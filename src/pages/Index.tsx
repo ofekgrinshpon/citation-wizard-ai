@@ -1,16 +1,269 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useRef, useEffect } from "react";
+import { MessageBubble } from "@/components/MessageBubble";
+import { LoadingDots } from "@/components/LoadingDots";
+import { supabase } from "@/integrations/supabase/client";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const CITATION_EXAMPLES = [
+  "פסק דין קול העם נגד שר הפנים משנת 53",
+  "חוק העונשין סעיף 34כב",
+  'ע"א בנק המזרחי נגד מגדל בעניין חוק גל',
+  "המאמר של גביזון על פרטיות ומשפט בעיוני משפט",
+  "Atkins v. Virginia על עונש מוות",
+];
+
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
+const Index = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState<"chat" | "batch">("chat");
+  const [batchText, setBatchText] = useState("");
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
+
+  const callAPI = async (userMessage: string, history: Message[]) => {
+    const { data, error } = await supabase.functions.invoke("citation-chat", {
+      body: {
+        messages: [
+          ...history.map((m) => ({ role: m.role, content: m.content })),
+          { role: "user", content: userMessage },
+        ],
+      },
+    });
+
+    if (error) throw error;
+    return data?.content || "אירעה שגיאה בעיבוד הבקשה.";
+  };
+
+  const handleSend = async () => {
+    const text = input.trim();
+    if (!text || loading) return;
+    setInput("");
+
+    const newMessages: Message[] = [...messages, { role: "user", content: text }];
+    setMessages(newMessages);
+    setLoading(true);
+
+    try {
+      const reply = await callAPI(text, messages);
+      setMessages([...newMessages, { role: "assistant", content: reply }]);
+    } catch {
+      setMessages([
+        ...newMessages,
+        { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBatch = async () => {
+    if (!batchText.trim() || loading) return;
+    const prompt = `אנא זהה את כל המקורות המשפטיים בטקסט הבא והמר אותם להערות שוליים תקניות לפי כללי האזכור האחיד. הצג את הטקסט המקורי עם מספרי הערות שוליים, ולאחריו רשימת הערות השוליים הממוספרות.\n\nטקסט:\n${batchText}`;
+    setMessages([{ role: "user", content: prompt }]);
+    setMode("chat");
+    setLoading(true);
+    try {
+      const reply = await callAPI(prompt, []);
+      setMessages([
+        { role: "user", content: prompt },
+        { role: "assistant", content: reply },
+      ]);
+    } catch {
+      setMessages([
+        { role: "user", content: prompt },
+        { role: "assistant", content: "שגיאה בעיבוד." },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="flex flex-col h-screen bg-background text-foreground font-sans">
+      {/* Header */}
+      <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
+        <div className="flex items-center gap-3" style={{ direction: "rtl" }}>
+          <div className="text-3xl">🏛</div>
+          <div>
+            <h1 className="font-serif text-foreground text-lg font-bold leading-tight">
+              עוזר האזכור המשפטי
+            </h1>
+            <p className="text-text-dim text-xs">
+              כללי האזכור האחיד • מהדורת 2021
+            </p>
+          </div>
+        </div>
+
+        <div className="flex gap-1 bg-muted rounded-lg p-1">
+          {([
+            { id: "chat" as const, label: "שיחה" },
+            { id: "batch" as const, label: "עיבוד טקסט" },
+          ]).map((m) => (
+            <button
+              key={m.id}
+              onClick={() => setMode(m.id)}
+              className={`mode-tab ${
+                mode === m.id ? "mode-tab-active" : "mode-tab-inactive"
+              }`}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+      </header>
+
+      {/* Main content */}
+      <div className="flex-1 overflow-y-auto px-4" style={{ maxWidth: 860, margin: "0 auto", width: "100%" }}>
+        {mode === "batch" ? (
+          <div className="py-6" style={{ direction: "rtl" }}>
+            <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 mb-4 text-sm text-foreground">
+              📋 מצב עיבוד טקסט: הדבק טקסט משפטי המכיל הפניות למקורות. המערכת תזהה את כל המקורות ותייצר עבורך הערות שוליים תקניות.
+            </div>
+            <textarea
+              value={batchText}
+              onChange={(e) => setBatchText(e.target.value)}
+              placeholder="הדבק כאן טקסט משפטי לעיבוד..."
+              className="w-full min-h-[200px] bg-surface border border-border rounded-xl p-3.5 text-foreground text-sm leading-relaxed font-sans"
+              style={{ direction: "rtl" }}
+            />
+            <button
+              onClick={handleBatch}
+              disabled={loading || !batchText.trim()}
+              className="mt-3 px-7 py-2.5 rounded-lg font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{
+                background:
+                  loading || !batchText.trim()
+                    ? "hsl(var(--surface))"
+                    : "var(--gradient-primary)",
+                color:
+                  loading || !batchText.trim()
+                    ? "hsl(var(--muted-foreground))"
+                    : "hsl(var(--primary-foreground))",
+              }}
+            >
+              {loading ? "מעבד..." : "⚖ המר לאזכורים תקניים"}
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* Welcome screen */}
+            {messages.length === 0 && (
+              <div className="py-10 text-center" style={{ direction: "rtl" }}>
+                <div className="text-5xl mb-4">⚖️</div>
+                <h2 className="font-serif text-foreground text-xl font-bold mb-2">
+                  עוזר האזכור המשפטי
+                </h2>
+                <p className="text-text-dim text-sm mb-8">
+                  הכנס הפניה למקור – ואקבל אותה לנוסחה תקנית לפי כללי האזכור האחיד
+                </p>
+
+                <div className="mb-3">
+                  <p className="text-text-faint text-xs mb-3">דוגמאות לניסיון:</p>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {CITATION_EXAMPLES.map((ex, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setInput(ex)}
+                        className="example-chip"
+                        style={{ direction: "rtl" }}
+                      >
+                        {ex}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3 mt-8">
+                  {[
+                    { icon: "⚖️", title: "פסיקה", desc: "פסקי דין ישראליים, מנדטוריים ולועזיים" },
+                    { icon: "📜", title: "חקיקה", desc: "חוקי יסוד, חקיקה ראשית ומשנה" },
+                    { icon: "📚", title: "ספרות", desc: "ספרים, מאמרים ומקורות מרשתת" },
+                  ].map((f, i) => (
+                    <div key={i} className="feature-card">
+                      <div className="text-2xl mb-2">{f.icon}</div>
+                      <div className="text-foreground text-sm font-semibold mb-1">{f.title}</div>
+                      <div className="text-text-dim text-xs">{f.desc}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Messages */}
+            <div className="flex-1 pt-4">
+              {messages.map((msg, i) => (
+                <MessageBubble key={i} msg={msg} />
+              ))}
+              {loading && <LoadingDots />}
+              <div ref={chatEndRef} />
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Input bar */}
+      {mode === "chat" && (
+        <div className="input-bar sticky bottom-0 px-4 py-3">
+          <div
+            className="flex gap-2.5 items-end"
+            style={{ maxWidth: 860, margin: "0 auto", direction: "rtl" }}
+          >
+            {messages.length > 0 && (
+              <button
+                onClick={() => setMessages([])}
+                className="p-2.5 bg-surface border border-border rounded-xl text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-all flex-shrink-0"
+                title="נקה שיחה"
+              >
+                🗑
+              </button>
+            )}
+            <div className="input-field flex flex-1 overflow-hidden">
+              <textarea
+                ref={textareaRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="הזן מקור משפטי לאזכור... (Enter לשליחה, Shift+Enter לשורה חדשה)"
+                rows={1}
+                className="flex-1 bg-transparent border-none px-3.5 py-3 text-foreground text-sm leading-relaxed font-sans max-h-[120px] overflow-y-auto"
+                style={{ direction: "rtl" }}
+              />
+              <button
+                onClick={handleSend}
+                disabled={loading || !input.trim()}
+                className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
+              >
+                {loading ? (
+                  <div className="w-4.5 h-4.5 border-2 border-muted-foreground/30 border-t-foreground rounded-full animate-spin" />
+                ) : (
+                  "⇧"
+                )}
+              </button>
+            </div>
+          </div>
+          <div className="text-center mt-2 text-[11px] text-text-faint">
+            כללי האזכור האחיד בכתיבה המשפטית • מהדורה שלישית 2021 • Bluebook 21st ed.
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
