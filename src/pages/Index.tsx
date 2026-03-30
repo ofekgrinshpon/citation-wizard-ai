@@ -147,8 +147,8 @@ const Index = () => {
         <div className="flex items-center gap-3" style={{ direction: "rtl" }}>
           <div className="text-3xl">🏛</div>
           <div>
-            <h1 className="font-serif text-foreground text-lg font-bold leading-tight">
-              עוזר האזכור המשפטי
+            <h1 className="text-foreground text-lg font-bold leading-tight font-sans">
+              העוזמ״ש
             </h1>
             <p className="text-text-dim text-xs">
               כללי האזכור האחיד • מהדורת 2021
