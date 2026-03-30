@@ -21,6 +21,7 @@ interface VerifiedSource {
   full_citation: string;
   auto_verified: boolean;
   verified_at: string;
+  usage_count: number;
 }
 
 const Admin = () => {

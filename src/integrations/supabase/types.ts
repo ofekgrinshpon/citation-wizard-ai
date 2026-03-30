@@ -143,6 +143,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_usage_count: { Args: { source_id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "user"
