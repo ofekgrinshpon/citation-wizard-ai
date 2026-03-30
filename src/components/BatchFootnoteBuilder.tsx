@@ -21,7 +21,12 @@ const createCell = (id: number): FootnoteCell => ({
   status: "empty",
 });
 
-export function BatchFootnoteBuilder() {
+interface BatchProps {
+  isGuest?: boolean;
+  guestLimit?: { isLocked: boolean; increment: (n?: number) => void; remaining: number; max: number };
+}
+
+export function BatchFootnoteBuilder({ isGuest, guestLimit }: BatchProps) {
   const [cells, setCells] = useState<FootnoteCell[]>(
     Array.from({ length: 5 }, (_, i) => createCell(i + 1))
   );

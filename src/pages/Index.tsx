@@ -199,7 +199,7 @@ const Index = () => {
         {mode === "manual" ? (
           <ManualEntry />
         ) : mode === "batch" ? (
-          <BatchFootnoteBuilder />
+          <BatchFootnoteBuilder isGuest={isGuestMode} guestLimit={guestLimit} />
         ) : (
           <>
             {/* Welcome screen */}
