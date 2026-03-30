@@ -1,15 +1,54 @@
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { CITATION_PART_RULES, RULE_EXPLANATIONS } from "@/data/ruleTooltips";
+
 interface FormattedCitationProps {
   text: string;
   highlightMissing?: boolean;
+  enableTooltips?: boolean;
 }
 
-export function FormattedCitation({ text, highlightMissing }: FormattedCitationProps) {
-  const parts: JSX.Element[] = [];
+/** Render a single segment with optional tooltip */
+function SegmentWithTooltip({
+  content,
+  ruleKey,
+  label,
+}: {
+  content: React.ReactNode;
+  ruleKey: string;
+  label: string;
+}) {
+  const explanation = RULE_EXPLANATIONS[ruleKey];
+  if (!explanation) return <>{content}</>;
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="cursor-help border-b border-dotted border-muted-foreground/40 hover:border-primary transition-colors">
+          {content}
+        </span>
+      </TooltipTrigger>
+      <TooltipContent
+        side="top"
+        className="max-w-xs text-right"
+        style={{ direction: "rtl" }}
+      >
+        <p className="font-semibold text-xs text-primary mb-0.5">{label}</p>
+        <p className="text-xs">{explanation}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+/** Parse inline markers (**bold**, ##italic##, [חסר:...]) into React nodes */
+function parseInlineMarkers(
+  text: string,
+  highlightMissing: boolean
+): React.ReactNode[] {
+  const parts: React.ReactNode[] = [];
   let remaining = text;
   let key = 0;
 
   while (remaining.length > 0) {
-    // Find next marker: **, ##, or [חסר:
     const boldIdx = remaining.indexOf("**");
     const italicIdx = remaining.indexOf("##");
     const missingIdx = highlightMissing ? remaining.indexOf("[חסר:") : -1;
@@ -22,8 +61,6 @@ export function FormattedCitation({ text, highlightMissing }: FormattedCitationP
     }
 
     const nextIdx = Math.min(...indices);
-
-    // Find which marker is next
     let nextType: "bold" | "italic" | "missing";
     if (nextIdx === boldIdx) nextType = "bold";
     else if (nextIdx === italicIdx) nextType = "italic";
@@ -75,5 +112,93 @@ export function FormattedCitation({ text, highlightMissing }: FormattedCitationP
     remaining = remaining.slice(closeIdx + 2);
   }
 
-  return <>{parts}</>;
+  return parts;
+}
+
+/**
+ * Try to find a citation part rule that matches starting near position 0 of the raw text.
+ * Returns the matched rule and the match boundaries, or null.
+ */
+function findPartRules(rawLine: string) {
+  const matches: { start: number; end: number; ruleKey: string; label: string }[] = [];
+
+  for (const rule of CITATION_PART_RULES) {
+    if (!rule.ruleKey) continue; // skip display-only rules
+    let m: RegExpExecArray | null;
+    const regex = new RegExp(rule.pattern.source, "g");
+    while ((m = regex.exec(rawLine)) !== null) {
+      // Avoid duplicate overlapping matches
+      const overlaps = matches.some(
+        (existing) => m!.index < existing.end && m!.index + m![0].length > existing.start
+      );
+      if (!overlaps) {
+        matches.push({
+          start: m.index,
+          end: m.index + m[0].length,
+          ruleKey: rule.ruleKey,
+          label: rule.label,
+        });
+      }
+    }
+  }
+
+  return matches.sort((a, b) => a.start - b.start);
+}
+
+export function FormattedCitation({
+  text,
+  highlightMissing,
+  enableTooltips = false,
+}: FormattedCitationProps) {
+  if (!enableTooltips) {
+    return <>{parseInlineMarkers(text, !!highlightMissing)}</>;
+  }
+
+  // With tooltips: find rule-matching segments and wrap them
+  const matches = findPartRules(text);
+
+  if (matches.length === 0) {
+    return <>{parseInlineMarkers(text, !!highlightMissing)}</>;
+  }
+
+  const result: React.ReactNode[] = [];
+  let cursor = 0;
+  let key = 0;
+
+  for (const match of matches) {
+    // Text before this match
+    if (match.start > cursor) {
+      const before = text.slice(cursor, match.start);
+      result.push(
+        <span key={key++}>
+          {parseInlineMarkers(before, !!highlightMissing)}
+        </span>
+      );
+    }
+
+    // The matched segment
+    const segment = text.slice(match.start, match.end);
+    const rendered = parseInlineMarkers(segment, !!highlightMissing);
+    result.push(
+      <SegmentWithTooltip
+        key={key++}
+        content={rendered}
+        ruleKey={match.ruleKey}
+        label={match.label}
+      />
+    );
+
+    cursor = match.end;
+  }
+
+  // Remaining text after last match
+  if (cursor < text.length) {
+    result.push(
+      <span key={key++}>
+        {parseInlineMarkers(text.slice(cursor), !!highlightMissing)}
+      </span>
+    );
+  }
+
+  return <>{result}</>;
 }

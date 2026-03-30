@@ -1,9 +1,17 @@
 import { FormattedCitation } from "./FormattedCitation";
 import { toast } from "sonner";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { RULE_EXPLANATIONS } from "@/data/ruleTooltips";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
+}
+
+/** Extract rule number from a 📐 line */
+function extractRuleNumber(line: string): string | null {
+  const m = line.match(/כלל[:\s]*(\d+(?:\.\d+)?)/);
+  return m ? m[1] : null;
 }
 
 export function MessageBubble({ msg }: { msg: Message }) {
@@ -15,7 +23,6 @@ export function MessageBubble({ msg }: { msg: Message }) {
     toast.success("הועתק ללוח!");
   };
 
-  // Detect rule reference lines and [חסר:...] markers
   const isRuleLine = (line: string) =>
     /^📐|^כלל:|^Based on Rule|^Rule \d/.test(line.trim());
   const hasMissingMarker = (line: string) => /\[חסר:/.test(line);
@@ -43,19 +50,37 @@ export function MessageBubble({ msg }: { msg: Message }) {
             {msg.content.split("\n").map((line, i) => {
               if (!line.trim()) return <br key={i} />;
 
-              // Rule reference line
+              // Rule reference line – make it a tooltip-rich badge
               if (isRuleLine(line)) {
+                const ruleNum = extractRuleNumber(line);
+                const explanation = ruleNum ? RULE_EXPLANATIONS[ruleNum] : null;
+
                 return (
-                  <div
-                    key={i}
-                    className="mt-2 py-1 px-2 rounded-md text-xs"
-                    style={{
-                      background: "hsl(var(--primary) / 0.1)",
-                      color: "hsl(var(--primary))",
-                    }}
-                  >
-                    {line}
-                  </div>
+                  <Tooltip key={i}>
+                    <TooltipTrigger asChild>
+                      <div
+                        className="mt-2 py-1 px-2 rounded-md text-xs cursor-help inline-block"
+                        style={{
+                          background: "hsl(var(--primary) / 0.1)",
+                          color: "hsl(var(--primary))",
+                        }}
+                      >
+                        {line}
+                      </div>
+                    </TooltipTrigger>
+                    {explanation && (
+                      <TooltipContent
+                        side="top"
+                        className="max-w-xs text-right"
+                        style={{ direction: "rtl" }}
+                      >
+                        <p className="text-xs font-semibold text-primary mb-0.5">
+                          כלל {ruleNum}
+                        </p>
+                        <p className="text-xs">{explanation}</p>
+                      </TooltipContent>
+                    )}
+                  </Tooltip>
                 );
               }
 
@@ -63,14 +88,18 @@ export function MessageBubble({ msg }: { msg: Message }) {
               if (hasMissingMarker(line)) {
                 return (
                   <div key={i} className="my-0.5">
-                    <FormattedCitation text={line} highlightMissing />
+                    <FormattedCitation
+                      text={line}
+                      highlightMissing
+                      enableTooltips
+                    />
                   </div>
                 );
               }
 
               return (
                 <div key={i} className="my-0.5">
-                  <FormattedCitation text={line} />
+                  <FormattedCitation text={line} enableTooltips />
                 </div>
               );
             })}
