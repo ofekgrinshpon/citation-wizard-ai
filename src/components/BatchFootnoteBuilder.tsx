@@ -2,14 +2,16 @@ import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { FormattedCitation } from "./FormattedCitation";
+import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
 import { toast } from "sonner";
 
 interface FootnoteCell {
   id: number;
   input: string;
   output: string | null;
-  status: "empty" | "loading" | "valid" | "warning";
+  status: "empty" | "loading" | "valid" | "warning" | "verified";
   warningMsg?: string;
+  verifiedCitation?: string;
 }
 
 const createCell = (id: number): FootnoteCell => ({
@@ -29,7 +31,15 @@ export function BatchFootnoteBuilder() {
   const updateCellInput = useCallback((id: number, value: string) => {
     setCells((prev) =>
       prev.map((c) =>
-        c.id === id ? { ...c, input: value, status: "empty" } : c
+        c.id === id ? { ...c, input: value, status: "empty", verifiedCitation: undefined } : c
+      )
+    );
+  }, []);
+
+  const setCellVerified = useCallback((id: number, citation: string) => {
+    setCells((prev) =>
+      prev.map((c) =>
+        c.id === id ? { ...c, output: citation, status: "verified", verifiedCitation: citation } : c
       )
     );
   }, []);
@@ -46,7 +56,7 @@ export function BatchFootnoteBuilder() {
   }, []);
 
   const processAllCells = async () => {
-    const activeCells = cells.filter((c) => c.input.trim());
+    const activeCells = cells.filter((c) => c.input.trim() && c.status !== "verified");
     if (activeCells.length === 0) {
       toast.error("אנא הזן לפחות מקור אחד");
       return;
@@ -57,7 +67,7 @@ export function BatchFootnoteBuilder() {
 
     setCells((prev) =>
       prev.map((c) =>
-        c.input.trim() ? { ...c, status: "loading", output: null } : c
+        c.input.trim() && c.status !== "verified" ? { ...c, status: "loading", output: null } : c
       )
     );
 
@@ -104,23 +114,41 @@ ${sourcesText}
       let warningCount = 0;
       let validCount = 0;
 
-      setCells((prev) =>
-        prev.map((c) => {
-          if (!c.input.trim()) return c;
+      const updatedCells: FootnoteCell[] = [];
+      setCells((prev) => {
+        const result = prev.map((c) => {
+          if (!c.input.trim() || c.status === "verified") return c;
           const idx = activeCells.findIndex((ac) => ac.id === c.id);
           if (idx === -1) return c;
           const fn = footnotes[idx] || content;
           const hasWarning = /\[חסר:/.test(fn) || /⚠️/.test(fn);
           if (hasWarning) warningCount++;
           else validCount++;
-          return {
+          const updated = {
             ...c,
             output: fn,
-            status: hasWarning ? "warning" : "valid",
+            status: (hasWarning ? "warning" : "valid") as FootnoteCell["status"],
             warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
           };
-        })
-      );
+          updatedCells.push(updated);
+          return updated;
+        });
+        return result;
+      });
+
+      // Save to citation history
+      for (const cell of updatedCells) {
+        if (cell.output) {
+          const sourceType = detectSourceType(normalizeAbbreviations(cell.input));
+          const label = SOURCE_TYPE_LABELS[sourceType];
+          supabase.from("citation_history").insert({
+            raw_input: cell.input,
+            formatted_output: extractCitationOnly(cell.output),
+            source_type: label !== "לא ידוע" ? label : null,
+            is_verified: cell.status === "valid" && !/\[חסר:/.test(cell.output),
+          }).then(() => {});
+        }
+      }
 
       const total = validCount + warningCount;
       const repeatNote = /שם|לעיל/.test(content)
@@ -205,16 +233,16 @@ ${sourcesText}
         <div className="space-y-2.5">
           {cells.map((cell) => (
             <div key={cell.id} className="flex items-start gap-2">
-              <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1.5">
-                {cell.id}
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1.5 ${
+                cell.status === "verified" ? "bg-emerald-100 text-emerald-700" : "bg-primary/10 text-primary"
+              }`}>
+                {cell.status === "verified" ? "✓" : cell.id}
               </div>
-              <textarea
+              <VerifiedAutocomplete
                 value={cell.input}
-                onChange={(e) => updateCellInput(cell.id, e.target.value)}
+                onChange={(v) => updateCellInput(cell.id, v)}
+                onSelectCitation={(citation) => setCellVerified(cell.id, citation)}
                 placeholder="הזן מקור (פסיקה, חקיקה, ספרות...)"
-                rows={1}
-                className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-foreground text-sm font-sans resize-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50"
-                style={{ direction: "rtl" }}
                 disabled={globalLoading}
               />
               {cells.length > 1 && (
@@ -284,6 +312,9 @@ ${sourcesText}
               >
                 <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
                   <span className="text-primary font-bold text-sm font-sans">[{cell.id}]</span>
+                  {cell.status === "verified" && (
+                    <span className="text-emerald-600 text-xs" title="מקור מאומת">✓</span>
+                  )}
                   {cell.status === "warning" && (
                     <span className="text-destructive text-xs" title={cell.warningMsg}>⚠</span>
                   )}

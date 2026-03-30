@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
 import { ManualEntry } from "@/components/ManualEntry";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { toast } from "sonner";
 
@@ -30,6 +32,8 @@ const Index = () => {
   const [mode, setMode] = useState<AppMode>("freetext");
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { isAdmin } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -92,6 +96,12 @@ const Index = () => {
     try {
       const reply = await callAPI(prompt, messages);
       setMessages([...newMessages, { role: "assistant", content: reply }]);
+      // Save to citation history
+      supabase.from("citation_history").insert({
+        raw_input: rawText,
+        formatted_output: reply,
+        source_type: sourceType !== "unknown" ? sourceLabel : null,
+      }).then(() => {});
     } catch {
       setMessages([
         ...newMessages,
@@ -131,19 +141,29 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="flex gap-1 bg-muted rounded-lg p-1">
-          {MODES.map((m) => (
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1 bg-muted rounded-lg p-1">
+            {MODES.map((m) => (
+              <button
+                key={m.id}
+                onClick={() => setMode(m.id)}
+                className={`mode-tab flex items-center gap-1 ${
+                  mode === m.id ? "mode-tab-active" : "mode-tab-inactive"
+                }`}
+              >
+                <span className="text-[10px]">{m.icon}</span>
+                {m.label}
+              </button>
+            ))}
+          </div>
+          {isAdmin && (
             <button
-              key={m.id}
-              onClick={() => setMode(m.id)}
-              className={`mode-tab flex items-center gap-1 ${
-                mode === m.id ? "mode-tab-active" : "mode-tab-inactive"
-              }`}
+              onClick={() => navigate("/admin")}
+              className="text-xs text-primary hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors font-medium"
             >
-              <span className="text-[10px]">{m.icon}</span>
-              {m.label}
+              ⚙ ניהול
             </button>
-          ))}
+          )}
         </div>
       </header>
 
