@@ -74,6 +74,7 @@ const Index = () => {
   const handleSend = async () => {
     const rawText = input.trim();
     if (!rawText || loading) return;
+    if (isGuestMode && guestLimit.isLocked) return;
 
     // Step 1: Normalize abbreviations
     const normalized = normalizeAbbreviations(rawText);
