@@ -105,6 +105,8 @@ const Index = () => {
     try {
       const reply = await callAPI(prompt, messages);
       setMessages([...newMessages, { role: "assistant", content: reply }]);
+      // Increment guest counter
+      if (isGuestMode) guestLimit.increment();
       // Save to citation history
       supabase.from("citation_history").insert({
         raw_input: rawText,
