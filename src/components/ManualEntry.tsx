@@ -127,9 +127,19 @@ export function ManualEntry() {
 
   const copyToClipboard = () => {
     if (!output) return;
-    // Strip ** and ## markers for plain text
-    const plain = output.replace(/\*\*/g, "").replace(/##/g, "");
-    navigator.clipboard.writeText(plain);
+    // Extract only the citation: remove rule/meta lines (📐, כלל:, etc.) and blank lines
+    const citationOnly = output
+      .split("\n")
+      .filter((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) return false;
+        if (/^📐|^כלל:|^Based on Rule|^Rule \d|^מכיוון ש/.test(trimmed)) return false;
+        return true;
+      })
+      .join("\n")
+      .replace(/\*\*/g, "")
+      .replace(/##/g, "");
+    navigator.clipboard.writeText(citationOnly);
     toast.success("האזכור הועתק ללוח!");
   };
 
