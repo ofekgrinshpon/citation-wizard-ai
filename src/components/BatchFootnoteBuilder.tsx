@@ -233,16 +233,16 @@ ${sourcesText}
         <div className="space-y-2.5">
           {cells.map((cell) => (
             <div key={cell.id} className="flex items-start gap-2">
-              <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1.5">
-                {cell.id}
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1.5 ${
+                cell.status === "verified" ? "bg-emerald-100 text-emerald-700" : "bg-primary/10 text-primary"
+              }`}>
+                {cell.status === "verified" ? "✓" : cell.id}
               </div>
-              <textarea
+              <VerifiedAutocomplete
                 value={cell.input}
-                onChange={(e) => updateCellInput(cell.id, e.target.value)}
+                onChange={(v) => updateCellInput(cell.id, v)}
+                onSelectCitation={(citation) => setCellVerified(cell.id, citation)}
                 placeholder="הזן מקור (פסיקה, חקיקה, ספרות...)"
-                rows={1}
-                className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-foreground text-sm font-sans resize-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50"
-                style={{ direction: "rtl" }}
                 disabled={globalLoading}
               />
               {cells.length > 1 && (
