@@ -14,16 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      citation_history: {
+        Row: {
+          created_at: string
+          formatted_output: string
+          id: string
+          is_verified: boolean | null
+          raw_input: string
+          source_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          formatted_output: string
+          id?: string
+          is_verified?: boolean | null
+          raw_input: string
+          source_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          formatted_output?: string
+          id?: string
+          is_verified?: boolean | null
+          raw_input?: string
+          source_type?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      verified_sources: {
+        Row: {
+          auto_verified: boolean | null
+          full_citation: string
+          id: string
+          metadata: Json | null
+          page: string | null
+          search_text: string
+          source_name: string
+          source_type: string
+          verified_at: string
+          verified_by: string | null
+          volume: string | null
+          year: string | null
+        }
+        Insert: {
+          auto_verified?: boolean | null
+          full_citation: string
+          id?: string
+          metadata?: Json | null
+          page?: string | null
+          search_text: string
+          source_name: string
+          source_type: string
+          verified_at?: string
+          verified_by?: string | null
+          volume?: string | null
+          year?: string | null
+        }
+        Update: {
+          auto_verified?: boolean | null
+          full_citation?: string
+          id?: string
+          metadata?: Json | null
+          page?: string | null
+          search_text?: string
+          source_name?: string
+          source_type?: string
+          verified_at?: string
+          verified_by?: string | null
+          volume?: string | null
+          year?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +269,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
