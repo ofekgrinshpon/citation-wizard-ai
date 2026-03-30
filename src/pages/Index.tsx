@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
 import { ManualEntry } from "@/components/ManualEntry";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
+import { GuestLimitModal } from "@/components/GuestLimitModal";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useGuestLimit } from "@/hooks/useGuestLimit";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
