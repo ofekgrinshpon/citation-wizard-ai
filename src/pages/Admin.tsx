@@ -138,7 +138,7 @@ const Admin = () => {
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/app")}
             className="text-sm text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-lg transition-colors"
           >
             ← חזור לאפליקציה
