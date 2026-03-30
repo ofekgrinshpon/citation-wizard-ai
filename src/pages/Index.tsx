@@ -34,9 +34,14 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<AppMode>("freetext");
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const [searchParams] = useSearchParams();
   
-  const { isAdmin } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const guestLimit = useGuestLimit();
+
+  const isGuest = !user;
+  const isGuestMode = isGuest || searchParams.get("guest") === "true";
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
