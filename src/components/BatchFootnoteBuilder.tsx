@@ -9,8 +9,9 @@ interface FootnoteCell {
   id: number;
   input: string;
   output: string | null;
-  status: "empty" | "loading" | "valid" | "warning";
+  status: "empty" | "loading" | "valid" | "warning" | "verified";
   warningMsg?: string;
+  verifiedCitation?: string;
 }
 
 const createCell = (id: number): FootnoteCell => ({
