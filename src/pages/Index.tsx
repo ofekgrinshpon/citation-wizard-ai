@@ -96,6 +96,12 @@ const Index = () => {
     try {
       const reply = await callAPI(prompt, messages);
       setMessages([...newMessages, { role: "assistant", content: reply }]);
+      // Save to citation history
+      supabase.from("citation_history").insert({
+        raw_input: rawText,
+        formatted_output: reply,
+        source_type: sourceType !== "unknown" ? sourceLabel : null,
+      }).then(() => {});
     } catch {
       setMessages([
         ...newMessages,
