@@ -187,7 +187,7 @@ export function ManualEntry() {
               >
                 ← חזור
               </button>
-              <h3 className="font-serif text-foreground text-lg font-bold">
+              <h3 className="font-sans text-foreground text-lg font-bold">
                 {SOURCE_TYPE_LABELS[sourceType]}
               </h3>
             </div>
@@ -280,7 +280,7 @@ export function ManualEntry() {
 
           {/* Output preview */}
           {output && (
-            <div className="mt-5 bg-surface border border-border rounded-xl p-4 animate-fade-in">
+            <div className="mt-5 bg-card border border-border rounded-xl p-4 shadow-sm animate-fade-in">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-semibold text-foreground">
                   תוצאה:
