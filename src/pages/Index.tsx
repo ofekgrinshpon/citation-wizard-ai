@@ -189,9 +189,6 @@ const Index = () => {
             {user ? "התנתק" : "← חזרה"}
           </button>
         </div>
-            </button>
-          )}
-        </div>
       </header>
 
       {/* Main content */}
