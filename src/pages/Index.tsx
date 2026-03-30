@@ -155,6 +155,11 @@ const Index = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          {isGuestMode && (
+            <span className="text-[10px] text-muted-foreground bg-muted px-2 py-1 rounded-md">
+              אורח • {guestLimit.remaining}/{guestLimit.max} אזכורים
+            </span>
+          )}
           <div className="flex gap-1 bg-muted rounded-lg p-1">
             {MODES.map((m) => (
               <button
@@ -175,6 +180,15 @@ const Index = () => {
               className="text-xs text-primary hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors font-medium"
             >
               ⚙ ניהול
+            </button>
+          )}
+          <button
+            onClick={() => navigate("/")}
+            className="text-xs text-muted-foreground hover:text-foreground px-2 py-1.5 rounded-lg transition-colors"
+          >
+            {user ? "התנתק" : "← חזרה"}
+          </button>
+        </div>
             </button>
           )}
         </div>
