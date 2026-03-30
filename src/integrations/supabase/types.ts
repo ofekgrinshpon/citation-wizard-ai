@@ -93,6 +93,7 @@ export type Database = {
           search_text: string
           source_name: string
           source_type: string
+          usage_count: number
           verified_at: string
           verified_by: string | null
           volume: string | null
@@ -107,6 +108,7 @@ export type Database = {
           search_text: string
           source_name: string
           source_type: string
+          usage_count?: number
           verified_at?: string
           verified_by?: string | null
           volume?: string | null
@@ -121,6 +123,7 @@ export type Database = {
           search_text?: string
           source_name?: string
           source_type?: string
+          usage_count?: number
           verified_at?: string
           verified_by?: string | null
           volume?: string | null
