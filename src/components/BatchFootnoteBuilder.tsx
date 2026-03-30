@@ -29,7 +29,7 @@ export function BatchFootnoteBuilder() {
   const updateCellInput = useCallback((id: number, value: string) => {
     setCells((prev) =>
       prev.map((c) =>
-        c.id === id ? { ...c, input: value, status: value.trim() ? "empty" : "empty" } : c
+        c.id === id ? { ...c, input: value, status: "empty" } : c
       )
     );
   }, []);
@@ -145,11 +145,11 @@ ${sourcesText}
   const copyAll = () => {
     const outputs = cells
       .filter((c) => c.output)
-      .map((c, i) => {
+      .map((c) => {
         const citation = extractCitationOnly(c.output!);
-        return `${i + 1}. ${citation}`;
+        return `[${c.id}] ${citation}`;
       })
-      .join("\n");
+      .join("\n\n");
 
     if (!outputs) {
       toast.error("אין הערות שוליים להעתקה");
@@ -173,9 +173,11 @@ ${sourcesText}
 
   const hasAnyOutput = cells.some((c) => c.output);
   const hasAnyInput = cells.some((c) => c.input.trim());
+  const outputCells = cells.filter((c) => c.output);
 
   return (
     <div className="py-6" style={{ direction: "rtl" }}>
+      {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
           <h3 className="text-foreground text-lg font-bold font-sans">
@@ -186,14 +188,6 @@ ${sourcesText}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {hasAnyOutput && (
-            <button
-              onClick={copyAll}
-              className="text-xs bg-primary/15 text-primary hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
-            >
-              📋 העתק הכל
-            </button>
-          )}
           {hasAnyInput && (
             <button
               onClick={resetAll}
@@ -205,79 +199,46 @@ ${sourcesText}
         </div>
       </div>
 
-      <div className="space-y-3">
-        {cells.map((cell) => (
-          <div
-            key={cell.id}
-            className="bg-card border border-border rounded-xl p-3 shadow-sm transition-all hover:shadow-md"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0">
+      {/* === INPUT SECTION === */}
+      <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
+        <div className="space-y-2.5">
+          {cells.map((cell) => (
+            <div key={cell.id} className="flex items-start gap-2">
+              <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1.5">
                 {cell.id}
               </div>
-
-              <div className="flex-shrink-0">
-              {cell.status === "valid" && (
-                  <span className="text-primary text-sm" title="אזכור תקין">✓</span>
-                )}
-                {cell.status === "warning" && (
-                  <span className="text-destructive text-sm" title={cell.warningMsg}>⚠</span>
-                )}
-                {cell.status === "loading" && (
-                  <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-                )}
-              </div>
-
-              <div className="flex-1" />
-
-              {cell.output && (
-                <button
-                  onClick={() => copySingle(cell)}
-                  className="text-[11px] text-primary hover:bg-primary/10 px-2 py-1 rounded transition-colors"
-                >
-                  📋
-                </button>
-              )}
+              <textarea
+                value={cell.input}
+                onChange={(e) => updateCellInput(cell.id, e.target.value)}
+                placeholder="הזן מקור (פסיקה, חקיקה, ספרות...)"
+                rows={1}
+                className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-foreground text-sm font-sans resize-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50"
+                style={{ direction: "rtl" }}
+                disabled={globalLoading}
+              />
               {cells.length > 1 && (
                 <button
                   onClick={() => removeCell(cell.id)}
-                  className="text-[11px] text-muted-foreground hover:text-destructive px-1.5 py-1 rounded transition-colors"
+                  className="text-[11px] text-muted-foreground hover:text-destructive px-1.5 py-2 rounded transition-colors flex-shrink-0 mt-0.5"
                   title="הסר"
                 >
                   ✕
                 </button>
               )}
             </div>
+          ))}
+        </div>
 
-            <textarea
-              value={cell.input}
-              onChange={(e) => updateCellInput(cell.id, e.target.value)}
-              placeholder='הזן מקור (פסיקה, חקיקה, ספרות...)'
-              rows={2}
-              className="w-full bg-background border border-border rounded-lg px-3 py-2 text-foreground text-sm font-sans resize-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder:text-muted-foreground/50"
-              style={{ direction: "rtl" }}
-              disabled={globalLoading}
-            />
-
-            {cell.output && (
-              <div className="mt-2 bg-background/50 rounded-lg p-2.5 border border-border/50 animate-fade-in">
-                <div className="text-foreground text-sm leading-relaxed">
-                  <FormattedCitation text={cell.output} enableTooltips />
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
+        <button
+          onClick={addCell}
+          disabled={globalLoading}
+          className="mt-3 w-full py-2 border-2 border-dashed border-border hover:border-primary/40 rounded-lg text-muted-foreground hover:text-primary transition-all text-sm font-medium disabled:opacity-40"
+        >
+          + הוסף מקור
+        </button>
       </div>
 
-      <button
-        onClick={addCell}
-        disabled={globalLoading}
-        className="mt-3 w-full py-2.5 border-2 border-dashed border-border hover:border-primary/40 rounded-xl text-muted-foreground hover:text-primary transition-all text-sm font-medium disabled:opacity-40"
-      >
-        + הוסף מקור
-      </button>
-
+      {/* Generate Button */}
       <button
         onClick={processAllCells}
         disabled={globalLoading || !hasAnyInput}
@@ -290,6 +251,58 @@ ${sourcesText}
         {globalLoading ? "מעבד הערות שוליים..." : "⚖ ייצר הערות שוליים"}
       </button>
 
+      {/* === OUTPUT SECTION === */}
+      {(hasAnyOutput || globalLoading) && (
+        <div className="mt-5 bg-card border border-border rounded-xl shadow-sm animate-fade-in">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <h4 className="text-foreground text-sm font-bold font-sans">
+              📄 הערות שוליים
+            </h4>
+            {hasAnyOutput && (
+              <button
+                onClick={copyAll}
+                className="text-xs bg-primary/15 text-primary hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
+              >
+                📋 העתק הכל
+              </button>
+            )}
+          </div>
+
+          <div className="p-4 space-y-3">
+            {globalLoading && !hasAnyOutput && (
+              <div className="flex items-center justify-center gap-2 py-6 text-muted-foreground text-sm">
+                <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                <span>מעבד הערות שוליים...</span>
+              </div>
+            )}
+
+            {outputCells.map((cell) => (
+              <div
+                key={cell.id}
+                className="flex items-start gap-3 group"
+              >
+                <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
+                  <span className="text-primary font-bold text-sm font-sans">[{cell.id}]</span>
+                  {cell.status === "warning" && (
+                    <span className="text-destructive text-xs" title={cell.warningMsg}>⚠</span>
+                  )}
+                </div>
+                <div className="flex-1 text-foreground text-sm leading-relaxed">
+                  <FormattedCitation text={cell.output!} enableTooltips />
+                </div>
+                <button
+                  onClick={() => copySingle(cell)}
+                  className="text-[11px] text-primary hover:bg-primary/10 px-2 py-1 rounded transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
+                >
+                  📋
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Summary */}
       {summary && (
         <div className="mt-4 bg-primary/5 border border-primary/15 rounded-xl p-3 text-sm text-foreground animate-fade-in">
           <div className="flex items-start gap-2">
