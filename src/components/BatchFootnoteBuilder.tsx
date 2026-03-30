@@ -217,11 +217,11 @@ ${sourcesText}
               </div>
 
               <div className="flex-shrink-0">
-                {cell.status === "valid" && (
-                  <span className="text-green-500 text-sm" title="אזכור תקין">✓</span>
+              {cell.status === "valid" && (
+                  <span className="text-primary text-sm" title="אזכור תקין">✓</span>
                 )}
                 {cell.status === "warning" && (
-                  <span className="text-orange-500 text-sm" title={cell.warningMsg}>⚠</span>
+                  <span className="text-destructive text-sm" title={cell.warningMsg}>⚠</span>
                 )}
                 {cell.status === "loading" && (
                   <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
