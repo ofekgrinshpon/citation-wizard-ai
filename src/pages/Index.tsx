@@ -138,6 +138,8 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen font-sans bg-background text-foreground">
+      {/* Guest Limit Modal */}
+      {isGuestMode && guestLimit.isLocked && <GuestLimitModal />}
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shadow-sm">
         <div className="flex items-center gap-3" style={{ direction: "rtl" }}>
