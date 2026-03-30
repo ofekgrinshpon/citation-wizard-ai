@@ -18,18 +18,24 @@ export function MessageBubble({ msg }: { msg: Message }) {
   const isUser = msg.role === "user";
 
   const copyContent = () => {
-    // Copy only the citation string, stripping rule/meta lines
+    // Copy only the citation + missing-info notices, strip everything else
     const citationOnly = msg.content
       .split("\n")
       .filter((line) => {
         const trimmed = line.trim();
         if (!trimmed) return false;
+        // Keep missing-info warnings
+        if (/\[חסר:/.test(trimmed) || /המערכת זיהתה/.test(trimmed) || /הערה:/.test(trimmed)) return true;
+        // Remove meta/rule/intro lines
         if (/^📐|^כלל:|^Based on Rule|^Rule \d|^מכיוון ש/.test(trimmed)) return false;
+        if (/העוזר המשפטי/.test(trimmed)) return false;
+        if (/^שלב \d|^זיהוי סוג|^נרמול|^יישום/.test(trimmed)) return false;
         return true;
       })
       .join("\n")
       .replace(/\*\*/g, "")
-      .replace(/##/g, "");
+      .replace(/##/g, "")
+      .trim();
     navigator.clipboard.writeText(citationOnly);
     toast.success("הועתק ללוח!");
   };
