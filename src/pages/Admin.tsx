@@ -21,6 +21,7 @@ interface VerifiedSource {
   full_citation: string;
   auto_verified: boolean;
   verified_at: string;
+  usage_count: number;
 }
 
 const Admin = () => {
@@ -268,6 +269,7 @@ const Admin = () => {
                       <th className="text-right px-4 py-3 font-medium text-muted-foreground">שם מקור</th>
                       <th className="text-right px-4 py-3 font-medium text-muted-foreground">סוג</th>
                       <th className="text-right px-4 py-3 font-medium text-muted-foreground">ציטוט מלא</th>
+                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">שימושים</th>
                       <th className="text-right px-4 py-3 font-medium text-muted-foreground">אופן אימות</th>
                       <th className="text-right px-4 py-3 font-medium text-muted-foreground">פעולות</th>
                     </tr>
@@ -275,7 +277,7 @@ const Admin = () => {
                   <tbody>
                     {verifiedSources.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="text-center py-8 text-muted-foreground">
+                       <td colSpan={6} className="text-center py-8 text-muted-foreground">
                           אין מקורות מאומתים עדיין
                         </td>
                       </tr>
@@ -287,6 +289,9 @@ const Admin = () => {
                             <Badge variant="outline">{vs.source_type}</Badge>
                           </td>
                           <td className="px-4 py-3 text-foreground max-w-[300px] truncate">{vs.full_citation}</td>
+                          <td className="px-4 py-3">
+                            <Badge variant="secondary">{vs.usage_count} פעמים</Badge>
+                          </td>
                           <td className="px-4 py-3">
                             <Badge className={vs.auto_verified ? "bg-blue-100 text-blue-700 border-blue-200" : "bg-emerald-100 text-emerald-700 border-emerald-200"}>
                               {vs.auto_verified ? "אוטומטי" : "ידני"}

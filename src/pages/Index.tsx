@@ -7,6 +7,7 @@ import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
+import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
 
 const CITATION_EXAMPLES = [
@@ -31,7 +32,7 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<AppMode>("freetext");
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
   const { isAdmin } = useAuth();
   const navigate = useNavigate();
 
@@ -270,15 +271,22 @@ const Index = () => {
               </button>
             )}
             <div className="input-field flex flex-1 overflow-hidden">
-              <textarea
-                ref={textareaRef}
+              <VerifiedAutocomplete
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
+                onChange={setInput}
+                onSelectCitation={(citation) => {
+                  setInput("");
+                  const newMessages: Message[] = [
+                    ...messages,
+                    { role: "user", content: citation },
+                    { role: "assistant", content: `✓ מאומת\n${citation}` },
+                  ];
+                  setMessages(newMessages);
+                }}
                 placeholder='הזן מקור משפטי בטקסט חופשי... (למשל: "בגץ קול העם" או "חוק העונשין סעיף 34")'
-                rows={1}
-                className="flex-1 bg-transparent border-none px-3.5 py-3 text-foreground text-sm leading-relaxed font-sans max-h-[120px] overflow-y-auto"
-                style={{ direction: "rtl" }}
+                disabled={loading}
+                inputType="input"
+                className="flex-1 bg-transparent border-none px-3.5 py-3 text-foreground text-sm leading-relaxed font-sans"
               />
               <button
                 onClick={handleSend}
