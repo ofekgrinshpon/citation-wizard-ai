@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
 import { ManualEntry } from "@/components/ManualEntry";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
+import { GuestLimitModal } from "@/components/GuestLimitModal";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useGuestLimit } from "@/hooks/useGuestLimit";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
@@ -32,9 +34,14 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<AppMode>("freetext");
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const [searchParams] = useSearchParams();
   
-  const { isAdmin } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const guestLimit = useGuestLimit();
+
+  const isGuest = !user;
+  const isGuestMode = isGuest || searchParams.get("guest") === "true";
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -67,6 +74,7 @@ const Index = () => {
   const handleSend = async () => {
     const rawText = input.trim();
     if (!rawText || loading) return;
+    if (isGuestMode && guestLimit.isLocked) return;
 
     // Step 1: Normalize abbreviations
     const normalized = normalizeAbbreviations(rawText);
@@ -97,6 +105,8 @@ const Index = () => {
     try {
       const reply = await callAPI(prompt, messages);
       setMessages([...newMessages, { role: "assistant", content: reply }]);
+      // Increment guest counter
+      if (isGuestMode) guestLimit.increment();
       // Save to citation history
       supabase.from("citation_history").insert({
         raw_input: rawText,
@@ -128,6 +138,8 @@ const Index = () => {
 
   return (
     <div className="flex flex-col h-screen font-sans bg-background text-foreground">
+      {/* Guest Limit Modal */}
+      {isGuestMode && guestLimit.isLocked && <GuestLimitModal />}
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shadow-sm">
         <div className="flex items-center gap-3" style={{ direction: "rtl" }}>
@@ -143,6 +155,11 @@ const Index = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          {isGuestMode && (
+            <span className="text-[10px] text-muted-foreground bg-muted px-2 py-1 rounded-md">
+              אורח • {guestLimit.remaining}/{guestLimit.max} אזכורים
+            </span>
+          )}
           <div className="flex gap-1 bg-muted rounded-lg p-1">
             {MODES.map((m) => (
               <button
@@ -165,6 +182,12 @@ const Index = () => {
               ⚙ ניהול
             </button>
           )}
+          <button
+            onClick={() => navigate("/")}
+            className="text-xs text-muted-foreground hover:text-foreground px-2 py-1.5 rounded-lg transition-colors"
+          >
+            {user ? "התנתק" : "← חזרה"}
+          </button>
         </div>
       </header>
 
@@ -176,7 +199,7 @@ const Index = () => {
         {mode === "manual" ? (
           <ManualEntry />
         ) : mode === "batch" ? (
-          <BatchFootnoteBuilder />
+          <BatchFootnoteBuilder isGuest={isGuestMode} guestLimit={guestLimit} />
         ) : (
           <>
             {/* Welcome screen */}
