@@ -114,23 +114,41 @@ ${sourcesText}
       let warningCount = 0;
       let validCount = 0;
 
-      setCells((prev) =>
-        prev.map((c) => {
-          if (!c.input.trim()) return c;
+      const updatedCells: FootnoteCell[] = [];
+      setCells((prev) => {
+        const result = prev.map((c) => {
+          if (!c.input.trim() || c.status === "verified") return c;
           const idx = activeCells.findIndex((ac) => ac.id === c.id);
           if (idx === -1) return c;
           const fn = footnotes[idx] || content;
           const hasWarning = /\[חסר:/.test(fn) || /⚠️/.test(fn);
           if (hasWarning) warningCount++;
           else validCount++;
-          return {
+          const updated = {
             ...c,
             output: fn,
-            status: hasWarning ? "warning" : "valid",
+            status: (hasWarning ? "warning" : "valid") as FootnoteCell["status"],
             warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
           };
-        })
-      );
+          updatedCells.push(updated);
+          return updated;
+        });
+        return result;
+      });
+
+      // Save to citation history
+      for (const cell of updatedCells) {
+        if (cell.output) {
+          const sourceType = detectSourceType(normalizeAbbreviations(cell.input));
+          const label = SOURCE_TYPE_LABELS[sourceType];
+          supabase.from("citation_history").insert({
+            raw_input: cell.input,
+            formatted_output: extractCitationOnly(cell.output),
+            source_type: label !== "לא ידוע" ? label : null,
+            is_verified: cell.status === "valid" && !/\[חסר:/.test(cell.output),
+          }).then(() => {});
+        }
+      }
 
       const total = validCount + warningCount;
       const repeatNote = /שם|לעיל/.test(content)
