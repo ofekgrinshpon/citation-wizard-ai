@@ -141,19 +141,29 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="flex gap-1 bg-muted rounded-lg p-1">
-          {MODES.map((m) => (
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1 bg-muted rounded-lg p-1">
+            {MODES.map((m) => (
+              <button
+                key={m.id}
+                onClick={() => setMode(m.id)}
+                className={`mode-tab flex items-center gap-1 ${
+                  mode === m.id ? "mode-tab-active" : "mode-tab-inactive"
+                }`}
+              >
+                <span className="text-[10px]">{m.icon}</span>
+                {m.label}
+              </button>
+            ))}
+          </div>
+          {isAdmin && (
             <button
-              key={m.id}
-              onClick={() => setMode(m.id)}
-              className={`mode-tab flex items-center gap-1 ${
-                mode === m.id ? "mode-tab-active" : "mode-tab-inactive"
-              }`}
+              onClick={() => navigate("/admin")}
+              className="text-xs text-primary hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors font-medium"
             >
-              <span className="text-[10px]">{m.icon}</span>
-              {m.label}
+              ⚙ ניהול
             </button>
-          ))}
+          )}
         </div>
       </header>
 
