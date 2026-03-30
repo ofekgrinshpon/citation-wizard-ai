@@ -181,36 +181,7 @@ const Index = () => {
         {mode === "manual" ? (
           <ManualEntry />
         ) : mode === "batch" ? (
-          <div className="py-6" style={{ direction: "rtl" }}>
-            <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 mb-4 text-sm text-foreground">
-              📋 הדבק טקסט משפטי שלם. המערכת תזהה את כל המקורות, תתקן קיצורים,
-              ותייצר הערות שוליים תקניות עם הפניות לכללים.
-            </div>
-            <textarea
-              value={batchText}
-              onChange={(e) => setBatchText(e.target.value)}
-              placeholder="הדבק כאן טקסט משפטי לעיבוד..."
-              className="w-full min-h-[200px] bg-surface border border-border rounded-xl p-3.5 text-foreground text-sm leading-relaxed font-sans"
-              style={{ direction: "rtl" }}
-            />
-            <button
-              onClick={handleBatch}
-              disabled={loading || !batchText.trim()}
-              className="mt-3 px-7 py-2.5 rounded-lg font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{
-                background:
-                  loading || !batchText.trim()
-                    ? "hsl(var(--surface))"
-                    : "var(--gradient-primary)",
-                color:
-                  loading || !batchText.trim()
-                    ? "hsl(var(--muted-foreground))"
-                    : "hsl(var(--primary-foreground))",
-              }}
-            >
-              {loading ? "מעבד..." : "⚖ המר לאזכורים תקניים"}
-            </button>
-          </div>
+          <BatchFootnoteBuilder />
         ) : (
           <>
             {/* Welcome screen */}
