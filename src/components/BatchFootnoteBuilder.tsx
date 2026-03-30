@@ -56,7 +56,7 @@ export function BatchFootnoteBuilder() {
   }, []);
 
   const processAllCells = async () => {
-    const activeCells = cells.filter((c) => c.input.trim());
+    const activeCells = cells.filter((c) => c.input.trim() && c.status !== "verified");
     if (activeCells.length === 0) {
       toast.error("אנא הזן לפחות מקור אחד");
       return;
