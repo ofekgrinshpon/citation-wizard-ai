@@ -77,11 +77,12 @@ export function BatchFootnoteBuilder() {
 - אם מקור דומה אך עם עמוד שונה, השתמש ב"שם, בעמ' Y".
 - לכל הערה, ציין את מספר הכלל בסוף (📐 כלל: X.X).
 - אם חסרים פרטים, סמן [חסר:...] והוסף אזהרה.
+- אל תכלול משפטי פתיחה או הקדמה כמו "העוזר המשפטי האוטומטי יתחיל בעיבוד בקשתך" או כל טקסט מבוא. החזר רק את ההערות עצמן.
 
 המקורות:
 ${sourcesText}
 
-אנא החזר את התוצאה בפורמט הבא בדיוק, כל הערה בשורה נפרדת:
+אנא החזר את התוצאה בפורמט הבא בדיוק, כל הערה בשורה נפרדת, בלי שום טקסט לפני או אחרי:
 ---FOOTNOTE 1---
 [אזכור תקני]
 📐 כלל: [מספר]
@@ -353,6 +354,7 @@ function extractCitationOnly(text: string): string {
       if (!trimmed) return false;
       if (/^📐|^כלל:|^Based on Rule|^Rule \d|^מכיוון ש/.test(trimmed)) return false;
       if (/העוזר המשפטי/.test(trimmed)) return false;
+      if (/יתחיל בעיבוד|אתחיל בעיבוד|אטפל בבקשתך/.test(trimmed)) return false;
       if (/^שלב \d|^זיהוי סוג|^נרמול|^יישום/.test(trimmed)) return false;
       if (/^---FOOTNOTE/i.test(trimmed)) return false;
       if (/\[חסר:/.test(trimmed) || /המערכת זיהתה/.test(trimmed)) return true;
