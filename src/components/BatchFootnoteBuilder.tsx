@@ -354,6 +354,7 @@ function extractCitationOnly(text: string): string {
       if (!trimmed) return false;
       if (/^📐|^כלל:|^Based on Rule|^Rule \d|^מכיוון ש/.test(trimmed)) return false;
       if (/העוזר המשפטי/.test(trimmed)) return false;
+      if (/יתחיל בעיבוד|אתחיל בעיבוד|אטפל בבקשתך/.test(trimmed)) return false;
       if (/^שלב \d|^זיהוי סוג|^נרמול|^יישום/.test(trimmed)) return false;
       if (/^---FOOTNOTE/i.test(trimmed)) return false;
       if (/\[חסר:/.test(trimmed) || /המערכת זיהתה/.test(trimmed)) return true;
