@@ -61,6 +61,7 @@ export function BatchFootnoteBuilder({ isGuest, guestLimit }: BatchProps) {
   }, []);
 
   const processAllCells = async () => {
+    if (isGuest && guestLimit?.isLocked) return;
     const activeCells = cells.filter((c) => c.input.trim() && c.status !== "verified");
     if (activeCells.length === 0) {
       toast.error("אנא הזן לפחות מקור אחד");
