@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
 import { ManualEntry } from "@/components/ManualEntry";
+import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { toast } from "sonner";
