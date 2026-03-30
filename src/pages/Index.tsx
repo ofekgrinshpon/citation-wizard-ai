@@ -32,7 +32,7 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<AppMode>("freetext");
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
   const { isAdmin } = useAuth();
   const navigate = useNavigate();
 
