@@ -67,7 +67,7 @@ export function BatchFootnoteBuilder() {
 
     setCells((prev) =>
       prev.map((c) =>
-        c.input.trim() ? { ...c, status: "loading", output: null } : c
+        c.input.trim() && c.status !== "verified" ? { ...c, status: "loading", output: null } : c
       )
     );
 
