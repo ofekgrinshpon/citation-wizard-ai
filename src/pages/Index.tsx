@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
 import { ManualEntry } from "@/components/ManualEntry";
+import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { toast } from "sonner";
@@ -27,7 +28,6 @@ const Index = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<AppMode>("freetext");
-  const [batchText, setBatchText] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -102,31 +102,6 @@ const Index = () => {
     }
   };
 
-  const handleBatch = async () => {
-    if (!batchText.trim() || loading) return;
-
-    const normalizedBatch = normalizeAbbreviations(batchText);
-    const prompt = `אנא זהה את כל המקורות המשפטיים בטקסט הבא והמר אותם להערות שוליים תקניות לפי כללי האזכור האחיד. לכל הערה ציין את מספר הכלל הרלוונטי. הצג את הטקסט המקורי עם מספרי הערות שוליים, ולאחריו רשימת הערות השוליים הממוספרות.\n\nטקסט:\n${normalizedBatch}`;
-
-    setMessages([{ role: "user", content: batchText }]);
-    setMode("freetext");
-    setLoading(true);
-    try {
-      const reply = await callAPI(prompt, []);
-      setMessages([
-        { role: "user", content: batchText },
-        { role: "assistant", content: reply },
-      ]);
-    } catch {
-      setMessages([
-        { role: "user", content: batchText },
-        { role: "assistant", content: "שגיאה בעיבוד." },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -137,7 +112,7 @@ const Index = () => {
   const MODES: { id: AppMode; label: string; icon: string }[] = [
     { id: "freetext", label: "טקסט חופשי", icon: "✨" },
     { id: "manual", label: "הזנה ידנית", icon: "📝" },
-    { id: "batch", label: "עיבוד טקסט", icon: "📋" },
+    { id: "batch", label: "הערות שוליים", icon: "📑" },
   ];
 
   return (
@@ -180,36 +155,7 @@ const Index = () => {
         {mode === "manual" ? (
           <ManualEntry />
         ) : mode === "batch" ? (
-          <div className="py-6" style={{ direction: "rtl" }}>
-            <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 mb-4 text-sm text-foreground">
-              📋 הדבק טקסט משפטי שלם. המערכת תזהה את כל המקורות, תתקן קיצורים,
-              ותייצר הערות שוליים תקניות עם הפניות לכללים.
-            </div>
-            <textarea
-              value={batchText}
-              onChange={(e) => setBatchText(e.target.value)}
-              placeholder="הדבק כאן טקסט משפטי לעיבוד..."
-              className="w-full min-h-[200px] bg-surface border border-border rounded-xl p-3.5 text-foreground text-sm leading-relaxed font-sans"
-              style={{ direction: "rtl" }}
-            />
-            <button
-              onClick={handleBatch}
-              disabled={loading || !batchText.trim()}
-              className="mt-3 px-7 py-2.5 rounded-lg font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{
-                background:
-                  loading || !batchText.trim()
-                    ? "hsl(var(--surface))"
-                    : "var(--gradient-primary)",
-                color:
-                  loading || !batchText.trim()
-                    ? "hsl(var(--muted-foreground))"
-                    : "hsl(var(--primary-foreground))",
-              }}
-            >
-              {loading ? "מעבד..." : "⚖ המר לאזכורים תקניים"}
-            </button>
-          </div>
+          <BatchFootnoteBuilder />
         ) : (
           <>
             {/* Welcome screen */}
