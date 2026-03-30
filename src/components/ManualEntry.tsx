@@ -146,7 +146,7 @@ export function ManualEntry() {
       {/* Source type selection */}
       {!sourceType ? (
         <div>
-          <h3 className="font-serif text-foreground text-lg font-bold mb-4">
+          <h3 className="text-foreground text-lg font-bold mb-4 font-sans">
             בחר סוג מקור
           </h3>
           <div className="grid grid-cols-3 gap-3">
