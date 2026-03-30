@@ -1,1 +1,4 @@
 project_id = "ioktiqcffungtlsmlkcv"
+
+[functions.citation-chat]
+verify_jwt = false
