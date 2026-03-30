@@ -31,7 +31,15 @@ export function BatchFootnoteBuilder() {
   const updateCellInput = useCallback((id: number, value: string) => {
     setCells((prev) =>
       prev.map((c) =>
-        c.id === id ? { ...c, input: value, status: "empty" } : c
+        c.id === id ? { ...c, input: value, status: "empty", verifiedCitation: undefined } : c
+      )
+    );
+  }, []);
+
+  const setCellVerified = useCallback((id: number, citation: string) => {
+    setCells((prev) =>
+      prev.map((c) =>
+        c.id === id ? { ...c, output: citation, status: "verified", verifiedCitation: citation } : c
       )
     );
   }, []);
