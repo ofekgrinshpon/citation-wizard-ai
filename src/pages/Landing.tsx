@@ -9,18 +9,17 @@ const Landing = () => {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp, user, isAdmin } = useAuth();
+  const { signIn, signUp, user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   // If already logged in, redirect
-  if (user) {
-    if (isAdmin) {
-      navigate("/admin", { replace: true });
-    } else {
-      navigate("/app", { replace: true });
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate(isAdmin ? "/admin" : "/app", { replace: true });
     }
-    return null;
-  }
+  }, [user, isAdmin, authLoading, navigate]);
+
+  if (authLoading || user) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
