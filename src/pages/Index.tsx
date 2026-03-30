@@ -102,31 +102,6 @@ const Index = () => {
     }
   };
 
-  const handleBatch = async () => {
-    if (!batchText.trim() || loading) return;
-
-    const normalizedBatch = normalizeAbbreviations(batchText);
-    const prompt = `אנא זהה את כל המקורות המשפטיים בטקסט הבא והמר אותם להערות שוליים תקניות לפי כללי האזכור האחיד. לכל הערה ציין את מספר הכלל הרלוונטי. הצג את הטקסט המקורי עם מספרי הערות שוליים, ולאחריו רשימת הערות השוליים הממוספרות.\n\nטקסט:\n${normalizedBatch}`;
-
-    setMessages([{ role: "user", content: batchText }]);
-    setMode("freetext");
-    setLoading(true);
-    try {
-      const reply = await callAPI(prompt, []);
-      setMessages([
-        { role: "user", content: batchText },
-        { role: "assistant", content: reply },
-      ]);
-    } catch {
-      setMessages([
-        { role: "user", content: batchText },
-        { role: "assistant", content: "שגיאה בעיבוד." },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
