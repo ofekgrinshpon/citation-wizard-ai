@@ -312,6 +312,9 @@ ${sourcesText}
               >
                 <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
                   <span className="text-primary font-bold text-sm font-sans">[{cell.id}]</span>
+                  {cell.status === "verified" && (
+                    <span className="text-emerald-600 text-xs" title="מקור מאומת">✓</span>
+                  )}
                   {cell.status === "warning" && (
                     <span className="text-destructive text-xs" title={cell.warningMsg}>⚠</span>
                   )}
