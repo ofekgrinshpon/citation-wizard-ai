@@ -18,8 +18,19 @@ export function MessageBubble({ msg }: { msg: Message }) {
   const isUser = msg.role === "user";
 
   const copyContent = () => {
-    const plain = msg.content.replace(/\*\*/g, "").replace(/##/g, "");
-    navigator.clipboard.writeText(plain);
+    // Copy only the citation string, stripping rule/meta lines
+    const citationOnly = msg.content
+      .split("\n")
+      .filter((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) return false;
+        if (/^📐|^כלל:|^Based on Rule|^Rule \d|^מכיוון ש/.test(trimmed)) return false;
+        return true;
+      })
+      .join("\n")
+      .replace(/\*\*/g, "")
+      .replace(/##/g, "");
+    navigator.clipboard.writeText(citationOnly);
     toast.success("הועתק ללוח!");
   };
 
