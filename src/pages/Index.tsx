@@ -141,7 +141,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="flex flex-col h-screen bg-background text-foreground font-sans">
+    <div className="flex flex-col h-screen font-sans bg-secondary-foreground text-primary">
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
         <div className="flex items-center gap-3" style={{ direction: "rtl" }}>
