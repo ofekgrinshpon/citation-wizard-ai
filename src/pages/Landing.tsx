@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -8,6 +9,7 @@ const Landing = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const { signIn, signUp, user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -111,6 +113,26 @@ const Landing = () => {
                   dir="ltr"
                 />
               </div>
+              {isLogin && (
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="w-3.5 h-3.5 rounded border-border text-primary focus:ring-primary/20"
+                    />
+                    <span className="text-xs text-muted-foreground">זכור אותי</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => navigate("/reset-password")}
+                    className="text-xs text-primary hover:underline"
+                  >
+                    שכחתי סיסמה
+                  </button>
+                </div>
+              )}
               <button
                 type="submit"
                 disabled={loading}
