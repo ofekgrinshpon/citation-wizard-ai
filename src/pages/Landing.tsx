@@ -54,7 +54,7 @@ const Landing = () => {
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
         <div className="text-center mb-10 max-w-lg">
           <div className="text-5xl mb-4">⚖️</div>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3" style={{ fontFamily: "'Frank Ruhl Libre', serif" }}>
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3 font-sans" style={{ fontFamily: "'Frank Ruhl Libre', serif" }}>
             העוזר המשפטי האוטומטי
           </h1>
           <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
