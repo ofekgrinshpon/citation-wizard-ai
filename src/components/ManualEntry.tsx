@@ -187,7 +187,7 @@ export function ManualEntry() {
               >
                 ← חזור
               </button>
-              <h3 className="font-serif text-foreground text-lg font-bold">
+              <h3 className="font-sans text-foreground text-lg font-bold">
                 {SOURCE_TYPE_LABELS[sourceType]}
               </h3>
             </div>
