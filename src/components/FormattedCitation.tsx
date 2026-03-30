@@ -101,13 +101,23 @@ function parseInlineMarkers(
         break;
       }
       const inner = remaining.slice(nextIdx, closeIdx + 1);
+      const tooltipText = getMissingFieldTooltip(inner);
       parts.push(
-        <span
-          key={key++}
-          className="bg-destructive/20 text-destructive px-1 py-0.5 rounded text-xs font-medium"
-        >
-          {inner}
-        </span>
+        <Tooltip key={key++}>
+          <TooltipTrigger asChild>
+            <span className="bg-destructive/20 text-destructive px-1 py-0.5 rounded text-xs font-medium cursor-help border-b border-dashed border-destructive/50">
+              {inner}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent
+            side="top"
+            className="max-w-xs text-right"
+            style={{ direction: "rtl" }}
+          >
+            <p className="text-xs font-semibold text-destructive mb-0.5">⚠️ פרט חסר</p>
+            <p className="text-xs">{tooltipText}</p>
+          </TooltipContent>
+        </Tooltip>
       );
       remaining = remaining.slice(closeIdx + 1);
       continue;
