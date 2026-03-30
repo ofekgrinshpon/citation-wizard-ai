@@ -290,6 +290,9 @@ const Admin = () => {
                           </td>
                           <td className="px-4 py-3 text-foreground max-w-[300px] truncate">{vs.full_citation}</td>
                           <td className="px-4 py-3">
+                            <Badge variant="secondary">{vs.usage_count} פעמים</Badge>
+                          </td>
+                          <td className="px-4 py-3">
                             <Badge className={vs.auto_verified ? "bg-blue-100 text-blue-700 border-blue-200" : "bg-emerald-100 text-emerald-700 border-emerald-200"}>
                               {vs.auto_verified ? "אוטומטי" : "ידני"}
                             </Badge>
