@@ -7,6 +7,7 @@ import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
+import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
 
 const CITATION_EXAMPLES = [
