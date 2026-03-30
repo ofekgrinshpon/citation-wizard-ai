@@ -216,8 +216,8 @@ const Index = () => {
             {messages.length === 0 && (
               <div className="py-10 text-center" style={{ direction: "rtl" }}>
                 <div className="text-5xl mb-4">⚖️</div>
-                <h2 className="font-serif text-foreground text-xl font-bold mb-2">
-                  עוזר האזכור המשפטי
+                <h2 className="text-foreground text-xl font-bold mb-2 font-sans">
+                  העוזר המשפטי{" "}
                 </h2>
                 <p className="text-text-dim text-sm mb-2">
                   הכנס הפניה בטקסט חופשי – המערכת תזהה, תסווג ותעצב את האזכור
