@@ -1,6 +1,30 @@
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { CITATION_PART_RULES, RULE_EXPLANATIONS } from "@/data/ruleTooltips";
 
+/** Map missing field descriptions to likely rule numbers */
+const MISSING_FIELD_RULES: Record<string, { rule: string; tip: string }> = {
+  "עמוד": { rule: "18.6", tip: "חסר מספר עמוד תחילת פסק הדין לפי כלל 18.8" },
+  "כרך": { rule: "18.6", tip: "חסר מספר כרך לפי כלל 18.6" },
+  "שנה": { rule: "18.7", tip: "חסרה שנת פרסום לפי כלל 18.7" },
+  "שנת פרסום": { rule: "23.9", tip: "חסרה שנת פרסום לפי כלל 23.9" },
+  "צד": { rule: "18.4", tip: "חסר שם צד לפי כלל 18.4" },
+  "משיב": { rule: "18.4", tip: "חסר שם המשיב לפי כלל 18.4" },
+  "מספר תיק": { rule: "18.2", tip: "חסר מספר תיק לפי כלל 18.2" },
+  "ס\"ח": { rule: "2.1", tip: "חסר עמוד בספר החוקים לפי כלל 2.1" },
+  "ק\"ת": { rule: "6", tip: "חסר עמוד בקובץ התקנות לפי כלל 6" },
+  "מאגר": { rule: "19.1", tip: "חסר שם מאגר ותאריך לפי כלל 19.1" },
+  "URL": { rule: "30", tip: "חסרת כתובת URL לפי כלל 30" },
+  "תאריך": { rule: "19.1", tip: "חסר תאריך פרסום לפי כלל 19.1" },
+};
+
+function getMissingFieldTooltip(inner: string): string | null {
+  const lower = inner.toLowerCase();
+  for (const [keyword, info] of Object.entries(MISSING_FIELD_RULES)) {
+    if (lower.includes(keyword)) return info.tip;
+  }
+  return "פרט חיוני חסר – נא להשלים כדי לקבל אזכור תקין";
+}
+
 interface FormattedCitationProps {
   text: string;
   highlightMissing?: boolean;
@@ -77,13 +101,23 @@ function parseInlineMarkers(
         break;
       }
       const inner = remaining.slice(nextIdx, closeIdx + 1);
+      const tooltipText = getMissingFieldTooltip(inner);
       parts.push(
-        <span
-          key={key++}
-          className="bg-destructive/20 text-destructive px-1 py-0.5 rounded text-xs font-medium"
-        >
-          {inner}
-        </span>
+        <Tooltip key={key++}>
+          <TooltipTrigger asChild>
+            <span className="bg-destructive/20 text-destructive px-1 py-0.5 rounded text-xs font-medium cursor-help border-b border-dashed border-destructive/50">
+              {inner}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent
+            side="top"
+            className="max-w-xs text-right"
+            style={{ direction: "rtl" }}
+          >
+            <p className="text-xs font-semibold text-destructive mb-0.5">⚠️ פרט חסר</p>
+            <p className="text-xs">{tooltipText}</p>
+          </TooltipContent>
+        </Tooltip>
       );
       remaining = remaining.slice(closeIdx + 1);
       continue;
