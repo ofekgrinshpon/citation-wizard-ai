@@ -12,6 +12,7 @@ import { useGuestLimit } from "@/hooks/useGuestLimit";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
+import { ensureVerifiedSources } from "@/lib/verifiedSources";
 
 const CITATION_EXAMPLES = [
   "פסד עא 248/86 עזבון חננשוילי נ רותם חברה לביטוח",

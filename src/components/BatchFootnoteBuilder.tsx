@@ -5,6 +5,7 @@ import { FormattedCitation } from "./FormattedCitation";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
 import { useBibliography } from "@/hooks/useBibliography";
 import { toast } from "sonner";
+import { ensureVerifiedSources } from "@/lib/verifiedSources";
 
 interface FootnoteCell {
   id: number;
