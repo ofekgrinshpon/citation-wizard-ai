@@ -379,6 +379,15 @@ const Admin = () => {
 
             {sourceSubTab === "verified" && (
               <div className="space-y-8">
+                <div className="flex justify-end">
+                  <Button onClick={() => setShowAddDialog(true)}>➕ הוסף מקור חדש</Button>
+                </div>
+                <AddVerifiedSourceDialog
+                  open={showAddDialog}
+                  onOpenChange={setShowAddDialog}
+                  onAdded={() => fetchData()}
+                  userId={user?.id}
+                />
                 <VerifiedSourcesTable
                   title={`⚖️ ${getVerifiedCategoryLabel("caselaw")}`}
                   category="caselaw"
