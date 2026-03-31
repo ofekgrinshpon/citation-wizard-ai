@@ -202,6 +202,8 @@ const Index = () => {
           <ManualEntry />
         ) : mode === "batch" ? (
           <BatchFootnoteBuilder isGuest={isGuestMode} guestLimit={guestLimit} />
+        ) : mode === "bibliography" ? (
+          <BibliographyGenerator />
         ) : (
           <>
             {/* Welcome screen */}
