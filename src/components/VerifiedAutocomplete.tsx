@@ -78,6 +78,7 @@ export function VerifiedAutocomplete({
       const { data } = await supabase
         .from("verified_sources")
         .select("id, source_name, full_citation, source_type, year, volume, page, metadata")
+        .eq("verification_status", "verified")
         .or(
           `search_text.ilike.%${searchTerm}%,source_name.ilike.%${searchTerm}%,full_citation.ilike.%${searchTerm}%`
         )
