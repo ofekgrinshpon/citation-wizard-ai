@@ -144,7 +144,7 @@ ${sourcesText}
         return result;
       });
 
-      // Save to citation history
+      // Save to citation history & sync to bibliography
       for (const cell of updatedCells) {
         if (cell.output) {
           const sourceType = detectSourceType(normalizeAbbreviations(cell.input));
@@ -155,6 +155,16 @@ ${sourcesText}
             source_type: label !== "לא ידוע" ? label : null,
             is_verified: cell.status === "valid" && !/\[חסר:/.test(cell.output),
           }).then(() => {});
+
+          // Push full citation to bibliography
+          const fullCitation = extractCitationOnly(cell.output);
+          const added = bibliography.addEntry(cell.input, fullCitation, "footnote");
+          if (added) {
+            toast("המקור נוסף ומוין אוטומטית בביבליוגרפיה", {
+              duration: 2000,
+              icon: "📚",
+            });
+          }
         }
       }
 
