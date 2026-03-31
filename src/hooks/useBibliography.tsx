@@ -144,7 +144,7 @@ export function sortBibliography(entries: BibliographyEntry[]): BibliographyEntr
 interface BibliographyContextValue {
   entries: BibliographyEntry[];
   addEntry: (rawInput: string, fullCitation: string, from: "footnote" | "manual") => boolean;
-  addEntries: (items: { rawInput: string; fullCitation: string }[]) => number;
+  addEntries: (items: { rawInput: string; fullCitation: string }[], from?: "footnote" | "manual") => number;
   removeEntry: (id: string) => void;
   clearAll: () => void;
   sortedEntries: BibliographyEntry[];
