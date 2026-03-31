@@ -208,7 +208,7 @@ const Index = () => {
   };
 
 
-    const rawText = input.trim();
+    const handleSend = async () => {
     if (!rawText || loading) return;
     if (isGuestMode && guestLimit.isLocked) return;
 
