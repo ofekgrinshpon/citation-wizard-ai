@@ -14,6 +14,50 @@ import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
 import { ensureVerifiedSources } from "@/lib/verifiedSources";
 
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
+/**
+ * Extract the actual formatted citation from the AI response,
+ * stripping step-by-step explanations, rule references, and warnings.
+ */
+function extractCitationFromResponse(response: string): string {
+  const lines = response.split("\n").map((l) => l.trim()).filter(Boolean);
+
+  const citationLines = lines.filter((line) => {
+    if (/^שלב \d/.test(line)) return false;
+    if (/^📐/.test(line)) return false;
+    if (/^⚠️/.test(line)) return false;
+    if (/^העוזר המשפטי/.test(line)) return false;
+    if (/^מכיוון ש/.test(line)) return false;
+    if (/^הנוסחה ל/.test(line)) return false;
+    return true;
+  });
+
+  return citationLines.length > 0 ? citationLines[citationLines.length - 1] : "";
+}
+
+/**
+ * If current input is a fragment (number, short correction), trace back to find the original source name.
+ */
+function buildFullRawInput(currentInput: string, previousMessages: Message[]): string {
+  const trimmed = currentInput.trim();
+  const isFragment = /^\d+\.?$/.test(trimmed) || trimmed.length < 5;
+
+  if (!isFragment || previousMessages.length === 0) return currentInput;
+
+  for (let i = previousMessages.length - 1; i >= 0; i--) {
+    const msg = previousMessages[i];
+    if (msg.role === "user" && msg.content.trim().length >= 5 && !/^\d+\.?$/.test(msg.content.trim())) {
+      return msg.content;
+    }
+  }
+
+  return currentInput;
+}
+
 const CITATION_EXAMPLES = [
   "פסד עא 248/86 עזבון חננשוילי נ רותם חברה לביטוח",
   "פסק דין קול העם נגד שר הפנים משנת 53",
