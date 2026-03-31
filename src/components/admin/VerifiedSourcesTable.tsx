@@ -45,7 +45,7 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove }: VerifiedSo
             <tbody>
               {sources.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-8 text-muted-foreground">
+                   <td colSpan={8} className="text-center py-8 text-muted-foreground">
                     אין מקורות מאומתים בקטגוריה זו
                   </td>
                 </tr>
