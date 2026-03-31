@@ -52,14 +52,17 @@ export const CATEGORY_LABELS: Record<string, string> = {
 function hasAuthorPrefix(text: string, isEnglish: boolean): boolean {
   const trimmed = text.trim();
   if (isEnglish) {
-    // English: starts with a capitalized name (not a case number or statute keyword)
-    return /^[A-Z][a-z]+[\s,]/.test(trimmed) && !/^(The |An |A )?(Act|Law|Order|Regulation|Statute|Code)\b/i.test(trimmed);
+    if (/^(The |An |A )?(Act|Law|Order|Regulation|Statute|Code)\b/i.test(trimmed)) return false;
+    return /^[A-Z][a-z]+[\s,]/.test(trimmed);
   }
-  // Hebrew: starts with a name-like word that is NOT a legislation keyword
-  const legislationStarters = /^(חוק|פקודת|פקודה|תקנות|צו|נוהל|הוראת|חוק[\s-]יסוד)/;
+  // Hebrew: if it starts with a legislation or case keyword, it's NOT an author
+  const legislationStarters = /^(חוק|פקודת|פקודה|תקנות|צו|נוהל|הוראת|חוק[\s-]יסוד|סעיף)/;
   const caseStarters = /^(בג"ץ|ע"א|רע"א|דנ"א|ע"פ|רע"פ|דנ"פ|ע"ע|עש"מ|בש"פ|ת"א|ת"פ|ע"מ|ה"פ|המר|פר"ק|ת"ט|תא"מ|ת"ד|עב"ל|ס"ק|ד"מ)/;
-  if (legislationStarters.test(trimmed) || caseStarters.test(trimmed)) return false;
-  // If first word doesn't look like a legal keyword and contains a comma or space followed by more text
+  const otherNonAuthor = /^(ראו|ראה|השוו|השווה|כן ראו)/;
+  if (legislationStarters.test(trimmed) || caseStarters.test(trimmed) || otherNonAuthor.test(trimmed)) return false;
+  // If text has bold markers (**) or quoted article titles → strong author signal
+  if (/\*\*/.test(trimmed) || /"[^"]{3,}"/.test(trimmed)) return true;
+  // General: starts with a name-like word (2+ chars) followed by space/comma
   return /^[^\s,]{2,}[\s,]/.test(trimmed);
 }
 
