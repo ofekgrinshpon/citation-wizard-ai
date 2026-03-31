@@ -194,15 +194,39 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
     localStorage.setItem(BIB_STORAGE_KEY, JSON.stringify(entries));
   }, [entries]);
 
+  const normalizeCitation = useCallback((text: string) => {
+    return text
+      .replace(/\*\*/g, "")
+      .replace(/##/g, "")
+      .replace(/\s+/g, " ")
+      .replace(/[.,;:]+$/, "")
+      .trim()
+      .toLowerCase();
+  }, []);
+
   const isDuplicate = useCallback(
     (fullCitation: string, current: BibliographyEntry[]) => {
-      const normalized = fullCitation.replace(/\s+/g, " ").trim().toLowerCase();
+      const normalized = normalizeCitation(fullCitation);
       return current.some(
-        (e) => e.fullCitation.replace(/\s+/g, " ").trim().toLowerCase() === normalized
+        (e) => normalizeCitation(e.fullCitation) === normalized
       );
     },
-    []
+    [normalizeCitation]
   );
+
+  // Deduplicate existing entries on mount
+  useEffect(() => {
+    setEntries((prev) => {
+      const seen = new Set<string>();
+      const deduped = prev.filter((e) => {
+        const key = normalizeCitation(e.fullCitation);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+      return deduped.length === prev.length ? prev : deduped;
+    });
+  }, [normalizeCitation]);
 
   const addEntry = useCallback(
     (rawInput: string, fullCitation: string, from: "footnote" | "manual"): boolean => {
