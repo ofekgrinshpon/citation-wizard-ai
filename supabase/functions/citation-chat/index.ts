@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -165,6 +166,9 @@ const SYSTEM_PROMPT = `אתה "העוזר המשפטי האוטומטי". תמי
 - השתמש תמיד בעמוד הפותח הנכון. אם אינך בטוח – סמן [חסר: עמוד פותח בס"ח].
 - לעולם אל תשרשר שני עמודים יחד (למשל "ס"ח 247 69" שגוי – רק "ס"ח 69").
 
+שלב 10 – בדיקת מקורות מאומתים:
+אם המערכת מספקת לך מקור מאומת (verified source) כחלק מההודעה, השתמש בציטוט המאומת כבסיס. אל תשנה את הציטוט המאומת אלא אם הוא סותר במפורש את כללי האזכור האחיד.
+
 אילוצים קשיחים – איסור המצאת מידע (ANTI-HALLUCINATION):
 
 *** זהו הכלל החשוב ביותר – אל תפר אותו בשום מקרה ***
@@ -192,6 +196,46 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
+    // Extract the last user message for verified source lookup
+    const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === "user");
+    const userInput = lastUserMessage?.content || "";
+
+    // Check verified_sources table for a match before calling AI
+    let verifiedHint = "";
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2) {
+      try {
+        const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+        const searchTerm = userInput.replace(/\[סיווג אוטומטי:.*?\]\n?/, "").trim().toLowerCase();
+
+        const { data: verified } = await sb
+          .from("verified_sources")
+          .select("source_name, full_citation, source_type, year, metadata")
+          .eq("verification_status", "verified")
+          .or(`search_text.ilike.%${searchTerm}%,source_name.ilike.%${searchTerm}%`)
+          .limit(3);
+
+        if (verified && verified.length > 0) {
+          const sources = verified.map((v: Record<string, unknown>) =>
+            `[מקור מאומת] ${v.source_name}: ${v.full_citation}`
+          ).join("\n");
+          verifiedHint = `\n\n══ מקורות מאומתים שנמצאו במאגר ══\n${sources}\n══ השתמש בציטוטים המאומתים הללו כבסיס לתשובתך. אל תשנה אותם אלא אם הם סותרים את כללי האזכור. ══`;
+        }
+      } catch (e) {
+        console.error("Verified source lookup failed:", e);
+      }
+    }
+
+    // Append verified hint to the last user message
+    const enhancedMessages = messages.map((m: { role: string; content: string }, i: number) => {
+      if (i === messages.length - 1 && m.role === "user" && verifiedHint) {
+        return { ...m, content: m.content + verifiedHint };
+      }
+      return m;
+    });
+
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
       {
@@ -204,7 +248,7 @@ serve(async (req) => {
           model: "google/gemini-2.5-flash",
           messages: [
             { role: "system", content: SYSTEM_PROMPT },
-            ...messages,
+            ...enhancedMessages,
           ],
         }),
       }
