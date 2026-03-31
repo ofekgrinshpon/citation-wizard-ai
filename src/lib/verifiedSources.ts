@@ -219,6 +219,44 @@ export async function ensureVerifiedSources(
 
   for (const item of candidates) {
     const storage = buildStorageShape(item);
+    const isLaw = storage.category === "legislation_primary" || storage.category === "legislation_secondary";
+
+    // For laws: check if a master record with a lower (initial) page already exists.
+    // If the new entry has a higher page number, it's a "Specific Reference" — skip it.
+    if (isLaw && storage.initialPage !== null) {
+      const lawName = extractLawName(storage.storedCitation);
+      const { data: existingMasters } = await supabase
+        .from("verified_sources")
+        .select("id, full_citation, page")
+        .eq("source_type", storage.category)
+        .ilike("source_name", lawName)
+        .limit(5);
+
+      if (existingMasters && existingMasters.length > 0) {
+        const existingPages = existingMasters
+          .map((m) => {
+            const info = extractPublicationInfo(m.full_citation);
+            return info.page;
+          })
+          .filter((p): p is number => p !== null);
+
+        const lowestExisting = existingPages.length > 0 ? Math.min(...existingPages) : null;
+
+        if (lowestExisting !== null) {
+          if (storage.initialPage > lowestExisting) {
+            // This is a specific reference within the law, not the master record
+            console.log(`Skipping specific reference: page ${storage.initialPage} > master page ${lowestExisting} for "${lawName}"`);
+            skipped++;
+            continue;
+          } else if (storage.initialPage === lowestExisting) {
+            // Exact same master record already exists
+            skipped++;
+            continue;
+          }
+          // If storage.initialPage < lowestExisting, this is actually the real initial page — allow insert
+        }
+      }
+    }
 
     let verificationStatus: VerificationStatus = "pending";
     if (!options?.skipAIVerification) {
