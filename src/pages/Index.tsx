@@ -109,21 +109,33 @@ const Index = () => {
       setMessages([...newMessages, { role: "assistant", content: reply }]);
       // Increment guest counter
       if (isGuestMode) guestLimit.increment();
-      // Save to citation history
+
+      // Extract the actual citation from the AI response (skip step explanations, rules, warnings)
+      const extractedCitation = extractCitationFromResponse(reply);
+
+      // Determine the full context for rawInput:
+      // If current input looks like a fragment/correction (number, short text),
+      // combine with previous conversation context to get the full source name
+      const fullRawInput = buildFullRawInput(rawText, messages);
+
+      // Save to citation history — use the full reply for display, but the extracted citation for verification
       const citationPayload = {
-        raw_input: rawText,
+        raw_input: fullRawInput,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
       };
 
       supabase.from("citation_history").insert(citationPayload).then(() => {});
 
+      // Only verify if we have a real, complete citation (not a fragment, not missing data)
       const isVerified = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
-      if (isVerified) {
+      const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
+
+      if (isVerified && !isFragment) {
         ensureVerifiedSources([
           {
-            rawInput: rawText,
-            fullCitation: reply,
+            rawInput: fullRawInput,
+            fullCitation: extractedCitation,
             sourceType: citationPayload.source_type,
             verifiedBy: user?.id,
             autoVerified: true,
