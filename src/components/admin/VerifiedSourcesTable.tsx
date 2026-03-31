@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { getVerifiedCategoryLabel, type VerifiedSourceCategory } from "@/lib/verifiedSources";
+import { getVerifiedCategoryLabel, getVerificationStatusLabel, type VerifiedSourceCategory, type VerificationStatus } from "@/lib/verifiedSources";
 
 export interface VerifiedSourceRow {
   id: string;

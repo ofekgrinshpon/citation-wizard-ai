@@ -119,7 +119,7 @@ const Admin = () => {
             verifiedBy: user?.id,
             autoVerified: false,
           },
-        ]);
+        ], { skipAIVerification: true });
       } catch {
         toast.error("לא ניתן לשמור מקור מאומת");
         return;
