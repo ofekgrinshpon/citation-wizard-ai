@@ -504,7 +504,23 @@ const Index = () => {
           >
             {messages.length > 0 && (
               <button
-                onClick={() => setMessages([])}
+                onClick={() => {
+                  const totalLen = messages.reduce((sum, m) => sum + m.content.length, 0);
+                  const doClear = () => {
+                    setMessages([]);
+                    setInput("");
+                    localStorage.removeItem(LS_KEY_INPUT);
+                    localStorage.removeItem(LS_KEY_MESSAGES);
+                  };
+                  if (totalLen > 100) {
+                    toast("האם למחוק את כל השיחה?", {
+                      action: { label: "מחק", onClick: doClear },
+                      cancel: { label: "ביטול", onClick: () => {} },
+                    });
+                  } else {
+                    doClear();
+                  }
+                }}
                 className="p-2.5 bg-surface border border-border rounded-xl text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-all flex-shrink-0"
                 title="נקה שיחה"
               >
