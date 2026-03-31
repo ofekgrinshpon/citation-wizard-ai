@@ -135,6 +135,7 @@ const Index = () => {
     { id: "freetext", label: "טקסט חופשי", icon: "✨" },
     { id: "manual", label: "הזנה ידנית", icon: "📝" },
     { id: "batch", label: "הערות שוליים", icon: "📑" },
+    { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
   ];
 
   return (
