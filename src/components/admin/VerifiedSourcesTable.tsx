@@ -1,5 +1,10 @@
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { getVerifiedCategoryLabel, getVerificationStatusLabel, type VerifiedSourceCategory, type VerificationStatus } from "@/lib/verifiedSources";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getVerifiedCategoryLabel, getVerificationStatusLabel, type VerifiedSourceCategory } from "@/lib/verifiedSources";
 
 export interface VerifiedSourceRow {
   id: string;
@@ -17,9 +22,32 @@ interface VerifiedSourcesTableProps {
   category: VerifiedSourceCategory;
   sources: VerifiedSourceRow[];
   onRemove: (source: VerifiedSourceRow) => void;
+  onEdit?: (source: VerifiedSourceRow, updates: { source_name: string; full_citation: string; verification_status: string }) => void;
 }
 
-const VerifiedSourcesTable = ({ title, category, sources, onRemove }: VerifiedSourcesTableProps) => {
+const VerifiedSourcesTable = ({ title, category, sources, onRemove, onEdit }: VerifiedSourcesTableProps) => {
+  const [editingSource, setEditingSource] = useState<VerifiedSourceRow | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editCitation, setEditCitation] = useState("");
+  const [editStatus, setEditStatus] = useState("pending");
+
+  const openEdit = (source: VerifiedSourceRow) => {
+    setEditingSource(source);
+    setEditName(source.source_name);
+    setEditCitation(source.full_citation);
+    setEditStatus(source.verification_status);
+  };
+
+  const handleSave = () => {
+    if (!editingSource || !onEdit) return;
+    onEdit(editingSource, {
+      source_name: editName.trim(),
+      full_citation: editCitation.trim(),
+      verification_status: editStatus,
+    });
+    setEditingSource(null);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
@@ -77,12 +105,20 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove }: VerifiedSo
                       {new Date(source.verified_at).toLocaleDateString("he-IL")}
                     </td>
                     <td className="px-4 py-3">
-                      <button
-                        onClick={() => onRemove(source)}
-                        className="text-xs text-destructive hover:bg-destructive/10 px-2 py-1 rounded transition-colors"
-                      >
-                        הסר
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => openEdit(source)}
+                          className="text-xs text-primary hover:bg-primary/10 px-2 py-1 rounded transition-colors"
+                        >
+                          ערוך
+                        </button>
+                        <button
+                          onClick={() => onRemove(source)}
+                          className="text-xs text-destructive hover:bg-destructive/10 px-2 py-1 rounded transition-colors"
+                        >
+                          הסר
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -91,6 +127,47 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove }: VerifiedSo
           </table>
         </div>
       </div>
+
+      <Dialog open={!!editingSource} onOpenChange={(open) => !open && setEditingSource(null)}>
+        <DialogContent className="sm:max-w-lg" style={{ direction: "rtl" }}>
+          <DialogHeader>
+            <DialogTitle>עריכת מקור מאומת</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">שם מקור</label>
+              <Input value={editName} onChange={(e) => setEditName(e.target.value)} style={{ direction: "rtl" }} />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">ציטוט מלא</label>
+              <textarea
+                value={editCitation}
+                onChange={(e) => setEditCitation(e.target.value)}
+                rows={3}
+                className="w-full bg-background border border-border rounded-lg px-3 py-2 text-foreground text-sm resize-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                style={{ direction: "rtl" }}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">סטטוס</label>
+              <Select value={editStatus} onValueChange={setEditStatus}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="verified">✅ מאומת</SelectItem>
+                  <SelectItem value="pending">⏳ ממתין</SelectItem>
+                  <SelectItem value="invalid">❌ לא תקין</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={() => setEditingSource(null)}>ביטול</Button>
+            <Button onClick={handleSave} disabled={!editName.trim() || !editCitation.trim()}>שמור</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
