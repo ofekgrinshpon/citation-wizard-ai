@@ -50,21 +50,15 @@ function extractLawNameFromInput(text: string): string {
 function applyYearPreferences(citation: string, prefs: YearPreferences): string {
   let result = citation;
   if (!prefs.hasHebrewYear) {
-    // Remove Hebrew year pattern like התשנ"ב or התשי"ח–
-    result = result.replace(/,?\s*התש[^\s,–-]*(?:[–-]\s*\d{4})?/g, "");
-    // Clean up leftover double commas or leading commas
-    result = result.replace(/,\s*,/g, ",").replace(/,\s*\./, ".").trim();
+    // Remove Hebrew year patterns like התשנ"ב, התשנ״ב, התש"ם etc. with optional surrounding comma/space
+    result = result.replace(/,?\s*הת[שׁ]["\u05F4\u201C\u201D״]?[א-ת]["\u05F4\u201C\u201D״]?[א-ת]?/g, "");
+    result = result.replace(/,\s*,/g, ",").replace(/,\s*$/, "").replace(/,\s*\./, ".").trim();
   }
   if (!prefs.hasGregorianYear) {
-    // Remove standalone Gregorian year (not preceded by –)
-    if (prefs.hasHebrewYear) {
-      // Remove the –YYYY part after Hebrew year
-      result = result.replace(/[–-]\s*\d{4}/g, "");
-    } else {
-      // Remove standalone year
-      result = result.replace(/,?\s*\d{4}/g, "");
-    }
-    result = result.replace(/,\s*,/g, ",").replace(/,\s*\./, ".").trim();
+    // Remove Gregorian year like –1992, -1992, or standalone 1992
+    result = result.replace(/[–\-]\s*\d{4}/g, "");
+    result = result.replace(/,?\s*\d{4}/g, "");
+    result = result.replace(/,\s*,/g, ",").replace(/,\s*$/, "").replace(/,\s*\./, ".").trim();
   }
   return result;
 }
