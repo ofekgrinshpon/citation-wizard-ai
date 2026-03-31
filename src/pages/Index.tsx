@@ -128,7 +128,15 @@ const Index = () => {
             verifiedBy: user?.id,
             autoVerified: true,
           },
-        ]).catch(() => {});
+        ]).then((result) => {
+          if (result.invalid > 0) {
+            toast.warning("המקור נשמר לבדיקת אדמין – אימות AI זיהה חוסר עקביות");
+          } else if (result.skipped > 0) {
+            // Already exists, no action needed
+          } else if (result.added > 0) {
+            toast.success("המקור אומת ונשמר בהצלחה");
+          }
+        }).catch(() => {});
       }
     } catch {
       setMessages([
