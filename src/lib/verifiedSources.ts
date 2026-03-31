@@ -12,6 +12,7 @@ interface SourceClassificationInput {
 interface EnsureVerifiedSourceInput extends SourceClassificationInput {
   verifiedBy?: string | null;
   autoVerified?: boolean;
+  yearPreferences?: { hasHebrewYear: boolean; hasGregorianYear: boolean };
 }
 
 interface VerifySourceResult {
@@ -348,6 +349,7 @@ export async function ensureVerifiedSources(
       verified_by: item.verifiedBy ?? null,
       verification_status: verificationStatus,
       year: storage.year,
+      metadata: item.yearPreferences ? { hasHebrewYear: item.yearPreferences.hasHebrewYear, hasGregorianYear: item.yearPreferences.hasGregorianYear } : {},
     };
 
     const { error } = await supabase.from("verified_sources").insert(payload);

@@ -6,6 +6,7 @@ import { ManualEntry } from "@/components/ManualEntry";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
 import { GuestLimitModal } from "@/components/GuestLimitModal";
+import { PublicationIntegrityCard } from "@/components/PublicationIntegrityCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useGuestLimit } from "@/hooks/useGuestLimit";
@@ -17,6 +18,55 @@ import { ensureVerifiedSources } from "@/lib/verifiedSources";
 interface Message {
   role: "user" | "assistant";
   content: string;
+}
+
+interface YearPreferences {
+  hasHebrewYear: boolean;
+  hasGregorianYear: boolean;
+}
+
+interface PendingVerification {
+  lawName: string;
+  rawInput: string;
+  fullCitation: string;
+  sourceType: string | null;
+  reply: string;
+}
+
+const LEGISLATION_DETECT = /^(חוק|פקודת|פקודה|תקנות|צו|כללי|הוראות|חוק[\s-]יסוד|סעיף\s+[\dא-ת]+\s+ל)/;
+
+function isLegislationInput(text: string): boolean {
+  return LEGISLATION_DETECT.test(text.trim());
+}
+
+function extractLawNameFromInput(text: string): string {
+  let cleaned = text.trim().replace(/^סעיף\s+[\dא-ת()./\\–-]+\s+ל/, "").trim();
+  return cleaned.split(",")[0]?.trim() || cleaned;
+}
+
+/**
+ * Strip Hebrew year (התש...) or Gregorian year from a citation based on prefs.
+ */
+function applyYearPreferences(citation: string, prefs: YearPreferences): string {
+  let result = citation;
+  if (!prefs.hasHebrewYear) {
+    // Remove Hebrew year pattern like התשנ"ב or התשי"ח–
+    result = result.replace(/,?\s*התש[^\s,–-]*(?:[–-]\s*\d{4})?/g, "");
+    // Clean up leftover double commas or leading commas
+    result = result.replace(/,\s*,/g, ",").replace(/,\s*\./, ".").trim();
+  }
+  if (!prefs.hasGregorianYear) {
+    // Remove standalone Gregorian year (not preceded by –)
+    if (prefs.hasHebrewYear) {
+      // Remove the –YYYY part after Hebrew year
+      result = result.replace(/[–-]\s*\d{4}/g, "");
+    } else {
+      // Remove standalone year
+      result = result.replace(/,?\s*\d{4}/g, "");
+    }
+    result = result.replace(/,\s*,/g, ",").replace(/,\s*\./, ".").trim();
+  }
+  return result;
 }
 
 /**
@@ -75,6 +125,7 @@ const Index = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<AppMode>("freetext");
+  const [pendingVerification, setPendingVerification] = useState<PendingVerification | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   
@@ -111,6 +162,49 @@ const Index = () => {
     }
 
     return data?.content || "אירעה שגיאה בעיבוד הבקשה.";
+  };
+
+  const saveVerifiedSource = async (
+    rawInput: string,
+    fullCitation: string,
+    sourceType: string | null,
+    yearPrefs?: YearPreferences
+  ) => {
+    try {
+      const result = await ensureVerifiedSources(
+        [{
+          rawInput,
+          fullCitation,
+          sourceType,
+          verifiedBy: user?.id,
+          autoVerified: true,
+          yearPreferences: yearPrefs,
+        }],
+      );
+      if (result.invalid > 0) {
+        toast.warning("המקור נשמר לבדיקת אדמין – אימות AI זיהה חוסר עקביות");
+      } else if (result.skipped > 0) {
+        // Already exists
+      } else if (result.added > 0) {
+        toast.success("המקור אומת ונשמר בהצלחה");
+      }
+    } catch { /* silent */ }
+  };
+
+  const handleIntegrityConfirm = async (prefs: YearPreferences) => {
+    if (!pendingVerification) return;
+    const { rawInput, fullCitation, sourceType } = pendingVerification;
+    const adjustedCitation = applyYearPreferences(fullCitation, prefs);
+    await saveVerifiedSource(rawInput, adjustedCitation, sourceType, prefs);
+    setPendingVerification(null);
+  };
+
+  const handleIntegrityCancel = async () => {
+    if (!pendingVerification) return;
+    // Save with defaults (both years present)
+    const { rawInput, fullCitation, sourceType } = pendingVerification;
+    await saveVerifiedSource(rawInput, fullCitation, sourceType, { hasHebrewYear: true, hasGregorianYear: true });
+    setPendingVerification(null);
   };
 
   const handleSend = async () => {
@@ -168,27 +262,44 @@ const Index = () => {
       supabase.from("citation_history").insert(citationPayload).then(() => {});
 
       // Only verify if we have a real, complete citation (not a fragment, not missing data)
-      const isVerified = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+      const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
 
-      if (isVerified && !isFragment) {
-        ensureVerifiedSources([
-          {
-            rawInput: fullRawInput,
-            fullCitation: extractedCitation,
-            sourceType: citationPayload.source_type,
-            verifiedBy: user?.id,
-            autoVerified: true,
-          },
-        ]).then((result) => {
-          if (result.invalid > 0) {
-            toast.warning("המקור נשמר לבדיקת אדמין – אימות AI זיהה חוסר עקביות");
-          } else if (result.skipped > 0) {
-            // Already exists, no action needed
-          } else if (result.added > 0) {
-            toast.success("המקור אומת ונשמר בהצלחה");
+      if (isVerifiedClean && !isFragment) {
+        const isLegislation = isLegislationInput(fullRawInput) || isLegislationInput(extractedCitation);
+
+        // Check if this law already has year preferences stored
+        if (isLegislation) {
+          const lawName = extractLawNameFromInput(fullRawInput) || extractLawNameFromInput(extractedCitation);
+          const { data: existingSources } = await supabase
+            .from("verified_sources")
+            .select("metadata")
+            .ilike("source_name", `%${lawName.substring(0, 20)}%`)
+            .limit(1);
+
+          const existingMeta = existingSources?.[0]?.metadata as Record<string, unknown> | null;
+          if (existingMeta && ("hasHebrewYear" in existingMeta)) {
+            // Use stored preferences — apply them silently
+            const prefs: YearPreferences = {
+              hasHebrewYear: existingMeta.hasHebrewYear as boolean ?? true,
+              hasGregorianYear: existingMeta.hasGregorianYear as boolean ?? true,
+            };
+            const adjustedCitation = applyYearPreferences(extractedCitation, prefs);
+            await saveVerifiedSource(fullRawInput, adjustedCitation, citationPayload.source_type, prefs);
+          } else {
+            // New law — show the Publication Integrity Card
+            setPendingVerification({
+              lawName,
+              rawInput: fullRawInput,
+              fullCitation: extractedCitation,
+              sourceType: citationPayload.source_type,
+              reply,
+            });
           }
-        }).catch(() => {});
+        } else {
+          // Non-legislation: verify directly
+          await saveVerifiedSource(fullRawInput, extractedCitation, citationPayload.source_type);
+        }
       }
     } catch {
       setMessages([
@@ -351,6 +462,15 @@ const Index = () => {
                 <MessageBubble key={i} msg={msg} />
               ))}
               {loading && <LoadingDots />}
+              {pendingVerification && (
+                <div className="my-4">
+                  <PublicationIntegrityCard
+                    lawName={pendingVerification.lawName}
+                    onConfirm={handleIntegrityConfirm}
+                    onCancel={handleIntegrityCancel}
+                  />
+                </div>
+              )}
               <div ref={chatEndRef} />
             </div>
           </>
