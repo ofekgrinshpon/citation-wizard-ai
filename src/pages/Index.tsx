@@ -120,9 +120,17 @@ const CITATION_EXAMPLES = [
 
 type AppMode = "freetext" | "manual" | "batch" | "bibliography";
 
+const LS_KEY_INPUT = "legal_app_free_text_content";
+const LS_KEY_MESSAGES = "legal_app_free_text_messages";
+
 const Index = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<Message[]>(() => {
+    try {
+      const saved = localStorage.getItem(LS_KEY_MESSAGES);
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
+  const [input, setInput] = useState(() => localStorage.getItem(LS_KEY_INPUT) || "");
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<AppMode>("freetext");
   const [pendingVerification, setPendingVerification] = useState<PendingVerification | null>(null);
@@ -135,6 +143,16 @@ const Index = () => {
 
   const isGuest = !user;
   const isGuestMode = isGuest || searchParams.get("guest") === "true";
+
+  // Persist input to localStorage on every change
+  useEffect(() => {
+    localStorage.setItem(LS_KEY_INPUT, input);
+  }, [input]);
+
+  // Persist messages to localStorage
+  useEffect(() => {
+    localStorage.setItem(LS_KEY_MESSAGES, JSON.stringify(messages));
+  }, [messages]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -486,7 +504,23 @@ const Index = () => {
           >
             {messages.length > 0 && (
               <button
-                onClick={() => setMessages([])}
+                onClick={() => {
+                  const totalLen = messages.reduce((sum, m) => sum + m.content.length, 0);
+                  const doClear = () => {
+                    setMessages([]);
+                    setInput("");
+                    localStorage.removeItem(LS_KEY_INPUT);
+                    localStorage.removeItem(LS_KEY_MESSAGES);
+                  };
+                  if (totalLen > 100) {
+                    toast("האם למחוק את כל השיחה?", {
+                      action: { label: "מחק", onClick: doClear },
+                      cancel: { label: "ביטול", onClick: () => {} },
+                    });
+                  } else {
+                    doClear();
+                  }
+                }}
                 className="p-2.5 bg-surface border border-border rounded-xl text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-all flex-shrink-0"
                 title="נקה שיחה"
               >
