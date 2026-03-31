@@ -6,6 +6,7 @@ import { ManualEntry } from "@/components/ManualEntry";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
 import { GuestLimitModal } from "@/components/GuestLimitModal";
+import { PublicationIntegrityCard } from "@/components/PublicationIntegrityCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useGuestLimit } from "@/hooks/useGuestLimit";
@@ -17,6 +18,55 @@ import { ensureVerifiedSources } from "@/lib/verifiedSources";
 interface Message {
   role: "user" | "assistant";
   content: string;
+}
+
+interface YearPreferences {
+  hasHebrewYear: boolean;
+  hasGregorianYear: boolean;
+}
+
+interface PendingVerification {
+  lawName: string;
+  rawInput: string;
+  fullCitation: string;
+  sourceType: string | null;
+  reply: string;
+}
+
+const LEGISLATION_DETECT = /^(חוק|פקודת|פקודה|תקנות|צו|כללי|הוראות|חוק[\s-]יסוד|סעיף\s+[\dא-ת]+\s+ל)/;
+
+function isLegislationInput(text: string): boolean {
+  return LEGISLATION_DETECT.test(text.trim());
+}
+
+function extractLawNameFromInput(text: string): string {
+  let cleaned = text.trim().replace(/^סעיף\s+[\dא-ת()./\\–-]+\s+ל/, "").trim();
+  return cleaned.split(",")[0]?.trim() || cleaned;
+}
+
+/**
+ * Strip Hebrew year (התש...) or Gregorian year from a citation based on prefs.
+ */
+function applyYearPreferences(citation: string, prefs: YearPreferences): string {
+  let result = citation;
+  if (!prefs.hasHebrewYear) {
+    // Remove Hebrew year pattern like התשנ"ב or התשי"ח–
+    result = result.replace(/,?\s*התש[^\s,–-]*(?:[–-]\s*\d{4})?/g, "");
+    // Clean up leftover double commas or leading commas
+    result = result.replace(/,\s*,/g, ",").replace(/,\s*\./, ".").trim();
+  }
+  if (!prefs.hasGregorianYear) {
+    // Remove standalone Gregorian year (not preceded by –)
+    if (prefs.hasHebrewYear) {
+      // Remove the –YYYY part after Hebrew year
+      result = result.replace(/[–-]\s*\d{4}/g, "");
+    } else {
+      // Remove standalone year
+      result = result.replace(/,?\s*\d{4}/g, "");
+    }
+    result = result.replace(/,\s*,/g, ",").replace(/,\s*\./, ".").trim();
+  }
+  return result;
 }
 
 /**
