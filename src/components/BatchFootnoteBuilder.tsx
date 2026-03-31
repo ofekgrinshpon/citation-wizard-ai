@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { FormattedCitation } from "./FormattedCitation";
@@ -81,6 +81,34 @@ export function BatchFootnoteBuilder({ isGuest, guestLimit }: BatchProps) {
       if (prev.length <= 1) return prev;
       return prev.filter((c) => c.id !== id).map((c, i) => ({ ...c, id: i + 1 }));
     });
+  }, []);
+
+  // Drag and drop
+  const dragItem = useRef<number | null>(null);
+  const dragOverItem = useRef<number | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+
+  const handleDragStart = useCallback((index: number) => {
+    dragItem.current = index;
+    setDragIndex(index);
+  }, []);
+
+  const handleDragEnter = useCallback((index: number) => {
+    dragOverItem.current = index;
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    if (dragItem.current !== null && dragOverItem.current !== null && dragItem.current !== dragOverItem.current) {
+      setCells((prev) => {
+        const reordered = [...prev];
+        const [removed] = reordered.splice(dragItem.current!, 1);
+        reordered.splice(dragOverItem.current!, 0, removed);
+        return reordered.map((c, i) => ({ ...c, id: i + 1 }));
+      });
+    }
+    dragItem.current = null;
+    dragOverItem.current = null;
+    setDragIndex(null);
   }, []);
 
   const processAllCells = async () => {
@@ -281,11 +309,24 @@ ${sourcesText}
       {/* === INPUT SECTION === */}
       <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
         <div className="space-y-2.5">
-          {cells.map((cell) => (
-            <div key={cell.id} className="flex items-start gap-2">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1.5 ${
-                cell.status === "verified" ? "bg-emerald-100 text-emerald-700" : "bg-primary/10 text-primary"
-              }`}>
+          {cells.map((cell, index) => (
+            <div
+              key={`cell-${index}`}
+              draggable={!globalLoading}
+              onDragStart={() => handleDragStart(index)}
+              onDragEnter={() => handleDragEnter(index)}
+              onDragEnd={handleDragEnd}
+              onDragOver={(e) => e.preventDefault()}
+              className={`flex items-start gap-2 transition-opacity ${
+                dragIndex === index ? "opacity-40" : ""
+              }`}
+            >
+              <div
+                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1.5 cursor-grab active:cursor-grabbing ${
+                  cell.status === "verified" ? "bg-emerald-100 text-emerald-700" : "bg-primary/10 text-primary"
+                }`}
+                title="גרור לשינוי סדר"
+              >
                 {cell.status === "verified" ? "✓" : cell.id}
               </div>
               <VerifiedAutocomplete
