@@ -88,6 +88,7 @@ export type Database = {
           auto_verified: boolean | null
           full_citation: string
           id: string
+          identity_key: string | null
           metadata: Json | null
           page: string | null
           search_text: string
@@ -104,6 +105,7 @@ export type Database = {
           auto_verified?: boolean | null
           full_citation: string
           id?: string
+          identity_key?: string | null
           metadata?: Json | null
           page?: string | null
           search_text: string
@@ -120,6 +122,7 @@ export type Database = {
           auto_verified?: boolean | null
           full_citation?: string
           id?: string
+          identity_key?: string | null
           metadata?: Json | null
           page?: string | null
           search_text?: string
@@ -139,6 +142,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      compute_verified_source_identity: {
+        Args: {
+          _full_citation: string
+          _source_name: string
+          _source_type: string
+          _year: string
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
