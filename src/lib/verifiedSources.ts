@@ -158,6 +158,24 @@ function normalizeLawCitationForStorage(fullCitation: string) {
   return sectionPrefix ? `${sectionPrefix}${normalized}` : normalized;
 }
 
+/**
+ * Check if a citation is a fragment (e.g., just "ס"ח 69") rather than a complete legal entity.
+ * A complete legal entity must have: Name + Year + Publication Source + Page.
+ */
+function isFragmentCitation(text: string, category: VerifiedSourceCategory): boolean {
+  if (category !== "legislation_primary" && category !== "legislation_secondary") return false;
+  const trimmed = normalizeWhitespace(text);
+  // Fragment: just a publication ref without a law name
+  if (/^(ס["״]ח|ק["״]ת)\s+\d+\.?$/.test(trimmed)) return true;
+  // Fragment: just a page number
+  if (/^\d+\.?$/.test(trimmed)) return true;
+  // Must contain a law name (at least one Hebrew word that's not a pub ref)
+  const withoutPubRef = trimmed.replace(/(ס["״]ח|ק["״]ת)\s+\d+/g, "").replace(/,/g, "").trim();
+  const withoutYear = withoutPubRef.replace(/התש[^\s,]+[–-]\d{4}/g, "").replace(/\d{4}/g, "").trim();
+  if (!withoutYear || withoutYear.length < 3) return true;
+  return false;
+}
+
 function buildStorageShape(item: EnsureVerifiedSourceInput) {
   const category = classifyVerifiedSource(item);
   const isLaw = category === "legislation_primary" || category === "legislation_secondary";
@@ -175,6 +193,7 @@ function buildStorageShape(item: EnsureVerifiedSourceInput) {
     pubSource: pubInfo.pubSource,
     initialPage: pubInfo.page,
     section,
+    isFragment: isLaw ? isFragmentCitation(item.rawInput, category) : false,
   };
 }
 
