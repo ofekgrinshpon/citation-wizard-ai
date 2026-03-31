@@ -494,6 +494,97 @@ function parseFootnotes(content: string, expectedCount: number): string[] {
   return Array(expectedCount).fill(content);
 }
 
+function applyRepeatCitationRules(cells: FootnoteCell[]): FootnoteCell[] {
+  const seen = new Map<string, { index: number; fullCitation: string }>();
+
+  return cells.map((cell, index) => {
+    if (!cell.output) return cell;
+
+    const citationOnly = extractCitationOnly(cell.output);
+    const sourceKey = normalizeSourceKey(cell.input || citationOnly);
+    if (!sourceKey) return cell;
+
+    const prior = seen.get(sourceKey);
+    const normalizedOutput = citationOnly.trim();
+
+    if (!prior) {
+      seen.set(sourceKey, { index: index + 1, fullCitation: normalizedOutput });
+      return cell;
+    }
+
+    const referenceSuffix = extractReferenceSuffix(cell.input);
+    const nextCitation = prior.index === index
+      ? normalizedOutput
+      : prior.index === index
+        ? normalizedOutput
+        : prior.index === index + 1
+          ? `שם${referenceSuffix ? `, ${referenceSuffix}` : "."}`
+          : `${extractShortSourceLabel(prior.fullCitation)}, לעיל ה"ש ${prior.index}${referenceSuffix ? `, ${referenceSuffix}` : ""}.`;
+
+    return {
+      ...cell,
+      output: replaceCitationOnly(cell.output, nextCitation),
+    };
+  });
+}
+
+function normalizeSourceKey(text: string): string {
+  return text
+    .trim()
+    .replace(/^הערה\s*\d+:\s*/i, "")
+    .replace(/^סעיף\s+[\dא-ת()./\-–]+\s+ל/, "")
+    .replace(/^section\s+[A-Za-z0-9()./\-–]+\s+of\s+/i, "")
+    .replace(/\bבעמ['״]?\s*[\d\-–]+/g, "")
+    .replace(/\bעמ['״]?\s*[\d\-–]+/g, "")
+    .replace(/\bפסקה\s*\d+/g, "")
+    .replace(/\bpara\.?\s*\d+/gi, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function extractReferenceSuffix(text: string): string {
+  const trimmed = text.trim();
+  const hebrewSection = trimmed.match(/סעיף\s+[\dא-ת()./\-–]+/);
+  if (hebrewSection) return hebrewSection[0];
+  const hebrewPage = trimmed.match(/בעמ['״]?\s*[\d\-–]+|עמ['״]?\s*[\d\-–]+/);
+  if (hebrewPage) return hebrewPage[0];
+  const hebrewParagraph = trimmed.match(/פסקה\s*\d+/);
+  if (hebrewParagraph) return hebrewParagraph[0];
+  const englishSection = trimmed.match(/section\s+[A-Za-z0-9()./\-–]+/i);
+  if (englishSection) return englishSection[0];
+  const englishPage = trimmed.match(/at\s+\d+(?:[\-–]\d+)?/i);
+  if (englishPage) return englishPage[0];
+  const englishParagraph = trimmed.match(/para\.?\s*\d+/i);
+  if (englishParagraph) return englishParagraph[0];
+  return "";
+}
+
+function extractShortSourceLabel(text: string): string {
+  const cleaned = text
+    .replace(/\*\*/g, "")
+    .replace(/##/g, "")
+    .trim();
+
+  const caseMatch = cleaned.match(/\*\*?([^*\n]+?)\*\*?\s+נ['׳]/);
+  if (caseMatch) return caseMatch[1].trim();
+
+  const hebrewLaw = cleaned.match(/(חוק[\s-]יסוד[^,\n]*|חוק[^,\n]*|פקודת[^,\n]*|פקודה[^,\n]*|תקנות[^,\n]*|צו[^,\n]*)/);
+  if (hebrewLaw) return hebrewLaw[1].trim();
+
+  const englishLead = cleaned.match(/^([^,(\n]{3,80})/);
+  if (englishLead) return englishLead[1].trim();
+
+  return cleaned.split(",")[0].trim();
+}
+
+function replaceCitationOnly(fullText: string, nextCitation: string): string {
+  const lines = fullText.split("\n");
+  const ruleLines = lines.filter((line) => /^📐|^כלל:/.test(line.trim()));
+  const warningLines = lines.filter((line) => /^⚠️|\[חסר:|המערכת זיהתה/.test(line.trim()));
+  return [nextCitation, ...ruleLines, ...warningLines].filter(Boolean).join("\n");
+}
+
 function extractCitationOnly(text: string): string {
   return text
     .split("\n")
