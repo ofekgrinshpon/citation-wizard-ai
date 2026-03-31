@@ -22,6 +22,18 @@ interface VerifySourceResult {
   details: string;
 }
 
+export interface VerifiedSourceMatch {
+  id: string;
+  source_name: string;
+  full_citation: string;
+  source_type: string;
+  year: string | null;
+  volume: string | null;
+  page: string | null;
+  metadata: Record<string, unknown> | null;
+  verification_status: VerificationStatus;
+}
+
 const LEGISLATION_PATTERNS = /^(חוק|פקודת|פקודה|תקנות|צו|כללי|הוראות|נוהל|תקנון|חוק[\s-]יסוד)/;
 const CASELAW_PATTERNS = /^(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)/;
 const SECONDARY_LEGISLATION = /^(תקנות|צו|כללי|הוראות|נוהל|תקנון)/;
@@ -39,6 +51,73 @@ function normalizeWhitespace(text: string) {
 
 export function normalizeVerifiedSourceKey(text: string) {
   return normalizeWhitespace(text).toLowerCase();
+}
+
+function normalizeSearchableText(text: string) {
+  return normalizeVerifiedSourceKey(text)
+    .replace(/["״׳'.,()[\]{}:;!?/\\|–—-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tokenizeSearchTerms(text: string) {
+  return Array.from(new Set(normalizeSearchableText(text).split(" ").filter((token) => token.length >= 2)));
+}
+
+function scoreVerifiedSourceMatch(query: string, source: Pick<VerifiedSourceMatch, "source_name" | "full_citation">) {
+  const normalizedQuery = normalizeSearchableText(query);
+  const normalizedSourceName = normalizeSearchableText(source.source_name);
+  const normalizedCandidate = normalizeSearchableText(`${source.source_name} ${source.full_citation}`);
+  const words = tokenizeSearchTerms(query);
+
+  const matchesExactName = normalizedSourceName === normalizedQuery;
+  const matchesAllWords = words.length > 1 && words.every((word) => normalizedCandidate.includes(word));
+  const matchesSingleWord = words.length === 1 && normalizedQuery.length >= 4 && normalizedSourceName.includes(normalizedQuery);
+
+  if (!matchesExactName && !matchesAllWords && !matchesSingleWord) {
+    return -1;
+  }
+
+  let score = 0;
+  if (matchesExactName) score += 200;
+  if (matchesAllWords) score += 100;
+  if (matchesSingleWord) score += 40;
+  if (normalizedCandidate.includes(normalizedQuery)) score += 20;
+  score += words.reduce((total, word) => total + (normalizedCandidate.includes(word) ? 10 : 0), 0);
+
+  return score;
+}
+
+export async function findVerifiedSourceMatch(query: string): Promise<VerifiedSourceMatch | null> {
+  const terms = tokenizeSearchTerms(query);
+  if (terms.length === 0) return null;
+
+  const orConditions = terms
+    .flatMap((term) => [
+      `search_text.ilike.%${term}%`,
+      `source_name.ilike.%${term}%`,
+      `full_citation.ilike.%${term}%`,
+    ])
+    .join(",");
+
+  const { data, error } = await supabase
+    .from("verified_sources")
+    .select("id, source_name, full_citation, source_type, year, volume, page, metadata, verification_status")
+    .eq("verification_status", "verified")
+    .or(orConditions)
+    .limit(12);
+
+  if (error || !data?.length) return null;
+
+  const bestMatch = (data as VerifiedSourceMatch[])
+    .map((candidate) => ({
+      candidate,
+      score: scoreVerifiedSourceMatch(query, candidate),
+    }))
+    .filter((item) => item.score >= 0)
+    .sort((a, b) => b.score - a.score)[0];
+
+  return bestMatch?.candidate ?? null;
 }
 
 function isShortCitation(text: string) {
