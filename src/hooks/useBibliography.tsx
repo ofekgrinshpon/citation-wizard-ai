@@ -1,4 +1,4 @@
-import { useState, useCallback, createContext, useContext } from "react";
+import { useState, useCallback, useEffect, createContext, useContext } from "react";
 
 export interface BibliographyEntry {
   id: string;
