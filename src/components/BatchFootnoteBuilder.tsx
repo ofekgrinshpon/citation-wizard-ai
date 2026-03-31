@@ -214,18 +214,35 @@ ${sourcesText}
         });
       });
 
-      // Save to citation history
+      // Save to citation history and persist verified sources
+      const verifiedCandidates: { rawInput: string; fullCitation: string; sourceType: string | null }[] = [];
+
       for (const cell of updatedCells) {
-        if (cell.output) {
-          const sourceType = detectSourceType(normalizeAbbreviations(cell.input));
-          const label = SOURCE_TYPE_LABELS[sourceType];
-          supabase.from("citation_history").insert({
-            raw_input: cell.input,
-            formatted_output: extractCitationOnly(cell.output),
-            source_type: label !== "לא ידוע" ? label : null,
-            is_verified: cell.status === "valid" && !/\[חסר:/.test(cell.output),
-          }).then(() => {});
+        if (!cell.output) continue;
+
+        const sourceType = detectSourceType(normalizeAbbreviations(cell.input));
+        const label = SOURCE_TYPE_LABELS[sourceType];
+        const fullCitation = extractCitationOnly(cell.output);
+        const isVerified = cell.status === "valid" && !/\[חסר:/.test(cell.output);
+
+        supabase.from("citation_history").insert({
+          raw_input: cell.input,
+          formatted_output: fullCitation,
+          source_type: label !== "לא ידוע" ? label : null,
+          is_verified: isVerified,
+        }).then(() => {});
+
+        if (isVerified) {
+          verifiedCandidates.push({
+            rawInput: cell.input,
+            fullCitation,
+            sourceType: label !== "לא ידוע" ? label : null,
+          });
         }
+      }
+
+      if (verifiedCandidates.length > 0) {
+        ensureVerifiedSources(verifiedCandidates).catch(() => {});
       }
 
       // Recalculate bibliography from all current outputs instead of pushing into it
