@@ -295,18 +295,31 @@ const Index = () => {
       if (isVerifiedClean && !isFragment) {
         const isLegislation = isLegislationInput(fullRawInput) || isLegislationInput(extractedCitation);
 
-        // Check if this law already has year preferences stored
         if (isLegislation) {
           const lawName = extractLawNameFromInput(fullRawInput) || extractLawNameFromInput(extractedCitation);
+          // Split into words for better matching (same as autocomplete)
+          const words = lawName.split(/[\s\-:]+/).filter(w => w.length >= 2);
+          const orConditions = words.map(w => `source_name.ilike.%${w}%`).join(',');
+
           const { data: existingSources } = await supabase
             .from("verified_sources")
-            .select("metadata")
-            .ilike("source_name", `%${lawName.substring(0, 20)}%`)
+            .select("metadata, verification_status")
+            .or(orConditions)
             .limit(1);
 
-          const existingMeta = existingSources?.[0]?.metadata as Record<string, unknown> | null;
-          if (existingMeta && ("hasHebrewYear" in existingMeta)) {
-            // Use stored preferences — apply them silently
+          const existing = existingSources?.[0];
+          const existingMeta = existing?.metadata as Record<string, unknown> | null;
+
+          if (existing?.verification_status === "verified") {
+            // Source is already verified — use stored preferences silently, skip the card
+            const prefs: YearPreferences = {
+              hasHebrewYear: (existingMeta?.hasHebrewYear as boolean) ?? true,
+              hasGregorianYear: (existingMeta?.hasGregorianYear as boolean) ?? true,
+            };
+            const adjustedCitation = applyYearPreferences(extractedCitation, prefs);
+            await saveVerifiedSource(fullRawInput, adjustedCitation, citationPayload.source_type, prefs);
+          } else if (existingMeta && ("hasHebrewYear" in existingMeta)) {
+            // Has year preferences but not fully verified — still use silently
             const prefs: YearPreferences = {
               hasHebrewYear: existingMeta.hasHebrewYear as boolean ?? true,
               hasGregorianYear: existingMeta.hasGregorianYear as boolean ?? true,
