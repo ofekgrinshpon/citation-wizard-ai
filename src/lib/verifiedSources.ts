@@ -196,11 +196,14 @@ export async function ensureVerifiedSources(
         .filter((item) => item.fullCitation.trim() && !isShortCitation(item.fullCitation))
         .map((item) => {
           const storage = buildStorageShape(item);
+          const pubInfo = storage.category === "legislation_primary" || storage.category === "legislation_secondary"
+            ? extractPublicationInfo(storage.storedCitation)
+            : { pubSource: null, page: null };
           const dedupeKey = normalizeVerifiedSourceKey(
             storage.category === "caselaw"
               ? extractCaseNumber(storage.storedCitation) || `${storage.storedSourceName}|${storage.storedCitation}`
               : storage.category === "legislation_primary" || storage.category === "legislation_secondary"
-                ? `${extractLawName(storage.storedCitation)}|${storage.year ?? ""}`
+                ? `${extractLawName(storage.storedCitation)}|${storage.year ?? ""}|${pubInfo.pubSource ?? ""}|${pubInfo.page ?? ""}`
                 : `${storage.storedSourceName}|${storage.year ?? storage.storedCitation}`
           );
           return [dedupeKey, item] as const;
