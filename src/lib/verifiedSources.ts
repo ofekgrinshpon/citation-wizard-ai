@@ -138,7 +138,12 @@ function extractPublicationInfo(text: string): { pubSource: string | null; page:
  * a location *within* the law, not the law's starting page.
  */
 function normalizeLawCitationForStorage(fullCitation: string) {
-  let normalized = normalizeWhitespace(fullCitation).replace(SECTION_TO_LAW, "").trim();
+  const raw = normalizeWhitespace(fullCitation);
+  // Extract section prefix if present, to re-attach later
+  const sectionMatch = raw.match(SECTION_EXTRACT);
+  const sectionPrefix = sectionMatch ? `סעיף ${sectionMatch[1]} ל` : "";
+
+  let normalized = raw.replace(SECTION_TO_LAW, "").trim();
 
   // Strip pinpoint page references (בעמ', עמ', at p.) — these are specific references
   normalized = normalized.replace(/,\s*(?:בעמ['״׳]?|עמ['״׳]?|עמוד|at|p\.|pp\.)\s*[\d\-–]+\.?$/iu, "");
@@ -149,7 +154,8 @@ function normalizeLawCitationForStorage(fullCitation: string) {
     normalized = `${normalized}.`;
   }
 
-  return normalized;
+  // Re-attach section prefix for section-specific entries
+  return sectionPrefix ? `${sectionPrefix}${normalized}` : normalized;
 }
 
 function buildStorageShape(item: EnsureVerifiedSourceInput) {
