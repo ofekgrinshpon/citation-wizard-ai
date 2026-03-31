@@ -112,11 +112,30 @@ function extractLawName(text: string) {
   return withoutSection.split(",")[0]?.trim() ?? withoutSection;
 }
 
+/**
+ * Extract publication source (ס"ח / ק"ת) and page number from a citation.
+ */
+function extractPublicationInfo(text: string): { pubSource: string | null; page: number | null } {
+  const match = text.match(/(?:ס["״]ח|ק["״]ת)\s+(\d+)/);
+  if (!match) return { pubSource: null, page: null };
+  const pubMatch = text.match(/(ס["״]ח|ק["״]ת)/);
+  return {
+    pubSource: pubMatch ? pubMatch[1] : null,
+    page: parseInt(match[1], 10),
+  };
+}
+
+/**
+ * Normalize a law citation for storage as a "Master Record".
+ * KEEPS the publication source (ס"ח/ק"ת) and its initial page number.
+ * Strips specific pinpoint page references (בעמ', עמ') that refer to
+ * a location *within* the law, not the law's starting page.
+ */
 function normalizeLawCitationForStorage(fullCitation: string) {
   let normalized = normalizeWhitespace(fullCitation).replace(SECTION_TO_LAW, "").trim();
 
+  // Strip pinpoint page references (בעמ', עמ', at p.) — these are specific references
   normalized = normalized.replace(/,\s*(?:בעמ['״׳]?|עמ['״׳]?|עמוד|at|p\.|pp\.)\s*[\d\-–]+\.?$/iu, "");
-  normalized = normalized.replace(/,\s*(?:ס["״]ח|ק["״]ת)\s*[\d\-–]+(?:\s*[,/]\s*[\d\-–]+)?\.?$/u, "");
   normalized = normalized.replace(/\s+\./g, ".");
   normalized = normalized.replace(/,+$/g, "").trim();
 
@@ -133,12 +152,15 @@ function buildStorageShape(item: EnsureVerifiedSourceInput) {
   const storedCitation = isLaw ? normalizeLawCitationForStorage(item.fullCitation.trim()) : item.fullCitation.trim();
   const storedSourceName = isLaw ? extractLawName(storedCitation).slice(0, 100) : item.rawInput.substring(0, 100);
   const year = extractYear(storedCitation) ?? extractYear(item.fullCitation) ?? null;
+  const pubInfo = isLaw ? extractPublicationInfo(storedCitation) : { pubSource: null, page: null };
 
   return {
     category,
     storedCitation,
     storedSourceName,
     year,
+    pubSource: pubInfo.pubSource,
+    initialPage: pubInfo.page,
   };
 }
 
@@ -174,11 +196,14 @@ export async function ensureVerifiedSources(
         .filter((item) => item.fullCitation.trim() && !isShortCitation(item.fullCitation))
         .map((item) => {
           const storage = buildStorageShape(item);
+          const pubInfo = storage.category === "legislation_primary" || storage.category === "legislation_secondary"
+            ? extractPublicationInfo(storage.storedCitation)
+            : { pubSource: null, page: null };
           const dedupeKey = normalizeVerifiedSourceKey(
             storage.category === "caselaw"
               ? extractCaseNumber(storage.storedCitation) || `${storage.storedSourceName}|${storage.storedCitation}`
               : storage.category === "legislation_primary" || storage.category === "legislation_secondary"
-                ? `${extractLawName(storage.storedCitation)}|${storage.year ?? ""}`
+                ? `${extractLawName(storage.storedCitation)}|${storage.year ?? ""}|${pubInfo.pubSource ?? ""}|${pubInfo.page ?? ""}`
                 : `${storage.storedSourceName}|${storage.year ?? storage.storedCitation}`
           );
           return [dedupeKey, item] as const;
@@ -194,6 +219,44 @@ export async function ensureVerifiedSources(
 
   for (const item of candidates) {
     const storage = buildStorageShape(item);
+    const isLaw = storage.category === "legislation_primary" || storage.category === "legislation_secondary";
+
+    // For laws: check if a master record with a lower (initial) page already exists.
+    // If the new entry has a higher page number, it's a "Specific Reference" — skip it.
+    if (isLaw && storage.initialPage !== null) {
+      const lawName = extractLawName(storage.storedCitation);
+      const { data: existingMasters } = await supabase
+        .from("verified_sources")
+        .select("id, full_citation, page")
+        .eq("source_type", storage.category)
+        .ilike("source_name", lawName)
+        .limit(5);
+
+      if (existingMasters && existingMasters.length > 0) {
+        const existingPages = existingMasters
+          .map((m) => {
+            const info = extractPublicationInfo(m.full_citation);
+            return info.page;
+          })
+          .filter((p): p is number => p !== null);
+
+        const lowestExisting = existingPages.length > 0 ? Math.min(...existingPages) : null;
+
+        if (lowestExisting !== null) {
+          if (storage.initialPage > lowestExisting) {
+            // This is a specific reference within the law, not the master record
+            console.log(`Skipping specific reference: page ${storage.initialPage} > master page ${lowestExisting} for "${lawName}"`);
+            skipped++;
+            continue;
+          } else if (storage.initialPage === lowestExisting) {
+            // Exact same master record already exists
+            skipped++;
+            continue;
+          }
+          // If storage.initialPage < lowestExisting, this is actually the real initial page — allow insert
+        }
+      }
+    }
 
     let verificationStatus: VerificationStatus = "pending";
     if (!options?.skipAIVerification) {
