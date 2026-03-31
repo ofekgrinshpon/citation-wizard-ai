@@ -251,39 +251,79 @@ export async function ensureVerifiedSources(
     const storage = buildStorageShape(item);
     const isLaw = storage.category === "legislation_primary" || storage.category === "legislation_secondary";
 
-    // For laws: check if a master record with a lower (initial) page already exists.
-    // If the new entry has a higher page number, it's a "Specific Reference" — skip it.
-    if (isLaw && storage.initialPage !== null) {
+    // ENTITY INTEGRITY: Never save a fragment as a verified source
+    if (storage.isFragment) {
+      console.log(`Skipping fragment citation: "${item.rawInput}" — not a complete legal entity`);
+      skipped++;
+      continue;
+    }
+
+    // For laws: check if a master record already exists
+    if (isLaw) {
       const lawName = extractLawName(storage.storedCitation);
       const { data: existingMasters } = await supabase
         .from("verified_sources")
-        .select("id, full_citation, page")
+        .select("id, full_citation, page, source_name")
         .eq("source_type", storage.category)
         .ilike("source_name", lawName)
-        .limit(5);
+        .limit(10);
 
       if (existingMasters && existingMasters.length > 0) {
-        const existingPages = existingMasters
-          .map((m) => {
-            const info = extractPublicationInfo(m.full_citation);
-            return info.page;
-          })
-          .filter((p): p is number => p !== null);
+        // Find existing records that match this section (or no section for general law)
+        const sectionSuffix = storage.section ? `|section:${storage.section.toLowerCase().trim()}` : "";
+        const matchingRecords = existingMasters.filter((m) => {
+          const mSection = extractSection(m.full_citation);
+          const mSuffix = mSection ? `|section:${mSection.toLowerCase().trim()}` : "";
+          return mSuffix === sectionSuffix;
+        });
 
-        const lowestExisting = existingPages.length > 0 ? Math.min(...existingPages) : null;
+        if (matchingRecords.length > 0) {
+          const existingRecord = matchingRecords[0];
+          const existingPageInfo = extractPublicationInfo(existingRecord.full_citation);
 
-        if (lowestExisting !== null) {
-          if (storage.initialPage > lowestExisting) {
-            // This is a specific reference within the law, not the master record
-            console.log(`Skipping specific reference: page ${storage.initialPage} > master page ${lowestExisting} for "${lawName}"`);
-            skipped++;
-            continue;
-          } else if (storage.initialPage === lowestExisting) {
-            // Exact same master record already exists
+          if (storage.initialPage !== null && existingPageInfo.page !== null) {
+            if (storage.initialPage > existingPageInfo.page) {
+              // New page is HIGHER than existing — this is a specific reference, skip
+              console.log(`Skipping: page ${storage.initialPage} > master page ${existingPageInfo.page} for "${lawName}"`);
+              skipped++;
+              continue;
+            } else if (storage.initialPage < existingPageInfo.page) {
+              // New page is LOWER — this is the real initial page. OVERWRITE the old record.
+              console.log(`Overwriting master record for "${lawName}": replacing page ${existingPageInfo.page} with ${storage.initialPage}`);
+              const { error: updateError } = await supabase
+                .from("verified_sources")
+                .update({
+                  full_citation: storage.storedCitation,
+                  search_text: `${normalizeVerifiedSourceKey(storage.storedSourceName)} ${normalizeVerifiedSourceKey(storage.storedCitation)} ${storage.year ?? ""}`.trim(),
+                })
+                .eq("id", existingRecord.id);
+              if (updateError) console.error("Update master record error:", updateError);
+              else added++;
+              continue;
+            } else {
+              // Same page — exact duplicate, skip
+              skipped++;
+              continue;
+            }
+          } else {
+            // Master record exists but may have no page; update if we now have one
+            if (storage.initialPage !== null && existingPageInfo.page === null) {
+              console.log(`Updating master record for "${lawName}" with initial page ${storage.initialPage}`);
+              const { error: updateError } = await supabase
+                .from("verified_sources")
+                .update({
+                  full_citation: storage.storedCitation,
+                  search_text: `${normalizeVerifiedSourceKey(storage.storedSourceName)} ${normalizeVerifiedSourceKey(storage.storedCitation)} ${storage.year ?? ""}`.trim(),
+                })
+                .eq("id", existingRecord.id);
+              if (updateError) console.error("Update master record error:", updateError);
+              else added++;
+              continue;
+            }
+            // Otherwise exact duplicate
             skipped++;
             continue;
           }
-          // If storage.initialPage < lowestExisting, this is actually the real initial page — allow insert
         }
       }
     }
