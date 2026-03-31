@@ -9,6 +9,7 @@ export interface VerifiedSourceRow {
   auto_verified: boolean;
   verified_at: string;
   usage_count: number;
+  verification_status: "verified" | "pending" | "invalid";
 }
 
 interface VerifiedSourcesTableProps {
