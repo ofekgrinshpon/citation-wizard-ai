@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { supabase } from "@/integrations/supabase/client";
 
 interface VerifiedSource {
@@ -41,7 +42,28 @@ export function VerifiedAutocomplete({
   const [suggestions, setSuggestions] = useState<VerifiedSource[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(-1);
+  const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+
+  const updateDropdownPosition = useCallback(() => {
+    if (!wrapperRef.current) return;
+    const rect = wrapperRef.current.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const dropdownHeight = 300;
+    const openAbove = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
+
+    setDropdownStyle({
+      position: "fixed",
+      left: rect.left,
+      width: rect.width,
+      zIndex: 9999,
+      ...(openAbove
+        ? { bottom: window.innerHeight - rect.top + 4 }
+        : { top: rect.bottom + 4 }),
+    });
+  }, []);
 
   useEffect(() => {
     const search = async () => {
@@ -76,8 +98,23 @@ export function VerifiedAutocomplete({
   }, [value]);
 
   useEffect(() => {
+    if (isOpen) {
+      updateDropdownPosition();
+      window.addEventListener("scroll", updateDropdownPosition, true);
+      window.addEventListener("resize", updateDropdownPosition);
+      return () => {
+        window.removeEventListener("scroll", updateDropdownPosition, true);
+        window.removeEventListener("resize", updateDropdownPosition);
+      };
+    }
+  }, [isOpen, updateDropdownPosition]);
+
+  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        // Also check if click is inside the portal dropdown
+        const portal = document.getElementById("verified-dropdown-portal");
+        if (portal && portal.contains(e.target as Node)) return;
         setIsOpen(false);
       }
     };
@@ -90,7 +127,6 @@ export function VerifiedAutocomplete({
     onSelectCitation?.(source.full_citation, source);
     setIsOpen(false);
 
-    // Increment usage_count
     supabase.rpc("increment_usage_count", { source_id: source.id }).then(() => {});
   };
 
@@ -117,10 +153,58 @@ export function VerifiedAutocomplete({
     return CATEGORY_LABELS[sourceType] || { label: sourceType, icon: "📄" };
   };
 
+  const dropdown = isOpen && suggestions.length > 0 && createPortal(
+    <div id="verified-dropdown-portal" style={dropdownStyle}>
+      <div className="bg-card border border-primary/20 rounded-xl shadow-2xl max-h-[280px] overflow-y-auto">
+        <div className="px-3 py-2 border-b border-border/50 bg-primary/5 rounded-t-xl">
+          <span className="text-[11px] text-primary font-semibold flex items-center gap-1.5">
+            <span className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-[9px]">✓</span>
+            מקורות מאומתים • {suggestions.length} תוצאות
+          </span>
+        </div>
+        {suggestions.map((s, i) => {
+          const cat = getCategoryInfo(s.source_type);
+          return (
+            <button
+              key={s.id}
+              className={`w-full text-right px-3 py-3 text-sm transition-all border-b border-border/30 last:border-b-0 ${
+                i === highlightIndex
+                  ? "bg-primary/10"
+                  : "hover:bg-muted/50"
+              }`}
+              onClick={() => selectSuggestion(s)}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs">{cat.icon}</span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 rounded-full px-2 py-0.5">
+                  <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="flex-shrink-0">
+                    <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.78 5.28l-4.5 5a.75.75 0 0 1-1.06.02l-2-2a.75.75 0 1 1 1.06-1.06l1.47 1.47 3.97-4.47a.75.75 0 0 1 1.06 1.04z"/>
+                  </svg>
+                  מאומת
+                </span>
+                <span className="text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5">{cat.label}</span>
+                {s.year && (
+                  <span className="text-[10px] text-muted-foreground">{s.year}</span>
+                )}
+              </div>
+              <div className="font-medium text-foreground truncate">{s.source_name}</div>
+              <div className="text-xs text-muted-foreground mt-0.5 truncate">{s.full_citation}</div>
+            </button>
+          );
+        })}
+        <div className="px-3 py-1.5 bg-muted/30 rounded-b-xl">
+          <span className="text-[10px] text-muted-foreground">בחר מקור למילוי אוטומטי מיידי</span>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+
   return (
     <div ref={wrapperRef} className="relative flex-1">
       {inputType === "textarea" ? (
         <textarea
+          ref={inputRef as React.RefObject<HTMLTextAreaElement>}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -134,6 +218,7 @@ export function VerifiedAutocomplete({
         />
       ) : (
         <input
+          ref={inputRef as React.RefObject<HTMLInputElement>}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -146,49 +231,7 @@ export function VerifiedAutocomplete({
           autoComplete="off"
         />
       )}
-      {isOpen && suggestions.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-card border border-primary/20 rounded-xl shadow-xl max-h-[280px] overflow-y-auto">
-          <div className="px-3 py-2 border-b border-border/50 bg-primary/5 rounded-t-xl">
-            <span className="text-[11px] text-primary font-semibold flex items-center gap-1.5">
-              <span className="w-4 h-4 rounded-full bg-primary/20 flex items-center justify-center text-[9px]">✓</span>
-              מקורות מאומתים • {suggestions.length} תוצאות
-            </span>
-          </div>
-          {suggestions.map((s, i) => {
-            const cat = getCategoryInfo(s.source_type);
-            return (
-              <button
-                key={s.id}
-                className={`w-full text-right px-3 py-3 text-sm transition-all border-b border-border/30 last:border-b-0 last:rounded-b-xl ${
-                  i === highlightIndex
-                    ? "bg-primary/10"
-                    : "hover:bg-muted/50"
-                }`}
-                onClick={() => selectSuggestion(s)}
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs">{cat.icon}</span>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 rounded-full px-2 py-0.5">
-                    <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor" className="flex-shrink-0">
-                      <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.78 5.28l-4.5 5a.75.75 0 0 1-1.06.02l-2-2a.75.75 0 1 1 1.06-1.06l1.47 1.47 3.97-4.47a.75.75 0 0 1 1.06 1.04z"/>
-                    </svg>
-                    מאומת
-                  </span>
-                  <span className="text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5">{cat.label}</span>
-                  {s.year && (
-                    <span className="text-[10px] text-muted-foreground">{s.year}</span>
-                  )}
-                </div>
-                <div className="font-medium text-foreground truncate">{s.source_name}</div>
-                <div className="text-xs text-muted-foreground mt-0.5 truncate pr-0">{s.full_citation}</div>
-              </button>
-            );
-          })}
-          <div className="px-3 py-1.5 bg-muted/30 rounded-b-xl">
-            <span className="text-[10px] text-muted-foreground">בחר מקור למילוי אוטומטי מיידי</span>
-          </div>
-        </div>
-      )}
+      {dropdown}
     </div>
   );
 }
