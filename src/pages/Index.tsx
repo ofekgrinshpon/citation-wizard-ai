@@ -13,7 +13,7 @@ import { useGuestLimit } from "@/hooks/useGuestLimit";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
-import { ensureVerifiedSources } from "@/lib/verifiedSources";
+import { ensureVerifiedSources, findVerifiedSourceMatch } from "@/lib/verifiedSources";
 
 interface Message {
   role: "user" | "assistant";

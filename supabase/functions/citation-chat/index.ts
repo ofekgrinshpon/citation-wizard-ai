@@ -7,6 +7,42 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const normalizeSearchableText = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/\[סיווג אוטומטי:.*?\]\n?/g, "")
+    .replace(/["״׳'.,()[\]{}:;!?/\\|–—-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const tokenizeSearchTerms = (text: string) =>
+  Array.from(new Set(normalizeSearchableText(text).split(" ").filter((word) => word.length >= 2)));
+
+const scoreVerifiedMatch = (
+  query: string,
+  candidate: { source_name: string; full_citation: string },
+) => {
+  const normalizedQuery = normalizeSearchableText(query);
+  const normalizedSourceName = normalizeSearchableText(candidate.source_name);
+  const normalizedCandidate = normalizeSearchableText(`${candidate.source_name} ${candidate.full_citation}`);
+  const words = tokenizeSearchTerms(query);
+
+  const matchesExactName = normalizedSourceName === normalizedQuery;
+  const matchesAllWords = words.length > 1 && words.every((word) => normalizedCandidate.includes(word));
+  const matchesSingleWord = words.length === 1 && normalizedQuery.length >= 4 && normalizedSourceName.includes(normalizedQuery);
+
+  if (!matchesExactName && !matchesAllWords && !matchesSingleWord) return -1;
+
+  let score = 0;
+  if (matchesExactName) score += 200;
+  if (matchesAllWords) score += 100;
+  if (matchesSingleWord) score += 40;
+  if (normalizedCandidate.includes(normalizedQuery)) score += 20;
+  score += words.reduce((total, word) => total + (normalizedCandidate.includes(word) ? 10 : 0), 0);
+
+  return score;
+};
+
 const SYSTEM_PROMPT = `אתה "העוזר המשפטי האוטומטי". תמיד התייחס לעצמך בשם זה בלבד. אתה מומחה לכללי האזכור האחיד בכתיבה המשפטית בישראל (מהדורת 2021). תפקידך הוא לקבל טקסט משפטי גולמי, לזהות בתוכו הפניות למקורות, ולהמיר אותן להערות שוליים תקניות ומדויקות לפי הכללים.
 
 ═══════════════════════════════════════════════
