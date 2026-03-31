@@ -164,7 +164,50 @@ const Index = () => {
     return data?.content || "אירעה שגיאה בעיבוד הבקשה.";
   };
 
-  const handleSend = async () => {
+  const saveVerifiedSource = async (
+    rawInput: string,
+    fullCitation: string,
+    sourceType: string | null,
+    yearPrefs?: YearPreferences
+  ) => {
+    try {
+      const result = await ensureVerifiedSources(
+        [{
+          rawInput,
+          fullCitation,
+          sourceType,
+          verifiedBy: user?.id,
+          autoVerified: true,
+          yearPreferences: yearPrefs,
+        }],
+      );
+      if (result.invalid > 0) {
+        toast.warning("המקור נשמר לבדיקת אדמין – אימות AI זיהה חוסר עקביות");
+      } else if (result.skipped > 0) {
+        // Already exists
+      } else if (result.added > 0) {
+        toast.success("המקור אומת ונשמר בהצלחה");
+      }
+    } catch { /* silent */ }
+  };
+
+  const handleIntegrityConfirm = async (prefs: YearPreferences) => {
+    if (!pendingVerification) return;
+    const { rawInput, fullCitation, sourceType } = pendingVerification;
+    const adjustedCitation = applyYearPreferences(fullCitation, prefs);
+    await saveVerifiedSource(rawInput, adjustedCitation, sourceType, prefs);
+    setPendingVerification(null);
+  };
+
+  const handleIntegrityCancel = async () => {
+    if (!pendingVerification) return;
+    // Save with defaults (both years present)
+    const { rawInput, fullCitation, sourceType } = pendingVerification;
+    await saveVerifiedSource(rawInput, fullCitation, sourceType, { hasHebrewYear: true, hasGregorianYear: true });
+    setPendingVerification(null);
+  };
+
+
     const rawText = input.trim();
     if (!rawText || loading) return;
     if (isGuestMode && guestLimit.isLocked) return;
