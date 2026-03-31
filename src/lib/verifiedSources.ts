@@ -112,11 +112,30 @@ function extractLawName(text: string) {
   return withoutSection.split(",")[0]?.trim() ?? withoutSection;
 }
 
+/**
+ * Extract publication source (ס"ח / ק"ת) and page number from a citation.
+ */
+function extractPublicationInfo(text: string): { pubSource: string | null; page: number | null } {
+  const match = text.match(/(?:ס["״]ח|ק["״]ת)\s+(\d+)/);
+  if (!match) return { pubSource: null, page: null };
+  const pubMatch = text.match(/(ס["״]ח|ק["״]ת)/);
+  return {
+    pubSource: pubMatch ? pubMatch[1] : null,
+    page: parseInt(match[1], 10),
+  };
+}
+
+/**
+ * Normalize a law citation for storage as a "Master Record".
+ * KEEPS the publication source (ס"ח/ק"ת) and its initial page number.
+ * Strips specific pinpoint page references (בעמ', עמ') that refer to
+ * a location *within* the law, not the law's starting page.
+ */
 function normalizeLawCitationForStorage(fullCitation: string) {
   let normalized = normalizeWhitespace(fullCitation).replace(SECTION_TO_LAW, "").trim();
 
+  // Strip pinpoint page references (בעמ', עמ', at p.) — these are specific references
   normalized = normalized.replace(/,\s*(?:בעמ['״׳]?|עמ['״׳]?|עמוד|at|p\.|pp\.)\s*[\d\-–]+\.?$/iu, "");
-  normalized = normalized.replace(/,\s*(?:ס["״]ח|ק["״]ת)\s*[\d\-–]+(?:\s*[,/]\s*[\d\-–]+)?\.?$/u, "");
   normalized = normalized.replace(/\s+\./g, ".");
   normalized = normalized.replace(/,+$/g, "").trim();
 
