@@ -1,0 +1,111 @@
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { useState } from "react";
+
+interface SourceRecord {
+  id: string;
+  raw_input: string;
+  formatted_output: string;
+  source_type: string | null;
+  is_verified: boolean;
+  created_at: string;
+}
+
+interface SourceCategoryViewProps {
+  title: string;
+  sources: SourceRecord[];
+  onToggleVerification: (citation: SourceRecord) => void;
+}
+
+const SourceCategoryView = ({ title, sources, onToggleVerification }: SourceCategoryViewProps) => {
+  const [showUnverifiedOnly, setShowUnverifiedOnly] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filtered = sources.filter((s) => {
+    if (showUnverifiedOnly && s.is_verified) return false;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      return s.raw_input.toLowerCase().includes(q) || s.formatted_output.toLowerCase().includes(q);
+    }
+    return true;
+  });
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <h3 className="text-foreground font-bold text-base">{title}</h3>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Switch checked={showUnverifiedOnly} onCheckedChange={setShowUnverifiedOnly} />
+            <span className="text-xs text-muted-foreground">הצג רק ממתינים לאימות</span>
+          </div>
+          <Badge variant="secondary">{filtered.length} מקורות</Badge>
+        </div>
+      </div>
+
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="חפש במקורות..."
+        className="w-full bg-card border border-border rounded-lg px-4 py-2 text-foreground text-sm focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+      />
+
+      <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-muted/50">
+                <th className="text-right px-4 py-3 font-medium text-muted-foreground">תאריך</th>
+                <th className="text-right px-4 py-3 font-medium text-muted-foreground">קלט</th>
+                <th className="text-right px-4 py-3 font-medium text-muted-foreground">פלט</th>
+                <th className="text-right px-4 py-3 font-medium text-muted-foreground">סטטוס</th>
+                <th className="text-right px-4 py-3 font-medium text-muted-foreground">פעולות</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-8 text-muted-foreground">
+                    אין מקורות בקטגוריה זו
+                  </td>
+                </tr>
+              ) : (
+                filtered.map((cit) => (
+                  <tr key={cit.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                    <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">
+                      {new Date(cit.created_at).toLocaleDateString("he-IL")}
+                    </td>
+                    <td className="px-4 py-3 text-foreground max-w-[200px] truncate">{cit.raw_input}</td>
+                    <td className="px-4 py-3 text-foreground max-w-[300px] truncate">{cit.formatted_output}</td>
+                    <td className="px-4 py-3">
+                      {cit.is_verified ? (
+                        <Badge className="bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800">✓ מאומת</Badge>
+                      ) : (
+                        <Badge className="bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800">ממתין לאימות</Badge>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => onToggleVerification(cit)}
+                        className={`text-xs px-2 py-1 rounded transition-colors ${
+                          cit.is_verified
+                            ? "text-destructive hover:bg-destructive/10"
+                            : "text-primary hover:bg-primary/10"
+                        }`}
+                      >
+                        {cit.is_verified ? "בטל אימות" : "אמת"}
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SourceCategoryView;

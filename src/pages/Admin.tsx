@@ -4,6 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import AdminHeader from "@/components/admin/AdminHeader";
+import StatCard from "@/components/admin/StatCard";
+import SourceCategoryView from "@/components/admin/SourceCategoryView";
+import UsersTable from "@/components/admin/UsersTable";
 
 interface CitationRecord {
   id: string;
@@ -24,14 +28,46 @@ interface VerifiedSource {
   usage_count: number;
 }
 
+interface UserProfile {
+  id: string;
+  email: string | null;
+  full_name: string | null;
+  created_at: string;
+}
+
+// Classification helpers
+const LEGISLATION_PATTERNS = /^(חוק|פקודת|פקודה|תקנות|צו|כללי|הוראות|נוהל|תקנון|חוק[\s-]יסוד)/;
+const CASELAW_PATTERNS = /^(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)/;
+const SECONDARY_LEGISLATION = /^(תקנות|צו|כללי|הוראות|נוהל|תקנון)/;
+
+function classifySource(text: string): "caselaw" | "legislation_primary" | "legislation_secondary" | "literature" {
+  const trimmed = text.trim();
+  if (CASELAW_PATTERNS.test(trimmed)) return "caselaw";
+  if (LEGISLATION_PATTERNS.test(trimmed)) {
+    return SECONDARY_LEGISLATION.test(trimmed) ? "legislation_secondary" : "legislation_primary";
+  }
+  return "literature";
+}
+
+function classifyCitationRecord(cit: CitationRecord): "caselaw" | "legislation_primary" | "legislation_secondary" | "literature" {
+  // Check both raw_input and formatted_output
+  const fromInput = classifySource(cit.raw_input);
+  if (fromInput !== "literature") return fromInput;
+  return classifySource(cit.formatted_output);
+}
+
+type MainTab = "analytics" | "sources" | "users";
+type SourceSubTab = "caselaw" | "legislation" | "literature" | "verified";
+
 const Admin = () => {
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [citations, setCitations] = useState<CitationRecord[]>([]);
   const [verifiedSources, setVerifiedSources] = useState<VerifiedSource[]>([]);
+  const [users, setUsers] = useState<UserProfile[]>([]);
   const [loadingData, setLoadingData] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState<"history" | "verified" | "analytics">("analytics");
+  const [activeTab, setActiveTab] = useState<MainTab>("analytics");
+  const [sourceSubTab, setSourceSubTab] = useState<SourceSubTab>("caselaw");
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
@@ -45,12 +81,14 @@ const Admin = () => {
 
   const fetchData = async () => {
     setLoadingData(true);
-    const [citRes, verRes] = await Promise.all([
+    const [citRes, verRes, usersRes] = await Promise.all([
       supabase.from("citation_history").select("*").order("created_at", { ascending: false }).limit(500),
       supabase.from("verified_sources").select("*").order("verified_at", { ascending: false }),
+      supabase.from("profiles").select("*").order("created_at", { ascending: false }),
     ]);
     if (citRes.data) setCitations(citRes.data);
     if (verRes.data) setVerifiedSources(verRes.data);
+    if (usersRes.data) setUsers(usersRes.data);
     setLoadingData(false);
   };
 
@@ -67,10 +105,11 @@ const Admin = () => {
     }
 
     if (newState) {
-      // Add to verified sources
+      const cat = classifyCitationRecord(citation);
+      const sourceType = cat === "caselaw" ? "caselaw" : cat.startsWith("legislation") ? cat : "literature";
       await supabase.from("verified_sources").insert({
         source_name: citation.raw_input.substring(0, 100),
-        source_type: citation.source_type || "unknown",
+        source_type: sourceType,
         full_citation: citation.formatted_output,
         search_text: citation.raw_input.toLowerCase(),
         auto_verified: false,
@@ -91,17 +130,18 @@ const Admin = () => {
     toast.success("מקור מאומת הוסר");
   };
 
-  const filteredCitations = citations.filter(
-    (c) =>
-      c.raw_input.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.formatted_output.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Categorize citations
+  const caselawCitations = citations.filter((c) => classifyCitationRecord(c) === "caselaw");
+  const legislationCitations = citations.filter((c) => {
+    const cat = classifyCitationRecord(c);
+    return cat === "legislation_primary" || cat === "legislation_secondary";
+  });
+  const literatureCitations = citations.filter((c) => classifyCitationRecord(c) === "literature");
 
   const totalCitations = citations.length;
   const verifiedCount = citations.filter((c) => c.is_verified).length;
-  const manualCount = totalCitations - verifiedCount;
 
-  // Compute most cited laws
+  // Top laws
   const lawCounts: Record<string, number> = {};
   citations.forEach((c) => {
     const name = c.raw_input.substring(0, 50);
@@ -119,43 +159,27 @@ const Admin = () => {
     );
   }
 
-  const TABS = [
+  const MAIN_TABS = [
     { id: "analytics" as const, label: "📊 סטטיסטיקות" },
-    { id: "history" as const, label: "📋 היסטוריה" },
-    { id: "verified" as const, label: "✅ מקורות מאומתים" },
+    { id: "sources" as const, label: "📚 ניהול מקורות" },
+    { id: "users" as const, label: "👥 משתמשים" },
+  ];
+
+  const SOURCE_SUB_TABS = [
+    { id: "caselaw" as const, label: "⚖️ פסיקה", count: caselawCitations.length },
+    { id: "legislation" as const, label: "📜 חקיקה", count: legislationCitations.length },
+    { id: "literature" as const, label: "📖 ספרות ומאמרים", count: literatureCitations.length },
+    { id: "verified" as const, label: "✅ מקורות מאומתים", count: verifiedSources.length },
   ];
 
   return (
     <div className="min-h-screen bg-background" style={{ direction: "rtl" }}>
-      {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-card shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="text-2xl">🏛</div>
-          <div>
-            <h1 className="text-foreground text-lg font-bold">פאנל ניהול</h1>
-            <p className="text-muted-foreground text-xs">{user?.email}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate("/app")}
-            className="text-sm text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-lg transition-colors"
-          >
-            ← חזור לאפליקציה
-          </button>
-          <button
-            onClick={() => signOut()}
-            className="text-sm text-destructive hover:bg-destructive/10 px-3 py-1.5 rounded-lg transition-colors"
-          >
-            התנתק
-          </button>
-        </div>
-      </header>
+      <AdminHeader email={user?.email} onSignOut={signOut} />
 
       <div className="max-w-6xl mx-auto px-6 py-6">
-        {/* Tabs */}
+        {/* Main Tabs */}
         <div className="flex gap-1 bg-muted rounded-lg p-1 mb-6 w-fit">
-          {TABS.map((tab) => (
+          {MAIN_TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
@@ -169,10 +193,16 @@ const Admin = () => {
         {/* Analytics Tab */}
         {activeTab === "analytics" && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <StatCard icon="📄" label="סה״כ אזכורים" value={totalCitations} />
-              <StatCard icon="✅" label="מקורות מאומתים" value={verifiedCount} color="text-emerald-600" />
-              <StatCard icon="📝" label="מקורות ידניים" value={manualCount} color="text-amber-600" />
+              <StatCard icon="✅" label="מקורות מאומתים" value={verifiedCount} color="text-blue-600" />
+              <StatCard icon="⚖️" label="פסיקה" value={caselawCitations.length} />
+              <StatCard icon="📜" label="חקיקה" value={legislationCitations.length} />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <StatCard icon="📖" label="ספרות" value={literatureCitations.length} />
+              <StatCard icon="👥" label="משתמשים רשומים" value={users.length} color="text-primary" />
+              <StatCard icon="🗃️" label="מקורות מאומתים במאגר" value={verifiedSources.length} color="text-blue-600" />
             </div>
 
             {topLaws.length > 0 && (
@@ -191,146 +221,146 @@ const Admin = () => {
           </div>
         )}
 
-        {/* History Tab */}
-        {activeTab === "history" && (
-          <div className="space-y-4">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="חפש באזכורים..."
-              className="w-full bg-card border border-border rounded-lg px-4 py-2.5 text-foreground text-sm focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
-            />
-
-            <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border bg-muted/50">
-                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">תאריך</th>
-                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">קלט</th>
-                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">פלט</th>
-                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">סטטוס</th>
-                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">פעולות</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredCitations.length === 0 ? (
-                      <tr>
-                        <td colSpan={5} className="text-center py-8 text-muted-foreground">
-                          {citations.length === 0 ? "אין היסטוריה עדיין" : "לא נמצאו תוצאות"}
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredCitations.slice(0, 50).map((cit) => (
-                        <tr key={cit.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
-                          <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">
-                            {new Date(cit.created_at).toLocaleDateString("he-IL")}
-                          </td>
-                          <td className="px-4 py-3 text-foreground max-w-[200px] truncate">{cit.raw_input}</td>
-                          <td className="px-4 py-3 text-foreground max-w-[300px] truncate">{cit.formatted_output}</td>
-                          <td className="px-4 py-3">
-                            {cit.is_verified ? (
-                              <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">✓ מאומת</Badge>
-                            ) : (
-                              <Badge variant="secondary">ידני</Badge>
-                            )}
-                          </td>
-                          <td className="px-4 py-3">
-                            <button
-                              onClick={() => toggleVerification(cit)}
-                              className={`text-xs px-2 py-1 rounded transition-colors ${
-                                cit.is_verified
-                                  ? "text-destructive hover:bg-destructive/10"
-                                  : "text-primary hover:bg-primary/10"
-                              }`}
-                            >
-                              {cit.is_verified ? "בטל אימות" : "אמת"}
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+        {/* Sources Tab */}
+        {activeTab === "sources" && (
+          <div className="space-y-6">
+            {/* Sub-tabs */}
+            <div className="flex gap-2 flex-wrap">
+              {SOURCE_SUB_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setSourceSubTab(tab.id)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                    sourceSubTab === tab.id
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "bg-muted text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {tab.label}
+                  <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                    sourceSubTab === tab.id ? "bg-primary-foreground/20" : "bg-background"
+                  }`}>
+                    {tab.count}
+                  </span>
+                </button>
+              ))}
             </div>
+
+            {sourceSubTab === "caselaw" && (
+              <SourceCategoryView
+                title="⚖️ פסיקה (Case Law)"
+                sources={caselawCitations}
+                onToggleVerification={toggleVerification}
+              />
+            )}
+
+            {sourceSubTab === "legislation" && (
+              <div className="space-y-8">
+                <SourceCategoryView
+                  title="📜 חקיקה ראשית (Primary Legislation)"
+                  sources={legislationCitations.filter((c) => classifyCitationRecord(c) === "legislation_primary")}
+                  onToggleVerification={toggleVerification}
+                />
+                <SourceCategoryView
+                  title="📋 חקיקה משנית (Secondary Legislation)"
+                  sources={legislationCitations.filter((c) => classifyCitationRecord(c) === "legislation_secondary")}
+                  onToggleVerification={toggleVerification}
+                />
+              </div>
+            )}
+
+            {sourceSubTab === "literature" && (
+              <SourceCategoryView
+                title="📖 ספרות ומאמרים (Literature)"
+                sources={literatureCitations}
+                onToggleVerification={toggleVerification}
+              />
+            )}
+
+            {sourceSubTab === "verified" && (
+              <div className="space-y-4">
+                <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-border bg-muted/50">
+                          <th className="text-right px-4 py-3 font-medium text-muted-foreground">שם מקור</th>
+                          <th className="text-right px-4 py-3 font-medium text-muted-foreground">סוג</th>
+                          <th className="text-right px-4 py-3 font-medium text-muted-foreground">ציטוט מלא</th>
+                          <th className="text-right px-4 py-3 font-medium text-muted-foreground">שימושים</th>
+                          <th className="text-right px-4 py-3 font-medium text-muted-foreground">אופן אימות</th>
+                          <th className="text-right px-4 py-3 font-medium text-muted-foreground">פעולות</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {verifiedSources.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} className="text-center py-8 text-muted-foreground">
+                              אין מקורות מאומתים עדיין
+                            </td>
+                          </tr>
+                        ) : (
+                          verifiedSources.map((vs) => (
+                            <tr key={vs.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                              <td className="px-4 py-3 text-foreground font-medium">{vs.source_name}</td>
+                              <td className="px-4 py-3">
+                                <Badge variant="outline">{vs.source_type}</Badge>
+                              </td>
+                              <td className="px-4 py-3 text-foreground max-w-[300px] truncate">{vs.full_citation}</td>
+                              <td className="px-4 py-3">
+                                <Badge variant="secondary">{vs.usage_count} פעמים</Badge>
+                              </td>
+                              <td className="px-4 py-3">
+                                <Badge className={vs.auto_verified
+                                  ? "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300"
+                                  : "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-300"
+                                }>
+                                  {vs.auto_verified ? "אוטומטי" : "ידני"}
+                                </Badge>
+                              </td>
+                              <td className="px-4 py-3">
+                                <button
+                                  onClick={() => removeVerified(vs.id)}
+                                  className="text-xs text-destructive hover:bg-destructive/10 px-2 py-1 rounded transition-colors"
+                                >
+                                  הסר
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Verified Sources Tab */}
-        {activeTab === "verified" && (
-          <div className="space-y-4">
-            <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border bg-muted/50">
-                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">שם מקור</th>
-                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">סוג</th>
-                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">ציטוט מלא</th>
-                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">שימושים</th>
-                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">אופן אימות</th>
-                      <th className="text-right px-4 py-3 font-medium text-muted-foreground">פעולות</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {verifiedSources.length === 0 ? (
-                      <tr>
-                       <td colSpan={6} className="text-center py-8 text-muted-foreground">
-                          אין מקורות מאומתים עדיין
-                        </td>
-                      </tr>
-                    ) : (
-                      verifiedSources.map((vs) => (
-                        <tr key={vs.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
-                          <td className="px-4 py-3 text-foreground font-medium">{vs.source_name}</td>
-                          <td className="px-4 py-3">
-                            <Badge variant="outline">{vs.source_type}</Badge>
-                          </td>
-                          <td className="px-4 py-3 text-foreground max-w-[300px] truncate">{vs.full_citation}</td>
-                          <td className="px-4 py-3">
-                            <Badge variant="secondary">{vs.usage_count} פעמים</Badge>
-                          </td>
-                          <td className="px-4 py-3">
-                            <Badge className={vs.auto_verified ? "bg-blue-100 text-blue-700 border-blue-200" : "bg-emerald-100 text-emerald-700 border-emerald-200"}>
-                              {vs.auto_verified ? "אוטומטי" : "ידני"}
-                            </Badge>
-                          </td>
-                          <td className="px-4 py-3">
-                            <button
-                              onClick={() => removeVerified(vs.id)}
-                              className="text-xs text-destructive hover:bg-destructive/10 px-2 py-1 rounded transition-colors"
-                            >
-                              הסר
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+        {/* Users Tab */}
+        {activeTab === "users" && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <StatCard icon="👥" label="סה״כ משתמשים רשומים" value={users.length} color="text-primary" />
+              <StatCard
+                icon="📅"
+                label="הצטרפו החודש"
+                value={users.filter((u) => {
+                  const d = new Date(u.created_at);
+                  const now = new Date();
+                  return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                }).length}
+                color="text-emerald-600"
+              />
             </div>
+            <h3 className="text-foreground font-bold text-base">רשימת משתמשים</h3>
+            <UsersTable users={users} />
           </div>
         )}
       </div>
     </div>
   );
 };
-
-function StatCard({ icon, label, value, color }: { icon: string; label: string; value: number; color?: string }) {
-  return (
-    <div className="bg-card border border-border rounded-xl p-5 shadow-sm">
-      <div className="flex items-center gap-3">
-        <span className="text-2xl">{icon}</span>
-        <div>
-          <p className="text-muted-foreground text-xs">{label}</p>
-          <p className={`text-2xl font-bold ${color || "text-foreground"}`}>{value}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default Admin;
