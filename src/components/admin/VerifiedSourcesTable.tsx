@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { getVerifiedCategoryLabel, type VerifiedSourceCategory } from "@/lib/verifiedSources";
+import { getVerifiedCategoryLabel, getVerificationStatusLabel, type VerifiedSourceCategory, type VerificationStatus } from "@/lib/verifiedSources";
 
 export interface VerifiedSourceRow {
   id: string;
@@ -9,6 +9,7 @@ export interface VerifiedSourceRow {
   auto_verified: boolean;
   verified_at: string;
   usage_count: number;
+  verification_status: "verified" | "pending" | "invalid";
 }
 
 interface VerifiedSourcesTableProps {
@@ -36,6 +37,7 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove }: VerifiedSo
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">ציטוט מלא</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">שימושים</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">אופן אימות</th>
+                <th className="text-right px-4 py-3 font-medium text-muted-foreground">סטטוס</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">תאריך אימות</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">פעולות</th>
               </tr>
@@ -43,7 +45,7 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove }: VerifiedSo
             <tbody>
               {sources.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-8 text-muted-foreground">
+                   <td colSpan={8} className="text-center py-8 text-muted-foreground">
                     אין מקורות מאומתים בקטגוריה זו
                   </td>
                 </tr>
@@ -61,6 +63,14 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove }: VerifiedSo
                     <td className="px-4 py-3">
                       <Badge variant={source.auto_verified ? "default" : "secondary"}>
                         {source.auto_verified ? "אוטומטי" : "ידני"}
+                      </Badge>
+                    </td>
+                    <td className="px-4 py-3">
+                      <Badge variant={
+                        source.verification_status === "verified" ? "default" :
+                        source.verification_status === "invalid" ? "destructive" : "secondary"
+                      }>
+                        {getVerificationStatusLabel(source.verification_status || "pending")}
                       </Badge>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">

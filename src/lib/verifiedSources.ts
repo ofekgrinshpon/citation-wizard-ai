@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export type VerifiedSourceCategory = "caselaw" | "legislation_primary" | "legislation_secondary" | "literature";
+export type VerificationStatus = "verified" | "pending" | "invalid";
 
 interface SourceClassificationInput {
   rawInput: string;
@@ -11,6 +12,13 @@ interface SourceClassificationInput {
 interface EnsureVerifiedSourceInput extends SourceClassificationInput {
   verifiedBy?: string | null;
   autoVerified?: boolean;
+}
+
+interface VerifySourceResult {
+  status: VerificationStatus;
+  confidence: number;
+  issues: string[];
+  details: string;
 }
 
 const LEGISLATION_PATTERNS = /^(חוק|פקודת|פקודה|תקנות|צו|כללי|הוראות|נוהל|תקנון|חוק[\s-]יסוד)/;
@@ -74,7 +82,72 @@ export function getVerifiedCategoryLabel(category: VerifiedSourceCategory) {
   }
 }
 
-export async function ensureVerifiedSources(items: EnsureVerifiedSourceInput[]) {
+export function getVerificationStatusLabel(status: VerificationStatus) {
+  switch (status) {
+    case "verified":
+      return "מאומת";
+    case "pending":
+      return "ממתין לבדיקה";
+    case "invalid":
+      return "לא תקין";
+  }
+}
+
+/**
+ * Call the verify-source edge function to AI-validate a source.
+ */
+async function verifySourceWithAI(
+  rawInput: string,
+  fullCitation: string,
+  sourceType: string | null
+): Promise<VerifySourceResult> {
+  try {
+    const { data, error } = await supabase.functions.invoke("verify-source", {
+      body: { rawInput, fullCitation, sourceType },
+    });
+
+    if (error) {
+      console.error("verify-source invoke error:", error);
+      return { status: "pending", confidence: 0, issues: ["Verification service error"], details: "" };
+    }
+
+    return data as VerifySourceResult;
+  } catch (e) {
+    console.error("verify-source exception:", e);
+    return { status: "pending", confidence: 0, issues: ["Verification unavailable"], details: "" };
+  }
+}
+
+/**
+ * Check if a source already exists in verified_sources by normalized full_citation.
+ */
+async function sourceAlreadyExists(fullCitation: string): Promise<boolean> {
+  const key = normalizeVerifiedSourceKey(fullCitation);
+  const { data } = await supabase
+    .from("verified_sources")
+    .select("id")
+    .ilike("full_citation", key)
+    .limit(1);
+
+  if (data && data.length > 0) return true;
+
+  // Fallback: fetch all and compare normalized keys (handles edge cases)
+  const { data: allRows } = await supabase
+    .from("verified_sources")
+    .select("id, full_citation");
+
+  if (!allRows) return false;
+  return allRows.some((row) => normalizeVerifiedSourceKey(row.full_citation) === key);
+}
+
+/**
+ * Ensure verified sources are saved, with AI cross-referencing.
+ * Returns: { added: number, invalid: number, skipped: number }
+ */
+export async function ensureVerifiedSources(
+  items: EnsureVerifiedSourceInput[],
+  options?: { skipAIVerification?: boolean }
+): Promise<{ added: number; invalid: number; skipped: number }> {
   const candidates = Array.from(
     new Map(
       items
@@ -83,33 +156,55 @@ export async function ensureVerifiedSources(items: EnsureVerifiedSourceInput[]) 
     ).values()
   );
 
-  if (candidates.length === 0) return 0;
+  if (candidates.length === 0) return { added: 0, invalid: 0, skipped: 0 };
 
-  const { data: existingRows, error: existingError } = await supabase
-    .from("verified_sources")
-    .select("id, full_citation");
+  let added = 0;
+  let invalid = 0;
+  let skipped = 0;
 
-  if (existingError) throw existingError;
+  for (const item of candidates) {
+    // Zero redundancy: skip if already exists
+    const exists = await sourceAlreadyExists(item.fullCitation);
+    if (exists) {
+      skipped++;
+      continue;
+    }
 
-  const existingKeys = new Set(
-    (existingRows || []).map((row) => normalizeVerifiedSourceKey(row.full_citation))
-  );
+    // AI verification (unless skipped for admin manual verification)
+    let verificationStatus: VerificationStatus = "pending";
+    if (!options?.skipAIVerification) {
+      const result = await verifySourceWithAI(item.rawInput, item.fullCitation, item.sourceType ?? null);
+      verificationStatus = result.status as VerificationStatus;
 
-  const payload = candidates
-    .filter((item) => !existingKeys.has(normalizeVerifiedSourceKey(item.fullCitation)))
-    .map((item) => ({
+      if (verificationStatus === "invalid") {
+        invalid++;
+        // Still save as invalid for admin review
+      }
+    } else {
+      // Admin manual verification = directly verified
+      verificationStatus = "verified";
+    }
+
+    const payload = {
       source_name: item.rawInput.substring(0, 100),
       source_type: classifyVerifiedSource(item),
       full_citation: item.fullCitation.trim(),
       search_text: `${normalizeVerifiedSourceKey(item.rawInput)} ${normalizeVerifiedSourceKey(item.fullCitation)}`.trim(),
       auto_verified: item.autoVerified ?? false,
       verified_by: item.verifiedBy ?? null,
-    }));
+      verification_status: verificationStatus,
+    };
 
-  if (payload.length === 0) return 0;
+    const { error } = await supabase.from("verified_sources").insert(payload);
+    if (error) {
+      console.error("Insert verified source error:", error);
+      continue;
+    }
 
-  const { error } = await supabase.from("verified_sources").insert(payload);
-  if (error) throw error;
+    if (verificationStatus !== "invalid") {
+      added++;
+    }
+  }
 
-  return payload.length;
+  return { added, invalid, skipped };
 }

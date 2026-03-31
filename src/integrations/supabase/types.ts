@@ -94,6 +94,7 @@ export type Database = {
           source_name: string
           source_type: string
           usage_count: number
+          verification_status: string
           verified_at: string
           verified_by: string | null
           volume: string | null
@@ -109,6 +110,7 @@ export type Database = {
           source_name: string
           source_type: string
           usage_count?: number
+          verification_status?: string
           verified_at?: string
           verified_by?: string | null
           volume?: string | null
@@ -124,6 +126,7 @@ export type Database = {
           source_name?: string
           source_type?: string
           usage_count?: number
+          verification_status?: string
           verified_at?: string
           verified_by?: string | null
           volume?: string | null

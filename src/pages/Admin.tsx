@@ -93,7 +93,7 @@ const Admin = () => {
       .select("*")
       .order("verified_at", { ascending: false });
 
-    setVerifiedSources(verifiedRows ?? []);
+    setVerifiedSources((verifiedRows ?? []) as unknown as VerifiedSourceRow[]);
     setLoadingData(false);
   };
 
@@ -119,7 +119,7 @@ const Admin = () => {
             verifiedBy: user?.id,
             autoVerified: false,
           },
-        ]);
+        ], { skipAIVerification: true });
       } catch {
         toast.error("לא ניתן לשמור מקור מאומת");
         return;
