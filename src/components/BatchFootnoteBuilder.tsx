@@ -27,12 +27,24 @@ interface BatchProps {
   guestLimit?: { isLocked: boolean; increment: (n?: number) => void; remaining: number; max: number };
 }
 
+const CELLS_STORAGE_KEY = "footnote_cells";
+const SUMMARY_STORAGE_KEY = "footnote_summary";
+
+function loadCells(): FootnoteCell[] {
+  try {
+    const raw = localStorage.getItem(CELLS_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as FootnoteCell[];
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed.map(c => ({ ...c, status: c.status === "loading" ? "empty" : c.status }));
+    }
+  } catch {}
+  return Array.from({ length: 5 }, (_, i) => createCell(i + 1));
+}
+
 export function BatchFootnoteBuilder({ isGuest, guestLimit }: BatchProps) {
-  const [cells, setCells] = useState<FootnoteCell[]>(
-    Array.from({ length: 5 }, (_, i) => createCell(i + 1))
-  );
+  const [cells, setCells] = useState<FootnoteCell[]>(loadCells);
   const [globalLoading, setGlobalLoading] = useState(false);
-  const [summary, setSummary] = useState<string | null>(null);
+  const [summary, setSummary] = useState<string | null>(() => localStorage.getItem(SUMMARY_STORAGE_KEY));
   const bibliography = useBibliography();
 
   const updateCellInput = useCallback((id: number, value: string) => {
