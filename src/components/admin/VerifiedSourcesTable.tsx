@@ -37,6 +37,7 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove }: VerifiedSo
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">ציטוט מלא</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">שימושים</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">אופן אימות</th>
+                <th className="text-right px-4 py-3 font-medium text-muted-foreground">סטטוס</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">תאריך אימות</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">פעולות</th>
               </tr>
