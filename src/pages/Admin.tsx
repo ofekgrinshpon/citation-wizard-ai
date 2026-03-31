@@ -46,6 +46,7 @@ const Admin = () => {
   const [loadingData, setLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState<MainTab>("analytics");
   const [sourceSubTab, setSourceSubTab] = useState<SourceSubTab>("caselaw");
+  const [showAddDialog, setShowAddDialog] = useState(false);
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
