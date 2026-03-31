@@ -14,6 +14,50 @@ import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
 import { ensureVerifiedSources } from "@/lib/verifiedSources";
 
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
+
+/**
+ * Extract the actual formatted citation from the AI response,
+ * stripping step-by-step explanations, rule references, and warnings.
+ */
+function extractCitationFromResponse(response: string): string {
+  const lines = response.split("\n").map((l) => l.trim()).filter(Boolean);
+
+  const citationLines = lines.filter((line) => {
+    if (/^שלב \d/.test(line)) return false;
+    if (/^📐/.test(line)) return false;
+    if (/^⚠️/.test(line)) return false;
+    if (/^העוזר המשפטי/.test(line)) return false;
+    if (/^מכיוון ש/.test(line)) return false;
+    if (/^הנוסחה ל/.test(line)) return false;
+    return true;
+  });
+
+  return citationLines.length > 0 ? citationLines[citationLines.length - 1] : "";
+}
+
+/**
+ * If current input is a fragment (number, short correction), trace back to find the original source name.
+ */
+function buildFullRawInput(currentInput: string, previousMessages: Message[]): string {
+  const trimmed = currentInput.trim();
+  const isFragment = /^\d+\.?$/.test(trimmed) || trimmed.length < 5;
+
+  if (!isFragment || previousMessages.length === 0) return currentInput;
+
+  for (let i = previousMessages.length - 1; i >= 0; i--) {
+    const msg = previousMessages[i];
+    if (msg.role === "user" && msg.content.trim().length >= 5 && !/^\d+\.?$/.test(msg.content.trim())) {
+      return msg.content;
+    }
+  }
+
+  return currentInput;
+}
+
 const CITATION_EXAMPLES = [
   "פסד עא 248/86 עזבון חננשוילי נ רותם חברה לביטוח",
   "פסק דין קול העם נגד שר הפנים משנת 53",
@@ -23,10 +67,6 @@ const CITATION_EXAMPLES = [
   "Atkins v. Virginia על עונש מוות",
 ];
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
 
 type AppMode = "freetext" | "manual" | "batch" | "bibliography";
 
@@ -109,21 +149,33 @@ const Index = () => {
       setMessages([...newMessages, { role: "assistant", content: reply }]);
       // Increment guest counter
       if (isGuestMode) guestLimit.increment();
-      // Save to citation history
+
+      // Extract the actual citation from the AI response (skip step explanations, rules, warnings)
+      const extractedCitation = extractCitationFromResponse(reply);
+
+      // Determine the full context for rawInput:
+      // If current input looks like a fragment/correction (number, short text),
+      // combine with previous conversation context to get the full source name
+      const fullRawInput = buildFullRawInput(rawText, messages);
+
+      // Save to citation history — use the full reply for display, but the extracted citation for verification
       const citationPayload = {
-        raw_input: rawText,
+        raw_input: fullRawInput,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
       };
 
       supabase.from("citation_history").insert(citationPayload).then(() => {});
 
+      // Only verify if we have a real, complete citation (not a fragment, not missing data)
       const isVerified = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
-      if (isVerified) {
+      const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
+
+      if (isVerified && !isFragment) {
         ensureVerifiedSources([
           {
-            rawInput: rawText,
-            fullCitation: reply,
+            rawInput: fullRawInput,
+            fullCitation: extractedCitation,
             sourceType: citationPayload.source_type,
             verifiedBy: user?.id,
             autoVerified: true,
