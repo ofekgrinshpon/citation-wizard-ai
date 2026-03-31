@@ -207,8 +207,8 @@ const Index = () => {
     setPendingVerification(null);
   };
 
-
-    const handleSend = async () => {
+  const handleSend = async () => {
+    const rawText = input.trim();
     if (!rawText || loading) return;
     if (isGuestMode && guestLimit.isLocked) return;
 
