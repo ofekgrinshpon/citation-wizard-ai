@@ -161,8 +161,7 @@ function normalizeBibliographyCitation(text: string): string {
     .join(" ")
     .replace(/\*\*/g, "")
     .replace(/##/g, "")
-    .replace(/^\[?\d+\]?\.?
-?\s*/, "")
+    .replace(/^\[?\d+\]?\.?\s*/, "")
     .replace(/^סעיף\s+[\dא-ת()./\-–]+\s+ל(?=(חוק|חוק-יסוד|חוק\s+יסוד|פקודת|פקודה|תקנות|צו|נוהל|הוראת))/g, "")
     .replace(/^section\s+[A-Za-z0-9()./\-–]+\s+of\s+/gi, "")
     .replace(/,?\s*בעמ['״]?\s*[\d\-–]+/g, "")
