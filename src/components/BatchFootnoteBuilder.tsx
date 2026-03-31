@@ -165,7 +165,7 @@ ${sourcesText}
         return result;
       });
 
-      // Save to citation history & sync to bibliography
+      // Save to citation history
       for (const cell of updatedCells) {
         if (cell.output) {
           const sourceType = detectSourceType(normalizeAbbreviations(cell.input));
@@ -176,16 +176,24 @@ ${sourcesText}
             source_type: label !== "לא ידוע" ? label : null,
             is_verified: cell.status === "valid" && !/\[חסר:/.test(cell.output),
           }).then(() => {});
+        }
+      }
 
-          // Push full citation to bibliography
-          const fullCitation = extractCitationOnly(cell.output);
-          const added = bibliography.addEntry(cell.input, fullCitation, "footnote");
-          if (added) {
-            toast("המקור נוסף ומוין אוטומטית בביבליוגרפיה", {
-              duration: 2000,
-              icon: "📚",
-            });
-          }
+      // Sync all valid citations to bibliography in one batch
+      const bibItems = updatedCells
+        .filter((cell) => cell.output && !/שם,|שם\b|לעיל ה"ש/.test(cell.output))
+        .map((cell) => ({
+          rawInput: cell.input,
+          fullCitation: extractCitationOnly(cell.output!),
+        }));
+
+      if (bibItems.length > 0) {
+        const addedCount = bibliography.addEntries(bibItems, "footnote");
+        if (addedCount > 0) {
+          toast(`${addedCount} מקורות נוספו ומוינו אוטומטית בביבליוגרפיה`, {
+            duration: 3000,
+            icon: "📚",
+          });
         }
       }
 

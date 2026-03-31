@@ -144,7 +144,7 @@ export function sortBibliography(entries: BibliographyEntry[]): BibliographyEntr
 interface BibliographyContextValue {
   entries: BibliographyEntry[];
   addEntry: (rawInput: string, fullCitation: string, from: "footnote" | "manual") => boolean;
-  addEntries: (items: { rawInput: string; fullCitation: string }[]) => number;
+  addEntries: (items: { rawInput: string; fullCitation: string }[], from?: "footnote" | "manual") => number;
   removeEntry: (id: string) => void;
   clearAll: () => void;
   sortedEntries: BibliographyEntry[];
@@ -205,7 +205,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
   );
 
   const addEntries = useCallback(
-    (items: { rawInput: string; fullCitation: string }[]): number => {
+    (items: { rawInput: string; fullCitation: string }[], from: "footnote" | "manual" = "manual"): number => {
       let count = 0;
       setEntries((prev) => {
         const next = [...prev];
@@ -216,7 +216,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
             id: crypto.randomUUID(),
             rawInput: item.rawInput,
             fullCitation: item.fullCitation,
-            addedFrom: "manual",
+            addedFrom: from,
             addedAt: Date.now(),
             ...info,
           });
