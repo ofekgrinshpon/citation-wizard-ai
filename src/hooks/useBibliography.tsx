@@ -83,7 +83,7 @@ export function classifyCitation(text: string): {
   if (yearMatch) year = parseInt(yearMatch[1], 10);
 
   const authorDetected = hasAuthorPrefix(trimmed, isEnglish);
-  const hasLiteratureMarkers = /מאמר|ספר|עיוני משפט|משפטים|הפרקליט|מחקרי משפט/.test(trimmed) || /\bJ\.\b|\bL\.\s*Rev\b|\bBook\b|\bPress\b/i.test(trimmed);
+  const hasLiteratureMarkers = /מאמר|עיוני משפט|משפטים|הפרקליט|מחקרי משפט|כתב[\s-]עת/.test(trimmed) || /\bJ\.\b|\bL\.\s*Rev\b|\bBook\b|\bPress\b/i.test(trimmed);
   const hasPrimaryLegislation = /(?:^|\s|\()(חוק[\s-]יסוד|חוק|פקודת|פקודה)(?=[\s:-])/.test(trimmed) || /(?:^|\s)לחוק(?=\s)/.test(trimmed) || /^(Act|Law|Basic Law|Statute|Code)\b/i.test(trimmed);
   const hasSecondaryLegislation = /(?:^|\s|\()(תקנות|תקנה|צו|נוהל|הוראת)(?=[\s:-])/.test(trimmed) || /^(Regulations?|Order|Directive)\b/i.test(trimmed);
   const isSupremeCase = /בג"ץ|ע"א|רע"א|דנ"א|ע"פ|רע"פ|דנ"פ|ע"ע|עש"מ|בש"פ/.test(trimmed) || /Supreme Court|S\.Ct\./.test(trimmed);
@@ -279,7 +279,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
     (rawInput: string, fullCitation: string, from: "footnote" | "manual"): boolean => {
       let added = false;
       setEntries((prev) => {
-        if (isDuplicate(fullCitation, prev)) return prev;
+        if (isDuplicate(fullCitation, prev)) return rebuildBibliographyEntries(prev);
         const info = classifyCitation(fullCitation);
         const entry: BibliographyEntry = {
           id: crypto.randomUUID(),
@@ -290,7 +290,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
           ...info,
         };
         added = true;
-        return [...prev, entry];
+        return rebuildBibliographyEntries([...prev, entry]);
       });
       return added;
     },
@@ -315,7 +315,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
           });
           count++;
         }
-        return next;
+        return rebuildBibliographyEntries(next);
       });
       return count;
     },
