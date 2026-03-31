@@ -93,7 +93,7 @@ const Admin = () => {
       .select("*")
       .order("verified_at", { ascending: false });
 
-    setVerifiedSources(verifiedRows ?? []);
+    setVerifiedSources((verifiedRows ?? []) as unknown as VerifiedSourceRow[]);
     setLoadingData(false);
   };
 
