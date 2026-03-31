@@ -48,6 +48,21 @@ export const CATEGORY_LABELS: Record<string, string> = {
   unknown: "אחר",
 };
 
+// Detect if text starts with an author name (not a law/case prefix)
+function hasAuthorPrefix(text: string, isEnglish: boolean): boolean {
+  const trimmed = text.trim();
+  if (isEnglish) {
+    // English: starts with a capitalized name (not a case number or statute keyword)
+    return /^[A-Z][a-z]+[\s,]/.test(trimmed) && !/^(The |An |A )?(Act|Law|Order|Regulation|Statute|Code)\b/i.test(trimmed);
+  }
+  // Hebrew: starts with a name-like word that is NOT a legislation keyword
+  const legislationStarters = /^(חוק|פקודת|פקודה|תקנות|צו|נוהל|הוראת|חוק[\s-]יסוד)/;
+  const caseStarters = /^(בג"ץ|ע"א|רע"א|דנ"א|ע"פ|רע"פ|דנ"פ|ע"ע|עש"מ|בש"פ|ת"א|ת"פ|ע"מ|ה"פ|המר|פר"ק|ת"ט|תא"מ|ת"ד|עב"ל|ס"ק|ד"מ)/;
+  if (legislationStarters.test(trimmed) || caseStarters.test(trimmed)) return false;
+  // If first word doesn't look like a legal keyword and contains a comma or space followed by more text
+  return /^[^\s,]{2,}[\s,]/.test(trimmed);
+}
+
 export function classifyCitation(text: string): {
   sourceType: BibSourceCategory;
   language: "hebrew" | "english";
@@ -63,19 +78,19 @@ export function classifyCitation(text: string): {
   const yearMatch = text.match(/\((\d{4})\)/) || text.match(/(\d{4})/);
   if (yearMatch) year = parseInt(yearMatch[1]);
 
-  // Classify source type
+  // Detect author presence early — author-prefixed sources are literature, not legislation
+  const authorDetected = hasAuthorPrefix(text, isEnglish);
+  const hasLiteratureMarkers = /מאמר|ספר|עיוני משפט|משפטים|הפרקליט|מחקרי משפט/.test(text) || /\bJ\.\b|\bL\.\s*Rev\b|\bBook\b/i.test(text);
+
   let sourceType: BibSourceCategory = "unknown";
   let subCategory = "";
 
-  // Legislation
-  if (/חוק[\s-]יסוד|חוק|פקודת|פקודה/.test(text)) {
-    sourceType = "legislation_primary";
-    subCategory = /חוק[\s-]יסוד/.test(text) ? "חוק יסוד" : "חוק/פקודה";
-  } else if (/תקנות|צו|נוהל|הוראת/.test(text)) {
-    sourceType = "legislation_secondary";
-    subCategory = "תקנות/צו";
+  // If text starts with an author name → literature (never legislation)
+  if (authorDetected && !(/נ['׳]\s|נגד\s|\bv\.\b|\bvs\.\b/.test(text)) && !(/פד"י|פ"ד|דינים/.test(text))) {
+    sourceType = "literature";
+    subCategory = "ספרות";
   }
-  // Case law
+  // Case law (case numbers are unambiguous)
   else if (/בג"ץ|ע"א|רע"א|דנ"א|ע"פ|רע"פ|דנ"פ|ע"ע|עש"מ|בש"פ/.test(text) || /Supreme Court|S\.Ct\./.test(text)) {
     sourceType = "caselaw_supreme";
     subCategory = "בית המשפט העליון";
@@ -89,13 +104,21 @@ export function classifyCitation(text: string): {
     sourceType = "caselaw_specialized";
     subCategory = "בית דין מיוחד";
   }
-  // Case law by general patterns  
+  // Case law by general patterns
   else if (/נ['׳]\s|נגד\s|\bv\.\b|\bvs\.\b/.test(text) || /פד"י|פ"ד|דינים/.test(text)) {
     sourceType = "caselaw_supreme";
     subCategory = "פסיקה";
   }
+  // Legislation (only if no author detected)
+  else if (/חוק[\s-]יסוד|חוק|פקודת|פקודה/.test(text)) {
+    sourceType = "legislation_primary";
+    subCategory = /חוק[\s-]יסוד/.test(text) ? "חוק יסוד" : "חוק/פקודה";
+  } else if (/תקנות|צו|נוהל|הוראת/.test(text)) {
+    sourceType = "legislation_secondary";
+    subCategory = "תקנות/צו";
+  }
   // Literature
-  else if (/מאמר|ספר|עיוני משפט|משפטים|הפרקליט|מחקרי משפט/.test(text) || /\bJ\.\b|\bL\.\s*Rev\b|\bBook\b/i.test(text)) {
+  else if (hasLiteratureMarkers) {
     sourceType = "literature";
     subCategory = "ספרות";
   }
@@ -108,7 +131,6 @@ export function classifyCitation(text: string): {
   // Extract author surname for literature sorting
   let authorSurname: string | undefined;
   if (sourceType === "literature") {
-    // Try to get first word as surname for Hebrew, or last word before comma for English
     if (isEnglish) {
       const match = text.match(/^([A-Za-z]+)/);
       if (match) authorSurname = match[1];
