@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { BibliographyProvider } from "@/hooks/useBibliography";
 import Landing from "./pages/Landing.tsx";
 import Index from "./pages/Index.tsx";
 import Admin from "./pages/Admin.tsx";
