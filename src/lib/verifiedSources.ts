@@ -25,13 +25,18 @@ const LEGISLATION_PATTERNS = /^(חוק|פקודת|פקודה|תקנות|צו|כ�
 const CASELAW_PATTERNS = /^(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)/;
 const SECONDARY_LEGISLATION = /^(תקנות|צו|כללי|הוראות|נוהל|תקנון)/;
 const SECTION_TO_LAW = /^סעיף\s+[\dא-ת()./\\–-]+\s+ל/;
+const CASE_NUMBER_PATTERN = /(?:בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+([0-9]+\/[0-9]+)/;
 
 const LEGISLATION_SOURCE_TYPES = ["חוק יסוד", "חקיקה ראשית", "חקיקה משנית", "חקיקת משנה", "חקיקה", "basic_law", "primary_legislation", "secondary_legislation", "bill", "legislation_primary", "legislation_secondary"];
 const CASELAW_SOURCE_TYPES = ["פסיקה", "פסיקה (מאגר)", "פסיקה (פד\"י)", "case_law_published", "case_law_database", "caselaw"];
 const LITERATURE_SOURCE_TYPES = ["מאמר", "ספר", "article", "book", "literature", "מקור מרשתת", "מקור לועזי"];
 
+function normalizeWhitespace(text: string) {
+  return text.replace(/\s+/g, " ").trim();
+}
+
 export function normalizeVerifiedSourceKey(text: string) {
-  return text.replace(/\s+/g, " ").trim().toLowerCase();
+  return normalizeWhitespace(text).toLowerCase();
 }
 
 function isShortCitation(text: string) {
@@ -93,9 +98,50 @@ export function getVerificationStatusLabel(status: VerificationStatus) {
   }
 }
 
-/**
- * Call the verify-source edge function to AI-validate a source.
- */
+function extractYear(text: string) {
+  const matches = [...text.matchAll(/\b((?:19|20)\d{2})\b/g)];
+  return matches.length > 0 ? matches[matches.length - 1][1] : null;
+}
+
+function extractCaseNumber(text: string) {
+  return text.match(CASE_NUMBER_PATTERN)?.[1] ?? null;
+}
+
+function extractLawName(text: string) {
+  const withoutSection = normalizeWhitespace(text).replace(SECTION_TO_LAW, "").trim();
+  return withoutSection.split(",")[0]?.trim() ?? withoutSection;
+}
+
+function normalizeLawCitationForStorage(fullCitation: string) {
+  let normalized = normalizeWhitespace(fullCitation).replace(SECTION_TO_LAW, "").trim();
+
+  normalized = normalized.replace(/,\s*(?:בעמ['״׳]?|עמ['״׳]?|עמוד|at|p\.|pp\.)\s*[\d\-–]+\.?$/iu, "");
+  normalized = normalized.replace(/,\s*(?:ס["״]ח|ק["״]ת)\s*[\d\-–]+(?:\s*[,/]\s*[\d\-–]+)?\.?$/u, "");
+  normalized = normalized.replace(/\s+\./g, ".");
+  normalized = normalized.replace(/,+$/g, "").trim();
+
+  if (!/[.]$/.test(normalized)) {
+    normalized = `${normalized}.`;
+  }
+
+  return normalized;
+}
+
+function buildStorageShape(item: EnsureVerifiedSourceInput) {
+  const category = classifyVerifiedSource(item);
+  const isLaw = category === "legislation_primary" || category === "legislation_secondary";
+  const storedCitation = isLaw ? normalizeLawCitationForStorage(item.fullCitation.trim()) : item.fullCitation.trim();
+  const storedSourceName = isLaw ? extractLawName(storedCitation).slice(0, 100) : item.rawInput.substring(0, 100);
+  const year = extractYear(storedCitation) ?? extractYear(item.fullCitation) ?? null;
+
+  return {
+    category,
+    storedCitation,
+    storedSourceName,
+    year,
+  };
+}
+
 async function verifySourceWithAI(
   rawInput: string,
   fullCitation: string,
@@ -118,32 +164,6 @@ async function verifySourceWithAI(
   }
 }
 
-/**
- * Check if a source already exists in verified_sources by normalized full_citation.
- */
-async function sourceAlreadyExists(fullCitation: string): Promise<boolean> {
-  const key = normalizeVerifiedSourceKey(fullCitation);
-  const { data } = await supabase
-    .from("verified_sources")
-    .select("id")
-    .ilike("full_citation", key)
-    .limit(1);
-
-  if (data && data.length > 0) return true;
-
-  // Fallback: fetch all and compare normalized keys (handles edge cases)
-  const { data: allRows } = await supabase
-    .from("verified_sources")
-    .select("id, full_citation");
-
-  if (!allRows) return false;
-  return allRows.some((row) => normalizeVerifiedSourceKey(row.full_citation) === key);
-}
-
-/**
- * Ensure verified sources are saved, with AI cross-referencing.
- * Returns: { added: number, invalid: number, skipped: number }
- */
 export async function ensureVerifiedSources(
   items: EnsureVerifiedSourceInput[],
   options?: { skipAIVerification?: boolean }
@@ -152,7 +172,17 @@ export async function ensureVerifiedSources(
     new Map(
       items
         .filter((item) => item.fullCitation.trim() && !isShortCitation(item.fullCitation))
-        .map((item) => [normalizeVerifiedSourceKey(item.fullCitation), item])
+        .map((item) => {
+          const storage = buildStorageShape(item);
+          const dedupeKey = normalizeVerifiedSourceKey(
+            storage.category === "caselaw"
+              ? extractCaseNumber(storage.storedCitation) || `${storage.storedSourceName}|${storage.storedCitation}`
+              : storage.category === "legislation_primary" || storage.category === "legislation_secondary"
+                ? `${extractLawName(storage.storedCitation)}|${storage.year ?? ""}`
+                : `${storage.storedSourceName}|${storage.year ?? storage.storedCitation}`
+          );
+          return [dedupeKey, item] as const;
+        })
     ).values()
   );
 
@@ -163,40 +193,38 @@ export async function ensureVerifiedSources(
   let skipped = 0;
 
   for (const item of candidates) {
-    // Zero redundancy: skip if already exists
-    const exists = await sourceAlreadyExists(item.fullCitation);
-    if (exists) {
-      skipped++;
-      continue;
-    }
+    const storage = buildStorageShape(item);
 
-    // AI verification (unless skipped for admin manual verification)
     let verificationStatus: VerificationStatus = "pending";
     if (!options?.skipAIVerification) {
-      const result = await verifySourceWithAI(item.rawInput, item.fullCitation, item.sourceType ?? null);
+      const result = await verifySourceWithAI(item.rawInput, storage.storedCitation, item.sourceType ?? null);
       verificationStatus = result.status as VerificationStatus;
-
       if (verificationStatus === "invalid") {
         invalid++;
-        // Still save as invalid for admin review
       }
     } else {
-      // Admin manual verification = directly verified
       verificationStatus = "verified";
     }
 
     const payload = {
-      source_name: item.rawInput.substring(0, 100),
-      source_type: classifyVerifiedSource(item),
-      full_citation: item.fullCitation.trim(),
-      search_text: `${normalizeVerifiedSourceKey(item.rawInput)} ${normalizeVerifiedSourceKey(item.fullCitation)}`.trim(),
+      source_name: storage.storedSourceName,
+      source_type: storage.category,
+      full_citation: storage.storedCitation,
+      search_text: `${normalizeVerifiedSourceKey(storage.storedSourceName)} ${normalizeVerifiedSourceKey(storage.storedCitation)} ${storage.year ?? ""}`.trim(),
       auto_verified: item.autoVerified ?? false,
       verified_by: item.verifiedBy ?? null,
       verification_status: verificationStatus,
+      year: storage.year,
     };
 
     const { error } = await supabase.from("verified_sources").insert(payload);
+
     if (error) {
+      if ((error as { code?: string }).code === "23505") {
+        skipped++;
+        continue;
+      }
+
       console.error("Insert verified source error:", error);
       continue;
     }
