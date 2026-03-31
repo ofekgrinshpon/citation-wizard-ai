@@ -381,24 +381,28 @@ const Admin = () => {
                   category="caselaw"
                   sources={verifiedByCategory.caselaw}
                   onRemove={removeVerified}
+                  onEdit={editVerified}
                 />
                 <VerifiedSourcesTable
                   title={`📜 ${getVerifiedCategoryLabel("legislation_primary")}`}
                   category="legislation_primary"
                   sources={verifiedByCategory.legislation_primary}
                   onRemove={removeVerified}
+                  onEdit={editVerified}
                 />
                 <VerifiedSourcesTable
                   title={`📋 ${getVerifiedCategoryLabel("legislation_secondary")}`}
                   category="legislation_secondary"
                   sources={verifiedByCategory.legislation_secondary}
                   onRemove={removeVerified}
+                  onEdit={editVerified}
                 />
                 <VerifiedSourcesTable
                   title={`📖 ${getVerifiedCategoryLabel("literature")}`}
                   category="literature"
                   sources={verifiedByCategory.literature}
                   onRemove={removeVerified}
+                  onEdit={editVerified}
                 />
               </div>
             )}
