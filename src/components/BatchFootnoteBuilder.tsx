@@ -309,11 +309,24 @@ ${sourcesText}
       {/* === INPUT SECTION === */}
       <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
         <div className="space-y-2.5">
-          {cells.map((cell) => (
-            <div key={cell.id} className="flex items-start gap-2">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1.5 ${
-                cell.status === "verified" ? "bg-emerald-100 text-emerald-700" : "bg-primary/10 text-primary"
-              }`}>
+          {cells.map((cell, index) => (
+            <div
+              key={`cell-${index}`}
+              draggable={!globalLoading}
+              onDragStart={() => handleDragStart(index)}
+              onDragEnter={() => handleDragEnter(index)}
+              onDragEnd={handleDragEnd}
+              onDragOver={(e) => e.preventDefault()}
+              className={`flex items-start gap-2 transition-opacity ${
+                dragIndex === index ? "opacity-40" : ""
+              }`}
+            >
+              <div
+                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1.5 cursor-grab active:cursor-grabbing ${
+                  cell.status === "verified" ? "bg-emerald-100 text-emerald-700" : "bg-primary/10 text-primary"
+                }`}
+                title="גרור לשינוי סדר"
+              >
                 {cell.status === "verified" ? "✓" : cell.id}
               </div>
               <VerifiedAutocomplete
