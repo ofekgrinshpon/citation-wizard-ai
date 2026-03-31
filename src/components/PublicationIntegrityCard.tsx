@@ -33,11 +33,13 @@ export function PublicationIntegrityCard({ lawName, onConfirm, onCancel }: Publi
           <label htmlFor="hebrew-year" className="text-sm font-medium cursor-pointer flex-1">
             האם מופיעה שנה עברית בפרסום המקורי?
           </label>
-          <Switch
-            id="hebrew-year"
-            checked={hasHebrewYear}
-            onCheckedChange={setHasHebrewYear}
-          />
+          <div dir="ltr">
+            <Switch
+              id="hebrew-year"
+              checked={hasHebrewYear}
+              onCheckedChange={setHasHebrewYear}
+            />
+          </div>
         </div>
         <div className="flex items-center justify-between gap-3 p-3 rounded-lg bg-muted/50">
           <label htmlFor="gregorian-year" className="text-sm font-medium cursor-pointer flex-1">
