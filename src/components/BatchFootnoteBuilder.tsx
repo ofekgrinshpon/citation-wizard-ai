@@ -188,7 +188,7 @@ ${sourcesText}
         }));
 
       if (bibItems.length > 0) {
-        const addedCount = bibliography.addEntries(bibItems);
+        const addedCount = bibliography.addEntries(bibItems, "footnote");
         if (addedCount > 0) {
           toast(`${addedCount} מקורות נוספו ומוינו אוטומטית בביבליוגרפיה`, {
             duration: 3000,
