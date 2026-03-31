@@ -513,13 +513,10 @@ function applyRepeatCitationRules(cells: FootnoteCell[]): FootnoteCell[] {
     }
 
     const referenceSuffix = extractReferenceSuffix(cell.input);
-    const nextCitation = prior.index === index
-      ? normalizedOutput
-      : prior.index === index
-        ? normalizedOutput
-        : prior.index === index + 1
-          ? `שם${referenceSuffix ? `, ${referenceSuffix}` : "."}`
-          : `${extractShortSourceLabel(prior.fullCitation)}, לעיל ה"ש ${prior.index}${referenceSuffix ? `, ${referenceSuffix}` : ""}.`;
+    const isImmediateRepeat = prior.index === index;
+    const nextCitation = isImmediateRepeat
+      ? `שם${referenceSuffix ? `, ${referenceSuffix}` : "."}`
+      : `${extractShortSourceLabel(prior.fullCitation)}, לעיל ה"ש ${prior.index}${referenceSuffix ? `, ${referenceSuffix}` : ""}.`;
 
     return {
       ...cell,
