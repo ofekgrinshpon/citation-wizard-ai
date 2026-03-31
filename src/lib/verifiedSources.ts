@@ -155,6 +155,7 @@ function normalizeLawCitationForStorage(fullCitation: string) {
 function buildStorageShape(item: EnsureVerifiedSourceInput) {
   const category = classifyVerifiedSource(item);
   const isLaw = category === "legislation_primary" || category === "legislation_secondary";
+  const section = isLaw ? extractSection(item.fullCitation) : null;
   const storedCitation = isLaw ? normalizeLawCitationForStorage(item.fullCitation.trim()) : item.fullCitation.trim();
   const storedSourceName = isLaw ? extractLawName(storedCitation).slice(0, 100) : item.rawInput.substring(0, 100);
   const year = extractYear(storedCitation) ?? extractYear(item.fullCitation) ?? null;
@@ -167,6 +168,7 @@ function buildStorageShape(item: EnsureVerifiedSourceInput) {
     year,
     pubSource: pubInfo.pubSource,
     initialPage: pubInfo.page,
+    section,
   };
 }
 
