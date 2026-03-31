@@ -133,6 +133,30 @@ const Admin = () => {
     void fetchData();
   };
 
+  const editVerified = async (
+    source: VerifiedSourceRow,
+    updates: { source_name: string; full_citation: string; verification_status: string }
+  ) => {
+    const searchText = `${updates.source_name} ${updates.full_citation}`.toLowerCase();
+    const { error } = await supabase
+      .from("verified_sources")
+      .update({
+        source_name: updates.source_name,
+        full_citation: updates.full_citation,
+        verification_status: updates.verification_status,
+        search_text: searchText,
+      })
+      .eq("id", source.id);
+
+    if (error) {
+      toast.error("שגיאה בעדכון מקור");
+      return;
+    }
+
+    toast.success("מקור עודכן בהצלחה!");
+    void fetchData();
+  };
+
   const removeVerified = async (source: VerifiedSourceRow) => {
     const [{ error: deleteError }, { error: historyError }] = await Promise.all([
       supabase.from("verified_sources").delete().eq("id", source.id),
@@ -357,24 +381,28 @@ const Admin = () => {
                   category="caselaw"
                   sources={verifiedByCategory.caselaw}
                   onRemove={removeVerified}
+                  onEdit={editVerified}
                 />
                 <VerifiedSourcesTable
                   title={`📜 ${getVerifiedCategoryLabel("legislation_primary")}`}
                   category="legislation_primary"
                   sources={verifiedByCategory.legislation_primary}
                   onRemove={removeVerified}
+                  onEdit={editVerified}
                 />
                 <VerifiedSourcesTable
                   title={`📋 ${getVerifiedCategoryLabel("legislation_secondary")}`}
                   category="legislation_secondary"
                   sources={verifiedByCategory.legislation_secondary}
                   onRemove={removeVerified}
+                  onEdit={editVerified}
                 />
                 <VerifiedSourcesTable
                   title={`📖 ${getVerifiedCategoryLabel("literature")}`}
                   category="literature"
                   sources={verifiedByCategory.literature}
                   onRemove={removeVerified}
+                  onEdit={editVerified}
                 />
               </div>
             )}
