@@ -39,9 +39,17 @@ interface UserProfile {
 const LEGISLATION_PATTERNS = /^(חוק|פקודת|פקודה|תקנות|צו|כללי|הוראות|נוהל|תקנון|חוק[\s-]יסוד)/;
 const CASELAW_PATTERNS = /^(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)/;
 const SECONDARY_LEGISLATION = /^(תקנות|צו|כללי|הוראות|נוהל|תקנון)/;
+const SECTION_TO_LAW = /^סעיף\s+[\dא-ת()./\\–-]+\s+ל/;
+
+const LEGISLATION_SOURCE_TYPES = ["חוק יסוד", "חקיקה ראשית", "חקיקה משנית", "חקיקה"];
+const CASELAW_SOURCE_TYPES = ["פסיקה", "פסיקה (מאגר)", "פסיקה (פד\"י)"];
 
 function classifySource(text: string): "caselaw" | "legislation_primary" | "legislation_secondary" | "literature" {
-  const trimmed = text.trim();
+  let trimmed = text.trim();
+  // Strip "סעיף X ל" prefix to reveal the law name
+  if (SECTION_TO_LAW.test(trimmed)) {
+    trimmed = trimmed.replace(SECTION_TO_LAW, "").trim();
+  }
   if (CASELAW_PATTERNS.test(trimmed)) return "caselaw";
   if (LEGISLATION_PATTERNS.test(trimmed)) {
     return SECONDARY_LEGISLATION.test(trimmed) ? "legislation_secondary" : "legislation_primary";
@@ -50,7 +58,15 @@ function classifySource(text: string): "caselaw" | "legislation_primary" | "legi
 }
 
 function classifyCitationRecord(cit: CitationRecord): "caselaw" | "legislation_primary" | "legislation_secondary" | "literature" {
-  // Check both raw_input and formatted_output
+  // First check source_type from DB
+  const st = (cit.source_type || "").trim();
+  if (CASELAW_SOURCE_TYPES.some((p) => st.includes(p))) return "caselaw";
+  if (LEGISLATION_SOURCE_TYPES.some((p) => st.includes(p))) {
+    // Distinguish primary vs secondary from raw_input
+    const fromInput = classifySource(cit.raw_input);
+    return fromInput.startsWith("legislation") ? fromInput : "legislation_primary";
+  }
+  // Fallback to text-based classification
   const fromInput = classifySource(cit.raw_input);
   if (fromInput !== "literature") return fromInput;
   return classifySource(cit.formatted_output);
