@@ -12,6 +12,7 @@ interface SourceClassificationInput {
 interface EnsureVerifiedSourceInput extends SourceClassificationInput {
   verifiedBy?: string | null;
   autoVerified?: boolean;
+  yearPreferences?: { hasHebrewYear: boolean; hasGregorianYear: boolean };
 }
 
 interface VerifySourceResult {
