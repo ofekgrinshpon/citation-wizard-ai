@@ -279,7 +279,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
     (rawInput: string, fullCitation: string, from: "footnote" | "manual"): boolean => {
       let added = false;
       setEntries((prev) => {
-        if (isDuplicate(fullCitation, prev)) return prev;
+        if (isDuplicate(fullCitation, prev)) return rebuildBibliographyEntries(prev);
         const info = classifyCitation(fullCitation);
         const entry: BibliographyEntry = {
           id: crypto.randomUUID(),
@@ -290,7 +290,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
           ...info,
         };
         added = true;
-        return [...prev, entry];
+        return rebuildBibliographyEntries([...prev, entry]);
       });
       return added;
     },
@@ -315,7 +315,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
           });
           count++;
         }
-        return next;
+        return rebuildBibliographyEntries(next);
       });
       return count;
     },
