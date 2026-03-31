@@ -108,6 +108,11 @@ function extractCaseNumber(text: string) {
   return text.match(CASE_NUMBER_PATTERN)?.[1] ?? null;
 }
 
+function extractSection(text: string): string | null {
+  const match = normalizeWhitespace(text).match(SECTION_EXTRACT);
+  return match ? match[1].trim() : null;
+}
+
 function extractLawName(text: string) {
   const withoutSection = normalizeWhitespace(text).replace(SECTION_TO_LAW, "").trim();
   return withoutSection.split(",")[0]?.trim() ?? withoutSection;
