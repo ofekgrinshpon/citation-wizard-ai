@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import AddVerifiedSourceDialog from "@/components/admin/AddVerifiedSourceDialog";
 import AdminHeader from "@/components/admin/AdminHeader";
 import StatCard from "@/components/admin/StatCard";
 import SourceCategoryView from "@/components/admin/SourceCategoryView";
@@ -44,6 +46,7 @@ const Admin = () => {
   const [loadingData, setLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState<MainTab>("analytics");
   const [sourceSubTab, setSourceSubTab] = useState<SourceSubTab>("caselaw");
+  const [showAddDialog, setShowAddDialog] = useState(false);
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
@@ -376,6 +379,15 @@ const Admin = () => {
 
             {sourceSubTab === "verified" && (
               <div className="space-y-8">
+                <div className="flex justify-end">
+                  <Button onClick={() => setShowAddDialog(true)}>➕ הוסף מקור חדש</Button>
+                </div>
+                <AddVerifiedSourceDialog
+                  open={showAddDialog}
+                  onOpenChange={setShowAddDialog}
+                  onAdded={() => fetchData()}
+                  userId={user?.id}
+                />
                 <VerifiedSourcesTable
                   title={`⚖️ ${getVerifiedCategoryLabel("caselaw")}`}
                   category="caselaw"
