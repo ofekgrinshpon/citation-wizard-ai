@@ -83,6 +83,34 @@ export function BatchFootnoteBuilder({ isGuest, guestLimit }: BatchProps) {
     });
   }, []);
 
+  // Drag and drop
+  const dragItem = useRef<number | null>(null);
+  const dragOverItem = useRef<number | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+
+  const handleDragStart = useCallback((index: number) => {
+    dragItem.current = index;
+    setDragIndex(index);
+  }, []);
+
+  const handleDragEnter = useCallback((index: number) => {
+    dragOverItem.current = index;
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
+    if (dragItem.current !== null && dragOverItem.current !== null && dragItem.current !== dragOverItem.current) {
+      setCells((prev) => {
+        const reordered = [...prev];
+        const [removed] = reordered.splice(dragItem.current!, 1);
+        reordered.splice(dragOverItem.current!, 0, removed);
+        return reordered.map((c, i) => ({ ...c, id: i + 1 }));
+      });
+    }
+    dragItem.current = null;
+    dragOverItem.current = null;
+    setDragIndex(null);
+  }, []);
+
   const processAllCells = async () => {
     if (isGuest && guestLimit?.isLocked) return;
     const activeCells = cells.filter((c) => c.input.trim() && c.status !== "verified");
