@@ -219,27 +219,44 @@ const Index = () => {
       supabase.from("citation_history").insert(citationPayload).then(() => {});
 
       // Only verify if we have a real, complete citation (not a fragment, not missing data)
-      const isVerified = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+      const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
 
-      if (isVerified && !isFragment) {
-        ensureVerifiedSources([
-          {
-            rawInput: fullRawInput,
-            fullCitation: extractedCitation,
-            sourceType: citationPayload.source_type,
-            verifiedBy: user?.id,
-            autoVerified: true,
-          },
-        ]).then((result) => {
-          if (result.invalid > 0) {
-            toast.warning("המקור נשמר לבדיקת אדמין – אימות AI זיהה חוסר עקביות");
-          } else if (result.skipped > 0) {
-            // Already exists, no action needed
-          } else if (result.added > 0) {
-            toast.success("המקור אומת ונשמר בהצלחה");
+      if (isVerifiedClean && !isFragment) {
+        const isLegislation = isLegislationInput(fullRawInput) || isLegislationInput(extractedCitation);
+
+        // Check if this law already has year preferences stored
+        if (isLegislation) {
+          const lawName = extractLawNameFromInput(fullRawInput) || extractLawNameFromInput(extractedCitation);
+          const { data: existingSources } = await supabase
+            .from("verified_sources")
+            .select("metadata")
+            .ilike("source_name", `%${lawName.substring(0, 20)}%`)
+            .limit(1);
+
+          const existingMeta = existingSources?.[0]?.metadata as Record<string, unknown> | null;
+          if (existingMeta && ("hasHebrewYear" in existingMeta)) {
+            // Use stored preferences — apply them silently
+            const prefs: YearPreferences = {
+              hasHebrewYear: existingMeta.hasHebrewYear as boolean ?? true,
+              hasGregorianYear: existingMeta.hasGregorianYear as boolean ?? true,
+            };
+            const adjustedCitation = applyYearPreferences(extractedCitation, prefs);
+            await saveVerifiedSource(fullRawInput, adjustedCitation, citationPayload.source_type, prefs);
+          } else {
+            // New law — show the Publication Integrity Card
+            setPendingVerification({
+              lawName,
+              rawInput: fullRawInput,
+              fullCitation: extractedCitation,
+              sourceType: citationPayload.source_type,
+              reply,
+            });
           }
-        }).catch(() => {});
+        } else {
+          // Non-legislation: verify directly
+          await saveVerifiedSource(fullRawInput, extractedCitation, citationPayload.source_type);
+        }
       }
     } catch {
       setMessages([
