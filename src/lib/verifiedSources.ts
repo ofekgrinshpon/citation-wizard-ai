@@ -25,6 +25,7 @@ const LEGISLATION_PATTERNS = /^(חוק|פקודת|פקודה|תקנות|צו|כ�
 const CASELAW_PATTERNS = /^(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)/;
 const SECONDARY_LEGISLATION = /^(תקנות|צו|כללי|הוראות|נוהל|תקנון)/;
 const SECTION_TO_LAW = /^סעיף\s+[\dא-ת()./\\–-]+\s+ל/;
+const SECTION_EXTRACT = /^סעיף\s+([\dא-ת()./\\–-]+)\s+ל/;
 const CASE_NUMBER_PATTERN = /(?:בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+([0-9]+\/[0-9]+)/;
 
 const LEGISLATION_SOURCE_TYPES = ["חוק יסוד", "חקיקה ראשית", "חקיקה משנית", "חקיקת משנה", "חקיקה", "basic_law", "primary_legislation", "secondary_legislation", "bill", "legislation_primary", "legislation_secondary"];
@@ -107,6 +108,11 @@ function extractCaseNumber(text: string) {
   return text.match(CASE_NUMBER_PATTERN)?.[1] ?? null;
 }
 
+function extractSection(text: string): string | null {
+  const match = normalizeWhitespace(text).match(SECTION_EXTRACT);
+  return match ? match[1].trim() : null;
+}
+
 function extractLawName(text: string) {
   const withoutSection = normalizeWhitespace(text).replace(SECTION_TO_LAW, "").trim();
   return withoutSection.split(",")[0]?.trim() ?? withoutSection;
@@ -132,7 +138,12 @@ function extractPublicationInfo(text: string): { pubSource: string | null; page:
  * a location *within* the law, not the law's starting page.
  */
 function normalizeLawCitationForStorage(fullCitation: string) {
-  let normalized = normalizeWhitespace(fullCitation).replace(SECTION_TO_LAW, "").trim();
+  const raw = normalizeWhitespace(fullCitation);
+  // Extract section prefix if present, to re-attach later
+  const sectionMatch = raw.match(SECTION_EXTRACT);
+  const sectionPrefix = sectionMatch ? `סעיף ${sectionMatch[1]} ל` : "";
+
+  let normalized = raw.replace(SECTION_TO_LAW, "").trim();
 
   // Strip pinpoint page references (בעמ', עמ', at p.) — these are specific references
   normalized = normalized.replace(/,\s*(?:בעמ['״׳]?|עמ['״׳]?|עמוד|at|p\.|pp\.)\s*[\d\-–]+\.?$/iu, "");
@@ -143,12 +154,14 @@ function normalizeLawCitationForStorage(fullCitation: string) {
     normalized = `${normalized}.`;
   }
 
-  return normalized;
+  // Re-attach section prefix for section-specific entries
+  return sectionPrefix ? `${sectionPrefix}${normalized}` : normalized;
 }
 
 function buildStorageShape(item: EnsureVerifiedSourceInput) {
   const category = classifyVerifiedSource(item);
   const isLaw = category === "legislation_primary" || category === "legislation_secondary";
+  const section = isLaw ? extractSection(item.fullCitation) : null;
   const storedCitation = isLaw ? normalizeLawCitationForStorage(item.fullCitation.trim()) : item.fullCitation.trim();
   const storedSourceName = isLaw ? extractLawName(storedCitation).slice(0, 100) : item.rawInput.substring(0, 100);
   const year = extractYear(storedCitation) ?? extractYear(item.fullCitation) ?? null;
@@ -161,6 +174,7 @@ function buildStorageShape(item: EnsureVerifiedSourceInput) {
     year,
     pubSource: pubInfo.pubSource,
     initialPage: pubInfo.page,
+    section,
   };
 }
 
@@ -196,14 +210,11 @@ export async function ensureVerifiedSources(
         .filter((item) => item.fullCitation.trim() && !isShortCitation(item.fullCitation))
         .map((item) => {
           const storage = buildStorageShape(item);
-          const pubInfo = storage.category === "legislation_primary" || storage.category === "legislation_secondary"
-            ? extractPublicationInfo(storage.storedCitation)
-            : { pubSource: null, page: null };
           const dedupeKey = normalizeVerifiedSourceKey(
             storage.category === "caselaw"
               ? extractCaseNumber(storage.storedCitation) || `${storage.storedSourceName}|${storage.storedCitation}`
               : storage.category === "legislation_primary" || storage.category === "legislation_secondary"
-                ? `${extractLawName(storage.storedCitation)}|${storage.year ?? ""}|${pubInfo.pubSource ?? ""}|${pubInfo.page ?? ""}`
+                ? `${extractLawName(storage.storedCitation)}|${storage.year ?? ""}|${storage.pubSource ?? ""}|${storage.initialPage ?? ""}|${storage.section ?? "null"}`
                 : `${storage.storedSourceName}|${storage.year ?? storage.storedCitation}`
           );
           return [dedupeKey, item] as const;
