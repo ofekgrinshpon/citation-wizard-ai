@@ -73,15 +73,20 @@ export function VerifiedAutocomplete({
         return;
       }
 
-      const searchTerm = value.toLowerCase();
+      // Split into individual words for better partial matching
+      // e.g. "חוק יסוד הכנסת" needs to match "חוק-יסוד: הכנסת"
+      const words = value.toLowerCase().split(/[\s\-:]+/).filter(w => w.length >= 2);
+      const orConditions = words.flatMap(w => [
+        `search_text.ilike.%${w}%`,
+        `source_name.ilike.%${w}%`,
+        `full_citation.ilike.%${w}%`,
+      ]).join(',');
 
       const { data } = await supabase
         .from("verified_sources")
         .select("id, source_name, full_citation, source_type, year, volume, page, metadata")
         .eq("verification_status", "verified")
-        .or(
-          `search_text.ilike.%${searchTerm}%,source_name.ilike.%${searchTerm}%,full_citation.ilike.%${searchTerm}%`
-        )
+        .or(orConditions)
         .limit(8);
 
       if (data && data.length > 0) {
