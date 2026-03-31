@@ -47,6 +47,15 @@ export function BatchFootnoteBuilder({ isGuest, guestLimit }: BatchProps) {
   const [summary, setSummary] = useState<string | null>(() => localStorage.getItem(SUMMARY_STORAGE_KEY));
   const bibliography = useBibliography();
 
+  useEffect(() => {
+    localStorage.setItem(CELLS_STORAGE_KEY, JSON.stringify(cells));
+  }, [cells]);
+
+  useEffect(() => {
+    if (summary) localStorage.setItem(SUMMARY_STORAGE_KEY, summary);
+    else localStorage.removeItem(SUMMARY_STORAGE_KEY);
+  }, [summary]);
+
   const updateCellInput = useCallback((id: number, value: string) => {
     setCells((prev) =>
       prev.map((c) =>
