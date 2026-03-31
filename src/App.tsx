@@ -30,7 +30,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Landing />} />
-            <Route path="/app" element={<Index />} />
+            <Route path="/app" element={<BibliographyProvider><Index /></BibliographyProvider>} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/auth-redirect" element={<AuthRedirect />} />
             <Route path="/reset-password" element={<ResetPassword />} />
