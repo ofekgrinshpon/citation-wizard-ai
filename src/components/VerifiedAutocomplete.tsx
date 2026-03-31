@@ -67,7 +67,7 @@ export function VerifiedAutocomplete({
 
   useEffect(() => {
     const search = async () => {
-      if (value.length < 3) {
+      if (value.length < 2) {
         setSuggestions([]);
         setIsOpen(false);
         return;
