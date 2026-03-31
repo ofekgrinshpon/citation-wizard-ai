@@ -223,6 +223,7 @@ interface BibliographyContextValue {
   entries: BibliographyEntry[];
   addEntry: (rawInput: string, fullCitation: string, from: "footnote" | "manual") => boolean;
   addEntries: (items: { rawInput: string; fullCitation: string }[], from?: "footnote" | "manual") => number;
+  syncFootnoteEntries: (items: { rawInput: string; fullCitation: string }[]) => number;
   removeEntry: (id: string) => void;
   clearAll: () => void;
   sortedEntries: BibliographyEntry[];
@@ -322,6 +323,26 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
     [isDuplicate]
   );
 
+  const syncFootnoteEntries = useCallback((items: { rawInput: string; fullCitation: string }[]) => {
+    const normalizedItems = rebuildBibliographyEntries(
+      items.map((item) => ({
+        id: crypto.randomUUID(),
+        rawInput: item.rawInput,
+        fullCitation: item.fullCitation,
+        addedFrom: "footnote" as const,
+        addedAt: Date.now(),
+        ...classifyCitation(item.fullCitation),
+      }))
+    );
+
+    setEntries((prev) => {
+      const manualEntries = prev.filter((entry) => entry.addedFrom !== "footnote");
+      return rebuildBibliographyEntries([...manualEntries, ...normalizedItems]);
+    });
+
+    return normalizedItems.length;
+  }, []);
+
   const removeEntry = useCallback((id: string) => {
     setEntries((prev) => prev.filter((e) => e.id !== id));
   }, []);
@@ -332,7 +353,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
 
   return (
     <BibliographyContext.Provider
-      value={{ entries, addEntry, addEntries, removeEntry, clearAll, sortedEntries }}
+      value={{ entries, addEntry, addEntries, syncFootnoteEntries, removeEntry, clearAll, sortedEntries }}
     >
       {children}
     </BibliographyContext.Provider>

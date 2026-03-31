@@ -227,7 +227,7 @@ ${sourcesText}
         }
       }
 
-      // Sync bibliography from all current outputs, not only newly generated ones
+      // Recalculate bibliography from all current outputs instead of pushing into it
       const bibItems = nextCells
         .filter((cell) => {
           if (!cell.output) return false;
@@ -241,14 +241,12 @@ ${sourcesText}
           fullCitation: extractCitationOnly(cell.output!),
         }));
 
-      if (bibItems.length > 0) {
-        const addedCount = bibliography.addEntries(bibItems, "footnote");
-        if (addedCount > 0) {
-          toast(`${addedCount} מקורות נוספו ומוינו אוטומטית בביבליוגרפיה`, {
-            duration: 3000,
-            icon: "📚",
-          });
-        }
+      const syncedCount = bibliography.syncFootnoteEntries(bibItems);
+      if (syncedCount > 0) {
+        toast(`${syncedCount} מקורות חושבו מחדש בביבליוגרפיה`, {
+          duration: 3000,
+          icon: "📚",
+        });
       }
 
       const total = validCount + warningCount;
