@@ -168,6 +168,10 @@ function loadBibEntries(): BibliographyEntry[] {
 export function BibliographyProvider({ children }: { children: React.ReactNode }) {
   const [entries, setEntries] = useState<BibliographyEntry[]>(loadBibEntries);
 
+  useEffect(() => {
+    localStorage.setItem(BIB_STORAGE_KEY, JSON.stringify(entries));
+  }, [entries]);
+
   const isDuplicate = useCallback(
     (fullCitation: string, current: BibliographyEntry[]) => {
       const normalized = fullCitation.replace(/\s+/g, " ").trim().toLowerCase();
