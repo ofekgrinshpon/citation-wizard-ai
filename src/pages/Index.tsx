@@ -462,6 +462,15 @@ const Index = () => {
                 <MessageBubble key={i} msg={msg} />
               ))}
               {loading && <LoadingDots />}
+              {pendingVerification && (
+                <div className="my-4">
+                  <PublicationIntegrityCard
+                    lawName={pendingVerification.lawName}
+                    onConfirm={handleIntegrityConfirm}
+                    onCancel={handleIntegrityCancel}
+                  />
+                </div>
+              )}
               <div ref={chatEndRef} />
             </div>
           </>
