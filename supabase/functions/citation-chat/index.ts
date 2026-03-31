@@ -209,12 +209,18 @@ serve(async (req) => {
       try {
         const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
         const searchTerm = userInput.replace(/\[סיווג אוטומטי:.*?\]\n?/, "").trim().toLowerCase();
+        // Split into words for better matching (e.g. "חוק יסוד הכנסת" → matches "חוק-יסוד: הכנסת")
+        const words = searchTerm.split(/[\s\-:]+/).filter((w: string) => w.length >= 2);
+        const orConditions = words.flatMap((w: string) => [
+          `search_text.ilike.%${w}%`,
+          `source_name.ilike.%${w}%`,
+        ]).join(',');
 
         const { data: verified } = await sb
           .from("verified_sources")
           .select("source_name, full_citation, source_type, year, metadata")
           .eq("verification_status", "verified")
-          .or(`search_text.ilike.%${searchTerm}%,source_name.ilike.%${searchTerm}%`)
+          .or(orConditions)
           .limit(3);
 
         if (verified && verified.length > 0) {
