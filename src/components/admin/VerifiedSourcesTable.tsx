@@ -65,6 +65,14 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove }: VerifiedSo
                         {source.auto_verified ? "אוטומטי" : "ידני"}
                       </Badge>
                     </td>
+                    <td className="px-4 py-3">
+                      <Badge variant={
+                        source.verification_status === "verified" ? "default" :
+                        source.verification_status === "invalid" ? "destructive" : "secondary"
+                      }>
+                        {getVerificationStatusLabel(source.verification_status || "pending")}
+                      </Badge>
+                    </td>
                     <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">
                       {new Date(source.verified_at).toLocaleDateString("he-IL")}
                     </td>
