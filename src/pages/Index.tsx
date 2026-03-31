@@ -4,6 +4,7 @@ import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
 import { ManualEntry } from "@/components/ManualEntry";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
+import { BibliographyGenerator } from "@/components/BibliographyGenerator";
 import { GuestLimitModal } from "@/components/GuestLimitModal";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -26,7 +27,7 @@ interface Message {
   content: string;
 }
 
-type AppMode = "freetext" | "manual" | "batch";
+type AppMode = "freetext" | "manual" | "batch" | "bibliography";
 
 const Index = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -134,6 +135,7 @@ const Index = () => {
     { id: "freetext", label: "טקסט חופשי", icon: "✨" },
     { id: "manual", label: "הזנה ידנית", icon: "📝" },
     { id: "batch", label: "הערות שוליים", icon: "📑" },
+    { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
   ];
 
   return (
@@ -200,6 +202,8 @@ const Index = () => {
           <ManualEntry />
         ) : mode === "batch" ? (
           <BatchFootnoteBuilder isGuest={isGuestMode} guestLimit={guestLimit} />
+        ) : mode === "bibliography" ? (
+          <BibliographyGenerator />
         ) : (
           <>
             {/* Welcome screen */}
