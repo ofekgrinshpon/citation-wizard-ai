@@ -220,7 +220,14 @@ ${sourcesText}
 
       // Sync all valid citations to bibliography in one batch
       const bibItems = updatedCells
-        .filter((cell) => cell.output && !/שם,|שם\b|לעיל ה"ש/.test(cell.output))
+        .filter((cell) => {
+          if (!cell.output) return false;
+          const cleaned = extractCitationOnly(cell.output);
+          // Exclude short-form citations from bibliography
+          if (/^שם[.,\s]|^שם$/.test(cleaned.trim())) return false;
+          if (/לעיל ה"ש/.test(cleaned)) return false;
+          return true;
+        })
         .map((cell) => ({
           rawInput: cell.input,
           fullCitation: extractCitationOnly(cell.output!),
