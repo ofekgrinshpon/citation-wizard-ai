@@ -27,7 +27,7 @@ interface Message {
   content: string;
 }
 
-type AppMode = "freetext" | "manual" | "batch";
+type AppMode = "freetext" | "manual" | "batch" | "bibliography";
 
 const Index = () => {
   const [messages, setMessages] = useState<Message[]>([]);
