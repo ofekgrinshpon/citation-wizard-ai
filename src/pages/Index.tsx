@@ -12,6 +12,7 @@ import { useGuestLimit } from "@/hooks/useGuestLimit";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
+import { ensureVerifiedSources } from "@/lib/verifiedSources";
 
 const CITATION_EXAMPLES = [
   "פסד עא 248/86 עזבון חננשוילי נ רותם חברה לביטוח",
@@ -109,11 +110,26 @@ const Index = () => {
       // Increment guest counter
       if (isGuestMode) guestLimit.increment();
       // Save to citation history
-      supabase.from("citation_history").insert({
+      const citationPayload = {
         raw_input: rawText,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
-      }).then(() => {});
+      };
+
+      supabase.from("citation_history").insert(citationPayload).then(() => {});
+
+      const isVerified = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+      if (isVerified) {
+        ensureVerifiedSources([
+          {
+            rawInput: rawText,
+            fullCitation: reply,
+            sourceType: citationPayload.source_type,
+            verifiedBy: user?.id,
+            autoVerified: true,
+          },
+        ]).catch(() => {});
+      }
     } catch {
       setMessages([
         ...newMessages,
