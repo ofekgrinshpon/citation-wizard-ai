@@ -67,10 +67,6 @@ const CITATION_EXAMPLES = [
   "Atkins v. Virginia על עונש מוות",
 ];
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
 
 type AppMode = "freetext" | "manual" | "batch" | "bibliography";
 
