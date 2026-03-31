@@ -45,11 +45,13 @@ export function PublicationIntegrityCard({ lawName, onConfirm, onCancel }: Publi
           <label htmlFor="gregorian-year" className="text-sm font-medium cursor-pointer flex-1">
             האם מופיעה שנה לועזית בפרסום המקורי?
           </label>
-          <Switch
-            id="gregorian-year"
-            checked={hasGregorianYear}
-            onCheckedChange={setHasGregorianYear}
-          />
+          <div dir="ltr">
+            <Switch
+              id="gregorian-year"
+              checked={hasGregorianYear}
+              onCheckedChange={setHasGregorianYear}
+            />
+          </div>
         </div>
         <p className="text-xs text-muted-foreground leading-relaxed border-r-2 border-primary/30 pr-3">
           בהתאם לכללים 2.4 ו-2.5, יש לציין שנה רק אם היא מופיעה במקור. אם אינך בטוח, בדוק ברשומות.

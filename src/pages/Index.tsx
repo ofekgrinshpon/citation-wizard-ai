@@ -211,9 +211,24 @@ const Index = () => {
 
   const handleIntegrityConfirm = async (prefs: YearPreferences) => {
     if (!pendingVerification) return;
-    const { rawInput, fullCitation, sourceType } = pendingVerification;
+    const { rawInput, fullCitation, sourceType, reply } = pendingVerification;
     const adjustedCitation = applyYearPreferences(fullCitation, prefs);
     await saveVerifiedSource(rawInput, adjustedCitation, sourceType, prefs);
+
+    // Update the displayed message to reflect the adjusted citation
+    const adjustedReply = applyYearPreferences(reply, prefs);
+    setMessages((prev) => {
+      const updated = [...prev];
+      // Find the last assistant message and update it
+      for (let i = updated.length - 1; i >= 0; i--) {
+        if (updated[i].role === "assistant") {
+          updated[i] = { ...updated[i], content: adjustedReply };
+          break;
+        }
+      }
+      return updated;
+    });
+
     setPendingVerification(null);
   };
 
