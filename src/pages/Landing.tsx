@@ -15,13 +15,12 @@ const Landing = () => {
   const navigate = useNavigate();
 
   // If already logged in, redirect
-  useEffect(() => {
-    if (!authLoading && user) {
-      navigate(isAdmin ? "/admin" : "/app", { replace: true });
-    }
-  }, [user, isAdmin, authLoading, navigate]);
+  if (!authLoading && user) {
+    navigate(isAdmin ? "/admin" : "/app", { replace: true });
+    return <div className="flex items-center justify-center h-screen"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>;
+  }
 
-  if (authLoading || user) return null;
+  if (authLoading) return <div className="flex items-center justify-center h-screen"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
