@@ -33,6 +33,7 @@ export function BatchFootnoteBuilder({ isGuest, guestLimit }: BatchProps) {
   );
   const [globalLoading, setGlobalLoading] = useState(false);
   const [summary, setSummary] = useState<string | null>(null);
+  const bibliography = useBibliography();
 
   const updateCellInput = useCallback((id: number, value: string) => {
     setCells((prev) =>
