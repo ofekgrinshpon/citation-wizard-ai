@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { FormattedCitation } from "./FormattedCitation";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
+import { useBibliography } from "@/hooks/useBibliography";
 import { toast } from "sonner";
 
 interface FootnoteCell {
