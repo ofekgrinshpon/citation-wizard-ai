@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -14,13 +13,17 @@ const Landing = () => {
   const { signIn, signUp, user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  // If already logged in, redirect
-  if (!authLoading && user) {
-    navigate(isAdmin ? "/admin" : "/app", { replace: true });
-    return <div className="flex items-center justify-center h-screen"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>;
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
-  if (authLoading) return <div className="flex items-center justify-center h-screen"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>;
+  if (user) {
+    return <Navigate to={isAdmin ? "/admin" : "/app"} replace />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +33,6 @@ const Landing = () => {
         const { error } = await signIn(email, password);
         if (error) throw error;
         toast.success("התחברת בהצלחה!");
-        // Routing handled by auth state change + useEffect in App
       } else {
         const { error } = await signUp(email, password, fullName);
         if (error) throw error;
@@ -49,7 +51,6 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col" style={{ direction: "rtl" }}>
-      {/* Hero Section */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
         <div className="text-center mb-10 max-w-lg">
           <div className="text-5xl mb-4">⚖️</div>
@@ -69,7 +70,6 @@ const Landing = () => {
         </div>
 
         <div className="w-full max-w-md space-y-4">
-          {/* Login/Register Card */}
           <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
             <h2 className="text-foreground text-base font-bold mb-4 text-center">
               {isLogin ? "התחברות" : "הרשמה"}
@@ -153,12 +153,9 @@ const Landing = () => {
             )}
           </div>
 
-          {/* Guest Card */}
           <div className="bg-card border border-border rounded-xl p-5 shadow-sm text-center">
             <p className="text-foreground text-sm font-semibold mb-1">רוצה לנסות לפני?</p>
-            <p className="text-muted-foreground text-xs mb-3">
-              2 אזכורים חינם ללא הרשמה
-            </p>
+            <p className="text-muted-foreground text-xs mb-3">2 אזכורים חינם ללא הרשמה</p>
             <button
               onClick={handleGuest}
               className="w-full py-2.5 rounded-xl font-semibold text-sm border-2 border-primary/30 text-primary hover:bg-primary/5 transition-all"
