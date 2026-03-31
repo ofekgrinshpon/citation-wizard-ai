@@ -7,6 +7,42 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const normalizeSearchableText = (text: string) =>
+  text
+    .toLowerCase()
+    .replace(/\[סיווג אוטומטי:.*?\]\n?/g, "")
+    .replace(/["״׳'.,()[\]{}:;!?/\\|–—-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const tokenizeSearchTerms = (text: string) =>
+  Array.from(new Set(normalizeSearchableText(text).split(" ").filter((word) => word.length >= 2)));
+
+const scoreVerifiedMatch = (
+  query: string,
+  candidate: { source_name: string; full_citation: string },
+) => {
+  const normalizedQuery = normalizeSearchableText(query);
+  const normalizedSourceName = normalizeSearchableText(candidate.source_name);
+  const normalizedCandidate = normalizeSearchableText(`${candidate.source_name} ${candidate.full_citation}`);
+  const words = tokenizeSearchTerms(query);
+
+  const matchesExactName = normalizedSourceName === normalizedQuery;
+  const matchesAllWords = words.length > 1 && words.every((word) => normalizedCandidate.includes(word));
+  const matchesSingleWord = words.length === 1 && normalizedQuery.length >= 4 && normalizedSourceName.includes(normalizedQuery);
+
+  if (!matchesExactName && !matchesAllWords && !matchesSingleWord) return -1;
+
+  let score = 0;
+  if (matchesExactName) score += 200;
+  if (matchesAllWords) score += 100;
+  if (matchesSingleWord) score += 40;
+  if (normalizedCandidate.includes(normalizedQuery)) score += 20;
+  score += words.reduce((total, word) => total + (normalizedCandidate.includes(word) ? 10 : 0), 0);
+
+  return score;
+};
+
 const SYSTEM_PROMPT = `אתה "העוזר המשפטי האוטומטי". תמיד התייחס לעצמך בשם זה בלבד. אתה מומחה לכללי האזכור האחיד בכתיבה המשפטית בישראל (מהדורת 2021). תפקידך הוא לקבל טקסט משפטי גולמי, לזהות בתוכו הפניות למקורות, ולהמיר אותן להערות שוליים תקניות ומדויקות לפי הכללים.
 
 ═══════════════════════════════════════════════
@@ -126,26 +162,46 @@ serve(async (req) => {
     if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2) {
       try {
         const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-        const searchTerm = userInput.replace(/\[סיווג אוטומטי:.*?\]\n?/, "").trim().toLowerCase();
-        // Split into words for better matching (e.g. "חוק יסוד הכנסת" → matches "חוק-יסוד: הכנסת")
-        const words = searchTerm.split(/[\s\-:]+/).filter((w: string) => w.length >= 2);
-        const orConditions = words.flatMap((w: string) => [
-          `search_text.ilike.%${w}%`,
-          `source_name.ilike.%${w}%`,
-        ]).join(',');
+        const searchTerm = userInput.replace(/\[סיווג אוטומטי:.*?\]\n?/, "").trim();
+        const words = tokenizeSearchTerms(searchTerm);
 
-        const { data: verified } = await sb
-          .from("verified_sources")
-          .select("source_name, full_citation, source_type, year, metadata")
-          .eq("verification_status", "verified")
-          .or(orConditions)
-          .limit(3);
+        if (words.length > 0) {
+          const orConditions = words
+            .flatMap((word) => [
+              `search_text.ilike.%${word}%`,
+              `source_name.ilike.%${word}%`,
+              `full_citation.ilike.%${word}%`,
+            ])
+            .join(",");
 
-        if (verified && verified.length > 0) {
-          const sources = verified.map((v: Record<string, unknown>) =>
-            `[מקור מאומת] ${v.source_name}: ${v.full_citation}`
-          ).join("\n");
-          verifiedHint = `\n\n══ מקורות מאומתים שנמצאו במאגר ══\n${sources}\n══ השתמש בציטוטים המאומתים הללו כבסיס לתשובתך. אל תשנה אותם אלא אם הם סותרים את כללי האזכור. ══`;
+          const { data: verified } = await sb
+            .from("verified_sources")
+            .select("source_name, full_citation, source_type, year, metadata")
+            .eq("verification_status", "verified")
+            .or(orConditions)
+            .limit(12);
+
+          if (verified && verified.length > 0) {
+            const rankedMatches = verified
+              .map((candidate) => ({
+                candidate,
+                score: scoreVerifiedMatch(searchTerm, candidate as { source_name: string; full_citation: string }),
+              }))
+              .filter((item) => item.score >= 0)
+              .sort((a, b) => b.score - a.score);
+
+            const bestMatch = rankedMatches[0]?.candidate as { full_citation: string } | undefined;
+            if (bestMatch) {
+              return new Response(JSON.stringify({ content: bestMatch.full_citation }), {
+                headers: { ...corsHeaders, "Content-Type": "application/json" },
+              });
+            }
+
+            const sources = verified.map((v: Record<string, unknown>) =>
+              `[מקור מאומת] ${v.source_name}: ${v.full_citation}`
+            ).join("\n");
+            verifiedHint = `\n\n══ מקורות מאומתים שנמצאו במאגר ══\n${sources}\n══ השתמש בציטוטים המאומתים הללו כבסיס לתשובתך. אל תשנה אותם אלא אם הם סותרים את כללי האזכור. ══`;
+          }
         }
       } catch (e) {
         console.error("Verified source lookup failed:", e);

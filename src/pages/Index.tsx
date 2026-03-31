@@ -13,7 +13,7 @@ import { useGuestLimit } from "@/hooks/useGuestLimit";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
-import { ensureVerifiedSources } from "@/lib/verifiedSources";
+import { ensureVerifiedSources, findVerifiedSourceMatch } from "@/lib/verifiedSources";
 
 interface Message {
   role: "user" | "assistant";
@@ -266,6 +266,23 @@ const Index = () => {
     setLoading(true);
 
     try {
+      const fullRawInput = buildFullRawInput(rawText, messages);
+      const verifiedMatch = await findVerifiedSourceMatch(normalized);
+
+      if (verifiedMatch) {
+        const verifiedReply = verifiedMatch.full_citation;
+        setMessages([...newMessages, { role: "assistant", content: verifiedReply }]);
+        if (isGuestMode) guestLimit.increment();
+
+        supabase.from("citation_history").insert({
+          raw_input: fullRawInput,
+          formatted_output: verifiedReply,
+          source_type: sourceType !== "unknown" ? sourceLabel : null,
+          is_verified: true,
+        }).then(() => {});
+        return;
+      }
+
       const reply = await callAPI(prompt, messages);
       setMessages([...newMessages, { role: "assistant", content: reply }]);
       // Increment guest counter
@@ -273,11 +290,6 @@ const Index = () => {
 
       // Extract the actual citation from the AI response (skip step explanations, rules, warnings)
       const extractedCitation = extractCitationFromResponse(reply);
-
-      // Determine the full context for rawInput:
-      // If current input looks like a fragment/correction (number, short text),
-      // combine with previous conversation context to get the full source name
-      const fullRawInput = buildFullRawInput(rawText, messages);
 
       // Save to citation history — use the full reply for display, but the extracted citation for verification
       const citationPayload = {
