@@ -152,12 +152,15 @@ function buildStorageShape(item: EnsureVerifiedSourceInput) {
   const storedCitation = isLaw ? normalizeLawCitationForStorage(item.fullCitation.trim()) : item.fullCitation.trim();
   const storedSourceName = isLaw ? extractLawName(storedCitation).slice(0, 100) : item.rawInput.substring(0, 100);
   const year = extractYear(storedCitation) ?? extractYear(item.fullCitation) ?? null;
+  const pubInfo = isLaw ? extractPublicationInfo(storedCitation) : { pubSource: null, page: null };
 
   return {
     category,
     storedCitation,
     storedSourceName,
     year,
+    pubSource: pubInfo.pubSource,
+    initialPage: pubInfo.page,
   };
 }
 
