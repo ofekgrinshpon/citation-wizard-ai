@@ -86,7 +86,9 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove, onEdit }: Ve
                     <td className="px-4 py-3">
                       <Badge variant="outline">{getVerifiedCategoryLabel(category)}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-foreground max-w-[320px] truncate">{source.full_citation}</td>
+                    <td className="px-4 py-3 text-foreground max-w-[320px] truncate">
+                      <RenderCitation text={source.full_citation} />
+                    </td>
                     <td className="px-4 py-3">
                       <Badge variant="secondary">{source.usage_count} פעמים</Badge>
                     </td>
