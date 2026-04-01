@@ -118,6 +118,7 @@ export type SourceType =
   | 'bill'                  // הצעת חוק
   | 'book'                  // ספר
   | 'article'               // מאמר
+  | 'article_in_book'       // מאמר שפורסם בספר
   | 'internet'              // מרשתת
   | 'religious'             // מקור דתי
   | 'foreign'               // לועזי
