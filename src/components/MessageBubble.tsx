@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FormattedCitation } from "./FormattedCitation";
 import { toast } from "sonner";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
@@ -20,21 +21,52 @@ interface MessageBubbleProps {
   msg: Message;
   detectedType?: SourceType;
   onChangeSourceType?: (newType: SourceType) => void;
+  onEdit?: (newContent: string) => void;
 }
 
-export function MessageBubble({ msg, detectedType, onChangeSourceType }: MessageBubbleProps) {
+export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit }: MessageBubbleProps) {
   const isUser = msg.role === "user";
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(msg.content);
+
+  const handleStartEdit = () => {
+    setEditValue(msg.content);
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditValue(msg.content);
+  };
+
+  const handleSubmitEdit = () => {
+    const trimmed = editValue.trim();
+    if (!trimmed) return;
+    if (trimmed === msg.content.trim()) {
+      setIsEditing(false);
+      return;
+    }
+    onEdit?.(trimmed);
+    setIsEditing(false);
+  };
+
+  const handleEditKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmitEdit();
+    }
+    if (e.key === "Escape") {
+      handleCancelEdit();
+    }
+  };
 
   const copyContent = () => {
-    // Copy only the citation + missing-info notices, strip everything else
     const citationOnly = msg.content
       .split("\n")
       .filter((line) => {
         const trimmed = line.trim();
         if (!trimmed) return false;
-        // Keep missing-info warnings
         if (/\[חסר:/.test(trimmed) || /המערכת זיהתה/.test(trimmed) || /הערה:/.test(trimmed)) return true;
-        // Remove meta/rule/intro lines
         if (/^📐|^כלל:|^Based on Rule|^Rule \d|^מכיוון ש/.test(trimmed)) return false;
         if (/העוזר המשפטי/.test(trimmed)) return false;
         if (/^שלב \d|^זיהוי סוג|^נרמול|^יישום/.test(trimmed)) return false;
@@ -67,9 +99,45 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType }: Message
 
       <div className="max-w-[85%] min-w-0 relative">
         {isUser ? (
-          <div className="chat-bubble-user px-4 py-3 text-primary-foreground text-sm leading-relaxed">
-            {msg.content}
-          </div>
+          isEditing ? (
+            <div className="chat-bubble-user px-3 py-2 text-sm">
+              <textarea
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onKeyDown={handleEditKeyDown}
+                className="w-full bg-transparent border-none outline-none text-primary-foreground text-sm leading-relaxed resize-none min-h-[40px]"
+                rows={Math.max(1, editValue.split("\n").length)}
+                autoFocus
+              />
+              <div className="flex gap-2 mt-2 justify-end" style={{ direction: "rtl" }}>
+                <button
+                  onClick={handleSubmitEdit}
+                  className="px-3 py-1.5 text-xs rounded-lg bg-background text-primary font-medium hover:bg-background/90 transition-colors"
+                >
+                  עדכן אזכור ⇧
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  className="px-3 py-1.5 text-xs rounded-lg bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20 transition-colors"
+                >
+                  ביטול
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="chat-bubble-user px-4 py-3 text-primary-foreground text-sm leading-relaxed relative">
+              {msg.content}
+              {onEdit && (
+                <button
+                  onClick={handleStartEdit}
+                  className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-primary-foreground/10 hover:bg-primary-foreground/20 text-primary-foreground rounded-md px-2 py-1"
+                  title="ערוך"
+                >
+                  ✏️
+                </button>
+              )}
+            </div>
+          )
         ) : (
           <div className="chat-bubble-assistant px-4 py-3 text-foreground text-sm leading-relaxed">
             {detectedType && onChangeSourceType && (
@@ -81,7 +149,6 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType }: Message
             {msg.content.split("\n").map((line, i) => {
               if (!line.trim()) return <br key={i} />;
 
-              // Rule reference line – make it a tooltip-rich badge
               if (isRuleLine(line)) {
                 const ruleNum = extractRuleNumber(line);
                 const explanation = ruleNum ? RULE_EXPLANATIONS[ruleNum] : null;
@@ -115,7 +182,6 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType }: Message
                 );
               }
 
-              // Line with missing data marker
               if (hasMissingMarker(line)) {
                 return (
                   <div key={i} className="my-0.5">
@@ -135,7 +201,6 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType }: Message
               );
             })}
 
-            {/* Copy button */}
             <button
               onClick={copyContent}
               className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
