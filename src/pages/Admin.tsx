@@ -392,6 +392,10 @@ const Admin = () => {
               <SourceCategoryView title="📖 ספרות ומאמרים (Literature)" sources={literatureCitations} onToggleVerification={toggleVerification} />
             )}
 
+            {sourceSubTab === "other" && (
+              <SourceCategoryView title="📁 אחר (Other)" sources={otherCitations} onToggleVerification={toggleVerification} />
+            )}
+
             {sourceSubTab === "verified" && (
               <div className="space-y-8">
                 <div className="flex justify-end">
