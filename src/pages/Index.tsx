@@ -353,26 +353,40 @@ const Index = () => {
       const isPinpoint = PINPOINT_RE.test(rawText);
       const verifiedMatch = await findVerifiedSourceMatch(normalized);
 
-      // Short-circuit only for non-pinpoint queries — pinpoints need AI merging
+      // Short-circuit only for direct/canonical verified matches — aliases go through suggestion UI
       if (verifiedMatch && !isPinpoint) {
-        const verifiedReply = verifiedMatch.full_citation;
-        setMessages([...newMessages, { role: "assistant", content: verifiedReply }]);
-        if (isGuestMode) guestLimit.increment();
+        const isDirectVerifiedMatch = normalizeAbbreviations(verifiedMatch.source_name).includes(normalized) ||
+          verifiedMatch.full_citation.includes(rawText);
 
-        supabase.from("citation_history").insert({
-          raw_input: fullRawInput,
-          formatted_output: verifiedReply,
-          source_type: verifiedMatch.source_type || (sourceType !== "unknown" ? sourceLabel : null),
-          is_verified: true,
-        }).then(() => {});
-        return;
+        if (isDirectVerifiedMatch) {
+          const verifiedCategory = getVerifiedCategoryLabel(
+            classifyVerifiedSource({
+              rawInput: verifiedMatch.source_name,
+              fullCitation: verifiedMatch.full_citation,
+              sourceType: verifiedMatch.source_type,
+            })
+          );
+          const verifiedReply = verifiedMatch.full_citation;
+          setMessages([
+            ...newMessages,
+            { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
+          ]);
+          if (isGuestMode) guestLimit.increment();
+
+          supabase.from("citation_history").insert({
+            raw_input: fullRawInput,
+            formatted_output: verifiedReply,
+            source_type: verifiedMatch.source_type || (sourceType !== "unknown" ? sourceLabel : null),
+            is_verified: true,
+          }).then(() => {});
+          return;
+        }
       }
 
       // Check for similar (fuzzy) verified source match
       if (!isPinpoint) {
-        const similarMatch = await findSimilarVerifiedSource(normalized);
+        const similarMatch = verifiedMatch ?? await findSimilarVerifiedSource(normalized);
         if (similarMatch) {
-          // Show suggestion card and pause — user will decide
           setPendingSuggestion({
             suggestion: similarMatch,
             rawInput: rawText,
