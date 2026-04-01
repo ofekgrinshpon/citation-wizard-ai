@@ -298,6 +298,9 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     components: [
       { field: "citation", rule: "—", description: "אזכור מלא בהתאם לכללים הרלוונטיים", required: true, format: "plain" },
     ],
+    notes: [
+      'דברי כנסת (כלל 8): ד"כ {תאריך לועזי מלא}, {עמוד}. דוגמה: ד"כ 13.6.1950, 1743.',
+    ],
   },
 };
 

@@ -131,7 +131,7 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   primary_legislation: ['lawName', 'hebrewYear', 'gregorianYear', 'collection', 'firstPage'],
   basic_law: ['lawName', 'hebrewYear', 'gregorianYear', 'collection'],
   secondary_legislation: ['regulationName', 'hebrewYear', 'gregorianYear', 'collection', 'firstPage'],
-  bill: ['billName', 'billNumber', 'hebrewYear', 'gregorianYear', 'firstPage'],
+  bill: ['billName', 'billNumber', 'hebrewYear', 'gregorianYear'],
   book: ['author', 'bookTitle', 'year'],
   article: ['author', 'articleTitle', 'journalName', 'volume', 'firstPage', 'year'],
   article_in_book: ['author', 'articleTitle', 'bookTitle', 'firstPage', 'year'],
@@ -227,6 +227,7 @@ export function detectSourceType(text: string): SourceType {
   if (/חוק[- ]יסוד/.test(hebrewText)) return 'basic_law';
   if (/תקנות/.test(hebrewText)) return 'secondary_legislation';
   if (/הצעת חוק/.test(hebrewText)) return 'bill';
+  if (/ד["״]כ|דברי הכנסת|דברי כנסת/.test(hebrewText)) return 'unknown';
   if (/חוק |פקודת /.test(hebrewText)) return 'primary_legislation';
   
   // Check for literature
