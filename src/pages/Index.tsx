@@ -237,6 +237,7 @@ const Index = () => {
   const handleSend = async () => {
     const rawText = input.trim();
     if (!rawText || loading) return;
+    const PINPOINT_RE = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
     if (isGuestMode && guestLimit.isLocked) return;
 
     // Step 1: Normalize abbreviations
