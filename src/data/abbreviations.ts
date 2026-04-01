@@ -131,7 +131,7 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   primary_legislation: ['lawName', 'hebrewYear', 'gregorianYear', 'collection', 'firstPage'],
   basic_law: ['lawName', 'hebrewYear', 'gregorianYear', 'collection'],
   secondary_legislation: ['regulationName', 'hebrewYear', 'gregorianYear', 'collection', 'firstPage'],
-  bill: ['billName', 'billNumber', 'hebrewYear', 'gregorianYear', 'firstPage'],
+  bill: ['billName', 'billNumber', 'hebrewYear', 'gregorianYear'],
   book: ['author', 'bookTitle', 'year'],
   article: ['author', 'articleTitle', 'journalName', 'volume', 'firstPage', 'year'],
   article_in_book: ['author', 'articleTitle', 'bookTitle', 'firstPage', 'year'],
