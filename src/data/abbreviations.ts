@@ -266,6 +266,7 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   bill: 'כלל 8 – הצעות חוק',
   book: 'כלל 23 – ספרים',
   article: 'כלל 25 – מאמרים',
+  article_in_book: 'כלל 26 – מאמר שפורסם בספר',
   internet: 'כלל 30 – מקורות מהמרשתת',
   religious: 'כלל 32 – מקורות דתיים',
   foreign: 'כלל 36 – מקורות לועזיים (Bluebook)',
