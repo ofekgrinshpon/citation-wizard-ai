@@ -411,8 +411,13 @@ serve(async (req) => {
     }
 
     const enhancedMessages = messages.map((m: { role: string; content: string }, i: number) => {
-      if (i === messages.length - 1 && m.role === "user" && verifiedHint) {
-        return { ...m, content: m.content + verifiedHint };
+      if (i === messages.length - 1 && m.role === "user") {
+        // Inject engine hint + verified source hints into the last user message
+        const engineHint = extractEngineHint(m.content);
+        const allHints = engineHint + (verifiedHint || "");
+        if (allHints) {
+          return { ...m, content: m.content + allHints };
+        }
       }
       return m;
     });
