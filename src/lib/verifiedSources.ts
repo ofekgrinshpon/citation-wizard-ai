@@ -90,9 +90,12 @@ function scoreVerifiedSourceMatch(query: string, source: Pick<VerifiedSourceMatc
 
 export async function findVerifiedSourceMatch(query: string): Promise<VerifiedSourceMatch | null> {
   const terms = tokenizeSearchTerms(query);
-  if (terms.length === 0) return null;
+  // Also extract case number patterns (e.g., "1514/01", "1514")
+  const caseNumberParts = (query.match(/\d+(?:\/\d+)?/g) || []).filter(p => p.length >= 2);
+  const allTerms = Array.from(new Set([...terms, ...caseNumberParts]));
+  if (allTerms.length === 0) return null;
 
-  const orConditions = terms
+  const orConditions = allTerms
     .flatMap((term) => [
       `search_text.ilike.%${term}%`,
       `source_name.ilike.%${term}%`,
