@@ -72,6 +72,12 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType }: Message
           </div>
         ) : (
           <div className="chat-bubble-assistant px-4 py-3 text-foreground text-sm leading-relaxed">
+            {detectedType && detectedType !== "unknown" && onChangeSourceType && (
+              <SourceTypeConfirmation
+                detectedType={detectedType}
+                onChangeType={onChangeSourceType}
+              />
+            )}
             {msg.content.split("\n").map((line, i) => {
               if (!line.trim()) return <br key={i} />;
 
