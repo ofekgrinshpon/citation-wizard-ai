@@ -291,7 +291,10 @@ const Index = () => {
       }
 
       const reply = await callAPI(prompt, messages);
+      const assistantIndex = newMessages.length; // index of the new assistant message
       setMessages([...newMessages, { role: "assistant", content: reply }]);
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+      setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       // Increment guest counter
       if (isGuestMode) guestLimit.increment();
 
