@@ -267,9 +267,12 @@ const Index = () => {
 
     try {
       const fullRawInput = buildFullRawInput(rawText, messages);
+      const PINPOINT_REGEX = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
+      const isPinpoint = PINPOINT_REGEX.test(rawText);
       const verifiedMatch = await findVerifiedSourceMatch(normalized);
 
-      if (verifiedMatch) {
+      // Short-circuit only for non-pinpoint queries — pinpoints need AI merging
+      if (verifiedMatch && !isPinpoint) {
         const verifiedReply = verifiedMatch.full_citation;
         setMessages([...newMessages, { role: "assistant", content: verifiedReply }]);
         if (isGuestMode) guestLimit.increment();
