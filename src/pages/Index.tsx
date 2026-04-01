@@ -603,6 +603,54 @@ const Index = () => {
                   key={i}
                   msg={msg}
                   detectedType={msg.role === "assistant" ? messageSourceTypes[i] : undefined}
+                  onEdit={
+                    msg.role === "user"
+                      ? async (newContent: string) => {
+                          // Replace user message and remove the following assistant message, then re-generate
+                          const updatedMessages = [...messages];
+                          updatedMessages[i] = { role: "user", content: newContent };
+                          // Remove the assistant response that follows (if exists)
+                          if (i + 1 < updatedMessages.length && updatedMessages[i + 1].role === "assistant") {
+                            updatedMessages.splice(i + 1, 1);
+                          }
+                          setMessages(updatedMessages);
+                          setLoading(true);
+                          try {
+                            const normalized = normalizeAbbreviations(newContent);
+                            const sourceType = detectSourceType(normalized);
+                            const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
+                            let prompt = normalized;
+                            if (sourceType !== "unknown") {
+                              prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${normalized}`;
+                            }
+
+                            // Check verified sources first
+                            const verifiedMatch = await findVerifiedSourceMatch(normalized);
+                            if (verifiedMatch) {
+                              const verifiedReply = verifiedMatch.full_citation;
+                              setMessages([...updatedMessages, { role: "assistant", content: verifiedReply }]);
+                            } else {
+                              const reply = await callAPI(prompt, updatedMessages.slice(0, i));
+                              const assistantIndex = updatedMessages.length;
+                              setMessages([...updatedMessages, { role: "assistant", content: reply }]);
+                              setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+                              setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: newContent }));
+
+                              const extractedCitation = extractCitationFromResponse(reply);
+                              const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+                              const isFragment = !extractedCitation || extractedCitation.length < 10;
+                              if (isVerifiedClean && !isFragment) {
+                                await saveVerifiedSource(newContent, extractedCitation, sourceType !== "unknown" ? sourceLabel : null);
+                              }
+                            }
+                          } catch {
+                            setMessages([...updatedMessages, { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." }]);
+                          } finally {
+                            setLoading(false);
+                          }
+                        }
+                      : undefined
+                  }
                   onChangeSourceType={
                     msg.role === "assistant"
                       ? async (newType: SourceType) => {
