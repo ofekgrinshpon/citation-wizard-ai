@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type VerifiedSourceCategory = "caselaw" | "legislation_primary" | "legislation_secondary" | "literature";
+export type VerifiedSourceCategory = "caselaw" | "legislation_primary" | "legislation_secondary" | "literature" | "other";
 export type VerificationStatus = "verified" | "pending" | "invalid";
 
 interface SourceClassificationInput {
