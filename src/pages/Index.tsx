@@ -247,6 +247,57 @@ const Index = () => {
     setPendingVerification(null);
   };
 
+  const handleSuggestionAccept = () => {
+    if (!pendingSuggestion) return;
+    const { suggestion, rawInput, sourceLabel } = pendingSuggestion;
+    const verifiedReply = suggestion.full_citation;
+    setMessages((prev) => [...prev, { role: "assistant", content: `✓ מאומת\n${verifiedReply}` }]);
+    if (isGuestMode) guestLimit.increment();
+    supabase.from("citation_history").insert({
+      raw_input: rawInput,
+      formatted_output: verifiedReply,
+      source_type: sourceLabel || null,
+      is_verified: true,
+    }).then(() => {});
+    setPendingSuggestion(null);
+  };
+
+  const handleSuggestionReject = async () => {
+    if (!pendingSuggestion) return;
+    const { rawInput, normalized, sourceType, sourceLabel } = pendingSuggestion;
+    setPendingSuggestion(null);
+    setLoading(true);
+    try {
+      let prompt = normalized;
+      if (sourceType !== "unknown") {
+        prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${normalized}`;
+      }
+      const reply = await callAPI(prompt, messages);
+      const assistantIndex = messages.length;
+      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
+      setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
+      if (isGuestMode) guestLimit.increment();
+
+      const extractedCitation = extractCitationFromResponse(reply);
+      supabase.from("citation_history").insert({
+        raw_input: rawInput,
+        formatted_output: reply,
+        source_type: sourceType !== "unknown" ? sourceLabel : null,
+      }).then(() => {});
+
+      const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+      const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
+      if (isVerifiedClean && !isFragment) {
+        await saveVerifiedSource(rawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null);
+      }
+    } catch {
+      setMessages((prev) => [...prev, { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSend = async () => {
     const rawText = input.trim();
     if (!rawText || loading) return;
