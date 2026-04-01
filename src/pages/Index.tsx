@@ -661,8 +661,10 @@ const Index = () => {
                             // Check verified sources first
                             const verifiedMatch = await findVerifiedSourceMatch(normalized);
                             if (verifiedMatch) {
-                              const isDirectVerifiedMatch = normalizeAbbreviations(verifiedMatch.source_name).includes(normalized) ||
-                                verifiedMatch.full_citation.includes(newContent);
+                              const normalizedSourceName = normalizeAbbreviations(verifiedMatch.source_name).toLowerCase();
+                              const isDirectVerifiedMatch = normalizedSourceName.includes(normalized) ||
+                                normalizedSourceName === normalized ||
+                                normalized.includes(normalizedSourceName);
 
                               if (isDirectVerifiedMatch) {
                                 const verifiedCategory = getVerifiedCategoryLabel(
