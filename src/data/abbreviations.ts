@@ -122,6 +122,7 @@ export type SourceType =
   | 'internet'              // מרשתת
   | 'religious'             // מקור דתי
   | 'foreign'               // לועזי
+  | 'other'                 // אחר (דברי כנסת וכו')
   | 'unknown';
 
 // Required fields per source type (for gap analysis)
