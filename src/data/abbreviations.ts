@@ -259,6 +259,7 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   internet: 'מקור מרשתת',
   religious: 'מקור דתי',
   foreign: 'מקור לועזי',
+  other: 'אחר',
   unknown: 'לא מזוהה',
 };
 
