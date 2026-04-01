@@ -126,7 +126,6 @@ function extractEngineHint(userContent: string): string {
   if (userContent.includes("מנוע אזכור")) return "";
   return `\n[מנוע אזכור – ${engine.rule}] תבנית: ${engine.template} | רכיבי חובה: ${engine.required.join(", ")}`;
 }
-const PINPOINT_REGEX = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
 
 function hasExplicitPublicationReference(text: string) {
   return PUBLICATION_REF_REGEX.test(text);
