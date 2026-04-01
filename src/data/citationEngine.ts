@@ -111,15 +111,14 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
   bill: {
     primaryRule: "8",
     ruleTitle: "כלל 8 – הצעות חוק",
-    template: 'הצעת חוק {billName}, {hebrewYear}-{gregorianYear}, ה"ח [הכנסת/הממשלה/ריק] {billNumber}, {firstPage}.',
-    example: 'הצעת חוק העונשין (תיקון מס\' 137), התשע"ח-2018, ה"ח הממשלה 1234, 56.',
+    template: 'הצעת חוק {billName}, {hebrewYear}-{gregorianYear}, ה"ח [הכנסת/הממשלה/ריק] {billNumber}.',
+    example: 'הצעת חוק העונשין (תיקון מס\' 137), התשע"ח-2018, ה"ח הממשלה 1234.',
     components: [
       { field: "billName", rule: "8.1", description: "שם הצעת החוק", required: true, format: "plain" },
       { field: "hebrewYear", rule: "8.2", description: "שנה עברית", required: true, format: "plain" },
       { field: "gregorianYear", rule: "8.2", description: "שנה לועזית", required: true, format: "plain" },
       { field: "billType", rule: "8.3", description: 'סוג הצעת חוק (הכנסת / הממשלה / ריק) – אופציונלי', required: false, format: "plain" },
       { field: "billNumber", rule: "8.3", description: 'מספר חוברת ה"ח', required: true, format: "plain" },
-      { field: "firstPage", rule: "8.3", description: "עמוד ראשון", required: true, format: "plain" },
     ],
   },
 
@@ -127,14 +126,13 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
   basic_law_bill: {
     primaryRule: "8",
     ruleTitle: "כלל 8 – הצעות חוק יסוד",
-    template: 'הצעת חוק-יסוד: {billName}, {hebrewYear}, ה"ח [הכנסת/הממשלה/ריק] {billNumber}, {firstPage}.',
-    example: 'הצעת חוק-יסוד: כבוד האדם וחירותו (תיקון), התשפ"ג, ה"ח הכנסת 456, 78.',
+    template: 'הצעת חוק-יסוד: {billName}, {hebrewYear}, ה"ח [הכנסת/הממשלה/ריק] {billNumber}.',
+    example: 'הצעת חוק-יסוד: כבוד האדם וחירותו (תיקון), התשפ"ג, ה"ח הכנסת 456.',
     components: [
       { field: "billName", rule: "8.1", description: "שם הצעת חוק היסוד", required: true, format: "plain" },
       { field: "hebrewYear", rule: "8.2", description: "שנה עברית בלבד (ללא שנה לועזית)", required: true, format: "plain" },
       { field: "billType", rule: "8.3", description: 'סוג הצעת חוק (הכנסת / הממשלה / ריק) – אופציונלי', required: false, format: "plain" },
       { field: "billNumber", rule: "8.3", description: 'מספר חוברת ה"ח', required: true, format: "plain" },
-      { field: "firstPage", rule: "8.3", description: "עמוד ראשון", required: true, format: "plain" },
     ],
   },
 
