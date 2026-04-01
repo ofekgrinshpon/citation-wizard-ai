@@ -283,6 +283,7 @@ const Admin = () => {
     { id: "caselaw" as const, label: "⚖️ פסיקה", count: caselawCitations.length },
     { id: "legislation" as const, label: "📜 חקיקה", count: legislationCitations.length },
     { id: "literature" as const, label: "📖 ספרות ומאמרים", count: literatureCitations.length },
+    { id: "other" as const, label: "📁 אחר", count: otherCitations.length },
     { id: "verified" as const, label: "✅ מקורות מאומתים", count: verifiedSources.length },
   ];
 
