@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useGuestLimit } from "@/hooks/useGuestLimit";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
+import { validateAIResponse, buildEnginePromptHint, getEngineRuleReference, getMissingFieldsSummary } from "@/lib/citationValidation";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
 import {
@@ -288,7 +289,8 @@ const Index = () => {
     try {
       let prompt = normalized;
       if (sourceType !== "unknown") {
-        prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${normalized}`;
+        const engineHint = buildEnginePromptHint(sourceType as SourceType);
+        prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
       }
       const reply = await callAPI(prompt, messages);
       const assistantIndex = messages.length;
@@ -329,10 +331,11 @@ const Index = () => {
     const sourceType = detectSourceType(normalized);
     const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
 
-    // Build enhanced prompt with classification info
+    // Build enhanced prompt with classification info + engine hints
     let prompt = normalized;
     if (sourceType !== "unknown") {
-      prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${normalized}`;
+      const engineHint = buildEnginePromptHint(sourceType);
+      prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
     }
 
     // Show normalization info to user if text was changed
@@ -402,8 +405,19 @@ const Index = () => {
       }
 
       const reply = await callAPI(prompt, messages);
-      const assistantIndex = newMessages.length; // index of the new assistant message
-      setMessages([...newMessages, { role: "assistant", content: reply }]);
+      const assistantIndex = newMessages.length;
+
+      // Post-response validation using the citation engine
+      const validation = validateAIResponse(reply, sourceType as SourceType);
+      let finalReply = reply;
+      if (!validation.isComplete && validation.missingFields.length > 0) {
+        const summary = getMissingFieldsSummary(sourceType as SourceType, validation.missingFields);
+        if (summary && !/⚠️/.test(reply)) {
+          finalReply = `${reply}\n⚠️ ${summary}`;
+        }
+      }
+
+      setMessages([...newMessages, { role: "assistant", content: finalReply }]);
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       // Increment guest counter
@@ -655,7 +669,8 @@ const Index = () => {
                             const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
                             let prompt = normalized;
                             if (sourceType !== "unknown") {
-                              prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${normalized}`;
+                              const engineHint = buildEnginePromptHint(sourceType);
+                              prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
                             }
 
                             // Check verified sources first
@@ -719,7 +734,8 @@ const Index = () => {
                           setLoading(true);
                           try {
                             const newLabel = SOURCE_TYPE_LABELS[newType];
-                            const reclassifiedPrompt = `[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n[כלל רלוונטי: ${RULE_REFERENCES[newType]}]\n${rawInput}`;
+                            const engineHint = buildEnginePromptHint(newType);
+                            const reclassifiedPrompt = `[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n${engineHint}[כלל רלוונטי: ${getEngineRuleReference(newType)}]\n${rawInput}`;
                             const reply = await callAPI(reclassifiedPrompt, messages.slice(0, i));
                             setMessages((prev) => {
                               const updated = [...prev];
