@@ -117,6 +117,12 @@ const CITATION_ENGINE_TEMPLATES: Record<string, { rule: string; template: string
     template: "לפי כללי ה-Bluebook (מהדורה 21).",
     required: ["אזכור מלא לפי Bluebook"],
   },
+  "דברי כנסת": {
+    rule: "כלל 8",
+    template: 'ד"כ {תאריך לועזי מלא}, {עמוד}.',
+    required: ["תאריך לועזי מלא (יום.חודש.שנה)", "עמוד"],
+    notes: 'דברי הכנסת מסומנים בקיצור ד"כ. התאריך הוא תאריך לועזי מלא של הדיון. דוגמה: ד"כ 13.6.1950, 1743.',
+  },
 };
 
 /**
