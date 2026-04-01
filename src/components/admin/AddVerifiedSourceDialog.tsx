@@ -90,15 +90,28 @@ const AddVerifiedSourceDialog = ({ open, onOpenChange, onAdded, userId }: AddVer
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground">שם מקור</label>
-            <Input
-              value={sourceName}
-              onChange={(e) => setSourceName(e.target.value)}
-              placeholder='לדוגמה: חוק-יסוד: הכנסת'
-              style={{ direction: "rtl" }}
-            />
-          </div>
+          {isCaselaw ? (
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">מספר הליך (חובה)</label>
+              <Input
+                value={caseNumber}
+                onChange={(e) => setCaseNumber(e.target.value)}
+                placeholder='לדוגמה: ע"פ 1514/01'
+                style={{ direction: "rtl" }}
+              />
+              <p className="text-[11px] text-muted-foreground">מספר ההליך ישמש כמזהה הייחודי של פסק הדין</p>
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">שם מקור</label>
+              <Input
+                value={sourceName}
+                onChange={(e) => setSourceName(e.target.value)}
+                placeholder='לדוגמה: חוק-יסוד: הכנסת'
+                style={{ direction: "rtl" }}
+              />
+            </div>
+          )}
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-foreground">ציטוט מלא</label>
             <textarea
