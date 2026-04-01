@@ -198,6 +198,7 @@ function classifySourceText(text: string): VerifiedSourceCategory {
 export function classifyVerifiedSource(input: SourceClassificationInput): VerifiedSourceCategory {
   const sourceType = (input.sourceType || "").trim();
 
+  if (sourceType === "other") return "other";
   if (CASELAW_SOURCE_TYPES.some((candidate) => sourceType.includes(candidate))) return "caselaw";
   if (LEGISLATION_SOURCE_TYPES.some((candidate) => sourceType.includes(candidate))) {
     const rawCategory = classifySourceText(input.rawInput);
