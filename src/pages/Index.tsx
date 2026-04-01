@@ -264,6 +264,87 @@ const Index = () => {
     setPendingVerification(null);
   };
 
+  const handleBillTypeSelect = async (billType: BillPublicationType) => {
+    if (!pendingBillType) return;
+    const { rawText, normalized, sourceType, sourceLabel, newMessages } = pendingBillType;
+    setPendingBillType(null);
+    setLoading(true);
+
+    try {
+      // Inject bill type info into the prompt
+      const billTypeHint = billType
+        ? `\n[סוג חוברת: ה"ח ${billType}]`
+        : '\n[סוג חוברת: ה"ח (ללא ציון סוג)]';
+
+      let prompt = normalized;
+      if (sourceType !== "unknown") {
+        const engineHint = buildEnginePromptHint(sourceType);
+        prompt = `[סיווג אוטומטי: ${sourceLabel}]${billTypeHint}\n${engineHint}${normalized}`;
+      }
+
+      const fullRawInput = buildFullRawInput(rawText, messages);
+      const verifiedMatch = await findVerifiedSourceMatch(normalized);
+
+      if (verifiedMatch) {
+        const normalizedSourceName = normalizeAbbreviations(verifiedMatch.source_name).toLowerCase();
+        const isDirectVerifiedMatch = normalizedSourceName.includes(normalized) ||
+          normalizedSourceName === normalized ||
+          normalized.includes(normalizedSourceName);
+
+        if (isDirectVerifiedMatch) {
+          const verifiedCategory = getVerifiedCategoryLabel(
+            classifyVerifiedSource({
+              rawInput: verifiedMatch.source_name,
+              fullCitation: verifiedMatch.full_citation,
+              sourceType: verifiedMatch.source_type,
+            })
+          );
+          setMessages([
+            ...newMessages,
+            { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedMatch.full_citation}` },
+          ]);
+          if (isGuestMode) guestLimit.increment();
+          setLoading(false);
+          return;
+        }
+      }
+
+      const reply = await callAPI(prompt, messages);
+      const assistantIndex = newMessages.length;
+
+      const validation = validateAIResponse(reply, sourceType as SourceType);
+      let finalReply = reply;
+      if (!validation.isComplete && validation.missingFields.length > 0) {
+        const summary = getMissingFieldsSummary(sourceType as SourceType, validation.missingFields);
+        if (summary && !/⚠️/.test(reply)) {
+          finalReply = `${reply}\n⚠️ ${summary}`;
+        }
+      }
+
+      setMessages([...newMessages, { role: "assistant", content: finalReply }]);
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+      setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
+      if (isGuestMode) guestLimit.increment();
+
+      const extractedCitation = extractCitationFromResponse(reply);
+      supabase.from("citation_history").insert({
+        raw_input: fullRawInput,
+        formatted_output: reply,
+        source_type: sourceType !== "unknown" ? sourceLabel : null,
+      }).then(() => {});
+
+      const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+      const isFragment = !extractedCitation || extractedCitation.length < 10;
+      if (isVerifiedClean && !isFragment) {
+        await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null);
+      }
+    } catch {
+      setMessages([...newMessages, { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSuggestionAccept = () => {
     if (!pendingSuggestion) return;
     const { suggestion, rawInput } = pendingSuggestion;
