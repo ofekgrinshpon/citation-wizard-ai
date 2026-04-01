@@ -20,21 +20,30 @@ const SOURCE_TYPES = [
   { value: "literature", label: "📖 ספרות ומאמרים" },
 ];
 
+const CASE_NUMBER_REGEX = /(?:בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+\d+\/\d+/;
+
 const AddVerifiedSourceDialog = ({ open, onOpenChange, onAdded, userId }: AddVerifiedSourceDialogProps) => {
   const [sourceName, setSourceName] = useState("");
+  const [caseNumber, setCaseNumber] = useState("");
   const [fullCitation, setFullCitation] = useState("");
   const [sourceType, setSourceType] = useState("caselaw");
   const [year, setYear] = useState("");
   const [saving, setSaving] = useState(false);
 
+  const isCaselaw = sourceType === "caselaw";
+
   const handleSave = async () => {
-    if (!sourceName.trim() || !fullCitation.trim()) return;
+    if (isCaselaw && !caseNumber.trim()) return;
+    if (!isCaselaw && !sourceName.trim()) return;
+    if (!fullCitation.trim()) return;
     setSaving(true);
 
-    const searchText = `${sourceName} ${fullCitation}`.toLowerCase();
+    // For caselaw, the source_name is the case number
+    const effectiveSourceName = isCaselaw ? caseNumber.trim() : sourceName.trim();
+    const searchText = `${effectiveSourceName} ${fullCitation}`.toLowerCase();
 
     const { error } = await supabase.from("verified_sources").insert({
-      source_name: sourceName.trim(),
+      source_name: effectiveSourceName,
       full_citation: fullCitation.trim(),
       source_type: sourceType,
       search_text: searchText,
@@ -53,6 +62,7 @@ const AddVerifiedSourceDialog = ({ open, onOpenChange, onAdded, userId }: AddVer
 
     toast.success("מקור נוסף ואומת בהצלחה!");
     setSourceName("");
+    setCaseNumber("");
     setFullCitation("");
     setSourceType("caselaw");
     setYear("");
