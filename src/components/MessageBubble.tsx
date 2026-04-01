@@ -102,13 +102,16 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit }:
         {isUser ? (
           isEditing ? (
             <div className="chat-bubble-user px-3 py-2 text-sm">
-              <textarea
+              <VerifiedAutocomplete
                 value={editValue}
-                onChange={(e) => setEditValue(e.target.value)}
-                onKeyDown={handleEditKeyDown}
-                className="w-full bg-transparent border-none outline-none text-primary-foreground text-sm leading-relaxed resize-none min-h-[40px]"
-                rows={Math.max(1, editValue.split("\n").length)}
-                autoFocus
+                onChange={setEditValue}
+                onSelectCitation={(citation) => {
+                  setEditValue(citation);
+                }}
+                placeholder=""
+                disabled={false}
+                inputType="input"
+                className="w-full bg-transparent border-none outline-none text-primary-foreground text-sm leading-relaxed placeholder:text-primary-foreground/50"
               />
               <div className="flex gap-2 mt-2 justify-end" style={{ direction: "rtl" }}>
                 <button
@@ -126,12 +129,14 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit }:
               </div>
             </div>
           ) : (
-            <div className="chat-bubble-user px-4 py-3 text-primary-foreground text-sm leading-relaxed relative">
-              {msg.content}
+            <div className="flex items-start gap-2">
+              <div className="chat-bubble-user px-4 py-3 text-primary-foreground text-sm leading-relaxed flex-1">
+                {msg.content}
+              </div>
               {onEdit && (
                 <button
                   onClick={handleStartEdit}
-                  className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-primary-foreground/10 hover:bg-primary-foreground/20 text-primary-foreground rounded-md px-2 py-1"
+                  className="flex-shrink-0 mt-1 text-xs text-muted-foreground hover:text-foreground bg-muted hover:bg-muted/80 border border-border rounded-md px-2 py-1.5 transition-colors"
                   title="ערוך"
                 >
                   ✏️
