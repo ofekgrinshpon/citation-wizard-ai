@@ -256,14 +256,25 @@ const Index = () => {
 
   const handleSuggestionAccept = () => {
     if (!pendingSuggestion) return;
-    const { suggestion, rawInput, sourceLabel } = pendingSuggestion;
+    const { suggestion, rawInput } = pendingSuggestion;
     const verifiedReply = suggestion.full_citation;
-    setMessages((prev) => [...prev, { role: "assistant", content: `✓ מאומת\n${verifiedReply}` }]);
+    const verifiedCategory = getVerifiedCategoryLabel(
+      classifyVerifiedSource({
+        rawInput: suggestion.source_name,
+        fullCitation: suggestion.full_citation,
+        sourceType: suggestion.source_type,
+      })
+    );
+
+    setMessages((prev) => [
+      ...prev,
+      { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
+    ]);
     if (isGuestMode) guestLimit.increment();
     supabase.from("citation_history").insert({
       raw_input: rawInput,
       formatted_output: verifiedReply,
-      source_type: sourceLabel || null,
+      source_type: suggestion.source_type || null,
       is_verified: true,
     }).then(() => {});
     setPendingSuggestion(null);
