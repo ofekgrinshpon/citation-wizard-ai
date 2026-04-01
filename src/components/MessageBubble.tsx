@@ -16,7 +16,13 @@ function extractRuleNumber(line: string): string | null {
   return m ? m[1] : null;
 }
 
-export function MessageBubble({ msg }: { msg: Message }) {
+interface MessageBubbleProps {
+  msg: Message;
+  detectedType?: SourceType;
+  onChangeSourceType?: (newType: SourceType) => void;
+}
+
+export function MessageBubble({ msg, detectedType, onChangeSourceType }: MessageBubbleProps) {
   const isUser = msg.role === "user";
 
   const copyContent = () => {
