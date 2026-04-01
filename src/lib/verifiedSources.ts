@@ -92,7 +92,8 @@ export async function findVerifiedSourceMatch(query: string): Promise<VerifiedSo
   const terms = tokenizeSearchTerms(query);
   // Also extract case number patterns (e.g., "1514/01", "1514")
   const caseNumberParts = (query.match(/\d+(?:\/\d+)?/g) || []).filter(p => p.length >= 2);
-  const allTerms = Array.from(new Set([...terms, ...caseNumberParts]));
+  const allTerms = Array.from(new Set([...terms, ...caseNumberParts]))
+    .map(t => t.replace(/["״׳'\\,()]/g, '')).filter(t => t.length >= 2);
   if (allTerms.length === 0) return null;
 
   const orConditions = allTerms
