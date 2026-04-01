@@ -35,7 +35,7 @@ interface UserProfile {
 }
 
 type MainTab = "analytics" | "sources" | "users";
-type SourceSubTab = "caselaw" | "legislation" | "literature" | "verified";
+type SourceSubTab = "caselaw" | "legislation" | "literature" | "other" | "verified";
 
 const Admin = () => {
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
@@ -219,6 +219,19 @@ const Admin = () => {
     [citations]
   );
 
+  const otherCitations = useMemo(
+    () =>
+      citations.filter(
+        (citation) =>
+          classifyVerifiedSource({
+            rawInput: citation.raw_input,
+            fullCitation: citation.formatted_output,
+            sourceType: citation.source_type,
+          }) === "other"
+      ),
+    [citations]
+  );
+
   const verifiedByCategory = useMemo(() => {
     const grouped: Record<VerifiedSourceCategory, VerifiedSourceRow[]> = {
       caselaw: [],
@@ -270,6 +283,7 @@ const Admin = () => {
     { id: "caselaw" as const, label: "⚖️ פסיקה", count: caselawCitations.length },
     { id: "legislation" as const, label: "📜 חקיקה", count: legislationCitations.length },
     { id: "literature" as const, label: "📖 ספרות ומאמרים", count: literatureCitations.length },
+    { id: "other" as const, label: "📁 אחר", count: otherCitations.length },
     { id: "verified" as const, label: "✅ מקורות מאומתים", count: verifiedSources.length },
   ];
 
@@ -376,6 +390,10 @@ const Admin = () => {
 
             {sourceSubTab === "literature" && (
               <SourceCategoryView title="📖 ספרות ומאמרים (Literature)" sources={literatureCitations} onToggleVerification={toggleVerification} />
+            )}
+
+            {sourceSubTab === "other" && (
+              <SourceCategoryView title="📁 אחר (Other)" sources={otherCitations} onToggleVerification={toggleVerification} />
             )}
 
             {sourceSubTab === "verified" && (
