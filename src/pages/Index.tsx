@@ -150,6 +150,14 @@ const Index = () => {
     sourceType: SourceType;
     sourceLabel: string;
   } | null>(null);
+  // Pending bill type selection — when a bill is detected but user didn't specify הכנסת/הממשלה
+  const [pendingBillType, setPendingBillType] = useState<{
+    rawText: string;
+    normalized: string;
+    sourceType: SourceType;
+    sourceLabel: string;
+    newMessages: Message[];
+  } | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   
