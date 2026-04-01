@@ -43,7 +43,7 @@ const CASE_NUMBER_PATTERN = /(?:בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"
 
 const LEGISLATION_SOURCE_TYPES = ["חוק יסוד", "חקיקה ראשית", "חקיקה משנית", "חקיקת משנה", "חקיקה", "basic_law", "primary_legislation", "secondary_legislation", "bill", "legislation_primary", "legislation_secondary"];
 const CASELAW_SOURCE_TYPES = ["פסיקה", "פסיקה (מאגר)", "פסיקה (פד\"י)", "case_law_published", "case_law_database", "caselaw"];
-const LITERATURE_SOURCE_TYPES = ["מאמר", "ספר", "article", "book", "literature", "מקור מרשתת", "מקור לועזי"];
+const LITERATURE_SOURCE_TYPES = ["מאמר", "מאמר בכתב עת", "מאמר שפורסם בספר", "ספר", "article", "article_in_book", "book", "literature", "מקור מרשתת", "מקור לועזי"];
 
 function normalizeWhitespace(text: string) {
   return text.replace(/\s+/g, " ").trim();
