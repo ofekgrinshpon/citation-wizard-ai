@@ -630,6 +630,15 @@ const Index = () => {
                 />
               ))}
               {loading && <LoadingDots />}
+              {pendingSuggestion && (
+                <div className="my-4">
+                  <VerifiedSuggestionCard
+                    suggestion={pendingSuggestion.suggestion}
+                    onAccept={handleSuggestionAccept}
+                    onReject={handleSuggestionReject}
+                  />
+                </div>
+              )}
               {pendingVerification && (
                 <div className="my-4">
                   <PublicationIntegrityCard
