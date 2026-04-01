@@ -283,10 +283,14 @@ serve(async (req) => {
               .sort((a, b) => b.score - a.score);
 
             const bestMatch = rankedMatches[0]?.candidate as { full_citation: string } | undefined;
-            if (bestMatch) {
+            const hasPinpoint = PINPOINT_REGEX.test(userInput);
+            if (bestMatch && !hasPinpoint) {
               return new Response(JSON.stringify({ content: bestMatch.full_citation }), {
                 headers: { ...corsHeaders, "Content-Type": "application/json" },
               });
+            }
+            if (bestMatch && hasPinpoint) {
+              verifiedHint = `\n\n══ מקור מאומת (הפניה נקודתית) ══\nהמקור המאומת: ${bestMatch.full_citation}\n══ המשתמש מבקש הפניה נקודתית (pinpoint). שלב את ההפניה הנקודתית עם המקור המאומת לפי כללי האזכור האחיד. אל תשנה את הנתונים מהמקור המאומת. ══`;
             }
 
             const sources = verified.map((v: Record<string, unknown>) =>
