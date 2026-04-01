@@ -67,12 +67,13 @@ function tokenizeSearchTerms(text: string) {
 function scoreVerifiedSourceMatch(query: string, source: Pick<VerifiedSourceMatch, "source_name" | "full_citation"> & { search_text?: string }) {
   const normalizedQuery = normalizeSearchableText(query);
   const normalizedSourceName = normalizeSearchableText(source.source_name);
-  const normalizedCandidate = normalizeSearchableText(`${source.source_name} ${source.full_citation} ${source.search_text || ""}`);
+  const normalizedDisplayCandidate = normalizeSearchableText(`${source.source_name} ${source.full_citation}`);
+  const normalizedSearchCandidate = normalizeSearchableText(`${source.source_name} ${source.full_citation} ${source.search_text || ""}`);
   const words = tokenizeSearchTerms(query);
 
   const matchesExactName = normalizedSourceName === normalizedQuery;
-  const matchesAllWords = words.length > 1 && words.every((word) => normalizedCandidate.includes(word));
-  const matchesSingleWord = words.length === 1 && normalizedQuery.length >= 3 && normalizedCandidate.includes(normalizedQuery);
+  const matchesAllWords = words.length > 1 && words.every((word) => normalizedSearchCandidate.includes(word));
+  const matchesSingleWord = words.length === 1 && normalizedQuery.length >= 3 && normalizedDisplayCandidate.includes(normalizedQuery);
 
   if (!matchesExactName && !matchesAllWords && !matchesSingleWord) {
     return -1;
@@ -82,8 +83,8 @@ function scoreVerifiedSourceMatch(query: string, source: Pick<VerifiedSourceMatc
   if (matchesExactName) score += 200;
   if (matchesAllWords) score += 100;
   if (matchesSingleWord) score += 40;
-  if (normalizedCandidate.includes(normalizedQuery)) score += 20;
-  score += words.reduce((total, word) => total + (normalizedCandidate.includes(word) ? 10 : 0), 0);
+  if (normalizedSearchCandidate.includes(normalizedQuery)) score += 20;
+  score += words.reduce((total, word) => total + (normalizedSearchCandidate.includes(word) ? 10 : 0), 0);
 
   return score;
 }

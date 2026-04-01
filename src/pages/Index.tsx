@@ -659,8 +659,31 @@ const Index = () => {
                             // Check verified sources first
                             const verifiedMatch = await findVerifiedSourceMatch(normalized);
                             if (verifiedMatch) {
-                              const verifiedReply = verifiedMatch.full_citation;
-                              setMessages([...updatedMessages, { role: "assistant", content: verifiedReply }]);
+                              const isDirectVerifiedMatch = normalizeAbbreviations(verifiedMatch.source_name).includes(normalized) ||
+                                verifiedMatch.full_citation.includes(newContent);
+
+                              if (isDirectVerifiedMatch) {
+                                const verifiedCategory = getVerifiedCategoryLabel(
+                                  classifyVerifiedSource({
+                                    rawInput: verifiedMatch.source_name,
+                                    fullCitation: verifiedMatch.full_citation,
+                                    sourceType: verifiedMatch.source_type,
+                                  })
+                                );
+                                const verifiedReply = verifiedMatch.full_citation;
+                                setMessages([
+                                  ...updatedMessages,
+                                  { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
+                                ]);
+                              } else {
+                                setPendingSuggestion({
+                                  suggestion: verifiedMatch,
+                                  rawInput: newContent,
+                                  normalized,
+                                  sourceType: sourceType as SourceType,
+                                  sourceLabel,
+                                });
+                              }
                             } else {
                               const reply = await callAPI(prompt, updatedMessages.slice(0, i));
                               const assistantIndex = updatedMessages.length;

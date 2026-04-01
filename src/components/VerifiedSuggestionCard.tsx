@@ -1,4 +1,4 @@
-import type { VerifiedSourceMatch } from "@/lib/verifiedSources";
+import { classifyVerifiedSource, getVerifiedCategoryLabel, type VerifiedSourceMatch } from "@/lib/verifiedSources";
 
 interface VerifiedSuggestionCardProps {
   suggestion: VerifiedSourceMatch;
@@ -7,6 +7,14 @@ interface VerifiedSuggestionCardProps {
 }
 
 export function VerifiedSuggestionCard({ suggestion, onAccept, onReject }: VerifiedSuggestionCardProps) {
+  const category = getVerifiedCategoryLabel(
+    classifyVerifiedSource({
+      rawInput: suggestion.source_name,
+      fullCitation: suggestion.full_citation,
+      sourceType: suggestion.source_type,
+    })
+  );
+
   return (
     <div
       className="my-3 p-4 rounded-xl border border-primary/30 bg-primary/5 animate-fade-in"
@@ -21,6 +29,14 @@ export function VerifiedSuggestionCard({ suggestion, onAccept, onReject }: Verif
           <p className="text-xs text-muted-foreground mb-2">
             נמצא מקור מאומת דומה במאגר:
           </p>
+          <div className="flex flex-wrap items-center gap-2 mb-2">
+            <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+              ✓ מקור מאומת
+            </span>
+            <span className="inline-flex items-center rounded-full border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-foreground">
+              📁 {category}
+            </span>
+          </div>
           <div className="p-3 rounded-lg bg-background border border-border text-sm leading-relaxed text-foreground">
             {suggestion.full_citation.split("**").map((part, i) =>
               i % 2 === 1 ? (
