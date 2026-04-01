@@ -43,6 +43,59 @@ const scoreVerifiedMatch = (
   return score;
 };
 
+const PUBLICATION_REF_REGEX = /(ס["״]ח|ק["״]ת)\s+(\d+)/g;
+const NUMBER_ONLY_REGEX = /^\d+[.]?$/;
+const LEGISLATION_RESPONSE_REGEX = /(?:^|\n)\s*(?:סעיף\s+[^\s]+\s+ל)?(?:חוק(?:[\s-]יסוד)?|חוק-יסוד|פקודת|פקודה|תקנות|צו|כללי|הוראות)/;
+
+function hasExplicitPublicationReference(text: string) {
+  return PUBLICATION_REF_REGEX.test(text);
+}
+
+function isNumberOnlyInput(text: string) {
+  return NUMBER_ONLY_REGEX.test(text.trim());
+}
+
+function ensureMissingDataWarning(content: string) {
+  if (/\[חסר:/.test(content) && !/⚠️/.test(content)) {
+    return `${content}\n⚠️ חסרים פרטים לפי כלל 2.1. אנא השלם אותם.`;
+  }
+  return content;
+}
+
+function sanitizeHallucinatedPublicationData(
+  content: string,
+  options: {
+    hasVerifiedCandidates: boolean;
+    messages: Array<{ role: string; content: string }>;
+    userInput: string;
+  },
+) {
+  if (options.hasVerifiedCandidates) return content;
+
+  const isLikelyLegislationResponse =
+    LEGISLATION_RESPONSE_REGEX.test(content) || /(ס["״]ח|ק["״]ת)/.test(content);
+
+  if (!isLikelyLegislationResponse) return content;
+
+  const userProvidedPublicationData = options.messages.some(
+    (message) => message.role === "user" && hasExplicitPublicationReference(message.content),
+  );
+
+  if (userProvidedPublicationData || isNumberOnlyInput(options.userInput)) {
+    return content;
+  }
+
+  let sanitized = content
+    .replace(/(ס["״]ח)\s*\d+/g, '$1 [חסר: מספר ס"ח]')
+    .replace(/(ק["״]ת)\s*\d+/g, '$1 [חסר: מספר ק"ת]');
+
+  if (sanitized !== content) {
+    sanitized = ensureMissingDataWarning(sanitized);
+  }
+
+  return sanitized;
+}
+
 const SYSTEM_PROMPT = `אתה "העוזר המשפטי האוטומטי". תמיד התייחס לעצמך בשם זה בלבד. אתה מומחה לכללי האזכור האחיד בכתיבה המשפטית בישראל (מהדורת 2021). תפקידך הוא לקבל טקסט משפטי גולמי, לזהות בתוכו הפניות למקורות, ולהמיר אותן להערות שוליים תקניות ומדויקות לפי הכללים.
 
 ═══════════════════════════════════════════════
@@ -172,12 +225,11 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    // Extract the last user message for verified source lookup
     const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === "user");
     const userInput = lastUserMessage?.content || "";
 
-    // Check verified_sources table for a match before calling AI
     let verifiedHint = "";
+    let hasVerifiedCandidates = false;
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
@@ -204,6 +256,8 @@ serve(async (req) => {
             .limit(12);
 
           if (verified && verified.length > 0) {
+            hasVerifiedCandidates = true;
+
             const rankedMatches = verified
               .map((candidate) => ({
                 candidate,
@@ -220,7 +274,7 @@ serve(async (req) => {
             }
 
             const sources = verified.map((v: Record<string, unknown>) =>
-              `[מקור מאומת] ${v.source_name}: ${v.full_citation}`
+              `[מקור מאומת] ${v.source_name}: ${v.full_citation}`,
             ).join("\n");
             verifiedHint = `\n\n══ מקורות מאומתים שנמצאו במאגר ══\n${sources}\n══ השתמש בציטוטים המאומתים הללו כבסיס לתשובתך. אל תשנה אותם אלא אם הם סותרים את כללי האזכור. ══`;
           }
@@ -230,7 +284,6 @@ serve(async (req) => {
       }
     }
 
-    // Append verified hint to the last user message
     const enhancedMessages = messages.map((m: { role: string; content: string }, i: number) => {
       if (i === messages.length - 1 && m.role === "user" && verifiedHint) {
         return { ...m, content: m.content + verifiedHint };
@@ -253,32 +306,37 @@ serve(async (req) => {
             ...enhancedMessages,
           ],
         }),
-      }
+      },
     );
 
     if (!response.ok) {
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Rate limit exceeded. Try again later." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
       if (response.status === 402) {
         return new Response(
           JSON.stringify({ error: "Payment required." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
       const t = await response.text();
       console.error("AI gateway error:", response.status, t);
       return new Response(
         JSON.stringify({ error: "AI gateway error" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
     const data = await response.json();
-    const content = data.choices?.[0]?.message?.content || "אירעה שגיאה.";
+    const rawContent = data.choices?.[0]?.message?.content || "אירעה שגיאה.";
+    const content = sanitizeHallucinatedPublicationData(rawContent, {
+      hasVerifiedCandidates,
+      messages,
+      userInput,
+    });
 
     return new Response(JSON.stringify({ content }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -287,7 +345,7 @@ serve(async (req) => {
     console.error("chat error:", e);
     return new Response(
       JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
 });
