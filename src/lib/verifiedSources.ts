@@ -155,9 +155,9 @@ export async function findSimilarVerifiedSource(query: string): Promise<Verified
   if (error || !data?.length) return null;
 
   // Score all candidates and find partial matches
-  const scored = (data as VerifiedSourceMatch[])
+  const scored = (data as (VerifiedSourceMatch & { search_text?: string })[])
     .map((candidate) => {
-      const normalizedCandidate = normalizeSearchableText(`${candidate.source_name} ${candidate.full_citation}`);
+      const normalizedCandidate = normalizeSearchableText(`${candidate.source_name} ${candidate.full_citation} ${candidate.search_text || ""}`);
       const matchingTerms = allTerms.filter(term => normalizedCandidate.includes(term));
       const matchRatio = matchingTerms.length / allTerms.length;
       const fullScore = scoreVerifiedSourceMatch(query, candidate);
@@ -168,9 +168,10 @@ export async function findSimilarVerifiedSource(query: string): Promise<Verified
   const hasFullMatch = scored.some(s => s.fullScore >= 100);
   if (hasFullMatch) return null;
 
-  // Find the best partial match: at least 40% of terms match and at least 2 terms
+  // Find the best partial match: at least 40% of terms match and at least 1 matching term (for single-word queries)
+  const minTerms = allTerms.length === 1 ? 1 : 2;
   const bestPartial = scored
-    .filter(s => s.matchRatio >= 0.4 && s.matchingTerms >= 2)
+    .filter(s => s.matchRatio >= 0.4 && s.matchingTerms >= minTerms)
     .sort((a, b) => b.matchingTerms - a.matchingTerms || b.matchRatio - a.matchRatio)[0];
 
   return bestPartial?.candidate ?? null;
