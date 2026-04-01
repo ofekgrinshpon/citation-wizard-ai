@@ -134,6 +134,7 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   bill: ['billName', 'billNumber', 'hebrewYear', 'gregorianYear', 'firstPage'],
   book: ['author', 'bookTitle', 'year'],
   article: ['author', 'articleTitle', 'journalName', 'volume', 'firstPage', 'year'],
+  article_in_book: ['author', 'articleTitle', 'bookTitle', 'firstPage', 'year'],
   internet: ['author', 'title', 'siteName', 'url', 'accessDate'],
   religious: ['source', 'location'],
   foreign: ['citation'],
