@@ -118,6 +118,7 @@ export type SourceType =
   | 'bill'                  // הצעת חוק
   | 'book'                  // ספר
   | 'article'               // מאמר
+  | 'article_in_book'       // מאמר שפורסם בספר
   | 'internet'              // מרשתת
   | 'religious'             // מקור דתי
   | 'foreign'               // לועזי
@@ -133,6 +134,7 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   bill: ['billName', 'billNumber', 'hebrewYear', 'gregorianYear', 'firstPage'],
   book: ['author', 'bookTitle', 'year'],
   article: ['author', 'articleTitle', 'journalName', 'volume', 'firstPage', 'year'],
+  article_in_book: ['author', 'articleTitle', 'bookTitle', 'firstPage', 'year'],
   internet: ['author', 'title', 'siteName', 'url', 'accessDate'],
   religious: ['source', 'location'],
   foreign: ['citation'],
@@ -247,7 +249,8 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   secondary_legislation: 'חקיקת משנה',
   bill: 'הצעת חוק',
   book: 'ספר',
-  article: 'מאמר',
+  article: 'מאמר בכתב עת',
+  article_in_book: 'מאמר שפורסם בספר',
   internet: 'מקור מרשתת',
   religious: 'מקור דתי',
   foreign: 'מקור לועזי',
@@ -264,6 +267,7 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   bill: 'כלל 8 – הצעות חוק',
   book: 'כלל 23 – ספרים',
   article: 'כלל 25 – מאמרים',
+  article_in_book: 'כלל 26 – מאמר שפורסם בספר',
   internet: 'כלל 30 – מקורות מהמרשתת',
   religious: 'כלל 32 – מקורות דתיים',
   foreign: 'כלל 36 – מקורות לועזיים (Bluebook)',
