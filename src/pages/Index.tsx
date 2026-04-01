@@ -441,7 +441,7 @@ const Index = () => {
     setMessages(newMessages);
 
     // Check if this is a bill and user didn't specify הכנסת or הממשלה
-    const isBillSource = sourceType === "bill" || sourceType === ("basic_law_bill" as SourceType);
+    const isBillSource = sourceType === "bill" || (sourceType === "basic_law" && /הצעת/.test(rawText));
     const hasExplicitBillType = /הכנסת|הממשלה/.test(rawText);
     if (isBillSource && !hasExplicitBillType) {
       setPendingBillType({ rawText, normalized, sourceType: sourceType as SourceType, sourceLabel, newMessages });
