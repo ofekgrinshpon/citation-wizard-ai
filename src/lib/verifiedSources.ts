@@ -130,7 +130,7 @@ export async function findVerifiedSourceMatch(query: string): Promise<VerifiedSo
  */
 export async function findSimilarVerifiedSource(query: string): Promise<VerifiedSourceMatch | null> {
   const terms = tokenizeSearchTerms(query);
-  if (terms.length < 2) return null; // Need at least 2 terms for fuzzy matching
+  if (terms.length === 0) return null;
 
   const caseNumberParts = (query.match(/\d+(?:\/\d+)?/g) || []).filter(p => p.length >= 2);
   const allTerms = Array.from(new Set([...terms, ...caseNumberParts]))
