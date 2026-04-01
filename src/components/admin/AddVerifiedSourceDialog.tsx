@@ -135,7 +135,7 @@ const AddVerifiedSourceDialog = ({ open, onOpenChange, onAdded, userId }: AddVer
         </div>
         <DialogFooter className="flex gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>ביטול</Button>
-          <Button onClick={handleSave} disabled={saving || !sourceName.trim() || !fullCitation.trim()}>
+          <Button onClick={handleSave} disabled={saving || (isCaselaw ? !caseNumber.trim() : !sourceName.trim()) || !fullCitation.trim()}>
             {saving ? "שומר..." : "הוסף ואמת"}
           </Button>
         </DialogFooter>

@@ -76,7 +76,14 @@ export function VerifiedAutocomplete({
       // Split into individual words for better partial matching
       // e.g. "חוק יסוד הכנסת" needs to match "חוק-יסוד: הכנסת"
       const words = value.toLowerCase().split(/[\s\-:]+/).filter(w => w.length >= 2);
-      const orConditions = words.flatMap(w => [
+
+      // Also check if input contains a case number pattern (e.g., "1514/01" or "1514")
+      const caseNumberParts = value.match(/\d+(?:\/\d+)?/g) || [];
+
+      const allTerms = [...words, ...caseNumberParts].filter(t => t.length >= 2);
+      const uniqueTerms = Array.from(new Set(allTerms));
+
+      const orConditions = uniqueTerms.flatMap(w => [
         `search_text.ilike.%${w}%`,
         `source_name.ilike.%${w}%`,
         `full_citation.ilike.%${w}%`,

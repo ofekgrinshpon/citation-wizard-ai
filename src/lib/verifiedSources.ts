@@ -259,9 +259,21 @@ function isFragmentCitation(text: string, category: VerifiedSourceCategory): boo
 function buildStorageShape(item: EnsureVerifiedSourceInput) {
   const category = classifyVerifiedSource(item);
   const isLaw = category === "legislation_primary" || category === "legislation_secondary";
+  const isCase = category === "caselaw";
   const section = isLaw ? extractSection(item.fullCitation) : null;
   const storedCitation = isLaw ? normalizeLawCitationForStorage(item.fullCitation.trim()) : item.fullCitation.trim();
-  const storedSourceName = isLaw ? extractLawName(storedCitation).slice(0, 100) : item.rawInput.substring(0, 100);
+
+  // For caselaw: use the case number (e.g., "ע"פ 1514/01") as source_name
+  let storedSourceName: string;
+  if (isCase) {
+    const caseNumberMatch = item.fullCitation.match(CASE_NUMBER_PATTERN);
+    storedSourceName = caseNumberMatch ? caseNumberMatch[0].trim().slice(0, 100) : item.rawInput.substring(0, 100);
+  } else if (isLaw) {
+    storedSourceName = extractLawName(storedCitation).slice(0, 100);
+  } else {
+    storedSourceName = item.rawInput.substring(0, 100);
+  }
+
   const year = extractYear(storedCitation) ?? extractYear(item.fullCitation) ?? null;
   const pubInfo = isLaw ? extractPublicationInfo(storedCitation) : { pubSource: null, page: null };
 
