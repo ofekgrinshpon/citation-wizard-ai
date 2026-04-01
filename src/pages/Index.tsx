@@ -344,7 +344,7 @@ const Index = () => {
         supabase.from("citation_history").insert({
           raw_input: fullRawInput,
           formatted_output: verifiedReply,
-          source_type: sourceType !== "unknown" ? sourceLabel : null,
+          source_type: verifiedMatch.source_type || (sourceType !== "unknown" ? sourceLabel : null),
           is_verified: true,
         }).then(() => {});
         return;
