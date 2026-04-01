@@ -10,7 +10,7 @@ import { PublicationIntegrityCard } from "@/components/PublicationIntegrityCard"
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useGuestLimit } from "@/hooks/useGuestLimit";
-import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
+import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
 import { ensureVerifiedSources, findVerifiedSourceMatch } from "@/lib/verifiedSources";
@@ -128,6 +128,10 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<AppMode>("freetext");
   const [pendingVerification, setPendingVerification] = useState<PendingVerification | null>(null);
+  // Track detected source type per assistant message index
+  const [messageSourceTypes, setMessageSourceTypes] = useState<Record<number, SourceType>>({});
+  // Track original user input per assistant message index (for re-classification)
+  const [messageRawInputs, setMessageRawInputs] = useState<Record<number, string>>({});
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   
@@ -287,7 +291,10 @@ const Index = () => {
       }
 
       const reply = await callAPI(prompt, messages);
+      const assistantIndex = newMessages.length; // index of the new assistant message
       setMessages([...newMessages, { role: "assistant", content: reply }]);
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+      setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       // Increment guest counter
       if (isGuestMode) guestLimit.increment();
 
@@ -515,7 +522,35 @@ const Index = () => {
             {/* Messages */}
             <div className="flex-1 pt-4">
               {messages.map((msg, i) => (
-                <MessageBubble key={i} msg={msg} />
+                <MessageBubble
+                  key={i}
+                  msg={msg}
+                  detectedType={msg.role === "assistant" ? messageSourceTypes[i] : undefined}
+                  onChangeSourceType={
+                    msg.role === "assistant"
+                      ? async (newType: SourceType) => {
+                          const rawInput = messageRawInputs[i] || "";
+                          if (!rawInput) return;
+                          setMessageSourceTypes((prev) => ({ ...prev, [i]: newType }));
+                          setLoading(true);
+                          try {
+                            const newLabel = SOURCE_TYPE_LABELS[newType];
+                            const reclassifiedPrompt = `[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n[כלל רלוונטי: ${RULE_REFERENCES[newType]}]\n${rawInput}`;
+                            const reply = await callAPI(reclassifiedPrompt, messages.slice(0, i));
+                            setMessages((prev) => {
+                              const updated = [...prev];
+                              updated[i] = { role: "assistant", content: reply };
+                              return updated;
+                            });
+                          } catch {
+                            toast.error("שגיאה בעיבוד מחדש");
+                          } finally {
+                            setLoading(false);
+                          }
+                        }
+                      : undefined
+                  }
+                />
               ))}
               {loading && <LoadingDots />}
               {pendingVerification && (

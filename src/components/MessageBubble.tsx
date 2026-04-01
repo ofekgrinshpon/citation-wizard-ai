@@ -2,6 +2,8 @@ import { FormattedCitation } from "./FormattedCitation";
 import { toast } from "sonner";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { RULE_EXPLANATIONS } from "@/data/ruleTooltips";
+import { SourceTypeConfirmation } from "./SourceTypeConfirmation";
+import type { SourceType } from "@/data/abbreviations";
 
 interface Message {
   role: "user" | "assistant";
@@ -14,7 +16,13 @@ function extractRuleNumber(line: string): string | null {
   return m ? m[1] : null;
 }
 
-export function MessageBubble({ msg }: { msg: Message }) {
+interface MessageBubbleProps {
+  msg: Message;
+  detectedType?: SourceType;
+  onChangeSourceType?: (newType: SourceType) => void;
+}
+
+export function MessageBubble({ msg, detectedType, onChangeSourceType }: MessageBubbleProps) {
   const isUser = msg.role === "user";
 
   const copyContent = () => {
@@ -64,6 +72,12 @@ export function MessageBubble({ msg }: { msg: Message }) {
           </div>
         ) : (
           <div className="chat-bubble-assistant px-4 py-3 text-foreground text-sm leading-relaxed">
+            {detectedType && detectedType !== "unknown" && onChangeSourceType && (
+              <SourceTypeConfirmation
+                detectedType={detectedType}
+                onChangeType={onChangeSourceType}
+              />
+            )}
             {msg.content.split("\n").map((line, i) => {
               if (!line.trim()) return <br key={i} />;
 
