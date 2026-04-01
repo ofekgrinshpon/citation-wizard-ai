@@ -861,6 +861,11 @@ const Index = () => {
                   />
                 </div>
               )}
+              {pendingBillType && (
+                <div className="my-4">
+                  <BillTypeSelector onSelect={handleBillTypeSelect} />
+                </div>
+              )}
               {pendingVerification && (
                 <div className="my-4">
                   <PublicationIntegrityCard
