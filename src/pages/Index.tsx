@@ -668,7 +668,8 @@ const Index = () => {
                             const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
                             let prompt = normalized;
                             if (sourceType !== "unknown") {
-                              prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${normalized}`;
+                              const engineHint = buildEnginePromptHint(sourceType);
+                              prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
                             }
 
                             // Check verified sources first
