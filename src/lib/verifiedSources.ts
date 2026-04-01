@@ -275,7 +275,10 @@ function buildStorageShape(item: EnsureVerifiedSourceInput) {
   } else if (isLaw) {
     storedSourceName = extractLawName(storedCitation).slice(0, 100);
   } else {
-    storedSourceName = item.rawInput.substring(0, 100);
+    // For literature: extract the title from quotes (e.g., "שם המאמר") or bold markers (**שם הספר**)
+    const quotedTitle = item.fullCitation.match(/["״]([^"״]+)["״]/)?.[1]
+      || item.fullCitation.match(/\*\*([^*]+)\*\*/)?.[1];
+    storedSourceName = (quotedTitle || item.rawInput).substring(0, 100);
   }
 
   const year = extractYear(storedCitation) ?? extractYear(item.fullCitation) ?? null;
