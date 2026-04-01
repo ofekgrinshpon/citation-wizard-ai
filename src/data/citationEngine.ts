@@ -117,7 +117,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
       { field: "billName", rule: "8.1", description: "שם הצעת החוק", required: true, format: "plain" },
       { field: "hebrewYear", rule: "8.2", description: "שנה עברית", required: true, format: "plain" },
       { field: "gregorianYear", rule: "8.2", description: "שנה לועזית", required: true, format: "plain" },
-      { field: "billNumber", rule: "8.3", description: 'מספר חוברת הצעות חוק (הצ"ח הממשלה / הצ"ח הכנסת)', required: true, format: "plain" },
+      { field: "billNumber", rule: "8.3", description: 'מספר חוברת הצעות חוק (ה"ח הממשלה / ה"ח הכנסת)', required: true, format: "plain" },
       { field: "firstPage", rule: "8.3", description: "עמוד ראשון", required: true, format: "plain" },
     ],
   },
