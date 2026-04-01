@@ -289,7 +289,8 @@ const Index = () => {
     try {
       let prompt = normalized;
       if (sourceType !== "unknown") {
-        prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${normalized}`;
+        const engineHint = buildEnginePromptHint(sourceType as SourceType);
+        prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
       }
       const reply = await callAPI(prompt, messages);
       const assistantIndex = messages.length;
