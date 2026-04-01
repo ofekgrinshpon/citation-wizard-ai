@@ -35,7 +35,7 @@ interface UserProfile {
 }
 
 type MainTab = "analytics" | "sources" | "users";
-type SourceSubTab = "caselaw" | "legislation" | "literature" | "verified";
+type SourceSubTab = "caselaw" | "legislation" | "literature" | "other" | "verified";
 
 const Admin = () => {
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
