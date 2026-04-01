@@ -13,7 +13,14 @@ import { useGuestLimit } from "@/hooks/useGuestLimit";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
-import { ensureVerifiedSources, findVerifiedSourceMatch, findSimilarVerifiedSource, type VerifiedSourceMatch } from "@/lib/verifiedSources";
+import {
+  classifyVerifiedSource,
+  ensureVerifiedSources,
+  findVerifiedSourceMatch,
+  findSimilarVerifiedSource,
+  getVerifiedCategoryLabel,
+  type VerifiedSourceMatch,
+} from "@/lib/verifiedSources";
 import { VerifiedSuggestionCard } from "@/components/VerifiedSuggestionCard";
 
 interface Message {
@@ -249,14 +256,25 @@ const Index = () => {
 
   const handleSuggestionAccept = () => {
     if (!pendingSuggestion) return;
-    const { suggestion, rawInput, sourceLabel } = pendingSuggestion;
+    const { suggestion, rawInput } = pendingSuggestion;
     const verifiedReply = suggestion.full_citation;
-    setMessages((prev) => [...prev, { role: "assistant", content: `✓ מאומת\n${verifiedReply}` }]);
+    const verifiedCategory = getVerifiedCategoryLabel(
+      classifyVerifiedSource({
+        rawInput: suggestion.source_name,
+        fullCitation: suggestion.full_citation,
+        sourceType: suggestion.source_type,
+      })
+    );
+
+    setMessages((prev) => [
+      ...prev,
+      { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
+    ]);
     if (isGuestMode) guestLimit.increment();
     supabase.from("citation_history").insert({
       raw_input: rawInput,
       formatted_output: verifiedReply,
-      source_type: sourceLabel || null,
+      source_type: suggestion.source_type || null,
       is_verified: true,
     }).then(() => {});
     setPendingSuggestion(null);
@@ -335,26 +353,40 @@ const Index = () => {
       const isPinpoint = PINPOINT_RE.test(rawText);
       const verifiedMatch = await findVerifiedSourceMatch(normalized);
 
-      // Short-circuit only for non-pinpoint queries — pinpoints need AI merging
+      // Short-circuit only for direct/canonical verified matches — aliases go through suggestion UI
       if (verifiedMatch && !isPinpoint) {
-        const verifiedReply = verifiedMatch.full_citation;
-        setMessages([...newMessages, { role: "assistant", content: verifiedReply }]);
-        if (isGuestMode) guestLimit.increment();
+        const isDirectVerifiedMatch = normalizeAbbreviations(verifiedMatch.source_name).includes(normalized) ||
+          verifiedMatch.full_citation.includes(rawText);
 
-        supabase.from("citation_history").insert({
-          raw_input: fullRawInput,
-          formatted_output: verifiedReply,
-          source_type: verifiedMatch.source_type || (sourceType !== "unknown" ? sourceLabel : null),
-          is_verified: true,
-        }).then(() => {});
-        return;
+        if (isDirectVerifiedMatch) {
+          const verifiedCategory = getVerifiedCategoryLabel(
+            classifyVerifiedSource({
+              rawInput: verifiedMatch.source_name,
+              fullCitation: verifiedMatch.full_citation,
+              sourceType: verifiedMatch.source_type,
+            })
+          );
+          const verifiedReply = verifiedMatch.full_citation;
+          setMessages([
+            ...newMessages,
+            { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
+          ]);
+          if (isGuestMode) guestLimit.increment();
+
+          supabase.from("citation_history").insert({
+            raw_input: fullRawInput,
+            formatted_output: verifiedReply,
+            source_type: verifiedMatch.source_type || (sourceType !== "unknown" ? sourceLabel : null),
+            is_verified: true,
+          }).then(() => {});
+          return;
+        }
       }
 
       // Check for similar (fuzzy) verified source match
       if (!isPinpoint) {
-        const similarMatch = await findSimilarVerifiedSource(normalized);
+        const similarMatch = verifiedMatch ?? await findSimilarVerifiedSource(normalized);
         if (similarMatch) {
-          // Show suggestion card and pause — user will decide
           setPendingSuggestion({
             suggestion: similarMatch,
             rawInput: rawText,
@@ -627,8 +659,31 @@ const Index = () => {
                             // Check verified sources first
                             const verifiedMatch = await findVerifiedSourceMatch(normalized);
                             if (verifiedMatch) {
-                              const verifiedReply = verifiedMatch.full_citation;
-                              setMessages([...updatedMessages, { role: "assistant", content: verifiedReply }]);
+                              const isDirectVerifiedMatch = normalizeAbbreviations(verifiedMatch.source_name).includes(normalized) ||
+                                verifiedMatch.full_citation.includes(newContent);
+
+                              if (isDirectVerifiedMatch) {
+                                const verifiedCategory = getVerifiedCategoryLabel(
+                                  classifyVerifiedSource({
+                                    rawInput: verifiedMatch.source_name,
+                                    fullCitation: verifiedMatch.full_citation,
+                                    sourceType: verifiedMatch.source_type,
+                                  })
+                                );
+                                const verifiedReply = verifiedMatch.full_citation;
+                                setMessages([
+                                  ...updatedMessages,
+                                  { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
+                                ]);
+                              } else {
+                                setPendingSuggestion({
+                                  suggestion: verifiedMatch,
+                                  rawInput: newContent,
+                                  normalized,
+                                  sourceType: sourceType as SourceType,
+                                  sourceLabel,
+                                });
+                              }
                             } else {
                               const reply = await callAPI(prompt, updatedMessages.slice(0, i));
                               const assistantIndex = updatedMessages.length;

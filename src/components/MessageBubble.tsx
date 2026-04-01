@@ -68,7 +68,7 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit }:
         const trimmed = line.trim();
         if (!trimmed) return false;
         if (/\[חסר:/.test(trimmed) || /המערכת זיהתה/.test(trimmed) || /הערה:/.test(trimmed)) return true;
-        if (/^📐|^כלל:|^Based on Rule|^Rule \d|^מכיוון ש/.test(trimmed)) return false;
+        if (/^✓\s|^🏷️\s|^📐|^כלל:|^Based on Rule|^Rule \d|^מכיוון ש/.test(trimmed)) return false;
         if (/העוזר המשפטי/.test(trimmed)) return false;
         if (/^שלב \d|^זיהוי סוג|^נרמול|^יישום/.test(trimmed)) return false;
         return true;
