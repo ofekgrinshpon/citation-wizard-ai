@@ -225,6 +225,7 @@ const Admin = () => {
       legislation_primary: [],
       legislation_secondary: [],
       literature: [],
+      other: [],
     };
 
     verifiedSources.forEach((source) => {
