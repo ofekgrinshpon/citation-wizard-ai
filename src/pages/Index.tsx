@@ -268,8 +268,7 @@ const Index = () => {
 
     try {
       const fullRawInput = buildFullRawInput(rawText, messages);
-      const PINPOINT_REGEX = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
-      const isPinpoint = PINPOINT_REGEX.test(rawText);
+      const isPinpoint = PINPOINT_RE.test(rawText);
       const verifiedMatch = await findVerifiedSourceMatch(normalized);
 
       // Short-circuit only for non-pinpoint queries — pinpoints need AI merging
