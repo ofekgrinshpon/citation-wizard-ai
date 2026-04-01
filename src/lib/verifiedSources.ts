@@ -106,7 +106,7 @@ export async function findVerifiedSourceMatch(query: string): Promise<VerifiedSo
 
   const { data, error } = await supabase
     .from("verified_sources")
-    .select("id, source_name, full_citation, source_type, year, volume, page, metadata, verification_status")
+    .select("id, source_name, full_citation, source_type, year, volume, page, metadata, verification_status, search_text")
     .eq("verification_status", "verified")
     .or(orConditions)
     .limit(12);
