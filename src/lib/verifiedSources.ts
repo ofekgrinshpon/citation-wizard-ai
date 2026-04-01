@@ -64,15 +64,15 @@ function tokenizeSearchTerms(text: string) {
   return Array.from(new Set(normalizeSearchableText(text).split(" ").filter((token) => token.length >= 2)));
 }
 
-function scoreVerifiedSourceMatch(query: string, source: Pick<VerifiedSourceMatch, "source_name" | "full_citation">) {
+function scoreVerifiedSourceMatch(query: string, source: Pick<VerifiedSourceMatch, "source_name" | "full_citation"> & { search_text?: string }) {
   const normalizedQuery = normalizeSearchableText(query);
   const normalizedSourceName = normalizeSearchableText(source.source_name);
-  const normalizedCandidate = normalizeSearchableText(`${source.source_name} ${source.full_citation}`);
+  const normalizedCandidate = normalizeSearchableText(`${source.source_name} ${source.full_citation} ${source.search_text || ""}`);
   const words = tokenizeSearchTerms(query);
 
   const matchesExactName = normalizedSourceName === normalizedQuery;
   const matchesAllWords = words.length > 1 && words.every((word) => normalizedCandidate.includes(word));
-  const matchesSingleWord = words.length === 1 && normalizedQuery.length >= 4 && normalizedSourceName.includes(normalizedQuery);
+  const matchesSingleWord = words.length === 1 && normalizedQuery.length >= 3 && normalizedCandidate.includes(normalizedQuery);
 
   if (!matchesExactName && !matchesAllWords && !matchesSingleWord) {
     return -1;
@@ -106,14 +106,14 @@ export async function findVerifiedSourceMatch(query: string): Promise<VerifiedSo
 
   const { data, error } = await supabase
     .from("verified_sources")
-    .select("id, source_name, full_citation, source_type, year, volume, page, metadata, verification_status")
+    .select("id, source_name, full_citation, source_type, year, volume, page, metadata, verification_status, search_text")
     .eq("verification_status", "verified")
     .or(orConditions)
     .limit(12);
 
   if (error || !data?.length) return null;
 
-  const bestMatch = (data as VerifiedSourceMatch[])
+  const bestMatch = (data as (VerifiedSourceMatch & { search_text?: string })[])
     .map((candidate) => ({
       candidate,
       score: scoreVerifiedSourceMatch(query, candidate),
@@ -130,7 +130,7 @@ export async function findVerifiedSourceMatch(query: string): Promise<VerifiedSo
  */
 export async function findSimilarVerifiedSource(query: string): Promise<VerifiedSourceMatch | null> {
   const terms = tokenizeSearchTerms(query);
-  if (terms.length < 2) return null; // Need at least 2 terms for fuzzy matching
+  if (terms.length === 0) return null;
 
   const caseNumberParts = (query.match(/\d+(?:\/\d+)?/g) || []).filter(p => p.length >= 2);
   const allTerms = Array.from(new Set([...terms, ...caseNumberParts]))
@@ -147,7 +147,7 @@ export async function findSimilarVerifiedSource(query: string): Promise<Verified
 
   const { data, error } = await supabase
     .from("verified_sources")
-    .select("id, source_name, full_citation, source_type, year, volume, page, metadata, verification_status")
+    .select("id, source_name, full_citation, source_type, year, volume, page, metadata, verification_status, search_text")
     .eq("verification_status", "verified")
     .or(orConditions)
     .limit(20);
@@ -155,9 +155,9 @@ export async function findSimilarVerifiedSource(query: string): Promise<Verified
   if (error || !data?.length) return null;
 
   // Score all candidates and find partial matches
-  const scored = (data as VerifiedSourceMatch[])
+  const scored = (data as (VerifiedSourceMatch & { search_text?: string })[])
     .map((candidate) => {
-      const normalizedCandidate = normalizeSearchableText(`${candidate.source_name} ${candidate.full_citation}`);
+      const normalizedCandidate = normalizeSearchableText(`${candidate.source_name} ${candidate.full_citation} ${candidate.search_text || ""}`);
       const matchingTerms = allTerms.filter(term => normalizedCandidate.includes(term));
       const matchRatio = matchingTerms.length / allTerms.length;
       const fullScore = scoreVerifiedSourceMatch(query, candidate);
@@ -168,9 +168,10 @@ export async function findSimilarVerifiedSource(query: string): Promise<Verified
   const hasFullMatch = scored.some(s => s.fullScore >= 100);
   if (hasFullMatch) return null;
 
-  // Find the best partial match: at least 40% of terms match and at least 2 terms
+  // Find the best partial match: at least 40% of terms match and at least 1 matching term (for single-word queries)
+  const minTerms = allTerms.length === 1 ? 1 : 2;
   const bestPartial = scored
-    .filter(s => s.matchRatio >= 0.4 && s.matchingTerms >= 2)
+    .filter(s => s.matchRatio >= 0.4 && s.matchingTerms >= minTerms)
     .sort((a, b) => b.matchingTerms - a.matchingTerms || b.matchRatio - a.matchRatio)[0];
 
   return bestPartial?.candidate ?? null;
