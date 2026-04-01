@@ -122,6 +122,7 @@ export type SourceType =
   | 'internet'              // מרשתת
   | 'religious'             // מקור דתי
   | 'foreign'               // לועזי
+  | 'other'                 // אחר (דברי כנסת וכו')
   | 'unknown';
 
 // Required fields per source type (for gap analysis)
@@ -138,6 +139,7 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   internet: ['author', 'title', 'siteName', 'url', 'accessDate'],
   religious: ['source', 'location'],
   foreign: ['citation'],
+  other: [],
   unknown: [],
 };
 
@@ -257,6 +259,7 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   internet: 'מקור מרשתת',
   religious: 'מקור דתי',
   foreign: 'מקור לועזי',
+  other: 'אחר',
   unknown: 'לא מזוהה',
 };
 
@@ -274,5 +277,6 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   internet: 'כלל 30 – מקורות מהמרשתת',
   religious: 'כלל 32 – מקורות דתיים',
   foreign: 'כלל 36 – מקורות לועזיים (Bluebook)',
+  other: 'כלל 8 – אחר (דברי כנסת וכו׳)',
   unknown: '',
 };

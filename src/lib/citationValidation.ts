@@ -22,6 +22,7 @@ const ENGINE_KEY_MAP: Record<SourceType, string> = {
   internet: "internet",
   religious: "religious",
   foreign: "foreign",
+  other: "other",
   unknown: "",
 };
 
