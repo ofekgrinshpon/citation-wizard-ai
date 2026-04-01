@@ -219,6 +219,19 @@ const Admin = () => {
     [citations]
   );
 
+  const otherCitations = useMemo(
+    () =>
+      citations.filter(
+        (citation) =>
+          classifyVerifiedSource({
+            rawInput: citation.raw_input,
+            fullCitation: citation.formatted_output,
+            sourceType: citation.source_type,
+          }) === "other"
+      ),
+    [citations]
+  );
+
   const verifiedByCategory = useMemo(() => {
     const grouped: Record<VerifiedSourceCategory, VerifiedSourceRow[]> = {
       caselaw: [],
