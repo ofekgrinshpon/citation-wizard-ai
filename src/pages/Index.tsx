@@ -522,7 +522,35 @@ const Index = () => {
             {/* Messages */}
             <div className="flex-1 pt-4">
               {messages.map((msg, i) => (
-                <MessageBubble key={i} msg={msg} />
+                <MessageBubble
+                  key={i}
+                  msg={msg}
+                  detectedType={msg.role === "assistant" ? messageSourceTypes[i] : undefined}
+                  onChangeSourceType={
+                    msg.role === "assistant"
+                      ? async (newType: SourceType) => {
+                          const rawInput = messageRawInputs[i] || "";
+                          if (!rawInput) return;
+                          setMessageSourceTypes((prev) => ({ ...prev, [i]: newType }));
+                          setLoading(true);
+                          try {
+                            const newLabel = SOURCE_TYPE_LABELS[newType];
+                            const reclassifiedPrompt = `[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n[כלל רלוונטי: ${RULE_REFERENCES[newType]}]\n${rawInput}`;
+                            const reply = await callAPI(reclassifiedPrompt, messages.slice(0, i));
+                            setMessages((prev) => {
+                              const updated = [...prev];
+                              updated[i] = { role: "assistant", content: reply };
+                              return updated;
+                            });
+                          } catch {
+                            toast.error("שגיאה בעיבוד מחדש");
+                          } finally {
+                            setLoading(false);
+                          }
+                        }
+                      : undefined
+                  }
+                />
               ))}
               {loading && <LoadingDots />}
               {pendingVerification && (
