@@ -67,7 +67,7 @@ const CITATION_ENGINE_TEMPLATES: Record<string, { rule: string; template: string
   },
   "הצעת חוק": {
     rule: "כלל 8",
-    template: "הצעת חוק {שם}, {שנה}, {מספר חוברת}, {עמוד}.",
+    template: 'הצעת חוק {שם}, {שנה}, ה"ח {סוג} {מספר חוברת}, {עמוד}.',
     required: ["שם הצעת החוק", "שנה", "מספר חוברת", "עמוד ראשון"],
   },
   "פסיקה (דפוס)": {
