@@ -303,8 +303,11 @@ const Index = () => {
       // Only verify if we have a real, complete citation (not a fragment, not missing data)
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
+      // Don't save pinpoint references to verified sources — they are specific references, not master records
+      const PINPOINT_REGEX = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
+      const isPinpoint = PINPOINT_REGEX.test(rawText);
 
-      if (isVerifiedClean && !isFragment) {
+      if (isVerifiedClean && !isFragment && !isPinpoint) {
         const isLegislation = isLegislationInput(fullRawInput) || isLegislationInput(extractedCitation);
 
         if (isLegislation) {
