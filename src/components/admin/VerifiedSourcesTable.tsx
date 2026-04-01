@@ -80,7 +80,9 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove, onEdit }: Ve
               ) : (
                 sources.map((source) => (
                   <tr key={source.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3 text-foreground font-medium max-w-[220px] truncate">{source.source_name}</td>
+                    <td className="px-4 py-3 text-foreground font-medium max-w-[220px] truncate">
+                      {category === "caselaw" ? extractCaseNumber(source.source_name, source.full_citation) : source.source_name}
+                    </td>
                     <td className="px-4 py-3">
                       <Badge variant="outline">{getVerifiedCategoryLabel(category)}</Badge>
                     </td>
