@@ -112,7 +112,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     primaryRule: "8",
     ruleTitle: "כלל 8 – הצעות חוק",
     template: "הצעת חוק {billName}, {hebrewYear} {gregorianYear}, {billNumber}, {firstPage}.",
-    example: 'הצעת חוק העונשין (תיקון מס\' 137), התשע"ח-2018, הצ"ח הממשלה 1234, 56.',
+    example: 'הצעת חוק העונשין (תיקון מס\' 137), התשע"ח-2018, ה"ח הממשלה 1234, 56.',
     components: [
       { field: "billName", rule: "8.1", description: "שם הצעת החוק", required: true, format: "plain" },
       { field: "hebrewYear", rule: "8.2", description: "שנה עברית", required: true, format: "plain" },
