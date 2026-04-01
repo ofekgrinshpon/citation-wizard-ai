@@ -237,6 +237,7 @@ const Index = () => {
   const handleSend = async () => {
     const rawText = input.trim();
     if (!rawText || loading) return;
+    const PINPOINT_RE = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
     if (isGuestMode && guestLimit.isLocked) return;
 
     // Step 1: Normalize abbreviations
@@ -267,9 +268,11 @@ const Index = () => {
 
     try {
       const fullRawInput = buildFullRawInput(rawText, messages);
+      const isPinpoint = PINPOINT_RE.test(rawText);
       const verifiedMatch = await findVerifiedSourceMatch(normalized);
 
-      if (verifiedMatch) {
+      // Short-circuit only for non-pinpoint queries — pinpoints need AI merging
+      if (verifiedMatch && !isPinpoint) {
         const verifiedReply = verifiedMatch.full_citation;
         setMessages([...newMessages, { role: "assistant", content: verifiedReply }]);
         if (isGuestMode) guestLimit.increment();
@@ -304,8 +307,6 @@ const Index = () => {
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
       // Don't save pinpoint references to verified sources — they are specific references, not master records
-      const PINPOINT_REGEX = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
-      const isPinpoint = PINPOINT_REGEX.test(rawText);
 
       if (isVerifiedClean && !isFragment && !isPinpoint) {
         const isLegislation = isLegislationInput(fullRawInput) || isLegislationInput(extractedCitation);
