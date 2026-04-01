@@ -64,15 +64,15 @@ function tokenizeSearchTerms(text: string) {
   return Array.from(new Set(normalizeSearchableText(text).split(" ").filter((token) => token.length >= 2)));
 }
 
-function scoreVerifiedSourceMatch(query: string, source: Pick<VerifiedSourceMatch, "source_name" | "full_citation">) {
+function scoreVerifiedSourceMatch(query: string, source: Pick<VerifiedSourceMatch, "source_name" | "full_citation"> & { search_text?: string }) {
   const normalizedQuery = normalizeSearchableText(query);
   const normalizedSourceName = normalizeSearchableText(source.source_name);
-  const normalizedCandidate = normalizeSearchableText(`${source.source_name} ${source.full_citation}`);
+  const normalizedCandidate = normalizeSearchableText(`${source.source_name} ${source.full_citation} ${source.search_text || ""}`);
   const words = tokenizeSearchTerms(query);
 
   const matchesExactName = normalizedSourceName === normalizedQuery;
   const matchesAllWords = words.length > 1 && words.every((word) => normalizedCandidate.includes(word));
-  const matchesSingleWord = words.length === 1 && normalizedQuery.length >= 4 && normalizedSourceName.includes(normalizedQuery);
+  const matchesSingleWord = words.length === 1 && normalizedQuery.length >= 3 && normalizedCandidate.includes(normalizedQuery);
 
   if (!matchesExactName && !matchesAllWords && !matchesSingleWord) {
     return -1;
