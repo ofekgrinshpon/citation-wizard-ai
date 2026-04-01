@@ -133,6 +133,14 @@ const Index = () => {
   const [messageSourceTypes, setMessageSourceTypes] = useState<Record<number, SourceType>>({});
   // Track original user input per assistant message index (for re-classification)
   const [messageRawInputs, setMessageRawInputs] = useState<Record<number, string>>({});
+  // "Did you mean?" suggestion state
+  const [pendingSuggestion, setPendingSuggestion] = useState<{
+    suggestion: VerifiedSourceMatch;
+    rawInput: string;
+    normalized: string;
+    sourceType: SourceType;
+    sourceLabel: string;
+  } | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   
