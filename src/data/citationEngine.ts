@@ -127,12 +127,13 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
   basic_law_bill: {
     primaryRule: "8",
     ruleTitle: "כלל 8 – הצעות חוק יסוד",
-    template: 'הצעת חוק-יסוד: {billName}, {hebrewYear}, ה"ח {billType} {billNumber}, {firstPage}.',
+    template: 'הצעת חוק-יסוד: {billName}, {hebrewYear}, ה"ח [הכנסת/הממשלה/ריק] {billNumber}, {firstPage}.',
     example: 'הצעת חוק-יסוד: כבוד האדם וחירותו (תיקון), התשפ"ג, ה"ח הכנסת 456, 78.',
     components: [
       { field: "billName", rule: "8.1", description: "שם הצעת חוק היסוד", required: true, format: "plain" },
       { field: "hebrewYear", rule: "8.2", description: "שנה עברית בלבד (ללא שנה לועזית)", required: true, format: "plain" },
-      { field: "billNumber", rule: "8.3", description: 'מספר חוברת הצעות חוק (ה"ח הממשלה / ה"ח הכנסת)', required: true, format: "plain" },
+      { field: "billType", rule: "8.3", description: 'סוג הצעת חוק (הכנסת / הממשלה / ריק) – אופציונלי', required: false, format: "plain" },
+      { field: "billNumber", rule: "8.3", description: 'מספר חוברת ה"ח', required: true, format: "plain" },
       { field: "firstPage", rule: "8.3", description: "עמוד ראשון", required: true, format: "plain" },
     ],
   },
