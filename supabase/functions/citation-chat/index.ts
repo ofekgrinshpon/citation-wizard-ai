@@ -46,6 +46,7 @@ const scoreVerifiedMatch = (
 const PUBLICATION_REF_REGEX = /(ס["״]ח|ק["״]ת)\s+(\d+)/g;
 const NUMBER_ONLY_REGEX = /^\d+[.]?$/;
 const LEGISLATION_RESPONSE_REGEX = /(?:^|\n)\s*(?:סעיף\s+[^\s]+\s+ל)?(?:חוק(?:[\s-]יסוד)?|חוק-יסוד|פקודת|פקודה|תקנות|צו|כללי|הוראות)/;
+const PINPOINT_REGEX = /(?:סעיף|ס['׳]|פסקה|פס['׳]|עמ['׳]|לפסק\s+דינו\s+של|לפסק\s+דינה\s+של|בעמ['׳]|שם,)/;
 
 function hasExplicitPublicationReference(text: string) {
   return PUBLICATION_REF_REGEX.test(text);
@@ -192,6 +193,22 @@ const SYSTEM_PROMPT = `אתה "העוזר המשפטי האוטומטי". תמי
 מקורות מאומתים: אם סופק מקור מאומת – השתמש בו כבסיס ואל תשנה אותו.
 
 ═══════════════════════════════════════════════
+*** הפניות נקודתיות (Pinpoint References) ***
+═══════════════════════════════════════════════
+
+*** כאשר הקלט מכיל מילות מפתח כמו: סעיף, ס', פסקה, פס', עמ', בעמ', לפסק דינו של ***
+*** זהה את זה כהפניה נקודתית (pinpoint) ושלב אותה עם המקור המאומת לפי הכללים. ***
+
+*** חקיקה (כלל 2.6): סעיף X ל[שם החוק], [שנה עברית]–[שנה לועזית]. ***
+*** פסיקה בדפוס (כלל 18): הוסף ", בעמ' Y" אחרי העמוד הראשון. ***
+*** פסיקה ממאגר (כלל 19): הוסף ", פס' Y" לפני הסוגריים. ***
+*** ספרים (כלל 23): הוסף עמוד ספציפי אחרי הכרך. ***
+*** מאמרים (כלל 25): הוסף ", בעמ' Y" אחרי העמוד הראשון. ***
+
+*** חשוב: אל תשנה שום נתון מהמקור המאומת. רק הוסף את ההפניה הנקודתית במיקום הנכון. ***
+*** אין צורך לאמת הפניה נקודתית – הצג אותה ישירות. ***
+
+═══════════════════════════════════════════════
 *** איסור מוחלט להמצאת מטא-נתונים (Anti-Hallucination) ***
 ═══════════════════════════════════════════════
 
@@ -282,10 +299,14 @@ serve(async (req) => {
               .sort((a, b) => b.score - a.score);
 
             const bestMatch = rankedMatches[0]?.candidate as { full_citation: string } | undefined;
-            if (bestMatch) {
+            const hasPinpoint = PINPOINT_REGEX.test(userInput);
+            if (bestMatch && !hasPinpoint) {
               return new Response(JSON.stringify({ content: bestMatch.full_citation }), {
                 headers: { ...corsHeaders, "Content-Type": "application/json" },
               });
+            }
+            if (bestMatch && hasPinpoint) {
+              verifiedHint = `\n\n══ מקור מאומת (הפניה נקודתית) ══\nהמקור המאומת: ${bestMatch.full_citation}\n══ המשתמש מבקש הפניה נקודתית (pinpoint). שלב את ההפניה הנקודתית עם המקור המאומת לפי כללי האזכור האחיד. אל תשנה את הנתונים מהמקור המאומת. ══`;
             }
 
             const sources = verified.map((v: Record<string, unknown>) =>
