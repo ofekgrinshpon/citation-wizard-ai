@@ -21,6 +21,7 @@ const SOURCE_CATEGORIES: { key: SourceType; label: string; icon: string }[] = [
   { key: "internet", label: "מקור מרשתת", icon: "🌐" },
   { key: "religious", label: "מקור דתי", icon: "📿" },
   { key: "foreign", label: "מקור לועזי", icon: "🌍" },
+  { key: "other", label: "אחר (דברי כנסת וכו׳)", icon: "📁" },
 ];
 
 interface Props {

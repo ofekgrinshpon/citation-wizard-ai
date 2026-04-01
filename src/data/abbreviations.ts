@@ -277,5 +277,6 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   internet: 'כלל 30 – מקורות מהמרשתת',
   religious: 'כלל 32 – מקורות דתיים',
   foreign: 'כלל 36 – מקורות לועזיים (Bluebook)',
+  other: 'כלל 8 – אחר (דברי כנסת וכו׳)',
   unknown: '',
 };
