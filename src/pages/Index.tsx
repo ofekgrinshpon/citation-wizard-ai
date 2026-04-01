@@ -128,6 +128,10 @@ const Index = () => {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<AppMode>("freetext");
   const [pendingVerification, setPendingVerification] = useState<PendingVerification | null>(null);
+  // Track detected source type per assistant message index
+  const [messageSourceTypes, setMessageSourceTypes] = useState<Record<number, SourceType>>({});
+  // Track original user input per assistant message index (for re-classification)
+  const [messageRawInputs, setMessageRawInputs] = useState<Record<number, string>>({});
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   
