@@ -13,7 +13,8 @@ import { useGuestLimit } from "@/hooks/useGuestLimit";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
 import { toast } from "sonner";
-import { ensureVerifiedSources, findVerifiedSourceMatch } from "@/lib/verifiedSources";
+import { ensureVerifiedSources, findVerifiedSourceMatch, findSimilarVerifiedSource, type VerifiedSourceMatch } from "@/lib/verifiedSources";
+import { VerifiedSuggestionCard } from "@/components/VerifiedSuggestionCard";
 
 interface Message {
   role: "user" | "assistant";
@@ -132,6 +133,14 @@ const Index = () => {
   const [messageSourceTypes, setMessageSourceTypes] = useState<Record<number, SourceType>>({});
   // Track original user input per assistant message index (for re-classification)
   const [messageRawInputs, setMessageRawInputs] = useState<Record<number, string>>({});
+  // "Did you mean?" suggestion state
+  const [pendingSuggestion, setPendingSuggestion] = useState<{
+    suggestion: VerifiedSourceMatch;
+    rawInput: string;
+    normalized: string;
+    sourceType: SourceType;
+    sourceLabel: string;
+  } | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   
@@ -238,6 +247,57 @@ const Index = () => {
     setPendingVerification(null);
   };
 
+  const handleSuggestionAccept = () => {
+    if (!pendingSuggestion) return;
+    const { suggestion, rawInput, sourceLabel } = pendingSuggestion;
+    const verifiedReply = suggestion.full_citation;
+    setMessages((prev) => [...prev, { role: "assistant", content: `✓ מאומת\n${verifiedReply}` }]);
+    if (isGuestMode) guestLimit.increment();
+    supabase.from("citation_history").insert({
+      raw_input: rawInput,
+      formatted_output: verifiedReply,
+      source_type: sourceLabel || null,
+      is_verified: true,
+    }).then(() => {});
+    setPendingSuggestion(null);
+  };
+
+  const handleSuggestionReject = async () => {
+    if (!pendingSuggestion) return;
+    const { rawInput, normalized, sourceType, sourceLabel } = pendingSuggestion;
+    setPendingSuggestion(null);
+    setLoading(true);
+    try {
+      let prompt = normalized;
+      if (sourceType !== "unknown") {
+        prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${normalized}`;
+      }
+      const reply = await callAPI(prompt, messages);
+      const assistantIndex = messages.length;
+      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
+      setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
+      if (isGuestMode) guestLimit.increment();
+
+      const extractedCitation = extractCitationFromResponse(reply);
+      supabase.from("citation_history").insert({
+        raw_input: rawInput,
+        formatted_output: reply,
+        source_type: sourceType !== "unknown" ? sourceLabel : null,
+      }).then(() => {});
+
+      const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+      const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
+      if (isVerifiedClean && !isFragment) {
+        await saveVerifiedSource(rawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null);
+      }
+    } catch {
+      setMessages((prev) => [...prev, { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSend = async () => {
     const rawText = input.trim();
     if (!rawText || loading) return;
@@ -288,6 +348,23 @@ const Index = () => {
           is_verified: true,
         }).then(() => {});
         return;
+      }
+
+      // Check for similar (fuzzy) verified source match
+      if (!isPinpoint) {
+        const similarMatch = await findSimilarVerifiedSource(normalized);
+        if (similarMatch) {
+          // Show suggestion card and pause — user will decide
+          setPendingSuggestion({
+            suggestion: similarMatch,
+            rawInput: rawText,
+            normalized,
+            sourceType: sourceType as SourceType,
+            sourceLabel,
+          });
+          setLoading(false);
+          return;
+        }
       }
 
       const reply = await callAPI(prompt, messages);
@@ -553,6 +630,15 @@ const Index = () => {
                 />
               ))}
               {loading && <LoadingDots />}
+              {pendingSuggestion && (
+                <div className="my-4">
+                  <VerifiedSuggestionCard
+                    suggestion={pendingSuggestion.suggestion}
+                    onAccept={handleSuggestionAccept}
+                    onReject={handleSuggestionReject}
+                  />
+                </div>
+              )}
               {pendingVerification && (
                 <div className="my-4">
                   <PublicationIntegrityCard
