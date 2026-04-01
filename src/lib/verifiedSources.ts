@@ -113,7 +113,7 @@ export async function findVerifiedSourceMatch(query: string): Promise<VerifiedSo
 
   if (error || !data?.length) return null;
 
-  const bestMatch = (data as VerifiedSourceMatch[])
+  const bestMatch = (data as (VerifiedSourceMatch & { search_text?: string })[])
     .map((candidate) => ({
       candidate,
       score: scoreVerifiedSourceMatch(query, candidate),
