@@ -81,7 +81,8 @@ export function VerifiedAutocomplete({
       const caseNumberParts = value.match(/\d+(?:\/\d+)?/g) || [];
 
       const allTerms = [...words, ...caseNumberParts].filter(t => t.length >= 2);
-      const uniqueTerms = Array.from(new Set(allTerms));
+      // Strip quotes and special chars that break PostgREST or() filters
+      const uniqueTerms = Array.from(new Set(allTerms)).map(t => t.replace(/["״׳'\\,()]/g, '')).filter(t => t.length >= 2);
 
       const orConditions = uniqueTerms.flatMap(w => [
         `search_text.ilike.%${w}%`,

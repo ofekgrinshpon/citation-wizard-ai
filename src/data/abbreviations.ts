@@ -230,6 +230,8 @@ export function detectSourceType(text: string): SourceType {
   if (/חוק |פקודת /.test(hebrewText)) return 'primary_legislation';
   
   // Check for literature
+  // Article in book: pattern like "author "title" book-name" (quoted article + book context)
+  if (/"[^"]+".+(?:ספר|בתוך|עורך)/.test(hebrewText) || /".+"\s+.{5,}/.test(hebrewText) && !/עיוני משפט|משפטים|משפט וממשל|הפרקליט|כתב.עת/.test(hebrewText) && /ספר|בתוך/.test(hebrewText)) return 'article_in_book';
   if (/מאמר|עיוני משפט|משפטים|משפט וממשל|הפרקליט/.test(hebrewText)) return 'article';
   if (/https?:\/\//.test(text)) return 'internet';
   if (/ספר|כרך|מהדורה/.test(hebrewText)) return 'book';
