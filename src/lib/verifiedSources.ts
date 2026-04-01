@@ -124,6 +124,58 @@ export async function findVerifiedSourceMatch(query: string): Promise<VerifiedSo
   return bestMatch?.candidate ?? null;
 }
 
+/**
+ * Find a similar (but not exact) verified source match.
+ * Returns a suggestion when at least half the search terms match but it's not a full match.
+ */
+export async function findSimilarVerifiedSource(query: string): Promise<VerifiedSourceMatch | null> {
+  const terms = tokenizeSearchTerms(query);
+  if (terms.length < 2) return null; // Need at least 2 terms for fuzzy matching
+
+  const caseNumberParts = (query.match(/\d+(?:\/\d+)?/g) || []).filter(p => p.length >= 2);
+  const allTerms = Array.from(new Set([...terms, ...caseNumberParts]))
+    .map(t => t.replace(/["״׳'\\,()]/g, '')).filter(t => t.length >= 2);
+  if (allTerms.length === 0) return null;
+
+  const orConditions = allTerms
+    .flatMap((term) => [
+      `search_text.ilike.%${term}%`,
+      `source_name.ilike.%${term}%`,
+      `full_citation.ilike.%${term}%`,
+    ])
+    .join(",");
+
+  const { data, error } = await supabase
+    .from("verified_sources")
+    .select("id, source_name, full_citation, source_type, year, volume, page, metadata, verification_status")
+    .eq("verification_status", "verified")
+    .or(orConditions)
+    .limit(20);
+
+  if (error || !data?.length) return null;
+
+  // Score all candidates and find partial matches
+  const scored = (data as VerifiedSourceMatch[])
+    .map((candidate) => {
+      const normalizedCandidate = normalizeSearchableText(`${candidate.source_name} ${candidate.full_citation}`);
+      const matchingTerms = allTerms.filter(term => normalizedCandidate.includes(term));
+      const matchRatio = matchingTerms.length / allTerms.length;
+      const fullScore = scoreVerifiedSourceMatch(query, candidate);
+      return { candidate, matchRatio, matchingTerms: matchingTerms.length, fullScore };
+    });
+
+  // If there's already a full match (score >= 0), no need for suggestion
+  const hasFullMatch = scored.some(s => s.fullScore >= 100);
+  if (hasFullMatch) return null;
+
+  // Find the best partial match: at least 40% of terms match and at least 2 terms
+  const bestPartial = scored
+    .filter(s => s.matchRatio >= 0.4 && s.matchingTerms >= 2)
+    .sort((a, b) => b.matchingTerms - a.matchingTerms || b.matchRatio - a.matchRatio)[0];
+
+  return bestPartial?.candidate ?? null;
+}
+
 function isShortCitation(text: string) {
   const cleaned = text.trim();
   return /^שם([.,\s]|$)/.test(cleaned) || /לעיל ה["״']?ש/.test(cleaned);
