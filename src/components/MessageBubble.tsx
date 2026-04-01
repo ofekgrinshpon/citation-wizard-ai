@@ -101,7 +101,11 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit }:
       <div className="max-w-[85%] min-w-0 relative">
         {isUser ? (
           isEditing ? (
-            <div className="chat-bubble-user px-3 py-2 text-sm">
+            <div className="chat-bubble-user px-3 py-2 text-sm" onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                handleCancelEdit();
+              }
+            }}>
               <VerifiedAutocomplete
                 value={editValue}
                 onChange={setEditValue}
