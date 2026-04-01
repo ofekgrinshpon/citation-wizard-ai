@@ -330,10 +330,11 @@ const Index = () => {
     const sourceType = detectSourceType(normalized);
     const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
 
-    // Build enhanced prompt with classification info
+    // Build enhanced prompt with classification info + engine hints
     let prompt = normalized;
     if (sourceType !== "unknown") {
-      prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${normalized}`;
+      const engineHint = buildEnginePromptHint(sourceType);
+      prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
     }
 
     // Show normalization info to user if text was changed
