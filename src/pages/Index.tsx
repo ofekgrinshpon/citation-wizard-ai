@@ -5,6 +5,7 @@ import { LoadingDots } from "@/components/LoadingDots";
 import { ManualEntry } from "@/components/ManualEntry";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
+import { BillTypeSelector, type BillPublicationType } from "@/components/BillTypeSelector";
 import { GuestLimitModal } from "@/components/GuestLimitModal";
 import { PublicationIntegrityCard } from "@/components/PublicationIntegrityCard";
 import { supabase } from "@/integrations/supabase/client";
