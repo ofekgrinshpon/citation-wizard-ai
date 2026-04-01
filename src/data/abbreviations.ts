@@ -227,6 +227,7 @@ export function detectSourceType(text: string): SourceType {
   if (/חוק[- ]יסוד/.test(hebrewText)) return 'basic_law';
   if (/תקנות/.test(hebrewText)) return 'secondary_legislation';
   if (/הצעת חוק/.test(hebrewText)) return 'bill';
+  if (/ד["״]כ|דברי הכנסת|דברי כנסת/.test(hebrewText)) return 'unknown';
   if (/חוק |פקודת /.test(hebrewText)) return 'primary_legislation';
   
   // Check for literature
