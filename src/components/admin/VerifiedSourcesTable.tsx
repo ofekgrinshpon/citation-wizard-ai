@@ -6,6 +6,29 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getVerifiedCategoryLabel, getVerificationStatusLabel, type VerifiedSourceCategory } from "@/lib/verifiedSources";
 
+const CASE_NUMBER_RE = /(?:בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+\d+\/\d+/;
+
+function extractCaseNumber(sourceName: string, fullCitation: string): string {
+  const match = sourceName.match(CASE_NUMBER_RE) || fullCitation.match(CASE_NUMBER_RE);
+  return match ? match[0] : sourceName;
+}
+
+function RenderCitation({ text }: { text: string }) {
+  const parts: React.ReactNode[] = [];
+  let remaining = text;
+  let key = 0;
+  while (remaining.length > 0) {
+    const idx = remaining.indexOf("**");
+    if (idx === -1) { parts.push(<span key={key++}>{remaining}</span>); break; }
+    if (idx > 0) parts.push(<span key={key++}>{remaining.slice(0, idx)}</span>);
+    const close = remaining.indexOf("**", idx + 2);
+    if (close === -1) { parts.push(<span key={key++}>{remaining.slice(idx)}</span>); break; }
+    parts.push(<strong key={key++} className="font-bold">{remaining.slice(idx + 2, close)}</strong>);
+    remaining = remaining.slice(close + 2);
+  }
+  return <>{parts}</>;
+}
+
 export interface VerifiedSourceRow {
   id: string;
   source_name: string;
