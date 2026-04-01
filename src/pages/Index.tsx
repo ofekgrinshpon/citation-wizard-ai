@@ -299,6 +299,23 @@ const Index = () => {
         return;
       }
 
+      // Check for similar (fuzzy) verified source match
+      if (!isPinpoint) {
+        const similarMatch = await findSimilarVerifiedSource(normalized);
+        if (similarMatch) {
+          // Show suggestion card and pause — user will decide
+          setPendingSuggestion({
+            suggestion: similarMatch,
+            rawInput: rawText,
+            normalized,
+            sourceType: sourceType as SourceType,
+            sourceLabel,
+          });
+          setLoading(false);
+          return;
+        }
+      }
+
       const reply = await callAPI(prompt, messages);
       const assistantIndex = newMessages.length; // index of the new assistant message
       setMessages([...newMessages, { role: "assistant", content: reply }]);
