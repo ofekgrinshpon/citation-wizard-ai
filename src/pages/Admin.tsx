@@ -225,6 +225,7 @@ const Admin = () => {
       legislation_primary: [],
       legislation_secondary: [],
       literature: [],
+      other: [],
     };
 
     verifiedSources.forEach((source) => {
@@ -413,6 +414,13 @@ const Admin = () => {
                   title={`📖 ${getVerifiedCategoryLabel("literature")}`}
                   category="literature"
                   sources={verifiedByCategory.literature}
+                  onRemove={removeVerified}
+                  onEdit={editVerified}
+                />
+                <VerifiedSourcesTable
+                  title={`📁 ${getVerifiedCategoryLabel("other")}`}
+                  category="other"
+                  sources={verifiedByCategory.other}
                   onRemove={removeVerified}
                   onEdit={editVerified}
                 />

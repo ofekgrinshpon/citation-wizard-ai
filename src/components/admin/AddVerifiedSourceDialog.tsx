@@ -18,6 +18,7 @@ const SOURCE_TYPES = [
   { value: "legislation_primary", label: "📜 חקיקה ראשית" },
   { value: "legislation_secondary", label: "📋 חקיקת משנה" },
   { value: "literature", label: "📖 ספרות ומאמרים" },
+  { value: "other", label: "📁 אחר" },
 ];
 
 const CASE_NUMBER_REGEX = /(?:בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+\d+\/\d+/;

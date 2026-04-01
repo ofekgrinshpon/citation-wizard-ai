@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type VerifiedSourceCategory = "caselaw" | "legislation_primary" | "legislation_secondary" | "literature";
+export type VerifiedSourceCategory = "caselaw" | "legislation_primary" | "legislation_secondary" | "literature" | "other";
 export type VerificationStatus = "verified" | "pending" | "invalid";
 
 interface SourceClassificationInput {
@@ -198,6 +198,7 @@ function classifySourceText(text: string): VerifiedSourceCategory {
 export function classifyVerifiedSource(input: SourceClassificationInput): VerifiedSourceCategory {
   const sourceType = (input.sourceType || "").trim();
 
+  if (sourceType === "other") return "other";
   if (CASELAW_SOURCE_TYPES.some((candidate) => sourceType.includes(candidate))) return "caselaw";
   if (LEGISLATION_SOURCE_TYPES.some((candidate) => sourceType.includes(candidate))) {
     const rawCategory = classifySourceText(input.rawInput);
@@ -219,6 +220,9 @@ export function getVerifiedCategoryLabel(category: VerifiedSourceCategory) {
     case "legislation_secondary":
       return "חקיקת משנה";
     case "literature":
+      return "ספרות ומאמרים";
+    case "other":
+      return "אחר";
     default:
       return "ספרות ומאמרים";
   }

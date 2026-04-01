@@ -28,6 +28,7 @@ const CATEGORY_LABELS: Record<string, { label: string; icon: string }> = {
   legislation_primary: { label: "חקיקה ראשית", icon: "📜" },
   legislation_secondary: { label: "חקיקת משנה", icon: "📋" },
   literature: { label: "ספרות", icon: "📚" },
+  other: { label: "אחר", icon: "📁" },
 };
 
 export function VerifiedAutocomplete({
