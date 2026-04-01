@@ -139,6 +139,7 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   internet: ['author', 'title', 'siteName', 'url', 'accessDate'],
   religious: ['source', 'location'],
   foreign: ['citation'],
+  other: [],
   unknown: [],
 };
 
