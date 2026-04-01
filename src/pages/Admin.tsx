@@ -417,6 +417,13 @@ const Admin = () => {
                   onRemove={removeVerified}
                   onEdit={editVerified}
                 />
+                <VerifiedSourcesTable
+                  title={`📁 ${getVerifiedCategoryLabel("other")}`}
+                  category="other"
+                  sources={verifiedByCategory.other}
+                  onRemove={removeVerified}
+                  onEdit={editVerified}
+                />
               </div>
             )}
           </div>

@@ -220,6 +220,9 @@ export function getVerifiedCategoryLabel(category: VerifiedSourceCategory) {
     case "legislation_secondary":
       return "חקיקת משנה";
     case "literature":
+      return "ספרות ומאמרים";
+    case "other":
+      return "אחר";
     default:
       return "ספרות ומאמרים";
   }
