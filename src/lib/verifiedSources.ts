@@ -90,9 +90,12 @@ function scoreVerifiedSourceMatch(query: string, source: Pick<VerifiedSourceMatc
 
 export async function findVerifiedSourceMatch(query: string): Promise<VerifiedSourceMatch | null> {
   const terms = tokenizeSearchTerms(query);
-  if (terms.length === 0) return null;
+  // Also extract case number patterns (e.g., "1514/01", "1514")
+  const caseNumberParts = (query.match(/\d+(?:\/\d+)?/g) || []).filter(p => p.length >= 2);
+  const allTerms = Array.from(new Set([...terms, ...caseNumberParts]));
+  if (allTerms.length === 0) return null;
 
-  const orConditions = terms
+  const orConditions = allTerms
     .flatMap((term) => [
       `search_text.ilike.%${term}%`,
       `source_name.ilike.%${term}%`,
@@ -259,9 +262,21 @@ function isFragmentCitation(text: string, category: VerifiedSourceCategory): boo
 function buildStorageShape(item: EnsureVerifiedSourceInput) {
   const category = classifyVerifiedSource(item);
   const isLaw = category === "legislation_primary" || category === "legislation_secondary";
+  const isCase = category === "caselaw";
   const section = isLaw ? extractSection(item.fullCitation) : null;
   const storedCitation = isLaw ? normalizeLawCitationForStorage(item.fullCitation.trim()) : item.fullCitation.trim();
-  const storedSourceName = isLaw ? extractLawName(storedCitation).slice(0, 100) : item.rawInput.substring(0, 100);
+
+  // For caselaw: use the case number (e.g., "ע"פ 1514/01") as source_name
+  let storedSourceName: string;
+  if (isCase) {
+    const caseNumberMatch = item.fullCitation.match(CASE_NUMBER_PATTERN);
+    storedSourceName = caseNumberMatch ? caseNumberMatch[0].trim().slice(0, 100) : item.rawInput.substring(0, 100);
+  } else if (isLaw) {
+    storedSourceName = extractLawName(storedCitation).slice(0, 100);
+  } else {
+    storedSourceName = item.rawInput.substring(0, 100);
+  }
+
   const year = extractYear(storedCitation) ?? extractYear(item.fullCitation) ?? null;
   const pubInfo = isLaw ? extractPublicationInfo(storedCitation) : { pubSource: null, page: null };
 

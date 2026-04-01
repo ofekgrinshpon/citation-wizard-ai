@@ -250,8 +250,12 @@ serve(async (req) => {
         const searchTerm = userInput.replace(/\[סיווג אוטומטי:.*?\]\n?/, "").trim();
         const words = tokenizeSearchTerms(searchTerm);
 
-        if (words.length > 0) {
-          const orConditions = words
+        // Also extract case number patterns (e.g., "1514/01", "1514")
+        const caseNumberParts = (searchTerm.match(/\d+(?:\/\d+)?/g) || []).filter((p: string) => p.length >= 2);
+        const allTerms = Array.from(new Set([...words, ...caseNumberParts]));
+
+        if (allTerms.length > 0) {
+          const orConditions = allTerms
             .flatMap((word) => [
               `search_text.ilike.%${word}%`,
               `source_name.ilike.%${word}%`,
