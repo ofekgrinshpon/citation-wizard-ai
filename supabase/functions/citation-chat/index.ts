@@ -46,7 +46,7 @@ const scoreVerifiedMatch = (
 const PUBLICATION_REF_REGEX = /(ס["״]ח|ק["״]ת)\s+(\d+)/g;
 const NUMBER_ONLY_REGEX = /^\d+[.]?$/;
 const LEGISLATION_RESPONSE_REGEX = /(?:^|\n)\s*(?:סעיף\s+[^\s]+\s+ל)?(?:חוק(?:[\s-]יסוד)?|חוק-יסוד|פקודת|פקודה|תקנות|צו|כללי|הוראות)/;
-const PINPOINT_REGEX = /(?:סעיף|ס['׳]|פסקה|פס['׳]|עמ['׳]|לפסק\s+דינו\s+של|לפסק\s+דינה\s+של|בעמ['׳]|שם,)/;
+const PINPOINT_REGEX = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
 
 function hasExplicitPublicationReference(text: string) {
   return PUBLICATION_REF_REGEX.test(text);
