@@ -96,14 +96,13 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
   secondary_legislation: {
     primaryRule: "6",
     ruleTitle: "כלל 6 – חקיקת משנה",
-    template: "{regulationName}, {hebrewYear} {gregorianYear}, {collection} {firstPage}.",
-    example: 'תקנות התעבורה, התשכ"א-1961, ק"ת 1128, 1425.',
+    template: "{regulationName}, {hebrewYear}-{gregorianYear}, {collection} {number}.",
+    example: 'תקנות התעבורה, התשכ"א-1961, ק"ת 1128.',
     components: [
       { field: "regulationName", rule: "6.1", description: "שם התקנות המלא", required: true, format: "plain" },
       { field: "hebrewYear", rule: "6.2", description: "שנה עברית", required: true, format: "plain" },
       { field: "gregorianYear", rule: "6.2", description: "שנה לועזית", required: true, format: "plain" },
       { field: "collection", rule: "6.3", description: 'ק"ת – קובץ התקנות', required: true, format: "plain" },
-      { field: "firstPage", rule: "6.3", description: "עמוד ראשון בקובץ התקנות", required: true, format: "plain" },
     ],
   },
 
