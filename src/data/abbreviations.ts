@@ -229,7 +229,7 @@ export function detectSourceType(text: string): SourceType {
   if (/חוק[- ]יסוד/.test(hebrewText)) return 'basic_law';
   if (/תקנות/.test(hebrewText)) return 'secondary_legislation';
   if (/הצעת חוק/.test(hebrewText)) return 'bill';
-  if (/ד["״]כ|דברי הכנסת|דברי כנסת|מועצת המדינה הזמנית/.test(hebrewText)) return 'other';
+  if (/ד["״]כ|דברי הכנסת|דברי כנסת|מועצת המדינה(?:\s+הזמנית)?/.test(hebrewText)) return 'other';
   if (/חוק |פקודת /.test(hebrewText)) return 'primary_legislation';
   
   // Check for literature
@@ -237,7 +237,7 @@ export function detectSourceType(text: string): SourceType {
   if (/"[^"]+".+(?:ספר|בתוך|עורך)/.test(hebrewText) || /".+"\s+.{5,}/.test(hebrewText) && !/עיוני משפט|משפטים|משפט וממשל|הפרקליט|כתב.עת/.test(hebrewText) && /ספר|בתוך/.test(hebrewText)) return 'article_in_book';
   if (/מאמר|עיוני משפט|משפטים|משפט וממשל|הפרקליט/.test(hebrewText)) return 'article';
   if (/https?:\/\//.test(text)) return 'internet';
-  if (/ספר|כרך|מהדורה/.test(hebrewText)) return 'book';
+  if (/ספר|מהדורה/.test(hebrewText)) return 'book';
   
   // Religious sources
   if (/תלמוד|משנה|גמרא|שו"ת|מקרא|בראשית|שמות|ויקרא|במדבר|דברים/.test(hebrewText)) return 'religious';
