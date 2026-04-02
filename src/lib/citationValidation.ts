@@ -178,6 +178,63 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
   return fields;
 }
 
+function getCitationLine(response: string): string {
+  return response
+    .split("\n")
+    .map(line => line.trim())
+    .find(line => line && !/^📐/.test(line) && !/^⚠️/.test(line)) || response.trim();
+}
+
+type OtherSubtype = "knesset" | "provisional_council";
+
+const OTHER_MISSING_FIELD_LABELS: Record<string, string> = {
+  volumeHebrew: "כרך באותיות עבריות (כלל 8.2)",
+  sessionNumber: "מספר ישיבה (כלל 8.2)",
+  page: "עמוד",
+  fullDate: "תאריך לועזי מלא",
+};
+
+function detectOtherSubtype(response: string): OtherSubtype | null {
+  const citationLine = getCitationLine(response);
+  if (/מועצת המדינה(?:\s+הזמנית)?/.test(citationLine)) return "provisional_council";
+  if (/ד["״]כ|דברי הכנסת|דברי כנסת/.test(citationLine)) return "knesset";
+  return null;
+}
+
+function validateOtherResponse(response: string): string[] {
+  const citationLine = getCitationLine(response);
+  const subtype = detectOtherSubtype(response);
+  if (!subtype) return [];
+
+  if (subtype === "knesset") {
+    const missingFields: string[] = [];
+    const hasFullDate = /\d{1,2}\.\d{1,2}\.\d{4}/.test(citationLine) && !/\[חסר:\s*תאריך/i.test(citationLine);
+    const hasPage = /,\s*\d+\s*\.?$/.test(citationLine) && !/\[חסר:\s*עמוד/i.test(citationLine);
+
+    if (!hasFullDate) missingFields.push("fullDate");
+    if (!hasPage) missingFields.push("page");
+
+    return missingFields;
+  }
+
+  const missingFields: string[] = [];
+  const hasVolume = /מועצת המדינה(?:\s+הזמנית)?\s+[א-ת]+/.test(citationLine) && !/\[חסר:\s*כרך/i.test(citationLine);
+  const hasSession = /ישיבה\s+[א-ת0-9]+/.test(citationLine) && !/\[חסר:\s*מספר ישיבה/i.test(citationLine);
+  const pageMatch = citationLine.match(/ישיבה\s+[א-ת0-9]+,\s*(\d+)\s*\(/);
+  const pageValue = pageMatch?.[1] ?? "";
+  const citationYear = citationLine.match(/\((?:\d{1,2}\.\d{1,2}\.)?(\d{4})\)/)?.[1] ?? "";
+  const looksLikeYearInsteadOfPage = /^(19|20)\d{2}$/.test(pageValue) || (Boolean(citationYear) && pageValue === citationYear);
+  const hasPage = Boolean(pageValue) && !/\[חסר:\s*עמוד/i.test(citationLine) && !looksLikeYearInsteadOfPage;
+  const hasFullDate = /\(\d{1,2}\.\d{1,2}\.\d{4}\)/.test(citationLine) && !/\[חסר:\s*תאריך לועזי מלא/i.test(citationLine);
+
+  if (!hasVolume) missingFields.push("volumeHebrew");
+  if (!hasSession) missingFields.push("sessionNumber");
+  if (!hasPage) missingFields.push("page");
+  if (!hasFullDate) missingFields.push("fullDate");
+
+  return missingFields;
+}
+
 /**
  * Validate an AI-generated citation against the engine's rules.
  * Returns completeness info, missing fields, and rule metadata.
@@ -197,6 +254,25 @@ export function validateAIResponse(
       template: "",
       ruleSet: null,
     };
+  }
+
+  if (sourceType === "other") {
+    const otherSubtype = detectOtherSubtype(response);
+    if (otherSubtype) {
+      const missingFields = validateOtherResponse(response);
+      const isProvisionalCouncil = otherSubtype === "provisional_council";
+
+      return {
+        isComplete: missingFields.length === 0,
+        missingFields,
+        primaryRule: isProvisionalCouncil ? "8.2" : "8",
+        ruleTitle: isProvisionalCouncil ? "כלל 8.2 – מועצת המדינה הזמנית" : "כלל 8 – דברי כנסת",
+        template: isProvisionalCouncil
+          ? "מועצת המדינה הזמנית {כרך באותיות עבריות}, ישיבה {מספר ישיבה}, {עמוד} ({תאריך לועזי מלא})."
+          : 'ד"כ {תאריך לועזי מלא}, {עמוד}.',
+        ruleSet,
+      };
+    }
   }
 
   const engineKey = ENGINE_KEY_MAP[sourceType];
@@ -220,8 +296,15 @@ export function getMissingFieldsSummary(
   sourceType: SourceType,
   missingFields: string[]
 ): string {
+  if (missingFields.length === 0) return "";
+
+  if (sourceType === "other") {
+    const descriptions = missingFields.map(field => OTHER_MISSING_FIELD_LABELS[field] || field);
+    return `חסרים ${descriptions.length} רכיבי חובה: ${descriptions.join("، ")}`;
+  }
+
   const ruleSet = getRuleSet(sourceType);
-  if (!ruleSet || missingFields.length === 0) return "";
+  if (!ruleSet) return "";
 
   const descriptions = missingFields.map(field => {
     const component = ruleSet.components.find(c => c.field === field);
