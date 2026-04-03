@@ -822,8 +822,8 @@ const Index = () => {
           <>
             {/* Welcome screen */}
             {messages.length === 0 && (
-              <div className="py-10 text-center" style={{ direction: "rtl" }}>
-                <div className="mb-4 flex justify-center"><ReLexLogo size={44} /></div>
+              <div className="py-6 sm:py-10 text-center" style={{ direction: "rtl" }}>
+                <div className="mb-3 sm:mb-4 flex justify-center"><ReLexLogo size={36} /></div>
                 <h2 className="text-foreground text-xl font-bold mb-2 font-sans">
                   {"\n"}
                 </h2>
