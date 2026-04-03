@@ -797,10 +797,10 @@ const Index = () => {
       )}
 
       {/* Body with sidebar */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden items-stretch">
         {/* Right sidebar — desktop only */}
         {!isGuestMode && user && !isOfficeAddin && (
-          <div className="hidden md:block">
+          <div className="hidden md:flex self-stretch">
             <AppSidebar />
           </div>
         )}
