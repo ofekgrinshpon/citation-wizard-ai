@@ -781,9 +781,9 @@ const Index = () => {
             {/* Welcome screen */}
             {messages.length === 0 && (
               <div className="py-10 text-center" style={{ direction: "rtl" }}>
-                <div className="text-5xl mb-4">⚖️</div>
+                <div className="mb-4 flex justify-center"><ReLexLogo size={44} /></div>
                 <h2 className="text-foreground text-xl font-bold mb-2 font-sans">
-                  העוזר המשפטי{" "}
+                  ReLex
                 </h2>
                 <p className="text-text-dim text-sm mb-2">
                   הכנס מקור משפטי בטקסט חופשי או בצורה ידנית – המערכת תזהה,
