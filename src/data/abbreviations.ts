@@ -139,6 +139,7 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   article_in_book: ['author', 'articleTitle', 'bookTitle', 'firstPage', 'year'],
   internet: ['author', 'title', 'siteName', 'url', 'accessDate'],
   religious: ['source', 'location'],
+  treaty: ['treatyName', 'volume', 'firstPage', 'signingType', 'signingYear'],
   foreign: ['citation'],
   other: [],
   unknown: [],
