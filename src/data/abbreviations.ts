@@ -121,6 +121,7 @@ export type SourceType =
   | 'article_in_book'       // מאמר שפורסם בספר
   | 'internet'              // מרשתת
   | 'religious'             // מקור דתי
+  | 'treaty'                // כתבי אמנה
   | 'foreign'               // לועזי
   | 'other'                 // אחר (דברי כנסת וכו')
   | 'unknown';
