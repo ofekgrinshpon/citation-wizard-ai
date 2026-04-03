@@ -24,13 +24,16 @@ interface MessageBubbleProps {
   detectedType?: SourceType;
   onChangeSourceType?: (newType: SourceType) => void;
   onEdit?: (newContent: string) => void;
+  onUpdateAssistantContent?: (newContent: string) => void;
 }
 
-export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit }: MessageBubbleProps) {
+export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent }: MessageBubbleProps) {
   const isUser = msg.role === "user";
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
   const [showPartyCheck, setShowPartyCheck] = useState(false);
+  const [isEditingCitation, setIsEditingCitation] = useState(false);
+  const [citationEditValue, setCitationEditValue] = useState("");
 
   const isCaseLaw = detectedType === "case_law_published" || detectedType === "case_law_database";
   const isVerifiedSource = msg.content.startsWith("✓");
