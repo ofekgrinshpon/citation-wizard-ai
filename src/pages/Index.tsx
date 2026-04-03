@@ -130,17 +130,19 @@ const CITATION_EXAMPLES = [
 
 type AppMode = "freetext" | "manual" | "batch" | "bibliography";
 
-const LS_KEY_INPUT = "legal_app_free_text_content";
-const LS_KEY_MESSAGES = "legal_app_free_text_messages";
+const LS_KEY_INPUT_PREFIX = "legal_app_free_text_content";
+const LS_KEY_MESSAGES_PREFIX = "legal_app_free_text_messages";
+
+function getProjectKey(prefix: string, projectId: string | undefined) {
+  return projectId ? `${prefix}_${projectId}` : prefix;
+}
 
 const Index = () => {
-  const [messages, setMessages] = useState<Message[]>(() => {
-    try {
-      const saved = localStorage.getItem(LS_KEY_MESSAGES);
-      return saved ? JSON.parse(saved) : [];
-    } catch { return []; }
-  });
-  const [input, setInput] = useState(() => localStorage.getItem(LS_KEY_INPUT) || "");
+  const { currentProject } = useProjects();
+  const projectId = currentProject?.id;
+
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<AppMode>("freetext");
   const [pendingVerification, setPendingVerification] = useState<PendingVerification | null>(null);
