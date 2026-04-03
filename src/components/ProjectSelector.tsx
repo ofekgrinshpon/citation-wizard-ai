@@ -10,18 +10,20 @@ import {
 import { toast } from "sonner";
 
 export function ProjectSelector() {
-  const { projects, currentProject, setCurrentProjectId, createProject, deleteProject } = useProjects();
+  const { projects, currentProject, setCurrentProjectId, createProject, deleteProject, loading } = useProjects();
   const [newName, setNewName] = useState("");
   const [showCreate, setShowCreate] = useState(false);
 
   const handleCreate = async () => {
     const name = newName.trim();
-    if (!name) return;
+    if (!name || loading) return;
     const p = await createProject(name);
-    if (p) {
-      setCurrentProjectId(p.id);
-      toast.success(`פרויקט "${name}" נוצר`);
+    if (!p) {
+      toast.error("לא הצלחנו ליצור פרויקט חדש");
+      return;
     }
+    setCurrentProjectId(p.id);
+    toast.success(`פרויקט "${name}" נוצר`);
     setNewName("");
     setShowCreate(false);
   };
@@ -89,7 +91,7 @@ export function ProjectSelector() {
             </button>
           </div>
         ) : (
-          <DropdownMenuItem onSelect={() => setShowCreate(true)}>
+          <DropdownMenuItem onSelect={() => !loading && setShowCreate(true)} disabled={loading}>
             <span className="text-primary">+ פרויקט חדש</span>
           </DropdownMenuItem>
         )}
