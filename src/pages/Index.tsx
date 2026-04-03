@@ -181,7 +181,6 @@ const Index = () => {
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const guestLimit = useGuestLimit();
-  const { currentProject } = useProjects();
   const { log: logActivity } = useActivityLog();
 
   const isGuest = !user;
