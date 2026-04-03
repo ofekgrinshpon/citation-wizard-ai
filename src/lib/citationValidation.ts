@@ -262,6 +262,19 @@ export function validateAIResponse(
   response: string,
   sourceType: SourceType
 ): CitationValidationResult {
+  // Skip validation for repeated citations (לעיל ה"ש / שם)
+  if (/לעיל ה["״'׳]?ש/.test(response) || /^שם([.,\s]|$)/.test(response.trim())) {
+    const ruleSet = getRuleSet(sourceType);
+    return {
+      isComplete: true,
+      missingFields: [],
+      primaryRule: ruleSet?.primaryRule || "",
+      ruleTitle: ruleSet?.ruleTitle || RULE_REFERENCES[sourceType] || "",
+      template: ruleSet?.template || "",
+      ruleSet: ruleSet || null,
+    };
+  }
+
   const ruleSet = getRuleSet(sourceType);
 
   if (!ruleSet) {
