@@ -722,15 +722,10 @@ const Index = () => {
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shadow-sm">
         <div className="flex items-center gap-3" style={{ direction: "rtl" }}>
-          <div className="text-3xl">🏛</div>
-          <div>
-            <h1 className="text-foreground text-lg font-bold leading-tight font-sans">
-              העוזמ״ש
-            </h1>
-            <p className="text-text-dim text-xs">
-              כללי האזכור האחיד • מהדורת 2021
-            </p>
-          </div>
+          <ReLexLogo size={32} />
+          <p className="text-text-dim text-xs">
+            כללי האזכור האחיד • מהדורת 2021
+          </p>
         </div>
 
         <div className="flex items-center gap-2">

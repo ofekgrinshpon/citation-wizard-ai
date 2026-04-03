@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { ReLexLogo } from "@/components/ReLexLogo";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 

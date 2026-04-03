@@ -85,8 +85,8 @@
         <bt:String id="TaskpaneButton.Label" DefaultValue="ReLex" />
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="עוזר מחקר משפטי לעיצוב אזכורים תקניים לפי כללי האזכור האחיד" />
-        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="פתח את העוזר המשפטי לאזכורים" />
+        <bt:String id="GetStarted.Description" DefaultValue="Smart Legal Citations for Israeli Law" />
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Open ReLex citation assistant" />
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
