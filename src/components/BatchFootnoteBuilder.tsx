@@ -4,6 +4,7 @@ import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/
 import { FormattedCitation } from "./FormattedCitation";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
 import { useBibliography } from "@/hooks/useBibliography";
+import { useProjects } from "@/hooks/useProjects";
 import { toast } from "sonner";
 import { ensureVerifiedSources } from "@/lib/verifiedSources";
 
@@ -28,12 +29,19 @@ interface BatchProps {
   guestLimit?: { isLocked: boolean; increment: (n?: number) => void; remaining: number; max: number };
 }
 
-const CELLS_STORAGE_KEY = "footnote_cells";
-const SUMMARY_STORAGE_KEY = "footnote_summary";
+const CELLS_STORAGE_PREFIX = "footnote_cells";
+const SUMMARY_STORAGE_PREFIX = "footnote_summary";
 
-function loadCells(): FootnoteCell[] {
+function getCellsKey(projectId: string | undefined) {
+  return projectId ? `${CELLS_STORAGE_PREFIX}_${projectId}` : CELLS_STORAGE_PREFIX;
+}
+function getSummaryKey(projectId: string | undefined) {
+  return projectId ? `${SUMMARY_STORAGE_PREFIX}_${projectId}` : SUMMARY_STORAGE_PREFIX;
+}
+
+function loadCells(projectId: string | undefined): FootnoteCell[] {
   try {
-    const raw = localStorage.getItem(CELLS_STORAGE_KEY);
+    const raw = localStorage.getItem(getCellsKey(projectId));
     if (raw) {
       const parsed = JSON.parse(raw) as FootnoteCell[];
       if (Array.isArray(parsed) && parsed.length > 0) return parsed.map(c => ({ ...c, status: c.status === "loading" ? "empty" : c.status }));
@@ -43,19 +51,28 @@ function loadCells(): FootnoteCell[] {
 }
 
 export function BatchFootnoteBuilder({ isGuest, guestLimit }: BatchProps) {
-  const [cells, setCells] = useState<FootnoteCell[]>(loadCells);
+  const { currentProject } = useProjects();
+  const projectId = currentProject?.id;
+  const [cells, setCells] = useState<FootnoteCell[]>(() => loadCells(projectId));
   const [globalLoading, setGlobalLoading] = useState(false);
-  const [summary, setSummary] = useState<string | null>(() => localStorage.getItem(SUMMARY_STORAGE_KEY));
+  const [summary, setSummary] = useState<string | null>(() => localStorage.getItem(getSummaryKey(projectId)));
   const bibliography = useBibliography();
 
+  // Reload when project changes
   useEffect(() => {
-    localStorage.setItem(CELLS_STORAGE_KEY, JSON.stringify(cells));
-  }, [cells]);
+    setCells(loadCells(projectId));
+    setSummary(localStorage.getItem(getSummaryKey(projectId)));
+  }, [projectId]);
 
   useEffect(() => {
-    if (summary) localStorage.setItem(SUMMARY_STORAGE_KEY, summary);
-    else localStorage.removeItem(SUMMARY_STORAGE_KEY);
-  }, [summary]);
+    localStorage.setItem(getCellsKey(projectId), JSON.stringify(cells));
+  }, [cells, projectId]);
+
+  useEffect(() => {
+    const key = getSummaryKey(projectId);
+    if (summary) localStorage.setItem(key, summary);
+    else localStorage.removeItem(key);
+  }, [summary, projectId]);
 
   const updateCellInput = useCallback((id: number, value: string) => {
     setCells((prev) =>
