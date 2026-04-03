@@ -64,12 +64,12 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Assistant', sans-serif;
+    font-family: 'Heebo', 'Inter', sans-serif;
     direction: rtl;
   }
 
   h1, h2, h3 {
-    font-family: 'Frank Ruhl Libre', serif;
+    font-family: 'Inter', 'Heebo', sans-serif;
   }
 }
 
