@@ -354,6 +354,60 @@ const Index = () => {
     }
   };
 
+  const handleTreatyTypeSelect = async (treatyType: TreatySigningType) => {
+    if (!pendingTreatyType) return;
+    const { rawText, normalized, sourceType, sourceLabel, newMessages } = pendingTreatyType;
+    setPendingTreatyType(null);
+    setLoading(true);
+
+    try {
+      const treatyHint = treatyType === "multilateral"
+        ? '\n[סוג אמנה: רב-צדדית – "נפתחה לחתימה ב-{שנה}"]'
+        : '\n[סוג אמנה: דו-צדדית – "נחתמה ב-{שנה}"]';
+
+      let prompt = normalized;
+      if (sourceType !== "unknown") {
+        const engineHint = buildEnginePromptHint(sourceType);
+        prompt = `[סיווג אוטומטי: ${sourceLabel}]${treatyHint}\n${engineHint}${normalized}`;
+      }
+
+      const fullRawInput = buildFullRawInput(rawText, messages);
+      const reply = await callAPI(prompt, messages);
+      const assistantIndex = newMessages.length;
+
+      const validation = validateAIResponse(reply, sourceType as SourceType);
+      let finalReply = reply;
+      if (!validation.isComplete && validation.missingFields.length > 0) {
+        const summary = getMissingFieldsSummary(sourceType as SourceType, validation.missingFields);
+        if (summary && !/⚠️/.test(reply)) {
+          finalReply = `${reply}\n⚠️ ${summary}`;
+        }
+      }
+
+      setMessages([...newMessages, { role: "assistant", content: finalReply }]);
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+      setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
+      if (isGuestMode) guestLimit.increment();
+
+      const extractedCitation = extractCitationFromResponse(reply);
+      supabase.from("citation_history").insert({
+        raw_input: fullRawInput,
+        formatted_output: reply,
+        source_type: sourceType !== "unknown" ? sourceLabel : null,
+      }).then(() => {});
+
+      const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+      const isFragment = !extractedCitation || extractedCitation.length < 10;
+      if (isVerifiedClean && !isFragment) {
+        await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null);
+      }
+    } catch {
+      setMessages([...newMessages, { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSuggestionAccept = () => {
     if (!pendingSuggestion) return;
     const { suggestion, rawInput } = pendingSuggestion;
