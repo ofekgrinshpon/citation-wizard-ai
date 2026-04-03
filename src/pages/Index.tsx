@@ -961,6 +961,11 @@ const Index = () => {
                   <BillTypeSelector onSelect={handleBillTypeSelect} />
                 </div>
               )}
+              {pendingTreatyType && (
+                <div className="my-4">
+                  <TreatyTypeSelector onSelect={handleTreatyTypeSelect} />
+                </div>
+              )}
               {pendingVerification && (
                 <div className="my-4">
                   <PublicationIntegrityCard
