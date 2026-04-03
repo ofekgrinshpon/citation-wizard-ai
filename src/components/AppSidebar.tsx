@@ -98,11 +98,33 @@ export function AppSidebar() {
             }`}
             onClick={() => setCurrentProjectId(p.id)}
           >
-            <span className="truncate flex items-center gap-1.5">
-              <span className="text-xs">📁</span>
-              {p.name}
-            </span>
-            {projects.length > 1 && (
+            {editingId === p.id ? (
+              <input
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                onBlur={() => handleRename(p.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleRename(p.id);
+                  if (e.key === "Escape") setEditingId(null);
+                }}
+                className="bg-background border border-border rounded px-1.5 py-0.5 text-sm text-foreground w-full min-w-0"
+                autoFocus
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <span
+                className="truncate flex items-center gap-1.5"
+                onDoubleClick={(e) => {
+                  e.stopPropagation();
+                  setEditingId(p.id);
+                  setEditName(p.name);
+                }}
+              >
+                <span className="text-xs">📁</span>
+                {p.name}
+              </span>
+            )}
+            {editingId !== p.id && projects.length > 1 && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
