@@ -8,10 +8,12 @@ import { toast } from "sonner";
 export function AppSidebar() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
-  const { projects, currentProject, setCurrentProjectId, createProject, deleteProject, loading: projectsLoading } = useProjects();
+  const { projects, currentProject, setCurrentProjectId, createProject, renameProject, deleteProject, loading: projectsLoading } = useProjects();
   const [newName, setNewName] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [displayName, setDisplayName] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -38,6 +40,17 @@ export function AppSidebar() {
     toast.success(`פרויקט "${name}" נוצר`);
     setNewName("");
     setShowCreate(false);
+  };
+
+  const handleRename = async (id: string) => {
+    const trimmed = editName.trim();
+    if (!trimmed || trimmed === projects.find((p) => p.id === id)?.name) {
+      setEditingId(null);
+      return;
+    }
+    await renameProject(id, trimmed);
+    toast.success("שם הפרויקט עודכן");
+    setEditingId(null);
   };
 
   const handleDelete = (id: string, name: string) => {
@@ -85,11 +98,33 @@ export function AppSidebar() {
             }`}
             onClick={() => setCurrentProjectId(p.id)}
           >
-            <span className="truncate flex items-center gap-1.5">
-              <span className="text-xs">📁</span>
-              {p.name}
-            </span>
-            {projects.length > 1 && (
+            {editingId === p.id ? (
+              <input
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                onBlur={() => handleRename(p.id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleRename(p.id);
+                  if (e.key === "Escape") setEditingId(null);
+                }}
+                className="bg-background border border-border rounded px-1.5 py-0.5 text-sm text-foreground w-full min-w-0"
+                autoFocus
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <span
+                className="truncate flex items-center gap-1.5"
+                onDoubleClick={(e) => {
+                  e.stopPropagation();
+                  setEditingId(p.id);
+                  setEditName(p.name);
+                }}
+              >
+                <span className="text-xs">📁</span>
+                {p.name}
+              </span>
+            )}
+            {editingId !== p.id && projects.length > 1 && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
