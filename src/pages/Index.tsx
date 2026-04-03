@@ -736,6 +736,7 @@ const Index = () => {
               אורח • {guestLimit.remaining}/{guestLimit.max} אזכורים
             </span>
           )}
+          {!isGuestMode && user && <ProjectSelector />}
           <div className="flex gap-1 bg-muted rounded-lg p-1">
             {MODES.map((m) => (
               <button
@@ -756,6 +757,14 @@ const Index = () => {
               className="text-xs text-primary hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors font-medium"
             >
               ⚙ ניהול
+            </button>
+          )}
+          {user && (
+            <button
+              onClick={() => navigate("/profile")}
+              className="text-xs text-primary hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors font-medium"
+            >
+              👤 פרופיל
             </button>
           )}
           <button
