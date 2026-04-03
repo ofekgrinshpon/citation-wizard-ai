@@ -130,17 +130,19 @@ const CITATION_EXAMPLES = [
 
 type AppMode = "freetext" | "manual" | "batch" | "bibliography";
 
-const LS_KEY_INPUT = "legal_app_free_text_content";
-const LS_KEY_MESSAGES = "legal_app_free_text_messages";
+const LS_KEY_INPUT_PREFIX = "legal_app_free_text_content";
+const LS_KEY_MESSAGES_PREFIX = "legal_app_free_text_messages";
+
+function getProjectKey(prefix: string, projectId: string | undefined) {
+  return projectId ? `${prefix}_${projectId}` : prefix;
+}
 
 const Index = () => {
-  const [messages, setMessages] = useState<Message[]>(() => {
-    try {
-      const saved = localStorage.getItem(LS_KEY_MESSAGES);
-      return saved ? JSON.parse(saved) : [];
-    } catch { return []; }
-  });
-  const [input, setInput] = useState(() => localStorage.getItem(LS_KEY_INPUT) || "");
+  const { currentProject } = useProjects();
+  const projectId = currentProject?.id;
+
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<AppMode>("freetext");
   const [pendingVerification, setPendingVerification] = useState<PendingVerification | null>(null);
@@ -179,21 +181,35 @@ const Index = () => {
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const guestLimit = useGuestLimit();
-  const { currentProject } = useProjects();
   const { log: logActivity } = useActivityLog();
 
   const isGuest = !user;
   const isGuestMode = isGuest || searchParams.get("guest") === "true";
 
+  // Load project-specific state when project changes
+  useEffect(() => {
+    try {
+      const savedMessages = localStorage.getItem(getProjectKey(LS_KEY_MESSAGES_PREFIX, projectId));
+      setMessages(savedMessages ? JSON.parse(savedMessages) : []);
+    } catch { setMessages([]); }
+    setInput(localStorage.getItem(getProjectKey(LS_KEY_INPUT_PREFIX, projectId)) || "");
+    setPendingVerification(null);
+    setPendingSuggestion(null);
+    setPendingBillType(null);
+    setPendingTreatyType(null);
+    setMessageSourceTypes({});
+    setMessageRawInputs({});
+  }, [projectId]);
+
   // Persist input to localStorage on every change
   useEffect(() => {
-    localStorage.setItem(LS_KEY_INPUT, input);
-  }, [input]);
+    localStorage.setItem(getProjectKey(LS_KEY_INPUT_PREFIX, projectId), input);
+  }, [input, projectId]);
 
   // Persist messages to localStorage
   useEffect(() => {
-    localStorage.setItem(LS_KEY_MESSAGES, JSON.stringify(messages));
-  }, [messages]);
+    localStorage.setItem(getProjectKey(LS_KEY_MESSAGES_PREFIX, projectId), JSON.stringify(messages));
+  }, [messages, projectId]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -1052,8 +1068,8 @@ const Index = () => {
                   const doClear = () => {
                     setMessages([]);
                     setInput("");
-                    localStorage.removeItem(LS_KEY_INPUT);
-                    localStorage.removeItem(LS_KEY_MESSAGES);
+                    localStorage.removeItem(getProjectKey(LS_KEY_INPUT_PREFIX, projectId));
+                    localStorage.removeItem(getProjectKey(LS_KEY_MESSAGES_PREFIX, projectId));
                   };
                   if (totalLen > 100) {
                     toast("האם למחוק את כל השיחה?", {

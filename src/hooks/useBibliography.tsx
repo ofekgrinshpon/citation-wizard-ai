@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, createContext, useContext } from "react";
+import { useProjects } from "@/hooks/useProjects";
 
 export interface BibliographyEntry {
   id: string;
@@ -231,11 +232,12 @@ interface BibliographyContextValue {
 
 const BibliographyContext = createContext<BibliographyContextValue | null>(null);
 
-const BIB_STORAGE_KEY = "bibliography_entries";
+const BIB_STORAGE_PREFIX = "bibliography_entries";
 
-function loadBibEntries(): BibliographyEntry[] {
+function loadBibEntries(projectId: string | undefined): BibliographyEntry[] {
   try {
-    const raw = localStorage.getItem(BIB_STORAGE_KEY);
+    const key = projectId ? `${BIB_STORAGE_PREFIX}_${projectId}` : BIB_STORAGE_PREFIX;
+    const raw = localStorage.getItem(key);
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) return rebuildBibliographyEntries(parsed);
@@ -245,7 +247,14 @@ function loadBibEntries(): BibliographyEntry[] {
 }
 
 export function BibliographyProvider({ children }: { children: React.ReactNode }) {
-  const [entries, setEntries] = useState<BibliographyEntry[]>(loadBibEntries);
+  const { currentProject } = useProjects();
+  const projectId = currentProject?.id;
+  const [entries, setEntries] = useState<BibliographyEntry[]>(() => loadBibEntries(projectId));
+
+  // Reload entries when project changes
+  useEffect(() => {
+    setEntries(loadBibEntries(projectId));
+  }, [projectId]);
 
   useEffect(() => {
     setEntries((prev) => {
@@ -265,8 +274,9 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(BIB_STORAGE_KEY, JSON.stringify(entries));
-  }, [entries]);
+    const key = projectId ? `${BIB_STORAGE_PREFIX}_${projectId}` : BIB_STORAGE_PREFIX;
+    localStorage.setItem(key, JSON.stringify(entries));
+  }, [entries, projectId]);
 
   const isDuplicate = useCallback(
     (fullCitation: string, current: BibliographyEntry[]) => {
