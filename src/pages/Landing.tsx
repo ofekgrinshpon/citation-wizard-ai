@@ -59,7 +59,7 @@ const Landing = () => {
             <ReLexLogo size={48} />
           </div>
           <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
-            אזכורים משפטיים חכמים למשפט הישראלי
+            העוזר המשפטי החכם שלך
           </p>
           <div className="flex items-center justify-center gap-4 mt-5 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">⚖️ פסיקה</span>
