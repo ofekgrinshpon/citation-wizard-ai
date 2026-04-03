@@ -42,6 +42,17 @@ export function AppSidebar() {
     setShowCreate(false);
   };
 
+  const handleRename = async (id: string) => {
+    const trimmed = editName.trim();
+    if (!trimmed || trimmed === projects.find((p) => p.id === id)?.name) {
+      setEditingId(null);
+      return;
+    }
+    await renameProject(id, trimmed);
+    toast.success("שם הפרויקט עודכן");
+    setEditingId(null);
+  };
+
   const handleDelete = (id: string, name: string) => {
     toast(`למחוק את הפרויקט "${name}"?`, {
       action: {
