@@ -260,7 +260,64 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
             </div>
 
             {showPartyCheck && (
-              <PartyNameCheck onDismiss={() => setShowPartyCheck(false)} />
+              <PartyNameCheck
+                onDismiss={() => setShowPartyCheck(false)}
+                onRequestEdit={() => {
+                  setShowPartyCheck(false);
+                  // Extract the citation line for editing
+                  const citationLine = msg.content
+                    .split("\n")
+                    .find((l) => l.trim() && !/^✓|^🏷️|^📐|^⚠️|^כלל:/.test(l.trim()));
+                  setCitationEditValue(citationLine || msg.content);
+                  setIsEditingCitation(true);
+                }}
+              />
+            )}
+
+            {isEditingCitation && (
+              <div className="mt-2 rounded-lg border border-border bg-surface px-3 py-2.5" style={{ direction: "rtl" }}>
+                <p className="text-xs text-muted-foreground mb-1.5">ערוך את שמות הצדדים באזכור:</p>
+                <textarea
+                  value={citationEditValue}
+                  onChange={(e) => setCitationEditValue(e.target.value)}
+                  className="w-full bg-background border border-border rounded-md px-3 py-2 text-sm text-foreground leading-relaxed resize-none outline-none focus:border-primary transition-colors"
+                  rows={2}
+                  dir="rtl"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape") {
+                      setIsEditingCitation(false);
+                    }
+                  }}
+                />
+                <div className="flex gap-2 mt-2 justify-end">
+                  <button
+                    onClick={() => {
+                      const trimmed = citationEditValue.trim();
+                      if (!trimmed) return;
+                      // Replace the citation line in the full message content
+                      const lines = msg.content.split("\n");
+                      const citationIdx = lines.findIndex(
+                        (l) => l.trim() && !/^✓|^🏷️|^📐|^⚠️|^כלל:/.test(l.trim())
+                      );
+                      if (citationIdx !== -1) {
+                        lines[citationIdx] = trimmed;
+                      }
+                      onUpdateAssistantContent?.(lines.join("\n"));
+                      setIsEditingCitation(false);
+                    }}
+                    className="px-3 py-1.5 text-xs rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+                  >
+                    ✓ עדכן אזכור
+                  </button>
+                  <button
+                    onClick={() => setIsEditingCitation(false)}
+                    className="px-3 py-1.5 text-xs rounded-md bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
+                  >
+                    ביטול
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         )}
