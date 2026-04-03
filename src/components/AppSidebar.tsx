@@ -56,7 +56,7 @@ export function AppSidebar() {
 
   return (
     <aside
-      className="w-52 border-l border-border bg-muted/50 flex flex-col py-4 px-3 gap-1 overflow-y-auto flex-shrink-0"
+      className="w-full md:w-52 border-l border-border bg-muted/50 flex flex-col py-4 px-3 gap-1 overflow-y-auto overflow-x-hidden flex-shrink-0"
       style={{ direction: "rtl" }}
     >
       {/* Profile link */}
