@@ -224,7 +224,7 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
                     {isCaseLaw && !isVerifiedSource && (
                       <button
                         onClick={() => setShowPartyCheck((v) => !v)}
-                        className="inline-flex items-center gap-1 py-1 px-2 rounded-md text-xs font-medium bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 transition-colors"
+                        className="inline-flex items-center gap-1 py-1 px-2 rounded-md text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
                         title="בדיקת שמות צדדים (כלל 18.4.4)"
                       >
                         <AlertTriangle size={13} />
