@@ -2,13 +2,14 @@ import { useState } from "react";
 
 interface PartyNameCheckProps {
   onDismiss: () => void;
+  onRequestEdit: () => void;
 }
 
 /**
  * Rule 18.4.4 party name verification checklist.
- * Shows guidance and lets users confirm their citation's party names are correct.
+ * Shows guidance and lets users confirm or fix their citation's party names.
  */
-export function PartyNameCheck({ onDismiss }: PartyNameCheckProps) {
+export function PartyNameCheck({ onDismiss, onRequestEdit }: PartyNameCheckProps) {
   const [dismissed, setDismissed] = useState(false);
 
   if (dismissed) return null;
@@ -54,12 +55,20 @@ export function PartyNameCheck({ onDismiss }: PartyNameCheckProps) {
         </div>
       </div>
 
-      <button
-        onClick={() => { setDismissed(true); onDismiss(); }}
-        className="mt-2.5 w-full text-center py-1.5 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
-      >
-        ✓ בדקתי – שמות הצדדים תקינים
-      </button>
+      <div className="mt-2.5 flex gap-2">
+        <button
+          onClick={() => { setDismissed(true); onDismiss(); }}
+          className="flex-1 text-center py-1.5 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
+        >
+          ✓ שמות הצדדים תקינים
+        </button>
+        <button
+          onClick={() => { setDismissed(true); onRequestEdit(); }}
+          className="flex-1 text-center py-1.5 rounded-md bg-destructive/10 text-destructive text-xs font-medium hover:bg-destructive/20 transition-colors"
+        >
+          ✏️ שמות הצדדים לא תקינים – עריכה
+        </button>
+      </div>
     </div>
   );
 }
