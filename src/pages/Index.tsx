@@ -175,6 +175,7 @@ const Index = () => {
   const [searchParams] = useSearchParams();
   
   const { user, isAdmin } = useAuth();
+  const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const guestLimit = useGuestLimit();
   const { currentProject } = useProjects();
