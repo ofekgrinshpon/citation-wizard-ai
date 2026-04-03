@@ -549,7 +549,7 @@ export async function ensureVerifiedSources(
       continue;
     }
 
-    if (verificationStatus !== "invalid") {
+    if (aiVerificationStatus !== "invalid") {
       added++;
     }
   }
