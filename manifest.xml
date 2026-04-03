@@ -80,9 +80,9 @@
         <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://id-preview--da75bf03-5ea8-4e5f-a54a-fd6ed2a9c146.lovable.app" />
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="GetStarted.Title" DefaultValue="עוזר האזכורים המשפטי" />
-        <bt:String id="CommandsGroup.Label" DefaultValue="אזכורים" />
-        <bt:String id="TaskpaneButton.Label" DefaultValue="עוזמ״ש" />
+        <bt:String id="GetStarted.Title" DefaultValue="ReLex" />
+        <bt:String id="CommandsGroup.Label" DefaultValue="ReLex" />
+        <bt:String id="TaskpaneButton.Label" DefaultValue="ReLex" />
       </bt:ShortStrings>
       <bt:LongStrings>
         <bt:String id="GetStarted.Description" DefaultValue="עוזר מחקר משפטי לעיצוב אזכורים תקניים לפי כללי האזכור האחיד" />
