@@ -128,7 +128,8 @@ export function AppSidebar() {
       ) : (
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-primary hover:bg-muted transition-colors text-right w-full"
+          disabled={projectsLoading}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-primary hover:bg-muted transition-colors text-right w-full disabled:opacity-50 disabled:pointer-events-none"
         >
           <span className="text-xs">＋</span>
           פרויקט חדש

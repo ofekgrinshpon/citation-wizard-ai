@@ -91,7 +91,7 @@ export function ProjectSelector() {
             </button>
           </div>
         ) : (
-          <DropdownMenuItem onSelect={() => setShowCreate(true)}>
+          <DropdownMenuItem onSelect={() => !loading && setShowCreate(true)} disabled={loading}>
             <span className="text-primary">+ פרויקט חדש</span>
           </DropdownMenuItem>
         )}

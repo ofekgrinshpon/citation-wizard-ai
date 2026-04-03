@@ -24,7 +24,7 @@ const ProjectsContext = createContext<ProjectsContextValue | null>(null);
 const LS_CURRENT_PROJECT = "current_project_id";
 
 export function ProjectsProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [currentProjectId, setCurrentProjectIdRaw] = useState<string | null>(
     () => localStorage.getItem(LS_CURRENT_PROJECT)
@@ -32,29 +32,45 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchProjects = useCallback(async () => {
+    if (authLoading) {
+      setLoading(true);
+      return;
+    }
+
     if (!user) {
       setProjects([]);
+      setCurrentProjectIdRaw(null);
+      localStorage.removeItem(LS_CURRENT_PROJECT);
       setLoading(false);
       return;
     }
-    const { data } = await supabase
+
+    setLoading(true);
+    const { data, error } = await supabase
       .from("projects")
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("Failed to fetch projects", error);
+      setLoading(false);
+      return;
+    }
+
     const list = (data as Project[]) || [];
     setProjects(list);
 
-    // Auto-select first project if none selected
     if (list.length > 0 && (!currentProjectId || !list.find((p) => p.id === currentProjectId))) {
       setCurrentProjectIdRaw(list[0].id);
       localStorage.setItem(LS_CURRENT_PROJECT, list[0].id);
     }
+
     setLoading(false);
-  }, [user, currentProjectId]);
+  }, [authLoading, user, currentProjectId]);
 
   useEffect(() => {
-    fetchProjects();
+    void fetchProjects();
   }, [fetchProjects]);
 
   const setCurrentProjectId = (id: string) => {
@@ -63,13 +79,18 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
   };
 
   const createProject = async (name: string): Promise<Project | null> => {
-    if (!user) return null;
+    if (!user || authLoading) return null;
     const { data, error } = await supabase
       .from("projects")
       .insert({ user_id: user.id, name })
       .select()
       .single();
-    if (error || !data) return null;
+
+    if (error || !data) {
+      console.error("Failed to create project", error);
+      return null;
+    }
+
     const p = data as Project;
     setProjects((prev) => [...prev, p]);
     return p;
