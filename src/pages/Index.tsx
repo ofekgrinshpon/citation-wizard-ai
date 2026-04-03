@@ -6,6 +6,7 @@ import { ManualEntry } from "@/components/ManualEntry";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
 import { BillTypeSelector, type BillPublicationType } from "@/components/BillTypeSelector";
+import { TreatyTypeSelector, type TreatySigningType } from "@/components/TreatyTypeSelector";
 import { GuestLimitModal } from "@/components/GuestLimitModal";
 import { PublicationIntegrityCard } from "@/components/PublicationIntegrityCard";
 import { supabase } from "@/integrations/supabase/client";
