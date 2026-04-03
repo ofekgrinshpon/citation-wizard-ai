@@ -251,6 +251,11 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
   const projectId = currentProject?.id;
   const [entries, setEntries] = useState<BibliographyEntry[]>(() => loadBibEntries(projectId));
 
+  // Reload entries when project changes
+  useEffect(() => {
+    setEntries(loadBibEntries(projectId));
+  }, [projectId]);
+
   useEffect(() => {
     setEntries((prev) => {
       const rebuilt = rebuildBibliographyEntries(prev);
@@ -269,8 +274,9 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(BIB_STORAGE_KEY, JSON.stringify(entries));
-  }, [entries]);
+    const key = projectId ? `${BIB_STORAGE_PREFIX}_${projectId}` : BIB_STORAGE_PREFIX;
+    localStorage.setItem(key, JSON.stringify(entries));
+  }, [entries, projectId]);
 
   const isDuplicate = useCallback(
     (fullCitation: string, current: BibliographyEntry[]) => {
