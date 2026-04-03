@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useOffice } from "@/hooks/useOffice";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { lovable } from "@/integrations/lovable/index";
+import { signInWithOfficeDialog } from "@/lib/officeAuth";
 import { toast } from "sonner";
 
 const Landing = () => {
@@ -13,6 +15,7 @@ const Landing = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const { signIn, signUp, user, isAdmin, loading: authLoading } = useAuth();
+  const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
 
   if (authLoading) {
