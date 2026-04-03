@@ -1,88 +1,67 @@
 
 
-# Microsoft Word Task Pane Add-in — Architecture Plan
+# Fix Office Word Add-in Authentication & App Loading
 
-## Overview
-The app will run in two modes: **standalone web** (current) and **Word Add-in** (Task Pane). At runtime, it detects whether it's inside Office and adapts accordingly. All Office-specific code is behind a guard — the standalone app remains unchanged.
+## Problem
+When the manifest opens the Task Pane at `/app?addin=1`, the user sees the app but:
+1. **No auth trigger in the Task Pane** — The `AuthDialog` page exists but nothing in the app ever calls `Office.context.ui.displayDialogAsync()` to open it. Google OAuth popups are blocked inside Task Panes, so authentication silently fails.
+2. **Landing page doesn't adapt for add-in** — If the user is redirected to `/` (Landing), the Google OAuth button uses `lovable.auth.signInWithOAuth` which opens a popup — blocked in Task Panes.
+3. **No session recovery from dialog** — Even if the dialog somehow opened, there's no listener in the Task Pane to receive the `messageParent` tokens and set the Supabase session.
 
----
+## Plan
 
-## 1. Office.js Loading & Dual-Mode Init
+### 1. Add Office Auth Helper (`src/lib/officeAuth.ts`)
+Create a utility that:
+- Opens `displayDialogAsync` pointing to `/auth-dialog`
+- Listens for `messageParent` messages with the auth tokens
+- Calls `supabase.auth.setSession()` with the received tokens
+- Returns a promise that resolves on success or rejects on error
 
-- Add the `office.js` script to `index.html` (it's a no-op outside Office)
-- Update `src/main.tsx`: if Office is present, wrap render in `Office.onReady()`; otherwise render directly
-- Create `src/hooks/useOffice.tsx` — a React context exposing `isOfficeAddin: boolean` and Word API helpers
+### 2. Update Landing Page for Add-in Mode
+In `src/pages/Landing.tsx`:
+- Detect `isOfficeAddin` from the `useOffice` hook
+- When in add-in mode, replace the Google OAuth button's `onClick` to call the Office auth helper (displayDialogAsync) instead of `lovable.auth.signInWithOAuth`
+- Email/password login works as-is (no popup needed)
+- Hide the guest mode option in add-in mode (or keep it — your choice)
 
-**Files:** `index.html`, `src/main.tsx`, new `src/hooks/useOffice.tsx`
+### 3. Update Index Page Auth Gate
+In `src/pages/Index.tsx`:
+- When `isOfficeAddin && !user`, show a login prompt or redirect to Landing instead of showing an empty/broken state
+- Add a "Sign in" button that triggers the Office auth dialog
 
----
+### 4. Add Dialog Message Listener to App
+In `src/hooks/useAuth.tsx` or a new hook:
+- When running in add-in mode, register a listener for dialog events
+- On receiving `auth-success` message, call `supabase.auth.setSession({ access_token, refresh_token })`
+- Update the auth context state accordingly
 
-## 2. Insert Citation as Footnote
+### 5. Fix AuthDialog Page
+In `src/pages/AuthDialog.tsx`:
+- The OAuth redirect_uri should use the **published URL** origin, not `window.location.origin` (which inside the dialog may differ)
+- Handle the case where the OAuth callback lands with hash fragments (Supabase appends tokens to the URL hash)
+- Ensure Office.js is loaded in the dialog context for `messageParent` to work
 
-Create `src/lib/wordInsertion.ts`:
-- `insertCitationAsFootnote(text)` — uses `Word.run` to insert a footnote at the cursor
-- `citationToOoxml(text)` — converts `**bold**` / `##italic##` markers to OOXML `<w:r>` runs with `<w:b/>` / `<w:i/>` for reliable formatting
+### Technical Details
 
-Add an "הכנס להערת שוליים" button on each assistant message bubble, visible only in add-in mode.
+**Dialog flow:**
+```text
+Task Pane (/app?addin=1)
+  → user clicks "Sign in with Google"
+  → Office.context.ui.displayDialogAsync("/auth-dialog", {width:50, height:60})
+  → Dialog opens /auth-dialog
+  → AuthDialog calls lovable.auth.signInWithOAuth("google", {redirect_uri: origin+"/auth-dialog"})
+  → Google OAuth completes, redirects back to /auth-dialog
+  → AuthDialog detects session, calls Office.context.ui.messageParent({tokens})
+  → Task Pane receives tokens, calls supabase.auth.setSession()
+  → User is authenticated, app loads
+```
 
-**Why OOXML over HTML?** Word's HTML import is lossy with RTL/Hebrew. OOXML gives exact control over bold, italic, and BiDi runs.
+**Files to create:**
+- `src/lib/officeAuth.ts`
 
-**Files:** new `src/lib/wordInsertion.ts`, edit `src/components/MessageBubble.tsx`
-
----
-
-## 3. Compact Mode UI (300px Task Pane)
-
-When `isOfficeAddin` is true:
-- **Hide sidebar** — replace with a small project dropdown at the top
-- **Single-column layout** filling full width
-- **Smaller fonts** and tighter padding
-- **Tabs** use abbreviated labels or icons
-- Applied via a `compact` class on the root, driven by the Office context
-
-**Files:** edit `src/pages/Index.tsx`, `src/components/AppSidebar.tsx`, `src/index.css`
-
----
-
-## 4. Manifest File
-
-Generate `manifest.xml` at project root:
-- `SourceLocation` → published URL + `/app?addin=1`
-- TaskPane command definition, default width 300px
-- Hebrew display name and description
-- Compatible with Office on Windows, Mac, and Web
-
-**Files:** new `manifest.xml`
-
----
-
-## 5. Authentication in Add-in
-
-OAuth pop-ups are blocked inside Task Panes. Solution:
-- Use `Office.context.ui.displayDialogAsync()` to open a dialog for Google OAuth
-- Create `/auth-dialog` route — completes OAuth, sends token back via `messageParent()`
-- Task Pane receives token and sets Supabase session
-- Email/password login works as-is (no pop-up needed)
-
-**Files:** new `src/pages/AuthDialog.tsx`, edit `src/hooks/useAuth.tsx`, `src/App.tsx`
-
----
-
-## 6. Vite Config
-
-- Allow `appsforoffice.microsoft.com` origin in dev headers
-- Add HTTPS plugin (`@vitejs/plugin-basic-ssl`) for local Office testing
-
-**Files:** edit `vite.config.ts`
-
----
-
-## Implementation Order
-
-1. Office context detection + dual-mode init
-2. Manifest file
-3. Compact mode UI
-4. OOXML footnote insertion logic
-5. Auth dialog for Office
-6. Vite HTTPS for local dev
+**Files to modify:**
+- `src/pages/Landing.tsx` — add-in mode auth button
+- `src/pages/Index.tsx` — auth gate for add-in
+- `src/pages/AuthDialog.tsx` — fix redirect URI handling
+- `src/hooks/useOffice.tsx` — optionally expose a `signInWithOfficeDialog` method
 
