@@ -6,12 +6,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { ProjectsProvider } from "@/hooks/useProjects";
 import { BibliographyProvider } from "@/hooks/useBibliography";
+import { OfficeProvider } from "@/hooks/useOffice";
 import Landing from "./pages/Landing.tsx";
 import Index from "./pages/Index.tsx";
 import Admin from "./pages/Admin.tsx";
 import Profile from "./pages/Profile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
+import AuthDialog from "./pages/AuthDialog.tsx";
 
 const queryClient = new QueryClient();
 
@@ -27,22 +29,25 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <ProjectsProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/app" element={<BibliographyProvider><Index /></BibliographyProvider>} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/auth-redirect" element={<AuthRedirect />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
+        <OfficeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/app" element={<BibliographyProvider><Index /></BibliographyProvider>} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/auth-redirect" element={<AuthRedirect />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/auth-dialog" element={<AuthDialog />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </OfficeProvider>
       </ProjectsProvider>
     </AuthProvider>
   </QueryClientProvider>

@@ -11,6 +11,7 @@ import { GuestLimitModal } from "@/components/GuestLimitModal";
 import { PublicationIntegrityCard } from "@/components/PublicationIntegrityCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useOffice } from "@/hooks/useOffice";
 import { useGuestLimit } from "@/hooks/useGuestLimit";
 import { useProjects } from "@/hooks/useProjects";
 import { useActivityLog } from "@/hooks/useActivityLog";
@@ -174,6 +175,7 @@ const Index = () => {
   const [searchParams] = useSearchParams();
   
   const { user, isAdmin } = useAuth();
+  const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const guestLimit = useGuestLimit();
   const { currentProject } = useProjects();
@@ -714,7 +716,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="flex flex-col h-screen font-sans bg-background text-foreground">
+    <div className={`flex flex-col h-screen font-sans bg-background text-foreground ${isOfficeAddin ? "compact-mode" : ""}`}>
       {/* Guest Limit Modal */}
       {isGuestMode && guestLimit.isLocked && <GuestLimitModal />}
       {/* Header */}
@@ -762,8 +764,8 @@ const Index = () => {
 
       {/* Body with sidebar */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Right sidebar — only for logged-in users */}
-        {!isGuestMode && user && <AppSidebar />}
+        {/* Right sidebar — only for logged-in users, hidden in compact/add-in mode */}
+        {!isGuestMode && user && !isOfficeAddin && <AppSidebar />}
 
         {/* Main column */}
         <div className="flex-1 flex flex-col overflow-hidden">

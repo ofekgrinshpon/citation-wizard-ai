@@ -7,6 +7,8 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip
 import { RULE_EXPLANATIONS } from "@/data/ruleTooltips";
 import { SourceTypeConfirmation } from "./SourceTypeConfirmation";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
+import { useOffice } from "@/hooks/useOffice";
+import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import type { SourceType } from "@/data/abbreviations";
 
 interface Message {
@@ -30,11 +32,13 @@ interface MessageBubbleProps {
 
 export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent }: MessageBubbleProps) {
   const isUser = msg.role === "user";
+  const { isOfficeAddin } = useOffice();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
   const [showPartyCheck, setShowPartyCheck] = useState(false);
   const [isEditingCitation, setIsEditingCitation] = useState(false);
   const [citationEditValue, setCitationEditValue] = useState("");
+  const [isInserting, setIsInserting] = useState(false);
 
   const isCaseLawByType = detectedType === "case_law_published" || detectedType === "case_law_database";
   // Fallback: detect case law from content patterns when detectedType is lost (e.g. after HMR)
@@ -266,13 +270,35 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
               </div>
             )}
 
-            <button
-              onClick={copyContent}
-              className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
-              title="העתק"
-            >
-              📋
-            </button>
+            <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                onClick={copyContent}
+                className="text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
+                title="העתק"
+              >
+                📋
+              </button>
+              {isOfficeAddin && (
+                <button
+                  onClick={async () => {
+                    setIsInserting(true);
+                    try {
+                      await insertCitationAsFootnote(msg.content);
+                      toast.success("הוכנס כהערת שוליים!");
+                    } catch (err: any) {
+                      toast.error("שגיאה בהכנסה: " + (err.message || "Unknown error"));
+                    } finally {
+                      setIsInserting(false);
+                    }
+                  }}
+                  disabled={isInserting}
+                  className="text-xs bg-primary/10 hover:bg-primary/20 border border-primary/30 rounded-md px-2 py-1 text-primary hover:text-primary font-medium disabled:opacity-50"
+                  title="הכנס להערת שוליים"
+                >
+                  {isInserting ? "⏳" : "📝"} הע״ש
+                </button>
+              )}
+            </div>
 
             {showPartyCheck && (
               <PartyNameCheck

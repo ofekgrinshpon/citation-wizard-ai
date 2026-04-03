@@ -194,3 +194,19 @@
 ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground)); }
 textarea { resize: none; }
 textarea:focus { outline: none; }
+
+/* Compact mode for Office Add-in Task Pane */
+.compact-mode {
+  font-size: 13px;
+}
+.compact-mode .chat-bubble-assistant,
+.compact-mode .chat-bubble-user {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+}
+.compact-mode .text-sm {
+  font-size: 0.75rem;
+}
+.compact-mode .text-xs {
+  font-size: 0.625rem;
+}
