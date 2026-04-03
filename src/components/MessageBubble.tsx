@@ -270,13 +270,35 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
               </div>
             )}
 
-            <button
-              onClick={copyContent}
-              className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
-              title="העתק"
-            >
-              📋
-            </button>
+            <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                onClick={copyContent}
+                className="text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
+                title="העתק"
+              >
+                📋
+              </button>
+              {isOfficeAddin && (
+                <button
+                  onClick={async () => {
+                    setIsInserting(true);
+                    try {
+                      await insertCitationAsFootnote(msg.content);
+                      toast.success("הוכנס כהערת שוליים!");
+                    } catch (err: any) {
+                      toast.error("שגיאה בהכנסה: " + (err.message || "Unknown error"));
+                    } finally {
+                      setIsInserting(false);
+                    }
+                  }}
+                  disabled={isInserting}
+                  className="text-xs bg-primary/10 hover:bg-primary/20 border border-primary/30 rounded-md px-2 py-1 text-primary hover:text-primary font-medium disabled:opacity-50"
+                  title="הכנס להערת שוליים"
+                >
+                  {isInserting ? "⏳" : "📝"} הע״ש
+                </button>
+              )}
+            </div>
 
             {showPartyCheck && (
               <PartyNameCheck
