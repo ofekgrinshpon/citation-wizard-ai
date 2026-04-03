@@ -195,6 +195,10 @@
 textarea { resize: none; }
 textarea:focus { outline: none; }
 
+/* Hide scrollbar for mode tabs on mobile */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
 /* Compact mode for Office Add-in Task Pane */
 .compact-mode {
   font-size: 13px;

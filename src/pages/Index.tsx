@@ -716,31 +716,61 @@ const Index = () => {
     { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
   ];
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <div className={`flex flex-col h-screen font-sans bg-background text-foreground ${isOfficeAddin ? "compact-mode" : ""}`}>
       {/* Guest Limit Modal */}
       {isGuestMode && guestLimit.isLocked && <GuestLimitModal />}
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shadow-sm">
-        <div className="flex items-center gap-3" style={{ direction: "rtl" }}>
-          <ReLexLogo size={32} />
-          <p className="text-text-dim text-xs">
-            כללי האזכור האחיד • מהדורת 2021
-          </p>
-        </div>
+      <header className="flex flex-col border-b border-border bg-card shadow-sm">
+        {/* Top row: logo + actions */}
+        <div className="flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3">
+          <div className="flex items-center gap-2 sm:gap-3" style={{ direction: "rtl" }}>
+            {/* Mobile sidebar toggle */}
+            {!isGuestMode && user && !isOfficeAddin && (
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="md:hidden p-1.5 rounded-lg text-muted-foreground hover:bg-muted transition-colors"
+              >
+                ☰
+              </button>
+            )}
+            <ReLexLogo size={28} />
+            <p className="text-text-dim text-[10px] sm:text-xs hidden sm:block">
+              כללי האזכור האחיד • מהדורת 2021
+            </p>
+          </div>
 
-        <div className="flex items-center gap-2">
-          {isGuestMode && (
-            <span className="text-[10px] text-muted-foreground bg-muted px-2 py-1 rounded-md">
-              אורח • {guestLimit.remaining}/{guestLimit.max} אזכורים
-            </span>
-          )}
-          <div className="flex gap-1 bg-muted rounded-lg p-1">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {isGuestMode && (
+              <span className="text-[9px] sm:text-[10px] text-muted-foreground bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md">
+                אורח • {guestLimit.remaining}/{guestLimit.max}
+              </span>
+            )}
+            <button
+              onClick={async () => {
+                if (user) {
+                  await signOut();
+                  window.location.href = "/";
+                } else {
+                  navigate("/");
+                }
+              }}
+              className="text-[10px] sm:text-xs text-muted-foreground hover:text-foreground px-1.5 sm:px-2 py-1 sm:py-1.5 rounded-lg transition-colors"
+            >
+              {user ? "התנתק" : "← חזרה"}
+            </button>
+          </div>
+        </div>
+        {/* Mode tabs — scrollable on mobile */}
+        <div className="px-2 pb-2 sm:px-4 sm:pb-3">
+          <div className="flex gap-1 bg-muted rounded-lg p-0.5 sm:p-1 overflow-x-auto no-scrollbar">
             {MODES.map((m) => (
               <button
                 key={m.id}
                 onClick={() => setMode(m.id)}
-                className={`mode-tab flex items-center gap-1 ${
+                className={`mode-tab flex items-center gap-0.5 sm:gap-1 whitespace-nowrap flex-shrink-0 ${
                   mode === m.id ? "mode-tab-active" : "mode-tab-inactive"
                 }`}
               >
@@ -749,32 +779,37 @@ const Index = () => {
               </button>
             ))}
           </div>
-          <button
-            onClick={async () => {
-              if (user) {
-                await signOut();
-                window.location.href = "/";
-              } else {
-                navigate("/");
-              }
-            }}
-            className="text-xs text-muted-foreground hover:text-foreground px-2 py-1.5 rounded-lg transition-colors"
-          >
-            {user ? "התנתק" : "← חזרה"}
-          </button>
         </div>
       </header>
 
+      {/* Mobile sidebar drawer */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
+          <div className="absolute inset-y-0 right-0 w-64 bg-background shadow-xl animate-fade-in">
+            <div className="flex items-center justify-between px-3 py-3 border-b border-border">
+              <span className="text-sm font-semibold text-foreground">תפריט</span>
+              <button onClick={() => setSidebarOpen(false)} className="text-muted-foreground p-1">✕</button>
+            </div>
+            <AppSidebar />
+          </div>
+        </div>
+      )}
+
       {/* Body with sidebar */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Right sidebar — only for logged-in users, hidden in compact/add-in mode */}
-        {!isGuestMode && user && !isOfficeAddin && <AppSidebar />}
+        {/* Right sidebar — desktop only */}
+        {!isGuestMode && user && !isOfficeAddin && (
+          <div className="hidden md:block">
+            <AppSidebar />
+          </div>
+        )}
 
         {/* Main column */}
         <div className="flex-1 flex flex-col overflow-hidden">
         {/* Main content */}
         <div
-          className="flex-1 overflow-y-auto px-4"
+          className="flex-1 overflow-y-auto px-3 sm:px-4"
           style={{ maxWidth: 860, margin: "0 auto", width: "100%" }}
         >
         {mode === "manual" ? (
@@ -787,8 +822,8 @@ const Index = () => {
           <>
             {/* Welcome screen */}
             {messages.length === 0 && (
-              <div className="py-10 text-center" style={{ direction: "rtl" }}>
-                <div className="mb-4 flex justify-center"><ReLexLogo size={44} /></div>
+              <div className="py-6 sm:py-10 text-center" style={{ direction: "rtl" }}>
+                <div className="mb-3 sm:mb-4 flex justify-center"><ReLexLogo size={36} /></div>
                 <h2 className="text-foreground text-xl font-bold mb-2 font-sans">
                   {"\n"}
                 </h2>
@@ -818,7 +853,7 @@ const Index = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3 mt-8">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 mt-6 sm:mt-8">
                   {[
                     {
                       icon: "⚖️",
@@ -1005,9 +1040,9 @@ const Index = () => {
 
       {/* Input bar (only in freetext mode) */}
       {mode === "freetext" && (
-        <div className="input-bar sticky bottom-0 px-4 py-3">
+        <div className="input-bar sticky bottom-0 px-2 sm:px-4 py-2 sm:py-3">
           <div
-            className="flex gap-2.5 items-end"
+            className="flex gap-1.5 sm:gap-2.5 items-end"
             style={{ maxWidth: 860, margin: "0 auto", direction: "rtl" }}
           >
             {messages.length > 0 && (
@@ -1048,10 +1083,10 @@ const Index = () => {
                   ];
                   setMessages(newMessages);
                 }}
-                placeholder='הזן מקור משפטי בטקסט חופשי... (למשל: "בגץ קול העם" או "חוק העונשין סעיף 34")'
+                placeholder='הזן מקור משפטי...'
                 disabled={loading}
                 inputType="input"
-                className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-3.5 py-3 text-foreground text-sm leading-relaxed font-sans"
+                className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-2.5 sm:px-3.5 py-2.5 sm:py-3 text-foreground text-sm leading-relaxed font-sans"
               />
               <button
                 onClick={handleSend}
@@ -1066,7 +1101,7 @@ const Index = () => {
               </button>
             </div>
           </div>
-          <div className="text-center mt-2 text-[11px] text-text-faint">
+          <div className="text-center mt-1.5 sm:mt-2 text-[10px] sm:text-[11px] text-text-faint hidden sm:block">
             כללי האזכור האחיד בכתיבה המשפטית • מהדורה שלישית 2021 • Bluebook
             21st ed.
           </div>
