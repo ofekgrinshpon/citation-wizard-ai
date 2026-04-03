@@ -273,6 +273,31 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     ],
   },
 
+  // ─── כתבי אמנה (Treaties – Rule 9) ────────────────────────
+  treaty: {
+    primaryRule: "9",
+    ruleTitle: "כלל 9 – כתבי אמנה",
+    template: '[הפניה ספציפית] [ל]{treatyName}, כ"א {volume}, {firstPage}, {specificPage} ({signingDetails}).',
+    example: 'אמנה בינלאומית בדבר זכויות אזרחיות ומדיניות, כ"א 31, 269 (נפתחה לחתימה ב-1966).',
+    components: [
+      { field: "section", rule: "9.1", description: 'הפניה ספציפית (ס\' X ל...)', required: false, format: "plain" },
+      { field: "treatyName", rule: "9.1", description: "שם האמנה בעברית", required: true, format: "plain" },
+      { field: "volume", rule: "9.1", description: 'מספר כרך בכתבי אמנה (כ"א)', required: true, format: "plain" },
+      { field: "notebook", rule: "9.1", description: "מספר חוברת (בסוגריים אחרי הכרך, אם העמודים לא רציפים)", required: false, format: "plain" },
+      { field: "firstPage", rule: "9.1", description: "מספר העמוד הראשון", required: true, format: "plain" },
+      { field: "specificPage", rule: "9.1", description: "מספר העמוד הספציפי (אם יש הפניה ספציפית)", required: false, format: "plain" },
+      { field: "signingType", rule: "9.1", description: 'סוג חתימה: "נפתחה לחתימה ב-" (רב-צדדית) או "נחתמה ב-" (דו-צדדית)', required: true, format: "plain" },
+      { field: "signingYear", rule: "9.1", description: "שנת החתימה הלועזית", required: true, format: "plain" },
+      { field: "ratification", rule: "9.2", description: "מידע נוסף: שנת אשרור, כניסה לתוקף (בסוגריים נפרדים)", required: false, format: "plain" },
+    ],
+    notes: [
+      'כלל 9.1: אמנה רב-צדדית – "נפתחה לחתימה ב-{שנה}" (ללא רווח בין הקו לשנה).',
+      'כלל 9.1: אמנה דו-צדדית – "נחתמה ב-{שנה}" (ללא רווח בין הקו לשנה).',
+      'כלל 9.1: אם העמודים בכרך אינם ממוספרים ברציפות – יש לציין מספר חוברת בסוגריים אחרי מספר הכרך, למשל כ"א 51(1415).',
+      'כלל 9.2: אפשר להוסיף מידע רלוונטי נוסף בסוגריים בסוף האזכור, כגון "(אושררה ונכנסה לתוקף ב-1991)".',
+    ],
+  },
+
   // ─── מקורות לועזיים (Foreign Sources – Bluebook) ──────────
   foreign: {
     primaryRule: "36",

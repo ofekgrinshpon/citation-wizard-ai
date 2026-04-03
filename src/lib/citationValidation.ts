@@ -21,6 +21,7 @@ const ENGINE_KEY_MAP: Record<SourceType, string> = {
   article_in_book: "article_in_book",
   internet: "internet",
   religious: "religious",
+  treaty: "treaty",
   foreign: "foreign",
   other: "other",
   unknown: "",
