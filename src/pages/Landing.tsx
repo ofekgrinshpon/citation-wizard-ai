@@ -187,16 +187,18 @@ const Landing = () => {
             )}
           </div>
 
-          <div className="bg-card border border-border rounded-xl p-5 shadow-sm text-center">
-            <p className="text-foreground text-sm font-semibold mb-1">רוצה לנסות לפני?</p>
-            <p className="text-muted-foreground text-xs mb-3">2 אזכורים חינם ללא הרשמה</p>
-            <button
-              onClick={handleGuest}
-              className="w-full py-2.5 rounded-xl font-semibold text-sm border-2 border-primary/30 text-primary hover:bg-primary/5 transition-all"
-            >
-              כניסה כאורח/ת (2 אזכורים חינם)
-            </button>
-          </div>
+          {!isOfficeAddin && (
+            <div className="bg-card border border-border rounded-xl p-5 shadow-sm text-center">
+              <p className="text-foreground text-sm font-semibold mb-1">רוצה לנסות לפני?</p>
+              <p className="text-muted-foreground text-xs mb-3">2 אזכורים חינם ללא הרשמה</p>
+              <button
+                onClick={handleGuest}
+                className="w-full py-2.5 rounded-xl font-semibold text-sm border-2 border-primary/30 text-primary hover:bg-primary/5 transition-all"
+              >
+                כניסה כאורח/ת (2 אזכורים חינם)
+              </button>
+            </div>
+          )}
         </div>
 
         <p className="text-[10px] text-muted-foreground mt-8">
