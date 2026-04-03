@@ -113,28 +113,36 @@ export function AppSidebar() {
                 onClick={(e) => e.stopPropagation()}
               />
             ) : (
-              <span
-                className="truncate flex items-center gap-1.5"
-                onDoubleClick={(e) => {
-                  e.stopPropagation();
-                  setEditingId(p.id);
-                  setEditName(p.name);
-                }}
-              >
+              <span className="truncate flex items-center gap-1.5 flex-1 min-w-0">
                 <span className="text-xs">📁</span>
                 {p.name}
               </span>
             )}
-            {editingId !== p.id && projects.length > 1 && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(p.id, p.name);
-                }}
-                className="text-destructive text-[10px] opacity-0 group-hover:opacity-100 transition-opacity hover:underline mr-1"
-              >
-                ✕
-              </button>
+            {editingId !== p.id && (
+              <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity mr-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditingId(p.id);
+                    setEditName(p.name);
+                  }}
+                  className="text-muted-foreground hover:text-foreground p-0.5"
+                  title="שנה שם"
+                >
+                  <Pencil size={11} />
+                </button>
+                {projects.length > 1 && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(p.id, p.name);
+                    }}
+                    className="text-destructive text-[10px] hover:underline"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             )}
           </div>
         ))
