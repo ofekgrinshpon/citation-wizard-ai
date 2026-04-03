@@ -265,6 +265,7 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   article_in_book: 'מאמר שפורסם בספר',
   internet: 'מקור מרשתת',
   religious: 'מקור דתי',
+  treaty: 'כתבי אמנה',
   foreign: 'מקור לועזי',
   other: 'אחר',
   unknown: 'לא מזוהה',
