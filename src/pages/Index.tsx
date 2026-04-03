@@ -457,6 +457,14 @@ const Index = () => {
       return;
     }
 
+    // Check if this is a treaty and user didn't specify type
+    const isTreatySource = sourceType === "treaty";
+    const hasExplicitTreatyType = /נפתחה לחתימה|נחתמה ב|רב[- ]?צדדית|דו[- ]?צדדית/.test(rawText);
+    if (isTreatySource && !hasExplicitTreatyType) {
+      setPendingTreatyType({ rawText, normalized, sourceType: sourceType as SourceType, sourceLabel, newMessages });
+      return;
+    }
+
     setLoading(true);
 
     try {
