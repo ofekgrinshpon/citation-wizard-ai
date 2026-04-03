@@ -50,7 +50,7 @@ const Admin = () => {
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
-      navigate("/auth");
+      navigate("/");
     }
   }, [user, isAdmin, authLoading, navigate]);
 
