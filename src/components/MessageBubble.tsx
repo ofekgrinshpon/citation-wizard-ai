@@ -32,11 +32,13 @@ interface MessageBubbleProps {
 
 export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent }: MessageBubbleProps) {
   const isUser = msg.role === "user";
+  const { isOfficeAddin } = useOffice();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
   const [showPartyCheck, setShowPartyCheck] = useState(false);
   const [isEditingCitation, setIsEditingCitation] = useState(false);
   const [citationEditValue, setCitationEditValue] = useState("");
+  const [isInserting, setIsInserting] = useState(false);
 
   const isCaseLawByType = detectedType === "case_law_published" || detectedType === "case_law_database";
   // Fallback: detect case law from content patterns when detectedType is lost (e.g. after HMR)
