@@ -1068,8 +1068,8 @@ const Index = () => {
                   const doClear = () => {
                     setMessages([]);
                     setInput("");
-                    localStorage.removeItem(LS_KEY_INPUT);
-                    localStorage.removeItem(LS_KEY_MESSAGES);
+                    localStorage.removeItem(getProjectKey(LS_KEY_INPUT_PREFIX, projectId));
+                    localStorage.removeItem(getProjectKey(LS_KEY_MESSAGES_PREFIX, projectId));
                   };
                   if (totalLen > 100) {
                     toast("האם למחוק את כל השיחה?", {
