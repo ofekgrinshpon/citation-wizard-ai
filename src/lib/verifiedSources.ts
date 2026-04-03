@@ -83,11 +83,13 @@ function tokenizeSearchTerms(text: string) {
 }
 
 function scoreVerifiedSourceMatch(query: string, source: Pick<VerifiedSourceMatch, "source_name" | "full_citation"> & { search_text?: string }) {
-  const normalizedQuery = normalizeSearchableText(query);
+  // Strip section references so "חוק העונשין ס׳34כב" matches "חוק העונשין"
+  const strippedQuery = stripSectionReferences(query);
+  const normalizedQuery = normalizeSearchableText(strippedQuery);
   const normalizedSourceName = normalizeSearchableText(source.source_name);
   const normalizedDisplayCandidate = normalizeSearchableText(`${source.source_name} ${source.full_citation}`);
   const normalizedSearchCandidate = normalizeSearchableText(`${source.source_name} ${source.full_citation} ${source.search_text || ""}`);
-  const words = tokenizeSearchTerms(query);
+  const words = tokenizeSearchTerms(strippedQuery);
 
   const matchesExactName = normalizedSourceName === normalizedQuery;
   const matchesAllWords = words.length > 1 && words.every((word) => normalizedSearchCandidate.includes(word));
@@ -108,7 +110,8 @@ function scoreVerifiedSourceMatch(query: string, source: Pick<VerifiedSourceMatc
 }
 
 export async function findVerifiedSourceMatch(query: string): Promise<VerifiedSourceMatch | null> {
-  const terms = tokenizeSearchTerms(query);
+  const strippedQuery = stripSectionReferences(query);
+  const terms = tokenizeSearchTerms(strippedQuery);
   // Also extract case number patterns (e.g., "1514/01", "1514")
   const caseNumberParts = (query.match(/\d+(?:\/\d+)?/g) || []).filter(p => p.length >= 2);
   const allTerms = Array.from(new Set([...terms, ...caseNumberParts]))
