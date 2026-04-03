@@ -345,7 +345,9 @@ const Index = () => {
         raw_input: fullRawInput,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
-      }).then(() => {});
+        user_id: user?.id || null,
+        project_id: currentProject?.id || null,
+      }]).then(() => {});
 
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10;
@@ -399,7 +401,9 @@ const Index = () => {
         raw_input: fullRawInput,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
-      }).then(() => {});
+        user_id: user?.id || null,
+        project_id: currentProject?.id || null,
+      }]).then(() => {});
 
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10;
@@ -435,7 +439,9 @@ const Index = () => {
       formatted_output: verifiedReply,
       source_type: suggestion.source_type || null,
       is_verified: true,
-    }).then(() => {});
+      user_id: user?.id || null,
+      project_id: currentProject?.id || null,
+    }]).then(() => {});
     setPendingSuggestion(null);
   };
 
@@ -462,7 +468,9 @@ const Index = () => {
         raw_input: rawInput,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
-      }).then(() => {});
+        user_id: user?.id || null,
+        project_id: currentProject?.id || null,
+      }]).then(() => {});
 
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
@@ -558,7 +566,9 @@ const Index = () => {
             formatted_output: verifiedReply,
             source_type: verifiedMatch.source_type || (sourceType !== "unknown" ? sourceLabel : null),
             is_verified: true,
-          }).then(() => {});
+            user_id: user?.id || null,
+            project_id: currentProject?.id || null,
+          }]).then(() => {});
           return;
         }
       }
@@ -618,6 +628,8 @@ const Index = () => {
         raw_input: fullRawInput,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
+        user_id: user?.id || null,
+        project_id: currentProject?.id || null,
       };
 
       supabase.from("citation_history").insert([citationPayload]).then(() => {});
