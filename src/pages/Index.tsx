@@ -503,6 +503,18 @@ const Index = () => {
         }
       }
 
+      // If pinpoint + verified match found, inject verified source as hint into prompt
+      if (isPinpoint && verifiedMatch) {
+        const verifiedCategory = getVerifiedCategoryLabel(
+          classifyVerifiedSource({
+            rawInput: verifiedMatch.source_name,
+            fullCitation: verifiedMatch.full_citation,
+            sourceType: verifiedMatch.source_type,
+          })
+        );
+        prompt = `${prompt}\n\n══ מקור מאומת (${verifiedCategory}) ══\nהשתמש בפרטים הבאים מהמקור המאומת כדי להשלים את האזכור:\nשם: ${verifiedMatch.source_name}\nאזכור מלא: ${verifiedMatch.full_citation}\n══════════════════════════════════`;
+      }
+
       const reply = await callAPI(prompt, messages);
       const assistantIndex = newMessages.length;
 
