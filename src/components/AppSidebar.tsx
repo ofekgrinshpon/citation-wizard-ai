@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export function AppSidebar() {
@@ -10,6 +11,21 @@ export function AppSidebar() {
   const { projects, currentProject, setCurrentProjectId, createProject, deleteProject } = useProjects();
   const [newName, setNewName] = useState("");
   const [showCreate, setShowCreate] = useState(false);
+  const [displayName, setDisplayName] = useState("");
+
+  useEffect(() => {
+    if (!user) return;
+    // Try user_metadata first, then fetch from profiles
+    const metaName = user.user_metadata?.full_name;
+    if (metaName) {
+      setDisplayName(metaName);
+    } else {
+      supabase.from("profiles").select("full_name").eq("id", user.id).single()
+        .then(({ data }) => {
+          if (data?.full_name) setDisplayName(data.full_name);
+        });
+    }
+  }, [user]);
 
   const handleCreate = async () => {
     const name = newName.trim();
