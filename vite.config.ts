@@ -13,7 +13,11 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
-  plugins: [react(), basicSsl(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [
+    react(),
+    process.env.OFFICE_DEV === "true" && basicSsl(),
+    mode === "development" && componentTagger(),
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
