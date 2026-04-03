@@ -737,7 +737,6 @@ const Index = () => {
               אורח • {guestLimit.remaining}/{guestLimit.max} אזכורים
             </span>
           )}
-          {!isGuestMode && user && <ProjectSelector />}
           <div className="flex gap-1 bg-muted rounded-lg p-1">
             {MODES.map((m) => (
               <button
@@ -752,22 +751,6 @@ const Index = () => {
               </button>
             ))}
           </div>
-          {isAdmin && (
-            <button
-              onClick={() => navigate("/admin")}
-              className="text-xs text-primary hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors font-medium"
-            >
-              ⚙ ניהול
-            </button>
-          )}
-          {user && (
-            <button
-              onClick={() => navigate("/profile")}
-              className="text-xs text-primary hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors font-medium"
-            >
-              👤 פרופיל
-            </button>
-          )}
           <button
             onClick={() => navigate("/")}
             className="text-xs text-muted-foreground hover:text-foreground px-2 py-1.5 rounded-lg transition-colors"
@@ -777,11 +760,16 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Main content */}
-      <div
-        className="flex-1 overflow-y-auto px-4"
-        style={{ maxWidth: 860, margin: "0 auto", width: "100%" }}
-      >
+      {/* Body with sidebar */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Right sidebar — only for logged-in users */}
+        {!isGuestMode && user && <AppSidebar />}
+
+        {/* Main content */}
+        <div
+          className="flex-1 overflow-y-auto px-4"
+          style={{ maxWidth: 860, margin: "0 auto", width: "100%" }}
+        >
         {mode === "manual" ? (
           <ManualEntry />
         ) : mode === "batch" ? (
