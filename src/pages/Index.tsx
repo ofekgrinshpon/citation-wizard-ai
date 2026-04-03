@@ -11,6 +11,7 @@ import { GuestLimitModal } from "@/components/GuestLimitModal";
 import { PublicationIntegrityCard } from "@/components/PublicationIntegrityCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useOffice } from "@/hooks/useOffice";
 import { useGuestLimit } from "@/hooks/useGuestLimit";
 import { useProjects } from "@/hooks/useProjects";
 import { useActivityLog } from "@/hooks/useActivityLog";
