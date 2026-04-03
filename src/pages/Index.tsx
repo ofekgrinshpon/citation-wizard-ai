@@ -809,7 +809,7 @@ const Index = () => {
         <div className="flex-1 flex flex-col overflow-hidden">
         {/* Main content */}
         <div
-          className="flex-1 overflow-y-auto px-4"
+          className="flex-1 overflow-y-auto px-3 sm:px-4"
           style={{ maxWidth: 860, margin: "0 auto", width: "100%" }}
         >
         {mode === "manual" ? (
