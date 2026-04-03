@@ -27,6 +27,7 @@ import {
   type VerifiedSourceMatch,
 } from "@/lib/verifiedSources";
 import { VerifiedSuggestionCard } from "@/components/VerifiedSuggestionCard";
+import { ProjectSelector } from "@/components/ProjectSelector";
 
 interface Message {
   role: "user" | "assistant";
