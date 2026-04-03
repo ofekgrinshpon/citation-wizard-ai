@@ -20,6 +20,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const hasHydratedSession = useRef(false);
+  const adminResolving = useRef(false);
 
   const resolveAdmin = async (nextUser: User | null) => {
     if (!nextUser) {
@@ -27,6 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    adminResolving.current = true;
     const { data, error } = await supabase
       .from("user_roles")
       .select("role")
@@ -35,33 +37,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .maybeSingle();
 
     setIsAdmin(!error && !!data);
+    adminResolving.current = false;
   };
 
   useEffect(() => {
     let isMounted = true;
 
-    const syncAuthState = (nextSession: Session | null) => {
+    const syncAuthState = async (nextSession: Session | null) => {
       if (!isMounted) return;
 
       setSession(nextSession);
       setUser(nextSession?.user ?? null);
 
-      void resolveAdmin(nextSession?.user ?? null).finally(() => {
-        if (isMounted && hasHydratedSession.current) {
-          setLoading(false);
-        }
-      });
+      await resolveAdmin(nextSession?.user ?? null);
+
+      if (isMounted && hasHydratedSession.current) {
+        setLoading(false);
+      }
     };
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      syncAuthState(nextSession);
+      void syncAuthState(nextSession);
     });
 
     void supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       hasHydratedSession.current = true;
-      syncAuthState(currentSession);
+      void syncAuthState(currentSession);
     });
 
     return () => {

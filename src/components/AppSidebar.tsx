@@ -56,7 +56,7 @@ export function AppSidebar() {
 
   return (
     <aside
-      className="w-52 border-l border-border bg-muted/50 flex flex-col py-4 px-3 gap-1 overflow-y-auto flex-shrink-0"
+      className="w-full md:w-52 border-l border-border bg-muted/50 flex flex-col py-4 px-3 gap-1 overflow-y-auto overflow-x-hidden flex-shrink-0"
       style={{ direction: "rtl" }}
     >
       {/* Profile link */}
@@ -105,16 +105,16 @@ export function AppSidebar() {
 
       {/* Create project */}
       {showCreate ? (
-        <div className="px-1 mt-1 flex flex-col gap-1.5">
+        <div className="px-2 mt-1 flex flex-col gap-1.5">
           <input
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="שם פרויקט..."
-            className="bg-background border border-border rounded px-2 py-1 text-sm text-foreground w-full"
+            className="bg-background border border-border rounded px-2 py-1.5 text-sm text-foreground w-full min-w-0"
             autoFocus
             onKeyDown={(e) => e.key === "Enter" && handleCreate()}
           />
-          <div className="flex gap-1.5">
+          <div className="flex gap-2">
             <button onClick={handleCreate} className="text-primary text-xs font-medium">
               צור
             </button>
