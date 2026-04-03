@@ -12,6 +12,8 @@ import { PublicationIntegrityCard } from "@/components/PublicationIntegrityCard"
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useGuestLimit } from "@/hooks/useGuestLimit";
+import { useProjects } from "@/hooks/useProjects";
+import { useActivityLog } from "@/hooks/useActivityLog";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
 import { validateAIResponse, buildEnginePromptHint, getEngineRuleReference, getMissingFieldsSummary } from "@/lib/citationValidation";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
@@ -25,6 +27,7 @@ import {
   type VerifiedSourceMatch,
 } from "@/lib/verifiedSources";
 import { VerifiedSuggestionCard } from "@/components/VerifiedSuggestionCard";
+import { ProjectSelector } from "@/components/ProjectSelector";
 
 interface Message {
   role: "user" | "assistant";
@@ -173,6 +176,8 @@ const Index = () => {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const guestLimit = useGuestLimit();
+  const { currentProject } = useProjects();
+  const { log: logActivity } = useActivityLog();
 
   const isGuest = !user;
   const isGuestMode = isGuest || searchParams.get("guest") === "true";
@@ -336,11 +341,13 @@ const Index = () => {
       if (isGuestMode) guestLimit.increment();
 
       const extractedCitation = extractCitationFromResponse(reply);
-      supabase.from("citation_history").insert({
+      supabase.from("citation_history").insert([{
         raw_input: fullRawInput,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
-      }).then(() => {});
+        user_id: user?.id || null,
+        project_id: currentProject?.id || null,
+      }]).then(() => {});
 
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10;
@@ -390,11 +397,13 @@ const Index = () => {
       if (isGuestMode) guestLimit.increment();
 
       const extractedCitation = extractCitationFromResponse(reply);
-      supabase.from("citation_history").insert({
+      supabase.from("citation_history").insert([{
         raw_input: fullRawInput,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
-      }).then(() => {});
+        user_id: user?.id || null,
+        project_id: currentProject?.id || null,
+      }]).then(() => {});
 
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10;
@@ -425,12 +434,14 @@ const Index = () => {
       { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
     ]);
     if (isGuestMode) guestLimit.increment();
-    supabase.from("citation_history").insert({
+    supabase.from("citation_history").insert([{
       raw_input: rawInput,
       formatted_output: verifiedReply,
       source_type: suggestion.source_type || null,
       is_verified: true,
-    }).then(() => {});
+      user_id: user?.id || null,
+      project_id: currentProject?.id || null,
+    }]).then(() => {});
     setPendingSuggestion(null);
   };
 
@@ -453,11 +464,13 @@ const Index = () => {
       if (isGuestMode) guestLimit.increment();
 
       const extractedCitation = extractCitationFromResponse(reply);
-      supabase.from("citation_history").insert({
+      supabase.from("citation_history").insert([{
         raw_input: rawInput,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
-      }).then(() => {});
+        user_id: user?.id || null,
+        project_id: currentProject?.id || null,
+      }]).then(() => {});
 
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
@@ -548,12 +561,14 @@ const Index = () => {
           ]);
           if (isGuestMode) guestLimit.increment();
 
-          supabase.from("citation_history").insert({
+          supabase.from("citation_history").insert([{
             raw_input: fullRawInput,
             formatted_output: verifiedReply,
             source_type: verifiedMatch.source_type || (sourceType !== "unknown" ? sourceLabel : null),
             is_verified: true,
-          }).then(() => {});
+            user_id: user?.id || null,
+            project_id: currentProject?.id || null,
+          }]).then(() => {});
           return;
         }
       }
@@ -613,9 +628,12 @@ const Index = () => {
         raw_input: fullRawInput,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
+        user_id: user?.id || null,
+        project_id: currentProject?.id || null,
       };
 
-      supabase.from("citation_history").insert(citationPayload).then(() => {});
+      supabase.from("citation_history").insert([citationPayload]).then(() => {});
+      logActivity("יצירת אזכור", { source_type: sourceLabel, raw_input: fullRawInput.slice(0, 100) });
 
       // Only verify if we have a real, complete citation (not a fragment, not missing data)
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
@@ -719,6 +737,7 @@ const Index = () => {
               אורח • {guestLimit.remaining}/{guestLimit.max} אזכורים
             </span>
           )}
+          {!isGuestMode && user && <ProjectSelector />}
           <div className="flex gap-1 bg-muted rounded-lg p-1">
             {MODES.map((m) => (
               <button
@@ -739,6 +758,14 @@ const Index = () => {
               className="text-xs text-primary hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors font-medium"
             >
               ⚙ ניהול
+            </button>
+          )}
+          {user && (
+            <button
+              onClick={() => navigate("/profile")}
+              className="text-xs text-primary hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors font-medium"
+            >
+              👤 פרופיל
             </button>
           )}
           <button
