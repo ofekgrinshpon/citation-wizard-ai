@@ -97,33 +97,33 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background" style={{ direction: "rtl" }}>
-      <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
-        <div className="flex items-center gap-3">
-          <div className="text-3xl">👤</div>
-          <h1 className="text-foreground text-lg font-bold">הפרופיל שלי</h1>
+      <header className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 border-b border-border bg-card">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="text-2xl sm:text-3xl">👤</div>
+          <h1 className="text-foreground text-base sm:text-lg font-bold">הפרופיל שלי</h1>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-1.5 sm:gap-2">
           <button
             onClick={() => navigate("/app")}
-            className="text-xs text-primary hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors"
+            className="text-[10px] sm:text-xs text-primary hover:bg-primary/10 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg transition-colors"
           >
-            ← חזרה לאפליקציה
+            ← חזרה
           </button>
           <button
             onClick={async () => { await signOut(); navigate("/"); }}
-            className="text-xs text-destructive hover:bg-destructive/10 px-2.5 py-1.5 rounded-lg transition-colors"
+            className="text-[10px] sm:text-xs text-destructive hover:bg-destructive/10 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg transition-colors"
           >
             התנתק
           </button>
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto p-6">
+      <div className="max-w-3xl mx-auto p-3 sm:p-6">
         <Tabs defaultValue="profile" dir="rtl">
-          <TabsList className="w-full justify-start mb-6">
-            <TabsTrigger value="profile">פרטים אישיים</TabsTrigger>
-            <TabsTrigger value="history">היסטוריית אזכורים</TabsTrigger>
-            <TabsTrigger value="activity">יומן פעילות</TabsTrigger>
+          <TabsList className="w-full justify-start mb-4 sm:mb-6 overflow-x-auto no-scrollbar">
+            <TabsTrigger value="profile" className="text-xs sm:text-sm">פרטים אישיים</TabsTrigger>
+            <TabsTrigger value="history" className="text-xs sm:text-sm">היסטוריית אזכורים</TabsTrigger>
+            <TabsTrigger value="activity" className="text-xs sm:text-sm">יומן פעילות</TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile">
