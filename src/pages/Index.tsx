@@ -1101,7 +1101,7 @@ const Index = () => {
               </button>
             </div>
           </div>
-          <div className="text-center mt-2 text-[11px] text-text-faint">
+          <div className="text-center mt-1.5 sm:mt-2 text-[10px] sm:text-[11px] text-text-faint hidden sm:block">
             כללי האזכור האחיד בכתיבה המשפטית • מהדורה שלישית 2021 • Bluebook
             21st ed.
           </div>
