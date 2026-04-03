@@ -65,7 +65,7 @@ export function AppSidebar() {
         className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted transition-colors text-right w-full"
       >
         <span>👤</span>
-        <span>הפרופיל שלי</span>
+        <span className="truncate">{displayName || user?.email || "הפרופיל שלי"}</span>
       </button>
 
       {/* Divider */}
