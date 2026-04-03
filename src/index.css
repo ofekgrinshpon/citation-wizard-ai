@@ -51,9 +51,9 @@
     --glass: 0 0% 100%;
     --text-dim: 215 14% 46%;
     --text-faint: 215 12% 68%;
-    --gradient-primary: linear-gradient(135deg, hsl(217 71% 35%), hsl(217 71% 50%));
-    --gradient-secondary: linear-gradient(135deg, hsl(213 60% 93%), hsl(210 20% 96%));
-    --shadow-glow: 0 2px 12px rgba(30, 64, 124, 0.18);
+    --gradient-primary: linear-gradient(135deg, hsl(204 70% 53%), hsl(168 55% 42%));
+    --gradient-secondary: linear-gradient(135deg, hsl(204 60% 93%), hsl(210 20% 96%));
+    --shadow-glow: 0 2px 12px rgba(52, 152, 219, 0.25);
   }
 }
 
