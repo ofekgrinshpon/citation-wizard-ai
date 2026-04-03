@@ -716,31 +716,61 @@ const Index = () => {
     { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
   ];
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <div className={`flex flex-col h-screen font-sans bg-background text-foreground ${isOfficeAddin ? "compact-mode" : ""}`}>
       {/* Guest Limit Modal */}
       {isGuestMode && guestLimit.isLocked && <GuestLimitModal />}
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shadow-sm">
-        <div className="flex items-center gap-3" style={{ direction: "rtl" }}>
-          <ReLexLogo size={32} />
-          <p className="text-text-dim text-xs">
-            כללי האזכור האחיד • מהדורת 2021
-          </p>
-        </div>
+      <header className="flex flex-col border-b border-border bg-card shadow-sm">
+        {/* Top row: logo + actions */}
+        <div className="flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3">
+          <div className="flex items-center gap-2 sm:gap-3" style={{ direction: "rtl" }}>
+            {/* Mobile sidebar toggle */}
+            {!isGuestMode && user && !isOfficeAddin && (
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="md:hidden p-1.5 rounded-lg text-muted-foreground hover:bg-muted transition-colors"
+              >
+                ☰
+              </button>
+            )}
+            <ReLexLogo size={28} />
+            <p className="text-text-dim text-[10px] sm:text-xs hidden sm:block">
+              כללי האזכור האחיד • מהדורת 2021
+            </p>
+          </div>
 
-        <div className="flex items-center gap-2">
-          {isGuestMode && (
-            <span className="text-[10px] text-muted-foreground bg-muted px-2 py-1 rounded-md">
-              אורח • {guestLimit.remaining}/{guestLimit.max} אזכורים
-            </span>
-          )}
-          <div className="flex gap-1 bg-muted rounded-lg p-1">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {isGuestMode && (
+              <span className="text-[9px] sm:text-[10px] text-muted-foreground bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md">
+                אורח • {guestLimit.remaining}/{guestLimit.max}
+              </span>
+            )}
+            <button
+              onClick={async () => {
+                if (user) {
+                  await signOut();
+                  window.location.href = "/";
+                } else {
+                  navigate("/");
+                }
+              }}
+              className="text-[10px] sm:text-xs text-muted-foreground hover:text-foreground px-1.5 sm:px-2 py-1 sm:py-1.5 rounded-lg transition-colors"
+            >
+              {user ? "התנתק" : "← חזרה"}
+            </button>
+          </div>
+        </div>
+        {/* Mode tabs — scrollable on mobile */}
+        <div className="px-2 pb-2 sm:px-4 sm:pb-3">
+          <div className="flex gap-1 bg-muted rounded-lg p-0.5 sm:p-1 overflow-x-auto no-scrollbar">
             {MODES.map((m) => (
               <button
                 key={m.id}
                 onClick={() => setMode(m.id)}
-                className={`mode-tab flex items-center gap-1 ${
+                className={`mode-tab flex items-center gap-0.5 sm:gap-1 whitespace-nowrap flex-shrink-0 ${
                   mode === m.id ? "mode-tab-active" : "mode-tab-inactive"
                 }`}
               >
@@ -749,19 +779,6 @@ const Index = () => {
               </button>
             ))}
           </div>
-          <button
-            onClick={async () => {
-              if (user) {
-                await signOut();
-                window.location.href = "/";
-              } else {
-                navigate("/");
-              }
-            }}
-            className="text-xs text-muted-foreground hover:text-foreground px-2 py-1.5 rounded-lg transition-colors"
-          >
-            {user ? "התנתק" : "← חזרה"}
-          </button>
         </div>
       </header>
 
