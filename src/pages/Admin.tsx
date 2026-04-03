@@ -289,7 +289,7 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-background" style={{ direction: "rtl" }}>
-      <AdminHeader email={user?.email} onSignOut={async () => { await signOut(); navigate("/"); }} />
+      <AdminHeader email={user?.email} onSignOut={async () => { await signOut(); window.location.href = "/"; }} />
 
       <div className="max-w-6xl mx-auto px-6 py-6">
         <div className="flex gap-1 bg-muted rounded-lg p-1 mb-6 w-fit">
