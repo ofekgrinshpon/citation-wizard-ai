@@ -507,25 +507,32 @@ export async function ensureVerifiedSources(
       }
     }
 
-    let verificationStatus: VerificationStatus = "pending";
+    // AI verification is used to determine quality, but RLS requires
+    // non-admin inserts to use verification_status='pending'.
+    // Admins bypass this via the ALL policy.
+    let aiVerificationStatus: VerificationStatus = "pending";
     if (!options?.skipAIVerification) {
       const result = await verifySourceWithAI(item.rawInput, storage.storedCitation, item.sourceType ?? null);
-      verificationStatus = result.status as VerificationStatus;
-      if (verificationStatus === "invalid") {
+      aiVerificationStatus = result.status as VerificationStatus;
+      if (aiVerificationStatus === "invalid") {
         invalid++;
       }
     } else {
-      verificationStatus = "verified";
+      aiVerificationStatus = "verified";
     }
 
+    // For RLS compliance: non-admin inserts must be 'pending' with no verified_by.
+    // Admin inserts (skipAIVerification=true) can use 'verified' since the admin
+    // ALL policy bypasses the INSERT restriction.
+    const isAdminInsert = !!options?.skipAIVerification;
     const payload = {
       source_name: storage.storedSourceName,
       source_type: storage.category,
       full_citation: storage.storedCitation,
       search_text: `${normalizeVerifiedSourceKey(storage.storedSourceName)} ${normalizeVerifiedSourceKey(storage.storedCitation)} ${storage.year ?? ""}`.trim(),
-      auto_verified: item.autoVerified ?? false,
-      verified_by: item.verifiedBy ?? null,
-      verification_status: verificationStatus,
+      auto_verified: isAdminInsert ? (item.autoVerified ?? false) : false,
+      verified_by: isAdminInsert ? (item.verifiedBy ?? null) : null,
+      verification_status: isAdminInsert ? aiVerificationStatus : "pending",
       year: storage.year,
       metadata: item.yearPreferences ? { hasHebrewYear: item.yearPreferences.hasHebrewYear, hasGregorianYear: item.yearPreferences.hasGregorianYear } : {},
     };
