@@ -182,7 +182,7 @@ const Landing = () => {
               onClick={handleGuest}
               className="w-full py-2.5 rounded-xl font-semibold text-sm border-2 border-primary/30 text-primary hover:bg-primary/5 transition-all"
             >
-              כניסה כאורח (2 אזכורים חינם)
+              כניסה כאורח/ת (2 אזכורים חינם)
             </button>
           </div>
         </div>
