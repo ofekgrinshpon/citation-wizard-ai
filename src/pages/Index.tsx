@@ -159,6 +159,14 @@ const Index = () => {
     sourceLabel: string;
     newMessages: Message[];
   } | null>(null);
+  // Pending treaty type selection — multilateral or bilateral
+  const [pendingTreatyType, setPendingTreatyType] = useState<{
+    rawText: string;
+    normalized: string;
+    sourceType: SourceType;
+    sourceLabel: string;
+    newMessages: Message[];
+  } | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   
