@@ -1040,9 +1040,9 @@ const Index = () => {
 
       {/* Input bar (only in freetext mode) */}
       {mode === "freetext" && (
-        <div className="input-bar sticky bottom-0 px-4 py-3">
+        <div className="input-bar sticky bottom-0 px-2 sm:px-4 py-2 sm:py-3">
           <div
-            className="flex gap-2.5 items-end"
+            className="flex gap-1.5 sm:gap-2.5 items-end"
             style={{ maxWidth: 860, margin: "0 auto", direction: "rtl" }}
           >
             {messages.length > 0 && (
