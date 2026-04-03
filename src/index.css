@@ -32,18 +32,18 @@
 
     --border: 214 18% 86%;
     --input: 214 18% 86%;
-    --ring: 217 71% 50%;
+    --ring: 204 70% 53%;
 
     --radius: 0.75rem;
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 215 25% 17%;
-    --sidebar-primary: 217 71% 35%;
+    --sidebar-primary: 204 70% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 213 60% 93%;
+    --sidebar-accent: 204 60% 93%;
     --sidebar-accent-foreground: 215 25% 17%;
     --sidebar-border: 214 18% 86%;
-    --sidebar-ring: 217 71% 50%;
+    --sidebar-ring: 204 70% 53%;
 
     /* Custom tokens */
     --surface: 210 14% 97%;
