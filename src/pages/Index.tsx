@@ -782,10 +782,28 @@ const Index = () => {
         </div>
       </header>
 
+      {/* Mobile sidebar drawer */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
+          <div className="absolute inset-y-0 right-0 w-64 bg-background shadow-xl animate-fade-in">
+            <div className="flex items-center justify-between px-3 py-3 border-b border-border">
+              <span className="text-sm font-semibold text-foreground">תפריט</span>
+              <button onClick={() => setSidebarOpen(false)} className="text-muted-foreground p-1">✕</button>
+            </div>
+            <AppSidebar />
+          </div>
+        </div>
+      )}
+
       {/* Body with sidebar */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Right sidebar — only for logged-in users, hidden in compact/add-in mode */}
-        {!isGuestMode && user && !isOfficeAddin && <AppSidebar />}
+        {/* Right sidebar — desktop only */}
+        {!isGuestMode && user && !isOfficeAddin && (
+          <div className="hidden md:block">
+            <AppSidebar />
+          </div>
+        )}
 
         {/* Main column */}
         <div className="flex-1 flex flex-col overflow-hidden">
