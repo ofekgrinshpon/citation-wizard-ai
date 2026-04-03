@@ -55,6 +55,34 @@ export function PartyNameCheck({ onDismiss, onRequestEdit }: PartyNameCheckProps
         </div>
       </div>
 
+      <div className="mt-2.5 pt-2 border-t border-border text-muted-foreground">
+        <span className="font-semibold text-foreground text-sm">📐 תפקיד ותואר (כלל 18.4.5)</span>
+        <p className="mt-1">
+          אם מופיע שמו של אדם לצד <strong className="text-foreground">תפקידו</strong> — יש לציין רק את <strong className="text-foreground">שם המשפחה</strong> אם הוא מעורב כאדם פרטי, ורק את <strong className="text-foreground">התפקיד</strong> אם הוא מעורב מכוח תפקידו (אלא אם שם התפקיד כוללני מדי).
+        </p>
+        <p className="mt-1">
+          אם מופיע שמו של אדם לצד <strong className="text-foreground">תוארו</strong> — <strong className="text-foreground">אין לציין את התואר</strong>.
+        </p>
+        <div className="mt-1.5 space-y-1">
+          <div>
+            <span className="text-xs text-primary">✓</span>{" "}
+            בג&quot;ץ 987/94 יורונט קווי זהב (1992) בע&quot;מ נ׳ <strong className="text-foreground">שרת התקשורת</strong>
+          </div>
+          <div>
+            <span className="text-xs text-destructive">✗</span>{" "}
+            בג&quot;ץ 987/94 יורונט קווי זהב (1992) בע&quot;מ נ׳ שרת התקשורת, <s className="text-destructive/70">הגב׳ אלוני</s>
+          </div>
+          <div className="mt-1">
+            <span className="text-xs text-primary">✓</span>{" "}
+            ע&quot;א 3295/94 <strong className="text-foreground">הנאמן על נכסי מור</strong> נ׳ מור
+          </div>
+          <div>
+            <span className="text-xs text-destructive">✗</span>{" "}
+            ע&quot;א 3295/94 <s className="text-destructive/70">פרמינגר, עו&quot;ד,</s> הנאמן על נכסי <s className="text-destructive/70">חוה ויוסף</s> מור...
+          </div>
+        </div>
+      </div>
+
       <div className="mt-2.5 flex gap-2">
         <button
           onClick={() => { setDismissed(true); onDismiss(); }}
