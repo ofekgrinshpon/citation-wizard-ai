@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { ReLexLogo } from "@/components/ReLexLogo";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 
@@ -54,12 +55,11 @@ const Landing = () => {
     <div className="min-h-screen bg-background flex flex-col" style={{ direction: "rtl" }}>
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
         <div className="text-center mb-10 max-w-lg">
-          <div className="text-5xl mb-4">⚖️</div>
-          <h1 className="text-3xl font-bold text-foreground mb-3 font-sans md:text-5xl" style={{ fontFamily: "'Frank Ruhl Libre', serif" }}>
-            העוזר המשפטי האוטומטי
-          </h1>
+          <div className="mb-4 flex justify-center">
+            <ReLexLogo size={48} />
+          </div>
           <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
-            דיוק משפטי בלחיצת כפתור לפי כללי האזכור האחיד
+            אזכורים משפטיים חכמים למשפט הישראלי
           </p>
           <div className="flex items-center justify-center gap-4 mt-5 text-xs text-muted-foreground">
             <span className="flex items-center gap-1">⚖️ פסיקה</span>

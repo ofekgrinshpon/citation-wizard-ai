@@ -12,8 +12,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["'Assistant'", "sans-serif"],
-        serif: ["'Frank Ruhl Libre'", "serif"],
+        sans: ["'Heebo'", "'Inter'", "sans-serif"],
+        serif: ["'Inter'", "'Heebo'", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

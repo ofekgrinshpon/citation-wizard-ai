@@ -292,10 +292,10 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
                     }
                   }}
                   disabled={isInserting}
-                  className="text-xs bg-primary/10 hover:bg-primary/20 border border-primary/30 rounded-md px-2 py-1 text-primary hover:text-primary font-medium disabled:opacity-50"
+                  className="text-xs bg-secondary/10 hover:bg-secondary/20 border border-secondary/30 rounded-md px-2 py-1 text-secondary hover:text-secondary font-medium disabled:opacity-50"
                   title="הכנס להערת שוליים"
                 >
-                  {isInserting ? "⏳" : "📝"} הע״ש
+                  {isInserting ? "⏳" : "📝"} הכנס ל-Word
                 </button>
               )}
             </div>

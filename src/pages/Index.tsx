@@ -29,6 +29,7 @@ import {
 } from "@/lib/verifiedSources";
 import { VerifiedSuggestionCard } from "@/components/VerifiedSuggestionCard";
 import { AppSidebar } from "@/components/AppSidebar";
+import { ReLexLogo } from "@/components/ReLexLogo";
 
 interface Message {
   role: "user" | "assistant";
@@ -722,15 +723,10 @@ const Index = () => {
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shadow-sm">
         <div className="flex items-center gap-3" style={{ direction: "rtl" }}>
-          <div className="text-3xl">🏛</div>
-          <div>
-            <h1 className="text-foreground text-lg font-bold leading-tight font-sans">
-              העוזמ״ש
-            </h1>
-            <p className="text-text-dim text-xs">
-              כללי האזכור האחיד • מהדורת 2021
-            </p>
-          </div>
+          <ReLexLogo size={32} />
+          <p className="text-text-dim text-xs">
+            כללי האזכור האחיד • מהדורת 2021
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -785,9 +781,9 @@ const Index = () => {
             {/* Welcome screen */}
             {messages.length === 0 && (
               <div className="py-10 text-center" style={{ direction: "rtl" }}>
-                <div className="text-5xl mb-4">⚖️</div>
+                <div className="mb-4 flex justify-center"><ReLexLogo size={44} /></div>
                 <h2 className="text-foreground text-xl font-bold mb-2 font-sans">
-                  העוזר המשפטי{" "}
+                  ReLex
                 </h2>
                 <p className="text-text-dim text-sm mb-2">
                   הכנס מקור משפטי בטקסט חופשי או בצורה ידנית – המערכת תזהה,

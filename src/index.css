@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -15,35 +15,35 @@
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 17%;
 
-    --primary: 217 71% 35%;
+    --primary: 204 70% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 215 20% 90%;
-    --secondary-foreground: 215 25% 17%;
+    --secondary: 168 55% 42%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 210 16% 93%;
     --muted-foreground: 215 14% 46%;
 
-    --accent: 213 60% 93%;
-    --accent-foreground: 217 71% 35%;
+    --accent: 204 60% 93%;
+    --accent-foreground: 204 70% 40%;
 
     --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 214 18% 86%;
     --input: 214 18% 86%;
-    --ring: 217 71% 50%;
+    --ring: 204 70% 53%;
 
     --radius: 0.75rem;
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 215 25% 17%;
-    --sidebar-primary: 217 71% 35%;
+    --sidebar-primary: 204 70% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 213 60% 93%;
+    --sidebar-accent: 204 60% 93%;
     --sidebar-accent-foreground: 215 25% 17%;
     --sidebar-border: 214 18% 86%;
-    --sidebar-ring: 217 71% 50%;
+    --sidebar-ring: 204 70% 53%;
 
     /* Custom tokens */
     --surface: 210 14% 97%;
@@ -51,9 +51,9 @@
     --glass: 0 0% 100%;
     --text-dim: 215 14% 46%;
     --text-faint: 215 12% 68%;
-    --gradient-primary: linear-gradient(135deg, hsl(217 71% 35%), hsl(217 71% 50%));
-    --gradient-secondary: linear-gradient(135deg, hsl(213 60% 93%), hsl(210 20% 96%));
-    --shadow-glow: 0 2px 12px rgba(30, 64, 124, 0.18);
+    --gradient-primary: linear-gradient(135deg, hsl(204 70% 53%), hsl(168 55% 42%));
+    --gradient-secondary: linear-gradient(135deg, hsl(204 60% 93%), hsl(210 20% 96%));
+    --shadow-glow: 0 2px 12px rgba(52, 152, 219, 0.25);
   }
 }
 
@@ -64,12 +64,12 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Assistant', sans-serif;
+    font-family: 'Heebo', 'Inter', sans-serif;
     direction: rtl;
   }
 
   h1, h2, h3 {
-    font-family: 'Frank Ruhl Libre', serif;
+    font-family: 'Inter', 'Heebo', sans-serif;
   }
 }
 
