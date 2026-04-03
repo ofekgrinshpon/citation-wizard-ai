@@ -153,11 +153,20 @@ const Landing = () => {
 
             <button
               onClick={async () => {
-                const result = await lovable.auth.signInWithOAuth("google", {
-                  redirect_uri: window.location.origin,
-                });
-                if (result.error) {
-                  toast.error("שגיאה בהתחברות עם Google");
+                if (isOfficeAddin) {
+                  try {
+                    await signInWithOfficeDialog();
+                    toast.success("התחברת בהצלחה!");
+                  } catch (err: any) {
+                    toast.error(err.message || "שגיאה בהתחברות עם Google");
+                  }
+                } else {
+                  const result = await lovable.auth.signInWithOAuth("google", {
+                    redirect_uri: window.location.origin,
+                  });
+                  if (result.error) {
+                    toast.error("שגיאה בהתחברות עם Google");
+                  }
                 }
               }}
               className="w-full py-2.5 rounded-xl font-semibold text-sm border border-border hover:bg-muted transition-all flex items-center justify-center gap-2"
