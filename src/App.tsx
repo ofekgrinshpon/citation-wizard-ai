@@ -29,22 +29,25 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <ProjectsProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/app" element={<BibliographyProvider><Index /></BibliographyProvider>} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/auth-redirect" element={<AuthRedirect />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
+        <OfficeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/app" element={<BibliographyProvider><Index /></BibliographyProvider>} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/auth-redirect" element={<AuthRedirect />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/auth-dialog" element={<AuthDialog />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </OfficeProvider>
       </ProjectsProvider>
     </AuthProvider>
   </QueryClientProvider>
