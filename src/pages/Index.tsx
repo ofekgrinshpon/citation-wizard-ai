@@ -765,6 +765,8 @@ const Index = () => {
         {/* Right sidebar — only for logged-in users */}
         {!isGuestMode && user && <AppSidebar />}
 
+        {/* Main column */}
+        <div className="flex-1 flex flex-col overflow-hidden">
         {/* Main content */}
         <div
           className="flex-1 overflow-y-auto px-4"
