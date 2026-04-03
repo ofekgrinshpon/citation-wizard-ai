@@ -61,7 +61,7 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit }:
     }
   };
 
-  const copyContent = () => {
+  const copyContent = async () => {
     const citationOnly = msg.content
       .split("\n")
       .filter((line) => {
@@ -74,10 +74,31 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit }:
         return true;
       })
       .join("\n")
-      .replace(/\*\*/g, "")
-      .replace(/##/g, "")
       .trim();
-    navigator.clipboard.writeText(citationOnly);
+
+    // Build rich text (HTML) version with bold/italic formatting
+    const htmlContent = citationOnly
+      .replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+      .replace(/##(.+?)##/g, "<i>$1</i>")
+      .replace(/\n/g, "<br>");
+
+    const plainContent = citationOnly
+      .replace(/\*\*/g, "")
+      .replace(/##/g, "");
+
+    try {
+      const htmlBlob = new Blob([`<div dir="rtl" style="font-family: 'David', 'Times New Roman', serif;">${htmlContent}</div>`], { type: "text/html" });
+      const textBlob = new Blob([plainContent], { type: "text/plain" });
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          "text/html": htmlBlob,
+          "text/plain": textBlob,
+        }),
+      ]);
+    } catch {
+      // Fallback for browsers that don't support ClipboardItem
+      await navigator.clipboard.writeText(plainContent);
+    }
     toast.success("הועתק ללוח!");
   };
 
