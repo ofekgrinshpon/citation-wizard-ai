@@ -71,9 +71,9 @@
 
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://id-preview--da75bf03-5ea8-4e5f-a54a-fd6ed2a9c146.lovable.app/placeholder.svg" />
-        <bt:Image id="Icon.32x32" DefaultValue="https://id-preview--da75bf03-5ea8-4e5f-a54a-fd6ed2a9c146.lovable.app/placeholder.svg" />
-        <bt:Image id="Icon.80x80" DefaultValue="https://id-preview--da75bf03-5ea8-4e5f-a54a-fd6ed2a9c146.lovable.app/placeholder.svg" />
+        <bt:Image id="Icon.16x16" DefaultValue="https://id-preview--da75bf03-5ea8-4e5f-a54a-fd6ed2a9c146.lovable.app/relex-icon.svg" />
+        <bt:Image id="Icon.32x32" DefaultValue="https://id-preview--da75bf03-5ea8-4e5f-a54a-fd6ed2a9c146.lovable.app/relex-icon.svg" />
+        <bt:Image id="Icon.80x80" DefaultValue="https://id-preview--da75bf03-5ea8-4e5f-a54a-fd6ed2a9c146.lovable.app/relex-icon.svg" />
       </bt:Images>
       <bt:Urls>
         <bt:Url id="Taskpane.Url" DefaultValue="https://id-preview--da75bf03-5ea8-4e5f-a54a-fd6ed2a9c146.lovable.app/app?addin=1" />
