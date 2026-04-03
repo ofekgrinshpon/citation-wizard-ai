@@ -60,6 +60,24 @@ function normalizeSearchableText(text: string) {
     .trim();
 }
 
+/**
+ * Strip section/pinpoint references from a query so that
+ * "חוק העונשין ס׳34כב" → "חוק העונשין" for verified-source matching.
+ */
+function stripSectionReferences(text: string): string {
+  return text
+    // ס׳34כב / ס'34 / ס"34 patterns (section abbreviation + number)
+    .replace(/ס[׳'״"]\s*\d+[א-ת]*/g, "")
+    // סעיף 34כב / סעיפים 1-5
+    .replace(/סעיפי?ם?\s+[\dא-ת()./\\–\-\s]+/g, "")
+    // פסקה / פס' references
+    .replace(/(?:פסקה|פס[׳'״"])\s*[\dא-ת()./\\–\-]+/g, "")
+    // בעמ' / עמ' page references  
+    .replace(/(?:בעמ[׳'״"]?|עמ[׳'״"]?|עמוד)\s*[\d\-–]+/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function tokenizeSearchTerms(text: string) {
   return Array.from(new Set(normalizeSearchableText(text).split(" ").filter((token) => token.length >= 2)));
 }
