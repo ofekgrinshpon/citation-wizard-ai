@@ -36,7 +36,10 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
   const [isEditingCitation, setIsEditingCitation] = useState(false);
   const [citationEditValue, setCitationEditValue] = useState("");
 
-  const isCaseLaw = detectedType === "case_law_published" || detectedType === "case_law_database";
+  const isCaseLawByType = detectedType === "case_law_published" || detectedType === "case_law_database";
+  // Fallback: detect case law from content patterns when detectedType is lost (e.g. after HMR)
+  const caseLawPattern = /(?:ע"א|ע״א|בג"ץ|בג״ץ|ד"נ|ד״נ|ע"פ|ע״פ|רע"א|רע״א|בש"פ|בש״פ|ת"א|ת״א|ה"פ|ה״פ|עת"מ|עת״מ)\s*\d/;
+  const isCaseLaw = isCaseLawByType || (!isUser && caseLawPattern.test(msg.content));
   const isVerifiedSource = msg.content.startsWith("✓");
 
   const handleStartEdit = () => {
@@ -249,6 +252,19 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
                 </div>
               );
             })}
+
+            {isCaseLaw && !isVerifiedSource && !msg.content.split("\n").some(l => isRuleLine(l)) && (
+              <div className="flex items-center gap-2 flex-wrap mt-2">
+                <button
+                  onClick={() => setShowPartyCheck((v) => !v)}
+                  className="inline-flex items-center gap-1 py-1 px-2 rounded-md text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
+                  title="בדיקת שמות צדדים (כלל 18.4.4)"
+                >
+                  <AlertTriangle size={13} />
+                  <span>👤 בדיקת צדדים</span>
+                </button>
+              </div>
+            )}
 
             <button
               onClick={copyContent}
