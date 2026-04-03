@@ -186,15 +186,30 @@ const Index = () => {
   const isGuest = !user;
   const isGuestMode = isGuest || searchParams.get("guest") === "true";
 
+  // Load project-specific state when project changes
+  useEffect(() => {
+    try {
+      const savedMessages = localStorage.getItem(getProjectKey(LS_KEY_MESSAGES_PREFIX, projectId));
+      setMessages(savedMessages ? JSON.parse(savedMessages) : []);
+    } catch { setMessages([]); }
+    setInput(localStorage.getItem(getProjectKey(LS_KEY_INPUT_PREFIX, projectId)) || "");
+    setPendingVerification(null);
+    setPendingSuggestion(null);
+    setPendingBillType(null);
+    setPendingTreatyType(null);
+    setMessageSourceTypes({});
+    setMessageRawInputs({});
+  }, [projectId]);
+
   // Persist input to localStorage on every change
   useEffect(() => {
-    localStorage.setItem(LS_KEY_INPUT, input);
-  }, [input]);
+    localStorage.setItem(getProjectKey(LS_KEY_INPUT_PREFIX, projectId), input);
+  }, [input, projectId]);
 
   // Persist messages to localStorage
   useEffect(() => {
-    localStorage.setItem(LS_KEY_MESSAGES, JSON.stringify(messages));
-  }, [messages]);
+    localStorage.setItem(getProjectKey(LS_KEY_MESSAGES_PREFIX, projectId), JSON.stringify(messages));
+  }, [messages, projectId]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
