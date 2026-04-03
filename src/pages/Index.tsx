@@ -341,7 +341,7 @@ const Index = () => {
       if (isGuestMode) guestLimit.increment();
 
       const extractedCitation = extractCitationFromResponse(reply);
-      supabase.from("citation_history").insert({
+      supabase.from("citation_history").insert([{
         raw_input: fullRawInput,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
@@ -395,7 +395,7 @@ const Index = () => {
       if (isGuestMode) guestLimit.increment();
 
       const extractedCitation = extractCitationFromResponse(reply);
-      supabase.from("citation_history").insert({
+      supabase.from("citation_history").insert([{
         raw_input: fullRawInput,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
@@ -430,7 +430,7 @@ const Index = () => {
       { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
     ]);
     if (isGuestMode) guestLimit.increment();
-    supabase.from("citation_history").insert({
+    supabase.from("citation_history").insert([{
       raw_input: rawInput,
       formatted_output: verifiedReply,
       source_type: suggestion.source_type || null,
@@ -458,7 +458,7 @@ const Index = () => {
       if (isGuestMode) guestLimit.increment();
 
       const extractedCitation = extractCitationFromResponse(reply);
-      supabase.from("citation_history").insert({
+      supabase.from("citation_history").insert([{
         raw_input: rawInput,
         formatted_output: reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
@@ -553,7 +553,7 @@ const Index = () => {
           ]);
           if (isGuestMode) guestLimit.increment();
 
-          supabase.from("citation_history").insert({
+          supabase.from("citation_history").insert([{
             raw_input: fullRawInput,
             formatted_output: verifiedReply,
             source_type: verifiedMatch.source_type || (sourceType !== "unknown" ? sourceLabel : null),
@@ -620,7 +620,7 @@ const Index = () => {
         source_type: sourceType !== "unknown" ? sourceLabel : null,
       };
 
-      supabase.from("citation_history").insert(citationPayload).then(() => {});
+      supabase.from("citation_history").insert([citationPayload]).then(() => {});
 
       // Only verify if we have a real, complete citation (not a fragment, not missing data)
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
