@@ -181,6 +181,10 @@ export const FIELD_LABELS: Record<string, string> = {
   citation: 'אזכור מלא',
   court: 'ערכאה',
   district: 'מחוז',
+  treatyName: 'שם האמנה',
+  signingType: 'סוג חתימה (נפתחה/נחתמה)',
+  signingYear: 'שנת חתימה',
+  notebook: 'מספר חוברת',
 };
 
 // Normalize abbreviations in free text
