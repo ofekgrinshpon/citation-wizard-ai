@@ -12,6 +12,8 @@ import { PublicationIntegrityCard } from "@/components/PublicationIntegrityCard"
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useGuestLimit } from "@/hooks/useGuestLimit";
+import { useProjects } from "@/hooks/useProjects";
+import { useActivityLog } from "@/hooks/useActivityLog";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
 import { validateAIResponse, buildEnginePromptHint, getEngineRuleReference, getMissingFieldsSummary } from "@/lib/citationValidation";
 import { VerifiedAutocomplete } from "@/components/VerifiedAutocomplete";
