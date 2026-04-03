@@ -111,7 +111,7 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     const lawMatch = response.match(/^([^,]+)/);
     if (lawMatch) fields.lawName = lawMatch[1].trim();
     // Hebrew year
-    const hebrewYearMatch = response.match(/(הת[שׁ]["״׳][א-ת]["״׳]?[א-ת]?)/);
+    const hebrewYearMatch = response.match(/(הת[שׁש][א-ת]*["״׳][א-ת]["״׳]?[א-ת]?)/);
     if (hebrewYearMatch) fields.hebrewYear = hebrewYearMatch[1];
     // Gregorian year
     const gregMatch = response.match(/(\d{4})/);
