@@ -6,12 +6,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { ProjectsProvider } from "@/hooks/useProjects";
 import { BibliographyProvider } from "@/hooks/useBibliography";
+import { OfficeProvider } from "@/hooks/useOffice";
 import Landing from "./pages/Landing.tsx";
 import Index from "./pages/Index.tsx";
 import Admin from "./pages/Admin.tsx";
 import Profile from "./pages/Profile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
+import AuthDialog from "./pages/AuthDialog.tsx";
 
 const queryClient = new QueryClient();
 
