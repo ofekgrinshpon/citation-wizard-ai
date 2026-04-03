@@ -29,12 +29,14 @@ export function AppSidebar() {
 
   const handleCreate = async () => {
     const name = newName.trim();
-    if (!name) return;
+    if (!name || projectsLoading) return;
     const p = await createProject(name);
-    if (p) {
-      setCurrentProjectId(p.id);
-      toast.success(`פרויקט "${name}" נוצר`);
+    if (!p) {
+      toast.error("לא הצלחנו ליצור פרויקט חדש");
+      return;
     }
+    setCurrentProjectId(p.id);
+    toast.success(`פרויקט "${name}" נוצר`);
     setNewName("");
     setShowCreate(false);
   };
