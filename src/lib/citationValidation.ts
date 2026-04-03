@@ -21,6 +21,7 @@ const ENGINE_KEY_MAP: Record<SourceType, string> = {
   article_in_book: "article_in_book",
   internet: "internet",
   religious: "religious",
+  treaty: "treaty",
   foreign: "foreign",
   other: "other",
   unknown: "",
@@ -158,6 +159,24 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     const titleMatch = response.match(/"([^"]+)"/);
     if (titleMatch) fields.title = titleMatch[1];
     if (/נדלה ביום/.test(response)) fields.accessDate = "present";
+  }
+
+  // Treaty patterns
+  if (sourceType === "treaty") {
+    // Treaty name
+    const nameMatch = response.match(/^(?:ס['׳']\s*\d+\s*ל)?(.+?),\s*כ["״]א/);
+    if (nameMatch) fields.treatyName = nameMatch[1].trim();
+    // Volume (כ"א number)
+    const volMatch = response.match(/כ["״]א\s+(\d+)/);
+    if (volMatch) fields.volume = volMatch[1];
+    // First page
+    const pageMatch = response.match(/כ["״]א\s+\d+(?:\(\d+\))?,\s*(\d+)/);
+    if (pageMatch) fields.firstPage = pageMatch[1];
+    // Signing type and year
+    if (/נפתחה לחתימה ב-/.test(response)) fields.signingType = "multilateral";
+    if (/נחתמה ב-/.test(response)) fields.signingType = "bilateral";
+    const yearMatch = response.match(/(?:נפתחה לחתימה|נחתמה) ב-(\d{4})/);
+    if (yearMatch) fields.signingYear = yearMatch[1];
   }
 
   // Check for [חסר:...] markers — these mean the field is explicitly missing

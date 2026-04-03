@@ -6,6 +6,7 @@ import { ManualEntry } from "@/components/ManualEntry";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
 import { BillTypeSelector, type BillPublicationType } from "@/components/BillTypeSelector";
+import { TreatyTypeSelector, type TreatySigningType } from "@/components/TreatyTypeSelector";
 import { GuestLimitModal } from "@/components/GuestLimitModal";
 import { PublicationIntegrityCard } from "@/components/PublicationIntegrityCard";
 import { supabase } from "@/integrations/supabase/client";
@@ -152,6 +153,14 @@ const Index = () => {
   } | null>(null);
   // Pending bill type selection — when a bill is detected but user didn't specify הכנסת/הממשלה
   const [pendingBillType, setPendingBillType] = useState<{
+    rawText: string;
+    normalized: string;
+    sourceType: SourceType;
+    sourceLabel: string;
+    newMessages: Message[];
+  } | null>(null);
+  // Pending treaty type selection — multilateral or bilateral
+  const [pendingTreatyType, setPendingTreatyType] = useState<{
     rawText: string;
     normalized: string;
     sourceType: SourceType;
@@ -345,6 +354,60 @@ const Index = () => {
     }
   };
 
+  const handleTreatyTypeSelect = async (treatyType: TreatySigningType) => {
+    if (!pendingTreatyType) return;
+    const { rawText, normalized, sourceType, sourceLabel, newMessages } = pendingTreatyType;
+    setPendingTreatyType(null);
+    setLoading(true);
+
+    try {
+      const treatyHint = treatyType === "multilateral"
+        ? '\n[סוג אמנה: רב-צדדית – "נפתחה לחתימה ב-{שנה}"]'
+        : '\n[סוג אמנה: דו-צדדית – "נחתמה ב-{שנה}"]';
+
+      let prompt = normalized;
+      if (sourceType !== "unknown") {
+        const engineHint = buildEnginePromptHint(sourceType);
+        prompt = `[סיווג אוטומטי: ${sourceLabel}]${treatyHint}\n${engineHint}${normalized}`;
+      }
+
+      const fullRawInput = buildFullRawInput(rawText, messages);
+      const reply = await callAPI(prompt, messages);
+      const assistantIndex = newMessages.length;
+
+      const validation = validateAIResponse(reply, sourceType as SourceType);
+      let finalReply = reply;
+      if (!validation.isComplete && validation.missingFields.length > 0) {
+        const summary = getMissingFieldsSummary(sourceType as SourceType, validation.missingFields);
+        if (summary && !/⚠️/.test(reply)) {
+          finalReply = `${reply}\n⚠️ ${summary}`;
+        }
+      }
+
+      setMessages([...newMessages, { role: "assistant", content: finalReply }]);
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+      setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
+      if (isGuestMode) guestLimit.increment();
+
+      const extractedCitation = extractCitationFromResponse(reply);
+      supabase.from("citation_history").insert({
+        raw_input: fullRawInput,
+        formatted_output: reply,
+        source_type: sourceType !== "unknown" ? sourceLabel : null,
+      }).then(() => {});
+
+      const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
+      const isFragment = !extractedCitation || extractedCitation.length < 10;
+      if (isVerifiedClean && !isFragment) {
+        await saveVerifiedSource(fullRawInput, extractedCitation, sourceType !== "unknown" ? sourceLabel : null);
+      }
+    } catch {
+      setMessages([...newMessages, { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSuggestionAccept = () => {
     if (!pendingSuggestion) return;
     const { suggestion, rawInput } = pendingSuggestion;
@@ -445,6 +508,14 @@ const Index = () => {
     const hasExplicitBillType = /הכנסת|הממשלה/.test(rawText);
     if (isBillSource && !hasExplicitBillType) {
       setPendingBillType({ rawText, normalized, sourceType: sourceType as SourceType, sourceLabel, newMessages });
+      return;
+    }
+
+    // Check if this is a treaty and user didn't specify type
+    const isTreatySource = sourceType === "treaty";
+    const hasExplicitTreatyType = /נפתחה לחתימה|נחתמה ב|רב[- ]?צדדית|דו[- ]?צדדית/.test(rawText);
+    if (isTreatySource && !hasExplicitTreatyType) {
+      setPendingTreatyType({ rawText, normalized, sourceType: sourceType as SourceType, sourceLabel, newMessages });
       return;
     }
 
@@ -888,6 +959,11 @@ const Index = () => {
               {pendingBillType && (
                 <div className="my-4">
                   <BillTypeSelector onSelect={handleBillTypeSelect} />
+                </div>
+              )}
+              {pendingTreatyType && (
+                <div className="my-4">
+                  <TreatyTypeSelector onSelect={handleTreatyTypeSelect} />
                 </div>
               )}
               {pendingVerification && (

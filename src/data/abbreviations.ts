@@ -121,6 +121,7 @@ export type SourceType =
   | 'article_in_book'       // מאמר שפורסם בספר
   | 'internet'              // מרשתת
   | 'religious'             // מקור דתי
+  | 'treaty'                // כתבי אמנה
   | 'foreign'               // לועזי
   | 'other'                 // אחר (דברי כנסת וכו')
   | 'unknown';
@@ -138,6 +139,7 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   article_in_book: ['author', 'articleTitle', 'bookTitle', 'firstPage', 'year'],
   internet: ['author', 'title', 'siteName', 'url', 'accessDate'],
   religious: ['source', 'location'],
+  treaty: ['treatyName', 'volume', 'firstPage', 'signingType', 'signingYear'],
   foreign: ['citation'],
   other: [],
   unknown: [],
@@ -179,6 +181,10 @@ export const FIELD_LABELS: Record<string, string> = {
   citation: 'אזכור מלא',
   court: 'ערכאה',
   district: 'מחוז',
+  treatyName: 'שם האמנה',
+  signingType: 'סוג חתימה (נפתחה/נחתמה)',
+  signingYear: 'שנת חתימה',
+  notebook: 'מספר חוברת',
 };
 
 // Normalize abbreviations in free text
@@ -230,6 +236,7 @@ export function detectSourceType(text: string): SourceType {
   if (/תקנות/.test(hebrewText)) return 'secondary_legislation';
   if (/הצעת חוק/.test(hebrewText)) return 'bill';
   if (/ד["״]כ|דברי הכנסת|דברי כנסת|מועצת המדינה(?:\s+הזמנית)?/.test(hebrewText)) return 'other';
+  if (/אמנה|אמנת|הסכם.+(?:ממלכ|מדינ)|כ["״]א\s+\d/.test(hebrewText)) return 'treaty';
   if (/חוק |פקודת /.test(hebrewText)) return 'primary_legislation';
   
   // Check for literature
@@ -258,6 +265,7 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   article_in_book: 'מאמר שפורסם בספר',
   internet: 'מקור מרשתת',
   religious: 'מקור דתי',
+  treaty: 'כתבי אמנה',
   foreign: 'מקור לועזי',
   other: 'אחר',
   unknown: 'לא מזוהה',
@@ -276,6 +284,7 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   article_in_book: 'כלל 26 – מאמר שפורסם בספר',
   internet: 'כלל 30 – מקורות מהמרשתת',
   religious: 'כלל 32 – מקורות דתיים',
+  treaty: 'כלל 9 – כתבי אמנה',
   foreign: 'כלל 36 – מקורות לועזיים (Bluebook)',
   other: 'כלל 8 – אחר (דברי כנסת וכו׳)',
   unknown: '',
