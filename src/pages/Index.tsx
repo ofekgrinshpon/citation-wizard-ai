@@ -1083,7 +1083,7 @@ const Index = () => {
                   ];
                   setMessages(newMessages);
                 }}
-                placeholder='הזן מקור משפטי בטקסט חופשי... (למשל: "בגץ קול העם" או "חוק העונשין סעיף 34")'
+                placeholder='הזן מקור משפטי...'
                 disabled={loading}
                 inputType="input"
                 className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-3.5 py-3 text-foreground text-sm leading-relaxed font-sans"
