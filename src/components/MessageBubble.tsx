@@ -234,14 +234,29 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
                   </div>
                 );
               }
-              <button
-                onClick={copyContent}
-                className="text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
-                title="העתק"
-              >
-                📋
-              </button>
-            </div>
+
+              if (hasMissingMarker(line)) {
+                return (
+                  <div key={i} className="my-0.5">
+                    <FormattedCitation text={line} highlightMissing enableTooltips />
+                  </div>
+                );
+              }
+
+              return (
+                <div key={i} className="my-0.5">
+                  <FormattedCitation text={line} enableTooltips />
+                </div>
+              );
+            })}
+
+            <button
+              onClick={copyContent}
+              className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
+              title="העתק"
+            >
+              📋
+            </button>
 
             {showPartyCheck && (
               <PartyNameCheck
