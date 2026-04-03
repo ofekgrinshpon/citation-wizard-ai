@@ -716,7 +716,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="flex flex-col h-screen font-sans bg-background text-foreground">
+    <div className={`flex flex-col h-screen font-sans bg-background text-foreground ${isOfficeAddin ? "compact-mode" : ""}`}>
       {/* Guest Limit Modal */}
       {isGuestMode && guestLimit.isLocked && <GuestLimitModal />}
       {/* Header */}
