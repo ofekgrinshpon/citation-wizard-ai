@@ -8,10 +8,10 @@
 
   <Id>a1b2c3d4-e5f6-7890-abcd-ef1234567890</Id>
   <Version>1.0.0.0</Version>
-  <ProviderName>עוזמ״ש</ProviderName>
+  <ProviderName>ReLex</ProviderName>
   <DefaultLocale>he-IL</DefaultLocale>
-  <DisplayName DefaultValue="העוזר המשפטי לאזכורים" />
-  <Description DefaultValue="עוזר מחקר משפטי לעיצוב אזכורים תקניים לפי כללי האזכור האחיד" />
+  <DisplayName DefaultValue="ReLex" />
+  <Description DefaultValue="Smart Legal Citations for Israeli Law" />
 
   <IconUrl DefaultValue="https://id-preview--da75bf03-5ea8-4e5f-a54a-fd6ed2a9c146.lovable.app/placeholder.svg" />
   <HighResolutionIconUrl DefaultValue="https://id-preview--da75bf03-5ea8-4e5f-a54a-fd6ed2a9c146.lovable.app/placeholder.svg" />
