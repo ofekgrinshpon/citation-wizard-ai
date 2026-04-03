@@ -849,6 +849,18 @@ const Index = () => {
                         }
                       : undefined
                   }
+                  onUpdateAssistantContent={
+                    msg.role === "assistant"
+                      ? (newContent: string) => {
+                          setMessages((prev) => {
+                            const updated = [...prev];
+                            updated[i] = { ...updated[i], content: newContent };
+                            return updated;
+                          });
+                          toast.success("האזכור עודכן בהצלחה");
+                        }
+                      : undefined
+                  }
                 />
               ))}
               {loading && <LoadingDots />}
