@@ -175,7 +175,7 @@ const Index = () => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, signOut } = useAuth();
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const guestLimit = useGuestLimit();
