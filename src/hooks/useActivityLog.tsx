@@ -8,7 +8,7 @@ export function useActivityLog() {
   const { currentProject } = useProjects();
 
   const log = useCallback(
-    async (action: string, details: Record<string, unknown> = {}) => {
+    async (action: string, details: Record<string, string | number | boolean | null> = {}) => {
       if (!user) return;
       await supabase.from("activity_logs").insert([{
         user_id: user.id,
