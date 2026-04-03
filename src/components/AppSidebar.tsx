@@ -8,10 +8,12 @@ import { toast } from "sonner";
 export function AppSidebar() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
-  const { projects, currentProject, setCurrentProjectId, createProject, deleteProject, loading: projectsLoading } = useProjects();
+  const { projects, currentProject, setCurrentProjectId, createProject, renameProject, deleteProject, loading: projectsLoading } = useProjects();
   const [newName, setNewName] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [displayName, setDisplayName] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
 
   useEffect(() => {
     if (!user) return;
