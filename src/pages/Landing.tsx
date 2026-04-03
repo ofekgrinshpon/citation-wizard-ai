@@ -139,7 +139,7 @@ const Landing = () => {
                 className="w-full py-3 rounded-xl font-semibold text-sm text-primary-foreground transition-all disabled:opacity-50"
                 style={{ background: "var(--gradient-primary)" }}
               >
-                {loading ? "מעבד..." : isLogin ? "התחברו" : "הירשם"}
+                {loading ? "מעבד..." : isLogin ? "התחבר/י" : "הירשמ/י"}
               </button>
             </form>
 
@@ -165,7 +165,7 @@ const Landing = () => {
 
             <div className="mt-3 text-center">
               <button onClick={() => setIsLogin(!isLogin)} className="text-xs text-primary hover:underline">
-                {isLogin ? "אין לך חשבון? הירשמו" : "יש לך חשבון? התחברו"}
+                {isLogin ? "אין לך חשבון? הירשמ/י" : "יש לך חשבון? התחבר/י"}
               </button>
             </div>
             {!isLogin && (
