@@ -250,6 +250,19 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
               );
             })}
 
+            {isCaseLaw && !isVerifiedSource && !msg.content.split("\n").some(l => isRuleLine(l)) && (
+              <div className="flex items-center gap-2 flex-wrap mt-2">
+                <button
+                  onClick={() => setShowPartyCheck((v) => !v)}
+                  className="inline-flex items-center gap-1 py-1 px-2 rounded-md text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
+                  title="בדיקת שמות צדדים (כלל 18.4.4)"
+                >
+                  <AlertTriangle size={13} />
+                  <span>👤 בדיקת צדדים</span>
+                </button>
+              </div>
+            )}
+
             <button
               onClick={copyContent}
               className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
