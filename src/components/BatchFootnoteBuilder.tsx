@@ -333,8 +333,8 @@ ${sourcesText}
   const resetAll = () => {
     setCells(Array.from({ length: 5 }, (_, i) => createCell(i + 1)));
     setSummary(null);
-    localStorage.removeItem(CELLS_STORAGE_KEY);
-    localStorage.removeItem(SUMMARY_STORAGE_KEY);
+    localStorage.removeItem(getCellsKey(projectId));
+    localStorage.removeItem(getSummaryKey(projectId));
   };
 
   const hasAnyOutput = cells.some((c) => c.output);
