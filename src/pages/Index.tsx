@@ -29,6 +29,7 @@ import {
 } from "@/lib/verifiedSources";
 import { VerifiedSuggestionCard } from "@/components/VerifiedSuggestionCard";
 import { AppSidebar } from "@/components/AppSidebar";
+import { ReLexLogo } from "@/components/ReLexLogo";
 
 interface Message {
   role: "user" | "assistant";
