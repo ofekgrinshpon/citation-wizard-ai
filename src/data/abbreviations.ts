@@ -284,6 +284,7 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   article_in_book: 'כלל 26 – מאמר שפורסם בספר',
   internet: 'כלל 30 – מקורות מהמרשתת',
   religious: 'כלל 32 – מקורות דתיים',
+  treaty: 'כלל 9 – כתבי אמנה',
   foreign: 'כלל 36 – מקורות לועזיים (Bluebook)',
   other: 'כלל 8 – אחר (דברי כנסת וכו׳)',
   unknown: '',
