@@ -165,7 +165,7 @@ const Landing = () => {
 
             <div className="mt-3 text-center">
               <button onClick={() => setIsLogin(!isLogin)} className="text-xs text-primary hover:underline">
-                {isLogin ? "אין לך חשבון? הירשם" : "יש לך חשבון? התחבר"}
+                {isLogin ? "אין לך חשבון? הירשמו" : "יש לך חשבון? התחברו"}
               </button>
             </div>
             {!isLogin && (
