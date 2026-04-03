@@ -139,7 +139,7 @@ const Landing = () => {
                 className="w-full py-3 rounded-xl font-semibold text-sm text-primary-foreground transition-all disabled:opacity-50"
                 style={{ background: "var(--gradient-primary)" }}
               >
-                {loading ? "מעבד..." : isLogin ? "התחבר" : "הירשם"}
+                {loading ? "מעבד..." : isLogin ? "התחברו" : "הירשם"}
               </button>
             </form>
 
