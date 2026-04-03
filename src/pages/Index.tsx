@@ -1086,7 +1086,7 @@ const Index = () => {
                 placeholder='הזן מקור משפטי...'
                 disabled={loading}
                 inputType="input"
-                className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-3.5 py-3 text-foreground text-sm leading-relaxed font-sans"
+                className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-2.5 sm:px-3.5 py-2.5 sm:py-3 text-foreground text-sm leading-relaxed font-sans"
               />
               <button
                 onClick={handleSend}
