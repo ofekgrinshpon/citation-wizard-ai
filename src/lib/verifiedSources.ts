@@ -151,7 +151,8 @@ export async function findVerifiedSourceMatch(query: string): Promise<VerifiedSo
  * Returns a suggestion when at least half the search terms match but it's not a full match.
  */
 export async function findSimilarVerifiedSource(query: string): Promise<VerifiedSourceMatch | null> {
-  const terms = tokenizeSearchTerms(query);
+  const strippedQuery = stripSectionReferences(query);
+  const terms = tokenizeSearchTerms(strippedQuery);
   if (terms.length === 0) return null;
 
   const caseNumberParts = (query.match(/\d+(?:\/\d+)?/g) || []).filter(p => p.length >= 2);
