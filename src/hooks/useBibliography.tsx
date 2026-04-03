@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, createContext, useContext } from "react";
+import { useProjects } from "@/hooks/useProjects";
 
 export interface BibliographyEntry {
   id: string;
