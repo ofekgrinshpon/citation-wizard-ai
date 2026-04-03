@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AlertTriangle } from "lucide-react";
 import { FormattedCitation } from "./FormattedCitation";
 import { PartyNameCheck } from "./PartyNameCheck";
 import { toast } from "sonner";
@@ -193,42 +194,51 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
                 const explanation = ruleNum ? RULE_EXPLANATIONS[ruleNum] : null;
 
                 return (
-                  <Tooltip key={i}>
-                    <TooltipTrigger asChild>
-                      <div
-                        className="mt-2 py-1 px-2 rounded-md text-xs cursor-help inline-block"
-                        style={{
-                          background: "hsl(var(--primary) / 0.1)",
-                          color: "hsl(var(--primary))",
-                        }}
+                  <div key={i} className="flex items-center gap-2 flex-wrap mt-2">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className="py-1 px-2 rounded-md text-xs cursor-help inline-block"
+                          style={{
+                            background: "hsl(var(--primary) / 0.1)",
+                            color: "hsl(var(--primary))",
+                          }}
+                        >
+                          {line}
+                        </div>
+                      </TooltipTrigger>
+                      {explanation && (
+                        <TooltipContent
+                          side="top"
+                          className="max-w-xs text-right"
+                          style={{ direction: "rtl" }}
+                        >
+                          <p className="text-xs font-semibold text-primary mb-0.5">
+                            כלל {ruleNum}
+                          </p>
+                          <p className="text-xs">{explanation}</p>
+                        </TooltipContent>
+                      )}
+                    </Tooltip>
+
+                    {isCaseLaw && !isVerifiedSource && (
+                      <button
+                        onClick={() => setShowPartyCheck((v) => !v)}
+                        className="inline-flex items-center gap-1 py-1 px-2 rounded-md text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors"
+                        title="בדיקת שמות צדדים (כלל 18.4.4)"
                       >
-                        {line}
-                      </div>
-                    </TooltipTrigger>
-                    {explanation && (
-                      <TooltipContent
-                        side="top"
-                        className="max-w-xs text-right"
-                        style={{ direction: "rtl" }}
-                      >
-                        <p className="text-xs font-semibold text-primary mb-0.5">
-                          כלל {ruleNum}
-                        </p>
-                        <p className="text-xs">{explanation}</p>
-                      </TooltipContent>
+                        <AlertTriangle size={13} />
+                        <span>👤 בדיקת צדדים</span>
+                      </button>
                     )}
-                  </Tooltip>
+                  </div>
                 );
               }
 
               if (hasMissingMarker(line)) {
                 return (
                   <div key={i} className="my-0.5">
-                    <FormattedCitation
-                      text={line}
-                      highlightMissing
-                      enableTooltips
-                    />
+                    <FormattedCitation text={line} highlightMissing enableTooltips />
                   </div>
                 );
               }
@@ -240,24 +250,13 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
               );
             })}
 
-            <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              {isCaseLaw && !isVerifiedSource && (
-                <button
-                  onClick={() => setShowPartyCheck((v) => !v)}
-                  className="text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
-                  title="בדיקת שמות צדדים (כלל 18.4.4)"
-                >
-                  👤
-                </button>
-              )}
-              <button
-                onClick={copyContent}
-                className="text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
-                title="העתק"
-              >
-                📋
-              </button>
-            </div>
+            <button
+              onClick={copyContent}
+              className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
+              title="העתק"
+            >
+              📋
+            </button>
 
             {showPartyCheck && (
               <PartyNameCheck
