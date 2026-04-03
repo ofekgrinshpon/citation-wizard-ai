@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FormattedCitation } from "./FormattedCitation";
+import { PartyNameCheck } from "./PartyNameCheck";
 import { toast } from "sonner";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { RULE_EXPLANATIONS } from "@/data/ruleTooltips";
