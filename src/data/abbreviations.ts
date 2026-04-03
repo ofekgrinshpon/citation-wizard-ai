@@ -236,6 +236,7 @@ export function detectSourceType(text: string): SourceType {
   if (/תקנות/.test(hebrewText)) return 'secondary_legislation';
   if (/הצעת חוק/.test(hebrewText)) return 'bill';
   if (/ד["״]כ|דברי הכנסת|דברי כנסת|מועצת המדינה(?:\s+הזמנית)?/.test(hebrewText)) return 'other';
+  if (/אמנה|אמנת|הסכם.+(?:ממלכ|מדינ)|כ["״]א\s+\d/.test(hebrewText)) return 'treaty';
   if (/חוק |פקודת /.test(hebrewText)) return 'primary_legislation';
   
   // Check for literature
