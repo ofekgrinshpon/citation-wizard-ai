@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useOffice } from "@/hooks/useOffice";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { lovable } from "@/integrations/lovable/index";
+import { signInWithOfficeDialog } from "@/lib/officeAuth";
 import { toast } from "sonner";
 
 const Landing = () => {
@@ -13,6 +15,7 @@ const Landing = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const { signIn, signUp, user, isAdmin, loading: authLoading } = useAuth();
+  const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
 
   if (authLoading) {
@@ -150,11 +153,20 @@ const Landing = () => {
 
             <button
               onClick={async () => {
-                const result = await lovable.auth.signInWithOAuth("google", {
-                  redirect_uri: window.location.origin,
-                });
-                if (result.error) {
-                  toast.error("שגיאה בהתחברות עם Google");
+                if (isOfficeAddin) {
+                  try {
+                    await signInWithOfficeDialog();
+                    toast.success("התחברת בהצלחה!");
+                  } catch (err: any) {
+                    toast.error(err.message || "שגיאה בהתחברות עם Google");
+                  }
+                } else {
+                  const result = await lovable.auth.signInWithOAuth("google", {
+                    redirect_uri: window.location.origin,
+                  });
+                  if (result.error) {
+                    toast.error("שגיאה בהתחברות עם Google");
+                  }
                 }
               }}
               className="w-full py-2.5 rounded-xl font-semibold text-sm border border-border hover:bg-muted transition-all flex items-center justify-center gap-2"
@@ -175,16 +187,18 @@ const Landing = () => {
             )}
           </div>
 
-          <div className="bg-card border border-border rounded-xl p-5 shadow-sm text-center">
-            <p className="text-foreground text-sm font-semibold mb-1">רוצה לנסות לפני?</p>
-            <p className="text-muted-foreground text-xs mb-3">2 אזכורים חינם ללא הרשמה</p>
-            <button
-              onClick={handleGuest}
-              className="w-full py-2.5 rounded-xl font-semibold text-sm border-2 border-primary/30 text-primary hover:bg-primary/5 transition-all"
-            >
-              כניסה כאורח/ת (2 אזכורים חינם)
-            </button>
-          </div>
+          {!isOfficeAddin && (
+            <div className="bg-card border border-border rounded-xl p-5 shadow-sm text-center">
+              <p className="text-foreground text-sm font-semibold mb-1">רוצה לנסות לפני?</p>
+              <p className="text-muted-foreground text-xs mb-3">2 אזכורים חינם ללא הרשמה</p>
+              <button
+                onClick={handleGuest}
+                className="w-full py-2.5 rounded-xl font-semibold text-sm border-2 border-primary/30 text-primary hover:bg-primary/5 transition-all"
+              >
+                כניסה כאורח/ת (2 אזכורים חינם)
+              </button>
+            </div>
+          )}
         </div>
 
         <p className="text-[10px] text-muted-foreground mt-8">
