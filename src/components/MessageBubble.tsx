@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FormattedCitation } from "./FormattedCitation";
+import { PartyNameCheck } from "./PartyNameCheck";
 import { toast } from "sonner";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { RULE_EXPLANATIONS } from "@/data/ruleTooltips";
@@ -29,6 +30,10 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit }:
   const isUser = msg.role === "user";
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
+  const [showPartyCheck, setShowPartyCheck] = useState(false);
+
+  const isCaseLaw = detectedType === "case_law_published" || detectedType === "case_law_database";
+  const isVerifiedSource = msg.content.startsWith("✓");
 
   const handleStartEdit = () => {
     setEditValue(msg.content);
@@ -232,13 +237,28 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit }:
               );
             })}
 
-            <button
-              onClick={copyContent}
-              className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
-              title="העתק"
-            >
-              📋
-            </button>
+            <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {isCaseLaw && !isVerifiedSource && (
+                <button
+                  onClick={() => setShowPartyCheck((v) => !v)}
+                  className="text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
+                  title="בדיקת שמות צדדים (כלל 18.4.4)"
+                >
+                  👤
+                </button>
+              )}
+              <button
+                onClick={copyContent}
+                className="text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"
+                title="העתק"
+              >
+                📋
+              </button>
+            </div>
+
+            {showPartyCheck && (
+              <PartyNameCheck onDismiss={() => setShowPartyCheck(false)} />
+            )}
           </div>
         )}
       </div>
