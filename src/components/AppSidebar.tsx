@@ -8,7 +8,7 @@ import { toast } from "sonner";
 export function AppSidebar() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
-  const { projects, currentProject, setCurrentProjectId, createProject, deleteProject } = useProjects();
+  const { projects, currentProject, setCurrentProjectId, createProject, deleteProject, loading: projectsLoading } = useProjects();
   const [newName, setNewName] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [displayName, setDisplayName] = useState("");
