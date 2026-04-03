@@ -750,7 +750,14 @@ const Index = () => {
             ))}
           </div>
           <button
-            onClick={() => navigate("/")}
+            onClick={async () => {
+              if (user) {
+                await signOut();
+                window.location.href = "/";
+              } else {
+                navigate("/");
+              }
+            }}
             className="text-xs text-muted-foreground hover:text-foreground px-2 py-1.5 rounded-lg transition-colors"
           >
             {user ? "התנתק" : "← חזרה"}
