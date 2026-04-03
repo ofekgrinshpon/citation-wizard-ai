@@ -209,7 +209,57 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_verified_sources: {
+        Row: {
+          auto_verified: boolean | null
+          full_citation: string | null
+          id: string | null
+          identity_key: string | null
+          metadata: Json | null
+          page: string | null
+          search_text: string | null
+          source_name: string | null
+          source_type: string | null
+          usage_count: number | null
+          verification_status: string | null
+          verified_at: string | null
+          volume: string | null
+          year: string | null
+        }
+        Insert: {
+          auto_verified?: boolean | null
+          full_citation?: string | null
+          id?: string | null
+          identity_key?: string | null
+          metadata?: Json | null
+          page?: string | null
+          search_text?: string | null
+          source_name?: string | null
+          source_type?: string | null
+          usage_count?: number | null
+          verification_status?: string | null
+          verified_at?: string | null
+          volume?: string | null
+          year?: string | null
+        }
+        Update: {
+          auto_verified?: boolean | null
+          full_citation?: string | null
+          id?: string | null
+          identity_key?: string | null
+          metadata?: Json | null
+          page?: string | null
+          search_text?: string | null
+          source_name?: string | null
+          source_type?: string | null
+          usage_count?: number | null
+          verification_status?: string | null
+          verified_at?: string | null
+          volume?: string | null
+          year?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       compute_verified_source_identity: {
