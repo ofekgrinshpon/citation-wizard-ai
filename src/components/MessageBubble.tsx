@@ -30,6 +30,10 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit }:
   const isUser = msg.role === "user";
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
+  const [showPartyCheck, setShowPartyCheck] = useState(false);
+
+  const isCaseLaw = detectedType === "case_law_published" || detectedType === "case_law_database";
+  const isVerifiedSource = msg.content.startsWith("✓");
 
   const handleStartEdit = () => {
     setEditValue(msg.content);
