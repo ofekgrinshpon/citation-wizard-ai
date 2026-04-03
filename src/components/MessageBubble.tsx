@@ -7,6 +7,8 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip
 import { RULE_EXPLANATIONS } from "@/data/ruleTooltips";
 import { SourceTypeConfirmation } from "./SourceTypeConfirmation";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
+import { useOffice } from "@/hooks/useOffice";
+import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import type { SourceType } from "@/data/abbreviations";
 
 interface Message {
