@@ -53,9 +53,7 @@ const Landing = () => {
     }
   };
 
-  const handleGuest = () => {
-    navigate("/app?guest=true");
-  };
+
 
   return (
     <div className="min-h-screen bg-background flex flex-col" style={{ direction: "rtl" }}>
