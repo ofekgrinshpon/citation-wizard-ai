@@ -855,7 +855,7 @@ const Index = () => {
         {mode === "manual" ? (
           <ManualEntry />
         ) : mode === "batch" ? (
-          <BatchFootnoteBuilder isGuest={isGuestMode} guestLimit={guestLimit} />
+          <BatchFootnoteBuilder />
         ) : mode === "bibliography" ? (
           <BibliographyGenerator />
         ) : (
