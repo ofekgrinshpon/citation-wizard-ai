@@ -152,6 +152,50 @@ const Profile = () => {
             </div>
           </TabsContent>
 
+          <TabsContent value="account">
+            <div className="bg-card border border-border rounded-xl p-6 space-y-5">
+              <div className="flex items-center gap-3">
+                <h3 className="text-foreground font-bold text-base">סטטוס מנוי</h3>
+                <Badge variant={isSubscribed ? "default" : "destructive"}>
+                  {isSubscribed ? "מנוי פעיל" : "לא מנוי"}
+                </Badge>
+              </div>
+
+              {!isSubscribed && (
+                <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-foreground">אזכורים בשימוש</span>
+                    <span className="text-sm font-bold text-foreground">{citationCount} / {limit}</span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div
+                      className="h-2 rounded-full transition-all"
+                      style={{
+                        width: `${Math.min(100, (citationCount / limit) * 100)}%`,
+                        background: isLimitReached ? "hsl(var(--destructive))" : "var(--gradient-primary)",
+                      }}
+                    />
+                  </div>
+                  {isLimitReached && (
+                    <p className="text-xs text-destructive">הגעת למכסה המרבית. שדרג/י למנוי Pro כדי להמשיך.</p>
+                  )}
+                </div>
+              )}
+
+              {isSubscribed ? (
+                <p className="text-sm text-muted-foreground">יש לך גישה מלאה לכל הכלים ללא הגבלה.</p>
+              ) : (
+                <button
+                  onClick={() => toast.info("בקרוב! אפשרות תשלום תהיה זמינה בקרוב.")}
+                  className="w-full py-3 rounded-xl font-semibold text-sm text-primary-foreground transition-all"
+                  style={{ background: "var(--gradient-primary)" }}
+                >
+                  ⭐ שדרג ל-Pro
+                </button>
+              )}
+            </div>
+          </TabsContent>
+
           <TabsContent value="history">
             <div className="space-y-4">
               <Input
