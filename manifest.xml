@@ -80,9 +80,9 @@
         <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://citation-wizard-ai.lovable.app" />
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="GetStarted.Title" DefaultValue="ReLex" />
-        <bt:String id="CommandsGroup.Label" DefaultValue="ReLex" />
-        <bt:String id="TaskpaneButton.Label" DefaultValue="ReLex" />
+        <bt:String id="GetStarted.Title" DefaultValue="ReLex Assistant" />
+        <bt:String id="CommandsGroup.Label" DefaultValue="ReLex Assistant" />
+        <bt:String id="TaskpaneButton.Label" DefaultValue="ReLex Assistant" />
       </bt:ShortStrings>
       <bt:LongStrings>
         <bt:String id="GetStarted.Description" DefaultValue="Smart Legal Citations for Israeli Law" />
