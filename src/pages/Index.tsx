@@ -363,7 +363,7 @@ const Index = () => {
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
-      if (isGuestMode) guestLimit.increment();
+      await subscription.incrementCount();
 
       const extractedCitation = extractCitationFromResponse(reply);
       supabase.from("citation_history").insert([{
