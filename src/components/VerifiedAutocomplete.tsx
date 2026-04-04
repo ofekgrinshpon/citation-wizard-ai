@@ -36,6 +36,7 @@ export function VerifiedAutocomplete({
   value,
   onChange,
   onSelectCitation,
+  onKeyDown: externalOnKeyDown,
   placeholder,
   disabled,
   inputType = "textarea",
