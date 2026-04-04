@@ -783,9 +783,9 @@ const Index = () => {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {isGuestMode && (
+            {!subscription.isSubscribed && (
               <span className="text-[9px] sm:text-[10px] text-muted-foreground bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md">
-                אורח • {guestLimit.remaining}/{guestLimit.max}
+                {subscription.remaining}/{subscription.limit} אזכורים
               </span>
             )}
             <button
