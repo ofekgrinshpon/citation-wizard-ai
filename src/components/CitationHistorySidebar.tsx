@@ -70,6 +70,22 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
       )
     : citations;
 
+  /** Extract only the citation line, stripping rules, warnings, labels */
+  const extractCitationOnly = (text: string) => {
+    const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
+    const citationLines = lines.filter(line =>
+      !line.startsWith("📐") &&
+      !line.startsWith("⚠️") &&
+      !line.startsWith("🏷️") &&
+      !line.startsWith("✓") &&
+      !/^שלב \d/.test(line) &&
+      !/^העוזר המשפטי/.test(line) &&
+      !/^מכיוון ש/.test(line) &&
+      !/^הנוסחה ל/.test(line)
+    );
+    return citationLines.length > 0 ? citationLines[citationLines.length - 1] : text;
+  };
+
   /** Convert markdown bold/italic to HTML */
   const markdownToHtml = (text: string) =>
     text
@@ -82,9 +98,10 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
     text.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1").replace(/_(.+?)_/g, "$1");
 
   const handleCopy = async (text: string) => {
+    const citation = extractCitationOnly(text);
     try {
-      const html = `<div dir="rtl" style="font-family: David, 'Times New Roman', serif;">${markdownToHtml(text)}</div>`;
-      const plain = stripMarkdown(text);
+      const html = `<div dir="rtl" style="font-family: David, 'Times New Roman', serif;">${markdownToHtml(citation)}</div>`;
+      const plain = stripMarkdown(citation);
       await navigator.clipboard.write([
         new ClipboardItem({
           "text/html": new Blob([html], { type: "text/html" }),
@@ -155,7 +172,7 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
                 </div>
                 <p
                   className="text-xs text-sidebar-foreground leading-relaxed line-clamp-2"
-                  dangerouslySetInnerHTML={{ __html: markdownToHtml(c.formatted_output) }}
+                  dangerouslySetInnerHTML={{ __html: markdownToHtml(extractCitationOnly(c.formatted_output)) }}
                 />
                 <p className="text-[10px] text-muted-foreground mt-1 line-clamp-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   📋 העתק
