@@ -10,7 +10,7 @@
   <Version>1.0.0.0</Version>
   <ProviderName>ReLex</ProviderName>
   <DefaultLocale>he-IL</DefaultLocale>
-  <DisplayName DefaultValue="ReLex" />
+  <DisplayName DefaultValue="ReLex Assistant" />
   <Description DefaultValue="Smart Legal Citations for Israeli Law" />
 
   <IconUrl DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.svg" />
