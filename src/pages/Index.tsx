@@ -743,7 +743,25 @@ const Index = () => {
   return (
     <div className={`flex flex-col h-screen font-sans bg-background text-foreground ${isOfficeAddin ? "compact-mode" : ""}`}>
       {/* Guest Limit Modal */}
-      {isGuestMode && guestLimit.isLocked && <GuestLimitModal />}
+      {subscription.isLimitReached && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ direction: "rtl" }}>
+          <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" />
+          <div className="relative bg-card border border-border rounded-2xl p-6 max-w-sm mx-4 shadow-lg text-center animate-fade-in">
+            <div className="text-4xl mb-3">🔒</div>
+            <h3 className="text-foreground text-lg font-bold mb-2">הגעת למכסה המרבית</h3>
+            <p className="text-muted-foreground text-sm mb-5 leading-relaxed">
+              השתמשת ב-{subscription.limit} אזכורים החינמיים שלך. שדרג/י למנוי Pro כדי להמשיך.
+            </p>
+            <button
+              onClick={() => navigate("/profile?tab=account")}
+              className="w-full py-3 rounded-xl font-semibold text-sm text-primary-foreground transition-all"
+              style={{ background: "var(--gradient-primary)" }}
+            >
+              שדרג ל-Pro
+            </button>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <header className="flex flex-col border-b border-border bg-card shadow-sm">
         {/* Top row: logo + actions */}
