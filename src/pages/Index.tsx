@@ -660,7 +660,7 @@ const Index = () => {
         project_id: currentProject?.id || null,
       };
 
-      supabase.from("citation_history").insert([citationPayload]).then(() => {});
+      supabase.from("citation_history").insert([citationPayload]).then(() => { setCitationRefreshKey(k => k + 1); });
       logActivity("יצירת אזכור", { source_type: sourceLabel, raw_input: fullRawInput.slice(0, 100) });
 
       // Only verify if we have a real, complete citation (not a fragment, not missing data)
