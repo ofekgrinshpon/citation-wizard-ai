@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
