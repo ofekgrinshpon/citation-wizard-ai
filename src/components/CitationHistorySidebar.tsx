@@ -98,9 +98,10 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
     text.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1").replace(/_(.+?)_/g, "$1");
 
   const handleCopy = async (text: string) => {
+    const citation = extractCitationOnly(text);
     try {
-      const html = `<div dir="rtl" style="font-family: David, 'Times New Roman', serif;">${markdownToHtml(text)}</div>`;
-      const plain = stripMarkdown(text);
+      const html = `<div dir="rtl" style="font-family: David, 'Times New Roman', serif;">${markdownToHtml(citation)}</div>`;
+      const plain = stripMarkdown(citation);
       await navigator.clipboard.write([
         new ClipboardItem({
           "text/html": new Blob([html], { type: "text/html" }),
