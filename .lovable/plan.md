@@ -1,19 +1,49 @@
 
 
-# Add Enter-to-Send in the Search Input
+# Add Citation History Panel to Left Sidebar
 
-## Problem
-The `VerifiedAutocomplete` component used as the main input does not propagate `Enter` keypress to the parent `Index.tsx`. The `handleKeyDown` in `Index.tsx` exists but is never passed to the input component.
+## Overview
+Add a left-side panel that displays the user's citation history for the current project, alongside the main input area. This creates a three-column layout: projects sidebar (right) | main content (center) | citation history (left).
 
-## Solution
+## Layout
 
-### 1. Add `onKeyDown` prop to `VerifiedAutocomplete` (`src/components/VerifiedAutocomplete.tsx`)
-- Add an optional `onKeyDown` prop to the component interface
-- In the internal `handleKeyDown`, after handling autocomplete keys (ArrowUp/Down, Enter for selection, Escape), call the external `onKeyDown` for unhandled keys
-- Specifically: only call `onKeyDown` for Enter when the autocomplete dropdown is **closed** or no item is highlighted — so selecting a suggestion still works
+```text
+┌──────────────────────────────────────────────────┐
+│                    Header                         │
+├──────────┬─────────────────────┬─────────────────┤
+│ Projects │   Main Content      │ Citation History │
+│ (right)  │   (center)          │ (left)           │
+│  w-52    │   flex-1            │  w-64            │
+│          │                     │                  │
+│          │   [input bar]       │  search filter   │
+│          │                     │  citation list   │
+└──────────┴─────────────────────┴─────────────────┘
+```
 
-### 2. Pass `handleKeyDown` from `Index.tsx` (`src/pages/Index.tsx`)
-- Add `onKeyDown={handleKeyDown}` to the `<VerifiedAutocomplete>` at ~line 1097
+## Changes
 
-This way, Enter sends the message unless the user is actively selecting an autocomplete suggestion.
+### 1. Create `src/components/CitationHistorySidebar.tsx`
+- New component that fetches `citation_history` for the current user + project
+- Displays a scrollable list of past citations, newest first
+- Each item shows: truncated raw input, formatted output, source type badge, timestamp
+- Search/filter input at the top
+- Click on a citation copies it or inserts it into the input field
+- Realtime or refetch on new citation creation
+- Desktop only (hidden on mobile, or accessible via a toggle)
+
+### 2. Modify `src/pages/Index.tsx`
+- Add the `CitationHistorySidebar` as a left panel inside the `flex` layout (line ~823)
+- Place it after the main column div, so in RTL it appears on the left side
+- Only show for authenticated (non-guest) users on desktop
+- Pass `currentProject?.id` and a callback for when a citation is clicked
+
+### 3. Mobile handling
+- Hide the history panel on mobile (`hidden md:flex`)
+- Optionally add a toggle button in the header to show it as a drawer (similar to the existing mobile sidebar pattern)
+
+## Technical Details
+- Query: `supabase.from("citation_history").select("*").eq("user_id", user.id).eq("project_id", projectId).order("created_at", { ascending: false }).limit(50)`
+- Filter locally by search text matching `raw_input` or `formatted_output`
+- Use `useEffect` to refetch when `projectId` changes
+- Clicking a citation item copies `formatted_output` to clipboard with a toast confirmation
 
