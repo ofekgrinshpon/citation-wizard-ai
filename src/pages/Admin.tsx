@@ -32,6 +32,8 @@ interface UserProfile {
   email: string | null;
   full_name: string | null;
   created_at: string;
+  is_subscribed?: boolean;
+  citation_count?: number;
 }
 
 type MainTab = "analytics" | "sources" | "users";
