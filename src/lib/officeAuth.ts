@@ -13,7 +13,7 @@ export function signInWithOfficeDialog(): Promise<void> {
       return;
     }
 
-    const dialogUrl = `${window.location.origin}/auth-dialog`;
+    const dialogUrl = `${window.location.origin}/auth-dialog?addin=1`;
 
     Office.context.ui.displayDialogAsync(
       dialogUrl,
