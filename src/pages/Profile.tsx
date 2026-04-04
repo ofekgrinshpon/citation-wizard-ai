@@ -19,7 +19,10 @@ interface ActivityLog {
 
 const Profile = () => {
   const { user, signOut } = useAuth();
+  const { isSubscribed, citationCount, isLimitReached, limit } = useSubscription();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const defaultTab = searchParams.get("tab") || "profile";
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [activities, setActivities] = useState<ActivityLog[]>([]);
