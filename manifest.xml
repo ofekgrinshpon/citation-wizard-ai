@@ -10,11 +10,11 @@
   <Version>1.0.0.0</Version>
   <ProviderName>ReLex</ProviderName>
   <DefaultLocale>he-IL</DefaultLocale>
-  <DisplayName DefaultValue="ReLex" />
+  <DisplayName DefaultValue="ReLex Assistant" />
   <Description DefaultValue="Smart Legal Citations for Israeli Law" />
 
-  <IconUrl DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.svg" />
-  <HighResolutionIconUrl DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.svg" />
+  <IconUrl DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.png" />
+  <HighResolutionIconUrl DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.png" />
   <SupportUrl DefaultValue="https://citation-wizard-ai.lovable.app" />
 
   <Hosts>
@@ -71,18 +71,18 @@
 
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.svg" />
-        <bt:Image id="Icon.32x32" DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.svg" />
-        <bt:Image id="Icon.80x80" DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.svg" />
+        <bt:Image id="Icon.16x16" DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.png" />
+        <bt:Image id="Icon.32x32" DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.png" />
+        <bt:Image id="Icon.80x80" DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.png" />
       </bt:Images>
       <bt:Urls>
         <bt:Url id="Taskpane.Url" DefaultValue="https://citation-wizard-ai.lovable.app/app?addin=1" />
         <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://citation-wizard-ai.lovable.app" />
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="GetStarted.Title" DefaultValue="ReLex" />
-        <bt:String id="CommandsGroup.Label" DefaultValue="ReLex" />
-        <bt:String id="TaskpaneButton.Label" DefaultValue="ReLex" />
+        <bt:String id="GetStarted.Title" DefaultValue="ReLex Assistant" />
+        <bt:String id="CommandsGroup.Label" DefaultValue="ReLex Assistant" />
+        <bt:String id="TaskpaneButton.Label" DefaultValue="ReLex Assistant" />
       </bt:ShortStrings>
       <bt:LongStrings>
         <bt:String id="GetStarted.Description" DefaultValue="Smart Legal Citations for Israeli Law" />
