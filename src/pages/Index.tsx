@@ -182,18 +182,15 @@ const Index = () => {
   const { user, isAdmin, signOut } = useAuth();
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
-  const guestLimit = useGuestLimit();
+  const subscription = useSubscription();
   const { log: logActivity } = useActivityLog();
 
-  const isGuest = !user;
-  const isGuestMode = isGuest || searchParams.get("guest") === "true";
-
-  // In add-in mode, require authentication — no guest access
+  // Require authentication — redirect unauthenticated users
   useEffect(() => {
-    if (isOfficeAddin && !user) {
-      navigate("/?addin=1", { replace: true });
+    if (!user) {
+      navigate("/", { replace: true });
     }
-  }, [isOfficeAddin, user, navigate]);
+  }, [user, navigate]);
 
   // Load project-specific state when project changes
   useEffect(() => {
