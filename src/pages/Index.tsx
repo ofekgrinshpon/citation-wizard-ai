@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
 import { ManualEntry } from "@/components/ManualEntry";
@@ -7,12 +7,12 @@ import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
 import { BillTypeSelector, type BillPublicationType } from "@/components/BillTypeSelector";
 import { TreatyTypeSelector, type TreatySigningType } from "@/components/TreatyTypeSelector";
-import { GuestLimitModal } from "@/components/GuestLimitModal";
+
 import { PublicationIntegrityCard } from "@/components/PublicationIntegrityCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useOffice } from "@/hooks/useOffice";
-import { useGuestLimit } from "@/hooks/useGuestLimit";
+import { useSubscription } from "@/hooks/useSubscription";
 import { useProjects } from "@/hooks/useProjects";
 import { useActivityLog } from "@/hooks/useActivityLog";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
@@ -177,23 +177,20 @@ const Index = () => {
   } | null>(null);
   const [citationRefreshKey, setCitationRefreshKey] = useState(0);
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const [searchParams] = useSearchParams();
+  
   
   const { user, isAdmin, signOut } = useAuth();
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
-  const guestLimit = useGuestLimit();
+  const subscription = useSubscription();
   const { log: logActivity } = useActivityLog();
 
-  const isGuest = !user;
-  const isGuestMode = isGuest || searchParams.get("guest") === "true";
-
-  // In add-in mode, require authentication — no guest access
+  // Require authentication — redirect unauthenticated users
   useEffect(() => {
-    if (isOfficeAddin && !user) {
-      navigate("/?addin=1", { replace: true });
+    if (!user) {
+      navigate("/", { replace: true });
     }
-  }, [isOfficeAddin, user, navigate]);
+  }, [user, navigate]);
 
   // Load project-specific state when project changes
   useEffect(() => {
@@ -345,7 +342,7 @@ const Index = () => {
             ...newMessages,
             { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedMatch.full_citation}` },
           ]);
-          if (isGuestMode) guestLimit.increment();
+          await subscription.incrementCount();
           setLoading(false);
           return;
         }
@@ -366,7 +363,7 @@ const Index = () => {
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
-      if (isGuestMode) guestLimit.increment();
+      await subscription.incrementCount();
 
       const extractedCitation = extractCitationFromResponse(reply);
       supabase.from("citation_history").insert([{
@@ -422,7 +419,7 @@ const Index = () => {
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
-      if (isGuestMode) guestLimit.increment();
+      await subscription.incrementCount();
 
       const extractedCitation = extractCitationFromResponse(reply);
       supabase.from("citation_history").insert([{
@@ -461,7 +458,7 @@ const Index = () => {
       ...prev,
       { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
     ]);
-    if (isGuestMode) guestLimit.increment();
+    subscription.incrementCount();
     supabase.from("citation_history").insert([{
       raw_input: rawInput,
       formatted_output: verifiedReply,
@@ -489,7 +486,7 @@ const Index = () => {
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
-      if (isGuestMode) guestLimit.increment();
+      await subscription.incrementCount();
 
       const extractedCitation = extractCitationFromResponse(reply);
       supabase.from("citation_history").insert([{
@@ -516,7 +513,7 @@ const Index = () => {
     const rawText = input.trim();
     if (!rawText || loading) return;
     const PINPOINT_RE = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
-    if (isGuestMode && guestLimit.isLocked) return;
+    if (subscription.isLimitReached) return;
 
     // Step 1: Normalize abbreviations
     const normalized = normalizeAbbreviations(rawText);
@@ -587,7 +584,7 @@ const Index = () => {
             ...newMessages,
             { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
           ]);
-          if (isGuestMode) guestLimit.increment();
+          await subscription.incrementCount();
 
           supabase.from("citation_history").insert([{
             raw_input: fullRawInput,
@@ -646,7 +643,7 @@ const Index = () => {
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       // Increment guest counter
-      if (isGuestMode) guestLimit.increment();
+      await subscription.incrementCount();
 
       // Extract the actual citation from the AI response (skip step explanations, rules, warnings)
       const extractedCitation = extractCitationFromResponse(reply);
@@ -746,14 +743,32 @@ const Index = () => {
   return (
     <div className={`flex flex-col h-screen font-sans bg-background text-foreground ${isOfficeAddin ? "compact-mode" : ""}`}>
       {/* Guest Limit Modal */}
-      {isGuestMode && guestLimit.isLocked && <GuestLimitModal />}
+      {subscription.isLimitReached && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ direction: "rtl" }}>
+          <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" />
+          <div className="relative bg-card border border-border rounded-2xl p-6 max-w-sm mx-4 shadow-lg text-center animate-fade-in">
+            <div className="text-4xl mb-3">🔒</div>
+            <h3 className="text-foreground text-lg font-bold mb-2">הגעת למכסה המרבית</h3>
+            <p className="text-muted-foreground text-sm mb-5 leading-relaxed">
+              השתמשת ב-{subscription.limit} אזכורים החינמיים שלך. שדרג/י למנוי Pro כדי להמשיך.
+            </p>
+            <button
+              onClick={() => navigate("/profile?tab=account")}
+              className="w-full py-3 rounded-xl font-semibold text-sm text-primary-foreground transition-all"
+              style={{ background: "var(--gradient-primary)" }}
+            >
+              שדרג ל-Pro
+            </button>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <header className="flex flex-col border-b border-border bg-card shadow-sm">
         {/* Top row: logo + actions */}
         <div className="flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3">
           <div className="flex items-center gap-2 sm:gap-3" style={{ direction: "rtl" }}>
             {/* Mobile sidebar toggle */}
-            {!isGuestMode && user && !isOfficeAddin && (
+            {user && !isOfficeAddin && (
               <button
                 onClick={() => setSidebarOpen(true)}
                 className="md:hidden p-1.5 rounded-lg text-muted-foreground hover:bg-muted transition-colors"
@@ -768,9 +783,9 @@ const Index = () => {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            {isGuestMode && (
+            {!subscription.isSubscribed && (
               <span className="text-[9px] sm:text-[10px] text-muted-foreground bg-muted px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md">
-                אורח • {guestLimit.remaining}/{guestLimit.max}
+                {subscription.remaining}/{subscription.limit} אזכורים
               </span>
             )}
             <button
@@ -824,7 +839,7 @@ const Index = () => {
       {/* Body with sidebar */}
       <div className="flex flex-1 overflow-hidden items-stretch">
         {/* Right sidebar — desktop only */}
-        {!isGuestMode && user && !isOfficeAddin && (
+        {user && !isOfficeAddin && (
           <div className="hidden md:flex self-stretch">
             <AppSidebar />
           </div>
@@ -840,7 +855,7 @@ const Index = () => {
         {mode === "manual" ? (
           <ManualEntry />
         ) : mode === "batch" ? (
-          <BatchFootnoteBuilder isGuest={isGuestMode} guestLimit={guestLimit} />
+          <BatchFootnoteBuilder />
         ) : mode === "bibliography" ? (
           <BibliographyGenerator />
         ) : (
@@ -1136,7 +1151,7 @@ const Index = () => {
         </div>
 
         {/* Citation history sidebar — desktop only, authenticated users */}
-        {!isGuestMode && user && !isOfficeAddin && (
+        {user && !isOfficeAddin && (
           <div className="hidden md:flex self-stretch">
             <CitationHistorySidebar
               projectId={projectId ?? null}

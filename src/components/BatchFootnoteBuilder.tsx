@@ -24,10 +24,7 @@ const createCell = (id: number): FootnoteCell => ({
   status: "empty",
 });
 
-interface BatchProps {
-  isGuest?: boolean;
-  guestLimit?: { isLocked: boolean; increment: (n?: number) => void; remaining: number; max: number };
-}
+interface BatchProps {}
 
 const CELLS_STORAGE_PREFIX = "footnote_cells";
 const SUMMARY_STORAGE_PREFIX = "footnote_summary";
@@ -50,7 +47,7 @@ function loadCells(projectId: string | undefined): FootnoteCell[] {
   return Array.from({ length: 5 }, (_, i) => createCell(i + 1));
 }
 
-export function BatchFootnoteBuilder({ isGuest, guestLimit }: BatchProps) {
+export function BatchFootnoteBuilder({}: BatchProps) {
   const { currentProject } = useProjects();
   const projectId = currentProject?.id;
   const [cells, setCells] = useState<FootnoteCell[]>(() => loadCells(projectId));
@@ -130,7 +127,7 @@ export function BatchFootnoteBuilder({ isGuest, guestLimit }: BatchProps) {
   }, []);
 
   const processAllCells = async () => {
-    if (isGuest && guestLimit?.isLocked) return;
+    
     const activeCells = cells.filter((c) => c.input.trim() && c.status !== "verified");
     if (activeCells.length === 0) {
       toast.error("אנא הזן לפחות מקור אחד");
@@ -285,7 +282,7 @@ ${sourcesText}
       }
 
       const total = validCount + warningCount;
-      if (isGuest && guestLimit) guestLimit.increment(total);
+      
       const repeatNote = /שם|לעיל/.test(content)
         ? " שים לב לתיקונים בנסיבות של אזכור חוזר."
         : "";

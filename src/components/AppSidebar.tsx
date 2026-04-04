@@ -2,14 +2,17 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
+import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export function AppSidebar() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { projects, currentProject, setCurrentProjectId, createProject, renameProject, deleteProject, loading: projectsLoading } = useProjects();
+  const { isSubscribed } = useSubscription();
   const [newName, setNewName] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [displayName, setDisplayName] = useState("");
@@ -80,6 +83,13 @@ export function AppSidebar() {
       >
         <span>👤</span>
         <span className="truncate">{displayName || user?.email || "הפרופיל שלי"}</span>
+        <Badge
+          className="cursor-pointer text-[10px] px-1.5 py-0"
+          variant={isSubscribed ? "default" : "destructive"}
+          onClick={(e) => { e.stopPropagation(); navigate("/profile?tab=account"); }}
+        >
+          {isSubscribed ? "מנוי" : "לא מנוי"}
+        </Badge>
       </button>
 
       <div className="h-px bg-border my-2" />

@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -17,7 +19,10 @@ interface ActivityLog {
 
 const Profile = () => {
   const { user, signOut } = useAuth();
+  const { isSubscribed, citationCount, isLimitReached, limit } = useSubscription();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const defaultTab = searchParams.get("tab") || "profile";
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [activities, setActivities] = useState<ActivityLog[]>([]);
@@ -119,9 +124,10 @@ const Profile = () => {
       </header>
 
       <div className="max-w-3xl mx-auto p-3 sm:p-6">
-        <Tabs defaultValue="profile" dir="rtl">
+        <Tabs defaultValue={defaultTab} dir="rtl">
           <TabsList className="w-full justify-start mb-4 sm:mb-6 overflow-x-auto no-scrollbar">
             <TabsTrigger value="profile" className="text-xs sm:text-sm">פרטים אישיים</TabsTrigger>
+            <TabsTrigger value="account" className="text-xs sm:text-sm">ניהול חשבון</TabsTrigger>
             <TabsTrigger value="history" className="text-xs sm:text-sm">היסטוריית אזכורים</TabsTrigger>
             <TabsTrigger value="activity" className="text-xs sm:text-sm">יומן פעילות</TabsTrigger>
           </TabsList>
@@ -143,6 +149,50 @@ const Profile = () => {
               >
                 שמור שינויים
               </button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="account">
+            <div className="bg-card border border-border rounded-xl p-6 space-y-5">
+              <div className="flex items-center gap-3">
+                <h3 className="text-foreground font-bold text-base">סטטוס מנוי</h3>
+                <Badge variant={isSubscribed ? "default" : "destructive"}>
+                  {isSubscribed ? "מנוי פעיל" : "לא מנוי"}
+                </Badge>
+              </div>
+
+              {!isSubscribed && (
+                <div className="bg-muted/50 rounded-lg p-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-foreground">אזכורים בשימוש</span>
+                    <span className="text-sm font-bold text-foreground">{citationCount} / {limit}</span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div
+                      className="h-2 rounded-full transition-all"
+                      style={{
+                        width: `${Math.min(100, (citationCount / limit) * 100)}%`,
+                        background: isLimitReached ? "hsl(var(--destructive))" : "var(--gradient-primary)",
+                      }}
+                    />
+                  </div>
+                  {isLimitReached && (
+                    <p className="text-xs text-destructive">הגעת למכסה המרבית. שדרג/י למנוי Pro כדי להמשיך.</p>
+                  )}
+                </div>
+              )}
+
+              {isSubscribed ? (
+                <p className="text-sm text-muted-foreground">יש לך גישה מלאה לכל הכלים ללא הגבלה.</p>
+              ) : (
+                <button
+                  onClick={() => toast.info("בקרוב! אפשרות תשלום תהיה זמינה בקרוב.")}
+                  className="w-full py-3 rounded-xl font-semibold text-sm text-primary-foreground transition-all"
+                  style={{ background: "var(--gradient-primary)" }}
+                >
+                  ⭐ שדרג ל-Pro
+                </button>
+              )}
             </div>
           </TabsContent>
 

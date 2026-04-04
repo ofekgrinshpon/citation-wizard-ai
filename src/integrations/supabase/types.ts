@@ -92,22 +92,28 @@ export type Database = {
       }
       profiles: {
         Row: {
+          citation_count: number
           created_at: string
           email: string | null
           full_name: string | null
           id: string
+          is_subscribed: boolean
         }
         Insert: {
+          citation_count?: number
           created_at?: string
           email?: string | null
           full_name?: string | null
           id: string
+          is_subscribed?: boolean
         }
         Update: {
+          citation_count?: number
           created_at?: string
           email?: string | null
           full_name?: string | null
           id?: string
+          is_subscribed?: boolean
         }
         Relationships: []
       }
@@ -278,6 +284,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_citation_count: { Args: never; Returns: undefined }
       increment_usage_count: { Args: { source_id: string }; Returns: undefined }
     }
     Enums: {
