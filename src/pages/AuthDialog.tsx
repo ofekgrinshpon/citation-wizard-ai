@@ -8,13 +8,12 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
-const PUBLISHED_ORIGIN = "https://citation-wizard-ai.lovable.app";
-
-function getRedirectOrigin() {
-  if (window.location.hostname === "localhost" || window.location.hostname.includes("preview")) {
-    return window.location.origin;
-  }
-  return PUBLISHED_ORIGIN;
+function getRedirectUrl() {
+  // Always use current origin; preserve ?addin=1 so Office.js loads on callback
+  const params = new URLSearchParams(window.location.search);
+  const addin = params.get("addin");
+  const base = `${window.location.origin}/auth-dialog`;
+  return addin ? `${base}?addin=${addin}` : base;
 }
 
 function sendToParent(message: object) {
@@ -82,7 +81,7 @@ export default function AuthDialog() {
 
         // No session and no hash — start Google OAuth flow
         if (!session && !window.location.hash.includes("access_token")) {
-          const redirectUri = getRedirectOrigin() + "/auth-dialog";
+          const redirectUri = getRedirectUrl();
 
           const result = await lovable.auth.signInWithOAuth("google", {
             redirect_uri: redirectUri,
