@@ -47,7 +47,7 @@ function loadCells(projectId: string | undefined): FootnoteCell[] {
   return Array.from({ length: 5 }, (_, i) => createCell(i + 1));
 }
 
-export function BatchFootnoteBuilder({ isGuest, guestLimit }: BatchProps) {
+export function BatchFootnoteBuilder({}: BatchProps) {
   const { currentProject } = useProjects();
   const projectId = currentProject?.id;
   const [cells, setCells] = useState<FootnoteCell[]>(() => loadCells(projectId));
