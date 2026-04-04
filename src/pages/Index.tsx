@@ -175,6 +175,7 @@ const Index = () => {
     sourceLabel: string;
     newMessages: Message[];
   } | null>(null);
+  const [citationRefreshKey, setCitationRefreshKey] = useState(0);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   
