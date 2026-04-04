@@ -189,7 +189,7 @@ export const FIELD_LABELS: Record<string, string> = {
 
 // Normalize abbreviations in free text
 export function normalizeAbbreviations(text: string): string {
-  let result = text;
+  let result = normalizeQuotes(text);
   
   // Sort by length descending to match longer patterns first
   const allAbbreviations = { ...CASE_TYPE_ABBREVIATIONS, ...PUBLICATION_ABBREVIATIONS };
