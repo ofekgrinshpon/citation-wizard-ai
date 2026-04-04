@@ -282,7 +282,7 @@ ${sourcesText}
       }
 
       const total = validCount + warningCount;
-      if (isGuest && guestLimit) guestLimit.increment(total);
+      
       const repeatNote = /שם|לעיל/.test(content)
         ? " שים לב לתיקונים בנסיבות של אזכור חוזר."
         : "";
