@@ -1151,7 +1151,7 @@ const Index = () => {
         </div>
 
         {/* Citation history sidebar — desktop only, authenticated users */}
-        {!isGuestMode && user && !isOfficeAddin && (
+        {user && !isOfficeAddin && (
           <div className="hidden md:flex self-stretch">
             <CitationHistorySidebar
               projectId={projectId ?? null}
