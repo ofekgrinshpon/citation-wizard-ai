@@ -458,7 +458,7 @@ const Index = () => {
       ...prev,
       { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
     ]);
-    if (isGuestMode) guestLimit.increment();
+    subscription.incrementCount();
     supabase.from("citation_history").insert([{
       raw_input: rawInput,
       formatted_output: verifiedReply,
