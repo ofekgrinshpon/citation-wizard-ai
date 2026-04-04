@@ -768,7 +768,7 @@ const Index = () => {
         <div className="flex items-center justify-between px-3 py-2 sm:px-4 sm:py-3">
           <div className="flex items-center gap-2 sm:gap-3" style={{ direction: "rtl" }}>
             {/* Mobile sidebar toggle */}
-            {!isGuestMode && user && !isOfficeAddin && (
+            {user && !isOfficeAddin && (
               <button
                 onClick={() => setSidebarOpen(true)}
                 className="md:hidden p-1.5 rounded-lg text-muted-foreground hover:bg-muted transition-colors"
