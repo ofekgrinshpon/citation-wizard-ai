@@ -498,7 +498,7 @@ const Index = () => {
         source_type: sourceType !== "unknown" ? sourceLabel : null,
         user_id: user?.id || null,
         project_id: currentProject?.id || null,
-      }]).then(() => {});
+      }]).then(() => { setCitationRefreshKey(k => k + 1); });
 
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
