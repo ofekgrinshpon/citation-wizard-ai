@@ -27,7 +27,8 @@ const Landing = () => {
   }
 
   if (user) {
-    return <Navigate to={isAdmin ? "/admin" : "/app"} replace />;
+    const addinParam = isOfficeAddin ? "?addin=1" : "";
+    return <Navigate to={isAdmin ? `/admin${addinParam}` : `/app${addinParam}`} replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

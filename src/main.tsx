@@ -50,7 +50,11 @@ async function bootstrap() {
     await loadOfficeJs();
 
     if (win.Office?.onReady) {
-      win.Office.onReady(() => renderApp());
+      // Race: render on Office.onReady OR after 5s timeout (whichever comes first)
+      let rendered = false;
+      const render = () => { if (!rendered) { rendered = true; renderApp(); } };
+      win.Office.onReady(() => render());
+      setTimeout(render, 5000);
       return;
     }
   } catch (error) {
