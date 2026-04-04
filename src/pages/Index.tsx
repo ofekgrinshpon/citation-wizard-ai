@@ -831,7 +831,7 @@ const Index = () => {
         )}
 
         {/* Main column */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Main content */}
         <div
           className="flex-1 overflow-y-auto px-3 sm:px-4"
