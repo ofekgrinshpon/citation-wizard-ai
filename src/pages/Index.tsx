@@ -177,7 +177,7 @@ const Index = () => {
   } | null>(null);
   const [citationRefreshKey, setCitationRefreshKey] = useState(0);
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const [searchParams] = useSearchParams();
+  
   
   const { user, isAdmin, signOut } = useAuth();
   const { isOfficeAddin } = useOffice();
