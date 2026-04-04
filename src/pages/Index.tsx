@@ -342,7 +342,7 @@ const Index = () => {
             ...newMessages,
             { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedMatch.full_citation}` },
           ]);
-          if (isGuestMode) guestLimit.increment();
+          await subscription.incrementCount();
           setLoading(false);
           return;
         }
