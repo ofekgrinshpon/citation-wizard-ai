@@ -643,7 +643,7 @@ const Index = () => {
       setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       // Increment guest counter
-      if (isGuestMode) guestLimit.increment();
+      await subscription.incrementCount();
 
       // Extract the actual citation from the AI response (skip step explanations, rules, warnings)
       const extractedCitation = extractCitationFromResponse(reply);
