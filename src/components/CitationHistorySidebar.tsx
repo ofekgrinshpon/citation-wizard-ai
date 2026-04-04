@@ -70,6 +70,22 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
       )
     : citations;
 
+  /** Extract only the citation line, stripping rules, warnings, labels */
+  const extractCitationOnly = (text: string) => {
+    const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
+    const citationLines = lines.filter(line =>
+      !line.startsWith("📐") &&
+      !line.startsWith("⚠️") &&
+      !line.startsWith("🏷️") &&
+      !line.startsWith("✓") &&
+      !/^שלב \d/.test(line) &&
+      !/^העוזר המשפטי/.test(line) &&
+      !/^מכיוון ש/.test(line) &&
+      !/^הנוסחה ל/.test(line)
+    );
+    return citationLines.length > 0 ? citationLines[citationLines.length - 1] : text;
+  };
+
   /** Convert markdown bold/italic to HTML */
   const markdownToHtml = (text: string) =>
     text
