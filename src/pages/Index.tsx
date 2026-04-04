@@ -185,10 +185,12 @@ const Index = () => {
   const subscription = useSubscription();
   const { log: logActivity } = useActivityLog();
 
-  // Require authentication — redirect unauthenticated users
+  // Require authentication — redirect unauthenticated users (preserve ?addin=1)
   useEffect(() => {
     if (!user) {
-      navigate("/", { replace: true });
+      const params = new URLSearchParams(window.location.search);
+      const addin = params.get("addin");
+      navigate(addin ? `/?addin=${addin}` : "/", { replace: true });
     }
   }, [user, navigate]);
 
