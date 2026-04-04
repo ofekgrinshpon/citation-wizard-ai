@@ -596,7 +596,7 @@ const Index = () => {
             is_verified: true,
             user_id: user?.id || null,
             project_id: currentProject?.id || null,
-          }]).then(() => {});
+          }]).then(() => { setCitationRefreshKey(k => k + 1); });
           return;
         }
       }
