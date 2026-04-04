@@ -11,7 +11,6 @@ import { lovable } from "@/integrations/lovable/index";
 const PUBLISHED_ORIGIN = "https://citation-wizard-ai.lovable.app";
 
 function getRedirectOrigin() {
-  // In production use the published URL; in dev use current origin
   if (window.location.hostname === "localhost" || window.location.hostname.includes("preview")) {
     return window.location.origin;
   }
@@ -32,9 +31,30 @@ export default function AuthDialog() {
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    const handleAuth = async () => {
+    let handled = false;
+
+    // Listen for auth state changes — this catches the session from URL hash tokens
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (handled) return;
+      if (session && (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "INITIAL_SESSION")) {
+        handled = true;
+        const sent = sendToParent({
+          type: "auth-success",
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+        });
+        if (sent) {
+          setStatus("success");
+        } else {
+          // Not inside Office dialog — redirect to app
+          window.location.href = "/app";
+        }
+      }
+    });
+
+    // Check if there's already a session, or start OAuth
+    const initAuth = async () => {
       try {
-        // 1. Check if we already have a session (OAuth redirect landed here with tokens in hash)
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error) {
@@ -44,56 +64,40 @@ export default function AuthDialog() {
           return;
         }
 
-        if (session) {
-          // We have tokens — send them back to the Task Pane
+        // If session exists already (e.g. hash was processed before this runs)
+        if (session && !handled) {
+          handled = true;
           const sent = sendToParent({
             type: "auth-success",
             access_token: session.access_token,
             refresh_token: session.refresh_token,
           });
-
           if (sent) {
             setStatus("success");
           } else {
-            // Not inside Office dialog — redirect to app
             window.location.href = "/app";
           }
           return;
         }
 
-        // 2. No session yet — start Google OAuth flow
-        const redirectUri = getRedirectOrigin() + "/auth-dialog";
+        // No session and no hash — start Google OAuth flow
+        if (!session && !window.location.hash.includes("access_token")) {
+          const redirectUri = getRedirectOrigin() + "/auth-dialog";
 
-        const result = await lovable.auth.signInWithOAuth("google", {
-          redirect_uri: redirectUri,
-        });
-
-        if (result.error) {
-          const msg = (result.error as any).message || "OAuth failed";
-          setErrorMsg(msg);
-          setStatus("error");
-          sendToParent({ type: "auth-error", message: msg });
-          return;
-        }
-
-        if (result.redirected) {
-          // Browser will redirect to Google — nothing more to do
-          return;
-        }
-
-        // 3. If tokens were returned directly (rare path)
-        const { data: { session: newSession } } = await supabase.auth.getSession();
-        if (newSession) {
-          const sent = sendToParent({
-            type: "auth-success",
-            access_token: newSession.access_token,
-            refresh_token: newSession.refresh_token,
+          const result = await lovable.auth.signInWithOAuth("google", {
+            redirect_uri: redirectUri,
           });
-          if (sent) {
-            setStatus("success");
-          } else {
-            window.location.href = "/app";
+
+          if (result.error) {
+            const msg = (result.error as any).message || "OAuth failed";
+            setErrorMsg(msg);
+            setStatus("error");
+            sendToParent({ type: "auth-error", message: msg });
+            return;
           }
+
+          // If redirected, browser navigates to Google — nothing more to do
+          // If not redirected, onAuthStateChange will fire when session is set
         }
       } catch (err: any) {
         const msg = err.message || "Unknown error";
@@ -103,7 +107,11 @@ export default function AuthDialog() {
       }
     };
 
-    handleAuth();
+    initAuth();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   return (
