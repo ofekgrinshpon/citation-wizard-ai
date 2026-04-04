@@ -17,6 +17,7 @@ interface VerifiedAutocompleteProps {
   value: string;
   onChange: (value: string) => void;
   onSelectCitation?: (citation: string, metadata?: VerifiedSource) => void;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
   placeholder?: string;
   disabled?: boolean;
   inputType?: "textarea" | "input";
