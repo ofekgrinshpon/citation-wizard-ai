@@ -38,6 +38,9 @@ const Landing = () => {
         const { error } = await signIn(email, password);
         if (error) throw error;
         toast.success("התחברת בהצלחה!");
+        // Explicitly navigate after successful sign-in (fallback for add-in context)
+        const target = isOfficeAddin ? "/app?addin=1" : "/app";
+        navigate(target, { replace: true });
       } else {
         const { error } = await signUp(email, password, fullName);
         if (error) throw error;
