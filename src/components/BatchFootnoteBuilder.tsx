@@ -24,10 +24,7 @@ const createCell = (id: number): FootnoteCell => ({
   status: "empty",
 });
 
-interface BatchProps {
-  isGuest?: boolean;
-  guestLimit?: { isLocked: boolean; increment: (n?: number) => void; remaining: number; max: number };
-}
+interface BatchProps {}
 
 const CELLS_STORAGE_PREFIX = "footnote_cells";
 const SUMMARY_STORAGE_PREFIX = "footnote_summary";
