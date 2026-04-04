@@ -79,6 +79,10 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
     }
   };
 
+  /** Strip markdown bold/italic markers for plain display */
+  const stripMarkdown = (text: string) =>
+    text.replace(/\*\*(.+?)\*\*/g, "$1").replace(/\*(.+?)\*/g, "$1").replace(/_(.+?)_/g, "$1");
+
   const formatTime = (iso: string) => {
     const d = new Date(iso);
     return d.toLocaleDateString("he-IL", { day: "numeric", month: "short" });
