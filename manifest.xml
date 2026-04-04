@@ -13,8 +13,8 @@
   <DisplayName DefaultValue="ReLex Assistant" />
   <Description DefaultValue="Smart Legal Citations for Israeli Law" />
 
-  <IconUrl DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.svg" />
-  <HighResolutionIconUrl DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.svg" />
+  <IconUrl DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.png" />
+  <HighResolutionIconUrl DefaultValue="https://citation-wizard-ai.lovable.app/relex-icon.png" />
   <SupportUrl DefaultValue="https://citation-wizard-ai.lovable.app" />
 
   <Hosts>
