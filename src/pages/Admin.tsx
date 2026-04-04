@@ -465,7 +465,12 @@ const Admin = () => {
               />
             </div>
             <h3 className="text-foreground font-bold text-base">רשימת משתמשים</h3>
-            <UsersTable users={users} />
+            <UsersTable
+              users={users}
+              onToggleSubscription={(userId, newValue) => {
+                setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, is_subscribed: newValue } : u));
+              }}
+            />
           </div>
         )}
       </div>
