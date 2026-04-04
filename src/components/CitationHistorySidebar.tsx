@@ -153,9 +153,10 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
                     {formatTime(c.created_at)}
                   </span>
                 </div>
-                <p className="text-xs text-sidebar-foreground leading-relaxed line-clamp-2">
-                  {stripMarkdown(c.formatted_output)}
-                </p>
+                <p
+                  className="text-xs text-sidebar-foreground leading-relaxed line-clamp-2"
+                  dangerouslySetInnerHTML={{ __html: markdownToHtml(c.formatted_output) }}
+                />
                 <p className="text-[10px] text-muted-foreground mt-1 line-clamp-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   📋 העתק
                 </p>
