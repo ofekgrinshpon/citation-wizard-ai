@@ -29,6 +29,7 @@ import {
 } from "@/lib/verifiedSources";
 import { VerifiedSuggestionCard } from "@/components/VerifiedSuggestionCard";
 import { AppSidebar } from "@/components/AppSidebar";
+import { CitationHistorySidebar } from "@/components/CitationHistorySidebar";
 import { ReLexLogo } from "@/components/ReLexLogo";
 
 interface Message {
@@ -174,6 +175,7 @@ const Index = () => {
     sourceLabel: string;
     newMessages: Message[];
   } | null>(null);
+  const [citationRefreshKey, setCitationRefreshKey] = useState(0);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
   
@@ -373,7 +375,7 @@ const Index = () => {
         source_type: sourceType !== "unknown" ? sourceLabel : null,
         user_id: user?.id || null,
         project_id: currentProject?.id || null,
-      }]).then(() => {});
+      }]).then(() => { setCitationRefreshKey(k => k + 1); });
 
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10;
@@ -429,7 +431,7 @@ const Index = () => {
         source_type: sourceType !== "unknown" ? sourceLabel : null,
         user_id: user?.id || null,
         project_id: currentProject?.id || null,
-      }]).then(() => {});
+      }]).then(() => { setCitationRefreshKey(k => k + 1); });
 
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10;
@@ -467,7 +469,7 @@ const Index = () => {
       is_verified: true,
       user_id: user?.id || null,
       project_id: currentProject?.id || null,
-    }]).then(() => {});
+    }]).then(() => { setCitationRefreshKey(k => k + 1); });
     setPendingSuggestion(null);
   };
 
@@ -496,7 +498,7 @@ const Index = () => {
         source_type: sourceType !== "unknown" ? sourceLabel : null,
         user_id: user?.id || null,
         project_id: currentProject?.id || null,
-      }]).then(() => {});
+      }]).then(() => { setCitationRefreshKey(k => k + 1); });
 
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
       const isFragment = !extractedCitation || extractedCitation.length < 10 || /^\d+\.?$/.test(extractedCitation.trim());
@@ -594,7 +596,7 @@ const Index = () => {
             is_verified: true,
             user_id: user?.id || null,
             project_id: currentProject?.id || null,
-          }]).then(() => {});
+          }]).then(() => { setCitationRefreshKey(k => k + 1); });
           return;
         }
       }
@@ -658,7 +660,7 @@ const Index = () => {
         project_id: currentProject?.id || null,
       };
 
-      supabase.from("citation_history").insert([citationPayload]).then(() => {});
+      supabase.from("citation_history").insert([citationPayload]).then(() => { setCitationRefreshKey(k => k + 1); });
       logActivity("יצירת אזכור", { source_type: sourceLabel, raw_input: fullRawInput.slice(0, 100) });
 
       // Only verify if we have a real, complete citation (not a fragment, not missing data)
@@ -829,7 +831,7 @@ const Index = () => {
         )}
 
         {/* Main column */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Main content */}
         <div
           className="flex-1 overflow-y-auto px-3 sm:px-4"
@@ -1132,6 +1134,16 @@ const Index = () => {
         </div>
       )}
         </div>
+
+        {/* Citation history sidebar — desktop only, authenticated users */}
+        {!isGuestMode && user && !isOfficeAddin && (
+          <div className="hidden md:flex self-stretch">
+            <CitationHistorySidebar
+              projectId={projectId ?? null}
+              refreshKey={citationRefreshKey}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
