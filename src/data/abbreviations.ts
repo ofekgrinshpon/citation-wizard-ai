@@ -189,7 +189,7 @@ export const FIELD_LABELS: Record<string, string> = {
 
 // Normalize abbreviations in free text
 export function normalizeAbbreviations(text: string): string {
-  let result = text;
+  let result = normalizeQuotes(text);
   
   // Sort by length descending to match longer patterns first
   const allAbbreviations = { ...CASE_TYPE_ABBREVIATIONS, ...PUBLICATION_ABBREVIATIONS };
@@ -209,10 +209,19 @@ export function normalizeAbbreviations(text: string): string {
   return result;
 }
 
+// Normalize Hebrew quote marks (gershayim ״/׳) to ASCII equivalents
+function normalizeQuotes(text: string): string {
+  return text
+    .replace(/\u05F4/g, '"')   // ״ → "
+    .replace(/\u05F3/g, "'")   // ׳ → '
+    .replace(/[\u201C\u201D\u201E]/g, '"')  // smart double quotes
+    .replace(/[\u2018\u2019\u201A]/g, "'"); // smart single quotes
+}
+
 // Detect source type from free text
 export function detectSourceType(text: string): SourceType {
   const normalized = text.toLowerCase();
-  const hebrewText = text;
+  const hebrewText = normalizeQuotes(text);
   
   // Check for foreign sources
   if (/[a-zA-Z]{3,}/.test(text) && /v\.|vs\./.test(normalized)) return 'foreign';
