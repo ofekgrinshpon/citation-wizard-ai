@@ -1097,6 +1097,7 @@ const Index = () => {
               <VerifiedAutocomplete
                 value={input}
                 onChange={setInput}
+                onKeyDown={handleKeyDown}
                 onSelectCitation={(citation) => {
                   setInput("");
                   const newMessages: Message[] = [

@@ -17,6 +17,7 @@ interface VerifiedAutocompleteProps {
   value: string;
   onChange: (value: string) => void;
   onSelectCitation?: (citation: string, metadata?: VerifiedSource) => void;
+  onKeyDown?: (e: React.KeyboardEvent) => void;
   placeholder?: string;
   disabled?: boolean;
   inputType?: "textarea" | "input";
@@ -35,6 +36,7 @@ export function VerifiedAutocomplete({
   value,
   onChange,
   onSelectCitation,
+  onKeyDown: externalOnKeyDown,
   placeholder,
   disabled,
   inputType = "textarea",
@@ -146,19 +148,25 @@ export function VerifiedAutocomplete({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!isOpen) return;
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setHighlightIndex((prev) => Math.min(prev + 1, suggestions.length - 1));
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setHighlightIndex((prev) => Math.max(prev - 1, 0));
-    } else if (e.key === "Enter" && highlightIndex >= 0) {
-      e.preventDefault();
-      selectSuggestion(suggestions[highlightIndex]);
-    } else if (e.key === "Escape") {
-      setIsOpen(false);
+    if (isOpen) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setHighlightIndex((prev) => Math.min(prev + 1, suggestions.length - 1));
+        return;
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setHighlightIndex((prev) => Math.max(prev - 1, 0));
+        return;
+      } else if (e.key === "Enter" && highlightIndex >= 0) {
+        e.preventDefault();
+        selectSuggestion(suggestions[highlightIndex]);
+        return;
+      } else if (e.key === "Escape") {
+        setIsOpen(false);
+        return;
+      }
     }
+    externalOnKeyDown?.(e);
   };
 
   const defaultClass =
