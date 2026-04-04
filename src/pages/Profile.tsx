@@ -124,9 +124,10 @@ const Profile = () => {
       </header>
 
       <div className="max-w-3xl mx-auto p-3 sm:p-6">
-        <Tabs defaultValue="profile" dir="rtl">
+        <Tabs defaultValue={defaultTab} dir="rtl">
           <TabsList className="w-full justify-start mb-4 sm:mb-6 overflow-x-auto no-scrollbar">
             <TabsTrigger value="profile" className="text-xs sm:text-sm">פרטים אישיים</TabsTrigger>
+            <TabsTrigger value="account" className="text-xs sm:text-sm">ניהול חשבון</TabsTrigger>
             <TabsTrigger value="history" className="text-xs sm:text-sm">היסטוריית אזכורים</TabsTrigger>
             <TabsTrigger value="activity" className="text-xs sm:text-sm">יומן פעילות</TabsTrigger>
           </TabsList>
