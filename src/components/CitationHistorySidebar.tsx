@@ -72,7 +72,7 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
 
   const handleCopy = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(stripMarkdown(text));
       toast.success("הועתק ללוח");
     } catch {
       toast.error("שגיאה בהעתקה");
