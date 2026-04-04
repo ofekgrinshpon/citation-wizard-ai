@@ -584,7 +584,7 @@ const Index = () => {
             ...newMessages,
             { role: "assistant", content: `✓ מקור מאומת\n🏷️ ${verifiedCategory}\n${verifiedReply}` },
           ]);
-          if (isGuestMode) guestLimit.increment();
+          await subscription.incrementCount();
 
           supabase.from("citation_history").insert([{
             raw_input: fullRawInput,
