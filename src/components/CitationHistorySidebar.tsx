@@ -140,7 +140,7 @@ export function CitationHistorySidebar({ projectId, refreshKey }: Props) {
                   </span>
                 </div>
                 <p className="text-xs text-sidebar-foreground leading-relaxed line-clamp-2">
-                  {c.formatted_output}
+                  {stripMarkdown(c.formatted_output)}
                 </p>
                 <p className="text-[10px] text-muted-foreground mt-1 line-clamp-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   📋 העתק
