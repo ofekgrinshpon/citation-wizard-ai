@@ -81,7 +81,7 @@ export default function AuthDialog() {
           if (sent) {
             setStatus("success");
           } else {
-            window.location.href = "/app";
+            window.location.href = isOfficeAddinRoute() ? "/app?addin=1" : "/app";
           }
           return;
         }
