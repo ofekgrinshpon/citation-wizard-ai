@@ -1,37 +1,59 @@
 
+Goal: make Word Online footnote insertion wait for real document access instead of assuming any Office shell can insert.
 
-# Fix: Mobile browser incorrectly detected as Office Add-in
+1. Separate “Office add-in” from “Word document ready”
+- In `src/hooks/useOffice.tsx`, keep `isOfficeAddin` for compact/add-in UI.
+- Add a second capability such as `canUseWordDocument` / `hasDocumentAccess`.
+- Compute it only from real insertion signals:
+  - `Office.context.document`
+  - or `Word.run`
+- Do not treat `Office.context.ui` alone as enough for insertion.
 
-## Problem
+2. Make Word readiness detection more robust
+- In `src/lib/wordInsertion.ts`, replace the current short readiness check with a dedicated wait that:
+  - waits for `Office.onReady`
+  - polls longer for `Office.context.document`
+  - also treats `Word.run` as a valid usable path even if `document` is late
+- Return clearer diagnostics so we can distinguish:
+  - Office loaded, no host
+  - host exists, document not ready yet
+  - Word APIs unavailable entirely
 
-The Office.js CDN script (`office.js`) is loaded statically in `index.html` for **all** visitors. On mobile browsers, `window.Office.onReady` becomes truthy after the script loads, causing both `isOfficeAddin()` (in `App.tsx`) and `hasOfficeHost()` (in `useOffice.tsx`) to return `true`. This triggers MemoryRouter, compact mode, and Word-specific UI on regular mobile browsers.
+3. Guard the UI until Word APIs are actually ready
+- In `src/components/BatchFootnoteBuilder.tsx` and `src/components/MessageBubble.tsx`:
+  - keep Word buttons visible in add-in mode
+  - but disable them until `hasDocumentAccess` is true
+  - show a small “connecting to Word…” hint instead of letting users hit the runtime error
+- This matches the current add-in UX while preventing false failures.
 
-## Solution
+4. Fix add-in routing to preserve the real path
+- In `src/App.tsx`, stop hardcoding `MemoryRouter` to `"/?addin=1"`.
+- Use the actual current path + search as the initial memory entry.
+- This avoids breaking add-in subroutes like `/auth-dialog?addin=1`, which can indirectly affect Office initialization/auth flows.
 
-Only treat the app as an Office Add-in when there is a **real Office host** — not just because the Office.js library loaded. The `Office.onReady` callback receives an `info` object with a `host` property (e.g., `"Word"`). Outside a real Office host, `info.host` is `null`/`undefined`.
+5. Tighten insertion fallback behavior
+- Keep the existing insertion order, but make the fallback logic explicit:
+  - try `Word.run` first
+  - if unavailable, wait/retry once more
+  - only then use Common API insertion through `Office.context.document`
+- If neither path exists after the wait window, fail with a targeted message instead of the current generic one.
 
-### 1. `src/App.tsx` — Fix `isOfficeAddin()` detection
+Files to update
+- `src/hooks/useOffice.tsx`
+- `src/lib/wordInsertion.ts`
+- `src/components/BatchFootnoteBuilder.tsx`
+- `src/components/MessageBubble.tsx`
+- `src/App.tsx`
 
-Change the check from `Boolean(win.Office?.onReady)` to only trust explicit signals:
-- `?addin=1` query parameter (set by the manifest)
-- `Office.context.host` being a non-empty string
+Technical notes
+- Root issue: the app currently knows it is “inside Office”, but insertion needs a narrower condition: document APIs must be ready.
+- `Office.context.ui` is enough for dialogs/host shell, but not enough for footnote insertion.
+- Word Online is slower/more timing-sensitive than desktop, so readiness must be treated as asynchronous capability detection, not a one-time boolean.
 
-Remove `win.Office?.onReady` from the detection logic since it's always truthy when the script is loaded.
-
-### 2. `src/hooks/useOffice.tsx` — Fix `hasOfficeHost()` detection
-
-Same change: remove `win.Office?.onReady` from `hasOfficeHost()`. Only check `Office.context.host` and `Office.context.ui`.
-
-Additionally, in the `onReady` callback handler, only set `isOfficeAddin(true)` when `info.host` is truthy — not just because `onReady` fired.
-
-### 3. `src/main.tsx` — Guard the Office.onReady path
-
-The bootstrap function currently assumes if `Office.onReady` exists, it should wait for it. Add a timeout-first approach: render immediately but let `onReady` also trigger render. This is already partially in place but the `onReady` check itself (`win.Office?.onReady`) will always be true. No functional change needed here since the timeout fallback already handles it.
-
-## Files
-
-| File | Change |
-|------|--------|
-| `src/App.tsx` | Remove `win.Office?.onReady` from `isOfficeAddin()`, only check `context.host` or `context.ui` |
-| `src/hooks/useOffice.tsx` | Remove `win.Office?.onReady` from `hasOfficeHost()`; only set addin=true in `onReady` callback when `info.host` is truthy |
-
+QA to run after implementation
+- Regular web and mobile still open in normal web mode.
+- Word Online task pane loads without blank screen.
+- Login/auth dialog still works in add-in mode.
+- Single footnote insertion works.
+- “Insert all” works.
+- Buttons stay disabled until Word is truly ready, then become enabled.
