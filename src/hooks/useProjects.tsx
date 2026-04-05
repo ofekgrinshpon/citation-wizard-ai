@@ -27,7 +27,9 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
   const { user, loading: authLoading } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [currentProjectId, setCurrentProjectIdRaw] = useState<string | null>(
-    () => localStorage.getItem(LS_CURRENT_PROJECT)
+    () => {
+      try { return localStorage.getItem(LS_CURRENT_PROJECT); } catch { return null; }
+    }
   );
   const [loading, setLoading] = useState(true);
 
@@ -40,7 +42,7 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
     if (!user) {
       setProjects([]);
       setCurrentProjectIdRaw(null);
-      localStorage.removeItem(LS_CURRENT_PROJECT);
+      try { localStorage.removeItem(LS_CURRENT_PROJECT); } catch {}
       setLoading(false);
       return;
     }
@@ -63,7 +65,7 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
 
     if (list.length > 0 && (!currentProjectId || !list.find((p) => p.id === currentProjectId))) {
       setCurrentProjectIdRaw(list[0].id);
-      localStorage.setItem(LS_CURRENT_PROJECT, list[0].id);
+      try { localStorage.setItem(LS_CURRENT_PROJECT, list[0].id); } catch {}
     }
 
     setLoading(false);
@@ -75,7 +77,7 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
 
   const setCurrentProjectId = (id: string) => {
     setCurrentProjectIdRaw(id);
-    localStorage.setItem(LS_CURRENT_PROJECT, id);
+    try { localStorage.setItem(LS_CURRENT_PROJECT, id); } catch {}
   };
 
   const createProject = async (name: string): Promise<Project | null> => {

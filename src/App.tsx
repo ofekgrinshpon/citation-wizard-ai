@@ -27,15 +27,15 @@ function AuthRedirect() {
 }
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <ProjectsProvider>
-        <OfficeProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <ErrorBoundary>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ProjectsProvider>
+          <OfficeProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
                 <Routes>
                   <Route path="/" element={<Landing />} />
                   <Route path="/app" element={<BibliographyProvider><Index /></BibliographyProvider>} />
@@ -47,13 +47,13 @@ const App = () => (
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </ErrorBoundary>
-            </BrowserRouter>
-          </TooltipProvider>
-        </OfficeProvider>
-      </ProjectsProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+              </BrowserRouter>
+            </TooltipProvider>
+          </OfficeProvider>
+        </ProjectsProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;
