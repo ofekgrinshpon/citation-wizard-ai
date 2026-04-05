@@ -1,84 +1,37 @@
 
 
-# Subscription Model & Remove Guest Mode
+# Fix Word Add-in White Screen
 
-## Overview
-Remove guest access entirely, add subscription tracking to the database, enforce usage limits for non-subscribers, and provide admin controls for managing subscriptions.
+## Root Causes Identified
 
-## 1. Database Migration
+1. **No visible loading state before React renders.** When `?addin=1` is detected, `main.tsx` waits up to 5 seconds for Office.js before rendering anything — the user sees pure white.
 
-Add two columns to `profiles`:
-- `is_subscribed BOOLEAN NOT NULL DEFAULT false`
-- `citation_count INTEGER NOT NULL DEFAULT 0`
+2. **`FunctionFile` in manifest points to the full app.** Line 39 of `manifest.xml` sets `FunctionFile resid="Taskpane.Url"` which loads the entire React app as a "function file." This is meant for lightweight command handlers, not full apps — Word Online may error trying to initialize it.
 
-Add an RLS policy so only admins can update `is_subscribed` on any profile (regular users can still update their own `full_name` but not `is_subscribed`).
+3. **Unhandled errors crash silently.** If `useSubscription`, `useProjects`, or auth hooks throw (e.g., RLS error, network issue), there's no error boundary — React unmounts and shows white.
 
-## 2. Remove Guest Mode
+4. **Auth redirect race in Index.tsx.** When the add-in opens `/app?addin=1`, auth is still loading. Once it resolves with no user, it redirects to `/?addin=1`. This works, but during the transition there's no feedback.
 
-**Files affected:** `src/pages/Landing.tsx`, `src/pages/Index.tsx`, `src/hooks/useGuestLimit.tsx`, `src/components/GuestLimitModal.tsx`
+## Plan
 
-- Delete the "כניסה כאורח/ת" button and card from `Landing.tsx`
-- Remove `handleGuest` function
-- In `Index.tsx`: redirect unauthenticated users to `/` instead of allowing guest mode
-- Remove all `isGuestMode` / `isGuest` logic, `useGuestLimit` usage, and `GuestLimitModal` import
-- Remove `BatchFootnoteBuilder`'s `isGuest` / `guestLimit` props (no longer needed)
-- Delete `useGuestLimit.tsx` and `GuestLimitModal.tsx`
+### 1. Add HTML loading indicator in `index.html`
+Add a simple CSS spinner inside `<div id="root">` so something shows immediately, before any JS executes. React will replace it on mount.
 
-## 3. Subscription Hook: `useSubscription`
+### 2. Remove `FunctionFile` from `manifest.xml`
+Delete line 39 (`<FunctionFile resid="Taskpane.Url" />`). Task pane add-ins don't require a FunctionFile unless you use ribbon commands that execute functions. The current manifest only uses `ShowTaskpane`, which doesn't need it.
 
-**New file:** `src/hooks/useSubscription.tsx`
+### 3. Add React Error Boundary in `App.tsx`
+Wrap the app routes in an error boundary component so that if any hook crashes, the user sees an error message instead of a white screen.
 
-- Fetches `is_subscribed` and `citation_count` from `profiles` for the current user
-- Exposes: `isSubscribed`, `citationCount`, `isLimitReached` (count >= 3 && !isSubscribed), `incrementCount()`, `refresh()`
-- `incrementCount` calls an RPC or direct update to increment `citation_count` by 1
+### 4. Add loading fallback in `Index.tsx`
+While `authLoading` is true, show a spinner instead of rendering nothing. This prevents the brief white flash before the redirect to Landing.
 
-## 4. Enforce Usage Limits in Index.tsx
-
-- After each successful citation (freetext, batch, bibliography), call `incrementCount()`
-- When `isLimitReached` is true:
-  - Disable the send button and batch/bibliography generate buttons
-  - Show a banner: "הגעת למכסה המרבית. שדרג/י למנוי Pro" with a link to the account management section in Profile
-
-## 5. UI Changes
-
-### Profile Badge (AppSidebar)
-- Next to the user's name, show a badge:
-  - Green "מנוי" if `is_subscribed === true`
-  - Red "לא מנוי" if `is_subscribed === false`
-- Clicking the badge navigates to `/profile?tab=account`
-
-### Profile Page — New "ניהול חשבון" Tab
-- Add a new tab in `Profile.tsx`
-- Shows: subscription status, citation count used, remaining (if not subscribed)
-- "שדרג ל-Pro" placeholder button (no payment integration yet, shows toast "בקרוב!")
-
-## 6. Admin Controls
-
-### Admin Users Tab Enhancement
-- Add a search input to filter users by email/name
-- Add a toggle switch per user row to set `is_subscribed`
-- Toggle calls `supabase.from("profiles").update({ is_subscribed }).eq("id", userId)` (admin RLS policy allows this)
-
-**Files modified:** `src/components/admin/UsersTable.tsx`, `src/pages/Admin.tsx`
-
-## 7. Add-in Compatibility
-- The subscription badge and limit banner use existing responsive patterns
-- Already no guest mode in add-in (existing redirect). Now all paths require auth consistently.
-
-## Files Summary
+## Files
 
 | Action | File |
 |--------|------|
-| Create | `src/hooks/useSubscription.tsx` |
-| Modify | `src/pages/Landing.tsx` |
-| Modify | `src/pages/Index.tsx` |
-| Modify | `src/pages/Profile.tsx` |
-| Modify | `src/pages/Admin.tsx` |
-| Modify | `src/components/AppSidebar.tsx` |
-| Modify | `src/components/admin/UsersTable.tsx` |
-| Modify | `src/components/BatchFootnoteBuilder.tsx` |
-| Modify | `src/components/BibliographyGenerator.tsx` |
-| Delete | `src/hooks/useGuestLimit.tsx` |
-| Delete | `src/components/GuestLimitModal.tsx` |
-| Migration | Add `is_subscribed`, `citation_count` to `profiles`; admin update policy |
+| Modify | `index.html` — add inline loading spinner inside `#root` |
+| Modify | `manifest.xml` — remove `FunctionFile` line |
+| Modify | `src/App.tsx` — add ErrorBoundary wrapper |
+| Modify | `src/pages/Index.tsx` — show spinner while auth loads |
 
