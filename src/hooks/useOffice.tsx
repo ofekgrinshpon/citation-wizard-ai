@@ -47,9 +47,21 @@ function detectAddin(win: OfficeWindow) {
   return isOfficeAddinRoute() || hasOfficeHost(win);
 }
 
-/** Check if Word document APIs are actually available for insertion */
+/** Check if Word document APIs are actually available for insertion (passive check) */
 function checkDocumentAccess(win: OfficeWindow): boolean {
-  return Boolean(win.Office?.context?.document || win.Word?.run);
+  // Don't trust Word.run alone — it exists as a stub before the bridge is ready
+  return Boolean(win.Office?.context?.document);
+}
+
+/** Active probe: actually call Word.run to verify the Rich API bridge works */
+async function probeWordRun(win: OfficeWindow): Promise<boolean> {
+  if (!win.Word?.run) return false;
+  try {
+    await (win.Word.run as any)(async (ctx: any) => { await ctx.sync(); });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function OfficeProvider({ children }: { children: ReactNode }) {
@@ -97,22 +109,35 @@ export function OfficeProvider({ children }: { children: ReactNode }) {
       }
     }, 100);
 
-    // Extended polling for document access (Word Online can be slow)
-    const docPollId = window.setInterval(() => {
+    // Extended polling for document access — use active probe for Word.run
+    let docPollStopped = false;
+    const docPollId = window.setInterval(async () => {
+      if (docPollStopped) return;
+      // Passive check first (fast)
       if (checkDocumentAccess(win)) {
         setHasDocumentAccess(true);
+        docPollStopped = true;
+        window.clearInterval(docPollId);
+        return;
+      }
+      // Active probe (slower but definitive)
+      const probeOk = await probeWordRun(win);
+      if (probeOk) {
+        setHasDocumentAccess(true);
+        docPollStopped = true;
         window.clearInterval(docPollId);
       }
-    }, 500);
+    }, 1000);
 
-    // Timeout fallback
+    // Timeout fallback — extended to 15s for Word Online
     const timeoutId = window.setTimeout(() => {
       window.clearInterval(intervalId);
+      docPollStopped = true;
       window.clearInterval(docPollId);
       if (detectAddin(win)) setIsOfficeAddin(true);
       updateDocAccess();
       setIsReady(true);
-    }, 5000);
+    }, 15000);
 
     return () => {
       window.clearInterval(intervalId);
