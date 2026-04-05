@@ -31,8 +31,8 @@ export function useSubscription() {
     fetch();
   }, [fetch]);
 
-  const isLimitReached = !isSubscribed && citationCount >= FREE_LIMIT;
-  const remaining = isSubscribed ? Infinity : Math.max(0, FREE_LIMIT - citationCount);
+  const isLimitReached = !isAdmin && !isSubscribed && citationCount >= FREE_LIMIT;
+  const remaining = isAdmin || isSubscribed ? Infinity : Math.max(0, FREE_LIMIT - citationCount);
 
   const incrementCount = useCallback(async (amount = 1) => {
     for (let i = 0; i < amount; i++) {
