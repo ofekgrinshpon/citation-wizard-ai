@@ -11,13 +11,15 @@ function renderApp() {
 }
 
 async function bootstrap() {
-  const win = window as Window & { Office?: { onReady?: (callback: () => void) => void } };
+  const win = window as Window & { Office?: { onReady?: (callback: (info: { host?: string }) => void) => void } };
+  const isAddinRoute = new URLSearchParams(window.location.search).get("addin") === "1";
 
-  console.log("[ReLex] bootstrap start");
+  console.log("[ReLex] bootstrap start, addin param:", isAddinRoute);
 
-  // Office.js is loaded statically in index.html.
-  // If Office.onReady is available, wait for it (with timeout fallback).
-  if (win.Office?.onReady) {
+  // Only wait for Office.onReady when explicitly in add-in mode (?addin=1).
+  // The office.js script is loaded for all visitors but we should NOT
+  // delay rendering for regular browser users just because Office.onReady exists.
+  if (isAddinRoute && win.Office?.onReady) {
     let rendered = false;
     const render = () => {
       if (!rendered) {
@@ -26,8 +28,8 @@ async function bootstrap() {
         renderApp();
       }
     };
-    win.Office.onReady(() => {
-      console.log("[ReLex] Office.onReady fired");
+    win.Office.onReady((info) => {
+      console.log("[ReLex] Office.onReady fired, host:", info?.host);
       render();
     });
     setTimeout(() => {
@@ -37,7 +39,7 @@ async function bootstrap() {
     return;
   }
 
-  // No Office environment — render immediately
+  // No add-in mode — render immediately
   console.log("[ReLex] standalone mode, rendering immediately");
   renderApp();
 }
