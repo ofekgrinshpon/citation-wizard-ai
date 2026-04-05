@@ -18,6 +18,17 @@ import AuthDialog from "./pages/AuthDialog.tsx";
 
 const queryClient = new QueryClient();
 
+function isOfficeAddin() {
+  try { return new URLSearchParams(window.location.search).get("addin") === "1"; }
+  catch { return false; }
+}
+
+const Router = isOfficeAddin()
+  ? ({ children }: { children: React.ReactNode }) => (
+      <MemoryRouter initialEntries={["/?addin=1"]}>{children}</MemoryRouter>
+    )
+  : BrowserRouter;
+
 function AuthRedirect() {
   const { user, isAdmin, loading } = useAuth();
   if (loading) return null;
