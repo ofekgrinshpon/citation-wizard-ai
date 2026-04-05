@@ -19,7 +19,21 @@ import AuthDialog from "./pages/AuthDialog.tsx";
 const queryClient = new QueryClient();
 
 function isOfficeAddin() {
-  try { return new URLSearchParams(window.location.search).get("addin") === "1"; }
+  try {
+    if (new URLSearchParams(window.location.search).get("addin") === "1") return true;
+
+    const win = window as Window & {
+      Office?: {
+        context?: {
+          host?: string;
+          ui?: unknown;
+        };
+        onReady?: unknown;
+      };
+    };
+
+    return Boolean(win.Office?.context?.host || win.Office?.context?.ui || win.Office?.onReady);
+  }
   catch { return false; }
 }
 
