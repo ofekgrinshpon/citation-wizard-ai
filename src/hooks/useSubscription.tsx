@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 const FREE_LIMIT = 3;
 
 export function useSubscription() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [citationCount, setCitationCount] = useState(0);
   const [loading, setLoading] = useState(true);
