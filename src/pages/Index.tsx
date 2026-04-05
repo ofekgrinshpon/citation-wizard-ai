@@ -179,7 +179,7 @@ const Index = () => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   
   
-  const { user, isAdmin, loading, signOut } = useAuth();
+  const { user, isAdmin, loading: authLoading, signOut } = useAuth();
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const subscription = useSubscription();
