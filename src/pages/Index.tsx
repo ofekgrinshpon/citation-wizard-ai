@@ -750,7 +750,7 @@ const Index = () => {
     { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
   ];
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  
 
   return (
     <div className={`flex flex-col h-screen font-sans bg-background text-foreground ${isOfficeAddin ? "compact-mode" : ""}`}>
