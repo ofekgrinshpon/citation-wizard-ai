@@ -67,23 +67,17 @@ export function citationToOoxml(rawText: string): string {
   return ooxml;
 }
 
-/** Insert citation as a footnote at the current cursor position in Word */
-export async function insertCitationAsFootnote(text: string): Promise<void> {
+/** Insert citation at the current cursor position in Word.
+ *  Tries footnote first (Desktop); falls back to inline text (Word Online). */
+export async function insertCitationAsFootnote(text: string): Promise<"footnote" | "inline"> {
   const Word = (window as any).Word;
   if (!Word) {
     throw new Error("Word API is not available");
   }
 
-  await Word.run(async (context: any) => {
-    const selection = context.document.getSelection();
-    const footnote = selection.insertFootnote("");
+  const ooxml = citationToOoxml(text);
 
-    // Get the footnote body and insert OOXML
-    const body = footnote.body;
-    const ooxml = citationToOoxml(text);
-
-    // Wrap in full OOXML document envelope
-    const fullOoxml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  const fullOoxml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <pkg:package xmlns:pkg="http://schemas.microsoft.com/office/2006/xmlPackage">
   <pkg:part pkg:name="/_rels/.rels" pkg:contentType="application/vnd.openxmlformats-package.relationships+xml">
     <pkg:xmlData>
@@ -101,8 +95,23 @@ export async function insertCitationAsFootnote(text: string): Promise<void> {
   </pkg:part>
 </pkg:package>`;
 
-    body.insertOoxml(fullOoxml, "Replace");
+  let method: "footnote" | "inline" = "footnote";
+
+  await Word.run(async (context: any) => {
+    const selection = context.document.getSelection();
+
+    try {
+      const footnote = selection.insertFootnote("");
+      const body = footnote.body;
+      body.insertOoxml(fullOoxml, "Replace");
+    } catch {
+      // Footnote API unavailable (Word Online) — insert inline at cursor
+      method = "inline";
+      selection.insertOoxml(fullOoxml, "After");
+    }
 
     await context.sync();
   });
+
+  return method;
 }

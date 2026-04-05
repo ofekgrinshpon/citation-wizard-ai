@@ -283,8 +283,8 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
                   onClick={async () => {
                     setIsInserting(true);
                     try {
-                      await insertCitationAsFootnote(msg.content);
-                      toast.success("הוכנס כהערת שוליים!");
+                      const method = await insertCitationAsFootnote(msg.content);
+                      toast.success(method === "footnote" ? "הוכנס כהערת שוליים!" : "הוכנס כטקסט במיקום הסמן!");
                     } catch (err: any) {
                       toast.error("שגיאה בהכנסה: " + (err.message || "Unknown error"));
                     } finally {
