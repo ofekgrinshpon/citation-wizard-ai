@@ -96,7 +96,7 @@ function getPlainText(rawText: string): string {
     .replace(/##/g, "");
 }
 
-/** Wait for Office.js to be fully ready (with timeout) */
+/** Wait for Office.js to be fully ready, including document context (with timeout) */
 async function ensureOfficeReady(): Promise<void> {
   const win = window as any;
   const Office = win.Office;
@@ -105,9 +105,9 @@ async function ensureOfficeReady(): Promise<void> {
     return;
   }
   if (Office.context?.document) {
-    // Already ready
     return;
   }
+  // Wait for onReady first
   if (Office.onReady) {
     await Promise.race([
       new Promise<void>((resolve) => {
@@ -115,6 +115,24 @@ async function ensureOfficeReady(): Promise<void> {
       }),
       new Promise<void>((resolve) => setTimeout(resolve, 3000)),
     ]);
+  }
+  // Poll for Office.context.document (Word Online populates it after onReady)
+  if (!Office.context?.document) {
+    console.log("[WordInsertion] document not yet available, polling...");
+    await new Promise<void>((resolve) => {
+      let elapsed = 0;
+      const interval = setInterval(() => {
+        elapsed += 200;
+        if (Office.context?.document || elapsed >= 5000) {
+          clearInterval(interval);
+          console.log("[WordInsertion] poll result:", {
+            hasDocument: !!Office.context?.document,
+            elapsed,
+          });
+          resolve();
+        }
+      }, 200);
+    });
   }
 }
 
@@ -140,8 +158,9 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
   const ooxml = citationToOoxml(text);
   const fullOoxml = wrapInOoxmlPackage(ooxml);
 
-  // --- Attempt 1: Word.run Rich API (Desktop) ---
-  if (Word?.run) {
+  // --- Attempt 1: Word.run Rich API (Desktop & Word Online) ---
+  const tryWordRun = async (): Promise<"footnote" | "inline" | null> => {
+    if (!Word?.run) return null;
     try {
       let method: "footnote" | "inline" = "footnote";
       await Word.run(async (context: any) => {
@@ -157,9 +176,22 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
         await context.sync();
       });
       return method;
-    } catch (richApiError: any) {
-      console.warn("Word Rich API failed, falling back to Common API:", richApiError?.message);
+    } catch (e: any) {
+      console.warn("[WordInsertion] Word.run attempt failed:", e?.message);
+      return null;
     }
+  };
+
+  // First try
+  let result = await tryWordRun();
+  if (result) return result;
+
+  // Retry after a brief wait (Word Online may need more time)
+  if (Word?.run) {
+    console.log("[WordInsertion] Retrying Word.run after 1s delay...");
+    await new Promise((r) => setTimeout(r, 1000));
+    result = await tryWordRun();
+    if (result) return result;
   }
 
   // --- Attempt 2: Office Common API with OOXML coercion ---
