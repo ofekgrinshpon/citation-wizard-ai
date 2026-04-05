@@ -195,15 +195,6 @@ const Index = () => {
     }
   }, [user, authLoading, navigate]);
 
-  // Show loading spinner while auth is hydrating (prevents white screen in Word add-in)
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="w-9 h-9 border-[3px] border-muted border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
-
   // Load project-specific state when project changes
   useEffect(() => {
     try {
@@ -232,6 +223,15 @@ const Index = () => {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  // Show loading spinner while auth is hydrating (prevents white screen in Word add-in)
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <div className="w-9 h-9 border-[3px] border-muted border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const callAPI = async (userMessage: string, history: Message[]) => {
     const { data, error } = await supabase.functions.invoke("citation-chat", {
