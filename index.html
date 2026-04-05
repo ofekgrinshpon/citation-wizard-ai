@@ -22,7 +22,11 @@
   <meta name="twitter:title" content="ReLex — Smart Legal Citations">
   <meta property="og:description" content="ReLex - מחולל אזכורים משפטיים חכם המבוסס על כללי האזכור האחיד. חוסך זמן יקר בכתיבת עבודות אקדמיות ומסמכים משפטיים.">
   <meta name="twitter:description" content="ReLex - מחולל אזכורים משפטיים חכם המבוסס על כללי האזכור האחיד. חוסך זמן יקר בכתיבת עבודות אקדמיות ומסמכים משפטיים.">
-  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <script>
+    if (location.search.indexOf('addin=1') !== -1) {
+      document.write('<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"><\/script>');
+    }
+  </script>
 </head>
 
   <body>
