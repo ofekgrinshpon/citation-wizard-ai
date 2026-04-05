@@ -27,7 +27,9 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
   const { user, loading: authLoading } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [currentProjectId, setCurrentProjectIdRaw] = useState<string | null>(
-    () => localStorage.getItem(LS_CURRENT_PROJECT)
+    () => {
+      try { return localStorage.getItem(LS_CURRENT_PROJECT); } catch { return null; }
+    }
   );
   const [loading, setLoading] = useState(true);
 
