@@ -268,26 +268,6 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
               >
                 📋
               </button>
-              {isOfficeAddin && (
-                <button
-                  onClick={async () => {
-                    setIsInserting(true);
-                    try {
-                      const method = await insertCitationAsFootnote(msg.content);
-                      toast.success(method === "footnote" ? "הוכנס כהערת שוליים!" : "הוכנס כטקסט במיקום הסמן!");
-                    } catch (err: any) {
-                      toast.error("שגיאה בהכנסה: " + (err.message || "Unknown error"));
-                    } finally {
-                      setIsInserting(false);
-                    }
-                  }}
-                  disabled={isInserting}
-                  className="text-xs bg-secondary/10 hover:bg-secondary/20 border border-secondary/30 rounded-md px-2 py-1 text-secondary hover:text-secondary font-medium disabled:opacity-50"
-                  title="הכנס להערת שוליים"
-                >
-                  {isInserting ? "⏳" : "📝"} הכנס ל-Word
-                </button>
-              )}
             </div>
 
             {showPartyCheck && (

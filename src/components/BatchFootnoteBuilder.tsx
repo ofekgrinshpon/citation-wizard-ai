@@ -447,16 +447,25 @@ ${sourcesText}
                     onClick={async () => {
                       setIsInsertingAll(true);
                       let count = 0;
+                      const errors: string[] = [];
                       for (const cell of outputCells) {
                         if (cell.output) {
                           try {
                             await insertCitationAsFootnote(cell.output);
                             count++;
-                          } catch {}
+                          } catch (err: any) {
+                            console.error(`Failed to insert footnote ${cell.id}:`, err);
+                            errors.push(`הערה ${cell.id}: ${err.message || "Unknown"}`);
+                          }
                         }
                       }
                       setIsInsertingAll(false);
-                      toast.success(`הוכנסו ${count} הערות שוליים ל-Word`);
+                      if (count > 0) {
+                        toast.success(`הוכנסו ${count} הערות שוליים ל-Word`);
+                      }
+                      if (errors.length > 0) {
+                        toast.error(`${errors.length} הערות נכשלו: ${errors[0]}`);
+                      }
                     }}
                     disabled={isInsertingAll}
                     className="text-xs bg-secondary/10 text-secondary hover:bg-secondary/20 border border-secondary/30 px-3 py-1.5 rounded-lg transition-colors font-medium disabled:opacity-50"

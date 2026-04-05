@@ -1,6 +1,7 @@
 /**
  * Word insertion utilities for the Office Add-in.
  * Uses OOXML for reliable RTL/Hebrew formatting in footnotes.
+ * Supports both Word Desktop (Word.run Rich API) and Word Online (Common API fallback).
  */
 
 /** Strip citation metadata lines, keeping only the citation text */
@@ -67,17 +68,9 @@ export function citationToOoxml(rawText: string): string {
   return ooxml;
 }
 
-/** Insert citation at the current cursor position in Word.
- *  Tries footnote first (Desktop); falls back to inline text (Word Online). */
-export async function insertCitationAsFootnote(text: string): Promise<"footnote" | "inline"> {
-  const Word = (window as any).Word;
-  if (!Word) {
-    throw new Error("Word API is not available");
-  }
-
-  const ooxml = citationToOoxml(text);
-
-  const fullOoxml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+/** Build a full OOXML package string from inner paragraph OOXML */
+function wrapInOoxmlPackage(innerOoxml: string): string {
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <pkg:package xmlns:pkg="http://schemas.microsoft.com/office/2006/xmlPackage">
   <pkg:part pkg:name="/_rels/.rels" pkg:contentType="application/vnd.openxmlformats-package.relationships+xml">
     <pkg:xmlData>
@@ -89,29 +82,93 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
   <pkg:part pkg:name="/word/document.xml" pkg:contentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml">
     <pkg:xmlData>
       <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-        <w:body>${ooxml}</w:body>
+        <w:body>${innerOoxml}</w:body>
       </w:document>
     </pkg:xmlData>
   </pkg:part>
 </pkg:package>`;
+}
 
-  let method: "footnote" | "inline" = "footnote";
+/** Get plain text from citation (strip formatting markers) */
+function getPlainText(rawText: string): string {
+  return extractCitationText(rawText)
+    .replace(/\*\*/g, "")
+    .replace(/##/g, "");
+}
 
-  await Word.run(async (context: any) => {
-    const selection = context.document.getSelection();
+/** Insert citation at the current cursor position in Word.
+ *  Tries Word.run Rich API first (Desktop); falls back to Office Common API (Word Online). */
+export async function insertCitationAsFootnote(text: string): Promise<"footnote" | "inline"> {
+  const win = window as any;
+  const Word = win.Word;
+  const Office = win.Office;
 
+  const ooxml = citationToOoxml(text);
+  const fullOoxml = wrapInOoxmlPackage(ooxml);
+
+  // --- Attempt 1: Word.run Rich API (Desktop) ---
+  if (Word?.run) {
     try {
-      const footnote = selection.insertFootnote("");
-      const body = footnote.body;
-      body.insertOoxml(fullOoxml, "Replace");
+      let method: "footnote" | "inline" = "footnote";
+      await Word.run(async (context: any) => {
+        const selection = context.document.getSelection();
+        try {
+          const footnote = selection.insertFootnote("");
+          const body = footnote.body;
+          body.insertOoxml(fullOoxml, "Replace");
+        } catch {
+          method = "inline";
+          selection.insertOoxml(fullOoxml, "After");
+        }
+        await context.sync();
+      });
+      return method;
+    } catch (richApiError: any) {
+      // Rich API not available (Word Online) — fall through to Common API
+      console.warn("Word Rich API failed, falling back to Common API:", richApiError?.message);
+    }
+  }
+
+  // --- Attempt 2: Office Common API with OOXML coercion ---
+  if (Office?.context?.document?.setSelectedDataAsync) {
+    // Try OOXML first
+    try {
+      await new Promise<void>((resolve, reject) => {
+        Office.context.document.setSelectedDataAsync(
+          fullOoxml,
+          { coercionType: Office.CoercionType.Ooxml },
+          (result: any) => {
+            if (result.status === Office.AsyncResultStatus.Succeeded) {
+              resolve();
+            } else {
+              reject(new Error(result.error?.message || "OOXML insertion failed"));
+            }
+          }
+        );
+      });
+      return "inline";
     } catch {
-      // Footnote API unavailable (Word Online) — insert inline at cursor
-      method = "inline";
-      selection.insertOoxml(fullOoxml, "After");
+      // OOXML coercion not supported — try plain text
+      console.warn("OOXML coercion failed, falling back to plain text");
     }
 
-    await context.sync();
-  });
+    // Try plain text fallback
+    const plainText = getPlainText(text);
+    await new Promise<void>((resolve, reject) => {
+      Office.context.document.setSelectedDataAsync(
+        plainText,
+        { coercionType: Office.CoercionType.Text },
+        (result: any) => {
+          if (result.status === Office.AsyncResultStatus.Succeeded) {
+            resolve();
+          } else {
+            reject(new Error(result.error?.message || "Text insertion failed"));
+          }
+        }
+      );
+    });
+    return "inline";
+  }
 
-  return method;
+  throw new Error("Word API is not available");
 }
