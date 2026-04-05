@@ -112,20 +112,15 @@ async function ensureOfficeReady(): Promise<void> {
     ]);
   }
 
-  // Check if Word.run is available even without Office.context.document
-  if (win.Word?.run) {
-    console.log("[WordInsertion] Word.run available, proceeding");
-    return;
-  }
-
-  // Poll for Office.context.document OR Word.run (Word Online can be very slow)
-  if (!Office.context?.document && !win.Word?.run) {
+  // Don't trust Word.run existence alone — the bridge may not be connected yet.
+  // Poll for Office.context.document only as a readiness signal.
+  if (!Office.context?.document) {
     console.log("[WordInsertion] document not yet available, polling (up to 10s)...");
     await new Promise<void>((resolve) => {
       let elapsed = 0;
       const interval = setInterval(() => {
-        elapsed += 300;
-        if (Office.context?.document || win.Word?.run || elapsed >= 10000) {
+        elapsed += 500;
+        if (Office.context?.document || elapsed >= 10000) {
           clearInterval(interval);
           console.log("[WordInsertion] poll result:", {
             hasDocument: !!Office.context?.document,
@@ -134,7 +129,7 @@ async function ensureOfficeReady(): Promise<void> {
           });
           resolve();
         }
-      }, 300);
+      }, 500);
     });
   }
 }
@@ -191,9 +186,13 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
   if (Word?.run) {
     for (let attempt = 1; attempt <= 3; attempt++) {
       const result = await tryWordRun();
+      if (result === ("bridge_missing" as any)) {
+        console.warn("[WordInsertion] Rich API bridge not connected, skipping to Common API fallback");
+        break;
+      }
       if (result) return result;
       if (attempt < 3) {
-        const delay = attempt * 2000; // 2s, 4s
+        const delay = attempt * 2000;
         console.log(`[WordInsertion] Retry ${attempt}/3 after ${delay}ms...`);
         await new Promise((r) => setTimeout(r, delay));
       }
@@ -256,7 +255,7 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
 
   const diagnostics: string[] = [];
   if (!Office) diagnostics.push("Office.js not loaded");
-  else if (!Office.context?.document && !Word?.run) diagnostics.push("Word document APIs not ready — try again in a moment");
+  else if (!Office.context?.document) diagnostics.push("Word document is still loading — please wait a moment and try again");
   else diagnostics.push("Insertion APIs unavailable");
 
   throw new Error(`Word API is not available: ${diagnostics.join("; ")}. State: ${state}`);
