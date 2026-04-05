@@ -498,6 +498,25 @@ ${sourcesText}
                 <div className="flex-1 text-foreground text-sm leading-relaxed">
                   <FormattedCitation text={cell.output!} enableTooltips />
                 </div>
+                {isOfficeAddin && (
+                  <button
+                    onClick={async () => {
+                      setInsertingCellId(cell.id);
+                      try {
+                        const method = await insertCitationAsFootnote(cell.output!);
+                        toast.success(method === "footnote" ? "הוכנס כהערת שוליים!" : "הוכנס כטקסט!");
+                      } catch (err: any) {
+                        toast.error("שגיאה: " + (err.message || "Unknown"));
+                      } finally {
+                        setInsertingCellId(null);
+                      }
+                    }}
+                    disabled={insertingCellId === cell.id}
+                    className="text-[11px] text-secondary hover:bg-secondary/10 px-2 py-1 rounded transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0 disabled:opacity-50"
+                  >
+                    {insertingCellId === cell.id ? "⏳" : "📝"}
+                  </button>
+                )}
                 <button
                   onClick={() => copySingle(cell)}
                   className="text-[11px] text-primary hover:bg-primary/10 px-2 py-1 rounded transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
