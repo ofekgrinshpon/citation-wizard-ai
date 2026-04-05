@@ -1,36 +1,41 @@
 
 
-# Fix Word Insertion + Remove Unwanted Button
+# Fix: "Word API is not available" Error
 
-## Problems
+## Root Cause
 
-1. **"הכנס ל-Word" button in טקסט חופשי** — user doesn't want it there. Remove it from `MessageBubble.tsx`.
+The `insertCitationAsFootnote` function checks for two things:
+1. `Word?.run` — not available in Word Online
+2. `Office?.context?.document?.setSelectedDataAsync` — should be available but may not be populated yet
 
-2. **Word Online insertion fails** — the error `OSF.DDA.RichAPI.RichApi.ExecuteRichApi.RequestAsync is not a function` means Word Online doesn't support the `Word.run` Rich API. The current code uses `Word.run` which only works on Word Desktop. For Word Online, we need to use the Office Common API: `Office.context.document.setSelectedDataAsync()`.
+The error "Word API is not available" means **both** checks fail. This happens because in Word Online's iframe environment, `Office.context.document` may not be fully initialized at the time the button is clicked, even though `Office` itself exists. The current code doesn't wait for Office readiness before attempting insertion.
 
-3. **"0 footnotes inserted"** — because every `insertCitationAsFootnote` call throws (due to the above), the `catch {}` silently swallows it, so `count` stays 0.
+## Fix
 
-## Plan
+### 1. Add Office readiness gate to `insertCitationAsFootnote` (`src/lib/wordInsertion.ts`)
 
-### 1. Remove "Insert to Word" from MessageBubble (`src/components/MessageBubble.tsx`)
-- Delete the Word insert button (lines 271-290) from the free text chat section
-- Keep only the copy button
+Before attempting insertion, wait for `Office.onReady` to complete (with a short timeout). This ensures `Office.context.document` is populated.
 
-### 2. Fix `insertCitationAsFootnote` for Word Online (`src/lib/wordInsertion.ts`)
-- Try `Word.run` first (Desktop)
-- If `Word` global doesn't exist or throws, fall back to `Office.context.document.setSelectedDataAsync()` with `Office.CoercionType.Ooxml`
-- If OOXML coercion isn't supported, fall back to `Office.CoercionType.Text` with plain text
-- This ensures it works in both Desktop and Word Online
+```text
+Current flow:
+  Click → check Word.run → check Office.context.document → both fail → throw
 
-### 3. Fix bulk insert error handling (`src/components/BatchFootnoteBuilder.tsx`)
-- Log errors in the catch block instead of silently swallowing
-- Show a toast if all insertions fail
+Fixed flow:
+  Click → wait for Office.onReady (max 3s) → check Word.run → check Office.context.document → insert
+```
+
+Changes:
+- Add a helper `ensureOfficeReady()` that returns a promise resolving when `Office.onReady` fires (or rejects after timeout)
+- Call it at the start of `insertCitationAsFootnote` before checking APIs
+- Add diagnostic `console.log` showing what APIs are available after readiness, so future debugging is easier
+
+### 2. Broaden Common API detection
+
+Also check for `Office.context.document.getSelectedDataAsync` as an alternative signal that the document API is available — some Word Online builds expose methods differently.
 
 ## Files
 
 | Action | File |
 |--------|------|
-| Modify | `src/components/MessageBubble.tsx` — remove Word insert button |
-| Modify | `src/lib/wordInsertion.ts` — add Office Common API fallback |
-| Modify | `src/components/BatchFootnoteBuilder.tsx` — improve error handling in bulk insert |
+| Modify | `src/lib/wordInsertion.ts` — add `ensureOfficeReady()` gate + broader API detection |
 
