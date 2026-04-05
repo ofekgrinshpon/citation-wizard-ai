@@ -179,7 +179,7 @@ const Index = () => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   
   
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, loading: authLoading, signOut } = useAuth();
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const subscription = useSubscription();
@@ -187,12 +187,12 @@ const Index = () => {
 
   // Require authentication — redirect unauthenticated users (preserve ?addin=1)
   useEffect(() => {
-    if (!user) {
+    if (!authLoading && !user) {
       const params = new URLSearchParams(window.location.search);
       const addin = params.get("addin");
       navigate(addin ? `/?addin=${addin}` : "/", { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   // Load project-specific state when project changes
   useEffect(() => {
