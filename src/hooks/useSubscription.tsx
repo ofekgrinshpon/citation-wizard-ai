@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 const FREE_LIMIT = 3;
 
 export function useSubscription() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [citationCount, setCitationCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -31,8 +31,8 @@ export function useSubscription() {
     fetch();
   }, [fetch]);
 
-  const isLimitReached = !isSubscribed && citationCount >= FREE_LIMIT;
-  const remaining = isSubscribed ? Infinity : Math.max(0, FREE_LIMIT - citationCount);
+  const isLimitReached = !isAdmin && !isSubscribed && citationCount >= FREE_LIMIT;
+  const remaining = isAdmin || isSubscribed ? Infinity : Math.max(0, FREE_LIMIT - citationCount);
 
   const incrementCount = useCallback(async (amount = 1) => {
     for (let i = 0; i < amount; i++) {
