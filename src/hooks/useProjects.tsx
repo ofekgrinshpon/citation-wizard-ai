@@ -65,7 +65,7 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
 
     if (list.length > 0 && (!currentProjectId || !list.find((p) => p.id === currentProjectId))) {
       setCurrentProjectIdRaw(list[0].id);
-      localStorage.setItem(LS_CURRENT_PROJECT, list[0].id);
+      try { localStorage.setItem(LS_CURRENT_PROJECT, list[0].id); } catch {}
     }
 
     setLoading(false);
