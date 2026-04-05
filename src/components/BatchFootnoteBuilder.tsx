@@ -8,6 +8,7 @@ import { useProjects } from "@/hooks/useProjects";
 import { useOffice } from "@/hooks/useOffice";
 import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import { toast } from "sonner";
+import { copyPlainText } from "@/lib/clipboard";
 import { ensureVerifiedSources } from "@/lib/verifiedSources";
 
 interface FootnoteCell {
@@ -321,14 +322,14 @@ ${sourcesText}
       toast.error("אין הערות שוליים להעתקה");
       return;
     }
-    navigator.clipboard.writeText(outputs);
+    copyPlainText(outputs);
     toast.success("כל הערות השוליים הועתקו ללוח!");
   };
 
   const copySingle = (cell: FootnoteCell) => {
     if (!cell.output) return;
     const citation = extractCitationOnly(cell.output);
-    navigator.clipboard.writeText(citation);
+    copyPlainText(citation);
     toast.success(`הערה ${cell.id} הועתקה!`);
   };
 

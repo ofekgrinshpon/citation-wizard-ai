@@ -52,6 +52,7 @@ export function OfficeProvider({ children }: { children: ReactNode }) {
 
     const timeoutId = window.setTimeout(() => {
       window.clearInterval(intervalId);
+      if (addinRoute) setIsOfficeAddin(true);
       setIsReady(true);
     }, 5000);
 
