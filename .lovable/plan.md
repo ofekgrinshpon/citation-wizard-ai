@@ -1,59 +1,33 @@
 
 
-# Fix: Word.run exists but Rich API bridge not connected in Word Online
+# Fix: "Connecting to Word..." blocks forever
 
 ## Problem
 
-`Word.run` exists as a function stub in the Office.js library, but the underlying bridge (`executeRichApiRequestAsync`) is not wired up by the Word Online host. This means checking `!!Word.run` is **not a reliable readiness signal** — it's always true once Office.js loads, even before the document context is actually connected.
+In Word Online, neither `Office.context.document` nor the `Word.run` bridge become available within the 15s polling window. After timeout, `hasDocumentAccess` stays `false` permanently, so the UI is stuck showing "Connecting to Word..." with disabled buttons. The user can never even attempt insertion.
 
-Both `hasDocumentAccess` (in useOffice) and `ensureOfficeReady` (in wordInsertion) currently trust `Word.run` existence as proof of readiness. This causes premature insertion attempts that fail with the RichAPI error.
+## Root cause
+
+The current approach gates the UI on a readiness check that Word Online may never pass. But the insertion function (`insertCitationAsFootnote`) already has its own retry logic, fallbacks, and error messages. Blocking the UI permanently is worse than letting the user try and getting a specific error.
 
 ## Solution
 
-Replace passive existence checks (`!!Word.run`) with an **active probe** — actually call `Word.run` with a no-op to verify the bridge is functional.
+After the 15s timeout, if we're in add-in mode, force `hasDocumentAccess = true` so buttons become enabled. The insertion function will handle failures with actionable error messages. Additionally, the Common API path (`setSelectedDataAsync`) may work even when the probe fails, so we should give it a chance.
 
 ## Changes
 
-### 1. `src/hooks/useOffice.tsx`
+### `src/hooks/useOffice.tsx`
+- In the 15s timeout handler: if `isOfficeAddin` is true, set `hasDocumentAccess = true` as a last resort so the UI unblocks
+- This lets the insertion function's own error handling take over instead of a permanent UI block
 
-- Change `checkDocumentAccess` to NOT count `Word.run` existence alone
-- Only trust `Office.context.document` for passive checks
-- Add an async probe function that actually calls `Word.run(() => context.sync())` in a try/catch
-- Run this probe during polling; only set `hasDocumentAccess = true` when it succeeds
-- Extend polling timeout to 15s (Word Online is slow)
-
-### 2. `src/lib/wordInsertion.ts`
-
-- In `ensureOfficeReady`, stop treating `Word.run` existence as "ready" (line 116-118)
-- Poll for `Office.context.document` only; treat `Word.run` as a path to try but not a readiness guarantee
-- In the insertion flow, if `Word.run` fails with `executeRichApiRequestAsync`, skip remaining retries and fall through to Common API immediately
-- If Common API (`Office.context.document`) is also unavailable, show a specific message: "Word document is still loading — please wait a moment and try again"
-
-### Key logic
-
-```
-// Active probe instead of passive check
-async function probeWordRun(): Promise<boolean> {
-  try {
-    await Word.run(async (ctx) => { await ctx.sync(); });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-// In insertion: detect bridge error and skip retries
-catch (e) {
-  if (e.message.includes('executeRichApiRequestAsync')) {
-    // Bridge not ready — don't retry Word.run, fall to Common API
-    break;
-  }
-}
-```
+### `src/lib/wordInsertion.ts`  
+- In `ensureOfficeReady`: after polling for `Office.context.document` times out, also try the active `Word.run` probe as a last check before giving up
+- In the Common API fallback section: attempt `setSelectedDataAsync` even without checking `doc` existence first — wrap in try/catch and let it fail gracefully
+- Improve the final error message to say "please wait a moment and try again" instead of a technical dump
 
 ## Files
 | File | Change |
 |------|--------|
-| `src/hooks/useOffice.tsx` | Active probe for document access instead of `!!Word.run` |
-| `src/lib/wordInsertion.ts` | Skip Word.run retries on bridge errors; better fallback + messaging |
+| `src/hooks/useOffice.tsx` | Force `hasDocumentAccess = true` after timeout in addin mode |
+| `src/lib/wordInsertion.ts` | Try Common API more aggressively; better final error message |
 
