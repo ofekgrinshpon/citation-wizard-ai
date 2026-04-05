@@ -1,45 +1,44 @@
 
 
-# Fix Word Add-in White Screen (Attempt 3)
+# Fix Word Add-in White Screen — Root Cause Found
 
-## Root Causes
+## The Real Problem
 
-**1. Auth deadlock in `onAuthStateChange`:** The `syncAuthState` function inside the `onAuthStateChange` callback uses `await resolveAdmin()`, which makes an async database query. This blocks the auth state change pipeline and can cause a deadlock — the session never finishes hydrating, so `loading` stays `true` forever, resulting in a permanent spinner → white screen.
+The Supabase client is configured with `auth: { storage: localStorage }` (auto-generated, line 13 of `client.ts`). The `useProjects` hook also calls `localStorage.getItem()` during initialization. 
 
-**2. Manifest points to `/app?addin=1` which immediately redirects:** Word Online loads the task pane at `/app?addin=1`. This route requires auth, so it redirects to `/?addin=1`. This double-navigation inside Word's iframe can cause timing issues and the "add-in may not load properly" error.
+**Word Online loads the add-in in a cross-origin iframe.** Most browsers block `localStorage` access in third-party iframes (ITP, third-party cookie blocking). When `localStorage` is accessed, it throws a `SecurityError` that crashes React before any UI renders — hence the white screen.
 
-**3. No `X-Frame-Options` / CSP consideration:** Word Online loads the task pane in an iframe. If any response headers block framing, the page will be blank. (This is handled by Lovable hosting, but the redirects compound the problem.)
+The `ErrorBoundary` in `App.tsx` cannot catch this because the crash happens inside providers (`ProjectsProvider`, `AuthProvider`) that sit at the same level or above it.
 
 ## Plan
 
-### 1. Fix auth deadlock (`src/hooks/useAuth.tsx`)
-Remove `await` from the `resolveAdmin` call inside `onAuthStateChange`. Use fire-and-forget pattern so the callback doesn't block. Set `loading` to `false` immediately after setting user/session, then resolve admin status in the background.
+### 1. Add a safe storage wrapper (`src/lib/safeStorage.ts`)
+Create a `SafeStorage` class implementing the `Storage` interface that:
+- Tries to use `localStorage` 
+- If it throws (iframe restriction), falls back to an in-memory `Map`
+- Export a singleton instance
 
-```typescript
-// Before (blocks):
-await resolveAdmin(nextSession?.user ?? null);
+### 2. Override Supabase auth storage (`src/App.tsx`)
+Since we cannot edit `client.ts` (auto-generated), we wrap the Supabase client initialization by calling `supabase.auth.setSession` with the safe storage approach. Actually, the better approach: **create a wrapper** in `main.tsx` that patches `window.localStorage` with the safe fallback before any imports run — or use a custom storage adapter.
 
-// After (fire-and-forget):
-resolveAdmin(nextSession?.user ?? null); // no await
-```
+**Better approach**: Shim `localStorage` at the very top of `main.tsx` (before any imports) so all code that uses `localStorage` works transparently. If `localStorage` is blocked, replace it with an in-memory polyfill.
 
-Also set `loading = false` unconditionally once the session is hydrated, without waiting for admin resolution.
+### 3. Fix `useProjects.tsx` localStorage usage
+Wrap the `localStorage.getItem(LS_CURRENT_PROJECT)` call in a try-catch so it doesn't crash during SSR/iframe contexts.
 
-### 2. Change manifest to point to Landing page (`manifest.xml`)
-Change `SourceLocation` and `Taskpane.Url` from `/app?addin=1` to `/?addin=1`. This way:
-- Word loads the landing page directly (no redirect needed)
-- If user is already logged in, Landing auto-redirects to `/app?addin=1`
-- If not logged in, they see the login form immediately
-- Eliminates the redirect-inside-iframe problem
+### 4. Move ErrorBoundary above all providers (`App.tsx`)
+Move the `ErrorBoundary` to wrap the entire component tree including `AuthProvider` and `ProjectsProvider`, so any remaining crashes show an error message instead of white screen.
 
-### 3. Add console logging to bootstrap (`src/main.tsx`)
-Add `console.log` statements at each stage of the bootstrap process so we can diagnose any remaining issues from the console logs.
+### 5. Add `AppDomains` to manifest (`manifest.xml`)
+Add the Supabase auth domain and the app domain to `<AppDomains>` so Word Online trusts navigation to these origins within the iframe.
 
 ## Files
 
 | Action | File |
 |--------|------|
-| Modify | `src/hooks/useAuth.tsx` — fire-and-forget admin resolution |
-| Modify | `manifest.xml` — point to `/?addin=1` instead of `/app?addin=1` |
-| Modify | `src/main.tsx` — add diagnostic console logs |
+| Create | `src/lib/safeStorage.ts` — memory fallback for localStorage |
+| Modify | `src/main.tsx` — shim localStorage before app loads |
+| Modify | `src/hooks/useProjects.tsx` — wrap localStorage in try-catch |
+| Modify | `src/App.tsx` — move ErrorBoundary above providers |
+| Modify | `manifest.xml` — add AppDomains for trusted origins |
 
