@@ -1,59 +1,36 @@
 
-Goal: make Word Online footnote insertion wait for real document access instead of assuming any Office shell can insert.
 
-1. Separate “Office add-in” from “Word document ready”
-- In `src/hooks/useOffice.tsx`, keep `isOfficeAddin` for compact/add-in UI.
-- Add a second capability such as `canUseWordDocument` / `hasDocumentAccess`.
-- Compute it only from real insertion signals:
-  - `Office.context.document`
-  - or `Word.run`
-- Do not treat `Office.context.ui` alone as enough for insertion.
+# Fix: Word.run available but insertion silently failing
 
-2. Make Word readiness detection more robust
-- In `src/lib/wordInsertion.ts`, replace the current short readiness check with a dedicated wait that:
-  - waits for `Office.onReady`
-  - polls longer for `Office.context.document`
-  - also treats `Word.run` as a valid usable path even if `document` is late
-- Return clearer diagnostics so we can distinguish:
-  - Office loaded, no host
-  - host exists, document not ready yet
-  - Word APIs unavailable entirely
+## Problem
 
-3. Guard the UI until Word APIs are actually ready
-- In `src/components/BatchFootnoteBuilder.tsx` and `src/components/MessageBubble.tsx`:
-  - keep Word buttons visible in add-in mode
-  - but disable them until `hasDocumentAccess` is true
-  - show a small “connecting to Word…” hint instead of letting users hit the runtime error
-- This matches the current add-in UX while preventing false failures.
+The error state shows `hasWordRun: true` — meaning `Word.run` IS available and IS being attempted, but it's **failing silently**. The `tryWordRun` function catches all errors and returns `null`, then the diagnostic code falls through to an irrelevant "No Office host detected" message because `Office.context.host` happens to be falsy.
 
-4. Fix add-in routing to preserve the real path
-- In `src/App.tsx`, stop hardcoding `MemoryRouter` to `"/?addin=1"`.
-- Use the actual current path + search as the initial memory entry.
-- This avoids breaking add-in subroutes like `/auth-dialog?addin=1`, which can indirectly affect Office initialization/auth flows.
+The real issue is hidden: `Word.run` throws an error that gets swallowed. We need to surface it.
 
-5. Tighten insertion fallback behavior
-- Keep the existing insertion order, but make the fallback logic explicit:
-  - try `Word.run` first
-  - if unavailable, wait/retry once more
-  - only then use Common API insertion through `Office.context.document`
-- If neither path exists after the wait window, fail with a targeted message instead of the current generic one.
+## Changes
 
-Files to update
-- `src/hooks/useOffice.tsx`
-- `src/lib/wordInsertion.ts`
-- `src/components/BatchFootnoteBuilder.tsx`
-- `src/components/MessageBubble.tsx`
-- `src/App.tsx`
+### `src/lib/wordInsertion.ts`
 
-Technical notes
-- Root issue: the app currently knows it is “inside Office”, but insertion needs a narrower condition: document APIs must be ready.
-- `Office.context.ui` is enough for dialogs/host shell, but not enough for footnote insertion.
-- Word Online is slower/more timing-sensitive than desktop, so readiness must be treated as asynchronous capability detection, not a one-time boolean.
+1. **Capture the actual Word.run error** — In `tryWordRun`, store the caught error message instead of discarding it.
 
-QA to run after implementation
-- Regular web and mobile still open in normal web mode.
-- Word Online task pane loads without blank screen.
-- Login/auth dialog still works in add-in mode.
-- Single footnote insertion works.
-- “Insert all” works.
-- Buttons stay disabled until Word is truly ready, then become enabled.
+2. **Fix the diagnostic logic** — When `Word.run` exists but failed, report the actual failure reason instead of checking `Office.context.host` (which is irrelevant when Word.run is the available path).
+
+3. **Remove the misleading host check from the error path** — The current flow is:
+   - Word.run exists → try it → fails silently → falls to diagnostics
+   - Diagnostics: "No Office host detected" (wrong — Word.run WAS there)
+   
+   Fix: if Word.run was tried and failed, show "Word.run failed: [actual error]"
+
+4. **Add a longer retry with delay** — Word Online may need the document context to fully initialize. Add a 2-second wait before the retry (currently 1s), and attempt up to 3 times total.
+
+### Summary of logic change
+
+```
+Before: Word.run fails → error swallowed → "No Office host detected"
+After:  Word.run fails → error captured → retry with longer waits → 
+        if still fails → "Word.run failed: [actual error message]"
+```
+
+Only one file changes: `src/lib/wordInsertion.ts`
+
