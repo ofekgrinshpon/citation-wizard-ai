@@ -187,12 +187,12 @@ const Index = () => {
 
   // Require authentication — redirect unauthenticated users (preserve ?addin=1)
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       const params = new URLSearchParams(window.location.search);
       const addin = params.get("addin");
       navigate(addin ? `/?addin=${addin}` : "/", { replace: true });
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
   // Load project-specific state when project changes
   useEffect(() => {
