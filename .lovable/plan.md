@@ -1,35 +1,32 @@
 
 
-# Fix "הכנס ל-Word" Button — `insertFootnote` Not Available in Word Online
+# Add "Insert All to Word" Button in Batch Footnote Builder
 
-## Root Cause
+## What
 
-The `insertFootnote` API requires **WordApi requirement set 1.5**. Word Online has limited support for this API — it may not be implemented at all or may throw `RichApi.Error: NotImplemented`. The manifest doesn't declare any requirement sets, so Office loads the add-in but the API simply isn't available at runtime.
+Add an "Insert to Word" button in the batch footnote output section that inserts all generated footnotes into Word sequentially — each as a footnote (Desktop) or inline text (Word Online). The button only appears when running as an Office add-in.
 
-This is a known Microsoft limitation: footnote APIs work on Desktop Word but are **partially or fully unsupported in Word Online**.
+## How
 
-## Fix: Graceful Fallback
+### 1. Modify `src/components/BatchFootnoteBuilder.tsx`
 
-Since we can't guarantee `insertFootnote` works in Word Online, we need a two-tier approach:
+- Import `useOffice` and `insertCitationAsFootnote` 
+- Add an "Insert all to Word" button next to the existing "Copy All" button in the output section header (line ~437-444)
+- The button is only visible when `isOfficeAddin` is true
+- On click, iterate through all `outputCells` in order, calling `insertCitationAsFootnote` for each cell's output
+- Show a loading state while inserting, and a toast with the result count when done
+- Also add a per-cell insert button (next to the existing copy button, line ~472-477) for inserting individual footnotes
 
-1. **Try footnote first** — if `insertFootnote` succeeds (Desktop Word), use it
-2. **Fall back to inline text insertion** — if it fails (Word Online), insert the citation as formatted text at the cursor using `insertOoxml` directly on the selection range, which is supported in WordApi 1.1
+### 2. Insertion logic
 
-### 1. Update `insertCitationAsFootnote` (`src/lib/wordInsertion.ts`)
-
-- Wrap the `insertFootnote` call in a try-catch
-- On failure, fall back to `selection.insertOoxml(fullOoxml, "After")` which inserts the citation as inline text at the cursor position
-- Show a different success message so the user knows it was inserted inline vs. as a footnote
-
-### 2. Update the button handler (`src/components/MessageBubble.tsx`)
-
-- Change the success toast to reflect whether it was inserted as a footnote or inline text
-- The function will return a result indicating which method was used
+- Loop through output cells sequentially (not parallel — Word API requires sequential `Word.run` calls)
+- For each cell, call `insertCitationAsFootnote(cell.output)` 
+- Track how many succeeded as footnote vs inline
+- Show summary toast: "הוכנסו X הערות שוליים ל-Word"
 
 ## Files
 
 | Action | File |
 |--------|------|
-| Modify | `src/lib/wordInsertion.ts` — add fallback from footnote to inline OOXML insertion |
-| Modify | `src/components/MessageBubble.tsx` — update toast message based on insertion method |
+| Modify | `src/components/BatchFootnoteBuilder.tsx` — add bulk + per-cell Word insert buttons |
 
