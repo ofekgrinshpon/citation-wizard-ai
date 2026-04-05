@@ -512,14 +512,13 @@ ${sourcesText}
                   <button
                     onClick={async () => {
                       setInsertingCellId(cell.id);
-                      try {
-                        const method = await insertCitationAsFootnote(cell.output!);
-                        toast.success(method === "footnote" ? "הוכנס כהערת שוליים!" : "הוכנס כטקסט!");
-                      } catch (err: any) {
-                        toast.error("שגיאה: " + (err.message || "Unknown"));
-                      } finally {
-                        setInsertingCellId(null);
+                      const result = await insertCitationAsFootnote(cell.output!);
+                      if (result.mode === "manual-copy") {
+                        toast.info("הועתק ללוח — הדבק/י ב-Word ידנית (Ctrl+V)", { duration: 5000 });
+                      } else {
+                        toast.success(result.mode === "footnote" ? "הוכנס כהערת שוליים!" : "הוכנס כטקסט!");
                       }
+                      setInsertingCellId(null);
                     }}
                     disabled={insertingCellId === cell.id || !hasDocumentAccess}
                     className="text-[11px] text-secondary hover:bg-secondary/10 px-2 py-1 rounded transition-colors flex-shrink-0 disabled:opacity-50"
