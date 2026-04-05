@@ -158,8 +158,9 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
   const ooxml = citationToOoxml(text);
   const fullOoxml = wrapInOoxmlPackage(ooxml);
 
-  // --- Attempt 1: Word.run Rich API (Desktop) ---
-  if (Word?.run) {
+  // --- Attempt 1: Word.run Rich API (Desktop & Word Online) ---
+  const tryWordRun = async (): Promise<"footnote" | "inline" | null> => {
+    if (!Word?.run) return null;
     try {
       let method: "footnote" | "inline" = "footnote";
       await Word.run(async (context: any) => {
@@ -175,9 +176,22 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
         await context.sync();
       });
       return method;
-    } catch (richApiError: any) {
-      console.warn("Word Rich API failed, falling back to Common API:", richApiError?.message);
+    } catch (e: any) {
+      console.warn("[WordInsertion] Word.run attempt failed:", e?.message);
+      return null;
     }
+  };
+
+  // First try
+  let result = await tryWordRun();
+  if (result) return result;
+
+  // Retry after a brief wait (Word Online may need more time)
+  if (Word?.run) {
+    console.log("[WordInsertion] Retrying Word.run after 1s delay...");
+    await new Promise((r) => setTimeout(r, 1000));
+    result = await tryWordRun();
+    if (result) return result;
   }
 
   // --- Attempt 2: Office Common API with OOXML coercion ---
