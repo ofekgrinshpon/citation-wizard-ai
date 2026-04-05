@@ -51,9 +51,12 @@ function loadCells(projectId: string | undefined): FootnoteCell[] {
 
 export function BatchFootnoteBuilder({}: BatchProps) {
   const { currentProject } = useProjects();
+  const { isOfficeAddin } = useOffice();
   const projectId = currentProject?.id;
   const [cells, setCells] = useState<FootnoteCell[]>(() => loadCells(projectId));
   const [globalLoading, setGlobalLoading] = useState(false);
+  const [isInsertingAll, setIsInsertingAll] = useState(false);
+  const [insertingCellId, setInsertingCellId] = useState<number | null>(null);
   const [summary, setSummary] = useState<string | null>(() => localStorage.getItem(getSummaryKey(projectId)));
   const bibliography = useBibliography();
 
