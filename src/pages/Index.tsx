@@ -176,6 +176,7 @@ const Index = () => {
     newMessages: Message[];
   } | null>(null);
   const [citationRefreshKey, setCitationRefreshKey] = useState(0);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   
   
