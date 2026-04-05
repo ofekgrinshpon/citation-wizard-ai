@@ -5,6 +5,8 @@ import { FormattedCitation } from "./FormattedCitation";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
 import { useBibliography } from "@/hooks/useBibliography";
 import { useProjects } from "@/hooks/useProjects";
+import { useOffice } from "@/hooks/useOffice";
+import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import { toast } from "sonner";
 import { ensureVerifiedSources } from "@/lib/verifiedSources";
 
