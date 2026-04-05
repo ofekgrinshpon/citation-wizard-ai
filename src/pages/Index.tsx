@@ -184,14 +184,6 @@ const Index = () => {
   const navigate = useNavigate();
   const subscription = useSubscription();
 
-  // Show loading spinner while auth is hydrating (prevents white screen in Word add-in)
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="w-9 h-9 border-[3px] border-muted border-t-primary rounded-full animate-spin" />
-      </div>
-    );
-  }
   const { log: logActivity } = useActivityLog();
 
   // Require authentication — redirect unauthenticated users (preserve ?addin=1)
@@ -202,6 +194,15 @@ const Index = () => {
       navigate(addin ? `/?addin=${addin}` : "/", { replace: true });
     }
   }, [user, authLoading, navigate]);
+
+  // Show loading spinner while auth is hydrating (prevents white screen in Word add-in)
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <div className="w-9 h-9 border-[3px] border-muted border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   // Load project-specific state when project changes
   useEffect(() => {
