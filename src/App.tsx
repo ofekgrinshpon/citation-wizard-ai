@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, MemoryRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +18,17 @@ import AuthDialog from "./pages/AuthDialog.tsx";
 
 const queryClient = new QueryClient();
 
+function isOfficeAddin() {
+  try { return new URLSearchParams(window.location.search).get("addin") === "1"; }
+  catch { return false; }
+}
+
+const Router = isOfficeAddin()
+  ? ({ children }: { children: React.ReactNode }) => (
+      <MemoryRouter initialEntries={["/?addin=1"]}>{children}</MemoryRouter>
+    )
+  : BrowserRouter;
+
 function AuthRedirect() {
   const { user, isAdmin, loading } = useAuth();
   if (loading) return null;
@@ -35,7 +46,7 @@ const App = () => (
             <TooltipProvider>
               <Toaster />
               <Sonner />
-              <BrowserRouter>
+              <Router>
                 <Routes>
                   <Route path="/" element={<Landing />} />
                   <Route path="/app" element={<BibliographyProvider><Index /></BibliographyProvider>} />
@@ -47,7 +58,7 @@ const App = () => (
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </BrowserRouter>
+              </Router>
             </TooltipProvider>
           </OfficeProvider>
         </ProjectsProvider>
