@@ -1,32 +1,43 @@
 
 
-# Add "Insert All to Word" Button in Batch Footnote Builder
+# Fix: Word Add-in Buttons Missing + Copy Not Working
 
-## What
+## Problems Found
 
-Add an "Insert to Word" button in the batch footnote output section that inserts all generated footnotes into Word sequentially — each as a footnote (Desktop) or inline text (Word Online). The button only appears when running as an Office add-in.
+1. **"Insert to Word" buttons not showing**: The `useOffice` timeout fallback (line 53-56) sets `isReady=true` but does NOT set `isOfficeAddin=true`. If Office.onReady doesn't fire before the 5-second timeout, `isOfficeAddin` stays `false` and all Word-specific buttons are hidden. This is the most likely cause.
 
-## How
+2. **Copy button not working**: `navigator.clipboard.write()` and `navigator.clipboard.writeText()` are blocked in Word Online's cross-origin iframe due to Permissions Policy restrictions. Need a fallback using `document.execCommand('copy')` with a temporary textarea.
 
-### 1. Modify `src/components/BatchFootnoteBuilder.tsx`
+## Fix
 
-- Import `useOffice` and `insertCitationAsFootnote` 
-- Add an "Insert all to Word" button next to the existing "Copy All" button in the output section header (line ~437-444)
-- The button is only visible when `isOfficeAddin` is true
-- On click, iterate through all `outputCells` in order, calling `insertCitationAsFootnote` for each cell's output
-- Show a loading state while inserting, and a toast with the result count when done
-- Also add a per-cell insert button (next to the existing copy button, line ~472-477) for inserting individual footnotes
+### 1. Fix `useOffice` timeout fallback (`src/hooks/useOffice.tsx`)
 
-### 2. Insertion logic
+In the timeout fallback (line 53-56), also set `isOfficeAddin` to `true` when `addinRoute` is true. If we know we're on `?addin=1`, we should trust that even if Office.onReady never fires:
 
-- Loop through output cells sequentially (not parallel — Word API requires sequential `Word.run` calls)
-- For each cell, call `insertCitationAsFootnote(cell.output)` 
-- Track how many succeeded as footnote vs inline
-- Show summary toast: "הוכנסו X הערות שוליים ל-Word"
+```tsx
+const timeoutId = window.setTimeout(() => {
+  window.clearInterval(intervalId);
+  if (addinRoute) setIsOfficeAddin(true); // <-- add this
+  setIsReady(true);
+}, 5000);
+```
+
+### 2. Fix clipboard in Word Online iframe (`src/components/MessageBubble.tsx` + `src/components/BatchFootnoteBuilder.tsx`)
+
+Create a shared clipboard utility (`src/lib/clipboard.ts`) that:
+- Tries `navigator.clipboard.write()` first (rich text)
+- Falls back to `navigator.clipboard.writeText()` 
+- Falls back to `document.execCommand('copy')` with a temporary textarea
+- Returns success/failure
+
+Then use this utility in both `MessageBubble.copyContent()` and `BatchFootnoteBuilder.copyAll()`/`copySingle()`.
 
 ## Files
 
 | Action | File |
 |--------|------|
-| Modify | `src/components/BatchFootnoteBuilder.tsx` — add bulk + per-cell Word insert buttons |
+| Modify | `src/hooks/useOffice.tsx` — set `isOfficeAddin=true` in timeout fallback |
+| Create | `src/lib/clipboard.ts` — clipboard utility with execCommand fallback |
+| Modify | `src/components/MessageBubble.tsx` — use clipboard utility |
+| Modify | `src/components/BatchFootnoteBuilder.tsx` — use clipboard utility |
 
