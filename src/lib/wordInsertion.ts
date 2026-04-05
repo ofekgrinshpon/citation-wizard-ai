@@ -160,7 +160,9 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
   const ooxml = citationToOoxml(text);
   const fullOoxml = wrapInOoxmlPackage(ooxml);
 
-  // --- Attempt 1: Word.run Rich API (Desktop & Word Online) ---
+  // Track Word.run errors for diagnostics
+  let lastWordRunError: string | null = null;
+
   const tryWordRun = async (): Promise<"footnote" | "inline" | null> => {
     if (!Word?.run) return null;
     try {
@@ -179,24 +181,26 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
       });
       return method;
     } catch (e: any) {
-      console.warn("[WordInsertion] Word.run attempt failed:", e?.message);
+      lastWordRunError = e?.message || String(e);
+      console.warn("[WordInsertion] Word.run attempt failed:", lastWordRunError);
       return null;
     }
   };
 
-  // First try
-  let result = await tryWordRun();
-  if (result) return result;
-
-  // Retry after a brief wait (Word Online may need more time)
+  // Try Word.run up to 3 times with increasing delays
   if (Word?.run) {
-    console.log("[WordInsertion] Retrying Word.run after 1s delay...");
-    await new Promise((r) => setTimeout(r, 1000));
-    result = await tryWordRun();
-    if (result) return result;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      const result = await tryWordRun();
+      if (result) return result;
+      if (attempt < 3) {
+        const delay = attempt * 2000; // 2s, 4s
+        console.log(`[WordInsertion] Retry ${attempt}/3 after ${delay}ms...`);
+        await new Promise((r) => setTimeout(r, delay));
+      }
+    }
   }
 
-  // --- Attempt 2: Office Common API with OOXML coercion ---
+  // --- Fallback: Office Common API with OOXML coercion ---
   const doc = Office?.context?.document;
   if (doc?.setSelectedDataAsync || doc?.getSelectedDataAsync) {
     if (doc.setSelectedDataAsync) {
@@ -238,17 +242,22 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
     }
   }
 
-  // Build diagnostic message
-  const diagnostics: string[] = [];
-  if (!Office) diagnostics.push("Office.js not loaded");
-  else if (!Office.context?.host) diagnostics.push("No Office host detected");
-  else if (!Office.context?.document && !Word?.run) diagnostics.push("Word document APIs not ready — try again in a moment");
-  else diagnostics.push("Insertion APIs unavailable");
-
-  throw new Error(`Word API is not available: ${diagnostics.join("; ")}. State: ${JSON.stringify({
+  // Build diagnostic message — prioritize Word.run errors
+  const state = JSON.stringify({
     hasOffice: !!Office,
     hasHost: !!Office?.context?.host,
     hasDocument: !!Office?.context?.document,
     hasWordRun: !!Word?.run,
-  })}`);
+  });
+
+  if (Word?.run && lastWordRunError) {
+    throw new Error(`Word.run failed after 3 attempts: ${lastWordRunError}. State: ${state}`);
+  }
+
+  const diagnostics: string[] = [];
+  if (!Office) diagnostics.push("Office.js not loaded");
+  else if (!Office.context?.document && !Word?.run) diagnostics.push("Word document APIs not ready — try again in a moment");
+  else diagnostics.push("Insertion APIs unavailable");
+
+  throw new Error(`Word API is not available: ${diagnostics.join("; ")}. State: ${state}`);
 }
