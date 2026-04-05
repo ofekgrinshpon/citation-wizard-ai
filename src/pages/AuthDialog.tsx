@@ -53,7 +53,7 @@ export default function AuthDialog() {
           setStatus("success");
         } else {
           // Not inside Office dialog — redirect to app
-          window.location.href = "/app";
+          window.location.href = isOfficeAddinRoute() ? "/app?addin=1" : "/app";
         }
       }
     });
