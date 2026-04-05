@@ -34,7 +34,7 @@ function isOfficeAddinRoute() {
 }
 
 function hasOfficeHost(win: OfficeWindow) {
-  return Boolean(win.Office?.context?.host || win.Office?.context?.ui || win.Office?.onReady);
+  return Boolean(win.Office?.context?.host || win.Office?.context?.ui);
 }
 
 function detectAddin(win: OfficeWindow) {
@@ -56,7 +56,8 @@ export function OfficeProvider({ children }: { children: ReactNode }) {
     }
 
     const handleOfficeReady = (info: OfficeReadyInfo) => {
-      setIsOfficeAddin(Boolean(info?.host) || detectAddin(win));
+      if (info?.host) setIsOfficeAddin(true);
+      else if (detectAddin(win)) setIsOfficeAddin(true);
       setIsReady(true);
     };
 

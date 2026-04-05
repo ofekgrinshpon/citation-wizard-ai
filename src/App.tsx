@@ -28,11 +28,10 @@ function isOfficeAddin() {
           host?: string;
           ui?: unknown;
         };
-        onReady?: unknown;
       };
     };
 
-    return Boolean(win.Office?.context?.host || win.Office?.context?.ui || win.Office?.onReady);
+    return Boolean(win.Office?.context?.host || win.Office?.context?.ui);
   }
   catch { return false; }
 }
