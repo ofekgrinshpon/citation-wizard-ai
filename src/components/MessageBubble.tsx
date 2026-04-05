@@ -3,6 +3,7 @@ import { AlertTriangle } from "lucide-react";
 import { FormattedCitation } from "./FormattedCitation";
 import { PartyNameCheck } from "./PartyNameCheck";
 import { toast } from "sonner";
+import { copyRichText } from "@/lib/clipboard";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { RULE_EXPLANATIONS } from "@/data/ruleTooltips";
 import { SourceTypeConfirmation } from "./SourceTypeConfirmation";
@@ -102,19 +103,8 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
       .replace(/\*\*/g, "")
       .replace(/##/g, "");
 
-    try {
-      const htmlBlob = new Blob([`<div dir="rtl" style="font-family: 'David', 'Times New Roman', serif;">${htmlContent}</div>`], { type: "text/html" });
-      const textBlob = new Blob([plainContent], { type: "text/plain" });
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          "text/html": htmlBlob,
-          "text/plain": textBlob,
-        }),
-      ]);
-    } catch {
-      // Fallback for browsers that don't support ClipboardItem
-      await navigator.clipboard.writeText(plainContent);
-    }
+    const richHtml = `<div dir="rtl" style="font-family: 'David', 'Times New Roman', serif;">${htmlContent}</div>`;
+    await copyRichText(richHtml, plainContent);
     toast.success("הועתק ללוח!");
   };
 
