@@ -178,6 +178,9 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
     } catch (e: any) {
       lastWordRunError = e?.message || String(e);
       console.warn("[WordInsertion] Word.run attempt failed:", lastWordRunError);
+      if (lastWordRunError?.includes("executeRichApiRequestAsync")) {
+        return "bridge_missing" as any;
+      }
       return null;
     }
   };
