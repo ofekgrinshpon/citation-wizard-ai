@@ -1,24 +1,37 @@
 
 
-# Fix: Office.context.document still undefined after Office.onReady
+# Fix: Mobile browser incorrectly detected as Office Add-in
 
 ## Problem
 
-The static Office.js script tag is already in place and `Office.onReady` fires successfully, but `Office.context.document` remains undefined. This is a known Word Online timing issue where the document context is populated **after** `onReady` resolves.
+The Office.js CDN script (`office.js`) is loaded statically in `index.html` for **all** visitors. On mobile browsers, `window.Office.onReady` becomes truthy after the script loads, causing both `isOfficeAddin()` (in `App.tsx`) and `hasOfficeHost()` (in `useOffice.tsx`) to return `true`. This triggers MemoryRouter, compact mode, and Word-specific UI on regular mobile browsers.
 
-## Solution — Two changes in `src/lib/wordInsertion.ts`
+## Solution
 
-### 1. Poll for `Office.context.document` after onReady
+Only treat the app as an Office Add-in when there is a **real Office host** — not just because the Office.js library loaded. The `Office.onReady` callback receives an `info` object with a `host` property (e.g., `"Word"`). Outside a real Office host, `info.host` is `null`/`undefined`.
 
-The current `ensureOfficeReady` waits for `onReady` but doesn't verify the document context is actually populated. Add a polling loop (up to 5 seconds, checking every 200ms) that waits for `Office.context.document` to become available after `onReady` resolves.
+### 1. `src/App.tsx` — Fix `isOfficeAddin()` detection
 
-### 2. Try `Word.run` even when `Office.context.document` is missing
+Change the check from `Boolean(win.Office?.onReady)` to only trust explicit signals:
+- `?addin=1` query parameter (set by the manifest)
+- `Office.context.host` being a non-empty string
 
-In Word Online, `Word.run` (the Rich API) creates its own execution context and may work even when `Office.context.document` is undefined. The current code already tries `Word.run` first, but the `Word` global might not be checked correctly. Add a more aggressive retry: if the initial `Word.run` attempt fails and `Office.context.document` is still null, wait briefly and retry `Word.run` once more.
+Remove `win.Office?.onReady` from the detection logic since it's always truthy when the script is loaded.
 
-## File
+### 2. `src/hooks/useOffice.tsx` — Fix `hasOfficeHost()` detection
+
+Same change: remove `win.Office?.onReady` from `hasOfficeHost()`. Only check `Office.context.host` and `Office.context.ui`.
+
+Additionally, in the `onReady` callback handler, only set `isOfficeAddin(true)` when `info.host` is truthy — not just because `onReady` fired.
+
+### 3. `src/main.tsx` — Guard the Office.onReady path
+
+The bootstrap function currently assumes if `Office.onReady` exists, it should wait for it. Add a timeout-first approach: render immediately but let `onReady` also trigger render. This is already partially in place but the `onReady` check itself (`win.Office?.onReady`) will always be true. No functional change needed here since the timeout fallback already handles it.
+
+## Files
 
 | File | Change |
 |------|--------|
-| `src/lib/wordInsertion.ts` | Enhance `ensureOfficeReady` with document polling; add `Word.run` retry logic |
+| `src/App.tsx` | Remove `win.Office?.onReady` from `isOfficeAddin()`, only check `context.host` or `context.ui` |
+| `src/hooks/useOffice.tsx` | Remove `win.Office?.onReady` from `hasOfficeHost()`; only set addin=true in `onReady` callback when `info.host` is truthy |
 
