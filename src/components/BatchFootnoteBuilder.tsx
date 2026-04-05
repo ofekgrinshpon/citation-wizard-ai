@@ -446,25 +446,24 @@ ${sourcesText}
                   <button
                     onClick={async () => {
                       setIsInsertingAll(true);
-                      let count = 0;
-                      const errors: string[] = [];
+                      let inserted = 0;
+                      let copied = 0;
                       for (const cell of outputCells) {
                         if (cell.output) {
-                          try {
-                            await insertCitationAsFootnote(cell.output);
-                            count++;
-                          } catch (err: any) {
-                            console.error(`Failed to insert footnote ${cell.id}:`, err);
-                            errors.push(`הערה ${cell.id}: ${err.message || "Unknown"}`);
+                          const result = await insertCitationAsFootnote(cell.output);
+                          if (result.mode === "manual-copy") {
+                            copied++;
+                          } else {
+                            inserted++;
                           }
                         }
                       }
                       setIsInsertingAll(false);
-                      if (count > 0) {
-                        toast.success(`הוכנסו ${count} הערות שוליים ל-Word`);
+                      if (inserted > 0) {
+                        toast.success(`הוכנסו ${inserted} הערות שוליים ל-Word`);
                       }
-                      if (errors.length > 0) {
-                        toast.error(`${errors.length} הערות נכשלו: ${errors[0]}`);
+                      if (copied > 0) {
+                        toast.info(`${copied} הערות הועתקו ללוח — הדבק/י ב-Word ידנית (Ctrl+V)`, { duration: 6000 });
                       }
                     }}
                     disabled={isInsertingAll || !hasDocumentAccess}
@@ -513,14 +512,13 @@ ${sourcesText}
                   <button
                     onClick={async () => {
                       setInsertingCellId(cell.id);
-                      try {
-                        const method = await insertCitationAsFootnote(cell.output!);
-                        toast.success(method === "footnote" ? "הוכנס כהערת שוליים!" : "הוכנס כטקסט!");
-                      } catch (err: any) {
-                        toast.error("שגיאה: " + (err.message || "Unknown"));
-                      } finally {
-                        setInsertingCellId(null);
+                      const result = await insertCitationAsFootnote(cell.output!);
+                      if (result.mode === "manual-copy") {
+                        toast.info("הועתק ללוח — הדבק/י ב-Word ידנית (Ctrl+V)", { duration: 5000 });
+                      } else {
+                        toast.success(result.mode === "footnote" ? "הוכנס כהערת שוליים!" : "הוכנס כטקסט!");
                       }
+                      setInsertingCellId(null);
                     }}
                     disabled={insertingCellId === cell.id || !hasDocumentAccess}
                     className="text-[11px] text-secondary hover:bg-secondary/10 px-2 py-1 rounded transition-colors flex-shrink-0 disabled:opacity-50"

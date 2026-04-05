@@ -1,8 +1,15 @@
 /**
  * Word insertion utilities for the Office Add-in.
  * Uses OOXML for reliable RTL/Hebrew formatting in footnotes.
- * Supports both Word Desktop (Word.run Rich API) and Word Online (Common API fallback).
+ * Supports Word Desktop (Rich API), Word Online (Common API), and manual-copy fallback.
  */
+
+import { copyPlainText } from "@/lib/clipboard";
+
+export type InsertionResult = {
+  mode: "footnote" | "inline" | "manual-copy";
+  text?: string;
+};
 
 /** Strip citation metadata lines, keeping only the citation text */
 function extractCitationText(fullContent: string): string {
@@ -82,182 +89,164 @@ function wrapInOoxmlPackage(innerOoxml: string): string {
 }
 
 /** Get plain text from citation (strip formatting markers) */
-function getPlainText(rawText: string): string {
+export function getPlainCitationText(rawText: string): string {
   return extractCitationText(rawText)
     .replace(/\*\*/g, "")
     .replace(/##/g, "");
 }
 
-/** Wait for Office.js to be fully ready, including document context (with extended timeout for Word Online) */
-async function ensureOfficeReady(): Promise<void> {
+/** Snapshot of available Office capabilities */
+interface HostCapabilities {
+  hasOffice: boolean;
+  hasDocument: boolean;
+  hasSetSelectedData: boolean;
+  hasWordRun: boolean;
+  bridgeConnected: boolean;
+}
+
+/** Detect what Office APIs are actually usable right now */
+async function detectCapabilities(): Promise<HostCapabilities> {
   const win = window as any;
   const Office = win.Office;
-  if (!Office) {
-    console.warn("[WordInsertion] Office global not found");
-    return;
-  }
+  const Word = win.Word;
 
-  // If document context already available, we're good
-  if (Office.context?.document) {
-    return;
-  }
+  const caps: HostCapabilities = {
+    hasOffice: !!Office,
+    hasDocument: !!Office?.context?.document,
+    hasSetSelectedData: !!Office?.context?.document?.setSelectedDataAsync,
+    hasWordRun: !!Word?.run,
+    bridgeConnected: false,
+  };
 
-  // Wait for onReady first
-  if (Office.onReady) {
-    await Promise.race([
-      new Promise<void>((resolve) => {
-        Office.onReady(() => resolve());
-      }),
-      new Promise<void>((resolve) => setTimeout(resolve, 3000)),
-    ]);
-  }
-
-  // Poll for Office.context.document as primary readiness signal
-  if (!Office.context?.document) {
-    console.log("[WordInsertion] document not yet available, polling (up to 10s)...");
-    await new Promise<void>((resolve) => {
-      let elapsed = 0;
-      const interval = setInterval(() => {
-        elapsed += 500;
-        if (Office.context?.document || elapsed >= 10000) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, 500);
-    });
-  }
-
-  // If document still not available, try active Word.run probe as last check
-  if (!Office.context?.document && win.Word?.run) {
-    console.log("[WordInsertion] Trying active Word.run probe...");
+  // Active probe: actually try Word.run to see if the bridge works
+  if (caps.hasWordRun) {
     try {
-      await (win.Word.run as any)(async (ctx: any) => { await ctx.sync(); });
-      console.log("[WordInsertion] Word.run probe succeeded");
+      await Word.run(async (ctx: any) => { await ctx.sync(); });
+      caps.bridgeConnected = true;
     } catch {
-      console.log("[WordInsertion] Word.run probe failed — proceeding anyway");
+      // Bridge not connected (e.g. executeRichApiRequestAsync missing)
     }
+  }
+
+  console.log("[WordInsertion] Capabilities:", caps);
+  return caps;
+}
+
+/** Short wait for Office.js to settle (non-blocking) */
+async function waitForOfficeInit(): Promise<void> {
+  const win = window as any;
+  const Office = win.Office;
+  if (!Office?.onReady) return;
+
+  await Promise.race([
+    new Promise<void>((resolve) => { Office.onReady(() => resolve()); }),
+    new Promise<void>((resolve) => setTimeout(resolve, 3000)),
+  ]);
+}
+
+/** Strategy A: Rich API footnote insertion via Word.run */
+async function tryRichApi(fullOoxml: string): Promise<InsertionResult | null> {
+  const win = window as any;
+  const Word = win.Word;
+  if (!Word?.run) return null;
+
+  try {
+    let method: "footnote" | "inline" = "footnote";
+    await Word.run(async (context: any) => {
+      const selection = context.document.getSelection();
+      try {
+        const footnote = selection.insertFootnote("");
+        const body = footnote.body;
+        body.insertOoxml(fullOoxml, "Replace");
+      } catch {
+        method = "inline";
+        selection.insertOoxml(fullOoxml, "After");
+      }
+      await context.sync();
+    });
+    return { mode: method };
+  } catch (e: any) {
+    const msg = e?.message || String(e);
+    if (msg.includes("executeRichApiRequestAsync")) {
+      console.warn("[WordInsertion] Rich API bridge not connected");
+      return null; // Don't retry — bridge won't appear
+    }
+    console.warn("[WordInsertion] Rich API failed:", msg);
+    return null;
+  }
+}
+
+/** Strategy B: Common API insertion via setSelectedDataAsync */
+async function tryCommonApi(fullOoxml: string, plainText: string): Promise<InsertionResult | null> {
+  const win = window as any;
+  const Office = win.Office;
+  const doc = Office?.context?.document;
+  if (!doc?.setSelectedDataAsync) return null;
+
+  // Try OOXML first
+  try {
+    await new Promise<void>((resolve, reject) => {
+      doc.setSelectedDataAsync(
+        fullOoxml,
+        { coercionType: Office.CoercionType.Ooxml },
+        (result: any) => {
+          if (result.status === Office.AsyncResultStatus.Succeeded) resolve();
+          else reject(new Error(result.error?.message || "OOXML failed"));
+        }
+      );
+    });
+    return { mode: "inline" };
+  } catch {
+    console.warn("[WordInsertion] OOXML coercion failed, trying plain text");
+  }
+
+  // Try plain text
+  try {
+    await new Promise<void>((resolve, reject) => {
+      doc.setSelectedDataAsync(
+        plainText,
+        { coercionType: Office.CoercionType.Text },
+        (result: any) => {
+          if (result.status === Office.AsyncResultStatus.Succeeded) resolve();
+          else reject(new Error(result.error?.message || "Text failed"));
+        }
+      );
+    });
+    return { mode: "inline" };
+  } catch (e: any) {
+    console.warn("[WordInsertion] Plain text also failed:", e?.message);
+    return null;
   }
 }
 
 /** Insert citation at the current cursor position in Word.
- *  Tries Word.run Rich API first (Desktop); falls back to Office Common API (Word Online). */
-export async function insertCitationAsFootnote(text: string): Promise<"footnote" | "inline"> {
-  await ensureOfficeReady();
+ *  Returns the insertion mode used, including "manual-copy" as a last resort. */
+export async function insertCitationAsFootnote(text: string): Promise<InsertionResult> {
+  await waitForOfficeInit();
 
-  const win = window as any;
-  const Word = win.Word;
-  const Office = win.Office;
-
-  console.log("[WordInsertion] APIs available:", {
-    hasWord: !!Word,
-    hasWordRun: !!Word?.run,
-    hasOffice: !!Office,
-    hasContext: !!Office?.context,
-    hasDocument: !!Office?.context?.document,
-    hasSetSelectedData: !!Office?.context?.document?.setSelectedDataAsync,
-  });
-
+  const caps = await detectCapabilities();
   const ooxml = citationToOoxml(text);
   const fullOoxml = wrapInOoxmlPackage(ooxml);
+  const plainText = getPlainCitationText(text);
 
-  // Track Word.run errors for diagnostics
-  let lastWordRunError: string | null = null;
-
-  const tryWordRun = async (): Promise<"footnote" | "inline" | null> => {
-    if (!Word?.run) return null;
-    try {
-      let method: "footnote" | "inline" = "footnote";
-      await Word.run(async (context: any) => {
-        const selection = context.document.getSelection();
-        try {
-          const footnote = selection.insertFootnote("");
-          const body = footnote.body;
-          body.insertOoxml(fullOoxml, "Replace");
-        } catch {
-          method = "inline";
-          selection.insertOoxml(fullOoxml, "After");
-        }
-        await context.sync();
-      });
-      return method;
-    } catch (e: any) {
-      lastWordRunError = e?.message || String(e);
-      console.warn("[WordInsertion] Word.run attempt failed:", lastWordRunError);
-      if (lastWordRunError?.includes("executeRichApiRequestAsync")) {
-        return "bridge_missing" as any;
-      }
-      return null;
-    }
-  };
-
-  // Try Word.run up to 3 times with increasing delays
-  if (Word?.run) {
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      const result = await tryWordRun();
-      if (result === ("bridge_missing" as any)) {
-        console.warn("[WordInsertion] Rich API bridge not connected, skipping to Common API fallback");
-        break;
-      }
-      if (result) return result;
-      if (attempt < 3) {
-        const delay = attempt * 2000;
-        console.log(`[WordInsertion] Retry ${attempt}/3 after ${delay}ms...`);
-        await new Promise((r) => setTimeout(r, delay));
-      }
-    }
+  // Strategy A: Rich API (only if bridge is actually connected)
+  if (caps.bridgeConnected) {
+    const result = await tryRichApi(fullOoxml);
+    if (result) return result;
   }
 
-  // --- Fallback: Office Common API with OOXML coercion ---
-  // Try aggressively even if doc appears unavailable — Word Online may wire it up late
-  const doc = Office?.context?.document;
-  if (doc?.setSelectedDataAsync) {
-    try {
-      await new Promise<void>((resolve, reject) => {
-        doc.setSelectedDataAsync(
-          fullOoxml,
-          { coercionType: Office.CoercionType.Ooxml },
-          (result: any) => {
-            if (result.status === Office.AsyncResultStatus.Succeeded) {
-              resolve();
-            } else {
-              reject(new Error(result.error?.message || "OOXML insertion failed"));
-            }
-          }
-        );
-      });
-      return "inline";
-    } catch {
-      console.warn("[WordInsertion] OOXML coercion failed, falling back to plain text");
-    }
-
-    // Try plain text fallback
-    try {
-      const plainText = getPlainText(text);
-      await new Promise<void>((resolve, reject) => {
-        doc.setSelectedDataAsync(
-          plainText,
-          { coercionType: Office.CoercionType.Text },
-          (result: any) => {
-            if (result.status === Office.AsyncResultStatus.Succeeded) {
-              resolve();
-            } else {
-              reject(new Error(result.error?.message || "Text insertion failed"));
-            }
-          }
-        );
-      });
-      return "inline";
-    } catch (e: any) {
-      console.warn("[WordInsertion] Plain text fallback also failed:", e?.message);
-    }
+  // Strategy B: Common API
+  if (caps.hasSetSelectedData) {
+    const result = await tryCommonApi(fullOoxml, plainText);
+    if (result) return result;
   }
 
-  // All paths exhausted — provide actionable error
-  if (!Office) {
-    throw new Error("לא ניתן להתחבר ל-Word — נסה לרענן את התוסף");
+  // Strategy C: Manual copy fallback
+  console.log("[WordInsertion] No working API found — falling back to clipboard copy");
+  try {
+    await copyPlainText(plainText);
+  } catch {
+    // Clipboard may also fail in restricted iframe — text is still returned
   }
-  if (!Office.context?.document) {
-    throw new Error("Word עדיין נטען — אנא המתן מספר שניות ונסה שוב");
-  }
-  throw new Error("לא ניתן להכניס טקסט ל-Word — נסה לרענן את התוסף");
+  return { mode: "manual-copy", text: plainText };
 }
