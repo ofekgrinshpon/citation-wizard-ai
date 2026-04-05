@@ -27,6 +27,12 @@
 
   <Permissions>ReadWriteDocument</Permissions>
 
+  <AppDomains>
+    <AppDomain>https://citation-wizard-ai.lovable.app</AppDomain>
+    <AppDomain>https://ioktiqcffungtlsmlkcv.supabase.co</AppDomain>
+    <AppDomain>https://accounts.google.com</AppDomain>
+  </AppDomains>
+
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
     <Hosts>
       <Host xsi:type="Document">

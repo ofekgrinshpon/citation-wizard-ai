@@ -77,7 +77,7 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
 
   const setCurrentProjectId = (id: string) => {
     setCurrentProjectIdRaw(id);
-    localStorage.setItem(LS_CURRENT_PROJECT, id);
+    try { localStorage.setItem(LS_CURRENT_PROJECT, id); } catch {}
   };
 
   const createProject = async (name: string): Promise<Project | null> => {

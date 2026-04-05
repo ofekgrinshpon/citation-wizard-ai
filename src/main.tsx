@@ -1,3 +1,7 @@
+// Shim localStorage BEFORE any other imports (Supabase reads it immediately)
+import { shimLocalStorageIfNeeded } from "./lib/safeStorage";
+shimLocalStorageIfNeeded();
+
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
