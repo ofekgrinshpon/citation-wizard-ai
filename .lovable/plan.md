@@ -1,44 +1,51 @@
 
 
-# Fix Word Add-in White Screen — Root Cause Found
+# Fix Word Add-in: `o.replaceState is not a function`
 
-## The Real Problem
+## Root Cause
 
-The Supabase client is configured with `auth: { storage: localStorage }` (auto-generated, line 13 of `client.ts`). The `useProjects` hook also calls `localStorage.getItem()` during initialization. 
+**`BrowserRouter` uses `history.pushState` / `history.replaceState` under the hood.** Word Online loads the add-in in a cross-origin iframe where these browser History API methods are restricted or unavailable. The minified error `o.replaceState is not an option` is React Router crashing because it cannot call `history.replaceState`.
 
-**Word Online loads the add-in in a cross-origin iframe.** Most browsers block `localStorage` access in third-party iframes (ITP, third-party cookie blocking). When `localStorage` is accessed, it throws a `SecurityError` that crashes React before any UI renders — hence the white screen.
+The `ErrorBoundary` catches this and shows "משהו השתבש" — which is exactly what the user sees after the spinner.
 
-The `ErrorBoundary` in `App.tsx` cannot catch this because the crash happens inside providers (`ProjectsProvider`, `AuthProvider`) that sit at the same level or above it.
+## Fix
 
-## Plan
+Replace `BrowserRouter` with `MemoryRouter` when running inside the Word add-in (`?addin=1`). `MemoryRouter` keeps all routing state in memory without touching the browser History API, which is exactly what's needed in a restricted iframe.
 
-### 1. Add a safe storage wrapper (`src/lib/safeStorage.ts`)
-Create a `SafeStorage` class implementing the `Storage` interface that:
-- Tries to use `localStorage` 
-- If it throws (iframe restriction), falls back to an in-memory `Map`
-- Export a singleton instance
+### 1. Switch to `MemoryRouter` for add-in mode (`src/App.tsx`)
 
-### 2. Override Supabase auth storage (`src/App.tsx`)
-Since we cannot edit `client.ts` (auto-generated), we wrap the Supabase client initialization by calling `supabase.auth.setSession` with the safe storage approach. Actually, the better approach: **create a wrapper** in `main.tsx` that patches `window.localStorage` with the safe fallback before any imports run — or use a custom storage adapter.
+Detect `?addin=1` before rendering. If true, use `MemoryRouter` (with `initialEntries={["/?addin=1"]}`). Otherwise, use `BrowserRouter` as normal.
 
-**Better approach**: Shim `localStorage` at the very top of `main.tsx` (before any imports) so all code that uses `localStorage` works transparently. If `localStorage` is blocked, replace it with an in-memory polyfill.
+```tsx
+import { BrowserRouter, MemoryRouter, Route, Routes, Navigate } from "react-router-dom";
 
-### 3. Fix `useProjects.tsx` localStorage usage
-Wrap the `localStorage.getItem(LS_CURRENT_PROJECT)` call in a try-catch so it doesn't crash during SSR/iframe contexts.
+function isOfficeAddin() {
+  try { return new URLSearchParams(window.location.search).get("addin") === "1"; }
+  catch { return false; }
+}
 
-### 4. Move ErrorBoundary above all providers (`App.tsx`)
-Move the `ErrorBoundary` to wrap the entire component tree including `AuthProvider` and `ProjectsProvider`, so any remaining crashes show an error message instead of white screen.
+const Router = isOfficeAddin()
+  ? ({ children }: { children: React.ReactNode }) => (
+      <MemoryRouter initialEntries={["/?addin=1"]}>{children}</MemoryRouter>
+    )
+  : BrowserRouter;
+```
 
-### 5. Add `AppDomains` to manifest (`manifest.xml`)
-Add the Supabase auth domain and the app domain to `<AppDomains>` so Word Online trusts navigation to these origins within the iframe.
+Then replace `<BrowserRouter>` with `<Router>` in the JSX.
+
+### 2. Preserve `addin=1` context in `MemoryRouter` (`src/hooks/useOffice.tsx`)
+
+Since `MemoryRouter` doesn't update the real URL, `useOffice` should also check the initial `window.location.search` (already does this). No change needed here.
+
+### 3. Fix navigation in Landing page (`src/pages/Landing.tsx`)
+
+The `<Navigate to="/app?addin=1">` works fine with `MemoryRouter` — React Router parses the query string from the `to` prop. No change needed.
 
 ## Files
 
 | Action | File |
 |--------|------|
-| Create | `src/lib/safeStorage.ts` — memory fallback for localStorage |
-| Modify | `src/main.tsx` — shim localStorage before app loads |
-| Modify | `src/hooks/useProjects.tsx` — wrap localStorage in try-catch |
-| Modify | `src/App.tsx` — move ErrorBoundary above providers |
-| Modify | `manifest.xml` — add AppDomains for trusted origins |
+| Modify | `src/App.tsx` — use `MemoryRouter` when `?addin=1` |
+
+This is a single-file fix. The `MemoryRouter` avoids all History API calls, eliminating the crash entirely.
 
