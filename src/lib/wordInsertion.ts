@@ -96,12 +96,46 @@ function getPlainText(rawText: string): string {
     .replace(/##/g, "");
 }
 
+/** Wait for Office.js to be fully ready (with timeout) */
+async function ensureOfficeReady(): Promise<void> {
+  const win = window as any;
+  const Office = win.Office;
+  if (!Office) {
+    console.warn("[WordInsertion] Office global not found");
+    return;
+  }
+  if (Office.context?.document) {
+    // Already ready
+    return;
+  }
+  if (Office.onReady) {
+    await Promise.race([
+      new Promise<void>((resolve) => {
+        Office.onReady(() => resolve());
+      }),
+      new Promise<void>((resolve) => setTimeout(resolve, 3000)),
+    ]);
+  }
+}
+
 /** Insert citation at the current cursor position in Word.
  *  Tries Word.run Rich API first (Desktop); falls back to Office Common API (Word Online). */
 export async function insertCitationAsFootnote(text: string): Promise<"footnote" | "inline"> {
+  // Wait for Office to be fully initialized
+  await ensureOfficeReady();
+
   const win = window as any;
   const Word = win.Word;
   const Office = win.Office;
+
+  console.log("[WordInsertion] APIs available:", {
+    hasWord: !!Word,
+    hasWordRun: !!Word?.run,
+    hasOffice: !!Office,
+    hasContext: !!Office?.context,
+    hasDocument: !!Office?.context?.document,
+    hasSetSelectedData: !!Office?.context?.document?.setSelectedDataAsync,
+  });
 
   const ooxml = citationToOoxml(text);
   const fullOoxml = wrapInOoxmlPackage(ooxml);
@@ -124,51 +158,56 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
       });
       return method;
     } catch (richApiError: any) {
-      // Rich API not available (Word Online) — fall through to Common API
       console.warn("Word Rich API failed, falling back to Common API:", richApiError?.message);
     }
   }
 
   // --- Attempt 2: Office Common API with OOXML coercion ---
-  if (Office?.context?.document?.setSelectedDataAsync) {
+  const doc = Office?.context?.document;
+  if (doc?.setSelectedDataAsync || doc?.getSelectedDataAsync) {
     // Try OOXML first
-    try {
+    if (doc.setSelectedDataAsync) {
+      try {
+        await new Promise<void>((resolve, reject) => {
+          doc.setSelectedDataAsync(
+            fullOoxml,
+            { coercionType: Office.CoercionType.Ooxml },
+            (result: any) => {
+              if (result.status === Office.AsyncResultStatus.Succeeded) {
+                resolve();
+              } else {
+                reject(new Error(result.error?.message || "OOXML insertion failed"));
+              }
+            }
+          );
+        });
+        return "inline";
+      } catch {
+        console.warn("OOXML coercion failed, falling back to plain text");
+      }
+
+      // Try plain text fallback
+      const plainText = getPlainText(text);
       await new Promise<void>((resolve, reject) => {
-        Office.context.document.setSelectedDataAsync(
-          fullOoxml,
-          { coercionType: Office.CoercionType.Ooxml },
+        doc.setSelectedDataAsync(
+          plainText,
+          { coercionType: Office.CoercionType.Text },
           (result: any) => {
             if (result.status === Office.AsyncResultStatus.Succeeded) {
               resolve();
             } else {
-              reject(new Error(result.error?.message || "OOXML insertion failed"));
+              reject(new Error(result.error?.message || "Text insertion failed"));
             }
           }
         );
       });
       return "inline";
-    } catch {
-      // OOXML coercion not supported — try plain text
-      console.warn("OOXML coercion failed, falling back to plain text");
     }
-
-    // Try plain text fallback
-    const plainText = getPlainText(text);
-    await new Promise<void>((resolve, reject) => {
-      Office.context.document.setSelectedDataAsync(
-        plainText,
-        { coercionType: Office.CoercionType.Text },
-        (result: any) => {
-          if (result.status === Office.AsyncResultStatus.Succeeded) {
-            resolve();
-          } else {
-            reject(new Error(result.error?.message || "Text insertion failed"));
-          }
-        }
-      );
-    });
-    return "inline";
   }
 
-  throw new Error("Word API is not available");
+  throw new Error("Word API is not available. Office state: " + JSON.stringify({
+    hasOffice: !!Office,
+    hasContext: !!Office?.context,
+    hasDocument: !!Office?.context?.document,
+  }));
 }
