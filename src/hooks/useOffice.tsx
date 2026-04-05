@@ -137,6 +137,11 @@ export function OfficeProvider({ children }: { children: ReactNode }) {
       if (detectAddin(win)) setIsOfficeAddin(true);
       updateDocAccess();
       setIsReady(true);
+      // Force-unblock UI in add-in mode so insertion function's own error handling takes over
+      if (detectAddin(win)) {
+        console.log("[Office] Timeout reached in addin mode — force-enabling hasDocumentAccess");
+        setHasDocumentAccess(true);
+      }
     }, 15000);
 
     return () => {

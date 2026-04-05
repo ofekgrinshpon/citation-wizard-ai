@@ -112,8 +112,7 @@ async function ensureOfficeReady(): Promise<void> {
     ]);
   }
 
-  // Don't trust Word.run existence alone — the bridge may not be connected yet.
-  // Poll for Office.context.document only as a readiness signal.
+  // Poll for Office.context.document as primary readiness signal
   if (!Office.context?.document) {
     console.log("[WordInsertion] document not yet available, polling (up to 10s)...");
     await new Promise<void>((resolve) => {
@@ -122,15 +121,21 @@ async function ensureOfficeReady(): Promise<void> {
         elapsed += 500;
         if (Office.context?.document || elapsed >= 10000) {
           clearInterval(interval);
-          console.log("[WordInsertion] poll result:", {
-            hasDocument: !!Office.context?.document,
-            hasWordRun: !!win.Word?.run,
-            elapsed,
-          });
           resolve();
         }
       }, 500);
     });
+  }
+
+  // If document still not available, try active Word.run probe as last check
+  if (!Office.context?.document && win.Word?.run) {
+    console.log("[WordInsertion] Trying active Word.run probe...");
+    try {
+      await (win.Word.run as any)(async (ctx: any) => { await ctx.sync(); });
+      console.log("[WordInsertion] Word.run probe succeeded");
+    } catch {
+      console.log("[WordInsertion] Word.run probe failed — proceeding anyway");
+    }
   }
 }
 
@@ -203,29 +208,30 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
   }
 
   // --- Fallback: Office Common API with OOXML coercion ---
+  // Try aggressively even if doc appears unavailable — Word Online may wire it up late
   const doc = Office?.context?.document;
-  if (doc?.setSelectedDataAsync || doc?.getSelectedDataAsync) {
-    if (doc.setSelectedDataAsync) {
-      try {
-        await new Promise<void>((resolve, reject) => {
-          doc.setSelectedDataAsync(
-            fullOoxml,
-            { coercionType: Office.CoercionType.Ooxml },
-            (result: any) => {
-              if (result.status === Office.AsyncResultStatus.Succeeded) {
-                resolve();
-              } else {
-                reject(new Error(result.error?.message || "OOXML insertion failed"));
-              }
+  if (doc?.setSelectedDataAsync) {
+    try {
+      await new Promise<void>((resolve, reject) => {
+        doc.setSelectedDataAsync(
+          fullOoxml,
+          { coercionType: Office.CoercionType.Ooxml },
+          (result: any) => {
+            if (result.status === Office.AsyncResultStatus.Succeeded) {
+              resolve();
+            } else {
+              reject(new Error(result.error?.message || "OOXML insertion failed"));
             }
-          );
-        });
-        return "inline";
-      } catch {
-        console.warn("OOXML coercion failed, falling back to plain text");
-      }
+          }
+        );
+      });
+      return "inline";
+    } catch {
+      console.warn("[WordInsertion] OOXML coercion failed, falling back to plain text");
+    }
 
-      // Try plain text fallback
+    // Try plain text fallback
+    try {
       const plainText = getPlainText(text);
       await new Promise<void>((resolve, reject) => {
         doc.setSelectedDataAsync(
@@ -241,25 +247,17 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
         );
       });
       return "inline";
+    } catch (e: any) {
+      console.warn("[WordInsertion] Plain text fallback also failed:", e?.message);
     }
   }
 
-  // Build diagnostic message — prioritize Word.run errors
-  const state = JSON.stringify({
-    hasOffice: !!Office,
-    hasHost: !!Office?.context?.host,
-    hasDocument: !!Office?.context?.document,
-    hasWordRun: !!Word?.run,
-  });
-
-  if (Word?.run && lastWordRunError) {
-    throw new Error(`Word.run failed after 3 attempts: ${lastWordRunError}. State: ${state}`);
+  // All paths exhausted — provide actionable error
+  if (!Office) {
+    throw new Error("לא ניתן להתחבר ל-Word — נסה לרענן את התוסף");
   }
-
-  const diagnostics: string[] = [];
-  if (!Office) diagnostics.push("Office.js not loaded");
-  else if (!Office.context?.document) diagnostics.push("Word document is still loading — please wait a moment and try again");
-  else diagnostics.push("Insertion APIs unavailable");
-
-  throw new Error(`Word API is not available: ${diagnostics.join("; ")}. State: ${state}`);
+  if (!Office.context?.document) {
+    throw new Error("Word עדיין נטען — אנא המתן מספר שניות ונסה שוב");
+  }
+  throw new Error("לא ניתן להכניס טקסט ל-Word — נסה לרענן את התוסף");
 }
