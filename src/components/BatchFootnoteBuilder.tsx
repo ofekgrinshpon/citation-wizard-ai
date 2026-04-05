@@ -440,12 +440,36 @@ ${sourcesText}
               📄 הערות שוליים
             </h4>
             {hasAnyOutput && (
-              <button
-                onClick={copyAll}
-                className="text-xs bg-primary/15 text-primary hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
-              >
-                📋 העתק הכל
-              </button>
+              <div className="flex items-center gap-2">
+                {isOfficeAddin && (
+                  <button
+                    onClick={async () => {
+                      setIsInsertingAll(true);
+                      let count = 0;
+                      for (const cell of outputCells) {
+                        if (cell.output) {
+                          try {
+                            await insertCitationAsFootnote(cell.output);
+                            count++;
+                          } catch {}
+                        }
+                      }
+                      setIsInsertingAll(false);
+                      toast.success(`הוכנסו ${count} הערות שוליים ל-Word`);
+                    }}
+                    disabled={isInsertingAll}
+                    className="text-xs bg-secondary/10 text-secondary hover:bg-secondary/20 border border-secondary/30 px-3 py-1.5 rounded-lg transition-colors font-medium disabled:opacity-50"
+                  >
+                    {isInsertingAll ? "⏳ מכניס..." : "📝 הכנס הכל ל-Word"}
+                  </button>
+                )}
+                <button
+                  onClick={copyAll}
+                  className="text-xs bg-primary/15 text-primary hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
+                >
+                  📋 העתק הכל
+                </button>
+              </div>
             )}
           </div>
 
