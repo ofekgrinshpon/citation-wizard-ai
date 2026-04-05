@@ -5,6 +5,21 @@ interface OfficeContextType {
   isReady: boolean;
 }
 
+type OfficeReadyInfo = {
+  host?: string;
+  platform?: string;
+};
+
+type OfficeWindow = Window & {
+  Office?: {
+    context?: {
+      host?: string;
+      ui?: unknown;
+    };
+    onReady?: (callback: (info: OfficeReadyInfo) => void) => void;
+  };
+};
+
 const OfficeContext = createContext<OfficeContextType>({
   isOfficeAddin: false,
   isReady: false,
@@ -14,45 +29,56 @@ function isOfficeAddinRoute() {
   return new URLSearchParams(window.location.search).get("addin") === "1";
 }
 
+function hasOfficeHost(win: OfficeWindow) {
+  return Boolean(win.Office?.context?.host || win.Office?.context?.ui || win.Office?.onReady);
+}
+
 export function OfficeProvider({ children }: { children: ReactNode }) {
-  const [isOfficeAddin, setIsOfficeAddin] = useState(isOfficeAddinRoute());
-  const [isReady, setIsReady] = useState(!isOfficeAddinRoute());
+  const initialIsOfficeAddin = isOfficeAddinRoute() || hasOfficeHost(window as OfficeWindow);
+  const [isOfficeAddin, setIsOfficeAddin] = useState(initialIsOfficeAddin);
+  const [isReady, setIsReady] = useState(!initialIsOfficeAddin);
 
   useEffect(() => {
-    const win = window as Window & {
-      Office?: {
-        onReady?: (callback: (info: { host?: string; platform?: string }) => void) => void;
-      };
-    };
+    const win = window as OfficeWindow;
 
     const addinRoute = isOfficeAddinRoute();
-
-    if (!addinRoute) {
+    const activateAddinMode = () => {
+      setIsOfficeAddin(true);
       setIsReady(true);
-      return;
+    };
+
+    const handleOfficeReady = (info: OfficeReadyInfo) => {
+      setIsOfficeAddin(Boolean(info?.host) || hasOfficeHost(win) || addinRoute);
+      setIsReady(true);
+    };
+
+    if (hasOfficeHost(win)) {
+      setIsOfficeAddin(true);
+    }
+
+    if (!addinRoute && !hasOfficeHost(win)) {
+      setIsReady(true);
     }
 
     if (win.Office?.onReady) {
-      win.Office.onReady((info) => {
-        setIsOfficeAddin(Boolean(info?.host) || addinRoute);
-        setIsReady(true);
-      });
+      win.Office.onReady(handleOfficeReady);
       return;
     }
 
     const intervalId = window.setInterval(() => {
+      if (hasOfficeHost(win) && !win.Office?.onReady) {
+        activateAddinMode();
+      }
+
       if (win.Office?.onReady) {
         window.clearInterval(intervalId);
-        win.Office.onReady((info) => {
-          setIsOfficeAddin(Boolean(info?.host) || addinRoute);
-          setIsReady(true);
-        });
+        win.Office.onReady(handleOfficeReady);
       }
     }, 100);
 
     const timeoutId = window.setTimeout(() => {
       window.clearInterval(intervalId);
-      if (addinRoute) setIsOfficeAddin(true);
+      if (addinRoute || hasOfficeHost(win)) setIsOfficeAddin(true);
       setIsReady(true);
     }, 5000);
 
