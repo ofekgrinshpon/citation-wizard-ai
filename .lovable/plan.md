@@ -1,106 +1,36 @@
 
-## Goal
 
-Make the "Insert to Word" actions appear reliably in both:
-- "טקסט חופשי"
-- "הערות שוליים"
+# Fix Word Insertion + Remove Unwanted Button
 
-without affecting the regular web app.
+## Problems
 
-## What is actually going wrong
+1. **"הכנס ל-Word" button in טקסט חופשי** — user doesn't want it there. Remove it from `MessageBubble.tsx`.
 
-There are two separate issues in the current code:
+2. **Word Online insertion fails** — the error `OSF.DDA.RichAPI.RichApi.ExecuteRichApi.RequestAsync is not a function` means Word Online doesn't support the `Word.run` Rich API. The current code uses `Word.run` which only works on Word Desktop. For Word Online, we need to use the Office Common API: `Office.context.document.setSelectedDataAsync()`.
 
-1. `useOffice` can still stay `false` forever  
-   In `src/hooks/useOffice.tsx`, if `window.Office?.onReady` exists, the effect returns immediately after registering the callback. If `onReady` does not complete as expected, and the URL no longer has `?addin=1`, `isOfficeAddin` can remain `false`, so all Word buttons stay hidden.
+3. **"0 footnotes inserted"** — because every `insertCitationAsFootnote` call throws (due to the above), the `catch {}` silently swallows it, so `count` stays 0.
 
-2. Some Word buttons are hidden behind hover-only UI  
-   In:
-   - `src/components/MessageBubble.tsx`
-   - `src/components/BatchFootnoteBuilder.tsx`
+## Plan
 
-   the per-item actions use `opacity-0 group-hover:opacity-100`. In the narrow Word task pane this makes the actions easy to miss, and on some environments hover is unreliable.
+### 1. Remove "Insert to Word" from MessageBubble (`src/components/MessageBubble.tsx`)
+- Delete the Word insert button (lines 271-290) from the free text chat section
+- Keep only the copy button
 
-There is also a smaller routing issue:
-- `AuthRedirect` and `AuthDialog` still have redirects that can drop the add-in query/context.
+### 2. Fix `insertCitationAsFootnote` for Word Online (`src/lib/wordInsertion.ts`)
+- Try `Word.run` first (Desktop)
+- If `Word` global doesn't exist or throws, fall back to `Office.context.document.setSelectedDataAsync()` with `Office.CoercionType.Ooxml`
+- If OOXML coercion isn't supported, fall back to `Office.CoercionType.Text` with plain text
+- This ensures it works in both Desktop and Word Online
 
-## Implementation plan
+### 3. Fix bulk insert error handling (`src/components/BatchFootnoteBuilder.tsx`)
+- Log errors in the catch block instead of silently swallowing
+- Show a toast if all insertions fail
 
-### 1. Make Office add-in detection robust
-Update `src/hooks/useOffice.tsx` so it does not depend on a single signal.
-
-Plan:
-- Create one shared detection rule for:
-  - `?addin=1`
-  - `window.Office`
-  - `window.Office.context.host`
-  - `window.Office.context.ui`
-  - `window.Office.onReady`
-- Do not `return` early just because `Office.onReady` exists.
-- Keep a timeout fallback active even when `onReady` is present.
-- If Office runtime is present by timeout time, set `isOfficeAddin = true`.
-
-This fixes the case where Office.js loads but `onReady` does not complete cleanly.
-
-### 2. Preserve add-in routing everywhere
-Update redirects so Word context is not lost.
-
-Files:
-- `src/App.tsx`
-- `src/pages/AuthDialog.tsx`
-
-Plan:
-- Make `AuthRedirect` preserve `?addin=1` when present.
-- Make `AuthDialog` fallback redirects preserve `?addin=1` too.
-
-This prevents the app from silently falling back into “regular web app” mode.
-
-### 3. Make Word actions always visible inside the add-in
-Update both UI sections so Word actions are visible without hover when `isOfficeAddin` is true.
-
-Files:
-- `src/components/MessageBubble.tsx`
-- `src/components/BatchFootnoteBuilder.tsx`
-
-Plan:
-- In free text results, keep the action row visible in add-in mode instead of hover-only.
-- In footnotes, show per-footnote insert buttons visibly in add-in mode.
-- Keep the current cleaner hover behavior for the normal browser app.
-
-## Technical details
-
-```text
-Current failure path:
-Office.js exists
-→ onReady handler registered
-→ effect returns early
-→ URL/query may already be missing
-→ isOfficeAddin never flips true
-→ Insert buttons never render
-```
-
-```text
-Target behavior:
-Word add-in runtime detected by any valid signal
-→ add-in mode stays true
-→ query/context preserved through redirects
-→ Insert buttons render visibly in Word UI
-```
-
-## Files to update
+## Files
 
 | Action | File |
-|---|---|
-| Modify | `src/hooks/useOffice.tsx` |
-| Modify | `src/App.tsx` |
-| Modify | `src/pages/AuthDialog.tsx` |
-| Modify | `src/components/MessageBubble.tsx` |
-| Modify | `src/components/BatchFootnoteBuilder.tsx` |
+|--------|------|
+| Modify | `src/components/MessageBubble.tsx` — remove Word insert button |
+| Modify | `src/lib/wordInsertion.ts` — add Office Common API fallback |
+| Modify | `src/components/BatchFootnoteBuilder.tsx` — improve error handling in bulk insert |
 
-## Expected result
-
-After this change:
-- "Insert to Word" appears again in free text results
-- "Insert to Word" appears in the footnotes section
-- the regular web app remains unchanged
-- add-in mode is no longer fragile when auth or routing occurs
