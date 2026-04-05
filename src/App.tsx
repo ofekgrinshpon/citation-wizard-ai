@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ProjectsProvider } from "@/hooks/useProjects";
 import { BibliographyProvider } from "@/hooks/useBibliography";
 import { OfficeProvider } from "@/hooks/useOffice";
@@ -34,17 +35,19 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Landing />} />
-                <Route path="/app" element={<BibliographyProvider><Index /></BibliographyProvider>} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/auth-redirect" element={<AuthRedirect />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/auth-dialog" element={<AuthDialog />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <ErrorBoundary>
+                <Routes>
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/app" element={<BibliographyProvider><Index /></BibliographyProvider>} />
+                  <Route path="/admin" element={<Admin />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/auth-redirect" element={<AuthRedirect />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/auth-dialog" element={<AuthDialog />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </ErrorBoundary>
             </BrowserRouter>
           </TooltipProvider>
         </OfficeProvider>

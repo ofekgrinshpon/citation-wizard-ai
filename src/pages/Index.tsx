@@ -176,6 +176,7 @@ const Index = () => {
     newMessages: Message[];
   } | null>(null);
   const [citationRefreshKey, setCitationRefreshKey] = useState(0);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   
   
@@ -183,6 +184,7 @@ const Index = () => {
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const subscription = useSubscription();
+
   const { log: logActivity } = useActivityLog();
 
   // Require authentication — redirect unauthenticated users (preserve ?addin=1)
@@ -222,6 +224,15 @@ const Index = () => {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  // Show loading spinner while auth is hydrating (prevents white screen in Word add-in)
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <div className="w-9 h-9 border-[3px] border-muted border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   const callAPI = async (userMessage: string, history: Message[]) => {
     const { data, error } = await supabase.functions.invoke("citation-chat", {
@@ -740,7 +751,7 @@ const Index = () => {
     { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
   ];
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  
 
   return (
     <div className={`flex flex-col h-screen font-sans bg-background text-foreground ${isOfficeAddin ? "compact-mode" : ""}`}>
