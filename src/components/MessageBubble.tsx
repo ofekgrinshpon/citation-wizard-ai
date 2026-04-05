@@ -260,7 +260,7 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
               </div>
             )}
 
-            <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className={`absolute top-2 left-2 flex gap-1 transition-opacity ${isOfficeAddin ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}>
               <button
                 onClick={copyContent}
                 className="text-xs bg-surface hover:bg-surface-hover border border-border rounded-md px-2 py-1 text-muted-foreground hover:text-foreground"

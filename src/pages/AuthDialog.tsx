@@ -8,8 +8,15 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
+function isOfficeAddinRoute() {
+  try {
+    return new URLSearchParams(window.location.search).get("addin") === "1";
+  } catch {
+    return false;
+  }
+}
+
 function getRedirectUrl() {
-  // Always use current origin; preserve ?addin=1 so Office.js loads on callback
   const params = new URLSearchParams(window.location.search);
   const addin = params.get("addin");
   const base = `${window.location.origin}/auth-dialog`;
@@ -46,7 +53,7 @@ export default function AuthDialog() {
           setStatus("success");
         } else {
           // Not inside Office dialog — redirect to app
-          window.location.href = "/app";
+          window.location.href = isOfficeAddinRoute() ? "/app?addin=1" : "/app";
         }
       }
     });
@@ -74,7 +81,7 @@ export default function AuthDialog() {
           if (sent) {
             setStatus("success");
           } else {
-            window.location.href = "/app";
+            window.location.href = isOfficeAddinRoute() ? "/app?addin=1" : "/app";
           }
           return;
         }

@@ -26,48 +26,50 @@ const OfficeContext = createContext<OfficeContextType>({
 });
 
 function isOfficeAddinRoute() {
-  return new URLSearchParams(window.location.search).get("addin") === "1";
+  try {
+    return new URLSearchParams(window.location.search).get("addin") === "1";
+  } catch {
+    return false;
+  }
 }
 
 function hasOfficeHost(win: OfficeWindow) {
   return Boolean(win.Office?.context?.host || win.Office?.context?.ui || win.Office?.onReady);
 }
 
+function detectAddin(win: OfficeWindow) {
+  return isOfficeAddinRoute() || hasOfficeHost(win);
+}
+
 export function OfficeProvider({ children }: { children: ReactNode }) {
-  const initialIsOfficeAddin = isOfficeAddinRoute() || hasOfficeHost(window as OfficeWindow);
+  const win = window as OfficeWindow;
+  const initialIsOfficeAddin = detectAddin(win);
   const [isOfficeAddin, setIsOfficeAddin] = useState(initialIsOfficeAddin);
   const [isReady, setIsReady] = useState(!initialIsOfficeAddin);
 
   useEffect(() => {
     const win = window as OfficeWindow;
 
-    const addinRoute = isOfficeAddinRoute();
-    const activateAddinMode = () => {
+    // If we already know we're in an addin, set it immediately
+    if (detectAddin(win)) {
       setIsOfficeAddin(true);
-      setIsReady(true);
-    };
+    }
 
     const handleOfficeReady = (info: OfficeReadyInfo) => {
-      setIsOfficeAddin(Boolean(info?.host) || hasOfficeHost(win) || addinRoute);
+      setIsOfficeAddin(Boolean(info?.host) || detectAddin(win));
       setIsReady(true);
     };
 
-    if (hasOfficeHost(win)) {
-      setIsOfficeAddin(true);
-    }
-
-    if (!addinRoute && !hasOfficeHost(win)) {
-      setIsReady(true);
-    }
-
+    // Try to call onReady if available, but do NOT return early —
+    // keep the interval + timeout as fallback
     if (win.Office?.onReady) {
       win.Office.onReady(handleOfficeReady);
-      return;
     }
 
+    // Poll for Office.js appearing later
     const intervalId = window.setInterval(() => {
-      if (hasOfficeHost(win) && !win.Office?.onReady) {
-        activateAddinMode();
+      if (detectAddin(win)) {
+        setIsOfficeAddin(true);
       }
 
       if (win.Office?.onReady) {
@@ -76,9 +78,10 @@ export function OfficeProvider({ children }: { children: ReactNode }) {
       }
     }, 100);
 
+    // Timeout fallback — after 5s, force ready and trust whatever signals we have
     const timeoutId = window.setTimeout(() => {
       window.clearInterval(intervalId);
-      if (addinRoute || hasOfficeHost(win)) setIsOfficeAddin(true);
+      if (detectAddin(win)) setIsOfficeAddin(true);
       setIsReady(true);
     }, 5000);
 

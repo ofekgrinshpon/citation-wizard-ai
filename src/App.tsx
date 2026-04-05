@@ -46,9 +46,11 @@ const Router = isOfficeAddin()
 function AuthRedirect() {
   const { user, isAdmin, loading } = useAuth();
   if (loading) return null;
-  if (!user) return <Navigate to="/" replace />;
-  if (isAdmin) return <Navigate to="/admin" replace />;
-  return <Navigate to="/app" replace />;
+  // Preserve ?addin=1 across redirects so Word add-in mode is not lost
+  const addinSuffix = new URLSearchParams(window.location.search).get("addin") === "1" ? "?addin=1" : "";
+  if (!user) return <Navigate to={`/${addinSuffix ? addinSuffix : ""}`} replace />;
+  if (isAdmin) return <Navigate to={`/admin${addinSuffix}`} replace />;
+  return <Navigate to={`/app${addinSuffix}`} replace />;
 }
 
 const App = () => (

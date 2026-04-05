@@ -513,7 +513,7 @@ ${sourcesText}
                       }
                     }}
                     disabled={insertingCellId === cell.id}
-                    className="text-[11px] text-secondary hover:bg-secondary/10 px-2 py-1 rounded transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0 disabled:opacity-50"
+                    className="text-[11px] text-secondary hover:bg-secondary/10 px-2 py-1 rounded transition-colors flex-shrink-0 disabled:opacity-50"
                   >
                     {insertingCellId === cell.id ? "⏳" : "📝"}
                   </button>
