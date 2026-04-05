@@ -52,7 +52,7 @@ function loadCells(projectId: string | undefined): FootnoteCell[] {
 
 export function BatchFootnoteBuilder({}: BatchProps) {
   const { currentProject } = useProjects();
-  const { isOfficeAddin } = useOffice();
+  const { isOfficeAddin, hasDocumentAccess } = useOffice();
   const projectId = currentProject?.id;
   const [cells, setCells] = useState<FootnoteCell[]>(() => loadCells(projectId));
   const [globalLoading, setGlobalLoading] = useState(false);
@@ -467,10 +467,11 @@ ${sourcesText}
                         toast.error(`${errors.length} הערות נכשלו: ${errors[0]}`);
                       }
                     }}
-                    disabled={isInsertingAll}
+                    disabled={isInsertingAll || !hasDocumentAccess}
                     className="text-xs bg-secondary/10 text-secondary hover:bg-secondary/20 border border-secondary/30 px-3 py-1.5 rounded-lg transition-colors font-medium disabled:opacity-50"
+                    title={!hasDocumentAccess ? "ממתין לחיבור ל-Word..." : ""}
                   >
-                    {isInsertingAll ? "⏳ מכניס..." : "📝 הכנס הכל ל-Word"}
+                    {isInsertingAll ? "⏳ מכניס..." : !hasDocumentAccess ? "⏳ מתחבר ל-Word..." : "📝 הכנס הכל ל-Word"}
                   </button>
                 )}
                 <button
@@ -521,10 +522,11 @@ ${sourcesText}
                         setInsertingCellId(null);
                       }
                     }}
-                    disabled={insertingCellId === cell.id}
+                    disabled={insertingCellId === cell.id || !hasDocumentAccess}
                     className="text-[11px] text-secondary hover:bg-secondary/10 px-2 py-1 rounded transition-colors flex-shrink-0 disabled:opacity-50"
+                    title={!hasDocumentAccess ? "ממתין לחיבור ל-Word..." : "הכנס ל-Word"}
                   >
-                    {insertingCellId === cell.id ? "⏳" : "📝"}
+                    {insertingCellId === cell.id ? "⏳" : !hasDocumentAccess ? "⏳" : "📝"}
                   </button>
                 )}
                 <button
