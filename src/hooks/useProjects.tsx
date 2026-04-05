@@ -42,7 +42,7 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
     if (!user) {
       setProjects([]);
       setCurrentProjectIdRaw(null);
-      localStorage.removeItem(LS_CURRENT_PROJECT);
+      try { localStorage.removeItem(LS_CURRENT_PROJECT); } catch {}
       setLoading(false);
       return;
     }
