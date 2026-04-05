@@ -24,14 +24,11 @@ function extractCitationText(fullContent: string): string {
 export function citationToOoxml(rawText: string): string {
   const text = extractCitationText(rawText);
 
-  // Tokenize the text into segments with formatting
   const segments: { text: string; bold: boolean; italic: boolean }[] = [];
 
-  // First pass: handle **bold** markers
   const boldParts = text.split(/\*\*/);
   boldParts.forEach((part, i) => {
     const isBold = i % 2 === 1;
-    // Second pass within each part: handle ##italic## markers
     const italicParts = part.split(/##/);
     italicParts.forEach((subPart, j) => {
       const isItalic = j % 2 === 1;
@@ -41,13 +38,11 @@ export function citationToOoxml(rawText: string): string {
     });
   });
 
-  // Build OOXML runs
   const runs = segments
     .map((seg) => {
       const rPr: string[] = [];
       if (seg.bold) rPr.push("<w:b/>");
       if (seg.italic) rPr.push("<w:i/>");
-      // Always set RTL and Hebrew font
       rPr.push('<w:rtl/>');
       rPr.push('<w:rFonts w:cs="David" w:hint="cs"/>');
       rPr.push('<w:sz w:val="20"/>');
@@ -62,10 +57,7 @@ export function citationToOoxml(rawText: string): string {
     })
     .join("");
 
-  // Wrap in a BiDi paragraph
-  const ooxml = `<w:p><w:pPr><w:bidi/><w:jc w:val="right"/></w:pPr>${runs}</w:p>`;
-
-  return ooxml;
+  return `<w:p><w:pPr><w:bidi/><w:jc w:val="right"/></w:pPr>${runs}</w:p>`;
 }
 
 /** Build a full OOXML package string from inner paragraph OOXML */
@@ -96,7 +88,7 @@ function getPlainText(rawText: string): string {
     .replace(/##/g, "");
 }
 
-/** Wait for Office.js to be fully ready, including document context (with timeout) */
+/** Wait for Office.js to be fully ready, including document context (with extended timeout for Word Online) */
 async function ensureOfficeReady(): Promise<void> {
   const win = window as any;
   const Office = win.Office;
@@ -104,9 +96,12 @@ async function ensureOfficeReady(): Promise<void> {
     console.warn("[WordInsertion] Office global not found");
     return;
   }
+
+  // If document context already available, we're good
   if (Office.context?.document) {
     return;
   }
+
   // Wait for onReady first
   if (Office.onReady) {
     await Promise.race([
@@ -116,22 +111,30 @@ async function ensureOfficeReady(): Promise<void> {
       new Promise<void>((resolve) => setTimeout(resolve, 3000)),
     ]);
   }
-  // Poll for Office.context.document (Word Online populates it after onReady)
-  if (!Office.context?.document) {
-    console.log("[WordInsertion] document not yet available, polling...");
+
+  // Check if Word.run is available even without Office.context.document
+  if (win.Word?.run) {
+    console.log("[WordInsertion] Word.run available, proceeding");
+    return;
+  }
+
+  // Poll for Office.context.document OR Word.run (Word Online can be very slow)
+  if (!Office.context?.document && !win.Word?.run) {
+    console.log("[WordInsertion] document not yet available, polling (up to 10s)...");
     await new Promise<void>((resolve) => {
       let elapsed = 0;
       const interval = setInterval(() => {
-        elapsed += 200;
-        if (Office.context?.document || elapsed >= 5000) {
+        elapsed += 300;
+        if (Office.context?.document || win.Word?.run || elapsed >= 10000) {
           clearInterval(interval);
           console.log("[WordInsertion] poll result:", {
             hasDocument: !!Office.context?.document,
+            hasWordRun: !!win.Word?.run,
             elapsed,
           });
           resolve();
         }
-      }, 200);
+      }, 300);
     });
   }
 }
@@ -139,7 +142,6 @@ async function ensureOfficeReady(): Promise<void> {
 /** Insert citation at the current cursor position in Word.
  *  Tries Word.run Rich API first (Desktop); falls back to Office Common API (Word Online). */
 export async function insertCitationAsFootnote(text: string): Promise<"footnote" | "inline"> {
-  // Wait for Office to be fully initialized
   await ensureOfficeReady();
 
   const win = window as any;
@@ -197,7 +199,6 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
   // --- Attempt 2: Office Common API with OOXML coercion ---
   const doc = Office?.context?.document;
   if (doc?.setSelectedDataAsync || doc?.getSelectedDataAsync) {
-    // Try OOXML first
     if (doc.setSelectedDataAsync) {
       try {
         await new Promise<void>((resolve, reject) => {
@@ -237,9 +238,17 @@ export async function insertCitationAsFootnote(text: string): Promise<"footnote"
     }
   }
 
-  throw new Error("Word API is not available. Office state: " + JSON.stringify({
+  // Build diagnostic message
+  const diagnostics: string[] = [];
+  if (!Office) diagnostics.push("Office.js not loaded");
+  else if (!Office.context?.host) diagnostics.push("No Office host detected");
+  else if (!Office.context?.document && !Word?.run) diagnostics.push("Word document APIs not ready — try again in a moment");
+  else diagnostics.push("Insertion APIs unavailable");
+
+  throw new Error(`Word API is not available: ${diagnostics.join("; ")}. State: ${JSON.stringify({
     hasOffice: !!Office,
-    hasContext: !!Office?.context,
+    hasHost: !!Office?.context?.host,
     hasDocument: !!Office?.context?.document,
-  }));
+    hasWordRun: !!Word?.run,
+  })}`);
 }

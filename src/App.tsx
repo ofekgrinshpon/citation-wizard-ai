@@ -37,9 +37,10 @@ function isOfficeAddin() {
 }
 
 const Router = isOfficeAddin()
-  ? ({ children }: { children: React.ReactNode }) => (
-      <MemoryRouter initialEntries={["/?addin=1"]}>{children}</MemoryRouter>
-    )
+  ? ({ children }: { children: React.ReactNode }) => {
+      const initialPath = window.location.pathname + window.location.search;
+      return <MemoryRouter initialEntries={[initialPath]}>{children}</MemoryRouter>;
+    }
   : BrowserRouter;
 
 function AuthRedirect() {

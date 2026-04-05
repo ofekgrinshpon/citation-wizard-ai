@@ -33,7 +33,7 @@ interface MessageBubbleProps {
 
 export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent }: MessageBubbleProps) {
   const isUser = msg.role === "user";
-  const { isOfficeAddin } = useOffice();
+  const { isOfficeAddin, hasDocumentAccess } = useOffice();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(msg.content);
   const [showPartyCheck, setShowPartyCheck] = useState(false);
