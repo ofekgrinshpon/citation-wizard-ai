@@ -5,6 +5,8 @@ import { FormattedCitation } from "./FormattedCitation";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
 import { useBibliography } from "@/hooks/useBibliography";
 import { useProjects } from "@/hooks/useProjects";
+import { useOffice } from "@/hooks/useOffice";
+import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import { toast } from "sonner";
 import { ensureVerifiedSources } from "@/lib/verifiedSources";
 
@@ -49,9 +51,12 @@ function loadCells(projectId: string | undefined): FootnoteCell[] {
 
 export function BatchFootnoteBuilder({}: BatchProps) {
   const { currentProject } = useProjects();
+  const { isOfficeAddin } = useOffice();
   const projectId = currentProject?.id;
   const [cells, setCells] = useState<FootnoteCell[]>(() => loadCells(projectId));
   const [globalLoading, setGlobalLoading] = useState(false);
+  const [isInsertingAll, setIsInsertingAll] = useState(false);
+  const [insertingCellId, setInsertingCellId] = useState<number | null>(null);
   const [summary, setSummary] = useState<string | null>(() => localStorage.getItem(getSummaryKey(projectId)));
   const bibliography = useBibliography();
 
@@ -435,12 +440,36 @@ ${sourcesText}
               📄 הערות שוליים
             </h4>
             {hasAnyOutput && (
-              <button
-                onClick={copyAll}
-                className="text-xs bg-primary/15 text-primary hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
-              >
-                📋 העתק הכל
-              </button>
+              <div className="flex items-center gap-2">
+                {isOfficeAddin && (
+                  <button
+                    onClick={async () => {
+                      setIsInsertingAll(true);
+                      let count = 0;
+                      for (const cell of outputCells) {
+                        if (cell.output) {
+                          try {
+                            await insertCitationAsFootnote(cell.output);
+                            count++;
+                          } catch {}
+                        }
+                      }
+                      setIsInsertingAll(false);
+                      toast.success(`הוכנסו ${count} הערות שוליים ל-Word`);
+                    }}
+                    disabled={isInsertingAll}
+                    className="text-xs bg-secondary/10 text-secondary hover:bg-secondary/20 border border-secondary/30 px-3 py-1.5 rounded-lg transition-colors font-medium disabled:opacity-50"
+                  >
+                    {isInsertingAll ? "⏳ מכניס..." : "📝 הכנס הכל ל-Word"}
+                  </button>
+                )}
+                <button
+                  onClick={copyAll}
+                  className="text-xs bg-primary/15 text-primary hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
+                >
+                  📋 העתק הכל
+                </button>
+              </div>
             )}
           </div>
 
@@ -469,6 +498,25 @@ ${sourcesText}
                 <div className="flex-1 text-foreground text-sm leading-relaxed">
                   <FormattedCitation text={cell.output!} enableTooltips />
                 </div>
+                {isOfficeAddin && (
+                  <button
+                    onClick={async () => {
+                      setInsertingCellId(cell.id);
+                      try {
+                        const method = await insertCitationAsFootnote(cell.output!);
+                        toast.success(method === "footnote" ? "הוכנס כהערת שוליים!" : "הוכנס כטקסט!");
+                      } catch (err: any) {
+                        toast.error("שגיאה: " + (err.message || "Unknown"));
+                      } finally {
+                        setInsertingCellId(null);
+                      }
+                    }}
+                    disabled={insertingCellId === cell.id}
+                    className="text-[11px] text-secondary hover:bg-secondary/10 px-2 py-1 rounded transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0 disabled:opacity-50"
+                  >
+                    {insertingCellId === cell.id ? "⏳" : "📝"}
+                  </button>
+                )}
                 <button
                   onClick={() => copySingle(cell)}
                   className="text-[11px] text-primary hover:bg-primary/10 px-2 py-1 rounded transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
