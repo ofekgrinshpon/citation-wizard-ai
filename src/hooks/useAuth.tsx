@@ -43,15 +43,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let isMounted = true;
 
-    const syncAuthState = async (nextSession: Session | null) => {
+    const syncAuthState = (nextSession: Session | null) => {
       if (!isMounted) return;
 
       setSession(nextSession);
       setUser(nextSession?.user ?? null);
 
-      await resolveAdmin(nextSession?.user ?? null);
+      // Fire-and-forget: don't block auth hydration on admin resolution
+      resolveAdmin(nextSession?.user ?? null);
 
-      if (isMounted && hasHydratedSession.current) {
+      if (hasHydratedSession.current) {
         setLoading(false);
       }
     };
