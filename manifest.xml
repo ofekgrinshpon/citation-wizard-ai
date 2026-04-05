@@ -22,7 +22,7 @@
   </Hosts>
 
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://citation-wizard-ai.lovable.app/app?addin=1" />
+    <SourceLocation DefaultValue="https://citation-wizard-ai.lovable.app/?addin=1" />
   </DefaultSettings>
 
   <Permissions>ReadWriteDocument</Permissions>
