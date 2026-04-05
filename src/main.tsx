@@ -41,24 +41,28 @@ function loadOfficeJs() {
 async function bootstrap() {
   const win = window as Window & { Office?: { onReady?: (callback: () => void) => void } };
 
+  console.log("[ReLex] bootstrap start, addin=", isOfficeAddinRoute());
+
   if (!isOfficeAddinRoute()) {
+    console.log("[ReLex] standalone mode, rendering immediately");
     renderApp();
     return;
   }
 
   try {
+    console.log("[ReLex] loading Office.js...");
     await loadOfficeJs();
+    console.log("[ReLex] Office.js loaded, onReady=", !!win.Office?.onReady);
 
     if (win.Office?.onReady) {
-      // Race: render on Office.onReady OR after 5s timeout (whichever comes first)
       let rendered = false;
-      const render = () => { if (!rendered) { rendered = true; renderApp(); } };
-      win.Office.onReady(() => render());
-      setTimeout(render, 5000);
+      const render = () => { if (!rendered) { rendered = true; console.log("[ReLex] rendering app"); renderApp(); } };
+      win.Office.onReady(() => { console.log("[ReLex] Office.onReady fired"); render(); });
+      setTimeout(() => { console.log("[ReLex] timeout fallback"); render(); }, 5000);
       return;
     }
   } catch (error) {
-    console.warn("Office.js did not load, falling back to standalone mode.", error);
+    console.warn("[ReLex] Office.js failed, falling back to standalone mode.", error);
   }
 
   renderApp();
