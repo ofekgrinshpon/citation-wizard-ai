@@ -1,34 +1,24 @@
 
 
-# Fix: Office.context.document undefined in Word Online
+# Fix: Office.context.document still undefined after Office.onReady
 
-## Root Cause
+## Problem
 
-Office.js is loaded dynamically via JavaScript in `main.tsx`. Microsoft requires it to be a **static `<script>` tag in `<head>`** for Word Online to properly wire up `Office.context.document` inside the iframe.
+The static Office.js script tag is already in place and `Office.onReady` fires successfully, but `Office.context.document` remains undefined. This is a known Word Online timing issue where the document context is populated **after** `onReady` resolves.
 
-## Changes
+## Solution — Two changes in `src/lib/wordInsertion.ts`
 
-### 1. `index.html` — Add static Office.js script
-Add before the app bundle script:
-```html
-<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-```
-This is harmless outside Office (creates an inert `Office` global).
+### 1. Poll for `Office.context.document` after onReady
 
-### 2. `src/main.tsx` — Simplify bootstrap
-Remove the dynamic `loadOfficeJs()` function entirely. Since Office.js is now always available via the static tag, just use:
-```
-Office.onReady(() => renderApp());
-setTimeout(renderApp, 5000); // fallback for non-Office
-```
+The current `ensureOfficeReady` waits for `onReady` but doesn't verify the document context is actually populated. Add a polling loop (up to 5 seconds, checking every 200ms) that waits for `Office.context.document` to become available after `onReady` resolves.
 
-### 3. `src/lib/wordInsertion.ts` — No changes needed
-The existing `ensureOfficeReady` gate remains as a safety net.
+### 2. Try `Word.run` even when `Office.context.document` is missing
 
-## Files
+In Word Online, `Word.run` (the Rich API) creates its own execution context and may work even when `Office.context.document` is undefined. The current code already tries `Word.run` first, but the `Word` global might not be checked correctly. Add a more aggressive retry: if the initial `Word.run` attempt fails and `Office.context.document` is still null, wait briefly and retry `Word.run` once more.
+
+## File
 
 | File | Change |
 |------|--------|
-| `index.html` | Add static Office.js `<script>` in `<head>` |
-| `src/main.tsx` | Remove dynamic loading, use `Office.onReady` directly |
+| `src/lib/wordInsertion.ts` | Enhance `ensureOfficeReady` with document polling; add `Word.run` retry logic |
 
