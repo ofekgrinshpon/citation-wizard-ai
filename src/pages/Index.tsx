@@ -352,7 +352,7 @@ const Index = () => {
       const extractedCitation = extractCitationFromResponse(reply);
       supabase.from("citation_history").insert([{
         raw_input: fullRawInput,
-        formatted_output: reply,
+        formatted_output: extractedCitation || reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
         user_id: user?.id || null,
         project_id: currentProject?.id || null,
@@ -408,7 +408,7 @@ const Index = () => {
       const extractedCitation = extractCitationFromResponse(reply);
       supabase.from("citation_history").insert([{
         raw_input: fullRawInput,
-        formatted_output: reply,
+        formatted_output: extractedCitation || reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
         user_id: user?.id || null,
         project_id: currentProject?.id || null,
@@ -475,7 +475,7 @@ const Index = () => {
       const extractedCitation = extractCitationFromResponse(reply);
       supabase.from("citation_history").insert([{
         raw_input: rawInput,
-        formatted_output: reply,
+        formatted_output: extractedCitation || reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
         user_id: user?.id || null,
         project_id: currentProject?.id || null,
@@ -648,7 +648,7 @@ const Index = () => {
       // Save to citation history — use the full reply for display, but the extracted citation for verification
       const citationPayload = {
         raw_input: fullRawInput,
-        formatted_output: reply,
+        formatted_output: extractedCitation || reply,
         source_type: sourceType !== "unknown" ? sourceLabel : null,
         user_id: user?.id || null,
         project_id: currentProject?.id || null,
