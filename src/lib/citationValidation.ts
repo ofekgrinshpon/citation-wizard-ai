@@ -70,8 +70,8 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
 
   // Case law patterns
   if (sourceType === "case_law_published" || sourceType === "case_law_database") {
-    // Case type + number: e.g., ע"א 248/86
-    const caseMatch = response.match(/([א-ת]["״][א-ת])\s+(\d+\/\d+)/);
+    // Case type + number: e.g., ע"א 248/86, רע"פ 9142/01, בג"ץ 1514/01
+    const caseMatch = response.match(/([א-ת]{1,3}["״׳']+[א-ת]{1,2})\s+(\d+[\/\-]\d+)/);
     if (caseMatch) {
       fields.caseType = caseMatch[1];
       fields.caseNumber = caseMatch[2];
