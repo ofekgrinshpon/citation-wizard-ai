@@ -1,45 +1,64 @@
 
 
-# Fix: Word Desktop falling back to clipboard instead of inserting footnotes
+# Auto-search Israeli court decisions for case law citations
 
-## Problem
+## Context
 
-On Word Desktop, the insertion falls through to "manual-copy" (clipboard) instead of actually inserting footnotes. The root cause is in the capability detection flow:
+The gov.il court decisions page (`spokmanship_court`) does not have a public API. Direct server-side calls are blocked by Cloudflare. The site "נט המשפט" (court.gov.il) also requires authentication. There is no official open API for Israeli case law.
 
-1. `waitForOfficeInit` waits only 3 seconds — may not be enough on Desktop
-2. `detectCapabilities` does an active `Word.run` probe — if this fails transiently, `bridgeConnected` stays `false`
-3. The insertion code **only** attempts Rich API if `bridgeConnected === true` (line 233)
-4. If the probe fails, it skips Rich API entirely and also skips Common API (since `hasSetSelectedData` may also be false at that point)
-5. Result: straight to clipboard copy, even though Word Desktop fully supports footnote insertion
+## Practical approach: AI-powered web search via Perplexity
 
-## Solution
+The most reliable approach is to use Perplexity (AI search engine) to look up case details when the system classifies a query as case law. Perplexity can search the web (including Nevo, court.gov.il published decisions, legal databases) and return structured results with party names, dates, and court details.
 
-Make the insertion flow less conservative — try `Word.run` insertion even if the probe failed, since the probe is just a quick health check and the actual insertion call may succeed (Word Desktop may need the full context of an insertion operation to work).
+### How it works
 
-## Changes — `src/lib/wordInsertion.ts` only
-
-1. **Try Rich API whenever `hasWordRun` is true**, not only when `bridgeConnected` is true. The `tryRichApi` function already has its own error handling and will return `null` if it genuinely fails.
-
-2. **Increase `waitForOfficeInit` timeout** from 3s to 5s — Word Desktop can be slow to fully initialize the bridge.
-
-3. **Add a retry with delay to `tryRichApi`** — if the first attempt fails with a non-bridge error, wait 2 seconds and try once more. Bridge errors (`executeRichApiRequestAsync`) still skip immediately.
-
-### Key logic change
-
-```
-Before:
-  if (caps.bridgeConnected) → tryRichApi    // skipped if probe failed
-  if (caps.hasSetSelectedData) → tryCommonApi
-  → manual-copy
-
-After:
-  if (caps.hasWordRun) → tryRichApi          // always try if Word.run exists
-  if (caps.hasSetSelectedData) → tryCommonApi
-  → manual-copy
+```text
+User enters: "בג"ץ 1514/01"
+     ↓
+System classifies → caselaw
+     ↓
+Edge function calls Perplexity:
+  "Find Israeli court case בג"ץ 1514/01: party names, date, court, publication details"
+     ↓
+Perplexity returns: party names, date, court name, פד"י volume/page (if published)
+     ↓
+System formats citation per Rule 18/19 and returns to user
 ```
 
-This means:
-- **Word Desktop**: Will attempt Rich API insertion (footnotes) even if the probe was inconclusive
-- **Word Online**: Will still skip Rich API quickly on bridge error and fall to Common API or clipboard
-- No other files need changes — the `InsertionResult` type and UI handling remain the same
+## Implementation plan
+
+### 1. Connect Perplexity connector
+Use the Perplexity connector to provide API access for case law searches.
+
+### 2. Create `case-law-search` edge function
+A new edge function that:
+- Receives a case number (e.g., "1514/01") and case type prefix (e.g., "בג"ץ")
+- Calls Perplexity with a targeted Hebrew query asking for: party names (surname only for individuals), decision date, court name, publication details (פד"י volume/page if published, or database name)
+- Parses the response into structured fields
+- Returns: `{ parties, date, court, publication, isPublished, databaseName }`
+
+### 3. Integrate into `citation-chat` edge function
+- When the source type is classified as case law, call the `case-law-search` function first
+- Inject the search results into the AI prompt as verified metadata
+- The AI then formats the citation according to Rule 18/19 using real data instead of hallucinating
+
+### 4. Client-side integration
+- In `src/pages/Index.tsx` or the chat flow: when source is classified as caselaw, show a brief "searching for case details..." indicator
+- No major UI changes needed — the search happens transparently within the existing chat flow
+
+## Limitations to be aware of
+- Perplexity searches the open web; it may not find every case (especially unpublished lower court decisions)
+- Results depend on what's publicly indexed (Nevo summaries, court press releases, legal blogs)
+- The system will fall back to the current behavior (AI generates with `[missing:...]` placeholders) if the search returns no results
+- Perplexity has rate limits and costs per request
+
+## Files to create/modify
+| File | Change |
+|------|--------|
+| `supabase/functions/case-law-search/index.ts` | New edge function for Perplexity case law lookup |
+| `supabase/functions/citation-chat/index.ts` | Call case-law-search when source is caselaw, inject results into prompt |
+| `src/pages/Index.tsx` | Minor: add "searching..." indicator for caselaw queries |
+
+## Alternative considered: Firecrawl scraping
+Firecrawl could scrape the gov.il page directly, but Cloudflare protection makes this unreliable. Perplexity is more robust since it aggregates from multiple indexed sources.
 
