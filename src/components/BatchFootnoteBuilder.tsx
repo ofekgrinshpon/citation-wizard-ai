@@ -235,16 +235,66 @@ export function BatchFootnoteBuilder({}: BatchProps) {
         });
       });
 
-      // Save to citation history and persist verified sources
-      const verifiedCandidates: { rawInput: string; fullCitation: string; sourceType: string | null }[] = [];
+      // Save to citation history, apply year preferences, and persist verified sources
+      const verifiedCandidates: { rawInput: string; fullCitation: string; sourceType: string | null; yearPreferences?: YearPreferences }[] = [];
+      const integrityQueue: PendingIntegrity[] = [];
 
       for (const cell of updatedCells) {
         if (!cell.output) continue;
 
         const sourceType = detectSourceType(normalizeAbbreviations(cell.input));
         const label = SOURCE_TYPE_LABELS[sourceType];
-        const fullCitation = extractCitationOnly(cell.output);
+        let fullCitation = extractCitationOnly(cell.output);
         const isVerified = cell.status === "valid" && !/\[חסר:/.test(cell.output);
+
+        // For legislation, check verified_sources for stored year preferences
+        if (isVerified && (isLegislationInput(cell.input) || isLegislationInput(fullCitation))) {
+          const lawName = extractLawNameFromInput(cell.input) || extractLawNameFromInput(fullCitation);
+          const words = lawName.split(/[\s\-:]+/).filter(w => w.length >= 2);
+          const orConditions = words.map(w => `source_name.ilike.%${w}%`).join(',');
+
+          const { data: existingSources } = await supabase
+            .from("verified_sources")
+            .select("metadata, verification_status")
+            .or(orConditions)
+            .limit(1);
+
+          const existing = existingSources?.[0];
+          const existingMeta = existing?.metadata as Record<string, unknown> | null;
+
+          if (existing?.verification_status === "verified" || (existingMeta && "hasHebrewYear" in existingMeta)) {
+            // Apply stored year preferences silently
+            const prefs: YearPreferences = {
+              hasHebrewYear: (existingMeta?.hasHebrewYear as boolean) ?? true,
+              hasGregorianYear: (existingMeta?.hasGregorianYear as boolean) ?? true,
+            };
+            fullCitation = applyYearPreferences(fullCitation, prefs);
+            // Update the cell output with adjusted citation
+            setCells(prev => prev.map(c => c.id === cell.id ? { ...c, output: applyYearPreferences(c.output!, prefs) } : c));
+
+            verifiedCandidates.push({
+              rawInput: cell.input,
+              fullCitation,
+              sourceType: label !== "לא ידוע" ? label : null,
+              yearPreferences: prefs,
+            });
+          } else {
+            // New legislation — queue for integrity card
+            integrityQueue.push({
+              cellId: cell.id,
+              lawName,
+              rawInput: cell.input,
+              fullCitation,
+              sourceType: label !== "לא ידוע" ? label : null,
+            });
+          }
+        } else if (isVerified) {
+          verifiedCandidates.push({
+            rawInput: cell.input,
+            fullCitation,
+            sourceType: label !== "לא ידוע" ? label : null,
+          });
+        }
 
         supabase.from("citation_history").insert({
           raw_input: cell.input,
@@ -252,14 +302,6 @@ export function BatchFootnoteBuilder({}: BatchProps) {
           source_type: label !== "לא ידוע" ? label : null,
           is_verified: isVerified,
         }).then(() => {});
-
-        if (isVerified) {
-          verifiedCandidates.push({
-            rawInput: cell.input,
-            fullCitation,
-            sourceType: label !== "לא ידוע" ? label : null,
-          });
-        }
       }
 
       if (verifiedCandidates.length > 0) {
