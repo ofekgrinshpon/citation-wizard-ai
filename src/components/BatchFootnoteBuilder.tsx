@@ -4,6 +4,7 @@ import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type Sour
 import { buildEnginePromptHint } from "@/lib/citationValidation";
 import { FormattedCitation } from "./FormattedCitation";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
+import { PublicationIntegrityCard } from "./PublicationIntegrityCard";
 import { useBibliography } from "@/hooks/useBibliography";
 import { useProjects } from "@/hooks/useProjects";
 import { useOffice } from "@/hooks/useOffice";
@@ -11,6 +12,7 @@ import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import { toast } from "sonner";
 import { copyPlainText } from "@/lib/clipboard";
 import { ensureVerifiedSources } from "@/lib/verifiedSources";
+import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, type YearPreferences } from "@/lib/citationUtils";
 
 interface FootnoteCell {
   id: number;
@@ -19,6 +21,14 @@ interface FootnoteCell {
   status: "empty" | "loading" | "valid" | "warning" | "verified";
   warningMsg?: string;
   verifiedCitation?: string;
+}
+
+interface PendingIntegrity {
+  cellId: number;
+  lawName: string;
+  rawInput: string;
+  fullCitation: string;
+  sourceType: string | null;
 }
 
 const createCell = (id: number): FootnoteCell => ({
@@ -60,6 +70,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   const [isInsertingAll, setIsInsertingAll] = useState(false);
   const [insertingCellId, setInsertingCellId] = useState<number | null>(null);
   const [summary, setSummary] = useState<string | null>(() => localStorage.getItem(getSummaryKey(projectId)));
+  const [pendingIntegrity, setPendingIntegrity] = useState<PendingIntegrity[]>([]);
   const bibliography = useBibliography();
 
   // Reload when project changes
@@ -224,16 +235,66 @@ export function BatchFootnoteBuilder({}: BatchProps) {
         });
       });
 
-      // Save to citation history and persist verified sources
-      const verifiedCandidates: { rawInput: string; fullCitation: string; sourceType: string | null }[] = [];
+      // Save to citation history, apply year preferences, and persist verified sources
+      const verifiedCandidates: { rawInput: string; fullCitation: string; sourceType: string | null; yearPreferences?: YearPreferences }[] = [];
+      const integrityQueue: PendingIntegrity[] = [];
 
       for (const cell of updatedCells) {
         if (!cell.output) continue;
 
         const sourceType = detectSourceType(normalizeAbbreviations(cell.input));
         const label = SOURCE_TYPE_LABELS[sourceType];
-        const fullCitation = extractCitationOnly(cell.output);
+        let fullCitation = extractCitationOnly(cell.output);
         const isVerified = cell.status === "valid" && !/\[חסר:/.test(cell.output);
+
+        // For legislation, check verified_sources for stored year preferences
+        if (isVerified && (isLegislationInput(cell.input) || isLegislationInput(fullCitation))) {
+          const lawName = extractLawNameFromInput(cell.input) || extractLawNameFromInput(fullCitation);
+          const words = lawName.split(/[\s\-:]+/).filter(w => w.length >= 2);
+          const orConditions = words.map(w => `source_name.ilike.%${w}%`).join(',');
+
+          const { data: existingSources } = await supabase
+            .from("verified_sources")
+            .select("metadata, verification_status")
+            .or(orConditions)
+            .limit(1);
+
+          const existing = existingSources?.[0];
+          const existingMeta = existing?.metadata as Record<string, unknown> | null;
+
+          if (existing?.verification_status === "verified" || (existingMeta && "hasHebrewYear" in existingMeta)) {
+            // Apply stored year preferences silently
+            const prefs: YearPreferences = {
+              hasHebrewYear: (existingMeta?.hasHebrewYear as boolean) ?? true,
+              hasGregorianYear: (existingMeta?.hasGregorianYear as boolean) ?? true,
+            };
+            fullCitation = applyYearPreferences(fullCitation, prefs);
+            // Update the cell output with adjusted citation
+            setCells(prev => prev.map(c => c.id === cell.id ? { ...c, output: applyYearPreferences(c.output!, prefs) } : c));
+
+            verifiedCandidates.push({
+              rawInput: cell.input,
+              fullCitation,
+              sourceType: label !== "לא ידוע" ? label : null,
+              yearPreferences: prefs,
+            });
+          } else {
+            // New legislation — queue for integrity card
+            integrityQueue.push({
+              cellId: cell.id,
+              lawName,
+              rawInput: cell.input,
+              fullCitation,
+              sourceType: label !== "לא ידוע" ? label : null,
+            });
+          }
+        } else if (isVerified) {
+          verifiedCandidates.push({
+            rawInput: cell.input,
+            fullCitation,
+            sourceType: label !== "לא ידוע" ? label : null,
+          });
+        }
 
         supabase.from("citation_history").insert({
           raw_input: cell.input,
@@ -241,18 +302,15 @@ export function BatchFootnoteBuilder({}: BatchProps) {
           source_type: label !== "לא ידוע" ? label : null,
           is_verified: isVerified,
         }).then(() => {});
-
-        if (isVerified) {
-          verifiedCandidates.push({
-            rawInput: cell.input,
-            fullCitation,
-            sourceType: label !== "לא ידוע" ? label : null,
-          });
-        }
       }
 
       if (verifiedCandidates.length > 0) {
         ensureVerifiedSources(verifiedCandidates).catch(() => {});
+      }
+
+      // Show integrity cards for new legislation
+      if (integrityQueue.length > 0) {
+        setPendingIntegrity(integrityQueue);
       }
 
       // Recalculate bibliography from all current outputs
@@ -334,6 +392,46 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   const hasAnyOutput = cells.some((c) => c.output);
   const hasAnyInput = cells.some((c) => c.input.trim());
   const outputCells = cells.filter((c) => c.output);
+  const currentIntegrity = pendingIntegrity[0] ?? null;
+
+  const handleIntegrityConfirm = async (prefs: YearPreferences) => {
+    if (!currentIntegrity) return;
+    const { cellId, rawInput, fullCitation, sourceType } = currentIntegrity;
+    const adjustedCitation = applyYearPreferences(fullCitation, prefs);
+
+    // Update cell output
+    setCells(prev => prev.map(c =>
+      c.id === cellId ? { ...c, output: applyYearPreferences(c.output!, prefs) } : c
+    ));
+
+    // Save to verified sources with year prefs
+    ensureVerifiedSources([{
+      rawInput,
+      fullCitation: adjustedCitation,
+      sourceType,
+      autoVerified: true,
+      yearPreferences: prefs,
+    }]).catch(() => {});
+
+    // Move to next
+    setPendingIntegrity(prev => prev.slice(1));
+  };
+
+  const handleIntegrityCancel = async () => {
+    if (!currentIntegrity) return;
+    const { rawInput, fullCitation, sourceType } = currentIntegrity;
+
+    // Save with defaults (both years present)
+    ensureVerifiedSources([{
+      rawInput,
+      fullCitation,
+      sourceType,
+      autoVerified: true,
+      yearPreferences: { hasHebrewYear: true, hasGregorianYear: true },
+    }]).catch(() => {});
+
+    setPendingIntegrity(prev => prev.slice(1));
+  };
 
   return (
     <div className="py-6" style={{ direction: "rtl" }}>
@@ -542,6 +640,20 @@ export function BatchFootnoteBuilder({}: BatchProps) {
               <p className="text-foreground/80">{summary}</p>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Publication Integrity Card */}
+      {currentIntegrity && (
+        <div className="mt-4 animate-fade-in">
+          <p className="text-xs text-muted-foreground mb-2">
+            וידוא פרסום ({pendingIntegrity.length} נותרו)
+          </p>
+          <PublicationIntegrityCard
+            lawName={currentIntegrity.lawName}
+            onConfirm={handleIntegrityConfirm}
+            onCancel={handleIntegrityCancel}
+          />
         </div>
       )}
     </div>
