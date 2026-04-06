@@ -1,48 +1,40 @@
 
 
-# Add Perplexity search for legislation (law name, year, ס"ח)
+# Fix legislation citation: single page number after ס"ח (Rule 2.8)
 
 ## Problem
-When a user queries a law (e.g., "חוק התכנון והבנייה"), the system only checks the local `laws.ts` database and `verified_sources` table. If the law isn't there or has incomplete data (missing ס"ח page), the AI has no way to find the official publication details and either guesses or leaves them out.
+The citation engine template and Perplexity prompt incorrectly expect two numbers after ס"ח (issue number + page). Per Rule 2.8, only **one number** should follow — the first page where the law appears in the collection. Example: `ס"ח 63` (correct), not `ס"ח 446` (issue number — wrong).
 
-## Solution
-Add a legislation search block in `citation-chat/index.ts` (after the case law search block, ~line 624) that triggers when:
-1. The source type is classified as חקיקה, חוק יסוד, or חקיקת משנה
-2. No verified source with a complete citation was returned as a direct match
+## Changes
 
-### How it works
+### 1. Update `src/data/citationEngine.ts` — primary_legislation rule
 
-1. **Detection**: Check if `classMatch` contains חקיקה/חוק יסוד/חקיקת משנה. Extract the law name from the user input (strip the classification tag).
+- **Template**: Change from `{collection} {firstPage}.` (which implies two numbers via example) — fix the example
+- **Example** (line 57): Change `'חוק העונשין, התשל"ז-1977, ס"ח 864, 226.'` → `'חוק העונשין, התשל"ז-1977, ס"ח 226.'`
+  - 864 is the issue number, 226 is the page — only 226 should appear
+- **Remove** the `volume` component (line 63) — issue/booklet number is not cited
+- Update `firstPage` description to clarify: "מספר העמוד הראשון שבו מופיע החיקוק בקובץ, ולא מספר החוברת"
+- Add a note referencing Rule 2.8 about page vs. issue distinction
 
-2. **Perplexity query**: Ask Perplexity to find the official publication details — return JSON:
-   ```json
-   {
-     "found": true,
-     "lawName": "חוק התכנון והבנייה",
-     "hebrewYear": "התשכ\"ה",
-     "gregorianYear": 1965,
-     "collection": "ס\"ח",
-     "page": 307,
-     "isNewVersion": false,
-     "isCombinedVersion": false
-   }
-   ```
+### 2. Update `src/data/citationEngine.ts` — basic_law rule
 
-3. **System prompt**: Instruct Perplexity to search for the law's official publication in ספר החוקים (ס"ח), קובץ התקנות (ק"ת), or נוסח חדש (נ"ח), and return the first page number in that collection.
+- **Example** (line 80): Change `'חוק-יסוד: כבוד האדם וחירותו, ס"ח 1391, 150.'` → `'חוק-יסוד: כבוד האדם וחירותו, ס"ח 150.'`
+  - Same issue: 1391 is the booklet, 150 is the page
 
-4. **Validation**: Only use results if `found` is true, `lawName` is non-empty, and `collection` is non-empty.
+### 3. Update `supabase/functions/citation-chat/index.ts` — Perplexity legislation prompt (~lines 654-661)
 
-5. **Hint injection**: Inject a `legislationHint` into the user message with verified publication data (same pattern as `caseLawHint`), so the AI formats the citation with ס"ח and page number.
+- Add explicit instruction in the system prompt: "page הוא מספר העמוד הראשון שבו מופיע החיקוק בקובץ החקיקה, ולא מספר החוברת. דוגמה: חוק הירושה = ס"ח 63 (עמוד), ולא ס"ח 446 (חוברת)."
+- Keep only `page` in the JSON schema — no separate booklet field needed since we never use it
 
-6. **Fallback**: If search fails or data is unusable, inject a hint with `[חסר:...]` for unknown publication fields.
+### 4. Update hint injection (~line 681-682)
 
-7. **Skip condition**: If verified sources already returned a direct best-match (the early-return at line 454), the Perplexity search never runs since the function already returned.
+- Format stays: `${collection} ${page}` — just one number after the collection abbreviation
+- This is already correct in the current code; the fix is ensuring Perplexity returns the right number
 
-## Technical details
+## Files
 
 | File | Change |
 |------|--------|
-| `supabase/functions/citation-chat/index.ts` | Add ~50 lines after line 624: legislation Perplexity search block with detection, query, validation, hint injection, and fallback |
-
-The new block mirrors the case law search pattern — a `legislationHint` variable initialized to `""`, a Perplexity fetch with structured JSON response, validation, and injection into `enhancedMessages` alongside `caseLawHint`.
+| `src/data/citationEngine.ts` | Fix template examples, remove volume component, clarify firstPage description |
+| `supabase/functions/citation-chat/index.ts` | Harden Perplexity prompt with page vs. issue distinction and example |
 
