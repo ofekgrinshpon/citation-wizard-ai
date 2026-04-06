@@ -538,13 +538,21 @@ serve(async (req) => {
                   }
                   console.log(`[case-law] overrideLabel=${caseLawOverrideLabel ?? 'none'}`);
                   caseLawHint = details;
+                } else {
+                  console.log(`[case-law] Perplexity returned found=false for ${fullCaseRef}`);
+                  caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${fullCaseRef}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע (צדדים, תאריך, בית משפט, פרסום/מאגר).\nאל תמציא שמות צדדים, תאריכים, או פרטי פרסום.\n══`;
                 }
               } catch (e) {
                 console.error("Failed to parse case law search JSON:", e);
+                caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${fullCaseRef}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע (צדדים, תאריך, בית משפט, פרסום/מאגר).\nאל תמציא שמות צדדים, תאריכים, או פרטי פרסום.\n══`;
               }
+            } else {
+              console.log(`[case-law] No JSON found in Perplexity response for ${fullCaseRef}`);
+              caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${fullCaseRef}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע (צדדים, תאריך, בית משפט, פרסום/מאגר).\nאל תמציא שמות צדדים, תאריכים, או פרטי פרסום.\n══`;
             }
           } else {
             console.error("Perplexity search failed:", perplexityResp.status);
+            caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${fullCaseRef}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע (צדדים, תאריך, בית משפט, פרסום/מאגר).\nאל תמציא שמות צדדים, תאריכים, או פרטי פרסום.\n══`;
           }
         }
       } catch (e) {
