@@ -515,22 +515,29 @@ serve(async (req) => {
             if (jsonMatch) {
               try {
                 const parsed = JSON.parse(jsonMatch[0]);
-                if (parsed.found) {
+                
+                // Validate data quality: reject bogus results with empty/placeholder fields
+                const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && parsed.date.trim() !== "";
+                const hasValidParties = parsed.party1 && parsed.party1.trim() !== "" && parsed.party2 && parsed.party2.trim() !== "";
+                const hasValidPublication = (parsed.isPublished && parsed.padi_volume && parsed.padi_volume.trim() !== "") || (!parsed.isPublished && parsed.databaseName && parsed.databaseName.trim() !== "");
+                const dataIsUsable = parsed.found && hasValidParties && (hasValidDate || hasValidPublication);
+                
+                if (dataIsUsable) {
                   let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
                   details += `תיק: ${fullCaseRef}\n`;
-                  if (parsed.party1 && parsed.party2) details += `צדדים: **${parsed.party1}** נ' **${parsed.party2}**\n`;
+                  if (hasValidParties) details += `צדדים: **${parsed.party1}** נ' **${parsed.party2}**\n`;
                   if (parsed.court) details += `בית משפט: ${parsed.court}\n`;
-                  if (parsed.isPublished && parsed.padi_volume) {
+                  if (parsed.isPublished && parsed.padi_volume && parsed.padi_volume.trim() !== "") {
                     caseLawOverrideLabel = "פסיקה (דפוס)";
                     const part = parsed.padi_part ? `(${parsed.padi_part})` : "";
                     details += `פרסום: פ"ד ${parsed.padi_volume}${part} ${parsed.padi_page || ""}\n`;
                   }
-                  if (!parsed.isPublished && parsed.databaseName) {
+                  if (!parsed.isPublished && parsed.databaseName && parsed.databaseName.trim() !== "") {
                     caseLawOverrideLabel = "פסיקה (מאגר)";
                     details += `מאגר: ${parsed.databaseName}\n`;
                   }
-                  if (parsed.date) details += `תאריך: ${parsed.date}\n`;
-                  if (parsed.year) details += `שנה: ${parsed.year}\n`;
+                  if (hasValidDate) details += `תאריך: ${parsed.date}\n`;
+                  if (parsed.year && parsed.year.trim() !== "") details += `שנה: ${parsed.year}\n`;
                   if (caseLawOverrideLabel === "פסיקה (דפוס)") {
                     details += `══ נמצא פרסום בפ"ד, לכן חובה לעצב את האזכור כפסיקה (דפוס) לפי כלל 18. אין לציין מאגר או תאריך בסוגריים במקום פ"ד. ══`;
                   } else {
@@ -539,7 +546,7 @@ serve(async (req) => {
                   console.log(`[case-law] overrideLabel=${caseLawOverrideLabel ?? 'none'}`);
                   caseLawHint = details;
                 } else {
-                  console.log(`[case-law] Perplexity returned found=false for ${fullCaseRef}`);
+                  console.log(`[case-law] Data unusable for ${fullCaseRef}: found=${parsed.found}, validParties=${hasValidParties}, validDate=${hasValidDate}, validPub=${hasValidPublication}`);
                   caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${fullCaseRef}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע (צדדים, תאריך, בית משפט, פרסום/מאגר).\nאל תמציא שמות צדדים, תאריכים, או פרטי פרסום.\n══`;
                 }
               } catch (e) {
