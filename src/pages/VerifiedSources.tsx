@@ -81,11 +81,14 @@ export default function VerifiedSources() {
     return matchTab && matchSearch;
   });
 
-  const handleCopy = async (citation: string) => {
-    // Strip inline rule references like "📐 כלל: 2 – ..."
-    let clean = citation.replace(/\s*📐\s*כלל:.*$/gm, "").trim();
+  const cleanCitation = (text: string) => {
+    let clean = text.replace(/\s*📐\s*כלל:.*$/gm, "").trim();
     clean = extractCitationFromResponse(clean) || clean;
-    await copyPlainText(clean);
+    return clean;
+  };
+
+  const handleCopy = async (citation: string) => {
+    await copyPlainText(cleanCitation(citation));
     toast.success("הציטוט הועתק");
   };
 
