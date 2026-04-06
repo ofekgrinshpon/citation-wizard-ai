@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -46,13 +47,17 @@ interface VerifiedSourcesTableProps {
   sources: VerifiedSourceRow[];
   onRemove: (source: VerifiedSourceRow) => void;
   onEdit?: (source: VerifiedSourceRow, updates: { source_name: string; full_citation: string; verification_status: string }) => void;
+  onVerify?: (source: VerifiedSourceRow) => void;
+  onBulkVerify?: (sourceIds: string[]) => void;
+  onBulkRemove?: (sourceIds: string[]) => void;
 }
 
-const VerifiedSourcesTable = ({ title, category, sources, onRemove, onEdit }: VerifiedSourcesTableProps) => {
+const VerifiedSourcesTable = ({ title, category, sources, onRemove, onEdit, onVerify, onBulkVerify, onBulkRemove }: VerifiedSourcesTableProps) => {
   const [editingSource, setEditingSource] = useState<VerifiedSourceRow | null>(null);
   const [editName, setEditName] = useState("");
   const [editCitation, setEditCitation] = useState("");
   const [editStatus, setEditStatus] = useState("pending");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const openEdit = (source: VerifiedSourceRow) => {
     setEditingSource(source);
@@ -71,6 +76,27 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove, onEdit }: Ve
     setEditingSource(null);
   };
 
+  const allSelected = sources.length > 0 && sources.every((s) => selectedIds.has(s.id));
+
+  const toggleAll = () => {
+    if (allSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(sources.map((s) => s.id)));
+    }
+  };
+
+  const toggleOne = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const selectedPending = sources.filter((s) => selectedIds.has(s.id) && s.verification_status !== "verified");
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
@@ -78,11 +104,35 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove, onEdit }: Ve
         <Badge variant="secondary">{sources.length} מקורות</Badge>
       </div>
 
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-3 bg-primary/10 border border-primary/20 rounded-lg px-4 py-3">
+          <span className="text-sm font-medium text-foreground">{selectedIds.size} נבחרו</span>
+          <div className="flex items-center gap-2 mr-auto">
+            {selectedPending.length > 0 && onBulkVerify && (
+              <Button size="sm" onClick={() => { onBulkVerify(Array.from(selectedIds)); setSelectedIds(new Set()); }}>
+                אמת {selectedPending.length} מקורות
+              </Button>
+            )}
+            {onBulkRemove && (
+              <Button size="sm" variant="destructive" onClick={() => { onBulkRemove(Array.from(selectedIds)); setSelectedIds(new Set()); }}>
+                הסר {selectedIds.size} מקורות
+              </Button>
+            )}
+            <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())}>
+              בטל בחירה
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/50">
+                <th className="px-4 py-3 w-10">
+                  <Checkbox checked={allSelected} onCheckedChange={toggleAll} />
+                </th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">שם מקור</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">קטגוריה</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">ציטוט מלא</th>
@@ -96,13 +146,16 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove, onEdit }: Ve
             <tbody>
               {sources.length === 0 ? (
                 <tr>
-                   <td colSpan={8} className="text-center py-8 text-muted-foreground">
+                   <td colSpan={9} className="text-center py-8 text-muted-foreground">
                     אין מקורות מאומתים בקטגוריה זו
                   </td>
                 </tr>
               ) : (
                 sources.map((source) => (
-                  <tr key={source.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                  <tr key={source.id} className={`border-b border-border/50 hover:bg-muted/30 transition-colors ${selectedIds.has(source.id) ? "bg-primary/5" : ""}`}>
+                    <td className="px-4 py-3">
+                      <Checkbox checked={selectedIds.has(source.id)} onCheckedChange={() => toggleOne(source.id)} />
+                    </td>
                     <td className="px-4 py-3 text-foreground font-medium max-w-[220px] truncate">
                       {category === "caselaw" ? extractCaseNumber(source.source_name, source.full_citation) : source.source_name}
                     </td>
@@ -133,6 +186,14 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove, onEdit }: Ve
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
+                        {source.verification_status !== "verified" && onVerify && (
+                          <button
+                            onClick={() => onVerify(source)}
+                            className="text-xs text-green-600 hover:bg-green-500/10 px-2 py-1 rounded transition-colors font-medium"
+                          >
+                            ✓ אמת
+                          </button>
+                        )}
                         <button
                           onClick={() => openEdit(source)}
                           className="text-xs text-primary hover:bg-primary/10 px-2 py-1 rounded transition-colors"

@@ -138,6 +138,73 @@ const Admin = () => {
     void fetchData();
   };
 
+  const bulkToggleVerification = async (citationsToToggle: CitationRecord[]) => {
+    const toVerify = citationsToToggle.filter((c) => !c.is_verified);
+    const toUnverify = citationsToToggle.filter((c) => c.is_verified);
+
+    if (toVerify.length > 0) {
+      const ids = toVerify.map((c) => c.id);
+      await supabase.from("citation_history").update({ is_verified: true }).in("id", ids);
+      try {
+        await ensureVerifiedSources(
+          toVerify.map((c) => ({
+            rawInput: c.raw_input,
+            fullCitation: c.formatted_output,
+            sourceType: c.source_type,
+            verifiedBy: user?.id,
+            autoVerified: false,
+          })),
+          { skipAIVerification: true }
+        );
+      } catch {
+        toast.error("שגיאה בסנכרון מקורות מאומתים");
+      }
+    }
+
+    if (toUnverify.length > 0) {
+      const ids = toUnverify.map((c) => c.id);
+      await supabase.from("citation_history").update({ is_verified: false }).in("id", ids);
+      for (const c of toUnverify) {
+        await supabase.from("verified_sources").delete().eq("full_citation", c.formatted_output);
+      }
+    }
+
+    toast.success(`${citationsToToggle.length} מקורות עודכנו`);
+    void fetchData();
+  };
+
+  const bulkVerifyVerifiedSources = async (sourceIds: string[]) => {
+    const { error } = await supabase
+      .from("verified_sources")
+      .update({ verification_status: "verified" })
+      .in("id", sourceIds);
+
+    if (error) {
+      toast.error("שגיאה באימות מקורות");
+      return;
+    }
+    toast.success(`${sourceIds.length} מקורות אומתו`);
+    void fetchData();
+  };
+
+  const bulkRemoveVerifiedSources = async (sourceIds: string[]) => {
+    const { error } = await supabase
+      .from("verified_sources")
+      .delete()
+      .in("id", sourceIds);
+
+    if (error) {
+      toast.error("שגיאה בהסרת מקורות");
+      return;
+    }
+    toast.success(`${sourceIds.length} מקורות הוסרו`);
+    void fetchData();
+  };
+
+  const verifySingleSource = async (source: VerifiedSourceRow) => {
+    await bulkVerifyVerifiedSources([source.id]);
+  };
+
   const editVerified = async (
     source: VerifiedSourceRow,
     updates: { source_name: string; full_citation: string; verification_status: string }
@@ -360,7 +427,7 @@ const Admin = () => {
             </div>
 
             {sourceSubTab === "caselaw" && (
-              <SourceCategoryView title="⚖️ פסיקה (Case Law)" sources={caselawCitations} onToggleVerification={toggleVerification} />
+              <SourceCategoryView title="⚖️ פסיקה (Case Law)" sources={caselawCitations} onToggleVerification={toggleVerification} onBulkVerify={bulkToggleVerification} />
             )}
 
             {sourceSubTab === "legislation" && (
@@ -375,6 +442,7 @@ const Admin = () => {
                     }) === "legislation_primary"
                   )}
                   onToggleVerification={toggleVerification}
+                  onBulkVerify={bulkToggleVerification}
                 />
                 <SourceCategoryView
                   title="📋 חקיקת משנה (Secondary Legislation)"
@@ -386,16 +454,17 @@ const Admin = () => {
                     }) === "legislation_secondary"
                   )}
                   onToggleVerification={toggleVerification}
+                  onBulkVerify={bulkToggleVerification}
                 />
               </div>
             )}
 
             {sourceSubTab === "literature" && (
-              <SourceCategoryView title="📖 ספרות ומאמרים (Literature)" sources={literatureCitations} onToggleVerification={toggleVerification} />
+              <SourceCategoryView title="📖 ספרות ומאמרים (Literature)" sources={literatureCitations} onToggleVerification={toggleVerification} onBulkVerify={bulkToggleVerification} />
             )}
 
             {sourceSubTab === "other" && (
-              <SourceCategoryView title="📁 אחר (Other)" sources={otherCitations} onToggleVerification={toggleVerification} />
+              <SourceCategoryView title="📁 אחר (Other)" sources={otherCitations} onToggleVerification={toggleVerification} onBulkVerify={bulkToggleVerification} />
             )}
 
             {sourceSubTab === "verified" && (
@@ -415,6 +484,9 @@ const Admin = () => {
                   sources={verifiedByCategory.caselaw}
                   onRemove={removeVerified}
                   onEdit={editVerified}
+                  onVerify={verifySingleSource}
+                  onBulkVerify={bulkVerifyVerifiedSources}
+                  onBulkRemove={bulkRemoveVerifiedSources}
                 />
                 <VerifiedSourcesTable
                   title={`📜 ${getVerifiedCategoryLabel("legislation_primary")}`}
@@ -422,6 +494,9 @@ const Admin = () => {
                   sources={verifiedByCategory.legislation_primary}
                   onRemove={removeVerified}
                   onEdit={editVerified}
+                  onVerify={verifySingleSource}
+                  onBulkVerify={bulkVerifyVerifiedSources}
+                  onBulkRemove={bulkRemoveVerifiedSources}
                 />
                 <VerifiedSourcesTable
                   title={`📋 ${getVerifiedCategoryLabel("legislation_secondary")}`}
@@ -429,6 +504,9 @@ const Admin = () => {
                   sources={verifiedByCategory.legislation_secondary}
                   onRemove={removeVerified}
                   onEdit={editVerified}
+                  onVerify={verifySingleSource}
+                  onBulkVerify={bulkVerifyVerifiedSources}
+                  onBulkRemove={bulkRemoveVerifiedSources}
                 />
                 <VerifiedSourcesTable
                   title={`📖 ${getVerifiedCategoryLabel("literature")}`}
@@ -436,6 +514,9 @@ const Admin = () => {
                   sources={verifiedByCategory.literature}
                   onRemove={removeVerified}
                   onEdit={editVerified}
+                  onVerify={verifySingleSource}
+                  onBulkVerify={bulkVerifyVerifiedSources}
+                  onBulkRemove={bulkRemoveVerifiedSources}
                 />
                 <VerifiedSourcesTable
                   title={`📁 ${getVerifiedCategoryLabel("other")}`}
@@ -443,6 +524,9 @@ const Admin = () => {
                   sources={verifiedByCategory.other}
                   onRemove={removeVerified}
                   onEdit={editVerified}
+                  onVerify={verifySingleSource}
+                  onBulkVerify={bulkVerifyVerifiedSources}
+                  onBulkRemove={bulkRemoveVerifiedSources}
                 />
               </div>
             )}

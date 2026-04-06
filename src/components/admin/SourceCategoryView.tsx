@@ -1,5 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 interface SourceRecord {
@@ -15,11 +17,13 @@ interface SourceCategoryViewProps {
   title: string;
   sources: SourceRecord[];
   onToggleVerification: (citation: SourceRecord) => void;
+  onBulkVerify?: (citations: SourceRecord[]) => void;
 }
 
-const SourceCategoryView = ({ title, sources, onToggleVerification }: SourceCategoryViewProps) => {
+const SourceCategoryView = ({ title, sources, onToggleVerification, onBulkVerify }: SourceCategoryViewProps) => {
   const [showUnverifiedOnly, setShowUnverifiedOnly] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const filtered = sources.filter((s) => {
     if (showUnverifiedOnly && s.is_verified) return false;
@@ -29,6 +33,43 @@ const SourceCategoryView = ({ title, sources, onToggleVerification }: SourceCate
     }
     return true;
   });
+
+  const allSelected = filtered.length > 0 && filtered.every((s) => selectedIds.has(s.id));
+
+  const toggleAll = () => {
+    if (allSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map((s) => s.id)));
+    }
+  };
+
+  const toggleOne = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const selectedCitations = filtered.filter((s) => selectedIds.has(s.id));
+  const selectedUnverified = selectedCitations.filter((s) => !s.is_verified);
+  const selectedVerified = selectedCitations.filter((s) => s.is_verified);
+
+  const handleBulkVerify = () => {
+    if (onBulkVerify && selectedUnverified.length > 0) {
+      onBulkVerify(selectedUnverified);
+      setSelectedIds(new Set());
+    }
+  };
+
+  const handleBulkUnverify = () => {
+    if (onBulkVerify && selectedVerified.length > 0) {
+      onBulkVerify(selectedVerified);
+      setSelectedIds(new Set());
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -51,11 +92,35 @@ const SourceCategoryView = ({ title, sources, onToggleVerification }: SourceCate
         className="w-full bg-card border border-border rounded-lg px-4 py-2 text-foreground text-sm focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
       />
 
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-3 bg-primary/10 border border-primary/20 rounded-lg px-4 py-3">
+          <span className="text-sm font-medium text-foreground">{selectedIds.size} נבחרו</span>
+          <div className="flex items-center gap-2 mr-auto">
+            {selectedUnverified.length > 0 && (
+              <Button size="sm" onClick={handleBulkVerify}>
+                אמת {selectedUnverified.length} מקורות
+              </Button>
+            )}
+            {selectedVerified.length > 0 && (
+              <Button size="sm" variant="outline" onClick={handleBulkUnverify}>
+                בטל אימות {selectedVerified.length} מקורות
+              </Button>
+            )}
+            <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())}>
+              בטל בחירה
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/50">
+                <th className="px-4 py-3 w-10">
+                  <Checkbox checked={allSelected} onCheckedChange={toggleAll} />
+                </th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">תאריך</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">קלט</th>
                 <th className="text-right px-4 py-3 font-medium text-muted-foreground">פלט</th>
@@ -66,13 +131,16 @@ const SourceCategoryView = ({ title, sources, onToggleVerification }: SourceCate
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-8 text-muted-foreground">
+                  <td colSpan={6} className="text-center py-8 text-muted-foreground">
                     אין מקורות בקטגוריה זו
                   </td>
                 </tr>
               ) : (
                 filtered.map((cit) => (
-                  <tr key={cit.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                  <tr key={cit.id} className={`border-b border-border/50 hover:bg-muted/30 transition-colors ${selectedIds.has(cit.id) ? "bg-primary/5" : ""}`}>
+                    <td className="px-4 py-3">
+                      <Checkbox checked={selectedIds.has(cit.id)} onCheckedChange={() => toggleOne(cit.id)} />
+                    </td>
                     <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">
                       {new Date(cit.created_at).toLocaleDateString("he-IL")}
                     </td>
