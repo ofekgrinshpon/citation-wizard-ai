@@ -140,38 +140,54 @@ async function waitForOfficeInit(): Promise<void> {
 
   await Promise.race([
     new Promise<void>((resolve) => { Office.onReady(() => resolve()); }),
-    new Promise<void>((resolve) => setTimeout(resolve, 3000)),
+    new Promise<void>((resolve) => setTimeout(resolve, 5000)),
   ]);
 }
 
-/** Strategy A: Rich API footnote insertion via Word.run */
-async function tryRichApi(fullOoxml: string): Promise<InsertionResult | null> {
+/** Single Rich API insertion attempt */
+async function attemptRichApi(fullOoxml: string): Promise<InsertionResult | null> {
   const win = window as any;
   const Word = win.Word;
   if (!Word?.run) return null;
 
+  let method: "footnote" | "inline" = "footnote";
+  await Word.run(async (context: any) => {
+    const selection = context.document.getSelection();
+    try {
+      const footnote = selection.insertFootnote("");
+      const body = footnote.body;
+      body.insertOoxml(fullOoxml, "Replace");
+    } catch {
+      method = "inline";
+      selection.insertOoxml(fullOoxml, "After");
+    }
+    await context.sync();
+  });
+  return { mode: method };
+}
+
+/** Strategy A: Rich API footnote insertion via Word.run (with retry) */
+async function tryRichApi(fullOoxml: string): Promise<InsertionResult | null> {
+  const win = window as any;
+  if (!win.Word?.run) return null;
+
   try {
-    let method: "footnote" | "inline" = "footnote";
-    await Word.run(async (context: any) => {
-      const selection = context.document.getSelection();
-      try {
-        const footnote = selection.insertFootnote("");
-        const body = footnote.body;
-        body.insertOoxml(fullOoxml, "Replace");
-      } catch {
-        method = "inline";
-        selection.insertOoxml(fullOoxml, "After");
-      }
-      await context.sync();
-    });
-    return { mode: method };
+    return await attemptRichApi(fullOoxml);
   } catch (e: any) {
     const msg = e?.message || String(e);
     if (msg.includes("executeRichApiRequestAsync")) {
-      console.warn("[WordInsertion] Rich API bridge not connected");
-      return null; // Don't retry — bridge won't appear
+      console.warn("[WordInsertion] Rich API bridge not connected — skipping");
+      return null;
     }
-    console.warn("[WordInsertion] Rich API failed:", msg);
+    console.warn("[WordInsertion] Rich API attempt 1 failed:", msg, "— retrying in 2s");
+  }
+
+  // Retry once after a short delay
+  await new Promise((r) => setTimeout(r, 2000));
+  try {
+    return await attemptRichApi(fullOoxml);
+  } catch (e: any) {
+    console.warn("[WordInsertion] Rich API attempt 2 failed:", e?.message || String(e));
     return null;
   }
 }
@@ -229,8 +245,8 @@ export async function insertCitationAsFootnote(text: string): Promise<InsertionR
   const fullOoxml = wrapInOoxmlPackage(ooxml);
   const plainText = getPlainCitationText(text);
 
-  // Strategy A: Rich API (only if bridge is actually connected)
-  if (caps.bridgeConnected) {
+  // Strategy A: Rich API (try whenever Word.run exists)
+  if (caps.hasWordRun) {
     const result = await tryRichApi(fullOoxml);
     if (result) return result;
   }
