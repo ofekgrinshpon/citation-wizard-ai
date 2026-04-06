@@ -1,39 +1,35 @@
 
 
-# Enable Perplexity searches in batch footnote mode
+# Add Publication Integrity verification to batch footnote mode
 
 ## Problem
-The batch footnote builder sends all sources as a single combined prompt to the `citation-chat` edge function. The edge function only triggers Perplexity searches (for case law and legislation) when it detects a `[סיווג אוטומטי: ...]` classification tag in the user input. Since the batch prompt doesn't include these tags, Perplexity searches never run for batch-generated footnotes.
+The batch footnote builder bypasses the Publication Integrity Card that exists in chat mode. Per Rule 2.5, if the original publication of a law (especially early Basic Laws like חוק-יסוד: הכנסת, התשי"ח–1958) doesn't include a Gregorian year, it should be omitted from the citation. Currently:
+
+1. Perplexity returns a Gregorian year (e.g., 1958) regardless of whether it appeared in the original publication
+2. The AI blindly includes it in the citation
+3. The batch builder never shows the Publication Integrity Card, so the user is never asked whether Hebrew/Gregorian years appeared in the original
+4. No `verified_sources` lookup is done for year preferences in the batch flow
+
+In chat mode, this is handled by: (a) checking `verified_sources` for stored year preferences, and (b) showing the Publication Integrity Card for new laws.
 
 ## Solution
-Change the batch footnote builder to process each source individually (one API call per source) instead of sending them all in one combined prompt. Each individual call will include the `[סיווג אוטומטי: ...]` tag, which will trigger Perplexity searches just like the chat mode does. After all individual citations are generated, apply the repeat-citation rules (שם / לעיל ה"ש) client-side as it already does today.
+Add the same year-preference logic to the batch footnote builder:
+
+### 1. After each individual citation returns, check `verified_sources` for stored year preferences
+- If the source has stored `hasHebrewYear`/`hasGregorianYear` metadata, apply `applyYearPreferences` to strip the unwanted year — same as chat mode does silently for known laws.
+
+### 2. For new legislation not yet in `verified_sources`, queue a Publication Integrity Card
+- After all batch citations complete, show the Publication Integrity Card one-by-one for each new legislation source that lacks year preferences.
+- Apply the user's choices to the corresponding citation and save to `verified_sources`.
+
+### 3. Extract `applyYearPreferences` to a shared utility
+- Currently defined inline in `src/pages/Index.tsx` — move it to a shared location (e.g., `src/lib/citationUtils.ts`) so both Index.tsx and BatchFootnoteBuilder.tsx can use it.
 
 ## Changes
 
-### `src/components/BatchFootnoteBuilder.tsx` — `processAllCells`
-
-Replace the current "send all sources in one prompt" approach with:
-
-1. For each active cell, send an individual request to `citation-chat` with the same format used by the chat mode:
-   - Normalize abbreviations and detect source type
-   - Prepend the `[סיווג אוטומטי: ...]` tag
-   - Append the citation engine hint (same as the chat mode does)
-   - Send as a single-message conversation
-
-2. Process all cells in parallel (using `Promise.allSettled`) for speed, with individual error handling per cell.
-
-3. After all responses return, apply the existing `applyRepeatCitationRules` logic on the collected outputs to handle שם/לעיל cross-references.
-
-4. Keep existing bibliography sync, citation history logging, and verified source persistence unchanged.
-
-### Key detail: the repeat-citation prompt
-The current batch prompt includes detailed instructions for repeat citations (שם, לעיל ה"ש). Since each source will now be processed individually, the LLM won't see the other sources. The client-side `applyRepeatCitationRules` function (already in this file) will handle cross-references after all citations are collected — this is the same function already used post-processing today.
-
-## Files
-
 | File | Change |
 |------|--------|
-| `src/components/BatchFootnoteBuilder.tsx` | Refactor `processAllCells` to send individual requests per cell instead of one combined prompt |
-
-No edge function changes needed — the existing search logic will work once it receives properly tagged individual requests.
+| `src/lib/citationUtils.ts` | New file: extract `applyYearPreferences` function |
+| `src/pages/Index.tsx` | Import `applyYearPreferences` from shared utility instead of defining inline |
+| `src/components/BatchFootnoteBuilder.tsx` | After each legislation citation: check `verified_sources` for year prefs, apply them; queue unverified laws for Publication Integrity Card; show cards sequentially after batch completes |
 
