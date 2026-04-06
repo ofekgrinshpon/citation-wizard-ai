@@ -1,40 +1,35 @@
 
 
-# Fix legislation citation: single page number after ס"ח (Rule 2.8)
+# Fix legislation validation: single number after ס"ח
 
-## Problem
-The citation engine template and Perplexity prompt incorrectly expect two numbers after ס"ח (issue number + page). Per Rule 2.8, only **one number** should follow — the first page where the law appears in the collection. Example: `ס"ח 63` (correct), not `ס"ח 446` (issue number — wrong).
+## Root Cause
+Two bugs cause the false "missing page" warning:
+
+1. **Frontend validation regex** (line 124 of `citationValidation.ts`): The pattern `(?:ס["״]ח|ק["״]ת)\s+\d+[,\s]+(\d+)` expects TWO numbers after ס"ח (e.g., `ס"ח 864, 226`). But per Rule 2.8, there should only be ONE number (the page). So `ס"ח 128` never matches and `firstPage` stays undefined.
+
+2. **LLM adds `[חסר: עמוד בס"ח]`**: Even though Perplexity returns the page, the LLM still outputs a `[חסר]` marker. The marker-stripping logic at lines 160-170 then deletes `firstPage` even if the regex had found it.
 
 ## Changes
 
-### 1. Update `src/data/citationEngine.ts` — primary_legislation rule
+### 1. `src/lib/citationValidation.ts` — Fix firstPage regex (line 124)
 
-- **Template**: Change from `{collection} {firstPage}.` (which implies two numbers via example) — fix the example
-- **Example** (line 57): Change `'חוק העונשין, התשל"ז-1977, ס"ח 864, 226.'` → `'חוק העונשין, התשל"ז-1977, ס"ח 226.'`
-  - 864 is the issue number, 226 is the page — only 226 should appear
-- **Remove** the `volume` component (line 63) — issue/booklet number is not cited
-- Update `firstPage` description to clarify: "מספר העמוד הראשון שבו מופיע החיקוק בקובץ, ולא מספר החוברת"
-- Add a note referencing Rule 2.8 about page vs. issue distinction
+Change the regex from expecting two numbers to extracting the single number after ס"ח/ק"ת:
+```
+// OLD: expects two numbers (issue + page)
+/(?:ס["״]ח|ק["״]ת)\s+\d+[,\s]+(\d+)/
 
-### 2. Update `src/data/citationEngine.ts` — basic_law rule
+// NEW: captures the single number right after the collection name
+/(?:ס["״]ח|ק["״]ת)\s+(\d+)/
+```
 
-- **Example** (line 80): Change `'חוק-יסוד: כבוד האדם וחירותו, ס"ח 1391, 150.'` → `'חוק-יסוד: כבוד האדם וחירותו, ס"ח 150.'`
-  - Same issue: 1391 is the booklet, 150 is the page
+### 2. `supabase/functions/citation-chat/index.ts` — Strengthen hint to prevent `[חסר]`
 
-### 3. Update `supabase/functions/citation-chat/index.ts` — Perplexity legislation prompt (~lines 654-661)
-
-- Add explicit instruction in the system prompt: "page הוא מספר העמוד הראשון שבו מופיע החיקוק בקובץ החקיקה, ולא מספר החוברת. דוגמה: חוק הירושה = ס"ח 63 (עמוד), ולא ס"ח 446 (חוברת)."
-- Keep only `page` in the JSON schema — no separate booklet field needed since we never use it
-
-### 4. Update hint injection (~line 681-682)
-
-- Format stays: `${collection} ${page}` — just one number after the collection abbreviation
-- This is already correct in the current code; the fix is ensuring Perplexity returns the right number
+Add an explicit instruction in the `legislationHint` (line 690): "אם קובץ הפרסום כולל מספר עמוד, אל תוסיף [חסר: עמוד]. הנתונים שלהלן מאומתים." This prevents the LLM from second-guessing the Perplexity data and adding a false `[חסר]` marker.
 
 ## Files
 
 | File | Change |
 |------|--------|
-| `src/data/citationEngine.ts` | Fix template examples, remove volume component, clarify firstPage description |
-| `supabase/functions/citation-chat/index.ts` | Harden Perplexity prompt with page vs. issue distinction and example |
+| `src/lib/citationValidation.ts` | Fix firstPage regex to match single number after ס"ח |
+| `supabase/functions/citation-chat/index.ts` | Add instruction preventing false `[חסר]` when page data exists |
 
