@@ -141,10 +141,10 @@ export default function VerifiedSources() {
                       <TableCell className="max-w-xs truncate">
                         <HoverCard>
                           <HoverCardTrigger asChild>
-                            <span className="cursor-pointer"><RenderCitation text={s.full_citation} /></span>
+                            <span className="cursor-pointer"><RenderCitation text={cleanCitation(s.full_citation)} /></span>
                           </HoverCardTrigger>
                           <HoverCardContent className="w-96 text-sm whitespace-pre-wrap break-words" dir="rtl" side="top">
-                            <RenderCitation text={s.full_citation} />
+                            <RenderCitation text={cleanCitation(s.full_citation)} />
                           </HoverCardContent>
                         </HoverCard>
                       </TableCell>
