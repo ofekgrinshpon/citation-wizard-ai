@@ -308,6 +308,11 @@ export function BatchFootnoteBuilder({}: BatchProps) {
         ensureVerifiedSources(verifiedCandidates).catch(() => {});
       }
 
+      // Show integrity cards for new legislation
+      if (integrityQueue.length > 0) {
+        setPendingIntegrity(integrityQueue);
+      }
+
       // Recalculate bibliography from all current outputs
       const bibItems = nextCells
         .filter((cell) => {
