@@ -146,6 +146,7 @@ const Index = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
+  const [mode, setMode] = useState<AppMode>("freetext");
   const [pendingVerification, setPendingVerification] = useState<PendingVerification | null>(null);
   // Track detected source type per assistant message index
   const [messageSourceTypes, setMessageSourceTypes] = useState<Record<number, SourceType>>({});
