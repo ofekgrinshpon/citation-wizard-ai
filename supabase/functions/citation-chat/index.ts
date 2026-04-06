@@ -623,6 +623,87 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
       }
     }
 
+    // ── Legislation search via Perplexity ──
+    let legislationHint = "";
+    const isLegislation = classMatch && /חקיקה|חוק יסוד|חקיקת משנה/.test(classMatch[1]);
+    if (isLegislation && !hasVerifiedCandidates) {
+      try {
+        const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
+        if (PERPLEXITY_API_KEY) {
+          // Extract law name: strip classification tag and engine hint
+          const lawName = userInput
+            .replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "")
+            .replace(/\n══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
+            .trim();
+
+          if (lawName.length > 2) {
+            console.log(`[legislation] Searching Perplexity for: ${lawName}`);
+            const legQuery = `מצא את פרטי הפרסום הרשמי של החוק הישראלי "${lawName}". חפש באיזה ספר חוקים הוא פורסם (ס"ח - ספר החוקים, ק"ת - קובץ התקנות, או נ"ח - נוסח חדש), באיזו שנה עברית ולועזית, ומה מספר העמוד הראשון. אם זה פקודה מנדטורית שפורסמה בנוסח חדש, ציין זאת.`;
+
+            const legResp = await fetch("https://api.perplexity.ai/chat/completions", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                model: "sonar",
+                messages: [
+                  {
+                    role: "system",
+                    content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
+חפש את פרטי הפרסום הרשמי של החוק. לחקיקה ראשית חפש בספר החוקים (ס"ח). לחקיקת משנה (תקנות, צווים) חפש בקובץ התקנות (ק"ת). לפקודות מנדטוריות בנוסח חדש חפש בנוסח חדש (נ"ח).
+הפורמט:
+{"found":true/false,"lawName":"שם החוק המלא","hebrewYear":"שנה עברית","gregorianYear":1965,"collection":"ס\\"ח","page":307,"isNewVersion":false,"isCombinedVersion":false}
+collection חייב להיות אחד מ: ס"ח, ק"ת, נ"ח, ע"ר
+page הוא מספר העמוד הראשון בקובץ הפרסום.
+isNewVersion=true אם החוק הוא בנוסח חדש (נו"ח).
+isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
+                  },
+                  { role: "user", content: legQuery },
+                ],
+              }),
+            });
+
+            if (legResp.ok) {
+              const legData = await legResp.json();
+              const legContent = legData.choices?.[0]?.message?.content || "";
+              const legJsonMatch = legContent.match(/\{[\s\S]*?\}/);
+              if (legJsonMatch) {
+                try {
+                  const legParsed = JSON.parse(legJsonMatch[0]);
+                  if (legParsed.found && legParsed.lawName && legParsed.collection) {
+                    console.log(`[legislation] Found: ${legParsed.lawName}, ${legParsed.collection} ${legParsed.page || '?'}, ${legParsed.hebrewYear || '?'}`);
+                    let details = `\n\n══ נתוני חקיקה מאומתים ══\n`;
+                    details += `שם החוק: ${legParsed.lawName}\n`;
+                    if (legParsed.hebrewYear) details += `שנה עברית: ${legParsed.hebrewYear}\n`;
+                    if (legParsed.gregorianYear) details += `שנה לועזית: ${legParsed.gregorianYear}\n`;
+                    details += `קובץ פרסום: ${legParsed.collection}`;
+                    if (legParsed.page) details += ` ${legParsed.page}`;
+                    details += `\n`;
+                    if (legParsed.isNewVersion) details += `נוסח חדש: כן\n`;
+                    if (legParsed.isCombinedVersion) details += `נוסח משולב: כן\n`;
+                    details += `══ השתמש בנתונים אלו לעיצוב אזכור החקיקה. אם הנתונים חלקיים, סמן [חסר:...] לשדות החסרים. ══`;
+                    legislationHint = details;
+                  } else {
+                    console.log(`[legislation] Data unusable: found=${legParsed.found}, lawName=${legParsed.lawName}, collection=${legParsed.collection}`);
+                    legislationHint = `\n\n══ חיפוש חקיקה ══\nלא נמצאו נתוני פרסום מאומתים עבור "${lawName}".\nחובה להשתמש ב-[חסר:...] עבור שדות פרסום שאינם ידועים (ס"ח, עמוד, שנה).\nאל תמציא נתוני פרסום.\n══`;
+                  }
+                } catch (e) {
+                  console.error("[legislation] Failed to parse JSON:", e);
+                  legislationHint = `\n\n══ חיפוש חקיקה ══\nלא נמצאו נתוני פרסום מאומתים עבור "${lawName}".\nחובה להשתמש ב-[חסר:...] עבור שדות פרסום שאינם ידועים.\n══`;
+                }
+              }
+            } else {
+              console.error("[legislation] Perplexity search failed:", legResp.status);
+            }
+          }
+        }
+      } catch (e) {
+        console.error("[legislation] search error:", e);
+      }
+    }
+
     const enhancedMessages = messages.map((m: { role: string; content: string }, i: number) => {
       if (i === messages.length - 1 && m.role === "user") {
         let content = m.content;
@@ -632,9 +713,9 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
             .replace(/\n══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "\n");
         }
 
-        // Inject engine hint + verified source hints + case law search into the last user message
+        // Inject engine hint + verified source hints + case law search + legislation search into the last user message
         const engineHint = extractEngineHint(content);
-        const allHints = engineHint + (verifiedHint || "") + caseLawHint;
+        const allHints = engineHint + (verifiedHint || "") + caseLawHint + legislationHint;
         if (allHints || content !== m.content) {
           return { ...m, content: content + allHints };
         }
