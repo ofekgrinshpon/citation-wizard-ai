@@ -1,31 +1,42 @@
 
 
-# Fix: Case law search not triggering for hyphen-formatted case numbers
+# Fix: Perplexity case law search is blocked by false-positive verified source matches
 
 ## Problem
 
-When you typed `רע״א 5768-94`, the UI showed "מחפש פסק דין" (that part works -- it's triggered by client-side source type detection). But on the server, the Perplexity search **never actually ran** because the regex that extracts the case number only accepts a slash (`/`) separator, not a hyphen (`-`).
+The Perplexity search **never runs** because of a logic bug in the guard condition on line 476:
 
-The regex on line 474 of `citation-chat/index.ts`:
+```typescript
+if (isCaseLaw && caseNumberMatch && !hasVerifiedCandidates) {
 ```
-([0-9]+\/[0-9]+)
-```
-Your input: `5768-94` (hyphen) -- no match, so `caseNumberMatch` is `null`, the Perplexity call is skipped entirely, and the AI generates the citation without any search data.
+
+`hasVerifiedCandidates` is set to `true` on line 438 whenever ANY rows come back from the `verified_sources` table -- even if they're completely irrelevant to the case. The tokenized search for "רע״א 5768/94" extracts terms like "5768", "94" and searches broadly with `ilike`. If any verified source contains these numbers (even a law from 1994), it sets `hasVerifiedCandidates = true`, which skips the Perplexity search entirely.
+
+Result: the AI generates the citation with zero case data, producing `[חסר:...]` placeholders for everything.
 
 ## Solution
 
-**File: `supabase/functions/citation-chat/index.ts`** (line 474)
+Two changes in `supabase/functions/citation-chat/index.ts`:
 
-Change the case number regex from `[0-9]+\/[0-9]+` to `[0-9]+[\/\-][0-9]+` so it accepts both `5768/94` and `5768-94`. Then normalize the hyphen to a slash before sending to Perplexity (since the official format uses `/`).
+### Change 1: Don't let irrelevant verified sources block case law search
+Move the `hasVerifiedCandidates = true` assignment to AFTER the ranking/filtering step, so it's only set when there are actually relevant matches (score >= 0). Currently it's set on line 438 before any relevance check.
 
-Also apply the same fix to the standalone `case-law-search/index.ts` edge function for consistency.
+### Change 2: For case law, always run Perplexity search
+Remove the `!hasVerifiedCandidates` guard from the case law search condition entirely. Case law data (party names, dates, court) is fundamentally different from what verified sources provide (pre-formatted citations). The Perplexity search should always run for case law, and its results can supplement or override verified source hints.
 
-## Changes
+The updated condition on line 476 becomes:
+```typescript
+if (isCaseLaw && caseNumberMatch) {
+```
+
+### Change 3: Add debug logging
+Add `console.log` statements before key decision points so future issues are diagnosable from logs.
+
+## Files to modify
 
 | File | Change |
 |------|--------|
-| `supabase/functions/citation-chat/index.ts` | Accept `-` in addition to `/` in case number regex; normalize to `/` before search |
-| `supabase/functions/case-law-search/index.ts` | Same hyphen-to-slash normalization for the case number input |
+| `supabase/functions/citation-chat/index.ts` | Remove `!hasVerifiedCandidates` guard from Perplexity search; move `hasVerifiedCandidates` assignment after ranking; add debug logs |
 
-This is a one-line regex fix. After this, typing `רע״א 5768-94` will correctly trigger the Perplexity search and return real case data.
+This is a 3-line fix. After this, every case law query will trigger a Perplexity web search for real case metadata.
 
