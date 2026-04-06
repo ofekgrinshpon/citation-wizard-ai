@@ -1,53 +1,39 @@
 
-Fix the bug in three coordinated places, because the remaining warning is not just a frontend validation issue.
 
-1. Align the edge-function system prompt with the new legislation search behavior
-- Update `supabase/functions/citation-chat/index.ts` so the anti-hallucination instructions no longer say publication data may come only from the verified table or the user.
-- Explicitly allow trusted legislation metadata injected by the Perplexity legislation lookup as a third approved source.
-- Replace the old guidance that tells the model to output both `[חסר: מספר ס"ח]` and `[חסר: עמוד בס"ח]`, since Rule 2.8 now uses only one number after `ס"ח`: the first page.
+# Enable Perplexity searches in batch footnote mode
 
-2. Stop the sanitizer from destroying valid legislation publication data
-- In `sanitizeHallucinatedPublicationData`, add awareness of when trusted legislation metadata was injected.
-- Skip or narrow the `ס"ח`/`ק"ת` replacement logic when the response came from verified legislation search results, so a correct value like `ס"ח 128` is not rewritten or indirectly pushed back toward `[חסר]`.
-- Keep the sanitizer active for truly unverified legislation replies to preserve the anti-hallucination protection.
+## Problem
+The batch footnote builder sends all sources as a single combined prompt to the `citation-chat` edge function. The edge function only triggers Perplexity searches (for case law and legislation) when it detects a `[סיווג אוטומטי: ...]` classification tag in the user input. Since the batch prompt doesn't include these tags, Perplexity searches never run for batch-generated footnotes.
 
-3. Tighten missing-marker handling in frontend validation
-- Update `src/lib/citationValidation.ts` so legislation validation prefers the actual parsed citation data when a valid `ס"ח 128` / `ק"ת 123` exists.
-- Limit the generic `[חסר: ...]` deletion logic so a stale or overcautious missing marker does not wipe out `firstPage` when the citation line already contains the required page number.
-- Keep the existing single-number regex for legislation.
+## Solution
+Change the batch footnote builder to process each source individually (one API call per source) instead of sending them all in one combined prompt. Each individual call will include the `[סיווג אוטומטי: ...]` tag, which will trigger Perplexity searches just like the chat mode does. After all individual citations are generated, apply the repeat-citation rules (שם / לעיל ה"ש) client-side as it already does today.
 
-4. Verify rule text stays internally consistent
-- Review `src/data/citationEngine.ts` wording so all legislation examples, component descriptions, and notes consistently refer to one number after `ס"ח`/`ק"ת` for primary legislation page citation.
-- Make sure no leftover copy still implies “issue number + page”.
+## Changes
 
-Why this is still happening
-- The logs show Perplexity is finding valid data such as `חוק התחרות הכלכלית, ס"ח 128, התשמ"ח`.
-- But the edge-function system prompt still contains older instructions that forbid the model from trusting searched publication metadata and tell it to emit `[חסר]` unless data came from the verified table or the user.
-- Even if the citation text is correct, the frontend validator can still mark it incomplete if a `[חסר]` marker remains and deletes `firstPage`.
+### `src/components/BatchFootnoteBuilder.tsx` — `processAllCells`
 
-Files to update
-- `supabase/functions/citation-chat/index.ts`
-- `src/lib/citationValidation.ts`
-- `src/data/citationEngine.ts` (consistency pass)
+Replace the current "send all sources in one prompt" approach with:
 
-Expected result
-- A law citation like `חוק התחרות הכלכלית, התשמ"ח-1988, ס"ח 128.` should no longer produce:
-  - `[חסר: עמוד בס"ח]`
-  - `חסרים 1 רכיבי חובה...`
-- The warning should appear only when the searched metadata genuinely lacks the first page.
+1. For each active cell, send an individual request to `citation-chat` with the same format used by the chat mode:
+   - Normalize abbreviations and detect source type
+   - Prepend the `[סיווג אוטומטי: ...]` tag
+   - Append the citation engine hint (same as the chat mode does)
+   - Send as a single-message conversation
 
-Technical details
-```text
-Current conflict:
-Perplexity search finds trusted page
-        ↓
-legislationHint injects trusted data
-        ↓
-SYSTEM_PROMPT still says “only verified table or user may supply page”
-        ↓
-model may still emit [חסר]
-        ↓
-frontend sees [חסר] and deletes firstPage
-        ↓
-warning is appended
-```
+2. Process all cells in parallel (using `Promise.allSettled`) for speed, with individual error handling per cell.
+
+3. After all responses return, apply the existing `applyRepeatCitationRules` logic on the collected outputs to handle שם/לעיל cross-references.
+
+4. Keep existing bibliography sync, citation history logging, and verified source persistence unchanged.
+
+### Key detail: the repeat-citation prompt
+The current batch prompt includes detailed instructions for repeat citations (שם, לעיל ה"ש). Since each source will now be processed individually, the LLM won't see the other sources. The client-side `applyRepeatCitationRules` function (already in this file) will handle cross-references after all citations are collected — this is the same function already used post-processing today.
+
+## Files
+
+| File | Change |
+|------|--------|
+| `src/components/BatchFootnoteBuilder.tsx` | Refactor `processAllCells` to send individual requests per cell instead of one combined prompt |
+
+No edge function changes needed — the existing search logic will work once it receives properly tagged individual requests.
+
