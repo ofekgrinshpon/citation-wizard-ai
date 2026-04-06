@@ -138,6 +138,73 @@ const Admin = () => {
     void fetchData();
   };
 
+  const bulkToggleVerification = async (citationsToToggle: CitationRecord[]) => {
+    const toVerify = citationsToToggle.filter((c) => !c.is_verified);
+    const toUnverify = citationsToToggle.filter((c) => c.is_verified);
+
+    if (toVerify.length > 0) {
+      const ids = toVerify.map((c) => c.id);
+      await supabase.from("citation_history").update({ is_verified: true }).in("id", ids);
+      try {
+        await ensureVerifiedSources(
+          toVerify.map((c) => ({
+            rawInput: c.raw_input,
+            fullCitation: c.formatted_output,
+            sourceType: c.source_type,
+            verifiedBy: user?.id,
+            autoVerified: false,
+          })),
+          { skipAIVerification: true }
+        );
+      } catch {
+        toast.error("שגיאה בסנכרון מקורות מאומתים");
+      }
+    }
+
+    if (toUnverify.length > 0) {
+      const ids = toUnverify.map((c) => c.id);
+      await supabase.from("citation_history").update({ is_verified: false }).in("id", ids);
+      for (const c of toUnverify) {
+        await supabase.from("verified_sources").delete().eq("full_citation", c.formatted_output);
+      }
+    }
+
+    toast.success(`${citationsToToggle.length} מקורות עודכנו`);
+    void fetchData();
+  };
+
+  const bulkVerifyVerifiedSources = async (sourceIds: string[]) => {
+    const { error } = await supabase
+      .from("verified_sources")
+      .update({ verification_status: "verified" })
+      .in("id", sourceIds);
+
+    if (error) {
+      toast.error("שגיאה באימות מקורות");
+      return;
+    }
+    toast.success(`${sourceIds.length} מקורות אומתו`);
+    void fetchData();
+  };
+
+  const bulkRemoveVerifiedSources = async (sourceIds: string[]) => {
+    const { error } = await supabase
+      .from("verified_sources")
+      .delete()
+      .in("id", sourceIds);
+
+    if (error) {
+      toast.error("שגיאה בהסרת מקורות");
+      return;
+    }
+    toast.success(`${sourceIds.length} מקורות הוסרו`);
+    void fetchData();
+  };
+
+  const verifySingleSource = async (source: VerifiedSourceRow) => {
+    await bulkVerifyVerifiedSources([source.id]);
+  };
+
   const editVerified = async (
     source: VerifiedSourceRow,
     updates: { source_name: string; full_citation: string; verification_status: string }
