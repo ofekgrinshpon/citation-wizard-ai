@@ -12,7 +12,7 @@ export function AppSidebar() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { projects, currentProject, setCurrentProjectId, createProject, renameProject, deleteProject, loading: projectsLoading } = useProjects();
-  const { isSubscribed } = useSubscription();
+  const { isSubscribed, loading: subLoading } = useSubscription();
   const [newName, setNewName] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [displayName, setDisplayName] = useState("");
