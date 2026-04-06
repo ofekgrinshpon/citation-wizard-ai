@@ -37,10 +37,7 @@ interface Message {
   content: string;
 }
 
-interface YearPreferences {
-  hasHebrewYear: boolean;
-  hasGregorianYear: boolean;
-}
+import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, type YearPreferences } from "@/lib/citationUtils";
 
 interface PendingVerification {
   lawName: string;
