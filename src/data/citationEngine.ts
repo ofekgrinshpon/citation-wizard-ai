@@ -54,14 +54,13 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     primaryRule: "2",
     ruleTitle: "כלל 2 – חקיקה ראשית",
     template: "{lawName}, {hebrewYear} {gregorianYear}, {collection} {firstPage}.",
-    example: 'חוק העונשין, התשל"ז-1977, ס"ח 864, 226.',
+    example: 'חוק העונשין, התשל"ז-1977, ס"ח 226.',
     components: [
       { field: "lawName", rule: "2.1", description: "שם החוק המלא כפי שמופיע בכותרתו", required: true, format: "plain" },
       { field: "hebrewYear", rule: "2.4", description: "שנה עברית (למשל: התשל\"ז)", required: true, format: "plain" },
       { field: "gregorianYear", rule: "2.4", description: "שנה לועזית מחוברת במקף (למשל: -1977)", required: true, format: "plain" },
       { field: "collection", rule: "2.5", description: 'קובץ פרסום: ס"ח או ק"ת', required: true, format: "plain" },
-      { field: "volume", rule: "2.5", description: "מספר חוברת/כרך הקובץ", required: false, format: "plain" },
-      { field: "firstPage", rule: "2.6", description: "עמוד ראשון של החוק בקובץ", required: true, format: "plain" },
+      { field: "firstPage", rule: "2.6", description: "מספר העמוד הראשון שבו מופיע החיקוק בקובץ החקיקה (ולא מספר החוברת)", required: true, format: "plain" },
       { field: "specificPage", rule: "2.6", description: "עמוד ספציפי מופניה (עם פסיק)", required: false, format: "plain" },
       { field: "section", rule: "2.8", description: 'הפניה לסעיף ספציפי: ס\' X, סס\' X-Y', required: false, format: "plain" },
     ],
@@ -69,6 +68,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
       'כלל 2.2: "פקודה" – שם ישן לחוק; אותם כללי אזכור.',
       "כלל 2.3: תיקוני חקיקה – לציין את מספר התיקון בסוגריים.",
       'כלל 2.7: אם אין שנה עברית (פקודות מנדט) – מציינים שנה לועזית בלבד.',
+      'כלל 2.8: יש לציין את מספר העמוד הראשון שבו מופיע החיקוק בקובץ החקיקה, ולא את מספר החוברת. דוגמה: ס"ח 63 (נכון), לא ס"ח 446 (מספר חוברת – שגוי).',
     ],
   },
 
@@ -77,7 +77,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     primaryRule: "4",
     ruleTitle: "כלל 4 – חוק יסוד",
     template: "חוק-יסוד: {lawName}, {collection} {firstPage}.",
-    example: 'חוק-יסוד: כבוד האדם וחירותו, ס"ח 1391, 150.',
+    example: 'חוק-יסוד: כבוד האדם וחירותו, ס"ח 150.',
     components: [
       { field: "lawName", rule: "4.3", description: 'חוק-יסוד נכתב עם מקף; נקודתיים לפני שם החוק (חריג: חוק-יסוד: משק המדינה)', required: true, format: "plain" },
       { field: "hebrewYear", rule: "4.4", description: "שנה עברית (אם קיימת)", required: false, format: "plain" },
