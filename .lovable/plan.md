@@ -1,18 +1,28 @@
 
 
-# Strip rule/meta lines from formatted_output before saving to citation_history
+# User-facing Verified Sources page (subscribers only)
 
-## Problem
-The raw AI response (including `📐 כלל:`, `⚠️`, `🏷️`, step-by-step explanations) is saved directly to `citation_history.formatted_output` (line 355). The clean extraction function `extractCitationFromResponse` already exists and is used for `verified_sources`, but not for `citation_history`.
-
-## Solution
-Use `extractCitationFromResponse(reply)` (already computed as `extractedCitation` on line 352) as the value saved to `formatted_output` instead of the raw `reply`. This applies to all the citation save points in `Index.tsx`.
+## Overview
+Add a read-only "מקורות מאומתים" page where subscribed users can browse verified sources by category, search, and copy citations. Non-subscribers see a paywall message. No editing or pending sources shown.
 
 ## Changes
 
 | File | Change |
 |------|--------|
-| `src/pages/Index.tsx` | On line 355, change `formatted_output: reply` to `formatted_output: extractedCitation \|\| reply` (fallback to raw if extraction yields empty). Apply the same pattern to any other `citation_history.insert` calls in the file (treaty type handler, bill type handler, etc.). |
+| `src/pages/VerifiedSources.tsx` | **New file.** Fetch from `verified_sources` where `verification_status = 'verified'`. Category tabs, search bar, read-only table with HoverCard + RenderCitation for full citations. Copy button per row using `copyPlainText`. Gate access: if `!isSubscribed && !isAdmin`, show upgrade prompt instead of the table. |
+| `src/App.tsx` | Add route: `<Route path="/verified-sources" element={<VerifiedSources />} />` |
+| `src/components/AppSidebar.tsx` | Add "📚 מקורות מאומתים" link below projects section. Only visible when `isSubscribed || isAdmin`. Navigates to `/verified-sources`. |
 
-The `extractCitationFromResponse` function already strips `📐`, `⚠️`, `שלב`, `העוזר המשפטי`, and `מכיוון ש` lines — so the stored citation will be clean. The user's displayed message (`finalReply`) remains unchanged, so they still see warnings and rule references in the chat UI.
+## Access control
+- Uses `useSubscription()` hook — only `isSubscribed` or `isAdmin` users see the sidebar link and page content
+- Non-subscribers who navigate directly to `/verified-sources` see a message prompting them to subscribe
+- No database changes needed — existing RLS policy `Anyone can read verified sources` (SELECT for public) already allows read access
+- Query filters to `verification_status = 'verified'` only — pending/invalid sources are never shown
+
+## Page structure
+- RTL layout matching admin panel style
+- Category tabs: פסיקה, חקיקה ראשית, חקיקת משנה, ספרות ומאמרים, אחר
+- Search input filtering by source name or citation text
+- Table columns: שם מקור, קטגוריה, ציטוט מלא (with HoverCard), העתק (copy button)
+- No edit, delete, or verify actions
 
