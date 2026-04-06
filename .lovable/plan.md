@@ -1,13 +1,16 @@
 
 
-# Show "מקורות מאומתים" sidebar link to all users
+# Fix subscription badge flicker on navigation
 
 ## Problem
-The sidebar link is currently gated behind `isSubscribed || isAdmin`, so non-subscribers never see it. The user wants all authenticated users to see the link — clicking it as a non-subscriber should show the existing upgrade/paywall prompt on the page itself.
+When navigating from admin back to the app, `useSubscription` re-fetches from the database. During that fetch, `isSubscribed` defaults to `false` and `loading` is `true`, causing the badge to briefly flash "לא מנוי" (red) before updating to the correct state.
+
+## Solution
+Use the `loading` state from `useSubscription` in `AppSidebar` to hide the badge until subscription status is resolved.
 
 ## Change
 
 | File | Change |
 |------|--------|
-| `src/components/AppSidebar.tsx` | Remove the `(isSubscribed || isAdmin)` condition wrapping the "📚 מקורות מאומתים" button+separator block, so it renders for all authenticated users. The page already handles access gating with the Lock/upgrade screen. |
+| `src/components/AppSidebar.tsx` | Destructure `loading` from `useSubscription()`. Wrap the subscription `Badge` (lines 86-92) in a condition: only render when `!loading`. While loading, either show nothing or a small skeleton placeholder so there's no flash of incorrect state. |
 
