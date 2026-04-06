@@ -483,7 +483,7 @@ serve(async (req) => {
     const caseNumberMatch = userInput.match(/(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+([0-9]+[\/\-][0-9]+)/);
 
     console.log(`[case-law] isCaseLaw=${isCaseLaw}, caseNumberMatch=${caseNumberMatch?.[0] ?? 'null'}, hasVerifiedCandidates=${hasVerifiedCandidates}`);
-    if (isCaseLaw && caseNumberMatch) {
+    if (isCaseLaw && caseNumberMatch && !hasVerifiedCandidates) {
       try {
         const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
         if (PERPLEXITY_API_KEY) {
