@@ -25,9 +25,9 @@ interface VerifiedSource {
 
 const CATEGORIES = [
   { value: "all", label: "הכל" },
-  { value: "caselaw", label: "פסיקה" },
   { value: "legislation_primary", label: "חקיקה ראשית" },
   { value: "legislation_secondary", label: "חקיקת משנה" },
+  { value: "caselaw", label: "פסיקה" },
   { value: "literature", label: "ספרות ומאמרים" },
   { value: "other", label: "אחר" },
 ];
@@ -82,7 +82,9 @@ export default function VerifiedSources() {
   });
 
   const handleCopy = async (citation: string) => {
-    const clean = extractCitationFromResponse(citation) || citation;
+    // Strip inline rule references like "📐 כלל: 2 – ..."
+    let clean = citation.replace(/\s*📐\s*כלל:.*$/gm, "").trim();
+    clean = extractCitationFromResponse(clean) || clean;
     await copyPlainText(clean);
     toast.success("הציטוט הועתק");
   };
