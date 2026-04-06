@@ -442,6 +442,7 @@ const Admin = () => {
                     }) === "legislation_primary"
                   )}
                   onToggleVerification={toggleVerification}
+                  onBulkVerify={bulkToggleVerification}
                 />
                 <SourceCategoryView
                   title="📋 חקיקת משנה (Secondary Legislation)"
@@ -453,6 +454,7 @@ const Admin = () => {
                     }) === "legislation_secondary"
                   )}
                   onToggleVerification={toggleVerification}
+                  onBulkVerify={bulkToggleVerification}
                 />
               </div>
             )}
