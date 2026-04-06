@@ -120,8 +120,8 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     // Collection (ס"ח / ק"ת)
     const collMatch = response.match(/(ס["״]ח|ק["״]ת)/);
     if (collMatch) fields.collection = collMatch[1];
-    // First page after collection + number
-    const pageMatch = response.match(/(?:ס["״]ח|ק["״]ת)\s+\d+[,\s]+(\d+)/);
+    // First page — single number right after collection name (Rule 2.8)
+    const pageMatch = response.match(/(?:ס["״]ח|ק["״]ת)\s+(\d+)/);
     if (pageMatch) fields.firstPage = pageMatch[1];
   }
 
