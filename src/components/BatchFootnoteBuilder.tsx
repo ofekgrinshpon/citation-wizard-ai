@@ -70,6 +70,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   const [isInsertingAll, setIsInsertingAll] = useState(false);
   const [insertingCellId, setInsertingCellId] = useState<number | null>(null);
   const [summary, setSummary] = useState<string | null>(() => localStorage.getItem(getSummaryKey(projectId)));
+  const [pendingIntegrity, setPendingIntegrity] = useState<PendingIntegrity[]>([]);
   const bibliography = useBibliography();
 
   // Reload when project changes
