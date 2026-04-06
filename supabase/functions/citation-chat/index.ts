@@ -435,8 +435,6 @@ serve(async (req) => {
             .limit(12);
 
           if (verified && verified.length > 0) {
-            hasVerifiedCandidates = true;
-
             const rankedMatches = verified
               .map((candidate) => ({
                 candidate,
@@ -444,6 +442,11 @@ serve(async (req) => {
               }))
               .filter((item) => item.score >= 0)
               .sort((a, b) => b.score - a.score);
+
+            if (rankedMatches.length > 0) {
+              hasVerifiedCandidates = true;
+            }
+            console.log(`[verified] raw=${verified.length}, ranked=${rankedMatches.length}, hasVerifiedCandidates=${rankedMatches.length > 0}`);
 
             const bestMatch = rankedMatches[0]?.candidate as { full_citation: string } | undefined;
             const hasPinpoint = PINPOINT_REGEX.test(userInput);
@@ -473,7 +476,8 @@ serve(async (req) => {
     const isCaseLaw = classMatch && /פסיקה/.test(classMatch[1]);
     const caseNumberMatch = userInput.match(/(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+([0-9]+[\/\-][0-9]+)/);
 
-    if (isCaseLaw && caseNumberMatch && !hasVerifiedCandidates) {
+    console.log(`[case-law] isCaseLaw=${isCaseLaw}, caseNumberMatch=${caseNumberMatch?.[0] ?? 'null'}, hasVerifiedCandidates=${hasVerifiedCandidates}`);
+    if (isCaseLaw && caseNumberMatch) {
       try {
         const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
         if (PERPLEXITY_API_KEY) {
