@@ -1,32 +1,38 @@
 
 
-# Add "case not found" fallback with [חסר:...] placeholders
+# Improve Perplexity prompt to distinguish published vs. database case law
 
 ## Problem
-When Perplexity finds nothing (`found: false`, JSON parse failure, or HTTP error), the system silently proceeds with zero metadata. The LLM then either halluccinates details or produces an unhelpful response.
+Perplexity finds case references on secondary sites (legal blogs, database citations) and incorrectly reports `isPublished: false` with a database name, even when the case IS officially published in פ"ד. This happens because Perplexity doesn't access Nevo directly — it sees whatever citation format appears on the web pages it finds.
 
-## Solution
-In `supabase/functions/citation-chat/index.ts`, when a case law search runs but returns no results, inject a fallback hint telling the AI explicitly:
-- The case was **not found** in any search
-- It must use `[חסר:...]` for every unknown field
-- It must **not invent** party names, dates, courts, or publication details
+## Root cause
+The current prompt asks Perplexity "if published in פ"ד, say so; otherwise, name the database." But Perplexity often encounters database citations first (e.g., a Nevo link) and stops there, never checking whether a פ"ד publication also exists.
 
-### Change (single file)
+## Solution: Multi-layered prompt hardening
 
-**`supabase/functions/citation-chat/index.ts`** — after the search block (around line 541), add an `else` branch for when `parsed.found` is falsy (or when JSON parsing fails, or Perplexity returns an error):
+### Change 1: Restructure the Perplexity search prompt
+In `supabase/functions/citation-chat/index.ts`, rewrite the system prompt to:
 
-```typescript
-// After the if (parsed.found) { ... } block:
-} else {
-  caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${fullCaseRef}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע (צדדים, תאריך, בית משפט, פרסום/מאגר).\nאל תמציא שמות צדדים, תאריכים, או פרטי פרסום.\n══`;
-}
-```
+1. **Prioritize פ"ד lookup** — explicitly instruct: "First, check if this case appears in פ"ד (פסקי דין של בית המשפט העליון). Search for the case number together with 'פ"ד' and volume number."
+2. **Add negative confirmation** — "Only mark `isPublished: false` if you specifically searched for פ"ד publication and confirmed it does NOT exist."
+3. **Flag uncertainty** — Add a new JSON field `"confidence": "high"/"low"` so the system can treat low-confidence results more cautiously.
 
-Same fallback text for the outer failure cases (HTTP error, no JSON match, parse error) — set `caseLawHint` to the same warning string instead of leaving it empty.
+### Change 2: Add a secondary verification search
+When Perplexity returns `isPublished: false`, run a **second focused query** specifically asking: "Is case X published in פ"ד? Search for '[case number] פ"ד כרך'". This targeted search is more likely to find the official publication if it exists.
 
-This ensures the LLM always gets explicit anti-hallucination instructions when no real data was found.
+### Change 3: Handle low-confidence gracefully
+If both searches disagree or confidence is low, inject a note to the user: "לא ניתן לאמת בוודאות אם פסק הדין פורסם בפ"ד. מוצג כפסיקה ממאגר. אם ידוע לך שפורסם בפ"ד, נא לציין כרך וחלק."
+
+## Technical details
+
+**File: `supabase/functions/citation-chat/index.ts`** (~lines 488-508)
+
+1. Rewrite the system prompt for the Perplexity call to emphasize פ"ד priority
+2. After the first search returns `isPublished: false`, add a second `fetch` call to Perplexity with a focused query like: `"האם ${fullCaseRef} פורסם בפ"ד? חפש כרך וחלק ועמוד ראשון"`
+3. If the second search finds פ"ד data, override `isPublished` to `true` and populate volume/part/page
+4. Add `confidence` field handling throughout the existing parse logic
 
 | File | Change |
 |------|--------|
-| `supabase/functions/citation-chat/index.ts` | Add fallback `caseLawHint` with [חסר:...] instructions when search finds nothing |
+| `supabase/functions/citation-chat/index.ts` | Rewrite Perplexity prompt to prioritize פ"ד; add secondary verification search; handle uncertainty |
 
