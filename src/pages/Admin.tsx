@@ -427,7 +427,7 @@ const Admin = () => {
             </div>
 
             {sourceSubTab === "caselaw" && (
-              <SourceCategoryView title="⚖️ פסיקה (Case Law)" sources={caselawCitations} onToggleVerification={toggleVerification} />
+              <SourceCategoryView title="⚖️ פסיקה (Case Law)" sources={caselawCitations} onToggleVerification={toggleVerification} onBulkVerify={bulkToggleVerification} />
             )}
 
             {sourceSubTab === "legislation" && (
@@ -458,11 +458,11 @@ const Admin = () => {
             )}
 
             {sourceSubTab === "literature" && (
-              <SourceCategoryView title="📖 ספרות ומאמרים (Literature)" sources={literatureCitations} onToggleVerification={toggleVerification} />
+              <SourceCategoryView title="📖 ספרות ומאמרים (Literature)" sources={literatureCitations} onToggleVerification={toggleVerification} onBulkVerify={bulkToggleVerification} />
             )}
 
             {sourceSubTab === "other" && (
-              <SourceCategoryView title="📁 אחר (Other)" sources={otherCitations} onToggleVerification={toggleVerification} />
+              <SourceCategoryView title="📁 אחר (Other)" sources={otherCitations} onToggleVerification={toggleVerification} onBulkVerify={bulkToggleVerification} />
             )}
 
             {sourceSubTab === "verified" && (
