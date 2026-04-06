@@ -392,6 +392,46 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   const hasAnyOutput = cells.some((c) => c.output);
   const hasAnyInput = cells.some((c) => c.input.trim());
   const outputCells = cells.filter((c) => c.output);
+  const currentIntegrity = pendingIntegrity[0] ?? null;
+
+  const handleIntegrityConfirm = async (prefs: YearPreferences) => {
+    if (!currentIntegrity) return;
+    const { cellId, rawInput, fullCitation, sourceType } = currentIntegrity;
+    const adjustedCitation = applyYearPreferences(fullCitation, prefs);
+
+    // Update cell output
+    setCells(prev => prev.map(c =>
+      c.id === cellId ? { ...c, output: applyYearPreferences(c.output!, prefs) } : c
+    ));
+
+    // Save to verified sources with year prefs
+    ensureVerifiedSources([{
+      rawInput,
+      fullCitation: adjustedCitation,
+      sourceType,
+      autoVerified: true,
+      yearPreferences: prefs,
+    }]).catch(() => {});
+
+    // Move to next
+    setPendingIntegrity(prev => prev.slice(1));
+  };
+
+  const handleIntegrityCancel = async () => {
+    if (!currentIntegrity) return;
+    const { rawInput, fullCitation, sourceType } = currentIntegrity;
+
+    // Save with defaults (both years present)
+    ensureVerifiedSources([{
+      rawInput,
+      fullCitation,
+      sourceType,
+      autoVerified: true,
+      yearPreferences: { hasHebrewYear: true, hasGregorianYear: true },
+    }]).catch(() => {});
+
+    setPendingIntegrity(prev => prev.slice(1));
+  };
 
   return (
     <div className="py-6" style={{ direction: "rtl" }}>
