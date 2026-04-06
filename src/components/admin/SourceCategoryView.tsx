@@ -2,6 +2,8 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
+import { RenderCitation } from "@/components/admin/RenderCitation";
 import { useState } from "react";
 
 interface SourceRecord {
@@ -145,7 +147,18 @@ const SourceCategoryView = ({ title, sources, onToggleVerification, onBulkVerify
                       {new Date(cit.created_at).toLocaleDateString("he-IL")}
                     </td>
                     <td className="px-4 py-3 text-foreground max-w-[200px] truncate">{cit.raw_input}</td>
-                    <td className="px-4 py-3 text-foreground max-w-[300px] truncate">{cit.formatted_output}</td>
+                    <td className="px-4 py-3 text-foreground max-w-[300px] truncate">
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <span className="cursor-pointer">
+                            <RenderCitation text={cit.formatted_output} />
+                          </span>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-96 text-sm whitespace-pre-wrap break-words" dir="rtl" side="top">
+                          <RenderCitation text={cit.formatted_output} />
+                        </HoverCardContent>
+                      </HoverCard>
+                    </td>
                     <td className="px-4 py-3">
                       {cit.is_verified ? (
                         <Badge className="bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800">✓ מאומת</Badge>
