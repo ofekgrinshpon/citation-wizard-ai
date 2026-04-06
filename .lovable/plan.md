@@ -1,42 +1,37 @@
 
 
-# Fix: Perplexity case law search is blocked by false-positive verified source matches
+# Fix: Published case law incorrectly validated as database case law
 
 ## Problem
 
-The Perplexity search **never runs** because of a logic bug in the guard condition on line 476:
+When searching for `רע"פ 9142/01`, the client-side `detectSourceType` classifies it as `case_law_database` because the user input doesn't contain `פ"ד`. However, the Perplexity search discovers it IS published in פ"ד נז(6) 793. The AI correctly formats it as published case law (Rule 18), but the post-response validation still runs against `case_law_database` (Rule 19), which demands a database name and full date -- producing a false "missing 2 mandatory components" warning.
 
-```typescript
-if (isCaseLaw && caseNumberMatch && !hasVerifiedCandidates) {
-```
-
-`hasVerifiedCandidates` is set to `true` on line 438 whenever ANY rows come back from the `verified_sources` table -- even if they're completely irrelevant to the case. The tokenized search for "רע״א 5768/94" extracts terms like "5768", "94" and searches broadly with `ilike`. If any verified source contains these numbers (even a law from 1994), it sets `hasVerifiedCandidates = true`, which skips the Perplexity search entirely.
-
-Result: the AI generates the citation with zero case data, producing `[חסר:...]` placeholders for everything.
+This also explains the inconsistency: sometimes the AI output format varies slightly, causing different validation results for the same case.
 
 ## Solution
 
-Two changes in `supabase/functions/citation-chat/index.ts`:
+**File: `src/pages/Index.tsx`** (around line 650-664)
 
-### Change 1: Don't let irrelevant verified sources block case law search
-Move the `hasVerifiedCandidates = true` assignment to AFTER the ranking/filtering step, so it's only set when there are actually relevant matches (score >= 0). Currently it's set on line 438 before any relevance check.
+After receiving the AI response, re-detect the source type from the **output** when the original type is case law. If the AI response contains `פ"ד` (indicating published case law), upgrade the source type from `case_law_database` to `case_law_published` before running validation.
 
-### Change 2: For case law, always run Perplexity search
-Remove the `!hasVerifiedCandidates` guard from the case law search condition entirely. Case law data (party names, dates, court) is fundamentally different from what verified sources provide (pre-formatted citations). The Perplexity search should always run for case law, and its results can supplement or override verified source hints.
+### Specific change
 
-The updated condition on line 476 becomes:
+After `const reply = await callAPI(...)` and before `const validation = validateAIResponse(...)`, add logic:
+
 ```typescript
-if (isCaseLaw && caseNumberMatch) {
+// If originally classified as database case law, but AI found it's published (contains פ"ד),
+// re-classify to case_law_published for correct validation
+let effectiveSourceType = sourceType as SourceType;
+if (effectiveSourceType === "case_law_database" && /פ["״]ד\s+[א-ת]+/.test(reply)) {
+  effectiveSourceType = "case_law_published";
+}
 ```
 
-### Change 3: Add debug logging
-Add `console.log` statements before key decision points so future issues are diagnosable from logs.
+Then use `effectiveSourceType` instead of `sourceType` in `validateAIResponse`, `getMissingFieldsSummary`, `setMessageSourceTypes`, and the history save.
 
 ## Files to modify
 
 | File | Change |
 |------|--------|
-| `supabase/functions/citation-chat/index.ts` | Remove `!hasVerifiedCandidates` guard from Perplexity search; move `hasVerifiedCandidates` assignment after ranking; add debug logs |
-
-This is a 3-line fix. After this, every case law query will trigger a Perplexity web search for real case metadata.
+| `src/pages/Index.tsx` | Re-classify source type from AI output before validation; use effective type for validation and display |
 
