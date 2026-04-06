@@ -7,12 +7,11 @@ import { copyPlainText } from "@/lib/clipboard";
 import { extractCitationFromResponse } from "@/lib/citationUtils";
 import { RenderCitation } from "@/components/admin/RenderCitation";
 import { toast } from "sonner";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 import { Button } from "@/components/ui/button";
-import { Copy, ArrowRight, Lock } from "lucide-react";
+import { Copy, ArrowRight, Lock, Search } from "lucide-react";
 
 interface VerifiedSource {
   id: string;
@@ -60,15 +59,17 @@ export default function VerifiedSources() {
 
   if (!canAccess) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-4 p-6 text-center" dir="rtl">
-        <Lock className="h-12 w-12 text-muted-foreground" />
-        <h2 className="text-xl font-bold">מקורות מאומתים זמינים למנויים בלבד</h2>
-        <p className="text-muted-foreground max-w-md">שדרגו לחשבון מנוי כדי לגשת למאגר המקורות המאומתים שלנו.</p>
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={() => navigate("/profile?tab=account")}>שדרוג חשבון</Button>
-          <Button variant="ghost" onClick={() => navigate(-1 as any)}>
-            <ArrowRight className="h-4 w-4 ml-1" /> חזרה
-          </Button>
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4 p-6 text-center bg-background" dir="rtl">
+        <div className="bg-card rounded-2xl border border-border p-10 shadow-sm max-w-md space-y-4">
+          <Lock className="h-10 w-10 text-muted-foreground mx-auto" />
+          <h2 className="text-xl font-bold text-foreground">מקורות מאומתים זמינים למנויים בלבד</h2>
+          <p className="text-muted-foreground text-sm">שדרגו לחשבון מנוי כדי לגשת למאגר המקורות המאומתים שלנו.</p>
+          <div className="flex gap-3 justify-center pt-2">
+            <Button onClick={() => navigate("/profile?tab=account")} className="bg-primary text-primary-foreground hover:bg-primary/90">שדרוג חשבון</Button>
+            <Button variant="ghost" onClick={() => navigate(-1 as any)}>
+              <ArrowRight className="h-4 w-4 ml-1" /> חזרה
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -94,72 +95,92 @@ export default function VerifiedSources() {
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8" dir="rtl">
-      <div className="max-w-5xl mx-auto space-y-6">
+      <div className="max-w-5xl mx-auto space-y-5">
+        {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">📚 מקורות מאומתים</h1>
-          <Button variant="ghost" size="sm" onClick={() => navigate(-1 as any)}>
+          <h1 className="text-2xl font-bold text-foreground">📚 מקורות מאומתים</h1>
+          <Button variant="ghost" size="sm" onClick={() => navigate(-1 as any)} className="text-muted-foreground hover:text-foreground">
             <ArrowRight className="h-4 w-4 ml-1" /> חזרה
           </Button>
         </div>
 
-        <Input
-          placeholder="חיפוש לפי שם מקור או ציטוט..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-md"
-        />
+        {/* Card container */}
+        <div className="bg-card border border-border rounded-xl shadow-sm p-5 space-y-4">
+          {/* Search */}
+          <div className="relative max-w-sm">
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <Input
+              placeholder="חיפוש לפי שם מקור או ציטוט..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pr-9 bg-background border-border"
+            />
+          </div>
 
-        <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="flex-wrap justify-end">
+          {/* Category tabs - right aligned */}
+          <div className="flex flex-wrap gap-1.5 justify-start">
             {CATEGORIES.map((c) => (
-              <TabsTrigger key={c.value} value={c.value}>{c.label}</TabsTrigger>
+              <button
+                key={c.value}
+                onClick={() => setTab(c.value)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  tab === c.value
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                }`}
+              >
+                {c.label}
+              </button>
             ))}
-          </TabsList>
+          </div>
 
-          <TabsContent value={tab} className="mt-4">
-            {loading ? (
-              <p className="text-muted-foreground text-sm">טוען מקורות...</p>
-            ) : filtered.length === 0 ? (
-              <p className="text-muted-foreground text-sm">לא נמצאו מקורות.</p>
-            ) : (
-              <div dir="rtl"><Table>
+          {/* Table */}
+          {loading ? (
+            <p className="text-muted-foreground text-sm py-8 text-center">טוען מקורות...</p>
+          ) : filtered.length === 0 ? (
+            <p className="text-muted-foreground text-sm py-8 text-center">לא נמצאו מקורות.</p>
+          ) : (
+            <div className="rounded-lg border border-border overflow-hidden">
+              <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-right">שם מקור</TableHead>
-                    <TableHead className="text-right">קטגוריה</TableHead>
-                    <TableHead className="text-right">ציטוט מלא</TableHead>
-                    <TableHead className="text-right w-20">העתק</TableHead>
+                  <TableRow className="bg-muted/50">
+                    <TableHead className="text-right text-foreground font-semibold">שם מקור</TableHead>
+                    <TableHead className="text-right text-foreground font-semibold">קטגוריה</TableHead>
+                    <TableHead className="text-right text-foreground font-semibold">ציטוט מלא</TableHead>
+                    <TableHead className="text-right text-foreground font-semibold w-16">העתק</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filtered.map((s) => (
-                    <TableRow key={s.id}>
-                      <TableCell className="font-medium">{s.source_name}</TableCell>
-                      <TableCell className="text-muted-foreground text-xs">
-                        {CATEGORIES.find((c) => c.value === s.source_type)?.label ?? s.source_type}
+                    <TableRow key={s.id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell className="font-medium text-foreground">{s.source_name}</TableCell>
+                      <TableCell>
+                        <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-accent text-accent-foreground">
+                          {CATEGORIES.find((c) => c.value === s.source_type)?.label ?? s.source_type}
+                        </span>
                       </TableCell>
-                      <TableCell className="max-w-xs truncate">
+                      <TableCell className="max-w-xs truncate text-muted-foreground">
                         <HoverCard>
                           <HoverCardTrigger asChild>
-                            <span className="cursor-pointer"><RenderCitation text={cleanCitation(s.full_citation)} /></span>
+                            <span className="cursor-pointer hover:text-foreground transition-colors"><RenderCitation text={cleanCitation(s.full_citation)} /></span>
                           </HoverCardTrigger>
-                          <HoverCardContent className="w-96 text-sm whitespace-pre-wrap break-words" dir="rtl" side="top">
+                          <HoverCardContent className="w-96 text-sm whitespace-pre-wrap break-words bg-card border-border" dir="rtl" side="top">
                             <RenderCitation text={cleanCitation(s.full_citation)} />
                           </HoverCardContent>
                         </HoverCard>
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="icon" onClick={() => handleCopy(s.full_citation)} title="העתק ציטוט">
+                        <Button variant="ghost" size="icon" onClick={() => handleCopy(s.full_citation)} title="העתק ציטוט" className="text-muted-foreground hover:text-primary">
                           <Copy className="h-4 w-4" />
                         </Button>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
-              </Table></div>
-            )}
-          </TabsContent>
-        </Tabs>
+              </Table>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
