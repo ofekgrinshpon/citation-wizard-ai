@@ -23,6 +23,14 @@ interface FootnoteCell {
   verifiedCitation?: string;
 }
 
+interface PendingIntegrity {
+  cellId: number;
+  lawName: string;
+  rawInput: string;
+  fullCitation: string;
+  sourceType: string | null;
+}
+
 const createCell = (id: number): FootnoteCell => ({
   id,
   input: "",
