@@ -1,37 +1,18 @@
 
 
-# Add hover tooltips to SourceCategoryView + fix bold rendering
+# Strip rule/meta lines from formatted_output before saving to citation_history
 
 ## Problem
-1. The "פלט" column in `SourceCategoryView.tsx` (used for all category tabs) truncates long text with no way to see the full citation on hover.
-2. Both `SourceCategoryView` and `VerifiedSourcesTable` display raw `**bold**` markdown instead of rendering it as bold text. The `RenderCitation` component (which parses `**` into `<strong>`) exists in `VerifiedSourcesTable.tsx` but is not used in `SourceCategoryView`.
+The raw AI response (including `📐 כלל:`, `⚠️`, `🏷️`, step-by-step explanations) is saved directly to `citation_history.formatted_output` (line 355). The clean extraction function `extractCitationFromResponse` already exists and is used for `verified_sources`, but not for `citation_history`.
+
+## Solution
+Use `extractCitationFromResponse(reply)` (already computed as `extractedCitation` on line 352) as the value saved to `formatted_output` instead of the raw `reply`. This applies to all the citation save points in `Index.tsx`.
 
 ## Changes
 
 | File | Change |
 |------|--------|
-| `src/components/admin/SourceCategoryView.tsx` | 1. Import `HoverCard`, `HoverCardTrigger`, `HoverCardContent` from hover-card. 2. Copy or import the `RenderCitation` helper (parses `**text**` into `<strong>`). 3. Wrap the פלט cell (line 148) in a `HoverCard` with full-text hover content, using `RenderCitation` for both the truncated cell and the hover popover. |
-| `src/components/admin/VerifiedSourcesTable.tsx` | No structural changes needed — already has `HoverCard` and `RenderCitation`. Just confirm bold rendering works (it does, since `RenderCitation` is already used). |
+| `src/pages/Index.tsx` | On line 355, change `formatted_output: reply` to `formatted_output: extractedCitation \|\| reply` (fallback to raw if extraction yields empty). Apply the same pattern to any other `citation_history.insert` calls in the file (treaty type handler, bill type handler, etc.). |
 
-### Detail for SourceCategoryView line 148
-
-From:
-```tsx
-<td className="... max-w-[300px] truncate">{cit.formatted_output}</td>
-```
-To:
-```tsx
-<td className="... max-w-[300px] truncate">
-  <HoverCard>
-    <HoverCardTrigger asChild>
-      <span className="cursor-pointer"><RenderCitation text={cit.formatted_output} /></span>
-    </HoverCardTrigger>
-    <HoverCardContent className="w-96 text-sm whitespace-pre-wrap break-words" dir="rtl" side="top">
-      <RenderCitation text={cit.formatted_output} />
-    </HoverCardContent>
-  </HoverCard>
-</td>
-```
-
-To avoid code duplication, I'll extract `RenderCitation` into a small shared utility file (`src/components/admin/RenderCitation.tsx`) and import it in both table components.
+The `extractCitationFromResponse` function already strips `📐`, `⚠️`, `שלב`, `העוזר המשפטי`, and `מכיוון ש` lines — so the stored citation will be clean. The user's displayed message (`finalReply`) remains unchanged, so they still see warnings and rule references in the chat UI.
 
