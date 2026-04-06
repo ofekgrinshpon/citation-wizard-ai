@@ -82,7 +82,8 @@ export default function VerifiedSources() {
   });
 
   const handleCopy = async (citation: string) => {
-    await copyPlainText(citation);
+    const clean = extractCitationFromResponse(citation) || citation;
+    await copyPlainText(clean);
     toast.success("הציטוט הועתק");
   };
 

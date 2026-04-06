@@ -30,3 +30,25 @@ export function extractLawNameFromInput(text: string): string {
   let cleaned = text.trim().replace(/^סעיף\s+[\dא-ת()./\\–-]+\s+ל/, "").trim();
   return cleaned.split(",")[0]?.trim() || cleaned;
 }
+
+/**
+ * Extract the actual citation line from an AI response,
+ * stripping step-by-step explanations, rule references, and warnings.
+ */
+export function extractCitationFromResponse(response: string): string {
+  const lines = response.split("\n").map((l) => l.trim()).filter(Boolean);
+
+  const citationLines = lines.filter((line) => {
+    if (/^שלב \d/.test(line)) return false;
+    if (/^📐/.test(line)) return false;
+    if (/^⚠️/.test(line)) return false;
+    if (/^🏷️/.test(line)) return false;
+    if (/^✓/.test(line)) return false;
+    if (/^העוזר המשפטי/.test(line)) return false;
+    if (/^מכיוון ש/.test(line)) return false;
+    if (/^הנוסחה ל/.test(line)) return false;
+    return true;
+  });
+
+  return citationLines.length > 0 ? citationLines[citationLines.length - 1] : "";
+}
