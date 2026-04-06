@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
 import { copyPlainText } from "@/lib/clipboard";
+import { extractCitationFromResponse } from "@/lib/citationUtils";
 import { RenderCitation } from "@/components/admin/RenderCitation";
 import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -81,7 +82,8 @@ export default function VerifiedSources() {
   });
 
   const handleCopy = async (citation: string) => {
-    await copyPlainText(citation);
+    const clean = extractCitationFromResponse(citation) || citation;
+    await copyPlainText(clean);
     toast.success("הציטוט הועתק");
   };
 
@@ -103,7 +105,7 @@ export default function VerifiedSources() {
         />
 
         <Tabs value={tab} onValueChange={setTab}>
-          <TabsList className="flex-wrap">
+          <TabsList className="flex-wrap justify-end">
             {CATEGORIES.map((c) => (
               <TabsTrigger key={c.value} value={c.value}>{c.label}</TabsTrigger>
             ))}
