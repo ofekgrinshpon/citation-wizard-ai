@@ -1,37 +1,32 @@
 
 
-# Fix: Published case law incorrectly validated as database case law
+# Add "case not found" fallback with [חסר:...] placeholders
 
 ## Problem
-
-When searching for `רע"פ 9142/01`, the client-side `detectSourceType` classifies it as `case_law_database` because the user input doesn't contain `פ"ד`. However, the Perplexity search discovers it IS published in פ"ד נז(6) 793. The AI correctly formats it as published case law (Rule 18), but the post-response validation still runs against `case_law_database` (Rule 19), which demands a database name and full date -- producing a false "missing 2 mandatory components" warning.
-
-This also explains the inconsistency: sometimes the AI output format varies slightly, causing different validation results for the same case.
+When Perplexity finds nothing (`found: false`, JSON parse failure, or HTTP error), the system silently proceeds with zero metadata. The LLM then either halluccinates details or produces an unhelpful response.
 
 ## Solution
+In `supabase/functions/citation-chat/index.ts`, when a case law search runs but returns no results, inject a fallback hint telling the AI explicitly:
+- The case was **not found** in any search
+- It must use `[חסר:...]` for every unknown field
+- It must **not invent** party names, dates, courts, or publication details
 
-**File: `src/pages/Index.tsx`** (around line 650-664)
+### Change (single file)
 
-After receiving the AI response, re-detect the source type from the **output** when the original type is case law. If the AI response contains `פ"ד` (indicating published case law), upgrade the source type from `case_law_database` to `case_law_published` before running validation.
-
-### Specific change
-
-After `const reply = await callAPI(...)` and before `const validation = validateAIResponse(...)`, add logic:
+**`supabase/functions/citation-chat/index.ts`** — after the search block (around line 541), add an `else` branch for when `parsed.found` is falsy (or when JSON parsing fails, or Perplexity returns an error):
 
 ```typescript
-// If originally classified as database case law, but AI found it's published (contains פ"ד),
-// re-classify to case_law_published for correct validation
-let effectiveSourceType = sourceType as SourceType;
-if (effectiveSourceType === "case_law_database" && /פ["״]ד\s+[א-ת]+/.test(reply)) {
-  effectiveSourceType = "case_law_published";
+// After the if (parsed.found) { ... } block:
+} else {
+  caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${fullCaseRef}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע (צדדים, תאריך, בית משפט, פרסום/מאגר).\nאל תמציא שמות צדדים, תאריכים, או פרטי פרסום.\n══`;
 }
 ```
 
-Then use `effectiveSourceType` instead of `sourceType` in `validateAIResponse`, `getMissingFieldsSummary`, `setMessageSourceTypes`, and the history save.
+Same fallback text for the outer failure cases (HTTP error, no JSON match, parse error) — set `caseLawHint` to the same warning string instead of leaving it empty.
 
-## Files to modify
+This ensures the LLM always gets explicit anti-hallucination instructions when no real data was found.
 
 | File | Change |
 |------|--------|
-| `src/pages/Index.tsx` | Re-classify source type from AI output before validation; use effective type for validation and display |
+| `supabase/functions/citation-chat/index.ts` | Add fallback `caseLawHint` with [חסר:...] instructions when search finds nothing |
 
