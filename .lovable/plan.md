@@ -1,38 +1,48 @@
 
 
-# Improve Perplexity prompt to distinguish published vs. database case law
+# Add Perplexity search for legislation (law name, year, ס"ח)
 
 ## Problem
-Perplexity finds case references on secondary sites (legal blogs, database citations) and incorrectly reports `isPublished: false` with a database name, even when the case IS officially published in פ"ד. This happens because Perplexity doesn't access Nevo directly — it sees whatever citation format appears on the web pages it finds.
+When a user queries a law (e.g., "חוק התכנון והבנייה"), the system only checks the local `laws.ts` database and `verified_sources` table. If the law isn't there or has incomplete data (missing ס"ח page), the AI has no way to find the official publication details and either guesses or leaves them out.
 
-## Root cause
-The current prompt asks Perplexity "if published in פ"ד, say so; otherwise, name the database." But Perplexity often encounters database citations first (e.g., a Nevo link) and stops there, never checking whether a פ"ד publication also exists.
+## Solution
+Add a legislation search block in `citation-chat/index.ts` (after the case law search block, ~line 624) that triggers when:
+1. The source type is classified as חקיקה, חוק יסוד, or חקיקת משנה
+2. No verified source with a complete citation was returned as a direct match
 
-## Solution: Multi-layered prompt hardening
+### How it works
 
-### Change 1: Restructure the Perplexity search prompt
-In `supabase/functions/citation-chat/index.ts`, rewrite the system prompt to:
+1. **Detection**: Check if `classMatch` contains חקיקה/חוק יסוד/חקיקת משנה. Extract the law name from the user input (strip the classification tag).
 
-1. **Prioritize פ"ד lookup** — explicitly instruct: "First, check if this case appears in פ"ד (פסקי דין של בית המשפט העליון). Search for the case number together with 'פ"ד' and volume number."
-2. **Add negative confirmation** — "Only mark `isPublished: false` if you specifically searched for פ"ד publication and confirmed it does NOT exist."
-3. **Flag uncertainty** — Add a new JSON field `"confidence": "high"/"low"` so the system can treat low-confidence results more cautiously.
+2. **Perplexity query**: Ask Perplexity to find the official publication details — return JSON:
+   ```json
+   {
+     "found": true,
+     "lawName": "חוק התכנון והבנייה",
+     "hebrewYear": "התשכ\"ה",
+     "gregorianYear": 1965,
+     "collection": "ס\"ח",
+     "page": 307,
+     "isNewVersion": false,
+     "isCombinedVersion": false
+   }
+   ```
 
-### Change 2: Add a secondary verification search
-When Perplexity returns `isPublished: false`, run a **second focused query** specifically asking: "Is case X published in פ"ד? Search for '[case number] פ"ד כרך'". This targeted search is more likely to find the official publication if it exists.
+3. **System prompt**: Instruct Perplexity to search for the law's official publication in ספר החוקים (ס"ח), קובץ התקנות (ק"ת), or נוסח חדש (נ"ח), and return the first page number in that collection.
 
-### Change 3: Handle low-confidence gracefully
-If both searches disagree or confidence is low, inject a note to the user: "לא ניתן לאמת בוודאות אם פסק הדין פורסם בפ"ד. מוצג כפסיקה ממאגר. אם ידוע לך שפורסם בפ"ד, נא לציין כרך וחלק."
+4. **Validation**: Only use results if `found` is true, `lawName` is non-empty, and `collection` is non-empty.
+
+5. **Hint injection**: Inject a `legislationHint` into the user message with verified publication data (same pattern as `caseLawHint`), so the AI formats the citation with ס"ח and page number.
+
+6. **Fallback**: If search fails or data is unusable, inject a hint with `[חסר:...]` for unknown publication fields.
+
+7. **Skip condition**: If verified sources already returned a direct best-match (the early-return at line 454), the Perplexity search never runs since the function already returned.
 
 ## Technical details
 
-**File: `supabase/functions/citation-chat/index.ts`** (~lines 488-508)
-
-1. Rewrite the system prompt for the Perplexity call to emphasize פ"ד priority
-2. After the first search returns `isPublished: false`, add a second `fetch` call to Perplexity with a focused query like: `"האם ${fullCaseRef} פורסם בפ"ד? חפש כרך וחלק ועמוד ראשון"`
-3. If the second search finds פ"ד data, override `isPublished` to `true` and populate volume/part/page
-4. Add `confidence` field handling throughout the existing parse logic
-
 | File | Change |
 |------|--------|
-| `supabase/functions/citation-chat/index.ts` | Rewrite Perplexity prompt to prioritize פ"ד; add secondary verification search; handle uncertainty |
+| `supabase/functions/citation-chat/index.ts` | Add ~50 lines after line 624: legislation Perplexity search block with detection, query, validation, hint injection, and fallback |
+
+The new block mirrors the case law search pattern — a `legislationHint` variable initialized to `""`, a Perplexity fetch with structured JSON response, validation, and injection into `enhancedMessages` alongside `caseLawHint`.
 
