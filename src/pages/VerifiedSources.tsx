@@ -115,7 +115,7 @@ export default function VerifiedSources() {
             ) : filtered.length === 0 ? (
               <p className="text-muted-foreground text-sm">לא נמצאו מקורות.</p>
             ) : (
-              <Table>
+              <div dir="rtl"><Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="text-right">שם מקור</TableHead>
