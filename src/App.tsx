@@ -15,6 +15,7 @@ import Profile from "./pages/Profile.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import AuthDialog from "./pages/AuthDialog.tsx";
+import VerifiedSources from "./pages/VerifiedSources.tsx";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
                   <Route path="/app" element={<BibliographyProvider><Index /></BibliographyProvider>} />
                   <Route path="/admin" element={<Admin />} />
                   <Route path="/profile" element={<Profile />} />
+                  <Route path="/verified-sources" element={<VerifiedSources />} />
                   <Route path="/auth-redirect" element={<AuthRedirect />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/auth-dialog" element={<AuthDialog />} />
