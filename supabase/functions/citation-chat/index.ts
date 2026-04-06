@@ -443,6 +443,11 @@ serve(async (req) => {
               .filter((item) => item.score >= 0)
               .sort((a, b) => b.score - a.score);
 
+            if (rankedMatches.length > 0) {
+              hasVerifiedCandidates = true;
+            }
+            console.log(`[verified] raw=${verified.length}, ranked=${rankedMatches.length}, hasVerifiedCandidates=${rankedMatches.length > 0}`);
+
             const bestMatch = rankedMatches[0]?.candidate as { full_citation: string } | undefined;
             const hasPinpoint = PINPOINT_REGEX.test(userInput);
             if (bestMatch && !hasPinpoint) {
