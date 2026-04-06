@@ -67,6 +67,12 @@ export function getEngineRuleReference(sourceType: SourceType): string {
  */
 function extractFieldsFromResponse(response: string, sourceType: SourceType): Record<string, string | undefined> {
   const fields: Record<string, string | undefined> = {};
+  const citationLine = getCitationLine(response);
+  const hasTrustedLegislationPage = (
+    sourceType === "primary_legislation" ||
+    sourceType === "basic_law" ||
+    sourceType === "secondary_legislation"
+  ) && /(?:ס["״]ח|ק["״]ת)\s+\d+/.test(citationLine);
 
   // Case law patterns
   if (sourceType === "case_law_published" || sourceType === "case_law_database") {
@@ -183,7 +189,15 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
   const missingMarkers = [...response.matchAll(/\[חסר:\s*([^\]]+)\]/g)];
   for (const marker of missingMarkers) {
     const desc = marker[1].toLowerCase();
-    if (desc.includes("עמוד") || desc.includes("ס\"ח")) delete fields.firstPage;
+    if (
+      desc.includes("עמוד") ||
+      desc.includes("ס\"ח") ||
+      desc.includes("ס״ח") ||
+      desc.includes("ק\"ת") ||
+      desc.includes("ק״ת")
+    ) {
+      if (!(hasTrustedLegislationPage && fields.firstPage)) delete fields.firstPage;
+    }
     if (desc.includes("כרך")) delete fields.volume;
     if (desc.includes("שנה עברית")) delete fields.hebrewYear;
     if (desc.includes("שנה")) delete fields.year;
