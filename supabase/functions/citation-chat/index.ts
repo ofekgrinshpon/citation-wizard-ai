@@ -485,7 +485,7 @@ serve(async (req) => {
           const caseType = caseNumberMatch[1];
           const caseNum = caseNumberMatch[2].replace('-', '/');
           const fullCaseRef = `${caseType} ${caseNum}`;
-          const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) אם פורסם בפד"י - ציין כרך, חלק ועמוד ראשון, 5) אם לא פורסם בפד"י - ציין באיזה מאגר (נבו/תקדין/פסקדין). ענה בעברית בלבד.`;
+          const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חשוב מאוד: בדוק קודם כל האם פסק הדין פורסם בפד"י (פסקי דין של בית המשפט העליון). חפש את מספר התיק יחד עם המילה "פ"ד" וכרך. רק אם וידאת שהוא לא מופיע בפד"י, ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. ענה בעברית בלבד.`;
 
           const perplexityResp = await fetch("https://api.perplexity.ai/chat/completions", {
             method: "POST",
@@ -498,9 +498,13 @@ serve(async (req) => {
               messages: [
                 {
                   role: "system",
-                  content: `אתה עוזר מחקר משפטי. החזר תשובה בפורמט JSON בלבד:
-{"found":true/false,"party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY"}
-שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.`,
+                  content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
+חשוב ביותר: עדיפות ראשונה היא לבדוק פרסום בפד"י (פסקי דין). רוב פסקי הדין של בית המשפט העליון פורסמו בפד"י. אל תסתמך רק על מאגרי מידע אלקטרוניים - חפש במיוחד אם יש ציון "פ"ד" עם כרך ועמוד.
+סמן isPublished: false רק אם חיפשת במפורש פרסום בפד"י ווידאת שהוא לא קיים.
+הפורמט:
+{"found":true/false,"party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","confidence":"high/low"}
+שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
+confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות רבים, "low" אם יש ספק או מקור יחיד.`,
                 },
                 { role: "user", content: query },
               ],
@@ -514,8 +518,56 @@ serve(async (req) => {
             const jsonMatch = pContent.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
               try {
-                const parsed = JSON.parse(jsonMatch[0]);
+                let parsed = JSON.parse(jsonMatch[0]);
                 
+                // ── Secondary verification: if Perplexity says not published, double-check with a focused query ──
+                if (parsed.found && !parsed.isPublished) {
+                  console.log(`[case-law] First search says unpublished for ${fullCaseRef}, running verification search...`);
+                  try {
+                    const verifyResp = await fetch("https://api.perplexity.ai/chat/completions", {
+                      method: "POST",
+                      headers: {
+                        Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        model: "sonar",
+                        messages: [
+                          {
+                            role: "system",
+                            content: `בדוק האם פסק דין ישראלי פורסם בפד"י (פסקי דין). החזר JSON בלבד:
+{"isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד ראשון"}
+אם לא מצאת ציון פד"י, החזר {"isPublished":false}`,
+                          },
+                          {
+                            role: "user",
+                            content: `האם ${fullCaseRef} פורסם בפד"י (פסקי דין)? חפש "${caseNum} פ"ד" או "${fullCaseRef} פ"ד כרך". ציין כרך, חלק ועמוד ראשון.`,
+                          },
+                        ],
+                      }),
+                    });
+                    if (verifyResp.ok) {
+                      const vData = await verifyResp.json();
+                      const vContent = vData.choices?.[0]?.message?.content || "";
+                      console.log("[case-law] Verification search result:", vContent);
+                      const vJson = vContent.match(/\{[\s\S]*\}/);
+                      if (vJson) {
+                        const vParsed = JSON.parse(vJson[0]);
+                        if (vParsed.isPublished && vParsed.padi_volume && vParsed.padi_volume.trim() !== "") {
+                          console.log(`[case-law] Verification found פד"י publication! Overriding.`);
+                          parsed.isPublished = true;
+                          parsed.padi_volume = vParsed.padi_volume;
+                          parsed.padi_part = vParsed.padi_part || parsed.padi_part;
+                          parsed.padi_page = vParsed.padi_page || parsed.padi_page;
+                          parsed.confidence = "high";
+                        }
+                      }
+                    }
+                  } catch (verifyErr) {
+                    console.error("[case-law] Verification search error:", verifyErr);
+                  }
+                }
+
                 // Validate data quality: reject bogus results with empty/placeholder fields
                 const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && parsed.date.trim() !== "";
                 const hasValidParties = parsed.party1 && parsed.party1.trim() !== "" && parsed.party2 && parsed.party2.trim() !== "";
@@ -535,6 +587,10 @@ serve(async (req) => {
                   if (!parsed.isPublished && parsed.databaseName && parsed.databaseName.trim() !== "") {
                     caseLawOverrideLabel = "פסיקה (מאגר)";
                     details += `מאגר: ${parsed.databaseName}\n`;
+                    // Add uncertainty note for low-confidence database classifications
+                    if (parsed.confidence === "low") {
+                      details += `⚠️ הערה: לא ניתן לאמת בוודאות אם פסק הדין פורסם בפ"ד. מוצג כפסיקה ממאגר. אם ידוע לך שפורסם בפ"ד, נא לציין כרך וחלק.\n`;
+                    }
                   }
                   if (hasValidDate) details += `תאריך: ${parsed.date}\n`;
                   if (parsed.year && parsed.year.trim() !== "") details += `שנה: ${parsed.year}\n`;
@@ -543,7 +599,7 @@ serve(async (req) => {
                   } else {
                     details += `══ השתמש בנתונים אלו לעיצוב האזכור. אם הנתונים חלקיים, סמן [חסר:...] לשדות החסרים. ══`;
                   }
-                  console.log(`[case-law] overrideLabel=${caseLawOverrideLabel ?? 'none'}`);
+                  console.log(`[case-law] overrideLabel=${caseLawOverrideLabel ?? 'none'}, confidence=${parsed.confidence ?? 'unknown'}`);
                   caseLawHint = details;
                 } else {
                   console.log(`[case-law] Data unusable for ${fullCaseRef}: found=${parsed.found}, validParties=${hasValidParties}, validDate=${hasValidDate}, validPub=${hasValidPublication}`);
