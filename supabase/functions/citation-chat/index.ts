@@ -472,6 +472,7 @@ serve(async (req) => {
 
     // ── Case law search via Perplexity ──
     let caseLawHint = "";
+    let caseLawOverrideLabel: string | null = null;
     const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
     const isCaseLaw = classMatch && /פסיקה/.test(classMatch[1]);
     const caseNumberMatch = userInput.match(/(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+([0-9]+[\/\-][0-9]+)/);
@@ -520,15 +521,22 @@ serve(async (req) => {
                   if (parsed.party1 && parsed.party2) details += `צדדים: **${parsed.party1}** נ' **${parsed.party2}**\n`;
                   if (parsed.court) details += `בית משפט: ${parsed.court}\n`;
                   if (parsed.isPublished && parsed.padi_volume) {
+                    caseLawOverrideLabel = "פסיקה (דפוס)";
                     const part = parsed.padi_part ? `(${parsed.padi_part})` : "";
                     details += `פרסום: פ"ד ${parsed.padi_volume}${part} ${parsed.padi_page || ""}\n`;
                   }
                   if (!parsed.isPublished && parsed.databaseName) {
+                    caseLawOverrideLabel = "פסיקה (מאגר)";
                     details += `מאגר: ${parsed.databaseName}\n`;
                   }
                   if (parsed.date) details += `תאריך: ${parsed.date}\n`;
                   if (parsed.year) details += `שנה: ${parsed.year}\n`;
-                  details += `══ השתמש בנתונים אלו לעיצוב האזכור. אם הנתונים חלקיים, סמן [חסר:...] לשדות החסרים. ══`;
+                  if (caseLawOverrideLabel === "פסיקה (דפוס)") {
+                    details += `══ נמצא פרסום בפ"ד, לכן חובה לעצב את האזכור כפסיקה (דפוס) לפי כלל 18. אין לציין מאגר או תאריך בסוגריים במקום פ"ד. ══`;
+                  } else {
+                    details += `══ השתמש בנתונים אלו לעיצוב האזכור. אם הנתונים חלקיים, סמן [חסר:...] לשדות החסרים. ══`;
+                  }
+                  console.log(`[case-law] overrideLabel=${caseLawOverrideLabel ?? 'none'}`);
                   caseLawHint = details;
                 }
               } catch (e) {
@@ -546,11 +554,18 @@ serve(async (req) => {
 
     const enhancedMessages = messages.map((m: { role: string; content: string }, i: number) => {
       if (i === messages.length - 1 && m.role === "user") {
+        let content = m.content;
+        if (caseLawOverrideLabel) {
+          content = content
+            .replace(/\[סיווג אוטומטי:\s*[^\]]+\]/, `[סיווג אוטומטי: ${caseLawOverrideLabel}]`)
+            .replace(/\n══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "\n");
+        }
+
         // Inject engine hint + verified source hints + case law search into the last user message
-        const engineHint = extractEngineHint(m.content);
+        const engineHint = extractEngineHint(content);
         const allHints = engineHint + (verifiedHint || "") + caseLawHint;
-        if (allHints) {
-          return { ...m, content: m.content + allHints };
+        if (allHints || content !== m.content) {
+          return { ...m, content: content + allHints };
         }
       }
       return m;
