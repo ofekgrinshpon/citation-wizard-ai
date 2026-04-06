@@ -37,38 +37,7 @@ interface Message {
   content: string;
 }
 
-import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, type YearPreferences } from "@/lib/citationUtils";
-
-interface PendingVerification {
-  lawName: string;
-  rawInput: string;
-  fullCitation: string;
-  sourceType: string | null;
-  reply: string;
-}
-
-
-
-
-/**
- * Extract the actual formatted citation from the AI response,
- * stripping step-by-step explanations, rule references, and warnings.
- */
-function extractCitationFromResponse(response: string): string {
-  const lines = response.split("\n").map((l) => l.trim()).filter(Boolean);
-
-  const citationLines = lines.filter((line) => {
-    if (/^שלב \d/.test(line)) return false;
-    if (/^📐/.test(line)) return false;
-    if (/^⚠️/.test(line)) return false;
-    if (/^העוזר המשפטי/.test(line)) return false;
-    if (/^מכיוון ש/.test(line)) return false;
-    if (/^הנוסחה ל/.test(line)) return false;
-    return true;
-  });
-
-  return citationLines.length > 0 ? citationLines[citationLines.length - 1] : "";
-}
+import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, extractCitationFromResponse, type YearPreferences } from "@/lib/citationUtils";
 
 /**
  * If current input is a fragment (number, short correction), trace back to find the original source name.
