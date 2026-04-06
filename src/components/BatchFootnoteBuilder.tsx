@@ -642,6 +642,20 @@ export function BatchFootnoteBuilder({}: BatchProps) {
           </div>
         </div>
       )}
+
+      {/* Publication Integrity Card */}
+      {currentIntegrity && (
+        <div className="mt-4 animate-fade-in">
+          <p className="text-xs text-muted-foreground mb-2">
+            וידוא פרסום ({pendingIntegrity.length} נותרו)
+          </p>
+          <PublicationIntegrityCard
+            lawName={currentIntegrity.lawName}
+            onConfirm={handleIntegrityConfirm}
+            onCancel={handleIntegrityCancel}
+          />
+        </div>
+      )}
     </div>
   );
 }
