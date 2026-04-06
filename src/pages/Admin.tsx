@@ -484,6 +484,9 @@ const Admin = () => {
                   sources={verifiedByCategory.caselaw}
                   onRemove={removeVerified}
                   onEdit={editVerified}
+                  onVerify={verifySingleSource}
+                  onBulkVerify={bulkVerifyVerifiedSources}
+                  onBulkRemove={bulkRemoveVerifiedSources}
                 />
                 <VerifiedSourcesTable
                   title={`📜 ${getVerifiedCategoryLabel("legislation_primary")}`}
@@ -491,6 +494,9 @@ const Admin = () => {
                   sources={verifiedByCategory.legislation_primary}
                   onRemove={removeVerified}
                   onEdit={editVerified}
+                  onVerify={verifySingleSource}
+                  onBulkVerify={bulkVerifyVerifiedSources}
+                  onBulkRemove={bulkRemoveVerifiedSources}
                 />
                 <VerifiedSourcesTable
                   title={`📋 ${getVerifiedCategoryLabel("legislation_secondary")}`}
@@ -498,6 +504,9 @@ const Admin = () => {
                   sources={verifiedByCategory.legislation_secondary}
                   onRemove={removeVerified}
                   onEdit={editVerified}
+                  onVerify={verifySingleSource}
+                  onBulkVerify={bulkVerifyVerifiedSources}
+                  onBulkRemove={bulkRemoveVerifiedSources}
                 />
                 <VerifiedSourcesTable
                   title={`📖 ${getVerifiedCategoryLabel("literature")}`}
@@ -505,6 +514,9 @@ const Admin = () => {
                   sources={verifiedByCategory.literature}
                   onRemove={removeVerified}
                   onEdit={editVerified}
+                  onVerify={verifySingleSource}
+                  onBulkVerify={bulkVerifyVerifiedSources}
+                  onBulkRemove={bulkRemoveVerifiedSources}
                 />
                 <VerifiedSourcesTable
                   title={`📁 ${getVerifiedCategoryLabel("other")}`}
@@ -512,6 +524,9 @@ const Admin = () => {
                   sources={verifiedByCategory.other}
                   onRemove={removeVerified}
                   onEdit={editVerified}
+                  onVerify={verifySingleSource}
+                  onBulkVerify={bulkVerifyVerifiedSources}
+                  onBulkRemove={bulkRemoveVerifiedSources}
                 />
               </div>
             )}
