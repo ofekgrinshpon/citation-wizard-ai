@@ -413,7 +413,10 @@ serve(async (req) => {
     if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY && userInput.length >= 2) {
       try {
         const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-        const searchTerm = userInput.replace(/\[סיווג אוטומטי:.*?\]\n?/, "").trim();
+        const searchTerm = userInput
+          .replace(/\[סיווג אוטומטי:.*?\]\n?/, "")
+          .replace(/══[\s\S]*══+\s*/g, "")
+          .trim();
         const words = tokenizeSearchTerms(searchTerm);
 
         // Also extract case number patterns (e.g., "1514/01", "1514")
