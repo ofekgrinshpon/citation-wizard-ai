@@ -188,18 +188,14 @@ export function AppSidebar() {
         </button>
       )}
 
-      {(isSubscribed || isAdmin) && (
-        <>
-          <div className="h-px bg-border my-2" />
-          <button
-            onClick={() => navigate("/verified-sources")}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-primary hover:bg-muted transition-colors text-right w-full"
-          >
-            <span>📚</span>
-            <span>מקורות מאומתים</span>
-          </button>
-        </>
-      )}
+      <div className="h-px bg-border my-2" />
+      <button
+        onClick={() => navigate("/verified-sources")}
+        className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-primary hover:bg-muted transition-colors text-right w-full"
+      >
+        <span>📚</span>
+        <span>מקורות מאומתים</span>
+      </button>
 
       {isAdmin && (
         <>
