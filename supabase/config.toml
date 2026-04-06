@@ -2,3 +2,6 @@ project_id = "ioktiqcffungtlsmlkcv"
 
 [functions.citation-chat]
 verify_jwt = false
+
+[functions.case-law-search]
+verify_jwt = false

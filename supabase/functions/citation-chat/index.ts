@@ -467,11 +467,84 @@ serve(async (req) => {
       }
     }
 
+    // ── Case law search via Perplexity ──
+    let caseLawHint = "";
+    const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
+    const isCaseLaw = classMatch && /פסיקה/.test(classMatch[1]);
+    const caseNumberMatch = userInput.match(/(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+([0-9]+\/[0-9]+)/);
+
+    if (isCaseLaw && caseNumberMatch && !hasVerifiedCandidates) {
+      try {
+        const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
+        if (PERPLEXITY_API_KEY) {
+          const caseType = caseNumberMatch[1];
+          const caseNum = caseNumberMatch[2];
+          const fullCaseRef = `${caseType} ${caseNum}`;
+          const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) אם פורסם בפד"י - ציין כרך, חלק ועמוד ראשון, 5) אם לא פורסם בפד"י - ציין באיזה מאגר (נבו/תקדין/פסקדין). ענה בעברית בלבד.`;
+
+          const perplexityResp = await fetch("https://api.perplexity.ai/chat/completions", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "sonar",
+              messages: [
+                {
+                  role: "system",
+                  content: `אתה עוזר מחקר משפטי. החזר תשובה בפורמט JSON בלבד:
+{"found":true/false,"party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY"}
+שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.`,
+                },
+                { role: "user", content: query },
+              ],
+            }),
+          });
+
+          if (perplexityResp.ok) {
+            const pData = await perplexityResp.json();
+            const pContent = pData.choices?.[0]?.message?.content || "";
+            console.log("Case law search result:", pContent);
+            const jsonMatch = pContent.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+              try {
+                const parsed = JSON.parse(jsonMatch[0]);
+                if (parsed.found) {
+                  let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
+                  details += `תיק: ${fullCaseRef}\n`;
+                  if (parsed.party1 && parsed.party2) details += `צדדים: **${parsed.party1}** נ' **${parsed.party2}**\n`;
+                  if (parsed.court) details += `בית משפט: ${parsed.court}\n`;
+                  if (parsed.isPublished && parsed.padi_volume) {
+                    const part = parsed.padi_part ? `(${parsed.padi_part})` : "";
+                    details += `פרסום: פ"ד ${parsed.padi_volume}${part} ${parsed.padi_page || ""}\n`;
+                  }
+                  if (!parsed.isPublished && parsed.databaseName) {
+                    details += `מאגר: ${parsed.databaseName}\n`;
+                  }
+                  if (parsed.date) details += `תאריך: ${parsed.date}\n`;
+                  if (parsed.year) details += `שנה: ${parsed.year}\n`;
+                  details += `══ השתמש בנתונים אלו לעיצוב האזכור. אם הנתונים חלקיים, סמן [חסר:...] לשדות החסרים. ══`;
+                  caseLawHint = details;
+                }
+              } catch (e) {
+                console.error("Failed to parse case law search JSON:", e);
+              }
+            }
+          } else {
+            console.error("Perplexity search failed:", perplexityResp.status);
+          }
+        }
+      } catch (e) {
+        console.error("Case law search error:", e);
+      }
+    }
+
     const enhancedMessages = messages.map((m: { role: string; content: string }, i: number) => {
       if (i === messages.length - 1 && m.role === "user") {
-        // Inject engine hint + verified source hints into the last user message
+        // Inject engine hint + verified source hints + case law search into the last user message
         const engineHint = extractEngineHint(m.content);
-        const allHints = engineHint + (verifiedHint || "");
+        const allHints = engineHint + (verifiedHint || "") + caseLawHint;
         if (allHints) {
           return { ...m, content: m.content + allHints };
         }

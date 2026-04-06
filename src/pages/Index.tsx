@@ -145,6 +145,7 @@ const Index = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [mode, setMode] = useState<AppMode>("freetext");
   const [pendingVerification, setPendingVerification] = useState<PendingVerification | null>(null);
   // Track detected source type per assistant message index
@@ -570,6 +571,13 @@ const Index = () => {
       return;
     }
 
+    // Show searching message for case law queries
+    const isCaseLawQuery = sourceType === "case_law_published" || sourceType === "case_law_database";
+    if (isCaseLawQuery) {
+      setLoadingMessage("🔍 מחפש פרטי פסק דין...");
+    } else {
+      setLoadingMessage(null);
+    }
     setLoading(true);
 
     try {
@@ -734,6 +742,7 @@ const Index = () => {
       ]);
     } finally {
       setLoading(false);
+      setLoadingMessage(null);
     }
   };
 
@@ -1056,7 +1065,14 @@ const Index = () => {
                   }
                 />
               ))}
-              {loading && <LoadingDots />}
+              {loading && (
+                <div className="flex flex-col items-center gap-1">
+                  <LoadingDots />
+                  {loadingMessage && (
+                    <span className="text-xs text-muted-foreground animate-pulse">{loadingMessage}</span>
+                  )}
+                </div>
+              )}
               {pendingSuggestion && (
                 <div className="my-4">
                   <VerifiedSuggestionCard
