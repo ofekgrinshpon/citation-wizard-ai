@@ -39,6 +39,14 @@ interface Message {
 
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, extractCitationFromResponse, type YearPreferences } from "@/lib/citationUtils";
 
+interface PendingVerification {
+  lawName: string;
+  rawInput: string;
+  fullCitation: string;
+  sourceType: string | null;
+  reply: string;
+}
+
 /**
  * If current input is a fragment (number, short correction), trace back to find the original source name.
  */
