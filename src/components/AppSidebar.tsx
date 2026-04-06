@@ -83,13 +83,15 @@ export function AppSidebar() {
       >
         <span>👤</span>
         <span className="truncate">{displayName || user?.email || "הפרופיל שלי"}</span>
-        <Badge
-          className="cursor-pointer text-[10px] px-1.5 py-0"
-          variant={isSubscribed ? "default" : "destructive"}
-          onClick={(e) => { e.stopPropagation(); navigate("/profile?tab=account"); }}
-        >
-          {isSubscribed ? "מנוי" : "לא מנוי"}
-        </Badge>
+        {!subLoading && (
+          <Badge
+            className="cursor-pointer text-[10px] px-1.5 py-0"
+            variant={isSubscribed ? "default" : "destructive"}
+            onClick={(e) => { e.stopPropagation(); navigate("/profile?tab=account"); }}
+          >
+            {isSubscribed ? "מנוי" : "לא מנוי"}
+          </Badge>
+        )}
       </button>
 
       <div className="h-px bg-border my-2" />
