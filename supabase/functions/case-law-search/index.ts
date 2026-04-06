@@ -65,7 +65,8 @@ serve(async (req) => {
       );
     }
 
-    const fullCaseRef = `${caseType} ${caseNumber}`;
+    const normalizedCaseNumber = caseNumber.replace('-', '/');
+    const fullCaseRef = `${caseType} ${normalizedCaseNumber}`;
     const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) אם פורסם בפד"י - ציין כרך, חלק ועמוד ראשון, 5) אם לא פורסם בפד"י - ציין באיזה מאגר (נבו/תקדין/פסקדין). ענה בעברית בלבד.`;
 
     const perplexityResponse = await fetch("https://api.perplexity.ai/chat/completions", {
