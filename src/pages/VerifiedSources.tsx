@@ -25,9 +25,9 @@ interface VerifiedSource {
 
 const CATEGORIES = [
   { value: "all", label: "הכל" },
-  { value: "caselaw", label: "פסיקה" },
   { value: "legislation_primary", label: "חקיקה ראשית" },
   { value: "legislation_secondary", label: "חקיקת משנה" },
+  { value: "caselaw", label: "פסיקה" },
   { value: "literature", label: "ספרות ומאמרים" },
   { value: "other", label: "אחר" },
 ];
@@ -81,9 +81,14 @@ export default function VerifiedSources() {
     return matchTab && matchSearch;
   });
 
+  const cleanCitation = (text: string) => {
+    let clean = text.replace(/\s*📐\s*כלל:.*$/gm, "").trim();
+    clean = extractCitationFromResponse(clean) || clean;
+    return clean;
+  };
+
   const handleCopy = async (citation: string) => {
-    const clean = extractCitationFromResponse(citation) || citation;
-    await copyPlainText(clean);
+    await copyPlainText(cleanCitation(citation));
     toast.success("הציטוט הועתק");
   };
 
@@ -136,10 +141,10 @@ export default function VerifiedSources() {
                       <TableCell className="max-w-xs truncate">
                         <HoverCard>
                           <HoverCardTrigger asChild>
-                            <span className="cursor-pointer"><RenderCitation text={s.full_citation} /></span>
+                            <span className="cursor-pointer"><RenderCitation text={cleanCitation(s.full_citation)} /></span>
                           </HoverCardTrigger>
                           <HoverCardContent className="w-96 text-sm whitespace-pre-wrap break-words" dir="rtl" side="top">
-                            <RenderCitation text={s.full_citation} />
+                            <RenderCitation text={cleanCitation(s.full_citation)} />
                           </HoverCardContent>
                         </HoverCard>
                       </TableCell>
