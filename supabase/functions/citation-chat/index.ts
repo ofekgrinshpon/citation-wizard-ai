@@ -687,7 +687,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                     details += `\n`;
                     if (legParsed.isNewVersion) details += `נוסח חדש: כן\n`;
                     if (legParsed.isCombinedVersion) details += `נוסח משולב: כן\n`;
-                    details += `══ השתמש בנתונים אלו לעיצוב אזכור החקיקה. אם הנתונים חלקיים, סמן [חסר:...] לשדות החסרים. ══`;
+                    details += `══ השתמש בנתונים אלו לעיצוב אזכור החקיקה. אם קובץ הפרסום כולל מספר עמוד, אל תוסיף [חסר: עמוד] — הנתונים מאומתים. סמן [חסר:...] רק לשדות שאינם מופיעים למעלה. ══`;
                     legislationHint = details;
                   } else {
                     console.log(`[legislation] Data unusable: found=${legParsed.found}, lawName=${legParsed.lawName}, collection=${legParsed.collection}`);
