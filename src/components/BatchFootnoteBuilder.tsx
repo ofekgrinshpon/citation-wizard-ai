@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS } from "@/data/abbreviations";
+import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType } from "@/data/abbreviations";
+import { buildEnginePromptHint } from "@/lib/citationValidation";
 import { FormattedCitation } from "./FormattedCitation";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
 import { useBibliography } from "@/hooks/useBibliography";
@@ -133,7 +134,6 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   }, []);
 
   const processAllCells = async () => {
-    
     const activeCells = cells.filter((c) => c.input.trim() && c.status !== "verified");
     if (activeCells.length === 0) {
       toast.error("אנא הזן לפחות מקור אחד");
@@ -149,64 +149,53 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       )
     );
 
-    const sourcesText = activeCells
-      .map((c) => {
-        const normalized = normalizeAbbreviations(c.input);
-        const sourceType = detectSourceType(normalized);
-        const label = SOURCE_TYPE_LABELS[sourceType];
-        return `הערה ${c.id}: ${label !== "לא ידוע" ? `[${label}] ` : ""}${normalized}`;
-      })
-      .join("\n");
-
-    const prompt = `אנא ייצר הערות שוליים תקניות לפי כללי האזכור האחיד עבור המקורות הבאים. כל מקור בשורה נפרדת.
-
-כללי אזכור חוזר (כלל 37.7) – חובה ליישם:
-1. בהופעה הראשונה של מקור אסור להשתמש ב"שם" או ב"לעיל ה\"ש". בפעם הראשונה תמיד החזר אזכור מלא.
-2. אם הערה N מכילה בדיוק את אותו מקור כמו הערה N-1, השתמש ב"שם." בלבד.
-3. אם אותו מקור מופיע שוב אך עם הפניה פנימית אחרת באותו מקור (למשל סעיף/עמוד/פסקה אחרים), השתמש ב"שם, סעיף X" או "שם, בעמ' Y" לפי העניין.
-4. אם מקור כבר הופיע בהערה מוקדמת יותר אך לא בהערה שמיד קודמת, השתמש ב"[שם מקור מקוצר], לעיל ה\"ש X"; ואם יש הפניה פנימית שונה הוסף אותה בסוף.
-5. כדי לקבוע "אותו מקור", התעלם מהבדלים של סעיף/עמוד/פסקה.
-
-חשוב מאוד נוסף:
-- לכל הערה, ציין את מספר הכלל בסוף (📐 כלל: X.X).
-- אם חסרים פרטים, סמן [חסר:...] והוסף אזהרה.
-- אל תכלול משפטי פתיחה או הקדמה. החזר רק את ההערות עצמן.
-
-המקורות:
-${sourcesText}
-
-אנא החזר את התוצאה בפורמט הבא בדיוק, כל הערה בשורה נפרדת, בלי שום טקסט לפני או אחרי:
----FOOTNOTE 1---
-[אזכור תקני]
-📐 כלל: [מספר]
----FOOTNOTE 2---
-[אזכור תקני]
-📐 כלל: [מספר]
-...וכן הלאה`;
-
     try {
-      const { data, error } = await supabase.functions.invoke("citation-chat", {
-        body: { messages: [{ role: "user", content: prompt }] },
-      });
+      // Send individual requests per cell (enables Perplexity searches via classification tags)
+      const results = await Promise.allSettled(
+        activeCells.map(async (cell) => {
+          const normalized = normalizeAbbreviations(cell.input);
+          const sourceType = detectSourceType(normalized);
+          const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
 
-      if (error) throw error;
+          let prompt = normalized;
+          if (sourceType !== "unknown") {
+            const engineHint = buildEnginePromptHint(sourceType as SourceType);
+            prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
+          }
 
-      const content = data?.content || "";
-      const footnotes = parseFootnotes(content, activeCells.length);
+          const { data, error } = await supabase.functions.invoke("citation-chat", {
+            body: { messages: [{ role: "user", content: prompt }] },
+          });
+
+          if (error) throw error;
+          return { cellId: cell.id, content: data?.content || "" };
+        })
+      );
+
+      // Map results back to cells
+      const resultMap = new Map<number, string>();
+      for (const result of results) {
+        if (result.status === "fulfilled") {
+          resultMap.set(result.value.cellId, result.value.content);
+        }
+      }
 
       let warningCount = 0;
       let validCount = 0;
-
       let nextCells: FootnoteCell[] = [];
       const updatedCells: FootnoteCell[] = [];
+
       setCells((prev) => {
         const drafted = prev.map((c) => {
           if (!c.input.trim() || c.status === "verified") return c;
-          const idx = activeCells.findIndex((ac) => ac.id === c.id);
-          if (idx === -1) return c;
+          const content = resultMap.get(c.id);
+          if (content === undefined) {
+            // Failed request
+            return { ...c, status: "empty" as FootnoteCell["status"], output: null };
+          }
           return {
             ...c,
-            output: footnotes[idx] || content,
+            output: content,
             status: "valid" as FootnoteCell["status"],
             warningMsg: undefined,
           };
@@ -217,7 +206,8 @@ ${sourcesText}
 
         for (const cell of normalized) {
           if (!cell.input.trim() || !activeCells.some((ac) => ac.id === cell.id)) continue;
-          const hasWarning = Boolean(cell.output) && (/\[חסר:/.test(cell.output) || /⚠️/.test(cell.output));
+          if (!resultMap.has(cell.id)) continue;
+          const hasWarning = Boolean(cell.output) && (/\[חסר:/.test(cell.output!) || /⚠️/.test(cell.output!));
           if (hasWarning) warningCount++;
           else validCount++;
           updatedCells.push({
@@ -265,7 +255,7 @@ ${sourcesText}
         ensureVerifiedSources(verifiedCandidates).catch(() => {});
       }
 
-      // Recalculate bibliography from all current outputs instead of pushing into it
+      // Recalculate bibliography from all current outputs
       const bibItems = nextCells
         .filter((cell) => {
           if (!cell.output) return false;
@@ -287,15 +277,16 @@ ${sourcesText}
         });
       }
 
+      const failedCount = results.filter(r => r.status === "rejected").length;
       const total = validCount + warningCount;
-      
-      const repeatNote = /שם|לעיל/.test(content)
+
+      const repeatNote = nextCells.some(c => c.output && /שם|לעיל/.test(c.output))
         ? " שים לב לתיקונים בנסיבות של אזכור חוזר."
         : "";
       setSummary(
         `בניתי עבורך ${total} הערות שוליים לפי הכללים.${
           warningCount > 0 ? ` ${warningCount} הערות דורשות השלמת פרטים.` : ""
-        }${repeatNote}`
+        }${failedCount > 0 ? ` ${failedCount} מקורות נכשלו.` : ""}${repeatNote}`
       );
     } catch {
       setCells((prev) =>
