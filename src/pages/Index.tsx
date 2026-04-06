@@ -742,6 +742,7 @@ const Index = () => {
       ]);
     } finally {
       setLoading(false);
+      setLoadingMessage(null);
     }
   };
 
