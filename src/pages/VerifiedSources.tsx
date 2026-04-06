@@ -149,7 +149,7 @@ export default function VerifiedSources() {
                     </TableRow>
                   ))}
                 </TableBody>
-              </Table>
+              </Table></div>
             )}
           </TabsContent>
         </Tabs>
