@@ -164,7 +164,16 @@ const VerifiedSourcesTable = ({ title, category, sources, onRemove, onEdit, onVe
                       <Badge variant="outline">{getVerifiedCategoryLabel(category)}</Badge>
                     </td>
                     <td className="px-4 py-3 text-foreground max-w-[320px] truncate">
-                      <RenderCitation text={source.full_citation} />
+                      <HoverCard>
+                        <HoverCardTrigger asChild>
+                          <span className="cursor-pointer">
+                            <RenderCitation text={source.full_citation} />
+                          </span>
+                        </HoverCardTrigger>
+                        <HoverCardContent className="w-96 text-sm whitespace-pre-wrap break-words" dir="rtl" side="top">
+                          <RenderCitation text={source.full_citation} />
+                        </HoverCardContent>
+                      </HoverCard>
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant="secondary">{source.usage_count} פעמים</Badge>
