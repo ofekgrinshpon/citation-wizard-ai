@@ -60,7 +60,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
       { field: "hebrewYear", rule: "2.4", description: "שנה עברית (למשל: התשל\"ז)", required: true, format: "plain" },
       { field: "gregorianYear", rule: "2.4", description: "שנה לועזית מחוברת במקף (למשל: -1977)", required: true, format: "plain" },
       { field: "collection", rule: "2.5", description: 'קובץ פרסום: ס"ח או ק"ת', required: true, format: "plain" },
-      { field: "firstPage", rule: "2.6", description: "מספר העמוד הראשון שבו מופיע החיקוק בקובץ החקיקה (ולא מספר החוברת)", required: true, format: "plain" },
+      { field: "firstPage", rule: "2.6", description: "המספר היחיד שנכתב אחרי ס\"ח/ק\"ת: העמוד הראשון שבו מופיע החיקוק (ולא מספר החוברת)", required: true, format: "plain" },
       { field: "specificPage", rule: "2.6", description: "עמוד ספציפי מופניה (עם פסיק)", required: false, format: "plain" },
       { field: "section", rule: "2.8", description: 'הפניה לסעיף ספציפי: ס\' X, סס\' X-Y', required: false, format: "plain" },
     ],
@@ -68,7 +68,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
       'כלל 2.2: "פקודה" – שם ישן לחוק; אותם כללי אזכור.',
       "כלל 2.3: תיקוני חקיקה – לציין את מספר התיקון בסוגריים.",
       'כלל 2.7: אם אין שנה עברית (פקודות מנדט) – מציינים שנה לועזית בלבד.',
-      'כלל 2.8: יש לציין את מספר העמוד הראשון שבו מופיע החיקוק בקובץ החקיקה, ולא את מספר החוברת. דוגמה: ס"ח 63 (נכון), לא ס"ח 446 (מספר חוברת – שגוי).',
+      'כלל 2.8: אחרי ס"ח/ק"ת כותבים מספר אחד בלבד — העמוד הראשון שבו מופיע החיקוק, ולא מספר החוברת. דוגמאות: ס"ח 63 (נכון), לא ס"ח 446; ס"ח 226 (נכון), לא ס"ח 864.',
     ],
   },
 
