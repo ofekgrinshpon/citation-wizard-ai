@@ -4,6 +4,7 @@ import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type Sour
 import { buildEnginePromptHint } from "@/lib/citationValidation";
 import { FormattedCitation } from "./FormattedCitation";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
+import { PublicationIntegrityCard } from "./PublicationIntegrityCard";
 import { useBibliography } from "@/hooks/useBibliography";
 import { useProjects } from "@/hooks/useProjects";
 import { useOffice } from "@/hooks/useOffice";
@@ -11,6 +12,7 @@ import { insertCitationAsFootnote } from "@/lib/wordInsertion";
 import { toast } from "sonner";
 import { copyPlainText } from "@/lib/clipboard";
 import { ensureVerifiedSources } from "@/lib/verifiedSources";
+import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, type YearPreferences } from "@/lib/citationUtils";
 
 interface FootnoteCell {
   id: number;
