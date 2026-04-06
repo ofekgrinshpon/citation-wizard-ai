@@ -650,18 +650,24 @@ const Index = () => {
       const reply = await callAPI(prompt, messages);
       const assistantIndex = newMessages.length;
 
+      // Re-classify source type based on AI output (e.g., database → published if פ"ד found)
+      let effectiveSourceType = sourceType as SourceType;
+      if (effectiveSourceType === "case_law_database" && /פ["״]ד\s+[א-ת]+/.test(reply)) {
+        effectiveSourceType = "case_law_published";
+      }
+
       // Post-response validation using the citation engine
-      const validation = validateAIResponse(reply, sourceType as SourceType);
+      const validation = validateAIResponse(reply, effectiveSourceType);
       let finalReply = reply;
       if (!validation.isComplete && validation.missingFields.length > 0) {
-        const summary = getMissingFieldsSummary(sourceType as SourceType, validation.missingFields);
+        const summary = getMissingFieldsSummary(effectiveSourceType, validation.missingFields);
         if (summary && !/⚠️/.test(reply)) {
           finalReply = `${reply}\n⚠️ ${summary}`;
         }
       }
 
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       // Increment guest counter
       await subscription.incrementCount();
