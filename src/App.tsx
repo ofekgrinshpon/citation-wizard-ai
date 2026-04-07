@@ -67,6 +67,7 @@ const App = () => (
               <Router>
                 <Routes>
                   <Route path="/" element={<Landing />} />
+                  <Route path="/auth" element={<Auth />} />
                   <Route path="/app" element={<BibliographyProvider><Index /></BibliographyProvider>} />
                   <Route path="/admin" element={<Admin />} />
                   <Route path="/profile" element={<Profile />} />
