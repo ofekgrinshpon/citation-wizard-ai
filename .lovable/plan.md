@@ -1,31 +1,30 @@
 
 
-# Fix Missing Inline Footnote Numbers
+# Fix Citation Clustering and Source Quality
 
-## Problem
-The AI model is not reliably inserting superscript footnote numbers (¹²³...) into the answer text. The frontend parser expects Unicode superscript characters but the model either omits them or uses regular numbers/brackets instead.
+## Problems
+1. **Citation clustering**: Multiple footnote marks (e.g., ¹²³⁴⁵) pile up on a single sentence instead of being spread across the answer
+2. **Low-quality sources**: Perplexity returns lawyer blogs and legal review websites instead of primary sources (statutes, case law, academic books)
 
-## Solution
-Two-layer fix: strengthen the prompt AND add server-side post-processing to guarantee superscript numbers appear in the text.
+## Approach
+Strengthen both the Perplexity search prompt and the Gemini structuring prompt. No database/v2 needed — the issue is prompt quality.
 
 ## Changes
 
-### 1. Edge Function Post-Processing (`supabase/functions/legal-qa/index.ts`)
-After parsing the AI tool call response, add a post-processing step:
-- For each footnote in the `parsed.footnotes` array, verify its superscript number exists in `parsed.answer`
-- If missing, attempt to find likely insertion points (end of sentences referencing that source) and inject the superscript
-- As a fallback, convert any `[N]` or `(N)` patterns in the answer to their Unicode superscript equivalents
-- Map digits 0-9 to their Unicode superscript counterparts (⁰¹²³⁴⁵⁶⁷⁸⁹) for numbers above 9
+### 1. Perplexity Prompt (`supabase/functions/legal-qa/index.ts`)
+- Add `search_domain_filter` to prioritize official legal databases: `nevo.co.il`, `www.nevo.co.il`, `supreme.court.gov.il`, `knesset.gov.il`, `lawdata.co.il`, `psakdin.co.il`
+- Rewrite system prompt to explicitly demand **primary sources only**: statutes with S.H./K.T. numbers, court decisions with case numbers, academic books/articles from law journals — NOT blog posts, law firm websites, or legal summaries
+- Add negative instruction: "Do NOT cite lawyer blogs, law firm marketing pages, or legal news summaries. Only cite the original statute, court decision, or academic publication."
 
-### 2. Prompt Refinement (`supabase/functions/legal-qa/index.ts`)
-- Add explicit examples showing multi-digit superscripts (e.g., `¹⁴`, `¹⁵`)
-- Emphasize that EVERY footnote MUST have its corresponding superscript number embedded in the answer text
-- Add a rule: "If you define footnote N, the character sequence for N in superscript MUST appear exactly once in the answer text"
+### 2. Gemini Structuring Prompt (`supabase/functions/legal-qa/index.ts`)
+- Add rule: "Each sentence may have AT MOST ONE footnote mark. Spread citations across different sentences. If multiple sources support the same point, place each on a different sentence that discusses a different aspect."
+- Add rule: "Prefer fewer, higher-quality footnotes (5-8 per answer) over many low-quality ones."
+- Add rule: "Do NOT create footnotes for lawyer blogs, law firm websites, or legal summaries. Only cite primary legal sources: legislation, case law, books, and journal articles."
 
-### 3. Frontend Fallback (`src/components/LegalQAChat.tsx`)
-- Expand the superscript regex to also catch `[N]` or `^N` patterns as fallback
-- Add superscript `⁰` to the character map for multi-digit numbers like ¹⁰, ²⁰
+### 3. Post-processing filter (`supabase/functions/legal-qa/index.ts`)
+- After parsing footnotes, filter out any whose URL contains known blog/marketing domains (e.g., patterns like `/blog/`, `law-firm`, `adv-`, `עורכי-דין`)
+- Re-number remaining footnotes and update superscripts in the answer accordingly
 
 ## Result
-Footnote numbers like ¹⁴, ¹⁵, ¹⁶ will reliably appear inline at the end of sentences (after punctuation), matching the reference screenshot.
+Answers will have well-distributed footnotes (one per sentence, 5-8 total) citing only primary legal sources — statutes, court decisions, and academic literature.
 
