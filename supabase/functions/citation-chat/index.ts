@@ -846,8 +846,13 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     let bookHint = "";
     const isBook = classMatch && /ספרות|ספר/.test(classMatch[1]);
     const isUnknown = classMatch && /לא מזוהה|אחר/.test(classMatch[1]);
-    // Also trigger book search for unknown types that look like Hebrew name + title (4+ words, no legislation markers)
-    const looksLikeBook = isUnknown && /^[\u0590-\u05FF]/.test(userInput.replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "").replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "").trim()) && userInput.replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "").replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "").trim().split(/\s+/).length >= 4;
+    const noClassTag = !classMatch;
+    // Also trigger book search for unknown/untagged types that look like Hebrew name + title (4+ words, no legislation markers)
+    const cleanedForBookCheck = userInput.replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "").replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "").trim();
+    const looksLikeBook = (isUnknown || noClassTag) && 
+      /^[\u0590-\u05FF]/.test(cleanedForBookCheck.replace(/['׳"״`]/g, '')) && 
+      cleanedForBookCheck.split(/\s+/).length >= 4 &&
+      !/נ['']|נגד|חוק |פקודת |תקנות|הצעת חוק|אמנ|ד["״]כ/.test(cleanedForBookCheck);
     if ((isBook || looksLikeBook) && !hasVerifiedCandidates) {
       try {
         const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
