@@ -842,6 +842,92 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       }
     }
 
+    // ── Book (ספר) search via Perplexity ──
+    let bookHint = "";
+    const isBook = classMatch && /ספרות|ספר/.test(classMatch[1]);
+    if (isBook && !hasVerifiedCandidates) {
+      try {
+        const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
+        if (PERPLEXITY_API_KEY) {
+          const bookQuery = userInput
+            .replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "")
+            .replace(/\n══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
+            .trim();
+
+          if (bookQuery.length > 2) {
+            console.log(`[book] Searching Perplexity for: ${bookQuery}`);
+            const bookSearchQuery = `מצא את הספר המשפטי/אקדמי הישראלי "${bookQuery}". ציין: 1) שם המחבר/ים המלא (ללא תארים אקדמיים/צבאיים), 2) שם הספר המלא, 3) שנת פרסום לועזית, 4) שנת פרסום עברית אם קיימת, 5) מהדורה (רק אם יש יותר ממהדורה אחת), 6) שם העורך אם יש, 7) שם המתרגם אם יש, 8) מספר כרכים אם יש, 9) שם ההוצאה לאור, 10) האם המחבר הוא מוסד/גוף ציבורי.`;
+
+            const bookResp = await fetch("https://api.perplexity.ai/chat/completions", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                model: "sonar",
+                messages: [
+                  {
+                    role: "system",
+                    content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
+חפש את פרטי הספר המשפטי/אקדמי הישראלי. מצא את כל הפרטים הביבליוגרפיים.
+הפורמט:
+{"found":true/false,"author":"שם המחבר/ים (ללא תארים)","bookTitle":"שם הספר המלא","year":2019,"hebrewYear":"התשע\\"ט","edition":"מהדורה שנייה","editor":"שם העורך","translator":"שם המתרגם","volumes":"מספר כרכים","publisher":"הוצאה לאור","isInstitutional":false}
+אם לא מצאת, החזר {"found":false}.
+חשוב:
+- שמות מחברים ללא תארים אקדמיים (פרופ', ד"ר) או צבאיים (אלוף, סא"ל) או אחרים (עו"ד, שופט).
+- אם המחבר הוא מוסד/ועדה/גוף ציבורי, סמן isInstitutional: true וכתוב את שם המוסד בשדה author.
+- אם יש שנה עברית ולועזית, ציין את שתיהן. שנה עברית מתחילה תמיד באות ה' (למשל: התשע"ט).
+- ציין מהדורה רק אם יש יותר ממהדורה אחת.
+- השאר שדות ריקים ("") אם המידע לא ידוע.`,
+                  },
+                  { role: "user", content: bookSearchQuery },
+                ],
+              }),
+            });
+
+            if (bookResp.ok) {
+              const bookData = await bookResp.json();
+              const bookContent = bookData.choices?.[0]?.message?.content || "";
+              console.log(`[book] Perplexity raw response: ${bookContent.substring(0, 300)}`);
+              const bookJsonMatch = bookContent.match(/\{[\s\S]*?\}/);
+              if (bookJsonMatch) {
+                try {
+                  const bookParsed = JSON.parse(bookJsonMatch[0]);
+                  if (bookParsed.found && bookParsed.bookTitle && (bookParsed.author || bookParsed.year)) {
+                    console.log(`[book] Found: ${bookParsed.bookTitle}, author=${bookParsed.author || '?'}, year=${bookParsed.year || '?'}`);
+                    let details = `\n\n══ נתוני ספר שנמצאו בחיפוש ══\n`;
+                    if (bookParsed.author) details += `מחבר: ${bookParsed.author}\n`;
+                    details += `שם הספר: ${bookParsed.bookTitle}\n`;
+                    if (bookParsed.year) details += `שנה לועזית: ${bookParsed.year}\n`;
+                    if (bookParsed.hebrewYear) details += `שנה עברית: ${bookParsed.hebrewYear}\n`;
+                    if (bookParsed.edition) details += `מהדורה: ${bookParsed.edition}\n`;
+                    if (bookParsed.editor) details += `עורך: ${bookParsed.editor}\n`;
+                    if (bookParsed.translator) details += `מתרגם: ${bookParsed.translator}\n`;
+                    if (bookParsed.volumes) details += `כרכים: ${bookParsed.volumes}\n`;
+                    if (bookParsed.publisher) details += `הוצאה לאור: ${bookParsed.publisher}\n`;
+                    if (bookParsed.isInstitutional) details += `מחבר מוסדי: כן\n`;
+                    details += `══ השתמש בנתונים אלו לעיצוב אזכור הספר לפי כלל 23. סמן [חסר:...] רק לשדות שאינם מופיעים למעלה. ══`;
+                    bookHint = details;
+                  } else {
+                    console.log(`[book] Data unusable: found=${bookParsed.found}, title=${bookParsed.bookTitle}`);
+                    bookHint = `\n\n══ חיפוש ספר ══\nלא נמצאו נתונים מאומתים עבור "${bookQuery}".\nחובה להשתמש ב-[חסר:...] עבור שדות חסרים.\nאל תמציא נתונים ביבליוגרפיים.\n══`;
+                  }
+                } catch (e) {
+                  console.error("[book] Failed to parse JSON:", e);
+                  bookHint = `\n\n══ חיפוש ספר ══\nלא נמצאו נתונים מאומתים עבור "${bookQuery}".\nחובה להשתמש ב-[חסר:...] עבור שדות חסרים.\n══`;
+                }
+              }
+            } else {
+              console.error("[book] Perplexity search failed:", bookResp.status);
+            }
+          }
+        }
+      } catch (e) {
+        console.error("[book] search error:", e);
+      }
+    }
+
     const enhancedMessages = messages.map((m: { role: string; content: string }, i: number) => {
       if (i === messages.length - 1 && m.role === "user") {
         let content = m.content;
@@ -851,9 +937,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
             .replace(/\n══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "\n");
         }
 
-        // Inject engine hint + verified source hints + case law search + legislation search + regulation search into the last user message
+        // Inject engine hint + verified source hints + case law search + legislation search + regulation search + book search into the last user message
         const engineHint = extractEngineHint(content);
-        const allHints = engineHint + (verifiedHint || "") + caseLawHint + legislationHint + regulationHint;
+        const allHints = engineHint + (verifiedHint || "") + caseLawHint + legislationHint + regulationHint + bookHint;
         if (allHints || content !== m.content) {
           return { ...m, content: content + allHints };
         }
