@@ -298,6 +298,25 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     ],
   },
 
+  // ─── תקנונים (Bylaws/Regulations – Rule 13.1) ─────────────
+  regulation: {
+    primaryRule: "13.1",
+    ruleTitle: "כלל 13.1 – תקנונים",
+    template: "[הפניה ספציפית] ל{regulationName} ({fullDate}).",
+    example: 'ס\' 141 לתקנון הכנסת (30.4.2019).',
+    components: [
+      { field: "section", rule: "13.1", description: 'הפניה ספציפית (ס\' X, פס\' X)', required: false, format: "plain" },
+      { field: "regulationName", rule: "13.1", description: "שם התקנון או קיצורו", required: true, format: "plain" },
+      { field: "fullDate", rule: "13.1", description: "תאריך לועזי מדויק של גרסת התקנון (DD.MM.YYYY)", required: true, format: "plain" },
+    ],
+    notes: [
+      "כלל 13.1: יש לציין את התאריך הלועזי המדויק של גרסת התקנון המאוזכרת.",
+      "אם מדובר בתקנון מעודכן – תאריך התיקון האחרון (או קבלתו אם לא תוקן).",
+      'תיקונים לתקנון הכנסת מתפרסמים ב"ילקוט הפרסומים" – אפשר להפנות לשם.',
+      'דוגמה לתיקון: תיקון תקנון הכנסת, י"פ התשע"ב 5730, 5744.',
+    ],
+  },
+
   // ─── מקורות לועזיים (Foreign Sources – Bluebook) ──────────
   foreign: {
     primaryRule: "36",
