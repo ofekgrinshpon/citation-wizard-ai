@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
-import { ManualEntry } from "@/components/ManualEntry";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
 import { BillTypeSelector, type BillPublicationType } from "@/components/BillTypeSelector";
@@ -76,7 +75,7 @@ const CITATION_EXAMPLES = [
 ];
 
 
-type AppMode = "freetext" | "manual" | "batch" | "bibliography";
+type AppMode = "freetext" | "batch" | "bibliography";
 
 const LS_KEY_INPUT_PREFIX = "legal_app_free_text_content";
 const LS_KEY_MESSAGES_PREFIX = "legal_app_free_text_messages";
@@ -708,7 +707,6 @@ const Index = () => {
 
   const MODES: { id: AppMode; label: string; icon: string }[] = [
     { id: "freetext", label: "טקסט חופשי", icon: "✨" },
-    { id: "manual", label: "הזנה ידנית", icon: "📝" },
     { id: "batch", label: "הערות שוליים", icon: "📑" },
     { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
   ];
@@ -827,9 +825,7 @@ const Index = () => {
           className="flex-1 overflow-y-auto px-3 sm:px-4"
           style={{ maxWidth: 860, margin: "0 auto", width: "100%" }}
         >
-        {mode === "manual" ? (
-          <ManualEntry />
-        ) : mode === "batch" ? (
+        {mode === "batch" ? (
           <BatchFootnoteBuilder />
         ) : mode === "bibliography" ? (
           <BibliographyGenerator />
