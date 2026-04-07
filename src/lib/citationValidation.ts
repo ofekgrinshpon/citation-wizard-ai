@@ -25,6 +25,8 @@ const ENGINE_KEY_MAP: Record<SourceType, string> = {
   regulation: "regulation",
   government_decision: "government_decision",
   expert_opinion: "expert_opinion",
+  planning_plan: "planning_plan",
+  collective_agreement: "collective_agreement",
   foreign: "foreign",
   other: "other",
   unknown: "",
@@ -200,6 +202,41 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     // Opinion number (16.4)
     const numMatch = response.match(/חוות דעת\s+(\d+\/\d+|\d+)/);
     if (numMatch) fields.opinionNumber = numMatch[1];
+  }
+
+  // Planning plan (כלל 17.1) patterns
+  if (sourceType === "planning_plan") {
+    // Plan number
+    const numMatch = response.match(/תכנית\s+מפורטת\s+([^\s]+)/);
+    if (numMatch) fields.planNumber = numMatch[1];
+    // Deciding body (committee name after "של")
+    const bodyMatch = response.match(/של\s+([^\s"][^\n"]+?)(?:\s*")/);
+    if (bodyMatch) fields.decidingBody = bodyMatch[1].trim();
+    // Plan name in quotes
+    const nameMatch = response.match(/"([^"]+)"/);
+    if (nameMatch) fields.decisionName = nameMatch[1];
+    // Date/year
+    const dateMatch = response.match(/\((\d{1,2}\.\d{1,2}\.\d{4}|\d{4})\)/);
+    if (dateMatch) fields.fullDate = dateMatch[1];
+  }
+
+  // Collective agreement (כלל 17.2) patterns
+  if (sourceType === "collective_agreement") {
+    // Agreement number
+    const numMatch = response.match(/הסכם\s+קיבוצי\s+מס['׳']?\s*(\S+)/);
+    if (numMatch) fields.agreementNumber = numMatch[1];
+    // Party 1 (between "בין" and "ל")
+    const party1Match = response.match(/בין\s+(.+?)\s+ל(?!עניין)/);
+    if (party1Match) fields.party1 = party1Match[1].trim();
+    // Party 2 (between "ל" and "בעניין")
+    const party2Match = response.match(/\sל(.+?)\s+בעניין/);
+    if (party2Match) fields.party2 = party2Match[1].trim();
+    // Subject (after "בעניין")
+    const subjectMatch = response.match(/בעניין\s+(.+?)\s*\(/);
+    if (subjectMatch) fields.agreementSubject = subjectMatch[1].trim();
+    // Date
+    const dateMatch = response.match(/\((\d{1,2}\.\d{1,2}\.\d{4})\)/);
+    if (dateMatch) fields.fullDate = dateMatch[1];
   }
 
   // Regulation (תקנון) patterns

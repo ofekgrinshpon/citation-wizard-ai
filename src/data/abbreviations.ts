@@ -125,6 +125,8 @@ export type SourceType =
   | 'regulation'            // תקנון (כלל 13.1)
   | 'government_decision'   // החלטות גופים שלטוניים (כלל 15)
   | 'expert_opinion'        // חוות דעת (כלל 16)
+  | 'planning_plan'         // תכנית תכנון ובנייה (כלל 17.1)
+  | 'collective_agreement'  // הסכם קיבוצי (כלל 17.2)
   | 'foreign'               // לועזי
   | 'other'                 // אחר (דברי כנסת וכו')
   | 'unknown';
@@ -140,6 +142,8 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   regulation: ['regulationName', 'fullDate'],
   government_decision: ['decidingBody', 'decisionName', 'fullDate'],
   expert_opinion: ['opinionName', 'opinionAuthor', 'fullDate'],
+  planning_plan: ['planNumber', 'decidingBody', 'decisionName', 'fullDate'],
+  collective_agreement: ['agreementNumber', 'party1', 'party2', 'agreementSubject', 'fullDate'],
   book: ['author', 'bookTitle', 'year'],
   article: ['author', 'articleTitle', 'journalName', 'volume', 'firstPage', 'year'],
   article_in_book: ['author', 'articleTitle', 'bookTitle', 'firstPage', 'year'],
@@ -197,6 +201,9 @@ export const FIELD_LABELS: Record<string, string> = {
   opinionName: 'שם חוות הדעת',
   opinionAuthor: 'נותן חוות הדעת',
   opinionNumber: 'מספר חוות הדעת',
+  planNumber: 'מספר תכנית',
+  agreementNumber: 'מספר הסכם',
+  agreementSubject: 'נושא ההסכם',
 };
 
 // Normalize abbreviations in free text
@@ -255,6 +262,12 @@ export function detectSourceType(text: string): SourceType {
   // Check for expert opinions (Rule 16)
   if (/חוות\s+דעת/.test(hebrewText)) return 'expert_opinion';
 
+  // Check for planning committee plans (Rule 17.1)
+  if (/תכנית\s+מפורטת|תכנית\s+(?:בניין|בנין)\s+עיר|תב"ע|תכנית\s+מתאר/.test(hebrewText)) return 'planning_plan';
+
+  // Check for collective agreements (Rule 17.2)
+  if (/הסכם\s+קיבוצי/.test(hebrewText)) return 'collective_agreement';
+
   // Check for governmental body decisions (Rule 15)
   if (/החלטה\s+\d|החלטה\s+של|החלטה\s+חכ|תמצית\s+החלטה/.test(hebrewText)) return 'government_decision';
   if (/רשם\s+הפטנטים|בקשה\s+לביטול\s+תיקון|בקשת\s+עיצוב|התנגדות\s+לרישום\s+סימן|בקשות\s+מתחרות/.test(hebrewText)) return 'government_decision';
@@ -298,6 +311,8 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   regulation: 'תקנון',
   government_decision: 'החלטות גופים שלטוניים',
   expert_opinion: 'חוות דעת',
+  planning_plan: 'תכנית תכנון ובנייה',
+  collective_agreement: 'הסכם קיבוצי',
   treaty: 'כתבי אמנה',
   foreign: 'מקור לועזי',
   other: 'אחר',
@@ -320,6 +335,8 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   regulation: 'כלל 13.1 – תקנונים',
   government_decision: 'כלל 15 – החלטות גופים שלטוניים',
   expert_opinion: 'כלל 16 – חוות דעת',
+  planning_plan: 'כלל 17.1 – תכניות תכנון ובנייה',
+  collective_agreement: 'כלל 17.2 – הסכמים קיבוציים',
   treaty: 'כלל 9 – כתבי אמנה',
   foreign: 'כלל 36 – מקורות לועזיים (Bluebook)',
   other: 'כלל 8 – אחר (דברי כנסת וכו׳)',
