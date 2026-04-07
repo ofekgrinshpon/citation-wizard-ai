@@ -50,6 +50,8 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState<MainTab>("analytics");
   const [sourceSubTab, setSourceSubTab] = useState<SourceSubTab>("caselaw");
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [legalDocs, setLegalDocs] = useState<{ id: string; title: string; source_type: string; citation: string; created_at: string }[]>([]);
+  const [totalChunks, setTotalChunks] = useState(0);
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
@@ -65,15 +67,19 @@ const Admin = () => {
   const fetchData = async () => {
     setLoadingData(true);
 
-    const [citRes, usersRes, verifiedRes] = await Promise.all([
+    const [citRes, usersRes, verifiedRes, docsRes, chunksRes] = await Promise.all([
       supabase.from("citation_history").select("*").order("created_at", { ascending: false }).limit(500),
       supabase.from("profiles").select("*").order("created_at", { ascending: false }),
       supabase.from("verified_sources").select("*").order("verified_at", { ascending: false }),
+      supabase.from("legal_documents").select("id, title, source_type, citation, created_at").order("created_at", { ascending: false }).limit(50),
+      supabase.from("legal_document_chunks").select("id", { count: "exact", head: true }),
     ]);
 
     setCitations(citRes.data ?? []);
     setUsers(usersRes.data ?? []);
     setVerifiedSources((verifiedRes.data ?? []) as unknown as VerifiedSourceRow[]);
+    setLegalDocs(docsRes.data ?? []);
+    setTotalChunks(chunksRes.count ?? 0);
     setLoadingData(false);
   };
 
@@ -515,6 +521,70 @@ const Admin = () => {
             <p className="text-muted-foreground text-sm">
               הוסיפו מקורות משפטיים למאגר הידע המקומי. מקורות אלו ישמשו כמקור ראשוני בתשובות לשאלות משפטיות.
             </p>
+
+            {/* Knowledge base stats */}
+            {(() => {
+              const SOURCE_TYPE_META: Record<string, { emoji: string; label: string }> = {
+                legislation: { emoji: "📜", label: "חקיקה" },
+                caselaw: { emoji: "⚖️", label: "פסיקה" },
+                book: { emoji: "📕", label: "ספרים" },
+                article: { emoji: "📰", label: "מאמרים" },
+                notebook: { emoji: "📓", label: "מחברות" },
+                international: { emoji: "🌐", label: "בינלאומי" },
+              };
+              const typeCounts: Record<string, number> = {};
+              legalDocs.forEach((d) => {
+                typeCounts[d.source_type] = (typeCounts[d.source_type] || 0) + 1;
+              });
+              const typeEntries = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]);
+
+              return (
+                <>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <StatCard icon="📚" label="סה״כ מסמכים" value={legalDocs.length} color="text-primary" />
+                    <StatCard icon="🧩" label="סה״כ קטעים (chunks)" value={totalChunks} />
+                    {typeEntries.map(([type, count]) => {
+                      const meta = SOURCE_TYPE_META[type] || { emoji: "📁", label: type };
+                      return <StatCard key={type} icon={meta.emoji} label={meta.label} value={count} />;
+                    })}
+                  </div>
+
+                  {legalDocs.length > 0 && (
+                    <div className="bg-card border border-border rounded-xl p-5 shadow-sm">
+                      <h3 className="text-foreground font-bold text-sm mb-4">📄 מסמכים אחרונים שנוספו</h3>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-border text-muted-foreground">
+                              <th className="py-2 px-2 text-right font-medium">סוג</th>
+                              <th className="py-2 px-2 text-right font-medium">כותרת</th>
+                              <th className="py-2 px-2 text-right font-medium">אזכור</th>
+                              <th className="py-2 px-2 text-right font-medium">תאריך הוספה</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {legalDocs.slice(0, 20).map((doc) => {
+                              const meta = SOURCE_TYPE_META[doc.source_type] || { emoji: "📁", label: doc.source_type };
+                              return (
+                                <tr key={doc.id} className="border-b border-border/50 last:border-b-0">
+                                  <td className="py-2 px-2 whitespace-nowrap">{meta.emoji} {meta.label}</td>
+                                  <td className="py-2 px-2 max-w-[200px] truncate">{doc.title}</td>
+                                  <td className="py-2 px-2 max-w-[250px] truncate text-muted-foreground">{doc.citation}</td>
+                                  <td className="py-2 px-2 whitespace-nowrap text-muted-foreground">
+                                    {new Date(doc.created_at).toLocaleDateString("he-IL")}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+
             <LegalDocumentIngestion onIngested={() => fetchData()} />
           </div>
         )}
