@@ -506,6 +506,139 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     ],
   },
 
+  // ─── התכתבויות (Correspondence – Rule 32.1) ────────────────
+  correspondence: {
+    primaryRule: "32.1",
+    ruleTitle: "כלל 32.1 – התכתבויות",
+    template: "{correspondenceType} מ{senderName}[, {senderRole},] ל{recipientName}[, {recipientRole},] {subject} ({fullDate}).",
+    example: 'מכתב מנאור כהן, סגן שר ההגנה, לטל גולדברג, היועצת המשפטית למשרד הפיתוח, בעניין תקציב לניסויים חקלאיים (20.7.2015).',
+    components: [
+      { field: "correspondenceType", rule: "32.1.1", description: "סוג ההתכתבות (מכתב, מזכר, דואר אלקטרוני וכו')", required: true, format: "plain" },
+      { field: "senderName", rule: "32.1.2", description: "שם הכותב כפי שמופיע במסמך", required: true, format: "plain" },
+      { field: "senderRole", rule: "32.1.2", description: "תפקיד הכותב (אופציונלי)", required: false, format: "plain" },
+      { field: "recipientName", rule: "32.1.2", description: "שם הנמען כפי שמופיע במסמך", required: true, format: "plain" },
+      { field: "recipientRole", rule: "32.1.2", description: "תפקיד הנמען (אופציונלי)", required: false, format: "plain" },
+      { field: "subject", rule: "32.1", description: 'נושא ההתכתבות (אחרי "בעניין")', required: false, format: "plain" },
+      { field: "fullDate", rule: "32.1", description: "תאריך הכתיבה הלועזי (DD.MM.YYYY)", required: true, format: "plain" },
+    ],
+    notes: [
+      'כלל 32.1.1: יש לציין אם מדובר במכתב, במזכר, בדואר אלקטרוני וכדומה.',
+      'כלל 32.1.2: שם הכותב, תפקיד הכותב, שם הנמען ותפקיד הנמען יופיעו כפי שהם מופיעים במסמך.',
+      'דוגמה עם שעה: דואר אלקטרוני מאור זמיר, הזואולוגית המחוזית, לאלון זוסמן, דיקן הפקולטה לביולוגיה, ואשר לוין, ראש החוג לאבולוציה (5.8.2018, 11:57:36).',
+    ],
+  },
+
+  // ─── ראיונות (Interviews – Rule 32.2) ──────────────────────
+  interview: {
+    primaryRule: "32.2",
+    ruleTitle: "כלל 32.2 – ראיונות",
+    template: "{interviewType} [של {interviewerName}] עם {intervieweeName}[, {intervieweeRole}] ({fullDate}).",
+    example: 'ריאיון עם מסעודה גולני, מנהלת מחלקת הטלוויזיה בעיריית שדרות (4.11.1993).',
+    components: [
+      { field: "interviewType", rule: "32.2", description: "סוג הריאיון (ריאיון, ריאיון טלפוני וכו')", required: false, format: "plain" },
+      { field: "interviewerName", rule: "32.2", description: "שם המראיין (אופציונלי)", required: false, format: "plain" },
+      { field: "intervieweeName", rule: "32.2", description: "שם המרואיין", required: true, format: "plain" },
+      { field: "intervieweeRole", rule: "32.2", description: "תפקיד המרואיין (אופציונלי)", required: false, format: "plain" },
+      { field: "fullDate", rule: "32.2", description: "תאריך הריאיון הלועזי", required: true, format: "plain" },
+    ],
+    notes: [
+      'שלוש צורות: (1) ריאיון עם X (ללא מראיין). (2) ריאיון טלפוני עם X. (3) ריאיון של X עם Y (עם מראיין).',
+      'דוגמות: ריאיון עם מסעודה גולני, מנהלת מחלקת הטלוויזיה בעיריית שדרות (4.11.1993). | ריאיון טלפוני עם עו"ד עמית דנציגר, בא כוח העותרות (19.5.1987). | ריאיון של מני זמורה עם אסף שמגר (1.2.2020–15.3.2020).',
+    ],
+  },
+
+  // ─── הרצאות (Lectures – Rule 32.3) ─────────────────────────
+  lecture: {
+    primaryRule: "32.3",
+    ruleTitle: "כלל 32.3 – הרצאות",
+    template: '{author} "{articleTitle}" (הרצאה ב{eventName}, {eventLocation} {fullDate}).',
+    example: 'איסי רוזן-צבי "שלטי חוצות: בין משפט ופוליטיקה" (הרצאה ביום עיון בנושא "שלטי פרסום במרחב הציבורי", הפקולטה למשפטים, אוניברסיטת תל אביב 19.6.2008).',
+    components: [
+      { field: "author", rule: "32.3", description: "שם הדובר", required: true, format: "plain" },
+      { field: "articleTitle", rule: "32.3", description: "שם ההרצאה – במירכאות", required: true, format: "quotes" },
+      { field: "eventName", rule: "32.3", description: "שם האירוע שבו נישאה ההרצאה", required: true, format: "plain" },
+      { field: "eventLocation", rule: "32.3", description: "מקום האירוע", required: false, format: "plain" },
+      { field: "fullDate", rule: "32.3", description: "תאריך ההרצאה", required: true, format: "plain" },
+    ],
+    notes: [
+      'שם ההרצאה במירכאות. שם האירוע מופיע אחרי "הרצאה ב".',
+    ],
+  },
+
+  // ─── הודעות לתקשורת (Press Releases – Rule 32.4) ───────────
+  press_release: {
+    primaryRule: "32.4",
+    ruleTitle: "כלל 32.4 – הודעות לתקשורת",
+    template: '{author} "{articleTitle}" ({releaseDescription} {fullDate}).',
+    example: 'רשות המסים "פרויקט \'חינוך למסים\' יוצא לדרך" (הודעת דוברות 27.1.2013).',
+    components: [
+      { field: "author", rule: "32.4", description: "שם המודיע", required: true, format: "plain" },
+      { field: "articleTitle", rule: "32.4", description: "כותרת ההודעה – במירכאות", required: true, format: "quotes" },
+      { field: "releaseDescription", rule: "32.4", description: 'תיאור ההודעה (הודעה לתקשורת/הודעת דוברות וכו\')', required: false, format: "plain" },
+      { field: "fullDate", rule: "32.4", description: "תאריך ההודעה", required: true, format: "plain" },
+    ],
+    notes: [
+      'תיאור ההודעה יהיה כפי שהופיע בה: הודעה לתקשורת, הודעה לעיתונות וכדומה. אם לא הופיע תיאור במקור, יש לכתוב "הודעה לתקשורת".',
+    ],
+  },
+
+  // ─── סרטים (Films – Rule 33.1) ─────────────────────────────
+  film: {
+    primaryRule: "33.1",
+    ruleTitle: "כלל 33.1 – סרטים",
+    template: "{filmName} ({director} במאי/ת {year}).",
+    example: 'אפס ביחסי אנוש (טליה לביא במאית 2010).',
+    components: [
+      { field: "filmName", rule: "33.1", description: "שם הסרט", required: true, format: "plain" },
+      { field: "director", rule: "33.1", description: 'שם הבמאי – לפי כלל 23.2. אחרי השמות: "במאי"/"במאית"/"במאים"/"במאיות"', required: true, format: "plain" },
+      { field: "year", rule: "33.1", description: "שנת צאת הסרט", required: true, format: "plain" },
+    ],
+    notes: [
+      'על שם הבמאי יחול כלל 23.2 (שמות מחברים). לאחר שמות הבמאים יבואו "במאי", "במאית", "במאים" או "במאיות" לפי העניין.',
+    ],
+  },
+
+  // ─── תוכניות טלוויזיה (TV Shows – Rule 33.2) ──────────────
+  tv_show: {
+    primaryRule: "33.2",
+    ruleTitle: "כלל 33.2 – תוכניות טלוויזיה",
+    template: '"{showName}[: {episodeName}]" ([{creator} יוצר/ת,] {channel} {fullDate}).',
+    example: '"רמזור: שם לתינוק" (אדיר מילר יוצר, ערוץ 2, 10.9.2011).',
+    components: [
+      { field: "showName", rule: "33.2", description: "שם התוכנית – במירכאות", required: true, format: "quotes" },
+      { field: "episodeName", rule: "33.2", description: "שם הפרק (אופציונלי, אחרי נקודתיים)", required: false, format: "plain" },
+      { field: "creator", rule: "33.2", description: 'שם יוצר התוכנית + "יוצר"/"יוצרת" וכו\' – לפי כלל 23.2 (אופציונלי)', required: false, format: "plain" },
+      { field: "channel", rule: "33.2", description: "ערוץ הטלוויזיה", required: true, format: "plain" },
+      { field: "fullDate", rule: "33.2", description: "תאריך לועזי מלא של השידור", required: true, format: "plain" },
+      { field: "timeReference", rule: "33.5", description: "הפניית זמן (דקה:שנייה) – לפני הסוגריים", required: false, format: "plain" },
+    ],
+    notes: [
+      'אם אין שם לפרק, יצוין רק שם התוכנית.',
+      'על שם היוצר יחול כלל 23.2. לאחר שמות היוצרים: "יוצר"/"יוצרת"/"יוצרים"/"יוצרות". אם אין לתוכנית יוצר – לא יצוין.',
+      'דוגמה ללא יוצר: "מבט" (ערוץ 1, 22.1.1997).',
+      'כלל 33.5: אפשר להפנות לחלק מסוים לפי זמן תחילתו או תחילתו וסופו. הזמן לפני הסוגריים. דוגמה: "סליחה על השאלה: אסירים משוחררים" 19:19–21:17 (כאן 11, 13.11.2018).',
+    ],
+  },
+
+  // ─── רדיו/תסכיתים (Radio – Rule 33.3) ─────────────────────
+  radio: {
+    primaryRule: "33.3",
+    ruleTitle: "כלל 33.3 – רדיו ותסכיתים",
+    template: '"{showName}[: {episodeName}]" ({radioStation} {fullDate}).',
+    example: '"האוניברסיטה המשודרת: מבוא לעבודה: עבדות מודרנית וסחר בבני אדם עם הד"ר הילה שמיר" (גלי צה"ל 21.7.2020).',
+    components: [
+      { field: "showName", rule: "33.3", description: "שם התוכנית או התסכית – במירכאות", required: true, format: "quotes" },
+      { field: "episodeName", rule: "33.3", description: "שם הפרק (אופציונלי, אחרי נקודתיים)", required: false, format: "plain" },
+      { field: "radioStation", rule: "33.3", description: "תחנת הרדיו", required: true, format: "plain" },
+      { field: "fullDate", rule: "33.3", description: "תאריך לועזי מלא של השידור", required: true, format: "plain" },
+      { field: "timeReference", rule: "33.5", description: "הפניית זמן (דקה:שנייה) – לפני הסוגריים", required: false, format: "plain" },
+    ],
+    notes: [
+      'אם אין שם לפרק, יצוין רק שם התוכנית.',
+      'כלל 33.5: הפניית זמן לפני הסוגריים. דוגמות: "סליחה על השאלה: אסירים משוחררים" 19:19 (כאן 11, 13.11.2018). | "דנה בסוגיה" (קול ברמה 19.11.2019).',
+    ],
+  },
+
   // ─── מקורות לועזיים (Foreign Sources – Bluebook) ──────────
   foreign: {
     primaryRule: "36",
