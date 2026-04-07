@@ -24,6 +24,7 @@ const ENGINE_KEY_MAP: Record<SourceType, string> = {
   treaty: "treaty",
   regulation: "regulation",
   government_decision: "government_decision",
+  expert_opinion: "expert_opinion",
   foreign: "foreign",
   other: "other",
   unknown: "",
@@ -183,6 +184,22 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     // Full date
     const dateMatch = response.match(/\((\d{1,2}\.\d{1,2}\.\d{4})\)/);
     if (dateMatch) fields.fullDate = dateMatch[1];
+  }
+
+  // Expert opinion (חוות דעת) patterns
+  if (sourceType === "expert_opinion") {
+    // Opinion name in quotes
+    const nameMatch = response.match(/"([^"]+)"/);
+    if (nameMatch) fields.opinionName = nameMatch[1];
+    // Author after "חוות דעת של"
+    const authorMatch = response.match(/חוות דעת של\s+([^\d(]+?)(?:\s+\d{1,2}\.\d{1,2}\.\d{4}|\s*\()/);
+    if (authorMatch) fields.opinionAuthor = authorMatch[1].trim();
+    // Full date
+    const dateMatch = response.match(/(\d{1,2}\.\d{1,2}\.\d{4})/);
+    if (dateMatch) fields.fullDate = dateMatch[1];
+    // Opinion number (16.4)
+    const numMatch = response.match(/חוות דעת\s+(\d+\/\d+|\d+)/);
+    if (numMatch) fields.opinionNumber = numMatch[1];
   }
 
   // Regulation (תקנון) patterns
