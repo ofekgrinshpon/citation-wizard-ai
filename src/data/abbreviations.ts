@@ -259,11 +259,11 @@ export function detectSourceType(text: string): SourceType {
       return 'case_law_database';
     }
   }
-  if (/נ['']|נגד/.test(hebrewText) && /\d+\/\d+/.test(hebrewText)) {
+  if (/נ['׳'']|נגד/.test(hebrewText) && /\d+\/\d+/.test(hebrewText)) {
     return 'case_law_database';
   }
-  // Party names without case number (e.g., "מדינת ישראל נגד זדורוב")
-  if (/[\u0590-\u05FF]+\s+(?:נגד|נ['׳'])\s+[\u0590-\u05FF]+/.test(hebrewText) && !/חוק|פקוד|תקנ|הצעת|אמנ|ספר|מהדורה/.test(hebrewText)) {
+  // Party names without case number (e.g., "מדינת ישראל נגד זדורוב" or "X נ׳ Y")
+  if (/[\u0590-\u05FF]+\s+(?:נגד|נ['׳''])\s+[\u0590-\u05FF]+/.test(hebrewText) && !/חוק|פקוד|תקנ|הצעת|אמנ|ספר|מהדורה/.test(hebrewText)) {
     return 'case_law_database';
   }
   
