@@ -20,6 +20,7 @@ const ENGINE_KEY_MAP: Record<SourceType, string> = {
   article: "article",
   article_in_book: "article_in_book",
   internet: "internet",
+  internet_comment: "internet_comment",
   religious: "religious",
   treaty: "treaty",
   regulation: "regulation",

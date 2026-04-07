@@ -277,26 +277,57 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     ],
   },
 
-  // ─── מקורות מרשתת (Internet Sources) ─────────────────────
+  // ─── מקורות מרשתת (Internet Sources – Rule 34.2) ──────────
   internet: {
-    primaryRule: "30",
-    ruleTitle: "כלל 30 – מקורות מהמרשתת",
-    template: '{author} "{title}" {siteName} ({fullDate}) {url}.',
-    example: 'יוסי שריד "רפורמה בחינוך" **אתר הארץ** (14.5.2020) www.haaretz.co.il/...',
+    primaryRule: "34.2",
+    ruleTitle: "כלל 34.2 – מקורות מהמרשתת",
+    template: '{author} "{title}" {contentType} **{siteName}** {specificReference} ({fullDate}) {url}.',
+    example: 'טובה צימוקי "פתרון לסחבת במערכת המשפט" **ynet** (21.12.2017) https://www.ynet.co.il/articles/0,7340,L-5060004,00.html.',
     components: [
-      { field: "author", rule: "30.1", description: "שם המחבר (אם ידוע)", required: false, format: "plain" },
-      { field: "title", rule: "30.2", description: "כותרת הפרסום – במירכאות", required: true, format: "quotes" },
-      { field: "siteName", rule: "30.3", description: "שם האתר – מודגש", required: true, format: "bold" },
-      { field: "fullDate", rule: "30.4", description: "תאריך פרסום", required: false, format: "plain" },
-      { field: "url", rule: "30.5", description: "כתובת URL מלאה", required: true, format: "plain" },
-      { field: "accessDate", rule: "30.6", description: "תאריך גישה אחרונה", required: true, format: "plain" },
+      { field: "author", rule: "34.2.2", description: "שם המחבר – רק אם הופיע. מדיה חברתית: שם משתמש בסוגריים. שם בעברית ובשפות נוספות – די בעברית", required: false, format: "plain" },
+      { field: "title", rule: "34.2.3", description: "שם העמוד/התוכן – רק אם הופיע. עמוד ראשי – ללא כותרת. מדיה חברתית – אופציונלי", required: false, format: "quotes" },
+      { field: "contentType", rule: "34.2.4", description: "סוג תוכן – רק אם אינו בסיסי (שרשור, סטורי)", required: false, format: "plain" },
+      { field: "siteName", rule: "34.2.5", description: "שם האתר – מודגש. מדיה חברתית בעברית (טוויטר, פייסבוק, אינסטגרם, יוטיוב)", required: false, format: "bold" },
+      { field: "specificReference", rule: "34.2.6", description: "הפניה ספציפית (כותרת, פסקה, זמן בתוכן חזותי/שמעי)", required: false, format: "plain" },
+      { field: "fullDate", rule: "34.2.7", description: "תאריך לועזי מלא ביותר שמופיע. אם אין – עברי. אם אין כלל – ללא. מדיה חברתית – אפשר שעה", required: false, format: "plain" },
+      { field: "url", rule: "34.2.8", description: "כתובת URL מלאה כולל http://. אפשר לקצר", required: true, format: "plain" },
     ],
     notes: [
-      'כלל 30.6: תאריך גישה חובה; הנוסח: "נדלה ביום [תאריך]".',
+      'כלל 34.2.1: נוסחה: [שם המחבר] "[שם העמוד או התוכן]" [סוג התוכן] [שם האתר] [הפניה ספציפית] ([תאריך]) [כתובת]. חלה על אתרים, עמודים, מדיה חברתית, מאמרים באתרי עיתונים. לא חלה על כתבי עת מקוונים (24.10) או תגובות (34.2.9).',
+      'כלל 34.2.2: שם מחבר רק אם הופיע בעמוד. לצד שם מחבר של מדיה חברתית – שם משתמש בסוגריים. שם בעברית ובשפות נוספות – די בעברית.',
+      'כלל 34.2.3: כותרת רק אם הופיעה. עמוד ראשי – ללא כותרת. מדיה חברתית – כותרת אופציונלית.',
+      'כלל 34.2.4: סוג תוכן רק אם אינו הסוג הבסיסי (למשל שרשור בטוויטר, סטורי באינסטגרם).',
+      'כלל 34.2.5: שם אתר מודגש. שם כפי שמופיע באתר. מדיה חברתית בעברית: טוויטר, פייסבוק, אינסטגרם, יוטיוב.',
+      'כלל 34.2.6: הפניה ספציפית (כותרת, פסקה, זמן). כתובת מדויקת עדיפה. דוגמה: חלק 5, או 16:09.',
+      'כלל 34.2.7: תאריך לועזי מלא ביותר. אם אין – עברי. אם אין כלל – ללא. מדיה חברתית – אפשר שעה.',
+      'כלל 34.2.8: כתובת URL מלאה כולל http://. אם ארוכה – אפשר לקצר באמצעות שירותי קיצור.',
+      'דוגמות: טובה צימוקי "פתרון לסחבת במערכת המשפט" **ynet** (21.12.2017) https://www.ynet.co.il/articles/0,7340,L-5060004,00.html. | "הסיוע המשפטי" **משרד המשפטים** (2020) https://www.justice.gov.il/Units/SiuaMishpaty/Pages/Default.aspx. | נעמה כרמי **קרוא וכתוב** https://naama-carmi.com. | רות גביזון (ruthgavizon@) **פייסבוק** (20.10.2019) https://www.facebook.com/ruthgavison/posts/3237367343000319. | Birnhack( Michael Birnhack@) שרשור **טוויטר** (22.4.2020, 8:12) https://twitter.com/Birnhack/status/1252827512599572482.',
     ],
   },
 
-  // ─── מקורות דתיים (Religious Sources – Rules 28–30) ────────
+  // ─── תגובות במרשתת (Internet Comments – Rule 34.2.9) ──────
+  internet_comment: {
+    primaryRule: "34.2.9",
+    ruleTitle: "כלל 34.2.9 – תגובות במרשתת",
+    template: '{commentAuthor} "{title}" תגובה {commentNumber} {commentDate} ל{originalSourceDetails}.',
+    example: 'קרן ילין-מור, תגובה מ-5.12.2013, 22:45 לנועם זמיר "האם רשאי בית המשפט של הערעור להיעזר בנט המשפט?" **הטרקלין** (5.12.2013) https://israelaw.wordpress.com/2013/12/05/net-hamishpat/.',
+    components: [
+      { field: "commentAuthor", rule: "34.2.2", description: "שם מחבר התגובה – לפי כלל 34.2.2", required: false, format: "plain" },
+      { field: "title", rule: "34.2.9", description: "כותרת התגובה – רק אם מופיעה במקור", required: false, format: "quotes" },
+      { field: "commentNumber", rule: "34.2.9", description: "מספר התגובה (אם ממוספרת)", required: false, format: "plain" },
+      { field: "commentDate", rule: "34.2.9", description: 'תאריך התגובה (אחרי "מ-")', required: false, format: "plain" },
+      { field: "originalSourceDetails", rule: "34.2.9", description: "פרטי המקור לפי כללים 34.2.2–34.2.8", required: true, format: "plain" },
+      { field: "url", rule: "34.2.8", description: "כתובת התגובה (עדיפה) או כתובת המקור", required: true, format: "plain" },
+    ],
+    notes: [
+      'כלל 34.2.9: נוסחה: [שם מחבר התגובה] "[כותרת]" תגובה [פרטי תגובה] ל[פרטי המקור].',
+      'על שם מחבר התגובה יחול כלל 34.2.2. כותרת רק אם מופיעה במקור.',
+      'פרטי התגובה: מספרה (אם ממוספרת) ותאריך (אחרי "מ-") אם מופיע.',
+      'פרטי המקור לפי כללים 34.2.2–34.2.8. כתובת התגובה עדיפה על כתובת המקור.',
+      'דוגמות: usabach( Uri@) תגובה לאגודה לזכויות האזרח (acrionline@) **אינסטגרם** (28.8.2018) https://www.instagram.com/p/BnBSOyygw1K. | קרן ילין-מור, תגובה מ-5.12.2013, 22:45 לנועם זמיר "האם רשאי בית המשפט של הערעור להיעזר בנט המשפט?" **הטרקלין** (5.12.2013) https://israelaw.wordpress.com/2013/12/05/net-hamishpat/. | רחובותית, תגובה 1 מ-5.1.2017, 11:37 ליותם טולוב "זאת לא השפה: חברי הכנסת מפגרים מאחור" **וואלה!** (26.12.2016) https://news.walla.co.il/item/3025997.',
+    ],
+  },
+
   religious: {
     primaryRule: "28",
     ruleTitle: "כללים 28–30 – מקורות דתיים",
