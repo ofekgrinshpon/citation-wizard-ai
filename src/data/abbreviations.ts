@@ -262,6 +262,10 @@ export function detectSourceType(text: string): SourceType {
   if (/נ['']|נגד/.test(hebrewText) && /\d+\/\d+/.test(hebrewText)) {
     return 'case_law_database';
   }
+  // Party names without case number (e.g., "מדינת ישראל נגד זדורוב")
+  if (/[\u0590-\u05FF]+\s+(?:נגד|נ['׳'])\s+[\u0590-\u05FF]+/.test(hebrewText) && !/חוק|פקוד|תקנ|הצעת|אמנ|ספר|מהדורה/.test(hebrewText)) {
+    return 'case_law_database';
+  }
   
   // Check for court pleadings (Rule 22.2) – before case law checks
   if (/כתב\s+(?:ערעור|תביעה|הגנה|טענות)|טיעונים\s+(?:משלימים|מטעם)|סיכומים\s+(?:מטעם|של)|בקשה\s+(?:מטעם|של)/.test(hebrewText)) return 'court_pleading';
