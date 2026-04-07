@@ -24,7 +24,7 @@ const DAVID_FONT = "David, 'David Libre', serif";
 
 function superscriptToNumber(s: string): number | null {
   const map: Record<string, string> = {
-    "\u00B9": "1", "\u00B2": "2", "\u00B3": "3",
+    "\u2070": "0", "\u00B9": "1", "\u00B2": "2", "\u00B3": "3",
     "\u2074": "4", "\u2075": "5", "\u2076": "6",
     "\u2077": "7", "\u2078": "8", "\u2079": "9",
   };
@@ -37,11 +37,14 @@ function superscriptToNumber(s: string): number | null {
 }
 
 function AnswerWithFootnotes({ text, onFootnoteClick }: { text: string; onFootnoteClick: (n: number) => void }) {
-  const parts = text.split(/([\u00B9\u00B2\u00B3\u2074-\u2079]+)/g);
+  // Match superscript unicode chars AND fallback [N] bracket patterns
+  const parts = text.split(/([\u2070\u00B9\u00B2\u00B3\u2074-\u2079]+|\[\d{1,2}\])/g);
   return (
     <>
       {parts.map((part, i) => {
-        const num = superscriptToNumber(part);
+      // Try superscript unicode first, then [N] bracket fallback
+        const bracketMatch = part.match(/^\[(\d{1,2})\]$/);
+        const num = superscriptToNumber(part) ?? (bracketMatch ? parseInt(bracketMatch[1], 10) : null);
         if (num !== null) {
           return (
             <sup
