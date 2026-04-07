@@ -1,32 +1,19 @@
 
 
-# Fix Book Search — Engine Hint Block Not Stripped
+# Replace Disclaimer Text Across All Three Sections
 
-## Problem
-The Perplexity book search is sending the entire engine hint block as the search query instead of just the book name. The log confirms:
-```
-[book] Searching Perplexity for: ══ מנוע אזכור (כלל 23 – ספרים) ══ ...
-```
+## What
+Replace the existing text below the search bar in the "טקסט חופשי" mode, and add the same disclaimer to the "הערות שוליים" and "ביבליוגרפיה" sections:
 
-The regex `.replace(/\n══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")` requires a `\n` before `══`, but after stripping the classification tag, the engine hint starts at position 0 — no newline prefix.
+**New text:** `ReLex הוא AI ויכול לעשות טעויות. יש לבדוק שנית את הפלט לפני השימוש בו.`
 
-## Fix
-In `supabase/functions/citation-chat/index.ts` line 854, change the regex to make the leading `\n` optional:
+## Changes
 
-```typescript
-// Before
-.replace(/\n══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
+| File | Line(s) | Change |
+|------|---------|--------|
+| `src/pages/Index.tsx` | 1123–1126 | Replace "כללי האזכור האחיד..." text with the new disclaimer |
+| `src/components/BatchFootnoteBuilder.tsx` | 444–446 | Replace subtitle `<p>` text with the disclaimer |
+| `src/components/BibliographyGenerator.tsx` | 113–115 | Replace subtitle `<p>` text with the disclaimer |
 
-// After
-.replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
-```
-
-This same issue likely affects the legislation and regulation search blocks (lines 696, 781) — apply the same `\n?` fix there for consistency, even though those currently work because their engine hint block positioning differs.
-
-## Files modified
-| File | Change |
-|------|--------|
-| `supabase/functions/citation-chat/index.ts` | Make leading `\n` optional in engine-hint-stripping regex on lines 854, 696, 781 |
-
-After the fix, deploy the edge function and re-test with "אוריאל פרוקצ'יה דיני חברות חדשים בישראל".
+All three will use the same styling — small muted text centered or aligned per existing layout.
 
