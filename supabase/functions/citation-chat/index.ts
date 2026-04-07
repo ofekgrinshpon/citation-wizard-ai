@@ -1083,6 +1083,128 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       }
     }
 
+    // ── Article (מאמר) search via Perplexity ──
+    let articleHint = "";
+    const isArticle = classMatch && /מאמר/.test(classMatch[1]);
+    if (isArticle && !hasVerifiedCandidates) {
+      try {
+        const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
+        if (PERPLEXITY_API_KEY) {
+          const articleQuery = userInput
+            .replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "")
+            .replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
+            .trim();
+
+          if (articleQuery.length > 2) {
+            const isArticleInBook = /מאמר שפורסם בספר/.test(classMatch![1]) || /בתוך|בספר/.test(articleQuery);
+            console.log(`[article] Searching Perplexity for: ${articleQuery} (inBook=${isArticleInBook})`);
+
+            const articleSearchPrompt = isArticleInBook
+              ? `מצא את המאמר "${articleQuery}" שפורסם בספר. ציין: 1) שם מחבר המאמר (ללא תארים), 2) שם המאמר המלא, 3) שם מחבר הספר (ללא תארים), 4) שם הספר המלא, 5) כרך (אם יש), 6) עמוד תחילת המאמר, 7) עורך/ים, 8) שנת פרסום לועזית, 9) האם מחבר המאמר זהה למחבר הספר.`
+              : `מצא את המאמר האקדמי/משפטי הישראלי: "${articleQuery}". ציין: 1) שם המחבר/ים המלא (ללא תארים אקדמיים/צבאיים), 2) שם המאמר המלא, 3) שם כתב העת, 4) מספר כרך (אותיות או מספרים כמו במקור), 5) מספר חוברת (אם רלוונטי), 6) עמוד תחילת המאמר, 7) שנת פרסום לועזית, 8) שנת פרסום עברית (אם קיימת), 9) האם זה עיתון יומי ואם כן שם החלק ותאריך פרסום מלא.`;
+
+            const articleSystemPrompt = isArticleInBook
+              ? `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
+חפש מאמר שפורסם בתוך ספר. מצא את כל הפרטים הביבליוגרפיים.
+הפורמט:
+{"found":true,"type":"article_in_book","author":"שם מחבר המאמר","articleTitle":"שם המאמר","bookAuthor":"שם מחבר הספר","bookTitle":"שם הספר","volume":"","firstPage":"","editor":"","year":0,"sameAuthor":false}
+אם לא מצאת, החזר {"found":false}.
+חשוב: שמות ללא תארים (פרופ', ד"ר, עו"ד). sameAuthor=true אם מחבר המאמר זהה למחבר הספר.`
+              : `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
+חפש מאמר אקדמי/משפטי ישראלי. מצא את כל הפרטים הביבליוגרפיים.
+הפורמט:
+{"found":true,"type":"journal","author":"שם מחבר","articleTitle":"שם המאמר","journalName":"שם כתב העת","volume":"","notebook":"","firstPage":"","year":0,"hebrewYear":"","newspaperSection":"","newspaperDate":""}
+אם type הוא "newspaper" (עיתון יומי), ציין את שם החלק ב-newspaperSection ותאריך פרסום מלא ב-newspaperDate.
+אם לא מצאת, החזר {"found":false}.
+חשוב: שמות ללא תארים (פרופ', ד"ר, עו"ד). כרך כמו במקור (אותיות עבריות או מספרים).`;
+
+            const artResp = await fetch("https://api.perplexity.ai/chat/completions", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                model: "sonar",
+                messages: [
+                  { role: "system", content: articleSystemPrompt },
+                  { role: "user", content: articleSearchPrompt },
+                ],
+              }),
+            });
+
+            if (artResp.ok) {
+              const artData = await artResp.json();
+              const artContent = artData.choices?.[0]?.message?.content || "";
+              console.log(`[article] Perplexity raw response: ${artContent.substring(0, 300)}`);
+              const artJsonMatch = artContent.match(/\{[\s\S]*?\}/);
+              if (artJsonMatch) {
+                try {
+                  const art = JSON.parse(artJsonMatch[0]);
+                  if (art.found && art.articleTitle && (art.author || art.journalName || art.bookTitle)) {
+                    console.log(`[article] Found: ${art.articleTitle}, author=${art.author || '?'}, journal=${art.journalName || ''}, book=${art.bookTitle || ''}`);
+
+                    if (art.type === "article_in_book" || isArticleInBook) {
+                      // Article in book hint
+                      let details = `\n\n══ נתוני מאמר בספר שנמצאו בחיפוש ══\n`;
+                      if (art.author) details += `מחבר המאמר: ${art.author}\n`;
+                      details += `שם המאמר: ${art.articleTitle}\n`;
+                      if (art.bookAuthor) details += `מחבר הספר: ${art.bookAuthor}\n`;
+                      if (art.bookTitle) details += `שם הספר: ${art.bookTitle}\n`;
+                      if (art.volume) details += `כרך: ${art.volume}\n`;
+                      if (art.firstPage) details += `עמוד ראשון: ${art.firstPage}\n`;
+                      if (art.editor) details += `עורך: ${art.editor}\n`;
+                      if (art.year) details += `שנה: ${art.year}\n`;
+                      if (art.sameAuthor) details += `מחבר זהה: כן (לפי כלל 24.11 – אין לחזור על שם המחבר לפני שם הספר)\n`;
+                      details += `══ השתמש בנתונים אלו לעיצוב אזכור לפי כלל 24.11. סמן [חסר:...] רק לשדות שאינם מופיעים. ══`;
+                      articleHint = details;
+                    } else {
+                      // Journal / newspaper hint
+                      let details = `\n\n══ נתוני מאמר שנמצאו בחיפוש ══\n`;
+                      if (art.author) details += `מחבר: ${art.author}\n`;
+                      details += `שם מאמר: ${art.articleTitle}\n`;
+                      if (art.journalName) details += `כתב עת: ${art.journalName}\n`;
+                      if (art.volume) details += `כרך: ${art.volume}\n`;
+                      if (art.notebook) details += `חוברת: ${art.notebook}\n`;
+                      if (art.firstPage) details += `עמוד ראשון: ${art.firstPage}\n`;
+                      if (art.year) details += `שנה: ${art.year}\n`;
+                      if (art.hebrewYear) details += `שנה עברית: ${art.hebrewYear}\n`;
+
+                      // Special cases
+                      if (art.journalName && /פרשת השבוע/.test(art.journalName)) {
+                        details += `הנחיה מיוחדת: כלל 24.12.2 — ציין פרשה לפני השנה, ללא עמוד ראשון.\n`;
+                      }
+                      if (art.journalName && /משפט,?\s*חברה ותרבות/.test(art.journalName) && art.year && art.year < 2018) {
+                        details += `הנחיה מיוחדת: כלל 24.12.1 — אזכר כמאמר בספר לפי כלל 24.11.\n`;
+                      }
+                      if (art.type === "newspaper" || art.newspaperSection) {
+                        if (art.newspaperSection) details += `חלק בעיתון: ${art.newspaperSection}\n`;
+                        if (art.newspaperDate) details += `תאריך פרסום: ${art.newspaperDate}\n`;
+                        details += `הנחיה: עיתון יומי — שם כתב העת מודגש עם נקודתיים לפני שם החלק: **שם:חלק**\n`;
+                      }
+
+                      details += `══ השתמש בנתונים אלו לעיצוב אזכור לפי כלל 24. סמן [חסר:...] רק לשדות שאינם מופיעים. ══`;
+                      articleHint = details;
+                    }
+                  } else {
+                    console.log(`[article] Data unusable: found=${art.found}, title=${art.articleTitle}`);
+                    articleHint = `\n\n══ חיפוש מאמר ══\nלא נמצאו נתונים מאומתים עבור "${articleQuery}".\nחובה להשתמש ב-[חסר:...] עבור שדות חסרים.\nאל תמציא נתונים ביבליוגרפיים.\n══`;
+                  }
+                } catch (e) {
+                  console.error("[article] Failed to parse JSON:", e);
+                  articleHint = `\n\n══ חיפוש מאמר ══\nלא נמצאו נתונים מאומתים עבור "${articleQuery}".\nחובה להשתמש ב-[חסר:...] עבור שדות חסרים.\n══`;
+                }
+              }
+            } else {
+              console.error("[article] Perplexity search failed:", artResp.status);
+            }
+          }
+        }
+      } catch (e) {
+        console.error("[article] search error:", e);
+      }
+    }
+
     const enhancedMessages = messages.map((m: { role: string; content: string }, i: number) => {
       if (i === messages.length - 1 && m.role === "user") {
         let content = m.content;
@@ -1092,9 +1214,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
             .replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "\n");
         }
 
-        // Inject engine hint + verified source hints + case law search + legislation search + regulation search + book search into the last user message
+        // Inject engine hint + verified source hints + case law search + legislation search + regulation search + book search + article search into the last user message
         const engineHint = extractEngineHint(content);
-        const allHints = engineHint + (verifiedHint || "") + caseLawHint + legislationHint + regulationHint + bookHint;
+        const allHints = engineHint + (verifiedHint || "") + caseLawHint + legislationHint + regulationHint + bookHint + articleHint;
         if (allHints || content !== m.content) {
           return { ...m, content: content + allHints };
         }
