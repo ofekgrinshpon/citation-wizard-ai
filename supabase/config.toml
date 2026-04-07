@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.case-law-search]
 verify_jwt = false
+
+[functions.legal-qa]
+verify_jwt = false
