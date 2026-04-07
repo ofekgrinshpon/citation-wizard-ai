@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,19 +34,55 @@ const SOURCE_TYPE_LABELS: Record<string, string> = {
   international: "בינלאומי",
 };
 
-const SOURCE_TYPE_ICONS: Record<string, string> = {
-  legislation: "📜",
-  caselaw: "⚖️",
-  book: "📚",
-  article: "📄",
-  international: "🌐",
-};
+const SUPERSCRIPTS = "¹²³⁴⁵⁶⁷⁸⁹";
+
+/** Render answer text with clickable superscript footnote numbers */
+function AnswerWithFootnotes({ text, onFootnoteClick }: { text: string; onFootnoteClick: (n: number) => void }) {
+  // Split on superscript numbers like ¹ ² ³ etc.
+  const parts = text.split(/([\u00B9\u00B2\u00B3\u2074-\u2079]+)/g);
+  return (
+    <>
+      {parts.map((part, i) => {
+        // Check if this part is a superscript number
+        const num = superscriptToNumber(part);
+        if (num !== null) {
+          return (
+            <sup
+              key={i}
+              className="text-primary cursor-pointer hover:underline font-bold"
+              style={{ fontSize: "10px", fontFamily: "David, 'David Libre', serif" }}
+              onClick={() => onFootnoteClick(num)}
+            >
+              {part}
+            </sup>
+          );
+        }
+        return <span key={i}>{part}</span>;
+      })}
+    </>
+  );
+}
+
+function superscriptToNumber(s: string): number | null {
+  const map: Record<string, string> = {
+    "\u00B9": "1", "\u00B2": "2", "\u00B3": "3",
+    "\u2074": "4", "\u2075": "5", "\u2076": "6",
+    "\u2077": "7", "\u2078": "8", "\u2079": "9",
+  };
+  let num = "";
+  for (const c of s) {
+    if (map[c]) num += map[c];
+    else return null;
+  }
+  return num ? parseInt(num, 10) : null;
+}
 
 export default function LegalQA() {
   const { user, loading: authLoading } = useAuth();
   const [question, setQuestion] = useState("");
   const [result, setResult] = useState<QAResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const footnotesRef = useRef<HTMLDivElement>(null);
 
   if (authLoading) return null;
   if (!user) return <Navigate to="/auth" replace />;
@@ -91,6 +127,11 @@ export default function LegalQA() {
     toast.success("הועתק ללוח");
   };
 
+  const scrollToFootnote = (num: number) => {
+    const el = document.getElementById(`footnote-${num}`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
   return (
     <div className="flex h-screen overflow-hidden" dir="rtl">
       <AppSidebar />
@@ -101,7 +142,9 @@ export default function LegalQA() {
           <div className="text-center space-y-2">
             <div className="flex items-center justify-center gap-2">
               <Scale className="w-7 h-7 text-primary" />
-              <h1 className="text-2xl font-bold text-foreground">שאלה משפטית</h1>
+              <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "David, 'David Libre', serif" }}>
+                שאלה משפטית
+              </h1>
             </div>
             <p className="text-sm text-muted-foreground">
               שאלו שאלה משפטית וקבלו תשובה מקצועית עם הפניות למקורות אמיתיים
@@ -123,7 +166,8 @@ export default function LegalQA() {
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="לדוגמה: מהם התנאים לביטול חוזה עקב הטעיה לפי הדין הישראלי?"
-                className="min-h-[100px] text-base resize-none"
+                className="min-h-[100px] resize-none"
+                style={{ fontFamily: "David, 'David Libre', serif", fontSize: "12pt" }}
                 dir="rtl"
               />
               <div className="flex justify-end">
@@ -160,38 +204,49 @@ export default function LegalQA() {
           {result && (
             <Card>
               <CardContent className="pt-6 space-y-6">
-                {/* Answer */}
-                <div className="prose prose-sm max-w-none text-foreground leading-relaxed whitespace-pre-wrap">
-                  {result.answer}
+                {/* Answer body - David 12pt, justified */}
+                <div
+                  className="max-w-none text-foreground leading-relaxed whitespace-pre-wrap"
+                  style={{
+                    fontFamily: "David, 'David Libre', serif",
+                    fontSize: "12pt",
+                    textAlign: "justify",
+                    lineHeight: 1.8,
+                  }}
+                >
+                  <AnswerWithFootnotes text={result.answer} onFootnoteClick={scrollToFootnote} />
                 </div>
 
-                {/* Footnotes */}
+                {/* Footnotes - David 10pt */}
                 {result.footnotes.length > 0 && (
-                  <div className="border-t border-border pt-4 space-y-3">
-                    <h3 className="text-sm font-semibold text-muted-foreground">הערות שוליים</h3>
-                    <ol className="space-y-2">
+                  <div ref={footnotesRef} className="border-t border-border pt-4 space-y-2">
+                    <h3
+                      className="font-semibold text-muted-foreground"
+                      style={{ fontFamily: "David, 'David Libre', serif", fontSize: "11pt" }}
+                    >
+                      הערות שוליים
+                    </h3>
+                    <ol className="space-y-1.5">
                       {result.footnotes.map((fn) => (
-                        <li key={fn.number} className="text-sm flex gap-2 items-start">
-                          <span className="text-primary font-bold text-xs mt-0.5 shrink-0">
+                        <li
+                          key={fn.number}
+                          id={`footnote-${fn.number}`}
+                          className="flex gap-2 items-start"
+                          style={{ fontFamily: "David, 'David Libre', serif", fontSize: "10pt" }}
+                        >
+                          <span className="text-primary font-bold shrink-0" style={{ fontSize: "10pt" }}>
                             {fn.number}.
                           </span>
-                          <div className="space-y-0.5 min-w-0">
-                            <div className="flex items-center gap-1.5">
-                              <span>{SOURCE_TYPE_ICONS[fn.source_type] || "📌"}</span>
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
-                                {SOURCE_TYPE_LABELS[fn.source_type] || fn.source_type}
-                              </span>
-                            </div>
-                            <p className="text-foreground">{fn.citation}</p>
+                          <div className="min-w-0">
+                            <span className="text-foreground">{fn.citation}</span>
                             {fn.url && (
                               <a
                                 href={fn.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-primary text-xs hover:underline inline-flex items-center gap-1"
+                                className="text-primary text-xs hover:underline inline-flex items-center gap-0.5 mr-1.5"
                               >
                                 <ExternalLink className="w-3 h-3" />
-                                מקור
                               </a>
                             )}
                           </div>
