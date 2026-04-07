@@ -101,9 +101,14 @@ Always cite real sources. Never fabricate case numbers or law references.`,
 כללי כתיבה לגוף התשובה:
 1. כתוב תשובה מקצועית בעברית. אל תשתמש בסימני עיצוב כמו ** או # או כוכביות – כתוב טקסט רגיל בלבד.
 2. בגוף הטקסט, השתמש בשמות מקוצרים של חוקים (למשל "סעיף 15 לחוק החוזים" ולא "סעיף 15 לחוק החוזים (חלק כללי), התשל"ג–1973"). השם המלא יופיע רק בהערת השוליים.
-3. מספר הערת שוליים בסופרסקריפט (¹²³⁴⁵⁶⁷⁸⁹) תמיד בא בסוף המשפט, אחרי סימן הפיסוק. דוגמה נכונה: "ביטול חוזה עקב הטעיה מעוגן בסעיף 15 לחוק החוזים.¹" דוגמה שגויה: "ביטול חוזה¹ עקב הטעיה..."
-4. אל תמציא מקורות. כל הערת שוליים חייבת להתבסס על מקור אמיתי מתוצאות החיפוש.
-5. סווג כל מקור: legislation, caselaw, book, article, international.
+3. חובה: כל הערת שוליים שאתה מגדיר חייבת להופיע כמספר סופרסקריפט בגוף הטקסט. השתמש בתווי יוניקוד: ⁰¹²³⁴⁵⁶⁷⁸⁹. עבור מספרים דו-ספרתיים, שרשר: ¹⁰, ¹¹, ¹², ¹³, ¹⁴, ¹⁵ וכו'.
+4. מיקום הסופרסקריפט: תמיד בסוף המשפט, מיד אחרי סימן הפיסוק. דוגמאות נכונות:
+   - "ביטול חוזה עקב הטעיה מעוגן בסעיף 15 לחוק החוזים.¹"
+   - "גישה זו אומצה בפסיקה.¹⁴"
+   - דוגמה שגויה: "ביטול חוזה¹ עקב הטעיה..."
+5. אל תמציא מקורות. כל הערת שוליים חייבת להתבסס על מקור אמיתי מתוצאות החיפוש.
+6. סווג כל מקור: legislation, caselaw, book, article, international.
+7. אם יש לך 14 הערות שוליים, חייבים להופיע בגוף הטקסט 14 סופרסקריפטים: ¹ ² ³ ⁴ ⁵ ⁶ ⁷ ⁸ ⁹ ¹⁰ ¹¹ ¹² ¹³ ¹⁴.
 
 כללי כתיבה להערות שוליים (כללי האזכור האחיד 2021):
 הערות השוליים הן האזכור המשפטי המלא. כתוב אותן בדיוק לפי הפורמט הבא:
@@ -227,10 +232,57 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
 
     const parsed = JSON.parse(toolCall.function.arguments);
 
+    // Post-processing: ensure superscript footnote numbers exist in the answer
+    let answer = parsed.answer || "";
+    const footnotes = parsed.footnotes || [];
+
+    const digitToSuperscript: Record<string, string> = {
+      "0": "\u2070", "1": "\u00B9", "2": "\u00B2", "3": "\u00B3",
+      "4": "\u2074", "5": "\u2075", "6": "\u2076",
+      "7": "\u2077", "8": "\u2078", "9": "\u2079",
+    };
+
+    function toSuperscript(n: number): string {
+      return String(n).split("").map((d) => digitToSuperscript[d] || d).join("");
+    }
+
+    // First, convert any [N] or (N) bracket patterns to superscript
+    answer = answer.replace(/\[(\d{1,2})\]/g, (_: string, num: string) => toSuperscript(parseInt(num, 10)));
+    answer = answer.replace(/\((\d{1,2})\)(?=[^\dא-ת]|$)/g, (_: string, num: string) => toSuperscript(parseInt(num, 10)));
+
+    // For each footnote, verify its superscript exists; if not, try to inject it
+    for (const fn of footnotes) {
+      const sup = toSuperscript(fn.number);
+      if (!answer.includes(sup)) {
+        // Try to find a sentence ending (period followed by space or end) and append there
+        // Find the Nth period as a heuristic
+        const periodRegex = /([.。])([\s\n]|$)/g;
+        let match;
+        let count = 0;
+        let insertPos = -1;
+        while ((match = periodRegex.exec(answer)) !== null) {
+          count++;
+          if (count === fn.number) {
+            insertPos = match.index + match[1].length;
+            break;
+          }
+        }
+        if (insertPos > 0) {
+          answer = answer.slice(0, insertPos) + sup + answer.slice(insertPos);
+        } else {
+          // Append at end of last sentence before footnotes section
+          const lastPeriod = answer.lastIndexOf(".");
+          if (lastPeriod > 0) {
+            answer = answer.slice(0, lastPeriod + 1) + sup + answer.slice(lastPeriod + 1);
+          }
+        }
+      }
+    }
+
     return new Response(
       JSON.stringify({
-        answer: parsed.answer,
-        footnotes: parsed.footnotes || [],
+        answer,
+        footnotes,
         source_urls: citations,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
