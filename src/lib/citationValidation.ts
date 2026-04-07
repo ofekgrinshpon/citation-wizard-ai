@@ -168,6 +168,16 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     if (/נדלה ביום/.test(response)) fields.accessDate = "present";
   }
 
+  // Regulation (תקנון) patterns
+  if (sourceType === "regulation") {
+    // Regulation name after "ל"
+    const nameMatch = response.match(/ל(תקנון[^\s(,]+(?:\s+[^\s(,]+)*|תקשי"ר)/);
+    if (nameMatch) fields.regulationName = nameMatch[1];
+    // Full date in parentheses
+    const dateMatch = response.match(/\((\d{1,2}\.\d{1,2}\.\d{4})\)/);
+    if (dateMatch) fields.fullDate = dateMatch[1];
+  }
+
   // Treaty patterns
   if (sourceType === "treaty") {
     // Treaty name
