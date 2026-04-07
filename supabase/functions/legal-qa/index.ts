@@ -17,7 +17,6 @@ function toSuperscript(n: number): string {
   return String(n).split("").map((d) => digitToSuperscript[d] || d).join("");
 }
 
-// Patterns indicating low-quality blog/marketing sources
 const BLOG_URL_PATTERNS = [
   /\/blog\//i, /\/blogs\//i, /adv-/i, /adv\./i,
   /עורכי-דין/i, /law-firm/i, /lawfirm/i, /lawyer/i,
@@ -29,6 +28,43 @@ const BLOG_URL_PATTERNS = [
 function isBlogUrl(url?: string): boolean {
   if (!url) return false;
   return BLOG_URL_PATTERNS.some((p) => p.test(url));
+}
+
+async function getEmbedding(text: string, apiKey: string): Promise<number[]> {
+  const res = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "text-embedding-3-small",
+      input: text,
+      dimensions: 768,
+    }),
+  });
+
+  if (!res.ok) {
+    // Non-fatal: log and return null to fall back to Perplexity
+    const errText = await res.text();
+    console.error("Embedding error (non-fatal):", res.status, errText);
+    return [];
+  }
+
+  const data = await res.json();
+  return data.data?.[0]?.embedding || [];
+}
+
+interface LocalMatch {
+  chunk_id: string;
+  document_id: string;
+  chunk_content: string;
+  document_title: string;
+  document_citation: string;
+  source_type: string;
+  source_url: string | null;
+  metadata: Record<string, unknown>;
+  similarity: number;
 }
 
 serve(async (req) => {
@@ -70,17 +106,57 @@ serve(async (req) => {
     }
 
     const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
-    if (!PERPLEXITY_API_KEY) {
-      throw new Error("PERPLEXITY_API_KEY is not configured");
-    }
+    if (!PERPLEXITY_API_KEY) throw new Error("PERPLEXITY_API_KEY is not configured");
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    const adminClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    // ========= Step 1: Local vector search =========
+    let localMatches: LocalMatch[] = [];
+    let localContext = "";
+    let usedLocalSearch = false;
+
+    try {
+      const queryEmbedding = await getEmbedding(question, LOVABLE_API_KEY);
+
+      if (queryEmbedding.length > 0) {
+        const { data: matches, error: matchError } = await adminClient.rpc("match_legal_chunks", {
+          query_embedding: JSON.stringify(queryEmbedding),
+          match_threshold: 0.7,
+          match_count: 8,
+        });
+
+        if (!matchError && matches && matches.length > 0) {
+          localMatches = matches;
+          usedLocalSearch = true;
+          console.log(`Local search: found ${matches.length} matching chunks`);
+
+          // Build local context for the LLM
+          const seenDocs = new Set<string>();
+          localContext = "\n\n=== מקורות מהמאגר המקומי (מאומתים) ===\n";
+          for (const m of localMatches) {
+            if (!seenDocs.has(m.document_id)) {
+              seenDocs.add(m.document_id);
+              localContext += `\n--- מקור: ${m.document_title} ---\nסוג: ${m.source_type}\nאזכור: ${m.document_citation}\n`;
+              if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
+            }
+            localContext += `\nקטע רלוונטי (דמיון: ${(m.similarity * 100).toFixed(0)}%):\n${m.chunk_content}\n`;
+          }
+        } else {
+          console.log("Local search: no matches found or error:", matchError?.message);
+        }
+      }
+    } catch (embErr) {
+      console.error("Local search failed (non-fatal), falling back to Perplexity:", embErr);
     }
 
-    // Step 1: Perplexity search for PRIMARY legal sources only
-    console.log("Searching Perplexity for legal sources...");
+    // ========= Step 2: Perplexity search (always, but as supplement) =========
+    console.log("Searching Perplexity for additional sources...");
     const perplexityRes = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: {
@@ -90,16 +166,9 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "sonar-pro",
         search_domain_filter: [
-          "nevo.co.il",
-          "www.nevo.co.il",
-          "supreme.court.gov.il",
-          "knesset.gov.il",
-          "lawdata.co.il",
-          "psakdin.co.il",
-          "huji.ac.il",
-          "tau.ac.il",
-          "biu.ac.il",
-          "haifa.ac.il",
+          "nevo.co.il", "www.nevo.co.il", "supreme.court.gov.il",
+          "knesset.gov.il", "lawdata.co.il", "psakdin.co.il",
+          "huji.ac.il", "tau.ac.il", "biu.ac.il", "haifa.ac.il",
         ],
         messages: [
           {
@@ -129,19 +198,41 @@ For each source, provide:
       }),
     });
 
-    if (!perplexityRes.ok) {
+    let searchResults = "";
+    let citations: string[] = [];
+
+    if (perplexityRes.ok) {
+      const perplexityData = await perplexityRes.json();
+      searchResults = perplexityData.choices?.[0]?.message?.content || "";
+      citations = perplexityData.citations || [];
+      console.log(`Perplexity returned ${citations.length} citations`);
+    } else {
       const errText = await perplexityRes.text();
-      console.error("Perplexity error:", perplexityRes.status, errText);
-      throw new Error(`Perplexity search failed: ${perplexityRes.status}`);
+      console.error("Perplexity error (non-fatal):", perplexityRes.status, errText);
+      // If we have local matches, continue without Perplexity
+      if (!usedLocalSearch) {
+        throw new Error(`Perplexity search failed: ${perplexityRes.status}`);
+      }
     }
 
-    const perplexityData = await perplexityRes.json();
-    const searchResults = perplexityData.choices?.[0]?.message?.content || "";
-    const citations = perplexityData.citations || [];
+    // ========= Step 3: Build combined context for LLM =========
+    const contextParts: string[] = [];
 
-    console.log(`Perplexity returned ${citations.length} citations`);
+    if (localContext) {
+      contextParts.push(localContext);
+      contextParts.push("\nהערה חשובה: מקורות מהמאגר המקומי הם מאומתים ואמינים. העדף אותם על פני מקורות מ-Perplexity.");
+    }
 
-    // Step 2: Lovable AI to structure the answer with footnotes
+    if (searchResults) {
+      contextParts.push("\n\n=== מקורות מחיפוש Perplexity ===\n" + searchResults);
+      if (citations.length > 0) {
+        contextParts.push(`\nקישורי מקור:\n${citations.map((c: string, i: number) => `[${i + 1}] ${c}`).join("\n")}`);
+      }
+    }
+
+    const combinedContext = contextParts.join("\n");
+
+    // ========= Step 4: Gemini structuring =========
     const systemPrompt = `אתה עוזר משפטי מומחה. קיבלת תוצאות חיפוש משפטי ועליך לכתוב תשובה מובנית בעברית.
 
 כללי כתיבה לגוף התשובה:
@@ -161,6 +252,11 @@ For each source, provide:
 9. העדף 5–8 הערות שוליים איכותיות על פני הערות רבות ודלות.
 10. אל תיצור הערות שוליים עבור בלוגים משפטיים, אתרי משרדי עורכי דין, או סקירות משפטיות. צטט רק מקורות משפטיים ראשוניים: חקיקה, פסיקה, ספרים אקדמיים, ומאמרים בכתבי עת.
 
+כללים לסימון מקור ההערות:
+11. לכל הערת שוליים, ציין את שדה source מהמקורות:
+    - אם ההערה מבוססת על מקור מהמאגר המקומי (מאומת), סמן source: "local"
+    - אם ההערה מבוססת על מקור מחיפוש Perplexity, סמן source: "perplexity"
+
 כללי כתיבה להערות שוליים (כללי האזכור האחיד 2021):
 הערות השוליים הן האזכור המשפטי המלא. כתוב אותן בדיוק לפי הפורמט הבא:
 - חקיקה ראשית (כלל 2): שם החוק המלא, שנה עברית–שנה לועזית, ס"ח עמוד ראשון. דוגמה: חוק החוזים (חלק כללי), התשל"ג–1973, ס"ח 118.
@@ -173,9 +269,7 @@ For each source, provide:
 - עבור מידע חסר, השתמש ב-[missing:פרט חסר].
 
 תוצאות החיפוש המשפטי:
-${searchResults}
-
-${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, i: number) => `[${i + 1}] ${c}`).join("\n")}` : ""}`;
+${combinedContext}`;
 
     const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -202,7 +296,7 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
                   answer: {
                     type: "string",
                     description:
-                      "The full Hebrew answer with superscript footnote numbers (¹²³). Each sentence has AT MOST one superscript. Never place multiple superscripts on the same sentence.",
+                      "The full Hebrew answer with superscript footnote numbers (¹²³). Each sentence has AT MOST one superscript.",
                   },
                   footnotes: {
                     type: "array",
@@ -216,20 +310,19 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
                         },
                         source_type: {
                           type: "string",
-                          enum: [
-                            "legislation",
-                            "caselaw",
-                            "book",
-                            "article",
-                            "international",
-                          ],
+                          enum: ["legislation", "caselaw", "book", "article", "international"],
                         },
                         url: {
                           type: "string",
                           description: "Source URL if available",
                         },
+                        source: {
+                          type: "string",
+                          enum: ["local", "perplexity"],
+                          description: "Whether this footnote comes from the local verified database or from Perplexity search",
+                        },
                       },
-                      required: ["number", "citation", "source_type"],
+                      required: ["number", "citation", "source_type", "source"],
                       additionalProperties: false,
                     },
                   },
@@ -283,7 +376,7 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
     const parsed = JSON.parse(toolCall.function.arguments);
 
     let answer = parsed.answer || "";
-    let footnotes: Array<{ number: number; citation: string; source_type: string; url?: string }> = parsed.footnotes || [];
+    let footnotes: Array<{ number: number; citation: string; source_type: string; url?: string; source?: string }> = parsed.footnotes || [];
 
     // --- Post-processing Step 1: Filter out blog/marketing footnotes ---
     const filteredFootnotes = footnotes.filter((fn) => !isBlogUrl(fn.url));
@@ -293,17 +386,14 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
 
     if (removedNumbers.size > 0) {
       console.log(`Filtered out ${removedNumbers.size} blog/marketing footnotes`);
-      // Remove superscripts for filtered footnotes from the answer
       for (const num of removedNumbers) {
         const sup = toSuperscript(num);
         answer = answer.replaceAll(sup, "");
       }
-      // Re-number remaining footnotes sequentially
       const oldToNew = new Map<number, number>();
       filteredFootnotes.forEach((fn, idx) => {
         oldToNew.set(fn.number, idx + 1);
       });
-      // Update superscripts in answer
       for (const [oldNum, newNum] of oldToNew) {
         if (oldNum !== newNum) {
           const oldSup = toSuperscript(oldNum);
@@ -315,7 +405,6 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
         const placeholder = `__FN_PLACEHOLDER_${newNum}__`;
         answer = answer.replaceAll(placeholder, toSuperscript(newNum));
       }
-      // Update footnote numbers
       filteredFootnotes.forEach((fn, idx) => {
         fn.number = idx + 1;
       });
@@ -327,26 +416,18 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
     answer = answer.replace(/\((\d{1,2})\)(?=[^\dא-ת]|$)/g, (_: string, num: string) => toSuperscript(parseInt(num, 10)));
 
     // --- Post-processing Step 3: De-cluster adjacent superscripts ---
-    // If multiple superscripts are adjacent (e.g., ¹²³), keep only the first one
     const superscriptChars = new Set(Object.values(digitToSuperscript));
     const lines = answer.split("\n");
     const processedLines = lines.map((line) => {
       let result = "";
       let inSuperscriptRun = false;
-      let superscriptCount = 0;
       for (let i = 0; i < line.length; i++) {
         const ch = line[i];
         if (superscriptChars.has(ch)) {
           if (!inSuperscriptRun) {
             inSuperscriptRun = true;
-            superscriptCount = 1;
             result += ch;
           } else {
-            superscriptCount++;
-            // Keep digits that are part of a multi-digit number (e.g., ¹⁴ = 14)
-            // But drop if it's a separate footnote number clustering
-            // Heuristic: if previous superscript char + this one form a valid footnote number <= max footnote, keep it
-            // Otherwise drop
             const prevSupChars: string[] = [];
             for (let j = result.length - 1; j >= 0; j--) {
               if (superscriptChars.has(result[j])) {
@@ -354,7 +435,6 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
               } else break;
             }
             prevSupChars.push(ch);
-            // Convert back to number
             const superscriptToDigit: Record<string, string> = {};
             for (const [d, s] of Object.entries(digitToSuperscript)) {
               superscriptToDigit[s] = d;
@@ -363,14 +443,11 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
             const num = parseInt(numStr, 10);
             const maxFootnote = footnotes.length > 0 ? Math.max(...footnotes.map((f) => f.number)) : 20;
             if (num <= maxFootnote) {
-              // This is a multi-digit footnote number, keep it
               result += ch;
             }
-            // else: this is a separate clustered footnote, drop it
           }
         } else {
           inSuperscriptRun = false;
-          superscriptCount = 0;
           result += ch;
         }
       }
