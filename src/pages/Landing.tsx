@@ -159,30 +159,7 @@ const Landing = () => {
 
         <div className="space-y-16">
           {steps.map((step, i) => (
-            <div
-              key={i}
-              className={`flex flex-col ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} items-center gap-8`}
-            >
-              <div className="md:w-1/2 space-y-3">
-                <div className="flex items-center gap-3">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
-                    {i + 1}
-                  </span>
-                  <h3 className="text-lg font-bold text-foreground">{step.title}</h3>
-                </div>
-                <p className="text-muted-foreground text-sm leading-relaxed pr-11">
-                  {step.description}
-                </p>
-              </div>
-              <div className="md:w-1/2">
-                <img
-                  src={step.image}
-                  alt={step.title}
-                  className="rounded-xl border border-border shadow-lg w-full"
-                  loading="lazy"
-                />
-              </div>
-            </div>
+            <StepCard key={i} step={step} index={i} />
           ))}
         </div>
 
