@@ -357,6 +357,41 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     ],
   },
 
+  // ─── תכניות תכנון ובנייה (Planning Plans – Rule 17.1) ─────
+  planning_plan: {
+    primaryRule: "17.1",
+    ruleTitle: "כלל 17.1 – תכניות תכנון ובנייה",
+    template: 'תכנית מפורטת {planNumber} של {decidingBody} "{decisionName}" ({fullDate}).',
+    example: 'תכנית מפורטת 2549א\' של הוועדה המקומית לתכנון ולבניה תל-אביב–יפו "מתחם רח\' יפת, רח\' רבי פנחס" (2003).',
+    components: [
+      { field: "planNumber", rule: "17.1", description: "מספר התכנית", required: true, format: "plain" },
+      { field: "decidingBody", rule: "17.1", description: "שם הוועדה (הגוף המחליט)", required: true, format: "plain" },
+      { field: "decisionName", rule: "17.1", description: "שם התכנית – במירכאות", required: true, format: "quotes" },
+      { field: "fullDate", rule: "17.1", description: "שנה או תאריך מלא", required: true, format: "plain" },
+    ],
+    notes: [
+      'כלל 17.1: תכניות של ועדות לתכנון ובנייה מאוזכרות בדומה להחלטות של גופים שלטוניים (כלל 15).',
+    ],
+  },
+
+  // ─── הסכמים קיבוציים (Collective Agreements – Rule 17.2) ───
+  collective_agreement: {
+    primaryRule: "17.2",
+    ruleTitle: "כלל 17.2 – הסכמים קיבוציים",
+    template: 'הסכם קיבוצי מס\' {agreementNumber} בין {party1} ל{party2} בעניין {agreementSubject} ({fullDate}).',
+    example: 'הסכם קיבוצי מס\' 2008/7033 בין הסתדרות העובדים הכללית החדשה ללשכת התאום של הארגונים הכלכליים בעניין עקרונות מוסכמים וכלי שימוש במחשב ובתיבת דואר אלקטרוני במקום העבודה (25.6.2008).',
+    components: [
+      { field: "agreementNumber", rule: "17.2", description: "מספר ההסכם הקיבוצי", required: true, format: "plain" },
+      { field: "party1", rule: "17.2", description: "צד א' להסכם", required: true, format: "plain" },
+      { field: "party2", rule: "17.2", description: "צד ב' להסכם", required: true, format: "plain" },
+      { field: "agreementSubject", rule: "17.2", description: 'נושא ההסכם (אחרי "בעניין")', required: true, format: "plain" },
+      { field: "fullDate", rule: "17.2", description: "תאריך ההסכם (DD.MM.YYYY)", required: true, format: "plain" },
+    ],
+    notes: [
+      'כלל 17.2: אם צד כולל יותר מגורם אחד, אפשר לציין את הגורם הראשון בלבד ואחריו "ואח\'" אם אין חשיבות מיוחדת לציון יתר הגורמים.',
+    ],
+  },
+
   // ─── מקורות לועזיים (Foreign Sources – Bluebook) ──────────
   foreign: {
     primaryRule: "36",

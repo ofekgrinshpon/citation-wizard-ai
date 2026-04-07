@@ -23,6 +23,8 @@ const SOURCE_CATEGORIES: { key: SourceType; label: string; icon: string }[] = [
   { key: "regulation", label: "תקנון", icon: "📋" },
   { key: "government_decision", label: "החלטות גופים שלטוניים", icon: "🏛️" },
   { key: "expert_opinion", label: "חוות דעת", icon: "📝" },
+  { key: "planning_plan", label: "תכנית תכנון ובנייה", icon: "🏗️" },
+  { key: "collective_agreement", label: "הסכם קיבוצי", icon: "🤝" },
   { key: "religious", label: "מקור דתי", icon: "📿" },
   { key: "foreign", label: "מקור לועזי", icon: "🌍" },
   { key: "other", label: "אחר (דברי כנסת וכו׳)", icon: "📁" },
