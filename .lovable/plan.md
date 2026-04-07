@@ -1,30 +1,97 @@
 
 
-# Fix Citation Clustering and Source Quality
+# V2 Infrastructure: Legal Source Database + RAG Pipeline
 
-## Problems
-1. **Citation clustering**: Multiple footnote marks (e.g., ¹²³⁴⁵) pile up on a single sentence instead of being spread across the answer
-2. **Low-quality sources**: Perplexity returns lawyer blogs and legal review websites instead of primary sources (statutes, case law, academic books)
+## Overview
+Build a two-layer legal knowledge system: (1) a structured database of Israeli legal sources (statutes, case law, academic literature) and (2) a vector embeddings pipeline for semantic search over legal text. The Legal QA edge function will query this local knowledge base first, using Perplexity only as a fallback for sources not yet indexed.
 
-## Approach
-Strengthen both the Perplexity search prompt and the Gemini structuring prompt. No database/v2 needed — the issue is prompt quality.
+## Architecture
+
+```text
+User Question
+     │
+     ▼
+┌─────────────────────┐
+│  legal-qa function   │
+│                     │
+│  1. Embed question  │──► pgvector similarity search
+│  2. Local DB match? │──► verified_sources + legal_documents
+│  3. If gaps remain  │──► Perplexity (fallback only)
+│  4. Gemini structure│──► format answer + footnotes
+└─────────────────────┘
+```
 
 ## Changes
 
-### 1. Perplexity Prompt (`supabase/functions/legal-qa/index.ts`)
-- Add `search_domain_filter` to prioritize official legal databases: `nevo.co.il`, `www.nevo.co.il`, `supreme.court.gov.il`, `knesset.gov.il`, `lawdata.co.il`, `psakdin.co.il`
-- Rewrite system prompt to explicitly demand **primary sources only**: statutes with S.H./K.T. numbers, court decisions with case numbers, academic books/articles from law journals — NOT blog posts, law firm websites, or legal summaries
-- Add negative instruction: "Do NOT cite lawyer blogs, law firm marketing pages, or legal news summaries. Only cite the original statute, court decision, or academic publication."
+### 1. Database: `legal_documents` table (migration)
+New table to store full-text legal content with vector embeddings:
+- `id` (uuid, PK)
+- `source_type` (text): legislation, caselaw, book, article, international
+- `title` (text): law name, case name, book title
+- `content` (text): full text or relevant excerpts
+- `citation` (text): formatted citation per Uniform Citation Rules
+- `metadata` (jsonb): year, case number, publisher, volume, page, S.H./K.T. ref
+- `embedding` (vector(768)): text embedding for semantic search
+- `source_url` (text, nullable): link to Nevo/official source
+- `created_at`, `updated_at` timestamps
+- RLS: public SELECT, admin-only INSERT/UPDATE/DELETE
+- Enable pgvector extension
 
-### 2. Gemini Structuring Prompt (`supabase/functions/legal-qa/index.ts`)
-- Add rule: "Each sentence may have AT MOST ONE footnote mark. Spread citations across different sentences. If multiple sources support the same point, place each on a different sentence that discusses a different aspect."
-- Add rule: "Prefer fewer, higher-quality footnotes (5-8 per answer) over many low-quality ones."
-- Add rule: "Do NOT create footnotes for lawyer blogs, law firm websites, or legal summaries. Only cite primary legal sources: legislation, case law, books, and journal articles."
+### 2. Database: `legal_document_chunks` table (migration)
+For long documents, store chunked text with embeddings:
+- `id` (uuid, PK)
+- `document_id` (uuid, FK to legal_documents)
+- `chunk_index` (int)
+- `content` (text): chunk text (~500 tokens)
+- `embedding` (vector(768))
+- RLS: public SELECT, admin-only writes
 
-### 3. Post-processing filter (`supabase/functions/legal-qa/index.ts`)
-- After parsing footnotes, filter out any whose URL contains known blog/marketing domains (e.g., patterns like `/blog/`, `law-firm`, `adv-`, `עורכי-דין`)
-- Re-number remaining footnotes and update superscripts in the answer accordingly
+### 3. Edge Function: `embed-legal-source` (new)
+Accepts a legal document (text + metadata), chunks it, generates embeddings via Lovable AI Gateway, and inserts into both tables.
+- Auth: admin-only (check user_roles)
+- Chunking: ~500 token windows with 50-token overlap
+- Embedding model: use Lovable AI Gateway (google/gemini-2.5-flash for text embedding or a dedicated embedding endpoint)
 
-## Result
-Answers will have well-distributed footnotes (one per sentence, 5-8 total) citing only primary legal sources — statutes, court decisions, and academic literature.
+### 4. Edge Function: `search-legal-sources` (new)
+Semantic search endpoint:
+- Takes a question string
+- Generates embedding for the query
+- Performs pgvector cosine similarity search on `legal_document_chunks`
+- Returns top-K matching chunks with their parent document citations
+- Auth: authenticated users only
+
+### 5. Update `legal-qa` edge function
+Modify the existing flow:
+1. First call `search-legal-sources` logic internally (embed question → pgvector search)
+2. If sufficient high-quality local matches found (similarity > 0.75), use those as the primary context
+3. If local results are insufficient, fall back to Perplexity search (current behavior)
+4. Pass combined context to Gemini for answer structuring
+5. Tag each footnote with `source: "local"` or `source: "perplexity"` so the frontend can show provenance
+
+### 6. Admin UI: Source ingestion page
+Add an admin-only section (in existing Admin page) for:
+- Pasting legal text + metadata to ingest into the database
+- Bulk import from CSV (law name, citation, text, type)
+- View ingested documents count by category
+- Re-embed existing verified_sources entries
+
+### 7. Frontend: Source provenance indicator
+In `LegalQAChat.tsx`, show a small badge next to each footnote:
+- Green dot = sourced from local verified database
+- Gray dot = sourced from Perplexity search
+
+## Migration SQL Summary
+1. Enable pgvector: `CREATE EXTENSION IF NOT EXISTS vector`
+2. Create `legal_documents` with vector column
+3. Create `legal_document_chunks` with vector column and FK
+4. Create similarity search function: `match_legal_chunks(query_embedding vector(768), match_threshold float, match_count int)`
+5. RLS policies for both tables
+
+## Implementation Order
+1. Database migrations (pgvector + tables + search function)
+2. `embed-legal-source` edge function
+3. `search-legal-sources` edge function
+4. Update `legal-qa` to use local search first
+5. Admin ingestion UI
+6. Frontend provenance badges
 
