@@ -53,7 +53,7 @@ function AnswerWithFootnotes({ text, onFootnoteClick }: { text: string; onFootno
               style={{ fontSize: "10px", fontFamily: DAVID_FONT }}
               onClick={() => onFootnoteClick(num)}
             >
-              {part}
+              {bracketMatch ? num : part}
             </sup>
           );
         }
