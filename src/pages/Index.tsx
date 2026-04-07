@@ -4,6 +4,7 @@ import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
+import { LegalQAChat } from "@/components/LegalQAChat";
 import { BillTypeSelector, type BillPublicationType } from "@/components/BillTypeSelector";
 import { TreatyTypeSelector, type TreatySigningType } from "@/components/TreatyTypeSelector";
 
@@ -75,7 +76,7 @@ const CITATION_EXAMPLES = [
 ];
 
 
-type AppMode = "freetext" | "batch" | "bibliography";
+type AppMode = "freetext" | "batch" | "bibliography" | "legalqa";
 
 const LS_KEY_INPUT_PREFIX = "legal_app_free_text_content";
 const LS_KEY_MESSAGES_PREFIX = "legal_app_free_text_messages";
@@ -709,6 +710,7 @@ const Index = () => {
     { id: "freetext", label: "טקסט חופשי", icon: "✨" },
     { id: "batch", label: "הערות שוליים", icon: "📑" },
     { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
+    { id: "legalqa", label: "שאלה משפטית", icon: "⚖️" },
   ];
 
   
@@ -791,13 +793,6 @@ const Index = () => {
                 {m.label}
               </button>
             ))}
-            <button
-              onClick={() => navigate("/legal-qa")}
-              className="mode-tab flex items-center gap-0.5 sm:gap-1 whitespace-nowrap flex-shrink-0 mode-tab-inactive"
-            >
-              <span className="text-[10px]">⚖️</span>
-              שאלה משפטית
-            </button>
           </div>
         </div>
       </header>
@@ -836,6 +831,8 @@ const Index = () => {
           <BatchFootnoteBuilder />
         ) : mode === "bibliography" ? (
           <BibliographyGenerator />
+        ) : mode === "legalqa" ? (
+          <LegalQAChat />
         ) : (
           <>
             {/* Welcome screen */}
