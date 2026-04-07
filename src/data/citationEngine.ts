@@ -392,6 +392,30 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     ],
   },
 
+  // ─── כתבי טענות (Court Pleadings – Rule 22.2) ──────────────
+  court_pleading: {
+    primaryRule: "22.2",
+    ruleTitle: "כלל 22.2 – כתבי טענות",
+    template: "[הפניה ספציפית] ל{pleadingTitle} ב{caseType} {caseNumber} {party1} נ' {party2} ({fullDate}).",
+    example: 'כתב ערעור בע"א 751/10 דיין נ\' ר\' (15.2.2010).',
+    components: [
+      { field: "specificReference", rule: "22.2", description: "הפניה ספציפית (ס' X, פס' X) – אופציונלי", required: false, format: "plain" },
+      { field: "pleadingTitle", rule: "22.2", description: "כותרת כתב הטענות (כתב ערעור, טיעונים משלימים מטעם העותרים וכו')", required: true, format: "plain" },
+      { field: "caseType", rule: "22.2", description: "סוג ההליך (ע\"א, בג\"ץ וכו')", required: true, format: "plain" },
+      { field: "caseNumber", rule: "22.2", description: "מספר התיק", required: true, format: "plain" },
+      { field: "party1", rule: "22.2", description: "צד א'", required: true, format: "plain" },
+      { field: "party2", rule: "22.2", description: "צד ב'", required: true, format: "plain" },
+      { field: "fullDate", rule: "22.2", description: "תאריך כתב הטענות (DD.MM.YYYY)", required: true, format: "plain" },
+      { field: "court", rule: "22.2", description: "פרטי ערכאה (אופציונלי)", required: false, format: "plain" },
+      { field: "database", rule: "22.2", description: "שם מאגר (אופציונלי)", required: false, format: "plain" },
+    ],
+    notes: [
+      'כלל 22.2: הפניה ספציפית (ס\' X) מופיעה בתחילת האזכור, לפני כותרת כתב הטענות.',
+      'כותרת כתב הטענות כוללת את סוג המסמך ואופציונלית את הצד שמטעמו הוגש ("מטעם העותרים").',
+      'אם כתב הטענות מצוטט ממאגר – שם המאגר מופיע לפני התאריך בסוגריים.',
+    ],
+  },
+
   // ─── מקורות לועזיים (Foreign Sources – Bluebook) ──────────
   foreign: {
     primaryRule: "36",

@@ -27,6 +27,7 @@ const ENGINE_KEY_MAP: Record<SourceType, string> = {
   expert_opinion: "expert_opinion",
   planning_plan: "planning_plan",
   collective_agreement: "collective_agreement",
+  court_pleading: "court_pleading",
   foreign: "foreign",
   other: "other",
   unknown: "",
@@ -236,6 +237,33 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     if (subjectMatch) fields.agreementSubject = subjectMatch[1].trim();
     // Date
     const dateMatch = response.match(/\((\d{1,2}\.\d{1,2}\.\d{4})\)/);
+    if (dateMatch) fields.fullDate = dateMatch[1];
+  }
+
+  // Court pleading (כתב טענות) patterns
+  if (sourceType === "court_pleading") {
+    // Pleading title: text between "ל" and "ב" + case type, or starts with כתב/טיעונים/סיכומים/בקשה
+    const titleMatch = response.match(/(?:ל(כתב[^\n]+?|טיעונים[^\n]+?|סיכומים[^\n]+?|בקשה[^\n]+?)\s+ב)|^(כתב\s+\S+|טיעונים\s+\S+|סיכומים\s+\S+)/);
+    if (titleMatch) fields.pleadingTitle = (titleMatch[1] || titleMatch[2] || "").trim();
+    // Also detect standalone pleading title at start
+    if (!fields.pleadingTitle) {
+      const standaloneMatch = response.match(/^(?:ס['׳']\s*\d+\s*ל)?(כתב\s+\S+|טיעונים[^\n]*?|סיכומים[^\n]*?)(?:\s+ב(?:[א-ת]["״׳']+[א-ת]))/);
+      if (standaloneMatch) fields.pleadingTitle = standaloneMatch[1].trim();
+    }
+    // Case type + number
+    const caseMatch = response.match(/([א-ת]{1,3}["״׳']+[א-ת]{1,2})\s+(\d+[\/\-]\d+)/);
+    if (caseMatch) {
+      fields.caseType = caseMatch[1];
+      fields.caseNumber = caseMatch[2];
+    }
+    // Parties
+    const partyMatch = response.match(/(\S+)\s+נ['׳']\s+(\S+)/);
+    if (partyMatch) {
+      fields.party1 = partyMatch[1];
+      fields.party2 = partyMatch[2];
+    }
+    // Full date
+    const dateMatch = response.match(/(\d{1,2}\.\d{1,2}\.\d{4})/);
     if (dateMatch) fields.fullDate = dateMatch[1];
   }
 
