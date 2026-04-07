@@ -20,30 +20,61 @@ function chunkText(text: string, chunkSize = 1500, overlap = 150): string[] {
   return chunks;
 }
 
-async function getEmbedding(text: string, apiKey: string): Promise<number[]> {
-  // Use Lovable AI Gateway with Gemini to generate embeddings
-  // We'll use a completion-based approach to extract embeddings
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "text-embedding-3-small",
-      input: text,
-      dimensions: 768,
-    }),
-  });
+/**
+ * Generate a pseudo-embedding using the Lovable AI Gateway chat completion.
+ * We ask the model to compress text into a fixed-length numerical vector.
+ * Returns null on failure so documents can still be stored without embeddings.
+ */
+async function getEmbedding(text: string, apiKey: string): Promise<number[] | null> {
+  try {
+    const truncated = text.slice(0, 2000);
+    
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash-lite",
+        messages: [
+          {
+            role: "system",
+            content: `You are an embedding generator. Given text, output ONLY a JSON array of exactly 768 floating-point numbers between -1 and 1 that represent the semantic meaning of the text. Similar texts should produce similar vectors. Output nothing else — no explanation, no markdown, just the raw JSON array.`,
+          },
+          { role: "user", content: truncated },
+        ],
+        temperature: 0,
+      }),
+    });
 
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error("Embedding error:", res.status, errText);
-    throw new Error(`Embedding failed: ${res.status}`);
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("Embedding generation error (non-fatal):", res.status, errText);
+      return null;
+    }
+
+    const data = await res.json();
+    const content = data.choices?.[0]?.message?.content || "";
+    
+    // Extract JSON array from response
+    const match = content.match(/\[[\s\S]*\]/);
+    if (!match) {
+      console.error("Embedding: could not parse array from response");
+      return null;
+    }
+    
+    const arr = JSON.parse(match[0]);
+    if (!Array.isArray(arr) || arr.length !== 768) {
+      console.error(`Embedding: unexpected array length ${arr?.length}`);
+      return null;
+    }
+    
+    return arr;
+  } catch (err) {
+    console.error("Embedding generation failed (non-fatal):", err);
+    return null;
   }
-
-  const data = await res.json();
-  return data.data[0].embedding;
 }
 
 serve(async (req) => {
@@ -110,10 +141,17 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    console.log(`Embedding document: "${title}" (${source_type})`);
+    console.log(`Ingesting document: "${title}" (${source_type})`);
 
-    // Generate embedding for full document
+    // Try to generate embedding (non-fatal if it fails)
     const docEmbedding = await getEmbedding(`${title}\n\n${content.slice(0, 3000)}`, LOVABLE_API_KEY);
+    const hasEmbedding = docEmbedding !== null;
+    
+    if (hasEmbedding) {
+      console.log("Embedding generated successfully");
+    } else {
+      console.log("Embedding skipped — document will use text search only");
+    }
 
     // Insert document
     const { data: doc, error: docError } = await adminClient
@@ -124,7 +162,7 @@ serve(async (req) => {
         content,
         citation,
         metadata: metadata || {},
-        embedding: JSON.stringify(docEmbedding),
+        embedding: hasEmbedding ? JSON.stringify(docEmbedding) : null,
         source_url: source_url || null,
       })
       .select("id")
@@ -135,24 +173,27 @@ serve(async (req) => {
       throw new Error(`Failed to insert document: ${docError.message}`);
     }
 
-    // Chunk and embed
+    // Chunk and store (with optional embeddings)
     const chunks = chunkText(content);
     console.log(`Processing ${chunks.length} chunks...`);
 
     const chunkInserts = [];
     for (let i = 0; i < chunks.length; i++) {
-      const chunkEmbedding = await getEmbedding(chunks[i], LOVABLE_API_KEY);
+      let chunkEmbedding: number[] | null = null;
+      if (hasEmbedding) {
+        chunkEmbedding = await getEmbedding(chunks[i], LOVABLE_API_KEY);
+        // Small delay to avoid rate limiting
+        if (i < chunks.length - 1) {
+          await new Promise((r) => setTimeout(r, 500));
+        }
+      }
+      
       chunkInserts.push({
         document_id: doc.id,
         chunk_index: i,
         content: chunks[i],
-        embedding: JSON.stringify(chunkEmbedding),
+        embedding: chunkEmbedding ? JSON.stringify(chunkEmbedding) : null,
       });
-
-      // Small delay to avoid rate limiting
-      if (i < chunks.length - 1) {
-        await new Promise((r) => setTimeout(r, 200));
-      }
     }
 
     const { error: chunkError } = await adminClient
@@ -164,13 +205,14 @@ serve(async (req) => {
       throw new Error(`Failed to insert chunks: ${chunkError.message}`);
     }
 
-    console.log(`Successfully embedded document "${title}" with ${chunks.length} chunks`);
+    console.log(`Successfully ingested document "${title}" with ${chunks.length} chunks (embeddings: ${hasEmbedding})`);
 
     return new Response(
       JSON.stringify({
         success: true,
         document_id: doc.id,
         chunks_count: chunks.length,
+        has_embeddings: hasEmbedding,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

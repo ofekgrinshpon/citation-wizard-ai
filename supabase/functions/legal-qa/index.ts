@@ -116,11 +116,12 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // ========= Step 1: Local vector search =========
+    // ========= Step 1: Local search (vector + text fallback) =========
     let localMatches: LocalMatch[] = [];
     let localContext = "";
     let usedLocalSearch = false;
 
+    // Try vector search first
     try {
       const queryEmbedding = await getEmbedding(question, LOVABLE_API_KEY);
 
@@ -134,30 +135,51 @@ serve(async (req) => {
         if (!matchError && matches && matches.length > 0) {
           localMatches = matches;
           usedLocalSearch = true;
-          console.log(`Local search: found ${matches.length} matching chunks`);
-
-          // Build local context for the LLM
-          const seenDocs = new Set<string>();
-          localContext = "\n\n=== מקורות מהמאגר המקומי (מאומתים) ===\n";
-          for (const m of localMatches) {
-            const isNotebook = m.source_type === "notebook";
-            if (!seenDocs.has(m.document_id)) {
-              seenDocs.add(m.document_id);
-              if (isNotebook) {
-                localContext += `\n--- מחברת לימודים (לרקע בלבד – אל תצטט כמקור): ${m.document_title} ---\n`;
-              } else {
-                localContext += `\n--- מקור: ${m.document_title} ---\nסוג: ${m.source_type}\nאזכור: ${m.document_citation}\n`;
-                if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
-              }
-            }
-            localContext += `\nקטע רלוונטי (דמיון: ${(m.similarity * 100).toFixed(0)}%):\n${m.chunk_content}\n`;
-          }
+          console.log(`Vector search: found ${matches.length} matching chunks`);
         } else {
-          console.log("Local search: no matches found or error:", matchError?.message);
+          console.log("Vector search: no matches found or error:", matchError?.message);
         }
       }
     } catch (embErr) {
-      console.error("Local search failed (non-fatal), falling back to Perplexity:", embErr);
+      console.error("Vector search failed (non-fatal):", embErr);
+    }
+
+    // Fallback to text search if vector search returned nothing
+    if (!usedLocalSearch) {
+      try {
+        const { data: textMatches, error: textError } = await adminClient.rpc("search_legal_chunks_text", {
+          search_query: question,
+          match_count: 8,
+        });
+
+        if (!textError && textMatches && textMatches.length > 0) {
+          localMatches = textMatches;
+          usedLocalSearch = true;
+          console.log(`Text search fallback: found ${textMatches.length} matching chunks`);
+        } else {
+          console.log("Text search: no matches found or error:", textError?.message);
+        }
+      } catch (textErr) {
+        console.error("Text search failed (non-fatal):", textErr);
+      }
+    }
+
+    if (usedLocalSearch && localMatches.length > 0) {
+      const seenDocs = new Set<string>();
+      localContext = "\n\n=== מקורות מהמאגר המקומי (מאומתים) ===\n";
+      for (const m of localMatches) {
+        const isNotebook = m.source_type === "notebook";
+        if (!seenDocs.has(m.document_id)) {
+          seenDocs.add(m.document_id);
+          if (isNotebook) {
+            localContext += `\n--- מחברת לימודים (לרקע בלבד – אל תצטט כמקור): ${m.document_title} ---\n`;
+          } else {
+            localContext += `\n--- מקור: ${m.document_title} ---\nסוג: ${m.source_type}\nאזכור: ${m.document_citation}\n`;
+            if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
+          }
+        }
+        localContext += `\nקטע רלוונטי (דמיון: ${(m.similarity * 100).toFixed(0)}%):\n${m.chunk_content}\n`;
+      }
     }
 
     // ========= Step 2: Perplexity search (always, but as supplement) =========
