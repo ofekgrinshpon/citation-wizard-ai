@@ -1,35 +1,31 @@
 
 
-# Integrate Legal QA as a Mode in the Main Page
+# Fix Missing Inline Footnote Numbers
 
-## What Changes
-Instead of navigating to a separate full-screen `/legal-qa` page, the "שאלה משפטית" feature becomes a fourth mode inside the existing Index page — just like "טקסט חופשי", "הערות שוליים", and "ביבליוגרפיה". The chat-like input/output layout mirrors the freetext section.
+## Problem
+The AI model is not reliably inserting superscript footnote numbers (¹²³...) into the answer text. The frontend parser expects Unicode superscript characters but the model either omits them or uses regular numbers/brackets instead.
+
+## Solution
+Two-layer fix: strengthen the prompt AND add server-side post-processing to guarantee superscript numbers appear in the text.
 
 ## Changes
 
-### 1. `src/pages/Index.tsx`
-- Add `"legalqa"` to the `AppMode` type union
-- Add it to the `MODES` array: `{ id: "legalqa", label: "שאלה משפטית", icon: "⚖️" }`
-- Remove the separate navigate button for legal-qa from the tab bar
-- In the main content area, add a `mode === "legalqa"` branch that renders an inline Legal QA chat component
-- The Legal QA section will have:
-  - A disclaimer alert at the top (compact)
-  - A scrollable area showing the answer result (David font, 12pt, justified) with footnotes — same as current LegalQA page output
-  - A bottom input bar with textarea + send button, matching the freetext input bar style
-  - State: `legalQAQuestion`, `legalQAResult`, `legalQALoading`
+### 1. Edge Function Post-Processing (`supabase/functions/legal-qa/index.ts`)
+After parsing the AI tool call response, add a post-processing step:
+- For each footnote in the `parsed.footnotes` array, verify its superscript number exists in `parsed.answer`
+- If missing, attempt to find likely insertion points (end of sentences referencing that source) and inject the superscript
+- As a fallback, convert any `[N]` or `(N)` patterns in the answer to their Unicode superscript equivalents
+- Map digits 0-9 to their Unicode superscript counterparts (⁰¹²³⁴⁵⁶⁷⁸⁹) for numbers above 9
 
-### 2. `src/pages/LegalQA.tsx`
-- Keep the file but it will no longer be the primary entry point; the logic moves inline or into a reusable component
+### 2. Prompt Refinement (`supabase/functions/legal-qa/index.ts`)
+- Add explicit examples showing multi-digit superscripts (e.g., `¹⁴`, `¹⁵`)
+- Emphasize that EVERY footnote MUST have its corresponding superscript number embedded in the answer text
+- Add a rule: "If you define footnote N, the character sequence for N in superscript MUST appear exactly once in the answer text"
 
-### 3. `src/components/LegalQAChat.tsx` (new)
-- Extract the Legal QA logic (question submission, result display, footnotes) into a standalone component
-- Props: none (self-contained, uses `useAuth` and supabase internally)
-- Layout: scrollable content area + sticky bottom input bar, same structure as freetext mode
-- Includes: disclaimer, answer with David font rendering, footnotes section, copy button
-
-### 4. `src/App.tsx`
-- Keep the `/legal-qa` route as a fallback/redirect, or remove it
+### 3. Frontend Fallback (`src/components/LegalQAChat.tsx`)
+- Expand the superscript regex to also catch `[N]` or `^N` patterns as fallback
+- Add superscript `⁰` to the character map for multi-digit numbers like ¹⁰, ²⁰
 
 ## Result
-Users switch to "שאלה משפטית" via the same tab bar and stay on the same page with sidebar and citation history visible, matching the compact chat layout of the freetext mode.
+Footnote numbers like ¹⁴, ¹⁵, ¹⁶ will reliably appear inline at the end of sentences (after punctuation), matching the reference screenshot.
 
