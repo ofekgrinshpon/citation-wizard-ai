@@ -378,6 +378,20 @@ export type Database = {
           source_url: string
         }[]
       }
+      search_legal_chunks_text: {
+        Args: { match_count?: number; search_query: string }
+        Returns: {
+          chunk_content: string
+          chunk_id: string
+          document_citation: string
+          document_id: string
+          document_title: string
+          metadata: Json
+          similarity: number
+          source_type: string
+          source_url: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "user"
