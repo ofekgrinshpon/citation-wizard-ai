@@ -25,6 +25,7 @@ const SOURCE_TYPES = [
   { value: "book", label: "📖 ספר" },
   { value: "article", label: "📄 מאמר" },
   { value: "international", label: "🌍 בינלאומי" },
+  { value: "notebook", label: "📓 מחברת לימודים" },
 ];
 
 type Mode = "single" | "csv" | "file";
@@ -73,11 +74,15 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
   const [extracting, setExtracting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const isNotebook = sourceType === "notebook";
+
   const handleSingleIngest = async () => {
-    if (!title || !content || !citation) {
-      toast.error("נא למלא כותרת, תוכן ואזכור");
+    if (!title || !content || (!citation && !isNotebook)) {
+      toast.error(isNotebook ? "נא למלא כותרת ותוכן" : "נא למלא כותרת, תוכן ואזכור");
       return;
     }
+
+    const finalCitation = citation || (isNotebook ? `מחברת לימודים: ${title}` : "");
 
     setLoading(true);
     try {
@@ -86,7 +91,7 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
           source_type: sourceType,
           title,
           content,
-          citation,
+          citation: finalCitation,
           source_url: sourceUrl || undefined,
           metadata: year ? { year } : {},
         },
