@@ -130,6 +130,13 @@ export type SourceType =
   | 'court_pleading'        // כתב טענות (כלל 22.2)
   | 'encyclopedia_entry'    // ערך במילון/אנציקלופדיה (כלל 25)
   | 'academic_work'         // עבודה אקדמית (כלל 26)
+  | 'correspondence'        // התכתבות (כלל 32.1)
+  | 'interview'             // ריאיון (כלל 32.2)
+  | 'lecture'               // הרצאה (כלל 32.3)
+  | 'press_release'         // הודעה לתקשורת (כלל 32.4)
+  | 'film'                  // סרט (כלל 33.1)
+  | 'tv_show'               // תוכנית טלוויזיה (כלל 33.2)
+  | 'radio'                 // רדיו/תסכית (כלל 33.3)
   | 'foreign'               // לועזי
   | 'other'                 // אחר (דברי כנסת וכו')
   | 'unknown';
@@ -155,6 +162,13 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   academic_work: ['author', 'bookTitle', 'workType', 'institution', 'year'],
   internet: ['author', 'title', 'siteName', 'url', 'accessDate'],
   religious: ['source', 'location'],
+  correspondence: ['correspondenceType', 'senderName', 'recipientName', 'fullDate'],
+  interview: ['intervieweeName', 'fullDate'],
+  lecture: ['author', 'articleTitle', 'eventName', 'fullDate'],
+  press_release: ['author', 'articleTitle', 'fullDate'],
+  film: ['filmName', 'director', 'year'],
+  tv_show: ['showName', 'channel', 'fullDate'],
+  radio: ['showName', 'radioStation', 'fullDate'],
   treaty: ['treatyName', 'volume', 'firstPage', 'signingType', 'signingYear'],
   foreign: ['citation'],
   other: [],
@@ -215,6 +229,27 @@ export const FIELD_LABELS: Record<string, string> = {
   workType: 'סוג העבודה',
   institution: 'מוסד אקדמי',
   courseName: 'שם הקורס',
+  correspondenceType: 'סוג התכתבות',
+  senderName: 'שם הכותב',
+  senderRole: 'תפקיד הכותב',
+  recipientName: 'שם הנמען',
+  recipientRole: 'תפקיד הנמען',
+  subject: 'נושא ההתכתבות',
+  intervieweeName: 'שם המרואיין',
+  interviewerName: 'שם המראיין',
+  intervieweeRole: 'תפקיד המרואיין',
+  interviewType: 'סוג ריאיון',
+  eventName: 'שם האירוע',
+  eventLocation: 'מקום האירוע',
+  releaseDescription: 'תיאור ההודעה',
+  filmName: 'שם הסרט',
+  director: 'שם הבמאי',
+  showName: 'שם התוכנית',
+  episodeName: 'שם הפרק',
+  channel: 'ערוץ',
+  creator: 'יוצר התוכנית',
+  radioStation: 'תחנת רדיו',
+  timeReference: 'הפניית זמן',
 };
 
 // Normalize abbreviations in free text
@@ -300,6 +335,27 @@ export function detectSourceType(text: string): SourceType {
   if (/תקנון/.test(hebrewText)) return 'regulation';
   if (/חוק |פקודת /.test(hebrewText)) return 'primary_legislation';
   
+  // Check for correspondence (Rule 32.1)
+  if (/מכתב מ|דואר אלקטרוני מ|מזכר מ/.test(hebrewText)) return 'correspondence';
+
+  // Check for interviews (Rule 32.2)
+  if (/ריאיון\s+(עם|של|טלפוני)/.test(hebrewText)) return 'interview';
+
+  // Check for lectures (Rule 32.3)
+  if (/הרצאה ב/.test(hebrewText)) return 'lecture';
+
+  // Check for press releases (Rule 32.4)
+  if (/הודעה ל(?:תקשורת|עיתונות)|הודעת דובר/.test(hebrewText)) return 'press_release';
+
+  // Check for films (Rule 33.1)
+  if (/במאי[תם]?\s|סרט\s/.test(hebrewText)) return 'film';
+
+  // Check for TV shows (Rule 33.2) – quoted name + channel
+  if (/ערוץ\s+\d/.test(hebrewText) && /"[^"]+"/.test(hebrewText)) return 'tv_show';
+
+  // Check for radio (Rule 33.3)
+  if (/גלי צה"ל|קול ברמה|רדיו|תסכית|תחנת\s/.test(hebrewText)) return 'radio';
+
   // Check for academic works (Rule 26) – before general literature
   if (/עבודת\s+גמר|חיבור\s+לשם|עבודה\s+סמינריונית|דוקטור.*תואר|מוסמך.*תואר|תזה|דיסרטציה|עבודת\s+דוקטורט/.test(hebrewText)) return 'academic_work';
 
@@ -342,6 +398,13 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   article_in_book: 'מאמר שפורסם בספר',
   internet: 'מקור מרשתת',
   religious: 'מקור דתי',
+  correspondence: 'התכתבות',
+  interview: 'ריאיון',
+  lecture: 'הרצאה',
+  press_release: 'הודעה לתקשורת',
+  film: 'סרט',
+  tv_show: 'תוכנית טלוויזיה',
+  radio: 'רדיו/תסכית',
   regulation: 'תקנון',
   government_decision: 'החלטות גופים שלטוניים',
   expert_opinion: 'חוות דעת',
@@ -369,6 +432,13 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   article_in_book: 'כלל 24.11 – מאמר שפורסם בספר',
   internet: 'כלל 30 – מקורות מהמרשתת',
   religious: 'כללים 28–30 – מקורות דתיים',
+  correspondence: 'כלל 32.1 – התכתבויות',
+  interview: 'כלל 32.2 – ראיונות',
+  lecture: 'כלל 32.3 – הרצאות',
+  press_release: 'כלל 32.4 – הודעות לתקשורת',
+  film: 'כלל 33.1 – סרטים',
+  tv_show: 'כלל 33.2 – תוכניות טלוויזיה',
+  radio: 'כלל 33.3 – רדיו ותסכיתים',
   regulation: 'כלל 13.1 – תקנונים',
   government_decision: 'כלל 15 – החלטות גופים שלטוניים',
   expert_opinion: 'כלל 16 – חוות דעת',
