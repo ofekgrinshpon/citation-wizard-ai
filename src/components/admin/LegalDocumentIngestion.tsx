@@ -388,6 +388,11 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
                       ))}
                     </SelectContent>
                   </Select>
+                  {isNotebook && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      📓 מחברות לימודים משמשות כרקע בלבד
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>שנה</Label>
@@ -401,8 +406,8 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
               </div>
 
               <div className="space-y-2">
-                <Label>אזכור מלא</Label>
-                <Input value={citation} onChange={(e) => setCitation(e.target.value)} placeholder="נא להזין אזכור לפי כללי האזכור האחיד" dir="rtl" />
+                <Label>אזכור מלא {isNotebook ? "(אופציונלי)" : ""}</Label>
+                <Input value={citation} onChange={(e) => setCitation(e.target.value)} placeholder={isNotebook ? "ייווצר אוטומטית אם ריק" : "נא להזין אזכור לפי כללי האזכור האחיד"} dir="rtl" />
               </div>
 
               <div className="space-y-2">
