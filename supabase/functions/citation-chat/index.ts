@@ -534,19 +534,47 @@ serve(async (req) => {
     let caseLawOverrideLabel: string | null = null;
     const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
     const isCaseLaw = classMatch && /פסיקה/.test(classMatch[1]);
+    
+    // ── Check if this is a disambiguation selection (skip Perplexity) ──
+    const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(userInput);
+    
     const caseNumberMatch = userInput.match(/(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+([0-9]+[\/\-][0-9]+)/);
 
     // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
     const cleanedForParty = userInput
       .replace(/\[סיווג אוטומטי:.*?\]\n?/, "")
+      .replace(/\[בחירת תוצאה\]\s*/, "")
       .replace(/\n?══[\s\S]*?══+\s*/g, "")
       .trim();
     const partyMatch = !caseNumberMatch
       ? cleanedForParty.match(/([\u0590-\u05FF\s'"״׳']+)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3])\s+([\u0590-\u05FF\s'"״׳']+)/)
       : null;
 
-    const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (caseNumberMatch || partyMatch);
-    console.log(`[case-law] isCaseLaw=${isCaseLaw}, caseNumberMatch=${caseNumberMatch?.[0] ?? 'null'}, partyMatch=${partyMatch ? 'yes' : 'no'}, hasVerifiedCandidates=${hasVerifiedCandidates}`);
+    // If this is a disambiguation selection, do a focused single-case search with the case number
+    if (isDisambiguationSelection && isCaseLaw && caseNumberMatch) {
+      console.log(`[case-law] Disambiguation selection detected, doing focused search for ${caseNumberMatch[0]}`);
+      // Re-use the Branch A (case number search) logic by NOT setting isDisambiguationSelection block
+      // Just let it fall through to the normal caseNumberMatch branch below
+    } else if (isDisambiguationSelection && isCaseLaw) {
+      // No case number found in selection — build hint from text
+      const selectionText = userInput.replace(/\[סיווג אוטומטי:.*?\]\n?/, "").replace(/\[בחירת תוצאה\]\s*/, "").trim();
+      const yearMatch = selectionText.match(/\((\d{4})\)/);
+      const courtMatch = selectionText.match(/—\s*(.+?)$/);
+      const partiesInSelection = selectionText.match(/([\u0590-\u05FF\s'"״׳']+)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3])\s+([\u0590-\u05FF\s'"״׳']+)/);
+      
+      let details = `\n\n══ נתוני פסק דין שנבחר ══\n`;
+      details += `פרטים: ${selectionText}\n`;
+      if (partiesInSelection) details += `צדדים: **${partiesInSelection[1].trim()}** נ' **${partiesInSelection[2].trim().replace(/\s*\(\d{4}\).*$/, '')}**\n`;
+      if (courtMatch) details += `בית משפט: ${courtMatch[1].trim()}\n`;
+      if (yearMatch) details += `שנה: ${yearMatch[1]}\n`;
+      details += `══ עצב אזכור מלא לפסק דין זה. סמן [חסר:...] לשדות חסרים. ══`;
+      caseLawHint = details;
+      console.log(`[case-law] No case number in selection, using parsed text hint`);
+    }
+
+    // When disambiguation selection has a case number, allow the normal case-number search to proceed
+    const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (caseNumberMatch || partyMatch) && !(isDisambiguationSelection && !caseNumberMatch);
+    console.log(`[case-law] isCaseLaw=${isCaseLaw}, isDisambiguationSelection=${isDisambiguationSelection}, caseNumberMatch=${caseNumberMatch?.[0] ?? 'null'}, partyMatch=${partyMatch ? 'yes' : 'no'}, hasVerifiedCandidates=${hasVerifiedCandidates}`);
 
     if (shouldSearchCaseLaw) {
       try {
