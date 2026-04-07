@@ -26,42 +26,7 @@ interface QAResult {
   source_urls: string[];
 }
 
-const SOURCE_TYPE_LABELS: Record<string, string> = {
-  legislation: "חקיקה",
-  caselaw: "פסיקה",
-  book: "ספר",
-  article: "מאמר",
-  international: "בינלאומי",
-};
-
-const SUPERSCRIPTS = "¹²³⁴⁵⁶⁷⁸⁹";
-
-/** Render answer text with clickable superscript footnote numbers */
-function AnswerWithFootnotes({ text, onFootnoteClick }: { text: string; onFootnoteClick: (n: number) => void }) {
-  // Split on superscript numbers like ¹ ² ³ etc.
-  const parts = text.split(/([\u00B9\u00B2\u00B3\u2074-\u2079]+)/g);
-  return (
-    <>
-      {parts.map((part, i) => {
-        // Check if this part is a superscript number
-        const num = superscriptToNumber(part);
-        if (num !== null) {
-          return (
-            <sup
-              key={i}
-              className="text-primary cursor-pointer hover:underline font-bold"
-              style={{ fontSize: "10px", fontFamily: "David, 'David Libre', serif" }}
-              onClick={() => onFootnoteClick(num)}
-            >
-              {part}
-            </sup>
-          );
-        }
-        return <span key={i}>{part}</span>;
-      })}
-    </>
-  );
-}
+const DAVID_FONT = "David, 'David Libre', serif";
 
 function superscriptToNumber(s: string): number | null {
   const map: Record<string, string> = {
@@ -75,6 +40,58 @@ function superscriptToNumber(s: string): number | null {
     else return null;
   }
   return num ? parseInt(num, 10) : null;
+}
+
+/** Render answer text with clickable superscript footnote numbers and bold **text** */
+function AnswerWithFootnotes({ text, onFootnoteClick }: { text: string; onFootnoteClick: (n: number) => void }) {
+  // First split on superscript numbers
+  const parts = text.split(/([\u00B9\u00B2\u00B3\u2074-\u2079]+)/g);
+  
+  return (
+    <>
+      {parts.map((part, i) => {
+        const num = superscriptToNumber(part);
+        if (num !== null) {
+          return (
+            <sup
+              key={i}
+              className="text-primary cursor-pointer hover:underline font-bold"
+              style={{ fontSize: "10px", fontFamily: DAVID_FONT }}
+              onClick={() => onFootnoteClick(num)}
+            >
+              {part}
+            </sup>
+          );
+        }
+        // Render **bold** markers as actual bold
+        return <RenderBold key={i} text={part} />;
+      })}
+    </>
+  );
+}
+
+/** Convert **text** to <strong>text</strong> */
+function RenderBold({ text }: { text: string }) {
+  const parts = text.split(/\*\*(.*?)\*\*/g);
+  return (
+    <>
+      {parts.map((segment, i) =>
+        i % 2 === 1 ? <strong key={i}>{segment}</strong> : <span key={i}>{segment}</span>
+      )}
+    </>
+  );
+}
+
+/** Render footnote citation with **bold** support */
+function CitationText({ text }: { text: string }) {
+  const parts = text.split(/\*\*(.*?)\*\*/g);
+  return (
+    <>
+      {parts.map((segment, i) =>
+        i % 2 === 1 ? <strong key={i}>{segment}</strong> : <span key={i}>{segment}</span>
+      )}
+    </>
+  );
 }
 
 export default function LegalQA() {
@@ -142,9 +159,7 @@ export default function LegalQA() {
           <div className="text-center space-y-2">
             <div className="flex items-center justify-center gap-2">
               <Scale className="w-7 h-7 text-primary" />
-              <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "David, 'David Libre', serif" }}>
-                שאלה משפטית
-              </h1>
+              <h1 className="text-2xl font-bold text-foreground">שאלה משפטית</h1>
             </div>
             <p className="text-sm text-muted-foreground">
               שאלו שאלה משפטית וקבלו תשובה מקצועית עם הפניות למקורות אמיתיים
@@ -166,8 +181,7 @@ export default function LegalQA() {
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="לדוגמה: מהם התנאים לביטול חוזה עקב הטעיה לפי הדין הישראלי?"
-                className="min-h-[100px] resize-none"
-                style={{ fontFamily: "David, 'David Libre', serif", fontSize: "12pt" }}
+                className="min-h-[100px] text-base resize-none"
                 dir="rtl"
               />
               <div className="flex justify-end">
@@ -200,7 +214,7 @@ export default function LegalQA() {
             </Card>
           )}
 
-          {/* Result */}
+          {/* Result — David font only here */}
           {result && (
             <Card>
               <CardContent className="pt-6 space-y-6">
@@ -208,7 +222,7 @@ export default function LegalQA() {
                 <div
                   className="max-w-none text-foreground leading-relaxed whitespace-pre-wrap"
                   style={{
-                    fontFamily: "David, 'David Libre', serif",
+                    fontFamily: DAVID_FONT,
                     fontSize: "12pt",
                     textAlign: "justify",
                     lineHeight: 1.8,
@@ -222,7 +236,7 @@ export default function LegalQA() {
                   <div ref={footnotesRef} className="border-t border-border pt-4 space-y-2">
                     <h3
                       className="font-semibold text-muted-foreground"
-                      style={{ fontFamily: "David, 'David Libre', serif", fontSize: "11pt" }}
+                      style={{ fontFamily: DAVID_FONT, fontSize: "11pt" }}
                     >
                       הערות שוליים
                     </h3>
@@ -231,20 +245,21 @@ export default function LegalQA() {
                         <li
                           key={fn.number}
                           id={`footnote-${fn.number}`}
-                          className="flex gap-2 items-start"
-                          style={{ fontFamily: "David, 'David Libre', serif", fontSize: "10pt" }}
+                          className="flex gap-2 items-start text-foreground"
+                          style={{ fontFamily: DAVID_FONT, fontSize: "10pt" }}
                         >
                           <span className="text-primary font-bold shrink-0" style={{ fontSize: "10pt" }}>
                             {fn.number}.
                           </span>
                           <div className="min-w-0">
-                            <span className="text-foreground">{fn.citation}</span>
+                            <CitationText text={fn.citation} />
                             {fn.url && (
                               <a
                                 href={fn.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-primary text-xs hover:underline inline-flex items-center gap-0.5 mr-1.5"
+                                className="text-primary hover:underline inline-flex items-center gap-0.5 mr-1.5"
+                                style={{ fontSize: "9pt" }}
                               >
                                 <ExternalLink className="w-3 h-3" />
                               </a>
