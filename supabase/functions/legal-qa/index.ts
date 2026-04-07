@@ -165,6 +165,22 @@ serve(async (req) => {
     }
 
     if (usedLocalSearch && localMatches.length > 0) {
+      const seenDocs = new Set<string>();
+      localContext = "\n\n=== מקורות מהמאגר המקומי (מאומתים) ===\n";
+      for (const m of localMatches) {
+        const isNotebook = m.source_type === "notebook";
+        if (!seenDocs.has(m.document_id)) {
+          seenDocs.add(m.document_id);
+          if (isNotebook) {
+            localContext += `\n--- מחברת לימודים (לרקע בלבד – אל תצטט כמקור): ${m.document_title} ---\n`;
+          } else {
+            localContext += `\n--- מקור: ${m.document_title} ---\nסוג: ${m.source_type}\nאזכור: ${m.document_citation}\n`;
+            if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
+          }
+        }
+        localContext += `\nקטע רלוונטי (דמיון: ${(m.similarity * 100).toFixed(0)}%):\n${m.chunk_content}\n`;
+      }
+    }
 
     // ========= Step 2: Perplexity search (always, but as supplement) =========
     console.log("Searching Perplexity for additional sources...");
