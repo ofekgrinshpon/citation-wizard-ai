@@ -1,18 +1,17 @@
 
 
-# Clean SVG Favicon — Minimal R¹
+# Add "איך זה עובד?" label above the scroll arrow
 
-## Changes
+## Change
 
-### 1. `public/relex-icon.svg`
-Replace with a hand-crafted SVG: bold "R" in brand blue (#3ea3d3) with a small superscript "1" in teal (#36b7ad), on a transparent background. No arrows, no gradients — just clean typography optimized for 16×16 legibility.
+**`src/pages/Landing.tsx`** — Update the scroll button at the bottom of the hero section to include a text label above the chevron arrow:
 
-### 2. `index.html`
-Switch favicon back to SVG:
-```html
-<link rel="icon" type="image/svg+xml" href="/relex-icon.svg">
+```tsx
+<button onClick={scrollToHow} className="absolute bottom-16 md:bottom-8 flex flex-col items-center gap-1 text-muted-foreground hover:text-foreground transition-colors animate-bounce z-10" aria-label="גלילה למטה">
+  <span className="text-sm font-medium">איך זה עובד?</span>
+  <ChevronDown className="w-8 h-8" />
+</button>
 ```
 
-### 3. Keep `public/relex-icon.png`
-The uploaded PNG stays for the Word add-in manifest (displayed at larger sizes where it looks fine).
+Single file, single edit — adds the Hebrew label "איך זה עובד?" directly above the existing bouncing arrow.
 
