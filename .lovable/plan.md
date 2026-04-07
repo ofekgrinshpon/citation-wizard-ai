@@ -1,87 +1,80 @@
 
 
-# הטמעת כללים 32–33: התכתבויות, ראיונות, הרצאות, הודעות לתקשורת וחומר אור-קולי
+# הטמעת כללי מקורות מרשתת מפורטים (34.2.1–34.2.9)
 
 ## סיכום
 
-הוספת 7 סוגי מקור חדשים למערכת: התכתבויות (32.1), ראיונות (32.2), הרצאות (32.3), הודעות לתקשורת (32.4), סרטים (33.1), תוכניות טלוויזיה (33.2), ותוכניות רדיו (33.3). כולל זיהוי אוטומטי, תבניות עיצוב, והנחיות ל-AI. ללא חיפוש Perplexity.
+החלפת ההגדרה הכללית "כלל 30 – מקורות מהמרשתת" בהגדרות מפורטות לפי כלל 34.2, כולל הוספת סוג מקור חדש `internet_comment` (תגובה במרשתת, כלל 34.2.9). שאר תת-הסוגים (אתרים, מדיה חברתית, פרסומים) ייכנסו תחת הסוג הקיים `internet` עם notes מפורטים ל-AI.
 
 ## שינויים
 
 ### 1. `src/data/abbreviations.ts`
 
-**SourceType** — הוספת 7 סוגים:
-- `'correspondence'` — התכתבות (כלל 32.1)
-- `'interview'` — ריאיון (כלל 32.2)
-- `'lecture'` — הרצאה (כלל 32.3)
-- `'press_release'` — הודעה לתקשורת (כלל 32.4)
-- `'film'` — סרט (כלל 33.1)
-- `'tv_show'` — תוכנית טלוויזיה (כלל 33.2)
-- `'radio'` — רדיו/תסכית (כלל 33.3)
+**SourceType** — הוספת סוג אחד חדש:
+- `'internet_comment'` — תגובה למקור במרשתת (כלל 34.2.9)
 
 **REQUIRED_FIELDS**:
-- `correspondence`: `['correspondenceType', 'senderName', 'recipientName', 'fullDate']`
-- `interview`: `['intervieweeName', 'fullDate']`
-- `lecture`: `['author', 'articleTitle', 'eventName', 'fullDate']`
-- `press_release`: `['author', 'articleTitle', 'fullDate']`
-- `film`: `['filmName', 'director', 'year']`
-- `tv_show`: `['showName', 'channel', 'fullDate']`
-- `radio`: `['showName', 'radioStation', 'fullDate']`
+- `internet` — עדכון ל: `['url']` (רק URL חובה; שם מחבר, כותרת, שם אתר ותאריך אופציונליים לפי הכללים)
+- `internet_comment`: `['url']`
 
 **FIELD_LABELS** — הוספת שדות חדשים:
-- `correspondenceType`, `senderName`, `senderRole`, `recipientName`, `recipientRole`, `subject`
-- `intervieweeName`, `interviewerName`, `intervieweeRole`, `interviewType`
-- `eventName`, `eventLocation`
-- `releaseDescription`
-- `filmName`, `director`
-- `showName`, `episodeName`, `channel`, `creator`
-- `radioStation`, `timeReference`
+- `contentType` (סוג התוכן — שרשור, סטורי וכו'), `socialUsername` (שם משתמש), `specificReference` (הפניה ספציפית — כותרת/פסקה/זמן), `commentAuthor`, `commentDate`, `commentNumber`, `originalSourceDetails`
 
-**detectSourceType** — הוספת זיהוי (לפני בדיקות ספרות):
-- `correspondence`: `/מכתב מ|דואר אלקטרוני מ|מזכר מ/`
-- `interview`: `/ריאיון\s+(עם|של|טלפוני)/`
-- `lecture`: `/הרצאה ב/`
-- `press_release`: `/הודעה ל(תקשורת|עיתונות)|הודעת דובר/`
-- `film`: `/במאי[תם]?\s|סרט\s/`
-- `tv_show`: `/ערוץ\s+\d|טלוויזיה/` (אם גם שם בגרשיים)
-- `radio`: `/גלי צה"ל|קול ברמה|רדיו|תסכית|תחנת\s/`
+**detectSourceType** — הוספת זיהוי:
+- `internet_comment`: `/תגובה\s+(ל|מ-?\d)/` (לפני בדיקת internet)
+- `internet`: הרגקס הקיים `/https?:\/\//` נשאר
 
-**SOURCE_TYPE_LABELS**, **RULE_REFERENCES** — הוספת ערכים מתאימים.
+**SOURCE_TYPE_LABELS**: `internet_comment: 'תגובה במרשתת'`
+**RULE_REFERENCES**: 
+- `internet`: שינוי מ-`'כלל 30'` ל-`'כלל 34.2 – מקורות מהמרשתת'`
+- `internet_comment`: `'כלל 34.2.9 – תגובות במרשתת'`
 
 ### 2. `src/data/citationEngine.ts`
 
-הוספת 7 בלוקים ל-`CITATION_RULES`:
+**internet** — החלפת הבלוק הקיים:
+- `primaryRule: "34.2"`
+- `ruleTitle: "כלל 34.2 – מקורות מהמרשתת"`
+- `template: '{author} "{title}" {contentType} **{siteName}** {specificReference} ({fullDate}) {url}.'`
+- `components`: עדכון השדות לפי 34.2.1–34.2.8
+- `notes` מפורט עם כל תת-הכללים:
+  - 34.2.1: נוסחה כללית. חלה על אתרים, עמודים, מדיה חברתית, מאמרים באתרי עיתונים. לא חלה על כתבי עת מקוונים (24.10) או תגובות (34.2.9)
+  - 34.2.2: שם מחבר רק אם הופיע. מדיה חברתית — שם משתמש בסוגריים. שם בעברית ובשפות נוספות — די בעברית
+  - 34.2.3: כותרת רק אם הופיעה. עמוד ראשי — ללא כותרת. מדיה חברתית — כותרת אופציונלית
+  - 34.2.4: סוג תוכן רק אם אינו בסיסי (שרשור, סטורי)
+  - 34.2.5: שם אתר מודגש. מדיה חברתית — בעברית (טוויטר, פייסבוק, אינסטגרם, יוטיוב)
+  - 34.2.6: הפניה ספציפית (כותרת, פסקה, זמן). כתובת מדויקת עדיפה
+  - 34.2.7: תאריך לועזי מלא ביותר. אם אין לועזי — עברי. אם אין כלל — לא לציין. מדיה חברתית — אפשר שעה
+  - 34.2.8: כתובת URL מלאה כולל http://. אפשר לקצר
 
-- **correspondence** (כלל 32.1): נוסחה, דוגמות, הערות על 32.1.1 ו-32.1.2
-- **interview** (כלל 32.2): נוסחה, דוגמות
-- **lecture** (כלל 32.3): נוסחה, דוגמות
-- **press_release** (כלל 32.4): נוסחה, דוגמות
-- **film** (כלל 33.1): נוסחה, הערה על שם במאי לפי 23.2
-- **tv_show** (כלל 33.2): נוסחה, דוגמות, הערה על יוצר
-- **radio** (כלל 33.3): נוסחה, דוגמות, הערה על 33.5 (הפניית זמן)
+הוספת בלוק **internet_comment** (כלל 34.2.9):
+- `template: '{commentAuthor} "{title}" תגובה {commentDetails} ל{originalSource}'`
+- `notes`: פרטי תגובה = מספר (אם ממוספרת) + תאריך (אחרי "מ-"). פרטי מקור לפי 34.2.2–34.2.8. כתובת התגובה עדיפה על כתובת המקור
 
 ### 3. `src/components/SourceTypeConfirmation.tsx`
 
-הוספת 7 קטגוריות ל-`SOURCE_CATEGORIES`:
-- `correspondence` (✉️), `interview` (🎙️), `lecture` (🎤), `press_release` (📢), `film` (🎬), `tv_show` (📺), `radio` (📻)
+הוספת קטגוריה חדשה:
+- `internet_comment` (💬 תגובה במרשתת)
 
 ### 4. `supabase/functions/citation-chat/index.ts`
 
-**CITATION_ENGINE_TEMPLATES** — הוספת 7 רשומות עם נוסחאות, דוגמות ו-notes מפורטים:
+**CITATION_TEMPLATES["מקור מרשתת"]** — החלפה מלאה:
+- `rule: "כלל 34.2"`
+- `template` + `notes` מפורטים עם כל הדוגמות מ-34.2.1–34.2.8
+- `required`: רק URL
 
-- **"התכתבות"**: rule כלל 32.1, template + notes על סוגי התכתבות (32.1.1) ושמות/תפקידים (32.1.2), כולל דוגמת דוא"ל עם שעה
-- **"ריאיון"**: rule כלל 32.2, שלוש צורות (ריאיון עם, ריאיון טלפוני, ריאיון של X עם Y)
-- **"הרצאה"**: rule כלל 32.3, נוסחה עם שם דובר, שם הרצאה במירכאות, שם אירוע
-- **"הודעה לתקשורת"**: rule כלל 32.4, נוסחה עם שם מודיע וכותרת הודעה
-- **"סרט"**: rule כלל 33.1, שם סרט + במאי/ת + שנה, שמות לפי 23.2
-- **"תוכנית טלוויזיה"**: rule כלל 33.2, שם תוכנית + פרק + יוצר + ערוץ + תאריך
-- **"תוכנית רדיו"**: rule כלל 33.3, שם תוכנית + תחנה + תאריך, כולל הפניית זמן (33.5)
+הוספת **"תגובה במרשתת"**:
+- `rule: "כלל 34.2.9"`
+- נוסחה + דוגמות מלאות
 
-**System prompt** — הוספת הנחיות ל-AI לזיהוי תת-סוגים של כללים 32–33.
+**System prompt** — הוספת הנחיות ל-AI:
+- זהה אם מדובר באתר רגיל, מדיה חברתית, או תגובה
+- החל כללי 34.2.2–34.2.8 בהתאם
+- מדיה חברתית: שם הפלטפורמה בעברית, שם משתמש בסוגריים
+- תגובות: נוסחת 34.2.9 עם הפניה למקור המקורי
 
 ### 5. `src/lib/citationValidation.ts`
 
-הוספת 7 סוגי מקור חדשים ל-validation (אם נדרש שדות חובה).
+הוספת `internet_comment` ל-validation.
 
 ### פריסה
 Edge Function — deploy אוטומטי.
