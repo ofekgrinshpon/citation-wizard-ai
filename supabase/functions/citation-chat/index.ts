@@ -693,7 +693,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
           // Extract law name: strip classification tag and engine hint
           const lawName = userInput
             .replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "")
-            .replace(/\n══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
+            .replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
             .trim();
 
           if (lawName.length > 2) {
@@ -778,7 +778,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
         if (PERPLEXITY_API_KEY) {
           const regName = userInput
             .replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "")
-            .replace(/\n══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
+            .replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
             .trim();
 
           if (regName.length > 2) {
@@ -851,7 +851,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
         if (PERPLEXITY_API_KEY) {
           const bookQuery = userInput
             .replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "")
-            .replace(/\n══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
+            .replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
             .trim();
 
           if (bookQuery.length > 2) {
@@ -934,7 +934,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
         if (caseLawOverrideLabel) {
           content = content
             .replace(/\[סיווג אוטומטי:\s*[^\]]+\]/, `[סיווג אוטומטי: ${caseLawOverrideLabel}]`)
-            .replace(/\n══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "\n");
+            .replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "\n");
         }
 
         // Inject engine hint + verified source hints + case law search + legislation search + regulation search + book search into the last user message
