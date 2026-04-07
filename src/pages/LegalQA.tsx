@@ -109,9 +109,9 @@ export default function LegalQA() {
           </div>
 
           {/* Disclaimer */}
-          <Alert className="border-amber-300 bg-amber-50 dark:bg-amber-950/30">
-            <AlertTriangle className="h-4 w-4 text-amber-600" />
-            <AlertDescription className="text-amber-800 dark:text-amber-200 text-xs">
+          <Alert className="border-destructive/30 bg-destructive/5">
+            <AlertTriangle className="h-4 w-4 text-destructive" />
+            <AlertDescription className="text-destructive text-xs">
               תשובות ReLex הן בגדר עזר בלבד ואינן מהוות ייעוץ משפטי. יש לבדוק את המקורות באופן עצמאי.
             </AlertDescription>
           </Alert>
