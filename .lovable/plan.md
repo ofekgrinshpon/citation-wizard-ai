@@ -1,38 +1,65 @@
 
-# Add Rule 15 – החלטות של גופים שלטוניים (Governmental Body Decisions)
+
+# Add Rule 16 – חוות דעת (Expert Opinions)
 
 ## Overview
-Add a new source type `government_decision` covering Rules 15.1–15.4, 15.7, and 15.8 for citing decisions of governmental bodies, patent registrar proceedings, and planning appeal committees.
+Add a new source type `expert_opinion` covering Rules 16.1–16.4 for citing expert opinions, including a special sub-formula for the Public Complaints Commissioner on Judges (נציבות תלונות הציבור על שופטים).
 
-## Formula (Rule 15.1)
-`החלטה [מספר] של [הגוף המחליט] "[שם ההחלטה]" ([תאריך לועזי מלא])`
+## Formulas
 
-## Sub-rules handled in system prompt
-- **15.2**: No decision number → omit it
-- **15.3**: Government/ministerial committee → include government number (e.g. הממשלה ה-30)
-- **15.4**: No full date → use whatever date info is available; no Gregorian → use Hebrew date
-- **15.7**: Patent Registrar → special formula with proceedings type, parties, interim description
-- **15.8**: Planning appeal committees → cite like case law (Rules 18–20)
+**Standard (16.1):**
+`"[שם חוות הדעת]" (חוות דעת של [זהות נותן חוות הדעת] [תאריך לועזי מלא])`
+
+**Commissioner variant (16.4):**
+`חוות דעת [מספר] של נציבות תלונות הציבור על שופטים "[שם]" [פרטי פרסום] ([תאריך])`
+
+## Sub-rules (handled in system prompt)
+- **16.2**: Official capacity → title only. Private → name + relevant title. Name in opinion title → omit from parentheses.
+- **16.3**: Use full Gregorian date. If unavailable, partial date or Hebrew date.
+- **16.4**: Commissioner opinions use a distinct formula with opinion number and optional publication details.
 
 ## Changes
 
 | File | Change |
 |------|--------|
-| **`src/data/abbreviations.ts`** | Add `'government_decision'` to `SourceType` union. Add to `REQUIRED_FIELDS`, `FIELD_LABELS`, `SOURCE_TYPE_LABELS`, `RULE_REFERENCES`. Update `detectSourceType` to detect `החלטה`, `רשם הפטנטים`, `ועדת ערר לתכנון`. |
-| **`src/data/citationEngine.ts`** | Add `government_decision` rule set with primaryRule `"15.1"`, template, examples, components, and notes covering 15.2–15.4, 15.7, 15.8. |
-| **`src/lib/citationValidation.ts`** | Add `government_decision` to `ENGINE_KEY_MAP`. Add field extraction patterns for decision citations. |
-| **`src/components/SourceTypeConfirmation.tsx`** | Add `government_decision` entry with label "החלטות גופים שלטוניים" and icon "🏛️". |
-| **`supabase/functions/citation-chat/index.ts`** | Add `"החלטות גופים שלטוניים"` to `CITATION_ENGINE_TEMPLATES`. Add full formula with all sub-rules and examples to the system prompt. |
+| `src/data/abbreviations.ts` | Add `'expert_opinion'` to `SourceType` union. Add to `REQUIRED_FIELDS`, `FIELD_LABELS`, `SOURCE_TYPE_LABELS`, `RULE_REFERENCES`. Add detection: `/חוות\s+דעת/`. Add fields: `opinionName`, `opinionAuthor`, `opinionNumber`. |
+| `src/data/citationEngine.ts` | Add `expert_opinion` rule set with primaryRule `"16.1"`, template, examples, components, and notes covering 16.2–16.4. |
+| `src/lib/citationValidation.ts` | Add `expert_opinion` to `ENGINE_KEY_MAP`. Add field extraction patterns (quoted name, author after "חוות דעת של", date). |
+| `src/components/SourceTypeConfirmation.tsx` | Add `expert_opinion` entry with label "חוות דעת" and icon "📝". |
+| `supabase/functions/citation-chat/index.ts` | Add `"חוות דעת"` to `CITATION_ENGINE_TEMPLATES` with full formula, sub-rules, and examples. Add to source type list in system prompt. |
 
 ## Detection logic
-```typescript
-if (/החלטה\s+\d|החלטה\s+של|תמצית\s+החלטה/.test(hebrewText)) return 'government_decision';
-if (/רשם\s+הפטנטים|בקשה\s+לביטול|בקשת\s+עיצוב|התנגדות\s+לרישום|בקשות\s+מתחרות/.test(hebrewText)) return 'government_decision';
-if (/ועדת\s+ערר\s+לתכנון/.test(hebrewText)) return 'government_decision';
+```text
+if (/חוות\s+דעת/.test(hebrewText)) return 'expert_opinion';
 ```
+Placed before generic legislation checks in `detectSourceType`.
 
 ## New fields
-- `decisionNumber` – optional (per 15.2)
-- `decidingBody` – required
-- `decisionName` – required (in quotes)
-- `fullDate` – required (with 15.4 fallback)
+- `opinionName` – required (in quotes)
+- `opinionAuthor` – required (title or name per 16.2)
+- `fullDate` – required (with 16.3 fallback)
+- `opinionNumber` – optional (for 16.4 commissioner opinions)
+
+## Technical details
+
+### abbreviations.ts
+- Add `'expert_opinion'` to the `SourceType` union after `'government_decision'`
+- `REQUIRED_FIELDS.expert_opinion = ['opinionName', 'opinionAuthor', 'fullDate']`
+- `FIELD_LABELS`: add `opinionName: 'שם חוות הדעת'`, `opinionAuthor: 'נותן חוות הדעת'`, `opinionNumber: 'מספר חוות הדעת'`
+- `SOURCE_TYPE_LABELS.expert_opinion = 'חוות דעת'`
+- `RULE_REFERENCES.expert_opinion = 'כלל 16 – חוות דעת'`
+- Detection regex in `detectSourceType` before the government_decision block
+
+### citationEngine.ts
+- New `expert_opinion` entry in `CITATION_RULES` between `government_decision` and `foreign`
+- Template: `"[שם חוות הדעת]" (חוות דעת של [זהות נותן חוות הדעת] [תאריך לועזי מלא]).`
+- Notes covering 16.2 (capacity vs. private), 16.3 (date fallback), 16.4 (commissioner formula + example)
+
+### citationValidation.ts
+- Add `expert_opinion: "expert_opinion"` to `ENGINE_KEY_MAP`
+- Extract: `opinionName` from quoted text, `opinionAuthor` from "חוות דעת של [X]", `fullDate` from date pattern, `opinionNumber` from "חוות דעת [number]"
+
+### Edge function system prompt
+- Add `"חוות דעת"` template entry with all sub-rules
+- Add to the source type listing and formula reference sections
+
