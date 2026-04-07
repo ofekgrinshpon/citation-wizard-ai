@@ -25,6 +25,7 @@ const SOURCE_TYPES = [
   { value: "book", label: "📖 ספר" },
   { value: "article", label: "📄 מאמר" },
   { value: "international", label: "🌍 בינלאומי" },
+  { value: "notebook", label: "📓 מחברת לימודים" },
 ];
 
 type Mode = "single" | "csv" | "file";
@@ -73,11 +74,15 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
   const [extracting, setExtracting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const isNotebook = sourceType === "notebook";
+
   const handleSingleIngest = async () => {
-    if (!title || !content || !citation) {
-      toast.error("נא למלא כותרת, תוכן ואזכור");
+    if (!title || !content || (!citation && !isNotebook)) {
+      toast.error(isNotebook ? "נא למלא כותרת ותוכן" : "נא למלא כותרת, תוכן ואזכור");
       return;
     }
+
+    const finalCitation = citation || (isNotebook ? `מחברת לימודים: ${title}` : "");
 
     setLoading(true);
     try {
@@ -86,7 +91,7 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
           source_type: sourceType,
           title,
           content,
-          citation,
+          citation: finalCitation,
           source_url: sourceUrl || undefined,
           metadata: year ? { year } : {},
         },
@@ -249,6 +254,11 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
                   ))}
                 </SelectContent>
               </Select>
+              {isNotebook && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  📓 מחברות לימודים משמשות כרקע בלבד — ה-AI ישתמש בתוכן כדי להבין טוב יותר אך יצטט רק מקורות ראשוניים
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label>שנה</Label>
@@ -262,8 +272,8 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
           </div>
 
           <div className="space-y-2">
-            <Label>אזכור מלא (לפי כללי האזכור האחיד)</Label>
-            <Input value={citation} onChange={(e) => setCitation(e.target.value)} placeholder='לדוגמה: חוק החוזים (חלק כללי), התשל"ג–1973, ס"ח 118' dir="rtl" />
+            <Label>אזכור מלא {isNotebook ? "(אופציונלי)" : "(לפי כללי האזכור האחיד)"}</Label>
+            <Input value={citation} onChange={(e) => setCitation(e.target.value)} placeholder={isNotebook ? "ייווצר אוטומטית אם ריק" : 'לדוגמה: חוק החוזים (חלק כללי), התשל"ג–1973, ס"ח 118'} dir="rtl" />
           </div>
 
           <div className="space-y-2">
@@ -378,6 +388,11 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
                       ))}
                     </SelectContent>
                   </Select>
+                  {isNotebook && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      📓 מחברות לימודים משמשות כרקע בלבד
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label>שנה</Label>
@@ -391,8 +406,8 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
               </div>
 
               <div className="space-y-2">
-                <Label>אזכור מלא</Label>
-                <Input value={citation} onChange={(e) => setCitation(e.target.value)} placeholder="נא להזין אזכור לפי כללי האזכור האחיד" dir="rtl" />
+                <Label>אזכור מלא {isNotebook ? "(אופציונלי)" : ""}</Label>
+                <Input value={citation} onChange={(e) => setCitation(e.target.value)} placeholder={isNotebook ? "ייווצר אוטומטית אם ריק" : "נא להזין אזכור לפי כללי האזכור האחיד"} dir="rtl" />
               </div>
 
               <div className="space-y-2">

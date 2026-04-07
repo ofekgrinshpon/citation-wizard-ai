@@ -140,10 +140,15 @@ serve(async (req) => {
           const seenDocs = new Set<string>();
           localContext = "\n\n=== מקורות מהמאגר המקומי (מאומתים) ===\n";
           for (const m of localMatches) {
+            const isNotebook = m.source_type === "notebook";
             if (!seenDocs.has(m.document_id)) {
               seenDocs.add(m.document_id);
-              localContext += `\n--- מקור: ${m.document_title} ---\nסוג: ${m.source_type}\nאזכור: ${m.document_citation}\n`;
-              if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
+              if (isNotebook) {
+                localContext += `\n--- מחברת לימודים (לרקע בלבד – אל תצטט כמקור): ${m.document_title} ---\n`;
+              } else {
+                localContext += `\n--- מקור: ${m.document_title} ---\nסוג: ${m.source_type}\nאזכור: ${m.document_citation}\n`;
+                if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
+              }
             }
             localContext += `\nקטע רלוונטי (דמיון: ${(m.similarity * 100).toFixed(0)}%):\n${m.chunk_content}\n`;
           }
@@ -250,7 +255,7 @@ For each source, provide:
 7. לכל משפט מותר לצרף לכל היותר הערת שוליים אחת (סופרסקריפט אחד). אסור בשום מקרה לצרף מספר הערות שוליים לאותו משפט (למשל ¹²³ או ¹⁴¹⁵¹⁶ – אסור!).
 8. פזר את ההערות לאורך כל התשובה. אם מספר מקורות תומכים באותה נקודה, כתוב משפטים נפרדים שכל אחד מהם מתייחס להיבט שונה, וצרף לכל משפט הערה אחת בלבד.
 9. העדף 5–8 הערות שוליים איכותיות על פני הערות רבות ודלות.
-10. אל תיצור הערות שוליים עבור בלוגים משפטיים, אתרי משרדי עורכי דין, או סקירות משפטיות. צטט רק מקורות משפטיים ראשוניים: חקיקה, פסיקה, ספרים אקדמיים, ומאמרים בכתבי עת.
+10. אל תיצור הערות שוליים עבור בלוגים משפטיים, אתרי משרדי עורכי דין, סקירות משפטיות, או מחברות לימודים. מקורות מסוג "מחברת לימודים" הם חומרי רקע בלבד – השתמש בהם להבנה ולניתוח, אך צטט רק את המקורות הראשוניים (חקיקה, פסיקה, ספרים, מאמרים) שהמחברת דנה בהם.
 
 כללים לסימון מקור ההערות:
 11. לכל הערת שוליים, ציין את שדה source מהמקורות:
