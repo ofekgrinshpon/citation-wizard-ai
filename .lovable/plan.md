@@ -1,35 +1,49 @@
 
+# הטמעת כלל 24 – אזכור מאמרים (כתבי עת, עיתונות יומית, מאמרים בספרים)
 
-# Make Disambiguation Options Clickable
+## מה משתנה
 
-## What
-When the AI presents multiple case law results (e.g., "1. ע"פ 7939/10 זדורוב נ' מדינת ישראל (2016)"), each option should be a clickable button. Clicking one sends it as a new user message, triggering the full citation flow for that specific case.
+המערכת כיום מגדירה מאמרים בכתבי עת כ"כלל 25" ומאמרים בספרים כ"כלל 26", עם כללים בסיסיים בלבד. יש להחליף בכלל 24 המלא עם כל תת-הכללים.
 
-## Changes
+## שינויים
 
-| File | Change |
-|------|--------|
-| `src/components/MessageBubble.tsx` | 1. Add `onSelectOption` callback prop. 2. Detect numbered disambiguation lines (regex: `/^\d+\.\s+/`). 3. Render them as styled clickable buttons instead of plain text. |
-| `src/pages/Index.tsx` | Pass an `onSelectOption` handler to `MessageBubble` that calls `handleSend` with the selected option text (sets `input` and triggers send). |
+### 1. `src/data/citationEngine.ts` — עדכון הגדרות article ו-article_in_book
 
-## Technical Details
+**article** — שינוי primaryRule מ-"25" ל-"24", עדכון ruleTitle ל-"כלל 24 – מאמרים", הרחבת הרכיבים:
+- שם מחבר (24.2, לפי 23.2)
+- שם מאמר במירכאות (24.3.1), שמות משניים עם נקודתיים (24.3.3)
+- שם כתב העת מודגש (24.4); עיתון יומי עם חלק: **שם:חלק** (24.4)
+- כרך לא מודגש (24.5.1-24.5.2), כפי שבמקור (אותיות או מספרים)
+- מספר חוברת בסוגריים ללא רווח (24.6) — רק אם כל חוברת מעמוד 1
+- עמוד ראשון (24.7.1), חריגים ב-24.7.2 (מאמר יחיד, כולם מעמוד 1, אין עמודים)
+- הפניה ספציפית אחרי פסיק (24.8)
+- שנה (24.9) — רק אם לא הופיעה ככרך; עברית/לועזית לפי מקור
 
-**Disambiguation line detection** in MessageBubble's line renderer:
-```typescript
-const isDisambiguationLine = (line: string) => /^\d+\.\s+(?:ע|בג|ד|ר|ב|ת|ה)/.test(line.trim());
-```
+הוספת notes עם דוגמות ותת-כללים (24.10 מקוון, 24.12.1 משפט חברה ותרבות, 24.12.2 פרשת השבוע).
 
-When detected, render as:
-```tsx
-<button
-  onClick={() => onSelectOption?.(line.trim())}
-  className="w-full text-right p-2 rounded-lg border border-primary/20 hover:bg-primary/10 transition-colors cursor-pointer"
->
-  <FormattedCitation text={line} enableTooltips />
-</button>
-```
+**article_in_book** — שינוי primaryRule מ-"26" ל-"24.11", עדכון ruleTitle, הרחבת הנוסחה:
+- רכיבי מאמר לפי 24.2, 24.3, 24.7, 24.8
+- רכיבי ספר לפי 23.2–23.4, 23.6–23.9
+- הערה: מחבר מאמר = מחבר ספר → אין לחזור על השם
 
-**In Index.tsx**, the `onSelectOption` handler:
-- Sets `input` to the selected line text
-- Calls `handleSend()` (or directly invokes the send logic with that text)
+### 2. `supabase/functions/citation-chat/index.ts` — עדכון הפרומפט
 
+**a. טבלת CITATION_TEMPLATES** (שורות 96-105):
+- "מאמר בכתב עת" → rule: "כלל 24", תבנית עם חוברת, notes מפורט עם כל תת-הכללים 24.1-24.12
+- "מאמר שפורסם בספר" → rule: "כלל 24.11", הערה שאם מחבר זהה אין לחזור
+
+**b. נוסחאות אזכור בגוף הפרומפט** (שורות 342-344):
+- החלפת "כלל 25" ב-"כלל 24" עם הנוסחה המלאה
+- הוספת דוגמות (כתב עת, עיתון יומי, מקוון, פרשת השבוע)
+- עדכון "כלל 26" ל-"כלל 24.11"
+
+**c. רכיבי חובה** (שורות 313-314):
+- עדכון מספור כלל 24
+
+### 3. `src/data/abbreviations.ts` — עדכון RULE_REFERENCES
+
+- article: "כלל 25" → "כלל 24"
+- article_in_book: "כלל 26" → "כלל 24.11"
+
+### פריסה
+Edge Function — deploy אוטומטי
