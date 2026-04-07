@@ -9,6 +9,7 @@ import { ProjectsProvider } from "@/hooks/useProjects";
 import { BibliographyProvider } from "@/hooks/useBibliography";
 import { OfficeProvider } from "@/hooks/useOffice";
 import Landing from "./pages/Landing.tsx";
+import Auth from "./pages/Auth.tsx";
 import Index from "./pages/Index.tsx";
 import Admin from "./pages/Admin.tsx";
 import Profile from "./pages/Profile.tsx";
