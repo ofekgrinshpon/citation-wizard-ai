@@ -798,7 +798,7 @@ const Index = () => {
               <span className="text-[10px]">⚖️</span>
               שאלה משפטית
             </button>
-        </div>
+          </div>
       </header>
 
       {/* Mobile sidebar drawer */}
