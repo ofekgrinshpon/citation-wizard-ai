@@ -799,6 +799,7 @@ const Index = () => {
               שאלה משפטית
             </button>
           </div>
+        </div>
       </header>
 
       {/* Mobile sidebar drawer */}
