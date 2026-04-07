@@ -1,53 +1,35 @@
 
 
-# Legal Q&A Feature (V1) — Implementation Plan
+# Integrate Legal QA as a Mode in the Main Page
 
-## What This Builds
-A new "שאלה משפטית" section where users ask legal questions and receive structured Hebrew answers with inline superscript footnote numbers. Footnotes cite real laws, case law, and academic sources found via Perplexity search and formatted by Lovable AI.
+## What Changes
+Instead of navigating to a separate full-screen `/legal-qa` page, the "שאלה משפטית" feature becomes a fourth mode inside the existing Index page — just like "טקסט חופשי", "הערות שוליים", and "ביבליוגרפיה". The chat-like input/output layout mirrors the freetext section.
 
 ## Changes
 
-### 1. Edge Function: `supabase/functions/legal-qa/index.ts`
-- Auth gate (JWT validation via `getClaims`)
-- Step 1: Send user question to **Perplexity (sonar-pro)** with a Hebrew legal search prompt targeting Israeli + international sources
-- Step 2: Pass the Perplexity results + question to **Lovable AI (gemini-2.5-flash)** with a system prompt that enforces:
-  - Structured Hebrew answer with superscript numbers (¹²³)
-  - Only cite sources Perplexity actually found
-  - Tool calling to extract structured JSON: `{ answer: string, footnotes: [{ number, citation, source_type }] }`
-- Returns structured JSON (non-streaming, needs complete footnotes)
-- Handles 429/402 errors from AI gateway
+### 1. `src/pages/Index.tsx`
+- Add `"legalqa"` to the `AppMode` type union
+- Add it to the `MODES` array: `{ id: "legalqa", label: "שאלה משפטית", icon: "⚖️" }`
+- Remove the separate navigate button for legal-qa from the tab bar
+- In the main content area, add a `mode === "legalqa"` branch that renders an inline Legal QA chat component
+- The Legal QA section will have:
+  - A disclaimer alert at the top (compact)
+  - A scrollable area showing the answer result (David font, 12pt, justified) with footnotes — same as current LegalQA page output
+  - A bottom input bar with textarea + send button, matching the freetext input bar style
+  - State: `legalQAQuestion`, `legalQAResult`, `legalQALoading`
 
-### 2. Config: `supabase/config.toml`
-- Add `[functions.legal-qa]` block with `verify_jwt = false`
+### 2. `src/pages/LegalQA.tsx`
+- Keep the file but it will no longer be the primary entry point; the logic moves inline or into a reusable component
 
-### 3. New Page: `src/pages/LegalQA.tsx`
-- RTL layout with `GeometricBackground` (matching auth pages)
-- `AppSidebar` on the right
-- Textarea for the legal question
-- Submit button: "שאל שאלה משפטית"
-- Answer area rendering:
-  - Hebrew text with superscript footnote numbers
-  - "הערות שוליים" section at bottom with numbered citations
-- Loading skeleton during API call
-- Copy button (answer + footnotes)
-- Disclaimer banner: "תשובות ReLex הן בגדר עזר בלבד ואינן מהוות ייעוץ משפטי"
-- Auth guard (redirect to `/auth` if not logged in)
+### 3. `src/components/LegalQAChat.tsx` (new)
+- Extract the Legal QA logic (question submission, result display, footnotes) into a standalone component
+- Props: none (self-contained, uses `useAuth` and supabase internally)
+- Layout: scrollable content area + sticky bottom input bar, same structure as freetext mode
+- Includes: disclaimer, answer with David font rendering, footnotes section, copy button
 
-### 4. Route: `src/App.tsx`
-- Add `/legal-qa` route pointing to `LegalQA` page
+### 4. `src/App.tsx`
+- Keep the `/legal-qa` route as a fallback/redirect, or remove it
 
-### 5. Navigation: `src/components/AppSidebar.tsx`
-- Add "⚖️ שאלה משפטית" link navigating to `/legal-qa`, placed above "מקורות מאומתים"
-
-## Technical Details
-
-**Perplexity prompt** searches for: Israeli statutes, court decisions, academic articles, and international sources relevant to the question. Uses `sonar-pro` for multi-step reasoning with citations.
-
-**Lovable AI system prompt** enforces:
-- Answer in Hebrew with numbered superscripts
-- Each footnote must reference a real source from the Perplexity results
-- Source types: `legislation`, `caselaw`, `book`, `article`, `international`
-- `[missing:...]` protocol for uncertain data
-
-**Structured output** via tool calling ensures reliable JSON parsing of the answer and footnotes array.
+## Result
+Users switch to "שאלה משפטית" via the same tab bar and stay on the same page with sidebar and citation history visible, matching the compact chat layout of the freetext mode.
 
