@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate, useSearchParams, Navigate } from "react-router-dom";
 import { useOffice } from "@/hooks/useOffice";
 import { ReLexLogo } from "@/components/ReLexLogo";
+import { GeometricBackground } from "@/components/GeometricBackground";
 import { lovable } from "@/integrations/lovable/index";
 import { signInWithOfficeDialog } from "@/lib/officeAuth";
 import { toast } from "sonner";
@@ -62,8 +63,9 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4" style={{ direction: "rtl" }}>
-      <div className="w-full max-w-md space-y-4">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 relative" style={{ direction: "rtl" }}>
+      <GeometricBackground />
+      <div className="w-full max-w-md space-y-4 relative z-10">
         <div className="text-center mb-6">
           <div className="mb-3 flex justify-center">
             <ReLexLogo size={48} />
