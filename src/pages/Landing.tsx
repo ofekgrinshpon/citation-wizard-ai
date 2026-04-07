@@ -144,9 +144,10 @@ const Landing = () => {
 
         <button
           onClick={scrollToHow}
-          className="absolute bottom-16 md:bottom-8 text-muted-foreground hover:text-foreground transition-colors animate-bounce z-10"
+          className="absolute bottom-16 md:bottom-8 flex flex-col items-center gap-1 text-muted-foreground hover:text-foreground transition-colors animate-bounce z-10"
           aria-label="גלילה למטה"
         >
+          <span className="text-sm font-medium">איך זה עובד?</span>
           <ChevronDown className="w-8 h-8" />
         </button>
       </section>
