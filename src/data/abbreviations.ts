@@ -187,7 +187,6 @@ export const FIELD_LABELS: Record<string, string> = {
   signingType: 'סוג חתימה (נפתחה/נחתמה)',
   signingYear: 'שנת חתימה',
   notebook: 'מספר חוברת',
-  regulationName: 'שם התקנון',
 };
 
 // Normalize abbreviations in free text

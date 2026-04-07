@@ -20,6 +20,7 @@ const SOURCE_CATEGORIES: { key: SourceType; label: string; icon: string }[] = [
   { key: "article_in_book", label: "מאמר שפורסם בספר", icon: "📖" },
   { key: "internet", label: "מקור מרשתת", icon: "🌐" },
   { key: "treaty", label: "כתבי אמנה", icon: "🤝" },
+  { key: "regulation", label: "תקנון", icon: "📋" },
   { key: "religious", label: "מקור דתי", icon: "📿" },
   { key: "foreign", label: "מקור לועזי", icon: "🌍" },
   { key: "other", label: "אחר (דברי כנסת וכו׳)", icon: "📁" },
