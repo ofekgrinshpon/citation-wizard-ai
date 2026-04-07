@@ -317,6 +317,27 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     ],
   },
 
+  // ─── החלטות גופים שלטוניים (Government Decisions – Rule 15) ─
+  government_decision: {
+    primaryRule: "15.1",
+    ruleTitle: "כלל 15 – החלטות גופים שלטוניים",
+    template: 'החלטה {decisionNumber} של {decidingBody} "{decisionName}" ({fullDate}).',
+    example: 'החלטה 1666 של הממשלה ה-30 "מינוי המועצה הישראלית לתרבות ואמנות" (14.3.2004).',
+    components: [
+      { field: "decisionNumber", rule: "15.1", description: "מספר ההחלטה (אופציונלי לפי כלל 15.2)", required: false, format: "plain" },
+      { field: "decidingBody", rule: "15.1", description: "שם הגוף המחליט (כולל מספר ממשלה לפי כלל 15.3)", required: true, format: "plain" },
+      { field: "decisionName", rule: "15.1", description: "שם ההחלטה – במירכאות", required: true, format: "quotes" },
+      { field: "fullDate", rule: "15.1", description: "תאריך לועזי מלא (DD.MM.YYYY)", required: true, format: "plain" },
+    ],
+    notes: [
+      'כלל 15.2: אם אין מספר להחלטה – אין מציינים אותו.',
+      'כלל 15.3: אם הגוף המחליט הוא הממשלה או ועדת שרים – יש לציין את מספר הממשלה (למשל: הממשלה ה-30).',
+      'כלל 15.4: אם אין תאריך לועזי מלא – יש לציין את פרטי התאריך הקיימים; אם אין תאריך לועזי כלל – תאריך עברי.',
+      'כלל 15.7: החלטות רשם הפטנטים – נוסחה מיוחדת: [סוג ההליך] מס\' [מספר] [שמות צדדים] ([תיאור הליך ביניים]) ([תאריך]).',
+      'כלל 15.8: החלטות ועדות ערר לתכנון ובנייה – מאוזכרות כפסקי דין (כללים 18–20).',
+    ],
+  },
+
   // ─── מקורות לועזיים (Foreign Sources – Bluebook) ──────────
   foreign: {
     primaryRule: "36",

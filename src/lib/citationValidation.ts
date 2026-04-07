@@ -23,6 +23,7 @@ const ENGINE_KEY_MAP: Record<SourceType, string> = {
   religious: "religious",
   treaty: "treaty",
   regulation: "regulation",
+  government_decision: "government_decision",
   foreign: "foreign",
   other: "other",
   unknown: "",
@@ -166,6 +167,22 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     const titleMatch = response.match(/"([^"]+)"/);
     if (titleMatch) fields.title = titleMatch[1];
     if (/נדלה ביום/.test(response)) fields.accessDate = "present";
+  }
+
+  // Government decision (כלל 15) patterns
+  if (sourceType === "government_decision") {
+    // Deciding body
+    const bodyMatch = response.match(/(?:של\s+)([^\s"][^\n"]+?)(?:\s*")/);
+    if (bodyMatch) fields.decidingBody = bodyMatch[1].trim();
+    // Decision name in quotes
+    const nameMatch = response.match(/"([^"]+)"/);
+    if (nameMatch) fields.decisionName = nameMatch[1];
+    // Decision number (optional)
+    const numMatch = response.match(/החלטה\s+(\d+(?:\s*\([^)]+\))?)/);
+    if (numMatch) fields.decisionNumber = numMatch[1];
+    // Full date
+    const dateMatch = response.match(/\((\d{1,2}\.\d{1,2}\.\d{4})\)/);
+    if (dateMatch) fields.fullDate = dateMatch[1];
   }
 
   // Regulation (תקנון) patterns
