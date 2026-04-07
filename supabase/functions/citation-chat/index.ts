@@ -542,7 +542,7 @@ serve(async (req) => {
       .replace(/\n?══[\s\S]*?══+\s*/g, "")
       .trim();
     const partyMatch = !caseNumberMatch
-      ? cleanedForParty.match(/([\u0590-\u05FF\s'"״׳]+)\s+(?:נגד|נ['׳'])\s+([\u0590-\u05FF\s'"״׳]+)/)
+      ? cleanedForParty.match(/([\u0590-\u05FF\s'"״׳']+)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3])\s+([\u0590-\u05FF\s'"״׳']+)/)
       : null;
 
     const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (caseNumberMatch || partyMatch);
