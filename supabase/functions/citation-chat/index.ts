@@ -723,6 +723,79 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       }
     }
 
+    // ── Regulation (תקנון) search via Perplexity ──
+    let regulationHint = "";
+    const isRegulation = classMatch && /תקנון/.test(classMatch[1]);
+    if (isRegulation && !hasVerifiedCandidates) {
+      try {
+        const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
+        if (PERPLEXITY_API_KEY) {
+          const regName = userInput
+            .replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "")
+            .replace(/\n══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
+            .trim();
+
+          if (regName.length > 2) {
+            console.log(`[regulation] Searching Perplexity for: ${regName}`);
+            const regQuery = `מצא את התקנון הישראלי "${regName}". ציין: 1) שם התקנון המלא, 2) התאריך הלועזי המדויק (יום.חודש.שנה) של הנוסח העדכני ביותר (תאריך התיקון האחרון, או תאריך קבלתו אם לא תוקן), 3) קיצור מקובל אם יש (למשל תקשי"ר).`;
+
+            const regResp = await fetch("https://api.perplexity.ai/chat/completions", {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                model: "sonar",
+                messages: [
+                  {
+                    role: "system",
+                    content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
+חפש את פרטי התקנון (bylaw/regulation) הישראלי. מצא את השם המלא, התאריך הלועזי המדויק של הנוסח העדכני (DD.MM.YYYY), וקיצור מקובל אם קיים.
+הפורמט:
+{"found":true/false,"regulationName":"שם התקנון המלא","fullDate":"DD.MM.YYYY","abbreviation":"קיצור מקובל אם יש"}
+אם לא מצאת, החזר {"found":false}.
+חשוב: התאריך חייב להיות תאריך לועזי מדויק בפורמט DD.MM.YYYY (למשל 30.4.2019). אם התקנון תוקן – תאריך התיקון האחרון. אם לא תוקן – תאריך קבלתו.`,
+                  },
+                  { role: "user", content: regQuery },
+                ],
+              }),
+            });
+
+            if (regResp.ok) {
+              const regData = await regResp.json();
+              const regContent = regData.choices?.[0]?.message?.content || "";
+              const regJsonMatch = regContent.match(/\{[\s\S]*?\}/);
+              if (regJsonMatch) {
+                try {
+                  const regParsed = JSON.parse(regJsonMatch[0]);
+                  if (regParsed.found && regParsed.regulationName) {
+                    console.log(`[regulation] Found: ${regParsed.regulationName}, date=${regParsed.fullDate || '?'}`);
+                    let details = `\n\n══ נתוני תקנון מאומתים ══\n`;
+                    details += `שם התקנון: ${regParsed.regulationName}\n`;
+                    if (regParsed.fullDate) details += `תאריך: ${regParsed.fullDate}\n`;
+                    if (regParsed.abbreviation) details += `קיצור: ${regParsed.abbreviation}\n`;
+                    details += `══ השתמש בנתונים אלו לעיצוב אזכור התקנון לפי כלל 13.1. סמן [חסר:...] רק לשדות שאינם מופיעים למעלה. ══`;
+                    regulationHint = details;
+                  } else {
+                    console.log(`[regulation] Data unusable: found=${regParsed.found}`);
+                    regulationHint = `\n\n══ חיפוש תקנון ══\nלא נמצאו נתונים מאומתים עבור "${regName}".\nחובה להשתמש ב-[חסר:...] עבור שדות חסרים (תאריך, שם תקנון).\nאל תמציא תאריכים.\n══`;
+                  }
+                } catch (e) {
+                  console.error("[regulation] Failed to parse JSON:", e);
+                  regulationHint = `\n\n══ חיפוש תקנון ══\nלא נמצאו נתונים מאומתים עבור "${regName}".\nחובה להשתמש ב-[חסר:...] עבור שדות חסרים.\n══`;
+                }
+              }
+            } else {
+              console.error("[regulation] Perplexity search failed:", regResp.status);
+            }
+          }
+        }
+      } catch (e) {
+        console.error("[regulation] search error:", e);
+      }
+    }
+
     const enhancedMessages = messages.map((m: { role: string; content: string }, i: number) => {
       if (i === messages.length - 1 && m.role === "user") {
         let content = m.content;
@@ -732,9 +805,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
             .replace(/\n══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "\n");
         }
 
-        // Inject engine hint + verified source hints + case law search + legislation search into the last user message
+        // Inject engine hint + verified source hints + case law search + legislation search + regulation search into the last user message
         const engineHint = extractEngineHint(content);
-        const allHints = engineHint + (verifiedHint || "") + caseLawHint + legislationHint;
+        const allHints = engineHint + (verifiedHint || "") + caseLawHint + legislationHint + regulationHint;
         if (allHints || content !== m.content) {
           return { ...m, content: content + allHints };
         }
