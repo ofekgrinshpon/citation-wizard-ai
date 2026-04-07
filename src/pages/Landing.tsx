@@ -172,7 +172,7 @@ const Landing = () => {
             התחילו עכשיו!
           </button>
           <p className="text-[10px] text-muted-foreground">
-            כללי האזכור האחיד בכתיבה המשפטית • מהדורה שלישית 2021 • Bluebook 21st ed.
+            © 2026 ReLex. כל הזכויות שמורות.
           </p>
         </div>
       </section>
