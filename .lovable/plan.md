@@ -1,58 +1,35 @@
 
 
-# Support Multiple Case Law Results & Party-Name Search
+# Make Disambiguation Options Clickable
 
-## Problem
-Two issues with the current case law search:
-
-1. **No case number = no search**: The Perplexity case law search only triggers when a case number pattern (e.g., `ע"א 1234/56`) is detected (line 537-540). Searching by party names like "מדינת ישראל נגד רומן זדורוב" skips the Perplexity search entirely — `caseNumberMatch` is `null`.
-
-2. **Single result only**: Even when triggered, Perplexity is asked to return a single JSON object. For party names that span multiple proceedings (e.g., Zadorov had criminal trial, appeals, retrial), only one result would come back.
-
-## Proposed Solution
-
-### 1. Enable party-name search trigger
-In `citation-chat/index.ts`, add a fallback: if the source is classified as case law (`isCaseLaw`) but no case number is found, detect a "parties pattern" (Hebrew text containing `נגד` / `נ'`) and use that as the search query.
-
-### 2. Ask Perplexity for multiple results
-Change the Perplexity system prompt to return a JSON **array** of cases when searching by party names:
-```json
-{"results": [
-  {"found":true, "caseType":"ע\"פ", "caseNumber":"7939/10", "party1":"זדורוב", "party2":"מדינת ישראל", "date":"...", "court":"...", ...},
-  {"found":true, "caseType":"ע\"פ", "caseNumber":"2485/23", ...}
-]}
-```
-
-### 3. Present disambiguation to user
-When multiple results are returned, format the hint as a numbered list asking the LLM to present the user with options, e.g.:
-```
-נמצאו מספר פסקי דין תואמים:
-1. ע"פ 7939/10 זדורוב נ' מדינת ישראל (2016) — בית המשפט העליון
-2. ע"פ 2485/23 זדורוב נ' מדינת ישראל (2024) — בית המשפט העליון
-```
-The LLM will ask the user to choose, then proceed with the selected case's data.
-
-When only one result is returned, proceed as today (auto-populate).
+## What
+When the AI presents multiple case law results (e.g., "1. ע"פ 7939/10 זדורוב נ' מדינת ישראל (2016)"), each option should be a clickable button. Clicking one sends it as a new user message, triggering the full citation flow for that specific case.
 
 ## Changes
 
 | File | Change |
 |------|--------|
-| `supabase/functions/citation-chat/index.ts` | 1. Add party-name detection fallback when `isCaseLaw && !caseNumberMatch`. 2. Use a multi-result prompt for party-name searches. 3. Parse array response and build disambiguation hint when >1 result. |
+| `src/components/MessageBubble.tsx` | 1. Add `onSelectOption` callback prop. 2. Detect numbered disambiguation lines (regex: `/^\d+\.\s+/`). 3. Render them as styled clickable buttons instead of plain text. |
+| `src/pages/Index.tsx` | Pass an `onSelectOption` handler to `MessageBubble` that calls `handleSend` with the selected option text (sets `input` and triggers send). |
 
 ## Technical Details
 
-**Party-name detection regex** (after classification tag stripping):
+**Disambiguation line detection** in MessageBubble's line renderer:
 ```typescript
-const partyMatch = cleanedInput.match(/([\u0590-\u05FF\s'"]+)\s+(?:נגד|נ['׳'])\s+([\u0590-\u05FF\s'"]+)/);
+const isDisambiguationLine = (line: string) => /^\d+\.\s+(?:ע|בג|ד|ר|ב|ת|ה)/.test(line.trim());
 ```
 
-**Perplexity prompt for multi-result**:
-- System: "Return a JSON array of ALL matching Israeli court cases for these parties. Max 5 results, sorted by date descending."
-- Schema: `{"results": [{...case fields...}]}`
+When detected, render as:
+```tsx
+<button
+  onClick={() => onSelectOption?.(line.trim())}
+  className="w-full text-right p-2 rounded-lg border border-primary/20 hover:bg-primary/10 transition-colors cursor-pointer"
+>
+  <FormattedCitation text={line} enableTooltips />
+</button>
+```
 
-**Disambiguation flow**:
-- If `results.length === 1`: use existing single-result hint logic
-- If `results.length > 1`: build a numbered list hint and instruct the LLM to ask the user which case they meant
-- If `results.length === 0`: existing "not found" fallback
+**In Index.tsx**, the `onSelectOption` handler:
+- Sets `input` to the selected line text
+- Calls `handleSend()` (or directly invokes the send logic with that text)
 
