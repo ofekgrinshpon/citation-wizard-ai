@@ -31,17 +31,17 @@ function StepCard({ step, index }: { step: typeof steps[number]; index: number }
           <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
             {index + 1}
           </span>
-          <h3 className="text-lg font-bold text-foreground">{step.title}</h3>
+          <h3 className="text-xl font-bold text-foreground">{step.title}</h3>
         </div>
-        <p className="text-muted-foreground text-sm leading-relaxed pr-11">
+        <p className="text-muted-foreground text-base leading-relaxed pr-11">
           {step.description}
         </p>
       </div>
-      <div className="md:w-1/2">
+      <div className="md:w-1/2 p-2">
         <img
           src={step.image}
           alt={step.title}
-          className="rounded-xl border border-border shadow-lg w-full"
+          className="rounded-xl border border-border shadow-lg w-full max-w-lg mx-auto"
           loading="lazy"
         />
       </div>
@@ -144,7 +144,7 @@ const Landing = () => {
 
         <button
           onClick={scrollToHow}
-          className="absolute bottom-8 text-muted-foreground hover:text-foreground transition-colors animate-bounce z-10"
+          className="absolute bottom-16 md:bottom-8 text-muted-foreground hover:text-foreground transition-colors animate-bounce z-10"
           aria-label="גלילה למטה"
         >
           <ChevronDown className="w-8 h-8" />
@@ -157,7 +157,7 @@ const Landing = () => {
           איך זה עובד?
         </h2>
 
-        <div className="space-y-16">
+        <div className="space-y-24">
           {steps.map((step, i) => (
             <StepCard key={i} step={step} index={i} />
           ))}
