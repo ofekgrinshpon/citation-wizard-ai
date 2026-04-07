@@ -143,8 +143,20 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     if (authorMatch) fields.author = authorMatch[1].trim();
     const titleMatch = response.match(/\*\*([^*]+)\*\*/);
     if (titleMatch) fields.bookTitle = titleMatch[1];
-    const yearMatch = response.match(/\((?:[^)]*?)(\d{4})\)/);
+    const yearMatch = response.match(/\((?:[^)]*?)(\d{4}|הת[שׁש][א-ת]*["״׳][א-ת]["״׳]?[א-ת]?)\)$/);
     if (yearMatch) fields.year = yearMatch[1];
+    // Volume (כרך)
+    const volMatch = response.match(/כרך\s+([א-ת]+|\d+)/);
+    if (volMatch) fields.volume = volMatch[1];
+    // Edition (מהדורה)
+    const editionMatch = response.match(/מהדורה\s+[^\s),]+(?:\s+[^\s),]+)*/);
+    if (editionMatch) fields.edition = editionMatch[0];
+    // Editor (עורך/עורכת/עורכים/עורכות)
+    const editorMatch = response.match(/([^,(]+?)\s+עורכ(?:ת|ים|ות|)/);
+    if (editorMatch) fields.editor = editorMatch[0].trim();
+    // Translator (מתרגם/מתרגמת/מתרגמים/מתרגמות)
+    const translatorMatch = response.match(/([^,(]+?)\s+מתרגמ(?:ת|ים|ות|)/);
+    if (translatorMatch) fields.translator = translatorMatch[0].trim();
   }
 
   // Article patterns
