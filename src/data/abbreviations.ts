@@ -123,6 +123,7 @@ export type SourceType =
   | 'religious'             // מקור דתי
   | 'treaty'                // כתבי אמנה
   | 'regulation'            // תקנון (כלל 13.1)
+  | 'government_decision'   // החלטות גופים שלטוניים (כלל 15)
   | 'foreign'               // לועזי
   | 'other'                 // אחר (דברי כנסת וכו')
   | 'unknown';
@@ -136,6 +137,7 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   secondary_legislation: ['regulationName', 'hebrewYear', 'gregorianYear', 'collection'],
   bill: ['billName', 'billNumber', 'hebrewYear', 'gregorianYear'],
   regulation: ['regulationName', 'fullDate'],
+  government_decision: ['decidingBody', 'decisionName', 'fullDate'],
   book: ['author', 'bookTitle', 'year'],
   article: ['author', 'articleTitle', 'journalName', 'volume', 'firstPage', 'year'],
   article_in_book: ['author', 'articleTitle', 'bookTitle', 'firstPage', 'year'],
@@ -187,6 +189,9 @@ export const FIELD_LABELS: Record<string, string> = {
   signingType: 'סוג חתימה (נפתחה/נחתמה)',
   signingYear: 'שנת חתימה',
   notebook: 'מספר חוברת',
+  decisionNumber: 'מספר החלטה',
+  decidingBody: 'הגוף המחליט',
+  decisionName: 'שם ההחלטה',
 };
 
 // Normalize abbreviations in free text
@@ -242,6 +247,11 @@ export function detectSourceType(text: string): SourceType {
     return 'case_law_database';
   }
   
+  // Check for governmental body decisions (Rule 15)
+  if (/החלטה\s+\d|החלטה\s+של|החלטה\s+חכ|תמצית\s+החלטה/.test(hebrewText)) return 'government_decision';
+  if (/רשם\s+הפטנטים|בקשה\s+לביטול\s+תיקון|בקשת\s+עיצוב|התנגדות\s+לרישום\s+סימן|בקשות\s+מתחרות/.test(hebrewText)) return 'government_decision';
+  if (/ועדת\s+ערר\s+לתכנון/.test(hebrewText)) return 'government_decision';
+
   // Check for legislation
   if (/חוק[- ]יסוד/.test(hebrewText)) return 'basic_law';
   if (/תקנות/.test(hebrewText)) return 'secondary_legislation';
@@ -278,6 +288,7 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   internet: 'מקור מרשתת',
   religious: 'מקור דתי',
   regulation: 'תקנון',
+  government_decision: 'החלטות גופים שלטוניים',
   treaty: 'כתבי אמנה',
   foreign: 'מקור לועזי',
   other: 'אחר',
@@ -298,6 +309,7 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   internet: 'כלל 30 – מקורות מהמרשתת',
   religious: 'כלל 32 – מקורות דתיים',
   regulation: 'כלל 13.1 – תקנונים',
+  government_decision: 'כלל 15 – החלטות גופים שלטוניים',
   treaty: 'כלל 9 – כתבי אמנה',
   foreign: 'כלל 36 – מקורות לועזיים (Bluebook)',
   other: 'כלל 8 – אחר (דברי כנסת וכו׳)',
