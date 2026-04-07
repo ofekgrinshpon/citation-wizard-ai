@@ -254,6 +254,11 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
                   ))}
                 </SelectContent>
               </Select>
+              {isNotebook && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  📓 מחברות לימודים משמשות כרקע בלבד — ה-AI ישתמש בתוכן כדי להבין טוב יותר אך יצטט רק מקורות ראשוניים
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label>שנה</Label>
@@ -267,8 +272,8 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
           </div>
 
           <div className="space-y-2">
-            <Label>אזכור מלא (לפי כללי האזכור האחיד)</Label>
-            <Input value={citation} onChange={(e) => setCitation(e.target.value)} placeholder='לדוגמה: חוק החוזים (חלק כללי), התשל"ג–1973, ס"ח 118' dir="rtl" />
+            <Label>אזכור מלא {isNotebook ? "(אופציונלי)" : "(לפי כללי האזכור האחיד)"}</Label>
+            <Input value={citation} onChange={(e) => setCitation(e.target.value)} placeholder={isNotebook ? "ייווצר אוטומטית אם ריק" : 'לדוגמה: חוק החוזים (חלק כללי), התשל"ג–1973, ס"ח 118'} dir="rtl" />
           </div>
 
           <div className="space-y-2">
