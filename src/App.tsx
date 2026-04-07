@@ -50,7 +50,7 @@ function AuthRedirect() {
   if (loading) return null;
   // Preserve ?addin=1 across redirects so Word add-in mode is not lost
   const addinSuffix = new URLSearchParams(window.location.search).get("addin") === "1" ? "?addin=1" : "";
-  if (!user) return <Navigate to={`/${addinSuffix ? addinSuffix : ""}`} replace />;
+  if (!user) return <Navigate to={`/auth${addinSuffix ? `?${addinSuffix.slice(1)}` : ""}`} replace />;
   if (isAdmin) return <Navigate to={`/admin${addinSuffix}`} replace />;
   return <Navigate to={`/app${addinSuffix}`} replace />;
 }
