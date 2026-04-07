@@ -29,9 +29,10 @@ interface MessageBubbleProps {
   onChangeSourceType?: (newType: SourceType) => void;
   onEdit?: (newContent: string) => void;
   onUpdateAssistantContent?: (newContent: string) => void;
+  onSelectOption?: (optionText: string) => void;
 }
 
-export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent }: MessageBubbleProps) {
+export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, onUpdateAssistantContent, onSelectOption }: MessageBubbleProps) {
   const isUser = msg.role === "user";
   const { isOfficeAddin, hasDocumentAccess } = useOffice();
   const [isEditing, setIsEditing] = useState(false);
@@ -111,6 +112,7 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
   const isRuleLine = (line: string) =>
     /^📐|^כלל:|^Based on Rule|^Rule \d/.test(line.trim());
   const hasMissingMarker = (line: string) => /\[חסר:/.test(line);
+  const isDisambiguationLine = (line: string) => /^\d+\.\s+(?:ע|בג|ד|ר|ב|ת|ה)/.test(line.trim());
 
   return (
     <div
@@ -229,6 +231,19 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
                       </button>
                     )}
                   </div>
+                );
+              }
+
+              if (isDisambiguationLine(line)) {
+                return (
+                  <button
+                    key={i}
+                    onClick={() => onSelectOption?.(line.trim())}
+                    className="w-full text-right p-2 my-1 rounded-lg border border-primary/20 hover:bg-primary/10 hover:border-primary/40 transition-colors cursor-pointer block"
+                    dir="rtl"
+                  >
+                    <FormattedCitation text={line} enableTooltips />
+                  </button>
                 );
               }
 

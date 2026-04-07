@@ -1012,6 +1012,13 @@ const Index = () => {
                         }
                       : undefined
                   }
+                  onSelectOption={(optionText: string) => {
+                    setInput(optionText);
+                    setTimeout(() => {
+                      const sendBtn = document.querySelector('.btn-send') as HTMLButtonElement;
+                      if (sendBtn) sendBtn.click();
+                    }, 50);
+                  }}
                 />
               ))}
               {loading && (
