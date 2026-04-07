@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
-import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
 import { BillTypeSelector, type BillPublicationType } from "@/components/BillTypeSelector";
 import { TreatyTypeSelector, type TreatySigningType } from "@/components/TreatyTypeSelector";
