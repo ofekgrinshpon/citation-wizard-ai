@@ -845,7 +845,10 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     // ── Book (ספר) search via Perplexity ──
     let bookHint = "";
     const isBook = classMatch && /ספרות|ספר/.test(classMatch[1]);
-    if (isBook && !hasVerifiedCandidates) {
+    const isUnknown = classMatch && /לא מזוהה|אחר/.test(classMatch[1]);
+    // Also trigger book search for unknown types that look like Hebrew name + title (4+ words, no legislation markers)
+    const looksLikeBook = isUnknown && /^[\u0590-\u05FF]/.test(userInput.replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "").replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "").trim()) && userInput.replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "").replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "").trim().split(/\s+/).length >= 4;
+    if ((isBook || looksLikeBook) && !hasVerifiedCandidates) {
       try {
         const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
         if (PERPLEXITY_API_KEY) {
