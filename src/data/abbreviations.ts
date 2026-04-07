@@ -124,6 +124,7 @@ export type SourceType =
   | 'treaty'                // כתבי אמנה
   | 'regulation'            // תקנון (כלל 13.1)
   | 'government_decision'   // החלטות גופים שלטוניים (כלל 15)
+  | 'expert_opinion'        // חוות דעת (כלל 16)
   | 'foreign'               // לועזי
   | 'other'                 // אחר (דברי כנסת וכו')
   | 'unknown';
@@ -138,6 +139,7 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   bill: ['billName', 'billNumber', 'hebrewYear', 'gregorianYear'],
   regulation: ['regulationName', 'fullDate'],
   government_decision: ['decidingBody', 'decisionName', 'fullDate'],
+  expert_opinion: ['opinionName', 'opinionAuthor', 'fullDate'],
   book: ['author', 'bookTitle', 'year'],
   article: ['author', 'articleTitle', 'journalName', 'volume', 'firstPage', 'year'],
   article_in_book: ['author', 'articleTitle', 'bookTitle', 'firstPage', 'year'],
@@ -192,6 +194,9 @@ export const FIELD_LABELS: Record<string, string> = {
   decisionNumber: 'מספר החלטה',
   decidingBody: 'הגוף המחליט',
   decisionName: 'שם ההחלטה',
+  opinionName: 'שם חוות הדעת',
+  opinionAuthor: 'נותן חוות הדעת',
+  opinionNumber: 'מספר חוות הדעת',
 };
 
 // Normalize abbreviations in free text
@@ -247,6 +252,9 @@ export function detectSourceType(text: string): SourceType {
     return 'case_law_database';
   }
   
+  // Check for expert opinions (Rule 16)
+  if (/חוות\s+דעת/.test(hebrewText)) return 'expert_opinion';
+
   // Check for governmental body decisions (Rule 15)
   if (/החלטה\s+\d|החלטה\s+של|החלטה\s+חכ|תמצית\s+החלטה/.test(hebrewText)) return 'government_decision';
   if (/רשם\s+הפטנטים|בקשה\s+לביטול\s+תיקון|בקשת\s+עיצוב|התנגדות\s+לרישום\s+סימן|בקשות\s+מתחרות/.test(hebrewText)) return 'government_decision';
@@ -289,6 +297,7 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   religious: 'מקור דתי',
   regulation: 'תקנון',
   government_decision: 'החלטות גופים שלטוניים',
+  expert_opinion: 'חוות דעת',
   treaty: 'כתבי אמנה',
   foreign: 'מקור לועזי',
   other: 'אחר',
@@ -310,6 +319,7 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   religious: 'כלל 32 – מקורות דתיים',
   regulation: 'כלל 13.1 – תקנונים',
   government_decision: 'כלל 15 – החלטות גופים שלטוניים',
+  expert_opinion: 'כלל 16 – חוות דעת',
   treaty: 'כלל 9 – כתבי אמנה',
   foreign: 'כלל 36 – מקורות לועזיים (Bluebook)',
   other: 'כלל 8 – אחר (דברי כנסת וכו׳)',
