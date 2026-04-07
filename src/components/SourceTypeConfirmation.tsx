@@ -19,6 +19,7 @@ const SOURCE_CATEGORIES: { key: SourceType; label: string; icon: string }[] = [
   { key: "article", label: "מאמר בכתב עת", icon: "📰" },
   { key: "article_in_book", label: "מאמר שפורסם בספר", icon: "📖" },
   { key: "internet", label: "מקור מרשתת", icon: "🌐" },
+  { key: "internet_comment", label: "תגובה במרשתת", icon: "💬" },
   { key: "treaty", label: "כתבי אמנה", icon: "🤝" },
   { key: "regulation", label: "תקנון", icon: "📋" },
   { key: "government_decision", label: "החלטות גופים שלטוניים", icon: "🏛️" },
