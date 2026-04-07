@@ -28,6 +28,8 @@ const ENGINE_KEY_MAP: Record<SourceType, string> = {
   planning_plan: "planning_plan",
   collective_agreement: "collective_agreement",
   court_pleading: "court_pleading",
+  encyclopedia_entry: "encyclopedia_entry",
+  academic_work: "academic_work",
   foreign: "foreign",
   other: "other",
   unknown: "",

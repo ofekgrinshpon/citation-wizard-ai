@@ -455,6 +455,49 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     ],
   },
 
+  // ─── ערכים במילונים/אנציקלופדיות (Rule 25) ─────────────────
+  encyclopedia_entry: {
+    primaryRule: "25",
+    ruleTitle: "כלל 25 – ערכים במילונים ובאנציקלופדיות",
+    template: '"{articleTitle}" {bookAuthor} **{bookTitle}** {firstPage} ({editor} {year}).',
+    example: '"דין" אברהם אבן-שושן **מלון אבן-שושן המרכז: מחדש ומעודכן לשנות האלפים** 182 (משה אזר עורך ראשי 2004).',
+    components: [
+      { field: "articleTitle", rule: "25", description: "שם הערך – במירכאות", required: true, format: "quotes" },
+      { field: "bookAuthor", rule: "23.2", description: "שם מחבר המילון/אנציקלופדיה", required: false, format: "plain" },
+      { field: "bookTitle", rule: "23.3", description: "שם המילון/אנציקלופדיה – מודגש", required: true, format: "bold" },
+      { field: "volume", rule: "23.4", description: "מספר כרך (אם יש)", required: false, format: "plain" },
+      { field: "firstPage", rule: "24.7", description: "עמוד תחילת הערך", required: true, format: "plain" },
+      { field: "editor", rule: "23.7", description: "שם העורך + עורך/עורכת/עורכים/עורכות", required: false, format: "plain" },
+      { field: "year", rule: "23.9", description: "שנת פרסום", required: true, format: "plain" },
+    ],
+    notes: [
+      'כלל 25: ערכים במילונים, באנציקלופדיות ובפרסומים כיוצא באלו מאוזכרים בדומה למאמר בספר (כלל 24.11).',
+      'שם הערך מופיע במירכאות בתחילת האזכור.',
+    ],
+  },
+
+  // ─── עבודות אקדמיות (Rule 26) ──────────────────────────────
+  academic_work: {
+    primaryRule: "26",
+    ruleTitle: "כלל 26 – עבודות אקדמיות",
+    template: '{author} **{bookTitle}** {specificReference} ({workType}, {institution} {year}).',
+    example: 'אושרה קנצפולסקי **תרופות חוקתיות לתופעה של פגיעה על ידי המשטרה בזכויות חשודים: גישה אמפירית** (חיבור לשם קבלת תואר "דוקטור למשפטים", אוניברסיטת חיפה 2014).',
+    components: [
+      { field: "author", rule: "23.2", description: "שם המחבר – לפי כלל 23.2", required: true, format: "plain" },
+      { field: "bookTitle", rule: "23.3", description: "שם העבודה – מודגש", required: true, format: "bold" },
+      { field: "specificReference", rule: "23.5", description: "הפניה ספציפית (עמוד, פרק)", required: false, format: "plain" },
+      { field: "workType", rule: "26", description: "סוג העבודה כפי שהופיע במקור", required: true, format: "plain" },
+      { field: "institution", rule: "26", description: "שם המוסד האקדמי", required: true, format: "plain" },
+      { field: "courseName", rule: "26", description: 'שם הקורס (לעבודה בקורס – "בקורס {שם}")', required: false, format: "plain" },
+      { field: "year", rule: "23.9", description: "שנת הגשה", required: true, format: "plain" },
+    ],
+    notes: [
+      'כלל 26: על מרכיבי הנוסחה יחולו הכללים שחלים על המרכיבים המקבילים בנוסחת אזכור הספרים (כלל 23).',
+      'סוג העבודה יצוין כפי שהופיע במקור.',
+      'לגבי עבודה שהוגשה בקורס יש לציין לאחר סוג העבודה את המילה "בקורס" ואת שם הקורס.',
+    ],
+  },
+
   // ─── מקורות לועזיים (Foreign Sources – Bluebook) ──────────
   foreign: {
     primaryRule: "36",
