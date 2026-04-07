@@ -199,6 +199,21 @@ textarea:focus { outline: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* Landing CTA button micro-interactions */
+.landing-cta-btn {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  box-shadow: 0 4px 14px rgba(52, 152, 219, 0.25);
+}
+.landing-cta-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(52, 152, 219, 0.35);
+  filter: brightness(1.08);
+}
+.landing-cta-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+}
+
 /* Compact mode for Office Add-in Task Pane */
 .compact-mode {
   font-size: 13px;
