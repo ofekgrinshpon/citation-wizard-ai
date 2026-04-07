@@ -7,6 +7,30 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const digitToSuperscript: Record<string, string> = {
+  "0": "\u2070", "1": "\u00B9", "2": "\u00B2", "3": "\u00B3",
+  "4": "\u2074", "5": "\u2075", "6": "\u2076",
+  "7": "\u2077", "8": "\u2078", "9": "\u2079",
+};
+
+function toSuperscript(n: number): string {
+  return String(n).split("").map((d) => digitToSuperscript[d] || d).join("");
+}
+
+// Patterns indicating low-quality blog/marketing sources
+const BLOG_URL_PATTERNS = [
+  /\/blog\//i, /\/blogs\//i, /adv-/i, /adv\./i,
+  /עורכי-דין/i, /law-firm/i, /lawfirm/i, /lawyer/i,
+  /kolzchut\.org/i, /ynet\.co\.il/i, /walla\.co\.il/i,
+  /mako\.co\.il/i, /globes\.co\.il/i, /calcalist\.co\.il/i,
+  /themarker\.com/i, /israelhayom/i,
+];
+
+function isBlogUrl(url?: string): boolean {
+  if (!url) return false;
+  return BLOG_URL_PATTERNS.some((p) => p.test(url));
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -55,7 +79,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Step 1: Perplexity search for legal sources
+    // Step 1: Perplexity search for PRIMARY legal sources only
     console.log("Searching Perplexity for legal sources...");
     const perplexityRes = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
@@ -65,18 +89,40 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: "sonar-pro",
+        search_domain_filter: [
+          "nevo.co.il",
+          "www.nevo.co.il",
+          "supreme.court.gov.il",
+          "knesset.gov.il",
+          "lawdata.co.il",
+          "psakdin.co.il",
+          "huji.ac.il",
+          "tau.ac.il",
+          "biu.ac.il",
+          "haifa.ac.il",
+        ],
         messages: [
           {
             role: "system",
-            content: `You are a legal research assistant specializing in Israeli law. 
-Search for real, verifiable legal sources relevant to the question.
-Focus on:
-- Israeli statutes and legislation (חוקים, תקנות)
-- Israeli Supreme Court and district court decisions (פסקי דין)
-- Israeli legal academic articles and books
-- International law and treaties when relevant
-- Provide exact case numbers, law names, publication references (ס"ח, ק"ת, פ"ד) when available.
-Always cite real sources. Never fabricate case numbers or law references.`,
+            content: `You are a legal research assistant specializing in Israeli law.
+Your job is to find PRIMARY legal sources ONLY. This means:
+- Israeli statutes and legislation with EXACT publication references (ס"ח page number, ק"ת page number)
+- Israeli court decisions with EXACT case numbers (e.g., ע"א 461/62, בג"ץ 5100/94)
+- Academic books published by recognized publishers (e.g., נבו, פרלשטיין-גינוסר, שוקן)
+- Academic articles from law journals (e.g., הפרקליט, משפטים, עיוני משפט, משפט וממשל)
+- International treaties and conventions when relevant
+
+CRITICAL: Do NOT cite any of the following:
+- Lawyer blogs or law firm websites
+- Legal news summaries or marketing pages
+- General news articles about legal topics
+- "סקירות משפטיות" from lawyer websites
+- Any URL containing "/blog/", "adv-", "עורכי-דין", or law firm names
+
+For each source, provide:
+- The EXACT law name, case number, or book title
+- Publication details (ס"ח/ק"ת page, פ"ד volume, publisher and year for books)
+- Never fabricate case numbers, page numbers, or publication references`,
           },
           { role: "user", content: question },
         ],
@@ -108,7 +154,12 @@ Always cite real sources. Never fabricate case numbers or law references.`,
    - דוגמה שגויה: "ביטול חוזה¹ עקב הטעיה..."
 5. אל תמציא מקורות. כל הערת שוליים חייבת להתבסס על מקור אמיתי מתוצאות החיפוש.
 6. סווג כל מקור: legislation, caselaw, book, article, international.
-7. אם יש לך 14 הערות שוליים, חייבים להופיע בגוף הטקסט 14 סופרסקריפטים: ¹ ² ³ ⁴ ⁵ ⁶ ⁷ ⁸ ⁹ ¹⁰ ¹¹ ¹² ¹³ ¹⁴.
+
+כללים קריטיים לפיזור הערות שוליים:
+7. לכל משפט מותר לצרף לכל היותר הערת שוליים אחת (סופרסקריפט אחד). אסור בשום מקרה לצרף מספר הערות שוליים לאותו משפט (למשל ¹²³ או ¹⁴¹⁵¹⁶ – אסור!).
+8. פזר את ההערות לאורך כל התשובה. אם מספר מקורות תומכים באותה נקודה, כתוב משפטים נפרדים שכל אחד מהם מתייחס להיבט שונה, וצרף לכל משפט הערה אחת בלבד.
+9. העדף 5–8 הערות שוליים איכותיות על פני הערות רבות ודלות.
+10. אל תיצור הערות שוליים עבור בלוגים משפטיים, אתרי משרדי עורכי דין, או סקירות משפטיות. צטט רק מקורות משפטיים ראשוניים: חקיקה, פסיקה, ספרים אקדמיים, ומאמרים בכתבי עת.
 
 כללי כתיבה להערות שוליים (כללי האזכור האחיד 2021):
 הערות השוליים הן האזכור המשפטי המלא. כתוב אותן בדיוק לפי הפורמט הבא:
@@ -144,14 +195,14 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
             function: {
               name: "format_legal_answer",
               description:
-                "Format a structured legal answer with inline footnotes",
+                "Format a structured legal answer with inline footnotes. CRITICAL: each sentence may have AT MOST one footnote superscript. Never cluster multiple footnotes on the same sentence.",
               parameters: {
                 type: "object",
                 properties: {
                   answer: {
                     type: "string",
                     description:
-                      "The full Hebrew answer with superscript footnote numbers (¹²³)",
+                      "The full Hebrew answer with superscript footnote numbers (¹²³). Each sentence has AT MOST one superscript. Never place multiple superscripts on the same sentence.",
                   },
                   footnotes: {
                     type: "array",
@@ -161,7 +212,7 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
                         number: { type: "number" },
                         citation: {
                           type: "string",
-                          description: "Full legal citation formatted per Israeli Uniform Citation Rules (2021). For legislation: law name, Hebrew year–Gregorian year, S.H./K.T. page. For case law: procedure type, case number, party v party, P.D. volume(part) page (year). For books: author **title** page (edition, year). For articles: author 'title' **journal** volume page (year).",
+                          description: "Full legal citation formatted per Israeli Uniform Citation Rules (2021).",
                         },
                         source_type: {
                           type: "string",
@@ -218,7 +269,6 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
     const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
 
     if (!toolCall?.function?.arguments) {
-      // Fallback: try to use content directly
       const content = aiData.choices?.[0]?.message?.content || "";
       return new Response(
         JSON.stringify({
@@ -232,30 +282,106 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
 
     const parsed = JSON.parse(toolCall.function.arguments);
 
-    // Post-processing: ensure superscript footnote numbers exist in the answer
     let answer = parsed.answer || "";
-    const footnotes = parsed.footnotes || [];
+    let footnotes: Array<{ number: number; citation: string; source_type: string; url?: string }> = parsed.footnotes || [];
 
-    const digitToSuperscript: Record<string, string> = {
-      "0": "\u2070", "1": "\u00B9", "2": "\u00B2", "3": "\u00B3",
-      "4": "\u2074", "5": "\u2075", "6": "\u2076",
-      "7": "\u2077", "8": "\u2078", "9": "\u2079",
-    };
+    // --- Post-processing Step 1: Filter out blog/marketing footnotes ---
+    const filteredFootnotes = footnotes.filter((fn) => !isBlogUrl(fn.url));
+    const removedNumbers = new Set(
+      footnotes.filter((fn) => isBlogUrl(fn.url)).map((fn) => fn.number)
+    );
 
-    function toSuperscript(n: number): string {
-      return String(n).split("").map((d) => digitToSuperscript[d] || d).join("");
+    if (removedNumbers.size > 0) {
+      console.log(`Filtered out ${removedNumbers.size} blog/marketing footnotes`);
+      // Remove superscripts for filtered footnotes from the answer
+      for (const num of removedNumbers) {
+        const sup = toSuperscript(num);
+        answer = answer.replaceAll(sup, "");
+      }
+      // Re-number remaining footnotes sequentially
+      const oldToNew = new Map<number, number>();
+      filteredFootnotes.forEach((fn, idx) => {
+        oldToNew.set(fn.number, idx + 1);
+      });
+      // Update superscripts in answer
+      for (const [oldNum, newNum] of oldToNew) {
+        if (oldNum !== newNum) {
+          const oldSup = toSuperscript(oldNum);
+          const placeholder = `__FN_PLACEHOLDER_${newNum}__`;
+          answer = answer.replaceAll(oldSup, placeholder);
+        }
+      }
+      for (const [, newNum] of oldToNew) {
+        const placeholder = `__FN_PLACEHOLDER_${newNum}__`;
+        answer = answer.replaceAll(placeholder, toSuperscript(newNum));
+      }
+      // Update footnote numbers
+      filteredFootnotes.forEach((fn, idx) => {
+        fn.number = idx + 1;
+      });
+      footnotes = filteredFootnotes;
     }
 
-    // First, convert any [N] or (N) bracket patterns to superscript
+    // --- Post-processing Step 2: Convert bracket patterns to superscript ---
     answer = answer.replace(/\[(\d{1,2})\]/g, (_: string, num: string) => toSuperscript(parseInt(num, 10)));
     answer = answer.replace(/\((\d{1,2})\)(?=[^\dא-ת]|$)/g, (_: string, num: string) => toSuperscript(parseInt(num, 10)));
 
-    // For each footnote, verify its superscript exists; if not, try to inject it
+    // --- Post-processing Step 3: De-cluster adjacent superscripts ---
+    // If multiple superscripts are adjacent (e.g., ¹²³), keep only the first one
+    const superscriptChars = new Set(Object.values(digitToSuperscript));
+    const lines = answer.split("\n");
+    const processedLines = lines.map((line) => {
+      let result = "";
+      let inSuperscriptRun = false;
+      let superscriptCount = 0;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (superscriptChars.has(ch)) {
+          if (!inSuperscriptRun) {
+            inSuperscriptRun = true;
+            superscriptCount = 1;
+            result += ch;
+          } else {
+            superscriptCount++;
+            // Keep digits that are part of a multi-digit number (e.g., ¹⁴ = 14)
+            // But drop if it's a separate footnote number clustering
+            // Heuristic: if previous superscript char + this one form a valid footnote number <= max footnote, keep it
+            // Otherwise drop
+            const prevSupChars: string[] = [];
+            for (let j = result.length - 1; j >= 0; j--) {
+              if (superscriptChars.has(result[j])) {
+                prevSupChars.unshift(result[j]);
+              } else break;
+            }
+            prevSupChars.push(ch);
+            // Convert back to number
+            const superscriptToDigit: Record<string, string> = {};
+            for (const [d, s] of Object.entries(digitToSuperscript)) {
+              superscriptToDigit[s] = d;
+            }
+            const numStr = prevSupChars.map((c) => superscriptToDigit[c] || "").join("");
+            const num = parseInt(numStr, 10);
+            const maxFootnote = footnotes.length > 0 ? Math.max(...footnotes.map((f) => f.number)) : 20;
+            if (num <= maxFootnote) {
+              // This is a multi-digit footnote number, keep it
+              result += ch;
+            }
+            // else: this is a separate clustered footnote, drop it
+          }
+        } else {
+          inSuperscriptRun = false;
+          superscriptCount = 0;
+          result += ch;
+        }
+      }
+      return result;
+    });
+    answer = processedLines.join("\n");
+
+    // --- Post-processing Step 4: Inject missing superscripts ---
     for (const fn of footnotes) {
       const sup = toSuperscript(fn.number);
       if (!answer.includes(sup)) {
-        // Try to find a sentence ending (period followed by space or end) and append there
-        // Find the Nth period as a heuristic
         const periodRegex = /([.。])([\s\n]|$)/g;
         let match;
         let count = 0;
@@ -270,7 +396,6 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
         if (insertPos > 0) {
           answer = answer.slice(0, insertPos) + sup + answer.slice(insertPos);
         } else {
-          // Append at end of last sentence before footnotes section
           const lastPeriod = answer.lastIndexOf(".");
           if (lastPeriod > 0) {
             answer = answer.slice(0, lastPeriod + 1) + sup + answer.slice(lastPeriod + 1);
