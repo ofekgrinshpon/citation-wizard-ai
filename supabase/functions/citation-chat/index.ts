@@ -550,28 +550,30 @@ serve(async (req) => {
       ? cleanedForParty.match(/([\u0590-\u05FF\s'"״׳']+)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3])\s+([\u0590-\u05FF\s'"״׳']+)/)
       : null;
 
-    // If this is a disambiguation selection, build hint from the embedded text instead of searching
-    if (isDisambiguationSelection && isCaseLaw) {
+    // If this is a disambiguation selection, do a focused single-case search with the case number
+    if (isDisambiguationSelection && isCaseLaw && caseNumberMatch) {
+      console.log(`[case-law] Disambiguation selection detected, doing focused search for ${caseNumberMatch[0]}`);
+      // Re-use the Branch A (case number search) logic by NOT setting isDisambiguationSelection block
+      // Just let it fall through to the normal caseNumberMatch branch below
+    } else if (isDisambiguationSelection && isCaseLaw) {
+      // No case number found in selection — build hint from text
       const selectionText = userInput.replace(/\[סיווג אוטומטי:.*?\]\n?/, "").replace(/\[בחירת תוצאה\]\s*/, "").trim();
-      const caseRef = caseNumberMatch ? `${caseNumberMatch[1]} ${caseNumberMatch[2]}` : selectionText;
-      // Extract year from parentheses like (2023)
       const yearMatch = selectionText.match(/\((\d{4})\)/);
-      // Extract court from "— בית משפט..."
       const courtMatch = selectionText.match(/—\s*(.+?)$/);
-      // Extract parties from "X נ' Y"
       const partiesInSelection = selectionText.match(/([\u0590-\u05FF\s'"״׳']+)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3])\s+([\u0590-\u05FF\s'"״׳']+)/);
       
       let details = `\n\n══ נתוני פסק דין שנבחר ══\n`;
-      details += `תיק: ${caseRef}\n`;
+      details += `פרטים: ${selectionText}\n`;
       if (partiesInSelection) details += `צדדים: **${partiesInSelection[1].trim()}** נ' **${partiesInSelection[2].trim().replace(/\s*\(\d{4}\).*$/, '')}**\n`;
       if (courtMatch) details += `בית משפט: ${courtMatch[1].trim()}\n`;
       if (yearMatch) details += `שנה: ${yearMatch[1]}\n`;
-      details += `══ עצב אזכור מלא לפסק דין זה לפי כללי האזכור האחיד. חפש פרטים נוספים אם צריך, או סמן [חסר:...] לשדות חסרים. ══`;
+      details += `══ עצב אזכור מלא לפסק דין זה. סמן [חסר:...] לשדות חסרים. ══`;
       caseLawHint = details;
-      console.log(`[case-law] Disambiguation selection detected, skipping Perplexity search. Ref: ${caseRef}`);
+      console.log(`[case-law] No case number in selection, using parsed text hint`);
     }
 
-    const shouldSearchCaseLaw = isCaseLaw && !isDisambiguationSelection && !hasVerifiedCandidates && (caseNumberMatch || partyMatch);
+    // When disambiguation selection has a case number, allow the normal case-number search to proceed
+    const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (caseNumberMatch || partyMatch) && !(isDisambiguationSelection && !caseNumberMatch);
     console.log(`[case-law] isCaseLaw=${isCaseLaw}, isDisambiguationSelection=${isDisambiguationSelection}, caseNumberMatch=${caseNumberMatch?.[0] ?? 'null'}, partyMatch=${partyMatch ? 'yes' : 'no'}, hasVerifiedCandidates=${hasVerifiedCandidates}`);
 
     if (shouldSearchCaseLaw) {
