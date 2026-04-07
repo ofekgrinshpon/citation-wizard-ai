@@ -442,7 +442,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
             בניית הערות שוליים
           </h3>
           <p className="text-muted-foreground text-xs mt-0.5">
-            הזן מקורות והמערכת תייצר הערות שוליים מוכנות ל-Word
+            ReLex הוא AI ויכול לעשות טעויות. יש לבדוק שנית את הפלט לפני השימוש בו.
           </p>
         </div>
         <div className="flex items-center gap-2">

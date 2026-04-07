@@ -111,7 +111,7 @@ ${lines.map((l, i) => `${i + 1}. ${l}`).join("\n")}
         <div>
           <h3 className="text-foreground text-lg font-bold font-sans">מחולל ביבליוגרפיה</h3>
           <p className="text-muted-foreground text-xs mt-0.5">
-            הזן מקורות או השתמש בהערות שוליים – המערכת תמיין ותסדר אוטומטית
+            ReLex הוא AI ויכול לעשות טעויות. יש לבדוק שנית את הפלט לפני השימוש בו.
           </p>
         </div>
         {sortedEntries.length > 0 && (
