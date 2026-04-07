@@ -323,8 +323,8 @@ export function detectSourceType(text: string): SourceType {
     return 'book';
   }
   
-  // Religious sources
-  if (/תלמוד|משנה|גמרא|שו"ת|מקרא|בראשית|שמות|ויקרא|במדבר|דברים/.test(hebrewText)) return 'religious';
+  // Religious sources (Rules 28–30)
+  if (/תלמוד|משנה|גמרא|שו"ת|מקרא|בראשית|שמות|ויקרא|במדבר|דברים|בבלי|ירושלמי|שולחן ערוך|מכילתא|רש"י|רמב"ם|משנה תורה|טורים|קוראן|סורת|סורה|הבשורה על פי|האיגרת אל|שמות רבה|בראשית רבה|ויקרא רבה|אוצר הגאונים|ספר הישר/.test(hebrewText)) return 'religious';
   
   return 'unknown';
 }
@@ -368,7 +368,7 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   article: 'כלל 24 – מאמרים',
   article_in_book: 'כלל 24.11 – מאמר שפורסם בספר',
   internet: 'כלל 30 – מקורות מהמרשתת',
-  religious: 'כלל 32 – מקורות דתיים',
+  religious: 'כללים 28–30 – מקורות דתיים',
   regulation: 'כלל 13.1 – תקנונים',
   government_decision: 'כלל 15 – החלטות גופים שלטוניים',
   expert_opinion: 'כלל 16 – חוות דעת',
