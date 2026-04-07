@@ -64,41 +64,15 @@ const Admin = () => {
   const fetchData = async () => {
     setLoadingData(true);
 
-    const [citRes, usersRes] = await Promise.all([
+    const [citRes, usersRes, verifiedRes] = await Promise.all([
       supabase.from("citation_history").select("*").order("created_at", { ascending: false }).limit(500),
       supabase.from("profiles").select("*").order("created_at", { ascending: false }),
+      supabase.from("verified_sources").select("*").order("verified_at", { ascending: false }),
     ]);
 
-    const citationRows = citRes.data ?? [];
-    const userRows = usersRes.data ?? [];
-
-    setCitations(citationRows);
-    setUsers(userRows);
-
-    const verifiedCitationRows = citationRows
-      .filter((citation) => citation.is_verified)
-      .map((citation) => ({
-        rawInput: citation.raw_input,
-        fullCitation: citation.formatted_output,
-        sourceType: citation.source_type,
-        verifiedBy: user?.id,
-        autoVerified: false,
-      }));
-
-    if (verifiedCitationRows.length > 0) {
-      try {
-        await ensureVerifiedSources(verifiedCitationRows);
-      } catch {
-        toast.error("לא ניתן לסנכרן מקורות מאומתים מההיסטוריה");
-      }
-    }
-
-    const { data: verifiedRows } = await supabase
-      .from("verified_sources")
-      .select("*")
-      .order("verified_at", { ascending: false });
-
-    setVerifiedSources((verifiedRows ?? []) as unknown as VerifiedSourceRow[]);
+    setCitations(citRes.data ?? []);
+    setUsers(usersRes.data ?? []);
+    setVerifiedSources((verifiedRes.data ?? []) as unknown as VerifiedSourceRow[]);
     setLoadingData(false);
   };
 
