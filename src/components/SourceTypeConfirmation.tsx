@@ -25,6 +25,7 @@ const SOURCE_CATEGORIES: { key: SourceType; label: string; icon: string }[] = [
   { key: "expert_opinion", label: "חוות דעת", icon: "📝" },
   { key: "planning_plan", label: "תכנית תכנון ובנייה", icon: "🏗️" },
   { key: "collective_agreement", label: "הסכם קיבוצי", icon: "🤝" },
+  { key: "court_pleading", label: "כתב טענות", icon: "📋" },
   { key: "religious", label: "מקור דתי", icon: "📿" },
   { key: "foreign", label: "מקור לועזי", icon: "🌍" },
   { key: "other", label: "אחר (דברי כנסת וכו׳)", icon: "📁" },
