@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MessageBubble } from "@/components/MessageBubble";
 import { LoadingDots } from "@/components/LoadingDots";
-import { ManualEntry } from "@/components/ManualEntry";
+import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { BatchFootnoteBuilder } from "@/components/BatchFootnoteBuilder";
 import { BibliographyGenerator } from "@/components/BibliographyGenerator";
 import { BillTypeSelector, type BillPublicationType } from "@/components/BillTypeSelector";
@@ -76,7 +76,7 @@ const CITATION_EXAMPLES = [
 ];
 
 
-type AppMode = "freetext" | "manual" | "batch" | "bibliography";
+type AppMode = "freetext" | "batch" | "bibliography";
 
 const LS_KEY_INPUT_PREFIX = "legal_app_free_text_content";
 const LS_KEY_MESSAGES_PREFIX = "legal_app_free_text_messages";
