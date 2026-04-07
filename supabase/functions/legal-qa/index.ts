@@ -154,7 +154,7 @@ ${citations.length > 0 ? `\nקישורי מקור:\n${citations.map((c: string, 
                         number: { type: "number" },
                         citation: {
                           type: "string",
-                          description: "Full citation text in Hebrew",
+                          description: "Full legal citation formatted per Israeli Uniform Citation Rules (2021). For legislation: law name, Hebrew year–Gregorian year, S.H./K.T. page. For case law: procedure type, case number, party v party, P.D. volume(part) page (year). For books: author **title** page (edition, year). For articles: author 'title' **journal** volume page (year).",
                         },
                         source_type: {
                           type: "string",
