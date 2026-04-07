@@ -128,6 +128,8 @@ export type SourceType =
   | 'planning_plan'         // תכנית תכנון ובנייה (כלל 17.1)
   | 'collective_agreement'  // הסכם קיבוצי (כלל 17.2)
   | 'court_pleading'        // כתב טענות (כלל 22.2)
+  | 'encyclopedia_entry'    // ערך במילון/אנציקלופדיה (כלל 25)
+  | 'academic_work'         // עבודה אקדמית (כלל 26)
   | 'foreign'               // לועזי
   | 'other'                 // אחר (דברי כנסת וכו')
   | 'unknown';
@@ -149,6 +151,8 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   book: ['author', 'bookTitle', 'year'],
   article: ['author', 'articleTitle', 'journalName', 'volume', 'firstPage', 'year'],
   article_in_book: ['author', 'articleTitle', 'bookTitle', 'firstPage', 'year'],
+  encyclopedia_entry: ['articleTitle', 'bookAuthor', 'bookTitle', 'firstPage', 'year'],
+  academic_work: ['author', 'bookTitle', 'workType', 'institution', 'year'],
   internet: ['author', 'title', 'siteName', 'url', 'accessDate'],
   religious: ['source', 'location'],
   treaty: ['treatyName', 'volume', 'firstPage', 'signingType', 'signingYear'],
@@ -208,6 +212,9 @@ export const FIELD_LABELS: Record<string, string> = {
   agreementSubject: 'נושא ההסכם',
   pleadingTitle: 'כותרת כתב הטענות',
   specificReference: 'הפניה ספציפית',
+  workType: 'סוג העבודה',
+  institution: 'מוסד אקדמי',
+  courseName: 'שם הקורס',
 };
 
 // Normalize abbreviations in free text
@@ -293,6 +300,12 @@ export function detectSourceType(text: string): SourceType {
   if (/תקנון/.test(hebrewText)) return 'regulation';
   if (/חוק |פקודת /.test(hebrewText)) return 'primary_legislation';
   
+  // Check for academic works (Rule 26) – before general literature
+  if (/עבודת\s+גמר|חיבור\s+לשם|עבודה\s+סמינריונית|דוקטור.*תואר|מוסמך.*תואר|תזה|דיסרטציה|עבודת\s+דוקטורט/.test(hebrewText)) return 'academic_work';
+
+  // Check for encyclopedia/dictionary entries (Rule 25)
+  if (/מילון|אנציקלופד|ערך\s+"/.test(hebrewText)) return 'encyclopedia_entry';
+
   // Check for literature
   // Article in book: pattern like "author "title" book-name" (quoted article + book context)
   if (/"[^"]+".+(?:ספר|בתוך|עורך)/.test(hebrewText) || /".+"\s+.{5,}/.test(hebrewText) && !/עיוני משפט|משפטים|משפט וממשל|הפרקליט|כתב.עת/.test(hebrewText) && /ספר|בתוך/.test(hebrewText)) return 'article_in_book';
@@ -335,6 +348,8 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   planning_plan: 'תכנית תכנון ובנייה',
   collective_agreement: 'הסכם קיבוצי',
   court_pleading: 'כתב טענות',
+  encyclopedia_entry: 'ערך במילון/אנציקלופדיה',
+  academic_work: 'עבודה אקדמית',
   treaty: 'כתבי אמנה',
   foreign: 'מקור לועזי',
   other: 'אחר',
@@ -360,6 +375,8 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   planning_plan: 'כלל 17.1 – תכניות תכנון ובנייה',
   collective_agreement: 'כלל 17.2 – הסכמים קיבוציים',
   court_pleading: 'כלל 22.2 – כתבי טענות',
+  encyclopedia_entry: 'כלל 25 – ערכים במילונים ובאנציקלופדיות',
+  academic_work: 'כלל 26 – עבודות אקדמיות',
   treaty: 'כלל 9 – כתבי אמנה',
   foreign: 'כלל 36 – מקורות לועזיים (Bluebook)',
   other: 'כלל 8 – אחר (דברי כנסת וכו׳)',
