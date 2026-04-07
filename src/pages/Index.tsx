@@ -497,7 +497,7 @@ const Index = () => {
     setInput("");
     const newMessages: Message[] = [
       ...messages,
-      { role: "user", content: rawText },
+      { role: "user", content: rawText.replace(/\[בחירת תוצאה\]\s*/g, '') },
     ];
     setMessages(newMessages);
 
