@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let isMounted = true;
 
-    const syncAuthState = (nextSession: Session | null) => {
+    const syncAuthState = (nextSession: Session | null, setReady = false) => {
       if (!isMounted) return;
 
       setSession(nextSession);
@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Fire-and-forget: don't block auth hydration on admin resolution
       resolveAdmin(nextSession?.user ?? null);
 
-      if (hasHydratedSession.current) {
+      if (setReady || hasHydratedSession.current) {
         setLoading(false);
       }
     };
@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     void supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       hasHydratedSession.current = true;
-      void syncAuthState(currentSession);
+      void syncAuthState(currentSession, true);
     });
 
     return () => {
