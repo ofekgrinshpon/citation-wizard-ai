@@ -708,7 +708,6 @@ const Index = () => {
 
   const MODES: { id: AppMode; label: string; icon: string }[] = [
     { id: "freetext", label: "טקסט חופשי", icon: "✨" },
-    { id: "manual", label: "הזנה ידנית", icon: "📝" },
     { id: "batch", label: "הערות שוליים", icon: "📑" },
     { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
   ];
@@ -827,9 +826,7 @@ const Index = () => {
           className="flex-1 overflow-y-auto px-3 sm:px-4"
           style={{ maxWidth: 860, margin: "0 auto", width: "100%" }}
         >
-        {mode === "manual" ? (
-          <ManualEntry />
-        ) : mode === "batch" ? (
+        {mode === "batch" ? (
           <BatchFootnoteBuilder />
         ) : mode === "bibliography" ? (
           <BibliographyGenerator />
