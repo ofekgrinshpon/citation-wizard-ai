@@ -120,6 +120,7 @@ export type SourceType =
   | 'article'               // מאמר
   | 'article_in_book'       // מאמר שפורסם בספר
   | 'internet'              // מרשתת
+  | 'internet_comment'      // תגובה במרשתת (כלל 34.2.9)
   | 'religious'             // מקור דתי
   | 'treaty'                // כתבי אמנה
   | 'regulation'            // תקנון (כלל 13.1)
@@ -160,7 +161,8 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   article_in_book: ['author', 'articleTitle', 'bookTitle', 'firstPage', 'year'],
   encyclopedia_entry: ['articleTitle', 'bookAuthor', 'bookTitle', 'firstPage', 'year'],
   academic_work: ['author', 'bookTitle', 'workType', 'institution', 'year'],
-  internet: ['author', 'title', 'siteName', 'url', 'accessDate'],
+  internet: ['url'],
+  internet_comment: ['url'],
   religious: ['source', 'location'],
   correspondence: ['correspondenceType', 'senderName', 'recipientName', 'fullDate'],
   interview: ['intervieweeName', 'fullDate'],
@@ -250,6 +252,13 @@ export const FIELD_LABELS: Record<string, string> = {
   creator: 'יוצר התוכנית',
   radioStation: 'תחנת רדיו',
   timeReference: 'הפניית זמן',
+  contentType: 'סוג התוכן',
+  socialUsername: 'שם משתמש',
+  commentAuthor: 'מחבר התגובה',
+  commentDate: 'תאריך התגובה',
+  commentNumber: 'מספר התגובה',
+  originalSourceDetails: 'פרטי המקור המקורי',
+  title: 'כותרת',
 };
 
 // Normalize abbreviations in free text
@@ -366,6 +375,8 @@ export function detectSourceType(text: string): SourceType {
   // Article in book: pattern like "author "title" book-name" (quoted article + book context)
   if (/"[^"]+".+(?:ספר|בתוך|עורך)/.test(hebrewText) || /".+"\s+.{5,}/.test(hebrewText) && !/עיוני משפט|משפטים|משפט וממשל|הפרקליט|כתב.עת/.test(hebrewText) && /ספר|בתוך/.test(hebrewText)) return 'article_in_book';
   if (/מאמר|עיוני משפט|משפטים|משפט וממשל|הפרקליט/.test(hebrewText)) return 'article';
+  // Check for internet comments (Rule 34.2.9) before general internet
+  if (/תגובה\s+(ל|מ-?\d)/.test(hebrewText) && /https?:\/\//.test(text)) return 'internet_comment';
   if (/https?:\/\//.test(text)) return 'internet';
   if (/ספר|מהדורה/.test(hebrewText)) return 'book';
   
@@ -397,6 +408,7 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   article: 'מאמר בכתב עת',
   article_in_book: 'מאמר שפורסם בספר',
   internet: 'מקור מרשתת',
+  internet_comment: 'תגובה במרשתת',
   religious: 'מקור דתי',
   correspondence: 'התכתבות',
   interview: 'ריאיון',
@@ -430,7 +442,8 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   book: 'כלל 23 – ספרים',
   article: 'כלל 24 – מאמרים',
   article_in_book: 'כלל 24.11 – מאמר שפורסם בספר',
-  internet: 'כלל 30 – מקורות מהמרשתת',
+  internet: 'כלל 34.2 – מקורות מהמרשתת',
+  internet_comment: 'כלל 34.2.9 – תגובות במרשתת',
   religious: 'כללים 28–30 – מקורות דתיים',
   correspondence: 'כלל 32.1 – התכתבויות',
   interview: 'כלל 32.2 – ראיונות',
