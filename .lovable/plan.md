@@ -1,65 +1,69 @@
 
 
-# Add Rule 16 – חוות דעת (Expert Opinions)
+# Add Rules 17.1 & 17.2 – Planning Committee Plans & Collective Agreements
 
 ## Overview
-Add a new source type `expert_opinion` covering Rules 16.1–16.4 for citing expert opinions, including a special sub-formula for the Public Complaints Commissioner on Judges (נציבות תלונות הציבור על שופטים).
+Add two new source types:
+1. **`planning_plan`** (Rule 17.1) – Planning committee plans, cited like governmental body decisions (Rule 15)
+2. **`collective_agreement`** (Rule 17.2) – Collective labor agreements with a unique formula
 
 ## Formulas
 
-**Standard (16.1):**
-`"[שם חוות הדעת]" (חוות דעת של [זהות נותן חוות הדעת] [תאריך לועזי מלא])`
+**Planning plans (17.1):** Cited like Rule 15 (governmental body decisions):
+`תכנית מפורטת [מספר] של [שם הוועדה] "[שם התכנית]" ([שנה/תאריך])`
 
-**Commissioner variant (16.4):**
-`חוות דעת [מספר] של נציבות תלונות הציבור על שופטים "[שם]" [פרטי פרסום] ([תאריך])`
-
-## Sub-rules (handled in system prompt)
-- **16.2**: Official capacity → title only. Private → name + relevant title. Name in opinion title → omit from parentheses.
-- **16.3**: Use full Gregorian date. If unavailable, partial date or Hebrew date.
-- **16.4**: Commissioner opinions use a distinct formula with opinion number and optional publication details.
+**Collective agreements (17.2):**
+`הסכם קיבוצי מס' [מספר] בין [צד א'] ל[צד ב'] בעניין [נושא] ([תאריך])`
+- If a party has multiple entities, cite the first + "ואח'" if the rest aren't important.
 
 ## Changes
 
 | File | Change |
 |------|--------|
-| `src/data/abbreviations.ts` | Add `'expert_opinion'` to `SourceType` union. Add to `REQUIRED_FIELDS`, `FIELD_LABELS`, `SOURCE_TYPE_LABELS`, `RULE_REFERENCES`. Add detection: `/חוות\s+דעת/`. Add fields: `opinionName`, `opinionAuthor`, `opinionNumber`. |
-| `src/data/citationEngine.ts` | Add `expert_opinion` rule set with primaryRule `"16.1"`, template, examples, components, and notes covering 16.2–16.4. |
-| `src/lib/citationValidation.ts` | Add `expert_opinion` to `ENGINE_KEY_MAP`. Add field extraction patterns (quoted name, author after "חוות דעת של", date). |
-| `src/components/SourceTypeConfirmation.tsx` | Add `expert_opinion` entry with label "חוות דעת" and icon "📝". |
-| `supabase/functions/citation-chat/index.ts` | Add `"חוות דעת"` to `CITATION_ENGINE_TEMPLATES` with full formula, sub-rules, and examples. Add to source type list in system prompt. |
+| **`src/data/abbreviations.ts`** | Add `planning_plan` and `collective_agreement` to `SourceType`. Add to `REQUIRED_FIELDS`, `FIELD_LABELS`, `SOURCE_TYPE_LABELS`, `RULE_REFERENCES`. Add detection regexes before the `תקנון` check. |
+| **`src/data/citationEngine.ts`** | Add two new `CITATION_RULES` entries with templates, examples, components, and notes. |
+| **`src/lib/citationValidation.ts`** | Add both types to `ENGINE_KEY_MAP` with field extraction patterns. |
+| **`src/components/SourceTypeConfirmation.tsx`** | Add two entries: "🏗️ תכנית תכנון ובנייה" and "🤝 הסכם קיבוצי". |
+| **`supabase/functions/citation-chat/index.ts`** | Add both source types to `CITATION_ENGINE_TEMPLATES` and system prompt with formulas, sub-rules, and examples. |
 
 ## Detection logic
-```text
-if (/חוות\s+דעת/.test(hebrewText)) return 'expert_opinion';
+```typescript
+// Rule 17.1 – Planning committee plans
+if (/תכנית\s+מפורטת|תכנית\s+(?:בניין|בנין)\s+עיר|תב"ע|תכנית\s+מתאר/.test(hebrewText)) return 'planning_plan';
+
+// Rule 17.2 – Collective agreements
+if (/הסכם\s+קיבוצי/.test(hebrewText)) return 'collective_agreement';
 ```
-Placed before generic legislation checks in `detectSourceType`.
+Placed after `expert_opinion` and `government_decision` checks, before legislation checks.
 
 ## New fields
-- `opinionName` – required (in quotes)
-- `opinionAuthor` – required (title or name per 16.2)
-- `fullDate` – required (with 16.3 fallback)
-- `opinionNumber` – optional (for 16.4 commissioner opinions)
+**Planning plan:**
+- `planNumber` – required (e.g. "2549א'")
+- `decidingBody` – required (reuse existing field; the committee name)
+- `decisionName` – required (reuse; the plan's descriptive name, in quotes)
+- `fullDate` – required (year or full date)
+
+**Collective agreement:**
+- `agreementNumber` – required (e.g. "2008/7033")
+- `party1` – required (first party)
+- `party2` – required (second party)
+- `agreementSubject` – required (the topic after "בעניין")
+- `fullDate` – required (agreement date)
 
 ## Technical details
 
 ### abbreviations.ts
-- Add `'expert_opinion'` to the `SourceType` union after `'government_decision'`
-- `REQUIRED_FIELDS.expert_opinion = ['opinionName', 'opinionAuthor', 'fullDate']`
-- `FIELD_LABELS`: add `opinionName: 'שם חוות הדעת'`, `opinionAuthor: 'נותן חוות הדעת'`, `opinionNumber: 'מספר חוות הדעת'`
-- `SOURCE_TYPE_LABELS.expert_opinion = 'חוות דעת'`
-- `RULE_REFERENCES.expert_opinion = 'כלל 16 – חוות דעת'`
-- Detection regex in `detectSourceType` before the government_decision block
+- Add to `SourceType` union: `| 'planning_plan'` and `| 'collective_agreement'` after `expert_opinion`
+- `REQUIRED_FIELDS.planning_plan = ['planNumber', 'decidingBody', 'decisionName', 'fullDate']`
+- `REQUIRED_FIELDS.collective_agreement = ['agreementNumber', 'party1', 'party2', 'agreementSubject', 'fullDate']`
+- New `FIELD_LABELS` entries: `planNumber: 'מספר תכנית'`, `agreementNumber: 'מספר הסכם'`, `agreementSubject: 'נושא ההסכם'`
 
 ### citationEngine.ts
-- New `expert_opinion` entry in `CITATION_RULES` between `government_decision` and `foreign`
-- Template: `"[שם חוות הדעת]" (חוות דעת של [זהות נותן חוות הדעת] [תאריך לועזי מלא]).`
-- Notes covering 16.2 (capacity vs. private), 16.3 (date fallback), 16.4 (commissioner formula + example)
-
-### citationValidation.ts
-- Add `expert_opinion: "expert_opinion"` to `ENGINE_KEY_MAP`
-- Extract: `opinionName` from quoted text, `opinionAuthor` from "חוות דעת של [X]", `fullDate` from date pattern, `opinionNumber` from "חוות דעת [number]"
+- `planning_plan`: primaryRule `"17.1"`, note that formatting follows Rule 15 pattern
+- `collective_agreement`: primaryRule `"17.2"`, note about "ואח'" for multi-entity parties
 
 ### Edge function system prompt
-- Add `"חוות דעת"` template entry with all sub-rules
-- Add to the source type listing and formula reference sections
+- Add both templates with full formulas and examples
+- For 17.1, reference Rule 15 format
+- For 17.2, include the "ואח'" multi-party rule
 
