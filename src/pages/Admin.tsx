@@ -517,7 +517,7 @@ const Admin = () => {
             </p>
             <LegalDocumentIngestion onIngested={() => fetchData()} />
           </div>
-        )
+        )}
 
         {activeTab === "users" && (
           <div className="space-y-6">
