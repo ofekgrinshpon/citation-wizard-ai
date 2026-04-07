@@ -12,6 +12,7 @@ interface Footnote {
   citation: string;
   source_type: string;
   url?: string;
+  source?: "local" | "perplexity";
 }
 
 interface QAResult {
@@ -220,7 +221,12 @@ export function LegalQAChat() {
                       className="flex gap-2 items-start text-foreground"
                       style={{ fontFamily: DAVID_FONT, fontSize: "10pt" }}
                     >
-                      <span className="text-primary font-bold shrink-0" style={{ fontSize: "10pt" }}>
+                      <span className="text-primary font-bold shrink-0 flex items-center gap-1" style={{ fontSize: "10pt" }}>
+                        <span
+                          className="inline-block w-2 h-2 rounded-full shrink-0"
+                          style={{ backgroundColor: fn.source === "local" ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))" }}
+                          title={fn.source === "local" ? "מקור מאומת מהמאגר" : "מקור מחיפוש אינטרנט"}
+                        />
                         {fn.number}.
                       </span>
                       <div className="min-w-0">

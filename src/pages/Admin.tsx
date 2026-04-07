@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import AddVerifiedSourceDialog from "@/components/admin/AddVerifiedSourceDialog";
+import LegalDocumentIngestion from "@/components/admin/LegalDocumentIngestion";
 import AdminHeader from "@/components/admin/AdminHeader";
 import StatCard from "@/components/admin/StatCard";
 import SourceCategoryView from "@/components/admin/SourceCategoryView";
@@ -36,7 +37,7 @@ interface UserProfile {
   citation_count?: number;
 }
 
-type MainTab = "analytics" | "sources" | "users";
+type MainTab = "analytics" | "sources" | "users" | "knowledge";
 type SourceSubTab = "caselaw" | "legislation" | "literature" | "other" | "verified";
 
 const Admin = () => {
@@ -319,6 +320,7 @@ const Admin = () => {
   const mainTabs = [
     { id: "analytics" as const, label: "📊 סטטיסטיקות" },
     { id: "sources" as const, label: "📚 ניהול מקורות" },
+    { id: "knowledge" as const, label: "🧠 מאגר ידע" },
     { id: "users" as const, label: "👥 משתמשים" },
   ];
 
@@ -504,6 +506,16 @@ const Admin = () => {
                 />
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === "knowledge" && (
+          <div className="space-y-6">
+            <h2 className="text-foreground font-bold text-lg">🧠 מאגר ידע משפטי (V2 RAG)</h2>
+            <p className="text-muted-foreground text-sm">
+              הוסיפו מקורות משפטיים למאגר הידע המקומי. מקורות אלו ישמשו כמקור ראשוני בתשובות לשאלות משפטיות.
+            </p>
+            <LegalDocumentIngestion onIngested={() => fetchData()} />
           </div>
         )}
 
