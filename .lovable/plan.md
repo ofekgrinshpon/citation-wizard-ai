@@ -1,58 +1,61 @@
 
 
-# Add Rule 22.2 – כתבי טענות (Court Pleadings)
+# Enhance Rule 23 – ספרים (Books) with Full Sub-Rules + Rule 1.9
 
 ## Overview
-Add a new source type `court_pleading` for citing court pleadings (כתבי טענות) per Rule 22.2. This is a specialized reference type that combines a pleading description with case-law-style case identifiers.
+The current `book` implementation is minimal — it has a basic template and 3 brief notes. The user provided the complete Rules 23.1–23.9 with detailed sub-rules for authors, titles, volumes, pinpoints, editions, editors, translators, and years, plus Rule 1.9 (comma separation). This plan enriches the existing implementation to cover all sub-rules accurately.
 
-## Formula (Rule 22.2)
-`[הפניה ספציפית] ל[כותרת כתב הטענות] ב[סוג ההליך] ([פרטי הערכאה]) [מספר התיק] [צד א'] [מפריד] [צד ב'] ([תאריך כתב הטענות])`
+## What's changing
 
-## Examples
-- `כתב ערעור בע"א 751/10 דיין נ' ר' (15.2.2010).`
-- `ס' 38 לטיעונים משלימים מטעם העותרים בבג"ץ 2974/06 ישראלי נ' הועדה להרחבת סל הבריאות (נבו 16.5.2006).`
+### 1. `src/data/citationEngine.ts` — Enrich `book` rule set
+Expand the `components` array and `notes` to cover all sub-rules:
 
-## Changes
+**Components to add/update:**
+- `author` (23.2.1–23.2.4): First+last name as in source. Multiple authors: 2 = "ו"ו", 3 = commas + "ו"ו", 4+ = optional "ואח'". No titles (23.2.3). Institutional author if no person (23.2.4).
+- `bookTitle` (23.3): Bold. No change needed.
+- `volume` (23.4): Always cite volume number as printed, no bold, no geresh after letter-volumes.
+- Pinpoint/`firstPage` (23.5): Multiple modes — page number without "בעמ'" (23.5.2), chapter/section with label (23.5.3), footnote/table with page+comma+label (23.5.4). No comma between title and pinpoint or between volume and pinpoint (unless Rule 1.9 applies).
+- `edition` (23.6): Only if 2+ editions exist. Cite as in source. Comma before next item only per Rule 1.9.
+- `editor` (23.7): Per 23.2 naming rules + "עורך/עורכת/עורכים/עורכות" or other title. Comma per 1.9.
+- `translator` (23.8): Per 23.2 naming rules + "מתרגם/מתרגמת/מתרגמים/מתרגמות". Comma per 1.9.
+- `year` (23.9): Hebrew-only → Hebrew. Gregorian-only → Gregorian. Both → Gregorian only. New edition → new edition year. Hebrew year starts with ה (no geresh).
 
+**Updated notes array** covering all sub-rules with examples.
+
+### 2. `supabase/functions/citation-chat/index.ts` — Enrich system prompt
+- Update the `"ספר"` entry in `CITATION_ENGINE_TEMPLATES` to add detailed `notes` covering 23.1–23.9.
+- Update the `ספרים (כלל 23)` formula line in the system prompt to include all sub-rules and examples.
+- Add Rule 1.9 as a general formatting rule referenced throughout.
+
+### 3. `src/data/citationEngine.ts` — Add Rule 1.9 to `GENERAL_RULES`
+Update the existing `"1.9"` entry with the full comma-separation rule: consecutive numbers or consecutive words without distinguishing formatting require a comma separator.
+
+### 4. `src/lib/citationValidation.ts` — Enhance book field extraction
+Add extraction for `editor` and `translator` fields (detect "עורך/עורכת" and "מתרגם/מתרגמת" patterns inside parentheses). Add extraction for `edition` (detect "מהדורה" pattern). Improve `volume` extraction (detect "כרך" keyword).
+
+## Key sub-rules to embed in system prompt
+
+- **23.2.1**: Name as printed, abbreviations with geresh/gershayim (not dots)
+- **23.2.2**: 2 authors = "ו", 3 = commas + "ו", 4+ = optionally first + "ואח'"
+- **23.2.3**: No academic/military/other titles
+- **23.2.4**: Institutional author (reports/committees) — cite institution name only
+- **23.3**: Book title in bold
+- **23.4**: Always cite volume number, as printed, not bold, no geresh after letter
+- **23.5.2**: Page number as printed, no "בעמ'" prefix
+- **23.5.3**: Chapter/section needs label; § allowed if consecutive numbering
+- **23.5.4**: Footnote/table → page, comma, item label + number
+- **23.6**: Edition only if 2+, as in source, comma per 1.9
+- **23.7**: Editor names per 23.2 + "עורך/ת/ים/ות", comma per 1.9
+- **23.8**: Translator names per 23.2 + "מתרגם/ת/ים/ות", no source language, comma per 1.9
+- **23.9**: Hebrew year only → Hebrew (with ה, no geresh). Gregorian only → Gregorian. Both → Gregorian. New edition → new edition year.
+- **1.9**: Comma separates consecutive numbers or consecutive words when no other visual separator exists
+
+## Files modified
 | File | Change |
 |------|--------|
-| `src/data/abbreviations.ts` | Add `'court_pleading'` to `SourceType`. Add to `REQUIRED_FIELDS`, `FIELD_LABELS`, `SOURCE_TYPE_LABELS`, `RULE_REFERENCES`. Add detection regex for pleading keywords. |
-| `src/data/citationEngine.ts` | Add `court_pleading` rule set with primaryRule `"22.2"`, template, examples, and components. |
-| `src/lib/citationValidation.ts` | Add `court_pleading` to `ENGINE_KEY_MAP` with field extraction patterns. |
-| `src/components/SourceTypeConfirmation.tsx` | Add `court_pleading` entry with label "כתב טענות" and icon "📋". |
-| `supabase/functions/citation-chat/index.ts` | Add `"כתב טענות"` to `CITATION_ENGINE_TEMPLATES` and system prompt with formula and examples. |
+| `src/data/citationEngine.ts` | Enrich `book` components + notes; update Rule 1.9 in `GENERAL_RULES` |
+| `src/lib/citationValidation.ts` | Add editor/translator/edition/volume extraction for `book` type |
+| `supabase/functions/citation-chat/index.ts` | Enrich `"ספר"` template notes + system prompt book section with all sub-rules, Rule 1.9, and examples |
 
-## Detection logic
-```typescript
-if (/כתב\s+(?:ערעור|תביעה|הגנה|טענות)|טיעונים\s+(?:משלימים|מטעם)|סיכומים\s+(?:מטעם|של)|בקשה\s+(?:מטעם|של)/.test(hebrewText)) return 'court_pleading';
-```
-Placed before case law checks in `detectSourceType`, since pleadings contain case-type abbreviations but should be classified differently.
-
-## Fields
-- `pleadingTitle` – required (e.g. "כתב ערעור", "טיעונים משלימים מטעם העותרים")
-- `caseType` – required (e.g. ע"א, בג"ץ)
-- `caseNumber` – required (e.g. 751/10)
-- `party1` – required
-- `party2` – required
-- `fullDate` – required (date of the pleading)
-- `specificReference` – optional (e.g. "ס' 38")
-- `court` – optional (court details in parentheses)
-- `database` – optional (e.g. "נבו")
-
-## Technical details
-
-### abbreviations.ts
-- Add `| 'court_pleading'` to `SourceType` union
-- `REQUIRED_FIELDS.court_pleading = ['pleadingTitle', 'caseType', 'caseNumber', 'party1', 'party2', 'fullDate']`
-- New `FIELD_LABELS`: `pleadingTitle: 'כותרת כתב הטענות'`, `specificReference: 'הפניה ספציפית'`
-- `SOURCE_TYPE_LABELS.court_pleading = 'כתב טענות'`
-- `RULE_REFERENCES.court_pleading = 'כלל 22.2 – כתבי טענות'`
-
-### citationEngine.ts
-- Template: `[הפניה ספציפית] ל[כותרת כתב הטענות] ב[סוג ההליך] ([פרטי הערכאה]) [מספר התיק] [צד א'] נ' [צד ב'] ([תאריך כתב הטענות]).`
-- Notes: specific reference (section/paragraph) is optional and prefixed; court details optional; database name before date when citing from a database
-
-### Edge function system prompt
-- Add full formula with both examples
-- Note that the pleading title should describe the document type and optionally whose it is ("מטעם העותרים")
+No new source types, no schema changes, no new fields in `abbreviations.ts` (editor/translator/edition/volume already exist as field labels).
 
