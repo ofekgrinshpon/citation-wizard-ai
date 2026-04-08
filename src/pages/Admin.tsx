@@ -52,6 +52,7 @@ const Admin = () => {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [legalDocs, setLegalDocs] = useState<{ id: string; title: string; source_type: string; citation: string; created_at: string }[]>([]);
   const [totalChunks, setTotalChunks] = useState(0);
+  const [qaStats, setQaStats] = useState<{ total: number; withLocal: number; perplexityOnly: number; avgLocalRatio: number }>({ total: 0, withLocal: 0, perplexityOnly: 0, avgLocalRatio: 0 });
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
@@ -67,12 +68,13 @@ const Admin = () => {
   const fetchData = async () => {
     setLoadingData(true);
 
-    const [citRes, usersRes, verifiedRes, docsRes, chunksRes] = await Promise.all([
+    const [citRes, usersRes, verifiedRes, docsRes, chunksRes, qaLogsRes] = await Promise.all([
       supabase.from("citation_history").select("*").order("created_at", { ascending: false }).limit(500),
       supabase.from("profiles").select("*").order("created_at", { ascending: false }),
       supabase.from("verified_sources").select("*").order("verified_at", { ascending: false }),
       supabase.from("legal_documents").select("id, title, source_type, citation, created_at").order("created_at", { ascending: false }).limit(50),
       supabase.from("legal_document_chunks").select("id", { count: "exact", head: true }),
+      supabase.from("qa_logs").select("*").order("created_at", { ascending: false }).limit(1000),
     ]);
 
     setCitations(citRes.data ?? []);
@@ -80,6 +82,17 @@ const Admin = () => {
     setVerifiedSources((verifiedRes.data ?? []) as unknown as VerifiedSourceRow[]);
     setLegalDocs(docsRes.data ?? []);
     setTotalChunks(chunksRes.count ?? 0);
+
+    // Compute QA provenance stats
+    const qaLogs = (qaLogsRes.data ?? []) as Array<{ local_footnotes_count: number; perplexity_footnotes_count: number; total_footnotes: number }>;
+    const totalQ = qaLogs.length;
+    const withLocal = qaLogs.filter(l => l.local_footnotes_count > 0).length;
+    const perplexityOnly = qaLogs.filter(l => l.local_footnotes_count === 0 && l.perplexity_footnotes_count > 0).length;
+    const avgLocalRatio = totalQ > 0
+      ? qaLogs.reduce((sum, l) => sum + (l.total_footnotes > 0 ? l.local_footnotes_count / l.total_footnotes : 0), 0) / totalQ * 100
+      : 0;
+    setQaStats({ total: totalQ, withLocal, perplexityOnly, avgLocalRatio: Math.round(avgLocalRatio) });
+
     setLoadingData(false);
   };
 
@@ -521,6 +534,30 @@ const Admin = () => {
             <p className="text-muted-foreground text-sm">
               הוסיפו מקורות משפטיים למאגר הידע המקומי. מקורות אלו ישמשו כמקור ראשוני בתשובות לשאלות משפטיות.
             </p>
+
+            {/* QA source provenance stats */}
+            <div className="bg-card border border-border rounded-xl p-5 shadow-sm space-y-3">
+              <h3 className="text-foreground font-bold text-sm">📊 מקורות תשובות (Local vs Perplexity)</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <StatCard icon="❓" label="סה״כ שאלות" value={qaStats.total} />
+                <StatCard icon="🟢" label="כוללות מקור מקומי" value={qaStats.withLocal} color="text-primary" />
+                <StatCard icon="🔴" label="Perplexity בלבד" value={qaStats.perplexityOnly} color="text-destructive" />
+                <StatCard icon="📈" label="% מקורות מקומיים (ממוצע)" value={qaStats.avgLocalRatio} color="text-primary" />
+              </div>
+              {qaStats.total > 0 && (
+                <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
+                  <div
+                    className="bg-primary h-full rounded-full transition-all"
+                    style={{ width: `${qaStats.total > 0 ? (qaStats.withLocal / qaStats.total) * 100 : 0}%` }}
+                  />
+                </div>
+              )}
+              {qaStats.total > 0 && (
+                <p className="text-xs text-muted-foreground text-center">
+                  {Math.round((qaStats.withLocal / qaStats.total) * 100)}% מהתשובות כוללות לפחות מקור מקומי אחד
+                </p>
+              )}
+            </div>
 
             {/* Knowledge base stats */}
             {(() => {

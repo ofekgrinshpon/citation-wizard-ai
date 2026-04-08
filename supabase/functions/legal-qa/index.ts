@@ -508,6 +508,21 @@ ${combinedContext}`;
       }
     }
 
+    // Log source provenance (non-fatal)
+    try {
+      const localCount = footnotes.filter((f) => f.source === "local").length;
+      const perplexityCount = footnotes.filter((f) => f.source === "perplexity").length;
+      await adminClient.from("qa_logs").insert({
+        user_id: user.id,
+        question: question.substring(0, 500),
+        local_footnotes_count: localCount,
+        perplexity_footnotes_count: perplexityCount,
+        total_footnotes: footnotes.length,
+      });
+    } catch (logErr) {
+      console.error("Failed to log QA stats (non-fatal):", logErr);
+    }
+
     return new Response(
       JSON.stringify({
         answer,

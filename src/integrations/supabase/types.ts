@@ -215,6 +215,36 @@ export type Database = {
         }
         Relationships: []
       }
+      qa_logs: {
+        Row: {
+          created_at: string
+          id: string
+          local_footnotes_count: number
+          perplexity_footnotes_count: number
+          question: string
+          total_footnotes: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          local_footnotes_count?: number
+          perplexity_footnotes_count?: number
+          question: string
+          total_footnotes?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          local_footnotes_count?: number
+          perplexity_footnotes_count?: number
+          question?: string
+          total_footnotes?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
