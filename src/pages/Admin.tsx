@@ -535,6 +535,30 @@ const Admin = () => {
               הוסיפו מקורות משפטיים למאגר הידע המקומי. מקורות אלו ישמשו כמקור ראשוני בתשובות לשאלות משפטיות.
             </p>
 
+            {/* QA source provenance stats */}
+            <div className="bg-card border border-border rounded-xl p-5 shadow-sm space-y-3">
+              <h3 className="text-foreground font-bold text-sm">📊 מקורות תשובות (Local vs Perplexity)</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <StatCard icon="❓" label="סה״כ שאלות" value={qaStats.total} />
+                <StatCard icon="🟢" label="כוללות מקור מקומי" value={qaStats.withLocal} color="text-primary" />
+                <StatCard icon="🔴" label="Perplexity בלבד" value={qaStats.perplexityOnly} color="text-destructive" />
+                <StatCard icon="📈" label="% מקורות מקומיים (ממוצע)" value={qaStats.avgLocalRatio} color="text-primary" />
+              </div>
+              {qaStats.total > 0 && (
+                <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
+                  <div
+                    className="bg-primary h-full rounded-full transition-all"
+                    style={{ width: `${qaStats.total > 0 ? (qaStats.withLocal / qaStats.total) * 100 : 0}%` }}
+                  />
+                </div>
+              )}
+              {qaStats.total > 0 && (
+                <p className="text-xs text-muted-foreground text-center">
+                  {Math.round((qaStats.withLocal / qaStats.total) * 100)}% מהתשובות כוללות לפחות מקור מקומי אחד
+                </p>
+              )}
+            </div>
+
             {/* Knowledge base stats */}
             {(() => {
               const SOURCE_TYPE_META: Record<string, { emoji: string; label: string }> = {
