@@ -304,13 +304,14 @@ serve(async (req) => {
         try {
           const docEmbedding = await getEmbedding(`${title}\n\n${content.slice(0, 3000)}`, LOVABLE_API_KEY);
           const chunks = chunkText(content);
+          const MAX_EMBEDDED_CHUNKS = 30;
           const chunkInserts = [];
 
           for (let i = 0; i < chunks.length; i++) {
             let chunkEmbedding: number[] | null = null;
-            if (docEmbedding) {
+            if (docEmbedding && i < MAX_EMBEDDED_CHUNKS) {
               chunkEmbedding = await getEmbedding(chunks[i], LOVABLE_API_KEY);
-              if (i < chunks.length - 1) await new Promise((r) => setTimeout(r, 300));
+              if (i < Math.min(chunks.length, MAX_EMBEDDED_CHUNKS) - 1) await new Promise((r) => setTimeout(r, 200));
             }
             chunkInserts.push({
               document_id: doc.id,

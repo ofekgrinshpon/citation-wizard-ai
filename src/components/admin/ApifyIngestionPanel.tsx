@@ -17,7 +17,7 @@ interface ApifyIngestionPanelProps {
   onIngested: () => void;
 }
 
-const BATCH_SIZE = 5;
+const BATCH_SIZE = 2;
 
 export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelProps) {
   const [jsonInput, setJsonInput] = useState("");
@@ -72,10 +72,13 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
         setProgressMsg(`מעבד אצווה ${batchNum}/${totalBatches} (${accumulated.inserted} הועלו, ${accumulated.skipped} דולגו, ${accumulated.failed.length} נכשלו)...`);
 
         try {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 120_000);
           const res = await fetch(
             `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/apify-ingest-cases`,
-            { method: "POST", headers, body: JSON.stringify(batch) }
+            { method: "POST", headers, body: JSON.stringify(batch), signal: controller.signal }
           );
+          clearTimeout(timeout);
 
           if (!res.ok) {
             const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
