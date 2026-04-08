@@ -113,6 +113,7 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
   // Multi-file state
   const [fileQueue, setFileQueue] = useState<QueuedFile[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isNotebook = sourceType === "notebook";
@@ -171,11 +172,9 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
     toast.success(`יובאו ${success} מקורות, ${failed} נכשלו`);
   };
 
-  const handleFilesSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
+  const processFiles = async (files: File[]) => {
     if (!files.length) return;
 
-    // Filter out CSV/TSV → switch to CSV mode
     const csvFiles = files.filter(f => /\.(csv|tsv)$/i.test(f.name));
     const docFiles = files.filter(f => !/\.(csv|tsv)$/i.test(f.name));
 
@@ -203,17 +202,37 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
     setFileQueue(prev => [...prev, ...newItems]);
     if (fileInputRef.current) fileInputRef.current.value = "";
 
-    // Extract text from all new files
     for (const item of newItems) {
       updateQueueItem(item.id, { status: "extracting" });
       try {
         const text = await extractText(item.file);
-        // Use functional update to avoid stale state
         setFileQueue(prev => prev.map(f => f.id === item.id ? { ...f, content: text, status: "ready" } : f));
       } catch (err: any) {
         setFileQueue(prev => prev.map(f => f.id === item.id ? { ...f, status: "error", error: err.message } : f));
       }
     }
+  };
+
+  const handleFilesSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    await processFiles(Array.from(e.target.files || []));
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    const files = Array.from(e.dataTransfer.files);
+    if (mode !== "file") setMode("file");
+    await processFiles(files);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
   };
 
   const removeFromQueue = (id: string) => {
@@ -347,19 +366,28 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
       )}
 
       {mode === "file" && (
-        <div className="bg-card border border-border rounded-xl p-5 space-y-4">
+        <div
+          className="bg-card border border-border rounded-xl p-5 space-y-4"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+        >
           <h3 className="text-foreground font-bold text-sm">📤 העלאת קבצים</h3>
-          <p className="text-muted-foreground text-xs">העלו קבצי TXT, PDF או DOCX. ניתן לבחור מספר קבצים בו-זמנית.</p>
+          <p className="text-muted-foreground text-xs">העלו קבצי TXT, PDF, DOC או DOCX. ניתן לבחור או לגרור קבצים.</p>
 
           <input ref={fileInputRef} type="file" accept=".txt,.pdf,.doc,.docx,.csv,.tsv" multiple onChange={handleFilesSelect} className="hidden" />
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="w-full border-2 border-dashed border-border rounded-xl p-6 flex flex-col items-center gap-2 hover:border-primary/50 transition-colors text-muted-foreground hover:text-foreground"
+            className={`w-full border-2 border-dashed rounded-xl p-6 flex flex-col items-center gap-2 transition-colors ${
+              dragging
+                ? "border-primary bg-primary/10 text-foreground"
+                : "border-border hover:border-primary/50 text-muted-foreground hover:text-foreground"
+            }`}
           >
             <Upload className="w-8 h-8" />
-            <span className="text-sm font-medium">לחצו לבחירת קבצים</span>
-            <span className="text-xs">.txt, .pdf, .doc, .docx (ניתן לבחור מספר קבצים)</span>
+            <span className="text-sm font-medium">{dragging ? "שחררו כאן" : "לחצו או גררו קבצים לכאן"}</span>
+            <span className="text-xs">.txt, .pdf, .doc, .docx</span>
           </button>
 
           {fileQueue.length > 0 && (
