@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.search-legal-sources]
 verify_jwt = false
+
+[functions.convert-doc]
+verify_jwt = false
