@@ -66,6 +66,14 @@ async function extractTextFromDocx(file: File): Promise<string> {
   return result.value;
 }
 
+async function extractTextFromDoc(file: File): Promise<string> {
+  const WordExtractor = (await import("word-extractor")).default;
+  const extractor = new WordExtractor();
+  const arrayBuffer = await file.arrayBuffer();
+  const doc = await extractor.extract(arrayBuffer);
+  return doc.getBody();
+}
+
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -76,7 +84,8 @@ async function extractText(file: File): Promise<string> {
   const ext = file.name.split(".").pop()?.toLowerCase();
   if (ext === "txt") return file.text();
   if (ext === "pdf") return extractTextFromPdf(file);
-  if (ext === "doc" || ext === "docx") return extractTextFromDocx(file);
+  if (ext === "docx") return extractTextFromDocx(file);
+  if (ext === "doc") return extractTextFromDoc(file);
   throw new Error(`סוג קובץ לא נתמך: .${ext}`);
 }
 
