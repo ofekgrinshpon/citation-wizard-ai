@@ -1,41 +1,22 @@
 
 
-## Problem
+## Fix: Reduce batch size and cap chunk embeddings to prevent timeouts
 
-The `apify-ingest-cases` edge function processes 97 documents sequentially, generating embeddings for each document and every chunk. This takes ~18 minutes total, but edge functions timeout after ~150 seconds. The client gets "failed to fetch" because the function is killed mid-execution.
-
-## Solution: Batch Processing
-
-Split the 97 items into small batches (5 documents per call) and process them sequentially from the frontend, showing progress as each batch completes.
+### Problem
+The edge function logs confirm that with `BATCH_SIZE = 5`, some batches still exceed the ~150s timeout — large documents generate 200+ chunks, each requiring an embedding API call with 300ms delays. One large document alone can take 60+ seconds.
 
 ### Changes
 
-**1. Update `apify-ingest-cases` edge function**
-- Add a `batchSize` and `offset` parameter so the frontend can request a slice of the array
-- Alternatively (simpler): the frontend sends only 5 items at a time instead of all 97
+**1. `src/components/admin/ApifyIngestionPanel.tsx`**
+- Reduce `BATCH_SIZE` from 5 to 2
+- Add `AbortController` with 120s timeout per batch fetch call to prevent indefinite hangs
+- On timeout, mark the batch as failed and continue to the next
 
-**2. Update `ApifyIngestionPanel.tsx`**
-- After fetching all 97 items from Apify, split them into batches of 5
-- Call `apify-ingest-cases` for each batch sequentially
-- Show real-time progress: "Processing batch 3/20... (12 inserted, 2 skipped, 1 failed)"
-- Accumulate results across all batches
-- If one batch fails, continue with the next (resilient processing)
+**2. `supabase/functions/apify-ingest-cases/index.ts`**
+- Cap chunk embedding generation at 30 chunks per document (store ALL chunks for text search, but only embed the first 30)
+- This limits embedding time to ~10 seconds per document maximum
+- Reduce inter-chunk delay from 300ms to 200ms
 
-### Technical Details
-
-Frontend batching approach (no edge function changes needed):
-```text
-items = [97 items from Apify]
-batches = split into groups of 5
-for each batch:
-  POST /apify-ingest-cases with batch (5 items)
-  accumulate inserted/skipped/failed counts
-  update progress UI
-show final totals
-```
-
-Each batch of 5 documents should complete in ~50 seconds (well within the timeout).
-
-### Files Modified
-- `src/components/admin/ApifyIngestionPanel.tsx` — add batch loop with progress tracking
+### Expected outcome
+Each batch (2 docs, max 30 embeddings each) should complete in ~30-40 seconds, well within the 150s limit.
 
