@@ -1,56 +1,45 @@
 
 
-# Add Partial-Failure Handling to Ingestion Pipeline
+# Auto-Fetch Apify Dataset into the App
 
-## Problem
-If a document is inserted into `legal_documents` but embedding/chunking fails, it's currently lost — no way to identify or retry it.
+## How it works
+A new edge function will call the Apify API to fetch your Actor's latest dataset results, then pass them directly to the existing `apify-ingest-cases` ingestion pipeline. In the admin panel, you'll get a single "Fetch from Apify" button instead of copy-pasting JSON.
 
 ## Changes
 
-### 1. Database Migration
-Add an `ingestion_status` column to `legal_documents`:
-- `ingestion_status text NOT NULL DEFAULT 'pending'` — values: `pending`, `complete`, `partial_failure`
-- `ingestion_error text` — stores the error message on failure
+### 1. Store Apify API Token as a secret
+You'll need your Apify API token (found at https://console.apify.com/account/integrations -> API tokens). We'll store it securely as a backend secret called `APIFY_API_TOKEN`.
 
-### 2. Edge Function: `apify-ingest-cases` (new)
-For each case record:
-1. Insert into `legal_documents` with `ingestion_status = 'pending'`
-2. Attempt chunking + embedding
-3. On success → update to `complete`
-4. On failure → update to `partial_failure` with error message in `ingestion_error`
-5. Continue to next record (never abort the batch)
+### 2. New Edge Function: `fetch-apify-dataset`
+- Accepts `{ actorId?: string, datasetId?: string }` in the request body
+- Calls the Apify API: `GET https://api.apify.com/v2/acts/{actorId}/runs/last/dataset/items?token=...`
+- Returns the JSON array of scraped items
+- Admin-only auth gate (same pattern as existing functions)
 
-Return summary: `{ inserted, skipped, failed: [{ title, error }] }`
+### 3. Update `ApifyIngestionPanel.tsx`
+- Add a "Fetch from Apify" button above the manual JSON textarea
+- On click: calls `fetch-apify-dataset` to get the data, then sends it to `apify-ingest-cases` for ingestion
+- Shows a progress indicator and result summary
+- The manual paste option remains as a fallback
 
-### 3. Edge Function: `retry-failed-ingestion` (new)
-- Queries `legal_documents WHERE ingestion_status = 'partial_failure'`
-- Re-attempts chunking + embedding for each
-- Updates status accordingly
-- Admin-only auth gate
+### 4. No database changes needed
+The existing `legal_documents` table and ingestion pipeline handle everything already.
 
-### 4. Admin UI
-- Show a "Failed Ingestions" count badge on the admin panel
-- Add a "Retry Failed" button that calls `retry-failed-ingestion`
-- Display list of failed documents with their error messages
+## Technical details
 
-### 5. Updated Apify Actor Code
-Provide final `src/main.js` with corrected Hebrew labels, תקציר filter, and dual file extraction — unchanged from previous plan.
-
-## Database Migration SQL
-```sql
-ALTER TABLE public.legal_documents
-  ADD COLUMN IF NOT EXISTS court text,
-  ADD COLUMN IF NOT EXISTS decision_date text,
-  ADD COLUMN IF NOT EXISTS case_number text,
-  ADD COLUMN IF NOT EXISTS judges text,
-  ADD COLUMN IF NOT EXISTS procedure_type text,
-  ADD COLUMN IF NOT EXISTS district text,
-  ADD COLUMN IF NOT EXISTS docx_url text,
-  ADD COLUMN IF NOT EXISTS pdf_url text,
-  ADD COLUMN IF NOT EXISTS scraped_at timestamptz,
-  ADD COLUMN IF NOT EXISTS ingestion_status text NOT NULL DEFAULT 'complete',
-  ADD COLUMN IF NOT EXISTS ingestion_error text;
+**Apify API endpoint:**
+```
+GET https://api.apify.com/v2/acts/{actorId}/runs/last/dataset/items
+?token={APIFY_API_TOKEN}
+&format=json
 ```
 
-Note: default is `'complete'` so existing records are unaffected.
+**Edge function flow:**
+```text
+Admin clicks "Fetch"
+  -> fetch-apify-dataset (gets items from Apify API)
+  -> returns JSON array to client
+  -> client sends array to apify-ingest-cases (existing)
+  -> documents ingested with chunking + embeddings
+```
 
