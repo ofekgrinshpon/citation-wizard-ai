@@ -222,7 +222,7 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
         {progressMsg && (
           <div className="space-y-2">
             <p className="text-xs text-muted-foreground">{progressMsg}</p>
-            <Progress value={undefined} className="h-2" />
+            <Progress value={batchProgress ? (batchProgress.current / batchProgress.total) * 100 : undefined} className="h-2" />
           </div>
         )}
       </div>
