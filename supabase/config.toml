@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.retry-failed-ingestion]
 verify_jwt = false
+
+[functions.fetch-apify-dataset]
+verify_jwt = false
