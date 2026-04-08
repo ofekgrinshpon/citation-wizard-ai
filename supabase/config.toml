@@ -17,3 +17,9 @@ verify_jwt = false
 
 [functions.convert-doc]
 verify_jwt = false
+
+[functions.apify-ingest-cases]
+verify_jwt = false
+
+[functions.retry-failed-ingestion]
+verify_jwt = false
