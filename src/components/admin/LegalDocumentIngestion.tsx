@@ -113,6 +113,7 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
   // Multi-file state
   const [fileQueue, setFileQueue] = useState<QueuedFile[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isNotebook = sourceType === "notebook";
