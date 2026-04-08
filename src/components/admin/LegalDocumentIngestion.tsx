@@ -67,6 +67,11 @@ async function extractTextFromDocx(file: File): Promise<string> {
 }
 
 async function extractTextFromDoc(file: File): Promise<string> {
+  // word-extractor requires Node.js Buffer in the browser
+  const { Buffer } = await import("buffer");
+  if (typeof globalThis.Buffer === "undefined") {
+    (globalThis as any).Buffer = Buffer;
+  }
   const WordExtractor = (await import("word-extractor")).default;
   const extractor = new WordExtractor();
   const arrayBuffer = await file.arrayBuffer();
