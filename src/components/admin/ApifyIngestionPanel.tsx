@@ -41,10 +41,14 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
   }, []);
 
   const getAuthHeaders = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    // Use refreshSession to guarantee a fresh, valid token
+    const { data: { session }, error } = await supabase.auth.refreshSession();
+    if (error || !session) {
+      throw new Error("לא מחובר – יש להתחבר מחדש");
+    }
     return {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session?.access_token}`,
+      Authorization: `Bearer ${session.access_token}`,
       apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
     };
   };
