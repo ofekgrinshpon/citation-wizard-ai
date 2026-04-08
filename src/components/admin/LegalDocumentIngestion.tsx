@@ -72,12 +72,36 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+async function convertDocToDocx(file: File): Promise<File> {
+  const formData = new FormData();
+  formData.append("file", file, file.name);
+
+  const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+  const res = await fetch(
+    `https://${projectId}.supabase.co/functions/v1/convert-doc`,
+    { method: "POST", body: formData }
+  );
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: "המרה נכשלה" }));
+    throw new Error(err.error || "המרת .doc ל-.docx נכשלה");
+  }
+
+  const blob = await res.blob();
+  return new File([blob], file.name.replace(/\.doc$/i, ".docx"), {
+    type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  });
+}
+
 async function extractText(file: File): Promise<string> {
   const ext = file.name.split(".").pop()?.toLowerCase();
   if (ext === "txt") return file.text();
   if (ext === "pdf") return extractTextFromPdf(file);
   if (ext === "docx") return extractTextFromDocx(file);
-  if (ext === "doc") throw new Error("פורמט .doc ישן אינו נתמך בדפדפן. אנא שמרו את הקובץ כ-.docx ונסו שוב.");
+  if (ext === "doc") {
+    const docxFile = await convertDocToDocx(file);
+    return extractTextFromDocx(docxFile);
+  }
   throw new Error(`סוג קובץ לא נתמך: .${ext}`);
 }
 
