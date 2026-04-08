@@ -47,7 +47,7 @@ interface QueuedFile {
 
 async function extractTextFromPdf(file: File): Promise<string> {
   const pdfjsLib = await import("pdfjs-dist");
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.8.69/pdf.worker.min.mjs`;
   const arrayBuffer = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
   const pages: string[] = [];
@@ -217,8 +217,13 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
 
     setUploading(true);
     let success = 0, failed = 0;
+    const CONCURRENCY = 3;
+    let nextIndex = 0;
 
-    for (const item of ready) {
+    const processNext = async (): Promise<void> => {
+      if (nextIndex >= ready.length) return;
+      const item = ready[nextIndex++];
+
       updateQueueItem(item.id, { status: "uploading" });
       const isNb = item.sourceType === "notebook";
       const finalCitation = item.citation || (isNb ? `מחברת לימודים: ${item.title}` : "");
@@ -226,7 +231,8 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
       if (!item.title || !item.content || (!finalCitation && !isNb)) {
         updateQueueItem(item.id, { status: "error", error: "חסרים שדות חובה" });
         failed++;
-        continue;
+        await processNext();
+        return;
       }
 
       try {
@@ -244,8 +250,11 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
         updateQueueItem(item.id, { status: "error", error: err.message });
         failed++;
       }
-      await new Promise(r => setTimeout(r, 500));
-    }
+      await processNext();
+    };
+
+    const workers = Array.from({ length: Math.min(CONCURRENCY, ready.length) }, () => processNext());
+    await Promise.all(workers);
 
     setUploading(false);
     if (success > 0) onIngested();
