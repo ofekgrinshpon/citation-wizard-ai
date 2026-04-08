@@ -74,7 +74,9 @@ serve(async (req) => {
     if (datasetId) {
       apiUrl = `https://api.apify.com/v2/datasets/${datasetId}/items?token=${APIFY_API_TOKEN}&format=json`;
     } else {
-      apiUrl = `https://api.apify.com/v2/acts/${actorId}/runs/last/dataset/items?token=${APIFY_API_TOKEN}&format=json`;
+      // Apify API requires tilde (~) between username and actor name, not slash
+      const normalizedActorId = actorId.replace("/", "~");
+      apiUrl = `https://api.apify.com/v2/acts/${normalizedActorId}/runs/last/dataset/items?token=${APIFY_API_TOKEN}&format=json`;
     }
 
     console.log(`Fetching from Apify: ${apiUrl.replace(APIFY_API_TOKEN, "***")}`);
