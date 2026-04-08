@@ -193,20 +193,26 @@ serve(async (req) => {
       }
 
       try {
-        let content: string | null = null;
-        if (caseItem.docx_url) {
-          console.log(`Extracting DOCX for: ${title}`);
+        // Prefer pre-extracted text from Apify actor (page_text field)
+        let content: string | null = caseItem.page_text || null;
+        if (content) {
+          console.log(`Using page_text for: ${title} (${content.length} chars)`);
+        }
+
+        // Fallback: try DOCX download (may fail due to gov.il blocking)
+        if (!content && caseItem.docx_url) {
+          console.log(`Attempting DOCX fallback for: ${title}`);
           content = await extractTextFromDocxUrl(caseItem.docx_url);
           if (content) {
             console.log(`DOCX extracted: ${content.length} chars`);
           } else {
-            console.log(`DOCX extraction returned null for: ${title}`);
+            console.log(`DOCX extraction failed for: ${title}`);
           }
         }
 
-        // Fallback to any inline text
+        // Last resort: inline content
         if (!content) {
-          content = caseItem.page_text || caseItem.content || "";
+          content = caseItem.content || "";
         }
 
         // If still no content, store metadata as partial_failure
