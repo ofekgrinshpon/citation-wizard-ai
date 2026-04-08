@@ -172,11 +172,9 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
     toast.success(`יובאו ${success} מקורות, ${failed} נכשלו`);
   };
 
-  const handleFilesSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
+  const processFiles = async (files: File[]) => {
     if (!files.length) return;
 
-    // Filter out CSV/TSV → switch to CSV mode
     const csvFiles = files.filter(f => /\.(csv|tsv)$/i.test(f.name));
     const docFiles = files.filter(f => !/\.(csv|tsv)$/i.test(f.name));
 
@@ -204,17 +202,37 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
     setFileQueue(prev => [...prev, ...newItems]);
     if (fileInputRef.current) fileInputRef.current.value = "";
 
-    // Extract text from all new files
     for (const item of newItems) {
       updateQueueItem(item.id, { status: "extracting" });
       try {
         const text = await extractText(item.file);
-        // Use functional update to avoid stale state
         setFileQueue(prev => prev.map(f => f.id === item.id ? { ...f, content: text, status: "ready" } : f));
       } catch (err: any) {
         setFileQueue(prev => prev.map(f => f.id === item.id ? { ...f, status: "error", error: err.message } : f));
       }
     }
+  };
+
+  const handleFilesSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    await processFiles(Array.from(e.target.files || []));
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    const files = Array.from(e.dataTransfer.files);
+    if (mode !== "file") setMode("file");
+    await processFiles(files);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
   };
 
   const removeFromQueue = (id: string) => {
