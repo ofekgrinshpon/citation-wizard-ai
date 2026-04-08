@@ -56,7 +56,13 @@ async function getEmbedding(text: string, apiKey: string): Promise<number[] | nu
 
 async function extractTextFromDocxUrl(url: string): Promise<string | null> {
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+        "Accept": "*/*",
+        "Accept-Language": "he-IL,he;q=0.9,en-US;q=0.8,en;q=0.7",
+      },
+    });
     if (!res.ok) {
       console.error(`DOCX fetch failed: ${res.status} for ${url}`);
       return null;
