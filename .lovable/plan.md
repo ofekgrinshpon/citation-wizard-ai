@@ -1,30 +1,29 @@
 
 
-# Add Knowledge Base Document Summary to Admin Panel
+# Add Multi-File Upload to Knowledge Base Ingestion
 
-## Overview
-Add a summary panel in the Admin "Knowledge Base" tab showing how many documents have been ingested, broken down by source type, with a list of recent documents.
+## Current State
+The file upload mode already supports PDF (via pdfjs-dist), DOCX (via mammoth), and TXT extraction — but only one file at a time.
 
 ## Changes
 
-### 1. `src/pages/Admin.tsx`
-- Fetch `legal_documents` data alongside existing queries in `fetchData()` (count by source_type, recent entries)
-- Store in new state: `legalDocs`
-- Pass to `LegalDocumentIngestion` or render summary cards directly in the knowledge tab above the ingestion component
+### `src/components/admin/LegalDocumentIngestion.tsx`
+- Change `<input type="file">` to accept `multiple`
+- Replace single `selectedFile` state with a `fileQueue: Array<{file, title, content, status, sourceType, citation, year}>` state
+- On file selection, extract text from all files in parallel (with a progress indicator per file)
+- Show a list/table of queued files with: filename, size, extraction status, source type selector, title (editable, pre-filled from filename), citation field
+- Add a "📤 העלה הכל" (Upload All) button that processes each file sequentially through `embed-legal-source`
+- Show per-file progress: pending → extracting → ready → uploading → done/error
+- Keep the drag-and-drop zone (update label to "בחרו קבצים" plural)
+- Allow removing individual files from the queue before upload
 
-### 2. Knowledge tab section (in `Admin.tsx`, the `activeTab === "knowledge"` block)
-Add before the `LegalDocumentIngestion` component:
-- **Summary stats row**: StatCard grid showing total documents, total chunks, and count per source type (legislation, caselaw, book, article, notebook, international)
-- **Recent documents list**: A table/list of the last ~20 ingested documents showing: title, source type (with emoji), citation (truncated), chunk count, and date added
-- Each row is read-only (no edit/delete needed here, that's managed elsewhere)
+### UX Flow
+1. User selects multiple files (or drops them)
+2. Text is extracted from each file client-side (PDF/DOCX/TXT)
+3. User reviews the list, adjusts source types/titles/citations per file
+4. User clicks "Upload All" → sequential processing with progress
+5. Summary toast: "X succeeded, Y failed"
 
-### 3. Data fetching
-Add to the existing `fetchData()` parallel queries:
-- `supabase.from("legal_documents").select("id, title, source_type, citation, created_at").order("created_at", { ascending: false }).limit(50)`
-- `supabase.from("legal_document_chunks").select("id", { count: "exact", head: true })` for total chunk count
-
-### 4. Display format
-- StatCards: 📚 Total Documents | 🧩 Total Chunks | per-type breakdown
-- Document list: simple table with columns: סוג | כותרת | אזכור | תאריך הוספה
-- Source type displayed with matching emoji from SOURCE_TYPES
+### No backend changes needed
+The existing `embed-legal-source` edge function handles one document at a time; the client will call it in a loop.
 
