@@ -17,6 +17,8 @@ interface ApifyIngestionPanelProps {
   onIngested: () => void;
 }
 
+const BATCH_SIZE = 5;
+
 export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelProps) {
   const [jsonInput, setJsonInput] = useState("");
   const [ingesting, setIngesting] = useState(false);
@@ -25,6 +27,7 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
   const [failedDocs, setFailedDocs] = useState<FailedDoc[]>([]);
   const [actorId, setActorId] = useState(""); 
   const [progressMsg, setProgressMsg] = useState("");
+  const [batchProgress, setBatchProgress] = useState<{ current: number; total: number } | null>(null);
   const [results, setResults] = useState<{ inserted: number; skipped: number; failed: Array<{ title: string; error: string }> } | null>(null);
 
   const fetchFailed = async () => {
@@ -41,7 +44,6 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
   }, []);
 
   const getAuthHeaders = async () => {
-    // Use refreshSession to guarantee a fresh, valid token
     const { data: { session }, error } = await supabase.auth.refreshSession();
     if (error || !session) {
       throw new Error("לא מחובר – יש להתחבר מחדש");
@@ -56,23 +58,46 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
   const ingestCases = async (cases: unknown[]) => {
     setIngesting(true);
     setResults(null);
-    setProgressMsg(`מעבד ${cases.length} רשומות...`);
+
+    const totalBatches = Math.ceil(cases.length / BATCH_SIZE);
+    const accumulated = { inserted: 0, skipped: 0, failed: [] as Array<{ title: string; error: string }> };
 
     try {
       const headers = await getAuthHeaders();
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/apify-ingest-cases`,
-        { method: "POST", headers, body: JSON.stringify(cases) }
-      );
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Ingestion failed");
+      for (let i = 0; i < cases.length; i += BATCH_SIZE) {
+        const batch = cases.slice(i, i + BATCH_SIZE);
+        const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+        setBatchProgress({ current: batchNum, total: totalBatches });
+        setProgressMsg(`מעבד אצווה ${batchNum}/${totalBatches} (${accumulated.inserted} הועלו, ${accumulated.skipped} דולגו, ${accumulated.failed.length} נכשלו)...`);
+
+        try {
+          const res = await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/apify-ingest-cases`,
+            { method: "POST", headers, body: JSON.stringify(batch) }
+          );
+
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+            throw new Error(err.error || `Batch ${batchNum} failed`);
+          }
+
+          const data = await res.json();
+          accumulated.inserted += data.inserted || 0;
+          accumulated.skipped += data.skipped || 0;
+          if (data.failed?.length) accumulated.failed.push(...data.failed);
+        } catch (batchErr) {
+          const errMsg = batchErr instanceof Error ? batchErr.message : "שגיאה";
+          accumulated.failed.push(...batch.map((_, idx) => ({
+            title: `אצווה ${batchNum} פריט ${idx + 1}`,
+            error: errMsg,
+          })));
+          console.error(`Batch ${batchNum} failed:`, errMsg);
+        }
       }
 
-      const data = await res.json();
-      setResults(data);
-      toast.success(`הועלו ${data.inserted} מסמכים, דולגו ${data.skipped}, נכשלו ${data.failed?.length || 0}`);
+      setResults(accumulated);
+      toast.success(`הועלו ${accumulated.inserted} מסמכים, דולגו ${accumulated.skipped}, נכשלו ${accumulated.failed.length}`);
       fetchFailed();
       onIngested();
     } catch (err) {
@@ -80,6 +105,7 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
     } finally {
       setIngesting(false);
       setProgressMsg("");
+      setBatchProgress(null);
     }
   };
 
