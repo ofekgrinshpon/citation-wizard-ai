@@ -1,31 +1,24 @@
 
 
-# Fix: Add Browser-Like Headers to DOCX Download
+# Plan: Move DOCX Text Extraction to Apify Actor + Update Edge Function
 
-## Problem
-The edge function fetches DOCX files from `gov.il` with a bare `fetch()` call — no `User-Agent` header. The server returns 403 because it detects a non-browser request. The files are perfectly accessible from a real browser.
-
-## Solution
-Add a `User-Agent` header (and optionally `Accept`) to the fetch request in `extractTextFromDocxUrl` to mimic a browser request.
+## Summary
+The DOCX extraction code works — the download is what fails. Move the download step to the Apify actor (real browser), send extracted text as `page_text` in the dataset, and update the edge function to use it.
 
 ## Changes
 
-### 1. Update `extractTextFromDocxUrl` in `supabase/functions/apify-ingest-cases/index.ts`
-- Add browser-like headers to the `fetch` call:
-  ```
-  fetch(url, {
-    headers: {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ...",
-      "Accept": "*/*",
-    }
-  })
-  ```
+### 1. Update `apify-ingest-cases` edge function
+- Check for `page_text` field first before attempting any DOCX download
+- Use `page_text` as the document content when available
+- Keep DOCX fetch as a fallback (unlikely to work, but harmless)
 
-### 2. Clean up existing failed records before re-ingestion
-- Delete the 97 `partial_failure` caselaw records from `legal_documents` so they can be re-ingested cleanly (via migration or manual cleanup)
-- Alternatively, add duplicate detection by `case_number` to skip already-existing records
+### 2. Provide Apify actor code snippet (for you to paste into your actor on apify.com)
+Node.js code to add inside your actor's `requestHandler`:
+- Download DOCX using Playwright's browser context (`page.context().request.get(docxUrl)`)
+- Unzip with `adm-zip` (add to actor's `package.json`)
+- Parse `word/document.xml`, extract text from `<w:t>` tags
+- Save as `page_text` field in the dataset item
 
-### 3. Re-deploy and test
-- Deploy the updated function
-- Run the Apify fetch+ingest flow again to verify DOCX files download successfully
+### 3. Delete existing partial_failure records
+- SQL migration to clean up the 97 failed caselaw records so they can be re-ingested with full text
 
