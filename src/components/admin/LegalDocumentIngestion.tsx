@@ -76,7 +76,7 @@ async function extractText(file: File): Promise<string> {
   const ext = file.name.split(".").pop()?.toLowerCase();
   if (ext === "txt") return file.text();
   if (ext === "pdf") return extractTextFromPdf(file);
-  if (ext === "docx") return extractTextFromDocx(file);
+  if (ext === "doc" || ext === "docx") return extractTextFromDocx(file);
   throw new Error(`סוג קובץ לא נתמך: .${ext}`);
 }
 
@@ -342,7 +342,7 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
           <h3 className="text-foreground font-bold text-sm">📤 העלאת קבצים</h3>
           <p className="text-muted-foreground text-xs">העלו קבצי TXT, PDF או DOCX. ניתן לבחור מספר קבצים בו-זמנית.</p>
 
-          <input ref={fileInputRef} type="file" accept=".txt,.pdf,.docx,.csv,.tsv" multiple onChange={handleFilesSelect} className="hidden" />
+          <input ref={fileInputRef} type="file" accept=".txt,.pdf,.doc,.docx,.csv,.tsv" multiple onChange={handleFilesSelect} className="hidden" />
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
@@ -350,7 +350,7 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
           >
             <Upload className="w-8 h-8" />
             <span className="text-sm font-medium">לחצו לבחירת קבצים</span>
-            <span className="text-xs">.txt, .pdf, .docx (ניתן לבחור מספר קבצים)</span>
+            <span className="text-xs">.txt, .pdf, .doc, .docx (ניתן לבחור מספר קבצים)</span>
           </button>
 
           {fileQueue.length > 0 && (
