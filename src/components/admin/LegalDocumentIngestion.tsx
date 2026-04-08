@@ -85,7 +85,7 @@ const STATUS_ICON: Record<FileStatus, React.ReactNode> = {
   extracting: <Loader2 className="w-4 h-4 text-primary animate-spin" />,
   ready: <FileText className="w-4 h-4 text-primary" />,
   uploading: <Loader2 className="w-4 h-4 text-primary animate-spin" />,
-  done: <Check className="w-4 h-4 text-green-500" />,
+  done: <Check className="w-4 h-4 text-primary" />,
   error: <AlertCircle className="w-4 h-4 text-destructive" />,
 };
 
@@ -348,7 +348,7 @@ export default function LegalDocumentIngestion({ onIngested }: LegalDocumentInge
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-foreground">{fileQueue.length} קבצים בתור</span>
-                {doneCount > 0 && <span className="text-xs text-green-500">{doneCount} הושלמו</span>}
+                {doneCount > 0 && <span className="text-xs text-primary">{doneCount} הושלמו</span>}
               </div>
 
               <div className="space-y-2 max-h-[500px] overflow-y-auto">
