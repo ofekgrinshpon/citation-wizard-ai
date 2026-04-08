@@ -127,36 +127,69 @@ export type Database = {
       }
       legal_documents: {
         Row: {
+          case_number: string | null
           citation: string
           content: string
+          court: string | null
           created_at: string
+          decision_date: string | null
+          district: string | null
+          docx_url: string | null
           embedding: string | null
           id: string
+          ingestion_error: string | null
+          ingestion_status: string
+          judges: string | null
           metadata: Json | null
+          pdf_url: string | null
+          procedure_type: string | null
+          scraped_at: string | null
           source_type: string
           source_url: string | null
           title: string
           updated_at: string
         }
         Insert: {
+          case_number?: string | null
           citation: string
           content: string
+          court?: string | null
           created_at?: string
+          decision_date?: string | null
+          district?: string | null
+          docx_url?: string | null
           embedding?: string | null
           id?: string
+          ingestion_error?: string | null
+          ingestion_status?: string
+          judges?: string | null
           metadata?: Json | null
+          pdf_url?: string | null
+          procedure_type?: string | null
+          scraped_at?: string | null
           source_type: string
           source_url?: string | null
           title: string
           updated_at?: string
         }
         Update: {
+          case_number?: string | null
           citation?: string
           content?: string
+          court?: string | null
           created_at?: string
+          decision_date?: string | null
+          district?: string | null
+          docx_url?: string | null
           embedding?: string | null
           id?: string
+          ingestion_error?: string | null
+          ingestion_status?: string
+          judges?: string | null
           metadata?: Json | null
+          pdf_url?: string | null
+          procedure_type?: string | null
+          scraped_at?: string | null
           source_type?: string
           source_url?: string | null
           title?: string
