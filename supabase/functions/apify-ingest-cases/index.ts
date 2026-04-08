@@ -178,8 +178,21 @@ serve(async (req) => {
         continue;
       }
 
+      // Skip duplicates by case_number
+      if (caseItem.case_number) {
+        const { data: existing } = await adminClient
+          .from("legal_documents")
+          .select("id")
+          .eq("case_number", caseItem.case_number)
+          .maybeSingle();
+        if (existing) {
+          results.skipped++;
+          console.log(`Skipped duplicate: ${title} (${caseItem.case_number})`);
+          continue;
+        }
+      }
+
       try {
-        // Extract text from docx URL
         let content: string | null = null;
         if (caseItem.docx_url) {
           console.log(`Extracting DOCX for: ${title}`);
