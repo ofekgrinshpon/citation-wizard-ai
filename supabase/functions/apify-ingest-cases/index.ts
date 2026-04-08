@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { unzipSync } from "https://esm.sh/fflate@0.8.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -56,27 +57,38 @@ async function getEmbedding(text: string, apiKey: string): Promise<number[] | nu
 async function extractTextFromDocxUrl(url: string): Promise<string | null> {
   try {
     const res = await fetch(url);
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error(`DOCX fetch failed: ${res.status} for ${url}`);
+      return null;
+    }
     const buffer = await res.arrayBuffer();
-    // Use mammoth via esm.sh
-    const mammoth = await import("https://esm.sh/mammoth@1.12.0");
-    const result = await mammoth.extractRawText({ arrayBuffer: buffer });
-    return result.value || null;
+    const unzipped = unzipSync(new Uint8Array(buffer));
+
+    // Find word/document.xml
+    const docXmlBytes = unzipped["word/document.xml"];
+    if (!docXmlBytes) {
+      console.error("No word/document.xml found in DOCX");
+      return null;
+    }
+
+    const xmlContent = new TextDecoder().decode(docXmlBytes);
+
+    // Extract text from <w:t> tags (Word paragraph text nodes)
+    const textParts: string[] = [];
+    const tagRegex = /<w:t[^>]*>([\s\S]*?)<\/w:t>/g;
+    let m;
+    while ((m = tagRegex.exec(xmlContent)) !== null) {
+      textParts.push(m[1]);
+    }
+
+    // Join with paragraph breaks where we detect </w:p>
+    // Simple approach: join all text, insert newlines at paragraph boundaries
+    const rawText = textParts.join(" ");
+    const cleaned = rawText.replace(/\s+/g, " ").trim();
+
+    return cleaned || null;
   } catch (err) {
     console.error("DOCX extraction failed:", err);
-    return null;
-  }
-}
-
-async function extractTextFromPdfUrl(url: string): Promise<string | null> {
-  try {
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    // Simple fallback: return null since PDF extraction in Deno is complex
-    // The docx path is the primary one
-    console.log("PDF extraction not implemented server-side, skipping");
-    return null;
-  } catch {
     return null;
   }
 }
@@ -142,6 +154,12 @@ serve(async (req) => {
       });
     }
 
+    // Log first item keys to help debug field mapping
+    if (cases.length > 0) {
+      console.log("First item keys:", Object.keys(cases[0]).join(", "));
+      console.log("First item sample:", JSON.stringify(cases[0]).slice(0, 500));
+    }
+
     const results = { inserted: 0, skipped: 0, failed: [] as Array<{ title: string; error: string }> };
 
     for (const caseItem of cases) {
@@ -155,20 +173,66 @@ serve(async (req) => {
       }
 
       try {
-        // Extract text from docx (preferred) or pdf
+        // Extract text from docx URL
         let content: string | null = null;
         if (caseItem.docx_url) {
+          console.log(`Extracting DOCX for: ${title}`);
           content = await extractTextFromDocxUrl(caseItem.docx_url);
+          if (content) {
+            console.log(`DOCX extracted: ${content.length} chars`);
+          } else {
+            console.log(`DOCX extraction returned null for: ${title}`);
+          }
         }
-        if (!content && caseItem.pdf_url) {
-          content = await extractTextFromPdfUrl(caseItem.pdf_url);
-        }
+
+        // Fallback to any inline text
         if (!content) {
-          // Use whatever text we have from the scraped page
           content = caseItem.page_text || caseItem.content || "";
         }
+
+        // If still no content, store metadata as partial_failure
         if (!content || content.trim().length < 50) {
-          results.failed.push({ title, error: "No extractable text content" });
+          if (title && title !== "ללא כותרת") {
+            // Save metadata even without full text
+            const citation = caseItem.case_number
+              ? `${caseItem.case_number}${caseItem.court ? ` (${caseItem.court})` : ""}`
+              : title;
+
+            const { error: docError } = await adminClient
+              .from("legal_documents")
+              .insert({
+                source_type: "caselaw",
+                title,
+                content: title, // minimal content
+                citation,
+                metadata: {
+                  court: caseItem.court || null,
+                  judges: caseItem.judges || null,
+                  procedure_type: caseItem.procedure_type || null,
+                  district: caseItem.district || null,
+                },
+                court: caseItem.court || null,
+                decision_date: caseItem.decision_date || null,
+                case_number: caseItem.case_number || null,
+                judges: caseItem.judges || null,
+                procedure_type: caseItem.procedure_type || null,
+                district: caseItem.district || null,
+                docx_url: caseItem.docx_url || null,
+                pdf_url: caseItem.pdf_url || null,
+                scraped_at: caseItem.scraped_at || new Date().toISOString(),
+                ingestion_status: "partial_failure",
+                ingestion_error: "No extractable text content",
+                source_url: caseItem.source_url || null,
+              });
+
+            if (docError) {
+              results.failed.push({ title, error: `DB insert: ${docError.message}` });
+            } else {
+              results.failed.push({ title, error: "No text – saved metadata only" });
+            }
+          } else {
+            results.failed.push({ title, error: "No extractable text content" });
+          }
           continue;
         }
 
@@ -233,7 +297,6 @@ serve(async (req) => {
 
           await adminClient.from("legal_document_chunks").insert(chunkInserts);
 
-          // Update document embedding and status to complete
           await adminClient
             .from("legal_documents")
             .update({
@@ -246,7 +309,6 @@ serve(async (req) => {
           results.inserted++;
           console.log(`Ingested: ${title} (${chunks.length} chunks)`);
         } catch (embeddingErr) {
-          // Document inserted but embedding failed — mark as partial_failure
           const errMsg = embeddingErr instanceof Error ? embeddingErr.message : "Unknown embedding error";
           await adminClient
             .from("legal_documents")
