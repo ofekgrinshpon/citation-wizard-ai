@@ -1,24 +1,41 @@
 
 
-# Plan: Move DOCX Text Extraction to Apify Actor + Update Edge Function
+## Problem
 
-## Summary
-The DOCX extraction code works — the download is what fails. Move the download step to the Apify actor (real browser), send extracted text as `page_text` in the dataset, and update the edge function to use it.
+The `apify-ingest-cases` edge function processes 97 documents sequentially, generating embeddings for each document and every chunk. This takes ~18 minutes total, but edge functions timeout after ~150 seconds. The client gets "failed to fetch" because the function is killed mid-execution.
 
-## Changes
+## Solution: Batch Processing
 
-### 1. Update `apify-ingest-cases` edge function
-- Check for `page_text` field first before attempting any DOCX download
-- Use `page_text` as the document content when available
-- Keep DOCX fetch as a fallback (unlikely to work, but harmless)
+Split the 97 items into small batches (5 documents per call) and process them sequentially from the frontend, showing progress as each batch completes.
 
-### 2. Provide Apify actor code snippet (for you to paste into your actor on apify.com)
-Node.js code to add inside your actor's `requestHandler`:
-- Download DOCX using Playwright's browser context (`page.context().request.get(docxUrl)`)
-- Unzip with `adm-zip` (add to actor's `package.json`)
-- Parse `word/document.xml`, extract text from `<w:t>` tags
-- Save as `page_text` field in the dataset item
+### Changes
 
-### 3. Delete existing partial_failure records
-- SQL migration to clean up the 97 failed caselaw records so they can be re-ingested with full text
+**1. Update `apify-ingest-cases` edge function**
+- Add a `batchSize` and `offset` parameter so the frontend can request a slice of the array
+- Alternatively (simpler): the frontend sends only 5 items at a time instead of all 97
+
+**2. Update `ApifyIngestionPanel.tsx`**
+- After fetching all 97 items from Apify, split them into batches of 5
+- Call `apify-ingest-cases` for each batch sequentially
+- Show real-time progress: "Processing batch 3/20... (12 inserted, 2 skipped, 1 failed)"
+- Accumulate results across all batches
+- If one batch fails, continue with the next (resilient processing)
+
+### Technical Details
+
+Frontend batching approach (no edge function changes needed):
+```text
+items = [97 items from Apify]
+batches = split into groups of 5
+for each batch:
+  POST /apify-ingest-cases with batch (5 items)
+  accumulate inserted/skipped/failed counts
+  update progress UI
+show final totals
+```
+
+Each batch of 5 documents should complete in ~50 seconds (well within the timeout).
+
+### Files Modified
+- `src/components/admin/ApifyIngestionPanel.tsx` — add batch loop with progress tracking
 
