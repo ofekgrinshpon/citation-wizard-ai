@@ -1,45 +1,40 @@
 
 
-# Auto-Fetch Apify Dataset into the App
+# Fix: Apify Ingestion - DOCX Text Extraction Failing
 
-## How it works
-A new edge function will call the Apify API to fetch your Actor's latest dataset results, then pass them directly to the existing `apify-ingest-cases` ingestion pipeline. In the admin panel, you'll get a single "Fetch from Apify" button instead of copy-pasting JSON.
+## Problem
+All 97 cases from Apify failed with "No extractable text content". The root cause: `mammoth` (DOCX-to-text library) imported via `esm.sh` doesn't work in the Deno edge runtime. PDF extraction is also not implemented. Since the Apify data has no `page_text` or `content` field, every case hits the minimum-content check and fails.
+
+## Solution
+Replace the broken `mammoth` approach with a simpler, reliable DOCX text extraction method that works in Deno edge runtime. DOCX files are ZIP archives containing XML — we can extract text directly using Deno-compatible libraries.
 
 ## Changes
 
-### 1. Store Apify API Token as a secret
-You'll need your Apify API token (found at https://console.apify.com/account/integrations -> API tokens). We'll store it securely as a backend secret called `APIFY_API_TOKEN`.
+### 1. Rewrite `extractTextFromDocxUrl` in `apify-ingest-cases/index.ts`
+- Remove the `mammoth` dependency (doesn't work in Deno edge runtime)
+- Use `fflate` (a lightweight, Deno-compatible ZIP decompression library) to unzip the DOCX
+- Parse `word/document.xml` from the ZIP and extract text from XML paragraph tags
+- This approach has zero Node.js dependencies and works natively in Deno
 
-### 2. New Edge Function: `fetch-apify-dataset`
-- Accepts `{ actorId?: string, datasetId?: string }` in the request body
-- Calls the Apify API: `GET https://api.apify.com/v2/acts/{actorId}/runs/last/dataset/items?token=...`
-- Returns the JSON array of scraped items
-- Admin-only auth gate (same pattern as existing functions)
+### 2. Add better error logging
+- Log the specific error reason for each failed case (currently swallowed)
+- Log sample of first item's keys to help debug field mapping issues
 
-### 3. Update `ApifyIngestionPanel.tsx`
-- Add a "Fetch from Apify" button above the manual JSON textarea
-- On click: calls `fetch-apify-dataset` to get the data, then sends it to `apify-ingest-cases` for ingestion
-- Shows a progress indicator and result summary
-- The manual paste option remains as a fallback
-
-### 4. No database changes needed
-The existing `legal_documents` table and ingestion pipeline handle everything already.
+### 3. Add fallback: store metadata even without full text
+- If DOCX extraction fails but we have a title and case_number, insert the document with the title as minimal content and mark as `partial_failure`
+- This ensures metadata is preserved and documents can be retried later
 
 ## Technical details
 
-**Apify API endpoint:**
-```
-GET https://api.apify.com/v2/acts/{actorId}/runs/last/dataset/items
-?token={APIFY_API_TOKEN}
-&format=json
+**DOCX text extraction approach:**
+```text
+DOCX file (from URL)
+  -> fetch as ArrayBuffer
+  -> decompress ZIP with fflate
+  -> find word/document.xml
+  -> strip XML tags, extract text content
+  -> return clean text
 ```
 
-**Edge function flow:**
-```text
-Admin clicks "Fetch"
-  -> fetch-apify-dataset (gets items from Apify API)
-  -> returns JSON array to client
-  -> client sends array to apify-ingest-cases (existing)
-  -> documents ingested with chunking + embeddings
-```
+**Library:** `fflate` via `https://esm.sh/fflate@0.8.2` — proven to work in Deno edge runtime, lightweight (~13KB), handles ZIP decompression.
 
