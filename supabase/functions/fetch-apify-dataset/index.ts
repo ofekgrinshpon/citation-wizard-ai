@@ -62,7 +62,7 @@ serve(async (req) => {
     const actorId = body.actorId || "";
     const datasetId = body.datasetId || "";
     const offset = body.offset || 0;
-    const limit = body.limit || 25;
+    const limit = body.limit || 50;
 
     if (!actorId && !datasetId) {
       return new Response(
