@@ -57,11 +57,21 @@ const Admin = () => {
   const [docTypeCounts, setDocTypeCounts] = useState<Record<string, number>>({});
   const [qaStats, setQaStats] = useState<{ total: number; withLocal: number; perplexityOnly: number; avgLocalRatio: number }>({ total: 0, withLocal: 0, perplexityOnly: 0, avgLocalRatio: 0 });
 
+  // Track if admin was ever confirmed — prevents redirect during transient auth churn
+  const [adminConfirmed, setAdminConfirmed] = useState(false);
+
   useEffect(() => {
-    if (!authLoading && (!user || !isAdmin)) {
+    if (isAdmin) setAdminConfirmed(true);
+  }, [isAdmin]);
+
+  useEffect(() => {
+    if (!authLoading && !user && !adminConfirmed) {
       navigate("/");
     }
-  }, [user, isAdmin, authLoading, navigate]);
+    if (!authLoading && user && isAdmin === false && !adminConfirmed) {
+      navigate("/");
+    }
+  }, [user, isAdmin, authLoading, adminConfirmed, navigate]);
 
   useEffect(() => {
     if (!isAdmin) return;

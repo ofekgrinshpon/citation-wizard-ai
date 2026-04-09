@@ -23,11 +23,69 @@ interface AccumulatedResults {
   failed: Array<{ title: string; error: string }>;
 }
 
+/** Full resume checkpoint for streamed Apify ingestion */
+interface ApifyResumeState {
+  actorId: string;
+  offset: number;
+  pageNum: number;
+  accumulated: AccumulatedResults;
+  remainingItems: unknown[];
+  batchIndexInPage: number;
+}
+
 const BATCH_SIZE = 10;
 const APIFY_PAGE_SIZE = 50;
 const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = 3000;
 
+// ─── Auth helpers ───────────────────────────────────────────
+let cachedToken: string | null = null;
+
+/** Read the current session token without rotating it. */
+async function getToken(): Promise<string> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.access_token) {
+    cachedToken = session.access_token;
+    return session.access_token;
+  }
+  // fallback: try a single refresh
+  const { data: { session: refreshed }, error } = await supabase.auth.refreshSession();
+  if (error || !refreshed) throw new Error("AUTH_EXPIRED");
+  cachedToken = refreshed.access_token;
+  return refreshed.access_token;
+}
+
+function buildHeaders(token: string): Record<string, string> {
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+    apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+  };
+}
+
+/** Fetch wrapper that retries once on 401/403 with a fresh token. */
+async function resilientFetch(
+  url: string,
+  init: RequestInit,
+): Promise<Response> {
+  let token = cachedToken || (await getToken());
+  let res = await fetch(url, {
+    ...init,
+    headers: { ...buildHeaders(token), ...(init.headers as Record<string, string> || {}) },
+  });
+
+  if (res.status === 401 || res.status === 403) {
+    // one refresh attempt
+    token = await getToken();
+    res = await fetch(url, {
+      ...init,
+      headers: { ...buildHeaders(token), ...(init.headers as Record<string, string> || {}) },
+    });
+  }
+  return res;
+}
+
+// ─── Component ──────────────────────────────────────────────
 export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelProps) {
   const [jsonInput, setJsonInput] = useState("");
   const [ingesting, setIngesting] = useState(false);
@@ -45,6 +103,7 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
   const [batchIndex, setBatchIndex] = useState(0);
   const [accumulated, setAccumulated] = useState<AccumulatedResults>({ inserted: 0, skipped: 0, failed: [] });
   const [paused, setPaused] = useState(false);
+  const [apifyResume, setApifyResume] = useState<ApifyResumeState | null>(null);
 
   const pausedRef = useRef(false);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
@@ -71,6 +130,7 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
     fetchDocCount();
   }, []);
 
+  // ─── Wake Lock ──────────────────────────────────────────
   const acquireWakeLock = async () => {
     try {
       if ("wakeLock" in navigator) {
@@ -97,24 +157,12 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
     return () => document.removeEventListener("visibilitychange", handleVisibility);
   }, [ingesting]);
 
-  const getAuthHeaders = async () => {
-    const { data: { session }, error } = await supabase.auth.refreshSession();
-    if (error || !session) {
-      throw new Error("לא מחובר – יש להתחבר מחדש");
-    }
-    return {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session.access_token}`,
-      apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-    };
-  };
-
   const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
+  // ─── Batch ingestion with retry ─────────────────────────
   const ingestBatchWithRetry = async (
     batch: unknown[],
     batchNum: number,
-    headers: Record<string, string>,
     acc: AccumulatedResults,
   ): Promise<boolean> => {
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -122,16 +170,15 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
         if (attempt > 0) {
           setProgressMsg(`ניסיון חוזר ${attempt}/${MAX_RETRIES} לאצווה ${batchNum}...`);
           await sleep(RETRY_DELAY_MS);
-          headers = await getAuthHeaders(); // refresh token
         }
 
         const controller = new AbortController();
         abortRef.current = controller;
         const timeout = setTimeout(() => controller.abort(), 180_000);
 
-        const res = await fetch(
+        const res = await resilientFetch(
           `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/apify-ingest-cases`,
-          { method: "POST", headers, body: JSON.stringify(batch), signal: controller.signal }
+          { method: "POST", body: JSON.stringify(batch), signal: controller.signal },
         );
         clearTimeout(timeout);
         abortRef.current = null;
@@ -148,7 +195,10 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
         return true;
       } catch (err) {
         const errMsg = err instanceof Error ? err.message : "שגיאה";
-        const isNetworkError = errMsg.includes("fetch") || errMsg.includes("abort") || errMsg.includes("מחובר") || errMsg.includes("network") || errMsg.includes("WORKER_LIMIT");
+        const isNetworkError =
+          errMsg.includes("fetch") || errMsg.includes("abort") ||
+          errMsg.includes("network") || errMsg.includes("WORKER_LIMIT") ||
+          errMsg === "AUTH_EXPIRED";
 
         if (isNetworkError && attempt < MAX_RETRIES) {
           console.warn(`Batch ${batchNum} attempt ${attempt + 1} failed, retrying...`, errMsg);
@@ -156,8 +206,7 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
         }
 
         if (isNetworkError) {
-          // Exhausted retries — pause for manual resume
-          return false;
+          return false; // exhausted retries — pause for manual resume
         }
 
         // Non-network error — log and continue
@@ -172,6 +221,7 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
     return true;
   };
 
+  // ─── Manual JSON batch loop ─────────────────────────────
   const runBatchLoop = useCallback(async (
     items: unknown[],
     startIndex: number,
@@ -201,11 +251,10 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
         setBatchProgress({ current: batchNum, total: totalBatches });
         setProgressMsg(`מעבד אצווה ${batchNum}/${totalBatches} (${acc.inserted} הועלו, ${acc.skipped} דולגו, ${acc.failed.length} נכשלו)...`);
 
-        const headers = await getAuthHeaders();
-        const ok = await ingestBatchWithRetry(batch, batchNum, headers, acc);
+        const ok = await ingestBatchWithRetry(batch, batchNum, acc);
 
         if (!ok) {
-          toast.warning("חיבור נותק – אפשר להמשיך בלחיצה על 'המשך'");
+          toast.warning("החיבור פג זמנית – אפשר להמשיך מאותה נקודה");
           setPaused(true);
           pausedRef.current = true;
           setBatchIndex(i);
@@ -216,7 +265,6 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
           return;
         }
 
-        // Update DB counter after each batch
         fetchDocCount();
       }
 
@@ -238,7 +286,13 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
     }
   }, [onIngested]);
 
+  // ─── Resume handlers ───────────────────────────────────
   const handleResume = () => {
+    if (apifyResume) {
+      // Resume streamed Apify ingestion
+      handleFetchFromApify(apifyResume);
+      return;
+    }
     if (pendingItems) {
       runBatchLoop(pendingItems, batchIndex, { ...accumulated });
     }
@@ -250,46 +304,71 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
     abortRef.current?.abort();
   };
 
-  const handleFetchFromApify = async () => {
-    if (!actorId.trim()) {
+  // ─── Streamed Apify fetch + ingest ─────────────────────
+  const handleFetchFromApify = async (resume?: ApifyResumeState) => {
+    const sourceId = resume?.actorId || actorId.trim();
+    if (!sourceId) {
       toast.error("הזינו Actor ID או Dataset ID");
       return;
     }
 
     setFetching(true);
-    setResults(null);
+    setIngesting(true);
     setPaused(false);
     pausedRef.current = false;
+    setApifyResume(null);
+
+    const isDataset = sourceId.length === 17 || sourceId.startsWith("dataset/");
+    const baseBody = isDataset
+      ? { datasetId: sourceId.replace("dataset/", "") }
+      : { actorId: sourceId };
+
+    const acc: AccumulatedResults = resume
+      ? { ...resume.accumulated }
+      : { inserted: 0, skipped: 0, failed: [] };
+    setAccumulated(acc);
+    if (!resume) setResults(null);
+
+    let offset = resume?.offset ?? 0;
+    let pageNum = resume?.pageNum ?? 0;
+    let totalFetched = 0;
+
+    // If resuming with remaining items from a partially-processed page
+    let startItems: unknown[] | null = resume?.remainingItems ?? null;
+    let startBatchIdx = resume?.batchIndexInPage ?? 0;
+
     setProgressMsg("שולף נתונים מ-Apify...");
     await acquireWakeLock();
 
-    const isDataset = actorId.trim().length === 17 || actorId.trim().startsWith("dataset/");
-    const baseBody = isDataset
-      ? { datasetId: actorId.trim().replace("dataset/", "") }
-      : { actorId: actorId.trim() };
-
-    const acc: AccumulatedResults = { inserted: 0, skipped: 0, failed: [] };
-    setAccumulated(acc);
-    let offset = 0;
-    let pageNum = 0;
-    let totalFetched = 0;
+    // Pre-warm token cache
+    try { await getToken(); } catch { /* will fail on first request */ }
 
     try {
+      // Process remaining items from a previous page first (if resuming)
+      if (startItems && startItems.length > 0) {
+        const ok = await processPage(startItems, startBatchIdx, pageNum, acc, sourceId, offset);
+        if (!ok) return; // paused or failed — resume state already saved
+        startItems = null;
+        startBatchIdx = 0;
+        offset += APIFY_PAGE_SIZE; // move to next page
+      }
+
       while (true) {
         if (pausedRef.current) {
+          saveApifyResume(sourceId, offset, pageNum, acc, [], 0);
           setProgressMsg(`מושהה – ${acc.inserted} הועלו, ${acc.skipped} דולגו`);
           releaseWakeLock();
           setFetching(false);
+          setIngesting(false);
           return;
         }
 
         pageNum++;
         setProgressMsg(`שולף עמוד ${pageNum} מ-Apify (${totalFetched} נשלפו, ${acc.inserted} הועלו, ${acc.skipped} דולגו)...`);
 
-        const headers = await getAuthHeaders();
-        const res = await fetch(
+        const res = await resilientFetch(
           `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fetch-apify-dataset`,
-          { method: "POST", headers, body: JSON.stringify({ ...baseBody, offset, limit: APIFY_PAGE_SIZE }) }
+          { method: "POST", body: JSON.stringify({ ...baseBody, offset, limit: APIFY_PAGE_SIZE }) },
         );
 
         if (!res.ok) {
@@ -303,48 +382,8 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
 
         if (items.length === 0) break;
 
-        // Ingest this page immediately
-        setIngesting(true);
-        const totalBatches = Math.ceil(items.length / BATCH_SIZE);
-        for (let i = 0; i < items.length; i += BATCH_SIZE) {
-          if (pausedRef.current) {
-            // Save remaining items for resume
-            const remaining = items.slice(i);
-            setPendingItems(remaining);
-            setBatchIndex(0);
-            setAccumulated({ ...acc });
-            setProgressMsg(`מושהה – ${acc.inserted} הועלו, ${acc.skipped} דולגו`);
-            releaseWakeLock();
-            setFetching(false);
-            setIngesting(false);
-            return;
-          }
-
-          const batch = items.slice(i, i + BATCH_SIZE);
-          const batchNum = Math.floor(i / BATCH_SIZE) + 1;
-          setBatchProgress({ current: batchNum, total: totalBatches });
-          setProgressMsg(`עמוד ${pageNum}: אצווה ${batchNum}/${totalBatches} (סה"כ ${acc.inserted} הועלו, ${acc.skipped} דולגו, ${acc.failed.length} נכשלו)...`);
-
-          const batchHeaders = await getAuthHeaders();
-          const ok = await ingestBatchWithRetry(batch, batchNum, batchHeaders, acc);
-
-          if (!ok) {
-            toast.warning("חיבור נותק – אפשר להמשיך בלחיצה על 'המשך'");
-            setPaused(true);
-            pausedRef.current = true;
-            const remaining = items.slice(i);
-            setPendingItems(remaining);
-            setBatchIndex(0);
-            setAccumulated({ ...acc });
-            setProgressMsg(`הופסק – ${acc.inserted} הועלו, ${acc.failed.length} נכשלו`);
-            releaseWakeLock();
-            setFetching(false);
-            setIngesting(false);
-            return;
-          }
-
-          fetchDocCount();
-        }
+        const ok = await processPage(items, 0, pageNum, acc, sourceId, offset);
+        if (!ok) return; // paused — resume state saved inside processPage
 
         if (items.length < APIFY_PAGE_SIZE) break; // last page
         offset += APIFY_PAGE_SIZE;
@@ -354,12 +393,19 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
       setResults(acc);
       toast.success(`הועלו ${acc.inserted} מסמכים, דולגו ${acc.skipped}, נכשלו ${acc.failed.length}`);
       setPendingItems(null);
+      setApifyResume(null);
       setAccumulated({ inserted: 0, skipped: 0, failed: [] });
       fetchFailed();
       fetchDocCount();
       onIngested();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "שגיאה בשליפה מ-Apify");
+      const msg = err instanceof Error ? err.message : "שגיאה בשליפה מ-Apify";
+      if (msg === "AUTH_EXPIRED") {
+        toast.warning("החיבור פג זמנית – אפשר להמשיך מאותה נקודה");
+        saveApifyResume(sourceId, offset, pageNum, acc, [], 0);
+      } else {
+        toast.error(msg);
+      }
     } finally {
       setFetching(false);
       setIngesting(false);
@@ -369,6 +415,71 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
     }
   };
 
+  /** Process a single page of items in batches. Returns false if paused/failed. */
+  const processPage = async (
+    items: unknown[],
+    startBatch: number,
+    pageNum: number,
+    acc: AccumulatedResults,
+    sourceId: string,
+    currentOffset: number,
+  ): Promise<boolean> => {
+    const totalBatches = Math.ceil(items.length / BATCH_SIZE);
+
+    for (let i = startBatch; i < items.length; i += BATCH_SIZE) {
+      if (pausedRef.current) {
+        const remaining = items.slice(i);
+        saveApifyResume(sourceId, currentOffset, pageNum, acc, remaining, 0);
+        setProgressMsg(`מושהה – ${acc.inserted} הועלו, ${acc.skipped} דולגו`);
+        releaseWakeLock();
+        setFetching(false);
+        setIngesting(false);
+        return false;
+      }
+
+      const batch = items.slice(i, i + BATCH_SIZE);
+      const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+      setBatchProgress({ current: batchNum, total: totalBatches });
+      setProgressMsg(`עמוד ${pageNum}: אצווה ${batchNum}/${totalBatches} (סה"כ ${acc.inserted} הועלו, ${acc.skipped} דולגו, ${acc.failed.length} נכשלו)...`);
+
+      const ok = await ingestBatchWithRetry(batch, batchNum, acc);
+
+      if (!ok) {
+        toast.warning("החיבור פג זמנית – אפשר להמשיך מאותה נקודה");
+        setPaused(true);
+        pausedRef.current = true;
+        const remaining = items.slice(i);
+        saveApifyResume(sourceId, currentOffset, pageNum, acc, remaining, 0);
+        setProgressMsg(`הופסק – ${acc.inserted} הועלו, ${acc.failed.length} נכשלו`);
+        releaseWakeLock();
+        setFetching(false);
+        setIngesting(false);
+        return false;
+      }
+
+      fetchDocCount();
+    }
+    return true;
+  };
+
+  const saveApifyResume = (
+    sourceId: string, offset: number, pageNum: number,
+    acc: AccumulatedResults, remaining: unknown[], batchIdx: number,
+  ) => {
+    setPaused(true);
+    pausedRef.current = true;
+    setApifyResume({
+      actorId: sourceId,
+      offset,
+      pageNum,
+      accumulated: { ...acc },
+      remainingItems: remaining,
+      batchIndexInPage: batchIdx,
+    });
+    setAccumulated({ ...acc });
+  };
+
+  // ─── Manual JSON ingest ────────────────────────────────
   const handleManualIngest = async () => {
     let cases: unknown[];
     try {
@@ -386,13 +497,14 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
     setJsonInput("");
   };
 
+  // ─── Retry failed ──────────────────────────────────────
   const handleRetry = async () => {
     setRetrying(true);
     try {
-      const headers = await getAuthHeaders();
+      const token = await getToken();
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/retry-failed-ingestion`,
-        { method: "POST", headers, body: "{}" }
+        { method: "POST", headers: buildHeaders(token), body: "{}" },
       );
 
       if (!res.ok) {
@@ -413,7 +525,7 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
   };
 
   const isBusy = ingesting || fetching;
-  const canResume = paused && pendingItems && !ingesting;
+  const canResume = paused && (pendingItems || apifyResume) && !ingesting;
 
   return (
     <div className="space-y-4">
@@ -450,7 +562,7 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
           dir="ltr"
         />
         <div className="flex gap-2">
-          <Button onClick={handleFetchFromApify} disabled={isBusy || !actorId.trim()}>
+          <Button onClick={() => handleFetchFromApify()} disabled={isBusy || !actorId.trim()}>
             {fetching ? "שולף..." : "🔄 שלוף והעלה מ-Apify"}
           </Button>
           {isBusy && (
