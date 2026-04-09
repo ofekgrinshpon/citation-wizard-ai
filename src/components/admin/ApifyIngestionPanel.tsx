@@ -228,34 +228,46 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
     try {
       const headers = await getAuthHeaders();
       const isDataset = actorId.trim().length === 17 || actorId.trim().startsWith("dataset/");
-      const body = isDataset
+      const baseBody = isDataset
         ? { datasetId: actorId.trim().replace("dataset/", "") }
         : { actorId: actorId.trim() };
 
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fetch-apify-dataset`,
-        { method: "POST", headers, body: JSON.stringify(body) }
-      );
+      // Paginate through all items in chunks of 25
+      const PAGE_SIZE = 25;
+      const allItems: unknown[] = [];
+      let offset = 0;
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to fetch from Apify");
+      while (true) {
+        setProgressMsg(`שולף רשומות מ-Apify (${allItems.length} עד כה)...`);
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fetch-apify-dataset`,
+          { method: "POST", headers, body: JSON.stringify({ ...baseBody, offset, limit: PAGE_SIZE }) }
+        );
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || "Failed to fetch from Apify");
+        }
+
+        const data = await res.json();
+        const items = data.items || [];
+        allItems.push(...items);
+
+        if (items.length < PAGE_SIZE) break; // last page
+        offset += PAGE_SIZE;
       }
 
-      const data = await res.json();
-      const items = data.items || [];
-
-      if (!items.length) {
+      if (!allItems.length) {
         toast.warning("לא נמצאו רשומות ב-Apify");
         setFetching(false);
         setProgressMsg("");
         return;
       }
 
-      toast.info(`נשלפו ${items.length} רשומות, מתחיל העלאה...`);
+      toast.info(`נשלפו ${allItems.length} רשומות, מתחיל העלאה...`);
       setFetching(false);
 
-      await ingestCases(items);
+      await ingestCases(allItems);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "שגיאה בשליפה מ-Apify");
       setFetching(false);
