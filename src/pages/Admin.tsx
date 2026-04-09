@@ -53,6 +53,8 @@ const Admin = () => {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [legalDocs, setLegalDocs] = useState<{ id: string; title: string; source_type: string; citation: string; created_at: string }[]>([]);
   const [totalChunks, setTotalChunks] = useState(0);
+  const [totalDocsCount, setTotalDocsCount] = useState(0);
+  const [docTypeCounts, setDocTypeCounts] = useState<Record<string, number>>({});
   const [qaStats, setQaStats] = useState<{ total: number; withLocal: number; perplexityOnly: number; avgLocalRatio: number }>({ total: 0, withLocal: 0, perplexityOnly: 0, avgLocalRatio: 0 });
 
   useEffect(() => {
@@ -69,13 +71,15 @@ const Admin = () => {
   const fetchData = async () => {
     setLoadingData(true);
 
-    const [citRes, usersRes, verifiedRes, docsRes, chunksRes, qaLogsRes] = await Promise.all([
+    const [citRes, usersRes, verifiedRes, docsRes, chunksRes, qaLogsRes, totalDocsRes, docTypesRes] = await Promise.all([
       supabase.from("citation_history").select("*").order("created_at", { ascending: false }).limit(500),
       supabase.from("profiles").select("*").order("created_at", { ascending: false }),
       supabase.from("verified_sources").select("*").order("verified_at", { ascending: false }),
       supabase.from("legal_documents").select("id, title, source_type, citation, created_at").order("created_at", { ascending: false }).limit(50),
       supabase.from("legal_document_chunks").select("id", { count: "exact", head: true }),
       supabase.from("qa_logs").select("*").order("created_at", { ascending: false }).limit(1000),
+      supabase.from("legal_documents").select("id", { count: "exact", head: true }),
+      supabase.from("legal_documents").select("source_type"),
     ]);
 
     setCitations(citRes.data ?? []);
@@ -83,6 +87,14 @@ const Admin = () => {
     setVerifiedSources((verifiedRes.data ?? []) as unknown as VerifiedSourceRow[]);
     setLegalDocs(docsRes.data ?? []);
     setTotalChunks(chunksRes.count ?? 0);
+    setTotalDocsCount(totalDocsRes.count ?? 0);
+
+    // Compute doc type counts from full source_type column
+    const typeCountsMap: Record<string, number> = {};
+    (docTypesRes.data ?? []).forEach((d: { source_type: string }) => {
+      typeCountsMap[d.source_type] = (typeCountsMap[d.source_type] || 0) + 1;
+    });
+    setDocTypeCounts(typeCountsMap);
 
     // Compute QA provenance stats
     const qaLogs = (qaLogsRes.data ?? []) as Array<{ local_footnotes_count: number; perplexity_footnotes_count: number; total_footnotes: number }>;
@@ -570,16 +582,12 @@ const Admin = () => {
                 notebook: { emoji: "📓", label: "מחברות" },
                 international: { emoji: "🌐", label: "בינלאומי" },
               };
-              const typeCounts: Record<string, number> = {};
-              legalDocs.forEach((d) => {
-                typeCounts[d.source_type] = (typeCounts[d.source_type] || 0) + 1;
-              });
-              const typeEntries = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]);
+              const typeEntries = Object.entries(docTypeCounts).sort((a, b) => b[1] - a[1]);
 
               return (
                 <>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <StatCard icon="📚" label="סה״כ מסמכים" value={legalDocs.length} color="text-primary" />
+                    <StatCard icon="📚" label="סה״כ מסמכים" value={totalDocsCount} color="text-primary" />
                     <StatCard icon="🧩" label="סה״כ קטעים (chunks)" value={totalChunks} />
                     {typeEntries.map(([type, count]) => {
                       const meta = SOURCE_TYPE_META[type] || { emoji: "📁", label: type };
