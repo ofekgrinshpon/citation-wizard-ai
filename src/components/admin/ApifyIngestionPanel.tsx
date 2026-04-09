@@ -366,14 +366,25 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
         pageNum++;
         setProgressMsg(`שולף עמוד ${pageNum} מ-Apify (${totalFetched} נשלפו, ${acc.inserted} הועלו, ${acc.skipped} דולגו)...`);
 
-        const res = await resilientFetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fetch-apify-dataset`,
-          { method: "POST", body: JSON.stringify({ ...baseBody, offset, limit: APIFY_PAGE_SIZE }) },
-        );
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
-          throw new Error(err.error || "Failed to fetch from Apify");
+        let res: Response | null = null;
+        for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+          try {
+            if (attempt > 0) {
+              setProgressMsg(`ניסיון חוזר ${attempt} לשליפת עמוד ${pageNum}...`);
+              await sleep(RETRY_DELAY_MS);
+            }
+            res = await resilientFetch(
+              `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fetch-apify-dataset`,
+              { method: "POST", body: JSON.stringify({ ...baseBody, offset, limit: APIFY_PAGE_SIZE }) },
+            );
+            if (res.ok) break;
+            if (attempt === MAX_RETRIES) {
+              const err = await res.json().catch(() => ({ error: `HTTP ${res!.status}` }));
+              throw new Error(err.error || "Failed to fetch from Apify");
+            }
+          } catch (e) {
+            if (attempt === MAX_RETRIES) throw e;
+          }
         }
 
         const data = await res.json();
@@ -400,11 +411,12 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
       onIngested();
     } catch (err) {
       const msg = err instanceof Error ? err.message : "שגיאה בשליפה מ-Apify";
+      // Always save resume state so the user can continue from this point
+      saveApifyResume(sourceId, offset, pageNum, acc, [], 0);
       if (msg === "AUTH_EXPIRED") {
         toast.warning("החיבור פג זמנית – אפשר להמשיך מאותה נקודה");
-        saveApifyResume(sourceId, offset, pageNum, acc, [], 0);
       } else {
-        toast.error(msg);
+        toast.warning(`${msg} – אפשר להמשיך מאותה נקודה`);
       }
     } finally {
       setFetching(false);
