@@ -61,6 +61,8 @@ serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const actorId = body.actorId || "";
     const datasetId = body.datasetId || "";
+    const offset = body.offset || 0;
+    const limit = body.limit || 25;
 
     if (!actorId && !datasetId) {
       return new Response(
@@ -69,17 +71,16 @@ serve(async (req) => {
       );
     }
 
-    // Build Apify API URL
+    // Build Apify API URL with pagination
     let apiUrl: string;
     if (datasetId) {
-      apiUrl = `https://api.apify.com/v2/datasets/${datasetId}/items?token=${APIFY_API_TOKEN}&format=json`;
+      apiUrl = `https://api.apify.com/v2/datasets/${datasetId}/items?token=${APIFY_API_TOKEN}&format=json&offset=${offset}&limit=${limit}`;
     } else {
-      // Apify API requires tilde (~) between username and actor name, not slash
       const normalizedActorId = actorId.replace("/", "~");
-      apiUrl = `https://api.apify.com/v2/acts/${normalizedActorId}/runs/last/dataset/items?token=${APIFY_API_TOKEN}&format=json`;
+      apiUrl = `https://api.apify.com/v2/acts/${normalizedActorId}/runs/last/dataset/items?token=${APIFY_API_TOKEN}&format=json&offset=${offset}&limit=${limit}`;
     }
 
-    console.log(`Fetching from Apify: ${apiUrl.replace(APIFY_API_TOKEN, "***")}`);
+    console.log(`Fetching from Apify: offset=${offset}, limit=${limit}, url=${apiUrl.replace(APIFY_API_TOKEN, "***")}`);
 
     const apifyRes = await fetch(apiUrl);
     if (!apifyRes.ok) {
@@ -92,9 +93,10 @@ serve(async (req) => {
     }
 
     const items = await apifyRes.json();
-    console.log(`Fetched ${Array.isArray(items) ? items.length : 0} items from Apify`);
+    const count = Array.isArray(items) ? items.length : 0;
+    console.log(`Fetched ${count} items (offset=${offset})`);
 
-    return new Response(JSON.stringify({ items, count: Array.isArray(items) ? items.length : 0 }), {
+    return new Response(JSON.stringify({ items, count, offset, limit }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
