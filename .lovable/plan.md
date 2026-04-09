@@ -1,22 +1,46 @@
 
 
-## Fix: Reduce batch size and cap chunk embeddings to prevent timeouts
+## Resume Ingestion and Prevent Sleep Interruptions
 
-### Problem
-The edge function logs confirm that with `BATCH_SIZE = 5`, some batches still exceed the ~150s timeout — large documents generate 200+ chunks, each requiring an embedding API call with 300ms delays. One large document alone can take 60+ seconds.
+### Current State
+- 19/97 documents ingested (11 complete, 4 partial_failure, 4 pending)
+- ~78 documents were never sent because the browser tab lost connection when the computer went to sleep
 
-### Changes
+### Root Cause
+The frontend drives the batch loop sequentially. When the computer sleeps, the browser suspends, the auth token expires, and remaining batches are never sent.
 
-**1. `src/components/admin/ApifyIngestionPanel.tsx`**
-- Reduce `BATCH_SIZE` from 5 to 2
-- Add `AbortController` with 120s timeout per batch fetch call to prevent indefinite hangs
-- On timeout, mark the batch as failed and continue to the next
+### Plan
 
-**2. `supabase/functions/apify-ingest-cases/index.ts`**
-- Cap chunk embedding generation at 30 chunks per document (store ALL chunks for text search, but only embed the first 30)
-- This limits embedding time to ~10 seconds per document maximum
-- Reduce inter-chunk delay from 300ms to 200ms
+**1. Clean up failed/pending records**
+- Delete the 4 `partial_failure` and 4 `pending` documents (and their chunks) so they can be re-ingested cleanly
 
-### Expected outcome
-Each batch (2 docs, max 30 embeddings each) should complete in ~30-40 seconds, well within the 150s limit.
+**2. Add Wake Lock + Visibility handling to `ApifyIngestionPanel.tsx`**
+- Request a `navigator.wakeLock` (Screen Wake Lock API) during ingestion to prevent the device from sleeping
+- On `visibilitychange` to "hidden", pause the loop; on "visible", refresh the auth token and resume
+- Before each batch, call `supabase.auth.refreshSession()` to ensure the token is still valid (already done, but add error recovery)
+
+**3. Add resilient batch recovery**
+- Store the current batch index and full items list in component state
+- If a batch fails due to auth/network error, show a "Resume" button instead of losing all progress
+- On resume, re-authenticate and continue from where it left off
+
+### Files Modified
+- `src/components/admin/ApifyIngestionPanel.tsx` — wake lock, visibility handling, resume capability
+- Database cleanup via migration tool (delete partial_failure + pending caselaw records)
+
+### Technical Details
+
+```text
+Ingestion flow (updated):
+1. Fetch items from Apify (97 items)
+2. Request Wake Lock to prevent sleep
+3. For each batch of 2:
+   a. Refresh auth token
+   b. POST to apify-ingest-cases
+   c. Update progress UI
+   d. If network error → pause, show "Resume" button
+4. Release Wake Lock when done
+```
+
+Wake Lock fallback: if the API is not available (older browsers), the process works as before but with the resume button as a safety net.
 
