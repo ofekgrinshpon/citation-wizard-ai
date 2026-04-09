@@ -23,7 +23,7 @@ interface AccumulatedResults {
   failed: Array<{ title: string; error: string }>;
 }
 
-const BATCH_SIZE = 2;
+const BATCH_SIZE = 10;
 
 export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelProps) {
   const [jsonInput, setJsonInput] = useState("");
