@@ -20,40 +20,6 @@ function chunkText(text: string, chunkSize = 1500, overlap = 150): string[] {
   return chunks;
 }
 
-async function getEmbedding(text: string, apiKey: string): Promise<number[] | null> {
-  try {
-    const truncated = text.slice(0, 2000);
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash-lite",
-        messages: [
-          {
-            role: "system",
-            content: `You are an embedding generator. Given text, output ONLY a JSON array of exactly 768 floating-point numbers between -1 and 1 that represent the semantic meaning of the text. Output nothing else — no explanation, no markdown, just the raw JSON array.`,
-          },
-          { role: "user", content: truncated },
-        ],
-        temperature: 0,
-      }),
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    const content = data.choices?.[0]?.message?.content || "";
-    const match = content.match(/\[[\s\S]*\]/);
-    if (!match) return null;
-    const arr = JSON.parse(match[0]);
-    if (!Array.isArray(arr) || arr.length !== 768) return null;
-    return arr;
-  } catch {
-    return null;
-  }
-}
-
 async function extractTextFromDocxUrl(url: string): Promise<string | null> {
   try {
     const res = await fetch(url, {
@@ -70,7 +36,6 @@ async function extractTextFromDocxUrl(url: string): Promise<string | null> {
     const buffer = await res.arrayBuffer();
     const unzipped = unzipSync(new Uint8Array(buffer));
 
-    // Find word/document.xml
     const docXmlBytes = unzipped["word/document.xml"];
     if (!docXmlBytes) {
       console.error("No word/document.xml found in DOCX");
@@ -79,7 +44,6 @@ async function extractTextFromDocxUrl(url: string): Promise<string | null> {
 
     const xmlContent = new TextDecoder().decode(docXmlBytes);
 
-    // Extract text from <w:t> tags (Word paragraph text nodes)
     const textParts: string[] = [];
     const tagRegex = /<w:t[^>]*>([\s\S]*?)<\/w:t>/g;
     let m;
@@ -87,8 +51,6 @@ async function extractTextFromDocxUrl(url: string): Promise<string | null> {
       textParts.push(m[1]);
     }
 
-    // Join with paragraph breaks where we detect </w:p>
-    // Simple approach: join all text, insert newlines at paragraph boundaries
     const rawText = textParts.join(" ");
     const cleaned = rawText.replace(/\s+/g, " ").trim();
 
@@ -142,9 +104,6 @@ serve(async (req) => {
       });
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
-
     const adminClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -160,7 +119,6 @@ serve(async (req) => {
       });
     }
 
-    // Log first item keys to help debug field mapping
     if (cases.length > 0) {
       console.log("First item keys:", Object.keys(cases[0]).join(", "));
       console.log("First item sample:", JSON.stringify(cases[0]).slice(0, 500));
@@ -171,14 +129,12 @@ serve(async (req) => {
     for (const caseItem of cases) {
       const title = caseItem.title || caseItem.case_number || "ללא כותרת";
 
-      // Skip summaries (תקציר)
       if (title.includes("תקציר")) {
         results.skipped++;
         console.log(`Skipped summary: ${title}`);
         continue;
       }
 
-      // Skip duplicates by case_number
       if (caseItem.case_number) {
         const { data: existing } = await adminClient
           .from("legal_documents")
@@ -193,13 +149,11 @@ serve(async (req) => {
       }
 
       try {
-        // Prefer pre-extracted text from Apify actor (page_text field)
         let content: string | null = caseItem.page_text || null;
         if (content) {
           console.log(`Using page_text for: ${title} (${content.length} chars)`);
         }
 
-        // Fallback: try DOCX download (may fail due to gov.il blocking)
         if (!content && caseItem.docx_url) {
           console.log(`Attempting DOCX fallback for: ${title}`);
           content = await extractTextFromDocxUrl(caseItem.docx_url);
@@ -210,87 +164,63 @@ serve(async (req) => {
           }
         }
 
-        // Last resort: inline content
         if (!content) {
           content = caseItem.content || "";
         }
 
-        // If still no content, store metadata as partial_failure
-        if (!content || content.trim().length < 50) {
-          if (title && title !== "ללא כותרת") {
-            // Save metadata even without full text
-            const citation = caseItem.case_number
-              ? `${caseItem.case_number}${caseItem.court ? ` (${caseItem.court})` : ""}`
-              : title;
-
-            const { error: docError } = await adminClient
-              .from("legal_documents")
-              .insert({
-                source_type: "caselaw",
-                title,
-                content: title, // minimal content
-                citation,
-                metadata: {
-                  court: caseItem.court || null,
-                  judges: caseItem.judges || null,
-                  procedure_type: caseItem.procedure_type || null,
-                  district: caseItem.district || null,
-                },
-                court: caseItem.court || null,
-                decision_date: caseItem.decision_date || null,
-                case_number: caseItem.case_number || null,
-                judges: caseItem.judges || null,
-                procedure_type: caseItem.procedure_type || null,
-                district: caseItem.district || null,
-                docx_url: caseItem.docx_url || null,
-                pdf_url: caseItem.pdf_url || null,
-                scraped_at: caseItem.scraped_at || new Date().toISOString(),
-                ingestion_status: "partial_failure",
-                ingestion_error: "No extractable text content",
-                source_url: caseItem.source_url || null,
-              });
-
-            if (docError) {
-              results.failed.push({ title, error: `DB insert: ${docError.message}` });
-            } else {
-              results.failed.push({ title, error: "No text – saved metadata only" });
-            }
-          } else {
-            results.failed.push({ title, error: "No extractable text content" });
-          }
-          continue;
-        }
-
-        // Build citation string
         const citation = caseItem.case_number
           ? `${caseItem.case_number}${caseItem.court ? ` (${caseItem.court})` : ""}`
           : title;
 
-        // Insert document with pending status
+        const metadata = {
+          court: caseItem.court || null,
+          judges: caseItem.judges || null,
+          procedure_type: caseItem.procedure_type || null,
+          district: caseItem.district || null,
+        };
+
+        const docFields = {
+          source_type: "caselaw",
+          title,
+          content: content && content.trim().length >= 50 ? content : title,
+          citation,
+          metadata,
+          court: caseItem.court || null,
+          decision_date: caseItem.decision_date || null,
+          case_number: caseItem.case_number || null,
+          judges: caseItem.judges || null,
+          procedure_type: caseItem.procedure_type || null,
+          district: caseItem.district || null,
+          docx_url: caseItem.docx_url || null,
+          pdf_url: caseItem.pdf_url || null,
+          scraped_at: caseItem.scraped_at || new Date().toISOString(),
+          source_url: caseItem.source_url || null,
+          embedding: null,
+        };
+
+        if (!content || content.trim().length < 50) {
+          const { error: docError } = await adminClient
+            .from("legal_documents")
+            .insert({
+              ...docFields,
+              ingestion_status: "partial_failure",
+              ingestion_error: "No extractable text content",
+            });
+
+          if (docError) {
+            results.failed.push({ title, error: `DB insert: ${docError.message}` });
+          } else {
+            results.failed.push({ title, error: "No text – saved metadata only" });
+          }
+          continue;
+        }
+
+        // Insert document — no embedding, mark complete immediately
         const { data: doc, error: docError } = await adminClient
           .from("legal_documents")
           .insert({
-            source_type: "caselaw",
-            title,
-            content,
-            citation,
-            metadata: {
-              court: caseItem.court || null,
-              judges: caseItem.judges || null,
-              procedure_type: caseItem.procedure_type || null,
-              district: caseItem.district || null,
-            },
-            court: caseItem.court || null,
-            decision_date: caseItem.decision_date || null,
-            case_number: caseItem.case_number || null,
-            judges: caseItem.judges || null,
-            procedure_type: caseItem.procedure_type || null,
-            district: caseItem.district || null,
-            docx_url: caseItem.docx_url || null,
-            pdf_url: caseItem.pdf_url || null,
-            scraped_at: caseItem.scraped_at || new Date().toISOString(),
-            ingestion_status: "pending",
-            source_url: caseItem.source_url || null,
+            ...docFields,
+            ingestion_status: "complete",
           })
           .select("id")
           .single();
@@ -300,53 +230,19 @@ serve(async (req) => {
           continue;
         }
 
-        // Attempt chunking + embedding
-        try {
-          const docEmbedding = await getEmbedding(`${title}\n\n${content.slice(0, 3000)}`, LOVABLE_API_KEY);
-          const chunks = chunkText(content);
-          const MAX_EMBEDDED_CHUNKS = 30;
-          const chunkInserts = [];
+        // Chunk text and store — no embeddings
+        const chunks = chunkText(content);
+        const chunkInserts = chunks.map((chunk, i) => ({
+          document_id: doc.id,
+          chunk_index: i,
+          content: chunk,
+          embedding: null,
+        }));
 
-          for (let i = 0; i < chunks.length; i++) {
-            let chunkEmbedding: number[] | null = null;
-            if (docEmbedding && i < MAX_EMBEDDED_CHUNKS) {
-              chunkEmbedding = await getEmbedding(chunks[i], LOVABLE_API_KEY);
-              if (i < Math.min(chunks.length, MAX_EMBEDDED_CHUNKS) - 1) await new Promise((r) => setTimeout(r, 200));
-            }
-            chunkInserts.push({
-              document_id: doc.id,
-              chunk_index: i,
-              content: chunks[i],
-              embedding: chunkEmbedding ? JSON.stringify(chunkEmbedding) : null,
-            });
-          }
+        await adminClient.from("legal_document_chunks").insert(chunkInserts);
 
-          await adminClient.from("legal_document_chunks").insert(chunkInserts);
-
-          await adminClient
-            .from("legal_documents")
-            .update({
-              embedding: docEmbedding ? JSON.stringify(docEmbedding) : null,
-              ingestion_status: "complete",
-              ingestion_error: null,
-            })
-            .eq("id", doc.id);
-
-          results.inserted++;
-          console.log(`Ingested: ${title} (${chunks.length} chunks)`);
-        } catch (embeddingErr) {
-          const errMsg = embeddingErr instanceof Error ? embeddingErr.message : "Unknown embedding error";
-          await adminClient
-            .from("legal_documents")
-            .update({
-              ingestion_status: "partial_failure",
-              ingestion_error: errMsg,
-            })
-            .eq("id", doc.id);
-
-          results.failed.push({ title, error: `Embedding: ${errMsg}` });
-          console.error(`Partial failure for "${title}":`, errMsg);
-        }
+        results.inserted++;
+        console.log(`Ingested: ${title} (${chunks.length} chunks)`);
       } catch (err) {
         const errMsg = err instanceof Error ? err.message : "Unknown error";
         results.failed.push({ title, error: errMsg });
