@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { Download, Upload, RefreshCw } from "lucide-react";
+import { Download, Upload, RefreshCw, Play, Pause } from "lucide-react";
 
 interface FailedDoc {
   id: string;
@@ -17,6 +17,12 @@ interface ApifyIngestionPanelProps {
   onIngested: () => void;
 }
 
+interface AccumulatedResults {
+  inserted: number;
+  skipped: number;
+  failed: Array<{ title: string; error: string }>;
+}
+
 const BATCH_SIZE = 2;
 
 export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelProps) {
@@ -25,10 +31,20 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
   const [fetching, setFetching] = useState(false);
   const [retrying, setRetrying] = useState(false);
   const [failedDocs, setFailedDocs] = useState<FailedDoc[]>([]);
-  const [actorId, setActorId] = useState(""); 
+  const [actorId, setActorId] = useState("");
   const [progressMsg, setProgressMsg] = useState("");
   const [batchProgress, setBatchProgress] = useState<{ current: number; total: number } | null>(null);
-  const [results, setResults] = useState<{ inserted: number; skipped: number; failed: Array<{ title: string; error: string }> } | null>(null);
+  const [results, setResults] = useState<AccumulatedResults | null>(null);
+
+  // Resume state
+  const [pendingItems, setPendingItems] = useState<unknown[] | null>(null);
+  const [batchIndex, setBatchIndex] = useState(0);
+  const [accumulated, setAccumulated] = useState<AccumulatedResults>({ inserted: 0, skipped: 0, failed: [] });
+  const [paused, setPaused] = useState(false);
+
+  const pausedRef = useRef(false);
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   const fetchFailed = async () => {
     const { data } = await supabase
@@ -43,6 +59,36 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
     fetchFailed();
   }, []);
 
+  // Wake Lock helpers
+  const acquireWakeLock = async () => {
+    try {
+      if ("wakeLock" in navigator) {
+        wakeLockRef.current = await navigator.wakeLock.request("screen");
+        wakeLockRef.current.addEventListener("release", () => {
+          wakeLockRef.current = null;
+        });
+      }
+    } catch {
+      // Wake Lock not available or denied — continue without it
+    }
+  };
+
+  const releaseWakeLock = () => {
+    wakeLockRef.current?.release();
+    wakeLockRef.current = null;
+  };
+
+  // Re-acquire wake lock when tab becomes visible again (browsers release it on hide)
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible" && ingesting && !pausedRef.current) {
+        acquireWakeLock();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [ingesting]);
+
   const getAuthHeaders = async () => {
     const { data: { session }, error } = await supabase.auth.refreshSession();
     if (error || !session) {
@@ -55,30 +101,48 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
     };
   };
 
-  const ingestCases = async (cases: unknown[]) => {
+  const runBatchLoop = useCallback(async (
+    items: unknown[],
+    startIndex: number,
+    acc: AccumulatedResults,
+  ) => {
     setIngesting(true);
+    setPaused(false);
+    pausedRef.current = false;
     setResults(null);
+    await acquireWakeLock();
 
-    const totalBatches = Math.ceil(cases.length / BATCH_SIZE);
-    const accumulated = { inserted: 0, skipped: 0, failed: [] as Array<{ title: string; error: string }> };
+    const totalBatches = Math.ceil(items.length / BATCH_SIZE);
 
     try {
-      const headers = await getAuthHeaders();
+      for (let i = startIndex; i < items.length; i += BATCH_SIZE) {
+        // Check if paused
+        if (pausedRef.current) {
+          setBatchIndex(i);
+          setAccumulated({ ...acc });
+          setPendingItems(items);
+          setProgressMsg(`מושהה – ${acc.inserted} הועלו, ${acc.skipped} דולגו, ${acc.failed.length} נכשלו`);
+          releaseWakeLock();
+          return; // exit loop, keep state for resume
+        }
 
-      for (let i = 0; i < cases.length; i += BATCH_SIZE) {
-        const batch = cases.slice(i, i + BATCH_SIZE);
+        const batch = items.slice(i, i + BATCH_SIZE);
         const batchNum = Math.floor(i / BATCH_SIZE) + 1;
         setBatchProgress({ current: batchNum, total: totalBatches });
-        setProgressMsg(`מעבד אצווה ${batchNum}/${totalBatches} (${accumulated.inserted} הועלו, ${accumulated.skipped} דולגו, ${accumulated.failed.length} נכשלו)...`);
+        setProgressMsg(`מעבד אצווה ${batchNum}/${totalBatches} (${acc.inserted} הועלו, ${acc.skipped} דולגו, ${acc.failed.length} נכשלו)...`);
 
         try {
+          const headers = await getAuthHeaders();
           const controller = new AbortController();
+          abortRef.current = controller;
           const timeout = setTimeout(() => controller.abort(), 120_000);
+
           const res = await fetch(
             `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/apify-ingest-cases`,
             { method: "POST", headers, body: JSON.stringify(batch), signal: controller.signal }
           );
           clearTimeout(timeout);
+          abortRef.current = null;
 
           if (!res.ok) {
             const err = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
@@ -86,12 +150,26 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
           }
 
           const data = await res.json();
-          accumulated.inserted += data.inserted || 0;
-          accumulated.skipped += data.skipped || 0;
-          if (data.failed?.length) accumulated.failed.push(...data.failed);
+          acc.inserted += data.inserted || 0;
+          acc.skipped += data.skipped || 0;
+          if (data.failed?.length) acc.failed.push(...data.failed);
         } catch (batchErr) {
           const errMsg = batchErr instanceof Error ? batchErr.message : "שגיאה";
-          accumulated.failed.push(...batch.map((_, idx) => ({
+
+          // On network/auth error, pause and allow resume
+          if (errMsg.includes("fetch") || errMsg.includes("abort") || errMsg.includes("מחובר") || errMsg.includes("network")) {
+            toast.warning("חיבור נותק – אפשר להמשיך בלחיצה על 'המשך'");
+            setPaused(true);
+            pausedRef.current = true;
+            setBatchIndex(i); // retry this batch
+            setAccumulated({ ...acc });
+            setPendingItems(items);
+            setProgressMsg(`הופסק – ${acc.inserted} הועלו, ${acc.failed.length} נכשלו`);
+            releaseWakeLock();
+            return;
+          }
+
+          acc.failed.push(...batch.map((_, idx) => ({
             title: `אצווה ${batchNum} פריט ${idx + 1}`,
             error: errMsg,
           })));
@@ -99,8 +177,12 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
         }
       }
 
-      setResults(accumulated);
-      toast.success(`הועלו ${accumulated.inserted} מסמכים, דולגו ${accumulated.skipped}, נכשלו ${accumulated.failed.length}`);
+      // Done
+      setResults(acc);
+      toast.success(`הועלו ${acc.inserted} מסמכים, דולגו ${acc.skipped}, נכשלו ${acc.failed.length}`);
+      setPendingItems(null);
+      setBatchIndex(0);
+      setAccumulated({ inserted: 0, skipped: 0, failed: [] });
       fetchFailed();
       onIngested();
     } catch (err) {
@@ -109,7 +191,28 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
       setIngesting(false);
       setProgressMsg("");
       setBatchProgress(null);
+      releaseWakeLock();
     }
+  }, [onIngested]);
+
+  const handleResume = () => {
+    if (pendingItems) {
+      runBatchLoop(pendingItems, batchIndex, { ...accumulated });
+    }
+  };
+
+  const handlePause = () => {
+    setPaused(true);
+    pausedRef.current = true;
+    abortRef.current?.abort();
+  };
+
+  const ingestCases = async (cases: unknown[]) => {
+    const acc: AccumulatedResults = { inserted: 0, skipped: 0, failed: [] };
+    setAccumulated(acc);
+    setPendingItems(cases);
+    setBatchIndex(0);
+    await runBatchLoop(cases, 0, acc);
   };
 
   const handleFetchFromApify = async () => {
@@ -199,6 +302,7 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
   };
 
   const isBusy = ingesting || fetching;
+  const canResume = paused && pendingItems && !ingesting;
 
   return (
     <div className="space-y-4">
@@ -218,9 +322,23 @@ export default function ApifyIngestionPanel({ onIngested }: ApifyIngestionPanelP
           className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground font-mono"
           dir="ltr"
         />
-        <Button onClick={handleFetchFromApify} disabled={isBusy || !actorId.trim()}>
-          {fetching ? "שולף..." : "🔄 שלוף והעלה מ-Apify"}
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={handleFetchFromApify} disabled={isBusy || !actorId.trim()}>
+            {fetching ? "שולף..." : "🔄 שלוף והעלה מ-Apify"}
+          </Button>
+          {ingesting && (
+            <Button variant="outline" onClick={handlePause}>
+              <Pause className="h-3 w-3 mr-1" />
+              השהה
+            </Button>
+          )}
+          {canResume && (
+            <Button variant="default" onClick={handleResume}>
+              <Play className="h-3 w-3 mr-1" />
+              המשך ({Math.floor(batchIndex / BATCH_SIZE) + 1}/{pendingItems ? Math.ceil(pendingItems.length / BATCH_SIZE) : 0})
+            </Button>
+          )}
+        </div>
 
         {progressMsg && (
           <div className="space-y-2">
