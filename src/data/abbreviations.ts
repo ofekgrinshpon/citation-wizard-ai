@@ -378,11 +378,16 @@ export function detectSourceType(text: string): SourceType {
   // Check for internet comments (Rule 34.2.9) before general internet
   if (/תגובה\s+(ל|מ-?\d)/.test(hebrewText) && /https?:\/\//.test(text)) return 'internet_comment';
   if (/https?:\/\//.test(text)) return 'internet';
+  
+  // Natural language case law references (e.g., "פסק הדין", "פס"ד") — BEFORE book heuristics
+  if (/פסק\s+(?:ה)?דין|פס["״]ד/.test(hebrewText) && 
+      !/חוק|פקוד|תקנ|הצעת|ספר/.test(hebrewText)) {
+    return 'case_law_database';
+  }
+  
   if (/ספר|מהדורה/.test(hebrewText)) return 'book';
   
   // Heuristic: Hebrew name (2+ words) followed by a title (3+ additional words) → likely a book
-  // e.g. "אוריאל פרוקצ'יה דיני חברות חדשים בישראל"
-  // Allow apostrophes/quotes within Hebrew words (e.g. פרוקצ'יה, ז"ל)
   const strippedForBook = hebrewText.trim().replace(/['׳"״`]/g, '');
   if (/^[\u0590-\u05FF]+\s+[\u0590-\u05FF]+\s+[\u0590-\u05FF]/.test(strippedForBook) && 
       hebrewText.trim().split(/\s+/).length >= 4 &&
@@ -392,12 +397,6 @@ export function detectSourceType(text: string): SourceType {
   
   // Religious sources (Rules 28–30)
   if (/תלמוד|משנה|גמרא|שו"ת|מקרא|בראשית|שמות|ויקרא|במדבר|דברים|בבלי|ירושלמי|שולחן ערוך|מכילתא|רש"י|רמב"ם|משנה תורה|טורים|קוראן|סורת|סורה|הבשורה על פי|האיגרת אל|שמות רבה|בראשית רבה|ויקרא רבה|אוצר הגאונים|ספר הישר/.test(hebrewText)) return 'religious';
-  
-  // Natural language case law references (e.g., "פסק הדין", "פס"ד")
-  if (/פסק\s+(?:ה)?דין|פס["״]ד/.test(hebrewText) && 
-      !/חוק|פקוד|תקנ|הצעת|ספר/.test(hebrewText)) {
-    return 'case_law_database';
-  }
   
   return 'unknown';
 }
