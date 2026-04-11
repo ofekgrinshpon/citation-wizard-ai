@@ -393,6 +393,12 @@ export function detectSourceType(text: string): SourceType {
   // Religious sources (Rules 28–30)
   if (/תלמוד|משנה|גמרא|שו"ת|מקרא|בראשית|שמות|ויקרא|במדבר|דברים|בבלי|ירושלמי|שולחן ערוך|מכילתא|רש"י|רמב"ם|משנה תורה|טורים|קוראן|סורת|סורה|הבשורה על פי|האיגרת אל|שמות רבה|בראשית רבה|ויקרא רבה|אוצר הגאונים|ספר הישר/.test(hebrewText)) return 'religious';
   
+  // Natural language case law references (e.g., "פסק הדין", "פס"ד")
+  if (/פסק\s+(?:ה)?דין|פס["״]ד/.test(hebrewText) && 
+      !/חוק|פקוד|תקנ|הצעת|ספר/.test(hebrewText)) {
+    return 'case_law_database';
+  }
+  
   return 'unknown';
 }
 
