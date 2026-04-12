@@ -708,7 +708,7 @@ const Index = () => {
 
   const MODES: { id: AppMode; label: string; icon: string }[] = [
     { id: "legalqa", label: "העוזר המשפטי", icon: "⚖️" },
-    { id: "freetext", label: "טקסט חופשי", icon: "✨" },
+    { id: "freetext", label: "אזכור אחיד", icon: "✨" },
     { id: "batch", label: "הערות שוליים", icon: "📑" },
     { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
   ];
