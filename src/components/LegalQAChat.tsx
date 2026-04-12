@@ -120,7 +120,12 @@ async function extractDocxText(file: File): Promise<string> {
 
 // ─── Main Component ──────────────────────────────────────────────────
 
-export function LegalQAChat() {
+interface LegalQAChatProps {
+  onResultSaved?: () => void;
+  externalResult?: { question: string; result: QAResult; taskMode: TaskMode } | null;
+}
+
+export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps = {}) {
   const [question, setQuestion] = useState("");
   const [result, setResult] = useState<QAResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -132,6 +137,15 @@ export function LegalQAChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Load external result from history sidebar
+  useEffect(() => {
+    if (externalResult) {
+      setQuestion(externalResult.question);
+      setResult(externalResult.result);
+      setTaskMode(externalResult.taskMode);
+    }
+  }, [externalResult]);
 
   useEffect(() => {
     if (result) scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
@@ -248,7 +262,28 @@ export function LegalQAChat() {
         return;
       }
 
-      setResult(data as QAResult);
+      const qaResult = data as QAResult;
+      setResult(qaResult);
+
+      // Save to qa_logs
+      try {
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        if (currentUser) {
+          await supabase.from("qa_logs").insert({
+            user_id: currentUser.id,
+            question: q,
+            answer: qaResult.answer,
+            footnotes: qaResult.footnotes as any,
+            task_mode: taskMode,
+            local_footnotes_count: qaResult.footnotes.filter(f => f.source === "local").length,
+            perplexity_footnotes_count: qaResult.footnotes.filter(f => f.source === "perplexity").length,
+            total_footnotes: qaResult.footnotes.length,
+          });
+          onResultSaved?.();
+        }
+      } catch (saveErr) {
+        console.error("Failed to save QA log:", saveErr);
+      }
     } catch (e: any) {
       console.error("Legal QA error:", e);
       setError("שגיאה בעיבוד השאלה. נסו שוב.");

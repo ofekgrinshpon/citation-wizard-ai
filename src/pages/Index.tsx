@@ -30,6 +30,7 @@ import {
 import { VerifiedSuggestionCard } from "@/components/VerifiedSuggestionCard";
 import { AppSidebar } from "@/components/AppSidebar";
 import { CitationHistorySidebar } from "@/components/CitationHistorySidebar";
+import { QAHistorySidebar } from "@/components/QAHistorySidebar";
 import { ReLexLogo } from "@/components/ReLexLogo";
 
 interface Message {
@@ -124,6 +125,8 @@ const Index = () => {
     newMessages: Message[];
   } | null>(null);
   const [citationRefreshKey, setCitationRefreshKey] = useState(0);
+  const [qaRefreshKey, setQaRefreshKey] = useState(0);
+  const [qaExternalResult, setQaExternalResult] = useState<{ question: string; result: any; taskMode: "research" | "pleading_analysis" | "case_summary" | "argument_draft" } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   
@@ -832,7 +835,10 @@ const Index = () => {
         ) : mode === "bibliography" ? (
           <BibliographyGenerator />
         ) : mode === "legalqa" ? (
-          <LegalQAChat />
+          <LegalQAChat
+            onResultSaved={() => setQaRefreshKey(k => k + 1)}
+            externalResult={qaExternalResult}
+          />
         ) : (
           <>
             {/* Welcome screen */}
@@ -1143,10 +1149,19 @@ const Index = () => {
         {/* Citation history sidebar — desktop only, authenticated users */}
         {user && !isOfficeAddin && (
           <div className="hidden md:flex self-stretch">
-            <CitationHistorySidebar
-              projectId={projectId ?? null}
-              refreshKey={citationRefreshKey}
-            />
+            {mode === "legalqa" ? (
+              <QAHistorySidebar
+                projectId={projectId ?? null}
+                onLoadResult={(question, result, taskMode) => {
+                  setQaExternalResult({ question, result, taskMode: taskMode as "research" | "pleading_analysis" | "case_summary" | "argument_draft" });
+                }}
+              />
+            ) : (
+              <CitationHistorySidebar
+                projectId={projectId ?? null}
+                refreshKey={citationRefreshKey}
+              />
+            )}
           </div>
         )}
       </div>
