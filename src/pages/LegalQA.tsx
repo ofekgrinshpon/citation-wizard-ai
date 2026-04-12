@@ -136,11 +136,25 @@ export default function LegalQA() {
 
   const handleCopy = () => {
     if (!result) return;
-    const footnotesText = result.footnotes
-      .map((f) => `${f.number}. ${f.citation}`)
-      .join("\n");
-    const fullText = `${result.answer}\n\nהערות שוליים:\n${footnotesText}`;
-    copyPlainText(fullText);
+
+    const mdToHtml = (t: string) => t.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    const mdToPlain = (t: string) => t.replace(/\*\*(.+?)\*\*/g, "$1");
+
+    const bodyStyle = 'font-family: David, "David Libre", serif; font-size: 12pt; line-height: 1.5; text-align: justify; direction: rtl;';
+    const fnStyle = 'font-family: David, "David Libre", serif; font-size: 10pt; line-height: 1.5; direction: rtl;';
+
+    const answerHtml = mdToHtml(result.answer).replace(/\n/g, "<br>");
+    const footnotesHtml = result.footnotes
+      .map((f) => `<div style="${fnStyle}"><strong>${f.number}.</strong> ${mdToHtml(f.citation)}</div>`)
+      .join("");
+
+    const html = `<div style="${bodyStyle}">${answerHtml}</div>` +
+      (result.footnotes.length > 0 ? `<hr><div style="${fnStyle}"><strong>הערות שוליים</strong></div>${footnotesHtml}` : "");
+
+    const footnotesPlain = result.footnotes.map((f) => `${f.number}. ${mdToPlain(f.citation)}`).join("\n");
+    const plain = `${mdToPlain(result.answer)}\n\nהערות שוליים:\n${footnotesPlain}`;
+
+    copyRichText(html, plain);
     toast.success("הועתק ללוח");
   };
 
