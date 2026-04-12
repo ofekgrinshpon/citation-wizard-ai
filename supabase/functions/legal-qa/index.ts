@@ -500,6 +500,13 @@ ${combinedContext}`;
       fn.citation = fn.citation.replace(/,?\s*עמ['׳]?\s*$/, "").trim();
     }
 
+    // Ensure trailing period on every citation
+    for (const fn of footnotes) {
+      if (fn.citation && !/[.。]$/.test(fn.citation.trim())) {
+        fn.citation = fn.citation.trim() + ".";
+      }
+    }
+
     // Filter short footnotes and renumber
     const validFootnotes = footnotes.filter((fn) => fn.citation.trim().length >= 10);
     if (validFootnotes.length !== footnotes.length) {
