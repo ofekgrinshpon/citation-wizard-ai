@@ -43,6 +43,16 @@ interface LocalMatch {
   similarity: number;
 }
 
+// ─── Source card: server-built, numbered list of sources for the AI ───
+interface SourceCard {
+  id: number;
+  citation: string;
+  source_type: string;
+  url?: string;
+  provenance: "local" | "perplexity" | "document";
+  excerpt: string;
+}
+
 // ─── Task mode → system prompt instructions ──────────────────────────
 
 function getTaskModeInstructions(taskMode?: string): string {
@@ -130,6 +140,8 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    const t0 = Date.now();
+
     // ========= Step 0: Document context (if uploaded) =========
     let documentContext = "";
     const hasDocument = documentText && typeof documentText === "string" && documentText.trim().length > 100;
@@ -178,7 +190,7 @@ serve(async (req) => {
               { role: "user", content: question },
             ],
           }),
-        }, 15000); // 15s timeout
+        }, 15000);
 
         if (res.ok) {
           const data = await res.json();
@@ -196,7 +208,6 @@ serve(async (req) => {
       return { content: "", citations: [] };
     })();
 
-    // Await both in parallel
     const [localResult, perplexityResult] = await Promise.all([localSearchPromise, perplexityPromise]);
 
     const localMatches = localResult.matches;
@@ -204,7 +215,9 @@ serve(async (req) => {
     const searchResults = perplexityResult.content;
     const citations = perplexityResult.citations;
 
-    // If ALL sources failed and no document, we can't produce anything useful
+    const tRetrieval = Date.now();
+    console.log(`Retrieval took ${tRetrieval - t0}ms`);
+
     if (!usedLocalSearch && !searchResults && !hasDocument) {
       return new Response(
         JSON.stringify({ error: "לא נמצאו מקורות רלוונטיים. נסו לנסח את השאלה אחרת." }),
@@ -212,7 +225,56 @@ serve(async (req) => {
       );
     }
 
-    // ========= Step 2: Build combined context (trimmed) =========
+    // ========= Step 2: Build source cards (server-side) =========
+    const sourceCards: SourceCard[] = [];
+    let cardId = 1;
+
+    // Local sources
+    if (usedLocalSearch && localMatches.length > 0) {
+      const seenDocs = new Set<string>();
+      for (const m of localMatches) {
+        if (m.source_type === "notebook") continue;
+        if (seenDocs.has(m.document_id)) continue;
+        seenDocs.add(m.document_id);
+        if (isBlogUrl(m.source_url || undefined)) continue;
+        sourceCards.push({
+          id: cardId++,
+          citation: m.document_citation,
+          source_type: m.source_type,
+          url: m.source_url || undefined,
+          provenance: "local",
+          excerpt: m.chunk_content.slice(0, 400),
+        });
+      }
+    }
+
+    // Perplexity sources — extract from citations array
+    if (citations.length > 0) {
+      for (const citUrl of citations.slice(0, 8)) {
+        if (isBlogUrl(citUrl)) continue;
+        sourceCards.push({
+          id: cardId++,
+          citation: citUrl, // URL as citation — AI will improve in its answer
+          source_type: "web",
+          url: citUrl,
+          provenance: "perplexity",
+          excerpt: "",
+        });
+      }
+    }
+
+    // Document source
+    if (hasDocument) {
+      sourceCards.push({
+        id: cardId++,
+        citation: documentName || "מסמך שהועלה",
+        source_type: "document",
+        provenance: "document",
+        excerpt: documentText.slice(0, 300),
+      });
+    }
+
+    // ========= Step 3: Build context for AI (without forcing tool_call) =========
     const contextParts: string[] = [];
 
     if (hasDocument) {
@@ -236,14 +298,16 @@ serve(async (req) => {
 
     if (searchResults) {
       contextParts.push("\n=== מקורות מחיפוש ===\n" + searchResults.slice(0, 3000));
-      if (citations.length > 0) {
-        contextParts.push(citations.slice(0, 8).map((c, i) => `[${i + 1}] ${c}`).join("\n"));
-      }
     }
 
     const combinedContext = truncateContext(contextParts.join("\n"));
 
-    // ========= Step 3: Gemini call (Flash for speed) =========
+    // Build source catalog string for the AI
+    const sourceCatalog = sourceCards.map(
+      (sc) => `[${sc.id}] ${sc.citation}${sc.url ? ` (${sc.url})` : ""} — ${sc.source_type}`
+    ).join("\n");
+
+    // ========= Step 4: Gemini call — plain text, NO tool_call =========
     const taskInstructions = getTaskModeInstructions(taskMode);
     const citationInstructions = buildCitationInstructions();
 
@@ -253,16 +317,20 @@ ${taskInstructions}
 כללי כתיבה:
 - אורך: 800-1500 מילים. כל חלק חייב להיות מהותי.
 - השתמש בכותרות מודגשות: **תקציר**, **מסגרת נורמטיבית**, **ניתוח מפורט**, **המלצות מעשיות**.
-- כל הערת שוליים חייבת להופיע כסופרסקריפט יוניקוד (⁰¹²³⁴⁵⁶⁷⁸⁹) בסוף משפט.
-- לכל משפט לכל היותר הערה אחת. העדף 8-12 הערות איכותיות.
-- אל תמציא מקורות. כל הערה מבוססת על המקורות שלהלן.
-- מספור רציף: 1, 2, 3...
-- source: "local" למאגר מאומת, "perplexity" לחיפוש${hasDocument ? ', "document" למסמך' : ''}.
+- הפנה למקורות באמצעות סימון [X] בסוף משפט, כאשר X הוא מספר המקור מרשימת המקורות למטה.
+- העדף 8-12 הפניות איכותיות. אל תמציא מקורות. השתמש רק במקורות מהרשימה.
+- אתה יכול גם לכתוב אזכורים נוספים שאינם ברשימה, אם אתה בטוח לחלוטין שהם קיימים. סמן אותם כ-[NEW:אזכור מלא לפי כללי האזכור].
 
 ${citationInstructions}
 
-מקורות:
+רשימת מקורות זמינים:
+${sourceCatalog}
+
+הקשר מהמקורות:
 ${combinedContext}`;
+
+    const promptLen = systemPrompt.length;
+    console.log(`Prompt length: ${promptLen} chars, ${sourceCards.length} source cards`);
 
     const aiBody = JSON.stringify({
       model: "google/gemini-2.5-flash",
@@ -271,47 +339,10 @@ ${combinedContext}`;
         { role: "system", content: systemPrompt },
         { role: "user", content: `השאלה המשפטית: ${question}` },
       ],
-      tools: [
-        {
-          type: "function",
-          function: {
-            name: "format_legal_answer",
-            description: "Format a structured legal memo with footnotes.",
-            parameters: {
-              type: "object",
-              properties: {
-                answer: {
-                  type: "string",
-                  description: "Full Hebrew legal memo with section headings and superscript footnote numbers.",
-                },
-                footnotes: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      number: { type: "number" },
-                      citation: { type: "string" },
-                      source_type: { type: "string", enum: ["legislation", "caselaw", "book", "article", "international", "document"] },
-                      url: { type: "string" },
-                      source: { type: "string", enum: ["local", "perplexity", "document"] },
-                    },
-                    required: ["number", "citation", "source_type", "source"],
-                    additionalProperties: false,
-                  },
-                },
-              },
-              required: ["answer", "footnotes"],
-              additionalProperties: false,
-            },
-          },
-        },
-      ],
-      tool_choice: { type: "function", function: { name: "format_legal_answer" } },
     });
 
-    let parsed: any = null;
-
-    console.log("AI call starting (55s timeout)...");
+    console.log("AI call starting (90s timeout, no tool_call)...");
+    let answerText = "";
     try {
       const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
@@ -320,7 +351,10 @@ ${combinedContext}`;
           "Content-Type": "application/json",
         },
         body: aiBody,
-      }, 55000); // 55s timeout — single attempt, no retry
+      }, 90000); // 90s — no tool_call overhead, plenty of time
+
+      const tAi = Date.now();
+      console.log(`AI call took ${tAi - tRetrieval}ms`);
 
       if (!aiRes.ok) {
         if (aiRes.status === 429) {
@@ -344,39 +378,15 @@ ${combinedContext}`;
       }
 
       const aiData = await aiRes.json();
-      const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
+      answerText = aiData.choices?.[0]?.message?.content || "";
       const finishReason = aiData.choices?.[0]?.finish_reason || "unknown";
-      console.log(`AI response: tool_calls=${toolCall ? "yes" : "no"}, finish_reason=${finishReason}`);
+      console.log(`AI response: ${answerText.length} chars, finish_reason=${finishReason}`);
 
-      if (!toolCall?.function?.arguments) {
-        const content = aiData.choices?.[0]?.message?.content || "";
-        if (content && content.length >= 50) {
-          parsed = { answer: content, footnotes: [] };
-        } else {
-          console.error(`No usable response, content length: ${content.length}`);
-          return new Response(
-            JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-      } else {
-        try {
-          parsed = JSON.parse(toolCall.function.arguments);
-        } catch {
-          console.error("Failed to parse tool call arguments");
-          return new Response(
-            JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-
-        if (!parsed.answer || parsed.answer.length < 50) {
-          console.error(`Answer too short: ${parsed.answer?.length || 0} chars`);
-          return new Response(
-            JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה מלאה. נסו שוב." }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
+      if (!answerText || answerText.length < 50) {
+        return new Response(
+          JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
       }
     } catch (err) {
       console.error("AI call error:", err);
@@ -386,129 +396,130 @@ ${combinedContext}`;
       );
     }
 
-    let answer = parsed.answer || "";
-    let footnotes: Array<{ number: number; citation: string; source_type: string; url?: string; source?: string }> = parsed.footnotes || [];
+    // ========= Step 5: Build footnotes deterministically on server =========
+    // Find all [X] references in the answer
+    const usedSourceIds = new Set<number>();
+    const newCitations: Array<{ citation: string; source_type: string }> = [];
 
-    console.log(`Final: answer=${answer.length} chars, footnotes=${footnotes.length}`);
+    // Match [X] patterns (source references)
+    const refPattern = /\[(\d{1,2})\]/g;
+    let refMatch;
+    while ((refMatch = refPattern.exec(answerText)) !== null) {
+      usedSourceIds.add(parseInt(refMatch[1], 10));
+    }
 
-    // --- Post-processing: Filter blog footnotes ---
-    footnotes = footnotes.filter((fn) => !isBlogUrl(fn.url));
+    // Match [NEW:...] patterns (AI-generated new citations)
+    const newRefPattern = /\[NEW:([^\]]+)\]/g;
+    let newMatch;
+    while ((newMatch = newRefPattern.exec(answerText)) !== null) {
+      newCitations.push({ citation: newMatch[1].trim(), source_type: "unknown" });
+    }
 
-    // --- Post-processing: Strip titles ---
+    // Build footnotes array from source cards
+    const footnotes: Array<{ number: number; citation: string; source_type: string; url?: string; source?: string }> = [];
+    const oldIdToNewNumber = new Map<number, number>();
+    let fnNum = 1;
+
+    for (const srcId of Array.from(usedSourceIds).sort((a, b) => a - b)) {
+      const card = sourceCards.find((sc) => sc.id === srcId);
+      if (!card) continue;
+      oldIdToNewNumber.set(srcId, fnNum);
+      footnotes.push({
+        number: fnNum,
+        citation: card.citation,
+        source_type: card.source_type,
+        url: card.url,
+        source: card.provenance,
+      });
+      fnNum++;
+    }
+
+    // Add new AI-generated citations
+    for (const nc of newCitations) {
+      footnotes.push({
+        number: fnNum,
+        citation: nc.citation,
+        source_type: nc.source_type,
+        source: "perplexity", // treat as web-discovered
+      });
+      fnNum++;
+    }
+
+    // ========= Step 6: Replace [X] markers with superscripts =========
+    let answer = answerText;
+
+    // Replace [X] with superscript, remapping to new numbers
+    answer = answer.replace(/\[(\d{1,2})\]/g, (_: string, num: string) => {
+      const oldId = parseInt(num, 10);
+      const newNum = oldIdToNewNumber.get(oldId);
+      if (newNum) return toSuperscript(newNum);
+      return ""; // source not found, remove reference
+    });
+
+    // Replace [NEW:...] with superscript numbers
+    let newIdx = footnotes.length - newCitations.length + 1;
+    answer = answer.replace(/\[NEW:[^\]]+\]/g, () => {
+      return toSuperscript(newIdx++);
+    });
+
+    // ========= Step 7: Post-processing =========
+    // Strip titles from citations
     const titlePattern = /\b(פרופ['׳]|ד"ר|ד״ר|עו"ד|עו״ד|רו"ח|רו״ח|שופטת|שופט|המנוחה|המנוח|ז"ל|ז״ל)\s*/g;
     for (const fn of footnotes) {
       fn.citation = fn.citation.replace(titlePattern, "").replace(/\s{2,}/g, " ").trim();
     }
 
-    // --- Post-processing: Remove placeholders ---
+    // Remove placeholders
     const placeholderPattern = /\[missing:[^\]]*\]|\[חסר:[^\]]*\]|\[פרט חסר[^\]]*\]/g;
     for (const fn of footnotes) {
       fn.citation = fn.citation.replace(placeholderPattern, "").trim();
       fn.citation = fn.citation.replace(/,?\s*עמ['׳]?\s*$/, "").trim();
     }
 
-    // --- Post-processing: Filter short footnotes ---
-    footnotes = footnotes.filter((fn) => fn.citation.trim().length >= 10);
-
-    // --- Post-processing: Renumber ---
-    {
-      const survivingOldNumbers = new Set(footnotes.map((fn) => fn.number));
-      const allOldNumbers = (parsed.footnotes || []).map((fn: any) => fn.number as number);
-      for (const oldNum of allOldNumbers) {
-        if (!survivingOldNumbers.has(oldNum)) {
-          answer = answer.replaceAll(toSuperscript(oldNum), "");
-        }
+    // Filter short footnotes and renumber
+    const validFootnotes = footnotes.filter((fn) => fn.citation.trim().length >= 10);
+    if (validFootnotes.length !== footnotes.length) {
+      // Need to renumber
+      const removedNumbers = new Set(
+        footnotes.filter((fn) => fn.citation.trim().length < 10).map((fn) => fn.number)
+      );
+      for (const num of removedNumbers) {
+        answer = answer.replaceAll(toSuperscript(num), "");
       }
-      const oldToNew = new Map<number, number>();
-      footnotes.forEach((fn, idx) => { oldToNew.set(fn.number, idx + 1); });
-      for (const [oldNum, newNum] of oldToNew) {
-        if (oldNum !== newNum) {
-          answer = answer.replaceAll(toSuperscript(oldNum), `__FN_${newNum}__`);
+      validFootnotes.forEach((fn, idx) => {
+        const oldSup = toSuperscript(fn.number);
+        const newNum = idx + 1;
+        if (fn.number !== newNum) {
+          answer = answer.replaceAll(oldSup, `__FN_${newNum}__`);
         }
-      }
-      for (const [, newNum] of oldToNew) {
-        answer = answer.replaceAll(`__FN_${newNum}__`, toSuperscript(newNum));
-      }
-      footnotes.forEach((fn, idx) => { fn.number = idx + 1; });
-    }
-
-    // --- Convert bracket patterns to superscript ---
-    answer = answer.replace(/\[(\d{1,2})\]/g, (_: string, num: string) => toSuperscript(parseInt(num, 10)));
-    answer = answer.replace(/\((\d{1,2})\)(?=[^\dא-ת]|$)/g, (_: string, num: string) => toSuperscript(parseInt(num, 10)));
-
-    // --- De-cluster adjacent superscripts ---
-    const superscriptChars = new Set(Object.values(digitToSuperscript));
-    const lines = answer.split("\n");
-    const processedLines = lines.map((line) => {
-      let result = "";
-      let inSuperscriptRun = false;
-      for (let i = 0; i < line.length; i++) {
-        const ch = line[i];
-        if (superscriptChars.has(ch)) {
-          if (!inSuperscriptRun) {
-            inSuperscriptRun = true;
-            result += ch;
-          } else {
-            const prevSupChars: string[] = [];
-            for (let j = result.length - 1; j >= 0; j--) {
-              if (superscriptChars.has(result[j])) prevSupChars.unshift(result[j]);
-              else break;
-            }
-            prevSupChars.push(ch);
-            const superscriptToDigit: Record<string, string> = {};
-            for (const [d, s] of Object.entries(digitToSuperscript)) superscriptToDigit[s] = d;
-            const numStr = prevSupChars.map((c) => superscriptToDigit[c] || "").join("");
-            const num = parseInt(numStr, 10);
-            const maxFn = footnotes.length > 0 ? Math.max(...footnotes.map((f) => f.number)) : 20;
-            if (num <= maxFn) result += ch;
-          }
-        } else {
-          inSuperscriptRun = false;
-          result += ch;
-        }
-      }
-      return result;
-    });
-    answer = processedLines.join("\n");
-
-    // --- Inject missing superscripts ---
-    for (const fn of footnotes) {
-      const sup = toSuperscript(fn.number);
-      if (!answer.includes(sup)) {
-        const periodRegex = /([.。])([\s\n]|$)/g;
-        let match;
-        let count = 0;
-        let insertPos = -1;
-        while ((match = periodRegex.exec(answer)) !== null) {
-          count++;
-          if (count === fn.number) { insertPos = match.index + match[1].length; break; }
-        }
-        if (insertPos > 0) {
-          answer = answer.slice(0, insertPos) + sup + answer.slice(insertPos);
-        } else {
-          const lastPeriod = answer.lastIndexOf(".");
-          if (lastPeriod > 0) answer = answer.slice(0, lastPeriod + 1) + sup + answer.slice(lastPeriod + 1);
-        }
+        fn.number = newNum;
+      });
+      for (const fn of validFootnotes) {
+        answer = answer.replaceAll(`__FN_${fn.number}__`, toSuperscript(fn.number));
       }
     }
+
+    const finalFootnotes = validFootnotes;
+
+    console.log(`Final: answer=${answer.length} chars, footnotes=${finalFootnotes.length}, total time=${Date.now() - t0}ms`);
 
     // Log
     try {
-      const localCount = footnotes.filter((f) => f.source === "local").length;
-      const perplexityCount = footnotes.filter((f) => f.source === "perplexity").length;
+      const localCount = finalFootnotes.filter((f) => f.source === "local").length;
+      const perplexityCount = finalFootnotes.filter((f) => f.source === "perplexity").length;
       await adminClient.from("qa_logs").insert({
         user_id: user.id,
         question: question.substring(0, 500),
         local_footnotes_count: localCount,
         perplexity_footnotes_count: perplexityCount,
-        total_footnotes: footnotes.length,
+        total_footnotes: finalFootnotes.length,
       });
     } catch (logErr) {
       console.error("Failed to log QA stats (non-fatal):", logErr);
     }
 
     return new Response(
-      JSON.stringify({ answer, footnotes, source_urls: citations }),
+      JSON.stringify({ answer, footnotes: finalFootnotes, source_urls: citations }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
