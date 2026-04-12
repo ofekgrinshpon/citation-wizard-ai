@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
+import { useProjects } from "@/hooks/useProjects";
 
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
@@ -152,6 +153,7 @@ interface LegalQAChatProps {
 }
 
 export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps = {}) {
+  const { currentProject } = useProjects();
   const [question, setQuestion] = useState("");
   const [result, setResult] = useState<QAResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -297,6 +299,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
         if (currentUser) {
           await supabase.from("qa_logs").insert({
             user_id: currentUser.id,
+            project_id: currentProject?.id ?? null,
             question: q,
             answer: qaResult.answer,
             footnotes: qaResult.footnotes as any,
