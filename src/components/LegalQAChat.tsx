@@ -193,6 +193,7 @@ export function LegalQAChat() {
 
     setLoading(true);
     setResult(null);
+    setError(null);
 
     try {
       const body: Record<string, unknown> = {
@@ -204,36 +205,34 @@ export function LegalQAChat() {
         body.documentName = uploadedFile?.name;
       }
 
-      const { data, error } = await supabase.functions.invoke("legal-qa", { body });
+      const { data, error: fnError } = await supabase.functions.invoke("legal-qa", { body });
 
-      if (error) {
-        // Check for specific HTTP status codes
-        const statusCode = (error as any)?.status || (error as any)?.context?.status;
+      if (fnError) {
+        const statusCode = (fnError as any)?.status || (fnError as any)?.context?.status;
         if (statusCode === 429) {
-          toast.error("יותר מדי בקשות. נסו שוב בעוד דקה.");
+          setError("יותר מדי בקשות. נסו שוב בעוד דקה.");
           return;
         }
         if (statusCode === 402) {
-          toast.error("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות.");
+          setError("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות.");
           return;
         }
-        throw error;
+        throw fnError;
       }
       if (data?.error) {
-        toast.error(data.error);
+        setError(data.error);
         return;
       }
 
-      // Guard against empty payload
       if (!data?.answer || data.answer.trim().length < 20) {
-        toast.error("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב.");
+        setError("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב.");
         return;
       }
 
       setResult(data as QAResult);
     } catch (e: any) {
       console.error("Legal QA error:", e);
-      toast.error("שגיאה בעיבוד השאלה. נסו שוב.");
+      setError("שגיאה בעיבוד השאלה. נסו שוב.");
     } finally {
       setLoading(false);
     }
