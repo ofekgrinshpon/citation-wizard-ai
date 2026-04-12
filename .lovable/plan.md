@@ -1,48 +1,42 @@
 
 
-## Fix: Connect Citation Engine to Legal QA Footnotes
+## Fix: Enforce Memo Length & Citation Formatting (Prompt + Post-Processing)
 
-### Problem
-The legal-qa edge function has a brief, hand-written 7-line summary of citation rules (lines 320-327) that misses most formatting details. The full citation engine (`src/data/citationEngine.ts`) already has comprehensive rules for every source type — templates, required fields, formatting instructions, notes, and examples. These two are not connected.
+### Root Causes
+1. **Too short**: `gemini-2.5-flash` produces concise output by default. The 800-1200 word instruction is being ignored. Need to upgrade to `gemini-2.5-pro` for complex legal memos AND raise the minimum.
+2. **Titles persist** (פרופ', ד"ר, רו"ח): The AI ignores the no-titles rule. Need server-side regex stripping.
+3. **`[missing: פרט חסר]`**: The AI ignores the no-placeholders rule. Need server-side regex removal.
+4. **Truncated footnote 4**: Likely a `max_tokens` limit. Need to increase it.
+5. **Footnote 6 gap**: The existing renumbering logic only runs when blog URLs are filtered. Need a universal sequential renumber pass.
 
-### Solution
-Serialize the citation engine rules into the system prompt dynamically at build time, so the AI gets the full, authoritative formatting instructions for every source type — not a lossy hand-written summary.
+### Changes — `supabase/functions/legal-qa/index.ts`
 
-### Changes
+**A. Switch model and increase tokens** (line 343):
+- Change `google/gemini-2.5-flash` to `google/gemini-2.5-pro` for higher instruction adherence
+- Add `max_tokens: 8192` to prevent truncation
 
-#### 1. Create a shared citation rules module for the edge function
+**B. Strengthen length instructions** (line 306):
+- Change "800–1200 מילים" to "1500–2500 מילים" with CRITICAL emphasis
+- Add: "כל חלק (תקציר, מסגרת נורמטיבית, ניתוח מפורט, המלצות מעשיות) חייב לכלול לפחות 3–4 פסקאות. חלק 'ניתוח מפורט' חייב להיות הארוך ביותר עם לפחות 5 פסקאות."
 
-**New file: `supabase/functions/legal-qa/citationRules.ts`**
+**C. Add post-processing steps** (after line 470, the existing post-processing):
 
-Extract the key data from `src/data/citationEngine.ts` into a self-contained module that can be imported by the edge function (edge functions can't import from `src/`). This module will contain:
-- A function `buildCitationInstructions(): string` that generates the full citation formatting block for the system prompt
-- For each source type: template, example, required fields with descriptions, formatting notes, and the "no titles" rule
-- Include the general rules (1.9 comma separation, 1.10 number ranges)
-- Add the extra rules missing from the current prompt: no academic titles (23.2.3), Knesset Research paper formatting, no `[missing:]` placeholders
+1. **Strip academic titles from footnotes**:
+   - Regex to remove פרופ', ד"ר, עו"ד, רו"ח, שופט/ת, המנוח/ה, ז"ל from citation text
+   - Pattern: `/\b(פרופ['׳]|ד"ר|עו"ד|רו"ח|שופט[ת]?|המנוח[ה]?|ז"ל)\s*/g` → replace with empty string
 
-#### 2. Update legal-qa edge function
+2. **Remove `[missing:...]` and `[חסר:...]` placeholders**:
+   - Pattern: `/\[missing:[^\]]*\]|\[חסר:[^\]]*\]/g` → remove
+   - Also clean up orphaned "עמ'" left behind: `/, עמ'\s*$/` → remove trailing incomplete refs
 
-**File: `supabase/functions/legal-qa/index.ts`**
+3. **Universal sequential renumbering**:
+   - After ALL filtering, always renumber footnotes 1,2,3... and update superscripts in the answer text — not only when blog filtering occurs
 
-- Import `buildCitationInstructions` from the new module
-- Replace lines 320-327 (the hand-written citation rules block) with `${buildCitationInstructions()}`
-- Add length enforcement: "Write at least 800-1200 words. Each section must have 2-3 substantive paragraphs."
-- Add rule: "Never use [missing:...] placeholders — omit the component entirely if unknown."
-- Add sequential footnote numbering enforcement
-
-#### 3. Deploy
-
-Deploy the updated `legal-qa` edge function.
-
-### What This Fixes
-- Footnotes will follow the full citation engine rules (templates, formatting, required fields)
-- No more academic titles in author names (פרופ', ד"ר, רו"ח)
-- Knesset Research papers formatted correctly as articles
-- No more `[missing:...]` placeholders
-- Longer, more detailed memos
-- Sequential footnote numbering with no gaps
+4. **Filter truncated/empty footnotes**:
+   - Remove any footnote where `citation.trim().length < 10` (too short to be valid)
+   - Remove the corresponding superscript from the answer
 
 ### Files Changed
-- **New**: `supabase/functions/legal-qa/citationRules.ts`
-- **Edit**: `supabase/functions/legal-qa/index.ts`
+- `supabase/functions/legal-qa/index.ts` — model upgrade, max_tokens, stronger length prompt, 4 new post-processing steps
+- Deploy updated edge function
 
