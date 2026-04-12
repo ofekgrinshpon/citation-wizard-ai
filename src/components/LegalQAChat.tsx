@@ -33,11 +33,11 @@ type TaskMode = "research" | "pleading_analysis" | "case_summary" | "argument_dr
 
 const FILE_RELEVANT_MODES: TaskMode[] = ["pleading_analysis", "case_summary"];
 
-const TASK_MODES: { id: TaskMode; label: string; description: string }[] = [
-  { id: "research", label: "מחקר משפטי", description: "סקירה מקיפה עם מסגרת נורמטיבית מלאה" },
-  { id: "pleading_analysis", label: "ניתוח כתב טענה", description: "ניתוח טענות משפטיות וחולשות" },
-  { id: "case_summary", label: "סיכום פסיקה", description: "סיכום ממוקד של פסקי דין" },
-  { id: "argument_draft", label: "ניסוח טיעון", description: "בניית טיעון משפטי מובנה" },
+const TASK_MODES: { id: TaskMode; label: string; description: string; placeholder: string }[] = [
+  { id: "research", label: "מחקר משפטי", description: "סריקה מקיפה עם מסגרת נורמטיבית מלאה", placeholder: "תארו שאלה משפטית לסקירה מקיפה..." },
+  { id: "pleading_analysis", label: "ניתוח כתב טענה", description: "זיהוי חולשות, סתירות ואזכורים חסרים", placeholder: "הדביקו כתב טענה או העלו קובץ לניתוח..." },
+  { id: "case_summary", label: "סיכום פסיקה", description: "תמצית: עובדות, שאלה משפטית, הכרעה ורציו", placeholder: "הזינו שם פסק דין או הדביקו טקסט לסיכום..." },
+  { id: "argument_draft", label: "ניסוח טיעון", description: "כתיבה משכנעת המבוססת על מקורות מוסמכים", placeholder: "תארו את הטיעון שברצונכם לבנות..." },
 ];
 
 const DAVID_FONT = "David, 'David Libre', serif";
@@ -285,6 +285,8 @@ export function LegalQAChat() {
     return { color: "hsl(var(--muted-foreground))", label: "חיפוש אינטרנט" };
   };
 
+  const activeMode = TASK_MODES.find((m) => m.id === taskMode)!;
+
   return (
     <div className="flex flex-col h-full" style={{ direction: "rtl" }}>
       {/* Query Panel — top */}
@@ -297,24 +299,27 @@ export function LegalQAChat() {
           </AlertDescription>
         </Alert>
 
-        {/* Task Mode Selector */}
-        <div>
+        {/* Task Mode Pills */}
+        <div className="space-y-1.5">
           <ToggleGroup
             type="single"
             value={taskMode}
             onValueChange={handleModeChange}
-            className="flex flex-wrap gap-1 justify-start"
+            className="flex flex-wrap gap-1.5 justify-start"
           >
             {TASK_MODES.map((m) => (
               <ToggleGroupItem
                 key={m.id}
                 value={m.id}
-                className="text-[11px] sm:text-xs px-2.5 py-1.5 rounded-lg data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                className="text-[11px] sm:text-xs px-3 py-2 rounded-full border border-border transition-all data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:border-primary data-[state=on]:shadow-sm"
               >
                 {m.label}
               </ToggleGroupItem>
             ))}
           </ToggleGroup>
+          <p className="text-[10px] text-muted-foreground pr-1 transition-all duration-200">
+            {activeMode.description}
+          </p>
         </div>
 
         {/* Input area with file upload */}
@@ -366,7 +371,7 @@ export function LegalQAChat() {
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={uploadedFile ? `שאלו על "${uploadedFile.name}"...` : "שאלו שאלה משפטית..."}
+              placeholder={uploadedFile ? `שאלו על "${uploadedFile.name}"...` : activeMode.placeholder}
               disabled={loading}
               rows={1}
               className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-2.5 sm:px-3.5 py-2.5 sm:py-3 text-foreground text-sm leading-relaxed font-sans resize-none"
@@ -398,23 +403,15 @@ export function LegalQAChat() {
       {/* Scrollable result area */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-2 sm:px-4 pb-4">
         {/* Empty state */}
-        {!result && !loading && (
-          <div className="py-10 text-center">
+        {!result && !loading && !error && (
+          <div className="py-12 text-center">
             <div className="text-4xl mb-3">⚖️</div>
             <h2 className="text-foreground text-lg font-bold mb-2">העוזר המשפטי</h2>
-            <p className="text-muted-foreground text-sm mb-4">
+            <p className="text-muted-foreground text-sm">
               {uploadedFile
                 ? "שאלו שאלה על המסמך שהועלה – התשובה תתבסס על תוכן הקובץ ועל המאגר הפנימי"
                 : "שאלו שאלה משפטית וקבלו חוות דעת מקצועית עם הפניות למקורות אמיתיים"}
             </p>
-            <div className="grid grid-cols-2 gap-2 max-w-md mx-auto mt-6">
-              {TASK_MODES.map((m) => (
-                <div key={m.id} className="feature-card text-right p-3">
-                  <div className="text-foreground text-xs font-semibold mb-1">{m.label}</div>
-                  <div className="text-muted-foreground text-[10px]">{m.description}</div>
-                </div>
-              ))}
-            </div>
           </div>
         )}
 
