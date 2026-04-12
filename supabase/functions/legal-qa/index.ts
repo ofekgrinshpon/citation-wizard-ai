@@ -43,6 +43,29 @@ interface LocalMatch {
   similarity: number;
 }
 
+// ─── Hebrew stop words for keyword extraction ───
+const HEBREW_STOP_WORDS = new Set([
+  "האם","יכול","יכולה","יכולים","את","של","על","כי","זה","הם","אם","לא","גם","כל","עם",
+  "היא","הוא","אין","מה","איך","כאשר","כדי","בין","אלא","רק","עוד","אשר","היה","יש",
+  "אך","אף","כך","לפי","בו","בה","או","אל","כן","פי","שלא","שהיא","שהוא","שלו","שלה",
+  "אותו","אותה","הזה","הזאת","לפני","אחרי","תחת","מול","ליד","היו","היתה","להיות",
+  "כלומר","לכן","אולם","למרות","מאחר","הרי","כבר","עדיין","בכל","ואם","שאם","מאוד",
+  "ביותר","כמו","למשל","אלה","אלו","זאת","הנ","אינו","אינה","אינם","מי","כיצד",
+  "מדוע","האם","שם","כאן","שוב","תמיד","לעולם","בעוד","משום","הן","והם","והיא",
+  "שהם","ולא","אבל","אותם","אותן","עליו","עליה","עליהם","ממנו","ממנה","בהם","בהן",
+  "להם","להן","אני","אנחנו","הוא","היא","אתה","את","הם","הן",
+]);
+
+function extractKeywords(question: string): string {
+  const words = question
+    .replace(/[?!.,;:"״׳']/g, "")
+    .split(/\s+/)
+    .filter(w => w.length > 1 && !HEBREW_STOP_WORDS.has(w));
+  
+  // Take up to 6 most meaningful keywords
+  return words.slice(0, 6).join(" ");
+}
+
 // ─── Source card: server-built, numbered list of sources for the AI ───
 interface SourceCard {
   id: number;
@@ -176,13 +199,32 @@ serve(async (req) => {
     // ========= Step 1: Local search + Perplexity IN PARALLEL =========
     const localSearchPromise = (async (): Promise<{ matches: LocalMatch[]; used: boolean }> => {
       try {
+        // Extract keywords (strip stop words) for better OR-based matching
+        const keywords = extractKeywords(question);
+        console.log(`Search keywords: "${keywords}" (from: "${question.slice(0, 80)}")`);
+        
         const { data: textMatches, error: textError } = await adminClient.rpc("search_legal_chunks_text", {
-          search_query: question,
+          search_query: keywords,
           match_count: 10,
         });
         if (!textError && textMatches && textMatches.length > 0) {
           console.log(`Text search: found ${textMatches.length} matching chunks`);
           return { matches: textMatches, used: true };
+        }
+        console.log(`Text search: 0 results for keywords "${keywords}"`);
+        
+        // Fallback: try with fewer keywords (top 3)
+        if (keywords.split(" ").length > 3) {
+          const fewerKeywords = keywords.split(" ").slice(0, 3).join(" ");
+          console.log(`Retry with fewer keywords: "${fewerKeywords}"`);
+          const { data: retryMatches, error: retryError } = await adminClient.rpc("search_legal_chunks_text", {
+            search_query: fewerKeywords,
+            match_count: 10,
+          });
+          if (!retryError && retryMatches && retryMatches.length > 0) {
+            console.log(`Retry search: found ${retryMatches.length} matching chunks`);
+            return { matches: retryMatches, used: true };
+          }
         }
       } catch (err) {
         console.error("Text search failed (non-fatal):", err);
