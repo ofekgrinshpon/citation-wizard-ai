@@ -339,7 +339,7 @@ export function LegalQAChat() {
             <p className="text-muted-foreground text-sm">
               {uploadedFile
                 ? "שאלו שאלה על המסמך שהועלה – התשובה תתבסס על תוכן הקובץ ועל המאגר הפנימי"
-                : "שאלו שאלה משפטית וקבלו חוות דעת מקצועית עם הפניות למקורות אמיתיים"}
+                : "\n"}
             </p>
           </div>
         )}
