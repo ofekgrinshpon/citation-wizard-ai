@@ -303,7 +303,7 @@ For each source, provide the EXACT law name, case number, or book title with ful
 ${taskInstructions}
 
 כללי כתיבה לגוף התשובה:
-1. כתוב חוות דעת מקצועית, מפורטת ומקיפה בעברית. אורך מינימלי: 800–1200 מילים. כל חלק חייב לכלול לפחות 2–3 פסקאות מהותיות עם ניתוח ספציפי, הוראות חוק, אזכורי פסיקה ודיון אקדמי. אל תסכם — נתח לעומק.
+1. **קריטי – אורך התשובה**: כתוב חוות דעת מקצועית, מפורטת ומקיפה בעברית. אורך מינימלי: 1500–2500 מילים. כל חלק (תקציר, מסגרת נורמטיבית, ניתוח מפורט, המלצות מעשיות) חייב לכלול לפחות 3–4 פסקאות מהותיות. חלק "ניתוח מפורט" חייב להיות הארוך ביותר עם לפחות 5 פסקאות. כל פסקה חייבת לכלול ניתוח ספציפי, הוראות חוק, אזכורי פסיקה ודיון אקדמי. אל תסכם — נתח לעומק. תשובה קצרה מ-1500 מילים היא כישלון.
 2. השתמש בכותרות מודגשות (**תקציר**, **מסגרת נורמטיבית**, **ניתוח מפורט**, **המלצות מעשיות**) לארגון התשובה.
 3. בגוף הטקסט, השתמש בשמות מקוצרים של חוקים (למשל "סעיף 15 לחוק החוזים"). השם המלא יופיע רק בהערת השוליים.
 4. חובה: כל הערת שוליים שאתה מגדיר חייבת להופיע כמספר סופרסקריפט בגוף הטקסט. השתמש בתווי יוניקוד: ⁰¹²³⁴⁵⁶⁷⁸⁹.
@@ -340,7 +340,8 @@ ${combinedContext}`;
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-2.5-pro",
+        max_tokens: 8192,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: `השאלה המשפטית: ${question}` },
@@ -437,36 +438,54 @@ ${combinedContext}`;
     let footnotes: Array<{ number: number; citation: string; source_type: string; url?: string; source?: string }> = parsed.footnotes || [];
 
     // --- Post-processing Step 1: Filter out blog/marketing footnotes ---
-    const filteredFootnotes = footnotes.filter((fn) => !isBlogUrl(fn.url));
-    const removedNumbers = new Set(
-      footnotes.filter((fn) => isBlogUrl(fn.url)).map((fn) => fn.number)
-    );
+    footnotes = footnotes.filter((fn) => !isBlogUrl(fn.url));
 
-    if (removedNumbers.size > 0) {
-      console.log(`Filtered out ${removedNumbers.size} blog/marketing footnotes`);
-      for (const num of removedNumbers) {
-        const sup = toSuperscript(num);
-        answer = answer.replaceAll(sup, "");
+    // --- Post-processing Step 2: Strip academic/professional titles from citations ---
+    const titlePattern = /\b(פרופ['׳]|ד"ר|ד״ר|עו"ד|עו״ד|רו"ח|רו״ח|שופטת|שופט|המנוחה|המנוח|ז"ל|ז״ל)\s*/g;
+    for (const fn of footnotes) {
+      fn.citation = fn.citation.replace(titlePattern, "").replace(/\s{2,}/g, " ").trim();
+    }
+
+    // --- Post-processing Step 3: Remove [missing:...] and [חסר:...] placeholders ---
+    const placeholderPattern = /\[missing:[^\]]*\]|\[חסר:[^\]]*\]|\[פרט חסר[^\]]*\]/g;
+    for (const fn of footnotes) {
+      fn.citation = fn.citation.replace(placeholderPattern, "").trim();
+      // Clean orphaned trailing "עמ'" or ", עמ'" left behind
+      fn.citation = fn.citation.replace(/,?\s*עמ['׳]?\s*$/, "").trim();
+    }
+
+    // --- Post-processing Step 4: Filter truncated/empty footnotes ---
+    footnotes = footnotes.filter((fn) => fn.citation.trim().length >= 10);
+
+    // --- Post-processing Step 5: Universal sequential renumbering ---
+    {
+      // Remove superscripts for any footnotes that were filtered out
+      const survivingOldNumbers = new Set(footnotes.map((fn) => fn.number));
+      const allOldNumbers = (parsed.footnotes || []).map((fn: any) => fn.number as number);
+      for (const oldNum of allOldNumbers) {
+        if (!survivingOldNumbers.has(oldNum)) {
+          answer = answer.replaceAll(toSuperscript(oldNum), "");
+        }
       }
+
+      // Renumber all surviving footnotes sequentially
       const oldToNew = new Map<number, number>();
-      filteredFootnotes.forEach((fn, idx) => {
+      footnotes.forEach((fn, idx) => {
         oldToNew.set(fn.number, idx + 1);
       });
+
+      // Use placeholders to avoid collisions
       for (const [oldNum, newNum] of oldToNew) {
         if (oldNum !== newNum) {
-          const oldSup = toSuperscript(oldNum);
-          const placeholder = `__FN_PLACEHOLDER_${newNum}__`;
-          answer = answer.replaceAll(oldSup, placeholder);
+          answer = answer.replaceAll(toSuperscript(oldNum), `__FN_PLACEHOLDER_${newNum}__`);
         }
       }
       for (const [, newNum] of oldToNew) {
-        const placeholder = `__FN_PLACEHOLDER_${newNum}__`;
-        answer = answer.replaceAll(placeholder, toSuperscript(newNum));
+        answer = answer.replaceAll(`__FN_PLACEHOLDER_${newNum}__`, toSuperscript(newNum));
       }
-      filteredFootnotes.forEach((fn, idx) => {
+      footnotes.forEach((fn, idx) => {
         fn.number = idx + 1;
       });
-      footnotes = filteredFootnotes;
     }
 
     // --- Post-processing Step 2: Convert bracket patterns to superscript ---
