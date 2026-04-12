@@ -199,13 +199,32 @@ serve(async (req) => {
     // ========= Step 1: Local search + Perplexity IN PARALLEL =========
     const localSearchPromise = (async (): Promise<{ matches: LocalMatch[]; used: boolean }> => {
       try {
+        // Extract keywords (strip stop words) for better OR-based matching
+        const keywords = extractKeywords(question);
+        console.log(`Search keywords: "${keywords}" (from: "${question.slice(0, 80)}")`);
+        
         const { data: textMatches, error: textError } = await adminClient.rpc("search_legal_chunks_text", {
-          search_query: question,
+          search_query: keywords,
           match_count: 10,
         });
         if (!textError && textMatches && textMatches.length > 0) {
           console.log(`Text search: found ${textMatches.length} matching chunks`);
           return { matches: textMatches, used: true };
+        }
+        console.log(`Text search: 0 results for keywords "${keywords}"`);
+        
+        // Fallback: try with fewer keywords (top 3)
+        if (keywords.split(" ").length > 3) {
+          const fewerKeywords = keywords.split(" ").slice(0, 3).join(" ");
+          console.log(`Retry with fewer keywords: "${fewerKeywords}"`);
+          const { data: retryMatches, error: retryError } = await adminClient.rpc("search_legal_chunks_text", {
+            search_query: fewerKeywords,
+            match_count: 10,
+          });
+          if (!retryError && retryMatches && retryMatches.length > 0) {
+            console.log(`Retry search: found ${retryMatches.length} matching chunks`);
+            return { matches: retryMatches, used: true };
+          }
         }
       } catch (err) {
         console.error("Text search failed (non-fatal):", err);
