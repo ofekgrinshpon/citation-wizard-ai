@@ -122,6 +122,7 @@ export function LegalQAChat() {
   const [question, setQuestion] = useState("");
   const [result, setResult] = useState<QAResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [taskMode, setTaskMode] = useState<TaskMode>("research");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [extractedText, setExtractedText] = useState<string | null>(null);
@@ -192,6 +193,7 @@ export function LegalQAChat() {
 
     setLoading(true);
     setResult(null);
+    setError(null);
 
     try {
       const body: Record<string, unknown> = {
@@ -203,36 +205,34 @@ export function LegalQAChat() {
         body.documentName = uploadedFile?.name;
       }
 
-      const { data, error } = await supabase.functions.invoke("legal-qa", { body });
+      const { data, error: fnError } = await supabase.functions.invoke("legal-qa", { body });
 
-      if (error) {
-        // Check for specific HTTP status codes
-        const statusCode = (error as any)?.status || (error as any)?.context?.status;
+      if (fnError) {
+        const statusCode = (fnError as any)?.status || (fnError as any)?.context?.status;
         if (statusCode === 429) {
-          toast.error("יותר מדי בקשות. נסו שוב בעוד דקה.");
+          setError("יותר מדי בקשות. נסו שוב בעוד דקה.");
           return;
         }
         if (statusCode === 402) {
-          toast.error("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות.");
+          setError("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות.");
           return;
         }
-        throw error;
+        throw fnError;
       }
       if (data?.error) {
-        toast.error(data.error);
+        setError(data.error);
         return;
       }
 
-      // Guard against empty payload
       if (!data?.answer || data.answer.trim().length < 20) {
-        toast.error("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב.");
+        setError("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב.");
         return;
       }
 
       setResult(data as QAResult);
     } catch (e: any) {
       console.error("Legal QA error:", e);
-      toast.error("שגיאה בעיבוד השאלה. נסו שוב.");
+      setError("שגיאה בעיבוד השאלה. נסו שוב.");
     } finally {
       setLoading(false);
     }
@@ -395,6 +395,24 @@ export function LegalQAChat() {
               ))}
             </div>
           </div>
+        )}
+
+        {/* Inline error */}
+        {!result && !loading && error && (
+          <Card className="mt-4 border-destructive/30 bg-destructive/5">
+            <CardContent className="p-6 text-center space-y-3">
+              <AlertTriangle className="w-8 h-8 text-destructive mx-auto" />
+              <p className="text-foreground text-sm font-medium">{error}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => { setError(null); handleSubmit(); }}
+                className="gap-1.5"
+              >
+                נסו שוב
+              </Button>
+            </CardContent>
+          </Card>
         )}
 
         {/* Loading skeleton with memo structure */}
