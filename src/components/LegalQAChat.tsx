@@ -122,6 +122,7 @@ export function LegalQAChat() {
   const [question, setQuestion] = useState("");
   const [result, setResult] = useState<QAResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [taskMode, setTaskMode] = useState<TaskMode>("research");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [extractedText, setExtractedText] = useState<string | null>(null);
