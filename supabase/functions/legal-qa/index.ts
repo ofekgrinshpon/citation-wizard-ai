@@ -347,9 +347,12 @@ serve(async (req) => {
 
     const combinedContext = truncateContext(contextParts.join("\n"));
 
-    // Build source catalog string for the AI
+    // Build source catalog string for the AI — tag local sources as [מאומת]
     const sourceCatalog = sourceCards.map(
-      (sc) => `[${sc.id}] ${sc.citation}${sc.url ? ` (${sc.url})` : ""} — ${sc.source_type}`
+      (sc) => {
+        const tag = sc.provenance === "local" ? " [מאומת]" : "";
+        return `[${sc.id}]${tag} ${sc.citation}${sc.url ? ` (${sc.url})` : ""} — ${sc.source_type}`;
+      }
     ).join("\n");
 
     // ========= Step 4: Gemini call — plain text, NO tool_call =========
