@@ -6,7 +6,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { toast } from "sonner";
-import { copyPlainText } from "@/lib/clipboard";
+import { copyRichText } from "@/lib/clipboard";
 import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, PenTool, type LucideIcon } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
@@ -294,11 +294,29 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
 
   const handleCopy = () => {
     if (!result) return;
+
+    // Plain text version
     const footnotesText = result.footnotes
       .map((f) => `${f.number}. ${f.citation}`)
       .join("\n");
-    const fullText = `${result.answer}\n\nהערות שוליים:\n${footnotesText}`;
-    copyPlainText(fullText);
+    const plainText = `${result.answer}\n\nהערות שוליים:\n${footnotesText}`;
+
+    // Rich HTML version — David 12pt for pasting into Word / Google Docs
+    const bodyHtml = result.answer
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\n/g, "<br>");
+
+    const footnotesHtml = result.footnotes
+      .map((f) => `<span>${f.number}. ${f.citation}</span>`)
+      .join("<br>");
+
+    const richHtml = `<div dir="rtl" style="font-family: ${DAVID_FONT}; font-size: 12pt; line-height: 1.5; text-align: justify; direction: rtl;">
+      ${bodyHtml}
+      <br><br>
+      <div style="font-size: 10pt;"><strong>הערות שוליים:</strong><br>${footnotesHtml}</div>
+    </div>`;
+
+    copyRichText(richHtml, plainText);
     toast.success("הועתק ללוח");
   };
 

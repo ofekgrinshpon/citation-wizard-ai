@@ -26,6 +26,7 @@ interface QAResult {
 interface Props {
   projectId: string | null;
   onLoadResult?: (question: string, result: QAResult, taskMode: string) => void;
+  refreshKey?: number;
 }
 
 const MODE_LABELS: Record<string, { label: string; icon: typeof Search }> = {
@@ -35,7 +36,7 @@ const MODE_LABELS: Record<string, { label: string; icon: typeof Search }> = {
   argument_draft: { label: "ניסוח", icon: PenTool },
 };
 
-export function QAHistorySidebar({ projectId, onLoadResult }: Props) {
+export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props) {
   const { user } = useAuth();
   const [logs, setLogs] = useState<QALogRecord[]>([]);
   const [search, setSearch] = useState("");
@@ -71,7 +72,7 @@ export function QAHistorySidebar({ projectId, onLoadResult }: Props) {
     };
 
     fetchLogs();
-  }, [user, projectId]);
+  }, [user, projectId, refreshKey]);
 
   const filtered = search.trim()
     ? logs.filter((l) => l.question.toLowerCase().includes(search.toLowerCase()))
