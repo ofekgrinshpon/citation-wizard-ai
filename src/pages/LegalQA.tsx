@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
-import { copyPlainText } from "@/lib/clipboard";
+import { copyRichText } from "@/lib/clipboard";
 import { Send, Copy, Scale, AlertTriangle, ExternalLink } from "lucide-react";
 
 interface Footnote {
