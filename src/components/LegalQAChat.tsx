@@ -138,6 +138,15 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Load external result from history sidebar
+  useEffect(() => {
+    if (externalResult) {
+      setQuestion(externalResult.question);
+      setResult(externalResult.result);
+      setTaskMode(externalResult.taskMode);
+    }
+  }, [externalResult]);
+
   useEffect(() => {
     if (result) scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }, [result]);
