@@ -31,28 +31,10 @@ function isBlogUrl(url?: string): boolean {
   return BLOG_URL_PATTERNS.some((p) => p.test(url));
 }
 
-async function getEmbedding(text: string, apiKey: string): Promise<number[]> {
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "text-embedding-3-small",
-      input: text,
-      dimensions: 768,
-    }),
-  });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error("Embedding error (non-fatal):", res.status, errText);
-    return [];
-  }
-
-  const data = await res.json();
-  return data.data?.[0]?.embedding || [];
+async function getEmbedding(_text: string, _apiKey: string): Promise<number[]> {
+  // Embedding models are not supported by the Lovable AI Gateway.
+  // Skip vector search entirely and fall through to text-based search.
+  return [];
 }
 
 interface LocalMatch {
@@ -303,7 +285,7 @@ For each source, provide the EXACT law name, case number, or book title with ful
 ${taskInstructions}
 
 כללי כתיבה לגוף התשובה:
-1. **קריטי – אורך התשובה**: כתוב חוות דעת מקצועית, מפורטת ומקיפה בעברית. אורך מינימלי: 1500–2500 מילים. כל חלק (תקציר, מסגרת נורמטיבית, ניתוח מפורט, המלצות מעשיות) חייב לכלול לפחות 3–4 פסקאות מהותיות. חלק "ניתוח מפורט" חייב להיות הארוך ביותר עם לפחות 5 פסקאות. כל פסקה חייבת לכלול ניתוח ספציפי, הוראות חוק, אזכורי פסיקה ודיון אקדמי. אל תסכם — נתח לעומק. תשובה קצרה מ-1500 מילים היא כישלון.
+1. **קריטי – אורך התשובה**: כתוב חוות דעת מקצועית ומפורטת מאוד בעברית, באורך של 1200–2000 מילים לפחות. כל חלק (תקציר, מסגרת נורמטיבית, ניתוח מפורט, המלצות מעשיות) חייב להיות מהותי ומפורט. הדגש על עומק הניתוח ולא על קיצור. תשובה קצרה מ-1000 מילים אינה מספקת.
 2. השתמש בכותרות מודגשות (**תקציר**, **מסגרת נורמטיבית**, **ניתוח מפורט**, **המלצות מעשיות**) לארגון התשובה.
 3. בגוף הטקסט, השתמש בשמות מקוצרים של חוקים (למשל "סעיף 15 לחוק החוזים"). השם המלא יופיע רק בהערת השוליים.
 4. חובה: כל הערת שוליים שאתה מגדיר חייבת להופיע כמספר סופרסקריפט בגוף הטקסט. השתמש בתווי יוניקוד: ⁰¹²³⁴⁵⁶⁷⁸⁹.
@@ -424,18 +406,48 @@ ${combinedContext}`;
     const aiData = await aiRes.json();
     const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
 
+    console.log(`AI response: tool_calls=${toolCall ? "yes" : "no"}, finish_reason=${aiData.choices?.[0]?.finish_reason || "unknown"}`);
+
     if (!toolCall?.function?.arguments) {
       const content = aiData.choices?.[0]?.message?.content || "";
+      console.error("No tool call returned. Content length:", content.length);
+      if (!content || content.length < 50) {
+        return new Response(
+          JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה מלאה. נסו שוב בעוד רגע." }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      // Model returned plain text instead of tool call — use it as-is
       return new Response(
         JSON.stringify({ answer: content, footnotes: [], source_urls: citations }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const parsed = JSON.parse(toolCall.function.arguments);
+    let parsed: any;
+    try {
+      parsed = JSON.parse(toolCall.function.arguments);
+    } catch (parseErr) {
+      console.error("Failed to parse tool call arguments:", parseErr);
+      return new Response(
+        JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה מלאה. נסו שוב בעוד רגע." }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     let answer = parsed.answer || "";
     let footnotes: Array<{ number: number; citation: string; source_type: string; url?: string; source?: string }> = parsed.footnotes || [];
+
+    console.log(`Parsed AI output: answer=${answer.length} chars, footnotes=${footnotes.length}`);
+
+    // Guard against empty answer
+    if (!answer || answer.length < 50) {
+      console.error("AI returned empty/very short answer");
+      return new Response(
+        JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה מלאה. נסו שוב בעוד רגע." }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // --- Post-processing Step 1: Filter out blog/marketing footnotes ---
     footnotes = footnotes.filter((fn) => !isBlogUrl(fn.url));
