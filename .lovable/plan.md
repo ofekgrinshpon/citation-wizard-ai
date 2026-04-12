@@ -1,59 +1,31 @@
 
 
-## Fix: Add GIN Indexes for Fast Retrieval + Verify End-to-End
+## Update: Footnote Superscripts Must Follow Punctuation
 
-### Current Status (after investigation)
-
-**Good news**: The retrieval pipeline IS working now. The latest deployed edge function:
-- Extracts keywords correctly ("ראש הממשלה לפטר היועצת המשפטית לממשלה")
-- Finds 10 matching chunks from the local database
-- The most recent stats row shows **10 local + 6 perplexity footnotes**
-
-**Problem 1: No GIN indexes** — retrieval takes **18 seconds** scanning 18K documents and 290K chunks without indexes. This wastes half the timeout budget.
-
-**Problem 2: Missing GIN index migration** — the first migration (`697cfebf`) was supposed to create a GIN index on `legal_document_chunks.content`, but it was overridden by the second migration (`277dbcdb`) which rewrote the function to search `legal_documents` titles instead. Neither migration created the GIN index.
-
-**Problem 3: User tested before latest deployment** — The user's test at 15:28/15:41 ran against the old function code. The latest deployment (which I triggered) does work correctly.
+### Problem
+Currently, the AI places `[X]` markers anywhere in the text, and the server converts them to superscripts in-place. This results in superscripts appearing before punctuation (e.g., `בעניין בן גביר¹,` instead of `בעניין בן גביר,¹`).
 
 ### Changes
 
-**1. Database migration — add GIN indexes for performance**
+**File: `supabase/functions/legal-qa/index.ts`**
 
-Two indexes to make the title-based search fast:
+1. **Prompt instruction** (line 416): Add explicit rule that `[X]` must be placed **after** punctuation marks, with examples:
+   ```
+   - חשוב: סימן ההפניה [X] חייב לבוא תמיד אחרי סימן הפיסוק, לא לפניו.
+     נכון: בעניין בן גביר,[1]
+     נכון: מערכת בתי המשפט.[1]
+     לא נכון: בעניין בן גביר[1],
+   ```
 
-```sql
--- Index on legal_documents title/citation (used by current search function)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_legal_docs_title_search
-ON legal_documents
-USING gin(to_tsvector('simple', title || ' ' || citation || ' ' || coalesce(case_number,'') || ' ' || coalesce(court,'')));
-
--- Index on legal_document_chunks content (for future chunk-level search)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_legal_chunks_content_search
-ON legal_document_chunks
-USING gin(to_tsvector('simple', content));
-```
-
-This should reduce retrieval from 18 seconds to under 2 seconds.
-
-**2. Add debug logging to the edge function**
-
-Add a log line showing how many local vs perplexity source cards were built, so we can verify in logs without waiting for the full response:
-
-```
-"Source cards: 7 local, 5 perplexity, 1 document"
-```
-
-**3. Verify with a live test call**
-
-After deploying the indexes and updated function, run the test question through the edge function and confirm:
-- Retrieval time drops from 18s to <3s
-- Local sources appear in the final footnotes
-- The full round-trip completes within timeout
-
-### Files
-- Database migration: two GIN indexes
-- `supabase/functions/legal-qa/index.ts`: minor logging addition
+2. **Post-processing fix** (after line 565, in Step 7): Add a regex pass that fixes any remaining cases where the AI placed the superscript before punctuation:
+   ```typescript
+   // Move superscripts that precede punctuation to after it
+   answer = answer.replace(/([\u00B9\u00B2\u00B3\u2074-\u2079]+)([,.\-;:!?])/g, '$2$1');
+   ```
+   This catches all cases where superscript digits appear before `,` `.` `-` `;` `:` etc., and swaps them.
 
 ### Expected outcome
-Retrieval drops from 18s to <2s, leaving 40+ seconds for AI generation. The AI cites local verified sources (already confirmed working in latest deployment).
+All footnote markers in the body text will appear after punctuation:
+- `בפסק הדין בעניין בן גביר,¹`
+- `מערכת בתי המשפט.¹`
 
