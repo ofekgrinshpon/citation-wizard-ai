@@ -1,25 +1,25 @@
 
 
-## Fix: Add trailing period to footnote citations in העוזר המשפטי
+## Fix: QA History Sidebar — RLS Permission Error
 
-### Problem
-Footnote citations in the Legal Assistant output are missing a period (`.`) at the end, which is required by Israeli citation convention.
+### Root Cause
+The `qa_logs` table has an RLS policy "Admins can read all qa_logs" that references `has_role(auth.uid(), 'admin'::app_role)` in the **public** schema. The authenticated role doesn't have EXECUTE permission on `public.has_role`, so PostgreSQL throws `permission denied for function has_role` — and since all permissive policies are evaluated together, this blocks even the user's own SELECT policy from working.
 
-### Change
+Every other table uses `private.has_role()` which works correctly.
 
-**`supabase/functions/legal-qa/index.ts`** — after the post-processing cleanup (around line 501), add a step that ensures every footnote citation ends with a period:
+### Fix
+Database migration to drop and recreate the admin SELECT policy on `qa_logs` using `private.has_role()`:
 
-```typescript
-// Ensure trailing period on every citation
-for (const fn of footnotes) {
-  if (fn.citation && !/[.。]$/.test(fn.citation.trim())) {
-    fn.citation = fn.citation.trim() + ".";
-  }
-}
+```sql
+DROP POLICY "Admins can read all qa_logs" ON public.qa_logs;
+
+CREATE POLICY "Admins can read all qa_logs"
+  ON public.qa_logs
+  FOR SELECT
+  TO authenticated
+  USING (private.has_role(auth.uid(), 'admin'::app_role));
 ```
 
-This runs after title stripping and placeholder removal, so the period is always the final character.
-
 ### Files
-- `supabase/functions/legal-qa/index.ts` — add trailing period enforcement
+- Database migration only — no code changes needed
 
