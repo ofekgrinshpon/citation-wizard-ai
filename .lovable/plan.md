@@ -1,36 +1,93 @@
 
 
-## Fix: Natural Language Case Law Detection Order & Disambiguation Prompt
+## "העוזר המשפטי" (V2) — Major Component Overhaul
 
-### Problem
-Two issues from the previous implementation:
+This is a significant transformation of the Legal QA module into a professional legal workspace that serves as the primary view after login.
 
-1. **Detection order bug**: The natural language case law check (`פסק הדין`, `פס"ד`) was placed at line 396, AFTER the book heuristic at line 387-390. The input "מכירה את פסק הדין המזרחי המאוחד המפורסם?" has 7+ Hebrew words and matches the book heuristic first, so it never reaches the case law check. It gets classified as "ספר" (book).
+### Overview
 
-2. **Missing disambiguation instruction**: The system prompt in `citation-chat/index.ts` was never updated with the disambiguation instruction for multiple matching cases.
+Rename "שאלה משפטית" to "העוזר המשפטי", make it the default/first tab, redesign the output from chat-style to a structured legal memo format, add file upload support (PDF/DOCX) for document-grounded Q&A, and add a task mode selector.
 
-### Changes
+---
 
-#### 1. Move natural language case law detection BEFORE the book checks
-**File**: `src/data/abbreviations.ts`
+### 1. Make "העוזר המשפטי" the default first tab
 
-Move the natural language case law detection block (currently at lines 396-399) to BEFORE line 381 (the `ספר|מהדורה` check) and BEFORE the book heuristic at lines 387-390. This ensures "פסק הדין" is caught before the generic book patterns.
+**File: `src/pages/Index.tsx`**
+- Change the default `mode` state from `"freetext"` to `"legalqa"`
+- Reorder the `MODES` array so `legalqa` is first:
+  ```
+  [העוזר המשפטי ⚖️] [טקסט חופשי ✨] [הערות שוליים 📑] [ביבליוגרפיה 📚]
+  ```
+- Rename the label from "שאלה משפטית" to "העוזר המשפטי"
 
-#### 2. Add disambiguation instruction to the system prompt
-**File**: `supabase/functions/citation-chat/index.ts`
+### 2. Redesign LegalQAChat to "Professional Workspace" style
 
-Add a new section to the `SYSTEM_PROMPT` (around line 401, after the missing data protocol) instructing the AI: when a case law query is ambiguous or could match multiple cases (same parties, different procedures like both an appeal and a leave to appeal), list all matching cases as numbered options in this format:
+**File: `src/components/LegalQAChat.tsx`** — Major rewrite
 
+**Layout changes:**
+- Replace the chat-style input bar with a professional query panel at the top
+- Add a "Task Mode" selector (toggle group) above the input: `[מחקר משפטי, ניתוח כתב טענה, סיכום פסיקה, ניסוח טיעון]`
+- Add a file upload dropzone (PDF/DOCX) next to the textarea input
+- Results render as a structured legal memo, not chat bubbles
+
+**Memo output structure:**
+- Results displayed in a clean Card with David font
+- AI must generate structured sections with headings: **תקציר**, **מסגרת נורמטיבית**, **ניתוח מפורט**, **המלצות מעשיות**
+- Footnotes section at the bottom with provenance badges (local vs web)
+- Copy and clear buttons in a toolbar above the result
+
+**File upload component:**
+- Drag-and-drop zone or click-to-upload for PDF/DOCX files (max 20MB)
+- When a file is uploaded, extract text client-side (pdfjs-dist for PDF, or send DOCX to convert-doc edge function) and send it alongside the question
+- Visual indicator showing the uploaded file name with a remove button
+
+### 3. Update the `legal-qa` edge function
+
+**File: `supabase/functions/legal-qa/index.ts`**
+
+**New request body:**
+```typescript
+{ question: string, taskMode?: string, documentText?: string, documentName?: string }
 ```
-נמצאו מספר פסקי דין תואמים. לאיזה פסק דין התכוונת?
 
-1. ע"א 6821/93 בנק המזרחי המאוחד בע"מ נ' מגדל כפר שיתופי, פ"ד מט(4) 221 (1995)
-2. רע"א 1908/94 בנק המזרחי המאוחד בע"מ נ' מגדל כפר שיתופי, פ"ד מט(4) 221 (1995)
-```
+**Changes to the system prompt:**
+- Add task-mode-specific instructions (e.g., "מחקר משפטי" generates comprehensive research memos; "סיכום פסיקה" focuses on case analysis)
+- When `documentText` is provided, inject it as primary context with the label "[מתוך הקובץ שהועלה]" and instruct the AI to ground answers in the uploaded document while cross-referencing with the internal DB
+- When no document is uploaded, the existing General Research Mode (internal DB + Perplexity) remains unchanged
+- Enforce structured output with sections: תקציר, מסגרת נורמטיבית, ניתוח מפורט, המלצות מעשיות
+- Add the `taskMode` to the tool schema output so the AI adapts its response structure
 
-This format matches the existing `isDisambiguationLine` regex in `MessageBubble.tsx`, which will automatically render them as clickable buttons.
+**Source hierarchy enforcement in prompt:**
+1. Primary: Internal Database (local matches)
+2. Secondary: Perplexity/Scholar for web verification
+3. Contextual: Uploaded documents — footnotes from uploaded files labeled `[מתוך הקובץ שהועלה]`
 
-### Files Changed
-- `src/data/abbreviations.ts` -- move detection block earlier
-- `supabase/functions/citation-chat/index.ts` -- add disambiguation instruction to system prompt + redeploy
+### 4. Storage bucket for uploaded documents
+
+**Database migration:**
+- Create a `user-documents` storage bucket (private) for uploaded files
+- Add RLS policies so authenticated users can upload/read their own files
+
+### 5. Visual & UX details
+
+- Maintain the existing ReLex minimalist blue/gray palette
+- RTL throughout
+- Task mode selector uses the existing ToggleGroup component
+- File upload uses a dashed-border dropzone with an upload icon
+- Empty state shows the ⚖️ icon with "העוזר המשפטי" title and task mode descriptions
+- Loading state shows skeleton with section headers
+
+---
+
+### Files changed
+- `src/pages/Index.tsx` — reorder tabs, rename, default to legalqa
+- `src/components/LegalQAChat.tsx` — major rewrite (workspace layout, file upload, task modes, memo output)
+- `supabase/functions/legal-qa/index.ts` — accept documentText/taskMode, structured memo prompt, document-grounded mode
+- New migration — create `user-documents` storage bucket with RLS
+
+### Technical notes
+- PDF text extraction uses existing `pdfjs-dist` dependency (already in project)
+- DOCX text extraction uses the existing `convert-doc` edge function or client-side fflate
+- Document text is truncated to ~30,000 chars before sending to the edge function to stay within token limits
+- The task mode is passed as a string parameter and shapes the system prompt sections
 
