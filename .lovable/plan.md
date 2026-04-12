@@ -1,78 +1,23 @@
 
-מטרת התיקון: להחזיר את "העוזר המשפטי" למצב שעובד באמת, בלי לקצר את איכות התשובה ובלי לוותר על אזכורים מלאים.
 
-מה בדקתי
-- הקריאה מהלקוח כן יוצאת לפונקציה עם הרשאה תקינה.
-- החיפוש המקומי ו-Perplexity כן רצים ומחזירים נתונים.
-- הכשל הוא בשלב ה-AI עצמו: בלוגים רואים `AI call starting (55s timeout)` ואז `AbortError` בדיוק אחרי 55 שניות.
-- כלומר: הבעיה כבר לא בלקוח, לא בהרשאה, ולא ב-retrieval. הבעיה היא שהקריאה למודל עדיין כבדה מדי במבנה הנוכחי.
+## Fix: Copy with Rich Formatting (Bold, David 12pt, Justified, 1.5 spacing)
 
-למה זה עדיין לא עובד
-- כרגע הקריאה מבקשת מהמודל לעשות בבת אחת:
-  1. לכתוב מזכר משפטי מלא,
-  2. לציית לכללי אזכור ארוכים,
-  3. להחזיר `tool_call` עם JSON,
-  4. לייצר גם מערך footnotes מלא.
-- גם אחרי העלאת ה-timeout ל-55s, זה עדיין נחתך.
+### Problem
+`handleCopy` uses `copyPlainText` — raw `**bold**` markers are pasted as-is with no formatting.
 
-תוכנית התיקון
-1. לשנות את מבנה הפלט ב-`supabase/functions/legal-qa/index.ts`
-- להפסיק להכריח את המודל להחזיר את כל המזכר בתוך `tool_call` כבד.
-- במקום זה, לבנות מראש רשימת מקורות ממוספרת בשרת (`source cards`) עם:
-  - citation קנוני,
-  - source/url,
-  - source_type,
-  - excerpt קצר.
-- לבקש מהמודל להחזיר רק:
-  - `answer` מלא,
-  - ומספרי מקורות/סימונים שהוא השתמש בהם.
-- את מערך ה-`footnotes` לבנות דטרמיניסטית בשרת מתוך רשימת המקורות, ולא לתת למודל להמציא אותו מחדש.
+### Changes
 
-2. לשמור על איכות מלאה
-- לא לקצץ את איכות התשובה.
-- לא להסיר את המקורות שהמשתמש רואה.
-- לא "להחליש" את ה-prompt כפתרון ראשי.
-- להשאיר את מבנה המזכר המלא:
-  - תקציר
-  - מסגרת נורמטיבית
-  - ניתוח מפורט
-  - המלצות מעשיות
+**`src/pages/LegalQA.tsx` — `handleCopy` function**
 
-3. להפחית מורכבות בלי לפגוע בתוכן
-- להשאיר את ה-retrieval כמו שהוא בעיקרו.
-- להפחית עומס מהמודל ע"י זה שהוא לא יידרש גם לכתוב תשובה ארוכה וגם לבנות JSON מורכב של הערות שוליים.
-- במידת הצורך, להחליף `tool_choice` ל-`response_format` פשוט יותר או לפלט טקסט/JSON קל יותר.
+1. Build an HTML string from the answer + footnotes with proper styling:
+   - Convert `**text**` to `<strong>text</strong>`
+   - Wrap in a `<div>` with inline styles: `font-family: David, 'David Libre', serif; font-size: 12pt; line-height: 1.5; text-align: justify; direction: rtl;`
+   - Footnotes section: same font at 10pt with `<strong>` for numbers
 
-4. לעדכן את ניהול הזמן
-- להעלות את timeout של ה-AI מעבר ל-55 שניות אם סביבת ההרצה מאפשרת זאת, כי כרגע ה-abort הוא self-imposed.
-- במקביל, להוסיף לוגים מפורטים:
-  - זמן חיפוש מקומי
-  - זמן Perplexity
-  - זמן AI
-  - אורך prompt/context
-  - כמות מקורות שנשלחו למודל
+2. Switch from `copyPlainText` to `copyRichText(html, plainText)` (already exists in `src/lib/clipboard.ts`)
 
-5. לשפר את חוויית הכשל ב-`src/components/LegalQAChat.tsx`
-- לא להסתפק רק ב-toast זמני.
-- להציג שגיאה inline בתוך אזור התוצאה, עם הסבר ברור וכפתור נסיון חוזר.
-- להשאיר את השאלה שהמשתמש כתב, כדי שלא ירגיש שהמסך פשוט "לא עובד".
+3. For the plain-text fallback, strip `**` markers so even plain paste looks clean
 
-בדיקות אחרי המימוש
-- לבדוק שוב עם: `סקירה משפטית על הלכת יששכרוב בדין הפלילי`
-- לוודא שמתקבל:
-  - מזכר מלא ולא קטע קצר,
-  - 8–12 הערות שוליים,
-  - מקורות אמיתיים,
-  - בלי timeout.
-- לבדוק גם תרחיש של מסמך PDF/DOCX כדי לוודא שהשינוי לא שבר את מצב העלאת הקובץ.
+### No other files changed
+- `clipboard.ts` already has `copyRichText` with HTML+plain support and Office iframe fallbacks
 
-קבצים עיקריים
-- `supabase/functions/legal-qa/index.ts`
-- `src/components/LegalQAChat.tsx`
-
-פרטים טכניים
-- המסקנה המרכזית: העלאת timeout בלבד לא מספיקה.
-- הפתרון הנכון הוא לפרק את האחריות:
-  - המודל יכתוב את הניתוח,
-  - השרת יבנה את הערות השוליים מהמקורות שכבר נאספו.
-- כך שומרים גם על תשובה מלאה וגם על אזכורים מלאים, בלי להעמיס על קריאת AI אחת יותר מדי.
