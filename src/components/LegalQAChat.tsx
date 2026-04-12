@@ -31,6 +31,8 @@ interface QAResult {
 
 type TaskMode = "research" | "pleading_analysis" | "case_summary" | "argument_draft";
 
+const FILE_RELEVANT_MODES: TaskMode[] = ["pleading_analysis", "case_summary"];
+
 const TASK_MODES: { id: TaskMode; label: string; description: string }[] = [
   { id: "research", label: "מחקר משפטי", description: "סקירה מקיפה עם מסגרת נורמטיבית מלאה" },
   { id: "pleading_analysis", label: "ניתוח כתב טענה", description: "ניתוח טענות משפטיות וחולשות" },
@@ -178,6 +180,23 @@ export function LegalQAChat() {
     if (file) handleFileSelect(file);
   }, [handleFileSelect]);
 
+  const isFileRelevantMode = FILE_RELEVANT_MODES.includes(taskMode);
+
+  const handleModeChange = useCallback((value: string) => {
+    if (!value) return;
+    const newMode = value as TaskMode;
+    setTaskMode(newMode);
+    if (uploadedFile && !FILE_RELEVANT_MODES.includes(newMode)) {
+      toast.warning("שימו לב: הקובץ שהועלה עדיין מצורף. ניתן להסיר אותו אם אינו רלוונטי למצב הנוכחי.", {
+        action: {
+          label: "הסר קובץ",
+          onClick: () => removeFile(),
+        },
+        duration: 6000,
+      });
+    }
+  }, [uploadedFile]);
+
   const removeFile = () => {
     setUploadedFile(null);
     setExtractedText(null);
@@ -283,7 +302,7 @@ export function LegalQAChat() {
           <ToggleGroup
             type="single"
             value={taskMode}
-            onValueChange={(v) => v && setTaskMode(v as TaskMode)}
+            onValueChange={handleModeChange}
             className="flex flex-wrap gap-1 justify-start"
           >
             {TASK_MODES.map((m) => (
@@ -307,7 +326,9 @@ export function LegalQAChat() {
             onClick={() => !uploadedFile && fileInputRef.current?.click()}
             className={`flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 border-dashed flex items-center justify-center cursor-pointer transition-colors ${
               uploadedFile
-                ? "border-primary/40 bg-primary/5"
+                ? isFileRelevantMode
+                  ? "border-primary/40 bg-primary/5"
+                  : "border-amber-400/60 bg-amber-50/30 dark:bg-amber-900/10"
                 : "border-border hover:border-primary/30 hover:bg-muted/50"
             }`}
           >
