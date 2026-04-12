@@ -93,7 +93,7 @@ const Index = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
-  const [mode, setMode] = useState<AppMode>("freetext");
+  const [mode, setMode] = useState<AppMode>("legalqa");
   const [pendingVerification, setPendingVerification] = useState<PendingVerification | null>(null);
   // Track detected source type per assistant message index
   const [messageSourceTypes, setMessageSourceTypes] = useState<Record<number, SourceType>>({});
@@ -707,10 +707,10 @@ const Index = () => {
   };
 
   const MODES: { id: AppMode; label: string; icon: string }[] = [
+    { id: "legalqa", label: "העוזר המשפטי", icon: "⚖️" },
     { id: "freetext", label: "טקסט חופשי", icon: "✨" },
     { id: "batch", label: "הערות שוליים", icon: "📑" },
     { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
-    { id: "legalqa", label: "שאלה משפטית", icon: "⚖️" },
   ];
 
   
