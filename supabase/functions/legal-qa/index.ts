@@ -315,139 +315,153 @@ ${hasDocument ? "3. הקשרי: המסמך שהועלה – השתמש בו כמ
 תוצאות החיפוש המשפטי:
 ${combinedContext}`;
 
-    const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-pro",
-        max_tokens: 8192,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: `השאלה המשפטית: ${question}` },
-        ],
-        tools: [
-          {
-            type: "function",
-            function: {
-              name: "format_legal_answer",
-              description:
-                "Format a structured legal memo with inline footnotes. CRITICAL: each sentence may have AT MOST one footnote superscript.",
-              parameters: {
-                type: "object",
-                properties: {
-                  answer: {
-                    type: "string",
-                    description:
-                      "The full Hebrew legal memo with section headings (תקציר, מסגרת נורמטיבית, ניתוח מפורט, המלצות מעשיות) and superscript footnote numbers.",
-                  },
-                  footnotes: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        number: { type: "number" },
-                        citation: {
-                          type: "string",
-                          description: "Full legal citation formatted per Israeli Uniform Citation Rules (2021).",
-                        },
-                        source_type: {
-                          type: "string",
-                          enum: ["legislation", "caselaw", "book", "article", "international", "document"],
-                        },
-                        url: {
-                          type: "string",
-                          description: "Source URL if available",
-                        },
-                        source: {
-                          type: "string",
-                          enum: ["local", "perplexity", "document"],
-                          description: "Whether this footnote comes from the local verified database, Perplexity search, or the uploaded document",
-                        },
+    // ========= AI call with retry =========
+    const aiRequestBody = JSON.stringify({
+      model: "google/gemini-2.5-pro",
+      max_tokens: 8192,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: `השאלה המשפטית: ${question}` },
+      ],
+      tools: [
+        {
+          type: "function",
+          function: {
+            name: "format_legal_answer",
+            description:
+              "Format a structured legal memo with inline footnotes. CRITICAL: each sentence may have AT MOST one footnote superscript.",
+            parameters: {
+              type: "object",
+              properties: {
+                answer: {
+                  type: "string",
+                  description:
+                    "The full Hebrew legal memo with section headings (תקציר, מסגרת נורמטיבית, ניתוח מפורט, המלצות מעשיות) and superscript footnote numbers.",
+                },
+                footnotes: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      number: { type: "number" },
+                      citation: {
+                        type: "string",
+                        description: "Full legal citation formatted per Israeli Uniform Citation Rules (2021).",
                       },
-                      required: ["number", "citation", "source_type", "source"],
-                      additionalProperties: false,
+                      source_type: {
+                        type: "string",
+                        enum: ["legislation", "caselaw", "book", "article", "international", "document"],
+                      },
+                      url: {
+                        type: "string",
+                        description: "Source URL if available",
+                      },
+                      source: {
+                        type: "string",
+                        enum: ["local", "perplexity", "document"],
+                        description: "Whether this footnote comes from the local verified database, Perplexity search, or the uploaded document",
+                      },
                     },
+                    required: ["number", "citation", "source_type", "source"],
+                    additionalProperties: false,
                   },
                 },
-                required: ["answer", "footnotes"],
-                additionalProperties: false,
               },
+              required: ["answer", "footnotes"],
+              additionalProperties: false,
             },
           },
-        ],
-        tool_choice: {
-          type: "function",
-          function: { name: "format_legal_answer" },
         },
-      }),
+      ],
+      tool_choice: {
+        type: "function",
+        function: { name: "format_legal_answer" },
+      },
     });
 
-    if (!aiRes.ok) {
-      if (aiRes.status === 429) {
+    let parsed: any = null;
+    const MAX_RETRIES = 2;
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      console.log(`AI attempt ${attempt}/${MAX_RETRIES}...`);
+
+      const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: aiRequestBody,
+      });
+
+      if (!aiRes.ok) {
+        if (aiRes.status === 429) {
+          return new Response(
+            JSON.stringify({ error: "יותר מדי בקשות. נסו שוב בעוד דקה." }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        if (aiRes.status === 402) {
+          return new Response(
+            JSON.stringify({ error: "נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות." }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        const errText = await aiRes.text();
+        console.error(`AI gateway error (attempt ${attempt}):`, aiRes.status, errText);
+        if (attempt < MAX_RETRIES) continue;
         return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({ error: "שגיאה בשירות ה-AI. נסו שוב בעוד רגע." }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      if (aiRes.status === 402) {
+
+      const aiData = await aiRes.json();
+      const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
+      const finishReason = aiData.choices?.[0]?.finish_reason || "unknown";
+
+      console.log(`AI response (attempt ${attempt}): tool_calls=${toolCall ? "yes" : "no"}, finish_reason=${finishReason}`);
+
+      if (!toolCall?.function?.arguments) {
+        const content = aiData.choices?.[0]?.message?.content || "";
+        if (content && content.length >= 50) {
+          // Model returned plain text instead of tool call — use it
+          parsed = { answer: content, footnotes: [] };
+          break;
+        }
+        console.error(`No usable response (attempt ${attempt}), content length: ${content.length}`);
+        if (attempt < MAX_RETRIES) continue;
         return new Response(
-          JSON.stringify({ error: "AI credits exhausted. Please add funds." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב בעוד רגע." }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      const errText = await aiRes.text();
-      console.error("AI gateway error:", aiRes.status, errText);
-      throw new Error(`AI gateway error: ${aiRes.status}`);
-    }
 
-    const aiData = await aiRes.json();
-    const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
-
-    console.log(`AI response: tool_calls=${toolCall ? "yes" : "no"}, finish_reason=${aiData.choices?.[0]?.finish_reason || "unknown"}`);
-
-    if (!toolCall?.function?.arguments) {
-      const content = aiData.choices?.[0]?.message?.content || "";
-      console.error("No tool call returned. Content length:", content.length);
-      if (!content || content.length < 50) {
+      try {
+        parsed = JSON.parse(toolCall.function.arguments);
+      } catch (parseErr) {
+        console.error(`Failed to parse tool call (attempt ${attempt}):`, parseErr);
+        if (attempt < MAX_RETRIES) continue;
         return new Response(
-          JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה מלאה. נסו שוב בעוד רגע." }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב בעוד רגע." }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      // Model returned plain text instead of tool call — use it as-is
-      return new Response(
-        JSON.stringify({ answer: content, footnotes: [], source_urls: citations }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
 
-    let parsed: any;
-    try {
-      parsed = JSON.parse(toolCall.function.arguments);
-    } catch (parseErr) {
-      console.error("Failed to parse tool call arguments:", parseErr);
+      if (parsed.answer && parsed.answer.length >= 50) break;
+
+      console.error(`Answer too short (attempt ${attempt}): ${parsed.answer?.length || 0} chars`);
+      if (attempt < MAX_RETRIES) { parsed = null; continue; }
       return new Response(
         JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה מלאה. נסו שוב בעוד רגע." }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     let answer = parsed.answer || "";
     let footnotes: Array<{ number: number; citation: string; source_type: string; url?: string; source?: string }> = parsed.footnotes || [];
 
-    console.log(`Parsed AI output: answer=${answer.length} chars, footnotes=${footnotes.length}`);
-
-    // Guard against empty answer
-    if (!answer || answer.length < 50) {
-      console.error("AI returned empty/very short answer");
-      return new Response(
-        JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה מלאה. נסו שוב בעוד רגע." }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+    console.log(`Final AI output: answer=${answer.length} chars, footnotes=${footnotes.length}`);
 
     // --- Post-processing Step 1: Filter out blog/marketing footnotes ---
     footnotes = footnotes.filter((fn) => !isBlogUrl(fn.url));
