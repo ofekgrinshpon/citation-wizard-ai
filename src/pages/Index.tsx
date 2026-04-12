@@ -835,7 +835,10 @@ const Index = () => {
         ) : mode === "bibliography" ? (
           <BibliographyGenerator />
         ) : mode === "legalqa" ? (
-          <LegalQAChat />
+          <LegalQAChat
+            onResultSaved={() => setQaRefreshKey(k => k + 1)}
+            externalResult={qaExternalResult}
+          />
         ) : (
           <>
             {/* Welcome screen */}
@@ -1146,10 +1149,19 @@ const Index = () => {
         {/* Citation history sidebar — desktop only, authenticated users */}
         {user && !isOfficeAddin && (
           <div className="hidden md:flex self-stretch">
-            <CitationHistorySidebar
-              projectId={projectId ?? null}
-              refreshKey={citationRefreshKey}
-            />
+            {mode === "legalqa" ? (
+              <QAHistorySidebar
+                projectId={projectId ?? null}
+                onLoadResult={(question, result, taskMode) => {
+                  setQaExternalResult({ question, result, taskMode });
+                }}
+              />
+            ) : (
+              <CitationHistorySidebar
+                projectId={projectId ?? null}
+                refreshKey={citationRefreshKey}
+              />
+            )}
           </div>
         )}
       </div>
