@@ -1,26 +1,38 @@
 
 
-## Fix: Copy Formatting + History Sidebar Refresh
+## Fix: Display Font, Markdown Heading Rendering, and Citation Quality
 
-### Issue 1: Copy-paste loses formatting
-`handleCopy` in `LegalQAChat.tsx` uses `copyPlainText`, so the clipboard only gets unformatted text. Need to switch to `copyRichText` and build an HTML version with David 12pt styling — same approach used in `MessageBubble.tsx`.
+### Issues Identified
 
-**Change in `LegalQAChat.tsx`:**
-- Import `copyRichText` instead of `copyPlainText`
-- In `handleCopy`, build an HTML string with `direction: rtl`, `font-family: David`, `font-size: 12pt`, `line-height: 1.5`, `text-align: justify`
-- Convert `**bold**` markers to `<strong>` tags
-- Style footnotes section at 10pt
-- Keep the on-screen display using the app's current font (no change to rendering)
+1. **Display shows David font** — the result area has `fontFamily: DAVID_FONT` inline style on screen. Should use the app's default font for display; David only applies when copying.
 
-### Issue 2: History sidebar doesn't refresh after new query
-`qaRefreshKey` is incremented in `Index.tsx` when `onResultSaved` fires, but it's never passed to `QAHistorySidebar`. The sidebar only fetches data on mount.
+2. **Raw `###` symbols ("סולמיות")** — the AI returns markdown headings (`## `, `### `) but the `RenderBold` component only handles `**bold**`. The headings render as raw text with hash marks.
 
-**Changes:**
-- `QAHistorySidebar.tsx`: Add a `refreshKey` prop; include it in the `useEffect` dependency array so it re-fetches when incremented
-- `Index.tsx`: Pass `refreshKey={qaRefreshKey}` to `QAHistorySidebar`
+3. **Citation format issues** — the AI system prompt instructs structured headings but doesn't explicitly forbid markdown `#` syntax. Need to tell the AI to use `**bold**` for headings, never `#`.
+
+### Changes
+
+**`src/components/LegalQAChat.tsx`**
+
+1. **Remove David font from on-screen display** (lines 473, 75, 480, 491):
+   - Remove `fontFamily: DAVID_FONT` from the result container div (line 473), footnote header (line 480), footnote items (line 491), and superscript elements (line 75)
+   - Keep `fontSize`, `textAlign`, `lineHeight` for layout
+   - David font remains ONLY in the `handleCopy` HTML string for clipboard
+
+2. **Add markdown heading parsing** — update `RenderBold` (or create a new `RenderMarkdown` component) to:
+   - Strip `## ` / `### ` / `#### ` prefixes from lines
+   - Render heading lines as `<strong>` with appropriate sizing (e.g., `text-base font-bold` for `##`, `text-sm font-semibold` for `###`)
+   - Continue handling `**bold**` inline markers
+
+3. **Update `handleCopy`** — also strip `#` headings and convert to `<strong>` in the rich HTML builder (line 306)
+
+**`supabase/functions/legal-qa/index.ts`**
+
+4. **Tighten the system prompt** — add explicit instruction:
+   - `אל תשתמש בסימני # לכותרות. השתמש ב-**כותרת** (הדגשה) בלבד.`
+   - This prevents the AI from generating markdown headings in future responses
 
 ### Files
-- `src/components/LegalQAChat.tsx` — rich text copy
-- `src/components/QAHistorySidebar.tsx` — add `refreshKey` prop
-- `src/pages/Index.tsx` — pass `refreshKey` to sidebar
+- `src/components/LegalQAChat.tsx` — remove David font from display, add heading parsing, fix copy HTML
+- `supabase/functions/legal-qa/index.ts` — add no-`#` instruction to system prompt
 
