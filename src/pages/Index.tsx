@@ -1152,6 +1152,7 @@ const Index = () => {
             {mode === "legalqa" ? (
               <QAHistorySidebar
                 projectId={projectId ?? null}
+                refreshKey={qaRefreshKey}
                 onLoadResult={(question, result, taskMode) => {
                   setQaExternalResult({ question, result, taskMode: taskMode as "research" | "pleading_analysis" | "case_summary" | "argument_draft" });
                 }}
