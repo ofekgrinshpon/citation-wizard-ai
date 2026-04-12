@@ -523,67 +523,130 @@ ${combinedContext}`;
       );
     }
 
-    // ========= Step 5: Build footnotes deterministically on server =========
-    // Find all [X] references in the answer
+    // ========= Step 5: Parse AI footnotes section =========
+    // The AI appends "--- הערות שוליים ---" followed by numbered citations
+    const footnoteSeparator = /---\s*הערות שוליים\s*---/;
+    const separatorMatch = answerText.match(footnoteSeparator);
+
+    let answerBody = answerText;
+    const aiFootnoteLines: Array<{ num: number; text: string }> = [];
+
+    if (separatorMatch && separatorMatch.index !== undefined) {
+      answerBody = answerText.slice(0, separatorMatch.index).trim();
+      const footnotesSection = answerText.slice(separatorMatch.index + separatorMatch[0].length);
+
+      // Parse numbered lines: "1. citation text" or "1. **citation text**"
+      const linePattern = /^(\d{1,2})\.\s+(.+)$/gm;
+      let lineMatch;
+      while ((lineMatch = linePattern.exec(footnotesSection)) !== null) {
+        aiFootnoteLines.push({
+          num: parseInt(lineMatch[1], 10),
+          text: lineMatch[2].trim(),
+        });
+      }
+      console.log(`Parsed ${aiFootnoteLines.length} AI-formatted footnotes`);
+    } else {
+      console.log("No footnote separator found — falling back to source card citations");
+    }
+
+    // ========= Step 5b: Match AI footnotes to source cards for provenance =========
+    function matchFootnoteToCard(fnText: string, cards: SourceCard[]): SourceCard | null {
+      const fnLower = fnText.toLowerCase();
+      // Try matching by case number
+      const caseNumMatch = fnText.match(/(\d{2,5}\/\d{2,4})/);
+      if (caseNumMatch) {
+        const found = cards.find(c => c.citation.includes(caseNumMatch[1]));
+        if (found) return found;
+      }
+      // Try matching by URL
+      for (const card of cards) {
+        if (card.url && fnLower.includes(card.url.replace(/https?:\/\//, "").slice(0, 30).toLowerCase())) {
+          return card;
+        }
+      }
+      // Try matching by keyword overlap (first 3 significant words of card citation)
+      for (const card of cards) {
+        const cardWords = card.citation.replace(/[^א-תa-zA-Z0-9\s]/g, "").split(/\s+/).filter(w => w.length > 2).slice(0, 3);
+        if (cardWords.length >= 2) {
+          const matchCount = cardWords.filter(w => fnLower.includes(w.toLowerCase())).length;
+          if (matchCount >= 2) return card;
+        }
+      }
+      return null;
+    }
+
+    // Build footnotes: prefer AI-formatted text, fall back to source card raw data
+    const footnotes: Array<{ number: number; citation: string; source_type: string; url?: string; source?: string }> = [];
     const usedSourceIds = new Set<number>();
     const newCitations: Array<{ citation: string; source_type: string }> = [];
 
-    // Match [X] patterns (source references)
+    // Collect [X] and [NEW:...] refs from body
     const refPattern = /\[(\d{1,2})\]/g;
     let refMatch;
-    while ((refMatch = refPattern.exec(answerText)) !== null) {
+    while ((refMatch = refPattern.exec(answerBody)) !== null) {
       usedSourceIds.add(parseInt(refMatch[1], 10));
     }
-
-    // Match [NEW:...] patterns (AI-generated new citations)
     const newRefPattern = /\[NEW:([^\]]+)\]/g;
     let newMatch;
-    while ((newMatch = newRefPattern.exec(answerText)) !== null) {
+    while ((newMatch = newRefPattern.exec(answerBody)) !== null) {
       newCitations.push({ citation: newMatch[1].trim(), source_type: "unknown" });
     }
 
-    // Build footnotes array from source cards
-    const footnotes: Array<{ number: number; citation: string; source_type: string; url?: string; source?: string }> = [];
     const oldIdToNewNumber = new Map<number, number>();
     let fnNum = 1;
 
-    for (const srcId of Array.from(usedSourceIds).sort((a, b) => a - b)) {
-      const card = sourceCards.find((sc) => sc.id === srcId);
-      if (!card) continue;
-      oldIdToNewNumber.set(srcId, fnNum);
-      footnotes.push({
-        number: fnNum,
-        citation: card.citation,
-        source_type: card.source_type,
-        url: card.url,
-        source: card.provenance,
-      });
-      fnNum++;
-    }
-
-    // Add new AI-generated citations
-    for (const nc of newCitations) {
-      footnotes.push({
-        number: fnNum,
-        citation: nc.citation,
-        source_type: nc.source_type,
-        source: "perplexity", // treat as web-discovered
-      });
-      fnNum++;
+    if (aiFootnoteLines.length > 0) {
+      // Use AI-formatted footnotes — match each to a source card for provenance
+      for (const aiFn of aiFootnoteLines) {
+        const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards);
+        footnotes.push({
+          number: fnNum,
+          citation: aiFn.text,
+          source_type: matchedCard?.source_type || "unknown",
+          url: matchedCard?.url,
+          source: matchedCard?.provenance || "perplexity",
+        });
+        // Map original [X] number to new sequential number
+        oldIdToNewNumber.set(aiFn.num, fnNum);
+        fnNum++;
+      }
+    } else {
+      // Fallback: use source card citations (old behavior)
+      for (const srcId of Array.from(usedSourceIds).sort((a, b) => a - b)) {
+        const card = sourceCards.find((sc) => sc.id === srcId);
+        if (!card) continue;
+        oldIdToNewNumber.set(srcId, fnNum);
+        footnotes.push({
+          number: fnNum,
+          citation: card.citation,
+          source_type: card.source_type,
+          url: card.url,
+          source: card.provenance,
+        });
+        fnNum++;
+      }
+      // Add new AI-generated citations
+      for (const nc of newCitations) {
+        footnotes.push({
+          number: fnNum,
+          citation: nc.citation,
+          source_type: nc.source_type,
+          source: "perplexity",
+        });
+        fnNum++;
+      }
     }
 
     // ========= Step 6: Replace [X] markers with superscripts =========
-    let answer = answerText;
+    let answer = answerBody;
 
-    // Replace [X] with superscript, remapping to new numbers
     answer = answer.replace(/\[(\d{1,2})\]/g, (_: string, num: string) => {
       const oldId = parseInt(num, 10);
       const newNum = oldIdToNewNumber.get(oldId);
       if (newNum) return toSuperscript(newNum);
-      return ""; // source not found, remove reference
+      return "";
     });
 
-    // Replace [NEW:...] with superscript numbers
     let newIdx = footnotes.length - newCitations.length + 1;
     answer = answer.replace(/\[NEW:[^\]]+\]/g, () => {
       return toSuperscript(newIdx++);
@@ -616,7 +679,6 @@ ${combinedContext}`;
     // Filter short footnotes and renumber
     const validFootnotes = footnotes.filter((fn) => fn.citation.trim().length >= 10);
     if (validFootnotes.length !== footnotes.length) {
-      // Need to renumber
       const removedNumbers = new Set(
         footnotes.filter((fn) => fn.citation.trim().length < 10).map((fn) => fn.number)
       );
