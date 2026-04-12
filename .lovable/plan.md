@@ -1,37 +1,78 @@
 
+מטרת התיקון: להחזיר את "העוזר המשפטי" למצב שעובד באמת, בלי לקצר את איכות התשובה ובלי לוותר על אזכורים מלאים.
 
-## Fix: Legal QA Timeout — Keep Full Citations, Fix the Timer
+מה בדקתי
+- הקריאה מהלקוח כן יוצאת לפונקציה עם הרשאה תקינה.
+- החיפוש המקומי ו-Perplexity כן רצים ומחזירים נתונים.
+- הכשל הוא בשלב ה-AI עצמו: בלוגים רואים `AI call starting (55s timeout)` ואז `AbortError` בדיוק אחרי 55 שניות.
+- כלומר: הבעיה כבר לא בלקוח, לא בהרשאה, ולא ב-retrieval. הבעיה היא שהקריאה למודל עדיין כבדה מדי במבנה הנוכחי.
 
-### What's Actually Wrong
-The 40-second AI timeout is too short for Gemini Flash to process the full prompt and generate a complete legal memo with tool-calling. The model needs ~45-50 seconds for complex queries. When attempt 1 is killed at 40s, the retry starts with almost no time left and produces a tiny fragment.
+למה זה עדיין לא עובד
+- כרגע הקריאה מבקשת מהמודל לעשות בבת אחת:
+  1. לכתוב מזכר משפטי מלא,
+  2. לציית לכללי אזכור ארוכים,
+  3. להחזיר `tool_call` עם JSON,
+  4. לייצר גם מערך footnotes מלא.
+- גם אחרי העלאת ה-timeout ל-55s, זה עדיין נחתך.
 
-The citation rules are NOT the bottleneck — they're ~3KB of text which Flash handles fine. The bottleneck is the combination of prompt + tool-calling + generation length.
+תוכנית התיקון
+1. לשנות את מבנה הפלט ב-`supabase/functions/legal-qa/index.ts`
+- להפסיק להכריח את המודל להחזיר את כל המזכר בתוך `tool_call` כבד.
+- במקום זה, לבנות מראש רשימת מקורות ממוספרת בשרת (`source cards`) עם:
+  - citation קנוני,
+  - source/url,
+  - source_type,
+  - excerpt קצר.
+- לבקש מהמודל להחזיר רק:
+  - `answer` מלא,
+  - ומספרי מקורות/סימונים שהוא השתמש בהם.
+- את מערך ה-`footnotes` לבנות דטרמיניסטית בשרת מתוך רשימת המקורות, ולא לתת למודל להמציא אותו מחדש.
 
-### The Fix (No Trimming Required)
+2. לשמור על איכות מלאה
+- לא לקצץ את איכות התשובה.
+- לא להסיר את המקורות שהמשתמש רואה.
+- לא "להחליש" את ה-prompt כפתרון ראשי.
+- להשאיר את מבנה המזכר המלא:
+  - תקציר
+  - מסגרת נורמטיבית
+  - ניתוח מפורט
+  - המלצות מעשיות
 
-**1. Increase AI timeout from 40s → 55s** (`index.ts` line 326)
-- Perplexity + local search run in parallel and finish in ~12s
-- Edge functions allow up to 150s on paid plans
-- 55s gives Flash plenty of room to generate a full memo with all citation rules intact
+3. להפחית מורכבות בלי לפגוע בתוכן
+- להשאיר את ה-retrieval כמו שהוא בעיקרו.
+- להפחית עומס מהמודל ע"י זה שהוא לא יידרש גם לכתוב תשובה ארוכה וגם לבנות JSON מורכב של הערות שוליים.
+- במידת הצורך, להחליף `tool_choice` ל-`response_format` פשוט יותר או לפלט טקסט/JSON קל יותר.
 
-**2. Make retry actually useful — don't repeat the same call**
-- Currently both attempts use the identical heavy payload, which is wasteful
-- If attempt 1 times out at 55s, there's no time for attempt 2 anyway
-- Change strategy: remove the retry loop entirely and use a single call with the longer timeout
-- If it fails, return a clear error immediately instead of wasting time on a doomed retry
+4. לעדכן את ניהול הזמן
+- להעלות את timeout של ה-AI מעבר ל-55 שניות אם סביבת ההרצה מאפשרת זאת, כי כרגע ה-abort הוא self-imposed.
+- במקביל, להוסיף לוגים מפורטים:
+  - זמן חיפוש מקומי
+  - זמן Perplexity
+  - זמן AI
+  - אורך prompt/context
+  - כמות מקורות שנשלחו למודל
 
-**3. Keep everything the user wants**
-- Full citation rules — no trimming
-- Full context (6000 chars) — no reduction
-- Full tool-calling with structured footnotes
-- 8192 max_tokens for long output
+5. לשפר את חוויית הכשל ב-`src/components/LegalQAChat.tsx`
+- לא להסתפק רק ב-toast זמני.
+- להציג שגיאה inline בתוך אזור התוצאה, עם הסבר ברור וכפתור נסיון חוזר.
+- להשאיר את השאלה שהמשתמש כתב, כדי שלא ירגיש שהמסך פשוט "לא עובד".
 
-### What Changes
-- `supabase/functions/legal-qa/index.ts`:
-  - Line 326: timeout `40000` → `55000`
-  - Lines 313-395: Remove retry loop, use single attempt with proper error handling
-  - All citation rules, context, and quality settings stay exactly as they are
+בדיקות אחרי המימוש
+- לבדוק שוב עם: `סקירה משפטית על הלכת יששכרוב בדין הפלילי`
+- לוודא שמתקבל:
+  - מזכר מלא ולא קטע קצר,
+  - 8–12 הערות שוליים,
+  - מקורות אמיתיים,
+  - בלי timeout.
+- לבדוק גם תרחיש של מסמך PDF/DOCX כדי לוודא שהשינוי לא שבר את מצב העלאת הקובץ.
 
-### Why This Works
-The previous approach (40s + retry) was self-defeating: the timeout was too short for success, and the retry had no time left. A single 55s attempt gives the model the time it actually needs, and the parallel search/Perplexity (already implemented) ensures the total function stays well within edge function limits.
+קבצים עיקריים
+- `supabase/functions/legal-qa/index.ts`
+- `src/components/LegalQAChat.tsx`
 
+פרטים טכניים
+- המסקנה המרכזית: העלאת timeout בלבד לא מספיקה.
+- הפתרון הנכון הוא לפרק את האחריות:
+  - המודל יכתוב את הניתוח,
+  - השרת יבנה את הערות השוליים מהמקורות שכבר נאספו.
+- כך שומרים גם על תשובה מלאה וגם על אזכורים מלאים, בלי להעמיס על קריאת AI אחת יותר מדי.
