@@ -1,61 +1,59 @@
 
 
-## Fix: Local Database Search Never Finds Matches
+## Fix: Add GIN Indexes for Fast Retrieval + Verify End-to-End
 
-### Root Cause
-Two compounding issues prevent the local text search from returning results:
+### Current Status (after investigation)
 
-1. **`plainto_tsquery` uses AND logic** — the full question "האם ראש הממשלה יכול לפטר את היועצת המשפטית לממשלה?" creates a query requiring ALL words (including "האם", "יכול", "את") to appear in the same chunk. This almost never matches.
+**Good news**: The retrieval pipeline IS working now. The latest deployed edge function:
+- Extracts keywords correctly ("ראש הממשלה לפטר היועצת המשפטית לממשלה")
+- Finds 10 matching chunks from the local database
+- The most recent stats row shows **10 local + 6 perplexity footnotes**
 
-2. **No GIN index** — the `legal_document_chunks` table (293K rows) has no text search index, so even when a simpler query could match, the search times out scanning the full table.
+**Problem 1: No GIN indexes** — retrieval takes **18 seconds** scanning 18K documents and 290K chunks without indexes. This wastes half the timeout budget.
 
-Evidence: searching "יועץ משפטי לממשלה" (3 keywords) returns 5 results. The full question returns 0 (or times out).
+**Problem 2: Missing GIN index migration** — the first migration (`697cfebf`) was supposed to create a GIN index on `legal_document_chunks.content`, but it was overridden by the second migration (`277dbcdb`) which rewrote the function to search `legal_documents` titles instead. Neither migration created the GIN index.
+
+**Problem 3: User tested before latest deployment** — The user's test at 15:28/15:41 ran against the old function code. The latest deployment (which I triggered) does work correctly.
 
 ### Changes
 
-**1. Database migration — add GIN index for text search performance**
+**1. Database migration — add GIN indexes for performance**
+
+Two indexes to make the title-based search fast:
+
 ```sql
-CREATE INDEX IF NOT EXISTS idx_legal_chunks_text_search
+-- Index on legal_documents title/citation (used by current search function)
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_legal_docs_title_search
+ON legal_documents
+USING gin(to_tsvector('simple', title || ' ' || citation || ' ' || coalesce(case_number,'') || ' ' || coalesce(court,'')));
+
+-- Index on legal_document_chunks content (for future chunk-level search)
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_legal_chunks_content_search
 ON legal_document_chunks
 USING gin(to_tsvector('simple', content));
 ```
 
-**2. Database migration — create a smarter search function**
-Replace `search_legal_chunks_text` with a function that:
-- Strips Hebrew stop words (האם, יכול, את, של, על, כי, זה, הם, אם, לא, גם, כל, עם, היא, הוא, אין, מה, איך, כאשר, כדי, בין, אלא, רק, עוד, אשר, היה, יש, אך, אף, כך, לפי, בו, בה, או, אל, כן, פי, שלא, שהיא, שהוא, שלו, שלה, אותו, אותה, etc.)
-- Uses OR logic (`websearch_to_tsquery` or manually built OR query) so partial keyword overlap still returns results
-- Falls back to progressively fewer keywords if no results found
+This should reduce retrieval from 18 seconds to under 2 seconds.
 
-**3. Edge function (`supabase/functions/legal-qa/index.ts`)**
-- Add a keyword extraction step before calling the search: strip common Hebrew words, extract the 3-5 most meaningful terms
-- Add logging to show how many local matches were found vs. skipped
-- If the first search returns 0, try again with fewer keywords
+**2. Add debug logging to the edge function**
 
-### Technical details
+Add a log line showing how many local vs perplexity source cards were built, so we can verify in logs without waiting for the full response:
 
-New `search_legal_chunks_text` function logic:
-```sql
--- Use websearch_to_tsquery which supports OR operator
--- Strip stop words from the query before searching
--- Search content, title, and citation with the cleaned query
+```
+"Source cards: 7 local, 5 perplexity, 1 document"
 ```
 
-Edge function keyword extraction (in TypeScript):
-```typescript
-const STOP_WORDS = new Set(["האם","יכול","את","של","על","כי","זה","הם","אם","לא","גם","כל","עם","היא","הוא","אין","מה","איך","כאשר","כדי","בין","אלא","רק","עוד","אשר","היה","יש","אך","אף","כך","לפי","או","אל","כן","שלא","אותו","אותה","הזה","הזאת","לפני","אחרי","תחת","מול","ליד","בו","בה","שהיא","שהוא"]);
+**3. Verify with a live test call**
 
-function extractKeywords(question: string): string {
-  return question.split(/\s+/)
-    .filter(w => w.length > 1 && !STOP_WORDS.has(w))
-    .slice(0, 6)
-    .join(" OR ");
-}
-```
+After deploying the indexes and updated function, run the test question through the edge function and confirm:
+- Retrieval time drops from 18s to <3s
+- Local sources appear in the final footnotes
+- The full round-trip completes within timeout
 
 ### Files
-- Database migration: GIN index + updated search function
-- `supabase/functions/legal-qa/index.ts`: keyword extraction, better logging
+- Database migration: two GIN indexes
+- `supabase/functions/legal-qa/index.ts`: minor logging addition
 
 ### Expected outcome
-After this change, the question "האם ראש הממשלה יכול לפטר את היועצת המשפטית לממשלה?" will search for "ראש הממשלה OR לפטר OR היועצת OR המשפטית OR לממשלה" — matching relevant Knesset research documents about the Attorney General that already exist in the database.
+Retrieval drops from 18s to <2s, leaving 40+ seconds for AI generation. The AI cites local verified sources (already confirmed working in latest deployment).
 
