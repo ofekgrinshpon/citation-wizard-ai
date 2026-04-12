@@ -31,12 +31,6 @@ function isBlogUrl(url?: string): boolean {
   return BLOG_URL_PATTERNS.some((p) => p.test(url));
 }
 
-async function getEmbedding(_text: string, _apiKey: string): Promise<number[]> {
-  // Embedding models are not supported by the Lovable AI Gateway.
-  // Skip vector search entirely and fall through to text-based search.
-  return [];
-}
-
 interface LocalMatch {
   chunk_id: string;
   document_id: string;
@@ -54,37 +48,35 @@ interface LocalMatch {
 function getTaskModeInstructions(taskMode?: string): string {
   switch (taskMode) {
     case "pleading_analysis":
-      return `\n\nמצב עבודה: ניתוח כתב טענה
-חובה לבנות את התשובה לפי המבנה הבא:
-**תקציר** – סיכום הטענות המרכזיות בכתב הטענה.
-**מסגרת נורמטיבית** – החוקים והפסיקה הרלוונטיים לטענות.
-**ניתוח מפורט** – ניתוח ביקורתי של כל טענה: חוזקות, חולשות, ופערים.
-**המלצות מעשיות** – המלצות לשיפור כתב הטענה או לתשובה עליו.`;
-
+      return `מצב עבודה: ניתוח כתב טענה. בנה לפי: **תקציר**, **מסגרת נורמטיבית**, **ניתוח מפורט**, **המלצות מעשיות**.`;
     case "case_summary":
-      return `\n\nמצב עבודה: סיכום פסיקה
-חובה לבנות את התשובה לפי המבנה הבא:
-**תקציר** – עובדות המקרה והשאלה המשפטית.
-**מסגרת נורמטיבית** – הדין שהופעל והתקדימים הרלוונטיים.
-**ניתוח מפורט** – הכרעת בית המשפט, הנמקה, דעות מיעוט.
-**המלצות מעשיות** – השלכות פסק הדין על מקרים עתידיים.`;
-
+      return `מצב עבודה: סיכום פסיקה. בנה לפי: **תקציר**, **מסגרת נורמטיבית**, **ניתוח מפורט**, **המלצות מעשיות**.`;
     case "argument_draft":
-      return `\n\nמצב עבודה: ניסוח טיעון
-חובה לבנות את התשובה לפי המבנה הבא:
-**תקציר** – הטיעון המרכזי בתמצית.
-**מסגרת נורמטיבית** – הבסיס החוקי והפסיקתי לטיעון.
-**ניתוח מפורט** – בניית הטיעון שלב אחר שלב עם סימוכין.
-**המלצות מעשיות** – טיעוני נגד אפשריים ודרכי התמודדות.`;
-
-    default: // "research"
-      return `\n\nמצב עבודה: מחקר משפטי
-חובה לבנות את התשובה לפי המבנה הבא:
-**תקציר** – תמצית הסוגיה והמסקנות.
-**מסגרת נורמטיבית** – סקירת החקיקה והפסיקה הרלוונטית.
-**ניתוח מפורט** – דיון מעמיק בגישות השונות ובפרשנויות.
-**המלצות מעשיות** – יישום מעשי ותובנות לפעולה.`;
+      return `מצב עבודה: ניסוח טיעון. בנה לפי: **תקציר**, **מסגרת נורמטיבית**, **ניתוח מפורט**, **המלצות מעשיות**.`;
+    default:
+      return `מצב עבודה: מחקר משפטי. בנה לפי: **תקציר**, **מסגרת נורמטיבית**, **ניתוח מפורט**, **המלצות מעשיות**.`;
   }
+}
+
+// ─── Fetch with timeout helper ───────────────────────────────────────
+
+async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// ─── Truncate combined context to a max character budget ─────────────
+
+const MAX_CONTEXT_CHARS = 6000;
+
+function truncateContext(text: string): string {
+  if (text.length <= MAX_CONTEXT_CHARS) return text;
+  return text.slice(0, MAX_CONTEXT_CHARS) + "\n[... קוצר מטעמי אורך ...]";
 }
 
 serve(async (req) => {
@@ -142,182 +134,138 @@ serve(async (req) => {
     let documentContext = "";
     const hasDocument = documentText && typeof documentText === "string" && documentText.trim().length > 100;
     if (hasDocument) {
-      documentContext = `\n\n=== מסמך שהועלה: ${documentName || "ללא שם"} ===\n${documentText.slice(0, 30000)}\n=== סוף המסמך ===\n`;
+      documentContext = `\n=== מסמך שהועלה: ${documentName || "ללא שם"} ===\n${documentText.slice(0, 15000)}\n=== סוף המסמך ===\n`;
       console.log(`Document uploaded: ${documentName}, ${documentText.length} chars`);
     }
 
-    // ========= Step 1: Local search (vector + text fallback) =========
-    let localMatches: LocalMatch[] = [];
-    let localContext = "";
-    let usedLocalSearch = false;
-
-    try {
-      const queryEmbedding = await getEmbedding(question, LOVABLE_API_KEY);
-      if (queryEmbedding.length > 0) {
-        const { data: matches, error: matchError } = await adminClient.rpc("match_legal_chunks", {
-          query_embedding: JSON.stringify(queryEmbedding),
-          match_threshold: 0.7,
-          match_count: 8,
-        });
-        if (!matchError && matches && matches.length > 0) {
-          localMatches = matches;
-          usedLocalSearch = true;
-          console.log(`Vector search: found ${matches.length} matching chunks`);
-        }
-      }
-    } catch (embErr) {
-      console.error("Vector search failed (non-fatal):", embErr);
-    }
-
-    if (!usedLocalSearch) {
+    // ========= Step 1: Local search + Perplexity IN PARALLEL =========
+    const localSearchPromise = (async (): Promise<{ matches: LocalMatch[]; used: boolean }> => {
       try {
         const { data: textMatches, error: textError } = await adminClient.rpc("search_legal_chunks_text", {
           search_query: question,
-          match_count: 8,
+          match_count: 5,
         });
         if (!textError && textMatches && textMatches.length > 0) {
-          localMatches = textMatches;
-          usedLocalSearch = true;
-          console.log(`Text search fallback: found ${textMatches.length} matching chunks`);
+          console.log(`Text search: found ${textMatches.length} matching chunks`);
+          return { matches: textMatches, used: true };
         }
-      } catch (textErr) {
-        console.error("Text search failed (non-fatal):", textErr);
+      } catch (err) {
+        console.error("Text search failed (non-fatal):", err);
       }
-    }
+      return { matches: [], used: false };
+    })();
 
-    if (usedLocalSearch && localMatches.length > 0) {
-      const seenDocs = new Set<string>();
-      localContext = "\n\n=== מקורות מהמאגר המקומי (מאומתים) ===\n";
-      for (const m of localMatches) {
-        const isNotebook = m.source_type === "notebook";
-        if (!seenDocs.has(m.document_id)) {
-          seenDocs.add(m.document_id);
-          if (isNotebook) {
-            localContext += `\n--- מחברת לימודים (לרקע בלבד – אל תצטט כמקור): ${m.document_title} ---\n`;
-          } else {
-            localContext += `\n--- מקור: ${m.document_title} ---\nסוג: ${m.source_type}\nאזכור: ${m.document_citation}\n`;
-            if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
-          }
-        }
-        localContext += `\nקטע רלוונטי (דמיון: ${(m.similarity * 100).toFixed(0)}%):\n${m.chunk_content}\n`;
-      }
-    }
-
-    // ========= Step 2: Perplexity search =========
-    console.log("Searching Perplexity for additional sources...");
-    const perplexityRes = await fetch("https://api.perplexity.ai/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "sonar-pro",
-        search_domain_filter: [
-          "nevo.co.il", "www.nevo.co.il", "supreme.court.gov.il",
-          "knesset.gov.il", "lawdata.co.il", "psakdin.co.il",
-          "huji.ac.il", "tau.ac.il", "biu.ac.il", "haifa.ac.il",
-        ],
-        messages: [
-          {
-            role: "system",
-            content: `You are a legal research assistant specializing in Israeli law.
-Your job is to find PRIMARY legal sources ONLY. This means:
-- Israeli statutes and legislation with EXACT publication references (ס"ח page number, ק"ת page number)
-- Israeli court decisions with EXACT case numbers (e.g., ע"א 461/62, בג"ץ 5100/94)
-- Academic books published by recognized publishers
-- Academic articles from law journals (e.g., הפרקליט, משפטים, עיוני משפט, משפט וממשל)
-- International treaties and conventions when relevant
-
-CRITICAL: Do NOT cite lawyer blogs, law firm websites, legal news summaries, or marketing pages.
-
-For each source, provide the EXACT law name, case number, or book title with full publication details.`,
+    const perplexityPromise = (async (): Promise<{ content: string; citations: string[] }> => {
+      try {
+        const res = await fetchWithTimeout("https://api.perplexity.ai/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+            "Content-Type": "application/json",
           },
-          { role: "user", content: question },
-        ],
-      }),
-    });
+          body: JSON.stringify({
+            model: "sonar-pro",
+            search_domain_filter: [
+              "nevo.co.il", "supreme.court.gov.il",
+              "knesset.gov.il", "psakdin.co.il",
+              "huji.ac.il", "tau.ac.il",
+            ],
+            messages: [
+              {
+                role: "system",
+                content: `Israeli law research assistant. Find PRIMARY legal sources only: statutes with ס"ח/ק"ת page numbers, court decisions with exact case numbers, academic books/articles. No blogs or law firm sites.`,
+              },
+              { role: "user", content: question },
+            ],
+          }),
+        }, 15000); // 15s timeout
 
-    let searchResults = "";
-    let citations: string[] = [];
-
-    if (perplexityRes.ok) {
-      const perplexityData = await perplexityRes.json();
-      searchResults = perplexityData.choices?.[0]?.message?.content || "";
-      citations = perplexityData.citations || [];
-      console.log(`Perplexity returned ${citations.length} citations`);
-    } else {
-      const errText = await perplexityRes.text();
-      console.error("Perplexity error (non-fatal):", perplexityRes.status, errText);
-      if (!usedLocalSearch && !hasDocument) {
-        throw new Error(`Perplexity search failed: ${perplexityRes.status}`);
+        if (res.ok) {
+          const data = await res.json();
+          const content = data.choices?.[0]?.message?.content || "";
+          const cits = data.citations || [];
+          console.log(`Perplexity returned ${cits.length} citations`);
+          return { content, citations: cits };
+        } else {
+          const errText = await res.text();
+          console.error("Perplexity error (non-fatal):", res.status, errText);
+        }
+      } catch (err) {
+        console.error("Perplexity call failed (non-fatal):", err);
       }
+      return { content: "", citations: [] };
+    })();
+
+    // Await both in parallel
+    const [localResult, perplexityResult] = await Promise.all([localSearchPromise, perplexityPromise]);
+
+    const localMatches = localResult.matches;
+    const usedLocalSearch = localResult.used;
+    const searchResults = perplexityResult.content;
+    const citations = perplexityResult.citations;
+
+    // If ALL sources failed and no document, we can't produce anything useful
+    if (!usedLocalSearch && !searchResults && !hasDocument) {
+      return new Response(
+        JSON.stringify({ error: "לא נמצאו מקורות רלוונטיים. נסו לנסח את השאלה אחרת." }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    // ========= Step 3: Build combined context =========
+    // ========= Step 2: Build combined context (trimmed) =========
     const contextParts: string[] = [];
 
     if (hasDocument) {
       contextParts.push(documentContext);
-      contextParts.push("\nהערה: המסמך שהועלה הוא מקור הקשרי ראשוני. ענה על השאלה תוך התייחסות ישירה לתוכנו. אם אתה מצטט ממנו, סמן את ההערה כ-source: \"document\".");
     }
 
-    if (localContext) {
+    if (usedLocalSearch && localMatches.length > 0) {
+      const seenDocs = new Set<string>();
+      let localContext = "\n=== מקורות מאומתים ===\n";
+      for (const m of localMatches) {
+        if (m.source_type === "notebook") continue;
+        if (!seenDocs.has(m.document_id)) {
+          seenDocs.add(m.document_id);
+          localContext += `\n--- ${m.document_title} ---\nסוג: ${m.source_type} | אזכור: ${m.document_citation}\n`;
+          if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
+        }
+        localContext += `${m.chunk_content.slice(0, 800)}\n`;
+      }
       contextParts.push(localContext);
-      contextParts.push("\nהערה חשובה: מקורות מהמאגר המקומי הם מאומתים ואמינים. העדף אותם על פני מקורות מ-Perplexity.");
     }
 
     if (searchResults) {
-      contextParts.push("\n\n=== מקורות מחיפוש Perplexity ===\n" + searchResults);
+      contextParts.push("\n=== מקורות מחיפוש ===\n" + searchResults.slice(0, 3000));
       if (citations.length > 0) {
-        contextParts.push(`\nקישורי מקור:\n${citations.map((c: string, i: number) => `[${i + 1}] ${c}`).join("\n")}`);
+        contextParts.push(citations.slice(0, 8).map((c, i) => `[${i + 1}] ${c}`).join("\n"));
       }
     }
 
-    const combinedContext = contextParts.join("\n");
+    const combinedContext = truncateContext(contextParts.join("\n"));
 
-    // ========= Step 4: Gemini structuring =========
+    // ========= Step 3: Gemini call (Flash for speed) =========
     const taskInstructions = getTaskModeInstructions(taskMode);
-
     const citationInstructions = buildCitationInstructions();
 
-    const systemPrompt = `אתה עוזר משפטי מומחה. קיבלת תוצאות חיפוש משפטי ועליך לכתוב חוות דעת משפטית מובנית ומקיפה בעברית.
+    const systemPrompt = `אתה עוזר משפטי מומחה. כתוב חוות דעת משפטית מקצועית בעברית.
 ${taskInstructions}
 
-כללי כתיבה לגוף התשובה:
-1. **קריטי – אורך התשובה**: כתוב חוות דעת מקצועית ומפורטת מאוד בעברית, באורך של 1200–2000 מילים לפחות. כל חלק (תקציר, מסגרת נורמטיבית, ניתוח מפורט, המלצות מעשיות) חייב להיות מהותי ומפורט. הדגש על עומק הניתוח ולא על קיצור. תשובה קצרה מ-1000 מילים אינה מספקת.
-2. השתמש בכותרות מודגשות (**תקציר**, **מסגרת נורמטיבית**, **ניתוח מפורט**, **המלצות מעשיות**) לארגון התשובה.
-3. בגוף הטקסט, השתמש בשמות מקוצרים של חוקים (למשל "סעיף 15 לחוק החוזים"). השם המלא יופיע רק בהערת השוליים.
-4. חובה: כל הערת שוליים שאתה מגדיר חייבת להופיע כמספר סופרסקריפט בגוף הטקסט. השתמש בתווי יוניקוד: ⁰¹²³⁴⁵⁶⁷⁸⁹.
-5. מיקום הסופרסקריפט: תמיד בסוף המשפט, מיד אחרי סימן הפיסוק.
-6. אל תמציא מקורות. כל הערת שוליים חייבת להתבסס על מקור אמיתי מתוצאות החיפוש${hasDocument ? " או מהמסמך שהועלה" : ""}.
-7. סווג כל מקור: legislation, caselaw, book, article, international${hasDocument ? ", document" : ""}.
-
-כללים קריטיים לפיזור הערות שוליים:
-8. לכל משפט מותר לצרף לכל היותר הערת שוליים אחת.
-9. פזר את ההערות לאורך כל התשובה. העדף 8–15 הערות שוליים איכותיות.
-10. אל תיצור הערות שוליים עבור בלוגים, אתרי משרדי עורכי דין, או מחברות לימודים.
-11. מספור הערות השוליים חייב להיות רציף: 1, 2, 3... ללא דילוגים.
-
-סימון מקור ההערות:
-12. לכל הערת שוליים, ציין את שדה source:
-    - מקור מהמאגר המקומי: source: "local"
-    - מקור מחיפוש Perplexity: source: "perplexity"${hasDocument ? '\n    - מקור מהמסמך שהועלה: source: "document"' : ""}
-${hasDocument ? '\n13. מקור מהמסמך שהועלה: ציין "[מתוך הקובץ שהועלה]" בסוף הציטוט.\n' : ""}
+כללי כתיבה:
+- אורך: 800-1500 מילים. כל חלק חייב להיות מהותי.
+- השתמש בכותרות מודגשות: **תקציר**, **מסגרת נורמטיבית**, **ניתוח מפורט**, **המלצות מעשיות**.
+- כל הערת שוליים חייבת להופיע כסופרסקריפט יוניקוד (⁰¹²³⁴⁵⁶⁷⁸⁹) בסוף משפט.
+- לכל משפט לכל היותר הערה אחת. העדף 8-12 הערות איכותיות.
+- אל תמציא מקורות. כל הערה מבוססת על המקורות שלהלן.
+- מספור רציף: 1, 2, 3...
+- source: "local" למאגר מאומת, "perplexity" לחיפוש${hasDocument ? ', "document" למסמך' : ''}.
 
 ${citationInstructions}
 
-היררכיית מקורות:
-1. ראשוני: מאגר פנימי (מקורות מאומתים)
-2. משני: Perplexity/Scholar לאימות מקוון
-${hasDocument ? "3. הקשרי: המסמך שהועלה – השתמש בו כמקור ראשוני להקשר" : ""}
-
-תוצאות החיפוש המשפטי:
+מקורות:
 ${combinedContext}`;
 
-    // ========= AI call with retry =========
-    const aiRequestBody = JSON.stringify({
-      model: "google/gemini-2.5-pro",
+    const aiBody = JSON.stringify({
+      model: "google/gemini-2.5-flash",
       max_tokens: 8192,
       messages: [
         { role: "system", content: systemPrompt },
@@ -328,15 +276,13 @@ ${combinedContext}`;
           type: "function",
           function: {
             name: "format_legal_answer",
-            description:
-              "Format a structured legal memo with inline footnotes. CRITICAL: each sentence may have AT MOST one footnote superscript.",
+            description: "Format a structured legal memo with footnotes.",
             parameters: {
               type: "object",
               properties: {
                 answer: {
                   type: "string",
-                  description:
-                    "The full Hebrew legal memo with section headings (תקציר, מסגרת נורמטיבית, ניתוח מפורט, המלצות מעשיות) and superscript footnote numbers.",
+                  description: "Full Hebrew legal memo with section headings and superscript footnote numbers.",
                 },
                 footnotes: {
                   type: "array",
@@ -344,23 +290,10 @@ ${combinedContext}`;
                     type: "object",
                     properties: {
                       number: { type: "number" },
-                      citation: {
-                        type: "string",
-                        description: "Full legal citation formatted per Israeli Uniform Citation Rules (2021).",
-                      },
-                      source_type: {
-                        type: "string",
-                        enum: ["legislation", "caselaw", "book", "article", "international", "document"],
-                      },
-                      url: {
-                        type: "string",
-                        description: "Source URL if available",
-                      },
-                      source: {
-                        type: "string",
-                        enum: ["local", "perplexity", "document"],
-                        description: "Whether this footnote comes from the local verified database, Perplexity search, or the uploaded document",
-                      },
+                      citation: { type: "string" },
+                      source_type: { type: "string", enum: ["legislation", "caselaw", "book", "article", "international", "document"] },
+                      url: { type: "string" },
+                      source: { type: "string", enum: ["local", "perplexity", "document"] },
                     },
                     required: ["number", "citation", "source_type", "source"],
                     additionalProperties: false,
@@ -373,10 +306,7 @@ ${combinedContext}`;
           },
         },
       ],
-      tool_choice: {
-        type: "function",
-        function: { name: "format_legal_answer" },
-      },
+      tool_choice: { type: "function", function: { name: "format_legal_answer" } },
     });
 
     let parsed: any = null;
@@ -385,107 +315,111 @@ ${combinedContext}`;
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       console.log(`AI attempt ${attempt}/${MAX_RETRIES}...`);
 
-      const aiRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: aiRequestBody,
-      });
-
-      if (!aiRes.ok) {
-        if (aiRes.status === 429) {
-          return new Response(
-            JSON.stringify({ error: "יותר מדי בקשות. נסו שוב בעוד דקה." }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-        if (aiRes.status === 402) {
-          return new Response(
-            JSON.stringify({ error: "נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות." }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-        const errText = await aiRes.text();
-        console.error(`AI gateway error (attempt ${attempt}):`, aiRes.status, errText);
-        if (attempt < MAX_RETRIES) continue;
-        return new Response(
-          JSON.stringify({ error: "שגיאה בשירות ה-AI. נסו שוב בעוד רגע." }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      const aiData = await aiRes.json();
-      const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
-      const finishReason = aiData.choices?.[0]?.finish_reason || "unknown";
-
-      console.log(`AI response (attempt ${attempt}): tool_calls=${toolCall ? "yes" : "no"}, finish_reason=${finishReason}`);
-
-      if (!toolCall?.function?.arguments) {
-        const content = aiData.choices?.[0]?.message?.content || "";
-        if (content && content.length >= 50) {
-          // Model returned plain text instead of tool call — use it
-          parsed = { answer: content, footnotes: [] };
-          break;
-        }
-        console.error(`No usable response (attempt ${attempt}), content length: ${content.length}`);
-        if (attempt < MAX_RETRIES) continue;
-        return new Response(
-          JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב בעוד רגע." }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
       try {
-        parsed = JSON.parse(toolCall.function.arguments);
-      } catch (parseErr) {
-        console.error(`Failed to parse tool call (attempt ${attempt}):`, parseErr);
+        const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: aiBody,
+        }, 40000); // 40s timeout
+
+        if (!aiRes.ok) {
+          if (aiRes.status === 429) {
+            return new Response(
+              JSON.stringify({ error: "יותר מדי בקשות. נסו שוב בעוד דקה." }),
+              { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
+          }
+          if (aiRes.status === 402) {
+            return new Response(
+              JSON.stringify({ error: "נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות." }),
+              { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            );
+          }
+          const errText = await aiRes.text();
+          console.error(`AI gateway error (attempt ${attempt}):`, aiRes.status, errText);
+          if (attempt < MAX_RETRIES) continue;
+          return new Response(
+            JSON.stringify({ error: "שגיאה בשירות ה-AI. נסו שוב בעוד רגע." }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        const aiData = await aiRes.json();
+        const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
+        const finishReason = aiData.choices?.[0]?.finish_reason || "unknown";
+        console.log(`AI response (attempt ${attempt}): tool_calls=${toolCall ? "yes" : "no"}, finish_reason=${finishReason}`);
+
+        if (!toolCall?.function?.arguments) {
+          const content = aiData.choices?.[0]?.message?.content || "";
+          if (content && content.length >= 50) {
+            parsed = { answer: content, footnotes: [] };
+            break;
+          }
+          console.error(`No usable response (attempt ${attempt}), content length: ${content.length}`);
+          if (attempt < MAX_RETRIES) continue;
+          return new Response(
+            JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        try {
+          parsed = JSON.parse(toolCall.function.arguments);
+        } catch {
+          console.error(`Failed to parse tool call (attempt ${attempt})`);
+          if (attempt < MAX_RETRIES) continue;
+          return new Response(
+            JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        if (parsed.answer && parsed.answer.length >= 50) break;
+        console.error(`Answer too short (attempt ${attempt}): ${parsed.answer?.length || 0} chars`);
+        if (attempt < MAX_RETRIES) { parsed = null; continue; }
+        return new Response(
+          JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה מלאה. נסו שוב." }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } catch (err) {
+        console.error(`AI call error (attempt ${attempt}):`, err);
         if (attempt < MAX_RETRIES) continue;
         return new Response(
-          JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב בעוד רגע." }),
+          JSON.stringify({ error: "תם הזמן לעיבוד השאלה. נסו שוב או קצרו את השאלה." }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-
-      if (parsed.answer && parsed.answer.length >= 50) break;
-
-      console.error(`Answer too short (attempt ${attempt}): ${parsed.answer?.length || 0} chars`);
-      if (attempt < MAX_RETRIES) { parsed = null; continue; }
-      return new Response(
-        JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה מלאה. נסו שוב בעוד רגע." }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
     }
 
     let answer = parsed.answer || "";
     let footnotes: Array<{ number: number; citation: string; source_type: string; url?: string; source?: string }> = parsed.footnotes || [];
 
-    console.log(`Final AI output: answer=${answer.length} chars, footnotes=${footnotes.length}`);
+    console.log(`Final: answer=${answer.length} chars, footnotes=${footnotes.length}`);
 
-    // --- Post-processing Step 1: Filter out blog/marketing footnotes ---
+    // --- Post-processing: Filter blog footnotes ---
     footnotes = footnotes.filter((fn) => !isBlogUrl(fn.url));
 
-    // --- Post-processing Step 2: Strip academic/professional titles from citations ---
+    // --- Post-processing: Strip titles ---
     const titlePattern = /\b(פרופ['׳]|ד"ר|ד״ר|עו"ד|עו״ד|רו"ח|רו״ח|שופטת|שופט|המנוחה|המנוח|ז"ל|ז״ל)\s*/g;
     for (const fn of footnotes) {
       fn.citation = fn.citation.replace(titlePattern, "").replace(/\s{2,}/g, " ").trim();
     }
 
-    // --- Post-processing Step 3: Remove [missing:...] and [חסר:...] placeholders ---
+    // --- Post-processing: Remove placeholders ---
     const placeholderPattern = /\[missing:[^\]]*\]|\[חסר:[^\]]*\]|\[פרט חסר[^\]]*\]/g;
     for (const fn of footnotes) {
       fn.citation = fn.citation.replace(placeholderPattern, "").trim();
-      // Clean orphaned trailing "עמ'" or ", עמ'" left behind
       fn.citation = fn.citation.replace(/,?\s*עמ['׳]?\s*$/, "").trim();
     }
 
-    // --- Post-processing Step 4: Filter truncated/empty footnotes ---
+    // --- Post-processing: Filter short footnotes ---
     footnotes = footnotes.filter((fn) => fn.citation.trim().length >= 10);
 
-    // --- Post-processing Step 5: Universal sequential renumbering ---
+    // --- Post-processing: Renumber ---
     {
-      // Remove superscripts for any footnotes that were filtered out
       const survivingOldNumbers = new Set(footnotes.map((fn) => fn.number));
       const allOldNumbers = (parsed.footnotes || []).map((fn: any) => fn.number as number);
       for (const oldNum of allOldNumbers) {
@@ -493,32 +427,24 @@ ${combinedContext}`;
           answer = answer.replaceAll(toSuperscript(oldNum), "");
         }
       }
-
-      // Renumber all surviving footnotes sequentially
       const oldToNew = new Map<number, number>();
-      footnotes.forEach((fn, idx) => {
-        oldToNew.set(fn.number, idx + 1);
-      });
-
-      // Use placeholders to avoid collisions
+      footnotes.forEach((fn, idx) => { oldToNew.set(fn.number, idx + 1); });
       for (const [oldNum, newNum] of oldToNew) {
         if (oldNum !== newNum) {
-          answer = answer.replaceAll(toSuperscript(oldNum), `__FN_PLACEHOLDER_${newNum}__`);
+          answer = answer.replaceAll(toSuperscript(oldNum), `__FN_${newNum}__`);
         }
       }
       for (const [, newNum] of oldToNew) {
-        answer = answer.replaceAll(`__FN_PLACEHOLDER_${newNum}__`, toSuperscript(newNum));
+        answer = answer.replaceAll(`__FN_${newNum}__`, toSuperscript(newNum));
       }
-      footnotes.forEach((fn, idx) => {
-        fn.number = idx + 1;
-      });
+      footnotes.forEach((fn, idx) => { fn.number = idx + 1; });
     }
 
-    // --- Post-processing Step 2: Convert bracket patterns to superscript ---
+    // --- Convert bracket patterns to superscript ---
     answer = answer.replace(/\[(\d{1,2})\]/g, (_: string, num: string) => toSuperscript(parseInt(num, 10)));
     answer = answer.replace(/\((\d{1,2})\)(?=[^\dא-ת]|$)/g, (_: string, num: string) => toSuperscript(parseInt(num, 10)));
 
-    // --- Post-processing Step 3: De-cluster adjacent superscripts ---
+    // --- De-cluster adjacent superscripts ---
     const superscriptChars = new Set(Object.values(digitToSuperscript));
     const lines = answer.split("\n");
     const processedLines = lines.map((line) => {
@@ -533,21 +459,16 @@ ${combinedContext}`;
           } else {
             const prevSupChars: string[] = [];
             for (let j = result.length - 1; j >= 0; j--) {
-              if (superscriptChars.has(result[j])) {
-                prevSupChars.unshift(result[j]);
-              } else break;
+              if (superscriptChars.has(result[j])) prevSupChars.unshift(result[j]);
+              else break;
             }
             prevSupChars.push(ch);
             const superscriptToDigit: Record<string, string> = {};
-            for (const [d, s] of Object.entries(digitToSuperscript)) {
-              superscriptToDigit[s] = d;
-            }
+            for (const [d, s] of Object.entries(digitToSuperscript)) superscriptToDigit[s] = d;
             const numStr = prevSupChars.map((c) => superscriptToDigit[c] || "").join("");
             const num = parseInt(numStr, 10);
-            const maxFootnote = footnotes.length > 0 ? Math.max(...footnotes.map((f) => f.number)) : 20;
-            if (num <= maxFootnote) {
-              result += ch;
-            }
+            const maxFn = footnotes.length > 0 ? Math.max(...footnotes.map((f) => f.number)) : 20;
+            if (num <= maxFn) result += ch;
           }
         } else {
           inSuperscriptRun = false;
@@ -558,7 +479,7 @@ ${combinedContext}`;
     });
     answer = processedLines.join("\n");
 
-    // --- Post-processing Step 4: Inject missing superscripts ---
+    // --- Inject missing superscripts ---
     for (const fn of footnotes) {
       const sup = toSuperscript(fn.number);
       if (!answer.includes(sup)) {
@@ -568,23 +489,18 @@ ${combinedContext}`;
         let insertPos = -1;
         while ((match = periodRegex.exec(answer)) !== null) {
           count++;
-          if (count === fn.number) {
-            insertPos = match.index + match[1].length;
-            break;
-          }
+          if (count === fn.number) { insertPos = match.index + match[1].length; break; }
         }
         if (insertPos > 0) {
           answer = answer.slice(0, insertPos) + sup + answer.slice(insertPos);
         } else {
           const lastPeriod = answer.lastIndexOf(".");
-          if (lastPeriod > 0) {
-            answer = answer.slice(0, lastPeriod + 1) + sup + answer.slice(lastPeriod + 1);
-          }
+          if (lastPeriod > 0) answer = answer.slice(0, lastPeriod + 1) + sup + answer.slice(lastPeriod + 1);
         }
       }
     }
 
-    // Log source provenance
+    // Log
     try {
       const localCount = footnotes.filter((f) => f.source === "local").length;
       const perplexityCount = footnotes.filter((f) => f.source === "perplexity").length;
@@ -606,8 +522,8 @@ ${combinedContext}`;
   } catch (e) {
     console.error("legal-qa error:", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({ error: "שגיאה בעיבוד השאלה. נסו שוב." }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
