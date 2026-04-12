@@ -125,6 +125,8 @@ const Index = () => {
     newMessages: Message[];
   } | null>(null);
   const [citationRefreshKey, setCitationRefreshKey] = useState(0);
+  const [qaRefreshKey, setQaRefreshKey] = useState(0);
+  const [qaExternalResult, setQaExternalResult] = useState<{ question: string; result: any; taskMode: string } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   
