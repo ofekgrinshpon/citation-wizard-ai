@@ -178,7 +178,7 @@ serve(async (req) => {
       try {
         const { data: textMatches, error: textError } = await adminClient.rpc("search_legal_chunks_text", {
           search_query: question,
-          match_count: 5,
+          match_count: 10,
         });
         if (!textError && textMatches && textMatches.length > 0) {
           console.log(`Text search: found ${textMatches.length} matching chunks`);
@@ -252,18 +252,41 @@ serve(async (req) => {
     const sourceCards: SourceCard[] = [];
     let cardId = 1;
 
-    // Local sources
+    // Local sources — build rich citations from structured fields
     if (usedLocalSearch && localMatches.length > 0) {
       const seenDocs = new Set<string>();
       for (const m of localMatches) {
-        if (m.source_type === "notebook") continue;
         if (seenDocs.has(m.document_id)) continue;
         seenDocs.add(m.document_id);
         if (isBlogUrl(m.source_url || undefined)) continue;
+
+        // Build a richer citation from structured metadata
+        let richCitation = m.document_citation;
+        const meta = (m.metadata || {}) as Record<string, unknown>;
+
+        if (m.source_type === "caselaw") {
+          // For case law: use case_number, court, decision_date, title
+          const caseNumber = (meta.case_number as string) || "";
+          const court = (meta.court as string) || "";
+          const decisionDate = (meta.decision_date as string) || "";
+          if (caseNumber) {
+            richCitation = `${caseNumber} ${m.document_title}`;
+            if (court) richCitation += ` (${court}`;
+            if (decisionDate) richCitation += `, ${decisionDate}`;
+            if (court) richCitation += ")";
+          }
+        } else if (m.source_type === "knesset_research") {
+          // For knesset research / law journal: use title as-is, it's usually well-formatted
+          richCitation = m.document_title || m.document_citation;
+        }
+
+        const sourceLabel = m.source_type === "caselaw" ? "פסיקה" :
+          m.source_type === "knesset_research" ? "מחקר כנסת / חקיקה" : m.source_type;
+
         sourceCards.push({
           id: cardId++,
-          citation: m.document_citation,
-          source_type: m.source_type,
+          citation: richCitation,
+          source_type: sourceLabel,
           url: m.source_url || undefined,
           provenance: "local",
           excerpt: m.chunk_content.slice(0, 400),
@@ -306,9 +329,8 @@ serve(async (req) => {
 
     if (usedLocalSearch && localMatches.length > 0) {
       const seenDocs = new Set<string>();
-      let localContext = "\n=== מקורות מאומתים ===\n";
+      let localContext = "\n=== מקורות מאומתים מהמאגר המשפטי ===\n";
       for (const m of localMatches) {
-        if (m.source_type === "notebook") continue;
         if (!seenDocs.has(m.document_id)) {
           seenDocs.add(m.document_id);
           localContext += `\n--- ${m.document_title} ---\nסוג: ${m.source_type} | אזכור: ${m.document_citation}\n`;
