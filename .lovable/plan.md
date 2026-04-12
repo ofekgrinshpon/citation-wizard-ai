@@ -1,26 +1,57 @@
 
 
-## Tweak: Reset/Warn File Upload on Mode Change
+## UI Overhaul: Card-Style Task Selectors for Legal Assistant
 
-### What happens now
-When the user switches task mode, the uploaded file stays silently attached — even if it's irrelevant to the new mode (e.g., a pleading PDF stays when switching to "מחקר משפטי").
+### Layout Change
 
-### Change
+Replace the small ToggleGroup pills (lines 302-323) with 4 professional rectangular cards in a responsive row/grid, positioned at the top of the workspace below the disclaimer. Move the input bar to the very bottom of the screen. Results fill the middle area.
 
-**`src/components/LegalQAChat.tsx`**
+### Changes — `src/components/LegalQAChat.tsx`
 
-1. **Define file-relevant modes**: Mark which modes typically need a file upload — `pleading_analysis` and `case_summary` are file-relevant; `research` and `argument_draft` are not (though files can still be useful).
+**1. Update TASK_MODES with icons**
+Add an `icon` field to each mode (using Lucide icons):
+- `research` → `Search` icon
+- `pleading_analysis` → `FileSearch` icon
+- `case_summary` → `BookOpen` icon
+- `argument_draft` → `PenTool` icon
 
-2. **Add mode-change handler**: Replace the inline `onValueChange` on the ToggleGroup (line 286) with a handler that:
-   - Sets the new mode
-   - If a file is currently uploaded AND the new mode is NOT file-relevant → show a toast warning: `"שימו לב: הקובץ שהועלה עדיין מצורף. ניתן להסיר אותו אם אינו רלוונטי למצב הנוכחי."` with an action button "הסר קובץ" that calls `removeFile()`.
-   - Does NOT auto-remove the file (user might still want it).
+**2. Replace ToggleGroup pills (lines 302-323) with Card grid**
+- Render 4 cards in a `grid grid-cols-2 sm:grid-cols-4 gap-2` layout
+- Each card contains: icon, title, sub-label
+- Default style: white/light background with subtle border
+- Selected style: `bg-primary text-primary-foreground border-primary shadow-sm`
+- Cards are clickable, calling `handleModeChange`
+- When results are showing, cards shrink slightly (smaller padding/text)
 
-3. **Visual indicator**: When a file is attached and the current mode is NOT file-relevant, add a subtle amber/warning border tint to the file upload zone (instead of the normal `border-primary/40`) to visually signal potential irrelevance.
+**3. Restructure the overall flex layout**
+Current order: disclaimer → pills → input → results (scrollable)
 
-### Files
+New order:
+```
+┌─────────────────────────────┐
+│ Disclaimer                  │
+│ 4 Mode Cards (row/grid)     │
+├─────────────────────────────┤
+│ Results area (flex-1 scroll)│
+│ or Empty state              │
+├─────────────────────────────┤
+│ File upload + Input bar     │
+│ File indicator + Attribution│
+└─────────────────────────────┘
+```
+
+- Move the input bar block (lines 326-401) to the bottom, pinned with `mt-auto`
+- Results area becomes the scrollable middle section
+- Empty state stays centered in the middle area
+
+**4. Card interaction**
+- Clicking a card triggers `handleModeChange` (preserving file warning logic)
+- Dynamic placeholder still updates based on selected mode
+- Sub-label visible on the card itself, remove the standalone `<p>` sub-label
+
+### Files Modified
 - `src/components/LegalQAChat.tsx` — only file changed
 
-### Why warn instead of auto-reset
-Auto-removing a file the user just uploaded would be frustrating. A toast with a one-click remove action respects user intent while preventing accidental irrelevant context being sent to the AI.
+### No backend changes needed
+Backend prompts were already updated in the previous implementation.
 
