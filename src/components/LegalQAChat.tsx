@@ -205,9 +205,27 @@ export function LegalQAChat() {
 
       const { data, error } = await supabase.functions.invoke("legal-qa", { body });
 
-      if (error) throw error;
+      if (error) {
+        // Check for specific HTTP status codes
+        const statusCode = (error as any)?.status || (error as any)?.context?.status;
+        if (statusCode === 429) {
+          toast.error("יותר מדי בקשות. נסו שוב בעוד דקה.");
+          return;
+        }
+        if (statusCode === 402) {
+          toast.error("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות.");
+          return;
+        }
+        throw error;
+      }
       if (data?.error) {
         toast.error(data.error);
+        return;
+      }
+
+      // Guard against empty payload
+      if (!data?.answer || data.answer.trim().length < 20) {
+        toast.error("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב.");
         return;
       }
 
