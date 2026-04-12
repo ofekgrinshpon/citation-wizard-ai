@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+
 import { toast } from "sonner";
 import { copyPlainText } from "@/lib/clipboard";
-import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText } from "lucide-react";
+import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, PenTool, type LucideIcon } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
 // Configure PDF.js worker
@@ -33,11 +33,11 @@ type TaskMode = "research" | "pleading_analysis" | "case_summary" | "argument_dr
 
 const FILE_RELEVANT_MODES: TaskMode[] = ["pleading_analysis", "case_summary"];
 
-const TASK_MODES: { id: TaskMode; label: string; description: string; placeholder: string }[] = [
-  { id: "research", label: "מחקר משפטי", description: "סריקה מקיפה עם מסגרת נורמטיבית מלאה", placeholder: "תארו שאלה משפטית לסקירה מקיפה..." },
-  { id: "pleading_analysis", label: "ניתוח כתב טענה", description: "זיהוי חולשות, סתירות ואזכורים חסרים", placeholder: "הדביקו כתב טענה או העלו קובץ לניתוח..." },
-  { id: "case_summary", label: "סיכום פסיקה", description: "תמצית: עובדות, שאלה משפטית, הכרעה ורציו", placeholder: "הזינו שם פסק דין או הדביקו טקסט לסיכום..." },
-  { id: "argument_draft", label: "ניסוח טיעון", description: "כתיבה משכנעת המבוססת על מקורות מוסמכים", placeholder: "תארו את הטיעון שברצונכם לבנות..." },
+const TASK_MODES: { id: TaskMode; label: string; description: string; placeholder: string; icon: LucideIcon }[] = [
+  { id: "research", label: "מחקר משפטי", description: "סריקה מקיפה עם מסגרת נורמטיבית מלאה", placeholder: "תארו שאלה משפטית לסקירה מקיפה...", icon: Search },
+  { id: "pleading_analysis", label: "ניתוח כתב טענה", description: "זיהוי חולשות, סתירות ואזכורים חסרים", placeholder: "הדביקו כתב טענה או העלו קובץ לניתוח...", icon: FileSearch },
+  { id: "case_summary", label: "סיכום פסיקה", description: "תמצית: עובדות, שאלה משפטית, הכרעה ורציו", placeholder: "הזינו שם פסק דין או הדביקו טקסט לסיכום...", icon: BookOpen },
+  { id: "argument_draft", label: "ניסוח טיעון", description: "כתיבה משכנעת המבוססת על מקורות מוסמכים", placeholder: "תארו את הטיעון שברצונכם לבנות...", icon: PenTool },
 ];
 
 const DAVID_FONT = "David, 'David Libre', serif";
@@ -289,7 +289,7 @@ export function LegalQAChat() {
 
   return (
     <div className="flex flex-col h-full" style={{ direction: "rtl" }}>
-      {/* Query Panel — top */}
+      {/* Top section: Disclaimer + Mode Cards */}
       <div className="px-2 sm:px-4 pt-4 pb-2 space-y-3">
         {/* Disclaimer */}
         <Alert className="border-destructive/30 bg-destructive/5">
@@ -299,30 +299,172 @@ export function LegalQAChat() {
           </AlertDescription>
         </Alert>
 
-        {/* Task Mode Pills */}
-        <div className="space-y-1.5">
-          <ToggleGroup
-            type="single"
-            value={taskMode}
-            onValueChange={handleModeChange}
-            className="flex flex-wrap gap-1.5 justify-start"
-          >
-            {TASK_MODES.map((m) => (
-              <ToggleGroupItem
+        {/* Mode Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {TASK_MODES.map((m) => {
+            const isSelected = taskMode === m.id;
+            const Icon = m.icon;
+            return (
+              <button
                 key={m.id}
-                value={m.id}
-                className="text-[11px] sm:text-xs px-3 py-2 rounded-full border border-border transition-all data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:border-primary data-[state=on]:shadow-sm"
+                onClick={() => handleModeChange(m.id)}
+                className={`flex flex-col items-center text-center gap-1.5 rounded-xl border transition-all ${
+                  result ? "px-2 py-2.5" : "px-3 py-3.5"
+                } ${
+                  isSelected
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    : "bg-card text-card-foreground border-border hover:border-primary/40 hover:bg-muted/50"
+                }`}
               >
-                {m.label}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-          <p className="text-[10px] text-muted-foreground pr-1 transition-all duration-200">
-            {activeMode.description}
-          </p>
+                <Icon className={result ? "w-4 h-4" : "w-5 h-5"} />
+                <span className={`font-semibold leading-tight ${result ? "text-[11px]" : "text-xs sm:text-sm"}`}>
+                  {m.label}
+                </span>
+                <span className={`leading-tight opacity-80 ${result ? "text-[9px] hidden sm:block" : "text-[10px] sm:text-[11px]"}`}>
+                  {m.description}
+                </span>
+              </button>
+            );
+          })}
         </div>
+      </div>
 
-        {/* Input area with file upload */}
+      {/* Middle: scrollable results area */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-2 sm:px-4">
+        {/* Empty state */}
+        {!result && !loading && !error && (
+          <div className="flex flex-col items-center justify-center h-full py-12 text-center">
+            <div className="text-4xl mb-3">⚖️</div>
+            <h2 className="text-foreground text-lg font-bold mb-2">העוזר המשפטי</h2>
+            <p className="text-muted-foreground text-sm">
+              {uploadedFile
+                ? "שאלו שאלה על המסמך שהועלה – התשובה תתבסס על תוכן הקובץ ועל המאגר הפנימי"
+                : "שאלו שאלה משפטית וקבלו חוות דעת מקצועית עם הפניות למקורות אמיתיים"}
+            </p>
+          </div>
+        )}
+
+        {/* Inline error */}
+        {!result && !loading && error && (
+          <Card className="mt-4 border-destructive/30 bg-destructive/5">
+            <CardContent className="p-6 text-center space-y-3">
+              <AlertTriangle className="w-8 h-8 text-destructive mx-auto" />
+              <p className="text-foreground text-sm font-medium">{error}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => { setError(null); handleSubmit(); }}
+                className="gap-1.5"
+              >
+                נסו שוב
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Loading skeleton */}
+        {loading && (
+          <Card className="mt-4 border-border">
+            <CardContent className="p-4 sm:p-6 space-y-5">
+              <div>
+                <Skeleton className="h-5 w-24 mb-3" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-full mt-2" />
+              </div>
+              <div>
+                <Skeleton className="h-5 w-32 mb-3" />
+                <Skeleton className="h-4 w-5/6" />
+                <Skeleton className="h-4 w-full mt-2" />
+                <Skeleton className="h-4 w-2/3 mt-2" />
+              </div>
+              <div>
+                <Skeleton className="h-5 w-28 mb-3" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-4/5 mt-2" />
+              </div>
+              <div className="pt-4 border-t border-border">
+                <Skeleton className="h-4 w-28 mb-3" />
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-4/5 mt-2" />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Result */}
+        {result && (
+          <Card className="mt-4 border-border">
+            <div className="flex items-center justify-between px-4 sm:px-6 pt-4 pb-2 border-b border-border">
+              <span className="text-xs text-muted-foreground font-medium">
+                {TASK_MODES.find((m) => m.id === taskMode)?.label || "חוות דעת"}
+              </span>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs">
+                  <Copy className="w-3.5 h-3.5" />
+                  העתק
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => { setResult(null); setQuestion(""); }}
+                  className="text-xs text-muted-foreground"
+                >
+                  נקה
+                </Button>
+              </div>
+            </div>
+
+            <CardContent className="p-4 sm:p-6">
+              <div
+                className="max-w-none text-foreground leading-relaxed whitespace-pre-wrap"
+                style={{ fontFamily: DAVID_FONT, fontSize: "12pt", textAlign: "justify", lineHeight: 1.8 }}
+              >
+                <AnswerWithFootnotes text={result.answer} onFootnoteClick={scrollToFootnote} />
+              </div>
+
+              {result.footnotes.length > 0 && (
+                <div className="border-t border-border pt-4 mt-6 space-y-2">
+                  <h3 className="font-semibold text-muted-foreground" style={{ fontFamily: DAVID_FONT, fontSize: "11pt" }}>
+                    הערות שוליים
+                  </h3>
+                  <ol className="space-y-1.5">
+                    {result.footnotes.map((fn) => {
+                      const badge = getSourceBadge(fn.source);
+                      return (
+                        <li
+                          key={fn.number}
+                          id={`legalqa-footnote-${fn.number}`}
+                          className="flex gap-2 items-start text-foreground"
+                          style={{ fontFamily: DAVID_FONT, fontSize: "10pt" }}
+                        >
+                          <span className="text-primary font-bold shrink-0 flex items-center gap-1" style={{ fontSize: "10pt" }}>
+                            <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: badge.color }} title={badge.label} />
+                            {fn.number}.
+                          </span>
+                          <div className="min-w-0">
+                            <RenderBold text={fn.citation} />
+                            {fn.source === "document" && (
+                              <span className="text-[9px] text-accent-foreground mr-1">[מתוך הקובץ שהועלה]</span>
+                            )}
+                            {fn.url && (
+                              <a href={fn.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center gap-0.5 mr-1.5" style={{ fontSize: "9pt" }}>
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      {/* Bottom: Input bar pinned */}
+      <div className="mt-auto px-2 sm:px-4 pb-2 pt-2 space-y-1.5 border-t border-border bg-background">
         <div className="flex gap-2 items-end">
           {/* File upload zone */}
           <div
@@ -398,166 +540,11 @@ export function LegalQAChat() {
             {extractedText ? ` • ${(extractedText.length / 1000).toFixed(0)}K תווים` : ""}
           </p>
         )}
-      </div>
 
-      {/* Scrollable result area */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-2 sm:px-4 pb-4">
-        {/* Empty state */}
-        {!result && !loading && !error && (
-          <div className="py-12 text-center">
-            <div className="text-4xl mb-3">⚖️</div>
-            <h2 className="text-foreground text-lg font-bold mb-2">העוזר המשפטי</h2>
-            <p className="text-muted-foreground text-sm">
-              {uploadedFile
-                ? "שאלו שאלה על המסמך שהועלה – התשובה תתבסס על תוכן הקובץ ועל המאגר הפנימי"
-                : "שאלו שאלה משפטית וקבלו חוות דעת מקצועית עם הפניות למקורות אמיתיים"}
-            </p>
-          </div>
-        )}
-
-        {/* Inline error */}
-        {!result && !loading && error && (
-          <Card className="mt-4 border-destructive/30 bg-destructive/5">
-            <CardContent className="p-6 text-center space-y-3">
-              <AlertTriangle className="w-8 h-8 text-destructive mx-auto" />
-              <p className="text-foreground text-sm font-medium">{error}</p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => { setError(null); handleSubmit(); }}
-                className="gap-1.5"
-              >
-                נסו שוב
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Loading skeleton with memo structure */}
-        {loading && (
-          <Card className="mt-4 border-border">
-            <CardContent className="p-4 sm:p-6 space-y-5">
-              <div>
-                <Skeleton className="h-5 w-24 mb-3" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-full mt-2" />
-              </div>
-              <div>
-                <Skeleton className="h-5 w-32 mb-3" />
-                <Skeleton className="h-4 w-5/6" />
-                <Skeleton className="h-4 w-full mt-2" />
-                <Skeleton className="h-4 w-2/3 mt-2" />
-              </div>
-              <div>
-                <Skeleton className="h-5 w-28 mb-3" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-4/5 mt-2" />
-              </div>
-              <div className="pt-4 border-t border-border">
-                <Skeleton className="h-4 w-28 mb-3" />
-                <Skeleton className="h-3 w-full" />
-                <Skeleton className="h-3 w-4/5 mt-2" />
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Result — professional memo format */}
-        {result && (
-          <Card className="mt-4 border-border">
-            {/* Toolbar */}
-            <div className="flex items-center justify-between px-4 sm:px-6 pt-4 pb-2 border-b border-border">
-              <span className="text-xs text-muted-foreground font-medium">
-                {TASK_MODES.find((m) => m.id === taskMode)?.label || "חוות דעת"}
-              </span>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs">
-                  <Copy className="w-3.5 h-3.5" />
-                  העתק
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => { setResult(null); setQuestion(""); }}
-                  className="text-xs text-muted-foreground"
-                >
-                  נקה
-                </Button>
-              </div>
-            </div>
-
-            <CardContent className="p-4 sm:p-6">
-              {/* Answer body */}
-              <div
-                className="max-w-none text-foreground leading-relaxed whitespace-pre-wrap"
-                style={{
-                  fontFamily: DAVID_FONT,
-                  fontSize: "12pt",
-                  textAlign: "justify",
-                  lineHeight: 1.8,
-                }}
-              >
-                <AnswerWithFootnotes text={result.answer} onFootnoteClick={scrollToFootnote} />
-              </div>
-
-              {/* Footnotes */}
-              {result.footnotes.length > 0 && (
-                <div className="border-t border-border pt-4 mt-6 space-y-2">
-                  <h3
-                    className="font-semibold text-muted-foreground"
-                    style={{ fontFamily: DAVID_FONT, fontSize: "11pt" }}
-                  >
-                    הערות שוליים
-                  </h3>
-                  <ol className="space-y-1.5">
-                    {result.footnotes.map((fn) => {
-                      const badge = getSourceBadge(fn.source);
-                      return (
-                        <li
-                          key={fn.number}
-                          id={`legalqa-footnote-${fn.number}`}
-                          className="flex gap-2 items-start text-foreground"
-                          style={{ fontFamily: DAVID_FONT, fontSize: "10pt" }}
-                        >
-                          <span className="text-primary font-bold shrink-0 flex items-center gap-1" style={{ fontSize: "10pt" }}>
-                            <span
-                              className="inline-block w-2 h-2 rounded-full shrink-0"
-                              style={{ backgroundColor: badge.color }}
-                              title={badge.label}
-                            />
-                            {fn.number}.
-                          </span>
-                          <div className="min-w-0">
-                            <RenderBold text={fn.citation} />
-                            {fn.source === "document" && (
-                              <span className="text-[9px] text-accent-foreground mr-1">[מתוך הקובץ שהועלה]</span>
-                            )}
-                            {fn.url && (
-                              <a
-                                href={fn.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-primary hover:underline inline-flex items-center gap-0.5 mr-1.5"
-                                style={{ fontSize: "9pt" }}
-                              >
-                                <ExternalLink className="w-3 h-3" />
-                              </a>
-                            )}
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ol>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-      </div>
-
-      {/* Bottom attribution */}
-      <div className="text-center py-1.5 text-[10px] sm:text-[11px] text-muted-foreground">
-        ReLex הוא AI ויכול לעשות טעויות. יש לבדוק שנית את הפלט לפני השימוש בו.
+        {/* Attribution */}
+        <div className="text-center py-1 text-[10px] sm:text-[11px] text-muted-foreground">
+          ReLex הוא AI ויכול לעשות טעויות. יש לבדוק שנית את הפלט לפני השימוש בו.
+        </div>
       </div>
     </div>
   );
