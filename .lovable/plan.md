@@ -1,67 +1,32 @@
 
-מטרת התיקון: לעצור את מצב ה"טען ואז לא קיבלתי תשובה" ב"העוזר המשפטי", ולוודא שגם כשבקשת AI ארוכה או נכשלת חלקית, המשתמש לא נשאר עם מסך ריק.
 
-מה זיהיתי
-- בקשת `legal-qa` האחרונה חזרה ב-HTTP 200, אבל עם `answer: ""` ו-`footnotes: []`.
-- כלומר הבעיה כרגע אינה בתקשורת מהלקוח לשרת, אלא בכך שהפונקציה מחזירה הצלחה עם תוכן ריק.
-- בלוגים האחרונים גם מראים ששלב ה-embedding נכשל עם מודל לא נתמך (`text-embedding-3-small`). זה לא מפיל את כל הפונקציה, אבל פוגע בחיפוש המקומי.
-- בנוסף, יש אזהרת React ב-`LegalQAChat` על refs, שכנראה לא קשורה ישירות לאי-התגובה, אבל כדאי לנקות אותה תוך כדי.
+## Fix: Legal QA Edge Function Timeout
 
-תכנית תיקון
-1. להקשיח את `supabase/functions/legal-qa/index.ts` נגד תשובה ריקה
-- להוסיף בדיקת תקינות אחרי תשובת ה-AI:
-  - אם אין `tool_calls`
-  - או שאין `arguments`
-  - או שה-JSON מפוענח אבל `answer` ריק/קצר מאוד
-  - או שאין גם `answer` וגם `footnotes`
-- במקום להחזיר 200 עם תשובה ריקה, להחזיר שגיאה ברורה עם הודעה ידידותית כמו:
-  - "העוזר המשפטי לא הצליח לייצר תשובה מלאה. נסו שוב בעוד רגע."
-- להוסיף לוגים מפורטים עבור:
-  - אורך ה-system prompt
-  - האם התקבל tool call
-  - אורך התשובה
-  - מספר הערות שוליים לפני/אחרי post-processing
+### Root Cause
+The function runs three sequential network calls (local DB search → Perplexity → Gemini Pro) that together exceed the edge function's ~60s execution limit. Switching to `gemini-2.5-pro` made this worse because Pro is significantly slower than Flash.
 
-2. להקטין סיכון לכשל בגלל עומס/אורך
-- לעדכן את ההוראות כך שהמודל יוכל להחזיר מזכר ארוך, אבל בפורמט יותר יציב:
-  - לשמור על מבנה המזכר
-  - להפחית ניסוחים שמכריחים כמות קיצונית מדי של פסקאות
-  - להעדיף "מפורט מאוד" בלי לדרוש מבנה שעלול לשבור tool-calling
-- אם צריך, אעביר ליעד אורך מעט פחות קיצוני אך עדיין מקצועי, כדי לשפר אמינות תגובה.
+### Changes — `supabase/functions/legal-qa/index.ts`
 
-3. לתקן את שלב ה-embedding
-- להחליף את מודל ה-embedding הלא נתמך בפתרון נתמך בפלטפורמה, או לבטל זמנית את שלב הווקטורים ולעבוד רק עם text fallback כשאין embedding זמין.
-- המטרה: שהפונקציה לא תבזבז זמן/לוגים על קריאה לא חוקית, ושאחזור מקורות מקומיים יהיה צפוי יותר.
+**A. Switch back to `gemini-2.5-flash`** (line 320)
+- Pro is too slow for edge function constraints. Flash is fast enough and handles tool-calling well.
+- Keep `max_tokens: 8192` for long output.
 
-4. לשפר טיפול שגיאות בצד הלקוח ב-`src/components/LegalQAChat.tsx`
-- להבדיל בין:
-  - שגיאת שרת רגילה
-  - 429
-  - 402
-  - תשובה ריקה/לא תקינה
-- אם מוחזרת תשובה ריקה או שגיאה מפורשת מהשרת:
-  - להציג toast ברור בעברית
-  - לא להשאיר את המשתמש בתחושה ש"הכול עבד" כשאין פלט
-- להוסיף guard שלא יעשה `setResult` על payload ריק.
+**B. Run Perplexity and local search in parallel** (lines 149-255)
+- Currently sequential. Use `Promise.all` to run both at the same time, saving ~10s.
 
-5. לתקן את אזהרת React ב-`LegalQAChat`
-- לנקות את מבנה הרינדור שגורם ל-warning:
-  - `Function components cannot be given refs`
-- זה לא נראה כמו שורש התקלה של "אין תשובה", אבל זה רעש שמקשה על דיבוג וצריך להסיר.
+**C. Add AbortController timeouts to all external calls**
+- Perplexity: 15s timeout
+- Gemini: 40s timeout
+- This prevents any single call from consuming the entire budget.
 
-6. אימות אחרי התיקון
-- לבדוק שוב את השאלה:
-  - "סקירה משפטית על בסיס המס בישראל"
-- לוודא אחד משני מצבים בלבד:
-  - מתקבלת תשובה מלאה עם הערות שוליים
-  - או מתקבלת הודעת שגיאה ברורה למשתמש, ולא תשובת 200 ריקה
-- לבדוק בלוגים שהפונקציה כבר לא נופלת על embedding לא נתמך.
+**D. Slim down the prompt**
+- Reduce `combinedContext` to max 6000 chars (currently unbounded — 8 local chunks + full Perplexity response can be huge).
+- Reduce Perplexity results and local matches from 8 to 5 each.
 
-קבצים עיקריים
-- `supabase/functions/legal-qa/index.ts`
-- `src/components/LegalQAChat.tsx`
+**E. Always return HTTP 200 with structured JSON**
+- All error paths return `{ error: "..." }` with status 200 so the client can always read the body.
 
-פרטים טכניים
-- הבעיה המרכזית כרגע היא fallback שגוי: הקוד מחזיר הצלחה גם כשאין תוכן שימושי.
-- הבעיה המשנית היא שימוש במודל embedding שלא נתמך בפלטפורמת ה-AI gateway.
-- לכן התיקון צריך להיות גם לוגי (validation/fail-fast) וגם תפעולי (retrieval/logging/client UX).
+### Files Changed
+- `supabase/functions/legal-qa/index.ts` — model switch, parallel calls, timeouts, context trimming
+- Redeploy edge function
+
