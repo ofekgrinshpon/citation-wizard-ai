@@ -72,17 +72,29 @@ function AnswerWithFootnotes({ text, onFootnoteClick }: { text: string; onFootno
             <sup
               key={i}
               className="text-primary cursor-pointer hover:underline font-bold"
-              style={{ fontSize: "10px", fontFamily: DAVID_FONT }}
+              style={{ fontSize: "10px" }}
               onClick={() => onFootnoteClick(num)}
             >
               {bracketMatch ? num : part}
             </sup>
           );
         }
-        return <RenderBold key={i} text={part} />;
+        return <RenderMarkdown key={i} text={part} />;
       })}
     </>
   );
+}
+
+function RenderMarkdownLine({ line }: { line: string }) {
+  // Strip markdown heading prefixes and render as bold
+  const headingMatch = line.match(/^(#{1,4})\s+(.*)/);
+  if (headingMatch) {
+    const level = headingMatch[1].length;
+    const content = headingMatch[2];
+    const className = level <= 2 ? "text-base font-bold" : "text-sm font-semibold";
+    return <div className={className}><RenderBold text={content} /></div>;
+  }
+  return <RenderBold text={line} />;
 }
 
 function RenderBold({ text }: { text: string }) {
@@ -92,6 +104,20 @@ function RenderBold({ text }: { text: string }) {
       {parts.map((segment, i) =>
         i % 2 === 1 ? <strong key={i}>{segment}</strong> : <span key={i}>{segment}</span>
       )}
+    </>
+  );
+}
+
+function RenderMarkdown({ text }: { text: string }) {
+  const lines = text.split("\n");
+  return (
+    <>
+      {lines.map((line, i) => (
+        <span key={i}>
+          {i > 0 && <br />}
+          <RenderMarkdownLine line={line} />
+        </span>
+      ))}
     </>
   );
 }
@@ -303,6 +329,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
 
     // Rich HTML version — David 12pt for pasting into Word / Google Docs
     const bodyHtml = result.answer
+      .replace(/^#{1,4}\s+(.+)$/gm, "<strong>$1</strong>")
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
       .replace(/\n/g, "<br>");
 
@@ -470,14 +497,14 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
             <CardContent className="p-4 sm:p-6">
               <div
                 className="max-w-none text-foreground leading-relaxed whitespace-pre-wrap"
-                style={{ fontFamily: DAVID_FONT, fontSize: "12pt", textAlign: "justify", lineHeight: 1.8 }}
+                style={{ fontSize: "12pt", textAlign: "justify", lineHeight: 1.8 }}
               >
                 <AnswerWithFootnotes text={result.answer} onFootnoteClick={scrollToFootnote} />
               </div>
 
               {result.footnotes.length > 0 && (
                 <div className="border-t border-border pt-4 mt-6 space-y-2">
-                  <h3 className="font-semibold text-muted-foreground" style={{ fontFamily: DAVID_FONT, fontSize: "11pt" }}>
+                  <h3 className="font-semibold text-muted-foreground" style={{ fontSize: "11pt" }}>
                     הערות שוליים
                   </h3>
                   <ol className="space-y-1.5">
@@ -488,7 +515,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                           key={fn.number}
                           id={`legalqa-footnote-${fn.number}`}
                           className="flex gap-2 items-start text-foreground"
-                          style={{ fontFamily: DAVID_FONT, fontSize: "10pt" }}
+                          style={{ fontSize: "10pt" }}
                         >
                           <span className="text-primary font-bold shrink-0 flex items-center gap-1" style={{ fontSize: "10pt" }}>
                             <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: badge.color }} title={badge.label} />
