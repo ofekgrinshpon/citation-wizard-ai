@@ -1,42 +1,67 @@
 
+מטרת התיקון: לעצור את מצב ה"טען ואז לא קיבלתי תשובה" ב"העוזר המשפטי", ולוודא שגם כשבקשת AI ארוכה או נכשלת חלקית, המשתמש לא נשאר עם מסך ריק.
 
-## Fix: Enforce Memo Length & Citation Formatting (Prompt + Post-Processing)
+מה זיהיתי
+- בקשת `legal-qa` האחרונה חזרה ב-HTTP 200, אבל עם `answer: ""` ו-`footnotes: []`.
+- כלומר הבעיה כרגע אינה בתקשורת מהלקוח לשרת, אלא בכך שהפונקציה מחזירה הצלחה עם תוכן ריק.
+- בלוגים האחרונים גם מראים ששלב ה-embedding נכשל עם מודל לא נתמך (`text-embedding-3-small`). זה לא מפיל את כל הפונקציה, אבל פוגע בחיפוש המקומי.
+- בנוסף, יש אזהרת React ב-`LegalQAChat` על refs, שכנראה לא קשורה ישירות לאי-התגובה, אבל כדאי לנקות אותה תוך כדי.
 
-### Root Causes
-1. **Too short**: `gemini-2.5-flash` produces concise output by default. The 800-1200 word instruction is being ignored. Need to upgrade to `gemini-2.5-pro` for complex legal memos AND raise the minimum.
-2. **Titles persist** (פרופ', ד"ר, רו"ח): The AI ignores the no-titles rule. Need server-side regex stripping.
-3. **`[missing: פרט חסר]`**: The AI ignores the no-placeholders rule. Need server-side regex removal.
-4. **Truncated footnote 4**: Likely a `max_tokens` limit. Need to increase it.
-5. **Footnote 6 gap**: The existing renumbering logic only runs when blog URLs are filtered. Need a universal sequential renumber pass.
+תכנית תיקון
+1. להקשיח את `supabase/functions/legal-qa/index.ts` נגד תשובה ריקה
+- להוסיף בדיקת תקינות אחרי תשובת ה-AI:
+  - אם אין `tool_calls`
+  - או שאין `arguments`
+  - או שה-JSON מפוענח אבל `answer` ריק/קצר מאוד
+  - או שאין גם `answer` וגם `footnotes`
+- במקום להחזיר 200 עם תשובה ריקה, להחזיר שגיאה ברורה עם הודעה ידידותית כמו:
+  - "העוזר המשפטי לא הצליח לייצר תשובה מלאה. נסו שוב בעוד רגע."
+- להוסיף לוגים מפורטים עבור:
+  - אורך ה-system prompt
+  - האם התקבל tool call
+  - אורך התשובה
+  - מספר הערות שוליים לפני/אחרי post-processing
 
-### Changes — `supabase/functions/legal-qa/index.ts`
+2. להקטין סיכון לכשל בגלל עומס/אורך
+- לעדכן את ההוראות כך שהמודל יוכל להחזיר מזכר ארוך, אבל בפורמט יותר יציב:
+  - לשמור על מבנה המזכר
+  - להפחית ניסוחים שמכריחים כמות קיצונית מדי של פסקאות
+  - להעדיף "מפורט מאוד" בלי לדרוש מבנה שעלול לשבור tool-calling
+- אם צריך, אעביר ליעד אורך מעט פחות קיצוני אך עדיין מקצועי, כדי לשפר אמינות תגובה.
 
-**A. Switch model and increase tokens** (line 343):
-- Change `google/gemini-2.5-flash` to `google/gemini-2.5-pro` for higher instruction adherence
-- Add `max_tokens: 8192` to prevent truncation
+3. לתקן את שלב ה-embedding
+- להחליף את מודל ה-embedding הלא נתמך בפתרון נתמך בפלטפורמה, או לבטל זמנית את שלב הווקטורים ולעבוד רק עם text fallback כשאין embedding זמין.
+- המטרה: שהפונקציה לא תבזבז זמן/לוגים על קריאה לא חוקית, ושאחזור מקורות מקומיים יהיה צפוי יותר.
 
-**B. Strengthen length instructions** (line 306):
-- Change "800–1200 מילים" to "1500–2500 מילים" with CRITICAL emphasis
-- Add: "כל חלק (תקציר, מסגרת נורמטיבית, ניתוח מפורט, המלצות מעשיות) חייב לכלול לפחות 3–4 פסקאות. חלק 'ניתוח מפורט' חייב להיות הארוך ביותר עם לפחות 5 פסקאות."
+4. לשפר טיפול שגיאות בצד הלקוח ב-`src/components/LegalQAChat.tsx`
+- להבדיל בין:
+  - שגיאת שרת רגילה
+  - 429
+  - 402
+  - תשובה ריקה/לא תקינה
+- אם מוחזרת תשובה ריקה או שגיאה מפורשת מהשרת:
+  - להציג toast ברור בעברית
+  - לא להשאיר את המשתמש בתחושה ש"הכול עבד" כשאין פלט
+- להוסיף guard שלא יעשה `setResult` על payload ריק.
 
-**C. Add post-processing steps** (after line 470, the existing post-processing):
+5. לתקן את אזהרת React ב-`LegalQAChat`
+- לנקות את מבנה הרינדור שגורם ל-warning:
+  - `Function components cannot be given refs`
+- זה לא נראה כמו שורש התקלה של "אין תשובה", אבל זה רעש שמקשה על דיבוג וצריך להסיר.
 
-1. **Strip academic titles from footnotes**:
-   - Regex to remove פרופ', ד"ר, עו"ד, רו"ח, שופט/ת, המנוח/ה, ז"ל from citation text
-   - Pattern: `/\b(פרופ['׳]|ד"ר|עו"ד|רו"ח|שופט[ת]?|המנוח[ה]?|ז"ל)\s*/g` → replace with empty string
+6. אימות אחרי התיקון
+- לבדוק שוב את השאלה:
+  - "סקירה משפטית על בסיס המס בישראל"
+- לוודא אחד משני מצבים בלבד:
+  - מתקבלת תשובה מלאה עם הערות שוליים
+  - או מתקבלת הודעת שגיאה ברורה למשתמש, ולא תשובת 200 ריקה
+- לבדוק בלוגים שהפונקציה כבר לא נופלת על embedding לא נתמך.
 
-2. **Remove `[missing:...]` and `[חסר:...]` placeholders**:
-   - Pattern: `/\[missing:[^\]]*\]|\[חסר:[^\]]*\]/g` → remove
-   - Also clean up orphaned "עמ'" left behind: `/, עמ'\s*$/` → remove trailing incomplete refs
+קבצים עיקריים
+- `supabase/functions/legal-qa/index.ts`
+- `src/components/LegalQAChat.tsx`
 
-3. **Universal sequential renumbering**:
-   - After ALL filtering, always renumber footnotes 1,2,3... and update superscripts in the answer text — not only when blog filtering occurs
-
-4. **Filter truncated/empty footnotes**:
-   - Remove any footnote where `citation.trim().length < 10` (too short to be valid)
-   - Remove the corresponding superscript from the answer
-
-### Files Changed
-- `supabase/functions/legal-qa/index.ts` — model upgrade, max_tokens, stronger length prompt, 4 new post-processing steps
-- Deploy updated edge function
-
+פרטים טכניים
+- הבעיה המרכזית כרגע היא fallback שגוי: הקוד מחזיר הצלחה גם כשאין תוכן שימושי.
+- הבעיה המשנית היא שימוש במודל embedding שלא נתמך בפלטפורמת ה-AI gateway.
+- לכן התיקון צריך להיות גם לוגי (validation/fail-fast) וגם תפעולי (retrieval/logging/client UX).
