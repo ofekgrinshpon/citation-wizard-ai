@@ -310,88 +310,80 @@ ${combinedContext}`;
     });
 
     let parsed: any = null;
-    const MAX_RETRIES = 2;
 
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-      console.log(`AI attempt ${attempt}/${MAX_RETRIES}...`);
+    console.log("AI call starting (55s timeout)...");
+    try {
+      const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: aiBody,
+      }, 55000); // 55s timeout — single attempt, no retry
 
-      try {
-        const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: aiBody,
-        }, 40000); // 40s timeout
-
-        if (!aiRes.ok) {
-          if (aiRes.status === 429) {
-            return new Response(
-              JSON.stringify({ error: "יותר מדי בקשות. נסו שוב בעוד דקה." }),
-              { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-            );
-          }
-          if (aiRes.status === 402) {
-            return new Response(
-              JSON.stringify({ error: "נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות." }),
-              { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-            );
-          }
-          const errText = await aiRes.text();
-          console.error(`AI gateway error (attempt ${attempt}):`, aiRes.status, errText);
-          if (attempt < MAX_RETRIES) continue;
+      if (!aiRes.ok) {
+        if (aiRes.status === 429) {
           return new Response(
-            JSON.stringify({ error: "שגיאה בשירות ה-AI. נסו שוב בעוד רגע." }),
+            JSON.stringify({ error: "יותר מדי בקשות. נסו שוב בעוד דקה." }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
-
-        const aiData = await aiRes.json();
-        const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
-        const finishReason = aiData.choices?.[0]?.finish_reason || "unknown";
-        console.log(`AI response (attempt ${attempt}): tool_calls=${toolCall ? "yes" : "no"}, finish_reason=${finishReason}`);
-
-        if (!toolCall?.function?.arguments) {
-          const content = aiData.choices?.[0]?.message?.content || "";
-          if (content && content.length >= 50) {
-            parsed = { answer: content, footnotes: [] };
-            break;
-          }
-          console.error(`No usable response (attempt ${attempt}), content length: ${content.length}`);
-          if (attempt < MAX_RETRIES) continue;
+        if (aiRes.status === 402) {
           return new Response(
-            JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
+            JSON.stringify({ error: "נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות." }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
-
-        try {
-          parsed = JSON.parse(toolCall.function.arguments);
-        } catch {
-          console.error(`Failed to parse tool call (attempt ${attempt})`);
-          if (attempt < MAX_RETRIES) continue;
-          return new Response(
-            JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-
-        if (parsed.answer && parsed.answer.length >= 50) break;
-        console.error(`Answer too short (attempt ${attempt}): ${parsed.answer?.length || 0} chars`);
-        if (attempt < MAX_RETRIES) { parsed = null; continue; }
+        const errText = await aiRes.text();
+        console.error("AI gateway error:", aiRes.status, errText);
         return new Response(
-          JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה מלאה. נסו שוב." }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      } catch (err) {
-        console.error(`AI call error (attempt ${attempt}):`, err);
-        if (attempt < MAX_RETRIES) continue;
-        return new Response(
-          JSON.stringify({ error: "תם הזמן לעיבוד השאלה. נסו שוב או קצרו את השאלה." }),
+          JSON.stringify({ error: "שגיאה בשירות ה-AI. נסו שוב בעוד רגע." }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
+
+      const aiData = await aiRes.json();
+      const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
+      const finishReason = aiData.choices?.[0]?.finish_reason || "unknown";
+      console.log(`AI response: tool_calls=${toolCall ? "yes" : "no"}, finish_reason=${finishReason}`);
+
+      if (!toolCall?.function?.arguments) {
+        const content = aiData.choices?.[0]?.message?.content || "";
+        if (content && content.length >= 50) {
+          parsed = { answer: content, footnotes: [] };
+        } else {
+          console.error(`No usable response, content length: ${content.length}`);
+          return new Response(
+            JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+      } else {
+        try {
+          parsed = JSON.parse(toolCall.function.arguments);
+        } catch {
+          console.error("Failed to parse tool call arguments");
+          return new Response(
+            JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        if (!parsed.answer || parsed.answer.length < 50) {
+          console.error(`Answer too short: ${parsed.answer?.length || 0} chars`);
+          return new Response(
+            JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה מלאה. נסו שוב." }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+      }
+    } catch (err) {
+      console.error("AI call error:", err);
+      return new Response(
+        JSON.stringify({ error: "תם הזמן לעיבוד השאלה. נסו שוב או קצרו את השאלה." }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     let answer = parsed.answer || "";
