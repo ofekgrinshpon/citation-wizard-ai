@@ -250,29 +250,41 @@ export type Database = {
       }
       qa_logs: {
         Row: {
+          answer: string | null
           created_at: string
+          footnotes: Json | null
           id: string
           local_footnotes_count: number
           perplexity_footnotes_count: number
+          project_id: string | null
           question: string
+          task_mode: string | null
           total_footnotes: number
           user_id: string
         }
         Insert: {
+          answer?: string | null
           created_at?: string
+          footnotes?: Json | null
           id?: string
           local_footnotes_count?: number
           perplexity_footnotes_count?: number
+          project_id?: string | null
           question: string
+          task_mode?: string | null
           total_footnotes?: number
           user_id: string
         }
         Update: {
+          answer?: string | null
           created_at?: string
+          footnotes?: Json | null
           id?: string
           local_footnotes_count?: number
           perplexity_footnotes_count?: number
+          project_id?: string | null
           question?: string
+          task_mode?: string | null
           total_footnotes?: number
           user_id?: string
         }
