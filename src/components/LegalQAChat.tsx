@@ -397,6 +397,24 @@ export function LegalQAChat() {
           </div>
         )}
 
+        {/* Inline error */}
+        {!result && !loading && error && (
+          <Card className="mt-4 border-destructive/30 bg-destructive/5">
+            <CardContent className="p-6 text-center space-y-3">
+              <AlertTriangle className="w-8 h-8 text-destructive mx-auto" />
+              <p className="text-foreground text-sm font-medium">{error}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => { setError(null); handleSubmit(); }}
+                className="gap-1.5"
+              >
+                נסו שוב
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Loading skeleton with memo structure */}
         {loading && (
           <Card className="mt-4 border-border">
