@@ -45,7 +45,6 @@ async function getEmbedding(text: string, apiKey: string): Promise<number[]> {
   });
 
   if (!res.ok) {
-    // Non-fatal: log and return null to fall back to Perplexity
     const errText = await res.text();
     console.error("Embedding error (non-fatal):", res.status, errText);
     return [];
@@ -65,6 +64,44 @@ interface LocalMatch {
   source_url: string | null;
   metadata: Record<string, unknown>;
   similarity: number;
+}
+
+// ─── Task mode → system prompt instructions ──────────────────────────
+
+function getTaskModeInstructions(taskMode?: string): string {
+  switch (taskMode) {
+    case "pleading_analysis":
+      return `\n\nמצב עבודה: ניתוח כתב טענה
+חובה לבנות את התשובה לפי המבנה הבא:
+**תקציר** – סיכום הטענות המרכזיות בכתב הטענה.
+**מסגרת נורמטיבית** – החוקים והפסיקה הרלוונטיים לטענות.
+**ניתוח מפורט** – ניתוח ביקורתי של כל טענה: חוזקות, חולשות, ופערים.
+**המלצות מעשיות** – המלצות לשיפור כתב הטענה או לתשובה עליו.`;
+
+    case "case_summary":
+      return `\n\nמצב עבודה: סיכום פסיקה
+חובה לבנות את התשובה לפי המבנה הבא:
+**תקציר** – עובדות המקרה והשאלה המשפטית.
+**מסגרת נורמטיבית** – הדין שהופעל והתקדימים הרלוונטיים.
+**ניתוח מפורט** – הכרעת בית המשפט, הנמקה, דעות מיעוט.
+**המלצות מעשיות** – השלכות פסק הדין על מקרים עתידיים.`;
+
+    case "argument_draft":
+      return `\n\nמצב עבודה: ניסוח טיעון
+חובה לבנות את התשובה לפי המבנה הבא:
+**תקציר** – הטיעון המרכזי בתמצית.
+**מסגרת נורמטיבית** – הבסיס החוקי והפסיקתי לטיעון.
+**ניתוח מפורט** – בניית הטיעון שלב אחר שלב עם סימוכין.
+**המלצות מעשיות** – טיעוני נגד אפשריים ודרכי התמודדות.`;
+
+    default: // "research"
+      return `\n\nמצב עבודה: מחקר משפטי
+חובה לבנות את התשובה לפי המבנה הבא:
+**תקציר** – תמצית הסוגיה והמסקנות.
+**מסגרת נורמטיבית** – סקירת החקיקה והפסיקה הרלוונטית.
+**ניתוח מפורט** – דיון מעמיק בגישות השונות ובפרשנויות.
+**המלצות מעשיות** – יישום מעשי ותובנות לפעולה.`;
+  }
 }
 
 serve(async (req) => {
@@ -97,7 +134,9 @@ serve(async (req) => {
       });
     }
 
-    const { question } = await req.json();
+    const body = await req.json();
+    const { question, taskMode, documentText, documentName } = body;
+
     if (!question || typeof question !== "string" || question.trim().length < 5) {
       return new Response(JSON.stringify({ error: "Question too short" }), {
         status: 400,
@@ -116,48 +155,47 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // ========= Step 0: Document context (if uploaded) =========
+    let documentContext = "";
+    const hasDocument = documentText && typeof documentText === "string" && documentText.trim().length > 100;
+    if (hasDocument) {
+      documentContext = `\n\n=== מסמך שהועלה: ${documentName || "ללא שם"} ===\n${documentText.slice(0, 30000)}\n=== סוף המסמך ===\n`;
+      console.log(`Document uploaded: ${documentName}, ${documentText.length} chars`);
+    }
+
     // ========= Step 1: Local search (vector + text fallback) =========
     let localMatches: LocalMatch[] = [];
     let localContext = "";
     let usedLocalSearch = false;
 
-    // Try vector search first
     try {
       const queryEmbedding = await getEmbedding(question, LOVABLE_API_KEY);
-
       if (queryEmbedding.length > 0) {
         const { data: matches, error: matchError } = await adminClient.rpc("match_legal_chunks", {
           query_embedding: JSON.stringify(queryEmbedding),
           match_threshold: 0.7,
           match_count: 8,
         });
-
         if (!matchError && matches && matches.length > 0) {
           localMatches = matches;
           usedLocalSearch = true;
           console.log(`Vector search: found ${matches.length} matching chunks`);
-        } else {
-          console.log("Vector search: no matches found or error:", matchError?.message);
         }
       }
     } catch (embErr) {
       console.error("Vector search failed (non-fatal):", embErr);
     }
 
-    // Fallback to text search if vector search returned nothing
     if (!usedLocalSearch) {
       try {
         const { data: textMatches, error: textError } = await adminClient.rpc("search_legal_chunks_text", {
           search_query: question,
           match_count: 8,
         });
-
         if (!textError && textMatches && textMatches.length > 0) {
           localMatches = textMatches;
           usedLocalSearch = true;
           console.log(`Text search fallback: found ${textMatches.length} matching chunks`);
-        } else {
-          console.log("Text search: no matches found or error:", textError?.message);
         }
       } catch (textErr) {
         console.error("Text search failed (non-fatal):", textErr);
@@ -182,7 +220,7 @@ serve(async (req) => {
       }
     }
 
-    // ========= Step 2: Perplexity search (always, but as supplement) =========
+    // ========= Step 2: Perplexity search =========
     console.log("Searching Perplexity for additional sources...");
     const perplexityRes = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
@@ -204,21 +242,13 @@ serve(async (req) => {
 Your job is to find PRIMARY legal sources ONLY. This means:
 - Israeli statutes and legislation with EXACT publication references (ס"ח page number, ק"ת page number)
 - Israeli court decisions with EXACT case numbers (e.g., ע"א 461/62, בג"ץ 5100/94)
-- Academic books published by recognized publishers (e.g., נבו, פרלשטיין-גינוסר, שוקן)
+- Academic books published by recognized publishers
 - Academic articles from law journals (e.g., הפרקליט, משפטים, עיוני משפט, משפט וממשל)
 - International treaties and conventions when relevant
 
-CRITICAL: Do NOT cite any of the following:
-- Lawyer blogs or law firm websites
-- Legal news summaries or marketing pages
-- General news articles about legal topics
-- "סקירות משפטיות" from lawyer websites
-- Any URL containing "/blog/", "adv-", "עורכי-דין", or law firm names
+CRITICAL: Do NOT cite lawyer blogs, law firm websites, legal news summaries, or marketing pages.
 
-For each source, provide:
-- The EXACT law name, case number, or book title
-- Publication details (ס"ח/ק"ת page, פ"ד volume, publisher and year for books)
-- Never fabricate case numbers, page numbers, or publication references`,
+For each source, provide the EXACT law name, case number, or book title with full publication details.`,
           },
           { role: "user", content: question },
         ],
@@ -236,14 +266,18 @@ For each source, provide:
     } else {
       const errText = await perplexityRes.text();
       console.error("Perplexity error (non-fatal):", perplexityRes.status, errText);
-      // If we have local matches, continue without Perplexity
-      if (!usedLocalSearch) {
+      if (!usedLocalSearch && !hasDocument) {
         throw new Error(`Perplexity search failed: ${perplexityRes.status}`);
       }
     }
 
-    // ========= Step 3: Build combined context for LLM =========
+    // ========= Step 3: Build combined context =========
     const contextParts: string[] = [];
+
+    if (hasDocument) {
+      contextParts.push(documentContext);
+      contextParts.push("\nהערה: המסמך שהועלה הוא מקור הקשרי ראשוני. ענה על השאלה תוך התייחסות ישירה לתוכנו. אם אתה מצטט ממנו, סמן את ההערה כ-source: \"document\".");
+    }
 
     if (localContext) {
       contextParts.push(localContext);
@@ -260,40 +294,42 @@ For each source, provide:
     const combinedContext = contextParts.join("\n");
 
     // ========= Step 4: Gemini structuring =========
-    const systemPrompt = `אתה עוזר משפטי מומחה. קיבלת תוצאות חיפוש משפטי ועליך לכתוב תשובה מובנית בעברית.
+    const taskInstructions = getTaskModeInstructions(taskMode);
+
+    const systemPrompt = `אתה עוזר משפטי מומחה. קיבלת תוצאות חיפוש משפטי ועליך לכתוב חוות דעת משפטית מובנית בעברית.
+${taskInstructions}
 
 כללי כתיבה לגוף התשובה:
-1. כתוב תשובה מקצועית בעברית. אל תשתמש בסימני עיצוב כמו ** או # או כוכביות – כתוב טקסט רגיל בלבד.
-2. בגוף הטקסט, השתמש בשמות מקוצרים של חוקים (למשל "סעיף 15 לחוק החוזים" ולא "סעיף 15 לחוק החוזים (חלק כללי), התשל"ג–1973"). השם המלא יופיע רק בהערת השוליים.
-3. חובה: כל הערת שוליים שאתה מגדיר חייבת להופיע כמספר סופרסקריפט בגוף הטקסט. השתמש בתווי יוניקוד: ⁰¹²³⁴⁵⁶⁷⁸⁹. עבור מספרים דו-ספרתיים, שרשר: ¹⁰, ¹¹, ¹², ¹³, ¹⁴, ¹⁵ וכו'.
-4. מיקום הסופרסקריפט: תמיד בסוף המשפט, מיד אחרי סימן הפיסוק. דוגמאות נכונות:
-   - "ביטול חוזה עקב הטעיה מעוגן בסעיף 15 לחוק החוזים.¹"
-   - "גישה זו אומצה בפסיקה.¹⁴"
-   - דוגמה שגויה: "ביטול חוזה¹ עקב הטעיה..."
-5. אל תמציא מקורות. כל הערת שוליים חייבת להתבסס על מקור אמיתי מתוצאות החיפוש.
-6. סווג כל מקור: legislation, caselaw, book, article, international.
+1. כתוב חוות דעת מקצועית ומפורטת בעברית. השתמש בכותרות מודגשות (**תקציר**, **מסגרת נורמטיבית**, **ניתוח מפורט**, **המלצות מעשיות**) לארגון התשובה.
+2. בגוף הטקסט, השתמש בשמות מקוצרים של חוקים (למשל "סעיף 15 לחוק החוזים"). השם המלא יופיע רק בהערת השוליים.
+3. חובה: כל הערת שוליים שאתה מגדיר חייבת להופיע כמספר סופרסקריפט בגוף הטקסט. השתמש בתווי יוניקוד: ⁰¹²³⁴⁵⁶⁷⁸⁹.
+4. מיקום הסופרסקריפט: תמיד בסוף המשפט, מיד אחרי סימן הפיסוק.
+5. אל תמציא מקורות. כל הערת שוליים חייבת להתבסס על מקור אמיתי מתוצאות החיפוש${hasDocument ? " או מהמסמך שהועלה" : ""}.
+6. סווג כל מקור: legislation, caselaw, book, article, international${hasDocument ? ", document" : ""}.
 
 כללים קריטיים לפיזור הערות שוליים:
-7. לכל משפט מותר לצרף לכל היותר הערת שוליים אחת (סופרסקריפט אחד). אסור בשום מקרה לצרף מספר הערות שוליים לאותו משפט (למשל ¹²³ או ¹⁴¹⁵¹⁶ – אסור!).
-8. פזר את ההערות לאורך כל התשובה. אם מספר מקורות תומכים באותה נקודה, כתוב משפטים נפרדים שכל אחד מהם מתייחס להיבט שונה, וצרף לכל משפט הערה אחת בלבד.
-9. העדף 5–8 הערות שוליים איכותיות על פני הערות רבות ודלות.
-10. אל תיצור הערות שוליים עבור בלוגים משפטיים, אתרי משרדי עורכי דין, סקירות משפטיות, או מחברות לימודים. מקורות מסוג "מחברת לימודים" הם חומרי רקע בלבד – השתמש בהם להבנה ולניתוח, אך צטט רק את המקורות הראשוניים (חקיקה, פסיקה, ספרים, מאמרים) שהמחברת דנה בהם.
+7. לכל משפט מותר לצרף לכל היותר הערת שוליים אחת.
+8. פזר את ההערות לאורך כל התשובה. העדף 5–8 הערות שוליים איכותיות.
+9. אל תיצור הערות שוליים עבור בלוגים, אתרי משרדי עורכי דין, או מחברות לימודים.
 
-כללים לסימון מקור ההערות:
-11. לכל הערת שוליים, ציין את שדה source מהמקורות:
-    - אם ההערה מבוססת על מקור מהמאגר המקומי (מאומת), סמן source: "local"
-    - אם ההערה מבוססת על מקור מחיפוש Perplexity, סמן source: "perplexity"
+סימון מקור ההערות:
+10. לכל הערת שוליים, ציין את שדה source:
+    - מקור מהמאגר המקומי: source: "local"
+    - מקור מחיפוש Perplexity: source: "perplexity"${hasDocument ? '\n    - מקור מהמסמך שהועלה: source: "document"' : ""}
 
 כללי כתיבה להערות שוליים (כללי האזכור האחיד 2021):
-הערות השוליים הן האזכור המשפטי המלא. כתוב אותן בדיוק לפי הפורמט הבא:
-- חקיקה ראשית (כלל 2): שם החוק המלא, שנה עברית–שנה לועזית, ס"ח עמוד ראשון. דוגמה: חוק החוזים (חלק כללי), התשל"ג–1973, ס"ח 118.
-- חקיקת משנה (כלל 6): שם התקנות, שנה עברית–שנה לועזית, ק"ת עמוד. דוגמה: תקנות סדר הדין האזרחי, התשע"ט–2018, ק"ת 234.
-- פסיקה מפורסמת (כלל 18): סוג הליך מספר תיק שם נ' שם, פ"ד כרך(חלק) עמוד (שנה). דוגמה: ע"א 461/62 צים נ' מזיאר, פ"ד יז 1319 (1963).
-- פסיקה ממאגר (כלל 19): סוג הליך מספר תיק שם נ' שם (שם מאגר, תאריך מלא DD.MM.YYYY). דוגמה: ע"א 1234/05 כהן נ' לוי (נבו, 15.3.2010).
-- ספרים (כלל 23): שם מחבר, שם הספר, עמוד (מהדורה, שנה). דוגמה: גבריאלה שלו דיני חוזים – החלק הכללי 350 (מהדורה שנייה, 2005).
-- מאמרים (כלל 24): שם מחבר "שם המאמר" שם כתב העת כרך עמוד פתיחה, עמוד ספציפי (שנה). דוגמה: אהרן ברק "פרשנות חוזה" הפרקליט מג 118, 125 (1997).
-- אל תשתמש בכוכביות (**) או בסימני עיצוב אחרים בהערות השוליים.
+- חקיקה ראשית (כלל 2): שם החוק המלא, שנה עברית–שנה לועזית, ס"ח עמוד ראשון.
+- חקיקת משנה (כלל 6): שם התקנות, שנה עברית–שנה לועזית, ק"ת עמוד.
+- פסיקה מפורסמת (כלל 18): סוג הליך מספר תיק שם נ' שם, פ"ד כרך(חלק) עמוד (שנה).
+- פסיקה ממאגר (כלל 19): סוג הליך מספר תיק שם נ' שם (שם מאגר, תאריך מלא DD.MM.YYYY).
+- ספרים (כלל 23): שם מחבר, שם הספר, עמוד (מהדורה, שנה).
+- מאמרים (כלל 24): שם מחבר "שם המאמר" שם כתב העת כרך עמוד פתיחה, עמוד ספציפי (שנה).${hasDocument ? '\n- מקור מהמסמך שהועלה: ציין "[מתוך הקובץ שהועלה]" בסוף הציטוט.' : ""}
 - עבור מידע חסר, השתמש ב-[missing:פרט חסר].
+
+היררכיית מקורות:
+1. ראשוני: מאגר פנימי (מקורות מאומתים)
+2. משני: Perplexity/Scholar לאימות מקוון
+${hasDocument ? "3. הקשרי: המסמך שהועלה – השתמש בו כמקור ראשוני להקשר" : ""}
 
 תוצאות החיפוש המשפטי:
 ${combinedContext}`;
@@ -316,14 +352,14 @@ ${combinedContext}`;
             function: {
               name: "format_legal_answer",
               description:
-                "Format a structured legal answer with inline footnotes. CRITICAL: each sentence may have AT MOST one footnote superscript. Never cluster multiple footnotes on the same sentence.",
+                "Format a structured legal memo with inline footnotes. CRITICAL: each sentence may have AT MOST one footnote superscript.",
               parameters: {
                 type: "object",
                 properties: {
                   answer: {
                     type: "string",
                     description:
-                      "The full Hebrew answer with superscript footnote numbers (¹²³). Each sentence has AT MOST one superscript.",
+                      "The full Hebrew legal memo with section headings (תקציר, מסגרת נורמטיבית, ניתוח מפורט, המלצות מעשיות) and superscript footnote numbers.",
                   },
                   footnotes: {
                     type: "array",
@@ -337,7 +373,7 @@ ${combinedContext}`;
                         },
                         source_type: {
                           type: "string",
-                          enum: ["legislation", "caselaw", "book", "article", "international"],
+                          enum: ["legislation", "caselaw", "book", "article", "international", "document"],
                         },
                         url: {
                           type: "string",
@@ -345,8 +381,8 @@ ${combinedContext}`;
                         },
                         source: {
                           type: "string",
-                          enum: ["local", "perplexity"],
-                          description: "Whether this footnote comes from the local verified database or from Perplexity search",
+                          enum: ["local", "perplexity", "document"],
+                          description: "Whether this footnote comes from the local verified database, Perplexity search, or the uploaded document",
                         },
                       },
                       required: ["number", "citation", "source_type", "source"],
@@ -391,11 +427,7 @@ ${combinedContext}`;
     if (!toolCall?.function?.arguments) {
       const content = aiData.choices?.[0]?.message?.content || "";
       return new Response(
-        JSON.stringify({
-          answer: content,
-          footnotes: [],
-          source_urls: citations,
-        }),
+        JSON.stringify({ answer: content, footnotes: [], source_urls: citations }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -508,7 +540,7 @@ ${combinedContext}`;
       }
     }
 
-    // Log source provenance (non-fatal)
+    // Log source provenance
     try {
       const localCount = footnotes.filter((f) => f.source === "local").length;
       const perplexityCount = footnotes.filter((f) => f.source === "perplexity").length;
@@ -524,19 +556,13 @@ ${combinedContext}`;
     }
 
     return new Response(
-      JSON.stringify({
-        answer,
-        footnotes,
-        source_urls: citations,
-      }),
+      JSON.stringify({ answer, footnotes, source_urls: citations }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
     console.error("legal-qa error:", e);
     return new Response(
-      JSON.stringify({
-        error: e instanceof Error ? e.message : "Unknown error",
-      }),
+      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
