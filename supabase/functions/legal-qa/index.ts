@@ -362,6 +362,11 @@ serve(async (req) => {
       });
     }
 
+    const localCount = sourceCards.filter(sc => sc.provenance === "local").length;
+    const perplexityCount = sourceCards.filter(sc => sc.provenance === "perplexity").length;
+    const docCount = sourceCards.filter(sc => sc.provenance === "document").length;
+    console.log(`Source cards: ${localCount} local, ${perplexityCount} perplexity, ${docCount} document`);
+
     // ========= Step 3: Build context for AI (without forcing tool_call) =========
     const contextParts: string[] = [];
 
