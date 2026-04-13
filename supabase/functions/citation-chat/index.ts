@@ -1203,7 +1203,10 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                     if (bookParsed.author) details += `מחבר: ${bookParsed.author}\n`;
                     details += `שם הספר: ${bookParsed.bookTitle}\n`;
                     if (bookParsed.year) details += `שנה לועזית: ${bookParsed.year}\n`;
-                    if (bookParsed.hebrewYear) details += `שנה עברית: ${bookParsed.hebrewYear}\n`;
+                    if (bookParsed.year && bookParsed.hebrewYear) {
+                      details += `הנחיה חשובה (כלל 23.9): מכיוון שקיימות גם שנה עברית וגם שנה לועזית, יש לציין רק את השנה הלועזית (${bookParsed.year}). אין לציין את השנה העברית.\n`;
+                    }
+                    if (bookParsed.hebrewYear && !bookParsed.year) details += `שנה עברית: ${bookParsed.hebrewYear}\n`;
                     if (bookParsed.edition) details += `מהדורה: ${bookParsed.edition}\n`;
                     if (bookParsed.editor) details += `עורך: ${bookParsed.editor}\n`;
                     if (bookParsed.translator) details += `מתרגם: ${bookParsed.translator}\n`;
