@@ -1320,7 +1320,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                       if (art.year && art.hebrewYear) {
                         details += `הנחיה חשובה (כלל 24.9.2): מכיוון שקיימות גם שנה עברית וגם שנה לועזית, יש לציין רק את השנה הלועזית (${art.year}). אין לציין את השנה העברית.\n`;
                       }
-                      if (art.hebrewYear) details += `שנה עברית: ${art.hebrewYear}\n`;
+                      if (art.hebrewYear && !art.year) details += `שנה עברית: ${art.hebrewYear}\n`;
 
                       // Special cases
                       if (art.journalName && /פרשת השבוע/.test(art.journalName)) {
