@@ -1,80 +1,61 @@
 
 
-## Fix: Footnotes Must Appear in Consecutive Order of First Appearance
+## Add Stop/Cancel Button for Legal QA Queries
 
 ### Problem
-The AI may reference sources in non-sequential order (e.g., `[3]` before `[1]`), or skip numbers. The current code maps AI footnote numbers to new sequential numbers based on the order they appear in the **footnotes section**, not the order they first appear in the **body text**. This results in non-consecutive footnote numbering in the output.
+Once a user submits a question in the Legal QA section, there's no way to cancel the in-progress request. The user must wait for the full response or reload the page.
 
 ### Solution
-After building the footnotes array and replacing `[X]` with superscripts, add a **reordering pass** that:
-1. Scans the body text left-to-right for superscript numbers
-2. Records the order of first appearance
-3. Renumbers both the superscripts in the body and the footnotes array to match that order (1, 2, 3...)
+Add an `AbortController` to the edge function invocation, and show a "Stop" button while loading.
 
 ### Changes
 
-**File: `supabase/functions/legal-qa/index.ts`**
+**File: `src/pages/LegalQA.tsx`**
 
-Insert a reordering step between Step 6 (superscript replacement) and Step 7 (post-processing), around line 654:
+1. Add an `AbortController` ref:
+   ```typescript
+   const abortControllerRef = useRef<AbortController | null>(null);
+   ```
 
-```typescript
-// ========= Step 6b: Reorder footnotes by first appearance in body =========
-const superscriptPattern = /[\u2070\u00B9\u00B2\u00B3\u2074-\u2079]+/g;
-const superscriptToNum = (s: string) => {
-  const reverseMap: Record<string, string> = {};
-  for (const [digit, sup] of Object.entries(digitToSuperscript)) {
-    reverseMap[sup] = digit;
-  }
-  return parseInt(s.split("").map(c => reverseMap[c] || c).join(""), 10);
-};
+2. In `handleSubmit`, create a new `AbortController` and pass its signal to `supabase.functions.invoke`:
+   ```typescript
+   const controller = new AbortController();
+   abortControllerRef.current = controller;
+   // ...
+   const { data, error } = await supabase.functions.invoke("legal-qa", {
+     body: { question: q },
+   }, { signal: controller.signal }); // pass abort signal
+   ```
+   Note: If `supabase.functions.invoke` doesn't support a signal option directly, we'll use a raw `fetch` call to the edge function URL with the abort signal instead.
 
-// Collect footnote numbers in order of first appearance
-const appearanceOrder: number[] = [];
-let supMatch;
-while ((supMatch = superscriptPattern.exec(answer)) !== null) {
-  const num = superscriptToNum(supMatch[0]);
-  if (!isNaN(num) && !appearanceOrder.includes(num)) {
-    appearanceOrder.push(num);
-  }
-}
+3. Add a `handleStop` function:
+   ```typescript
+   const handleStop = () => {
+     abortControllerRef.current?.abort();
+     setLoading(false);
+     toast.info("העיבוד הופסק");
+   };
+   ```
 
-// Build old→new mapping based on appearance order
-if (appearanceOrder.length > 0) {
-  const reorderMap = new Map<number, number>();
-  appearanceOrder.forEach((oldNum, idx) => {
-    reorderMap.set(oldNum, idx + 1);
-  });
+4. In the catch block, detect abort errors and skip the error toast for them.
 
-  // Replace superscripts in body with placeholders, then with new numbers
-  for (const [oldNum, newNum] of reorderMap) {
-    answer = answer.replaceAll(toSuperscript(oldNum), `__REORDER_${newNum}__`);
-  }
-  for (const [, newNum] of reorderMap) {
-    answer = answer.replaceAll(`__REORDER_${newNum}__`, toSuperscript(newNum));
-  }
+5. Replace the submit button with a stop button while loading:
+   ```tsx
+   {loading ? (
+     <Button variant="destructive" onClick={handleStop} className="gap-2">
+       <StopCircle className="w-4 h-4" />
+       עצור
+     </Button>
+   ) : (
+     <Button onClick={handleSubmit} disabled={question.trim().length < 5} className="gap-2">
+       <Send className="w-4 h-4" />
+       שאל שאלה משפטית
+     </Button>
+   )}
+   ```
 
-  // Reorder footnotes array to match
-  const reorderedFootnotes = [];
-  for (let i = 1; i <= appearanceOrder.length; i++) {
-    const oldNum = appearanceOrder[i - 1];
-    const fn = footnotes.find(f => f.number === oldNum);
-    if (fn) {
-      reorderedFootnotes.push({ ...fn, number: i });
-    }
-  }
-  // Add any footnotes not referenced in body at the end
-  for (const fn of footnotes) {
-    if (!appearanceOrder.includes(fn.number)) {
-      reorderedFootnotes.push({ ...fn, number: reorderedFootnotes.length + 1 });
-    }
-  }
-  footnotes.length = 0;
-  footnotes.push(...reorderedFootnotes);
-}
-```
-
-This ensures footnotes always appear as 1, 2, 3... in the order they are first cited in the body text.
+6. Import `StopCircle` from `lucide-react`.
 
 ### Files
-- `supabase/functions/legal-qa/index.ts` — add reordering pass after superscript replacement
+- `src/pages/LegalQA.tsx` — add abort controller, stop button, and cancel handling
 
