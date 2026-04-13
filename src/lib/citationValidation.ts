@@ -153,8 +153,8 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
     if (authorMatch) fields.author = authorMatch[1].trim();
     const titleMatch = response.match(/\*\*([^*]+)\*\*/);
     if (titleMatch) fields.bookTitle = titleMatch[1];
-    const yearMatch = response.match(/\((?:[^)]*?)(\d{4}|הת[שׁש][א-ת]*["״׳][א-ת]["״׳]?[א-ת]?|הת[שׁש][א-ת]*["״׳][א-ת]["״׳]?[א-ת]?\s*[–-]\s*\d{4})\)\s*\.?\s*$/);
-    if (yearMatch) fields.year = yearMatch[1].replace(/\s*[–-]\s*/, "–");
+    const yearMatch = response.match(/\((?:[^)]*?)(\d{4}|הת[שׁש][א-ת]*["״׳][א-ת]["״׳]?[א-ת]?)\)\s*\.?\s*$/);
+    if (yearMatch) fields.year = yearMatch[1];
     // Volume (כרך)
     const volMatch = response.match(/כרך\s+([א-ת]+|\d+)/);
     if (volMatch) fields.volume = volMatch[1];
