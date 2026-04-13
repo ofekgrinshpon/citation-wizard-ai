@@ -392,7 +392,10 @@ serve(async (req) => {
       for (const m of localMatches) {
         if (!seenDocs.has(m.document_id)) {
           seenDocs.add(m.document_id);
-          localContext += `\n--- ${m.document_title} ---\nסוג: ${m.source_type} | אזכור: ${m.document_citation}\n`;
+          const typeLabel = m.source_type === "caselaw" ? "פסיקה" :
+            m.source_type === "knesset_research" ? "מחקר כנסת" :
+            m.source_type === "journal_article" ? "מאמר אקדמי" : m.source_type;
+          localContext += `\n--- ${m.document_title} ---\nסוג מקור: ${typeLabel} | אזכור: ${m.document_citation}\n`;
           if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
         }
         localContext += `${m.chunk_content.slice(0, 800)}\n`;
