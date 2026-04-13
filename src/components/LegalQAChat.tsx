@@ -8,7 +8,7 @@ import { useProjects } from "@/hooks/useProjects";
 
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
-import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, PenTool, type LucideIcon } from "lucide-react";
+import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, PenTool, StopCircle, type LucideIcon } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
 // Configure PDF.js worker
