@@ -48,6 +48,7 @@ export function VerifiedAutocomplete({
   const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+  const hasFocused = useRef(false);
 
   // Auto-resize textarea
   useEffect(() => {
