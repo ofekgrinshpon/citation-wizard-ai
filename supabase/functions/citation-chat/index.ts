@@ -268,6 +268,14 @@ function ensureMissingDataWarning(content: string) {
   return content;
 }
 
+/**
+ * Fix bare Hebrew years (e.g. תשס"ב) by prepending ה' → התשס"ב.
+ * All modern Hebrew years start with תש.
+ */
+function fixHebrewYearPrefix(text: string): string {
+  return text.replace(/(?<!ה)(תש[א-ת]["״\u05F4][א-ת])/g, "ה$1");
+}
+
 function sanitizeHallucinatedPublicationData(
   content: string,
   options: {
@@ -1375,12 +1383,13 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
 
     const data = await response.json();
     const rawContent = data.choices?.[0]?.message?.content || "אירעה שגיאה.";
-    const content = sanitizeHallucinatedPublicationData(rawContent, {
+    let content = sanitizeHallucinatedPublicationData(rawContent, {
       hasVerifiedCandidates,
       hasTrustedLegislationPage,
       messages,
       userInput,
     });
+    content = fixHebrewYearPrefix(content);
 
     return new Response(JSON.stringify({ content }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

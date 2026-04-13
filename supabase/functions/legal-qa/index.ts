@@ -18,6 +18,13 @@ function toSuperscript(n: number): string {
   return String(n).split("").map((d) => digitToSuperscript[d] || d).join("");
 }
 
+/**
+ * Fix bare Hebrew years (e.g. תשס"ב) by prepending ה' → התשס"ב.
+ */
+function fixHebrewYearPrefix(text: string): string {
+  return text.replace(/(?<!ה)(תש[א-ת]["״\u05F4][א-ת])/g, "ה$1");
+}
+
 const BLOG_URL_PATTERNS = [
   /\/blog\//i, /\/blogs\//i, /adv-/i, /adv\./i,
   /עורכי-דין/i, /law-firm/i, /lawfirm/i, /lawyer/i,
@@ -736,6 +743,12 @@ ${combinedContext}`;
     for (const fn of footnotes) {
       fn.citation = fn.citation.replace(placeholderPattern, "").trim();
       fn.citation = fn.citation.replace(/,?\s*עמ['׳]?\s*$/, "").trim();
+    }
+
+    // Fix Hebrew year prefix (e.g. תשס"ב → התשס"ב)
+    answer = fixHebrewYearPrefix(answer);
+    for (const fn of footnotes) {
+      fn.citation = fixHebrewYearPrefix(fn.citation);
     }
 
     // Ensure trailing period on every citation
