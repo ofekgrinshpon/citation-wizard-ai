@@ -8,7 +8,7 @@ import { useProjects } from "@/hooks/useProjects";
 
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
-import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, PenTool, type LucideIcon } from "lucide-react";
+import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, PenTool, StopCircle, type LucideIcon } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
 // Configure PDF.js worker
@@ -165,6 +165,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Load external result from history sidebar
   useEffect(() => {
@@ -245,6 +246,13 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const handleStop = () => {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
+    setLoading(false);
+    toast.info("העיבוד הופסק");
+  };
+
   const handleSubmit = async () => {
     const q = question.trim();
     if (!q || q.length < 5) {
@@ -256,6 +264,9 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
     setResult(null);
     setError(null);
 
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
       const body: Record<string, unknown> = {
         question: q,
@@ -266,20 +277,35 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
         body.documentName = uploadedFile?.name;
       }
 
-      const { data, error: fnError } = await supabase.functions.invoke("legal-qa", { body });
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      const { data: { session } } = await supabase.auth.getSession();
 
-      if (fnError) {
-        const statusCode = (fnError as any)?.status || (fnError as any)?.context?.status;
-        if (statusCode === 429) {
+      const res = await fetch(`${supabaseUrl}/functions/v1/legal-qa`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token ?? supabaseKey}`,
+          "apikey": supabaseKey,
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+
+      if (!res.ok) {
+        if (res.status === 429) {
           setError("יותר מדי בקשות. נסו שוב בעוד דקה.");
           return;
         }
-        if (statusCode === 402) {
+        if (res.status === 402) {
           setError("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות.");
           return;
         }
-        throw fnError;
+        throw new Error(`HTTP ${res.status}`);
       }
+
+      const data = await res.json();
+
       if (data?.error) {
         setError(data.error);
         return;
@@ -314,9 +340,11 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
         console.error("Failed to save QA log:", saveErr);
       }
     } catch (e: any) {
+      if (e.name === "AbortError") return;
       console.error("Legal QA error:", e);
       setError("שגיאה בעיבוד השאלה. נסו שוב.");
     } finally {
+      abortControllerRef.current = null;
       setLoading(false);
     }
   };
@@ -602,17 +630,23 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
               className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-2.5 sm:px-3.5 py-2.5 sm:py-3 text-foreground text-sm leading-relaxed font-sans resize-none"
               dir="rtl"
             />
-            <button
-              onClick={handleSubmit}
-              disabled={loading || question.trim().length < 5}
-              className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
-            >
-              {loading ? (
-                <div className="w-4 h-4 border-2 border-muted-foreground/30 border-t-foreground rounded-full animate-spin" />
-              ) : (
-                "⇧"
-              )}
-            </button>
+            {loading ? (
+              <button
+                onClick={handleStop}
+                className="btn-send px-4 py-2.5 m-1.5 text-destructive-foreground bg-destructive text-base flex-shrink-0 hover:bg-destructive/90"
+                title="עצור"
+              >
+                <StopCircle className="w-4 h-4" />
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                disabled={question.trim().length < 5}
+                className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
+              >
+                ⇧
+              </button>
+            )}
           </div>
         </div>
 
