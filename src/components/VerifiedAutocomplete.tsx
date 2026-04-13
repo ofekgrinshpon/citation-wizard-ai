@@ -112,7 +112,7 @@ export function VerifiedAutocomplete({
 
       if (data && data.length > 0) {
         setSuggestions(data as VerifiedSource[]);
-        setIsOpen(true);
+        if (hasFocused.current) setIsOpen(true);
         setHighlightIndex(-1);
       } else {
         setSuggestions([]);
