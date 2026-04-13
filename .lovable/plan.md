@@ -1,22 +1,24 @@
 
 
-## Reclassify "עיוני משפט" Articles to journal_article
+## Reclassify "משפט ועסקים" Articles to journal_article
 
 ### What
-Update 205 documents from the Tel Aviv University Law Review ("עיוני משפט") from `knesset_research` to `journal_article`.
+Update 630 documents from the "משפט ועסקים" journal (Reichman University Law Review, hosted at `runilawreview.org`) from `knesset_research` to `journal_article`.
+
+No `idclawreview` documents were found in the database — all articles came from a single source.
 
 ### SQL
 
 ```sql
 UPDATE legal_documents
 SET source_type = 'journal_article'
-WHERE (source_url LIKE '%taulawreview%' OR pdf_url LIKE '%taulawreview%')
+WHERE source_url LIKE '%runilawreview.org%'
   AND source_type = 'knesset_research';
 ```
 
-### Note
-205 records found (1 short of 206 — possibly a failed ingestion or different URL). No code changes needed — the `legal-qa` edge function already handles `journal_article` labeling from the previous deployment.
+### Result
+After this update, total `journal_article` count will be ~1,874 (1,244 existing + 630 new).
 
 ### Files affected
-- Database data only
+- Database data only — no code changes needed
 
