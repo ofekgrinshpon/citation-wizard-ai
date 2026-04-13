@@ -1,16 +1,20 @@
 
 
-## Fix Textarea Not Using Full Width
+## Fix: Verified Sources Dropdowns Auto-Opening in Footnotes Tab
 
 ### Problem
-The textarea in "אזכור אחיד" wraps to the next line prematurely because it has `flex-1` in its class but its parent (`<div className="relative flex-1 min-w-0">`) is not a flex container — so `flex-1` has no effect and the textarea defaults to its intrinsic width.
+When switching to "הערות שוליים" (Batch Footnote Builder), every cell that already has text triggers the `VerifiedAutocomplete` search `useEffect`, which runs on mount because `value` already has content. This causes all dropdown panels to open simultaneously.
 
 ### Fix
-**`src/pages/Index.tsx` — line 1127**: Add `w-full` to the textarea's className:
+**`src/components/VerifiedAutocomplete.tsx`** — Add a `hasFocused` ref that prevents the dropdown from opening on mount. The search effect should still fetch suggestions, but only set `isOpen(true)` if the input has been focused at least once.
 
-```
-className="w-full flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-2.5 sm:px-3.5 py-2.5 sm:py-3 text-foreground text-sm leading-relaxed font-sans resize-none"
-```
+1. Add a `hasFocused` ref initialized to `false`
+2. Set it to `true` in the `onFocus` handler
+3. In the search effect, only call `setIsOpen(true)` if `hasFocused.current` is true
+4. The `onFocus` handler already opens the dropdown if suggestions exist, so focusing will still show results
 
-One line change, one file.
+This ensures dropdowns stay closed when the tab loads, but work normally once the user interacts with a field.
+
+### Files
+- `src/components/VerifiedAutocomplete.tsx` — ~5 lines changed
 
