@@ -318,12 +318,24 @@ serve(async (req) => {
             if (court) richCitation += ")";
           }
         } else if (m.source_type === "knesset_research") {
-          // For knesset research / law journal: use title as-is, it's usually well-formatted
+          // For knesset research: use title as-is
           richCitation = m.document_title || m.document_citation;
+        } else if (m.source_type === "journal_article") {
+          // For journal articles: build academic citation from metadata
+          const author = (meta.author as string) || "";
+          const journal = (meta.journal as string) || "משפטים";
+          const vol = (meta.volume as string) || "";
+          if (author) {
+            richCitation = `${author} "${m.document_title}" ${journal}`;
+            if (vol) richCitation += ` ${vol}`;
+          } else {
+            richCitation = m.document_title || m.document_citation;
+          }
         }
 
         const sourceLabel = m.source_type === "caselaw" ? "פסיקה" :
-          m.source_type === "knesset_research" ? "מחקר כנסת / חקיקה" : m.source_type;
+          m.source_type === "knesset_research" ? "מחקר כנסת / חקיקה" :
+          m.source_type === "journal_article" ? "מאמר אקדמי" : m.source_type;
 
         sourceCards.push({
           id: cardId++,
@@ -380,7 +392,10 @@ serve(async (req) => {
       for (const m of localMatches) {
         if (!seenDocs.has(m.document_id)) {
           seenDocs.add(m.document_id);
-          localContext += `\n--- ${m.document_title} ---\nסוג: ${m.source_type} | אזכור: ${m.document_citation}\n`;
+          const typeLabel = m.source_type === "caselaw" ? "פסיקה" :
+            m.source_type === "knesset_research" ? "מחקר כנסת" :
+            m.source_type === "journal_article" ? "מאמר אקדמי" : m.source_type;
+          localContext += `\n--- ${m.document_title} ---\nסוג מקור: ${typeLabel} | אזכור: ${m.document_citation}\n`;
           if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
         }
         localContext += `${m.chunk_content.slice(0, 800)}\n`;
