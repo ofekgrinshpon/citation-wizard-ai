@@ -48,6 +48,7 @@ export function VerifiedAutocomplete({
   const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+  const hasFocused = useRef(false);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -111,7 +112,7 @@ export function VerifiedAutocomplete({
 
       if (data && data.length > 0) {
         setSuggestions(data as VerifiedSource[]);
-        setIsOpen(true);
+        if (hasFocused.current) setIsOpen(true);
         setHighlightIndex(-1);
       } else {
         setSuggestions([]);
@@ -240,7 +241,7 @@ export function VerifiedAutocomplete({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => suggestions.length > 0 && setIsOpen(true)}
+          onFocus={() => { hasFocused.current = true; if (suggestions.length > 0) setIsOpen(true); }}
           placeholder={placeholder}
           rows={1}
           disabled={disabled}
@@ -255,7 +256,7 @@ export function VerifiedAutocomplete({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => suggestions.length > 0 && setIsOpen(true)}
+          onFocus={() => { hasFocused.current = true; if (suggestions.length > 0) setIsOpen(true); }}
           placeholder={placeholder}
           disabled={disabled}
           className={className || defaultClass}
