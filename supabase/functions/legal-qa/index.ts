@@ -25,6 +25,30 @@ function fixHebrewYearPrefix(text: string): string {
   return text.replace(/(?<!ה)(תש[א-ת]["״\u05F4][א-ת])/g, "ה$1");
 }
 
+/**
+ * Rule 24.9.2: When both Hebrew and Gregorian years appear in parentheses,
+ * keep only the Gregorian year.
+ */
+function normalizeArticleYearByRule2492(text: string): string {
+  const hebrewYearPattern = `ה?ת(?:ש|רש)[א-ת]["״׳'\\u05F4][א-ת]["״׳'\\u05F4]?[א-ת]?`;
+  const gregorianYearPattern = `\\d{4}`;
+  const separator = `[–\\-,\\s]+`;
+
+  const pattern1 = new RegExp(
+    `\\(\\s*${hebrewYearPattern}${separator}(${gregorianYearPattern})\\s*\\)`,
+    "g"
+  );
+  text = text.replace(pattern1, "($1)");
+
+  const pattern2 = new RegExp(
+    `\\(\\s*(${gregorianYearPattern})${separator}${hebrewYearPattern}\\s*\\)`,
+    "g"
+  );
+  text = text.replace(pattern2, "($1)");
+
+  return text;
+}
+
 const BLOG_URL_PATTERNS = [
   /\/blog\//i, /\/blogs\//i, /adv-/i, /adv\./i,
   /עורכי-דין/i, /law-firm/i, /lawfirm/i, /lawyer/i,
@@ -749,6 +773,12 @@ ${combinedContext}`;
     answer = fixHebrewYearPrefix(answer);
     for (const fn of footnotes) {
       fn.citation = fixHebrewYearPrefix(fn.citation);
+    }
+
+    // Rule 24.9.2: strip Hebrew year when both Hebrew and Gregorian appear in parens
+    answer = normalizeArticleYearByRule2492(answer);
+    for (const fn of footnotes) {
+      fn.citation = normalizeArticleYearByRule2492(fn.citation);
     }
 
     // Ensure trailing period on every citation

@@ -276,6 +276,36 @@ function fixHebrewYearPrefix(text: string): string {
   return text.replace(/(?<!ה)(תש[א-ת]["״\u05F4][א-ת])/g, "ה$1");
 }
 
+/**
+ * Rule 24.9.2: When both Hebrew and Gregorian years appear in parentheses,
+ * keep only the Gregorian year.
+ * Matches patterns like (התשס"ב–2002), (2002–התשס"ב), (התשס"ב, 2002), etc.
+ * Does NOT touch legislation patterns like התשל"ז-1977 outside parentheses.
+ */
+function normalizeArticleYearByRule2492(text: string): string {
+  // Pattern: (HebrewYear separator GregorianYear) → (GregorianYear)
+  // Hebrew year: ה?תש[א-ת]["״׳'][א-ת] with optional quotes variations
+  const hebrewYearPattern = `ה?ת(?:ש|רש)[א-ת]["״׳'\\u05F4][א-ת]["״׳'\\u05F4]?[א-ת]?`;
+  const gregorianYearPattern = `\\d{4}`;
+  const separator = `[–\\-,\\s]+`;
+
+  // Case 1: (HebrewYear–GregorianYear) → (GregorianYear)
+  const pattern1 = new RegExp(
+    `\\(\\s*${hebrewYearPattern}${separator}(${gregorianYearPattern})\\s*\\)`,
+    "g"
+  );
+  text = text.replace(pattern1, "($1)");
+
+  // Case 2: (GregorianYear–HebrewYear) → (GregorianYear)
+  const pattern2 = new RegExp(
+    `\\(\\s*(${gregorianYearPattern})${separator}${hebrewYearPattern}\\s*\\)`,
+    "g"
+  );
+  text = text.replace(pattern2, "($1)");
+
+  return text;
+}
+
 function sanitizeHallucinatedPublicationData(
   content: string,
   options: {
@@ -1286,6 +1316,10 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
                       if (art.notebook) details += `חוברת: ${art.notebook}\n`;
                       if (art.firstPage) details += `עמוד ראשון: ${art.firstPage}\n`;
                       if (art.year) details += `שנה: ${art.year}\n`;
+                      // Rule 24.9.2: if both years exist, instruct to use only Gregorian
+                      if (art.year && art.hebrewYear) {
+                        details += `הנחיה חשובה (כלל 24.9.2): מכיוון שקיימות גם שנה עברית וגם שנה לועזית, יש לציין רק את השנה הלועזית (${art.year}). אין לציין את השנה העברית.\n`;
+                      }
                       if (art.hebrewYear) details += `שנה עברית: ${art.hebrewYear}\n`;
 
                       // Special cases
@@ -1390,6 +1424,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       userInput,
     });
     content = fixHebrewYearPrefix(content);
+    content = normalizeArticleYearByRule2492(content);
 
     return new Response(JSON.stringify({ content }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
