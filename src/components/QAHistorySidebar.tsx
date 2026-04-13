@@ -59,7 +59,9 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
         .limit(30);
 
       if (projectId) {
-        query = query.or(`project_id.eq.${projectId},project_id.is.null`);
+        query = query.eq("project_id", projectId);
+      } else {
+        query = query.is("project_id", null);
       }
 
       const { data, error } = await query;
