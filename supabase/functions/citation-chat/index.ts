@@ -1375,12 +1375,13 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
 
     const data = await response.json();
     const rawContent = data.choices?.[0]?.message?.content || "אירעה שגיאה.";
-    const content = sanitizeHallucinatedPublicationData(rawContent, {
+    let content = sanitizeHallucinatedPublicationData(rawContent, {
       hasVerifiedCandidates,
       hasTrustedLegislationPage,
       messages,
       userInput,
     });
+    content = fixHebrewYearPrefix(content);
 
     return new Response(JSON.stringify({ content }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

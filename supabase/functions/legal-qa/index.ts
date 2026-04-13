@@ -738,6 +738,12 @@ ${combinedContext}`;
       fn.citation = fn.citation.replace(/,?\s*עמ['׳]?\s*$/, "").trim();
     }
 
+    // Fix Hebrew year prefix (e.g. תשס"ב → התשס"ב)
+    answer = fixHebrewYearPrefix(answer);
+    for (const fn of footnotes) {
+      fn.citation = fixHebrewYearPrefix(fn.citation);
+    }
+
     // Ensure trailing period on every citation
     for (const fn of footnotes) {
       if (fn.citation && !/[.。]$/.test(fn.citation.trim())) {
