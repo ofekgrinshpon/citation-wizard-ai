@@ -1,31 +1,33 @@
 
 
-## Update: Footnote Superscripts Must Follow Punctuation
+## Fix: QA History Should Be Strictly Per-Project
 
 ### Problem
-Currently, the AI places `[X]` markers anywhere in the text, and the server converts them to superscripts in-place. This results in superscripts appearing before punctuation (e.g., `בעניין בן גביר¹,` instead of `בעניין בן גביר,¹`).
+Line 62 of `QAHistorySidebar.tsx` uses `.or(`project_id.eq.${projectId},project_id.is.null`)`, which shows all legacy logs (with null project_id) in every project's history. Each project should only show its own logs.
 
-### Changes
+### Change
 
-**File: `supabase/functions/legal-qa/index.ts`**
+**File: `src/components/QAHistorySidebar.tsx`** (line 61-63)
 
-1. **Prompt instruction** (line 416): Add explicit rule that `[X]` must be placed **after** punctuation marks, with examples:
-   ```
-   - חשוב: סימן ההפניה [X] חייב לבוא תמיד אחרי סימן הפיסוק, לא לפניו.
-     נכון: בעניין בן גביר,[1]
-     נכון: מערכת בתי המשפט.[1]
-     לא נכון: בעניין בן גביר[1],
-   ```
+Replace the `or` filter with a strict `eq` filter:
 
-2. **Post-processing fix** (after line 565, in Step 7): Add a regex pass that fixes any remaining cases where the AI placed the superscript before punctuation:
-   ```typescript
-   // Move superscripts that precede punctuation to after it
-   answer = answer.replace(/([\u00B9\u00B2\u00B3\u2074-\u2079]+)([,.\-;:!?])/g, '$2$1');
-   ```
-   This catches all cases where superscript digits appear before `,` `.` `-` `;` `:` etc., and swaps them.
+```typescript
+// Before
+if (projectId) {
+  query = query.or(`project_id.eq.${projectId},project_id.is.null`);
+}
 
-### Expected outcome
-All footnote markers in the body text will appear after punctuation:
-- `בפסק הדין בעניין בן גביר,¹`
-- `מערכת בתי המשפט.¹`
+// After
+if (projectId) {
+  query = query.eq("project_id", projectId);
+} else {
+  query = query.is("project_id", null);
+}
+```
+
+This ensures:
+- When a project is selected → only that project's logs appear
+- When no project is selected (edge case) → only unassigned logs appear
+
+No database or edge function changes needed.
 
