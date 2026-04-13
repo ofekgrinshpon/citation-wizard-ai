@@ -1,16 +1,72 @@
 
+מסקנה: אתה צודק. זו כבר לא בעיית ה־ה' בתחילת השנה, אלא בעיית כלל 24.9.2: כשהחוברת כוללת גם שנה עברית וגם שנה לועזית, צריך להציג רק את השנה הלועזית. כרגע יש אכיפה רק של הוספת ה' לשנה עברית, אבל אין אכיפה שמסירה את השנה העברית כאשר שתיהן מופיעות.
 
-## Fix Truncated Input in "אזכור אחיד" Mode
+מה מצאתי
+- ב־`supabase/functions/citation-chat/index.ts` החיפוש למאמרים אוסף גם:
+  - `year`
+  - `hebrewYear`
+- אחר כך הוא מוסיף את שניהם כרמז ל־AI:
+  - `שנה: 2002`
+  - `שנה עברית: התשס"ב`
+- לאחר תשובת המודל יש רק פוסט־פרוסס אחד רלוונטי:
+  - `fixHebrewYearPrefix(...)`
+- אין היום שום פוסט־פרוסס שמיישם את כלל 24.9.2 ומוחק שנה עברית כשיש גם שנה לועזית.
+- `applyYearPreferences(...)` לא פותר את זה, כי הוא משמש בעיקר לזרימת וידוא של חקיקה, לא לאזכור מאמרים רגיל.
 
-### Problem
-The input field in the "אזכור אחיד" section uses a single-line `<input>` element inside a container with `overflow-hidden`. When the user types a long citation, the text gets cut off and isn't fully visible (as shown in the screenshot).
+מה אעדכן
+1. `supabase/functions/citation-chat/index.ts`
+- אוסיף פונקציית פוסט־פרוסס ייעודית, למשל:
+  - `normalizeArticleYearByRule2492`
+- הפונקציה תזהה מקרים של שנה משולבת בסוגריים כגון:
+  - `(התשס"ב–2002)`
+  - `(2002–התשס"ב)`
+  - `(התשס"ב, 2002)`
+  - `(2002, התשס"ב)`
+- ובמקרים כאלה תשאיר רק:
+  - `(2002)`
 
-### Solution
-The input field container on line 1110 of `src/pages/Index.tsx` has `overflow-hidden` which clips the text. The fix:
+2. חיזוק רמזי ה־AI באותו קובץ
+- אשנה את בניית `articleHint` כך שאם קיימות גם `art.year` וגם `art.hebrewYear`, הרמז לא יבקש בעקיפין להשתמש בשתיהן.
+- במקום זאת, אוסיף הנחיה מפורשת:
+  - אם יש גם שנה עברית וגם שנה לועזית במקור, יש לציין רק את השנה הלועזית לפי כלל 24.9.2.
+- כך יהיו גם:
+  - מניעה ברמת הפרומפט
+  - אכיפה ברמת הפוסט־פרוסס
 
-1. **Remove `overflow-hidden`** from the `.input-field` wrapper div (line 1110) — change it to `overflow-visible` or remove the overflow class entirely
-2. Alternatively, ensure the inner `<input>` element can scroll horizontally so the user can see what they're typing
+3. `supabase/functions/legal-qa/index.ts`
+- אבדוק אם גם שם עשוי להיווצר אותו דפוס בתשובות עם הערות שוליים.
+- אוסיף את אותה נורמליזציה גם שם, כדי לשמור על עקביות בין "האזכור האחיד" לבין "העוזר המשפטי".
 
-### File
-- `src/pages/Index.tsx` — line 1110: remove `overflow-hidden` from the `input-field` div's class list
+התוצאה הצפויה
+הקלט:
+```text
+בועז סנג׳רו ״על עונש המוות בכלל ועל עונש המוות בגין רצח בפעולת טרור בפרט״ עמוד 129 תשס״ב
+```
 
+אם המקור כולל גם תשס"ב וגם 2002, הפלט יתוקן ל:
+```text
+בועז סנג'רו "על עונש המוות בכלל ועל עונש המוות בגין רצח בפעולת טרור בפרט" עלי משפט ב 129 (2002).
+```
+
+ואם במקור מופיעה רק שנה עברית, הפלט יישאר:
+```text
+(... התשס"ב).
+```
+עם ה' כנדרש.
+
+קבצים מושפעים
+- `supabase/functions/citation-chat/index.ts`
+- `supabase/functions/legal-qa/index.ts`
+
+פרט טכני
+איישם את זה בזהירות כך שהניקוי יחול רק על דפוסים של שנות פרסום בסוגריים במאמרים/ספרות, ולא יפגע בפורמטים שבהם דווקא נדרש טווח עברי־לועזי, כמו חקיקה:
+```text
+חוק העונשין, התשל"ז-1977, ס"ח 226.
+```
+
+בדיקות שאבצע אחרי היישום
+- גם עברית וגם לועזית → נשארת רק לועזית
+- רק עברית → נשארת עברית עם ה'
+- רק לועזית → נשארת לועזית
+- חקיקה לא נפגעת
+- תשובות של `citation-chat` ו־`legal-qa` נשארות עקביות
