@@ -1,31 +1,20 @@
 
 
-## Fix Hebrew Year Prefix (ה') in Citations
+## Add Stop Button to LegalQAChat Component
 
 ### Problem
-When a Hebrew year is cited (e.g., תשס"ב), it must start with ה' (התשס"ב) per Rules 23.9 and 24.9. The AI currently outputs תשס"ב without the prefix.
-
-### Root Cause
-1. The article rule (כלל 24) in `citationRules.ts` is **missing** the Hebrew year formatting note that exists in the book rule
-2. The `citation-chat` prompt already mentions this rule but the AI doesn't always follow it — no programmatic enforcement exists
+The `LegalQAChat` component (used on `/app`) has no way to cancel an in-progress request. It uses `supabase.functions.invoke()` which doesn't support `AbortController`, and the send button just shows a spinner while loading.
 
 ### Changes
 
-**1. `supabase/functions/legal-qa/citationRules.ts`**
-- Add to the article `formattingNotes` array: `"שנה: עברית בלבד → עברית (עם ה', למשל התשס"ב); לועזית בלבד → לועזית; שתיהן → לועזית בלבד (כלל 24.9)"`
+**`src/components/LegalQAChat.tsx`**
 
-**2. `supabase/functions/citation-chat/index.ts`**
-- Add a post-processing function `fixHebrewYearPrefix` that uses regex to find bare Hebrew years (e.g., `תשס"ב`, `תשע"ט`) that are missing the ה' prefix and adds it
-- Pattern: match `(תש[א-ת]["״][א-ת])` not preceded by ה, and prepend ה
-- Apply this fix after `sanitizeHallucinatedPublicationData` on the response
-
-**3. `supabase/functions/legal-qa/index.ts`**
-- Add the same `fixHebrewYearPrefix` post-processing to the legal-qa response pipeline
+1. Switch from `supabase.functions.invoke()` to raw `fetch()` with `AbortController` (same pattern as `LegalQA.tsx` lines 118-135)
+2. Add an `abortControllerRef` using `useRef<AbortController | null>(null)`
+3. Add a `handleStop` function that aborts the controller and resets loading state
+4. Change the send button (line 605-615): when `loading` is true, show a stop icon (StopCircle) that calls `handleStop` instead of the spinning indicator
 
 ### Technical Detail
-The regex to catch bare Hebrew years:
-```
-/(?<![הH])(תש[א-ת]["״׳\u05F4][א-ת])/g → ה$1
-```
-This handles years like תשס"ב, תשע"ט, etc. — all modern Hebrew years start with תש.
+- The send button currently shows a spinner during loading and is disabled. It will instead become a clickable stop button with a `StopCircle` icon styled in destructive color.
+- The `fetch()` call will use the same URL pattern (`${VITE_SUPABASE_URL}/functions/v1/legal-qa`) and auth headers as the existing `LegalQA.tsx` page.
 
