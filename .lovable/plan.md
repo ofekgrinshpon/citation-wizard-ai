@@ -1,61 +1,46 @@
 
 
-## Add Stop/Cancel Button for Legal QA Queries
+## Fix: Reclassify Law Journal Articles and Add Source Type Validation
 
 ### Problem
-Once a user submits a question in the Legal QA section, there's no way to cancel the in-progress request. The user must wait for the full response or reload the page.
+1. ~1,000+ articles from כתב העת "משפטים" were ingested with `source_type = 'knesset_research'` instead of `'journal_article'` or `'literature'`. Many have garbage titles like "פרטי מסמך" or "תוכן עניינים".
+2. The Legal QA retrieval engine has no mechanism to inspect or validate what kind of source a document is before presenting it to the AI.
+3. The specific article "מזונות האשה בנישואין בטלים" by פנחס שיפמן is **not in the database** as its own document — it only appears as a reference within other documents' text.
 
-### Solution
-Add an `AbortController` to the edge function invocation, and show a "Stop" button while loading.
+### Proposed Changes
 
-### Changes
+#### 1. Database: Reclassify journal articles (migration + data update)
 
-**File: `src/pages/LegalQA.tsx`**
+**Step A — Identify journal articles** by scanning `knesset_research` documents whose content or title matches law journal patterns (e.g., contains "כרך", "כתב העת משפטים", academic author names, article-style titles with parenthetical volume references like "(כרך כ״ג)").
 
-1. Add an `AbortController` ref:
-   ```typescript
-   const abortControllerRef = useRef<AbortController | null>(null);
-   ```
+**Step B — Update `source_type`** from `'knesset_research'` to a new value `'journal_article'` for matched records. This distinguishes them from actual Knesset Research Center documents.
 
-2. In `handleSubmit`, create a new `AbortController` and pass its signal to `supabase.functions.invoke`:
-   ```typescript
-   const controller = new AbortController();
-   abortControllerRef.current = controller;
-   // ...
-   const { data, error } = await supabase.functions.invoke("legal-qa", {
-     body: { question: q },
-   }, { signal: controller.signal }); // pass abort signal
-   ```
-   Note: If `supabase.functions.invoke` doesn't support a signal option directly, we'll use a raw `fetch` call to the edge function URL with the abort signal instead.
+**Step C — Fix titles** for documents with generic titles ("פרטי מסמך", "תוכן עניינים") — extract the real article title from the first chunk's content using a pattern-based approach.
 
-3. Add a `handleStop` function:
-   ```typescript
-   const handleStop = () => {
-     abortControllerRef.current?.abort();
-     setLoading(false);
-     toast.info("העיבוד הופסק");
-   };
-   ```
+#### 2. Edge function: Add source type label for journal articles
 
-4. In the catch block, detect abort errors and skip the error toast for them.
+**File: `supabase/functions/legal-qa/index.ts`**
 
-5. Replace the submit button with a stop button while loading:
-   ```tsx
-   {loading ? (
-     <Button variant="destructive" onClick={handleStop} className="gap-2">
-       <StopCircle className="w-4 h-4" />
-       עצור
-     </Button>
-   ) : (
-     <Button onClick={handleSubmit} disabled={question.trim().length < 5} className="gap-2">
-       <Send className="w-4 h-4" />
-       שאל שאלה משפטית
-     </Button>
-   )}
-   ```
+- Add a branch for `source_type === 'journal_article'` in the source card builder (around line 320) to label them as "מאמר אקדמי" instead of "מחקר כנסת / חקיקה".
+- Update the citation builder for journal articles to present them in proper academic citation format (author, title, journal, volume, page).
 
-6. Import `StopCircle` from `lucide-react`.
+#### 3. Edge function: Add source metadata preview in context
 
-### Files
-- `src/pages/LegalQA.tsx` — add abort controller, stop button, and cancel handling
+Add a short "source fingerprint" to each source card's excerpt that includes:
+- `source_type` (human-readable label)
+- Document title
+- First 100 chars of content
+
+This gives the AI enough context to evaluate source relevance and type before citing it.
+
+### Technical details
+
+- The reclassification query will use pattern matching on content (e.g., `content ILIKE '%כתב העת משפטים%'` or title containing `(כרך ...)`) to identify journal articles.
+- A database migration will add `'journal_article'` as a recognized source type value.
+- The data update (via insert tool) will batch-update matching records.
+- No schema changes needed — `source_type` is already a free text field.
+
+### Files affected
+- `supabase/functions/legal-qa/index.ts` — source card labeling and citation formatting
+- Database data update — reclassify ~1,000 records from `knesset_research` to `journal_article`
 
