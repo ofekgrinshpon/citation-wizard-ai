@@ -224,7 +224,7 @@ export function VerifiedAutocomplete({
   );
 
   return (
-    <div ref={wrapperRef} className="relative flex-1">
+    <div ref={wrapperRef} className="relative flex-1 min-w-0">
       {inputType === "textarea" ? (
         <textarea
           ref={inputRef as React.RefObject<HTMLTextAreaElement>}
