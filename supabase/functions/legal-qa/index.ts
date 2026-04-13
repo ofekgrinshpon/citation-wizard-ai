@@ -18,6 +18,13 @@ function toSuperscript(n: number): string {
   return String(n).split("").map((d) => digitToSuperscript[d] || d).join("");
 }
 
+/**
+ * Fix bare Hebrew years (e.g. תשס"ב) by prepending ה' → התשס"ב.
+ */
+function fixHebrewYearPrefix(text: string): string {
+  return text.replace(/(?<!ה)(תש[א-ת]["״\u05F4][א-ת])/g, "ה$1");
+}
+
 const BLOG_URL_PATTERNS = [
   /\/blog\//i, /\/blogs\//i, /adv-/i, /adv\./i,
   /עורכי-דין/i, /law-firm/i, /lawfirm/i, /lawyer/i,
