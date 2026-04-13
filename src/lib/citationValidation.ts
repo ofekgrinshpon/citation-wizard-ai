@@ -149,11 +149,11 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
 
   // Book patterns
   if (sourceType === "book") {
-    const authorMatch = response.match(/^([^*"]+?)\s+\*\*/);
+    const authorMatch = response.match(/^([^*"״"]+?)\s+\*\*/) || response.match(/^([^"״"]+?)\s+["״"]/);
     if (authorMatch) fields.author = authorMatch[1].trim();
     const titleMatch = response.match(/\*\*([^*]+)\*\*/);
     if (titleMatch) fields.bookTitle = titleMatch[1];
-    const yearMatch = response.match(/\((?:[^)]*?)(\d{4}|הת[שׁש][א-ת]*["״׳][א-ת]["״׳]?[א-ת]?)\)$/);
+    const yearMatch = response.match(/\((?:[^)]*?)(\d{4}|הת[שׁש][א-ת]*["״׳][א-ת]["״׳]?[א-ת]?)\)\s*\.?\s*$/);
     if (yearMatch) fields.year = yearMatch[1];
     // Volume (כרך)
     const volMatch = response.match(/כרך\s+([א-ת]+|\d+)/);
