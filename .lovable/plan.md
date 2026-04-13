@@ -1,35 +1,16 @@
 
-מסקנה: הבעיה כבר לא ב־`overflow-hidden` או ב־`min-w-0`. אלה טופלו, אבל השדה ב"אזכור אחיד" עדיין משתמש ב־`<input type="text">` דרך `VerifiedAutocomplete`, ולכן כשמקלידים טקסט ארוך הדפדפן פשוט מגלגל את הטקסט בתוך שורה אחת. זה נראה "חתוך", אבל בעצם זו מגבלה של שדה חד־שורי.
 
-מה אעדכן
+## Fix Textarea Not Using Full Width
 
-1. `src/pages/Index.tsx`
-- אשנה את השימוש של `VerifiedAutocomplete` במצב "אזכור אחיד" מ־`inputType="input"` ל־`inputType="textarea"`.
-- אשמור על אותה פריסת RTL, אותו כפתור שליחה, ואותו `handleKeyDown`, כך ש־Enter עדיין ישלח.
+### Problem
+The textarea in "אזכור אחיד" wraps to the next line prematurely because it has `flex-1` in its class but its parent (`<div className="relative flex-1 min-w-0">`) is not a flex container — so `flex-1` has no effect and the textarea defaults to its intrinsic width.
 
-2. `src/components/VerifiedAutocomplete.tsx`
-- אוסיף תמיכה אמיתית ב־auto-resize כשמשתמשים בגרסת `textarea`:
-  - בכל שינוי ערך אאפס זמנית את הגובה
-  - אגדיר את הגובה לפי `scrollHeight`
-  - אוסיף גבול עליון סביר כדי שהשדה לא ישתלט על כל המסך
-- אעדכן את מחלקות ה־textarea כך ש:
-  - יהיה `min-w-0 w-full`
-  - יהיה `overflow-y-auto` רק אם עוברים את הגובה המקסימלי
-  - הטקסט יישבר לכמה שורות במקום "להיעלם" בקצה
-- אשאיר את מצב `input` הקיים ללא שינוי, כדי לא לשבור מקומות אחרים כמו עריכת הודעות.
+### Fix
+**`src/pages/Index.tsx` — line 1127**: Add `w-full` to the textarea's className:
 
-למה זה הפתרון הנכון
-- ה־session replay מראה שהשדה עצמו זז/נסcroll פנימית בזמן הקלדה, כלומר הבעיה היא התנהגות של שדה חד־שורי, לא רק של ה־container.
-- החלפה ל־textarea עם auto-grow תגרום לכל הטקסט להיות נראה לעין גם כשהוא ארוך מאוד.
-- זה תואם לדפוס שכבר קיים ב־`LegalQAChat`, שבו משתמשים ב־textarea עבור קלטים ארוכים.
+```
+className="w-full flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-2.5 sm:px-3.5 py-2.5 sm:py-3 text-foreground text-sm leading-relaxed font-sans resize-none"
+```
 
-קבצים מושפעים
-- `src/pages/Index.tsx`
-- `src/components/VerifiedAutocomplete.tsx`
+One line change, one file.
 
-בדיקות שאבצע אחרי היישום
-- טקסט עברי ארוך מאוד ב"אזכור אחיד" נשבר לשתי שורות ומעלה במקום להיחתך
-- כפתור השליחה נשאר מיושר ולא נדחף החוצה
-- Enter עדיין שולח
-- רשימת ההשלמות (`dropdown`) עדיין נפתחת וממוקמת נכון
-- שימושים אחרים של `VerifiedAutocomplete` שנשארים עם `inputType="input"` לא משתנים
