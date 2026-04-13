@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
-import { Send, Copy, Scale, AlertTriangle, ExternalLink } from "lucide-react";
+import { Send, Copy, Scale, AlertTriangle, ExternalLink, StopCircle } from "lucide-react";
 
 interface Footnote {
   number: number;
@@ -100,6 +100,7 @@ export default function LegalQA() {
   const [result, setResult] = useState<QAResult | null>(null);
   const [loading, setLoading] = useState(false);
   const footnotesRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   if (authLoading) return null;
   if (!user) return <Navigate to="/auth" replace />;
@@ -114,12 +115,28 @@ export default function LegalQA() {
     setLoading(true);
     setResult(null);
 
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
-      const { data, error } = await supabase.functions.invoke("legal-qa", {
-        body: { question: q },
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      const { data: { session } } = await supabase.auth.getSession();
+
+      const res = await fetch(`${supabaseUrl}/functions/v1/legal-qa`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token ?? supabaseKey}`,
+          "apikey": supabaseKey,
+        },
+        body: JSON.stringify({ question: q }),
+        signal: controller.signal,
       });
 
-      if (error) throw error;
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
       if (data?.error) {
         toast.error(data.error);
         return;
@@ -127,11 +144,20 @@ export default function LegalQA() {
 
       setResult(data as QAResult);
     } catch (e: any) {
+      if (e.name === "AbortError") return; // user cancelled
       console.error("Legal QA error:", e);
       toast.error("שגיאה בעיבוד השאלה. נסו שוב.");
     } finally {
+      abortControllerRef.current = null;
       setLoading(false);
     }
+  };
+
+  const handleStop = () => {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
+    setLoading(false);
+    toast.info("העיבוד הופסק");
   };
 
   const handleCopy = () => {
@@ -199,14 +225,21 @@ export default function LegalQA() {
                 dir="rtl"
               />
               <div className="flex justify-end">
-                <Button
-                  onClick={handleSubmit}
-                  disabled={loading || question.trim().length < 5}
-                  className="gap-2"
-                >
-                  <Send className="w-4 h-4" />
-                  {loading ? "מחפש מקורות..." : "שאל שאלה משפטית"}
-                </Button>
+                {loading ? (
+                  <Button variant="destructive" onClick={handleStop} className="gap-2">
+                    <StopCircle className="w-4 h-4" />
+                    עצור
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={question.trim().length < 5}
+                    className="gap-2"
+                  >
+                    <Send className="w-4 h-4" />
+                    שאל שאלה משפטית
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
