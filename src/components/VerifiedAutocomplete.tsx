@@ -256,7 +256,7 @@ export function VerifiedAutocomplete({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => suggestions.length > 0 && setIsOpen(true)}
+          onFocus={() => { hasFocused.current = true; if (suggestions.length > 0) setIsOpen(true); }}
           placeholder={placeholder}
           disabled={disabled}
           className={className || defaultClass}
