@@ -1107,7 +1107,7 @@ const Index = () => {
                 🗑
               </button>
             )}
-            <div className="input-field flex flex-1 overflow-hidden">
+            <div className="input-field flex flex-1">
               <VerifiedAutocomplete
                 value={input}
                 onChange={setInput}
