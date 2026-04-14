@@ -41,10 +41,17 @@ export default function BatchEmbeddingPanel() {
 
     while (!abortRef.current) {
       try {
+        // Refresh session to avoid token expiry during long runs
+        const { data: { session: freshSession } } = await supabase.auth.getSession();
+        if (!freshSession) {
+          toast.error("הסשן פג תוקף — יש להתחבר מחדש");
+          break;
+        }
+
         const res = await fetch(url, {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${session.access_token}`,
+            Authorization: `Bearer ${freshSession.access_token}`,
             "Content-Type": "application/json",
           },
         });
