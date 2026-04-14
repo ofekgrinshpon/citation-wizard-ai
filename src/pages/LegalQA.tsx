@@ -98,13 +98,16 @@ function CitationText({ text }: { text: string }) {
 
 export default function LegalQA() {
   const { user, loading: authLoading } = useAuth();
+  const { isLimitReached, remaining, incrementCount, loading: subLoading, limit } = useSubscription();
+  const navigate = useNavigate();
   const [question, setQuestion] = useState("");
   const [result, setResult] = useState<QAResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showLimitDialog, setShowLimitDialog] = useState(false);
   const footnotesRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  if (authLoading) return null;
+  if (authLoading || subLoading) return null;
   if (!user) return <Navigate to="/auth" replace />;
 
   const handleSubmit = async () => {
