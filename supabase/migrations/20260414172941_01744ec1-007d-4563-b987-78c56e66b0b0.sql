@@ -1,0 +1,1 @@
+CREATE INDEX idx_legal_chunks_embedding_null ON public.legal_document_chunks (created_at) WHERE embedding IS NULL;
