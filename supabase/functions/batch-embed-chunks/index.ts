@@ -187,19 +187,24 @@ serve(async (req) => {
           }
         }
 
-        // Write in small DB_BATCH_SIZE chunks to avoid statement timeout
-        for (let dbStart = 0; dbStart < allItems.length; dbStart += DB_BATCH_SIZE) {
-          const payload = allItems.slice(dbStart, dbStart + DB_BATCH_SIZE);
-          const { data: updatedCount, error: rpcErr } = await adminClient.rpc(
-            "bulk_update_legal_chunk_embeddings",
-            { payload }
+        // Write individual updates in parallel (DB_WRITE_CONCURRENCY at a time)
+        for (let dbStart = 0; dbStart < allItems.length; dbStart += DB_WRITE_CONCURRENCY) {
+          const batch = allItems.slice(dbStart, dbStart + DB_WRITE_CONCURRENCY);
+          const results = await Promise.all(
+            batch.map((item) =>
+              adminClient
+                .from("legal_document_chunks")
+                .update({ embedding: item.embedding })
+                .eq("id", item.id)
+            )
           );
-
-          if (rpcErr) {
-            console.error("RPC bulk_update error:", rpcErr);
-            failed += payload.length;
-          } else {
-            processed += Number(updatedCount) || payload.length;
+          for (const res of results) {
+            if (res.error) {
+              console.error("Update error:", res.error);
+              failed++;
+            } else {
+              processed++;
+            }
           }
         }
 
