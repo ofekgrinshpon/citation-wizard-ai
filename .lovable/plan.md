@@ -1,29 +1,20 @@
 
 
-## מחיקת מסמכי "הפרקליט" מהמסד
+## Update Hapraklit Documents to `journal_article`
 
-### מה נמצא
-- 157 רשומות ב־`legal_documents` שבהן `source_url` או `pdf_url` מכילים `hapraklit`
-- יש גם chunks תלויים ב־`legal_document_chunks` שצריך למחוק קודם (FK constraint)
+### What
+153 records currently typed as `knesset_research` where `pdf_url` or `source_url` contains `hapraklit` will be updated to `source_type = 'journal_article'`.
 
-### מה אעשה
-אריץ migration אחת עם שתי פקודות:
-
+### SQL
 ```sql
--- First delete dependent chunks
-DELETE FROM legal_document_chunks
-WHERE document_id IN (
-  SELECT id FROM legal_documents
-  WHERE source_url LIKE '%hapraklit%'
-     OR pdf_url LIKE '%hapraklit%'
-);
-
--- Then delete the documents
-DELETE FROM legal_documents
-WHERE source_url LIKE '%hapraklit%'
-   OR pdf_url LIKE '%hapraklit%';
+UPDATE legal_documents
+SET source_type = 'journal_article'
+WHERE pdf_url LIKE '%hapraklit%'
+   OR source_url LIKE '%hapraklit%';
 ```
 
-### קבצים מושפעים
-- אין שינויי קוד, רק migration למסד הנתונים
+### Technical details
+- Uses the data insert/update tool (not a migration, since this is a data change)
+- No schema or code changes needed
+- 153 rows affected
 
