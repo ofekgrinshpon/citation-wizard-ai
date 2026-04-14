@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { AppSidebar } from "@/components/AppSidebar";
 import { GeometricBackground } from "@/components/GeometricBackground";
@@ -9,9 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
-import { Send, Copy, Scale, AlertTriangle, ExternalLink, StopCircle } from "lucide-react";
+import { Send, Copy, Scale, AlertTriangle, ExternalLink, StopCircle, Lock } from "lucide-react";
 
 interface Footnote {
   number: number;
@@ -96,16 +98,24 @@ function CitationText({ text }: { text: string }) {
 
 export default function LegalQA() {
   const { user, loading: authLoading } = useAuth();
+  const { isLimitReached, remaining, incrementCount, loading: subLoading, limit } = useSubscription();
+  const navigate = useNavigate();
   const [question, setQuestion] = useState("");
   const [result, setResult] = useState<QAResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showLimitDialog, setShowLimitDialog] = useState(false);
   const footnotesRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  if (authLoading) return null;
+  if (authLoading || subLoading) return null;
   if (!user) return <Navigate to="/auth" replace />;
 
   const handleSubmit = async () => {
+    if (isLimitReached) {
+      setShowLimitDialog(true);
+      return;
+    }
+
     const q = question.trim();
     if (!q || q.length < 5) {
       toast.error("השאלה קצרה מדי. נסו לפרט יותר.");
@@ -143,6 +153,7 @@ export default function LegalQA() {
       }
 
       setResult(data as QAResult);
+      await incrementCount();
     } catch (e: any) {
       if (e.name === "AbortError") return; // user cancelled
       console.error("Legal QA error:", e);
@@ -233,14 +244,21 @@ export default function LegalQA() {
                 ) : (
                   <Button
                     onClick={handleSubmit}
-                    disabled={question.trim().length < 5}
+                    disabled={question.trim().length < 5 || isLimitReached}
                     className="gap-2"
                   >
-                    <Send className="w-4 h-4" />
-                    שאל שאלה משפטית
+                    {isLimitReached ? <Lock className="w-4 h-4" /> : <Send className="w-4 h-4" />}
+                    {isLimitReached ? "המכסה אזלה" : "שאל שאלה משפטית"}
                   </Button>
                 )}
               </div>
+              {remaining !== Infinity && (
+                <p className="text-xs text-muted-foreground text-left mt-1">
+                  {isLimitReached
+                    ? `הגעת למגבלת ${limit} שאילתות חינמיות`
+                    : `נותרו ${remaining} שאילתות מתוך ${limit}`}
+                </p>
+              )}
             </CardContent>
           </Card>
 
@@ -329,6 +347,29 @@ export default function LegalQA() {
             </Card>
           )}
         </div>
+
+        {/* Limit reached dialog */}
+        <Dialog open={showLimitDialog} onOpenChange={setShowLimitDialog}>
+          <DialogContent dir="rtl" className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 justify-center">
+                <Lock className="w-5 h-5 text-destructive" />
+                המכסה החינמית אזלה
+              </DialogTitle>
+              <DialogDescription className="text-center">
+                ניצלת את {limit} השאילתות החינמיות. לשימוש ללא הגבלה, שדרגו למנוי.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-center gap-2 pt-2">
+              <Button onClick={() => { setShowLimitDialog(false); navigate("/profile"); }}>
+                שדרוג מנוי
+              </Button>
+              <Button variant="outline" onClick={() => setShowLimitDialog(false)}>
+                סגור
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );
