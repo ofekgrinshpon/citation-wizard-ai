@@ -354,14 +354,18 @@ serve(async (req) => {
         } else if (m.source_type === "journal_article") {
           // For journal articles: build academic citation from metadata
           const author = (meta.author as string) || "";
-          const journal = (meta.journal as string) || "משפטים";
+          const journalMap: Record<string, string> = {
+            mishpatim: "משפטים",
+            tau_law_review: "עיוני משפט",
+            hapraklit: "הפרקליט",
+            runilawreview: "משפט ועסקים",
+          };
+          const journal = (meta.journal as string) || journalMap[(meta.source_site as string) || ""] || "";
           const vol = (meta.volume as string) || "";
-          if (author) {
-            richCitation = `${author} "${m.document_title}" ${journal}`;
-            if (vol) richCitation += ` ${vol}`;
-          } else {
-            richCitation = m.document_title || m.document_citation;
-          }
+
+          richCitation = author ? `${author} "${m.document_title}"` : `"${m.document_title}"`;
+          if (journal) richCitation += ` **${journal}**`;
+          if (vol) richCitation += ` ${vol}`;
         }
 
         const sourceLabel = m.source_type === "caselaw" ? "פסיקה" :
@@ -512,6 +516,10 @@ ${taskInstructions}
 - לפני שאתה מצטט מקור כלשהו, בדוק שהוא רלוונטי מהותית לשאלה המשפטית. התאמה במילות מפתח (למשל "ראש הממשלה") אינה מספיקה — המקור חייב לעסוק באותה סוגיה משפטית.
 - אם מקור מהרשימה עוסק בנושא אחר לחלוטין (למשל: השאלה עוסקת בחנינה, והמקור עוסק במינויים), אל תצטט אותו כלל, גם אם הוא מסומן [מאומת].
 - עדיף לצטט פחות מקורות רלוונטיים מאשר להוסיף מקורות שאינם קשורים לנושא.
+
+כלל קריטי – פרטים חסרים:
+- אם מקור מהמאגר חסר שנת פרסום, כתוב "(לא נמצאה שנת פרסום)" — אל תמציא שנה ואל תכתוב "תאריך לא ידוע".
+- אם חסרים פרטים ביבליוגרפיים חיוניים (כמו שם מחבר), נסה לחלץ אותם מתוך תוכן המקור שסופק לך.
 
 ${citationInstructions}
 
