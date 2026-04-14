@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { AppSidebar } from "@/components/AppSidebar";
 import { GeometricBackground } from "@/components/GeometricBackground";
@@ -9,9 +10,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
-import { Send, Copy, Scale, AlertTriangle, ExternalLink, StopCircle } from "lucide-react";
+import { Send, Copy, Scale, AlertTriangle, ExternalLink, StopCircle, Lock } from "lucide-react";
 
 interface Footnote {
   number: number;
