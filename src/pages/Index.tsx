@@ -756,7 +756,7 @@ const Index = () => {
             )}
             <ReLexLogo size={28} />
             <p className="text-text-dim text-[10px] sm:text-xs hidden sm:block">
-              כללי האזכור האחיד • מהדורת 2021
+              ReLex © 2026
             </p>
           </div>
 
