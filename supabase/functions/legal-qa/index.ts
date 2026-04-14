@@ -330,24 +330,85 @@ serve(async (req) => {
       console.log(`Document uploaded: ${documentName}, ${documentText.length} chars`);
     }
 
-    // ========= Step 1: Local search + Perplexity IN PARALLEL =========
+    // ========= Step 1: Local search (hybrid: keyword + vector) + Perplexity IN PARALLEL =========
+
+    // Helper: generate query embedding for vector search
+    async function getQueryEmbedding(text: string): Promise<number[] | null> {
+      try {
+        const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/embeddings", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "text-embedding-3-small",
+            input: text.slice(0, 4000),
+            dimensions: 768,
+          }),
+        }, 5000);
+        if (!res.ok) {
+          console.error("Query embedding error:", res.status);
+          return null;
+        }
+        const data = await res.json();
+        return data.data[0].embedding;
+      } catch (err) {
+        console.error("Query embedding failed (non-fatal):", err);
+        return null;
+      }
+    }
+
     const localSearchPromise = (async (): Promise<{ matches: LocalMatch[]; used: boolean }> => {
       try {
-        // Extract keywords (strip stop words) for better OR-based matching
         const keywords = extractKeywords(question);
         console.log(`Search keywords: "${keywords}" (from: "${question.slice(0, 80)}")`);
-        
-        const { data: textMatches, error: textError } = await adminClient.rpc("search_legal_chunks_text", {
+
+        // Run keyword search and vector search in parallel
+        const keywordPromise = adminClient.rpc("search_legal_chunks_text", {
           search_query: keywords,
-          match_count: 10,
+          match_count: 8,
         });
-        if (!textError && textMatches && textMatches.length > 0) {
-          console.log(`Text search: found ${textMatches.length} matching chunks`);
-          return { matches: textMatches, used: true };
+
+        const vectorPromise = (async () => {
+          const embedding = await getQueryEmbedding(question);
+          if (!embedding) return { data: null, error: null };
+          return adminClient.rpc("match_legal_chunks", {
+            query_embedding: JSON.stringify(embedding),
+            match_threshold: 0.7,
+            match_count: 8,
+          });
+        })();
+
+        const [keywordResult, vectorResult] = await Promise.all([keywordPromise, vectorPromise]);
+
+        const keywordMatches: LocalMatch[] = (!keywordResult.error && keywordResult.data) ? keywordResult.data : [];
+        const vectorMatches: LocalMatch[] = (!vectorResult.error && vectorResult.data) ? vectorResult.data : [];
+
+        console.log(`Keyword search: ${keywordMatches.length} results | Vector search: ${vectorMatches.length} results`);
+
+        // Merge and deduplicate by chunk_id, keeping higher similarity
+        const mergedMap = new Map<string, LocalMatch>();
+        for (const m of keywordMatches) {
+          mergedMap.set(m.chunk_id, m);
         }
-        console.log(`Text search: 0 results for keywords "${keywords}"`);
-        
-        // Fallback: try with fewer keywords (top 3)
+        for (const m of vectorMatches) {
+          const existing = mergedMap.get(m.chunk_id);
+          if (!existing || m.similarity > existing.similarity) {
+            mergedMap.set(m.chunk_id, m);
+          }
+        }
+
+        const merged = Array.from(mergedMap.values())
+          .sort((a, b) => b.similarity - a.similarity)
+          .slice(0, 12);
+
+        if (merged.length > 0) {
+          console.log(`Hybrid search: ${merged.length} unique chunks after merge`);
+          return { matches: merged, used: true };
+        }
+
+        // Fallback: try with fewer keywords
         if (keywords.split(" ").length > 3) {
           const fewerKeywords = keywords.split(" ").slice(0, 3).join(" ");
           console.log(`Retry with fewer keywords: "${fewerKeywords}"`);
@@ -361,7 +422,7 @@ serve(async (req) => {
           }
         }
       } catch (err) {
-        console.error("Text search failed (non-fatal):", err);
+        console.error("Hybrid search failed (non-fatal):", err);
       }
       return { matches: [], used: false };
     })();
