@@ -461,7 +461,19 @@ serve(async (req) => {
     const tRetrieval = Date.now();
     console.log(`Retrieval took ${tRetrieval - t0}ms`);
 
-    if (!usedLocalSearch && !searchResults && !hasDocument) {
+    // ========= Step 1c: AI-based re-ranking of local sources =========
+    let rankedMatches: RankedMatch[] = localMatches.map(m => ({ ...m }));
+    if (localMatches.length > 0 && LOVABLE_API_KEY) {
+      try {
+        rankedMatches = await rerankLocalMatches(localMatches, question, LOVABLE_API_KEY);
+        const tRerank = Date.now();
+        console.log(`Re-ranking took ${tRerank - tRetrieval}ms, kept ${rankedMatches.length}/${localMatches.length} chunks`);
+      } catch (err) {
+        console.error("Re-ranking error (non-fatal):", err);
+      }
+    }
+
+    if (rankedMatches.length === 0 && !searchResults && !hasDocument) {
       return new Response(
         JSON.stringify({ error: "לא נמצאו מקורות רלוונטיים. נסו לנסח את השאלה אחרת." }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
