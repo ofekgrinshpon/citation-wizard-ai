@@ -7,8 +7,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const BATCH_SIZE = 50;
-const DELAY_MS = 200;
+const BATCH_SIZE = 20;
+const DELAY_MS = 100;
 
 async function getEmbedding(text: string, apiKey: string): Promise<number[] | null> {
   try {
