@@ -153,14 +153,14 @@ serve(async (req) => {
     let processed = 0;
     let failed = 0;
 
-    // Split into sub-batches and process PARALLEL_CALLS at a time
-    const subBatches: typeof chunks[] = [];
-    for (let i = 0; i < chunks.length; i += SUB_BATCH_SIZE) {
-      subBatches.push(chunks.slice(i, i + SUB_BATCH_SIZE));
+    // Split into embedding sub-batches and process PARALLEL_CALLS at a time
+    const embedBatches: typeof chunks[] = [];
+    for (let i = 0; i < chunks.length; i += EMBED_BATCH_SIZE) {
+      embedBatches.push(chunks.slice(i, i + EMBED_BATCH_SIZE));
     }
 
-    for (let i = 0; i < subBatches.length; i += PARALLEL_CALLS) {
-      const parallel = subBatches.slice(i, i + PARALLEL_CALLS);
+    for (let i = 0; i < embedBatches.length; i += PARALLEL_CALLS) {
+      const parallel = embedBatches.slice(i, i + PARALLEL_CALLS);
 
       // Fire embedding calls in parallel
       const embeddingResults = await Promise.all(
@@ -169,16 +169,16 @@ serve(async (req) => {
         )
       );
 
-      // Write each sub-batch result to DB
+      // Collect all successful results, then write to DB in small batches
       for (let j = 0; j < parallel.length; j++) {
         const subChunks = parallel[j];
         const embeddings = embeddingResults[j];
 
-        const payload: { id: string; embedding: string }[] = [];
+        const allItems: { id: string; embedding: string }[] = [];
         let subFailed = 0;
         for (let k = 0; k < subChunks.length; k++) {
           if (embeddings[k]) {
-            payload.push({
+            allItems.push({
               id: subChunks[k].id,
               embedding: JSON.stringify(embeddings[k]),
             });
@@ -187,8 +187,9 @@ serve(async (req) => {
           }
         }
 
-        if (payload.length > 0) {
-          // Pass raw array — supabase-js serializes it to jsonb automatically
+        // Write in small DB_BATCH_SIZE chunks to avoid statement timeout
+        for (let dbStart = 0; dbStart < allItems.length; dbStart += DB_BATCH_SIZE) {
+          const payload = allItems.slice(dbStart, dbStart + DB_BATCH_SIZE);
           const { data: updatedCount, error: rpcErr } = await adminClient.rpc(
             "bulk_update_legal_chunk_embeddings",
             { payload }
@@ -206,7 +207,7 @@ serve(async (req) => {
       }
 
       // Short delay between parallel groups to avoid rate limits
-      if (i + PARALLEL_CALLS < subBatches.length) {
+      if (i + PARALLEL_CALLS < embedBatches.length) {
         await sleep(200);
       }
     }
