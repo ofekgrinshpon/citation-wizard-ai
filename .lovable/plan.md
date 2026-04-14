@@ -1,12 +1,25 @@
 
 
-## Fix: Reduce Batch Size to 500
+## Fix: Token Limit Exceeded (318K > 300K max)
 
-The network logs show every batch of 1000 chunks fails completely (0 processed, 1000 failed). OpenAI is likely rejecting the large payload. Reducing to 500 should work reliably.
+### Problem
+The logs show: **"Requested 318095 tokens, max 300000 tokens per request"**. 500 chunks with up to 8000 chars each exceeds OpenAI's 300K token-per-request limit. Every batch fails with 0 processed, 500 failed.
+
+### Solution: Adaptive sub-batching within each edge function call
+
+Instead of sending all 500 chunks in one API call, split them into **token-safe sub-batches** (~200 chunks each) and make multiple API calls per edge function invocation. This keeps each API call under the 300K token limit while still processing 500 chunks per edge function call.
 
 ### Changes
 
-1. **`supabase/functions/batch-embed-chunks/index.ts`** -- change `BATCH_SIZE` from `2048` to `500`
-2. **`src/components/admin/BatchEmbeddingPanel.tsx`** -- update description text to say "500 קטעים"
-3. **Redeploy** the edge function
+**`supabase/functions/batch-embed-chunks/index.ts`**:
+- Keep `BATCH_SIZE = 500` (DB fetch size)
+- Add a `SUB_BATCH_SIZE = 200` constant for API calls
+- Split chunks into groups of 200 before calling `getEmbeddingsBatch`
+- Loop through sub-batches, accumulating results
+- This means 2-3 API calls per edge function call instead of 1, but each stays well under the 300K token limit
+
+### Expected result
+- 200 chunks × ~636 tokens avg = ~127K tokens per API call (safely under 300K)
+- 500 chunks processed per edge function call via 2-3 sub-batches
+- ~3,000+ chunks/min throughput maintained
 
