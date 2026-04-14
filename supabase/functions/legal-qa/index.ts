@@ -311,6 +311,35 @@ serve(async (req) => {
     const searchResults = perplexityResult.content;
     const citations = perplexityResult.citations;
 
+    // ========= Step 1b: Enrich incomplete journal articles via Perplexity =========
+    const incompleteArticles = localMatches.filter(m =>
+      m.source_type === "journal_article" &&
+      (!(m.metadata as Record<string, unknown>)?.author || !(m.metadata as Record<string, unknown>)?.year)
+    );
+
+    if (incompleteArticles.length > 0 && PERPLEXITY_API_KEY) {
+      const enrichmentPromises = incompleteArticles.slice(0, 3).map(async (article) => {
+        try {
+          const res = await fetchWithTimeout("https://api.perplexity.ai/chat/completions", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: "sonar",
+              messages: [{ role: "user", content: `מצא את שם המחבר ושנת הפרסום של המאמר: "${article.document_title}". החזר רק: מחבר: [שם], שנה: [שנה]` }],
+            }),
+          }, 8000);
+          const data = await res.json();
+          const text = data.choices?.[0]?.message?.content || "";
+          const authorMatch = text.match(/מחבר:\s*(.+?)(?:,|\n|$)/);
+          const yearMatch = text.match(/שנה:\s*(\d{4})/);
+          if (authorMatch) article.metadata = { ...(article.metadata || {}), author: authorMatch[1].trim() };
+          if (yearMatch) article.metadata = { ...(article.metadata || {}), year: yearMatch[1] };
+          console.log(`Enriched article "${article.document_title.slice(0, 40)}": author=${authorMatch?.[1] || "?"}, year=${yearMatch?.[1] || "?"}`);
+        } catch (e) { /* skip enrichment on error */ }
+      });
+      await Promise.all(enrichmentPromises);
+    }
+
     const tRetrieval = Date.now();
     console.log(`Retrieval took ${tRetrieval - t0}ms`);
 
