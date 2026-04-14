@@ -1,20 +1,29 @@
 
 
-## Fix: Verified Sources Dropdowns Auto-Opening in Footnotes Tab
+## מחיקת מסמכי "הפרקליט" מהמסד
 
-### Problem
-When switching to "הערות שוליים" (Batch Footnote Builder), every cell that already has text triggers the `VerifiedAutocomplete` search `useEffect`, which runs on mount because `value` already has content. This causes all dropdown panels to open simultaneously.
+### מה נמצא
+- 157 רשומות ב־`legal_documents` שבהן `source_url` או `pdf_url` מכילים `hapraklit`
+- יש גם chunks תלויים ב־`legal_document_chunks` שצריך למחוק קודם (FK constraint)
 
-### Fix
-**`src/components/VerifiedAutocomplete.tsx`** — Add a `hasFocused` ref that prevents the dropdown from opening on mount. The search effect should still fetch suggestions, but only set `isOpen(true)` if the input has been focused at least once.
+### מה אעשה
+אריץ migration אחת עם שתי פקודות:
 
-1. Add a `hasFocused` ref initialized to `false`
-2. Set it to `true` in the `onFocus` handler
-3. In the search effect, only call `setIsOpen(true)` if `hasFocused.current` is true
-4. The `onFocus` handler already opens the dropdown if suggestions exist, so focusing will still show results
+```sql
+-- First delete dependent chunks
+DELETE FROM legal_document_chunks
+WHERE document_id IN (
+  SELECT id FROM legal_documents
+  WHERE source_url LIKE '%hapraklit%'
+     OR pdf_url LIKE '%hapraklit%'
+);
 
-This ensures dropdowns stay closed when the tab loads, but work normally once the user interacts with a field.
+-- Then delete the documents
+DELETE FROM legal_documents
+WHERE source_url LIKE '%hapraklit%'
+   OR pdf_url LIKE '%hapraklit%';
+```
 
-### Files
-- `src/components/VerifiedAutocomplete.tsx` — ~5 lines changed
+### קבצים מושפעים
+- אין שינויי קוד, רק migration למסד הנתונים
 
