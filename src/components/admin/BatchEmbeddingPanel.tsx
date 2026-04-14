@@ -7,9 +7,8 @@ import { toast } from "sonner";
 interface BatchResult {
   processed: number;
   failed: number;
-  remaining: number;
+  remaining: number | null;
   batch_size: number;
-  retries?: number;
   error?: string;
 }
 
@@ -19,6 +18,7 @@ export default function BatchEmbeddingPanel() {
   const [totalFailed, setTotalFailed] = useState(0);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [batchCount, setBatchCount] = useState(0);
+  const [lastError, setLastError] = useState<string | null>(null);
   const abortRef = useRef(false);
 
   const totalChunks = remaining !== null ? totalProcessed + remaining : null;
@@ -30,6 +30,7 @@ export default function BatchEmbeddingPanel() {
     setTotalProcessed(0);
     setTotalFailed(0);
     setBatchCount(0);
+    setLastError(null);
 
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
@@ -43,7 +44,6 @@ export default function BatchEmbeddingPanel() {
 
     while (!abortRef.current) {
       try {
-        // Refresh session to avoid token expiry during long runs
         const { data: { session: freshSession } } = await supabase.auth.getSession();
         if (!freshSession) {
           toast.error("הסשן פג תוקף — יש להתחבר מחדש");
@@ -61,6 +61,7 @@ export default function BatchEmbeddingPanel() {
         if (!res.ok) {
           const errText = await res.text();
           console.error("Batch error:", res.status, errText);
+          setLastError(`HTTP ${res.status}: ${errText.slice(0, 200)}`);
           consecutiveErrors++;
           if (consecutiveErrors >= 3) {
             toast.error("3 שגיאות רצופות — התהליך נעצר");
@@ -73,20 +74,35 @@ export default function BatchEmbeddingPanel() {
         consecutiveErrors = 0;
         const data: BatchResult = await res.json();
 
+        // Check for backend error
+        if (data.error) {
+          setLastError(data.error);
+          toast.error(`שגיאת שרת: ${data.error}`);
+          break;
+        }
+
         setTotalProcessed((prev) => prev + data.processed);
         setTotalFailed((prev) => prev + data.failed);
         setRemaining(data.remaining);
         setBatchCount((prev) => prev + 1);
 
+        // Only declare success when remaining is explicitly 0
         if (data.remaining === 0) {
           toast.success("כל ה-chunks עובדו בהצלחה! 🎉");
           break;
         }
 
-        // Small delay between batches
+        // If nothing was processed and there were failures, stop
+        if (data.processed === 0 && data.failed > 0) {
+          setLastError("כל ה-chunks באצווה נכשלו");
+          toast.error("כל ה-chunks באצווה נכשלו — יש לבדוק את הלוגים");
+          break;
+        }
+
         await new Promise((r) => setTimeout(r, 500));
       } catch (err) {
         console.error("Batch fetch error:", err);
+        setLastError(err instanceof Error ? err.message : "שגיאת רשת");
         consecutiveErrors++;
         if (consecutiveErrors >= 3) {
           toast.error("שגיאת רשת — התהליך נעצר");
@@ -122,7 +138,7 @@ export default function BatchEmbeddingPanel() {
         )}
       </div>
 
-      {(running || totalProcessed > 0) && (
+      {(running || totalProcessed > 0 || totalFailed > 0) && (
         <>
           <Progress value={progress} className="h-3" />
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
@@ -139,6 +155,12 @@ export default function BatchEmbeddingPanel() {
             )}
           </div>
         </>
+      )}
+
+      {lastError && (
+        <div className="text-xs text-destructive bg-destructive/10 rounded p-2 break-all">
+          ⚠️ {lastError}
+        </div>
       )}
 
       <p className="text-xs text-muted-foreground">

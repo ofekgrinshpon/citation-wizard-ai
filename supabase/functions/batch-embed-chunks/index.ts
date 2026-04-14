@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 const BATCH_SIZE = 500;
-const SUB_BATCH_SIZE = 100;
+const SUB_BATCH_SIZE = 50;
 const MAX_RETRIES = 3;
 
 function sleep(ms: number) {
@@ -38,7 +38,6 @@ async function getEmbeddingsBatch(
 
       if (res.status === 429) {
         const errBody = await res.text();
-        // Try to extract suggested wait time
         const waitMatch = errBody.match(/try again in ([\d.]+)s/i);
         const waitSec = waitMatch ? parseFloat(waitMatch[1]) : 2;
         const backoff = Math.min(waitSec * 1000 + Math.random() * 500, 10000);
@@ -88,7 +87,8 @@ serve(async (req) => {
       });
     }
 
-    const supabase = createClient(
+    // Use anon client for auth check
+    const anonClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } }
@@ -98,7 +98,7 @@ serve(async (req) => {
     const {
       data: { user },
       error: userError,
-    } = await supabase.auth.getUser(token);
+    } = await anonClient.auth.getUser(token);
     if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
@@ -106,7 +106,7 @@ serve(async (req) => {
       });
     }
 
-    const { data: roleData } = await supabase
+    const { data: roleData } = await anonClient
       .from("user_roles")
       .select("role")
       .eq("user_id", user.id)
@@ -123,15 +123,16 @@ serve(async (req) => {
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
     if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY not configured");
 
+    // Service role client for DB operations
     const adminClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Fetch all required columns
+    // Fetch chunks that need embeddings (only id + content needed now)
     const { data: chunks, error: fetchErr } = await adminClient
       .from("legal_document_chunks")
-      .select("id, document_id, chunk_index, content")
+      .select("id, content")
       .is("embedding", null)
       .order("created_at", { ascending: true })
       .limit(BATCH_SIZE);
@@ -148,9 +149,8 @@ serve(async (req) => {
         JSON.stringify({
           processed: 0,
           failed: 0,
-          remaining: count || 0,
+          remaining: count ?? 0,
           batch_size: 0,
-          retries: 0,
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -158,52 +158,60 @@ serve(async (req) => {
 
     let processed = 0;
     let failed = 0;
-    let totalRetries = 0;
 
     for (let start = 0; start < chunks.length; start += SUB_BATCH_SIZE) {
       const subChunks = chunks.slice(start, start + SUB_BATCH_SIZE);
       const texts = subChunks.map((c) => c.content);
       const embeddings = await getEmbeddingsBatch(texts, OPENAI_API_KEY);
 
-      // Build upsert payload with ALL required fields
-      const updates: { id: string; document_id: string; chunk_index: number; content: string; embedding: string }[] = [];
+      // Build compact payload: only id + embedding
+      const payload: { id: string; embedding: string }[] = [];
+      let subFailed = 0;
       for (let i = 0; i < subChunks.length; i++) {
         if (embeddings[i]) {
-          updates.push({
+          payload.push({
             id: subChunks[i].id,
-            document_id: subChunks[i].document_id,
-            chunk_index: subChunks[i].chunk_index,
-            content: subChunks[i].content,
             embedding: JSON.stringify(embeddings[i]),
           });
         } else {
-          failed++;
+          subFailed++;
         }
       }
 
-      if (updates.length > 0) {
-        const { error: upsertErr } = await adminClient
-          .from("legal_document_chunks")
-          .upsert(updates, { onConflict: "id", ignoreDuplicates: false });
+      if (payload.length > 0) {
+        // Call the lightweight RPC instead of heavy upsert
+        const { data: updatedCount, error: rpcErr } = await adminClient.rpc(
+          "bulk_update_legal_chunk_embeddings",
+          { payload: JSON.stringify(payload) }
+        );
 
-        if (upsertErr) {
-          console.error("Bulk upsert error:", upsertErr);
-          failed += updates.length;
+        if (rpcErr) {
+          console.error("RPC bulk_update error:", rpcErr);
+          failed += payload.length;
         } else {
-          processed += updates.length;
+          processed += Number(updatedCount) || payload.length;
         }
       }
 
-      // Small delay between sub-batches to avoid rate limits
+      failed += subFailed;
+
+      // Delay between sub-batches to avoid rate limits
       if (start + SUB_BATCH_SIZE < chunks.length) {
         await sleep(1000);
       }
     }
 
-    const { count: remaining } = await adminClient
+    // Get accurate remaining count
+    const { count: remainingCount, error: countErr } = await adminClient
       .from("legal_document_chunks")
       .select("id", { count: "exact", head: true })
       .is("embedding", null);
+
+    if (countErr) {
+      console.error("Count query error:", countErr);
+    }
+
+    const remaining = remainingCount ?? null;
 
     console.log(
       `Batch complete: ${processed} processed, ${failed} failed, ${remaining} remaining`
@@ -213,9 +221,8 @@ serve(async (req) => {
       JSON.stringify({
         processed,
         failed,
-        remaining: remaining || 0,
+        remaining,
         batch_size: chunks.length,
-        retries: totalRetries,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
