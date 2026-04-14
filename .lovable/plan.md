@@ -1,36 +1,53 @@
 
 
-## Fix: Cross-reference regex doesn't match Hebrew gershayim (״)
+## Fix: Improve source relevance in Legal QA
+
+### Problem
+The retrieval pipeline matches keywords, not legal topics. A question about "presidential pardons" retrieves any document mentioning "president" — including cases about government formation, ministerial appointments, etc. The AI then cites these irrelevant sources because they were provided as context.
 
 ### Root cause
+1. **Keyword-only retrieval**: `search_legal_chunks_text` uses PostgreSQL `ts_rank` on title/citation text with OR logic. No semantic understanding.
+2. **Only first chunk returned**: The lateral join gets `chunk_index = 0` only — often just an abstract or header, not the substantive content.
+3. **No re-ranking step**: All 10 matches go straight to the AI with equal weight.
 
-All regexes for "לעיל ה"ש" use standard double-quote `"` but the AI sometimes outputs Hebrew gershayim `״` (U+05F4). The reference `פרי, לעיל ה״ש 4` was never caught by the renumbering logic, so it stayed as 4 instead of being updated to 3.
+### Proposed fix: AI-based re-ranking step
 
-### Changes
+Add a lightweight re-ranking step between retrieval and prompt construction. Use the AI (or a fast model) to score each retrieved source's relevance to the specific legal question, then keep only the top sources.
 
 **File: `supabase/functions/legal-qa/index.ts`**
 
-Create a reusable quote-agnostic pattern and update all 4 locations that match "לעיל ה"ש":
+**A. Add a re-ranking function (~after line 160)**
 
-```typescript
-// Near top of serve handler, define a helper pattern string
-const SUPRA_PATTERN = 'לעיל\\s+ה["\u05F4\u201C\u201D״]ש\\s+';
+After local search returns 10 matches, send a quick scoring request to Gemini Flash asking it to rate each source's relevance (0-10) to the specific legal question. This uses the source title + first chunk excerpt. Keep only sources scoring 5+.
+
+```text
+Input:  question + 10 source titles/excerpts
+Output: relevance scores (0-10) for each
+Filter: keep only score >= 5
 ```
 
-Then update these 4 regex sites to use the pattern:
+This adds ~2-3 seconds but dramatically improves citation quality.
 
-1. **Line ~904** (renumbering cross-refs): replace `/לעיל\s+ה"ש\s+(\d{1,2})/g` with `new RegExp(SUPRA_PATTERN + '(\\d{1,2})', 'g')`
+**B. Retrieve more chunks per document (~modify SQL function)**
 
-2. **Line ~942** (self-reference fix): replace the hardcoded pattern with `new RegExp(SUPRA_PATTERN + fn.number + '\\b', 'g')`
+Change the lateral join from `LIMIT 1` to `LIMIT 2` so the AI gets more context per document (not just the intro paragraph). This helps both the re-ranker and the final AI judge relevance.
 
-3. **Line ~945** (self-reference removal): same pattern update
+**C. Pass relevance scores to the AI prompt**
 
-4. **Line ~952** (validation): replace `/לעיל\s+ה"ש\s+(\d{1,2})/` with `new RegExp(SUPRA_PATTERN + '(\\d{1,2})')`
+Tag source cards with their relevance score so the AI can prioritize higher-scored sources:
+```
+[1][מאומת][רלוונטיות: 9] בג"ץ 428/86 ברזילי נ' ממשלת ישראל — פסיקה
+[2][מאומת][רלוונטיות: 3] בג"ץ 4588/04 העמותה... — פסיקה  ← filtered out
+```
 
-5. **Line ~958** (validation removal): same pattern update
+### Alternative: Embedding-based search (longer-term)
+
+The database has a `vector(768)` embedding column on `legal_documents`, but it's currently bypassed (the code hard-codes empty results for the embedding model). Re-enabling semantic search with a working embedding model would be the best long-term fix but requires generating embeddings for all ~19,670 documents.
 
 ### Technical details
-- Single file change: `supabase/functions/legal-qa/index.ts`
-- The pattern matches `"`, `״`, `"`, `"` variants
-- Redeploy Edge Function `legal-qa`
+- Primary changes in `supabase/functions/legal-qa/index.ts`
+- SQL function update via migration for multi-chunk retrieval
+- Re-ranking uses the same Gemini Flash model (fast, ~2s for 10 sources)
+- Total latency increase: ~2-3 seconds
+- No UI changes needed
 
