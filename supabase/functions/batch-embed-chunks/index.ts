@@ -7,9 +7,9 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const BATCH_SIZE = 1000;
+const BATCH_SIZE = 500;
 const EMBED_BATCH_SIZE = 200;  // OpenAI embedding call size
-const DB_BATCH_SIZE = 50;      // RPC write size (avoid DB timeout)
+const DB_WRITE_CONCURRENCY = 10; // parallel individual updates
 const MAX_RETRIES = 3;
 const PARALLEL_CALLS = 2;
 
