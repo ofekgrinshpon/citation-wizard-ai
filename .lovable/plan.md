@@ -1,25 +1,32 @@
 
 
-## Fix: Token Limit Exceeded (318K > 300K max)
+## Speed Up Batch Embedding: Bulk DB Updates
 
 ### Problem
-The logs show: **"Requested 318095 tokens, max 300000 tokens per request"**. 500 chunks with up to 8000 chars each exceeds OpenAI's 300K token-per-request limit. Every batch fails with 0 processed, 500 failed.
+The embedding API calls are fast (~2s for 200 chunks), but the **database updates are sequential** -- 500 individual `UPDATE` queries per edge function call, each with network round-trip overhead. This is the primary bottleneck.
 
-### Solution: Adaptive sub-batching within each edge function call
+### Solution: Batch upserts instead of individual updates
 
-Instead of sending all 500 chunks in one API call, split them into **token-safe sub-batches** (~200 chunks each) and make multiple API calls per edge function invocation. This keeps each API call under the 300K token limit while still processing 500 chunks per edge function call.
+Replace the loop of 500 individual `.update().eq("id", ...)` calls with a single bulk upsert per sub-batch using `.upsert()` with `onConflict: 'id'`. This reduces 500 DB round-trips to 2-3.
 
 ### Changes
 
 **`supabase/functions/batch-embed-chunks/index.ts`**:
-- Keep `BATCH_SIZE = 500` (DB fetch size)
-- Add a `SUB_BATCH_SIZE = 200` constant for API calls
-- Split chunks into groups of 200 before calling `getEmbeddingsBatch`
-- Loop through sub-batches, accumulating results
-- This means 2-3 API calls per edge function call instead of 1, but each stays well under the 300K token limit
+- After getting embeddings for a sub-batch, collect all successful results into an array
+- Use a single `adminClient.from("legal_document_chunks").upsert(updates, { onConflict: 'id' })` call instead of 200 individual updates
+- Each update object contains `{ id, embedding }` only
 
-### Expected result
-- 200 chunks × ~636 tokens avg = ~127K tokens per API call (safely under 300K)
-- 500 chunks processed per edge function call via 2-3 sub-batches
-- ~3,000+ chunks/min throughput maintained
+### Before vs After
+```text
+Before: 500 sequential DB updates (~3-5s each = 25-40s total DB time)
+After:  2-3 bulk upserts (~1s each = 2-3s total DB time)
+```
+
+### Expected improvement
+- ~10x faster per edge function call
+- Processing rate should jump from ~500 chunks/min to ~3,000-5,000 chunks/min
+- 313K remaining chunks: from ~10 hours down to ~1-2 hours
+
+### Files changed
+- `supabase/functions/batch-embed-chunks/index.ts` -- replace sequential updates with bulk upsert
 
