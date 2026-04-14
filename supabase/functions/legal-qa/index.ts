@@ -947,7 +947,20 @@ ${combinedContext}`;
       }
     }
 
-    // Fix Hebrew year prefix (e.g. תשס"ב → התשס"ב)
+    // Validate cross-references: ensure "לעיל ה"ש X" points to a matching source
+    for (const fn of footnotes) {
+      const refMatch = fn.citation.match(/לעיל\s+ה"ש\s+(\d{1,2})/);
+      if (refMatch) {
+        const targetNum = parseInt(refMatch[1], 10);
+        const targetFn = footnotes.find(f => f.number === targetNum);
+        if (!targetFn) {
+          // Target doesn't exist — remove the cross-reference phrase
+          fn.citation = fn.citation.replace(/,?\s*לעיל\s+ה"ש\s+\d{1,2}/, "").trim();
+          fn.citation = fn.citation.replace(/^[,،\s]+/, "").trim();
+        }
+      }
+    }
+
     answer = fixHebrewYearPrefix(answer);
     for (const fn of footnotes) {
       fn.citation = fixHebrewYearPrefix(fn.citation);
