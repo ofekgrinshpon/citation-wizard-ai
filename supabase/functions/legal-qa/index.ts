@@ -166,6 +166,109 @@ function truncateContext(text: string): string {
   return text.slice(0, MAX_CONTEXT_CHARS) + "\n[... קוצר מטעמי אורך ...]";
 }
 
+// ─── AI-based re-ranking: score source relevance to the question ─────
+
+interface RankedMatch extends LocalMatch {
+  relevanceScore?: number;
+}
+
+async function rerankLocalMatches(
+  matches: LocalMatch[],
+  question: string,
+  apiKey: string,
+): Promise<RankedMatch[]> {
+  if (matches.length === 0) return [];
+
+  // Deduplicate by document_id, aggregate chunks per doc
+  const docMap = new Map<string, { match: LocalMatch; chunks: string[] }>();
+  for (const m of matches) {
+    const existing = docMap.get(m.document_id);
+    if (existing) {
+      existing.chunks.push(m.chunk_content.slice(0, 300));
+    } else {
+      docMap.set(m.document_id, { match: m, chunks: [m.chunk_content.slice(0, 300)] });
+    }
+  }
+
+  const docs = Array.from(docMap.values());
+  const sourceList = docs.map((d, i) => {
+    const typeLabel = d.match.source_type === "caselaw" ? "פסיקה" :
+      d.match.source_type === "journal_article" ? "מאמר" :
+      d.match.source_type === "knesset_research" ? "מחקר כנסת" : d.match.source_type;
+    return `[${i}] ${typeLabel}: ${d.match.document_title}\nתוכן: ${d.chunks.join(" ").slice(0, 400)}`;
+  }).join("\n\n");
+
+  const rerankPrompt = `אתה מדרג רלוונטיות של מקורות משפטיים לשאלה נתונה.
+
+שאלה: ${question}
+
+מקורות:
+${sourceList}
+
+דרג כל מקור מ-0 עד 10 לפי רלוונטיות מהותית לשאלה (לא רק התאמת מילות מפתח).
+0 = לא קשור כלל, 10 = רלוונטי מאוד לסוגיה המשפטית.
+
+החזר רק מערך JSON של מספרים, ציון אחד לכל מקור לפי הסדר.
+דוגמה: [8, 2, 9, 1, 6]`;
+
+  try {
+    const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash-lite",
+        max_tokens: 200,
+        messages: [
+          { role: "user", content: rerankPrompt },
+        ],
+      }),
+    }, 10000);
+
+    if (!res.ok) {
+      console.error(`Re-ranking API error: ${res.status}`);
+      return matches.map(m => ({ ...m, relevanceScore: undefined }));
+    }
+
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content || "";
+    // Extract JSON array from response
+    const arrayMatch = text.match(/\[[\d\s,]+\]/);
+    if (!arrayMatch) {
+      console.log("Re-ranking: could not parse scores, using all sources");
+      return matches.map(m => ({ ...m, relevanceScore: undefined }));
+    }
+
+    const scores: number[] = JSON.parse(arrayMatch[0]);
+    console.log(`Re-ranking scores: ${scores.join(", ")}`);
+
+    // Map scores back to matches, filter out low-relevance docs
+    const result: RankedMatch[] = [];
+    const docsArr = Array.from(docMap.entries());
+    for (let i = 0; i < docsArr.length; i++) {
+      const [docId, docData] = docsArr[i];
+      const score = scores[i] ?? 5;
+      if (score >= 4) {
+        // Include all chunks for this document
+        for (const m of matches) {
+          if (m.document_id === docId) {
+            result.push({ ...m, relevanceScore: score });
+          }
+        }
+      } else {
+        console.log(`Filtered out low-relevance source (score=${score}): "${docData.match.document_title.slice(0, 50)}"`);
+      }
+    }
+
+    return result;
+  } catch (err) {
+    console.error("Re-ranking failed (non-fatal):", err);
+    return matches.map(m => ({ ...m, relevanceScore: undefined }));
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
