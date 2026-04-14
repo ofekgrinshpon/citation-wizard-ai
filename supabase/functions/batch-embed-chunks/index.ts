@@ -127,21 +127,25 @@ serve(async (req) => {
       const texts = subChunks.map(c => c.content);
       const embeddings = await getEmbeddingsBatch(texts, OPENAI_API_KEY);
 
+      const updates: { id: string; embedding: string }[] = [];
       for (let i = 0; i < subChunks.length; i++) {
         if (embeddings[i]) {
-          const { error: updateErr } = await adminClient
-            .from("legal_document_chunks")
-            .update({ embedding: JSON.stringify(embeddings[i]) })
-            .eq("id", subChunks[i].id);
-
-          if (updateErr) {
-            console.error(`Update error for chunk ${subChunks[i].id}:`, updateErr);
-            failed++;
-          } else {
-            processed++;
-          }
+          updates.push({ id: subChunks[i].id, embedding: JSON.stringify(embeddings[i]) });
         } else {
           failed++;
+        }
+      }
+
+      if (updates.length > 0) {
+        const { error: upsertErr } = await adminClient
+          .from("legal_document_chunks")
+          .upsert(updates, { onConflict: "id", ignoreDuplicates: false });
+
+        if (upsertErr) {
+          console.error("Bulk upsert error:", upsertErr);
+          failed += updates.length;
+        } else {
+          processed += updates.length;
         }
       }
     }
