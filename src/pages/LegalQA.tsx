@@ -244,14 +244,21 @@ export default function LegalQA() {
                 ) : (
                   <Button
                     onClick={handleSubmit}
-                    disabled={question.trim().length < 5}
+                    disabled={question.trim().length < 5 || isLimitReached}
                     className="gap-2"
                   >
-                    <Send className="w-4 h-4" />
-                    שאל שאלה משפטית
+                    {isLimitReached ? <Lock className="w-4 h-4" /> : <Send className="w-4 h-4" />}
+                    {isLimitReached ? "המכסה אזלה" : "שאל שאלה משפטית"}
                   </Button>
                 )}
               </div>
+              {remaining !== Infinity && (
+                <p className="text-xs text-muted-foreground text-left mt-1">
+                  {isLimitReached
+                    ? `הגעת למגבלת ${limit} שאילתות חינמיות`
+                    : `נותרו ${remaining} שאילתות מתוך ${limit}`}
+                </p>
+              )}
             </CardContent>
           </Card>
 
