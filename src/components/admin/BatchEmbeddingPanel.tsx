@@ -140,7 +140,7 @@ export default function BatchEmbeddingPanel() {
       )}
 
       <p className="text-xs text-muted-foreground">
-        כל הפעלה מעבדת 50 קטעים. התהליך רץ בלופ אוטומטי עד שכל הקטעים מקבלים embedding.
+        כל הפעלה מעבדת עד 2,048 קטעים. התהליך רץ בלופ אוטומטי עד שכל הקטעים מקבלים embedding.
         ניתן לעצור ולהמשיך בכל זמן.
       </p>
     </div>
