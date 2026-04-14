@@ -311,6 +311,35 @@ serve(async (req) => {
     const searchResults = perplexityResult.content;
     const citations = perplexityResult.citations;
 
+    // ========= Step 1b: Enrich incomplete journal articles via Perplexity =========
+    const incompleteArticles = localMatches.filter(m =>
+      m.source_type === "journal_article" &&
+      (!(m.metadata as Record<string, unknown>)?.author || !(m.metadata as Record<string, unknown>)?.year)
+    );
+
+    if (incompleteArticles.length > 0 && PERPLEXITY_API_KEY) {
+      const enrichmentPromises = incompleteArticles.slice(0, 3).map(async (article) => {
+        try {
+          const res = await fetchWithTimeout("https://api.perplexity.ai/chat/completions", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: "sonar",
+              messages: [{ role: "user", content: `מצא את שם המחבר ושנת הפרסום של המאמר: "${article.document_title}". החזר רק: מחבר: [שם], שנה: [שנה]` }],
+            }),
+          }, 8000);
+          const data = await res.json();
+          const text = data.choices?.[0]?.message?.content || "";
+          const authorMatch = text.match(/מחבר:\s*(.+?)(?:,|\n|$)/);
+          const yearMatch = text.match(/שנה:\s*(\d{4})/);
+          if (authorMatch) article.metadata = { ...(article.metadata || {}), author: authorMatch[1].trim() };
+          if (yearMatch) article.metadata = { ...(article.metadata || {}), year: yearMatch[1] };
+          console.log(`Enriched article "${article.document_title.slice(0, 40)}": author=${authorMatch?.[1] || "?"}, year=${yearMatch?.[1] || "?"}`);
+        } catch (e) { /* skip enrichment on error */ }
+      });
+      await Promise.all(enrichmentPromises);
+    }
+
     const tRetrieval = Date.now();
     console.log(`Retrieval took ${tRetrieval - t0}ms`);
 
@@ -354,14 +383,18 @@ serve(async (req) => {
         } else if (m.source_type === "journal_article") {
           // For journal articles: build academic citation from metadata
           const author = (meta.author as string) || "";
-          const journal = (meta.journal as string) || "משפטים";
+          const journalMap: Record<string, string> = {
+            mishpatim: "משפטים",
+            tau_law_review: "עיוני משפט",
+            hapraklit: "הפרקליט",
+            runilawreview: "משפט ועסקים",
+          };
+          const journal = (meta.journal as string) || journalMap[(meta.source_site as string) || ""] || "";
           const vol = (meta.volume as string) || "";
-          if (author) {
-            richCitation = `${author} "${m.document_title}" ${journal}`;
-            if (vol) richCitation += ` ${vol}`;
-          } else {
-            richCitation = m.document_title || m.document_citation;
-          }
+
+          richCitation = author ? `${author} "${m.document_title}"` : `"${m.document_title}"`;
+          if (journal) richCitation += ` **${journal}**`;
+          if (vol) richCitation += ` ${vol}`;
         }
 
         const sourceLabel = m.source_type === "caselaw" ? "פסיקה" :
@@ -512,6 +545,10 @@ ${taskInstructions}
 - לפני שאתה מצטט מקור כלשהו, בדוק שהוא רלוונטי מהותית לשאלה המשפטית. התאמה במילות מפתח (למשל "ראש הממשלה") אינה מספיקה — המקור חייב לעסוק באותה סוגיה משפטית.
 - אם מקור מהרשימה עוסק בנושא אחר לחלוטין (למשל: השאלה עוסקת בחנינה, והמקור עוסק במינויים), אל תצטט אותו כלל, גם אם הוא מסומן [מאומת].
 - עדיף לצטט פחות מקורות רלוונטיים מאשר להוסיף מקורות שאינם קשורים לנושא.
+
+כלל קריטי – פרטים חסרים:
+- אם מקור מהמאגר חסר שנת פרסום, כתוב "(לא נמצאה שנת פרסום)" — אל תמציא שנה ואל תכתוב "תאריך לא ידוע".
+- אם חסרים פרטים ביבליוגרפיים חיוניים (כמו שם מחבר), נסה לחלץ אותם מתוך תוכן המקור שסופק לך.
 
 ${citationInstructions}
 
