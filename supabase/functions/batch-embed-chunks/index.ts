@@ -8,38 +8,70 @@ const corsHeaders = {
 };
 
 const BATCH_SIZE = 500;
-const SUB_BATCH_SIZE = 200;
+const SUB_BATCH_SIZE = 100;
+const MAX_RETRIES = 3;
 
-async function getEmbeddingsBatch(texts: string[], apiKey: string): Promise<(number[] | null)[]> {
-  try {
-    const truncated = texts.map(t => t.slice(0, 8000));
-    const res = await fetch("https://api.openai.com/v1/embeddings", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "text-embedding-3-small",
-        input: truncated,
-        dimensions: 768,
-      }),
-    });
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
 
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error("Embedding batch error:", res.status, errText);
+async function getEmbeddingsBatch(
+  texts: string[],
+  apiKey: string
+): Promise<(number[] | null)[]> {
+  const truncated = texts.map((t) => t.slice(0, 8000));
+
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch("https://api.openai.com/v1/embeddings", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "text-embedding-3-small",
+          input: truncated,
+          dimensions: 768,
+        }),
+      });
+
+      if (res.status === 429) {
+        const errBody = await res.text();
+        // Try to extract suggested wait time
+        const waitMatch = errBody.match(/try again in ([\d.]+)s/i);
+        const waitSec = waitMatch ? parseFloat(waitMatch[1]) : 2;
+        const backoff = Math.min(waitSec * 1000 + Math.random() * 500, 10000);
+        console.warn(
+          `Rate limited (attempt ${attempt + 1}/${MAX_RETRIES + 1}), waiting ${(backoff / 1000).toFixed(1)}s`
+        );
+        if (attempt < MAX_RETRIES) {
+          await sleep(backoff);
+          continue;
+        }
+        console.error("Rate limit retries exhausted");
+        return texts.map(() => null);
+      }
+
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error("Embedding batch error:", res.status, errText);
+        return texts.map(() => null);
+      }
+
+      const data = await res.json();
+      const sorted = data.data.sort((a: any, b: any) => a.index - b.index);
+      return sorted.map((item: any) => item.embedding);
+    } catch (err) {
+      console.error(`Embedding fetch error (attempt ${attempt + 1}):`, err);
+      if (attempt < MAX_RETRIES) {
+        await sleep(2000 * (attempt + 1));
+        continue;
+      }
       return texts.map(() => null);
     }
-
-    const data = await res.json();
-    // OpenAI returns embeddings sorted by index
-    const sorted = data.data.sort((a: any, b: any) => a.index - b.index);
-    return sorted.map((item: any) => item.embedding);
-  } catch (err) {
-    console.error("Embedding batch failed:", err);
-    return texts.map(() => null);
   }
+  return texts.map(() => null);
 }
 
 serve(async (req) => {
@@ -63,7 +95,10 @@ serve(async (req) => {
     );
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: userError } = await supabase.auth.getUser(token);
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(token);
     if (userError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
@@ -93,9 +128,10 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Fetch all required columns
     const { data: chunks, error: fetchErr } = await adminClient
       .from("legal_document_chunks")
-      .select("id, content")
+      .select("id, document_id, chunk_index, content")
       .is("embedding", null)
       .order("created_at", { ascending: true })
       .limit(BATCH_SIZE);
@@ -108,29 +144,38 @@ serve(async (req) => {
         .select("id", { count: "exact", head: true })
         .is("embedding", null);
 
-      return new Response(JSON.stringify({
-        processed: 0,
-        failed: 0,
-        remaining: count || 0,
-        batch_size: 0,
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          processed: 0,
+          failed: 0,
+          remaining: count || 0,
+          batch_size: 0,
+          retries: 0,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
-    // Sub-batch API calls to stay under OpenAI's 300K token limit
     let processed = 0;
     let failed = 0;
+    let totalRetries = 0;
 
     for (let start = 0; start < chunks.length; start += SUB_BATCH_SIZE) {
       const subChunks = chunks.slice(start, start + SUB_BATCH_SIZE);
-      const texts = subChunks.map(c => c.content);
+      const texts = subChunks.map((c) => c.content);
       const embeddings = await getEmbeddingsBatch(texts, OPENAI_API_KEY);
 
-      const updates: { id: string; embedding: string }[] = [];
+      // Build upsert payload with ALL required fields
+      const updates: { id: string; document_id: string; chunk_index: number; content: string; embedding: string }[] = [];
       for (let i = 0; i < subChunks.length; i++) {
         if (embeddings[i]) {
-          updates.push({ id: subChunks[i].id, embedding: JSON.stringify(embeddings[i]) });
+          updates.push({
+            id: subChunks[i].id,
+            document_id: subChunks[i].document_id,
+            chunk_index: subChunks[i].chunk_index,
+            content: subChunks[i].content,
+            embedding: JSON.stringify(embeddings[i]),
+          });
         } else {
           failed++;
         }
@@ -148,6 +193,11 @@ serve(async (req) => {
           processed += updates.length;
         }
       }
+
+      // Small delay between sub-batches to avoid rate limits
+      if (start + SUB_BATCH_SIZE < chunks.length) {
+        await sleep(1000);
+      }
     }
 
     const { count: remaining } = await adminClient
@@ -155,21 +205,30 @@ serve(async (req) => {
       .select("id", { count: "exact", head: true })
       .is("embedding", null);
 
-    console.log(`Batch complete: ${processed} processed, ${failed} failed, ${remaining} remaining`);
+    console.log(
+      `Batch complete: ${processed} processed, ${failed} failed, ${remaining} remaining`
+    );
 
-    return new Response(JSON.stringify({
-      processed,
-      failed,
-      remaining: remaining || 0,
-      batch_size: chunks.length,
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        processed,
+        failed,
+        remaining: remaining || 0,
+        batch_size: chunks.length,
+        retries: totalRetries,
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   } catch (e) {
     console.error("batch-embed-chunks error:", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({
+        error: e instanceof Error ? e.message : "Unknown error",
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
     );
   }
 });

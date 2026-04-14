@@ -9,6 +9,8 @@ interface BatchResult {
   failed: number;
   remaining: number;
   batch_size: number;
+  retries?: number;
+  error?: string;
 }
 
 export default function BatchEmbeddingPanel() {
