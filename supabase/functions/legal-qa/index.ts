@@ -318,18 +318,19 @@ serve(async (req) => {
     );
 
     if (incompleteArticles.length > 0 && PERPLEXITY_API_KEY) {
+      const journalMapEnrich: Record<string, string> = { mishpatim: "משפטים", tau_law_review: "עיוני משפט", hapraklit: "הפרקליט", runilawreview: "משפט ועסקים" };
       const enrichmentPromises = incompleteArticles.slice(0, 3).map(async (article) => {
         try {
+          const artMeta = (article.metadata || {}) as Record<string, unknown>;
+          const jName = (artMeta.journal as string) || journalMapEnrich[(artMeta.source_site as string) || ""] || "";
+          const vName = (artMeta.volume as string) || "";
+          const enrichPrompt = `מצא את שם המחבר ושנת הפרסום של המאמר האקדמי הישראלי: "${article.document_title}".${jName ? ` המאמר פורסם בכתב העת ${jName}` : ""}${vName ? ` ${vName}` : ""}. החזר רק בפורמט: מחבר: [שם], שנה: [שנה לועזית בת 4 ספרות]`;
           const res = await fetchWithTimeout("https://api.perplexity.ai/chat/completions", {
             method: "POST",
             headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, "Content-Type": "application/json" },
             body: JSON.stringify({
               model: "sonar",
-              const artMeta = (article.metadata || {}) as Record<string, unknown>;
-              const journalMapEnrich: Record<string, string> = { mishpatim: "משפטים", tau_law_review: "עיוני משפט", hapraklit: "הפרקליט", runilawreview: "משפט ועסקים" };
-              const jName = (artMeta.journal as string) || journalMapEnrich[(artMeta.source_site as string) || ""] || "";
-              const vName = (artMeta.volume as string) || "";
-              messages: [{ role: "user", content: `מצא את שם המחבר ושנת הפרסום של המאמר האקדמי הישראלי: "${article.document_title}".${jName ? ` המאמר פורסם בכתב העת ${jName}` : ""}${vName ? ` ${vName}` : ""}. החזר רק בפורמט: מחבר: [שם], שנה: [שנה לועזית בת 4 ספרות]` }],
+              messages: [{ role: "user", content: enrichPrompt }],
             }),
           }, 8000);
           const data = await res.json();
