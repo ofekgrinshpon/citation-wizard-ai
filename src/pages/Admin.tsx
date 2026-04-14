@@ -642,6 +642,7 @@ const Admin = () => {
               );
             })()}
 
+            <BatchEmbeddingPanel />
             <LegalDocumentIngestion onIngested={() => fetchData()} />
             <ApifyIngestionPanel onIngested={() => fetchData()} />
           </div>
