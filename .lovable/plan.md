@@ -1,37 +1,16 @@
 
 
-## Speed Up Batch Embedding (~60x faster)
+## Increase Batch Size to Maximum
 
-### Problem
-Current rate: ~100 chunks/min → ~60 hours for 360K chunks. The bottleneck is **one embedding API call per chunk** (20 calls per batch, each with HTTP overhead).
+OpenAI's embedding API accepts up to **2048 inputs** per request for `text-embedding-3-small`. However, there's also an edge function timeout to consider (~60s on Lovable Cloud). With 2048 chunks of up to 8K chars each, the payload and processing time could exceed limits.
 
-### Solution: Batch inputs in a single OpenAI API call
-OpenAI's embedding endpoint accepts an **array of inputs** — up to 2048 texts in one request. Instead of 20 sequential HTTP calls, we send all 20 (or more) texts in **one call** and get all embeddings back at once.
+A safe maximum is **2048** (OpenAI's hard limit). If timeouts occur, we can reduce to ~500.
 
 ### Changes
 
-1. **Increase `BATCH_SIZE` from 20 to 100** — OpenAI handles this easily in one request
-2. **Rewrite `getEmbedding` → `getEmbeddings`** — accept an array of texts, return an array of embeddings in a single API call
-3. **Remove per-chunk delay** — no longer needed since it's one API call per batch
-4. **Update the processing loop** — bulk-update all chunks in one pass after receiving embeddings
+1. **`supabase/functions/batch-embed-chunks/index.ts`** -- change `BATCH_SIZE` from `100` to `2048`
+2. **`src/components/admin/BatchEmbeddingPanel.tsx`** -- update the description text from "50 קטעים" to "2048 קטעים"
+3. **Redeploy** the `batch-embed-chunks` edge function
 
-### Expected improvement
-- Current: 20 chunks × 1 API call each = ~20 API round-trips per batch (~15s)
-- New: 100 chunks × 1 API call total = ~1 API round-trip per batch (~2s)
-- Estimated new rate: **~2,000-3,000 chunks/min** → finishes in **2-3 hours**
-
-### Files changed
-- `supabase/functions/batch-embed-chunks/index.ts` — rewrite embedding logic to use batch input
-
-### Technical detail
-```
-// Before: one call per chunk
-for (chunk of chunks) {
-  embedding = await getEmbedding(chunk.content);
-}
-
-// After: one call for all chunks
-const texts = chunks.map(c => c.content.slice(0, 8000));
-const embeddings = await getEmbeddingsBatch(texts); // single HTTP request
-```
+This should process chunks ~20x faster than the current 100-per-batch setting.
 
