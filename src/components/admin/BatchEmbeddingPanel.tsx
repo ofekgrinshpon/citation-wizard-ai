@@ -31,6 +31,7 @@ export default function BatchEmbeddingPanel() {
     setTotalFailed(0);
     setBatchCount(0);
     setLastError(null);
+    setRemaining(null);
 
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
@@ -94,8 +95,15 @@ export default function BatchEmbeddingPanel() {
 
         // If nothing was processed and there were failures, stop
         if (data.processed === 0 && data.failed > 0) {
-          setLastError("כל ה-chunks באצווה נכשלו");
+          setLastError(`כל ${data.failed} ה-chunks באצווה נכשלו`);
           toast.error("כל ה-chunks באצווה נכשלו — יש לבדוק את הלוגים");
+          break;
+        }
+
+        // If nothing was processed and nothing failed, but remaining > 0, something is wrong
+        if (data.processed === 0 && data.failed === 0 && data.batch_size === 0 && (data.remaining ?? 0) > 0) {
+          setLastError("אצווה ריקה למרות שנותרו chunks — ייתכן בעיית שליפה");
+          toast.error("בעיה בשליפת chunks — התהליך נעצר");
           break;
         }
 
@@ -164,7 +172,7 @@ export default function BatchEmbeddingPanel() {
       )}
 
       <p className="text-xs text-muted-foreground">
-        כל הפעלה מעבדת עד 500 קטעים. התהליך רץ בלופ אוטומטי עד שכל הקטעים מקבלים embedding.
+        כל הפעלה מעבדת עד 1,000 קטעים (200×2 במקביל). התהליך רץ בלופ אוטומטי עד שכל הקטעים מקבלים embedding.
         ניתן לעצור ולהמשיך בכל זמן.
       </p>
     </div>

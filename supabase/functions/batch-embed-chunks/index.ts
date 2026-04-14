@@ -7,9 +7,10 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const BATCH_SIZE = 500;
-const SUB_BATCH_SIZE = 50;
+const BATCH_SIZE = 1000;
+const SUB_BATCH_SIZE = 200;
 const MAX_RETRIES = 3;
+const PARALLEL_CALLS = 2;
 
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
@@ -87,7 +88,6 @@ serve(async (req) => {
       });
     }
 
-    // Use anon client for auth check
     const anonClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
@@ -123,13 +123,11 @@ serve(async (req) => {
     const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
     if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY not configured");
 
-    // Service role client for DB operations
     const adminClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Fetch chunks that need embeddings (only id + content needed now)
     const { data: chunks, error: fetchErr } = await adminClient
       .from("legal_document_chunks")
       .select("id, content")
@@ -146,12 +144,7 @@ serve(async (req) => {
         .is("embedding", null);
 
       return new Response(
-        JSON.stringify({
-          processed: 0,
-          failed: 0,
-          remaining: count ?? 0,
-          batch_size: 0,
-        }),
+        JSON.stringify({ processed: 0, failed: 0, remaining: count ?? 0, batch_size: 0 }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -159,49 +152,64 @@ serve(async (req) => {
     let processed = 0;
     let failed = 0;
 
-    for (let start = 0; start < chunks.length; start += SUB_BATCH_SIZE) {
-      const subChunks = chunks.slice(start, start + SUB_BATCH_SIZE);
-      const texts = subChunks.map((c) => c.content);
-      const embeddings = await getEmbeddingsBatch(texts, OPENAI_API_KEY);
+    // Split into sub-batches and process PARALLEL_CALLS at a time
+    const subBatches: typeof chunks[] = [];
+    for (let i = 0; i < chunks.length; i += SUB_BATCH_SIZE) {
+      subBatches.push(chunks.slice(i, i + SUB_BATCH_SIZE));
+    }
 
-      // Build compact payload: only id + embedding
-      const payload: { id: string; embedding: string }[] = [];
-      let subFailed = 0;
-      for (let i = 0; i < subChunks.length; i++) {
-        if (embeddings[i]) {
-          payload.push({
-            id: subChunks[i].id,
-            embedding: JSON.stringify(embeddings[i]),
-          });
-        } else {
-          subFailed++;
+    for (let i = 0; i < subBatches.length; i += PARALLEL_CALLS) {
+      const parallel = subBatches.slice(i, i + PARALLEL_CALLS);
+
+      // Fire embedding calls in parallel
+      const embeddingResults = await Promise.all(
+        parallel.map((sub) =>
+          getEmbeddingsBatch(sub.map((c) => c.content), OPENAI_API_KEY)
+        )
+      );
+
+      // Write each sub-batch result to DB
+      for (let j = 0; j < parallel.length; j++) {
+        const subChunks = parallel[j];
+        const embeddings = embeddingResults[j];
+
+        const payload: { id: string; embedding: string }[] = [];
+        let subFailed = 0;
+        for (let k = 0; k < subChunks.length; k++) {
+          if (embeddings[k]) {
+            payload.push({
+              id: subChunks[k].id,
+              embedding: JSON.stringify(embeddings[k]),
+            });
+          } else {
+            subFailed++;
+          }
         }
+
+        if (payload.length > 0) {
+          // Pass raw array — supabase-js serializes it to jsonb automatically
+          const { data: updatedCount, error: rpcErr } = await adminClient.rpc(
+            "bulk_update_legal_chunk_embeddings",
+            { payload }
+          );
+
+          if (rpcErr) {
+            console.error("RPC bulk_update error:", rpcErr);
+            failed += payload.length;
+          } else {
+            processed += Number(updatedCount) || payload.length;
+          }
+        }
+
+        failed += subFailed;
       }
 
-      if (payload.length > 0) {
-        // Call the lightweight RPC instead of heavy upsert
-        const { data: updatedCount, error: rpcErr } = await adminClient.rpc(
-          "bulk_update_legal_chunk_embeddings",
-          { payload: JSON.stringify(payload) }
-        );
-
-        if (rpcErr) {
-          console.error("RPC bulk_update error:", rpcErr);
-          failed += payload.length;
-        } else {
-          processed += Number(updatedCount) || payload.length;
-        }
-      }
-
-      failed += subFailed;
-
-      // Delay between sub-batches to avoid rate limits
-      if (start + SUB_BATCH_SIZE < chunks.length) {
-        await sleep(1000);
+      // Short delay between parallel groups to avoid rate limits
+      if (i + PARALLEL_CALLS < subBatches.length) {
+        await sleep(200);
       }
     }
 
-    // Get accurate remaining count
     const { count: remainingCount, error: countErr } = await adminClient
       .from("legal_document_chunks")
       .select("id", { count: "exact", head: true })
@@ -218,20 +226,13 @@ serve(async (req) => {
     );
 
     return new Response(
-      JSON.stringify({
-        processed,
-        failed,
-        remaining,
-        batch_size: chunks.length,
-      }),
+      JSON.stringify({ processed, failed, remaining, batch_size: chunks.length }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
     console.error("batch-embed-chunks error:", e);
     return new Response(
-      JSON.stringify({
-        error: e instanceof Error ? e.message : "Unknown error",
-      }),
+      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
