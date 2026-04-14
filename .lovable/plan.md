@@ -1,78 +1,82 @@
 
-Goal: make batch embedding work reliably again, then speed it up safely.
+Goal: make batch embedding actually complete again, then restore speed safely.
 
-What I found
-- The current failure is real and reproducible from the logs.
-- Root cause 1: `batch-embed-chunks` now fetches only `id, content` and then does `upsert({ id, embedding })`.
-- But `legal_document_chunks` has required non-null columns: `document_id`, `chunk_index`, and `content`.
-- In Postgres, an upsert payload must still satisfy NOT NULL checks before conflict resolution, so the current bulk write fails with:
-  - `null value in column "document_id" ... violates not-null constraint`
-- Root cause 2: logs also show intermittent OpenAI `429 rate_limit_exceeded` on embedding requests, so even after fixing the DB write path, throughput can still stall without retry/backoff.
+What the issue is
+- I now know the main failure: it is no longer the old NOT NULL bug.
+- The current edge logs show repeated database write failures:
+  - `57014 canceling statement due to statement timeout`
+- So the problem is the current bulk `upsert` itself is too heavy.
+- There is also a UI bug: when the function returns `remaining: null`, the code coerces it to `0`, so the admin panel can wrongly show “all chunks processed” even when `0 processed / 500 failed`.
 
-Plan to fix it
-1. Repair the database write path in `supabase/functions/batch-embed-chunks/index.ts`
-- Change the fetch to include all required columns:
-  - `id, document_id, chunk_index, content`
-- Build the bulk payload with all required fields plus `embedding`
-- Keep bulk writes, but only for valid rows
+Why the current approach fails
+- `upsert` still sends large payloads for every row:
+  - `id`
+  - `document_id`
+  - `chunk_index`
+  - `content`
+  - `embedding`
+- That means each DB write is pushing large text blobs plus vectors through the REST layer.
+- The logs show this write path is timing out before completion.
+- So the fix should stop using `upsert` for this job.
 
-2. Add resilient retry handling for embedding API calls
-- Detect 429 responses in `getEmbeddingsBatch`
-- Retry the sub-batch with capped exponential backoff and jitter
-- Respect the provider’s suggested wait time when available
-- If retries still fail, mark only that sub-batch as failed instead of silently poisoning the whole run
+Plan to fix
+1. Replace bulk `upsert` with a real bulk `update`
+- Add a database function via migration, e.g. `bulk_update_legal_chunk_embeddings(payload jsonb)`.
+- Inside it, use `jsonb_to_recordset(...)` + `UPDATE ... FROM ...` keyed by `id`.
+- Update only the `embedding` column.
+- Return the number of rows updated.
+- Revoke public execute access so only backend code can use it safely.
 
-3. Make the batch size safer under rate pressure
-- Reduce `SUB_BATCH_SIZE` from 200 to a safer value if needed
-- Keep `BATCH_SIZE` at 500 for DB fetches unless logs show timeout pressure
-- Optionally insert a small delay between sub-batches to stay under tokens-per-minute limits
+2. Update the edge function to call the bulk-update function
+- In `supabase/functions/batch-embed-chunks/index.ts`:
+  - stop building full upsert rows
+  - send a compact payload like:
+    ```text
+    [{ id, embedding }]
+    ```
+  - call the database function with the service-role client
+- Keep the existing auth/admin gate.
+- Add strict error handling for:
+  - update RPC failure
+  - count query failure
+  - rate-limit exhaustion
 
-4. Improve operator visibility in the admin panel
-- Return clearer response details from the function:
-  - processed
-  - failed
-  - remaining
-  - sub-batches attempted
-  - retry count / rate-limited status
-- Update `src/components/admin/BatchEmbeddingPanel.tsx` to surface “rate limited, retrying” vs “DB write failed” so failures are diagnosable from the UI
+3. Make the batch safer while recovering
+- Temporarily lower `SUB_BATCH_SIZE` to a safer value like `25` or `50`.
+- Keep retry/backoff for 429s.
+- Once the new DB write path is stable, increase the sub-batch again if logs stay clean.
 
-5. Verify the fix after deployment
-- Redeploy `batch-embed-chunks`
-- Trigger one batch run
-- Check logs to confirm:
-  - no more NOT NULL upsert errors
-  - processed count is greater than 0
-  - remaining decreases
-  - 429s, if they occur, are retried instead of failing the whole batch
+4. Fix the admin UI so it stops lying about success
+- In `src/components/admin/BatchEmbeddingPanel.tsx`:
+  - do not treat `null` remaining as `0`
+  - only show success when:
+    - `remaining === 0`
+    - and no fatal error occurred
+  - if `processed === 0` and `failed > 0`, show an error toast instead
+  - surface backend error text when available
 
-Recommended implementation detail
-```text
-Fetch:
-  select id, document_id, chunk_index, content
+5. Verify with logs and one live run
+- Redeploy the function and migration.
+- Run one batch from `/admin`.
+- Confirm:
+  - no more `statement timeout`
+  - processed count increases
+  - remaining decreases correctly
+  - no false “all done” message
+- If timeouts still happen, use the fallback:
+  - controlled concurrent per-row `update` calls (small concurrency) instead of RPC batching
 
-Upsert payload per success:
-  {
-    id,
-    document_id,
-    chunk_index,
-    content,
-    embedding
-  }
-```
-
-Why this approach
-- It preserves the intended speedup from bulk writes.
-- It fixes the actual hard failure shown in the logs.
-- It also addresses the second bottleneck already visible: provider rate limiting.
+Files to change
+- `supabase/functions/batch-embed-chunks/index.ts`
+- `src/components/admin/BatchEmbeddingPanel.tsx`
+- new migration in `supabase/migrations/...sql`
 
 Technical notes
-- No schema migration is required for this fix.
-- The main code file to update is:
-  - `supabase/functions/batch-embed-chunks/index.ts`
-- Secondary optional UI update:
-  - `src/components/admin/BatchEmbeddingPanel.tsx`
-- Existing auth and admin-role checks can remain as-is.
+- This likely needs a schema migration because the best fix is a dedicated bulk-update database function.
+- No auth model changes are needed.
+- The console ref warnings in Admin/Apify are unrelated to the embedding failure.
 
 Expected result
-- The batch process should start embedding successfully again instead of returning `0 processed, 500 failed`.
-- Throughput should improve versus individual updates, while staying stable under API rate limits.
+- The embedding process should stop failing at the DB write step.
+- The admin panel should report the real state instead of false success.
+- Throughput should improve because the backend will update only `{id, embedding}` instead of re-sending full chunk rows.
