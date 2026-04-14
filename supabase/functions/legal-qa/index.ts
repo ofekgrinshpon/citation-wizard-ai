@@ -898,10 +898,14 @@ ${combinedContext}`;
           reorderedFootnotes.push({ ...fn, number: reorderedFootnotes.length + 1 });
         }
       }
+    // Quote-agnostic pattern for "לעיל ה"ש" (matches ", ״, ", ")
+      const SUPRA_QUOTE = '["\u05F4\u201C\u201D]';
+      const SUPRA_PATTERN = `לעיל\\s+ה${SUPRA_QUOTE}ש\\s+`;
+
       // Update cross-references ("לעיל ה"ש X") inside footnote citations
       for (const fn of reorderedFootnotes) {
         fn.citation = fn.citation.replace(
-          /לעיל\s+ה"ש\s+(\d{1,2})/g,
+          new RegExp(SUPRA_PATTERN + '(\\d{1,2})', 'g'),
           (match: string, num: string) => {
             const oldNum = parseInt(num, 10);
             const newNum = reorderMap.get(oldNum);
@@ -938,24 +942,26 @@ ${combinedContext}`;
     answer = answer.replace(/\[NEW:[^\]]+\]/g, "");
 
     // Fix self-referencing "לעיל ה"ש X" where X equals the footnote's own number
+    const SUPRA_Q = '["\u05F4\u201C\u201D]';
+    const SUPRA_P = `לעיל\\s+ה${SUPRA_Q}ש\\s+`;
     for (const fn of footnotes) {
-      const selfRefPattern = new RegExp(`לעיל\\s+ה"ש\\s+${fn.number}\\b`, "g");
+      const selfRefPattern = new RegExp(SUPRA_P + `${fn.number}\\b`, "g");
       if (selfRefPattern.test(fn.citation)) {
         // Remove the self-referencing phrase and clean up
-        fn.citation = fn.citation.replace(new RegExp(`,?\\s*לעיל\\s+ה"ש\\s+${fn.number}\\b`, "g"), "").trim();
+        fn.citation = fn.citation.replace(new RegExp(`,?\\s*` + SUPRA_P + `${fn.number}\\b`, "g"), "").trim();
         fn.citation = fn.citation.replace(/^[,،\s]+/, "").trim();
       }
     }
 
     // Validate cross-references: ensure "לעיל ה"ש X" points to a matching source
     for (const fn of footnotes) {
-      const refMatch = fn.citation.match(/לעיל\s+ה"ש\s+(\d{1,2})/);
+      const refMatch = fn.citation.match(new RegExp(SUPRA_P + '(\\d{1,2})'));
       if (refMatch) {
         const targetNum = parseInt(refMatch[1], 10);
         const targetFn = footnotes.find(f => f.number === targetNum);
         if (!targetFn) {
           // Target doesn't exist — remove the cross-reference phrase
-          fn.citation = fn.citation.replace(/,?\s*לעיל\s+ה"ש\s+\d{1,2}/, "").trim();
+          fn.citation = fn.citation.replace(new RegExp(`,?\\s*` + SUPRA_P + '\\d{1,2}'), "").trim();
           fn.citation = fn.citation.replace(/^[,،\s]+/, "").trim();
         }
       }
