@@ -347,6 +347,29 @@ export default function LegalQA() {
             </Card>
           )}
         </div>
+
+        {/* Limit reached dialog */}
+        <Dialog open={showLimitDialog} onOpenChange={setShowLimitDialog}>
+          <DialogContent dir="rtl" className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 justify-center">
+                <Lock className="w-5 h-5 text-destructive" />
+                המכסה החינמית אזלה
+              </DialogTitle>
+              <DialogDescription className="text-center">
+                ניצלת את {limit} השאילתות החינמיות. לשימוש ללא הגבלה, שדרגו למנוי.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-center gap-2 pt-2">
+              <Button onClick={() => { setShowLimitDialog(false); navigate("/profile"); }}>
+                שדרוג מנוי
+              </Button>
+              <Button variant="outline" onClick={() => setShowLimitDialog(false)}>
+                סגור
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );
