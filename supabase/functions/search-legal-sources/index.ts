@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 async function getEmbedding(text: string, apiKey: string): Promise<number[]> {
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/embeddings", {
+  const res = await fetch("https://api.openai.com/v1/embeddings", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -61,8 +61,8 @@ serve(async (req) => {
       });
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY not configured");
 
     const { question, match_threshold = 0.7, match_count = 8 } = await req.json();
 
@@ -75,7 +75,7 @@ serve(async (req) => {
 
     // Generate embedding for the question
     console.log("Generating question embedding...");
-    const queryEmbedding = await getEmbedding(question, LOVABLE_API_KEY);
+    const queryEmbedding = await getEmbedding(question, OPENAI_API_KEY);
 
     // Use service role for the RPC call (to access the match function)
     const adminClient = createClient(
