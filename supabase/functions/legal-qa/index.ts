@@ -484,10 +484,10 @@ serve(async (req) => {
     const sourceCards: SourceCard[] = [];
     let cardId = 1;
 
-    // Local sources — build rich citations from structured fields
-    if (usedLocalSearch && localMatches.length > 0) {
+    // Local sources — build rich citations from structured fields (using re-ranked matches)
+    if (rankedMatches.length > 0) {
       const seenDocs = new Set<string>();
-      for (const m of localMatches) {
+      for (const m of rankedMatches) {
         if (seenDocs.has(m.document_id)) continue;
         seenDocs.add(m.document_id);
         if (isBlogUrl(m.source_url || undefined)) continue;
