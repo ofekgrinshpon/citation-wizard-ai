@@ -153,6 +153,7 @@ export default function LegalQA() {
       }
 
       setResult(data as QAResult);
+      await incrementCount();
     } catch (e: any) {
       if (e.name === "AbortError") return; // user cancelled
       console.error("Legal QA error:", e);
