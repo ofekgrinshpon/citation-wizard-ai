@@ -8,6 +8,7 @@ const corsHeaders = {
 };
 
 const BATCH_SIZE = 500;
+const SUB_BATCH_SIZE = 200;
 
 async function getEmbeddingsBatch(texts: string[], apiKey: string): Promise<(number[] | null)[]> {
   try {
@@ -117,29 +118,31 @@ serve(async (req) => {
       });
     }
 
-    // Single batch API call for all chunks
-    const texts = chunks.map(c => c.content);
-    const embeddings = await getEmbeddingsBatch(texts, OPENAI_API_KEY);
-
+    // Sub-batch API calls to stay under OpenAI's 300K token limit
     let processed = 0;
     let failed = 0;
 
-    // Update all chunks with their embeddings
-    for (let i = 0; i < chunks.length; i++) {
-      if (embeddings[i]) {
-        const { error: updateErr } = await adminClient
-          .from("legal_document_chunks")
-          .update({ embedding: JSON.stringify(embeddings[i]) })
-          .eq("id", chunks[i].id);
+    for (let start = 0; start < chunks.length; start += SUB_BATCH_SIZE) {
+      const subChunks = chunks.slice(start, start + SUB_BATCH_SIZE);
+      const texts = subChunks.map(c => c.content);
+      const embeddings = await getEmbeddingsBatch(texts, OPENAI_API_KEY);
 
-        if (updateErr) {
-          console.error(`Update error for chunk ${chunks[i].id}:`, updateErr);
-          failed++;
+      for (let i = 0; i < subChunks.length; i++) {
+        if (embeddings[i]) {
+          const { error: updateErr } = await adminClient
+            .from("legal_document_chunks")
+            .update({ embedding: JSON.stringify(embeddings[i]) })
+            .eq("id", subChunks[i].id);
+
+          if (updateErr) {
+            console.error(`Update error for chunk ${subChunks[i].id}:`, updateErr);
+            failed++;
+          } else {
+            processed++;
+          }
         } else {
-          processed++;
+          failed++;
         }
-      } else {
-        failed++;
       }
     }
 
