@@ -1,20 +1,20 @@
 
 
-## Update Hapraklit Documents to `journal_article`
+## עדכון מסמכי Supreme Decisions ל-caselaw
 
-### What
-153 records currently typed as `knesset_research` where `pdf_url` or `source_url` contains `hapraklit` will be updated to `source_type = 'journal_article'`.
+### מה נמצא
+- 506 רשומות ב-`legal_documents` עם `source_url` או `pdf_url` שמכילים `supremedecisions`
+- כולן מסווגות כרגע כ-`knesset_research`
 
 ### SQL
 ```sql
 UPDATE legal_documents
-SET source_type = 'journal_article'
-WHERE pdf_url LIKE '%hapraklit%'
-   OR source_url LIKE '%hapraklit%';
+SET source_type = 'caselaw'
+WHERE source_url LIKE '%supremedecisions%'
+   OR pdf_url LIKE '%supremedecisions%';
 ```
 
-### Technical details
-- Uses the data insert/update tool (not a migration, since this is a data change)
-- No schema or code changes needed
-- 153 rows affected
+### פרטים טכניים
+- שינוי נתונים בלבד, ללא שינוי סכמה
+- 506 שורות יושפעו
 
