@@ -19,6 +19,7 @@ export default function BatchEmbeddingPanel() {
   const [remaining, setRemaining] = useState<number | null>(null);
   const [batchCount, setBatchCount] = useState(0);
   const [lastError, setLastError] = useState<string | null>(null);
+  const [rebuildingIndex, setRebuildingIndex] = useState(false);
   const abortRef = useRef(false);
 
   const totalChunks = remaining !== null ? totalProcessed + remaining : null;
@@ -75,7 +76,6 @@ export default function BatchEmbeddingPanel() {
         consecutiveErrors = 0;
         const data: BatchResult = await res.json();
 
-        // Check for backend error
         if (data.error) {
           setLastError(data.error);
           toast.error(`שגיאת שרת: ${data.error}`);
@@ -87,20 +87,17 @@ export default function BatchEmbeddingPanel() {
         setRemaining(data.remaining);
         setBatchCount((prev) => prev + 1);
 
-        // Only declare success when remaining is explicitly 0
         if (data.remaining === 0) {
-          toast.success("כל ה-chunks עובדו בהצלחה! 🎉");
+          toast.success("כל ה-chunks עובדו בהצלחה! 🎉 עכשיו אפשר לבנות מחדש את אינדקס החיפוש.");
           break;
         }
 
-        // If nothing was processed and there were failures, stop
         if (data.processed === 0 && data.failed > 0) {
           setLastError(`כל ${data.failed} ה-chunks באצווה נכשלו`);
           toast.error("כל ה-chunks באצווה נכשלו — יש לבדוק את הלוגים");
           break;
         }
 
-        // If nothing was processed and nothing failed, but remaining > 0, something is wrong
         if (data.processed === 0 && data.failed === 0 && data.batch_size === 0 && (data.remaining ?? 0) > 0) {
           setLastError("אצווה ריקה למרות שנותרו chunks — ייתכן בעיית שליפה");
           toast.error("בעיה בשליפת chunks — התהליך נעצר");
@@ -131,19 +128,66 @@ export default function BatchEmbeddingPanel() {
     abortRef.current = true;
   };
 
+  const rebuildIndex = useCallback(async () => {
+    setRebuildingIndex(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error("לא מחובר");
+        return;
+      }
+
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/rebuild-hnsw-index`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        toast.error(`שגיאה בבניית אינדקס: ${errText.slice(0, 200)}`);
+        return;
+      }
+
+      const data = await res.json();
+      if (data.error) {
+        toast.error(`שגיאה: ${data.error}`);
+      } else {
+        toast.success("אינדקס HNSW נבנה מחדש בהצלחה! 🎉");
+      }
+    } catch (err) {
+      toast.error("שגיאת רשת בבניית אינדקס");
+    } finally {
+      setRebuildingIndex(false);
+    }
+  }, []);
+
   return (
     <div className="bg-card border border-border rounded-xl p-5 shadow-sm space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-foreground font-bold text-sm">🧬 יצירת Embeddings (Vector Search)</h3>
-        {running ? (
-          <Button variant="destructive" size="sm" onClick={stop}>
-            ⏹ עצור
+        <div className="flex gap-2">
+          {running ? (
+            <Button variant="destructive" size="sm" onClick={stop}>
+              ⏹ עצור
+            </Button>
+          ) : (
+            <Button size="sm" onClick={runBatch}>
+              ▶️ הפעל Batch Embedding
+            </Button>
+          )}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={rebuildIndex}
+            disabled={running || rebuildingIndex}
+          >
+            {rebuildingIndex ? "⏳ בונה אינדקס..." : "🔧 בנה אינדקס HNSW"}
           </Button>
-        ) : (
-          <Button size="sm" onClick={runBatch}>
-            ▶️ הפעל Batch Embedding
-          </Button>
-        )}
+        </div>
       </div>
 
       {(running || totalProcessed > 0 || totalFailed > 0) && (
@@ -172,8 +216,8 @@ export default function BatchEmbeddingPanel() {
       )}
 
       <p className="text-xs text-muted-foreground">
-        כל הפעלה מעבדת עד 1,000 קטעים (200×2 במקביל). התהליך רץ בלופ אוטומטי עד שכל הקטעים מקבלים embedding.
-        ניתן לעצור ולהמשיך בכל זמן.
+        כל הפעלה מעבדת עד 500 קטעים (200×2 במקביל). התהליך רץ בלופ אוטומטי עד שכל הקטעים מקבלים embedding.
+        לאחר סיום כל ה-embeddings, לחצו "בנה אינדקס HNSW" לשחזור חיפוש וקטורי מהיר.
       </p>
     </div>
   );
