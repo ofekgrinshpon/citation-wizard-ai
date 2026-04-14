@@ -1,34 +1,25 @@
 
 
-## Plan: Fix batch embedding + speed optimizations
+## Fix: Token Limit Exceeded (318K > 300K max)
 
-### Root cause (confirmed from logs)
-Line 185: `{ payload: JSON.stringify(payload) }` — the Supabase JS client already serializes arguments to JSON, so calling `JSON.stringify` wraps the array in a string scalar. The DB function then fails with `cannot extract elements from a scalar`.
+### Problem
+The logs show: **"Requested 318095 tokens, max 300000 tokens per request"**. 500 chunks with up to 8000 chars each exceeds OpenAI's 300K token-per-request limit. Every batch fails with 0 processed, 500 failed.
+
+### Solution: Adaptive sub-batching within each edge function call
+
+Instead of sending all 500 chunks in one API call, split them into **token-safe sub-batches** (~200 chunks each) and make multiple API calls per edge function invocation. This keeps each API call under the 300K token limit while still processing 500 chunks per edge function call.
 
 ### Changes
 
-**1. Fix the RPC call in `supabase/functions/batch-embed-chunks/index.ts`**
-- Remove `JSON.stringify()` around the payload — pass the raw array directly
-- The embedding strings inside each item are already JSON-stringified, which is correct for the DB function
+**`supabase/functions/batch-embed-chunks/index.ts`**:
+- Keep `BATCH_SIZE = 500` (DB fetch size)
+- Add a `SUB_BATCH_SIZE = 200` constant for API calls
+- Split chunks into groups of 200 before calling `getEmbeddingsBatch`
+- Loop through sub-batches, accumulating results
+- This means 2-3 API calls per edge function call instead of 1, but each stays well under the 300K token limit
 
-**2. Speed optimizations in the same file**
-- Increase `SUB_BATCH_SIZE` from 50 to 200 (OpenAI batch embedding API handles large arrays efficiently)
-- Reduce inter-batch delay from 1000ms to 200ms
-- Fire 2 sub-batches in parallel using `Promise.all` when possible (2 concurrent OpenAI calls, then 1 RPC write per batch) — this roughly doubles throughput while staying under rate limits
-- Keep the existing retry/backoff logic for 429s
-
-**3. UI fix in `src/components/admin/BatchEmbeddingPanel.tsx`**
-- Handle `remaining === null` correctly (don't treat as 0)
-- Show backend error text when present
-- Only show success toast when `remaining === 0`
-
-### Files to change
-- `supabase/functions/batch-embed-chunks/index.ts`
-- `src/components/admin/BatchEmbeddingPanel.tsx`
-
-### No migration needed
-The existing `bulk_update_legal_chunk_embeddings` DB function is correct — only the caller is broken.
-
-### Expected speed
-With SUB_BATCH_SIZE=200, 2 parallel calls, and 200ms delays: ~1000 chunks per function invocation, completing ~313K chunks in ~5-6 hours of continuous running (vs current 0 due to the bug).
+### Expected result
+- 200 chunks × ~636 tokens avg = ~127K tokens per API call (safely under 300K)
+- 500 chunks processed per edge function call via 2-3 sub-batches
+- ~3,000+ chunks/min throughput maintained
 

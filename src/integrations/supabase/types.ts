@@ -417,10 +417,6 @@ export type Database = {
       }
     }
     Functions: {
-      bulk_update_legal_chunk_embeddings: {
-        Args: { payload: Json }
-        Returns: number
-      }
       compute_verified_source_identity: {
         Args: {
           _full_citation: string
