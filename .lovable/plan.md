@@ -1,19 +1,25 @@
 
 
-## תיקון: התאמה בין הפניה נרטיבית בגוף לבין הערת השוליים
+## Fix: Add relevance filtering instruction to prevent irrelevant source citations
 
-### הבעיה
-גוף הטקסט מזכיר "עניין רוזנשטיין" אבל הערת שוליים 2 מפנה לתיק אחר לגמרי (אלמקייס נ' ראש הממשלה). זו בעיית עקביות — ה-AI משתמש בשם נרטיבי שלא תואם את המקור בהערת השוליים.
+### Problem
+The keyword-based retrieval (OR logic) returns sources with superficial keyword overlap (e.g., "ראש הממשלה") even when the legal topic is completely different. The AI then cites these irrelevant sources instead of ignoring them.
 
-### שינוי
+### Solution
+Add an explicit instruction in the system prompt telling the AI to evaluate source relevance before citing, and to skip sources that don't substantively relate to the legal question.
 
-**קובץ: `supabase/functions/legal-qa/index.ts`** — הוספת הוראה חדשה בבלוק "הפניות נרטיביות לפסיקה" (אחרי שורה ~481):
+### Changes
+
+**File: `supabase/functions/legal-qa/index.ts`** — Add a new critical rule after the source priority block (~line 504):
 
 ```
-- כלל קריטי – התאמה בין גוף להערה: כאשר אתה מזכיר מקור בגוף הטקסט בשם נרטיבי (למשל "בעניין רוזנשטיין"), הערת השוליים המתאימה חייבת להכיל את אותו מקור בדיוק. אסור בשום מצב שהגוף יזכיר שם אחד (רוזנשטיין) וההערה תכיל תיק אחר (אלמקייס). אם אין לך את הפרטים הטכניים של המקור שאתה מזכיר — אל תזכיר אותו בגוף הטקסט.
+כלל קריטי – רלוונטיות מקורות:
+- לפני שאתה מצטט מקור כלשהו, בדוק שהוא רלוונטי מהותית לשאלה המשפטית. התאמה במילות מפתח (למשל "ראש הממשלה") אינה מספיקה — המקור חייב לעסוק באותה סוגיה משפטית.
+- אם מקור מהרשימה עוסק בנושא אחר לחלוטין (למשל: השאלה עוסקת בחנינה, והמקור עוסק במינויים), אל תצטט אותו כלל, גם אם הוא מסומן [מאומת].
+- עדיף לצטט פחות מקורות רלוונטיים מאשר להוסיף מקורות שאינם קשורים לנושא.
 ```
 
-### פרטים טכניים
-- שינוי פרומפט בלבד, ללא שינוי קוד
-- פריסה מחדש של Edge Function `legal-qa`
+### Technical details
+- Prompt-only change, no code logic changes
+- Redeploy Edge Function `legal-qa`
 
