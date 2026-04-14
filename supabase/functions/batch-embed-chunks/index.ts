@@ -7,12 +7,11 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const BATCH_SIZE = 20;
-const DELAY_MS = 100;
+const BATCH_SIZE = 100;
 
-async function getEmbedding(text: string, apiKey: string): Promise<number[] | null> {
+async function getEmbeddingsBatch(texts: string[], apiKey: string): Promise<(number[] | null)[]> {
   try {
-    const truncated = text.slice(0, 8000);
+    const truncated = texts.map(t => t.slice(0, 8000));
     const res = await fetch("https://api.openai.com/v1/embeddings", {
       method: "POST",
       headers: {
@@ -27,20 +26,18 @@ async function getEmbedding(text: string, apiKey: string): Promise<number[] | nu
     });
 
     if (!res.ok) {
-      if (res.status === 429) {
-        console.warn("Rate limited, will retry later");
-        return null;
-      }
       const errText = await res.text();
-      console.error("Embedding error:", res.status, errText);
-      return null;
+      console.error("Embedding batch error:", res.status, errText);
+      return texts.map(() => null);
     }
 
     const data = await res.json();
-    return data.data[0].embedding;
+    // OpenAI returns embeddings sorted by index
+    const sorted = data.data.sort((a: any, b: any) => a.index - b.index);
+    return sorted.map((item: any) => item.embedding);
   } catch (err) {
-    console.error("Embedding failed:", err);
-    return null;
+    console.error("Embedding batch failed:", err);
+    return texts.map(() => null);
   }
 }
 
@@ -50,7 +47,6 @@ serve(async (req) => {
   }
 
   try {
-    // Admin-only auth gate
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -96,7 +92,6 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Get chunks without embeddings
     const { data: chunks, error: fetchErr } = await adminClient
       .from("legal_document_chunks")
       .select("id, content")
@@ -107,7 +102,6 @@ serve(async (req) => {
     if (fetchErr) throw new Error(`Failed to fetch chunks: ${fetchErr.message}`);
 
     if (!chunks || chunks.length === 0) {
-      // Count total to confirm done
       const { count } = await adminClient
         .from("legal_document_chunks")
         .select("id", { count: "exact", head: true })
@@ -115,27 +109,31 @@ serve(async (req) => {
 
       return new Response(JSON.stringify({
         processed: 0,
+        failed: 0,
         remaining: count || 0,
-        message: "No chunks to process",
+        batch_size: 0,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    // Single batch API call for all chunks
+    const texts = chunks.map(c => c.content);
+    const embeddings = await getEmbeddingsBatch(texts, OPENAI_API_KEY);
+
     let processed = 0;
     let failed = 0;
 
-    for (const chunk of chunks) {
-      const embedding = await getEmbedding(chunk.content, OPENAI_API_KEY);
-
-      if (embedding) {
+    // Update all chunks with their embeddings
+    for (let i = 0; i < chunks.length; i++) {
+      if (embeddings[i]) {
         const { error: updateErr } = await adminClient
           .from("legal_document_chunks")
-          .update({ embedding: JSON.stringify(embedding) })
-          .eq("id", chunk.id);
+          .update({ embedding: JSON.stringify(embeddings[i]) })
+          .eq("id", chunks[i].id);
 
         if (updateErr) {
-          console.error(`Update error for chunk ${chunk.id}:`, updateErr);
+          console.error(`Update error for chunk ${chunks[i].id}:`, updateErr);
           failed++;
         } else {
           processed++;
@@ -143,12 +141,8 @@ serve(async (req) => {
       } else {
         failed++;
       }
-
-      // Rate-limit aware delay
-      await new Promise((r) => setTimeout(r, DELAY_MS));
     }
 
-    // Get remaining count
     const { count: remaining } = await adminClient
       .from("legal_document_chunks")
       .select("id", { count: "exact", head: true })
