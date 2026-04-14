@@ -8,7 +8,8 @@ const corsHeaders = {
 };
 
 const BATCH_SIZE = 1000;
-const SUB_BATCH_SIZE = 200;
+const EMBED_BATCH_SIZE = 200;  // OpenAI embedding call size
+const DB_BATCH_SIZE = 50;      // RPC write size (avoid DB timeout)
 const MAX_RETRIES = 3;
 const PARALLEL_CALLS = 2;
 
