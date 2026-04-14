@@ -1,20 +1,25 @@
 
 
-## עדכון מסמכי Supreme Decisions ל-caselaw
+## הגבלת שאילתות בעוזר המשפטי לפי מנוי
 
-### מה נמצא
-- 506 רשומות ב-`legal_documents` עם `source_url` או `pdf_url` שמכילים `supremedecisions`
-- כולן מסווגות כרגע כ-`knesset_research`
+### מה חסר
+עמוד ה-Legal QA (`/legal-qa`) לא משתמש כלל ב-`useSubscription` — אין בדיקת מכסה, אין ספירה, ואין חסימה למשתמשים לא מנויים.
 
-### SQL
-```sql
-UPDATE legal_documents
-SET source_type = 'caselaw'
-WHERE source_url LIKE '%supremedecisions%'
-   OR pdf_url LIKE '%supremedecisions%';
-```
+### מה אעשה
+
+**1. הוספת הוק המנוי לעמוד LegalQA**
+- ייבוא `useSubscription` ושימוש בו ב-`LegalQA.tsx`
+- קריאה ל-`incrementCount()` אחרי כל שאילתה מוצלחת (בתוך `handleSubmit`, אחרי קבלת תוצאה)
+
+**2. חסימת שליחה כשהמכסה אוזלת**
+- השבתת כפתור "שאל שאלה משפטית" כש-`isLimitReached === true`
+- הצגת overlay/modal זהה לזה שבעמוד הראשי (Index) כשהמכסה מלאה, עם הפניה לעמוד הפרופיל/מנוי
+
+**3. הצגת מונה שאילתות נותרות**
+- הוספת טקסט קטן מתחת לכפתור השליחה שמראה כמה שאילתות נותרו (למשל: "נותרו 2 שאילתות")
 
 ### פרטים טכניים
-- שינוי נתונים בלבד, ללא שינוי סכמה
-- 506 שורות יושפעו
+- הספירה משותפת עם הצ'אט הראשי — אותו `citation_count` בטבלת `profiles`, אותו RPC `increment_citation_count`
+- המכסה: 3 סה"כ (FREE_LIMIT) לכל הפיצ'רים יחד
+- קובץ אחד מושפע: `src/pages/LegalQA.tsx`
 
