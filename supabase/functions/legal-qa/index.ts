@@ -590,16 +590,17 @@ serve(async (req) => {
       contextParts.push(documentContext);
     }
 
-    if (usedLocalSearch && localMatches.length > 0) {
+    if (rankedMatches.length > 0) {
       const seenDocs = new Set<string>();
       let localContext = "\n=== מקורות מאומתים מהמאגר המשפטי ===\n";
-      for (const m of localMatches) {
+      for (const m of rankedMatches) {
         if (!seenDocs.has(m.document_id)) {
           seenDocs.add(m.document_id);
           const typeLabel = m.source_type === "caselaw" ? "פסיקה" :
             m.source_type === "knesset_research" ? "מחקר כנסת" :
             m.source_type === "journal_article" ? "מאמר אקדמי" : m.source_type;
-          localContext += `\n--- ${m.document_title} ---\nסוג מקור: ${typeLabel} | אזכור: ${m.document_citation}\n`;
+          const relevanceTag = m.relevanceScore !== undefined ? ` | רלוונטיות: ${m.relevanceScore}/10` : "";
+          localContext += `\n--- ${m.document_title} ---\nסוג מקור: ${typeLabel} | אזכור: ${m.document_citation}${relevanceTag}\n`;
           if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
         }
         localContext += `${m.chunk_content.slice(0, 800)}\n`;
