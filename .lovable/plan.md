@@ -1,78 +1,78 @@
 
 
-## Fix: Wrong year and page numbers in journal article citations
-
-### Verified problem
-
-The article "להיות או לא להיות" exists in the database with:
-- `source_url`: `https://lawjournal.huji.ac.il/article/12/689` (689 = starting page)
-- `volume`: "כרך לג" (vol. 33)
-- **No author, no year** in metadata
-
-The Perplexity enrichment query returned year 2003 (likely confusing vol. 33 with a year). The actual publication date is **02.02.2018** per the journal website. The source card also never includes the starting page, so the AI fabricates page references.
+## Fix: Broken cross-references after renumbering + wrong enrichment year
 
 ### Root causes
-1. **No starting page in source card** — the URL encodes it (`/article/12/689`) but it's never extracted
-2. **Perplexity enrichment returns wrong year** — the query is too vague; vol. 33 gets confused with 2003
-3. **Year and page not included in richCitation** — even when enrichment succeeds, the year/page aren't added to the citation string sent to the AI
+
+1. **Step 6b renumbers footnotes but never updates "לעיל ה"ש X" inside footnote text.** The AI writes "לעיל ה"ש 5" based on its original ordering. After renumbering, footnote 5 is a different source entirely. Same issue affects footnotes 1→2, 7→5, 10→7, 11→6, 12→8.
+
+2. **Perplexity enrichment returns 2003 for volume 33.** The model keeps confusing volume numbers with years. Need stronger validation.
 
 ### Changes
 
 **File: `supabase/functions/legal-qa/index.ts`**
 
-**A. Extract starting page from source URL for journal articles (~line 383-398)**
+**A. Update "לעיל ה"ש" references inside footnotes during renumbering (~after line 892)**
 
-Add page extraction from known URL patterns before building richCitation:
+After building `reorderMap` (old→new number mapping), scan each footnote's citation text and replace "לעיל ה"ש [old]" with "לעיל ה"ש [new]":
 
 ```typescript
-// Extract starting page from URL patterns
-// mishpatim: /article/{issue}/{page}
-// Other journals may have similar patterns
-let startPage = (meta.page as string) || "";
-if (!startPage && m.source_url) {
-  const pageMatch = m.source_url.match(/\/article\/\d+\/(\d+)/);
-  if (pageMatch) startPage = pageMatch[1];
+// Update cross-references inside footnote citations
+for (const fn of reorderedFootnotes) {
+  fn.citation = fn.citation.replace(
+    /לעיל\s+ה"ש\s+(\d{1,2})/g, 
+    (match, num) => {
+      const oldNum = parseInt(num, 10);
+      const newNum = reorderMap.get(oldNum);
+      return newNum ? `לעיל ה"ש ${newNum}` : match;
+    }
+  );
 }
 ```
 
-**B. Include year and page in richCitation (~line 395-397)**
+**B. Post-processing: validate cross-references (~after Step 7, before final filter)**
 
-After building the base citation with author/title/journal/volume, append page and year:
+After all renumbering is complete, validate each "לעיל ה"ש X" reference by checking if footnote X contains a plausibly matching source. If not, replace the short reference with the full citation text from the current footnote (strip the "לעיל" phrase and keep what remains, or expand from the source card):
 
 ```typescript
-richCitation = author ? `${author} "${m.document_title}"` : `"${m.document_title}"`;
-if (journal) richCitation += ` **${journal}**`;
-if (vol) richCitation += ` ${vol}`;
-if (startPage) richCitation += ` ${startPage}`;
-const year = (meta.year as string) || "";
-if (year) richCitation += ` (${year})`;
+for (const fn of footnotes) {
+  const refMatch = fn.citation.match(/לעיל\s+ה"ש\s+(\d{1,2})/);
+  if (refMatch) {
+    const targetNum = parseInt(refMatch[1], 10);
+    const targetFn = footnotes.find(f => f.number === targetNum);
+    if (!targetFn) {
+      // Target doesn't exist — remove the reference phrase
+      fn.citation = fn.citation.replace(/,?\s*לעיל\s+ה"ש\s+\d{1,2}/, "").trim();
+    }
+    // Additional check: does this footnote's title appear in the target?
+    // Extract the title/name portion before "לעיל"
+    // If no match, remove the cross-reference
+  }
+}
 ```
 
-This produces: `רונן פרי "להיות או לא להיות..." **משפטים** כרך לג 689 (2018)` — giving the AI the correct data.
+**C. Validate Perplexity enrichment year (~line 341)**
 
-**C. Improve Perplexity enrichment query (~line 328)**
+Add a sanity check: if the returned year matches the volume number (e.g., year=2003 and volume contains "לג" = 33), reject the year as likely confused:
 
-Make the query more specific to avoid volume/year confusion:
-
-```
-מצא את שם המחבר ושנת הפרסום של המאמר האקדמי הישראלי: "${article.document_title}". 
-המאמר פורסם בכתב העת ${journalName || ""} ${volume || ""}.
-החזר רק בפורמט: מחבר: [שם], שנה: [שנה לועזית בת 4 ספרות]
-```
-
-Also pass the journal name and volume into the enrichment query to provide context and reduce hallucination.
-
-**D. Add prompt rule about page accuracy (~after existing prompt rules)**
-
-```
-כלל קריטי – עמודים:
-- כאשר מקור מהמאגר כולל מספר עמוד פתיחה, השתמש בו בדיוק. אל תמציא מספרי עמודים.
-- ב"שם, בעמ' X" — ציין מספר עמוד רק אם אתה יודע בוודאות שהעמוד קיים במאמר. אם אינך בטוח, כתוב "שם" בלבד ללא הפניה לעמוד ספציפי.
+```typescript
+if (yearMatch) {
+  const enrichedYear = yearMatch[1];
+  // Reject if year looks like it was confused with volume number
+  const volNum = vName.match(/\d+/)?.[0];
+  const yearLastTwo = enrichedYear.slice(-2);
+  if (volNum && (yearLastTwo === volNum || `20${volNum}` === enrichedYear || `19${volNum}` === enrichedYear)) {
+    console.log(`Rejected suspicious year ${enrichedYear} (matches volume ${volNum})`);
+  } else {
+    article.metadata = { ...(article.metadata || {}), year: enrichedYear };
+  }
+}
 ```
 
 ### Technical details
 - All changes in `supabase/functions/legal-qa/index.ts`
-- Page extraction uses existing URL patterns from the mishpatim journal
-- Enrichment query includes journal context to prevent year confusion
+- Cross-reference update runs during the existing renumbering step
+- Validation runs after renumbering as a safety net
+- Year validation prevents volume/year confusion pattern
 - Redeploy Edge Function `legal-qa`
 
