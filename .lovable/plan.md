@@ -1,29 +1,37 @@
 
 
-## Fix: Switch embedding calls from Lovable AI Gateway to OpenAI API
+## Speed Up Batch Embedding (~60x faster)
 
 ### Problem
-The Lovable AI Gateway does not support the `/v1/embeddings` endpoint or `text-embedding-3-small` model. All 50 chunks per batch fail with a 400 error.
+Current rate: ~100 chunks/min → ~60 hours for 360K chunks. The bottleneck is **one embedding API call per chunk** (20 calls per batch, each with HTTP overhead).
 
-### Solution
-Switch all three edge functions that call `/v1/embeddings` to use the OpenAI API directly (`https://api.openai.com/v1/embeddings`) with a new `OPENAI_API_KEY` secret.
+### Solution: Batch inputs in a single OpenAI API call
+OpenAI's embedding endpoint accepts an **array of inputs** — up to 2048 texts in one request. Instead of 20 sequential HTTP calls, we send all 20 (or more) texts in **one call** and get all embeddings back at once.
 
-### Steps
+### Changes
 
-1. **Add `OPENAI_API_KEY` secret** -- prompt you to enter your OpenAI API key
+1. **Increase `BATCH_SIZE` from 20 to 100** — OpenAI handles this easily in one request
+2. **Rewrite `getEmbedding` → `getEmbeddings`** — accept an array of texts, return an array of embeddings in a single API call
+3. **Remove per-chunk delay** — no longer needed since it's one API call per batch
+4. **Update the processing loop** — bulk-update all chunks in one pass after receiving embeddings
 
-2. **Update `supabase/functions/batch-embed-chunks/index.ts`**
-   - Change URL from `https://ai.gateway.lovable.dev/v1/embeddings` to `https://api.openai.com/v1/embeddings`
-   - Use `OPENAI_API_KEY` instead of `LOVABLE_API_KEY` for the Authorization header
+### Expected improvement
+- Current: 20 chunks × 1 API call each = ~20 API round-trips per batch (~15s)
+- New: 100 chunks × 1 API call total = ~1 API round-trip per batch (~2s)
+- Estimated new rate: **~2,000-3,000 chunks/min** → finishes in **2-3 hours**
 
-3. **Update `supabase/functions/legal-qa/index.ts`** (line ~338)
-   - Same URL and key change for the `getQueryEmbedding` function
+### Files changed
+- `supabase/functions/batch-embed-chunks/index.ts` — rewrite embedding logic to use batch input
 
-4. **Update `supabase/functions/search-legal-sources/index.ts`** (line ~11)
-   - Same URL and key change for the `getEmbedding` function
+### Technical detail
+```
+// Before: one call per chunk
+for (chunk of chunks) {
+  embedding = await getEmbedding(chunk.content);
+}
 
-5. **Redeploy** all three edge functions
-
-### Cost estimate
-~361K chunks x ~500 tokens avg = ~180M tokens. At $0.02/1M tokens for `text-embedding-3-small`, total cost is approximately **$3.60**.
+// After: one call for all chunks
+const texts = chunks.map(c => c.content.slice(0, 8000));
+const embeddings = await getEmbeddingsBatch(texts); // single HTTP request
+```
 
