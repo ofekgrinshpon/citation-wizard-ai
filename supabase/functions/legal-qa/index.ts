@@ -335,10 +335,12 @@ serve(async (req) => {
     // Helper: generate query embedding for vector search
     async function getQueryEmbedding(text: string): Promise<number[] | null> {
       try {
-        const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/embeddings", {
+        const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+        if (!OPENAI_API_KEY) { console.error("OPENAI_API_KEY not configured"); return null; }
+        const res = await fetchWithTimeout("https://api.openai.com/v1/embeddings", {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
