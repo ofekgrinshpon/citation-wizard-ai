@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.ingest-knesset-research]
 verify_jwt = false
+
+[functions.batch-embed-chunks]
+verify_jwt = false
