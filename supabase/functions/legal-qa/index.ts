@@ -607,9 +607,23 @@ ${combinedContext}`;
     }
 
     // ========= Step 5: Parse AI footnotes section =========
-    // The AI appends "--- הערות שוליים ---" followed by numbered citations
-    const footnoteSeparator = /---\s*הערות שוליים\s*---/;
-    const separatorMatch = answerText.match(footnoteSeparator);
+    // The AI appends a footnotes header followed by numbered citations.
+    // Try multiple separator patterns from strict to loose.
+    const separatorPatterns = [
+      /---\s*הערות שוליים\s*---/,          // strict: --- הערות שוליים ---
+      /\*\*\s*הערות שוליים\s*\*\*/,        // bold: **הערות שוליים**
+      /^#{1,3}\s*הערות שוליים/m,           // markdown heading: ## הערות שוליים
+      /^הערות שוליים\s*:?\s*$/m,           // standalone line: הערות שוליים or הערות שוליים:
+    ];
+
+    let separatorMatch: RegExpMatchArray | null = null;
+    for (const pattern of separatorPatterns) {
+      separatorMatch = answerText.match(pattern);
+      if (separatorMatch && separatorMatch.index !== undefined) {
+        console.log(`Footnote separator matched pattern: ${pattern}`);
+        break;
+      }
+    }
 
     let answerBody = answerText;
     const aiFootnoteLines: Array<{ num: number; text: string }> = [];
@@ -618,7 +632,6 @@ ${combinedContext}`;
       answerBody = answerText.slice(0, separatorMatch.index).trim();
       const footnotesSection = answerText.slice(separatorMatch.index + separatorMatch[0].length);
 
-      // Parse numbered lines: "1. citation text" or "1. **citation text**"
       const linePattern = /^(\d{1,2})\.\s+(.+)$/gm;
       let lineMatch;
       while ((lineMatch = linePattern.exec(footnotesSection)) !== null) {
@@ -629,7 +642,36 @@ ${combinedContext}`;
       }
       console.log(`Parsed ${aiFootnoteLines.length} AI-formatted footnotes`);
     } else {
-      console.log("No footnote separator found — falling back to source card citations");
+      // Final fallback: detect a trailing block of consecutive numbered lines (1. 2. 3. ...)
+      const lines = answerText.split("\n");
+      let firstFootnoteLine = -1;
+      for (let i = lines.length - 1; i >= 0; i--) {
+        if (/^\d{1,2}\.\s+.+/.test(lines[i].trim())) {
+          firstFootnoteLine = i;
+        } else if (firstFootnoteLine !== -1) {
+          break; // stop when we hit a non-numbered line
+        }
+      }
+      if (firstFootnoteLine !== -1 && firstFootnoteLine > 0) {
+        // Verify the block starts with "1." to confirm it's footnotes
+        const firstNum = lines[firstFootnoteLine].trim().match(/^(\d{1,2})\./);
+        if (firstNum && parseInt(firstNum[1], 10) === 1) {
+          answerBody = lines.slice(0, firstFootnoteLine).join("\n").trim();
+          const footnoteBlock = lines.slice(firstFootnoteLine).join("\n");
+          const linePattern = /^(\d{1,2})\.\s+(.+)$/gm;
+          let lineMatch;
+          while ((lineMatch = linePattern.exec(footnoteBlock)) !== null) {
+            aiFootnoteLines.push({
+              num: parseInt(lineMatch[1], 10),
+              text: lineMatch[2].trim(),
+            });
+          }
+          console.log(`Fallback: parsed ${aiFootnoteLines.length} trailing footnotes`);
+        }
+      }
+      if (aiFootnoteLines.length === 0) {
+        console.log("No footnote separator found — falling back to source card citations");
+      }
     }
 
     // ========= Step 5b: Match AI footnotes to source cards for provenance =========
