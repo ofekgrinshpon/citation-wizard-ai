@@ -318,14 +318,19 @@ serve(async (req) => {
     );
 
     if (incompleteArticles.length > 0 && PERPLEXITY_API_KEY) {
+      const journalMapEnrich: Record<string, string> = { mishpatim: "משפטים", tau_law_review: "עיוני משפט", hapraklit: "הפרקליט", runilawreview: "משפט ועסקים" };
       const enrichmentPromises = incompleteArticles.slice(0, 3).map(async (article) => {
         try {
+          const artMeta = (article.metadata || {}) as Record<string, unknown>;
+          const jName = (artMeta.journal as string) || journalMapEnrich[(artMeta.source_site as string) || ""] || "";
+          const vName = (artMeta.volume as string) || "";
+          const enrichPrompt = `מצא את שם המחבר ושנת הפרסום של המאמר האקדמי הישראלי: "${article.document_title}".${jName ? ` המאמר פורסם בכתב העת ${jName}` : ""}${vName ? ` ${vName}` : ""}. החזר רק בפורמט: מחבר: [שם], שנה: [שנה לועזית בת 4 ספרות]`;
           const res = await fetchWithTimeout("https://api.perplexity.ai/chat/completions", {
             method: "POST",
             headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, "Content-Type": "application/json" },
             body: JSON.stringify({
               model: "sonar",
-              messages: [{ role: "user", content: `מצא את שם המחבר ושנת הפרסום של המאמר: "${article.document_title}". החזר רק: מחבר: [שם], שנה: [שנה]` }],
+              messages: [{ role: "user", content: enrichPrompt }],
             }),
           }, 8000);
           const data = await res.json();
@@ -392,9 +397,19 @@ serve(async (req) => {
           const journal = (meta.journal as string) || journalMap[(meta.source_site as string) || ""] || "";
           const vol = (meta.volume as string) || "";
 
+          // Extract starting page from URL patterns (e.g. /article/{issue}/{page})
+          let startPage = (meta.page as string) || "";
+          if (!startPage && m.source_url) {
+            const pageMatch = m.source_url.match(/\/article\/\d+\/(\d+)/);
+            if (pageMatch) startPage = pageMatch[1];
+          }
+
           richCitation = author ? `${author} "${m.document_title}"` : `"${m.document_title}"`;
           if (journal) richCitation += ` **${journal}**`;
           if (vol) richCitation += ` ${vol}`;
+          if (startPage) richCitation += ` ${startPage}`;
+          const year = (meta.year as string) || "";
+          if (year) richCitation += ` (${year})`;
         }
 
         const sourceLabel = m.source_type === "caselaw" ? "פסיקה" :
@@ -549,6 +564,10 @@ ${taskInstructions}
 כלל קריטי – פרטים חסרים:
 - אם מקור מהמאגר חסר שנת פרסום, כתוב "(לא נמצאה שנת פרסום)" — אל תמציא שנה ואל תכתוב "תאריך לא ידוע".
 - אם חסרים פרטים ביבליוגרפיים חיוניים (כמו שם מחבר), נסה לחלץ אותם מתוך תוכן המקור שסופק לך.
+
+כלל קריטי – עמודים:
+- כאשר מקור מהמאגר כולל מספר עמוד פתיחה, השתמש בו בדיוק. אל תמציא מספרי עמודים.
+- ב"שם, בעמ' X" — ציין מספר עמוד רק אם אתה יודע בוודאות שהעמוד קיים במאמר. אם אינך בטוח, כתוב "שם" בלבד ללא הפניה לעמוד ספציפי.
 
 ${citationInstructions}
 
