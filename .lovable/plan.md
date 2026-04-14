@@ -1,25 +1,24 @@
 
 
-## Fix: Add relevance filtering instruction to prevent irrelevant source citations
+## Fix: Duplicate footnote groups in Legal QA output
 
 ### Problem
-The keyword-based retrieval (OR logic) returns sources with superficial keyword overlap (e.g., "ראש הממשלה") even when the legal topic is completely different. The AI then cites these irrelevant sources instead of ignoring them.
+The AI sometimes writes the footnotes section without the exact `--- הערות שוליים ---` separator (e.g., using `**הערות שוליים**`, `הערות שוליים:`, or just `הערות שוליים` without dashes). When the regex doesn't match, the entire AI response — including its inline footnotes — becomes the body text, and the fallback logic appends a second set of footnotes from source cards. This produces two footnote groups in the output.
 
 ### Solution
-Add an explicit instruction in the system prompt telling the AI to evaluate source relevance before citing, and to skip sources that don't substantively relate to the legal question.
+Two changes in `supabase/functions/legal-qa/index.ts`:
 
-### Changes
+1. **Broaden separator detection** (Step 5, ~line 611): Replace the strict regex with a flexible one that catches common variations:
+   - `--- הערות שוליים ---`
+   - `**הערות שוליים**`
+   - `הערות שוליים:`
+   - `הערות שוליים` (standalone heading line)
 
-**File: `supabase/functions/legal-qa/index.ts`** — Add a new critical rule after the source priority block (~line 504):
-
-```
-כלל קריטי – רלוונטיות מקורות:
-- לפני שאתה מצטט מקור כלשהו, בדוק שהוא רלוונטי מהותית לשאלה המשפטית. התאמה במילות מפתח (למשל "ראש הממשלה") אינה מספיקה — המקור חייב לעסוק באותה סוגיה משפטית.
-- אם מקור מהרשימה עוסק בנושא אחר לחלוטין (למשל: השאלה עוסקת בחנינה, והמקור עוסק במינויים), אל תצטט אותו כלל, גם אם הוא מסומן [מאומת].
-- עדיף לצטט פחות מקורות רלוונטיים מאשר להוסיף מקורות שאינם קשורים לנושא.
-```
+2. **Strip orphan footnotes from body on fallback**: If the separator still isn't found but the body contains a numbered list at the end (e.g., `1. ציטוט...`), detect and parse it as the footnotes section rather than leaving it in the body.
 
 ### Technical details
-- Prompt-only change, no code logic changes
+- File: `supabase/functions/legal-qa/index.ts`, lines ~611-633
+- Replace separator regex: `/---\s*הערות שוליים\s*---/` → a multi-pattern approach that tries the strict format first, then falls back to looser patterns like `/\*?\*?הערות שוליים\*?\*?\s*:?/m`
+- Add a final fallback: scan for a trailing block of consecutive `N. text` lines at the end of the response and split there
 - Redeploy Edge Function `legal-qa`
 
