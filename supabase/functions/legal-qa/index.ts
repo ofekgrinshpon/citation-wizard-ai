@@ -338,7 +338,17 @@ serve(async (req) => {
           const authorMatch = text.match(/מחבר:\s*(.+?)(?:,|\n|$)/);
           const yearMatch = text.match(/שנה:\s*(\d{4})/);
           if (authorMatch) article.metadata = { ...(article.metadata || {}), author: authorMatch[1].trim() };
-          if (yearMatch) article.metadata = { ...(article.metadata || {}), year: yearMatch[1] };
+          if (yearMatch) {
+            const enrichedYear = yearMatch[1];
+            // Reject if year looks like it was confused with volume number
+            const volNum = vName.match(/\d+/)?.[0];
+            const yearLastTwo = enrichedYear.slice(-2);
+            if (volNum && (yearLastTwo === volNum || `20${volNum}` === enrichedYear || `19${volNum}` === enrichedYear)) {
+              console.log(`Rejected suspicious year ${enrichedYear} (matches volume ${volNum}) for "${article.document_title.slice(0, 40)}"`);
+            } else {
+              article.metadata = { ...(article.metadata || {}), year: enrichedYear };
+            }
+          }
           console.log(`Enriched article "${article.document_title.slice(0, 40)}": author=${authorMatch?.[1] || "?"}, year=${yearMatch?.[1] || "?"}`);
         } catch (e) { /* skip enrichment on error */ }
       });
@@ -888,6 +898,18 @@ ${combinedContext}`;
           reorderedFootnotes.push({ ...fn, number: reorderedFootnotes.length + 1 });
         }
       }
+      // Update cross-references ("לעיל ה"ש X") inside footnote citations
+      for (const fn of reorderedFootnotes) {
+        fn.citation = fn.citation.replace(
+          /לעיל\s+ה"ש\s+(\d{1,2})/g,
+          (match: string, num: string) => {
+            const oldNum = parseInt(num, 10);
+            const newNum = reorderMap.get(oldNum);
+            return newNum ? `לעיל ה"ש ${newNum}` : match;
+          }
+        );
+      }
+
       footnotes.length = 0;
       footnotes.push(...reorderedFootnotes);
     }
