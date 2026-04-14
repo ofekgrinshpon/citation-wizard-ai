@@ -111,6 +111,11 @@ export default function LegalQA() {
   if (!user) return <Navigate to="/auth" replace />;
 
   const handleSubmit = async () => {
+    if (isLimitReached) {
+      setShowLimitDialog(true);
+      return;
+    }
+
     const q = question.trim();
     if (!q || q.length < 5) {
       toast.error("השאלה קצרה מדי. נסו לפרט יותר.");
