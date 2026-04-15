@@ -1,86 +1,72 @@
 
-Goal: fix the new “blank page with endless spinner after sign-in” state shown in the screenshot.
+**Answer**
+No reliable “hard kill” exists in the current app for an already-running backend query/job. Right now:
+- the admin page can still start heavy reads,
+- the embedding/ingestion tools can keep the backend busy,
+- the Stop button only stops the client loop after the current request returns.
 
-What I found
-- This does not look like browser memory from the embeddings themselves.
-- The screenshot matches a route that renders only a centered spinner while auth is unresolved.
-- Several pages still gate rendering on auth-related loading and can show nothing or only a spinner:
+So the fix should be: stop waiting on stale work, stop launching more heavy work, and add a real cooperative cancel/pause mechanism for long-running admin jobs.
+
+**What I found**
+- `Admin.tsx` is better than before, but the Knowledge tab still launches 4 queries together, including large-table counts and `qa_logs` reads.
+- `BatchEmbeddingPanel.tsx` only stops the next loop iteration locally; it does not cancel the in-flight `batch-embed-chunks` request.
+- `batch-embed-chunks` still does large reads plus per-chunk updates, and only ends when a batch completes.
+- `ApifyIngestionPanel.tsx` and ingestion functions can also keep the backend under pressure.
+- Auth startup still depends on DB reads (`user_roles`, `projects`, `profiles`) with no hard timeout, so if the backend is saturated, login can look frozen.
+
+**Plan**
+1. **Make login immune to admin load**
+   - Stop sending admins straight into the heavy dashboard immediately after sign-in.
+   - Route successful login to a lightweight post-auth screen first, then let admins enter `/admin` manually.
+
+2. **Add hard timeouts to startup auth reads**
+   - Wrap admin-role, projects, and subscription/profile queries with timeout logic.
+   - If a query stalls, fail soft with a visible retry state instead of an endless spinner.
+
+3. **Remove remaining expensive admin startup reads**
+   - Break the Knowledge tab into smaller fetches.
+   - Defer `qa_logs` stats and large counts until explicitly requested.
+   - Keep the admin shell visible immediately.
+
+4. **Add real cancel/pause for long-running admin jobs**
+   - Add a backend control table for job state (`running`, `pause_requested`, `cancel_requested`).
+   - Update `batch-embed-chunks` and ingestion flows to check that flag between sub-batches and exit quickly.
+   - Change the Admin UI Stop button to set the backend cancel flag, not just a local boolean.
+
+5. **Add recovery UX**
+   - If auth is ready but backend-dependent reads are slow, show:
+     - “logged in successfully”
+     - “admin data is still loading”
+     - retry / continue to app actions
+
+6. **Add targeted diagnostics**
+   - Log exact timings for `getSession`, role lookup, projects fetch, subscription fetch, and admin tab fetches so the next stuck case is attributable immediately.
+
+**Technical details**
+- **Frontend files**
+  - `src/hooks/useAuth.tsx`
+  - `src/hooks/useProjects.tsx`
+  - `src/hooks/useSubscription.tsx`
   - `src/pages/Auth.tsx`
   - `src/pages/Landing.tsx`
+  - `src/App.tsx`
   - `src/pages/Admin.tsx`
-  - `src/pages/Index.tsx`
-  - `src/pages/Profile.tsx`
-  - `src/pages/LegalQA.tsx` currently returns `null` when auth/subscription is loading.
-- The highest-risk issue is role resolution:
-  - `useAuth` sets `loading=false` before admin role resolution finishes.
-  - `Auth.tsx` and `Landing.tsx` immediately redirect authenticated users using `isAdmin`.
-  - If the user is actually admin, they can be misrouted to `/app` first; if auth/role/session hydration races, the app can bounce into a bad loading state.
-- Another likely issue: current Google OAuth still redirects to `window.location.origin`, not the dedicated `/auth-redirect` route that already exists in `src/App.tsx`.
-- `AuthRedirect` currently returns `null` while auth is loading, which can produce a blank screen with no visible status.
-- `Admin.tsx` is lighter than before, but `fetchKnowledge()` still does an expensive full `select("source_type")` on `legal_documents`, which should be removed/replaced.
+  - `src/components/admin/BatchEmbeddingPanel.tsx`
+  - `src/components/admin/ApifyIngestionPanel.tsx`
+- **Backend functions**
+  - `supabase/functions/batch-embed-chunks/index.ts`
+  - `supabase/functions/apify-ingest-cases/index.ts`
+  - possibly `supabase/functions/embed-legal-source/index.ts`
+- **Database change likely needed**
+  - small admin-only job-control table for cooperative cancellation/pause
+  - RLS restricted to admins only
 
-Likely root cause
-- Not “50k chunks in browser memory”.
-- A post-login auth/role redirect race, made worse by blank loading states and at least one remaining heavy admin query.
-- The app has a callback route, but the OAuth flow is not actually using it.
+**Important constraint**
+- I do not plan to use unsafe backend-process cancellation.
+- I do plan to implement cooperative cancellation plus frontend timeouts, which is the safer and more reliable fix in this stack.
 
-Implementation plan
-1. Make auth state explicit and safe
-- Update `useAuth` to separate:
-  - session hydration ready
-  - admin role loading
-- Expose an additional readiness flag such as `authReady` / `roleReady` or `isAdminResolved`.
-- Do not let pages make role-based redirects until role resolution is complete for signed-in users.
-
-2. Fix OAuth landing flow properly
-- Change Google sign-in in `src/pages/Auth.tsx` to redirect to `/auth-redirect` instead of bare origin.
-- Update signup email redirect to point to a stable callback target if needed.
-- Refine `AuthRedirect` in `src/App.tsx` so it shows a real loading screen, waits for auth + role readiness, then routes once:
-  - admin → `/admin`
-  - regular user → `/app`
-  - no user → `/auth`
-
-3. Remove blank-screen loading states
-- Replace `return null` patterns with a visible loader/shell:
-  - especially in `src/pages/LegalQA.tsx`
-  - and any auth-protected route still rendering blank while loading
-- Standardize one small “auth resolving” UI so users see progress instead of a white page.
-
-4. Prevent premature redirects on auth pages
-- In `src/pages/Auth.tsx` and `src/pages/Landing.tsx`, only redirect authenticated users after role resolution is complete.
-- Avoid immediate `Navigate` based on a possibly stale default `isAdmin=false`.
-
-5. Harden `/app` startup
-- In `src/pages/Index.tsx`, gate route rendering on both auth readiness and projects readiness.
-- If no `currentProject` is available yet, show shell/loading instead of continuing with half-ready state.
-- Keep existing fail-soft behavior in `useProjects`, but avoid rendering the main workspace before it settles.
-
-6. Finish admin performance cleanup
-- Refactor `src/pages/Admin.tsx` knowledge tab fetch:
-  - remove full `select("source_type")` over `legal_documents`
-  - replace with lighter aggregated logic, backend summary query, or defer counts until requested
-- Keep admin shell visible immediately while tab data loads.
-
-7. Add diagnostics for the stuck flow
-- Add focused console logs around:
-  - auth session hydration
-  - admin role resolution
-  - `/auth-redirect` mount and redirect decision
-  - post-login route chosen
-- This will make the next report conclusive if anything still hangs.
-
-Files to update
-- `src/hooks/useAuth.tsx`
-- `src/pages/Auth.tsx`
-- `src/App.tsx`
-- `src/pages/Landing.tsx`
-- `src/pages/Index.tsx`
-- `src/pages/LegalQA.tsx`
-- `src/pages/Admin.tsx`
-- possibly `src/pages/Profile.tsx` for consistent auth-loading handling
-
-Expected result
-- Google sign-in lands on a dedicated callback route instead of hanging on a blank page.
-- Admin users are not misrouted while role lookup is still pending.
-- The app always shows a visible loading state instead of a white screen.
-- Heavy admin reads no longer make login feel frozen.
+**Expected result**
+- Login succeeds even if admin/background jobs are busy.
+- Old admin work no longer makes auth appear frozen.
+- Admin jobs can be paused/canceled cleanly.
+- The app shows recovery UI instead of hanging on a spinner.
