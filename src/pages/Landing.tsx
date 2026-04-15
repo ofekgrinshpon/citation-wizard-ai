@@ -87,15 +87,9 @@ const Landing = () => {
   }
 
   if (user) {
-    if (!isAdminResolved) {
-      return (
-        <div className="flex items-center justify-center h-screen">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-        </div>
-      );
-    }
+    // Always route to /app — don't wait for role resolution or route to heavy admin dashboard
     const addinParam = isOfficeAddin ? "?addin=1" : "";
-    return <Navigate to={isAdmin ? `/admin${addinParam}` : `/app${addinParam}`} replace />;
+    return <Navigate to={`/app${addinParam}`} replace />;
   }
 
   const scrollToHow = () => {
