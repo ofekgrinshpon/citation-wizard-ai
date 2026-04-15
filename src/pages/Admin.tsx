@@ -140,8 +140,9 @@ const Admin = () => {
       setKnowledgeLoaded(true);
 
       // Fetch QA stats in background — don't block the tab
-      supabase.from("qa_logs").select("local_footnotes_count, perplexity_footnotes_count, total_footnotes").order("created_at", { ascending: false }).limit(500)
-        .then(({ data: qaLogsData }) => {
+      Promise.resolve(
+        supabase.from("qa_logs").select("local_footnotes_count, perplexity_footnotes_count, total_footnotes").order("created_at", { ascending: false }).limit(500)
+      ).then(({ data: qaLogsData }) => {
           const qaLogs = (qaLogsData ?? []) as Array<{ local_footnotes_count: number; perplexity_footnotes_count: number; total_footnotes: number }>;
           const totalQ = qaLogs.length;
           const withLocal = qaLogs.filter(l => l.local_footnotes_count > 0).length;
