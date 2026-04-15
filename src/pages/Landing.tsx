@@ -73,7 +73,7 @@ const steps = [
 ];
 
 const Landing = () => {
-  const { user, isAdmin, isAdminResolved, loading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const howRef = useRef<HTMLDivElement>(null);

@@ -17,7 +17,7 @@ const Auth = () => {
   const [fullName, setFullName] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp, user, isAdmin, isAdminResolved, loading: authLoading } = useAuth();
+  const { signIn, signUp, user, loading: authLoading } = useAuth();
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
 
