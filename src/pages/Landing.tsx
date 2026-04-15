@@ -73,7 +73,7 @@ const steps = [
 ];
 
 const Landing = () => {
-  const { user, isAdmin, loading: authLoading } = useAuth();
+  const { user, isAdmin, isAdminResolved, loading: authLoading } = useAuth();
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const howRef = useRef<HTMLDivElement>(null);
@@ -87,6 +87,13 @@ const Landing = () => {
   }
 
   if (user) {
+    if (!isAdminResolved) {
+      return (
+        <div className="flex items-center justify-center h-screen">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      );
+    }
     const addinParam = isOfficeAddin ? "?addin=1" : "";
     return <Navigate to={isAdmin ? `/admin${addinParam}` : `/app${addinParam}`} replace />;
   }

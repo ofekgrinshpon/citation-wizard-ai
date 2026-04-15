@@ -43,7 +43,7 @@ type MainTab = "analytics" | "sources" | "users" | "knowledge";
 type SourceSubTab = "caselaw" | "legislation" | "literature" | "other" | "verified";
 
 const Admin = () => {
-  const { user, isAdmin, loading: authLoading, signOut } = useAuth();
+  const { user, isAdmin, isAdminResolved, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [citations, setCitations] = useState<CitationRecord[]>([]);
   const [verifiedSources, setVerifiedSources] = useState<VerifiedSourceRow[]>([]);
@@ -71,13 +71,15 @@ const Admin = () => {
   }, [isAdmin]);
 
   useEffect(() => {
-    if (!authLoading && !user && !adminConfirmed) {
+    // Wait for both auth and role resolution before redirecting away
+    if (authLoading || !isAdminResolved) return;
+    if (!user && !adminConfirmed) {
       navigate("/");
     }
-    if (!authLoading && user && isAdmin === false && !adminConfirmed) {
+    if (user && isAdmin === false && !adminConfirmed) {
       navigate("/");
     }
-  }, [user, isAdmin, authLoading, adminConfirmed, navigate]);
+  }, [user, isAdmin, isAdminResolved, authLoading, adminConfirmed, navigate]);
 
   // --- Lazy tab-specific data fetchers ---
 
@@ -121,7 +123,7 @@ const Admin = () => {
         supabase.from("legal_documents").select("id, title, source_type, citation, created_at").order("created_at", { ascending: false }).limit(50),
         supabase.from("legal_document_chunks").select("id", { count: "estimated", head: true }),
         supabase.from("legal_documents").select("id", { count: "estimated", head: true }),
-        supabase.from("legal_documents").select("source_type"),
+        supabase.rpc("get_doc_type_counts").then(res => res).catch(() => ({ data: null, error: "rpc not available" })),
         supabase.from("qa_logs").select("*").order("created_at", { ascending: false }).limit(1000),
       ]);
 

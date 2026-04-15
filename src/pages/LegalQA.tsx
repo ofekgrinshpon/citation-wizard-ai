@@ -107,7 +107,13 @@ export default function LegalQA() {
   const footnotesRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  if (authLoading || subLoading) return null;
+  if (authLoading || subLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
   if (!user) return <Navigate to="/auth" replace />;
 
   const handleSubmit = async () => {

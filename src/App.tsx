@@ -46,10 +46,22 @@ const Router = isOfficeAddin()
     }
   : BrowserRouter;
 
+function AuthLoadingSpinner() {
+  return (
+    <div className="flex items-center justify-center h-screen">
+      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
+
 function AuthRedirect() {
-  const { user, isAdmin, loading } = useAuth();
-  if (loading) return null;
-  // Preserve ?addin=1 across redirects so Word add-in mode is not lost
+  const { user, isAdmin, loading, isAdminResolved } = useAuth();
+
+  // Wait for both session hydration AND role resolution
+  if (loading || (user && !isAdminResolved)) {
+    return <AuthLoadingSpinner />;
+  }
+
   const addinSuffix = new URLSearchParams(window.location.search).get("addin") === "1" ? "?addin=1" : "";
   if (!user) return <Navigate to={`/auth${addinSuffix ? `?${addinSuffix.slice(1)}` : ""}`} replace />;
   if (isAdmin) return <Navigate to={`/admin${addinSuffix}`} replace />;
