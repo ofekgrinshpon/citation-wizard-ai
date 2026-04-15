@@ -1,6 +1,9 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { withTimeout } from "@/lib/queryTimeout";
 import { useAuth } from "@/hooks/useAuth";
+
+const FETCH_TIMEOUT_MS = 8000;
 
 export interface Project {
   id: string;
@@ -50,11 +53,15 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     let data: Project[] | null = null;
     try {
-      const res = await supabase
-        .from("projects")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: true });
+      const res = await withTimeout(
+        supabase
+          .from("projects")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: true }),
+        FETCH_TIMEOUT_MS,
+        "projects fetch",
+      );
       if (res.error) {
         console.error("Failed to fetch projects", res.error);
         setLoading(false);
@@ -62,7 +69,7 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
       }
       data = res.data as Project[];
     } catch (err) {
-      console.error("Projects fetch exception", err);
+      console.error("Projects fetch exception/timeout:", err);
       setLoading(false);
       return;
     }
