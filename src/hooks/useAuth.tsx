@@ -7,6 +7,8 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
+  /** True once admin role resolution has finished (or was skipped for non-users) */
+  isAdminResolved: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -19,25 +21,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdminResolved, setIsAdminResolved] = useState(false);
   const hasHydratedSession = useRef(false);
-  const adminResolving = useRef(false);
 
   const resolveAdmin = async (nextUser: User | null) => {
     if (!nextUser) {
       setIsAdmin(false);
+      setIsAdminResolved(true);
       return;
     }
 
-    adminResolving.current = true;
-    const { data, error } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", nextUser.id)
-      .eq("role", "admin")
-      .maybeSingle();
+    setIsAdminResolved(false);
+    try {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", nextUser.id)
+        .eq("role", "admin")
+        .maybeSingle();
 
-    setIsAdmin(!error && !!data);
-    adminResolving.current = false;
+      setIsAdmin(!error && !!data);
+    } catch (err) {
+      console.error("[ReLex] resolveAdmin failed:", err);
+      setIsAdmin(false);
+    } finally {
+      setIsAdminResolved(true);
+    }
   };
 
   useEffect(() => {
@@ -71,7 +80,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .catch((err) => {
         console.error("[ReLex] getSession failed:", err);
         hasHydratedSession.current = true;
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+          setIsAdminResolved(true);
+        }
       });
 
     return () => {
@@ -91,7 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password,
       options: {
         data: { full_name: fullName },
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: `${window.location.origin}/auth-redirect`,
       },
     });
     return { error: error as Error | null };
@@ -102,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, isAdmin, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, isAdmin, isAdminResolved, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );

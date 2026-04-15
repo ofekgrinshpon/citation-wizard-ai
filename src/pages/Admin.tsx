@@ -43,7 +43,7 @@ type MainTab = "analytics" | "sources" | "users" | "knowledge";
 type SourceSubTab = "caselaw" | "legislation" | "literature" | "other" | "verified";
 
 const Admin = () => {
-  const { user, isAdmin, loading: authLoading, signOut } = useAuth();
+  const { user, isAdmin, isAdminResolved, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [citations, setCitations] = useState<CitationRecord[]>([]);
   const [verifiedSources, setVerifiedSources] = useState<VerifiedSourceRow[]>([]);
@@ -71,13 +71,15 @@ const Admin = () => {
   }, [isAdmin]);
 
   useEffect(() => {
-    if (!authLoading && !user && !adminConfirmed) {
+    // Wait for both auth and role resolution before redirecting away
+    if (authLoading || !isAdminResolved) return;
+    if (!user && !adminConfirmed) {
       navigate("/");
     }
-    if (!authLoading && user && isAdmin === false && !adminConfirmed) {
+    if (user && isAdmin === false && !adminConfirmed) {
       navigate("/");
     }
-  }, [user, isAdmin, authLoading, adminConfirmed, navigate]);
+  }, [user, isAdmin, isAdminResolved, authLoading, adminConfirmed, navigate]);
 
   // --- Lazy tab-specific data fetchers ---
 
@@ -117,11 +119,10 @@ const Admin = () => {
   const fetchKnowledge = useCallback(async () => {
     if (knowledgeLoaded) return;
     try {
-      const [docsRes, chunksRes, totalDocsRes, docTypesRes, qaLogsRes] = await Promise.all([
+      const [docsRes, chunksRes, totalDocsRes, qaLogsRes] = await Promise.all([
         supabase.from("legal_documents").select("id, title, source_type, citation, created_at").order("created_at", { ascending: false }).limit(50),
         supabase.from("legal_document_chunks").select("id", { count: "estimated", head: true }),
         supabase.from("legal_documents").select("id", { count: "estimated", head: true }),
-        supabase.from("legal_documents").select("source_type"),
         supabase.from("qa_logs").select("*").order("created_at", { ascending: false }).limit(1000),
       ]);
 
@@ -129,8 +130,9 @@ const Admin = () => {
       setTotalChunks(chunksRes.count ?? 0);
       setTotalDocsCount(totalDocsRes.count ?? 0);
 
+      // Build type counts from the already-fetched recent 50 docs (approximate)
       const typeCountsMap: Record<string, number> = {};
-      (docTypesRes.data ?? []).forEach((d: { source_type: string }) => {
+      (docsRes.data ?? []).forEach((d: { source_type: string }) => {
         typeCountsMap[d.source_type] = (typeCountsMap[d.source_type] || 0) + 1;
       });
       setDocTypeCounts(typeCountsMap);
