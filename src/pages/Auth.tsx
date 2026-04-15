@@ -159,10 +159,17 @@ const Auth = () => {
                   toast.error(err.message || "שגיאה בהתחברות עם Google");
                 }
               } else {
-                const result = await lovable.auth.signInWithOAuth("google", {
-                  redirect_uri: window.location.origin,
-                });
-                if (result.error) {
+                try {
+                  const result = await lovable.auth.signInWithOAuth("google", {
+                    redirect_uri: window.location.origin,
+                  });
+                  if (result.redirected) return;
+                  if (result.error) {
+                    console.error("[ReLex] Google OAuth error:", result.error);
+                    toast.error("שגיאה בהתחברות עם Google");
+                  }
+                } catch (err: any) {
+                  console.error("[ReLex] Google OAuth exception:", err);
                   toast.error("שגיאה בהתחברות עם Google");
                 }
               }
