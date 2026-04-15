@@ -697,8 +697,8 @@ ${taskInstructions}
 - אל תשתמש בסימני # לכותרות. השתמש ב-**כותרת** (הדגשה) בלבד.
 - השתמש בכותרות המודגשות שמפורטות במצב העבודה למעלה. אל תשתמש בכותרות אחרות.
 - טון: פורמלי, אובייקטיבי ואנליטי. כל טענה משפטית חייבת להיות מעוגנת בהערת שוליים.
-- העדף 8-12 הפניות איכותיות. אל תמציא מקורות. השתמש רק במקורות מהרשימה.
-- אתה יכול גם לכתוב אזכורים נוספים שאינם ברשימה, אם אתה בטוח לחלוטין שהם קיימים. כתוב אותם ישירות בחלק הערות השוליים בדיוק כמו כל הערה אחרת, ללא סימון מיוחד.
+- העדף 8-12 הפניות איכותיות. השתמש אך ורק במקורות מהרשימה למעלה.
+- אסור בהחלט לצטט מקורות שאינם מופיעים ברשימת המקורות הזמינים למעלה. אם אין מספיק מקורות ברשימה, כתוב פחות הערות שוליים — אל תמציא מקורות חדשים. עדיף מזכר עם 4 הערות שוליים אמיתיות מאשר 10 הערות שכוללות מקורות בדויים.
 
 כלל קריטי – גוף טקסט נקי:
 - בגוף הטקסט, אין לציין שנים (עבריות או לועזיות), מספרי ס"ח/ק"ת, או כל פרט טכני של מקור.
@@ -972,14 +972,19 @@ ${combinedContext}`;
 
     if (aiFootnoteLines.length > 0) {
       // Use AI-formatted footnotes — match each to a source card for provenance
+      // CRITICAL: Strip any footnote that doesn't match a provided source (anti-hallucination)
       for (const aiFn of aiFootnoteLines) {
         const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards);
+        if (!matchedCard) {
+          console.log(`Stripped hallucinated footnote #${aiFn.num}: ${aiFn.text.slice(0, 80)}...`);
+          continue; // Skip footnotes that don't match any provided source
+        }
         footnotes.push({
           number: fnNum,
           citation: aiFn.text,
-          source_type: matchedCard?.source_type || "unknown",
-          url: matchedCard?.url,
-          source: matchedCard?.provenance || "perplexity",
+          source_type: matchedCard.source_type,
+          url: matchedCard.url,
+          source: matchedCard.provenance || "local",
         });
         // Map original [X] number to new sequential number
         oldIdToNewNumber.set(aiFn.num, fnNum);

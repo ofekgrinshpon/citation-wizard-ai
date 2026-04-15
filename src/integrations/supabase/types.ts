@@ -417,6 +417,10 @@ export type Database = {
       }
     }
     Functions: {
+      bulk_update_legal_chunk_embeddings: {
+        Args: { payload: Json }
+        Returns: number
+      }
       compute_verified_source_identity: {
         Args: {
           _full_citation: string
@@ -453,6 +457,7 @@ export type Database = {
           source_url: string
         }[]
       }
+      rebuild_hnsw_index: { Args: never; Returns: undefined }
       search_legal_chunks_text: {
         Args: { match_count?: number; search_query: string }
         Returns: {
