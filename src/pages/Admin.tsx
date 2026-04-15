@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,7 +48,6 @@ const Admin = () => {
   const [citations, setCitations] = useState<CitationRecord[]>([]);
   const [verifiedSources, setVerifiedSources] = useState<VerifiedSourceRow[]>([]);
   const [users, setUsers] = useState<UserProfile[]>([]);
-  const [loadingData, setLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState<MainTab>("analytics");
   const [sourceSubTab, setSourceSubTab] = useState<SourceSubTab>("caselaw");
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -58,7 +57,13 @@ const Admin = () => {
   const [docTypeCounts, setDocTypeCounts] = useState<Record<string, number>>({});
   const [qaStats, setQaStats] = useState<{ total: number; withLocal: number; perplexityOnly: number; avgLocalRatio: number }>({ total: 0, withLocal: 0, perplexityOnly: 0, avgLocalRatio: 0 });
 
-  // Track if admin was ever confirmed — prevents redirect during transient auth churn
+  // Per-tab loading states — shell renders immediately, tabs load lazily
+  const [analyticsLoaded, setAnalyticsLoaded] = useState(false);
+  const [sourcesLoaded, setSourcesLoaded] = useState(false);
+  const [usersLoaded, setUsersLoaded] = useState(false);
+  const [knowledgeLoaded, setKnowledgeLoaded] = useState(false);
+
+  // Track if admin was ever confirmed
   const [adminConfirmed, setAdminConfirmed] = useState(false);
 
   useEffect(() => {
@@ -74,51 +79,95 @@ const Admin = () => {
     }
   }, [user, isAdmin, authLoading, adminConfirmed, navigate]);
 
+  // --- Lazy tab-specific data fetchers ---
+
+  const fetchAnalytics = useCallback(async () => {
+    if (analyticsLoaded) return;
+    try {
+      const [citRes, verifiedRes] = await Promise.all([
+        supabase.from("citation_history").select("*").order("created_at", { ascending: false }).limit(500),
+        supabase.from("verified_sources").select("*").order("verified_at", { ascending: false }),
+      ]);
+      setCitations(citRes.data ?? []);
+      setVerifiedSources((verifiedRes.data ?? []) as unknown as VerifiedSourceRow[]);
+      setAnalyticsLoaded(true);
+    } catch (err) {
+      console.error("[Admin] fetchAnalytics failed:", err);
+    }
+  }, [analyticsLoaded]);
+
+  const fetchSources = useCallback(async () => {
+    if (sourcesLoaded) return;
+    // Sources tab reuses citations + verifiedSources, ensure analytics is loaded
+    if (!analyticsLoaded) await fetchAnalytics();
+    setSourcesLoaded(true);
+  }, [sourcesLoaded, analyticsLoaded, fetchAnalytics]);
+
+  const fetchUsers = useCallback(async () => {
+    if (usersLoaded) return;
+    try {
+      const { data } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
+      setUsers(data ?? []);
+      setUsersLoaded(true);
+    } catch (err) {
+      console.error("[Admin] fetchUsers failed:", err);
+    }
+  }, [usersLoaded]);
+
+  const fetchKnowledge = useCallback(async () => {
+    if (knowledgeLoaded) return;
+    try {
+      const [docsRes, chunksRes, totalDocsRes, docTypesRes, qaLogsRes] = await Promise.all([
+        supabase.from("legal_documents").select("id, title, source_type, citation, created_at").order("created_at", { ascending: false }).limit(50),
+        supabase.from("legal_document_chunks").select("id", { count: "estimated", head: true }),
+        supabase.from("legal_documents").select("id", { count: "estimated", head: true }),
+        supabase.from("legal_documents").select("source_type"),
+        supabase.from("qa_logs").select("*").order("created_at", { ascending: false }).limit(1000),
+      ]);
+
+      setLegalDocs(docsRes.data ?? []);
+      setTotalChunks(chunksRes.count ?? 0);
+      setTotalDocsCount(totalDocsRes.count ?? 0);
+
+      const typeCountsMap: Record<string, number> = {};
+      (docTypesRes.data ?? []).forEach((d: { source_type: string }) => {
+        typeCountsMap[d.source_type] = (typeCountsMap[d.source_type] || 0) + 1;
+      });
+      setDocTypeCounts(typeCountsMap);
+
+      const qaLogs = (qaLogsRes.data ?? []) as Array<{ local_footnotes_count: number; perplexity_footnotes_count: number; total_footnotes: number }>;
+      const totalQ = qaLogs.length;
+      const withLocal = qaLogs.filter(l => l.local_footnotes_count > 0).length;
+      const perplexityOnly = qaLogs.filter(l => l.local_footnotes_count === 0 && l.perplexity_footnotes_count > 0).length;
+      const avgLocalRatio = totalQ > 0
+        ? qaLogs.reduce((sum, l) => sum + (l.total_footnotes > 0 ? l.local_footnotes_count / l.total_footnotes : 0), 0) / totalQ * 100
+        : 0;
+      setQaStats({ total: totalQ, withLocal, perplexityOnly, avgLocalRatio: Math.round(avgLocalRatio) });
+
+      setKnowledgeLoaded(true);
+    } catch (err) {
+      console.error("[Admin] fetchKnowledge failed:", err);
+    }
+  }, [knowledgeLoaded]);
+
+  // Fetch data for active tab when admin is confirmed
   useEffect(() => {
     if (!isAdmin) return;
-    void fetchData();
-  }, [isAdmin]);
+    switch (activeTab) {
+      case "analytics": void fetchAnalytics(); break;
+      case "sources": void fetchSources(); break;
+      case "users": void fetchUsers(); break;
+      case "knowledge": void fetchKnowledge(); break;
+    }
+  }, [isAdmin, activeTab, fetchAnalytics, fetchSources, fetchUsers, fetchKnowledge]);
 
-  const fetchData = async () => {
-    setLoadingData(true);
-
-    const [citRes, usersRes, verifiedRes, docsRes, chunksRes, qaLogsRes, totalDocsRes, docTypesRes] = await Promise.all([
-      supabase.from("citation_history").select("*").order("created_at", { ascending: false }).limit(500),
-      supabase.from("profiles").select("*").order("created_at", { ascending: false }),
-      supabase.from("verified_sources").select("*").order("verified_at", { ascending: false }),
-      supabase.from("legal_documents").select("id, title, source_type, citation, created_at").order("created_at", { ascending: false }).limit(50),
-      supabase.from("legal_document_chunks").select("id", { count: "exact", head: true }),
-      supabase.from("qa_logs").select("*").order("created_at", { ascending: false }).limit(1000),
-      supabase.from("legal_documents").select("id", { count: "exact", head: true }),
-      supabase.from("legal_documents").select("source_type"),
-    ]);
-
-    setCitations(citRes.data ?? []);
-    setUsers(usersRes.data ?? []);
-    setVerifiedSources((verifiedRes.data ?? []) as unknown as VerifiedSourceRow[]);
-    setLegalDocs(docsRes.data ?? []);
-    setTotalChunks(chunksRes.count ?? 0);
-    setTotalDocsCount(totalDocsRes.count ?? 0);
-
-    // Compute doc type counts from full source_type column
-    const typeCountsMap: Record<string, number> = {};
-    (docTypesRes.data ?? []).forEach((d: { source_type: string }) => {
-      typeCountsMap[d.source_type] = (typeCountsMap[d.source_type] || 0) + 1;
-    });
-    setDocTypeCounts(typeCountsMap);
-
-    // Compute QA provenance stats
-    const qaLogs = (qaLogsRes.data ?? []) as Array<{ local_footnotes_count: number; perplexity_footnotes_count: number; total_footnotes: number }>;
-    const totalQ = qaLogs.length;
-    const withLocal = qaLogs.filter(l => l.local_footnotes_count > 0).length;
-    const perplexityOnly = qaLogs.filter(l => l.local_footnotes_count === 0 && l.perplexity_footnotes_count > 0).length;
-    const avgLocalRatio = totalQ > 0
-      ? qaLogs.reduce((sum, l) => sum + (l.total_footnotes > 0 ? l.local_footnotes_count / l.total_footnotes : 0), 0) / totalQ * 100
-      : 0;
-    setQaStats({ total: totalQ, withLocal, perplexityOnly, avgLocalRatio: Math.round(avgLocalRatio) });
-
-    setLoadingData(false);
-  };
+  // Reload all loaded tabs
+  const reloadAll = useCallback(async () => {
+    setAnalyticsLoaded(false);
+    setSourcesLoaded(false);
+    setUsersLoaded(false);
+    setKnowledgeLoaded(false);
+  }, []);
 
   const toggleVerification = async (citation: CitationRecord) => {
     const newState = !citation.is_verified;
@@ -153,7 +202,7 @@ const Admin = () => {
 
     setCitations((prev) => prev.map((item) => (item.id === citation.id ? { ...item, is_verified: newState } : item)));
     toast.success(newState ? "מקור אומת!" : "אימות הוסר");
-    void fetchData();
+    void reloadAll();
   };
 
   const bulkToggleVerification = async (citationsToToggle: CitationRecord[]) => {
@@ -188,7 +237,7 @@ const Admin = () => {
     }
 
     toast.success(`${citationsToToggle.length} מקורות עודכנו`);
-    void fetchData();
+    void reloadAll();
   };
 
   const bulkVerifyVerifiedSources = async (sourceIds: string[]) => {
@@ -202,7 +251,7 @@ const Admin = () => {
       return;
     }
     toast.success(`${sourceIds.length} מקורות אומתו`);
-    void fetchData();
+    void reloadAll();
   };
 
   const bulkRemoveVerifiedSources = async (sourceIds: string[]) => {
@@ -216,7 +265,7 @@ const Admin = () => {
       return;
     }
     toast.success(`${sourceIds.length} מקורות הוסרו`);
-    void fetchData();
+    void reloadAll();
   };
 
   const verifySingleSource = async (source: VerifiedSourceRow) => {
@@ -244,7 +293,7 @@ const Admin = () => {
     }
 
     toast.success("מקור עודכן בהצלחה!");
-    void fetchData();
+    void reloadAll();
   };
 
   const removeVerified = async (source: VerifiedSourceRow) => {
@@ -352,13 +401,29 @@ const Admin = () => {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
-  if (authLoading || loadingData) {
+  // Show shell immediately once auth is resolved — don't wait for data
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
       </div>
     );
   }
+
+  const isTabLoading = (tab: MainTab) => {
+    switch (tab) {
+      case "analytics": return !analyticsLoaded;
+      case "sources": return !sourcesLoaded;
+      case "users": return !usersLoaded;
+      case "knowledge": return !knowledgeLoaded;
+    }
+  };
+
+  const TabSpinner = () => (
+    <div className="flex items-center justify-center py-12">
+      <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+    </div>
+  );
 
   const mainTabs = [
     { id: "analytics" as const, label: "📊 סטטיסטיקות" },
@@ -393,6 +458,7 @@ const Admin = () => {
         </div>
 
         {activeTab === "analytics" && (
+          isTabLoading("analytics") ? <TabSpinner /> : (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <StatCard icon="📄" label="סה״כ אזכורים" value={totalCitations} />
@@ -420,9 +486,11 @@ const Admin = () => {
               </div>
             )}
           </div>
+          )
         )}
 
         {activeTab === "sources" && (
+          isTabLoading("sources") ? <TabSpinner /> : (
           <div className="space-y-6">
             <div className="flex gap-2 flex-wrap">
               {sourceSubTabs.map((tab) => (
@@ -494,7 +562,7 @@ const Admin = () => {
                 <AddVerifiedSourceDialog
                   open={showAddDialog}
                   onOpenChange={setShowAddDialog}
-                  onAdded={() => fetchData()}
+                  onAdded={() => reloadAll()}
                   userId={user?.id}
                 />
                 <VerifiedSourcesTable
@@ -550,16 +618,17 @@ const Admin = () => {
               </div>
             )}
           </div>
+          )
         )}
 
         {activeTab === "knowledge" && (
+          isTabLoading("knowledge") ? <TabSpinner /> : (
           <div className="space-y-6">
             <h2 className="text-foreground font-bold text-lg">🧠 מאגר ידע משפטי (V2 RAG)</h2>
             <p className="text-muted-foreground text-sm">
               הוסיפו מקורות משפטיים למאגר הידע המקומי. מקורות אלו ישמשו כמקור ראשוני בתשובות לשאלות משפטיות.
             </p>
 
-            {/* QA source provenance stats */}
             <div className="bg-card border border-border rounded-xl p-5 shadow-sm space-y-3">
               <h3 className="text-foreground font-bold text-sm">📊 מקורות תשובות (Local vs Perplexity)</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -583,7 +652,6 @@ const Admin = () => {
               )}
             </div>
 
-            {/* Knowledge base stats */}
             {(() => {
               const SOURCE_TYPE_META: Record<string, { emoji: string; label: string }> = {
                 legislation: { emoji: "📜", label: "חקיקה" },
@@ -643,12 +711,14 @@ const Admin = () => {
             })()}
 
             <BatchEmbeddingPanel />
-            <LegalDocumentIngestion onIngested={() => fetchData()} />
-            <ApifyIngestionPanel onIngested={() => fetchData()} />
+            <LegalDocumentIngestion onIngested={() => reloadAll()} />
+            <ApifyIngestionPanel onIngested={() => reloadAll()} />
           </div>
+          )
         )}
 
         {activeTab === "users" && (
+          isTabLoading("users") ? <TabSpinner /> : (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <StatCard icon="👥" label="סה״כ משתמשים רשומים" value={users.length} color="text-primary" />
@@ -671,6 +741,7 @@ const Admin = () => {
               }}
             />
           </div>
+          )
         )}
       </div>
     </div>
