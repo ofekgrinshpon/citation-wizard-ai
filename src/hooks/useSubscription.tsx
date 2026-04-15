@@ -15,14 +15,18 @@ export function useSubscription() {
       setLoading(false);
       return;
     }
-    const { data } = await supabase
-      .from("profiles")
-      .select("is_subscribed, citation_count")
-      .eq("id", user.id)
-      .single();
-    if (data) {
-      setIsSubscribed(data.is_subscribed ?? false);
-      setCitationCount(data.citation_count ?? 0);
+    try {
+      const { data } = await supabase
+        .from("profiles")
+        .select("is_subscribed, citation_count")
+        .eq("id", user.id)
+        .single();
+      if (data) {
+        setIsSubscribed(data.is_subscribed ?? false);
+        setCitationCount(data.citation_count ?? 0);
+      }
+    } catch (err) {
+      console.error("[useSubscription] fetch failed:", err);
     }
     setLoading(false);
   }, [user]);

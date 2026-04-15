@@ -48,14 +48,21 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
     }
 
     setLoading(true);
-    const { data, error } = await supabase
-      .from("projects")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: true });
-
-    if (error) {
-      console.error("Failed to fetch projects", error);
+    let data: Project[] | null = null;
+    try {
+      const res = await supabase
+        .from("projects")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: true });
+      if (res.error) {
+        console.error("Failed to fetch projects", res.error);
+        setLoading(false);
+        return;
+      }
+      data = res.data as Project[];
+    } catch (err) {
+      console.error("Projects fetch exception", err);
       setLoading(false);
       return;
     }
