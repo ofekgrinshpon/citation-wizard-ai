@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { supabaseWithTimeout } from "@/lib/queryTimeout";
 import { useAuth } from "@/hooks/useAuth";
 
 const FREE_LIMIT = 3;
+const FETCH_TIMEOUT_MS = 8000;
 
 export function useSubscription() {
   const { user, isAdmin } = useAuth();
@@ -16,17 +18,21 @@ export function useSubscription() {
       return;
     }
     try {
-      const { data } = await supabase
-        .from("profiles")
-        .select("is_subscribed, citation_count")
-        .eq("id", user.id)
-        .single();
+      const { data } = await supabaseWithTimeout(
+        supabase
+          .from("profiles")
+          .select("is_subscribed, citation_count")
+          .eq("id", user.id)
+          .single(),
+        FETCH_TIMEOUT_MS,
+        "subscription profile",
+      );
       if (data) {
         setIsSubscribed(data.is_subscribed ?? false);
         setCitationCount(data.citation_count ?? 0);
       }
     } catch (err) {
-      console.error("[useSubscription] fetch failed:", err);
+      console.error("[useSubscription] fetch failed/timeout:", err);
     }
     setLoading(false);
   }, [user]);

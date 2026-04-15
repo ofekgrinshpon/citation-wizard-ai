@@ -119,11 +119,11 @@ const Admin = () => {
   const fetchKnowledge = useCallback(async () => {
     if (knowledgeLoaded) return;
     try {
-      const [docsRes, chunksRes, totalDocsRes, qaLogsRes] = await Promise.all([
+      // Only fetch lightweight data first — defer qa_logs until explicitly needed
+      const [docsRes, chunksRes, totalDocsRes] = await Promise.all([
         supabase.from("legal_documents").select("id, title, source_type, citation, created_at").order("created_at", { ascending: false }).limit(50),
         supabase.from("legal_document_chunks").select("id", { count: "estimated", head: true }),
         supabase.from("legal_documents").select("id", { count: "estimated", head: true }),
-        supabase.from("qa_logs").select("*").order("created_at", { ascending: false }).limit(1000),
       ]);
 
       setLegalDocs(docsRes.data ?? []);
@@ -137,18 +137,26 @@ const Admin = () => {
       });
       setDocTypeCounts(typeCountsMap);
 
-      const qaLogs = (qaLogsRes.data ?? []) as Array<{ local_footnotes_count: number; perplexity_footnotes_count: number; total_footnotes: number }>;
-      const totalQ = qaLogs.length;
-      const withLocal = qaLogs.filter(l => l.local_footnotes_count > 0).length;
-      const perplexityOnly = qaLogs.filter(l => l.local_footnotes_count === 0 && l.perplexity_footnotes_count > 0).length;
-      const avgLocalRatio = totalQ > 0
-        ? qaLogs.reduce((sum, l) => sum + (l.total_footnotes > 0 ? l.local_footnotes_count / l.total_footnotes : 0), 0) / totalQ * 100
-        : 0;
-      setQaStats({ total: totalQ, withLocal, perplexityOnly, avgLocalRatio: Math.round(avgLocalRatio) });
-
       setKnowledgeLoaded(true);
+
+      // Fetch QA stats in background — don't block the tab
+      Promise.resolve(
+        supabase.from("qa_logs").select("local_footnotes_count, perplexity_footnotes_count, total_footnotes").order("created_at", { ascending: false }).limit(500)
+      ).then(({ data: qaLogsData }) => {
+          const qaLogs = (qaLogsData ?? []) as Array<{ local_footnotes_count: number; perplexity_footnotes_count: number; total_footnotes: number }>;
+          const totalQ = qaLogs.length;
+          const withLocal = qaLogs.filter(l => l.local_footnotes_count > 0).length;
+          const perplexityOnly = qaLogs.filter(l => l.local_footnotes_count === 0 && l.perplexity_footnotes_count > 0).length;
+          const avgLocalRatio = totalQ > 0
+            ? qaLogs.reduce((sum, l) => sum + (l.total_footnotes > 0 ? l.local_footnotes_count / l.total_footnotes : 0), 0) / totalQ * 100
+            : 0;
+          setQaStats({ total: totalQ, withLocal, perplexityOnly, avgLocalRatio: Math.round(avgLocalRatio) });
+        })
+        .catch(err => console.error("[Admin] QA stats background fetch failed:", err));
     } catch (err) {
       console.error("[Admin] fetchKnowledge failed:", err);
+      // Still mark as loaded so the tab renders instead of spinning forever
+      setKnowledgeLoaded(true);
     }
   }, [knowledgeLoaded]);
 

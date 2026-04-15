@@ -17,7 +17,7 @@ const Auth = () => {
   const [fullName, setFullName] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp, user, isAdmin, isAdminResolved, loading: authLoading } = useAuth();
+  const { signIn, signUp, user, loading: authLoading } = useAuth();
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
 
@@ -37,15 +37,9 @@ const Auth = () => {
 
   if (user) {
     const addinParam = isOfficeAddin ? "?addin=1" : "";
-    // Wait for role resolution before redirecting to avoid misrouting admins
-    if (!isAdminResolved) {
-      return (
-        <div className="flex items-center justify-center h-screen">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-        </div>
-      );
-    }
-    return <Navigate to={isAdmin ? `/admin${addinParam}` : `/app${addinParam}`} replace />;
+    // Don't wait for role resolution — always route to /app
+    // Admins can navigate to /admin manually; this prevents heavy dashboard from blocking login
+    return <Navigate to={`/app${addinParam}`} replace />;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

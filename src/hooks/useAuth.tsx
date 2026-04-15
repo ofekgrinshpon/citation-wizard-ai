@@ -1,13 +1,15 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { withTimeout, supabaseWithTimeout } from "@/lib/queryTimeout";
 import type { User, Session } from "@supabase/supabase-js";
+
+const ROLE_TIMEOUT_MS = 6000;
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
   isAdmin: boolean;
-  /** True once admin role resolution has finished (or was skipped for non-users) */
   isAdminResolved: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: Error | null }>;
@@ -33,16 +35,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setIsAdminResolved(false);
     try {
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", nextUser.id)
-        .eq("role", "admin")
-        .maybeSingle();
+      const { data, error } = await supabaseWithTimeout(
+        supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", nextUser.id)
+          .eq("role", "admin")
+          .maybeSingle(),
+        ROLE_TIMEOUT_MS,
+        "admin role lookup",
+      );
 
       setIsAdmin(!error && !!data);
     } catch (err) {
-      console.error("[ReLex] resolveAdmin failed:", err);
+      console.error("[ReLex] resolveAdmin failed/timeout:", err);
+      // Fail-safe: treat as non-admin so user isn't stuck
       setIsAdmin(false);
     } finally {
       setIsAdminResolved(true);
@@ -72,13 +79,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       void syncAuthState(nextSession);
     });
 
-    void supabase.auth.getSession()
+    // Hard timeout on getSession itself — if backend is saturated, don't hang forever
+    const sessionPromise = supabase.auth.getSession();
+    withTimeout(sessionPromise, 10000, "getSession")
       .then(({ data: { session: currentSession } }) => {
         hasHydratedSession.current = true;
         void syncAuthState(currentSession, true);
       })
       .catch((err) => {
-        console.error("[ReLex] getSession failed:", err);
+        console.error("[ReLex] getSession failed/timeout:", err);
         hasHydratedSession.current = true;
         if (isMounted) {
           setLoading(false);

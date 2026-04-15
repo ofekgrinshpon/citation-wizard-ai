@@ -63,8 +63,11 @@ function AuthRedirect() {
   }
 
   const addinSuffix = new URLSearchParams(window.location.search).get("addin") === "1" ? "?addin=1" : "";
+
   if (!user) return <Navigate to={`/auth${addinSuffix ? `?${addinSuffix.slice(1)}` : ""}`} replace />;
-  if (isAdmin) return <Navigate to={`/admin${addinSuffix}`} replace />;
+
+  // Always route to /app after login — admins can navigate to /admin manually
+  // This prevents the heavy admin dashboard from blocking the post-login experience
   return <Navigate to={`/app${addinSuffix}`} replace />;
 }
 
