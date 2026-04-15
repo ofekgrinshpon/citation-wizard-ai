@@ -1,53 +1,57 @@
 
+Fix target: make login feel instant again and prevent the app from hanging right after sign-in.
 
-## Fix Authentication on Published URL
+What I found:
+- This does not look like a browser-memory problem from “50k embeddings” on the auth page itself.
+- The auth flow only touches auth/session data plus small tables like `user_roles`, `profiles`, and `projects`.
+- The likely connection is post-login load: admins are redirected straight to `/admin`, and `src/pages/Admin.tsx` immediately runs several heavy queries, including:
+  - exact count on `legal_document_chunks`
+  - full `select("source_type")` over `legal_documents`
+  - multiple large table reads in parallel
+- With ~361k chunks and active embedding work, that can make it seem like “Google login loads forever” even if sign-in already succeeded.
 
-### Problem Analysis
+Plan:
+1. Make post-login lightweight
+- Keep authentication separate from heavy admin analytics.
+- After sign-in, send users to a lightweight shell/loading state first instead of triggering all admin queries immediately.
+- Only load admin analytics after the route is mounted and the session is clearly ready.
 
-The evidence shows two separate issues:
-- **Preview**: Email login POST fails at the network level ("Load failed") due to the preview's fetch proxy. Google OAuth returns an immediate error. These are known preview environment limitations.
-- **Published version**: Google OAuth "loads forever" -- likely the app hasn't been re-published with latest code, or the OAuth callback isn't being processed correctly after returning from Google.
+2. Refactor `src/pages/Admin.tsx`
+- Split the current `fetchData()` into smaller tab-specific fetches.
+- Do not load everything in one `Promise.all`.
+- Remove expensive “load all source types then count in JS” behavior.
+- Replace chunk/document totals with lighter summary queries or a backend summary function/view.
 
-### Root Cause
+3. Reduce expensive startup reads
+- Review `useProjects`, `useSubscription`, sidebar/profile reads, and make them fail-soft:
+  - add error handling
+  - avoid blocking the whole app if one query stalls
+  - render UI shell while secondary data loads
 
-The Google OAuth handler in `Auth.tsx` does not handle the `result.redirected` case, and lacks error logging. After returning from Google, if token processing fails silently, the user sees a loading state forever. Additionally, the app may not have been published with the latest code changes.
+4. Harden OAuth landing flow
+- Update the Google redirect target to a dedicated callback route instead of the bare site root.
+- Use that callback page to wait for session hydration, then redirect to `/app` or `/admin`.
+- Show a visible error state if callback/session setup fails instead of appearing stuck.
 
-### Plan
+5. Verify backend pressure
+- Check auth/database logs to confirm whether the database is timing out under embedding load.
+- If confirmed, temporarily pause/throttle embedding while testing auth, or move admin stats to precomputed summaries.
 
-**1. Improve Google OAuth handler in `Auth.tsx`**
-- Add explicit `result.redirected` handling (return early since browser is navigating away)
-- Add console logging to capture the exact error when OAuth fails
-- Add a timeout fallback so the button doesn't stay in "loading" state forever
+Files likely involved:
+- `src/pages/Admin.tsx`
+- `src/pages/Auth.tsx`
+- `src/hooks/useAuth.tsx`
+- `src/hooks/useProjects.tsx`
+- `src/hooks/useSubscription.tsx`
+- possibly `src/App.tsx` for a dedicated post-auth callback/loading route
 
-**2. Add error resilience to `useAuth.tsx`**
-- Add a try/catch around `supabase.auth.getSession()` so if the initial session check fails, `loading` still becomes `false` (preventing infinite spinner)
+Technical details:
+- Main suspected hotspot is `Admin.tsx` initial `fetchData()` doing broad reads across `citation_history`, `profiles`, `verified_sources`, `legal_documents`, `legal_document_chunks`, and `qa_logs`.
+- `legal_document_chunks` exact counts are especially likely to get slower as the embedding corpus grows.
+- This is a backend/query-load issue, not “the app holding 50k chunks in browser memory”.
+- If you are an admin user, the problem would show up exactly as a login hang because admins are routed into the heavy dashboard immediately.
 
-**3. Publish the latest version**
-- Ensure the published URL has the latest code with these fixes
-
-### Technical Details
-
-In `Auth.tsx`, the Google button handler will be updated:
-```typescript
-const result = await lovable.auth.signInWithOAuth("google", {
-  redirect_uri: window.location.origin,
-});
-if (result.redirected) return; // browser is navigating to Google
-if (result.error) {
-  console.error("[ReLex] Google OAuth error:", result.error);
-  toast.error("שגיאה בהתחברות עם Google");
-}
-```
-
-In `useAuth.tsx`, wrap the session hydration in a try/catch:
-```typescript
-void supabase.auth.getSession().then(...).catch(() => {
-  hasHydratedSession.current = true;
-  setLoading(false);
-});
-```
-
-### Important Note
-
-Email and Google authentication **will not work in the Lovable preview** due to iframe restrictions and the proxy environment. You must test authentication on the published URL: `https://citation-wizard-ai.lovable.app`. This is a platform limitation, not a code bug.
-
+Expected result:
+- Email/Google sign-in completes normally.
+- Users reach the app quickly even while background/admin data is still loading.
+- Admin dashboard becomes incremental instead of blocking the whole session on large-table queries.
