@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { withTimeout } from "@/lib/queryTimeout";
+import { supabaseWithTimeout } from "@/lib/queryTimeout";
 import { useAuth } from "@/hooks/useAuth";
 
 const FETCH_TIMEOUT_MS = 8000;
@@ -53,7 +53,7 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     let data: Project[] | null = null;
     try {
-      const res = await withTimeout(
+      const res = await supabaseWithTimeout(
         supabase
           .from("projects")
           .select("*")

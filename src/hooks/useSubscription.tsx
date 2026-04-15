@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { withTimeout } from "@/lib/queryTimeout";
+import { supabaseWithTimeout } from "@/lib/queryTimeout";
 import { useAuth } from "@/hooks/useAuth";
 
 const FREE_LIMIT = 3;
@@ -18,7 +18,7 @@ export function useSubscription() {
       return;
     }
     try {
-      const { data } = await withTimeout(
+      const { data } = await supabaseWithTimeout(
         supabase
           .from("profiles")
           .select("is_subscribed, citation_count")
