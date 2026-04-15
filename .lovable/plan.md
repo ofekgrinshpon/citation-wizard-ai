@@ -1,57 +1,86 @@
 
-Fix target: make login feel instant again and prevent the app from hanging right after sign-in.
+Goal: fix the new “blank page with endless spinner after sign-in” state shown in the screenshot.
 
-What I found:
-- This does not look like a browser-memory problem from “50k embeddings” on the auth page itself.
-- The auth flow only touches auth/session data plus small tables like `user_roles`, `profiles`, and `projects`.
-- The likely connection is post-login load: admins are redirected straight to `/admin`, and `src/pages/Admin.tsx` immediately runs several heavy queries, including:
-  - exact count on `legal_document_chunks`
-  - full `select("source_type")` over `legal_documents`
-  - multiple large table reads in parallel
-- With ~361k chunks and active embedding work, that can make it seem like “Google login loads forever” even if sign-in already succeeded.
+What I found
+- This does not look like browser memory from the embeddings themselves.
+- The screenshot matches a route that renders only a centered spinner while auth is unresolved.
+- Several pages still gate rendering on auth-related loading and can show nothing or only a spinner:
+  - `src/pages/Auth.tsx`
+  - `src/pages/Landing.tsx`
+  - `src/pages/Admin.tsx`
+  - `src/pages/Index.tsx`
+  - `src/pages/Profile.tsx`
+  - `src/pages/LegalQA.tsx` currently returns `null` when auth/subscription is loading.
+- The highest-risk issue is role resolution:
+  - `useAuth` sets `loading=false` before admin role resolution finishes.
+  - `Auth.tsx` and `Landing.tsx` immediately redirect authenticated users using `isAdmin`.
+  - If the user is actually admin, they can be misrouted to `/app` first; if auth/role/session hydration races, the app can bounce into a bad loading state.
+- Another likely issue: current Google OAuth still redirects to `window.location.origin`, not the dedicated `/auth-redirect` route that already exists in `src/App.tsx`.
+- `AuthRedirect` currently returns `null` while auth is loading, which can produce a blank screen with no visible status.
+- `Admin.tsx` is lighter than before, but `fetchKnowledge()` still does an expensive full `select("source_type")` on `legal_documents`, which should be removed/replaced.
 
-Plan:
-1. Make post-login lightweight
-- Keep authentication separate from heavy admin analytics.
-- After sign-in, send users to a lightweight shell/loading state first instead of triggering all admin queries immediately.
-- Only load admin analytics after the route is mounted and the session is clearly ready.
+Likely root cause
+- Not “50k chunks in browser memory”.
+- A post-login auth/role redirect race, made worse by blank loading states and at least one remaining heavy admin query.
+- The app has a callback route, but the OAuth flow is not actually using it.
 
-2. Refactor `src/pages/Admin.tsx`
-- Split the current `fetchData()` into smaller tab-specific fetches.
-- Do not load everything in one `Promise.all`.
-- Remove expensive “load all source types then count in JS” behavior.
-- Replace chunk/document totals with lighter summary queries or a backend summary function/view.
+Implementation plan
+1. Make auth state explicit and safe
+- Update `useAuth` to separate:
+  - session hydration ready
+  - admin role loading
+- Expose an additional readiness flag such as `authReady` / `roleReady` or `isAdminResolved`.
+- Do not let pages make role-based redirects until role resolution is complete for signed-in users.
 
-3. Reduce expensive startup reads
-- Review `useProjects`, `useSubscription`, sidebar/profile reads, and make them fail-soft:
-  - add error handling
-  - avoid blocking the whole app if one query stalls
-  - render UI shell while secondary data loads
+2. Fix OAuth landing flow properly
+- Change Google sign-in in `src/pages/Auth.tsx` to redirect to `/auth-redirect` instead of bare origin.
+- Update signup email redirect to point to a stable callback target if needed.
+- Refine `AuthRedirect` in `src/App.tsx` so it shows a real loading screen, waits for auth + role readiness, then routes once:
+  - admin → `/admin`
+  - regular user → `/app`
+  - no user → `/auth`
 
-4. Harden OAuth landing flow
-- Update the Google redirect target to a dedicated callback route instead of the bare site root.
-- Use that callback page to wait for session hydration, then redirect to `/app` or `/admin`.
-- Show a visible error state if callback/session setup fails instead of appearing stuck.
+3. Remove blank-screen loading states
+- Replace `return null` patterns with a visible loader/shell:
+  - especially in `src/pages/LegalQA.tsx`
+  - and any auth-protected route still rendering blank while loading
+- Standardize one small “auth resolving” UI so users see progress instead of a white page.
 
-5. Verify backend pressure
-- Check auth/database logs to confirm whether the database is timing out under embedding load.
-- If confirmed, temporarily pause/throttle embedding while testing auth, or move admin stats to precomputed summaries.
+4. Prevent premature redirects on auth pages
+- In `src/pages/Auth.tsx` and `src/pages/Landing.tsx`, only redirect authenticated users after role resolution is complete.
+- Avoid immediate `Navigate` based on a possibly stale default `isAdmin=false`.
 
-Files likely involved:
-- `src/pages/Admin.tsx`
-- `src/pages/Auth.tsx`
+5. Harden `/app` startup
+- In `src/pages/Index.tsx`, gate route rendering on both auth readiness and projects readiness.
+- If no `currentProject` is available yet, show shell/loading instead of continuing with half-ready state.
+- Keep existing fail-soft behavior in `useProjects`, but avoid rendering the main workspace before it settles.
+
+6. Finish admin performance cleanup
+- Refactor `src/pages/Admin.tsx` knowledge tab fetch:
+  - remove full `select("source_type")` over `legal_documents`
+  - replace with lighter aggregated logic, backend summary query, or defer counts until requested
+- Keep admin shell visible immediately while tab data loads.
+
+7. Add diagnostics for the stuck flow
+- Add focused console logs around:
+  - auth session hydration
+  - admin role resolution
+  - `/auth-redirect` mount and redirect decision
+  - post-login route chosen
+- This will make the next report conclusive if anything still hangs.
+
+Files to update
 - `src/hooks/useAuth.tsx`
-- `src/hooks/useProjects.tsx`
-- `src/hooks/useSubscription.tsx`
-- possibly `src/App.tsx` for a dedicated post-auth callback/loading route
+- `src/pages/Auth.tsx`
+- `src/App.tsx`
+- `src/pages/Landing.tsx`
+- `src/pages/Index.tsx`
+- `src/pages/LegalQA.tsx`
+- `src/pages/Admin.tsx`
+- possibly `src/pages/Profile.tsx` for consistent auth-loading handling
 
-Technical details:
-- Main suspected hotspot is `Admin.tsx` initial `fetchData()` doing broad reads across `citation_history`, `profiles`, `verified_sources`, `legal_documents`, `legal_document_chunks`, and `qa_logs`.
-- `legal_document_chunks` exact counts are especially likely to get slower as the embedding corpus grows.
-- This is a backend/query-load issue, not “the app holding 50k chunks in browser memory”.
-- If you are an admin user, the problem would show up exactly as a login hang because admins are routed into the heavy dashboard immediately.
-
-Expected result:
-- Email/Google sign-in completes normally.
-- Users reach the app quickly even while background/admin data is still loading.
-- Admin dashboard becomes incremental instead of blocking the whole session on large-table queries.
+Expected result
+- Google sign-in lands on a dedicated callback route instead of hanging on a blank page.
+- Admin users are not misrouted while role lookup is still pending.
+- The app always shows a visible loading state instead of a white screen.
+- Heavy admin reads no longer make login feel frozen.
