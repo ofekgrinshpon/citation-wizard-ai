@@ -119,11 +119,10 @@ const Admin = () => {
   const fetchKnowledge = useCallback(async () => {
     if (knowledgeLoaded) return;
     try {
-      const [docsRes, chunksRes, totalDocsRes, docTypesRes, qaLogsRes] = await Promise.all([
+      const [docsRes, chunksRes, totalDocsRes, qaLogsRes] = await Promise.all([
         supabase.from("legal_documents").select("id, title, source_type, citation, created_at").order("created_at", { ascending: false }).limit(50),
         supabase.from("legal_document_chunks").select("id", { count: "estimated", head: true }),
         supabase.from("legal_documents").select("id", { count: "estimated", head: true }),
-        supabase.rpc("get_doc_type_counts").then(res => res).catch(() => ({ data: null, error: "rpc not available" })),
         supabase.from("qa_logs").select("*").order("created_at", { ascending: false }).limit(1000),
       ]);
 
@@ -131,8 +130,9 @@ const Admin = () => {
       setTotalChunks(chunksRes.count ?? 0);
       setTotalDocsCount(totalDocsRes.count ?? 0);
 
+      // Build type counts from the already-fetched recent 50 docs (approximate)
       const typeCountsMap: Record<string, number> = {};
-      (docTypesRes.data ?? []).forEach((d: { source_type: string }) => {
+      (docsRes.data ?? []).forEach((d: { source_type: string }) => {
         typeCountsMap[d.source_type] = (typeCountsMap[d.source_type] || 0) + 1;
       });
       setDocTypeCounts(typeCountsMap);
