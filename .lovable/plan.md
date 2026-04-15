@@ -1,72 +1,36 @@
 
-**Answer**
-No reliable “hard kill” exists in the current app for an already-running backend query/job. Right now:
-- the admin page can still start heavy reads,
-- the embedding/ingestion tools can keep the backend busy,
-- the Stop button only stops the client loop after the current request returns.
 
-So the fix should be: stop waiting on stale work, stop launching more heavy work, and add a real cooperative cancel/pause mechanism for long-running admin jobs.
+# Fix: AI Fabricating Non-Existent Sources in Legal QA
 
-**What I found**
-- `Admin.tsx` is better than before, but the Knowledge tab still launches 4 queries together, including large-table counts and `qa_logs` reads.
-- `BatchEmbeddingPanel.tsx` only stops the next loop iteration locally; it does not cancel the in-flight `batch-embed-chunks` request.
-- `batch-embed-chunks` still does large reads plus per-chunk updates, and only ends when a batch completes.
-- `ApifyIngestionPanel.tsx` and ingestion functions can also keep the backend under pressure.
-- Auth startup still depends on DB reads (`user_roles`, `projects`, `profiles`) with no hard timeout, so if the backend is saturated, login can look frozen.
+## The Problem
+The footnote `זאב סגל "זכויות אדם כחוקה" משפטים כח 77, 85 (1997)` looks perfectly formatted but the article doesn't exist. The AI hallucinated it.
 
-**Plan**
-1. **Make login immune to admin load**
-   - Stop sending admins straight into the heavy dashboard immediately after sign-in.
-   - Route successful login to a lightweight post-auth screen first, then let admins enter `/admin` manually.
+## Root Cause
+Line 701 in `supabase/functions/legal-qa/index.ts` explicitly permits the AI to cite sources not in the provided list:
 
-2. **Add hard timeouts to startup auth reads**
-   - Wrap admin-role, projects, and subscription/profile queries with timeout logic.
-   - If a query stalls, fail soft with a visible retry state instead of an endless spinner.
+> "אתה יכול גם לכתוב אזכורים נוספים שאינם ברשימה, אם אתה בטוח לחלוטין שהם קיימים."
 
-3. **Remove remaining expensive admin startup reads**
-   - Break the Knowledge tab into smaller fetches.
-   - Defer `qa_logs` stats and large counts until explicitly requested.
-   - Keep the admin shell visible immediately.
+This is a direct invitation for hallucination. LLMs cannot reliably verify whether an article exists — they generate plausible-sounding metadata (author + journal + volume + page + year) that passes human eye-test but is fabricated.
 
-4. **Add real cancel/pause for long-running admin jobs**
-   - Add a backend control table for job state (`running`, `pause_requested`, `cancel_requested`).
-   - Update `batch-embed-chunks` and ingestion flows to check that flag between sub-batches and exit quickly.
-   - Change the Admin UI Stop button to set the backend cancel flag, not just a local boolean.
+## Plan
 
-5. **Add recovery UX**
-   - If auth is ready but backend-dependent reads are slow, show:
-     - “logged in successfully”
-     - “admin data is still loading”
-     - retry / continue to app actions
+### 1. Remove the permission to cite outside the source list
+Replace line 701 with a strict prohibition:
 
-6. **Add targeted diagnostics**
-   - Log exact timings for `getSession`, role lookup, projects fetch, subscription fetch, and admin tab fetches so the next stuck case is attributable immediately.
+> "אסור בהחלט לצטט מקורות שאינם מופיעים ברשימת המקורות הזמינים למעלה. אם אין מספיק מקורות ברשימה, כתוב פחות הערות שוליים — אל תמציא מקורות חדשים."
 
-**Technical details**
-- **Frontend files**
-  - `src/hooks/useAuth.tsx`
-  - `src/hooks/useProjects.tsx`
-  - `src/hooks/useSubscription.tsx`
-  - `src/pages/Auth.tsx`
-  - `src/pages/Landing.tsx`
-  - `src/App.tsx`
-  - `src/pages/Admin.tsx`
-  - `src/components/admin/BatchEmbeddingPanel.tsx`
-  - `src/components/admin/ApifyIngestionPanel.tsx`
-- **Backend functions**
-  - `supabase/functions/batch-embed-chunks/index.ts`
-  - `supabase/functions/apify-ingest-cases/index.ts`
-  - possibly `supabase/functions/embed-legal-source/index.ts`
-- **Database change likely needed**
-  - small admin-only job-control table for cooperative cancellation/pause
-  - RLS restricted to admins only
+### 2. Add a post-processing validation step
+After the AI response is received, cross-check each footnote against the source cards that were actually provided. Flag or strip any footnote that doesn't match any provided source (by title, case number, or author).
 
-**Important constraint**
-- I do not plan to use unsafe backend-process cancellation.
-- I do plan to implement cooperative cancellation plus frontend timeouts, which is the safer and more reliable fix in this stack.
+### 3. Mark unverified external citations
+For footnotes derived from Perplexity (web) sources, add a subtle marker so users know these weren't from the local verified database.
 
-**Expected result**
-- Login succeeds even if admin/background jobs are busy.
-- Old admin work no longer makes auth appear frozen.
-- Admin jobs can be paused/canceled cleanly.
-- The app shows recovery UI instead of hanging on a spinner.
+## Files to Change
+- `supabase/functions/legal-qa/index.ts` — prompt rewrite (line 701) + post-processing validation
+- No database changes needed
+
+## Expected Result
+- The AI will only cite sources actually provided in the source catalog
+- Fabricated articles like the Zeev Segal example will no longer appear
+- If retrieved sources are insufficient, the memo will have fewer footnotes rather than fake ones
+
