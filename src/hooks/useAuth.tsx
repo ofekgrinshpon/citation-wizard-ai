@@ -63,10 +63,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       void syncAuthState(nextSession);
     });
 
-    void supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
-      hasHydratedSession.current = true;
-      void syncAuthState(currentSession, true);
-    });
+    void supabase.auth.getSession()
+      .then(({ data: { session: currentSession } }) => {
+        hasHydratedSession.current = true;
+        void syncAuthState(currentSession, true);
+      })
+      .catch((err) => {
+        console.error("[ReLex] getSession failed:", err);
+        hasHydratedSession.current = true;
+        if (isMounted) setLoading(false);
+      });
 
     return () => {
       isMounted = false;
