@@ -972,14 +972,19 @@ ${combinedContext}`;
 
     if (aiFootnoteLines.length > 0) {
       // Use AI-formatted footnotes — match each to a source card for provenance
+      // CRITICAL: Strip any footnote that doesn't match a provided source (anti-hallucination)
       for (const aiFn of aiFootnoteLines) {
         const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards);
+        if (!matchedCard) {
+          console.log(`Stripped hallucinated footnote #${aiFn.num}: ${aiFn.text.slice(0, 80)}...`);
+          continue; // Skip footnotes that don't match any provided source
+        }
         footnotes.push({
           number: fnNum,
           citation: aiFn.text,
-          source_type: matchedCard?.source_type || "unknown",
-          url: matchedCard?.url,
-          source: matchedCard?.provenance || "perplexity",
+          source_type: matchedCard.source_type,
+          url: matchedCard.url,
+          source: matchedCard.provenance || "local",
         });
         // Map original [X] number to new sequential number
         oldIdToNewNumber.set(aiFn.num, fnNum);
