@@ -1018,6 +1018,19 @@ ${combinedContext}`;
       }
     }
 
+    // ========= Step 5c: Normalize any raw superscripts back to [X] brackets =========
+    // Safety: if the AI still produces Unicode superscripts instead of [X], convert them first
+    const superscriptToDigitMap: Record<string, string> = {
+      "\u2070": "0", "\u00B9": "1", "\u00B2": "2", "\u00B3": "3",
+      "\u2074": "4", "\u2075": "5", "\u2076": "6",
+      "\u2077": "7", "\u2078": "8", "\u2079": "9",
+    };
+    answerBody = answerBody.replace(/[\u2070\u00B9\u00B2\u00B3\u2074-\u2079]+/g, (match) => {
+      const num = match.split("").map(c => superscriptToDigitMap[c] || c).join("");
+      return `[${num}]`;
+    });
+    console.log("Normalized superscripts to brackets in answer body");
+
     // ========= Step 6: Replace [X] markers with superscripts =========
     let answer = answerBody;
 
