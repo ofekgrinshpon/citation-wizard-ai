@@ -388,9 +388,9 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline } = body;
 
-    if (!question || typeof question !== "string" || question.trim().length < 5) {
+    if (!question || typeof question !== "string" || question.trim().length < 3) {
       return new Response(JSON.stringify({ error: "Question too short" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -410,13 +410,85 @@ serve(async (req) => {
 
     const t0 = Date.now();
 
+    // ========= Academic sub-mode shortcut =========
+    // For suggest_topics, validate_question, propose_outline: lighter flow without full retrieval
+    if (taskMode === "academic_writing" && academicStep && ["suggest_topics", "validate_question", "propose_outline"].includes(academicStep)) {
+      const subPrompt = getAcademicSubModePrompt(academicStep, body);
+      if (!subPrompt) {
+        return new Response(JSON.stringify({ error: "Invalid academic step" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Quick local search for context
+      let localContext = "";
+      try {
+        const keywords = extractKeywords(question);
+        const { data: textMatches } = await adminClient.rpc("search_legal_chunks_text", {
+          search_query: keywords, match_count: 5,
+        });
+        if (textMatches && textMatches.length > 0) {
+          localContext = "\n=== מקורות רלוונטיים מהמאגר ===\n" +
+            textMatches.slice(0, 5).map((m: any) => `- ${m.document_title} (${m.source_type})`).join("\n");
+        }
+      } catch { /* non-fatal */ }
+
+      // Include multi-file context if available
+      let fileContext = "";
+      if (documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
+        fileContext = "\n=== מסמכים שהועלו ===\n" +
+          documentTexts.map((dt: any) => `=== ${dt.name} ===\n${dt.text?.slice(0, 5000) || ""}`).join("\n\n");
+      }
+
+      const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          max_tokens: 4096,
+          messages: [
+            { role: "system", content: subPrompt + localContext + fileContext },
+            { role: "user", content: question },
+          ],
+        }),
+      }, 60000);
+
+      if (!aiRes.ok) {
+        const errText = await aiRes.text();
+        console.error("Academic sub-mode AI error:", aiRes.status, errText);
+        return new Response(JSON.stringify({ error: "שגיאה בשירות ה-AI." }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const aiData = await aiRes.json();
+      const answerText = aiData.choices?.[0]?.message?.content || "";
+      console.log(`Academic sub-mode (${academicStep}): ${answerText.length} chars, ${Date.now() - t0}ms`);
+
+      return new Response(
+        JSON.stringify({ answer: answerText, footnotes: [], source_urls: [] }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // ========= Step 0: Document context (if uploaded) =========
     let documentContext = "";
-    const hasDocument = documentText && typeof documentText === "string" && documentText.trim().length > 100;
-    if (hasDocument) {
-      documentContext = `\n=== מסמך שהועלה: ${documentName || "ללא שם"} ===\n${documentText.slice(0, 15000)}\n=== סוף המסמך ===\n`;
-      console.log(`Document uploaded: ${documentName}, ${documentText.length} chars`);
+    const isAcademicMode = taskMode === "academic_writing";
+    const contextCharLimit = isAcademicMode ? 12000 : MAX_CONTEXT_CHARS;
+
+    // Multi-file support
+    if (documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
+      documentContext = documentTexts.map((dt: any) => 
+        `\n=== מסמך: ${dt.name || "ללא שם"} ===\n${(dt.text || "").slice(0, 15000)}\n=== סוף המסמך ===\n`
+      ).join("\n");
+      console.log(`Multi-file upload: ${documentTexts.length} files`);
+    } else {
+      const hasDocument = documentText && typeof documentText === "string" && documentText.trim().length > 100;
+      if (hasDocument) {
+        documentContext = `\n=== מסמך שהועלה: ${documentName || "ללא שם"} ===\n${documentText.slice(0, 15000)}\n=== סוף המסמך ===\n`;
+        console.log(`Document uploaded: ${documentName}, ${documentText.length} chars`);
+      }
     }
+    const hasDocument = documentContext.length > 0;
 
     // ========= Step 1: Local search (hybrid: keyword + vector) + Perplexity IN PARALLEL =========
 
