@@ -581,20 +581,18 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   };
 
   const approveOutline = () => {
-    // Parse outline to extract chapter titles
     const lines = outline.split("\n").filter(l => l.trim());
     const chapterTitles: string[] = [];
     for (const line of lines) {
       const match = line.match(/^\d+\.\s*\*?\*?(.+?)\*?\*?\s*$/);
       if (match) chapterTitles.push(match[1].trim().replace(/\*\*/g, ""));
     }
-    // Fallback: standard structure
     if (chapterTitles.length === 0) {
       chapterTitles.push("תקציר", "מבוא", "המסגרת הנורמטיבית", "סקירה פסיקתית ודוקטרינרית", "ניתוח ביקורתי", "סיכום ומסקנות");
     }
     setChapters(chapterTitles.map(t => ({ title: t, content: null })));
     setCurrentChapter(0);
-    setWizardStep("writing");
+    updateWizardStep("writing");
   };
 
   const writeCurrentChapter = () => {
@@ -605,14 +603,13 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
     if (currentChapter < chapters.length - 1) {
       setCurrentChapter(currentChapter + 1);
       setResult(null);
-      setWizardStep("writing");
+      updateWizardStep("writing");
     } else {
-      setWizardStep("done");
+      updateWizardStep("done");
     }
   };
 
   const editCurrentChapter = () => {
-    // Re-write current chapter
     setResult(null);
     setWizardStep("writing");
   };
