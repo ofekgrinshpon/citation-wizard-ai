@@ -536,18 +536,18 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
 
       // Handle wizard step transitions
       if (academicStep === "suggest_topics") {
-        setWizardStep("topic_or_question");
+        updateWizardStep("topic_or_question");
       } else if (academicStep === "validate_question") {
-        setWizardStep("topic_or_question");
+        updateWizardStep("topic_or_question");
       } else if (academicStep === "propose_outline") {
         setOutline(qaResult.answer);
-        setWizardStep("outline");
+        updateWizardStep("outline");
       } else if (academicStep === "write_chapter") {
         // Save chapter content
         const updatedChapters = [...chapters];
         updatedChapters[currentChapter] = { ...updatedChapters[currentChapter], content: qaResult.answer };
         setChapters(updatedChapters);
-        setWizardStep("checkpoint");
+        updateWizardStep("checkpoint");
       }
 
       // Save to qa_logs
