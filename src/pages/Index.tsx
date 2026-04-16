@@ -1154,7 +1154,7 @@ const Index = () => {
                 projectId={projectId ?? null}
                 refreshKey={qaRefreshKey}
                 onLoadResult={(question, result, taskMode) => {
-                  setQaExternalResult({ question, result, taskMode: taskMode as "research" | "pleading_analysis" | "case_summary" | "argument_draft" });
+                  setQaExternalResult({ question, result, taskMode: taskMode as "research" | "pleading_analysis" | "case_summary" | "academic_writing" });
                 }}
               />
             ) : (
