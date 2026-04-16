@@ -920,7 +920,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                     }}
                   >
                     <span className="font-semibold">יש לי נושא כללי</span>
-                    <span className="text-[10px] text-muted-foreground">ה-AI יציע 3 שאלות מחקר</span>
+                    <span className="text-[10px] text-muted-foreground">המערכת תציע 3 שאלות מחקר</span>
                   </Button>
                   <Button
                     variant="outline"
@@ -931,7 +931,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                     }}
                   >
                     <span className="font-semibold">יש לי שאלת מחקר</span>
-                    <span className="text-[10px] text-muted-foreground">ה-AI יבדוק את כדאיותה</span>
+                    <span className="text-[10px] text-muted-foreground">המערכת תבדוק את כדאיותה</span>
                   </Button>
                 </div>
               </div>
