@@ -1,33 +1,45 @@
 
 
-# Academic Writing (Seminar Wizard) Mode — Updated Plan
+# Bi-directional Navigation, Copy Full Paper, and Destructive Edit Warnings
 
-This is the same plan as previously approved, with one addition: **session persistence and navigation guard** for the wizard state.
+## Overview
+Add a visual progress stepper, back/forward navigation between wizard steps, destructive edit warnings, and a persistent "Copy Full Paper" button to the Academic Writing wizard.
 
-## Addition: Wizard State Persistence & Exit Warning
+## Changes (all in `src/components/LegalQAChat.tsx`)
 
-### localStorage persistence (`LegalQAChat.tsx`)
-- Store the wizard's accumulated state in `localStorage` under a key like `relex_academic_session_{projectId}`:
-  - `wizardStep`, `currentChapter`, `chapters` (array of title + content), `researchQuestion`, `outline`
-- On mount in `academic_writing` mode, check for a saved session and restore it (skip the init screen, jump to the last active step)
-- Clear the saved session when the user completes or explicitly discards the paper
-- Use `safeStorage` (from `src/lib/safeStorage.ts`) instead of raw `localStorage` to handle the Word Add-in iframe environment
+### 1. Track furthest reached step
+Add a `maxReachedStep` state (persisted in `safeStorage` alongside existing session data) that records the furthest step the user has reached. This enables the "forward" button when the user navigates back.
 
-### Navigation/refresh guard
-- Add a `beforeunload` listener when `wizardStep` is past `"init"` and at least one chapter has content — shows the browser's native "unsaved changes" warning
-- Remove the listener when the session is completed or discarded
-- Optionally show an in-app confirmation dialog if the user tries to switch modes while a wizard session is in progress
+### 2. Visual Progress Stepper
+Replace the current simple progress bar (lines 754-766) with a clickable step indicator showing: **נושא/שאלה → מתווה → כתיבה**. The current step is highlighted; completed steps are clickable. This stepper is always visible (except at `init`).
 
-### Debounced saves
-- Save to `safeStorage` after each chapter is written/approved (not on every keystroke) to avoid performance issues with large accumulated text
+### 3. Back & Forward buttons
+- **Back**: Visible at every step past `init`. Navigates to the previous step without clearing data. E.g., from `writing` back to `outline` — chapters and outline remain intact.
+- **Forward (קדימה)**: Visible only when `maxReachedStep` is ahead of the current step. Jumps forward to where the user left off, with all data intact.
 
-## All Other Details
-Everything else from the previously approved plan remains unchanged:
-- Mode setup, multi-file upload, wizard state machine, academic engine prompt, sub-mode routing, history sidebar updates, edge function changes
+### 4. Destructive Edit Warning
+When the user is on a previous step and takes an action that would regenerate content (e.g., submitting a new research question from `topic_or_question` when chapters already exist, or re-proposing an outline when chapters exist):
+- Show `window.confirm("שים לב: שינוי [שם השלב] יגרום למחיקת התוכן שנכתב בהמשך. האם להמשיך?")`
+- Only on confirm: clear subsequent state (chapters/outline as appropriate) and reset `maxReachedStep`
+- On cancel: do nothing
 
-## Files to Change
-- `src/components/LegalQAChat.tsx` — wizard state machine, multi-file, new mode, **localStorage persistence + beforeunload guard**
-- `supabase/functions/legal-qa/index.ts` — academic prompt, sub-mode routing, multi-file context
-- `src/components/QAHistorySidebar.tsx` — label update
-- `src/pages/Index.tsx` — type update
+### 5. "העתק טקסט מלא" (Copy Full Paper) button
+- A floating/sticky button visible whenever `chapters.some(ch => ch.content)` is true, regardless of current wizard step
+- Uses the existing `handleCopy` logic (lines 640-658) which already aggregates chapters into rich text
+- Positioned in the stepper bar area or as a small fixed button so it's always accessible
+
+### 6. State persistence update
+Update `AcademicSession` interface and `saveAcademicSession`/`loadAcademicSession` to include `maxReachedStep`. Navigation changes (back/forward) trigger a persist.
+
+## Step dependency rules
+```text
+topic_or_question → outline → writing/checkpoint/done
+```
+- Going back from `outline` to `topic_or_question` is non-destructive (just viewing)
+- Actually submitting a NEW topic/question from `topic_or_question` when outline/chapters exist → destructive warning
+- Actually re-proposing outline when chapters exist → destructive warning
+- Simply viewing a previous step = safe, no data loss
+
+## No other files change
+All modifications are contained in `LegalQAChat.tsx`.
 
