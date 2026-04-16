@@ -819,18 +819,86 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
         {/* ── Academic Wizard UI ── */}
         {isAcademic && (
           <div className="space-y-4 py-4">
-            {/* Progress indicator */}
-            {wizardStep !== "init" && chapters.length > 0 && (
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>
-                    {wizardStep === "done"
-                      ? "העבודה הושלמה!"
-                      : `פרק ${currentChapter + 1} מתוך ${chapters.length}`}
-                  </span>
-                  <span>{chapters.filter(ch => ch.content).length}/{chapters.length} פרקים</span>
+            {/* Progress stepper + nav + copy */}
+            {wizardStep !== "init" && (
+              <div className="space-y-2">
+                {/* Clickable step indicators */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    {canGoBack && (
+                      <Button variant="ghost" size="sm" onClick={navigateBack} className="gap-1 text-xs h-7 px-2">
+                        <ChevronRight className="w-3.5 h-3.5" />
+                        חזרה
+                      </Button>
+                    )}
+                    {canGoForward && (
+                      <Button variant="ghost" size="sm" onClick={navigateForward} className="gap-1 text-xs h-7 px-2">
+                        קדימה
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Persistent copy button */}
+                  {hasWrittenContent && (
+                    <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs h-7">
+                      <Copy className="w-3 h-3" />
+                      העתק טקסט מלא
+                    </Button>
+                  )}
                 </div>
-                <Progress value={(chapters.filter(ch => ch.content).length / Math.max(chapters.length, 1)) * 100} className="h-2" />
+
+                {/* Visual stepper */}
+                <div className="flex items-center justify-center gap-2 text-xs">
+                  {([
+                    { step: "topic_or_question" as WizardStep, label: "נושא/שאלה" },
+                    { step: "outline" as WizardStep, label: "מתווה" },
+                    { step: "writing" as WizardStep, label: "כתיבה" },
+                  ] as const).map(({ step, label }, i) => {
+                    const isCurrent = wizardStep === step || (step === "writing" && (wizardStep === "checkpoint" || wizardStep === "done"));
+                    const isCompleted = isStepAfter(maxReachedStep, step) || (step === "writing" && wizardStep === "done");
+                    const isClickable = !isCompleted ? false : !isCurrent;
+                    return (
+                      <div key={step} className="flex items-center gap-2">
+                        {i > 0 && <div className={`w-6 h-px ${isCompleted || isCurrent ? "bg-primary" : "bg-border"}`} />}
+                        <button
+                          onClick={() => {
+                            if (!isClickable) return;
+                            if (step === "topic_or_question") { setWizardStep("topic_or_question"); setResult(null); }
+                            else if (step === "outline") { setWizardStep("outline"); setResult({ answer: outline, footnotes: [], source_urls: [] }); }
+                            else if (step === "writing") { setWizardStep(chapters.some(ch => ch.content) ? "checkpoint" : "writing"); setResult(null); }
+                          }}
+                          disabled={!isClickable}
+                          className={`flex items-center gap-1 px-2 py-1 rounded-full transition-colors ${
+                            isCurrent
+                              ? "bg-primary text-primary-foreground font-semibold"
+                              : isCompleted
+                                ? "bg-primary/10 text-primary cursor-pointer hover:bg-primary/20"
+                                : "bg-muted text-muted-foreground"
+                          }`}
+                        >
+                          {isCompleted && !isCurrent && <Check className="w-3 h-3" />}
+                          {label}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Chapter progress bar */}
+                {chapters.length > 0 && (
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                      <span>
+                        {wizardStep === "done"
+                          ? "העבודה הושלמה!"
+                          : `פרק ${currentChapter + 1} מתוך ${chapters.length}`}
+                      </span>
+                      <span>{chapters.filter(ch => ch.content).length}/{chapters.length} פרקים</span>
+                    </div>
+                    <Progress value={(chapters.filter(ch => ch.content).length / Math.max(chapters.length, 1)) * 100} className="h-1.5" />
+                  </div>
+                )}
               </div>
             )}
 
