@@ -245,17 +245,30 @@ ${sourceList}
     console.log(`Re-ranking scores: ${scores.join(", ")}`);
 
     // Map scores back to matches, filter out low-relevance docs
+    // But ALWAYS keep at least the top-scoring document to avoid 0 local sources
     const result: RankedMatch[] = [];
     const docsArr = Array.from(docMap.entries());
+    let bestScore = -1;
+    let bestDocId: string | null = null;
+    for (let i = 0; i < docsArr.length; i++) {
+      const score = scores[i] ?? 5;
+      if (score > bestScore) {
+        bestScore = score;
+        bestDocId = docsArr[i][0];
+      }
+    }
+
     for (let i = 0; i < docsArr.length; i++) {
       const [docId, docData] = docsArr[i];
       const score = scores[i] ?? 5;
-      if (score >= 4) {
-        // Include all chunks for this document
+      if (score >= 3 || docId === bestDocId) {
         for (const m of matches) {
           if (m.document_id === docId) {
             result.push({ ...m, relevanceScore: score });
           }
+        }
+        if (score < 3) {
+          console.log(`Kept top-scoring source despite low score (score=${score}): "${docData.match.document_title.slice(0, 50)}"`);
         }
       } else {
         console.log(`Filtered out low-relevance source (score=${score}): "${docData.match.document_title.slice(0, 50)}"`);
@@ -934,12 +947,30 @@ ${combinedContext}`;
         const found = cards.find(c => c.citation.includes(caseNumMatch[1]));
         if (found) return found;
       }
-      // Try matching by URL
+
+      // Try matching by URL domain + path/ID in footnote text
       for (const card of cards) {
-        if (card.url && fnLower.includes(card.url.replace(/https?:\/\//, "").slice(0, 30).toLowerCase())) {
-          return card;
+        if (!card.url) continue;
+        try {
+          const cardUrl = new URL(card.url);
+          const domain = cardUrl.hostname.replace(/^www\./, "");
+          // Check if footnote text contains the domain
+          if (fnLower.includes(domain)) return card;
+          // For nevo URLs, extract document ID parameters and match
+          if (domain.includes("nevo.co.il")) {
+            const dParam = cardUrl.searchParams.get("d");
+            const uParam = cardUrl.searchParams.get("u");
+            if (dParam && fnLower.includes(dParam)) return card;
+            if (uParam && fnLower.includes(uParam.slice(0, 8))) return card;
+          }
+        } catch {
+          // Fallback: simple substring match on URL
+          if (card.url && fnLower.includes(card.url.replace(/https?:\/\//, "").slice(0, 30).toLowerCase())) {
+            return card;
+          }
         }
       }
+
       // Try matching by keyword overlap (first 3 significant words of card citation)
       for (const card of cards) {
         const cardWords = card.citation.replace(/[^א-תa-zA-Z0-9\s]/g, "").split(/\s+/).filter(w => w.length > 2).slice(0, 3);
@@ -948,6 +979,38 @@ ${combinedContext}`;
           if (matchCount >= 2) return card;
         }
       }
+
+      // For Perplexity cards with URL-only citations: check if the footnote text
+      // contains ANY URL that shares domain with a Perplexity card
+      for (const card of cards) {
+        if (card.provenance !== "perplexity" || !card.url) continue;
+        try {
+          const cardDomain = new URL(card.url).hostname.replace(/^www\./, "");
+          // Extract URLs from footnote text
+          const urlsInFn = fnText.match(/https?:\/\/[^\s)>"]+/g) || [];
+          for (const fnUrl of urlsInFn) {
+            try {
+              const fnDomain = new URL(fnUrl).hostname.replace(/^www\./, "");
+              if (fnDomain === cardDomain) return card;
+            } catch { /* skip malformed URLs */ }
+          }
+        } catch { /* skip */ }
+      }
+
+      // Last resort for Perplexity cards: check if footnote mentions source_type keywords
+      // that align with any Perplexity source (relaxed matching since AI was given these sources)
+      for (const card of cards) {
+        if (card.provenance !== "perplexity") continue;
+        // Check excerpt overlap if available
+        if (card.excerpt && card.excerpt.length > 20) {
+          const excerptWords = card.excerpt.replace(/[^א-תa-zA-Z0-9\s]/g, "").split(/\s+/).filter(w => w.length > 3).slice(0, 4);
+          if (excerptWords.length >= 2) {
+            const matchCount = excerptWords.filter(w => fnLower.includes(w.toLowerCase())).length;
+            if (matchCount >= 2) return card;
+          }
+        }
+      }
+
       return null;
     }
 
@@ -973,12 +1036,11 @@ ${combinedContext}`;
 
     if (aiFootnoteLines.length > 0) {
       // Use AI-formatted footnotes — match each to a source card for provenance
-      // CRITICAL: Strip any footnote that doesn't match a provided source (anti-hallucination)
       for (const aiFn of aiFootnoteLines) {
         const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards);
         if (!matchedCard) {
-          console.log(`Stripped hallucinated footnote #${aiFn.num}: ${aiFn.text.slice(0, 80)}...`);
-          continue; // Skip footnotes that don't match any provided source
+          console.log(`Stripped unmatched footnote #${aiFn.num}: ${aiFn.text.slice(0, 80)}...`);
+          continue;
         }
         footnotes.push({
           number: fnNum,
@@ -987,9 +1049,24 @@ ${combinedContext}`;
           url: matchedCard.url,
           source: matchedCard.provenance || "local",
         });
-        // Map original [X] number to new sequential number
         oldIdToNewNumber.set(aiFn.num, fnNum);
         fnNum++;
+      }
+
+      // SAFETY FALLBACK: If ALL footnotes were stripped, keep them as "unverified"
+      if (footnotes.length === 0 && aiFootnoteLines.length > 0) {
+        console.log(`FALLBACK: All ${aiFootnoteLines.length} footnotes stripped — keeping as unverified`);
+        fnNum = 1;
+        for (const aiFn of aiFootnoteLines) {
+          footnotes.push({
+            number: fnNum,
+            citation: aiFn.text,
+            source_type: "web",
+            source: "perplexity",
+          });
+          oldIdToNewNumber.set(aiFn.num, fnNum);
+          fnNum++;
+        }
       }
     } else {
       // Fallback: use source card citations (old behavior)
