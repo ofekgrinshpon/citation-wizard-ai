@@ -93,7 +93,7 @@ serve(async (req) => {
       try {
         const citation = title;
         const docFields = {
-          source_type: "knesset_research",
+          source_type: (doc.source_type as string) || "knesset_research",
           title,
           content: content.trim().length >= 50 ? content : title,
           citation,
