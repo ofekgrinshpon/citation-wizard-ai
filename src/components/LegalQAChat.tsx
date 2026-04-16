@@ -10,7 +10,7 @@ import { safeStorage } from "@/lib/safeStorage";
 
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
-import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, GraduationCap, StopCircle, Plus, Trash2, type LucideIcon } from "lucide-react";
+import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, GraduationCap, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, type LucideIcon } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
 // Configure PDF.js worker
