@@ -1,34 +1,33 @@
 
 
-# Fix: Over-Aggressive Footnote Stripping (0 Footnotes Returned)
+# Academic Writing (Seminar Wizard) Mode — Updated Plan
 
-## The Problem
-The anti-hallucination filter stripped **all 11 footnotes** because `matchFootnoteToCard` couldn't match any AI-written citation to the provided source cards. The logs confirm: 0 local sources survived re-ranking, and all 8 source cards were Perplexity URLs. Since Perplexity cards store only a raw URL as `citation` (e.g., `https://www.nevo.co.il/handlers/...`), the keyword-overlap matching logic (which compares Hebrew words) found zero matches.
+This is the same plan as previously approved, with one addition: **session persistence and navigation guard** for the wizard state.
 
-## Root Causes
-1. **Perplexity cards have URL-only citations** — `matchFootnoteToCard` tries keyword overlap on `card.citation`, but the citation is just a URL, so Hebrew word matching always fails.
-2. **URL matching is too narrow** — it only checks the first 30 chars of the URL domain, missing nevo.co.il handler URLs with different query parameters.
-3. **No fallback** — when ALL footnotes are stripped, the user gets a body with dangling `[1]...[11]` references and zero footnotes.
+## Addition: Wizard State Persistence & Exit Warning
 
-## Fix (in `supabase/functions/legal-qa/index.ts`)
+### localStorage persistence (`LegalQAChat.tsx`)
+- Store the wizard's accumulated state in `localStorage` under a key like `relex_academic_session_{projectId}`:
+  - `wizardStep`, `currentChapter`, `chapters` (array of title + content), `researchQuestion`, `outline`
+- On mount in `academic_writing` mode, check for a saved session and restore it (skip the init screen, jump to the last active step)
+- Clear the saved session when the user completes or explicitly discards the paper
+- Use `safeStorage` (from `src/lib/safeStorage.ts`) instead of raw `localStorage` to handle the Word Add-in iframe environment
 
-### 1. Improve Perplexity URL matching
-For Perplexity source cards, extract the domain and key path segments. When the AI footnote contains a URL from the same domain, match it. Also match by nevo document ID patterns.
+### Navigation/refresh guard
+- Add a `beforeunload` listener when `wizardStep` is past `"init"` and at least one chapter has content — shows the browser's native "unsaved changes" warning
+- Remove the listener when the session is completed or discarded
+- Optionally show an in-app confirmation dialog if the user tries to switch modes while a wizard session is in progress
 
-### 2. Allow Perplexity-sourced footnotes with relaxed matching
-Since the AI was explicitly given these Perplexity URLs as source cards, any footnote referencing them is not hallucinated. Add a pass that checks if the footnote text contains any of the Perplexity URLs (or their key identifiers like nevo document IDs).
+### Debounced saves
+- Save to `safeStorage` after each chapter is written/approved (not on every keystroke) to avoid performance issues with large accumulated text
 
-### 3. Add a safety fallback
-If ALL footnotes are stripped (footnotes array is empty but AI wrote footnotes), fall back to keeping the AI-formatted footnotes tagged as "unverified" rather than returning zero footnotes. This prevents the broken UX of a body full of superscript references pointing to nothing.
-
-### 4. Improve re-ranking threshold
-The re-ranking filtered out ALL 8 local chunks (scores 0,1,0,0 — the one with score 1 was also dropped). Lower the minimum score or keep at least the top-scoring chunk to avoid 0 local sources.
+## All Other Details
+Everything else from the previously approved plan remains unchanged:
+- Mode setup, multi-file upload, wizard state machine, academic engine prompt, sub-mode routing, history sidebar updates, edge function changes
 
 ## Files to Change
-- `supabase/functions/legal-qa/index.ts` — improve `matchFootnoteToCard` for Perplexity cards, add empty-result fallback, adjust re-ranking threshold
-
-## Expected Result
-- Footnotes from Perplexity-sourced URLs will be correctly matched and kept
-- Users will never see a body full of references with zero footnotes
-- Local chunks with even marginal relevance won't all be filtered out
+- `src/components/LegalQAChat.tsx` — wizard state machine, multi-file, new mode, **localStorage persistence + beforeunload guard**
+- `supabase/functions/legal-qa/index.ts` — academic prompt, sub-mode routing, multi-file context
+- `src/components/QAHistorySidebar.tsx` — label update
+- `src/pages/Index.tsx` — type update
 
