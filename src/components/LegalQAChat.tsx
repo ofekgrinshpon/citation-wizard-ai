@@ -225,6 +225,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
 
   // ─── Academic wizard state ───────────────────────────────────────
   const [wizardStep, setWizardStep] = useState<WizardStep>("init");
+  const [maxReachedStep, setMaxReachedStep] = useState<WizardStep>("init");
   const [currentChapter, setCurrentChapter] = useState(0);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [researchQuestion, setResearchQuestion] = useState("");
