@@ -10,7 +10,7 @@ import { safeStorage } from "@/lib/safeStorage";
 
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
-import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, GraduationCap, StopCircle, Plus, Trash2, type LucideIcon } from "lucide-react";
+import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, GraduationCap, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, type LucideIcon } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
 // Configure PDF.js worker
@@ -58,10 +58,21 @@ interface ChapterData {
 
 interface AcademicSession {
   wizardStep: WizardStep;
+  maxReachedStep: WizardStep;
   currentChapter: number;
   chapters: ChapterData[];
   researchQuestion: string;
   outline: string;
+}
+
+const WIZARD_STEP_ORDER: WizardStep[] = ["init", "topic_or_question", "outline", "writing", "checkpoint", "done"];
+
+function stepIndex(step: WizardStep): number {
+  return WIZARD_STEP_ORDER.indexOf(step);
+}
+
+function isStepAfter(a: WizardStep, b: WizardStep): boolean {
+  return stepIndex(a) > stepIndex(b);
 }
 
 const ACADEMIC_SESSION_KEY = (projectId?: string) => 
@@ -214,6 +225,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
 
   // ─── Academic wizard state ───────────────────────────────────────
   const [wizardStep, setWizardStep] = useState<WizardStep>("init");
+  const [maxReachedStep, setMaxReachedStep] = useState<WizardStep>("init");
   const [currentChapter, setCurrentChapter] = useState(0);
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [researchQuestion, setResearchQuestion] = useState("");
@@ -225,6 +237,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
       const saved = loadAcademicSession(projectId);
       if (saved && saved.wizardStep !== "init") {
         setWizardStep(saved.wizardStep);
+        setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
         setCurrentChapter(saved.currentChapter);
         setChapters(saved.chapters);
         setResearchQuestion(saved.researchQuestion);
@@ -236,8 +249,8 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   // Save academic session after chapter writes
   const persistAcademicSession = useCallback(() => {
     if (taskMode !== "academic_writing" || wizardStep === "init") return;
-    saveAcademicSession({ wizardStep, currentChapter, chapters, researchQuestion, outline }, projectId);
-  }, [taskMode, wizardStep, currentChapter, chapters, researchQuestion, outline, projectId]);
+    saveAcademicSession({ wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline }, projectId);
+  }, [taskMode, wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, projectId]);
 
   useEffect(() => {
     persistAcademicSession();
@@ -338,12 +351,14 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
       const saved = loadAcademicSession(projectId);
       if (saved && saved.wizardStep !== "init") {
         setWizardStep(saved.wizardStep);
+        setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
         setCurrentChapter(saved.currentChapter);
         setChapters(saved.chapters);
         setResearchQuestion(saved.researchQuestion);
         setOutline(saved.outline);
       } else {
         setWizardStep("init");
+        setMaxReachedStep("init");
         setCurrentChapter(0);
         setChapters([]);
         setResearchQuestion("");
@@ -383,6 +398,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   const discardAcademicSession = () => {
     if (chapters.some(ch => ch.content) && !window.confirm("האם לבטל את העבודה האקדמית? כל הפרקים שנכתבו יימחקו.")) return;
     setWizardStep("init");
+    setMaxReachedStep("init");
     setCurrentChapter(0);
     setChapters([]);
     setResearchQuestion("");
@@ -390,6 +406,62 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
     setResult(null);
     setQuestion("");
     clearAcademicSession(projectId);
+  };
+
+  // ─── Academic navigation helpers ────────────────────────────────
+  const updateWizardStep = (step: WizardStep) => {
+    setWizardStep(step);
+    if (isStepAfter(step, maxReachedStep)) {
+      setMaxReachedStep(step);
+    }
+  };
+
+  const navigateBack = () => {
+    const idx = stepIndex(wizardStep);
+    if (idx <= 1) return; // can't go before topic_or_question
+    // Map back: writing/checkpoint → outline, outline → topic_or_question
+    if (wizardStep === "writing" || wizardStep === "checkpoint") {
+      setWizardStep("outline");
+      setResult(null);
+    } else if (wizardStep === "outline") {
+      setWizardStep("topic_or_question");
+      setResult(null);
+    }
+  };
+
+  const navigateForward = () => {
+    // Jump to maxReachedStep or next logical step
+    if (wizardStep === "topic_or_question" && isStepAfter(maxReachedStep, "topic_or_question")) {
+      setWizardStep(outline ? "outline" : maxReachedStep);
+      // Restore result for outline view
+      if (outline) setResult({ answer: outline, footnotes: [], source_urls: [] });
+    } else if (wizardStep === "outline" && isStepAfter(maxReachedStep, "outline")) {
+      setWizardStep(chapters.some(ch => ch.content) ? "checkpoint" : "writing");
+      setResult(null);
+    }
+  };
+
+  const canGoBack = wizardStep !== "init" && wizardStep !== "done" && stepIndex(wizardStep) > 1;
+  const canGoForward = wizardStep !== "done" && isStepAfter(maxReachedStep, wizardStep);
+  const hasWrittenContent = chapters.some(ch => ch.content);
+
+  /** Check if submitting from a previous step would invalidate later data */
+  const checkDestructiveEdit = (fromStep: WizardStep): boolean => {
+    if (fromStep === "topic_or_question" && (outline || hasWrittenContent)) {
+      if (!window.confirm("שים לב: שינוי שאלת המחקר יגרום למחיקת המתווה והפרקים שנכתבו. האם להמשיך?")) return false;
+      setOutline("");
+      setChapters([]);
+      setCurrentChapter(0);
+      setMaxReachedStep("topic_or_question");
+      setResult(null);
+    } else if (fromStep === "outline" && hasWrittenContent) {
+      if (!window.confirm("שים לב: שינוי המתווה יגרום למחיקת הפרקים שנכתבו. האם להמשיך?")) return false;
+      setChapters([]);
+      setCurrentChapter(0);
+      setMaxReachedStep("outline");
+      setResult(null);
+    }
+    return true;
   };
 
   const handleAcademicSubmit = async (academicStep: string, extraBody?: Record<string, unknown>) => {
@@ -464,18 +536,18 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
 
       // Handle wizard step transitions
       if (academicStep === "suggest_topics") {
-        setWizardStep("topic_or_question");
+        updateWizardStep("topic_or_question");
       } else if (academicStep === "validate_question") {
-        setWizardStep("topic_or_question");
+        updateWizardStep("topic_or_question");
       } else if (academicStep === "propose_outline") {
         setOutline(qaResult.answer);
-        setWizardStep("outline");
+        updateWizardStep("outline");
       } else if (academicStep === "write_chapter") {
         // Save chapter content
         const updatedChapters = [...chapters];
         updatedChapters[currentChapter] = { ...updatedChapters[currentChapter], content: qaResult.answer };
         setChapters(updatedChapters);
-        setWizardStep("checkpoint");
+        updateWizardStep("checkpoint");
       }
 
       // Save to qa_logs
@@ -509,20 +581,18 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   };
 
   const approveOutline = () => {
-    // Parse outline to extract chapter titles
     const lines = outline.split("\n").filter(l => l.trim());
     const chapterTitles: string[] = [];
     for (const line of lines) {
       const match = line.match(/^\d+\.\s*\*?\*?(.+?)\*?\*?\s*$/);
       if (match) chapterTitles.push(match[1].trim().replace(/\*\*/g, ""));
     }
-    // Fallback: standard structure
     if (chapterTitles.length === 0) {
       chapterTitles.push("תקציר", "מבוא", "המסגרת הנורמטיבית", "סקירה פסיקתית ודוקטרינרית", "ניתוח ביקורתי", "סיכום ומסקנות");
     }
     setChapters(chapterTitles.map(t => ({ title: t, content: null })));
     setCurrentChapter(0);
-    setWizardStep("writing");
+    updateWizardStep("writing");
   };
 
   const writeCurrentChapter = () => {
@@ -533,14 +603,13 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
     if (currentChapter < chapters.length - 1) {
       setCurrentChapter(currentChapter + 1);
       setResult(null);
-      setWizardStep("writing");
+      updateWizardStep("writing");
     } else {
-      setWizardStep("done");
+      updateWizardStep("done");
     }
   };
 
   const editCurrentChapter = () => {
-    // Re-write current chapter
     setResult(null);
     setWizardStep("writing");
   };
@@ -750,18 +819,86 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
         {/* ── Academic Wizard UI ── */}
         {isAcademic && (
           <div className="space-y-4 py-4">
-            {/* Progress indicator */}
-            {wizardStep !== "init" && chapters.length > 0 && (
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>
-                    {wizardStep === "done"
-                      ? "העבודה הושלמה!"
-                      : `פרק ${currentChapter + 1} מתוך ${chapters.length}`}
-                  </span>
-                  <span>{chapters.filter(ch => ch.content).length}/{chapters.length} פרקים</span>
+            {/* Progress stepper + nav + copy */}
+            {wizardStep !== "init" && (
+              <div className="space-y-2">
+                {/* Clickable step indicators */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    {canGoBack && (
+                      <Button variant="ghost" size="sm" onClick={navigateBack} className="gap-1 text-xs h-7 px-2">
+                        <ChevronRight className="w-3.5 h-3.5" />
+                        חזרה
+                      </Button>
+                    )}
+                    {canGoForward && (
+                      <Button variant="ghost" size="sm" onClick={navigateForward} className="gap-1 text-xs h-7 px-2">
+                        קדימה
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Persistent copy button */}
+                  {hasWrittenContent && (
+                    <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs h-7">
+                      <Copy className="w-3 h-3" />
+                      העתק טקסט מלא
+                    </Button>
+                  )}
                 </div>
-                <Progress value={(chapters.filter(ch => ch.content).length / Math.max(chapters.length, 1)) * 100} className="h-2" />
+
+                {/* Visual stepper */}
+                <div className="flex items-center justify-center gap-2 text-xs">
+                  {([
+                    { step: "topic_or_question" as WizardStep, label: "נושא/שאלה" },
+                    { step: "outline" as WizardStep, label: "מתווה" },
+                    { step: "writing" as WizardStep, label: "כתיבה" },
+                  ] as const).map(({ step, label }, i) => {
+                    const isCurrent = wizardStep === step || (step === "writing" && (wizardStep === "checkpoint" || wizardStep === "done"));
+                    const isCompleted = isStepAfter(maxReachedStep, step) || (step === "writing" && wizardStep === "done");
+                    const isClickable = !isCompleted ? false : !isCurrent;
+                    return (
+                      <div key={step} className="flex items-center gap-2">
+                        {i > 0 && <div className={`w-6 h-px ${isCompleted || isCurrent ? "bg-primary" : "bg-border"}`} />}
+                        <button
+                          onClick={() => {
+                            if (!isClickable) return;
+                            if (step === "topic_or_question") { setWizardStep("topic_or_question"); setResult(null); }
+                            else if (step === "outline") { setWizardStep("outline"); setResult({ answer: outline, footnotes: [], source_urls: [] }); }
+                            else if (step === "writing") { setWizardStep(chapters.some(ch => ch.content) ? "checkpoint" : "writing"); setResult(null); }
+                          }}
+                          disabled={!isClickable}
+                          className={`flex items-center gap-1 px-2 py-1 rounded-full transition-colors ${
+                            isCurrent
+                              ? "bg-primary text-primary-foreground font-semibold"
+                              : isCompleted
+                                ? "bg-primary/10 text-primary cursor-pointer hover:bg-primary/20"
+                                : "bg-muted text-muted-foreground"
+                          }`}
+                        >
+                          {isCompleted && !isCurrent && <Check className="w-3 h-3" />}
+                          {label}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Chapter progress bar */}
+                {chapters.length > 0 && (
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                      <span>
+                        {wizardStep === "done"
+                          ? "העבודה הושלמה!"
+                          : `פרק ${currentChapter + 1} מתוך ${chapters.length}`}
+                      </span>
+                      <span>{chapters.filter(ch => ch.content).length}/{chapters.length} פרקים</span>
+                    </div>
+                    <Progress value={(chapters.filter(ch => ch.content).length / Math.max(chapters.length, 1)) * 100} className="h-1.5" />
+                  </div>
+                )}
               </div>
             )}
 
@@ -778,7 +915,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                     variant="outline"
                     className="flex-1 h-auto py-4 flex flex-col gap-1"
                     onClick={() => {
-                      setWizardStep("topic_or_question");
+                      updateWizardStep("topic_or_question");
                       setQuestion("");
                     }}
                   >
@@ -789,7 +926,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                     variant="outline"
                     className="flex-1 h-auto py-4 flex flex-col gap-1"
                     onClick={() => {
-                      setWizardStep("topic_or_question");
+                      updateWizardStep("topic_or_question");
                       setQuestion("");
                     }}
                   >
@@ -813,7 +950,10 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                 />
                 <div className="flex gap-2">
                   <Button
-                    onClick={() => handleAcademicSubmit("suggest_topics")}
+                    onClick={() => {
+                      if (!checkDestructiveEdit("topic_or_question")) return;
+                      handleAcademicSubmit("suggest_topics");
+                    }}
                     disabled={question.trim().length < 5}
                     size="sm"
                   >
@@ -822,6 +962,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                   <Button
                     variant="outline"
                     onClick={() => {
+                      if (!checkDestructiveEdit("topic_or_question")) return;
                       setResearchQuestion(question.trim());
                       handleAcademicSubmit("validate_question");
                     }}
@@ -845,6 +986,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                     <Button
                       size="sm"
                       onClick={() => {
+                        if (!checkDestructiveEdit("topic_or_question")) return;
                         const rq = question.trim() || researchQuestion;
                         setResearchQuestion(rq);
                         setResult(null);
@@ -874,7 +1016,10 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                     <RenderMarkdown text={result.answer} />
                   </div>
                   <div className="flex gap-2 pt-2">
-                    <Button size="sm" onClick={approveOutline}>
+                    <Button size="sm" onClick={() => {
+                      if (!checkDestructiveEdit("outline")) return;
+                      approveOutline();
+                    }}>
                       אשר מתווה והתחל כתיבה
                     </Button>
                     <Button variant="ghost" size="sm" onClick={() => { setResult(null); setWizardStep("topic_or_question"); }}>
