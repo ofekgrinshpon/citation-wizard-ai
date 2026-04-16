@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { useProjects } from "@/hooks/useProjects";
+import { safeStorage } from "@/lib/safeStorage";
 
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
-import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, PenTool, StopCircle, type LucideIcon } from "lucide-react";
+import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, GraduationCap, StopCircle, Plus, Trash2, type LucideIcon } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 
 // Configure PDF.js worker
@@ -30,20 +32,60 @@ interface QAResult {
   source_urls: string[];
 }
 
-type TaskMode = "research" | "pleading_analysis" | "case_summary" | "argument_draft";
+type TaskMode = "research" | "pleading_analysis" | "case_summary" | "academic_writing";
 
-const FILE_RELEVANT_MODES: TaskMode[] = ["pleading_analysis", "case_summary"];
+const FILE_RELEVANT_MODES: TaskMode[] = ["pleading_analysis", "case_summary", "academic_writing"];
 
 const TASK_MODES: { id: TaskMode; label: string; description: string; placeholder: string; icon: LucideIcon }[] = [
   { id: "research", label: "מחקר משפטי", description: "סריקה מקיפה עם מסגרת נורמטיבית מלאה", placeholder: "תארו שאלה משפטית לסקירה מקיפה...", icon: Search },
   { id: "pleading_analysis", label: "ניתוח כתב טענה", description: "זיהוי חולשות, סתירות ואזכורים חסרים", placeholder: "הדביקו כתב טענה או העלו קובץ לניתוח...", icon: FileSearch },
   { id: "case_summary", label: "סיכום פסיקה", description: "תמצית: עובדות, שאלה משפטית, הכרעה ורציו", placeholder: "הזינו שם פסק דין או הדביקו טקסט לסיכום...", icon: BookOpen },
-  { id: "argument_draft", label: "ניסוח טיעון", description: "כתיבה משכנעת המבוססת על מקורות מוסמכים", placeholder: "תארו את הטיעון שברצונכם לבנות...", icon: PenTool },
+  { id: "academic_writing", label: "כתיבה אקדמית", description: "ליווי בכתיבת סמינריונים ומאמרים אקדמיים בשלבים", placeholder: "תארו נושא מחקר או שאלת מחקר...", icon: GraduationCap },
 ];
 
 const DAVID_FONT = "David, 'David Libre', serif";
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 const MAX_DOC_TEXT = 30000;
+
+// ─── Academic wizard types ──────────────────────────────────────────
+
+type WizardStep = "init" | "topic_or_question" | "outline" | "writing" | "checkpoint" | "done";
+
+interface ChapterData {
+  title: string;
+  content: string | null;
+}
+
+interface AcademicSession {
+  wizardStep: WizardStep;
+  currentChapter: number;
+  chapters: ChapterData[];
+  researchQuestion: string;
+  outline: string;
+}
+
+const ACADEMIC_SESSION_KEY = (projectId?: string) => 
+  projectId ? `relex_academic_session_${projectId}` : "relex_academic_session";
+
+function loadAcademicSession(projectId?: string): AcademicSession | null {
+  try {
+    const raw = safeStorage.getItem(ACADEMIC_SESSION_KEY(projectId));
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+
+function saveAcademicSession(session: AcademicSession, projectId?: string) {
+  try {
+    safeStorage.setItem(ACADEMIC_SESSION_KEY(projectId), JSON.stringify(session));
+  } catch { /* silent */ }
+}
+
+function clearAcademicSession(projectId?: string) {
+  try {
+    safeStorage.removeItem(ACADEMIC_SESSION_KEY(projectId));
+  } catch { /* silent */ }
+}
 
 // ─── Utility components ──────────────────────────────────────────────
 
@@ -87,7 +129,6 @@ function AnswerWithFootnotes({ text, onFootnoteClick }: { text: string; onFootno
 }
 
 function RenderMarkdownLine({ line }: { line: string }) {
-  // Strip markdown heading prefixes and render as bold
   const headingMatch = line.match(/^(#{1,4})\s+(.*)/);
   if (headingMatch) {
     const level = headingMatch[1].length;
@@ -138,7 +179,6 @@ async function extractPdfText(file: File): Promise<string> {
 }
 
 async function extractDocxText(file: File): Promise<string> {
-  // Use mammoth on the client side
   const mammoth = await import("mammoth");
   const arrayBuffer = await file.arrayBuffer();
   const result = await mammoth.extractRawText({ arrayBuffer });
@@ -154,18 +194,67 @@ interface LegalQAChatProps {
 
 export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps = {}) {
   const { currentProject } = useProjects();
+  const projectId = currentProject?.id;
+
   const [question, setQuestion] = useState("");
   const [result, setResult] = useState<QAResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [taskMode, setTaskMode] = useState<TaskMode>("research");
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [extractedText, setExtractedText] = useState<string | null>(null);
+
+  // Multi-file support
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [extractedTexts, setExtractedTexts] = useState<Array<{ name: string; text: string }>>([]);
   const [extracting, setExtracting] = useState(false);
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // ─── Academic wizard state ───────────────────────────────────────
+  const [wizardStep, setWizardStep] = useState<WizardStep>("init");
+  const [currentChapter, setCurrentChapter] = useState(0);
+  const [chapters, setChapters] = useState<ChapterData[]>([]);
+  const [researchQuestion, setResearchQuestion] = useState("");
+  const [outline, setOutline] = useState("");
+
+  // Restore academic session on mount / project change
+  useEffect(() => {
+    if (taskMode === "academic_writing") {
+      const saved = loadAcademicSession(projectId);
+      if (saved && saved.wizardStep !== "init") {
+        setWizardStep(saved.wizardStep);
+        setCurrentChapter(saved.currentChapter);
+        setChapters(saved.chapters);
+        setResearchQuestion(saved.researchQuestion);
+        setOutline(saved.outline);
+      }
+    }
+  }, [projectId]);
+
+  // Save academic session after chapter writes
+  const persistAcademicSession = useCallback(() => {
+    if (taskMode !== "academic_writing" || wizardStep === "init") return;
+    saveAcademicSession({ wizardStep, currentChapter, chapters, researchQuestion, outline }, projectId);
+  }, [taskMode, wizardStep, currentChapter, chapters, researchQuestion, outline, projectId]);
+
+  useEffect(() => {
+    persistAcademicSession();
+  }, [persistAcademicSession]);
+
+  // Beforeunload guard
+  useEffect(() => {
+    if (taskMode !== "academic_writing" || wizardStep === "init" || wizardStep === "done") return;
+    const hasContent = chapters.some(ch => ch.content);
+    if (!hasContent) return;
+
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [taskMode, wizardStep, chapters]);
 
   // Load external result from history sidebar
   useEffect(() => {
@@ -189,29 +278,38 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
     }
   }, [question]);
 
-  // Extract text when file is uploaded
-  const handleFileSelect = useCallback(async (file: File) => {
-    if (file.size > MAX_FILE_SIZE) {
-      toast.error("הקובץ גדול מדי. מקסימום 20MB.");
-      return;
+  // Multi-file extraction
+  const handleFileSelect = useCallback(async (files: FileList | File[]) => {
+    const fileArr = Array.from(files);
+    const validFiles: File[] = [];
+    for (const file of fileArr) {
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error(`"${file.name}" גדול מדי. מקסימום 20MB.`);
+        continue;
+      }
+      const ext = file.name.split(".").pop()?.toLowerCase();
+      if (!["pdf", "docx"].includes(ext || "")) {
+        toast.error(`"${file.name}" — יש להעלות PDF או DOCX בלבד.`);
+        continue;
+      }
+      validFiles.push(file);
     }
-    const ext = file.name.split(".").pop()?.toLowerCase();
-    if (!["pdf", "docx"].includes(ext || "")) {
-      toast.error("יש להעלות קובץ PDF או DOCX בלבד.");
-      return;
-    }
+    if (validFiles.length === 0) return;
 
-    setUploadedFile(file);
+    setUploadedFiles(prev => [...prev, ...validFiles]);
     setExtracting(true);
     try {
-      const text = ext === "pdf" ? await extractPdfText(file) : await extractDocxText(file);
-      setExtractedText(text);
-      toast.success(`הקובץ "${file.name}" נטען בהצלחה (${(text.length / 1000).toFixed(0)}K תווים)`);
+      const newTexts: Array<{ name: string; text: string }> = [];
+      await Promise.all(validFiles.map(async (file) => {
+        const ext = file.name.split(".").pop()?.toLowerCase();
+        const text = ext === "pdf" ? await extractPdfText(file) : await extractDocxText(file);
+        newTexts.push({ name: file.name, text });
+      }));
+      setExtractedTexts(prev => [...prev, ...newTexts]);
+      toast.success(`${validFiles.length} קבצים נטענו בהצלחה`);
     } catch (e) {
       console.error("File extraction error:", e);
-      toast.error("שגיאה בחילוץ טקסט מהקובץ.");
-      setUploadedFile(null);
-      setExtractedText(null);
+      toast.error("שגיאה בחילוץ טקסט מקבצים.");
     } finally {
       setExtracting(false);
     }
@@ -219,8 +317,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file) handleFileSelect(file);
+    if (e.dataTransfer.files.length > 0) handleFileSelect(e.dataTransfer.files);
   }, [handleFileSelect]);
 
   const isFileRelevantMode = FILE_RELEVANT_MODES.includes(taskMode);
@@ -228,21 +325,49 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   const handleModeChange = useCallback((value: string) => {
     if (!value) return;
     const newMode = value as TaskMode;
+
+    // Warn if switching away from academic_writing with progress
+    if (taskMode === "academic_writing" && newMode !== "academic_writing" && wizardStep !== "init" && chapters.some(ch => ch.content)) {
+      if (!window.confirm("יש לך עבודה אקדמית בתהליך. בטוח שברצונך לעבור מצב?")) return;
+    }
+
     setTaskMode(newMode);
-    if (uploadedFile && !FILE_RELEVANT_MODES.includes(newMode)) {
-      toast.warning("שימו לב: הקובץ שהועלה עדיין מצורף. ניתן להסיר אותו אם אינו רלוונטי למצב הנוכחי.", {
-        action: {
-          label: "הסר קובץ",
-          onClick: () => removeFile(),
-        },
+
+    // Reset wizard state when switching to academic mode
+    if (newMode === "academic_writing") {
+      const saved = loadAcademicSession(projectId);
+      if (saved && saved.wizardStep !== "init") {
+        setWizardStep(saved.wizardStep);
+        setCurrentChapter(saved.currentChapter);
+        setChapters(saved.chapters);
+        setResearchQuestion(saved.researchQuestion);
+        setOutline(saved.outline);
+      } else {
+        setWizardStep("init");
+        setCurrentChapter(0);
+        setChapters([]);
+        setResearchQuestion("");
+        setOutline("");
+      }
+      setResult(null);
+    }
+
+    if (uploadedFiles.length > 0 && !FILE_RELEVANT_MODES.includes(newMode)) {
+      toast.warning("שימו לב: הקבצים שהועלו עדיין מצורפים.", {
+        action: { label: "הסר קבצים", onClick: () => removeAllFiles() },
         duration: 6000,
       });
     }
-  }, [uploadedFile]);
+  }, [uploadedFiles, taskMode, wizardStep, chapters, projectId]);
 
-  const removeFile = () => {
-    setUploadedFile(null);
-    setExtractedText(null);
+  const removeFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+    setExtractedTexts(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeAllFiles = () => {
+    setUploadedFiles([]);
+    setExtractedTexts([]);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -253,10 +378,24 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
     toast.info("העיבוד הופסק");
   };
 
-  const handleSubmit = async () => {
+  // ─── Academic wizard helpers ─────────────────────────────────────
+
+  const discardAcademicSession = () => {
+    if (chapters.some(ch => ch.content) && !window.confirm("האם לבטל את העבודה האקדמית? כל הפרקים שנכתבו יימחקו.")) return;
+    setWizardStep("init");
+    setCurrentChapter(0);
+    setChapters([]);
+    setResearchQuestion("");
+    setOutline("");
+    setResult(null);
+    setQuestion("");
+    clearAcademicSession(projectId);
+  };
+
+  const handleAcademicSubmit = async (academicStep: string, extraBody?: Record<string, unknown>) => {
     const q = question.trim();
-    if (!q || q.length < 5) {
-      toast.error("השאלה קצרה מדי. נסו לפרט יותר.");
+    if (!q && academicStep !== "write_chapter") {
+      toast.error("יש להזין טקסט.");
       return;
     }
 
@@ -269,12 +408,30 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
 
     try {
       const body: Record<string, unknown> = {
-        question: q,
-        taskMode,
+        question: q || researchQuestion,
+        taskMode: "academic_writing",
+        academicStep,
+        ...extraBody,
       };
-      if (extractedText) {
-        body.documentText = extractedText;
-        body.documentName = uploadedFile?.name;
+
+      // Include multi-file context
+      if (extractedTexts.length > 0) {
+        body.documentTexts = extractedTexts;
+      }
+
+      // Include previous chapters context for writing
+      if (academicStep === "write_chapter") {
+        body.previousChapters = chapters
+          .filter(ch => ch.content)
+          .map(ch => ({ title: ch.title, content: ch.content }));
+        body.chapterTitle = chapters[currentChapter]?.title || "";
+        body.chapterIndex = currentChapter;
+        body.researchQuestion = researchQuestion;
+        body.outline = outline;
+      }
+
+      if (academicStep === "propose_outline") {
+        body.researchQuestion = researchQuestion;
       }
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -293,33 +450,164 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
       });
 
       if (!res.ok) {
-        if (res.status === 429) {
-          setError("יותר מדי בקשות. נסו שוב בעוד דקה.");
-          return;
-        }
-        if (res.status === 402) {
-          setError("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות.");
-          return;
-        }
+        if (res.status === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
+        if (res.status === 402) { setError("נגמרו הקרדיטים."); return; }
         throw new Error(`HTTP ${res.status}`);
       }
 
       const data = await res.json();
-
-      if (data?.error) {
-        setError(data.error);
-        return;
-      }
-
-      if (!data?.answer || data.answer.trim().length < 20) {
-        setError("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב.");
-        return;
-      }
+      if (data?.error) { setError(data.error); return; }
+      if (!data?.answer || data.answer.trim().length < 10) { setError("לא התקבלה תשובה. נסו שוב."); return; }
 
       const qaResult = data as QAResult;
       setResult(qaResult);
 
+      // Handle wizard step transitions
+      if (academicStep === "suggest_topics") {
+        setWizardStep("topic_or_question");
+      } else if (academicStep === "validate_question") {
+        setWizardStep("topic_or_question");
+      } else if (academicStep === "propose_outline") {
+        setOutline(qaResult.answer);
+        setWizardStep("outline");
+      } else if (academicStep === "write_chapter") {
+        // Save chapter content
+        const updatedChapters = [...chapters];
+        updatedChapters[currentChapter] = { ...updatedChapters[currentChapter], content: qaResult.answer };
+        setChapters(updatedChapters);
+        setWizardStep("checkpoint");
+      }
+
       // Save to qa_logs
+      try {
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        if (currentUser) {
+          await supabase.from("qa_logs").insert({
+            user_id: currentUser.id,
+            project_id: currentProject?.id ?? null,
+            question: q || `[academic: ${academicStep}] ${researchQuestion}`,
+            answer: qaResult.answer,
+            footnotes: qaResult.footnotes as any,
+            task_mode: "academic_writing",
+            local_footnotes_count: qaResult.footnotes.filter(f => f.source === "local").length,
+            perplexity_footnotes_count: qaResult.footnotes.filter(f => f.source === "perplexity").length,
+            total_footnotes: qaResult.footnotes.length,
+          });
+          onResultSaved?.();
+        }
+      } catch (saveErr) {
+        console.error("Failed to save QA log:", saveErr);
+      }
+    } catch (e: any) {
+      if (e.name === "AbortError") return;
+      console.error("Academic writing error:", e);
+      setError("שגיאה בעיבוד. נסו שוב.");
+    } finally {
+      abortControllerRef.current = null;
+      setLoading(false);
+    }
+  };
+
+  const approveOutline = () => {
+    // Parse outline to extract chapter titles
+    const lines = outline.split("\n").filter(l => l.trim());
+    const chapterTitles: string[] = [];
+    for (const line of lines) {
+      const match = line.match(/^\d+\.\s*\*?\*?(.+?)\*?\*?\s*$/);
+      if (match) chapterTitles.push(match[1].trim().replace(/\*\*/g, ""));
+    }
+    // Fallback: standard structure
+    if (chapterTitles.length === 0) {
+      chapterTitles.push("תקציר", "מבוא", "המסגרת הנורמטיבית", "סקירה פסיקתית ודוקטרינרית", "ניתוח ביקורתי", "סיכום ומסקנות");
+    }
+    setChapters(chapterTitles.map(t => ({ title: t, content: null })));
+    setCurrentChapter(0);
+    setWizardStep("writing");
+  };
+
+  const writeCurrentChapter = () => {
+    handleAcademicSubmit("write_chapter");
+  };
+
+  const advanceToNextChapter = () => {
+    if (currentChapter < chapters.length - 1) {
+      setCurrentChapter(currentChapter + 1);
+      setResult(null);
+      setWizardStep("writing");
+    } else {
+      setWizardStep("done");
+    }
+  };
+
+  const editCurrentChapter = () => {
+    // Re-write current chapter
+    setResult(null);
+    setWizardStep("writing");
+  };
+
+  // ─── Standard (non-academic) submit ──────────────────────────────
+
+  const handleSubmit = async () => {
+    // Academic mode has its own submit flow
+    if (taskMode === "academic_writing") {
+      if (wizardStep === "init" || wizardStep === "topic_or_question") return;
+      return;
+    }
+
+    const q = question.trim();
+    if (!q || q.length < 5) {
+      toast.error("השאלה קצרה מדי. נסו לפרט יותר.");
+      return;
+    }
+
+    setLoading(true);
+    setResult(null);
+    setError(null);
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    try {
+      const body: Record<string, unknown> = {
+        question: q,
+        taskMode,
+      };
+      // Send multi-file context
+      if (extractedTexts.length === 1) {
+        body.documentText = extractedTexts[0].text;
+        body.documentName = extractedTexts[0].name;
+      } else if (extractedTexts.length > 1) {
+        body.documentTexts = extractedTexts;
+      }
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      const { data: { session } } = await supabase.auth.getSession();
+
+      const res = await fetch(`${supabaseUrl}/functions/v1/legal-qa`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.access_token ?? supabaseKey}`,
+          "apikey": supabaseKey,
+        },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+
+      if (!res.ok) {
+        if (res.status === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
+        if (res.status === 402) { setError("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות."); return; }
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      if (data?.error) { setError(data.error); return; }
+      if (!data?.answer || data.answer.trim().length < 20) { setError("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב."); return; }
+
+      const qaResult = data as QAResult;
+      setResult(qaResult);
+
       try {
         const { data: { user: currentUser } } = await supabase.auth.getUser();
         if (currentUser) {
@@ -350,15 +638,31 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   };
 
   const handleCopy = () => {
+    if (!result && taskMode !== "academic_writing") return;
+
+    // For academic mode, copy entire accumulated paper
+    if (taskMode === "academic_writing" && chapters.some(ch => ch.content)) {
+      const fullPaper = chapters
+        .filter(ch => ch.content)
+        .map(ch => `**${ch.title}**\n\n${ch.content}`)
+        .join("\n\n---\n\n");
+
+      const bodyHtml = fullPaper
+        .replace(/^#{1,4}\s+(.+)$/gm, "<strong>$1</strong>")
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\n/g, "<br>");
+
+      const richHtml = `<div dir="rtl" style="font-family: ${DAVID_FONT}; font-size: 12pt; line-height: 2; text-align: justify; direction: rtl;">${bodyHtml}</div>`;
+      copyRichText(richHtml, fullPaper);
+      toast.success("העבודה הועתקה ללוח");
+      return;
+    }
+
     if (!result) return;
 
-    // Plain text version
-    const footnotesText = result.footnotes
-      .map((f) => `${f.number}. ${f.citation}`)
-      .join("\n");
+    const footnotesText = result.footnotes.map((f) => `${f.number}. ${f.citation}`).join("\n");
     const plainText = `${result.answer}\n\nהערות שוליים:\n${footnotesText}`;
 
-    // Rich HTML version — David 12pt for pasting into Word / Google Docs
     const bodyHtml = result.answer
       .replace(/^#{1,4}\s+(.+)$/gm, "<strong>$1</strong>")
       .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
@@ -386,6 +690,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      if (taskMode === "academic_writing") return; // academic mode uses buttons
       handleSubmit();
     }
   };
@@ -397,12 +702,12 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   };
 
   const activeMode = TASK_MODES.find((m) => m.id === taskMode)!;
+  const isAcademic = taskMode === "academic_writing";
 
   return (
     <div className="flex flex-col h-full" style={{ direction: "rtl" }}>
       {/* Top section: Disclaimer + Mode Cards */}
       <div className="px-2 sm:px-4 pt-4 pb-2 space-y-3">
-        {/* Disclaimer */}
         <Alert className="border-destructive/30 bg-destructive/5">
           <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
           <AlertDescription className="text-destructive text-[10px]">
@@ -410,7 +715,6 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
           </AlertDescription>
         </Alert>
 
-        {/* Mode Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {TASK_MODES.map((m) => {
             const isSelected = taskMode === m.id;
@@ -420,18 +724,18 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                 key={m.id}
                 onClick={() => handleModeChange(m.id)}
                 className={`flex flex-col items-center text-center gap-1.5 rounded-xl border transition-all ${
-                  result ? "px-2 py-2.5" : "px-3 py-3.5"
+                  result || isAcademic ? "px-2 py-2.5" : "px-3 py-3.5"
                 } ${
                   isSelected
                     ? "bg-primary text-primary-foreground border-primary shadow-sm"
                     : "bg-card text-card-foreground border-border hover:border-primary/40 hover:bg-muted/50"
                 }`}
               >
-                <Icon className={result ? "w-4 h-4" : "w-5 h-5"} />
-                <span className={`font-semibold leading-tight ${result ? "text-[11px]" : "text-xs sm:text-sm"}`}>
+                <Icon className={result || isAcademic ? "w-4 h-4" : "w-5 h-5"} />
+                <span className={`font-semibold leading-tight ${result || isAcademic ? "text-[11px]" : "text-xs sm:text-sm"}`}>
                   {m.label}
                 </span>
-                <span className={`leading-tight opacity-80 ${result ? "text-[9px] hidden sm:block" : "text-[10px] sm:text-[11px]"}`}>
+                <span className={`leading-tight opacity-80 ${result || isAcademic ? "text-[9px] hidden sm:block" : "text-[10px] sm:text-[11px]"}`}>
                   {m.description}
                 </span>
               </button>
@@ -442,14 +746,256 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
 
       {/* Middle: scrollable results area */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-2 sm:px-4">
-        {/* Empty state */}
-        {!result && !loading && !error && (
+
+        {/* ── Academic Wizard UI ── */}
+        {isAcademic && (
+          <div className="space-y-4 py-4">
+            {/* Progress indicator */}
+            {wizardStep !== "init" && chapters.length > 0 && (
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>
+                    {wizardStep === "done"
+                      ? "העבודה הושלמה!"
+                      : `פרק ${currentChapter + 1} מתוך ${chapters.length}`}
+                  </span>
+                  <span>{chapters.filter(ch => ch.content).length}/{chapters.length} פרקים</span>
+                </div>
+                <Progress value={(chapters.filter(ch => ch.content).length / Math.max(chapters.length, 1)) * 100} className="h-2" />
+              </div>
+            )}
+
+            {/* INIT: Two paths */}
+            {wizardStep === "init" && !loading && !result && (
+              <div className="flex flex-col items-center justify-center py-12 text-center space-y-6">
+                <GraduationCap className="w-12 h-12 text-primary" />
+                <div>
+                  <h2 className="text-foreground text-lg font-bold mb-2">כתיבה אקדמית</h2>
+                  <p className="text-muted-foreground text-sm mb-6">עוזר מחקר אקדמי ליצירת עבודות סמינריון ומאמרים משפטיים בשלבים</p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+                  <Button
+                    variant="outline"
+                    className="flex-1 h-auto py-4 flex flex-col gap-1"
+                    onClick={() => {
+                      setWizardStep("topic_or_question");
+                      setQuestion("");
+                    }}
+                  >
+                    <span className="font-semibold">יש לי נושא כללי</span>
+                    <span className="text-[10px] text-muted-foreground">ה-AI יציע 3 שאלות מחקר</span>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1 h-auto py-4 flex flex-col gap-1"
+                    onClick={() => {
+                      setWizardStep("topic_or_question");
+                      setQuestion("");
+                    }}
+                  >
+                    <span className="font-semibold">יש לי שאלת מחקר</span>
+                    <span className="text-[10px] text-muted-foreground">ה-AI יבדוק את כדאיותה</span>
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* TOPIC/QUESTION: input + action */}
+            {wizardStep === "topic_or_question" && !loading && !result && (
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">הזינו נושא כללי או שאלת מחקר ספציפית:</p>
+                <textarea
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  placeholder="למשל: השפעת חוק-יסוד: כבוד האדם וחירותו על דיני הנזיקין..."
+                  className="w-full rounded-lg border border-border bg-background p-3 text-sm min-h-[80px] resize-none"
+                  dir="rtl"
+                />
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => handleAcademicSubmit("suggest_topics")}
+                    disabled={question.trim().length < 5}
+                    size="sm"
+                  >
+                    הצע שאלות מחקר
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setResearchQuestion(question.trim());
+                      handleAcademicSubmit("validate_question");
+                    }}
+                    disabled={question.trim().length < 10}
+                    size="sm"
+                  >
+                    בדוק כדאיות אקדמית
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Show AI response for topic suggestions / validation */}
+            {wizardStep === "topic_or_question" && result && (
+              <Card className="border-border">
+                <CardContent className="p-4 space-y-3">
+                  <div className="text-foreground text-sm leading-relaxed whitespace-pre-wrap" style={{ lineHeight: 1.8 }}>
+                    <AnswerWithFootnotes text={result.answer} onFootnoteClick={scrollToFootnote} />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        const rq = question.trim() || researchQuestion;
+                        setResearchQuestion(rq);
+                        setResult(null);
+                        handleAcademicSubmit("propose_outline", { researchQuestion: rq });
+                      }}
+                    >
+                      אשר ועבור למתווה
+                    </Button>
+                    <textarea
+                      value={question}
+                      onChange={(e) => setQuestion(e.target.value)}
+                      placeholder="ניתן לערוך את שאלת המחקר..."
+                      className="flex-1 rounded border border-border bg-background p-2 text-xs min-h-[36px] resize-none"
+                      dir="rtl"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* OUTLINE: show proposed outline, approve/edit */}
+            {wizardStep === "outline" && result && (
+              <Card className="border-border">
+                <CardContent className="p-4 space-y-3">
+                  <h3 className="font-bold text-foreground">מתווה מוצע</h3>
+                  <div className="text-foreground text-sm leading-relaxed whitespace-pre-wrap" style={{ lineHeight: 1.8 }}>
+                    <RenderMarkdown text={result.answer} />
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <Button size="sm" onClick={approveOutline}>
+                      אשר מתווה והתחל כתיבה
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => { setResult(null); setWizardStep("topic_or_question"); }}>
+                      חזרה לעריכה
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* WRITING: show current chapter + write button */}
+            {wizardStep === "writing" && !loading && !result && chapters.length > 0 && (
+              <Card className="border-border">
+                <CardContent className="p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-bold text-foreground">
+                      כתיבת פרק: {chapters[currentChapter]?.title}
+                    </h3>
+                    <span className="text-xs text-muted-foreground">פרק {currentChapter + 1} מתוך {chapters.length}</span>
+                  </div>
+                  {chapters[currentChapter]?.content && (
+                    <div className="text-xs text-muted-foreground p-2 bg-muted/30 rounded">
+                      פרק זה כבר נכתב. לחצו "כתוב מחדש" לשכתוב.
+                    </div>
+                  )}
+                  <Button onClick={writeCurrentChapter} size="sm">
+                    {chapters[currentChapter]?.content ? "כתוב מחדש" : "כתוב פרק זה"}
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* CHECKPOINT: chapter just written */}
+            {wizardStep === "checkpoint" && result && (
+              <Card className="border-border">
+                <div className="flex items-center justify-between px-4 pt-4 pb-2 border-b border-border">
+                  <span className="text-xs text-muted-foreground font-medium">
+                    פרק {currentChapter + 1}: {chapters[currentChapter]?.title}
+                  </span>
+                  <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs">
+                    <Copy className="w-3.5 h-3.5" />
+                    העתק
+                  </Button>
+                </div>
+                <CardContent className="p-4">
+                  <div className="max-w-none text-foreground leading-relaxed whitespace-pre-wrap" style={{ fontSize: "12pt", textAlign: "justify", lineHeight: 1.8 }}>
+                    <AnswerWithFootnotes text={result.answer} onFootnoteClick={scrollToFootnote} />
+                  </div>
+                  {result.footnotes.length > 0 && (
+                    <div className="border-t border-border pt-4 mt-6 space-y-2">
+                      <h3 className="font-semibold text-muted-foreground" style={{ fontSize: "11pt" }}>הערות שוליים</h3>
+                      <ol className="space-y-1.5">
+                        {result.footnotes.map((fn) => {
+                          const badge = getSourceBadge(fn.source);
+                          return (
+                            <li key={fn.number} id={`legalqa-footnote-${fn.number}`} className="flex gap-2 items-start text-foreground" style={{ fontSize: "10pt" }}>
+                              <span className="text-primary font-bold shrink-0 flex items-center gap-1" style={{ fontSize: "10pt" }}>
+                                <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: badge.color }} title={badge.label} />
+                                {fn.number}.
+                              </span>
+                              <div className="min-w-0"><RenderBold text={fn.citation} /></div>
+                            </li>
+                          );
+                        })}
+                      </ol>
+                    </div>
+                  )}
+                </CardContent>
+                <div className="px-4 pb-4 flex gap-2 border-t border-border pt-3">
+                  <Button size="sm" onClick={advanceToNextChapter}>
+                    {currentChapter < chapters.length - 1 ? "המשך לפרק הבא" : "סיים עבודה"}
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={editCurrentChapter}>
+                    כתוב מחדש פרק זה
+                  </Button>
+                </div>
+              </Card>
+            )}
+
+            {/* DONE: show summary */}
+            {wizardStep === "done" && (
+              <Card className="border-primary/30 bg-primary/5">
+                <CardContent className="p-6 text-center space-y-4">
+                  <GraduationCap className="w-10 h-10 text-primary mx-auto" />
+                  <h2 className="text-foreground text-lg font-bold">העבודה הושלמה!</h2>
+                  <p className="text-sm text-muted-foreground">
+                    {chapters.filter(ch => ch.content).length} פרקים נכתבו בהצלחה.
+                  </p>
+                  <div className="flex gap-2 justify-center">
+                    <Button onClick={handleCopy} className="gap-1.5">
+                      <Copy className="w-4 h-4" />
+                      העתק את כל העבודה
+                    </Button>
+                    <Button variant="outline" onClick={discardAcademicSession}>
+                      עבודה חדשה
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Discard button when in progress */}
+            {wizardStep !== "init" && wizardStep !== "done" && !loading && (
+              <div className="flex justify-end">
+                <Button variant="ghost" size="sm" className="text-xs text-destructive gap-1" onClick={discardAcademicSession}>
+                  <Trash2 className="w-3 h-3" />
+                  בטל עבודה
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Non-academic empty state ── */}
+        {!isAcademic && !result && !loading && !error && (
           <div className="flex flex-col items-center justify-center h-full py-12 text-center">
             <div className="text-4xl mb-3">⚖️</div>
             <h2 className="text-foreground text-lg font-bold mb-2">העוזר המשפטי</h2>
             <p className="text-muted-foreground text-sm">
-              {uploadedFile
-                ? "שאלו שאלה על המסמך שהועלה – התשובה תתבסס על תוכן הקובץ ועל המאגר הפנימי"
+              {uploadedFiles.length > 0
+                ? "שאלו שאלה על המסמכים שהועלו – התשובה תתבסס על תוכן הקבצים ועל המאגר הפנימי"
                 : "\n"}
             </p>
           </div>
@@ -464,7 +1010,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => { setError(null); handleSubmit(); }}
+                onClick={() => { setError(null); }}
                 className="gap-1.5"
               >
                 נסו שוב
@@ -502,8 +1048,8 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
           </Card>
         )}
 
-        {/* Result */}
-        {result && (
+        {/* Non-academic result */}
+        {!isAcademic && result && (
           <Card className="mt-4 border-border">
             <div className="flex items-center justify-between px-4 sm:px-6 pt-4 pb-2 border-b border-border">
               <span className="text-xs text-muted-foreground font-medium">
@@ -576,86 +1122,126 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
 
       {/* Bottom: Input bar pinned */}
       <div className="mt-auto px-2 sm:px-4 pb-2 pt-2 space-y-1.5 border-t border-border bg-background">
-        <div className="flex gap-2 items-end">
-          {/* File upload zone */}
-          <div
-            onDrop={handleDrop}
-            onDragOver={(e) => e.preventDefault()}
-            onClick={() => !uploadedFile && fileInputRef.current?.click()}
-            className={`flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 border-dashed flex items-center justify-center cursor-pointer transition-colors ${
-              uploadedFile
-                ? isFileRelevantMode
-                  ? "border-primary/40 bg-primary/5"
-                  : "border-amber-400/60 bg-amber-50/30 dark:bg-amber-900/10"
-                : "border-border hover:border-primary/30 hover:bg-muted/50"
-            }`}
-          >
-            {extracting ? (
-              <div className="w-5 h-5 border-2 border-muted-foreground/30 border-t-primary rounded-full animate-spin" />
-            ) : uploadedFile ? (
-              <div className="relative flex items-center justify-center w-full h-full">
-                <FileText className="w-5 h-5 text-primary" />
-                <button
-                  onClick={(e) => { e.stopPropagation(); removeFile(); }}
-                  className="absolute -top-1 -left-1 w-4 h-4 bg-destructive text-destructive-foreground rounded-full flex items-center justify-center"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            ) : (
-              <Upload className="w-5 h-5 text-muted-foreground" />
-            )}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf,.docx"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleFileSelect(file);
-              }}
-            />
-          </div>
+        {/* Hide input bar for academic mode (it has its own UI) unless in non-wizard steps */}
+        {!isAcademic && (
+          <div className="flex gap-2 items-end">
+            {/* File upload zone */}
+            <div
+              onDrop={handleDrop}
+              onDragOver={(e) => e.preventDefault()}
+              onClick={() => fileInputRef.current?.click()}
+              className={`flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-xl border-2 border-dashed flex items-center justify-center cursor-pointer transition-colors ${
+                uploadedFiles.length > 0
+                  ? isFileRelevantMode
+                    ? "border-primary/40 bg-primary/5"
+                    : "border-amber-400/60 bg-amber-50/30 dark:bg-amber-900/10"
+                  : "border-border hover:border-primary/30 hover:bg-muted/50"
+              }`}
+            >
+              {extracting ? (
+                <div className="w-5 h-5 border-2 border-muted-foreground/30 border-t-primary rounded-full animate-spin" />
+              ) : uploadedFiles.length > 0 ? (
+                <div className="relative flex items-center justify-center w-full h-full">
+                  <FileText className="w-5 h-5 text-primary" />
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground rounded-full w-4 h-4 flex items-center justify-center text-[9px] font-bold">
+                    {uploadedFiles.length}
+                  </span>
+                </div>
+              ) : (
+                <Upload className="w-5 h-5 text-muted-foreground" />
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.docx"
+                multiple
+                className="hidden"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files.length > 0) handleFileSelect(e.target.files);
+                }}
+              />
+            </div>
 
-          {/* Textarea + send */}
-          <div className="input-field flex flex-1 overflow-hidden">
-            <textarea
-              ref={textareaRef}
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={uploadedFile ? `שאלו על "${uploadedFile.name}"...` : activeMode.placeholder}
-              disabled={loading}
-              rows={1}
-              className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-2.5 sm:px-3.5 py-2.5 sm:py-3 text-foreground text-sm leading-relaxed font-sans resize-none"
-              dir="rtl"
-            />
-            {loading ? (
+            {/* Textarea + send */}
+            <div className="input-field flex flex-1 overflow-hidden">
+              <textarea
+                ref={textareaRef}
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={uploadedFiles.length > 0 ? `שאלו על ${uploadedFiles.length} קבצים...` : activeMode.placeholder}
+                disabled={loading}
+                rows={1}
+                className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-2.5 sm:px-3.5 py-2.5 sm:py-3 text-foreground text-sm leading-relaxed font-sans resize-none"
+                dir="rtl"
+              />
+              {loading ? (
+                <button
+                  onClick={handleStop}
+                  className="btn-send px-4 py-2.5 m-1.5 text-destructive-foreground bg-destructive text-base flex-shrink-0 hover:bg-destructive/90"
+                  title="עצור"
+                >
+                  <StopCircle className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  onClick={handleSubmit}
+                  disabled={question.trim().length < 5}
+                  className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
+                >
+                  ⇧
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Academic mode: file upload bar */}
+        {isAcademic && wizardStep !== "done" && (
+          <div className="flex gap-2 items-center">
+            <div
+              onDrop={handleDrop}
+              onDragOver={(e) => e.preventDefault()}
+              onClick={() => fileInputRef.current?.click()}
+              className="flex-shrink-0 h-10 px-3 rounded-lg border border-dashed border-border hover:border-primary/30 flex items-center gap-2 cursor-pointer transition-colors"
+            >
+              <Plus className="w-4 h-4 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">העלאת קבצים</span>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf,.docx"
+                multiple
+                className="hidden"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files.length > 0) handleFileSelect(e.target.files);
+                }}
+              />
+            </div>
+            {loading && (
               <button
                 onClick={handleStop}
-                className="btn-send px-4 py-2.5 m-1.5 text-destructive-foreground bg-destructive text-base flex-shrink-0 hover:bg-destructive/90"
-                title="עצור"
+                className="h-10 px-3 rounded-lg bg-destructive text-destructive-foreground text-xs flex items-center gap-1.5"
               >
-                <StopCircle className="w-4 h-4" />
-              </button>
-            ) : (
-              <button
-                onClick={handleSubmit}
-                disabled={question.trim().length < 5}
-                className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
-              >
-                ⇧
+                <StopCircle className="w-3.5 h-3.5" />
+                עצור
               </button>
             )}
           </div>
-        </div>
+        )}
 
-        {/* File name indicator */}
-        {uploadedFile && (
-          <p className="text-[10px] text-muted-foreground">
-            📎 {uploadedFile.name} ({(uploadedFile.size / 1024).toFixed(0)} KB)
-            {extractedText ? ` • ${(extractedText.length / 1000).toFixed(0)}K תווים` : ""}
-          </p>
+        {/* File list */}
+        {uploadedFiles.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {uploadedFiles.map((f, i) => (
+              <span key={i} className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/40 rounded px-1.5 py-0.5">
+                📎 {f.name}
+                <button onClick={() => removeFile(i)} className="text-destructive hover:text-destructive/80">
+                  <X className="w-2.5 h-2.5" />
+                </button>
+              </span>
+            ))}
+          </div>
         )}
 
         {/* Attribution */}

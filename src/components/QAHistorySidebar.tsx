@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, BookOpen, FileSearch, PenTool, Clock } from "lucide-react";
+import { Search, BookOpen, FileSearch, GraduationCap, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { he } from "date-fns/locale";
 
@@ -33,7 +33,7 @@ const MODE_LABELS: Record<string, { label: string; icon: typeof Search }> = {
   research: { label: "מחקר", icon: Search },
   pleading_analysis: { label: "ניתוח טענה", icon: FileSearch },
   case_summary: { label: "סיכום", icon: BookOpen },
-  argument_draft: { label: "ניסוח", icon: PenTool },
+  academic_writing: { label: "כתיבה אקדמית", icon: GraduationCap },
 };
 
 export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props) {
