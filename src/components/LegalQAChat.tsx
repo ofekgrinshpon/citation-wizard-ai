@@ -1016,7 +1016,10 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                     <RenderMarkdown text={result.answer} />
                   </div>
                   <div className="flex gap-2 pt-2">
-                    <Button size="sm" onClick={approveOutline}>
+                    <Button size="sm" onClick={() => {
+                      if (!checkDestructiveEdit("outline")) return;
+                      approveOutline();
+                    }}>
                       אשר מתווה והתחל כתיבה
                     </Button>
                     <Button variant="ghost" size="sm" onClick={() => { setResult(null); setWizardStep("topic_or_question"); }}>
