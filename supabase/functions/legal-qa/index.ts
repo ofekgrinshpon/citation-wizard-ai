@@ -1036,12 +1036,11 @@ ${combinedContext}`;
 
     if (aiFootnoteLines.length > 0) {
       // Use AI-formatted footnotes — match each to a source card for provenance
-      // CRITICAL: Strip any footnote that doesn't match a provided source (anti-hallucination)
       for (const aiFn of aiFootnoteLines) {
         const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards);
         if (!matchedCard) {
-          console.log(`Stripped hallucinated footnote #${aiFn.num}: ${aiFn.text.slice(0, 80)}...`);
-          continue; // Skip footnotes that don't match any provided source
+          console.log(`Stripped unmatched footnote #${aiFn.num}: ${aiFn.text.slice(0, 80)}...`);
+          continue;
         }
         footnotes.push({
           number: fnNum,
@@ -1050,9 +1049,24 @@ ${combinedContext}`;
           url: matchedCard.url,
           source: matchedCard.provenance || "local",
         });
-        // Map original [X] number to new sequential number
         oldIdToNewNumber.set(aiFn.num, fnNum);
         fnNum++;
+      }
+
+      // SAFETY FALLBACK: If ALL footnotes were stripped, keep them as "unverified"
+      if (footnotes.length === 0 && aiFootnoteLines.length > 0) {
+        console.log(`FALLBACK: All ${aiFootnoteLines.length} footnotes stripped — keeping as unverified`);
+        fnNum = 1;
+        for (const aiFn of aiFootnoteLines) {
+          footnotes.push({
+            number: fnNum,
+            citation: aiFn.text,
+            source_type: "web",
+            source: "perplexity",
+          });
+          oldIdToNewNumber.set(aiFn.num, fnNum);
+          fnNum++;
+        }
       }
     } else {
       // Fallback: use source card citations (old behavior)
