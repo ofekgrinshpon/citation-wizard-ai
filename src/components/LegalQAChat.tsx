@@ -249,8 +249,8 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   // Save academic session after chapter writes
   const persistAcademicSession = useCallback(() => {
     if (taskMode !== "academic_writing" || wizardStep === "init") return;
-    saveAcademicSession({ wizardStep, currentChapter, chapters, researchQuestion, outline }, projectId);
-  }, [taskMode, wizardStep, currentChapter, chapters, researchQuestion, outline, projectId]);
+    saveAcademicSession({ wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline }, projectId);
+  }, [taskMode, wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, projectId]);
 
   useEffect(() => {
     persistAcademicSession();
