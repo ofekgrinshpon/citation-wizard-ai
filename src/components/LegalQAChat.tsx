@@ -398,6 +398,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   const discardAcademicSession = () => {
     if (chapters.some(ch => ch.content) && !window.confirm("האם לבטל את העבודה האקדמית? כל הפרקים שנכתבו יימחקו.")) return;
     setWizardStep("init");
+    setMaxReachedStep("init");
     setCurrentChapter(0);
     setChapters([]);
     setResearchQuestion("");
@@ -405,6 +406,62 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
     setResult(null);
     setQuestion("");
     clearAcademicSession(projectId);
+  };
+
+  // ─── Academic navigation helpers ────────────────────────────────
+  const updateWizardStep = (step: WizardStep) => {
+    setWizardStep(step);
+    if (isStepAfter(step, maxReachedStep)) {
+      setMaxReachedStep(step);
+    }
+  };
+
+  const navigateBack = () => {
+    const idx = stepIndex(wizardStep);
+    if (idx <= 1) return; // can't go before topic_or_question
+    // Map back: writing/checkpoint → outline, outline → topic_or_question
+    if (wizardStep === "writing" || wizardStep === "checkpoint") {
+      setWizardStep("outline");
+      setResult(null);
+    } else if (wizardStep === "outline") {
+      setWizardStep("topic_or_question");
+      setResult(null);
+    }
+  };
+
+  const navigateForward = () => {
+    // Jump to maxReachedStep or next logical step
+    if (wizardStep === "topic_or_question" && isStepAfter(maxReachedStep, "topic_or_question")) {
+      setWizardStep(outline ? "outline" : maxReachedStep);
+      // Restore result for outline view
+      if (outline) setResult({ answer: outline, footnotes: [], source_urls: [] });
+    } else if (wizardStep === "outline" && isStepAfter(maxReachedStep, "outline")) {
+      setWizardStep(chapters.some(ch => ch.content) ? "checkpoint" : "writing");
+      setResult(null);
+    }
+  };
+
+  const canGoBack = wizardStep !== "init" && wizardStep !== "done" && stepIndex(wizardStep) > 1;
+  const canGoForward = wizardStep !== "done" && isStepAfter(maxReachedStep, wizardStep);
+  const hasWrittenContent = chapters.some(ch => ch.content);
+
+  /** Check if submitting from a previous step would invalidate later data */
+  const checkDestructiveEdit = (fromStep: WizardStep): boolean => {
+    if (fromStep === "topic_or_question" && (outline || hasWrittenContent)) {
+      if (!window.confirm("שים לב: שינוי שאלת המחקר יגרום למחיקת המתווה והפרקים שנכתבו. האם להמשיך?")) return false;
+      setOutline("");
+      setChapters([]);
+      setCurrentChapter(0);
+      setMaxReachedStep("topic_or_question");
+      setResult(null);
+    } else if (fromStep === "outline" && hasWrittenContent) {
+      if (!window.confirm("שים לב: שינוי המתווה יגרום למחיקת הפרקים שנכתבו. האם להמשיך?")) return false;
+      setChapters([]);
+      setCurrentChapter(0);
+      setMaxReachedStep("outline");
+      setResult(null);
+    }
+    return true;
   };
 
   const handleAcademicSubmit = async (academicStep: string, extraBody?: Record<string, unknown>) => {
