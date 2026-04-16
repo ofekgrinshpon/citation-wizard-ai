@@ -245,17 +245,30 @@ ${sourceList}
     console.log(`Re-ranking scores: ${scores.join(", ")}`);
 
     // Map scores back to matches, filter out low-relevance docs
+    // But ALWAYS keep at least the top-scoring document to avoid 0 local sources
     const result: RankedMatch[] = [];
     const docsArr = Array.from(docMap.entries());
+    let bestScore = -1;
+    let bestDocId: string | null = null;
+    for (let i = 0; i < docsArr.length; i++) {
+      const score = scores[i] ?? 5;
+      if (score > bestScore) {
+        bestScore = score;
+        bestDocId = docsArr[i][0];
+      }
+    }
+
     for (let i = 0; i < docsArr.length; i++) {
       const [docId, docData] = docsArr[i];
       const score = scores[i] ?? 5;
-      if (score >= 4) {
-        // Include all chunks for this document
+      if (score >= 3 || docId === bestDocId) {
         for (const m of matches) {
           if (m.document_id === docId) {
             result.push({ ...m, relevanceScore: score });
           }
+        }
+        if (score < 3) {
+          console.log(`Kept top-scoring source despite low score (score=${score}): "${docData.match.document_title.slice(0, 50)}"`);
         }
       } else {
         console.log(`Filtered out low-relevance source (score=${score}): "${docData.match.document_title.slice(0, 50)}"`);
