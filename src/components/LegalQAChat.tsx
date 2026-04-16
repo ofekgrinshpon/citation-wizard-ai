@@ -986,6 +986,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                     <Button
                       size="sm"
                       onClick={() => {
+                        if (!checkDestructiveEdit("topic_or_question")) return;
                         const rq = question.trim() || researchQuestion;
                         setResearchQuestion(rq);
                         setResult(null);
