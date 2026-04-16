@@ -236,9 +236,9 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: nu
 
 const MAX_CONTEXT_CHARS = 6000;
 
-function truncateContext(text: string): string {
-  if (text.length <= MAX_CONTEXT_CHARS) return text;
-  return text.slice(0, MAX_CONTEXT_CHARS) + "\n[... קוצר מטעמי אורך ...]";
+function truncateContext(text: string, limit: number = MAX_CONTEXT_CHARS): string {
+  if (text.length <= limit) return text;
+  return text.slice(0, limit) + "\n[... קוצר מטעמי אורך ...]";
 }
 
 // ─── AI-based re-ranking: score source relevance to the question ─────
