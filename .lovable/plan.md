@@ -1,45 +1,34 @@
 
 
-# Bi-directional Navigation, Copy Full Paper, and Destructive Edit Warnings
+# Clickable Chapter List & Per-Chapter Feedback Input
 
 ## Overview
-Add a visual progress stepper, back/forward navigation between wizard steps, destructive edit warnings, and a persistent "Copy Full Paper" button to the Academic Writing wizard.
+Two additions to the academic writing wizard:
+1. **Clickable chapter list** — during writing/checkpoint, show all chapters as a sidebar-style list so the user can click any already-written chapter to view it.
+2. **Per-chapter feedback textbox** — after each chapter is output (checkpoint step), show a text input where the user can type instructions (e.g. "focus more on case law"), then re-generate the chapter with that feedback appended to the prompt.
 
 ## Changes (all in `src/components/LegalQAChat.tsx`)
 
-### 1. Track furthest reached step
-Add a `maxReachedStep` state (persisted in `safeStorage` alongside existing session data) that records the furthest step the user has reached. This enables the "forward" button when the user navigates back.
+### 1. Clickable Chapter List
+In the **writing** and **checkpoint** steps, render the `chapters` array as a vertical list of buttons above/beside the current chapter card:
+- Each chapter shows its title and a status indicator (✓ written / current / pending)
+- Clicking a written chapter sets `currentChapter` to that index and shows its content in a read-only card (reusing the checkpoint display)
+- Clicking the current unwritten chapter returns to the "write" prompt
+- This lets users freely browse completed chapters without losing any data
 
-### 2. Visual Progress Stepper
-Replace the current simple progress bar (lines 754-766) with a clickable step indicator showing: **נושא/שאלה → מתווה → כתיבה**. The current step is highlighted; completed steps are clickable. This stepper is always visible (except at `init`).
+### 2. Feedback Textbox on Checkpoint
+After a chapter is written (checkpoint step), add a textarea below the chapter content:
+- Placeholder: `"הנחיות נוספות לשכתוב (למשל: הרחב את סקירת הפסיקה, התמקד בגישה הביקורתית...)"` 
+- A "שכתב עם הנחיות" (Rewrite with instructions) button sends the chapter for rewrite, passing the feedback text as `userFeedback` in the `handleAcademicSubmit` payload
+- The edge function (`legal-qa/index.ts`) will append this feedback to the `write_chapter` prompt so the AI incorporates it
 
-### 3. Back & Forward buttons
-- **Back**: Visible at every step past `init`. Navigates to the previous step without clearing data. E.g., from `writing` back to `outline` — chapters and outline remain intact.
-- **Forward (קדימה)**: Visible only when `maxReachedStep` is ahead of the current step. Jumps forward to where the user left off, with all data intact.
-
-### 4. Destructive Edit Warning
-When the user is on a previous step and takes an action that would regenerate content (e.g., submitting a new research question from `topic_or_question` when chapters already exist, or re-proposing an outline when chapters exist):
-- Show `window.confirm("שים לב: שינוי [שם השלב] יגרום למחיקת התוכן שנכתב בהמשך. האם להמשיך?")`
-- Only on confirm: clear subsequent state (chapters/outline as appropriate) and reset `maxReachedStep`
-- On cancel: do nothing
-
-### 5. "העתק טקסט מלא" (Copy Full Paper) button
-- A floating/sticky button visible whenever `chapters.some(ch => ch.content)` is true, regardless of current wizard step
-- Uses the existing `handleCopy` logic (lines 640-658) which already aggregates chapters into rich text
-- Positioned in the stepper bar area or as a small fixed button so it's always accessible
-
-### 6. State persistence update
-Update `AcademicSession` interface and `saveAcademicSession`/`loadAcademicSession` to include `maxReachedStep`. Navigation changes (back/forward) trigger a persist.
-
-## Step dependency rules
-```text
-topic_or_question → outline → writing/checkpoint/done
+### 3. Edge Function Update (`legal-qa/index.ts`)
+In the `write_chapter` sub-mode handler, read an optional `userFeedback` field from the request body and append it to the system/user prompt:
 ```
-- Going back from `outline` to `topic_or_question` is non-destructive (just viewing)
-- Actually submitting a NEW topic/question from `topic_or_question` when outline/chapters exist → destructive warning
-- Actually re-proposing outline when chapters exist → destructive warning
-- Simply viewing a previous step = safe, no data loss
+הנחיות נוספות מהמשתמש: {userFeedback}
+```
 
-## No other files change
-All modifications are contained in `LegalQAChat.tsx`.
+## File Changes
+- `src/components/LegalQAChat.tsx` — chapter list UI, feedback textarea + rewrite button, pass `userFeedback` in payload
+- `supabase/functions/legal-qa/index.ts` — read `userFeedback` and inject into `write_chapter` prompt
 
