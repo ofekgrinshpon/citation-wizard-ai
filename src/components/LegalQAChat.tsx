@@ -237,6 +237,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
       const saved = loadAcademicSession(projectId);
       if (saved && saved.wizardStep !== "init") {
         setWizardStep(saved.wizardStep);
+        setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
         setCurrentChapter(saved.currentChapter);
         setChapters(saved.chapters);
         setResearchQuestion(saved.researchQuestion);
