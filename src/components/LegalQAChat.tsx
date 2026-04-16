@@ -58,10 +58,21 @@ interface ChapterData {
 
 interface AcademicSession {
   wizardStep: WizardStep;
+  maxReachedStep: WizardStep;
   currentChapter: number;
   chapters: ChapterData[];
   researchQuestion: string;
   outline: string;
+}
+
+const WIZARD_STEP_ORDER: WizardStep[] = ["init", "topic_or_question", "outline", "writing", "checkpoint", "done"];
+
+function stepIndex(step: WizardStep): number {
+  return WIZARD_STEP_ORDER.indexOf(step);
+}
+
+function isStepAfter(a: WizardStep, b: WizardStep): boolean {
+  return stepIndex(a) > stepIndex(b);
 }
 
 const ACADEMIC_SESSION_KEY = (projectId?: string) => 
