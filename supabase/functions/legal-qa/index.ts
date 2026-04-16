@@ -849,11 +849,19 @@ serve(async (req) => {
     const taskInstructions = getTaskModeInstructions(taskMode);
     const citationInstructions = buildCitationInstructions();
 
+    // For academic write_chapter: use the dedicated sub-mode prompt as additional instruction
+    let academicChapterContext = "";
+    if (isAcademicMode && academicStep === "write_chapter") {
+      const subPrompt = getAcademicSubModePrompt("write_chapter", body);
+      if (subPrompt) academicChapterContext = "\n\n" + subPrompt;
+    }
+
     const systemPrompt = `אתה עוזר משפטי מומחה. כתוב חוות דעת משפטית מקצועית בעברית.
 ${taskInstructions}
+${academicChapterContext}
 
 כללי כתיבה:
-- אורך: 800-1500 מילים. כל חלק חייב להיות מהותי.
+- אורך: ${isAcademicMode ? "500-1200" : "800-1500"} מילים. כל חלק חייב להיות מהותי.
 - אל תשתמש בסימני # לכותרות. השתמש ב-**כותרת** (הדגשה) בלבד.
 - השתמש בכותרות המודגשות שמפורטות במצב העבודה למעלה. אל תשתמש בכותרות אחרות.
 - טון: פורמלי, אובייקטיבי ואנליטי. כל טענה משפטית חייבת להיות מעוגנת בהערת שוליים.
@@ -953,9 +961,10 @@ ${combinedContext}`;
     const promptLen = systemPrompt.length;
     console.log(`Prompt length: ${promptLen} chars, ${sourceCards.length} source cards`);
 
+    const aiMaxTokens = isAcademicMode ? 12288 : 8192;
     const aiBody = JSON.stringify({
       model: "google/gemini-2.5-flash",
-      max_tokens: 8192,
+      max_tokens: aiMaxTokens,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: `השאלה המשפטית: ${question}` },
