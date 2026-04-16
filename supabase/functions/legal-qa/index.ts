@@ -200,6 +200,9 @@ function getAcademicSubModePrompt(academicStep: string, body: Record<string, unk
           prevChapters.map(ch => `--- ${ch.title} ---\n${ch.content?.slice(0, 2000) || ""}`).join("\n\n");
       }
 
+      const userFeedback = (body.userFeedback as string) || "";
+      const feedbackLine = userFeedback ? `\n\nהנחיות נוספות מהמשתמש לשכתוב הפרק:\n${userFeedback}` : "";
+
       return `אתה חוקר אקדמי בכיר במשפטים. כתוב את הפרק הבא בעבודה הסמינריונית.
 
 שאלת המחקר: "${rq}"
@@ -212,7 +215,7 @@ ${prevContext}
 - שמור על רצף ועקביות עם הפרקים הקודמים.
 - השתמש בהערות שוליים מעוצבות לפי כללי האזכור האחיד.
 - העדף מקורות מאומתים ממאגר journal_article לחלקים תיאורטיים.
-- טון: עברית אקדמית ברגיסטר גבוה.`;
+- טון: עברית אקדמית ברגיסטר גבוה.${feedbackLine}`;
     }
 
     default:

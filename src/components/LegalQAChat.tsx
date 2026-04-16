@@ -614,6 +614,33 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
     setWizardStep("writing");
   };
 
+  // ─── Chapter feedback (rewrite with instructions) ───────────────
+  const [chapterFeedback, setChapterFeedback] = useState("");
+  const [viewingChapterIdx, setViewingChapterIdx] = useState<number | null>(null);
+
+  const rewriteWithFeedback = () => {
+    const fb = chapterFeedback.trim();
+    if (!fb) { toast.error("יש להזין הנחיות לשכתוב."); return; }
+    setChapterFeedback("");
+    setViewingChapterIdx(null);
+    handleAcademicSubmit("write_chapter", { userFeedback: fb });
+  };
+
+  const viewChapter = (idx: number) => {
+    if (chapters[idx]?.content) {
+      setViewingChapterIdx(idx);
+      setCurrentChapter(idx);
+      setResult({ answer: chapters[idx].content!, footnotes: [], source_urls: [] });
+      setWizardStep("checkpoint");
+    } else {
+      // Jump to write this chapter
+      setViewingChapterIdx(null);
+      setCurrentChapter(idx);
+      setResult(null);
+      setWizardStep("writing");
+    }
+  };
+
   // ─── Standard (non-academic) submit ──────────────────────────────
 
   const handleSubmit = async () => {
@@ -1030,6 +1057,32 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
               </Card>
             )}
 
+            {/* Clickable chapter list — visible during writing/checkpoint */}
+            {(wizardStep === "writing" || wizardStep === "checkpoint") && chapters.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-3">
+                {chapters.map((ch, idx) => {
+                  const isWritten = !!ch.content;
+                  const isCurrent = idx === currentChapter;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => viewChapter(idx)}
+                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs border transition-colors ${
+                        isCurrent
+                          ? "bg-primary text-primary-foreground border-primary font-semibold"
+                          : isWritten
+                            ? "bg-primary/10 text-primary border-primary/30 hover:bg-primary/20 cursor-pointer"
+                            : "bg-muted text-muted-foreground border-border hover:bg-muted/80 cursor-pointer"
+                      }`}
+                    >
+                      {isWritten && !isCurrent && <Check className="w-3 h-3" />}
+                      <span className="truncate max-w-[120px]">{idx + 1}. {ch.title}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
             {/* WRITING: show current chapter + write button */}
             {wizardStep === "writing" && !loading && !result && chapters.length > 0 && (
               <Card className="border-border">
@@ -1088,6 +1141,22 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                     </div>
                   )}
                 </CardContent>
+                {/* Feedback textbox for rewrite */}
+                <div className="px-4 pb-2 space-y-2">
+                  <textarea
+                    value={chapterFeedback}
+                    onChange={(e) => setChapterFeedback(e.target.value)}
+                    placeholder="הנחיות נוספות לשכתוב (למשל: הרחב את סקירת הפסיקה, התמקד בגישה הביקורתית...)"
+                    className="w-full rounded-lg border border-border bg-background p-2.5 text-xs min-h-[48px] resize-none"
+                    dir="rtl"
+                  />
+                  {chapterFeedback.trim() && (
+                    <Button variant="secondary" size="sm" onClick={rewriteWithFeedback} className="text-xs gap-1">
+                      שכתב עם הנחיות
+                    </Button>
+                  )}
+                </div>
+
                 <div className="px-4 pb-4 flex gap-2 border-t border-border pt-3">
                   <Button size="sm" onClick={advanceToNextChapter}>
                     {currentChapter < chapters.length - 1 ? "המשך לפרק הבא" : "סיים עבודה"}
