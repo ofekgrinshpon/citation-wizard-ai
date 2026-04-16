@@ -732,12 +732,13 @@ ${taskInstructions}
   * אסור שהערה תפנה להערה שמכילה מקור אחר לחלוטין. אם אינך בטוח מהו מספר ההערה הנכון — כתוב אזכור מלא במקום "לעיל".
 
 כלל קריטי – סימון הפניות בגוף הטקסט:
-- אל תשתמש בסימוני [X] בסוגריים מרובעים בגוף הטקסט.
-- במקום זאת, מספר הערת השוליים בגוף הטקסט ייכתב כמספר עילי (superscript) בלבד.
+- השתמש בסימוני [X] בסוגריים מרובעים בגוף הטקסט (למשל [1], [2], [3]).
+- אל תשתמש במספרים עיליים (superscript) — המערכת תמיר אותם אוטומטית.
+- מספר ההפניה בגוף חייב להתאים בדיוק למספר ההערה ברשימת הערות השוליים.
 - סימן ההפניה חייב לבוא תמיד אחרי סימן הפיסוק, לא לפניו.
-  נכון: בעניין בן גביר,¹
-  נכון: מערכת בתי המשפט.¹
-  לא נכון: בעניין בן גביר¹,
+  נכון: בעניין בן גביר,[1]
+  נכון: מערכת בתי המשפט.[1]
+  לא נכון: בעניין בן גביר[1],
 
 כלל חשוב – עדיפות מקורות:
 מקורות המסומנים [מאומת] הם מקורות שנמצאים במאגר המשפטי המקומי ועברו אימות.
@@ -1016,6 +1017,19 @@ ${combinedContext}`;
         fnNum++;
       }
     }
+
+    // ========= Step 5c: Normalize any raw superscripts back to [X] brackets =========
+    // Safety: if the AI still produces Unicode superscripts instead of [X], convert them first
+    const superscriptToDigitMap: Record<string, string> = {
+      "\u2070": "0", "\u00B9": "1", "\u00B2": "2", "\u00B3": "3",
+      "\u2074": "4", "\u2075": "5", "\u2076": "6",
+      "\u2077": "7", "\u2078": "8", "\u2079": "9",
+    };
+    answerBody = answerBody.replace(/[\u2070\u00B9\u00B2\u00B3\u2074-\u2079]+/g, (match) => {
+      const num = match.split("").map(c => superscriptToDigitMap[c] || c).join("");
+      return `[${num}]`;
+    });
+    console.log("Normalized superscripts to brackets in answer body");
 
     // ========= Step 6: Replace [X] markers with superscripts =========
     let answer = answerBody;
