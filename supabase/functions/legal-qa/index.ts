@@ -127,14 +127,17 @@ function getTaskModeInstructions(taskMode?: string): string {
 **ההכרעה** – מה פסק בית המשפט.
 **הרציו (Ratio Decidendi)** – הנימוק המשפטי המרכזי שביסוד ההכרעה.
 **השלכות** – משמעות פסק הדין לדין הקיים ולתיקים דומים.`;
-    case "argument_draft":
-      return `מצב עבודה: ניסוח טיעון משפטי.
-בנה את הטיעון לפי המבנה הבא:
-**תמצית הטיעון** – טענה מרכזית ברורה במשפט אחד או שניים.
-**בסיס נורמטיבי** – חקיקה ופסיקה התומכות בטיעון.
-**ניתוח ופיתוח הטיעון** – פירוט הטענה, יישום הדין על העובדות, היקש מפסיקה.
-**מענה לטענות צפויות** – ציפייה לטענות הנגד ודחייתן.
-**סיכום** – חזרה על הטענה המרכזית ומסקנה.`;
+    case "academic_writing":
+      return `מצב עבודה: כתיבה אקדמית (סמינריון / מאמר משפטי).
+פרסונה: חוקר אקדמי בכיר בתחום המשפטים.
+טון: עברית אקדמית ברמה גבוהה – רגיסטר גבוה, מינוח משפטי מקצועי.
+
+כללי כתיבה אקדמית:
+- כתיבה ברגיסטר אקדמי גבוה. הימנע ממשפטים קצרים וישירים – העדף ניסוח מורכב ועשיר.
+- ציטוט בגוף הטקסט: נרטיבי בלבד ("בעניין נחמני", "פרופ' דויטש סבור..."). כל מידע טכני – רק בהערות שוליים.
+- העדפת מקורות: בחלקים התיאורטיים, העדף מאמרים אקדמיים (journal_article) ממקורות מאומתים.
+- כאשר מקור כבר צוטט, השתמש ב"שם" ו"לעיל ה"ש X" לפי כללי האזכור האחיד.
+- מבנה סמינריון ישראלי תקני: תקציר → מבוא → מסגרת נורמטיבית → סקירה פסיקתית ודוקטרינרית → ניתוח ביקורתי → סיכום ומסקנות.`;
     default:
       return `מצב עבודה: מחקר משפטי.
 בנה את חוות הדעת לפי המבנה הבא:
@@ -142,6 +145,78 @@ function getTaskModeInstructions(taskMode?: string): string {
 **מסגרת נורמטיבית** – חקיקה ופסיקה רלוונטיים (IRAC).
 **ניתוח מפורט** – יישום הדין על העובדות, ניתוח פסיקה, השוואה.
 **המלצות מעשיות** – צעדים מומלצים בהתבסס על הניתוח.`;
+  }
+}
+
+// ─── Academic sub-mode prompts ───────────────────────────────────────
+
+function getAcademicSubModePrompt(academicStep: string, body: Record<string, unknown>): string | null {
+  switch (academicStep) {
+    case "suggest_topics":
+      return `אתה חוקר אקדמי בכיר במשפטים. המשתמש הציג נושא כללי. 
+נתח את הנושא והצע 3 שאלות מחקר ספציפיות ומעניינות שמתאימות לעבודה סמינריונית בת 20-30 עמודים.
+לכל שאלה הוסף:
+1. ניסוח ברור של שאלת המחקר
+2. הסבר קצר למה השאלה מעניינת מבחינה אקדמית
+3. ציון סוגי המקורות הזמינים (חקיקה, פסיקה, ספרות אקדמית)
+
+ענה בעברית אקדמית.`;
+
+    case "validate_question":
+      return `אתה חוקר אקדמי בכיר במשפטים. המשתמש הציג שאלת מחקר.
+בדוק את כדאיותה האקדמית:
+1. האם השאלה ברורה וממוקדת מספיק?
+2. האם יש מספיק ספרות וחומר מקורי לכתיבת עבודה סמינריונית?
+3. הצע שיפורים לניסוח אם נדרש.
+4. ציין מקורות ראשוניים רלוונטיים שמצאת.
+
+ענה בעברית אקדמית.`;
+
+    case "propose_outline": {
+      const rq = (body.researchQuestion as string) || "";
+      return `אתה חוקר אקדמי בכיר במשפטים. שאלת המחקר: "${rq}"
+
+הצע מתווה (תוכן עניינים) לעבודה סמינריונית משפטית לפי המבנה הבא:
+1. **תקציר** – סיכום התזה והממצאים
+2. **מבוא** – רקע, שאלת המחקר והמתודולוגיה
+3. **המסגרת הנורמטיבית** – חקיקה ו"משפט קשה" רלוונטי
+4. **סקירה פסיקתית ודוקטרינרית** – ניתוח תקדימים ודעות אקדמיות
+5. **ניתוח ביקורתי** – משפט השוואתי או פרשנות חדשה
+6. **סיכום ומסקנות** – מענה לשאלת המחקר
+
+הוסף תת-פרקים ספציפיים לנושא. ציין מקורות מרכזיים צפויים לכל פרק.
+ענה בעברית אקדמית.`;
+    }
+
+    case "write_chapter": {
+      const chapterTitle = (body.chapterTitle as string) || "";
+      const chapterIndex = (body.chapterIndex as number) || 0;
+      const rq = (body.researchQuestion as string) || "";
+      const prevChapters = (body.previousChapters as Array<{ title: string; content: string }>) || [];
+      
+      let prevContext = "";
+      if (prevChapters.length > 0) {
+        prevContext = "\n\n=== פרקים שנכתבו עד כה ===\n" + 
+          prevChapters.map(ch => `--- ${ch.title} ---\n${ch.content?.slice(0, 2000) || ""}`).join("\n\n");
+      }
+
+      return `אתה חוקר אקדמי בכיר במשפטים. כתוב את הפרק הבא בעבודה הסמינריונית.
+
+שאלת המחקר: "${rq}"
+פרק נוכחי (${chapterIndex + 1}): **${chapterTitle}**
+${prevContext}
+
+הנחיות:
+- כתוב פרק אחד בלבד: "${chapterTitle}".
+- אורך: 500-1200 מילים (תלוי בחשיבות הפרק).
+- שמור על רצף ועקביות עם הפרקים הקודמים.
+- השתמש בהערות שוליים מעוצבות לפי כללי האזכור האחיד.
+- העדף מקורות מאומתים ממאגר journal_article לחלקים תיאורטיים.
+- טון: עברית אקדמית ברגיסטר גבוה.`;
+    }
+
+    default:
+      return null;
   }
 }
 
@@ -161,9 +236,9 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: nu
 
 const MAX_CONTEXT_CHARS = 6000;
 
-function truncateContext(text: string): string {
-  if (text.length <= MAX_CONTEXT_CHARS) return text;
-  return text.slice(0, MAX_CONTEXT_CHARS) + "\n[... קוצר מטעמי אורך ...]";
+function truncateContext(text: string, limit: number = MAX_CONTEXT_CHARS): string {
+  if (text.length <= limit) return text;
+  return text.slice(0, limit) + "\n[... קוצר מטעמי אורך ...]";
 }
 
 // ─── AI-based re-ranking: score source relevance to the question ─────
@@ -313,9 +388,9 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline } = body;
 
-    if (!question || typeof question !== "string" || question.trim().length < 5) {
+    if (!question || typeof question !== "string" || question.trim().length < 3) {
       return new Response(JSON.stringify({ error: "Question too short" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -335,13 +410,85 @@ serve(async (req) => {
 
     const t0 = Date.now();
 
+    // ========= Academic sub-mode shortcut =========
+    // For suggest_topics, validate_question, propose_outline: lighter flow without full retrieval
+    if (taskMode === "academic_writing" && academicStep && ["suggest_topics", "validate_question", "propose_outline"].includes(academicStep)) {
+      const subPrompt = getAcademicSubModePrompt(academicStep, body);
+      if (!subPrompt) {
+        return new Response(JSON.stringify({ error: "Invalid academic step" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      // Quick local search for context
+      let localContext = "";
+      try {
+        const keywords = extractKeywords(question);
+        const { data: textMatches } = await adminClient.rpc("search_legal_chunks_text", {
+          search_query: keywords, match_count: 5,
+        });
+        if (textMatches && textMatches.length > 0) {
+          localContext = "\n=== מקורות רלוונטיים מהמאגר ===\n" +
+            textMatches.slice(0, 5).map((m: any) => `- ${m.document_title} (${m.source_type})`).join("\n");
+        }
+      } catch { /* non-fatal */ }
+
+      // Include multi-file context if available
+      let fileContext = "";
+      if (documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
+        fileContext = "\n=== מסמכים שהועלו ===\n" +
+          documentTexts.map((dt: any) => `=== ${dt.name} ===\n${dt.text?.slice(0, 5000) || ""}`).join("\n\n");
+      }
+
+      const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          max_tokens: 4096,
+          messages: [
+            { role: "system", content: subPrompt + localContext + fileContext },
+            { role: "user", content: question },
+          ],
+        }),
+      }, 60000);
+
+      if (!aiRes.ok) {
+        const errText = await aiRes.text();
+        console.error("Academic sub-mode AI error:", aiRes.status, errText);
+        return new Response(JSON.stringify({ error: "שגיאה בשירות ה-AI." }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const aiData = await aiRes.json();
+      const answerText = aiData.choices?.[0]?.message?.content || "";
+      console.log(`Academic sub-mode (${academicStep}): ${answerText.length} chars, ${Date.now() - t0}ms`);
+
+      return new Response(
+        JSON.stringify({ answer: answerText, footnotes: [], source_urls: [] }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // ========= Step 0: Document context (if uploaded) =========
     let documentContext = "";
-    const hasDocument = documentText && typeof documentText === "string" && documentText.trim().length > 100;
-    if (hasDocument) {
-      documentContext = `\n=== מסמך שהועלה: ${documentName || "ללא שם"} ===\n${documentText.slice(0, 15000)}\n=== סוף המסמך ===\n`;
-      console.log(`Document uploaded: ${documentName}, ${documentText.length} chars`);
+    const isAcademicMode = taskMode === "academic_writing";
+    const contextCharLimit = isAcademicMode ? 12000 : MAX_CONTEXT_CHARS;
+
+    // Multi-file support
+    if (documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
+      documentContext = documentTexts.map((dt: any) => 
+        `\n=== מסמך: ${dt.name || "ללא שם"} ===\n${(dt.text || "").slice(0, 15000)}\n=== סוף המסמך ===\n`
+      ).join("\n");
+      console.log(`Multi-file upload: ${documentTexts.length} files`);
+    } else {
+      const hasDocument = documentText && typeof documentText === "string" && documentText.trim().length > 100;
+      if (hasDocument) {
+        documentContext = `\n=== מסמך שהועלה: ${documentName || "ללא שם"} ===\n${documentText.slice(0, 15000)}\n=== סוף המסמך ===\n`;
+        console.log(`Document uploaded: ${documentName}, ${documentText.length} chars`);
+      }
     }
+    const hasDocument = documentContext.length > 0;
 
     // ========= Step 1: Local search (hybrid: keyword + vector) + Perplexity IN PARALLEL =========
 
@@ -688,7 +835,7 @@ serve(async (req) => {
       contextParts.push("\n=== מקורות מחיפוש ===\n" + searchResults.slice(0, 3000));
     }
 
-    const combinedContext = truncateContext(contextParts.join("\n"));
+    const combinedContext = truncateContext(contextParts.join("\n"), contextCharLimit);
 
     // Build source catalog string for the AI — tag local sources as [מאומת]
     const sourceCatalog = sourceCards.map(
@@ -702,11 +849,19 @@ serve(async (req) => {
     const taskInstructions = getTaskModeInstructions(taskMode);
     const citationInstructions = buildCitationInstructions();
 
+    // For academic write_chapter: use the dedicated sub-mode prompt as additional instruction
+    let academicChapterContext = "";
+    if (isAcademicMode && academicStep === "write_chapter") {
+      const subPrompt = getAcademicSubModePrompt("write_chapter", body);
+      if (subPrompt) academicChapterContext = "\n\n" + subPrompt;
+    }
+
     const systemPrompt = `אתה עוזר משפטי מומחה. כתוב חוות דעת משפטית מקצועית בעברית.
 ${taskInstructions}
+${academicChapterContext}
 
 כללי כתיבה:
-- אורך: 800-1500 מילים. כל חלק חייב להיות מהותי.
+- אורך: ${isAcademicMode ? "500-1200" : "800-1500"} מילים. כל חלק חייב להיות מהותי.
 - אל תשתמש בסימני # לכותרות. השתמש ב-**כותרת** (הדגשה) בלבד.
 - השתמש בכותרות המודגשות שמפורטות במצב העבודה למעלה. אל תשתמש בכותרות אחרות.
 - טון: פורמלי, אובייקטיבי ואנליטי. כל טענה משפטית חייבת להיות מעוגנת בהערת שוליים.
@@ -806,9 +961,10 @@ ${combinedContext}`;
     const promptLen = systemPrompt.length;
     console.log(`Prompt length: ${promptLen} chars, ${sourceCards.length} source cards`);
 
+    const aiMaxTokens = isAcademicMode ? 12288 : 8192;
     const aiBody = JSON.stringify({
       model: "google/gemini-2.5-flash",
-      max_tokens: 8192,
+      max_tokens: aiMaxTokens,
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: `השאלה המשפטית: ${question}` },

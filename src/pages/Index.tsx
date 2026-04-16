@@ -126,7 +126,7 @@ const Index = () => {
   } | null>(null);
   const [citationRefreshKey, setCitationRefreshKey] = useState(0);
   const [qaRefreshKey, setQaRefreshKey] = useState(0);
-  const [qaExternalResult, setQaExternalResult] = useState<{ question: string; result: any; taskMode: "research" | "pleading_analysis" | "case_summary" | "argument_draft" } | null>(null);
+  const [qaExternalResult, setQaExternalResult] = useState<{ question: string; result: any; taskMode: "research" | "pleading_analysis" | "case_summary" | "academic_writing" } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   
@@ -1154,7 +1154,7 @@ const Index = () => {
                 projectId={projectId ?? null}
                 refreshKey={qaRefreshKey}
                 onLoadResult={(question, result, taskMode) => {
-                  setQaExternalResult({ question, result, taskMode: taskMode as "research" | "pleading_analysis" | "case_summary" | "argument_draft" });
+                  setQaExternalResult({ question, result, taskMode: taskMode as "research" | "pleading_analysis" | "case_summary" | "academic_writing" });
                 }}
               />
             ) : (
