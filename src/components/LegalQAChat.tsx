@@ -950,7 +950,10 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                 />
                 <div className="flex gap-2">
                   <Button
-                    onClick={() => handleAcademicSubmit("suggest_topics")}
+                    onClick={() => {
+                      if (!checkDestructiveEdit("topic_or_question")) return;
+                      handleAcademicSubmit("suggest_topics");
+                    }}
                     disabled={question.trim().length < 5}
                     size="sm"
                   >
@@ -959,6 +962,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                   <Button
                     variant="outline"
                     onClick={() => {
+                      if (!checkDestructiveEdit("topic_or_question")) return;
                       setResearchQuestion(question.trim());
                       handleAcademicSubmit("validate_question");
                     }}
