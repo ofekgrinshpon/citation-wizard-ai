@@ -835,7 +835,7 @@ serve(async (req) => {
       contextParts.push("\n=== מקורות מחיפוש ===\n" + searchResults.slice(0, 3000));
     }
 
-    const combinedContext = truncateContext(contextParts.join("\n"));
+    const combinedContext = truncateContext(contextParts.join("\n"), contextCharLimit);
 
     // Build source catalog string for the AI — tag local sources as [מאומת]
     const sourceCatalog = sourceCards.map(
