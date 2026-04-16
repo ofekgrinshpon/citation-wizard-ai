@@ -1,38 +1,34 @@
 
 
-# Fix: Footnote-Body Mismatches in Legal QA
+# Fix: Over-Aggressive Footnote Stripping (0 Footnotes Returned)
 
 ## The Problem
-The AI writes superscript numbers (¹²³) directly in the body text and then writes a separate footnotes section — but the numbers don't match. For example, the body says "חוק יסוד: הממשלה¹" (about Basic Law) but footnote 1 is about a completely unrelated Knesset committee discussion. This is a **numbering alignment problem**, not a hallucination problem.
+The anti-hallucination filter stripped **all 11 footnotes** because `matchFootnoteToCard` couldn't match any AI-written citation to the provided source cards. The logs confirm: 0 local sources survived re-ranking, and all 8 source cards were Perplexity URLs. Since Perplexity cards store only a raw URL as `citation` (e.g., `https://www.nevo.co.il/handlers/...`), the keyword-overlap matching logic (which compares Hebrew words) found zero matches.
 
-## Root Cause
-The prompt (line 734-736) tells the AI: "Don't use [X] brackets — use superscript numbers directly." But the AI is bad at maintaining consistent numbering between inline superscripts and the footnotes section. The post-processing code (Step 6) was designed to convert `[X]` bracket references to superscripts, but since the AI already writes superscripts, this conversion never fires — so the system relies entirely on the AI getting the mapping right, which it doesn't.
+## Root Causes
+1. **Perplexity cards have URL-only citations** — `matchFootnoteToCard` tries keyword overlap on `card.citation`, but the citation is just a URL, so Hebrew word matching always fails.
+2. **URL matching is too narrow** — it only checks the first 30 chars of the URL domain, missing nevo.co.il handler URLs with different query parameters.
+3. **No fallback** — when ALL footnotes are stripped, the user gets a body with dangling `[1]...[11]` references and zero footnotes.
 
-## Fix: Force bracket markers, convert to superscripts server-side
+## Fix (in `supabase/functions/legal-qa/index.ts`)
 
-### Step 1: Change the prompt to require `[X]` markers
-Replace the "superscript" instruction (lines 734-740) with instructions to use `[1]`, `[2]`, etc. in the body text, matching the footnote numbers in the footnotes section. This gives the post-processing deterministic control over the mapping.
+### 1. Improve Perplexity URL matching
+For Perplexity source cards, extract the domain and key path segments. When the AI footnote contains a URL from the same domain, match it. Also match by nevo document ID patterns.
 
-### Step 2: Add a consistency check after parsing
-After parsing both the body references and the footnotes section, verify that each `[X]` in the body corresponds to footnote X in the list. If a mismatch is detected (body mentions a source by name but the footnote is about something else), log it for debugging.
+### 2. Allow Perplexity-sourced footnotes with relaxed matching
+Since the AI was explicitly given these Perplexity URLs as source cards, any footnote referencing them is not hallucinated. Add a pass that checks if the footnote text contains any of the Perplexity URLs (or their key identifiers like nevo document IDs).
 
-### Step 3: Convert brackets to superscripts server-side
-The existing Step 6 code already does this (`answer.replace(/\[(\d{1,2})\]/g, ...)`). It just wasn't being used because the AI was writing superscripts directly. Now it will work as designed.
+### 3. Add a safety fallback
+If ALL footnotes are stripped (footnotes array is empty but AI wrote footnotes), fall back to keeping the AI-formatted footnotes tagged as "unverified" rather than returning zero footnotes. This prevents the broken UX of a body full of superscript references pointing to nothing.
 
-### Step 4: Strip any raw superscripts the AI might still produce
-Add a safety pass that converts any remaining Unicode superscript characters back to `[X]` format before the main conversion, ensuring consistent processing regardless of AI behavior.
+### 4. Improve re-ranking threshold
+The re-ranking filtered out ALL 8 local chunks (scores 0,1,0,0 — the one with score 1 was also dropped). Lower the minimum score or keep at least the top-scoring chunk to avoid 0 local sources.
 
 ## Files to Change
-- `supabase/functions/legal-qa/index.ts` — prompt rewrite (lines 734-740) + add superscript-to-bracket normalization before Step 6
-
-## Technical Detail
-```
-Current flow:  AI writes ¹²³ directly → post-processing can't control mapping → mismatches
-Fixed flow:    AI writes [1][2][3] → post-processing maps to source cards → converts to ¹²³
-```
+- `supabase/functions/legal-qa/index.ts` — improve `matchFootnoteToCard` for Perplexity cards, add empty-result fallback, adjust re-ranking threshold
 
 ## Expected Result
-- Each superscript in the body will reliably point to the correct footnote
-- The server controls the numbering, not the AI
-- No more "חוק יסוד¹" pointing to an unrelated Knesset committee document
+- Footnotes from Perplexity-sourced URLs will be correctly matched and kept
+- Users will never see a body full of references with zero footnotes
+- Local chunks with even marginal relevance won't all be filtered out
 
