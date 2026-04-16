@@ -915,7 +915,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                     variant="outline"
                     className="flex-1 h-auto py-4 flex flex-col gap-1"
                     onClick={() => {
-                      setWizardStep("topic_or_question");
+                      updateWizardStep("topic_or_question");
                       setQuestion("");
                     }}
                   >
@@ -926,7 +926,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                     variant="outline"
                     className="flex-1 h-auto py-4 flex flex-col gap-1"
                     onClick={() => {
-                      setWizardStep("topic_or_question");
+                      updateWizardStep("topic_or_question");
                       setQuestion("");
                     }}
                   >
