@@ -63,6 +63,36 @@ interface AcademicSession {
   chapters: ChapterData[];
   researchQuestion: string;
   outline: string;
+  proposedQuestions?: string[];
+  lastAcademicAction?: string | null;
+}
+
+/** Parse a numbered list (1. ... 2. ... 3. ...) from AI text into an array. */
+function parseProposedQuestions(text: string): string[] {
+  if (!text) return [];
+  // Match lines starting with "1." / "2." / "3." (Hebrew or Latin digits OK)
+  const lines = text.split("\n");
+  const items: string[] = [];
+  let current = "";
+  for (const raw of lines) {
+    const line = raw.trim();
+    const m = line.match(/^(\d+)[.)]\s*(.+)$/);
+    if (m) {
+      if (current) items.push(current.trim());
+      current = m[2];
+    } else if (current && line) {
+      current += " " + line;
+    } else if (!line && current) {
+      items.push(current.trim());
+      current = "";
+    }
+  }
+  if (current) items.push(current.trim());
+  // Strip markdown bold/italic and trailing punctuation
+  return items
+    .map(s => s.replace(/\*\*/g, "").replace(/__/g, "").trim())
+    .filter(s => s.length > 5)
+    .slice(0, 3);
 }
 
 const WIZARD_STEP_ORDER: WizardStep[] = ["init", "topic_or_question", "outline", "writing", "checkpoint", "done"];
