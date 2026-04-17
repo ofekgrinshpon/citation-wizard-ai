@@ -63,6 +63,36 @@ interface AcademicSession {
   chapters: ChapterData[];
   researchQuestion: string;
   outline: string;
+  proposedQuestions?: string[];
+  lastAcademicAction?: string | null;
+}
+
+/** Parse a numbered list (1. ... 2. ... 3. ...) from AI text into an array. */
+function parseProposedQuestions(text: string): string[] {
+  if (!text) return [];
+  // Match lines starting with "1." / "2." / "3." (Hebrew or Latin digits OK)
+  const lines = text.split("\n");
+  const items: string[] = [];
+  let current = "";
+  for (const raw of lines) {
+    const line = raw.trim();
+    const m = line.match(/^(\d+)[.)]\s*(.+)$/);
+    if (m) {
+      if (current) items.push(current.trim());
+      current = m[2];
+    } else if (current && line) {
+      current += " " + line;
+    } else if (!line && current) {
+      items.push(current.trim());
+      current = "";
+    }
+  }
+  if (current) items.push(current.trim());
+  // Strip markdown bold/italic and trailing punctuation
+  return items
+    .map(s => s.replace(/\*\*/g, "").replace(/__/g, "").trim())
+    .filter(s => s.length > 5)
+    .slice(0, 3);
 }
 
 const WIZARD_STEP_ORDER: WizardStep[] = ["init", "topic_or_question", "outline", "writing", "checkpoint", "done"];
@@ -230,6 +260,8 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [researchQuestion, setResearchQuestion] = useState("");
   const [outline, setOutline] = useState("");
+  const [proposedQuestions, setProposedQuestions] = useState<string[]>([]);
+  const [lastAcademicAction, setLastAcademicAction] = useState<string | null>(null);
 
   // Restore academic session on mount / project change
   useEffect(() => {
@@ -242,6 +274,8 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
         setChapters(saved.chapters);
         setResearchQuestion(saved.researchQuestion);
         setOutline(saved.outline);
+        setProposedQuestions(saved.proposedQuestions || []);
+        setLastAcademicAction(saved.lastAcademicAction || null);
       }
     }
   }, [projectId]);
@@ -249,8 +283,9 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   // Save academic session after chapter writes
   const persistAcademicSession = useCallback(() => {
     if (taskMode !== "academic_writing" || wizardStep === "init") return;
-    saveAcademicSession({ wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline }, projectId);
-  }, [taskMode, wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, projectId]);
+    saveAcademicSession({ wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction }, projectId);
+  }, [taskMode, wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction, projectId]);
+
 
   useEffect(() => {
     persistAcademicSession();
@@ -356,6 +391,8 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
         setChapters(saved.chapters);
         setResearchQuestion(saved.researchQuestion);
         setOutline(saved.outline);
+        setProposedQuestions(saved.proposedQuestions || []);
+        setLastAcademicAction(saved.lastAcademicAction || null);
       } else {
         setWizardStep("init");
         setMaxReachedStep("init");
@@ -363,6 +400,8 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
         setChapters([]);
         setResearchQuestion("");
         setOutline("");
+        setProposedQuestions([]);
+        setLastAcademicAction(null);
       }
       setResult(null);
     }
@@ -403,6 +442,8 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
     setChapters([]);
     setResearchQuestion("");
     setOutline("");
+    setProposedQuestions([]);
+    setLastAcademicAction(null);
     setResult(null);
     setQuestion("");
     clearAcademicSession(projectId);
@@ -534,12 +575,18 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
       const qaResult = data as QAResult;
       setResult(qaResult);
 
+      // Track last action for UI rendering
+      setLastAcademicAction(academicStep);
+
       // Handle wizard step transitions
       if (academicStep === "suggest_topics") {
+        setProposedQuestions(parseProposedQuestions(qaResult.answer));
         updateWizardStep("topic_or_question");
       } else if (academicStep === "validate_question") {
+        setProposedQuestions([]);
         updateWizardStep("topic_or_question");
       } else if (academicStep === "propose_outline") {
+        setProposedQuestions([]);
         setOutline(qaResult.answer);
         updateWizardStep("outline");
       } else if (academicStep === "write_chapter") {
@@ -1003,7 +1050,51 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
             )}
 
             {/* Show AI response for topic suggestions / validation */}
-            {wizardStep === "topic_or_question" && result && (
+            {wizardStep === "topic_or_question" && result && lastAcademicAction === "suggest_topics" && proposedQuestions.length > 0 && (
+              <Card className="border-border">
+                <CardContent className="p-4 space-y-3">
+                  <p className="text-sm font-semibold text-foreground">בחרו אחת מהשאלות המוצעות:</p>
+                  <div className="space-y-2">
+                    {proposedQuestions.map((q, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          if (!checkDestructiveEdit("topic_or_question")) return;
+                          setResearchQuestion(q);
+                          setQuestion(q);
+                          setProposedQuestions([]);
+                          setResult(null);
+                          setLastAcademicAction(null);
+                          handleAcademicSubmit("propose_outline", { researchQuestion: q });
+                        }}
+                        className="w-full text-right p-3 rounded-lg border border-border bg-background hover:bg-primary/5 hover:border-primary/40 transition-colors text-sm leading-relaxed"
+                        dir="rtl"
+                      >
+                        <span className="font-bold text-primary ml-2">{idx + 1}.</span>
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex gap-2 pt-1 border-t border-border">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        // Bail out: clear suggestions, return to manual entry of own research question
+                        setProposedQuestions([]);
+                        setResult(null);
+                        setLastAcademicAction(null);
+                        setQuestion("");
+                      }}
+                    >
+                      יש לי שאלת מחקר משלי
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {wizardStep === "topic_or_question" && result && lastAcademicAction !== "suggest_topics" && (
               <Card className="border-border">
                 <CardContent className="p-4 space-y-3">
                   <div className="text-foreground text-sm leading-relaxed whitespace-pre-wrap" style={{ lineHeight: 1.8 }}>
