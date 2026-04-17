@@ -1050,7 +1050,51 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
             )}
 
             {/* Show AI response for topic suggestions / validation */}
-            {wizardStep === "topic_or_question" && result && (
+            {wizardStep === "topic_or_question" && result && lastAcademicAction === "suggest_topics" && proposedQuestions.length > 0 && (
+              <Card className="border-border">
+                <CardContent className="p-4 space-y-3">
+                  <p className="text-sm font-semibold text-foreground">בחרו אחת מהשאלות המוצעות:</p>
+                  <div className="space-y-2">
+                    {proposedQuestions.map((q, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          if (!checkDestructiveEdit("topic_or_question")) return;
+                          setResearchQuestion(q);
+                          setQuestion(q);
+                          setProposedQuestions([]);
+                          setResult(null);
+                          setLastAcademicAction(null);
+                          handleAcademicSubmit("propose_outline", { researchQuestion: q });
+                        }}
+                        className="w-full text-right p-3 rounded-lg border border-border bg-background hover:bg-primary/5 hover:border-primary/40 transition-colors text-sm leading-relaxed"
+                        dir="rtl"
+                      >
+                        <span className="font-bold text-primary ml-2">{idx + 1}.</span>
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex gap-2 pt-1 border-t border-border">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        // Bail out: clear suggestions, return to manual entry of own research question
+                        setProposedQuestions([]);
+                        setResult(null);
+                        setLastAcademicAction(null);
+                        setQuestion("");
+                      }}
+                    >
+                      יש לי שאלת מחקר משלי
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {wizardStep === "topic_or_question" && result && lastAcademicAction !== "suggest_topics" && (
               <Card className="border-border">
                 <CardContent className="p-4 space-y-3">
                   <div className="text-foreground text-sm leading-relaxed whitespace-pre-wrap" style={{ lineHeight: 1.8 }}>
