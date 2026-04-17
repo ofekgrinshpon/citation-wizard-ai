@@ -260,6 +260,8 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   const [chapters, setChapters] = useState<ChapterData[]>([]);
   const [researchQuestion, setResearchQuestion] = useState("");
   const [outline, setOutline] = useState("");
+  const [proposedQuestions, setProposedQuestions] = useState<string[]>([]);
+  const [lastAcademicAction, setLastAcademicAction] = useState<string | null>(null);
 
   // Restore academic session on mount / project change
   useEffect(() => {
@@ -272,6 +274,8 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
         setChapters(saved.chapters);
         setResearchQuestion(saved.researchQuestion);
         setOutline(saved.outline);
+        setProposedQuestions(saved.proposedQuestions || []);
+        setLastAcademicAction(saved.lastAcademicAction || null);
       }
     }
   }, [projectId]);
@@ -279,8 +283,9 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
   // Save academic session after chapter writes
   const persistAcademicSession = useCallback(() => {
     if (taskMode !== "academic_writing" || wizardStep === "init") return;
-    saveAcademicSession({ wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline }, projectId);
-  }, [taskMode, wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, projectId]);
+    saveAcademicSession({ wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction }, projectId);
+  }, [taskMode, wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction, projectId]);
+
 
   useEffect(() => {
     persistAcademicSession();
