@@ -442,6 +442,8 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
     setChapters([]);
     setResearchQuestion("");
     setOutline("");
+    setProposedQuestions([]);
+    setLastAcademicAction(null);
     setResult(null);
     setQuestion("");
     clearAcademicSession(projectId);
