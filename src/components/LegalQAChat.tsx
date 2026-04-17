@@ -391,6 +391,8 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
         setChapters(saved.chapters);
         setResearchQuestion(saved.researchQuestion);
         setOutline(saved.outline);
+        setProposedQuestions(saved.proposedQuestions || []);
+        setLastAcademicAction(saved.lastAcademicAction || null);
       } else {
         setWizardStep("init");
         setMaxReachedStep("init");
@@ -398,6 +400,8 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
         setChapters([]);
         setResearchQuestion("");
         setOutline("");
+        setProposedQuestions([]);
+        setLastAcademicAction(null);
       }
       setResult(null);
     }
