@@ -575,12 +575,18 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
       const qaResult = data as QAResult;
       setResult(qaResult);
 
+      // Track last action for UI rendering
+      setLastAcademicAction(academicStep);
+
       // Handle wizard step transitions
       if (academicStep === "suggest_topics") {
+        setProposedQuestions(parseProposedQuestions(qaResult.answer));
         updateWizardStep("topic_or_question");
       } else if (academicStep === "validate_question") {
+        setProposedQuestions([]);
         updateWizardStep("topic_or_question");
       } else if (academicStep === "propose_outline") {
+        setProposedQuestions([]);
         setOutline(qaResult.answer);
         updateWizardStep("outline");
       } else if (academicStep === "write_chapter") {
