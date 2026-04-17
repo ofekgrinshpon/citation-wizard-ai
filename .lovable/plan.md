@@ -1,37 +1,32 @@
 
 
-## Goal
-After the system proposes 3 research questions for a general topic, let the user (1) click any of the 3 to pick it, or (2) click a "יש לי שאלת מחקר" button to bail out and enter their own.
+## Bug
+The prompt tells the AI to output 3 questions, where **each question has 3 numbered sub-points** (ניסוח, הסבר, מקורות). The client parser uses the regex `/^(\d+)[.)]\s*(.+)$/` which matches the first `1.`/`2.`/`3.` it sees — so it parses the 3 sub-points of the FIRST question as if they were the 3 questions. Result: 3 cards all describing one question.
 
-## Investigation needed
-- How the 3 research questions are currently displayed in `LegalQAChat.tsx` (academic mode, `topic_or_question` step after general topic submit).
-- Where the questions are stored in state (likely the assistant message text or a parsed array).
-- The handler that submits a research question to advance to the `outline` step.
+## Fix (2 files)
 
-## Approach (single file: `src/components/LegalQAChat.tsx`)
+### 1. `supabase/functions/legal-qa/index.ts` — `suggest_topics` prompt (lines 156–163)
+Change the output format so questions and sub-points use **different markers**:
 
-### 1. Parse the 3 proposed questions
-When the AI returns 3 research questions for a general topic, parse them out (numbered list `1. ... 2. ... 3. ...`) and store as an array `proposedQuestions: string[]` in wizard state.
+```
+**שאלה 1:** <ניסוח ברור של שאלת המחקר>
+- מעניינת אקדמית כי: ...
+- מקורות זמינים: ...
 
-### 2. Render clickable cards
-Below the assistant message, render 3 clickable cards/buttons (one per question). Clicking one:
-- Sets the chosen string as the active `researchQuestion`
-- Calls the same submit path used today for "submit research question"
-- Advances the wizard to the `outline` step
+**שאלה 2:** <ניסוח ...>
+- מעניינת אקדמית כי: ...
+- מקורות זמינים: ...
 
-### 3. "יש לי שאלת מחקר" escape button
-Next to the 3 cards, render a secondary outline button **"יש לי שאלת מחקר משלי"**. Clicking it:
-- Clears `proposedQuestions`
-- Switches the sub-mode back to `research_question` entry (the same UI shown when the user originally picked "יש לי שאלת מחקר")
-- Keeps the topic context but lets them type their own question and submit normally
+**שאלה 3:** ...
+```
+Add explicit instruction: "אל תשתמש במספור (1./2./3.) בתת-הסעיפים — השתמש במקפים (-)."
 
-### 4. Persistence
-The `proposedQuestions` array and current sub-mode are added to the existing `safeStorage` wizard snapshot so a refresh preserves the choice screen.
+### 2. `src/components/LegalQAChat.tsx` — `parseProposedQuestions` (lines 70–96)
+Rewrite the parser to look for the `שאלה N:` marker (with optional `**` bold) instead of any `N.`:
+- Match `^\*{0,2}שאלה\s+(\d+)\s*[:.]\s*\*{0,2}\s*(.+)$`
+- Capture only the question text on that line (strip the bullet sub-points that follow until the next `שאלה N:`)
+- Keep fallback: if no `שאלה N:` markers found, fall back to the old numbered-list parser for backward compatibility
 
 ## Out of scope
-- No edge function changes — the AI already returns the 3 questions; we only change client parsing/UI.
-- No changes to outline/writing steps.
-
-## File changes
-- `src/components/LegalQAChat.tsx` — parse proposed questions, render clickable cards + escape button, wire to existing submit handlers, extend persistence.
+No changes to outline/writing steps, persistence, or the click handlers — only the prompt format and the matching parser.
 
