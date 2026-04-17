@@ -67,11 +67,33 @@ interface AcademicSession {
   lastAcademicAction?: string | null;
 }
 
-/** Parse a numbered list (1. ... 2. ... 3. ...) from AI text into an array. */
+/** Parse 3 proposed research questions from AI text.
+ * Primary format: lines starting with "**שאלה N:** <question>" (sub-bullets ignored).
+ * Fallback: legacy numbered list "1. ... 2. ... 3. ...".
+ */
 function parseProposedQuestions(text: string): string[] {
   if (!text) return [];
-  // Match lines starting with "1." / "2." / "3." (Hebrew or Latin digits OK)
   const lines = text.split("\n");
+
+  // Primary: look for "שאלה N:" markers (with optional ** bold)
+  const questionRegex = /^\*{0,2}\s*שאלה\s+(\d+)\s*[:.\-–]\s*\*{0,2}\s*(.*)$/;
+  const primary: string[] = [];
+  for (const raw of lines) {
+    const line = raw.trim();
+    const m = line.match(questionRegex);
+    if (m) {
+      const q = m[2].replace(/\*\*/g, "").replace(/__/g, "").trim();
+      if (q.length > 0) primary.push(q);
+    }
+  }
+  if (primary.length >= 2) {
+    return primary
+      .map(s => s.replace(/\*\*/g, "").trim())
+      .filter(s => s.length > 5)
+      .slice(0, 3);
+  }
+
+  // Fallback: legacy numbered list (1. ... 2. ... 3. ...)
   const items: string[] = [];
   let current = "";
   for (const raw of lines) {
@@ -88,7 +110,6 @@ function parseProposedQuestions(text: string): string[] {
     }
   }
   if (current) items.push(current.trim());
-  // Strip markdown bold/italic and trailing punctuation
   return items
     .map(s => s.replace(/\*\*/g, "").replace(/__/g, "").trim())
     .filter(s => s.length > 5)
