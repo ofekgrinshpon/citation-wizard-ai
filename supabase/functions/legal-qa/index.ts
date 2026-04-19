@@ -329,8 +329,15 @@ ${sourceList}
     // Extract JSON array from response
     const arrayMatch = text.match(/\[[\d\s,]+\]/);
     if (!arrayMatch) {
-      console.log("Re-ranking: could not parse scores, using all sources");
-      return matches.map(m => ({ ...m, relevanceScore: undefined }));
+      console.warn(`Re-ranking: COULD NOT PARSE SCORES — falling back to similarity threshold. Raw response: ${text.slice(0, 200)}`);
+      // Fallback: keep only chunks with raw similarity >= 0.5 (not "use all"),
+      // and always keep at least the single highest-similarity chunk.
+      const sorted = [...matches].sort((a, b) => (b.similarity || 0) - (a.similarity || 0));
+      const top = sorted[0];
+      const filtered = matches.filter(m => (m.similarity || 0) >= 0.5);
+      const result = filtered.length > 0 ? filtered : (top ? [top] : []);
+      console.log(`Re-ranking fallback kept ${result.length}/${matches.length} chunks by similarity`);
+      return result.map(m => ({ ...m, relevanceScore: undefined }));
     }
 
     const scores: number[] = JSON.parse(arrayMatch[0]);
