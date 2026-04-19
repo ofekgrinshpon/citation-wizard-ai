@@ -1191,6 +1191,23 @@ ${combinedContext}`;
     const usedSourceIds = new Set<number>();
     const newCitations: Array<{ citation: string; source_type: string }> = [];
 
+    // Body-side dedup: if any [N] marker appears > 2 times, keep only the first occurrence.
+    // Prevents the visual "several ¹" bug when the AI repeats the same reference number.
+    {
+      const counts = new Map<string, number>();
+      const allMatches = Array.from(answerBody.matchAll(/\[(\d{1,2})\]/g));
+      for (const m of allMatches) counts.set(m[1], (counts.get(m[1]) || 0) + 1);
+      const seen = new Set<string>();
+      answerBody = answerBody.replace(/\[(\d{1,2})\]/g, (full, n) => {
+        if ((counts.get(n) || 0) > 2) {
+          if (seen.has(n)) return "";
+          seen.add(n);
+          return full;
+        }
+        return full;
+      });
+    }
+
     // Collect [X] and [NEW:...] refs from body
     const refPattern = /\[(\d{1,2})\]/g;
     let refMatch;
