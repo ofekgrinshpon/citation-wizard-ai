@@ -1068,10 +1068,22 @@ serve(async (req) => {
     // Local sources — build rich citations from structured fields (using re-ranked matches)
     if (rankedMatches.length > 0) {
       const seenDocs = new Set<string>();
+      let filteredBrokenKnesset = 0;
       for (const m of rankedMatches) {
         if (seenDocs.has(m.document_id)) continue;
         seenDocs.add(m.document_id);
         if (isBlogUrl(m.source_url || undefined)) continue;
+
+        // Filter broken-title Knesset research docs (placeholder title or flagged in metadata).
+        // These have generic "פרטי מסמך" titles from a scraping failure and cannot be cited usefully.
+        if (m.source_type === "knesset_research") {
+          const titleTrim = (m.document_title || "").trim();
+          const metaFlag = (m.metadata as Record<string, unknown> | null)?.broken_title === true;
+          if (titleTrim === "פרטי מסמך" || titleTrim === "ללא כותרת" || titleTrim === "" || metaFlag) {
+            filteredBrokenKnesset++;
+            continue;
+          }
+        }
 
         // Build a richer citation from structured metadata
         let richCitation = m.document_citation;
