@@ -1134,12 +1134,13 @@ ${combinedContext}`;
 
       // ===== Tier 1: strict identifier matches =====
 
-      // 1a. Exact case number match (e.g., 1234/22)
+      // 1a. Exact case number match (e.g., 1234/22) — check both citation text and structured field
       const fnCaseNums = Array.from(fnText.matchAll(/\b(\d{2,5}\/\d{2,4})\b/g)).map(m => m[1]);
       if (fnCaseNums.length > 0) {
         for (const card of cards) {
           for (const cn of fnCaseNums) {
             if (card.citation.includes(cn)) return card;
+            if (card.case_number && card.case_number.includes(cn)) return card;
           }
         }
       }
@@ -1173,16 +1174,19 @@ ${combinedContext}`;
         if (titleNorm.length >= 15 && fnNorm.includes(titleNorm)) return card;
       }
 
-      // ===== Tier 2: ≥3 significant-word overlap =====
-      // Significant = length ≥ 4, not a stopword
+      // ===== Tier 2: significant-word overlap =====
+      // Significant = length ≥ 4, not a stopword.
+      // Local DB cards (formal citations) require ≥3 overlap.
+      // Perplexity cards (short web snippets) only require ≥2 overlap.
       for (const card of cards) {
         const cardWords = normalize(card.citation)
           .split(/\s+/)
           .filter(w => w.length >= 4 && !STOPWORDS.has(w));
-        if (cardWords.length < 3) continue;
+        if (cardWords.length < 2) continue;
         const uniqueCardWords = Array.from(new Set(cardWords));
         const matchCount = uniqueCardWords.filter(w => fnNorm.includes(w)).length;
-        if (matchCount >= 3) return card;
+        const required = card.provenance === "perplexity" ? 2 : 3;
+        if (matchCount >= required) return card;
       }
 
       return null;
