@@ -105,6 +105,7 @@ interface SourceCard {
   url?: string;
   provenance: "local" | "perplexity" | "document";
   excerpt: string;
+  case_number?: string;
 }
 
 // ─── Task mode → system prompt instructions ──────────────────────────
