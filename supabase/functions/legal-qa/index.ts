@@ -1249,7 +1249,8 @@ serve(async (req) => {
 
     if (rankedMatches.length > 0) {
       const seenDocs = new Set<string>();
-      let localContext = "\n=== מקורות מאומתים מהמאגר המשפטי ===\n";
+      let localContext = "\n=== [מאומת – מקור אמת לתוכן] מקורות מהמאגר המשפטי המקומי ===\n";
+      localContext += "(תוכן הסעיפים, ההלכות והציטוטים המהותיים — חייב להיות מעוגן כאן בלבד)\n";
       for (const m of rankedMatches) {
         if (!seenDocs.has(m.document_id)) {
           seenDocs.add(m.document_id);
@@ -1258,7 +1259,7 @@ serve(async (req) => {
             m.source_type === "journal_article" ? "מאמר אקדמי" :
             m.source_type === "israeli_law" ? "חקיקה ישראלית" : m.source_type;
           const relevanceTag = m.relevanceScore !== undefined ? ` | רלוונטיות: ${m.relevanceScore}/10` : "";
-          localContext += `\n--- ${m.document_title} ---\nסוג מקור: ${typeLabel} | אזכור: ${m.document_citation}${relevanceTag}\n`;
+          localContext += `\n--- [מאומת] ${m.document_title} ---\nסוג מקור: ${typeLabel} | אזכור: ${m.document_citation}${relevanceTag}\n`;
           if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
         }
         localContext += `${m.chunk_content.slice(0, 800)}\n`;
@@ -1267,15 +1268,34 @@ serve(async (req) => {
     }
 
     if (searchResults) {
-      contextParts.push("\n=== מקורות מחיפוש ===\n" + searchResults.slice(0, 3000));
+      // Trim Perplexity body: keep only lines that look like bibliographic metadata
+      // (years, ס"ח/ק"ת + page, volume references, journal/publisher hints).
+      // Discard substantive prose so the model cannot lift content claims from it.
+      const bibHintRe = /(ס"ח|ס״ח|ק"ת|ק״ת|פ"ד|פ״ד|פד"י|פד״י|כרך|חוברת|עמ['׳]?|עמוד|התש[א-ת"״''׳\-–]+|\b(19|20)\d{2}\b|נבו|תקדין|הוצאת|כתב\s+עת|משפטים|עיוני\s+משפט)/;
+      const perplexityLines = searchResults
+        .split(/\r?\n/)
+        .map(l => l.trim())
+        .filter(l => l.length > 0 && l.length < 400 && bibHintRe.test(l))
+        .slice(0, 30);
+      const perplexityTrimmed = perplexityLines.join("\n");
+      if (perplexityTrimmed) {
+        contextParts.push(
+          "\n=== [חיצוני – למטא-דאטה ביבליוגרפית בלבד] רמזים מ-Perplexity ===\n" +
+          "(אסור לשאוב מכאן תוכן מהותי של סעיפים או הלכות — רק שנים, ס\"ח/ק\"ת, עמוד, כרך, מו\"ל, שם כתב עת)\n" +
+          perplexityTrimmed.slice(0, 2000)
+        );
+      }
     }
 
     const combinedContext = truncateContext(contextParts.join("\n"), contextCharLimit);
 
-    // Build source catalog string for the AI — tag local sources as [מאומת]
+    // Build source catalog string for the AI — tag local vs Perplexity distinctly
     const sourceCatalog = sourceCards.map(
       (sc) => {
-        const tag = sc.provenance === "local" ? " [מאומת]" : "";
+        const tag =
+          sc.provenance === "local"     ? " [מאומת – מקור אמת לתוכן]" :
+          sc.provenance === "perplexity" ? " [חיצוני – למטא-דאטה בלבד]" :
+          sc.provenance === "document"   ? " [מסמך משתמש]" : "";
         return `[${sc.id}]${tag} ${sc.citation}${sc.url ? ` (${sc.url})` : ""} — ${sc.source_type}`;
       }
     ).join("\n");
@@ -1344,11 +1364,16 @@ ${academicChapterContext}
   נכון: מערכת בתי המשפט.[1]
   לא נכון: בעניין בן גביר[1],
 
-כלל חשוב – עדיפות מקורות:
-מקורות המסומנים [מאומת] הם מקורות שנמצאים במאגר המשפטי המקומי ועברו אימות.
-תעדיף תמיד לצטט מקורות מאומתים על פני מקורות מהאינטרנט.
-השתמש במקורות אינטרנט רק כהשלמה למקורות מאומתים, לא כתחליף.
-אם יש מקורות מאומתים רלוונטיים, לפחות 60% מההפניות חייבות להיות מקורות מאומתים.
+כללי שימוש במקורות (חובה — חוק ברזל):
+- מקורות המסומנים [מאומת – מקור אמת לתוכן] (מהמאגר המשפטי המקומי) הם **מקור האמת היחיד** לכל תוכן מהותי: נוסח סעיפי חוק, הלכות, ציטוטים מפסיקה, וקביעות משפטיות קונקרטיות.
+  • כל קביעה מהסוג "סעיף X לחוק Y קובע כי...", "ההלכה ב-Z קבעה כי...", או כל ציטוט נוסח — חייבת להיות מעוגנת בטקסט שמופיע במפורש באחד ממקורות [מאומת].
+  • אם אין במקור מקומי טקסט שתומך בקביעה הספציפית — **אסור** לקבוע אותה. נסח כללית ("חוק X מסדיר את הנושא") או השמט לחלוטין.
+  • אסור להמציא לשון של סעיף או הלכה גם אם זה "ידע משפטי כללי".
+- מקורות המסומנים [חיצוני – למטא-דאטה בלבד] (מ-Perplexity) משמשים אך ורק להשלמת **מטא-דאטה ביבליוגרפית** להערות השוליים: שנת פרסום, מספר ס"ח/ק"ת, מספר עמוד פתיחה, כרך, מו"ל, שם כתב עת, פרטי תיק.
+  • **אסור** לשאוב מ-Perplexity קביעות מהותיות על תוכן סעיף, נוסח חוק, או הלכה.
+  • אם Perplexity מכיל מידע מהותי שסותר את המקור המקומי — התעלם ממנו לחלוטין. המקומי גובר תמיד.
+- בקונפליקט בין שני סוגי המקורות על תוכן/נוסח — המקומי גובר באופן מוחלט.
+- אם יש מקורות מאומתים רלוונטיים, לפחות 60% מההפניות חייבות להיות מקורות מאומתים.
 
 כלל קריטי – רלוונטיות מקורות:
 - לפני שאתה מצטט מקור כלשהו, בדוק שהוא רלוונטי מהותית לשאלה המשפטית. התאמה במילות מפתח (למשל "ראש הממשלה") אינה מספיקה — המקור חייב לעסוק באותה סוגיה משפטית.
@@ -2065,6 +2090,34 @@ ${combinedContext}`;
     const finalFootnotes = validFootnotes;
 
     console.log(`Final: answer=${answer.length} chars, footnotes=${finalFootnotes.length}, total time=${Date.now() - t0}ms`);
+
+    // ===== Post-response grounding sanity check (log-only, non-blocking) =====
+    // Detect substantive statutory claims (סעיף X ל-Y ... קובע/מורה/מגדיר/אוסר/מחייב/מתיר)
+    // and verify the section number + law name hint appear in at least one local chunk.
+    try {
+      const localCorpus = rankedMatches.map((m) => m.chunk_content || "").join("\n");
+      const claimRe = /סעיף\s+([\dא-ת()'״"׳./\\–-]+)\s+ל([^\s,.;:()\[\]{}"״']{2,40})\s+[^.]{0,80}?(קובע|מורה|מגדיר|אוסר|מחייב|מתיר)/g;
+      const violations: string[] = [];
+      let cm: RegExpExecArray | null;
+      while ((cm = claimRe.exec(answer)) !== null) {
+        const sectionNum = cm[1];
+        const lawHint = cm[2];
+        const escSec = sectionNum.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const sectionInLocal = new RegExp(`סעיף\\s+${escSec}\\b`).test(localCorpus);
+        const lawInLocal = localCorpus.includes(lawHint);
+        if (!sectionInLocal || !lawInLocal) {
+          violations.push(`סעיף ${sectionNum} ל${lawHint} (section=${sectionInLocal}, law=${lawInLocal})`);
+        }
+      }
+      if (violations.length > 0) {
+        console.warn(
+          `[content-grounding-violation] ${violations.length} ungrounded statutory claim(s):`,
+          violations.slice(0, 5)
+        );
+      }
+    } catch (gErr) {
+      console.error("Grounding check failed (non-fatal):", gErr);
+    }
 
     // Log
     try {
