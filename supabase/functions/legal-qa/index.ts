@@ -889,11 +889,11 @@ serve(async (req) => {
         }
 
         // Fix #1: Reserve a quota for caselaw so precedent isn't crowded out by
-        // denser academic prose. Take top 4 caselaw + top 8 non-caselaw, then re-sort.
+        // denser academic prose. Layer 3: top 6 caselaw + top 6 non-caselaw (was 4/8).
         const sortedAll = Array.from(mergedMap.values())
           .sort((a, b) => b.similarity - a.similarity);
-        const caselawTop = sortedAll.filter(m => m.source_type === "caselaw").slice(0, 4);
-        const otherTop = sortedAll.filter(m => m.source_type !== "caselaw").slice(0, 8);
+        const caselawTop = sortedAll.filter(m => m.source_type === "caselaw").slice(0, 6);
+        const otherTop = sortedAll.filter(m => m.source_type !== "caselaw").slice(0, 6);
         const reservedIds = new Set([...caselawTop, ...otherTop].map(m => m.chunk_id));
         const merged = [...caselawTop, ...otherTop]
           .sort((a, b) => b.similarity - a.similarity)
@@ -902,6 +902,26 @@ serve(async (req) => {
         console.log(`Caselaw quota: ${caselawKept} caselaw / ${merged.length - caselawKept} other (total ${merged.length})`);
         // Suppress unused warning
         void reservedIds;
+
+        // Layer 4 diagnostic: report rank/similarity of any landmark case in candidate pool
+        if (landmarkCaseNumbers.length > 0) {
+          const landmarkChunkIds = new Set(landmarkInjected.map(m => m.chunk_id));
+          const landmarkInPool = sortedAll
+            .map((m, idx) => ({ m, rank: idx + 1 }))
+            .filter(x =>
+              landmarkChunkIds.has(x.m.chunk_id) ||
+              landmarkCaseNumbers.some(cn => (x.m.metadata as Record<string, unknown>)?.case_number === cn)
+            );
+          if (landmarkInPool.length === 0) {
+            console.log(`Landmark diagnostic: NONE of [${landmarkCaseNumbers.join(", ")}] reached the candidate pool`);
+          } else {
+            for (const { m, rank } of landmarkInPool) {
+              const cn = (m.metadata as Record<string, unknown>)?.case_number || "?";
+              const inMerged = merged.some(x => x.chunk_id === m.chunk_id) ? "KEPT" : "DROPPED";
+              console.log(`Landmark diagnostic: case_number=${cn} rank=${rank}/${sortedAll.length} sim=${(m.similarity || 0).toFixed(3)} → ${inMerged}`);
+            }
+          }
+        }
 
         if (merged.length > 0) {
           console.log(`Hybrid search: ${merged.length} unique chunks after merge`);
