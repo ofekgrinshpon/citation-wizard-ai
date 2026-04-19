@@ -11,15 +11,22 @@ const HEBREW_MONTHS = [
   "אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר",
 ];
 
+const HEBREW_CAL_MONTHS = [
+  "ניסן","אייר","סיון","סיוון","תמוז","אב","אלול",
+  "תשרי","חשון","חשוון","כסלו","טבת","שבט","אדר",
+];
+
 // Lines we never accept as titles
 const BOILERPLATE_PATTERNS: RegExp[] = [
   /^הכנסת\s*$/,
   /^מרכז\s+המחקר\s+והמידע\s*$/,
   /מרכז\s+המחקר\s+והמידע\s+של\s+הכנסת/,
+  /^הכנסת,?\s+מרכז\s+המחקר/,
   /knesset\.gov\.il/i,
   /^כתיבה\s*[:|]/,
   /^אישור\s*[:|]/,
   /^עריכ(ה|ת)\s+(לשון|לשונית)/,
+  /^לשונית\s+עריכה/,
   /^תאריך\s*[:|]/,
   /^תוכן\s+(ה?עניינים|ענייני)/,
   /^מבוא(\s|$)/,
@@ -44,10 +51,20 @@ const BOILERPLATE_PATTERNS: RegExp[] = [
   /^עמוד\s*\d+/,
   /^www\./i,
   /^\d{1,2}\s+ב?(ינואר|פברואר|מרץ|מרס|אפריל|מאי|יוני|יולי|אוגוסט|ספטמבר|אוקטובר|נובמבר|דצמבר)\s+\d{4}/,
-  /^[יכלמנסעפצקרשת]['"״׳][אבגדהוזחטיכלמנסעפצקרשת]?\s+ב/, // "כ"ג בסיוון..."
+  // Hebrew calendar dates: "ט"ז אדר ב' תשע"ד" / "ד 'בטבת תשס"ח" / "כ"ג בסיוון..."
+  new RegExp(
+    `^[יכלמנסעפצקרשתבגדהוזחטא]['"״׳]?[א-ת]?\\s*['׳]?\\s*ב?(?:${HEBREW_CAL_MONTHS.join("|")})(\\s+[אב]['׳])?\\s+ת?ש[א-ת]+`,
+  ),
+  // Reversed RTL date variant: "תשע"ד אדר ט"ז"
+  new RegExp(`(?:${HEBREW_CAL_MONTHS.join("|")})\\s+[יכלמנסעפצקרשתבגדהוזחטא]['"״׳]`),
   /^חוקרת?$/,
   /^ראש\s+צוות$/,
   /^מנהלת?\s+הממ/,
+  /^המחלקה\s+ל/,
+  /^מערכת\s*["״]?דברי/,
+  /דברי["״]?\s*הכנסת/,
+  // Pure Hebrew year only
+  /^ת?ש[א-ת]['"״׳][א-ת]?\s*[–-]?\s*\d{0,4}\s*$/,
 ];
 
 const isBoilerplate = (line: string): boolean =>
@@ -55,34 +72,23 @@ const isBoilerplate = (line: string): boolean =>
 
 const hasHebrew = (s: string): boolean => /[\u0590-\u05FF]/.test(s);
 
+// Mid-sentence cutoff words at line end → indicates paragraph fragment
+const SENTENCE_TAIL_RE = /\s(של|את|הוא|היא|הם|הן|או|וגם|אך|אם|כי|אשר|לפי|בין|לבין|תוך|עם|על|אל|מן|לפני|אחרי|בעת|בגין|בשל|בנוגע|לגבי|לצורך|כדי|כך|לכן|אולם|למרות|בעוד|כאשר|בעקבות|במסגרת|במהלך|לקראת|בנושא|לעניין|לרבות|וכן|וכד['׳]?|וכו['׳]?|ב|ל|מ|ו|ה|כ|ש)$/;
+
+const PREPOSITION_PREFIX_RE = /^(ב|ל|מ|כ|מה|לה|בה|כה|מן|אל|על|עם|בין|לפני|אחרי|בעת|תוך|בנוגע|לגבי)[א-ת]/;
+
 // Detect scrambled / reversed Hebrew text from old broken PDFs.
-// Indicators:
-//  - Latin/symbol noise mixed inside Hebrew (ñ, &, control chars, lone Latin letters)
-//  - Digits appearing INSIDE Hebrew words (e.g., "התשנ"ו;1996" without proper format)
-//  - Punctuation BEFORE words instead of after (",מרכז" / ":מי")
-//  - Weird character density
 function looksScrambled(line: string): boolean {
-  // Latin letters mixed into Hebrew (excluding standalone ASCII fragments)
   const hebrewChars = (line.match(/[\u0590-\u05FF]/g) || []).length;
   if (hebrewChars < 4) return true;
-  // Noise characters
   if (/[ñ&§¶†‡µ]/.test(line)) return true;
-  // Comma/colon/semicolon BEFORE a Hebrew letter (RTL artifact)
   if (/[,:;][\u0590-\u05FF]/.test(line)) return true;
-  // Digit immediately followed by Hebrew letter without space (RTL artifact, e.g., "5רקע")
   if (/\d[\u0590-\u05FF]/.test(line)) return true;
-  // Hebrew letter immediately followed by digit (e.g., "התשנ"ו;1996")
   if (/[\u0590-\u05FF];?\d/.test(line)) return true;
-  // Lone Latin letters mixed in
   if (/[\u0590-\u05FF]\s*[A-Za-z]\s*[\u0590-\u05FF]/.test(line)) return true;
-  // Quotation marks in odd positions (e.g., 'ד "תשס')
-  if (/['"][\u0590-\u05FF]+\s+[\u0590-\u05FF]+["']/.test(line) && /\s/.test(line)) {
-    // not necessarily scrambled — let other checks decide
-  }
   return false;
 }
 
-// Strip noise: bullet markers, leading/trailing punctuation, control chars
 function cleanLine(raw: string): string {
   return raw
     .replace(/[\u0000-\u001F\u007F]/g, " ")
@@ -100,41 +106,58 @@ interface Extraction {
   method: string;
 }
 
+// Validate or repair a year, accepting only 1990–2026.
+// If reversed (e.g. "0200"), try flipping; otherwise return undefined.
+function normalizeYear(raw: string | undefined): string | undefined {
+  if (!raw) return undefined;
+  const n = parseInt(raw, 10);
+  if (!Number.isFinite(n)) return undefined;
+  if (n >= 1990 && n <= 2026) return String(n);
+  const reversed = raw.split("").reverse().join("");
+  const r = parseInt(reversed, 10);
+  if (Number.isFinite(r) && r >= 1990 && r <= 2026) return String(r);
+  return undefined;
+}
+
 function extractDate(text: string): string | undefined {
   const m1 = text.match(
     new RegExp(`\\b\\d{1,2}\\s+ב?(${HEBREW_MONTHS.join("|")})\\s+\\d{4}\\b`),
   );
-  if (m1) return m1[0].replace(/\s+/g, " ").trim();
+  if (m1) {
+    const yr = m1[0].match(/\d{4}/)?.[0];
+    if (normalizeYear(yr)) return m1[0].replace(/\s+/g, " ").trim();
+  }
   const m2 = text.match(/\b\d{1,2}\.\d{1,2}\.\d{4}\b/);
-  if (m2) return m2[0];
+  if (m2) {
+    const yr = m2[0].match(/\d{4}$/)?.[0];
+    if (normalizeYear(yr)) return m2[0];
+  }
   return undefined;
 }
 
 function extractYear(text: string): string | undefined {
-  // Find first 4-digit year between 1990-2099 in the head
-  const m = text.match(/\b(19[9]\d|20\d{2})\b/);
-  return m ? m[1] : undefined;
+  // Collect ALL 4-digit numbers and pick the first that normalizes to a valid year.
+  const all = text.match(/\b\d{4}\b/g) || [];
+  for (const candidate of all) {
+    const v = normalizeYear(candidate);
+    if (v) return v;
+  }
+  return undefined;
 }
 
-// Strip academic / professional titles per Rule 23.2.3
 function cleanAuthorName(raw: string): string {
   return raw
     .replace(/\b(ד["״']ר|פרופ['׳]|פרופסור|עו["״']ד|רו["״']ח|השופט|השופטת|המנוח|ז["״']ל|מר|גב['׳])\s+/g, "")
+    // Strip trailing role suffixes
+    .replace(/\s*,\s*(כלכלן(ית)?|חוקר(ת)?|עובד(ת)?|מתמחה|ראש\s+צוות|מנהל(ת)?|יועץ(ת)?|כותב(ת)?|אנליסט(ית)?|רכז(ת)?).*$/i, "")
     .replace(/\s+/g, " ")
     .trim();
 }
 
-// Extract author(s) from "כתיבה: X" line. Handles:
-//   "כתיבה: דינה צדוק"
-//   "כתיבה: ד"ר אילה אליהו ואהוד בקר"
-//   "כתיבה: אמיר פרגר  |אישור: ..."
 function extractAuthors(text: string): string | undefined {
-  // Modern format: "כתיבה: NAME" possibly followed by "|" or "אישור" or newline
   const m = text.match(/כתיבה\s*:\s*([^|\n\r]+?)(?:\s*\|\s*אישור|\s+אישור\s*:|[\n\r])/);
   if (!m) return undefined;
   let raw = m[1].trim();
-  // Drop trailing role descriptors like ", חוקרת" / "מ"מ ראש צוות"
-  raw = raw.replace(/\s*,\s*(חוקר|חוקרת|עובד|עובדת|מתמחה|ראש\s+צוות|מנהל|מנהלת).*/i, "");
   raw = cleanAuthorName(raw);
   if (looksScrambled(raw)) return undefined;
   if (raw.length < 3 || raw.length > 80) return undefined;
@@ -142,40 +165,53 @@ function extractAuthors(text: string): string | undefined {
   return raw;
 }
 
+// Final gate before accepting a title candidate.
+function isValidTitle(line: string): boolean {
+  if (!line) return false;
+  if (line.length < 8 || line.length > 120) return false;
+  if (!hasHebrew(line)) return false;
+  if (looksScrambled(line)) return false;
+  if (isBoilerplate(line)) return false;
+  // Must have at least 3 Hebrew "words"
+  const hebrewWords = (line.match(/[\u0590-\u05FF]+/g) || []).filter((w) => w.length >= 2);
+  if (hebrewWords.length < 3) return false;
+  // Reject paragraph fragments — colon mid-sentence
+  if (/[\u0590-\u05FF]+\s*:\s*\S/.test(line)) return false;
+  // Reject mid-sentence cutoff endings
+  if (SENTENCE_TAIL_RE.test(line)) return false;
+  // Reject lines that end with a comma (clearly cut off)
+  if (/,\s*$/.test(line)) return false;
+  // Reject prepositional starts (paragraph fragments)
+  if (PREPOSITION_PREFIX_RE.test(line)) return false;
+  // Heuristic: digit density should be low (titles aren't mostly numbers)
+  const digits = (line.match(/\d/g) || []).length;
+  if (digits / line.length > 0.2) return false;
+  return true;
+}
+
 function extractTitle(content: string): Extraction | null {
   const head = content.slice(0, 3000);
   const rawLines = head.split(/\r?\n/).map(cleanLine).filter((l) => l.length > 0);
 
-  // Hard reject if the head text is mostly scrambled (old broken PDF)
   const sampleLines = rawLines.slice(0, 25);
   const scrambledCount = sampleLines.filter((l) => looksScrambled(l)).length;
   if (sampleLines.length > 0 && scrambledCount / sampleLines.length > 0.4) {
-    return null; // → caller will flag broken_title
+    return null;
   }
 
   const date = extractDate(head);
   const year = extractYear(head);
   const authors = extractAuthors(head);
 
-  // Build candidate pool
+  // Build candidate pool — already validated by isValidTitle
   const candidates: { line: string; idx: number }[] = [];
   rawLines.forEach((line, idx) => {
-    if (line.length < 8 || line.length > 180) return;
-    if (!hasHebrew(line)) return;
-    if (isBoilerplate(line)) return;
-    if (looksScrambled(line)) return;
-    const dotCount = (line.match(/\./g) || []).length;
-    if (dotCount > 6) return;
-    if (/^\d/.test(line)) return;
-    // Reject lines that are mostly digits / non-Hebrew
-    const heChars = (line.match(/[\u0590-\u05FF]/g) || []).length;
-    if (heChars / line.length < 0.5) return;
-    candidates.push({ line, idx });
+    if (isValidTitle(line)) candidates.push({ line, idx });
   });
 
   if (candidates.length === 0) return null;
 
-  // Strategy 1: title appears AFTER a label line ("סקירה", "מבט משווה", "מסמך רקע", "נייר רקע")
+  // Strategy 1: title appears AFTER a label line
   const LABEL_REGEX = /^(סקירה(\s+(משפטית|כלכלית|השוואתית|משווה))?|מבט\s+משווה|מסמך\s+רקע(\s+לדיון)?(\s+בנושא:?)?|נייר\s+רקע|דברי\s+הסבר)\s*$/;
   for (let i = 0; i < rawLines.length - 1; i++) {
     if (LABEL_REGEX.test(rawLines[i])) {
@@ -188,10 +224,11 @@ function extractTitle(content: string): Extraction | null {
     }
   }
 
-  // Strategy 2: title appears AFTER "כתיבה:" / "אישור:" header block (modern format)
+  // Strategy 2: title appears AFTER "כתיבה:" / "עריכה לשונית" header block.
+  // CRITICAL: must skip date-like lines that happen to follow.
   for (let i = 0; i < rawLines.length - 1; i++) {
     if (/^כתיבה\s*:/.test(rawLines[i]) || /^עריכ(ה|ת)\s+ל?שון/.test(rawLines[i])) {
-      for (let j = i + 1; j < Math.min(i + 6, rawLines.length); j++) {
+      for (let j = i + 1; j < Math.min(i + 8, rawLines.length); j++) {
         const cand = candidates.find((c) => c.idx === j);
         if (cand) {
           return { title: cand.line, authors, year, date, method: "after_kativa_header" };
@@ -200,17 +237,13 @@ function extractTitle(content: string): Extraction | null {
     }
   }
 
-  // Strategy 3: longest valid candidate within first 12 candidates
-  const topPool = candidates.slice(0, 12);
-  topPool.sort((a, b) => b.line.length - a.line.length);
-  return { title: topPool[0].line, authors, year, date, method: "longest_top_candidate" };
+  // No `longest_top_candidate` fallback — flag broken instead of guessing.
+  return null;
 }
 
-// Build citation per Rule 23.11 (article in book) format requested by user:
-//   "{author(s)} {title} (הכנסת, מרכז מחקר ומידע {year})."
 function buildCitation(extraction: Extraction): string {
   const { title, authors, year, date } = extraction;
-  const yearForCite = year || (date?.match(/\d{4}/)?.[0]);
+  const yearForCite = year || normalizeYear(date?.match(/\d{4}/)?.[0]);
   const tail = yearForCite
     ? `(הכנסת, מרכז מחקר ומידע ${yearForCite})`
     : `(הכנסת, מרכז מחקר ומידע)`;
@@ -304,7 +337,8 @@ serve(async (req) => {
         const content = (chunk?.content as string | undefined) || "";
         const extraction = content ? extractTitle(content) : null;
 
-        if (extraction && extraction.title.length >= 8) {
+        // Re-validate the chosen title through the same gate to catch edge cases.
+        if (extraction && isValidTitle(extraction.title)) {
           const newCitation = buildCitation(extraction);
           const newMeta = {
             ...((doc.metadata as Record<string, unknown>) || {}),
@@ -326,7 +360,7 @@ serve(async (req) => {
             .eq("id", doc.id);
           if (updErr) throw updErr;
           recovered++;
-          console.log(`Recovered: ${doc.id} → "${extraction.title}" [${extraction.method}]${extraction.authors ? ` by ${extraction.authors}` : ""}`);
+          console.log(`Recovered: ${doc.id} → "${extraction.title}" [${extraction.method}]${extraction.authors ? ` by ${extraction.authors}` : ""}${extraction.year ? ` (${extraction.year})` : ""}`);
         } else {
           const newMeta = {
             ...((doc.metadata as Record<string, unknown>) || {}),
