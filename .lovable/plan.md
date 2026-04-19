@@ -1,50 +1,68 @@
 
 
-## Problem
-The AI sometimes writes wrong target numbers in `לעיל ה"ש X` back-references. Example from latest run:
-- FN #4: full citation `רן מס "רשימה: 'על לווייתנים ואריות'..." (2019)`
-- FN #7 & #11: `רן מס, לעיל ה"ש 6` ← should be `לעיל ה"ש 4`
+## Idea
+Knesset titles are broken (`פרטי מסמך`) but the **content** (`legal_documents.content`) was successfully ingested. The real document title almost always appears in the **first lines of the content itself** (cover page: "מרכז המחקר והמידע של הכנסת — [topic]" + a `<h1>` style heading + author + date).
 
-Current post-processing (lines 1820–1841) only checks:
-1. Self-reference (X = own number) → strips the phrase
-2. Target exists → keeps as-is
+So instead of scraping the Knesset website, we mine the title from the text we already have.
 
-It does NOT verify that the target footnote actually contains the same source.
+## Plan: Recover Knesset titles from chunk content
 
-## Plan: Content-aware "לעיל ה"ש" validator
+### Step 1 — Probe: read 5–10 sample chunks
+Before writing the recovery function, fetch the first chunk (`chunk_index=0`) of 5–10 broken-title knesset docs to confirm the cover-page pattern. Look for repeating markers like:
+- `נושא:` / `הנושא:`
+- `מוגש ל-` / `מוגשת ל-` / `הוכן עבור`
+- `כתיבה:` / `כתב:`
+- `תאריך:`
+- A bold line right after `מרכז המחקר והמידע`
 
-### Single change in `supabase/functions/legal-qa/index.ts`
+Pick the most reliable extractor. If multiple patterns exist, try them in order.
 
-Add a new validation pass **after** the existing exists-check (around line 1841), **before** `fixHebrewYearPrefix`. For every footnote that contains `לעיל ה"ש X`:
+### Step 2 — New edge function `recover-knesset-titles`
+Admin-only. Loops in pages of 50:
 
-1. **Extract the back-ref key** from the short-form citation (everything before the `, לעיל ה"ש` phrase). Normalize it (trim quotes, whitespace, punctuation, lowercase Hebrew).
-   - Example: `רן מס, לעיל ה"ש 6.` → key = `רן מס`
-   - Example: `פקודת הנזיקין, ס' 13, לעיל ה"ש 1.` → key = `פקודת הנזיקין` (strip pinpoint after comma)
-   - Example: `ת"צ (עבודה ת"א) 35327-08-20, לעיל ה"ש 3.` → key = `35327-08-20` (case number)
+```text
+for each doc where source_type='knesset_research' AND title='פרטי מסמך':
+  fetch first chunk content (chunk_index=0)
+  try extractors in order:
+    1. line after "נושא:" up to newline
+    2. line after "מרכז המחקר והמידע של הכנסת" (skip 1–2 lines)
+    3. first non-empty line ≥ 10 chars that isn't boilerplate
+  if extracted title looks valid (5–200 chars, Hebrew, not boilerplate):
+    UPDATE legal_documents SET
+      title = extracted,
+      citation = extracted + " (מרכז המחקר והמידע של הכנסת)" + (date if found),
+      metadata = metadata || {recovered_title: true, recovery_method: '...'}
+  else:
+    UPDATE metadata = metadata || {broken_title: true}
+```
 
-2. **Build a key-extraction helper** that pulls from each footnote's full citation:
-   - Author surname (first 1–2 Hebrew words before `"`)
-   - Case number pattern (`\d+/\d+` or `\d+-\d+-\d+`)
-   - Law name (text before first comma if it starts with `חוק`/`פקודת`/`תקנות`)
+Returns `{processed, recovered, flagged_broken, failed}`.
 
-3. **Search all footnotes** for one whose extracted key matches the back-ref key. Prefer the **earliest-numbered** footnote (since "לעיל" means "above").
+### Step 3 — Date extraction (bonus)
+While reading the cover page, regex for `\b(ינואר|פברואר|...|דצמבר)\s+\d{4}` or `\d{1,2}\.\d{1,2}\.\d{4}` to enrich the citation with the publication date (rule-compliant for knesset research).
 
-4. **If a better target is found** and it differs from the AI's number:
-   - Rewrite `לעיל ה"ש X` → `לעיל ה"ש <correctNum>`
-   - Log: `Corrected back-ref in FN #N: "key..." → ה"ש X became ה"ש Y`
+### Step 4 — Filter in `legal-qa/index.ts`
+Independent of recovery success:
+- Skip cards where `source_type='knesset_research'` AND (`title='פרטי מסמך'` OR `metadata.broken_title=true`).
+- Log: `Filtered N broken-title knesset docs from source pool`.
 
-5. **If no matching full-citation found** (orphan back-ref), keep the existing exists-only check behavior (or strip the phrase if target also looks like a back-ref to avoid back-ref chains).
+This way:
+- Recovered docs (good title) → flow through normally.
+- Unrecovered ones → permanently filtered.
 
-### Position in pipeline
-Place AFTER the existing reorder logic (which already remaps numbers based on body appearance) so we work with the final numbering. The validator catches cases where the AI's original numbering was wrong, not just shifted.
+### Step 5 — Ingestion guard (one-line)
+In `ingest-knesset-research/index.ts`, reject incoming docs whose title is `פרטי מסמך` / `ללא כותרת` / empty so the pile doesn't grow.
+
+### Step 6 — Admin UI button (small)
+Add a "Recover Knesset titles" button to the existing admin batch panel that calls the new function and shows a toast with the summary. Optional — can also be triggered via curl.
 
 ### Out of scope
-- No prompt changes (the prompt already says "אסור שהערה תפנה להערה שמכילה מקור אחר לחלוטין" — the AI is just unreliable here).
-- No DB / SQL changes.
-- No changes to the body-renumbering loop.
+- No external scraping (Knesset SharePoint is geo-blocked, per existing memory).
+- No re-embedding (chunks stay; only `legal_documents.title` and `citation` change).
+- No changes to rerank / fuzzy URL matcher.
 
 ### Expected impact
-- `רן מס, לעיל ה"ש 6` (when רן מס is at FN #4) → auto-corrected to `רן מס, לעיל ה"ש 4`.
-- Same for `פקודת הנזיקין, לעיל ה"ש N` and case-number back-refs.
-- A new log line: `Corrected back-ref in FN #N: ...` will let us audit how often the AI gets this wrong.
+- ~Most of the 6,159 docs get a real, distinctive title → fuzzy URL matcher works → footnote #12-style placeholders disappear.
+- Docs where extraction fails → flagged + filtered out, never cited.
+- Total cost: 1 read per doc + 1 update per doc, no external API calls, no embeddings recomputed.
 
