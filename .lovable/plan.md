@@ -1,79 +1,53 @@
 
 
-## Plan — Improve local recall in `legal-qa`
+## Root cause (verified against the live DB)
 
-Single file change: `supabase/functions/legal-qa/index.ts`
+I generated the actual embedding for "האם אפשר לפטר את היועמשית" and called `match_legal_chunks` directly. Findings:
 
-### 1. Semantic query expansion (new pre-step)
-Before retrieval, if the user question is **< 5 words OR < 25 chars**, call Lovable AI Gateway (`google/gemini-2.5-flash-lite`, fast/cheap) with a tight prompt:
+| Query                                              | Top similarity | Above 0.55 threshold? |
+|----------------------------------------------------|----------------|------------------------|
+| Original: "האם אפשר לפטר את היועמשית" (5 words) | **0.546**      | ❌ All 15 hits sit 0.528–0.546 |
+| Expanded legal phrasing                            | **0.630**      | ✅ 10+ hits well above 0.55 |
 
-> "הרחב את השאלה המשפטית הבאה למשפט תיאורי פורמלי אחד (עד 25 מילים), הכולל מונחים משפטיים מלאים במקום קיצורים. החזר רק את המשפט המורחב."
+So:
+1. **Embedding generation is fine** — OpenAI returns a valid 768-dim vector.
+2. **The DB function works** — 361,176 chunks have embeddings, dims match.
+3. **The threshold (0.55) is just barely above the natural ceiling** for short Hebrew questions. Topical chunks score 0.53–0.55 — invisible at threshold 0.55.
+4. **Query expansion didn't fire** because question is exactly 5 words / 26 chars, just outside the trigger (`< 5 OR < 25`). Had it fired, top similarity would have been **0.630** and we'd have ~10 strong local hits.
 
-Use the expanded sentence **in addition to** the original for embedding + keyword search. Both queries' results are merged and de-duped before re-rank.
+## Fix — `supabase/functions/legal-qa/index.ts` only
 
-Failure handling: if expansion call fails or times out (>3s), fall back to original query only — never block retrieval.
+### 1. Loosen expansion trigger
+Change from `< 5 words OR < 25 chars` to `≤ 7 words OR ≤ 40 chars`. This catches typical Hebrew legal questions (which average 5–7 words) and is the single highest-impact change.
 
-Log: `Query expansion: "<orig>" → "<expanded>"`.
+### 2. Lower vector threshold from 0.55 → 0.45
+Verified empirically: short Hebrew queries top out around 0.55. Dropping to 0.45 captures genuine matches; the AI re-ranker (already in place) filters noise downstream. We also already have a `slice(0, 12)` cap after merge, so prompt size is bounded.
 
-### 2. Hebrew abbreviation expansion in `extractKeywords` (append, don't replace)
-Add a static map of ~20 high-frequency legal abbreviations:
+### 3. Add explicit success/failure logging around the embedding call
+Currently we only log on error. Add:
+- `Embedding generated for query "<first 40 chars>...": dim=N, sample=[X.XX, X.XX, X.XX]` on success
+- `Embedding returned null for query "..."` on null return
+- `match_legal_chunks RPC error: <message>` if the RPC itself fails (currently silently `flatMap`'d away)
 
-```
-יועמ"ש / יועמש / היועמשית → היועץ המשפטי לממשלה, היועצת המשפטית לממשלה
-בג"ץ → בית המשפט הגבוה לצדק
-בימ"ש → בית המשפט
-ביה"ד → בית הדין
-ע"א → ערעור אזרחי
-ע"פ → ערעור פלילי
-רע"א → רשות ערעור אזרחי
-ס"ח → ספר החוקים
-ק"ת → קובץ התקנות
-תקנ' → תקנות
-ועדת חוקה → ועדת חוקה חוק ומשפט
-מ"י → מדינת ישראל
-חו"י → חוק יסוד
-פס"ד → פסק דין
-ב"כ → בא כוח
-פד"י → פסקי דין
-```
+This makes future "0 results" investigations 1 minute instead of 20.
 
-Logic: detect each abbreviation in the question, **append** its full form to the keyword set (original abbreviation stays). This widens both the keyword search and gives more material for vector embedding.
+### 4. Surface RPC errors in the vector pipeline
+Today: `vectorResults.flatMap(r => (!r.error && r.data) ? r.data : [])` silently drops errors. Change to log `r.error?.message` when present, before flatMapping.
 
-### 3. Lower vector threshold + bump candidate count
-- `match_legal_chunks` threshold: `0.70 → 0.55`
-- `match_count`: `8 → 15` for both vector and keyword searches
-- Final merged cap stays at 12 (after re-rank) to keep prompt size bounded
+### 5. (Bonus) Add a low-threshold safety net
+If the expanded query still returns 0 after threshold 0.45, do **one** more retry at threshold 0.35 with `match_count: 8`. Logged as `Vector search safety-net retry at threshold 0.35`. This guarantees at least *some* local cards make it to the re-ranker, which is the gate that actually decides relevance.
 
-### 4. Neutral re-ranker
-Update the re-rank prompt to be **source-type-blind**:
-
-> "דרג כל מקור 0–10 לפי רלוונטיות תוכנית בלבד לשאלה. אל תתחשב בסוג המקור (פסיקה / מאמר / מחקר כנסת) — רק במידת העזרה שיתן בתשובה משפטית מקצועית."
-
-Also: lower keep threshold from `≥5` to `≥4` to preserve background context.
-
-### 5. Re-rank failure handling
-Already shipped: when score parsing fails, fall back to raw similarity ≥ 0.5 (not "use all"). Confirmed in current code, no change needed.
-
-### 6. Diagnostic logging
-- `Keyword set (with expansions): [...]`
-- `Vector search: top 3 raw similarities = [0.XX, 0.XX, 0.XX]`
-- `Rerank scores per doc: {doc_id: score}`
-- `Final source mix: <N> local / <M> perplexity`
-
-## Expected impact
-For "האם אפשר לפטר את היועמשית":
-- Query expansion adds full legal phrasing → vector hits topical chunks
-- Abbreviation map catches "היועמשית" → "היועצת המשפטית לממשלה"
-- Lower threshold + more candidates → re-ranker has 15+ local cards to choose from
-- Neutral re-rank → best answer wins regardless of source type
-- Estimated local card count: 1 → 5–7
+## Expected impact for "האם אפשר לפטר את היועמשית"
+- Expansion fires → second embedding generated → top sim ~0.63
+- Threshold 0.45 → ~15 local vector hits
+- Final source mix expected: **5–7 local / 4–6 perplexity** (today: 3 / 8)
 
 ## Out of scope
 - No DB schema changes, no re-embedding
 - No client changes
-- No prompt-to-AI changes for the answer itself (only for expansion + rerank)
-- No changes to footnote matcher (already strict & accurate after previous fix)
+- No prompt-to-AI changes for the answer body
+- No footnote matcher changes
 
 ## File changes
-- `supabase/functions/legal-qa/index.ts` — items 1, 2, 3, 4, 6
+- `supabase/functions/legal-qa/index.ts` — items 1, 2, 3, 4, 5
 
