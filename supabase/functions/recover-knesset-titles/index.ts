@@ -300,11 +300,21 @@ serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const batchSize = Math.min(Math.max(Number(body?.batch_size) || 50, 1), 200);
 
-    const { data: docs, error: fetchErr } = await admin
-      .from("legal_documents")
-      .select("id, title, citation, metadata, source_url")
-      .eq("source_type", "knesset_research")
-      .eq("title", "פרטי מסמך")
+    // Pending recovery = placeholder title AND not already broken AND not already recovered.
+    // This prevents the loop from reprocessing already-flagged docs forever.
+    const PENDING_FILTER = (q: ReturnType<typeof admin.from>) =>
+      q
+        .eq("source_type", "knesset_research")
+        .eq("title", "פרטי מסמך")
+        .or("metadata->>broken_title.is.null,metadata->>broken_title.eq.false")
+        .or("metadata->>recovered_title.is.null,metadata->>recovered_title.eq.false");
+
+    const { data: docs, error: fetchErr } = await PENDING_FILTER(
+      admin
+        .from("legal_documents")
+        .select("id, title, citation, metadata, source_url"),
+    )
+      .order("id", { ascending: true })
       .limit(batchSize);
 
     if (fetchErr) {
@@ -343,6 +353,7 @@ serve(async (req) => {
           const newMeta = {
             ...((doc.metadata as Record<string, unknown>) || {}),
             recovered_title: true,
+            broken_title: false,
             recovery_method: extraction.method,
             recovered_at: new Date().toISOString(),
             ...(extraction.authors ? { authors: extraction.authors } : {}),
@@ -362,9 +373,17 @@ serve(async (req) => {
           recovered++;
           console.log(`Recovered: ${doc.id} → "${extraction.title}" [${extraction.method}]${extraction.authors ? ` by ${extraction.authors}` : ""}${extraction.year ? ` (${extraction.year})` : ""}`);
         } else {
+          // Terminal: flag broken with a reason. Will not be re-attempted by the queue.
+          const reason =
+            !content
+              ? "no_chunk_content"
+              : !extraction
+              ? "no_valid_candidate"
+              : "failed_validation_gate";
           const newMeta = {
             ...((doc.metadata as Record<string, unknown>) || {}),
             broken_title: true,
+            broken_title_reason: reason,
             broken_title_checked_at: new Date().toISOString(),
           };
           const { error: updErr } = await admin
@@ -380,11 +399,12 @@ serve(async (req) => {
       }
     }
 
-    const { count: remaining } = await admin
-      .from("legal_documents")
-      .select("id", { count: "exact", head: true })
-      .eq("source_type", "knesset_research")
-      .eq("title", "פרטי מסמך");
+    // Use the SAME pending filter so already-broken docs are excluded from the count.
+    const { count: remaining } = await PENDING_FILTER(
+      admin
+        .from("legal_documents")
+        .select("id", { count: "exact", head: true }),
+    );
 
     return new Response(
       JSON.stringify({
