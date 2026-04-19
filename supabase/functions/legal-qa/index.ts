@@ -639,31 +639,45 @@ serve(async (req) => {
 
     const localSearchPromise = (async (): Promise<{ matches: LocalMatch[]; used: boolean }> => {
       try {
-        const keywords = extractKeywords(question);
-        console.log(`Search keywords: "${keywords}" (from: "${question.slice(0, 80)}")`);
+        // Step A: optionally expand short queries to a fuller legal phrasing
+        const expandedQuery = await expandShortQuery(question, LOVABLE_API_KEY);
+        const queriesForEmbedding = expandedQuery ? [question, expandedQuery] : [question];
+        const keywordSourceText = expandedQuery ? `${question} ${expandedQuery}` : question;
 
-        // Run keyword search and vector search in parallel
+        const keywords = extractKeywords(keywordSourceText);
+        console.log(`Search keywords: "${keywords}" (from: "${question.slice(0, 80)}"${expandedQuery ? ` + expanded` : ""})`);
+
+        // Keyword search (single combined query)
         const keywordPromise = adminClient.rpc("search_legal_chunks_text", {
           search_query: keywords,
-          match_count: 8,
+          match_count: 15,
         });
 
-        const vectorPromise = (async () => {
-          const embedding = await getQueryEmbedding(question);
+        // Vector search — run for original AND expanded query in parallel, merge
+        const vectorPromises = queriesForEmbedding.map(async (q) => {
+          const embedding = await getQueryEmbedding(q);
           if (!embedding) return { data: null, error: null };
           return adminClient.rpc("match_legal_chunks", {
             query_embedding: JSON.stringify(embedding),
-            match_threshold: 0.7,
-            match_count: 8,
+            match_threshold: 0.55,
+            match_count: 15,
           });
-        })();
+        });
 
-        const [keywordResult, vectorResult] = await Promise.all([keywordPromise, vectorPromise]);
+        const [keywordResult, ...vectorResults] = await Promise.all([keywordPromise, ...vectorPromises]);
 
         const keywordMatches: LocalMatch[] = (!keywordResult.error && keywordResult.data) ? keywordResult.data : [];
-        const vectorMatches: LocalMatch[] = (!vectorResult.error && vectorResult.data) ? vectorResult.data : [];
+        const vectorMatches: LocalMatch[] = vectorResults.flatMap(r =>
+          (!r.error && r.data) ? r.data as LocalMatch[] : []
+        );
 
-        console.log(`Keyword search: ${keywordMatches.length} results | Vector search: ${vectorMatches.length} results`);
+        // Diagnostic: top-3 raw vector similarities
+        const topVectorSims = [...vectorMatches]
+          .sort((a, b) => (b.similarity || 0) - (a.similarity || 0))
+          .slice(0, 3)
+          .map(m => (m.similarity || 0).toFixed(3));
+        console.log(`Vector search: top 3 raw similarities = [${topVectorSims.join(", ")}]`);
+        console.log(`Keyword search: ${keywordMatches.length} results | Vector search: ${vectorMatches.length} results (across ${queriesForEmbedding.length} ${queriesForEmbedding.length === 1 ? "query" : "queries"})`);
 
         // Merge and deduplicate by chunk_id, keeping higher similarity
         const mergedMap = new Map<string, LocalMatch>();
@@ -692,7 +706,7 @@ serve(async (req) => {
           console.log(`Retry with fewer keywords: "${fewerKeywords}"`);
           const { data: retryMatches, error: retryError } = await adminClient.rpc("search_legal_chunks_text", {
             search_query: fewerKeywords,
-            match_count: 10,
+            match_count: 15,
           });
           if (!retryError && retryMatches && retryMatches.length > 0) {
             console.log(`Retry search: found ${retryMatches.length} matching chunks`);
