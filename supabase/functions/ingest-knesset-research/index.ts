@@ -76,6 +76,14 @@ serve(async (req) => {
       const decisionDate = (doc.decision_date as string) || null;
       const metadata = (doc.metadata as Record<string, unknown>) || {};
 
+      // Reject documents with placeholder/empty titles to keep the corpus clean.
+      const titleTrim = title.trim();
+      if (titleTrim === "" || titleTrim === "פרטי מסמך" || titleTrim === "ללא כותרת") {
+        results.failed.push({ title: titleTrim || "(empty)", error: "placeholder title rejected" });
+        console.log(`Rejected placeholder-titled doc (url=${sourceUrl})`);
+        continue;
+      }
+
       // Deduplicate by source_url
       if (sourceUrl) {
         const { data: existing } = await adminClient

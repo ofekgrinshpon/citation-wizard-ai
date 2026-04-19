@@ -1144,6 +1144,9 @@ serve(async (req) => {
           case_number: m.source_type === "caselaw" ? ((meta.case_number as string) || undefined) : undefined,
         });
       }
+      if (filteredBrokenKnesset > 0) {
+        console.log(`Filtered ${filteredBrokenKnesset} broken-title knesset docs from source pool`);
+      }
     }
 
     // Perplexity sources — extract from citations array
