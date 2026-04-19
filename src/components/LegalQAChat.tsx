@@ -608,6 +608,16 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setResult(null);
     setQuestion("");
     clearAcademicSession(projectId);
+    // Also delete the DB-persisted session so it doesn't resurface on another device.
+    (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        let q = supabase.from("academic_sessions").delete().eq("user_id", user.id);
+        q = projectId ? q.eq("project_id", projectId) : q.is("project_id", null);
+        await q;
+      } catch { /* silent */ }
+    })();
   };
 
   // ─── Academic navigation helpers ────────────────────────────────
