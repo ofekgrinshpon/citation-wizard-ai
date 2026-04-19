@@ -1,38 +1,50 @@
 
+## Root cause
 
-## Root cause confirmed
-The re-rank threshold `score >= 4` (line 459 in `supabase/functions/legal-qa/index.ts`) is dropping 6 of 9 local docs even though they retrieved at high similarity. Multiple genuinely relevant local sources score 3 and get filtered. The +0.08 content-aware bonus added previously only affects retrieval similarity — it does NOT influence rerank scores, which is the real gate.
+The caselaw-filtered vector query returns 8 chunks but בג"ץ 18225-06-25 גילון doesn't make the cut because:
 
-## Fix — `supabase/functions/legal-qa/index.ts` only
+1. **Embedding mismatch**: The case's procedural prose ("בית המשפט הגבוה לצדק", motion language) embeds far from the conceptual query "האם אפשר לפטר את היועמשית" / "להדיח את היועצת המשפטית".
+2. **No keyword path**: `search_legal_chunks_text` returned **0 results** in the last run because the case's title/citation/case_number/court fields don't contain the literal words "לפטר" or "היועמשית" — the AND-mode requires distinctive terms (length≥4) ALL to match the indexed fields, but those fields are short metadata, not full text.
+3. **Caselaw quota fills with denser cases**: Family-court and corporate cases out-rank גילון because their metadata is more verbose.
 
-### 1. Lower rerank keep threshold from `>= 4` to `>= 3`
-Line 459. Score 3 means "useful but not central" — exactly the supporting sources we want in a legal memo. Score < 3 still gets filtered, so noise (0–2) stays out.
+## Fix strategy — three layers
 
-### 2. Force-keep top-N local docs regardless of score
-After scoring, always retain the **top 4 docs by rerank score** even if some scored < 3. This guarantees we never collapse below 4 local sources when retrieval found 30 hits. Today only `bestDocId` (single top doc) is force-kept.
+### Layer 1: Index chunk content in keyword search (root cause fix)
+Currently `search_legal_chunks_text` builds the tsvector from `title + citation + case_number + court` only. The actual case discussion lives in `legal_document_chunks.content`, never indexed. **Add `c2.content` to the tsvector source**, so a case mentioning "פיטור היועצת המשפטית" inside its body text becomes findable even when the metadata doesn't mention it.
 
-### 3. Apply rerank-score bonus for action-verb topical match
-Same `VERB_TOPIC_PAIRS` logic, but applied to the **rerank score** (e.g. +1 to the score) when the chunk content matches the question's action verbs. This means בג"ץ גילון-style docs that mention "פיטור" / "סיום כהונ" jump from score 3 → 4 and clear the threshold organically.
+This is the single highest-impact change — it unlocks every landmark case whose metadata is terse.
 
-### 4. Tighten rerank prompt with concrete guidance
-Add one explicit line to the prompt at line 394: clarify that a source scoring 3 is "תורם לרקע משפטי / עוסק בענף הדין הרלוונטי" and should be kept; only 0–2 are "off-topic." This re-calibrates the LLM upward without removing strictness.
+### Layer 2: Landmark-case direct injection
+Add a small curated map in `legal-qa/index.ts`:
+```ts
+const LANDMARK_CASES = [
+  { triggers: [/יועמ"?ש|יועצת המשפטית|יועץ המשפטי/], 
+    case_numbers: ["18225-06-25", "4267/93"] },
+  // extensible
+];
+```
+When the question matches a trigger, fetch those documents by `case_number` and unconditionally inject them into the candidate pool **before** rerank. They still go through rerank, so off-topic landmarks get filtered.
 
-### 5. Add diagnostic log
-After filtering: `console.log("Local kept after rerank: X/Y (force-kept: Z)")` so we can verify the next run hits the 5–7 target.
+### Layer 3: Loosen caselaw threshold + expand pool
+- Drop `match_threshold` for the caselaw-filtered vector query from 0.4 → **0.25** (case law embeds lower than academic prose).
+- Expand caselaw vector results from top 8 → **top 16**, keep top **6 in merge** (was 4).
 
-## Expected impact for "האם אפשר לפטר את היועמשית"
-With the recent run's scores `[0, 2, 0, 3, 3, 2, 3, 4, 7]`:
-- Threshold ≥3 alone → **5 local kept** (the four 3s + the 4 + the 7)
-- Plus verb bonus likely pushes one or two of the 2s up
-- Plus force-keep top-4 floor → guaranteed minimum
-- Final mix expected: **5–6 local / 5–6 perplexity**
+### Layer 4 (diagnostic only)
+Log the raw similarity and rank of any landmark case ID present in the candidate pool, so we can verify Layer 2 worked and see why rerank kept/dropped it.
 
-## Out of scope
-- No DB / schema / embedding changes
-- No client changes
-- No changes to the answer-body prompt or footnote matcher
-- No removal of the existing similarity-based content bonus (keep both layers)
+## Expected impact
+- Layer 1 alone should surface גילון via keyword if its body mentions "פיטור" / "היועצת המשפטית".
+- Layer 2 guarantees it appears in the candidate pool even if both retrieval channels miss it.
+- Layer 3 widens the net for borderline cases without flooding noise (rerank still gates).
 
 ## File changes
-- `supabase/functions/legal-qa/index.ts` — items 1, 2, 3, 4, 5
+- **DB migration**: update `search_legal_chunks_text` to include `c2.content` in the tsvector (joined LATERAL already exists).
+- **`supabase/functions/legal-qa/index.ts`**:
+  - Add `LANDMARK_CASES` map + injection logic before merge.
+  - Lower caselaw threshold to 0.25, expand to top 16 / keep 6.
+  - Add diagnostic log for landmark case rank.
 
+## Out of scope
+- No changes to embedding model or re-ingestion.
+- No changes to answer-body prompt or footnote matcher.
+- No client changes.
