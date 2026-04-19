@@ -446,22 +446,25 @@ ${sourceList}
       }
     }
 
+    const rerankScoreLog: Record<string, number> = {};
     for (let i = 0; i < docsArr.length; i++) {
       const [docId, docData] = docsArr[i];
-      const score = scores[i] ?? 5;
-      if (score >= 5 || docId === bestDocId) {
+      const score = scores[i] ?? 4;
+      rerankScoreLog[docData.match.document_title.slice(0, 60)] = score;
+      if (score >= 4 || docId === bestDocId) {
         for (const m of matches) {
           if (m.document_id === docId) {
             result.push({ ...m, relevanceScore: score });
           }
         }
-        if (score < 5) {
+        if (score < 4) {
           console.log(`Kept top-scoring source despite low score (score=${score}): "${docData.match.document_title.slice(0, 50)}"`);
         }
       } else {
         console.log(`Filtered out low-relevance source (score=${score}): "${docData.match.document_title.slice(0, 50)}"`);
       }
     }
+    console.log(`Rerank scores per doc: ${JSON.stringify(rerankScoreLog)}`);
 
     return result;
   } catch (err) {
