@@ -14,6 +14,62 @@ export type Database = {
   }
   public: {
     Tables: {
+      academic_sessions: {
+        Row: {
+          chapters: Json
+          created_at: string
+          current_chapter: number
+          id: string
+          last_academic_action: string | null
+          max_reached_step: string
+          outline: string
+          project_id: string | null
+          proposed_questions: Json
+          research_question: string
+          updated_at: string
+          user_id: string
+          wizard_step: string
+        }
+        Insert: {
+          chapters?: Json
+          created_at?: string
+          current_chapter?: number
+          id?: string
+          last_academic_action?: string | null
+          max_reached_step: string
+          outline?: string
+          project_id?: string | null
+          proposed_questions?: Json
+          research_question?: string
+          updated_at?: string
+          user_id: string
+          wizard_step: string
+        }
+        Update: {
+          chapters?: Json
+          created_at?: string
+          current_chapter?: number
+          id?: string
+          last_academic_action?: string | null
+          max_reached_step?: string
+          outline?: string
+          project_id?: string | null
+          proposed_questions?: Json
+          research_question?: string
+          updated_at?: string
+          user_id?: string
+          wizard_step?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academic_sessions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       activity_logs: {
         Row: {
           action: string

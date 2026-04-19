@@ -158,6 +158,63 @@ function clearAcademicSession(projectId?: string) {
   } catch { /* silent */ }
 }
 
+// ─── DB-backed academic session sync ───────────────────────────────
+// Persists wizard state to academic_sessions table so users can resume
+// from any browser/device, not just the one that wrote localStorage.
+
+async function loadAcademicSessionFromDB(projectId?: string): Promise<AcademicSession | null> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+    let q = supabase
+      .from("academic_sessions")
+      .select("*")
+      .eq("user_id", user.id);
+    q = projectId ? q.eq("project_id", projectId) : q.is("project_id", null);
+    const { data, error } = await q.maybeSingle();
+    if (error || !data) return null;
+    return {
+      wizardStep: data.wizard_step as WizardStep,
+      maxReachedStep: data.max_reached_step as WizardStep,
+      currentChapter: data.current_chapter ?? 0,
+      chapters: (data.chapters as unknown as ChapterData[]) || [],
+      researchQuestion: data.research_question || "",
+      outline: data.outline || "",
+      proposedQuestions: (data.proposed_questions as unknown as string[]) || [],
+      lastAcademicAction: data.last_academic_action || null,
+    };
+  } catch { return null; }
+}
+
+async function saveAcademicSessionToDB(session: AcademicSession, projectId?: string): Promise<void> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const payload = {
+      user_id: user.id,
+      project_id: projectId ?? null,
+      wizard_step: session.wizardStep,
+      max_reached_step: session.maxReachedStep,
+      current_chapter: session.currentChapter,
+      chapters: session.chapters as unknown as any,
+      research_question: session.researchQuestion,
+      outline: session.outline,
+      proposed_questions: (session.proposedQuestions || []) as unknown as any,
+      last_academic_action: session.lastAcademicAction ?? null,
+    };
+    // Upsert by (user_id, project_id) — matches the unique index that treats NULL project as a single slot.
+    let q = supabase.from("academic_sessions").select("id").eq("user_id", user.id);
+    q = projectId ? q.eq("project_id", projectId) : q.is("project_id", null);
+    const { data: existing } = await q.maybeSingle();
+    if (existing?.id) {
+      await supabase.from("academic_sessions").update(payload).eq("id", existing.id);
+    } else {
+      await supabase.from("academic_sessions").insert(payload);
+    }
+  } catch { /* silent */ }
+}
+
+
 // ─── Utility components ──────────────────────────────────────────────
 
 function superscriptToNumber(s: string): number | null {
@@ -295,28 +352,39 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const [proposedQuestions, setProposedQuestions] = useState<string[]>([]);
   const [lastAcademicAction, setLastAcademicAction] = useState<string | null>(null);
 
-  // Restore academic session on mount / project change
+  // Restore academic session on mount / project change (DB first, localStorage fallback)
   useEffect(() => {
+    let cancelled = false;
     if (taskMode === "academic_writing") {
-      const saved = loadAcademicSession(projectId);
-      if (saved && saved.wizardStep !== "init") {
-        setWizardStep(saved.wizardStep);
-        setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
-        setCurrentChapter(saved.currentChapter);
-        setChapters(saved.chapters);
-        setResearchQuestion(saved.researchQuestion);
-        setOutline(saved.outline);
-        setProposedQuestions(saved.proposedQuestions || []);
-        setLastAcademicAction(saved.lastAcademicAction || null);
-      }
+      (async () => {
+        const dbSaved = await loadAcademicSessionFromDB(projectId);
+        const saved = dbSaved && dbSaved.wizardStep !== "init"
+          ? dbSaved
+          : loadAcademicSession(projectId);
+        if (!cancelled && saved && saved.wizardStep !== "init") {
+          setWizardStep(saved.wizardStep);
+          setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
+          setCurrentChapter(saved.currentChapter);
+          setChapters(saved.chapters);
+          setResearchQuestion(saved.researchQuestion);
+          setOutline(saved.outline);
+          setProposedQuestions(saved.proposedQuestions || []);
+          setLastAcademicAction(saved.lastAcademicAction || null);
+        }
+      })();
     }
+    return () => { cancelled = true; };
   }, [projectId]);
 
-  // Save academic session after chapter writes
+  // Save academic session after chapter writes (localStorage immediate + DB sync)
   const persistAcademicSession = useCallback(() => {
     if (taskMode !== "academic_writing" || wizardStep === "init") return;
-    saveAcademicSession({ wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction }, projectId);
+    const session: AcademicSession = { wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction };
+    saveAcademicSession(session, projectId);
+    // Fire-and-forget DB sync; localStorage already has the source of truth for instant reads.
+    void saveAcademicSessionToDB(session, projectId);
   }, [taskMode, wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction, projectId]);
+
 
 
   useEffect(() => {
@@ -345,44 +413,50 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     }
   }, [externalResult]);
 
-  // Resume academic session from history sidebar click
+  // Resume academic session from history sidebar click (DB first, localStorage fallback)
   useEffect(() => {
     if (!academicResumeSignal) return;
     setTaskMode("academic_writing");
-    const saved = loadAcademicSession(projectId);
-    if (saved && saved.wizardStep !== "init") {
-      setWizardStep(saved.wizardStep);
-      setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
-      setChapters(saved.chapters);
-      setResearchQuestion(saved.researchQuestion);
-      setOutline(saved.outline);
-      setProposedQuestions(saved.proposedQuestions || []);
-      setLastAcademicAction(saved.lastAcademicAction || null);
+    (async () => {
+      const dbSaved = await loadAcademicSessionFromDB(projectId);
+      const saved = dbSaved && dbSaved.wizardStep !== "init"
+        ? dbSaved
+        : loadAcademicSession(projectId);
+      if (saved && saved.wizardStep !== "init") {
+        setWizardStep(saved.wizardStep);
+        setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
+        setChapters(saved.chapters);
+        setResearchQuestion(saved.researchQuestion);
+        setOutline(saved.outline);
+        setProposedQuestions(saved.proposedQuestions || []);
+        setLastAcademicAction(saved.lastAcademicAction || null);
 
-      // Land on the last chapter with content (or first without — whichever is further)
-      const chs = saved.chapters || [];
-      let landIdx = saved.currentChapter || 0;
-      const lastWritten = (() => {
-        for (let i = chs.length - 1; i >= 0; i--) if (chs[i]?.content) return i;
-        return -1;
-      })();
-      const firstEmpty = chs.findIndex(c => !c?.content);
-      const candidate = Math.max(landIdx, lastWritten, firstEmpty === -1 ? landIdx : firstEmpty);
-      landIdx = Math.min(Math.max(candidate, 0), Math.max(chs.length - 1, 0));
-      setCurrentChapter(landIdx);
+        // Land on the last chapter with content (or first without — whichever is further)
+        const chs = saved.chapters || [];
+        let landIdx = saved.currentChapter || 0;
+        const lastWritten = (() => {
+          for (let i = chs.length - 1; i >= 0; i--) if (chs[i]?.content) return i;
+          return -1;
+        })();
+        const firstEmpty = chs.findIndex(c => !c?.content);
+        const candidate = Math.max(landIdx, lastWritten, firstEmpty === -1 ? landIdx : firstEmpty);
+        landIdx = Math.min(Math.max(candidate, 0), Math.max(chs.length - 1, 0));
+        setCurrentChapter(landIdx);
 
-      setResult(null);
-      setError(null);
-      setQuestion("");
-      const title = chs[landIdx]?.title || "";
-      toast.success(title ? `חזרת לעבודה האקדמית — פרק נוכחי: ${title}` : "חזרת לעבודה האקדמית");
-    } else if (academicResumeFallback) {
-      toast.info("לא נמצאה התקדמות שמורה לפרויקט זה. ההיסטוריה מציגה רק תוצאות פרקים קודמים.");
-      setQuestion(academicResumeFallback.question);
-      setResult(academicResumeFallback.result);
-    }
+        setResult(null);
+        setError(null);
+        setQuestion("");
+        const title = chs[landIdx]?.title || "";
+        toast.success(title ? `חזרת לעבודה האקדמית — פרק נוכחי: ${title}` : "חזרת לעבודה האקדמית");
+      } else if (academicResumeFallback) {
+        toast.info("לא נמצאה התקדמות שמורה לפרויקט זה. ההיסטוריה מציגה רק תוצאות פרקים קודמים.");
+        setQuestion(academicResumeFallback.question);
+        setResult(academicResumeFallback.result);
+      }
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [academicResumeSignal]);
+
 
   useEffect(() => {
     if (result) scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
@@ -452,18 +526,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
     setTaskMode(newMode);
 
-    // Reset wizard state when switching to academic mode
+    // Restore wizard state when switching to academic mode (DB first, localStorage fallback)
     if (newMode === "academic_writing") {
-      const saved = loadAcademicSession(projectId);
-      if (saved && saved.wizardStep !== "init") {
-        setWizardStep(saved.wizardStep);
-        setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
-        setCurrentChapter(saved.currentChapter);
-        setChapters(saved.chapters);
-        setResearchQuestion(saved.researchQuestion);
-        setOutline(saved.outline);
-        setProposedQuestions(saved.proposedQuestions || []);
-        setLastAcademicAction(saved.lastAcademicAction || null);
+      const localSaved = loadAcademicSession(projectId);
+      // Apply localStorage immediately so the user sees something fast.
+      if (localSaved && localSaved.wizardStep !== "init") {
+        setWizardStep(localSaved.wizardStep);
+        setMaxReachedStep(localSaved.maxReachedStep || localSaved.wizardStep);
+        setCurrentChapter(localSaved.currentChapter);
+        setChapters(localSaved.chapters);
+        setResearchQuestion(localSaved.researchQuestion);
+        setOutline(localSaved.outline);
+        setProposedQuestions(localSaved.proposedQuestions || []);
+        setLastAcademicAction(localSaved.lastAcademicAction || null);
       } else {
         setWizardStep("init");
         setMaxReachedStep("init");
@@ -474,8 +549,23 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         setProposedQuestions([]);
         setLastAcademicAction(null);
       }
+      // Then upgrade with DB state if it has more progress (cross-device sync).
+      (async () => {
+        const dbSaved = await loadAcademicSessionFromDB(projectId);
+        if (dbSaved && dbSaved.wizardStep !== "init") {
+          setWizardStep(dbSaved.wizardStep);
+          setMaxReachedStep(dbSaved.maxReachedStep || dbSaved.wizardStep);
+          setCurrentChapter(dbSaved.currentChapter);
+          setChapters(dbSaved.chapters);
+          setResearchQuestion(dbSaved.researchQuestion);
+          setOutline(dbSaved.outline);
+          setProposedQuestions(dbSaved.proposedQuestions || []);
+          setLastAcademicAction(dbSaved.lastAcademicAction || null);
+        }
+      })();
       setResult(null);
     }
+
 
     if (uploadedFiles.length > 0 && !FILE_RELEVANT_MODES.includes(newMode)) {
       toast.warning("שימו לב: הקבצים שהועלו עדיין מצורפים.", {
@@ -518,6 +608,16 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setResult(null);
     setQuestion("");
     clearAcademicSession(projectId);
+    // Also delete the DB-persisted session so it doesn't resurface on another device.
+    (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        let q = supabase.from("academic_sessions").delete().eq("user_id", user.id);
+        q = projectId ? q.eq("project_id", projectId) : q.is("project_id", null);
+        await q;
+      } catch { /* silent */ }
+    })();
   };
 
   // ─── Academic navigation helpers ────────────────────────────────
