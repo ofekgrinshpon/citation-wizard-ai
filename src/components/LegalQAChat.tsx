@@ -352,28 +352,39 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const [proposedQuestions, setProposedQuestions] = useState<string[]>([]);
   const [lastAcademicAction, setLastAcademicAction] = useState<string | null>(null);
 
-  // Restore academic session on mount / project change
+  // Restore academic session on mount / project change (DB first, localStorage fallback)
   useEffect(() => {
+    let cancelled = false;
     if (taskMode === "academic_writing") {
-      const saved = loadAcademicSession(projectId);
-      if (saved && saved.wizardStep !== "init") {
-        setWizardStep(saved.wizardStep);
-        setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
-        setCurrentChapter(saved.currentChapter);
-        setChapters(saved.chapters);
-        setResearchQuestion(saved.researchQuestion);
-        setOutline(saved.outline);
-        setProposedQuestions(saved.proposedQuestions || []);
-        setLastAcademicAction(saved.lastAcademicAction || null);
-      }
+      (async () => {
+        const dbSaved = await loadAcademicSessionFromDB(projectId);
+        const saved = dbSaved && dbSaved.wizardStep !== "init"
+          ? dbSaved
+          : loadAcademicSession(projectId);
+        if (!cancelled && saved && saved.wizardStep !== "init") {
+          setWizardStep(saved.wizardStep);
+          setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
+          setCurrentChapter(saved.currentChapter);
+          setChapters(saved.chapters);
+          setResearchQuestion(saved.researchQuestion);
+          setOutline(saved.outline);
+          setProposedQuestions(saved.proposedQuestions || []);
+          setLastAcademicAction(saved.lastAcademicAction || null);
+        }
+      })();
     }
+    return () => { cancelled = true; };
   }, [projectId]);
 
-  // Save academic session after chapter writes
+  // Save academic session after chapter writes (localStorage immediate + DB sync)
   const persistAcademicSession = useCallback(() => {
     if (taskMode !== "academic_writing" || wizardStep === "init") return;
-    saveAcademicSession({ wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction }, projectId);
+    const session: AcademicSession = { wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction };
+    saveAcademicSession(session, projectId);
+    // Fire-and-forget DB sync; localStorage already has the source of truth for instant reads.
+    void saveAcademicSessionToDB(session, projectId);
   }, [taskMode, wizardStep, maxReachedStep, currentChapter, chapters, researchQuestion, outline, proposedQuestions, lastAcademicAction, projectId]);
+
 
 
   useEffect(() => {
