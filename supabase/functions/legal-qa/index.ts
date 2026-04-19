@@ -788,6 +788,7 @@ serve(async (req) => {
           url: m.source_url || undefined,
           provenance: "local",
           excerpt: m.chunk_content.slice(0, 400),
+          case_number: m.source_type === "caselaw" ? ((meta.case_number as string) || undefined) : undefined,
         });
       }
     }
