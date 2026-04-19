@@ -304,7 +304,35 @@ function getAcademicSubModePrompt(academicStep: string, body: Record<string, unk
       const chapterIndex = (body.chapterIndex as number) || 0;
       const rq = (body.researchQuestion as string) || "";
       const prevChapters = (body.previousChapters as Array<{ title: string; content: string }>) || [];
-      
+      const isAbstract = !!body.isAbstract;
+
+      // ───────── Dedicated Abstract synthesis prompt ─────────
+      if (isAbstract) {
+        const allChaptersContext = prevChapters.length > 0
+          ? prevChapters.map(ch => `--- ${ch.title} ---\n${ch.content || ""}`).join("\n\n")
+          : "(לא סופקו פרקים)";
+
+        return `אתה חוקר אקדמי בכיר במשפטים. עליך לכתוב **תקציר** לעבודה סמינריונית שכבר נכתבה במלואה.
+
+שאלת המחקר: "${rq}"
+
+=== כל פרקי העבודה ===
+${allChaptersContext}
+
+הנחיות מחייבות:
+- אורך: עד 250 מילים בלבד (קשיח). אל תחרוג.
+- טון: עברית אקדמית פורמלית ברגיסטר גבוה.
+- מבנה (פסקה אחת רציפה או 2-4 פסקאות קצרות):
+  1. שאלת המחקר וחשיבותה.
+  2. המסגרת התיאורטית/המתודולוגיה.
+  3. הטיעונים המרכזיים שהוצגו בפרקים.
+  4. המסקנה והתרומה של המחקר.
+- אל תוסיף הערות שוליים, רשימת מקורות, כותרות משנה או רשימות ממוספרות.
+- אל תפתח במילים "תקציר זה..." — פתח ישר בתוכן.
+- אל תוסיף ציטוטים חדשים — סינתזה בלבד מהפרקים הקיימים.
+- אם חרגת מ-250 מילים — קצר את עצמך.`;
+      }
+
       let prevContext = "";
       if (prevChapters.length > 0) {
         prevContext = "\n\n=== פרקים שנכתבו עד כה ===\n" + 
@@ -529,7 +557,7 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract } = body;
 
     if (!question || typeof question !== "string" || question.trim().length < 3) {
       return new Response(JSON.stringify({ error: "Question too short" }), {
@@ -552,8 +580,17 @@ serve(async (req) => {
     const t0 = Date.now();
 
     // ========= Academic sub-mode shortcut =========
-    // For suggest_topics, validate_question, propose_outline: lighter flow without full retrieval
-    if (taskMode === "academic_writing" && academicStep && ["suggest_topics", "validate_question", "propose_outline"].includes(academicStep)) {
+    // For suggest_topics, validate_question, propose_outline: lighter flow without full retrieval.
+    // Also: write_chapter when isAbstract === true, since the abstract is pure synthesis of
+    // already-written chapters and must NOT introduce new external citations.
+    const isAbstractGeneration =
+      taskMode === "academic_writing" && academicStep === "write_chapter" && !!isAbstract;
+
+    if (
+      taskMode === "academic_writing" &&
+      academicStep &&
+      (["suggest_topics", "validate_question", "propose_outline"].includes(academicStep) || isAbstractGeneration)
+    ) {
       const subPrompt = getAcademicSubModePrompt(academicStep, body);
       if (!subPrompt) {
         return new Response(JSON.stringify({ error: "Invalid academic step" }), {
@@ -561,22 +598,24 @@ serve(async (req) => {
         });
       }
 
-      // Quick local search for context
+      // Quick local search for context (skipped for abstract — synthesis only)
       let localContext = "";
-      try {
-        const keywords = extractKeywords(question);
-        const { data: textMatches } = await adminClient.rpc("search_legal_chunks_text", {
-          search_query: keywords, match_count: 5,
-        });
-        if (textMatches && textMatches.length > 0) {
-          localContext = "\n=== מקורות רלוונטיים מהמאגר ===\n" +
-            textMatches.slice(0, 5).map((m: any) => `- ${m.document_title} (${m.source_type})`).join("\n");
-        }
-      } catch { /* non-fatal */ }
+      if (!isAbstractGeneration) {
+        try {
+          const keywords = extractKeywords(question);
+          const { data: textMatches } = await adminClient.rpc("search_legal_chunks_text", {
+            search_query: keywords, match_count: 5,
+          });
+          if (textMatches && textMatches.length > 0) {
+            localContext = "\n=== מקורות רלוונטיים מהמאגר ===\n" +
+              textMatches.slice(0, 5).map((m: any) => `- ${m.document_title} (${m.source_type})`).join("\n");
+          }
+        } catch { /* non-fatal */ }
+      }
 
-      // Include multi-file context if available
+      // Include multi-file context if available (skipped for abstract)
       let fileContext = "";
-      if (documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
+      if (!isAbstractGeneration && documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
         fileContext = "\n=== מסמכים שהועלו ===\n" +
           documentTexts.map((dt: any) => `=== ${dt.name} ===\n${dt.text?.slice(0, 5000) || ""}`).join("\n\n");
       }
@@ -586,10 +625,10 @@ serve(async (req) => {
         headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "google/gemini-2.5-flash",
-          max_tokens: 4096,
+          max_tokens: isAbstractGeneration ? 1024 : 4096,
           messages: [
             { role: "system", content: subPrompt + localContext + fileContext },
-            { role: "user", content: question },
+            { role: "user", content: isAbstractGeneration ? "כתוב את התקציר עכשיו, עד 250 מילים בלבד." : question },
           ],
         }),
       }, 60000);
@@ -602,8 +641,27 @@ serve(async (req) => {
         });
       }
       const aiData = await aiRes.json();
-      const answerText = aiData.choices?.[0]?.message?.content || "";
-      console.log(`Academic sub-mode (${academicStep}): ${answerText.length} chars, ${Date.now() - t0}ms`);
+      let answerText = aiData.choices?.[0]?.message?.content || "";
+
+      // Defensive word-count guard for the abstract (≤250 words). Trim by sentence if exceeded.
+      if (isAbstractGeneration && answerText) {
+        const words = answerText.trim().split(/\s+/).filter(Boolean);
+        if (words.length > 250) {
+          console.warn(`Abstract exceeded 250 words (got ${words.length}). Trimming.`);
+          // Trim to 250 words at a sentence boundary if possible.
+          const truncated = words.slice(0, 250).join(" ");
+          const lastStop = Math.max(
+            truncated.lastIndexOf("."),
+            truncated.lastIndexOf("!"),
+            truncated.lastIndexOf("?")
+          );
+          answerText = lastStop > truncated.length * 0.6
+            ? truncated.slice(0, lastStop + 1)
+            : truncated + "…";
+        }
+      }
+
+      console.log(`Academic sub-mode (${academicStep}${isAbstractGeneration ? ":abstract" : ""}): ${answerText.length} chars, ${Date.now() - t0}ms`);
 
       return new Response(
         JSON.stringify({ answer: answerText, footnotes: [], source_urls: [] }),
