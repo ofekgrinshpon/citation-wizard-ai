@@ -1249,7 +1249,8 @@ serve(async (req) => {
 
     if (rankedMatches.length > 0) {
       const seenDocs = new Set<string>();
-      let localContext = "\n=== מקורות מאומתים מהמאגר המשפטי ===\n";
+      let localContext = "\n=== [מאומת – מקור אמת לתוכן] מקורות מהמאגר המשפטי המקומי ===\n";
+      localContext += "(תוכן הסעיפים, ההלכות והציטוטים המהותיים — חייב להיות מעוגן כאן בלבד)\n";
       for (const m of rankedMatches) {
         if (!seenDocs.has(m.document_id)) {
           seenDocs.add(m.document_id);
@@ -1258,7 +1259,7 @@ serve(async (req) => {
             m.source_type === "journal_article" ? "מאמר אקדמי" :
             m.source_type === "israeli_law" ? "חקיקה ישראלית" : m.source_type;
           const relevanceTag = m.relevanceScore !== undefined ? ` | רלוונטיות: ${m.relevanceScore}/10` : "";
-          localContext += `\n--- ${m.document_title} ---\nסוג מקור: ${typeLabel} | אזכור: ${m.document_citation}${relevanceTag}\n`;
+          localContext += `\n--- [מאומת] ${m.document_title} ---\nסוג מקור: ${typeLabel} | אזכור: ${m.document_citation}${relevanceTag}\n`;
           if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
         }
         localContext += `${m.chunk_content.slice(0, 800)}\n`;
@@ -1267,7 +1268,23 @@ serve(async (req) => {
     }
 
     if (searchResults) {
-      contextParts.push("\n=== מקורות מחיפוש ===\n" + searchResults.slice(0, 3000));
+      // Trim Perplexity body: keep only lines that look like bibliographic metadata
+      // (years, ס"ח/ק"ת + page, volume references, journal/publisher hints).
+      // Discard substantive prose so the model cannot lift content claims from it.
+      const bibHintRe = /(ס"ח|ס״ח|ק"ת|ק״ת|פ"ד|פ״ד|פד"י|פד״י|כרך|חוברת|עמ['׳]?|עמוד|התש[א-ת"״''׳\-–]+|\b(19|20)\d{2}\b|נבו|תקדין|הוצאת|כתב\s+עת|משפטים|עיוני\s+משפט)/;
+      const perplexityLines = searchResults
+        .split(/\r?\n/)
+        .map(l => l.trim())
+        .filter(l => l.length > 0 && l.length < 400 && bibHintRe.test(l))
+        .slice(0, 30);
+      const perplexityTrimmed = perplexityLines.join("\n");
+      if (perplexityTrimmed) {
+        contextParts.push(
+          "\n=== [חיצוני – למטא-דאטה ביבליוגרפית בלבד] רמזים מ-Perplexity ===\n" +
+          "(אסור לשאוב מכאן תוכן מהותי של סעיפים או הלכות — רק שנים, ס\"ח/ק\"ת, עמוד, כרך, מו\"ל, שם כתב עת)\n" +
+          perplexityTrimmed.slice(0, 2000)
+        );
+      }
     }
 
     const combinedContext = truncateContext(contextParts.join("\n"), contextCharLimit);
