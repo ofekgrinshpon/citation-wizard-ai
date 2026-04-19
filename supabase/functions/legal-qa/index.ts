@@ -1586,8 +1586,58 @@ ${combinedContext}`;
       for (const aiFn of aiFootnoteLines) {
         const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards, aiFn.num);
         if (!matchedCard) {
-          // Tier 3 fallback: keep the footnote text but omit the URL.
-          // The bug we're guarding against is wrong URLs — a citation with no link is fine.
+          // ── Fuzzy URL fallback: try to attach a URL via token overlap ──
+          let fuzzyUrl: string | undefined;
+          let fuzzyMatchedTitle: string | undefined;
+          let fuzzyMatchedTokens: string[] = [];
+          try {
+            const fnText = aiFn.text;
+            // Extract distinctive tokens:
+            // 1) Case numbers like 338/60 or 35327-08-20
+            const caseNumberMatches = Array.from(fnText.matchAll(/\b(\d{2,6}[-\/]\d{2,6}(?:[-\/]\d{2,6})?)\b/g)).map(m => m[1]);
+            // 2) Latin all-caps tokens (≥3 letters), e.g. WOLT
+            const latinTokens = Array.from(fnText.matchAll(/\b([A-Z]{3,}(?:\s+[A-Z]{2,})*)\b/g)).map(m => m[1]);
+            // 3) Hebrew tokens between ** ** markers (party names)
+            const boldTokens = Array.from(fnText.matchAll(/\*\*([^*]{2,40})\*\*/g)).map(m => m[1].trim());
+            const distinctive = Array.from(new Set([...caseNumberMatches, ...latinTokens, ...boldTokens]));
+
+            if (distinctive.length > 0) {
+              for (const card of sourceCards) {
+                if (!card.url) continue;
+                const haystack = `${card.citation} ${card.case_number || ""} ${card.url} ${card.excerpt || ""}`.toLowerCase();
+                const hits: string[] = [];
+                for (const tok of distinctive) {
+                  if (!tok) continue;
+                  if (haystack.includes(tok.toLowerCase())) hits.push(tok);
+                }
+                // Match if: any case-number hit, OR ≥2 distinctive token hits
+                const hasCaseNumberHit = caseNumberMatches.some(cn => hits.includes(cn));
+                if (hasCaseNumberHit || hits.length >= 2) {
+                  fuzzyUrl = card.url;
+                  fuzzyMatchedTitle = card.citation.slice(0, 60);
+                  fuzzyMatchedTokens = hits;
+                  break;
+                }
+              }
+            }
+          } catch (e) {
+            console.warn(`Fuzzy URL match error for footnote #${aiFn.num}:`, e);
+          }
+
+          if (fuzzyUrl) {
+            console.log(`Fuzzy URL match: footnote #${aiFn.num} → "${fuzzyMatchedTitle}" (matched on: ${fuzzyMatchedTokens.join(", ")})`);
+            footnotes.push({
+              number: fnNum,
+              citation: aiFn.text,
+              source_type: "unverified",
+              source: "unverified",
+              url: fuzzyUrl,
+            });
+            oldIdToNewNumber.set(aiFn.num, fnNum);
+            fnNum++;
+            continue;
+          }
+
           console.log(`Kept footnote #${aiFn.num} without URL (no card match): ${aiFn.text.slice(0, 80)}...`);
           footnotes.push({
             number: fnNum,
