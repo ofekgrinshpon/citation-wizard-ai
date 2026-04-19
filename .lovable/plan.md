@@ -1,32 +1,48 @@
 
 
-## Bug
-The prompt tells the AI to output 3 questions, where **each question has 3 numbered sub-points** (ניסוח, הסבר, מקורות). The client parser uses the regex `/^(\d+)[.)]\s*(.+)$/` which matches the first `1.`/`2.`/`3.` it sees — so it parses the 3 sub-points of the FIRST question as if they were the 3 questions. Result: 3 cards all describing one question.
+## Issue
+Footnote URLs in the legal-qa response point to sources that don't match the citation text. This is the same root cause as the previous bug — `matchFootnoteToCard` in `legal-qa/index.ts` is too permissive and pairs an AI-generated citation with the wrong source card from the retrieved results, then attaches that card's `source_url` to the footnote.
 
-## Fix (2 files)
+## Root cause (already known from previous plan)
+In `supabase/functions/legal-qa/index.ts`, when the AI emits a footnote citation, the function tries to match it back to one of the retrieved source cards (local DB or Perplexity) to attach the canonical URL. The current matcher accepts:
+- Keyword overlap as low as 2 of 3 short words
+- Perplexity excerpt overlap of 2 of 4 words
+- A "safety fallback" that keeps unmatched footnotes as "unverified" with whatever URL got attached
 
-### 1. `supabase/functions/legal-qa/index.ts` — `suggest_topics` prompt (lines 156–163)
-Change the output format so questions and sub-points use **different markers**:
+Result: a footnote about case A can get glued to card B's URL because two generic Hebrew words overlap (e.g. "בית", "המשפט"). The user clicks the link and lands on a completely unrelated source.
 
-```
-**שאלה 1:** <ניסוח ברור של שאלת המחקר>
-- מעניינת אקדמית כי: ...
-- מקורות זמינים: ...
+## Fix — single file: `supabase/functions/legal-qa/index.ts`
 
-**שאלה 2:** <ניסוח ...>
-- מעניינת אקדמית כי: ...
-- מקורות זמינים: ...
+This extends the previous (already-approved) fix with **explicit URL-attachment hardening**:
 
-**שאלה 3:** ...
-```
-Add explicit instruction: "אל תשתמש במספור (1./2./3.) בתת-הסעיפים — השתמש במקפים (-)."
+### 1. Strict-only matching in `matchFootnoteToCard`
+- **Tier 1 (accept):** exact case-number match (`\d+/\d+`), or exact normalized title match, or normalized URL substring match.
+- **Tier 2 (accept):** ≥3 significant-word overlap (words ≥4 chars, excluding stopwords like בית/המשפט/של/את/לפי).
+- **Remove** the Perplexity excerpt-overlap branch entirely.
+- If no tier matches → return `null`.
 
-### 2. `src/components/LegalQAChat.tsx` — `parseProposedQuestions` (lines 70–96)
-Rewrite the parser to look for the `שאלה N:` marker (with optional `**` bold) instead of any `N.`:
-- Match `^\*{0,2}שאלה\s+(\d+)\s*[:.]\s*\*{0,2}\s*(.+)$`
-- Capture only the question text on that line (strip the bullet sub-points that follow until the next `שאלה N:`)
-- Keep fallback: if no `שאלה N:` markers found, fall back to the old numbered-list parser for backward compatibility
+### 2. Never attach a URL from a non-matched card
+When `matchFootnoteToCard` returns `null`:
+- Drop the footnote entirely (do not keep as "unverified" with a wrong URL).
+- Strip the corresponding `[N]` marker from the body so the renumber pass doesn't leave dangling superscripts.
+
+### 3. Remove the "keep all as unverified" safety fallback
+The existing block that keeps every footnote when matching fails is the main path for wrong URLs leaking through. Drop unmatched footnotes instead.
+
+### 4. Raise rerank threshold
+Change retrieval `score >= 3` → `score >= 5` so weakly-relevant cards never reach the AI in the first place.
+
+### 5. Prompt hardening against duplicate `[N]` markers
+Add to the system prompt: "כל מספר הפניה [N] יופיע פעם אחת בלבד בגוף הטקסט. אם אותו מקור תומך בכמה טענות, השתמש ב-'שם' או 'לעיל ה"ש N' — אל תחזור על אותו מספר הפניה."
+
+### 6. Body-side dedup of repeated `[N]` markers
+Before renumber, if any `[N]` appears >2 times in the body, keep only the first occurrence; remove the rest (so the user doesn't see "several ¹").
 
 ## Out of scope
-No changes to outline/writing steps, persistence, or the click handlers — only the prompt format and the matching parser.
+- No client-side changes (`LegalQAChat.tsx` rendering stays as-is).
+- No DB schema changes.
+- No academic-mode logic.
+
+## File changes
+- `supabase/functions/legal-qa/index.ts` — items 1-6 above.
 
