@@ -2091,6 +2091,34 @@ ${combinedContext}`;
 
     console.log(`Final: answer=${answer.length} chars, footnotes=${finalFootnotes.length}, total time=${Date.now() - t0}ms`);
 
+    // ===== Post-response grounding sanity check (log-only, non-blocking) =====
+    // Detect substantive statutory claims (סעיף X ל-Y ... קובע/מורה/מגדיר/אוסר/מחייב/מתיר)
+    // and verify the section number + law name hint appear in at least one local chunk.
+    try {
+      const localCorpus = rankedMatches.map((m) => m.chunk_content || "").join("\n");
+      const claimRe = /סעיף\s+([\dא-ת()'״"׳./\\–-]+)\s+ל([^\s,.;:()\[\]{}"״']{2,40})\s+[^.]{0,80}?(קובע|מורה|מגדיר|אוסר|מחייב|מתיר)/g;
+      const violations: string[] = [];
+      let cm: RegExpExecArray | null;
+      while ((cm = claimRe.exec(answer)) !== null) {
+        const sectionNum = cm[1];
+        const lawHint = cm[2];
+        const escSec = sectionNum.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const sectionInLocal = new RegExp(`סעיף\\s+${escSec}\\b`).test(localCorpus);
+        const lawInLocal = localCorpus.includes(lawHint);
+        if (!sectionInLocal || !lawInLocal) {
+          violations.push(`סעיף ${sectionNum} ל${lawHint} (section=${sectionInLocal}, law=${lawInLocal})`);
+        }
+      }
+      if (violations.length > 0) {
+        console.warn(
+          `[content-grounding-violation] ${violations.length} ungrounded statutory claim(s):`,
+          violations.slice(0, 5)
+        );
+      }
+    } catch (gErr) {
+      console.error("Grounding check failed (non-fatal):", gErr);
+    }
+
     // Log
     try {
       const localCount = finalFootnotes.filter((f) => f.source === "local").length;
