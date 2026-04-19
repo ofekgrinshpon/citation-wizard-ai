@@ -635,6 +635,18 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
         updatedChapters[currentChapter] = { ...updatedChapters[currentChapter], content: qaResult.answer };
         setChapters(updatedChapters);
         updateWizardStep("checkpoint");
+
+        // If this completion just unlocked the abstract, surface a toast.
+        const justWrittenIsAbstract = isAbstractChapter(updatedChapters[currentChapter]?.title || "");
+        if (!justWrittenIsAbstract) {
+          const remainingNonAbstract = updatedChapters
+            .filter(ch => !isAbstractChapter(ch.title))
+            .filter(ch => !ch.content).length;
+          const hasAbstract = updatedChapters.some(ch => isAbstractChapter(ch.title));
+          if (hasAbstract && remainingNonAbstract === 0) {
+            toast.success("כל הפרקים הושלמו — ניתן לייצר תקציר");
+          }
+        }
       }
 
       // Save to qa_logs
