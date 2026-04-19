@@ -241,17 +241,18 @@ export default function BatchEmbeddingPanel() {
 
         {(recovering || recoveredTotal > 0 || flaggedTotal > 0) && (
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-            <span>✅ שוחזרו: <strong className="text-foreground">{recoveredTotal.toLocaleString()}</strong></span>
-            <span>🚫 סומנו פגומים: <strong className="text-foreground">{flaggedTotal.toLocaleString()}</strong></span>
+            <span>✅ שוחזרו (בריצה זו): <strong className="text-foreground">{recoveredTotal.toLocaleString()}</strong></span>
+            <span>🚫 סומנו פגומים (בריצה זו): <strong className="text-foreground">{flaggedTotal.toLocaleString()}</strong></span>
             {recoveryRemaining !== null && (
-              <span>⏳ נותרו: <strong className="text-foreground">{recoveryRemaining.toLocaleString()}</strong></span>
+              <span>⏳ נותרו לעיבוד: <strong className="text-foreground">{recoveryRemaining.toLocaleString()}</strong></span>
             )}
           </div>
         )}
 
         <p className="text-xs text-muted-foreground">
           כורה את הכותרת האמיתית מתוכן המסמך עבור רשומות עם כותרת גנרית "פרטי מסמך".
-          50 מסמכים לאצווה. מסמכים שלא ניתן לחלץ מהם כותרת מסומנים כפגומים ויוסתרו מהחיפוש.
+          50 מסמכים לאצווה. מסמכים שלא ניתן לחלץ מהם כותרת מסומנים כפגומים <strong>פעם אחת בלבד</strong> — הם לא יעובדו שוב והם מוסתרים מהחיפוש.
+          המונים מציגים את הריצה הנוכחית בלבד; "נותרו" משקף מסמכים תלויים שטרם עובדו (לא כולל פגומים/שוחזרו).
         </p>
       </div>
     </div>
