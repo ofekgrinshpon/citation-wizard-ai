@@ -1129,13 +1129,17 @@ ${combinedContext}`;
       "פסק", "דין", "פסקדין", "הלכה", "ערעור", "בקשה", "החלטה", "סעיף", "חוק",
       "ישראל", "מדינת", "המדינה", "נגד", "נ׳", "פרשת", "עניין", "פרשה",
       "עמוד", "בעמ", "פסקה", "ראו", "ראה", "השוו", "וכן",
+      // High-frequency Knesset / government / legislative boilerplate that
+      // produces false matches against generic page titles.
+      "כנסת", "דיון", "ישיבה", "הצעת", "חוקים", "ועדה", "פרוטוקול",
+      "מליאה", "ממשלה", "משרד", "הוראות", "תיקון", "מספר", "לעניין",
     ]);
 
     function normalize(s: string): string {
       return s.toLowerCase().replace(/[״"׳'.,;:()\[\]{}]/g, " ").replace(/\s+/g, " ").trim();
     }
 
-    function matchFootnoteToCard(fnText: string, cards: SourceCard[]): SourceCard | null {
+    function matchFootnoteToCard(fnText: string, cards: SourceCard[], fnNum?: number): SourceCard | null {
       const fnLower = fnText.toLowerCase();
       const fnNorm = normalize(fnText);
 
