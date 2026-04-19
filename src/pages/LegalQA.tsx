@@ -139,17 +139,26 @@ export default function LegalQA() {
       const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       const { data: { session } } = await supabase.auth.getSession();
 
+      if (!session?.access_token) {
+        toast.error("יש להתחבר כדי להשתמש בעוזר המשפטי.");
+        return;
+      }
+
       const res = await fetch(`${supabaseUrl}/functions/v1/legal-qa`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${session?.access_token ?? supabaseKey}`,
+          "Authorization": `Bearer ${session.access_token}`,
           "apikey": supabaseKey,
         },
         body: JSON.stringify({ question: q }),
         signal: controller.signal,
       });
 
+      if (res.status === 401) {
+        toast.error("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש.");
+        return;
+      }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
 
