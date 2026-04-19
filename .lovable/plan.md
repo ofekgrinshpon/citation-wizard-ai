@@ -1,103 +1,51 @@
 
 
 ## Goal
-Lock the **Abstract** (תקציר) chapter in the Academic Writing wizard until **all other chapters** are written. When unlocked, generation must use the full context of every previously written chapter and produce a strict ≤250-word formal Hebrew academic abstract covering research question, methodology, main arguments, and conclusion.
+When the user clicks an **academic_writing** entry in the history sidebar, jump back into the Seminar Wizard at its **last progress** (current chapter, outline, all written chapters, current step) — instead of dumping the single chapter text into the read-only result pane.
 
 ## Current behavior (verified)
-- Default chapter list (`approveOutline`, line 665): `["תקציר", "מבוא", "המסגרת הנורמטיבית", "סקירה פסיקתית ודוקטרינרית", "ניתוח ביקורתי", "סיכום ומסקנות"]` — תקציר is **already first** in the list.
-- The wizard renders chapters as clickable chips (lines 1187–1207) and lets the user write any chapter via `viewChapter` / `writeCurrentChapter`. There is no special handling for "abstract".
-- Chapter generation goes through `handleAcademicSubmit("write_chapter")` → edge function `legal-qa` → `getAcademicSubModePrompt("write_chapter", body)` (lines 302–330). All chapters share the same prompt.
-- `previousChapters` is already sent to the edge function with **2,000-char slices per chapter** (line 311). For the abstract we'll need to send **fuller content**.
+- `qa_logs` stores **one row per academic step** (e.g., each `write_chapter` call). The `answer` is just that one chapter's text — not the full wizard state.
+- The full wizard state (`wizardStep`, `currentChapter`, `chapters[]`, `outline`, `researchQuestion`, `proposedQuestions`, `maxReachedStep`) lives in **localStorage** at `relex_academic_session_{projectId}` (`saveAcademicSession` in `LegalQAChat.tsx:149`).
+- Clicking any history item runs `QAHistorySidebar.handleClick` → `onLoadResult(question, result, taskMode)` → `Index.tsx` sets `qaExternalResult` → `LegalQAChat`'s `externalResult` effect (line 338) sets `question`, `result`, `taskMode`. It does **not** touch wizard state, so the user lands on the academic mode default screen with the result text floating outside the wizard.
 
 ## Plan
 
-### 1. Frontend — `src/components/LegalQAChat.tsx`
+### 1. `src/components/QAHistorySidebar.tsx`
+- When rendering each log button, if `task_mode === "academic_writing"`, show a small "המשך עבודה אקדמית" hint badge and use a `GraduationCap` icon (already in the labels map) — visual cue that clicking resumes a session.
+- No change to the `onLoadResult` signature; the resume logic lives downstream so behavior stays uniform.
 
-**A. Identify the abstract chapter**
-Add a small helper:
-- `isAbstractChapter(title)` → true when title is "תקציר" / "Abstract" / starts with תקציר.
-- `abstractIdx` = index of the abstract chapter (memoized).
-- `nonAbstractChapters` = all chapters except the abstract.
-- `abstractUnlocked` = every non-abstract chapter has `content`.
+### 2. `src/pages/Index.tsx` (around line 1156)
+- In the `onLoadResult` callback, branch on `taskMode`:
+  - If `"academic_writing"`: ensure the `LegalQAChat` is in academic mode and trigger a **resume signal** (e.g., set a new state `academicResumeSignal` = a counter or timestamp) instead of stuffing into `qaExternalResult`. Pass that signal to `LegalQAChat` as a new prop `academicResumeSignal?: number`.
+  - For all other modes: keep current `setQaExternalResult` behavior unchanged.
 
-**B. Lock the chapter chip** (lines 1187–1207)
-For the abstract chip when `!abstractUnlocked`:
-- Render a `Lock` icon (lucide-react) instead of the check.
-- Apply muted/disabled styling and `cursor-not-allowed`.
-- Wrap in a `Tooltip` showing: `ניתן לייצר תקציר רק לאחר השלמת כל פרקי העבודה, כדי להבטיח שהוא משקף את המחקר במלואו`.
-- `onClick` becomes a no-op (or a `toast.info` with the same message).
+### 3. `src/components/LegalQAChat.tsx`
+- Add a new prop `academicResumeSignal?: number`.
+- Add a new `useEffect` that watches `academicResumeSignal`:
+  1. Force `taskMode = "academic_writing"`.
+  2. Call `loadAcademicSession(projectId)`.
+  3. If a saved session exists (`wizardStep !== "init"`):
+     - Restore all state: `wizardStep`, `maxReachedStep`, `currentChapter`, `chapters`, `researchQuestion`, `outline`, `proposedQuestions`, `lastAcademicAction`.
+     - Set `currentChapter` to the **last chapter with content** (or the first chapter without content, whichever is further along) so the user lands precisely on their last progress point.
+     - Clear any `result`/`error` left over from a previous research view.
+     - Toast: `"חזרת לעבודה האקדמית — פרק נוכחי: {title}"`.
+  4. If no saved session exists for this project (e.g., user cleared localStorage or switched device):
+     - Toast: `"לא נמצאה התקדמות שמורה לפרויקט זה. ההיסטוריה מציגה רק תוצאות פרקים קודמים."`
+     - Fall back to the current behavior: load the clicked log's answer into `result` so the user at least sees the chapter text.
 
-**C. Lock the writing card** (lines 1210–1230)
-When the user is on the abstract chapter and it's locked:
-- Replace the "כתוב פרק זה" button with a disabled button labeled "ייצר תקציר" + `Lock` icon and the tooltip above.
-- Show a small inline notice: `יש להשלים תחילה {N}/{M} פרקים נותרים` listing missing chapter titles.
+### 4. Edge case — multi-project history
+The history sidebar is already filtered by `projectId` (see `QAHistorySidebar` query: `eq("project_id", projectId)`), and academic sessions are also keyed by `projectId`, so a clicked log will always match the currently loaded session. No cross-project resolution needed.
 
-**D. Unlocked state — visual feedback**
-When `abstractUnlocked`:
-- The abstract chip shows a `Wand2` (Magic Wand) icon if not yet written, or `Check` if written (already handled).
-- The writing-card button becomes "ייצר תקציר" with the `Wand2` icon, primary variant.
-
-**E. Send a flag for abstract generation**
-In `writeCurrentChapter`, when on the abstract:
-- Pass `{ isAbstract: true }` via `extraBody` to `handleAcademicSubmit("write_chapter", { isAbstract: true })`.
-- Inside `handleAcademicSubmit`, when `isAbstract` is true, override the `previousChapters` slice cap (currently 2,000 chars) and send full content per chapter (or a higher cap, e.g., 6,000 chars per chapter) so the AI sees the whole paper.
-
-**F. Auto-jump on completion**
-When the last non-abstract chapter is finished, surface a small toast: `כל הפרקים הושלמו — ניתן לייצר תקציר`.
-
-### 2. Backend — `supabase/functions/legal-qa/index.ts`
-
-**A. Extend `write_chapter` prompt** (lines 302–330)
-Read `body.isAbstract` (boolean). When true, return a dedicated abstract prompt instead of the generic chapter prompt:
-
-```
-אתה חוקר אקדמי בכיר במשפטים. עליך לכתוב **תקציר** לעבודה סמינריונית שכבר נכתבה במלואה.
-
-שאלת המחקר: "${rq}"
-
-=== כל פרקי העבודה ===
-{prevChapters joined, with titles}
-
-הנחיות מחייבות:
-- אורך: עד 250 מילים בלבד (קשיח). אל תחרוג.
-- טון: עברית אקדמית פורמלית ברגיסטר גבוה.
-- מבנה (פסקה אחת רציפה או 2-4 פסקאות קצרות):
-  1. שאלת המחקר וחשיבותה.
-  2. המסגרת התיאורטית/המתודולוגיה.
-  3. הטיעונים המרכזיים שהוצגו בפרקים.
-  4. המסקנה והתרומה של המחקר.
-- אל תוסיף הערות שוליים, רשימת מקורות, כותרות משנה או רשימות ממוספרות.
-- אל תפתח במילים "תקציר זה..." — פתח ישר בתוכן.
-- אם חרגת מ-250 מילים — קצר את עצמך.
-```
-
-**B. Skip retrieval for abstract**
-The abstract is purely a synthesis of existing chapters — no need for vector search or Perplexity. In the main handler (around lines 554–620 where the academic sub-mode shortcut runs), extend the shortcut list to include `"write_chapter"` **only when `body.isAbstract === true`**, so the abstract is generated through the lightweight path (LLM only, no retrieval). This:
-- Speeds up generation.
-- Avoids polluting the abstract with new external citations (rule per memory: abstract = synthesis, no new citations).
-
-**C. Post-process word-count guard**
-After the LLM responds, count Hebrew words in the answer. If > 250, log a warning (do not fail). Optionally trim trailing sentence overflow. Keep this defensive — the prompt is the primary enforcement.
-
-### 3. Memory update
-Add `mem://features/academic-writing-mode/abstract-locking` describing:
-- Abstract is locked until all other chapters are complete.
-- Abstract uses a dedicated 250-word synthesis prompt.
-- Abstract skips retrieval (synthesis-only).
-Add a one-line reference in `mem://index.md`.
+### 5. Out of scope
+- Persisting wizard state to the database (would let users resume from another device — separate, larger feature).
+- Showing per-chapter history items (each `qa_logs` row currently doesn't say *which* chapter it belongs to; would require a follow-up to record chapter index in the log).
+- Editing or rewriting old chapters from history.
 
 ## Files to change
-- `src/components/LegalQAChat.tsx` — chip lock UI + writing card lock + isAbstract flag + full-content payload.
-- `supabase/functions/legal-qa/index.ts` — `getAcademicSubModePrompt` abstract branch + extend academic shortcut.
-- `mem://features/academic-writing-mode/abstract-locking` (new) + `mem://index.md` (append reference line).
-
-## Out of scope
-- Changing the default outline (תקציר stays the first chapter).
-- Editable abstract length cap (250 is fixed per spec).
-- Retroactive abstracts for old QA sessions.
+- `src/components/QAHistorySidebar.tsx` — minor visual hint for academic items.
+- `src/pages/Index.tsx` — branch in `onLoadResult` to dispatch `academicResumeSignal` for academic logs.
+- `src/components/LegalQAChat.tsx` — add `academicResumeSignal` prop + resume effect that restores wizard state from localStorage and lands on last progress.
 
 ## Expected outcome
-- Abstract chip is visually locked (🔒) with a clear Hebrew tooltip until every other chapter has content.
-- Once unlocked, chip swaps to a Magic Wand (🪄) and the action button reads "ייצר תקציר".
-- Generated abstract is ≤250 words, formal Hebrew, covers all 4 required elements, contains no footnotes.
+Clicking any academic_writing entry in the history sidebar takes the user straight back into the Seminar Wizard at the chapter and step they last reached — with the outline, written chapters, and proposed questions all intact. If no local session exists, a clear toast explains why and the chapter text is still shown as fallback.
 
