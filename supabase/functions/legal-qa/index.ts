@@ -704,20 +704,83 @@ serve(async (req) => {
         // Fix #2: Parallel caselaw-only vector query so precedent competes against itself
         // (not against denser academic prose). Use the original (non-expanded) question
         // since expansion often drifts toward academic phrasing.
+        // Layer 3: lowered threshold 0.40→0.25 and expanded top 8→16 (caselaw embeds lower
+        // than academic prose; rerank still gates downstream).
         const caselawVectorPromise = (async () => {
           const embedding = await getQueryEmbedding(question);
           if (!embedding) return { data: null, error: null };
           return await adminClient.rpc("match_legal_chunks_filtered", {
             query_embedding: JSON.stringify(embedding),
             filter_source_type: "caselaw",
-            match_threshold: 0.40,
-            match_count: 8,
+            match_threshold: 0.25,
+            match_count: 16,
           });
         })();
 
-        const [keywordResult, caselawResult, ...vectorResults] = await Promise.all([
+        // Layer 2: Landmark-case direct injection. When a question matches a topic trigger,
+        // unconditionally fetch known landmark cases by case_number and inject them into the
+        // candidate pool. They still go through rerank, so off-topic landmarks get filtered.
+        const LANDMARK_CASES: Array<{ triggers: RegExp[]; case_numbers: string[] }> = [
+          {
+            triggers: [/יועמ["״']?ש/, /יועצת\s+המשפטית/, /יועץ\s+המשפטי/],
+            case_numbers: ["18225-06-25", "4267/93"],
+          },
+        ];
+        const questionForLandmark = `${question} ${expandedQuery || ""}`;
+        const landmarkCaseNumbers = Array.from(new Set(
+          LANDMARK_CASES
+            .filter(lc => lc.triggers.some(t => t.test(questionForLandmark)))
+            .flatMap(lc => lc.case_numbers)
+        ));
+        const landmarkPromise = (async (): Promise<LocalMatch[]> => {
+          if (landmarkCaseNumbers.length === 0) return [];
+          const { data: docs, error: docsErr } = await adminClient
+            .from("legal_documents")
+            .select("id, title, citation, source_type, source_url, metadata, case_number")
+            .in("case_number", landmarkCaseNumbers);
+          if (docsErr || !docs || docs.length === 0) {
+            if (docsErr) console.error(`Landmark fetch error: ${docsErr.message}`);
+            return [];
+          }
+          const docIds = docs.map(d => d.id);
+          const { data: chunks, error: chunksErr } = await adminClient
+            .from("legal_document_chunks")
+            .select("id, document_id, content, chunk_index")
+            .in("document_id", docIds)
+            .order("chunk_index", { ascending: true });
+          if (chunksErr || !chunks) {
+            console.error(`Landmark chunks error: ${chunksErr?.message}`);
+            return [];
+          }
+          // Take first 2 chunks per doc to match RPC behavior
+          const perDocCount = new Map<string, number>();
+          const injected: LocalMatch[] = [];
+          for (const c of chunks) {
+            const n = perDocCount.get(c.document_id) || 0;
+            if (n >= 2) continue;
+            perDocCount.set(c.document_id, n + 1);
+            const doc = docs.find(d => d.id === c.document_id);
+            if (!doc) continue;
+            injected.push({
+              chunk_id: c.id,
+              document_id: c.document_id,
+              chunk_content: c.content,
+              document_title: doc.title,
+              document_citation: doc.citation,
+              source_type: doc.source_type,
+              source_url: doc.source_url,
+              metadata: (doc.metadata || {}) as Record<string, unknown>,
+              similarity: 0.50, // moderate floor so it survives merge but doesn't dominate
+            });
+          }
+          console.log(`Landmark injection: triggers=[${landmarkCaseNumbers.join(", ")}] matched ${docs.length} docs / ${injected.length} chunks`);
+          return injected;
+        })();
+
+        const [keywordResult, caselawResult, landmarkInjected, ...vectorResults] = await Promise.all([
           keywordPromise,
           caselawVectorPromise,
+          landmarkPromise,
           ...vectorPromises,
         ]);
 
@@ -739,10 +802,17 @@ serve(async (req) => {
         let vectorMatches: LocalMatch[] = vectorResults.flatMap(r =>
           (!r.error && r.data) ? r.data as LocalMatch[] : []
         );
-        // Merge in caselaw-filtered results (Fix #2): dedupe by chunk_id, keeping higher similarity
+        // Merge in caselaw-filtered results (Fix #2) AND landmark-injected docs (Layer 2):
+        // dedupe by chunk_id, keeping higher similarity
         const vecMap = new Map<string, LocalMatch>();
         for (const m of vectorMatches) vecMap.set(m.chunk_id, m);
         for (const m of caselawMatches) {
+          const existing = vecMap.get(m.chunk_id);
+          if (!existing || (m.similarity || 0) > (existing.similarity || 0)) {
+            vecMap.set(m.chunk_id, m);
+          }
+        }
+        for (const m of landmarkInjected) {
           const existing = vecMap.get(m.chunk_id);
           if (!existing || (m.similarity || 0) > (existing.similarity || 0)) {
             vecMap.set(m.chunk_id, m);
@@ -819,11 +889,11 @@ serve(async (req) => {
         }
 
         // Fix #1: Reserve a quota for caselaw so precedent isn't crowded out by
-        // denser academic prose. Take top 4 caselaw + top 8 non-caselaw, then re-sort.
+        // denser academic prose. Layer 3: top 6 caselaw + top 6 non-caselaw (was 4/8).
         const sortedAll = Array.from(mergedMap.values())
           .sort((a, b) => b.similarity - a.similarity);
-        const caselawTop = sortedAll.filter(m => m.source_type === "caselaw").slice(0, 4);
-        const otherTop = sortedAll.filter(m => m.source_type !== "caselaw").slice(0, 8);
+        const caselawTop = sortedAll.filter(m => m.source_type === "caselaw").slice(0, 6);
+        const otherTop = sortedAll.filter(m => m.source_type !== "caselaw").slice(0, 6);
         const reservedIds = new Set([...caselawTop, ...otherTop].map(m => m.chunk_id));
         const merged = [...caselawTop, ...otherTop]
           .sort((a, b) => b.similarity - a.similarity)
@@ -832,6 +902,26 @@ serve(async (req) => {
         console.log(`Caselaw quota: ${caselawKept} caselaw / ${merged.length - caselawKept} other (total ${merged.length})`);
         // Suppress unused warning
         void reservedIds;
+
+        // Layer 4 diagnostic: report rank/similarity of any landmark case in candidate pool
+        if (landmarkCaseNumbers.length > 0) {
+          const landmarkChunkIds = new Set(landmarkInjected.map(m => m.chunk_id));
+          const landmarkInPool = sortedAll
+            .map((m, idx) => ({ m, rank: idx + 1 }))
+            .filter(x =>
+              landmarkChunkIds.has(x.m.chunk_id) ||
+              landmarkCaseNumbers.some(cn => (x.m.metadata as Record<string, unknown>)?.case_number === cn)
+            );
+          if (landmarkInPool.length === 0) {
+            console.log(`Landmark diagnostic: NONE of [${landmarkCaseNumbers.join(", ")}] reached the candidate pool`);
+          } else {
+            for (const { m, rank } of landmarkInPool) {
+              const cn = (m.metadata as Record<string, unknown>)?.case_number || "?";
+              const inMerged = merged.some(x => x.chunk_id === m.chunk_id) ? "KEPT" : "DROPPED";
+              console.log(`Landmark diagnostic: case_number=${cn} rank=${rank}/${sortedAll.length} sim=${(m.similarity || 0).toFixed(3)} → ${inMerged}`);
+            }
+          }
+        }
 
         if (merged.length > 0) {
           console.log(`Hybrid search: ${merged.length} unique chunks after merge`);
