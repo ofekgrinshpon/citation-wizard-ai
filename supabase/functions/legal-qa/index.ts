@@ -1840,6 +1840,113 @@ ${combinedContext}`;
       }
     }
 
+    // Content-aware "לעיל ה"ש" validator: ensure target footnote actually contains the same source.
+    // Extracts identity keys (author surname, case number, law name) from each footnote
+    // and rewrites mismatched back-refs to point at the earliest matching full-citation.
+    const SUPRA_FULL = new RegExp(SUPRA_P + '(\\d{1,2})');
+    const normalizeKey = (s: string) =>
+      s
+        .replace(/["'\u05F4\u201C\u201D\u2018\u2019׳]/g, "")
+        .replace(/[.,;:!?\-–—()\[\]]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLowerCase();
+
+    // Extract identity keys from a citation. Returns multiple candidate keys (case#, law name, author).
+    const extractIdentityKeys = (citation: string): string[] => {
+      const keys: string[] = [];
+      // Skip if this citation is itself just a back-ref (no full content)
+      if (SUPRA_FULL.test(citation) && citation.length < 80) {
+        // It's likely a short-form — still try to extract author/law for matching
+      }
+
+      // 1. Case number patterns (e.g., 35327-08-20, 10007/09)
+      const caseNumMatches = citation.match(/\d{3,6}[-\/]\d{1,4}([-\/]\d{1,4})?/g);
+      if (caseNumMatches) {
+        for (const cn of caseNumMatches) keys.push(normalizeKey(cn));
+      }
+
+      // 2. Law/regulation name (text starting with חוק/פקודת/תקנות/חוק-יסוד up to first comma)
+      const lawMatch = citation.match(/^\s*((?:חוק[- ]יסוד|חוק|פקודת|פקודה|תקנות|צו|כללי)\s+[\u0590-\u05FF"׳״\s'\-]+?)(?:,|$)/);
+      if (lawMatch) keys.push(normalizeKey(lawMatch[1]));
+
+      // 3. Author surname: first 1-2 Hebrew words appearing before an opening quote (article/book title)
+      // Strip leading non-Hebrew/whitespace
+      const authorMatch = citation.match(/^\s*([\u0590-\u05FF]+(?:\s+[\u0590-\u05FF]+)?)\s+["\u201C\u05F4]/);
+      if (authorMatch) {
+        const author = authorMatch[1];
+        // Avoid matching law-prefix words as authors
+        if (!/^(חוק|פקודת|פקודה|תקנות|צו|כללי|בג"ץ|בג״ץ)/.test(author)) {
+          keys.push(normalizeKey(author));
+        }
+      }
+
+      return Array.from(new Set(keys.filter((k) => k.length >= 3)));
+    };
+
+    // Extract back-ref key from a short-form footnote (text before ", לעיל ה"ש X")
+    const extractBackRefKey = (citation: string): string[] => {
+      const supraIdx = citation.search(new RegExp(SUPRA_P));
+      if (supraIdx < 0) return [];
+      // Take text before the supra phrase, strip trailing comma/pinpoint clauses
+      let prefix = citation.slice(0, supraIdx).trim().replace(/[,،]\s*$/, "").trim();
+      // Strip trailing pinpoint clause (last comma-separated segment if it looks like a pinpoint)
+      const parts = prefix.split(/,\s*/);
+      if (parts.length > 1) {
+        const last = parts[parts.length - 1];
+        if (/^(ס['׳]|סעיף|עמ['׳]|עמוד|פס['׳]|פסקה|פיסקה|תק['׳]|תקנה)\b/.test(last) || /^\d/.test(last)) {
+          prefix = parts.slice(0, -1).join(", ").trim();
+        }
+      }
+      return extractIdentityKeys(prefix + ' "x"'); // add fake quote so author regex hits
+    };
+
+    // Pre-compute identity keys for every footnote (only for those that look like full citations)
+    const fnKeys = new Map<number, string[]>();
+    for (const fn of footnotes) {
+      // Skip footnotes that are themselves back-refs (no full content to match against)
+      const isShortForm = SUPRA_FULL.test(fn.citation) || /^שם\b/.test(fn.citation.trim());
+      if (isShortForm) {
+        fnKeys.set(fn.number, []);
+      } else {
+        fnKeys.set(fn.number, extractIdentityKeys(fn.citation));
+      }
+    }
+
+    // Validate and rewrite back-refs
+    for (const fn of footnotes) {
+      const refMatch = fn.citation.match(new RegExp(SUPRA_P + '(\\d{1,2})'));
+      if (!refMatch) continue;
+      const aiTargetNum = parseInt(refMatch[1], 10);
+      const backRefKeys = extractBackRefKey(fn.citation);
+      if (backRefKeys.length === 0) continue;
+
+      // Find earliest-numbered footnote (before current) whose keys overlap
+      let bestMatch: number | null = null;
+      const sortedFns = [...footnotes].sort((a, b) => a.number - b.number);
+      for (const candidate of sortedFns) {
+        if (candidate.number >= fn.number) break;
+        const candKeys = fnKeys.get(candidate.number) || [];
+        if (candKeys.some((ck) => backRefKeys.some((bk) => ck === bk || ck.includes(bk) || bk.includes(ck)))) {
+          bestMatch = candidate.number;
+          break;
+        }
+      }
+
+      if (bestMatch !== null && bestMatch !== aiTargetNum) {
+        const before = fn.citation;
+        fn.citation = fn.citation.replace(
+          new RegExp(SUPRA_P + '\\d{1,2}'),
+          `לעיל ה"ש ${bestMatch}`
+        );
+        console.log(
+          `Corrected back-ref in FN #${fn.number}: "${backRefKeys.join("|").slice(0, 60)}" → ה"ש ${aiTargetNum} became ה"ש ${bestMatch}`
+        );
+        console.log(`  before: ${before.slice(0, 120)}`);
+        console.log(`  after:  ${fn.citation.slice(0, 120)}`);
+      }
+    }
+
     answer = fixHebrewYearPrefix(answer);
     for (const fn of footnotes) {
       fn.citation = fixHebrewYearPrefix(fn.citation);
