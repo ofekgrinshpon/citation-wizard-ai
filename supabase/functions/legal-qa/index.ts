@@ -105,6 +105,7 @@ interface SourceCard {
   url?: string;
   provenance: "local" | "perplexity" | "document";
   excerpt: string;
+  case_number?: string;
 }
 
 // ─── Task mode → system prompt instructions ──────────────────────────
@@ -328,8 +329,15 @@ ${sourceList}
     // Extract JSON array from response
     const arrayMatch = text.match(/\[[\d\s,]+\]/);
     if (!arrayMatch) {
-      console.log("Re-ranking: could not parse scores, using all sources");
-      return matches.map(m => ({ ...m, relevanceScore: undefined }));
+      console.warn(`Re-ranking: COULD NOT PARSE SCORES — falling back to similarity threshold. Raw response: ${text.slice(0, 200)}`);
+      // Fallback: keep only chunks with raw similarity >= 0.5 (not "use all"),
+      // and always keep at least the single highest-similarity chunk.
+      const sorted = [...matches].sort((a, b) => (b.similarity || 0) - (a.similarity || 0));
+      const top = sorted[0];
+      const filtered = matches.filter(m => (m.similarity || 0) >= 0.5);
+      const result = filtered.length > 0 ? filtered : (top ? [top] : []);
+      console.log(`Re-ranking fallback kept ${result.length}/${matches.length} chunks by similarity`);
+      return result.map(m => ({ ...m, relevanceScore: undefined }));
     }
 
     const scores: number[] = JSON.parse(arrayMatch[0]);
@@ -787,6 +795,7 @@ serve(async (req) => {
           url: m.source_url || undefined,
           provenance: "local",
           excerpt: m.chunk_content.slice(0, 400),
+          case_number: m.source_type === "caselaw" ? ((meta.case_number as string) || undefined) : undefined,
         });
       }
     }
@@ -1132,12 +1141,13 @@ ${combinedContext}`;
 
       // ===== Tier 1: strict identifier matches =====
 
-      // 1a. Exact case number match (e.g., 1234/22)
+      // 1a. Exact case number match (e.g., 1234/22) — check both citation text and structured field
       const fnCaseNums = Array.from(fnText.matchAll(/\b(\d{2,5}\/\d{2,4})\b/g)).map(m => m[1]);
       if (fnCaseNums.length > 0) {
         for (const card of cards) {
           for (const cn of fnCaseNums) {
             if (card.citation.includes(cn)) return card;
+            if (card.case_number && card.case_number.includes(cn)) return card;
           }
         }
       }
@@ -1171,16 +1181,19 @@ ${combinedContext}`;
         if (titleNorm.length >= 15 && fnNorm.includes(titleNorm)) return card;
       }
 
-      // ===== Tier 2: ≥3 significant-word overlap =====
-      // Significant = length ≥ 4, not a stopword
+      // ===== Tier 2: significant-word overlap =====
+      // Significant = length ≥ 4, not a stopword.
+      // Local DB cards (formal citations) require ≥3 overlap.
+      // Perplexity cards (short web snippets) only require ≥2 overlap.
       for (const card of cards) {
         const cardWords = normalize(card.citation)
           .split(/\s+/)
           .filter(w => w.length >= 4 && !STOPWORDS.has(w));
-        if (cardWords.length < 3) continue;
+        if (cardWords.length < 2) continue;
         const uniqueCardWords = Array.from(new Set(cardWords));
         const matchCount = uniqueCardWords.filter(w => fnNorm.includes(w)).length;
-        if (matchCount >= 3) return card;
+        const required = card.provenance === "perplexity" ? 2 : 3;
+        if (matchCount >= required) return card;
       }
 
       return null;
@@ -1228,7 +1241,17 @@ ${combinedContext}`;
       for (const aiFn of aiFootnoteLines) {
         const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards);
         if (!matchedCard) {
-          console.log(`Stripped unmatched footnote #${aiFn.num}: ${aiFn.text.slice(0, 80)}...`);
+          // Tier 3 fallback: keep the footnote text but omit the URL.
+          // The bug we're guarding against is wrong URLs — a citation with no link is fine.
+          console.log(`Kept footnote #${aiFn.num} without URL (no card match): ${aiFn.text.slice(0, 80)}...`);
+          footnotes.push({
+            number: fnNum,
+            citation: aiFn.text,
+            source_type: "unverified",
+            source: "unverified",
+          });
+          oldIdToNewNumber.set(aiFn.num, fnNum);
+          fnNum++;
           continue;
         }
         footnotes.push({
@@ -1240,12 +1263,6 @@ ${combinedContext}`;
         });
         oldIdToNewNumber.set(aiFn.num, fnNum);
         fnNum++;
-      }
-
-      // NOTE: Removed the "keep all as unverified" safety fallback.
-      // Better to show fewer accurate footnotes than many with wrong URLs.
-      if (footnotes.length === 0 && aiFootnoteLines.length > 0) {
-        console.log(`All ${aiFootnoteLines.length} AI footnotes failed strict matching — dropping all to avoid wrong-URL leaks`);
       }
     } else {
       // Fallback: use source card citations (old behavior)
