@@ -224,6 +224,36 @@ export default function BatchEmbeddingPanel() {
         כל הפעלה מעבדת עד 500 קטעים. התהליך רץ בלופ אוטומטי עד שכל הקטעים מקבלים embedding.
         ניתן לעצור ולהמשיך בכל זמן.
       </p>
+
+      <div className="border-t border-border pt-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-foreground font-bold text-sm">📚 שחזור כותרות מסמכי הכנסת</h3>
+          {recovering ? (
+            <Button variant="destructive" size="sm" onClick={stopRecovery}>
+              ⏹ עצור
+            </Button>
+          ) : (
+            <Button size="sm" onClick={runRecovery}>
+              ▶️ הפעל שחזור כותרות
+            </Button>
+          )}
+        </div>
+
+        {(recovering || recoveredTotal > 0 || flaggedTotal > 0) && (
+          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+            <span>✅ שוחזרו: <strong className="text-foreground">{recoveredTotal.toLocaleString()}</strong></span>
+            <span>🚫 סומנו פגומים: <strong className="text-foreground">{flaggedTotal.toLocaleString()}</strong></span>
+            {recoveryRemaining !== null && (
+              <span>⏳ נותרו: <strong className="text-foreground">{recoveryRemaining.toLocaleString()}</strong></span>
+            )}
+          </div>
+        )}
+
+        <p className="text-xs text-muted-foreground">
+          כורה את הכותרת האמיתית מתוכן המסמך עבור רשומות עם כותרת גנרית "פרטי מסמך".
+          50 מסמכים לאצווה. מסמכים שלא ניתן לחלץ מהם כותרת מסומנים כפגומים ויוסתרו מהחיפוש.
+        </p>
+      </div>
     </div>
   );
 }
