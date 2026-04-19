@@ -376,21 +376,18 @@ async function rerankLocalMatches(
 
   const docs = Array.from(docMap.values());
   const sourceList = docs.map((d, i) => {
-    const typeLabel = d.match.source_type === "caselaw" ? "פסיקה" :
-      d.match.source_type === "journal_article" ? "מאמר" :
-      d.match.source_type === "knesset_research" ? "מחקר כנסת" : d.match.source_type;
-    return `[${i}] ${typeLabel}: ${d.match.document_title}\nתוכן: ${d.chunks.join(" ").slice(0, 400)}`;
+    return `[${i}] ${d.match.document_title}\nתוכן: ${d.chunks.join(" ").slice(0, 400)}`;
   }).join("\n\n");
 
-  const rerankPrompt = `אתה מדרג רלוונטיות של מקורות משפטיים לשאלה נתונה.
+  const rerankPrompt = `אתה מדרג רלוונטיות תוכנית של מקורות משפטיים לשאלה.
 
 שאלה: ${question}
 
 מקורות:
 ${sourceList}
 
-דרג כל מקור מ-0 עד 10 לפי רלוונטיות מהותית לשאלה (לא רק התאמת מילות מפתח).
-0 = לא קשור כלל, 10 = רלוונטי מאוד לסוגיה המשפטית.
+דרג כל מקור 0–10 לפי רלוונטיות תוכנית בלבד לשאלה. אל תתחשב בסוג המקור (פסיקה / מאמר / מחקר כנסת / רגולציה) — רק במידת העזרה שיתן בתשובה משפטית מקצועית ומבוססת.
+0 = לא קשור כלל, 10 = מרכזי לסוגיה.
 
 החזר רק מערך JSON של מספרים, ציון אחד לכל מקור לפי הסדר.
 דוגמה: [8, 2, 9, 1, 6]`;
