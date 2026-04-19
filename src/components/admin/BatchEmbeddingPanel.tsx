@@ -112,6 +112,80 @@ export default function BatchEmbeddingPanel() {
     abortRef.current = true;
   };
 
+  const runRecovery = useCallback(async () => {
+    recoveryAbortRef.current = false;
+    setRecovering(true);
+    setRecoveredTotal(0);
+    setFlaggedTotal(0);
+    setRecoveryRemaining(null);
+
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/recover-knesset-titles`;
+    let consecutiveErrors = 0;
+    let totalProcessed = 0;
+
+    while (!recoveryAbortRef.current) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          toast.error("הסשן פג תוקף — יש להתחבר מחדש");
+          break;
+        }
+
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ batch_size: 50 }),
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          console.error("Recovery error:", res.status, errText);
+          consecutiveErrors++;
+          if (consecutiveErrors >= 3) {
+            toast.error("3 שגיאות רצופות — שחזור הכותרות נעצר");
+            break;
+          }
+          await new Promise((r) => setTimeout(r, 2000));
+          continue;
+        }
+
+        consecutiveErrors = 0;
+        const data = await res.json();
+        totalProcessed += data.processed || 0;
+        setRecoveredTotal((p) => p + (data.recovered || 0));
+        setFlaggedTotal((p) => p + (data.flagged_broken || 0));
+        setRecoveryRemaining(data.remaining ?? 0);
+
+        if (!data.processed || data.processed === 0) {
+          toast.success("שחזור הכותרות הושלם 🎉");
+          break;
+        }
+
+        await new Promise((r) => setTimeout(r, 300));
+      } catch (err) {
+        console.error("Recovery fetch error:", err);
+        consecutiveErrors++;
+        if (consecutiveErrors >= 3) {
+          toast.error("שגיאת רשת — שחזור הכותרות נעצר");
+          break;
+        }
+        await new Promise((r) => setTimeout(r, 2000));
+      }
+    }
+
+    if (recoveryAbortRef.current) {
+      toast.info("שחזור הכותרות נעצר ידנית");
+    }
+    setRecovering(false);
+  }, []);
+
+  const stopRecovery = () => {
+    recoveryAbortRef.current = true;
+  };
+
   return (
     <div className="bg-card border border-border rounded-xl p-5 shadow-sm space-y-4">
       <div className="flex items-center justify-between">
