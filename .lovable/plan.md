@@ -1,76 +1,103 @@
 
-## Problem
-The recovery loop is likely not just “doing badly” — it is probably **stuck reprocessing already-broken placeholder docs**.
 
-Why:
-- `recover-knesset-titles` currently fetches rows with only `source_type='knesset_research'` and `title='פרטי מסמך'`.
-- When a doc is flagged broken, its `title` stays `פרטי מסמך`.
-- So those same docs remain eligible forever.
-- The function’s `remaining` count uses the same loose filter, so the admin loop keeps thinking there is more work.
-- Result: very low success count, inflated broken count, and a process that may never naturally finish.
+## Goal
+Lock the **Abstract** (תקציר) chapter in the Academic Writing wizard until **all other chapters** are written. When unlocked, generation must use the full context of every previously written chapter and produce a strict ≤250-word formal Hebrew academic abstract covering research question, methodology, main arguments, and conclusion.
+
+## Current behavior (verified)
+- Default chapter list (`approveOutline`, line 665): `["תקציר", "מבוא", "המסגרת הנורמטיבית", "סקירה פסיקתית ודוקטרינרית", "ניתוח ביקורתי", "סיכום ומסקנות"]` — תקציר is **already first** in the list.
+- The wizard renders chapters as clickable chips (lines 1187–1207) and lets the user write any chapter via `viewChapter` / `writeCurrentChapter`. There is no special handling for "abstract".
+- Chapter generation goes through `handleAcademicSubmit("write_chapter")` → edge function `legal-qa` → `getAcademicSubModePrompt("write_chapter", body)` (lines 302–330). All chapters share the same prompt.
+- `previousChapters` is already sent to the edge function with **2,000-char slices per chapter** (line 311). For the abstract we'll need to send **fuller content**.
 
 ## Plan
 
-### 1) Fix the recovery queue definition
-Update `supabase/functions/recover-knesset-titles/index.ts` so “pending recovery” means:
-- `source_type='knesset_research'`
-- `title='פרטי מסמך'`
-- `metadata.broken_title != true`
-- `metadata.recovered_title != true`
+### 1. Frontend — `src/components/LegalQAChat.tsx`
 
-Also make the batch deterministic with an `order(...)` so it walks forward consistently.
+**A. Identify the abstract chapter**
+Add a small helper:
+- `isAbstractChapter(title)` → true when title is "תקציר" / "Abstract" / starts with תקציר.
+- `abstractIdx` = index of the abstract chapter (memoized).
+- `nonAbstractChapters` = all chapters except the abstract.
+- `abstractUnlocked` = every non-abstract chapter has `content`.
 
-### 2) Fix the completion logic
-Use the **same pending filter** for the `remaining` count.
-That way:
-- already-broken docs are excluded from future attempts
-- the loop can actually reach `remaining = 0`
-- the admin panel reflects real progress instead of retry noise
+**B. Lock the chapter chip** (lines 1187–1207)
+For the abstract chip when `!abstractUnlocked`:
+- Render a `Lock` icon (lucide-react) instead of the check.
+- Apply muted/disabled styling and `cursor-not-allowed`.
+- Wrap in a `Tooltip` showing: `ניתן לייצר תקציר רק לאחר השלמת כל פרקי העבודה, כדי להבטיח שהוא משקף את המחקר במלואו`.
+- `onClick` becomes a no-op (or a `toast.info` with the same message).
 
-### 3) Make broken docs one-time terminal results
-When extraction fails:
-- keep `broken_title=true`
-- keep the placeholder title
-- do not try that doc again automatically
+**C. Lock the writing card** (lines 1210–1230)
+When the user is on the abstract chapter and it's locked:
+- Replace the "כתוב פרק זה" button with a disabled button labeled "ייצר תקציר" + `Lock` icon and the tooltip above.
+- Show a small inline notice: `יש להשלים תחילה {N}/{M} פרקים נותרים` listing missing chapter titles.
 
-Optionally store a small failure reason/method in metadata so we can later distinguish:
-- scrambled OCR
-- no valid title candidate
-- invalid date/boilerplate line
+**D. Unlocked state — visual feedback**
+When `abstractUnlocked`:
+- The abstract chip shows a `Wand2` (Magic Wand) icon if not yet written, or `Check` if written (already handled).
+- The writing-card button becomes "ייצר תקציר" with the `Wand2` icon, primary variant.
 
-### 4) Improve admin progress reporting
-Update `src/components/admin/BatchEmbeddingPanel.tsx` so the recovery area shows:
-- recovered this run
-- newly flagged broken this run
-- pending remaining
+**E. Send a flag for abstract generation**
+In `writeCurrentChapter`, when on the abstract:
+- Pass `{ isAbstract: true }` via `extraBody` to `handleAcademicSubmit("write_chapter", { isAbstract: true })`.
+- Inside `handleAcademicSubmit`, when `isAbstract` is true, override the `previousChapters` slice cap (currently 2,000 chars) and send full content per chapter (or a higher cap, e.g., 6,000 chars per chapter) so the AI sees the whole paper.
 
-And stop the loop based on the corrected pending count.
-Add a clearer note that previous counters may have included repeated attempts before this fix.
+**F. Auto-jump on completion**
+When the last non-abstract chapter is finished, surface a small toast: `כל הפרקים הושלמו — ניתן לייצר תקציר`.
 
-### 5) Validate output quality, not just throughput
-After the fix, QA the current recovered docs and future recoveries:
-- sample the 8 already recovered docs
-- confirm citations follow Rule 23.11 format:
-  `AUTHOR TITLE (הכנסת, מרכז מחקר ומידע YEAR).`
-- if any of those 8 are malformed, reset only those rows and let them be retried under the fixed queue logic
+### 2. Backend — `supabase/functions/legal-qa/index.ts`
 
-### 6) Re-run recovery cleanly
-Once patched:
-- re-run from the admin panel
-- expect the process to end normally
-- expect broken count to represent unique docs, not repeated retries
-- recovered docs should remain citeable; broken docs stay filtered out of Legal QA
+**A. Extend `write_chapter` prompt** (lines 302–330)
+Read `body.isAbstract` (boolean). When true, return a dedicated abstract prompt instead of the generic chapter prompt:
 
-## Technical notes
-- No schema change is needed.
-- Main files:
-  - `supabase/functions/recover-knesset-titles/index.ts`
-  - `src/components/admin/BatchEmbeddingPanel.tsx`
-- `legal-qa` filtering for `broken_title` already exists and should remain.
+```
+אתה חוקר אקדמי בכיר במשפטים. עליך לכתוב **תקציר** לעבודה סמינריונית שכבר נכתבה במלואה.
 
-## Expected result
-- The recovery job stops looping over the same broken docs.
-- “Remaining” becomes meaningful.
-- The process finishes.
-- Recovered Knesset docs can still be used with proper Rule 23.11 citations.
-- Broken docs remain excluded instead of wasting more recovery attempts.
+שאלת המחקר: "${rq}"
+
+=== כל פרקי העבודה ===
+{prevChapters joined, with titles}
+
+הנחיות מחייבות:
+- אורך: עד 250 מילים בלבד (קשיח). אל תחרוג.
+- טון: עברית אקדמית פורמלית ברגיסטר גבוה.
+- מבנה (פסקה אחת רציפה או 2-4 פסקאות קצרות):
+  1. שאלת המחקר וחשיבותה.
+  2. המסגרת התיאורטית/המתודולוגיה.
+  3. הטיעונים המרכזיים שהוצגו בפרקים.
+  4. המסקנה והתרומה של המחקר.
+- אל תוסיף הערות שוליים, רשימת מקורות, כותרות משנה או רשימות ממוספרות.
+- אל תפתח במילים "תקציר זה..." — פתח ישר בתוכן.
+- אם חרגת מ-250 מילים — קצר את עצמך.
+```
+
+**B. Skip retrieval for abstract**
+The abstract is purely a synthesis of existing chapters — no need for vector search or Perplexity. In the main handler (around lines 554–620 where the academic sub-mode shortcut runs), extend the shortcut list to include `"write_chapter"` **only when `body.isAbstract === true`**, so the abstract is generated through the lightweight path (LLM only, no retrieval). This:
+- Speeds up generation.
+- Avoids polluting the abstract with new external citations (rule per memory: abstract = synthesis, no new citations).
+
+**C. Post-process word-count guard**
+After the LLM responds, count Hebrew words in the answer. If > 250, log a warning (do not fail). Optionally trim trailing sentence overflow. Keep this defensive — the prompt is the primary enforcement.
+
+### 3. Memory update
+Add `mem://features/academic-writing-mode/abstract-locking` describing:
+- Abstract is locked until all other chapters are complete.
+- Abstract uses a dedicated 250-word synthesis prompt.
+- Abstract skips retrieval (synthesis-only).
+Add a one-line reference in `mem://index.md`.
+
+## Files to change
+- `src/components/LegalQAChat.tsx` — chip lock UI + writing card lock + isAbstract flag + full-content payload.
+- `supabase/functions/legal-qa/index.ts` — `getAcademicSubModePrompt` abstract branch + extend academic shortcut.
+- `mem://features/academic-writing-mode/abstract-locking` (new) + `mem://index.md` (append reference line).
+
+## Out of scope
+- Changing the default outline (תקציר stays the first chapter).
+- Editable abstract length cap (250 is fixed per spec).
+- Retroactive abstracts for old QA sessions.
+
+## Expected outcome
+- Abstract chip is visually locked (🔒) with a clear Hebrew tooltip until every other chapter has content.
+- Once unlocked, chip swaps to a Magic Wand (🪄) and the action button reads "ייצר תקציר".
+- Generated abstract is ≤250 words, formal Hebrew, covers all 4 required elements, contains no footnotes.
+
