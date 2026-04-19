@@ -1,44 +1,79 @@
 
 
-## Issue
-A footnote about firing the Attorney General linked to an unrelated Knesset debate (about digital broadcasting fees). The matcher accepted a Perplexity card whose URL pointed to a completely different topic.
+## Plan — Improve local recall in `legal-qa`
 
-## Root cause
-From the logs of the user's query: 8 of 9 cards were Perplexity. The current Tier 2 matcher accepts a Perplexity card on **2 significant-word overlap** (relaxed in the previous fix). For Knesset/government sites, generic words like "כנסת", "דיון", "הצעת", "חוק" appear in almost every page title — so a footnote about "פיטורי היועצת המשפטית לממשלה" can match a "דיון בכנסת על הצעת חוק..." card on words like {"כנסת", "דיון"} or {"הצעת", "חוק"}.
+Single file change: `supabase/functions/legal-qa/index.ts`
 
-The previous relaxation (3→2 words for Perplexity) traded URL accuracy for citation completeness. We now need to put accuracy back without dropping legitimate citations.
+### 1. Semantic query expansion (new pre-step)
+Before retrieval, if the user question is **< 5 words OR < 25 chars**, call Lovable AI Gateway (`google/gemini-2.5-flash-lite`, fast/cheap) with a tight prompt:
 
-## Fix — `supabase/functions/legal-qa/index.ts`
+> "הרחב את השאלה המשפטית הבאה למשפט תיאורי פורמלי אחד (עד 25 מילים), הכולל מונחים משפטיים מלאים במקום קיצורים. החזר רק את המשפט המורחב."
 
-### 1. Expand the stopword list with high-frequency legal/Knesset boilerplate
-Add to the existing stopword filter (used to count "significant" words):
-`כנסת, דיון, ישיבה, הצעת, חוק, חוקים, ועדה, פרוטוקול, מליאה, ממשלה, משרד, הוראות, תיקון, מספר, עניין, לעניין`
+Use the expanded sentence **in addition to** the original for embedding + keyword search. Both queries' results are merged and de-duped before re-rank.
 
-After filtering, words like "היועצת", "משפטית", "פיטורין", "פיטורי", "יועמ"ש" remain — those are the actually discriminating tokens.
+Failure handling: if expansion call fails or times out (>3s), fall back to original query only — never block retrieval.
 
-### 2. Restore Perplexity threshold to 3 significant words (after stopword expansion)
-With the expanded stopwords, 3-word overlap is achievable for genuine matches but blocks generic Knesset/government boilerplate matches. Local DB cards stay at 3 (unchanged).
+Log: `Query expansion: "<orig>" → "<expanded>"`.
 
-### 3. Add a topical-keyword guard for Perplexity matches
-For Perplexity cards specifically, require **at least one "topic-bearing" word** (length ≥5, not in stopwords) to overlap between the footnote text and the card title/snippet. This is a cheap second check that kills the "matched only on common short words" case.
+### 2. Hebrew abbreviation expansion in `extractKeywords` (append, don't replace)
+Add a static map of ~20 high-frequency legal abbreviations:
 
-### 4. Keep Tier 3 (no-URL fallback) intact
-Footnotes that fail the stricter Perplexity check still survive — they just appear without a clickable URL (existing behavior from the previous fix). User sees the citation text, no wrong link.
+```
+יועמ"ש / יועמש / היועמשית → היועץ המשפטי לממשלה, היועצת המשפטית לממשלה
+בג"ץ → בית המשפט הגבוה לצדק
+בימ"ש → בית המשפט
+ביה"ד → בית הדין
+ע"א → ערעור אזרחי
+ע"פ → ערעור פלילי
+רע"א → רשות ערעור אזרחי
+ס"ח → ספר החוקים
+ק"ת → קובץ התקנות
+תקנ' → תקנות
+ועדת חוקה → ועדת חוקה חוק ומשפט
+מ"י → מדינת ישראל
+חו"י → חוק יסוד
+פס"ד → פסק דין
+ב"כ → בא כוח
+פד"י → פסקי דין
+```
 
-### 5. Improve logging
-When a Perplexity match is rejected by the topical-keyword guard, log: `Rejected Perplexity match for fn #N: only generic words overlapped with card "<title>"`. This makes future debugging trivial.
+Logic: detect each abbreviation in the question, **append** its full form to the keyword set (original abbreviation stays). This widens both the keyword search and gives more material for vector embedding.
 
-## Why this works
-- Matcher gets back the strictness it needs to refuse wrong URLs
-- Legitimate citations are preserved (Tier 3 fallback already shipped)
-- The fix is **content-aware** (topic-bearing word required), not just count-based, so it survives both short snippets and long ones
+### 3. Lower vector threshold + bump candidate count
+- `match_legal_chunks` threshold: `0.70 → 0.55`
+- `match_count`: `8 → 15` for both vector and keyword searches
+- Final merged cap stays at 12 (after re-rank) to keep prompt size bounded
+
+### 4. Neutral re-ranker
+Update the re-rank prompt to be **source-type-blind**:
+
+> "דרג כל מקור 0–10 לפי רלוונטיות תוכנית בלבד לשאלה. אל תתחשב בסוג המקור (פסיקה / מאמר / מחקר כנסת) — רק במידת העזרה שיתן בתשובה משפטית מקצועית."
+
+Also: lower keep threshold from `≥5` to `≥4` to preserve background context.
+
+### 5. Re-rank failure handling
+Already shipped: when score parsing fails, fall back to raw similarity ≥ 0.5 (not "use all"). Confirmed in current code, no change needed.
+
+### 6. Diagnostic logging
+- `Keyword set (with expansions): [...]`
+- `Vector search: top 3 raw similarities = [0.XX, 0.XX, 0.XX]`
+- `Rerank scores per doc: {doc_id: score}`
+- `Final source mix: <N> local / <M> perplexity`
+
+## Expected impact
+For "האם אפשר לפטר את היועמשית":
+- Query expansion adds full legal phrasing → vector hits topical chunks
+- Abbreviation map catches "היועמשית" → "היועצת המשפטית לממשלה"
+- Lower threshold + more candidates → re-ranker has 15+ local cards to choose from
+- Neutral re-rank → best answer wins regardless of source type
+- Estimated local card count: 1 → 5–7
 
 ## Out of scope
+- No DB schema changes, no re-embedding
 - No client changes
-- No prompt changes
-- No DB / schema changes
-- No re-rank changes
+- No prompt-to-AI changes for the answer itself (only for expansion + rerank)
+- No changes to footnote matcher (already strict & accurate after previous fix)
 
 ## File changes
-- `supabase/functions/legal-qa/index.ts` — items 1, 2, 3, 5 (item 4 is unchanged, just confirming behavior)
+- `supabase/functions/legal-qa/index.ts` — items 1, 2, 3, 4, 6
 
