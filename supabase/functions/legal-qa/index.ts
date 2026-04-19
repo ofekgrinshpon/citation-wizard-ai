@@ -1289,10 +1289,13 @@ serve(async (req) => {
 
     const combinedContext = truncateContext(contextParts.join("\n"), contextCharLimit);
 
-    // Build source catalog string for the AI — tag local sources as [מאומת]
+    // Build source catalog string for the AI — tag local vs Perplexity distinctly
     const sourceCatalog = sourceCards.map(
       (sc) => {
-        const tag = sc.provenance === "local" ? " [מאומת]" : "";
+        const tag =
+          sc.provenance === "local"     ? " [מאומת – מקור אמת לתוכן]" :
+          sc.provenance === "perplexity" ? " [חיצוני – למטא-דאטה בלבד]" :
+          sc.provenance === "document"   ? " [מסמך משתמש]" : "";
         return `[${sc.id}]${tag} ${sc.citation}${sc.url ? ` (${sc.url})` : ""} — ${sc.source_type}`;
       }
     ).join("\n");
