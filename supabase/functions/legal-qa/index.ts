@@ -1190,7 +1190,8 @@ serve(async (req) => {
 
         const sourceLabel = m.source_type === "caselaw" ? "פסיקה" :
           m.source_type === "knesset_research" ? "מחקר כנסת / חקיקה" :
-          m.source_type === "journal_article" ? "מאמר אקדמי" : m.source_type;
+          m.source_type === "journal_article" ? "מאמר אקדמי" :
+          m.source_type === "israeli_law" ? "חקיקה ישראלית" : m.source_type;
 
         sourceCards.push({
           id: cardId++,
@@ -1254,7 +1255,8 @@ serve(async (req) => {
           seenDocs.add(m.document_id);
           const typeLabel = m.source_type === "caselaw" ? "פסיקה" :
             m.source_type === "knesset_research" ? "מחקר כנסת" :
-            m.source_type === "journal_article" ? "מאמר אקדמי" : m.source_type;
+            m.source_type === "journal_article" ? "מאמר אקדמי" :
+            m.source_type === "israeli_law" ? "חקיקה ישראלית" : m.source_type;
           const relevanceTag = m.relevanceScore !== undefined ? ` | רלוונטיות: ${m.relevanceScore}/10` : "";
           localContext += `\n--- ${m.document_title} ---\nסוג מקור: ${typeLabel} | אזכור: ${m.document_citation}${relevanceTag}\n`;
           if (m.source_url) localContext += `קישור: ${m.source_url}\n`;
