@@ -572,11 +572,16 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
       const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       const { data: { session } } = await supabase.auth.getSession();
 
+      if (!session?.access_token) {
+        setError("יש להתחבר כדי להשתמש בעוזר המשפטי.");
+        return;
+      }
+
       const res = await fetch(`${supabaseUrl}/functions/v1/legal-qa`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${session?.access_token ?? supabaseKey}`,
+          "Authorization": `Bearer ${session.access_token}`,
           "apikey": supabaseKey,
         },
         body: JSON.stringify(body),
@@ -584,6 +589,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
       });
 
       if (!res.ok) {
+        if (res.status === 401) { setError("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש."); return; }
         if (res.status === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
         if (res.status === 402) { setError("נגמרו הקרדיטים."); return; }
         throw new Error(`HTTP ${res.status}`);
@@ -748,11 +754,16 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
       const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       const { data: { session } } = await supabase.auth.getSession();
 
+      if (!session?.access_token) {
+        setError("יש להתחבר כדי להשתמש בעוזר המשפטי.");
+        return;
+      }
+
       const res = await fetch(`${supabaseUrl}/functions/v1/legal-qa`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${session?.access_token ?? supabaseKey}`,
+          "Authorization": `Bearer ${session.access_token}`,
           "apikey": supabaseKey,
         },
         body: JSON.stringify(body),
@@ -760,6 +771,7 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
       });
 
       if (!res.ok) {
+        if (res.status === 401) { setError("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש."); return; }
         if (res.status === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
         if (res.status === 402) { setError("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות."); return; }
         throw new Error(`HTTP ${res.status}`);
