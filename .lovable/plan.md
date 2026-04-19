@@ -1,50 +1,59 @@
 
-## Root cause
+## Plan: Rewrite `search_legal_chunks_text` for full-content search + index-backed performance + dual-field ranking
 
-The caselaw-filtered vector query returns 8 chunks but בג"ץ 18225-06-25 גילון doesn't make the cut because:
+### Migration changes
 
-1. **Embedding mismatch**: The case's procedural prose ("בית המשפט הגבוה לצדק", motion language) embeds far from the conceptual query "האם אפשר לפטר את היועמשית" / "להדיח את היועצת המשפטית".
-2. **No keyword path**: `search_legal_chunks_text` returned **0 results** in the last run because the case's title/citation/case_number/court fields don't contain the literal words "לפטר" or "היועמשית" — the AND-mode requires distinctive terms (length≥4) ALL to match the indexed fields, but those fields are short metadata, not full text.
-3. **Caselaw quota fills with denser cases**: Family-court and corporate cases out-rank גילון because their metadata is more verbose.
+**1. Add GIN indexes** for index-backed lookups:
+```sql
+CREATE INDEX IF NOT EXISTS idx_chunks_content_fts
+  ON public.legal_document_chunks
+  USING gin (to_tsvector('simple', content));
 
-## Fix strategy — three layers
-
-### Layer 1: Index chunk content in keyword search (root cause fix)
-Currently `search_legal_chunks_text` builds the tsvector from `title + citation + case_number + court` only. The actual case discussion lives in `legal_document_chunks.content`, never indexed. **Add `c2.content` to the tsvector source**, so a case mentioning "פיטור היועצת המשפטית" inside its body text becomes findable even when the metadata doesn't mention it.
-
-This is the single highest-impact change — it unlocks every landmark case whose metadata is terse.
-
-### Layer 2: Landmark-case direct injection
-Add a small curated map in `legal-qa/index.ts`:
-```ts
-const LANDMARK_CASES = [
-  { triggers: [/יועמ"?ש|יועצת המשפטית|יועץ המשפטי/], 
-    case_numbers: ["18225-06-25", "4267/93"] },
-  // extensible
-];
+CREATE INDEX IF NOT EXISTS idx_docs_meta_fts
+  ON public.legal_documents
+  USING gin (to_tsvector('simple',
+    title || ' ' || citation || ' ' ||
+    coalesce(case_number,'') || ' ' || coalesce(court,'')
+  ));
 ```
-When the question matches a trigger, fetch those documents by `case_number` and unconditionally inject them into the candidate pool **before** rerank. They still go through rerank, so off-topic landmarks get filtered.
 
-### Layer 3: Loosen caselaw threshold + expand pool
-- Drop `match_threshold` for the caselaw-filtered vector query from 0.4 → **0.25** (case law embeds lower than academic prose).
-- Expand caselaw vector results from top 8 → **top 16**, keep top **6 in merge** (was 4).
+**2. Rewrite `search_legal_chunks_text`** with three improvements:
 
-### Layer 4 (diagnostic only)
-Log the raw similarity and rank of any landmark case ID present in the candidate pool, so we can verify Layer 2 worked and see why rerank kept/dropped it.
+- **Remove `LIMIT 2`** on the LATERAL chunk join → all chunks searched.
+- **Loosen AND-mode**: keep only the **top-2 longest** distinctive terms as required (`&`); all other terms (length ≥ 2) become OR boosters. Final tsquery shape: `(top1 & top2) | (other1 | other2 | ...)`. Edge cases: 1 term → just that term; 2 terms → both AND; 3+ terms → top-2 AND, rest OR.
+- **Combined ranking**: compute `ts_rank` separately on the metadata tsvector and on the chunk-content tsvector, then sum them with a small bonus when both fields match:
 
-## Expected impact
-- Layer 1 alone should surface גילון via keyword if its body mentions "פיטור" / "היועצת המשפטית".
-- Layer 2 guarantees it appears in the candidate pool even if both retrieval channels miss it.
-- Layer 3 widens the net for borderline cases without flooding noise (rerank still gates).
+```sql
+WITH q AS (SELECT <ts> AS ts)
+SELECT ...,
+  (
+    ts_rank(meta_tsv, q.ts)
+    + ts_rank(content_tsv, q.ts)
+    + CASE WHEN meta_tsv @@ q.ts AND content_tsv @@ q.ts THEN 0.1 ELSE 0 END
+  )::float AS similarity
+FROM legal_documents d
+JOIN LATERAL (
+  SELECT c2.id, c2.content, to_tsvector('simple', c2.content) AS content_tsv
+  FROM legal_document_chunks c2
+  WHERE c2.document_id = d.id
+    AND to_tsvector('simple', c2.content) @@ q.ts
+) c ON true
+WHERE meta_tsv @@ q.ts OR content_tsv @@ q.ts
+```
 
-## File changes
-- **DB migration**: update `search_legal_chunks_text` to include `c2.content` in the tsvector (joined LATERAL already exists).
-- **`supabase/functions/legal-qa/index.ts`**:
-  - Add `LANDMARK_CASES` map + injection logic before merge.
-  - Lower caselaw threshold to 0.25, expand to top 16 / keep 6.
-  - Add diagnostic log for landmark case rank.
+The `WHERE` and the LATERAL filter both use index-backed `@@` against the precomputed tsvector expressions matching the GIN index, so Postgres uses the indexes (no full scan). Documents with matches in both metadata AND content rank above documents with a match in only one.
 
-## Out of scope
-- No changes to embedding model or re-ingestion.
-- No changes to answer-body prompt or footnote matcher.
-- No client changes.
+**3. Tokenizer**: drop common length-<2 noise; sort remaining by `length(w) DESC`; first 2 → AND-required; rest → OR. Wrap `to_tsquery` in EXCEPTION block; on parse error fall back to `plainto_tsquery('simple', search_query)`.
+
+### File changes
+- **New migration file** containing both `CREATE INDEX` statements and `CREATE OR REPLACE FUNCTION search_legal_chunks_text` with the rewrite above.
+- **No edge function code changes** — `legal-qa/index.ts` already calls this RPC; the SQL change alone delivers the fix.
+
+### Expected impact
+- בג"ץ גילון surfaces via keyword match on chunk 3+ content (e.g., "פיטור היועצת המשפטית").
+- Hebrew morphology mismatches no longer kill results: "לפטר" missing from content is fine as long as "היועצת" + "המשפטית" match.
+- Documents matching both title and body rank above title-only or body-only hits.
+- GIN indexes keep latency low even with full-corpus content search.
+
+### Out of scope
+- No re-embedding, no edge function changes, no client changes, no Hebrew stemming dictionary.
