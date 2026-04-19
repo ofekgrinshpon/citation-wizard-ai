@@ -32,3 +32,6 @@ verify_jwt = false
 
 [functions.batch-embed-chunks]
 verify_jwt = false
+
+[functions.recover-knesset-titles]
+verify_jwt = false

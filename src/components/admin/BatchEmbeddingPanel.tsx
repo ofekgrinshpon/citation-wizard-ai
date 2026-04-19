@@ -19,6 +19,13 @@ export default function BatchEmbeddingPanel() {
   const [batchCount, setBatchCount] = useState(0);
   const abortRef = useRef(false);
 
+  // Knesset title recovery state
+  const [recovering, setRecovering] = useState(false);
+  const [recoveredTotal, setRecoveredTotal] = useState(0);
+  const [flaggedTotal, setFlaggedTotal] = useState(0);
+  const [recoveryRemaining, setRecoveryRemaining] = useState<number | null>(null);
+  const recoveryAbortRef = useRef(false);
+
   const totalChunks = remaining !== null ? totalProcessed + remaining : null;
   const progress = totalChunks && totalChunks > 0 ? (totalProcessed / totalChunks) * 100 : 0;
 
@@ -105,6 +112,80 @@ export default function BatchEmbeddingPanel() {
     abortRef.current = true;
   };
 
+  const runRecovery = useCallback(async () => {
+    recoveryAbortRef.current = false;
+    setRecovering(true);
+    setRecoveredTotal(0);
+    setFlaggedTotal(0);
+    setRecoveryRemaining(null);
+
+    const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/recover-knesset-titles`;
+    let consecutiveErrors = 0;
+    let totalProcessed = 0;
+
+    while (!recoveryAbortRef.current) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          toast.error("הסשן פג תוקף — יש להתחבר מחדש");
+          break;
+        }
+
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ batch_size: 50 }),
+        });
+
+        if (!res.ok) {
+          const errText = await res.text();
+          console.error("Recovery error:", res.status, errText);
+          consecutiveErrors++;
+          if (consecutiveErrors >= 3) {
+            toast.error("3 שגיאות רצופות — שחזור הכותרות נעצר");
+            break;
+          }
+          await new Promise((r) => setTimeout(r, 2000));
+          continue;
+        }
+
+        consecutiveErrors = 0;
+        const data = await res.json();
+        totalProcessed += data.processed || 0;
+        setRecoveredTotal((p) => p + (data.recovered || 0));
+        setFlaggedTotal((p) => p + (data.flagged_broken || 0));
+        setRecoveryRemaining(data.remaining ?? 0);
+
+        if (!data.processed || data.processed === 0) {
+          toast.success("שחזור הכותרות הושלם 🎉");
+          break;
+        }
+
+        await new Promise((r) => setTimeout(r, 300));
+      } catch (err) {
+        console.error("Recovery fetch error:", err);
+        consecutiveErrors++;
+        if (consecutiveErrors >= 3) {
+          toast.error("שגיאת רשת — שחזור הכותרות נעצר");
+          break;
+        }
+        await new Promise((r) => setTimeout(r, 2000));
+      }
+    }
+
+    if (recoveryAbortRef.current) {
+      toast.info("שחזור הכותרות נעצר ידנית");
+    }
+    setRecovering(false);
+  }, []);
+
+  const stopRecovery = () => {
+    recoveryAbortRef.current = true;
+  };
+
   return (
     <div className="bg-card border border-border rounded-xl p-5 shadow-sm space-y-4">
       <div className="flex items-center justify-between">
@@ -143,6 +224,36 @@ export default function BatchEmbeddingPanel() {
         כל הפעלה מעבדת עד 500 קטעים. התהליך רץ בלופ אוטומטי עד שכל הקטעים מקבלים embedding.
         ניתן לעצור ולהמשיך בכל זמן.
       </p>
+
+      <div className="border-t border-border pt-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-foreground font-bold text-sm">📚 שחזור כותרות מסמכי הכנסת</h3>
+          {recovering ? (
+            <Button variant="destructive" size="sm" onClick={stopRecovery}>
+              ⏹ עצור
+            </Button>
+          ) : (
+            <Button size="sm" onClick={runRecovery}>
+              ▶️ הפעל שחזור כותרות
+            </Button>
+          )}
+        </div>
+
+        {(recovering || recoveredTotal > 0 || flaggedTotal > 0) && (
+          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+            <span>✅ שוחזרו: <strong className="text-foreground">{recoveredTotal.toLocaleString()}</strong></span>
+            <span>🚫 סומנו פגומים: <strong className="text-foreground">{flaggedTotal.toLocaleString()}</strong></span>
+            {recoveryRemaining !== null && (
+              <span>⏳ נותרו: <strong className="text-foreground">{recoveryRemaining.toLocaleString()}</strong></span>
+            )}
+          </div>
+        )}
+
+        <p className="text-xs text-muted-foreground">
+          כורה את הכותרת האמיתית מתוכן המסמך עבור רשומות עם כותרת גנרית "פרטי מסמך".
+          50 מסמכים לאצווה. מסמכים שלא ניתן לחלץ מהם כותרת מסומנים כפגומים ויוסתרו מהחיפוש.
+        </p>
+      </div>
     </div>
   );
 }
