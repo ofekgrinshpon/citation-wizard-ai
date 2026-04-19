@@ -1,45 +1,44 @@
 
 
-## Why you got only 2 footnotes
+## Issue
+A footnote about firing the Attorney General linked to an unrelated Knesset debate (about digital broadcasting fees). The matcher accepted a Perplexity card whose URL pointed to a completely different topic.
 
-From the edge function logs for your query:
-- The AI generated **10 footnotes**.
-- The strict footnote-to-source matcher (added in the previous fix) **dropped 8 of them** as "unmatched" and kept only 2.
-- Logged messages: `Stripped unmatched footnote #1`, `#3`, `#4`, `#5`, `#6`, `#7`, `#9`, `#10`.
+## Root cause
+From the logs of the user's query: 8 of 9 cards were Perplexity. The current Tier 2 matcher accepts a Perplexity card on **2 significant-word overlap** (relaxed in the previous fix). For Knesset/government sites, generic words like "כנסת", "דיון", "הצעת", "חוק" appear in almost every page title — so a footnote about "פיטורי היועצת המשפטית לממשלה" can match a "דיון בכנסת על הצעת חוק..." card on words like {"כנסת", "דיון"} or {"הצעת", "חוק"}.
 
-The previous fix was working as designed, but **too aggressively** for this query because:
+The previous relaxation (3→2 words for Perplexity) traded URL accuracy for citation completeness. We now need to put accuracy back without dropping legitimate citations.
 
-1. **Most sources came from Perplexity** (8 of 10 cards), not the local DB. Perplexity returns short web snippets whose wording rarely overlaps with a properly-formatted Israeli legal citation (e.g. `בג"ץ 653/88 צוק נ' שר הביטחון, פ"ד מג(2) 714 (1989)`).
-2. **Tier 1 (case number) failed** because the snippet text rarely includes the formal case number `653/88`.
-3. **Tier 2 (≥3 significant words)** failed because Perplexity snippets are short and topical, not citation-shaped.
-4. **Re-ranking silently degraded**: `Re-ranking: could not parse scores, using all sources` — the threshold protection didn't engage, so weak Perplexity cards reached the AI anyway.
+## Fix — `supabase/functions/legal-qa/index.ts`
 
-Net effect: the matcher correctly refused to attach wrong URLs, but it also threw away footnotes whose citation text was actually fine — just not provable against the available cards.
+### 1. Expand the stopword list with high-frequency legal/Knesset boilerplate
+Add to the existing stopword filter (used to count "significant" words):
+`כנסת, דיון, ישיבה, הצעת, חוק, חוקים, ועדה, פרוטוקול, מליאה, ממשלה, משרד, הוראות, תיקון, מספר, עניין, לעניין`
 
-## Fix — relax the matcher safely (single file: `supabase/functions/legal-qa/index.ts`)
+After filtering, words like "היועצת", "משפטית", "פיטורין", "פיטורי", "יועמ"ש" remain — those are the actually discriminating tokens.
 
-The goal: keep wrong-URL prevention, but stop dropping legitimate citations.
+### 2. Restore Perplexity threshold to 3 significant words (after stopword expansion)
+With the expanded stopwords, 3-word overlap is achievable for genuine matches but blocks generic Knesset/government boilerplate matches. Local DB cards stay at 3 (unchanged).
 
-### 1. Add Tier 3: keep footnote without a URL when no card matches
-Currently, no match → drop entirely. Change to: no match → **keep the footnote text, omit the URL** (so the user still sees the citation but no broken link). The bug we were preventing is wrong URLs — a footnote with no link at all is fine.
+### 3. Add a topical-keyword guard for Perplexity matches
+For Perplexity cards specifically, require **at least one "topic-bearing" word** (length ≥5, not in stopwords) to overlap between the footnote text and the card title/snippet. This is a cheap second check that kills the "matched only on common short words" case.
 
-### 2. Match by case number against the card's `case_number` field, not just citation text
-For local DB cards, also check `card.case_number` (already in `legal_documents`). This catches cases where the AI cites `12345/22` and the card has it as a structured field but not in the snippet body.
+### 4. Keep Tier 3 (no-URL fallback) intact
+Footnotes that fail the stricter Perplexity check still survive — they just appear without a clickable URL (existing behavior from the previous fix). User sees the citation text, no wrong link.
 
-### 3. Lower Tier 2 to `≥2 significant words` for Perplexity cards specifically
-Perplexity snippets are shorter than full citations, so 3-word overlap is unrealistic. Use 2-word for `provenance === "perplexity"`, keep 3-word for local DB cards.
+### 5. Improve logging
+When a Perplexity match is rejected by the topical-keyword guard, log: `Rejected Perplexity match for fn #N: only generic words overlapped with card "<title>"`. This makes future debugging trivial.
 
-### 4. Body marker handling for kept-without-URL footnotes
-When a footnote is kept without a URL, its `[N]` marker stays in the body (currently it's stripped because the footnote was dropped). Renumber as usual.
-
-### 5. Log re-rank failure more loudly + lower threshold fallback
-When score parsing fails, fall back to `score >= 5` filter on raw similarity instead of "use all" — this stops weak Perplexity cards from reaching the AI in the first place.
+## Why this works
+- Matcher gets back the strictness it needs to refuse wrong URLs
+- Legitimate citations are preserved (Tier 3 fallback already shipped)
+- The fix is **content-aware** (topic-bearing word required), not just count-based, so it survives both short snippets and long ones
 
 ## Out of scope
-- No client changes.
-- No prompt changes.
-- No DB changes.
+- No client changes
+- No prompt changes
+- No DB / schema changes
+- No re-rank changes
 
 ## File changes
-- `supabase/functions/legal-qa/index.ts` — items 1–5 above.
+- `supabase/functions/legal-qa/index.ts` — items 1, 2, 3, 5 (item 4 is unchanged, just confirming behavior)
 
