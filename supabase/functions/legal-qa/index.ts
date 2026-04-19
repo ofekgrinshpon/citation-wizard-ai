@@ -169,7 +169,11 @@ async function expandShortQuery(question: string, apiKey: string): Promise<strin
         messages: [
           {
             role: "user",
-            content: `הרחב את השאלה המשפטית הבאה למשפט תיאורי פורמלי אחד (עד 25 מילים), הכולל מונחים משפטיים מלאים במקום קיצורים. החזר רק את המשפט המורחב, ללא הקדמה.\n\nשאלה: ${question}`,
+            content: `הרחב את השאלה המשפטית הבאה למשפט תיאורי קצר אחד (עד 20 מילים), שמשתמש במונחים משפטיים קונקרטיים ובפעלים פעולתיים (כגון "פיטורי", "סיום כהונת", "הפסקת כהונה", "הליך הדחה", "מינוי", "ביטול", "תקיפה ישירה", "סמכות הממשלה ל…").
+אסור להשתמש בביטויים גנריים כמו "עמידה בהוראות החוק", "בהתאם לפסיקה הרלוונטית", "תוך שמירה על עקרונות מנהליים".
+החזר רק את המשפט המורחב, ללא הקדמה, ללא סימני ציטוט.
+
+שאלה: ${question}`,
           },
         ],
       }),
@@ -715,12 +719,41 @@ serve(async (req) => {
         console.log(`Vector search: top 3 raw similarities = [${topVectorSims.join(", ")}]`);
         console.log(`Keyword search: ${keywordMatches.length} results | Vector search: ${vectorMatches.length} results (across ${queriesForEmbedding.length} ${queriesForEmbedding.length === 1 ? "query" : "queries"})`);
 
-        // Merge and deduplicate by chunk_id, keeping higher similarity
+        // ── Content-aware similarity bonus ──────────────────────────
+        // Pair the question's action verbs with their nominal/legal counterparts
+        // and award a small bonus to chunks whose content contains the counterpart.
+        // This rescues on-topic chunks (e.g. בג"ץ גילון on AG dismissal) that
+        // get out-scored by broader articles when the expanded query is generic.
+        const VERB_TOPIC_PAIRS: Array<{ trigger: RegExp; topicTerms: string[] }> = [
+          { trigger: /(לפטר|פיטור|להדיח|הדחה|להפסיק|הפסקת|לסיים|סיום\s+כהונ)/, topicTerms: ["פיטור", "פיטורי", "הפסקת כהונ", "סיום כהונ", "הדחה", "מנגנון הפסקת", "להפסיק את כהונ", "סיים את כהונ"] },
+          { trigger: /(למנות|מינוי|להחליף)/, topicTerms: ["מינוי", "ועדת המינויים", "הליך מינוי", "מתמנה"] },
+          { trigger: /(לעצור|מעצר|לעכב|עיכוב)/, topicTerms: ["מעצר", "עיכוב הליכים", "מעצר עד תום ההליכים"] },
+          { trigger: /(להחרים|חילוט|תפיסה)/, topicTerms: ["חילוט", "תפיסת רכוש", "החרמה"] },
+        ];
+        const questionFull = `${question} ${expandedQuery || ""}`;
+        const activePairs = VERB_TOPIC_PAIRS.filter(p => p.trigger.test(questionFull));
+        if (activePairs.length > 0) {
+          console.log(`Content-aware bonus active for triggers: ${activePairs.map(p => p.topicTerms[0]).join(", ")}`);
+        }
+        const applyBonus = (m: LocalMatch): LocalMatch => {
+          if (activePairs.length === 0 || !m.chunk_content) return m;
+          const content = m.chunk_content;
+          let bonus = 0;
+          for (const pair of activePairs) {
+            if (pair.topicTerms.some(t => content.includes(t))) {
+              bonus = 0.08;
+              break;
+            }
+          }
+          return bonus > 0 ? { ...m, similarity: (m.similarity || 0) + bonus } : m;
+        };
+
+        // Merge and deduplicate by chunk_id, keeping higher similarity (after bonus)
         const mergedMap = new Map<string, LocalMatch>();
-        for (const m of keywordMatches) {
+        for (const m of keywordMatches.map(applyBonus)) {
           mergedMap.set(m.chunk_id, m);
         }
-        for (const m of vectorMatches) {
+        for (const m of vectorMatches.map(applyBonus)) {
           const existing = mergedMap.get(m.chunk_id);
           if (!existing || m.similarity > existing.similarity) {
             mergedMap.set(m.chunk_id, m);
