@@ -1225,47 +1225,126 @@ export function LegalQAChat({ onResultSaved, externalResult }: LegalQAChatProps 
                 {chapters.map((ch, idx) => {
                   const isWritten = !!ch.content;
                   const isCurrent = idx === currentChapter;
-                  return (
+                  const isAbstract = isAbstractChapter(ch.title);
+                  const isLockedAbstract = isAbstract && !abstractUnlocked && !isWritten;
+
+                  const baseClass = `flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs border transition-colors ${
+                    isLockedAbstract
+                      ? "bg-muted/50 text-muted-foreground border-dashed border-border opacity-70 cursor-not-allowed"
+                      : isCurrent
+                        ? "bg-primary text-primary-foreground border-primary font-semibold"
+                        : isWritten
+                          ? "bg-primary/10 text-primary border-primary/30 hover:bg-primary/20 cursor-pointer"
+                          : "bg-muted text-muted-foreground border-border hover:bg-muted/80 cursor-pointer"
+                  }`;
+
+                  const handleClick = () => {
+                    if (isLockedAbstract) {
+                      toast.info(ABSTRACT_LOCKED_TOOLTIP);
+                      return;
+                    }
+                    viewChapter(idx);
+                  };
+
+                  const iconNode = isLockedAbstract
+                    ? <Lock className="w-3 h-3" />
+                    : isAbstract && !isWritten && abstractUnlocked
+                      ? <Wand2 className="w-3 h-3" />
+                      : isWritten && !isCurrent
+                        ? <Check className="w-3 h-3" />
+                        : null;
+
+                  const btn = (
                     <button
                       key={idx}
-                      onClick={() => viewChapter(idx)}
-                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs border transition-colors ${
-                        isCurrent
-                          ? "bg-primary text-primary-foreground border-primary font-semibold"
-                          : isWritten
-                            ? "bg-primary/10 text-primary border-primary/30 hover:bg-primary/20 cursor-pointer"
-                            : "bg-muted text-muted-foreground border-border hover:bg-muted/80 cursor-pointer"
-                      }`}
+                      type="button"
+                      onClick={handleClick}
+                      aria-disabled={isLockedAbstract}
+                      className={baseClass}
                     >
-                      {isWritten && !isCurrent && <Check className="w-3 h-3" />}
+                      {iconNode}
                       <span className="truncate max-w-[120px]">{idx + 1}. {ch.title}</span>
                     </button>
                   );
+
+                  if (isLockedAbstract) {
+                    return (
+                      <Tooltip key={idx}>
+                        <TooltipTrigger asChild>{btn}</TooltipTrigger>
+                        <TooltipContent side="top" className="max-w-xs text-xs">
+                          {ABSTRACT_LOCKED_TOOLTIP}
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  }
+                  return btn;
                 })}
               </div>
             )}
 
             {/* WRITING: show current chapter + write button */}
-            {wizardStep === "writing" && !loading && !result && chapters.length > 0 && (
-              <Card className="border-border">
-                <CardContent className="p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-foreground">
-                      כתיבת פרק: {chapters[currentChapter]?.title}
-                    </h3>
-                    <span className="text-xs text-muted-foreground">פרק {currentChapter + 1} מתוך {chapters.length}</span>
-                  </div>
-                  {chapters[currentChapter]?.content && (
-                    <div className="text-xs text-muted-foreground p-2 bg-muted/30 rounded">
-                      פרק זה כבר נכתב. לחצו "כתוב מחדש" לשכתוב.
+            {wizardStep === "writing" && !loading && !result && chapters.length > 0 && (() => {
+              const currentTitle = chapters[currentChapter]?.title || "";
+              const isAbstract = isAbstractChapter(currentTitle);
+              const isLocked = isAbstract && !abstractUnlocked;
+              const hasContent = !!chapters[currentChapter]?.content;
+
+              const writeButtonLabel = isAbstract
+                ? (hasContent ? "ייצר תקציר מחדש" : "ייצר תקציר")
+                : (hasContent ? "כתוב מחדש" : "כתוב פרק זה");
+
+              return (
+                <Card className="border-border">
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-bold text-foreground">
+                        {isAbstract ? "כתיבת תקציר" : "כתיבת פרק"}: {currentTitle}
+                      </h3>
+                      <span className="text-xs text-muted-foreground">פרק {currentChapter + 1} מתוך {chapters.length}</span>
                     </div>
-                  )}
-                  <Button onClick={writeCurrentChapter} size="sm">
-                    {chapters[currentChapter]?.content ? "כתוב מחדש" : "כתוב פרק זה"}
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
+
+                    {isLocked && (
+                      <div className="text-xs text-muted-foreground p-2 bg-muted/40 rounded space-y-1">
+                        <p>{ABSTRACT_LOCKED_TOOLTIP}</p>
+                        <p>
+                          הושלמו {completedNonAbstract}/{totalNonAbstract} פרקים.
+                          {missingChapterTitles.length > 0 && (
+                            <> נותרו: {missingChapterTitles.join("; ")}.</>
+                          )}
+                        </p>
+                      </div>
+                    )}
+
+                    {hasContent && !isLocked && (
+                      <div className="text-xs text-muted-foreground p-2 bg-muted/30 rounded">
+                        פרק זה כבר נכתב. לחצו "{writeButtonLabel}" לשכתוב.
+                      </div>
+                    )}
+
+                    {isLocked ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="inline-block">
+                            <Button size="sm" disabled className="gap-1.5 cursor-not-allowed">
+                              <Lock className="w-3.5 h-3.5" />
+                              ייצר תקציר
+                            </Button>
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="max-w-xs text-xs">
+                          {ABSTRACT_LOCKED_TOOLTIP}
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : (
+                      <Button onClick={writeCurrentChapter} size="sm" className="gap-1.5">
+                        {isAbstract && <Wand2 className="w-3.5 h-3.5" />}
+                        {writeButtonLabel}
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })()}
 
             {/* CHECKPOINT: chapter just written */}
             {wizardStep === "checkpoint" && result && (
