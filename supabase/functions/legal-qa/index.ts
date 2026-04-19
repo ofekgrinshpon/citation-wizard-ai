@@ -463,28 +463,18 @@ ${sourceList}
       docScores.push({ docId, score: raw + bonus, rawScore: raw, bonus, title: docData.match.document_title });
     }
 
-    // Force-keep top 4 docs by adjusted score regardless of threshold
-    const sortedByScore = [...docScores].sort((a, b) => b.score - a.score);
-    const forceKeepIds = new Set(sortedByScore.slice(0, 4).map(d => d.docId));
-
-    const KEEP_THRESHOLD = 3;
+    // No force-keep: drop everything below threshold to avoid polluting the prompt with noise.
+    const KEEP_THRESHOLD = 1;
     const result: RankedMatch[] = [];
     const rerankScoreLog: Record<string, string> = {};
-    let forceKeptCount = 0;
     for (const ds of docScores) {
       const tag = ds.bonus > 0 ? `${ds.rawScore}+${ds.bonus}=${ds.score}` : `${ds.score}`;
       rerankScoreLog[ds.title.slice(0, 60)] = tag;
-      const passes = ds.score >= KEEP_THRESHOLD;
-      const forced = !passes && forceKeepIds.has(ds.docId);
-      if (passes || forced) {
+      if (ds.score >= KEEP_THRESHOLD) {
         for (const m of matches) {
           if (m.document_id === ds.docId) {
             result.push({ ...m, relevanceScore: ds.score });
           }
-        }
-        if (forced) {
-          forceKeptCount++;
-          console.log(`Force-kept low-score source (score=${ds.score}): "${ds.title.slice(0, 50)}"`);
         }
       } else {
         console.log(`Filtered out low-relevance source (score=${ds.score}): "${ds.title.slice(0, 50)}"`);
@@ -492,7 +482,7 @@ ${sourceList}
     }
     const keptDocs = new Set(result.map(r => r.document_id)).size;
     console.log(`Rerank scores per doc: ${JSON.stringify(rerankScoreLog)}`);
-    console.log(`Local kept after rerank: ${keptDocs}/${docsArr.length} (force-kept: ${forceKeptCount}, threshold: ${KEEP_THRESHOLD}, active verb pairs: ${activePairsRR.length})`);
+    console.log(`Local kept after filter: ${keptDocs}/${docsArr.length} (no force-keep, threshold: ${KEEP_THRESHOLD}, active verb pairs: ${activePairsRR.length})`);
 
     return result;
   } catch (err) {
