@@ -352,13 +352,13 @@ ${sourceList}
     for (let i = 0; i < docsArr.length; i++) {
       const [docId, docData] = docsArr[i];
       const score = scores[i] ?? 5;
-      if (score >= 3 || docId === bestDocId) {
+      if (score >= 5 || docId === bestDocId) {
         for (const m of matches) {
           if (m.document_id === docId) {
             result.push({ ...m, relevanceScore: score });
           }
         }
-        if (score < 3) {
+        if (score < 5) {
           console.log(`Kept top-scoring source despite low score (score=${score}): "${docData.match.document_title.slice(0, 50)}"`);
         }
       } else {
@@ -919,6 +919,7 @@ ${academicChapterContext}
 - השתמש בסימוני [X] בסוגריים מרובעים בגוף הטקסט (למשל [1], [2], [3]).
 - אל תשתמש במספרים עיליים (superscript) — המערכת תמיר אותם אוטומטית.
 - מספר ההפניה בגוף חייב להתאים בדיוק למספר ההערה ברשימת הערות השוליים.
+- כל מספר הפניה [N] יופיע פעם אחת בלבד בגוף הטקסט. אם אותו מקור תומך בכמה טענות, השתמש ב-"שם" או "לעיל ה"ש N" עם מספר הפניה חדש — אל תחזור על אותו מספר [N] שוב ושוב.
 - סימן ההפניה חייב לבוא תמיד אחרי סימן הפיסוק, לא לפניו.
   נכון: בעניין בן גביר,[1]
   נכון: מערכת בתי המשפט.[1]
@@ -1111,76 +1112,75 @@ ${combinedContext}`;
     }
 
     // ========= Step 5b: Match AI footnotes to source cards for provenance =========
+    // STRICT matcher: only attach a card's URL when we have high-confidence identifier overlap.
+    // Returns null when uncertain — the footnote will be dropped to avoid wrong-URL leaks.
+    const STOPWORDS = new Set([
+      "בית", "המשפט", "העליון", "המחוזי", "השלום", "של", "את", "לפי", "על", "עם",
+      "אל", "מן", "כי", "או", "גם", "זה", "זו", "אשר", "כפי", "כמו", "אך", "אם",
+      "פסק", "דין", "פסקדין", "הלכה", "ערעור", "בקשה", "החלטה", "סעיף", "חוק",
+      "ישראל", "מדינת", "המדינה", "נגד", "נ׳", "פרשת", "עניין", "פרשה",
+      "עמוד", "בעמ", "פסקה", "ראו", "ראה", "השוו", "וכן",
+    ]);
+
+    function normalize(s: string): string {
+      return s.toLowerCase().replace(/[״"׳'.,;:()\[\]{}]/g, " ").replace(/\s+/g, " ").trim();
+    }
+
     function matchFootnoteToCard(fnText: string, cards: SourceCard[]): SourceCard | null {
       const fnLower = fnText.toLowerCase();
-      // Try matching by case number
-      const caseNumMatch = fnText.match(/(\d{2,5}\/\d{2,4})/);
-      if (caseNumMatch) {
-        const found = cards.find(c => c.citation.includes(caseNumMatch[1]));
-        if (found) return found;
+      const fnNorm = normalize(fnText);
+
+      // ===== Tier 1: strict identifier matches =====
+
+      // 1a. Exact case number match (e.g., 1234/22)
+      const fnCaseNums = Array.from(fnText.matchAll(/\b(\d{2,5}\/\d{2,4})\b/g)).map(m => m[1]);
+      if (fnCaseNums.length > 0) {
+        for (const card of cards) {
+          for (const cn of fnCaseNums) {
+            if (card.citation.includes(cn)) return card;
+          }
+        }
       }
 
-      // Try matching by URL domain + path/ID in footnote text
+      // 1b. URL substring match (domain + identifier)
       for (const card of cards) {
         if (!card.url) continue;
         try {
           const cardUrl = new URL(card.url);
           const domain = cardUrl.hostname.replace(/^www\./, "");
-          // Check if footnote text contains the domain
-          if (fnLower.includes(domain)) return card;
-          // For nevo URLs, extract document ID parameters and match
+          if (!fnLower.includes(domain)) continue;
+          // Domain present — require additional identifier to confirm same document
           if (domain.includes("nevo.co.il")) {
             const dParam = cardUrl.searchParams.get("d");
             const uParam = cardUrl.searchParams.get("u");
             if (dParam && fnLower.includes(dParam)) return card;
-            if (uParam && fnLower.includes(uParam.slice(0, 8))) return card;
+            if (uParam && uParam.length >= 8 && fnLower.includes(uParam.slice(0, 8))) return card;
+          } else {
+            // Generic: require a path segment of >=6 chars to also appear
+            const segments = cardUrl.pathname.split("/").filter(s => s.length >= 6);
+            for (const seg of segments) {
+              if (fnLower.includes(seg.toLowerCase())) return card;
+            }
           }
-        } catch {
-          // Fallback: simple substring match on URL
-          if (card.url && fnLower.includes(card.url.replace(/https?:\/\//, "").slice(0, 30).toLowerCase())) {
-            return card;
-          }
-        }
+        } catch { /* skip malformed */ }
       }
 
-      // Try matching by keyword overlap (first 3 significant words of card citation)
+      // 1c. Exact normalized title match
       for (const card of cards) {
-        const cardWords = card.citation.replace(/[^א-תa-zA-Z0-9\s]/g, "").split(/\s+/).filter(w => w.length > 2).slice(0, 3);
-        if (cardWords.length >= 2) {
-          const matchCount = cardWords.filter(w => fnLower.includes(w.toLowerCase())).length;
-          if (matchCount >= 2) return card;
-        }
+        const titleNorm = normalize(card.citation);
+        if (titleNorm.length >= 15 && fnNorm.includes(titleNorm)) return card;
       }
 
-      // For Perplexity cards with URL-only citations: check if the footnote text
-      // contains ANY URL that shares domain with a Perplexity card
+      // ===== Tier 2: ≥3 significant-word overlap =====
+      // Significant = length ≥ 4, not a stopword
       for (const card of cards) {
-        if (card.provenance !== "perplexity" || !card.url) continue;
-        try {
-          const cardDomain = new URL(card.url).hostname.replace(/^www\./, "");
-          // Extract URLs from footnote text
-          const urlsInFn = fnText.match(/https?:\/\/[^\s)>"]+/g) || [];
-          for (const fnUrl of urlsInFn) {
-            try {
-              const fnDomain = new URL(fnUrl).hostname.replace(/^www\./, "");
-              if (fnDomain === cardDomain) return card;
-            } catch { /* skip malformed URLs */ }
-          }
-        } catch { /* skip */ }
-      }
-
-      // Last resort for Perplexity cards: check if footnote mentions source_type keywords
-      // that align with any Perplexity source (relaxed matching since AI was given these sources)
-      for (const card of cards) {
-        if (card.provenance !== "perplexity") continue;
-        // Check excerpt overlap if available
-        if (card.excerpt && card.excerpt.length > 20) {
-          const excerptWords = card.excerpt.replace(/[^א-תa-zA-Z0-9\s]/g, "").split(/\s+/).filter(w => w.length > 3).slice(0, 4);
-          if (excerptWords.length >= 2) {
-            const matchCount = excerptWords.filter(w => fnLower.includes(w.toLowerCase())).length;
-            if (matchCount >= 2) return card;
-          }
-        }
+        const cardWords = normalize(card.citation)
+          .split(/\s+/)
+          .filter(w => w.length >= 4 && !STOPWORDS.has(w));
+        if (cardWords.length < 3) continue;
+        const uniqueCardWords = Array.from(new Set(cardWords));
+        const matchCount = uniqueCardWords.filter(w => fnNorm.includes(w)).length;
+        if (matchCount >= 3) return card;
       }
 
       return null;
@@ -1190,6 +1190,23 @@ ${combinedContext}`;
     const footnotes: Array<{ number: number; citation: string; source_type: string; url?: string; source?: string }> = [];
     const usedSourceIds = new Set<number>();
     const newCitations: Array<{ citation: string; source_type: string }> = [];
+
+    // Body-side dedup: if any [N] marker appears > 2 times, keep only the first occurrence.
+    // Prevents the visual "several ¹" bug when the AI repeats the same reference number.
+    {
+      const counts = new Map<string, number>();
+      const allMatches = Array.from(answerBody.matchAll(/\[(\d{1,2})\]/g));
+      for (const m of allMatches) counts.set(m[1], (counts.get(m[1]) || 0) + 1);
+      const seen = new Set<string>();
+      answerBody = answerBody.replace(/\[(\d{1,2})\]/g, (full, n) => {
+        if ((counts.get(n) || 0) > 2) {
+          if (seen.has(n)) return "";
+          seen.add(n);
+          return full;
+        }
+        return full;
+      });
+    }
 
     // Collect [X] and [NEW:...] refs from body
     const refPattern = /\[(\d{1,2})\]/g;
@@ -1225,20 +1242,10 @@ ${combinedContext}`;
         fnNum++;
       }
 
-      // SAFETY FALLBACK: If ALL footnotes were stripped, keep them as "unverified"
+      // NOTE: Removed the "keep all as unverified" safety fallback.
+      // Better to show fewer accurate footnotes than many with wrong URLs.
       if (footnotes.length === 0 && aiFootnoteLines.length > 0) {
-        console.log(`FALLBACK: All ${aiFootnoteLines.length} footnotes stripped — keeping as unverified`);
-        fnNum = 1;
-        for (const aiFn of aiFootnoteLines) {
-          footnotes.push({
-            number: fnNum,
-            citation: aiFn.text,
-            source_type: "web",
-            source: "perplexity",
-          });
-          oldIdToNewNumber.set(aiFn.num, fnNum);
-          fnNum++;
-        }
+        console.log(`All ${aiFootnoteLines.length} AI footnotes failed strict matching — dropping all to avoid wrong-URL leaks`);
       }
     } else {
       // Fallback: use source card citations (old behavior)
