@@ -21,6 +21,7 @@ interface LegalDocumentIngestionProps {
 
 const SOURCE_TYPES = [
   { value: "legislation", label: "📜 חקיקה" },
+  { value: "israeli_law", label: "🇮🇱 חקיקה ישראלית" },
   { value: "caselaw", label: "⚖️ פסיקה" },
   { value: "book", label: "📖 ספר" },
   { value: "article", label: "📄 מאמר" },
