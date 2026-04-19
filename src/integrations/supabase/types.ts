@@ -457,6 +457,25 @@ export type Database = {
           source_url: string
         }[]
       }
+      match_legal_chunks_filtered: {
+        Args: {
+          filter_source_type: string
+          match_count?: number
+          match_threshold?: number
+          query_embedding: string
+        }
+        Returns: {
+          chunk_content: string
+          chunk_id: string
+          document_citation: string
+          document_id: string
+          document_title: string
+          metadata: Json
+          similarity: number
+          source_type: string
+          source_url: string
+        }[]
+      }
       rebuild_hnsw_index: { Args: never; Returns: undefined }
       search_legal_chunks_text: {
         Args: { match_count?: number; search_query: string }

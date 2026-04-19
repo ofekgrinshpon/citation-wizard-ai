@@ -701,7 +701,32 @@ serve(async (req) => {
           return { ...result, embedding, query: q };
         });
 
-        const [keywordResult, ...vectorResults] = await Promise.all([keywordPromise, ...vectorPromises]);
+        // Fix #2: Parallel caselaw-only vector query so precedent competes against itself
+        // (not against denser academic prose). Use the original (non-expanded) question
+        // since expansion often drifts toward academic phrasing.
+        const caselawVectorPromise = (async () => {
+          const embedding = await getQueryEmbedding(question);
+          if (!embedding) return { data: null, error: null };
+          return await adminClient.rpc("match_legal_chunks_filtered", {
+            query_embedding: JSON.stringify(embedding),
+            filter_source_type: "caselaw",
+            match_threshold: 0.40,
+            match_count: 8,
+          });
+        })();
+
+        const [keywordResult, caselawResult, ...vectorResults] = await Promise.all([
+          keywordPromise,
+          caselawVectorPromise,
+          ...vectorPromises,
+        ]);
+
+        const caselawMatches: LocalMatch[] = (!caselawResult.error && caselawResult.data) ? caselawResult.data as LocalMatch[] : [];
+        if (caselawResult.error) {
+          console.error(`match_legal_chunks_filtered (caselaw) error: ${caselawResult.error.message || JSON.stringify(caselawResult.error)}`);
+        } else {
+          console.log(`Caselaw-filtered vector search: ${caselawMatches.length} chunks`);
+        }
 
         const keywordMatches: LocalMatch[] = (!keywordResult.error && keywordResult.data) ? keywordResult.data : [];
 
@@ -714,6 +739,16 @@ serve(async (req) => {
         let vectorMatches: LocalMatch[] = vectorResults.flatMap(r =>
           (!r.error && r.data) ? r.data as LocalMatch[] : []
         );
+        // Merge in caselaw-filtered results (Fix #2): dedupe by chunk_id, keeping higher similarity
+        const vecMap = new Map<string, LocalMatch>();
+        for (const m of vectorMatches) vecMap.set(m.chunk_id, m);
+        for (const m of caselawMatches) {
+          const existing = vecMap.get(m.chunk_id);
+          if (!existing || (m.similarity || 0) > (existing.similarity || 0)) {
+            vecMap.set(m.chunk_id, m);
+          }
+        }
+        vectorMatches = Array.from(vecMap.values());
 
         // Safety-net: if 0 vector hits at 0.45, retry once at 0.35 with the first available embedding
         if (vectorMatches.length === 0) {
@@ -783,9 +818,20 @@ serve(async (req) => {
           }
         }
 
-        const merged = Array.from(mergedMap.values())
+        // Fix #1: Reserve a quota for caselaw so precedent isn't crowded out by
+        // denser academic prose. Take top 4 caselaw + top 8 non-caselaw, then re-sort.
+        const sortedAll = Array.from(mergedMap.values())
+          .sort((a, b) => b.similarity - a.similarity);
+        const caselawTop = sortedAll.filter(m => m.source_type === "caselaw").slice(0, 4);
+        const otherTop = sortedAll.filter(m => m.source_type !== "caselaw").slice(0, 8);
+        const reservedIds = new Set([...caselawTop, ...otherTop].map(m => m.chunk_id));
+        const merged = [...caselawTop, ...otherTop]
           .sort((a, b) => b.similarity - a.similarity)
           .slice(0, 12);
+        const caselawKept = merged.filter(m => m.source_type === "caselaw").length;
+        console.log(`Caselaw quota: ${caselawKept} caselaw / ${merged.length - caselawKept} other (total ${merged.length})`);
+        // Suppress unused warning
+        void reservedIds;
 
         if (merged.length > 0) {
           console.log(`Hybrid search: ${merged.length} unique chunks after merge`);
