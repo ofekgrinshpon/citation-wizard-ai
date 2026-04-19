@@ -526,18 +526,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
     setTaskMode(newMode);
 
-    // Reset wizard state when switching to academic mode
+    // Restore wizard state when switching to academic mode (DB first, localStorage fallback)
     if (newMode === "academic_writing") {
-      const saved = loadAcademicSession(projectId);
-      if (saved && saved.wizardStep !== "init") {
-        setWizardStep(saved.wizardStep);
-        setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
-        setCurrentChapter(saved.currentChapter);
-        setChapters(saved.chapters);
-        setResearchQuestion(saved.researchQuestion);
-        setOutline(saved.outline);
-        setProposedQuestions(saved.proposedQuestions || []);
-        setLastAcademicAction(saved.lastAcademicAction || null);
+      const localSaved = loadAcademicSession(projectId);
+      // Apply localStorage immediately so the user sees something fast.
+      if (localSaved && localSaved.wizardStep !== "init") {
+        setWizardStep(localSaved.wizardStep);
+        setMaxReachedStep(localSaved.maxReachedStep || localSaved.wizardStep);
+        setCurrentChapter(localSaved.currentChapter);
+        setChapters(localSaved.chapters);
+        setResearchQuestion(localSaved.researchQuestion);
+        setOutline(localSaved.outline);
+        setProposedQuestions(localSaved.proposedQuestions || []);
+        setLastAcademicAction(localSaved.lastAcademicAction || null);
       } else {
         setWizardStep("init");
         setMaxReachedStep("init");
@@ -548,8 +549,23 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         setProposedQuestions([]);
         setLastAcademicAction(null);
       }
+      // Then upgrade with DB state if it has more progress (cross-device sync).
+      (async () => {
+        const dbSaved = await loadAcademicSessionFromDB(projectId);
+        if (dbSaved && dbSaved.wizardStep !== "init") {
+          setWizardStep(dbSaved.wizardStep);
+          setMaxReachedStep(dbSaved.maxReachedStep || dbSaved.wizardStep);
+          setCurrentChapter(dbSaved.currentChapter);
+          setChapters(dbSaved.chapters);
+          setResearchQuestion(dbSaved.researchQuestion);
+          setOutline(dbSaved.outline);
+          setProposedQuestions(dbSaved.proposedQuestions || []);
+          setLastAcademicAction(dbSaved.lastAcademicAction || null);
+        }
+      })();
       setResult(null);
     }
+
 
     if (uploadedFiles.length > 0 && !FILE_RELEVANT_MODES.includes(newMode)) {
       toast.warning("שימו לב: הקבצים שהועלו עדיין מצורפים.", {
