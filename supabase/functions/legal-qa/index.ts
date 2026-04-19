@@ -704,20 +704,83 @@ serve(async (req) => {
         // Fix #2: Parallel caselaw-only vector query so precedent competes against itself
         // (not against denser academic prose). Use the original (non-expanded) question
         // since expansion often drifts toward academic phrasing.
+        // Layer 3: lowered threshold 0.40→0.25 and expanded top 8→16 (caselaw embeds lower
+        // than academic prose; rerank still gates downstream).
         const caselawVectorPromise = (async () => {
           const embedding = await getQueryEmbedding(question);
           if (!embedding) return { data: null, error: null };
           return await adminClient.rpc("match_legal_chunks_filtered", {
             query_embedding: JSON.stringify(embedding),
             filter_source_type: "caselaw",
-            match_threshold: 0.40,
-            match_count: 8,
+            match_threshold: 0.25,
+            match_count: 16,
           });
         })();
 
-        const [keywordResult, caselawResult, ...vectorResults] = await Promise.all([
+        // Layer 2: Landmark-case direct injection. When a question matches a topic trigger,
+        // unconditionally fetch known landmark cases by case_number and inject them into the
+        // candidate pool. They still go through rerank, so off-topic landmarks get filtered.
+        const LANDMARK_CASES: Array<{ triggers: RegExp[]; case_numbers: string[] }> = [
+          {
+            triggers: [/יועמ["״']?ש/, /יועצת\s+המשפטית/, /יועץ\s+המשפטי/],
+            case_numbers: ["18225-06-25", "4267/93"],
+          },
+        ];
+        const questionForLandmark = `${question} ${expandedQuery || ""}`;
+        const landmarkCaseNumbers = Array.from(new Set(
+          LANDMARK_CASES
+            .filter(lc => lc.triggers.some(t => t.test(questionForLandmark)))
+            .flatMap(lc => lc.case_numbers)
+        ));
+        const landmarkPromise = (async (): Promise<LocalMatch[]> => {
+          if (landmarkCaseNumbers.length === 0) return [];
+          const { data: docs, error: docsErr } = await adminClient
+            .from("legal_documents")
+            .select("id, title, citation, source_type, source_url, metadata, case_number")
+            .in("case_number", landmarkCaseNumbers);
+          if (docsErr || !docs || docs.length === 0) {
+            if (docsErr) console.error(`Landmark fetch error: ${docsErr.message}`);
+            return [];
+          }
+          const docIds = docs.map(d => d.id);
+          const { data: chunks, error: chunksErr } = await adminClient
+            .from("legal_document_chunks")
+            .select("id, document_id, content, chunk_index")
+            .in("document_id", docIds)
+            .order("chunk_index", { ascending: true });
+          if (chunksErr || !chunks) {
+            console.error(`Landmark chunks error: ${chunksErr?.message}`);
+            return [];
+          }
+          // Take first 2 chunks per doc to match RPC behavior
+          const perDocCount = new Map<string, number>();
+          const injected: LocalMatch[] = [];
+          for (const c of chunks) {
+            const n = perDocCount.get(c.document_id) || 0;
+            if (n >= 2) continue;
+            perDocCount.set(c.document_id, n + 1);
+            const doc = docs.find(d => d.id === c.document_id);
+            if (!doc) continue;
+            injected.push({
+              chunk_id: c.id,
+              document_id: c.document_id,
+              chunk_content: c.content,
+              document_title: doc.title,
+              document_citation: doc.citation,
+              source_type: doc.source_type,
+              source_url: doc.source_url,
+              metadata: (doc.metadata || {}) as Record<string, unknown>,
+              similarity: 0.50, // moderate floor so it survives merge but doesn't dominate
+            });
+          }
+          console.log(`Landmark injection: triggers=[${landmarkCaseNumbers.join(", ")}] matched ${docs.length} docs / ${injected.length} chunks`);
+          return injected;
+        })();
+
+        const [keywordResult, caselawResult, landmarkInjected, ...vectorResults] = await Promise.all([
           keywordPromise,
           caselawVectorPromise,
+          landmarkPromise,
           ...vectorPromises,
         ]);
 
