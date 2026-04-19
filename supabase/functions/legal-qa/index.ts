@@ -936,6 +936,7 @@ serve(async (req) => {
     const perplexityCount = sourceCards.filter(sc => sc.provenance === "perplexity").length;
     const docCount = sourceCards.filter(sc => sc.provenance === "document").length;
     console.log(`Source cards: ${localCount} local, ${perplexityCount} perplexity, ${docCount} document`);
+    console.log(`Final source mix: ${localCount} local / ${perplexityCount} perplexity (+ ${docCount} doc)`);
 
     // ========= Step 3: Build context for AI (without forcing tool_call) =========
     const contextParts: string[] = [];
