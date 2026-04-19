@@ -1256,7 +1256,7 @@ ${combinedContext}`;
     if (aiFootnoteLines.length > 0) {
       // Use AI-formatted footnotes — match each to a source card for provenance
       for (const aiFn of aiFootnoteLines) {
-        const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards);
+        const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards, aiFn.num);
         if (!matchedCard) {
           // Tier 3 fallback: keep the footnote text but omit the URL.
           // The bug we're guarding against is wrong URLs — a citation with no link is fine.
