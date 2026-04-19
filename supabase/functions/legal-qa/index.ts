@@ -802,10 +802,17 @@ serve(async (req) => {
         let vectorMatches: LocalMatch[] = vectorResults.flatMap(r =>
           (!r.error && r.data) ? r.data as LocalMatch[] : []
         );
-        // Merge in caselaw-filtered results (Fix #2): dedupe by chunk_id, keeping higher similarity
+        // Merge in caselaw-filtered results (Fix #2) AND landmark-injected docs (Layer 2):
+        // dedupe by chunk_id, keeping higher similarity
         const vecMap = new Map<string, LocalMatch>();
         for (const m of vectorMatches) vecMap.set(m.chunk_id, m);
         for (const m of caselawMatches) {
+          const existing = vecMap.get(m.chunk_id);
+          if (!existing || (m.similarity || 0) > (existing.similarity || 0)) {
+            vecMap.set(m.chunk_id, m);
+          }
+        }
+        for (const m of landmarkInjected) {
           const existing = vecMap.get(m.chunk_id);
           if (!existing || (m.similarity || 0) > (existing.similarity || 0)) {
             vecMap.set(m.chunk_id, m);
