@@ -1,48 +1,45 @@
 
 
-## Issue
-Footnote URLs in the legal-qa response point to sources that don't match the citation text. This is the same root cause as the previous bug — `matchFootnoteToCard` in `legal-qa/index.ts` is too permissive and pairs an AI-generated citation with the wrong source card from the retrieved results, then attaches that card's `source_url` to the footnote.
+## Why you got only 2 footnotes
 
-## Root cause (already known from previous plan)
-In `supabase/functions/legal-qa/index.ts`, when the AI emits a footnote citation, the function tries to match it back to one of the retrieved source cards (local DB or Perplexity) to attach the canonical URL. The current matcher accepts:
-- Keyword overlap as low as 2 of 3 short words
-- Perplexity excerpt overlap of 2 of 4 words
-- A "safety fallback" that keeps unmatched footnotes as "unverified" with whatever URL got attached
+From the edge function logs for your query:
+- The AI generated **10 footnotes**.
+- The strict footnote-to-source matcher (added in the previous fix) **dropped 8 of them** as "unmatched" and kept only 2.
+- Logged messages: `Stripped unmatched footnote #1`, `#3`, `#4`, `#5`, `#6`, `#7`, `#9`, `#10`.
 
-Result: a footnote about case A can get glued to card B's URL because two generic Hebrew words overlap (e.g. "בית", "המשפט"). The user clicks the link and lands on a completely unrelated source.
+The previous fix was working as designed, but **too aggressively** for this query because:
 
-## Fix — single file: `supabase/functions/legal-qa/index.ts`
+1. **Most sources came from Perplexity** (8 of 10 cards), not the local DB. Perplexity returns short web snippets whose wording rarely overlaps with a properly-formatted Israeli legal citation (e.g. `בג"ץ 653/88 צוק נ' שר הביטחון, פ"ד מג(2) 714 (1989)`).
+2. **Tier 1 (case number) failed** because the snippet text rarely includes the formal case number `653/88`.
+3. **Tier 2 (≥3 significant words)** failed because Perplexity snippets are short and topical, not citation-shaped.
+4. **Re-ranking silently degraded**: `Re-ranking: could not parse scores, using all sources` — the threshold protection didn't engage, so weak Perplexity cards reached the AI anyway.
 
-This extends the previous (already-approved) fix with **explicit URL-attachment hardening**:
+Net effect: the matcher correctly refused to attach wrong URLs, but it also threw away footnotes whose citation text was actually fine — just not provable against the available cards.
 
-### 1. Strict-only matching in `matchFootnoteToCard`
-- **Tier 1 (accept):** exact case-number match (`\d+/\d+`), or exact normalized title match, or normalized URL substring match.
-- **Tier 2 (accept):** ≥3 significant-word overlap (words ≥4 chars, excluding stopwords like בית/המשפט/של/את/לפי).
-- **Remove** the Perplexity excerpt-overlap branch entirely.
-- If no tier matches → return `null`.
+## Fix — relax the matcher safely (single file: `supabase/functions/legal-qa/index.ts`)
 
-### 2. Never attach a URL from a non-matched card
-When `matchFootnoteToCard` returns `null`:
-- Drop the footnote entirely (do not keep as "unverified" with a wrong URL).
-- Strip the corresponding `[N]` marker from the body so the renumber pass doesn't leave dangling superscripts.
+The goal: keep wrong-URL prevention, but stop dropping legitimate citations.
 
-### 3. Remove the "keep all as unverified" safety fallback
-The existing block that keeps every footnote when matching fails is the main path for wrong URLs leaking through. Drop unmatched footnotes instead.
+### 1. Add Tier 3: keep footnote without a URL when no card matches
+Currently, no match → drop entirely. Change to: no match → **keep the footnote text, omit the URL** (so the user still sees the citation but no broken link). The bug we were preventing is wrong URLs — a footnote with no link at all is fine.
 
-### 4. Raise rerank threshold
-Change retrieval `score >= 3` → `score >= 5` so weakly-relevant cards never reach the AI in the first place.
+### 2. Match by case number against the card's `case_number` field, not just citation text
+For local DB cards, also check `card.case_number` (already in `legal_documents`). This catches cases where the AI cites `12345/22` and the card has it as a structured field but not in the snippet body.
 
-### 5. Prompt hardening against duplicate `[N]` markers
-Add to the system prompt: "כל מספר הפניה [N] יופיע פעם אחת בלבד בגוף הטקסט. אם אותו מקור תומך בכמה טענות, השתמש ב-'שם' או 'לעיל ה"ש N' — אל תחזור על אותו מספר הפניה."
+### 3. Lower Tier 2 to `≥2 significant words` for Perplexity cards specifically
+Perplexity snippets are shorter than full citations, so 3-word overlap is unrealistic. Use 2-word for `provenance === "perplexity"`, keep 3-word for local DB cards.
 
-### 6. Body-side dedup of repeated `[N]` markers
-Before renumber, if any `[N]` appears >2 times in the body, keep only the first occurrence; remove the rest (so the user doesn't see "several ¹").
+### 4. Body marker handling for kept-without-URL footnotes
+When a footnote is kept without a URL, its `[N]` marker stays in the body (currently it's stripped because the footnote was dropped). Renumber as usual.
+
+### 5. Log re-rank failure more loudly + lower threshold fallback
+When score parsing fails, fall back to `score >= 5` filter on raw similarity instead of "use all" — this stops weak Perplexity cards from reaching the AI in the first place.
 
 ## Out of scope
-- No client-side changes (`LegalQAChat.tsx` rendering stays as-is).
-- No DB schema changes.
-- No academic-mode logic.
+- No client changes.
+- No prompt changes.
+- No DB changes.
 
 ## File changes
-- `supabase/functions/legal-qa/index.ts` — items 1-6 above.
+- `supabase/functions/legal-qa/index.ts` — items 1–5 above.
 
