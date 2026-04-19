@@ -818,9 +818,20 @@ serve(async (req) => {
           }
         }
 
-        const merged = Array.from(mergedMap.values())
+        // Fix #1: Reserve a quota for caselaw so precedent isn't crowded out by
+        // denser academic prose. Take top 4 caselaw + top 8 non-caselaw, then re-sort.
+        const sortedAll = Array.from(mergedMap.values())
+          .sort((a, b) => b.similarity - a.similarity);
+        const caselawTop = sortedAll.filter(m => m.source_type === "caselaw").slice(0, 4);
+        const otherTop = sortedAll.filter(m => m.source_type !== "caselaw").slice(0, 8);
+        const reservedIds = new Set([...caselawTop, ...otherTop].map(m => m.chunk_id));
+        const merged = [...caselawTop, ...otherTop]
           .sort((a, b) => b.similarity - a.similarity)
           .slice(0, 12);
+        const caselawKept = merged.filter(m => m.source_type === "caselaw").length;
+        console.log(`Caselaw quota: ${caselawKept} caselaw / ${merged.length - caselawKept} other (total ${merged.length})`);
+        // Suppress unused warning
+        void reservedIds;
 
         if (merged.length > 0) {
           console.log(`Hybrid search: ${merged.length} unique chunks after merge`);
