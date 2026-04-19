@@ -434,42 +434,65 @@ ${sourceList}
       return result.map(m => ({ ...m, relevanceScore: undefined }));
     }
 
-    const scores: number[] = JSON.parse(arrayMatch[0]);
-    console.log(`Re-ranking scores: ${scores.join(", ")}`);
+    const rawScores: number[] = JSON.parse(arrayMatch[0]);
+    console.log(`Re-ranking scores (raw): ${rawScores.join(", ")}`);
 
-    // Map scores back to matches, filter out low-relevance docs
-    // But ALWAYS keep at least the top-scoring document to avoid 0 local sources
-    const result: RankedMatch[] = [];
-    const docsArr = Array.from(docMap.entries());
-    let bestScore = -1;
-    let bestDocId: string | null = null;
-    for (let i = 0; i < docsArr.length; i++) {
-      const score = scores[i] ?? 5;
-      if (score > bestScore) {
-        bestScore = score;
-        bestDocId = docsArr[i][0];
+    // Action-verb topical bonus on the rerank score itself (parallels similarity-bonus layer).
+    const VERB_TOPIC_PAIRS_RR: Array<{ trigger: RegExp; topicTerms: string[] }> = [
+      { trigger: /(לפטר|פיטור|להדיח|הדחה|להפסיק\s+כהונ|הפסקת\s+כהונ|לסיים\s+כהונ|סיום\s+כהונ)/, topicTerms: ["פיטור", "פיטורי", "הפסקת כהונ", "סיום כהונ", "הדחה", "הדחת"] },
+      { trigger: /(למנות|מינוי|להתמנות)/, topicTerms: ["מינוי", "מינויי", "למנות", "התמנות"] },
+      { trigger: /(לעצור|מעצר|מעצרים)/, topicTerms: ["מעצר", "עצור", "עוצר", "מעצרים"] },
+      { trigger: /(חיפוש|לערוך\s+חיפוש|צו\s+חיפוש)/, topicTerms: ["חיפוש", "צו חיפוש"] },
+      { trigger: /(חקירה|חשד|לחקור)/, topicTerms: ["חקירה", "חשד", "חקירת"] },
+    ];
+    const activePairsRR = VERB_TOPIC_PAIRS_RR.filter(p => p.trigger.test(question));
+    const computeBonus = (chunkContent: string): number => {
+      if (activePairsRR.length === 0) return 0;
+      for (const pair of activePairsRR) {
+        if (pair.topicTerms.some(t => chunkContent.includes(t))) return 1;
       }
-    }
+      return 0;
+    };
 
-    const rerankScoreLog: Record<string, number> = {};
+    const docsArr = Array.from(docMap.entries());
+    const docScores: Array<{ docId: string; score: number; rawScore: number; bonus: number; title: string }> = [];
     for (let i = 0; i < docsArr.length; i++) {
       const [docId, docData] = docsArr[i];
-      const score = scores[i] ?? 4;
-      rerankScoreLog[docData.match.document_title.slice(0, 60)] = score;
-      if (score >= 4 || docId === bestDocId) {
+      const raw = rawScores[i] ?? 4;
+      const bonus = computeBonus(docData.chunks.join(" "));
+      docScores.push({ docId, score: raw + bonus, rawScore: raw, bonus, title: docData.match.document_title });
+    }
+
+    // Force-keep top 4 docs by adjusted score regardless of threshold
+    const sortedByScore = [...docScores].sort((a, b) => b.score - a.score);
+    const forceKeepIds = new Set(sortedByScore.slice(0, 4).map(d => d.docId));
+
+    const KEEP_THRESHOLD = 3;
+    const result: RankedMatch[] = [];
+    const rerankScoreLog: Record<string, string> = {};
+    let forceKeptCount = 0;
+    for (const ds of docScores) {
+      const tag = ds.bonus > 0 ? `${ds.rawScore}+${ds.bonus}=${ds.score}` : `${ds.score}`;
+      rerankScoreLog[ds.title.slice(0, 60)] = tag;
+      const passes = ds.score >= KEEP_THRESHOLD;
+      const forced = !passes && forceKeepIds.has(ds.docId);
+      if (passes || forced) {
         for (const m of matches) {
-          if (m.document_id === docId) {
-            result.push({ ...m, relevanceScore: score });
+          if (m.document_id === ds.docId) {
+            result.push({ ...m, relevanceScore: ds.score });
           }
         }
-        if (score < 4) {
-          console.log(`Kept top-scoring source despite low score (score=${score}): "${docData.match.document_title.slice(0, 50)}"`);
+        if (forced) {
+          forceKeptCount++;
+          console.log(`Force-kept low-score source (score=${ds.score}): "${ds.title.slice(0, 50)}"`);
         }
       } else {
-        console.log(`Filtered out low-relevance source (score=${score}): "${docData.match.document_title.slice(0, 50)}"`);
+        console.log(`Filtered out low-relevance source (score=${ds.score}): "${ds.title.slice(0, 50)}"`);
       }
     }
+    const keptDocs = new Set(result.map(r => r.document_id)).size;
     console.log(`Rerank scores per doc: ${JSON.stringify(rerankScoreLog)}`);
+    console.log(`Local kept after rerank: ${keptDocs}/${docsArr.length} (force-kept: ${forceKeptCount}, threshold: ${KEEP_THRESHOLD}, active verb pairs: ${activePairsRR.length})`);
 
     return result;
   } catch (err) {
