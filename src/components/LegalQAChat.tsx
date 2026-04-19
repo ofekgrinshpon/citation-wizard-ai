@@ -158,6 +158,63 @@ function clearAcademicSession(projectId?: string) {
   } catch { /* silent */ }
 }
 
+// ─── DB-backed academic session sync ───────────────────────────────
+// Persists wizard state to academic_sessions table so users can resume
+// from any browser/device, not just the one that wrote localStorage.
+
+async function loadAcademicSessionFromDB(projectId?: string): Promise<AcademicSession | null> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+    let q = supabase
+      .from("academic_sessions")
+      .select("*")
+      .eq("user_id", user.id);
+    q = projectId ? q.eq("project_id", projectId) : q.is("project_id", null);
+    const { data, error } = await q.maybeSingle();
+    if (error || !data) return null;
+    return {
+      wizardStep: data.wizard_step as WizardStep,
+      maxReachedStep: data.max_reached_step as WizardStep,
+      currentChapter: data.current_chapter ?? 0,
+      chapters: (data.chapters as unknown as ChapterData[]) || [],
+      researchQuestion: data.research_question || "",
+      outline: data.outline || "",
+      proposedQuestions: (data.proposed_questions as unknown as string[]) || [],
+      lastAcademicAction: data.last_academic_action || null,
+    };
+  } catch { return null; }
+}
+
+async function saveAcademicSessionToDB(session: AcademicSession, projectId?: string): Promise<void> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const payload = {
+      user_id: user.id,
+      project_id: projectId ?? null,
+      wizard_step: session.wizardStep,
+      max_reached_step: session.maxReachedStep,
+      current_chapter: session.currentChapter,
+      chapters: session.chapters as unknown as any,
+      research_question: session.researchQuestion,
+      outline: session.outline,
+      proposed_questions: (session.proposedQuestions || []) as unknown as any,
+      last_academic_action: session.lastAcademicAction ?? null,
+    };
+    // Upsert by (user_id, project_id) — matches the unique index that treats NULL project as a single slot.
+    let q = supabase.from("academic_sessions").select("id").eq("user_id", user.id);
+    q = projectId ? q.eq("project_id", projectId) : q.is("project_id", null);
+    const { data: existing } = await q.maybeSingle();
+    if (existing?.id) {
+      await supabase.from("academic_sessions").update(payload).eq("id", existing.id);
+    } else {
+      await supabase.from("academic_sessions").insert(payload);
+    }
+  } catch { /* silent */ }
+}
+
+
 // ─── Utility components ──────────────────────────────────────────────
 
 function superscriptToNumber(s: string): number | null {
