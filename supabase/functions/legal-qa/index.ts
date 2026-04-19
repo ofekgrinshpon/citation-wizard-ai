@@ -304,7 +304,35 @@ function getAcademicSubModePrompt(academicStep: string, body: Record<string, unk
       const chapterIndex = (body.chapterIndex as number) || 0;
       const rq = (body.researchQuestion as string) || "";
       const prevChapters = (body.previousChapters as Array<{ title: string; content: string }>) || [];
-      
+      const isAbstract = !!body.isAbstract;
+
+      // ───────── Dedicated Abstract synthesis prompt ─────────
+      if (isAbstract) {
+        const allChaptersContext = prevChapters.length > 0
+          ? prevChapters.map(ch => `--- ${ch.title} ---\n${ch.content || ""}`).join("\n\n")
+          : "(לא סופקו פרקים)";
+
+        return `אתה חוקר אקדמי בכיר במשפטים. עליך לכתוב **תקציר** לעבודה סמינריונית שכבר נכתבה במלואה.
+
+שאלת המחקר: "${rq}"
+
+=== כל פרקי העבודה ===
+${allChaptersContext}
+
+הנחיות מחייבות:
+- אורך: עד 250 מילים בלבד (קשיח). אל תחרוג.
+- טון: עברית אקדמית פורמלית ברגיסטר גבוה.
+- מבנה (פסקה אחת רציפה או 2-4 פסקאות קצרות):
+  1. שאלת המחקר וחשיבותה.
+  2. המסגרת התיאורטית/המתודולוגיה.
+  3. הטיעונים המרכזיים שהוצגו בפרקים.
+  4. המסקנה והתרומה של המחקר.
+- אל תוסיף הערות שוליים, רשימת מקורות, כותרות משנה או רשימות ממוספרות.
+- אל תפתח במילים "תקציר זה..." — פתח ישר בתוכן.
+- אל תוסיף ציטוטים חדשים — סינתזה בלבד מהפרקים הקיימים.
+- אם חרגת מ-250 מילים — קצר את עצמך.`;
+      }
+
       let prevContext = "";
       if (prevChapters.length > 0) {
         prevContext = "\n\n=== פרקים שנכתבו עד כה ===\n" + 
