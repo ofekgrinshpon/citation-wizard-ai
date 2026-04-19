@@ -1,59 +1,41 @@
 
-## Plan: Rewrite `search_legal_chunks_text` for full-content search + index-backed performance + dual-field ranking
+## Plan: keyword fallback + drop noise + fuzzy URL matching
 
-### Migration changes
+### 1. DB function — top-1 AND fallback
+Update `search_legal_chunks_text`: after the existing top-2-AND query runs, if `RETURN QUERY` produced 0 rows, retry with top-1 AND + rest OR. Implementation: capture row count via `GET DIAGNOSTICS`, branch on it.
 
-**1. Add GIN indexes** for index-backed lookups:
-```sql
-CREATE INDEX IF NOT EXISTS idx_chunks_content_fts
-  ON public.legal_document_chunks
-  USING gin (to_tsvector('simple', content));
-
-CREATE INDEX IF NOT EXISTS idx_docs_meta_fts
-  ON public.legal_documents
-  USING gin (to_tsvector('simple',
-    title || ' ' || citation || ' ' ||
-    coalesce(case_number,'') || ' ' || coalesce(court,'')
-  ));
+```text
+build top2 tsquery → run query into temp result → if 0 rows:
+  build top1 tsquery: required=sorted_words[1:1], boosters=sorted_words[2:N]
+  re-run same SELECT with new tsq
+  RAISE NOTICE 'Keyword search fallback triggered: %' (top1 word)
+return result
 ```
 
-**2. Rewrite `search_legal_chunks_text`** with three improvements:
+Use a `RETURN QUERY` pattern with a CTE materialization, or run the query into a temp table, check count, and conditionally re-run. Cleanest: wrap in a loop that tries top-2 first, then top-1, then plainto.
 
-- **Remove `LIMIT 2`** on the LATERAL chunk join → all chunks searched.
-- **Loosen AND-mode**: keep only the **top-2 longest** distinctive terms as required (`&`); all other terms (length ≥ 2) become OR boosters. Final tsquery shape: `(top1 & top2) | (other1 | other2 | ...)`. Edge cases: 1 term → just that term; 2 terms → both AND; 3+ terms → top-2 AND, rest OR.
-- **Combined ranking**: compute `ts_rank` separately on the metadata tsvector and on the chunk-content tsvector, then sum them with a small bonus when both fields match:
+### 2. Edge function — remove score=0 force-keep
+File: `supabase/functions/legal-qa/index.ts`. Currently force-keeps 2 low-score sources to fill the pool. Change to: drop everything with `score < 1`. Accept that final local count may be <6. Log: `Local kept after filter: N/M (no force-keep, threshold: 1)`.
 
-```sql
-WITH q AS (SELECT <ts> AS ts)
-SELECT ...,
-  (
-    ts_rank(meta_tsv, q.ts)
-    + ts_rank(content_tsv, q.ts)
-    + CASE WHEN meta_tsv @@ q.ts AND content_tsv @@ q.ts THEN 0.1 ELSE 0 END
-  )::float AS similarity
-FROM legal_documents d
-JOIN LATERAL (
-  SELECT c2.id, c2.content, to_tsvector('simple', c2.content) AS content_tsv
-  FROM legal_document_chunks c2
-  WHERE c2.document_id = d.id
-    AND to_tsvector('simple', c2.content) @@ q.ts
-) c ON true
-WHERE meta_tsv @@ q.ts OR content_tsv @@ q.ts
-```
+### 3. Footnote URL fuzzy matcher
+In `legal-qa/index.ts` post-process where unmatched footnotes are logged ("Kept footnote without URL"). Before logging, run a fuzzy match:
+- Extract distinctive tokens from footnote citation (party names like "WOLT", "מדר", case numbers like "338/60", "35327-08-20").
+- Search across all candidate source cards' `document_title`, `document_citation`, `case_number`, and `source_url` fields for substring/regex hits.
+- If any card contains 2+ distinctive tokens or the case number, attach its `source_url`.
+- Log: `Fuzzy URL match: footnote #N → card "title..." (matched on: tokens)`.
 
-The `WHERE` and the LATERAL filter both use index-backed `@@` against the precomputed tsvector expressions matching the GIN index, so Postgres uses the indexes (no full scan). Documents with matches in both metadata AND content rank above documents with a match in only one.
-
-**3. Tokenizer**: drop common length-<2 noise; sort remaining by `length(w) DESC`; first 2 → AND-required; rest → OR. Wrap `to_tsquery` in EXCEPTION block; on parse error fall back to `plainto_tsquery('simple', search_query)`.
+### 4. Verification logging
+- DB function: `RAISE NOTICE` (visible in postgres logs) when fallback fires.
+- Edge function: log keyword result count + whether fallback was used (visible from RPC NOTICE? No — Postgres NOTICE doesn't surface via supabase-js. Solution: have the function return an extra signal via a separate diagnostic RPC, OR simpler: log the keyword count and let absence of results vs. presence-after-retry be visible from Postgres logs which we can query via `analytics_query`).
+- Practical approach: log to Postgres logs via `RAISE NOTICE`, and add an edge-function log line `Keyword search returned N results (top-2 AND or top-1 fallback)` based on count alone.
 
 ### File changes
-- **New migration file** containing both `CREATE INDEX` statements and `CREATE OR REPLACE FUNCTION search_legal_chunks_text` with the rewrite above.
-- **No edge function code changes** — `legal-qa/index.ts` already calls this RPC; the SQL change alone delivers the fix.
-
-### Expected impact
-- בג"ץ גילון surfaces via keyword match on chunk 3+ content (e.g., "פיטור היועצת המשפטית").
-- Hebrew morphology mismatches no longer kill results: "לפטר" missing from content is fine as long as "היועצת" + "המשפטית" match.
-- Documents matching both title and body rank above title-only or body-only hits.
-- GIN indexes keep latency low even with full-corpus content search.
+- **New migration**: `CREATE OR REPLACE FUNCTION search_legal_chunks_text` with top-2 → top-1 → plainto cascade and `RAISE NOTICE` on fallback.
+- **`supabase/functions/legal-qa/index.ts`**:
+  - Remove force-keep logic in rerank section.
+  - Add fuzzy URL matcher before "Kept footnote without URL" log.
+  - Add diagnostic log after keyword search call.
 
 ### Out of scope
-- No re-embedding, no edge function changes, no client changes, no Hebrew stemming dictionary.
+- No client changes, no embedding changes, no Hebrew morphology dictionaries.
+- No prompt changes.
