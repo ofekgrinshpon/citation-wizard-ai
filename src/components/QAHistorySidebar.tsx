@@ -141,10 +141,15 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
                     <p className="text-xs text-foreground leading-relaxed line-clamp-2 group-hover:text-primary transition-colors">
                       {log.question}
                     </p>
-                    <div className="flex items-center gap-1.5 mt-1">
+                    <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                       <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
                         {mode.label}
                       </Badge>
+                      {log.task_mode === "academic_writing" && (
+                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-primary/40 text-primary">
+                          המשך עבודה אקדמית
+                        </Badge>
+                      )}
                       <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
                         <Clock className="w-2.5 h-2.5" />
                         {timeAgo}

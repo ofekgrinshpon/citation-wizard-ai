@@ -127,6 +127,8 @@ const Index = () => {
   const [citationRefreshKey, setCitationRefreshKey] = useState(0);
   const [qaRefreshKey, setQaRefreshKey] = useState(0);
   const [qaExternalResult, setQaExternalResult] = useState<{ question: string; result: any; taskMode: "research" | "pleading_analysis" | "case_summary" | "academic_writing" } | null>(null);
+  const [academicResumeSignal, setAcademicResumeSignal] = useState<number>(0);
+  const [academicResumeFallback, setAcademicResumeFallback] = useState<{ question: string; result: any } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   
@@ -838,6 +840,8 @@ const Index = () => {
           <LegalQAChat
             onResultSaved={() => setQaRefreshKey(k => k + 1)}
             externalResult={qaExternalResult}
+            academicResumeSignal={academicResumeSignal}
+            academicResumeFallback={academicResumeFallback}
           />
         ) : (
           <>
@@ -1154,7 +1158,12 @@ const Index = () => {
                 projectId={projectId ?? null}
                 refreshKey={qaRefreshKey}
                 onLoadResult={(question, result, taskMode) => {
-                  setQaExternalResult({ question, result, taskMode: taskMode as "research" | "pleading_analysis" | "case_summary" | "academic_writing" });
+                  if (taskMode === "academic_writing") {
+                    setAcademicResumeFallback({ question, result });
+                    setAcademicResumeSignal(Date.now());
+                  } else {
+                    setQaExternalResult({ question, result, taskMode: taskMode as "research" | "pleading_analysis" | "case_summary" | "academic_writing" });
+                  }
                 }}
               />
             ) : (
