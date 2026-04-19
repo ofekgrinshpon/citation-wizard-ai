@@ -19,6 +19,13 @@ export default function BatchEmbeddingPanel() {
   const [batchCount, setBatchCount] = useState(0);
   const abortRef = useRef(false);
 
+  // Knesset title recovery state
+  const [recovering, setRecovering] = useState(false);
+  const [recoveredTotal, setRecoveredTotal] = useState(0);
+  const [flaggedTotal, setFlaggedTotal] = useState(0);
+  const [recoveryRemaining, setRecoveryRemaining] = useState<number | null>(null);
+  const recoveryAbortRef = useRef(false);
+
   const totalChunks = remaining !== null ? totalProcessed + remaining : null;
   const progress = totalChunks && totalChunks > 0 ? (totalProcessed / totalChunks) * 100 : 0;
 
