@@ -87,14 +87,106 @@ const HEBREW_STOP_WORDS = new Set([
   "להם","להן","אני","אנחנו","הוא","היא","אתה","את","הם","הן",
 ]);
 
+// ─── Hebrew legal abbreviation expansions (appended, not replaced) ───
+// Match against the raw question; for each detected abbreviation, append its
+// full form(s) so both keyword search and embeddings get richer signal.
+const HEBREW_ABBREVIATION_EXPANSIONS: Array<{ pattern: RegExp; expansions: string[] }> = [
+  { pattern: /יועמ["״]ש|יועמש|היועמשי?ת|היועמש/g, expansions: ["היועץ המשפטי לממשלה", "היועצת המשפטית לממשלה"] },
+  { pattern: /בג["״]ץ/g, expansions: ["בית המשפט הגבוה לצדק"] },
+  { pattern: /בימ["״]ש/g, expansions: ["בית המשפט"] },
+  { pattern: /ביה["״]ד/g, expansions: ["בית הדין"] },
+  { pattern: /ע["״]א(?![\u0590-\u05FF])/g, expansions: ["ערעור אזרחי"] },
+  { pattern: /ע["״]פ(?![\u0590-\u05FF])/g, expansions: ["ערעור פלילי"] },
+  { pattern: /רע["״]א/g, expansions: ["רשות ערעור אזרחי"] },
+  { pattern: /ס["״]ח/g, expansions: ["ספר החוקים"] },
+  { pattern: /ק["״]ת/g, expansions: ["קובץ התקנות"] },
+  { pattern: /תקנ['׳]/g, expansions: ["תקנות"] },
+  { pattern: /ועדת חוקה(?! חוק)/g, expansions: ["ועדת חוקה חוק ומשפט"] },
+  { pattern: /מ["״]י(?![\u0590-\u05FF])/g, expansions: ["מדינת ישראל"] },
+  { pattern: /חו["״]י/g, expansions: ["חוק יסוד"] },
+  { pattern: /פס["״]ד/g, expansions: ["פסק דין"] },
+  { pattern: /ב["״]כ(?![\u0590-\u05FF])/g, expansions: ["בא כוח"] },
+  { pattern: /פד["״]י/g, expansions: ["פסקי דין"] },
+  { pattern: /דנ["״]א/g, expansions: ["דיון נוסף אזרחי"] },
+  { pattern: /בש["״]פ/g, expansions: ["בקשה פלילית"] },
+  { pattern: /עע["״]מ/g, expansions: ["ערעור מינהלי"] },
+];
+
+function expandHebrewAbbreviations(text: string): string[] {
+  const found: string[] = [];
+  for (const { pattern, expansions } of HEBREW_ABBREVIATION_EXPANSIONS) {
+    if (pattern.test(text)) {
+      found.push(...expansions);
+    }
+    pattern.lastIndex = 0; // reset stateful /g regex
+  }
+  return found;
+}
+
 function extractKeywords(question: string): string {
   const words = question
     .replace(/[?!.,;:"״׳']/g, "")
     .split(/\s+/)
     .filter(w => w.length > 1 && !HEBREW_STOP_WORDS.has(w));
-  
-  // Take up to 6 most meaningful keywords
-  return words.slice(0, 6).join(" ");
+
+  // Take up to 6 most meaningful keywords from the original question
+  const baseKeywords = words.slice(0, 6);
+
+  // Append expanded forms of any detected legal abbreviations (de-duped)
+  const expansions = expandHebrewAbbreviations(question);
+  const expansionWords: string[] = [];
+  for (const phrase of expansions) {
+    for (const w of phrase.split(/\s+/)) {
+      if (w.length > 1 && !HEBREW_STOP_WORDS.has(w) && !baseKeywords.includes(w) && !expansionWords.includes(w)) {
+        expansionWords.push(w);
+      }
+    }
+  }
+
+  const finalSet = [...baseKeywords, ...expansionWords];
+  if (expansionWords.length > 0) {
+    console.log(`Keyword set (with expansions): [${finalSet.join(", ")}]`);
+  } else {
+    console.log(`Keyword set (with expansions): [${finalSet.join(", ")}] (no expansions matched)`);
+  }
+  return finalSet.join(" ");
+}
+
+// ─── Semantic query expansion for short questions ────────────────────
+async function expandShortQuery(question: string, apiKey: string): Promise<string | null> {
+  const wordCount = question.trim().split(/\s+/).length;
+  const charCount = question.trim().length;
+  if (wordCount >= 5 && charCount >= 25) return null;
+
+  try {
+    const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash-lite",
+        max_tokens: 120,
+        messages: [
+          {
+            role: "user",
+            content: `הרחב את השאלה המשפטית הבאה למשפט תיאורי פורמלי אחד (עד 25 מילים), הכולל מונחים משפטיים מלאים במקום קיצורים. החזר רק את המשפט המורחב, ללא הקדמה.\n\nשאלה: ${question}`,
+          },
+        ],
+      }),
+    }, 3000);
+
+    if (!res.ok) {
+      console.warn(`Query expansion API error: ${res.status} — falling back to original`);
+      return null;
+    }
+    const data = await res.json();
+    const expanded = (data.choices?.[0]?.message?.content || "").trim().replace(/^["'״׳]+|["'״׳]+$/g, "");
+    if (!expanded || expanded.length < 5) return null;
+    console.log(`Query expansion: "${question}" → "${expanded}"`);
+    return expanded;
+  } catch (err) {
+    console.warn("Query expansion failed (non-fatal):", err instanceof Error ? err.message : err);
+    return null;
+  }
 }
 
 // ─── Source card: server-built, numbered list of sources for the AI ───
