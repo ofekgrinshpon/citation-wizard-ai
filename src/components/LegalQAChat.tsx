@@ -413,44 +413,50 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     }
   }, [externalResult]);
 
-  // Resume academic session from history sidebar click
+  // Resume academic session from history sidebar click (DB first, localStorage fallback)
   useEffect(() => {
     if (!academicResumeSignal) return;
     setTaskMode("academic_writing");
-    const saved = loadAcademicSession(projectId);
-    if (saved && saved.wizardStep !== "init") {
-      setWizardStep(saved.wizardStep);
-      setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
-      setChapters(saved.chapters);
-      setResearchQuestion(saved.researchQuestion);
-      setOutline(saved.outline);
-      setProposedQuestions(saved.proposedQuestions || []);
-      setLastAcademicAction(saved.lastAcademicAction || null);
+    (async () => {
+      const dbSaved = await loadAcademicSessionFromDB(projectId);
+      const saved = dbSaved && dbSaved.wizardStep !== "init"
+        ? dbSaved
+        : loadAcademicSession(projectId);
+      if (saved && saved.wizardStep !== "init") {
+        setWizardStep(saved.wizardStep);
+        setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
+        setChapters(saved.chapters);
+        setResearchQuestion(saved.researchQuestion);
+        setOutline(saved.outline);
+        setProposedQuestions(saved.proposedQuestions || []);
+        setLastAcademicAction(saved.lastAcademicAction || null);
 
-      // Land on the last chapter with content (or first without — whichever is further)
-      const chs = saved.chapters || [];
-      let landIdx = saved.currentChapter || 0;
-      const lastWritten = (() => {
-        for (let i = chs.length - 1; i >= 0; i--) if (chs[i]?.content) return i;
-        return -1;
-      })();
-      const firstEmpty = chs.findIndex(c => !c?.content);
-      const candidate = Math.max(landIdx, lastWritten, firstEmpty === -1 ? landIdx : firstEmpty);
-      landIdx = Math.min(Math.max(candidate, 0), Math.max(chs.length - 1, 0));
-      setCurrentChapter(landIdx);
+        // Land on the last chapter with content (or first without — whichever is further)
+        const chs = saved.chapters || [];
+        let landIdx = saved.currentChapter || 0;
+        const lastWritten = (() => {
+          for (let i = chs.length - 1; i >= 0; i--) if (chs[i]?.content) return i;
+          return -1;
+        })();
+        const firstEmpty = chs.findIndex(c => !c?.content);
+        const candidate = Math.max(landIdx, lastWritten, firstEmpty === -1 ? landIdx : firstEmpty);
+        landIdx = Math.min(Math.max(candidate, 0), Math.max(chs.length - 1, 0));
+        setCurrentChapter(landIdx);
 
-      setResult(null);
-      setError(null);
-      setQuestion("");
-      const title = chs[landIdx]?.title || "";
-      toast.success(title ? `חזרת לעבודה האקדמית — פרק נוכחי: ${title}` : "חזרת לעבודה האקדמית");
-    } else if (academicResumeFallback) {
-      toast.info("לא נמצאה התקדמות שמורה לפרויקט זה. ההיסטוריה מציגה רק תוצאות פרקים קודמים.");
-      setQuestion(academicResumeFallback.question);
-      setResult(academicResumeFallback.result);
-    }
+        setResult(null);
+        setError(null);
+        setQuestion("");
+        const title = chs[landIdx]?.title || "";
+        toast.success(title ? `חזרת לעבודה האקדמית — פרק נוכחי: ${title}` : "חזרת לעבודה האקדמית");
+      } else if (academicResumeFallback) {
+        toast.info("לא נמצאה התקדמות שמורה לפרויקט זה. ההיסטוריה מציגה רק תוצאות פרקים קודמים.");
+        setQuestion(academicResumeFallback.question);
+        setResult(academicResumeFallback.result);
+      }
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [academicResumeSignal]);
+
 
   useEffect(() => {
     if (result) scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
