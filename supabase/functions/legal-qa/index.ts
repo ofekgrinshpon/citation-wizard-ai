@@ -352,13 +352,13 @@ ${sourceList}
     for (let i = 0; i < docsArr.length; i++) {
       const [docId, docData] = docsArr[i];
       const score = scores[i] ?? 5;
-      if (score >= 3 || docId === bestDocId) {
+      if (score >= 5 || docId === bestDocId) {
         for (const m of matches) {
           if (m.document_id === docId) {
             result.push({ ...m, relevanceScore: score });
           }
         }
-        if (score < 3) {
+        if (score < 5) {
           console.log(`Kept top-scoring source despite low score (score=${score}): "${docData.match.document_title.slice(0, 50)}"`);
         }
       } else {
