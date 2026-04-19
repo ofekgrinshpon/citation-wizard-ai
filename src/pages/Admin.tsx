@@ -665,10 +665,13 @@ const Admin = () => {
             {(() => {
               const SOURCE_TYPE_META: Record<string, { emoji: string; label: string }> = {
                 legislation: { emoji: "📜", label: "חקיקה" },
+                israeli_law: { emoji: "🇮🇱", label: "חקיקה ישראלית" },
                 caselaw: { emoji: "⚖️", label: "פסיקה" },
                 book: { emoji: "📕", label: "ספרים" },
                 article: { emoji: "📰", label: "מאמרים" },
                 notebook: { emoji: "📓", label: "מחברות" },
+                knesset_research: { emoji: "🏛️", label: "מחקר כנסת" },
+                journal_article: { emoji: "📚", label: "מאמר אקדמי" },
                 international: { emoji: "🌐", label: "בינלאומי" },
               };
               const typeEntries = Object.entries(docTypeCounts).sort((a, b) => b[1] - a[1]);
