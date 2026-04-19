@@ -739,6 +739,16 @@ serve(async (req) => {
         let vectorMatches: LocalMatch[] = vectorResults.flatMap(r =>
           (!r.error && r.data) ? r.data as LocalMatch[] : []
         );
+        // Merge in caselaw-filtered results (Fix #2): dedupe by chunk_id, keeping higher similarity
+        const vecMap = new Map<string, LocalMatch>();
+        for (const m of vectorMatches) vecMap.set(m.chunk_id, m);
+        for (const m of caselawMatches) {
+          const existing = vecMap.get(m.chunk_id);
+          if (!existing || (m.similarity || 0) > (existing.similarity || 0)) {
+            vecMap.set(m.chunk_id, m);
+          }
+        }
+        vectorMatches = Array.from(vecMap.values());
 
         // Safety-net: if 0 vector hits at 0.45, retry once at 0.35 with the first available embedding
         if (vectorMatches.length === 0) {
