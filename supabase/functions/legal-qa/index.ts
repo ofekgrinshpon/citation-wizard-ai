@@ -87,14 +87,106 @@ const HEBREW_STOP_WORDS = new Set([
   "להם","להן","אני","אנחנו","הוא","היא","אתה","את","הם","הן",
 ]);
 
+// ─── Hebrew legal abbreviation expansions (appended, not replaced) ───
+// Match against the raw question; for each detected abbreviation, append its
+// full form(s) so both keyword search and embeddings get richer signal.
+const HEBREW_ABBREVIATION_EXPANSIONS: Array<{ pattern: RegExp; expansions: string[] }> = [
+  { pattern: /יועמ["״]ש|יועמש|היועמשי?ת|היועמש/g, expansions: ["היועץ המשפטי לממשלה", "היועצת המשפטית לממשלה"] },
+  { pattern: /בג["״]ץ/g, expansions: ["בית המשפט הגבוה לצדק"] },
+  { pattern: /בימ["״]ש/g, expansions: ["בית המשפט"] },
+  { pattern: /ביה["״]ד/g, expansions: ["בית הדין"] },
+  { pattern: /ע["״]א(?![\u0590-\u05FF])/g, expansions: ["ערעור אזרחי"] },
+  { pattern: /ע["״]פ(?![\u0590-\u05FF])/g, expansions: ["ערעור פלילי"] },
+  { pattern: /רע["״]א/g, expansions: ["רשות ערעור אזרחי"] },
+  { pattern: /ס["״]ח/g, expansions: ["ספר החוקים"] },
+  { pattern: /ק["״]ת/g, expansions: ["קובץ התקנות"] },
+  { pattern: /תקנ['׳]/g, expansions: ["תקנות"] },
+  { pattern: /ועדת חוקה(?! חוק)/g, expansions: ["ועדת חוקה חוק ומשפט"] },
+  { pattern: /מ["״]י(?![\u0590-\u05FF])/g, expansions: ["מדינת ישראל"] },
+  { pattern: /חו["״]י/g, expansions: ["חוק יסוד"] },
+  { pattern: /פס["״]ד/g, expansions: ["פסק דין"] },
+  { pattern: /ב["״]כ(?![\u0590-\u05FF])/g, expansions: ["בא כוח"] },
+  { pattern: /פד["״]י/g, expansions: ["פסקי דין"] },
+  { pattern: /דנ["״]א/g, expansions: ["דיון נוסף אזרחי"] },
+  { pattern: /בש["״]פ/g, expansions: ["בקשה פלילית"] },
+  { pattern: /עע["״]מ/g, expansions: ["ערעור מינהלי"] },
+];
+
+function expandHebrewAbbreviations(text: string): string[] {
+  const found: string[] = [];
+  for (const { pattern, expansions } of HEBREW_ABBREVIATION_EXPANSIONS) {
+    if (pattern.test(text)) {
+      found.push(...expansions);
+    }
+    pattern.lastIndex = 0; // reset stateful /g regex
+  }
+  return found;
+}
+
 function extractKeywords(question: string): string {
   const words = question
     .replace(/[?!.,;:"״׳']/g, "")
     .split(/\s+/)
     .filter(w => w.length > 1 && !HEBREW_STOP_WORDS.has(w));
-  
-  // Take up to 6 most meaningful keywords
-  return words.slice(0, 6).join(" ");
+
+  // Take up to 6 most meaningful keywords from the original question
+  const baseKeywords = words.slice(0, 6);
+
+  // Append expanded forms of any detected legal abbreviations (de-duped)
+  const expansions = expandHebrewAbbreviations(question);
+  const expansionWords: string[] = [];
+  for (const phrase of expansions) {
+    for (const w of phrase.split(/\s+/)) {
+      if (w.length > 1 && !HEBREW_STOP_WORDS.has(w) && !baseKeywords.includes(w) && !expansionWords.includes(w)) {
+        expansionWords.push(w);
+      }
+    }
+  }
+
+  const finalSet = [...baseKeywords, ...expansionWords];
+  if (expansionWords.length > 0) {
+    console.log(`Keyword set (with expansions): [${finalSet.join(", ")}]`);
+  } else {
+    console.log(`Keyword set (with expansions): [${finalSet.join(", ")}] (no expansions matched)`);
+  }
+  return finalSet.join(" ");
+}
+
+// ─── Semantic query expansion for short questions ────────────────────
+async function expandShortQuery(question: string, apiKey: string): Promise<string | null> {
+  const wordCount = question.trim().split(/\s+/).length;
+  const charCount = question.trim().length;
+  if (wordCount >= 5 && charCount >= 25) return null;
+
+  try {
+    const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash-lite",
+        max_tokens: 120,
+        messages: [
+          {
+            role: "user",
+            content: `הרחב את השאלה המשפטית הבאה למשפט תיאורי פורמלי אחד (עד 25 מילים), הכולל מונחים משפטיים מלאים במקום קיצורים. החזר רק את המשפט המורחב, ללא הקדמה.\n\nשאלה: ${question}`,
+          },
+        ],
+      }),
+    }, 3000);
+
+    if (!res.ok) {
+      console.warn(`Query expansion API error: ${res.status} — falling back to original`);
+      return null;
+    }
+    const data = await res.json();
+    const expanded = (data.choices?.[0]?.message?.content || "").trim().replace(/^["'״׳]+|["'״׳]+$/g, "");
+    if (!expanded || expanded.length < 5) return null;
+    console.log(`Query expansion: "${question}" → "${expanded}"`);
+    return expanded;
+  } catch (err) {
+    console.warn("Query expansion failed (non-fatal):", err instanceof Error ? err.message : err);
+    return null;
+  }
 }
 
 // ─── Source card: server-built, numbered list of sources for the AI ───
@@ -284,21 +376,18 @@ async function rerankLocalMatches(
 
   const docs = Array.from(docMap.values());
   const sourceList = docs.map((d, i) => {
-    const typeLabel = d.match.source_type === "caselaw" ? "פסיקה" :
-      d.match.source_type === "journal_article" ? "מאמר" :
-      d.match.source_type === "knesset_research" ? "מחקר כנסת" : d.match.source_type;
-    return `[${i}] ${typeLabel}: ${d.match.document_title}\nתוכן: ${d.chunks.join(" ").slice(0, 400)}`;
+    return `[${i}] ${d.match.document_title}\nתוכן: ${d.chunks.join(" ").slice(0, 400)}`;
   }).join("\n\n");
 
-  const rerankPrompt = `אתה מדרג רלוונטיות של מקורות משפטיים לשאלה נתונה.
+  const rerankPrompt = `אתה מדרג רלוונטיות תוכנית של מקורות משפטיים לשאלה.
 
 שאלה: ${question}
 
 מקורות:
 ${sourceList}
 
-דרג כל מקור מ-0 עד 10 לפי רלוונטיות מהותית לשאלה (לא רק התאמת מילות מפתח).
-0 = לא קשור כלל, 10 = רלוונטי מאוד לסוגיה המשפטית.
+דרג כל מקור 0–10 לפי רלוונטיות תוכנית בלבד לשאלה. אל תתחשב בסוג המקור (פסיקה / מאמר / מחקר כנסת / רגולציה) — רק במידת העזרה שיתן בתשובה משפטית מקצועית ומבוססת.
+0 = לא קשור כלל, 10 = מרכזי לסוגיה.
 
 החזר רק מערך JSON של מספרים, ציון אחד לכל מקור לפי הסדר.
 דוגמה: [8, 2, 9, 1, 6]`;
@@ -357,22 +446,25 @@ ${sourceList}
       }
     }
 
+    const rerankScoreLog: Record<string, number> = {};
     for (let i = 0; i < docsArr.length; i++) {
       const [docId, docData] = docsArr[i];
-      const score = scores[i] ?? 5;
-      if (score >= 5 || docId === bestDocId) {
+      const score = scores[i] ?? 4;
+      rerankScoreLog[docData.match.document_title.slice(0, 60)] = score;
+      if (score >= 4 || docId === bestDocId) {
         for (const m of matches) {
           if (m.document_id === docId) {
             result.push({ ...m, relevanceScore: score });
           }
         }
-        if (score < 5) {
+        if (score < 4) {
           console.log(`Kept top-scoring source despite low score (score=${score}): "${docData.match.document_title.slice(0, 50)}"`);
         }
       } else {
         console.log(`Filtered out low-relevance source (score=${score}): "${docData.match.document_title.slice(0, 50)}"`);
       }
     }
+    console.log(`Rerank scores per doc: ${JSON.stringify(rerankScoreLog)}`);
 
     return result;
   } catch (err) {
@@ -547,31 +639,45 @@ serve(async (req) => {
 
     const localSearchPromise = (async (): Promise<{ matches: LocalMatch[]; used: boolean }> => {
       try {
-        const keywords = extractKeywords(question);
-        console.log(`Search keywords: "${keywords}" (from: "${question.slice(0, 80)}")`);
+        // Step A: optionally expand short queries to a fuller legal phrasing
+        const expandedQuery = await expandShortQuery(question, LOVABLE_API_KEY);
+        const queriesForEmbedding = expandedQuery ? [question, expandedQuery] : [question];
+        const keywordSourceText = expandedQuery ? `${question} ${expandedQuery}` : question;
 
-        // Run keyword search and vector search in parallel
+        const keywords = extractKeywords(keywordSourceText);
+        console.log(`Search keywords: "${keywords}" (from: "${question.slice(0, 80)}"${expandedQuery ? ` + expanded` : ""})`);
+
+        // Keyword search (single combined query)
         const keywordPromise = adminClient.rpc("search_legal_chunks_text", {
           search_query: keywords,
-          match_count: 8,
+          match_count: 15,
         });
 
-        const vectorPromise = (async () => {
-          const embedding = await getQueryEmbedding(question);
+        // Vector search — run for original AND expanded query in parallel, merge
+        const vectorPromises = queriesForEmbedding.map(async (q) => {
+          const embedding = await getQueryEmbedding(q);
           if (!embedding) return { data: null, error: null };
           return adminClient.rpc("match_legal_chunks", {
             query_embedding: JSON.stringify(embedding),
-            match_threshold: 0.7,
-            match_count: 8,
+            match_threshold: 0.55,
+            match_count: 15,
           });
-        })();
+        });
 
-        const [keywordResult, vectorResult] = await Promise.all([keywordPromise, vectorPromise]);
+        const [keywordResult, ...vectorResults] = await Promise.all([keywordPromise, ...vectorPromises]);
 
         const keywordMatches: LocalMatch[] = (!keywordResult.error && keywordResult.data) ? keywordResult.data : [];
-        const vectorMatches: LocalMatch[] = (!vectorResult.error && vectorResult.data) ? vectorResult.data : [];
+        const vectorMatches: LocalMatch[] = vectorResults.flatMap(r =>
+          (!r.error && r.data) ? r.data as LocalMatch[] : []
+        );
 
-        console.log(`Keyword search: ${keywordMatches.length} results | Vector search: ${vectorMatches.length} results`);
+        // Diagnostic: top-3 raw vector similarities
+        const topVectorSims = [...vectorMatches]
+          .sort((a, b) => (b.similarity || 0) - (a.similarity || 0))
+          .slice(0, 3)
+          .map(m => (m.similarity || 0).toFixed(3));
+        console.log(`Vector search: top 3 raw similarities = [${topVectorSims.join(", ")}]`);
+        console.log(`Keyword search: ${keywordMatches.length} results | Vector search: ${vectorMatches.length} results (across ${queriesForEmbedding.length} ${queriesForEmbedding.length === 1 ? "query" : "queries"})`);
 
         // Merge and deduplicate by chunk_id, keeping higher similarity
         const mergedMap = new Map<string, LocalMatch>();
@@ -600,7 +706,7 @@ serve(async (req) => {
           console.log(`Retry with fewer keywords: "${fewerKeywords}"`);
           const { data: retryMatches, error: retryError } = await adminClient.rpc("search_legal_chunks_text", {
             search_query: fewerKeywords,
-            match_count: 10,
+            match_count: 15,
           });
           if (!retryError && retryMatches && retryMatches.length > 0) {
             console.log(`Retry search: found ${retryMatches.length} matching chunks`);
@@ -830,6 +936,7 @@ serve(async (req) => {
     const perplexityCount = sourceCards.filter(sc => sc.provenance === "perplexity").length;
     const docCount = sourceCards.filter(sc => sc.provenance === "document").length;
     console.log(`Source cards: ${localCount} local, ${perplexityCount} perplexity, ${docCount} document`);
+    console.log(`Final source mix: ${localCount} local / ${perplexityCount} perplexity (+ ${docCount} doc)`);
 
     // ========= Step 3: Build context for AI (without forcing tool_call) =========
     const contextParts: string[] = [];
