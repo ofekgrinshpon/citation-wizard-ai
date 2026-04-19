@@ -1234,7 +1234,17 @@ ${combinedContext}`;
       for (const aiFn of aiFootnoteLines) {
         const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards);
         if (!matchedCard) {
-          console.log(`Stripped unmatched footnote #${aiFn.num}: ${aiFn.text.slice(0, 80)}...`);
+          // Tier 3 fallback: keep the footnote text but omit the URL.
+          // The bug we're guarding against is wrong URLs — a citation with no link is fine.
+          console.log(`Kept footnote #${aiFn.num} without URL (no card match): ${aiFn.text.slice(0, 80)}...`);
+          footnotes.push({
+            number: fnNum,
+            citation: aiFn.text,
+            source_type: "unverified",
+            source: "unverified",
+          });
+          oldIdToNewNumber.set(aiFn.num, fnNum);
+          fnNum++;
           continue;
         }
         footnotes.push({
@@ -1246,12 +1256,6 @@ ${combinedContext}`;
         });
         oldIdToNewNumber.set(aiFn.num, fnNum);
         fnNum++;
-      }
-
-      // NOTE: Removed the "keep all as unverified" safety fallback.
-      // Better to show fewer accurate footnotes than many with wrong URLs.
-      if (footnotes.length === 0 && aiFootnoteLines.length > 0) {
-        console.log(`All ${aiFootnoteLines.length} AI footnotes failed strict matching — dropping all to avoid wrong-URL leaks`);
       }
     } else {
       // Fallback: use source card citations (old behavior)
