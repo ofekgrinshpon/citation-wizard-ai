@@ -156,7 +156,8 @@ function extractKeywords(question: string): string {
 async function expandShortQuery(question: string, apiKey: string): Promise<string | null> {
   const wordCount = question.trim().split(/\s+/).length;
   const charCount = question.trim().length;
-  if (wordCount >= 5 && charCount >= 25) return null;
+  // Loosened trigger: catches typical Hebrew legal questions (5–7 words avg)
+  if (wordCount > 7 && charCount > 40) return null;
 
   try {
     const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -630,7 +631,14 @@ serve(async (req) => {
           return null;
         }
         const data = await res.json();
-        return data.data[0].embedding;
+        const embedding = data.data?.[0]?.embedding;
+        if (!embedding || !Array.isArray(embedding)) {
+          console.error(`Embedding returned null for query "${text.slice(0, 40)}..."`);
+          return null;
+        }
+        const sample = embedding.slice(0, 3).map((v: number) => v.toFixed(3));
+        console.log(`Embedding generated for query "${text.slice(0, 40)}...": dim=${embedding.length}, sample=[${sample.join(", ")}]`);
+        return embedding;
       } catch (err) {
         console.error("Query embedding failed (non-fatal):", err);
         return null;
@@ -654,22 +662,50 @@ serve(async (req) => {
         });
 
         // Vector search — run for original AND expanded query in parallel, merge
+        // Threshold 0.45: short Hebrew queries top out ~0.55 raw; re-ranker filters noise downstream.
         const vectorPromises = queriesForEmbedding.map(async (q) => {
           const embedding = await getQueryEmbedding(q);
-          if (!embedding) return { data: null, error: null };
-          return adminClient.rpc("match_legal_chunks", {
+          if (!embedding) return { data: null, error: null, embedding: null as number[] | null, query: q };
+          const result = await adminClient.rpc("match_legal_chunks", {
             query_embedding: JSON.stringify(embedding),
-            match_threshold: 0.55,
+            match_threshold: 0.45,
             match_count: 15,
           });
+          return { ...result, embedding, query: q };
         });
 
         const [keywordResult, ...vectorResults] = await Promise.all([keywordPromise, ...vectorPromises]);
 
         const keywordMatches: LocalMatch[] = (!keywordResult.error && keywordResult.data) ? keywordResult.data : [];
-        const vectorMatches: LocalMatch[] = vectorResults.flatMap(r =>
+
+        // Surface RPC errors instead of silently dropping
+        for (const r of vectorResults) {
+          if (r.error) {
+            console.error(`match_legal_chunks RPC error for query "${(r.query || "").slice(0, 40)}...": ${r.error.message || JSON.stringify(r.error)}`);
+          }
+        }
+        let vectorMatches: LocalMatch[] = vectorResults.flatMap(r =>
           (!r.error && r.data) ? r.data as LocalMatch[] : []
         );
+
+        // Safety-net: if 0 vector hits at 0.45, retry once at 0.35 with the first available embedding
+        if (vectorMatches.length === 0) {
+          const firstEmbedding = vectorResults.find(r => r.embedding)?.embedding;
+          if (firstEmbedding) {
+            console.log("Vector search safety-net retry at threshold 0.35");
+            const retry = await adminClient.rpc("match_legal_chunks", {
+              query_embedding: JSON.stringify(firstEmbedding),
+              match_threshold: 0.35,
+              match_count: 8,
+            });
+            if (retry.error) {
+              console.error(`Safety-net match_legal_chunks RPC error: ${retry.error.message || JSON.stringify(retry.error)}`);
+            } else if (retry.data) {
+              vectorMatches = retry.data as LocalMatch[];
+              console.log(`Safety-net returned ${vectorMatches.length} chunks at threshold 0.35`);
+            }
+          }
+        }
 
         // Diagnostic: top-3 raw vector similarities
         const topVectorSims = [...vectorMatches]
