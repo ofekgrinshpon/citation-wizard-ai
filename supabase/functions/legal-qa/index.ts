@@ -701,7 +701,32 @@ serve(async (req) => {
           return { ...result, embedding, query: q };
         });
 
-        const [keywordResult, ...vectorResults] = await Promise.all([keywordPromise, ...vectorPromises]);
+        // Fix #2: Parallel caselaw-only vector query so precedent competes against itself
+        // (not against denser academic prose). Use the original (non-expanded) question
+        // since expansion often drifts toward academic phrasing.
+        const caselawVectorPromise = (async () => {
+          const embedding = await getQueryEmbedding(question);
+          if (!embedding) return { data: null, error: null };
+          return await adminClient.rpc("match_legal_chunks_filtered", {
+            query_embedding: JSON.stringify(embedding),
+            filter_source_type: "caselaw",
+            match_threshold: 0.40,
+            match_count: 8,
+          });
+        })();
+
+        const [keywordResult, caselawResult, ...vectorResults] = await Promise.all([
+          keywordPromise,
+          caselawVectorPromise,
+          ...vectorPromises,
+        ]);
+
+        const caselawMatches: LocalMatch[] = (!caselawResult.error && caselawResult.data) ? caselawResult.data as LocalMatch[] : [];
+        if (caselawResult.error) {
+          console.error(`match_legal_chunks_filtered (caselaw) error: ${caselawResult.error.message || JSON.stringify(caselawResult.error)}`);
+        } else {
+          console.log(`Caselaw-filtered vector search: ${caselawMatches.length} chunks`);
+        }
 
         const keywordMatches: LocalMatch[] = (!keywordResult.error && keywordResult.data) ? keywordResult.data : [];
 
