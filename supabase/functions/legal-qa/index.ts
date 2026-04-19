@@ -1129,13 +1129,17 @@ ${combinedContext}`;
       "פסק", "דין", "פסקדין", "הלכה", "ערעור", "בקשה", "החלטה", "סעיף", "חוק",
       "ישראל", "מדינת", "המדינה", "נגד", "נ׳", "פרשת", "עניין", "פרשה",
       "עמוד", "בעמ", "פסקה", "ראו", "ראה", "השוו", "וכן",
+      // High-frequency Knesset / government / legislative boilerplate that
+      // produces false matches against generic page titles.
+      "כנסת", "דיון", "ישיבה", "הצעת", "חוקים", "ועדה", "פרוטוקול",
+      "מליאה", "ממשלה", "משרד", "הוראות", "תיקון", "מספר", "לעניין",
     ]);
 
     function normalize(s: string): string {
       return s.toLowerCase().replace(/[״"׳'.,;:()\[\]{}]/g, " ").replace(/\s+/g, " ").trim();
     }
 
-    function matchFootnoteToCard(fnText: string, cards: SourceCard[]): SourceCard | null {
+    function matchFootnoteToCard(fnText: string, cards: SourceCard[], fnNum?: number): SourceCard | null {
       const fnLower = fnText.toLowerCase();
       const fnNorm = normalize(fnText);
 
@@ -1183,17 +1187,30 @@ ${combinedContext}`;
 
       // ===== Tier 2: significant-word overlap =====
       // Significant = length ≥ 4, not a stopword.
-      // Local DB cards (formal citations) require ≥3 overlap.
-      // Perplexity cards (short web snippets) only require ≥2 overlap.
+      // Both local DB cards and Perplexity cards require ≥3 overlap.
+      // Perplexity cards additionally require ≥1 "topic-bearing" word (length ≥5,
+      // not a stopword) to overlap — this prevents matches that rely only on
+      // generic Knesset/legislative boilerplate (e.g. "כנסת"/"דיון"/"הצעת"/"חוק").
       for (const card of cards) {
         const cardWords = normalize(card.citation)
           .split(/\s+/)
           .filter(w => w.length >= 4 && !STOPWORDS.has(w));
         if (cardWords.length < 2) continue;
         const uniqueCardWords = Array.from(new Set(cardWords));
-        const matchCount = uniqueCardWords.filter(w => fnNorm.includes(w)).length;
-        const required = card.provenance === "perplexity" ? 2 : 3;
-        if (matchCount >= required) return card;
+        const overlap = uniqueCardWords.filter(w => fnNorm.includes(w));
+        const matchCount = overlap.length;
+        if (matchCount < 3) continue;
+
+        if (card.provenance === "perplexity") {
+          const hasTopicWord = overlap.some(w => w.length >= 5 && !STOPWORDS.has(w));
+          if (!hasTopicWord) {
+            console.log(
+              `Rejected Perplexity match for fn #${fnNum ?? "?"}: only generic words overlapped with card "${card.citation.slice(0, 80)}" — overlap=[${overlap.join(", ")}]`
+            );
+            continue;
+          }
+        }
+        return card;
       }
 
       return null;
@@ -1239,7 +1256,7 @@ ${combinedContext}`;
     if (aiFootnoteLines.length > 0) {
       // Use AI-formatted footnotes — match each to a source card for provenance
       for (const aiFn of aiFootnoteLines) {
-        const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards);
+        const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards, aiFn.num);
         if (!matchedCard) {
           // Tier 3 fallback: keep the footnote text but omit the URL.
           // The bug we're guarding against is wrong URLs — a citation with no link is fine.
