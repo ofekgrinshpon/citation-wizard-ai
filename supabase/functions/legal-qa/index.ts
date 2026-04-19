@@ -463,28 +463,18 @@ ${sourceList}
       docScores.push({ docId, score: raw + bonus, rawScore: raw, bonus, title: docData.match.document_title });
     }
 
-    // Force-keep top 4 docs by adjusted score regardless of threshold
-    const sortedByScore = [...docScores].sort((a, b) => b.score - a.score);
-    const forceKeepIds = new Set(sortedByScore.slice(0, 4).map(d => d.docId));
-
-    const KEEP_THRESHOLD = 3;
+    // No force-keep: drop everything below threshold to avoid polluting the prompt with noise.
+    const KEEP_THRESHOLD = 1;
     const result: RankedMatch[] = [];
     const rerankScoreLog: Record<string, string> = {};
-    let forceKeptCount = 0;
     for (const ds of docScores) {
       const tag = ds.bonus > 0 ? `${ds.rawScore}+${ds.bonus}=${ds.score}` : `${ds.score}`;
       rerankScoreLog[ds.title.slice(0, 60)] = tag;
-      const passes = ds.score >= KEEP_THRESHOLD;
-      const forced = !passes && forceKeepIds.has(ds.docId);
-      if (passes || forced) {
+      if (ds.score >= KEEP_THRESHOLD) {
         for (const m of matches) {
           if (m.document_id === ds.docId) {
             result.push({ ...m, relevanceScore: ds.score });
           }
-        }
-        if (forced) {
-          forceKeptCount++;
-          console.log(`Force-kept low-score source (score=${ds.score}): "${ds.title.slice(0, 50)}"`);
         }
       } else {
         console.log(`Filtered out low-relevance source (score=${ds.score}): "${ds.title.slice(0, 50)}"`);
@@ -492,7 +482,7 @@ ${sourceList}
     }
     const keptDocs = new Set(result.map(r => r.document_id)).size;
     console.log(`Rerank scores per doc: ${JSON.stringify(rerankScoreLog)}`);
-    console.log(`Local kept after rerank: ${keptDocs}/${docsArr.length} (force-kept: ${forceKeptCount}, threshold: ${KEEP_THRESHOLD}, active verb pairs: ${activePairsRR.length})`);
+    console.log(`Local kept after filter: ${keptDocs}/${docsArr.length} (no force-keep, threshold: ${KEEP_THRESHOLD}, active verb pairs: ${activePairsRR.length})`);
 
     return result;
   } catch (err) {
@@ -846,6 +836,9 @@ serve(async (req) => {
           .map(m => (m.similarity || 0).toFixed(3));
         console.log(`Vector search: top 3 raw similarities = [${topVectorSims.join(", ")}]`);
         console.log(`Keyword search: ${keywordMatches.length} results | Vector search: ${vectorMatches.length} results (across ${queriesForEmbedding.length} ${queriesForEmbedding.length === 1 ? "query" : "queries"})`);
+        if (keywordMatches.length === 0) {
+          console.log(`Keyword search returned 0 results — check Postgres NOTICE logs for fallback chain (top-2 → top-1 → plainto)`);
+        }
 
         // ── Content-aware similarity bonus ──────────────────────────
         // Pair the question's action verbs with their nominal/legal counterparts
@@ -1593,8 +1586,58 @@ ${combinedContext}`;
       for (const aiFn of aiFootnoteLines) {
         const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards, aiFn.num);
         if (!matchedCard) {
-          // Tier 3 fallback: keep the footnote text but omit the URL.
-          // The bug we're guarding against is wrong URLs — a citation with no link is fine.
+          // ── Fuzzy URL fallback: try to attach a URL via token overlap ──
+          let fuzzyUrl: string | undefined;
+          let fuzzyMatchedTitle: string | undefined;
+          let fuzzyMatchedTokens: string[] = [];
+          try {
+            const fnText = aiFn.text;
+            // Extract distinctive tokens:
+            // 1) Case numbers like 338/60 or 35327-08-20
+            const caseNumberMatches = Array.from(fnText.matchAll(/\b(\d{2,6}[-\/]\d{2,6}(?:[-\/]\d{2,6})?)\b/g)).map(m => m[1]);
+            // 2) Latin all-caps tokens (≥3 letters), e.g. WOLT
+            const latinTokens = Array.from(fnText.matchAll(/\b([A-Z]{3,}(?:\s+[A-Z]{2,})*)\b/g)).map(m => m[1]);
+            // 3) Hebrew tokens between ** ** markers (party names)
+            const boldTokens = Array.from(fnText.matchAll(/\*\*([^*]{2,40})\*\*/g)).map(m => m[1].trim());
+            const distinctive = Array.from(new Set([...caseNumberMatches, ...latinTokens, ...boldTokens]));
+
+            if (distinctive.length > 0) {
+              for (const card of sourceCards) {
+                if (!card.url) continue;
+                const haystack = `${card.citation} ${card.case_number || ""} ${card.url} ${card.excerpt || ""}`.toLowerCase();
+                const hits: string[] = [];
+                for (const tok of distinctive) {
+                  if (!tok) continue;
+                  if (haystack.includes(tok.toLowerCase())) hits.push(tok);
+                }
+                // Match if: any case-number hit, OR ≥2 distinctive token hits
+                const hasCaseNumberHit = caseNumberMatches.some(cn => hits.includes(cn));
+                if (hasCaseNumberHit || hits.length >= 2) {
+                  fuzzyUrl = card.url;
+                  fuzzyMatchedTitle = card.citation.slice(0, 60);
+                  fuzzyMatchedTokens = hits;
+                  break;
+                }
+              }
+            }
+          } catch (e) {
+            console.warn(`Fuzzy URL match error for footnote #${aiFn.num}:`, e);
+          }
+
+          if (fuzzyUrl) {
+            console.log(`Fuzzy URL match: footnote #${aiFn.num} → "${fuzzyMatchedTitle}" (matched on: ${fuzzyMatchedTokens.join(", ")})`);
+            footnotes.push({
+              number: fnNum,
+              citation: aiFn.text,
+              source_type: "unverified",
+              source: "unverified",
+              url: fuzzyUrl,
+            });
+            oldIdToNewNumber.set(aiFn.num, fnNum);
+            fnNum++;
+            continue;
+          }
+
           console.log(`Kept footnote #${aiFn.num} without URL (no card match): ${aiFn.text.slice(0, 80)}...`);
           footnotes.push({
             number: fnNum,
