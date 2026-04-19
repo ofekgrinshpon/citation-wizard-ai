@@ -302,20 +302,21 @@ serve(async (req) => {
 
     // Pending recovery = placeholder title AND not already broken AND not already recovered.
     // This prevents the loop from reprocessing already-flagged docs forever.
-    const PENDING_FILTER = (q: ReturnType<typeof admin.from>) =>
+    // deno-lint-ignore no-explicit-any
+    const applyPendingFilter = (q: any) =>
       q
         .eq("source_type", "knesset_research")
         .eq("title", "פרטי מסמך")
         .or("metadata->>broken_title.is.null,metadata->>broken_title.eq.false")
         .or("metadata->>recovered_title.is.null,metadata->>recovered_title.eq.false");
 
-    const { data: docs, error: fetchErr } = await PENDING_FILTER(
+    const { data: docs, error: fetchErr } = await applyPendingFilter(
       admin
         .from("legal_documents")
-        .select("id, title, citation, metadata, source_url"),
-    )
-      .order("id", { ascending: true })
-      .limit(batchSize);
+        .select("id, title, citation, metadata, source_url")
+        .order("id", { ascending: true })
+        .limit(batchSize),
+    );
 
     if (fetchErr) {
       return new Response(JSON.stringify({ error: fetchErr.message }), {
@@ -400,7 +401,7 @@ serve(async (req) => {
     }
 
     // Use the SAME pending filter so already-broken docs are excluded from the count.
-    const { count: remaining } = await PENDING_FILTER(
+    const { count: remaining } = await applyPendingFilter(
       admin
         .from("legal_documents")
         .select("id", { count: "exact", head: true }),
