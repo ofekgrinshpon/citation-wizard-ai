@@ -455,34 +455,41 @@ ${sourceList}
     };
 
     const docsArr = Array.from(docMap.entries());
-    const docScores: Array<{ docId: string; score: number; rawScore: number; bonus: number; title: string }> = [];
+    const docScores: Array<{ docId: string; score: number; rawScore: number; bonus: number; title: string; originalIndex: number }> = [];
     for (let i = 0; i < docsArr.length; i++) {
       const [docId, docData] = docsArr[i];
       const raw = rawScores[i] ?? 4;
       const bonus = computeBonus(docData.chunks.join(" "));
-      docScores.push({ docId, score: raw + bonus, rawScore: raw, bonus, title: docData.match.document_title });
+      docScores.push({ docId, score: raw + bonus, rawScore: raw, bonus, title: docData.match.document_title, originalIndex: i });
     }
 
-    // No force-keep: drop everything below threshold to avoid polluting the prompt with noise.
-    const KEEP_THRESHOLD = 1;
+    // Sort by score desc; tiebreak by original retrieval order (preserves upstream vector similarity ranking).
+    // Then take top-N — no hard threshold, so semantically-relevant vector hits with score=0 still survive.
+    const TOP_N_DOCS = 6;
+    const sortedDocs = [...docScores].sort((a, b) => b.score - a.score || a.originalIndex - b.originalIndex);
+    const topDocs = sortedDocs.slice(0, TOP_N_DOCS);
+    const topDocIds = new Set(topDocs.map(d => d.docId));
+
     const result: RankedMatch[] = [];
     const rerankScoreLog: Record<string, string> = {};
     for (const ds of docScores) {
       const tag = ds.bonus > 0 ? `${ds.rawScore}+${ds.bonus}=${ds.score}` : `${ds.score}`;
       rerankScoreLog[ds.title.slice(0, 60)] = tag;
-      if (ds.score >= KEEP_THRESHOLD) {
-        for (const m of matches) {
-          if (m.document_id === ds.docId) {
-            result.push({ ...m, relevanceScore: ds.score });
-          }
+    }
+    // Push chunks for top-N docs in score order
+    for (const ds of topDocs) {
+      for (const m of matches) {
+        if (m.document_id === ds.docId) {
+          result.push({ ...m, relevanceScore: ds.score });
         }
-      } else {
-        console.log(`Filtered out low-relevance source (score=${ds.score}): "${ds.title.slice(0, 50)}"`);
       }
     }
-    const keptDocs = new Set(result.map(r => r.document_id)).size;
+
+    const zeroScoreKept = topDocs.filter(d => d.score === 0).length;
+    const keptDocs = topDocIds.size;
     console.log(`Rerank scores per doc: ${JSON.stringify(rerankScoreLog)}`);
-    console.log(`Local kept after filter: ${keptDocs}/${docsArr.length} (no force-keep, threshold: ${KEEP_THRESHOLD}, active verb pairs: ${activePairsRR.length})`);
+    console.log(`Rerank: kept top-${TOP_N_DOCS} of ${docsArr.length} docs by score (zero-score kept: ${zeroScoreKept})`);
+    console.log(`Local kept after top-${TOP_N_DOCS} slice: ${keptDocs}/${docsArr.length} (zero-score: ${zeroScoreKept}, active verb pairs: ${activePairsRR.length})`);
 
     return result;
   } catch (err) {
