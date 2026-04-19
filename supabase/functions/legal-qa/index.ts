@@ -836,6 +836,9 @@ serve(async (req) => {
           .map(m => (m.similarity || 0).toFixed(3));
         console.log(`Vector search: top 3 raw similarities = [${topVectorSims.join(", ")}]`);
         console.log(`Keyword search: ${keywordMatches.length} results | Vector search: ${vectorMatches.length} results (across ${queriesForEmbedding.length} ${queriesForEmbedding.length === 1 ? "query" : "queries"})`);
+        if (keywordMatches.length === 0) {
+          console.log(`Keyword search returned 0 results — check Postgres NOTICE logs for fallback chain (top-2 → top-1 → plainto)`);
+        }
 
         // ── Content-aware similarity bonus ──────────────────────────
         // Pair the question's action verbs with their nominal/legal counterparts
