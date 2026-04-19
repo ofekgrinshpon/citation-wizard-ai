@@ -1,51 +1,63 @@
 
 
 ## Goal
-When the user clicks an **academic_writing** entry in the history sidebar, jump back into the Seminar Wizard at its **last progress** (current chapter, outline, all written chapters, current step) — instead of dumping the single chapter text into the read-only result pane.
+Make `legal-qa` use **local DB chunks** as the *source of truth for what a statute section says*, while using **Perplexity** purely as a *citation-formatting helper* (year, ס"ח/ק"ת, page). On any content conflict, local wins.
 
-## Current behavior (verified)
-- `qa_logs` stores **one row per academic step** (e.g., each `write_chapter` call). The `answer` is just that one chapter's text — not the full wizard state.
-- The full wizard state (`wizardStep`, `currentChapter`, `chapters[]`, `outline`, `researchQuestion`, `proposedQuestions`, `maxReachedStep`) lives in **localStorage** at `relex_academic_session_{projectId}` (`saveAcademicSession` in `LegalQAChat.tsx:149`).
-- Clicking any history item runs `QAHistorySidebar.handleClick` → `onLoadResult(question, result, taskMode)` → `Index.tsx` sets `qaExternalResult` → `LegalQAChat`'s `externalResult` effect (line 338) sets `question`, `result`, `taskMode`. It does **not** touch wizard state, so the user lands on the academic mode default screen with the result text floating outside the wizard.
+## Current behavior (verified from `supabase/functions/legal-qa/index.ts` + memories)
+- Hybrid retrieval: local Supabase (text + vector) **and** Perplexity run in parallel.
+- Perplexity results are merged into the prompt as candidate sources/citations alongside local chunks.
+- Local items are already prioritized in display (≥60% target, mem `legal-qa/citation-prioritization`), but the AI is allowed to take **substantive content** from either pool.
+- There is no explicit "local = content truth, Perplexity = format only" instruction. So when local has no chunk for "Section 30", Perplexity's prose can leak in as fact (the bug from earlier).
 
-## Plan
+## The change
 
-### 1. `src/components/QAHistorySidebar.tsx`
-- When rendering each log button, if `task_mode === "academic_writing"`, show a small "המשך עבודה אקדמית" hint badge and use a `GraduationCap` icon (already in the labels map) — visual cue that clicking resumes a session.
-- No change to the `onLoadResult` signature; the resume logic lives downstream so behavior stays uniform.
+### 1. Re-scope the two retrieval pools in the system prompt
+Add an explicit, top-of-prompt rule block in `supabase/functions/legal-qa/index.ts`:
 
-### 2. `src/pages/Index.tsx` (around line 1156)
-- In the `onLoadResult` callback, branch on `taskMode`:
-  - If `"academic_writing"`: ensure the `LegalQAChat` is in academic mode and trigger a **resume signal** (e.g., set a new state `academicResumeSignal` = a counter or timestamp) instead of stuffing into `qaExternalResult`. Pass that signal to `LegalQAChat` as a new prop `academicResumeSignal?: number`.
-  - For all other modes: keep current `setQaExternalResult` behavior unchanged.
+```
+כללי שימוש במקורות (חובה):
+- מקורות מקומיים (מסומנים [מאומת]) הם מקור האמת היחיד לתוכן מהותי של חוקים, סעיפים, פסיקה והלכות.
+  • כל ציטוט תוכן ("סעיף X קובע...", "ההלכה קבעה...") חייב להיות מעוגן בטקסט שמופיע באחד ממקורות [מאומת].
+  • אם אין במקור מקומי טקסט התומך בקביעה — אסור לקבוע אותה. נסח כללית או השמט.
+- מקורות Perplexity (מסומנים [חיצוני]) משמשים אך ורק להשלמת מטא-דאטה ביבליוגרפית: שנת פרסום, ס"ח/ק"ת, מספר עמוד, כרך, מו"ל, שם כתב עת.
+  • אסור לשאוב מ-Perplexity קביעות מהותיות על תוכן סעיף או הלכה.
+  • אם Perplexity מספק תוכן מהותי שסותר את המקור המקומי — התעלם ממנו והעדף את המקומי.
+- במקרה של קונפליקט בנוסח/תוכן בין מקור מקומי למקור חיצוני — המקומי גובר תמיד.
+```
 
-### 3. `src/components/LegalQAChat.tsx`
-- Add a new prop `academicResumeSignal?: number`.
-- Add a new `useEffect` that watches `academicResumeSignal`:
-  1. Force `taskMode = "academic_writing"`.
-  2. Call `loadAcademicSession(projectId)`.
-  3. If a saved session exists (`wizardStep !== "init"`):
-     - Restore all state: `wizardStep`, `maxReachedStep`, `currentChapter`, `chapters`, `researchQuestion`, `outline`, `proposedQuestions`, `lastAcademicAction`.
-     - Set `currentChapter` to the **last chapter with content** (or the first chapter without content, whichever is further along) so the user lands precisely on their last progress point.
-     - Clear any `result`/`error` left over from a previous research view.
-     - Toast: `"חזרת לעבודה האקדמית — פרק נוכחי: {title}"`.
-  4. If no saved session exists for this project (e.g., user cleared localStorage or switched device):
-     - Toast: `"לא נמצאה התקדמות שמורה לפרויקט זה. ההיסטוריה מציגה רק תוצאות פרקים קודמים."`
-     - Fall back to the current behavior: load the clicked log's answer into `result` so the user at least sees the chapter text.
+### 2. Tag sources distinctly when building the prompt context
+In the section that assembles the source cards for the AI:
+- Prefix every local chunk header with `[מאומת – מקור אמת לתוכן]`.
+- Prefix every Perplexity result with `[חיצוני – למטא-דאטה בלבד]`.
+- For Perplexity entries, **strip long body excerpts** before injection (keep title + URL + bibliographic hints only — year, ס"ח, page if detectable). This removes the temptation/ability for the model to lift substantive prose from Perplexity.
 
-### 4. Edge case — multi-project history
-The history sidebar is already filtered by `projectId` (see `QAHistorySidebar` query: `eq("project_id", projectId)`), and academic sessions are also keyed by `projectId`, so a clicked log will always match the currently loaded session. No cross-project resolution needed.
+### 3. Citation merge logic
+When building footnote citations:
+- If the **same statute** appears in both pools, take the **content/quote from local** and **enrich the citation tail** (year, ס"ח X, page) from Perplexity's parsed metadata if local is missing it.
+- Lightweight matcher: normalize law names (existing helpers in `verified_source_engine`), match local↔Perplexity by law name + section number; on match, build one merged footnote.
 
-### 5. Out of scope
-- Persisting wizard state to the database (would let users resume from another device — separate, larger feature).
-- Showing per-chapter history items (each `qa_logs` row currently doesn't say *which* chapter it belongs to; would require a follow-up to record chapter index in the log).
-- Editing or rewriting old chapters from history.
+### 4. Post-response sanity check (non-blocking, log only)
+Scan the AI answer for `סעיף\s+\S+\s+ל\S+.*?(קובע|מורה|מגדיר)` followed by a quoted span. For each hit:
+- Verify the quoted span (or the section number near the law name) appears in at least one **local** chunk that was provided.
+- If it only appears in Perplexity context (or nowhere), `console.warn("[content-grounding-violation]", ...)`. No user-facing block — just observability so we can keep tightening.
+
+### 5. Memory updates
+- Update `mem://logic/anti-hallucination` to add: "Local DB = source of truth for substantive statutory/case content. Perplexity is restricted to bibliographic metadata only. On conflict, local wins."
+- Update `mem://logic/legal-qa/citation-prioritization` to reflect the new role split (not just ordering, but functional).
 
 ## Files to change
-- `src/components/QAHistorySidebar.tsx` — minor visual hint for academic items.
-- `src/pages/Index.tsx` — branch in `onLoadResult` to dispatch `academicResumeSignal` for academic logs.
-- `src/components/LegalQAChat.tsx` — add `academicResumeSignal` prop + resume effect that restores wizard state from localStorage and lands on last progress.
+- `supabase/functions/legal-qa/index.ts` — system prompt rules, source-tagging in context assembly, Perplexity payload trimming, merge logic, post-response scan + log.
+- `mem://logic/anti-hallucination` — append rule.
+- `mem://logic/legal-qa/citation-prioritization` — clarify role split.
+
+## Out of scope
+- Bulk re-ingesting Israeli statutes (separate larger task).
+- Changing the user-visible UI (badges/labels stay as today).
+- Touching `citation-chat` / Uniform Citation flow.
 
 ## Expected outcome
-Clicking any academic_writing entry in the history sidebar takes the user straight back into the Seminar Wizard at the chapter and step they last reached — with the outline, written chapters, and proposed questions all intact. If no local session exists, a clear toast explains why and the chapter text is still shown as fallback.
+- The AI can no longer attribute fabricated content to "Section X of Law Y" — substantive claims must trace to a local `[מאומת]` chunk.
+- Perplexity continues to enrich citations with year / ס"ח / page when local metadata is incomplete, but never injects substantive legal content.
+- Conflicts resolve deterministically: local wins.
+- Console warnings flag any remaining ungrounded statutory claims for monitoring.
 
