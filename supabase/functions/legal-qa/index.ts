@@ -1225,20 +1225,10 @@ ${combinedContext}`;
         fnNum++;
       }
 
-      // SAFETY FALLBACK: If ALL footnotes were stripped, keep them as "unverified"
+      // NOTE: Removed the "keep all as unverified" safety fallback.
+      // Better to show fewer accurate footnotes than many with wrong URLs.
       if (footnotes.length === 0 && aiFootnoteLines.length > 0) {
-        console.log(`FALLBACK: All ${aiFootnoteLines.length} footnotes stripped — keeping as unverified`);
-        fnNum = 1;
-        for (const aiFn of aiFootnoteLines) {
-          footnotes.push({
-            number: fnNum,
-            citation: aiFn.text,
-            source_type: "web",
-            source: "perplexity",
-          });
-          oldIdToNewNumber.set(aiFn.num, fnNum);
-          fnNum++;
-        }
+        console.log(`All ${aiFootnoteLines.length} AI footnotes failed strict matching — dropping all to avoid wrong-URL leaks`);
       }
     } else {
       // Fallback: use source card citations (old behavior)
