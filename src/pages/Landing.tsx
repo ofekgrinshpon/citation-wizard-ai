@@ -19,59 +19,93 @@ function useInView(ref: RefObject<HTMLElement | null>, threshold = 0.15) {
   return visible;
 }
 
-function StepCard({ step, index }: { step: typeof steps[number]; index: number }) {
+type Capability = {
+  title: string;
+  description: string;
+  image: string;
+  highlight?: boolean;
+  badge?: string;
+  chips?: string[];
+};
+
+const capabilities: Capability[] = [
+  {
+    title: "העוזר המשפטי",
+    description:
+      "מחקר משפטי, סיכום פסיקה, בקרה למסמכים וכתיבה אקדמית — עם תוצאות מובנות ומותאמות לעבודה משפטית.",
+    image: "/how-it-works/legal-assistant.png",
+    highlight: true,
+    badge: "סוויטה מלאה",
+    chips: ["מחקר משפטי", "סיכום פסיקה", "בקרה למסמכים", "כתיבה אקדמית"],
+  },
+  {
+    title: "אזכור אחיד",
+    description:
+      "הפקת אזכור אחיד משפטי בעברית — בהתאם לכללי האזכור האחיד.",
+    image: "/how-it-works/uniform-citation.png",
+  },
+  {
+    title: "הערות שוליים",
+    description:
+      "הוסיפו מספר מקורות ובנו הערות שוליים מסודרות באופן אוטומטי.",
+    image: "/how-it-works/step3.png",
+  },
+  {
+    title: "ביבליוגרפיה",
+    description:
+      "צרו רשימה ביבליוגרפית מסודרת ממספר מקורות.",
+    image: "/how-it-works/step4.png",
+  },
+];
+
+function CapabilityCard({ cap, index }: { cap: Capability; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const visible = useInView(ref);
   return (
     <div
       ref={ref}
-      className={`flex flex-col ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"} items-center gap-8 transition-all duration-700 ease-out ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+      style={{ transitionDelay: `${index * 80}ms` }}
+      className={`group relative flex flex-col rounded-2xl border bg-card p-5 transition-all duration-700 ease-out hover:-translate-y-1 hover:shadow-xl ${
+        cap.highlight
+          ? "border-primary/40 shadow-md shadow-primary/10"
+          : "border-border shadow-sm hover:border-primary/30"
+      } ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
     >
-      <div className="md:w-1/2 space-y-3">
-        <div className="flex items-center gap-3">
-          <span className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
-            {index + 1}
-          </span>
-          <h3 className="text-xl font-bold text-foreground">{step.title}</h3>
+      {cap.badge && (
+        <div className="absolute -top-3 right-5 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold shadow-sm">
+          <Sparkles className="w-3 h-3" />
+          {cap.badge}
         </div>
-        <p className="text-muted-foreground text-base leading-relaxed pr-11">
-          {step.description}
-        </p>
-      </div>
-      <div className="md:w-1/2 p-2">
+      )}
+      <div className="overflow-hidden rounded-xl border border-border bg-muted/40 mb-4">
         <img
-          src={step.image}
-          alt={step.title}
-          className="rounded-xl border border-border shadow-lg w-full max-w-lg mx-auto"
+          src={cap.image}
+          alt={cap.title}
+          className="w-full h-auto object-cover object-top max-h-64 transition-transform duration-500 group-hover:scale-[1.02]"
           loading="lazy"
         />
       </div>
+      <h3 className="text-lg md:text-xl font-bold text-foreground mb-2">
+        {cap.title}
+      </h3>
+      <p className="text-sm md:text-[15px] text-muted-foreground leading-relaxed flex-1">
+        {cap.description}
+      </p>
+      {cap.chips && (
+        <div className="flex flex-wrap gap-1.5 mt-4 pt-4 border-t border-border">
+          {cap.chips.map((chip) => (
+            <span
+              key={chip}
+              className="px-2.5 py-0.5 rounded-full bg-accent text-accent-foreground text-[11px] font-medium"
+            >
+              {chip}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
-
-const steps = [
-  {
-    title: "הקלד מקור משפטי",
-    description: "הזן בטקסט חופשי את המקור שברצונך לאזכר — פסק דין, חוק, מאמר או כל מקור אחר. המערכת תזהה אותו בעצמה.",
-    image: "/how-it-works/step1.png",
-  },
-  {
-    title: "קבל אזכור תקני",
-    description: "המערכת מזהה את סוג המקור ומעצבת אותו לפי כללי האזכור האחיד — כולל קיצורים, סימני פיסוק ועיצוב טקסט.",
-    image: "/how-it-works/step2.png",
-  },
-  {
-    title: "בנה הערות שוליים",
-    description: "הוסף מספר מקורות בבת אחת ובנה הערת שוליים שלמה עם מספור אוטומטי.",
-    image: "/how-it-works/step3.png",
-  },
-  {
-    title: "תוצאה מאומתת ומוכנה",
-    description: "קבל הערות שוליים מוכנות להדבקה, עם אימות אוטומטי והתראות על פרטים חסרים.",
-    image: "/how-it-works/step4.png",
-  },
-];
 
 const PRICING_PLANS: { id: PlanId; highlight?: boolean; perks: string[] }[] = [
   {
