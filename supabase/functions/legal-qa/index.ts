@@ -589,8 +589,31 @@ ${sourceList}
     // Then take top-N — no hard threshold, so semantically-relevant vector hits with score=0 still survive.
     const TOP_N_DOCS = 6;
     const sortedDocs = [...docScores].sort((a, b) => b.score - a.score || a.originalIndex - b.originalIndex);
-    const topDocs = sortedDocs.slice(0, TOP_N_DOCS);
+
+    // Hard relevance gate: drop docs with score <= 2 (off-topic).
+    // For caselaw specifically: also drop score 3 (only weakly related), unless we'd end up with zero caselaw kept.
+    const getDocSourceType = (docId: string): string =>
+      docMap.get(docId)?.match.source_type || "";
+    const isCaselaw = (docId: string): boolean => {
+      const st = getDocSourceType(docId);
+      return st === "case_law" || st === "caselaw" || st === "ruling";
+    };
+
+    const aboveHardFloor = sortedDocs.filter(d => d.score >= 3);
+    const strictKept = aboveHardFloor.filter(d => !isCaselaw(d.docId) || d.score >= 4);
+    // If filtering left zero caselaw but there were caselaw candidates with score 3, allow them back.
+    const hadCaselaw = sortedDocs.some(d => isCaselaw(d.docId));
+    const keptHasCaselaw = strictKept.some(d => isCaselaw(d.docId));
+    let baseKept = strictKept;
+    if (hadCaselaw && !keptHasCaselaw) {
+      const weakCaselaw = aboveHardFloor.filter(d => isCaselaw(d.docId) && d.score === 3);
+      baseKept = [...strictKept, ...weakCaselaw].sort(
+        (a, b) => b.score - a.score || a.originalIndex - b.originalIndex,
+      );
+    }
+    const topDocs = baseKept.slice(0, TOP_N_DOCS);
     const topDocIds = new Set(topDocs.map(d => d.docId));
+    const droppedByGate = sortedDocs.length - baseKept.length;
 
     const result: RankedMatch[] = [];
     const rerankScoreLog: Record<string, string> = {};
@@ -607,11 +630,11 @@ ${sourceList}
       }
     }
 
-    const zeroScoreKept = topDocs.filter(d => d.score === 0).length;
     const keptDocs = topDocIds.size;
     console.log(`Rerank scores per doc: ${JSON.stringify(rerankScoreLog)}`);
-    console.log(`Rerank: kept top-${TOP_N_DOCS} of ${docsArr.length} docs by score (zero-score kept: ${zeroScoreKept})`);
-    console.log(`Local kept after top-${TOP_N_DOCS} slice: ${keptDocs}/${docsArr.length} (zero-score: ${zeroScoreKept}, active verb pairs: ${activePairsRR.length})`);
+    console.log(`Rerank gate dropped ${droppedByGate} off-topic docs (score<3, or caselaw<4 with caselaw alternatives).`);
+    console.log(`Rerank: kept top-${TOP_N_DOCS} of ${docsArr.length} docs by score`);
+    console.log(`Local kept after gate + top-${TOP_N_DOCS} slice: ${keptDocs}/${docsArr.length} (active verb pairs: ${activePairsRR.length})`);
 
     return result;
   } catch (err) {
