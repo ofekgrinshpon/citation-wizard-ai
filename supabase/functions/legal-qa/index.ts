@@ -642,7 +642,7 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument } = body;
 
     if (!question || typeof question !== "string" || question.trim().length < 3) {
       return new Response(JSON.stringify({ error: "Question too short" }), {
@@ -883,6 +883,27 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     }
     const hasDocument = documentContext.length > 0;
+
+    // ========= pleading_analysis: 150-word guard on audit subject =========
+    // Subject = uploaded document text (if any) OR the typed question.
+    if (taskMode === "pleading_analysis") {
+      let auditSubject = "";
+      if (documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
+        auditSubject = documentTexts.map((dt: any) => dt.text || "").join("\n\n");
+      } else if (documentText && typeof documentText === "string") {
+        auditSubject = documentText;
+      } else {
+        auditSubject = question || "";
+      }
+      const wordCount = auditSubject.trim().split(/\s+/).filter(Boolean).length;
+      if (wordCount < 150) {
+        return new Response(JSON.stringify({
+          answer: "המסמך שסופק קצר מדי לביקורת מהותית (פחות מ-150 מילים). אנא הדביקו או העלו מסמך מלא יותר.",
+          footnotes: [],
+          source_urls: [],
+        }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+    }
 
     // ========= Step 1: Local search (hybrid: keyword + vector) + Perplexity IN PARALLEL =========
 
@@ -1618,12 +1639,22 @@ ${combinedContext}`;
     console.log(`Prompt length: ${promptLen} chars, ${sourceCards.length} source cards`);
 
     const aiMaxTokens = isAcademicMode ? 12288 : 8192;
+    // For pleading_analysis with an uploaded document: the document IS the audit subject,
+    // and the typed `question` becomes optional user instructions/focus directives.
+    const isPleadingWithDoc = taskMode === "pleading_analysis" && (bodyHasDocument || hasDocument);
+    const userMessage = isPleadingWithDoc
+      ? `המסמך לבדיקה צורף בהקשר המקורות שלמעלה (תחת "=== מסמך: ... ==="). בצע עליו את פרוטוקול הביקורת המלא.
+
+הנחיות נוספות מהמשתמש (אם קיימות — תן להן עדיפות בנוסף לפרוטוקול המלא):
+${question.trim() || "ללא הנחיות נוספות — בצע ביקורת מקיפה לפי כל הפרוטוקולים."}`
+      : `השאלה המשפטית: ${question}`;
+
     const aiBody = JSON.stringify({
       model: "google/gemini-2.5-flash",
       max_tokens: aiMaxTokens,
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: `השאלה המשפטית: ${question}` },
+        { role: "user", content: userMessage },
       ],
     });
 
