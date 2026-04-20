@@ -1,45 +1,47 @@
 
 
-## Goal
-Make the main app shell feel like a professional legal workspace by removing the prominent numeric credit balance from the sidebar. Show only the plan name with a subtle "ניהול חשבון" link. The Profile → ניהול חשבון tab keeps all transparent credit details exactly as today.
+## Root cause
+When navigating from `/profile` back to `/app`, the lock modal flashes for a split second.
 
-## Scope
-- **Change**: sidebar pill only.
-- **Do NOT touch**: Profile account tab (already correct), `useCredits` hook, ledger, refund/consume logic, plans config, `InsufficientCreditsDialog`.
+`Index.tsx` line 761 renders a 🔒 "הגעת למכסה המרבית" overlay whenever `subscription.isLimitReached` is true. That value comes from `useSubscription` → `useCredits`, computed as:
 
-## Changes
-
-### 1. Replace `CreditPill` content — `src/components/CreditPill.tsx`
-Same component, same export, same `onClick` (still navigates to `/profile?tab=account`), same RTL alignment — only the visible content changes.
-
-New layout (one line, two stacked tiny labels on the right side of the pill):
 ```
-[plan badge]   ניהול חשבון
-   Pro
+isLimitReached = !isAdmin && totalCreditsAvailable <= 0
+totalCreditsAvailable = (profile?.included_credits_remaining ?? 0) + (profile?.topup_credits_remaining ?? 0)
 ```
-- **Primary line**: `planMeta.label` (e.g. "Pro חודשי", "Basic", "Pro סמסטריאלי"). For admins → "Admin · ללא הגבלה" with the existing `InfinityIcon`.
-- **Secondary line**: muted, very small — `ניהול חשבון`.
-- **Removed**: the `{totalCreditsAvailable} קרדיטים` numeric label, the colored `ringColor` ratio indicator (low/medium/high), and the `planMeta.shortLabel` chip.
-- **Kept**: subtle border + hover, `Coins` icon for paid users (neutral muted color, no ratio coloring), `InfinityIcon` for admins.
-- **Tooltip (`title`)**: keep the detailed breakdown so a hover still shows the exact numbers for users who want them — this preserves "easy path to inspect" without dominating the UI.
 
-Visual: rounded-full pill, `border border-border bg-card`, neutral muted icon, no warning/destructive colors leaking to the main shell.
+While the profile re-fetches on `/app` mount, `profile` is `null`, so both balances default to `0`, `isLimitReached` evaluates to `true`, and the modal renders for one frame — even for a Pro user with 244 credits left. The same race makes `loading` flip from `true` (initial) to `false` only after the fetch resolves.
 
-### 2. Sidebar — `src/components/AppSidebar.tsx`
-No structural change. The existing `<CreditPill className="w-full justify-between" />` slot stays where it is so users still have a single-tap path to the account page. Only the inner content quiets down via the change above.
+## Fix
 
-### 3. Profile page — `src/pages/Profile.tsx`
-No changes. The `account` tab already shows: included remaining/total, top-up balance, total available, renewal date, top-up packs, and full `credit_ledger` history. This remains the single source of truth for usage transparency.
+Gate the modal on the loading state so it never renders before the profile has actually loaded.
 
-## Files modified
-- `src/components/CreditPill.tsx` — content rewrite (plan name + "ניהול חשבון", no number).
+### File: `src/pages/Index.tsx`
+Line 761 — change:
+```tsx
+{subscription.isLimitReached && (
+```
+to:
+```tsx
+{!subscription.loading && subscription.isLimitReached && (
+```
 
-## Files intentionally untouched
-- `src/components/AppSidebar.tsx`, `src/pages/Profile.tsx`, `src/hooks/useCredits.tsx`, `src/lib/plans.ts`, `src/components/InsufficientCreditsDialog.tsx`, all credit consume/refund logic.
+Also harden the early-return guard inside `handleSend` (line 511) the same way so a submit that races the refetch doesn't silently no-op:
+```tsx
+if (!subscription.loading && subscription.isLimitReached) return;
+```
+
+That's the entire change — one component, two lines, no behavior change for genuinely depleted users.
+
+### Why not also change `useCredits`
+We could make `totalCreditsAvailable` return `Infinity` while loading, but that would mask real "0 credits" states elsewhere. Gating the UI on `loading` at the consumer is more precise and keeps the hook's numbers honest.
+
+## Out of scope
+- The `LegalQA.tsx` Lock icon (line 282) — already correctly gated by `if (authLoading || subLoading)` at line 110, so no flash there.
+- Any redesign of the limit modal or copy.
 
 ## Expected outcome
-- Sidebar shows: plan name (e.g. "Pro חודשי") with a small muted "ניהול חשבון" beneath — no "244 קרדיטים" anywhere on the main screen.
-- Hovering the pill still surfaces the exact numbers as a native tooltip for power users.
-- Clicking the pill opens `/profile?tab=account` where the full meter, balances, renewal date, top-up packs, and ledger history remain unchanged.
-- Admin users see "Admin · ללא הגבלה" instead of an infinity-with-number readout.
+- Returning from `/profile` to `/app` shows the workspace immediately, no 🔒 flash.
+- Pro user with credits never sees the lock.
+- A user who genuinely has 0 credits still sees the modal once the fetch resolves — same behavior as today.
 
