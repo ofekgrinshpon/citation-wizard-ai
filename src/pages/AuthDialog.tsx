@@ -6,7 +6,7 @@
  */
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
+
 
 function isOfficeAddinRoute() {
   try {
@@ -95,12 +95,16 @@ export default function AuthDialog() {
         if (!session && !window.location.hash.includes("access_token")) {
           const redirectUri = getRedirectUrl();
 
-          const result = await lovable.auth.signInWithOAuth("google", {
-            redirect_uri: redirectUri,
+          const { error: oauthError } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+              redirectTo: redirectUri,
+              queryParams: { prompt: "select_account" },
+            },
           });
 
-          if (result.error) {
-            const msg = (result.error as any).message || "OAuth failed";
+          if (oauthError) {
+            const msg = oauthError.message || "OAuth failed";
             setErrorMsg(msg);
             setStatus("error");
             sendToParent({ type: "auth-error", message: msg });

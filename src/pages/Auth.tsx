@@ -4,9 +4,9 @@ import { useNavigate, useSearchParams, Navigate } from "react-router-dom";
 import { useOffice } from "@/hooks/useOffice";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { GeometricBackground } from "@/components/GeometricBackground";
-import { lovable } from "@/integrations/lovable/index";
 import { signInWithOfficeDialog } from "@/lib/officeAuth";
 import { isCanonicalHost, PUBLIC_SITE_URL } from "@/lib/publicUrl";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const Auth = () => {
@@ -48,12 +48,15 @@ const Auth = () => {
     window.history.replaceState({}, "", `${window.location.pathname}${cleaned.toString() ? `?${cleaned}` : ""}`);
     (async () => {
       try {
-        const result = await lovable.auth.signInWithOAuth("google", {
-          redirect_uri: `${window.location.origin}/auth-redirect`,
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: `${window.location.origin}/auth-redirect`,
+            queryParams: { prompt: "select_account" },
+          },
         });
-        if (result.redirected) return;
-        if (result.error) {
-          console.error("[ReLex] Google OAuth error:", result.error);
+        if (error) {
+          console.error("[ReLex] Google OAuth error:", error);
           toast.error("שגיאה בהתחברות עם Google");
         }
       } catch (err: any) {
@@ -215,12 +218,15 @@ const Auth = () => {
                     window.location.replace(`${PUBLIC_SITE_URL}/auth?${params.toString()}`);
                     return;
                   }
-                  const result = await lovable.auth.signInWithOAuth("google", {
-                    redirect_uri: `${window.location.origin}/auth-redirect`,
+                  const { error } = await supabase.auth.signInWithOAuth({
+                    provider: "google",
+                    options: {
+                      redirectTo: `${window.location.origin}/auth-redirect`,
+                      queryParams: { prompt: "select_account" },
+                    },
                   });
-                  if (result.redirected) return;
-                  if (result.error) {
-                    console.error("[ReLex] Google OAuth error:", result.error);
+                  if (error) {
+                    console.error("[ReLex] Google OAuth error:", error);
                     toast.error("שגיאה בהתחברות עם Google");
                   }
                 } catch (err: any) {
