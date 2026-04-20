@@ -1,64 +1,56 @@
 
 
 ## Goal
-Replace the Bibliography Generator's one-shot "paste → add" flow with a 3-step wizard: **Paste → Review & Fix → Add to Bibliography**. The user inspects every result before anything is added, can rewrite or replace each citation inline (just like in אזכור אחיד), pick disambiguation candidates, retry failed ones, and only then commits everything to the final list.
+Fix incorrect classification where ordinary Hebrew laws like "חוק הירושה", "חוק התחרות הכלכלית", "חוק העונשין" land under **ספרות משפטית** instead of **חקיקה ראשית**.
 
-## Why
-Today the lookups go straight into the bibliography even when they're broken (`[חסר: עמוד ראשון]`, wrong חוק, ambiguous case law). The user has no chance to fix them before they land in the categorized output. The "✓ הוסף" / "מחק" / "שינוי מקור" pattern from אזכור אחיד already solves this — we apply the same idea here.
+## Root cause
+`classifyCitation` in `src/hooks/useBibliography.tsx` runs the **author/literature** check before the **legislation** check (lines 100–130).
 
-## New flow
-
-```text
-Step 1: PASTE                Step 2: REVIEW (the fix)              Step 3: BIBLIOGRAPHY
-┌─────────────────┐          ┌────────────────────────────────┐    ┌───────────────────┐
-│ paste lines     │  ─────►  │ row per source:                │    │ existing grouped  │
-│ [עבד רשימה]     │          │  • formatted citation          │    │ output (unchanged)│
-└─────────────────┘          │  • ✓ מאומת / ⚠ חסר badges     │    │                   │
-                             │  • [ערוך] inline textarea      │    │                   │
-                             │  • [שינוי מקור] category picker│    │                   │
-                             │  • [חפש שוב] re-runs lookup    │    │                   │
-                             │  • [הסר]                       │    │                   │
-                             │  • disambiguation: pick option │    │                   │
-                             │ ─────────────────────────────  │    │                   │
-                             │ [➕ הוסף הכל לביבליוגרפיה]    │ ─► │                   │
-                             └────────────────────────────────┘    └───────────────────┘
+Inside `hasAuthorPrefix` (line 65) the guard regex uses `\b` after Hebrew words:
 ```
+/^(חוק|חוק-יסוד|פקודת|תקנות|...)\b/
+```
+JavaScript's `\b` is **ASCII-only** — Hebrew letters are not `\w`, so `\b` never matches between `חוק` and a following space. The "this is not an author" guard therefore **never fires** for Hebrew, and any "חוק <word>," string (e.g. `חוק הירושה,`) matches the generic 2-word author pattern and is mis-classified as literature.
 
-## Changes
+This is why some laws happen to land correctly:
+- `חוק החוזים (חלק כללי), ...` → next char is `(`, breaks the author lookahead → falls through to legislation ✓
+- `חוק-יסוד: הכנסת, ...` → `:` breaks the leading char class → falls through ✓
+- `חוק הירושה, ...` / `חוק העונשין, ...` / `חוק התחרות הכלכלית, ...` → cleanly matches the author 2-word pattern → wrongly tagged as literature ✗
 
-### `src/components/BibliographyGenerator.tsx`
-- Add a `reviewItems` state — array of:
-  ```ts
-  { id; rawInput; status: "ok"|"needs_choice"|"error"|"loading";
-    citation; isVerified; sourceType; options?; isMissingFields; isEditing }
-  ```
-- After `processInPool` finishes, push every result (ok / disambiguation / error) into `reviewItems` instead of writing straight into the bibliography. The existing `pendingDisambiguations` list is removed; disambiguation lives inline on the row.
-- Each review row renders:
-  - The citation via `<FormattedCitation enableTooltips highlightMissing />` (so `[חסר: …]` is highlighted in red exactly like today).
-  - A small badge strip: `✓ מאומת` (green) when verified, `⚠ פרטים חסרים` (amber) when the citation contains `[חסר:`, `❓ דורש בחירה` when status is `needs_choice`.
-  - Compact category chip + a "שינוי קטגוריה" button that opens a small popover (subset of `SOURCE_CATEGORIES` mapped to the 9 `BibSourceCategory` buckets) — overrides classification for that row.
-  - Action buttons: **ערוך** (turns the line into a textarea so the user can rewrite the full citation), **חפש שוב** (re-invokes `bibliography-lookup` for the original `rawInput`, optionally with the user's edited query), **הסר**.
-  - For `needs_choice`: the option list renders as click-to-pick buttons (current disambiguation UI, just inlined).
-- A primary action at the bottom of the review panel: **➕ הוסף הכל לביבליוגרפיה** — calls `addEntries` with all rows where `status === "ok"`. Optional secondary: **הוסף רק את המאומתים**.
-- A counter line: `נמצאו X · מאומתים Y · דורשים תיקון Z`.
-- Empty `reviewItems` → fall back to existing empty/bibliography view.
+## Fix
 
 ### `src/hooks/useBibliography.tsx`
-- Extend `addEntries` payload to optionally accept `sourceTypeOverride?: BibSourceCategory`. If provided, skip `classifyCitation` for that field. (Tiny change — keeps category picker honest.)
 
-### Edge function — no changes
-`bibliography-lookup` already returns the right shape. The "חפש שוב" button just re-invokes it; the "ערוך" path doesn't call the function at all (user provides the canonical text manually).
+1. **Replace ASCII `\b` with explicit lookaheads** in `hasAuthorPrefix`'s `nonAuthorStarters` regex so it actually rejects Hebrew legislation/case-law openers:
+   ```
+   /^(חוק-יסוד|חוק\s+יסוד|חוק|פקודת|פקודה|תקנות|תקנה|צו|נוהל|הוראת|הצעת|תזכיר|סעיף|סימן|פרק|תוספת|בית|פסק|דין|מדינת|הממשלה|הכנסת|משרד|רשות|בג"ץ|ע"א|רע"א|דנ"א|ע"פ|רע"פ|דנ"פ|ע"ע|עש"מ|בש"פ|ת"א|ת"פ|ע"מ|ה"פ|המר|פר"ק|ת"ט|תא"מ|ת"ד|עב"ל|ס"ק|ד"מ|ראו|ראה|השוו|השווה|שם|לעיל)(?=[\s:,\-־\(\.])/
+   ```
+   (uses an explicit lookahead instead of `\b`, so Hebrew openers are reliably rejected from the "is this an author?" path.)
+
+2. **Re-order `classifyCitation`** so structural markers win over generic name detection. New order:
+   1. Case-law detectors (`isSupremeCase`, `isDistrictCase`, `isMagistrateCase`, `isSpecializedCase`, `isGenericCase`) — case-law tokens are unambiguous.
+   2. Legislation detectors (`hasPrimaryLegislation`, `hasSecondaryLegislation`) — same reason.
+   3. `authorDetected` / `hasLiteratureMarkers` — only after structural sources are ruled out.
+   4. URL → `misc`.
+
+   `authorSurname` extraction stays gated on `sourceType === "literature"`, so it only runs when literature classification actually wins.
+
+3. The `useEffect` at lines 260–275 already re-runs `rebuildBibliographyEntries` on mount, which calls `classifyCitation` again. Existing mis-classified entries in `localStorage` will be **auto-corrected** on the next page load — no migration needed.
+
+### `src/components/BibliographyGenerator.tsx`
+No change. The category-override popover already lets users move a row manually if a future edge case slips through; this fix removes the need for them to use it on plain-vanilla laws.
+
+### Edge function
+No change.
 
 ## Out of scope
+- No changes to disambiguation, Perplexity fallback, verified-source priority, or the 3-step wizard.
 - No DB schema changes.
-- No new edge function.
-- Footnote-driven entries (`syncFootnoteEntries`) keep their current direct-add behavior — the review step is only for the manual paste flow.
-- Keeps verified-source priority + Perplexity fallback behavior intact.
 
 ## Outcome
-- Pasted sources never silently land as broken entries; the user sees and approves each one.
-- חוק החוזים coming back with `[חסר: עמוד ראשון]` → user clicks **חפש שוב** or rewrites it inline before adding.
-- בנק המזרחי → user picks the correct case directly on the row, no separate panel.
-- בג"ץ 18225-06-25 with missing parties → flagged amber, user fixes or removes before commit.
-- Wrong category (חוק העונשין classified as "ספרות משפטית") → one-click fix via the category chip.
+- `חוק הירושה, התשכ"ה–1965, ס"ח 63` → **חקיקה ראשית** ✓
+- `חוק התחרות הכלכלית, התשמ"ח–1988, ס"ח 128` → **חקיקה ראשית** ✓
+- `חוק העונשין, התשל"ז–1977, ס"ח 226` → **חקיקה ראשית** ✓
+- `חוק-יסוד: הכנסת` and `חוק החוזים (חלק כללי)` → keep working as today.
+- Existing wrongly-categorized entries in the user's bibliography will reshuffle to the correct category automatically on next reload.
 
