@@ -87,6 +87,12 @@ const Auth = () => {
           </p>
         </div>
 
+        {refCode && !isLogin && (
+          <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs text-foreground text-center">
+            🎁 הצטרפת דרך הזמנה (<span className="font-mono">{refCode}</span>) — לאחר הפעולה הראשונה שלך תקבלו שניכם 10 קרדיטים.
+          </div>
+        )}
+
         <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-3.5">
             {!isLogin && (
