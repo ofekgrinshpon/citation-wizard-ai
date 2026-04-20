@@ -1,49 +1,130 @@
 
 
 ## Goal
-Fix two related defects in **מחקר משפטי** (Research Mode):
-1. The AI placed footnote marker `[1]` next to "חוק החוזים (חלק כללי)" but footnote 1 was an unrelated family-court case (`תמ"ש 3402-09-21`).
-2. The named law (חוק החוזים) did not get its own bibliographic footnote, despite the existing exception rule.
+Extend the credits/pricing system (pending implementation) with two production-grade features:
+1. **Refundable credit flow** — credits are restored automatically when a paid action fails technically or returns an empty/not-found result, backed by an auditable ledger.
+2. **Referral loop** — every user gets a personal referral code; both sides receive 10 bonus credits when a new user signs up via the link and completes their first successful in-app action.
 
-## Root cause (from edge logs)
-- Rerank dropped 11/12 local docs as off-topic. Only 1 family-court case passed (score 4) — completely unrelated to contract law.
-- The system prompt enforces "≥60% of references must be `[מאומת]`", so the model jammed the only available local source as footnote 1 and attached it to the law mention — even though the source has nothing to do with `חוק החוזים`.
-- The "legislation exception" rule (lines 1626–1631, 1676–1681) is correct on paper, but the model preferred fulfilling the 60% quota over citing the law properly.
-- The relevance gate is too lenient for the family-court case: a citation about "הסכמים שעניינם הגירת קטינים" scored 4 because it superficially mentions "הסכמים".
+These extend the previously approved credits plan (4 plans + admin, `consume_credits` RPC, `useCredits` hook) — they do not replace it.
 
-## Changes (all in `supabase/functions/legal-qa/index.ts`)
+---
 
-### 1. Anti-mismatch guard in the prompt
-Add an explicit, high-priority rule near the top of the rules section:
-> **לעולם אל תצרף סימן הפניה `[N]` לאזכור של חוק/פקודה/תקנה אם הערת השוליים `N` היא מקור מסוג אחר** (למשל פסק דין, מאמר). אזכור של חוק חייב להיות מקושר אך ורק להערת שוליים שהיא ציטוט ביבליוגרפי של אותו חוק עצמו.
+## Part 1 — Refundable credit flow
 
-Pair it with a positive instruction: when the body says "חוק X", footnote `[N]` next to it MUST be the bibliographic citation of חוק X (per the existing exception), not a tangentially related case.
+### Database
 
-### 2. Drop the rigid 60% מאומת quota when there are no on-topic local sources
-Change line 1624 from a hard "≥60%" to: "אם המקורות [מאומת] רלוונטיים מהותית — העדף אותם. אם המקורות [מאומת] עוסקים בנושא אחר לחלוטין — **אל תצטט אותם בכלל**, גם אם המשמעות היא תשובה עם פחות הערות שוליים מקומיות. ציטוט מקור לא רלוונטי הוא הפרה חמורה."
+**New table `credit_ledger`** (the source of truth; `profiles` balances become a cached projection):
+- `id uuid pk`
+- `user_id uuid not null` (FK auth.users)
+- `request_id text not null` (client-generated UUID per paid action)
+- `event_type text` check in `('consume','refund','topup','renewal','admin_adjustment','referral_bonus','signup_bonus')`
+- `amount int not null` (positive for credit-add events, negative for `consume`)
+- `included_delta int not null default 0`, `topup_delta int not null default 0` (which bucket moved)
+- `balance_after_included int not null`, `balance_after_topup int not null`
+- `reason text`, `metadata jsonb default '{}'`
+- `created_at timestamptz default now()`
+- **Unique index** `(user_id, request_id, event_type)` → makes consume/refund idempotent.
 
-This removes the perverse incentive that caused the family-court case to be jammed in.
+RLS: users `SELECT` own rows; admins `SELECT` all; inserts only via security-definer RPCs.
 
-### 3. Tighten the rerank gate further
-- Raise the caselaw floor from 4 → **5**. A score of 4 still means "weakly related"; we want "directly on point" only.
-- Keep the safety valve (allow score-3 caselaw back if no caselaw at all survives) **only when the question itself is a caselaw-domain question**. For doctrinal/contract questions, an empty caselaw bucket is fine — Perplexity + legislation footnote can carry the answer.
-- Strengthen the rerank prompt with an explicit domain-mismatch example: "שאלה על חוזים מסחריים + מקור על משמורת קטינים = ציון 0–1, גם אם שניהם מזכירים 'הסכם'."
+**Updated RPCs** (replace the previously planned signatures):
+- `consume_credits(_amount int, _reason text, _request_id text) returns jsonb`
+  - Admin: insert ledger row with zero deltas, return ok.
+  - Idempotent: if a `consume` row already exists for `(user_id, request_id)`, return the prior result.
+  - Atomic: lock profile row, drain included first then topup, write ledger row, return `{ ok, request_id, remaining_included, remaining_topup }`. On insufficient → `{ ok:false, error:'INSUFFICIENT_CREDITS', remaining_* }`.
+- `refund_credits(_request_id text, _reason text) returns jsonb`
+  - Idempotent: if a `refund` row exists for `request_id`, return prior result.
+  - Looks up the matching `consume` row; restores the same `included_delta`/`topup_delta` to the same buckets; writes a `refund` ledger row; returns updated balances.
+  - No-op + ok response if no matching consume exists (defensive).
+- `add_topup_credits`, `set_user_plan`, `reset_or_renew_credits` from the prior plan also write ledger rows (`topup` / `renewal` / `admin_adjustment`).
 
-### 4. Verify the legislation-footnote exception is being honored
-The rule already exists (lines 1676–1681). After change #1 above, the model has no escape route — it must either generate a proper בקבוק footnote for `חוק החוזים` or omit the marker entirely. No code change needed beyond #1.
+### Edge functions (`legal-qa`, `citation-chat`, future paid endpoints)
+
+Pattern applied uniformly:
+1. Read `requestId` from the request body (client generates one per call).
+2. Call `consume_credits(cost, reason, requestId)`. If `INSUFFICIENT_CREDITS` → return HTTP 402 + `{ remaining_* }`.
+3. Wrap the rest in `try/catch`. **Refund triggers**:
+   - Any thrown exception (Lovable AI gateway failure, Perplexity timeout, parse error, OCR/convert-doc failure, etc.).
+   - `legal-qa` returns no usable answer (e.g. `answer` empty/whitespace, or `footnotes.length === 0` AND body length < 80 chars, or the model returned the explicit "לא נמצאו מקורות" sentinel we already detect for the empty-state UI).
+   - `convert-doc` / document-grounding pre-step fails before the QA call runs → refund the QA cost too (since nothing meaningful was produced).
+4. On refund: call `refund_credits(requestId, reason)` and add `{ refunded: true, refundReason }` to the response payload. Frontend uses this to show the toast.
+5. On success that is genuinely meaningful (non-empty answer with at least one footnote *or* ≥80 chars of body): keep deduction, no extra action.
+
+### Frontend
+
+- **`useCredits.consume(amount, reason)`** generates a `requestId` (`crypto.randomUUID()`), passes it through to the edge function call, and returns it to the caller so the same id can be used for downstream refunds. Client-side actions (batch builder, bibliography per-item) call `consume_credits` then `refund_credits` themselves on failure using the same id.
+- **`useCreditLedger()`** hook fetches recent ledger rows for the Profile usage table.
+- **Refund toast**: when an edge function response includes `refunded: true`, show `toast.info("הפעולה נכשלה והקרדיטים הוחזרו אוטומטית")` and call `refresh()` on the credits hook.
+- **Profile → "ניהול חשבון" / "היסטוריית שימוש"** table is sourced from `credit_ledger` (replacing the previously planned `activity_logs` source). Columns: date, action (translated `event_type` + `reason`), amount (signed), balance after. Refund rows render in green with a small "הוחזר" badge.
+
+---
+
+## Part 2 — Referral loop (10 + 10 credits, post-first-action grant)
+
+### Database
+
+**Add columns to `profiles`**:
+- `referral_code text unique not null` — generated on insert (8-char base32, e.g. `R7K2QX9F`)
+- `referred_by_user_id uuid references auth.users(id)` (nullable, set once at signup, never updated)
+- `referral_bonus_granted boolean not null default false` — per the *referred* user; flips to true when their first paid action succeeds and triggers the dual reward
+- `referral_first_action_at timestamptz` (audit)
+
+**`handle_new_user` trigger** is extended:
+- Generate a unique `referral_code` (retry on collision).
+- If `raw_user_meta_data->>'referral_code'` is present and resolves to an existing user that is **not** the new user, set `referred_by_user_id` accordingly. Self-referral is rejected silently.
+
+**New RPC `grant_referral_bonus_if_eligible(_user_id uuid) returns jsonb`** (security definer):
+- No-op if `referral_bonus_granted = true` or `referred_by_user_id IS NULL`.
+- Inside a single transaction:
+  - Set `referral_bonus_granted = true`, `referral_first_action_at = now()`.
+  - Add 10 to the new user's `topup_credits_remaining` + ledger row `event_type='referral_bonus'`, `request_id = 'referral:<new_user_id>:referee'`.
+  - Add 10 to the referrer's `topup_credits_remaining` + ledger row with `request_id = 'referral:<new_user_id>:referrer'`.
+- Idempotent via the boolean flag AND the unique `(user_id, request_id, event_type)` index on the ledger (defense in depth).
+
+**Trigger**: invoke `grant_referral_bonus_if_eligible(NEW.user_id)` after every successful `consume` ledger insert (positive consume i.e. real deduction, not admin). This implements the "first successful in-app action" rule with no edge-function changes.
+
+### Frontend
+
+- **Signup flow** (`Auth.tsx` / `AuthDialog.tsx`):
+  - Read `?ref=<code>` from URL on mount; persist to `sessionStorage` so it survives the OAuth round-trip.
+  - On `signUp`, pass `{ data: { referral_code: storedRef } }` so the trigger picks it up.
+  - Show a small banner when a ref code is present: "הצטרפת דרך הזמנה — לאחר הפעולה הראשונה שלך תקבלו שניכם 10 קרדיטים."
+- **Profile → new "הזמן חברים" section**:
+  - Display personal `referral_code`.
+  - Copy-link button (`https://relexlm.com/auth?mode=signup&ref=<code>`).
+  - Short Hebrew explainer per spec (using 10 credits, post-first-action).
+  - Read-only counter: total referrals granted (`SELECT count(*) FROM profiles WHERE referred_by_user_id = me AND referral_bonus_granted = true`).
+- **Admin `UsersTable.tsx`**:
+  - Two new read-only columns: `referral_code`, `referred by` (resolves to email).
+  - Tooltip on the row shows total referral bonuses paid out to that user (sum of `referral_bonus` ledger rows).
+
+---
 
 ## Out of scope
-- Other modes (pleading audit, academic writing, case summary) — unchanged.
-- Changes to retrieval (vector/keyword search) — only the rerank gate is tuned.
-- UI changes.
 
-## Files touched
-- `supabase/functions/legal-qa/index.ts` (+ redeploy)
-- `mem://logic/legal-qa/relevance-filtering` (update thresholds)
+- Real payment integration (still stubbed, per prior plan).
+- Refund of partially-successful results (e.g. QA returned a body but Perplexity failed) — kept as a "success with degraded sources" toast; no refund.
+- Multi-step referral campaigns / tiered rewards.
+- Anti-fraud beyond: self-referral block, single-grant-per-referred-user, idempotent ledger, post-first-action gate. Email/IP heuristics deferred.
+
+---
+
+## Files touched (additions to the prior credits plan)
+
+- New migration: `credit_ledger` table + RLS, updated `consume_credits` / `refund_credits` / `add_topup_credits` / `set_user_plan` / `reset_or_renew_credits`, `grant_referral_bonus_if_eligible`, ledger trigger, `profiles` referral columns, updated `handle_new_user`.
+- `supabase/functions/legal-qa/index.ts` — request-id intake, try/catch refund, empty-result detection.
+- `supabase/functions/citation-chat/index.ts` — same pattern with cost = 1.
+- `supabase/functions/convert-doc/index.ts` — refund hook for failed parses (when called as part of a paid grounding flow).
+- `src/hooks/useCredits.tsx` — request-id generation, `consume(reason)` / `refund(requestId, reason)` API.
+- `src/hooks/useCreditLedger.tsx` (new) — paginated ledger reader for the usage history table.
+- `src/lib/refundResponse.ts` (new) — shared helper that detects `{ refunded:true }` in edge responses and fires the toast.
+- `src/pages/Auth.tsx`, `src/pages/AuthDialog.tsx` — `?ref=` capture + signup metadata.
+- `src/pages/Profile.tsx` — usage history sourced from `credit_ledger`; new "הזמן חברים" card.
+- `src/components/admin/UsersTable.tsx` — referral columns.
+- `src/pages/LegalQA.tsx`, `src/components/BatchFootnoteBuilder.tsx`, `src/components/BibliographyGenerator.tsx`, `src/pages/Index.tsx` — adopt the new `consume(reason)`/refund-on-error pattern.
 
 ## Expected outcome
-For the same query about "השינוי בחוק החוזים":
-- The body still says "פרשנות חוזים בישראל מוסדרת בעיקרה בחוק החוזים (חלק כללי).¹"
-- Footnote 1 reads: `חוק החוזים (חלק כללי), התשל"ג-1973, ס"ח 118.` (or `(לא נמצאו פרטי פרסום)` if Perplexity has no metadata).
-- The unrelated family-court case (`תמ"ש 3402-09-21`) does not appear at all.
+
+- Every paid action that fails technically or yields no real result silently returns the credits and shows a Hebrew "הוחזרו אוטומטית" toast; the refund is visible in the user's history.
+- Users can share `relexlm.com/auth?mode=signup&ref=R7K2QX9F`. When the invitee signs up and runs their first successful action, both sides instantly see +10 top-up credits and a ledger entry. Self-referral, double-grants, and replays are all blocked at the DB level.
 
