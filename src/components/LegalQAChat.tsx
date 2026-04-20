@@ -973,7 +973,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
       const data = await res.json();
       if (data?.error) { setError(data.error); return; }
-      if (!data?.answer || data.answer.trim().length < 20) { setError("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב."); return; }
+      if (!data?.refusal && (!data?.answer || data.answer.trim().length < 20)) { setError("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב."); return; }
 
       const qaResult = data as QAResult;
       setResult(qaResult);
