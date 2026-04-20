@@ -24,7 +24,6 @@ type Capability = {
   description: string;
   image: string;
   highlight?: boolean;
-  badge?: string;
   chips?: string[];
 };
 
@@ -35,7 +34,6 @@ const capabilities: Capability[] = [
       "מחקר משפטי, סיכום פסיקה, בקרה למסמכים וכתיבה אקדמית — עם תוצאות מובנות ומותאמות לעבודה משפטית.",
     image: "/how-it-works/legal-assistant.png",
     highlight: true,
-    badge: "סוויטה מלאה",
     chips: ["מחקר משפטי", "סיכום פסיקה", "בקרה למסמכים", "כתיבה אקדמית"],
   },
   {
@@ -71,12 +69,7 @@ function CapabilityCard({ cap, index }: { cap: Capability; index: number }) {
           : "border-border shadow-sm hover:border-primary/30"
       } ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
     >
-      {cap.badge && (
-        <div className="absolute -top-3 right-5 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold shadow-sm">
-          <Sparkles className="w-3 h-3" />
-          {cap.badge}
-        </div>
-      )}
+    
       <div className="overflow-hidden rounded-xl border border-border bg-muted/40 mb-4">
         <img
           src={cap.image}
