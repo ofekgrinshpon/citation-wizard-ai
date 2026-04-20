@@ -36,15 +36,15 @@ const BARE_SLASH_REGEX = /\b([0-9]{1,6}\/[0-9]{2,4})\b/;
 const BARE_HYPHEN_REGEX = /\b([0-9]{1,6})-([0-9]{1,2})-([0-9]{2,4})\b/;
 
 function extractCaseNumber(text: string): string | null {
+  // Bare hyphen FIRST (most specific): 18225-06-25 → keep raw hyphenated form
+  const h = text.match(BARE_HYPHEN_REGEX);
+  if (h) return `${h[1]}-${h[2]}-${h[3]}`;
   // Prefixed style: בג"ץ 1234/05
   const m = text.match(CASE_NUM_REGEX);
   if (m) return m[1].trim();
   // Bare slash: 1234/05
   const s = text.match(BARE_SLASH_REGEX);
   if (s) return s[1].trim();
-  // Bare hyphen: 18225-06-25 → 18225/06 (DB canonical)
-  const h = text.match(BARE_HYPHEN_REGEX);
-  if (h) return `${h[1]}/${h[2]}`;
   return null;
 }
 
@@ -53,14 +53,21 @@ function caseNumberVariants(input: string): string[] {
   const out = new Set<string>();
   const trimmed = input.trim();
   out.add(trimmed);
+  // Hyphenated form: 18225-06-25 → also try 18225/06 and 18225-06
   const h = trimmed.match(/^([0-9]{1,6})-([0-9]{1,2})-([0-9]{2,4})$/);
   if (h) {
     out.add(`${h[1]}/${h[2]}`);
-    out.add(`${h[1]}-${h[2]}-${h[3]}`);
+    out.add(`${h[1]}-${h[2]}`);
   }
+  // Slash form: 18225/06 → also try 18225-06 (without day)
   const s = trimmed.match(/^([0-9]{1,6})\/([0-9]{2,4})$/);
   if (s) {
-    out.add(`${s[1]}/${s[2]}`);
+    out.add(`${s[1]}-${s[2]}`);
+  }
+  // Short hyphen: 18225-06 → also try 18225/06
+  const sh = trimmed.match(/^([0-9]{1,6})-([0-9]{1,2})$/);
+  if (sh) {
+    out.add(`${sh[1]}/${sh[2]}`);
   }
   return Array.from(out);
 }
