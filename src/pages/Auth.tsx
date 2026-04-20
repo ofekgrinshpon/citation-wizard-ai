@@ -62,9 +62,10 @@ const Auth = () => {
         const target = isOfficeAddin ? "/app?addin=1" : "/app";
         navigate(target, { replace: true });
       } else {
-        const { error } = await signUp(email, password, fullName);
+        const { error } = await signUp(email, password, fullName, refCode || undefined);
         if (error) throw error;
         toast.success("נרשמת בהצלחה! בדוק את האימייל לאימות.");
+        try { sessionStorage.removeItem("relex_ref_code"); } catch { /* ignore */ }
       }
     } catch (err: any) {
       toast.error(err.message || "שגיאה בהתחברות");
