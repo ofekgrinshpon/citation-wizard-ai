@@ -12,7 +12,7 @@ interface QALogRecord {
   id: string;
   question: string;
   answer: string | null;
-  footnotes: any[] | null;
+  footnotes: any;
   task_mode: string | null;
   created_at: string;
 }
@@ -21,6 +21,9 @@ interface QAResult {
   answer: string;
   footnotes: { number: number; citation: string; source_type: string; url?: string; source?: "local" | "perplexity" | "document" }[];
   source_urls: string[];
+  case_summary?: boolean;
+  verified_source?: "user" | "local" | "external" | "none";
+  case_metadata?: Record<string, any> | null;
 }
 
 interface Props {
