@@ -703,6 +703,14 @@ serve(async (req) => {
     const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === "user");
     const userInput = lastUserMessage?.content || "";
 
+    // ── Pre-consume validation: reject gibberish/empty input BEFORE charging credits ──
+    if (!isValidCitationInputServer(userInput)) {
+      return new Response(
+        JSON.stringify({ error: "INVALID_INPUT", messageHe: INVALID_INPUT_MSG_HE }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     let verifiedHint = "";
     let hasVerifiedCandidates = false;
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
@@ -1542,6 +1550,20 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     });
     content = fixHebrewYearPrefix(content);
     content = normalizeArticleYearByRule2492(content);
+
+    // Post-response safety net: if the AI returned a refusal/non-meaningful answer,
+    // automatically refund the credit so the user isn't charged for an unusable result.
+    if (isRefusalResponseServer(content)) {
+      await refundIfCharged("invalid_input_refusal");
+      return new Response(
+        JSON.stringify({
+          content,
+          refunded: true,
+          refundReason: "הקלט לא היה ברור דיו לעיבוד",
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
 
     return new Response(JSON.stringify({ content }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
