@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { getAuthRedirectOrigin } from "@/lib/publicUrl";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -125,7 +126,7 @@ function ForgotPasswordForm() {
     setLoading(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${getAuthRedirectOrigin()}/reset-password`,
       });
       if (error) throw error;
       setSent(true);
