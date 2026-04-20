@@ -322,29 +322,64 @@ serve(async (req) => {
           const url = (parsed.source_url as string) || cites[0] || "";
           if (url) {
             try {
-              const txtRes = await fetchWithTimeout(url, { method: "GET" }, 10000);
-              if (txtRes.ok) {
+              const txtRes = await fetchWithTimeout(url, {
+                method: "GET",
+                headers: BROWSER_HEADERS,
+                redirect: "follow",
+              }, 15000);
+              if (!txtRes.ok) {
+                console.warn(`verify-case-fulltext: external fetch HTTP ${txtRes.status} — ${url}`);
+              } else {
                 const ct = (txtRes.headers.get("content-type") || "").toLowerCase();
+                const cd = (txtRes.headers.get("content-disposition") || "").toLowerCase();
                 const isDocxByCt = ct.includes("officedocument.wordprocessingml") || ct.includes("application/vnd.openxmlformats");
                 const isPdfByCt = ct.includes("application/pdf");
                 const isHtmlByCt = ct.includes("text/html") || ct.includes("application/xhtml");
+                const cdMentionsDocx = /\.docx\b/.test(cd);
+                const cdMentionsPdf = /\.pdf\b/.test(cd);
 
                 let plain = "";
+                const urlSuggestsDocx = looksLikeDocxUrl(url);
+                const urlSuggestsPdf = looksLikePdfUrl(url);
 
-                if (isDocxByCt || (!isHtmlByCt && looksLikeDocxUrl(url))) {
-                  // DOCX path — unzip and extract <w:t> runs
+                // Prefer magic-byte sniffing over server-provided content-type, since court
+                // servers commonly mislabel DOCX downloads as text/html or octet-stream.
+                if (isDocxByCt || cdMentionsDocx || (!isHtmlByCt && urlSuggestsDocx) || (!isHtmlByCt && !isPdfByCt && !urlSuggestsPdf)) {
                   const buf = new Uint8Array(await txtRes.arrayBuffer());
-                  plain = extractDocxText(buf);
-                  console.log(`verify-case-fulltext: external DOCX (${plain.length} chars from ${url})`);
-                } else if (isPdfByCt || looksLikePdfUrl(url)) {
-                  // PDF path — convert to plain text via ConvertAPI
+                  if (looksLikeZip(buf)) {
+                    plain = extractDocxText(buf);
+                    console.log(`verify-case-fulltext: external DOCX (${plain.length} chars, ${buf.length}B from ${url})`);
+                  } else if (looksLikePdfMagic(buf)) {
+                    plain = await extractPdfTextViaConvertApi(buf);
+                    console.log(`verify-case-fulltext: external PDF via magic (${plain.length} chars, ${buf.length}B from ${url})`);
+                  } else {
+                    // Not a real binary — try treating buffer as HTML/text fallback.
+                    const raw = new TextDecoder("utf-8", { fatal: false }).decode(buf);
+                    const looksHtml = /^\s*<(!doctype|html|\?xml)/i.test(raw.slice(0, 200));
+                    if (looksHtml) {
+                      plain = raw
+                        .replace(/<script[\s\S]*?<\/script>/gi, " ")
+                        .replace(/<style[\s\S]*?<\/style>/gi, " ")
+                        .replace(/<[^>]+>/g, " ")
+                        .replace(/&nbsp;/g, " ")
+                        .replace(/\s+/g, " ")
+                        .trim();
+                      console.log(`verify-case-fulltext: external HTML interstitial fallback (${plain.length} chars from ${url})`);
+                    } else {
+                      console.warn(`verify-case-fulltext: rejected — not zip/pdf/html (ct=${ct} cd=${cd} bytes=${buf.length} first4=${Array.from(buf.slice(0,4)).map(b=>b.toString(16)).join(' ')}) — ${url}`);
+                    }
+                  }
+                } else if (isPdfByCt || cdMentionsPdf || urlSuggestsPdf) {
                   const buf = new Uint8Array(await txtRes.arrayBuffer());
-                  plain = await extractPdfTextViaConvertApi(buf);
-                  console.log(`verify-case-fulltext: external PDF (${plain.length} chars from ${url})`);
+                  if (looksLikePdfMagic(buf) || looksLikeZip(buf)) {
+                    plain = looksLikeZip(buf) ? extractDocxText(buf) : await extractPdfTextViaConvertApi(buf);
+                    console.log(`verify-case-fulltext: external PDF (${plain.length} chars, ${buf.length}B from ${url})`);
+                  } else {
+                    console.warn(`verify-case-fulltext: rejected PDF — bad magic (bytes=${buf.length}) — ${url}`);
+                  }
                 } else {
                   // HTML / unknown text path
                   const raw = await txtRes.text();
-                  // Sniff: if it's actually a binary that arrived without a content-type, bail.
                   const looksHtml = isHtmlByCt || /^\s*<(!doctype|html|\?xml)/i.test(raw.slice(0, 200));
                   if (looksHtml) {
                     plain = raw
@@ -355,7 +390,7 @@ serve(async (req) => {
                       .replace(/\s+/g, " ")
                       .trim();
                   } else {
-                    console.log(`verify-case-fulltext: external response not HTML/DOCX (ct=${ct}) — ${url}`);
+                    console.log(`verify-case-fulltext: external response not HTML/DOCX/PDF (ct=${ct}) — ${url}`);
                   }
                 }
 
