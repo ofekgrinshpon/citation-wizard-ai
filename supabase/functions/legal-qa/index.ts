@@ -1663,9 +1663,22 @@ ${citationInstructions}
 - אזכור חוזר (שם): שם, בעמ' 85.
 - אזכור חוזר (לעיל): פרוקצ'יה, לעיל ה"ש 2, בעמ' 45.
 
-אל תציין כתובות URL בהערות השוליים, אלא אם המקור הוא אתר אינטרנט בלבד (כלל 34.2).
+איסור מוחלט – הערות שוליים שהן רק URL:
+- **אסור** לכתוב הערת שוליים שכל תוכנה הוא כתובת URL (למשל "https://fs.knesset.gov.il/..." או "https://lawjournal.huji.ac.il/..."). זוהי הפרה של כללי האזכור האחיד.
+- אם יש לך מקור [חיצוני] שמכיל URL בלבד, עליך לבחור אחת משתי אפשרויות:
+  (1) לעצב הפניה מלאה לפי כללי האזכור האחיד (מחבר, כותרת, כתב עת, שנה, עמוד) על סמך מטא-דאטה שמופיעה בשורות [חיצוני] של Perplexity, או
+  (2) **להשמיט את הערת השוליים לחלוטין** ולנסח את הקביעה ללא הפניה.
+- כלל 34.2 (URL כהפניה) חל **אך ורק** על מקורות שהם אתר אינטרנט מובהק (בלוג, אתר ארגון, פוסט) — **לא** על פרוטוקולי כנסת, מאמרים אקדמיים בפורמט PDF, או מסמכים משפטיים אחרים שיש להם פורמט אזכור משלהם.
+- פרוטוקולי ועדות כנסת: אם אין לך פרטי פרסום מלאים (שם הוועדה, מספר ישיבה, תאריך) — **השמט** את ההפניה במקום לכתוב URL.
+
 לכל מקור מקומי [מאומת] — עצב את ההפניה מהפרטים שסופקו (מספר תיק, שמות צדדים, ערכאה, תאריך) לפי כלל 18 (פסיקה) או הכלל המתאים.
-לכל מקור אינטרנט — אם יש מספיק מידע ליצור אזכור מעוצב, עשה זאת. אם לא, ציין את הכתובת לפי כלל 34.2.
+
+חובה – הערת שוליים לחקיקה שהוזכרה במפורש (מימוש החריג):
+- בכל פעם שגוף התשובה מאזכר במפורש שם של חוק/פקודה/תקנה ספציפיים (לדוגמה: "חוק החוזים", "חוק החוזים האחידים", "חוק המחאת חיובים", "פקודת הנזיקין", "חוק חוזה הביטוח", "חוק-יסוד: כבוד האדם וחירותו", "תקנות סדר הדין האזרחי") — **חובה** להוסיף הערת שוליים אחת לאותה חקיקה בהופעתה הראשונה.
+- את פרטי הפרסום (ס"ח/ק"ת, מספר עמוד, שנה עברית) קח מהשורות [חיצוני] של Perplexity אם יש שם מידע מתאים.
+- אם אין פרטי פרסום ב-Perplexity — כתוב את שם החוק המלא בלבד עם "(לא נמצאו פרטי פרסום)". דוגמה: 'חוק החוזים (חלק כללי) (לא נמצאו פרטי פרסום).'
+- **אסור להמציא** מספרי ס"ח, עמודים או שנים. עדיף "(לא נמצאו פרטי פרסום)" מאשר נתון בדוי.
+- חריג זה הוא לציטוט הביבליוגרפי בלבד. **אסור** לקבוע מה החוק "קובע" בגוף הטקסט אלא אם מעוגן במקור [מאומת].
 
 רשימת מקורות זמינים:
 ${sourceCatalog}
@@ -2329,11 +2342,27 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       }
     }
 
-    // Filter short footnotes and renumber
-    const validFootnotes = footnotes.filter((fn) => fn.citation.trim().length >= 10);
+    // Filter footnotes that are bare URLs / URL-only (violation of citation rules) or too short, then renumber
+    const URL_ONLY_RE = /^(?:\[?\s*)?https?:\/\/\S+(?:\s*\([^)]*\))?\s*\.?\s*$/i;
+    const isUrlOnly = (txt: string): boolean => {
+      const t = txt.trim();
+      if (!t) return false;
+      // strip trailing parenthetical date like "(10.04.2024)" and trailing punctuation, then check
+      const stripped = t.replace(/\s*\([^)]*\)\s*\.?$/, "").replace(/\.$/, "").trim();
+      return URL_ONLY_RE.test(t) || /^https?:\/\/\S+$/i.test(stripped);
+    };
+    const validFootnotes = footnotes.filter(
+      (fn) => fn.citation.trim().length >= 10 && !isUrlOnly(fn.citation),
+    );
     if (validFootnotes.length !== footnotes.length) {
+      const droppedUrlOnly = footnotes.filter((fn) => isUrlOnly(fn.citation)).length;
+      const droppedShort = footnotes.filter((fn) => fn.citation.trim().length < 10).length;
+      if (droppedUrlOnly > 0) console.log(`Dropped ${droppedUrlOnly} URL-only footnotes (rule violation)`);
+      if (droppedShort > 0) console.log(`Dropped ${droppedShort} too-short footnotes`);
       const removedNumbers = new Set(
-        footnotes.filter((fn) => fn.citation.trim().length < 10).map((fn) => fn.number)
+        footnotes
+          .filter((fn) => fn.citation.trim().length < 10 || isUrlOnly(fn.citation))
+          .map((fn) => fn.number),
       );
       for (const num of removedNumbers) {
         answer = answer.replaceAll(toSuperscript(num), "");
