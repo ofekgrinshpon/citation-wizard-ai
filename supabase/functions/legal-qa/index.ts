@@ -884,6 +884,27 @@ ${(verify.fullText as string).slice(0, 50000)}
     }
     const hasDocument = documentContext.length > 0;
 
+    // ========= pleading_analysis: 150-word guard on audit subject =========
+    // Subject = uploaded document text (if any) OR the typed question.
+    if (taskMode === "pleading_analysis") {
+      let auditSubject = "";
+      if (documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
+        auditSubject = documentTexts.map((dt: any) => dt.text || "").join("\n\n");
+      } else if (documentText && typeof documentText === "string") {
+        auditSubject = documentText;
+      } else {
+        auditSubject = question || "";
+      }
+      const wordCount = auditSubject.trim().split(/\s+/).filter(Boolean).length;
+      if (wordCount < 150) {
+        return new Response(JSON.stringify({
+          answer: "המסמך שסופק קצר מדי לביקורת מהותית (פחות מ-150 מילים). אנא הדביקו או העלו מסמך מלא יותר.",
+          footnotes: [],
+          source_urls: [],
+        }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+    }
+
     // ========= Step 1: Local search (hybrid: keyword + vector) + Perplexity IN PARALLEL =========
 
     // Helper: generate query embedding for vector search
