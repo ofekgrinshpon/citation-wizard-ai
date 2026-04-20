@@ -224,7 +224,7 @@ export function sortBibliography(entries: BibliographyEntry[]): BibliographyEntr
 interface BibliographyContextValue {
   entries: BibliographyEntry[];
   addEntry: (rawInput: string, fullCitation: string, from: "footnote" | "manual") => boolean;
-  addEntries: (items: { rawInput: string; fullCitation: string; isVerified?: boolean }[], from?: "footnote" | "manual") => number;
+  addEntries: (items: { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory }[], from?: "footnote" | "manual") => number;
   syncFootnoteEntries: (items: { rawInput: string; fullCitation: string }[]) => number;
   removeEntry: (id: string) => void;
   clearAll: () => void;
@@ -310,13 +310,14 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
   );
 
   const addEntries = useCallback(
-    (items: { rawInput: string; fullCitation: string; isVerified?: boolean }[], from: "footnote" | "manual" = "manual"): number => {
+    (items: { rawInput: string; fullCitation: string; isVerified?: boolean; sourceTypeOverride?: BibSourceCategory }[], from: "footnote" | "manual" = "manual"): number => {
       let count = 0;
       setEntries((prev) => {
         const next = [...prev];
         for (const item of items) {
           if (isDuplicate(item.fullCitation, next)) continue;
           const info = classifyCitation(item.fullCitation);
+          if (item.sourceTypeOverride) info.sourceType = item.sourceTypeOverride;
           next.push({
             id: crypto.randomUUID(),
             rawInput: item.rawInput,
