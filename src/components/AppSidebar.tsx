@@ -80,17 +80,12 @@ export function AppSidebar() {
         className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted transition-colors text-right w-full"
       >
         <span>👤</span>
-        <span className="truncate">{displayName || user?.email || "הפרופיל שלי"}</span>
-        {!subLoading && (
-          <Badge
-            className="cursor-pointer text-[10px] px-1.5 py-0"
-            variant={isSubscribed ? "default" : "destructive"}
-            onClick={(e) => { e.stopPropagation(); navigate("/profile?tab=account"); }}
-          >
-            {isSubscribed ? "מנוי" : "לא מנוי"}
-          </Badge>
-        )}
+        <span className="truncate flex-1">{displayName || user?.email || "הפרופיל שלי"}</span>
       </button>
+
+      <div className="px-2 mt-1">
+        <CreditPill className="w-full justify-between" />
+      </div>
 
       <div className="h-px bg-border my-2" />
 
