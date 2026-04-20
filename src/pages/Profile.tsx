@@ -334,7 +334,11 @@ const Profile = () => {
                               <span className="font-medium text-foreground">{EVENT_LABEL[row.event_type] || row.event_type}</span>
                               {isRefund && <Badge variant="outline" className="text-[10px] px-1 py-0 text-emerald-600 border-emerald-600/40">הוחזר</Badge>}
                             </div>
-                            {row.reason && <div className="text-muted-foreground truncate">{row.reason}</div>}
+                            {row.reason && (
+                              <div className="text-muted-foreground truncate" title={row.reason}>
+                                {formatLedgerReason(row.reason)}
+                              </div>
+                            )}
                             <div className="text-muted-foreground">{format(new Date(row.created_at), "dd/MM/yyyy HH:mm")}</div>
                           </div>
                           <div className={`font-bold tabular-nums ${isPositive ? "text-emerald-600" : "text-destructive"}`}>
