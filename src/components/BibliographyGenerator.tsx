@@ -1,19 +1,36 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useBibliography, CATEGORY_LABELS } from "@/hooks/useBibliography";
+import { useBibliography, CATEGORY_LABELS, classifyCitation, type BibSourceCategory } from "@/hooks/useBibliography";
 import { FormattedCitation } from "./FormattedCitation";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
 
-type PendingDisambiguation = {
+type ReviewStatus = "ok" | "needs_choice" | "error" | "loading";
+
+interface ReviewItem {
   id: string;
   rawInput: string;
+  status: ReviewStatus;
+  citation: string;
+  isVerified: boolean;
   options: string[];
-};
+  errorMsg?: string;
+  isEditing: boolean;
+  editValue: string;
+  sourceTypeOverride?: BibSourceCategory;
+}
 
-type LookupResult =
-  | { kind: "ok"; rawInput: string; citation: string; isVerified: boolean }
-  | { kind: "disambiguation"; rawInput: string; options: string[] }
-  | { kind: "error"; rawInput: string; message: string };
+const CATEGORY_OPTIONS: { value: BibSourceCategory; label: string; icon: string }[] = [
+  { value: "legislation_primary", label: "חקיקה ראשית", icon: "📜" },
+  { value: "legislation_secondary", label: "חקיקה משנית", icon: "📋" },
+  { value: "caselaw_supreme", label: "פסיקה – עליון", icon: "⚖️" },
+  { value: "caselaw_district", label: "פסיקה – מחוזי", icon: "⚖️" },
+  { value: "caselaw_magistrate", label: "פסיקה – שלום", icon: "⚖️" },
+  { value: "caselaw_specialized", label: "פסיקה – בתי דין מיוחדים", icon: "⚖️" },
+  { value: "literature", label: "ספרות משפטית", icon: "📕" },
+  { value: "misc", label: "שונות", icon: "📁" },
+  { value: "unknown", label: "אחר", icon: "❔" },
+];
 
 const CONCURRENCY = 4;
 
@@ -43,26 +60,39 @@ export function BibliographyGenerator() {
   const [rawText, setRawText] = useState("");
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
-  const [pendingDisambiguations, setPendingDisambiguations] = useState<PendingDisambiguation[]>([]);
+  const [reviewItems, setReviewItems] = useState<ReviewItem[]>([]);
 
-  const lookupOne = async (line: string): Promise<LookupResult> => {
+  const lookupOne = async (rawInput: string): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
     try {
       const { data, error } = await supabase.functions.invoke("bibliography-lookup", {
-        body: { rawSource: line, requestId: crypto.randomUUID() },
+        body: { rawSource: rawInput, requestId: crypto.randomUUID() },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
       if (data?.isDisambiguation && Array.isArray(data?.options) && data.options.length > 0) {
-        return { kind: "disambiguation", rawInput: line, options: data.options };
+        return {
+          rawInput,
+          status: "needs_choice",
+          citation: "",
+          isVerified: false,
+          options: data.options.map((s: string) => cleanCitation(String(s))),
+        };
       }
       const citation = cleanCitation(String(data?.citation || ""));
       if (!citation) {
-        return { kind: "error", rawInput: line, message: "no citation returned" };
+        return { rawInput, status: "error", citation: "", isVerified: false, options: [], errorMsg: "לא הוחזר אזכור" };
       }
-      return { kind: "ok", rawInput: line, citation, isVerified: Boolean(data?.isVerified) };
+      return { rawInput, status: "ok", citation, isVerified: Boolean(data?.isVerified), options: [] };
     } catch (e) {
-      return { kind: "error", rawInput: line, message: e instanceof Error ? e.message : "unknown" };
+      return {
+        rawInput,
+        status: "error",
+        citation: "",
+        isVerified: false,
+        options: [],
+        errorMsg: e instanceof Error ? e.message : "unknown",
+      };
     }
   };
 
@@ -84,42 +114,20 @@ export function BibliographyGenerator() {
         setProgress({ done, total: lines.length }),
       );
 
-      const toAdd: { rawInput: string; fullCitation: string; isVerified?: boolean }[] = [];
-      const newPending: PendingDisambiguation[] = [];
-      let errorCount = 0;
+      const newItems: ReviewItem[] = results.map((r) => ({
+        id: crypto.randomUUID(),
+        ...r,
+        isEditing: false,
+        editValue: r.citation || r.rawInput,
+      }));
 
-      for (const r of results) {
-        if (!r) continue;
-        if (r.kind === "ok") {
-          toAdd.push({ rawInput: r.rawInput, fullCitation: r.citation, isVerified: r.isVerified });
-        } else if (r.kind === "disambiguation") {
-          newPending.push({ id: crypto.randomUUID(), rawInput: r.rawInput, options: r.options });
-        } else {
-          errorCount++;
-        }
-      }
-
-      const added = toAdd.length > 0 ? addEntries(toAdd) : 0;
-      const dupes = toAdd.length - added;
-
-      if (newPending.length > 0) {
-        setPendingDisambiguations((prev) => [...prev, ...newPending]);
-      }
-
-      const parts: string[] = [];
-      if (added > 0) parts.push(`${added} מקורות נוספו`);
-      if (newPending.length > 0) parts.push(`${newPending.length} דורשים בחירה`);
-      if (dupes > 0) parts.push(`${dupes} כפילויות הוסרו`);
-      if (errorCount > 0) parts.push(`${errorCount} נכשלו`);
-
-      if (added > 0 || newPending.length > 0) {
-        toast.success(parts.join(", "));
-      } else if (errorCount > 0) {
-        toast.error(parts.join(", ") || "שגיאה בעיבוד הרשימה");
-      } else {
-        toast.info("לא נוספו מקורות חדשים");
-      }
+      setReviewItems((prev) => [...prev, ...newItems]);
       setRawText("");
+
+      const okCount = newItems.filter((i) => i.status === "ok").length;
+      const needsChoice = newItems.filter((i) => i.status === "needs_choice").length;
+      const errorCount = newItems.filter((i) => i.status === "error").length;
+      toast.success(`עובדו ${newItems.length} מקורות · ${okCount} מוכנים, ${needsChoice} דורשים בחירה, ${errorCount} נכשלו`);
     } catch {
       toast.error("שגיאה בעיבוד הרשימה");
     } finally {
@@ -128,16 +136,94 @@ export function BibliographyGenerator() {
     }
   };
 
-  const resolveDisambiguation = (pendingId: string, chosen: string) => {
-    const item = pendingDisambiguations.find((p) => p.id === pendingId);
-    if (!item) return;
-    addEntries([{ rawInput: item.rawInput, fullCitation: cleanCitation(chosen) }]);
-    setPendingDisambiguations((prev) => prev.filter((p) => p.id !== pendingId));
+  const updateItem = (id: string, patch: Partial<ReviewItem>) => {
+    setReviewItems((prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)));
   };
 
-  const skipDisambiguation = (pendingId: string) => {
-    setPendingDisambiguations((prev) => prev.filter((p) => p.id !== pendingId));
+  const removeReviewItem = (id: string) => {
+    setReviewItems((prev) => prev.filter((it) => it.id !== id));
   };
+
+  const pickDisambiguation = (id: string, chosen: string) => {
+    updateItem(id, { status: "ok", citation: cleanCitation(chosen), editValue: cleanCitation(chosen), options: [] });
+  };
+
+  const startEdit = (id: string) => {
+    setReviewItems((prev) =>
+      prev.map((it) =>
+        it.id === id
+          ? { ...it, isEditing: true, editValue: it.citation || it.rawInput }
+          : it,
+      ),
+    );
+  };
+
+  const saveEdit = (id: string) => {
+    setReviewItems((prev) =>
+      prev.map((it) => {
+        if (it.id !== id) return it;
+        const v = it.editValue.trim();
+        if (!v) return it;
+        return { ...it, isEditing: false, citation: v, status: "ok", isVerified: false, options: [], errorMsg: undefined };
+      }),
+    );
+  };
+
+  const cancelEdit = (id: string) => {
+    updateItem(id, { isEditing: false });
+  };
+
+  const retryLookup = async (id: string) => {
+    const item = reviewItems.find((i) => i.id === id);
+    if (!item) return;
+    const query = item.isEditing ? item.editValue.trim() : item.rawInput;
+    if (!query) return;
+    updateItem(id, { status: "loading", isEditing: false });
+    const r = await lookupOne(query);
+    setReviewItems((prev) =>
+      prev.map((it) =>
+        it.id === id
+          ? { ...it, ...r, isEditing: false, editValue: r.citation || query }
+          : it,
+      ),
+    );
+  };
+
+  const commitAll = (verifiedOnly = false) => {
+    const ready = reviewItems.filter((it) => {
+      if (it.status !== "ok") return false;
+      if (verifiedOnly && !it.isVerified) return false;
+      return true;
+    });
+    if (ready.length === 0) {
+      toast.error("אין מקורות מוכנים להוספה");
+      return;
+    }
+    const added = addEntries(
+      ready.map((it) => ({
+        rawInput: it.rawInput,
+        fullCitation: it.citation,
+        isVerified: it.isVerified,
+        sourceTypeOverride: it.sourceTypeOverride,
+      })),
+    );
+    const dupes = ready.length - added;
+    setReviewItems((prev) => prev.filter((it) => !ready.some((r) => r.id === it.id)));
+    const parts: string[] = [];
+    if (added > 0) parts.push(`${added} נוספו`);
+    if (dupes > 0) parts.push(`${dupes} כפילויות`);
+    toast.success(parts.join(" · "));
+  };
+
+  const stats = useMemo(() => {
+    const total = reviewItems.length;
+    const verified = reviewItems.filter((i) => i.status === "ok" && i.isVerified).length;
+    const ok = reviewItems.filter((i) => i.status === "ok").length;
+    const needsFix = reviewItems.filter(
+      (i) => i.status === "needs_choice" || i.status === "error" || (i.status === "ok" && /\[חסר:/.test(i.citation)),
+    ).length;
+    return { total, verified, ok, needsFix };
+  }, [reviewItems]);
 
   const copyAll = () => {
     if (sortedEntries.length === 0) {
@@ -207,15 +293,24 @@ export function BibliographyGenerator() {
         )}
       </div>
 
-      {/* Manual input area */}
+      {/* Step indicator */}
+      <div className="flex items-center gap-2 mb-4 text-xs">
+        <StepBadge n={1} label="הדבק" active={reviewItems.length === 0 && !loading} done={reviewItems.length > 0} />
+        <div className="h-px flex-1 bg-border" />
+        <StepBadge n={2} label="בדיקה ותיקון" active={reviewItems.length > 0} done={false} />
+        <div className="h-px flex-1 bg-border" />
+        <StepBadge n={3} label="ביבליוגרפיה" active={false} done={sortedEntries.length > 0} />
+      </div>
+
+      {/* Step 1 — Manual input */}
       <div className="bg-card border border-border rounded-xl p-4 shadow-sm mb-4">
         <label className="text-sm font-semibold text-foreground mb-2 block">
-          הזנה ידנית – הדבק מקורות (כל מקור בשורה נפרדת)
+          1. הדבק מקורות (כל מקור בשורה נפרדת)
         </label>
         <textarea
           value={rawText}
           onChange={(e) => setRawText(e.target.value)}
-          placeholder={`למשל:\nע"א 6821/93 בנק המזרחי נ' מגדל, פ"ד מט(4) 221 (1995)\nחוק-יסוד: כבוד האדם וחירותו\nAharon Barak, Proportionality (2012)`}
+          placeholder={`למשל:\nע"א 6821/93 בנק המזרחי נ' מגדל\nחוק-יסוד: כבוד האדם וחירותו\nAharon Barak, Proportionality (2012)`}
           className="w-full min-h-[120px] bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-ring/60 transition-all resize-none"
           disabled={loading}
         />
@@ -232,55 +327,74 @@ export function BibliographyGenerator() {
             ? progress
               ? `מעבד ${progress.done} מתוך ${progress.total}...`
               : "מעבד רשימה..."
-            : "📚 עבד רשימה"}
+            : "🔍 שלח לבדיקה"}
         </button>
       </div>
 
-      {/* Pending disambiguations */}
-      {pendingDisambiguations.length > 0 && (
-        <div className="space-y-3 mb-4">
-          {pendingDisambiguations.map((pending) => (
-            <div
-              key={pending.id}
-              className="bg-card border-2 border-primary/30 rounded-xl p-4 shadow-sm animate-fade-in"
-            >
-              <div className="flex items-start justify-between gap-2 mb-3">
-                <div>
-                  <h4 className="text-foreground text-sm font-bold mb-1">
-                    בחר את פסק הדין הנכון
-                  </h4>
-                  <p className="text-xs text-muted-foreground">
-                    עבור: <span className="font-medium">{pending.rawInput}</span>
-                  </p>
-                </div>
-                <button
-                  onClick={() => skipDisambiguation(pending.id)}
-                  className="text-xs text-muted-foreground hover:text-destructive px-2 py-1 rounded transition-colors flex-shrink-0"
-                >
-                  דלג
-                </button>
-              </div>
-              <div className="space-y-2">
-                {pending.options.map((opt, i) => (
-                  <button
-                    key={i}
-                    onClick={() => resolveDisambiguation(pending.id, opt)}
-                    className="w-full text-right border border-border hover:border-primary hover:bg-primary/5 rounded-lg px-3 py-2 text-sm text-foreground transition-all"
-                  >
-                    {cleanCitation(opt)}
-                  </button>
-                ))}
-              </div>
+      {/* Step 2 — Review panel */}
+      {reviewItems.length > 0 && (
+        <div className="bg-card border-2 border-primary/20 rounded-xl shadow-sm mb-4 animate-fade-in">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+            <div>
+              <h4 className="text-foreground text-sm font-bold">2. בדוק ותקן לפני הוספה</h4>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                סך {stats.total} · ✓ מאומתים {stats.verified} · ⚠ דורשים תיקון {stats.needsFix}
+              </p>
             </div>
-          ))}
+            <button
+              onClick={() => setReviewItems([])}
+              className="text-xs text-muted-foreground hover:text-destructive px-2 py-1 rounded transition-colors"
+            >
+              נקה רשימה
+            </button>
+          </div>
+
+          <div className="p-3 space-y-2 max-h-[60vh] overflow-y-auto">
+            {reviewItems.map((item) => (
+              <ReviewRow
+                key={item.id}
+                item={item}
+                onStartEdit={() => startEdit(item.id)}
+                onSaveEdit={() => saveEdit(item.id)}
+                onCancelEdit={() => cancelEdit(item.id)}
+                onChangeEdit={(v) => updateItem(item.id, { editValue: v })}
+                onRetry={() => retryLookup(item.id)}
+                onRemove={() => removeReviewItem(item.id)}
+                onPickOption={(opt) => pickDisambiguation(item.id, opt)}
+                onChangeCategory={(cat) => updateItem(item.id, { sourceTypeOverride: cat })}
+              />
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2 px-4 py-3 border-t border-border">
+            <button
+              onClick={() => commitAll(false)}
+              disabled={stats.ok === 0}
+              className="flex-1 py-2.5 rounded-lg font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{
+                background: stats.ok === 0 ? "hsl(var(--muted))" : "var(--gradient-primary)",
+                color: stats.ok === 0 ? "hsl(var(--muted-foreground))" : "hsl(var(--primary-foreground))",
+              }}
+            >
+              ➕ הוסף הכל לביבליוגרפיה ({stats.ok})
+            </button>
+            {stats.verified > 0 && stats.verified < stats.ok && (
+              <button
+                onClick={() => commitAll(true)}
+                className="py-2.5 px-3 rounded-lg text-xs font-medium border border-emerald-500/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+              >
+                רק מאומתים ({stats.verified})
+              </button>
+            )}
+          </div>
         </div>
       )}
 
-      {/* Bibliography output */}
+      {/* Step 3 — Bibliography output */}
       {sortedEntries.length > 0 && (
         <div className="bg-card border border-border rounded-xl shadow-sm animate-fade-in">
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-            <h4 className="text-foreground text-sm font-bold font-sans">📖 ביבליוגרפיה מסודרת</h4>
+            <h4 className="text-foreground text-sm font-bold font-sans">📖 3. ביבליוגרפיה מסודרת</h4>
             <button
               onClick={copyAll}
               className="text-xs bg-primary/15 text-primary hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
@@ -326,12 +440,212 @@ export function BibliographyGenerator() {
       )}
 
       {/* Empty state */}
-      {sortedEntries.length === 0 && pendingDisambiguations.length === 0 && !loading && (
+      {sortedEntries.length === 0 && reviewItems.length === 0 && !loading && (
         <div className="text-center py-12">
           <div className="text-4xl mb-3">📚</div>
           <p className="text-muted-foreground text-sm">
             הביבליוגרפיה ריקה. הזן מקורות למעלה או ייצר הערות שוליים – המקורות יתווספו אוטומטית.
           </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StepBadge({ n, label, active, done }: { n: number; label: string; active: boolean; done: boolean }) {
+  const tone = active
+    ? "bg-primary text-primary-foreground"
+    : done
+      ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30"
+      : "bg-muted text-muted-foreground";
+  return (
+    <div className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 ${tone}`}>
+      <span className="font-bold text-[10px] w-4 h-4 inline-flex items-center justify-center rounded-full bg-background/30">
+        {done ? "✓" : n}
+      </span>
+      <span className="text-[11px] font-medium whitespace-nowrap">{label}</span>
+    </div>
+  );
+}
+
+function ReviewRow({
+  item,
+  onStartEdit,
+  onSaveEdit,
+  onCancelEdit,
+  onChangeEdit,
+  onRetry,
+  onRemove,
+  onPickOption,
+  onChangeCategory,
+}: {
+  item: ReviewItem;
+  onStartEdit: () => void;
+  onSaveEdit: () => void;
+  onCancelEdit: () => void;
+  onChangeEdit: (v: string) => void;
+  onRetry: () => void;
+  onRemove: () => void;
+  onPickOption: (opt: string) => void;
+  onChangeCategory: (cat: BibSourceCategory) => void;
+}) {
+  const hasMissing = item.status === "ok" && /\[חסר:/.test(item.citation);
+  const detectedCat = item.sourceTypeOverride
+    ? item.sourceTypeOverride
+    : item.citation
+      ? classifyCitation(item.citation).sourceType
+      : "unknown";
+  const catLabel = CATEGORY_LABELS[detectedCat] || "אחר";
+
+  const borderTone =
+    item.status === "needs_choice"
+      ? "border-amber-500/40"
+      : item.status === "error"
+        ? "border-destructive/40"
+        : hasMissing
+          ? "border-amber-500/30"
+          : item.isVerified
+            ? "border-emerald-500/30"
+            : "border-border";
+
+  return (
+    <div className={`border ${borderTone} rounded-lg bg-background/60 p-3`}>
+      {/* Top row: badges + raw input hint */}
+      <div className="flex items-center gap-1.5 flex-wrap mb-2">
+        {item.status === "loading" && (
+          <span className="text-[10px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded">⏳ מחפש...</span>
+        )}
+        {item.status === "ok" && item.isVerified && (
+          <span className="text-[10px] font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded">
+            ✓ מאומת
+          </span>
+        )}
+        {item.status === "needs_choice" && (
+          <span className="text-[10px] font-medium text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded">
+            ❓ דורש בחירה
+          </span>
+        )}
+        {item.status === "error" && (
+          <span className="text-[10px] font-medium text-destructive bg-destructive/10 border border-destructive/30 px-1.5 py-0.5 rounded">
+            ✕ שגיאה
+          </span>
+        )}
+        {hasMissing && (
+          <span className="text-[10px] font-medium text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded">
+            ⚠ פרטים חסרים
+          </span>
+        )}
+
+        {item.status === "ok" && (
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="text-[10px] bg-muted hover:bg-accent text-foreground px-1.5 py-0.5 rounded border border-border transition-colors">
+                {catLabel} ▾
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-1.5" style={{ direction: "rtl" }} align="end">
+              <div className="space-y-0.5">
+                {CATEGORY_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => onChangeCategory(opt.value)}
+                    className={`w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs text-right transition-colors ${
+                      detectedCat === opt.value
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "hover:bg-accent text-foreground"
+                    }`}
+                  >
+                    <span>{opt.icon}</span>
+                    <span className="flex-1">{opt.label}</span>
+                    {detectedCat === opt.value && <span className="text-[10px]">✓</span>}
+                  </button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+        )}
+
+        <span className="text-[10px] text-muted-foreground ml-auto truncate max-w-[60%]" title={item.rawInput}>
+          הקלט: {item.rawInput}
+        </span>
+      </div>
+
+      {/* Body */}
+      {item.isEditing ? (
+        <div className="space-y-2">
+          <textarea
+            value={item.editValue}
+            onChange={(e) => onChangeEdit(e.target.value)}
+            className="w-full min-h-[70px] bg-background border border-input rounded-md px-2.5 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 focus:border-ring/60 transition-all resize-y"
+            placeholder="הקלד את האזכור המלא..."
+          />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onSaveEdit}
+              className="text-xs bg-primary text-primary-foreground hover:bg-primary/90 px-3 py-1.5 rounded-md font-medium transition-colors"
+            >
+              שמור
+            </button>
+            <button
+              onClick={onCancelEdit}
+              className="text-xs text-muted-foreground hover:text-foreground px-2 py-1.5 rounded-md transition-colors"
+            >
+              ביטול
+            </button>
+            <button
+              onClick={onRetry}
+              className="text-xs text-primary hover:bg-primary/10 px-2 py-1.5 rounded-md transition-colors mr-auto"
+              title="חפש מחדש לפי הטקסט שערכת"
+            >
+              🔍 חפש מחדש
+            </button>
+          </div>
+        </div>
+      ) : item.status === "needs_choice" ? (
+        <div className="space-y-1.5">
+          <p className="text-[11px] text-muted-foreground">בחר את הפסיקה הנכונה:</p>
+          {item.options.map((opt, i) => (
+            <button
+              key={i}
+              onClick={() => onPickOption(opt)}
+              className="w-full text-right border border-border hover:border-primary hover:bg-primary/5 rounded-md px-2.5 py-1.5 text-sm text-foreground transition-all"
+            >
+              <FormattedCitation text={opt} />
+            </button>
+          ))}
+        </div>
+      ) : item.status === "error" ? (
+        <p className="text-sm text-destructive">{item.errorMsg || "שגיאה לא ידועה"}</p>
+      ) : item.status === "loading" ? (
+        <p className="text-sm text-muted-foreground italic">מחפש מחדש...</p>
+      ) : (
+        <div className="text-sm text-foreground leading-relaxed">
+          <FormattedCitation text={item.citation} highlightMissing enableTooltips />
+        </div>
+      )}
+
+      {/* Action bar */}
+      {!item.isEditing && (
+        <div className="flex items-center gap-1 mt-2 pt-2 border-t border-border/60">
+          <button
+            onClick={onStartEdit}
+            className="text-[11px] text-muted-foreground hover:text-foreground hover:bg-accent px-2 py-1 rounded transition-colors"
+          >
+            ✏️ ערוך
+          </button>
+          <button
+            onClick={onRetry}
+            disabled={item.status === "loading"}
+            className="text-[11px] text-muted-foreground hover:text-primary hover:bg-primary/10 px-2 py-1 rounded transition-colors disabled:opacity-50"
+          >
+            🔍 חפש שוב
+          </button>
+          <button
+            onClick={onRemove}
+            className="text-[11px] text-muted-foreground hover:text-destructive hover:bg-destructive/10 px-2 py-1 rounded transition-colors mr-auto"
+          >
+            ✕ הסר
+          </button>
         </div>
       )}
     </div>
