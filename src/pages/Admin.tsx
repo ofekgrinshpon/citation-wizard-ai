@@ -37,6 +37,11 @@ interface UserProfile {
   created_at: string;
   is_subscribed?: boolean;
   citation_count?: number;
+  plan?: string;
+  included_credits_remaining?: number;
+  topup_credits_remaining?: number;
+  referral_code?: string | null;
+  referred_by_user_id?: string | null;
 }
 
 type MainTab = "analytics" | "sources" | "users" | "knowledge";
@@ -749,8 +754,8 @@ const Admin = () => {
             <h3 className="text-foreground font-bold text-base">רשימת משתמשים</h3>
             <UsersTable
               users={users}
-              onToggleSubscription={(userId, newValue) => {
-                setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, is_subscribed: newValue } : u));
+              onUserUpdated={(userId, patch) => {
+                setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, ...patch } : u));
               }}
             />
           </div>
