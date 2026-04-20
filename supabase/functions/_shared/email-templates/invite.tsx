@@ -1,7 +1,6 @@
 /// <reference types="npm:@types/react@18.3.1" />
 
 import * as React from 'npm:react@18.3.1'
-
 import {
   Body,
   Button,
@@ -9,10 +8,13 @@ import {
   Head,
   Heading,
   Html,
+  Img,
   Link,
   Preview,
+  Section,
   Text,
 } from 'npm:@react-email/components@0.0.22'
+import { BRAND, styles } from './_brand.ts'
 
 interface InviteEmailProps {
   siteName: string
@@ -20,31 +22,34 @@ interface InviteEmailProps {
   confirmationUrl: string
 }
 
-export const InviteEmail = ({
-  siteName,
-  siteUrl,
-  confirmationUrl,
-}: InviteEmailProps) => (
-  <Html lang="en" dir="ltr">
+export const InviteEmail = ({ confirmationUrl }: InviteEmailProps) => (
+  <Html lang="he" dir="rtl">
     <Head />
-    <Preview>You've been invited to join {siteName}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Heading style={h1}>You've been invited</Heading>
-        <Text style={text}>
-          You've been invited to join{' '}
-          <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
-          </Link>
-          . Click the button below to accept the invitation and create your
-          account.
-        </Text>
-        <Button style={button} href={confirmationUrl}>
-          Accept Invitation
-        </Button>
-        <Text style={footer}>
-          If you weren't expecting this invitation, you can safely ignore this
-          email.
+    <Preview>הוזמנת להצטרף ל-{BRAND.name}</Preview>
+    <Body style={styles.main}>
+      <Container style={styles.container}>
+        <Section style={styles.logoWrap}>
+          <Img src={BRAND.logoUrl} alt={BRAND.name} style={styles.logo} />
+        </Section>
+        <Section style={styles.card}>
+          <Heading style={styles.h1}>הוזמנת ל-{BRAND.name}</Heading>
+          <Text style={styles.text}>
+            קיבלת הזמנה להצטרף ל-{BRAND.name} — {BRAND.tagline}. לחצ/י על
+            הכפתור כדי לקבל את ההזמנה וליצור חשבון:
+          </Text>
+          <Section style={styles.buttonWrap}>
+            <Button style={styles.button} href={confirmationUrl}>
+              קבלת ההזמנה
+            </Button>
+          </Section>
+          <Text style={styles.textMuted}>
+            אם לא ציפית לקבל הזמנה זו, ניתן להתעלם מהודעה זו.
+          </Text>
+        </Section>
+        <Text style={styles.footer}>
+          {BRAND.name} — {BRAND.tagline}
+          <br />
+          <Link href={BRAND.url} style={styles.footerLink}>{BRAND.url}</Link>
         </Text>
       </Container>
     </Body>
@@ -52,28 +57,3 @@ export const InviteEmail = ({
 )
 
 export default InviteEmail
-
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const link = { color: 'inherit', textDecoration: 'underline' }
-const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
-  fontSize: '14px',
-  borderRadius: '8px',
-  padding: '12px 20px',
-  textDecoration: 'none',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
