@@ -7,6 +7,7 @@ import { toast } from "sonner";
 interface BatchResult {
   processed: number;
   failed: number;
+  rate_limited?: number;
   remaining: number;
   batch_size: number;
 }
@@ -15,6 +16,7 @@ export default function BatchEmbeddingPanel() {
   const [running, setRunning] = useState(false);
   const [totalProcessed, setTotalProcessed] = useState(0);
   const [totalFailed, setTotalFailed] = useState(0);
+  const [totalRateLimited, setTotalRateLimited] = useState(0);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [batchCount, setBatchCount] = useState(0);
   const abortRef = useRef(false);
