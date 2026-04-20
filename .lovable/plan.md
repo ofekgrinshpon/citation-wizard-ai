@@ -1,70 +1,73 @@
 
 
 ## Goal
-Make every "invite" link ReLex-branded — both the personal referral link a user copies from their Profile, and the auth emails (verification, password reset, magic link, account invites) sent to people who sign up.
+Remove the two remaining Lovable signals visible to users / invitees:
+1. **Google sign-in screen** — currently shows "Lovable" as the requesting app. Switch to ReLex-branded Google OAuth.
+2. **Link preview** — when the referral link is shared (WhatsApp, iMessage, Slack, Twitter, LinkedIn) the unfurled card currently shows a Lovable preview screenshot + "@Lovable" attribution. Switch the card to ReLex.
 
 ---
 
-## Part 1 — Referral link always points to relexlm.com
+## Part 1 — Brand the Google consent screen as ReLex
 
-**Problem:** `Profile.tsx` builds the referral link as `${window.location.origin}/auth?mode=signup&ref=…`. When the logged-in user is on the Lovable preview domain (or a `*.lovable.app` URL), they share a Lovable-looking link instead of a ReLex one.
+**What the user sees today:** Clicking "התחברו עם Google" opens `accounts.google.com` and shows something like *"Lovable wants to access your Google Account"* with a Lovable icon. That string and icon come from the **Google OAuth client** the project uses — by default Lovable Cloud uses its own managed client, so all projects share Lovable's branding.
 
-**Fix:** Hard-code the public ReLex domain for shareable links.
+**Fix:** Provide our own Google OAuth client in the Google Cloud Console (BYOK — bring-your-own-key), branded as **ReLex**. Lovable Cloud then uses our credentials instead of the managed ones.
 
-- Add `src/lib/publicUrl.ts` exporting `PUBLIC_SITE_URL = "https://relexlm.com"` and a small `buildReferralLink(code)` helper. One constant, one source of truth.
-- Update `src/pages/Profile.tsx` (line 156–158) to use `buildReferralLink(referralCode)` instead of `window.location.origin`.
-- Also update the redirect after signup verification (`useAuth.signUp` → `emailRedirectTo`) to prefer `PUBLIC_SITE_URL` when the current origin is a non-production preview, so the magic-link "back to app" target also lands on relexlm.com. Production users keep the same behavior; preview users stop generating Lovable-branded redirect URLs.
+**Steps you do once in Google Cloud Console** (I'll guide you — this is a one-time setup, no code involved):
 
-Result: when a user clicks "העתק קישור" in Profile → ניהול חשבון → הזמן חברים, the clipboard contains `https://relexlm.com/auth?mode=signup&ref=ABCD1234` no matter where they're browsing from.
+1. Go to **Google Cloud Console → APIs & Services → OAuth consent screen**
+   - App name: **ReLex**
+   - User support email: your address
+   - App logo: upload `relex-logo.png`
+   - App domain: `relexlm.com`
+   - Authorized domains: `relexlm.com`, `lovable.app`, `supabase.co`
+   - Scopes: `openid`, `.../auth/userinfo.email`, `.../auth/userinfo.profile`
+   - Publishing status: **In production** (otherwise only test users can sign in)
 
----
+2. Go to **Credentials → Create credentials → OAuth client ID**
+   - Type: **Web application**
+   - Name: ReLex Web Client
+   - Authorized redirect URI: copy it from **Cloud → Auth Settings → Sign-In Methods → Google** in our project (Lovable shows the exact callback URL for our OAuth broker)
+   - Save → copy **Client ID** and **Client Secret**
 
-## Part 2 — ReLex-branded auth emails sent from relexlm.com
+3. In our project: **Cloud → Auth Settings → Sign-In Methods → Google → Use custom credentials** → paste Client ID + Secret → Save.
 
-Today auth emails (signup verification, password reset, magic link, invite, email change, reauthentication) use Lovable's default templates and a generic Lovable sender. We'll switch them to ReLex-branded templates sent from the project's already-configured custom domain `relexlm.com`.
+**Result:** Every Google sign-in popup now reads *"ReLex wants to access your Google Account"* with the ReLex logo. No Lovable text or icon anywhere.
 
-Steps the implementation phase will run:
-
-1. **Set up email infrastructure on relexlm.com.** This provisions a verified sender subdomain (e.g. `notify.relexlm.com`) and the queue/cron used to actually deliver emails. The user will see a one-click "Set up email domain" dialog as part of this; once completed, DNS verification continues in the background.
-
-2. **Scaffold ReLex-branded auth email templates.** Six templates are generated under `supabase/functions/_shared/email-templates/`:
-   - `signup.tsx` — "אימות כתובת האימייל שלך ב-ReLex"
-   - `magic-link.tsx` — "קישור התחברות ל-ReLex"
-   - `recovery.tsx` — "איפוס סיסמה ב-ReLex"
-   - `invite.tsx` — "הוזמנת ל-ReLex"
-   - `email-change.tsx` — "אישור שינוי כתובת אימייל"
-   - `reauthentication.tsx` — קוד אימות חד-פעמי
-
-3. **Apply ReLex brand styling** to every template:
-   - White email body (`#ffffff`) — required for inbox rendering, even though the app is light/neutral.
-   - Brand colors pulled from `src/index.css` CSS variables (primary blue/teal pair used by `--gradient-primary`).
-   - ReLex logo at the top (`public/relex-logo.png`) uploaded to an `email-assets` storage bucket and referenced by absolute URL.
-   - RTL layout (`dir="rtl"`, `lang="he"`), Hebrew copy matching the app's tone (e.g. "התחבר/י", "ניהול חשבון").
-   - CTA buttons styled like the in-app primary button (rounded-xl, `var(--gradient-primary)` flattened to a solid brand color for email-client compatibility).
-   - Footer: "ReLex — מערכת אזכור משפטי" + link to `https://relexlm.com`. No unsubscribe link (system appends one automatically only for transactional emails; auth emails don't get one).
-
-4. **Deploy `auth-email-hook`** edge function so Supabase Auth routes all auth emails through the new branded templates.
-
-5. **Tell the user where to monitor activation.** Templates start sending automatically once the DNS for `notify.relexlm.com` finishes verifying — usually minutes, can take up to 72h. Status is visible in Lovable Cloud → Emails. Until then, default Lovable auth emails continue to be delivered (no downtime).
+I'll prepare and verify the setup in Lovable Cloud once you have the Client ID + Secret ready. Until then the existing managed (Lovable-branded) client keeps working as a fallback — no downtime.
 
 ---
 
-## Files touched
-- New: `src/lib/publicUrl.ts`
-- Edit: `src/pages/Profile.tsx` (referral link builder)
-- Edit: `src/hooks/useAuth.tsx` (`emailRedirectTo` uses `PUBLIC_SITE_URL`)
-- New: `supabase/functions/auth-email-hook/{index.ts, deno.json}`
-- New: `supabase/functions/_shared/email-templates/{signup,magic-link,recovery,invite,email-change,reauthentication}.tsx`
-- Edit: `supabase/config.toml` (auth-email-hook function block)
-- New storage bucket: `email-assets` (logo upload)
+## Part 2 — Remove the Lovable thumbnail from shared links
 
-## Out of scope
-- Transactional / app-wide notification emails (e.g. "your credits were topped up"). Easy to add later on the same `notify.relexlm.com` sender — just say the word.
-- Changing the Auth page UI itself.
-- Migrating any historic ledger data.
+**What the user sees today:** When someone pastes the referral link `https://relexlm.com/auth?mode=signup&ref=…` into WhatsApp / iMessage / Slack / Twitter, the link unfurls into a card showing:
+- A **screenshot of the Lovable preview environment** (`og:image` points to `pub-…r2.dev/…lovable.app-….png`)
+- *"by @Lovable"* attribution (`twitter:site` = `@Lovable`, `meta name="author" content="Lovable"`)
+
+That data lives in `index.html`. I'll rewrite the social-card metadata to be pure ReLex.
+
+**Changes to `index.html`:**
+- `<meta name="author" content="ReLex">` (was "Lovable")
+- `<meta name="twitter:site" content="@relexlm">` (was `@Lovable`) — or remove if no Twitter handle
+- `<meta property="og:image">` and `<meta name="twitter:image">` → point to a ReLex-branded social card hosted on `relexlm.com` (e.g. `https://relexlm.com/relex-social-card.png`, 1200×630) instead of the Lovable preview screenshot
+- `<meta property="og:url" content="https://relexlm.com">` — added so unfurlers show the canonical domain
+- Remove the `<!-- TODO: Update og:title… -->` comment
+
+**Social card image:** I'll generate a 1200×630 PNG with the ReLex logo on the brand background and the tagline (Hebrew + English) and place it at `public/relex-social-card.png` so it's served from `https://relexlm.com/relex-social-card.png`. Once you push, social platforms (WhatsApp/Twitter/LinkedIn) cache aggressively — recipients may need a fresh share, or you can force a refresh via Twitter Card Validator / LinkedIn Post Inspector / Facebook Sharing Debugger (I'll include the links).
+
+**Browser tab favicon** (`/relex-icon.svg`) is already ReLex — no change needed.
+
+---
+
+## Out of scope (already fixed earlier)
+- Referral link domain (already canonicalized to `relexlm.com`)
+- Auth emails (already ReLex-branded via `notify.relexlm.com`)
+- "Edit with Lovable" badge on published site (already hidden)
+
+---
 
 ## Expected outcome
-- Referral link copied from Profile is always `https://relexlm.com/auth?mode=signup&ref=…`.
-- Verification / reset / invite emails arrive **from `noreply@notify.relexlm.com`**, with the ReLex logo, Hebrew RTL copy, and the brand color CTA button — zero Lovable branding visible to recipients.
-- Existing users' password-reset and verification flows keep working through the transition (defaults serve until DNS verifies, branded templates take over automatically).
+- Google sign-in popup says **"ReLex"** with the ReLex logo — no Lovable text or icon.
+- Pasting the invite link in any chat/social app unfurls a **ReLex social card** — no Lovable screenshot or `@Lovable` attribution.
+- All other surfaces remain unchanged.
 
