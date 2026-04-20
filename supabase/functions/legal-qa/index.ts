@@ -653,6 +653,11 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Refund state — hoisted so the outer catch can refund on unexpected throws.
+  let __creditsCharged = false;
+  let __creditRequestId: string | null = null;
+  let __userClientForRefund: ReturnType<typeof createClient> | null = null;
+
   try {
     // Auth gate
     const authHeader = req.headers.get("Authorization");
