@@ -1639,12 +1639,22 @@ ${combinedContext}`;
     console.log(`Prompt length: ${promptLen} chars, ${sourceCards.length} source cards`);
 
     const aiMaxTokens = isAcademicMode ? 12288 : 8192;
+    // For pleading_analysis with an uploaded document: the document IS the audit subject,
+    // and the typed `question` becomes optional user instructions/focus directives.
+    const isPleadingWithDoc = taskMode === "pleading_analysis" && (bodyHasDocument || hasDocument);
+    const userMessage = isPleadingWithDoc
+      ? `המסמך לבדיקה צורף בהקשר המקורות שלמעלה (תחת "=== מסמך: ... ==="). בצע עליו את פרוטוקול הביקורת המלא.
+
+הנחיות נוספות מהמשתמש (אם קיימות — תן להן עדיפות בנוסף לפרוטוקול המלא):
+${question.trim() || "ללא הנחיות נוספות — בצע ביקורת מקיפה לפי כל הפרוטוקולים."}`
+      : `השאלה המשפטית: ${question}`;
+
     const aiBody = JSON.stringify({
       model: "google/gemini-2.5-flash",
       max_tokens: aiMaxTokens,
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: `השאלה המשפטית: ${question}` },
+        { role: "user", content: userMessage },
       ],
     });
 
