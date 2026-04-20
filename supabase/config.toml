@@ -7,6 +7,8 @@ project_id = "ioktiqcffungtlsmlkcv"
     verify_jwt = false
   [functions.batch-embed-chunks]
     verify_jwt = false
+  [functions.bibliography-lookup]
+    verify_jwt = false
   [functions.case-law-search]
     verify_jwt = false
   [functions.citation-chat]
