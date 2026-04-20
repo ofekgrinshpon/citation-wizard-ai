@@ -7,39 +7,112 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const BATCH_SIZE = 500;
-const SUB_BATCH_SIZE = 200;
+const BATCH_SIZE = 200;                  // chunks fetched per invocation
+const MAX_TOKENS_PER_REQUEST = 250_000;  // safety margin under OpenAI's 300K hard cap
+const TPM_BUDGET = 800_000;              // safety margin under 1M TPM limit
+const MAX_RETRIES_429 = 3;
 
-async function getEmbeddingsBatch(texts: string[], apiKey: string): Promise<(number[] | null)[]> {
-  try {
-    const truncated = texts.map(t => t.slice(0, 8000));
-    const res = await fetch("https://api.openai.com/v1/embeddings", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "text-embedding-3-small",
-        input: truncated,
-        dimensions: 768,
-      }),
-    });
+// Hebrew-aware estimator: ~3.5 chars/token
+function estimateTokens(text: string): number {
+  return Math.ceil(Math.min(text.length, 8000) / 3.5);
+}
 
-    if (!res.ok) {
+interface EmbedResult {
+  embeddings: (number[] | null)[];
+  rateLimited: number; // count of chunks that hit unrecoverable 429
+  tokensUsed: number;  // tokens actually consumed (for TPM tracking)
+}
+
+async function embedSubBatch(
+  texts: string[],
+  apiKey: string,
+  estimatedTokens: number,
+): Promise<EmbedResult> {
+  const truncated = texts.map((t) => t.slice(0, 8000));
+
+  for (let attempt = 0; attempt < MAX_RETRIES_429; attempt++) {
+    try {
+      const res = await fetch("https://api.openai.com/v1/embeddings", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "text-embedding-3-small",
+          input: truncated,
+          dimensions: 768,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const sorted = data.data.sort((a: any, b: any) => a.index - b.index);
+        return {
+          embeddings: sorted.map((item: any) => item.embedding),
+          rateLimited: 0,
+          tokensUsed: estimatedTokens,
+        };
+      }
+
       const errText = await res.text();
-      console.error("Embedding batch error:", res.status, errText);
-      return texts.map(() => null);
-    }
 
-    const data = await res.json();
-    // OpenAI returns embeddings sorted by index
-    const sorted = data.data.sort((a: any, b: any) => a.index - b.index);
-    return sorted.map((item: any) => item.embedding);
-  } catch (err) {
-    console.error("Embedding batch failed:", err);
-    return texts.map(() => null);
+      if (res.status === 429) {
+        // Parse "Please try again in X.Xs" or "in Xms"
+        let delayMs = 1000;
+        const secMatch = errText.match(/try again in ([\d.]+)s/);
+        const msMatch = errText.match(/try again in ([\d.]+)ms/);
+        if (msMatch) delayMs = Math.ceil(parseFloat(msMatch[1]));
+        else if (secMatch) delayMs = Math.ceil(parseFloat(secMatch[1]) * 1000);
+        delayMs += 500; // jitter
+
+        console.warn(`429 rate-limited, attempt ${attempt + 1}/${MAX_RETRIES_429}, sleeping ${delayMs}ms`);
+        await new Promise((r) => setTimeout(r, delayMs));
+        continue;
+      }
+
+      // Non-429 error (e.g. 400, 500): no retry
+      console.error("Embedding batch error:", res.status, errText);
+      return { embeddings: texts.map(() => null), rateLimited: 0, tokensUsed: 0 };
+    } catch (err) {
+      console.error("Embedding batch failed (network):", err);
+      return { embeddings: texts.map(() => null), rateLimited: 0, tokensUsed: 0 };
+    }
   }
+
+  // Exhausted retries on 429
+  console.error(`429 retries exhausted for sub-batch of ${texts.length}`);
+  return { embeddings: texts.map(() => null), rateLimited: texts.length, tokensUsed: 0 };
+}
+
+// Pack chunks into sub-batches by token budget (≤ MAX_TOKENS_PER_REQUEST each)
+function packSubBatches<T extends { content: string }>(chunks: T[]): { items: T[]; tokens: number }[] {
+  const batches: { items: T[]; tokens: number }[] = [];
+  let current: T[] = [];
+  let currentTokens = 0;
+
+  for (const chunk of chunks) {
+    const t = estimateTokens(chunk.content);
+    // If a single chunk exceeds the budget, send it alone (will be truncated to 8K chars anyway)
+    if (t > MAX_TOKENS_PER_REQUEST) {
+      if (current.length) {
+        batches.push({ items: current, tokens: currentTokens });
+        current = [];
+        currentTokens = 0;
+      }
+      batches.push({ items: [chunk], tokens: Math.min(t, MAX_TOKENS_PER_REQUEST) });
+      continue;
+    }
+    if (currentTokens + t > MAX_TOKENS_PER_REQUEST && current.length > 0) {
+      batches.push({ items: current, tokens: currentTokens });
+      current = [];
+      currentTokens = 0;
+    }
+    current.push(chunk);
+    currentTokens += t;
+  }
+  if (current.length) batches.push({ items: current, tokens: currentTokens });
+  return batches;
 }
 
 serve(async (req) => {
@@ -111,6 +184,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({
         processed: 0,
         failed: 0,
+        rate_limited: 0,
         remaining: count || 0,
         batch_size: 0,
       }), {
@@ -118,31 +192,58 @@ serve(async (req) => {
       });
     }
 
-    // Sub-batch API calls to stay under OpenAI's 300K token limit
+    const subBatches = packSubBatches(chunks);
+
     let processed = 0;
     let failed = 0;
+    let rateLimited = 0;
 
-    for (let start = 0; start < chunks.length; start += SUB_BATCH_SIZE) {
-      const subChunks = chunks.slice(start, start + SUB_BATCH_SIZE);
-      const texts = subChunks.map(c => c.content);
-      const embeddings = await getEmbeddingsBatch(texts, OPENAI_API_KEY);
+    // Rolling 60s token-usage window for TPM budget
+    const tokenWindow: { ts: number; tokens: number }[] = [];
+    const usedInLast60s = () => {
+      const cutoff = Date.now() - 60_000;
+      while (tokenWindow.length && tokenWindow[0].ts < cutoff) tokenWindow.shift();
+      return tokenWindow.reduce((s, e) => s + e.tokens, 0);
+    };
 
-      for (let i = 0; i < subChunks.length; i++) {
-        if (embeddings[i]) {
+    for (const sb of subBatches) {
+      // TPM budget gate
+      const used = usedInLast60s();
+      if (used + sb.tokens > TPM_BUDGET) {
+        const oldest = tokenWindow[0]?.ts ?? Date.now();
+        const waitMs = Math.max(500, 60_000 - (Date.now() - oldest) + 500);
+        console.log(`TPM budget gate: used=${used}, need=${sb.tokens}, waiting ${waitMs}ms`);
+        await new Promise((r) => setTimeout(r, Math.min(waitMs, 60_000)));
+      }
+
+      const texts = sb.items.map((c) => c.content);
+      const result = await embedSubBatch(texts, OPENAI_API_KEY, sb.tokens);
+
+      if (result.tokensUsed > 0) {
+        tokenWindow.push({ ts: Date.now(), tokens: result.tokensUsed });
+      }
+      rateLimited += result.rateLimited;
+
+      // Update DB for successful embeddings
+      for (let i = 0; i < sb.items.length; i++) {
+        if (result.embeddings[i]) {
           const { error: updateErr } = await adminClient
             .from("legal_document_chunks")
-            .update({ embedding: JSON.stringify(embeddings[i]) })
-            .eq("id", subChunks[i].id);
+            .update({ embedding: JSON.stringify(result.embeddings[i]) })
+            .eq("id", sb.items[i].id);
 
           if (updateErr) {
-            console.error(`Update error for chunk ${subChunks[i].id}:`, updateErr);
+            console.error(`Update error for chunk ${sb.items[i].id}:`, updateErr);
             failed++;
           } else {
             processed++;
           }
-        } else {
+        } else if (result.rateLimited === 0) {
+          // Genuine non-429 failure (400, 500, network)
           failed++;
         }
+        // If rateLimited > 0, those chunks stay embedding IS NULL → next invocation picks them up.
+        // Don't count them as "failed" — they're retryable.
       }
     }
 
@@ -151,11 +252,12 @@ serve(async (req) => {
       .select("id", { count: "exact", head: true })
       .is("embedding", null);
 
-    console.log(`Batch complete: ${processed} processed, ${failed} failed, ${remaining} remaining`);
+    console.log(`Batch complete: ${processed} processed, ${failed} failed, ${rateLimited} rate-limited, ${remaining} remaining`);
 
     return new Response(JSON.stringify({
       processed,
       failed,
+      rate_limited: rateLimited,
       remaining: remaining || 0,
       batch_size: chunks.length,
     }), {
