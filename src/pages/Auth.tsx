@@ -6,6 +6,7 @@ import { ReLexLogo } from "@/components/ReLexLogo";
 import { GeometricBackground } from "@/components/GeometricBackground";
 import { lovable } from "@/integrations/lovable/index";
 import { signInWithOfficeDialog } from "@/lib/officeAuth";
+import { isCanonicalHost, PUBLIC_SITE_URL } from "@/lib/publicUrl";
 import { toast } from "sonner";
 
 const Auth = () => {
