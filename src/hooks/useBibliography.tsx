@@ -202,21 +202,36 @@ function rebuildBibliographyEntries(items: BibliographyEntry[]): BibliographyEnt
   const rebuilt: BibliographyEntry[] = [];
 
   for (const item of items) {
-    if (!item?.fullCitation?.trim()) continue;
+    const cleanedCitation = stripTrailingPunctuation(item?.fullCitation ?? "");
+    if (!cleanedCitation) continue;
 
-    const normalized = normalizeBibliographyCitation(item.fullCitation);
+    const normalized = normalizeBibliographyCitation(cleanedCitation);
     if (!normalized) continue;
     if (/^שם(?:[.\s,]|$)/.test(normalized)) continue;
     if (/לעיל ה["'׳]?ש/.test(normalized)) continue;
     if (seen.has(normalized)) continue;
 
     seen.add(normalized);
+    const auto = classifyCitation(cleanedCitation);
+    // If user manually picked the category, keep their sourceType/subCategory choice;
+    // only refresh language/year so sorting still works after edits.
+    const preserved = item.manualCategory
+      ? {
+          sourceType: item.sourceType,
+          subCategory: item.subCategory,
+          authorSurname: item.authorSurname,
+          language: auto.language,
+          year: auto.year,
+        }
+      : auto;
+
     rebuilt.push({
       ...item,
-      rawInput: item.rawInput || item.fullCitation,
+      fullCitation: cleanedCitation,
+      rawInput: item.rawInput || cleanedCitation,
       addedFrom: item.addedFrom === "footnote" ? "footnote" : "manual",
       addedAt: item.addedAt || Date.now(),
-      ...classifyCitation(item.fullCitation),
+      ...preserved,
     });
   }
 
