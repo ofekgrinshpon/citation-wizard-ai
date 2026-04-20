@@ -179,6 +179,16 @@ const Auth = () => {
                 }
               } else {
                 try {
+                  // Force OAuth to start from the canonical ReLex domain so users
+                  // never see the oauth.lovable.app broker flash on preview hosts.
+                  if (!isCanonicalHost()) {
+                    const params = new URLSearchParams();
+                    params.set("mode", isLogin ? "login" : "signup");
+                    if (refCode) params.set("ref", refCode);
+                    params.set("oauth", "google");
+                    window.location.replace(`${PUBLIC_SITE_URL}/auth?${params.toString()}`);
+                    return;
+                  }
                   const result = await lovable.auth.signInWithOAuth("google", {
                     redirect_uri: `${window.location.origin}/auth-redirect`,
                   });
