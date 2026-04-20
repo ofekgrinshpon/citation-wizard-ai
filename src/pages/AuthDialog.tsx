@@ -95,16 +95,13 @@ export default function AuthDialog() {
         if (!session && !window.location.hash.includes("access_token")) {
           const redirectUri = getRedirectUrl();
 
-          const { error: oauthError } = await supabase.auth.signInWithOAuth({
-            provider: "google",
-            options: {
-              redirectTo: redirectUri,
-              queryParams: { prompt: "select_account" },
-            },
+          const result = await lovable.auth.signInWithOAuth("google", {
+            redirect_uri: redirectUri,
+            extraParams: { prompt: "select_account" },
           });
 
-          if (oauthError) {
-            const msg = oauthError.message || "OAuth failed";
+          if (result.error) {
+            const msg = (result.error as any)?.message || "OAuth failed";
             setErrorMsg(msg);
             setStatus("error");
             sendToParent({ type: "auth-error", message: msg });
