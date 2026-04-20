@@ -716,6 +716,7 @@ serve(async (req) => {
       typeof clientRequestId === "string" && clientRequestId.length >= 8
         ? clientRequestId
         : crypto.randomUUID();
+    __creditRequestId = creditRequestId;
 
     // Use a user-scoped client (with the caller's JWT) so consume_credits sees auth.uid()
     const userClient = createClient(
@@ -723,6 +724,7 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } }
     );
+    __userClientForRefund = userClient;
 
     let creditsCharged = false;
     if (creditCost > 0) {
@@ -752,6 +754,7 @@ serve(async (req) => {
         });
       }
       creditsCharged = true;
+      __creditsCharged = true;
     }
 
     // Helper: build a refund-aware payload for refusals / empty results.
@@ -765,6 +768,7 @@ serve(async (req) => {
           });
           refunded = Boolean((refundData as Record<string, unknown> | null)?.ok);
           creditsCharged = !refunded;
+          __creditsCharged = creditsCharged;
         } catch (rfErr) {
           console.error("refund_credits failed (non-fatal):", rfErr);
         }
