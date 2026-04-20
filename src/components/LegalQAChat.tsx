@@ -981,16 +981,26 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       try {
         const { data: { user: currentUser } } = await supabase.auth.getUser();
         if (currentUser && !qaResult.refusal) {
+          const isCaseSummary = taskMode === "case_summary" || qaResult.case_summary;
+          const footnotesPayload: any = isCaseSummary
+            ? {
+                __case_summary: true,
+                verified_source: qaResult.verified_source ?? "none",
+                case_metadata: qaResult.case_metadata ?? null,
+                source_urls: qaResult.source_urls ?? [],
+                items: [],
+              }
+            : qaResult.footnotes;
           await supabase.from("qa_logs").insert({
             user_id: currentUser.id,
             project_id: currentProject?.id ?? null,
             question: q,
             answer: qaResult.answer,
-            footnotes: qaResult.footnotes as any,
+            footnotes: footnotesPayload,
             task_mode: taskMode,
-            local_footnotes_count: qaResult.footnotes.filter(f => f.source === "local").length,
-            perplexity_footnotes_count: qaResult.footnotes.filter(f => f.source === "perplexity").length,
-            total_footnotes: qaResult.footnotes.length,
+            local_footnotes_count: isCaseSummary ? 0 : qaResult.footnotes.filter(f => f.source === "local").length,
+            perplexity_footnotes_count: isCaseSummary ? 0 : qaResult.footnotes.filter(f => f.source === "perplexity").length,
+            total_footnotes: isCaseSummary ? 0 : qaResult.footnotes.length,
           });
           onResultSaved?.();
         }
