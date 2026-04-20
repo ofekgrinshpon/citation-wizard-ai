@@ -12,7 +12,7 @@ interface QALogRecord {
   id: string;
   question: string;
   answer: string | null;
-  footnotes: any[] | null;
+  footnotes: any;
   task_mode: string | null;
   created_at: string;
 }
@@ -21,6 +21,9 @@ interface QAResult {
   answer: string;
   footnotes: { number: number; citation: string; source_type: string; url?: string; source?: "local" | "perplexity" | "document" }[];
   source_urls: string[];
+  case_summary?: boolean;
+  verified_source?: "user" | "local" | "external" | "none";
+  case_metadata?: Record<string, any> | null;
 }
 
 interface Props {
@@ -82,11 +85,22 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
 
   const handleClick = (log: QALogRecord) => {
     if (!onLoadResult || !log.answer) return;
-    const result: QAResult = {
-      answer: log.answer,
-      footnotes: Array.isArray(log.footnotes) ? log.footnotes as any : [],
-      source_urls: [],
-    };
+    const fn = log.footnotes;
+    const isCaseSummaryEnvelope = fn && !Array.isArray(fn) && typeof fn === "object" && fn.__case_summary === true;
+    const result: QAResult = isCaseSummaryEnvelope
+      ? {
+          answer: log.answer,
+          footnotes: [],
+          source_urls: Array.isArray(fn.source_urls) ? fn.source_urls : [],
+          case_summary: true,
+          verified_source: fn.verified_source ?? "none",
+          case_metadata: fn.case_metadata ?? null,
+        }
+      : {
+          answer: log.answer,
+          footnotes: Array.isArray(fn) ? (fn as any) : [],
+          source_urls: [],
+        };
     onLoadResult(log.question, result, log.task_mode || "research");
   };
 
