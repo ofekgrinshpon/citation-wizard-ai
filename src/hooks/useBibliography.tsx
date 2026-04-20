@@ -327,13 +327,14 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
   const addEntry = useCallback(
     (rawInput: string, fullCitation: string, from: "footnote" | "manual"): boolean => {
       let added = false;
+      const cleaned = stripTrailingPunctuation(fullCitation);
       setEntries((prev) => {
-        if (isDuplicate(fullCitation, prev)) return rebuildBibliographyEntries(prev);
-        const info = classifyCitation(fullCitation);
+        if (isDuplicate(cleaned, prev)) return rebuildBibliographyEntries(prev);
+        const info = classifyCitation(cleaned);
         const entry: BibliographyEntry = {
           id: crypto.randomUUID(),
           rawInput,
-          fullCitation,
+          fullCitation: cleaned,
           addedFrom: from,
           addedAt: Date.now(),
           ...info,
