@@ -408,12 +408,21 @@ export function BibliographyGenerator() {
         <div className="bg-card border border-border rounded-xl shadow-sm animate-fade-in">
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <h4 className="text-foreground text-sm font-bold font-sans">📖 3. ביבליוגרפיה מסודרת</h4>
-            <button
-              onClick={copyAll}
-              className="text-xs bg-primary/15 text-primary hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
-            >
-              📋 העתק הכל ל-Word
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={sendAllBackToReview}
+                className="text-xs bg-amber-500/15 text-amber-700 dark:text-amber-400 hover:bg-amber-500/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
+                title="החזר את כל המקורות לשלב 2 לעריכה"
+              >
+                ← חזור לעריכה
+              </button>
+              <button
+                onClick={copyAll}
+                className="text-xs bg-primary/15 text-primary hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
+              >
+                📋 העתק הכל ל-Word
+              </button>
+            </div>
           </div>
 
           <div className="p-4">
