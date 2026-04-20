@@ -83,6 +83,7 @@ export default function BatchEmbeddingPanel() {
 
         setTotalProcessed((prev) => prev + data.processed);
         setTotalFailed((prev) => prev + data.failed);
+        setTotalRateLimited((prev) => prev + (data.rate_limited || 0));
         setRemaining(data.remaining);
         setBatchCount((prev) => prev + 1);
 
