@@ -31,10 +31,57 @@ const MIN_EXTERNAL_TEXT = 3000;
 const CASE_NUM_REGEX =
   /(?:בג["״]ץ|ע["״]א|ע["״]פ|רע["״]א|רע["״]פ|דנ["״]א|דנ["״]פ|בש["״]פ|עע["״]מ|בר["״]ם|תפ["״]ח|ת["״]א|ת["״]פ|ה["״]פ|עמ["״]ה)\s*([0-9]{1,6}\/[0-9]{2,4})/;
 
+// Bare procedural numbers: "18225-06-25" (case-month-year) or "1234/05" (case/year)
+const BARE_SLASH_REGEX = /\b([0-9]{1,6}\/[0-9]{2,4})\b/;
+const BARE_HYPHEN_REGEX = /\b([0-9]{1,6})-([0-9]{1,2})-([0-9]{2,4})\b/;
+
 function extractCaseNumber(text: string): string | null {
+  // Prefixed style: בג"ץ 1234/05
   const m = text.match(CASE_NUM_REGEX);
-  if (!m) return null;
-  return m[1].trim();
+  if (m) return m[1].trim();
+  // Bare slash: 1234/05
+  const s = text.match(BARE_SLASH_REGEX);
+  if (s) return s[1].trim();
+  // Bare hyphen: 18225-06-25 → 18225/06 (DB canonical)
+  const h = text.match(BARE_HYPHEN_REGEX);
+  if (h) return `${h[1]}/${h[2]}`;
+  return null;
+}
+
+// Returns all candidate forms a case number might appear as in the DB.
+function caseNumberVariants(input: string): string[] {
+  const out = new Set<string>();
+  const trimmed = input.trim();
+  out.add(trimmed);
+  const h = trimmed.match(/^([0-9]{1,6})-([0-9]{1,2})-([0-9]{2,4})$/);
+  if (h) {
+    out.add(`${h[1]}/${h[2]}`);
+    out.add(`${h[1]}-${h[2]}-${h[3]}`);
+  }
+  const s = trimmed.match(/^([0-9]{1,6})\/([0-9]{2,4})$/);
+  if (s) {
+    out.add(`${s[1]}/${s[2]}`);
+  }
+  return Array.from(out);
+}
+
+// Browser-like headers for court servers that reject default fetch UA.
+const BROWSER_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+  "Accept":
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,text/html;q=0.9,*/*;q=0.8",
+  "Accept-Language": "he-IL,he;q=0.9,en-US;q=0.8,en;q=0.7",
+};
+
+// True if the first bytes look like a real ZIP/DOCX (PK\x03\x04).
+function looksLikeZip(buf: Uint8Array): boolean {
+  return buf.length >= 4 && buf[0] === 0x50 && buf[1] === 0x4b && buf[2] === 0x03 && buf[3] === 0x04;
+}
+
+// True if the first bytes look like a PDF (%PDF-).
+function looksLikePdfMagic(buf: Uint8Array): boolean {
+  return buf.length >= 5 && buf[0] === 0x25 && buf[1] === 0x50 && buf[2] === 0x44 && buf[3] === 0x46 && buf[4] === 0x2d;
 }
 
 async function fetchWithTimeout(url: string, opts: RequestInit, ms: number): Promise<Response> {
