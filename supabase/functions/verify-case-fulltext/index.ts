@@ -250,11 +250,13 @@ serve(async (req) => {
     let localDoc: Record<string, unknown> | null = null;
 
     if (caseNum) {
+      const variants = caseNumberVariants(caseNum);
+      console.log(`verify-case-fulltext: local lookup variants=${JSON.stringify(variants)}`);
       const { data } = await adminClient
         .from("legal_documents")
         .select("id, title, citation, content, court, decision_date, case_number, source_url, source_type, metadata")
         .in("source_type", ["case_law", "case_law_database"])
-        .eq("case_number", caseNum)
+        .in("case_number", variants)
         .order("created_at", { ascending: false })
         .limit(1);
       if (data && data.length > 0) localDoc = data[0] as Record<string, unknown>;
