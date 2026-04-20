@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { PLANS, TOPUP_PACKS } from "@/lib/plans";
+import { buildReferralLink } from "@/lib/publicUrl";
 import { Copy as CopyIcon, Infinity as InfinityIcon } from "lucide-react";
 
 interface ActivityLog {
@@ -153,9 +154,7 @@ const Profile = () => {
     !searchQuery || c.raw_input?.includes(searchQuery) || c.formatted_output?.includes(searchQuery)
   );
 
-  const referralLink = referralCode
-    ? `${window.location.origin}/auth?mode=signup&ref=${referralCode}`
-    : "";
+  const referralLink = buildReferralLink(referralCode);
 
   const copyReferralLink = async () => {
     if (!referralLink) return;
