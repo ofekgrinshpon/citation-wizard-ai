@@ -1,34 +1,56 @@
 
 
-## Root cause (definitive)
+## Goal
+Rename the "ניתוח כתב טענה" mode to **"מבקר מסמכים משפטיים"** and replace its AI prompt with the full Senior Legal Document Auditor protocol you provided.
 
-The DB has 11,479 case rows under `source_type = 'caselaw'` (one word). The `verify-case-fulltext` function filters on `["case_law", "case_law_database"]` (with underscore). **No row ever matches.** Every case summary refuses, even when the text is sitting right there. The recent variant fix was correct but couldn't help because the `source_type` filter rejects the row before `case_number` is even compared.
+## Scope decision
+Keep the internal `taskMode` ID as `pleading_analysis` (don't rename to e.g. `document_audit`). Reasons:
+- Avoids breaking historical `qa_logs` rows (sidebar, resume, search history would lose old entries otherwise).
+- Avoids touching `Index.tsx` type unions, the `qaExternalResult` state, and academic-resume routing.
+- Only labels and the prompt are user-visible.
 
-Confirmed for `18225-06-25`:
-- Row exists, `source_type='caselaw'`, content **5393 chars**
-- Logs show variants generated correctly: `["18225-06-25","18225/06","18225-06"]`
-- Lookup returns 0 because `'caselaw'` is not in `["case_law","case_law_database"]`
-- External fetch then fails (Connection reset by peer from court server)
-- → refusal
+## Changes
 
-## Fix — one file
+### 1. `src/components/LegalQAChat.tsx` (line 65)
+Update the visible card for that mode:
+- **label**: `"מבקר מסמכים משפטיים"`
+- **description**: `"ביקורת משפטית: דיוק אזכורים, סתירות לוגיות, ניתוח אדוורסרי"`
+- **placeholder**: `"הדביקו או העלו מסמך משפטי (כתב טענה, חוזה, חוות דעת) לביקורת מקיפה..."`
+- Icon stays `FileSearch` (fits an auditor).
 
-**`supabase/functions/verify-case-fulltext/index.ts`** — change both local-lookup queries to filter on the actual values in the DB:
+### 2. `src/components/QAHistorySidebar.tsx` (line 37)
+Update history label: `pleading_analysis: { label: "ביקורת מסמך", icon: FileSearch }` (short form for the sidebar chip).
 
-```ts
-.in("source_type", ["caselaw", "case_law", "case_law_database"])
-```
+### 3. `supabase/functions/legal-qa/index.ts` (lines 212-219)
+Replace the `pleading_analysis` case body with the full audit protocol, faithfully translated from your spec into Hebrew and adapted to fit the existing `legal-qa` architecture (which already injects `[Verified]` local DB sources and `[External]` Perplexity results into the context). Key adaptations:
+- Keep the existing footnote/citation-rule contract from the surrounding system prompt — but instruct the auditor that the report itself uses the structured headings below, not the standard memo template.
+- Honor the **functional source split** by referencing the existing `[Verified]` / `[External]` markers used elsewhere in the prompt.
+- Enforce the 150-word minimum guard (refuse cleanly if input too short).
 
-(Keep the legacy values too, in case any older rows exist with those types.)
+The new prompt will produce output structured as:
+- **סיכום ביצועי** — 1–2 lines describing the document type and overall risk.
+- **🔴 ממצאים קריטיים** (Protocol A citation-surgery errors, repealed statutes, fabricated section numbers, timeline contradictions, numerical mismatches) — formatted as `**בעיה:** … | **מיקום:** … | **תיקון מוצע:** …`
+- **🟡 הערות והמלצות** (counter-arguments, weak evidence, non-uniform citations) — formatted as `**הצעה:** … | **נימוק:** …`
+- **🟢 חוזקות אסטרטגיות**
+- **טיעוני נגד צפויים** — at least 3 adversarial counter-arguments (Protocol C).
+- **בדיקה פורמלית** — only when document is a pleading: ID numbers, addresses for service, jurisdictional statements, סעדים, exhibit tracking.
 
-Two places to change: line 265 (case-number lookup) and line 278 (title-fallback lookup).
+The prompt will explicitly state:
+- `[Verified]` is the sole source of truth for substantive law; flag user claims that contradict it as Critical (🔴).
+- `[External]` may be used only for bibliographic metadata.
+- Never fabricate section numbers or years — use `[חסר]` and prompt the user.
+- If document < 150 words, return one sentence requesting more context and stop.
 
-That's it. No other logic, prompt, or UI changes needed — once the row is returned, the existing pipeline produces the structured summary.
+### Out of scope
+- DB / `qa_logs` schema (internal ID unchanged).
+- `case_summary`, `research`, `academic_writing` modes.
+- UI layout / icons beyond label text.
 
-## Out of scope
-- External court-server fetch (still blocked by IP-based rate limit; doesn't matter once local lookup works).
-- AI prompt or `legal-qa` changes.
+## Files touched
+- `src/components/LegalQAChat.tsx`
+- `src/components/QAHistorySidebar.tsx`
+- `supabase/functions/legal-qa/index.ts` (+ redeploy)
 
 ## Expected outcome
-`בג"ץ 18225-06-25` → local hit (5393 chars, `caselaw`) → real structured summary with עובדות / טענות / שאלה משפטית / דעות / הכרעה / הלכה filled from the actual judgment, with the "מקומי" badge. Same fix unblocks **all ~11.5K** locally-ingested cases.
+The mode card now reads **"מבקר מסמכים משפטיים"**. Submitting a document runs the new audit protocol and returns a structured red/yellow/green findings report with adversarial counter-arguments, citation surgery, and timeline/numerical consistency checks — grounded strictly in `[Verified]` local sources for substantive content.
 
