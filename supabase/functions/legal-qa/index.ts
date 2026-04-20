@@ -893,14 +893,15 @@ serve(async (req) => {
 
       if (!verify || verify.source === "none" || !verify.fullText) {
         console.log("case_summary: refusing — no full text available");
-        return new Response(JSON.stringify({
+        const payload = await refundAndPayload("case_summary:no-fulltext", {
           refusal: true,
           source: "none",
           message: verify?.refusal_message || "פסק הדין אינו קיים במערכת ולא ניתן היה לאתר את הטקסט המלא שלו. כדי שאוכל לסכם אותו עבורך, אנא העלה את הקובץ או הדבק את הטקסט בתיבת הטקסט.",
           answer: "",
           footnotes: [],
           source_urls: [],
-        }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        });
+        return new Response(JSON.stringify(payload), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
 
       // Defense-in-depth: Hebrew-ratio sanity gate. If the extracted text is mostly
