@@ -1,47 +1,29 @@
 
 
-## Problem
-1. **TPM rate-limit thrashing**: Loop fires 500-chunk batches back-to-back (~380K tokens each), exhausting the 1M TPM bucket. ~80% of sub-batches return 429.
-2. **Per-request token cap hits**: Some sub-batches (200 chunks × long content) exceed the 300K-tokens-per-request OpenAI limit → 400 errors.
-3. **Misleading "failed" counter**: A 429/400 marks chunks as failed in UI counters, but rows stay `embedding IS NULL`, so they're retried in the next batch. So `21,400 failed` ≠ permanently lost — it's mostly the same chunks being rate-limit-rejected over and over. Already-embedded ones are NOT re-sent.
+## What broke
+The version that processed 360K embeddings worked perfectly. I overengineered the fix when the real difference is just **chunk length** — `israeli_law` chunks are longer/denser than the previous corpus, so `SUB_BATCH_SIZE = 200` now exceeds OpenAI's 300K-tokens-per-request cap.
 
-## Fix (in `supabase/functions/batch-embed-chunks/index.ts`)
+## Minimal fix
+**Revert `batch-embed-chunks/index.ts` to the working version (commit `0758bed`), then change exactly one line:**
+- `SUB_BATCH_SIZE`: 200 → **50**
 
-### 1. Token-aware sub-batching
-Replace fixed `SUB_BATCH_SIZE = 200` with a token-budgeted packer:
-- Estimate tokens per chunk: `Math.ceil(content.length / 3.5)` (Hebrew-aware, ~3.5 chars/token).
-- Pack chunks into a sub-batch until cumulative est. tokens ≥ **250,000** (safety margin under the 300K hard cap).
-- Guarantees no more 400 "request too large" errors.
+That's the entire change. Everything else (TPM tracker, token estimator, retry-after parser, split-and-retry, packSubBatches function) gets removed. The 1M TPM bucket was never the bottleneck before and won't be now — smaller sub-batches just naturally pace themselves.
 
-### 2. Respect the TPM bucket — sequential sub-batches with budget tracking
-- Process sub-batches **sequentially** (not parallel) within a function invocation.
-- Keep a rolling 60-second token budget (target: stay under 800K TPM, leaving headroom).
-- Before sending a sub-batch, if estimated tokens + tokens-used-in-last-60s > 800K → `await sleep(time_until_oldest_token_ages_out)`.
+## Why this is enough
+- 50 chunks × ~6K-char israeli_law content × ~1 token/char Hebrew worst-case ≈ 300K tokens absolute max → fits under cap.
+- 429s (when they happen) just return failure for that sub-batch; rows stay `embedding IS NULL`, picked up next loop. That's how the original ran for 360K chunks without issue.
+- Throughput per invocation drops from "200 chunks at a time" to "50 × 10 sub-batches = 500 per invocation" — actually equivalent or better than the original.
 
-### 3. Honor 429 `retry-after` properly
-- On 429, parse `Please try again in X.Xs` from the OpenAI error body (already in logs).
-- Sleep for `parsedDelay + 500ms` jitter, then retry that exact sub-batch up to 3 times **inside the function** instead of returning failure.
-- Only count as "failed" if it fails after 3 retries.
-
-### 4. Reduce per-invocation batch size
-- Drop `BATCH_SIZE` from 500 → **200** per invocation.
-- One invocation now does ~1 minute of work cleanly within the TPM bucket, then the client loop picks up the next 200. Smoother, fewer wasted retries.
-
-### 5. Clearer counters in the UI (`BatchEmbeddingPanel.tsx`)
-- Rename "failed" → "rate-limited (will retry)" when the failure cause is 429.
-- Add a `rate_limited` field to the function response so the UI doesn't scare you with a fake 21K "failed" number.
+## UI revert
+**`BatchEmbeddingPanel.tsx`**: remove the `rate_limited` counter additions, restore the simpler 2-counter display (processed / failed). The function won't return `rate_limited` anymore.
 
 ## Files to change
-- `supabase/functions/batch-embed-chunks/index.ts` — token-aware packer, sequential sub-batches, TPM budget tracker, 429 retry-after parser, BATCH_SIZE 500→200.
-- `src/components/admin/BatchEmbeddingPanel.tsx` — show `rate_limited` separately from true failures.
+- `supabase/functions/batch-embed-chunks/index.ts` — revert to commit `0758bed` content, change `SUB_BATCH_SIZE = 200` → `50`.
+- `src/components/admin/BatchEmbeddingPanel.tsx` — revert the rate-limited counter UI additions.
 
 ## Out of scope
-- Switching embedding provider (e.g., to Lovable Gateway) — keeping OpenAI text-embedding-3-small to preserve the existing 768-dim HNSW index.
-- Re-embedding already-completed chunks (function correctly skips them via `embedding IS NULL` filter — no change needed).
+- Anything else. No new logic. No estimators. No budget trackers.
 
 ## Expected outcome
-- Throughput goes from ~100 processed / 400 failed per batch → ~200 processed / ~0 failed per batch.
-- No more 400 "request too large" errors.
-- "Failed" counter in UI reflects only real, permanent failures.
-- Full ~46K remaining `israeli_law` chunks finish in ~4 hours of steady, uninterrupted progress instead of thrashing.
+Same behavior as the run that successfully processed 360K embeddings, with sub-batches small enough for the longer israeli_law chunks. Remaining ~46K finish in roughly the same timeframe per chunk as the original run.
 
