@@ -36,6 +36,7 @@ export default function BatchEmbeddingPanel() {
     setRunning(true);
     setTotalProcessed(0);
     setTotalFailed(0);
+    setTotalRateLimited(0);
     setBatchCount(0);
 
     const { data: { session } } = await supabase.auth.getSession();
