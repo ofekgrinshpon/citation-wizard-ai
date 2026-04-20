@@ -719,10 +719,12 @@ function CategoryGroup({
   label,
   entries,
   onRemove,
+  onEdit,
 }: {
   label: string;
   entries: { id: string; fullCitation: string; addedFrom: string; isVerified?: boolean }[];
   onRemove: (id: string) => void;
+  onEdit?: (id: string) => void;
 }) {
   return (
     <div className="mb-3">
@@ -743,6 +745,15 @@ function CategoryGroup({
                 <span className="text-[10px] text-primary bg-primary/10 px-1.5 py-0.5 rounded">
                   מה"ש
                 </span>
+              )}
+              {onEdit && (
+                <button
+                  onClick={() => onEdit(entry.id)}
+                  className="text-[11px] text-muted-foreground hover:text-primary px-1 py-0.5 rounded transition-colors"
+                  title="ערוך מקור זה (החזר לשלב 2)"
+                >
+                  ✏️
+                </button>
               )}
               <button
                 onClick={() => onRemove(entry.id)}
