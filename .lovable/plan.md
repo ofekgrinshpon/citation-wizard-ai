@@ -1,73 +1,93 @@
 
 
 ## Goal
-Replace the placeholder 👤 emoji in the sidebar user card with a refined initial-avatar treatment, and consolidate the user card so the hierarchy reads as: **name → plan → ניהול חשבון**.
+Translate the English technical reason strings shown in the credit history (Profile → ניהול חשבון → היסטוריית קרדיטים) into Hebrew labels — `אזכור אחיד` instead of `citation-chat`, `עוזר משפטי – מחקר` instead of `legal-qa:research`, etc.
 
-## Current state
-`AppSidebar.tsx` lines 78–88 render two stacked elements:
-1. A `<button>` with a 👤 emoji and the display name
-2. A separate `<CreditPill />` showing plan + "ניהול חשבון"
+## Why a display-layer fix
+The ledger stores English technical reasons (`citation-chat`, `legal-qa:research+doc`, `legacy:incrementCount`, `plan changed to pro_annual`, `auto-refund: …`). Existing rows already use these strings. Translating at the **display layer** in `Profile.tsx` covers historic + new rows without DB migrations or coordinated edge-function changes, and keeps the raw value available for debugging.
 
-Both navigate to `/profile`. They become a single, polished card.
+## Change — `src/pages/Profile.tsx` only
 
-## Changes — `src/components/AppSidebar.tsx` only
-
-### 1. Imports
-- Drop `CreditPill` import.
-- Add `useCredits`, `useMemo`, and `Infinity as InfinityIcon` from lucide-react.
-
-### 2. Compute the initial
+### 1. Add a translator above the component (right after `EVENT_LABEL`)
 ```ts
-const { planMeta, isAdmin } = useCredits();
-const initial = useMemo(() => {
-  const source = (displayName || user?.email || "").trim();
-  const ch = Array.from(source)[0] ?? "?";
-  return ch.toUpperCase();
-}, [displayName, user?.email]);
-```
-Works for Hebrew ("ע") and Latin ("O") alike.
+const PLAN_LABELS_HE: Record<string, string> = {
+  basic: "Basic",
+  pro_monthly: "Pro חודשי",
+  pro_semester: "Pro סמסטריאלי",
+  pro_annual: "Pro שנתי",
+  admin: "Admin",
+};
 
-### 3. Replace the two elements (lines 78–88) with one unified card
+function formatLedgerReason(raw: string | null): string {
+  if (!raw) return "";
+  const r = raw.trim();
+
+  const direct: Record<string, string> = {
+    "citation-chat": "אזכור אחיד",
+    "legacy:incrementCount": "אזכור אחיד",
+    "verified-autocomplete": "השלמה אוטומטית מאומתת",
+    "batch-footnote": "מחולל הערות שוליים",
+    "bibliography": "מחולל ביבליוגרפיה",
+    "academic-writing": "כתיבה אקדמית",
+    "invalid_input_refusal": "הקלט לא היה ברור דיו",
+    "runtime-error": "שגיאה טכנית",
+    "citation-chat exception": "שגיאה טכנית באזכור אחיד",
+    "manual": "התאמה ידנית",
+  };
+  if (direct[r]) return direct[r];
+
+  const qa = r.match(/^legal-qa:([a-z_]+)(\+doc)?$/i);
+  if (qa) {
+    const modes: Record<string, string> = {
+      research: "עוזר משפטי – מחקר",
+      pleading_analysis: "עוזר משפטי – ביקורת מסמך",
+      case_summary: "עוזר משפטי – סיכום פסק דין",
+      academic_writing: "עוזר משפטי – כתיבה אקדמית",
+    };
+    const base = modes[qa[1]] ?? `עוזר משפטי – ${qa[1]}`;
+    return qa[2] ? `${base} (עם מסמך מצורף)` : base;
+  }
+
+  const auto = r.match(/^auto-refund:\s*(.+)$/i);
+  if (auto) return `החזר אוטומטי – ${formatLedgerReason(auto[1])}`;
+
+  const plan = r.match(/^plan changed to\s+(\S+)/i);
+  if (plan) return `שינוי מסלול ל-${PLAN_LABELS_HE[plan[1]] ?? plan[1]}`;
+
+  if (/[\u0590-\u05FF]/.test(r)) return r;  // already Hebrew → pass through
+  return "פעולת מערכת";                      // safe fallback for unknown English strings
+}
+```
+
+### 2. Use it in the ledger row render (~line 287)
+Replace:
 ```tsx
-<button
-  onClick={() => navigate("/profile?tab=account")}
-  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors text-right w-full group"
-  title={isAdmin ? "Admin — ללא הגבלה" : planMeta.label}
->
-  <span
-    aria-hidden
-    className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted border border-border/60 text-foreground font-semibold text-sm group-hover:border-primary/40 transition-colors"
-  >
-    {isAdmin ? <InfinityIcon className="w-4 h-4 text-primary" /> : initial}
-  </span>
-  <span className="flex flex-col min-w-0 flex-1 leading-tight">
-    <span className="text-sm font-medium text-foreground truncate">
-      {displayName || user?.email || "הפרופיל שלי"}
-    </span>
-    <span className="text-[11px] text-muted-foreground truncate">
-      {isAdmin ? "Admin" : planMeta.label}
-    </span>
-    <span className="text-[10px] text-muted-foreground/70 mt-0.5">ניהול חשבון</span>
-  </span>
-</button>
+{row.reason && <div className="text-muted-foreground truncate">{row.reason}</div>}
 ```
+with:
+```tsx
+{row.reason && (
+  <div className="text-muted-foreground truncate" title={row.reason}>
+    {formatLedgerReason(row.reason)}
+  </div>
+)}
+```
+`title` keeps the raw technical string on hover for support/debugging.
 
-The wrapping `<div className="px-2 mt-1"><CreditPill /></div>` block (lines 86–88) is removed entirely — the new card already carries the plan + management affordance.
-
-### 4. Visual notes
-- Avatar: 36×36, neutral `bg-muted` with subtle `border-border/60`, no gradients, no color fills — refined and secondary.
-- Hover only nudges the avatar border to a soft primary tint — no scale, no glow.
-- RTL preserved via the parent `direction: rtl` on `<aside>`; `text-right` keeps text alignment correct.
-- Admin sees `InfinityIcon` in primary color inside the same neutral circle — preserves visual rhythm.
+## Out of scope
+- DB migration / backfill of existing reasons.
+- Changing what edge functions write (keys stay stable for analytics).
+- Admin users table.
 
 ## Files modified
-- `src/components/AppSidebar.tsx` — swap header, remove CreditPill from sidebar.
-
-## Files intentionally untouched
-- `src/components/CreditPill.tsx`, `src/pages/Profile.tsx`.
+- `src/pages/Profile.tsx` — add translator, use it in the ledger list.
 
 ## Expected outcome
-- Sidebar top shows a clean initial-in-circle avatar (e.g. "O" for Ofek), the user's name, the plan name (e.g. "Pro חודשי"), and a quiet "ניהול חשבון" line — all in one tappable card opening the account page.
-- No 👤 emoji anywhere in the sidebar.
-- No numeric credit balance in the main shell (previous refinement preserved).
+- `citation-chat` → **אזכור אחיד**
+- `legacy:incrementCount` → **אזכור אחיד**
+- `legal-qa:research` → **עוזר משפטי – מחקר**
+- `legal-qa:academic_writing+doc` → **עוזר משפטי – כתיבה אקדמית (עם מסמך מצורף)**
+- `auto-refund: legal-qa runtime error` → **החזר אוטומטי – פעולת מערכת**
+- `plan changed to pro_annual` → **שינוי מסלול ל-Pro שנתי**
+- Unmapped English strings → **פעולת מערכת**, raw value still visible on hover.
 
