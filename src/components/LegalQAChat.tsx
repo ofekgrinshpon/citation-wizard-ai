@@ -836,14 +836,26 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   };
 
   const approveOutline = () => {
-    const lines = outline.split("\n").filter(l => l.trim());
+    const lines = outline.split("\n");
     const chapterTitles: string[] = [];
-    for (const line of lines) {
-      const match = line.match(/^\d+\.\s*\*?\*?(.+?)\*?\*?\s*$/);
-      if (match) chapterTitles.push(match[1].trim().replace(/\*\*/g, ""));
+    for (const rawLine of lines) {
+      // Only top-level numbered lines (no leading whitespace)
+      const line = rawLine.replace(/\s+$/, "");
+      if (/^\s+/.test(rawLine)) continue; // skip indented sub-bullets (- הרחבה: / - טיעוני נגד:)
+      // Match "1. **Title** – tag" or legacy "1. **Title**" / "1. Title"
+      const match = line.match(/^\d+\.\s+\*\*(.+?)\*\*(?:\s*[–\-—]\s*.+)?$/) ||
+                    line.match(/^\d+\.\s+(.+?)(?:\s*[–\-—]\s*.+)?$/);
+      if (match) {
+        const title = match[1].trim().replace(/\*\*/g, "");
+        if (title) chapterTitles.push(title);
+      }
     }
     if (chapterTitles.length === 0) {
       chapterTitles.push("תקציר", "מבוא", "המסגרת הנורמטיבית", "סקירה פסיקתית ודוקטרינרית", "ניתוח ביקורתי", "סיכום ומסקנות");
+    } else {
+      // Auto-prepend תקציר (the new outline omits it; abstract-locking flow still needs it)
+      const hasAbstract = chapterTitles.some(t => isAbstractChapter(t));
+      if (!hasAbstract) chapterTitles.unshift("תקציר");
     }
     setChapters(chapterTitles.map(t => ({ title: t, content: null })));
     setCurrentChapter(0);
@@ -1362,27 +1374,17 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               </Card>
             )}
 
-            {/* OUTLINE: show proposed outline, approve/edit */}
+            {/* OUTLINE: structured research-proposal report */}
             {wizardStep === "outline" && result && (
-              <Card className="border-border">
-                <CardContent className="p-4 space-y-3">
-                  <h3 className="font-bold text-foreground">מתווה מוצע</h3>
-                  <div className="text-foreground text-sm leading-relaxed whitespace-pre-wrap" style={{ lineHeight: 1.8 }}>
-                    <RenderMarkdown text={result.answer} />
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <Button size="sm" onClick={() => {
-                      if (!checkDestructiveEdit("outline")) return;
-                      approveOutline();
-                    }}>
-                      אשר מתווה והתחל כתיבה
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => { setResult(null); setWizardStep("topic_or_question"); }}>
-                      חזרה לעריכה
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <OutlineReport
+                answer={result.answer}
+                researchQuestion={researchQuestion}
+                onApprove={() => {
+                  if (!checkDestructiveEdit("outline")) return;
+                  approveOutline();
+                }}
+                onBack={() => { setResult(null); setWizardStep("topic_or_question"); }}
+              />
             )}
 
             {/* Clickable chapter list — visible during writing/checkpoint */}
