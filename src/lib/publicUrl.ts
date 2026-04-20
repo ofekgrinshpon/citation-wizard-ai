@@ -33,3 +33,10 @@ export function getAuthRedirectOrigin(): string {
   // Anything else (lovable preview, localhost) → canonical site
   return PUBLIC_SITE_URL;
 }
+
+/** True when the current host is the canonical ReLex production domain. */
+export function isCanonicalHost(): boolean {
+  if (typeof window === "undefined") return false;
+  const host = window.location.hostname;
+  return host === "relexlm.com" || host === "www.relexlm.com";
+}

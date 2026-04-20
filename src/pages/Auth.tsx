@@ -6,6 +6,7 @@ import { ReLexLogo } from "@/components/ReLexLogo";
 import { GeometricBackground } from "@/components/GeometricBackground";
 import { lovable } from "@/integrations/lovable/index";
 import { signInWithOfficeDialog } from "@/lib/officeAuth";
+import { isCanonicalHost, PUBLIC_SITE_URL } from "@/lib/publicUrl";
 import { toast } from "sonner";
 
 const Auth = () => {
@@ -35,6 +36,32 @@ const Auth = () => {
     if (mode === "signup") setIsLogin(false);
     else if (mode === "login") setIsLogin(true);
   }, [searchParams]);
+
+  // Auto-trigger Google OAuth when arriving from a preview-host redirect (?oauth=google).
+  useEffect(() => {
+    if (searchParams.get("oauth") !== "google") return;
+    if (!isCanonicalHost()) return;
+    if (user) return;
+    // Strip the trigger from the URL so a refresh doesn't re-fire it.
+    const cleaned = new URLSearchParams(searchParams);
+    cleaned.delete("oauth");
+    window.history.replaceState({}, "", `${window.location.pathname}${cleaned.toString() ? `?${cleaned}` : ""}`);
+    (async () => {
+      try {
+        const result = await lovable.auth.signInWithOAuth("google", {
+          redirect_uri: `${window.location.origin}/auth-redirect`,
+        });
+        if (result.redirected) return;
+        if (result.error) {
+          console.error("[ReLex] Google OAuth error:", result.error);
+          toast.error("שגיאה בהתחברות עם Google");
+        }
+      } catch (err: any) {
+        console.error("[ReLex] Google OAuth exception:", err);
+        toast.error("שגיאה בהתחברות עם Google");
+      }
+    })();
+  }, [searchParams, user]);
 
   if (authLoading) {
     return (
@@ -178,6 +205,16 @@ const Auth = () => {
                 }
               } else {
                 try {
+                  // Force OAuth to start from the canonical ReLex domain so users
+                  // never see the oauth.lovable.app broker flash on preview hosts.
+                  if (!isCanonicalHost()) {
+                    const params = new URLSearchParams();
+                    params.set("mode", isLogin ? "login" : "signup");
+                    if (refCode) params.set("ref", refCode);
+                    params.set("oauth", "google");
+                    window.location.replace(`${PUBLIC_SITE_URL}/auth?${params.toString()}`);
+                    return;
+                  }
                   const result = await lovable.auth.signInWithOAuth("google", {
                     redirect_uri: `${window.location.origin}/auth-redirect`,
                   });
