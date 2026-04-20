@@ -24,7 +24,6 @@ type Capability = {
   description: string;
   image: string;
   highlight?: boolean;
-  badge?: string;
   chips?: string[];
 };
 
@@ -35,7 +34,6 @@ const capabilities: Capability[] = [
       "מחקר משפטי, סיכום פסיקה, בקרה למסמכים וכתיבה אקדמית — עם תוצאות מובנות ומותאמות לעבודה משפטית.",
     image: "/how-it-works/legal-assistant.png",
     highlight: true,
-    badge: "סוויטה מלאה",
     chips: ["מחקר משפטי", "סיכום פסיקה", "בקרה למסמכים", "כתיבה אקדמית"],
   },
   {
