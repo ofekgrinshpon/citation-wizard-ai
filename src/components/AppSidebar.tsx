@@ -83,16 +83,26 @@ export function AppSidebar() {
       style={{ direction: "rtl" }}
     >
       <button
-        onClick={() => navigate("/profile")}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted transition-colors text-right w-full"
+        onClick={() => navigate("/profile?tab=account")}
+        className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted transition-colors text-right w-full group"
+        title={isAdminCredits ? "Admin — ללא הגבלה" : planMeta.label}
       >
-        <span>👤</span>
-        <span className="truncate flex-1">{displayName || user?.email || "הפרופיל שלי"}</span>
+        <span
+          aria-hidden
+          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted border border-border/60 text-foreground font-semibold text-sm group-hover:border-primary/40 transition-colors"
+        >
+          {isAdminCredits ? <InfinityIcon className="w-4 h-4 text-primary" /> : initial}
+        </span>
+        <span className="flex flex-col min-w-0 flex-1 leading-tight">
+          <span className="text-sm font-medium text-foreground truncate">
+            {displayName || user?.email || "הפרופיל שלי"}
+          </span>
+          <span className="text-[11px] text-muted-foreground truncate">
+            {isAdminCredits ? "Admin" : planMeta.label}
+          </span>
+          <span className="text-[10px] text-muted-foreground/70 mt-0.5">ניהול חשבון</span>
+        </span>
       </button>
-
-      <div className="px-2 mt-1">
-        <CreditPill className="w-full justify-between" />
-      </div>
 
       <div className="h-px bg-border my-2" />
 
