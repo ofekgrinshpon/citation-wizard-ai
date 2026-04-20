@@ -1,3 +1,7 @@
+// ============= NO-FOOTNOTE MODE PATCH =============
+// For pleading_analysis mode, footnotes are disabled - only the report body is returned
+// ============= END PATCH ==============
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { buildCitationInstructions } from "./citationRules.ts";
