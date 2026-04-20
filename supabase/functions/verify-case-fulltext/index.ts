@@ -262,7 +262,7 @@ serve(async (req) => {
       const { data } = await adminClient
         .from("legal_documents")
         .select("id, title, citation, content, court, decision_date, case_number, source_url, source_type, metadata")
-        .in("source_type", ["case_law", "case_law_database"])
+        .in("source_type", ["caselaw", "case_law", "case_law_database"])
         .in("case_number", variants)
         .order("created_at", { ascending: false })
         .limit(1);
