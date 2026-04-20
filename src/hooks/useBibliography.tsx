@@ -62,7 +62,9 @@ function hasAuthorPrefix(text: string, isEnglish: boolean): boolean {
     return /^[A-Z][A-Za-z'’.-]+(?:\s+[A-Z][A-Za-z'’.-]+){1,2}(?=,|\s+##|\s+\*\*)/.test(trimmed);
   }
 
-  const nonAuthorStarters = /^(חוק|חוק-יסוד|חוק\s+יסוד|פקודת|פקודה|תקנות|תקנה|צו|נוהל|הוראת|הצעת|תזכיר|סעיף|סימן|פרק|תוספת|בית|פסק|דין|מדינת|הממשלה|הכנסת|משרד|רשות|בג"ץ|ע"א|רע"א|דנ"א|ע"פ|רע"פ|דנ"פ|ע"ע|עש"מ|בש"פ|ת"א|ת"פ|ע"מ|ה"פ|המר|פר"ק|ת"ט|תא"מ|ת"ד|עב"ל|ס"ק|ד"מ|ראו|ראה|השוו|השווה|שם|לעיל)\b/;
+  // NOTE: JS \b is ASCII-only and never matches a boundary between Hebrew letters and whitespace,
+  // so we use an explicit lookahead instead. Without this, "חוק הירושה, ..." was wrongly tagged as an author.
+  const nonAuthorStarters = /^(חוק-יסוד|חוק\s+יסוד|חוק|פקודת|פקודה|תקנות|תקנה|צו|נוהל|הוראת|הצעת|תזכיר|סעיף|סימן|פרק|תוספת|בית|פסק|דין|מדינת|הממשלה|הכנסת|משרד|רשות|בג"ץ|ע"א|רע"א|דנ"א|ע"פ|רע"פ|דנ"פ|ע"ע|עש"מ|בש"פ|ת"א|ת"פ|ע"מ|ה"פ|המר|פר"ק|ת"ט|תא"מ|ת"ד|עב"ל|ס"ק|ד"מ|ראו|ראה|השוו|השווה|שם|לעיל)(?=[\s:,\-־.(])/;
   if (nonAuthorStarters.test(trimmed)) return false;
   if (/נ['׳]\s|נגד\s/.test(trimmed)) return false;
 
@@ -97,10 +99,9 @@ export function classifyCitation(text: string): {
   let sourceType: BibSourceCategory = "unknown";
   let subCategory = "";
 
-  if (authorDetected) {
-    sourceType = "literature";
-    subCategory = "ספרות";
-  } else if (isSupremeCase) {
+  // Order matters: structural markers (case-law, legislation) win over generic name patterns,
+  // since legislation/case-law tokens are unambiguous while author detection is heuristic.
+  if (isSupremeCase) {
     sourceType = "caselaw_supreme";
     subCategory = "בית המשפט העליון";
   } else if (isDistrictCase) {
@@ -121,6 +122,9 @@ export function classifyCitation(text: string): {
   } else if (hasSecondaryLegislation) {
     sourceType = "legislation_secondary";
     subCategory = "תקנות/צו";
+  } else if (authorDetected) {
+    sourceType = "literature";
+    subCategory = "ספרות";
   } else if (hasLiteratureMarkers) {
     sourceType = "literature";
     subCategory = "ספרות";
