@@ -4,9 +4,9 @@ import { useNavigate, useSearchParams, Navigate } from "react-router-dom";
 import { useOffice } from "@/hooks/useOffice";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { GeometricBackground } from "@/components/GeometricBackground";
-import { lovable } from "@/integrations/lovable/index";
 import { signInWithOfficeDialog } from "@/lib/officeAuth";
 import { isCanonicalHost, PUBLIC_SITE_URL } from "@/lib/publicUrl";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const Auth = () => {
