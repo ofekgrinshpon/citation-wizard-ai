@@ -2537,14 +2537,20 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     );
   } catch (e) {
     console.error("legal-qa error:", e);
-    // Best-effort refund: this catch may run before creditsCharged is in scope; we use a fresh client.
-    try {
-      const reqBody = (e as { __requestBody?: unknown })?.__requestBody;
-      // No-op placeholder; real refund attempted in inner scope. The outer catch covers
-      // truly unexpected throws where we've already lost the consume context.
-    } catch { /* ignore */ }
+    let refunded = false;
+    if (__creditsCharged && __creditRequestId && __userClientForRefund) {
+      try {
+        const { data: refundData } = await __userClientForRefund.rpc("refund_credits", {
+          _request_id: __creditRequestId,
+          _reason: "auto-refund: legal-qa runtime error",
+        });
+        refunded = Boolean((refundData as Record<string, unknown> | null)?.ok);
+      } catch (rfErr) {
+        console.error("refund_credits failed in catch (non-fatal):", rfErr);
+      }
+    }
     return new Response(
-      JSON.stringify({ error: "שגיאה בעיבוד השאלה. נסו שוב." }),
+      JSON.stringify({ error: "שגיאה בעיבוד השאלה. נסו שוב.", refunded, refundReason: refunded ? "runtime-error" : undefined }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
