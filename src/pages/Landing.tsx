@@ -176,12 +176,21 @@ const Landing = () => {
             >
               התחילו!
             </button>
-            <button
-              onClick={() => navigate("/auth?mode=login")}
-              className="text-sm text-primary hover:underline transition-colors"
-            >
-              כניסה למשתמש/ת קיימ/ת
-            </button>
+            <div className="flex items-center justify-center gap-3 text-sm">
+              <button
+                onClick={() => navigate("/auth?mode=login")}
+                className="text-primary hover:underline transition-colors"
+              >
+                כניסה למשתמש/ת קיימ/ת
+              </button>
+              <span className="text-border">·</span>
+              <button
+                onClick={scrollToPricing}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                צפו בתכניות
+              </button>
+            </div>
           </div>
         </div>
 
@@ -207,18 +216,86 @@ const Landing = () => {
           ))}
         </div>
 
-        <div className="text-center mt-16 space-y-4">
+        <div className="text-center mt-16">
           <button
-            onClick={() => navigate("/auth?mode=signup")}
+            onClick={scrollToPricing}
             className="landing-cta-btn px-8 py-3 rounded-xl font-bold text-sm text-primary-foreground"
             style={{ background: "var(--gradient-primary)" }}
           >
-            התחילו עכשיו!
+            לבחירת תכנית
           </button>
-          <p className="text-[10px] text-muted-foreground">
-            © 2026 ReLex. כל הזכויות שמורות.
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section ref={pricingRef} className="py-16 px-4 max-w-6xl mx-auto relative z-10">
+        <div className="text-center mb-12 space-y-3">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground">תכניות ReLex</h2>
+          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+            כל פעולה במערכת — אזכור, ביבליוגרפיה, או שאילתה לעוזר המשפטי — צורכת קרדיטים.
+            בחרו את התכנית שמתאימה לקצב העבודה שלכם.
           </p>
         </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {PRICING_PLANS.map(({ id, highlight, perks }) => {
+            const plan = PLANS[id];
+            return (
+              <div
+                key={id}
+                className={`relative rounded-2xl border bg-card p-6 flex flex-col gap-4 transition-all ${
+                  highlight
+                    ? "border-primary shadow-lg shadow-primary/10 scale-[1.02]"
+                    : "border-border hover:border-primary/40"
+                }`}
+              >
+                {highlight && (
+                  <div className="absolute -top-3 right-4 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">
+                    <Sparkles className="w-3 h-3" />
+                    הכי משתלם
+                  </div>
+                )}
+                <div className="space-y-1">
+                  <h3 className="text-lg font-bold text-foreground">{plan.label}</h3>
+                  <p className="text-xs text-muted-foreground">{plan.tagline}</p>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-2xl font-bold text-foreground">{plan.priceLabel}</div>
+                  <div className="text-xs text-primary font-medium">
+                    {plan.includedCredits.toLocaleString("he-IL")} קרדיטים כלולים
+                  </div>
+                </div>
+                <ul className="space-y-2 flex-1">
+                  {perks.map((perk, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-xs text-foreground">
+                      <Check className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                      <span>{perk}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => navigate("/auth?mode=signup")}
+                  className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all ${
+                    highlight
+                      ? "text-primary-foreground landing-cta-btn"
+                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                  }`}
+                  style={highlight ? { background: "var(--gradient-primary)" } : undefined}
+                >
+                  {id === "basic" ? "התחילו בחינם" : "בחרו תכנית"}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        <p className="text-center text-xs text-muted-foreground mt-8">
+          תוכלו לשדרג, להוסיף קרדיטי Top-up, או לעבור תכנית בכל עת.
+        </p>
+
+        <p className="text-[10px] text-muted-foreground text-center mt-12">
+          © 2026 ReLex. כל הזכויות שמורות.
+        </p>
       </section>
     </div>
   );
