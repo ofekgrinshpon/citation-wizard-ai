@@ -176,21 +176,34 @@ export function BibliographyGenerator() {
   const retryLookup = async (id: string) => {
     const item = reviewItems.find((i) => i.id === id);
     if (!item) return;
-    const query = item.isEditing ? item.editValue.trim() : item.rawInput;
+    // Always prefer the current edit buffer if the user typed something there;
+    // otherwise fall back to the existing citation, then to the original raw input.
+    const editedValue = item.editValue?.trim();
+    const currentCitation = item.citation?.trim();
+    const query = editedValue || currentCitation || item.rawInput;
     if (!query) return;
     updateItem(id, { status: "loading", isEditing: false });
     const r = await lookupOne(query);
     setReviewItems((prev) =>
       prev.map((it) =>
         it.id === id
-          ? { ...it, ...r, isEditing: false, editValue: r.citation || query }
+          ? { ...it, ...r, rawInput: query, isEditing: false, editValue: r.citation || query }
           : it,
       ),
     );
   };
 
   const commitAll = (verifiedOnly = false) => {
-    const ready = reviewItems.filter((it) => {
+    // Auto-save any in-progress edits so the latest text is what gets added.
+    const flushed = reviewItems.map((it) => {
+      if (!it.isEditing) return it;
+      const v = it.editValue?.trim();
+      if (!v) return { ...it, isEditing: false };
+      return { ...it, isEditing: false, citation: v, status: "ok" as ReviewStatus, isVerified: false, options: [], errorMsg: undefined };
+    });
+    if (flushed !== reviewItems) setReviewItems(flushed);
+
+    const ready = flushed.filter((it) => {
       if (it.status !== "ok") return false;
       if (verifiedOnly && !it.isVerified) return false;
       return true;
