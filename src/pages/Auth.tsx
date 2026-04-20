@@ -21,6 +21,15 @@ const Auth = () => {
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
 
+  // Capture ?ref= once (and persist across the OAuth round-trip via sessionStorage).
+  useEffect(() => {
+    const refFromUrl = searchParams.get("ref");
+    if (refFromUrl && refFromUrl.length >= 4 && refFromUrl.length <= 16) {
+      try { sessionStorage.setItem("relex_ref_code", refFromUrl.toUpperCase()); } catch { /* ignore */ }
+    }
+  }, [searchParams]);
+  const refCode = (typeof window !== "undefined" && sessionStorage.getItem("relex_ref_code")) || null;
+
   useEffect(() => {
     const mode = searchParams.get("mode");
     if (mode === "signup") setIsLogin(false);
