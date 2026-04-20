@@ -13,6 +13,13 @@ export interface BibliographyEntry {
   addedFrom: "footnote" | "manual";
   addedAt: number;
   isVerified?: boolean;
+  /** When true, the user manually chose the category — never auto-reclassify on rebuild. */
+  manualCategory?: boolean;
+}
+
+/** Strip stray trailing punctuation/whitespace so bibliography lines never end with "." */
+function stripTrailingPunctuation(text: string): string {
+  return text.replace(/[.,;:\s]+$/u, "").trim();
 }
 
 export type BibSourceCategory =
@@ -91,17 +98,28 @@ export function classifyCitation(text: string): {
   const hasPrimaryLegislation = /(?:^|\s|\()(חוק[\s-]יסוד|חוק|פקודת|פקודה)(?=[\s:-])/.test(trimmed) || /(?:^|\s)לחוק(?=\s)/.test(trimmed) || /^(Act|Law|Basic Law|Statute|Code)\b/i.test(trimmed);
   const hasSecondaryLegislation = /(?:^|\s|\()(תקנות|תקנה|צו|נוהל|הוראת)(?=[\s:-])/.test(trimmed) || /^(Regulations?|Order|Directive)\b/i.test(trimmed);
   const isSupremeCase = /בג"ץ|ע"א|רע"א|דנ"א|ע"פ|רע"פ|דנ"פ|ע"ע|עש"מ|בש"פ/.test(trimmed) || /Supreme Court|S\.Ct\./.test(trimmed);
-  const isDistrictCase = /ת"א|ת"פ|ע"מ|ה"פ|המר|פר"ק/.test(trimmed) || /District Court|Circuit/.test(trimmed);
-  const isMagistrateCase = /ת"ט|תא"מ|ת"ד/.test(trimmed) || /Magistrate/.test(trimmed);
-  const isSpecializedCase = /עב"ל|ס"ק|ד"מ|בית[\s]הדין/.test(trimmed) || /Tribunal/.test(trimmed);
+  // Anchored: each procedure abbreviation must appear as a token followed by a docket number,
+  // otherwise substrings like "המר" inside "המרובה" or "ע\"מ" inside literature get false-matched.
+  const isDistrictCase = /(?:^|\s)(?:ת"א|ת"פ|ע"מ|ה"פ|פר"ק|המ['׳]?)\s+\d/.test(trimmed) || /District Court|Circuit/.test(trimmed);
+  const isMagistrateCase = /(?:^|\s)(?:ת"ט|תא"מ|ת"ד)\s+\d/.test(trimmed) || /Magistrate/.test(trimmed);
+  const isSpecializedCase = /(?:^|\s)(?:עב"ל|ס"ק|ד"מ)\s+\d/.test(trimmed) || /בית[\s]הדין/.test(trimmed) || /Tribunal/.test(trimmed);
   const isGenericCase = /נ['׳]\s|נגד\s|\bv\.\b|\bvs\.\b/.test(trimmed) || /פד"י|פ"ד|דינים/.test(trimmed);
+
+  // Literature pre-check: a quoted Hebrew article title alongside a known journal hint (with
+  // a Hebrew or numeric volume marker) is unambiguously an article — beat any case-law false positives.
+  const looksLikeHebrewArticle = /"[^"]{4,}"\s*(?:משפטים|עיוני\s+משפט|הפרקליט|מחקרי\s+משפט|כתב[\s-]עת)\s+(?:[א-ת]{1,3}|\d+)/.test(trimmed);
 
   let sourceType: BibSourceCategory = "unknown";
   let subCategory = "";
 
   // Order matters: structural markers (case-law, legislation) win over generic name patterns,
   // since legislation/case-law tokens are unambiguous while author detection is heuristic.
-  if (isSupremeCase) {
+  // BUT: an unmistakable literature shape ("...title..." JOURNAL VOLUME) wins first, so that
+  // articles whose Hebrew title happens to contain procedure-abbreviation substrings stay literature.
+  if (looksLikeHebrewArticle) {
+    sourceType = "literature";
+    subCategory = "ספרות";
+  } else if (isSupremeCase) {
     sourceType = "caselaw_supreme";
     subCategory = "בית המשפט העליון";
   } else if (isDistrictCase) {
@@ -184,21 +202,36 @@ function rebuildBibliographyEntries(items: BibliographyEntry[]): BibliographyEnt
   const rebuilt: BibliographyEntry[] = [];
 
   for (const item of items) {
-    if (!item?.fullCitation?.trim()) continue;
+    const cleanedCitation = stripTrailingPunctuation(item?.fullCitation ?? "");
+    if (!cleanedCitation) continue;
 
-    const normalized = normalizeBibliographyCitation(item.fullCitation);
+    const normalized = normalizeBibliographyCitation(cleanedCitation);
     if (!normalized) continue;
     if (/^שם(?:[.\s,]|$)/.test(normalized)) continue;
     if (/לעיל ה["'׳]?ש/.test(normalized)) continue;
     if (seen.has(normalized)) continue;
 
     seen.add(normalized);
+    const auto = classifyCitation(cleanedCitation);
+    // If user manually picked the category, keep their sourceType/subCategory choice;
+    // only refresh language/year so sorting still works after edits.
+    const preserved = item.manualCategory
+      ? {
+          sourceType: item.sourceType,
+          subCategory: item.subCategory,
+          authorSurname: item.authorSurname,
+          language: auto.language,
+          year: auto.year,
+        }
+      : auto;
+
     rebuilt.push({
       ...item,
-      rawInput: item.rawInput || item.fullCitation,
+      fullCitation: cleanedCitation,
+      rawInput: item.rawInput || cleanedCitation,
       addedFrom: item.addedFrom === "footnote" ? "footnote" : "manual",
       addedAt: item.addedAt || Date.now(),
-      ...classifyCitation(item.fullCitation),
+      ...preserved,
     });
   }
 
@@ -294,13 +327,14 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
   const addEntry = useCallback(
     (rawInput: string, fullCitation: string, from: "footnote" | "manual"): boolean => {
       let added = false;
+      const cleaned = stripTrailingPunctuation(fullCitation);
       setEntries((prev) => {
-        if (isDuplicate(fullCitation, prev)) return rebuildBibliographyEntries(prev);
-        const info = classifyCitation(fullCitation);
+        if (isDuplicate(cleaned, prev)) return rebuildBibliographyEntries(prev);
+        const info = classifyCitation(cleaned);
         const entry: BibliographyEntry = {
           id: crypto.randomUUID(),
           rawInput,
-          fullCitation,
+          fullCitation: cleaned,
           addedFrom: from,
           addedAt: Date.now(),
           ...info,
@@ -320,15 +354,18 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
         const next = [...prev];
         for (const item of items) {
           if (isDuplicate(item.fullCitation, next)) continue;
-          const info = classifyCitation(item.fullCitation);
+          const cleanedCitation = stripTrailingPunctuation(item.fullCitation);
+          const info = classifyCitation(cleanedCitation);
+          const manualCategory = Boolean(item.sourceTypeOverride);
           if (item.sourceTypeOverride) info.sourceType = item.sourceTypeOverride;
           next.push({
             id: crypto.randomUUID(),
             rawInput: item.rawInput,
-            fullCitation: item.fullCitation,
+            fullCitation: cleanedCitation,
             addedFrom: from,
             addedAt: Date.now(),
             isVerified: item.isVerified,
+            manualCategory,
             ...info,
           });
           count++;
