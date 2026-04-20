@@ -353,15 +353,18 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
         const next = [...prev];
         for (const item of items) {
           if (isDuplicate(item.fullCitation, next)) continue;
-          const info = classifyCitation(item.fullCitation);
+          const cleanedCitation = stripTrailingPunctuation(item.fullCitation);
+          const info = classifyCitation(cleanedCitation);
+          const manualCategory = Boolean(item.sourceTypeOverride);
           if (item.sourceTypeOverride) info.sourceType = item.sourceTypeOverride;
           next.push({
             id: crypto.randomUUID(),
             rawInput: item.rawInput,
-            fullCitation: item.fullCitation,
+            fullCitation: cleanedCitation,
             addedFrom: from,
             addedAt: Date.now(),
             isVerified: item.isVerified,
+            manualCategory,
             ...info,
           });
           count++;
