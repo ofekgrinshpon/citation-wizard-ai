@@ -2342,11 +2342,27 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       }
     }
 
-    // Filter short footnotes and renumber
-    const validFootnotes = footnotes.filter((fn) => fn.citation.trim().length >= 10);
+    // Filter footnotes that are bare URLs / URL-only (violation of citation rules) or too short, then renumber
+    const URL_ONLY_RE = /^(?:\[?\s*)?https?:\/\/\S+(?:\s*\([^)]*\))?\s*\.?\s*$/i;
+    const isUrlOnly = (txt: string): boolean => {
+      const t = txt.trim();
+      if (!t) return false;
+      // strip trailing parenthetical date like "(10.04.2024)" and trailing punctuation, then check
+      const stripped = t.replace(/\s*\([^)]*\)\s*\.?$/, "").replace(/\.$/, "").trim();
+      return URL_ONLY_RE.test(t) || /^https?:\/\/\S+$/i.test(stripped);
+    };
+    const validFootnotes = footnotes.filter(
+      (fn) => fn.citation.trim().length >= 10 && !isUrlOnly(fn.citation),
+    );
     if (validFootnotes.length !== footnotes.length) {
+      const droppedUrlOnly = footnotes.filter((fn) => isUrlOnly(fn.citation)).length;
+      const droppedShort = footnotes.filter((fn) => fn.citation.trim().length < 10).length;
+      if (droppedUrlOnly > 0) console.log(`Dropped ${droppedUrlOnly} URL-only footnotes (rule violation)`);
+      if (droppedShort > 0) console.log(`Dropped ${droppedShort} too-short footnotes`);
       const removedNumbers = new Set(
-        footnotes.filter((fn) => fn.citation.trim().length < 10).map((fn) => fn.number)
+        footnotes
+          .filter((fn) => fn.citation.trim().length < 10 || isUrlOnly(fn.citation))
+          .map((fn) => fn.number),
       );
       for (const num of removedNumbers) {
         answer = answer.replaceAll(toSuperscript(num), "");
