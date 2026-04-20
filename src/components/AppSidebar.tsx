@@ -2,17 +2,15 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
-import { useSubscription } from "@/hooks/useSubscription";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { CreditPill } from "@/components/CreditPill";
 
 export function AppSidebar() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { projects, currentProject, setCurrentProjectId, createProject, renameProject, deleteProject, loading: projectsLoading } = useProjects();
-  const { isSubscribed, loading: subLoading } = useSubscription();
   const [newName, setNewName] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [displayName, setDisplayName] = useState("");
@@ -82,17 +80,12 @@ export function AppSidebar() {
         className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted transition-colors text-right w-full"
       >
         <span>👤</span>
-        <span className="truncate">{displayName || user?.email || "הפרופיל שלי"}</span>
-        {!subLoading && (
-          <Badge
-            className="cursor-pointer text-[10px] px-1.5 py-0"
-            variant={isSubscribed ? "default" : "destructive"}
-            onClick={(e) => { e.stopPropagation(); navigate("/profile?tab=account"); }}
-          >
-            {isSubscribed ? "מנוי" : "לא מנוי"}
-          </Badge>
-        )}
+        <span className="truncate flex-1">{displayName || user?.email || "הפרופיל שלי"}</span>
       </button>
+
+      <div className="px-2 mt-1">
+        <CreditPill className="w-full justify-between" />
+      </div>
 
       <div className="h-px bg-border my-2" />
 

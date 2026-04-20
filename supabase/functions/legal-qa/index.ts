@@ -653,6 +653,11 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Refund state — hoisted so the outer catch can refund on unexpected throws.
+  let __creditsCharged = false;
+  let __creditRequestId: string | null = null;
+  let __userClientForRefund: ReturnType<typeof createClient> | null = null;
+
   try {
     // Auth gate
     const authHeader = req.headers.get("Authorization");
@@ -679,7 +684,7 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId } = body;
 
     if (!question || typeof question !== "string" || question.trim().length < 3) {
       return new Response(JSON.stringify({ error: "Question too short" }), {
@@ -687,6 +692,89 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    // ===== Credit gate: consume up-front, refund automatically on failure / empty result =====
+    // Cost: 5 for legal QA. Document grounding adds +2 surcharge.
+    // Academic sub-modes (suggest_topics, validate_question, propose_outline) cost 0;
+    // chapter generation costs 8 (handled below before its own AI call).
+    const isAcademicSubModeFree =
+      taskMode === "academic_writing" &&
+      typeof academicStep === "string" &&
+      ["suggest_topics", "validate_question", "propose_outline"].includes(academicStep);
+    const isAcademicChapter =
+      taskMode === "academic_writing" && academicStep === "write_chapter";
+    const hasGroundingDoc =
+      (Array.isArray(documentTexts) && documentTexts.length > 0) ||
+      (typeof documentText === "string" && documentText.trim().length > 100);
+
+    let creditCost = 5;
+    if (isAcademicSubModeFree) creditCost = 0;
+    else if (isAcademicChapter) creditCost = 8;
+    if (hasGroundingDoc && !isAcademicChapter && !isAcademicSubModeFree) creditCost += 2;
+
+    const creditRequestId =
+      typeof clientRequestId === "string" && clientRequestId.length >= 8
+        ? clientRequestId
+        : crypto.randomUUID();
+    __creditRequestId = creditRequestId;
+
+    // Use a user-scoped client (with the caller's JWT) so consume_credits sees auth.uid()
+    const userClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+    __userClientForRefund = userClient;
+
+    let creditsCharged = false;
+    if (creditCost > 0) {
+      const { data: consumeData, error: consumeErr } = await userClient.rpc("consume_credits", {
+        _amount: creditCost,
+        _reason: `legal-qa:${taskMode || "research"}${hasGroundingDoc ? "+doc" : ""}`,
+        _request_id: creditRequestId,
+      });
+      if (consumeErr) {
+        console.error("consume_credits error:", consumeErr);
+        return new Response(JSON.stringify({ error: "שגיאה בחיוב קרדיטים. נסו שוב." }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const cr = (consumeData ?? {}) as Record<string, unknown>;
+      if (!cr.ok) {
+        if (cr.error === "INSUFFICIENT_CREDITS") {
+          return new Response(JSON.stringify({
+            error: "INSUFFICIENT_CREDITS",
+            required: cr.required ?? creditCost,
+            remaining_included: cr.remaining_included ?? 0,
+            remaining_topup: cr.remaining_topup ?? 0,
+          }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+        return new Response(JSON.stringify({ error: cr.error || "CREDIT_ERROR" }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      creditsCharged = true;
+      __creditsCharged = true;
+    }
+
+    // Helper: build a refund-aware payload for refusals / empty results.
+    const refundAndPayload = async (extraReason: string, payload: Record<string, unknown>) => {
+      let refunded = false;
+      if (creditsCharged) {
+        try {
+          const { data: refundData } = await userClient.rpc("refund_credits", {
+            _request_id: creditRequestId,
+            _reason: `auto-refund: ${extraReason}`,
+          });
+          refunded = Boolean((refundData as Record<string, unknown> | null)?.ok);
+          creditsCharged = !refunded;
+          __creditsCharged = creditsCharged;
+        } catch (rfErr) {
+          console.error("refund_credits failed (non-fatal):", rfErr);
+        }
+      }
+      return { ...payload, refunded, refundReason: refunded ? extraReason : undefined };
+    };
 
     const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
     if (!PERPLEXITY_API_KEY) throw new Error("PERPLEXITY_API_KEY is not configured");
@@ -814,14 +902,15 @@ serve(async (req) => {
 
       if (!verify || verify.source === "none" || !verify.fullText) {
         console.log("case_summary: refusing — no full text available");
-        return new Response(JSON.stringify({
+        const payload = await refundAndPayload("case_summary:no-fulltext", {
           refusal: true,
           source: "none",
           message: verify?.refusal_message || "פסק הדין אינו קיים במערכת ולא ניתן היה לאתר את הטקסט המלא שלו. כדי שאוכל לסכם אותו עבורך, אנא העלה את הקובץ או הדבק את הטקסט בתיבת הטקסט.",
           answer: "",
           footnotes: [],
           source_urls: [],
-        }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        });
+        return new Response(JSON.stringify(payload), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
 
       // Defense-in-depth: Hebrew-ratio sanity gate. If the extracted text is mostly
@@ -835,14 +924,15 @@ serve(async (req) => {
         const ratio = hebrew / total;
         if (ratio < 0.05) {
           console.log(`case_summary: refusing — extracted text failed Hebrew-ratio gate (${(ratio * 100).toFixed(2)}%, source=${verify.source})`);
-          return new Response(JSON.stringify({
+          const payload = await refundAndPayload("case_summary:hebrew-ratio-fail", {
             refusal: true,
             source: "none",
             message: "פסק הדין אינו קיים במערכת ולא ניתן היה לאתר את הטקסט המלא שלו. כדי שאוכל לסכם אותו עבורך, אנא העלה את הקובץ או הדבק את הטקסט בתיבת הטקסט.",
             answer: "",
             footnotes: [],
             source_urls: [],
-          }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+          });
+          return new Response(JSON.stringify(payload), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
       }
 
@@ -883,7 +973,8 @@ ${(verify.fullText as string).slice(0, 50000)}
       if (!aiRes.ok) {
         const errText = await aiRes.text();
         console.error("case_summary AI error:", aiRes.status, errText);
-        return new Response(JSON.stringify({ error: "שגיאה בעיבוד הסיכום. נסו שוב." }), {
+        const payload = await refundAndPayload("case_summary:ai-error", { error: "שגיאה בעיבוד הסיכום. נסו שוב." });
+        return new Response(JSON.stringify(payload), {
           status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
@@ -934,11 +1025,12 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
       const wordCount = auditSubject.trim().split(/\s+/).filter(Boolean).length;
       if (wordCount < 150) {
-        return new Response(JSON.stringify({
+        const payload = await refundAndPayload("pleading_analysis:too-short", {
           answer: "המסמך שסופק קצר מדי לביקורת מהותית (פחות מ-150 מילים). אנא הדביקו או העלו מסמך מלא יותר.",
           footnotes: [],
           source_urls: [],
-        }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        });
+        return new Response(JSON.stringify(payload), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
     }
 
@@ -1366,8 +1458,9 @@ ${(verify.fullText as string).slice(0, 50000)}
     }
 
     if (rankedMatches.length === 0 && !searchResults && !hasDocument) {
+      const payload = await refundAndPayload("legal-qa:no-sources", { error: "לא נמצאו מקורות רלוונטיים. נסו לנסח את השאלה אחרת." });
       return new Response(
-        JSON.stringify({ error: "לא נמצאו מקורות רלוונטיים. נסו לנסח את השאלה אחרת." }),
+        JSON.stringify(payload),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -2444,8 +2537,20 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     );
   } catch (e) {
     console.error("legal-qa error:", e);
+    let refunded = false;
+    if (__creditsCharged && __creditRequestId && __userClientForRefund) {
+      try {
+        const { data: refundData } = await __userClientForRefund.rpc("refund_credits", {
+          _request_id: __creditRequestId,
+          _reason: "auto-refund: legal-qa runtime error",
+        });
+        refunded = Boolean((refundData as Record<string, unknown> | null)?.ok);
+      } catch (rfErr) {
+        console.error("refund_credits failed in catch (non-fatal):", rfErr);
+      }
+    }
     return new Response(
-      JSON.stringify({ error: "שגיאה בעיבוד השאלה. נסו שוב." }),
+      JSON.stringify({ error: "שגיאה בעיבוד השאלה. נסו שוב.", refunded, refundReason: refunded ? "runtime-error" : undefined }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

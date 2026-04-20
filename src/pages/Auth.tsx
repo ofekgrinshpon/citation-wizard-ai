@@ -21,6 +21,15 @@ const Auth = () => {
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
 
+  // Capture ?ref= once (and persist across the OAuth round-trip via sessionStorage).
+  useEffect(() => {
+    const refFromUrl = searchParams.get("ref");
+    if (refFromUrl && refFromUrl.length >= 4 && refFromUrl.length <= 16) {
+      try { sessionStorage.setItem("relex_ref_code", refFromUrl.toUpperCase()); } catch { /* ignore */ }
+    }
+  }, [searchParams]);
+  const refCode = (typeof window !== "undefined" && sessionStorage.getItem("relex_ref_code")) || null;
+
   useEffect(() => {
     const mode = searchParams.get("mode");
     if (mode === "signup") setIsLogin(false);
@@ -53,9 +62,10 @@ const Auth = () => {
         const target = isOfficeAddin ? "/app?addin=1" : "/app";
         navigate(target, { replace: true });
       } else {
-        const { error } = await signUp(email, password, fullName);
+        const { error } = await signUp(email, password, fullName, refCode || undefined);
         if (error) throw error;
         toast.success("נרשמת בהצלחה! בדוק את האימייל לאימות.");
+        try { sessionStorage.removeItem("relex_ref_code"); } catch { /* ignore */ }
       }
     } catch (err: any) {
       toast.error(err.message || "שגיאה בהתחברות");
@@ -76,6 +86,12 @@ const Auth = () => {
             {isLogin ? "התחברות" : "הרשמה"}
           </p>
         </div>
+
+        {refCode && !isLogin && (
+          <div className="rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-xs text-foreground text-center">
+            🎁 הצטרפת דרך הזמנה (<span className="font-mono">{refCode}</span>) — לאחר הפעולה הראשונה שלך תקבלו שניכם 10 קרדיטים.
+          </div>
+        )}
 
         <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-3.5">

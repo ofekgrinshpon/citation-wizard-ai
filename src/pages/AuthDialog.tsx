@@ -19,8 +19,13 @@ function isOfficeAddinRoute() {
 function getRedirectUrl() {
   const params = new URLSearchParams(window.location.search);
   const addin = params.get("addin");
+  const ref = params.get("ref");
+  if (ref && ref.length >= 4 && ref.length <= 16) {
+    try { sessionStorage.setItem("relex_ref_code", ref.toUpperCase()); } catch { /* ignore */ }
+  }
   const base = `${window.location.origin}/auth-dialog`;
-  return addin ? `${base}?addin=${addin}` : base;
+  const qs = [addin ? `addin=${addin}` : null, ref ? `ref=${ref}` : null].filter(Boolean).join("&");
+  return qs ? `${base}?${qs}` : base;
 }
 
 function sendToParent(message: object) {
