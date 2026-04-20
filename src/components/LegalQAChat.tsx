@@ -1922,16 +1922,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         {/* Verifying-source progress (case_summary only) */}
         {!isAcademic && loading && taskMode === "case_summary" && (
           <Card className="mt-4 border-primary/30">
-            <CardContent className="p-5 space-y-3">
+            <CardContent className="p-5">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                 <span className="text-sm font-semibold text-foreground">מאמת מקור...</span>
               </div>
-              <ul className="text-xs text-muted-foreground space-y-1.5 pr-6">
-                <li>• בדיקת קלט המשתמש</li>
-                <li>• חיפוש במאגר המקומי</li>
-                <li>• איתור טקסט מלא חיצוני</li>
-              </ul>
             </CardContent>
           </Card>
         )}
