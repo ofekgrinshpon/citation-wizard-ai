@@ -7,6 +7,7 @@ import { toast } from "sonner";
 interface BatchResult {
   processed: number;
   failed: number;
+  rate_limited?: number;
   remaining: number;
   batch_size: number;
 }
@@ -15,6 +16,7 @@ export default function BatchEmbeddingPanel() {
   const [running, setRunning] = useState(false);
   const [totalProcessed, setTotalProcessed] = useState(0);
   const [totalFailed, setTotalFailed] = useState(0);
+  const [totalRateLimited, setTotalRateLimited] = useState(0);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [batchCount, setBatchCount] = useState(0);
   const abortRef = useRef(false);
@@ -34,6 +36,7 @@ export default function BatchEmbeddingPanel() {
     setRunning(true);
     setTotalProcessed(0);
     setTotalFailed(0);
+    setTotalRateLimited(0);
     setBatchCount(0);
 
     const { data: { session } } = await supabase.auth.getSession();
@@ -80,6 +83,7 @@ export default function BatchEmbeddingPanel() {
 
         setTotalProcessed((prev) => prev + data.processed);
         setTotalFailed((prev) => prev + data.failed);
+        setTotalRateLimited((prev) => prev + (data.rate_limited || 0));
         setRemaining(data.remaining);
         setBatchCount((prev) => prev + 1);
 
@@ -208,6 +212,11 @@ export default function BatchEmbeddingPanel() {
             <span>✅ עובדו: <strong className="text-foreground">{totalProcessed.toLocaleString()}</strong></span>
             {totalFailed > 0 && (
               <span>❌ נכשלו: <strong className="text-destructive">{totalFailed.toLocaleString()}</strong></span>
+            )}
+            {totalRateLimited > 0 && (
+              <span title="הגעה למגבלת קצב — ינוסה אוטומטית בריצה הבאה">
+                ⏱ הוגבל קצב (ינוסה שוב): <strong className="text-foreground">{totalRateLimited.toLocaleString()}</strong>
+              </span>
             )}
             {remaining !== null && (
               <span>⏳ נותרו: <strong className="text-foreground">{remaining.toLocaleString()}</strong></span>
