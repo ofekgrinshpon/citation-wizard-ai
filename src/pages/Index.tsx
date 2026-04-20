@@ -39,6 +39,8 @@ interface Message {
 }
 
 import { applyYearPreferences, isLegislationInput, extractLawNameFromInput, extractCitationFromResponse, type YearPreferences } from "@/lib/citationUtils";
+import { validateCitationInput } from "@/lib/citationInputValidation";
+import { handleRefundResponse } from "@/lib/refundResponse";
 
 interface PendingVerification {
   lawName: string;
@@ -188,18 +190,32 @@ const Index = () => {
   }
 
   const callAPI = async (userMessage: string, history: Message[]) => {
+    const requestId = crypto.randomUUID();
     const { data, error } = await supabase.functions.invoke("citation-chat", {
       body: {
         messages: [
           ...history.map((m) => ({ role: m.role, content: m.content })),
           { role: "user", content: userMessage },
         ],
+        requestId,
       },
     });
 
     if (error) throw error;
 
     if (data?.error) {
+      if (data.error === "INVALID_INPUT") {
+        toast.error(data.messageHe || "לא ניתן לעבד את הבקשה כי לא זוהה טקסט משפטי ברור לאזכור.", {
+          description: "לא בוצע חיוב בקרדיטים.",
+        });
+        const err = new Error("INVALID_INPUT") as Error & { isInvalidInput?: boolean };
+        err.isInvalidInput = true;
+        throw err;
+      }
+      if (data.error === "INSUFFICIENT_CREDITS") {
+        toast.error("אין מספיק קרדיטים — שדרגו תוכנית או הוסיפו טופ-אפ.");
+        throw new Error("INSUFFICIENT_CREDITS");
+      }
       if (data.error.includes("Rate limit")) {
         toast.error("מגבלת קצב – נסה שוב בעוד רגע");
       } else if (data.error.includes("Payment")) {
@@ -207,6 +223,9 @@ const Index = () => {
       }
       throw new Error(data.error);
     }
+
+    // Server signaled it auto-refunded the credit (e.g. AI returned a refusal).
+    handleRefundResponse(data);
 
     return data?.content || "אירעה שגיאה בעיבוד הבקשה.";
   };
@@ -478,6 +497,16 @@ const Index = () => {
   const handleSend = async () => {
     const rawText = input.trim();
     if (!rawText || loading) return;
+
+    // Pre-validate: prevent charging credits for gibberish / empty / non-legal input.
+    const validation = validateCitationInput(rawText);
+    if (!validation.valid) {
+      toast.error(validation.messageHe || "לא ניתן לעבד את הבקשה כי לא זוהה טקסט משפטי ברור לאזכור.", {
+        description: "לא בוצע חיוב בקרדיטים.",
+      });
+      return;
+    }
+
     const PINPOINT_RE = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
     if (subscription.isLimitReached) return;
 
@@ -693,11 +722,17 @@ const Index = () => {
           await saveVerifiedSource(fullRawInput, extractedCitation, citationPayload.source_type);
         }
       }
-    } catch {
-      setMessages([
-        ...newMessages,
-        { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." },
-      ]);
+    } catch (err) {
+      const e = err as Error & { isInvalidInput?: boolean; message?: string };
+      if (e?.isInvalidInput || e?.message === "INVALID_INPUT" || e?.message === "INSUFFICIENT_CREDITS") {
+        // Already toasted by callAPI. Roll back the user message bubble — nothing was processed.
+        setMessages(messages);
+      } else {
+        setMessages([
+          ...newMessages,
+          { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." },
+        ]);
+      }
     } finally {
       setLoading(false);
       setLoadingMessage(null);
