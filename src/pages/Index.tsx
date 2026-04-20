@@ -722,11 +722,17 @@ const Index = () => {
           await saveVerifiedSource(fullRawInput, extractedCitation, citationPayload.source_type);
         }
       }
-    } catch {
-      setMessages([
-        ...newMessages,
-        { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." },
-      ]);
+    } catch (err) {
+      const e = err as Error & { isInvalidInput?: boolean; message?: string };
+      if (e?.isInvalidInput || e?.message === "INVALID_INPUT" || e?.message === "INSUFFICIENT_CREDITS") {
+        // Already toasted by callAPI. Roll back the user message bubble — nothing was processed.
+        setMessages(messages);
+      } else {
+        setMessages([
+          ...newMessages,
+          { role: "assistant", content: "שגיאה בחיבור לשרת. אנא נסה שנית." },
+        ]);
+      }
     } finally {
       setLoading(false);
       setLoadingMessage(null);
