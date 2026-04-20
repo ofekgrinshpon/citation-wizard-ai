@@ -501,18 +501,23 @@ async function rerankLocalMatches(
     return `[${i}] ${d.match.document_title}\nתוכן: ${d.chunks.join(" ").slice(0, 400)}`;
   }).join("\n\n");
 
-  const rerankPrompt = `אתה מדרג רלוונטיות תוכנית של מקורות משפטיים לשאלה.
+  const rerankPrompt = `אתה מדרג רלוונטיות מהותית של מקורות משפטיים לשאלה. עליך להיות מחמיר.
 
 שאלה: ${question}
 
 מקורות:
 ${sourceList}
 
-דרג כל מקור 0–10 לפי רלוונטיות תוכנית בלבד לשאלה. אל תתחשב בסוג המקור (פסיקה / מאמר / מחקר כנסת / רגולציה) — רק במידת העזרה שיתן בתשובה משפטית מקצועית ומבוססת.
-0–2 = לא קשור / מחוץ לסוגיה. 3 = תורם לרקע משפטי או עוסק בענף הדין הרלוונטי (יש לשמור). 4–6 = רלוונטי. 7–10 = מרכזי לסוגיה.
+דרג כל מקור 0–10 לפי רלוונטיות מהותית בלבד לשאלה הספציפית.
+- 0–2 = לא קשור לסוגיה / ענף דין שונה / עוסק בנושא אחר לחלוטין (גם אם יש מילות מפתח דומות).
+- 3–4 = נוגע באופן רחוק / רקע כללי בלבד שאינו ענה על השאלה.
+- 5–6 = רלוונטי לענף הדין ולסוגיה הקרובה.
+- 7–10 = עוסק ישירות בסוגיה הספציפית הנשאלת.
+
+חשוב במיוחד עבור פסיקה: התאמה בין ענף הדין חיונית. שאלה על דיני חוזים אינה מצדיקה ציון גבוה לפסקי דין מענייני משפחה/עבודה/פלילים אלא אם הם עוסקים ישירות בעקרון הנידון. אל תהסס לתת ציון 0–2 לפסיקה לא רלוונטית.
 
 החזר רק מערך JSON של מספרים, ציון אחד לכל מקור לפי הסדר.
-דוגמה: [8, 2, 9, 1, 6]`;
+דוגמה: [8, 1, 9, 0, 6]`;
 
   try {
     const res = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -584,8 +589,31 @@ ${sourceList}
     // Then take top-N — no hard threshold, so semantically-relevant vector hits with score=0 still survive.
     const TOP_N_DOCS = 6;
     const sortedDocs = [...docScores].sort((a, b) => b.score - a.score || a.originalIndex - b.originalIndex);
-    const topDocs = sortedDocs.slice(0, TOP_N_DOCS);
+
+    // Hard relevance gate: drop docs with score <= 2 (off-topic).
+    // For caselaw specifically: also drop score 3 (only weakly related), unless we'd end up with zero caselaw kept.
+    const getDocSourceType = (docId: string): string =>
+      docMap.get(docId)?.match.source_type || "";
+    const isCaselaw = (docId: string): boolean => {
+      const st = getDocSourceType(docId);
+      return st === "case_law" || st === "caselaw" || st === "ruling";
+    };
+
+    const aboveHardFloor = sortedDocs.filter(d => d.score >= 3);
+    const strictKept = aboveHardFloor.filter(d => !isCaselaw(d.docId) || d.score >= 4);
+    // If filtering left zero caselaw but there were caselaw candidates with score 3, allow them back.
+    const hadCaselaw = sortedDocs.some(d => isCaselaw(d.docId));
+    const keptHasCaselaw = strictKept.some(d => isCaselaw(d.docId));
+    let baseKept = strictKept;
+    if (hadCaselaw && !keptHasCaselaw) {
+      const weakCaselaw = aboveHardFloor.filter(d => isCaselaw(d.docId) && d.score === 3);
+      baseKept = [...strictKept, ...weakCaselaw].sort(
+        (a, b) => b.score - a.score || a.originalIndex - b.originalIndex,
+      );
+    }
+    const topDocs = baseKept.slice(0, TOP_N_DOCS);
     const topDocIds = new Set(topDocs.map(d => d.docId));
+    const droppedByGate = sortedDocs.length - baseKept.length;
 
     const result: RankedMatch[] = [];
     const rerankScoreLog: Record<string, string> = {};
@@ -602,11 +630,11 @@ ${sourceList}
       }
     }
 
-    const zeroScoreKept = topDocs.filter(d => d.score === 0).length;
     const keptDocs = topDocIds.size;
     console.log(`Rerank scores per doc: ${JSON.stringify(rerankScoreLog)}`);
-    console.log(`Rerank: kept top-${TOP_N_DOCS} of ${docsArr.length} docs by score (zero-score kept: ${zeroScoreKept})`);
-    console.log(`Local kept after top-${TOP_N_DOCS} slice: ${keptDocs}/${docsArr.length} (zero-score: ${zeroScoreKept}, active verb pairs: ${activePairsRR.length})`);
+    console.log(`Rerank gate dropped ${droppedByGate} off-topic docs (score<3, or caselaw<4 with caselaw alternatives).`);
+    console.log(`Rerank: kept top-${TOP_N_DOCS} of ${docsArr.length} docs by score`);
+    console.log(`Local kept after gate + top-${TOP_N_DOCS} slice: ${keptDocs}/${docsArr.length} (active verb pairs: ${activePairsRR.length})`);
 
     return result;
   } catch (err) {
@@ -1594,6 +1622,12 @@ ${academicChapterContext}
   • אם Perplexity מכיל מידע מהותי שסותר את המקור המקומי — התעלם ממנו לחלוטין. המקומי גובר תמיד.
 - בקונפליקט בין שני סוגי המקורות על תוכן/נוסח — המקומי גובר באופן מוחלט.
 - אם יש מקורות מאומתים רלוונטיים, לפחות 60% מההפניות חייבות להיות מקורות מאומתים.
+
+חריג מותר – הערת שוליים לחקיקה שהוזכרה במפורש:
+- כאשר השאלה או גוף התשובה מאזכרים במפורש שם של חוק/פקודה/תקנה ספציפיים (למשל "חוק החוזים (חלק כללי)", "פקודת הנזיקין", "תקנות סדר הדין האזרחי"), מותר להוסיף הערת שוליים אחת לחקיקה זו גם אם החוק עצמו אינו מופיע במקורות [מאומת].
+- את פרטי הפרסום (ס"ח/ק"ת, מספר עמוד, שנה) יש לקחת **אך ורק** ממקור [חיצוני – למטא-דאטה בלבד] של Perplexity. אם אין שם פרטי פרסום — כתוב "(לא נמצאו פרטי פרסום)" אחרי שם החוק. **אסור להמציא** מספרי ס"ח, עמודים או שנים.
+- חריג זה חל רק על הציטוט הביבליוגרפי של החוק. **אסור** לצטט את לשון הסעיף או לקבוע מה החוק "קובע" אלא אם זה מעוגן במקור [מאומת].
+- דוגמה מותרת: 'חוק החוזים (חלק כללי), התשל"ג-1973, ס"ח 118.' או 'חוק החוזים (חלק כללי) (לא נמצאו פרטי פרסום).'
 
 כלל קריטי – רלוונטיות מקורות:
 - לפני שאתה מצטט מקור כלשהו, בדוק שהוא רלוונטי מהותית לשאלה המשפטית. התאמה במילות מפתח (למשל "ראש הממשלה") אינה מספיקה — המקור חייב לעסוק באותה סוגיה משפטית.
