@@ -1,69 +1,46 @@
 
 
-## Why the flash keeps happening
+## Goal
+Restore the previous behavior where Google's consent screen reads "המשך אל **relexlm.com**" by reverting to the Lovable broker. Trade-off: the brief `oauth.lovable.app` URL flash will return.
 
-The flash is **structural**, not configuration. The `lovable.auth.signInWithOAuth(...)` helper always sends the browser through `/~oauth/initiate`, which the Lovable proxy worker rewrites to `oauth.lovable.app` before forwarding to Google. **Custom Google credentials change which Client ID is used at the broker, but they do not remove the broker from the redirect chain.** So even on `relexlm.com` with everything configured perfectly, the URL bar will briefly show `oauth.lovable.app/~oauth/...` mid-flow.
+## Why this works
+The Lovable broker (`lovable.auth.signInWithOAuth`) registers your custom domain as the OAuth client display name with Google, so the consent screen shows "relexlm.com" instead of the technical callback host.
 
-The only way to make that frame disappear is to skip the Lovable broker entirely.
+## Changes
 
-## The fix: call Supabase Google OAuth directly
+### 1. `src/pages/Auth.tsx`
+- Restore the `import { lovable } from "@/integrations/lovable/index"`.
+- Replace both `supabase.auth.signInWithOAuth({ provider: "google", ... })` calls (the click handler and the `?oauth=google` auto-trigger `useEffect`) with:
+  ```ts
+  const result = await lovable.auth.signInWithOAuth("google", {
+    redirect_uri: `${window.location.origin}/auth-redirect`,
+    extraParams: { prompt: "select_account" },
+  });
+  if (result.error) { /* toast */ }
+  ```
+- Keep the `isCanonicalHost()` redirect to `relexlm.com/auth?...` so the flow always finishes on the branded domain.
 
-Replace the broker call with `supabase.auth.signInWithOAuth("google", ...)`. Supabase already has Google enabled on this project (verified just now via its public auth settings endpoint), so the flow becomes:
+### 2. `src/pages/AuthDialog.tsx` (Office add-in)
+- Replace `supabase.auth.signInWithOAuth({ provider: "google", ... })` with `lovable.auth.signInWithOAuth("google", { redirect_uri: ..., extraParams: { prompt: "select_account" } })`.
+- Keep the `onAuthStateChange` listener — the Lovable broker calls `supabase.auth.setSession` internally, which fires the same event.
 
-```text
-relexlm.com  →  ioktiqcffungtlsmlkcv.supabase.co/auth/v1/authorize  →  accounts.google.com  →  relexlm.com/auth-redirect
+### 3. Google Cloud Console (you, one-time)
+Add the Lovable broker callback back to **Authorized redirect URIs** on your Google OAuth client:
 ```
-
-No `oauth.lovable.app` frame anywhere. The Supabase callback hop is invisibly fast and uses your own project URL, not a Lovable-branded one.
-
-## Implementation
-
-### 1. `src/pages/Auth.tsx` — public web sign-in
-Replace the Google button handler. Drop the import of `lovable` and the `?oauth=google` auto-trigger `useEffect` (no longer needed because we no longer have to bounce off the canonical host to reach a custom-credentials broker). Keep the host-redirect to `relexlm.com` so the public-facing flow still always finishes on the branded domain.
-
-```ts
-import { supabase } from "@/integrations/supabase/client";
-
-// On Google click (non-Office):
-if (!isCanonicalHost()) {
-  // Same canonical-domain redirect as today, minus the oauth=google trigger
-  window.location.replace(`${PUBLIC_SITE_URL}/auth?...`);
-  return;
-}
-const { error } = await supabase.auth.signInWithOAuth({
-  provider: "google",
-  options: {
-    redirectTo: `${window.location.origin}/auth-redirect`,
-    queryParams: { prompt: "select_account" },
-  },
-});
+https://oauth.lovable.app/~oauth/callback
 ```
+The Supabase callback (`https://ioktiqcffungtlsmlkcv.supabase.co/auth/v1/callback`) you added last round can stay — harmless.
 
-The auto-trigger `useEffect` for `?oauth=google` can stay (now invoking `supabase.auth.signInWithOAuth` instead) so users coming from the preview-host redirect continue seamlessly.
-
-### 2. `src/pages/AuthDialog.tsx` — Office add-in popup
-Same swap inside the dialog: `supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: ... } })`. The existing `onAuthStateChange` listener already handles the returned session.
-
-### 3. `src/lib/officeAuth.ts`
-No code change needed — it just opens the dialog window.
-
-### 4. Supabase Google provider configuration (one-time, you do this)
-For the bare-Supabase flow to work, the Google Cloud OAuth Client must trust Supabase's callback:
-- **Authorized redirect URI in Google Cloud Console:** `https://ioktiqcffungtlsmlkcv.supabase.co/auth/v1/callback`
-- **Site URL** (Cloud → Auth Settings → URL Configuration): `https://relexlm.com`
-- **Additional Redirect URLs:** `https://relexlm.com/auth-redirect`, `https://www.relexlm.com/auth-redirect`, plus the preview/published URLs you want to allow.
-- **Google Client ID + Secret** must be saved in Cloud → Auth Settings → Google (the same custom credentials you already created — they just get used by Supabase directly now instead of by the Lovable broker).
-
-### 5. Files touched
-- `src/pages/Auth.tsx` — swap call, drop `lovable` import.
-- `src/pages/AuthDialog.tsx` — swap call.
+### 4. Files NOT touched
+- `src/integrations/supabase/client.ts` — leave alone (auto-generated).
 - `src/lib/publicUrl.ts` — unchanged.
-
-## Trade-offs
-
-- **Pros:** zero `oauth.lovable.app` exposure, fully under your domain + your Supabase project URL, brand-safe in every frame.
-- **Cons:** the very brief Supabase callback hop will show `ioktiqcffungtlsmlkcv.supabase.co` in the URL bar for a few hundred ms. To eliminate even that, configure a Supabase **Custom Auth Domain** (e.g., `auth.relexlm.com`) — optional, can be done later.
+- `src/lib/officeAuth.ts` — unchanged.
+- `.env` — unchanged.
 
 ## Outcome
-After this change and the Google Cloud Console redirect-URI addition, clicking "Sign in with Google" on `relexlm.com` will go straight from ReLex → Google → ReLex, with no Lovable-branded URL ever shown.
+- ✅ Google consent screen: "המשך אל **relexlm.com**" (back to what you had).
+- ❌ Brief `oauth.lovable.app` URL bar flash returns mid-flow (~300ms).
+
+## Confirmed trade-off
+You explicitly chose this over the custom-auth-domain route (`auth.relexlm.com`), which would have eliminated both the flash AND the supabase.co text but required a CNAME DNS record. If you change your mind later, that path remains available.
 
