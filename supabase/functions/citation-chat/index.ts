@@ -604,10 +604,32 @@ serve(async (req) => {
   }
   // ── End auth gate ──
 
+  // Build a per-request user-scoped client for credit RPCs
+  const userClient = createClient(SUPABASE_URL_ENV, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  });
+
+  let creditRequestId: string | null = null;
+  const refundIfCharged = async (reason: string) => {
+    if (!creditRequestId) return;
+    try {
+      await userClient.rpc("refund_credits", {
+        _request_id: creditRequestId,
+        _reason: reason,
+      });
+    } catch (e) {
+      console.error("refund_credits failed:", e);
+    }
+  };
+
   try {
-    const { messages } = await req.json();
+    const { messages, requestId: clientReqId } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    creditRequestId = (typeof clientReqId === "string" && clientReqId.length >= 8)
+      ? clientReqId
+      : crypto.randomUUID();
 
     const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === "user");
     const userInput = lastUserMessage?.content || "";
@@ -682,7 +704,30 @@ serve(async (req) => {
       }
     }
 
-    // ── Case law search via Perplexity ──
+    // ── Consume 1 credit before invoking the AI (verified short-circuit above is free) ──
+    const consumeRes = await userClient.rpc("consume_credits", {
+      _amount: 1,
+      _reason: "citation-chat",
+      _request_id: creditRequestId,
+    });
+    const consumeData = (consumeRes.data ?? {}) as Record<string, unknown>;
+    if (consumeRes.error || !consumeData.ok) {
+      if (consumeData.error === "INSUFFICIENT_CREDITS") {
+        return new Response(
+          JSON.stringify({
+            error: "INSUFFICIENT_CREDITS",
+            required: 1,
+            remaining_included: consumeData.remaining_included ?? 0,
+            remaining_topup: consumeData.remaining_topup ?? 0,
+          }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      console.error("consume_credits failed:", consumeRes.error, consumeData);
+      // Don't block on RPC errors — proceed without charging
+      creditRequestId = null;
+    }
+
     let caseLawHint = "";
     let caseLawOverrideLabel: string | null = null;
     const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
@@ -1434,8 +1479,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     });
   } catch (e) {
     console.error("chat error:", e);
+    await refundIfCharged("citation-chat exception");
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
+      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error", refunded: !!creditRequestId, refundReason: "טעות טכנית" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }

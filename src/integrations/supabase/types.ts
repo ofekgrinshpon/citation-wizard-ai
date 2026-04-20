@@ -146,6 +146,51 @@ export type Database = {
           },
         ]
       }
+      credit_ledger: {
+        Row: {
+          amount: number
+          balance_after_included: number
+          balance_after_topup: number
+          created_at: string
+          event_type: string
+          id: string
+          included_delta: number
+          metadata: Json
+          reason: string | null
+          request_id: string
+          topup_delta: number
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          balance_after_included: number
+          balance_after_topup: number
+          created_at?: string
+          event_type: string
+          id?: string
+          included_delta?: number
+          metadata?: Json
+          reason?: string | null
+          request_id: string
+          topup_delta?: number
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          balance_after_included?: number
+          balance_after_topup?: number
+          created_at?: string
+          event_type?: string
+          id?: string
+          included_delta?: number
+          metadata?: Json
+          reason?: string | null
+          request_id?: string
+          topup_delta?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       legal_document_chunks: {
         Row: {
           chunk_index: number
@@ -255,28 +300,61 @@ export type Database = {
       }
       profiles: {
         Row: {
+          billing_period_ends_at: string | null
+          billing_period_started_at: string | null
           citation_count: number
           created_at: string
+          credits_reset_mode: string
           email: string | null
           full_name: string | null
           id: string
+          included_credits_remaining: number
+          included_credits_total: number
           is_subscribed: boolean
+          plan: string
+          referral_bonus_granted: boolean
+          referral_code: string
+          referral_first_action_at: string | null
+          referred_by_user_id: string | null
+          topup_credits_remaining: number
         }
         Insert: {
+          billing_period_ends_at?: string | null
+          billing_period_started_at?: string | null
           citation_count?: number
           created_at?: string
+          credits_reset_mode?: string
           email?: string | null
           full_name?: string | null
           id: string
+          included_credits_remaining?: number
+          included_credits_total?: number
           is_subscribed?: boolean
+          plan?: string
+          referral_bonus_granted?: boolean
+          referral_code: string
+          referral_first_action_at?: string | null
+          referred_by_user_id?: string | null
+          topup_credits_remaining?: number
         }
         Update: {
+          billing_period_ends_at?: string | null
+          billing_period_started_at?: string | null
           citation_count?: number
           created_at?: string
+          credits_reset_mode?: string
           email?: string | null
           full_name?: string | null
           id?: string
+          included_credits_remaining?: number
+          included_credits_total?: number
           is_subscribed?: boolean
+          plan?: string
+          referral_bonus_granted?: boolean
+          referral_code?: string
+          referral_first_action_at?: string | null
+          referred_by_user_id?: string | null
+          topup_credits_remaining?: number
         }
         Relationships: []
       }
@@ -473,6 +551,14 @@ export type Database = {
       }
     }
     Functions: {
+      _generate_referral_code: { Args: never; Returns: string }
+      _plan_credits: { Args: { _plan: string }; Returns: number }
+      _plan_period_length: { Args: { _plan: string }; Returns: string }
+      _plan_reset_mode: { Args: { _plan: string }; Returns: string }
+      add_topup_credits: {
+        Args: { _amount: number; _reason?: string; _user_id: string }
+        Returns: Json
+      }
       bulk_update_legal_chunk_embeddings: {
         Args: { payload: Json }
         Returns: number
@@ -485,6 +571,10 @@ export type Database = {
           _year: string
         }
         Returns: string
+      }
+      consume_credits: {
+        Args: { _amount: number; _reason: string; _request_id: string }
+        Returns: Json
       }
       dblink: { Args: { "": string }; Returns: Record<string, unknown>[] }
       dblink_cancel_query: { Args: { "": string }; Returns: string }
@@ -520,6 +610,10 @@ export type Database = {
         Returns: Record<string, unknown>[]
       }
       dblink_is_busy: { Args: { "": string }; Returns: number }
+      grant_referral_bonus_if_eligible: {
+        Args: { _user_id: string }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -567,6 +661,11 @@ export type Database = {
         }[]
       }
       rebuild_hnsw_index: { Args: never; Returns: undefined }
+      refund_credits: {
+        Args: { _reason: string; _request_id: string }
+        Returns: Json
+      }
+      reset_or_renew_credits: { Args: never; Returns: number }
       search_legal_chunks_text: {
         Args: { match_count?: number; search_query: string }
         Returns: {
@@ -580,6 +679,10 @@ export type Database = {
           source_type: string
           source_url: string
         }[]
+      }
+      set_user_plan: {
+        Args: { _new_plan: string; _user_id: string }
+        Returns: Json
       }
     }
     Enums: {
