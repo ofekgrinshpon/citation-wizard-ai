@@ -114,7 +114,12 @@ export function classifyCitation(text: string): {
 
   // Order matters: structural markers (case-law, legislation) win over generic name patterns,
   // since legislation/case-law tokens are unambiguous while author detection is heuristic.
-  if (isSupremeCase) {
+  // BUT: an unmistakable literature shape ("...title..." JOURNAL VOLUME) wins first, so that
+  // articles whose Hebrew title happens to contain procedure-abbreviation substrings stay literature.
+  if (looksLikeHebrewArticle) {
+    sourceType = "literature";
+    subCategory = "ספרות";
+  } else if (isSupremeCase) {
     sourceType = "caselaw_supreme";
     subCategory = "בית המשפט העליון";
   } else if (isDistrictCase) {
