@@ -1,56 +1,37 @@
 
 
 ## Goal
-Rename the "ניתוח כתב טענה" mode to **"מבקר מסמכים משפטיים"** and replace its AI prompt with the full Senior Legal Document Auditor protocol you provided.
-
-## Scope decision
-Keep the internal `taskMode` ID as `pleading_analysis` (don't rename to e.g. `document_audit`). Reasons:
-- Avoids breaking historical `qa_logs` rows (sidebar, resume, search history would lose old entries otherwise).
-- Avoids touching `Index.tsx` type unions, the `qaExternalResult` state, and academic-resume routing.
-- Only labels and the prompt are user-visible.
+Two clear submission modes for **בקרה למסמכים משפטיים**:
+1. **File only** → audit the file.
+2. **File + text** → text is treated as user **context/instructions** about the file (not the document to audit).
+3. **Text only** → audit the typed text as the document.
 
 ## Changes
 
-### 1. `src/components/LegalQAChat.tsx` (line 65)
-Update the visible card for that mode:
-- **label**: `"מבקר מסמכים משפטיים"`
-- **description**: `"ביקורת משפטית: דיוק אזכורים, סתירות לוגיות, ניתוח אדוורסרי"`
-- **placeholder**: `"הדביקו או העלו מסמך משפטי (כתב טענה, חוזה, חוות דעת) לביקורת מקיפה..."`
-- Icon stays `FileSearch` (fits an auditor).
+### 1. `src/components/LegalQAChat.tsx`
+- Enable submit when **either** text (≥5 chars) **or** a file is attached.
+- When submitting:
+  - If file attached → send `question` as either the typed text (treated as user context) or a default instruction (`"בצע ביקורת מקיפה על המסמך המצורף"`) when textbox is empty.
+  - If no file → send typed text as the document to audit (current behavior).
+- Pass a flag (e.g. `hasDocument: true/false`) to the edge function so it knows how to interpret `question`.
 
-### 2. `src/components/QAHistorySidebar.tsx` (line 37)
-Update history label: `pleading_analysis: { label: "ביקורת מסמך", icon: FileSearch }` (short form for the sidebar chip).
+### 2. `supabase/functions/legal-qa/index.ts` — `pleading_analysis` branch
+- Read the `hasDocument` flag (or infer from presence of `documentContext`).
+- **Branch A — file present**: the **document content** is the audit subject; the typed `question` becomes "הנחיות נוספות מהמשתמש" injected into the prompt (e.g. "התמקד בסעיף הסעדים", "בדוק במיוחד את התאריכים"). The auditor follows those instructions while running the full protocol on the document.
+- **Branch B — text only**: the typed `question` IS the document being audited (current behavior).
+- Move the 150-word minimum to apply to **whichever is the audit subject** (document content in Branch A, typed text in Branch B). If subject < 150 words → return the existing "need more context" message.
 
-### 3. `supabase/functions/legal-qa/index.ts` (lines 212-219)
-Replace the `pleading_analysis` case body with the full audit protocol, faithfully translated from your spec into Hebrew and adapted to fit the existing `legal-qa` architecture (which already injects `[Verified]` local DB sources and `[External]` Perplexity results into the context). Key adaptations:
-- Keep the existing footnote/citation-rule contract from the surrounding system prompt — but instruct the auditor that the report itself uses the structured headings below, not the standard memo template.
-- Honor the **functional source split** by referencing the existing `[Verified]` / `[External]` markers used elsewhere in the prompt.
-- Enforce the 150-word minimum guard (refuse cleanly if input too short).
-
-The new prompt will produce output structured as:
-- **סיכום ביצועי** — 1–2 lines describing the document type and overall risk.
-- **🔴 ממצאים קריטיים** (Protocol A citation-surgery errors, repealed statutes, fabricated section numbers, timeline contradictions, numerical mismatches) — formatted as `**בעיה:** … | **מיקום:** … | **תיקון מוצע:** …`
-- **🟡 הערות והמלצות** (counter-arguments, weak evidence, non-uniform citations) — formatted as `**הצעה:** … | **נימוק:** …`
-- **🟢 חוזקות אסטרטגיות**
-- **טיעוני נגד צפויים** — at least 3 adversarial counter-arguments (Protocol C).
-- **בדיקה פורמלית** — only when document is a pleading: ID numbers, addresses for service, jurisdictional statements, סעדים, exhibit tracking.
-
-The prompt will explicitly state:
-- `[Verified]` is the sole source of truth for substantive law; flag user claims that contradict it as Critical (🔴).
-- `[External]` may be used only for bibliographic metadata.
-- Never fabricate section numbers or years — use `[חסר]` and prompt the user.
-- If document < 150 words, return one sentence requesting more context and stop.
-
-### Out of scope
-- DB / `qa_logs` schema (internal ID unchanged).
-- `case_summary`, `research`, `academic_writing` modes.
-- UI layout / icons beyond label text.
+## Out of scope
+- Other modes (research / case_summary / academic_writing) — unchanged.
+- UI redesign of upload area or new visual indicators.
+- History/sidebar display.
 
 ## Files touched
 - `src/components/LegalQAChat.tsx`
-- `src/components/QAHistorySidebar.tsx`
 - `supabase/functions/legal-qa/index.ts` (+ redeploy)
 
 ## Expected outcome
-The mode card now reads **"מבקר מסמכים משפטיים"**. Submitting a document runs the new audit protocol and returns a structured red/yellow/green findings report with adversarial counter-arguments, citation surgery, and timeline/numerical consistency checks — grounded strictly in `[Verified]` local sources for substantive content.
+- Upload contract PDF, leave textbox empty → full audit of the contract.
+- Upload contract PDF, type "התמקד בסעיף הפיצויים" → audit of the contract with extra emphasis on the compensation clause.
+- Type a 200-word כתב טענה directly, no file → audit of the typed text.
 
