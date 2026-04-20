@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
 import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, GraduationCap, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, Lock, Wand2, type LucideIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { CaseSummaryReport } from "@/components/CaseSummaryReport";
 
 // ─── Abstract chapter helpers ──────────────────────────────────────
 const ABSTRACT_LOCKED_TOOLTIP = "ניתן לייצר תקציר רק לאחר השלמת כל פרקי העבודה, כדי להבטיח שהוא משקף את המחקר במלואו";
