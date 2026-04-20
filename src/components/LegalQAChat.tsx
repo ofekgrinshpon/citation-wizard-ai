@@ -2088,7 +2088,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               ) : (
                 <button
                   onClick={handleSubmit}
-                  disabled={question.trim().length < 5}
+                  disabled={
+                    taskMode === "pleading_analysis"
+                      ? question.trim().length < 5 && uploadedFiles.length === 0
+                      : question.trim().length < 5
+                  }
                   className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
                 >
                   ⇧
