@@ -144,6 +144,7 @@ export default function LegalQA() {
         return;
       }
 
+      const requestId = crypto.randomUUID();
       const res = await fetch(`${supabaseUrl}/functions/v1/legal-qa`, {
         method: "POST",
         headers: {
@@ -151,7 +152,7 @@ export default function LegalQA() {
           "Authorization": `Bearer ${session.access_token}`,
           "apikey": supabaseKey,
         },
-        body: JSON.stringify({ question: q }),
+        body: JSON.stringify({ question: q, requestId }),
         signal: controller.signal,
       });
 
@@ -159,8 +160,23 @@ export default function LegalQA() {
         toast.error("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש.");
         return;
       }
+      if (res.status === 402) {
+        const payload = await res.json().catch(() => ({}));
+        toast.error("אין מספיק קרדיטים", {
+          description: `נדרשים ${payload?.required ?? 5} קרדיטים. נותרו ${(payload?.remaining_included ?? 0) + (payload?.remaining_topup ?? 0)}.`,
+          action: { label: "פתח חשבון", onClick: () => navigate("/profile?tab=account") },
+        });
+        return;
+      }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
+
+      // Refund toast — fired whether the response was an error/refusal or a successful payload that still got refunded.
+      if (data?.refunded) {
+        toast.info("הפעולה נכשלה והקרדיטים הוחזרו אוטומטית", {
+          description: data.refundReason || undefined,
+        });
+      }
 
       if (data?.error) {
         toast.error(data.error);
@@ -168,6 +184,7 @@ export default function LegalQA() {
       }
 
       setResult(data as QAResult);
+      // Credits already consumed server-side — keep the legacy counter in sync.
       await incrementCount();
     } catch (e: any) {
       if (e.name === "AbortError") return; // user cancelled
