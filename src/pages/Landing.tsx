@@ -238,15 +238,20 @@ const Landing = () => {
         </button>
       </section>
 
-      {/* How It Works Section */}
-      <section ref={howRef} className="py-16 px-4 max-w-5xl mx-auto relative z-10">
-        <h2 className="text-2xl md:text-3xl font-bold text-foreground text-center mb-12">
-          איך זה עובד?
-        </h2>
+      {/* Capabilities Section */}
+      <section ref={howRef} className="py-16 px-4 max-w-6xl mx-auto relative z-10">
+        <div className="text-center mb-12 space-y-3">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            כל הדרכים לעבוד עם ReLex
+          </h2>
+          <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
+            ממחקר משפטי ועד אזכור אחיד, הערות שוליים וביבליוגרפיה — הכל במקום אחד.
+          </p>
+        </div>
 
-        <div className="space-y-24">
-          {steps.map((step, i) => (
-            <StepCard key={i} step={step} index={i} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {capabilities.map((cap, i) => (
+            <CapabilityCard key={cap.title} cap={cap} index={i} />
           ))}
         </div>
 
