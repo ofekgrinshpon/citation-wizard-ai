@@ -768,29 +768,6 @@ ${(verify.fullText as string).slice(0, 50000)}
       const summary = (aiData.choices?.[0]?.message?.content || "").trim();
       console.log(`case_summary: produced ${summary.length} chars (source=${verify.source}, ${Date.now() - t0}ms)`);
 
-      // Persist to qa_logs so the history sidebar can re-render it as a structured report.
-      // Stash case-summary metadata inside the footnotes JSONB column (no schema change needed).
-      try {
-        await adminClient.from("qa_logs").insert({
-          user_id: user.id,
-          project_id: projectId ?? null,
-          question: question.substring(0, 500),
-          answer: summary,
-          task_mode: "case_summary",
-          footnotes: {
-            __case_summary: true,
-            verified_source: verify.source,
-            case_metadata: md,
-            source_urls: md.source_url ? [md.source_url] : [],
-          },
-          local_footnotes_count: 0,
-          perplexity_footnotes_count: 0,
-          total_footnotes: 0,
-        });
-      } catch (logErr) {
-        console.error("case_summary qa_logs insert failed:", logErr instanceof Error ? logErr.message : logErr);
-      }
-
       return new Response(JSON.stringify({
         answer: summary,
         footnotes: [],
