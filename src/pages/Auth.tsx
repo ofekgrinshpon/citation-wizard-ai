@@ -37,6 +37,32 @@ const Auth = () => {
     else if (mode === "login") setIsLogin(true);
   }, [searchParams]);
 
+  // Auto-trigger Google OAuth when arriving from a preview-host redirect (?oauth=google).
+  useEffect(() => {
+    if (searchParams.get("oauth") !== "google") return;
+    if (!isCanonicalHost()) return;
+    if (user) return;
+    // Strip the trigger from the URL so a refresh doesn't re-fire it.
+    const cleaned = new URLSearchParams(searchParams);
+    cleaned.delete("oauth");
+    window.history.replaceState({}, "", `${window.location.pathname}${cleaned.toString() ? `?${cleaned}` : ""}`);
+    (async () => {
+      try {
+        const result = await lovable.auth.signInWithOAuth("google", {
+          redirect_uri: `${window.location.origin}/auth-redirect`,
+        });
+        if (result.redirected) return;
+        if (result.error) {
+          console.error("[ReLex] Google OAuth error:", result.error);
+          toast.error("שגיאה בהתחברות עם Google");
+        }
+      } catch (err: any) {
+        console.error("[ReLex] Google OAuth exception:", err);
+        toast.error("שגיאה בהתחברות עם Google");
+      }
+    })();
+  }, [searchParams, user]);
+
   if (authLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
