@@ -39,6 +39,20 @@ interface QAResult {
   answer: string;
   footnotes: Footnote[];
   source_urls: string[];
+  refusal?: boolean;
+  message?: string;
+  case_summary?: boolean;
+  verified_source?: "user" | "local" | "external" | "none";
+  case_metadata?: {
+    title?: string | null;
+    citation?: string | null;
+    court?: string | null;
+    decision_date?: string | null;
+    case_number?: string | null;
+    parties?: string | null;
+    year?: string | null;
+    source_url?: string | null;
+  };
 }
 
 type TaskMode = "research" | "pleading_analysis" | "case_summary" | "academic_writing";
