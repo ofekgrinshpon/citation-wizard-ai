@@ -476,6 +476,7 @@ export function BibliographyGenerator() {
                     label={CATEGORY_LABELS[group.category] || group.category}
                     entries={group.entries}
                     onRemove={removeEntry}
+                    onEdit={sendEntryBackToReview}
                   />
                 ))}
               </div>
@@ -492,6 +493,7 @@ export function BibliographyGenerator() {
                     label={CATEGORY_LABELS[group.category] || group.category}
                     entries={group.entries}
                     onRemove={removeEntry}
+                    onEdit={sendEntryBackToReview}
                   />
                 ))}
               </div>
