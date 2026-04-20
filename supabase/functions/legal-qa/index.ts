@@ -690,6 +690,94 @@ serve(async (req) => {
       );
     }
 
+    // ========= Case Summary short-circuit (strict full-text gate) =========
+    if (taskMode === "case_summary") {
+      let userSuppliedText = "";
+      if (documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
+        userSuppliedText = documentTexts.map((dt: any) => dt.text || "").join("\n\n");
+      } else if (documentText && typeof documentText === "string") {
+        userSuppliedText = documentText;
+      }
+
+      let verify: { source: "user" | "local" | "external" | "none"; fullText?: string; metadata?: Record<string, unknown>; refusal_message?: string } | null = null;
+      try {
+        const vRes = await fetchWithTimeout(`${Deno.env.get("SUPABASE_URL")}/functions/v1/verify-case-fulltext`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": authHeader },
+          body: JSON.stringify({ question, userText: userSuppliedText }),
+        }, 20000);
+        if (vRes.ok) verify = await vRes.json();
+      } catch (e) {
+        console.error("verify-case-fulltext call failed:", e instanceof Error ? e.message : e);
+      }
+
+      if (!verify || verify.source === "none" || !verify.fullText) {
+        console.log("case_summary: refusing — no full text available");
+        return new Response(JSON.stringify({
+          refusal: true,
+          source: "none",
+          message: verify?.refusal_message || "פסק הדין אינו קיים במערכת ולא ניתן היה לאתר את הטקסט המלא שלו. כדי שאוכל לסכם אותו עבורך, אנא העלה את הקובץ או הדבק את הטקסט בתיבת הטקסט.",
+          answer: "",
+          footnotes: [],
+          source_urls: [],
+        }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+
+      const md = verify.metadata || {};
+      const headerHints = [
+        md.case_number ? `מספר תיק: ${md.case_number}` : null,
+        md.parties ? `צדדים: ${md.parties}` : null,
+        md.court ? `ערכאה: ${md.court}` : null,
+        md.year ? `שנה: ${md.year}` : null,
+      ].filter(Boolean).join(" | ");
+
+      const caseInstructions = getTaskModeInstructions("case_summary");
+      const sumPrompt = `אתה עוזר משפטי מומחה לסיכום פסיקה ישראלית.
+${caseInstructions}
+
+מטא-דאטה זמינה לכותרת (אם חסר — כתוב "(לא צוין בפסק הדין)"):
+${headerHints || "(לא נמסרה)"}
+
+=== טקסט פסק הדין המלא — מקור האמת היחיד ===
+${(verify.fullText as string).slice(0, 50000)}
+=== סוף הטקסט ===
+
+צור עכשיו את הדו"ח לפי המבנה המחייב. ללא הערות שוליים. ללא [N]. ללא ציטוט מקורות חיצוניים.`;
+
+      const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          max_tokens: 3500,
+          messages: [
+            { role: "system", content: sumPrompt },
+            { role: "user", content: `סכם את פסק הדין הבא: ${question.trim() || (md.case_number || "פסק הדין שסופק")}` },
+          ],
+        }),
+      }, 90000);
+
+      if (!aiRes.ok) {
+        const errText = await aiRes.text();
+        console.error("case_summary AI error:", aiRes.status, errText);
+        return new Response(JSON.stringify({ error: "שגיאה בעיבוד הסיכום. נסו שוב." }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const aiData = await aiRes.json();
+      const summary = (aiData.choices?.[0]?.message?.content || "").trim();
+      console.log(`case_summary: produced ${summary.length} chars (source=${verify.source}, ${Date.now() - t0}ms)`);
+
+      return new Response(JSON.stringify({
+        answer: summary,
+        footnotes: [],
+        source_urls: md.source_url ? [md.source_url] : [],
+        case_summary: true,
+        verified_source: verify.source,
+        case_metadata: md,
+      }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     // ========= Step 0: Document context (if uploaded) =========
     let documentContext = "";
     const isAcademicMode = taskMode === "academic_writing";
