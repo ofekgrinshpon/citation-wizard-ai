@@ -679,7 +679,7 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId } = body;
 
     if (!question || typeof question !== "string" || question.trim().length < 3) {
       return new Response(JSON.stringify({ error: "Question too short" }), {
@@ -687,6 +687,85 @@ serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    // ===== Credit gate: consume up-front, refund automatically on failure / empty result =====
+    // Cost: 5 for legal QA. Document grounding adds +2 surcharge.
+    // Academic sub-modes (suggest_topics, validate_question, propose_outline) cost 0;
+    // chapter generation costs 8 (handled below before its own AI call).
+    const isAcademicSubModeFree =
+      taskMode === "academic_writing" &&
+      typeof academicStep === "string" &&
+      ["suggest_topics", "validate_question", "propose_outline"].includes(academicStep);
+    const isAcademicChapter =
+      taskMode === "academic_writing" && academicStep === "write_chapter";
+    const hasGroundingDoc =
+      (Array.isArray(documentTexts) && documentTexts.length > 0) ||
+      (typeof documentText === "string" && documentText.trim().length > 100);
+
+    let creditCost = 5;
+    if (isAcademicSubModeFree) creditCost = 0;
+    else if (isAcademicChapter) creditCost = 8;
+    if (hasGroundingDoc && !isAcademicChapter && !isAcademicSubModeFree) creditCost += 2;
+
+    const creditRequestId =
+      typeof clientRequestId === "string" && clientRequestId.length >= 8
+        ? clientRequestId
+        : crypto.randomUUID();
+
+    // Use a user-scoped client (with the caller's JWT) so consume_credits sees auth.uid()
+    const userClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    let creditsCharged = false;
+    if (creditCost > 0) {
+      const { data: consumeData, error: consumeErr } = await userClient.rpc("consume_credits", {
+        _amount: creditCost,
+        _reason: `legal-qa:${taskMode || "research"}${hasGroundingDoc ? "+doc" : ""}`,
+        _request_id: creditRequestId,
+      });
+      if (consumeErr) {
+        console.error("consume_credits error:", consumeErr);
+        return new Response(JSON.stringify({ error: "שגיאה בחיוב קרדיטים. נסו שוב." }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const cr = (consumeData ?? {}) as Record<string, unknown>;
+      if (!cr.ok) {
+        if (cr.error === "INSUFFICIENT_CREDITS") {
+          return new Response(JSON.stringify({
+            error: "INSUFFICIENT_CREDITS",
+            required: cr.required ?? creditCost,
+            remaining_included: cr.remaining_included ?? 0,
+            remaining_topup: cr.remaining_topup ?? 0,
+          }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+        return new Response(JSON.stringify({ error: cr.error || "CREDIT_ERROR" }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      creditsCharged = true;
+    }
+
+    // Helper: build a refund-aware payload for refusals / empty results.
+    const refundAndPayload = async (extraReason: string, payload: Record<string, unknown>) => {
+      let refunded = false;
+      if (creditsCharged) {
+        try {
+          const { data: refundData } = await userClient.rpc("refund_credits", {
+            _request_id: creditRequestId,
+            _reason: `auto-refund: ${extraReason}`,
+          });
+          refunded = Boolean((refundData as Record<string, unknown> | null)?.ok);
+          creditsCharged = !refunded;
+        } catch (rfErr) {
+          console.error("refund_credits failed (non-fatal):", rfErr);
+        }
+      }
+      return { ...payload, refunded, refundReason: refunded ? extraReason : undefined };
+    };
 
     const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
     if (!PERPLEXITY_API_KEY) throw new Error("PERPLEXITY_API_KEY is not configured");
