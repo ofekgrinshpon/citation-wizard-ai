@@ -1,13 +1,70 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useBibliography, CATEGORY_LABELS, sortBibliography } from "@/hooks/useBibliography";
+import { useBibliography, CATEGORY_LABELS } from "@/hooks/useBibliography";
 import { FormattedCitation } from "./FormattedCitation";
 import { toast } from "sonner";
+
+type PendingDisambiguation = {
+  id: string;
+  rawInput: string;
+  options: string[];
+};
+
+type LookupResult =
+  | { kind: "ok"; rawInput: string; citation: string; isVerified: boolean }
+  | { kind: "disambiguation"; rawInput: string; options: string[] }
+  | { kind: "error"; rawInput: string; message: string };
+
+const CONCURRENCY = 4;
+
+async function processInPool<T, R>(items: T[], worker: (item: T) => Promise<R>, limit: number, onProgress?: (done: number) => void): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let cursor = 0;
+  let done = 0;
+  const runners = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (true) {
+      const i = cursor++;
+      if (i >= items.length) break;
+      try {
+        results[i] = await worker(items[i]);
+      } catch (e) {
+        results[i] = e as R;
+      }
+      done++;
+      onProgress?.(done);
+    }
+  });
+  await Promise.all(runners);
+  return results;
+}
 
 export function BibliographyGenerator() {
   const { sortedEntries, addEntries, removeEntry, clearAll } = useBibliography();
   const [rawText, setRawText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
+  const [pendingDisambiguations, setPendingDisambiguations] = useState<PendingDisambiguation[]>([]);
+
+  const lookupOne = async (line: string): Promise<LookupResult> => {
+    try {
+      const { data, error } = await supabase.functions.invoke("bibliography-lookup", {
+        body: { rawSource: line, requestId: crypto.randomUUID() },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      if (data?.isDisambiguation && Array.isArray(data?.options) && data.options.length > 0) {
+        return { kind: "disambiguation", rawInput: line, options: data.options };
+      }
+      const citation = cleanCitation(String(data?.citation || ""));
+      if (!citation) {
+        return { kind: "error", rawInput: line, message: "no citation returned" };
+      }
+      return { kind: "ok", rawInput: line, citation, isVerified: Boolean(data?.isVerified) };
+    } catch (e) {
+      return { kind: "error", rawInput: line, message: e instanceof Error ? e.message : "unknown" };
+    }
+  };
 
   const processRawList = async () => {
     const lines = rawText
@@ -20,42 +77,66 @@ export function BibliographyGenerator() {
     }
 
     setLoading(true);
+    setProgress({ done: 0, total: lines.length });
+
     try {
-      const prompt = `אתה מומחה לכללי האזכור האחיד (מהדורה שלישית 2021).
-קיבלת רשימת מקורות גולמיים. עבור כל מקור, החזר את האזכור התקני המלא (לא קיצור, לא "שם", לא "לעיל") – כולל שנה, כרך, צדדים מלאים.
+      const results = await processInPool(lines, lookupOne, CONCURRENCY, (done) =>
+        setProgress({ done, total: lines.length }),
+      );
 
-המקורות:
-${lines.map((l, i) => `${i + 1}. ${l}`).join("\n")}
+      const toAdd: { rawInput: string; fullCitation: string; isVerified?: boolean }[] = [];
+      const newPending: PendingDisambiguation[] = [];
+      let errorCount = 0;
 
-החזר בפורמט הבא בדיוק, בלי שום טקסט נוסף:
----BIB 1---
-[אזכור מלא]
----BIB 2---
-[אזכור מלא]
-...וכן הלאה`;
+      for (const r of results) {
+        if (!r) continue;
+        if (r.kind === "ok") {
+          toAdd.push({ rawInput: r.rawInput, fullCitation: r.citation, isVerified: r.isVerified });
+        } else if (r.kind === "disambiguation") {
+          newPending.push({ id: crypto.randomUUID(), rawInput: r.rawInput, options: r.options });
+        } else {
+          errorCount++;
+        }
+      }
 
-      const { data, error } = await supabase.functions.invoke("citation-chat", {
-        body: { messages: [{ role: "user", content: prompt }] },
-      });
+      const added = toAdd.length > 0 ? addEntries(toAdd) : 0;
+      const dupes = toAdd.length - added;
 
-      if (error) throw error;
+      if (newPending.length > 0) {
+        setPendingDisambiguations((prev) => [...prev, ...newPending]);
+      }
 
-      const content = data?.content || "";
-      const parts = content.split(/---BIB\s*\d+---/i).filter((s: string) => s.trim());
+      const parts: string[] = [];
+      if (added > 0) parts.push(`${added} מקורות נוספו`);
+      if (newPending.length > 0) parts.push(`${newPending.length} דורשים בחירה`);
+      if (dupes > 0) parts.push(`${dupes} כפילויות הוסרו`);
+      if (errorCount > 0) parts.push(`${errorCount} נכשלו`);
 
-      const items = lines.map((line, i) => ({
-        rawInput: line,
-        fullCitation: cleanCitation(parts[i] || line),
-      }));
-
-      const added = addEntries(items);
-      toast.success(`${added} מקורות נוספו לביבליוגרפיה (${lines.length - added} כפילויות הוסרו)`);
+      if (added > 0 || newPending.length > 0) {
+        toast.success(parts.join(", "));
+      } else if (errorCount > 0) {
+        toast.error(parts.join(", ") || "שגיאה בעיבוד הרשימה");
+      } else {
+        toast.info("לא נוספו מקורות חדשים");
+      }
       setRawText("");
     } catch {
       toast.error("שגיאה בעיבוד הרשימה");
     } finally {
       setLoading(false);
+      setProgress(null);
     }
+  };
+
+  const resolveDisambiguation = (pendingId: string, chosen: string) => {
+    const item = pendingDisambiguations.find((p) => p.id === pendingId);
+    if (!item) return;
+    addEntries([{ rawInput: item.rawInput, fullCitation: cleanCitation(chosen) }]);
+    setPendingDisambiguations((prev) => prev.filter((p) => p.id !== pendingId));
+  };
+
+  const skipDisambiguation = (pendingId: string) => {
+    setPendingDisambiguations((prev) => prev.filter((p) => p.id !== pendingId));
   };
 
   const copyAll = () => {
@@ -64,11 +145,9 @@ ${lines.map((l, i) => `${i + 1}. ${l}`).join("\n")}
       return;
     }
 
-    // Group by language then category
     const grouped = groupEntries(sortedEntries);
     const lines: string[] = [];
 
-    // Hebrew sources
     const hebrewCats = grouped.filter((g) => g.language === "hebrew");
     if (hebrewCats.length > 0) {
       lines.push("מקורות בעברית");
@@ -82,7 +161,6 @@ ${lines.map((l, i) => `${i + 1}. ${l}`).join("\n")}
       }
     }
 
-    // English sources
     const englishCats = grouped.filter((g) => g.language === "english");
     if (englishCats.length > 0) {
       lines.push("מקורות באנגלית");
@@ -150,9 +228,53 @@ ${lines.map((l, i) => `${i + 1}. ${l}`).join("\n")}
             color: loading || !rawText.trim() ? "hsl(var(--muted-foreground))" : "hsl(var(--primary-foreground))",
           }}
         >
-          {loading ? "מעבד רשימה..." : "📚 עבד רשימה"}
+          {loading
+            ? progress
+              ? `מעבד ${progress.done} מתוך ${progress.total}...`
+              : "מעבד רשימה..."
+            : "📚 עבד רשימה"}
         </button>
       </div>
+
+      {/* Pending disambiguations */}
+      {pendingDisambiguations.length > 0 && (
+        <div className="space-y-3 mb-4">
+          {pendingDisambiguations.map((pending) => (
+            <div
+              key={pending.id}
+              className="bg-card border-2 border-primary/30 rounded-xl p-4 shadow-sm animate-fade-in"
+            >
+              <div className="flex items-start justify-between gap-2 mb-3">
+                <div>
+                  <h4 className="text-foreground text-sm font-bold mb-1">
+                    בחר את פסק הדין הנכון
+                  </h4>
+                  <p className="text-xs text-muted-foreground">
+                    עבור: <span className="font-medium">{pending.rawInput}</span>
+                  </p>
+                </div>
+                <button
+                  onClick={() => skipDisambiguation(pending.id)}
+                  className="text-xs text-muted-foreground hover:text-destructive px-2 py-1 rounded transition-colors flex-shrink-0"
+                >
+                  דלג
+                </button>
+              </div>
+              <div className="space-y-2">
+                {pending.options.map((opt, i) => (
+                  <button
+                    key={i}
+                    onClick={() => resolveDisambiguation(pending.id, opt)}
+                    className="w-full text-right border border-border hover:border-primary hover:bg-primary/5 rounded-lg px-3 py-2 text-sm text-foreground transition-all"
+                  >
+                    {cleanCitation(opt)}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Bibliography output */}
       {sortedEntries.length > 0 && (
@@ -168,7 +290,6 @@ ${lines.map((l, i) => `${i + 1}. ${l}`).join("\n")}
           </div>
 
           <div className="p-4">
-            {/* Hebrew sources */}
             {hebrewGroups.length > 0 && (
               <div className="mb-4">
                 <h5 className="text-primary font-bold text-sm mb-3 pb-1 border-b border-primary/20">
@@ -185,7 +306,6 @@ ${lines.map((l, i) => `${i + 1}. ${l}`).join("\n")}
               </div>
             )}
 
-            {/* English sources */}
             {englishGroups.length > 0 && (
               <div>
                 <h5 className="text-primary font-bold text-sm mb-3 pb-1 border-b border-primary/20">
@@ -206,7 +326,7 @@ ${lines.map((l, i) => `${i + 1}. ${l}`).join("\n")}
       )}
 
       {/* Empty state */}
-      {sortedEntries.length === 0 && !loading && (
+      {sortedEntries.length === 0 && pendingDisambiguations.length === 0 && !loading && (
         <div className="text-center py-12">
           <div className="text-4xl mb-3">📚</div>
           <p className="text-muted-foreground text-sm">
@@ -224,7 +344,7 @@ function CategoryGroup({
   onRemove,
 }: {
   label: string;
-  entries: { id: string; fullCitation: string; addedFrom: string }[];
+  entries: { id: string; fullCitation: string; addedFrom: string; isVerified?: boolean }[];
   onRemove: (id: string) => void;
 }) {
   return (
@@ -235,6 +355,11 @@ function CategoryGroup({
           <div key={entry.id} className="flex items-start gap-2 group">
             <div className="flex-1 text-foreground text-sm leading-relaxed pr-2">
               <FormattedCitation text={entry.fullCitation} enableTooltips />
+              {entry.isVerified && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-1.5 py-0.5 rounded mr-2 align-middle">
+                  ✓ מאומת
+                </span>
+              )}
             </div>
             <div className="flex items-center gap-1 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
               {entry.addedFrom === "footnote" && (
@@ -260,10 +385,12 @@ function CategoryGroup({
 interface GroupedCategory {
   category: string;
   language: "hebrew" | "english";
-  entries: { id: string; fullCitation: string; addedFrom: string }[];
+  entries: { id: string; fullCitation: string; addedFrom: string; isVerified?: boolean }[];
 }
 
-function groupEntries(sorted: { id: string; fullCitation: string; sourceType: string; language: string; addedFrom: string }[]): GroupedCategory[] {
+function groupEntries(
+  sorted: { id: string; fullCitation: string; sourceType: string; language: string; addedFrom: string; isVerified?: boolean }[],
+): GroupedCategory[] {
   const groups: GroupedCategory[] = [];
   let currentKey = "";
 
@@ -277,7 +404,12 @@ function groupEntries(sorted: { id: string; fullCitation: string; sourceType: st
       });
       currentKey = key;
     }
-    groups[groups.length - 1].entries.push(entry);
+    groups[groups.length - 1].entries.push({
+      id: entry.id,
+      fullCitation: entry.fullCitation,
+      addedFrom: entry.addedFrom,
+      isVerified: entry.isVerified,
+    });
   }
 
   return groups;
