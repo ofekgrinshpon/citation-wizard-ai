@@ -11,11 +11,18 @@ export function AppSidebar() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { projects, currentProject, setCurrentProjectId, createProject, renameProject, deleteProject, loading: projectsLoading } = useProjects();
+  const { planMeta, isAdmin: isAdminCredits } = useCredits();
   const [newName, setNewName] = useState("");
   const [showCreate, setShowCreate] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+
+  const initial = useMemo(() => {
+    const source = (displayName || user?.email || "").trim();
+    const ch = Array.from(source)[0] ?? "?";
+    return ch.toUpperCase();
+  }, [displayName, user?.email]);
 
   useEffect(() => {
     if (!user) return;
