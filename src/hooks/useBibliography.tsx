@@ -98,10 +98,16 @@ export function classifyCitation(text: string): {
   const hasPrimaryLegislation = /(?:^|\s|\()(חוק[\s-]יסוד|חוק|פקודת|פקודה)(?=[\s:-])/.test(trimmed) || /(?:^|\s)לחוק(?=\s)/.test(trimmed) || /^(Act|Law|Basic Law|Statute|Code)\b/i.test(trimmed);
   const hasSecondaryLegislation = /(?:^|\s|\()(תקנות|תקנה|צו|נוהל|הוראת)(?=[\s:-])/.test(trimmed) || /^(Regulations?|Order|Directive)\b/i.test(trimmed);
   const isSupremeCase = /בג"ץ|ע"א|רע"א|דנ"א|ע"פ|רע"פ|דנ"פ|ע"ע|עש"מ|בש"פ/.test(trimmed) || /Supreme Court|S\.Ct\./.test(trimmed);
-  const isDistrictCase = /ת"א|ת"פ|ע"מ|ה"פ|המר|פר"ק/.test(trimmed) || /District Court|Circuit/.test(trimmed);
-  const isMagistrateCase = /ת"ט|תא"מ|ת"ד/.test(trimmed) || /Magistrate/.test(trimmed);
-  const isSpecializedCase = /עב"ל|ס"ק|ד"מ|בית[\s]הדין/.test(trimmed) || /Tribunal/.test(trimmed);
+  // Anchored: each procedure abbreviation must appear as a token followed by a docket number,
+  // otherwise substrings like "המר" inside "המרובה" or "ע\"מ" inside literature get false-matched.
+  const isDistrictCase = /(?:^|\s)(?:ת"א|ת"פ|ע"מ|ה"פ|פר"ק|המ['׳]?)\s+\d/.test(trimmed) || /District Court|Circuit/.test(trimmed);
+  const isMagistrateCase = /(?:^|\s)(?:ת"ט|תא"מ|ת"ד)\s+\d/.test(trimmed) || /Magistrate/.test(trimmed);
+  const isSpecializedCase = /(?:^|\s)(?:עב"ל|ס"ק|ד"מ)\s+\d/.test(trimmed) || /בית[\s]הדין/.test(trimmed) || /Tribunal/.test(trimmed);
   const isGenericCase = /נ['׳]\s|נגד\s|\bv\.\b|\bvs\.\b/.test(trimmed) || /פד"י|פ"ד|דינים/.test(trimmed);
+
+  // Literature pre-check: a quoted Hebrew article title alongside a known journal hint (with
+  // a Hebrew or numeric volume marker) is unambiguously an article — beat any case-law false positives.
+  const looksLikeHebrewArticle = /"[^"]{4,}"\s*(?:משפטים|עיוני\s+משפט|הפרקליט|מחקרי\s+משפט|כתב[\s-]עת)\s+(?:[א-ת]{1,3}|\d+)/.test(trimmed);
 
   let sourceType: BibSourceCategory = "unknown";
   let subCategory = "";
