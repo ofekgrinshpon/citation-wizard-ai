@@ -1,56 +1,64 @@
 
 
 ## Goal
-Fix incorrect classification where ordinary Hebrew laws like "חוק הירושה", "חוק התחרות הכלכלית", "חוק העונשין" land under **ספרות משפטית** instead of **חקיקה ראשית**.
+Fix three bugs in the Bibliography Generator:
+1. Manual category change in step 2 is ignored — source still ends up under the auto-detected category (e.g., user picks ספרות משפטית, but it lands under פסיקה – מחוזי).
+2. Sources are rendered with trailing periods that should be stripped on display/copy.
+3. The article `אלון הראל "מרובה המחזיק את המרובה: על היקף התפרשותן של הזכויות החוקתיות" משפטים נז` is mis-classified as **פסיקה – מחוזי**.
 
-## Root cause
-`classifyCitation` in `src/hooks/useBibliography.tsx` runs the **author/literature** check before the **legislation** check (lines 100–130).
+## Root causes
 
-Inside `hasAuthorPrefix` (line 65) the guard regex uses `\b` after Hebrew words:
+### Bug 1 — manual category reset
+In `src/hooks/useBibliography.tsx`, `addEntries` correctly applies `sourceTypeOverride`, but immediately wraps the new list in `rebuildBibliographyEntries(...)` which spreads `...classifyCitation(item.fullCitation)` over every entry — overwriting the user's choice with the heuristic result. Same thing happens on every mount via the `useEffect` that re-runs `rebuildBibliographyEntries`.
+
+### Bug 2 — trailing periods
+`copyAll` and the rendered list emit citations exactly as stored. Verified citations and AI lookups frequently end with `.`, leading to `... ס"ח 226.` on every line.
+
+### Bug 3 — district-court false positive
+In `classifyCitation`, the district-court detector is:
 ```
-/^(חוק|חוק-יסוד|פקודת|תקנות|...)\b/
+/ת"א|ת"פ|ע"מ|ה"פ|המר|פר"ק/
 ```
-JavaScript's `\b` is **ASCII-only** — Hebrew letters are not `\w`, so `\b` never matches between `חוק` and a following space. The "this is not an author" guard therefore **never fires** for Hebrew, and any "חוק <word>," string (e.g. `חוק הירושה,`) matches the generic 2-word author pattern and is mis-classified as literature.
-
-This is why some laws happen to land correctly:
-- `חוק החוזים (חלק כללי), ...` → next char is `(`, breaks the author lookahead → falls through to legislation ✓
-- `חוק-יסוד: הכנסת, ...` → `:` breaks the leading char class → falls through ✓
-- `חוק הירושה, ...` / `חוק העונשין, ...` / `חוק התחרות הכלכלית, ...` → cleanly matches the author 2-word pattern → wrongly tagged as literature ✗
+`המר` has no boundary anchor, so it matches inside the ordinary Hebrew word **המרובה** ("המרחזיק את **המר**ובה") and the article gets tagged as district case-law. Same risk exists for other un-anchored multi-letter tokens once gershayim are absent.
 
 ## Fix
 
 ### `src/hooks/useBibliography.tsx`
 
-1. **Replace ASCII `\b` with explicit lookaheads** in `hasAuthorPrefix`'s `nonAuthorStarters` regex so it actually rejects Hebrew legislation/case-law openers:
+1. **Persist manual category override.**
+   - Add `manualCategory?: boolean` to `BibliographyEntry`.
+   - In `addEntries`, when `sourceTypeOverride` is provided: set `sourceType` from it AND set `manualCategory: true`.
+   - In `rebuildBibliographyEntries`, if `item.manualCategory` is true, **keep** the existing `sourceType`/`subCategory`/`authorSurname` — only run `classifyCitation` for `language` and `year` (or just preserve everything except recompute `language`/`year` from text).
+
+2. **Anchor district / magistrate / specialized regexes** so abbreviations like `המר`, `ת"א`, `ע"מ`, `ה"פ`, `ת"ד`, `ד"מ` only match when they actually look like procedure tokens (followed by space + digits, or with required gershayim on Hebrew words). Concretely, replace:
    ```
-   /^(חוק-יסוד|חוק\s+יסוד|חוק|פקודת|פקודה|תקנות|תקנה|צו|נוהל|הוראת|הצעת|תזכיר|סעיף|סימן|פרק|תוספת|בית|פסק|דין|מדינת|הממשלה|הכנסת|משרד|רשות|בג"ץ|ע"א|רע"א|דנ"א|ע"פ|רע"פ|דנ"פ|ע"ע|עש"מ|בש"פ|ת"א|ת"פ|ע"מ|ה"פ|המר|פר"ק|ת"ט|תא"מ|ת"ד|עב"ל|ס"ק|ד"מ|ראו|ראה|השוו|השווה|שם|לעיל)(?=[\s:,\-־\(\.])/
+   /ת"א|ת"פ|ע"מ|ה"פ|המר|פר"ק/
    ```
-   (uses an explicit lookahead instead of `\b`, so Hebrew openers are reliably rejected from the "is this an author?" path.)
+   with anchored versions that require either a leading whitespace/start-of-string AND a following space + digit (procedure number) or quote mark, e.g.:
+   ```
+   /(?:^|\s)(?:ת"א|ת"פ|ע"מ|ה"פ|פר"ק|המ['׳]|המר['׳])\s+\d/
+   ```
+   Apply the same boundary tightening to magistrate (`ת"ט|תא"מ|ת"ד`) and specialized (`עב"ל|ס"ק|ד"מ`) regexes — each must be followed by `\s+\d` (a docket number) to count as case-law.
+   - Also add a precedence rule: if the citation contains a quoted article title (`"..."`) AND a Hebrew journal/volume hint (`משפטים|עיוני משפט|הפרקליט|מחקרי משפט|כתב[\s-]עת` followed by a Hebrew volume marker like `נז`/`כב`/digits), classify as `literature` BEFORE running case-law heuristics.
 
-2. **Re-order `classifyCitation`** so structural markers win over generic name detection. New order:
-   1. Case-law detectors (`isSupremeCase`, `isDistrictCase`, `isMagistrateCase`, `isSpecializedCase`, `isGenericCase`) — case-law tokens are unambiguous.
-   2. Legislation detectors (`hasPrimaryLegislation`, `hasSecondaryLegislation`) — same reason.
-   3. `authorDetected` / `hasLiteratureMarkers` — only after structural sources are ruled out.
-   4. URL → `misc`.
-
-   `authorSurname` extraction stays gated on `sourceType === "literature"`, so it only runs when literature classification actually wins.
-
-3. The `useEffect` at lines 260–275 already re-runs `rebuildBibliographyEntries` on mount, which calls `classifyCitation` again. Existing mis-classified entries in `localStorage` will be **auto-corrected** on the next page load — no migration needed.
+3. **Strip trailing punctuation on storage.** In `addEntries` (and `addEntry`, `syncFootnoteEntries`), normalize `fullCitation` once with `text.trim().replace(/[.,;:\s]+$/u, "")` before constructing the entry. This guarantees every stored citation ends cleanly; the on-screen list and copy-to-Word output then never show a stray period.
 
 ### `src/components/BibliographyGenerator.tsx`
-No change. The category-override popover already lets users move a row manually if a future edge case slips through; this fix removes the need for them to use it on plain-vanilla laws.
+
+- No regex changes. Two display-side touch-ups:
+  1. When rendering rows in step 2 and step 3, also strip trailing `.,;:` defensively (harmless second pass).
+  2. The category popover (`onChangeCategory`) already sets `sourceTypeOverride` on the review item — the hook fix above is what makes it actually stick after commit.
 
 ### Edge function
 No change.
 
 ## Out of scope
-- No changes to disambiguation, Perplexity fallback, verified-source priority, or the 3-step wizard.
-- No DB schema changes.
+- Disambiguation flow, Perplexity fallback, verified-source priority, 3-step wizard structure.
+- Existing entries in `localStorage` will re-run through the (now safer) classifier on next mount; manually-overridden ones added after this change will be locked.
 
 ## Outcome
-- `חוק הירושה, התשכ"ה–1965, ס"ח 63` → **חקיקה ראשית** ✓
-- `חוק התחרות הכלכלית, התשמ"ח–1988, ס"ח 128` → **חקיקה ראשית** ✓
-- `חוק העונשין, התשל"ז–1977, ס"ח 226` → **חקיקה ראשית** ✓
-- `חוק-יסוד: הכנסת` and `חוק החוזים (חלק כללי)` → keep working as today.
-- Existing wrongly-categorized entries in the user's bibliography will reshuffle to the correct category automatically on next reload.
+- Picking "ספרות משפטית" (or any other category) on a row → the source lands and **stays** in that category, even after page reload.
+- `אלון הראל "מרובה המחזיק את המרובה..." משפטים נז` → classified as **ספרות משפטית** (literature pre-check wins; even without it, `המר` no longer false-matches inside `המרובה`).
+- All bibliography lines end without a trailing `.` — both on screen and in the "העתק ל-Word" output.
+- Real district cases (e.g. `ת"א 1234/20 פלוני נ' אלמוני`) still classify correctly because the anchored regex requires `ת"א` followed by a docket number.
 
