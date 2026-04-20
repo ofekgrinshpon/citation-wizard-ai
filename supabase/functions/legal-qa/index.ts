@@ -749,6 +749,28 @@ serve(async (req) => {
         }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
 
+      // Defense-in-depth: Hebrew-ratio sanity gate. If the extracted text is mostly
+      // non-Hebrew (e.g., binary garbage that slipped through), refuse rather than
+      // hallucinate placeholders from noise.
+      {
+        const ft = verify.fullText as string;
+        const sample = ft.slice(0, 20000);
+        const total = sample.length || 1;
+        const hebrew = (sample.match(/[\u0590-\u05FF]/g) || []).length;
+        const ratio = hebrew / total;
+        if (ratio < 0.05) {
+          console.log(`case_summary: refusing — extracted text failed Hebrew-ratio gate (${(ratio * 100).toFixed(2)}%, source=${verify.source})`);
+          return new Response(JSON.stringify({
+            refusal: true,
+            source: "none",
+            message: "פסק הדין אינו קיים במערכת ולא ניתן היה לאתר את הטקסט המלא שלו. כדי שאוכל לסכם אותו עבורך, אנא העלה את הקובץ או הדבק את הטקסט בתיבת הטקסט.",
+            answer: "",
+            footnotes: [],
+            source_urls: [],
+          }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+      }
+
       const md = verify.metadata || {};
       const headerHints = [
         md.case_number ? `מספר תיק: ${md.case_number}` : null,

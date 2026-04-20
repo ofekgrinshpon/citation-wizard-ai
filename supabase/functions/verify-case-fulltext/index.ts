@@ -12,6 +12,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { unzipSync, strFromU8 } from "https://esm.sh/fflate@0.8.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -64,6 +65,52 @@ function buildMetadata(doc: Record<string, unknown>) {
     })(),
     source_url: (doc.source_url as string) || null,
   };
+}
+
+// Extract Hebrew/plain text from a DOCX byte buffer (proven approach from apify-ingest-cases).
+function extractDocxText(bytes: Uint8Array): string {
+  try {
+    const files = unzipSync(bytes);
+    const docXml = files["word/document.xml"];
+    if (!docXml) return "";
+    const xml = strFromU8(docXml);
+    // Concatenate all <w:t ...>text</w:t> runs; treat </w:p> as line breaks.
+    const paragraphs = xml.split(/<\/w:p>/);
+    const lines: string[] = [];
+    for (const p of paragraphs) {
+      const matches = p.match(/<w:t[^>]*>([^<]*)<\/w:t>/g) || [];
+      const txt = matches
+        .map((m) => m.replace(/<w:t[^>]*>/, "").replace(/<\/w:t>$/, ""))
+        .join("");
+      if (txt.trim()) lines.push(txt);
+    }
+    return lines
+      .join("\n")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&apos;/g, "'")
+      .trim();
+  } catch (e) {
+    console.warn("DOCX extraction failed:", e instanceof Error ? e.message : e);
+    return "";
+  }
+}
+
+function hebrewRatio(text: string): number {
+  const sample = text.slice(0, 20000);
+  const total = sample.length || 1;
+  const hebrew = (sample.match(/[\u0590-\u05FF]/g) || []).length;
+  return hebrew / total;
+}
+
+function looksLikeDocxUrl(url: string): boolean {
+  return /\.docx(\?|$)/i.test(url) || /type=4\b/i.test(url) || /Download\?/i.test(url);
+}
+
+function looksLikePdfUrl(url: string): boolean {
+  return /\.pdf(\?|$)/i.test(url) || /type=3\b/i.test(url);
 }
 
 serve(async (req) => {
@@ -190,30 +237,62 @@ serve(async (req) => {
             try {
               const txtRes = await fetchWithTimeout(url, { method: "GET" }, 10000);
               if (txtRes.ok) {
-                const html = await txtRes.text();
-                const plain = html
-                  .replace(/<script[\s\S]*?<\/script>/gi, " ")
-                  .replace(/<style[\s\S]*?<\/style>/gi, " ")
-                  .replace(/<[^>]+>/g, " ")
-                  .replace(/&nbsp;/g, " ")
-                  .replace(/\s+/g, " ")
-                  .trim();
+                const ct = (txtRes.headers.get("content-type") || "").toLowerCase();
+                const isDocxByCt = ct.includes("officedocument.wordprocessingml") || ct.includes("application/vnd.openxmlformats");
+                const isPdfByCt = ct.includes("application/pdf");
+                const isHtmlByCt = ct.includes("text/html") || ct.includes("application/xhtml");
+
+                let plain = "";
+
+                if (isDocxByCt || (!isHtmlByCt && looksLikeDocxUrl(url))) {
+                  // DOCX path — unzip and extract <w:t> runs
+                  const buf = new Uint8Array(await txtRes.arrayBuffer());
+                  plain = extractDocxText(buf);
+                  console.log(`verify-case-fulltext: external DOCX (${plain.length} chars from ${url})`);
+                } else if (isPdfByCt || looksLikePdfUrl(url)) {
+                  // PDF path — defer; fall through to refusal
+                  console.log(`verify-case-fulltext: external PDF skipped (no extractor) — ${url}`);
+                } else {
+                  // HTML / unknown text path
+                  const raw = await txtRes.text();
+                  // Sniff: if it's actually a binary that arrived without a content-type, bail.
+                  const looksHtml = isHtmlByCt || /^\s*<(!doctype|html|\?xml)/i.test(raw.slice(0, 200));
+                  if (looksHtml) {
+                    plain = raw
+                      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+                      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+                      .replace(/<[^>]+>/g, " ")
+                      .replace(/&nbsp;/g, " ")
+                      .replace(/\s+/g, " ")
+                      .trim();
+                  } else {
+                    console.log(`verify-case-fulltext: external response not HTML/DOCX (ct=${ct}) — ${url}`);
+                  }
+                }
+
+                // Hebrew-ratio sanity gate — guards against binary garbage that
+                // happens to exceed the length threshold.
                 if (plain.length >= MIN_EXTERNAL_TEXT) {
-                  console.log(`verify-case-fulltext: external match (${plain.length} chars from ${url})`);
-                  return new Response(JSON.stringify({
-                    source: "external",
-                    fullText: plain.slice(0, 60000),
-                    metadata: {
-                      title: (parsed.parties as string) || null,
-                      citation: null,
-                      court: (parsed.court as string) || null,
-                      decision_date: null,
-                      case_number: (parsed.case_number as string) || caseNum || null,
-                      parties: (parsed.parties as string) || null,
-                      year: (parsed.year as string) || null,
-                      source_url: url,
-                    },
-                  }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+                  const ratio = hebrewRatio(plain);
+                  if (ratio < 0.05) {
+                    console.warn(`verify-case-fulltext: external text failed Hebrew-ratio gate (${(ratio * 100).toFixed(2)}%) — discarding`);
+                  } else {
+                    console.log(`verify-case-fulltext: external match (${plain.length} chars, hebrew=${(ratio * 100).toFixed(1)}%, from ${url})`);
+                    return new Response(JSON.stringify({
+                      source: "external",
+                      fullText: plain.slice(0, 60000),
+                      metadata: {
+                        title: (parsed.parties as string) || null,
+                        citation: null,
+                        court: (parsed.court as string) || null,
+                        decision_date: null,
+                        case_number: (parsed.case_number as string) || caseNum || null,
+                        parties: (parsed.parties as string) || null,
+                        year: (parsed.year as string) || null,
+                        source_url: url,
+                      },
+                    }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+                  }
                 }
               }
             } catch (e) {
