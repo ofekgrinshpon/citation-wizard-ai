@@ -30,6 +30,56 @@ const EVENT_LABEL: Record<string, string> = {
   signup_bonus: "בונוס הצטרפות",
 };
 
+const PLAN_LABELS_HE: Record<string, string> = {
+  basic: "Basic",
+  pro_monthly: "Pro חודשי",
+  pro_semester: "Pro סמסטריאלי",
+  pro_annual: "Pro שנתי",
+  admin: "Admin",
+};
+
+/** Translate a raw ledger reason (English technical string) into Hebrew for display. */
+function formatLedgerReason(raw: string | null): string {
+  if (!raw) return "";
+  const r = raw.trim();
+
+  const direct: Record<string, string> = {
+    "citation-chat": "אזכור אחיד",
+    "legacy:incrementCount": "אזכור אחיד",
+    "verified-autocomplete": "השלמה אוטומטית מאומתת",
+    "batch-footnote": "מחולל הערות שוליים",
+    "bibliography": "מחולל ביבליוגרפיה",
+    "academic-writing": "כתיבה אקדמית",
+    "invalid_input_refusal": "הקלט לא היה ברור דיו",
+    "runtime-error": "שגיאה טכנית",
+    "citation-chat exception": "שגיאה טכנית באזכור אחיד",
+    "manual": "התאמה ידנית",
+  };
+  if (direct[r]) return direct[r];
+
+  const qa = r.match(/^legal-qa:([a-z_]+)(\+doc)?$/i);
+  if (qa) {
+    const modes: Record<string, string> = {
+      research: "עוזר משפטי – מחקר",
+      pleading_analysis: "עוזר משפטי – ביקורת מסמך",
+      case_summary: "עוזר משפטי – סיכום פסק דין",
+      academic_writing: "עוזר משפטי – כתיבה אקדמית",
+    };
+    const base = modes[qa[1]] ?? `עוזר משפטי – ${qa[1]}`;
+    return qa[2] ? `${base} (עם מסמך מצורף)` : base;
+  }
+
+  const auto = r.match(/^auto-refund:\s*(.+)$/i);
+  if (auto) return `החזר אוטומטי – ${formatLedgerReason(auto[1])}`;
+
+  const plan = r.match(/^plan changed to\s+(\S+)/i);
+  if (plan) return `שינוי מסלול ל-${PLAN_LABELS_HE[plan[1]] ?? plan[1]}`;
+
+  if (/[\u0590-\u05FF]/.test(r)) return r;
+  return "פעולת מערכת";
+}
+
+
 const Profile = () => {
   const { user, signOut } = useAuth();
   const {
