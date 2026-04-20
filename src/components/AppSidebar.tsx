@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
+import { useCredits } from "@/hooks/useCredits";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Pencil } from "lucide-react";
-import { CreditPill } from "@/components/CreditPill";
+import { Pencil, Infinity as InfinityIcon } from "lucide-react";
 
 export function AppSidebar() {
   const { user, isAdmin } = useAuth();
