@@ -171,7 +171,7 @@ const UsersTable = ({ users, onUserUpdated }: UsersTableProps) => {
                             <span className="text-muted-foreground"> כלולים</span>
                           </span>
                           <span className="text-foreground flex items-center gap-1">
-                            <Coins className="w-3 h-3 text-amber-500" />
+                            <Coins className="w-3 h-3 text-primary" />
                             {u.topup_credits_remaining ?? 0}
                             <span className="text-muted-foreground">Top-up</span>
                           </span>

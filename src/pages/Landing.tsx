@@ -4,7 +4,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useOffice } from "@/hooks/useOffice";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { GeometricBackground } from "@/components/GeometricBackground";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Check, Sparkles } from "lucide-react";
+import { PLANS, type PlanId } from "@/lib/plans";
 
 function useInView(ref: RefObject<HTMLElement | null>, threshold = 0.15) {
   const [visible, setVisible] = useState(false);
