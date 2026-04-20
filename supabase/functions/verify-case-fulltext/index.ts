@@ -67,6 +67,52 @@ function buildMetadata(doc: Record<string, unknown>) {
   };
 }
 
+// Extract Hebrew/plain text from a DOCX byte buffer (proven approach from apify-ingest-cases).
+function extractDocxText(bytes: Uint8Array): string {
+  try {
+    const files = unzipSync(bytes);
+    const docXml = files["word/document.xml"];
+    if (!docXml) return "";
+    const xml = strFromU8(docXml);
+    // Concatenate all <w:t ...>text</w:t> runs; treat </w:p> as line breaks.
+    const paragraphs = xml.split(/<\/w:p>/);
+    const lines: string[] = [];
+    for (const p of paragraphs) {
+      const matches = p.match(/<w:t[^>]*>([^<]*)<\/w:t>/g) || [];
+      const txt = matches
+        .map((m) => m.replace(/<w:t[^>]*>/, "").replace(/<\/w:t>$/, ""))
+        .join("");
+      if (txt.trim()) lines.push(txt);
+    }
+    return lines
+      .join("\n")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&apos;/g, "'")
+      .trim();
+  } catch (e) {
+    console.warn("DOCX extraction failed:", e instanceof Error ? e.message : e);
+    return "";
+  }
+}
+
+function hebrewRatio(text: string): number {
+  const sample = text.slice(0, 20000);
+  const total = sample.length || 1;
+  const hebrew = (sample.match(/[\u0590-\u05FF]/g) || []).length;
+  return hebrew / total;
+}
+
+function looksLikeDocxUrl(url: string): boolean {
+  return /\.docx(\?|$)/i.test(url) || /type=4\b/i.test(url) || /Download\?/i.test(url);
+}
+
+function looksLikePdfUrl(url: string): boolean {
+  return /\.pdf(\?|$)/i.test(url) || /type=3\b/i.test(url);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
