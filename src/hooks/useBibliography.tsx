@@ -12,6 +12,7 @@ export interface BibliographyEntry {
   authorSurname?: string;
   addedFrom: "footnote" | "manual";
   addedAt: number;
+  isVerified?: boolean;
 }
 
 export type BibSourceCategory =
@@ -223,7 +224,7 @@ export function sortBibliography(entries: BibliographyEntry[]): BibliographyEntr
 interface BibliographyContextValue {
   entries: BibliographyEntry[];
   addEntry: (rawInput: string, fullCitation: string, from: "footnote" | "manual") => boolean;
-  addEntries: (items: { rawInput: string; fullCitation: string }[], from?: "footnote" | "manual") => number;
+  addEntries: (items: { rawInput: string; fullCitation: string; isVerified?: boolean }[], from?: "footnote" | "manual") => number;
   syncFootnoteEntries: (items: { rawInput: string; fullCitation: string }[]) => number;
   removeEntry: (id: string) => void;
   clearAll: () => void;
@@ -309,7 +310,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
   );
 
   const addEntries = useCallback(
-    (items: { rawInput: string; fullCitation: string }[], from: "footnote" | "manual" = "manual"): number => {
+    (items: { rawInput: string; fullCitation: string; isVerified?: boolean }[], from: "footnote" | "manual" = "manual"): number => {
       let count = 0;
       setEntries((prev) => {
         const next = [...prev];
@@ -322,6 +323,7 @@ export function BibliographyProvider({ children }: { children: React.ReactNode }
             fullCitation: item.fullCitation,
             addedFrom: from,
             addedAt: Date.now(),
+            isVerified: item.isVerified,
             ...info,
           });
           count++;
