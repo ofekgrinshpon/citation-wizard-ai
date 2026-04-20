@@ -35,3 +35,6 @@ verify_jwt = false
 
 [functions.recover-knesset-titles]
 verify_jwt = false
+
+[functions.verify-case-fulltext]
+verify_jwt = false

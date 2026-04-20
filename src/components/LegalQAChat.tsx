@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
 import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, GraduationCap, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, Lock, Wand2, type LucideIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { CaseSummaryReport } from "@/components/CaseSummaryReport";
 
 // ─── Abstract chapter helpers ──────────────────────────────────────
 const ABSTRACT_LOCKED_TOOLTIP = "ניתן לייצר תקציר רק לאחר השלמת כל פרקי העבודה, כדי להבטיח שהוא משקף את המחקר במלואו";
@@ -39,6 +40,20 @@ interface QAResult {
   answer: string;
   footnotes: Footnote[];
   source_urls: string[];
+  refusal?: boolean;
+  message?: string;
+  case_summary?: boolean;
+  verified_source?: "user" | "local" | "external" | "none";
+  case_metadata?: {
+    title?: string | null;
+    citation?: string | null;
+    court?: string | null;
+    decision_date?: string | null;
+    case_number?: string | null;
+    parties?: string | null;
+    year?: string | null;
+    source_url?: string | null;
+  };
 }
 
 type TaskMode = "research" | "pleading_analysis" | "case_summary" | "academic_writing";
@@ -958,14 +973,14 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
       const data = await res.json();
       if (data?.error) { setError(data.error); return; }
-      if (!data?.answer || data.answer.trim().length < 20) { setError("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב."); return; }
+      if (!data?.refusal && (!data?.answer || data.answer.trim().length < 20)) { setError("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב."); return; }
 
       const qaResult = data as QAResult;
       setResult(qaResult);
 
       try {
         const { data: { user: currentUser } } = await supabase.auth.getUser();
-        if (currentUser) {
+        if (currentUser && !qaResult.refusal) {
           await supabase.from("qa_logs").insert({
             user_id: currentUser.id,
             project_id: currentProject?.id ?? null,
@@ -1616,7 +1631,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         )}
 
         {/* Loading skeleton */}
-        {loading && (
+        {loading && taskMode !== "case_summary" && (
           <Card className="mt-4 border-border">
             <CardContent className="p-4 sm:p-6 space-y-5">
               <div>
@@ -1644,8 +1659,54 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           </Card>
         )}
 
+        {/* Case-summary refusal card */}
+        {!isAcademic && result?.refusal && (
+          <Alert className="mt-4 border-amber-500/40 bg-amber-50/40 dark:bg-amber-900/10">
+            <AlertTriangle className="h-4 w-4 text-amber-600" />
+            <AlertDescription className="text-foreground space-y-3">
+              <p className="text-sm leading-relaxed">{result.message}</p>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                className="gap-1.5"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                העלה קובץ פסק הדין
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Case-summary structured report */}
+        {!isAcademic && result && !result.refusal && (result.case_summary || taskMode === "case_summary") && (
+          <CaseSummaryReport
+            answer={result.answer}
+            metadata={result.case_metadata}
+            verifiedSource={result.verified_source}
+            onClear={() => { setResult(null); setQuestion(""); }}
+          />
+        )}
+
+        {/* Verifying-source progress (case_summary only) */}
+        {!isAcademic && loading && taskMode === "case_summary" && (
+          <Card className="mt-4 border-primary/30">
+            <CardContent className="p-5 space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                <span className="text-sm font-semibold text-foreground">מאמת מקור...</span>
+              </div>
+              <ul className="text-xs text-muted-foreground space-y-1.5 pr-6">
+                <li>• בדיקת קלט המשתמש</li>
+                <li>• חיפוש במאגר המקומי</li>
+                <li>• איתור טקסט מלא חיצוני</li>
+              </ul>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Non-academic result */}
-        {!isAcademic && result && (
+        {!isAcademic && result && !result.refusal && !result.case_summary && taskMode !== "case_summary" && (
           <Card className="mt-4 border-border">
             <div className="flex items-center justify-between px-4 sm:px-6 pt-4 pb-2 border-b border-border">
               <span className="text-xs text-muted-foreground font-medium">
