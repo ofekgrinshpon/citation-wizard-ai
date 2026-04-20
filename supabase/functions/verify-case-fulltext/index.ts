@@ -31,10 +31,57 @@ const MIN_EXTERNAL_TEXT = 3000;
 const CASE_NUM_REGEX =
   /(?:בג["״]ץ|ע["״]א|ע["״]פ|רע["״]א|רע["״]פ|דנ["״]א|דנ["״]פ|בש["״]פ|עע["״]מ|בר["״]ם|תפ["״]ח|ת["״]א|ת["״]פ|ה["״]פ|עמ["״]ה)\s*([0-9]{1,6}\/[0-9]{2,4})/;
 
+// Bare procedural numbers: "18225-06-25" (case-month-year) or "1234/05" (case/year)
+const BARE_SLASH_REGEX = /\b([0-9]{1,6}\/[0-9]{2,4})\b/;
+const BARE_HYPHEN_REGEX = /\b([0-9]{1,6})-([0-9]{1,2})-([0-9]{2,4})\b/;
+
 function extractCaseNumber(text: string): string | null {
+  // Prefixed style: בג"ץ 1234/05
   const m = text.match(CASE_NUM_REGEX);
-  if (!m) return null;
-  return m[1].trim();
+  if (m) return m[1].trim();
+  // Bare slash: 1234/05
+  const s = text.match(BARE_SLASH_REGEX);
+  if (s) return s[1].trim();
+  // Bare hyphen: 18225-06-25 → 18225/06 (DB canonical)
+  const h = text.match(BARE_HYPHEN_REGEX);
+  if (h) return `${h[1]}/${h[2]}`;
+  return null;
+}
+
+// Returns all candidate forms a case number might appear as in the DB.
+function caseNumberVariants(input: string): string[] {
+  const out = new Set<string>();
+  const trimmed = input.trim();
+  out.add(trimmed);
+  const h = trimmed.match(/^([0-9]{1,6})-([0-9]{1,2})-([0-9]{2,4})$/);
+  if (h) {
+    out.add(`${h[1]}/${h[2]}`);
+    out.add(`${h[1]}-${h[2]}-${h[3]}`);
+  }
+  const s = trimmed.match(/^([0-9]{1,6})\/([0-9]{2,4})$/);
+  if (s) {
+    out.add(`${s[1]}/${s[2]}`);
+  }
+  return Array.from(out);
+}
+
+// Browser-like headers for court servers that reject default fetch UA.
+const BROWSER_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+  "Accept":
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/pdf,text/html;q=0.9,*/*;q=0.8",
+  "Accept-Language": "he-IL,he;q=0.9,en-US;q=0.8,en;q=0.7",
+};
+
+// True if the first bytes look like a real ZIP/DOCX (PK\x03\x04).
+function looksLikeZip(buf: Uint8Array): boolean {
+  return buf.length >= 4 && buf[0] === 0x50 && buf[1] === 0x4b && buf[2] === 0x03 && buf[3] === 0x04;
+}
+
+// True if the first bytes look like a PDF (%PDF-).
+function looksLikePdfMagic(buf: Uint8Array): boolean {
+  return buf.length >= 5 && buf[0] === 0x25 && buf[1] === 0x50 && buf[2] === 0x44 && buf[3] === 0x46 && buf[4] === 0x2d;
 }
 
 async function fetchWithTimeout(url: string, opts: RequestInit, ms: number): Promise<Response> {
@@ -203,11 +250,13 @@ serve(async (req) => {
     let localDoc: Record<string, unknown> | null = null;
 
     if (caseNum) {
+      const variants = caseNumberVariants(caseNum);
+      console.log(`verify-case-fulltext: local lookup variants=${JSON.stringify(variants)}`);
       const { data } = await adminClient
         .from("legal_documents")
         .select("id, title, citation, content, court, decision_date, case_number, source_url, source_type, metadata")
         .in("source_type", ["case_law", "case_law_database"])
-        .eq("case_number", caseNum)
+        .in("case_number", variants)
         .order("created_at", { ascending: false })
         .limit(1);
       if (data && data.length > 0) localDoc = data[0] as Record<string, unknown>;
@@ -273,29 +322,64 @@ serve(async (req) => {
           const url = (parsed.source_url as string) || cites[0] || "";
           if (url) {
             try {
-              const txtRes = await fetchWithTimeout(url, { method: "GET" }, 10000);
-              if (txtRes.ok) {
+              const txtRes = await fetchWithTimeout(url, {
+                method: "GET",
+                headers: BROWSER_HEADERS,
+                redirect: "follow",
+              }, 15000);
+              if (!txtRes.ok) {
+                console.warn(`verify-case-fulltext: external fetch HTTP ${txtRes.status} — ${url}`);
+              } else {
                 const ct = (txtRes.headers.get("content-type") || "").toLowerCase();
+                const cd = (txtRes.headers.get("content-disposition") || "").toLowerCase();
                 const isDocxByCt = ct.includes("officedocument.wordprocessingml") || ct.includes("application/vnd.openxmlformats");
                 const isPdfByCt = ct.includes("application/pdf");
                 const isHtmlByCt = ct.includes("text/html") || ct.includes("application/xhtml");
+                const cdMentionsDocx = /\.docx\b/.test(cd);
+                const cdMentionsPdf = /\.pdf\b/.test(cd);
 
                 let plain = "";
+                const urlSuggestsDocx = looksLikeDocxUrl(url);
+                const urlSuggestsPdf = looksLikePdfUrl(url);
 
-                if (isDocxByCt || (!isHtmlByCt && looksLikeDocxUrl(url))) {
-                  // DOCX path — unzip and extract <w:t> runs
+                // Prefer magic-byte sniffing over server-provided content-type, since court
+                // servers commonly mislabel DOCX downloads as text/html or octet-stream.
+                if (isDocxByCt || cdMentionsDocx || (!isHtmlByCt && urlSuggestsDocx) || (!isHtmlByCt && !isPdfByCt && !urlSuggestsPdf)) {
                   const buf = new Uint8Array(await txtRes.arrayBuffer());
-                  plain = extractDocxText(buf);
-                  console.log(`verify-case-fulltext: external DOCX (${plain.length} chars from ${url})`);
-                } else if (isPdfByCt || looksLikePdfUrl(url)) {
-                  // PDF path — convert to plain text via ConvertAPI
+                  if (looksLikeZip(buf)) {
+                    plain = extractDocxText(buf);
+                    console.log(`verify-case-fulltext: external DOCX (${plain.length} chars, ${buf.length}B from ${url})`);
+                  } else if (looksLikePdfMagic(buf)) {
+                    plain = await extractPdfTextViaConvertApi(buf);
+                    console.log(`verify-case-fulltext: external PDF via magic (${plain.length} chars, ${buf.length}B from ${url})`);
+                  } else {
+                    // Not a real binary — try treating buffer as HTML/text fallback.
+                    const raw = new TextDecoder("utf-8", { fatal: false }).decode(buf);
+                    const looksHtml = /^\s*<(!doctype|html|\?xml)/i.test(raw.slice(0, 200));
+                    if (looksHtml) {
+                      plain = raw
+                        .replace(/<script[\s\S]*?<\/script>/gi, " ")
+                        .replace(/<style[\s\S]*?<\/style>/gi, " ")
+                        .replace(/<[^>]+>/g, " ")
+                        .replace(/&nbsp;/g, " ")
+                        .replace(/\s+/g, " ")
+                        .trim();
+                      console.log(`verify-case-fulltext: external HTML interstitial fallback (${plain.length} chars from ${url})`);
+                    } else {
+                      console.warn(`verify-case-fulltext: rejected — not zip/pdf/html (ct=${ct} cd=${cd} bytes=${buf.length} first4=${Array.from(buf.slice(0,4)).map(b=>b.toString(16)).join(' ')}) — ${url}`);
+                    }
+                  }
+                } else if (isPdfByCt || cdMentionsPdf || urlSuggestsPdf) {
                   const buf = new Uint8Array(await txtRes.arrayBuffer());
-                  plain = await extractPdfTextViaConvertApi(buf);
-                  console.log(`verify-case-fulltext: external PDF (${plain.length} chars from ${url})`);
+                  if (looksLikePdfMagic(buf) || looksLikeZip(buf)) {
+                    plain = looksLikeZip(buf) ? extractDocxText(buf) : await extractPdfTextViaConvertApi(buf);
+                    console.log(`verify-case-fulltext: external PDF (${plain.length} chars, ${buf.length}B from ${url})`);
+                  } else {
+                    console.warn(`verify-case-fulltext: rejected PDF — bad magic (bytes=${buf.length}) — ${url}`);
+                  }
                 } else {
                   // HTML / unknown text path
                   const raw = await txtRes.text();
-                  // Sniff: if it's actually a binary that arrived without a content-type, bail.
                   const looksHtml = isHtmlByCt || /^\s*<(!doctype|html|\?xml)/i.test(raw.slice(0, 200));
                   if (looksHtml) {
                     plain = raw
@@ -306,7 +390,7 @@ serve(async (req) => {
                       .replace(/\s+/g, " ")
                       .trim();
                   } else {
-                    console.log(`verify-case-fulltext: external response not HTML/DOCX (ct=${ct}) — ${url}`);
+                    console.log(`verify-case-fulltext: external response not HTML/DOCX/PDF (ct=${ct}) — ${url}`);
                   }
                 }
 
