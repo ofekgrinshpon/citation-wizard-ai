@@ -1150,9 +1150,20 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     }
 
     const q = question.trim();
-    if (!q || q.length < 5) {
-      toast.error("השאלה קצרה מדי. נסו לפרט יותר.");
-      return;
+    const hasFile = extractedTexts.length > 0;
+
+    // For pleading_analysis: allow file-only submissions (no typed text required).
+    // For other modes: require ≥5 chars of typed text.
+    if (taskMode === "pleading_analysis") {
+      if (!hasFile && q.length < 5) {
+        toast.error("הזינו טקסט או העלו מסמך לביקורת.");
+        return;
+      }
+    } else {
+      if (!q || q.length < 5) {
+        toast.error("השאלה קצרה מדי. נסו לפרט יותר.");
+        return;
+      }
     }
 
     setLoading(true);
@@ -1163,9 +1174,17 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     abortControllerRef.current = controller;
 
     try {
+      // For pleading_analysis with a file but no typed text, send a default instruction
+      // so the edge function has a non-empty `question`. The actual audit subject is the file.
+      const effectiveQuestion =
+        taskMode === "pleading_analysis" && hasFile && q.length === 0
+          ? "בצע ביקורת מקיפה על המסמך המצורף"
+          : q;
+
       const body: Record<string, unknown> = {
-        question: q,
+        question: effectiveQuestion,
         taskMode,
+        hasDocument: hasFile,
       };
       // Send multi-file context
       if (extractedTexts.length === 1) {
