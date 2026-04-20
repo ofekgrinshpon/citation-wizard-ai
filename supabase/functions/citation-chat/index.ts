@@ -704,7 +704,30 @@ serve(async (req) => {
       }
     }
 
-    // ── Case law search via Perplexity ──
+    // ── Consume 1 credit before invoking the AI (verified short-circuit above is free) ──
+    const consumeRes = await userClient.rpc("consume_credits", {
+      _amount: 1,
+      _reason: "citation-chat",
+      _request_id: creditRequestId,
+    });
+    const consumeData = (consumeRes.data ?? {}) as Record<string, unknown>;
+    if (consumeRes.error || !consumeData.ok) {
+      if (consumeData.error === "INSUFFICIENT_CREDITS") {
+        return new Response(
+          JSON.stringify({
+            error: "INSUFFICIENT_CREDITS",
+            required: 1,
+            remaining_included: consumeData.remaining_included ?? 0,
+            remaining_topup: consumeData.remaining_topup ?? 0,
+          }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      console.error("consume_credits failed:", consumeRes.error, consumeData);
+      // Don't block on RPC errors — proceed without charging
+      creditRequestId = null;
+    }
+
     let caseLawHint = "";
     let caseLawOverrideLabel: string | null = null;
     const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
