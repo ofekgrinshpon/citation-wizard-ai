@@ -73,11 +73,48 @@ const steps = [
   },
 ];
 
+const PRICING_PLANS: { id: PlanId; highlight?: boolean; perks: string[] }[] = [
+  {
+    id: "basic",
+    perks: [
+      "20 קרדיטים בחודש",
+      "אזכורים אחידים, ביבליוגרפיה, העוזר המשפטי",
+      "ללא רכישת קרדיטים נוספת",
+    ],
+  },
+  {
+    id: "pro_monthly",
+    perks: [
+      "250 קרדיטים בחודש",
+      "אפשרות להוספת Top-up בכל עת",
+      "תמיכה בכל מצבי העבודה",
+    ],
+  },
+  {
+    id: "pro_semester",
+    highlight: true,
+    perks: [
+      "1,100 קרדיטים ל-4 חודשים",
+      "החיסכון הגדול ביותר לסטודנטים",
+      "Top-up זמין לפי צורך",
+    ],
+  },
+  {
+    id: "pro_annual",
+    perks: [
+      "3,600 קרדיטים בשנה",
+      "המחיר הטוב ביותר לקרדיט",
+      "אידיאלי למשרדים ולעבודה שוטפת",
+    ],
+  },
+];
+
 const Landing = () => {
   const { user, loading: authLoading } = useAuth();
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const howRef = useRef<HTMLDivElement>(null);
+  const pricingRef = useRef<HTMLDivElement>(null);
 
   if (authLoading) {
     return (
@@ -95,6 +132,10 @@ const Landing = () => {
 
   const scrollToHow = () => {
     howRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const scrollToPricing = () => {
+    pricingRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
