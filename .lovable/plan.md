@@ -1,62 +1,40 @@
 
-## Goal
-Fix the `סיכום פסיקה` flow so a case like `18225-06-25` does not fall through to the upload-refusal when the court file is actually reachable.
 
-## What I found
-- The current refusal is expected from the latest logs:
-  - `verify-case-fulltext: external DOCX (0 chars ...)`
-  - `DOCX extraction failed: invalid zip data`
-  - then `verify-case-fulltext: not found`
-- So the system is reaching the court URL, but the response being fetched is not the real DOCX payload that `fflate` expects.
-- There is a second weakness: `extractCaseNumber()` only recognizes prefixed/slash-style numbers like `בג"ץ 1234/05`, so a raw input like `18225-06-25` likely skips the local DB match entirely and relies on the flaky external path.
+## Root cause (three problems compounding)
 
-## Plan
+I confirmed the diagnosis by checking the DB and the logs:
 
-### 1. Harden court-file fetching in `verify-case-fulltext`
-Update `supabase/functions/verify-case-fulltext/index.ts` to fetch court download URLs with the same browser-like headers already used successfully in `apify-ingest-cases`:
-- `User-Agent`
-- `Accept`
-- `Accept-Language`
+1. **Local DB DOES have this case** — `legal_documents` row with `case_number = '18225-06-25'`, `source_type = 'case_law_database'`, content length **5393 chars** (well above the 3000 threshold). But the local lookup is missing it because:
+   - `extractCaseNumber("בג\"ץ 18225-06-25")` extracts `'18225/06'` (hyphen → slash conversion)
+   - `caseNumberVariants('18225/06')` produces only `['18225/06']` — it does NOT generate the original hyphenated form `'18225-06-25'`
+   - DB stores it as `'18225-06-25'`, so `.in("case_number", ['18225/06'])` matches nothing
+   - **This is the primary bug.** The case is right there, we just look up the wrong key.
 
-Then add response validation before DOCX extraction:
-- inspect `content-type`
-- inspect `content-disposition`
-- if a `type=4` court URL returns HTML/redirect/interstitial instead of a real DOCX, treat it as a failed fetch and try fallback handling instead of unzipping garbage
+2. **External fetch is blocked** — `supremedecisions.court.gov.il` resets the connection (`os error 104: Connection reset by peer`) for requests from Supabase edge runtime IPs, regardless of headers. This is a server-side anti-bot measure against datacenter IPs. We can't fix this from the edge function — but we don't need to, because the data is already local.
 
-### 2. Add a resilient court-download fallback path
-For Supreme Court `Download?...type=4` URLs:
-- detect when the first fetch does not yield a valid DOCX
-- retry with stricter headers / redirect-aware handling
-- only run `extractDocxText()` after confirming the response looks like an actual DOCX/ZIP payload
-- log the exact reason for rejection (`html interstitial`, `wrong content-type`, `empty buffer`, `invalid zip`) so this is debuggable next time
+3. **Title-fallback search would also work but never runs** — because `caseNum` is truthy (`'18225/06'`), the code skips the title-fallback `.or(...)` query entirely. Even if it ran, the title contains `(בג"ץ 18225-06-25)` so an `ilike '%18225-06-25%'` would have matched.
 
-### 3. Normalize case numbers so local matching works for `18225-06-25`
-Improve `extractCaseNumber()` (or add a small normalizer beside it) so bare hyphenated numbers can map to the DB-friendly canonical form:
-- `18225-06-25` → `18225/06`
-- keep existing support for prefixed/slash-style inputs
-- use the normalized value in the local DB lookup before external retrieval
+## Fix — `supabase/functions/verify-case-fulltext/index.ts`
 
-This should reduce unnecessary external fetches for users who paste procedural numbers directly.
+Change `caseNumberVariants()` to **also keep the original raw input** (the unconverted hyphenated form) when the input came from a hyphenated case number. Concretely:
 
-### 4. Keep the strict refusal rule intact
-Do not loosen the prohibition.
-If after normalization + stronger fetch handling there is still no usable full text, keep returning the exact upload/refusal message.
+- When `extractCaseNumber()` matches the `BARE_HYPHEN_REGEX` (e.g. `18225-06-25`), it currently returns the slash form `'18225/06'`. Change it to return the **original hyphenated string** `'18225-06-25'` instead, and let `caseNumberVariants()` derive both forms from it:
+  - `'18225-06-25'` → variants: `['18225-06-25', '18225/06', '18225-06']`
+- This way `.in("case_number", variants)` will match DB rows stored in any of the three common formats.
 
-### 5. Validate the case-summary path end-to-end
-After implementation, verify that:
-- entering `18225-06-25` can hit local or external full text successfully
-- `verify-case-fulltext` returns real text, not `0 chars`
-- `legal-qa` produces a structured summary instead of refusal
-- the existing structured `CaseSummaryReport` still renders with the source badge
+Also expand `caseNumberVariants()` for prefixed/slash inputs to cover the inverse mapping where reasonable (slash → hyphen is ambiguous without the day, so skip that direction; just make sure hyphenated DB rows are findable).
 
-## Files to update
-- `supabase/functions/verify-case-fulltext/index.ts`
-- possibly `supabase/functions/legal-qa/index.ts` only if a tiny normalization helper is also needed there, but most of the fix belongs in `verify-case-fulltext`
+That's the only retrieval change needed. The external-fetch path can stay as-is (it correctly logs the connection reset and falls through), since the local DB already has the case.
 
-## Technical notes
-- Root bug is not the summary prompt; it is retrieval.
-- `apify-ingest-cases` already shows the winning fetch pattern for court DOCX files, so I’d align `verify-case-fulltext` with that implementation instead of inventing a new extraction strategy.
-- The current Hebrew-ratio guard is good and should stay; it is correctly preventing hallucinated summaries from broken binary fetches.
+## Out of scope
+- Fixing the court-server connection reset (not solvable from edge runtime; would need a residential-IP proxy or scheduled offline ingestion).
+- Changing the AI prompt or `legal-qa` — once `verify-case-fulltext` returns the local 5393-char content, the existing pipeline will fill in the summary fields normally.
+- UI changes.
+
+## Files touched
+- **Edit** `supabase/functions/verify-case-fulltext/index.ts` — adjust `extractCaseNumber` (return raw hyphenated form) and `caseNumberVariants` (emit hyphen + slash + truncated-hyphen forms).
+- **Deploy** `verify-case-fulltext`.
 
 ## Expected outcome
-A user who enters `18225-06-25` should no longer get an upload refusal merely because the court download response was fetched incorrectly. If the judgment text is truly available, the app should generate the structured case summary; if not, it should still refuse cleanly.
+Entering `בג"ץ 18225-06-25` → local lookup finds the existing 5393-char document → `legal-qa` produces a real structured summary (עובדות / טענות / שאלה משפטית / דעות / הכרעה / הלכה) populated from the actual judgment text, with the "מקומי" source badge.
+
