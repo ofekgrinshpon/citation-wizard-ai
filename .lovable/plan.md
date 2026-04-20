@@ -1,81 +1,34 @@
 
 
-## Goal
-Restructure the Seminar Wizard outline (academic_writing → `propose_outline`) to follow a strict academic research-proposal format with an Introduction (thesis + line of argument + structure), per-chapter expansion + counter-arguments + argumentative tone, "general → specific" / "מצוי → ראוי" flow, and an estimated Conclusion section. Render the result as a structured hierarchical report instead of raw markdown.
+## Root cause
+`verify-case-fulltext` fetched a Supreme Court **DOCX download URL** (`...&type=4`) and treated the response as HTML — it stripped tags from binary ZIP bytes, producing 134K chars of unreadable garbage that passed the 3000-char threshold. The AI received noise, so every field came back as "(לא צוין בפסק הדין)". The header rendered correctly only because metadata came from Perplexity's JSON, not from the document.
 
-## Current state
-- `supabase/functions/legal-qa/index.ts` `getAcademicSubModePrompt("propose_outline")` (lines 307–321) returns a thin 6-bullet template (תקציר / מבוא / מסגרת / סקירה / ניתוח / סיכום) with no thesis, no per-chapter expansion, no counter-arguments, no flow guidance.
-- `LegalQAChat.tsx` `approveOutline()` (lines 838–851) parses chapter titles via a loose regex `^\d+\.\s*\*?\*?(.+)`. Needs to keep extracting the same titles even when the new richer outline has nested expansion bullets underneath.
-- The outline is rendered with `<RenderMarkdown text={result.answer} />` inside a plain card (line 1366–1386). No hierarchical/visual structure.
+The local ingestion function (`apify-ingest-cases`) already solves this with `fflate` DOCX extraction. The verify function never got that treatment.
 
-## Plan
+## Fix — `supabase/functions/verify-case-fulltext/index.ts`
 
-### 1. Rewrite `propose_outline` prompt (`supabase/functions/legal-qa/index.ts`)
-Replace the case body with a strict three-section research-proposal template that the AI must output verbatim:
+Add proper binary handling to the external-retrieval branch (lines 189–222):
 
-```
-**מבוא**
-- שאלת המחקר: <ניסוח מדויק>
-- התזה המרכזית (Thesis): <טענה משפטית מרכזית במשפט אחד>
-- חשיבות ותרומה לשיח המשפטי: <2-3 שורות>
-- קו הטיעון (Line of Argument): <כיצד התזה מתפתחת לאורך הפרקים>
-- מבנה העבודה: <משפט מקשר לפרקים שלמטה>
+1. **Detect content type** from response `Content-Type` header AND URL hints (`.docx`, `.pdf`, `type=4`, `type=3`, `Download?`).
+2. **DOCX path** — use `fflate` (already proven in `apify-ingest-cases`) to unzip and extract `<w:t>` runs from `word/document.xml`. Same code, copy-pasted.
+3. **PDF path** — call the existing `convert-doc` edge function (which the project already uses for ingestion) by POSTing the binary, OR skip and fall through to "not found" if convert-doc isn't suitable for inline use. Simpler: skip PDFs in this first pass, log it, fall through.
+4. **HTML path** (current behavior) — keep, but only when the response actually looks like HTML (`text/html` or starts with `<!DOCTYPE`/`<html`).
+5. **Sanity gate** — after extraction, verify the result contains a reasonable proportion of Hebrew characters (≥ 5% of chars in the `\u0590-\u05FF` range). If not, treat as failed extraction → fall through to "not found" instead of returning garbage.
 
-**רשימת הפרקים**
-1. **<כותרת פרק>** – הדין המצוי
-   - הרחבה: <2-4 משפטים — מוקד הפרק, הטיעונים הנטענים, וכיצד הוא משרת את שאלת המחקר>
-   - טיעוני נגד אפשריים: <משפט-שניים — אילו השגות יועלו וכיצד הפרק נערך לקראתן>
-2. **<כותרת פרק>** – ...
-   - הרחבה: ...
-   - טיעוני נגד אפשריים: ...
-(המשך — בהדרגה מן הכלל אל הפרט: התחל בדין המצוי, עבור לביקורת/השוואה, סיים בדין הראוי / הצעה נורמטיבית)
+## Fix — `supabase/functions/legal-qa/index.ts` (defense in depth)
 
-**סיכום ומסקנות (משוערות)**
-- מסקנה משוערת: <מה צפוי לעלות מהמחקר על-בסיס מה שידוע עד כה>
-- תרומה משפטית: <שורה-שתיים>
-```
-
-Plus mandatory style rules in the prompt:
-- **Argumentative tone**: "פרק זה טוען ש…" / "במאמר ייטען כי…" — never "אסקור" / "אבחן" / "ארצה להציג".
-- **Logical flow**: chapters MUST progress general → specific, מצוי → ראוי. Mark each chapter with `– הדין המצוי` / `– ניתוח ביקורתי` / `– הדין הראוי` tag for clarity.
-- 4–6 chapters, no תקציר in the outline (תקציר is generated last from the written work — keep the existing post-write flow untouched).
-- Hebrew academic register; no footnotes inside the outline.
-
-### 2. Keep chapter extraction working (`LegalQAChat.tsx` `approveOutline`)
-The new outline puts chapter titles on numbered lines `1. **Title** – tag` followed by indented sub-bullets. Update the regex to:
-- Match only top-level numbered lines (`^\d+\.\s+\*\*(.+?)\*\*`).
-- Strip the trailing ` – הדין המצוי/הראוי/...` tag from the title before saving to `chapters[]` (so chapter buttons show clean titles).
-- Skip any indented `- הרחבה:` / `- טיעוני נגד:` lines.
-- Preserve the existing "fallback to default 6-section list" if no titles parse.
-- **Inject תקציר** at the start of the parsed list automatically (since the new outline omits it, but the abstract-locking flow still needs it as the final synthesizable chapter).
-
-### 3. New `OutlineReport` rendering (`LegalQAChat.tsx`, replace lines 1366–1386 block)
-Build an inline structured renderer (no new file needed — keep co-located with the wizard) that parses the AI's three-section markdown into:
-- **Header card** — "מתווה מחקר אקדמי" + the research question pulled from state.
-- **Section: מבוא** — labelled rows for שאלת המחקר / תזה / חשיבות / קו הטיעון / מבנה. Each label bold, value in body text.
-- **Section: רשימת הפרקים** — ordered list, each chapter as a sub-card with: number badge + title + flow-tag pill (מצוי/ביקורתי/ראוי) + two labelled paragraphs (הרחבה, טיעוני נגד).
-- **Section: סיכום ומסקנות (משוערות)** — labelled rows for מסקנה משוערת / תרומה.
-- Keep the existing "אשר מתווה והתחל כתיבה" + "חזרה לעריכה" buttons unchanged below.
-
-Parsing strategy: split on the three `**...**` headers; within "רשימת הפרקים" split on `^\d+\.` lines and capture the indented `- הרחבה:` / `- טיעוני נגד:` bullets per chapter. Fallback: if parsing fails, render the original `<RenderMarkdown>` so nothing breaks for legacy outlines saved in localStorage/DB.
-
-### 4. Backward compatibility
-- Existing saved sessions (`outline` string in `academic_sessions` / localStorage) keep loading; `OutlineReport` falls back to plain markdown if the new headers aren't found, so old outlines render as before.
-- No DB migration needed (outline is already stored as free text).
-- `approveOutline` already handles the legacy 6-bullet shape via its fallback list; the updated regex is a strict superset.
-
-### 5. Files touched
-- **Edit** `supabase/functions/legal-qa/index.ts` — replace `propose_outline` case body (lines 307–321).
-- **Edit** `src/components/LegalQAChat.tsx`:
-  - Update `approveOutline()` regex + auto-inject תקציר.
-  - Replace the outline-rendering Card block (lines 1366–1386) with the new `OutlineReport` inline component.
-- **Deploy** `legal-qa` edge function.
+Add the same Hebrew-ratio sanity check on `verify.fullText` before sending to Gemini (around line 740). If the text fails the check, return the same refusal message as `source === "none"`. This prevents future regressions from any other extraction path.
 
 ## Out of scope
-- Changing the abstract / write_chapter / suggest_topics prompts — only `propose_outline` is restructured.
-- New DB columns for outline metadata (parsing happens at render time from the stored markdown string).
-- Persisting the parsed structure separately — the markdown remains the source of truth.
+- PDF extraction (defer — needs convert-doc integration; for now, PDF-only sources fall through to refusal, which is correct strict behavior).
+- Improving Perplexity's URL selection to prefer HTML viewer pages over download endpoints (would require prompt changes; the binary handling above makes it unnecessary).
+- Any UI changes — refusal already renders correctly.
+
+## Files touched
+- **Edit** `supabase/functions/verify-case-fulltext/index.ts` — add `fflate` import, content-type detection, DOCX extraction, Hebrew-ratio gate.
+- **Edit** `supabase/functions/legal-qa/index.ts` — Hebrew-ratio guard on returned `fullText`.
+- **Deploy** both functions.
 
 ## Expected outcome
-- User picks "כתיבה אקדמית" → enters research question → wizard shows a structured research-proposal outline with thesis, per-chapter expansions, counter-arguments, מצוי→ראוי flow, and an estimated conclusion. Clicking "אשר מתווה" still extracts clean chapter titles (with תקציר auto-prepended) and proceeds to the existing chapter-writing flow without behaviour change.
+For the Supreme Court case the user just tried (`גילון נ' ממשלת ישראל`), the external DOCX download will be properly unzipped → real Hebrew text reaches Gemini → the report fills in עובדות / טענות / דעות / הכרעה / הלכה from actual judgment content instead of placeholders. If extraction still fails, the user sees the proper "upload the file" refusal instead of an empty skeleton report.
 
