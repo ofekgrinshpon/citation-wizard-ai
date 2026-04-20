@@ -62,6 +62,45 @@ export function BibliographyGenerator() {
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [reviewItems, setReviewItems] = useState<ReviewItem[]>([]);
 
+  const sendEntryBackToReview = (id: string) => {
+    const entry = sortedEntries.find((e) => e.id === id);
+    if (!entry) return;
+    setReviewItems((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        rawInput: entry.rawInput || entry.fullCitation,
+        status: "ok",
+        citation: entry.fullCitation,
+        isVerified: Boolean(entry.isVerified),
+        options: [],
+        isEditing: true,
+        editValue: entry.fullCitation,
+        sourceTypeOverride: entry.sourceType,
+      },
+    ]);
+    removeEntry(id);
+    toast.success("המקור הוחזר לשלב 2 לעריכה");
+  };
+
+  const sendAllBackToReview = () => {
+    if (sortedEntries.length === 0) return;
+    const items: ReviewItem[] = sortedEntries.map((entry) => ({
+      id: crypto.randomUUID(),
+      rawInput: entry.rawInput || entry.fullCitation,
+      status: "ok",
+      citation: entry.fullCitation,
+      isVerified: Boolean(entry.isVerified),
+      options: [],
+      isEditing: false,
+      editValue: entry.fullCitation,
+      sourceTypeOverride: entry.sourceType,
+    }));
+    setReviewItems((prev) => [...prev, ...items]);
+    sortedEntries.forEach((e) => removeEntry(e.id));
+    toast.success(`${items.length} מקורות הוחזרו לשלב 2 לעריכה`);
+  };
+
   const lookupOne = async (rawInput: string): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
     try {
       const { data, error } = await supabase.functions.invoke("bibliography-lookup", {
