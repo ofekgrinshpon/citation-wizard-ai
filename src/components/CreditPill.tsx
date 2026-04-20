@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Coins, Infinity as InfinityIcon } from "lucide-react";
+import { Infinity as InfinityIcon, UserCog } from "lucide-react";
 import { useCredits } from "@/hooks/useCredits";
 import { cn } from "@/lib/utils";
 
@@ -11,41 +11,38 @@ interface CreditPillProps {
 export const CreditPill = ({ className, compact }: CreditPillProps) => {
   const navigate = useNavigate();
   const {
-    plan,
     planMeta,
     isAdmin,
     includedCreditsRemaining,
     includedCreditsTotal,
     topupCreditsRemaining,
-    totalCreditsAvailable,
     loading,
   } = useCredits();
 
   if (loading) return null;
 
-  const ratio = includedCreditsTotal > 0 ? includedCreditsRemaining / includedCreditsTotal : 0;
-  const ringColor =
-    ratio > 0.5 ? "bg-primary/20 text-primary" : ratio > 0.2 ? "bg-amber-500/20 text-amber-700 dark:text-amber-400" : "bg-destructive/15 text-destructive";
+  const primaryLabel = isAdmin ? "Admin" : planMeta.label;
+  const tooltip = isAdmin
+    ? "Admin — ללא הגבלה"
+    : `${planMeta.label} · נכלל: ${includedCreditsRemaining}/${includedCreditsTotal} · טעינות: ${topupCreditsRemaining}`;
 
   return (
     <button
       onClick={() => navigate("/profile?tab=account")}
       className={cn(
-        "flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium border border-border bg-card hover:bg-muted/60 transition-colors",
+        "flex items-center gap-2 rounded-lg px-3 py-2 text-right border border-border/60 bg-card hover:bg-muted/60 transition-colors group",
         className,
       )}
-      title={
-        isAdmin
-          ? "Admin — ללא הגבלה"
-          : `${planMeta.label} · נכלל: ${includedCreditsRemaining}/${includedCreditsTotal} · טעינות: ${topupCreditsRemaining}`
-      }
+      title={tooltip}
     >
-      <span className={cn("inline-flex h-5 w-5 items-center justify-center rounded-full", isAdmin ? "bg-primary/20 text-primary" : ringColor)}>
-        {isAdmin ? <InfinityIcon className="w-3 h-3" /> : <Coins className="w-3 h-3" />}
+      <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-muted text-muted-foreground group-hover:text-foreground transition-colors">
+        {isAdmin ? <InfinityIcon className="w-3.5 h-3.5" /> : <UserCog className="w-3.5 h-3.5" />}
       </span>
-      {!compact && <span className="text-muted-foreground">{planMeta.shortLabel}</span>}
-      <span className="text-foreground tabular-nums">
-        {isAdmin ? "∞" : `${totalCreditsAvailable} קרדיטים`}
+      <span className="flex flex-col items-start leading-tight min-w-0 flex-1">
+        <span className="text-xs font-semibold text-foreground truncate w-full">{primaryLabel}</span>
+        {!compact && (
+          <span className="text-[10px] text-muted-foreground">ניהול חשבון</span>
+        )}
       </span>
     </button>
   );
