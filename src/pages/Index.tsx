@@ -508,7 +508,7 @@ const Index = () => {
     }
 
     const PINPOINT_RE = /(?:סעיף|ס['׳']|פסקה|פס['׳']|עמ['׳']|לפסק\s+דינ[וה]\s+של|בעמ['׳']|שם,|פיסקה|השופט[ת]?\s|הנשיא[ה]?\s)/;
-    if (subscription.isLimitReached) return;
+    if (!subscription.loading && subscription.isLimitReached) return;
 
     // Step 1: Normalize abbreviations
     const normalized = normalizeAbbreviations(rawText);
