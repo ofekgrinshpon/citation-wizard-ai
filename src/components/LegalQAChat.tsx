@@ -980,7 +980,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
       try {
         const { data: { user: currentUser } } = await supabase.auth.getUser();
-        if (currentUser) {
+        if (currentUser && !qaResult.refusal) {
           await supabase.from("qa_logs").insert({
             user_id: currentUser.id,
             project_id: currentProject?.id ?? null,
@@ -1631,7 +1631,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         )}
 
         {/* Loading skeleton */}
-        {loading && (
+        {loading && taskMode !== "case_summary" && (
           <Card className="mt-4 border-border">
             <CardContent className="p-4 sm:p-6 space-y-5">
               <div>
