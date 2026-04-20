@@ -1,40 +1,31 @@
 project_id = "ioktiqcffungtlsmlkcv"
 
-[functions.citation-chat]
-verify_jwt = false
-
-[functions.case-law-search]
-verify_jwt = false
-
-[functions.legal-qa]
-verify_jwt = false
-
-[functions.embed-legal-source]
-verify_jwt = false
-
-[functions.search-legal-sources]
-verify_jwt = false
-
-[functions.convert-doc]
-verify_jwt = false
-
-[functions.apify-ingest-cases]
-verify_jwt = false
-
-[functions.retry-failed-ingestion]
-verify_jwt = false
-
-[functions.fetch-apify-dataset]
-verify_jwt = false
-
-[functions.ingest-knesset-research]
-verify_jwt = false
-
-[functions.batch-embed-chunks]
-verify_jwt = false
-
-[functions.recover-knesset-titles]
-verify_jwt = false
-
-[functions.verify-case-fulltext]
-verify_jwt = false
+[functions]
+  [functions.apify-ingest-cases]
+    verify_jwt = false
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.batch-embed-chunks]
+    verify_jwt = false
+  [functions.case-law-search]
+    verify_jwt = false
+  [functions.citation-chat]
+    verify_jwt = false
+  [functions.convert-doc]
+    verify_jwt = false
+  [functions.embed-legal-source]
+    verify_jwt = false
+  [functions.fetch-apify-dataset]
+    verify_jwt = false
+  [functions.ingest-knesset-research]
+    verify_jwt = false
+  [functions.legal-qa]
+    verify_jwt = false
+  [functions.recover-knesset-titles]
+    verify_jwt = false
+  [functions.retry-failed-ingestion]
+    verify_jwt = false
+  [functions.search-legal-sources]
+    verify_jwt = false
+  [functions.verify-case-fulltext]
+    verify_jwt = false
