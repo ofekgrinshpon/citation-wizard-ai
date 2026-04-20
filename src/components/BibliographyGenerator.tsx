@@ -62,6 +62,45 @@ export function BibliographyGenerator() {
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [reviewItems, setReviewItems] = useState<ReviewItem[]>([]);
 
+  const sendEntryBackToReview = (id: string) => {
+    const entry = sortedEntries.find((e) => e.id === id);
+    if (!entry) return;
+    setReviewItems((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        rawInput: entry.rawInput || entry.fullCitation,
+        status: "ok",
+        citation: entry.fullCitation,
+        isVerified: Boolean(entry.isVerified),
+        options: [],
+        isEditing: true,
+        editValue: entry.fullCitation,
+        sourceTypeOverride: entry.sourceType,
+      },
+    ]);
+    removeEntry(id);
+    toast.success("המקור הוחזר לשלב 2 לעריכה");
+  };
+
+  const sendAllBackToReview = () => {
+    if (sortedEntries.length === 0) return;
+    const items: ReviewItem[] = sortedEntries.map((entry) => ({
+      id: crypto.randomUUID(),
+      rawInput: entry.rawInput || entry.fullCitation,
+      status: "ok",
+      citation: entry.fullCitation,
+      isVerified: Boolean(entry.isVerified),
+      options: [],
+      isEditing: false,
+      editValue: entry.fullCitation,
+      sourceTypeOverride: entry.sourceType,
+    }));
+    setReviewItems((prev) => [...prev, ...items]);
+    sortedEntries.forEach((e) => removeEntry(e.id));
+    toast.success(`${items.length} מקורות הוחזרו לשלב 2 לעריכה`);
+  };
+
   const lookupOne = async (rawInput: string): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
     try {
       const { data, error } = await supabase.functions.invoke("bibliography-lookup", {
@@ -408,12 +447,21 @@ export function BibliographyGenerator() {
         <div className="bg-card border border-border rounded-xl shadow-sm animate-fade-in">
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <h4 className="text-foreground text-sm font-bold font-sans">📖 3. ביבליוגרפיה מסודרת</h4>
-            <button
-              onClick={copyAll}
-              className="text-xs bg-primary/15 text-primary hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
-            >
-              📋 העתק הכל ל-Word
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={sendAllBackToReview}
+                className="text-xs bg-amber-500/15 text-amber-700 dark:text-amber-400 hover:bg-amber-500/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
+                title="החזר את כל המקורות לשלב 2 לעריכה"
+              >
+                ← חזור לעריכה
+              </button>
+              <button
+                onClick={copyAll}
+                className="text-xs bg-primary/15 text-primary hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors font-medium"
+              >
+                📋 העתק הכל ל-Word
+              </button>
+            </div>
           </div>
 
           <div className="p-4">
@@ -428,6 +476,7 @@ export function BibliographyGenerator() {
                     label={CATEGORY_LABELS[group.category] || group.category}
                     entries={group.entries}
                     onRemove={removeEntry}
+                    onEdit={sendEntryBackToReview}
                   />
                 ))}
               </div>
@@ -444,6 +493,7 @@ export function BibliographyGenerator() {
                     label={CATEGORY_LABELS[group.category] || group.category}
                     entries={group.entries}
                     onRemove={removeEntry}
+                    onEdit={sendEntryBackToReview}
                   />
                 ))}
               </div>
@@ -669,10 +719,12 @@ function CategoryGroup({
   label,
   entries,
   onRemove,
+  onEdit,
 }: {
   label: string;
   entries: { id: string; fullCitation: string; addedFrom: string; isVerified?: boolean }[];
   onRemove: (id: string) => void;
+  onEdit?: (id: string) => void;
 }) {
   return (
     <div className="mb-3">
@@ -693,6 +745,15 @@ function CategoryGroup({
                 <span className="text-[10px] text-primary bg-primary/10 px-1.5 py-0.5 rounded">
                   מה"ש
                 </span>
+              )}
+              {onEdit && (
+                <button
+                  onClick={() => onEdit(entry.id)}
+                  className="text-[11px] text-muted-foreground hover:text-primary px-1 py-0.5 rounded transition-colors"
+                  title="ערוך מקור זה (החזר לשלב 2)"
+                >
+                  ✏️
+                </button>
               )}
               <button
                 onClick={() => onRemove(entry.id)}
