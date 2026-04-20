@@ -604,10 +604,32 @@ serve(async (req) => {
   }
   // ── End auth gate ──
 
+  // Build a per-request user-scoped client for credit RPCs
+  const userClient = createClient(SUPABASE_URL_ENV, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  });
+
+  let creditRequestId: string | null = null;
+  const refundIfCharged = async (reason: string) => {
+    if (!creditRequestId) return;
+    try {
+      await userClient.rpc("refund_credits", {
+        _request_id: creditRequestId,
+        _reason: reason,
+      });
+    } catch (e) {
+      console.error("refund_credits failed:", e);
+    }
+  };
+
   try {
-    const { messages } = await req.json();
+    const { messages, requestId: clientReqId } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+
+    creditRequestId = (typeof clientReqId === "string" && clientReqId.length >= 8)
+      ? clientReqId
+      : crypto.randomUUID();
 
     const lastUserMessage = [...messages].reverse().find((m: { role: string }) => m.role === "user");
     const userInput = lastUserMessage?.content || "";
