@@ -758,7 +758,7 @@ const Index = () => {
   return (
     <div className={`flex flex-col h-screen font-sans bg-background text-foreground ${isOfficeAddin ? "compact-mode" : ""}`}>
       {/* Guest Limit Modal */}
-      {subscription.isLimitReached && (
+      {!subscription.loading && subscription.isLimitReached && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ direction: "rtl" }}>
           <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" />
           <div className="relative bg-card border border-border rounded-2xl p-6 max-w-sm mx-4 shadow-lg text-center animate-fade-in">
