@@ -602,13 +602,16 @@ ${sourceList}
     };
 
     const aboveHardFloor = sortedDocs.filter(d => d.score >= 3);
-    const strictKept = aboveHardFloor.filter(d => !isCaselaw(d.docId) || d.score >= 4);
-    // If filtering left zero caselaw but there were caselaw candidates with score 3, allow them back.
+    const strictKept = aboveHardFloor.filter(d => !isCaselaw(d.docId) || d.score >= 5);
+    // Safety valve: if filtering left zero caselaw AND the question itself is caselaw-domain
+    // (explicit case markers like בג"ץ, ע"א, פס"ד, פסיקה, הלכה), allow back caselaw with score >= 3.
+    // For doctrinal/contract questions, an empty caselaw bucket is fine — legislation/articles carry it.
+    const isCaselawDomainQuestion = /(בג"ץ|בג״ץ|ע"א|ע״א|רע"א|רע״א|ע"פ|ע״פ|פס"ד|פס״ד|פסק\s+דין|פסיקה|הלכה|תקדים|בית\s+המשפט\s+העליון)/.test(question);
     const hadCaselaw = sortedDocs.some(d => isCaselaw(d.docId));
     const keptHasCaselaw = strictKept.some(d => isCaselaw(d.docId));
     let baseKept = strictKept;
-    if (hadCaselaw && !keptHasCaselaw) {
-      const weakCaselaw = aboveHardFloor.filter(d => isCaselaw(d.docId) && d.score === 3);
+    if (hadCaselaw && !keptHasCaselaw && isCaselawDomainQuestion) {
+      const weakCaselaw = aboveHardFloor.filter(d => isCaselaw(d.docId) && d.score >= 3);
       baseKept = [...strictKept, ...weakCaselaw].sort(
         (a, b) => b.score - a.score || a.originalIndex - b.originalIndex,
       );
