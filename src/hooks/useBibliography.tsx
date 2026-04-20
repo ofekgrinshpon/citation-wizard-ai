@@ -13,6 +13,13 @@ export interface BibliographyEntry {
   addedFrom: "footnote" | "manual";
   addedAt: number;
   isVerified?: boolean;
+  /** When true, the user manually chose the category — never auto-reclassify on rebuild. */
+  manualCategory?: boolean;
+}
+
+/** Strip stray trailing punctuation/whitespace so bibliography lines never end with "." */
+function stripTrailingPunctuation(text: string): string {
+  return text.replace(/[.,;:\s]+$/u, "").trim();
 }
 
 export type BibSourceCategory =
