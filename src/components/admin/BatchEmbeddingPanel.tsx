@@ -213,6 +213,11 @@ export default function BatchEmbeddingPanel() {
             {totalFailed > 0 && (
               <span>❌ נכשלו: <strong className="text-destructive">{totalFailed.toLocaleString()}</strong></span>
             )}
+            {totalRateLimited > 0 && (
+              <span title="הגעה למגבלת קצב — ינוסה אוטומטית בריצה הבאה">
+                ⏱ הוגבל קצב (ינוסה שוב): <strong className="text-foreground">{totalRateLimited.toLocaleString()}</strong>
+              </span>
+            )}
             {remaining !== null && (
               <span>⏳ נותרו: <strong className="text-foreground">{remaining.toLocaleString()}</strong></span>
             )}
