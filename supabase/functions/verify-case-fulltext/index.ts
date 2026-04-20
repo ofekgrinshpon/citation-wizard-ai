@@ -113,6 +113,44 @@ function looksLikePdfUrl(url: string): boolean {
   return /\.pdf(\?|$)/i.test(url) || /type=3\b/i.test(url);
 }
 
+// Convert a PDF byte buffer to plain text via ConvertAPI (pdf/to/txt).
+// Returns "" on any failure so the caller can fall through gracefully.
+async function extractPdfTextViaConvertApi(bytes: Uint8Array, filename = "case.pdf"): Promise<string> {
+  const CONVERTAPI_SECRET = Deno.env.get("CONVERTAPI_SECRET");
+  if (!CONVERTAPI_SECRET) {
+    console.warn("extractPdfTextViaConvertApi: CONVERTAPI_SECRET not configured");
+    return "";
+  }
+  try {
+    const form = new FormData();
+    form.append("File", new Blob([bytes], { type: "application/pdf" }), filename);
+    form.append("StoreFile", "true");
+
+    const res = await fetchWithTimeout(
+      "https://v2.convertapi.com/convert/pdf/to/txt",
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${CONVERTAPI_SECRET}` },
+        body: form,
+      },
+      25000,
+    );
+    if (!res.ok) {
+      console.warn(`ConvertAPI pdf→txt failed: ${res.status}`);
+      return "";
+    }
+    const json = await res.json();
+    const fileUrl = json?.Files?.[0]?.Url;
+    if (!fileUrl) return "";
+    const txtRes = await fetchWithTimeout(fileUrl, { method: "GET" }, 15000);
+    if (!txtRes.ok) return "";
+    return (await txtRes.text()).trim();
+  } catch (e) {
+    console.warn("extractPdfTextViaConvertApi error:", e instanceof Error ? e.message : e);
+    return "";
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
