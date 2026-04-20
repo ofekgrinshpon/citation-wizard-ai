@@ -288,8 +288,10 @@ serve(async (req) => {
                   plain = extractDocxText(buf);
                   console.log(`verify-case-fulltext: external DOCX (${plain.length} chars from ${url})`);
                 } else if (isPdfByCt || looksLikePdfUrl(url)) {
-                  // PDF path — defer; fall through to refusal
-                  console.log(`verify-case-fulltext: external PDF skipped (no extractor) — ${url}`);
+                  // PDF path — convert to plain text via ConvertAPI
+                  const buf = new Uint8Array(await txtRes.arrayBuffer());
+                  plain = await extractPdfTextViaConvertApi(buf);
+                  console.log(`verify-case-fulltext: external PDF (${plain.length} chars from ${url})`);
                 } else {
                   // HTML / unknown text path
                   const raw = await txtRes.text();
