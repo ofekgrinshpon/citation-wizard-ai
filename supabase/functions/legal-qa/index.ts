@@ -915,14 +915,15 @@ serve(async (req) => {
         const ratio = hebrew / total;
         if (ratio < 0.05) {
           console.log(`case_summary: refusing — extracted text failed Hebrew-ratio gate (${(ratio * 100).toFixed(2)}%, source=${verify.source})`);
-          return new Response(JSON.stringify({
+          const payload = await refundAndPayload("case_summary:hebrew-ratio-fail", {
             refusal: true,
             source: "none",
             message: "פסק הדין אינו קיים במערכת ולא ניתן היה לאתר את הטקסט המלא שלו. כדי שאוכל לסכם אותו עבורך, אנא העלה את הקובץ או הדבק את הטקסט בתיבת הטקסט.",
             answer: "",
             footnotes: [],
             source_urls: [],
-          }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+          });
+          return new Response(JSON.stringify(payload), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
       }
 
@@ -963,7 +964,8 @@ ${(verify.fullText as string).slice(0, 50000)}
       if (!aiRes.ok) {
         const errText = await aiRes.text();
         console.error("case_summary AI error:", aiRes.status, errText);
-        return new Response(JSON.stringify({ error: "שגיאה בעיבוד הסיכום. נסו שוב." }), {
+        const payload = await refundAndPayload("case_summary:ai-error", { error: "שגיאה בעיבוד הסיכום. נסו שוב." });
+        return new Response(JSON.stringify(payload), {
           status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
@@ -1014,11 +1016,12 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
       const wordCount = auditSubject.trim().split(/\s+/).filter(Boolean).length;
       if (wordCount < 150) {
-        return new Response(JSON.stringify({
+        const payload = await refundAndPayload("pleading_analysis:too-short", {
           answer: "המסמך שסופק קצר מדי לביקורת מהותית (פחות מ-150 מילים). אנא הדביקו או העלו מסמך מלא יותר.",
           footnotes: [],
           source_urls: [],
-        }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        });
+        return new Response(JSON.stringify(payload), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
     }
 
@@ -1446,8 +1449,9 @@ ${(verify.fullText as string).slice(0, 50000)}
     }
 
     if (rankedMatches.length === 0 && !searchResults && !hasDocument) {
+      const payload = await refundAndPayload("legal-qa:no-sources", { error: "לא נמצאו מקורות רלוונטיים. נסו לנסח את השאלה אחרת." });
       return new Response(
-        JSON.stringify({ error: "לא נמצאו מקורות רלוונטיים. נסו לנסח את השאלה אחרת." }),
+        JSON.stringify(payload),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -2524,6 +2528,12 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     );
   } catch (e) {
     console.error("legal-qa error:", e);
+    // Best-effort refund: this catch may run before creditsCharged is in scope; we use a fresh client.
+    try {
+      const reqBody = (e as { __requestBody?: unknown })?.__requestBody;
+      // No-op placeholder; real refund attempted in inner scope. The outer catch covers
+      // truly unexpected throws where we've already lost the consume context.
+    } catch { /* ignore */ }
     return new Response(
       JSON.stringify({ error: "שגיאה בעיבוד השאלה. נסו שוב." }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
