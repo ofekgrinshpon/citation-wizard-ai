@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { withTimeout, supabaseWithTimeout } from "@/lib/queryTimeout";
+import { getAuthRedirectOrigin } from "@/lib/publicUrl";
 import type { User, Session } from "@supabase/supabase-js";
 
 const ROLE_TIMEOUT_MS = 6000;
@@ -115,7 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           full_name: fullName,
           ...(referralCode ? { referral_code: referralCode } : {}),
         },
-        emailRedirectTo: `${window.location.origin}/auth-redirect`,
+        emailRedirectTo: `${getAuthRedirectOrigin()}/auth-redirect`,
       },
     });
     return { error: error as Error | null };
