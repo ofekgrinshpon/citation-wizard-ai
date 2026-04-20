@@ -7,6 +7,75 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// ─── Citation input validator (mirror of src/lib/citationInputValidation.ts) ───
+const HEBREW_LETTER_RE = /[\u0590-\u05FF]/;
+const URL_RE_V = /https?:\/\/\S+/i;
+const LEGAL_ABBR_RE_V =
+  /(?:בג["״]ץ|ע["״]א|ע["״]פ|רע["״]א|רע["״]פ|דנ["״]א|דנ["״]פ|ת["״]א|ת["״]פ|תפ["״]ח|ע["״]ע|עע["״]מ|בש["״]פ|בש["״]א|עמ["״]ה|בר["״]ם|פ["״]ד|ס["״]ח|ק["״]ת|ה["״]ח|י["״]פ|כ["״]א)/;
+const LEGAL_KEYWORD_RE_V =
+  /(?:^|\s)(?:חוק|חוק[- ]?יסוד|פקודת|פקודה|תקנות|תקנה|צו|כללי|הוראות|סעיף|הצעת\s+חוק|אמנה|תקנון|פסק[- ]?דין|פס["״]ד|בית[- ]?המשפט|השופט[ת]?|הנשיא[ה]?|נגד|נ['׳])/;
+const CASE_NUMBER_RE_V = /\b\d+\/\d{2,4}\b/;
+const PARTY_SEP_RE_V = /\sנ['׳]\s|\sנגד\s/;
+const SINGLE_CHAR_REPEAT_V = /^(.)\1{2,}$/;
+const SHORT_PATTERN_REPEAT_V = /^(.{1,3})\1{2,}$/;
+const LATIN_OR_DIGIT_ONLY_V = /^[a-z0-9\s.,!?-]+$/i;
+const INVALID_INPUT_MSG_HE =
+  "לא ניתן לעבד את הבקשה כי לא זוהה טקסט משפטי ברור לאזכור.";
+
+function isValidCitationInputServer(raw: string): boolean {
+  const text = (raw ?? "")
+    .replace(/\[סיווג אוטומטי:.*?\]\n?/g, "")
+    .replace(/\[בחירת תוצאה\]\s*/g, "")
+    .replace(/══[\s\S]*?══+\s*/g, "")
+    .trim();
+  if (!text) return false;
+  const compact = text.replace(/\s+/g, "");
+  if (SINGLE_CHAR_REPEAT_V.test(compact)) return false;
+
+  const hasMarker =
+    LEGAL_ABBR_RE_V.test(text) ||
+    LEGAL_KEYWORD_RE_V.test(text) ||
+    CASE_NUMBER_RE_V.test(text) ||
+    PARTY_SEP_RE_V.test(text) ||
+    URL_RE_V.test(text);
+
+  if (!hasMarker && SHORT_PATTERN_REPEAT_V.test(compact) && compact.length <= 12) return false;
+  if (hasMarker) return true;
+  if (compact.length < 6) return false;
+  const hasHebrew = HEBREW_LETTER_RE.test(text);
+  if (!hasHebrew && LATIN_OR_DIGIT_ONLY_V.test(text) && text.length < 18) return false;
+  const tokens = text
+    .split(/[\s,.;:!?()[\]{}"״׳'\\/|–—-]+/)
+    .map((t) => t.trim())
+    .filter((t) => t.length >= 2);
+  const distinct = new Set(tokens.map((t) => t.toLowerCase()));
+  return distinct.size >= 2;
+}
+
+function isRefusalResponseServer(text: string): boolean {
+  const t = (text ?? "").trim();
+  if (!t) return true;
+  const phrases = [
+    "אינו יכול לפרש",
+    "לא ניתן לפרש",
+    "לא ניתן לעבד",
+    "לא נמצא טקסט משפטי",
+    "הקלט אינו ברור",
+    "הבקשה אינה ברורה",
+    "לא הצלחתי להבין",
+    "אין מספיק מידע",
+    "cannot interpret",
+    "unable to interpret",
+    "could not interpret",
+  ];
+  if (phrases.some((p) => t.toLowerCase().includes(p.toLowerCase()))) return true;
+  const hasCitationMarker =
+    /חוק|סעיף|פקודת|תקנות|ע["״]א|ת["״]א|בג["״]ץ|פ["״]ד|ס["״]ח|ק["״]ת|נ['׳]|https?:\/\//.test(t);
+  const hasApology = /(אינו|לא ניתן|לא נמצא|מצטער|sorry|unable)/i.test(t);
+  if (!hasCitationMarker && hasApology && t.length < 220) return true;
+  return false;
+}
+
 const normalizeSearchableText = (text: string) =>
   text
     .toLowerCase()
