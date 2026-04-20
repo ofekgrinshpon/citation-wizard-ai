@@ -48,12 +48,15 @@ const Auth = () => {
     window.history.replaceState({}, "", `${window.location.pathname}${cleaned.toString() ? `?${cleaned}` : ""}`);
     (async () => {
       try {
-        const result = await lovable.auth.signInWithOAuth("google", {
-          redirect_uri: `${window.location.origin}/auth-redirect`,
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: `${window.location.origin}/auth-redirect`,
+            queryParams: { prompt: "select_account" },
+          },
         });
-        if (result.redirected) return;
-        if (result.error) {
-          console.error("[ReLex] Google OAuth error:", result.error);
+        if (error) {
+          console.error("[ReLex] Google OAuth error:", error);
           toast.error("שגיאה בהתחברות עם Google");
         }
       } catch (err: any) {
