@@ -1,93 +1,70 @@
 
 
 ## Goal
-Translate the English technical reason strings shown in the credit history (Profile → ניהול חשבון → היסטוריית קרדיטים) into Hebrew labels — `אזכור אחיד` instead of `citation-chat`, `עוזר משפטי – מחקר` instead of `legal-qa:research`, etc.
+Make every "invite" link ReLex-branded — both the personal referral link a user copies from their Profile, and the auth emails (verification, password reset, magic link, account invites) sent to people who sign up.
 
-## Why a display-layer fix
-The ledger stores English technical reasons (`citation-chat`, `legal-qa:research+doc`, `legacy:incrementCount`, `plan changed to pro_annual`, `auto-refund: …`). Existing rows already use these strings. Translating at the **display layer** in `Profile.tsx` covers historic + new rows without DB migrations or coordinated edge-function changes, and keeps the raw value available for debugging.
+---
 
-## Change — `src/pages/Profile.tsx` only
+## Part 1 — Referral link always points to relexlm.com
 
-### 1. Add a translator above the component (right after `EVENT_LABEL`)
-```ts
-const PLAN_LABELS_HE: Record<string, string> = {
-  basic: "Basic",
-  pro_monthly: "Pro חודשי",
-  pro_semester: "Pro סמסטריאלי",
-  pro_annual: "Pro שנתי",
-  admin: "Admin",
-};
+**Problem:** `Profile.tsx` builds the referral link as `${window.location.origin}/auth?mode=signup&ref=…`. When the logged-in user is on the Lovable preview domain (or a `*.lovable.app` URL), they share a Lovable-looking link instead of a ReLex one.
 
-function formatLedgerReason(raw: string | null): string {
-  if (!raw) return "";
-  const r = raw.trim();
+**Fix:** Hard-code the public ReLex domain for shareable links.
 
-  const direct: Record<string, string> = {
-    "citation-chat": "אזכור אחיד",
-    "legacy:incrementCount": "אזכור אחיד",
-    "verified-autocomplete": "השלמה אוטומטית מאומתת",
-    "batch-footnote": "מחולל הערות שוליים",
-    "bibliography": "מחולל ביבליוגרפיה",
-    "academic-writing": "כתיבה אקדמית",
-    "invalid_input_refusal": "הקלט לא היה ברור דיו",
-    "runtime-error": "שגיאה טכנית",
-    "citation-chat exception": "שגיאה טכנית באזכור אחיד",
-    "manual": "התאמה ידנית",
-  };
-  if (direct[r]) return direct[r];
+- Add `src/lib/publicUrl.ts` exporting `PUBLIC_SITE_URL = "https://relexlm.com"` and a small `buildReferralLink(code)` helper. One constant, one source of truth.
+- Update `src/pages/Profile.tsx` (line 156–158) to use `buildReferralLink(referralCode)` instead of `window.location.origin`.
+- Also update the redirect after signup verification (`useAuth.signUp` → `emailRedirectTo`) to prefer `PUBLIC_SITE_URL` when the current origin is a non-production preview, so the magic-link "back to app" target also lands on relexlm.com. Production users keep the same behavior; preview users stop generating Lovable-branded redirect URLs.
 
-  const qa = r.match(/^legal-qa:([a-z_]+)(\+doc)?$/i);
-  if (qa) {
-    const modes: Record<string, string> = {
-      research: "עוזר משפטי – מחקר",
-      pleading_analysis: "עוזר משפטי – ביקורת מסמך",
-      case_summary: "עוזר משפטי – סיכום פסק דין",
-      academic_writing: "עוזר משפטי – כתיבה אקדמית",
-    };
-    const base = modes[qa[1]] ?? `עוזר משפטי – ${qa[1]}`;
-    return qa[2] ? `${base} (עם מסמך מצורף)` : base;
-  }
+Result: when a user clicks "העתק קישור" in Profile → ניהול חשבון → הזמן חברים, the clipboard contains `https://relexlm.com/auth?mode=signup&ref=ABCD1234` no matter where they're browsing from.
 
-  const auto = r.match(/^auto-refund:\s*(.+)$/i);
-  if (auto) return `החזר אוטומטי – ${formatLedgerReason(auto[1])}`;
+---
 
-  const plan = r.match(/^plan changed to\s+(\S+)/i);
-  if (plan) return `שינוי מסלול ל-${PLAN_LABELS_HE[plan[1]] ?? plan[1]}`;
+## Part 2 — ReLex-branded auth emails sent from relexlm.com
 
-  if (/[\u0590-\u05FF]/.test(r)) return r;  // already Hebrew → pass through
-  return "פעולת מערכת";                      // safe fallback for unknown English strings
-}
-```
+Today auth emails (signup verification, password reset, magic link, invite, email change, reauthentication) use Lovable's default templates and a generic Lovable sender. We'll switch them to ReLex-branded templates sent from the project's already-configured custom domain `relexlm.com`.
 
-### 2. Use it in the ledger row render (~line 287)
-Replace:
-```tsx
-{row.reason && <div className="text-muted-foreground truncate">{row.reason}</div>}
-```
-with:
-```tsx
-{row.reason && (
-  <div className="text-muted-foreground truncate" title={row.reason}>
-    {formatLedgerReason(row.reason)}
-  </div>
-)}
-```
-`title` keeps the raw technical string on hover for support/debugging.
+Steps the implementation phase will run:
+
+1. **Set up email infrastructure on relexlm.com.** This provisions a verified sender subdomain (e.g. `notify.relexlm.com`) and the queue/cron used to actually deliver emails. The user will see a one-click "Set up email domain" dialog as part of this; once completed, DNS verification continues in the background.
+
+2. **Scaffold ReLex-branded auth email templates.** Six templates are generated under `supabase/functions/_shared/email-templates/`:
+   - `signup.tsx` — "אימות כתובת האימייל שלך ב-ReLex"
+   - `magic-link.tsx` — "קישור התחברות ל-ReLex"
+   - `recovery.tsx` — "איפוס סיסמה ב-ReLex"
+   - `invite.tsx` — "הוזמנת ל-ReLex"
+   - `email-change.tsx` — "אישור שינוי כתובת אימייל"
+   - `reauthentication.tsx` — קוד אימות חד-פעמי
+
+3. **Apply ReLex brand styling** to every template:
+   - White email body (`#ffffff`) — required for inbox rendering, even though the app is light/neutral.
+   - Brand colors pulled from `src/index.css` CSS variables (primary blue/teal pair used by `--gradient-primary`).
+   - ReLex logo at the top (`public/relex-logo.png`) uploaded to an `email-assets` storage bucket and referenced by absolute URL.
+   - RTL layout (`dir="rtl"`, `lang="he"`), Hebrew copy matching the app's tone (e.g. "התחבר/י", "ניהול חשבון").
+   - CTA buttons styled like the in-app primary button (rounded-xl, `var(--gradient-primary)` flattened to a solid brand color for email-client compatibility).
+   - Footer: "ReLex — מערכת אזכור משפטי" + link to `https://relexlm.com`. No unsubscribe link (system appends one automatically only for transactional emails; auth emails don't get one).
+
+4. **Deploy `auth-email-hook`** edge function so Supabase Auth routes all auth emails through the new branded templates.
+
+5. **Tell the user where to monitor activation.** Templates start sending automatically once the DNS for `notify.relexlm.com` finishes verifying — usually minutes, can take up to 72h. Status is visible in Lovable Cloud → Emails. Until then, default Lovable auth emails continue to be delivered (no downtime).
+
+---
+
+## Files touched
+- New: `src/lib/publicUrl.ts`
+- Edit: `src/pages/Profile.tsx` (referral link builder)
+- Edit: `src/hooks/useAuth.tsx` (`emailRedirectTo` uses `PUBLIC_SITE_URL`)
+- New: `supabase/functions/auth-email-hook/{index.ts, deno.json}`
+- New: `supabase/functions/_shared/email-templates/{signup,magic-link,recovery,invite,email-change,reauthentication}.tsx`
+- Edit: `supabase/config.toml` (auth-email-hook function block)
+- New storage bucket: `email-assets` (logo upload)
 
 ## Out of scope
-- DB migration / backfill of existing reasons.
-- Changing what edge functions write (keys stay stable for analytics).
-- Admin users table.
-
-## Files modified
-- `src/pages/Profile.tsx` — add translator, use it in the ledger list.
+- Transactional / app-wide notification emails (e.g. "your credits were topped up"). Easy to add later on the same `notify.relexlm.com` sender — just say the word.
+- Changing the Auth page UI itself.
+- Migrating any historic ledger data.
 
 ## Expected outcome
-- `citation-chat` → **אזכור אחיד**
-- `legacy:incrementCount` → **אזכור אחיד**
-- `legal-qa:research` → **עוזר משפטי – מחקר**
-- `legal-qa:academic_writing+doc` → **עוזר משפטי – כתיבה אקדמית (עם מסמך מצורף)**
-- `auto-refund: legal-qa runtime error` → **החזר אוטומטי – פעולת מערכת**
-- `plan changed to pro_annual` → **שינוי מסלול ל-Pro שנתי**
-- Unmapped English strings → **פעולת מערכת**, raw value still visible on hover.
+- Referral link copied from Profile is always `https://relexlm.com/auth?mode=signup&ref=…`.
+- Verification / reset / invite emails arrive **from `noreply@notify.relexlm.com`**, with the ReLex logo, Hebrew RTL copy, and the brand color CTA button — zero Lovable branding visible to recipients.
+- Existing users' password-reset and verification flows keep working through the transition (defaults serve until DNS verifies, branded templates take over automatically).
 
