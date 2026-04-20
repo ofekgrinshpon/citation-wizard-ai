@@ -1479,8 +1479,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     });
   } catch (e) {
     console.error("chat error:", e);
+    await refundIfCharged("citation-chat exception");
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
+      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error", refunded: !!creditRequestId, refundReason: "טעות טכנית" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
