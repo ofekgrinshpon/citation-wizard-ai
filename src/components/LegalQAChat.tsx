@@ -307,6 +307,225 @@ function RenderMarkdown({ text }: { text: string }) {
   );
 }
 
+// ─── Outline parsing & report rendering ───────────────────────────────
+
+interface ParsedOutline {
+  intro: Record<string, string>;
+  chapters: Array<{ title: string; flowTag: string; expansion: string; counter: string }>;
+  conclusion: Record<string, string>;
+}
+
+function parseOutline(text: string): ParsedOutline | null {
+  if (!text) return null;
+  if (!/\*\*מבוא\*\*/.test(text) || !/\*\*רשימת הפרקים\*\*/.test(text) || !/\*\*סיכום ומסקנות/.test(text)) {
+    return null;
+  }
+  const introMatch = text.match(/\*\*מבוא\*\*([\s\S]*?)\*\*רשימת הפרקים\*\*/);
+  const chaptersMatch = text.match(/\*\*רשימת הפרקים\*\*([\s\S]*?)\*\*סיכום ומסקנות/);
+  const conclusionMatch = text.match(/\*\*סיכום ומסקנות[^\*]*\*\*([\s\S]*)$/);
+  if (!introMatch || !chaptersMatch || !conclusionMatch) return null;
+
+  const parseLabelled = (block: string): Record<string, string> => {
+    const out: Record<string, string> = {};
+    const lines = block.split("\n");
+    let currentLabel: string | null = null;
+    for (const raw of lines) {
+      const line = raw.trim();
+      if (!line) continue;
+      const m = line.match(/^[-•]\s*([^:]+?):\s*(.*)$/);
+      if (m) {
+        currentLabel = m[1].trim();
+        out[currentLabel] = m[2].trim();
+      } else if (currentLabel) {
+        out[currentLabel] += " " + line.replace(/^[-•]\s*/, "");
+      }
+    }
+    return out;
+  };
+
+  const chaptersBlock = chaptersMatch[1];
+  const chapterLines = chaptersBlock.split("\n");
+  const chapters: ParsedOutline["chapters"] = [];
+  let cur: { title: string; flowTag: string; expansion: string; counter: string } | null = null;
+  for (const raw of chapterLines) {
+    const line = raw.replace(/\s+$/, "");
+    if (!line.trim()) continue;
+    const headerMatch = line.match(/^\d+\.\s+\*\*(.+?)\*\*(?:\s*[–\-—]\s*(.+))?$/);
+    if (headerMatch) {
+      if (cur) chapters.push(cur);
+      cur = { title: headerMatch[1].trim(), flowTag: (headerMatch[2] || "").trim(), expansion: "", counter: "" };
+      continue;
+    }
+    if (!cur) continue;
+    const expMatch = line.match(/^\s*[-•]\s*הרחבה\s*:\s*(.*)$/);
+    if (expMatch) { cur.expansion = expMatch[1].trim(); continue; }
+    const counterMatch = line.match(/^\s*[-•]\s*טיעוני נגד[^:]*:\s*(.*)$/);
+    if (counterMatch) { cur.counter = counterMatch[1].trim(); continue; }
+    if (/^\s+/.test(raw) && cur) {
+      if (cur.counter) cur.counter += " " + line.trim();
+      else if (cur.expansion) cur.expansion += " " + line.trim();
+    }
+  }
+  if (cur) chapters.push(cur);
+  if (chapters.length === 0) return null;
+
+  return {
+    intro: parseLabelled(introMatch[1]),
+    chapters,
+    conclusion: parseLabelled(conclusionMatch[1]),
+  };
+}
+
+function FlowTagPill({ tag }: { tag: string }) {
+  if (!tag) return null;
+  let cls = "bg-muted text-muted-foreground border-border";
+  if (/מצוי/.test(tag)) cls = "bg-primary/10 text-primary border-primary/30";
+  else if (/ביקורתי|השוואתי|משווה/.test(tag)) cls = "bg-accent/10 text-accent-foreground border-accent/30";
+  else if (/ראוי/.test(tag)) cls = "bg-secondary/40 text-secondary-foreground border-secondary";
+  return (
+    <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium border ${cls}`}>
+      {tag}
+    </span>
+  );
+}
+
+function OutlineReport({
+  answer,
+  researchQuestion,
+  onApprove,
+  onBack,
+}: {
+  answer: string;
+  researchQuestion: string;
+  onApprove: () => void;
+  onBack: () => void;
+}) {
+  const parsed = parseOutline(answer);
+
+  if (!parsed) {
+    return (
+      <Card className="border-border">
+        <CardContent className="p-4 space-y-3">
+          <h3 className="font-bold text-foreground">מתווה מוצע</h3>
+          <div className="text-foreground text-sm leading-relaxed whitespace-pre-wrap" style={{ lineHeight: 1.8 }}>
+            <RenderMarkdown text={answer} />
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
+            <Button variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const introOrder = ["שאלת המחקר", "התזה המרכזית (Thesis)", "חשיבות ותרומה לשיח המשפטי", "קו הטיעון (Line of Argument)", "מבנה העבודה"];
+  const conclusionOrder = ["מסקנה משוערת", "תרומה משפטית"];
+
+  return (
+    <div className="space-y-3">
+      <Card className="border-primary/30 bg-primary/5">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs font-medium text-primary uppercase tracking-wide">הצעת מחקר אקדמית</span>
+          </div>
+          <h2 className="text-base font-bold text-foreground">מתווה לעבודה סמינריונית</h2>
+          {researchQuestion && (
+            <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
+              <span className="font-semibold text-foreground">שאלת המחקר: </span>
+              {researchQuestion}
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="border-border">
+        <CardContent className="p-4 space-y-2">
+          <h3 className="font-bold text-foreground text-sm border-b border-border pb-1.5 mb-2">מבוא</h3>
+          {introOrder.map(label => {
+            const value = parsed.intro[label];
+            if (!value) return null;
+            return (
+              <div key={label} className="text-sm leading-relaxed">
+                <span className="font-semibold text-foreground">{label}: </span>
+                <span className="text-foreground/90">{value}</span>
+              </div>
+            );
+          })}
+          {Object.entries(parsed.intro)
+            .filter(([k]) => !introOrder.includes(k))
+            .map(([k, v]) => (
+              <div key={k} className="text-sm leading-relaxed">
+                <span className="font-semibold text-foreground">{k}: </span>
+                <span className="text-foreground/90">{v}</span>
+              </div>
+            ))}
+        </CardContent>
+      </Card>
+
+      <Card className="border-border">
+        <CardContent className="p-4 space-y-2">
+          <h3 className="font-bold text-foreground text-sm border-b border-border pb-1.5 mb-2">רשימת הפרקים</h3>
+          <ol className="space-y-2.5">
+            {parsed.chapters.map((ch, idx) => (
+              <li key={idx} className="rounded-lg border border-border bg-muted/30 p-3">
+                <div className="flex items-start gap-2 mb-1.5 flex-wrap">
+                  <span className="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">
+                    {idx + 1}
+                  </span>
+                  <span className="font-semibold text-foreground text-sm flex-1 min-w-0">{ch.title}</span>
+                  <FlowTagPill tag={ch.flowTag} />
+                </div>
+                {ch.expansion && (
+                  <div className="text-sm leading-relaxed mt-1.5 pr-8">
+                    <span className="font-semibold text-foreground">הרחבה: </span>
+                    <span className="text-foreground/90">{ch.expansion}</span>
+                  </div>
+                )}
+                {ch.counter && (
+                  <div className="text-sm leading-relaxed mt-1 pr-8">
+                    <span className="font-semibold text-foreground">טיעוני נגד אפשריים: </span>
+                    <span className="text-foreground/90">{ch.counter}</span>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ol>
+        </CardContent>
+      </Card>
+
+      <Card className="border-border">
+        <CardContent className="p-4 space-y-2">
+          <h3 className="font-bold text-foreground text-sm border-b border-border pb-1.5 mb-2">סיכום ומסקנות (משוערות)</h3>
+          {conclusionOrder.map(label => {
+            const value = parsed.conclusion[label];
+            if (!value) return null;
+            return (
+              <div key={label} className="text-sm leading-relaxed">
+                <span className="font-semibold text-foreground">{label}: </span>
+                <span className="text-foreground/90">{value}</span>
+              </div>
+            );
+          })}
+          {Object.entries(parsed.conclusion)
+            .filter(([k]) => !conclusionOrder.includes(k))
+            .map(([k, v]) => (
+              <div key={k} className="text-sm leading-relaxed">
+                <span className="font-semibold text-foreground">{k}: </span>
+                <span className="text-foreground/90">{v}</span>
+              </div>
+            ))}
+        </CardContent>
+      </Card>
+
+      <div className="flex gap-2 pt-1">
+        <Button size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
+        <Button variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
+      </div>
+    </div>
+  );
+}
+
 // ─── PDF text extraction ─────────────────────────────────────────────
 
 async function extractPdfText(file: File): Promise<string> {
@@ -836,14 +1055,26 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   };
 
   const approveOutline = () => {
-    const lines = outline.split("\n").filter(l => l.trim());
+    const lines = outline.split("\n");
     const chapterTitles: string[] = [];
-    for (const line of lines) {
-      const match = line.match(/^\d+\.\s*\*?\*?(.+?)\*?\*?\s*$/);
-      if (match) chapterTitles.push(match[1].trim().replace(/\*\*/g, ""));
+    for (const rawLine of lines) {
+      // Only top-level numbered lines (no leading whitespace)
+      const line = rawLine.replace(/\s+$/, "");
+      if (/^\s+/.test(rawLine)) continue; // skip indented sub-bullets (- הרחבה: / - טיעוני נגד:)
+      // Match "1. **Title** – tag" or legacy "1. **Title**" / "1. Title"
+      const match = line.match(/^\d+\.\s+\*\*(.+?)\*\*(?:\s*[–\-—]\s*.+)?$/) ||
+                    line.match(/^\d+\.\s+(.+?)(?:\s*[–\-—]\s*.+)?$/);
+      if (match) {
+        const title = match[1].trim().replace(/\*\*/g, "");
+        if (title) chapterTitles.push(title);
+      }
     }
     if (chapterTitles.length === 0) {
       chapterTitles.push("תקציר", "מבוא", "המסגרת הנורמטיבית", "סקירה פסיקתית ודוקטרינרית", "ניתוח ביקורתי", "סיכום ומסקנות");
+    } else {
+      // Auto-prepend תקציר (the new outline omits it; abstract-locking flow still needs it)
+      const hasAbstract = chapterTitles.some(t => isAbstractChapter(t));
+      if (!hasAbstract) chapterTitles.unshift("תקציר");
     }
     setChapters(chapterTitles.map(t => ({ title: t, content: null })));
     setCurrentChapter(0);
@@ -1362,27 +1593,17 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               </Card>
             )}
 
-            {/* OUTLINE: show proposed outline, approve/edit */}
+            {/* OUTLINE: structured research-proposal report */}
             {wizardStep === "outline" && result && (
-              <Card className="border-border">
-                <CardContent className="p-4 space-y-3">
-                  <h3 className="font-bold text-foreground">מתווה מוצע</h3>
-                  <div className="text-foreground text-sm leading-relaxed whitespace-pre-wrap" style={{ lineHeight: 1.8 }}>
-                    <RenderMarkdown text={result.answer} />
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    <Button size="sm" onClick={() => {
-                      if (!checkDestructiveEdit("outline")) return;
-                      approveOutline();
-                    }}>
-                      אשר מתווה והתחל כתיבה
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={() => { setResult(null); setWizardStep("topic_or_question"); }}>
-                      חזרה לעריכה
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <OutlineReport
+                answer={result.answer}
+                researchQuestion={researchQuestion}
+                onApprove={() => {
+                  if (!checkDestructiveEdit("outline")) return;
+                  approveOutline();
+                }}
+                onBack={() => { setResult(null); setWizardStep("topic_or_question"); }}
+              />
             )}
 
             {/* Clickable chapter list — visible during writing/checkpoint */}
