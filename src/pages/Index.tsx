@@ -140,6 +140,7 @@ const Index = () => {
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const subscription = useSubscription();
+  const { billingPeriodEndsAt, planMeta } = useCredits();
 
   const { log: logActivity } = useActivityLog();
 
