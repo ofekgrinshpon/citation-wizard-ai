@@ -44,6 +44,7 @@ interface QAResult {
   message?: string;
   case_summary?: boolean;
   verified_source?: "user" | "local" | "external" | "none";
+  dropped_footnotes_count?: number;
   case_metadata?: {
     title?: string | null;
     citation?: string | null;
@@ -1688,6 +1689,39 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               </div>
             )}
 
+            {/* COMPARATIVE-TOPIC BANNER: shown before/during writing of a comparative chapter
+                when the user hasn't uploaded any reference PDFs yet. */}
+            {(wizardStep === "writing" || wizardStep === "checkpoint") &&
+              chapters.length > 0 &&
+              uploadedFiles.length === 0 &&
+              /משווה|מודלים השוואתיים|ארצות הברית|אנגליה|קנדה|אוסטרליה|גרמניה|comparative|international/i.test(
+                chapters[currentChapter]?.title || "",
+              ) && (
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 text-sm">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
+                    <div className="space-y-2 flex-1">
+                      <p className="font-semibold text-foreground">
+                        לא מצאתי מספיק מקורות זרים מעמיקים בחיפוש אוטומטי.
+                      </p>
+                      <p className="text-muted-foreground leading-relaxed">
+                        כדי שהפרק ההשוואתי יהיה ברמה אקדמית גבוהה, מומלץ להעלות כאן מאמרים או פסקי דין ספציפיים (PDF).
+                        אני אנתח אותם ואשלב אותם בטקסט עם אזכורים מדויקים.
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="border-amber-500/40 hover:bg-amber-500/20 gap-1.5"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        העלאת מקורות זרים
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
             {/* WRITING: show current chapter + write button */}
             {wizardStep === "writing" && !loading && !result && chapters.length > 0 && (() => {
               const currentTitle = chapters[currentChapter]?.title || "";
@@ -1786,6 +1820,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                         })}
                       </ol>
                     </div>
+                  )}
+                  {!!result.dropped_footnotes_count && result.dropped_footnotes_count > 0 && (
+                    <p className="mt-3 text-xs text-muted-foreground italic">
+                      {result.dropped_footnotes_count === 1
+                        ? "הערת שוליים אחת הושמטה כי לא עמדה בדרישות הציטוט (למשל חסרים שמות צדדים או פרטי פרסום)."
+                        : `${result.dropped_footnotes_count} הערות שוליים הושמטו כי לא עמדו בדרישות הציטוט (למשל חסרים שמות צדדים או פרטי פרסום).`}
+                    </p>
                   )}
                 </CardContent>
                 {/* Feedback textbox for rewrite */}

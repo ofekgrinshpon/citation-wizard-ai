@@ -443,6 +443,8 @@ ${prevContext}
 - שמור על רצף ועקביות עם הפרקים הקודמים.
 - השתמש בהערות שוליים מעוצבות לפי כללי האזכור האחיד.
 - העדף מקורות מאומתים ממאגר journal_article לחלקים תיאורטיים.
+- **איכות לפני כמות**: אם אין לך מספיק נתונים בשביל ציטוט תקני (שם הצדדים בפסק דין, שם המחבר במאמר, פרטי פרסום) — אל תכתוב הערת שוליים בכלל. עדיף פרק עם פחות הערות מדויקות מאשר הערות חלקיות.
+- **אסור בהחלט** להפיק הערת שוליים שתוכנה מסתכם במספר תיק וסוגריים בלבד (כגון "20.1.5931 (בתי משפט השלום)"). הערה כזו חייבת לכלול גם את שמות הצדדים, ואם אין — להשמיט אותה.
 - טון: עברית אקדמית ברגיסטר גבוה.${feedbackLine}`;
     }
 
@@ -1351,42 +1353,59 @@ ${(verify.fullText as string).slice(0, 50000)}
     })();
 
     const perplexityPromise = (async (): Promise<{ content: string; citations: string[] }> => {
-      try {
-        const res = await fetchWithTimeout("https://api.perplexity.ai/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "sonar-pro",
-            search_domain_filter: [
-              "nevo.co.il", "supreme.court.gov.il",
-              "knesset.gov.il", "psakdin.co.il",
-              "huji.ac.il", "tau.ac.il",
-            ],
-            messages: [
-              {
-                role: "system",
-                content: `Israeli law research assistant. Find PRIMARY legal sources only: statutes with ס"ח/ק"ת page numbers, court decisions with exact case numbers, academic books/articles. No blogs or law firm sites.`,
-              },
-              { role: "user", content: question },
-            ],
-          }),
-        }, 15000);
+      const systemMsg = {
+        role: "system" as const,
+        content: `Israeli law research assistant. Find PRIMARY legal sources only: statutes with ס"ח/ק"ת page numbers, court decisions with exact case numbers, academic books/articles. No blogs or law firm sites.`,
+      };
+      const userMsg = { role: "user" as const, content: question };
 
-        if (res.ok) {
-          const data = await res.json();
-          const content = data.choices?.[0]?.message?.content || "";
-          const cits = data.citations || [];
-          console.log(`Perplexity returned ${cits.length} citations`);
-          return { content, citations: cits };
-        } else {
-          const errText = await res.text();
-          console.error("Perplexity error (non-fatal):", res.status, errText);
+      // Two attempts: full prompt with 30s, then short prompt with 20s on AbortError.
+      const attempts = [
+        { timeoutMs: 30000, messages: [systemMsg, userMsg], label: "primary" },
+        { timeoutMs: 20000, messages: [userMsg], label: "retry-short" },
+      ];
+
+      for (let i = 0; i < attempts.length; i++) {
+        const attempt = attempts[i];
+        try {
+          const res = await fetchWithTimeout("https://api.perplexity.ai/chat/completions", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "sonar-pro",
+              search_domain_filter: [
+                "nevo.co.il", "supreme.court.gov.il",
+                "knesset.gov.il", "psakdin.co.il",
+                "huji.ac.il", "tau.ac.il",
+              ],
+              messages: attempt.messages,
+            }),
+          }, attempt.timeoutMs);
+
+          if (res.ok) {
+            const data = await res.json();
+            const content = data.choices?.[0]?.message?.content || "";
+            const cits = data.citations || [];
+            console.log(`Perplexity ${attempt.label} returned ${cits.length} citations`);
+            return { content, citations: cits };
+          } else {
+            const errText = await res.text();
+            console.error(`Perplexity ${attempt.label} error (non-fatal):`, res.status, errText);
+            // Non-timeout HTTP error: don't bother retrying.
+            break;
+          }
+        } catch (err) {
+          const isAbort = err instanceof DOMException && err.name === "AbortError";
+          if (isAbort && i === 0) {
+            console.log(`Perplexity ${attempt.label} timed out after ${attempt.timeoutMs}ms — retrying with shorter prompt...`);
+            continue;
+          }
+          console.error(`Perplexity ${attempt.label} call failed (non-fatal):`, err);
+          break;
         }
-      } catch (err) {
-        console.error("Perplexity call failed (non-fatal):", err);
       }
       return { content: "", citations: [] };
     })();
@@ -1494,10 +1513,19 @@ ${(verify.fullText as string).slice(0, 50000)}
         const meta = (m.metadata || {}) as Record<string, unknown>;
 
         if (m.source_type === "caselaw") {
-          // For case law: use case_number, court, decision_date, title
+          // For case law: use case_number, court, decision_date, title.
+          // Guard: skip cards without a usable title — emitting just "case_number (court)"
+          // produces fake citations like "20.1.5931 (בתי משפט השלום)" without parties.
           const caseNumber = (meta.case_number as string) || "";
           const court = (meta.court as string) || "";
           const decisionDate = (meta.decision_date as string) || "";
+          const titleTrim = (m.document_title || "").trim();
+          const hasParties = /נ['"׳״]/.test(titleTrim);
+          const isUsableTitle = titleTrim.length >= 8 && (hasParties || /[א-ת]{4,}/.test(titleTrim));
+          if (!isUsableTitle) {
+            console.log(`Skipping caselaw card without usable title: case=${caseNumber || "?"}, title="${titleTrim}"`);
+            continue;
+          }
           if (caseNumber) {
             richCitation = `${caseNumber} ${m.document_title}`;
             if (court) richCitation += ` (${court}`;
@@ -2446,7 +2474,8 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       }
     }
 
-    // Filter footnotes that are bare URLs / URL-only (violation of citation rules) or too short, then renumber
+    // Filter footnotes that are bare URLs / URL-only (violation of citation rules),
+    // too short, or missing substantive words. Then renumber.
     const URL_ONLY_RE = /^(?:\[?\s*)?https?:\/\/\S+(?:\s*\([^)]*\))?\s*\.?\s*$/i;
     const isUrlOnly = (txt: string): boolean => {
       const t = txt.trim();
@@ -2455,19 +2484,40 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       const stripped = t.replace(/\s*\([^)]*\)\s*\.?$/, "").replace(/\.$/, "").trim();
       return URL_ONLY_RE.test(t) || /^https?:\/\/\S+$/i.test(stripped);
     };
-    const validFootnotes = footnotes.filter(
-      (fn) => fn.citation.trim().length >= 10 && !isUrlOnly(fn.citation),
-    );
-    if (validFootnotes.length !== footnotes.length) {
-      const droppedUrlOnly = footnotes.filter((fn) => isUrlOnly(fn.citation)).length;
-      const droppedShort = footnotes.filter((fn) => fn.citation.trim().length < 10).length;
-      if (droppedUrlOnly > 0) console.log(`Dropped ${droppedUrlOnly} URL-only footnotes (rule violation)`);
-      if (droppedShort > 0) console.log(`Dropped ${droppedShort} too-short footnotes`);
-      const removedNumbers = new Set(
-        footnotes
-          .filter((fn) => fn.citation.trim().length < 10 || isUrlOnly(fn.citation))
-          .map((fn) => fn.number),
-      );
+    // A footnote needs at least one substantive word (3+ Hebrew/Latin letters)
+    // beyond a leading case number — pure "20.1.5931 (בתי משפט השלום)" lacks parties.
+    const HAS_SUBSTANTIVE_WORD_RE = /[א-תA-Za-z]{3,}/;
+    const isMissingSubstance = (txt: string): boolean => {
+      const t = txt.trim();
+      if (!HAS_SUBSTANTIVE_WORD_RE.test(t)) return true;
+      const withoutCaseHead = t
+        .replace(/^[\d./\-א-ת"׳״']{2,30}\s*/, "")
+        .replace(/\s*\([^)]*\)\s*\.?$/, "")
+        .trim();
+      return withoutCaseHead.length < 4 || !HAS_SUBSTANTIVE_WORD_RE.test(withoutCaseHead);
+    };
+    const reasonFor = (fn: { citation: string }): string | null => {
+      const t = fn.citation.trim();
+      if (t.length < 25) return "too_short";
+      if (isUrlOnly(t)) return "url_only";
+      if (isMissingSubstance(t)) return "missing_parties";
+      return null;
+    };
+    const droppedDetails: { number: number; reason: string; preview: string }[] = [];
+    const validFootnotes = footnotes.filter((fn) => {
+      const reason = reasonFor(fn);
+      if (reason) {
+        droppedDetails.push({ number: fn.number, reason, preview: fn.citation.slice(0, 80) });
+        return false;
+      }
+      return true;
+    });
+    const droppedFootnotesCount = droppedDetails.length;
+    if (droppedFootnotesCount > 0) {
+      for (const d of droppedDetails) {
+        console.log(`Dropped footnote #${d.number} [${d.reason}]: "${d.preview}"`);
+      }
+      const removedNumbers = new Set(droppedDetails.map((d) => d.number));
       for (const num of removedNumbers) {
         answer = answer.replaceAll(toSuperscript(num), "");
       }
@@ -2532,7 +2582,12 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     }
 
     return new Response(
-      JSON.stringify({ answer, footnotes: finalFootnotes, source_urls: citations }),
+      JSON.stringify({
+        answer,
+        footnotes: finalFootnotes,
+        source_urls: citations,
+        dropped_footnotes_count: droppedFootnotesCount,
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
