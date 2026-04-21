@@ -1,64 +1,47 @@
 
 
 ## Goal
-Fix three bugs in the Bibliography Generator:
-1. Manual category change in step 2 is ignored — source still ends up under the auto-detected category (e.g., user picks ספרות משפטית, but it lands under פסיקה – מחוזי).
-2. Sources are rendered with trailing periods that should be stripped on display/copy.
-3. The article `אלון הראל "מרובה המחזיק את המרובה: על היקף התפרשותן של הזכויות החוקתיות" משפטים נז` is mis-classified as **פסיקה – מחוזי**.
+Fix the Bibliography Generator so Hebrew journal articles are formatted per Rule 24 instead of being returned in a book-shape with the journal name dropped. Concrete failure: `נטע ברק-קורן, חני לרנר ותרצה קלמן "הקמת אסיפה מכוננת לפתרון המשבר החוקתי בישראל" משפטים נו ...` came back as `נטע ברק-קורן, חני לרנר ותרצה קלמן הקמת אסיפה מכוננת לפתרון המשבר החוקתי בישראל (כרך נו) (2002)` — no quotes around the title, no journal name (משפטים), `(כרך נו)` instead of bare `נו`, no opening page, wrong year format.
 
-## Root causes
-
-### Bug 1 — manual category reset
-In `src/hooks/useBibliography.tsx`, `addEntries` correctly applies `sourceTypeOverride`, but immediately wraps the new list in `rebuildBibliographyEntries(...)` which spreads `...classifyCitation(item.fullCitation)` over every entry — overwriting the user's choice with the heuristic result. Same thing happens on every mount via the `useEffect` that re-runs `rebuildBibliographyEntries`.
-
-### Bug 2 — trailing periods
-`copyAll` and the rendered list emit citations exactly as stored. Verified citations and AI lookups frequently end with `.`, leading to `... ס"ח 226.` on every line.
-
-### Bug 3 — district-court false positive
-In `classifyCitation`, the district-court detector is:
-```
-/ת"א|ת"פ|ע"מ|ה"פ|המר|פר"ק/
-```
-`המר` has no boundary anchor, so it matches inside the ordinary Hebrew word **המרובה** ("המרחזיק את **המר**ובה") and the article gets tagged as district case-law. Same risk exists for other un-anchored multi-letter tokens once gershayim are absent.
+## Root cause
+In `supabase/functions/bibliography-lookup/index.ts`, the Perplexity system prompt mentions the article shape in a single line (`מחבר "שם המאמר" כתב עת כרך עמוד (שנה)`) but doesn't enforce: required quotation marks around the title, required journal name, required page number, the prohibition on `(כרך X)`, or the Hebrew-year requirement. Sonar collapses the article into a book-style citation when the journal name isn't already in the user's input. There is also no post-validation, so the broken citation is returned as `status: "ok"` and the user only sees the result after it lands in step 2 — without any warning chip or `[חסר: ...]` placeholder pointing at what's missing.
 
 ## Fix
 
-### `src/hooks/useBibliography.tsx`
+### 1. Harden the Perplexity prompt — `supabase/functions/bibliography-lookup/index.ts`
+Rewrite `PERPLEXITY_SYSTEM` to make the article (Rule 24) shape explicit and strict:
+- Title MUST appear inside straight quotation marks `"..."`.
+- Journal name (משפטים, עיוני משפט, הפרקליט, מחקרי משפט, …) is mandatory and must appear right after the title, unquoted.
+- Volume is a bare Hebrew letter or digit (e.g. `נו`, `מח`, `12`) — NEVER wrapped in `(כרך X)`.
+- Opening page number is mandatory.
+- Year is in Hebrew with `ה` prefix in parentheses, e.g. `(התשפ"ה)` — Gregorian year only when Hebrew is genuinely unknown.
+- If any required component cannot be verified, insert `[חסר: שם כתב העת]` / `[חסר: עמוד פתיחה]` / `[חסר: שנה]` instead of silently dropping it or substituting a guessed value.
+- Add a worked example for the משפטים article so Sonar mirrors the correct shape:
+  `נטע ברק-קורן, חני לרנר ותרצה קלמן "הקמת אסיפה מכוננת לפתרון המשבר החוקתי בישראל" משפטים נו 1 (התשפ"ה).`
+- Apply the same "quotes + journal + bare volume + page + Hebrew year" rule to English articles (Rule 24 English equivalent).
 
-1. **Persist manual category override.**
-   - Add `manualCategory?: boolean` to `BibliographyEntry`.
-   - In `addEntries`, when `sourceTypeOverride` is provided: set `sourceType` from it AND set `manualCategory: true`.
-   - In `rebuildBibliographyEntries`, if `item.manualCategory` is true, **keep** the existing `sourceType`/`subCategory`/`authorSurname` — only run `classifyCitation` for `language` and `year` (or just preserve everything except recompute `language`/`year` from text).
+### 2. Post-lookup article validator — same edge function
+After `callPerplexity` returns, run a small validator on `result.citation`:
+- If it looks like an article candidate (starts with a Hebrew or English author and contains a Hebrew journal hint OR the user's input already mentioned `משפטים|עיוני משפט|הפרקליט|מחקרי משפט|כתב[\s-]עת`), assert that the citation contains `"…"` around a title and a recognisable journal token.
+- If quotes are missing, wrap the segment between author block and journal token in straight quotes.
+- If the citation contains `(כרך X)`, strip the wrapper so the volume becomes bare `X`.
+- If the journal name is absent but the user's `rawSource` contained one, splice it back in, or substitute `[חסר: שם כתב העת]`.
+- If opening page is absent, append `[חסר: עמוד פתיחה]` after the volume.
+- These transformations are conservative — they never invent journal names, only restore tokens already present in the user's raw input or insert explicit `[חסר: …]` placeholders.
 
-2. **Anchor district / magistrate / specialized regexes** so abbreviations like `המר`, `ת"א`, `ע"מ`, `ה"פ`, `ת"ד`, `ד"מ` only match when they actually look like procedure tokens (followed by space + digits, or with required gershayim on Hebrew words). Concretely, replace:
-   ```
-   /ת"א|ת"פ|ע"מ|ה"פ|המר|פר"ק/
-   ```
-   with anchored versions that require either a leading whitespace/start-of-string AND a following space + digit (procedure number) or quote mark, e.g.:
-   ```
-   /(?:^|\s)(?:ת"א|ת"פ|ע"מ|ה"פ|פר"ק|המ['׳]|המר['׳])\s+\d/
-   ```
-   Apply the same boundary tightening to magistrate (`ת"ט|תא"מ|ת"ד`) and specialized (`עב"ל|ס"ק|ד"מ`) regexes — each must be followed by `\s+\d` (a docket number) to count as case-law.
-   - Also add a precedence rule: if the citation contains a quoted article title (`"..."`) AND a Hebrew journal/volume hint (`משפטים|עיוני משפט|הפרקליט|מחקרי משפט|כתב[\s-]עת` followed by a Hebrew volume marker like `נז`/`כב`/digits), classify as `literature` BEFORE running case-law heuristics.
+### 3. Surface the warning in step 2 — `src/components/BibliographyGenerator.tsx`
+The review row already flags `[חסר:` strings via `stats.needsFix` (line 275) and the inline warning chip. No structural change. Verify the chip text reads "חסרים פרטים — תקן ידנית או חפש שוב". This means once the validator inserts placeholders, the user sees the row highlighted in step 2 instead of pushing a silently-broken article into step 3.
 
-3. **Strip trailing punctuation on storage.** In `addEntries` (and `addEntry`, `syncFootnoteEntries`), normalize `fullCitation` once with `text.trim().replace(/[.,;:\s]+$/u, "")` before constructing the entry. This guarantees every stored citation ends cleanly; the on-screen list and copy-to-Word output then never show a stray period.
-
-### `src/components/BibliographyGenerator.tsx`
-
-- No regex changes. Two display-side touch-ups:
-  1. When rendering rows in step 2 and step 3, also strip trailing `.,;:` defensively (harmless second pass).
-  2. The category popover (`onChangeCategory`) already sets `sourceTypeOverride` on the review item — the hook fix above is what makes it actually stick after commit.
-
-### Edge function
-No change.
+### 4. No DB / no client-classifier change
+Classification of `literature` already wins for `"…"` + journal + volume thanks to the recent `looksLikeHebrewArticle` pre-check, so once the validator adds the missing quotes/journal the article also lands under **ספרות משפטית** automatically.
 
 ## Out of scope
-- Disambiguation flow, Perplexity fallback, verified-source priority, 3-step wizard structure.
-- Existing entries in `localStorage` will re-run through the (now safer) classifier on next mount; manually-overridden ones added after this change will be locked.
+- Replacing Perplexity with a dedicated journal-metadata API (e.g. RAMBI, NLI). Possible follow-up if the validator still flags too many entries.
+- Adding משפטים / עיוני משפט volume-to-year tables to auto-fill Hebrew years.
+- Changes to the 3-step wizard, disambiguation flow, or verified-source priority.
 
 ## Outcome
-- Picking "ספרות משפטית" (or any other category) on a row → the source lands and **stays** in that category, even after page reload.
-- `אלון הראל "מרובה המחזיק את המרובה..." משפטים נז` → classified as **ספרות משפטית** (literature pre-check wins; even without it, `המר` no longer false-matches inside `המרובה`).
-- All bibliography lines end without a trailing `.` — both on screen and in the "העתק ל-Word" output.
-- Real district cases (e.g. `ת"א 1234/20 פלוני נ' אלמוני`) still classify correctly because the anchored regex requires `ת"א` followed by a docket number.
+- `נטע ברק-קורן, חני לרנר ותרצה קלמן "הקמת אסיפה מכוננת לפתרון המשבר החוקתי בישראל"` pasted by the user now returns with title in quotes, `משפטים` present, bare volume `נו`, opening page (or `[חסר: עמוד פתיחה]`), and Hebrew year — and lands under **ספרות משפטית** in step 3.
+- If Sonar still can't supply the page or journal, the row is flagged in step 2 with explicit `[חסר: …]` placeholders so the user fixes it before commit instead of seeing a silent book-shaped citation.
+- Existing book and case-law lookups are unaffected — the validator only triggers on article-shaped candidates.
 
