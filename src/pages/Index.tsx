@@ -142,12 +142,15 @@ const Index = () => {
 
   const { log: logActivity } = useActivityLog();
 
-  // Require authentication — redirect unauthenticated users (preserve ?addin=1)
+  // Require authentication — redirect unauthenticated users to login (preserve ?addin=1)
   useEffect(() => {
     if (!authLoading && !user) {
       const params = new URLSearchParams(window.location.search);
       const addin = params.get("addin");
-      navigate(addin ? `/?addin=${addin}` : "/", { replace: true });
+      const target = addin
+        ? `/auth?mode=login&addin=${addin}`
+        : "/auth?mode=login";
+      navigate(target, { replace: true });
     }
   }, [user, authLoading, navigate]);
 
