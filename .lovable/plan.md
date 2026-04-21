@@ -1,66 +1,57 @@
 
 
 ## מטרה
-תיקון שני באגי-trust שהתגלו ב־QA:
-1. משתמש לא מחובר שמגיע ל־`/app` מועבר ל־landing (`/`) במקום למסך ה־login (`/auth`).
-2. דיאלוג "הגעת למכסה המרבית" אומר למשתמש ב־Basic שהוא ניצל את "האזכורים החינמיים" שלו, כאילו מדובר ב־trial חד-פעמי, בעוד שזה למעשה מכסה חודשית של 20 קרדיטים שמתחדשת.
+לעדכן את נוסח ה־banner שמופיע ב־Academic Wizard לפרקים השוואתיים כך שיתואר בצורה מדויקת ומועילה יותר, עם CTA ברור.
 
-## שינויים — שניהם ב־`src/pages/Index.tsx`
+## שינוי
+ב־`src/components/LegalQAChat.tsx`, באזור ה־Academic Wizard (הסקציה שתתווסף בתיקון 3 של ה־plan המאושר), להחליף את הנוסח של ה־banner.
 
-### 1. תיקון ה־redirect (שורות 145–152)
-להחליף את ה־redirect ל־landing ב־redirect ל־`/auth?mode=login`, תוך שמירת `?addin=1` כשרלוונטי:
+### במקום הנוסח שהוצע:
+> "פרק זה עוסק בנושא השוואתי. המאגר המקומי מכיל בעיקר מקורות ישראליים — מומלץ להעלות PDFs של מאמרים השוואתיים כדי לקבל הערות שוליים מדויקות."
 
+### לכתוב:
+**שורה 1 (כותרת/דגש):** "לא מצאתי מספיק מקורות זרים מעמיקים בחיפוש אוטומטי."
+
+**שורה 2 (גוף):** "כדי שהפרק ההשוואתי יהיה ברמה אקדמית גבוהה, מומלץ להעלות כאן מאמרים או פסקי דין ספציפיים (PDF). אני אנתח אותם ואשלב אותם בטקסט עם אזכורים מדויקים."
+
+**כפתור CTA:** "העלאת מקורות זרים" — שיפעיל את אותו file input הקיים ב־wizard ל־`documentTexts` (אותו upload flow של "צרף מסמך").
+
+### מבנה ויזואלי
 ```tsx
-// Require authentication — redirect unauthenticated users to login (preserve ?addin=1)
-useEffect(() => {
-  if (!authLoading && !user) {
-    const params = new URLSearchParams(window.location.search);
-    const addin = params.get("addin");
-    const target = addin
-      ? `/auth?mode=login&addin=${addin}`
-      : "/auth?mode=login";
-    navigate(target, { replace: true });
-  }
-}, [user, authLoading, navigate]);
+{isComparativeChapter && uploadedDocumentTexts.length === 0 && (
+  <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 text-sm text-amber-100 space-y-2">
+    <div className="flex items-start gap-2">
+      <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+      <div className="space-y-2 flex-1">
+        <p className="font-semibold">לא מצאתי מספיק מקורות זרים מעמיקים בחיפוש אוטומטי.</p>
+        <p className="text-amber-200/90 leading-relaxed">
+          כדי שהפרק ההשוואתי יהיה ברמה אקדמית גבוהה, מומלץ להעלות כאן מאמרים או פסקי דין ספציפיים (PDF).
+          אני אנתח אותם ואשלב אותם בטקסט עם אזכורים מדויקים.
+        </p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => fileInputRef.current?.click()}
+          className="border-amber-500/40 text-amber-100 hover:bg-amber-500/20"
+        >
+          <Upload className="w-3.5 h-3.5 ml-1.5" />
+          העלאת מקורות זרים
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
 ```
 
-הערות:
-- `Auth.tsx` כבר תומך ב־`mode=login` כפרמטר URL (מתואר ב־memory `auth/navigation-logic-modes`).
-- משתמש שיתחבר יחזור ל־`/app` דרך ה־`AuthRedirect` הקיים — אין צורך לשנות שם דבר.
+### תזמון הצגת ה־banner
+- מופיע **לפני** התחלת כתיבת פרק השוואתי (בשלב `outline_review` או בתחילת `writing` של פרק כזה).
+- מתחבא אוטומטית ברגע שמשתמש העלה לפחות PDF אחד (`uploadedDocumentTexts.length > 0`).
+- ה־detection (`isComparativeChapter`) משתמש באותו regex שהוצע: `/משווה|מודלים השוואתיים|ארצות הברית|אנגליה|קנדה|אוסטרליה|גרמניה|comparative|international/i` על שם הפרק.
 
-### 2. תיקון נוסח דיאלוג "מכסה" (שורות 760–779)
-להוסיף שימוש ב־`useCredits` לקריאת `billingPeriodEndsAt`, ולעדכן את הקופי כך שיתאר מכסה חודשית מתחדשת במקום "אזכורים חינמיים":
-
-- להוסיף import: `import { useCredits } from "@/hooks/useCredits";`
-- ליד `const subscription = useSubscription();` להוסיף:
-  ```tsx
-  const { billingPeriodEndsAt, planMeta } = useCredits();
-  ```
-- להחליף את הכותרת והפסקה בתוך הדיאלוג:
-  ```tsx
-  <h3 className="text-foreground text-lg font-bold mb-2">נגמרו הקרדיטים החודשיים</h3>
-  <p className="text-muted-foreground text-sm mb-5 leading-relaxed">
-    ניצלת את כל {subscription.limit} הקרדיטים החודשיים בתכנית {planMeta.label}.
-    {billingPeriodEndsAt
-      ? <> הקרדיטים יתחדשו ב־{new Date(billingPeriodEndsAt).toLocaleDateString("he-IL")}.</>
-      : null}
-    {" "}ניתן לשדרג ל־Pro או להוסיף Top-up כדי להמשיך לעבוד עכשיו.
-  </p>
-  ```
-- כפתור ה־CTA "שדרג ל-Pro" נשאר כפי שהוא — `navigate("/profile?tab=account")` כבר מציג גם שדרוג וגם Top-up.
-
-### בדיקות מקדימות שכבר אומתו
-- `useCredits` מחזיר `billingPeriodEndsAt` ו־`planMeta` (`src/hooks/useCredits.tsx`).
-- `Auth.tsx` קורא `mode` מ־query string (מתועד ב־memory).
-- ה־`AuthRedirect` הקיים ב־`App.tsx` יעביר משתמש מחובר חזרה ל־`/app` אחרי login, כולל שמירת `addin`.
-
-## מחוץ ל־scope
-- שינויי copy בדפים אחרים (Profile, Landing, Auth) — נשארים כמו שהם.
-- שינוי טיפול ה־limit ב־`LegalQAChat` (שונה במהותו — מציג inline error card ולא דיאלוג חוסם).
-- שינוי במנגנון renewal עצמו בצד ה־DB.
+## מה לא משתנה
+- כל שאר התיקונים ב־plan המאושר (timeout 30s, retry, caselaw guard, validator מחמיר, prompt reinforcement, dropped_footnotes_count) נשארים כפי שאושרו.
+- ה־upload flow עצמו לא משתנה — משתמשים ב־`fileInputRef` הקיים של ה־wizard.
 
 ## תוצאה
-- ניווט ל־`/app` ללא session → מסך login (`/auth?mode=login`) במקום landing. שמירת bookmarks ועמוקי-קישור עובדת.
-- משתמשי Basic שהגיעו ל־0 רואים הודעה ברורה: "נגמרו הקרדיטים החודשיים בתכנית Basic, יתחדשו ב־DD/MM/YYYY", במקום הודעה מטעה על "אזכורים חינמיים".
-- אין שינוי בהתנהגות עבור Pro / Admin (אצלם `isLimitReached` לא מופעל ממילא).
+משתמש שכותב פרק השוואתי יראה הודעה כנה ומדויקת על מצב המקורות, ויקבל CTA ישיר להעלאת PDFs במקום הצעה גנרית.
 
