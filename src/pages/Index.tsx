@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useOffice } from "@/hooks/useOffice";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useCredits } from "@/hooks/useCredits";
 import { useProjects } from "@/hooks/useProjects";
 import { useActivityLog } from "@/hooks/useActivityLog";
 import { normalizeAbbreviations, detectSourceType, SOURCE_TYPE_LABELS, type SourceType, RULE_REFERENCES } from "@/data/abbreviations";
@@ -139,15 +140,19 @@ const Index = () => {
   const { isOfficeAddin } = useOffice();
   const navigate = useNavigate();
   const subscription = useSubscription();
+  const { billingPeriodEndsAt, planMeta } = useCredits();
 
   const { log: logActivity } = useActivityLog();
 
-  // Require authentication — redirect unauthenticated users (preserve ?addin=1)
+  // Require authentication — redirect unauthenticated users to login (preserve ?addin=1)
   useEffect(() => {
     if (!authLoading && !user) {
       const params = new URLSearchParams(window.location.search);
       const addin = params.get("addin");
-      navigate(addin ? `/?addin=${addin}` : "/", { replace: true });
+      const target = addin
+        ? `/auth?mode=login&addin=${addin}`
+        : "/auth?mode=login";
+      navigate(target, { replace: true });
     }
   }, [user, authLoading, navigate]);
 
@@ -763,9 +768,11 @@ const Index = () => {
           <div className="absolute inset-0 bg-foreground/40 backdrop-blur-sm" />
           <div className="relative bg-card border border-border rounded-2xl p-6 max-w-sm mx-4 shadow-lg text-center animate-fade-in">
             <div className="text-4xl mb-3">🔒</div>
-            <h3 className="text-foreground text-lg font-bold mb-2">הגעת למכסה המרבית</h3>
+            <h3 className="text-foreground text-lg font-bold mb-2">נגמרו הקרדיטים החודשיים</h3>
             <p className="text-muted-foreground text-sm mb-5 leading-relaxed">
-              השתמשת ב-{subscription.limit} אזכורים החינמיים שלך. שדרג/י למנוי Pro כדי להמשיך.
+              ניצלת את כל {subscription.limit} הקרדיטים החודשיים בתכנית {planMeta.label}.
+              {billingPeriodEndsAt ? <> הקרדיטים יתחדשו ב־{new Date(billingPeriodEndsAt).toLocaleDateString("he-IL")}.</> : null}
+              {" "}ניתן לשדרג ל־Pro או להוסיף Top-up כדי להמשיך לעבוד עכשיו.
             </p>
             <button
               onClick={() => navigate("/profile?tab=account")}
