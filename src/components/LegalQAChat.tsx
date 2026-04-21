@@ -1821,6 +1821,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                       </ol>
                     </div>
                   )}
+                  {!!result.dropped_footnotes_count && result.dropped_footnotes_count > 0 && (
+                    <p className="mt-3 text-xs text-muted-foreground italic">
+                      {result.dropped_footnotes_count === 1
+                        ? "הערת שוליים אחת הושמטה כי לא עמדה בדרישות הציטוט (למשל חסרים שמות צדדים או פרטי פרסום)."
+                        : `${result.dropped_footnotes_count} הערות שוליים הושמטו כי לא עמדו בדרישות הציטוט (למשל חסרים שמות צדדים או פרטי פרסום).`}
+                    </p>
+                  )}
                 </CardContent>
                 {/* Feedback textbox for rewrite */}
                 <div className="px-4 pb-2 space-y-2">
