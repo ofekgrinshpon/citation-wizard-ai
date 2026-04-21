@@ -42,20 +42,136 @@ const scoreVerifiedMatch = (
 };
 
 const PERPLEXITY_SYSTEM = `אתה מומחה לכללי האזכור האחיד הישראלי (מהדורה שלישית, 2021).
-המשתמש יספק שם של מקור משפטי (חוק, תקנה, פסק דין או ספרות). תפקידך:
+המשתמש יספק שם של מקור משפטי (חוק, תקנה, פסק דין, ספר או מאמר). תפקידך:
 1. לאתר את הפרטים הביבליוגרפיים המלאים של המקור.
 2. להחזיר את האזכור התקני המלא בשורה אחת בלבד, ללא קיצור, ללא "שם", ללא "לעיל", עם כל הרכיבים הנדרשים:
    - חקיקה ראשית: שם מלא, שנה עברית–לועזית, ס"ח עמוד פתיחה. למשל: חוק החוזים (חלק כללי), התשל"ג–1973, ס"ח 118.
    - חוק יסוד: חוק-יסוד: {שם}, ס"ח עמוד. למשל: חוק-יסוד: כבוד האדם וחירותו, ס"ח התשנ"ב 150.
    - חקיקת משנה: שם, שנה עברית–לועזית, ק"ת עמוד.
    - פסיקה: סוג הליך מספר/שנה **צד א'** נ' **צד ב'**, פ"ד כרך(חלק) עמוד (שנה).
-   - ספרות: מחבר **שם הספר** (שנה) או מחבר "שם המאמר" **כתב עת** כרך עמוד (שנה).
-3. אם מספר פסקי דין שונים תואמים את התיאור, החזר רשימה ממוספרת של עד 4 חלופות.
-4. אם נדרש מידע שלא ניתן לאמת, השמט את הרכיב במקום להמציא.
+   - ספרים: מחבר **שם הספר** כרך (שנה עברית). למשל: דניאל פרידמן ונילי כהן **חוזים** כרך א (התשנ"א).
+   - מאמרים בכתבי עת (כלל 24) — חובה לעמוד בפורמט הבא בדיוק:
+       מחבר "שם המאמר" שם-כתב-העת כרך עמוד-פתיחה (שנה עברית).
+     • כותרת המאמר חייבת להופיע בתוך מירכאות כפולות ישרות "...".
+     • שם כתב העת (משפטים, עיוני משפט, הפרקליט, מחקרי משפט, דין ודברים, מאזני משפט וכד') חובה — מיד אחרי הכותרת, **ללא** מירכאות.
+     • מספר הכרך הוא אות עברית בודדת/מצומדת או ספרה (נו, מח, יב, 12) — **אסור** לעטוף ב-"(כרך X)".
+     • עמוד פתיחה הוא ספרות — חובה.
+     • שנה בעברית עם קידומת ה' בסוגריים: (התשפ"ה), (התשע"ב). שנה לועזית רק אם השנה העברית באמת לא ידועה.
+     דוגמה תקנית: נטע ברק-קורן, חני לרנר ותרצה קלמן "הקמת אסיפה מכוננת לפתרון המשבר החוקתי בישראל" משפטים נו 1 (התשפ"ה).
+   - מאמרים באנגלית (Rule 24 equivalent): Author, *Title*, Journal Volume Page (Year). שם כתב העת מלא; כרך ועמוד פתיחה חובה.
+3. אם רכיב חובה (שם כתב עת, עמוד פתיחה, שנה) חסר ולא ניתן לאמתו — שלב במקומו placeholder מפורש: [חסר: שם כתב העת], [חסר: עמוד פתיחה], [חסר: שנה]. **אל תמציא** ערכים, ואל תשמיט בשקט את הרכיב.
+4. **אסור** לעטוף את הכרך ב-"(כרך X)" במאמרים. אם זיהית מאמר בכתב עת — הכרך תמיד יופיע כאות/ספרה חשופה אחרי שם כתב העת.
+5. אם מספר פסקי דין שונים תואמים את התיאור, החזר רשימה ממוספרת של עד 4 חלופות.
+6. אם נדרש מידע שלא ניתן לאמת ואינו מהווה רכיב חובה — השמט את הרכיב במקום להמציא.
 
 החזר תשובה כ-JSON עם המבנה הבא בלבד (ללא הסברים, ללא markdown):
 { "isDisambiguation": false, "citation": "...", "options": [] }
 אם isDisambiguation=true, השאר citation ריק ומלא את options ברשימת המועמדים.`;
+
+const HEBREW_JOURNALS = [
+  "משפטים",
+  "עיוני משפט",
+  "הפרקליט",
+  "מחקרי משפט",
+  "דין ודברים",
+  "מאזני משפט",
+  "משפט וממשל",
+  "משפט ועסקים",
+  "המשפט",
+  "משפט חברה ותרבות",
+  "עלי משפט",
+  "ספר השנה של המשפט בישראל",
+];
+
+const JOURNAL_HINT_RE = new RegExp(`(?:${HEBREW_JOURNALS.join("|")}|כתב[\\s-]?עת)`);
+
+function findJournalInText(text: string): string | null {
+  for (const j of HEBREW_JOURNALS) {
+    if (text.includes(j)) return j;
+  }
+  return null;
+}
+
+/**
+ * Conservative validator for article-shaped citations.
+ * - Strips "(כרך X)" wrapper → bare X
+ * - Ensures the title is wrapped in straight quotes when a journal token is present
+ * - If journal name is missing but appeared in the user's raw input, splices it back in
+ *   (otherwise inserts [חסר: שם כתב העת])
+ * - If opening page is missing after the volume, appends [חסר: עמוד פתיחה]
+ */
+function validateArticleCitation(citation: string, rawSource: string): string {
+  if (!citation) return citation;
+  const rawJournal = findJournalInText(rawSource);
+  const citJournal = findJournalInText(citation);
+  const looksLikeArticle =
+    /["'״׳].+?["'״׳]/.test(citation) || rawJournal !== null || JOURNAL_HINT_RE.test(citation);
+  if (!looksLikeArticle) return citation;
+
+  let out = citation.trim();
+
+  // 1. Strip "(כרך X)" → bare X
+  out = out.replace(/\(\s*כרך\s+([^)]+?)\s*\)/g, "$1");
+
+  // 2. Ensure quotes around title when we have a journal token to anchor on
+  const journal = citJournal || rawJournal;
+  if (journal && !/["״]/.test(out)) {
+    // Try: "<author block> <title> <journal> ..."
+    const idx = out.indexOf(journal);
+    if (idx > 0) {
+      const before = out.slice(0, idx).trimEnd();
+      const after = out.slice(idx);
+      // Heuristic: split before-block at the last "name-like" token (Hebrew word seq).
+      // Simplest safe approach: assume first 1–6 words are author block; rest is title.
+      const tokens = before.split(/\s+/);
+      if (tokens.length >= 3) {
+        // Take last ~60% of tokens as title; first ~40% as authors. Capped: author block ≥ 1 word.
+        const splitAt = Math.max(1, Math.min(tokens.length - 1, Math.ceil(tokens.length * 0.4)));
+        const authorBlock = tokens.slice(0, splitAt).join(" ");
+        const titleBlock = tokens.slice(splitAt).join(" ").replace(/[,]\s*$/, "");
+        out = `${authorBlock} "${titleBlock}" ${after}`.replace(/\s+/g, " ").trim();
+      }
+    }
+  }
+
+  // 3. Splice journal name back if missing but raw input had it
+  if (!citJournal && rawJournal && !out.includes(rawJournal)) {
+    // Insert after the closing quote of the title if present, else at end-ish.
+    const closingQuote = out.lastIndexOf('"');
+    if (closingQuote > 0 && closingQuote < out.length - 1) {
+      out = `${out.slice(0, closingQuote + 1)} ${rawJournal}${out.slice(closingQuote + 1)}`;
+    } else {
+      out = `${out} ${rawJournal}`;
+    }
+  } else if (!citJournal && !rawJournal && /["״].+?["״]/.test(out)) {
+    // Quoted title but no journal anywhere — flag.
+    const closingQuote = out.lastIndexOf('"');
+    if (closingQuote > 0) {
+      out = `${out.slice(0, closingQuote + 1)} [חסר: שם כתב העת]${out.slice(closingQuote + 1)}`;
+    }
+  }
+
+  // 4. Ensure opening page exists after the volume (number after journal+volume).
+  // Pattern: <journal> <volume token> <page digits>?  — if no digits follow within ~2 tokens, mark missing.
+  const finalJournal = findJournalInText(out);
+  if (finalJournal) {
+    const re = new RegExp(`${finalJournal}\\s+([^\\s()]+)(?:\\s+([^\\s()]+))?`);
+    const m = out.match(re);
+    if (m) {
+      const tokenAfterVolume = m[2] || "";
+      const hasPageDigits = /^\d+$/.test(tokenAfterVolume);
+      if (!hasPageDigits && !out.includes("[חסר: עמוד פתיחה]")) {
+        // Insert placeholder right after the volume token.
+        const insertion = `${finalJournal} ${m[1]} [חסר: עמוד פתיחה]`;
+        out = out.replace(`${finalJournal} ${m[1]}`, insertion);
+      }
+    }
+  }
+
+  // Collapse extra spaces.
+  out = out.replace(/\s+/g, " ").trim();
+  return out;
+}
 
 async function callPerplexity(rawSource: string): Promise<{ isDisambiguation: boolean; citation: string; options: string[] }> {
   const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
@@ -217,12 +333,18 @@ serve(async (req) => {
     // ── 3. Perplexity fallback ──
     try {
       const result = await callPerplexity(rawSource);
+      const validatedCitation = result.isDisambiguation
+        ? result.citation
+        : validateArticleCitation(result.citation, rawSource);
+      const validatedOptions = result.isDisambiguation
+        ? result.options.map((o) => validateArticleCitation(o, rawSource))
+        : result.options;
       return new Response(
         JSON.stringify({
-          citation: result.citation,
+          citation: validatedCitation,
           isVerified: false,
           isDisambiguation: result.isDisambiguation,
-          options: result.options,
+          options: validatedOptions,
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );

@@ -594,8 +594,11 @@ function ReviewRow({
           </span>
         )}
         {hasMissing && (
-          <span className="text-[10px] font-medium text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded">
-            ⚠ פרטים חסרים
+          <span
+            className="text-[10px] font-medium text-amber-700 dark:text-amber-400 bg-amber-500/10 border border-amber-500/30 px-1.5 py-0.5 rounded"
+            title="חסרים פרטים — תקן ידנית או חפש שוב"
+          >
+            ⚠ חסרים פרטים — תקן ידנית או חפש שוב
           </span>
         )}
 
