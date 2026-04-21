@@ -1,46 +1,66 @@
 
 
 ## מטרה
-לבטל את ה־route הישן `/legal-qa` ולהפנות אותו ל־flow הקנוני היחיד: `/app?mode=legalqa`. כך מסירים את הכפילות בין `LegalQA.tsx` ל־`LegalQAChat.tsx`, ומונעים drift עתידי בקופי, בקרדיטים, ב־footnotes ובחווית המשתמש.
+תיקון שני באגי-trust שהתגלו ב־QA:
+1. משתמש לא מחובר שמגיע ל־`/app` מועבר ל־landing (`/`) במקום למסך ה־login (`/auth`).
+2. דיאלוג "הגעת למכסה המרבית" אומר למשתמש ב־Basic שהוא ניצל את "האזכורים החינמיים" שלו, כאילו מדובר ב־trial חד-פעמי, בעוד שזה למעשה מכסה חודשית של 20 קרדיטים שמתחדשת.
 
-## שינויים
+## שינויים — שניהם ב־`src/pages/Index.tsx`
 
-### 1. `src/App.tsx`
-- להחליף את ה־route:
-  ```tsx
-  <Route path="/legal-qa" element={<LegalQA />} />
-  ```
-  ב־redirect קבוע ששומר על `addin=1` במידת הצורך:
-  ```tsx
-  <Route path="/legal-qa" element={<Navigate to="/app?mode=legalqa" replace />} />
-  ```
-- להסיר את ה־import של `LegalQA` מהקובץ.
+### 1. תיקון ה־redirect (שורות 145–152)
+להחליף את ה־redirect ל־landing ב־redirect ל־`/auth?mode=login`, תוך שמירת `?addin=1` כשרלוונטי:
 
-### 2. `src/pages/LegalQA.tsx`
-- למחוק את הקובץ. הוא לא יישאר בשימוש בשום מקום באפליקציה.
-
-### 3. בדיקת קישורים פנימיים
-- לוודא שאף קומפוננטה (סיידבר, ניווט, כפתורי "פתח עוזר משפטי", landing) לא מפנה ל־`/legal-qa`. אם כן — לעדכן ל־`/app?mode=legalqa`. (בסריקה מקדימה לא נצפה שימוש פעיל מתוך הסיידבר, אבל יש לוודא ולהחליף בכל מופע אם קיים.)
-
-### 4. שמירת תאימות לאחור
-- ה־redirect הוא `replace`, כך שמשתמשים שיש להם bookmark ישן ל־`/legal-qa` יועברו אוטומטית ל־flow הקנוני בלי להשאיר רשומה ב־history.
-- אם יש פרמטר `?addin=1` או query אחר, ה־redirect הסטטי לא ישמר אותו. אם רוצים לשמר addin, אפשר להשתמש ב־wrapper קטן:
-  ```tsx
-  function LegalQARedirect() {
-    const search = window.location.search;
-    return <Navigate to={`/app?mode=legalqa${search ? `&${search.slice(1)}` : ""}`} replace />;
+```tsx
+// Require authentication — redirect unauthenticated users to login (preserve ?addin=1)
+useEffect(() => {
+  if (!authLoading && !user) {
+    const params = new URLSearchParams(window.location.search);
+    const addin = params.get("addin");
+    const target = addin
+      ? `/auth?mode=login&addin=${addin}`
+      : "/auth?mode=login";
+    navigate(target, { replace: true });
   }
+}, [user, authLoading, navigate]);
+```
+
+הערות:
+- `Auth.tsx` כבר תומך ב־`mode=login` כפרמטר URL (מתואר ב־memory `auth/navigation-logic-modes`).
+- משתמש שיתחבר יחזור ל־`/app` דרך ה־`AuthRedirect` הקיים — אין צורך לשנות שם דבר.
+
+### 2. תיקון נוסח דיאלוג "מכסה" (שורות 760–779)
+להוסיף שימוש ב־`useCredits` לקריאת `billingPeriodEndsAt`, ולעדכן את הקופי כך שיתאר מכסה חודשית מתחדשת במקום "אזכורים חינמיים":
+
+- להוסיף import: `import { useCredits } from "@/hooks/useCredits";`
+- ליד `const subscription = useSubscription();` להוסיף:
+  ```tsx
+  const { billingPeriodEndsAt, planMeta } = useCredits();
   ```
-  ולהשתמש בו במקום `<Navigate />` הישיר.
+- להחליף את הכותרת והפסקה בתוך הדיאלוג:
+  ```tsx
+  <h3 className="text-foreground text-lg font-bold mb-2">נגמרו הקרדיטים החודשיים</h3>
+  <p className="text-muted-foreground text-sm mb-5 leading-relaxed">
+    ניצלת את כל {subscription.limit} הקרדיטים החודשיים בתכנית {planMeta.label}.
+    {billingPeriodEndsAt
+      ? <> הקרדיטים יתחדשו ב־{new Date(billingPeriodEndsAt).toLocaleDateString("he-IL")}.</>
+      : null}
+    {" "}ניתן לשדרג ל־Pro או להוסיף Top-up כדי להמשיך לעבוד עכשיו.
+  </p>
+  ```
+- כפתור ה־CTA "שדרג ל-Pro" נשאר כפי שהוא — `navigate("/profile?tab=account")` כבר מציג גם שדרוג וגם Top-up.
+
+### בדיקות מקדימות שכבר אומתו
+- `useCredits` מחזיר `billingPeriodEndsAt` ו־`planMeta` (`src/hooks/useCredits.tsx`).
+- `Auth.tsx` קורא `mode` מ־query string (מתועד ב־memory).
+- ה־`AuthRedirect` הקיים ב־`App.tsx` יעביר משתמש מחובר חזרה ל־`/app` אחרי login, כולל שמירת `addin`.
 
 ## מחוץ ל־scope
-- שינויים ב־`LegalQAChat.tsx` או ב־edge function `legal-qa`.
-- איחוד קופי/קרדיטים/footnotes — כבר נמצאים רק ב־flow הקנוני אחרי המחיקה.
-- הוספת בדיקות אוטומטיות לניתוב.
+- שינויי copy בדפים אחרים (Profile, Landing, Auth) — נשארים כמו שהם.
+- שינוי טיפול ה־limit ב־`LegalQAChat` (שונה במהותו — מציג inline error card ולא דיאלוג חוסם).
+- שינוי במנגנון renewal עצמו בצד ה־DB.
 
 ## תוצאה
-- קיים flow אחד בלבד לעוזר המשפטי: `/app?mode=legalqa` (`LegalQAChat.tsx`).
-- `/legal-qa` ממשיך לעבוד כ־URL חוקי אבל מבצע redirect שקוף ל־flow הקנוני.
-- מסירים כ־400 שורות קוד כפול שגרמו לבאגים מתועדים (footnote ‎10/20 שבור, אין refund toast, אין החלפת מצב, אין task modes, אין file upload).
-- אין יותר drift אפשרי בין שתי גרסאות של אותו פיצ'ר.
+- ניווט ל־`/app` ללא session → מסך login (`/auth?mode=login`) במקום landing. שמירת bookmarks ועמוקי-קישור עובדת.
+- משתמשי Basic שהגיעו ל־0 רואים הודעה ברורה: "נגמרו הקרדיטים החודשיים בתכנית Basic, יתחדשו ב־DD/MM/YYYY", במקום הודעה מטעה על "אזכורים חינמיים".
+- אין שינוי בהתנהגות עבור Pro / Admin (אצלם `isLimitReached` לא מופעל ממילא).
 
