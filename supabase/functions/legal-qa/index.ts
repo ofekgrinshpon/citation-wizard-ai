@@ -1511,10 +1511,19 @@ ${(verify.fullText as string).slice(0, 50000)}
         const meta = (m.metadata || {}) as Record<string, unknown>;
 
         if (m.source_type === "caselaw") {
-          // For case law: use case_number, court, decision_date, title
+          // For case law: use case_number, court, decision_date, title.
+          // Guard: skip cards without a usable title — emitting just "case_number (court)"
+          // produces fake citations like "20.1.5931 (בתי משפט השלום)" without parties.
           const caseNumber = (meta.case_number as string) || "";
           const court = (meta.court as string) || "";
           const decisionDate = (meta.decision_date as string) || "";
+          const titleTrim = (m.document_title || "").trim();
+          const hasParties = /נ['"׳״]/.test(titleTrim);
+          const isUsableTitle = titleTrim.length >= 8 && (hasParties || /[א-ת]{4,}/.test(titleTrim));
+          if (!isUsableTitle) {
+            console.log(`Skipping caselaw card without usable title: case=${caseNumber || "?"}, title="${titleTrim}"`);
+            continue;
+          }
           if (caseNumber) {
             richCitation = `${caseNumber} ${m.document_title}`;
             if (court) richCitation += ` (${court}`;
