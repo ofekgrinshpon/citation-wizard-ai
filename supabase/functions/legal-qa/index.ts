@@ -1351,42 +1351,59 @@ ${(verify.fullText as string).slice(0, 50000)}
     })();
 
     const perplexityPromise = (async (): Promise<{ content: string; citations: string[] }> => {
-      try {
-        const res = await fetchWithTimeout("https://api.perplexity.ai/chat/completions", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "sonar-pro",
-            search_domain_filter: [
-              "nevo.co.il", "supreme.court.gov.il",
-              "knesset.gov.il", "psakdin.co.il",
-              "huji.ac.il", "tau.ac.il",
-            ],
-            messages: [
-              {
-                role: "system",
-                content: `Israeli law research assistant. Find PRIMARY legal sources only: statutes with ס"ח/ק"ת page numbers, court decisions with exact case numbers, academic books/articles. No blogs or law firm sites.`,
-              },
-              { role: "user", content: question },
-            ],
-          }),
-        }, 15000);
+      const systemMsg = {
+        role: "system" as const,
+        content: `Israeli law research assistant. Find PRIMARY legal sources only: statutes with ס"ח/ק"ת page numbers, court decisions with exact case numbers, academic books/articles. No blogs or law firm sites.`,
+      };
+      const userMsg = { role: "user" as const, content: question };
 
-        if (res.ok) {
-          const data = await res.json();
-          const content = data.choices?.[0]?.message?.content || "";
-          const cits = data.citations || [];
-          console.log(`Perplexity returned ${cits.length} citations`);
-          return { content, citations: cits };
-        } else {
-          const errText = await res.text();
-          console.error("Perplexity error (non-fatal):", res.status, errText);
+      // Two attempts: full prompt with 30s, then short prompt with 20s on AbortError.
+      const attempts = [
+        { timeoutMs: 30000, messages: [systemMsg, userMsg], label: "primary" },
+        { timeoutMs: 20000, messages: [userMsg], label: "retry-short" },
+      ];
+
+      for (let i = 0; i < attempts.length; i++) {
+        const attempt = attempts[i];
+        try {
+          const res = await fetchWithTimeout("https://api.perplexity.ai/chat/completions", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "sonar-pro",
+              search_domain_filter: [
+                "nevo.co.il", "supreme.court.gov.il",
+                "knesset.gov.il", "psakdin.co.il",
+                "huji.ac.il", "tau.ac.il",
+              ],
+              messages: attempt.messages,
+            }),
+          }, attempt.timeoutMs);
+
+          if (res.ok) {
+            const data = await res.json();
+            const content = data.choices?.[0]?.message?.content || "";
+            const cits = data.citations || [];
+            console.log(`Perplexity ${attempt.label} returned ${cits.length} citations`);
+            return { content, citations: cits };
+          } else {
+            const errText = await res.text();
+            console.error(`Perplexity ${attempt.label} error (non-fatal):`, res.status, errText);
+            // Non-timeout HTTP error: don't bother retrying.
+            break;
+          }
+        } catch (err) {
+          const isAbort = err instanceof DOMException && err.name === "AbortError";
+          if (isAbort && i === 0) {
+            console.log(`Perplexity ${attempt.label} timed out after ${attempt.timeoutMs}ms — retrying with shorter prompt...`);
+            continue;
+          }
+          console.error(`Perplexity ${attempt.label} call failed (non-fatal):`, err);
+          break;
         }
-      } catch (err) {
-        console.error("Perplexity call failed (non-fatal):", err);
       }
       return { content: "", citations: [] };
     })();
