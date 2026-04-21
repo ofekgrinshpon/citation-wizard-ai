@@ -333,12 +333,18 @@ serve(async (req) => {
     // ── 3. Perplexity fallback ──
     try {
       const result = await callPerplexity(rawSource);
+      const validatedCitation = result.isDisambiguation
+        ? result.citation
+        : validateArticleCitation(result.citation, rawSource);
+      const validatedOptions = result.isDisambiguation
+        ? result.options.map((o) => validateArticleCitation(o, rawSource))
+        : result.options;
       return new Response(
         JSON.stringify({
-          citation: result.citation,
+          citation: validatedCitation,
           isVerified: false,
           isDisambiguation: result.isDisambiguation,
-          options: result.options,
+          options: validatedOptions,
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
