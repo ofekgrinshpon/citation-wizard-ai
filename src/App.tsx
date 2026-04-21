@@ -17,7 +17,6 @@ import NotFound from "./pages/NotFound.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 import AuthDialog from "./pages/AuthDialog.tsx";
 import VerifiedSources from "./pages/VerifiedSources.tsx";
-import LegalQA from "./pages/LegalQA.tsx";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +44,12 @@ const Router = isOfficeAddin()
       return <MemoryRouter initialEntries={[initialPath]}>{children}</MemoryRouter>;
     }
   : BrowserRouter;
+
+function LegalQARedirect() {
+  const search = window.location.search;
+  const suffix = search ? `&${search.slice(1)}` : "";
+  return <Navigate to={`/app?mode=legalqa${suffix}`} replace />;
+}
 
 function AuthLoadingSpinner() {
   return (
@@ -88,7 +93,7 @@ const App = () => (
                   <Route path="/admin" element={<Admin />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/verified-sources" element={<VerifiedSources />} />
-                  <Route path="/legal-qa" element={<LegalQA />} />
+                  <Route path="/legal-qa" element={<LegalQARedirect />} />
                   <Route path="/auth-redirect" element={<AuthRedirect />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/auth-dialog" element={<AuthDialog />} />
