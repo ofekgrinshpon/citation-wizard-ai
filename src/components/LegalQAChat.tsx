@@ -44,6 +44,7 @@ interface QAResult {
   message?: string;
   case_summary?: boolean;
   verified_source?: "user" | "local" | "external" | "none";
+  dropped_footnotes_count?: number;
   case_metadata?: {
     title?: string | null;
     citation?: string | null;
