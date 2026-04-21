@@ -2582,7 +2582,12 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     }
 
     return new Response(
-      JSON.stringify({ answer, footnotes: finalFootnotes, source_urls: citations }),
+      JSON.stringify({
+        answer,
+        footnotes: finalFootnotes,
+        source_urls: citations,
+        dropped_footnotes_count: droppedFootnotesCount,
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {
