@@ -2472,7 +2472,8 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       }
     }
 
-    // Filter footnotes that are bare URLs / URL-only (violation of citation rules) or too short, then renumber
+    // Filter footnotes that are bare URLs / URL-only (violation of citation rules),
+    // too short, or missing substantive words. Then renumber.
     const URL_ONLY_RE = /^(?:\[?\s*)?https?:\/\/\S+(?:\s*\([^)]*\))?\s*\.?\s*$/i;
     const isUrlOnly = (txt: string): boolean => {
       const t = txt.trim();
@@ -2481,19 +2482,40 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       const stripped = t.replace(/\s*\([^)]*\)\s*\.?$/, "").replace(/\.$/, "").trim();
       return URL_ONLY_RE.test(t) || /^https?:\/\/\S+$/i.test(stripped);
     };
-    const validFootnotes = footnotes.filter(
-      (fn) => fn.citation.trim().length >= 10 && !isUrlOnly(fn.citation),
-    );
-    if (validFootnotes.length !== footnotes.length) {
-      const droppedUrlOnly = footnotes.filter((fn) => isUrlOnly(fn.citation)).length;
-      const droppedShort = footnotes.filter((fn) => fn.citation.trim().length < 10).length;
-      if (droppedUrlOnly > 0) console.log(`Dropped ${droppedUrlOnly} URL-only footnotes (rule violation)`);
-      if (droppedShort > 0) console.log(`Dropped ${droppedShort} too-short footnotes`);
-      const removedNumbers = new Set(
-        footnotes
-          .filter((fn) => fn.citation.trim().length < 10 || isUrlOnly(fn.citation))
-          .map((fn) => fn.number),
-      );
+    // A footnote needs at least one substantive word (3+ Hebrew/Latin letters)
+    // beyond a leading case number — pure "20.1.5931 (בתי משפט השלום)" lacks parties.
+    const HAS_SUBSTANTIVE_WORD_RE = /[א-תA-Za-z]{3,}/;
+    const isMissingSubstance = (txt: string): boolean => {
+      const t = txt.trim();
+      if (!HAS_SUBSTANTIVE_WORD_RE.test(t)) return true;
+      const withoutCaseHead = t
+        .replace(/^[\d./\-א-ת"׳״']{2,30}\s*/, "")
+        .replace(/\s*\([^)]*\)\s*\.?$/, "")
+        .trim();
+      return withoutCaseHead.length < 4 || !HAS_SUBSTANTIVE_WORD_RE.test(withoutCaseHead);
+    };
+    const reasonFor = (fn: { citation: string }): string | null => {
+      const t = fn.citation.trim();
+      if (t.length < 25) return "too_short";
+      if (isUrlOnly(t)) return "url_only";
+      if (isMissingSubstance(t)) return "missing_parties";
+      return null;
+    };
+    const droppedDetails: { number: number; reason: string; preview: string }[] = [];
+    const validFootnotes = footnotes.filter((fn) => {
+      const reason = reasonFor(fn);
+      if (reason) {
+        droppedDetails.push({ number: fn.number, reason, preview: fn.citation.slice(0, 80) });
+        return false;
+      }
+      return true;
+    });
+    const droppedFootnotesCount = droppedDetails.length;
+    if (droppedFootnotesCount > 0) {
+      for (const d of droppedDetails) {
+        console.log(`Dropped footnote #${d.number} [${d.reason}]: "${d.preview}"`);
+      }
+      const removedNumbers = new Set(droppedDetails.map((d) => d.number));
       for (const num of removedNumbers) {
         answer = answer.replaceAll(toSuperscript(num), "");
       }
