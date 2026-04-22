@@ -125,25 +125,29 @@ const DECOMP_SYSTEM_PROMPT = `אתה אנליסט משפטי. תפקידך לפ�
 
 /**
  * Stage A+B: One planner call that returns both decomposition and per-sub-issue query plan.
- * Returns null on any failure → caller must fall back to legacy retrieval path.
+ * Returns `{ data, run }`. `data` is null on any failure → caller must fall back to
+ * legacy retrieval path. `run` carries full telemetry (status, duration, model used).
  */
 export async function decomposeAndPlan(
   question: string,
-): Promise<DecomposedPlan | null> {
-  const result = await callPlannerJSON<DecomposedPlan>(
+): Promise<{ data: DecomposedPlan | null; run: StageRun }> {
+  const { data, run } = await callPlannerJSON<DecomposedPlan>(
     DECOMP_SYSTEM_PROMPT,
     `שאלת המחקר:\n${question}`,
     DECOMP_PLAN_TOOL,
-    10000,
+    { stage: "decomposition", timeoutMs: 30000, reasoningEffort: "minimal" },
   );
-  if (!result || !result.decomposition?.main_issue || !Array.isArray(result.decomposition?.sub_issues)) {
-    return null;
+  if (!data) return { data: null, run };
+  if (!data.decomposition?.main_issue || !Array.isArray(data.decomposition?.sub_issues)) {
+    return { data: null, run: { ...run, status: "parse_error", error_message: "missing main_issue or sub_issues" } };
   }
-  if (result.decomposition.sub_issues.length < 2) return null;
-  if (!Array.isArray(result.query_plan)) {
-    result.query_plan = [];
+  if (data.decomposition.sub_issues.length < 2) {
+    return { data: null, run: { ...run, status: "parse_error", error_message: "fewer than 2 sub_issues" } };
   }
-  return result;
+  if (!Array.isArray(data.query_plan)) {
+    data.query_plan = [];
+  }
+  return { data, run };
 }
 
 // ────────────────────────────────────────────────────────────────
