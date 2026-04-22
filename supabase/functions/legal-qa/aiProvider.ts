@@ -10,15 +10,21 @@ const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
 // ─── Centralized model configuration ────────────────────────────
-// Swap models in one place. Names must match the actual provider catalogue.
+// Authoritative config now lives in `legalResearchModels.ts`. We re-derive
+// the legacy MODEL_CONFIG shape from it to preserve backward compatibility
+// with the rest of this file.
+import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
+
 export const MODEL_CONFIG = {
   // Planner: decomposition+plan, claim-map. Light-to-medium reasoning.
-  PLANNER_OPENAI: "gpt-5-mini",
-  PLANNER_GEMINI: "google/gemini-2.5-flash-lite",
+  PLANNER_OPENAI: LEGAL_RESEARCH_MODELS.decomposition.primary.replace(/^openai\//, ""),
+  PLANNER_GEMINI: LEGAL_RESEARCH_MODELS.decomposition.fallback,
   // Drafter: final memo. Heavier reasoning preferred.
-  DRAFTER_OPENAI: "gpt-5",
-  DRAFTER_GEMINI: "google/gemini-2.5-flash",
+  DRAFTER_OPENAI: LEGAL_RESEARCH_MODELS.drafting.primary.replace(/^openai\//, ""),
+  DRAFTER_GEMINI: LEGAL_RESEARCH_MODELS.drafting.fallback,
 } as const;
+
+export { LEGAL_RESEARCH_MODELS };
 
 const OPENAI_URL = "https://api.openai.com/v1/chat/completions";
 const LOVABLE_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";

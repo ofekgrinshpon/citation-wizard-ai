@@ -14,6 +14,54 @@ import {
   type ClaimMap,
 } from "./decomposition.ts";
 import { callDrafter, plannerProviderLabel, MODEL_CONFIG } from "./aiProvider.ts";
+import {
+  BANNED_KEYS,
+  type LegalClaimMap,
+  type LegalDraftingInput,
+  type LegalResearchDecomposition,
+  type LegalSourcePack,
+} from "./contracts.ts";
+import { mapToDecompositionV2 } from "./legalResearchDecomposition.ts";
+import { assembleSourcePack, summarizeSourcePack, type InternalSourcePackEntry } from "./legalSourcePack.ts";
+import { mapToClaimMapV2, summarizeClaimMapV2 } from "./legalClaimMap.ts";
+import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
+
+// Single source of truth for the research-mode gate. The frontend currently
+// sends `taskMode: "research"`; if that ever changes, update this constant.
+const RESEARCH_MODE = "research";
+
+// ─── Provenance hardening: deep-strip banned keys from any payload ───
+// Used by `buildResponse` as defense-in-depth so internal fields like
+// `provenanceInternal`, `claimMap`, etc. can never leak to the client.
+function deepStripKeys<T>(value: T, banned: readonly string[]): T {
+  if (Array.isArray(value)) {
+    return value.map((v) => deepStripKeys(v, banned)) as unknown as T;
+  }
+  if (value && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      if (banned.includes(k)) continue;
+      out[k] = deepStripKeys(v, banned);
+    }
+    return out as unknown as T;
+  }
+  return value;
+}
+
+const IS_DEV = (Deno.env.get("DENO_ENV") ?? "development") !== "production";
+
+function sanitizeResponse<T extends object>(payload: T): T {
+  const cleaned = deepStripKeys(payload, BANNED_KEYS);
+  if (IS_DEV) {
+    const json = JSON.stringify(cleaned);
+    for (const k of BANNED_KEYS) {
+      if (json.includes(`"${k}"`)) {
+        console.warn(`[leak-guard] residual key after strip: ${k}`);
+      }
+    }
+  }
+  return cleaned;
+}
 
 // ─── Source pack types (Stage C — internal only, never serialized) ───
 type AuthorityClass =
@@ -46,8 +94,10 @@ interface SourcePackEntry {
 
 /**
  * Provenance hardening: this is the ONLY place that constructs the user-facing
- * response payload. Internal fields (provenance, decomposition, claim_map,
- * source_pack) cannot leak through this serializer.
+ * response payload. Internal fields (provenanceInternal, decomposition,
+ * claimMap, sourcePack, etc.) are stripped via `sanitizeResponse` as
+ * defense-in-depth. NEVER throws — strip is silent in production, with a
+ * `console.warn` in dev for early bug detection.
  */
 function buildResponse(
   answer: string,
@@ -55,21 +105,23 @@ function buildResponse(
   source_urls: string[],
   extras: { dropped_footnotes_count?: number } = {},
 ): Response {
-  // Strip any internal-only fields from each footnote (e.g. `source` provenance).
+  // Explicitly strip the legacy `source` field on each footnote (would leak
+  // "local" | "perplexity" | "unverified" provenance categorization).
   const safeFootnotes = footnotes.map((f) => ({
     number: f.number,
     citation: f.citation,
     source_type: f.source_type,
     ...(f.url ? { url: f.url } : {}),
   }));
-  const payload: Record<string, unknown> = {
+  const rawPayload: Record<string, unknown> = {
     answer,
     footnotes: safeFootnotes,
     source_urls,
   };
   if (typeof extras.dropped_footnotes_count === "number") {
-    payload.dropped_footnotes_count = extras.dropped_footnotes_count;
+    rawPayload.dropped_footnotes_count = extras.dropped_footnotes_count;
   }
+  const payload = sanitizeResponse(rawPayload);
   return new Response(JSON.stringify(payload), {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
@@ -1135,7 +1187,8 @@ ${(verify.fullText as string).slice(0, 50000)}
     // ========= Stage A+B: Decomposition + Query Plan (legal_research only) =========
     // INTERNAL — never exposed to UI. Recorded in qa_logs.metadata for diagnostics.
     let decomposedPlan: DecomposedPlan | null = null;
-    if (taskMode === "research") {
+    let decompositionV2: LegalResearchDecomposition | null = null;
+    if (taskMode === RESEARCH_MODE) {
       try {
         const tDecompStart = Date.now();
         decomposedPlan = await decomposeAndPlan(question);
@@ -1767,7 +1820,8 @@ ${(verify.fullText as string).slice(0, 50000)}
 
     // ========= Stage C: Source Pack assembly (legal_research only, INTERNAL) =========
     let sourcePack: SourcePackEntry[] = [];
-    if (taskMode === "research") {
+    let sourcePackV2: LegalSourcePack | null = null;
+    if (taskMode === RESEARCH_MODE) {
       sourcePack = sourceCards.map((sc) => {
         const excerpt = sc.excerpt || "";
         const anchorPresent = Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document";
@@ -1786,12 +1840,26 @@ ${(verify.fullText as string).slice(0, 50000)}
         };
       });
       console.log(`[source-pack] ${sourcePack.length} entries; anchored=${sourcePack.filter((s) => s.anchor_present).length}`);
+
+      // V2 contract: assemble formal LegalSourcePack from internal entries.
+      // Gate ≥2 entries (matches the claim-map prerequisite below).
+      if (sourcePack.length >= 2) {
+        sourcePackV2 = assembleSourcePack(sourcePack as InternalSourcePackEntry[]);
+        // Map decomposition (V2) once we have BOTH sides — needs hasDocument.
+        if (decomposedPlan) {
+          decompositionV2 = mapToDecompositionV2(decomposedPlan, hasDocument, question);
+        }
+        const sps = summarizeSourcePack(sourcePackV2);
+        console.log(`[source-pack-v2] core=${sps.core} supporting=${sps.supporting} secondary=${sps.secondary} anchored=${sps.anchored}`);
+      }
     }
 
     // ========= Stage D: Claim Map (legal_research only, INTERNAL) =========
     let claimMap: ClaimMap | null = null;
     let claimMapAllowedCount = 0;
-    if (taskMode === "research" && decomposedPlan && sourcePack.length >= 2) {
+    let claimMapV2: LegalClaimMap | null = null;
+    let draftingInput: LegalDraftingInput | null = null;
+    if (taskMode === RESEARCH_MODE && decomposedPlan && sourcePack.length >= 2) {
       try {
         const tClaimStart = Date.now();
         const sourcePackBrief = sourcePack
@@ -1812,6 +1880,24 @@ ${(verify.fullText as string).slice(0, 50000)}
           console.log(
             `[claim-map] ${claimMap.length} claims; ${claimMapAllowedCount} allowed (${Date.now() - tClaimStart}ms)`,
           );
+
+          // V2 contract: map to LegalClaimMap + assemble LegalDraftingInput.
+          if (decompositionV2 && sourcePackV2) {
+            claimMapV2 = mapToClaimMapV2(claimMap, decompositionV2);
+            const cms = summarizeClaimMapV2(claimMapV2);
+            console.log(`[claim-map-v2] direct=${cms.direct} qualified=${cms.qualified} omit=${cms.omit} uncovered=${cms.uncovered_sub_issues.length}`);
+            const allowedV2 = claimMapV2.claims.filter((c) => c.statementMode !== "omit").length;
+            if (allowedV2 >= 2) {
+              draftingInput = {
+                userQuestion: question,
+                decomposition: decompositionV2,
+                sourcePack: sourcePackV2,
+                claimMap: claimMapV2,
+                userDocumentContext: hasDocument ? "available" : undefined,
+                responseStyle: "regular",
+              };
+            }
+          }
         } else {
           console.log("[claim-map] returned null — drafter will fall back to legacy prompt");
         }
@@ -2099,7 +2185,33 @@ ${citationInstructions}
 ${sourceCatalog}
 
 הקשר מהמקורות:
-${combinedContext}${(claimMap && claimMapAllowedCount >= 2) ? `
+${combinedContext}${(draftingInput && claimMapV2)
+  ? `
+
+═══ מפת טענות מאושרת (Stage D — חובה לעקוב) ═══
+אתה כותב מתוך מפת הטענות הבאה. כל טענה משפטית מהותית בגוף התשובה חייבת להיות claim עם statementMode != "omit".
+- statementMode="direct": ניתן לכתוב כקביעה מפורשת (התמיכה בטקסט המקור חזקה).
+- statementMode="qualified": כתוב כ"משתמע" / "ניתן ללמוד" / "עולה מ..." או כחוסר ודאות.
+- statementMode="omit": אסור לכלול בתשובה.
+- needsPinpoint=true: חובה pinpoint בהערת השוליים (ס' X ל..., בעמ' Y).
+- אסור להמציא טענות מחוץ למפה. אם אין claim שתומך בטענה — אל תכתוב אותה.
+- כל sourceId במפה (פורמט "src-N") מתייחס לפריט ברשימת המקורות הזמינים למעלה (המספר אחרי "src-").
+- תת-סוגיות שלא מכוסות במפה (uncoveredSubIssues): ${claimMapV2.uncoveredSubIssues.length > 0 ? claimMapV2.uncoveredSubIssues.join(" | ") : "אין"} — ציין כחוסר ודאות במידת הצורך.
+
+מבנה התשובה (חובה — עבור legal_research):
+**תשובה קצרה** | **השאלה המשפטית** | **המסגרת הנורמטיבית** | **מקורות מרכזיים** | **ניתוח** | **חוסר ודאות** (אם רלוונטי) | **מסקנה**
+
+מפת הטענות (JSON):
+${JSON.stringify(claimMapV2.claims.filter((c) => c.statementMode !== "omit").map((c) => ({
+  claimId: c.claimId,
+  claim: c.claimText,
+  subIssue: c.subIssue,
+  sourceIds: c.sourceIds,
+  authorityLevel: c.authorityLevel,
+  statementMode: c.statementMode,
+  needsPinpoint: c.needsPinpoint,
+})), null, 2)}`
+  : (claimMap && claimMapAllowedCount >= 2) ? `
 
 ═══ מפת טענות מאושרת (Stage D — חובה לעקוב) ═══
 אתה כותב מתוך מפת הטענות הבאה. כל טענה משפטית מהותית בגוף התשובה חייבת להיות claim עם allowed_to_state=true.
@@ -2151,7 +2263,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     let drafterModelUsed = "google/gemini-2.5-flash";
     // Stage E: route legal_research with claim-map through callDrafter (provider-aware).
     // All other modes (case_summary already returned earlier; pleading_analysis, academic) keep the legacy Gemini call.
-    const useNewDrafter = taskMode === "research" && claimMap !== null && claimMapAllowedCount >= 2;
+    const useNewDrafter = taskMode === RESEARCH_MODE && claimMap !== null && claimMapAllowedCount >= 2;
     if (useNewDrafter) {
       const drafterRes = await callDrafter(systemPrompt, userMessage, aiMaxTokens, 90000);
       const tAi = Date.now();
@@ -3040,7 +3152,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
 
       // Build internal metadata snapshot (admin-only, never exposed to UI).
       let metadata: Record<string, unknown> | null = null;
-      if (taskMode === "research") {
+      if (taskMode === RESEARCH_MODE) {
         const byStrength = { strong: 0, partial: 0, weak: 0 } as Record<string, number>;
         if (claimMap) {
           for (const c of claimMap) {
@@ -3049,8 +3161,12 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             }
           }
         }
+        const sourcePackV2Summary = sourcePackV2 ? summarizeSourcePack(sourcePackV2) : null;
+        const claimMapV2Summary = claimMapV2 ? summarizeClaimMapV2(claimMapV2) : null;
+        const draftingPath: "structured" | "fallback" = draftingInput && useNewDrafter ? "structured" : "fallback";
         metadata = {
           decomposition: decomposedPlan?.decomposition ?? null,
+          decomposition_v2: decompositionV2,
           query_plan_summary: (decomposedPlan?.query_plan ?? []).map((p) => ({
             sub_issue: p.sub_issue,
             has_legislation_q: Boolean(p.legislation_query),
@@ -3058,16 +3174,23 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             has_literature_q: Boolean(p.literature_query),
             has_external_q: Boolean(p.external_query),
           })),
-          source_pack_summary: sourcePack.map((s) => ({
+          source_pack_summary: sourcePackV2Summary ?? sourcePack.map((s) => ({
             source_id: s.source_id,
             authority_class: s.authority_class,
             anchor_present: s.anchor_present,
           })),
-          claim_map_summary: claimMap
-            ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength }
-            : null,
-          draft_path: useNewDrafter ? "claim_map" : "fallback",
-          models_used: { planner: plannerProviderLabel(), drafter: drafterModelUsed },
+          claim_map_summary: claimMapV2Summary
+            ?? (claimMap ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength } : null),
+          drafting_path: draftingPath,
+          draft_path: useNewDrafter ? "claim_map" : "fallback",   // legacy alias for back-compat
+          models_used: {
+            planner: plannerProviderLabel(),
+            decomposition: plannerProviderLabel(),
+            claim_map: plannerProviderLabel(),
+            drafting: drafterModelUsed,
+            drafter: drafterModelUsed,                            // legacy alias
+          },
+          model_config: LEGAL_RESEARCH_MODELS,
         };
       }
 
