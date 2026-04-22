@@ -1765,7 +1765,64 @@ ${(verify.fullText as string).slice(0, 50000)}
     console.log(`Source cards: ${localCount} local, ${perplexityCount} perplexity, ${docCount} document`);
     console.log(`Final source mix: ${localCount} local / ${perplexityCount} perplexity (+ ${docCount} doc)`);
 
+    // ========= Stage C: Source Pack assembly (legal_research only, INTERNAL) =========
+    let sourcePack: SourcePackEntry[] = [];
+    if (taskMode === "legal_research") {
+      sourcePack = sourceCards.map((sc) => {
+        const excerpt = sc.excerpt || "";
+        const anchorPresent = Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document";
+        return {
+          source_id: sc.id,
+          title: sc.citation,
+          source_type: sc.source_type,
+          authority_class: classifyAuthority(sc.source_type, sc.citation, sc.url),
+          url: sc.url,
+          provenance: sc.provenance,
+          excerpt,
+          case_number: sc.case_number,
+          usable_for_analysis: excerpt.length > 300,
+          usable_for_citation: sc.citation.length > 15,
+          anchor_present: anchorPresent,
+        };
+      });
+      console.log(`[source-pack] ${sourcePack.length} entries; anchored=${sourcePack.filter((s) => s.anchor_present).length}`);
+    }
+
+    // ========= Stage D: Claim Map (legal_research only, INTERNAL) =========
+    let claimMap: ClaimMap | null = null;
+    let claimMapAllowedCount = 0;
+    if (taskMode === "legal_research" && decomposedPlan && sourcePack.length >= 2) {
+      try {
+        const tClaimStart = Date.now();
+        const sourcePackBrief = sourcePack
+          .filter((s) => s.usable_for_citation)
+          .slice(0, 16)
+          .map((s) => ({
+            source_id: s.source_id,
+            title: s.title,
+            authority_class: s.authority_class,
+            excerpt: s.excerpt,
+          }));
+        claimMap = await buildClaimMap(question, {
+          decomposition: decomposedPlan.decomposition,
+          sourcePackBrief,
+        });
+        if (claimMap) {
+          claimMapAllowedCount = claimMap.filter((c) => c.allowed_to_state).length;
+          console.log(
+            `[claim-map] ${claimMap.length} claims; ${claimMapAllowedCount} allowed (${Date.now() - tClaimStart}ms)`,
+          );
+        } else {
+          console.log("[claim-map] returned null — drafter will fall back to legacy prompt");
+        }
+      } catch (cmErr) {
+        console.error("[claim-map] failed (non-fatal):", cmErr);
+        claimMap = null;
+      }
+    }
+
     // ========= Step 3: Build context for AI (without forcing tool_call) =========
+
     const contextParts: string[] = [];
 
     if (hasDocument) {
