@@ -1132,7 +1132,28 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     }
 
+    // ========= Stage A+B: Decomposition + Query Plan (legal_research only) =========
+    // INTERNAL — never exposed to UI. Recorded in qa_logs.metadata for diagnostics.
+    let decomposedPlan: DecomposedPlan | null = null;
+    if (taskMode === "legal_research") {
+      try {
+        const tDecompStart = Date.now();
+        decomposedPlan = await decomposeAndPlan(question);
+        if (decomposedPlan) {
+          console.log(
+            `[plan] ${decomposedPlan.decomposition.sub_issues.length} sub-issues, ${decomposedPlan.query_plan.length} plans (${Date.now() - tDecompStart}ms; planner=${plannerProviderLabel()})`,
+          );
+        } else {
+          console.log(`[plan] decompose+plan returned null — falling back to legacy retrieval`);
+        }
+      } catch (decompErr) {
+        console.error("[plan] decompose+plan failed (non-fatal):", decompErr);
+        decomposedPlan = null;
+      }
+    }
+
     // ========= Step 1: Local search (hybrid: keyword + vector) + Perplexity IN PARALLEL =========
+
 
     // Helper: generate query embedding for vector search
     async function getQueryEmbedding(text: string): Promise<number[] | null> {
