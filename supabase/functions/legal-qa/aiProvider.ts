@@ -141,10 +141,10 @@ export async function callPlannerJSON<T = unknown>(
     ],
     tool_choice: { type: "function", function: { name: tool.name } },
   };
-  // OpenAI gpt-5* reasoning models accept a `reasoning` block. Gemini ignores it.
-  if (useOpenAI && reasoningEffort && /^gpt-5/i.test(model)) {
-    (body as Record<string, unknown>).reasoning = { effort: reasoningEffort };
-  }
+  // NOTE: `reasoning` block intentionally NOT sent — OpenAI Chat Completions
+  // for gpt-5-mini rejects it with HTTP 400 ("Unknown parameter: 'reasoning'").
+  // The `reasoningEffort` field is still recorded in StageRun telemetry for
+  // future use (e.g. switching to the Responses API). Gemini ignores it either way.
 
   try {
     const res = await fetchWithTimeout(
