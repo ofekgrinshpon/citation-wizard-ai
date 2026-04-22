@@ -1202,7 +1202,8 @@ ${(verify.fullText as string).slice(0, 50000)}
     let decompositionV2: LegalResearchDecomposition | null = null;
     // Per-stage runtime telemetry. Each stage pushes its `StageRun` here so we
     // can record honest "this model actually completed" data in qa_logs.metadata.
-    const stageRuns: StageRun[] = [];
+    // Aliased to the hoisted array so the outer catch can flush it on error.
+    const stageRuns: StageRun[] = __checkpointStageRuns;
 
     // ─── Early checkpoint persistence ────────────────────────────────
     // Pre-allocate a qa_logs row id so we can write a CHECKPOINT row right
@@ -1212,7 +1213,13 @@ ${(verify.fullText as string).slice(0, 50000)}
     // The final block at the bottom of this handler upserts on this id with
     // the full payload (answer, footnotes, complete metadata).
     const preallocatedQaLogId: string = crypto.randomUUID();
-    let checkpointInserted = false;
+    // Wire to hoisted state so the outer catch can flush a final error snapshot.
+    __checkpointQaLogId = preallocatedQaLogId;
+    __checkpointAdmin = adminClient;
+    __checkpointUserId = user.id;
+    __checkpointQuestion = question;
+    __checkpointTaskMode = taskMode;
+
     const writeCheckpoint = (phase: "decomposition" | "claim_map" | "drafting_started"): void => {
       if (taskMode !== RESEARCH_MODE) return;
       // Snapshot current state — note that drafting_path is "in_progress" until
@@ -1238,13 +1245,13 @@ ${(verify.fullText as string).slice(0, 50000)}
         total_footnotes: 0,
         metadata: snapshot,
       };
-      const op = checkpointInserted
+      const op = __checkpointInserted
         ? adminClient.from("qa_logs").update({ metadata: snapshot }).eq("id", preallocatedQaLogId)
         : adminClient.from("qa_logs").insert(payload);
       // Fire-and-forget; never block the pipeline on a logging write.
       const promise = (op as unknown as Promise<{ error: unknown }>).then((res) => {
         if (res?.error) console.error(`[checkpoint:${phase}] write failed (non-fatal):`, res.error);
-        else if (!checkpointInserted) checkpointInserted = true;
+        else if (!__checkpointInserted) __checkpointInserted = true;
       });
       // deno-lint-ignore no-explicit-any
       const er = (globalThis as any).EdgeRuntime;
