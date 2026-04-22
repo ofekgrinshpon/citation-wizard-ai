@@ -808,6 +808,17 @@ serve(async (req) => {
   let __creditsCharged = false;
   let __creditRequestId: string | null = null;
   let __userClientForRefund: ReturnType<typeof createClient> | null = null;
+  // Checkpoint state — hoisted so the outer catch can flush a final
+  // "error" snapshot to qa_logs.metadata even on unexpected throws or
+  // client disconnects (HTTP "connection closed before message completed").
+  let __checkpointQaLogId: string | null = null;
+  let __checkpointInserted = false;
+  // deno-lint-ignore no-explicit-any
+  let __checkpointAdmin: any = null;
+  let __checkpointUserId: string | null = null;
+  let __checkpointQuestion = "";
+  let __checkpointTaskMode: string | null = null;
+  const __checkpointStageRuns: StageRun[] = [];
 
   try {
     // Auth gate
@@ -1191,7 +1202,66 @@ ${(verify.fullText as string).slice(0, 50000)}
     let decompositionV2: LegalResearchDecomposition | null = null;
     // Per-stage runtime telemetry. Each stage pushes its `StageRun` here so we
     // can record honest "this model actually completed" data in qa_logs.metadata.
-    const stageRuns: StageRun[] = [];
+    // Aliased to the hoisted array so the outer catch can flush it on error.
+    const stageRuns: StageRun[] = __checkpointStageRuns;
+
+    // ─── Early checkpoint persistence ────────────────────────────────
+    // Pre-allocate a qa_logs row id so we can write a CHECKPOINT row right
+    // after each pipeline stage. If the client disconnects (HTTP "connection
+    // closed before message completed") the row still exists with the latest
+    // stage_runs, so admins can see how far the pipeline got.
+    // The final block at the bottom of this handler upserts on this id with
+    // the full payload (answer, footnotes, complete metadata).
+    const preallocatedQaLogId: string = crypto.randomUUID();
+    // Wire to hoisted state so the outer catch can flush a final error snapshot.
+    __checkpointQaLogId = preallocatedQaLogId;
+    __checkpointAdmin = adminClient;
+    __checkpointUserId = user.id;
+    __checkpointQuestion = question;
+    __checkpointTaskMode = taskMode;
+
+    const writeCheckpoint = (phase: "decomposition" | "claim_map" | "drafting_started"): void => {
+      if (taskMode !== RESEARCH_MODE) return;
+      // Snapshot current state — note that drafting_path is "in_progress" until
+      // the final block decides between "structured" / "fallback".
+      const snapshot = {
+        checkpoint: phase,
+        checkpoint_at: new Date().toISOString(),
+        drafting_path: "in_progress",
+        decomposition: decomposedPlan?.decomposition ?? null,
+        stage_runs: [...stageRuns],
+        // models_used computed at finalization time; here we just expose
+        // raw stage_runs so admins can correlate timing.
+      };
+      const payload = {
+        id: preallocatedQaLogId,
+        user_id: user.id,
+        question: question.substring(0, 500),
+        answer: null,
+        footnotes: [],
+        task_mode: taskMode,
+        local_footnotes_count: 0,
+        perplexity_footnotes_count: 0,
+        total_footnotes: 0,
+        metadata: snapshot,
+      };
+      const op = __checkpointInserted
+        ? adminClient.from("qa_logs").update({ metadata: snapshot }).eq("id", preallocatedQaLogId)
+        : adminClient.from("qa_logs").insert(payload);
+      // Fire-and-forget; never block the pipeline on a logging write.
+      const promise = (op as unknown as Promise<{ error: unknown }>).then((res) => {
+        if (res?.error) console.error(`[checkpoint:${phase}] write failed (non-fatal):`, res.error);
+        else if (!__checkpointInserted) __checkpointInserted = true;
+      });
+      // deno-lint-ignore no-explicit-any
+      const er = (globalThis as any).EdgeRuntime;
+      if (er && typeof er.waitUntil === "function") {
+        er.waitUntil(promise);
+      } else {
+        promise.catch(() => {});
+      }
+    };
+
     if (taskMode === RESEARCH_MODE) {
       try {
         const tDecompStart = Date.now();
@@ -1205,9 +1275,12 @@ ${(verify.fullText as string).slice(0, 50000)}
         } else {
           console.log(`[plan] decompose+plan returned null (status=${run.status}, ${run.duration_ms}ms) — falling back to legacy retrieval`);
         }
+        // Persist checkpoint regardless of success/failure so disconnects are visible.
+        writeCheckpoint("decomposition");
       } catch (decompErr) {
         console.error("[plan] decompose+plan failed (non-fatal):", decompErr);
         decomposedPlan = null;
+        writeCheckpoint("decomposition");
       }
     }
 
@@ -1868,14 +1941,18 @@ ${(verify.fullText as string).slice(0, 50000)}
     if (taskMode === RESEARCH_MODE && decomposedPlan && sourcePack.length >= 2) {
       try {
         const tClaimStart = Date.now();
+        // Trim before handing off to the planner. Final additional trimming
+        // (220-char excerpt cap, 10-item cap) happens inside `buildClaimMap`,
+        // but we also pre-truncate excerpts here so the JSON we send is small
+        // even if the cap is later relaxed.
         const sourcePackBrief = sourcePack
           .filter((s) => s.usable_for_citation)
-          .slice(0, 16)
+          .slice(0, 12)
           .map((s) => ({
             source_id: s.source_id,
             title: s.title,
             authority_class: s.authority_class,
-            excerpt: s.excerpt,
+            excerpt: (s.excerpt || "").slice(0, 300),
           }));
         const cmRes = await buildClaimMap(question, {
           decomposition: decomposedPlan.decomposition,
@@ -1913,6 +1990,8 @@ ${(verify.fullText as string).slice(0, 50000)}
         console.error("[claim-map] failed (non-fatal):", cmErr);
         claimMap = null;
       }
+      // Persist checkpoint after claim_map regardless of success/failure.
+      writeCheckpoint("claim_map");
     }
 
     // ========= Step 3: Build context for AI (without forcing tool_call) =========
@@ -3264,21 +3343,32 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         };
       }
 
-      const { data: insertedLog, error: insertErr } = await adminClient
-        .from("qa_logs")
-        .insert({
-          user_id: user.id,
-          question: question.substring(0, 500),
-          answer,
-          footnotes: finalFootnotes as unknown as Record<string, unknown>[],
-          task_mode: taskMode,
-          local_footnotes_count: localCount,
-          perplexity_footnotes_count: perplexityCount,
-          total_footnotes: finalFootnotes.length,
-          ...(metadata ? { metadata } : {}),
-        })
-        .select("id")
-        .maybeSingle();
+      // For research mode we pre-allocated an id and may have written
+      // checkpoint rows. Use upsert so we end up with a single canonical row
+      // containing the full payload + final metadata. For other task modes,
+      // keep the original plain insert behavior.
+      const finalRow = {
+        user_id: user.id,
+        question: question.substring(0, 500),
+        answer,
+        footnotes: finalFootnotes as unknown as Record<string, unknown>[],
+        task_mode: taskMode,
+        local_footnotes_count: localCount,
+        perplexity_footnotes_count: perplexityCount,
+        total_footnotes: finalFootnotes.length,
+        ...(metadata ? { metadata } : {}),
+      };
+      const { data: insertedLog, error: insertErr } = taskMode === RESEARCH_MODE
+        ? await adminClient
+            .from("qa_logs")
+            .upsert({ id: preallocatedQaLogId, ...finalRow }, { onConflict: "id" })
+            .select("id")
+            .maybeSingle()
+        : await adminClient
+            .from("qa_logs")
+            .insert(finalRow)
+            .select("id")
+            .maybeSingle();
 
       if (insertErr) {
         console.error("Failed to insert qa_logs row (non-fatal):", insertErr);
@@ -3328,6 +3418,48 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     });
   } catch (e) {
     console.error("legal-qa error:", e);
+    // Best-effort: persist a final "error" checkpoint so admins can see how
+    // far the pipeline got before the error/disconnect. Wrapped in its own
+    // try so a logging failure never masks the original error.
+    try {
+      if (
+        __checkpointQaLogId &&
+        __checkpointAdmin &&
+        __checkpointUserId &&
+        __checkpointTaskMode === RESEARCH_MODE
+      ) {
+        const errSnapshot = {
+          checkpoint: "error",
+          checkpoint_at: new Date().toISOString(),
+          drafting_path: "error",
+          stage_runs: __checkpointStageRuns,
+          error_message: (e as Error)?.message ?? String(e),
+        };
+        const op = __checkpointInserted
+          ? __checkpointAdmin
+              .from("qa_logs")
+              .update({ metadata: errSnapshot })
+              .eq("id", __checkpointQaLogId)
+          : __checkpointAdmin.from("qa_logs").insert({
+              id: __checkpointQaLogId,
+              user_id: __checkpointUserId,
+              question: __checkpointQuestion.substring(0, 500),
+              answer: null,
+              footnotes: [],
+              task_mode: __checkpointTaskMode,
+              local_footnotes_count: 0,
+              perplexity_footnotes_count: 0,
+              total_footnotes: 0,
+              metadata: errSnapshot,
+            });
+        const promise = (op as unknown as Promise<{ error: unknown }>).catch(() => {});
+        // deno-lint-ignore no-explicit-any
+        const er = (globalThis as any).EdgeRuntime;
+        if (er && typeof er.waitUntil === "function") er.waitUntil(promise);
+      }
+    } catch (cpErr) {
+      console.error("[checkpoint:error] flush failed (non-fatal):", cpErr);
+    }
     let refunded = false;
     if (__creditsCharged && __creditRequestId && __userClientForRefund) {
       try {
