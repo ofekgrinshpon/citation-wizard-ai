@@ -3366,6 +3366,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             };
           })(),
           model_config: LEGAL_RESEARCH_MODELS,
+          ...(evalRunId ? { eval_run_id: evalRunId } : {}),
+          ...(evalVariant ? { eval_variant: evalVariant } : {}),
+          ...(evalForceLegacy ? { eval_force_legacy: true } : {}),
         };
       }
 
