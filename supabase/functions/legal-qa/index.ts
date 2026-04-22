@@ -2328,8 +2328,8 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       fn.citation = fn.citation.replace(titlePattern, "").replace(/\s{2,}/g, " ").trim();
     }
 
-    // Remove placeholders
-    const placeholderPattern = /\[missing:[^\]]*\]|\[חסר:[^\]]*\]|\[פרט חסר[^\]]*\]/g;
+    // Remove placeholders — but PRESERVE [חסר: ...] markers (intentional partial-citation signal)
+    const placeholderPattern = /\[missing:[^\]]*\]|\[פרט חסר[^\]]*\]/g;
     for (const fn of footnotes) {
       fn.citation = fn.citation.replace(placeholderPattern, "").trim();
       fn.citation = fn.citation.replace(/,?\s*עמ['׳]?\s*$/, "").trim();
@@ -2514,18 +2514,39 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         .trim();
       return withoutCaseHead.length < 4 || !HAS_SUBSTANTIVE_WORD_RE.test(withoutCaseHead);
     };
-    const reasonFor = (fn: { citation: string }): string | null => {
+    // hasAnchor: a footnote is "anchored" only if it points to a real, retrievable source —
+    // a URL, or a `source` provenance from a real card (local DB / perplexity / verified_source).
+    // The literal `"unverified"` source string means no card was matched, so it is NOT an anchor.
+    // Critically: the [חסר: ...] marker itself is NOT proof of an anchor — the AI must not be
+    // able to bypass the filter by sprinkling markers without a real source behind them.
+    const hasAnchor = (fn: { url?: string; source?: string; citation: string }): boolean => {
+      if (fn.url && fn.url.trim().length > 0) return true;
+      const src = (fn.source || "").trim().toLowerCase();
+      if (src && src !== "unverified") return true;
+      return false;
+    };
+    const hasMissingMarker = (txt: string): boolean => /\[חסר:\s*[^\]]+\]/.test(txt);
+    const reasonFor = (fn: { citation: string; url?: string; source?: string }): string | null => {
       const t = fn.citation.trim();
-      if (t.length < 25) return "too_short";
-      if (isUrlOnly(t)) return "url_only";
-      if (isMissingSubstance(t)) return "missing_parties";
+      if (isUrlOnly(t)) return "url_only"; // hard fail always
+      const anchored = hasAnchor(fn);
+      const minLen = anchored ? 12 : 25;
+      if (t.length < minLen) return "too_short";
+      // anchored footnotes may have partial info ([חסר: צד]) — don't drop them on missing_parties
+      if (!anchored && isMissingSubstance(t)) return "missing_parties";
       return null;
     };
-    const droppedDetails: { number: number; reason: string; preview: string }[] = [];
+    const droppedDetails: { number: number; reason: string; preview: string; anchored: boolean; has_marker: boolean }[] = [];
     const validFootnotes = footnotes.filter((fn) => {
       const reason = reasonFor(fn);
       if (reason) {
-        droppedDetails.push({ number: fn.number, reason, preview: fn.citation.slice(0, 80) });
+        droppedDetails.push({
+          number: fn.number,
+          reason,
+          preview: fn.citation.slice(0, 80),
+          anchored: hasAnchor(fn),
+          has_marker: hasMissingMarker(fn.citation),
+        });
         return false;
       }
       return true;
@@ -2533,7 +2554,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     const droppedFootnotesCount = droppedDetails.length;
     if (droppedFootnotesCount > 0) {
       for (const d of droppedDetails) {
-        console.log(`Dropped footnote #${d.number} [${d.reason}]: "${d.preview}"`);
+        console.log(`Dropped footnote #${d.number} [${d.reason}, anchored=${d.anchored}, has_marker=${d.has_marker}]: "${d.preview}"`);
       }
       const removedNumbers = new Set(droppedDetails.map((d) => d.number));
       for (const num of removedNumbers) {
@@ -2550,6 +2571,32 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       for (const fn of validFootnotes) {
         answer = answer.replaceAll(`__FN_${fn.number}__`, toSuperscript(fn.number));
       }
+    }
+
+    // ========= Orphan superscript cleanup =========
+    // After all renumbering: scan body for any superscript digits that don't map to a valid
+    // footnote number, and strip them (along with a stray preceding space if it was created).
+    {
+      const validNums = new Set(validFootnotes.map((fn) => fn.number));
+      // Match runs of superscript digits (possibly multi-digit like ¹²)
+      answer = answer.replace(/([\u00B9\u00B2\u00B3\u2074-\u2079]+)/g, (match) => {
+        const digits = match
+          .split("")
+          .map((c) => {
+            const map: Record<string, string> = {
+              "\u00B9": "1", "\u00B2": "2", "\u00B3": "3",
+              "\u2074": "4", "\u2075": "5", "\u2076": "6",
+              "\u2077": "7", "\u2078": "8", "\u2079": "9", "\u2070": "0",
+            };
+            return map[c] || "";
+          })
+          .join("");
+        const num = parseInt(digits, 10);
+        if (Number.isFinite(num) && validNums.has(num)) return match;
+        return ""; // orphan — strip
+      });
+      // Clean up "word .  " (stray space before punctuation) created by orphan removal
+      answer = answer.replace(/ +([.,;:!?])/g, "$1").replace(/[ \t]{2,}/g, " ");
     }
 
     const finalFootnotes = validFootnotes;
