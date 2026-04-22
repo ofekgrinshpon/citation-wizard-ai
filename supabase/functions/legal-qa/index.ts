@@ -3236,13 +3236,30 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             ?? (claimMap ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength } : null),
           drafting_path: draftingPath,
           draft_path: useNewDrafter ? "claim_map" : "fallback",   // legacy alias for back-compat
-          models_used: {
-            planner: plannerProviderLabel(),
-            decomposition: plannerProviderLabel(),
-            claim_map: plannerProviderLabel(),
-            drafting: drafterModelUsed,
-            drafter: drafterModelUsed,                            // legacy alias
-          },
+          // Honest models_used: only record a model as "used" if its stage
+          // actually completed successfully. Otherwise expose null + the failure
+          // status, so admins don't get the false impression that gpt-5-mini ran.
+          stage_runs: stageRuns,
+          models_used: (() => {
+            const find = (s: string) => stageRuns.find((r) => r.stage === s);
+            const decomp = find("decomposition");
+            const claim = find("claim_map");
+            const draft = find("drafting");
+            const reduce = (r: StageRun | undefined) =>
+              r && r.status === "success"
+                ? { provider: r.provider, model: r.model, status: "success" as const, duration_ms: r.duration_ms }
+                : r
+                  ? { provider: r.provider, model: null, status: r.status, duration_ms: r.duration_ms, error: r.error_message ?? null }
+                  : { provider: null, model: null, status: "not_run" as const };
+            return {
+              decomposition: reduce(decomp),
+              claim_map: reduce(claim),
+              drafting: reduce(draft),
+              // Legacy aliases (kept for back-compat with existing dashboards/queries)
+              planner: decomp?.status === "success" ? `${decomp.provider}/${decomp.model}` : `${plannerProviderLabel()} (failed:${decomp?.status ?? "not_run"})`,
+              drafter: draft?.status === "success" ? draft.model : `${drafterModelUsed} (failed:${draft?.status ?? "not_run"})`,
+            };
+          })(),
           model_config: LEGAL_RESEARCH_MODELS,
         };
       }
