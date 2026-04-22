@@ -3135,8 +3135,12 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             }
           }
         }
+        const sourcePackV2Summary = sourcePackV2 ? summarizeSourcePack(sourcePackV2) : null;
+        const claimMapV2Summary = claimMapV2 ? summarizeClaimMapV2(claimMapV2) : null;
+        const draftingPath: "structured" | "fallback" = draftingInput && useNewDrafter ? "structured" : "fallback";
         metadata = {
           decomposition: decomposedPlan?.decomposition ?? null,
+          decomposition_v2: decompositionV2,
           query_plan_summary: (decomposedPlan?.query_plan ?? []).map((p) => ({
             sub_issue: p.sub_issue,
             has_legislation_q: Boolean(p.legislation_query),
@@ -3144,16 +3148,23 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             has_literature_q: Boolean(p.literature_query),
             has_external_q: Boolean(p.external_query),
           })),
-          source_pack_summary: sourcePack.map((s) => ({
+          source_pack_summary: sourcePackV2Summary ?? sourcePack.map((s) => ({
             source_id: s.source_id,
             authority_class: s.authority_class,
             anchor_present: s.anchor_present,
           })),
-          claim_map_summary: claimMap
-            ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength }
-            : null,
-          draft_path: useNewDrafter ? "claim_map" : "fallback",
-          models_used: { planner: plannerProviderLabel(), drafter: drafterModelUsed },
+          claim_map_summary: claimMapV2Summary
+            ?? (claimMap ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength } : null),
+          drafting_path: draftingPath,
+          draft_path: useNewDrafter ? "claim_map" : "fallback",   // legacy alias for back-compat
+          models_used: {
+            planner: plannerProviderLabel(),
+            decomposition: plannerProviderLabel(),
+            claim_map: plannerProviderLabel(),
+            drafting: drafterModelUsed,
+            drafter: drafterModelUsed,                            // legacy alias
+          },
+          model_config: LEGAL_RESEARCH_MODELS,
         };
       }
 
