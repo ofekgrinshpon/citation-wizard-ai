@@ -215,6 +215,7 @@ export async function callDrafter(
       userPrompt,
       maxTokens,
       timeoutMs,
+      provider: "openai",
     });
     if (openaiResult) return { text: openaiResult, modelUsed: MODEL_CONFIG.DRAFTER_OPENAI };
     console.log("[drafter] OpenAI failed — falling back to Gemini");
@@ -232,6 +233,7 @@ export async function callDrafter(
     userPrompt,
     maxTokens,
     timeoutMs,
+    provider: "gemini",
   });
   if (geminiResult) return { text: geminiResult, modelUsed: MODEL_CONFIG.DRAFTER_GEMINI };
   return null;
@@ -245,11 +247,16 @@ async function callOnce(opts: {
   userPrompt: string;
   maxTokens: number;
   timeoutMs: number;
+  provider: "openai" | "gemini";
 }): Promise<string | null> {
   try {
+    // OpenAI's gpt-5* family on Chat Completions rejects `max_tokens`
+    // ("Unsupported parameter: 'max_tokens' ... Use 'max_completion_tokens' instead").
+    // Gemini (via Lovable Gateway) uses the classic `max_tokens`.
+    const tokenParam = opts.provider === "openai" ? "max_completion_tokens" : "max_tokens";
     const body: Record<string, unknown> = {
       model: opts.model,
-      max_tokens: opts.maxTokens,
+      [tokenParam]: opts.maxTokens,
       messages: [
         { role: "system", content: opts.systemPrompt },
         { role: "user", content: opts.userPrompt },
