@@ -1705,7 +1705,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                         לא מצאתי מספיק מקורות זרים מעמיקים בחיפוש אוטומטי.
                       </p>
                       <p className="text-muted-foreground leading-relaxed">
-                        כדי שהפרק ההשוואתי יהיה ברמה אקדמית גבוהה, מומלץ להעלות כאן מאמרים או פסקי דין ספציפיים (PDF).
+                        כדי שהניתוח ההשוואתי יהיה ברמה אקדמית גבוהה, מומלץ להעלות כאן מאמרים או פסקי דין ספציפיים.
                         אני אנתח אותם ואשלב אותם בטקסט עם אזכורים מדויקים.
                       </p>
                       <Button
