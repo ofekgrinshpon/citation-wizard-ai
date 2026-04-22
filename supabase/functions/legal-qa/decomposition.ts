@@ -130,7 +130,7 @@ const DECOMP_SYSTEM_PROMPT = `אתה אנליסט משפטי. תפקידך לפ�
  */
 export async function decomposeAndPlan(
   question: string,
-): Promise<{ data: DecomposedPlan | null; run: StageRun }> {
+): Promise<{ data: DecomposedPlan | null; run: StageRun; retryRun?: StageRun }> {
   const { data, run } = await callPlannerJSON<DecomposedPlan>(
     DECOMP_SYSTEM_PROMPT,
     `שאלת המחקר:\n${question}`,
@@ -140,17 +140,49 @@ export async function decomposeAndPlan(
     // parallelization in index.ts this no longer blocks retrieval.
     { stage: "decomposition", timeoutMs: 45000, reasoningEffort: "minimal" },
   );
-  if (!data) return { data: null, run };
-  if (!data.decomposition?.main_issue || !Array.isArray(data.decomposition?.sub_issues)) {
-    return { data: null, run: { ...run, status: "parse_error", error_message: "missing main_issue or sub_issues" } };
+
+  const validate = (
+    p: DecomposedPlan | null,
+    r: StageRun,
+  ): { ok: boolean; data: DecomposedPlan | null; run: StageRun } => {
+    if (!p) return { ok: false, data: null, run: r };
+    if (!p.decomposition?.main_issue || !Array.isArray(p.decomposition?.sub_issues)) {
+      return { ok: false, data: null, run: { ...r, status: "parse_error", error_message: "missing main_issue or sub_issues" } };
+    }
+    if (p.decomposition.sub_issues.length < 2) {
+      return { ok: false, data: null, run: { ...r, status: "parse_error", error_message: "fewer than 2 sub_issues" } };
+    }
+    if (!Array.isArray(p.query_plan)) p.query_plan = [];
+    return { ok: true, data: p, run: r };
+  };
+
+  const first = validate(data, run);
+  if (first.ok) return { data: first.data, run: first.run };
+
+  // Tier-1.5 retry: escalate nano → mini on parse_error / no_tool_call only.
+  // Skip retry on timeout/http_error/no_api_key (won't help, just adds latency).
+  const retryableStatuses: StageRun["status"][] = ["parse_error", "no_tool_call"];
+  if (!retryableStatuses.includes(first.run.status)) {
+    return { data: null, run: first.run };
   }
-  if (data.decomposition.sub_issues.length < 2) {
-    return { data: null, run: { ...run, status: "parse_error", error_message: "fewer than 2 sub_issues" } };
+  console.log(`[decomposition] retrying with gpt-5-mini after ${first.run.status} on ${first.run.model}`);
+  const { data: retryData, run: retryRun } = await callPlannerJSON<DecomposedPlan>(
+    DECOMP_SYSTEM_PROMPT,
+    `שאלת המחקר:\n${question}`,
+    DECOMP_PLAN_TOOL,
+    {
+      stage: "decomposition",
+      timeoutMs: 45000,
+      reasoningEffort: "minimal",
+      openaiModelOverride: "gpt-5-mini",
+    },
+  );
+  const second = validate(retryData, retryRun);
+  if (second.ok) {
+    console.log(`[decomposition] retry succeeded on gpt-5-mini`);
+    return { data: second.data, run: second.run, retryRun: first.run };
   }
-  if (!Array.isArray(data.query_plan)) {
-    data.query_plan = [];
-  }
-  return { data, run };
+  return { data: null, run: second.run, retryRun: first.run };
 }
 
 // ────────────────────────────────────────────────────────────────

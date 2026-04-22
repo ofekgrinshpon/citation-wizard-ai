@@ -1295,7 +1295,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // search; the plan-derived sub-issue queries are consumed inside
     // localSearchPromise via `await decompPromise` only at the point they're
     // actually needed (after the first wave of embeddings is in flight).
-    let decompPromise: Promise<{ data: DecomposedPlan | null; run: StageRun }> | null = null;
+    let decompPromise: Promise<{ data: DecomposedPlan | null; run: StageRun; retryRun?: StageRun }> | null = null;
     if (taskMode === RESEARCH_MODE && !evalForceLegacy) {
       const tDecompStart = Date.now();
       decompPromise = decomposeAndPlan(question)
@@ -1968,6 +1968,9 @@ ${(verify.fullText as string).slice(0, 50000)}
     // silently. Retrieval is already complete here, so awaiting is free.
     if (decompPromise) {
       const decompRes = await decompPromise;
+      // Push the failed first attempt first (if any), then the final attempt,
+      // so qa_logs.metadata.stage_runs reflects the true retry sequence.
+      if (decompRes.retryRun) stageRuns.push(decompRes.retryRun);
       stageRuns.push(decompRes.run);
       decomposedPlan = decompRes.data;
       writeCheckpoint("decomposition");

@@ -86,6 +86,13 @@ export interface PlannerCallOptions {
   timeoutMs?: number;
   /** OpenAI reasoning effort (gpt-5* family). Ignored on Gemini. */
   reasoningEffort?: "minimal" | "low" | "medium" | "high";
+  /**
+   * Optional per-call OpenAI model override. When set AND OPENAI_API_KEY is
+   * available, this replaces the stage-derived default. Used by the
+   * decomposition retry path to escalate from nano → mini on parse_error
+   * without permanently changing the stage's primary model.
+   */
+  openaiModelOverride?: string;
 }
 
 /**
@@ -103,9 +110,11 @@ export async function callPlannerJSON<T = unknown>(
   const url = useOpenAI ? OPENAI_URL : LOVABLE_URL;
   const apiKey = useOpenAI ? OPENAI_API_KEY : LOVABLE_API_KEY;
   // Tier-1.5: select model per stage. claim_map → mini; everything else → decomposer (nano).
-  const model = opts.stage === "claim_map"
+  // Allow per-call override (used by decomposition retry to escalate nano → mini).
+  const stageDefaultModel = opts.stage === "claim_map"
     ? (useOpenAI ? MODEL_CONFIG.CLAIM_MAP_OPENAI : MODEL_CONFIG.CLAIM_MAP_GEMINI)
     : (useOpenAI ? MODEL_CONFIG.DECOMPOSER_OPENAI : MODEL_CONFIG.DECOMPOSER_GEMINI);
+  const model = (useOpenAI && opts.openaiModelOverride) ? opts.openaiModelOverride : stageDefaultModel;
   const provider: "openai" | "gemini" = useOpenAI ? "openai" : "gemini";
   const timeoutMs = opts.timeoutMs ?? 30000;
   const reasoningEffort = opts.reasoningEffort;
