@@ -1187,6 +1187,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // ========= Stage A+B: Decomposition + Query Plan (legal_research only) =========
     // INTERNAL — never exposed to UI. Recorded in qa_logs.metadata for diagnostics.
     let decomposedPlan: DecomposedPlan | null = null;
+    let decompositionV2: LegalResearchDecomposition | null = null;
     if (taskMode === RESEARCH_MODE) {
       try {
         const tDecompStart = Date.now();
@@ -1819,6 +1820,7 @@ ${(verify.fullText as string).slice(0, 50000)}
 
     // ========= Stage C: Source Pack assembly (legal_research only, INTERNAL) =========
     let sourcePack: SourcePackEntry[] = [];
+    let sourcePackV2: LegalSourcePack | null = null;
     if (taskMode === RESEARCH_MODE) {
       sourcePack = sourceCards.map((sc) => {
         const excerpt = sc.excerpt || "";
@@ -1838,11 +1840,25 @@ ${(verify.fullText as string).slice(0, 50000)}
         };
       });
       console.log(`[source-pack] ${sourcePack.length} entries; anchored=${sourcePack.filter((s) => s.anchor_present).length}`);
+
+      // V2 contract: assemble formal LegalSourcePack from internal entries.
+      // Gate ≥2 entries (matches the claim-map prerequisite below).
+      if (sourcePack.length >= 2) {
+        sourcePackV2 = assembleSourcePack(sourcePack as InternalSourcePackEntry[]);
+        // Map decomposition (V2) once we have BOTH sides — needs hasDocument.
+        if (decomposedPlan) {
+          decompositionV2 = mapToDecompositionV2(decomposedPlan, hasDocument, question);
+        }
+        const sps = summarizeSourcePack(sourcePackV2);
+        console.log(`[source-pack-v2] core=${sps.core} supporting=${sps.supporting} secondary=${sps.secondary} anchored=${sps.anchored}`);
+      }
     }
 
     // ========= Stage D: Claim Map (legal_research only, INTERNAL) =========
     let claimMap: ClaimMap | null = null;
     let claimMapAllowedCount = 0;
+    let claimMapV2: LegalClaimMap | null = null;
+    let draftingInput: LegalDraftingInput | null = null;
     if (taskMode === RESEARCH_MODE && decomposedPlan && sourcePack.length >= 2) {
       try {
         const tClaimStart = Date.now();
@@ -1864,6 +1880,24 @@ ${(verify.fullText as string).slice(0, 50000)}
           console.log(
             `[claim-map] ${claimMap.length} claims; ${claimMapAllowedCount} allowed (${Date.now() - tClaimStart}ms)`,
           );
+
+          // V2 contract: map to LegalClaimMap + assemble LegalDraftingInput.
+          if (decompositionV2 && sourcePackV2) {
+            claimMapV2 = mapToClaimMapV2(claimMap, decompositionV2);
+            const cms = summarizeClaimMapV2(claimMapV2);
+            console.log(`[claim-map-v2] direct=${cms.direct} qualified=${cms.qualified} omit=${cms.omit} uncovered=${cms.uncovered_sub_issues.length}`);
+            const allowedV2 = claimMapV2.claims.filter((c) => c.statementMode !== "omit").length;
+            if (allowedV2 >= 2) {
+              draftingInput = {
+                userQuestion: question,
+                decomposition: decompositionV2,
+                sourcePack: sourcePackV2,
+                claimMap: claimMapV2,
+                userDocumentContext: hasDocument ? "available" : undefined,
+                responseStyle: "regular",
+              };
+            }
+          }
         } else {
           console.log("[claim-map] returned null — drafter will fall back to legacy prompt");
         }
