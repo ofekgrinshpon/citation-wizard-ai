@@ -94,8 +94,10 @@ interface SourcePackEntry {
 
 /**
  * Provenance hardening: this is the ONLY place that constructs the user-facing
- * response payload. Internal fields (provenance, decomposition, claim_map,
- * source_pack) cannot leak through this serializer.
+ * response payload. Internal fields (provenanceInternal, decomposition,
+ * claimMap, sourcePack, etc.) are stripped via `sanitizeResponse` as
+ * defense-in-depth. NEVER throws — strip is silent in production, with a
+ * `console.warn` in dev for early bug detection.
  */
 function buildResponse(
   answer: string,
@@ -103,21 +105,23 @@ function buildResponse(
   source_urls: string[],
   extras: { dropped_footnotes_count?: number } = {},
 ): Response {
-  // Strip any internal-only fields from each footnote (e.g. `source` provenance).
+  // Explicitly strip the legacy `source` field on each footnote (would leak
+  // "local" | "perplexity" | "unverified" provenance categorization).
   const safeFootnotes = footnotes.map((f) => ({
     number: f.number,
     citation: f.citation,
     source_type: f.source_type,
     ...(f.url ? { url: f.url } : {}),
   }));
-  const payload: Record<string, unknown> = {
+  const rawPayload: Record<string, unknown> = {
     answer,
     footnotes: safeFootnotes,
     source_urls,
   };
   if (typeof extras.dropped_footnotes_count === "number") {
-    payload.dropped_footnotes_count = extras.dropped_footnotes_count;
+    rawPayload.dropped_footnotes_count = extras.dropped_footnotes_count;
   }
+  const payload = sanitizeResponse(rawPayload);
   return new Response(JSON.stringify(payload), {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
