@@ -2146,60 +2146,64 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       ],
     });
 
-    console.log("AI call starting (90s timeout, no tool_call)...");
+    console.log("AI call starting (drafter, 90s timeout)...");
     let answerText = "";
-    try {
-      const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: aiBody,
-      }, 90000); // 90s — no tool_call overhead, plenty of time
-
+    let drafterModelUsed = "google/gemini-2.5-flash";
+    // Stage E: route legal_research with claim-map through callDrafter (provider-aware).
+    // All other modes (case_summary already returned earlier; pleading_analysis, academic) keep the legacy Gemini call.
+    const useNewDrafter = taskMode === "legal_research" && claimMap !== null && claimMapAllowedCount >= 2;
+    if (useNewDrafter) {
+      const drafterRes = await callDrafter(systemPrompt, userMessage, aiMaxTokens, 90000);
       const tAi = Date.now();
-      console.log(`AI call took ${tAi - tRetrieval}ms`);
-
-      if (!aiRes.ok) {
-        if (aiRes.status === 429) {
-          return new Response(
-            JSON.stringify({ error: "יותר מדי בקשות. נסו שוב בעוד דקה." }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-        if (aiRes.status === 402) {
-          return new Response(
-            JSON.stringify({ error: "נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות." }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-        const errText = await aiRes.text();
-        console.error("AI gateway error:", aiRes.status, errText);
-        return new Response(
-          JSON.stringify({ error: "שגיאה בשירות ה-AI. נסו שוב בעוד רגע." }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      const aiData = await aiRes.json();
-      answerText = aiData.choices?.[0]?.message?.content || "";
-      const finishReason = aiData.choices?.[0]?.finish_reason || "unknown";
-      console.log(`AI response: ${answerText.length} chars, finish_reason=${finishReason}`);
-
-      if (!answerText || answerText.length < 50) {
+      console.log(`Drafter call took ${tAi - tRetrieval}ms (used=${drafterRes?.modelUsed || "FAILED"})`);
+      if (!drafterRes || drafterRes.text.length < 50) {
         return new Response(
           JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-    } catch (err) {
-      console.error("AI call error:", err);
-      return new Response(
-        JSON.stringify({ error: "תם הזמן לעיבוד השאלה. נסו שוב או קצרו את השאלה." }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      answerText = drafterRes.text;
+      drafterModelUsed = drafterRes.modelUsed;
+    } else {
+      try {
+        const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: aiBody,
+        }, 90000);
+
+        const tAi = Date.now();
+        console.log(`AI call took ${tAi - tRetrieval}ms`);
+
+        if (!aiRes.ok) {
+          if (aiRes.status === 429) {
+            return new Response(JSON.stringify({ error: "יותר מדי בקשות. נסו שוב בעוד דקה." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+          }
+          if (aiRes.status === 402) {
+            return new Response(JSON.stringify({ error: "נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+          }
+          const errText = await aiRes.text();
+          console.error("AI gateway error:", aiRes.status, errText);
+          return new Response(JSON.stringify({ error: "שגיאה בשירות ה-AI. נסו שוב בעוד רגע." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+
+        const aiData = await aiRes.json();
+        answerText = aiData.choices?.[0]?.message?.content || "";
+        const finishReason = aiData.choices?.[0]?.finish_reason || "unknown";
+        console.log(`AI response: ${answerText.length} chars, finish_reason=${finishReason}`);
+
+        if (!answerText || answerText.length < 50) {
+          return new Response(JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+      } catch (err) {
+        console.error("AI call error:", err);
+        return new Response(JSON.stringify({ error: "תם הזמן לעיבוד השאלה. נסו שוב או קצרו את השאלה." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
     }
+
 
     // ========= Step 5: Parse AI footnotes section =========
     // The AI appends a footnotes header followed by numbered citations.
