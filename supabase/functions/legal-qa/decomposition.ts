@@ -5,7 +5,7 @@
 // to the user-facing response. They are recorded in `qa_logs.metadata`
 // for admin diagnostics.
 
-import { callPlannerJSON, type PlannerToolDef } from "./aiProvider.ts";
+import { callPlannerJSON, type PlannerToolDef, type StageRun } from "./aiProvider.ts";
 
 // ────────────────────────────────────────────────────────────────
 // Stage A+B: Decomposition + Query Plan (single planner call)
