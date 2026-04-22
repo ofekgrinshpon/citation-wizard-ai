@@ -1877,14 +1877,16 @@ ${(verify.fullText as string).slice(0, 50000)}
             authority_class: s.authority_class,
             excerpt: s.excerpt,
           }));
-        claimMap = await buildClaimMap(question, {
+        const cmRes = await buildClaimMap(question, {
           decomposition: decomposedPlan.decomposition,
           sourcePackBrief,
         });
+        stageRuns.push(cmRes.run);
+        claimMap = cmRes.data;
         if (claimMap) {
           claimMapAllowedCount = claimMap.filter((c) => c.allowed_to_state).length;
           console.log(
-            `[claim-map] ${claimMap.length} claims; ${claimMapAllowedCount} allowed (${Date.now() - tClaimStart}ms)`,
+            `[claim-map] ${claimMap.length} claims; ${claimMapAllowedCount} allowed (${Date.now() - tClaimStart}ms; ${cmRes.run.provider}/${cmRes.run.model}, status=${cmRes.run.status})`,
           );
 
           // V2 contract: map to LegalClaimMap + assemble LegalDraftingInput.
@@ -1905,7 +1907,7 @@ ${(verify.fullText as string).slice(0, 50000)}
             }
           }
         } else {
-          console.log("[claim-map] returned null — drafter will fall back to legacy prompt");
+          console.log(`[claim-map] returned null (status=${cmRes.run.status}, ${cmRes.run.duration_ms}ms) — drafter will fall back to legacy prompt`);
         }
       } catch (cmErr) {
         console.error("[claim-map] failed (non-fatal):", cmErr);
