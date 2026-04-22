@@ -3033,30 +3033,63 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       console.error("Grounding check failed (non-fatal):", gErr);
     }
 
-    // Log
+    // Log — canonical server-side log with internal diagnostics in metadata.
     try {
       const localCount = finalFootnotes.filter((f) => f.source === "local").length;
       const perplexityCount = finalFootnotes.filter((f) => f.source === "perplexity").length;
+
+      // Build internal metadata snapshot (admin-only, never exposed to UI).
+      let metadata: Record<string, unknown> | null = null;
+      if (taskMode === "legal_research") {
+        const byStrength = { strong: 0, partial: 0, weak: 0 } as Record<string, number>;
+        if (claimMap) {
+          for (const c of claimMap) {
+            if (c.allowed_to_state && c.support_strength in byStrength) {
+              byStrength[c.support_strength]++;
+            }
+          }
+        }
+        metadata = {
+          decomposition: decomposedPlan?.decomposition ?? null,
+          query_plan_summary: (decomposedPlan?.query_plan ?? []).map((p) => ({
+            sub_issue: p.sub_issue,
+            has_legislation_q: Boolean(p.legislation_query),
+            has_caselaw_q: Boolean(p.caselaw_query),
+            has_literature_q: Boolean(p.literature_query),
+            has_external_q: Boolean(p.external_query),
+          })),
+          source_pack_summary: sourcePack.map((s) => ({
+            source_id: s.source_id,
+            authority_class: s.authority_class,
+            anchor_present: s.anchor_present,
+          })),
+          claim_map_summary: claimMap
+            ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength }
+            : null,
+          draft_path: useNewDrafter ? "claim_map" : "fallback",
+          models_used: { planner: plannerProviderLabel(), drafter: drafterModelUsed },
+        };
+      }
+
       await adminClient.from("qa_logs").insert({
         user_id: user.id,
+        project_id: projectId ?? null,
         question: question.substring(0, 500),
+        answer,
+        footnotes: finalFootnotes as unknown as Json,
+        task_mode: taskMode,
         local_footnotes_count: localCount,
         perplexity_footnotes_count: perplexityCount,
         total_footnotes: finalFootnotes.length,
+        ...(metadata ? { metadata: metadata as unknown as Json } : {}),
       });
     } catch (logErr) {
       console.error("Failed to log QA stats (non-fatal):", logErr);
     }
 
-    return new Response(
-      JSON.stringify({
-        answer,
-        footnotes: finalFootnotes,
-        source_urls: citations,
-        dropped_footnotes_count: droppedFootnotesCount,
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return buildResponse(answer, finalFootnotes, citations, {
+      dropped_footnotes_count: droppedFootnotesCount,
+    });
   } catch (e) {
     console.error("legal-qa error:", e);
     let refunded = false;
