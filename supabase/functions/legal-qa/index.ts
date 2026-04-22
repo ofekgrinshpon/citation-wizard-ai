@@ -2185,7 +2185,33 @@ ${citationInstructions}
 ${sourceCatalog}
 
 הקשר מהמקורות:
-${combinedContext}${(claimMap && claimMapAllowedCount >= 2) ? `
+${combinedContext}${(draftingInput && claimMapV2)
+  ? `
+
+═══ מפת טענות מאושרת (Stage D — חובה לעקוב) ═══
+אתה כותב מתוך מפת הטענות הבאה. כל טענה משפטית מהותית בגוף התשובה חייבת להיות claim עם statementMode != "omit".
+- statementMode="direct": ניתן לכתוב כקביעה מפורשת (התמיכה בטקסט המקור חזקה).
+- statementMode="qualified": כתוב כ"משתמע" / "ניתן ללמוד" / "עולה מ..." או כחוסר ודאות.
+- statementMode="omit": אסור לכלול בתשובה.
+- needsPinpoint=true: חובה pinpoint בהערת השוליים (ס' X ל..., בעמ' Y).
+- אסור להמציא טענות מחוץ למפה. אם אין claim שתומך בטענה — אל תכתוב אותה.
+- כל sourceId במפה (פורמט "src-N") מתייחס לפריט ברשימת המקורות הזמינים למעלה (המספר אחרי "src-").
+- תת-סוגיות שלא מכוסות במפה (uncoveredSubIssues): ${claimMapV2.uncoveredSubIssues.length > 0 ? claimMapV2.uncoveredSubIssues.join(" | ") : "אין"} — ציין כחוסר ודאות במידת הצורך.
+
+מבנה התשובה (חובה — עבור legal_research):
+**תשובה קצרה** | **השאלה המשפטית** | **המסגרת הנורמטיבית** | **מקורות מרכזיים** | **ניתוח** | **חוסר ודאות** (אם רלוונטי) | **מסקנה**
+
+מפת הטענות (JSON):
+${JSON.stringify(claimMapV2.claims.filter((c) => c.statementMode !== "omit").map((c) => ({
+  claimId: c.claimId,
+  claim: c.claimText,
+  subIssue: c.subIssue,
+  sourceIds: c.sourceIds,
+  authorityLevel: c.authorityLevel,
+  statementMode: c.statementMode,
+  needsPinpoint: c.needsPinpoint,
+})), null, 2)}`
+  : (claimMap && claimMapAllowedCount >= 2) ? `
 
 ═══ מפת טענות מאושרת (Stage D — חובה לעקוב) ═══
 אתה כותב מתוך מפת הטענות הבאה. כל טענה משפטית מהותית בגוף התשובה חייבת להיות claim עם allowed_to_state=true.
