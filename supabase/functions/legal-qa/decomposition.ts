@@ -255,10 +255,16 @@ export async function buildClaimMap(
   const subIssuesText = input.decomposition.sub_issues
     .map((s, i) => `${i + 1}. ${s}`)
     .join("\n");
-  const sourcesText = input.sourcePackBrief
+  // Trim claim-map input aggressively to reduce planner latency / timeouts:
+  // - cap to top 10 sources (was effectively 16 from caller)
+  // - truncate each excerpt to 220 chars (was 400)
+  // - truncate title to 140 chars
+  // The planner only needs enough signal to anchor each claim to source_ids.
+  const briefForPrompt = input.sourcePackBrief.slice(0, 10);
+  const sourcesText = briefForPrompt
     .map(
       (s) =>
-        `[${s.source_id}] (${s.authority_class}) ${s.title}\n   קטע: ${s.excerpt.slice(0, 400)}`,
+        `[${s.source_id}] (${s.authority_class}) ${s.title.slice(0, 140)}\n   קטע: ${s.excerpt.replace(/\s+/g, " ").slice(0, 220)}`,
     )
     .join("\n\n");
 
@@ -270,16 +276,17 @@ ${question}
 תת-סוגיות:
 ${subIssuesText}
 
-מקורות זמינים (source pack):
+מקורות זמינים (source pack, ${briefForPrompt.length} פריטים):
 ${sourcesText}
 
-בנה מפת טענות מעוגנת. כל טענה עם source_ids מתוך הרשימה למעלה.`;
+בנה מפת טענות מעוגנת קצרה (4–8 טענות). כל טענה עם source_ids מתוך הרשימה למעלה. הימנע מטענות חופפות.`;
 
   const { data, run } = await callPlannerJSON<{ claims: ClaimMap }>(
     CLAIM_MAP_SYSTEM_PROMPT,
     userPrompt,
     CLAIM_MAP_TOOL,
-    { stage: "claim_map", timeoutMs: 45000, reasoningEffort: "low" },
+    // 60s timeout (was 45s) to absorb gpt-5-mini variance even with trimmed input.
+    { stage: "claim_map", timeoutMs: 60000, reasoningEffort: "low" },
   );
   if (!data || !Array.isArray(data.claims)) return { data: null, run };
   // Defensive: ensure source_ids exists and arrays of integers.

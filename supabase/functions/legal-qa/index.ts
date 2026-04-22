@@ -1868,14 +1868,18 @@ ${(verify.fullText as string).slice(0, 50000)}
     if (taskMode === RESEARCH_MODE && decomposedPlan && sourcePack.length >= 2) {
       try {
         const tClaimStart = Date.now();
+        // Trim before handing off to the planner. Final additional trimming
+        // (220-char excerpt cap, 10-item cap) happens inside `buildClaimMap`,
+        // but we also pre-truncate excerpts here so the JSON we send is small
+        // even if the cap is later relaxed.
         const sourcePackBrief = sourcePack
           .filter((s) => s.usable_for_citation)
-          .slice(0, 16)
+          .slice(0, 12)
           .map((s) => ({
             source_id: s.source_id,
             title: s.title,
             authority_class: s.authority_class,
-            excerpt: s.excerpt,
+            excerpt: (s.excerpt || "").slice(0, 300),
           }));
         const cmRes = await buildClaimMap(question, {
           decomposition: decomposedPlan.decomposition,
