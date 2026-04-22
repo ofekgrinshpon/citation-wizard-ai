@@ -3073,15 +3073,14 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
 
       await adminClient.from("qa_logs").insert({
         user_id: user.id,
-        project_id: projectId ?? null,
         question: question.substring(0, 500),
         answer,
-        footnotes: finalFootnotes as unknown as Json,
+        footnotes: finalFootnotes as unknown as Record<string, unknown>[],
         task_mode: taskMode,
         local_footnotes_count: localCount,
         perplexity_footnotes_count: perplexityCount,
         total_footnotes: finalFootnotes.length,
-        ...(metadata ? { metadata: metadata as unknown as Json } : {}),
+        ...(metadata ? { metadata } : {}),
       });
     } catch (logErr) {
       console.error("Failed to log QA stats (non-fatal):", logErr);
