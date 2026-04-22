@@ -1972,6 +1972,8 @@ ${(verify.fullText as string).slice(0, 50000)}
         console.error("[claim-map] failed (non-fatal):", cmErr);
         claimMap = null;
       }
+      // Persist checkpoint after claim_map regardless of success/failure.
+      writeCheckpoint("claim_map");
     }
 
     // ========= Step 3: Build context for AI (without forcing tool_call) =========
