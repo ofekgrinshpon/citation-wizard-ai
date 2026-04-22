@@ -2619,6 +2619,38 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       console.log(`Legislation year fix in FN #${fn.number}: "${before.slice(0, 120)}" → "${fn.citation.slice(0, 120)}"`);
     }
 
+    // ========= Rule 8.3 protocol cleanup =========
+    // Cleanup ONLY — does not synthesize Rule 8.3 format.
+    // Strips invalid patterns from Knesset/government meeting-protocol citations.
+    // If nothing meaningful remains, the existing filter pipeline
+    // (url_only / too_short / placeholder_dominant / broken_title) will drop the
+    // footnote. Producing a valid Rule 8.3 citation
+    // ("פרוטוקול ישיבה X של ועדת Y, הכנסת ה-N (date).") is the AI's responsibility,
+    // driven by: prompt + source-card hint (KNESSET_PROTOCOL_RE) + citationRules.ts.
+    const KNESSET_PUB_RE = /\s*\(פורסם\s+ב?(?:אתר\s+)?ה?כנסת[^)]*\)\s*/g;
+    const MISSING_MEETING_NUM_RE = /\s*\[חסר:\s*מספר\s+ישיבה\s*\]\s*/g;
+    const PROTOCOL_AUTHOR_RE = /^\s*\[חסר:\s*שם\s+(?:מומחה|מחבר)\s*\]\s*/;
+    const KNESSET_PROTOCOL_URL_RE = /fs\.knesset\.gov\.il\/\d+\/(?:Committees|Plenum)\//i;
+    for (const fn of footnotes) {
+      const isProtocolCit =
+        /פרוטוקול\s+ישיבה/.test(fn.citation) ||
+        KNESSET_PROTOCOL_URL_RE.test(fn.url || "") ||
+        KNESSET_PROTOCOL_URL_RE.test(fn.citation) ||
+        KNESSET_PUB_RE.test(fn.citation);
+      if (!isProtocolCit) continue;
+      const before = fn.citation;
+      fn.citation = fn.citation
+        .replace(KNESSET_PUB_RE, " ")
+        .replace(MISSING_MEETING_NUM_RE, " ")
+        .replace(PROTOCOL_AUTHOR_RE, "")
+        .replace(/\s{2,}/g, " ")
+        .replace(/\s+([.,;:])/g, "$1")
+        .trim();
+      if (before !== fn.citation) {
+        console.log(`Rule 8.3 cleanup FN #${fn.number}: "${before.slice(0, 100)}" → "${fn.citation.slice(0, 100)}"`);
+      }
+    }
+
     // Filter footnotes that are bare URLs / URL-only (violation of citation rules),
     // too short, or missing substantive words. Then renumber.
     const URL_ONLY_RE = /^(?:\[?\s*)?https?:\/\/\S+(?:\s*\([^)]*\))?\s*\.?\s*$/i;
