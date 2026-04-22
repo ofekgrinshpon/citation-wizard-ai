@@ -300,12 +300,16 @@ function getTaskModeInstructions(taskMode?: string): string {
 - כאשר מקור כבר צוטט, השתמש ב"שם" ו"לעיל ה"ש X" לפי כללי האזכור האחיד.
 - מבנה סמינריון ישראלי תקני: תקציר → מבוא → מסגרת נורמטיבית → סקירה פסיקתית ודוקטרינרית → ניתוח ביקורתי → סיכום ומסקנות.`;
     default:
-      return `מצב עבודה: מחקר משפטי.
-בנה את חוות הדעת לפי המבנה הבא:
-**תקציר** – סקירה קצרה של הסוגיה והמסקנות.
-**מסגרת נורמטיבית** – חקיקה ופסיקה רלוונטיים (IRAC).
-**ניתוח מפורט** – יישום הדין על העובדות, ניתוח פסיקה, השוואה.
-**המלצות מעשיות** – צעדים מומלצים בהתבסס על הניתוח.`;
+      return `מצב עבודה: מחקר משפטי — חוות דעת מקצועית.
+
+מבנה התשובה: **תקציר** → **מסגרת נורמטיבית** (חקיקה ופסיקה לפי IRAC) → **ניתוח מפורט** → **המלצות מעשיות**.
+
+חובת ציטוט (קריטי):
+- כל טענה משפטית מהותית — קביעת הלכה, הפניה לפסק דין ספציפי, הפניה להחלטת ממשלה/ועדה ציבורית, ציטוט סעיף חוק — חייבת לקבל סימן הפניה [N].
+- "טענה משפטית מהותית" = כל משפט שמכיל שם של פסק דין, שם של ועדה ציבורית בעלת המלצות, מספר החלטת ממשלה, שם חוק/חוק-יסוד, או הלכה ייחודית.
+- מטרה כמותית מנחה: בחוות דעת של 600+ מילים, צפה לפחות 6–10 הערות שוליים שונות (לא חוזרות). אם יש פחות מ-4, סביר שהשמטת הפניות לטענות מרכזיות.
+- כאשר אותו מקור תומך בכמה טענות, השתמש ב"שם" / "לעיל ה"ש N" — לא להשמיט את ההפניה.
+- אם מקור קיים אך חסרים פרטים ביבליוגרפיים — הפק הערת שוליים חלקית עם [חסר: שדה] במקום השדה החסר. אל תשמיט הערה רק בגלל פרט חסר, כל עוד יש מקור אמיתי לעגן בו את ההפניה.`;
   }
 }
 
@@ -1728,6 +1732,11 @@ ${academicChapterContext}
   * אסור בשום מצב שהערה תפנה לעצמה (למשל הערה 7 לא יכולה לכתוב "לעיל ה"ש 7").
   * אסור שהערה תפנה להערה שמכילה מקור אחר לחלוטין. אם אינך בטוח מהו מספר ההערה הנכון — כתוב אזכור מלא במקום "לעיל".
 
+כלל קריטי – שלמות ההפניות:
+- לכל סימן הפניה [N] שאתה כותב בגוף הטקסט, חייבת להופיע הערת שוליים מספר N בסוף התשובה. אסור להשאיר [N] יתום.
+- לפני שאתה מסיים את התשובה, ספור את סימני ההפניה בגוף ואת מספר ההערות ברשימת הערות השוליים — שני המספרים חייבים להיות זהים.
+- אם הסרת קביעה מהגוף ולכן הפניה הפכה מיותרת — מחק גם אותה. אל תשאיר נקודה בודדת או רווח מוזר במקום ההפניה שהוסרה.
+
 כלל קריטי – סימון הפניות בגוף הטקסט:
 - השתמש בסימוני [X] בסוגריים מרובעים בגוף הטקסט (למשל [1], [2], [3]).
 - אל תשתמש במספרים עיליים (superscript) — המערכת תמיר אותם אוטומטית.
@@ -1769,6 +1778,15 @@ ${academicChapterContext}
 כלל קריטי – פרטים חסרים:
 - אם מקור מהמאגר חסר שנת פרסום, כתוב "(לא נמצאה שנת פרסום)" — אל תמציא שנה ואל תכתוב "תאריך לא ידוע".
 - אם חסרים פרטים ביבליוגרפיים חיוניים (כמו שם מחבר), נסה לחלץ אותם מתוך תוכן המקור שסופק לך.
+
+כלל קריטי – הערה חלקית עדיפה על השמטה (כשיש מקור מעוגן):
+- אם מקור [מאומת] או [חיצוני – למטא-דאטה בלבד] קיים ומעוגן (יש לו URL או רשומה זמינה), אבל חסר פרט ביבליוגרפי (עמוד, שנה, כרך, שם שופט, מספר ס"ח/ק"ת) — **הפק הערת שוליים חלקית** עם השדות הקיימים, ובמקום השדה החסר רשום מסמן בפורמט: [חסר: עמוד], [חסר: שנה], [חסר: כרך], [חסר: שם שופט], [חסר: ס"ח].
+- דוגמה מותרת: 'בג"ץ 18225-06-25 **גילון** נ' **ממשלת ישראל** [חסר: עמוד] (13.12.2025).'
+- דוגמה מותרת: 'חוק החוזים (חלק כללי), התשל"ג-1973, ס"ח [חסר: עמוד].'
+- **אסור** להפיק הערה חלקית כשאין מקור אמיתי מאחוריה. אם הקביעה אינה נתמכת על ידי מקור [מאומת] או [חיצוני], אל תכתוב הערה כלל ואל תציין סימן הפניה בגוף.
+- **אסור** להמציא ערך כדי "למלא" שדה. תמיד להעדיף [חסר: ...] על ניחוש.
+- **אסור** להשתמש ב-[חסר: ...] כדי "להעביר" הערת שוליים שאין מאחוריה מקור אמיתי. השתמש ב-[חסר: ...] **רק** כשיש מקור [מאומת] או [חיצוני] קונקרטי שאחזרת אליו, ופרט אחד או יותר חסר ממנו. אם אין מקור — לא לכתוב הערה כלל ולא לסמן הפניה בגוף.
+- "מעוגן" = למקור יש URL מ-Perplexity, או הוא בא ממאגר מקומי שאוחזר ב-retrieval, או הוא verified_source. אם אין anchor → לא לצטט.
 
 כלל קריטי – עמודים:
 - כאשר מקור מהמאגר כולל מספר עמוד פתיחה, השתמש בו בדיוק. אל תמציא מספרי עמודים.
@@ -2310,8 +2328,8 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       fn.citation = fn.citation.replace(titlePattern, "").replace(/\s{2,}/g, " ").trim();
     }
 
-    // Remove placeholders
-    const placeholderPattern = /\[missing:[^\]]*\]|\[חסר:[^\]]*\]|\[פרט חסר[^\]]*\]/g;
+    // Remove placeholders — but PRESERVE [חסר: ...] markers (intentional partial-citation signal)
+    const placeholderPattern = /\[missing:[^\]]*\]|\[פרט חסר[^\]]*\]/g;
     for (const fn of footnotes) {
       fn.citation = fn.citation.replace(placeholderPattern, "").trim();
       fn.citation = fn.citation.replace(/,?\s*עמ['׳]?\s*$/, "").trim();
@@ -2496,18 +2514,39 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         .trim();
       return withoutCaseHead.length < 4 || !HAS_SUBSTANTIVE_WORD_RE.test(withoutCaseHead);
     };
-    const reasonFor = (fn: { citation: string }): string | null => {
+    // hasAnchor: a footnote is "anchored" only if it points to a real, retrievable source —
+    // a URL, or a `source` provenance from a real card (local DB / perplexity / verified_source).
+    // The literal `"unverified"` source string means no card was matched, so it is NOT an anchor.
+    // Critically: the [חסר: ...] marker itself is NOT proof of an anchor — the AI must not be
+    // able to bypass the filter by sprinkling markers without a real source behind them.
+    const hasAnchor = (fn: { url?: string; source?: string; citation: string }): boolean => {
+      if (fn.url && fn.url.trim().length > 0) return true;
+      const src = (fn.source || "").trim().toLowerCase();
+      if (src && src !== "unverified") return true;
+      return false;
+    };
+    const hasMissingMarker = (txt: string): boolean => /\[חסר:\s*[^\]]+\]/.test(txt);
+    const reasonFor = (fn: { citation: string; url?: string; source?: string }): string | null => {
       const t = fn.citation.trim();
-      if (t.length < 25) return "too_short";
-      if (isUrlOnly(t)) return "url_only";
-      if (isMissingSubstance(t)) return "missing_parties";
+      if (isUrlOnly(t)) return "url_only"; // hard fail always
+      const anchored = hasAnchor(fn);
+      const minLen = anchored ? 12 : 25;
+      if (t.length < minLen) return "too_short";
+      // anchored footnotes may have partial info ([חסר: צד]) — don't drop them on missing_parties
+      if (!anchored && isMissingSubstance(t)) return "missing_parties";
       return null;
     };
-    const droppedDetails: { number: number; reason: string; preview: string }[] = [];
+    const droppedDetails: { number: number; reason: string; preview: string; anchored: boolean; has_marker: boolean }[] = [];
     const validFootnotes = footnotes.filter((fn) => {
       const reason = reasonFor(fn);
       if (reason) {
-        droppedDetails.push({ number: fn.number, reason, preview: fn.citation.slice(0, 80) });
+        droppedDetails.push({
+          number: fn.number,
+          reason,
+          preview: fn.citation.slice(0, 80),
+          anchored: hasAnchor(fn),
+          has_marker: hasMissingMarker(fn.citation),
+        });
         return false;
       }
       return true;
@@ -2515,7 +2554,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     const droppedFootnotesCount = droppedDetails.length;
     if (droppedFootnotesCount > 0) {
       for (const d of droppedDetails) {
-        console.log(`Dropped footnote #${d.number} [${d.reason}]: "${d.preview}"`);
+        console.log(`Dropped footnote #${d.number} [${d.reason}, anchored=${d.anchored}, has_marker=${d.has_marker}]: "${d.preview}"`);
       }
       const removedNumbers = new Set(droppedDetails.map((d) => d.number));
       for (const num of removedNumbers) {
@@ -2532,6 +2571,32 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       for (const fn of validFootnotes) {
         answer = answer.replaceAll(`__FN_${fn.number}__`, toSuperscript(fn.number));
       }
+    }
+
+    // ========= Orphan superscript cleanup =========
+    // After all renumbering: scan body for any superscript digits that don't map to a valid
+    // footnote number, and strip them (along with a stray preceding space if it was created).
+    {
+      const validNums = new Set(validFootnotes.map((fn) => fn.number));
+      // Match runs of superscript digits (possibly multi-digit like ¹²)
+      answer = answer.replace(/([\u00B9\u00B2\u00B3\u2074-\u2079]+)/g, (match) => {
+        const digits = match
+          .split("")
+          .map((c) => {
+            const map: Record<string, string> = {
+              "\u00B9": "1", "\u00B2": "2", "\u00B3": "3",
+              "\u2074": "4", "\u2075": "5", "\u2076": "6",
+              "\u2077": "7", "\u2078": "8", "\u2079": "9", "\u2070": "0",
+            };
+            return map[c] || "";
+          })
+          .join("");
+        const num = parseInt(digits, 10);
+        if (Number.isFinite(num) && validNums.has(num)) return match;
+        return ""; // orphan — strip
+      });
+      // Clean up "word .  " (stray space before punctuation) created by orphan removal
+      answer = answer.replace(/ +([.,;:!?])/g, "$1").replace(/[ \t]{2,}/g, " ");
     }
 
     const finalFootnotes = validFootnotes;
