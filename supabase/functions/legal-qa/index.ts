@@ -2685,9 +2685,15 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       return false;
     };
     const hasMissingMarker = (txt: string): boolean => /\[חסר:\s*[^\]]+\]/.test(txt);
+    // Known broken/placeholder titles from ingestion failures (e.g., Knesset research
+    // scrape fallback). These are never a valid citation — drop unconditionally,
+    // even if anchored, since "פרטי מסמך" / "ללא כותרת" are non-titles.
+    const BROKEN_TITLE_RE = /^\s*(?:["״"]?)\s*(?:פרטי\s+מסמך|ללא\s+כותרת|untitled|no\s+title)\b/i;
+    const isBrokenTitle = (txt: string): boolean => BROKEN_TITLE_RE.test(txt.trim());
     const reasonFor = (fn: { citation: string; url?: string; source?: string }): string | null => {
       const t = fn.citation.trim();
       if (isUrlOnly(t)) return "url_only"; // hard fail always
+      if (isBrokenTitle(t)) return "broken_title"; // hard fail always — invalid placeholder title
       const anchored = hasAnchor(fn);
       // NEW: unanchored + AI explicitly admitted missing fields ([חסר: ...]) → drop.
       // The marker alone is never proof of an anchor; without a real source it's a hallucinated skeleton.
