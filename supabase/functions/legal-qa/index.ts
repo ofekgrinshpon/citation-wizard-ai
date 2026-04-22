@@ -2272,11 +2272,23 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // Stage E: route legal_research with claim-map through callDrafter (provider-aware).
     // All other modes (case_summary already returned earlier; pleading_analysis, academic) keep the legacy Gemini call.
     const useNewDrafter = taskMode === RESEARCH_MODE && claimMap !== null && claimMapAllowedCount >= 2;
+    const drafterStartedAt = new Date();
+    const drafterStartMs = Date.now();
     if (useNewDrafter) {
       const drafterRes = await callDrafter(systemPrompt, userMessage, aiMaxTokens, 90000);
       const tAi = Date.now();
       console.log(`Drafter call took ${tAi - tRetrieval}ms (used=${drafterRes?.modelUsed || "FAILED"})`);
       if (!drafterRes || drafterRes.text.length < 50) {
+        stageRuns.push({
+          stage: "drafting",
+          provider: OPENAI_API_KEY ? "openai" : "gemini",
+          model: MODEL_CONFIG.DRAFTER_OPENAI,
+          started_at: drafterStartedAt.toISOString(),
+          completed_at: new Date().toISOString(),
+          duration_ms: Date.now() - drafterStartMs,
+          status: "error",
+          error_message: "drafter returned empty or null",
+        });
         return new Response(
           JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -2284,6 +2296,15 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       }
       answerText = drafterRes.text;
       drafterModelUsed = drafterRes.modelUsed;
+      stageRuns.push({
+        stage: "drafting",
+        provider: drafterModelUsed.startsWith("gpt-") ? "openai" : "gemini",
+        model: drafterModelUsed,
+        started_at: drafterStartedAt.toISOString(),
+        completed_at: new Date().toISOString(),
+        duration_ms: Date.now() - drafterStartMs,
+        status: "success",
+      });
     } else {
       try {
         const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -2318,8 +2339,32 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         if (!answerText || answerText.length < 50) {
           return new Response(JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
+        // Legacy Gemini drafter path — record telemetry too.
+        if (taskMode === RESEARCH_MODE) {
+          stageRuns.push({
+            stage: "drafting",
+            provider: "gemini",
+            model: "google/gemini-2.5-flash",
+            started_at: drafterStartedAt.toISOString(),
+            completed_at: new Date().toISOString(),
+            duration_ms: Date.now() - drafterStartMs,
+            status: "success",
+          });
+        }
       } catch (err) {
         console.error("AI call error:", err);
+        if (taskMode === RESEARCH_MODE) {
+          stageRuns.push({
+            stage: "drafting",
+            provider: "gemini",
+            model: "google/gemini-2.5-flash",
+            started_at: drafterStartedAt.toISOString(),
+            completed_at: new Date().toISOString(),
+            duration_ms: Date.now() - drafterStartMs,
+            status: /abort/i.test((err as Error).message ?? "") ? "timeout" : "error",
+            error_message: (err as Error).message,
+          });
+        }
         return new Response(JSON.stringify({ error: "תם הזמן לעיבוד השאלה. נסו שוב או קצרו את השאלה." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
     }
