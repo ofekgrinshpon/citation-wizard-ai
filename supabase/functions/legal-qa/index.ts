@@ -1997,6 +1997,17 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     }
 
+    // ─── Tier-1 tuning: finalize the parallel decomposition promise here.
+    // By this point retrieval is complete, so awaiting the plan only blocks
+    // claim_map (which can't run without it anyway). Push the StageRun to
+    // telemetry and write a checkpoint so disconnect diagnostics still work.
+    if (decompPromise) {
+      const decompRes = await decompPromise;
+      stageRuns.push(decompRes.run);
+      decomposedPlan = decompRes.data;
+      writeCheckpoint("decomposition");
+    }
+
     // ========= Stage D: Claim Map (legal_research only, INTERNAL) =========
     let claimMap: ClaimMap | null = null;
     let claimMapAllowedCount = 0;
