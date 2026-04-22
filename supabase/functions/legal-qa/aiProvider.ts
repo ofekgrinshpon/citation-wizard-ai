@@ -86,6 +86,13 @@ export interface PlannerCallOptions {
   timeoutMs?: number;
   /** OpenAI reasoning effort (gpt-5* family). Ignored on Gemini. */
   reasoningEffort?: "minimal" | "low" | "medium" | "high";
+  /**
+   * Optional per-call OpenAI model override. When set AND OPENAI_API_KEY is
+   * available, this replaces the stage-derived default. Used by the
+   * decomposition retry path to escalate from nano → mini on parse_error
+   * without permanently changing the stage's primary model.
+   */
+  openaiModelOverride?: string;
 }
 
 /**
