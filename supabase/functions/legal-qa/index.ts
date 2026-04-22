@@ -1288,26 +1288,45 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     };
 
+    // ─── Tier-1 tuning: kick off decomposition CONCURRENTLY with retrieval ───
+    // Previously this was awaited serially BEFORE localSearchPromise was even
+    // constructed, which cost ~25s on the wall clock and pushed total runs
+    // over the 150s edge-function ceiling. Now decomposition races local
+    // search; the plan-derived sub-issue queries are consumed inside
+    // localSearchPromise via `await decompPromise` only at the point they're
+    // actually needed (after the first wave of embeddings is in flight).
+    let decompPromise: Promise<{ data: DecomposedPlan | null; run: StageRun }> | null = null;
     if (taskMode === RESEARCH_MODE && !evalForceLegacy) {
-      try {
-        const tDecompStart = Date.now();
-        const { data, run } = await decomposeAndPlan(question);
-        stageRuns.push(run);
-        decomposedPlan = data;
-        if (decomposedPlan) {
-          console.log(
-            `[plan] ${decomposedPlan.decomposition.sub_issues.length} sub-issues, ${decomposedPlan.query_plan.length} plans (${Date.now() - tDecompStart}ms; ${run.provider}/${run.model}, status=${run.status})`,
-          );
-        } else {
-          console.log(`[plan] decompose+plan returned null (status=${run.status}, ${run.duration_ms}ms) — falling back to legacy retrieval`);
-        }
-        // Persist checkpoint regardless of success/failure so disconnects are visible.
-        writeCheckpoint("decomposition");
-      } catch (decompErr) {
-        console.error("[plan] decompose+plan failed (non-fatal):", decompErr);
-        decomposedPlan = null;
-        writeCheckpoint("decomposition");
-      }
+      const tDecompStart = Date.now();
+      decompPromise = decomposeAndPlan(question)
+        .then((res) => {
+          if (res.data) {
+            console.log(
+              `[plan] ${res.data.decomposition.sub_issues.length} sub-issues, ${res.data.query_plan.length} plans (${Date.now() - tDecompStart}ms; ${res.run.provider}/${res.run.model}, status=${res.run.status})`,
+            );
+          } else {
+            console.log(`[plan] decompose+plan returned null (status=${res.run.status}, ${res.run.duration_ms}ms) — falling back to legacy retrieval`);
+          }
+          return res;
+        })
+        .catch((decompErr) => {
+          console.error("[plan] decompose+plan failed (non-fatal):", decompErr);
+          // Synthesize a failed StageRun so telemetry stays consistent.
+          const now = new Date().toISOString();
+          return {
+            data: null as DecomposedPlan | null,
+            run: {
+              stage: "decomposition",
+              provider: "openai" as const,
+              model: "unknown",
+              started_at: now,
+              completed_at: now,
+              duration_ms: Date.now() - tDecompStart,
+              status: "error" as const,
+              error_message: (decompErr as Error)?.message ?? String(decompErr),
+            },
+          };
+        });
     }
 
     // ========= Step 1: Local search (hybrid: keyword + vector) + Perplexity IN PARALLEL =========
@@ -1354,11 +1373,28 @@ ${(verify.fullText as string).slice(0, 50000)}
         // Step A: optionally expand short queries to a fuller legal phrasing
         const expandedQuery = await expandShortQuery(question, LOVABLE_API_KEY);
         // Stage B: enrich vector search with sub-issue queries from the planner.
-        // Each plan contributes up to 3 short queries (legislation/caselaw/literature).
-        // Hard cap to avoid embedding-quota blowup.
+        // Tier-1 tuning: decomposition runs CONCURRENTLY with retrieval. We
+        // await the plan only here, after `expandShortQuery` (cheap LLM call,
+        // ~1-3s) has already overlapped most of the planner's runtime. If the
+        // plan still isn't ready, we don't wait — we proceed without sub-issue
+        // queries; the plan will be picked up later by the claim_map stage.
+        let planForRetrieval: DecomposedPlan | null = null;
+        if (decompPromise) {
+          // Race: plan vs. a tiny grace window. We've already burned ~1-3s on
+          // expandShortQuery, so most successful plans (median ~25s on mini,
+          // expected ~10s on nano) will still be in flight. Give them up to
+          // 25s more (total ~28s — within the 45s timeout) before giving up
+          // for retrieval purposes. Plan is still consumed later by claim_map
+          // even if it lands after this point.
+          const planRace = await Promise.race([
+            decompPromise.then((r) => ({ ready: true as const, plan: r.data })),
+            new Promise<{ ready: false }>((resolve) => setTimeout(() => resolve({ ready: false }), 25000)),
+          ]);
+          if (planRace.ready) planForRetrieval = planRace.plan;
+        }
         const planQueries: string[] = [];
-        if (decomposedPlan?.query_plan) {
-          for (const p of decomposedPlan.query_plan) {
+        if (planForRetrieval?.query_plan) {
+          for (const p of planForRetrieval.query_plan) {
             if (p.legislation_query) planQueries.push(p.legislation_query);
             if (p.caselaw_query) planQueries.push(p.caselaw_query);
             if (p.literature_query) planQueries.push(p.literature_query);
@@ -1372,6 +1408,8 @@ ${(verify.fullText as string).slice(0, 50000)}
         ];
         if (planQueriesUnique.length > 0) {
           console.log(`[plan] adding ${planQueriesUnique.length} sub-issue queries to vector search`);
+        } else if (decompPromise) {
+          console.log(`[plan] proceeding with retrieval before plan landed (or plan was null)`);
         }
         const keywordSourceText = expandedQuery ? `${question} ${expandedQuery}` : question;
 
@@ -1957,6 +1995,17 @@ ${(verify.fullText as string).slice(0, 50000)}
         const sps = summarizeSourcePack(sourcePackV2);
         console.log(`[source-pack-v2] core=${sps.core} supporting=${sps.supporting} secondary=${sps.secondary} anchored=${sps.anchored}`);
       }
+    }
+
+    // ─── Tier-1 tuning: finalize the parallel decomposition promise here.
+    // By this point retrieval is complete, so awaiting the plan only blocks
+    // claim_map (which can't run without it anyway). Push the StageRun to
+    // telemetry and write a checkpoint so disconnect diagnostics still work.
+    if (decompPromise) {
+      const decompRes = await decompPromise;
+      stageRuns.push(decompRes.run);
+      decomposedPlan = decompRes.data;
+      writeCheckpoint("decomposition");
     }
 
     // ========= Stage D: Claim Map (legal_research only, INTERNAL) =========

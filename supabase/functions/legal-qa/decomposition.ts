@@ -135,7 +135,10 @@ export async function decomposeAndPlan(
     DECOMP_SYSTEM_PROMPT,
     `שאלת המחקר:\n${question}`,
     DECOMP_PLAN_TOOL,
-    { stage: "decomposition", timeoutMs: 30000, reasoningEffort: "minimal" },
+    // Tier-1 tuning (eval run 04b7079e): observed p95 of successful gpt-5-nano/mini
+    // decomposition is ~30s; raise to 45s to absorb the long tail. Combined with
+    // parallelization in index.ts this no longer blocks retrieval.
+    { stage: "decomposition", timeoutMs: 45000, reasoningEffort: "minimal" },
   );
   if (!data) return { data: null, run };
   if (!data.decomposition?.main_issue || !Array.isArray(data.decomposition?.sub_issues)) {
