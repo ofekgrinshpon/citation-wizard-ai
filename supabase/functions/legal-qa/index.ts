@@ -25,6 +25,7 @@ import { mapToDecompositionV2 } from "./legalResearchDecomposition.ts";
 import { assembleSourcePack, summarizeSourcePack, type InternalSourcePackEntry } from "./legalSourcePack.ts";
 import { mapToClaimMapV2, summarizeClaimMapV2 } from "./legalClaimMap.ts";
 import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
+import { runShadowAbComparison, buildLegacyShadowPrompt } from "./shadowAbLogger.ts";
 
 // Single source of truth for the research-mode gate. The frontend currently
 // sends `taskMode: "research"`; if that ever changes, update this constant.
