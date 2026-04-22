@@ -808,6 +808,17 @@ serve(async (req) => {
   let __creditsCharged = false;
   let __creditRequestId: string | null = null;
   let __userClientForRefund: ReturnType<typeof createClient> | null = null;
+  // Checkpoint state — hoisted so the outer catch can flush a final
+  // "error" snapshot to qa_logs.metadata even on unexpected throws or
+  // client disconnects (HTTP "connection closed before message completed").
+  let __checkpointQaLogId: string | null = null;
+  let __checkpointInserted = false;
+  // deno-lint-ignore no-explicit-any
+  let __checkpointAdmin: any = null;
+  let __checkpointUserId: string | null = null;
+  let __checkpointQuestion = "";
+  let __checkpointTaskMode: string | null = null;
+  const __checkpointStageRuns: StageRun[] = [];
 
   try {
     // Auth gate
