@@ -5,6 +5,96 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { buildCitationInstructions } from "./citationRules.ts";
+import {
+  decomposeAndPlan,
+  buildClaimMap,
+  summarizeClaimMap,
+  summarizeQueryPlan,
+  type DecomposedPlan,
+  type ClaimMap,
+} from "./decomposition.ts";
+import { callDrafter, plannerProviderLabel, MODEL_CONFIG } from "./aiProvider.ts";
+
+// ─── Source pack types (Stage C — internal only, never serialized) ───
+type AuthorityClass =
+  | "primary_legislation"
+  | "basic_law"
+  | "supreme_court"
+  | "district_court"
+  | "labor_court"
+  | "knesset_research"
+  | "academic_book"
+  | "academic_article"
+  | "protocol"
+  | "external_web"
+  | "document"
+  | "other";
+
+interface SourcePackEntry {
+  source_id: number;
+  title: string;
+  source_type: string;
+  authority_class: AuthorityClass;
+  url?: string;
+  provenance: "local" | "perplexity" | "document";
+  excerpt: string;
+  case_number?: string;
+  usable_for_analysis: boolean;
+  usable_for_citation: boolean;
+  anchor_present: boolean;
+}
+
+/**
+ * Provenance hardening: this is the ONLY place that constructs the user-facing
+ * response payload. Internal fields (provenance, decomposition, claim_map,
+ * source_pack) cannot leak through this serializer.
+ */
+function buildResponse(
+  answer: string,
+  footnotes: Array<{ number: number; citation: string; source_type: string; url?: string }>,
+  source_urls: string[],
+  extras: { dropped_footnotes_count?: number } = {},
+): Response {
+  // Strip any internal-only fields from each footnote (e.g. `source` provenance).
+  const safeFootnotes = footnotes.map((f) => ({
+    number: f.number,
+    citation: f.citation,
+    source_type: f.source_type,
+    ...(f.url ? { url: f.url } : {}),
+  }));
+  const payload: Record<string, unknown> = {
+    answer,
+    footnotes: safeFootnotes,
+    source_urls,
+  };
+  if (typeof extras.dropped_footnotes_count === "number") {
+    payload.dropped_footnotes_count = extras.dropped_footnotes_count;
+  }
+  return new Response(JSON.stringify(payload), {
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+function classifyAuthority(sourceType: string, citation: string, url?: string): AuthorityClass {
+  const c = citation || "";
+  const u = url || "";
+  if (sourceType === "document") return "document";
+  if (sourceType === "protocol") return "protocol";
+  if (/חוק[-\s]יסוד|חוק יסוד/i.test(c)) return "basic_law";
+  if (/ס["״]ח|ס"ח|ספר החוקים|פקודת|תקנות/i.test(c)) return "primary_legislation";
+  if (sourceType === "israeli_law") return "primary_legislation";
+  if (sourceType === "caselaw") {
+    if (/בג["״]ץ|פ"ד|פד"י|supreme\.court/i.test(c + u)) return "supreme_court";
+    if (/בית\s*הדין\s*לעבודה|עע"מ|ע"ע/i.test(c)) return "labor_court";
+    return "district_court";
+  }
+  if (sourceType === "knesset_research") return "knesset_research";
+  if (sourceType === "journal_article") return "academic_article";
+  if (sourceType === "book") return "academic_book";
+  if (/knesset\.gov\.il/i.test(u)) return "protocol";
+  if (u) return "external_web";
+  return "other";
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
