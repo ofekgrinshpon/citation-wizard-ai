@@ -16,7 +16,14 @@ const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
 
 export const MODEL_CONFIG = {
-  // Planner: decomposition+plan, claim-map. Light-to-medium reasoning.
+  // Tier-1.5 split: decomposition and claim_map use DIFFERENT models. Previously
+  // the shared PLANNER_OPENAI constant accidentally moved claim_map to nano when
+  // we tuned decomposition; now each stage picks its own.
+  DECOMPOSER_OPENAI: LEGAL_RESEARCH_MODELS.decomposition.primary.replace(/^openai\//, ""),
+  DECOMPOSER_GEMINI: LEGAL_RESEARCH_MODELS.decomposition.fallback,
+  CLAIM_MAP_OPENAI: LEGAL_RESEARCH_MODELS.claimMap.primary.replace(/^openai\//, ""),
+  CLAIM_MAP_GEMINI: LEGAL_RESEARCH_MODELS.claimMap.fallback,
+  // Legacy aliases retained for any external readers — point at decomposition.
   PLANNER_OPENAI: LEGAL_RESEARCH_MODELS.decomposition.primary.replace(/^openai\//, ""),
   PLANNER_GEMINI: LEGAL_RESEARCH_MODELS.decomposition.fallback,
   // Drafter: final memo. Heavier reasoning preferred.
