@@ -1192,6 +1192,58 @@ ${(verify.fullText as string).slice(0, 50000)}
     // Per-stage runtime telemetry. Each stage pushes its `StageRun` here so we
     // can record honest "this model actually completed" data in qa_logs.metadata.
     const stageRuns: StageRun[] = [];
+
+    // ─── Early checkpoint persistence ────────────────────────────────
+    // Pre-allocate a qa_logs row id so we can write a CHECKPOINT row right
+    // after each pipeline stage. If the client disconnects (HTTP "connection
+    // closed before message completed") the row still exists with the latest
+    // stage_runs, so admins can see how far the pipeline got.
+    // The final block at the bottom of this handler upserts on this id with
+    // the full payload (answer, footnotes, complete metadata).
+    const preallocatedQaLogId: string = crypto.randomUUID();
+    let checkpointInserted = false;
+    const writeCheckpoint = (phase: "decomposition" | "claim_map" | "drafting_started"): void => {
+      if (taskMode !== RESEARCH_MODE) return;
+      // Snapshot current state — note that drafting_path is "in_progress" until
+      // the final block decides between "structured" / "fallback".
+      const snapshot = {
+        checkpoint: phase,
+        checkpoint_at: new Date().toISOString(),
+        drafting_path: "in_progress",
+        decomposition: decomposedPlan?.decomposition ?? null,
+        stage_runs: [...stageRuns],
+        // models_used computed at finalization time; here we just expose
+        // raw stage_runs so admins can correlate timing.
+      };
+      const payload = {
+        id: preallocatedQaLogId,
+        user_id: user.id,
+        question: question.substring(0, 500),
+        answer: null,
+        footnotes: [],
+        task_mode: taskMode,
+        local_footnotes_count: 0,
+        perplexity_footnotes_count: 0,
+        total_footnotes: 0,
+        metadata: snapshot,
+      };
+      const op = checkpointInserted
+        ? adminClient.from("qa_logs").update({ metadata: snapshot }).eq("id", preallocatedQaLogId)
+        : adminClient.from("qa_logs").insert(payload);
+      // Fire-and-forget; never block the pipeline on a logging write.
+      const promise = (op as unknown as Promise<{ error: unknown }>).then((res) => {
+        if (res?.error) console.error(`[checkpoint:${phase}] write failed (non-fatal):`, res.error);
+        else if (!checkpointInserted) checkpointInserted = true;
+      });
+      // deno-lint-ignore no-explicit-any
+      const er = (globalThis as any).EdgeRuntime;
+      if (er && typeof er.waitUntil === "function") {
+        er.waitUntil(promise);
+      } else {
+        promise.catch(() => {});
+      }
+    };
+
     if (taskMode === RESEARCH_MODE) {
       try {
         const tDecompStart = Date.now();
@@ -1205,9 +1257,12 @@ ${(verify.fullText as string).slice(0, 50000)}
         } else {
           console.log(`[plan] decompose+plan returned null (status=${run.status}, ${run.duration_ms}ms) — falling back to legacy retrieval`);
         }
+        // Persist checkpoint regardless of success/failure so disconnects are visible.
+        writeCheckpoint("decomposition");
       } catch (decompErr) {
         console.error("[plan] decompose+plan failed (non-fatal):", decompErr);
         decomposedPlan = null;
+        writeCheckpoint("decomposition");
       }
     }
 
