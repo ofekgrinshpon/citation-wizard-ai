@@ -30,7 +30,7 @@ if (!SUPABASE_URL || !SERVICE_ROLE || !ANON_KEY) {
   process.exit(1);
 }
 
-const OUT_DIR = "/mnt/documents/legal-qa-eval";
+const OUT_DIR = process.env.EVAL_OUT_DIR || "/mnt/documents/legal-qa-eval";
 if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
 
 const args = Object.fromEntries(
