@@ -1288,26 +1288,45 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     };
 
+    // ─── Tier-1 tuning: kick off decomposition CONCURRENTLY with retrieval ───
+    // Previously this was awaited serially BEFORE localSearchPromise was even
+    // constructed, which cost ~25s on the wall clock and pushed total runs
+    // over the 150s edge-function ceiling. Now decomposition races local
+    // search; the plan-derived sub-issue queries are consumed inside
+    // localSearchPromise via `await decompPromise` only at the point they're
+    // actually needed (after the first wave of embeddings is in flight).
+    let decompPromise: Promise<{ data: DecomposedPlan | null; run: StageRun }> | null = null;
     if (taskMode === RESEARCH_MODE && !evalForceLegacy) {
-      try {
-        const tDecompStart = Date.now();
-        const { data, run } = await decomposeAndPlan(question);
-        stageRuns.push(run);
-        decomposedPlan = data;
-        if (decomposedPlan) {
-          console.log(
-            `[plan] ${decomposedPlan.decomposition.sub_issues.length} sub-issues, ${decomposedPlan.query_plan.length} plans (${Date.now() - tDecompStart}ms; ${run.provider}/${run.model}, status=${run.status})`,
-          );
-        } else {
-          console.log(`[plan] decompose+plan returned null (status=${run.status}, ${run.duration_ms}ms) — falling back to legacy retrieval`);
-        }
-        // Persist checkpoint regardless of success/failure so disconnects are visible.
-        writeCheckpoint("decomposition");
-      } catch (decompErr) {
-        console.error("[plan] decompose+plan failed (non-fatal):", decompErr);
-        decomposedPlan = null;
-        writeCheckpoint("decomposition");
-      }
+      const tDecompStart = Date.now();
+      decompPromise = decomposeAndPlan(question)
+        .then((res) => {
+          if (res.data) {
+            console.log(
+              `[plan] ${res.data.decomposition.sub_issues.length} sub-issues, ${res.data.query_plan.length} plans (${Date.now() - tDecompStart}ms; ${res.run.provider}/${res.run.model}, status=${res.run.status})`,
+            );
+          } else {
+            console.log(`[plan] decompose+plan returned null (status=${res.run.status}, ${res.run.duration_ms}ms) — falling back to legacy retrieval`);
+          }
+          return res;
+        })
+        .catch((decompErr) => {
+          console.error("[plan] decompose+plan failed (non-fatal):", decompErr);
+          // Synthesize a failed StageRun so telemetry stays consistent.
+          const now = new Date().toISOString();
+          return {
+            data: null as DecomposedPlan | null,
+            run: {
+              stage: "decomposition",
+              provider: "openai" as const,
+              model: "unknown",
+              started_at: now,
+              completed_at: now,
+              duration_ms: Date.now() - tDecompStart,
+              status: "error" as const,
+              error_message: (decompErr as Error)?.message ?? String(decompErr),
+            },
+          };
+        });
     }
 
     // ========= Step 1: Local search (hybrid: keyword + vector) + Perplexity IN PARALLEL =========
