@@ -1135,7 +1135,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // ========= Stage A+B: Decomposition + Query Plan (legal_research only) =========
     // INTERNAL — never exposed to UI. Recorded in qa_logs.metadata for diagnostics.
     let decomposedPlan: DecomposedPlan | null = null;
-    if (taskMode === "legal_research") {
+    if (taskMode === "research") {
       try {
         const tDecompStart = Date.now();
         decomposedPlan = await decomposeAndPlan(question);
@@ -1767,7 +1767,7 @@ ${(verify.fullText as string).slice(0, 50000)}
 
     // ========= Stage C: Source Pack assembly (legal_research only, INTERNAL) =========
     let sourcePack: SourcePackEntry[] = [];
-    if (taskMode === "legal_research") {
+    if (taskMode === "research") {
       sourcePack = sourceCards.map((sc) => {
         const excerpt = sc.excerpt || "";
         const anchorPresent = Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document";
@@ -1791,7 +1791,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // ========= Stage D: Claim Map (legal_research only, INTERNAL) =========
     let claimMap: ClaimMap | null = null;
     let claimMapAllowedCount = 0;
-    if (taskMode === "legal_research" && decomposedPlan && sourcePack.length >= 2) {
+    if (taskMode === "research" && decomposedPlan && sourcePack.length >= 2) {
       try {
         const tClaimStart = Date.now();
         const sourcePackBrief = sourcePack
@@ -2151,7 +2151,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     let drafterModelUsed = "google/gemini-2.5-flash";
     // Stage E: route legal_research with claim-map through callDrafter (provider-aware).
     // All other modes (case_summary already returned earlier; pleading_analysis, academic) keep the legacy Gemini call.
-    const useNewDrafter = taskMode === "legal_research" && claimMap !== null && claimMapAllowedCount >= 2;
+    const useNewDrafter = taskMode === "research" && claimMap !== null && claimMapAllowedCount >= 2;
     if (useNewDrafter) {
       const drafterRes = await callDrafter(systemPrompt, userMessage, aiMaxTokens, 90000);
       const tAi = Date.now();
@@ -3033,30 +3033,62 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       console.error("Grounding check failed (non-fatal):", gErr);
     }
 
-    // Log
+    // Log — canonical server-side log with internal diagnostics in metadata.
     try {
       const localCount = finalFootnotes.filter((f) => f.source === "local").length;
       const perplexityCount = finalFootnotes.filter((f) => f.source === "perplexity").length;
+
+      // Build internal metadata snapshot (admin-only, never exposed to UI).
+      let metadata: Record<string, unknown> | null = null;
+      if (taskMode === "research") {
+        const byStrength = { strong: 0, partial: 0, weak: 0 } as Record<string, number>;
+        if (claimMap) {
+          for (const c of claimMap) {
+            if (c.allowed_to_state && c.support_strength in byStrength) {
+              byStrength[c.support_strength]++;
+            }
+          }
+        }
+        metadata = {
+          decomposition: decomposedPlan?.decomposition ?? null,
+          query_plan_summary: (decomposedPlan?.query_plan ?? []).map((p) => ({
+            sub_issue: p.sub_issue,
+            has_legislation_q: Boolean(p.legislation_query),
+            has_caselaw_q: Boolean(p.caselaw_query),
+            has_literature_q: Boolean(p.literature_query),
+            has_external_q: Boolean(p.external_query),
+          })),
+          source_pack_summary: sourcePack.map((s) => ({
+            source_id: s.source_id,
+            authority_class: s.authority_class,
+            anchor_present: s.anchor_present,
+          })),
+          claim_map_summary: claimMap
+            ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength }
+            : null,
+          draft_path: useNewDrafter ? "claim_map" : "fallback",
+          models_used: { planner: plannerProviderLabel(), drafter: drafterModelUsed },
+        };
+      }
+
       await adminClient.from("qa_logs").insert({
         user_id: user.id,
         question: question.substring(0, 500),
+        answer,
+        footnotes: finalFootnotes as unknown as Record<string, unknown>[],
+        task_mode: taskMode,
         local_footnotes_count: localCount,
         perplexity_footnotes_count: perplexityCount,
         total_footnotes: finalFootnotes.length,
+        ...(metadata ? { metadata } : {}),
       });
     } catch (logErr) {
       console.error("Failed to log QA stats (non-fatal):", logErr);
     }
 
-    return new Response(
-      JSON.stringify({
-        answer,
-        footnotes: finalFootnotes,
-        source_urls: citations,
-        dropped_footnotes_count: droppedFootnotesCount,
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return buildResponse(answer, finalFootnotes, citations, {
+      dropped_footnotes_count: droppedFootnotesCount,
+    });
   } catch (e) {
     console.error("legal-qa error:", e);
     let refunded = false;
