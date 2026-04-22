@@ -3325,21 +3325,32 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         };
       }
 
-      const { data: insertedLog, error: insertErr } = await adminClient
-        .from("qa_logs")
-        .insert({
-          user_id: user.id,
-          question: question.substring(0, 500),
-          answer,
-          footnotes: finalFootnotes as unknown as Record<string, unknown>[],
-          task_mode: taskMode,
-          local_footnotes_count: localCount,
-          perplexity_footnotes_count: perplexityCount,
-          total_footnotes: finalFootnotes.length,
-          ...(metadata ? { metadata } : {}),
-        })
-        .select("id")
-        .maybeSingle();
+      // For research mode we pre-allocated an id and may have written
+      // checkpoint rows. Use upsert so we end up with a single canonical row
+      // containing the full payload + final metadata. For other task modes,
+      // keep the original plain insert behavior.
+      const finalRow = {
+        user_id: user.id,
+        question: question.substring(0, 500),
+        answer,
+        footnotes: finalFootnotes as unknown as Record<string, unknown>[],
+        task_mode: taskMode,
+        local_footnotes_count: localCount,
+        perplexity_footnotes_count: perplexityCount,
+        total_footnotes: finalFootnotes.length,
+        ...(metadata ? { metadata } : {}),
+      };
+      const { data: insertedLog, error: insertErr } = taskMode === RESEARCH_MODE
+        ? await adminClient
+            .from("qa_logs")
+            .upsert({ id: preallocatedQaLogId, ...finalRow }, { onConflict: "id" })
+            .select("id")
+            .maybeSingle()
+        : await adminClient
+            .from("qa_logs")
+            .insert(finalRow)
+            .select("id")
+            .maybeSingle();
 
       if (insertErr) {
         console.error("Failed to insert qa_logs row (non-fatal):", insertErr);
