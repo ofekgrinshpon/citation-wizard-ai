@@ -846,7 +846,33 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant } = body;
+
+    // ─── Eval harness gate (admin-only, internal). Allows the offline
+    // evaluation runner to force the legacy retrieval+drafter path on the
+    // exact same edge function so we get apples-to-apples comparisons.
+    // No effect for normal users: the flag is silently ignored unless the
+    // caller has the admin role.
+    let isAdminCaller = false;
+    try {
+      const { data: roleRow } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      isAdminCaller = !!roleRow;
+    } catch (_e) {
+      isAdminCaller = false;
+    }
+    const evalForceLegacy = isAdminCaller && bodyEvalForceLegacy === true;
+    const evalRunId = isAdminCaller && typeof bodyEvalRunId === "string" ? bodyEvalRunId : null;
+    const evalVariant = isAdminCaller && (bodyEvalVariant === "legacy" || bodyEvalVariant === "structured")
+      ? bodyEvalVariant
+      : null;
+    if (evalForceLegacy) {
+      console.log(`[eval] forcing legacy path (run=${evalRunId} variant=${evalVariant})`);
+    }
 
     if (!question || typeof question !== "string" || question.trim().length < 3) {
       return new Response(JSON.stringify({ error: "Question too short" }), {
