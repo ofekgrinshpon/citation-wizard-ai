@@ -1195,7 +1195,26 @@ ${(verify.fullText as string).slice(0, 50000)}
       try {
         // Step A: optionally expand short queries to a fuller legal phrasing
         const expandedQuery = await expandShortQuery(question, LOVABLE_API_KEY);
-        const queriesForEmbedding = expandedQuery ? [question, expandedQuery] : [question];
+        // Stage B: enrich vector search with sub-issue queries from the planner.
+        // Each plan contributes up to 3 short queries (legislation/caselaw/literature).
+        // Hard cap to avoid embedding-quota blowup.
+        const planQueries: string[] = [];
+        if (decomposedPlan?.query_plan) {
+          for (const p of decomposedPlan.query_plan) {
+            if (p.legislation_query) planQueries.push(p.legislation_query);
+            if (p.caselaw_query) planQueries.push(p.caselaw_query);
+            if (p.literature_query) planQueries.push(p.literature_query);
+          }
+        }
+        const planQueriesUnique = Array.from(new Set(planQueries.map((q) => q.trim()).filter(Boolean))).slice(0, 5);
+        const queriesForEmbedding = [
+          question,
+          ...(expandedQuery ? [expandedQuery] : []),
+          ...planQueriesUnique,
+        ];
+        if (planQueriesUnique.length > 0) {
+          console.log(`[plan] adding ${planQueriesUnique.length} sub-issue queries to vector search`);
+        }
         const keywordSourceText = expandedQuery ? `${question} ${expandedQuery}` : question;
 
         const keywords = extractKeywords(keywordSourceText);
