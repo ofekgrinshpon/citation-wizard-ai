@@ -2099,7 +2099,29 @@ ${citationInstructions}
 ${sourceCatalog}
 
 הקשר מהמקורות:
-${combinedContext}`;
+${combinedContext}${(claimMap && claimMapAllowedCount >= 2) ? `
+
+═══ מפת טענות מאושרת (Stage D — חובה לעקוב) ═══
+אתה כותב מתוך מפת הטענות הבאה. כל טענה משפטית מהותית בגוף התשובה חייבת להיות claim עם allowed_to_state=true.
+- support_strength="strong": ניתן לכתוב כקביעה מפורשת.
+- support_strength="partial": כתוב כ"משתמע" / "ניתן ללמוד" / "עולה מ...".
+- support_strength="weak": ציין רק כחוסר ודאות, או דלג.
+- needs_pinpoint=true: חובה pinpoint בהערת השוליים (ס' X ל..., בעמ' Y).
+- אסור להמציא טענות מחוץ למפה. אם אין claim שתומך בטענה — אל תכתוב אותה.
+- כל source_id במפה מתייחס לפריט ברשימת המקורות הזמינים למעלה.
+
+מבנה התשובה (חובה — עבור legal_research):
+**תשובה קצרה** | **השאלה המשפטית** | **המסגרת הנורמטיבית** | **מקורות מרכזיים** | **ניתוח** | **חוסר ודאות** (אם רלוונטי) | **מסקנה**
+
+מפת הטענות (JSON):
+${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
+  claim: c.claim,
+  sub_issue: c.sub_issue,
+  source_ids: c.source_ids,
+  authority_level: c.authority_level,
+  support_strength: c.support_strength,
+  needs_pinpoint: c.needs_pinpoint,
+})), null, 2)}` : ""}`;
 
     const promptLen = systemPrompt.length;
     console.log(`Prompt length: ${promptLen} chars, ${sourceCards.length} source cards`);
