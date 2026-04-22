@@ -1799,7 +1799,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   </Button>
                 </div>
                 <CardContent className="p-4">
-                  <div className="max-w-none text-foreground leading-relaxed whitespace-pre-wrap" style={{ fontSize: "12pt", textAlign: "justify", lineHeight: 1.8 }}>
+                  <div className="max-w-none text-foreground leading-relaxed whitespace-pre-wrap" style={{ fontSize: "12pt", textAlign: "right", lineHeight: 1.8 }}>
                     <AnswerWithFootnotes text={result.answer} onFootnoteClick={scrollToFootnote} />
                   </div>
                   {result.footnotes.length > 0 && (
@@ -2017,7 +2017,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             <CardContent className="p-4 sm:p-6">
               <div
                 className="max-w-none text-foreground leading-relaxed whitespace-pre-wrap"
-                style={{ fontSize: "12pt", textAlign: "justify", lineHeight: 1.8 }}
+                style={{ fontSize: "12pt", textAlign: "right", lineHeight: 1.8 }}
               >
                 <AnswerWithFootnotes text={result.answer} onFootnoteClick={scrollToFootnote} />
               </div>
