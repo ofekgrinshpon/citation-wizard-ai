@@ -476,6 +476,7 @@ export type Database = {
           footnotes: Json | null
           id: string
           local_footnotes_count: number
+          metadata: Json | null
           perplexity_footnotes_count: number
           project_id: string | null
           question: string
@@ -489,6 +490,7 @@ export type Database = {
           footnotes?: Json | null
           id?: string
           local_footnotes_count?: number
+          metadata?: Json | null
           perplexity_footnotes_count?: number
           project_id?: string | null
           question: string
@@ -502,6 +504,7 @@ export type Database = {
           footnotes?: Json | null
           id?: string
           local_footnotes_count?: number
+          metadata?: Json | null
           perplexity_footnotes_count?: number
           project_id?: string | null
           question?: string

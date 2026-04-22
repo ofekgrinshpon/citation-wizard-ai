@@ -5,6 +5,96 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { buildCitationInstructions } from "./citationRules.ts";
+import {
+  decomposeAndPlan,
+  buildClaimMap,
+  summarizeClaimMap,
+  summarizeQueryPlan,
+  type DecomposedPlan,
+  type ClaimMap,
+} from "./decomposition.ts";
+import { callDrafter, plannerProviderLabel, MODEL_CONFIG } from "./aiProvider.ts";
+
+// ─── Source pack types (Stage C — internal only, never serialized) ───
+type AuthorityClass =
+  | "primary_legislation"
+  | "basic_law"
+  | "supreme_court"
+  | "district_court"
+  | "labor_court"
+  | "knesset_research"
+  | "academic_book"
+  | "academic_article"
+  | "protocol"
+  | "external_web"
+  | "document"
+  | "other";
+
+interface SourcePackEntry {
+  source_id: number;
+  title: string;
+  source_type: string;
+  authority_class: AuthorityClass;
+  url?: string;
+  provenance: "local" | "perplexity" | "document";
+  excerpt: string;
+  case_number?: string;
+  usable_for_analysis: boolean;
+  usable_for_citation: boolean;
+  anchor_present: boolean;
+}
+
+/**
+ * Provenance hardening: this is the ONLY place that constructs the user-facing
+ * response payload. Internal fields (provenance, decomposition, claim_map,
+ * source_pack) cannot leak through this serializer.
+ */
+function buildResponse(
+  answer: string,
+  footnotes: Array<{ number: number; citation: string; source_type: string; url?: string }>,
+  source_urls: string[],
+  extras: { dropped_footnotes_count?: number } = {},
+): Response {
+  // Strip any internal-only fields from each footnote (e.g. `source` provenance).
+  const safeFootnotes = footnotes.map((f) => ({
+    number: f.number,
+    citation: f.citation,
+    source_type: f.source_type,
+    ...(f.url ? { url: f.url } : {}),
+  }));
+  const payload: Record<string, unknown> = {
+    answer,
+    footnotes: safeFootnotes,
+    source_urls,
+  };
+  if (typeof extras.dropped_footnotes_count === "number") {
+    payload.dropped_footnotes_count = extras.dropped_footnotes_count;
+  }
+  return new Response(JSON.stringify(payload), {
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+function classifyAuthority(sourceType: string, citation: string, url?: string): AuthorityClass {
+  const c = citation || "";
+  const u = url || "";
+  if (sourceType === "document") return "document";
+  if (sourceType === "protocol") return "protocol";
+  if (/חוק[-\s]יסוד|חוק יסוד/i.test(c)) return "basic_law";
+  if (/ס["״]ח|ס"ח|ספר החוקים|פקודת|תקנות/i.test(c)) return "primary_legislation";
+  if (sourceType === "israeli_law") return "primary_legislation";
+  if (sourceType === "caselaw") {
+    if (/בג["״]ץ|פ"ד|פד"י|supreme\.court/i.test(c + u)) return "supreme_court";
+    if (/בית\s*הדין\s*לעבודה|עע"מ|ע"ע/i.test(c)) return "labor_court";
+    return "district_court";
+  }
+  if (sourceType === "knesset_research") return "knesset_research";
+  if (sourceType === "journal_article") return "academic_article";
+  if (sourceType === "book") return "academic_book";
+  if (/knesset\.gov\.il/i.test(u)) return "protocol";
+  if (u) return "external_web";
+  return "other";
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -1042,7 +1132,28 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     }
 
+    // ========= Stage A+B: Decomposition + Query Plan (legal_research only) =========
+    // INTERNAL — never exposed to UI. Recorded in qa_logs.metadata for diagnostics.
+    let decomposedPlan: DecomposedPlan | null = null;
+    if (taskMode === "legal_research") {
+      try {
+        const tDecompStart = Date.now();
+        decomposedPlan = await decomposeAndPlan(question);
+        if (decomposedPlan) {
+          console.log(
+            `[plan] ${decomposedPlan.decomposition.sub_issues.length} sub-issues, ${decomposedPlan.query_plan.length} plans (${Date.now() - tDecompStart}ms; planner=${plannerProviderLabel()})`,
+          );
+        } else {
+          console.log(`[plan] decompose+plan returned null — falling back to legacy retrieval`);
+        }
+      } catch (decompErr) {
+        console.error("[plan] decompose+plan failed (non-fatal):", decompErr);
+        decomposedPlan = null;
+      }
+    }
+
     // ========= Step 1: Local search (hybrid: keyword + vector) + Perplexity IN PARALLEL =========
+
 
     // Helper: generate query embedding for vector search
     async function getQueryEmbedding(text: string): Promise<number[] | null> {
@@ -1084,7 +1195,26 @@ ${(verify.fullText as string).slice(0, 50000)}
       try {
         // Step A: optionally expand short queries to a fuller legal phrasing
         const expandedQuery = await expandShortQuery(question, LOVABLE_API_KEY);
-        const queriesForEmbedding = expandedQuery ? [question, expandedQuery] : [question];
+        // Stage B: enrich vector search with sub-issue queries from the planner.
+        // Each plan contributes up to 3 short queries (legislation/caselaw/literature).
+        // Hard cap to avoid embedding-quota blowup.
+        const planQueries: string[] = [];
+        if (decomposedPlan?.query_plan) {
+          for (const p of decomposedPlan.query_plan) {
+            if (p.legislation_query) planQueries.push(p.legislation_query);
+            if (p.caselaw_query) planQueries.push(p.caselaw_query);
+            if (p.literature_query) planQueries.push(p.literature_query);
+          }
+        }
+        const planQueriesUnique = Array.from(new Set(planQueries.map((q) => q.trim()).filter(Boolean))).slice(0, 5);
+        const queriesForEmbedding = [
+          question,
+          ...(expandedQuery ? [expandedQuery] : []),
+          ...planQueriesUnique,
+        ];
+        if (planQueriesUnique.length > 0) {
+          console.log(`[plan] adding ${planQueriesUnique.length} sub-issue queries to vector search`);
+        }
         const keywordSourceText = expandedQuery ? `${question} ${expandedQuery}` : question;
 
         const keywords = extractKeywords(keywordSourceText);
@@ -1363,7 +1493,15 @@ ${(verify.fullText as string).slice(0, 50000)}
         role: "system" as const,
         content: `Israeli law research assistant. Find PRIMARY legal sources only: statutes with ס"ח/ק"ת page numbers, court decisions with exact case numbers, academic books/articles. No blogs or law firm sites.`,
       };
-      const userMsg = { role: "user" as const, content: question };
+      // Stage B: append planner external_query hints to the Perplexity prompt
+      const externalHints = (decomposedPlan?.query_plan || [])
+        .map((p) => p.external_query)
+        .filter((q): q is string => Boolean(q && q.trim()))
+        .slice(0, 4);
+      const perplexityQuestion = externalHints.length > 0
+        ? `${question}\n\nהיבטים נוספים לחיפוש:\n${externalHints.map((h, i) => `${i + 1}. ${h}`).join("\n")}`
+        : question;
+      const userMsg = { role: "user" as const, content: perplexityQuestion };
 
       // Two attempts: full prompt with 30s, then short prompt with 20s on AbortError.
       const attempts = [
@@ -1627,7 +1765,64 @@ ${(verify.fullText as string).slice(0, 50000)}
     console.log(`Source cards: ${localCount} local, ${perplexityCount} perplexity, ${docCount} document`);
     console.log(`Final source mix: ${localCount} local / ${perplexityCount} perplexity (+ ${docCount} doc)`);
 
+    // ========= Stage C: Source Pack assembly (legal_research only, INTERNAL) =========
+    let sourcePack: SourcePackEntry[] = [];
+    if (taskMode === "legal_research") {
+      sourcePack = sourceCards.map((sc) => {
+        const excerpt = sc.excerpt || "";
+        const anchorPresent = Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document";
+        return {
+          source_id: sc.id,
+          title: sc.citation,
+          source_type: sc.source_type,
+          authority_class: classifyAuthority(sc.source_type, sc.citation, sc.url),
+          url: sc.url,
+          provenance: sc.provenance,
+          excerpt,
+          case_number: sc.case_number,
+          usable_for_analysis: excerpt.length > 300,
+          usable_for_citation: sc.citation.length > 15,
+          anchor_present: anchorPresent,
+        };
+      });
+      console.log(`[source-pack] ${sourcePack.length} entries; anchored=${sourcePack.filter((s) => s.anchor_present).length}`);
+    }
+
+    // ========= Stage D: Claim Map (legal_research only, INTERNAL) =========
+    let claimMap: ClaimMap | null = null;
+    let claimMapAllowedCount = 0;
+    if (taskMode === "legal_research" && decomposedPlan && sourcePack.length >= 2) {
+      try {
+        const tClaimStart = Date.now();
+        const sourcePackBrief = sourcePack
+          .filter((s) => s.usable_for_citation)
+          .slice(0, 16)
+          .map((s) => ({
+            source_id: s.source_id,
+            title: s.title,
+            authority_class: s.authority_class,
+            excerpt: s.excerpt,
+          }));
+        claimMap = await buildClaimMap(question, {
+          decomposition: decomposedPlan.decomposition,
+          sourcePackBrief,
+        });
+        if (claimMap) {
+          claimMapAllowedCount = claimMap.filter((c) => c.allowed_to_state).length;
+          console.log(
+            `[claim-map] ${claimMap.length} claims; ${claimMapAllowedCount} allowed (${Date.now() - tClaimStart}ms)`,
+          );
+        } else {
+          console.log("[claim-map] returned null — drafter will fall back to legacy prompt");
+        }
+      } catch (cmErr) {
+        console.error("[claim-map] failed (non-fatal):", cmErr);
+        claimMap = null;
+      }
+    }
+
     // ========= Step 3: Build context for AI (without forcing tool_call) =========
+
     const contextParts: string[] = [];
 
     if (hasDocument) {
@@ -1904,7 +2099,29 @@ ${citationInstructions}
 ${sourceCatalog}
 
 הקשר מהמקורות:
-${combinedContext}`;
+${combinedContext}${(claimMap && claimMapAllowedCount >= 2) ? `
+
+═══ מפת טענות מאושרת (Stage D — חובה לעקוב) ═══
+אתה כותב מתוך מפת הטענות הבאה. כל טענה משפטית מהותית בגוף התשובה חייבת להיות claim עם allowed_to_state=true.
+- support_strength="strong": ניתן לכתוב כקביעה מפורשת.
+- support_strength="partial": כתוב כ"משתמע" / "ניתן ללמוד" / "עולה מ...".
+- support_strength="weak": ציין רק כחוסר ודאות, או דלג.
+- needs_pinpoint=true: חובה pinpoint בהערת השוליים (ס' X ל..., בעמ' Y).
+- אסור להמציא טענות מחוץ למפה. אם אין claim שתומך בטענה — אל תכתוב אותה.
+- כל source_id במפה מתייחס לפריט ברשימת המקורות הזמינים למעלה.
+
+מבנה התשובה (חובה — עבור legal_research):
+**תשובה קצרה** | **השאלה המשפטית** | **המסגרת הנורמטיבית** | **מקורות מרכזיים** | **ניתוח** | **חוסר ודאות** (אם רלוונטי) | **מסקנה**
+
+מפת הטענות (JSON):
+${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
+  claim: c.claim,
+  sub_issue: c.sub_issue,
+  source_ids: c.source_ids,
+  authority_level: c.authority_level,
+  support_strength: c.support_strength,
+  needs_pinpoint: c.needs_pinpoint,
+})), null, 2)}` : ""}`;
 
     const promptLen = systemPrompt.length;
     console.log(`Prompt length: ${promptLen} chars, ${sourceCards.length} source cards`);
@@ -1929,60 +2146,64 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       ],
     });
 
-    console.log("AI call starting (90s timeout, no tool_call)...");
+    console.log("AI call starting (drafter, 90s timeout)...");
     let answerText = "";
-    try {
-      const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        body: aiBody,
-      }, 90000); // 90s — no tool_call overhead, plenty of time
-
+    let drafterModelUsed = "google/gemini-2.5-flash";
+    // Stage E: route legal_research with claim-map through callDrafter (provider-aware).
+    // All other modes (case_summary already returned earlier; pleading_analysis, academic) keep the legacy Gemini call.
+    const useNewDrafter = taskMode === "legal_research" && claimMap !== null && claimMapAllowedCount >= 2;
+    if (useNewDrafter) {
+      const drafterRes = await callDrafter(systemPrompt, userMessage, aiMaxTokens, 90000);
       const tAi = Date.now();
-      console.log(`AI call took ${tAi - tRetrieval}ms`);
-
-      if (!aiRes.ok) {
-        if (aiRes.status === 429) {
-          return new Response(
-            JSON.stringify({ error: "יותר מדי בקשות. נסו שוב בעוד דקה." }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-        if (aiRes.status === 402) {
-          return new Response(
-            JSON.stringify({ error: "נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות." }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-        const errText = await aiRes.text();
-        console.error("AI gateway error:", aiRes.status, errText);
-        return new Response(
-          JSON.stringify({ error: "שגיאה בשירות ה-AI. נסו שוב בעוד רגע." }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-
-      const aiData = await aiRes.json();
-      answerText = aiData.choices?.[0]?.message?.content || "";
-      const finishReason = aiData.choices?.[0]?.finish_reason || "unknown";
-      console.log(`AI response: ${answerText.length} chars, finish_reason=${finishReason}`);
-
-      if (!answerText || answerText.length < 50) {
+      console.log(`Drafter call took ${tAi - tRetrieval}ms (used=${drafterRes?.modelUsed || "FAILED"})`);
+      if (!drafterRes || drafterRes.text.length < 50) {
         return new Response(
           JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-    } catch (err) {
-      console.error("AI call error:", err);
-      return new Response(
-        JSON.stringify({ error: "תם הזמן לעיבוד השאלה. נסו שוב או קצרו את השאלה." }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      answerText = drafterRes.text;
+      drafterModelUsed = drafterRes.modelUsed;
+    } else {
+      try {
+        const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: aiBody,
+        }, 90000);
+
+        const tAi = Date.now();
+        console.log(`AI call took ${tAi - tRetrieval}ms`);
+
+        if (!aiRes.ok) {
+          if (aiRes.status === 429) {
+            return new Response(JSON.stringify({ error: "יותר מדי בקשות. נסו שוב בעוד דקה." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+          }
+          if (aiRes.status === 402) {
+            return new Response(JSON.stringify({ error: "נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+          }
+          const errText = await aiRes.text();
+          console.error("AI gateway error:", aiRes.status, errText);
+          return new Response(JSON.stringify({ error: "שגיאה בשירות ה-AI. נסו שוב בעוד רגע." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+
+        const aiData = await aiRes.json();
+        answerText = aiData.choices?.[0]?.message?.content || "";
+        const finishReason = aiData.choices?.[0]?.finish_reason || "unknown";
+        console.log(`AI response: ${answerText.length} chars, finish_reason=${finishReason}`);
+
+        if (!answerText || answerText.length < 50) {
+          return new Response(JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        }
+      } catch (err) {
+        console.error("AI call error:", err);
+        return new Response(JSON.stringify({ error: "תם הזמן לעיבוד השאלה. נסו שוב או קצרו את השאלה." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
     }
+
 
     // ========= Step 5: Parse AI footnotes section =========
     // The AI appends a footnotes header followed by numbered citations.
