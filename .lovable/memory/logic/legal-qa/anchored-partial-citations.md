@@ -11,9 +11,12 @@ In `supabase/functions/legal-qa/index.ts`, the post-processing footnote filter u
 
 **Filter thresholds (`reasonFor`):**
 - `url_only` — hard fail always
-- `placeholder_dominant` — **NEW**: unanchored + contains `[חסר: ...]` marker → drop (regardless of length). Catches AI-fabricated skeletons like `פס"ד שפירא [חסר: מספר תיק] [חסר: פרטי פרסום]`.
+- `broken_title` — hard fail always (anchored or not). Catches placeholder ingestion-failure titles like `פרטי מסמך`, `ללא כותרת`, `untitled`, `no title` — these are never valid citations even with a URL.
+- `placeholder_dominant` — unanchored + contains `[חסר: ...]` marker → drop (regardless of length). Catches AI-fabricated skeletons like `פס"ד שפירא [חסר: מספר תיק] [חסר: פרטי פרסום]`.
 - Anchored: `min length 12`, `missing_parties` allowed (partial citation with markers permitted)
 - Non-anchored: `min length 25`, `missing_parties` rejected
+
+**Post-processing principle (cleanup vs. synthesis vs. filtering):** Three distinct layers run in order — (1) **AI** creates the citation format using prompt + source-card hints + `citationRules.ts`. (2) **Auto-validators** (e.g. legislation year-completeness, Rule 8.3 protocol cleanup) only **strip invalid patterns** — they do not synthesize correct formats and do not "rescue" broken citations. (3) **Filters** (`reasonFor`) make the final keep/drop decision; if cleanup left nothing meaningful, the filter pipeline drops it. See `mem://logic/citation-rules/meeting-protocols-rule-8-3` for the canonical Rule 8.3 example of this division.
 
 **Preserved markers:** The placeholder cleanup regex (`/\[missing:...\]|\[פרט חסר...\]/g`) intentionally does NOT strip `[חסר: ...]` — it's part of the intended UI rendering (`MessageBubble` styles them) for *anchored* notes that survive the filter.
 

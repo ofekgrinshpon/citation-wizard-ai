@@ -1590,12 +1590,19 @@ ${(verify.fullText as string).slice(0, 50000)}
 
     // Perplexity sources — extract from citations array
     if (citations.length > 0) {
+      const KNESSET_PROTOCOL_RE = /fs\.knesset\.gov\.il\/(\d+)\/(?:Committees|Plenum)\//i;
       for (const citUrl of citations.slice(0, 8)) {
         if (isBlogUrl(citUrl)) continue;
+        const protMatch = citUrl.match(KNESSET_PROTOCOL_RE);
+        const isProtocol = !!protMatch;
         sourceCards.push({
           id: cardId++,
-          citation: citUrl, // URL as citation — AI will improve in its answer
-          source_type: "web",
+          // For Knesset protocols, prefix the URL with a Rule 8.3 hint so the AI
+          // formats it correctly instead of falling back to Rule 34.2 ("פורסם באתר כנסת").
+          citation: isProtocol
+            ? `[פרוטוקול ישיבה — עצב לפי כלל 8.3: הכנסת ה-${protMatch![1]}; השמט מספר ישיבה אם לא ידוע; אסור "פורסם באתר הכנסת"; אסור [חסר: שם מומחה/מחבר]] ${citUrl}`
+            : citUrl,
+          source_type: isProtocol ? "protocol" : "web",
           url: citUrl,
           provenance: "perplexity",
           excerpt: "",
@@ -1862,7 +1869,25 @@ ${citationInstructions}
   (1) לעצב הפניה מלאה לפי כללי האזכור האחיד (מחבר, כותרת, כתב עת, שנה, עמוד) על סמך מטא-דאטה שמופיעה בשורות [חיצוני] של Perplexity, או
   (2) **להשמיט את הערת השוליים לחלוטין** ולנסח את הקביעה ללא הפניה.
 - כלל 34.2 (URL כהפניה) חל **אך ורק** על מקורות שהם אתר אינטרנט מובהק (בלוג, אתר ארגון, פוסט) — **לא** על פרוטוקולי כנסת, מאמרים אקדמיים בפורמט PDF, או מסמכים משפטיים אחרים שיש להם פורמט אזכור משלהם.
-- פרוטוקולי ועדות כנסת: אם אין לך פרטי פרסום מלאים (שם הוועדה, מספר ישיבה, תאריך) — **השמט** את ההפניה במקום לכתוב URL.
+
+**פרוטוקולי ישיבה (כלל 8.3)**: כל URL בדפוס \`fs.knesset.gov.il/.../Committees/...\` או \`fs.knesset.gov.il/.../Plenum/...\` הוא פרוטוקול ישיבה. **חובה** לעצב לפי כלל 8.3:
+
+\`פרוטוקול ישיבה [מספר אם קיים] של [גוף][, עמוד] (DD.MM.YYYY).\`
+
+דוגמאות תקניות:
+- פרוטוקול ישיבה 15 של הכנסת ה-23, 7–9 (21.4.2020).
+- פרוטוקול ישיבה 110 של ועדת החוקה, חוק ומשפט, הכנסת ה-14 (3.11.1997).
+- פרוטוקול ישיבה של ועדת השרים לעניני חוץ ובטחון, הממשלה ה-4, 9 (16.6.1953).
+
+איסורים מוחלטים על פרוטוקולים:
+• אסור: "(פורסם באתר כנסת, [תאריך]) [URL]" — אינו פורמט תקני.
+• אסור: "[חסר: שם מומחה]" / "[חסר: שם מחבר]" — לפרוטוקול אין מחבר.
+• אסור: "[חסר: מספר ישיבה]" — אם אין מספר ישיבה, השמט את הרכיב לגמרי.
+• אסור: לצטט פרוטוקול ללא שם הגוף ותאריך — השמט את ההפניה.
+
+חובה: לציין מספר כנסת או ממשלה גם בוועדות. "ועדת הכלכלה" אינו תקני — חייב להיות "ועדת הכלכלה, הכנסת ה-N".
+
+חילוץ מ-URL: ב-\`/25/Committees/25_ptv_4940105.doc\` — מספר הכנסת = 25. שם הוועדה והתאריך מופיעים ב-Perplexity body — חלץ משם.
 
 לכל מקור מקומי [מאומת] — עצב את ההפניה מהפרטים שסופקו (מספר תיק, שמות צדדים, ערכאה, תאריך) לפי כלל 18 (פסיקה) או הכלל המתאים.
 
@@ -2594,6 +2619,38 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       console.log(`Legislation year fix in FN #${fn.number}: "${before.slice(0, 120)}" → "${fn.citation.slice(0, 120)}"`);
     }
 
+    // ========= Rule 8.3 protocol cleanup =========
+    // Cleanup ONLY — does not synthesize Rule 8.3 format.
+    // Strips invalid patterns from Knesset/government meeting-protocol citations.
+    // If nothing meaningful remains, the existing filter pipeline
+    // (url_only / too_short / placeholder_dominant / broken_title) will drop the
+    // footnote. Producing a valid Rule 8.3 citation
+    // ("פרוטוקול ישיבה X של ועדת Y, הכנסת ה-N (date).") is the AI's responsibility,
+    // driven by: prompt + source-card hint (KNESSET_PROTOCOL_RE) + citationRules.ts.
+    const KNESSET_PUB_RE = /\s*\(פורסם\s+ב?(?:אתר\s+)?ה?כנסת[^)]*\)\s*/g;
+    const MISSING_MEETING_NUM_RE = /\s*\[חסר:\s*מספר\s+ישיבה\s*\]\s*/g;
+    const PROTOCOL_AUTHOR_RE = /^\s*\[חסר:\s*שם\s+(?:מומחה|מחבר)\s*\]\s*/;
+    const KNESSET_PROTOCOL_URL_RE = /fs\.knesset\.gov\.il\/\d+\/(?:Committees|Plenum)\//i;
+    for (const fn of footnotes) {
+      const isProtocolCit =
+        /פרוטוקול\s+ישיבה/.test(fn.citation) ||
+        KNESSET_PROTOCOL_URL_RE.test(fn.url || "") ||
+        KNESSET_PROTOCOL_URL_RE.test(fn.citation) ||
+        KNESSET_PUB_RE.test(fn.citation);
+      if (!isProtocolCit) continue;
+      const before = fn.citation;
+      fn.citation = fn.citation
+        .replace(KNESSET_PUB_RE, " ")
+        .replace(MISSING_MEETING_NUM_RE, " ")
+        .replace(PROTOCOL_AUTHOR_RE, "")
+        .replace(/\s{2,}/g, " ")
+        .replace(/\s+([.,;:])/g, "$1")
+        .trim();
+      if (before !== fn.citation) {
+        console.log(`Rule 8.3 cleanup FN #${fn.number}: "${before.slice(0, 100)}" → "${fn.citation.slice(0, 100)}"`);
+      }
+    }
+
     // Filter footnotes that are bare URLs / URL-only (violation of citation rules),
     // too short, or missing substantive words. Then renumber.
     const URL_ONLY_RE = /^(?:\[?\s*)?https?:\/\/\S+(?:\s*\([^)]*\))?\s*\.?\s*$/i;
@@ -2628,9 +2685,15 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       return false;
     };
     const hasMissingMarker = (txt: string): boolean => /\[חסר:\s*[^\]]+\]/.test(txt);
+    // Known broken/placeholder titles from ingestion failures (e.g., Knesset research
+    // scrape fallback). These are never a valid citation — drop unconditionally,
+    // even if anchored, since "פרטי מסמך" / "ללא כותרת" are non-titles.
+    const BROKEN_TITLE_RE = /^\s*(?:["״"]?)\s*(?:פרטי\s+מסמך|ללא\s+כותרת|untitled|no\s+title)\b/i;
+    const isBrokenTitle = (txt: string): boolean => BROKEN_TITLE_RE.test(txt.trim());
     const reasonFor = (fn: { citation: string; url?: string; source?: string }): string | null => {
       const t = fn.citation.trim();
       if (isUrlOnly(t)) return "url_only"; // hard fail always
+      if (isBrokenTitle(t)) return "broken_title"; // hard fail always — invalid placeholder title
       const anchored = hasAnchor(fn);
       // NEW: unanchored + AI explicitly admitted missing fields ([חסר: ...]) → drop.
       // The marker alone is never proof of an anchor; without a real source it's a hallucinated skeleton.
