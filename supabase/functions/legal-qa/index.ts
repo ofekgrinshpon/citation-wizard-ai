@@ -2593,6 +2593,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       const t = fn.citation.trim();
       if (isUrlOnly(t)) return "url_only"; // hard fail always
       const anchored = hasAnchor(fn);
+      // NEW: unanchored + AI explicitly admitted missing fields ([חסר: ...]) → drop.
+      // The marker alone is never proof of an anchor; without a real source it's a hallucinated skeleton.
+      if (!anchored && hasMissingMarker(t)) return "placeholder_dominant";
       const minLen = anchored ? 12 : 25;
       if (t.length < minLen) return "too_short";
       // anchored footnotes may have partial info ([חסר: צד]) — don't drop them on missing_parties
