@@ -1961,6 +1961,18 @@ ${(verify.fullText as string).slice(0, 50000)}
     console.log(`Source cards: ${localCount} local, ${perplexityCount} perplexity, ${docCount} document`);
     console.log(`Final source mix: ${localCount} local / ${perplexityCount} perplexity (+ ${docCount} doc)`);
 
+    // ─── Tier-1.5 fix: finalize the parallel decomposition promise BEFORE
+    // assembling source pack v2. Previously this await happened AFTER the
+    // sourcePack block, so `decomposedPlan` was still null when we tried to
+    // map decompositionV2 → forcing the structured drafter gate to fail
+    // silently. Retrieval is already complete here, so awaiting is free.
+    if (decompPromise) {
+      const decompRes = await decompPromise;
+      stageRuns.push(decompRes.run);
+      decomposedPlan = decompRes.data;
+      writeCheckpoint("decomposition");
+    }
+
     // ========= Stage C: Source Pack assembly (legal_research only, INTERNAL) =========
     let sourcePack: SourcePackEntry[] = [];
     let sourcePackV2: LegalSourcePack | null = null;
@@ -1988,24 +2000,14 @@ ${(verify.fullText as string).slice(0, 50000)}
       // Gate ≥2 entries (matches the claim-map prerequisite below).
       if (sourcePack.length >= 2) {
         sourcePackV2 = assembleSourcePack(sourcePack as InternalSourcePackEntry[]);
-        // Map decomposition (V2) once we have BOTH sides — needs hasDocument.
+        // decomposedPlan is now resolved (we awaited above), so this mapping
+        // succeeds whenever decomposition itself succeeded.
         if (decomposedPlan) {
           decompositionV2 = mapToDecompositionV2(decomposedPlan, hasDocument, question);
         }
         const sps = summarizeSourcePack(sourcePackV2);
         console.log(`[source-pack-v2] core=${sps.core} supporting=${sps.supporting} secondary=${sps.secondary} anchored=${sps.anchored}`);
       }
-    }
-
-    // ─── Tier-1 tuning: finalize the parallel decomposition promise here.
-    // By this point retrieval is complete, so awaiting the plan only blocks
-    // claim_map (which can't run without it anyway). Push the StageRun to
-    // telemetry and write a checkpoint so disconnect diagnostics still work.
-    if (decompPromise) {
-      const decompRes = await decompPromise;
-      stageRuns.push(decompRes.run);
-      decomposedPlan = decompRes.data;
-      writeCheckpoint("decomposition");
     }
 
     // ========= Stage D: Claim Map (legal_research only, INTERNAL) =========

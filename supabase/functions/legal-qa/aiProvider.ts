@@ -16,7 +16,14 @@ const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
 
 export const MODEL_CONFIG = {
-  // Planner: decomposition+plan, claim-map. Light-to-medium reasoning.
+  // Tier-1.5 split: decomposition and claim_map use DIFFERENT models. Previously
+  // the shared PLANNER_OPENAI constant accidentally moved claim_map to nano when
+  // we tuned decomposition; now each stage picks its own.
+  DECOMPOSER_OPENAI: LEGAL_RESEARCH_MODELS.decomposition.primary.replace(/^openai\//, ""),
+  DECOMPOSER_GEMINI: LEGAL_RESEARCH_MODELS.decomposition.fallback,
+  CLAIM_MAP_OPENAI: LEGAL_RESEARCH_MODELS.claimMap.primary.replace(/^openai\//, ""),
+  CLAIM_MAP_GEMINI: LEGAL_RESEARCH_MODELS.claimMap.fallback,
+  // Legacy aliases retained for any external readers — point at decomposition.
   PLANNER_OPENAI: LEGAL_RESEARCH_MODELS.decomposition.primary.replace(/^openai\//, ""),
   PLANNER_GEMINI: LEGAL_RESEARCH_MODELS.decomposition.fallback,
   // Drafter: final memo. Heavier reasoning preferred.
@@ -95,7 +102,10 @@ export async function callPlannerJSON<T = unknown>(
   const useOpenAI = Boolean(OPENAI_API_KEY);
   const url = useOpenAI ? OPENAI_URL : LOVABLE_URL;
   const apiKey = useOpenAI ? OPENAI_API_KEY : LOVABLE_API_KEY;
-  const model = useOpenAI ? MODEL_CONFIG.PLANNER_OPENAI : MODEL_CONFIG.PLANNER_GEMINI;
+  // Tier-1.5: select model per stage. claim_map → mini; everything else → decomposer (nano).
+  const model = opts.stage === "claim_map"
+    ? (useOpenAI ? MODEL_CONFIG.CLAIM_MAP_OPENAI : MODEL_CONFIG.CLAIM_MAP_GEMINI)
+    : (useOpenAI ? MODEL_CONFIG.DECOMPOSER_OPENAI : MODEL_CONFIG.DECOMPOSER_GEMINI);
   const provider: "openai" | "gemini" = useOpenAI ? "openai" : "gemini";
   const timeoutMs = opts.timeoutMs ?? 30000;
   const reasoningEffort = opts.reasoningEffort;
