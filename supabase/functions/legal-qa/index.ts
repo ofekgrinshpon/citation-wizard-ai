@@ -1288,7 +1288,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     };
 
-    if (taskMode === RESEARCH_MODE) {
+    if (taskMode === RESEARCH_MODE && !evalForceLegacy) {
       try {
         const tDecompStart = Date.now();
         const { data, run } = await decomposeAndPlan(question);
@@ -1964,7 +1964,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     let claimMapAllowedCount = 0;
     let claimMapV2: LegalClaimMap | null = null;
     let draftingInput: LegalDraftingInput | null = null;
-    if (taskMode === RESEARCH_MODE && decomposedPlan && sourcePack.length >= 2) {
+    if (taskMode === RESEARCH_MODE && !evalForceLegacy && decomposedPlan && sourcePack.length >= 2) {
       try {
         const tClaimStart = Date.now();
         // Trim before handing off to the planner. Final additional trimming
