@@ -1590,12 +1590,19 @@ ${(verify.fullText as string).slice(0, 50000)}
 
     // Perplexity sources — extract from citations array
     if (citations.length > 0) {
+      const KNESSET_PROTOCOL_RE = /fs\.knesset\.gov\.il\/(\d+)\/(?:Committees|Plenum)\//i;
       for (const citUrl of citations.slice(0, 8)) {
         if (isBlogUrl(citUrl)) continue;
+        const protMatch = citUrl.match(KNESSET_PROTOCOL_RE);
+        const isProtocol = !!protMatch;
         sourceCards.push({
           id: cardId++,
-          citation: citUrl, // URL as citation — AI will improve in its answer
-          source_type: "web",
+          // For Knesset protocols, prefix the URL with a Rule 8.3 hint so the AI
+          // formats it correctly instead of falling back to Rule 34.2 ("פורסם באתר כנסת").
+          citation: isProtocol
+            ? `[פרוטוקול ישיבה — עצב לפי כלל 8.3: הכנסת ה-${protMatch![1]}; השמט מספר ישיבה אם לא ידוע; אסור "פורסם באתר הכנסת"; אסור [חסר: שם מומחה/מחבר]] ${citUrl}`
+            : citUrl,
+          source_type: isProtocol ? "protocol" : "web",
           url: citUrl,
           provenance: "perplexity",
           excerpt: "",
