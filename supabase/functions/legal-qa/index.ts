@@ -1493,7 +1493,15 @@ ${(verify.fullText as string).slice(0, 50000)}
         role: "system" as const,
         content: `Israeli law research assistant. Find PRIMARY legal sources only: statutes with ס"ח/ק"ת page numbers, court decisions with exact case numbers, academic books/articles. No blogs or law firm sites.`,
       };
-      const userMsg = { role: "user" as const, content: question };
+      // Stage B: append planner external_query hints to the Perplexity prompt
+      const externalHints = (decomposedPlan?.query_plan || [])
+        .map((p) => p.external_query)
+        .filter((q): q is string => Boolean(q && q.trim()))
+        .slice(0, 4);
+      const perplexityQuestion = externalHints.length > 0
+        ? `${question}\n\nהיבטים נוספים לחיפוש:\n${externalHints.map((h, i) => `${i + 1}. ${h}`).join("\n")}`
+        : question;
+      const userMsg = { role: "user" as const, content: perplexityQuestion };
 
       // Two attempts: full prompt with 30s, then short prompt with 20s on AbortError.
       const attempts = [
