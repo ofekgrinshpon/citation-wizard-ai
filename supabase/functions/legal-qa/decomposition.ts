@@ -5,7 +5,7 @@
 // to the user-facing response. They are recorded in `qa_logs.metadata`
 // for admin diagnostics.
 
-import { callPlannerJSON, type PlannerToolDef } from "./aiProvider.ts";
+import { callPlannerJSON, type PlannerToolDef, type StageRun } from "./aiProvider.ts";
 
 // ────────────────────────────────────────────────────────────────
 // Stage A+B: Decomposition + Query Plan (single planner call)
@@ -125,25 +125,29 @@ const DECOMP_SYSTEM_PROMPT = `אתה אנליסט משפטי. תפקידך לפ�
 
 /**
  * Stage A+B: One planner call that returns both decomposition and per-sub-issue query plan.
- * Returns null on any failure → caller must fall back to legacy retrieval path.
+ * Returns `{ data, run }`. `data` is null on any failure → caller must fall back to
+ * legacy retrieval path. `run` carries full telemetry (status, duration, model used).
  */
 export async function decomposeAndPlan(
   question: string,
-): Promise<DecomposedPlan | null> {
-  const result = await callPlannerJSON<DecomposedPlan>(
+): Promise<{ data: DecomposedPlan | null; run: StageRun }> {
+  const { data, run } = await callPlannerJSON<DecomposedPlan>(
     DECOMP_SYSTEM_PROMPT,
     `שאלת המחקר:\n${question}`,
     DECOMP_PLAN_TOOL,
-    10000,
+    { stage: "decomposition", timeoutMs: 30000, reasoningEffort: "minimal" },
   );
-  if (!result || !result.decomposition?.main_issue || !Array.isArray(result.decomposition?.sub_issues)) {
-    return null;
+  if (!data) return { data: null, run };
+  if (!data.decomposition?.main_issue || !Array.isArray(data.decomposition?.sub_issues)) {
+    return { data: null, run: { ...run, status: "parse_error", error_message: "missing main_issue or sub_issues" } };
   }
-  if (result.decomposition.sub_issues.length < 2) return null;
-  if (!Array.isArray(result.query_plan)) {
-    result.query_plan = [];
+  if (data.decomposition.sub_issues.length < 2) {
+    return { data: null, run: { ...run, status: "parse_error", error_message: "fewer than 2 sub_issues" } };
   }
-  return result;
+  if (!Array.isArray(data.query_plan)) {
+    data.query_plan = [];
+  }
+  return { data, run };
 }
 
 // ────────────────────────────────────────────────────────────────
@@ -247,7 +251,7 @@ export interface ClaimMapInput {
 export async function buildClaimMap(
   question: string,
   input: ClaimMapInput,
-): Promise<ClaimMap | null> {
+): Promise<{ data: ClaimMap | null; run: StageRun }> {
   const subIssuesText = input.decomposition.sub_issues
     .map((s, i) => `${i + 1}. ${s}`)
     .join("\n");
@@ -271,17 +275,19 @@ ${sourcesText}
 
 בנה מפת טענות מעוגנת. כל טענה עם source_ids מתוך הרשימה למעלה.`;
 
-  const result = await callPlannerJSON<{ claims: ClaimMap }>(
+  const { data, run } = await callPlannerJSON<{ claims: ClaimMap }>(
     CLAIM_MAP_SYSTEM_PROMPT,
     userPrompt,
     CLAIM_MAP_TOOL,
-    15000,
+    { stage: "claim_map", timeoutMs: 45000, reasoningEffort: "low" },
   );
-  if (!result || !Array.isArray(result.claims)) return null;
+  if (!data || !Array.isArray(data.claims)) return { data: null, run };
   // Defensive: ensure source_ids exists and arrays of integers.
-  const cleaned = result.claims.filter((c) => c && typeof c.claim === "string" && Array.isArray(c.source_ids));
-  if (cleaned.length === 0) return null;
-  return cleaned;
+  const cleaned = data.claims.filter((c) => c && typeof c.claim === "string" && Array.isArray(c.source_ids));
+  if (cleaned.length === 0) {
+    return { data: null, run: { ...run, status: "parse_error", error_message: "0 valid claims after cleaning" } };
+  }
+  return { data: cleaned, run };
 }
 
 // ────────────────────────────────────────────────────────────────

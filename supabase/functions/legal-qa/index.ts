@@ -13,7 +13,7 @@ import {
   type DecomposedPlan,
   type ClaimMap,
 } from "./decomposition.ts";
-import { callDrafter, plannerProviderLabel, MODEL_CONFIG } from "./aiProvider.ts";
+import { callDrafter, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
   BANNED_KEYS,
   type LegalClaimMap,
@@ -1189,16 +1189,21 @@ ${(verify.fullText as string).slice(0, 50000)}
     // INTERNAL — never exposed to UI. Recorded in qa_logs.metadata for diagnostics.
     let decomposedPlan: DecomposedPlan | null = null;
     let decompositionV2: LegalResearchDecomposition | null = null;
+    // Per-stage runtime telemetry. Each stage pushes its `StageRun` here so we
+    // can record honest "this model actually completed" data in qa_logs.metadata.
+    const stageRuns: StageRun[] = [];
     if (taskMode === RESEARCH_MODE) {
       try {
         const tDecompStart = Date.now();
-        decomposedPlan = await decomposeAndPlan(question);
+        const { data, run } = await decomposeAndPlan(question);
+        stageRuns.push(run);
+        decomposedPlan = data;
         if (decomposedPlan) {
           console.log(
-            `[plan] ${decomposedPlan.decomposition.sub_issues.length} sub-issues, ${decomposedPlan.query_plan.length} plans (${Date.now() - tDecompStart}ms; planner=${plannerProviderLabel()})`,
+            `[plan] ${decomposedPlan.decomposition.sub_issues.length} sub-issues, ${decomposedPlan.query_plan.length} plans (${Date.now() - tDecompStart}ms; ${run.provider}/${run.model}, status=${run.status})`,
           );
         } else {
-          console.log(`[plan] decompose+plan returned null — falling back to legacy retrieval`);
+          console.log(`[plan] decompose+plan returned null (status=${run.status}, ${run.duration_ms}ms) — falling back to legacy retrieval`);
         }
       } catch (decompErr) {
         console.error("[plan] decompose+plan failed (non-fatal):", decompErr);
@@ -1872,14 +1877,16 @@ ${(verify.fullText as string).slice(0, 50000)}
             authority_class: s.authority_class,
             excerpt: s.excerpt,
           }));
-        claimMap = await buildClaimMap(question, {
+        const cmRes = await buildClaimMap(question, {
           decomposition: decomposedPlan.decomposition,
           sourcePackBrief,
         });
+        stageRuns.push(cmRes.run);
+        claimMap = cmRes.data;
         if (claimMap) {
           claimMapAllowedCount = claimMap.filter((c) => c.allowed_to_state).length;
           console.log(
-            `[claim-map] ${claimMap.length} claims; ${claimMapAllowedCount} allowed (${Date.now() - tClaimStart}ms)`,
+            `[claim-map] ${claimMap.length} claims; ${claimMapAllowedCount} allowed (${Date.now() - tClaimStart}ms; ${cmRes.run.provider}/${cmRes.run.model}, status=${cmRes.run.status})`,
           );
 
           // V2 contract: map to LegalClaimMap + assemble LegalDraftingInput.
@@ -1900,7 +1907,7 @@ ${(verify.fullText as string).slice(0, 50000)}
             }
           }
         } else {
-          console.log("[claim-map] returned null — drafter will fall back to legacy prompt");
+          console.log(`[claim-map] returned null (status=${cmRes.run.status}, ${cmRes.run.duration_ms}ms) — drafter will fall back to legacy prompt`);
         }
       } catch (cmErr) {
         console.error("[claim-map] failed (non-fatal):", cmErr);
@@ -2265,11 +2272,23 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // Stage E: route legal_research with claim-map through callDrafter (provider-aware).
     // All other modes (case_summary already returned earlier; pleading_analysis, academic) keep the legacy Gemini call.
     const useNewDrafter = taskMode === RESEARCH_MODE && claimMap !== null && claimMapAllowedCount >= 2;
+    const drafterStartedAt = new Date();
+    const drafterStartMs = Date.now();
     if (useNewDrafter) {
       const drafterRes = await callDrafter(systemPrompt, userMessage, aiMaxTokens, 90000);
       const tAi = Date.now();
       console.log(`Drafter call took ${tAi - tRetrieval}ms (used=${drafterRes?.modelUsed || "FAILED"})`);
       if (!drafterRes || drafterRes.text.length < 50) {
+        stageRuns.push({
+          stage: "drafting",
+          provider: Deno.env.get("OPENAI_API_KEY") ? "openai" : "gemini",
+          model: MODEL_CONFIG.DRAFTER_OPENAI,
+          started_at: drafterStartedAt.toISOString(),
+          completed_at: new Date().toISOString(),
+          duration_ms: Date.now() - drafterStartMs,
+          status: "error",
+          error_message: "drafter returned empty or null",
+        });
         return new Response(
           JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -2277,6 +2296,15 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       }
       answerText = drafterRes.text;
       drafterModelUsed = drafterRes.modelUsed;
+      stageRuns.push({
+        stage: "drafting",
+        provider: drafterModelUsed.startsWith("gpt-") ? "openai" : "gemini",
+        model: drafterModelUsed,
+        started_at: drafterStartedAt.toISOString(),
+        completed_at: new Date().toISOString(),
+        duration_ms: Date.now() - drafterStartMs,
+        status: "success",
+      });
     } else {
       try {
         const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -2311,8 +2339,32 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         if (!answerText || answerText.length < 50) {
           return new Response(JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
+        // Legacy Gemini drafter path — record telemetry too.
+        if (taskMode === RESEARCH_MODE) {
+          stageRuns.push({
+            stage: "drafting",
+            provider: "gemini",
+            model: "google/gemini-2.5-flash",
+            started_at: drafterStartedAt.toISOString(),
+            completed_at: new Date().toISOString(),
+            duration_ms: Date.now() - drafterStartMs,
+            status: "success",
+          });
+        }
       } catch (err) {
         console.error("AI call error:", err);
+        if (taskMode === RESEARCH_MODE) {
+          stageRuns.push({
+            stage: "drafting",
+            provider: "gemini",
+            model: "google/gemini-2.5-flash",
+            started_at: drafterStartedAt.toISOString(),
+            completed_at: new Date().toISOString(),
+            duration_ms: Date.now() - drafterStartMs,
+            status: /abort/i.test((err as Error).message ?? "") ? "timeout" : "error",
+            error_message: (err as Error).message,
+          });
+        }
         return new Response(JSON.stringify({ error: "תם הזמן לעיבוד השאלה. נסו שוב או קצרו את השאלה." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
     }
@@ -3184,13 +3236,30 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             ?? (claimMap ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength } : null),
           drafting_path: draftingPath,
           draft_path: useNewDrafter ? "claim_map" : "fallback",   // legacy alias for back-compat
-          models_used: {
-            planner: plannerProviderLabel(),
-            decomposition: plannerProviderLabel(),
-            claim_map: plannerProviderLabel(),
-            drafting: drafterModelUsed,
-            drafter: drafterModelUsed,                            // legacy alias
-          },
+          // Honest models_used: only record a model as "used" if its stage
+          // actually completed successfully. Otherwise expose null + the failure
+          // status, so admins don't get the false impression that gpt-5-mini ran.
+          stage_runs: stageRuns,
+          models_used: (() => {
+            const find = (s: string) => stageRuns.find((r) => r.stage === s);
+            const decomp = find("decomposition");
+            const claim = find("claim_map");
+            const draft = find("drafting");
+            const reduce = (r: StageRun | undefined) =>
+              r && r.status === "success"
+                ? { provider: r.provider, model: r.model, status: "success" as const, duration_ms: r.duration_ms }
+                : r
+                  ? { provider: r.provider, model: null, status: r.status, duration_ms: r.duration_ms, error: r.error_message ?? null }
+                  : { provider: null, model: null, status: "not_run" as const };
+            return {
+              decomposition: reduce(decomp),
+              claim_map: reduce(claim),
+              drafting: reduce(draft),
+              // Legacy aliases (kept for back-compat with existing dashboards/queries)
+              planner: decomp?.status === "success" ? `${decomp.provider}/${decomp.model}` : `${plannerProviderLabel()} (failed:${decomp?.status ?? "not_run"})`,
+              drafter: draft?.status === "success" ? draft.model : `${drafterModelUsed} (failed:${draft?.status ?? "not_run"})`,
+            };
+          })(),
           model_config: LEGAL_RESEARCH_MODELS,
         };
       }
