@@ -1,0 +1,1 @@
+ALTER TABLE public.qa_logs ADD COLUMN IF NOT EXISTS metadata jsonb;
