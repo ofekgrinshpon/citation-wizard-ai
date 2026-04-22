@@ -14,6 +14,54 @@ import {
   type ClaimMap,
 } from "./decomposition.ts";
 import { callDrafter, plannerProviderLabel, MODEL_CONFIG } from "./aiProvider.ts";
+import {
+  BANNED_KEYS,
+  type LegalClaimMap,
+  type LegalDraftingInput,
+  type LegalResearchDecomposition,
+  type LegalSourcePack,
+} from "./contracts.ts";
+import { mapToDecompositionV2 } from "./legalResearchDecomposition.ts";
+import { assembleSourcePack, summarizeSourcePack, type InternalSourcePackEntry } from "./legalSourcePack.ts";
+import { mapToClaimMapV2, summarizeClaimMapV2 } from "./legalClaimMap.ts";
+import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
+
+// Single source of truth for the research-mode gate. The frontend currently
+// sends `taskMode: "research"`; if that ever changes, update this constant.
+const RESEARCH_MODE = "research";
+
+// ─── Provenance hardening: deep-strip banned keys from any payload ───
+// Used by `buildResponse` as defense-in-depth so internal fields like
+// `provenanceInternal`, `claimMap`, etc. can never leak to the client.
+function deepStripKeys<T>(value: T, banned: readonly string[]): T {
+  if (Array.isArray(value)) {
+    return value.map((v) => deepStripKeys(v, banned)) as unknown as T;
+  }
+  if (value && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      if (banned.includes(k)) continue;
+      out[k] = deepStripKeys(v, banned);
+    }
+    return out as unknown as T;
+  }
+  return value;
+}
+
+const IS_DEV = (Deno.env.get("DENO_ENV") ?? "development") !== "production";
+
+function sanitizeResponse<T extends object>(payload: T): T {
+  const cleaned = deepStripKeys(payload, BANNED_KEYS);
+  if (IS_DEV) {
+    const json = JSON.stringify(cleaned);
+    for (const k of BANNED_KEYS) {
+      if (json.includes(`"${k}"`)) {
+        console.warn(`[leak-guard] residual key after strip: ${k}`);
+      }
+    }
+  }
+  return cleaned;
+}
 
 // ─── Source pack types (Stage C — internal only, never serialized) ───
 type AuthorityClass =
