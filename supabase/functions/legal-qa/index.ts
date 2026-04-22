@@ -2281,7 +2281,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       if (!drafterRes || drafterRes.text.length < 50) {
         stageRuns.push({
           stage: "drafting",
-          provider: OPENAI_API_KEY ? "openai" : "gemini",
+          provider: Deno.env.get("OPENAI_API_KEY") ? "openai" : "gemini",
           model: MODEL_CONFIG.DRAFTER_OPENAI,
           started_at: drafterStartedAt.toISOString(),
           completed_at: new Date().toISOString(),
