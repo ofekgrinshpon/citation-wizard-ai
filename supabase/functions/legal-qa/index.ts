@@ -1373,11 +1373,28 @@ ${(verify.fullText as string).slice(0, 50000)}
         // Step A: optionally expand short queries to a fuller legal phrasing
         const expandedQuery = await expandShortQuery(question, LOVABLE_API_KEY);
         // Stage B: enrich vector search with sub-issue queries from the planner.
-        // Each plan contributes up to 3 short queries (legislation/caselaw/literature).
-        // Hard cap to avoid embedding-quota blowup.
+        // Tier-1 tuning: decomposition runs CONCURRENTLY with retrieval. We
+        // await the plan only here, after `expandShortQuery` (cheap LLM call,
+        // ~1-3s) has already overlapped most of the planner's runtime. If the
+        // plan still isn't ready, we don't wait — we proceed without sub-issue
+        // queries; the plan will be picked up later by the claim_map stage.
+        let planForRetrieval: DecomposedPlan | null = null;
+        if (decompPromise) {
+          // Race: plan vs. a tiny grace window. We've already burned ~1-3s on
+          // expandShortQuery, so most successful plans (median ~25s on mini,
+          // expected ~10s on nano) will still be in flight. Give them up to
+          // 25s more (total ~28s — within the 45s timeout) before giving up
+          // for retrieval purposes. Plan is still consumed later by claim_map
+          // even if it lands after this point.
+          const planRace = await Promise.race([
+            decompPromise.then((r) => ({ ready: true as const, plan: r.data })),
+            new Promise<{ ready: false }>((resolve) => setTimeout(() => resolve({ ready: false }), 25000)),
+          ]);
+          if (planRace.ready) planForRetrieval = planRace.plan;
+        }
         const planQueries: string[] = [];
-        if (decomposedPlan?.query_plan) {
-          for (const p of decomposedPlan.query_plan) {
+        if (planForRetrieval?.query_plan) {
+          for (const p of planForRetrieval.query_plan) {
             if (p.legislation_query) planQueries.push(p.legislation_query);
             if (p.caselaw_query) planQueries.push(p.caselaw_query);
             if (p.literature_query) planQueries.push(p.literature_query);
@@ -1391,6 +1408,8 @@ ${(verify.fullText as string).slice(0, 50000)}
         ];
         if (planQueriesUnique.length > 0) {
           console.log(`[plan] adding ${planQueriesUnique.length} sub-issue queries to vector search`);
+        } else if (decompPromise) {
+          console.log(`[plan] proceeding with retrieval before plan landed (or plan was null)`);
         }
         const keywordSourceText = expandedQuery ? `${question} ${expandedQuery}` : question;
 
