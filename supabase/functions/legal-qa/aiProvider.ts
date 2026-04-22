@@ -102,7 +102,10 @@ export async function callPlannerJSON<T = unknown>(
   const useOpenAI = Boolean(OPENAI_API_KEY);
   const url = useOpenAI ? OPENAI_URL : LOVABLE_URL;
   const apiKey = useOpenAI ? OPENAI_API_KEY : LOVABLE_API_KEY;
-  const model = useOpenAI ? MODEL_CONFIG.PLANNER_OPENAI : MODEL_CONFIG.PLANNER_GEMINI;
+  // Tier-1.5: select model per stage. claim_map → mini; everything else → decomposer (nano).
+  const model = opts.stage === "claim_map"
+    ? (useOpenAI ? MODEL_CONFIG.CLAIM_MAP_OPENAI : MODEL_CONFIG.CLAIM_MAP_GEMINI)
+    : (useOpenAI ? MODEL_CONFIG.DECOMPOSER_OPENAI : MODEL_CONFIG.DECOMPOSER_GEMINI);
   const provider: "openai" | "gemini" = useOpenAI ? "openai" : "gemini";
   const timeoutMs = opts.timeoutMs ?? 30000;
   const reasoningEffort = opts.reasoningEffort;
