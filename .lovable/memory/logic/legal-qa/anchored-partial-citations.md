@@ -21,4 +21,6 @@ In `supabase/functions/legal-qa/index.ts`, the post-processing footnote filter u
 
 **Prompt reinforcement (~line 1771):** Explicit rule forbids generating any footnote without a real anchor, and clarifies that `[חסר: ...]` is not a "cover" for absent sources — only a partial-field marker on top of a real source.
 
-**Logging:** `Dropped footnote #N [reason, anchored=bool, has_marker=bool]` exposes attempted bypass cases including `placeholder_dominant`.
+**Logging:** `Dropped footnote #N [reason, anchored=bool, has_marker=bool]` exposes attempted bypass cases including `placeholder_dominant`. Additionally, `Citation density: N footnotes / W words (R per 1000 words; cards available: C)` logs every response, with a `Possible under-citation` warning when fewer than 4 footnotes are produced despite ≥6 available cards on a 600+ word memo.
+
+**Citation principle (coverage > count):** Every substantive legal claim in the body must be anchored to an available source — that is the primary requirement. The "6 footnotes per 600 words" guideline is a **sanity check only**, never a target. The model must NOT add filler footnotes to hit a number; if a coverage scan finds only 3 genuine claims, 3 footnotes is correct. Hallucinated/filler citations are worse than under-citation. The "Coverage check" prompt block (~line 1821) instructs the model to re-scan paragraphs and either add an anchored footnote or rewrite the claim as general opinion.
