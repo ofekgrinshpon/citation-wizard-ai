@@ -50,26 +50,80 @@ export interface PlannerToolDef {
 }
 
 /**
+ * Per-stage telemetry recorded for every planner call so we can distinguish
+ * "model ran successfully" from "model timed out / errored". Consumed by
+ * index.ts when assembling qa_logs.metadata.stage_runs.
+ */
+export interface StageRun {
+  stage: string;
+  provider: "openai" | "gemini";
+  model: string;
+  reasoning_effort?: "minimal" | "low" | "medium" | "high";
+  started_at: string;
+  completed_at: string;
+  duration_ms: number;
+  status: "success" | "timeout" | "http_error" | "parse_error" | "no_tool_call" | "no_api_key" | "error";
+  http_status?: number;
+  error_message?: string;
+}
+
+export interface PlannerCallResult<T> {
+  data: T | null;
+  run: StageRun;
+}
+
+export interface PlannerCallOptions {
+  /** Logical stage name, e.g. "decomposition" / "claim_map". */
+  stage: string;
+  /** Hard timeout for the HTTP call. Bumped per-stage by callers. */
+  timeoutMs?: number;
+  /** OpenAI reasoning effort (gpt-5* family). Ignored on Gemini. */
+  reasoningEffort?: "minimal" | "low" | "medium" | "high";
+}
+
+/**
  * Calls the planner model with a forced tool-call to extract structured JSON.
- * Returns the parsed tool arguments or `null` on any failure.
+ * Returns `{ data, run }`. `data` is null on any failure; `run` always
+ * carries telemetry so the caller can log accurate per-stage state.
  */
 export async function callPlannerJSON<T = unknown>(
   systemPrompt: string,
   userPrompt: string,
   tool: PlannerToolDef,
-  timeoutMs = 12000,
-): Promise<T | null> {
+  opts: PlannerCallOptions,
+): Promise<PlannerCallResult<T>> {
   const useOpenAI = Boolean(OPENAI_API_KEY);
   const url = useOpenAI ? OPENAI_URL : LOVABLE_URL;
   const apiKey = useOpenAI ? OPENAI_API_KEY : LOVABLE_API_KEY;
   const model = useOpenAI ? MODEL_CONFIG.PLANNER_OPENAI : MODEL_CONFIG.PLANNER_GEMINI;
+  const provider: "openai" | "gemini" = useOpenAI ? "openai" : "gemini";
+  const timeoutMs = opts.timeoutMs ?? 30000;
+  const reasoningEffort = opts.reasoningEffort;
+
+  const startedAt = new Date();
+  const startMs = Date.now();
+  const baseRun: Omit<StageRun, "status" | "completed_at" | "duration_ms"> = {
+    stage: opts.stage,
+    provider,
+    model,
+    ...(reasoningEffort && useOpenAI ? { reasoning_effort: reasoningEffort } : {}),
+    started_at: startedAt.toISOString(),
+  };
+  const finish = (
+    extra: Partial<StageRun> & { status: StageRun["status"] },
+  ): StageRun => ({
+    ...baseRun,
+    completed_at: new Date().toISOString(),
+    duration_ms: Date.now() - startMs,
+    ...extra,
+  });
 
   if (!apiKey) {
-    console.log("[planner] No API key available — skipping");
-    return null;
+    console.log(`[${opts.stage}] No API key available — skipping`);
+    return { data: null, run: finish({ status: "no_api_key" }) };
   }
 
-  const body = {
+  const body: Record<string, unknown> = {
     model,
     messages: [
       { role: "system", content: systemPrompt },
@@ -87,6 +141,10 @@ export async function callPlannerJSON<T = unknown>(
     ],
     tool_choice: { type: "function", function: { name: tool.name } },
   };
+  // OpenAI gpt-5* reasoning models accept a `reasoning` block. Gemini ignores it.
+  if (useOpenAI && reasoningEffort && /^gpt-5/i.test(model)) {
+    (body as Record<string, unknown>).reasoning = { effort: reasoningEffort };
+  }
 
   try {
     const res = await fetchWithTimeout(
@@ -103,24 +161,32 @@ export async function callPlannerJSON<T = unknown>(
     );
     if (!res.ok) {
       const txt = await res.text().catch(() => "");
-      console.error(`[planner] HTTP ${res.status} (${useOpenAI ? "openai" : "gemini"}):`, txt.slice(0, 200));
-      return null;
+      console.error(`[${opts.stage}] HTTP ${res.status} (${provider}/${model}):`, txt.slice(0, 200));
+      return { data: null, run: finish({ status: "http_error", http_status: res.status, error_message: txt.slice(0, 300) }) };
     }
     const data = await res.json();
     const argsRaw = data?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
     if (!argsRaw || typeof argsRaw !== "string") {
-      console.error("[planner] No tool_call arguments returned");
-      return null;
+      console.error(`[${opts.stage}] No tool_call arguments returned`);
+      return { data: null, run: finish({ status: "no_tool_call" }) };
     }
     try {
-      return JSON.parse(argsRaw) as T;
+      const parsed = JSON.parse(argsRaw) as T;
+      console.log(`[${opts.stage}] success in ${Date.now() - startMs}ms (${provider}/${model})`);
+      return { data: parsed, run: finish({ status: "success" }) };
     } catch (parseErr) {
-      console.error("[planner] JSON parse failed:", (parseErr as Error).message);
-      return null;
+      const msg = (parseErr as Error).message;
+      console.error(`[${opts.stage}] JSON parse failed:`, msg);
+      return { data: null, run: finish({ status: "parse_error", error_message: msg }) };
     }
   } catch (err) {
-    console.error("[planner] call failed:", (err as Error).message);
-    return null;
+    const msg = (err as Error).message ?? String(err);
+    const isAbort = /aborted|abort/i.test(msg);
+    console.error(`[${opts.stage}] call failed (${isAbort ? "timeout" : "error"} after ${Date.now() - startMs}ms):`, msg);
+    return {
+      data: null,
+      run: finish({ status: isAbort ? "timeout" : "error", error_message: msg }),
+    };
   }
 }
 
