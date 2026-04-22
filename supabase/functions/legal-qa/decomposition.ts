@@ -251,7 +251,7 @@ export interface ClaimMapInput {
 export async function buildClaimMap(
   question: string,
   input: ClaimMapInput,
-): Promise<ClaimMap | null> {
+): Promise<{ data: ClaimMap | null; run: StageRun }> {
   const subIssuesText = input.decomposition.sub_issues
     .map((s, i) => `${i + 1}. ${s}`)
     .join("\n");
@@ -275,17 +275,19 @@ ${sourcesText}
 
 בנה מפת טענות מעוגנת. כל טענה עם source_ids מתוך הרשימה למעלה.`;
 
-  const result = await callPlannerJSON<{ claims: ClaimMap }>(
+  const { data, run } = await callPlannerJSON<{ claims: ClaimMap }>(
     CLAIM_MAP_SYSTEM_PROMPT,
     userPrompt,
     CLAIM_MAP_TOOL,
-    15000,
+    { stage: "claim_map", timeoutMs: 45000, reasoningEffort: "low" },
   );
-  if (!result || !Array.isArray(result.claims)) return null;
+  if (!data || !Array.isArray(data.claims)) return { data: null, run };
   // Defensive: ensure source_ids exists and arrays of integers.
-  const cleaned = result.claims.filter((c) => c && typeof c.claim === "string" && Array.isArray(c.source_ids));
-  if (cleaned.length === 0) return null;
-  return cleaned;
+  const cleaned = data.claims.filter((c) => c && typeof c.claim === "string" && Array.isArray(c.source_ids));
+  if (cleaned.length === 0) {
+    return { data: null, run: { ...run, status: "parse_error", error_message: "0 valid claims after cleaning" } };
+  }
+  return { data: cleaned, run };
 }
 
 // ────────────────────────────────────────────────────────────────
