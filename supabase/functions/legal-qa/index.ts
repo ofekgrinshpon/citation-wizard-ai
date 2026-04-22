@@ -2567,6 +2567,26 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       }
     }
 
+    // ========= Legislation year-completeness validator =========
+    // Rule 2.4 / 2.8: legislation citations must include the Hebrew year before ס"ח/ק"ת page.
+    // Pattern: "<חוק/פקודת/תקנות ...>, ס"ח <number>" without a Hebrew year anywhere before ס"ח.
+    // Insert a [חסר: שנה] marker so the gap is visible (and so the placeholder_dominant filter
+    // catches unanchored cases).
+    // Skip short-form ("שם" / "לעיל ה"ש") and citations that already mark the missing year.
+    const LEG_NO_YEAR_RE = /^(\s*(?:חוק[- ]יסוד[^,]*|חוק[^,]+|פקודת[^,]+|תקנות[^,]+|צו[^,]+))\s*,\s*(ס["״]ח|ק["״]ת)\s+(\d{1,4})\b/;
+    const HEBREW_YEAR_RE = /\bה?תש[א-ת"״'׳\-]+/;
+    for (const fn of footnotes) {
+      if (SUPRA_FULL.test(fn.citation) || /\bשם\b/.test(fn.citation)) continue;
+      if (/\[חסר:\s*שנה\]/.test(fn.citation)) continue;
+      const m = fn.citation.match(LEG_NO_YEAR_RE);
+      if (!m) continue;
+      const headSegment = fn.citation.slice(0, fn.citation.indexOf(m[2]));
+      if (HEBREW_YEAR_RE.test(headSegment)) continue;
+      const before = fn.citation;
+      fn.citation = fn.citation.replace(LEG_NO_YEAR_RE, `$1, [חסר: שנה], $2 $3`);
+      console.log(`Legislation year fix in FN #${fn.number}: "${before.slice(0, 120)}" → "${fn.citation.slice(0, 120)}"`);
+    }
+
     // Filter footnotes that are bare URLs / URL-only (violation of citation rules),
     // too short, or missing substantive words. Then renumber.
     const URL_ONLY_RE = /^(?:\[?\s*)?https?:\/\/\S+(?:\s*\([^)]*\))?\s*\.?\s*$/i;
