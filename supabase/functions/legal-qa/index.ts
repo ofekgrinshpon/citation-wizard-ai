@@ -3195,17 +3195,61 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         };
       }
 
-      await adminClient.from("qa_logs").insert({
-        user_id: user.id,
-        question: question.substring(0, 500),
-        answer,
-        footnotes: finalFootnotes as unknown as Record<string, unknown>[],
-        task_mode: taskMode,
-        local_footnotes_count: localCount,
-        perplexity_footnotes_count: perplexityCount,
-        total_footnotes: finalFootnotes.length,
-        ...(metadata ? { metadata } : {}),
-      });
+      const { data: insertedLog, error: insertErr } = await adminClient
+        .from("qa_logs")
+        .insert({
+          user_id: user.id,
+          question: question.substring(0, 500),
+          answer,
+          footnotes: finalFootnotes as unknown as Record<string, unknown>[],
+          task_mode: taskMode,
+          local_footnotes_count: localCount,
+          perplexity_footnotes_count: perplexityCount,
+          total_footnotes: finalFootnotes.length,
+          ...(metadata ? { metadata } : {}),
+        })
+        .select("id")
+        .maybeSingle();
+
+      if (insertErr) {
+        console.error("Failed to insert qa_logs row (non-fatal):", insertErr);
+      }
+
+      // Shadow A/B logger — only when we actually used the structured path.
+      // Runs in the background after the user response returns; never blocks.
+      const qaLogId = insertedLog?.id as string | undefined;
+      if (
+        qaLogId &&
+        taskMode === RESEARCH_MODE &&
+        draftingInput &&
+        useNewDrafter &&
+        typeof systemPrompt === "string" &&
+        typeof userMessage === "string"
+      ) {
+        const shadowPromise = runShadowAbComparison({
+          question,
+          legacySystemPrompt: buildLegacyShadowPrompt(systemPrompt),
+          userMessage,
+          maxTokens: aiMaxTokens,
+          productionAnswer: answer,
+          productionFootnoteCount: finalFootnotes.length,
+          productionDrafterModel: drafterModelUsed,
+          draftingInput,
+          qaLogId,
+          adminClient,
+        });
+        // Prefer EdgeRuntime.waitUntil so the response can return immediately
+        // while the shadow drafter call continues in the background.
+        // deno-lint-ignore no-explicit-any
+        const er = (globalThis as any).EdgeRuntime;
+        if (er && typeof er.waitUntil === "function") {
+          er.waitUntil(shadowPromise);
+        } else {
+          // Fallback: detach the promise. Errors are already swallowed inside
+          // runShadowAbComparison, so this is safe.
+          shadowPromise.catch(() => {});
+        }
+      }
     } catch (logErr) {
       console.error("Failed to log QA stats (non-fatal):", logErr);
     }
