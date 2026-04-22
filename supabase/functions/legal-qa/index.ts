@@ -1187,7 +1187,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // ========= Stage A+B: Decomposition + Query Plan (legal_research only) =========
     // INTERNAL — never exposed to UI. Recorded in qa_logs.metadata for diagnostics.
     let decomposedPlan: DecomposedPlan | null = null;
-    if (taskMode === "research") {
+    if (taskMode === RESEARCH_MODE) {
       try {
         const tDecompStart = Date.now();
         decomposedPlan = await decomposeAndPlan(question);
@@ -1819,7 +1819,7 @@ ${(verify.fullText as string).slice(0, 50000)}
 
     // ========= Stage C: Source Pack assembly (legal_research only, INTERNAL) =========
     let sourcePack: SourcePackEntry[] = [];
-    if (taskMode === "research") {
+    if (taskMode === RESEARCH_MODE) {
       sourcePack = sourceCards.map((sc) => {
         const excerpt = sc.excerpt || "";
         const anchorPresent = Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document";
@@ -1843,7 +1843,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // ========= Stage D: Claim Map (legal_research only, INTERNAL) =========
     let claimMap: ClaimMap | null = null;
     let claimMapAllowedCount = 0;
-    if (taskMode === "research" && decomposedPlan && sourcePack.length >= 2) {
+    if (taskMode === RESEARCH_MODE && decomposedPlan && sourcePack.length >= 2) {
       try {
         const tClaimStart = Date.now();
         const sourcePackBrief = sourcePack
@@ -2203,7 +2203,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     let drafterModelUsed = "google/gemini-2.5-flash";
     // Stage E: route legal_research with claim-map through callDrafter (provider-aware).
     // All other modes (case_summary already returned earlier; pleading_analysis, academic) keep the legacy Gemini call.
-    const useNewDrafter = taskMode === "research" && claimMap !== null && claimMapAllowedCount >= 2;
+    const useNewDrafter = taskMode === RESEARCH_MODE && claimMap !== null && claimMapAllowedCount >= 2;
     if (useNewDrafter) {
       const drafterRes = await callDrafter(systemPrompt, userMessage, aiMaxTokens, 90000);
       const tAi = Date.now();
@@ -3092,7 +3092,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
 
       // Build internal metadata snapshot (admin-only, never exposed to UI).
       let metadata: Record<string, unknown> | null = null;
-      if (taskMode === "research") {
+      if (taskMode === RESEARCH_MODE) {
         const byStrength = { strong: 0, partial: 0, weak: 0 } as Record<string, number>;
         if (claimMap) {
           for (const c of claimMap) {
