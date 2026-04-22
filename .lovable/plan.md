@@ -1,57 +1,56 @@
 
 
-## מטרה
-לעדכן את נוסח ה־banner שמופיע ב־Academic Wizard לפרקים השוואתיים כך שיתואר בצורה מדויקת ומועילה יותר, עם CTA ברור.
+## חידוד שאושר
 
-## שינוי
-ב־`src/components/LegalQAChat.tsx`, באזור ה־Academic Wizard (הסקציה שתתווסף בתיקון 3 של ה־plan המאושר), להחליף את הנוסח של ה־banner.
+`hasAnchor` יסתמך **רק** על קיומו של מקור אמיתי הניתן לקישור — `url` ו/או `source` ו/או `source_id` של רשומה מאוחזרת. **הסמן `[חסר: שדה]` עצמו אינו anchor** ולא יכשיר הערה.
 
-### במקום הנוסח שהוצע:
-> "פרק זה עוסק בנושא השוואתי. המאגר המקומי מכיל בעיקר מקורות ישראליים — מומלץ להעלות PDFs של מאמרים השוואתיים כדי לקבל הערות שוליים מדויקות."
+## שינוי בקוד — `supabase/functions/legal-qa/index.ts`
 
-### לכתוב:
-**שורה 1 (כותרת/דגש):** "לא מצאתי מספיק מקורות זרים מעמיקים בחיפוש אוטומטי."
+### עדכון `hasAnchor` (לעומת התוכנית הקודמת)
 
-**שורה 2 (גוף):** "כדי שהפרק ההשוואתי יהיה ברמה אקדמית גבוהה, מומלץ להעלות כאן מאמרים או פסקי דין ספציפיים (PDF). אני אנתח אותם ואשלב אותם בטקסט עם אזכורים מדויקים."
-
-**כפתור CTA:** "העלאת מקורות זרים" — שיפעיל את אותו file input הקיים ב־wizard ל־`documentTexts` (אותו upload flow של "צרף מסמך").
-
-### מבנה ויזואלי
-```tsx
-{isComparativeChapter && uploadedDocumentTexts.length === 0 && (
-  <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 text-sm text-amber-100 space-y-2">
-    <div className="flex items-start gap-2">
-      <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-      <div className="space-y-2 flex-1">
-        <p className="font-semibold">לא מצאתי מספיק מקורות זרים מעמיקים בחיפוש אוטומטי.</p>
-        <p className="text-amber-200/90 leading-relaxed">
-          כדי שהפרק ההשוואתי יהיה ברמה אקדמית גבוהה, מומלץ להעלות כאן מאמרים או פסקי דין ספציפיים (PDF).
-          אני אנתח אותם ואשלב אותם בטקסט עם אזכורים מדויקים.
-        </p>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => fileInputRef.current?.click()}
-          className="border-amber-500/40 text-amber-100 hover:bg-amber-500/20"
-        >
-          <Upload className="w-3.5 h-3.5 ml-1.5" />
-          העלאת מקורות זרים
-        </Button>
-      </div>
-    </div>
-  </div>
-)}
+**מה היה בתוכנית שאושרה (ונפסל עכשיו):**
+```typescript
+if (/\[חסר:\s*[^\]]+\]/.test(fn.citation)) return true; // ← להסיר את השורה הזו
 ```
 
-### תזמון הצגת ה־banner
-- מופיע **לפני** התחלת כתיבת פרק השוואתי (בשלב `outline_review` או בתחילת `writing` של פרק כזה).
-- מתחבא אוטומטית ברגע שמשתמש העלה לפחות PDF אחד (`uploadedDocumentTexts.length > 0`).
-- ה־detection (`isComparativeChapter`) משתמש באותו regex שהוצע: `/משווה|מודלים השוואתיים|ארצות הברית|אנגליה|קנדה|אוסטרליה|גרמניה|comparative|international/i` על שם הפרק.
+**מה ייושם בפועל:**
+```typescript
+const hasAnchor = (fn: { url?: string; source?: string; source_id?: string; citation: string }): boolean => {
+  if (fn.url && fn.url.trim().length > 0) return true;
+  if (fn.source && fn.source.trim().length > 0) return true;
+  if (fn.source_id && fn.source_id.trim().length > 0) return true;
+  return false;
+};
+```
 
-## מה לא משתנה
-- כל שאר התיקונים ב־plan המאושר (timeout 30s, retry, caselaw guard, validator מחמיר, prompt reinforcement, dropped_footnotes_count) נשארים כפי שאושרו.
-- ה־upload flow עצמו לא משתנה — משתמשים ב־`fileInputRef` הקיים של ה־wizard.
+הסמן `[חסר: ...]` נשאר חלק מהפלט המכוון של ה-AI (משדר שקיפות ומשמש לרנדור ב-UI), אבל הוא **לא** משמש כקריטריון להעברת הסינון. רק מקור אמיתי שניתן לעגן אליו (URL / source / source_id) יכשיר הערה חלקית.
+
+### השלכה על הסינון
+- הערה עם `[חסר: עמוד]` **בלי** url/source/source_id → תיפול ב־`too_short`/`missing_parties` כרגיל. זה הרצוי: AI שכותב "[חסר: ...]" מבלי שיש לו מקור אמיתי מאחור — מנסה לרמות את הסף, ולכן ההערה נופלת.
+- הערה עם `[חסר: עמוד]` **עם** url/source מ-Perplexity או מ-retrieval → עוברת עם סף מוקל (12 תווים, missing_parties מותר). זה הרצוי: יש מקור אמיתי, רק חסר פרט.
+
+### חיזוק ב-prompt (שורות 1771+)
+להוסיף משפט מפורש להנחיה על `[חסר: שדה]`:
+
+> "אסור להשתמש ב-[חסר: ...] כדי 'להעביר' הערת שוליים שאין מאחוריה מקור אמיתי. השתמש ב-[חסר: ...] **רק** כשיש מקור [מאומת] או [חיצוני] קונקרטי שאחזרת אליו, ופרט אחד או יותר חסר ממנו. אם אין מקור — לא לכתוב הערה כלל ולא לסמן הפניה בגוף."
+
+### לוג עדכני
+לוג ה-`Dropped footnote` יציג את ה-anchor status האמיתי (לא מבוסס על הסמן):
+```
+Dropped footnote #3 [too_short, anchored=false, has_marker=true]: "[חסר: עמוד]..."
+```
+ה-`has_marker=true` בתוספת `anchored=false` יסמן בדיוק את התרחיש שהמשתמש דאג לו: AI שניסה להפיק הערה עם סמן בלי מקור אמיתי — ההערה תיפסל.
+
+## כל השאר נשאר כפי שאושר
+- שורות 1771+: ההנחיה החדשה על "הערה חלקית עדיפה על השמטה" עם דוגמאות `[חסר: עמוד]`.
+- שורות 2499–2514: הסף המוקל (12 תווים) ל-anchored, סף נוקשה (25 תווים) ל-non-anchored.
+- שורות 2314–2318: לא למחוק `[חסר: ...]` מההערות (placeholder pattern).
+- שורות 303–308: שורת תוספת ל-Research mode.
+- `url_only` נשאר hard-fail בכל מקרה.
+- כללי האנטי-הזיה ("(לא נמצאה שנת פרסום)" וכו') — נשמרים.
 
 ## תוצאה
-משתמש שכותב פרק השוואתי יראה הודעה כנה ומדויקת על מצב המקורות, ויקבל CTA ישיר להעלאת PDFs במקום הצעה גנרית.
+- הערה עם מקור אמיתי + פרט חסר → נשמרת עם `[חסר: שדה]`. ✓
+- הערה ללא מקור אמיתי + ה-AI כתב `[חסר: שדה]` → נופלת. ✓
+- אין רגרסיה: ה-AI לא יכול "לעקוף" את הסינון על ידי הוספת סמן מלאכותי.
 
