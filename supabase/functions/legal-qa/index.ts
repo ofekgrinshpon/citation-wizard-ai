@@ -2500,7 +2500,44 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       }
     }
 
-    answer = fixHebrewYearPrefix(answer);
+    // ========= Rule 37 post-processing — repeated citations cleanup =========
+    // 37.5: Legislation must not use "לעיל ה"ש N" — rewrite as "ס' [pinpoint] ל[law name]."
+    // Detects: "<law>, לעיל ה"ש N[, בס' X]." and rewrites to the section-first form.
+    const LAW_PREFIX = '(?:חוק[- ]יסוד|חוק|פקודת|פקודה|תקנות|תקנה|צו|כללי)';
+    const lawSupraRe = new RegExp(
+      `^\\s*(${LAW_PREFIX}\\s+[^,]+?),\\s*${SUPRA_P}\\d{1,2}(?:,\\s*ב?ס['׳]\\s*([\\d\\u0590-\\u05FFא-ת()]+))?\\s*\\.?\\s*$`
+    );
+    for (const fn of footnotes) {
+      const m = fn.citation.match(lawSupraRe);
+      if (m) {
+        const lawName = m[1].trim();
+        const pinpoint = m[2]?.trim();
+        const before = fn.citation;
+        fn.citation = pinpoint ? `ס' ${pinpoint} ל${lawName}.` : `${lawName}.`;
+        console.log(`Rule 37.5 fix in FN #${fn.number}: "${before.slice(0, 120)}" → "${fn.citation.slice(0, 120)}"`);
+      }
+    }
+
+    // 37.8: collapse "שם, שם" → "שם" (never repeat "שם" with comma)
+    for (const fn of footnotes) {
+      fn.citation = fn.citation.replace(/\bשם\s*[,،]\s*שם\b/g, "שם");
+    }
+
+    // 37.8: enforce בי"ת prefix on pinpoint inside SHORT-FORM citations only
+    // (citations that contain "שם" or "לעיל ה"ש"). Avoid touching full citations,
+    // which already use a different formula (e.g. "פ"ד נד(1) 258, 263 (2000)").
+    const beitPrefixRe = /,\s*(עמ['׳])\s+(\d)/g;
+    const pisPrefixRe = /,\s*(פס['׳])\s+(\d)/g;
+    const sectionPrefixRe = /,\s*(ס['׳])\s+(\d|[\u0590-\u05FFא-ת])/g;
+    for (const fn of footnotes) {
+      const isShortForm = SUPRA_FULL.test(fn.citation) || /\bשם\b/.test(fn.citation);
+      if (!isShortForm) continue;
+      fn.citation = fn.citation
+        .replace(beitPrefixRe, ", ב$1 $2")
+        .replace(pisPrefixRe, ", ב$1 $2")
+        .replace(sectionPrefixRe, ", ב$1 $2");
+    }
+
     for (const fn of footnotes) {
       fn.citation = fixHebrewYearPrefix(fn.citation);
     }
