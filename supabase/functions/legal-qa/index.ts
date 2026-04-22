@@ -3400,6 +3400,56 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     });
   } catch (e) {
     console.error("legal-qa error:", e);
+    // Best-effort: persist a final "error" checkpoint so admins can see how
+    // far the pipeline got before the error/disconnect. Wrapped in its own
+    // try so a logging failure never masks the original error.
+    try {
+      // deno-lint-ignore no-explicit-any
+      const er = (globalThis as any).EdgeRuntime;
+      // These are only defined when we entered the deep happy path. Guard
+      // each access so we don't throw on early-fail requests.
+      // deno-lint-ignore no-explicit-any
+      const _qaId = (typeof preallocatedQaLogId !== "undefined" ? preallocatedQaLogId : null) as string | null;
+      // deno-lint-ignore no-explicit-any
+      const _runs = (typeof stageRuns !== "undefined" ? stageRuns : []) as StageRun[];
+      // deno-lint-ignore no-explicit-any
+      const _admin = (typeof adminClient !== "undefined" ? adminClient : null) as ReturnType<typeof createClient> | null;
+      // deno-lint-ignore no-explicit-any
+      const _user = (typeof user !== "undefined" ? user : null) as { id: string } | null;
+      // deno-lint-ignore no-explicit-any
+      const _question = (typeof question !== "undefined" ? question : "") as string;
+      // deno-lint-ignore no-explicit-any
+      const _checkpointInserted = (typeof checkpointInserted !== "undefined" ? checkpointInserted : false) as boolean;
+      // deno-lint-ignore no-explicit-any
+      const _taskMode = (typeof taskMode !== "undefined" ? taskMode : null) as string | null;
+      if (_qaId && _admin && _user && _taskMode === RESEARCH_MODE) {
+        const errSnapshot = {
+          checkpoint: "error",
+          checkpoint_at: new Date().toISOString(),
+          drafting_path: "error",
+          stage_runs: _runs,
+          error_message: (e as Error)?.message ?? String(e),
+        };
+        const op = _checkpointInserted
+          ? _admin.from("qa_logs").update({ metadata: errSnapshot }).eq("id", _qaId)
+          : _admin.from("qa_logs").insert({
+              id: _qaId,
+              user_id: _user.id,
+              question: _question.substring(0, 500),
+              answer: null,
+              footnotes: [],
+              task_mode: _taskMode,
+              local_footnotes_count: 0,
+              perplexity_footnotes_count: 0,
+              total_footnotes: 0,
+              metadata: errSnapshot,
+            });
+        const promise = (op as unknown as Promise<{ error: unknown }>).catch(() => {});
+        if (er && typeof er.waitUntil === "function") er.waitUntil(promise);
+      }
+    } catch (cpErr) {
+      console.error("[checkpoint:error] flush failed (non-fatal):", cpErr);
+    }
     let refunded = false;
     if (__creditsCharged && __creditRequestId && __userClientForRefund) {
       try {
