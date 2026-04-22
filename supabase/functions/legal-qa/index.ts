@@ -1189,16 +1189,21 @@ ${(verify.fullText as string).slice(0, 50000)}
     // INTERNAL — never exposed to UI. Recorded in qa_logs.metadata for diagnostics.
     let decomposedPlan: DecomposedPlan | null = null;
     let decompositionV2: LegalResearchDecomposition | null = null;
+    // Per-stage runtime telemetry. Each stage pushes its `StageRun` here so we
+    // can record honest "this model actually completed" data in qa_logs.metadata.
+    const stageRuns: StageRun[] = [];
     if (taskMode === RESEARCH_MODE) {
       try {
         const tDecompStart = Date.now();
-        decomposedPlan = await decomposeAndPlan(question);
+        const { data, run } = await decomposeAndPlan(question);
+        stageRuns.push(run);
+        decomposedPlan = data;
         if (decomposedPlan) {
           console.log(
-            `[plan] ${decomposedPlan.decomposition.sub_issues.length} sub-issues, ${decomposedPlan.query_plan.length} plans (${Date.now() - tDecompStart}ms; planner=${plannerProviderLabel()})`,
+            `[plan] ${decomposedPlan.decomposition.sub_issues.length} sub-issues, ${decomposedPlan.query_plan.length} plans (${Date.now() - tDecompStart}ms; ${run.provider}/${run.model}, status=${run.status})`,
           );
         } else {
-          console.log(`[plan] decompose+plan returned null — falling back to legacy retrieval`);
+          console.log(`[plan] decompose+plan returned null (status=${run.status}, ${run.duration_ms}ms) — falling back to legacy retrieval`);
         }
       } catch (decompErr) {
         console.error("[plan] decompose+plan failed (non-fatal):", decompErr);
