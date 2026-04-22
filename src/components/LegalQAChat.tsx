@@ -1233,9 +1233,9 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         const { data: { user: currentUser } } = await supabase.auth.getUser();
         if (currentUser && !qaResult.refusal) {
           const isCaseSummary = taskMode === "case_summary" || qaResult.case_summary;
-          // legal_research is logged canonically server-side (with internal metadata).
-          // Skip the client-side insert for that mode to avoid duplicate rows.
-          if (taskMode !== "legal_research") {
+          // "research" (legal research mode) is logged canonically server-side
+          // with internal metadata. Skip the client-side insert for that mode to avoid duplicates.
+          if (taskMode !== "research") {
             const footnotesPayload: any = isCaseSummary
               ? {
                   __case_summary: true,
