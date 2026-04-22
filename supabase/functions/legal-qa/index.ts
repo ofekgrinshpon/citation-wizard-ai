@@ -846,7 +846,33 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant } = body;
+
+    // ─── Eval harness gate (admin-only, internal). Allows the offline
+    // evaluation runner to force the legacy retrieval+drafter path on the
+    // exact same edge function so we get apples-to-apples comparisons.
+    // No effect for normal users: the flag is silently ignored unless the
+    // caller has the admin role.
+    let isAdminCaller = false;
+    try {
+      const { data: roleRow } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      isAdminCaller = !!roleRow;
+    } catch (_e) {
+      isAdminCaller = false;
+    }
+    const evalForceLegacy = isAdminCaller && bodyEvalForceLegacy === true;
+    const evalRunId = isAdminCaller && typeof bodyEvalRunId === "string" ? bodyEvalRunId : null;
+    const evalVariant = isAdminCaller && (bodyEvalVariant === "legacy" || bodyEvalVariant === "structured")
+      ? bodyEvalVariant
+      : null;
+    if (evalForceLegacy) {
+      console.log(`[eval] forcing legacy path (run=${evalRunId} variant=${evalVariant})`);
+    }
 
     if (!question || typeof question !== "string" || question.trim().length < 3) {
       return new Response(JSON.stringify({ error: "Question too short" }), {
@@ -1262,7 +1288,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     };
 
-    if (taskMode === RESEARCH_MODE) {
+    if (taskMode === RESEARCH_MODE && !evalForceLegacy) {
       try {
         const tDecompStart = Date.now();
         const { data, run } = await decomposeAndPlan(question);
@@ -1938,7 +1964,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     let claimMapAllowedCount = 0;
     let claimMapV2: LegalClaimMap | null = null;
     let draftingInput: LegalDraftingInput | null = null;
-    if (taskMode === RESEARCH_MODE && decomposedPlan && sourcePack.length >= 2) {
+    if (taskMode === RESEARCH_MODE && !evalForceLegacy && decomposedPlan && sourcePack.length >= 2) {
       try {
         const tClaimStart = Date.now();
         // Trim before handing off to the planner. Final additional trimming
@@ -3340,6 +3366,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             };
           })(),
           model_config: LEGAL_RESEARCH_MODELS,
+          ...(evalRunId ? { eval_run_id: evalRunId } : {}),
+          ...(evalVariant ? { eval_variant: evalVariant } : {}),
+          ...(evalForceLegacy ? { eval_force_legacy: true } : {}),
         };
       }
 
