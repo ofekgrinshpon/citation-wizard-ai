@@ -10,9 +10,10 @@ import { safeStorage } from "@/lib/safeStorage";
 
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
-import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, GraduationCap, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, Lock, Wand2, type LucideIcon } from "lucide-react";
+import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, GraduationCap, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, Lock, Wand2, Zap, Brain, type LucideIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CaseSummaryReport } from "@/components/CaseSummaryReport";
+import { ResearchProgress } from "@/components/ResearchProgress";
 
 // ─── Abstract chapter helpers ──────────────────────────────────────
 const ABSTRACT_LOCKED_TOOLTIP = "ניתן לייצר תקציר רק לאחר השלמת כל פרקי העבודה, כדי להבטיח שהוא משקף את המחקר במלואו";
@@ -1944,34 +1945,8 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           </Card>
         )}
 
-        {/* Loading skeleton */}
-        {loading && taskMode !== "case_summary" && (
-          <Card className="mt-4 border-border">
-            <CardContent className="p-4 sm:p-6 space-y-5">
-              <div>
-                <Skeleton className="h-5 w-24 mb-3" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-full mt-2" />
-              </div>
-              <div>
-                <Skeleton className="h-5 w-32 mb-3" />
-                <Skeleton className="h-4 w-5/6" />
-                <Skeleton className="h-4 w-full mt-2" />
-                <Skeleton className="h-4 w-2/3 mt-2" />
-              </div>
-              <div>
-                <Skeleton className="h-5 w-28 mb-3" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-4/5 mt-2" />
-              </div>
-              <div className="pt-4 border-t border-border">
-                <Skeleton className="h-4 w-28 mb-3" />
-                <Skeleton className="h-3 w-full" />
-                <Skeleton className="h-3 w-4/5 mt-2" />
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        {/* Loading: dynamic step progress overlaid on blinking skeleton */}
+        {loading && taskMode !== "case_summary" && <ResearchProgress />}
 
         {/* Case-summary refusal card */}
         {!isAcademic && result?.refusal && (
@@ -2091,34 +2066,50 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         {/* Research depth toggle — research mode only. Quality control, not billing. */}
         {!isAcademic && taskMode === "research" && (
           <div className="flex justify-end">
-            <div className="inline-flex rounded-lg border border-border bg-card p-0.5" role="group" aria-label="עומק מחקר">
+            <div
+              className="inline-flex items-center rounded-lg border border-border bg-muted/40 p-0.5 shadow-sm"
+              role="group"
+              aria-label="עומק מחקר"
+            >
               <button
                 type="button"
                 onClick={() => setResearchDepth("fast")}
                 disabled={loading}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`inline-flex items-center gap-1.5 px-3 h-7 rounded-md text-xs font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                   researchDepth === "fast"
-                    ? "bg-primary text-primary-foreground shadow-sm"
+                    ? "bg-card text-primary shadow-sm ring-1 ring-primary/20"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
                 aria-pressed={researchDepth === "fast"}
               >
-                <span aria-hidden="true">⚡</span>
-                <span>מהיר</span>
+                <Zap
+                  size={16}
+                  className={`shrink-0 transition-colors ${
+                    researchDepth === "fast" ? "text-primary" : "text-muted-foreground"
+                  }`}
+                  aria-hidden="true"
+                />
+                <span className="leading-none">מהיר</span>
               </button>
               <button
                 type="button"
                 onClick={() => setResearchDepth("deep")}
                 disabled={loading}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`inline-flex items-center gap-1.5 px-3 h-7 rounded-md text-xs font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
                   researchDepth === "deep"
-                    ? "bg-primary text-primary-foreground shadow-sm"
+                    ? "bg-card text-primary shadow-sm ring-1 ring-primary/20"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
                 aria-pressed={researchDepth === "deep"}
               >
-                <span aria-hidden="true">🧠</span>
-                <span>מעמיק</span>
+                <Brain
+                  size={16}
+                  className={`shrink-0 transition-colors ${
+                    researchDepth === "deep" ? "text-primary" : "text-muted-foreground"
+                  }`}
+                  aria-hidden="true"
+                />
+                <span className="leading-none">מעמיק</span>
               </button>
             </div>
           </div>
