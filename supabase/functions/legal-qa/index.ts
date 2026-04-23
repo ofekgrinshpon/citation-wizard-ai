@@ -2545,23 +2545,19 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       ],
     });
 
-    // Pilot v5: structured drafter routes through gpt-5-mini with 120s timeout.
-    // Legacy/fallback drafter still uses gpt-5 with 90s. Structured prompts are
-    // 30k+ chars (claim map + source pack + decomposition) which gpt-5 was
-    // timing out on every pilot v4 call. Mini handles assembly + Hebrew prose
-    // in ~40-60s since the heavy reasoning already happened upstream.
-    const useNewDrafter = taskMode === RESEARCH_MODE && claimMap !== null && claimMapAllowedCount >= 2;
+    // Pilot v6: structured drafter uses compact prompt (~6-8k chars vs 28k+
+    // for legacy) + gpt-5-mini with 120s timeout. The trim shaves significant
+    // input-token latency on top of the model swap.
+    const useNewDrafter = useStructuredDrafterPath;
     const drafterTimeoutMs = useNewDrafter ? 120000 : 90000;
     const drafterVariant: "structured" | "legacy" = useNewDrafter ? "structured" : "legacy";
     console.log(`AI call starting (drafter=${drafterVariant}, ${drafterTimeoutMs / 1000}s timeout)...`);
     let answerText = "";
     let drafterModelUsed = "google/gemini-2.5-flash";
-    // Stage E: route legal_research with claim-map through callDrafter (provider-aware).
-    // All other modes (case_summary already returned earlier; pleading_analysis, academic) keep the legacy Gemini call.
     const drafterStartedAt = new Date();
     const drafterStartMs = Date.now();
     if (useNewDrafter) {
-      const drafterRes = await callDrafter(systemPrompt, userMessage, aiMaxTokens, drafterTimeoutMs, drafterVariant);
+      const drafterRes = await callDrafter(drafterSystemPrompt, userMessage, aiMaxTokens, drafterTimeoutMs, drafterVariant);
       const tAi = Date.now();
       console.log(`Drafter call took ${tAi - tRetrieval}ms (used=${drafterRes?.modelUsed || "FAILED"}, variant=${drafterVariant})`);
       if (!drafterRes || drafterRes.text.length < 50) {
