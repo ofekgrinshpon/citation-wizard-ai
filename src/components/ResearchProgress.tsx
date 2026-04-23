@@ -19,14 +19,18 @@ const STEPS = [
 const STEP_INTERVAL_MS = 10_000;
 
 export function ResearchProgress() {
-  const [activeStep, setActiveStep] = useState(0);
+  // Number of steps revealed so far (0..STEPS.length).
+  // The last revealed step is "active" (spinner); all earlier ones are "done".
+  const [revealedCount, setRevealedCount] = useState(1);
 
   useEffect(() => {
     const id = setInterval(() => {
-      setActiveStep((s) => Math.min(s + 1, STEPS.length - 1));
+      setRevealedCount((c) => Math.min(c + 1, STEPS.length));
     }, STEP_INTERVAL_MS);
     return () => clearInterval(id);
   }, []);
+
+  const visibleSteps = STEPS.slice(0, revealedCount);
 
   return (
     <Card className="mt-4 border-border overflow-hidden relative">
@@ -51,46 +55,39 @@ export function ResearchProgress() {
           </div>
         </div>
 
-        {/* Overlay step list */}
+        {/* Overlay sequential step list */}
         <div
           className="absolute inset-0 flex items-center justify-center px-4 sm:px-6"
           dir="rtl"
         >
           <div className="w-full max-w-md bg-card/95 backdrop-blur-sm border border-border rounded-xl shadow-lg p-4 sm:p-5">
             <ol className="space-y-2">
-              {STEPS.map((label, i) => {
-                const isDone = i < activeStep;
-                const isActive = i === activeStep;
-                const isPending = i > activeStep;
+              {visibleSteps.map((label, i) => {
+                const isActive = i === visibleSteps.length - 1;
+                const isDone = !isActive;
                 return (
                   <li
                     key={i}
-                    className={`flex items-center gap-2.5 text-sm transition-all duration-300 ${
-                      isPending ? "opacity-40" : "opacity-100"
-                    }`}
+                    className="flex items-center gap-2.5 text-sm animate-in fade-in slide-in-from-bottom-2 duration-300"
                   >
                     <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center">
                       {isDone ? (
                         <CheckCircle2
-                          className="w-4 h-4 text-primary"
+                          className="w-4 h-4 text-emerald-500"
                           aria-label="הושלם"
                         />
-                      ) : isActive ? (
+                      ) : (
                         <Loader2
                           className="w-4 h-4 text-primary animate-spin"
                           aria-label="בעיבוד"
                         />
-                      ) : (
-                        <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40" />
                       )}
                     </span>
                     <span
                       className={
                         isActive
                           ? "text-foreground font-medium"
-                          : isDone
-                            ? "text-muted-foreground line-through decoration-muted-foreground/40"
-                            : "text-muted-foreground"
+                          : "text-muted-foreground"
                       }
                     >
                       {label}
