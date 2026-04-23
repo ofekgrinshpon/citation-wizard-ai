@@ -2571,7 +2571,6 @@ ${(verify.fullText as string).slice(0, 50000)}
             decompV2ForCompletion,
             subIssuesForCompletion,
             externalHints,
-            adminClient,
           );
         } catch (e) {
           console.warn("[stage-e5] runPerplexityCompletion threw:", e);
@@ -2582,7 +2581,7 @@ ${(verify.fullText as string).slice(0, 50000)}
           for (const v of completion.validated) {
             const newCard: SourceCard = {
               id: cardId++,
-              citation: v.verified_full_citation || v.citation,
+              citation: v.citation,
               source_type: v.type === "caselaw" ? "caselaw" : "israeli_law",
               url: v.url,
               provenance: "perplexity_completion",
