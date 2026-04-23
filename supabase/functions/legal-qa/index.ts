@@ -191,6 +191,11 @@ interface PerplexityCompletionResult {
     | "request_failed"
     | "parse_failed";
   drops?: Record<string, number>;
+  /** Milestone C — engine resolution counts (subset of `candidates_kept`). */
+  engine_resolved_count?: number;
+  engine_unresolved_count?: number;
+  /** Milestone C — counts per engine failure reason. */
+  engine_drop_reasons?: Record<string, number>;
   /** First-pass debug — first 5 raw candidates with kept/dropped flag. */
   debug_candidates?: Array<{ kept: boolean; reason?: string; preview: string }>;
 }
