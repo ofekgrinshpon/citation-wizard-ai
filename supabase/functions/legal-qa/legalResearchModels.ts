@@ -14,16 +14,16 @@ export const LEGAL_RESEARCH_MODELS = {
     forceProvider: "gemini",
   },
   claimMap: {
-    // Pilot v6 latency pass: pinned to Gemini 2.5 Flash regardless of provider.
-    // gpt-5-mini consistently took 30-35s on this stage (see pilot v4/v5 logs);
-    // Gemini Flash returns the same shape in 5-10s, freeing 20-25s of the 150s
-    // edge-function budget for the drafter. The claim-map task is structured
-    // tool-calling on a small JSON schema — well within Flash's strengths.
-    // `forceProvider: "gemini"` below is honored in callPlannerJSON even when
-    // OPENAI_API_KEY is configured.
-    primary: "google/gemini-2.5-flash",
+    // Pilot v7.4: flipped back to OpenAI (gpt-5-mini) after v7.3 stability test
+    // showed Gemini Flash ignores `seed: 7`, producing run-to-run variance in
+    // claims.total (1 vs 2 vs 3 across identical inputs). Thin claim maps caused
+    // the structured drafter to degenerate → post-draft fallback. OpenAI honors
+    // the seed → deterministic claim_map → stable drafting path. Tradeoff: ~25-30s
+    // vs Gemini's ~5s, accepted to recover path stability. The `forceProvider:
+    // "openai"` override is set at the call site in decomposition.ts.
+    primary: "openai/gpt-5-mini",
     fallback: "google/gemini-2.5-flash",
-    forceProvider: "gemini",
+    forceProvider: "openai",
   },
   drafting: {
     // Legacy/fallback drafter (no claim map): heavier reasoning needed because
