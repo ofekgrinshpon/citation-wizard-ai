@@ -193,6 +193,8 @@ export interface SourceTypeCounts {
   knesset_research: number;
   journal_article: number;
   perplexity: number;
+  /** Milestone B — verified primary sources recovered via Perplexity completion. */
+  perplexity_completion: number;
   document: number;
   other: number;
   /** Of the above, how many landed in `core` after the A.5 promotion gate. */
@@ -209,12 +211,14 @@ export function countSourcesByType(
     knesset_research: 0,
     journal_article: 0,
     perplexity: 0,
+    perplexity_completion: 0,
     document: 0,
     other: 0,
     promoted_to_core: 0,
   };
   for (const e of entries) {
-    if (e.provenance === "perplexity") counts.perplexity++;
+    if (e.provenance === "perplexity_completion") counts.perplexity_completion++;
+    else if (e.provenance === "perplexity") counts.perplexity++;
     else if (e.provenance === "document") counts.document++;
     else if (e.source_type === "caselaw" || e.source_type === "פסיקה") counts.caselaw++;
     else if (e.source_type === "israeli_law" || e.source_type === "חקיקה ישראלית") counts.israeli_law++;
