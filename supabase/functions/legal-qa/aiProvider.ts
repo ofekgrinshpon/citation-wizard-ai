@@ -172,6 +172,12 @@ export async function callPlannerJSON<T = unknown>(
     return { data: null, run: finish({ status: "no_api_key" }) };
   }
 
+  // Pilot v7.3/v7.4: maximize determinism for planner stages.
+  // OpenAI gpt-5* on Chat Completions REJECTS temperature/top_p with anything
+  // other than the default 1 ("Unsupported value: 'temperature' does not
+  // support 0 with this model"). Only `seed` is honored. Gemini accepts all
+  // three and ignores `seed` gracefully — so we send temp/top_p only when
+  // we're NOT routing to OpenAI.
   const body: Record<string, unknown> = {
     model,
     messages: [
@@ -189,15 +195,12 @@ export async function callPlannerJSON<T = unknown>(
       },
     ],
     tool_choice: { type: "function", function: { name: tool.name } },
-    // Pilot v7.3: maximize determinism for planner stages (decomposition + claim_map).
-    // Tool-call output is structured JSON; we want the same input → same output across runs.
-    // - temperature=0 collapses sampling to argmax
-    // - top_p=1 disables nucleus filtering (irrelevant at temp 0 but explicit)
-    // - seed=7 pins OpenAI's pseudo-random sampler (Gemini ignores it gracefully)
-    temperature: 0,
-    top_p: 1,
     seed: 7,
   };
+  if (!useOpenAI) {
+    body.temperature = 0;
+    body.top_p = 1;
+  }
   // NOTE: `reasoning` block intentionally NOT sent — OpenAI Chat Completions
   // for gpt-5-mini rejects it with HTTP 400 ("Unknown parameter: 'reasoning'").
   // The `reasoningEffort` field is still recorded in StageRun telemetry for
