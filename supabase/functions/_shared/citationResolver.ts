@@ -220,13 +220,22 @@ function extractCaseLawDatabase(
   text: string,
   caseNumberHint?: string,
   decisionDateHint?: string,
+  titleHint?: string,
 ): Record<string, string> {
   const fields = extractCaseLawCommon(text, caseNumberHint);
-  // Database name (optional per schema)
-  if (/נבו/.test(text)) fields.database = "נבו";
-  else if (/פדאור/.test(text)) fields.database = "פדאור";
-  else if (/דינים/.test(text)) fields.database = "דינים";
-  else if (/תקדין|takdin/i.test(text)) fields.database = "תקדין";
+  // Database name (optional per schema) — scan citation text first, then titleHint.
+  // Perplexity often puts the database name (e.g. "נבו") in the title field
+  // rather than the citation string itself.
+  const scanForDb = (s: string | undefined): string | undefined => {
+    if (!s) return undefined;
+    if (/נבו/.test(s)) return "נבו";
+    if (/פדאור/.test(s)) return "פדאור";
+    if (/דינים/.test(s)) return "דינים";
+    if (/תקדין|takdin/i.test(s)) return "תקדין";
+    return undefined;
+  };
+  const db = scanForDb(text) ?? scanForDb(titleHint);
+  if (db) fields.database = db;
   // Full date — accept dd.mm.yyyy from text OR fall back to decisionDateHint
   const dateMatch = text.match(/(\d{1,2}\.\d{1,2}\.\d{4})/);
   if (dateMatch) fields.fullDate = dateMatch[1];
@@ -334,7 +343,7 @@ export function resolveCitation(
       fields = extractCaseLawPublished(text, opts.caseNumberHint);
       break;
     case "case_law_database":
-      fields = extractCaseLawDatabase(text, opts.caseNumberHint, opts.decisionDateHint);
+      fields = extractCaseLawDatabase(text, opts.caseNumberHint, opts.decisionDateHint, opts.titleHint);
       break;
   }
 
