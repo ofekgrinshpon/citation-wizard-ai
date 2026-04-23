@@ -2671,6 +2671,59 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     }
 
 
+    // ========= Step 4b: Anchor pass (Pilot v7, Fast-mode) =========
+    // Post-draft Gemini Flash call: scan the drafted body for substantive
+    // sentences that lack a [N] marker but have a real supporting source in
+    // the source pack, and inject `[N]` + a numbered footnote line. Runs
+    // ONLY on the structured drafter path (claim map present). 15s timeout;
+    // empty/timeout → ship draft as-is.
+    let anchorPassApplied = 0;
+    if (useStructuredDrafterPath && answerText.length > 200 && sourcePack.length >= 2) {
+      const tAnchorStart = Date.now();
+      const anchorSourcePack: AnchorPassSourcePackItem[] = sourceCards.map((sc) => ({
+        id: sc.id,
+        citation: sc.citation,
+        source_type: sc.source_type,
+        url: sc.url,
+        anchor_present: Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document",
+      }));
+      const anchorClaims: AnchorPassClaim[] = claimMapV2
+        ? claimMapV2.claims
+            .filter((c) => c.statementMode !== "omit")
+            .map((c) => ({
+              claim: c.claimText,
+              sourceIds: c.sourceIds.map((sid) => parseInt(sid.replace(/^src-/, ""), 10)).filter((n) => !isNaN(n)),
+              authorityLevel: c.authorityLevel,
+            }))
+        : claimMap
+        ? claimMap
+            .filter((c) => c.allowed_to_state)
+            .map((c) => ({ claim: c.claim, sourceIds: c.source_ids, authorityLevel: c.authority_level }))
+        : [];
+
+      try {
+        const anchorRes = await runAnchorPass({
+          body: answerText,
+          sourcePack: anchorSourcePack,
+          claims: anchorClaims,
+        });
+        stageRuns.push(anchorRes.run);
+        if (anchorRes.patches.length > 0) {
+          const applyRes = applyAnchorPatches(answerText, anchorRes.patches, anchorSourcePack);
+          if (applyRes.appliedCount > 0) {
+            answerText = applyRes.text;
+            anchorPassApplied = applyRes.appliedCount;
+          }
+        }
+        console.log(
+          `[anchor-pass] proposed=${anchorRes.patches.length} applied=${anchorPassApplied} (${Date.now() - tAnchorStart}ms; status=${anchorRes.run.status})`,
+        );
+      } catch (err) {
+        console.error("[anchor-pass] unexpected error — shipping draft as-is:", (err as Error).message);
+      }
+    }
+
+
     // ========= Step 5: Parse AI footnotes section =========
     // The AI appends a footnotes header followed by numbered citations.
     // Try multiple separator patterns from strict to loose.
