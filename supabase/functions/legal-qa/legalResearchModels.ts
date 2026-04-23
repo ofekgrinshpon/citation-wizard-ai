@@ -16,7 +16,19 @@ export const LEGAL_RESEARCH_MODELS = {
     fallback: "google/gemini-2.5-flash",
   },
   drafting: {
+    // Legacy/fallback drafter (no claim map): heavier reasoning needed because
+    // the model is doing both legal analysis and prose. Used by pleading_analysis,
+    // academic mode, and structured-with-no-claim-map paths.
     primary: "openai/gpt-5",
+    fallback: "google/gemini-2.5-flash",
+  },
+  structuredDrafting: {
+    // Structured drafter (with claim map): the heavy reasoning has already
+    // happened in decomposition + claim_map. The drafter's job is anchored
+    // assembly + Hebrew prose, which gpt-5-mini handles in ~40-60s vs.
+    // gpt-5's 90s+ (which timed out on every pilot v4 call). This is the
+    // single biggest latency win in the v5 pass.
+    primary: "openai/gpt-5-mini",
     fallback: "google/gemini-2.5-flash",
   },
 } as const;
