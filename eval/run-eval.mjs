@@ -43,6 +43,8 @@ const args = Object.fromEntries(
 const RUN_ID = args["run-id"] || randomUUID();
 const ONLY_QUESTIONS = args["only"] ? String(args["only"]).split(",").map(Number) : null;
 const SKIP_RUN = !!args["aggregate-only"];
+// "legacy", "structured", or "both" (default).
+const VARIANTS = args["variants"] ? String(args["variants"]).split(",") : ["legacy", "structured"];
 
 const PROGRESS_LOG = `${OUT_DIR}/progress.log`;
 const RESULTS_JSON = `${OUT_DIR}/results.json`;
@@ -389,12 +391,17 @@ async function main() {
         jwt = await getAdminJwt();
       }
       log(`---- Q${q.id} (${q.bucket}) ----`);
-      log(`  legacy…`);
-      const legacy = await runOne(jwt, q, "legacy", RUN_ID);
-      log(`    ok=${legacy.ok} path=${legacy.drafting_path} fn=${legacy.footnotes_count} ${legacy.wall_ms}ms`);
-      log(`  structured…`);
-      const structured = await runOne(jwt, q, "structured", RUN_ID);
-      log(`    ok=${structured.ok} path=${structured.drafting_path} fn=${structured.footnotes_count} ${structured.wall_ms}ms`);
+      let legacy = null, structured = null;
+      if (VARIANTS.includes("legacy")) {
+        log(`  legacy…`);
+        legacy = await runOne(jwt, q, "legacy", RUN_ID);
+        log(`    ok=${legacy.ok} path=${legacy.drafting_path} fn=${legacy.footnotes_count} ${legacy.wall_ms}ms`);
+      }
+      if (VARIANTS.includes("structured")) {
+        log(`  structured…`);
+        structured = await runOne(jwt, q, "structured", RUN_ID);
+        log(`    ok=${structured.ok} path=${structured.drafting_path} fn=${structured.footnotes_count} ${structured.wall_ms}ms`);
+      }
 
       state.results.push({
         id: q.id,
