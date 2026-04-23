@@ -190,6 +190,7 @@ function summarize(state) {
     lines.push(`- Avg words: ${Math.round(totals.words / totals.all)} (target 400-700)`);
     lines.push(`- Avg footnotes: ${(totals.fn / totals.all).toFixed(1)} (target 4-6)`);
     lines.push(`- Avg anchored: ${(totals.anch / totals.all).toFixed(1)}`);
+    lines.push(`- Avg dropped (unanchored AI footnotes): ${(totals.dropped / totals.all).toFixed(1)}`);
     lines.push(`- Avg wall: ${(totals.wall / totals.all / 1000).toFixed(1)}s`);
   }
   lines.push(``);
