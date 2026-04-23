@@ -152,6 +152,8 @@ async function runOne(jwt, q, attempt) {
     citation_density_per_100w: density,
     claim_map_summary: md.claim_map_summary ?? null,
     claim_map_allowed_count: md.claim_map_summary?.direct ?? null,
+    dropped_unanchored_count: md.dropped_unanchored_count ?? null,
+    dropped_unanchored_previews: md.dropped_unanchored_previews ?? null,
     models_used: md.models_used ?? null,
     stage_runs: md.stage_runs ?? null,
     qa_log_id: log_row?.id ?? null,
