@@ -1938,10 +1938,20 @@ ${(verify.fullText as string).slice(0, 50000)}
     if (rankedMatches.length > 0) {
       const seenDocs = new Set<string>();
       let filteredBrokenKnesset = 0;
+      // FUNNEL: per-source-type rejections inside the source-card loop.
+      const cardLoopDrops = { dedup_per_doc: {} as Record<string, number>, blog_url: {} as Record<string, number>, broken_title_knesset: 0, caselaw_no_usable_title: 0 };
+      const bumpType = (bag: Record<string, number>, t: string) => { bag[t] = (bag[t] || 0) + 1; };
       for (const m of rankedMatches) {
-        if (seenDocs.has(m.document_id)) continue;
+        const stForLog = (m.source_type || "other").toLowerCase();
+        if (seenDocs.has(m.document_id)) {
+          bumpType(cardLoopDrops.dedup_per_doc, stForLog);
+          continue;
+        }
         seenDocs.add(m.document_id);
-        if (isBlogUrl(m.source_url || undefined)) continue;
+        if (isBlogUrl(m.source_url || undefined)) {
+          bumpType(cardLoopDrops.blog_url, stForLog);
+          continue;
+        }
 
         // Filter broken-title Knesset research docs (placeholder title or flagged in metadata).
         // These have generic "פרטי מסמך" titles from a scraping failure and cannot be cited usefully.
@@ -1950,6 +1960,7 @@ ${(verify.fullText as string).slice(0, 50000)}
           const metaFlag = (m.metadata as Record<string, unknown> | null)?.broken_title === true;
           if (titleTrim === "פרטי מסמך" || titleTrim === "ללא כותרת" || titleTrim === "" || metaFlag) {
             filteredBrokenKnesset++;
+            cardLoopDrops.broken_title_knesset++;
             continue;
           }
         }
