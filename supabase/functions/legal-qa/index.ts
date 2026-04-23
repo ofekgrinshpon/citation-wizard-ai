@@ -3728,6 +3728,11 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             ?? (claimMap ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength } : null),
           drafting_path: draftingPath,
           draft_path: useNewDrafter ? "claim_map" : "fallback",   // legacy alias for back-compat
+          // Milestone A: how many AI footnotes were dropped because they had
+          // no catalog/fuzzy anchor. >0 means the drafter is fabricating
+          // citations to satisfy a floor — read alongside total_footnotes.
+          dropped_unanchored_count: droppedUnanchoredCount,
+          dropped_unanchored_previews: droppedUnanchoredPreviews,
           // Honest models_used: only record a model as "used" if its stage
           // actually completed successfully. Otherwise expose null + the failure
           // status, so admins don't get the false impression that gpt-5-mini ran.
