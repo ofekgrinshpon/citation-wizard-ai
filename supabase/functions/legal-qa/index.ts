@@ -1691,6 +1691,15 @@ ${(verify.fullText as string).slice(0, 50000)}
         drops?: Record<string, number>;
         debug_candidates?: Array<{ kept: boolean; reason?: string; preview: string }>;
       };
+      // Deep mode — Stage E.6 round-2 retrieval telemetry.
+      round_2?: {
+        triggered: boolean;
+        reason: string;
+        queries: string[];
+        new_cards: number;
+        new_doc_ids: number;
+        duration_ms: number;
+      };
     } = {
       raw_keyword: newFunnelStage(),
       raw_vector: newFunnelStage(),
@@ -2721,6 +2730,139 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     }
 
+    // ========= Stage E.6: Round-2 retrieval (Deep mode only) =========
+    // Profile-gated: when modeProfile.retrievalRounds >= 2, run a second
+    // local-search pass scoped to the planner's external_query items + any
+    // remaining sub_issues. Only chunks whose document_id is NOT already
+    // represented in sourceCards are added (deduped at the document level).
+    // This widens the source pool for Deep before the claim map is built.
+    if (
+      taskMode === RESEARCH_MODE &&
+      !evalForceLegacy &&
+      modeProfile.retrievalRounds >= 2 &&
+      decomposedPlan
+    ) {
+      const tR2Start = Date.now();
+      // Build round-2 query set from planner external_query then sub_issues.
+      const planQueries: string[] = (decomposedPlan.query_plan || [])
+        .map((p) => (typeof p?.external_query === "string" ? p.external_query.trim() : ""))
+        .filter((q): q is string => q.length >= 4);
+      const subIssues: string[] = Array.isArray(decomposedPlan.decomposition?.sub_issues)
+        ? (decomposedPlan.decomposition.sub_issues as unknown[])
+            .filter((s): s is string => typeof s === "string" && s.trim().length >= 4)
+            .map((s) => s.trim())
+        : [];
+      // De-dupe by lowercased text, keep first 4 to bound latency.
+      const seenQ = new Set<string>();
+      const round2Queries: string[] = [];
+      for (const q of [...planQueries, ...subIssues]) {
+        const key = q.toLowerCase();
+        if (seenQ.has(key)) continue;
+        seenQ.add(key);
+        round2Queries.push(q);
+        if (round2Queries.length >= 4) break;
+      }
+
+      if (round2Queries.length === 0) {
+        retrievalFunnel.round_2 = {
+          triggered: false,
+          reason: "no_queries",
+          queries: [],
+          new_cards: 0,
+          new_doc_ids: 0,
+          duration_ms: 0,
+        };
+      } else {
+        // Track doc_ids already present so we can dedupe.
+        const existingDocIds = new Set<string>();
+        for (const sc of sourceCards) {
+          // sourceCards don't carry document_id directly; we use citation+url as
+          // a stable key. This is fine because round-2 chunks come from the
+          // same RPC and we have document_citation to compare against.
+          existingDocIds.add(`${sc.citation}|${sc.url ?? ""}`);
+        }
+
+        // Run round-2 searches in parallel.
+        const round2Results = await Promise.all(
+          round2Queries.map(async (q) => {
+            try {
+              const { data } = await adminClient.rpc("search_legal_chunks_text", {
+                search_query: q,
+                match_count: 6,
+              });
+              return { q, matches: Array.isArray(data) ? data : [] };
+            } catch (e) {
+              console.warn(`[round-2] query "${q.slice(0, 40)}…" failed:`, (e as Error).message);
+              return { q, matches: [] };
+            }
+          }),
+        );
+
+        // Collect new cards (deduped per document_citation+url).
+        let newCardsAdded = 0;
+        const newDocKeys = new Set<string>();
+        for (const { matches } of round2Results) {
+          for (const m of matches) {
+            const docKey = `${m.document_citation}|${m.source_url ?? ""}`;
+            if (existingDocIds.has(docKey) || newDocKeys.has(docKey)) continue;
+            newDocKeys.add(docKey);
+
+            const sourceLabel =
+              m.source_type === "caselaw" ? "פסיקה" :
+              m.source_type === "knesset_research" ? "מחקר כנסת / חקיקה" :
+              m.source_type === "journal_article" ? "מאמר אקדמי" :
+              m.source_type === "israeli_law" ? "חקיקה ישראלית" : m.source_type;
+
+            const meta = (m.metadata || {}) as Record<string, unknown>;
+            const newCard: SourceCard = {
+              id: cardId++,
+              citation: m.document_citation || m.document_title || "מקור משפטי",
+              source_type: sourceLabel,
+              url: m.source_url || undefined,
+              provenance: "local",
+              excerpt: (m.chunk_content || "").slice(0, 400),
+              case_number: m.source_type === "caselaw" ? ((meta.case_number as string) || undefined) : undefined,
+              relevance_score: typeof m.similarity === "number" ? m.similarity : 0.5,
+            };
+            sourceCards.push(newCard);
+            sourcePack.push({
+              source_id: newCard.id,
+              title: newCard.citation,
+              source_type: newCard.source_type,
+              authority_class: classifyAuthority(newCard.source_type, newCard.citation, newCard.url),
+              url: newCard.url,
+              provenance: "local",
+              excerpt: newCard.excerpt,
+              case_number: newCard.case_number,
+              usable_for_analysis: (newCard.excerpt?.length ?? 0) > 300,
+              usable_for_citation: newCard.citation.length > 15,
+              anchor_present: Boolean(newCard.url) || true, // local provenance
+              relevance_score: newCard.relevance_score ?? 0.5,
+            });
+            newCardsAdded++;
+          }
+        }
+
+        // Re-assemble V2 source pack so new cards can be classified into
+        // core/supporting/secondary before Stage D consumes it.
+        if (newCardsAdded > 0 && sourcePack.length >= 2) {
+          sourcePackV2 = assembleSourcePack(sourcePack as InternalSourcePackEntry[]);
+          const sps = summarizeSourcePack(sourcePackV2);
+          console.log(`[round-2] +${newCardsAdded} cards (${newDocKeys.size} new docs); pack now core=${sps.core} supporting=${sps.supporting} secondary=${sps.secondary}`);
+        }
+
+        retrievalFunnel.round_2 = {
+          triggered: true,
+          reason: "profile_retrieval_rounds_2",
+          queries: round2Queries,
+          new_cards: newCardsAdded,
+          new_doc_ids: newDocKeys.size,
+          duration_ms: Date.now() - tR2Start,
+        };
+        console.log(`[round-2] ${round2Queries.length} queries, +${newCardsAdded} cards (${Date.now() - tR2Start}ms)`);
+      }
+    }
+
     // ========= Stage D: Claim Map (legal_research only, INTERNAL) =========
     let claimMap: ClaimMap | null = null;
     let claimMapAllowedCount = 0;
@@ -3161,14 +3303,25 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
       const uncoveredLine = claimMapV2 && claimMapV2.uncoveredSubIssues.length > 0
         ? `תת-סוגיות שלא מכוסות (ציין כחוסר ודאות): ${claimMapV2.uncoveredSubIssues.join(" | ")}`
         : "";
+      // ─── Profile-driven envelope (Fast vs Deep) ──────────────────
+      // The drafter envelope (word range + footnote floor/target) is read
+      // from the resolved ModeProfile so a single switch in modeProfiles.ts
+      // changes Deep behavior without touching this builder.
+      const modeLabel = researchDepth === "deep" ? "Deep" : "Fast";
+      const wordMin = modeProfile.wordRangeMin;
+      const wordMax = modeProfile.wordRangeMax;
+      const fnFloor = modeProfile.footnoteFloor;
+      const fnMax = modeProfile.footnoteTargetMax;
+      // Deep gets richer structural guidance (more analysis paragraphs)
+      // because the longer envelope justifies sub-treatment of sub-issues.
+      const frameworkSentenceTarget = researchDepth === "deep" ? "10-14 משפטים" : "6-9 משפטים";
+      const applicationSentenceTarget = researchDepth === "deep" ? "10-14 משפטים" : "6-9 משפטים";
+      const conclusionSentenceTarget = researchDepth === "deep" ? "4-6 משפטים" : "2-3 משפטים";
       // ─── Milestone A (parser-side anchor enforcement) ────────────
-      // Removed: "hard 4-footnote / 450-word floor" language. The system
-      // — not the model — now owns the citation floor. The parser drops
-      // any AI footnote that doesn't match a catalog source card, so
-      // floors expressed in the prompt only encouraged the drafter to
-      // fabricate "[חסר: ...]" skeletons. Target stays 400-700 words /
-      // 4-6 anchored citations, but as guidance, not pass/fail.
-      return `אתה עוזר משפטי מומחה במצב **Fast**. כתוב תשובה משפטית **תמציתית, פרקטית ומעוגנת** בעברית, על בסיס מפת הטענות המאושרת למטה.
+      // The parser drops any AI footnote that doesn't match a catalog
+      // source card, so the floor expressed in the prompt is guidance —
+      // not pass/fail. Floors and targets come from the active ModeProfile.
+      return `אתה עוזר משפטי מומחה במצב **${modeLabel}**. כתוב תשובה משפטית **${researchDepth === "deep" ? "מקיפה, מעמיקה ומעוגנת" : "תמציתית, פרקטית ומעוגנת"}** בעברית, על בסיס מפת הטענות המאושרת למטה.
 
 ═══ חובת פלט מוחלטת ═══
 התשובה שלך **חייבת** להסתיים בבלוק הערות שוליים. תמיד. אין יוצא מן הכלל.
@@ -3185,33 +3338,33 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
 3. אם אין מקור מעוגן — אל תכניס [N] בגוף, אבל הוסף את הכותרת והרשימה (או "אין מקורות מעוגנים זמינים לשאלה זו." מתחתיה).
 4. השורה האחרונה בתשובה היא תמיד חלק מבלוק הערות השוליים, לא משפט מסקנה.
 
-═══ מבנה התשובה למצב Fast (חובה — קרא ויישם) ═══
+═══ מבנה התשובה למצב ${modeLabel} (חובה — קרא ויישם) ═══
 כתוב **בדיוק** ארבעה חלקים, בסדר הזה, עם הכותרות המדויקות הללו ב-**bold**:
 
 **שורה תחתונה**
 2-4 משפטים. בולט ראשון. מסקנה משפטית פרקטית מיידית — מה התשובה הקצרה לשאלה. אם יש סייגים מהותיים (חוסר ודאות, פסיקה חלוקה, חסר עיגון) — ציין אותם כאן בחצי משפט.
 
 **מסגרת נורמטיבית**
-פסקה מהותית (6-9 משפטים). זהה את החוקים, פסקי הדין וההלכות המרכזיים שמסדירים את הסוגיה. אזכר אותם בשם נרטיבי ("חוק X", "בעניין Y") עם [N] לאחר כל מקור מהותי. הסבר את ההיגיון המשפטי, לא רק את שמות המקורות.
+פסקה מהותית (${frameworkSentenceTarget}). זהה את החוקים, פסקי הדין וההלכות המרכזיים שמסדירים את הסוגיה. אזכר אותם בשם נרטיבי ("חוק X", "בעניין Y") עם [N] לאחר כל מקור מהותי. הסבר את ההיגיון המשפטי, לא רק את שמות המקורות.
 
 **יישום**
-פסקה מהותית (6-9 משפטים). יישם את המסגרת על השאלה הקונקרטית שהוצגה. ניתוח ממוקד עם החלה קונקרטית, לא חזרה על המסגרת. הוסף [N] לכל טענה שמסתמכת על מקור.
+פסקה מהותית (${applicationSentenceTarget}). יישם את המסגרת על השאלה הקונקרטית שהוצגה. ניתוח ממוקד עם החלה קונקרטית, לא חזרה על המסגרת. הוסף [N] לכל טענה שמסתמכת על מקור.
 
 **מסקנה**
-2-3 משפטים. סגור את הטיעון. אם הוצגה אי-ודאות בשורה התחתונה — חזור עליה כאן בקצרה.
+${conclusionSentenceTarget}. סגור את הטיעון. אם הוצגה אי-ודאות בשורה התחתונה — חזור עליה כאן בקצרה.
 
 ═══ אורך ועיגון — יעדים (לא רצפות מחייבות) ═══
-- **יעד אורך גוף: 400-700 מילים**. אל תחרוג מ-700. אל תכווץ ל-200 — תן ניתוח של ממש במסגרת ויישום.
-- **יעד הערות שוליים: 4-6 הערות מעוגנות**, מינימום 2.
+- **יעד אורך גוף: ${wordMin}-${wordMax} מילים**. אל תחרוג מ-${wordMax}. אל תכווץ משמעותית מ-${wordMin} — תן ניתוח של ממש במסגרת ויישום.
+- **יעד הערות שוליים: ${fnFloor}-${fnMax} הערות מעוגנות**, מינימום ${fnFloor}.
 - "מעוגן" = יש לך כרטיס מקור בקטלוג שמתאים לאזכור. אם אין מקור מהקטלוג שתומך בטענה — אל תכניס [N] ואל תחבר הערת שוליים. **אין לייצר הערה ביבליוגרפית "מהזיכרון" כדי להגיע ליעד.**
-- אם הקטלוג קצר/חלש — מותר לסיים עם 2-3 הערות מעוגנות בלבד. עדיף פחות הערות אמיתיות מאשר יותר הערות מומצאות.
+- אם הקטלוג קצר/חלש — מותר לסיים עם פחות הערות מעוגנות. עדיף פחות הערות אמיתיות מאשר יותר הערות מומצאות.
 - ללא תת-כותרות נוספות, ללא רשימות תבליטים מעבר לבולט הראשון בשורה התחתונה, ללא # markdown.
 - טון פורמלי וישיר. אין הקדמות, אין "ראשית נציין", אין "חשוב להבין כי".
 
 ═══ בדיקה עצמית לפני הגשה ═══
 לפני שאתה מסיים, ודא:
 1. כל [N] בגוף מתייחס לפריט [src-N] בקטלוג למטה. אם אין כרטיס מתאים — מחק את ה-[N] ושכתב כדעה כללית.
-2. הגוף בטווח 400-700 מילים, ויש לפחות 2 הערות מעוגנות.
+2. הגוף בטווח ${wordMin}-${wordMax} מילים, ויש לפחות ${fnFloor} הערות מעוגנות.
 
 ═══ מפת הטענות (חוזה — חובה לעקוב) ═══
 אתה כותב אך ורק מתוך הטענות הבאות. אסור לייצר טענה משפטית שאינה במפה.
@@ -3219,7 +3372,7 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
 - statementMode="qualified": נסח כ"משתמע" / "ניתן ללמוד" / "עולה מ..." / חוסר ודאות.
 - needsPinpoint=true: חובה pinpoint בהערת השוליים (ס' X ל..., בעמ' Y).
 - כל sourceId ("src-N") מתייחס לפריט ברשימת המקורות למטה (המספר אחרי "src-").
-- בחר את 4-6 הטענות החזקות והמכוננות ביותר ועגן אותן. אל תנסה לכסות את כל הטענות במפה.
+- בחר את ${fnFloor}-${fnMax} הטענות החזקות והמכוננות ביותר ועגן אותן. אל תנסה לכסות את כל הטענות במפה.
 ${uncoveredLine}
 
 מפת הטענות (JSON):
@@ -3260,7 +3413,7 @@ ${sourceCatalog}
 ${combinedContext}
 
 ═══ תזכורת אחרונה ═══
-זהו מצב **Fast**: יעד 400-700 מילים / 4-6 הערות מעוגנות (מינימום 2), ארבע כותרות בלבד, בלוק הערות שוליים בסוף. כל [N] בגוף חייב להיות מגובה בכרטיס מקור מהקטלוג. אל תמציא הערות.
+זהו מצב **${modeLabel}**: יעד ${wordMin}-${wordMax} מילים / ${fnFloor}-${fnMax} הערות מעוגנות (מינימום ${fnFloor}), ארבע כותרות בלבד, בלוק הערות שוליים בסוף. כל [N] בגוף חייב להיות מגובה בכרטיס מקור מהקטלוג. אל תמציא הערות.
 
 הפורמט בסוף התשובה (חובה לעקוב אחריו אות באות):
 
@@ -3283,11 +3436,11 @@ ${combinedContext}
     const promptLen = drafterSystemPrompt.length;
     console.log(`Prompt length: ${promptLen} chars (variant=${useStructuredDrafterPath ? "compact" : "full"}), ${sourceCards.length} source cards`);
 
-    // Pilot v7.6 (Fast-mode shaping): the structured drafter prompt now
-    // targets 400-700 words / 4-6 footnotes. 2048 tokens is comfortably
-    // above the 700-word + footnote-block ceiling and acts as a hard cap
-    // on runaway prose. Academic and legacy paths keep their larger budgets.
-    const aiMaxTokens = isAcademicMode ? 12288 : (useStructuredDrafterPath ? 2048 : 8192);
+    // Token budget: structured drafter ceiling scales with the profile's
+    // word range (~1.6 tokens per Hebrew word, plus footnote-block headroom).
+    // Fast (≤700 words) → 2048; Deep (≤2000 words) → 6144.
+    const structuredDrafterMaxTokens = modeProfile.wordRangeMax >= 1500 ? 6144 : 2048;
+    const aiMaxTokens = isAcademicMode ? 12288 : (useStructuredDrafterPath ? structuredDrafterMaxTokens : 8192);
     // For pleading_analysis with an uploaded document: the document IS the audit subject,
     // and the typed `question` becomes optional user instructions/focus directives.
     const isPleadingWithDoc = taskMode === "pleading_analysis" && (bodyHasDocument || hasDocument);
@@ -3436,11 +3589,11 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // additional anchoring) and will be re-enabled with a higher ceiling
     // for a future Deep mode.
     let anchorPassApplied = 0;
-    // Anchor pass gate is now profile-driven. Fast skips it (structured path
-    // shaped to 4-6 footnotes); Deep enables it for additional anchoring.
-    // Legacy/fallback drafter path always benefits from anchor pass when the
-    // profile allows it.
-    const skipAnchorPass = !modeProfile.anchorPassEnabled || (useStructuredDrafterPath && researchDepth === "fast");
+    // Anchor pass gate is purely profile-driven. Fast = false (structured
+    // path shaped to 4-6 footnotes), Deep = true (richer envelope benefits
+    // from additional anchoring). The redundant fast+structured carve-out
+    // was removed — the profile flag is the single source of truth.
+    const skipAnchorPass = !modeProfile.anchorPassEnabled;
     if (!skipAnchorPass && answerText.length > 200 && sourcePack.length >= 2) {
       const tAnchorStart = Date.now();
       const anchorSourcePack: AnchorPassSourcePackItem[] = sourceCards.map((sc) => ({
