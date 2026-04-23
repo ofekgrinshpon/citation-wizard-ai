@@ -27,6 +27,7 @@ import { mapToClaimMapV2, summarizeClaimMapV2 } from "./legalClaimMap.ts";
 import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
 import { runShadowAbComparison, buildLegacyShadowPrompt } from "./shadowAbLogger.ts";
 import { runAnchorPass, applyAnchorPatches, type AnchorPassSourcePackItem, type AnchorPassClaim } from "./anchorPass.ts";
+import { resolveCitation } from "../_shared/citationResolver.ts";
 
 // Single source of truth for the research-mode gate. The frontend currently
 // sends `taskMode: "research"`; if that ever changes, update this constant.
@@ -87,13 +88,13 @@ function isTrustedLegalUrl(url: string): boolean {
   }
 }
 
-// ─── Milestone B: Perplexity-completion candidate validators ───
-// Statute citation must contain ס"ח or ק"ת + a number AND a Hebrew year
-// starting with ה (התש... form). Tolerant of straight quotes vs gershayim.
-const STATUTE_CITATION_RE = /(?:ס["״]ח|ק["״]ת)\s*\d/;
-const HEBREW_YEAR_RE = /\bהת(?:ש|רש)[א-ת]["״׳'][א-ת]/;
-// Caselaw case_number must match e.g. בג"ץ 1234/20, ע"א 44/76, רע"א 567/19, etc.
-const CASE_NUMBER_RE = /^(?:בג["״]ץ|בש["״]פ|ע["״]א|ע["״]פ|ע["״]ע|רע["״]א|רע["״]פ|דנ["״]א|דנ["״]פ|תפ["״]ח|עע["״]מ|בר["״]ם|ת["״]א|ת["״]פ|עמ["״]ה)\s+\d+\/\d+/;
+// ─── Milestone C: Perplexity-completion guards ───
+// Guard 1 = URL allowlist (isTrustedLegalUrl above).
+// Guard 2 = Citation engine resolution (resolveCitation, see below).
+// Engine is non-blocking: unresolved candidates are KEPT but flagged
+// engine_resolved=false. The previous STATUTE_CITATION_RE / HEBREW_YEAR_RE /
+// CASE_NUMBER_RE pre-checks were removed in Milestone C — the engine handles
+// shape validation through its required-field schema.
 
 interface PerplexityCompletionCandidate {
   type: "statute" | "caselaw";
@@ -108,47 +109,69 @@ interface PerplexityCompletionCandidate {
   relevance_note?: string;
 }
 
-type ValidatedCompletionCandidate = PerplexityCompletionCandidate;
+interface ValidatedCompletionCandidate extends PerplexityCompletionCandidate {
+  /** True iff the citation engine resolved this candidate into structured fields. */
+  engine_resolved: boolean;
+  /** When engine_resolved=false, the resolver's failure reason for telemetry. */
+  engine_drop_reason?: "classify_failed" | "extract_failed" | "missing_required";
+}
 
 /**
- * Validate a single Perplexity-completion candidate against 2 hard guards:
- *   1. Citation-shape regex (statute or caselaw)
- *   2. URL allowlist (TRUSTED_LEGAL_DOMAINS)
+ * Validate a single Perplexity-completion candidate against 2 guards
+ * (Milestone C):
+ *   1. URL allowlist (TRUSTED_LEGAL_DOMAINS) — runs first, hard drop.
+ *   2. Citation engine resolution — non-blocking. If the engine resolves
+ *      the candidate, the canonical re-emission replaces the raw citation
+ *      string. If not, the candidate is still kept (URL guard already
+ *      vouched for the source) but flagged engine_resolved=false.
+ *
+ * Hard-drop reasons:
+ *   - `unknown_type` (Perplexity returned something other than statute/caselaw)
+ *   - `url_not_allowlisted` (host not in TRUSTED_LEGAL_DOMAINS)
  *
  * Note: There is intentionally no `verified_sources` cross-check here.
  * `verified_sources` is a user-saved citations table — not an authority
  * registry — so requiring a match would drop legitimate primary sources
- * that simply nobody has saved yet. A valid Israeli legal citation shape
- * plus an allowlisted official-domain URL is sufficient evidence of
- * authenticity for citation-only anchoring (usable_for_citation=true,
- * usable_for_analysis=false).
+ * that simply nobody has saved yet.
  */
 function validatePerplexityCandidate(
   c: PerplexityCompletionCandidate,
 ): { ok: true; candidate: ValidatedCompletionCandidate } | { ok: false; reason: string } {
-  // Guard 1: citation-shape regex.
-  if (c.type === "statute") {
-    if (!STATUTE_CITATION_RE.test(c.citation)) {
-      return { ok: false, reason: "statute_citation_shape" };
-    }
-    if (!HEBREW_YEAR_RE.test(c.citation) && !HEBREW_YEAR_RE.test(c.year_hebrew || "")) {
-      return { ok: false, reason: "missing_hebrew_year" };
-    }
-  } else if (c.type === "caselaw") {
-    const cn = (c.case_number || "").trim();
-    if (!cn || !CASE_NUMBER_RE.test(cn)) {
-      return { ok: false, reason: "caselaw_case_number_shape" };
-    }
-  } else {
+  if (c.type !== "statute" && c.type !== "caselaw") {
     return { ok: false, reason: "unknown_type" };
   }
 
-  // Guard 2: URL allowlist.
+  // Guard 1: URL allowlist (hard drop).
   if (!c.url || !isTrustedLegalUrl(c.url)) {
     return { ok: false, reason: "url_not_allowlisted" };
   }
 
-  return { ok: true, candidate: c };
+  // Guard 2: engine resolution (non-blocking).
+  const resolved = resolveCitation(c.citation, c.type, {
+    caseNumberHint: c.case_number,
+    decisionDateHint: c.decision_date,
+  });
+
+  if (resolved.resolved) {
+    return {
+      ok: true,
+      candidate: {
+        ...c,
+        citation: resolved.canonical, // replace with canonical re-emission
+        engine_resolved: true,
+      },
+    };
+  }
+
+  // Unresolved → keep, flag for telemetry, drafter sees raw citation.
+  return {
+    ok: true,
+    candidate: {
+      ...c,
+      engine_resolved: false,
+      engine_drop_reason: resolved.reason,
+    },
+  };
 }
 
 interface PerplexityCompletionResult {
@@ -168,6 +191,11 @@ interface PerplexityCompletionResult {
     | "request_failed"
     | "parse_failed";
   drops?: Record<string, number>;
+  /** Milestone C — engine resolution counts (subset of `candidates_kept`). */
+  engine_resolved_count?: number;
+  engine_unresolved_count?: number;
+  /** Milestone C — counts per engine failure reason. */
+  engine_drop_reasons?: Record<string, number>;
   /** First-pass debug — first 5 raw candidates with kept/dropped flag. */
   debug_candidates?: Array<{ kept: boolean; reason?: string; preview: string }>;
 }
@@ -322,7 +350,18 @@ async function runPerplexityCompletion(
   if (validated.length === 0 && raw.length > 0 && status === "ok") status = "all_dropped";
 
   const byType = { statute: 0, caselaw: 0 };
-  for (const v of validated) byType[v.type]++;
+  let engineResolvedCount = 0;
+  let engineUnresolvedCount = 0;
+  const engineDropReasons: Record<string, number> = {};
+  for (const v of validated) {
+    byType[v.type]++;
+    if (v.engine_resolved) engineResolvedCount++;
+    else {
+      engineUnresolvedCount++;
+      const r = v.engine_drop_reason || "unknown";
+      engineDropReasons[r] = (engineDropReasons[r] || 0) + 1;
+    }
+  }
 
   return {
     result: {
@@ -335,6 +374,9 @@ async function runPerplexityCompletion(
       duration_ms: Date.now() - t0,
       status,
       drops,
+      engine_resolved_count: engineResolvedCount,
+      engine_unresolved_count: engineUnresolvedCount,
+      engine_drop_reasons: engineDropReasons,
       debug_candidates: debug?.slice(0, 5),
     },
     validated,
@@ -2623,10 +2665,13 @@ ${(verify.fullText as string).slice(0, 50000)}
           promoted_to_core: completion?.result?.promoted_to_core ?? 0,
           duration_ms: Date.now() - tE5,
           drops: completion?.result?.drops,
+          engine_resolved_count: completion?.result?.engine_resolved_count ?? 0,
+          engine_unresolved_count: completion?.result?.engine_unresolved_count ?? 0,
+          engine_drop_reasons: completion?.result?.engine_drop_reasons ?? {},
           debug_candidates: completion?.result?.debug_candidates,
         };
         console.log(
-          `[stage-e5] triggered status=${completion?.result?.status} returned=${completion?.result?.candidates_returned ?? 0} kept=${completion?.result?.candidates_kept ?? 0} core ${coreBefore}→${coreAfter} (${Date.now() - tE5}ms)`,
+          `[stage-e5] triggered status=${completion?.result?.status} returned=${completion?.result?.candidates_returned ?? 0} kept=${completion?.result?.candidates_kept ?? 0} engine_resolved=${completion?.result?.engine_resolved_count ?? 0}/${completion?.result?.candidates_kept ?? 0} core ${coreBefore}→${coreAfter} (${Date.now() - tE5}ms)`,
         );
       } else {
         retrievalFunnel.perplexity_completion = {
