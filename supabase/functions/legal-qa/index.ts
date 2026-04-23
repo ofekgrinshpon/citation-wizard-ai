@@ -2712,8 +2712,16 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // available (structured), otherwise anchorClaims is empty and the model
     // falls back to source-pack-only matching.
     // 15s timeout; empty/timeout → ship draft as-is.
+    // Pilot v7.6: skip anchor pass on the Fast structured path. The new
+    // shaped prompt (400-700 words, 4-6 footnotes) intentionally restricts
+    // citation count, so the anchor pass — which adds up to 4 extra
+    // footnotes — works against the Fast contract. Anchor pass remains on
+    // the legacy fallback path (where the longer mini-memo benefits from
+    // additional anchoring) and will be re-enabled with a higher ceiling
+    // for a future Deep mode.
     let anchorPassApplied = 0;
-    if (answerText.length > 200 && sourcePack.length >= 2) {
+    const skipAnchorPass = useStructuredDrafterPath; // Fast = structured path
+    if (!skipAnchorPass && answerText.length > 200 && sourcePack.length >= 2) {
       const tAnchorStart = Date.now();
       const anchorSourcePack: AnchorPassSourcePackItem[] = sourceCards.map((sc) => ({
         id: sc.id,
