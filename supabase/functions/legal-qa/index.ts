@@ -3879,6 +3879,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             sourcePack as InternalSourcePackEntry[],
             sourcePackV2,
           ),
+          // Retrieval funnel: per-source-type counts at each pipeline checkpoint
+          // + drop reasons. Instrumentation only — read with:
+          //   select metadata->'retrieval_funnel' from qa_logs order by created_at desc limit 1;
+          retrieval_funnel: retrievalFunnel,
           claim_map_summary: claimMapV2Summary
             ?? (claimMap ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength } : null),
           drafting_path: draftingPath,
