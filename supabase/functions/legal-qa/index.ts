@@ -1650,6 +1650,14 @@ ${(verify.fullText as string).slice(0, 50000)}
           console.log(`Keyword search returned 0 results — check Postgres NOTICE logs for fallback chain (top-2 → top-1 → plainto)`);
         }
 
+        // FUNNEL CHECKPOINT 1–3: raw retrieval per source_type
+        retrievalFunnel.raw_keyword = tallyByType(keywordMatches);
+        retrievalFunnel.raw_vector = tallyByType(vectorMatches);
+        retrievalFunnel.raw_caselaw_filtered = tallyByType(caselawMatches);
+        console.log(`FUNNEL raw_keyword: ${JSON.stringify(retrievalFunnel.raw_keyword)}`);
+        console.log(`FUNNEL raw_vector: ${JSON.stringify(retrievalFunnel.raw_vector)}`);
+        console.log(`FUNNEL raw_caselaw_filtered: ${JSON.stringify(retrievalFunnel.raw_caselaw_filtered)}`);
+
         // ── Content-aware similarity bonus ──────────────────────────
         // Pair the question's action verbs with their nominal/legal counterparts
         // and award a small bonus to chunks whose content contains the counterpart.
