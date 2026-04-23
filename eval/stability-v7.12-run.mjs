@@ -28,55 +28,26 @@ function log(msg) {
   appendFileSync(LOG_FILE, line + "\n");
 }
 
-// 18 questions × 9 legal domains. Each question targets a domain whose corpus
-// coverage we want to probe; mix of statute-anchored, caselaw-heavy, and
-// research-heavy queries so Stage E.5 firing varies naturally.
+// Milestone C smoke test — 6 questions × 1 rep covering domains where Stage E.5
+// fired most in the previous run (contract/labor, statute-anchored) plus one
+// constitutional control where the local corpus is healthy.
 const QUESTIONS = [
-  // Constitutional / administrative
+  // Constitutional / administrative — control (E.5 was healthy / sometimes skipped)
   { id: 1, bucket: "constitutional_admin",
     question: "האם הממשלה מוסמכת לפטר את היועצת המשפטית לממשלה, ואם כן באילו מגבלות נורמטיביות ומנהליות?" },
-  { id: 2, bucket: "constitutional_admin",
-    question: "מהו היקף ביקורת בג\"ץ על החלטות ועדת הבחירות המרכזית לכנסת בנושא פסילת רשימה?" },
-  // Contract / labor
-  { id: 3, bucket: "contract_labor",
+  // Contract / labor — E.5 fired most here
+  { id: 2, bucket: "contract_labor",
     question: "באילו נסיבות ניתן לאכוף תניית אי-תחרות בחוזה עבודה בישראל?" },
-  { id: 4, bucket: "contract_labor",
+  { id: 3, bucket: "contract_labor",
     question: "מתי ייחשב מעסיק כמי שפיטר עובד בחוסר תום לב המזכה בפיצוי מעבר לפיצויי פיטורים?" },
-  // Tort / negligence
-  { id: 5, bucket: "tort",
-    question: "כיצד נקבעת אחריות בנזיקין של רופא בגין רשלנות רפואית באבחון מאוחר?" },
-  { id: 6, bucket: "tort",
-    question: "האם ניתן לתבוע בנזיקין רשות מקומית בגין נזק שנגרם בשל ליקוי במדרכה ציבורית?" },
-  // Criminal
-  { id: 7, bucket: "criminal",
-    question: "מהם יסודות עבירת הפרת אמונים של עובד ציבור לפי סעיף 284 לחוק העונשין?" },
-  { id: 8, bucket: "criminal",
-    question: "באילו תנאים ניתן להגיש כתב אישום בעבירת מרמה והפרת אמונים נגד נבחר ציבור?" },
-  // Property / real estate
-  { id: 9, bucket: "property",
-    question: "מתי תחול דוקטרינת הסתמכות תקנה 9 לתקנות המקרקעין על רוכש דירה מקבלן?" },
-  { id: 10, bucket: "property",
-    question: "מהן זכויות דייר מוגן בנכס שנמכר למשקיע, ומתי ניתן לפנותו?" },
-  // Family
-  { id: 11, bucket: "family",
-    question: "מהי חזקת השיתוף בין בני זוג לגבי נכסים שנצברו לפני הנישואין?" },
-  { id: 12, bucket: "family",
-    question: "כיצד נקבע מזונות ילדים בין הורים בעלי הכנסות שוות במשמורת משותפת?" },
-  // Tax
-  { id: 13, bucket: "tax",
-    question: "מתי ייחשב יחיד כתושב ישראל לצורכי מס הכנסה לפי מבחן מרכז החיים?" },
-  { id: 14, bucket: "tax",
-    question: "מה דין ניכוי הוצאות ריבית על הלוואה ששימשה לרכישת נכס מניב?" },
-  // Procedural / civil procedure
-  { id: 15, bucket: "civil_procedure",
-    question: "מתי בית המשפט יורה על מחיקת תביעה על הסף בשל היעדר עילה לפי תקנה 41?" },
-  { id: 16, bucket: "civil_procedure",
-    question: "מהם התנאים לאישור תובענה ייצוגית בעניין צרכני לפי סעיף 4 לחוק תובענות ייצוגיות?" },
-  // Statute-anchored / Knesset research
-  { id: 17, bucket: "statute_anchored",
+  // Statute-anchored — E.5 fired and the engine should resolve these cleanly
+  { id: 4, bucket: "statute_anchored",
     question: "מה קובע סעיף 17 לחוק שירות המדינה (מינויים) לעניין פיטורים או הפסקת כהונה?" },
-  { id: 18, bucket: "statute_anchored",
+  { id: 5, bucket: "statute_anchored",
     question: "מהן ההגבלות בחוק חופש המידע על פרסום מסמכי ממשלה הנוגעים לביטחון המדינה?" },
+  // Criminal statute-anchored — likely E.5 with a clean חוק העונשין citation
+  { id: 6, bucket: "criminal",
+    question: "מהם יסודות עבירת הפרת אמונים של עובד ציבור לפי סעיף 284 לחוק העונשין?" },
 ];
 const REPETITIONS = 1;
 
