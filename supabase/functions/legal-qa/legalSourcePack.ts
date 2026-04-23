@@ -43,10 +43,10 @@ function mapAuthorityClass(
   completionType?: "statute" | "caselaw",
 ): LegalAuthorityClass {
   if (provenance === "document") return "user_document";
-  // Milestone B: perplexity_completion candidates are verified-source-matched
-  // BEFORE they reach this map (see runPerplexityCompletion in index.ts).
-  // Their declared type is therefore trusted and they go directly to primary
-  // authority, bypassing both the URL-based fallback and the relevance gate.
+  // Milestone B: perplexity_completion candidates have already passed the
+  // citation-shape regex + URL allowlist guards in runPerplexityCompletion
+  // (see index.ts). Their declared type is therefore trusted and they go
+  // directly to primary authority, bypassing the URL-based fallback.
   if (provenance === "perplexity_completion") {
     if (completionType === "statute") return "primary_legislation";
     if (completionType === "caselaw") return "primary_caselaw";
