@@ -135,54 +135,20 @@ export async function decomposeAndPlan(
     DECOMP_SYSTEM_PROMPT,
     `שאלת המחקר:\n${question}`,
     DECOMP_PLAN_TOOL,
-    // Tier-1 tuning (eval run 04b7079e): observed p95 of successful gpt-5-nano/mini
-    // decomposition is ~30s; raise to 45s to absorb the long tail. Combined with
-    // parallelization in index.ts this no longer blocks retrieval.
+    // Tier-2 (pilot v4): primary is now gpt-5-mini (see legalResearchModels.ts).
+    // 45s timeout absorbs the long tail; nano→mini retry removed since mini IS primary.
     { stage: "decomposition", timeoutMs: 45000, reasoningEffort: "minimal" },
   );
 
-  const validate = (
-    p: DecomposedPlan | null,
-    r: StageRun,
-  ): { ok: boolean; data: DecomposedPlan | null; run: StageRun } => {
-    if (!p) return { ok: false, data: null, run: r };
-    if (!p.decomposition?.main_issue || !Array.isArray(p.decomposition?.sub_issues)) {
-      return { ok: false, data: null, run: { ...r, status: "parse_error", error_message: "missing main_issue or sub_issues" } };
-    }
-    if (p.decomposition.sub_issues.length < 2) {
-      return { ok: false, data: null, run: { ...r, status: "parse_error", error_message: "fewer than 2 sub_issues" } };
-    }
-    if (!Array.isArray(p.query_plan)) p.query_plan = [];
-    return { ok: true, data: p, run: r };
-  };
-
-  const first = validate(data, run);
-  if (first.ok) return { data: first.data, run: first.run };
-
-  // Tier-1.5 retry: escalate nano → mini on parse_error / no_tool_call only.
-  // Skip retry on timeout/http_error/no_api_key (won't help, just adds latency).
-  const retryableStatuses: StageRun["status"][] = ["parse_error", "no_tool_call"];
-  if (!retryableStatuses.includes(first.run.status)) {
-    return { data: null, run: first.run };
+  if (!data) return { data: null, run };
+  if (!data.decomposition?.main_issue || !Array.isArray(data.decomposition?.sub_issues)) {
+    return { data: null, run: { ...run, status: "parse_error", error_message: "missing main_issue or sub_issues" } };
   }
-  console.log(`[decomposition] retrying with gpt-5-mini after ${first.run.status} on ${first.run.model}`);
-  const { data: retryData, run: retryRun } = await callPlannerJSON<DecomposedPlan>(
-    DECOMP_SYSTEM_PROMPT,
-    `שאלת המחקר:\n${question}`,
-    DECOMP_PLAN_TOOL,
-    {
-      stage: "decomposition",
-      timeoutMs: 45000,
-      reasoningEffort: "minimal",
-      openaiModelOverride: "gpt-5-mini",
-    },
-  );
-  const second = validate(retryData, retryRun);
-  if (second.ok) {
-    console.log(`[decomposition] retry succeeded on gpt-5-mini`);
-    return { data: second.data, run: second.run, retryRun: first.run };
+  if (data.decomposition.sub_issues.length < 2) {
+    return { data: null, run: { ...run, status: "parse_error", error_message: "fewer than 2 sub_issues" } };
   }
-  return { data: null, run: second.run, retryRun: first.run };
+  if (!Array.isArray(data.query_plan)) data.query_plan = [];
+  return { data, run };
 }
 
 // ────────────────────────────────────────────────────────────────
