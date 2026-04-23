@@ -312,6 +312,9 @@ serve(async (req) => {
               { role: "system", content: "You return ONLY a JSON object with keys: case_number, parties, court, year, source_url. No prose." },
               { role: "user", content: `מצא את פסק הדין הישראלי הבא והחזר רק JSON: ${question}` },
             ],
+            // Caselaw-only subset of legal-qa/index.ts TRUSTED_LEGAL_DOMAINS.
+            // Intentionally narrower (court domains only) since this function
+            // verifies case fulltext, not legislation/academic sources.
             search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "psakdin.co.il"],
           }),
         }, 8000);
