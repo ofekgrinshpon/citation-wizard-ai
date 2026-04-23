@@ -1890,6 +1890,33 @@ ${(verify.fullText as string).slice(0, 50000)}
         rankedMatches = await rerankLocalMatches(localMatches, question, LOVABLE_API_KEY);
         const tRerank = Date.now();
         console.log(`Re-ranking took ${tRerank - tRetrieval}ms, kept ${rankedMatches.length}/${localMatches.length} chunks`);
+
+        // FUNNEL CHECKPOINT 5: per-source-type breakdown after rerank gate
+        retrievalFunnel.after_rerank = tallyByType(rankedMatches);
+        const keptDocIds = new Set(rankedMatches.map(m => m.document_id));
+        const inputByDoc = new Map<string, { source_type: string; title: string }>();
+        for (const m of localMatches) {
+          if (!inputByDoc.has(m.document_id)) {
+            inputByDoc.set(m.document_id, { source_type: m.source_type || "other", title: m.document_title || "" });
+          }
+        }
+        let droppedRerankByType: Record<string, number> = {};
+        for (const [docId, info] of inputByDoc) {
+          if (!keptDocIds.has(docId)) {
+            const t = (info.source_type || "other").toLowerCase();
+            droppedRerankByType[t] = (droppedRerankByType[t] || 0) + 1;
+            retrievalFunnel.rerank_dropped_docs.push({
+              title: info.title.slice(0, 80),
+              source_type: info.source_type,
+              score: -1, // score not exposed by rerank fn; -1 = unknown
+              reason: "rerank_gate_or_top6_slice",
+            });
+          }
+        }
+        const droppedRerankTotal = Object.values(droppedRerankByType).reduce((a, b) => a + b, 0);
+        if (droppedRerankTotal > 0) bumpDrop("rerank_gate_or_top6_slice", droppedRerankTotal);
+        console.log(`FUNNEL after_rerank: ${JSON.stringify(retrievalFunnel.after_rerank)}`);
+        console.log(`FUNNEL rerank_dropped_by_type: ${JSON.stringify(droppedRerankByType)}`);
       } catch (err) {
         console.error("Re-ranking error (non-fatal):", err);
       }
