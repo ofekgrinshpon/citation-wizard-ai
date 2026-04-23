@@ -2042,6 +2042,30 @@ ${(verify.fullText as string).slice(0, 50000)}
       if (filteredBrokenKnesset > 0) {
         console.log(`Filtered ${filteredBrokenKnesset} broken-title knesset docs from source pool`);
       }
+      // FUNNEL CHECKPOINT 6+7: per-source-type after the source-card loop
+      // Tally local source cards by their *original* source_type (not the Hebrew label).
+      const localCardsTallySource: Array<{ source_type: string }> = [];
+      for (const sc of sourceCards) {
+        if (sc.provenance !== "local") continue;
+        // Map Hebrew labels back to source_type for funnel categorization
+        const label = sc.source_type;
+        const mapped =
+          label === "פסיקה" ? "caselaw" :
+          label === "מחקר כנסת / חקיקה" ? "knesset_research" :
+          label === "מאמר אקדמי" ? "journal_article" :
+          label === "חקיקה ישראלית" ? "israeli_law" : "other";
+        localCardsTallySource.push({ source_type: mapped });
+      }
+      retrievalFunnel.after_broken_title_filter = tallyByType(localCardsTallySource);
+      retrievalFunnel.source_cards_local = retrievalFunnel.after_broken_title_filter;
+      // Roll up card-loop drops into drop_reasons
+      for (const [t, n] of Object.entries(cardLoopDrops.dedup_per_doc)) bumpDrop(`card_dedup_${t}`, n);
+      for (const [t, n] of Object.entries(cardLoopDrops.blog_url)) bumpDrop(`blog_url_${t}`, n);
+      if (cardLoopDrops.broken_title_knesset > 0) bumpDrop("broken_title_knesset", cardLoopDrops.broken_title_knesset);
+      if (cardLoopDrops.caselaw_no_usable_title > 0) bumpDrop("caselaw_no_usable_title", cardLoopDrops.caselaw_no_usable_title);
+      console.log(`FUNNEL after_broken_title_filter (== source_cards_local): ${JSON.stringify(retrievalFunnel.after_broken_title_filter)}`);
+      console.log(`FUNNEL drop_reasons: ${JSON.stringify(retrievalFunnel.drop_reasons)}`);
+      console.log(`FUNNEL FULL: ${JSON.stringify(retrievalFunnel)}`);
     }
 
     // Perplexity sources — extract from citations array
