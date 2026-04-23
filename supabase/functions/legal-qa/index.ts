@@ -2974,6 +2974,13 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
 
     const oldIdToNewNumber = new Map<number, number>();
     let fnNum = 1;
+    // Milestone A: parser-side anchor enforcement.
+    // Track every AI footnote that we drop because it has no catalog/fuzzy
+    // anchor. These are surfaced in qa_logs.metadata.dropped_unanchored_count
+    // so we can see — honestly — how often the drafter is fabricating
+    // citations vs. citing the source pack.
+    let droppedUnanchoredCount = 0;
+    const droppedUnanchoredPreviews: string[] = [];
 
     if (aiFootnoteLines.length > 0) {
       // Use AI-formatted footnotes — match each to a source card for provenance
