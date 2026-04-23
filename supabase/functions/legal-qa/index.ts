@@ -2675,11 +2675,18 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // ========= Step 4b: Anchor pass (Pilot v7, Fast-mode) =========
     // Post-draft Gemini Flash call: scan the drafted body for substantive
     // sentences that lack a [N] marker but have a real supporting source in
-    // the source pack, and inject `[N]` + a numbered footnote line. Runs
-    // ONLY on the structured drafter path (claim map present). 15s timeout;
-    // empty/timeout → ship draft as-is.
+    // the source pack, and inject `[N]` + a numbered footnote line.
+    //
+    // Pilot v7.1 — runs on BOTH the structured AND the fallback drafter
+    // path. The fallback drafter (Q21-class regression) was producing
+    // unanchored statute citations; running anchor pass on its output too
+    // gives the same anchoring lift the structured path already gets.
+    // Requires: drafted body + source pack present. Claim map is used when
+    // available (structured), otherwise anchorClaims is empty and the model
+    // falls back to source-pack-only matching.
+    // 15s timeout; empty/timeout → ship draft as-is.
     let anchorPassApplied = 0;
-    if (useStructuredDrafterPath && answerText.length > 200 && sourcePack.length >= 2) {
+    if (answerText.length > 200 && sourcePack.length >= 2) {
       const tAnchorStart = Date.now();
       const anchorSourcePack: AnchorPassSourcePackItem[] = sourceCards.map((sc) => ({
         id: sc.id,
