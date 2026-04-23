@@ -567,6 +567,20 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const [error, setError] = useState<string | null>(null);
   const [taskMode, setTaskMode] = useState<TaskMode>("research");
 
+  // ─── Research depth (Fast / Deep) ─────────────────────────────────
+  // Quality control toggle, NOT a billing decision (see modeProfiles.ts on
+  // backend). Persisted per-browser so the user's preference sticks across
+  // sessions. Only consumed when taskMode === "research".
+  type ResearchDepth = "fast" | "deep";
+  const DEPTH_STORAGE_KEY = "relex.research.depth";
+  const [researchDepth, setResearchDepth] = useState<ResearchDepth>(() => {
+    const stored = safeStorage.getItem(DEPTH_STORAGE_KEY);
+    return stored === "deep" ? "deep" : "fast";
+  });
+  useEffect(() => {
+    safeStorage.setItem(DEPTH_STORAGE_KEY, researchDepth);
+  }, [researchDepth]);
+
   // Multi-file support
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [extractedTexts, setExtractedTexts] = useState<Array<{ name: string; text: string }>>([]);
@@ -1187,6 +1201,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         taskMode,
         hasDocument: hasFile,
       };
+      // Send research depth ("fast" | "deep") only for research mode — other
+      // modes ignore it server-side.
+      if (taskMode === "research") {
+        body.depth = researchDepth;
+      }
       // Send multi-file context
       if (extractedTexts.length === 1) {
         body.documentText = extractedTexts[0].text;
@@ -2069,6 +2088,41 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
       {/* Bottom: Input bar pinned */}
       <div className="mt-auto px-2 sm:px-4 pb-2 pt-2 space-y-1.5 border-t border-border bg-background">
+        {/* Research depth toggle — research mode only. Quality control, not billing. */}
+        {!isAcademic && taskMode === "research" && (
+          <div className="flex justify-end">
+            <div className="inline-flex rounded-lg border border-border bg-card p-0.5" role="group" aria-label="עומק מחקר">
+              <button
+                type="button"
+                onClick={() => setResearchDepth("fast")}
+                disabled={loading}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  researchDepth === "fast"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                aria-pressed={researchDepth === "fast"}
+              >
+                <span aria-hidden="true">⚡</span>
+                <span>מהיר</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setResearchDepth("deep")}
+                disabled={loading}
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  researchDepth === "deep"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                aria-pressed={researchDepth === "deep"}
+              >
+                <span aria-hidden="true">🧠</span>
+                <span>מעמיק</span>
+              </button>
+            </div>
+          </div>
+        )}
         {/* Hide input bar for academic mode (it has its own UI) unless in non-wizard steps */}
         {!isAcademic && (
           <div className="flex gap-2 items-end">

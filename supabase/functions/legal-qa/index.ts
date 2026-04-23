@@ -28,6 +28,7 @@ import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
 import { runShadowAbComparison, buildLegacyShadowPrompt } from "./shadowAbLogger.ts";
 import { runAnchorPass, applyAnchorPatches, type AnchorPassSourcePackItem, type AnchorPassClaim } from "./anchorPass.ts";
 import { resolveCitation } from "../_shared/citationResolver.ts";
+import { resolveModeProfile, type ModeProfile, type ResearchDepth } from "./modeProfiles.ts";
 
 // Single source of truth for the research-mode gate. The frontend currently
 // sends `taskMode: "research"`; if that ever changes, update this constant.
@@ -1234,7 +1235,16 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, depth: bodyDepth } = body;
+
+    // ─── Mode profile (Fast / Deep) — single source of truth for per-mode knobs ───
+    // Resolved once here; everything downstream reads from `modeProfile`.
+    // Defaults to Fast for backward compatibility (no `depth` in body = Fast).
+    // Only applied to taskMode === RESEARCH_MODE; other modes ignore it.
+    const { depth: researchDepth, profile: modeProfile } = resolveModeProfile(bodyDepth);
+    if (taskMode === RESEARCH_MODE) {
+      console.log(`[mode] depth=${researchDepth} (anchor_pass=${modeProfile.anchorPassEnabled}, drafter=${modeProfile.drafterVariant}, retrieval_rounds=${modeProfile.retrievalRounds})`);
+    }
 
     // ─── Eval harness gate (admin-only, internal). Allows the offline
     // evaluation runner to force the legacy retrieval+drafter path on the
@@ -2620,7 +2630,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // the core bucket before Stage D builds the claim map.
     if (taskMode === RESEARCH_MODE && !evalForceLegacy) {
       const coreBefore = sourcePackV2 ? summarizeSourcePack(sourcePackV2).core : 0;
-      if (coreBefore < 2) {
+      if (coreBefore < modeProfile.perplexityCompletionMinAnchored) {
         const tE5 = Date.now();
         const subIssuesForCompletion = Array.isArray(decomposedPlan?.decomposition?.sub_issues)
           ? (decomposedPlan!.decomposition.sub_issues as string[]).filter((s) => typeof s === "string" && s.length > 0)
@@ -3300,8 +3310,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // for legacy) + gpt-5-mini with 120s timeout. The trim shaves significant
     // input-token latency on top of the model swap.
     const useNewDrafter = useStructuredDrafterPath;
-    const drafterTimeoutMs = useNewDrafter ? 120000 : 90000;
-    const drafterVariant: "structured" | "legacy" = useNewDrafter ? "structured" : "legacy";
+    // Profile-driven timeout: Deep gets more headroom for the heavier model.
+    const drafterTimeoutMs = useNewDrafter ? modeProfile.drafterTimeoutMs : 90000;
+    const drafterVariant: "structured" | "legacy" = useNewDrafter ? modeProfile.drafterVariant : "legacy";
     console.log(`AI call starting (drafter=${drafterVariant}, ${drafterTimeoutMs / 1000}s timeout)...`);
     let answerText = "";
     let drafterModelUsed = "google/gemini-2.5-flash";
@@ -3424,7 +3435,11 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // additional anchoring) and will be re-enabled with a higher ceiling
     // for a future Deep mode.
     let anchorPassApplied = 0;
-    const skipAnchorPass = useStructuredDrafterPath; // Fast = structured path
+    // Anchor pass gate is now profile-driven. Fast skips it (structured path
+    // shaped to 4-6 footnotes); Deep enables it for additional anchoring.
+    // Legacy/fallback drafter path always benefits from anchor pass when the
+    // profile allows it.
+    const skipAnchorPass = !modeProfile.anchorPassEnabled || (useStructuredDrafterPath && researchDepth === "fast");
     if (!skipAnchorPass && answerText.length > 200 && sourcePack.length >= 2) {
       const tAnchorStart = Date.now();
       const anchorSourcePack: AnchorPassSourcePackItem[] = sourceCards.map((sc) => ({
@@ -4466,6 +4481,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             };
           })(),
           model_config: LEGAL_RESEARCH_MODELS,
+          // Mode profile actually used for this run. Read with:
+          //   select metadata->'profile_used' from qa_logs ...
+          profile_used: { depth: researchDepth, ...modeProfile },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
           ...(evalForceLegacy ? { eval_force_legacy: true } : {}),
