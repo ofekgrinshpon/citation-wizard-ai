@@ -1,134 +1,100 @@
 
 
-# Milestone A.5 — Fix source-pack classification (with relevance gate)
+# Milestone C — Citation Engine for Perplexity Candidates
 
-## Direct answer to your question
+Confirmed scope guardrails:
+- `src/data/citationEngine.ts` and `src/lib/citationValidation.ts` are **not modified, not imported, not symlinked**. Uniform-citation feature in the React app keeps working byte-identically.
+- The Deno copy lives under `supabase/functions/_shared/` and is used **only by `legal-qa`**.
+- Only Perplexity-completion candidates flow through the engine. Local corpus assembly is untouched.
 
-**You are right to push back.** The current `anchorPresent && usableForAnalysis` checks are too weak to gate a promotion to `core`:
+## Goal
 
-- `anchor_present` = "the chunk came from local DB or has a URL" — tells us nothing about topical fit.
-- `usable_for_analysis` = "excerpt is longer than 300 chars" — substance check, not relevance check.
+Replace the brittle `STATUTE_CITATION_RE` Guard 1 in Stage E.5 with the citation engine. A Perplexity candidate is accepted iff the engine can resolve it into a structured citation. When resolved, the engine's canonical re-emission becomes the citation string the drafter sees. When unresolved, the candidate is **kept** (Guards 1+2 already passed) but flagged `engine_resolved: false` and cited as-is.
 
-A journal article that mentions the topic in a single passing footnote would pass both. So we MUST add a **relevance gate** before promotion. Plan updated accordingly.
+## Files to add
 
----
+### 1. `supabase/functions/_shared/citationEngine.ts` (new)
+Verbatim copy of the data registry from `src/data/citationEngine.ts`:
+- `GENERAL_RULES`, `CITATION_RULES`, `REPEATED_CITATION_RULES`, `PINPOINT_RULES` constants
+- `CitationRuleSet`, `CitationComponent` interfaces
+- Helper functions: `getRequiredFields`, `getFieldFormat`, `getFieldRule`, `validateCitation`
 
-## What gets promoted to `core` and under what conditions
+No React imports (the source file already has none). Pure Deno-compatible TS.
 
-Promotion to `core` for a `knesset_research` or `journal_article` item requires **all four**:
+### 2. `supabase/functions/_shared/citationResolver.ts` (new)
+Deno-only logic that does NOT exist in the React side:
 
-1. `provenance === "local"` (not Perplexity, not document)
-2. `anchor_present === true` (already enforced)
-3. `usable_for_analysis === true` (excerpt > 300 chars — already enforced)
-4. **NEW: `relevance_score >= 0.55`** — derived from the chunk's retrieval similarity, computed as the higher of (vector cosine similarity) or (BM25 ts_rank normalized), already produced by `match_legal_chunks` / `search_legal_chunks_text`. We just need to carry it through.
-
-If a `knesset_research` / `journal_article` item passes 1–3 but fails 4, it stays in `supporting` (current behavior).
-
-Threshold rationale: `0.55` is the same threshold the existing rerank stage uses to pass a chunk through to the source pool at all, so anything below that wouldn't be in the candidate set in the first place; promoting starts at "well above the floor." We can tune it with one production run after deploy.
-
-For `caselaw`, the rule is stricter and unchanged: source_type=`caselaw` from the DB → `primary_caselaw` → `core`. The DB already vetted these; no relevance gate needed because they're primary authority by definition.
-
----
-
-## Code changes
-
-### 1. `supabase/functions/legal-qa/index.ts`
-
-**a. Carry the chunk's similarity score onto the source card** (line ~1911 area, where `sourceCards.push` happens for local matches): add `relevance_score: m.similarity` to the pushed card. The merged `m` object already has `similarity` from the hybrid retrieval merge.
-
-**b. Carry it onto the internal SourcePackEntry** (line ~1984, the `sourcePack = sourceCards.map(...)` block): add `relevance_score: sc.relevance_score ?? 0` to the entry.
-
-**c. Strengthen `classifyAuthority` for caselaw:** when `source_type === "פסיקה"` (the labeled value used here) OR the underlying DB `source_type === "caselaw"`, return `primary_caselaw` unconditionally. Today the regex-only check misses any caselaw whose `citation` field doesn't start with `בג"ץ`/`פ"ד`/etc. We trust the DB classification, not the citation string.
-
-**d. Add per-source-type counts** to the `source_pack_summary` metadata block (line ~3724 area): emit `{caselaw: N, israeli_law: N, knesset_research: N, journal_article: N, perplexity: N, document: N}` alongside the existing `{core, supporting, secondary}` counts. This gives us instant diagnosis next time `core` looks wrong.
-
-### 2. `supabase/functions/legal-qa/contracts.ts`
-
-Add an optional field to `LegalSourcePackItem`:
-```ts
-/** INTERNAL — retrieval-stage similarity (0–1). Used for promotion gating. */
-relevanceScore?: number;
+```text
+resolveCitation(candidateText, declaredType?) →
+  | { resolved: true,  sourceType, fields, canonical, missingFields: [] }
+  | { resolved: false, reason: 'classify_failed' | 'extract_failed' | 'missing_required', missingFields, partialFields }
 ```
 
-Add it to `BANNED_KEYS` so it never leaks to the user-facing payload.
+Pipeline:
+1. **Classify** — map Perplexity's `type` ("statute" | "caselaw") to engine source-type keys:
+   - statute → try `basic_law` (regex: `חוק[-\s]יסוד`), else `secondary_legislation` (regex: `תקנות|צו|כללי`), else `primary_legislation`
+   - caselaw → try `case_law_published` (regex: `פ["״]ד|פד["״]ע`), else `case_law_database`
+2. **Extract** — port the field extractors from `src/lib/citationValidation.ts:extractFieldsFromResponse` for the 5 source types above only. Keep the regex behavior identical.
+3. **Validate** — call ported `validateCitation(sourceType, fields)`. Resolution succeeds when zero required fields are missing.
+4. **Emit canonical** — interpolate `ruleSet.template` with extracted field values to produce a normalized citation string. For example template `{lawName}, {hebrewYear}-{gregorianYear}, {collection} {firstPage}.` → `חוק העונשין, התשל"ז-1977, ס"ח 226.`
 
-### 3. `supabase/functions/legal-qa/legalSourcePack.ts`
+## Files to modify
 
-**a. Extend `InternalSourcePackEntry`** with `relevance_score?: number`.
+### `supabase/functions/legal-qa/index.ts`
 
-**b. Map it through in `toItem`:** `relevanceScore: entry.relevance_score`.
+**Remove** lines 91–96 statute regex. Keep `CASE_NUMBER_RE` for now (engine handles it but we'll keep the cheap pre-check to fail fast on garbage).
 
-**c. Extend `assembleSourcePack` promotion logic.** Today the switch is purely on `authorityClass`. New logic:
+**Replace** `validatePerplexityCandidate` (lines 126–152). New logic:
 
-```ts
-// Inside the per-item loop in assembleSourcePack:
-const PROMOTION_THRESHOLD = 0.55;
-const isPromotable =
-  (item.authorityClass === "secondary_official" ||   // knesset_research
-   item.authorityClass === "secondary_academic") &&  // journal_article
-  item.anchorPresent &&
-  item.usableForAnalysis &&
-  (item.relevanceScore ?? 0) >= PROMOTION_THRESHOLD &&
-  item.provenanceInternal === "local";
-
-if (isPromotable) {
-  core.push(item);
-  continue;
-}
-// ...existing switch unchanged for everything else
+```text
+1. Guard 1 (URL allowlist) — unchanged, runs first now.
+2. Guard 2 (engine resolution) — call resolveCitation(c.citation, c.type).
+   - If resolved: candidate.citation = canonical; engine_resolved = true.
+   - If unresolved: candidate.engine_resolved = false; candidate.engine_drop_reason = reason.
+   - Either way, accept (we already trust the URL domain).
+3. Drop only on completely unknown type or missing URL.
 ```
 
-This means: knesset_research / journal_article items still default to `supporting`; they get promoted to `core` only when they're locally-retrieved, anchored, substantive, AND topically relevant.
+**Extend** `ValidatedCompletionCandidate` with two fields: `engine_resolved: boolean` and `engine_drop_reason?: string`.
 
----
+**Update** Stage E.5 SourceCard creation (line 2582) to use the canonical `v.citation` (already overwritten above) and pass `engine_resolved` into the `SourceCard` and `sourcePack` entry as a metadata flag (drafter prompt does not change — it sees the citation string the same way).
 
-## Why this fixes `core=0` without over-promoting
+**Update** telemetry block (line 2613). Add to `retrievalFunnel.perplexity_completion`:
+- `engine_resolved_count`
+- `engine_unresolved_count`
+- `engine_drop_reasons: Record<string, number>` (counts of `classify_failed` / `extract_failed` / `missing_required`)
 
-From the production sample (12 recent runs), the typical retrieved set per query is 8–11 chunks at similarity 0.55–0.85. Today **every** journal/knesset chunk lands in `supporting` even at sim=0.85. After A.5:
+This replaces the previous `drops` shape for engine outcomes; URL drops keep their own counter.
 
-- A journal_article hit at sim=0.78 with a 600-char excerpt → promoted to `core`.
-- A journal_article hit at sim=0.51 (weak topical fit, scraped past the rerank floor) → stays in `supporting`.
-- A knesset_research hit at sim=0.62 with the right keyword density → promoted to `core`.
-- A Perplexity-derived URL → stays in `secondary` (doesn't pass `provenance === "local"`).
-- A caselaw chunk regardless of citation regex → `primary_caselaw` → `core`.
+## Files to add (memory)
 
-Expected effect on Q1/Q6/Q21: `core` rises from 0 → typically 3–7 on the same retrieved chunks. No new external calls. No new latency.
+### `.lovable/memory/logic/legal-qa/citation-engine-perplexity-resolver.md` (new)
+Documents:
+- Two-stage pipeline: URL allowlist → engine resolve.
+- Engine resolution is **non-blocking**: unresolved candidates are kept with `engine_resolved=false`.
+- Deno engine copy is independent from React copy. Any rule changes must be ported manually (no auto-sync). When the user asks to update citation rules, both files need to change.
+- Scope: Perplexity candidates only. Local corpus is not piped through the engine yet (Milestone D).
 
----
+## Files NOT touched
 
-## Diagnostic exposure
+- `src/data/citationEngine.ts` ✋
+- `src/lib/citationValidation.ts` ✋
+- All `src/components/**`, `src/pages/**`, `src/hooks/**` ✋
 
-The new `source_type_counts` block in `qa_logs.metadata` lets us answer "did the model receive enough core authority?" in one SQL query, instead of inferring it from indirect evidence. Next regression takes 30 seconds to diagnose, not an hour.
+## Validation plan
 
----
+After deploy:
+1. Run `eval/stability-v7.12-run.mjs` (18 questions). Compare against last run:
+   - `engine_resolved_count` per question
+   - `engine_unresolved_count` and breakdown of reasons
+   - `candidates_kept` should now equal `candidates_returned − url_dropped` (engine never drops)
+   - Final anchored citations in body — should not regress
+2. Spot-check 3 statute candidates that previously failed `statute_citation_shape` (e.g., `חוק חופש המידע, התשנ"ח-1998`). Confirm they now resolve with `primary_legislation` template, canonical form matches input.
 
-## Verification plan after deploy
+## Technical notes
 
-Single 9-shot stability run (Q1 / Q6 / Q21 × 3) with one extra metric pulled from the new metadata: average `core.length` per run. Pass criteria:
-- `core.length >= 2` on at least 7 of 9 runs.
-- `anchored citations in body >= 3` on at least 7 of 9 runs.
-- No regression in wall time (target: stays under 65s avg).
-- `dropped_unanchored_count` from Milestone A stays at the v7.8 baseline (~3.6 avg) or lower.
-
-If `core.length` stays low on Q6/Q21 even after A.5, we've proven the corpus genuinely lacks coverage on those topics, and Milestone B (Perplexity completion) is justified.
-
----
-
-## Files to edit
-
-- `supabase/functions/legal-qa/index.ts` — carry `similarity` onto cards/entries; strengthen `classifyAuthority` for caselaw; emit per-source-type counts in metadata.
-- `supabase/functions/legal-qa/contracts.ts` — add `relevanceScore` field; add to `BANNED_KEYS`.
-- `supabase/functions/legal-qa/legalSourcePack.ts` — promotion logic with relevance gate.
-- `eval/stability-v7.9-run.mjs` — adapt the v7.8 runner to also pull `source_type_counts` and `core.length`.
-- `.lovable/memory/logic/legal-qa/source-pack-classification.md` — new memory doc capturing the promotion rules and threshold.
-
-## What this plan does NOT do
-
-- No model swaps.
-- No prompt changes.
-- No new external API calls.
-- No new database migrations.
-- No frontend changes.
-
-Pure source-pack bookkeeping. Smallest possible diff that makes the `core` bucket honest.
+- The engine is pure data + 4 helpers, ~820 lines. No runtime cost concerns.
+- Template interpolation handles missing optional fields by leaving the placeholder empty and collapsing surrounding whitespace/punctuation (e.g., `{specificPage}` empty → no trailing comma).
+- For caselaw, `case_law_published` requires `series`/`volume`/`firstPage`; if Perplexity returns only `case_number` without these, classification falls back to `case_law_database` which only requires database name + date — much higher resolution rate.
+- `engine_resolved=false` candidates retain the raw Perplexity citation string. Drafter behavior is unchanged (it never knew about the flag).
 
