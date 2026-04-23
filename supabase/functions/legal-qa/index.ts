@@ -2454,11 +2454,13 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
       const uncoveredLine = claimMapV2 && claimMapV2.uncoveredSubIssues.length > 0
         ? `תת-סוגיות שלא מכוסות (ציין כחוסר ודאות): ${claimMapV2.uncoveredSubIssues.join(" | ")}`
         : "";
-      // ─── Pilot v7.7 (Fast-mode floors) ────────────────────────────
-      // v7.6 overshot brevity (avg 278w / 2.2 fn). v7.7 enforces hard
-      // minimums (450w body, 4 anchored footnotes) with explicit failure
-      // language and a pre-submission self-check, while keeping the upper
-      // bounds (700w / 6 fn) so Fast still feels distinct from legacy.
+      // ─── Milestone A (parser-side anchor enforcement) ────────────
+      // Removed: "hard 4-footnote / 450-word floor" language. The system
+      // — not the model — now owns the citation floor. The parser drops
+      // any AI footnote that doesn't match a catalog source card, so
+      // floors expressed in the prompt only encouraged the drafter to
+      // fabricate "[חסר: ...]" skeletons. Target stays 400-700 words /
+      // 4-6 anchored citations, but as guidance, not pass/fail.
       return `אתה עוזר משפטי מומחה במצב **Fast**. כתוב תשובה משפטית **תמציתית, פרקטית ומעוגנת** בעברית, על בסיס מפת הטענות המאושרת למטה.
 
 ═══ חובת פלט מוחלטת ═══
