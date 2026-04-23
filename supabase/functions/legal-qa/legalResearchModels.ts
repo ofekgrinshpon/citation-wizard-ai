@@ -14,15 +14,15 @@ export const LEGAL_RESEARCH_MODELS = {
     forceProvider: "gemini",
   },
   claimMap: {
-    // Pilot v6 latency pass: pinned to Gemini 2.5 Flash regardless of provider.
-    // gpt-5-mini consistently took 30-35s on this stage; Gemini Flash returns
-    // the same shape in 5-10s. v7.4 attempt to flip to OpenAI was reverted —
-    // OpenAI account quota was exhausted (HTTP 429 on every call). Re-attempt
-    // once quota is restored; the OpenAI fallback string is preserved below
-    // so a one-line `forceProvider` flip is enough to retry.
-    primary: "google/gemini-2.5-flash",
-    fallback: "openai/gpt-5-mini",
-    forceProvider: "gemini",
+    // Pilot v7.4 (re-attempt after OpenAI top-up): pin to OpenAI gpt-5-mini.
+    // Hypothesis: Gemini ignored seed=7, causing claim count to vary across
+    // runs and flipping the drafting path. OpenAI honors the seed parameter,
+    // which should make the structured-vs-fallback decision deterministic.
+    // The actual provider for this stage is selected by `forceProvider` in
+    // decomposition.ts (extractClaimMap call: forceProvider="openai").
+    primary: "openai/gpt-5-mini",
+    fallback: "google/gemini-2.5-flash",
+    forceProvider: "openai",
   },
   drafting: {
     // Legacy/fallback drafter (no claim map): heavier reasoning needed because
