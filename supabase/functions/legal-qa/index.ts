@@ -2630,7 +2630,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // the core bucket before Stage D builds the claim map.
     if (taskMode === RESEARCH_MODE && !evalForceLegacy) {
       const coreBefore = sourcePackV2 ? summarizeSourcePack(sourcePackV2).core : 0;
-      if (coreBefore < 2) {
+      if (coreBefore < modeProfile.perplexityCompletionMinAnchored) {
         const tE5 = Date.now();
         const subIssuesForCompletion = Array.isArray(decomposedPlan?.decomposition?.sub_issues)
           ? (decomposedPlan!.decomposition.sub_issues as string[]).filter((s) => typeof s === "string" && s.length > 0)
@@ -3434,7 +3434,11 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // additional anchoring) and will be re-enabled with a higher ceiling
     // for a future Deep mode.
     let anchorPassApplied = 0;
-    const skipAnchorPass = useStructuredDrafterPath; // Fast = structured path
+    // Anchor pass gate is now profile-driven. Fast skips it (structured path
+    // shaped to 4-6 footnotes); Deep enables it for additional anchoring.
+    // Legacy/fallback drafter path always benefits from anchor pass when the
+    // profile allows it.
+    const skipAnchorPass = !modeProfile.anchorPassEnabled || (useStructuredDrafterPath && researchDepth === "fast");
     if (!skipAnchorPass && answerText.length > 200 && sourcePack.length >= 2) {
       const tAnchorStart = Date.now();
       const anchorSourcePack: AnchorPassSourcePackItem[] = sourceCards.map((sc) => ({
