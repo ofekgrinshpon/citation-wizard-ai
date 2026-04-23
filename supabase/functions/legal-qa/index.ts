@@ -119,7 +119,7 @@ interface SourcePackEntry {
   source_type: string;
   authority_class: AuthorityClass;
   url?: string;
-  provenance: "local" | "perplexity" | "document";
+  provenance: "local" | "perplexity" | "perplexity_completion" | "document";
   excerpt: string;
   case_number?: string;
   usable_for_analysis: boolean;
@@ -127,6 +127,8 @@ interface SourcePackEntry {
   anchor_present: boolean;
   /** INTERNAL — retrieval similarity (0–1). Used by source-pack promotion gate. */
   relevance_score?: number;
+  /** Milestone B — for perplexity_completion entries; passed through to legalSourcePack mapper. */
+  completion_candidate_type?: "statute" | "caselaw";
 }
 
 /**
