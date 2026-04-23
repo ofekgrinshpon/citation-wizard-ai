@@ -2051,7 +2051,7 @@ ${(verify.fullText as string).slice(0, 50000)}
         // (top 3, similarity >= 0.45). If nothing clears the floor, accept
         // absence — never stuff irrelevant chunks just to hit a quota.
         // The reranker still has the final say.
-        const SOFT_MIN_TYPES = ["israeli_law", "knesset_research", "journal_article", "caselaw"] as const;
+        const SOFT_MIN_TYPES = ["israeli_law", "knesset_research"] as const;
         const SOFT_MIN_THRESHOLD = 0.45;
         const SOFT_MIN_PER_TYPE = 3;
         const presentTypes = new Set(mergedBase.map(m => m.source_type));
