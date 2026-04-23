@@ -1243,6 +1243,60 @@ ${(verify.fullText as string).slice(0, 50000)}
     // Aliased to the hoisted array so the outer catch can flush it on error.
     const stageRuns: StageRun[] = __checkpointStageRuns;
 
+    // ─── Retrieval funnel telemetry ──────────────────────────────────
+    // Per-source-type counters captured at each pipeline checkpoint.
+    // Stashed on qa_logs.metadata.retrieval_funnel for diagnostics.
+    // INSTRUMENTATION ONLY — does not change retrieval/filter behavior.
+    type FunnelStage = {
+      caselaw: number;
+      knesset_research: number;
+      journal_article: number;
+      israeli_law: number;
+      other: number;
+      total: number;
+    };
+    const newFunnelStage = (): FunnelStage => ({
+      caselaw: 0, knesset_research: 0, journal_article: 0,
+      israeli_law: 0, other: 0, total: 0,
+    });
+    const tallyByType = (matches: Array<{ source_type?: string }>): FunnelStage => {
+      const s = newFunnelStage();
+      for (const m of matches) {
+        const t = (m.source_type || "").toLowerCase();
+        if (t === "caselaw" || t === "case_law" || t === "ruling") s.caselaw++;
+        else if (t === "knesset_research") s.knesset_research++;
+        else if (t === "journal_article") s.journal_article++;
+        else if (t === "israeli_law") s.israeli_law++;
+        else s.other++;
+        s.total++;
+      }
+      return s;
+    };
+    const retrievalFunnel: {
+      raw_keyword: FunnelStage;
+      raw_vector: FunnelStage;
+      raw_caselaw_filtered: FunnelStage;
+      after_dedup_quota: FunnelStage;
+      after_rerank: FunnelStage;
+      after_broken_title_filter: FunnelStage;
+      source_cards_local: FunnelStage;
+      drop_reasons: Record<string, number>;
+      rerank_dropped_docs: Array<{ title: string; source_type: string; score: number; reason: string }>;
+    } = {
+      raw_keyword: newFunnelStage(),
+      raw_vector: newFunnelStage(),
+      raw_caselaw_filtered: newFunnelStage(),
+      after_dedup_quota: newFunnelStage(),
+      after_rerank: newFunnelStage(),
+      after_broken_title_filter: newFunnelStage(),
+      source_cards_local: newFunnelStage(),
+      drop_reasons: {},
+      rerank_dropped_docs: [],
+    };
+    const bumpDrop = (reason: string, n = 1) => {
+      retrievalFunnel.drop_reasons[reason] = (retrievalFunnel.drop_reasons[reason] || 0) + n;
+    };
+
     // ─── Early checkpoint persistence ────────────────────────────────
     // Pre-allocate a qa_logs row id so we can write a CHECKPOINT row right
     // after each pipeline stage. If the client disconnects (HTTP "connection
@@ -1596,6 +1650,14 @@ ${(verify.fullText as string).slice(0, 50000)}
           console.log(`Keyword search returned 0 results — check Postgres NOTICE logs for fallback chain (top-2 → top-1 → plainto)`);
         }
 
+        // FUNNEL CHECKPOINT 1–3: raw retrieval per source_type
+        retrievalFunnel.raw_keyword = tallyByType(keywordMatches);
+        retrievalFunnel.raw_vector = tallyByType(vectorMatches);
+        retrievalFunnel.raw_caselaw_filtered = tallyByType(caselawMatches);
+        console.log(`FUNNEL raw_keyword: ${JSON.stringify(retrievalFunnel.raw_keyword)}`);
+        console.log(`FUNNEL raw_vector: ${JSON.stringify(retrievalFunnel.raw_vector)}`);
+        console.log(`FUNNEL raw_caselaw_filtered: ${JSON.stringify(retrievalFunnel.raw_caselaw_filtered)}`);
+
         // ── Content-aware similarity bonus ──────────────────────────
         // Pair the question's action verbs with their nominal/legal counterparts
         // and award a small bonus to chunks whose content contains the counterpart.
@@ -1649,6 +1711,11 @@ ${(verify.fullText as string).slice(0, 50000)}
           .slice(0, 12);
         const caselawKept = merged.filter(m => m.source_type === "caselaw").length;
         console.log(`Caselaw quota: ${caselawKept} caselaw / ${merged.length - caselawKept} other (total ${merged.length})`);
+        // FUNNEL CHECKPOINT 4: after merge + dedup + 6/6 caselaw quota
+        retrievalFunnel.after_dedup_quota = tallyByType(merged);
+        const droppedByQuota = (retrievalFunnel.raw_keyword.total + retrievalFunnel.raw_vector.total + retrievalFunnel.raw_caselaw_filtered.total) - merged.length;
+        if (droppedByQuota > 0) bumpDrop("dedup_or_quota", droppedByQuota);
+        console.log(`FUNNEL after_dedup_quota: ${JSON.stringify(retrievalFunnel.after_dedup_quota)}`);
         // Suppress unused warning
         void reservedIds;
 
@@ -1823,6 +1890,33 @@ ${(verify.fullText as string).slice(0, 50000)}
         rankedMatches = await rerankLocalMatches(localMatches, question, LOVABLE_API_KEY);
         const tRerank = Date.now();
         console.log(`Re-ranking took ${tRerank - tRetrieval}ms, kept ${rankedMatches.length}/${localMatches.length} chunks`);
+
+        // FUNNEL CHECKPOINT 5: per-source-type breakdown after rerank gate
+        retrievalFunnel.after_rerank = tallyByType(rankedMatches);
+        const keptDocIds = new Set(rankedMatches.map(m => m.document_id));
+        const inputByDoc = new Map<string, { source_type: string; title: string }>();
+        for (const m of localMatches) {
+          if (!inputByDoc.has(m.document_id)) {
+            inputByDoc.set(m.document_id, { source_type: m.source_type || "other", title: m.document_title || "" });
+          }
+        }
+        let droppedRerankByType: Record<string, number> = {};
+        for (const [docId, info] of inputByDoc) {
+          if (!keptDocIds.has(docId)) {
+            const t = (info.source_type || "other").toLowerCase();
+            droppedRerankByType[t] = (droppedRerankByType[t] || 0) + 1;
+            retrievalFunnel.rerank_dropped_docs.push({
+              title: info.title.slice(0, 80),
+              source_type: info.source_type,
+              score: -1, // score not exposed by rerank fn; -1 = unknown
+              reason: "rerank_gate_or_top6_slice",
+            });
+          }
+        }
+        const droppedRerankTotal = Object.values(droppedRerankByType).reduce((a, b) => a + b, 0);
+        if (droppedRerankTotal > 0) bumpDrop("rerank_gate_or_top6_slice", droppedRerankTotal);
+        console.log(`FUNNEL after_rerank: ${JSON.stringify(retrievalFunnel.after_rerank)}`);
+        console.log(`FUNNEL rerank_dropped_by_type: ${JSON.stringify(droppedRerankByType)}`);
       } catch (err) {
         console.error("Re-ranking error (non-fatal):", err);
       }
@@ -1844,10 +1938,20 @@ ${(verify.fullText as string).slice(0, 50000)}
     if (rankedMatches.length > 0) {
       const seenDocs = new Set<string>();
       let filteredBrokenKnesset = 0;
+      // FUNNEL: per-source-type rejections inside the source-card loop.
+      const cardLoopDrops = { dedup_per_doc: {} as Record<string, number>, blog_url: {} as Record<string, number>, broken_title_knesset: 0, caselaw_no_usable_title: 0 };
+      const bumpType = (bag: Record<string, number>, t: string) => { bag[t] = (bag[t] || 0) + 1; };
       for (const m of rankedMatches) {
-        if (seenDocs.has(m.document_id)) continue;
+        const stForLog = (m.source_type || "other").toLowerCase();
+        if (seenDocs.has(m.document_id)) {
+          bumpType(cardLoopDrops.dedup_per_doc, stForLog);
+          continue;
+        }
         seenDocs.add(m.document_id);
-        if (isBlogUrl(m.source_url || undefined)) continue;
+        if (isBlogUrl(m.source_url || undefined)) {
+          bumpType(cardLoopDrops.blog_url, stForLog);
+          continue;
+        }
 
         // Filter broken-title Knesset research docs (placeholder title or flagged in metadata).
         // These have generic "פרטי מסמך" titles from a scraping failure and cannot be cited usefully.
@@ -1856,6 +1960,7 @@ ${(verify.fullText as string).slice(0, 50000)}
           const metaFlag = (m.metadata as Record<string, unknown> | null)?.broken_title === true;
           if (titleTrim === "פרטי מסמך" || titleTrim === "ללא כותרת" || titleTrim === "" || metaFlag) {
             filteredBrokenKnesset++;
+            cardLoopDrops.broken_title_knesset++;
             continue;
           }
         }
@@ -1876,6 +1981,7 @@ ${(verify.fullText as string).slice(0, 50000)}
           const isUsableTitle = titleTrim.length >= 8 && (hasParties || /[א-ת]{4,}/.test(titleTrim));
           if (!isUsableTitle) {
             console.log(`Skipping caselaw card without usable title: case=${caseNumber || "?"}, title="${titleTrim}"`);
+            cardLoopDrops.caselaw_no_usable_title++;
             continue;
           }
           if (caseNumber) {
@@ -1936,6 +2042,30 @@ ${(verify.fullText as string).slice(0, 50000)}
       if (filteredBrokenKnesset > 0) {
         console.log(`Filtered ${filteredBrokenKnesset} broken-title knesset docs from source pool`);
       }
+      // FUNNEL CHECKPOINT 6+7: per-source-type after the source-card loop
+      // Tally local source cards by their *original* source_type (not the Hebrew label).
+      const localCardsTallySource: Array<{ source_type: string }> = [];
+      for (const sc of sourceCards) {
+        if (sc.provenance !== "local") continue;
+        // Map Hebrew labels back to source_type for funnel categorization
+        const label = sc.source_type;
+        const mapped =
+          label === "פסיקה" ? "caselaw" :
+          label === "מחקר כנסת / חקיקה" ? "knesset_research" :
+          label === "מאמר אקדמי" ? "journal_article" :
+          label === "חקיקה ישראלית" ? "israeli_law" : "other";
+        localCardsTallySource.push({ source_type: mapped });
+      }
+      retrievalFunnel.after_broken_title_filter = tallyByType(localCardsTallySource);
+      retrievalFunnel.source_cards_local = retrievalFunnel.after_broken_title_filter;
+      // Roll up card-loop drops into drop_reasons
+      for (const [t, n] of Object.entries(cardLoopDrops.dedup_per_doc)) bumpDrop(`card_dedup_${t}`, n);
+      for (const [t, n] of Object.entries(cardLoopDrops.blog_url)) bumpDrop(`blog_url_${t}`, n);
+      if (cardLoopDrops.broken_title_knesset > 0) bumpDrop("broken_title_knesset", cardLoopDrops.broken_title_knesset);
+      if (cardLoopDrops.caselaw_no_usable_title > 0) bumpDrop("caselaw_no_usable_title", cardLoopDrops.caselaw_no_usable_title);
+      console.log(`FUNNEL after_broken_title_filter (== source_cards_local): ${JSON.stringify(retrievalFunnel.after_broken_title_filter)}`);
+      console.log(`FUNNEL drop_reasons: ${JSON.stringify(retrievalFunnel.drop_reasons)}`);
+      console.log(`FUNNEL FULL: ${JSON.stringify(retrievalFunnel)}`);
     }
 
     // Perplexity sources — extract from citations array
@@ -3749,6 +3879,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             sourcePack as InternalSourcePackEntry[],
             sourcePackV2,
           ),
+          // Retrieval funnel: per-source-type counts at each pipeline checkpoint
+          // + drop reasons. Instrumentation only — read with:
+          //   select metadata->'retrieval_funnel' from qa_logs order by created_at desc limit 1;
+          retrieval_funnel: retrievalFunnel,
           claim_map_summary: claimMapV2Summary
             ?? (claimMap ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength } : null),
           drafting_path: draftingPath,
