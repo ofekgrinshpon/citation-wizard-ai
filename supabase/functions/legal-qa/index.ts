@@ -1691,7 +1691,15 @@ ${(verify.fullText as string).slice(0, 50000)}
         drops?: Record<string, number>;
         debug_candidates?: Array<{ kept: boolean; reason?: string; preview: string }>;
       };
-    } = {
+      // Deep mode — Stage E.6 round-2 retrieval telemetry.
+      round_2?: {
+        triggered: boolean;
+        reason: string;
+        queries: string[];
+        new_cards: number;
+        new_doc_ids: number;
+        duration_ms: number;
+      };
       raw_keyword: newFunnelStage(),
       raw_vector: newFunnelStage(),
       raw_caselaw_filtered: newFunnelStage(),
