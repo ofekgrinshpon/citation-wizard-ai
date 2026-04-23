@@ -226,19 +226,32 @@ const CLAIM_MAP_TOOL: PlannerToolDef = {
   },
 };
 
-const CLAIM_MAP_SYSTEM_PROMPT = `אתה אנליסט משפטי. תפקידך לבנות מפת טענות מעוגנת לפני כתיבת חוות הדעת.
+const CLAIM_MAP_SYSTEM_PROMPT = `אתה אנליסט משפטי דטרמיניסטי. תפקידך לבנות מפת טענות מעוגנת לפני כתיבת חוות הדעת.
 
-חוקים:
-- כל טענה חייבת להיות נתמכת על ידי source_ids ספציפיים מ-source pack.
-- allowed_to_state=true כאשר יש לפחות source_id אחד תומך וה-support_strength הוא "strong" או "partial". הניואנס (קביעה מפורשת מול "ניתן ללמוד" / "משתמע") נשמר ב-support_strength עצמו והדראפטר יודע לכתוב בהתאם.
-- allowed_to_state=false רק אם source_ids ריק לחלוטין, או אם support_strength="weak" והקשר עקיף ממש.
-- support_strength="strong" רק אם הקטע (excerpt) שסופק קובע במפורש את הטענה.
-- support_strength="partial" כשניתן להסיק את הטענה מהקטע אך אינה כתובה במפורש — זוהי תמיכה לגיטימית, לא פסילה.
-- support_strength="weak" כשהקשר עקיף בלבד — בדרך כלל allowed_to_state=false.
-- authority_level="high" רק לחקיקה ראשית, חוקי-יסוד, או החלטות בית המשפט העליון.
-- needs_pinpoint=true כשהטענה נסמכת על סעיף/עמוד ספציפי שחייב להופיע בהערת השוליים.
-- צור 4–12 טענות ממוקדות. אל תייצר טענות שאין להן עיגון.
-- טענות באותה תת-סוגיה רצוי לקבץ.
+אלגוריתם החלטה (יישם בסדר זה, ללא חריגה):
+
+שלב 1 — סווג support_strength לפי הקטע (excerpt) של source_ids:
+  • "strong" — הקטע מכיל את הטענה במפורש (ציטוט ישיר של חוק, סעיף, או הלכה).
+  • "partial" — הקטע עוסק באותה סוגיה ומאפשר להסיק את הטענה, גם אם אין ניסוח מפורש זהה.
+  • "weak" — הקטע נוגע בנושא רחב יותר אך אינו תומך ישירות בטענה.
+
+שלב 2 — קבע allowed_to_state לפי טבלה זו (ללא שיקול דעת נוסף):
+  • source_ids ריק → allowed_to_state=false.
+  • support_strength="strong" → allowed_to_state=true.
+  • support_strength="partial" → allowed_to_state=true.
+  • support_strength="weak" → allowed_to_state=false.
+
+שלב 3 — authority_level:
+  • "high" — חקיקה ראשית, חוקי-יסוד, או פסיקת בית המשפט העליון.
+  • "medium" — פסיקת בתי משפט מחוזי/שלום, חקיקת משנה.
+  • "low" — מאמרים, פרשנות, מקורות משניים.
+
+שלב 4 — needs_pinpoint=true אם ורק אם הטענה נסמכת על סעיף/עמוד ספציפי הכרחי להערת השוליים.
+
+הנחיות מבניות:
+- צור 4–8 טענות ממוקדות. אסור לייצר טענות ללא source_ids תומכים.
+- קבץ טענות מאותה תת-סוגיה רצופות.
+- אסור להוסיף שיקולי איכות מעבר לאלגוריתם למעלה — הסיווג חייב להיות עקבי בין הרצות.
 
 החזר JSON בלבד דרך הכלי submit_claim_map.`;
 
