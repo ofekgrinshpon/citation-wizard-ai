@@ -96,6 +96,13 @@ export interface PlannerCallOptions {
    * without permanently changing the stage's primary model.
    */
   openaiModelOverride?: string;
+  /**
+   * Pin this call to a specific provider regardless of which API keys are
+   * available. Used by claim_map (Pilot v6) to force Gemini routing because
+   * gpt-5-mini was the dominant latency cost (~33s) on that stage, and
+   * Gemini 2.5 Flash returns the same JSON tool-call shape in ~5-10s.
+   */
+  forceProvider?: "openai" | "gemini";
 }
 
 /**
