@@ -200,7 +200,7 @@ function summarize(state) {
     q.runs.forEach((r, i) => {
       if (!r) { lines.push(`- r${i + 1}: NO_RESULT`); return; }
       const stages = r.models_used || {};
-      lines.push(`- r${i + 1}: path=${r.drafting_path} • ${r.answer_words}w / ${r.answer_chars}ch • fn=${r.footnotes_count} (anchored=${r.anchored_count}, density=${r.citation_density_per_100w}/100w) • ${(r.wall_ms / 1000).toFixed(1)}s`);
+      lines.push(`- r${i + 1}: path=${r.drafting_path} • ${r.answer_words}w / ${r.answer_chars}ch • fn=${r.footnotes_count} (anchored=${r.anchored_count}, dropped=${r.dropped_unanchored_count ?? "—"}, density=${r.citation_density_per_100w}/100w) • ${(r.wall_ms / 1000).toFixed(1)}s`);
       lines.push(`    - stages: decomp=${stages.decomposition?.status} (${stages.decomposition?.duration_ms}ms), claim_map=${stages.claim_map?.status} (${stages.claim_map?.duration_ms}ms), draft=${stages.drafting?.status} (${stages.drafting?.duration_ms}ms)`);
       if (r.claim_map_summary) {
         const cm = r.claim_map_summary;
