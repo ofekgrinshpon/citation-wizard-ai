@@ -167,19 +167,20 @@ function summarize(state) {
   lines.push(``);
   lines.push(`Goal: 400-700 words, 4-6 footnotes, anchor-pass skipped, claim_map=Gemini Flash.`);
   lines.push(``);
-  lines.push(`| Q | Bucket | r | path | words | fn | anchored | density | wall |`);
-  lines.push(`|---|---|---|---|---|---|---|---|---|`);
-  let totals = { struct: 0, all: 0, words: 0, fn: 0, anch: 0, wall: 0 };
+  lines.push(`| Q | Bucket | r | path | words | fn | anchored | dropped | density | wall |`);
+  lines.push(`|---|---|---|---|---|---|---|---|---|---|`);
+  let totals = { struct: 0, all: 0, words: 0, fn: 0, anch: 0, dropped: 0, wall: 0 };
   for (const q of state.questions) {
     q.runs.forEach((r, i) => {
-      if (!r) { lines.push(`| Q${q.id} | ${q.bucket} | r${i + 1} | NO_RESULT | — | — | — | — | — |`); return; }
+      if (!r) { lines.push(`| Q${q.id} | ${q.bucket} | r${i + 1} | NO_RESULT | — | — | — | — | — | — |`); return; }
       totals.all++;
       if (r.drafting_path === "structured") totals.struct++;
       totals.words += r.answer_words || 0;
       totals.fn += r.footnotes_count || 0;
       totals.anch += r.anchored_count || 0;
+      totals.dropped += r.dropped_unanchored_count || 0;
       totals.wall += r.wall_ms || 0;
-      lines.push(`| Q${q.id} | ${q.bucket} | r${i + 1} | ${r.drafting_path ?? "ERR"} | ${r.answer_words} | ${r.footnotes_count} | ${r.anchored_count} | ${r.citation_density_per_100w} | ${(r.wall_ms / 1000).toFixed(1)}s |`);
+      lines.push(`| Q${q.id} | ${q.bucket} | r${i + 1} | ${r.drafting_path ?? "ERR"} | ${r.answer_words} | ${r.footnotes_count} | ${r.anchored_count} | ${r.dropped_unanchored_count ?? "—"} | ${r.citation_density_per_100w} | ${(r.wall_ms / 1000).toFixed(1)}s |`);
     });
   }
   lines.push(``);
