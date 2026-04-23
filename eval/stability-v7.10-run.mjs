@@ -166,6 +166,7 @@ async function runOne(jwt, q, attempt) {
     supporting_count: sps?.supporting ?? null,
     secondary_count: sps?.secondary ?? null,
     promoted_to_core: stc?.promoted_to_core ?? null,
+    soft_min: md.retrieval_funnel?.soft_min_supplementary ?? null,
     qa_log_id: log_row?.id ?? null,
     eval_run_id: evalRunId,
   };
