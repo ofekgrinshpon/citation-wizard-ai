@@ -40,8 +40,21 @@ function mapAuthorityClass(
   legacy: string,
   provenance: InternalSourcePackEntry["provenance"],
   url: string | undefined,
+  completionType?: "statute" | "caselaw",
 ): LegalAuthorityClass {
   if (provenance === "document") return "user_document";
+  // Milestone B: perplexity_completion candidates are verified-source-matched
+  // BEFORE they reach this map (see runPerplexityCompletion in index.ts).
+  // Their declared type is therefore trusted and they go directly to primary
+  // authority, bypassing both the URL-based fallback and the relevance gate.
+  if (provenance === "perplexity_completion") {
+    if (completionType === "statute") return "primary_legislation";
+    if (completionType === "caselaw") return "primary_caselaw";
+    // Defensive: if a completion candidate slipped through without a type,
+    // refuse to promote it. Better to demote to external_reference than to
+    // wrongly elevate something the guard couldn't classify.
+    return "external_reference";
+  }
   switch (legacy) {
     case "primary_legislation":
     case "basic_law":
@@ -78,7 +91,12 @@ function toItem(entry: InternalSourcePackEntry): LegalSourcePackItem {
     sourceId: `src-${entry.source_id}`,
     title: entry.title,
     sourceType: entry.source_type,
-    authorityClass: mapAuthorityClass(entry.authority_class, entry.provenance, entry.url),
+    authorityClass: mapAuthorityClass(
+      entry.authority_class,
+      entry.provenance,
+      entry.url,
+      entry.completion_candidate_type,
+    ),
     url: entry.url,
     caseNumber: entry.case_number,
     excerpt: entry.excerpt,
