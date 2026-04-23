@@ -46,16 +46,27 @@ export const LEGAL_RESEARCH_MODELS = {
 export type LegalResearchStage = keyof typeof LEGAL_RESEARCH_MODELS;
 
 /**
- * Returns the active model name for a stage, choosing primary if OpenAI is
- * available and fallback otherwise. Used for diagnostic logging.
+ * Returns the active model name for a stage. Honors `forceProvider` (Gemini-only
+ * stages like decomposition v7 and claim_map v6), then prefers OpenAI when its
+ * key is available and the primary is OpenAI-routed; otherwise picks Gemini.
+ * Used for diagnostic logging only.
  */
 export function getActiveModel(
   stage: LegalResearchStage,
   hasOpenAI: boolean,
 ): { provider: "openai" | "gemini"; model: string } {
-  const cfg = LEGAL_RESEARCH_MODELS[stage];
-  if (hasOpenAI && cfg.primary.startsWith("openai/")) {
-    return { provider: "openai", model: cfg.primary };
-  }
-  return { provider: "gemini", model: cfg.fallback };
+  const cfg = LEGAL_RESEARCH_MODELS[stage] as { primary: string; fallback: string; forceProvider?: "openai" | "gemini" };
+  const forced = cfg.forceProvider;
+  const pickGemini = () => {
+    const m = cfg.primary.startsWith("google/") ? cfg.primary : cfg.fallback;
+    return { provider: "gemini" as const, model: m };
+  };
+  const pickOpenAI = () => {
+    const m = cfg.primary.startsWith("openai/") ? cfg.primary.replace(/^openai\//, "") : cfg.fallback.replace(/^openai\//, "");
+    return { provider: "openai" as const, model: m };
+  };
+  if (forced === "gemini") return pickGemini();
+  if (forced === "openai" && hasOpenAI) return pickOpenAI();
+  if (hasOpenAI && cfg.primary.startsWith("openai/")) return pickOpenAI();
+  return pickGemini();
 }
