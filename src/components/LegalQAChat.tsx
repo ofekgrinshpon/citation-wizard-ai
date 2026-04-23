@@ -2063,57 +2063,6 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
       {/* Bottom: Input bar pinned */}
       <div className="mt-auto px-2 sm:px-4 pb-2 pt-2 space-y-1.5 border-t border-border bg-background">
-        {/* Research depth toggle — research mode only. Quality control, not billing. */}
-        {!isAcademic && taskMode === "research" && (
-          <div className="flex justify-end">
-            <div
-              className="inline-flex items-center rounded-lg border border-border bg-muted/40 p-0.5 shadow-sm"
-              role="group"
-              aria-label="עומק מחקר"
-            >
-              <button
-                type="button"
-                onClick={() => setResearchDepth("fast")}
-                disabled={loading}
-                className={`inline-flex items-center gap-1.5 px-3 h-7 rounded-md text-xs font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                  researchDepth === "fast"
-                    ? "bg-card text-primary shadow-sm ring-1 ring-primary/20"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-                aria-pressed={researchDepth === "fast"}
-              >
-                <Zap
-                  size={16}
-                  className={`shrink-0 transition-colors ${
-                    researchDepth === "fast" ? "text-primary" : "text-muted-foreground"
-                  }`}
-                  aria-hidden="true"
-                />
-                <span className="leading-none">מהיר</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setResearchDepth("deep")}
-                disabled={loading}
-                className={`inline-flex items-center gap-1.5 px-3 h-7 rounded-md text-xs font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                  researchDepth === "deep"
-                    ? "bg-card text-primary shadow-sm ring-1 ring-primary/20"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-                aria-pressed={researchDepth === "deep"}
-              >
-                <Brain
-                  size={16}
-                  className={`shrink-0 transition-colors ${
-                    researchDepth === "deep" ? "text-primary" : "text-muted-foreground"
-                  }`}
-                  aria-hidden="true"
-                />
-                <span className="leading-none">מעמיק</span>
-              </button>
-            </div>
-          </div>
-        )}
         {/* Hide input bar for academic mode (it has its own UI) unless in non-wizard steps */}
         {!isAcademic && (
           <div className="flex gap-2 items-end">
@@ -2154,39 +2103,93 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               />
             </div>
 
-            {/* Textarea + send */}
-            <div className="input-field flex flex-1 overflow-hidden">
-              <textarea
-                ref={textareaRef}
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={uploadedFiles.length > 0 ? `שאלו על ${uploadedFiles.length} קבצים...` : activeMode.placeholder}
-                disabled={loading}
-                rows={1}
-                className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-2.5 sm:px-3.5 py-2.5 sm:py-3 text-foreground text-sm leading-relaxed font-sans resize-none"
-                dir="rtl"
-              />
-              {loading ? (
-                <button
-                  onClick={handleStop}
-                  className="btn-send px-4 py-2.5 m-1.5 text-destructive-foreground bg-destructive text-base flex-shrink-0 hover:bg-destructive/90"
-                  title="עצור"
-                >
-                  <StopCircle className="w-4 h-4" />
-                </button>
-              ) : (
-                <button
-                  onClick={handleSubmit}
-                  disabled={
-                    taskMode === "pleading_analysis"
-                      ? question.trim().length < 5 && uploadedFiles.length === 0
-                      : question.trim().length < 5
-                  }
-                  className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
-                >
-                  ⇧
-                </button>
+            {/* Textarea + integrated depth toggle + send */}
+            <div className="input-field flex flex-col flex-1 overflow-hidden">
+              <div className="flex items-end">
+                <textarea
+                  ref={textareaRef}
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder={uploadedFiles.length > 0 ? `שאלו על ${uploadedFiles.length} קבצים...` : activeMode.placeholder}
+                  disabled={loading}
+                  rows={1}
+                  className="flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-2.5 sm:px-3.5 py-2.5 sm:py-3 text-foreground text-sm leading-relaxed font-sans resize-none"
+                  dir="rtl"
+                />
+                {loading ? (
+                  <button
+                    onClick={handleStop}
+                    className="btn-send px-4 py-2.5 m-1.5 text-destructive-foreground bg-destructive text-base flex-shrink-0 hover:bg-destructive/90"
+                    title="עצור"
+                  >
+                    <StopCircle className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleSubmit}
+                    disabled={
+                      taskMode === "pleading_analysis"
+                        ? question.trim().length < 5 && uploadedFiles.length === 0
+                        : question.trim().length < 5
+                    }
+                    className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
+                  >
+                    ⇧
+                  </button>
+                )}
+              </div>
+
+              {/* Integrated research depth toggle — research mode only. Quality control, not billing. */}
+              {taskMode === "research" && (
+                <div className="flex justify-end px-1.5 pb-1.5" dir="rtl">
+                  <div
+                    className="inline-flex items-center rounded-md bg-muted/50 p-0.5"
+                    role="group"
+                    aria-label="עומק מחקר"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setResearchDepth("fast")}
+                      disabled={loading}
+                      className={`inline-flex items-center gap-1 px-2 h-6 rounded-[5px] text-[11px] font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                        researchDepth === "fast"
+                          ? "bg-card text-primary shadow-sm ring-1 ring-primary/20"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                      aria-pressed={researchDepth === "fast"}
+                    >
+                      <Zap
+                        size={13}
+                        className={`shrink-0 transition-colors ${
+                          researchDepth === "fast" ? "text-primary" : "text-muted-foreground"
+                        }`}
+                        aria-hidden="true"
+                      />
+                      <span className="leading-none">מהיר</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setResearchDepth("deep")}
+                      disabled={loading}
+                      className={`inline-flex items-center gap-1 px-2 h-6 rounded-[5px] text-[11px] font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+                        researchDepth === "deep"
+                          ? "bg-card text-primary shadow-sm ring-1 ring-primary/20"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                      aria-pressed={researchDepth === "deep"}
+                    >
+                      <Brain
+                        size={13}
+                        className={`shrink-0 transition-colors ${
+                          researchDepth === "deep" ? "text-primary" : "text-muted-foreground"
+                        }`}
+                        aria-hidden="true"
+                      />
+                      <span className="leading-none">מעמיק</span>
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>
