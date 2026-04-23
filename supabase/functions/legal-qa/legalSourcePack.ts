@@ -18,7 +18,7 @@ export interface InternalSourcePackEntry {
   source_type: string;
   authority_class: string;            // legacy 12-value enum from index.ts
   url?: string;
-  provenance: "local" | "perplexity" | "document";
+  provenance: "local" | "perplexity" | "perplexity_completion" | "document";
   excerpt: string;
   case_number?: string;
   usable_for_analysis: boolean;
@@ -26,6 +26,13 @@ export interface InternalSourcePackEntry {
   anchor_present: boolean;
   /** Retrieval similarity (0–1). 0 if absent (e.g. perplexity/document). */
   relevance_score?: number;
+  /**
+   * Milestone B — for perplexity_completion entries only. Declares the
+   * primary-source type the AG-style guard accepted. Used by mapAuthorityClass
+   * to skip the URL-based fallback and route directly to primary_legislation /
+   * primary_caselaw, since these candidates are verified-source-matched.
+   */
+  completion_candidate_type?: "statute" | "caselaw";
 }
 
 /** Map the legacy 12-value authority enum to the formal 7-value enum. */
