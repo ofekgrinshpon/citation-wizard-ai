@@ -3310,8 +3310,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // for legacy) + gpt-5-mini with 120s timeout. The trim shaves significant
     // input-token latency on top of the model swap.
     const useNewDrafter = useStructuredDrafterPath;
-    const drafterTimeoutMs = useNewDrafter ? 120000 : 90000;
-    const drafterVariant: "structured" | "legacy" = useNewDrafter ? "structured" : "legacy";
+    // Profile-driven timeout: Deep gets more headroom for the heavier model.
+    const drafterTimeoutMs = useNewDrafter ? modeProfile.drafterTimeoutMs : 90000;
+    const drafterVariant: "structured" | "legacy" = useNewDrafter ? modeProfile.drafterVariant : "legacy";
     console.log(`AI call starting (drafter=${drafterVariant}, ${drafterTimeoutMs / 1000}s timeout)...`);
     let answerText = "";
     let drafterModelUsed = "google/gemini-2.5-flash";
