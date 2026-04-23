@@ -248,9 +248,9 @@ async function runPerplexityCompletion(
   let raw: PerplexityCompletionCandidate[] = [];
   let status: PerplexityCompletionResult["status"] = "ok";
 
-  // Single attempt with 25s timeout (no retry — this is already a fallback path).
+  // Single attempt with 15s timeout (no retry — this is already a fallback path).
   const ctrl = new AbortController();
-  const timeoutId = setTimeout(() => ctrl.abort(), 25_000);
+  const timeoutId = setTimeout(() => ctrl.abort(), 15_000);
   try {
     const res = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
