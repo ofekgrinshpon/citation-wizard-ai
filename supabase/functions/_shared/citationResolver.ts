@@ -76,8 +76,28 @@ function classify(text: string, declared: DeclaredType): EngineSourceType | null
 // Behavior is intentionally identical to the React-side extractors for the
 // 5 source types we support. Do not "improve" without porting back.
 
-function extractLegislation(text: string): Record<string, string> {
+// Bare-section reference detector (e.g. "סעיף 17", "ס' 12(א)", "סעיפים 3-5")
+const BARE_SECTION_RE = /^\s*(?:סעיפים?|ס['׳']\s*)\s*[\dא-ת()./\\\-–]+\s*$/;
+
+function extractLegislation(text: string, titleHint?: string): Record<string, string> {
   const fields: Record<string, string> = {};
+  // If the citation is just a bare section (no law name), pull law name from title
+  const isBareSection = BARE_SECTION_RE.test(text);
+  if (isBareSection && titleHint) {
+    // Use the title's first segment-before-comma as the law name
+    const titleMatch = titleHint.match(/^([^,]+)/);
+    if (titleMatch) fields.lawName = titleMatch[1].trim();
+    // Also try to pull year/collection from the title since the citation lacks them
+    const titleYear = titleHint.match(/(הת[שׁש][א-ת]*["״׳][א-ת]["״׳]?[א-ת]?)/);
+    if (titleYear) fields.hebrewYear = titleYear[1];
+    const titleGreg = titleHint.match(/\b(\d{4})\b/);
+    if (titleGreg) fields.gregorianYear = titleGreg[1];
+    const titleColl = titleHint.match(/(ס["״]ח|ק["״]ת)/);
+    if (titleColl) fields.collection = titleColl[1];
+    const titlePage = titleHint.match(/(?:ס["״]ח|ק["״]ת)\s+(\d+)/);
+    if (titlePage) fields.firstPage = titlePage[1];
+    return fields;
+  }
   // Law name = first segment before comma
   const lawMatch = text.match(/^([^,]+)/);
   if (lawMatch) fields.lawName = lawMatch[1].trim();
@@ -96,13 +116,18 @@ function extractLegislation(text: string): Record<string, string> {
   return fields;
 }
 
-function extractBasicLaw(text: string): Record<string, string> {
+function extractBasicLaw(text: string, titleHint?: string): Record<string, string> {
   const fields: Record<string, string> = {};
   // For basic laws, lawName is everything after "חוק-יסוד:" and before the first comma
   const m = text.match(/חוק[-\s]יסוד\s*:?\s*([^,]+)/);
   if (m) fields.lawName = m[1].trim();
-  // Reuse legislation patterns for the rest
-  const rest = extractLegislation(text);
+  // If still no name (bare section ref), try the title
+  if (!fields.lawName && titleHint) {
+    const tm = titleHint.match(/חוק[-\s]יסוד\s*:?\s*([^,]+)/);
+    if (tm) fields.lawName = tm[1].trim();
+  }
+  // Reuse legislation patterns for the rest, with title fallback
+  const rest = extractLegislation(text, titleHint);
   if (rest.hebrewYear) fields.hebrewYear = rest.hebrewYear;
   if (rest.gregorianYear) fields.gregorianYear = rest.gregorianYear;
   if (rest.collection) fields.collection = rest.collection;
@@ -110,8 +135,8 @@ function extractBasicLaw(text: string): Record<string, string> {
   return fields;
 }
 
-function extractSecondaryLeg(text: string): Record<string, string> {
-  const fields = extractLegislation(text);
+function extractSecondaryLeg(text: string, titleHint?: string): Record<string, string> {
+  const fields = extractLegislation(text, titleHint);
   // Rename lawName → regulationName to match the secondary_legislation schema
   if (fields.lawName) {
     fields.regulationName = fields.lawName;
@@ -120,22 +145,40 @@ function extractSecondaryLeg(text: string): Record<string, string> {
   return fields;
 }
 
+// Labor-court & other prefixes that lack gershayim (e.g. "עב", "בל").
+// We enumerate them explicitly so we don't false-match arbitrary 2-letter
+// Hebrew words at the start of a citation.
+const UNQUOTED_CASE_PREFIXES = [
+  "עב", "בל", "תק", "תא", "תפ", "הפ", "המ", "בש",
+];
+const UNQUOTED_PREFIX_RE = new RegExp(
+  `(?:^|\\s)(${UNQUOTED_CASE_PREFIXES.join("|")})\\s+(\\d+[/\\-]\\d+)`,
+);
+
+function matchCaseTypeAndNumber(s: string): { caseType: string; caseNumber: string } | null {
+  // Quoted abbreviations: סע"ש, עס"ק, בר"ע, ב"ל, בג"ץ, ע"א, רע"א, ע"פ, דנ"א, ת"א, etc.
+  const quoted = s.match(/([א-ת]{1,3}["״׳']+[א-ת]{1,2})\s+(\d+[/\-]\d+)/);
+  if (quoted) return { caseType: quoted[1], caseNumber: quoted[2] };
+  // Unquoted whitelist (labor court "עב", small claims "תק", etc.)
+  const unquoted = s.match(UNQUOTED_PREFIX_RE);
+  if (unquoted) return { caseType: unquoted[1], caseNumber: unquoted[2] };
+  return null;
+}
+
 function extractCaseLawCommon(
   text: string,
   caseNumberHint?: string,
 ): Record<string, string> {
   const fields: Record<string, string> = {};
-  // Case type + number — same regex as React side
-  const caseMatch = text.match(/([א-ת]{1,3}["״׳']+[א-ת]{1,2})\s+(\d+[/\-]\d+)/);
-  if (caseMatch) {
-    fields.caseType = caseMatch[1];
-    fields.caseNumber = caseMatch[2];
+  const fromText = matchCaseTypeAndNumber(text);
+  if (fromText) {
+    fields.caseType = fromText.caseType;
+    fields.caseNumber = fromText.caseNumber;
   } else if (caseNumberHint) {
-    // Fall back to the structured case_number field if Perplexity put it there
-    const hintMatch = caseNumberHint.match(/([א-ת]{1,3}["״׳']+[א-ת]{1,2})\s+(\d+[/\-]\d+)/);
-    if (hintMatch) {
-      fields.caseType = hintMatch[1];
-      fields.caseNumber = hintMatch[2];
+    const fromHint = matchCaseTypeAndNumber(caseNumberHint);
+    if (fromHint) {
+      fields.caseType = fromHint.caseType;
+      fields.caseNumber = fromHint.caseNumber;
     }
   }
   // Parties — bolded **X** OR plain "X נ' Y"
@@ -231,6 +274,13 @@ export interface ResolveCitationOptions {
   caseNumberHint?: string;
   /** Optional `decision_date` field (ISO or dd.mm.yyyy). */
   decisionDateHint?: string;
+  /**
+   * Optional `title` field from the Perplexity candidate. Used as a fallback
+   * source for the law name when the citation string is a bare section
+   * reference (e.g. "סעיף 17"). Perplexity typically puts the full law name
+   * in `title` even when the citation lacks it.
+   */
+  titleHint?: string;
 }
 
 /**
@@ -238,7 +288,7 @@ export interface ResolveCitationOptions {
  *
  * @param candidateText  The raw `citation` string returned by Perplexity.
  * @param declaredType   Perplexity's `type` field ("statute" | "caselaw").
- * @param opts           Extra hint fields (case_number, decision_date).
+ * @param opts           Extra hint fields (case_number, decision_date, title).
  */
 export function resolveCitation(
   candidateText: string,
@@ -255,8 +305,10 @@ export function resolveCitation(
     };
   }
 
-  // 1) Classify
-  const sourceType = classify(text, declaredType);
+  // 1) Classify (use combined text so titleHint can flip "primary" → "basic_law"
+  // when the citation is just "סעיף 17" but the title says "חוק-יסוד: …")
+  const classifyText = opts.titleHint ? `${text}\n${opts.titleHint}` : text;
+  const sourceType = classify(classifyText, declaredType);
   if (!sourceType) {
     return {
       resolved: false,
@@ -270,13 +322,13 @@ export function resolveCitation(
   let fields: Record<string, string>;
   switch (sourceType) {
     case "basic_law":
-      fields = extractBasicLaw(text);
+      fields = extractBasicLaw(text, opts.titleHint);
       break;
     case "secondary_legislation":
-      fields = extractSecondaryLeg(text);
+      fields = extractSecondaryLeg(text, opts.titleHint);
       break;
     case "primary_legislation":
-      fields = extractLegislation(text);
+      fields = extractLegislation(text, opts.titleHint);
       break;
     case "case_law_published":
       fields = extractCaseLawPublished(text, opts.caseNumberHint);
