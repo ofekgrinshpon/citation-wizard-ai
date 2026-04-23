@@ -2454,11 +2454,13 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
       const uncoveredLine = claimMapV2 && claimMapV2.uncoveredSubIssues.length > 0
         ? `תת-סוגיות שלא מכוסות (ציין כחוסר ודאות): ${claimMapV2.uncoveredSubIssues.join(" | ")}`
         : "";
-      // ─── Pilot v7.7 (Fast-mode floors) ────────────────────────────
-      // v7.6 overshot brevity (avg 278w / 2.2 fn). v7.7 enforces hard
-      // minimums (450w body, 4 anchored footnotes) with explicit failure
-      // language and a pre-submission self-check, while keeping the upper
-      // bounds (700w / 6 fn) so Fast still feels distinct from legacy.
+      // ─── Milestone A (parser-side anchor enforcement) ────────────
+      // Removed: "hard 4-footnote / 450-word floor" language. The system
+      // — not the model — now owns the citation floor. The parser drops
+      // any AI footnote that doesn't match a catalog source card, so
+      // floors expressed in the prompt only encouraged the drafter to
+      // fabricate "[חסר: ...]" skeletons. Target stays 400-700 words /
+      // 4-6 anchored citations, but as guidance, not pass/fail.
       return `אתה עוזר משפטי מומחה במצב **Fast**. כתוב תשובה משפטית **תמציתית, פרקטית ומעוגנת** בעברית, על בסיס מפת הטענות המאושרת למטה.
 
 ═══ חובת פלט מוחלטת ═══
@@ -2491,19 +2493,18 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
 **מסקנה**
 2-3 משפטים. סגור את הטיעון. אם הוצגה אי-ודאות בשורה התחתונה — חזור עליה כאן בקצרה.
 
-═══ מגבלות אורך ועיגון — חובה מוחלטת (תשובה שמפרה אותן נחשבת כשלון) ═══
-- **רצפה: לפחות 450 מילים בגוף**. תשובה מתחת ל-450 מילים נחשבת תת-מתועדת ופסולה. אם אתה מתחת — הרחב את "מסגרת נורמטיבית" ואת "יישום".
-- **תקרה: עד 700 מילים בגוף**. אל תחרוג.
-- **רצפה: לפחות 4 הערות שוליים מעוגנות (anchored)**. תשובה עם פחות מ-4 הערות נחשבת פסולה. אם אין לך 4 מקורות מעוגנים מובחנים בקטלוג — בחר את 4 החזקים ביותר ועגן אותם בנפרד בתוך הגוף.
-- **תקרה: עד 6 הערות שוליים**. אל תוסיף יותר.
+═══ אורך ועיגון — יעדים (לא רצפות מחייבות) ═══
+- **יעד אורך גוף: 400-700 מילים**. אל תחרוג מ-700. אל תכווץ ל-200 — תן ניתוח של ממש במסגרת ויישום.
+- **יעד הערות שוליים: 4-6 הערות מעוגנות**, מינימום 2.
+- "מעוגן" = יש לך כרטיס מקור בקטלוג שמתאים לאזכור. אם אין מקור מהקטלוג שתומך בטענה — אל תכניס [N] ואל תחבר הערת שוליים. **אין לייצר הערה ביבליוגרפית "מהזיכרון" כדי להגיע ליעד.**
+- אם הקטלוג קצר/חלש — מותר לסיים עם 2-3 הערות מעוגנות בלבד. עדיף פחות הערות אמיתיות מאשר יותר הערות מומצאות.
 - ללא תת-כותרות נוספות, ללא רשימות תבליטים מעבר לבולט הראשון בשורה התחתונה, ללא # markdown.
 - טון פורמלי וישיר. אין הקדמות, אין "ראשית נציין", אין "חשוב להבין כי".
 
-═══ בדיקה עצמית לפני הגשה (חובה) ═══
-לפני שאתה מסיים, ספור בראש:
-1. כמה מילים בגוף (לא כולל בלוק הערות השוליים)? אם פחות מ-450 — הרחב את "מסגרת נורמטיבית" ואת "יישום" עד שתעבור 450.
-2. כמה הערות שוליים יש לך? אם פחות מ-4 — הוסף עיגון נוסף לטענות במסגרת או ביישום מתוך הקטלוג.
-רק אחרי שעברת את שתי הבדיקות — הגש.
+═══ בדיקה עצמית לפני הגשה ═══
+לפני שאתה מסיים, ודא:
+1. כל [N] בגוף מתייחס לפריט [src-N] בקטלוג למטה. אם אין כרטיס מתאים — מחק את ה-[N] ושכתב כדעה כללית.
+2. הגוף בטווח 400-700 מילים, ויש לפחות 2 הערות מעוגנות.
 
 ═══ מפת הטענות (חוזה — חובה לעקוב) ═══
 אתה כותב אך ורק מתוך הטענות הבאות. אסור לייצר טענה משפטית שאינה במפה.
@@ -2552,7 +2553,7 @@ ${sourceCatalog}
 ${combinedContext}
 
 ═══ תזכורת אחרונה ═══
-זהו מצב **Fast**: רצפה 450 מילים / 4 הערות מעוגנות, תקרה 700 מילים / 6 הערות, ארבע כותרות בלבד, בלוק הערות שוליים בסוף. עבור את הבדיקה העצמית לפני הגשה. אל תחרוג מהתקרה. אל תרד מתחת לרצפה.
+זהו מצב **Fast**: יעד 400-700 מילים / 4-6 הערות מעוגנות (מינימום 2), ארבע כותרות בלבד, בלוק הערות שוליים בסוף. כל [N] בגוף חייב להיות מגובה בכרטיס מקור מהקטלוג. אל תמציא הערות.
 
 הפורמט בסוף התשובה (חובה לעקוב אחריו אות באות):
 
@@ -2974,6 +2975,13 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
 
     const oldIdToNewNumber = new Map<number, number>();
     let fnNum = 1;
+    // Milestone A: parser-side anchor enforcement.
+    // Track every AI footnote that we drop because it has no catalog/fuzzy
+    // anchor. These are surfaced in qa_logs.metadata.dropped_unanchored_count
+    // so we can see — honestly — how often the drafter is fabricating
+    // citations vs. citing the source pack.
+    let droppedUnanchoredCount = 0;
+    const droppedUnanchoredPreviews: string[] = [];
 
     if (aiFootnoteLines.length > 0) {
       // Use AI-formatted footnotes — match each to a source card for provenance
@@ -3032,15 +3040,16 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             continue;
           }
 
-          console.log(`Kept footnote #${aiFn.num} without URL (no card match): ${aiFn.text.slice(0, 80)}...`);
-          footnotes.push({
-            number: fnNum,
-            citation: aiFn.text,
-            source_type: "unverified",
-            source: "unverified",
-          });
-          oldIdToNewNumber.set(aiFn.num, fnNum);
-          fnNum++;
+          // Milestone A: no card match AND no fuzzy URL → drop the footnote
+          // entirely. Previously we kept it with `source: "unverified"`,
+          // which let the drafter game the floor by inventing bibliographic
+          // entries that didn't tie back to the catalog. Anchoring is now
+          // enforced at parse time, not in the prompt.
+          droppedUnanchoredCount++;
+          if (droppedUnanchoredPreviews.length < 5) {
+            droppedUnanchoredPreviews.push(aiFn.text.slice(0, 120));
+          }
+          console.log(`Dropped unanchored AI footnote #${aiFn.num} (no card match, no fuzzy URL): ${aiFn.text.slice(0, 100)}...`);
           continue;
         }
         footnotes.push({
@@ -3720,6 +3729,11 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             ?? (claimMap ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength } : null),
           drafting_path: draftingPath,
           draft_path: useNewDrafter ? "claim_map" : "fallback",   // legacy alias for back-compat
+          // Milestone A: how many AI footnotes were dropped because they had
+          // no catalog/fuzzy anchor. >0 means the drafter is fabricating
+          // citations to satisfy a floor — read alongside total_footnotes.
+          dropped_unanchored_count: droppedUnanchoredCount,
+          dropped_unanchored_previews: droppedUnanchoredPreviews,
           // Honest models_used: only record a model as "used" if its stage
           // actually completed successfully. Otherwise expose null + the failure
           // status, so admins don't get the false impression that gpt-5-mini ran.
