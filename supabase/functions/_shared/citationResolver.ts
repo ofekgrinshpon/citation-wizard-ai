@@ -343,7 +343,7 @@ export function resolveCitation(
       fields = extractCaseLawPublished(text, opts.caseNumberHint);
       break;
     case "case_law_database":
-      fields = extractCaseLawDatabase(text, opts.caseNumberHint, opts.decisionDateHint);
+      fields = extractCaseLawDatabase(text, opts.caseNumberHint, opts.decisionDateHint, opts.titleHint);
       break;
   }
 
