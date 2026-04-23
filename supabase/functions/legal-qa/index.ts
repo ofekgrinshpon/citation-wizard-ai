@@ -1981,6 +1981,7 @@ ${(verify.fullText as string).slice(0, 50000)}
           const isUsableTitle = titleTrim.length >= 8 && (hasParties || /[א-ת]{4,}/.test(titleTrim));
           if (!isUsableTitle) {
             console.log(`Skipping caselaw card without usable title: case=${caseNumber || "?"}, title="${titleTrim}"`);
+            cardLoopDrops.caselaw_no_usable_title++;
             continue;
           }
           if (caseNumber) {
