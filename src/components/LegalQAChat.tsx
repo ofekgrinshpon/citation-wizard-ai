@@ -567,6 +567,20 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const [error, setError] = useState<string | null>(null);
   const [taskMode, setTaskMode] = useState<TaskMode>("research");
 
+  // ─── Research depth (Fast / Deep) ─────────────────────────────────
+  // Quality control toggle, NOT a billing decision (see modeProfiles.ts on
+  // backend). Persisted per-browser so the user's preference sticks across
+  // sessions. Only consumed when taskMode === "research".
+  type ResearchDepth = "fast" | "deep";
+  const DEPTH_STORAGE_KEY = "relex.research.depth";
+  const [researchDepth, setResearchDepth] = useState<ResearchDepth>(() => {
+    const stored = safeStorage.getItem(DEPTH_STORAGE_KEY);
+    return stored === "deep" ? "deep" : "fast";
+  });
+  useEffect(() => {
+    safeStorage.setItem(DEPTH_STORAGE_KEY, researchDepth);
+  }, [researchDepth]);
+
   // Multi-file support
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [extractedTexts, setExtractedTexts] = useState<Array<{ name: string; text: string }>>([]);
