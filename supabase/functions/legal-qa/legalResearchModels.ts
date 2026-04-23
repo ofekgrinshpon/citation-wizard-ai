@@ -3,11 +3,11 @@
 
 export const LEGAL_RESEARCH_MODELS = {
   decomposition: {
-    // Tier-1.5 tuning: split from claim_map. gpt-5-nano is materially faster
-    // than gpt-5-mini for pure structured extraction (4 booleans + 2-5 sub_issues
-    // via tool-call schema). Schema makes shape errors impossible.
-    primary: "openai/gpt-5-nano",
-    fallback: "google/gemini-2.5-flash-lite",
+    // Tier-2 tuning (pilot v3): gpt-5-nano showed ~50% parse_error rate on this
+    // schema and the nano→mini retry didn't help end-to-end. Promote mini to
+    // primary; reliability matters more than the latency saving.
+    primary: "openai/gpt-5-mini",
+    fallback: "google/gemini-2.5-flash",
   },
   claimMap: {
     // Tier-1.5 tuning: kept on gpt-5-mini. Claim mapping requires synthesizing
