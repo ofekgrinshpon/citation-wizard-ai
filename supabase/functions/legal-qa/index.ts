@@ -2568,7 +2568,11 @@ ${combinedContext}
     const promptLen = drafterSystemPrompt.length;
     console.log(`Prompt length: ${promptLen} chars (variant=${useStructuredDrafterPath ? "compact" : "full"}), ${sourceCards.length} source cards`);
 
-    const aiMaxTokens = isAcademicMode ? 12288 : 8192;
+    // Pilot v7.6 (Fast-mode shaping): the structured drafter prompt now
+    // targets 400-700 words / 4-6 footnotes. 2048 tokens is comfortably
+    // above the 700-word + footnote-block ceiling and acts as a hard cap
+    // on runaway prose. Academic and legacy paths keep their larger budgets.
+    const aiMaxTokens = isAcademicMode ? 12288 : (useStructuredDrafterPath ? 2048 : 8192);
     // For pleading_analysis with an uploaded document: the document IS the audit subject,
     // and the typed `question` becomes optional user instructions/focus directives.
     const isPleadingWithDoc = taskMode === "pleading_analysis" && (bodyHasDocument || hasDocument);
