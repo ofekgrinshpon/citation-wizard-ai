@@ -1282,6 +1282,13 @@ ${(verify.fullText as string).slice(0, 50000)}
       source_cards_local: FunnelStage;
       drop_reasons: Record<string, number>;
       rerank_dropped_docs: Array<{ title: string; source_type: string; score: number; reason: string }>;
+      soft_min_supplementary?: {
+        missing_types: string[];
+        threshold: number;
+        per_type_cap: number;
+        considered_by_type: Record<string, number>;
+        added_by_type: Record<string, number>;
+      };
     } = {
       raw_keyword: newFunnelStage(),
       raw_vector: newFunnelStage(),
