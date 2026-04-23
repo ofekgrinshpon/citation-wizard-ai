@@ -26,9 +26,12 @@ export const MODEL_CONFIG = {
   // Legacy aliases retained for any external readers — point at decomposition.
   PLANNER_OPENAI: LEGAL_RESEARCH_MODELS.decomposition.primary.replace(/^openai\//, ""),
   PLANNER_GEMINI: LEGAL_RESEARCH_MODELS.decomposition.fallback,
-  // Drafter: final memo. Heavier reasoning preferred.
+  // Drafter: final memo. Heavier reasoning preferred. Used by legacy / fallback path.
   DRAFTER_OPENAI: LEGAL_RESEARCH_MODELS.drafting.primary.replace(/^openai\//, ""),
   DRAFTER_GEMINI: LEGAL_RESEARCH_MODELS.drafting.fallback,
+  // Structured drafter (with claim map): lighter model since reasoning is pre-baked.
+  STRUCTURED_DRAFTER_OPENAI: LEGAL_RESEARCH_MODELS.structuredDrafting.primary.replace(/^openai\//, ""),
+  STRUCTURED_DRAFTER_GEMINI: LEGAL_RESEARCH_MODELS.structuredDrafting.fallback,
 } as const;
 
 export { LEGAL_RESEARCH_MODELS };
