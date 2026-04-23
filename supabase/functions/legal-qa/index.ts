@@ -32,6 +32,39 @@ import { runAnchorPass, applyAnchorPatches, type AnchorPassSourcePackItem, type 
 // sends `taskMode: "research"`; if that ever changes, update this constant.
 const RESEARCH_MODE = "research";
 
+// ─── Trusted legal domains (Milestone B pre-work) ───
+// Single source of truth for the Perplexity URL allowlist. Used by:
+//   1. The loose Perplexity citation pass (sonar-pro, ~line 1863)
+//   2. The upcoming Milestone B Perplexity-completion guard
+// Scoped tightly to PRIMARY-source domains. Notes:
+//   - `gov.il` is NOT a wildcard — `gov.il` covers thousands of agency sites
+//     (press releases, ministry announcements) that are not primary law.
+//     We list the specific primary-source subdomains instead.
+//   - `idi.org.il` (Israel Democracy Institute) is intentionally OMITTED.
+//     IDI publishes high-quality policy research but is not an official
+//     primary source; promoting an IDI URL to `core` via Perplexity-completion
+//     would be wrong. IDI URLs can still arrive via the loose pass and land
+//     in `secondary` naturally.
+//   - `tau.ac.il` covers `mishpatim.tau.ac.il` (the law journal subdomain
+//     already special-cased in journal-metadata-extraction).
+// Keep this list in sync with verify-case-fulltext/index.ts (search_domain_filter).
+export const TRUSTED_LEGAL_DOMAINS: readonly string[] = [
+  // Caselaw — courts + major caselaw DBs
+  "nevo.co.il",
+  "supreme.court.gov.il",
+  "court.gov.il",       // district / magistrate / labor courts
+  "takdin.co.il",       // commercial caselaw DB
+  "psakdin.co.il",
+  // Legislation / official primary
+  "knesset.gov.il",
+  "main.knesset.gov.il",
+  "reshumot.gov.il",    // official gazette (ס"ח / ק"ת)
+  "justice.gov.il",     // AG opinions, legislative drafts
+  // Academic primary (law journals)
+  "huji.ac.il",
+  "tau.ac.il",          // covers mishpatim.tau.ac.il
+];
+
 // ─── Provenance hardening: deep-strip banned keys from any payload ───
 // Used by `buildResponse` as defense-in-depth so internal fields like
 // `provenanceInternal`, `claimMap`, etc. can never leak to the client.
