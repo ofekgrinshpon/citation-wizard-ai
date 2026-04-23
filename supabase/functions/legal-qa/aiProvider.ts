@@ -220,44 +220,51 @@ export interface DrafterResult {
 /**
  * Drafter call. Tries OpenAI first; on any failure, retries with Gemini.
  * Returns `null` only if both providers fail.
+ *
+ * @param variant - "legacy" (gpt-5, heavier) or "structured" (gpt-5-mini, faster).
+ *                  Defaults to "legacy" for backward compatibility.
  */
 export async function callDrafter(
   systemPrompt: string,
   userPrompt: string,
   maxTokens: number,
   timeoutMs = 90000,
+  variant: "legacy" | "structured" = "legacy",
 ): Promise<DrafterResult | null> {
+  const openaiModel = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI : MODEL_CONFIG.DRAFTER_OPENAI;
+  const geminiModel = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_GEMINI : MODEL_CONFIG.DRAFTER_GEMINI;
+
   // Try OpenAI first if available.
   if (OPENAI_API_KEY) {
     const openaiResult = await callOnce({
       url: OPENAI_URL,
       apiKey: OPENAI_API_KEY,
-      model: MODEL_CONFIG.DRAFTER_OPENAI,
+      model: openaiModel,
       systemPrompt,
       userPrompt,
       maxTokens,
       timeoutMs,
       provider: "openai",
     });
-    if (openaiResult) return { text: openaiResult, modelUsed: MODEL_CONFIG.DRAFTER_OPENAI };
-    console.log("[drafter] OpenAI failed — falling back to Gemini");
+    if (openaiResult) return { text: openaiResult, modelUsed: openaiModel };
+    console.log(`[drafter:${variant}] OpenAI failed — falling back to Gemini`);
   }
 
   if (!LOVABLE_API_KEY) {
-    console.error("[drafter] No LOVABLE_API_KEY — cannot fall back");
+    console.error(`[drafter:${variant}] No LOVABLE_API_KEY — cannot fall back`);
     return null;
   }
   const geminiResult = await callOnce({
     url: LOVABLE_URL,
     apiKey: LOVABLE_API_KEY,
-    model: MODEL_CONFIG.DRAFTER_GEMINI,
+    model: geminiModel,
     systemPrompt,
     userPrompt,
     maxTokens,
     timeoutMs,
     provider: "gemini",
   });
-  if (geminiResult) return { text: geminiResult, modelUsed: MODEL_CONFIG.DRAFTER_GEMINI };
+  if (geminiResult) return { text: geminiResult, modelUsed: geminiModel };
   return null;
 }
 
