@@ -1700,6 +1700,7 @@ ${(verify.fullText as string).slice(0, 50000)}
         new_doc_ids: number;
         duration_ms: number;
       };
+    } = {
       raw_keyword: newFunnelStage(),
       raw_vector: newFunnelStage(),
       raw_caselaw_filtered: newFunnelStage(),
