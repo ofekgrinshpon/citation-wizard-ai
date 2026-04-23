@@ -3,11 +3,15 @@
 
 export const LEGAL_RESEARCH_MODELS = {
   decomposition: {
-    // Tier-2 tuning (pilot v3): gpt-5-nano showed ~50% parse_error rate on this
-    // schema and the nano→mini retry didn't help end-to-end. Promote mini to
-    // primary; reliability matters more than the latency saving.
-    primary: "openai/gpt-5-mini",
-    fallback: "google/gemini-2.5-flash",
+    // Pilot v7 (Fast-mode feasibility): pinned to Gemini 2.5 Flash, mirroring
+    // the v6 claim_map migration. gpt-5-mini consistently took ~25s on this
+    // tool-call schema; Flash returns the same JSON shape in ~6-10s, freeing
+    // ~15s of the edge-function budget. Decomposition is structured planning
+    // on a small JSON schema — well within Flash's strengths. Revert is a
+    // one-line flip back to "openai/gpt-5-mini" if parse_error rate >10%.
+    primary: "google/gemini-2.5-flash",
+    fallback: "openai/gpt-5-mini",
+    forceProvider: "gemini",
   },
   claimMap: {
     // Pilot v6 latency pass: pinned to Gemini 2.5 Flash regardless of provider.
