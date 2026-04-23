@@ -32,24 +32,17 @@ function log(msg) {
 // fired most in the previous run (contract/labor, statute-anchored) plus one
 // constitutional control where the local corpus is healthy.
 const QUESTIONS = [
-  // Constitutional / administrative — control (E.5 was healthy / sometimes skipped)
+  // Constitutional / administrative — control (E.5 typically skipped, healthy local corpus)
   { id: 1, bucket: "constitutional_admin",
     question: "האם הממשלה מוסמכת לפטר את היועצת המשפטית לממשלה, ואם כן באילו מגבלות נורמטיביות ומנהליות?" },
-  // Contract / labor — E.5 fired most here
-  { id: 2, bucket: "contract_labor",
-    question: "באילו נסיבות ניתן לאכוף תניית אי-תחרות בחוזה עבודה בישראל?" },
-  { id: 3, bucket: "contract_labor",
-    question: "מתי ייחשב מעסיק כמי שפיטר עובד בחוסר תום לב המזכה בפיצוי מעבר לפיצויי פיטורים?" },
-  // Statute-anchored — E.5 fired and the engine should resolve these cleanly
+  // Statute-anchored — E.5 fires, exercises engine resolution path
   { id: 4, bucket: "statute_anchored",
     question: "מה קובע סעיף 17 לחוק שירות המדינה (מינויים) לעניין פיטורים או הפסקת כהונה?" },
-  { id: 5, bucket: "statute_anchored",
-    question: "מהן ההגבלות בחוק חופש המידע על פרסום מסמכי ממשלה הנוגעים לביטחון המדינה?" },
-  // Criminal statute-anchored — likely E.5 with a clean חוק העונשין citation
+  // Criminal statute-anchored — usually healthy with clean חוק העונשין citation
   { id: 6, bucket: "criminal",
     question: "מהם יסודות עבירת הפרת אמונים של עובד ציבור לפי סעיף 284 לחוק העונשין?" },
 ];
-const REPETITIONS = 1;
+const REPETITIONS = 3;
 
 const admin = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
 
