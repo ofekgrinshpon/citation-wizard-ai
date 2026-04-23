@@ -15,23 +15,39 @@ const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 // with the rest of this file.
 import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
 
+// Helpers — extract the openai-side and gemini-side model names from a stage
+// config that lists primary/fallback. We can't assume `primary` is OpenAI
+// anymore (decomposition v7 pinned primary to Gemini), so pick the first
+// entry that matches each provider, falling back to the other if absent.
+function pickByProvider(
+  stage: { primary: string; fallback: string },
+  provider: "openai" | "gemini",
+): string {
+  const isOpenAI = (m: string) => m.startsWith("openai/");
+  const isGemini = (m: string) => m.startsWith("google/");
+  const want = provider === "openai" ? isOpenAI : isGemini;
+  const candidate = want(stage.primary) ? stage.primary : want(stage.fallback) ? stage.fallback : stage.primary;
+  return provider === "openai" ? candidate.replace(/^openai\//, "") : candidate;
+}
+
 export const MODEL_CONFIG = {
-  // Tier-1.5 split: decomposition and claim_map use DIFFERENT models. Previously
-  // the shared PLANNER_OPENAI constant accidentally moved claim_map to nano when
-  // we tuned decomposition; now each stage picks its own.
-  DECOMPOSER_OPENAI: LEGAL_RESEARCH_MODELS.decomposition.primary.replace(/^openai\//, ""),
-  DECOMPOSER_GEMINI: LEGAL_RESEARCH_MODELS.decomposition.fallback,
-  CLAIM_MAP_OPENAI: LEGAL_RESEARCH_MODELS.claimMap.primary.replace(/^openai\//, ""),
-  CLAIM_MAP_GEMINI: LEGAL_RESEARCH_MODELS.claimMap.fallback,
+  // Each stage exposes a provider-specific model. The actual stage routing
+  // (which provider runs) is decided in callPlannerJSON by `forceProvider`
+  // and OPENAI_API_KEY availability — these constants only resolve the
+  // model name once the provider is chosen.
+  DECOMPOSER_OPENAI: pickByProvider(LEGAL_RESEARCH_MODELS.decomposition, "openai"),
+  DECOMPOSER_GEMINI: pickByProvider(LEGAL_RESEARCH_MODELS.decomposition, "gemini"),
+  CLAIM_MAP_OPENAI: pickByProvider(LEGAL_RESEARCH_MODELS.claimMap, "openai"),
+  CLAIM_MAP_GEMINI: pickByProvider(LEGAL_RESEARCH_MODELS.claimMap, "gemini"),
   // Legacy aliases retained for any external readers — point at decomposition.
-  PLANNER_OPENAI: LEGAL_RESEARCH_MODELS.decomposition.primary.replace(/^openai\//, ""),
-  PLANNER_GEMINI: LEGAL_RESEARCH_MODELS.decomposition.fallback,
+  PLANNER_OPENAI: pickByProvider(LEGAL_RESEARCH_MODELS.decomposition, "openai"),
+  PLANNER_GEMINI: pickByProvider(LEGAL_RESEARCH_MODELS.decomposition, "gemini"),
   // Drafter: final memo. Heavier reasoning preferred. Used by legacy / fallback path.
-  DRAFTER_OPENAI: LEGAL_RESEARCH_MODELS.drafting.primary.replace(/^openai\//, ""),
-  DRAFTER_GEMINI: LEGAL_RESEARCH_MODELS.drafting.fallback,
+  DRAFTER_OPENAI: pickByProvider(LEGAL_RESEARCH_MODELS.drafting, "openai"),
+  DRAFTER_GEMINI: pickByProvider(LEGAL_RESEARCH_MODELS.drafting, "gemini"),
   // Structured drafter (with claim map): lighter model since reasoning is pre-baked.
-  STRUCTURED_DRAFTER_OPENAI: LEGAL_RESEARCH_MODELS.structuredDrafting.primary.replace(/^openai\//, ""),
-  STRUCTURED_DRAFTER_GEMINI: LEGAL_RESEARCH_MODELS.structuredDrafting.fallback,
+  STRUCTURED_DRAFTER_OPENAI: pickByProvider(LEGAL_RESEARCH_MODELS.structuredDrafting, "openai"),
+  STRUCTURED_DRAFTER_GEMINI: pickByProvider(LEGAL_RESEARCH_MODELS.structuredDrafting, "gemini"),
 } as const;
 
 export { LEGAL_RESEARCH_MODELS };
