@@ -9,6 +9,7 @@ const ADMIN_USER_ID = "c6b2fdbf-a50c-411f-9941-41f9dff80eba";
 
 const QUESTIONS = [
   { id: 1, question: "האם הממשלה מוסמכת לפטר את היועצת המשפטית לממשלה, ואם כן באילו מגבלות נורמטיביות ומנהליות?" },
+  { id: 6, question: "מהן ההגנות החוקתיות על חופש הביטוי הפוליטי בישראל, ומהן המגבלות עליהן?" },
   { id: 21, question: "מה קובע סעיף 17 לחוק שירות המדינה (מינויים) לעניין פיטורים או הפסקת כהונה?" },
 ];
 
@@ -64,4 +65,7 @@ for (const r of results) {
   console.log("retrieval_funnel:", JSON.stringify(md.retrieval_funnel, null, 2));
   console.log("source_pack_summary:", JSON.stringify(md.source_pack_summary));
   console.log("source_type_counts:", JSON.stringify(md.source_type_counts));
+  if (md.retrieval_funnel?.soft_min_supplementary) {
+    console.log("SOFT_MIN:", JSON.stringify(md.retrieval_funnel.soft_min_supplementary));
+  }
 }

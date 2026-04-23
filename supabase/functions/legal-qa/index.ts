@@ -1282,6 +1282,13 @@ ${(verify.fullText as string).slice(0, 50000)}
       source_cards_local: FunnelStage;
       drop_reasons: Record<string, number>;
       rerank_dropped_docs: Array<{ title: string; source_type: string; score: number; reason: string }>;
+      soft_min_supplementary?: {
+        missing_types: string[];
+        threshold: number;
+        per_type_cap: number;
+        considered_by_type: Record<string, number>;
+        added_by_type: Record<string, number>;
+      };
     } = {
       raw_keyword: newFunnelStage(),
       raw_vector: newFunnelStage(),
@@ -1706,16 +1713,74 @@ ${(verify.fullText as string).slice(0, 50000)}
         const caselawTop = sortedAll.filter(m => m.source_type === "caselaw").slice(0, 6);
         const otherTop = sortedAll.filter(m => m.source_type !== "caselaw").slice(0, 6);
         const reservedIds = new Set([...caselawTop, ...otherTop].map(m => m.chunk_id));
-        const merged = [...caselawTop, ...otherTop]
+        const mergedBase = [...caselawTop, ...otherTop]
           .sort((a, b) => b.similarity - a.similarity)
           .slice(0, 12);
+
+        // ── Soft guaranteed minimum w/ relevance floor ──────────────────
+        // For each "must-have" source type that ended up with 0 representation
+        // in the candidate pool, run a per-type supplementary vector search
+        // (top 3, similarity >= 0.45). If nothing clears the floor, accept
+        // absence — never stuff irrelevant chunks just to hit a quota.
+        // The reranker still has the final say.
+        const SOFT_MIN_TYPES = ["israeli_law", "knesset_research", "journal_article", "caselaw"] as const;
+        const SOFT_MIN_THRESHOLD = 0.45;
+        const SOFT_MIN_PER_TYPE = 3;
+        const presentTypes = new Set(mergedBase.map(m => m.source_type));
+        const missingTypes = SOFT_MIN_TYPES.filter(t => !presentTypes.has(t));
+        const supplementalAddedByType: Record<string, number> = {};
+        const supplementalConsideredByType: Record<string, number> = {};
+        if (missingTypes.length > 0) {
+          const supplementalEmbedding = vectorResults.find(r => r.embedding)?.embedding;
+          if (supplementalEmbedding) {
+            console.log(`Soft-min supplementary: missing types = [${missingTypes.join(", ")}]`);
+            const supplementalResults = await Promise.all(missingTypes.map(async (t) => {
+              const r = await adminClient.rpc("match_legal_chunks_filtered", {
+                query_embedding: JSON.stringify(supplementalEmbedding),
+                filter_source_type: t,
+                match_threshold: SOFT_MIN_THRESHOLD,
+                match_count: SOFT_MIN_PER_TYPE,
+              });
+              if (r.error) {
+                console.error(`Soft-min supplementary RPC error for ${t}: ${r.error.message || JSON.stringify(r.error)}`);
+                return { type: t, matches: [] as LocalMatch[] };
+              }
+              return { type: t, matches: (r.data || []) as LocalMatch[] };
+            }));
+            const existingIds = new Set(mergedBase.map(m => m.chunk_id));
+            for (const { type, matches } of supplementalResults) {
+              supplementalConsideredByType[type] = matches.length;
+              const fresh = matches.filter(m => !existingIds.has(m.chunk_id));
+              for (const m of fresh) {
+                mergedBase.push(m);
+                existingIds.add(m.chunk_id);
+              }
+              supplementalAddedByType[type] = fresh.length;
+              console.log(`Soft-min ${type}: considered=${matches.length} (>=${SOFT_MIN_THRESHOLD}), added=${fresh.length} (after dedup)`);
+            }
+          } else {
+            console.log(`Soft-min supplementary skipped: no embedding available for missing types [${missingTypes.join(", ")}]`);
+          }
+        } else {
+          console.log(`Soft-min supplementary: all target types present, skipping`);
+        }
+
+        const merged = mergedBase;
         const caselawKept = merged.filter(m => m.source_type === "caselaw").length;
         console.log(`Caselaw quota: ${caselawKept} caselaw / ${merged.length - caselawKept} other (total ${merged.length})`);
-        // FUNNEL CHECKPOINT 4: after merge + dedup + 6/6 caselaw quota
+        // FUNNEL CHECKPOINT 4: after merge + dedup + 6/6 caselaw quota + soft-min supplements
         retrievalFunnel.after_dedup_quota = tallyByType(merged);
+        retrievalFunnel.soft_min_supplementary = {
+          missing_types: missingTypes,
+          threshold: SOFT_MIN_THRESHOLD,
+          per_type_cap: SOFT_MIN_PER_TYPE,
+          considered_by_type: supplementalConsideredByType,
+          added_by_type: supplementalAddedByType,
+        };
         const droppedByQuota = (retrievalFunnel.raw_keyword.total + retrievalFunnel.raw_vector.total + retrievalFunnel.raw_caselaw_filtered.total) - merged.length;
         if (droppedByQuota > 0) bumpDrop("dedup_or_quota", droppedByQuota);
         console.log(`FUNNEL after_dedup_quota: ${JSON.stringify(retrievalFunnel.after_dedup_quota)}`);
+        console.log(`FUNNEL soft_min_supplementary: ${JSON.stringify(retrievalFunnel.soft_min_supplementary)}`);
         // Suppress unused warning
         void reservedIds;
 
