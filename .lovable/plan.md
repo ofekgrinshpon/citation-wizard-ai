@@ -1,78 +1,61 @@
 
 
-## Fast-mode feasibility loop — validation, not final bar
+## Run the stability test myself using the existing eval harness
 
-Treat this loop as a checkpoint: does Fast-first architecture clear the engineering floor (~70s / 5 anchored)? The product bar (~30–45s / 4–6 solid) stays open and informs what comes next.
+I claimed I needed you to run manual tests. That was wrong — the codebase already has `eval/run-eval.mjs` which solves the JWT problem cleanly. I'll use it.
 
-### Changes this loop
+### How auth gets solved (no new code needed)
 
-**1. Decomposition → Gemini 2.5 Flash** (`supabase/functions/legal-qa/legalResearchModels.ts`)
-- Flip `decomposition.primary` from `openai/gpt-5-mini` → `google/gemini-2.5-flash`
-- Add `forceProvider: "gemini"` (mirrors the v6 `claimMap` migration)
-- Keep `gpt-5-mini` as `fallback` so revert is a one-line flip
-- Expected: ~25s → ~6–10s
+The existing harness:
+1. Uses `SUPABASE_SERVICE_ROLE_KEY` (already in env) to mint a magic link for the admin user `ofekgrinshpon@gmail.com`
+2. Exchanges the magic-link `token_hash` for a real session JWT via the anon client
+3. Sends that JWT as `Authorization: Bearer …` to `legal-qa`
+4. The edge function's existing admin gate (`index.ts` line 869) accepts `evalForceLegacy` / `evalRunId` / `evalVariant` from admin callers
 
-**2. Anchor pass** (`supabase/functions/legal-qa/index.ts`)
-- New stage between `structuredDrafting` and post-processing
-- Model: `google/gemini-2.5-flash` with `forceProvider: "gemini"`
-- Input: drafted body + existing `sourcePack` + `claimMap` (no new retrieval)
-- System prompt ~1k chars, single job: for each `claimMap.claims[]` entry whose anchor sentence has no footnote in body, return `{ sentenceFragment, sourceCardId }`
-- Output schema: `{ patches: [{ sentenceFragment: string, sourceCardId: string }] }`, max 4 patches
-- Apply patches in TS: locate sentence → append next superscript → push citation → renumber via existing footnote-ordering logic
-- 15s timeout. On timeout/empty patches, ship draft as-is.
+All env vars are present (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_PUBLISHABLE_KEY` — the harness already falls back from `SUPABASE_ANON_KEY` to `SUPABASE_PUBLISHABLE_KEY`).
 
-**3. Fallback drafter footnote anchoring rule** (`supabase/functions/legal-qa/index.ts`)
-- One-line addition to legacy/fallback drafter system prompt: every footnote requires either a URL from the source pack OR the marker `(לא נמצאו פרטי פרסום)`
-- Closes Q21 regression where fallback produced 4 unanchored statute citations
+### What I'll do this loop
 
-**4. Coverage-gap instrumentation**
-- Already shipped from prior loop. No changes.
+**1. Build a small wrapper script** at `eval/stability-test.mjs` that:
+- Reuses `getAdminJwt()` from `run-eval.mjs` (or imports its logic)
+- Targets exactly Q1, Q6, Q21 from the existing question bank
+- Runs each question 3× sequentially (9 total runs), structured variant only (`evalForceLegacy: false`)
+- Adds a unique `requestId` per run so credit ledger idempotency doesn't merge them
+- Polls `qa_logs` after each run for `metadata.drafting_path`, `metadata.stage_runs`, `metadata.models_used`, `footnotes`, `total_footnotes`
+- Writes results to `/mnt/documents/legal-qa-eval/stability-v7.2.json`
 
-### Expected stage budget
+**2. Execute it via `code--exec`** with a generous timeout (~15 min for 9 runs at ~70s each)
+
+**3. Aggregate and report** the structured-vs-fallback split per question:
 
 ```text
-decomposition  ~8s   (was ~25s)
-retrieval      ~5s   (unchanged)
-claim_map      ~5s   (unchanged, Flash)
-draft          ~50s  (unchanged, gpt-5-mini compact prompt)
-anchor pass    ~7s   (new)
-post-process   ~2s
-─────────────────────
-total mean    ~70s   structured path
+              Run 1     Run 2     Run 3     Structured rate
+Q1            ?/?       ?/?       ?/?       X/3
+Q6            ?/?       ?/?       ?/?       X/3
+Q21           ?/?       ?/?       ?/?       X/3
+                                            ──────
+                                            total /9
 ```
 
-### Smoke test (Q1, Q6, Q21)
+For each run I'll also report: `claimMapAllowedCount` (the gate variable), `footnotes_count`, `anchored_count`, `wall_ms`.
 
-Per question:
-- Stage latencies: decomp / retrieval / claim_map / draft / anchor pass / total
-- Footnote count + anchored count
-- Anchor-pass patch count
-- Decomp parse_error rate on Flash
-- Whether Q1 still falls back
+### Decision criteria
 
-### Decision gate (re-framed as validation, not success)
-
-| Outcome | Read | Next action |
-|---|---|---|
-| ≤ 70s mean, ≥ 5 anchored, decomp Flash stable | **Floor cleared, but not yet product bar.** | Run 10-question pilot to confirm baseline holds. Then design the gap-closer loop toward ~45s / 6 anchored. |
-| ≤ 70s but coverage stalls at 4 | Floor partially cleared. | One re-test with relaxed anchor-pass threshold. Then pilot. |
-| Decomp Flash regresses (parse_error >10%) | Architectural lever spent. | Flip back to `gpt-5-mini`, ship anchor pass alone, accept ~95s. Pilot deferred. |
-| Anchor pass produces false positives | Quality regression. | Tighten anchor-pass prompt to strict claim-to-source match. One re-test. |
-| Mean stays >85s | Floor not cleared. | Stop tuning. Drafter is the wall — design explicit drafter-on-Flash quality experiment. |
+| Outcome | Read |
+|---|---|
+| ≥ 8/9 structured | Gate relaxation succeeded — path is now stable. Move to retest fallback retrofit question. |
+| 6–7/9 structured | Partial win. Diagnose which question/run flipped and why (likely Q21 statute). |
+| ≤ 5/9 structured | Gate relaxation insufficient — the planner is still under-flagging claims. Investigate `support_strength` distribution before further tuning. |
 
 ### What this loop does NOT do
 
-- No Deep mode work (no contract, no scaffold, no UI)
-- No drafter model change
-- No retrieval/ranking/source-pack changes
-- No compact structured prompt changes (v8 hardening stays)
-- No 10/30-question pilot until smoke test clears the gate
+- No edge function code changes (the v7.2 changes from the prior loop are already deployed)
+- No new questions added beyond Q1/Q6/Q21
+- No fallback-retrofit work yet
+- No 10-question pilot
 
-### Deliverables after this loop
+### Deliverables
 
-- Per-stage latency for all 3 questions
-- Footnote count + anchored coverage per question
-- Anchor-pass effectiveness (patches applied, false positives)
-- Honest read against both the engineering floor (~70s / 5) and the product bar (~45s / 6)
-- Single go/no-go for the 10-question pilot, plus the next gap-closer move if the product bar still isn't met
+- `/mnt/documents/legal-qa-eval/stability-v7.2.json` — raw per-run data
+- A summary table in chat with structured/fallback split, gate values, and a single recommendation for the next move
 
