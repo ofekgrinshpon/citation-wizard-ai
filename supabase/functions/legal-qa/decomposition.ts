@@ -302,11 +302,14 @@ ${sourcesText}
     CLAIM_MAP_SYSTEM_PROMPT,
     userPrompt,
     CLAIM_MAP_TOOL,
-    // Pilot v6: pin claim_map to Gemini 2.5 Flash. gpt-5-mini took 30-35s on
-    // this stage; Gemini Flash returns the same JSON tool-call in 5-10s, freeing
-    // 20-25s of the 150s edge-function budget for the drafter. 30s timeout is
-    // ample for Flash on this trimmed input.
-    { stage: "claim_map", timeoutMs: 30000, forceProvider: "gemini" },
+    // Pilot v7.4: flip claim_map back to OpenAI (gpt-5-mini). v7.3 stability
+    // test showed Gemini Flash ignores `seed: 7`, producing run-to-run variance
+    // in claims.total (1 vs 2 vs 3 across identical inputs). Thin claim maps
+    // (1 claim) cause the structured drafter to degenerate, triggering
+    // post-draft fallback. OpenAI honors the seed → deterministic claim_map →
+    // stable drafting path. Tradeoff: ~25-30s vs Gemini's ~5s, accepted to
+    // recover path stability. Timeout bumped to 45s with headroom.
+    { stage: "claim_map", timeoutMs: 45000, forceProvider: "openai" },
   );
   if (!data || !Array.isArray(data.claims)) return { data: null, run };
   // Defensive: ensure source_ids exists and arrays of integers.

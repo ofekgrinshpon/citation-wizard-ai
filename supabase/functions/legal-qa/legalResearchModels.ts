@@ -15,14 +15,13 @@ export const LEGAL_RESEARCH_MODELS = {
   },
   claimMap: {
     // Pilot v6 latency pass: pinned to Gemini 2.5 Flash regardless of provider.
-    // gpt-5-mini consistently took 30-35s on this stage (see pilot v4/v5 logs);
-    // Gemini Flash returns the same shape in 5-10s, freeing 20-25s of the 150s
-    // edge-function budget for the drafter. The claim-map task is structured
-    // tool-calling on a small JSON schema — well within Flash's strengths.
-    // `forceProvider: "gemini"` below is honored in callPlannerJSON even when
-    // OPENAI_API_KEY is configured.
+    // gpt-5-mini consistently took 30-35s on this stage; Gemini Flash returns
+    // the same shape in 5-10s. v7.4 attempt to flip to OpenAI was reverted —
+    // OpenAI account quota was exhausted (HTTP 429 on every call). Re-attempt
+    // once quota is restored; the OpenAI fallback string is preserved below
+    // so a one-line `forceProvider` flip is enough to retry.
     primary: "google/gemini-2.5-flash",
-    fallback: "google/gemini-2.5-flash",
+    fallback: "openai/gpt-5-mini",
     forceProvider: "gemini",
   },
   drafting: {
