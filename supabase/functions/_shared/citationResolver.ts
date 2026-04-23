@@ -116,13 +116,18 @@ function extractLegislation(text: string, titleHint?: string): Record<string, st
   return fields;
 }
 
-function extractBasicLaw(text: string): Record<string, string> {
+function extractBasicLaw(text: string, titleHint?: string): Record<string, string> {
   const fields: Record<string, string> = {};
   // For basic laws, lawName is everything after "חוק-יסוד:" and before the first comma
   const m = text.match(/חוק[-\s]יסוד\s*:?\s*([^,]+)/);
   if (m) fields.lawName = m[1].trim();
-  // Reuse legislation patterns for the rest
-  const rest = extractLegislation(text);
+  // If still no name (bare section ref), try the title
+  if (!fields.lawName && titleHint) {
+    const tm = titleHint.match(/חוק[-\s]יסוד\s*:?\s*([^,]+)/);
+    if (tm) fields.lawName = tm[1].trim();
+  }
+  // Reuse legislation patterns for the rest, with title fallback
+  const rest = extractLegislation(text, titleHint);
   if (rest.hebrewYear) fields.hebrewYear = rest.hebrewYear;
   if (rest.gregorianYear) fields.gregorianYear = rest.gregorianYear;
   if (rest.collection) fields.collection = rest.collection;
@@ -130,8 +135,8 @@ function extractBasicLaw(text: string): Record<string, string> {
   return fields;
 }
 
-function extractSecondaryLeg(text: string): Record<string, string> {
-  const fields = extractLegislation(text);
+function extractSecondaryLeg(text: string, titleHint?: string): Record<string, string> {
+  const fields = extractLegislation(text, titleHint);
   // Rename lawName → regulationName to match the secondary_legislation schema
   if (fields.lawName) {
     fields.regulationName = fields.lawName;
@@ -140,22 +145,40 @@ function extractSecondaryLeg(text: string): Record<string, string> {
   return fields;
 }
 
+// Labor-court & other prefixes that lack gershayim (e.g. "עב", "בל").
+// We enumerate them explicitly so we don't false-match arbitrary 2-letter
+// Hebrew words at the start of a citation.
+const UNQUOTED_CASE_PREFIXES = [
+  "עב", "בל", "תק", "תא", "תפ", "הפ", "המ", "בש",
+];
+const UNQUOTED_PREFIX_RE = new RegExp(
+  `(?:^|\\s)(${UNQUOTED_CASE_PREFIXES.join("|")})\\s+(\\d+[/\\-]\\d+)`,
+);
+
+function matchCaseTypeAndNumber(s: string): { caseType: string; caseNumber: string } | null {
+  // Quoted abbreviations: סע"ש, עס"ק, בר"ע, ב"ל, בג"ץ, ע"א, רע"א, ע"פ, דנ"א, ת"א, etc.
+  const quoted = s.match(/([א-ת]{1,3}["״׳']+[א-ת]{1,2})\s+(\d+[/\-]\d+)/);
+  if (quoted) return { caseType: quoted[1], caseNumber: quoted[2] };
+  // Unquoted whitelist (labor court "עב", small claims "תק", etc.)
+  const unquoted = s.match(UNQUOTED_PREFIX_RE);
+  if (unquoted) return { caseType: unquoted[1], caseNumber: unquoted[2] };
+  return null;
+}
+
 function extractCaseLawCommon(
   text: string,
   caseNumberHint?: string,
 ): Record<string, string> {
   const fields: Record<string, string> = {};
-  // Case type + number — same regex as React side
-  const caseMatch = text.match(/([א-ת]{1,3}["״׳']+[א-ת]{1,2})\s+(\d+[/\-]\d+)/);
-  if (caseMatch) {
-    fields.caseType = caseMatch[1];
-    fields.caseNumber = caseMatch[2];
+  const fromText = matchCaseTypeAndNumber(text);
+  if (fromText) {
+    fields.caseType = fromText.caseType;
+    fields.caseNumber = fromText.caseNumber;
   } else if (caseNumberHint) {
-    // Fall back to the structured case_number field if Perplexity put it there
-    const hintMatch = caseNumberHint.match(/([א-ת]{1,3}["״׳']+[א-ת]{1,2})\s+(\d+[/\-]\d+)/);
-    if (hintMatch) {
-      fields.caseType = hintMatch[1];
-      fields.caseNumber = hintMatch[2];
+    const fromHint = matchCaseTypeAndNumber(caseNumberHint);
+    if (fromHint) {
+      fields.caseType = fromHint.caseType;
+      fields.caseNumber = fromHint.caseNumber;
     }
   }
   // Parties — bolded **X** OR plain "X נ' Y"
