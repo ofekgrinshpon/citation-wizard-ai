@@ -18,7 +18,7 @@ export interface InternalSourcePackEntry {
   source_type: string;
   authority_class: string;            // legacy 12-value enum from index.ts
   url?: string;
-  provenance: "local" | "perplexity" | "document";
+  provenance: "local" | "perplexity" | "perplexity_completion" | "document";
   excerpt: string;
   case_number?: string;
   usable_for_analysis: boolean;
@@ -26,6 +26,13 @@ export interface InternalSourcePackEntry {
   anchor_present: boolean;
   /** Retrieval similarity (0–1). 0 if absent (e.g. perplexity/document). */
   relevance_score?: number;
+  /**
+   * Milestone B — for perplexity_completion entries only. Declares the
+   * primary-source type the AG-style guard accepted. Used by mapAuthorityClass
+   * to skip the URL-based fallback and route directly to primary_legislation /
+   * primary_caselaw, since these candidates are verified-source-matched.
+   */
+  completion_candidate_type?: "statute" | "caselaw";
 }
 
 /** Map the legacy 12-value authority enum to the formal 7-value enum. */
@@ -33,8 +40,21 @@ function mapAuthorityClass(
   legacy: string,
   provenance: InternalSourcePackEntry["provenance"],
   url: string | undefined,
+  completionType?: "statute" | "caselaw",
 ): LegalAuthorityClass {
   if (provenance === "document") return "user_document";
+  // Milestone B: perplexity_completion candidates are verified-source-matched
+  // BEFORE they reach this map (see runPerplexityCompletion in index.ts).
+  // Their declared type is therefore trusted and they go directly to primary
+  // authority, bypassing both the URL-based fallback and the relevance gate.
+  if (provenance === "perplexity_completion") {
+    if (completionType === "statute") return "primary_legislation";
+    if (completionType === "caselaw") return "primary_caselaw";
+    // Defensive: if a completion candidate slipped through without a type,
+    // refuse to promote it. Better to demote to external_reference than to
+    // wrongly elevate something the guard couldn't classify.
+    return "external_reference";
+  }
   switch (legacy) {
     case "primary_legislation":
     case "basic_law":
@@ -71,7 +91,12 @@ function toItem(entry: InternalSourcePackEntry): LegalSourcePackItem {
     sourceId: `src-${entry.source_id}`,
     title: entry.title,
     sourceType: entry.source_type,
-    authorityClass: mapAuthorityClass(entry.authority_class, entry.provenance, entry.url),
+    authorityClass: mapAuthorityClass(
+      entry.authority_class,
+      entry.provenance,
+      entry.url,
+      entry.completion_candidate_type,
+    ),
     url: entry.url,
     caseNumber: entry.case_number,
     excerpt: entry.excerpt,
@@ -168,6 +193,8 @@ export interface SourceTypeCounts {
   knesset_research: number;
   journal_article: number;
   perplexity: number;
+  /** Milestone B — verified primary sources recovered via Perplexity completion. */
+  perplexity_completion: number;
   document: number;
   other: number;
   /** Of the above, how many landed in `core` after the A.5 promotion gate. */
@@ -184,12 +211,14 @@ export function countSourcesByType(
     knesset_research: 0,
     journal_article: 0,
     perplexity: 0,
+    perplexity_completion: 0,
     document: 0,
     other: 0,
     promoted_to_core: 0,
   };
   for (const e of entries) {
-    if (e.provenance === "perplexity") counts.perplexity++;
+    if (e.provenance === "perplexity_completion") counts.perplexity_completion++;
+    else if (e.provenance === "perplexity") counts.perplexity++;
     else if (e.provenance === "document") counts.document++;
     else if (e.source_type === "caselaw" || e.source_type === "פסיקה") counts.caselaw++;
     else if (e.source_type === "israeli_law" || e.source_type === "חקיקה ישראלית") counts.israeli_law++;

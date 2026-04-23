@@ -65,6 +65,341 @@ export const TRUSTED_LEGAL_DOMAINS: readonly string[] = [
   "tau.ac.il",          // covers mishpatim.tau.ac.il
 ];
 
+// Set form for fast hostname matching in the Milestone B URL allowlist guard.
+const TRUSTED_LEGAL_DOMAINS_SET = new Set(TRUSTED_LEGAL_DOMAINS);
+
+/**
+ * Match a candidate URL against TRUSTED_LEGAL_DOMAINS. Accepts the exact host
+ * AND any subdomain (so `mishpatim.tau.ac.il` matches the `tau.ac.il` entry).
+ * Rejects malformed URLs explicitly — no implicit allow.
+ */
+function isTrustedLegalUrl(url: string): boolean {
+  try {
+    const u = new URL(url);
+    const host = u.hostname.toLowerCase();
+    if (TRUSTED_LEGAL_DOMAINS_SET.has(host)) return true;
+    for (const allowed of TRUSTED_LEGAL_DOMAINS) {
+      if (host.endsWith("." + allowed)) return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+// ─── Milestone B: Perplexity-completion candidate validators ───
+// Statute citation must contain ס"ח or ק"ת + a number AND a Hebrew year
+// starting with ה (התש... form). Tolerant of straight quotes vs gershayim.
+const STATUTE_CITATION_RE = /(?:ס["״]ח|ק["״]ת)\s*\d/;
+const HEBREW_YEAR_RE = /\bהת(?:ש|רש)[א-ת]["״׳'][א-ת]/;
+// Caselaw case_number must match e.g. בג"ץ 1234/20, ע"א 44/76, רע"א 567/19, etc.
+const CASE_NUMBER_RE = /^(?:בג["״]ץ|בש["״]פ|ע["״]א|ע["״]פ|ע["״]ע|רע["״]א|רע["״]פ|דנ["״]א|דנ["״]פ|תפ["״]ח|עע["״]מ|בר["״]ם|ת["״]א|ת["״]פ|עמ["״]ה)\s+\d+\/\d+/;
+
+interface PerplexityCompletionCandidate {
+  type: "statute" | "caselaw";
+  title: string;
+  citation: string;
+  year_hebrew?: string;
+  year_gregorian?: string;
+  case_number?: string;
+  court?: string;
+  decision_date?: string;
+  url: string;
+  relevance_note?: string;
+}
+
+interface ValidatedCompletionCandidate extends PerplexityCompletionCandidate {
+  /** Identity key from compute_verified_source_identity, used for cross-check. */
+  identity_key: string;
+  /** The matched verified_sources row (canonical citation + verified_at). */
+  verified_full_citation: string;
+}
+
+/**
+ * Validate a single Perplexity-completion candidate against the 3 hard guards:
+ *   1. Citation-shape regex (statute or caselaw)
+ *   2. URL allowlist (TRUSTED_LEGAL_DOMAINS)
+ *   3. Verified-source cross-check (MANDATORY — drops if no match)
+ * Returns null with a `reason` log line on failure. Returns a
+ * ValidatedCompletionCandidate with the canonical verified citation on success.
+ */
+async function validatePerplexityCandidate(
+  c: PerplexityCompletionCandidate,
+  adminClient: ReturnType<typeof createClient>,
+): Promise<{ ok: true; candidate: ValidatedCompletionCandidate } | { ok: false; reason: string }> {
+  // Guard 1: citation-shape regex.
+  if (c.type === "statute") {
+    if (!STATUTE_CITATION_RE.test(c.citation)) {
+      return { ok: false, reason: "statute_citation_shape" };
+    }
+    if (!HEBREW_YEAR_RE.test(c.citation) && !HEBREW_YEAR_RE.test(c.year_hebrew || "")) {
+      return { ok: false, reason: "missing_hebrew_year" };
+    }
+  } else if (c.type === "caselaw") {
+    const cn = (c.case_number || "").trim();
+    if (!cn || !CASE_NUMBER_RE.test(cn)) {
+      return { ok: false, reason: "caselaw_case_number_shape" };
+    }
+  } else {
+    return { ok: false, reason: "unknown_type" };
+  }
+
+  // Guard 2: URL allowlist.
+  if (!c.url || !isTrustedLegalUrl(c.url)) {
+    return { ok: false, reason: "url_not_allowlisted" };
+  }
+
+  // Guard 3 (MANDATORY): verified-source cross-check.
+  // Compute the identity key the same way the trigger does, then look it up.
+  // If no row matches → drop. The model never originates a citation that
+  // isn't already verified locally.
+  const sourceTypeForIdentity = c.type === "caselaw" ? "caselaw" : "legislation_primary";
+  const sourceName = c.type === "caselaw" ? (c.case_number || c.title) : c.title;
+  const yearForIdentity = c.year_gregorian || (c.decision_date || "").slice(0, 4) || "";
+
+  let identityKey: string | null = null;
+  try {
+    // deno-lint-ignore no-explicit-any
+    const { data: keyData, error: keyErr } = await (adminClient as any).rpc(
+      "compute_verified_source_identity",
+      {
+        _source_type: sourceTypeForIdentity,
+        _source_name: sourceName,
+        _full_citation: c.citation,
+        _year: yearForIdentity,
+      },
+    );
+    if (keyErr) {
+      console.warn("[perplexity-completion] identity-key RPC failed:", keyErr.message);
+      return { ok: false, reason: "identity_key_rpc_failed" };
+    }
+    identityKey = (keyData as string) || null;
+  } catch (err) {
+    console.warn("[perplexity-completion] identity-key RPC threw:", err);
+    return { ok: false, reason: "identity_key_rpc_threw" };
+  }
+
+  if (!identityKey) return { ok: false, reason: "identity_key_empty" };
+
+  const { data: vsRows, error: vsErr } = await adminClient
+    .from("verified_sources")
+    .select("full_citation, verification_status")
+    .eq("identity_key", identityKey)
+    .limit(1);
+
+  if (vsErr) {
+    console.warn("[perplexity-completion] verified_sources lookup failed:", vsErr.message);
+    return { ok: false, reason: "verified_lookup_failed" };
+  }
+  if (!vsRows || vsRows.length === 0) {
+    return { ok: false, reason: "not_in_verified_sources" };
+  }
+  const row = vsRows[0] as { full_citation: string; verification_status: string };
+
+  return {
+    ok: true,
+    candidate: {
+      ...c,
+      identity_key: identityKey,
+      // Prefer the canonical verified citation over the raw model output.
+      // The model's role ends at "find this primary source"; the citation
+      // string itself comes from verified_sources, never from the LLM.
+      verified_full_citation: row.full_citation,
+    },
+  };
+}
+
+interface PerplexityCompletionResult {
+  triggered: boolean;
+  reason: "core_below_threshold" | "skipped_healthy" | "no_perplexity_key" | "skipped_non_research";
+  candidates_returned: number;
+  candidates_kept: number;
+  candidates_by_type: { statute: number; caselaw: number };
+  promoted_to_core: number;
+  duration_ms: number;
+  status:
+    | "ok"
+    | "skipped"
+    | "timeout"
+    | "no_candidates"
+    | "all_dropped"
+    | "request_failed"
+    | "parse_failed";
+  drops?: Record<string, number>;
+  /** First-pass debug — first 5 raw candidates with kept/dropped flag. */
+  debug_candidates?: Array<{ kept: boolean; reason?: string; preview: string }>;
+}
+
+/**
+ * Stage E.5 — Targeted Perplexity completion for corpus gaps.
+ * Fires ONLY when local source-pack assembly produced fewer than 2 core items.
+ * Uses sonar-pro with response_format: json_schema to extract up to 5 primary
+ * sources scoped by the planner's main issue + uncovered sub-issues. Each
+ * candidate must clear all 3 guards (citation shape + URL allowlist + verified
+ * cross-check). Returns validated candidates ready to push as SourceCards with
+ * provenance="perplexity_completion".
+ */
+async function runPerplexityCompletion(
+  question: string,
+  decompositionV2: LegalResearchDecomposition | null,
+  uncoveredSubIssues: string[],
+  externalHints: string[],
+  adminClient: ReturnType<typeof createClient>,
+): Promise<{ result: PerplexityCompletionResult; validated: ValidatedCompletionCandidate[] }> {
+  const t0 = Date.now();
+  const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
+  if (!PERPLEXITY_API_KEY) {
+    return {
+      result: {
+        triggered: false,
+        reason: "no_perplexity_key",
+        candidates_returned: 0,
+        candidates_kept: 0,
+        candidates_by_type: { statute: 0, caselaw: 0 },
+        promoted_to_core: 0,
+        duration_ms: Date.now() - t0,
+        status: "skipped",
+      },
+      validated: [],
+    };
+  }
+
+  const mainIssue = decompositionV2?.mainIssue || question.slice(0, 200);
+  const subIssues = (decompositionV2?.subIssues || []).slice(0, 5);
+  const uncovered = uncoveredSubIssues.slice(0, 5);
+  const hints = externalHints.slice(0, 4);
+
+  const userPrompt = [
+    `סוגיה ראשית: ${mainIssue}`,
+    subIssues.length > 0 ? `תת-סוגיות: ${subIssues.join(" | ")}` : "",
+    uncovered.length > 0 ? `תת-סוגיות שלא כוסו במאגר המקומי (עדיפות גבוהה): ${uncovered.join(" | ")}` : "",
+    hints.length > 0 ? `שאילתות חיפוש מהשלב המתכנן: ${hints.join(" | ")}` : "",
+    "",
+    `החזר עד 5 מקורות ראשוניים בלבד: חוקים (עם ס"ח/ק"ת + עמוד + שנה עברית התש...) או פסקי דין (עם מספר תיק + בית משפט + תאריך החלטה). אסור פרשנות, בלוגים, או סקירות. רק JSON תקני לפי הסכמה.`,
+  ].filter(Boolean).join("\n");
+
+  const schema = {
+    type: "object",
+    properties: {
+      candidates: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            type: { type: "string", enum: ["statute", "caselaw"] },
+            title: { type: "string" },
+            citation: { type: "string" },
+            year_hebrew: { type: "string" },
+            year_gregorian: { type: "string" },
+            case_number: { type: "string" },
+            court: { type: "string" },
+            decision_date: { type: "string" },
+            url: { type: "string" },
+            relevance_note: { type: "string" },
+          },
+          required: ["type", "title", "citation", "url"],
+        },
+      },
+    },
+    required: ["candidates"],
+  };
+
+  let raw: PerplexityCompletionCandidate[] = [];
+  let status: PerplexityCompletionResult["status"] = "ok";
+
+  // Single attempt with 25s timeout (no retry — this is already a fallback path).
+  const ctrl = new AbortController();
+  const timeoutId = setTimeout(() => ctrl.abort(), 25_000);
+  try {
+    const res = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      signal: ctrl.signal,
+      body: JSON.stringify({
+        model: "sonar-pro",
+        search_domain_filter: TRUSTED_LEGAL_DOMAINS,
+        response_format: {
+          type: "json_schema",
+          json_schema: { name: "primary_sources", schema },
+        },
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a precise Israeli-law research assistant. You ONLY return primary sources (statutes or court decisions) that you can cite with full bibliographic detail (publication name, page, Hebrew year, or case number/court/date). Never invent. If unsure, omit. Output JSON matching the schema exactly.",
+          },
+          { role: "user", content: userPrompt },
+        ],
+      }),
+    });
+    clearTimeout(timeoutId);
+    if (!res.ok) {
+      const errText = await res.text();
+      console.warn("[perplexity-completion] HTTP", res.status, errText.slice(0, 300));
+      status = "request_failed";
+    } else {
+      const data = await res.json();
+      const content = data.choices?.[0]?.message?.content || "";
+      try {
+        const parsed = JSON.parse(content);
+        const arr = Array.isArray(parsed?.candidates) ? parsed.candidates : [];
+        raw = arr.slice(0, 5);
+      } catch (parseErr) {
+        console.warn("[perplexity-completion] JSON parse failed:", parseErr);
+        status = "parse_failed";
+      }
+    }
+  } catch (err) {
+    clearTimeout(timeoutId);
+    const isAbort = err instanceof DOMException && err.name === "AbortError";
+    status = isAbort ? "timeout" : "request_failed";
+    console.warn("[perplexity-completion] fetch failed:", err);
+  }
+
+  if (raw.length === 0 && status === "ok") status = "no_candidates";
+
+  // Validate every candidate sequentially (small N, mandatory cross-check is
+  // a single DB call each, total << 1s).
+  const validated: ValidatedCompletionCandidate[] = [];
+  const drops: Record<string, number> = {};
+  const debug: PerplexityCompletionResult["debug_candidates"] = [];
+  for (const c of raw) {
+    const v = await validatePerplexityCandidate(c, adminClient);
+    const preview = `${c.type || "?"} | ${(c.citation || "").slice(0, 100)}`;
+    if (v.ok) {
+      validated.push(v.candidate);
+      debug!.push({ kept: true, preview });
+    } else {
+      drops[v.reason] = (drops[v.reason] || 0) + 1;
+      debug!.push({ kept: false, reason: v.reason, preview });
+    }
+  }
+
+  if (validated.length === 0 && raw.length > 0 && status === "ok") status = "all_dropped";
+
+  const byType = { statute: 0, caselaw: 0 };
+  for (const v of validated) byType[v.type]++;
+
+  return {
+    result: {
+      triggered: true,
+      reason: "core_below_threshold",
+      candidates_returned: raw.length,
+      candidates_kept: validated.length,
+      candidates_by_type: byType,
+      promoted_to_core: validated.length, // every validated candidate goes to core
+      duration_ms: Date.now() - t0,
+      status,
+      drops,
+      debug_candidates: debug?.slice(0, 5),
+    },
+    validated,
+  };
+}
+
 // ─── Provenance hardening: deep-strip banned keys from any payload ───
 // Used by `buildResponse` as defense-in-depth so internal fields like
 // `provenanceInternal`, `claimMap`, etc. can never leak to the client.
@@ -119,7 +454,7 @@ interface SourcePackEntry {
   source_type: string;
   authority_class: AuthorityClass;
   url?: string;
-  provenance: "local" | "perplexity" | "document";
+  provenance: "local" | "perplexity" | "perplexity_completion" | "document";
   excerpt: string;
   case_number?: string;
   usable_for_analysis: boolean;
@@ -127,6 +462,8 @@ interface SourcePackEntry {
   anchor_present: boolean;
   /** INTERNAL — retrieval similarity (0–1). Used by source-pack promotion gate. */
   relevance_score?: number;
+  /** Milestone B — for perplexity_completion entries; passed through to legalSourcePack mapper. */
+  completion_candidate_type?: "statute" | "caselaw";
 }
 
 /**
@@ -390,11 +727,13 @@ interface SourceCard {
   citation: string;
   source_type: string;
   url?: string;
-  provenance: "local" | "perplexity" | "document";
+  provenance: "local" | "perplexity" | "perplexity_completion" | "document";
   excerpt: string;
   case_number?: string;
   /** Retrieval-stage similarity score (0–1). Local cards only. */
   relevance_score?: number;
+  /** Milestone B — for perplexity_completion cards only; routed to assembleSourcePack. */
+  completion_candidate_type?: "statute" | "caselaw";
 }
 
 // ─── Task mode → system prompt instructions ──────────────────────────
