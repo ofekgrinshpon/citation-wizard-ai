@@ -116,7 +116,11 @@ export async function callPlannerJSON<T = unknown>(
   tool: PlannerToolDef,
   opts: PlannerCallOptions,
 ): Promise<PlannerCallResult<T>> {
-  const useOpenAI = Boolean(OPENAI_API_KEY);
+  // Provider selection: respect explicit per-call override (e.g. claim_map
+  // pinned to Gemini), otherwise prefer OpenAI when its key is available.
+  const useOpenAI = opts.forceProvider
+    ? opts.forceProvider === "openai" && Boolean(OPENAI_API_KEY)
+    : Boolean(OPENAI_API_KEY);
   const url = useOpenAI ? OPENAI_URL : LOVABLE_URL;
   const apiKey = useOpenAI ? OPENAI_API_KEY : LOVABLE_API_KEY;
   // Tier-1.5: select model per stage. claim_map → mini; everything else → decomposer (nano).
