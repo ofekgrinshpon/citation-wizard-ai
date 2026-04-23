@@ -2665,10 +2665,13 @@ ${(verify.fullText as string).slice(0, 50000)}
           promoted_to_core: completion?.result?.promoted_to_core ?? 0,
           duration_ms: Date.now() - tE5,
           drops: completion?.result?.drops,
+          engine_resolved_count: completion?.result?.engine_resolved_count ?? 0,
+          engine_unresolved_count: completion?.result?.engine_unresolved_count ?? 0,
+          engine_drop_reasons: completion?.result?.engine_drop_reasons ?? {},
           debug_candidates: completion?.result?.debug_candidates,
         };
         console.log(
-          `[stage-e5] triggered status=${completion?.result?.status} returned=${completion?.result?.candidates_returned ?? 0} kept=${completion?.result?.candidates_kept ?? 0} core ${coreBefore}→${coreAfter} (${Date.now() - tE5}ms)`,
+          `[stage-e5] triggered status=${completion?.result?.status} returned=${completion?.result?.candidates_returned ?? 0} kept=${completion?.result?.candidates_kept ?? 0} engine_resolved=${completion?.result?.engine_resolved_count ?? 0}/${completion?.result?.candidates_kept ?? 0} core ${coreBefore}→${coreAfter} (${Date.now() - tE5}ms)`,
         );
       } else {
         retrievalFunnel.perplexity_completion = {
