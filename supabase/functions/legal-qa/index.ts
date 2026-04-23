@@ -350,7 +350,18 @@ async function runPerplexityCompletion(
   if (validated.length === 0 && raw.length > 0 && status === "ok") status = "all_dropped";
 
   const byType = { statute: 0, caselaw: 0 };
-  for (const v of validated) byType[v.type]++;
+  let engineResolvedCount = 0;
+  let engineUnresolvedCount = 0;
+  const engineDropReasons: Record<string, number> = {};
+  for (const v of validated) {
+    byType[v.type]++;
+    if (v.engine_resolved) engineResolvedCount++;
+    else {
+      engineUnresolvedCount++;
+      const r = v.engine_drop_reason || "unknown";
+      engineDropReasons[r] = (engineDropReasons[r] || 0) + 1;
+    }
+  }
 
   return {
     result: {
@@ -363,6 +374,9 @@ async function runPerplexityCompletion(
       duration_ms: Date.now() - t0,
       status,
       drops,
+      engine_resolved_count: engineResolvedCount,
+      engine_unresolved_count: engineUnresolvedCount,
+      engine_drop_reasons: engineDropReasons,
       debug_candidates: debug?.slice(0, 5),
     },
     validated,
