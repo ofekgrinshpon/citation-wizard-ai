@@ -108,25 +108,24 @@ interface PerplexityCompletionCandidate {
   relevance_note?: string;
 }
 
-interface ValidatedCompletionCandidate extends PerplexityCompletionCandidate {
-  /** Identity key from compute_verified_source_identity, used for cross-check. */
-  identity_key: string;
-  /** The matched verified_sources row (canonical citation + verified_at). */
-  verified_full_citation: string;
-}
+type ValidatedCompletionCandidate = PerplexityCompletionCandidate;
 
 /**
- * Validate a single Perplexity-completion candidate against the 3 hard guards:
+ * Validate a single Perplexity-completion candidate against 2 hard guards:
  *   1. Citation-shape regex (statute or caselaw)
  *   2. URL allowlist (TRUSTED_LEGAL_DOMAINS)
- *   3. Verified-source cross-check (MANDATORY — drops if no match)
- * Returns null with a `reason` log line on failure. Returns a
- * ValidatedCompletionCandidate with the canonical verified citation on success.
+ *
+ * Note: There is intentionally no `verified_sources` cross-check here.
+ * `verified_sources` is a user-saved citations table — not an authority
+ * registry — so requiring a match would drop legitimate primary sources
+ * that simply nobody has saved yet. A valid Israeli legal citation shape
+ * plus an allowlisted official-domain URL is sufficient evidence of
+ * authenticity for citation-only anchoring (usable_for_citation=true,
+ * usable_for_analysis=false).
  */
-async function validatePerplexityCandidate(
+function validatePerplexityCandidate(
   c: PerplexityCompletionCandidate,
-  adminClient: ReturnType<typeof createClient>,
-): Promise<{ ok: true; candidate: ValidatedCompletionCandidate } | { ok: false; reason: string }> {
+): { ok: true; candidate: ValidatedCompletionCandidate } | { ok: false; reason: string } {
   // Guard 1: citation-shape regex.
   if (c.type === "statute") {
     if (!STATUTE_CITATION_RE.test(c.citation)) {
@@ -149,64 +148,7 @@ async function validatePerplexityCandidate(
     return { ok: false, reason: "url_not_allowlisted" };
   }
 
-  // Guard 3 (MANDATORY): verified-source cross-check.
-  // Compute the identity key the same way the trigger does, then look it up.
-  // If no row matches → drop. The model never originates a citation that
-  // isn't already verified locally.
-  const sourceTypeForIdentity = c.type === "caselaw" ? "caselaw" : "legislation_primary";
-  const sourceName = c.type === "caselaw" ? (c.case_number || c.title) : c.title;
-  const yearForIdentity = c.year_gregorian || (c.decision_date || "").slice(0, 4) || "";
-
-  let identityKey: string | null = null;
-  try {
-    // deno-lint-ignore no-explicit-any
-    const { data: keyData, error: keyErr } = await (adminClient as any).rpc(
-      "compute_verified_source_identity",
-      {
-        _source_type: sourceTypeForIdentity,
-        _source_name: sourceName,
-        _full_citation: c.citation,
-        _year: yearForIdentity,
-      },
-    );
-    if (keyErr) {
-      console.warn("[perplexity-completion] identity-key RPC failed:", keyErr.message);
-      return { ok: false, reason: "identity_key_rpc_failed" };
-    }
-    identityKey = (keyData as string) || null;
-  } catch (err) {
-    console.warn("[perplexity-completion] identity-key RPC threw:", err);
-    return { ok: false, reason: "identity_key_rpc_threw" };
-  }
-
-  if (!identityKey) return { ok: false, reason: "identity_key_empty" };
-
-  const { data: vsRows, error: vsErr } = await adminClient
-    .from("verified_sources")
-    .select("full_citation, verification_status")
-    .eq("identity_key", identityKey)
-    .limit(1);
-
-  if (vsErr) {
-    console.warn("[perplexity-completion] verified_sources lookup failed:", vsErr.message);
-    return { ok: false, reason: "verified_lookup_failed" };
-  }
-  if (!vsRows || vsRows.length === 0) {
-    return { ok: false, reason: "not_in_verified_sources" };
-  }
-  const row = vsRows[0] as { full_citation: string; verification_status: string };
-
-  return {
-    ok: true,
-    candidate: {
-      ...c,
-      identity_key: identityKey,
-      // Prefer the canonical verified citation over the raw model output.
-      // The model's role ends at "find this primary source"; the citation
-      // string itself comes from verified_sources, never from the LLM.
-      verified_full_citation: row.full_citation,
-    },
-  };
+  return { ok: true, candidate: c };
 }
 
 interface PerplexityCompletionResult {
