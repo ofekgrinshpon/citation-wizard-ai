@@ -22,7 +22,7 @@ import {
   type LegalSourcePack,
 } from "./contracts.ts";
 import { mapToDecompositionV2 } from "./legalResearchDecomposition.ts";
-import { assembleSourcePack, summarizeSourcePack, type InternalSourcePackEntry } from "./legalSourcePack.ts";
+import { assembleSourcePack, summarizeSourcePack, countSourcesByType, type InternalSourcePackEntry } from "./legalSourcePack.ts";
 import { mapToClaimMapV2, summarizeClaimMapV2 } from "./legalClaimMap.ts";
 import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
 import { runShadowAbComparison, buildLegacyShadowPrompt } from "./shadowAbLogger.ts";
@@ -3742,6 +3742,13 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             authority_class: s.authority_class,
             anchor_present: s.anchor_present,
           })),
+          // Milestone A.5: per-source-type counts for fast diagnosis of `core=0` regressions.
+          // Pulls from the raw entries (full type fidelity) AND the assembled pack
+          // (so we can also see how many were promoted into core via the A.5 gate).
+          source_type_counts: countSourcesByType(
+            sourcePack as InternalSourcePackEntry[],
+            sourcePackV2,
+          ),
           claim_map_summary: claimMapV2Summary
             ?? (claimMap ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength } : null),
           drafting_path: draftingPath,
