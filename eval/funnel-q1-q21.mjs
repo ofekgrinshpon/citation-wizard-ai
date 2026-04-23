@@ -65,4 +65,7 @@ for (const r of results) {
   console.log("retrieval_funnel:", JSON.stringify(md.retrieval_funnel, null, 2));
   console.log("source_pack_summary:", JSON.stringify(md.source_pack_summary));
   console.log("source_type_counts:", JSON.stringify(md.source_type_counts));
+  if (md.retrieval_funnel?.soft_min_supplementary) {
+    console.log("SOFT_MIN:", JSON.stringify(md.retrieval_funnel.soft_min_supplementary));
+  }
 }
