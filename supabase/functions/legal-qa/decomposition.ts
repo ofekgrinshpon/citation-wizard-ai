@@ -302,14 +302,18 @@ ${sourcesText}
     CLAIM_MAP_SYSTEM_PROMPT,
     userPrompt,
     CLAIM_MAP_TOOL,
-    // Pilot v7.4: flip claim_map back to OpenAI (gpt-5-mini). v7.3 stability
-    // test showed Gemini Flash ignores `seed: 7`, producing run-to-run variance
-    // in claims.total (1 vs 2 vs 3 across identical inputs). Thin claim maps
-    // (1 claim) cause the structured drafter to degenerate, triggering
-    // post-draft fallback. OpenAI honors the seed → deterministic claim_map →
-    // stable drafting path. Tradeoff: ~25-30s vs Gemini's ~5s, accepted to
-    // recover path stability. Timeout bumped to 45s with headroom.
-    { stage: "claim_map", timeoutMs: 45000, forceProvider: "openai" },
+    // Pilot v7.5 (revert): claim_map back to Gemini Flash for Fast mode.
+    // v7.4 (OpenAI gpt-5-mini, seed=7) gave deterministic claim counts but
+    // cost ~30-45s per call — Q1 hit the 45s timeout 3/3 in the stability
+    // test and silently fell back to legacy. We accept Gemini's seed-ignoring
+    // run-to-run variance as the lesser evil for Fast; the v7.2 gate relaxation
+    // (allowed >= 1) absorbs most of that variance.
+    // IMPORTANT: aiProvider defaults to OpenAI whenever OPENAI_API_KEY is set
+    // and forceProvider is omitted — we MUST explicitly force gemini here
+    // (otherwise claim_map silently routes to OpenAI gpt-5-mini and times out).
+    // For a future Deep mode, swap to `forceProvider: "openai"` based on a
+    // depth flag — the plumbing in aiProvider.ts is intact.
+    { stage: "claim_map", timeoutMs: 20000, forceProvider: "gemini" },
   );
   if (!data || !Array.isArray(data.claims)) return { data: null, run };
   // Defensive: ensure source_ids exists and arrays of integers.
