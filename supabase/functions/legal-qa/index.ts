@@ -2402,8 +2402,128 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
   needs_pinpoint: c.needs_pinpoint,
 })), null, 2)}` : ""}`;
 
-    const promptLen = systemPrompt.length;
-    console.log(`Prompt length: ${promptLen} chars, ${sourceCards.length} source cards`);
+    // ─── Pilot v6: compact structured drafter prompt ───────────────────
+    // The legacy systemPrompt above is ~28k chars. For the structured drafter
+    // (claimMap !== null && claimMapAllowedCount >= 2) most of those rules are
+    // either already enforced by the claim map (no-anchor → omit, statementMode,
+    // needsPinpoint) or are about defensive sourcing the drafter no longer
+    // does. We build a focused prompt that keeps ONLY:
+    //   - role + body/footnote separation + narrative-references rule
+    //   - bracket reference markers
+    //   - the claim-map block (the actual contract for what to write)
+    //   - footnote formatting rules + canonical examples
+    //   - sources catalog + retrieved context
+    // Everything else (full 37.x manifesto, "כללי שימוש במקורות" lecture,
+    // partial-citation deep-dive, coverage-check) is dropped because the
+    // claim map is now the source of truth for what may be stated.
+    const buildCompactStructuredPrompt = (): string => {
+      const claimMapJson = claimMapV2
+        ? JSON.stringify(
+            claimMapV2.claims
+              .filter((c) => c.statementMode !== "omit")
+              .map((c) => ({
+                claimId: c.claimId,
+                claim: c.claimText,
+                subIssue: c.subIssue,
+                sourceIds: c.sourceIds,
+                authorityLevel: c.authorityLevel,
+                statementMode: c.statementMode,
+                needsPinpoint: c.needsPinpoint,
+              })),
+            null,
+            2,
+          )
+        : claimMap
+        ? JSON.stringify(
+            claimMap
+              .filter((c) => c.allowed_to_state)
+              .map((c) => ({
+                claim: c.claim,
+                sub_issue: c.sub_issue,
+                source_ids: c.source_ids,
+                authority_level: c.authority_level,
+                support_strength: c.support_strength,
+                needs_pinpoint: c.needs_pinpoint,
+              })),
+            null,
+            2,
+          )
+        : "[]";
+      const uncoveredLine = claimMapV2 && claimMapV2.uncoveredSubIssues.length > 0
+        ? `תת-סוגיות שלא מכוסות (ציין כחוסר ודאות): ${claimMapV2.uncoveredSubIssues.join(" | ")}`
+        : "";
+      return `אתה עוזר משפטי מומחה. כתוב חוות דעת משפטית מקצועית בעברית בהתבסס על מפת הטענות המאושרת למטה.
+
+═══ מבנה התשובה (חובה — legal_research) ═══
+**תשובה קצרה** | **השאלה המשפטית** | **המסגרת הנורמטיבית** | **מקורות מרכזיים** | **ניתוח** | **חוסר ודאות** (אם רלוונטי) | **מסקנה**
+- אורך: 800-1500 מילים. כותרות עם **bold** בלבד, ללא # markdown.
+- טון פורמלי, אובייקטיבי, אנליטי.
+
+═══ מפת הטענות (חוזה — חובה לעקוב) ═══
+אתה כותב אך ורק מתוך הטענות הבאות. אסור לייצר טענה משפטית שאינה במפה.
+- statementMode="direct": כתוב כקביעה מפורשת.
+- statementMode="qualified": נסח כ"משתמע" / "ניתן ללמוד" / "עולה מ..." / חוסר ודאות.
+- needsPinpoint=true: חובה pinpoint בהערת השוליים (ס' X ל..., בעמ' Y).
+- כל sourceId ("src-N") מתייחס לפריט ברשימת המקורות למטה (המספר אחרי "src-").
+${uncoveredLine}
+
+מפת הטענות (JSON):
+${claimMapJson}
+
+═══ הפרדה גוף/הערות ═══
+- בגוף הטקסט: **לא** שנים, **לא** מספרי ס"ח/ק"ת/כרך/עמוד, **לא** מספרי תיק (ע"א/בג"ץ/ת"א).
+  נכון: "חוק העונשין אוסר על..." / "בעניין קעדאן קבע בית המשפט..."
+  לא נכון: "חוק העונשין, התשל"ז-1977..." / "בע"א 33/33 גת נ' מדינת ישראל..."
+- כל פרט ביבליוגרפי מופיע **רק** בהערת השוליים.
+- כשמזכירים מקור בגוף בשם נרטיבי ("בעניין X"), הערת השוליים המתאימה חייבת להכיל את אותו מקור בדיוק.
+
+═══ סימני הפניה ═══
+- השתמש ב-[1], [2], [3] בסוגריים מרובעים. סימן ההפניה אחרי הפיסוק (".[1]" / ",[2]"), לא לפניו.
+- כל [N] מופיע פעם אחת בלבד. לחזרה על אותו מקור: השתמש ב"שם" / "לעיל ה"ש N" עם מספר הפניה חדש.
+- מספור רץ ללא דילוגים. לכל [N] בגוף — חייבת להופיע הערה N ברשימה.
+
+═══ פורמט הערות שוליים — דוגמאות מחייבות ═══
+- פסיקה: בג"ץ 5555/18 **חסון** נ' **כנסת ישראל**, פ"ד עג(4) 53 (2021).
+- פסיקה במאגר: ע"א 1234/20 **פלוני** נ' **אלמוני** (פורסם בנבו, 15.3.2022).
+- חקיקה: חוק החוזים (חלק כללי), התשל"ג-1973, ס"ח 118.
+- חוק-יסוד: חוק-יסוד: הממשלה, ס"ח התשס"א 158. (חובה שנה עברית לפני העמוד.)
+- מאמר: יואב דותן "ביקורת שיפוטית על חקיקה בישראל" **משפטים** כח 77 (1997).
+- מחקר כנסת: שירות המחקר של הכנסת **כותרת המחקר** (2023).
+- פרוטוקול ישיבה (כלל 8.3): פרוטוקול ישיבה 110 של ועדת החוקה, חוק ומשפט, הכנסת ה-14 (3.11.1997).
+  אסור: "פורסם באתר הכנסת" / "[חסר: שם מומחה]" / "ועדת הכלכלה" בלי מספר כנסת.
+- שם (אזכור עוקב): שם. / שם, בעמ' 85.
+- לעיל (ספרות): פרוקצ'יה, לעיל ה"ש 2, בעמ' 45.
+- לעיל (פסיקה): עניין **קעדאן**, לעיל ה"ש 10, בעמ' 263.
+- לעיל (חוק — חריג 37.5): ס' 13 לפקודת הראיות. (לא: "פקודת הראיות, לעיל ה"ש N")
+
+═══ כללי ברזל ═══
+- אסור לכתוב הערה ללא anchor אמיתי (URL מ-Perplexity, רשומה מ-[מאומת], או מקור במפת הטענות). אם אין — אל תכתוב את ההערה ואל תוסיף [N] בגוף.
+- חסר פרט בודד (עמוד/שנה/כרך) במקור מעוגן? — סמן [חסר: עמוד] / [חסר: שנה] / [חסר: כרך]. אסור [חסר: ...] כשאין מקור אמיתי מאחורי ההערה.
+- שמות צדדים בעברית מודגשים (**X**); שמות מאמרים במירכאות ("X"); שמות לועזיים מוטים (##X##).
+- שנים עבריות עם 'ה' (התשס"א), לא ('תשס"א').
+
+═══ רשימת מקורות זמינים ═══
+${sourceCatalog}
+
+═══ הקשר מהמקורות ═══
+${combinedContext}
+
+בסוף התשובה, הוסף בלוק נפרד בפורמט הזה בדיוק:
+
+--- הערות שוליים ---
+1. [אזכור מעוצב לפי הדוגמאות למעלה]
+2. [אזכור מעוצב לפי הדוגמאות למעלה]
+...`;
+    };
+
+    // Decide which prompt to send. The structured drafter (gpt-5-mini) gets
+    // the compact one; legacy/fallback path keeps the full one for safety.
+    const useStructuredDrafterPath = taskMode === RESEARCH_MODE && claimMap !== null && claimMapAllowedCount >= 2;
+    const drafterSystemPrompt = useStructuredDrafterPath
+      ? buildCompactStructuredPrompt()
+      : systemPrompt;
+    const promptLen = drafterSystemPrompt.length;
+    console.log(`Prompt length: ${promptLen} chars (variant=${useStructuredDrafterPath ? "compact" : "full"}), ${sourceCards.length} source cards`);
 
     const aiMaxTokens = isAcademicMode ? 12288 : 8192;
     // For pleading_analysis with an uploaded document: the document IS the audit subject,
