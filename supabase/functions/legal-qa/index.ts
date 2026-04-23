@@ -1711,6 +1711,11 @@ ${(verify.fullText as string).slice(0, 50000)}
           .slice(0, 12);
         const caselawKept = merged.filter(m => m.source_type === "caselaw").length;
         console.log(`Caselaw quota: ${caselawKept} caselaw / ${merged.length - caselawKept} other (total ${merged.length})`);
+        // FUNNEL CHECKPOINT 4: after merge + dedup + 6/6 caselaw quota
+        retrievalFunnel.after_dedup_quota = tallyByType(merged);
+        const droppedByQuota = (retrievalFunnel.raw_keyword.total + retrievalFunnel.raw_vector.total + retrievalFunnel.raw_caselaw_filtered.total) - merged.length;
+        if (droppedByQuota > 0) bumpDrop("dedup_or_quota", droppedByQuota);
+        console.log(`FUNNEL after_dedup_quota: ${JSON.stringify(retrievalFunnel.after_dedup_quota)}`);
         // Suppress unused warning
         void reservedIds;
 
