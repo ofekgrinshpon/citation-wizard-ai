@@ -274,6 +274,13 @@ export interface ResolveCitationOptions {
   caseNumberHint?: string;
   /** Optional `decision_date` field (ISO or dd.mm.yyyy). */
   decisionDateHint?: string;
+  /**
+   * Optional `title` field from the Perplexity candidate. Used as a fallback
+   * source for the law name when the citation string is a bare section
+   * reference (e.g. "סעיף 17"). Perplexity typically puts the full law name
+   * in `title` even when the citation lacks it.
+   */
+  titleHint?: string;
 }
 
 /**
@@ -281,7 +288,7 @@ export interface ResolveCitationOptions {
  *
  * @param candidateText  The raw `citation` string returned by Perplexity.
  * @param declaredType   Perplexity's `type` field ("statute" | "caselaw").
- * @param opts           Extra hint fields (case_number, decision_date).
+ * @param opts           Extra hint fields (case_number, decision_date, title).
  */
 export function resolveCitation(
   candidateText: string,
@@ -298,8 +305,10 @@ export function resolveCitation(
     };
   }
 
-  // 1) Classify
-  const sourceType = classify(text, declaredType);
+  // 1) Classify (use combined text so titleHint can flip "primary" → "basic_law"
+  // when the citation is just "סעיף 17" but the title says "חוק-יסוד: …")
+  const classifyText = opts.titleHint ? `${text}\n${opts.titleHint}` : text;
+  const sourceType = classify(classifyText, declaredType);
   if (!sourceType) {
     return {
       resolved: false,
@@ -313,13 +322,13 @@ export function resolveCitation(
   let fields: Record<string, string>;
   switch (sourceType) {
     case "basic_law":
-      fields = extractBasicLaw(text);
+      fields = extractBasicLaw(text, opts.titleHint);
       break;
     case "secondary_legislation":
-      fields = extractSecondaryLeg(text);
+      fields = extractSecondaryLeg(text, opts.titleHint);
       break;
     case "primary_legislation":
-      fields = extractLegislation(text);
+      fields = extractLegislation(text, opts.titleHint);
       break;
     case "case_law_published":
       fields = extractCaseLawPublished(text, opts.caseNumberHint);
