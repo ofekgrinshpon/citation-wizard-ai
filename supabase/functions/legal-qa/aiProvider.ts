@@ -96,6 +96,13 @@ export interface PlannerCallOptions {
    * without permanently changing the stage's primary model.
    */
   openaiModelOverride?: string;
+  /**
+   * Pin this call to a specific provider regardless of which API keys are
+   * available. Used by claim_map (Pilot v6) to force Gemini routing because
+   * gpt-5-mini was the dominant latency cost (~33s) on that stage, and
+   * Gemini 2.5 Flash returns the same JSON tool-call shape in ~5-10s.
+   */
+  forceProvider?: "openai" | "gemini";
 }
 
 /**
@@ -109,7 +116,11 @@ export async function callPlannerJSON<T = unknown>(
   tool: PlannerToolDef,
   opts: PlannerCallOptions,
 ): Promise<PlannerCallResult<T>> {
-  const useOpenAI = Boolean(OPENAI_API_KEY);
+  // Provider selection: respect explicit per-call override (e.g. claim_map
+  // pinned to Gemini), otherwise prefer OpenAI when its key is available.
+  const useOpenAI = opts.forceProvider
+    ? opts.forceProvider === "openai" && Boolean(OPENAI_API_KEY)
+    : Boolean(OPENAI_API_KEY);
   const url = useOpenAI ? OPENAI_URL : LOVABLE_URL;
   const apiKey = useOpenAI ? OPENAI_API_KEY : LOVABLE_API_KEY;
   // Tier-1.5: select model per stage. claim_map → mini; everything else → decomposer (nano).

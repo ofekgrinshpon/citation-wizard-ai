@@ -286,8 +286,11 @@ ${sourcesText}
     CLAIM_MAP_SYSTEM_PROMPT,
     userPrompt,
     CLAIM_MAP_TOOL,
-    // 60s timeout (was 45s) to absorb gpt-5-mini variance even with trimmed input.
-    { stage: "claim_map", timeoutMs: 60000, reasoningEffort: "low" },
+    // Pilot v6: pin claim_map to Gemini 2.5 Flash. gpt-5-mini took 30-35s on
+    // this stage; Gemini Flash returns the same JSON tool-call in 5-10s, freeing
+    // 20-25s of the 150s edge-function budget for the drafter. 30s timeout is
+    // ample for Flash on this trimmed input.
+    { stage: "claim_map", timeoutMs: 30000, forceProvider: "gemini" },
   );
   if (!data || !Array.isArray(data.claims)) return { data: null, run };
   // Defensive: ensure source_ids exists and arrays of integers.
