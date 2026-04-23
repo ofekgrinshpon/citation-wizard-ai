@@ -1,84 +1,80 @@
 
 
-## 30-Question Legal Research Evaluation Harness
+## Next move: instrument the structured drafter for citation coverage, then add a single "anchor pass"
 
-### Goal
-Run all 30 questions twice — once on the **legacy** path, once on the **structured** path — and produce a side-by-side comparison report with per-question metrics. No user-facing UI changes.
+### Direct answers to your two questions
 
-### Approach
+**1. The single change most likely to improve citation richness without re-inflating latency:**
+
+Add a **post-draft "anchor pass"** that re-runs only over the drafted memo (not the full pipeline) with one job: scan each substantive claim in the body and attach a footnote from the *already-retrieved source pack* if one exists and the drafter missed it. No new retrieval. No new reasoning. Just claim-to-source matching against material we already paid for.
+
+Why this and not anything else:
+- The smoke test produced ~2 footnotes per memo despite v4 logs showing **6+ ranked source cards available per question**. So the bottleneck is not retrieval quality and not source availability — it's **the structured drafter under-using the sources it was handed**. The compact prompt (~6–8k chars, down from ~28k) almost certainly stripped too much of the "you must anchor every claim" reinforcement along with the redundant rules.
+- Fixing this at the drafter prompt level (option A) is risky: every prompt-tuning round in this thread has traded one property for another (latency vs. coverage vs. format compliance). We've seen that loop play out three times now.
+- Re-running retrieval (option B) is expensive and unnecessary — the source pack is already in memory.
+- A targeted second pass on `gemini-2.5-flash` over a ~1500-word memo + ~6 source cards is a structured tool-call task — empirically 3–8s on Flash. Adds latency we can afford, and is the same model+stage shape as `claim_map`, which we already proved is fast and reliable.
+
+**2. Realistic targets for a user-facing version:**
+
+| Metric | Current (pilot v6) | Target for "ship as default" | Target for "ship as opt-in deep mode" |
+|---|---|---|---|
+| Mean wall time | ~92s | **≤ 60s** | ≤ 100s |
+| P90 wall time | ~105s | ≤ 75s | ≤ 130s |
+| Footnotes per memo | ~2 | **≥ 5** (on questions with ≥5 available cards) | ≥ 4 |
+| Anchored claim coverage | not measured | **≥ 70%** of substantive claims | ≥ 60% |
+| Structured path success | 100% (3/3) | ≥ 95% | ≥ 90% |
+
+**Honest read:** ≤60s as default is aggressive given the current ~32s decomp + ~7s claim_map + ~50s draft floor. It probably requires *also* moving decomposition off `gpt-5-mini` onto Flash (decomp is the next-largest stage and is also a structured-output task). That is the *follow-up* move, not this one. **This loop's job is to fix coverage first**, because shipping a fast-but-thinly-cited Legal Research tool is worse than shipping a slightly slower well-cited one — under-citation is the single user-visible failure mode that erodes trust in legal AI.
+
+---
+
+### Concrete plan for the next loop
+
+**Step 1 — Instrument before changing anything (no code shipped, ~5 min).**
+Re-run the same 3-question smoke test (Q1, Q6, Q21) but add logging that captures, per question:
+- Number of source cards passed into the structured drafter
+- Number of those source cards actually cited in the final memo
+- List of substantive claim sentences in the body that have no footnote (heuristic: sentences containing legal terms — חוק / סעיף / פס"ד / קבע / נפסק / הלכה — without an adjacent superscript)
+
+This gives a real "coverage gap" number instead of the proxy of "footnote count." If coverage is already 70%+ and the issue is just that some questions genuinely have few claims, the anchor pass is unnecessary and we should instead just raise the visible footnote count by tweaking the drafter prompt back up slightly. We need this number before committing to the bigger change.
+
+**Step 2 — Build the anchor pass (only if Step 1 confirms the gap).**
+
+Add a new stage in `legal-qa/index.ts` between `structuredDrafting` and `post-processing`:
 
 ```text
-                    ┌─────────────────────────────────┐
-                    │  Node script (eval/run-eval.ts) │
-                    └──────────────┬──────────────────┘
-                                   │ for each of 30 questions
-              ┌────────────────────┼────────────────────┐
-              │                                         │
-   POST legal-qa                              POST legal-qa
-   { taskMode: "research",                    { taskMode: "research",
-     evalForceLegacy: true }                    evalMode: "structured" }
-              │                                         │
-              ▼                                         ▼
-   Legacy retrieval + drafter             decompose → claim_map → drafter
-              │                                         │
-              └────────────────────┬────────────────────┘
-                                   ▼
-                  Pull qa_logs row by request_id
-                  Combine with HTTP response body
-                                   │
-                                   ▼
-              Write /mnt/documents/legal-qa-eval/
-                  ├─ results.json   (raw, per-question)
-                  ├─ results.csv    (spreadsheet view)
-                  └─ report.md      (side-by-side + summary)
+[draft] → [anchorPass] → [post-processing footnote filters]
 ```
 
-### What gets built
+`anchorPass` contract:
+- Input: drafted memo body + the same `sourcePack` already passed to the drafter + the `claimMap` already produced
+- Model: `google/gemini-2.5-flash` (same as `claim_map`, same `forceProvider: "gemini"`)
+- System prompt: ~1k chars. One job — "for each claim in `claimMap.claims` that has `anchor: true` but does not appear as a footnote in the body, return a JSON patch with the exact sentence to anchor and the source card id to attach."
+- Output schema: `{ patches: [{ sentenceFragment: string, sourceCardId: string }] }`
+- Apply patches in code (not by re-prompting the drafter): find the sentence in the body, append a superscript, push the citation into the footnote list.
+- Hard cap: max 4 patches per memo (prevent over-citation). Anchor pass adds nothing if the drafter already cited well.
 
-**1. Tiny edge-function flag (`legal-qa/index.ts`)** — additive, internal only:
-- Accept `evalForceLegacy?: boolean` in the request body.
-- When true AND caller is the eval admin user, skip the `decomposeAndPlan` / `buildClaimMap` blocks (treat as if planner returned null), forcing the legacy retrieval+drafter path.
-- Stamp `metadata.eval_run_id` and `metadata.eval_variant` (`"legacy"` | `"structured"`) into `qa_logs` so we can match them back later.
-- Zero behavior change for normal users (flag absent → identical code path).
-- Credit consumption is skipped or refunded for admin eval runs (admins already bypass via `consume_credits`).
+**Step 3 — Re-run the 3-question smoke test with the anchor pass enabled.**
 
-**2. Eval runner script (`eval/run-eval.ts`)** — run once via `code--exec deno run`:
-- Reads the 30-question dataset (inlined in the script).
-- Authenticates as the super-admin (`ofekgrinshpon@gmail.com`) via Supabase auth using a password from a one-time prompt OR a service-role-signed JWT.
-- For each question, fires both variants **sequentially** (to avoid rate-limiting Lovable AI Gateway / OpenAI) with an `evalRunId = uuid` and `evalVariant`.
-- After each pair completes, queries `qa_logs` by `eval_run_id` + `eval_variant` to fetch `metadata.stage_runs`, `metadata.models_used`, `metadata.drafting_path`, `metadata.claim_map_summary`, `metadata.source_pack_summary`.
-- Computes derived metrics: answer length (chars + words), footnote density (footnotes / 1000 chars), anchored vs. unverified counts (from `metadata.anchored_count` if present, else inferred from footnote `url` presence).
-- Streams partial results to disk after every question so a mid-run crash doesn't lose progress.
+Compare:
+- Footnotes per memo (expect 2 → 4–6)
+- Coverage % (expect ~30–40% → ~65–75%)
+- Wall time delta (expect +5–10s, landing at ~100–115s)
+- Any new false-positive citations (anchor pass attached a source to a claim it shouldn't have)
 
-**3. Outputs in `/mnt/documents/legal-qa-eval/`**
-- `results.json` — full per-question record, both variants, all metadata.
-- `results.csv` — flat spreadsheet for sorting/filtering.
-- `report.md` — human-readable report with:
-  - Aggregate summary (avg footnotes, avg length, structured success rate, fallback rate, mean stage durations).
-  - Per-question side-by-side blocks (question → legacy answer + footnotes count → structured answer + footnotes count → which won on density / coverage).
-  - Top strengths / top weaknesses bucketed by question type (constitutional/admin law, contract, procedural, doctrinal/literature).
-  - Verdict: ready to flip default OR needs another tuning pass.
+**Step 4 — Decision gate:**
+- If coverage hits target and false-positive rate is low → run the 10-question pilot to confirm at scale, *then* the 30-question run becomes product-relevant.
+- If coverage improves but false positives appear → tighten the anchor pass prompt to require strict claim-to-source semantic match (one more iteration, not a rewrite).
+- If wall time blows past 120s → drop anchor pass to top-3 patches only.
 
-### Per-question fields captured
-question · legacy_answer · structured_answer · legacy_footnotes_count · structured_footnotes_count · legacy_dropped_footnotes · structured_dropped_footnotes · legacy_density · structured_density · legacy_length · structured_length · legacy_drafting_path · structured_drafting_path · legacy_models_used · structured_models_used · legacy_stage_runs · structured_stage_runs · structured_completed_or_fell_back · claim_map_summary · source_pack_summary · legacy_anchored / unverified · structured_anchored / unverified
+### What this loop does NOT do
+- No changes to retrieval, ranking, or source pack assembly.
+- No changes to decomposition (Flash migration is the follow-up move, gated on this one succeeding).
+- No changes to legacy path.
+- No 10-question or 30-question rerun until the 3-question coverage instrumentation + anchor pass land.
 
-### Execution & cost notes
-- 30 questions × 2 variants = **60 edge-function calls**. Average ~90–180s each → expect **90–180 min wall-clock**. Script logs progress and writes incrementally.
-- Run as super-admin so no user credits are charged.
-- If the structured path times out on a question, the row records `fell_back: true` with the stage that failed — that's a real evaluation signal, not an error to retry.
-
-### What I will deliver after the run
-1. Path to `/mnt/documents/legal-qa-eval/` artifacts (json + csv + md).
-2. How to review them (open `report.md` for the narrative; load `results.csv` in any spreadsheet for sorting).
-3. Top-level conclusion (structured vs. legacy on the 30-question set).
-4. Buckets where structured is stronger / weaker (e.g., literature-heavy questions vs. statute-anchored questions vs. open doctrinal questions).
-5. Recommendation on whether to flip the default to structured now or run one more tuning pass — with the specific tuning targets if so.
-
-### Out of scope (per instructions)
-- No UI changes, no provenance exposure, no pricing/credits changes, no architecture changes, no other-mode redesigns.
-
-### Technical details
-- Edge function diff is ~25 lines; gated on admin user-id check so it cannot be triggered by regular users.
-- The eval runner is a standalone Deno script invoked with `code--exec` — it is not part of the deployed app.
-- `eval_run_id` lets us re-query and re-export at any later time without re-running the model calls.
+### What I'll deliver after this loop
+- Coverage gap baseline (Step 1 numbers) — so we have a real metric, not just footnote count
+- Anchor pass effect (Step 3 numbers) — coverage delta, latency delta, false positive count
+- A single go/no-go: "anchor pass is the right ship; now run the 10-question pilot" or "coverage is fine, the issue is something else and here's what."
 
