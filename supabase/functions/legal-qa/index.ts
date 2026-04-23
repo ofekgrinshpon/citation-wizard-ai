@@ -22,7 +22,7 @@ import {
   type LegalSourcePack,
 } from "./contracts.ts";
 import { mapToDecompositionV2 } from "./legalResearchDecomposition.ts";
-import { assembleSourcePack, summarizeSourcePack, type InternalSourcePackEntry } from "./legalSourcePack.ts";
+import { assembleSourcePack, summarizeSourcePack, countSourcesByType, type InternalSourcePackEntry } from "./legalSourcePack.ts";
 import { mapToClaimMapV2, summarizeClaimMapV2 } from "./legalClaimMap.ts";
 import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
 import { runShadowAbComparison, buildLegacyShadowPrompt } from "./shadowAbLogger.ts";
@@ -92,6 +92,8 @@ interface SourcePackEntry {
   usable_for_analysis: boolean;
   usable_for_citation: boolean;
   anchor_present: boolean;
+  /** INTERNAL — retrieval similarity (0–1). Used by source-pack promotion gate. */
+  relevance_score?: number;
 }
 
 /**
@@ -137,13 +139,20 @@ function classifyAuthority(sourceType: string, citation: string, url?: string): 
   if (/חוק[-\s]יסוד|חוק יסוד/i.test(c)) return "basic_law";
   if (/ס["״]ח|ס"ח|ספר החוקים|פקודת|תקנות/i.test(c)) return "primary_legislation";
   if (sourceType === "israeli_law") return "primary_legislation";
-  if (sourceType === "caselaw") {
+  // Milestone A.5: trust DB classification for caselaw — both the labeled
+  // value used downstream ("פסיקה") and the raw DB source_type ("caselaw")
+  // are honored. Previously, the regex on citation text alone often missed
+  // caselaw whose `citation` field doesn't begin with בג"ץ/פ"ד/etc.,
+  // demoting genuine primary authority out of `core`.
+  if (sourceType === "caselaw" || sourceType === "פסיקה") {
     if (/בג["״]ץ|פ"ד|פד"י|supreme\.court/i.test(c + u)) return "supreme_court";
     if (/בית\s*הדין\s*לעבודה|עע"מ|ע"ע/i.test(c)) return "labor_court";
+    // Default any other DB-classified caselaw to district_court — still
+    // primary_caselaw at the V2-contract layer (legalSourcePack.ts).
     return "district_court";
   }
-  if (sourceType === "knesset_research") return "knesset_research";
-  if (sourceType === "journal_article") return "academic_article";
+  if (sourceType === "knesset_research" || sourceType === "מחקר כנסת / חקיקה") return "knesset_research";
+  if (sourceType === "journal_article" || sourceType === "מאמר אקדמי") return "academic_article";
   if (sourceType === "book") return "academic_book";
   if (/knesset\.gov\.il/i.test(u)) return "protocol";
   if (u) return "external_web";
@@ -351,6 +360,8 @@ interface SourceCard {
   provenance: "local" | "perplexity" | "document";
   excerpt: string;
   case_number?: string;
+  /** Retrieval-stage similarity score (0–1). Local cards only. */
+  relevance_score?: number;
 }
 
 // ─── Task mode → system prompt instructions ──────────────────────────
@@ -1916,6 +1927,10 @@ ${(verify.fullText as string).slice(0, 50000)}
           provenance: "local",
           excerpt: m.chunk_content.slice(0, 400),
           case_number: m.source_type === "caselaw" ? ((meta.case_number as string) || undefined) : undefined,
+          // Milestone A.5: carry retrieval similarity through to the source pack
+          // so assembleSourcePack can apply the relevance gate when promoting
+          // knesset_research / journal_article items to `core`.
+          relevance_score: typeof m.similarity === "number" ? m.similarity : 0,
         });
       }
       if (filteredBrokenKnesset > 0) {
@@ -1996,6 +2011,8 @@ ${(verify.fullText as string).slice(0, 50000)}
           usable_for_analysis: excerpt.length > 300,
           usable_for_citation: sc.citation.length > 15,
           anchor_present: anchorPresent,
+          // Milestone A.5: carry through for assembleSourcePack relevance gate.
+          relevance_score: sc.relevance_score ?? 0,
         };
       });
       console.log(`[source-pack] ${sourcePack.length} entries; anchored=${sourcePack.filter((s) => s.anchor_present).length}`);
@@ -3725,6 +3742,13 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             authority_class: s.authority_class,
             anchor_present: s.anchor_present,
           })),
+          // Milestone A.5: per-source-type counts for fast diagnosis of `core=0` regressions.
+          // Pulls from the raw entries (full type fidelity) AND the assembled pack
+          // (so we can also see how many were promoted into core via the A.5 gate).
+          source_type_counts: countSourcesByType(
+            sourcePack as InternalSourcePackEntry[],
+            sourcePackV2,
+          ),
           claim_map_summary: claimMapV2Summary
             ?? (claimMap ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength } : null),
           drafting_path: draftingPath,
