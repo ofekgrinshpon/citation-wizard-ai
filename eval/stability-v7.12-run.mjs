@@ -170,7 +170,7 @@ async function runOne(jwt, q, attempt) {
 
 function summarize(state) {
   const lines = [];
-  lines.push(`# Stability v7.12 — expanded domain coverage (18 questions × ${REPETITIONS}) — ${state.run_id}`);
+  lines.push(`# Stability v7.12 — Milestone C smoke (${QUESTIONS.length} questions × ${REPETITIONS}) — ${state.run_id}`);
   lines.push(``);
   lines.push(`| Q | bucket | path | E5? | ret | kept | core_b→a | anch | wall |`);
   lines.push(`|---|---|---|---|---|---|---|---|---|`);
