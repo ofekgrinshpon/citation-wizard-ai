@@ -308,7 +308,7 @@ async function runPerplexityCompletion(
   const drops: Record<string, number> = {};
   const debug: PerplexityCompletionResult["debug_candidates"] = [];
   for (const c of raw) {
-    const v = await validatePerplexityCandidate(c, adminClient);
+    const v = validatePerplexityCandidate(c);
     const preview = `${c.type || "?"} | ${(c.citation || "").slice(0, 100)}`;
     if (v.ok) {
       validated.push(v.candidate);
