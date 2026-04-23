@@ -1661,6 +1661,21 @@ ${(verify.fullText as string).slice(0, 50000)}
         considered_by_type: Record<string, number>;
         added_by_type: Record<string, number>;
       };
+      // Milestone B — Stage E.5 Perplexity completion telemetry.
+      perplexity_completion?: {
+        triggered: boolean;
+        reason: string;
+        status: string;
+        core_before: number;
+        core_after: number;
+        candidates_returned: number;
+        candidates_kept: number;
+        candidates_by_type: { statute: number; caselaw: number };
+        promoted_to_core: number;
+        duration_ms: number;
+        drops?: Record<string, number>;
+        debug_candidates?: Array<{ kept: boolean; reason?: string; preview: string }>;
+      };
     } = {
       raw_keyword: newFunnelStage(),
       raw_vector: newFunnelStage(),
@@ -2591,6 +2606,101 @@ ${(verify.fullText as string).slice(0, 50000)}
         }
         const sps = summarizeSourcePack(sourcePackV2);
         console.log(`[source-pack-v2] core=${sps.core} supporting=${sps.supporting} secondary=${sps.secondary} anchored=${sps.anchored}`);
+      }
+    }
+
+    // ========= Stage E.5: Perplexity Completion (Milestone B) =========
+    // Fires only if local source-pack assembly produced fewer than 2 core items.
+    // Validated candidates are pushed into sourceCards/sourcePack with provenance
+    // "perplexity_completion", then sourcePackV2 is re-assembled so they land in
+    // the core bucket before Stage D builds the claim map.
+    if (taskMode === RESEARCH_MODE && !evalForceLegacy) {
+      const coreBefore = sourcePackV2 ? summarizeSourcePack(sourcePackV2).core : 0;
+      if (coreBefore < 2) {
+        const tE5 = Date.now();
+        const subIssuesForCompletion = Array.isArray(decomposedPlan?.decomposition?.sub_issues)
+          ? (decomposedPlan!.decomposition.sub_issues as string[]).filter((s) => typeof s === "string" && s.length > 0)
+          : [];
+        const externalHints: string[] = [];
+        let completion;
+        try {
+          const decompV2ForCompletion = decompositionV2 ?? (decomposedPlan ? mapToDecompositionV2(decomposedPlan, hasDocument, question) : null);
+          completion = await runPerplexityCompletion(
+            question,
+            decompV2ForCompletion,
+            subIssuesForCompletion,
+            externalHints,
+            adminClient,
+          );
+        } catch (e) {
+          console.warn("[stage-e5] runPerplexityCompletion threw:", e);
+          completion = null;
+        }
+
+        if (completion && completion.validated.length > 0) {
+          for (const v of completion.validated) {
+            const newCard: SourceCard = {
+              id: cardId++,
+              citation: v.verified_full_citation || v.citation,
+              source_type: v.type === "caselaw" ? "caselaw" : "israeli_law",
+              url: v.url,
+              provenance: "perplexity_completion",
+              excerpt: v.relevance_note || "",
+              case_number: v.case_number,
+              completion_candidate_type: v.type,
+            };
+            sourceCards.push(newCard);
+            sourcePack.push({
+              source_id: newCard.id,
+              title: newCard.citation,
+              source_type: newCard.source_type,
+              authority_class: classifyAuthority(newCard.source_type, newCard.citation, newCard.url),
+              url: newCard.url,
+              provenance: "perplexity_completion",
+              excerpt: newCard.excerpt,
+              case_number: newCard.case_number,
+              usable_for_analysis: false,         // citation-only anchor
+              usable_for_citation: true,
+              anchor_present: true,
+              relevance_score: 0.9,
+              completion_candidate_type: v.type,
+            });
+          }
+          // Re-assemble the source pack so completion candidates land in core.
+          sourcePackV2 = assembleSourcePack(sourcePack as InternalSourcePackEntry[]);
+        }
+
+        const coreAfter = sourcePackV2 ? summarizeSourcePack(sourcePackV2).core : coreBefore;
+        retrievalFunnel.perplexity_completion = {
+          triggered: completion?.result?.triggered ?? false,
+          reason: completion?.result?.reason ?? "skipped",
+          status: completion?.result?.status ?? "skipped",
+          core_before: coreBefore,
+          core_after: coreAfter,
+          candidates_returned: completion?.result?.candidates_returned ?? 0,
+          candidates_kept: completion?.result?.candidates_kept ?? 0,
+          candidates_by_type: completion?.result?.candidates_by_type ?? { statute: 0, caselaw: 0 },
+          promoted_to_core: completion?.result?.promoted_to_core ?? 0,
+          duration_ms: Date.now() - tE5,
+          drops: completion?.result?.drops,
+          debug_candidates: completion?.result?.debug_candidates,
+        };
+        console.log(
+          `[stage-e5] triggered status=${completion?.result?.status} returned=${completion?.result?.candidates_returned ?? 0} kept=${completion?.result?.candidates_kept ?? 0} core ${coreBefore}→${coreAfter} (${Date.now() - tE5}ms)`,
+        );
+      } else {
+        retrievalFunnel.perplexity_completion = {
+          triggered: false,
+          reason: "skipped_healthy",
+          status: "skipped",
+          core_before: coreBefore,
+          core_after: coreBefore,
+          candidates_returned: 0,
+          candidates_kept: 0,
+          candidates_by_type: { statute: 0, caselaw: 0 },
+          promoted_to_core: 0,
+          duration_ms: 0,
+        };
       }
     }
 
