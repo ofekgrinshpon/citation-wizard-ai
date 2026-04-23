@@ -2729,6 +2729,139 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     }
 
+    // ========= Stage E.6: Round-2 retrieval (Deep mode only) =========
+    // Profile-gated: when modeProfile.retrievalRounds >= 2, run a second
+    // local-search pass scoped to the planner's external_query items + any
+    // remaining sub_issues. Only chunks whose document_id is NOT already
+    // represented in sourceCards are added (deduped at the document level).
+    // This widens the source pool for Deep before the claim map is built.
+    if (
+      taskMode === RESEARCH_MODE &&
+      !evalForceLegacy &&
+      modeProfile.retrievalRounds >= 2 &&
+      decomposedPlan
+    ) {
+      const tR2Start = Date.now();
+      // Build round-2 query set from planner external_query then sub_issues.
+      const planQueries: string[] = (decomposedPlan.query_plan || [])
+        .map((p) => (typeof p?.external_query === "string" ? p.external_query.trim() : ""))
+        .filter((q): q is string => q.length >= 4);
+      const subIssues: string[] = Array.isArray(decomposedPlan.decomposition?.sub_issues)
+        ? (decomposedPlan.decomposition.sub_issues as unknown[])
+            .filter((s): s is string => typeof s === "string" && s.trim().length >= 4)
+            .map((s) => s.trim())
+        : [];
+      // De-dupe by lowercased text, keep first 4 to bound latency.
+      const seenQ = new Set<string>();
+      const round2Queries: string[] = [];
+      for (const q of [...planQueries, ...subIssues]) {
+        const key = q.toLowerCase();
+        if (seenQ.has(key)) continue;
+        seenQ.add(key);
+        round2Queries.push(q);
+        if (round2Queries.length >= 4) break;
+      }
+
+      if (round2Queries.length === 0) {
+        retrievalFunnel.round_2 = {
+          triggered: false,
+          reason: "no_queries",
+          queries: [],
+          new_cards: 0,
+          new_doc_ids: 0,
+          duration_ms: 0,
+        };
+      } else {
+        // Track doc_ids already present so we can dedupe.
+        const existingDocIds = new Set<string>();
+        for (const sc of sourceCards) {
+          // sourceCards don't carry document_id directly; we use citation+url as
+          // a stable key. This is fine because round-2 chunks come from the
+          // same RPC and we have document_citation to compare against.
+          existingDocIds.add(`${sc.citation}|${sc.url ?? ""}`);
+        }
+
+        // Run round-2 searches in parallel.
+        const round2Results = await Promise.all(
+          round2Queries.map(async (q) => {
+            try {
+              const { data } = await adminClient.rpc("search_legal_chunks_text", {
+                search_query: q,
+                match_count: 6,
+              });
+              return { q, matches: Array.isArray(data) ? data : [] };
+            } catch (e) {
+              console.warn(`[round-2] query "${q.slice(0, 40)}…" failed:`, (e as Error).message);
+              return { q, matches: [] };
+            }
+          }),
+        );
+
+        // Collect new cards (deduped per document_citation+url).
+        let newCardsAdded = 0;
+        const newDocKeys = new Set<string>();
+        for (const { matches } of round2Results) {
+          for (const m of matches) {
+            const docKey = `${m.document_citation}|${m.source_url ?? ""}`;
+            if (existingDocIds.has(docKey) || newDocKeys.has(docKey)) continue;
+            newDocKeys.add(docKey);
+
+            const sourceLabel =
+              m.source_type === "caselaw" ? "פסיקה" :
+              m.source_type === "knesset_research" ? "מחקר כנסת / חקיקה" :
+              m.source_type === "journal_article" ? "מאמר אקדמי" :
+              m.source_type === "israeli_law" ? "חקיקה ישראלית" : m.source_type;
+
+            const meta = (m.metadata || {}) as Record<string, unknown>;
+            const newCard: SourceCard = {
+              id: cardId++,
+              citation: m.document_citation || m.document_title || "מקור משפטי",
+              source_type: sourceLabel,
+              url: m.source_url || undefined,
+              provenance: "local",
+              excerpt: (m.chunk_content || "").slice(0, 400),
+              case_number: m.source_type === "caselaw" ? ((meta.case_number as string) || undefined) : undefined,
+              relevance_score: typeof m.similarity === "number" ? m.similarity : 0.5,
+            };
+            sourceCards.push(newCard);
+            sourcePack.push({
+              source_id: newCard.id,
+              title: newCard.citation,
+              source_type: newCard.source_type,
+              authority_class: classifyAuthority(newCard.source_type, newCard.citation, newCard.url),
+              url: newCard.url,
+              provenance: "local",
+              excerpt: newCard.excerpt,
+              case_number: newCard.case_number,
+              usable_for_analysis: (newCard.excerpt?.length ?? 0) > 300,
+              usable_for_citation: newCard.citation.length > 15,
+              anchor_present: Boolean(newCard.url) || true, // local provenance
+              relevance_score: newCard.relevance_score ?? 0.5,
+            });
+            newCardsAdded++;
+          }
+        }
+
+        // Re-assemble V2 source pack so new cards can be classified into
+        // core/supporting/secondary before Stage D consumes it.
+        if (newCardsAdded > 0 && sourcePack.length >= 2) {
+          sourcePackV2 = assembleSourcePack(sourcePack as InternalSourcePackEntry[]);
+          const sps = summarizeSourcePack(sourcePackV2);
+          console.log(`[round-2] +${newCardsAdded} cards (${newDocKeys.size} new docs); pack now core=${sps.core} supporting=${sps.supporting} secondary=${sps.secondary}`);
+        }
+
+        retrievalFunnel.round_2 = {
+          triggered: true,
+          reason: "profile_retrieval_rounds_2",
+          queries: round2Queries,
+          new_cards: newCardsAdded,
+          new_doc_ids: newDocKeys.size,
+          duration_ms: Date.now() - tR2Start,
+        };
+        console.log(`[round-2] ${round2Queries.length} queries, +${newCardsAdded} cards (${Date.now() - tR2Start}ms)`);
+      }
+    }
+
     // ========= Stage D: Claim Map (legal_research only, INTERNAL) =========
     let claimMap: ClaimMap | null = null;
     let claimMapAllowedCount = 0;
