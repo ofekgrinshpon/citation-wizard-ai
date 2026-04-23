@@ -245,7 +245,24 @@ async function runPerplexityCompletion(
     uncovered.length > 0 ? `תת-סוגיות שלא כוסו במאגר המקומי (עדיפות גבוהה): ${uncovered.join(" | ")}` : "",
     hints.length > 0 ? `שאילתות חיפוש מהשלב המתכנן: ${hints.join(" | ")}` : "",
     "",
-    `החזר עד 5 מקורות ראשוניים בלבד: חוקים (עם ס"ח/ק"ת + עמוד + שנה עברית התש...) או פסקי דין (עם מספר תיק + בית משפט + תאריך החלטה). אסור פרשנות, בלוגים, או סקירות. רק JSON תקני לפי הסכמה.`,
+    `החזר עד 5 מקורות ראשוניים בלבד (חוקים או פסקי דין). חובה למלא את כל השדות הבאים, אחרת המקור ייפסל:`,
+    "",
+    `**עבור חוק / תקנה (type=\"statute\"):**`,
+    `- citation: שם החוק המלא, כולל שנה עברית ולועזית ופרטי פרסום. דוגמה: "חוק העונשין, התשל\\"ז-1977, ס\\"ח 864, 226."`,
+    `- year_hebrew: שנה עברית בפורמט התש... (חובה — למשל "התשל\\"ז", "התשנ\\"ח")`,
+    `- year_gregorian: שנה לועזית בת 4 ספרות (חובה — למשל "1977")`,
+    `- title: שם החוק עם פרטי פרסום מלאים (חובה — חייב להכיל ס"ח/ק"ת + מספר עמוד פתיחה, למשל "ס\\"ח התשל\\"ז 226")`,
+    `- url: קישור ישיר לנוסח הרשמי באתר nevo.co.il / fs.knesset.gov.il`,
+    "",
+    `**עבור פסק דין (type=\"caselaw\"):**`,
+    `- citation: ציטוט מלא: סוג תיק + מספר + צדדים + פרטי פרסום. דוגמה: "ע\\"א 8294/14 פלוני נ' אלמוני, פ\\"ד עב(2) 123 (2017)" או "סע\\"ש 12566-07-22 פלוני נ' אלמונית, נבו (15.3.2023)"`,
+    `- case_number: סוג תיק + מספר (למשל "ע\\"א 8294/14")`,
+    `- court: בית המשפט (למשל "בית המשפט העליון", "בית הדין האזורי לעבודה")`,
+    `- decision_date: תאריך מלא בפורמט dd.mm.yyyy או yyyy-mm-dd (חובה)`,
+    `- title: שם המאגר המשפטי שבו פורסם פסק הדין (חובה — "נבו" / "פדאור" / "דינים" / "תקדין", או שם הסדרה הרשמית "פ\\"ד" / "פד\\"ע")`,
+    `- url: קישור ישיר לפסק הדין במאגר`,
+    "",
+    `אם אינך יכול לספק את כל השדות שלעיל למקור מסוים — אל תכלול אותו. עדיף 2 מקורות מלאים מ-5 חלקיים. אסור פרשנות, בלוגים, סקירות. רק JSON תקני.`,
   ].filter(Boolean).join("\n");
 
   const schema = {
@@ -257,13 +274,13 @@ async function runPerplexityCompletion(
           type: "object",
           properties: {
             type: { type: "string", enum: ["statute", "caselaw"] },
-            title: { type: "string" },
-            citation: { type: "string" },
-            year_hebrew: { type: "string" },
-            year_gregorian: { type: "string" },
-            case_number: { type: "string" },
-            court: { type: "string" },
-            decision_date: { type: "string" },
+            title: { type: "string", description: "For statutes: name + ס\"ח/ק\"ת + page. For caselaw: database name (נבו/פדאור/דינים/תקדין) or official series (פ\"ד/פד\"ע)." },
+            citation: { type: "string", description: "Full citation string. Statute must include Hebrew year (התש...) + Gregorian year + ס\"ח/ק\"ת + page. Caselaw must include case number + parties + database/series + date." },
+            year_hebrew: { type: "string", description: "Required for statutes. Format: התש...\"X (e.g. התשל\"ז)." },
+            year_gregorian: { type: "string", description: "Required for statutes. 4-digit year (e.g. 1977)." },
+            case_number: { type: "string", description: "Required for caselaw. Case type + number (e.g. ע\"א 8294/14, סע\"ש 12566-07-22)." },
+            court: { type: "string", description: "Required for caselaw." },
+            decision_date: { type: "string", description: "Required for caselaw. Format dd.mm.yyyy or yyyy-mm-dd." },
             url: { type: "string" },
             relevance_note: { type: "string" },
           },
@@ -299,7 +316,10 @@ async function runPerplexityCompletion(
           {
             role: "system",
             content:
-              "You are a precise Israeli-law research assistant. You ONLY return primary sources (statutes or court decisions) that you can cite with full bibliographic detail (publication name, page, Hebrew year, or case number/court/date). Never invent. If unsure, omit. Output JSON matching the schema exactly.",
+              "You are a precise Israeli-law research assistant. Return ONLY primary sources (statutes or court decisions) you can cite with FULL bibliographic detail. " +
+              "For statutes you MUST provide: Hebrew year in התש... form (year_hebrew), 4-digit Gregorian year (year_gregorian), and gazette reference ס\"ח or ק\"ת with page number embedded in the citation/title. " +
+              "For court cases you MUST provide: case_number with case-type prefix (e.g. ע\"א 8294/14, סע\"ש 12566-07-22), court name, decision_date (dd.mm.yyyy), and the database/series name in title (נבו / פדאור / דינים / תקדין / פ\"ד / פד\"ע). " +
+              "If any required field is unknown, OMIT the entire source — never invent. Output JSON matching the schema exactly.",
           },
           { role: "user", content: userPrompt },
         ],
