@@ -14,15 +14,19 @@ export const LEGAL_RESEARCH_MODELS = {
     forceProvider: "gemini",
   },
   claimMap: {
-    // Pilot v7.4 (re-attempt after OpenAI top-up): pin to OpenAI gpt-5-mini.
-    // Hypothesis: Gemini ignored seed=7, causing claim count to vary across
-    // runs and flipping the drafting path. OpenAI honors the seed parameter,
-    // which should make the structured-vs-fallback decision deterministic.
-    // The actual provider for this stage is selected by `forceProvider` in
-    // decomposition.ts (extractClaimMap call: forceProvider="openai").
-    primary: "openai/gpt-5-mini",
-    fallback: "google/gemini-2.5-flash",
-    forceProvider: "openai",
+    // Pilot v7.5 (revert): claim_map back on Gemini Flash for Fast mode.
+    // v7.4 pinned this stage to OpenAI gpt-5-mini for determinism (seed=7),
+    // but the cost was unacceptable for Fast: claim_map alone took ~30-45s
+    // and the 9-shot test showed Q1 hitting the 45s ceiling with 3/3 silent
+    // legacy fallbacks (worse than v7.3). Gemini's seed-ignoring variance is
+    // the lesser evil at the Fast tier; OpenAI claim_map is preserved as a
+    // candidate for a future Deep / high-confidence mode (separate timeout
+    // budget, not part of the Fast 3-stage flow). To re-enable for Deep,
+    // pass `forceProvider: "openai"` from decomposition.ts based on a
+    // request-level `depth: "deep"` flag.
+    primary: "google/gemini-2.5-flash",
+    fallback: "openai/gpt-5-mini",
+    forceProvider: "gemini",
   },
   drafting: {
     // Legacy/fallback drafter (no claim map): heavier reasoning needed because
