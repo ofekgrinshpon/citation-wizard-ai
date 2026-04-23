@@ -1201,6 +1201,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         taskMode,
         hasDocument: hasFile,
       };
+      // Send research depth ("fast" | "deep") only for research mode — other
+      // modes ignore it server-side.
+      if (taskMode === "research") {
+        body.depth = researchDepth;
+      }
       // Send multi-file context
       if (extractedTexts.length === 1) {
         body.documentText = extractedTexts[0].text;
