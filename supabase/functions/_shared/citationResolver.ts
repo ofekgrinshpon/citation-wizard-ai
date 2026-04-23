@@ -76,8 +76,28 @@ function classify(text: string, declared: DeclaredType): EngineSourceType | null
 // Behavior is intentionally identical to the React-side extractors for the
 // 5 source types we support. Do not "improve" without porting back.
 
-function extractLegislation(text: string): Record<string, string> {
+// Bare-section reference detector (e.g. "סעיף 17", "ס' 12(א)", "סעיפים 3-5")
+const BARE_SECTION_RE = /^\s*(?:סעיפים?|ס['׳']\s*)\s*[\dא-ת()./\\\-–]+\s*$/;
+
+function extractLegislation(text: string, titleHint?: string): Record<string, string> {
   const fields: Record<string, string> = {};
+  // If the citation is just a bare section (no law name), pull law name from title
+  const isBareSection = BARE_SECTION_RE.test(text);
+  if (isBareSection && titleHint) {
+    // Use the title's first segment-before-comma as the law name
+    const titleMatch = titleHint.match(/^([^,]+)/);
+    if (titleMatch) fields.lawName = titleMatch[1].trim();
+    // Also try to pull year/collection from the title since the citation lacks them
+    const titleYear = titleHint.match(/(הת[שׁש][א-ת]*["״׳][א-ת]["״׳]?[א-ת]?)/);
+    if (titleYear) fields.hebrewYear = titleYear[1];
+    const titleGreg = titleHint.match(/\b(\d{4})\b/);
+    if (titleGreg) fields.gregorianYear = titleGreg[1];
+    const titleColl = titleHint.match(/(ס["״]ח|ק["״]ת)/);
+    if (titleColl) fields.collection = titleColl[1];
+    const titlePage = titleHint.match(/(?:ס["״]ח|ק["״]ת)\s+(\d+)/);
+    if (titlePage) fields.firstPage = titlePage[1];
+    return fields;
+  }
   // Law name = first segment before comma
   const lawMatch = text.match(/^([^,]+)/);
   if (lawMatch) fields.lawName = lawMatch[1].trim();
