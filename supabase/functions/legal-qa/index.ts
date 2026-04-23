@@ -3447,11 +3447,11 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // additional anchoring) and will be re-enabled with a higher ceiling
     // for a future Deep mode.
     let anchorPassApplied = 0;
-    // Anchor pass gate is now profile-driven. Fast skips it (structured path
-    // shaped to 4-6 footnotes); Deep enables it for additional anchoring.
-    // Legacy/fallback drafter path always benefits from anchor pass when the
-    // profile allows it.
-    const skipAnchorPass = !modeProfile.anchorPassEnabled || (useStructuredDrafterPath && researchDepth === "fast");
+    // Anchor pass gate is purely profile-driven. Fast = false (structured
+    // path shaped to 4-6 footnotes), Deep = true (richer envelope benefits
+    // from additional anchoring). The redundant fast+structured carve-out
+    // was removed — the profile flag is the single source of truth.
+    const skipAnchorPass = !modeProfile.anchorPassEnabled;
     if (!skipAnchorPass && answerText.length > 200 && sourcePack.length >= 2) {
       const tAnchorStart = Date.now();
       const anchorSourcePack: AnchorPassSourcePackItem[] = sourceCards.map((sc) => ({
