@@ -55,6 +55,8 @@ export interface LegalSourcePackItem {
   usableForCitation: boolean;
   /** INTERNAL — stripped by sanitizeResponse. */
   provenanceInternal?: LegalProvenanceInternal;
+  /** INTERNAL — retrieval-stage similarity (0–1). Drives source-pack promotion gate. */
+  relevanceScore?: number;
   metadata?: Record<string, unknown>;
 }
 
@@ -99,6 +101,7 @@ export interface LegalDraftingInput {
 // `sanitizeResponse` walks the payload and strips any of these.
 export const BANNED_KEYS: readonly string[] = [
   "provenanceInternal",
+  "relevanceScore",            // INTERNAL retrieval similarity, never user-facing
   "decomposition",
   "claimMap",
   "sourcePack",
