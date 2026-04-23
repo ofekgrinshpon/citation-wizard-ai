@@ -4481,6 +4481,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             };
           })(),
           model_config: LEGAL_RESEARCH_MODELS,
+          // Mode profile actually used for this run. Read with:
+          //   select metadata->'profile_used' from qa_logs ...
+          profile_used: { depth: researchDepth, ...modeProfile },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
           ...(evalForceLegacy ? { eval_force_legacy: true } : {}),
