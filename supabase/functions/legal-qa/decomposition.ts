@@ -229,10 +229,12 @@ const CLAIM_MAP_TOOL: PlannerToolDef = {
 const CLAIM_MAP_SYSTEM_PROMPT = `אתה אנליסט משפטי. תפקידך לבנות מפת טענות מעוגנת לפני כתיבת חוות הדעת.
 
 חוקים:
-- כל טענה חייבת להיות נתמכת על ידי source_ids ספציפיים מ-source pack. אם אין מקור תומך → allowed_to_state=false.
+- כל טענה חייבת להיות נתמכת על ידי source_ids ספציפיים מ-source pack.
+- allowed_to_state=true כאשר יש לפחות source_id אחד תומך וה-support_strength הוא "strong" או "partial". הניואנס (קביעה מפורשת מול "ניתן ללמוד" / "משתמע") נשמר ב-support_strength עצמו והדראפטר יודע לכתוב בהתאם.
+- allowed_to_state=false רק אם source_ids ריק לחלוטין, או אם support_strength="weak" והקשר עקיף ממש.
 - support_strength="strong" רק אם הקטע (excerpt) שסופק קובע במפורש את הטענה.
-- support_strength="partial" כשניתן להסיק את הטענה מהקטע אך אינה כתובה במפורש.
-- support_strength="weak" כשהקשר עקיף בלבד — חובה לציין בתשובה כחוסר ודאות, או לדלג.
+- support_strength="partial" כשניתן להסיק את הטענה מהקטע אך אינה כתובה במפורש — זוהי תמיכה לגיטימית, לא פסילה.
+- support_strength="weak" כשהקשר עקיף בלבד — בדרך כלל allowed_to_state=false.
 - authority_level="high" רק לחקיקה ראשית, חוקי-יסוד, או החלטות בית המשפט העליון.
 - needs_pinpoint=true כשהטענה נסמכת על סעיף/עמוד ספציפי שחייב להופיע בהערת השוליים.
 - צור 4–12 טענות ממוקדות. אל תייצר טענות שאין להן עיגון.

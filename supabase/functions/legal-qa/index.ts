@@ -2538,7 +2538,11 @@ ${combinedContext}
 
     // Decide which prompt to send. The structured drafter (gpt-5-mini) gets
     // the compact one; legacy/fallback path keeps the full one for safety.
-    const useStructuredDrafterPath = taskMode === RESEARCH_MODE && claimMap !== null && claimMapAllowedCount >= 2;
+    // Pilot v7.2 — gate relaxed from >=2 to >=1 to stop the same question
+    // ping-ponging between structured/fallback when Flash conservatively
+    // marks 1-2 claims allowed_to_state. The compact drafter prompt + claim
+    // map already handle single-claim drafting cleanly via statementMode.
+    const useStructuredDrafterPath = taskMode === RESEARCH_MODE && claimMap !== null && claimMapAllowedCount >= 1;
     const drafterSystemPrompt = useStructuredDrafterPath
       ? buildCompactStructuredPrompt()
       : systemPrompt;
