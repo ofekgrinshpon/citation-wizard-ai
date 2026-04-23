@@ -150,6 +150,7 @@ function validatePerplexityCandidate(
   const resolved = resolveCitation(c.citation, c.type, {
     caseNumberHint: c.case_number,
     decisionDateHint: c.decision_date,
+    titleHint: c.title,
   });
 
   if (resolved.resolved) {
