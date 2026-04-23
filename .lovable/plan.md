@@ -1,61 +1,128 @@
 
 
-## Run the stability test myself using the existing eval harness
+# Zoom-out: where Fast/Deep should land, and how to stop the tuning loop
 
-I claimed I needed you to run manual tests. That was wrong — the codebase already has `eval/run-eval.mjs` which solves the JWT problem cleanly. I'll use it.
+## The honest read on where we are
 
-### How auth gets solved (no new code needed)
+We've spent v7.0 → v7.7 micro-tuning a single pipeline and trying to make it serve two opposite goals (fast & light vs. rich & reliable) with one set of knobs. That's why every patch fixes one metric and regresses another. **The architecture, not the prompt, is the bottleneck.**
 
-The existing harness:
-1. Uses `SUPABASE_SERVICE_ROLE_KEY` (already in env) to mint a magic link for the admin user `ofekgrinshpon@gmail.com`
-2. Exchanges the magic-link `token_hash` for a real session JWT via the anon client
-3. Sends that JWT as `Authorization: Bearer …` to `legal-qa`
-4. The edge function's existing admin gate (`index.ts` line 869) accepts `evalForceLegacy` / `evalRunId` / `evalVariant` from admin callers
+What's actually working today:
+- Decomposition + ClaimMap on Gemini Flash: stable, ~8s combined.
+- Structured drafter on gpt-5-mini: ~35–50s, good Hebrew prose.
+- Perplexity already runs in parallel with local search (metadata-only role, well-defined).
+- Telemetry (stage_runs) is honest and queryable.
 
-All env vars are present (`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_PUBLISHABLE_KEY` — the harness already falls back from `SUPABASE_ANON_KEY` to `SUPABASE_PUBLISHABLE_KEY`).
+What's broken:
+- One pipeline, one prompt, one source-pack policy → can't satisfy Fast and Deep simultaneously.
+- "Anchored count" is computed post-hoc from URL presence → drafter gamed it by inventing footnotes when the floor was raised.
+- No source-side fallback when local DB returns `core=0` → drafter improvises instead of the system retrieving more.
 
-### What I'll do this loop
+---
 
-**1. Build a small wrapper script** at `eval/stability-test.mjs` that:
-- Reuses `getAdminJwt()` from `run-eval.mjs` (or imports its logic)
-- Targets exactly Q1, Q6, Q21 from the existing question bank
-- Runs each question 3× sequentially (9 total runs), structured variant only (`evalForceLegacy: false`)
-- Adds a unique `requestId` per run so credit ledger idempotency doesn't merge them
-- Polls `qa_logs` after each run for `metadata.drafting_path`, `metadata.stage_runs`, `metadata.models_used`, `footnotes`, `total_footnotes`
-- Writes results to `/mnt/documents/legal-qa-eval/stability-v7.2.json`
+## 1. The ideal architecture (target end-state)
 
-**2. Execute it via `code--exec`** with a generous timeout (~15 min for 9 runs at ~70s each)
-
-**3. Aggregate and report** the structured-vs-fallback split per question:
+Two **separately-tuned pipelines** sharing the same retrieval/contracts layer, with one new piece: **a Perplexity completion pass that promotes external sources into the catalog, not just metadata**.
 
 ```text
-              Run 1     Run 2     Run 3     Structured rate
-Q1            ?/?       ?/?       ?/?       X/3
-Q6            ?/?       ?/?       ?/?       X/3
-Q21           ?/?       ?/?       ?/?       X/3
-                                            ──────
-                                            total /9
+                    ┌─────────────────────────────────┐
+                    │   Decompose + Plan (Gemini)     │  shared
+                    └────────────┬────────────────────┘
+                                 │
+            ┌────────────────────┴────────────────────┐
+            │  Retrieve: local DB ∥ Perplexity        │  shared
+            │  + NEW: promote external hits to        │
+            │    catalog cards when authority>=X      │
+            └────────────────────┬────────────────────┘
+                                 │
+                    ┌────────────┴────────────┐
+                    │   ClaimMap + gating     │  shared
+                    └────────────┬────────────┘
+                                 │
+                ┌────────────────┴────────────────┐
+                ▼                                 ▼
+        ┌──────────────┐                  ┌──────────────┐
+        │  FAST path   │                  │  DEEP path   │
+        │  ~40-50s     │                  │  ~120-150s   │
+        │  450-700 w   │                  │  1200-2000 w │
+        │  4-6 cites   │                  │  8-15 cites  │
+        │  no anchor-  │                  │  full anchor │
+        │  pass        │                  │  pass + 2nd  │
+        │  gpt-5-mini  │                  │  retrieval   │
+        │              │                  │  round       │
+        └──────────────┘                  └──────────────┘
 ```
 
-For each run I'll also report: `claimMapAllowedCount` (the gate variable), `footnotes_count`, `anchored_count`, `wall_ms`.
+Key shared invariants:
+- **Anchoring is enforced at parse time, not in the prompt.** Drafter MUST emit `[src-N]` markers. Parser drops any footnote without a matching catalog card. Floors describe required *anchored* citations, not "any 4 footnotes".
+- **Source pack guarantees a floor**, not the prompt. If `core=0` after retrieval, the system runs a second-round Perplexity completion to fill the floor before the drafter ever sees the input. This is the new piece you asked about.
+- **Mode = product config**, not a code branch. One JSON config (word range, footnote floor, token cap, anchor-pass on/off, second-round retrieval on/off, drafter model).
 
-### Decision criteria
+---
 
-| Outcome | Read |
-|---|---|
-| ≥ 8/9 structured | Gate relaxation succeeded — path is now stable. Move to retest fallback retrofit question. |
-| 6–7/9 structured | Partial win. Diagnose which question/run flipped and why (likely Q21 statute). |
-| ≤ 5/9 structured | Gate relaxation insufficient — the planner is still under-flagging claims. Investigate `support_strength` distribution before further tuning. |
+## 2. Shortest path from here to there (3 milestones)
 
-### What this loop does NOT do
+### Milestone A — Stop the regression loop (1 work session)
+Single change, no model swaps:
+1. **Parser-side anchor enforcement** in `index.ts` post-processing: drop footnotes whose `[src-N]` doesn't resolve to a catalog card; expose `dropped_unanchored_count` in metadata. This kills the v7.7 fabrication problem permanently and makes every future metric honest.
+2. **Remove the hard 4-footnote floor from the prompt.** Replace with "use as many `[src-N]` citations as the source pack supports, minimum 2." The system, not the model, owns the floor.
+3. Lock v7.6-style Fast prompt (450–700 words, 2048 tokens, no anchor-pass) as the Fast baseline.
 
-- No edge function code changes (the v7.2 changes from the prior loop are already deployed)
-- No new questions added beyond Q1/Q6/Q21
-- No fallback-retrofit work yet
-- No 10-question pilot
+After A: Fast is honest. We stop chasing a metric the model is gaming.
 
-### Deliverables
+### Milestone B — Perplexity completion pass (1–2 sessions)
+The piece you raised. Currently Perplexity runs only for **metadata enrichment** of items already in the body. Add a new role: **source completion**.
 
-- `/mnt/documents/legal-qa-eval/stability-v7.2.json` — raw per-run data
-- A summary table in chat with structured/fallback split, gate values, and a single recommendation for the next move
+- After local retrieval, if `sourcePack.core.length < 2` OR `claimMap.uncoveredSubIssues.length > 0`, fire a targeted Perplexity query per uncovered sub-issue asking for primary sources (statutes, case numbers, ס"ח refs).
+- Promote returned items to first-class `SourcePackEntry` with `provenance: "perplexity"`, `authority_class` derived from URL pattern, `usable_for_citation: true` only if it carries case number / ס"ח+page.
+- Cap at +3 promoted sources per request, 8s budget (parallel with claim_map).
+- Anchored-count now naturally rises because the catalog has the cards the drafter needs.
+
+After B: Fast hits 4–6 anchored citations without prompt coercion.
+
+### Milestone C — Deep mode as a config, not a rewrite (1 session)
+- Add `depth: "deep"` config block: word range 1200–2000, token cap 4096, footnote floor 8, anchor-pass ON, **second retrieval round** (re-query local + Perplexity using claim-map gaps), drafter `openai/gpt-5` (not mini), `claim_map` on OpenAI gpt-5-mini with seed:7.
+- Frontend toggle + 2x credit cost.
+- Same code path, different config object.
+
+After C: Deep is a real product, not a separate engineering project.
+
+---
+
+## 3. What to stop tweaking (it's no longer worth time)
+
+- **Prompt floors and word counts.** Diminishing returns. We've seen the model game every floor we set. Move enforcement out of the prompt.
+- **OpenAI vs Gemini for claim_map in Fast.** Settled: Gemini Flash. Stop testing this.
+- **9-shot stability runs after every prompt edit.** Run them only after architectural changes (Milestones A/B/C), not after wording changes. They cost ~10 minutes each and we're using them as a comfort blanket.
+- **Anchor-pass tuning for Fast.** It belongs in Deep. Don't try to make it cheap enough for Fast.
+- **Seed-based determinism in Fast.** Gemini ignores it; chasing it is what cost us v7.4.
+
+---
+
+## 4. Honest timeline
+
+Assuming one focused implementation session per milestone, no scope creep, and stability tests only at milestone boundaries:
+
+| Milestone | Work | Outcome | Calendar |
+|---|---|---|---|
+| **A — Parser anchoring + remove prompt floor** | ~1 session | Fast is *honest* (metrics reflect reality). Not yet rich. | **Today / next session** |
+| **B — Perplexity completion pass** | 1–2 sessions | Fast is *usable*: 40–55s wall, 4–6 real anchored cites, 450–700 words. | **2–3 sessions out** |
+| **C — Deep mode config** | 1 session | Deep is *usable*: 120–150s, 8–15 anchored cites, 1200–2000 words. | **3–4 sessions out** |
+
+So: **usable Fast in ~2 sessions, usable Deep in ~3–4 sessions** from now. Anything longer means we slipped back into prompt tuning.
+
+---
+
+## Tradeoffs you should know
+
+- **Parser-side anchoring (Milestone A) will *temporarily lower* the visible footnote count** before Milestone B fills it back in. This is the right direction — we trade a fake number for a real one — but expect one round where Fast looks "thinner" on paper.
+- **Perplexity completion adds ~5–8s and external API cost** to runs where local DB underperforms. Worth it; it's the only way to hit anchored coverage on niche questions without growing the corpus.
+- **Deep mode at gpt-5 + 2 retrieval rounds will cost real money per query.** 2x credits is the floor; we may want 3x.
+
+---
+
+## Recommendation
+
+Approve **Milestone A only** for the next implementation turn. Do not bundle B and C yet. After A lands and we've confirmed metrics are honest, decide on B based on the *real* anchored-coverage number — not the gamed v7.7 number.
+
+If you approve, the next turn implements: parser-side `[src-N]` enforcement, removal of the 4-footnote prompt floor, and a single confirmation 9-shot. Nothing else.
 
