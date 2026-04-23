@@ -227,7 +227,7 @@ async function main() {
     for (let i = 1; i <= REPETITIONS; i++) {
       log(`---- Q${q.id} attempt ${i} ----`);
       const r = await runOne(jwt, q, i);
-      log(`  -> path=${r.drafting_path} words=${r.answer_words} fn=${r.footnotes_count} anchored=${r.anchored_count} ${r.wall_ms}ms`);
+      log(`  -> path=${r.drafting_path} words=${r.answer_words} fn=${r.footnotes_count} anchored=${r.anchored_count} dropped=${r.dropped_unanchored_count ?? "—"} ${r.wall_ms}ms`);
       q.runs.push(r);
       writeFileSync(OUT_FILE, JSON.stringify(state, null, 2));
     }
