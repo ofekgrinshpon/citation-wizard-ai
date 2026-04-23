@@ -177,8 +177,8 @@ interface PerplexityCompletionResult {
  * Fires ONLY when local source-pack assembly produced fewer than 2 core items.
  * Uses sonar-pro with response_format: json_schema to extract up to 5 primary
  * sources scoped by the planner's main issue + uncovered sub-issues. Each
- * candidate must clear all 3 guards (citation shape + URL allowlist + verified
- * cross-check). Returns validated candidates ready to push as SourceCards with
+ * candidate must clear 2 guards (citation shape + URL allowlist). Returns
+ * validated candidates ready to push as SourceCards with
  * provenance="perplexity_completion".
  */
 async function runPerplexityCompletion(
@@ -186,7 +186,6 @@ async function runPerplexityCompletion(
   decompositionV2: LegalResearchDecomposition | null,
   uncoveredSubIssues: string[],
   externalHints: string[],
-  adminClient: ReturnType<typeof createClient>,
 ): Promise<{ result: PerplexityCompletionResult; validated: ValidatedCompletionCandidate[] }> {
   const t0 = Date.now();
   const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
