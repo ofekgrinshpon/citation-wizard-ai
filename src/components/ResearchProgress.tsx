@@ -73,7 +73,7 @@ export function ResearchProgress() {
                     <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center">
                       {isDone ? (
                         <CheckCircle2
-                          className="w-4 h-4 text-emerald-500"
+                          className="w-4 h-4 text-secondary"
                           aria-label="הושלם"
                         />
                       ) : (
