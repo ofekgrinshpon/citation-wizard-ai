@@ -10,10 +10,16 @@ export const LEGAL_RESEARCH_MODELS = {
     fallback: "google/gemini-2.5-flash",
   },
   claimMap: {
-    // Tier-1.5 tuning: kept on gpt-5-mini. Claim mapping requires synthesizing
-    // 4-12 anchored claims from a 10-source pack — heavier reasoning than nano.
-    primary: "openai/gpt-5-mini",
+    // Pilot v6 latency pass: pinned to Gemini 2.5 Flash regardless of provider.
+    // gpt-5-mini consistently took 30-35s on this stage (see pilot v4/v5 logs);
+    // Gemini Flash returns the same shape in 5-10s, freeing 20-25s of the 150s
+    // edge-function budget for the drafter. The claim-map task is structured
+    // tool-calling on a small JSON schema — well within Flash's strengths.
+    // `forceProvider: "gemini"` below is honored in callPlannerJSON even when
+    // OPENAI_API_KEY is configured.
+    primary: "google/gemini-2.5-flash",
     fallback: "google/gemini-2.5-flash",
+    forceProvider: "gemini",
   },
   drafting: {
     // Legacy/fallback drafter (no claim map): heavier reasoning needed because
