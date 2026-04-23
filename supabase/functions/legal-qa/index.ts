@@ -3161,14 +3161,25 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
       const uncoveredLine = claimMapV2 && claimMapV2.uncoveredSubIssues.length > 0
         ? `תת-סוגיות שלא מכוסות (ציין כחוסר ודאות): ${claimMapV2.uncoveredSubIssues.join(" | ")}`
         : "";
+      // ─── Profile-driven envelope (Fast vs Deep) ──────────────────
+      // The drafter envelope (word range + footnote floor/target) is read
+      // from the resolved ModeProfile so a single switch in modeProfiles.ts
+      // changes Deep behavior without touching this builder.
+      const modeLabel = researchDepth === "deep" ? "Deep" : "Fast";
+      const wordMin = modeProfile.wordRangeMin;
+      const wordMax = modeProfile.wordRangeMax;
+      const fnFloor = modeProfile.footnoteFloor;
+      const fnMax = modeProfile.footnoteTargetMax;
+      // Deep gets richer structural guidance (more analysis paragraphs)
+      // because the longer envelope justifies sub-treatment of sub-issues.
+      const frameworkSentenceTarget = researchDepth === "deep" ? "10-14 משפטים" : "6-9 משפטים";
+      const applicationSentenceTarget = researchDepth === "deep" ? "10-14 משפטים" : "6-9 משפטים";
+      const conclusionSentenceTarget = researchDepth === "deep" ? "4-6 משפטים" : "2-3 משפטים";
       // ─── Milestone A (parser-side anchor enforcement) ────────────
-      // Removed: "hard 4-footnote / 450-word floor" language. The system
-      // — not the model — now owns the citation floor. The parser drops
-      // any AI footnote that doesn't match a catalog source card, so
-      // floors expressed in the prompt only encouraged the drafter to
-      // fabricate "[חסר: ...]" skeletons. Target stays 400-700 words /
-      // 4-6 anchored citations, but as guidance, not pass/fail.
-      return `אתה עוזר משפטי מומחה במצב **Fast**. כתוב תשובה משפטית **תמציתית, פרקטית ומעוגנת** בעברית, על בסיס מפת הטענות המאושרת למטה.
+      // The parser drops any AI footnote that doesn't match a catalog
+      // source card, so the floor expressed in the prompt is guidance —
+      // not pass/fail. Floors and targets come from the active ModeProfile.
+      return `אתה עוזר משפטי מומחה במצב **${modeLabel}**. כתוב תשובה משפטית **${researchDepth === "deep" ? "מקיפה, מעמיקה ומעוגנת" : "תמציתית, פרקטית ומעוגנת"}** בעברית, על בסיס מפת הטענות המאושרת למטה.
 
 ═══ חובת פלט מוחלטת ═══
 התשובה שלך **חייבת** להסתיים בבלוק הערות שוליים. תמיד. אין יוצא מן הכלל.
