@@ -1893,11 +1893,7 @@ ${(verify.fullText as string).slice(0, 50000)}
             },
             body: JSON.stringify({
               model: "sonar-pro",
-              search_domain_filter: [
-                "nevo.co.il", "supreme.court.gov.il",
-                "knesset.gov.il", "psakdin.co.il",
-                "huji.ac.il", "tau.ac.il",
-              ],
+              search_domain_filter: TRUSTED_LEGAL_DOMAINS,
               messages: attempt.messages,
             }),
           }, attempt.timeoutMs);
