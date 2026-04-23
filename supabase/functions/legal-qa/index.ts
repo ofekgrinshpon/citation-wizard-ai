@@ -1243,6 +1243,60 @@ ${(verify.fullText as string).slice(0, 50000)}
     // Aliased to the hoisted array so the outer catch can flush it on error.
     const stageRuns: StageRun[] = __checkpointStageRuns;
 
+    // ─── Retrieval funnel telemetry ──────────────────────────────────
+    // Per-source-type counters captured at each pipeline checkpoint.
+    // Stashed on qa_logs.metadata.retrieval_funnel for diagnostics.
+    // INSTRUMENTATION ONLY — does not change retrieval/filter behavior.
+    type FunnelStage = {
+      caselaw: number;
+      knesset_research: number;
+      journal_article: number;
+      israeli_law: number;
+      other: number;
+      total: number;
+    };
+    const newFunnelStage = (): FunnelStage => ({
+      caselaw: 0, knesset_research: 0, journal_article: 0,
+      israeli_law: 0, other: 0, total: 0,
+    });
+    const tallyByType = (matches: Array<{ source_type?: string }>): FunnelStage => {
+      const s = newFunnelStage();
+      for (const m of matches) {
+        const t = (m.source_type || "").toLowerCase();
+        if (t === "caselaw" || t === "case_law" || t === "ruling") s.caselaw++;
+        else if (t === "knesset_research") s.knesset_research++;
+        else if (t === "journal_article") s.journal_article++;
+        else if (t === "israeli_law") s.israeli_law++;
+        else s.other++;
+        s.total++;
+      }
+      return s;
+    };
+    const retrievalFunnel: {
+      raw_keyword: FunnelStage;
+      raw_vector: FunnelStage;
+      raw_caselaw_filtered: FunnelStage;
+      after_dedup_quota: FunnelStage;
+      after_rerank: FunnelStage;
+      after_broken_title_filter: FunnelStage;
+      source_cards_local: FunnelStage;
+      drop_reasons: Record<string, number>;
+      rerank_dropped_docs: Array<{ title: string; source_type: string; score: number; reason: string }>;
+    } = {
+      raw_keyword: newFunnelStage(),
+      raw_vector: newFunnelStage(),
+      raw_caselaw_filtered: newFunnelStage(),
+      after_dedup_quota: newFunnelStage(),
+      after_rerank: newFunnelStage(),
+      after_broken_title_filter: newFunnelStage(),
+      source_cards_local: newFunnelStage(),
+      drop_reasons: {},
+      rerank_dropped_docs: [],
+    };
+    const bumpDrop = (reason: string, n = 1) => {
+      retrievalFunnel.drop_reasons[reason] = (retrievalFunnel.drop_reasons[reason] || 0) + n;
+    };
+
     // ─── Early checkpoint persistence ────────────────────────────────
     // Pre-allocate a qa_logs row id so we can write a CHECKPOINT row right
     // after each pipeline stage. If the client disconnects (HTTP "connection
