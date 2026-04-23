@@ -3039,15 +3039,16 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             continue;
           }
 
-          console.log(`Kept footnote #${aiFn.num} without URL (no card match): ${aiFn.text.slice(0, 80)}...`);
-          footnotes.push({
-            number: fnNum,
-            citation: aiFn.text,
-            source_type: "unverified",
-            source: "unverified",
-          });
-          oldIdToNewNumber.set(aiFn.num, fnNum);
-          fnNum++;
+          // Milestone A: no card match AND no fuzzy URL → drop the footnote
+          // entirely. Previously we kept it with `source: "unverified"`,
+          // which let the drafter game the floor by inventing bibliographic
+          // entries that didn't tie back to the catalog. Anchoring is now
+          // enforced at parse time, not in the prompt.
+          droppedUnanchoredCount++;
+          if (droppedUnanchoredPreviews.length < 5) {
+            droppedUnanchoredPreviews.push(aiFn.text.slice(0, 120));
+          }
+          console.log(`Dropped unanchored AI footnote #${aiFn.num} (no card match, no fuzzy URL): ${aiFn.text.slice(0, 100)}...`);
           continue;
         }
         footnotes.push({
