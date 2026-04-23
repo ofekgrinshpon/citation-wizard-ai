@@ -3,11 +3,15 @@
 
 export const LEGAL_RESEARCH_MODELS = {
   decomposition: {
-    // Tier-2 tuning (pilot v3): gpt-5-nano showed ~50% parse_error rate on this
-    // schema and the nano→mini retry didn't help end-to-end. Promote mini to
-    // primary; reliability matters more than the latency saving.
-    primary: "openai/gpt-5-mini",
-    fallback: "google/gemini-2.5-flash",
+    // Pilot v7 (Fast-mode feasibility): pinned to Gemini 2.5 Flash, mirroring
+    // the v6 claim_map migration. gpt-5-mini consistently took ~25s on this
+    // tool-call schema; Flash returns the same JSON shape in ~6-10s, freeing
+    // ~15s of the edge-function budget. Decomposition is structured planning
+    // on a small JSON schema — well within Flash's strengths. Revert is a
+    // one-line flip back to "openai/gpt-5-mini" if parse_error rate >10%.
+    primary: "google/gemini-2.5-flash",
+    fallback: "openai/gpt-5-mini",
+    forceProvider: "gemini",
   },
   claimMap: {
     // Pilot v6 latency pass: pinned to Gemini 2.5 Flash regardless of provider.
@@ -42,16 +46,27 @@ export const LEGAL_RESEARCH_MODELS = {
 export type LegalResearchStage = keyof typeof LEGAL_RESEARCH_MODELS;
 
 /**
- * Returns the active model name for a stage, choosing primary if OpenAI is
- * available and fallback otherwise. Used for diagnostic logging.
+ * Returns the active model name for a stage. Honors `forceProvider` (Gemini-only
+ * stages like decomposition v7 and claim_map v6), then prefers OpenAI when its
+ * key is available and the primary is OpenAI-routed; otherwise picks Gemini.
+ * Used for diagnostic logging only.
  */
 export function getActiveModel(
   stage: LegalResearchStage,
   hasOpenAI: boolean,
 ): { provider: "openai" | "gemini"; model: string } {
-  const cfg = LEGAL_RESEARCH_MODELS[stage];
-  if (hasOpenAI && cfg.primary.startsWith("openai/")) {
-    return { provider: "openai", model: cfg.primary };
-  }
-  return { provider: "gemini", model: cfg.fallback };
+  const cfg = LEGAL_RESEARCH_MODELS[stage] as { primary: string; fallback: string; forceProvider?: "openai" | "gemini" };
+  const forced = cfg.forceProvider;
+  const pickGemini = () => {
+    const m = cfg.primary.startsWith("google/") ? cfg.primary : cfg.fallback;
+    return { provider: "gemini" as const, model: m };
+  };
+  const pickOpenAI = () => {
+    const m = cfg.primary.startsWith("openai/") ? cfg.primary.replace(/^openai\//, "") : cfg.fallback.replace(/^openai\//, "");
+    return { provider: "openai" as const, model: m };
+  };
+  if (forced === "gemini") return pickGemini();
+  if (forced === "openai" && hasOpenAI) return pickOpenAI();
+  if (hasOpenAI && cfg.primary.startsWith("openai/")) return pickOpenAI();
+  return pickGemini();
 }

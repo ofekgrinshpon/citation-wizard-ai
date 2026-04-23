@@ -135,9 +135,10 @@ export async function decomposeAndPlan(
     DECOMP_SYSTEM_PROMPT,
     `שאלת המחקר:\n${question}`,
     DECOMP_PLAN_TOOL,
-    // Tier-2 (pilot v4): primary is now gpt-5-mini (see legalResearchModels.ts).
-    // 45s timeout absorbs the long tail; nano→mini retry removed since mini IS primary.
-    { stage: "decomposition", timeoutMs: 45000, reasoningEffort: "minimal" },
+    // Pilot v7 (Fast-mode): pin decomposition to Gemini 2.5 Flash. gpt-5-mini
+    // took ~25s on this schema; Flash returns the same JSON tool-call in ~6-10s.
+    // 30s timeout is ample for Flash; nano→mini retry no longer relevant.
+    { stage: "decomposition", timeoutMs: 30000, reasoningEffort: "minimal", forceProvider: "gemini" },
   );
 
   if (!data) return { data: null, run };

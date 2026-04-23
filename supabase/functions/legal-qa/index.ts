@@ -26,6 +26,7 @@ import { assembleSourcePack, summarizeSourcePack, type InternalSourcePackEntry }
 import { mapToClaimMapV2, summarizeClaimMapV2 } from "./legalClaimMap.ts";
 import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
 import { runShadowAbComparison, buildLegacyShadowPrompt } from "./shadowAbLogger.ts";
+import { runAnchorPass, applyAnchorPatches, type AnchorPassSourcePackItem, type AnchorPassClaim } from "./anchorPass.ts";
 
 // Single source of truth for the research-mode gate. The frontend currently
 // sends `taskMode: "research"`; if that ever changes, update this constant.
@@ -2231,6 +2232,7 @@ ${academicChapterContext}
 - **אסור לייצר הערת שוליים אם אינך יכול לעגן אותה במקור אמיתי**: URL מ-[חיצוני], רשומה מ-[מאומת], או רשומה מאומתת אחרת. אם אין אף אחד מאלה — **אל תכתוב את ההערה כלל** ואל תוסיף סימן הפניה [N] בגוף.
 - **הסמן "[חסר: ...]" אינו "כיסוי"** להיעדר מקור. הוא מותר אך ורק כשיש בידך מקור אמיתי וניתן לקישור, וחסר ממנו פרט בודד (עמוד, שנה, כרך). אסור לבנות הערה שכולה שלד של "[חסר: ...]" סביב כותרת בלי anchor אמיתי.
 - הערה ללא anchor שמכילה ולו סמן "[חסר: ...]" אחד **תיפסל אוטומטית על ידי המערכת** ותימחק יחד עם סימן ההפניה בגוף. אל תייצר אותה מלכתחילה — זה גורם לתשובה חסרה ומבוזבזת.
+- **כלל ברזל לעיגון (Pilot v7)**: כל הערת שוליים שאתה כותב חייבת לכלול אחד משניים: (א) URL אמיתי שמופיע במפורש ברשימת המקורות הזמינים למעלה, או (ב) הסמן "(לא נמצאו פרטי פרסום)" בסוף ההערה כשהמקור הוא חוק/פקודה/תקנה שהוזכרה בגוף ואין לך לגביו פרטי פרסום מלאים. הערה ללא URL וללא הסמן הזה — אסור לכתוב כלל.
 - דוגמאות אסורות (אל תייצר):
   • פס"ד שפירא [חסר: מספר תיק] שפירא נ' מדינת ישראל [חסר: פרטי פרסום] — אין URL, אין רשומה. נופל.
   • [חסר: שם מחבר] "כותרת המאמר" [חסר: כתב עת] [חסר: כרך] ([חסר: שנה]) — שלד ריק. נופל.
@@ -2666,6 +2668,59 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           });
         }
         return new Response(JSON.stringify({ error: "תם הזמן לעיבוד השאלה. נסו שוב או קצרו את השאלה." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
+    }
+
+
+    // ========= Step 4b: Anchor pass (Pilot v7, Fast-mode) =========
+    // Post-draft Gemini Flash call: scan the drafted body for substantive
+    // sentences that lack a [N] marker but have a real supporting source in
+    // the source pack, and inject `[N]` + a numbered footnote line. Runs
+    // ONLY on the structured drafter path (claim map present). 15s timeout;
+    // empty/timeout → ship draft as-is.
+    let anchorPassApplied = 0;
+    if (useStructuredDrafterPath && answerText.length > 200 && sourcePack.length >= 2) {
+      const tAnchorStart = Date.now();
+      const anchorSourcePack: AnchorPassSourcePackItem[] = sourceCards.map((sc) => ({
+        id: sc.id,
+        citation: sc.citation,
+        source_type: sc.source_type,
+        url: sc.url,
+        anchor_present: Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document",
+      }));
+      const anchorClaims: AnchorPassClaim[] = claimMapV2
+        ? claimMapV2.claims
+            .filter((c) => c.statementMode !== "omit")
+            .map((c) => ({
+              claim: c.claimText,
+              sourceIds: c.sourceIds.map((sid) => parseInt(sid.replace(/^src-/, ""), 10)).filter((n) => !isNaN(n)),
+              authorityLevel: c.authorityLevel,
+            }))
+        : claimMap
+        ? claimMap
+            .filter((c) => c.allowed_to_state)
+            .map((c) => ({ claim: c.claim, sourceIds: c.source_ids, authorityLevel: c.authority_level }))
+        : [];
+
+      try {
+        const anchorRes = await runAnchorPass({
+          body: answerText,
+          sourcePack: anchorSourcePack,
+          claims: anchorClaims,
+        });
+        stageRuns.push(anchorRes.run);
+        if (anchorRes.patches.length > 0) {
+          const applyRes = applyAnchorPatches(answerText, anchorRes.patches, anchorSourcePack);
+          if (applyRes.appliedCount > 0) {
+            answerText = applyRes.text;
+            anchorPassApplied = applyRes.appliedCount;
+          }
+        }
+        console.log(
+          `[anchor-pass] proposed=${anchorRes.patches.length} applied=${anchorPassApplied} (${Date.now() - tAnchorStart}ms; status=${anchorRes.run.status})`,
+        );
+      } catch (err) {
+        console.error("[anchor-pass] unexpected error — shipping draft as-is:", (err as Error).message);
       }
     }
 
