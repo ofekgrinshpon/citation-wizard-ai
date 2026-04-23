@@ -43,6 +43,8 @@ const args = Object.fromEntries(
 const RUN_ID = args["run-id"] || randomUUID();
 const ONLY_QUESTIONS = args["only"] ? String(args["only"]).split(",").map(Number) : null;
 const SKIP_RUN = !!args["aggregate-only"];
+// "legacy", "structured", or "both" (default).
+const VARIANTS = args["variants"] ? String(args["variants"]).split(",") : ["legacy", "structured"];
 
 const PROGRESS_LOG = `${OUT_DIR}/progress.log`;
 const RESULTS_JSON = `${OUT_DIR}/results.json`;
