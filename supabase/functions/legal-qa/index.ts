@@ -3452,6 +3452,86 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       console.log(`Citation density check skipped: ${(e as Error).message}`);
     }
 
+    // ===== Coverage gap instrumentation (Pilot v7 Step 1, log-only) =====
+    // Measures how many source cards passed to the structured drafter were
+    // actually cited, and how many substantive legal claims in the body lack
+    // an adjacent footnote marker. This is the real "coverage gap" number
+    // (vs the proxy of footnote count) that decides whether to ship an
+    // anchor-pass stage. Heuristic + log-only; never blocks the response.
+    try {
+      const isStructured = taskMode === RESEARCH_MODE && useStructuredDrafterPath;
+      if (isStructured) {
+        const cardsIn = Array.isArray(sourceCards) ? sourceCards.length : 0;
+
+        // Cards actually cited: a card is "cited" if its url appears on any
+        // final footnote, OR if its title's first 3 distinctive tokens all
+        // appear in any footnote citation text. Conservative — undercounts
+        // rather than overcounts so the gap number is honest.
+        const stop = new Set(["של","את","עם","על","אל","ולא","לא","הוא","היא","זה","זו","אך","או","גם","כי","כמו","כל","אם","פס\"ד","פסק","דין","חוק","סעיף"]);
+        const tokensOf = (s: string): string[] =>
+          (s || "")
+            .replace(/["״׳'"().,:;\[\]{}]/g, " ")
+            .split(/\s+/)
+            .filter((t) => t.length >= 3 && !stop.has(t))
+            .slice(0, 3);
+        let cardsCited = 0;
+        const cardsTotal = Array.isArray(sourceCards) ? sourceCards.length : 0;
+        if (Array.isArray(sourceCards)) {
+          for (const card of sourceCards) {
+            const cardUrl: string | undefined = (card as { url?: string }).url;
+            const cardTitle: string = (card as { title?: string }).title || "";
+            const titleToks = tokensOf(cardTitle);
+            const hit = finalFootnotes.some((fn) => {
+              if (cardUrl && fn.url && fn.url === cardUrl) return true;
+              const fnText = fn.citation || "";
+              return titleToks.length >= 2 && titleToks.every((t) => fnText.includes(t));
+            });
+            if (hit) cardsCited++;
+          }
+        }
+
+        // Substantive claims in the body that lack an adjacent footnote.
+        // A "substantive claim" is a sentence containing one of the legal
+        // anchor terms (חוק / סעיף / פס"ד / פסק דין / קבע / נפסק / הלכה / קובע / מורה).
+        // "Adjacent footnote" = a digit (which has already been normalized
+        // from superscript to e.g. ¹/[1]) within ~30 chars of the term, or
+        // a "[\d+]" / superscript anywhere in the sentence.
+        const sentences = answer
+          .split(/(?<=[.!?])\s+|\n+/)
+          .map((s) => s.trim())
+          .filter((s) => s.length >= 20);
+        const claimRegex = /(חוק\s|סעיף\s|פס["״]ד|פסק\s+דין|נפסק|קבע\s|קובע\s|מורה\s|הלכה\s)/;
+        const noteRegex = /[¹²³⁴⁵⁶⁷⁸⁹⁰]|\[\d{1,3}\]/;
+        let claimsTotal = 0;
+        let claimsAnchored = 0;
+        const unanchoredSamples: string[] = [];
+        for (const sent of sentences) {
+          if (!claimRegex.test(sent)) continue;
+          claimsTotal++;
+          if (noteRegex.test(sent)) {
+            claimsAnchored++;
+          } else if (unanchoredSamples.length < 5) {
+            unanchoredSamples.push(sent.slice(0, 120));
+          }
+        }
+        const coveragePct = claimsTotal > 0 ? Math.round((claimsAnchored / claimsTotal) * 100) : 0;
+        const cardsPct = cardsTotal > 0 ? Math.round((cardsCited / cardsTotal) * 100) : 0;
+
+        console.log(
+          `[coverage-gap] cards_in=${cardsTotal} cards_cited=${cardsCited} (${cardsPct}%) | ` +
+          `claims_total=${claimsTotal} claims_anchored=${claimsAnchored} (${coveragePct}%) | ` +
+          `footnotes=${finalFootnotes.length}`,
+        );
+        if (unanchoredSamples.length > 0) {
+          for (const s of unanchoredSamples) {
+            console.log(`[coverage-gap] unanchored: "${s}"`);
+          }
+        }
+      }
+    } catch (e) {
+      console.log(`Coverage gap instrumentation skipped: ${(e as Error).message}`);
+    }
+
     // ===== Post-response grounding sanity check (log-only, non-blocking) =====
     // Detect substantive statutory claims (סעיף X ל-Y ... קובע/מורה/מגדיר/אוסר/מחייב/מתיר)
     // and verify the section number + law name hint appear in at least one local chunk.
