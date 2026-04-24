@@ -5152,7 +5152,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             }
 
             // 5. Validate + insert (operates on answerBody + footnotes)
-            const drops: Record<string, number> = {};
+            // Seed drops with pre-validation format drops (Fix E structured path)
+            const drops: Record<string, number> = { ...formatDrops };
             let nextCardId = sourceCards.reduce((mx, c) => Math.max(mx, c.id), 0) + 1;
             let nextFnNumSC = footnotes.reduce((mx, f) => Math.max(mx, f.number), 0) + 1;
 
