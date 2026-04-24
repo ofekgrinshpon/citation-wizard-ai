@@ -4961,29 +4961,84 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     if (enableDeepPipeline) {
       emitStage("statute_completion", "running");
       const tSC = Date.now();
-      try {
-        // 1. Scan body for Hebrew statute mentions.
-        // Tightened regex: requires ≥2 Hebrew tokens after the keyword,
-        // disallows `(` immediately after, and rejects descriptor stop-words
-        // (יעילה, מתאים, הולם, …) that produced false positives like
-        // "חוק יעילה" (from "חקיקה יעילה") and "חוק (משטרה" (paren capture).
-        const STATUTE_RE = /(חוק[- ]יסוד\s*:\s*[^,.\n[\]()]{4,80}|חוק\s+[א-ת][^,.\n[\]()]{3,80}|פקודת\s+[א-ת][^,.\n[\]()]{3,80}|תקנות\s+[א-ת][^,.\n[\]()]{3,80})/g;
-        const STATUTE_STOPWORDS = /^(יעיל[הת]?|מתאים[הת]?|הולם[הת]?|מספק[הת]?|כללי[הת]?|ספציפי[הת]?|נוסף[הת]?|אחר[הת]?|זה|זו|חדש[הת]?|חדשים|ישן[הת]?)\b/;
-        const rawMatches: Array<{ name: string; index: number }> = [];
-        let scanM: RegExpExecArray | null;
-        while ((scanM = STATUTE_RE.exec(answerBody)) !== null) {
-          let name = scanM[1].replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
-          // Strip trailing partial paren capture if any leaked
-          name = name.replace(/\s*\([^)]*$/, "").trim();
-          // Reject if the word right after "חוק "/"פקודת "/"תקנות " is a generic descriptor
-          const afterKeyword = name.replace(/^(חוק[- ]יסוד\s*:\s*|חוק\s+|פקודת\s+|תקנות\s+)/, "");
-          if (STATUTE_STOPWORDS.test(afterKeyword)) continue;
-          // Require at least 2 word-tokens of substance
-          const tokens = afterKeyword.split(/\s+/).filter(Boolean);
-          if (tokens.length < 2) continue;
-          if (/^חוק\s+(זה|אחר|ה[^\s]+)\s*$/.test(name)) continue;
-          rawMatches.push({ name, index: scanM.index });
-        }
+       try {
+         // 1. Scan body for Hebrew statute mentions — STRUCTURAL WHITELIST.
+         //
+         // Replaces the previous keyword+blacklist approach (which leaked
+         // drafter prose like "חוק קובע", "חוק זה מסדיר", "תקנות אלו").
+         // We now match only structural shapes that real Israeli statute
+         // names take:
+         //
+         //   DEFINITE_HEAD     ה[א-ת]{2,}                e.g. "העונשין"
+         //   CONSTRUCT_HEAD    [א-ת]{2,}\s+ה[א-ת]{2,}   e.g. "סדר הדין"
+         //   PAREN_QUAL        ( ... )                   e.g. "(חלק כללי)"
+         //   YEAR_CLAUSE       , התשכ"ג-1963             Hebrew + Gregorian
+         //
+         // Pattern (per keyword): KEYWORD + (CONSTRUCT_HEAD | DEFINITE_HEAD)
+         // followed by an optional PAREN_QUAL and an optional YEAR_CLAUSE.
+         // No keyword-anchor verbs/adjectives can match because they don't
+         // fit either head shape.
+         //
+         // Hebrew letter class includes geresh/gershayim for cases like
+         // "פירעון חוב" → none of the heads contain quotes, so plain [א-ת]
+         // is sufficient for the head; the year clause handles ״/".
+         const HEB = "[\\u05D0-\\u05EA]";
+         const DEFINITE_HEAD = `ה${HEB}{2,}`;
+         const CONSTRUCT_HEAD = `${HEB}{2,}\\s+ה${HEB}{2,}`;
+         const HEAD = `(?:${CONSTRUCT_HEAD}|${DEFINITE_HEAD})`;
+         const PAREN_QUAL = `(?:\\s*\\([^)]{2,40}\\))?`;
+         // Hebrew year: הת?ש followed by 1-3 Hebrew letters, with optional
+         // gershayim, then "-" or "–" and a 4-digit Gregorian year.
+         const YEAR_CLAUSE = `(?:\\s*,?\\s*הת?ש${HEB}{0,3}["״׳']?${HEB}?["״׳']?\\s*[-–]\\s*\\d{4})?`;
+         // Continuation tail: a name may extend with " ל<head>" / " של <head>"
+         // to capture e.g. "חוק סדר הדין הפלילי [נוסח משולב]" — we keep it
+         // simple and let the head + paren + year do the work.
+         const STATUTE_RE = new RegExp(
+           `(?:חוק[- ]יסוד\\s*:\\s*${HEB}[^,.\\n\\[\\]()]{2,80}` +
+           `|חוק\\s+${HEAD}(?:\\s+${HEAD})?${PAREN_QUAL}${YEAR_CLAUSE}` +
+           `|פקודת\\s+${HEAD}(?:\\s+${HEAD})?${PAREN_QUAL}${YEAR_CLAUSE}` +
+           `|תקנות\\s+${HEAD}(?:\\s+${HEAD})?${PAREN_QUAL}${YEAR_CLAUSE})`,
+           "g",
+         );
+         // Anchors that legitimize a short statute name — Rule 37 publication
+         // codes or a pinpoint reference within ±120 chars of the mention.
+         const RULE37_ANCHOR = /ס["״]ח|ק["״]ת|נ["״]ח|ע["״]ר|פ["״]ד|סעיף\s+\d|ס['׳]\s*\d|תק['׳]\s*\d/;
+         // Reject prepositional-prefix dangling (e.g. "חוק ל" with no year).
+         const PREP_TAIL = /\s[לבמכ]$/;
+         statuteCompletionTelemetry.regex_matches_total = 0;
+         statuteCompletionTelemetry.dropped_no_anchor_short = 0;
+         statuteCompletionTelemetry.dropped_prep_tail = 0;
+         statuteCompletionTelemetry.kept_for_completion = 0;
+         const rawMatches: Array<{ name: string; index: number }> = [];
+         let scanM: RegExpExecArray | null;
+         while ((scanM = STATUTE_RE.exec(answerBody)) !== null) {
+           statuteCompletionTelemetry.regex_matches_total++;
+           let name = scanM[1].replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
+           // Strip trailing partial paren capture if any leaked
+           name = name.replace(/\s*\([^)]*$/, "").trim();
+           // Reject prepositional dangle without year
+           if (PREP_TAIL.test(name) && !/\d{4}/.test(name)) {
+             statuteCompletionTelemetry.dropped_prep_tail++;
+             continue;
+           }
+           const afterKeyword = name.replace(/^(חוק[- ]יסוד\s*:\s*|חוק\s+|פקודת\s+|תקנות\s+)/, "");
+           const tokens = afterKeyword.split(/\s+/).filter(Boolean);
+           const hasYear = /\d{4}/.test(name);
+           const hasParen = /\([^)]+\)/.test(name);
+           // Short-match post-filter: ≤2 tokens AND no year AND no paren →
+           // require a Rule-37 anchor in the surrounding ±120 chars or drop.
+           if (tokens.length <= 2 && !hasYear && !hasParen) {
+             const wStart = Math.max(0, scanM.index - 120);
+             const wEnd = Math.min(answerBody.length, scanM.index + name.length + 120);
+             const window = answerBody.slice(wStart, wEnd);
+             if (!RULE37_ANCHOR.test(window)) {
+               statuteCompletionTelemetry.dropped_no_anchor_short++;
+               continue;
+             }
+           }
+           statuteCompletionTelemetry.kept_for_completion++;
+           rawMatches.push({ name, index: scanM.index });
+         }
         // De-dup by normalized name, keep first occurrence
         const seenNorm = new Set<string>();
         const uniqueMentions: Array<{ name: string; index: number }> = [];
