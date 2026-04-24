@@ -5027,12 +5027,37 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           if (!PERPLEXITY_API_KEY) {
             statuteCompletionTelemetry.status = "no_perplexity_key";
           } else {
+            // ─── Fix E (revised): structured-fields request ───
+            // Ports the proven pattern from supabase/functions/citation-chat
+            // (the user-facing "אזכור אחיד" flow). The model returns DISCRETE
+            // bibliographic fields and we assemble the citation string locally
+            // via formatStatuteCitation(). System prompt is ported verbatim
+            // from citation-chat lines 1131-1142, only adapted for plurals.
+            // citation-chat itself is NOT modified.
             const userPrompt = [
-              `החזר ציטוט ביבליוגרפי מלא עבור החוקים/הפקודות/התקנות הבאים:`,
+              `מצא את פרטי הפרסום הרשמי של החוקים/הפקודות/התקנות הבאים. החזר עבור כל פריט את כל השדות הביבליוגרפיים בנפרד. JSON תקני בלבד.`,
               ...targets.map((t, i) => `${i + 1}. ${t.name}`),
-              "",
-              `עבור כל פריט החזר type="statute" עם השדות citation/year_hebrew/year_gregorian/title/url. אם חסר שדה — אל תכלול. רק JSON תקני.`,
             ].join("\n");
+
+            // System prompt — ported VERBATIM from citation-chat/index.ts:1131-1142
+            // (booklet-vs-page disambiguation block + worked examples), with the
+            // singular "החוק" widened to plural and `kind` field added so the
+            // local formatter can route between Rule 2 / Rule 4 / Rule 6.
+            const systemPrompt = `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
+חפש את פרטי הפרסום הרשמי של כל פריט. לחקיקה ראשית חפש בספר החוקים (ס"ח). לחוק-יסוד חפש בספר החוקים (ס"ח). לחקיקת משנה (תקנות, צווים) חפש בקובץ התקנות (ק"ת). לפקודות מנדטוריות בנוסח חדש חפש בנוסח חדש (נ"ח).
+הפורמט:
+{"candidates":[{"found":true/false,"kind":"primary_legislation|basic_law|secondary_legislation","lawName":"שם החוק המלא","hebrewYear":"שנה עברית","gregorianYear":1965,"collection":"ס\\"ח","page":63,"url":"קישור רשמי","isNewVersion":false,"isCombinedVersion":false}]}
+collection חייב להיות אחד מ: ס"ח, ק"ת, נ"ח, ע"ר
+kind=basic_law רק עבור חוקי-יסוד; lawName יוחזר ללא הקידומת "חוק-יסוד:".
+
+חשוב מאוד: page הוא מספר העמוד הראשון שבו מופיע החיקוק בקובץ החקיקה, ולא מספר החוברת בקובץ החקיקה.
+דוגמה: חוק הירושה, התשכ"ה–1965 פורסם בס"ח חוברת 446, עמוד 63. הערך הנכון של page הוא 63 (העמוד), ולא 446 (החוברת).
+דוגמה נוספת: חוק העונשין, התשל"ז-1977 פורסם בס"ח חוברת 864, עמוד 226. הערך הנכון של page הוא 226.
+
+isNewVersion=true אם החוק הוא בנוסח חדש (נו"ח).
+isCombinedVersion=true אם החוק הוא בנוסח משולב.
+אם פריט לא נמצא או חסרים פרטי פרסום מאומתים — החזר found=false עבורו (אל תמציא).`;
+
             const schema = {
               type: "object",
               properties: {
@@ -5041,14 +5066,18 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
                   items: {
                     type: "object",
                     properties: {
-                      type: { type: "string", enum: ["statute"] },
-                      title: { type: "string" },
-                      citation: { type: "string" },
-                      year_hebrew: { type: "string" },
-                      year_gregorian: { type: "string" },
+                      found: { type: "boolean" },
+                      kind: { type: "string", enum: ["primary_legislation", "basic_law", "secondary_legislation"] },
+                      lawName: { type: "string" },
+                      hebrewYear: { type: "string" },
+                      gregorianYear: { type: "number" },
+                      collection: { type: "string", enum: ["ס\"ח", "ק\"ת", "נ\"ח", "ע\"ר"] },
+                      page: { type: "number" },
                       url: { type: "string" },
+                      isNewVersion: { type: "boolean" },
+                      isCombinedVersion: { type: "boolean" },
                     },
-                    required: ["type", "title", "citation", "url"],
+                    required: ["found", "kind", "lawName", "collection", "url"],
                   },
                 },
               },
@@ -5056,7 +5085,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             };
             const ctrl = new AbortController();
             const timeoutId = setTimeout(() => ctrl.abort(), 15_000);
-            let raw: PerplexityCompletionCandidate[] = [];
+            let rawFields: StatuteFields[] = [];
             try {
               const res = await fetch("https://api.perplexity.ai/chat/completions", {
                 method: "POST",
@@ -5065,9 +5094,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
                 body: JSON.stringify({
                   model: "sonar-pro",
                   search_domain_filter: TRUSTED_LEGAL_DOMAINS,
-                  response_format: { type: "json_schema", json_schema: { name: "statute_completion", schema } },
+                  response_format: { type: "json_schema", json_schema: { name: "statute_completion_structured", schema } },
                   messages: [
-                    { role: "system", content: "You are a precise Israeli-law research assistant. Return ONLY statute citations you can cite with FULL bibliographic detail. Omit any entry missing a required field." },
+                    { role: "system", content: systemPrompt },
                     { role: "user", content: userPrompt },
                   ],
                 }),
@@ -5078,7 +5107,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
                 const content = data.choices?.[0]?.message?.content || "";
                 try {
                   const parsed = JSON.parse(content);
-                  if (Array.isArray(parsed?.candidates)) raw = parsed.candidates.slice(0, 3);
+                  if (Array.isArray(parsed?.candidates)) rawFields = parsed.candidates.slice(0, 3);
                 } catch (parseErr) {
                   console.warn("[statute-completion] JSON parse failed:", parseErr);
                   statuteCompletionTelemetry.status = "parse_failed";
@@ -5092,6 +5121,34 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
               const isAbort = err instanceof DOMException && err.name === "AbortError";
               statuteCompletionTelemetry.status = isAbort ? "timeout" : "request_failed";
               console.warn("[statute-completion] fetch failed:", err);
+            }
+
+            // Transform structured fields → synthetic PerplexityCompletionCandidate
+            // so the existing validatePerplexityCandidate guards (URL allowlist,
+            // Fix C shape backstop, engine resolver) all still apply downstream.
+            const raw: PerplexityCompletionCandidate[] = [];
+            const formatDrops: Record<string, number> = {};
+            for (const f of rawFields) {
+              if (f.found === false) {
+                formatDrops.not_found = (formatDrops.not_found || 0) + 1;
+                continue;
+              }
+              const formatted = formatStatuteCitation(f);
+              if (!formatted) {
+                formatDrops.missing_required = (formatDrops.missing_required || 0) + 1;
+                continue;
+              }
+              const kind = f.kind || "primary_legislation";
+              statuteCompletionTelemetry.format_kind_counts![kind] =
+                (statuteCompletionTelemetry.format_kind_counts![kind] || 0) + 1;
+              raw.push({
+                type: "statute",
+                title: (f.lawName || "").trim(),
+                citation: formatted,
+                year_hebrew: f.hebrewYear,
+                year_gregorian: f.gregorianYear !== undefined ? String(f.gregorianYear) : undefined,
+                url: f.url || "",
+              });
             }
 
             // 5. Validate + insert (operates on answerBody + footnotes)
