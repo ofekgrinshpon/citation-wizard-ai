@@ -4950,6 +4950,11 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       // Fix E (revised): structured-fields path indicator + per-kind tally
       structured_path?: boolean;
       format_kind_counts?: Record<string, number>;
+      // Whitelist-regex post-filter telemetry (statute-name detection)
+      regex_matches_total?: number;
+      dropped_no_anchor_short?: number;
+      dropped_prep_tail?: number;
+      kept_for_completion?: number;
     } = {
       triggered: false,
       named_statutes: [],
