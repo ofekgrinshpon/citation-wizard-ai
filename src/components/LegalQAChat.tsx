@@ -846,8 +846,117 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     abortControllerRef.current?.abort();
     abortControllerRef.current = null;
     setLoading(false);
+    setStageEvents([]);
+    setPostProcessingLabel(null);
+    setStreamingDraft("");
     toast.info("העיבוד הופסק");
   };
+
+  /**
+   * Consume an SSE response stream from `legal-qa`.
+   * The wrapper emits four named event types:
+   *   - `stage`           → { stage, status: "running"|"complete", label, detail? }
+   *   - `draft_delta`     → { text }
+   *   - `post_processing` → { label }
+   *   - `final`           → { status, body }   (the canonical answer)
+   * We also accept the legacy unnamed `data: <wrapped>` event for back-compat.
+   * Returns { data, status } with the final payload (as the JSON-fetch path does).
+   */
+  const consumeSseStream = async (
+    body: ReadableStream<Uint8Array>,
+    handlers: {
+      onStage: (e: StageEvent) => void;
+      onDraftDelta: (chunk: string) => void;
+      onPostProcessing: (label: string) => void;
+    },
+  ): Promise<{ data: any; status: number }> => {
+    const reader = body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let finalPayload: any = null;
+    let finalStatus = 200;
+    let done = false;
+
+    // Per SSE spec, events are separated by a blank line. We accumulate
+    // event-name + data lines until the blank, then dispatch.
+    let currentEvent = "message";
+    let currentData = "";
+
+    const dispatch = () => {
+      if (!currentData) {
+        currentEvent = "message";
+        return;
+      }
+      const raw = currentData;
+      currentData = "";
+      const evt = currentEvent;
+      currentEvent = "message";
+      if (raw === "[DONE]") { done = true; return; }
+      let parsed: any;
+      try { parsed = JSON.parse(raw); } catch { return; }
+      switch (evt) {
+        case "stage":
+          handlers.onStage({
+            stage: parsed.stage,
+            status: parsed.status,
+            label: parsed.label ?? parsed.stage,
+            detail: parsed.detail,
+          });
+          break;
+        case "draft_delta":
+          if (typeof parsed.text === "string") handlers.onDraftDelta(parsed.text);
+          break;
+        case "post_processing":
+          if (typeof parsed.label === "string") handlers.onPostProcessing(parsed.label);
+          break;
+        case "final":
+          finalStatus = parsed.status ?? 200;
+          finalPayload = parsed.body ?? parsed;
+          done = true;
+          break;
+        case "message":
+        default:
+          // Legacy unnamed event: { status, body }
+          if (parsed && typeof parsed === "object" && "body" in parsed) {
+            finalStatus = parsed.status ?? 200;
+            finalPayload = parsed.body;
+            done = true;
+          }
+          break;
+      }
+    };
+
+    try {
+      while (!done) {
+        const chunk = await reader.read();
+        if (chunk.done) break;
+        buffer += decoder.decode(chunk.value, { stream: true });
+        let nlIdx: number;
+        while ((nlIdx = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, nlIdx);
+          buffer = buffer.slice(nlIdx + 1);
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line === "") { dispatch(); continue; }      // blank line ends an event
+          if (line.startsWith(":")) continue;             // heartbeat / comment
+          if (line.startsWith("event: ")) { currentEvent = line.slice(7).trim(); continue; }
+          if (line.startsWith("data: ")) {
+            const piece = line.slice(6);
+            currentData = currentData ? currentData + "\n" + piece : piece;
+            continue;
+          }
+        }
+        if (done) break;
+      }
+    } finally {
+      try { reader.releaseLock(); } catch { /* noop */ }
+    }
+
+    return {
+      data: finalPayload ?? { error: "לא התקבלה תשובה. נסו שוב." },
+      status: finalStatus,
+    };
+  };
+
 
   // ─── Academic wizard helpers ─────────────────────────────────────
 
