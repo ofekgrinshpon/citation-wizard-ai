@@ -4118,10 +4118,54 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     let droppedUnanchoredCount = 0;
     const droppedUnanchoredPreviews: string[] = [];
 
+    // Footnote dedup telemetry — when the drafter cites the same source card
+    // (or, in fuzzy fallback, the same URL) under two different note numbers,
+    // we collapse them into one and rewrite the body's [N] markers via
+    // oldIdToNewNumber. "שם" / "לעיל ה"ש" short-form notes are NOT touched —
+    // those are intentional repeats handled elsewhere.
+    const cardIdToNewNumber = new Map<number, number>();        // matched card → first emitted #
+    const fuzzyUrlToNewNumber = new Map<string, number>();      // fuzzy URL → first emitted #
+    let footnoteDedupMergedCount = 0;
+    let footnoteDedupPinpointConflict = 0;
+    const footnoteDedupSamples: Array<{ from: number; into: number; title: string; pinpoint_conflict: boolean }> = [];
+    // Crude pinpoint detector: "בעמ' 12", "בעמוד 12", "ס' 17(א)", "סעיף 17"
+    const PINPOINT_RE = /(בעמ['׳]?\s*\d+|בעמוד\s+\d+|ס['׳]\s*\d+[א-ת()()\d.\-–]*|סעיף\s+\d+[א-ת()()\d.\-–]*)/;
+    const extractPinpoint = (s: string): string | null => {
+      const m = s.match(PINPOINT_RE);
+      return m ? m[1].replace(/\s+/g, " ").trim() : null;
+    };
+
     if (aiFootnoteLines.length > 0) {
       // Use AI-formatted footnotes — match each to a source card for provenance
       for (const aiFn of aiFootnoteLines) {
         const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards, aiFn.num);
+        if (matchedCard) {
+          // Dedup against an already-emitted card
+          const existingNum = cardIdToNewNumber.get(matchedCard.id);
+          if (existingNum !== undefined) {
+            const existingFn = footnotes.find((f) => f.number === existingNum);
+            const newPin = extractPinpoint(aiFn.text);
+            const oldPin = existingFn ? extractPinpoint(existingFn.citation) : null;
+            const pinpointConflict = !!(newPin && oldPin && newPin !== oldPin);
+            if (pinpointConflict) footnoteDedupPinpointConflict++;
+            footnoteDedupMergedCount++;
+            if (footnoteDedupSamples.length < 3) {
+              footnoteDedupSamples.push({
+                from: aiFn.num,
+                into: existingNum,
+                title: matchedCard.citation.slice(0, 80),
+                pinpoint_conflict: pinpointConflict,
+              });
+            }
+            console.log(
+              `Deduped AI footnote #${aiFn.num} → reusing existing #${existingNum} ` +
+              `(same card "${matchedCard.citation.slice(0, 60)}...")` +
+              (pinpointConflict ? ` [pinpoint conflict: "${oldPin}" vs "${newPin}"]` : ""),
+            );
+            oldIdToNewNumber.set(aiFn.num, existingNum);
+            continue;
+          }
+        }
         if (!matchedCard) {
           // ── Fuzzy URL fallback: try to attach a URL via token overlap ──
           let fuzzyUrl: string | undefined;
