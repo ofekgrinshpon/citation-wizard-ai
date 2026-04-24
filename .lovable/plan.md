@@ -1,205 +1,129 @@
-# Rule 37 short-form generator — autonomous repeat-citation rewriter
+## Two real bugs, one root cause + one tuning issue
 
-## Problem recap
+We dug into `qa_logs` row `d4fdd0c1` to see what actually happened. Both bugs are real, but the diagnosis is different from what the user described.
 
-Today, when the drafter cites the same source twice in the body, the post-processor at lines 4218-4350 of `supabase/functions/legal-qa/index.ts` **collapses both into one footnote** via `cardIdToNewNumber` / `oldIdToNewNumber`. The body ends up with `[1]` appearing twice — same number reused — which violates Rule 1.10 ("each [N] appears once"), Rule 37.7 (every repeat needs its own short-form note), and breaks the academic norm that the bibliography of footnotes is a sequential record of authority invocations.
+### Bug A — Footnote 7 stays as a literal `[7]` in the body, never superscripted
 
-The fix flips the model: **every body citation gets its own footnote number.** The first invocation of a source emits a full citation; every subsequent invocation emits a new footnote whose text is the auto-generated Rule 37.7 short-form (`שם` / `[name], לעיל ה"ש N`) or the Rule 37.5 legislation form (`ס' X ל[חוק]`).
+The Rule 37 generator IS implemented and it ran (telemetry shows `total_repeats_expanded: 0`). The reason FN7 looks "assigned a late number even though it's the second citation" is **not** that Rule 37 missed a repeat — it's that the **statute-completion stage runs AFTER step 6 (superscript conversion) AND AFTER step 6b (appearance-order reordering)**.
 
-## The new pipeline stage
-
-A new function `applyRule37ShortForms()` runs **after** the footnote-build loop (immediately after line 4350) and **before** the appearance-order reordering at line 4406. It operates on three inputs already in scope: `answer` (body with `[N]` markers, pre-superscript), `footnotes` (the deduplicated list with full citations), and `oldIdToNewNumber` (the AI-id → emitted-id map).
+What actually happened in this run:
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│  Stage A — Build the source registry                        │
-│    For each footnote f in footnotes:                        │
-│      registry[f.number] = {                                  │
-│        cardId,            // back-resolved via cardIdToNewNumber inverse
-│        sourceType,        // f.source_type
-│        shortName,         // computed once (see Stage B)
-│        firstFnNumber: f.number,
-│      }                                                       │
-├─────────────────────────────────────────────────────────────┤
-│  Stage B — Compute the short-form name per Rule 37.2        │
-│    Legislation → strip year/ס"ח/[נוסח חדש] → "חוק העונשין" │
-│    Case law    → "עניין/פרשת [identifying party]"           │
-│    Books       → "[surname]" (or "[surname] [title-quoted]")│
-│    Articles    → "[surname] \"[title]\""                     │
-│    Foreign     → original-language name, "##X##" preserved  │
-│    Internet    → site name in bold + brief title            │
-├─────────────────────────────────────────────────────────────┤
-│  Stage C — Walk the body, find every [N], expand repeats    │
-│    bodyCitations = [{ pos, oldNum, pinpoint? }, ...]        │
-│      // pinpoint = optional "בעמ' X" / "ס' X" inside or     │
-│      // immediately following the [N] marker                │
-│    seenInOrder = []                                          │
-│    rewriteOps  = []                                          │
-│    for each citation in body order:                         │
-│      if first time seeing this firstFnNumber:               │
-│        seenInOrder.push(citation)                           │
-│        keep [N] as-is (full citation already in footnotes)  │
-│      else:                                                   │
-│        // It's a REPEAT — needs a brand-new footnote        │
-│        newFnNum = nextAvailableNumber()                     │
-│        shortText = buildShortForm(                          │
-│          registry[firstFnNumber],                           │
-│          previousCitation,                                  │
-│          citation.pinpoint,                                 │
-│        )                                                     │
-│        push new footnote { number: newFnNum, citation: shortText, ... }
-│        rewriteOps.push({ replace: oldMarker, with: [newFnNum] })
-├─────────────────────────────────────────────────────────────┤
-│  Stage D — Apply rewrites; reordering at line 4406 picks    │
-│  up the new numbering naturally (it's by appearance order). │
-└─────────────────────────────────────────────────────────────┘
+1. Drafter writes body with [1]…[2] markers (only 2 distinct numbers).
+2. Drafter says "חוק יסוד: כבוד האדם וחירותו" inline with NO marker (naked mention).
+3. Step 5d (Rule 37 generator) — scans for repeats — none found (only [1] and [2]).
+4. Step 6 — converts [1]→¹, [2]→² in body.
+5. Step 6b — appearance-order reorder, but there are only 2 footnotes used.
+6. Statute-completion (Stage E.5) — detects naked "חוק יסוד…" mention,
+   fetches Perplexity citation, appends as footnote #7, and inserts the
+   string "[7]" right after the mention in the body.
+   ↑ At this point the body is past step 6, so "[7]" never becomes "⁷".
+   ↑ Reordering already ran, so the new footnote doesn't get renumbered to
+     "appearance position 3" — it stays at #7 (or whatever number the loop
+     assigned).
 ```
 
-## Rule 37.7 / 37.5 short-form generation logic
+Net effect for the user: a literal `[7]` appears mid-paragraph instead of `³`, AND that footnote sits at #7 in the bibliography instead of #3.
 
-`buildShortForm(registry, previousCitation, pinpoint)` returns one of four shapes:
+**The fix is structural, not Rule-37-related.** Statute completion must produce body markers that go through the same superscript+reorder pipeline as drafter-emitted markers.
+
+### Bug B — `תקנות דמי מחלה` (FN3) is irrelevant to סחיטת דמי חסות
+
+This is a rerank-tuning issue. The regulation matched on the surface token `דמי` shared with the query's `דמי חסות`. The current rerank gate (`score >= 3` for non-caselaw) is forgiving and the rerank prompt's "domain mismatch" example only calls out caselaw mismatches, not legislation. The 5–6 band ("רלוונטי לענף הדין") is also too generous: a sick-pay regulation is technically "labor law" while the question is criminal/constitutional — different ענף דין, but Gemini-flash-lite gave it a 3 anyway.
+
+There's also a secondary issue surfaced by the same row's telemetry:
+- `named_statutes: ["חוק יסוד: כבוד האדם וחירותו", "חוק יעילה", "חוק (משטרה"]` — the statute-detection regex catches partial fragments (`"חוק יעילה"` from "חקיקה יעילה", `"חוק (משטרה"` from a parenthesised mention). Only one of three was a real statute name. Tightening the regex prevents wasted Perplexity calls and bogus completions.
+
+---
+
+## Plan
+
+### Fix A1 — Move statute-completion BEFORE step 6 (superscript + reorder)
+
+Restructure the pipeline so statute-completion runs at the same stage boundary as Rule 37: after the AI-footnote build loop, before step 6.
 
 ```text
-1. Same source as the IMMEDIATELY previous footnote, no intervening source:
-     → "שם."                                  (no pinpoint)
-     → "שם, בעמ' 45."                          (with pinpoint)
-     → "שם, בס' 17(א)."                        (legislation pinpoint, but
-                                                see Rule 37.5 override below)
-
-2. Same source as the immediately previous footnote, BUT an intervening source
-   exists between this one and that one (defensive — rare in practice):
-     → "[שם], שם."                             (with the source's short name)
-
-3. Source previously cited, NOT the immediately preceding one:
-     → "[שם], לעיל ה\"ש N."                    (no pinpoint)
-     → "[שם], לעיל ה\"ש N, בעמ' 45."           (with pinpoint)
-
-4. RULE 37.5 OVERRIDE — Legislation NEVER uses לעיל ה"ש:
-     If sourceType ∈ {israeli_law, basic_law, regulation, ordinance}:
-       → "ס' [pinpoint] ל[lawShortName]."     (with pinpoint)
-       → Drop the repeat entirely, leave the body marker out
-         (legislation without a pinpoint as a repeat is meaningless;
-         the first full citation already established the law)
+build footnotes  →  Rule 37 short-form generator (step 5d)
+                 →  statute completion  ← MOVED HERE (was after step 6b)
+                 →  step 6 (superscript conversion)
+                 →  step 6b (appearance-order reorder)
 ```
 
-The "previous footnote" check uses the running `seenInOrder` array — specifically the last item — so it correctly handles the case where two consecutive body markers cite the same source.
+Concretely in `supabase/functions/legal-qa/index.ts`:
 
-## Pinpoint extraction from the body
+- The current statute-completion block at ~lines 5300–5577 runs against `answer` (the post-superscript string). Move the block up to right after the Rule 37 generator's rewrite-application (~line 4746), and have it operate on `answerBody` (the still-bracket-marker body) and `footnotes` (not yet renumbered).
+- Inserts use `[${newFnNumber}]` exactly as today — but now step 6 converts the bracket to a superscript, and step 6b reorders by appearance, so FN7 will collapse to `³` (or whatever its true appearance position is) automatically. The reorder step's existing `reorderMap` rewrites `לעיל ה"ש N` cross-refs in footnote text, so any short-form citations that came from Rule 37 stay consistent.
+- Streaming-event ordering: `emitStage("statute_completion", …)` moves with the block — it now fires before `footnote_validate`. The frontend's `StageProgressList` is order-agnostic, so no client change.
 
-The body sometimes carries the pinpoint inline (`...כפי שקבע השופט ברק [3] בעמ' 245...`) and sometimes the AI tucked it into the footnote text. We detect pinpoints in two places:
+This single move fixes the "literal `[7]` in body" bug AND the "footnote 7 sits at end of list" bug.
+
+### Fix A2 — Make Rule 37 generator re-run after statute completion (defensive)
+
+After statute completion inserts new `[N]` markers, the same source could now appear twice in the body (e.g., drafter mentioned חוק יסוד once, and a later paragraph mentions it again — both naked, both get markers from completion, but one should become `שם` per Rule 37). The generator's first pass didn't see those markers because they didn't exist yet.
+
+Run Rule 37 generator a second time after statute completion, scoped to the newly inserted markers only. Cheap re-walk of `answerBody`; reuses `shortNameRegistry` (recomputed for the new footnotes only) and the existing rewrite logic. Telemetry merges into the same `rule37_short_forms` block (cumulative counts).
+
+### Fix A3 — Tighten statute-mention regex
+
+Current named-statute extractor produces false positives (`"חוק יעילה"` from "חקיקה יעילה", `"חוק (משטרה"` from "המאבק (משטרה ופרקליטות)"). Tighten:
+
+- Require the statute keyword (`חוק`, `חוק-יסוד`, `פקודת`, `תקנות`) to be **followed by either** a colon (basic laws) **or** a Hebrew word that doesn't start with `(` and isn't a known stop-word (`יעילה`, `מתאים`, `הולם`, `מספק`, …).
+- Require a minimum length of 2 Hebrew words after the keyword before terminating on `,`/`.`/`)`.
+- Add a denylist of generic descriptors that are never statute names.
+
+This prevents wasted Perplexity calls and downstream bogus footnotes.
+
+### Fix B1 — Tighten the rerank gate for non-caselaw
+
+Two-line change in `rerankLocalMatches` (~lines 1199–1213):
+
+- Raise the non-caselaw hard floor from `score >= 3` to `score >= 4`. Score 3 in the current rubric is "נוגע באופן רחוק / רקע כללי" — that's exactly the "תקנות דמי מחלה" failure mode. Score 4 forces the LLM to commit to "ענף דין קרוב" before passing.
+- Caselaw stays at `>= 5` (already tighter), and the safety-valve fallback for caselaw-domain questions still allows `>= 3` so we don't ever empty the caselaw bucket.
+
+### Fix B2 — Sharpen the rerank prompt with a legislation-specific example
+
+Add one line to the prompt's anti-pattern section (~line 1114):
+
+> דוגמה נוספת: שאלה על דין פלילי / סדר ציבורי + מקור על דיני עבודה, מיסוי, ביטוח לאומי = ציון 0–2, גם אם יש מילת מפתח משותפת ("דמי", "תשלום", "הסדר") — ענף הדין שונה.
+
+Single-shot prompt addition. No code branching — the rerank model already returns 0–10.
+
+### Fix B3 — Telemetry: log dropped-by-rerank doc titles + reasons
+
+Currently `console.log` shows the score map but the doc titles/reasons aren't persisted. Add a `rerank_drops` array to `qa_logs.metadata`:
 
 ```text
-1. Inside the footnote that the [N] originally pointed to — only useful for the
-   FIRST occurrence (which keeps its full citation, pinpoint already there).
-
-2. In a ~40-char window AFTER the [N] marker in the body, matching:
-     /\[N\]\s*(?:בעמ['׳]\s*\d+|בעמוד\s+\d+|בס['׳]\s*[\dא-ת()]+|בפס['׳]\s*\d+)/
-   When found, the pinpoint is captured and stripped from the body (since it
-   migrates into the new short-form footnote).
+rerank_drops: [
+  { title: "תקנות דמי מחלה …", source_type: "israeli_law", score: 3, reason: "below_floor" },
+  …
+]
 ```
 
-If no pinpoint is found for a repeat, the short-form is emitted without one — that's compliant with Rule 37.7 (pinpoint is optional in `שם` / `לעיל ה"ש N`).
+Capped at 10 entries. Lets us validate the gate change against future runs without re-tracing every query.
 
-## Source-name extraction (Rule 37.2) — `computeShortName(card, footnoteText)`
+### What we are NOT doing in this pass
 
-This is the trickiest part. The `SourceCard` has `source_type` and a full `citation`, but no pre-extracted "short name." We compute it once per source:
-
-```text
-LEGISLATION (israeli_law / basic_law / regulation / ordinance):
-  Take the first chunk of the citation up to the first comma, then strip:
-    - Hebrew year suffix (התש"ז-1977)
-    - "[נוסח חדש]" / "[נוסח משולב]"
-    - Bracketed annotations
-  → "חוק העונשין", "פקודת הראיות", "חוק-יסוד: כבוד האדם וחירותו"
-
-CASE LAW (caselaw / case_law_published / case_law_database):
-  Strategy: extract the bolded party names (**...**) from the citation, prefer
-  the non-government / non-anonymous side, and prefix with "עניין" or "הלכת":
-    - Both parties bold → pick the one that is NOT in
-      {מדינת ישראל, היועץ המשפטי לממשלה, פלוני, אלמוני, אנונימי, ...}
-    - If both are generic → fall back to the case number (rare)
-  → "עניין **גיספן**", "הלכת **קעדאן**"
-  Hard fallback when no bold markers: take the segment between the case number
-  and "נ'", strip whitespace.
-
-BOOKS (book):
-  Author surname only (last token of author name before the bolded title).
-  Same-surname clash detection is deferred to v2 — for v1 we accept the
-  collision and log it.
-  → "ברק"
-
-ARTICLES (article / article_in_book):
-  Author surname + article title in quotes:
-  → "פרוקצ'יה \"הסדרת החוזים המיוחדים\""
-  Surname extracted as the first token before the opening quote of the title.
-
-INTERNET (internet / web):
-  Bold site name + abbreviated title (≤30 chars):
-  → "**ynet** \"פתרון לסחבת...\""
-
-FOREIGN (foreign / bluebook):
-  Preserve original language; preserve "##X##" italic markers:
-  → "Brown", "##Donoghue v. Stevenson##"
-  Detected by Latin-character ratio in the citation > 50%.
-
-FALLBACK when classification fails or extraction returns empty:
-  Use the first 40 chars of the citation, trimmed at the last word boundary.
-  Log it as `qa_logs.metadata.rule37_shortname_fallback` with the card id.
-```
-
-## Edge cases handled
-
-- **Three or more invocations of the same source** — every repeat after the first generates its own short-form footnote. The "immediately previous" check correctly toggles between `שם` and `לעיל ה"ש N` based on what's actually adjacent in the final ordering.
-- **Drafter already wrote `שם` / `לעיל ה"ש N` manually** — these are detected via the existing `SUPRA_FULL` / `\bשם\b` test (already used at lines 4662, 4696). Manually-authored short-forms are passed through untouched; the back-ref validator (lines 4525-4630) continues to fix wrong N values. The new generator only fires when the body re-uses the same `[N]` marker, which is the bug pattern we're fixing.
-- **Legislation repeat with no pinpoint** — per the override above, we drop the body marker (the first full citation suffices). Logged as `rule37_legislation_repeat_dropped`.
-- **Foreign sources** — `לעיל ה"ש N` stays in Hebrew per Rule 37.9; only the source name is in the original language. The `##X##` italic markers are preserved.
-- **Same source as previous, different pinpoint** — emits `שם, בעמ' [new pinpoint].` (Rule 37.7 explicitly allows this).
-- **Card resolution failure** — if a footnote in the registry has no resolvable card (e.g. fuzzy-URL-only match with `source: "unverified"`), we use the citation text itself as the short-name source via the fallback path. The repeat still gets a proper `לעיל ה"ש N` form.
-
-## Interaction with existing post-processors
-
-The current Rule 37 cleanup at lines 4632-4668 (`lawSupraRe`, `שם, שם` collapse, בי"ת prefix enforcement) **stays** and runs *after* the new generator. The generator produces canonical short-forms; the cleanup is now a defensive net for edge cases and any AI-authored short-forms that slip through. The back-ref validator at lines 4525-4630 also stays and is now mostly a no-op for generator-produced short-forms (since the generator emits the correct `N`), but remains useful for AI-authored ones.
-
-The appearance-order reordering at line 4406 runs **after** the new generator, so the new repeat footnotes get renumbered to their actual position in the final body order. The `reorderMap` step at lines 4460-4470 already rewrites `לעיל ה"ש X` references inside footnote citations — that means if the generator emitted `לעיל ה"ש 3` and reordering renumbers footnote 3 to 5, the back-reference auto-updates to `לעיל ה"ש 5`. No changes needed there.
-
-## Telemetry
-
-New `qa_logs.metadata.rule37_short_forms`:
-
-```text
-{
-  total_repeats_expanded: number,
-  shem_count: number,
-  supra_count: number,
-  legislation_section_count: number,
-  legislation_repeat_dropped_count: number,
-  shortname_fallback_count: number,
-  samples: [{ original_marker, source_type, short_name, form }]  // first 5
-}
-```
-
-This makes it easy to see, per query, how the generator fired and catch regressions.
-
-## What we are explicitly NOT doing in this pass
-
-- **Not implementing same-surname clash detection for books** (Rule 37.2 second paragraph). v1 accepts collisions, logs them via `shortname_fallback_count`. We can layer this on later if logs show it matters.
-- **Not retroactively fixing prior `qa_logs` rows** — the rewriter only runs on new queries.
-- **Not changing the drafter prompt** — the prompt already asks for `שם` / `לעיל ה"ש N` (lines 832, 845, 3305-3318). The generator is a safety net for when the drafter ignores the prompt and re-uses the same `[N]`.
-- **Not touching the academic-mode shortcut block** — that path doesn't go through the footnote build loop, so there's nothing to expand.
+- Not retraining the rerank model — we're staying with Gemini-2.5-flash-lite. The prompt + gate change is enough.
+- Not adding source-type-vs-question-type filtering. That's heuristic territory that risks over-filtering. The rerank tightening should be sufficient.
+- Not retroactively rewriting old `qa_logs` rows.
+- Not changing the drafter prompt to force `[N]` reuse over inline `שם`. The Rule 37 generator already handles the `[N]`-reuse path; the inline `שם` path is a different (and currently-correct) drafter behavior that's unrelated to bug A.
 
 ## Files touched
 
-- `supabase/functions/legal-qa/index.ts` — new `computeShortName()`, `buildShortForm()`, and `applyRule37ShortForms()` functions; insert the call between line 4350 and line 4406; add the `rule37_short_forms` block to the `qa_logs.metadata` write.
-- `.lovable/memory/logic/repeated-citations.md` — append a "Rule 37 Short-Form Generator (server-side)" section documenting the new behavior, the source-name extraction rules, and the legislation override.
+- `supabase/functions/legal-qa/index.ts`
+  - Move statute-completion block (~5300–5577) up to after Rule 37 (~line 4746); switch its `answer` writes to `answerBody`.
+  - Add second Rule 37 pass after statute completion, scoped to newly inserted markers.
+  - Tighten named-statute regex + denylist (~5400 area).
+  - Raise rerank non-caselaw floor `3 → 4` (~line 1199).
+  - Add legislation example to rerank prompt (~line 1114).
+  - Persist `rerank_drops` to `qa_logs.metadata` (~line 5670 area).
+- `.lovable/memory/logic/legal-qa/post-processing-cleanup.md` — note the new ordering (statute-completion now between Rule 37 pass 1 and step 6).
+- `.lovable/memory/logic/legal-qa/relevance-filtering.md` — bump documented gate threshold to `>= 4` for non-caselaw.
 
-## Acceptance criteria
+## Acceptance
 
-For a query whose drafter cites the same Barak journal article three times in the body:
-
-- The body shows `[1]`, `[2]`, `[3]` (or whatever the final appearance-order numbers are) — never the same number twice.
-- Footnote 1 is the full Barak citation.
-- Footnote 2 is `שם, בעמ' [pinpoint].` (or just `שם.` if no pinpoint), because it's adjacent to footnote 1.
-- Footnote 3 is `שם.` if it's also adjacent to footnote 2, otherwise `פרוקצ'יה, לעיל ה"ש 1, בעמ' [pinpoint].`.
-- For a query that cites חוק העונשין twice with different sections: first footnote is the full citation; second `[N]` marker is replaced by `ס' 35 לחוק העונשין.` inline (no separate footnote needed for legislation repeats with pinpoints), or — if we keep it as a footnote per current architecture — the footnote text is `ס' 35 לחוק העונשין.`.
-- `qa_logs.metadata.rule37_short_forms.total_repeats_expanded >= 1`, with samples showing the original card and the generated form.
-- No regression: queries with no repeats produce identical output to today.
+- A repeat run of the same סחיטת-דמי-חסות query: footnote for חוק-יסוד appears as a superscript in the body (no literal `[N]`) AND lands at appearance position (≤3), not at the end.
+- `qa_logs.metadata.statute_completion.named_statutes` for that run contains only real statute names (no `"חוק יעילה"`).
+- `qa_logs.metadata.rerank_drops` includes `תקנות דמי מחלה` for that query (or it never enters retrieval at all).
+- No regression: `qa_logs.metadata.rule37_short_forms` continues to fire on queries where the drafter does reuse `[N]` markers.
+- Frontend `StageProgressList` still shows `statute_completion` event; only its position in the sequence shifts earlier.
