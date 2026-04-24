@@ -256,6 +256,186 @@ export interface DrafterResult {
 }
 
 /**
+ * Streaming drafter call. Tries OpenAI first (if key + supported), falls back
+ * to Gemini via Lovable AI Gateway. Calls `onDelta(chunk)` for each token
+ * batch as it arrives. Accumulates full text and returns the same
+ * DrafterResult shape as `callDrafter`. On any stream-level failure (parse,
+ * empty, network), returns `null` so the caller can fall back to the
+ * non-streaming `callDrafter`.
+ */
+export async function callDrafterStreaming(
+  systemPrompt: string,
+  userPrompt: string,
+  maxTokens: number,
+  timeoutMs: number,
+  variant: "legacy" | "structured",
+  onDelta: (chunk: string) => void,
+): Promise<DrafterResult | null> {
+  const openaiModel = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI : MODEL_CONFIG.DRAFTER_OPENAI;
+  const geminiModel = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_GEMINI : MODEL_CONFIG.DRAFTER_GEMINI;
+  const promptChars = systemPrompt.length + userPrompt.length;
+
+  if (OPENAI_API_KEY) {
+    const r = await streamOnce({
+      url: OPENAI_URL,
+      apiKey: OPENAI_API_KEY,
+      model: openaiModel,
+      systemPrompt,
+      userPrompt,
+      maxTokens,
+      timeoutMs,
+      provider: "openai",
+      variant,
+      promptChars,
+      onDelta,
+    });
+    if (r) return { text: r, modelUsed: openaiModel };
+    console.warn(`[drafter:stream-fallback] openai_model=${openaiModel} variant=${variant} → trying gemini=${geminiModel}`);
+  }
+
+  if (!LOVABLE_API_KEY) {
+    console.error(`[drafter:stream:${variant}] No LOVABLE_API_KEY — cannot fall back`);
+    return null;
+  }
+  const g = await streamOnce({
+    url: LOVABLE_URL,
+    apiKey: LOVABLE_API_KEY,
+    model: geminiModel,
+    systemPrompt,
+    userPrompt,
+    maxTokens,
+    timeoutMs,
+    provider: "gemini",
+    variant,
+    promptChars,
+    onDelta,
+  });
+  if (g) return { text: g, modelUsed: geminiModel };
+  return null;
+}
+
+async function streamOnce(opts: {
+  url: string;
+  apiKey: string;
+  model: string;
+  systemPrompt: string;
+  userPrompt: string;
+  maxTokens: number;
+  timeoutMs: number;
+  provider: "openai" | "gemini";
+  variant: "legacy" | "structured";
+  promptChars: number;
+  onDelta: (chunk: string) => void;
+}): Promise<string | null> {
+  const t0 = Date.now();
+  try {
+    const tokenParam = opts.provider === "openai" ? "max_completion_tokens" : "max_tokens";
+    const body: Record<string, unknown> = {
+      model: opts.model,
+      [tokenParam]: opts.maxTokens,
+      stream: true,
+      messages: [
+        { role: "system", content: opts.systemPrompt },
+        { role: "user", content: opts.userPrompt },
+      ],
+    };
+    if (opts.provider === "openai" && /^gpt-5/.test(opts.model)) {
+      body.reasoning = { effort: "medium" };
+    }
+    console.log(
+      `[drafter:stream:call] provider=${opts.provider} model=${opts.model} variant=${opts.variant} prompt_chars=${opts.promptChars} max_tokens=${opts.maxTokens} timeout_ms=${opts.timeoutMs}`,
+    );
+
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), opts.timeoutMs);
+    let res: Response;
+    try {
+      res = await fetch(opts.url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${opts.apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+        signal: ctl.signal,
+      });
+    } finally {
+      clearTimeout(timer);
+    }
+
+    if (!res.ok || !res.body) {
+      const txt = await res.text().catch(() => "");
+      console.error(`[drafter:stream:http_error] provider=${opts.provider} model=${opts.model} status=${res.status} duration_ms=${Date.now() - t0} body=${txt.slice(0, 200)}`);
+      return null;
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let accum = "";
+    let done = false;
+    while (!done) {
+      const { value, done: streamDone } = await reader.read();
+      if (streamDone) break;
+      buffer += decoder.decode(value, { stream: true });
+      let nlIdx: number;
+      while ((nlIdx = buffer.indexOf("\n")) !== -1) {
+        let line = buffer.slice(0, nlIdx);
+        buffer = buffer.slice(nlIdx + 1);
+        if (line.endsWith("\r")) line = line.slice(0, -1);
+        if (line.startsWith(":") || line.trim() === "") continue;
+        if (!line.startsWith("data: ")) continue;
+        const jsonStr = line.slice(6).trim();
+        if (jsonStr === "[DONE]") { done = true; break; }
+        try {
+          const parsed = JSON.parse(jsonStr);
+          const content = parsed?.choices?.[0]?.delta?.content;
+          if (typeof content === "string" && content.length > 0) {
+            accum += content;
+            try { opts.onDelta(content); } catch { /* swallow consumer errors */ }
+          }
+        } catch {
+          // Partial JSON across chunks — re-buffer and wait.
+          buffer = line + "\n" + buffer;
+          break;
+        }
+      }
+    }
+    // Final flush
+    if (buffer.trim()) {
+      for (let raw of buffer.split("\n")) {
+        if (!raw) continue;
+        if (raw.endsWith("\r")) raw = raw.slice(0, -1);
+        if (raw.startsWith(":") || raw.trim() === "") continue;
+        if (!raw.startsWith("data: ")) continue;
+        const jsonStr = raw.slice(6).trim();
+        if (jsonStr === "[DONE]") continue;
+        try {
+          const parsed = JSON.parse(jsonStr);
+          const content = parsed?.choices?.[0]?.delta?.content;
+          if (typeof content === "string" && content.length > 0) {
+            accum += content;
+            try { opts.onDelta(content); } catch { /* noop */ }
+          }
+        } catch { /* ignore leftover */ }
+      }
+    }
+
+    if (accum.length < 50) {
+      console.error(`[drafter:stream:empty] provider=${opts.provider} model=${opts.model} duration_ms=${Date.now() - t0} text_len=${accum.length}`);
+      return null;
+    }
+    console.log(`[drafter:stream:ok] provider=${opts.provider} model=${opts.model} duration_ms=${Date.now() - t0} text_len=${accum.length}`);
+    return accum;
+  } catch (err) {
+    const msg = (err as Error).message ?? String(err);
+    const isAbort = /aborted|abort/i.test(msg);
+    console.error(`[drafter:stream:${isAbort ? "timeout" : "error"}] provider=${opts.provider} model=${opts.model} duration_ms=${Date.now() - t0} error=${msg}`);
+    return null;
+  }
+}
+
+/**
  * Drafter call. Tries OpenAI first; on any failure, retries with Gemini.
  * Returns `null` only if both providers fail.
  *

@@ -13,7 +13,7 @@ import {
   type DecomposedPlan,
   type ClaimMap,
 } from "./decomposition.ts";
-import { callDrafter, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
+import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
   BANNED_KEYS,
   type LegalClaimMap,
@@ -1256,6 +1256,48 @@ ${sourceList}
 //      by `data: [DONE]\n\n`, then closes the stream.
 // Errors inside the handler are caught and emitted as a `data:{error:…}`
 // event so the client always gets a deterministic terminator.
+// ─── Live progress emitter (installed by SSE wrapper) ─────────────────────
+// Hebrew labels for each pipeline stage. Keys must match the `stage` strings
+// used in emitStage() calls throughout handleLegalQARequest.
+const STAGE_LABELS: Record<string, string> = {
+  frame: "ניתוח השאלה",
+  decompose: "פירוק לתתי-סוגיות",
+  plan: "תכנון אחזור",
+  retrieve: "אחזור מקורות",
+  rerank: "דירוג רלוונטיות",
+  source_pack: "בניית חבילת מקורות",
+  claim_map: "מיפוי טענות",
+  drafter: "ניסוח טיוטה",
+  anchor_pass: "עיגון ציטוטים",
+  coverage_gap: "בדיקת כיסוי",
+  statute_completion: "השלמת חקיקה",
+  footnote_validate: "אימות הערות שוליים",
+};
+
+export interface SseEmitter {
+  stage: (name: string, status: "running" | "complete", detail?: string) => void;
+  draftDelta: (chunk: string) => void;
+  postProcessing: (label: string) => void;
+}
+
+// Per-request emitter slot. The SSE wrapper installs this before invoking
+// handleLegalQARequest; the handler reads it via the helpers below at each
+// stage boundary. Module-level holder keeps the diff surgical.
+let __activeEmitter: SseEmitter | null = null;
+function setEmitter(e: SseEmitter | null) { __activeEmitter = e; }
+function emitStage(name: string, status: "running" | "complete", detail?: string) {
+  if (!__activeEmitter) return;
+  try { __activeEmitter.stage(name, status, detail); } catch { /* swallow */ }
+}
+function emitDraftDelta(chunk: string) {
+  if (!__activeEmitter) return;
+  try { __activeEmitter.draftDelta(chunk); } catch { /* swallow */ }
+}
+function emitPostProcessing(label: string) {
+  if (!__activeEmitter) return;
+  try { __activeEmitter.postProcessing(label); } catch { /* swallow */ }
+}
+
 async function runHandlerSSE(
   req: Request,
   parsedBody: Record<string, unknown>,
@@ -1284,6 +1326,28 @@ async function runHandlerSSE(
         }
       }, 15000) as unknown as number;
 
+      // Helper to safely enqueue a named SSE event.
+      const send = (event: string, data: unknown) => {
+        try {
+          const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
+          controller.enqueue(encoder.encode(payload));
+        } catch { /* already closed */ }
+      };
+
+      // Install live emitter so handleLegalQARequest can push stage/draft events.
+      setEmitter({
+        stage: (name, status, detail) => {
+          send("stage", {
+            stage: name,
+            status,
+            label: STAGE_LABELS[name] ?? name,
+            ...(detail ? { detail } : {}),
+          });
+        },
+        draftDelta: (chunk) => { send("draft_delta", { text: chunk }); },
+        postProcessing: (label) => { send("post_processing", { label }); },
+      });
+
       try {
         const finalRes = await handler(innerReq);
         // Read the inner response as text. We expect JSON in all paths.
@@ -1293,12 +1357,14 @@ async function runHandlerSSE(
         try { JSON.parse(text); } catch {
           payloadJson = JSON.stringify({ error: "Invalid response from handler" });
         }
-        // Encode as a single SSE message. Status code is forwarded via a
-        // dedicated header field on the JSON so the client can react.
+        // Backward-compat: emit the canonical body via legacy `data:` event
+        // (so older clients still parse) AND a named `final` event for new
+        // clients that key off event types.
         const wrapped = JSON.stringify({
           status: finalRes.status,
           body: JSON.parse(payloadJson),
         });
+        send("final", JSON.parse(wrapped));
         controller.enqueue(encoder.encode(`data: ${wrapped}\n\n`));
         controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
       } catch (err) {
@@ -1309,15 +1375,18 @@ async function runHandlerSSE(
           body: { error: "שגיאה בעיבוד השאלה. נסו שוב." },
         });
         try {
+          send("final", JSON.parse(wrapped));
           controller.enqueue(encoder.encode(`data: ${wrapped}\n\n`));
           controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
         } catch { /* already closed */ }
       } finally {
+        setEmitter(null);
         if (heartbeat !== undefined) clearInterval(heartbeat);
         try { controller.close(); } catch { /* already closed */ }
       }
     },
     cancel() {
+      setEmitter(null);
       if (heartbeat !== undefined) clearInterval(heartbeat);
     },
   });
@@ -1943,9 +2012,15 @@ ${(verify.fullText as string).slice(0, 50000)}
     // actually needed (after the first wave of embeddings is in flight).
     let decompPromise: Promise<{ data: DecomposedPlan | null; run: StageRun; retryRun?: StageRun }> | null = null;
     if (enableDeepPipeline && !evalForceLegacy) {
+      // Live progress: frame is essentially "request received & validated".
+      // Emit it as complete immediately so the user sees instant feedback.
+      emitStage("frame", "complete");
+      emitStage("decompose", "running");
       const tDecompStart = Date.now();
       decompPromise = decomposeAndPlan(question)
         .then((res) => {
+          emitStage("decompose", "complete",
+            res.data ? `${res.data.decomposition.sub_issues.length} תתי-סוגיות` : undefined);
           if (res.data) {
             console.log(
               `[plan] ${res.data.decomposition.sub_issues.length} sub-issues, ${res.data.query_plan.length} plans (${Date.now() - tDecompStart}ms; ${res.run.provider}/${res.run.model}, status=${res.run.status})`,
@@ -1956,6 +2031,7 @@ ${(verify.fullText as string).slice(0, 50000)}
           return res;
         })
         .catch((decompErr) => {
+          emitStage("decompose", "complete");
           console.error("[plan] decompose+plan failed (non-fatal):", decompErr);
           // Synthesize a failed StageRun so telemetry stays consistent.
           const now = new Date().toISOString();
@@ -2484,6 +2560,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       return { content: "", citations: [] };
     })();
 
+    emitStage("retrieve", "running");
     const [localResult, perplexityResult] = await Promise.all([localSearchPromise, perplexityPromise]);
 
     const localMatches = localResult.matches;
@@ -2537,10 +2614,12 @@ ${(verify.fullText as string).slice(0, 50000)}
 
     const tRetrieval = Date.now();
     console.log(`Retrieval took ${tRetrieval - t0}ms`);
+    emitStage("retrieve", "complete", `${localMatches.length} מסמכים`);
 
     // ========= Step 1c: AI-based re-ranking of local sources =========
     let rankedMatches: RankedMatch[] = localMatches.map(m => ({ ...m }));
     if (localMatches.length > 0 && LOVABLE_API_KEY) {
+      emitStage("rerank", "running");
       try {
         rankedMatches = await rerankLocalMatches(localMatches, question, LOVABLE_API_KEY);
         const tRerank = Date.now();
@@ -2575,6 +2654,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       } catch (err) {
         console.error("Re-ranking error (non-fatal):", err);
       }
+      emitStage("rerank", "complete", `${rankedMatches.length} מסמכים`);
     }
 
     if (rankedMatches.length === 0 && !searchResults && !hasDocument) {
