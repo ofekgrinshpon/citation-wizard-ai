@@ -4755,6 +4755,12 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           // citations to satisfy a floor — read alongside total_footnotes.
           dropped_unanchored_count: droppedUnanchoredCount,
           dropped_unanchored_previews: droppedUnanchoredPreviews,
+          // Citation engine resolver pass on chapter footnotes (academic only).
+          chapter_engine: isAcademicChapter ? {
+            resolved_count: chapterEngineResolvedCount,
+            unresolved_count: chapterEngineUnresolvedCount,
+            drop_reasons: chapterEngineDropReasons,
+          } : null,
           // Honest models_used: only record a model as "used" if its stage
           // actually completed successfully. Otherwise expose null + the failure
           // status, so admins don't get the false impression that gpt-5-mini ran.
