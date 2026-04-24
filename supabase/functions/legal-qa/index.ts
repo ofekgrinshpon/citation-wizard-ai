@@ -154,6 +154,69 @@ const FIXC_STATUTE_KEYWORD_RE = /^(חוק[- ]יסוד\s*:\s*|חוק\s+|פקוד�
 // it's a Rule 2.8 violation that surfaces as "year-only" or "name + year." truncation.
 const FIXC_PUB_SOURCE_RE = /(ס["״]ח\s*\d|ק["״]ת\s*\d|ס["״]ח\s+הת|ק["״]ת\s+הת|לא נמצאו פרטי פרסום|\[חסר)/;
 
+// ─── Fix E (revised): Structured-fields statute formatter ───
+// Stage 5e (post-drafter statute completion) requests discrete bibliographic
+// fields from Perplexity instead of a pre-baked citation string. We assemble
+// the citation locally from those fields using the canonical templates from
+// _shared/citationEngine.ts. Malformed shapes (`ס"ח.`, trailing commas,
+// year-stripped Basic Laws, etc.) become structurally impossible because the
+// model never writes the separators — we do.
+//
+// Mirrors the proven pattern in supabase/functions/citation-chat/index.ts
+// (the user-facing "אזכור אחיד" flow). citation-chat is NOT modified — its
+// system prompt is ported verbatim into the Stage 5e block below.
+export interface StatuteFields {
+  found?: boolean;
+  kind?: "primary_legislation" | "basic_law" | "secondary_legislation";
+  lawName?: string;          // full official name, no year suffix
+  hebrewYear?: string;       // e.g. התשכ"ה
+  gregorianYear?: number | string;
+  collection?: string;       // ס"ח | ק"ת | נ"ח | ע"ר
+  page?: number | string;    // first PAGE in the gazette (NOT booklet)
+  url?: string;
+  isNewVersion?: boolean;
+  isCombinedVersion?: boolean;
+}
+
+/**
+ * Build a canonical statute citation string from discrete fields.
+ * Returns null when structurally critical fields are missing
+ * (`lawName` or `collection`); the caller should drop the candidate.
+ * Missing year/page collapse to `[חסר: שנה]` / `[חסר: עמוד]` placeholders
+ * (consistent with legislation-year-completeness memo).
+ */
+export function formatStatuteCitation(f: StatuteFields): string | null {
+  const lawName = (f.lawName || "").trim();
+  const collection = (f.collection || "").trim();
+  if (!lawName || !collection) return null;
+  const heYear = (f.hebrewYear || "").trim();
+  const grYear = String(f.gregorianYear ?? "").trim();
+  const page = String(f.page ?? "").trim();
+  const kind = f.kind || "primary_legislation";
+
+  // Strip a leading "חוק-יסוד:" the model may have included for basic laws.
+  const cleanName = lawName.replace(/^חוק[- ]יסוד\s*:\s*/, "").trim();
+
+  if (kind === "basic_law") {
+    // Rule 4 — `חוק-יסוד: {lawName}, {collection} [hebrewYear] {page}.`
+    const yearPart = heYear || "[חסר: שנה]";
+    const pagePart = page || "[חסר: עמוד]";
+    return `חוק-יסוד: ${cleanName}, ${collection} ${yearPart} ${pagePart}.`;
+  }
+
+  // Rule 2 / 6 — `{lawName}, {hebrewYear}-{gregorianYear}, {collection} {page}.`
+  const yearBlock =
+    heYear && grYear
+      ? `${heYear}-${grYear}`
+      : heYear
+        ? `${heYear}-[חסר: שנה לועזית]`
+        : grYear
+          ? `[חסר: שנה]-${grYear}`
+          : "[חסר: שנה]";
+  const pagePart = page || "[חסר: עמוד]";
+  return `${cleanName}, ${yearBlock}, ${collection} ${pagePart}.`;
+}
+
 function fixCStatuteCitationShapeError(citation: string): string | null {
   const cit = String(citation || "").trim();
   if (!cit) return "empty";
