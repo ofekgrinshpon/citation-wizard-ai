@@ -1211,7 +1211,11 @@ ${sourceList}
       return st === "case_law" || st === "caselaw" || st === "ruling";
     };
 
-    const NON_CASELAW_FLOOR = 4;
+    // Floor reverted from 4 → 3 on 2026-04-24: raising to 4 collapsed retrieval
+    // on broad procedural questions (Q6 lost 9/13 docs). The toughened off-branch
+    // prompt already pushes irrelevant legislation to 0–2; rely on strict-keep
+    // (>=5) and the caselaw safety valve below for additional precision.
+    const NON_CASELAW_FLOOR = 3;
     const aboveHardFloor = sortedDocs.filter(d => isCaselaw(d.docId) ? d.score >= 3 : d.score >= NON_CASELAW_FLOOR);
     const strictKept = aboveHardFloor.filter(d => !isCaselaw(d.docId) || d.score >= 5);
     // Safety valve: if filtering left zero caselaw AND the question itself is caselaw-domain
@@ -4296,6 +4300,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // citations vs. citing the source pack.
     let droppedUnanchoredCount = 0;
     const droppedUnanchoredPreviews: string[] = [];
+    // Rule 37.7 ibid short-forms ("שם", "שם, פסקה N", "לעיל ה"ש N") legitimately
+    // reference an earlier anchored footnote and carry no URL of their own.
+    // We preserve them as source_type:"shortform" instead of dropping.
+    let keptShortformCount = 0;
 
     // Footnote dedup telemetry — when the drafter cites the same source card
     // (or, in fuzzy fallback, the same URL) under two different note numbers,
@@ -4419,6 +4427,27 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
               url: fuzzyUrl,
             });
             fuzzyUrlToNewNumber.set(fuzzyUrl, fnNum);
+            oldIdToNewNumber.set(aiFn.num, fnNum);
+            fnNum++;
+            continue;
+          }
+
+          // Rule 37.7 ibid whitelist: keep "שם" / "שם, פסקה N" / "לעיל ה"ש N"
+          // short-forms when at least one anchored footnote already exists.
+          // These have no URL by design — they reference the prior citation.
+          const trimmedFn = aiFn.text.trim();
+          const isShortform =
+            /^שם(\s*,\s*(?:פסקה|פסקאות|ע['׳"״]\s*\d+|בעמ['׳]\s*\d+|בעמוד\s+\d+|ס['׳"״]\s*[\dא-ת()()\-–.]+|סעיף\s+[\dא-ת()()\-–.]+))?\.?$/.test(trimmedFn) ||
+            /^לעיל\s+ה["״]ש\s+\d+/.test(trimmedFn);
+          if (isShortform && footnotes.length > 0) {
+            keptShortformCount++;
+            console.log(`Kept ibid short-form footnote #${aiFn.num}: "${trimmedFn.slice(0, 60)}"`);
+            footnotes.push({
+              number: fnNum,
+              citation: aiFn.text,
+              source_type: "shortform",
+              source: "shortform",
+            });
             oldIdToNewNumber.set(aiFn.num, fnNum);
             fnNum++;
             continue;
@@ -5787,6 +5816,8 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           // citations to satisfy a floor — read alongside total_footnotes.
           dropped_unanchored_count: droppedUnanchoredCount,
           dropped_unanchored_previews: droppedUnanchoredPreviews,
+          // Rule 37.7 ibid short-forms preserved instead of dropped.
+          kept_shortform_count: keptShortformCount,
           // Fix 1: footnote dedup (same source card cited under multiple #s).
           footnote_dedup: {
             merged_count: footnoteDedupMergedCount,
