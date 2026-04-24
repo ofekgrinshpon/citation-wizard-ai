@@ -1185,25 +1185,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         }
       }
 
-      // Save to qa_logs
+      // qa_logs is now written canonically server-side for every academic
+      // sub-mode (with metadata.academic_step + is_abstract). Client-side
+      // insert removed to avoid duplicates. Just notify the sidebar.
       try {
-        const { data: { user: currentUser } } = await supabase.auth.getUser();
-        if (currentUser) {
-          await supabase.from("qa_logs").insert({
-            user_id: currentUser.id,
-            project_id: currentProject?.id ?? null,
-            question: q || `[academic: ${academicStep}] ${researchQuestion}`,
-            answer: qaResult.answer,
-            footnotes: qaResult.footnotes as any,
-            task_mode: "academic_writing",
-            local_footnotes_count: qaResult.footnotes.filter(f => f.source === "local").length,
-            perplexity_footnotes_count: qaResult.footnotes.filter(f => f.source === "perplexity").length,
-            total_footnotes: qaResult.footnotes.length,
-          });
-          onResultSaved?.();
-        }
+        onResultSaved?.();
       } catch (saveErr) {
-        console.error("Failed to save QA log:", saveErr);
+        console.error("onResultSaved hook failed:", saveErr);
       }
     } catch (e: any) {
       if (e.name === "AbortError") return;
