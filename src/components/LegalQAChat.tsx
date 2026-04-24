@@ -1300,6 +1300,9 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setLoading(true);
     setResult(null);
     setError(null);
+    setStageEvents([]);
+    setPostProcessingLabel(null);
+    setStreamingDraft("");
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
