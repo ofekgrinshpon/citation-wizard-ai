@@ -1691,6 +1691,29 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
 
       console.log(`Academic sub-mode (${academicStep}${isAbstractGeneration ? ":abstract" : ""}): ${answerText.length} chars, ${Date.now() - t0}ms`);
 
+      // Persist academic sub-mode runs into qa_logs so the history sidebar
+      // and admin dashboards can see them. The full Deep pipeline write below
+      // only runs for write_chapter (non-abstract) / research mode.
+      try {
+        await adminClient.from("qa_logs").insert({
+          user_id: user.id,
+          question: question.substring(0, 500),
+          answer: answerText,
+          footnotes: [],
+          task_mode: taskMode,
+          local_footnotes_count: 0,
+          perplexity_footnotes_count: 0,
+          total_footnotes: 0,
+          metadata: {
+            academic_step: academicStep,
+            is_abstract: isAbstractGeneration,
+            duration_ms: Date.now() - t0,
+          },
+        });
+      } catch (logErr) {
+        console.error("Failed to insert academic sub-mode qa_logs row (non-fatal):", logErr);
+      }
+
       return new Response(
         JSON.stringify({ answer: answerText, footnotes: [], source_urls: [] }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -2861,6 +2884,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     let sourcePack: SourcePackEntry[] = [];
     let sourcePackV2: LegalSourcePack | null = null;
     if (enableDeepPipeline) {
+      emitStage("source_pack", "running");
       sourcePack = sourceCards.map((sc) => {
         const excerpt = sc.excerpt || "";
         const anchorPresent = Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document";
@@ -2893,6 +2917,9 @@ ${(verify.fullText as string).slice(0, 50000)}
         }
         const sps = summarizeSourcePack(sourcePackV2);
         console.log(`[source-pack-v2] core=${sps.core} supporting=${sps.supporting} secondary=${sps.secondary} anchored=${sps.anchored}`);
+        emitStage("source_pack", "complete", `${sps.core + sps.supporting + sps.secondary} מקורות`);
+      } else {
+        emitStage("source_pack", "complete", `${sourcePack.length} מקורות`);
       }
     }
 
@@ -3132,6 +3159,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     let claimMapV2: LegalClaimMap | null = null;
     let draftingInput: LegalDraftingInput | null = null;
     if (enableDeepPipeline && !evalForceLegacy && decomposedPlan && sourcePack.length >= 2) {
+      emitStage("claim_map", "running");
       try {
         const tClaimStart = Date.now();
         // Trim before handing off to the planner. Final additional trimming
@@ -3176,12 +3204,15 @@ ${(verify.fullText as string).slice(0, 50000)}
               };
             }
           }
+          emitStage("claim_map", "complete", `${claimMapAllowedCount}/${claimMap.length} טענות`);
         } else {
           console.log(`[claim-map] returned null (status=${cmRes.run.status}, ${cmRes.run.duration_ms}ms) — drafter will fall back to legacy prompt`);
+          emitStage("claim_map", "complete", "דילוג");
         }
       } catch (cmErr) {
         console.error("[claim-map] failed (non-fatal):", cmErr);
         claimMap = null;
+        emitStage("claim_map", "complete", "שגיאה");
       }
       // Persist checkpoint after claim_map regardless of success/failure.
       writeCheckpoint("claim_map");
@@ -3823,7 +3854,28 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     const drafterStartedAt = new Date();
     const drafterStartMs = Date.now();
     if (useNewDrafter) {
-      const drafterRes = await callDrafter(drafterSystemPrompt, userMessage, aiMaxTokens, drafterTimeoutMs, drafterVariant);
+      emitStage("drafter", "running");
+      // If an SSE emitter is installed, prefer the streaming drafter so the
+      // client sees `draft_delta` events as the model emits tokens. On any
+      // streaming-level failure (parse, empty, network) the helper returns
+      // null and we fall back to the non-streaming `callDrafter`.
+      let drafterRes: { text: string; modelUsed: string } | null = null;
+      if (__activeEmitter) {
+        drafterRes = await callDrafterStreaming(
+          drafterSystemPrompt,
+          userMessage,
+          aiMaxTokens,
+          drafterTimeoutMs,
+          drafterVariant,
+          (chunk) => emitDraftDelta(chunk),
+        );
+        if (!drafterRes) {
+          console.warn("[drafter] streaming returned null — falling back to non-streaming");
+        }
+      }
+      if (!drafterRes) {
+        drafterRes = await callDrafter(drafterSystemPrompt, userMessage, aiMaxTokens, drafterTimeoutMs, drafterVariant);
+      }
       const tAi = Date.now();
       console.log(`Drafter call took ${tAi - tRetrieval}ms (used=${drafterRes?.modelUsed || "FAILED"}, variant=${drafterVariant})`);
       if (!drafterRes || drafterRes.text.length < 50) {
@@ -3837,6 +3889,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           status: "error",
           error_message: "drafter returned empty or null",
         });
+        emitStage("drafter", "complete", "שגיאה");
         return new Response(
           JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -3853,6 +3906,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         duration_ms: Date.now() - drafterStartMs,
         status: "success",
       });
+      emitStage("drafter", "complete", `${answerText.length} תווים`);
     } else {
       try {
         const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -3967,6 +4021,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             .map((c) => ({ claim: c.claim, sourceIds: c.source_ids, authorityLevel: c.authority_level }))
         : [];
 
+      emitStage("anchor_pass", "running");
       try {
         const anchorRes = await runAnchorPass({
           body: answerText,
@@ -3984,8 +4039,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         console.log(
           `[anchor-pass] proposed=${anchorRes.patches.length} applied=${anchorPassApplied} (${Date.now() - tAnchorStart}ms; status=${anchorRes.run.status})`,
         );
+        emitStage("anchor_pass", "complete", `${anchorPassApplied} עיגונים`);
       } catch (err) {
         console.error("[anchor-pass] unexpected error — shipping draft as-is:", (err as Error).message);
+        emitStage("anchor_pass", "complete", "דילוג");
       }
     }
 
@@ -5205,6 +5262,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // an adjacent footnote marker. This is the real "coverage gap" number
     // (vs the proxy of footnote count) that decides whether to ship an
     // anchor-pass stage. Heuristic + log-only; never blocks the response.
+    emitStage("coverage_gap", "running");
     try {
       const isStructured = enableDeepPipeline && useStructuredDrafterPath;
       if (isStructured) {
@@ -5275,8 +5333,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           }
         }
       }
+      emitStage("coverage_gap", "complete");
     } catch (e) {
       console.log(`Coverage gap instrumentation skipped: ${(e as Error).message}`);
+      emitStage("coverage_gap", "complete", "דילוג");
     }
 
     // ===== Fix 2: Post-draft statute completion (Deep + academic) =====
@@ -5303,6 +5363,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       skipped_with_existing: 0,
     };
     if (enableDeepPipeline) {
+      emitStage("statute_completion", "running");
       const tSC = Date.now();
       try {
         // 1. Scan body for Hebrew statute mentions
@@ -5509,7 +5570,17 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         statuteCompletionTelemetry.status = "exception";
         statuteCompletionTelemetry.duration_ms = Date.now() - tSC;
       }
+      emitStage("statute_completion", "complete",
+        statuteCompletionTelemetry.completed_count > 0
+          ? `${statuteCompletionTelemetry.completed_count} חוקים`
+          : (statuteCompletionTelemetry.triggered ? "0 חוקים" : "ללא צורך"));
     }
+
+    // Footnote validation pass (post-grounding). Marks the final
+    // server-side cleanup window — clients use this signal to flip the
+    // streamed preview to a "finalizing" state before the `final` event.
+    emitStage("footnote_validate", "running");
+    emitPostProcessing("מאמת הערות שוליים");
 
     // ===== Post-response grounding sanity check (log-only, non-blocking) =====
     // Detect substantive statutory claims (סעיף X ל-Y ... קובע/מורה/מגדיר/אוסר/מחייב/מתיר)
@@ -5538,6 +5609,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     } catch (gErr) {
       console.error("Grounding check failed (non-fatal):", gErr);
     }
+    emitStage("footnote_validate", "complete", `${finalFootnotes.length} הערות`);
 
     // Log — canonical server-side log with internal diagnostics in metadata.
     try {
