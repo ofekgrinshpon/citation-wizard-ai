@@ -5239,6 +5239,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // an adjacent footnote marker. This is the real "coverage gap" number
     // (vs the proxy of footnote count) that decides whether to ship an
     // anchor-pass stage. Heuristic + log-only; never blocks the response.
+    emitStage("coverage_gap", "running");
     try {
       const isStructured = enableDeepPipeline && useStructuredDrafterPath;
       if (isStructured) {
