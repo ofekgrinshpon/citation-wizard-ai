@@ -2031,6 +2031,7 @@ ${(verify.fullText as string).slice(0, 50000)}
           return res;
         })
         .catch((decompErr) => {
+          emitStage("decompose", "complete");
           console.error("[plan] decompose+plan failed (non-fatal):", decompErr);
           // Synthesize a failed StageRun so telemetry stays consistent.
           const now = new Date().toISOString();
