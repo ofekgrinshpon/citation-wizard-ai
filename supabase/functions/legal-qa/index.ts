@@ -4388,6 +4388,306 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     });
     console.log("Normalized superscripts to brackets in answer body");
 
+    // ========= Step 5d: Rule 37 short-form generator =========
+    // When the same source is cited more than once in the body, every repeat
+    // gets its own NEW footnote whose text is the auto-generated short form
+    // (Rule 37.7: שם / [name], לעיל ה"ש N) or the Rule 37.5 legislation form
+    // (ס' X ל[חוק]). The first occurrence keeps its full citation. This is the
+    // server-side safety net — the drafter prompt asks for short-forms but
+    // often re-uses the same [N] marker instead.
+    //
+    // Inputs already in scope: answerBody (body with [N] markers),
+    // footnotes (full citations), oldIdToNewNumber (AI id → emitted #),
+    // cardIdToNewNumber (card.id → emitted #), sourceCards.
+    const rule37Telemetry = {
+      total_repeats_expanded: 0,
+      shem_count: 0,
+      supra_count: 0,
+      legislation_section_count: 0,
+      legislation_repeat_dropped_count: 0,
+      shortname_fallback_count: 0,
+      samples: [] as Array<{
+        original_marker: string;
+        source_type: string;
+        short_name: string;
+        form: "shem" | "shem_pinpoint" | "supra" | "supra_pinpoint" | "legislation_section" | "legislation_dropped";
+      }>,
+    };
+
+    // Build inverse map: emitted footnote # → SourceCard (when matched)
+    const fnNumberToCard = new Map<number, SourceCard>();
+    for (const [cardId, fnNumber] of cardIdToNewNumber.entries()) {
+      const card = sourceCards.find((c) => c.id === cardId);
+      if (card) fnNumberToCard.set(fnNumber, card);
+    }
+
+    // Source-name extraction per Rule 37.2.
+    // Returns { shortName, isLegislation } for a given footnote.
+    const LEGISLATION_TYPES = new Set([
+      "israeli_law",
+      "basic_law",
+      "regulation",
+      "ordinance",
+      "primary_legislation",
+      "secondary_legislation",
+      "legislation_primary",
+      "legislation_secondary",
+    ]);
+
+    function computeShortName(fn: { number: number; citation: string; source_type: string }): {
+      shortName: string;
+      isLegislation: boolean;
+      usedFallback: boolean;
+    } {
+      const card = fnNumberToCard.get(fn.number);
+      const sourceType = (card?.source_type || fn.source_type || "").toLowerCase();
+      const isLegislation = LEGISLATION_TYPES.has(sourceType) ||
+        /^(חוק[- ]יסוד|חוק|פקודת|פקודה|תקנות|תקנה|צו|כללי)\s/.test(fn.citation.trim());
+      const citationText = fn.citation;
+
+      try {
+        // ── LEGISLATION ──
+        if (isLegislation) {
+          let name = citationText.split(",")[0]?.trim() || citationText.trim();
+          // Strip [נוסח חדש] / [נוסח משולב] / other bracketed annotations
+          name = name.replace(/\s*\[(?:נוסח\s+(?:חדש|משולב)|[^\]]*)\]\s*/g, " ").trim();
+          // Strip trailing Hebrew year if it leaked into the name
+          name = name.replace(/\s*,?\s*הת?ש[א-ת"״'׳\-]+\s*[–-]?\s*\d{0,4}\s*$/, "").trim();
+          if (!name) throw new Error("empty legislation name");
+          return { shortName: name, isLegislation: true, usedFallback: false };
+        }
+
+        // ── FOREIGN (Latin-dominant) ──
+        const latinChars = (citationText.match(/[A-Za-z]/g) || []).length;
+        const hebrewChars = (citationText.match(/[\u0590-\u05FF]/g) || []).length;
+        if (latinChars > hebrewChars && latinChars > 5) {
+          // Preserve ##X## italic markers; pick the bolded/italicized party or first capitalized phrase
+          const italicMatch = citationText.match(/##([^#]+)##/);
+          if (italicMatch) return { shortName: `##${italicMatch[1].trim()}##`, isLegislation: false, usedFallback: false };
+          const capMatch = citationText.match(/\b([A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+){0,3})\b/);
+          if (capMatch) return { shortName: capMatch[1], isLegislation: false, usedFallback: false };
+        }
+
+        // ── CASE LAW ──
+        const isCaseLaw = sourceType.includes("caselaw") || sourceType.includes("case_law") ||
+          /^(?:בג["״]ץ|ע["״][אפממ]|רע["״][אפ]|דנ["״][אפ]|בש["״]פ|ת["״][אפ]|עע["״][מא]|בר["״][מע]|עמ["״]ה|תפ["״]ח|ה?על["״]ע)\s+\d/.test(citationText);
+        if (isCaseLaw) {
+          const GENERIC = /^(?:מדינת ישראל|היועץ המשפטי לממשלה|היועמ["״]ש|פלוני|אלמוני|אנונימי|פלונית|אלמונית|היועץ המשפטי|מ["״]י)$/;
+          // Try bolded parties first
+          const boldParties = Array.from(citationText.matchAll(/\*\*([^*]+)\*\*/g)).map((m) => m[1].trim());
+          let chosen: string | undefined;
+          for (const p of boldParties) {
+            if (!GENERIC.test(p)) { chosen = p; break; }
+          }
+          if (!chosen && boldParties.length > 0) chosen = boldParties[0];
+          // Fallback: take segment between case-number and נ'
+          if (!chosen) {
+            const m = citationText.match(/\d+\/\d+\s+(.+?)\s+נ['׳]/);
+            if (m) chosen = m[1].replace(/\*/g, "").trim();
+          }
+          if (chosen) {
+            return { shortName: `עניין **${chosen}**`, isLegislation: false, usedFallback: false };
+          }
+        }
+
+        // ── ARTICLE: author "title" ──
+        const articleMatch = citationText.match(/^([^"]{2,40}?)\s*"([^"]{3,80})"/);
+        if (articleMatch) {
+          const author = articleMatch[1].trim();
+          const surname = author.split(/\s+/).pop() || author;
+          const title = articleMatch[2].trim();
+          return { shortName: `${surname} "${title}"`, isLegislation: false, usedFallback: false };
+        }
+
+        // ── BOOK: author **title** ──
+        const bookMatch = citationText.match(/^([^*]{2,60}?)\s*\*\*([^*]+)\*\*/);
+        if (bookMatch) {
+          const author = bookMatch[1].trim().replace(/[,]+$/, "").trim();
+          const surname = author.split(/\s+/).pop() || author;
+          return { shortName: surname, isLegislation: false, usedFallback: false };
+        }
+
+        // ── INTERNET: **site** "title" ──
+        const internetMatch = citationText.match(/\*\*([^*]+)\*\*/);
+        if (internetMatch && /https?:\/\//.test(citationText)) {
+          const titleMatch = citationText.match(/"([^"]{3,40})"/);
+          const site = `**${internetMatch[1].trim()}**`;
+          return {
+            shortName: titleMatch ? `${site} "${titleMatch[1].trim()}"` : site,
+            isLegislation: false,
+            usedFallback: false,
+          };
+        }
+      } catch (e) {
+        console.warn(`Rule 37 shortname extraction error for FN #${fn.number}:`, e);
+      }
+
+      // ── FALLBACK: first ~40 chars at word boundary ──
+      let fallback = citationText.slice(0, 40);
+      const lastSpace = fallback.lastIndexOf(" ");
+      if (lastSpace > 15) fallback = fallback.slice(0, lastSpace);
+      return { shortName: fallback.trim(), isLegislation: false, usedFallback: true };
+    }
+
+    // Pre-compute short names for every existing footnote
+    const shortNameRegistry = new Map<number, ReturnType<typeof computeShortName>>();
+    for (const fn of footnotes) {
+      shortNameRegistry.set(fn.number, computeShortName(fn));
+    }
+
+    // Pinpoint detector for body context (immediately after [N])
+    const BODY_PINPOINT_RE = /^\s*(בעמ['׳]\s*\d+[\dא-ת\-–]*|בעמוד\s+\d+|בס['׳]\s*[\dא-ת()]+|בסעיף\s+[\dא-ת()]+|בפס['׳]\s*\d+|בפסקה\s+\d+)/;
+
+    // Walk the body, find every [N] occurrence in order, expand repeats.
+    // We rebuild answerBody with rewrites applied.
+    const markerRe = /\[(\d{1,2})\](?!\:)/g;  // [N] but not [NEW:...]
+    const occurrences: Array<{
+      start: number;
+      end: number;
+      oldId: number;
+      mappedFnNum: number | undefined;
+      pinpoint: string | null;
+      pinpointEnd: number;  // end pos after pinpoint (for stripping)
+    }> = [];
+    let mm: RegExpExecArray | null;
+    while ((mm = markerRe.exec(answerBody)) !== null) {
+      const oldId = parseInt(mm[1], 10);
+      const mapped = oldIdToNewNumber.get(oldId);
+      // Look for a pinpoint immediately after the marker
+      const tail = answerBody.slice(mm.index + mm[0].length, mm.index + mm[0].length + 40);
+      const pp = tail.match(BODY_PINPOINT_RE);
+      occurrences.push({
+        start: mm.index,
+        end: mm.index + mm[0].length,
+        oldId,
+        mappedFnNum: mapped,
+        pinpoint: pp ? pp[1].replace(/\s+/g, " ").trim() : null,
+        pinpointEnd: mm.index + mm[0].length + (pp ? pp[0].length : 0),
+      });
+    }
+
+    // Track which firstFnNumber each occurrence resolves to, expand repeats.
+    const seenFirstFnNumbers = new Set<number>();
+    let lastEmittedFnNumber: number | null = null;  // tracks the previous occurrence's emitted #
+    let nextFnNum = footnotes.length > 0 ? Math.max(...footnotes.map((f) => f.number)) + 1 : 1;
+    const newRepeatFootnotes: typeof footnotes = [];
+    // Rewrite ops: each occurrence may be replaced (different [N], possibly stripping pinpoint)
+    const rewriteOps: Array<{ start: number; end: number; replacement: string }> = [];
+
+    for (const occ of occurrences) {
+      const firstFnNum = occ.mappedFnNum;
+      if (firstFnNum === undefined) {
+        // Marker doesn't map to anything (will be stripped at line 4398 anyway)
+        lastEmittedFnNumber = null;
+        continue;
+      }
+
+      if (!seenFirstFnNumbers.has(firstFnNum)) {
+        // First occurrence — keep [N] as-is
+        seenFirstFnNumbers.add(firstFnNum);
+        lastEmittedFnNumber = firstFnNum;
+        continue;
+      }
+
+      // ─── REPEAT ───
+      const reg = shortNameRegistry.get(firstFnNum);
+      if (!reg) {
+        lastEmittedFnNumber = firstFnNum;
+        continue;
+      }
+      if (reg.usedFallback) rule37Telemetry.shortname_fallback_count++;
+
+      const isImmediatelyAdjacent = lastEmittedFnNumber === firstFnNum;
+      let shortText: string;
+      let form: typeof rule37Telemetry.samples[number]["form"];
+
+      if (reg.isLegislation) {
+        // Rule 37.5: never לעיל ה"ש for legislation
+        if (occ.pinpoint) {
+          // Convert "בס' 17(א)" → "ס' 17(א)" / "בעמ' 5" → "עמ' 5"
+          const pinpointStripped = occ.pinpoint.replace(/^ב/, "");
+          shortText = `${pinpointStripped} ל${reg.shortName}.`;
+          form = "legislation_section";
+          rule37Telemetry.legislation_section_count++;
+        } else {
+          // Legislation repeat with no pinpoint → drop the marker entirely
+          rewriteOps.push({ start: occ.start, end: occ.pinpointEnd, replacement: "" });
+          rule37Telemetry.legislation_repeat_dropped_count++;
+          if (rule37Telemetry.samples.length < 5) {
+            rule37Telemetry.samples.push({
+              original_marker: `[${occ.oldId}]`,
+              source_type: "legislation",
+              short_name: reg.shortName,
+              form: "legislation_dropped",
+            });
+          }
+          rule37Telemetry.total_repeats_expanded++;
+          lastEmittedFnNumber = firstFnNum;
+          continue;
+        }
+      } else if (isImmediatelyAdjacent) {
+        if (occ.pinpoint) {
+          // "שם, בעמ' 45." (preserve the בי"ת prefix)
+          shortText = `שם, ${occ.pinpoint}.`;
+          form = "shem_pinpoint";
+        } else {
+          shortText = "שם.";
+          form = "shem";
+        }
+        rule37Telemetry.shem_count++;
+      } else {
+        if (occ.pinpoint) {
+          shortText = `${reg.shortName}, לעיל ה"ש ${firstFnNum}, ${occ.pinpoint}.`;
+          form = "supra_pinpoint";
+        } else {
+          shortText = `${reg.shortName}, לעיל ה"ש ${firstFnNum}.`;
+          form = "supra";
+        }
+        rule37Telemetry.supra_count++;
+      }
+
+      // Emit a new footnote and rewrite the marker (and strip the pinpoint from body)
+      const newFnNum = nextFnNum++;
+      const card = fnNumberToCard.get(firstFnNum);
+      const origFn = footnotes.find((f) => f.number === firstFnNum);
+      newRepeatFootnotes.push({
+        number: newFnNum,
+        citation: shortText,
+        source_type: origFn?.source_type || card?.source_type || "unknown",
+        url: origFn?.url || card?.url,
+        source: origFn?.source || card?.provenance || "local",
+      });
+      rewriteOps.push({ start: occ.start, end: occ.pinpointEnd, replacement: `[${newFnNum}]` });
+      rule37Telemetry.total_repeats_expanded++;
+      if (rule37Telemetry.samples.length < 5) {
+        rule37Telemetry.samples.push({
+          original_marker: `[${occ.oldId}]`,
+          source_type: origFn?.source_type || "unknown",
+          short_name: reg.shortName,
+          form,
+        });
+      }
+      lastEmittedFnNumber = newFnNum;
+      // Map this new footnote so subsequent body markers won't try to re-resolve it.
+      // (oldIdToNewNumber identity for the new # so step 6 leaves it alone.)
+      oldIdToNewNumber.set(newFnNum, newFnNum);
+    }
+
+    // Apply rewrites in reverse order (so positions stay valid)
+    if (rewriteOps.length > 0) {
+      rewriteOps.sort((a, b) => b.start - a.start);
+      for (const op of rewriteOps) {
+        answerBody = answerBody.slice(0, op.start) + op.replacement + answerBody.slice(op.end);
+      }
+      footnotes.push(...newRepeatFootnotes);
+      console.log(
+        `Rule 37 short-form generator: expanded ${rule37Telemetry.total_repeats_expanded} repeats ` +
+        `(שם=${rule37Telemetry.shem_count}, לעיל=${rule37Telemetry.supra_count}, ` +
+        `legislation=${rule37Telemetry.legislation_section_count}, ` +
+        `dropped=${rule37Telemetry.legislation_repeat_dropped_count})`,
+      );
+    }
+
     // ========= Step 6: Replace [X] markers with superscripts =========
     let answer = answerBody;
 
@@ -5299,6 +5599,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             with_pinpoint_conflict: footnoteDedupPinpointConflict,
             samples: footnoteDedupSamples,
           },
+          // Rule 37 short-form generator: every repeated body citation
+          // becomes its own NEW footnote (שם / לעיל ה"ש N / ס' X ל[חוק]).
+          rule37_short_forms: rule37Telemetry,
           // Fix 2: post-draft statute completion telemetry.
           statute_completion: statuteCompletionTelemetry,
           // Citation engine resolver pass on chapter footnotes (academic only).
