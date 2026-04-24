@@ -1,13 +1,16 @@
 {
   "query_id": "Q21",
-  "captured_at": "2026-04-24T19:38:10.332Z",
+  "captured_at": "2026-04-24T19:48:46.434Z",
   "code_state": "before-C-E-B-fixes",
-  "total_footnotes": 0,
-  "anchored_count": "anchored=0/0 (need ≥-2)",
-  "footnote_identity_keys": [],
+  "total_footnotes": 3,
+  "anchored_count": "anchored=3/3 (need ≥1)",
+  "footnote_identity_keys": [
+    "lit:|חוק שירות המדינה (מינויים), התשי\"ט-1959, ס\"ח 140.",
+    "lit:|התשכ\"ג-1963.",
+    "lit:|התשכ\"ג-1963."
+  ],
   "known_failing_assertions": [
-    "COUNT_RERANK_DROPS",
-    "COUNT_TOTAL_FN"
+    "SHAPE_BODY_COVERAGE"
   ],
   "note": "Each entry in known_failing_assertions must be tracked to a fix (C, E, or B). Remove on fix."
 }

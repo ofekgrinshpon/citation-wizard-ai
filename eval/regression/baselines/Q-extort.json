@@ -1,16 +1,15 @@
 {
   "query_id": "Q-extort",
-  "captured_at": "2026-04-24T19:37:23.679Z",
+  "captured_at": "2026-04-24T19:48:20.189Z",
   "code_state": "before-C-E-B-fixes",
-  "total_footnotes": 2,
-  "anchored_count": "anchored=2/2 (need ≥0)",
+  "total_footnotes": 3,
+  "anchored_count": "anchored=3/3 (need ≥1)",
   "footnote_identity_keys": [
-    "lit:|37317-02-18 (בתי המשפט לענייני משפחה).",
-    "lit:|פקודת החסינויות וזכויות-היתר של האומות המאוחדות."
+    "lit:|ת\"פ (מחוזי ת\"א) 1097-11-23 **מדינת ישראל** נ' **פלוני** (פור",
+    "lit:|תלה\"מ (אילת) 37317-02-18 **פלוני** נ' **אלמונית** (פורסם בנב",
+    "lit:|37317-02-18, לעיל ה\"ש 3."
   ],
   "known_failing_assertions": [
-    "COUNT_RERANK_DROPS",
-    "COUNT_TOTAL_FN",
     "SHAPE_BODY_COVERAGE"
   ],
   "note": "Each entry in known_failing_assertions must be tracked to a fix (C, E, or B). Remove on fix."
