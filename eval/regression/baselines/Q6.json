@@ -1,0 +1,23 @@
+{
+  "query_id": "Q6",
+  "captured_at": "2026-04-24T19:36:34.443Z",
+  "code_state": "before-C-E-B-fixes",
+  "total_footnotes": 9,
+  "anchored_count": "anchored=9/9 (need ≥7)",
+  "footnote_identity_keys": [
+    "lit:|aa, לעיל ה\"ש 3.",
+    "lit:|עו\"ד חנוך קינן ואורנה לוטן \"המעסיק קבע תוקף צינון או אי-תחרו",
+    "lit:|document, לעיל ה\"ש 2.",
+    "lit:|document, לעיל ה\"ש 2.",
+    "lit:|document, לעיל ה\"ש 2.",
+    "lit:|aa, לעיל ה\"ש 3.",
+    "lit:|תקנות לביצוע אמנת האג 1954 (סדר הדין האזרחי).",
+    "lit:|דוד גילת \"הפררוגטיבה של המעביד ודיני החוזים – בעקבות פרשות נ",
+    "lit:|גיא מונדלק ואחרים \"לקראת מדיניות משפטית חדשה כלפי תניות אי-ת"
+  ],
+  "known_failing_assertions": [
+    "COUNT_RERANK_DROPS",
+    "SHAPE_BODY_COVERAGE"
+  ],
+  "note": "Each entry in known_failing_assertions must be tracked to a fix (C, E, or B). Remove on fix."
+}

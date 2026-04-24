@@ -1,0 +1,21 @@
+{
+  "query_id": "Q-procedural",
+  "captured_at": "2026-04-24T19:40:45.876Z",
+  "code_state": "before-C-E-B-fixes",
+  "total_footnotes": 7,
+  "anchored_count": "anchored=7/7 (need ≥5)",
+  "footnote_identity_keys": [
+    "lit:|ת\"א (מחוזי ת\"א) 39857-06-20 **פננס** נ' **פננס** (פורסם בבתי",
+    "lit:|תקנות סדר הדין האזרחי, התשע\"ט-2018, תק' 46 [4].",
+    "lit:|רמ\"ש (באר שבע) 47750-03-24 **פלוני** נ' **פרידמן** (פורסם בב",
+    "lit:|ע\"א (מחוזי ת\"א) 23239-11-20 **מזרחי** נ' **מדינת ישראל** (פו",
+    "lit:|ת\"א 6243-07-12 **דשן הנדסה בע\"מ** נ' **הכונס הרשמי** (פורסם ",
+    "lit:|ת\"א 35659-12-09 **בן דוד** נ' **בנק מרכנתיל דיסקונט בע\"מ** (",
+    "lit:|הכנסת – הלשכה המשפטית - תחום חקיקה ומחקר משפטי, לעיל ה\"ש 5."
+  ],
+  "known_failing_assertions": [
+    "COUNT_RERANK_DROPS",
+    "SHAPE_BODY_COVERAGE"
+  ],
+  "note": "Each entry in known_failing_assertions must be tracked to a fix (C, E, or B). Remove on fix."
+}
