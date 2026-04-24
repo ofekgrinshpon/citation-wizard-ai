@@ -1256,6 +1256,48 @@ ${sourceList}
 //      by `data: [DONE]\n\n`, then closes the stream.
 // Errors inside the handler are caught and emitted as a `data:{error:…}`
 // event so the client always gets a deterministic terminator.
+// ─── Live progress emitter (installed by SSE wrapper) ─────────────────────
+// Hebrew labels for each pipeline stage. Keys must match the `stage` strings
+// used in emitStage() calls throughout handleLegalQARequest.
+const STAGE_LABELS: Record<string, string> = {
+  frame: "ניתוח השאלה",
+  decompose: "פירוק לתתי-סוגיות",
+  plan: "תכנון אחזור",
+  retrieve: "אחזור מקורות",
+  rerank: "דירוג רלוונטיות",
+  source_pack: "בניית חבילת מקורות",
+  claim_map: "מיפוי טענות",
+  drafter: "ניסוח טיוטה",
+  anchor_pass: "עיגון ציטוטים",
+  coverage_gap: "בדיקת כיסוי",
+  statute_completion: "השלמת חקיקה",
+  footnote_validate: "אימות הערות שוליים",
+};
+
+export interface SseEmitter {
+  stage: (name: string, status: "running" | "complete", detail?: string) => void;
+  draftDelta: (chunk: string) => void;
+  postProcessing: (label: string) => void;
+}
+
+// Per-request emitter slot. The SSE wrapper installs this before invoking
+// handleLegalQARequest; the handler reads it via the helpers below at each
+// stage boundary. Module-level holder keeps the diff surgical.
+let __activeEmitter: SseEmitter | null = null;
+function setEmitter(e: SseEmitter | null) { __activeEmitter = e; }
+function emitStage(name: string, status: "running" | "complete", detail?: string) {
+  if (!__activeEmitter) return;
+  try { __activeEmitter.stage(name, status, detail); } catch { /* swallow */ }
+}
+function emitDraftDelta(chunk: string) {
+  if (!__activeEmitter) return;
+  try { __activeEmitter.draftDelta(chunk); } catch { /* swallow */ }
+}
+function emitPostProcessing(label: string) {
+  if (!__activeEmitter) return;
+  try { __activeEmitter.postProcessing(label); } catch { /* swallow */ }
+}
+
 async function runHandlerSSE(
   req: Request,
   parsedBody: Record<string, unknown>,
