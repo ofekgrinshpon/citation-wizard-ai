@@ -14,6 +14,7 @@ import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, F
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CaseSummaryReport } from "@/components/CaseSummaryReport";
 import { ResearchProgress } from "@/components/ResearchProgress";
+import { StageProgressList, type StageEvent } from "@/components/StageProgressList";
 
 // ─── Abstract chapter helpers ──────────────────────────────────────
 const ABSTRACT_LOCKED_TOOLTIP = "ניתן לייצר תקציר רק לאחר השלמת כל פרקי העבודה, כדי להבטיח שהוא משקף את המחקר במלואו";
@@ -586,6 +587,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [extractedTexts, setExtractedTexts] = useState<Array<{ name: string; text: string }>>([]);
   const [extracting, setExtracting] = useState(false);
+
+  // ─── SSE streaming state (Fast/Deep research + academic write_chapter) ───
+  const [stageEvents, setStageEvents] = useState<StageEvent[]>([]);
+  const [postProcessingLabel, setPostProcessingLabel] = useState<string | null>(null);
+  const [streamingDraft, setStreamingDraft] = useState<string>("");
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
