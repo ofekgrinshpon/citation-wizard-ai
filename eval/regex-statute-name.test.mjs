@@ -40,7 +40,9 @@ function extractKept(body) {
   let m;
   STATUTE_RE.lastIndex = 0;
   while ((m = STATUTE_RE.exec(body)) !== null) {
-    let name = m[1].replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
+    const matched = m[1] ?? m[0];
+    if (!matched) continue;
+    let name = matched.replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
     name = name.replace(/\s*\([^)]*$/, "").trim();
     if (PREP_TAIL.test(name) && !/\d{4}/.test(name)) continue;
     const after = name.replace(/^(חוק[- ]יסוד\s*:\s*|חוק\s+|פקודת\s+|תקנות\s+)/, "");
