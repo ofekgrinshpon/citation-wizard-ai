@@ -2654,6 +2654,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       } catch (err) {
         console.error("Re-ranking error (non-fatal):", err);
       }
+      emitStage("rerank", "complete", `${rankedMatches.length} מסמכים`);
     }
 
     if (rankedMatches.length === 0 && !searchResults && !hasDocument) {
