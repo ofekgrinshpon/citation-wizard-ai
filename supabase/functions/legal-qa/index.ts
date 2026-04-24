@@ -5213,6 +5213,14 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           // citations to satisfy a floor — read alongside total_footnotes.
           dropped_unanchored_count: droppedUnanchoredCount,
           dropped_unanchored_previews: droppedUnanchoredPreviews,
+          // Fix 1: footnote dedup (same source card cited under multiple #s).
+          footnote_dedup: {
+            merged_count: footnoteDedupMergedCount,
+            with_pinpoint_conflict: footnoteDedupPinpointConflict,
+            samples: footnoteDedupSamples,
+          },
+          // Fix 2: post-draft statute completion telemetry.
+          statute_completion: statuteCompletionTelemetry,
           // Citation engine resolver pass on chapter footnotes (academic only).
           chapter_engine: isAcademicChapter ? {
             resolved_count: chapterEngineResolvedCount,
