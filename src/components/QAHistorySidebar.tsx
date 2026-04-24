@@ -152,6 +152,18 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
               locale: he,
             });
 
+            const academicStep =
+              log.task_mode === "academic_writing" && log.metadata && typeof log.metadata === "object"
+                ? (log.metadata as Record<string, unknown>).academic_step as string | undefined
+                : undefined;
+            const isAbstract =
+              log.task_mode === "academic_writing" && log.metadata && typeof log.metadata === "object"
+                ? (log.metadata as Record<string, unknown>).is_abstract === true
+                : false;
+            const academicLabel = academicStep
+              ? (isAbstract ? "תקציר" : ACADEMIC_STEP_LABELS[academicStep] ?? academicStep)
+              : null;
+
             return (
               <button
                 key={log.id}
@@ -168,9 +180,9 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
                       <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
                         {mode.label}
                       </Badge>
-                      {log.task_mode === "academic_writing" && (
+                      {academicLabel && (
                         <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-primary/40 text-primary">
-                          המשך עבודה אקדמית
+                          {academicLabel}
                         </Badge>
                       )}
                       <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
