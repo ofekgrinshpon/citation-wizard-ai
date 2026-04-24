@@ -1691,6 +1691,29 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
 
       console.log(`Academic sub-mode (${academicStep}${isAbstractGeneration ? ":abstract" : ""}): ${answerText.length} chars, ${Date.now() - t0}ms`);
 
+      // Persist academic sub-mode runs into qa_logs so the history sidebar
+      // and admin dashboards can see them. The full Deep pipeline write below
+      // only runs for write_chapter (non-abstract) / research mode.
+      try {
+        await adminClient.from("qa_logs").insert({
+          user_id: user.id,
+          question: question.substring(0, 500),
+          answer: answerText,
+          footnotes: [],
+          task_mode: taskMode,
+          local_footnotes_count: 0,
+          perplexity_footnotes_count: 0,
+          total_footnotes: 0,
+          metadata: {
+            academic_step: academicStep,
+            is_abstract: isAbstractGeneration,
+            duration_ms: Date.now() - t0,
+          },
+        });
+      } catch (logErr) {
+        console.error("Failed to insert academic sub-mode qa_logs row (non-fatal):", logErr);
+      }
+
       return new Response(
         JSON.stringify({ answer: answerText, footnotes: [], source_urls: [] }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
