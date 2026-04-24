@@ -1,15 +1,14 @@
 {
   "query_id": "Q-extort",
-  "captured_at": "2026-04-24T19:48:20.189Z",
+  "captured_at": "2026-04-24T19:53:27.829Z",
   "code_state": "before-C-E-B-fixes",
-  "total_footnotes": 3,
-  "anchored_count": "anchored=3/3 (need ≥1)",
+  "total_footnotes": 1,
+  "anchored_count": "anchored=1/1 (need ≥-1)",
   "footnote_identity_keys": [
-    "lit:|ת\"פ (מחוזי ת\"א) 1097-11-23 **מדינת ישראל** נ' **פלוני** (פור",
-    "lit:|תלה\"מ (אילת) 37317-02-18 **פלוני** נ' **אלמונית** (פורסם בנב",
-    "lit:|37317-02-18, לעיל ה\"ש 3."
+    "lit:|פקודת החסינויות וזכויות-היתר של האומות המאוחדות."
   ],
   "known_failing_assertions": [
+    "COUNT_TOTAL_FN",
     "SHAPE_BODY_COVERAGE"
   ],
   "note": "Each entry in known_failing_assertions must be tracked to a fix (C, E, or B). Remove on fix."

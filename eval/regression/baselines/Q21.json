@@ -1,16 +1,15 @@
 {
   "query_id": "Q21",
-  "captured_at": "2026-04-24T19:48:46.434Z",
+  "captured_at": "2026-04-24T19:54:20.746Z",
   "code_state": "before-C-E-B-fixes",
-  "total_footnotes": 3,
-  "anchored_count": "anchored=3/3 (need ≥1)",
+  "total_footnotes": 2,
+  "anchored_count": "anchored=2/2 (need ≥0)",
   "footnote_identity_keys": [
-    "lit:|חוק שירות המדינה (מינויים), התשי\"ט-1959, ס\"ח 140.",
-    "lit:|התשכ\"ג-1963.",
-    "lit:|התשכ\"ג-1963."
+    "lit:|חוק שירות המדינה (משמעת)/שירותים חשאיים, ס' 17.",
+    "lit:|סימה קרמר \"חזרה לדיני משמעת: הפתרון לבריונות כהתנהגות בלתי ה"
   ],
   "known_failing_assertions": [
-    "SHAPE_BODY_COVERAGE"
+    "COUNT_TOTAL_FN"
   ],
   "note": "Each entry in known_failing_assertions must be tracked to a fix (C, E, or B). Remove on fix."
 }

@@ -1,10 +1,13 @@
 {
   "query_id": "Q6",
-  "captured_at": "2026-04-24T19:47:49.713Z",
+  "captured_at": "2026-04-24T19:52:38.319Z",
   "code_state": "before-C-E-B-fixes",
-  "total_footnotes": 0,
-  "anchored_count": "anchored=0/0 (need ≥-2)",
-  "footnote_identity_keys": [],
+  "total_footnotes": 2,
+  "anchored_count": "anchored=2/2 (need ≥0)",
+  "footnote_identity_keys": [
+    "case:8294/14",
+    "law:חוק-יסוד: חופש העיסוק [התשנ\"ד],."
+  ],
   "known_failing_assertions": [
     "COUNT_TOTAL_FN"
   ],

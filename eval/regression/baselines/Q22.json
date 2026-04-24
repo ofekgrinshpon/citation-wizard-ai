@@ -1,11 +1,11 @@
 {
   "query_id": "Q22",
-  "captured_at": "2026-04-24T19:49:16.056Z",
+  "captured_at": "2026-04-24T19:55:23.521Z",
   "code_state": "before-C-E-B-fixes",
   "total_footnotes": 1,
   "anchored_count": "anchored=1/1 (need ≥-1)",
   "footnote_identity_keys": [
-    "case:8336/17"
+    "lit:|חוק שירות הקבע בצבא-הגנה לישראל (גימלאות), (לא נמצאו פרטי פר"
   ],
   "known_failing_assertions": [
     "COUNT_TOTAL_FN",

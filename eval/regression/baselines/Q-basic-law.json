@@ -1,19 +1,16 @@
 {
   "query_id": "Q-basic-law",
-  "captured_at": "2026-04-24T19:49:42.410Z",
+  "captured_at": "2026-04-24T19:56:16.805Z",
   "code_state": "before-C-E-B-fixes",
-  "total_footnotes": 6,
-  "anchored_count": "anchored=6/6 (need ≥4)",
+  "total_footnotes": 2,
+  "anchored_count": "anchored=2/2 (need ≥0)",
   "footnote_identity_keys": [
-    "lit:|חוק-יסוד: כבוד האדם וחירותו,.",
-    "lit:|אורית קמיר, \"התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה",
-    "lit:|ת\"א (מחוזי חיפה) 18698-11-21 **פלוני** נ' **אלמוני** (פורסם ",
-    "lit:|עו\"ד ירון אונגר, \"1.2 היקפה של הזכות...... .................",
-    "lit:|18698-11-21, לעיל ה\"ש 3.",
-    "lit:|עו \"ד ירון אונגר,\", לעיל ה\"ש 4."
+    "law:חוק-יסוד: כבוד האדם וחירותו, ס\"ח.",
+    "law:חוק-יסוד: כבוד האדם וחירותו, ס\"ח."
   ],
   "known_failing_assertions": [
-    "SHAPE_BODY_COVERAGE"
+    "COUNT_TOTAL_FN",
+    "SHAPE_DUP_STATUTE"
   ],
   "note": "Each entry in known_failing_assertions must be tracked to a fix (C, E, or B). Remove on fix."
 }

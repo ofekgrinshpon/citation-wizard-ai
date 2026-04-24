@@ -1,15 +1,15 @@
 {
   "query_id": "Q-procedural",
-  "captured_at": "2026-04-24T19:50:10.233Z",
+  "captured_at": "2026-04-24T19:57:03.627Z",
   "code_state": "before-C-E-B-fixes",
-  "total_footnotes": 3,
-  "anchored_count": "anchored=3/3 (need ≥1)",
+  "total_footnotes": 2,
+  "anchored_count": "anchored=2/2 (need ≥0)",
   "footnote_identity_keys": [
     "lit:|תקנות סדר הדין האזרחי, תקנה 46.",
-    "lit:|אורה שמלץ \"תיקון טעויות בחוקים בדרך מקוצרת\" **משפטים** כרך י",
-    "lit:|סימן ב': תיקון כתב טענות."
+    "lit:|47750-03-24 (בתי המשפט המחוזיים) (פורסם בנבו, 13.03.2024)."
   ],
   "known_failing_assertions": [
+    "COUNT_TOTAL_FN",
     "SHAPE_BODY_COVERAGE"
   ],
   "note": "Each entry in known_failing_assertions must be tracked to a fix (C, E, or B). Remove on fix."
