@@ -3644,7 +3644,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           return new Response(JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
         // Legacy Gemini drafter path — record telemetry too.
-        if (taskMode === RESEARCH_MODE) {
+        if (enableDeepPipeline) {
           stageRuns.push({
             stage: "drafting",
             provider: "gemini",
@@ -3657,7 +3657,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         }
       } catch (err) {
         console.error("AI call error:", err);
-        if (taskMode === RESEARCH_MODE) {
+        if (enableDeepPipeline) {
           stageRuns.push({
             stage: "drafting",
             provider: "gemini",
@@ -4561,7 +4561,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // (vs the proxy of footnote count) that decides whether to ship an
     // anchor-pass stage. Heuristic + log-only; never blocks the response.
     try {
-      const isStructured = taskMode === RESEARCH_MODE && useStructuredDrafterPath;
+      const isStructured = enableDeepPipeline && useStructuredDrafterPath;
       if (isStructured) {
         const cardsIn = Array.isArray(sourceCards) ? sourceCards.length : 0;
 
@@ -4669,7 +4669,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
 
       // Build internal metadata snapshot (admin-only, never exposed to UI).
       let metadata: Record<string, unknown> | null = null;
-      if (taskMode === RESEARCH_MODE) {
+      if (enableDeepPipeline) {
         const byStrength = { strong: 0, partial: 0, weak: 0 } as Record<string, number>;
         if (claimMap) {
           for (const c of claimMap) {
@@ -4765,7 +4765,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         total_footnotes: finalFootnotes.length,
         ...(metadata ? { metadata } : {}),
       };
-      const { data: insertedLog, error: insertErr } = taskMode === RESEARCH_MODE
+      const { data: insertedLog, error: insertErr } = enableDeepPipeline
         ? await adminClient
             .from("qa_logs")
             .upsert({ id: preallocatedQaLogId, ...finalRow }, { onConflict: "id" })
