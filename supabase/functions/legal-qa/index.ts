@@ -1073,10 +1073,18 @@ interface RankedMatch extends LocalMatch {
   relevanceScore?: number;
 }
 
+export interface RerankDropDetail {
+  title: string;
+  source_type: string;
+  score: number;
+  reason: string;
+}
+
 async function rerankLocalMatches(
   matches: LocalMatch[],
   question: string,
   apiKey: string,
+  dropDetails?: RerankDropDetail[],
 ): Promise<RankedMatch[]> {
   if (matches.length === 0) return [];
 
