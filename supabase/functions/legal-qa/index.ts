@@ -5084,4 +5084,33 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
+}
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  // Peek at the body to decide whether to wrap in SSE. Only Deep mode opts in
+  // (Fast finishes well within the default HTTP window). The body is consumed
+  // here, so the SSE wrapper rebuilds a fresh Request for the inner handler.
+  let parsedBody: Record<string, unknown> | null = null;
+  try {
+    const cloned = req.clone();
+    parsedBody = await cloned.json();
+  } catch {
+    // Body unparsable / empty — let the inner handler return its own 4xx.
+  }
+
+  const wantsStream = Boolean(
+    parsedBody &&
+      parsedBody.stream === true &&
+      parsedBody.depth === "deep",
+  );
+
+  if (wantsStream && parsedBody) {
+    return runHandlerSSE(req, parsedBody, handleLegalQARequest);
+  }
+
+  return handleLegalQARequest(req);
 });
