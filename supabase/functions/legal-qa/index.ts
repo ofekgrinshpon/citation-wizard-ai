@@ -4947,11 +4947,16 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       drops?: Record<string, number>;
       status?: string;
       duration_ms?: number;
+      // Fix E (revised): structured-fields path indicator + per-kind tally
+      structured_path?: boolean;
+      format_kind_counts?: Record<string, number>;
     } = {
       triggered: false,
       named_statutes: [],
       completed_count: 0,
       skipped_with_existing: 0,
+      structured_path: true,
+      format_kind_counts: {},
     };
     if (enableDeepPipeline) {
       emitStage("statute_completion", "running");
