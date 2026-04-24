@@ -1750,7 +1750,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     __checkpointTaskMode = taskMode;
 
     const writeCheckpoint = (phase: "decomposition" | "claim_map" | "drafting_started"): void => {
-      if (taskMode !== RESEARCH_MODE) return;
+      if (!enableDeepPipeline) return;
       // Snapshot current state — note that drafting_path is "in_progress" until
       // the final block decides between "structured" / "fallback".
       const snapshot = {
@@ -1799,7 +1799,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // localSearchPromise via `await decompPromise` only at the point they're
     // actually needed (after the first wave of embeddings is in flight).
     let decompPromise: Promise<{ data: DecomposedPlan | null; run: StageRun; retryRun?: StageRun }> | null = null;
-    if (taskMode === RESEARCH_MODE && !evalForceLegacy) {
+    if (enableDeepPipeline && !evalForceLegacy) {
       const tDecompStart = Date.now();
       decompPromise = decomposeAndPlan(question)
         .then((res) => {
@@ -2625,7 +2625,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // ========= Stage C: Source Pack assembly (legal_research only, INTERNAL) =========
     let sourcePack: SourcePackEntry[] = [];
     let sourcePackV2: LegalSourcePack | null = null;
-    if (taskMode === RESEARCH_MODE) {
+    if (enableDeepPipeline) {
       sourcePack = sourceCards.map((sc) => {
         const excerpt = sc.excerpt || "";
         const anchorPresent = Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document";
@@ -2666,7 +2666,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // Validated candidates are pushed into sourceCards/sourcePack with provenance
     // "perplexity_completion", then sourcePackV2 is re-assembled so they land in
     // the core bucket before Stage D builds the claim map.
-    if (taskMode === RESEARCH_MODE && !evalForceLegacy) {
+    if (enableDeepPipeline && !evalForceLegacy) {
       const coreBefore = sourcePackV2 ? summarizeSourcePack(sourcePackV2).core : 0;
       if (coreBefore < modeProfile.perplexityCompletionMinAnchored) {
         const tE5 = Date.now();
@@ -2765,7 +2765,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // represented in sourceCards are added (deduped at the document level).
     // This widens the source pool for Deep before the claim map is built.
     if (
-      taskMode === RESEARCH_MODE &&
+      enableDeepPipeline &&
       !evalForceLegacy &&
       modeProfile.retrievalRounds >= 2 &&
       decomposedPlan
@@ -2896,7 +2896,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     let claimMapAllowedCount = 0;
     let claimMapV2: LegalClaimMap | null = null;
     let draftingInput: LegalDraftingInput | null = null;
-    if (taskMode === RESEARCH_MODE && !evalForceLegacy && decomposedPlan && sourcePack.length >= 2) {
+    if (enableDeepPipeline && !evalForceLegacy && decomposedPlan && sourcePack.length >= 2) {
       try {
         const tClaimStart = Date.now();
         // Trim before handing off to the planner. Final additional trimming
@@ -3535,7 +3535,7 @@ ${combinedContext}
     // ping-ponging between structured/fallback when Flash conservatively
     // marks 1-2 claims allowed_to_state. The compact drafter prompt + claim
     // map already handle single-claim drafting cleanly via statementMode.
-    const useStructuredDrafterPath = taskMode === RESEARCH_MODE && claimMap !== null && claimMapAllowedCount >= 1;
+    const useStructuredDrafterPath = enableDeepPipeline && claimMap !== null && claimMapAllowedCount >= 1;
     const drafterSystemPrompt = useStructuredDrafterPath
       ? buildCompactStructuredPrompt()
       : systemPrompt;
