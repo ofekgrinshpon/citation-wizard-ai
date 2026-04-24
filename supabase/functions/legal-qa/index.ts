@@ -2614,10 +2614,12 @@ ${(verify.fullText as string).slice(0, 50000)}
 
     const tRetrieval = Date.now();
     console.log(`Retrieval took ${tRetrieval - t0}ms`);
+    emitStage("retrieve", "complete", `${localMatches.length} מסמכים`);
 
     // ========= Step 1c: AI-based re-ranking of local sources =========
     let rankedMatches: RankedMatch[] = localMatches.map(m => ({ ...m }));
     if (localMatches.length > 0 && LOVABLE_API_KEY) {
+      emitStage("rerank", "running");
       try {
         rankedMatches = await rerankLocalMatches(localMatches, question, LOVABLE_API_KEY);
         const tRerank = Date.now();
