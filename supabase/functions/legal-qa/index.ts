@@ -5310,8 +5310,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           }
         }
       }
+      emitStage("coverage_gap", "complete");
     } catch (e) {
       console.log(`Coverage gap instrumentation skipped: ${(e as Error).message}`);
+      emitStage("coverage_gap", "complete", "דילוג");
     }
 
     // ===== Fix 2: Post-draft statute completion (Deep + academic) =====
@@ -5338,6 +5340,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       skipped_with_existing: 0,
     };
     if (enableDeepPipeline) {
+      emitStage("statute_completion", "running");
       const tSC = Date.now();
       try {
         // 1. Scan body for Hebrew statute mentions
