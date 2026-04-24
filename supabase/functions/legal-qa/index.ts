@@ -2676,10 +2676,11 @@ ${(verify.fullText as string).slice(0, 50000)}
 
     // ========= Step 1c: AI-based re-ranking of local sources =========
     let rankedMatches: RankedMatch[] = localMatches.map(m => ({ ...m }));
+    const rerankDrops: RerankDropDetail[] = [];
     if (localMatches.length > 0 && LOVABLE_API_KEY) {
       emitStage("rerank", "running");
       try {
-        rankedMatches = await rerankLocalMatches(localMatches, question, LOVABLE_API_KEY);
+        rankedMatches = await rerankLocalMatches(localMatches, question, LOVABLE_API_KEY, rerankDrops);
         const tRerank = Date.now();
         console.log(`Re-ranking took ${tRerank - tRetrieval}ms, kept ${rankedMatches.length}/${localMatches.length} chunks`);
 
@@ -2693,15 +2694,21 @@ ${(verify.fullText as string).slice(0, 50000)}
           }
         }
         let droppedRerankByType: Record<string, number> = {};
+        // Build a quick lookup of per-doc rerank scores from rerankDrops
+        // (kept docs aren't in dropDetails — we leave their score=-1 in the funnel).
+        const dropScoreByTitle = new Map<string, { score: number; reason: string }>();
+        for (const d of rerankDrops) dropScoreByTitle.set(d.title, { score: d.score, reason: d.reason });
         for (const [docId, info] of inputByDoc) {
           if (!keptDocIds.has(docId)) {
             const t = (info.source_type || "other").toLowerCase();
             droppedRerankByType[t] = (droppedRerankByType[t] || 0) + 1;
+            const titleKey = (info.title || "").slice(0, 80);
+            const detail = dropScoreByTitle.get(titleKey);
             retrievalFunnel.rerank_dropped_docs.push({
-              title: info.title.slice(0, 80),
+              title: titleKey,
               source_type: info.source_type,
-              score: -1, // score not exposed by rerank fn; -1 = unknown
-              reason: "rerank_gate_or_top6_slice",
+              score: detail?.score ?? -1,
+              reason: detail?.reason ?? "rerank_gate_or_top6_slice",
             });
           }
         }
