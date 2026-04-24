@@ -5586,6 +5586,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     } catch (gErr) {
       console.error("Grounding check failed (non-fatal):", gErr);
     }
+    emitStage("footnote_validate", "complete", `${finalFootnotes.length} הערות`);
 
     // Log — canonical server-side log with internal diagnostics in metadata.
     try {
