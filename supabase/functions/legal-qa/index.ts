@@ -1243,11 +1243,99 @@ ${sourceList}
   }
 }
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+// ─── SSE streaming wrapper for Deep mode ────────────────────────────────
+// Deep mode runs ~150-160s end-to-end. Without keepalive, the HTTP socket
+// (browser ↔ edge runtime ↔ legal-qa container) gets dropped before the
+// payload can be flushed, surfacing as the user-facing error
+// "Http: connection closed before message completed". This wrapper:
+//   1. Returns a `text/event-stream` Response immediately.
+//   2. Emits an SSE comment heartbeat (`: ping\n\n`) every 15s so every
+//      proxy in the chain stays warm.
+//   3. Runs the original handler against a fresh Request (body cloned) and,
+//      when it resolves, emits a single `data: <payload>\n\n` event followed
+//      by `data: [DONE]\n\n`, then closes the stream.
+// Errors inside the handler are caught and emitted as a `data:{error:…}`
+// event so the client always gets a deterministic terminator.
+async function runHandlerSSE(
+  req: Request,
+  parsedBody: Record<string, unknown>,
+  handler: (req: Request) => Promise<Response>,
+): Promise<Response> {
+  const encoder = new TextEncoder();
+  // Strip `stream` from the body we forward, so the inner handler doesn't
+  // re-trigger this wrapper if someone ever calls handler() recursively.
+  const { stream: _omit, ...rest } = parsedBody;
+  const innerReq = new Request(req.url, {
+    method: req.method,
+    headers: req.headers,
+    body: JSON.stringify(rest),
+  });
 
+  let heartbeat: number | undefined;
+  const stream = new ReadableStream({
+    async start(controller) {
+      // Initial comment so the client immediately sees the connection open.
+      controller.enqueue(encoder.encode(`: stream-open\n\n`));
+      heartbeat = setInterval(() => {
+        try {
+          controller.enqueue(encoder.encode(`: ping ${Date.now()}\n\n`));
+        } catch {
+          // controller already closed — let the cleanup finally{} clear it.
+        }
+      }, 15000) as unknown as number;
+
+      try {
+        const finalRes = await handler(innerReq);
+        // Read the inner response as text. We expect JSON in all paths.
+        const text = await finalRes.text();
+        let payloadJson = text;
+        // Validate it's parseable JSON; if not, wrap as an error event.
+        try { JSON.parse(text); } catch {
+          payloadJson = JSON.stringify({ error: "Invalid response from handler" });
+        }
+        // Encode as a single SSE message. Status code is forwarded via a
+        // dedicated header field on the JSON so the client can react.
+        const wrapped = JSON.stringify({
+          status: finalRes.status,
+          body: JSON.parse(payloadJson),
+        });
+        controller.enqueue(encoder.encode(`data: ${wrapped}\n\n`));
+        controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
+      } catch (err) {
+        const msg = (err as Error)?.message ?? String(err);
+        console.error("[sse-wrapper] handler threw:", msg);
+        const wrapped = JSON.stringify({
+          status: 500,
+          body: { error: "שגיאה בעיבוד השאלה. נסו שוב." },
+        });
+        try {
+          controller.enqueue(encoder.encode(`data: ${wrapped}\n\n`));
+          controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
+        } catch { /* already closed */ }
+      } finally {
+        if (heartbeat !== undefined) clearInterval(heartbeat);
+        try { controller.close(); } catch { /* already closed */ }
+      }
+    },
+    cancel() {
+      if (heartbeat !== undefined) clearInterval(heartbeat);
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      ...corsHeaders,
+      "Content-Type": "text/event-stream; charset=utf-8",
+      "Cache-Control": "no-cache, no-transform",
+      "X-Accel-Buffering": "no",
+      "Connection": "keep-alive",
+    },
+  });
+}
+
+// The actual request handler. Extracted from `serve(...)` so the SSE wrapper
+// above can re-invoke it with a fresh Request when streaming is enabled.
+async function handleLegalQARequest(req: Request): Promise<Response> {
   // Refund state — hoisted so the outer catch can refund on unexpected throws.
   let __creditsCharged = false;
   let __creditRequestId: string | null = null;
@@ -1967,14 +2055,26 @@ ${(verify.fullText as string).slice(0, 50000)}
             if (p.literature_query) planQueries.push(p.literature_query);
           }
         }
-        const planQueriesUnique = Array.from(new Set(planQueries.map((q) => q.trim()).filter(Boolean))).slice(0, 5);
+        // Cap total parallel vector queries at 4. Each match_legal_chunks RPC
+        // contends for the same HNSW index and PG worker pool; pushing 6+ in
+        // parallel was causing 5-6 statement_timeouts per Deep run (see logs
+        // 2026-04-24). Budget: question + optional expansion + remaining slots
+        // for plan-derived sub-issues. Keeps retrieval breadth while ensuring
+        // each query gets enough server time to complete.
+        const MAX_PARALLEL_VECTOR_QUERIES = 4;
+        const planQueriesUnique = Array.from(
+          new Set(planQueries.map((q) => q.trim()).filter(Boolean)),
+        );
+        const reservedSlots = 1 + (expandedQuery ? 1 : 0); // question + maybe expansion
+        const planSlots = Math.max(0, MAX_PARALLEL_VECTOR_QUERIES - reservedSlots);
+        const planQueriesCapped = planQueriesUnique.slice(0, planSlots);
         const queriesForEmbedding = [
           question,
           ...(expandedQuery ? [expandedQuery] : []),
-          ...planQueriesUnique,
+          ...planQueriesCapped,
         ];
-        if (planQueriesUnique.length > 0) {
-          console.log(`[plan] adding ${planQueriesUnique.length} sub-issue queries to vector search`);
+        if (planQueriesCapped.length > 0) {
+          console.log(`[plan] adding ${planQueriesCapped.length} sub-issue queries to vector search (capped at ${MAX_PARALLEL_VECTOR_QUERIES} total parallel; ${planQueriesUnique.length - planQueriesCapped.length} dropped)`);
         } else if (decompPromise) {
           console.log(`[plan] proceeding with retrieval before plan landed (or plan was null)`);
         }
@@ -4984,4 +5084,33 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
+}
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  // Peek at the body to decide whether to wrap in SSE. Only Deep mode opts in
+  // (Fast finishes well within the default HTTP window). The body is consumed
+  // here, so the SSE wrapper rebuilds a fresh Request for the inner handler.
+  let parsedBody: Record<string, unknown> | null = null;
+  try {
+    const cloned = req.clone();
+    parsedBody = await cloned.json();
+  } catch {
+    // Body unparsable / empty — let the inner handler return its own 4xx.
+  }
+
+  const wantsStream = Boolean(
+    parsedBody &&
+      parsedBody.stream === true &&
+      parsedBody.depth === "deep",
+  );
+
+  if (wantsStream && parsedBody) {
+    return runHandlerSSE(req, parsedBody, handleLegalQARequest);
+  }
+
+  return handleLegalQARequest(req);
 });
