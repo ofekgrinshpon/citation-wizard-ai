@@ -1094,6 +1094,10 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         body.researchQuestion = researchQuestion;
       }
 
+      if (useSseStream) {
+        body.stream = true;
+      }
+
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       const { data: { session } } = await supabase.auth.getSession();
@@ -1109,6 +1113,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           "Content-Type": "application/json",
           "Authorization": `Bearer ${session.access_token}`,
           "apikey": supabaseKey,
+          ...(useSseStream ? { "Accept": "text/event-stream" } : {}),
         },
         body: JSON.stringify(body),
         signal: controller.signal,
@@ -1121,9 +1126,27 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         throw new Error(`HTTP ${res.status}`);
       }
 
-      const data = await res.json();
+      let data: any;
+      let effectiveStatus = res.status;
+      const contentType = res.headers.get("content-type") || "";
+      if (useSseStream && contentType.includes("text/event-stream") && res.body) {
+        const result = await consumeSseStream(res.body, {
+          onStage: (e) => setStageEvents((prev) => [...prev, e]),
+          onDraftDelta: (chunk) => setStreamingDraft((prev) => prev + chunk),
+          onPostProcessing: (label) => setPostProcessingLabel(label),
+        });
+        data = result.data;
+        effectiveStatus = result.status;
+        if (effectiveStatus === 401) { setError("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש."); return; }
+        if (effectiveStatus === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
+        if (effectiveStatus === 402) { setError("נגמרו הקרדיטים."); return; }
+      } else {
+        data = await res.json();
+      }
+
       if (data?.error) { setError(data.error); return; }
       if (!data?.answer || data.answer.trim().length < 10) { setError("לא התקבלה תשובה. נסו שוב."); return; }
+
 
       const qaResult = data as QAResult;
       setResult(qaResult);
