@@ -1,15 +1,13 @@
 {
   "query_id": "Q-extort",
-  "captured_at": "2026-04-24T19:37:23.679Z",
+  "captured_at": "2026-04-24T19:53:27.829Z",
   "code_state": "before-C-E-B-fixes",
-  "total_footnotes": 2,
-  "anchored_count": "anchored=2/2 (need ≥0)",
+  "total_footnotes": 1,
+  "anchored_count": "anchored=1/1 (need ≥-1)",
   "footnote_identity_keys": [
-    "lit:|37317-02-18 (בתי המשפט לענייני משפחה).",
     "lit:|פקודת החסינויות וזכויות-היתר של האומות המאוחדות."
   ],
   "known_failing_assertions": [
-    "COUNT_RERANK_DROPS",
     "COUNT_TOTAL_FN",
     "SHAPE_BODY_COVERAGE"
   ],

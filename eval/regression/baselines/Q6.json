@@ -1,23 +1,15 @@
 {
   "query_id": "Q6",
-  "captured_at": "2026-04-24T19:36:34.443Z",
+  "captured_at": "2026-04-24T19:52:38.319Z",
   "code_state": "before-C-E-B-fixes",
-  "total_footnotes": 9,
-  "anchored_count": "anchored=9/9 (need ≥7)",
+  "total_footnotes": 2,
+  "anchored_count": "anchored=2/2 (need ≥0)",
   "footnote_identity_keys": [
-    "lit:|aa, לעיל ה\"ש 3.",
-    "lit:|עו\"ד חנוך קינן ואורנה לוטן \"המעסיק קבע תוקף צינון או אי-תחרו",
-    "lit:|document, לעיל ה\"ש 2.",
-    "lit:|document, לעיל ה\"ש 2.",
-    "lit:|document, לעיל ה\"ש 2.",
-    "lit:|aa, לעיל ה\"ש 3.",
-    "lit:|תקנות לביצוע אמנת האג 1954 (סדר הדין האזרחי).",
-    "lit:|דוד גילת \"הפררוגטיבה של המעביד ודיני החוזים – בעקבות פרשות נ",
-    "lit:|גיא מונדלק ואחרים \"לקראת מדיניות משפטית חדשה כלפי תניות אי-ת"
+    "case:8294/14",
+    "law:חוק-יסוד: חופש העיסוק [התשנ\"ד],."
   ],
   "known_failing_assertions": [
-    "COUNT_RERANK_DROPS",
-    "SHAPE_BODY_COVERAGE"
+    "COUNT_TOTAL_FN"
   ],
   "note": "Each entry in known_failing_assertions must be tracked to a fix (C, E, or B). Remove on fix."
 }

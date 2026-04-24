@@ -1,17 +1,16 @@
 {
   "query_id": "Q-basic-law",
-  "captured_at": "2026-04-24T19:39:48.617Z",
+  "captured_at": "2026-04-24T19:56:16.805Z",
   "code_state": "before-C-E-B-fixes",
-  "total_footnotes": 3,
-  "anchored_count": "anchored=3/3 (need ≥1)",
+  "total_footnotes": 2,
+  "anchored_count": "anchored=2/2 (need ≥0)",
   "footnote_identity_keys": [
-    "lit:|18698-11-21 (בתי המשפט המחוזיים).",
-    "lit:|אורית קמיר \"התעמרות בעבודה: בין פסיכולוגיה למשפט, בין חקיקה ",
-    "lit:|דן ד. להב \"נמקות להגנה חוקתית על תאגידים\" (מרכז המחקר והמידע"
+    "law:חוק-יסוד: כבוד האדם וחירותו, ס\"ח.",
+    "law:חוק-יסוד: כבוד האדם וחירותו, ס\"ח."
   ],
   "known_failing_assertions": [
-    "COUNT_RERANK_DROPS",
-    "SHAPE_BODY_COVERAGE"
+    "COUNT_TOTAL_FN",
+    "SHAPE_DUP_STATUTE"
   ],
   "note": "Each entry in known_failing_assertions must be tracked to a fix (C, E, or B). Remove on fix."
 }

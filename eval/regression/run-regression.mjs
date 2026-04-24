@@ -129,8 +129,10 @@ async function runOne(jwt, q, attempt) {
   const t0 = Date.now();
   const httpResult = await callLegalQa(jwt, {
     question: q.question,
+    taskMode: "research",
     depth: "fast",
-    metadata: { eval_run_id: evalRunId, eval_variant: "regression" },
+    evalRunId,
+    evalVariant: "structured",
   });
   const wallMs = Date.now() - t0;
   log(`  http=${httpResult.status} wall=${wallMs}ms`);

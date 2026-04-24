@@ -19,6 +19,30 @@
 
 const CASE_PREFIX_RE = /(?:בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+(\d+\/\d+)/;
 
+// Source-type buckets used across assertions.
+// Backend uses values like "israeli_law", "legislation_primary", "regulation",
+// "case_law", "caselaw", "literature", etc. Treat any of these as legislation:
+const LEGISLATION_TYPES = new Set([
+  "israeli_law",
+  "legislation",
+  "legislation_primary",
+  "legislation_secondary",
+  "regulation",
+  "regulations",
+  "basic_law",
+  "ordinance",
+]);
+
+export function isLegislationFn(footnote) {
+  const t = String(footnote?.source_type || "").toLowerCase();
+  if (!t) return false;
+  if (LEGISLATION_TYPES.has(t)) return true;
+  if (t.startsWith("legislation")) return true;
+  if (t.includes("law") && !t.includes("case")) return true;
+  if (t.includes("regulation")) return true;
+  return false;
+}
+
 export function computeIdentityKey(footnote) {
   const sourceType = String(footnote?.source_type || "").toLowerCase();
   const citation = String(footnote?.citation || "").trim();
@@ -31,7 +55,7 @@ export function computeIdentityKey(footnote) {
     return `case:${normalize(name)}|${normalize(citation).slice(0, 60)}`;
   }
 
-  if (sourceType.startsWith("legislation")) {
+  if (isLegislationFn(footnote)) {
     // Extract section if present
     const sectionMatch = citation.match(/^סעיף\s+([\dא-ת()./\\–-]+)\s+ל/);
     const section = sectionMatch ? sectionMatch[1] : null;
@@ -92,7 +116,7 @@ export function assertRerankDrops(metadata) {
 }
 
 export function assertNoDupStatute(fnList) {
-  const legFns = (fnList || []).filter((f) => String(f?.source_type || "").toLowerCase().startsWith("legislation"));
+  const legFns = (fnList || []).filter(isLegislationFn);
   const seen = new Map();
   const dups = [];
   for (const fn of legFns) {
@@ -119,17 +143,23 @@ const TRUNC_PATTERNS = [
   /\s+ל\s*$/,                          // "סעיף X ל" with no law name
 ];
 
+// A legislation citation that begins with the year prefix (no statute name) is broken.
+// e.g. "התשכ\"ג-1963." with no preceding "חוק/פקודת/תקנות".
+const YEAR_ONLY_RE = /^\s*התש[א-ת]["״]?[א-ת]?[\s\-–]*\d{4}\.?\s*$/;
+
 export function assertNoTruncation(fnList) {
   const bad = [];
   for (const fn of fnList || []) {
     const cit = String(fn?.citation || "");
     if (!cit) continue;
+    let isBad = false;
     for (const pat of TRUNC_PATTERNS) {
-      if (pat.test(cit)) {
-        bad.push({ n: fn.number ?? "?", tail: cit.slice(-25) });
-        break;
-      }
+      if (pat.test(cit)) { isBad = true; break; }
     }
+    if (!isBad && isLegislationFn(fn) && YEAR_ONLY_RE.test(cit)) {
+      isBad = true;
+    }
+    if (isBad) bad.push({ n: fn.number ?? "?", tail: cit.slice(-30) });
   }
   return {
     id: "SHAPE_TRUNC",
@@ -163,7 +193,7 @@ const STATUTE_KEYWORD_RE = /^(חוק[- ]יסוד\s*:\s*|חוק\s+|פקודת\s+|
 export function assertMinTokens(fnList) {
   const bad = [];
   for (const fn of fnList || []) {
-    if (!String(fn?.source_type || "").toLowerCase().startsWith("legislation")) continue;
+    if (!isLegislationFn(fn)) continue;
     const cit = String(fn?.citation || "").replace(/^סעיף\s+\S+\s+ל/, "").trim();
     if (!STATUTE_KEYWORD_RE.test(cit)) continue;
     // Count tokens before the year/gazette suffix; keep parentheticals (e.g. "חוק החוזים (חלק כללי)").
@@ -218,7 +248,7 @@ export function assertLegislationNoSupra(answerBody, fnList) {
   while ((m = re.exec(answerBody || "")) !== null) {
     const n = m[1];
     const fn = byNumber.get(n);
-    if (fn && String(fn.source_type || "").toLowerCase().startsWith("legislation")) {
+    if (fn && isLegislationFn(fn)) {
       bad.push(`לעיל ה"ש ${n} → legislation FN (rule 37.5 violation)`);
     }
   }
@@ -229,11 +259,27 @@ export function assertLegislationNoSupra(answerBody, fnList) {
   };
 }
 
-export function assertBodyCoverage(answerBody, fnList) {
-  const bodyNums = new Set();
-  const re = /\[(\d{1,3})\]/g;
+// Map Unicode superscript digits to their ASCII equivalents.
+const SUP_MAP = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9" };
+
+function extractBodyMarkers(answerBody) {
+  const nums = new Set();
+  const text = String(answerBody || "");
+  // [N] markers (legacy)
+  const bracketRe = /\[(\d{1,3})\]/g;
   let m;
-  while ((m = re.exec(answerBody || "")) !== null) bodyNums.add(Number(m[1]));
+  while ((m = bracketRe.exec(text)) !== null) nums.add(Number(m[1]));
+  // Superscript Unicode runs (¹, ¹², ¹²³…)
+  const supRe = /[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g;
+  while ((m = supRe.exec(text)) !== null) {
+    const ascii = [...m[0]].map((c) => SUP_MAP[c] ?? "").join("");
+    if (ascii) nums.add(Number(ascii));
+  }
+  return nums;
+}
+
+export function assertBodyCoverage(answerBody, fnList) {
+  const bodyNums = extractBodyMarkers(answerBody);
   const fnNums = new Set((fnList || []).map((f) => Number(f.number)).filter((n) => Number.isFinite(n)));
   const orphansInBody = [...bodyNums].filter((n) => !fnNums.has(n));
   const orphansInList = [...fnNums].filter((n) => !bodyNums.has(n));

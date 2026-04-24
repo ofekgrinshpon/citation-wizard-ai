@@ -1,13 +1,15 @@
 {
   "query_id": "Q22",
-  "captured_at": "2026-04-24T19:39:06.186Z",
+  "captured_at": "2026-04-24T19:55:23.521Z",
   "code_state": "before-C-E-B-fixes",
-  "total_footnotes": 0,
-  "anchored_count": "anchored=0/0 (need ≥-2)",
-  "footnote_identity_keys": [],
+  "total_footnotes": 1,
+  "anchored_count": "anchored=1/1 (need ≥-1)",
+  "footnote_identity_keys": [
+    "lit:|חוק שירות הקבע בצבא-הגנה לישראל (גימלאות), (לא נמצאו פרטי פר"
+  ],
   "known_failing_assertions": [
-    "COUNT_RERANK_DROPS",
-    "COUNT_TOTAL_FN"
+    "COUNT_TOTAL_FN",
+    "SHAPE_BODY_COVERAGE"
   ],
   "note": "Each entry in known_failing_assertions must be tracked to a fix (C, E, or B). Remove on fix."
 }
