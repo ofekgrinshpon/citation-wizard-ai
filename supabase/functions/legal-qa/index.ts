@@ -2012,9 +2012,15 @@ ${(verify.fullText as string).slice(0, 50000)}
     // actually needed (after the first wave of embeddings is in flight).
     let decompPromise: Promise<{ data: DecomposedPlan | null; run: StageRun; retryRun?: StageRun }> | null = null;
     if (enableDeepPipeline && !evalForceLegacy) {
+      // Live progress: frame is essentially "request received & validated".
+      // Emit it as complete immediately so the user sees instant feedback.
+      emitStage("frame", "complete");
+      emitStage("decompose", "running");
       const tDecompStart = Date.now();
       decompPromise = decomposeAndPlan(question)
         .then((res) => {
+          emitStage("decompose", "complete",
+            res.data ? `${res.data.decomposition.sub_issues.length} תתי-סוגיות` : undefined);
           if (res.data) {
             console.log(
               `[plan] ${res.data.decomposition.sub_issues.length} sub-issues, ${res.data.query_plan.length} plans (${Date.now() - tDecompStart}ms; ${res.run.provider}/${res.run.model}, status=${res.run.status})`,
