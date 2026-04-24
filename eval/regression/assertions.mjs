@@ -259,11 +259,27 @@ export function assertLegislationNoSupra(answerBody, fnList) {
   };
 }
 
-export function assertBodyCoverage(answerBody, fnList) {
-  const bodyNums = new Set();
-  const re = /\[(\d{1,3})\]/g;
+// Map Unicode superscript digits to their ASCII equivalents.
+const SUP_MAP = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9" };
+
+function extractBodyMarkers(answerBody) {
+  const nums = new Set();
+  const text = String(answerBody || "");
+  // [N] markers (legacy)
+  const bracketRe = /\[(\d{1,3})\]/g;
   let m;
-  while ((m = re.exec(answerBody || "")) !== null) bodyNums.add(Number(m[1]));
+  while ((m = bracketRe.exec(text)) !== null) nums.add(Number(m[1]));
+  // Superscript Unicode runs (¹, ¹², ¹²³…)
+  const supRe = /[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g;
+  while ((m = supRe.exec(text)) !== null) {
+    const ascii = [...m[0]].map((c) => SUP_MAP[c] ?? "").join("");
+    if (ascii) nums.add(Number(ascii));
+  }
+  return nums;
+}
+
+export function assertBodyCoverage(answerBody, fnList) {
+  const bodyNums = extractBodyMarkers(answerBody);
   const fnNums = new Set((fnList || []).map((f) => Number(f.number)).filter((n) => Number.isFinite(n)));
   const orphansInBody = [...bodyNums].filter((n) => !fnNums.has(n));
   const orphansInList = [...fnNums].filter((n) => !bodyNums.has(n));
