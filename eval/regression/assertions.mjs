@@ -116,7 +116,7 @@ export function assertRerankDrops(metadata) {
 }
 
 export function assertNoDupStatute(fnList) {
-  const legFns = (fnList || []).filter((f) => String(f?.source_type || "").toLowerCase().startsWith("legislation"));
+  const legFns = (fnList || []).filter(isLegislationFn);
   const seen = new Map();
   const dups = [];
   for (const fn of legFns) {
@@ -143,17 +143,23 @@ const TRUNC_PATTERNS = [
   /\s+ל\s*$/,                          // "סעיף X ל" with no law name
 ];
 
+// A legislation citation that begins with the year prefix (no statute name) is broken.
+// e.g. "התשכ\"ג-1963." with no preceding "חוק/פקודת/תקנות".
+const YEAR_ONLY_RE = /^\s*התש[א-ת]["״]?[א-ת]?[\s\-–]*\d{4}\.?\s*$/;
+
 export function assertNoTruncation(fnList) {
   const bad = [];
   for (const fn of fnList || []) {
     const cit = String(fn?.citation || "");
     if (!cit) continue;
+    let isBad = false;
     for (const pat of TRUNC_PATTERNS) {
-      if (pat.test(cit)) {
-        bad.push({ n: fn.number ?? "?", tail: cit.slice(-25) });
-        break;
-      }
+      if (pat.test(cit)) { isBad = true; break; }
     }
+    if (!isBad && isLegislationFn(fn) && YEAR_ONLY_RE.test(cit)) {
+      isBad = true;
+    }
+    if (isBad) bad.push({ n: fn.number ?? "?", tail: cit.slice(-30) });
   }
   return {
     id: "SHAPE_TRUNC",
