@@ -1211,7 +1211,11 @@ ${sourceList}
       return st === "case_law" || st === "caselaw" || st === "ruling";
     };
 
-    const NON_CASELAW_FLOOR = 4;
+    // Floor reverted from 4 → 3 on 2026-04-24: raising to 4 collapsed retrieval
+    // on broad procedural questions (Q6 lost 9/13 docs). The toughened off-branch
+    // prompt already pushes irrelevant legislation to 0–2; rely on strict-keep
+    // (>=5) and the caselaw safety valve below for additional precision.
+    const NON_CASELAW_FLOOR = 3;
     const aboveHardFloor = sortedDocs.filter(d => isCaselaw(d.docId) ? d.score >= 3 : d.score >= NON_CASELAW_FLOOR);
     const strictKept = aboveHardFloor.filter(d => !isCaselaw(d.docId) || d.score >= 5);
     // Safety valve: if filtering left zero caselaw AND the question itself is caselaw-domain
