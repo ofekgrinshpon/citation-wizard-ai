@@ -2108,8 +2108,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           </Card>
         )}
 
-        {/* Loading: dynamic step progress overlaid on blinking skeleton */}
-        {loading && taskMode !== "case_summary" && <ResearchProgress />}
+        {/* Loading: streamed runs (research + academic write_chapter) get the
+            live stage list with running/complete chips and a draft-text caret.
+            Non-streamed runs (case summary, pleading audit, short academic
+            sub-modes) keep the rotating skeleton placeholder. */}
+        {loading && taskMode !== "case_summary" && (
+          stageEvents.length > 0 || streamingDraft.length > 0 || postProcessingLabel
+            ? <StageProgressList
+                stages={stageEvents}
+                postProcessingLabel={postProcessingLabel}
+                draftText={streamingDraft}
+              />
+            : <ResearchProgress />
+        )}
 
         {/* Case-summary refusal card */}
         {!isAcademic && result?.refusal && (
