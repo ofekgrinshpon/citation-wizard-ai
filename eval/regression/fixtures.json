@@ -1,0 +1,65 @@
+{
+  "$comment": "Regression fixtures for legal-qa. Each query has tolerance bands and may override universal assertion behaviour. See README.md.",
+  "queries": [
+    {
+      "id": "Q6",
+      "question": "באילו נסיבות ניתן לאכוף תניית אי-תחרות בחוזה עבודה בישראל?",
+      "bucket": "contract_labor",
+      "rationale": "Stable control — was clean before recent regressions.",
+      "counts": {
+        "total_footnotes": { "min": 3, "max": 12 },
+        "anchored_min_delta": -2
+      }
+    },
+    {
+      "id": "Q-extort",
+      "question": "סחיטת דמי חסות — היקף האחריות הפלילית והאזרחית בישראל",
+      "bucket": "criminal_civil",
+      "rationale": "The query that surfaced duplicate statutes + irrelevant FNs + broken supra.",
+      "counts": {
+        "total_footnotes": { "min": 3, "max": 12 },
+        "anchored_min_delta": -2
+      }
+    },
+    {
+      "id": "Q21",
+      "question": "מה קובע סעיף 17 לחוק שירות המדינה (מינויים) לעניין פיטורים או הפסקת כהונה?",
+      "bucket": "statute_anchored",
+      "rationale": "Statute-anchored, exercises pinpoint + statute-completion path.",
+      "counts": {
+        "total_footnotes": { "min": 3, "max": 12 },
+        "anchored_min_delta": -2
+      }
+    },
+    {
+      "id": "Q22",
+      "question": "מהי המשמעות של סעיף 39 לחוק החוזים (חלק כללי) בפסיקה הישראלית?",
+      "bucket": "statute_anchored",
+      "rationale": "Statute-anchored with named law in body — exercises Rule 37.5.",
+      "counts": {
+        "total_footnotes": { "min": 3, "max": 12 },
+        "anchored_min_delta": -2
+      }
+    },
+    {
+      "id": "Q-basic-law",
+      "question": "מהו היקף ההגנה החוקתית על הזכות לחירות לפי חוק-יסוד: כבוד האדם וחירותו?",
+      "bucket": "constitutional",
+      "rationale": "Forces 'חוק-יסוד:' extraction path (regex special case).",
+      "counts": {
+        "total_footnotes": { "min": 3, "max": 12 },
+        "anchored_min_delta": -2
+      }
+    },
+    {
+      "id": "Q-procedural",
+      "question": "מתי בית המשפט יתיר תיקון כתב טענות בשלב מתקדם של ההליך?",
+      "bucket": "procedural",
+      "rationale": "Procedural, low statute density, stresses grounding/relevance.",
+      "counts": {
+        "total_footnotes": { "min": 3, "max": 12 },
+        "anchored_min_delta": -2
+      }
+    }
+  ]
+}

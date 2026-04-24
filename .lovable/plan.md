@@ -1,129 +1,154 @@
-## Two real bugs, one root cause + one tuning issue
+## Goal
 
-We dug into `qa_logs` row `d4fdd0c1` to see what actually happened. Both bugs are real, but the diagnosis is different from what the user described.
+Stop shipping fixes that introduce new bugs. Build a regression harness for `legal-qa` that:
+1. Runs a fixed set of representative queries against the deployed edge function.
+2. Asserts both **counts** (within tolerance bands) and **shapes** (the specific failure modes we've actually seen).
+3. Diffs against committed baseline snapshots so intentional changes are explicit and unintentional ones fail loudly.
+4. Captures the current (buggy) state as the "before" baseline so we can prove C/E/B fixes actually move the needle without breaking other queries.
 
-### Bug A — Footnote 7 stays as a literal `[7]` in the body, never superscripted
-
-The Rule 37 generator IS implemented and it ran (telemetry shows `total_repeats_expanded: 0`). The reason FN7 looks "assigned a late number even though it's the second citation" is **not** that Rule 37 missed a repeat — it's that the **statute-completion stage runs AFTER step 6 (superscript conversion) AND AFTER step 6b (appearance-order reordering)**.
-
-What actually happened in this run:
-
-```text
-1. Drafter writes body with [1]…[2] markers (only 2 distinct numbers).
-2. Drafter says "חוק יסוד: כבוד האדם וחירותו" inline with NO marker (naked mention).
-3. Step 5d (Rule 37 generator) — scans for repeats — none found (only [1] and [2]).
-4. Step 6 — converts [1]→¹, [2]→² in body.
-5. Step 6b — appearance-order reorder, but there are only 2 footnotes used.
-6. Statute-completion (Stage E.5) — detects naked "חוק יסוד…" mention,
-   fetches Perplexity citation, appends as footnote #7, and inserts the
-   string "[7]" right after the mention in the body.
-   ↑ At this point the body is past step 6, so "[7]" never becomes "⁷".
-   ↑ Reordering already ran, so the new footnote doesn't get renumbered to
-     "appearance position 3" — it stays at #7 (or whatever number the loop
-     assigned).
-```
-
-Net effect for the user: a literal `[7]` appears mid-paragraph instead of `³`, AND that footnote sits at #7 in the bibliography instead of #3.
-
-**The fix is structural, not Rule-37-related.** Statute completion must produce body markers that go through the same superscript+reorder pipeline as drafter-emitted markers.
-
-### Bug B — `תקנות דמי מחלה` (FN3) is irrelevant to סחיטת דמי חסות
-
-This is a rerank-tuning issue. The regulation matched on the surface token `דמי` shared with the query's `דמי חסות`. The current rerank gate (`score >= 3` for non-caselaw) is forgiving and the rerank prompt's "domain mismatch" example only calls out caselaw mismatches, not legislation. The 5–6 band ("רלוונטי לענף הדין") is also too generous: a sick-pay regulation is technically "labor law" while the question is criminal/constitutional — different ענף דין, but Gemini-flash-lite gave it a 3 anyway.
-
-There's also a secondary issue surfaced by the same row's telemetry:
-- `named_statutes: ["חוק יסוד: כבוד האדם וחירותו", "חוק יעילה", "חוק (משטרה"]` — the statute-detection regex catches partial fragments (`"חוק יעילה"` from "חקיקה יעילה", `"חוק (משטרה"` from a parenthesised mention). Only one of three was a real statute name. Tightening the regex prevents wasted Perplexity calls and bogus completions.
+Reuses the existing `eval/` infrastructure (auth flow, edge-function call, `qa_logs` lookup) — does not replace `run-eval.mjs` or `stability-test.mjs`.
 
 ---
 
-## Plan
+## Fixture queries (6)
 
-### Fix A1 — Move statute-completion BEFORE step 6 (superscript + reorder)
+Chosen to cover the failure modes we've actually seen, plus stable controls:
 
-Restructure the pipeline so statute-completion runs at the same stage boundary as Rule 37: after the AI-footnote build loop, before step 6.
+| ID | Query | Why |
+|----|-------|-----|
+| Q6 | באילו נסיבות ניתן לאכוף תניית אי-תחרות בחוזה עבודה בישראל? | Stable control — was clean before regressions |
+| Q-extort | סחיטת דמי חסות — היקף האחריות הפלילית והאזרחית | The query that surfaced duplicate statutes + irrelevant FNs + broken supra |
+| Q21 | מה קובע סעיף 17 לחוק שירות המדינה (מינויים)... | Statute-anchored, exercises pinpoint + statute-completion path |
+| Q22 | מהי המשמעות של סעיף 39 לחוק החוזים (חלק כללי)... | Statute-anchored with named law in body — exercises Rule 37.5 |
+| Q-basic-law | מהו היקף ההגנה החוקתית על הזכות לחירות לפי חוק-יסוד: כבוד האדם וחירותו? | Forces "חוק-יסוד:" extraction path (the regex special case) |
+| Q-procedural | מתי בית המשפט יתיר תיקון כתב טענות בשלב מתקדם של ההליך? | Procedural domain, low statute density, stresses grounding/relevance |
 
-```text
-build footnotes  →  Rule 37 short-form generator (step 5d)
-                 →  statute completion  ← MOVED HERE (was after step 6b)
-                 →  step 6 (superscript conversion)
-                 →  step 6b (appearance-order reorder)
-```
+Stored as a JSON file so adding/removing queries doesn't require code changes.
 
-Concretely in `supabase/functions/legal-qa/index.ts`:
+---
 
-- The current statute-completion block at ~lines 5300–5577 runs against `answer` (the post-superscript string). Move the block up to right after the Rule 37 generator's rewrite-application (~line 4746), and have it operate on `answerBody` (the still-bracket-marker body) and `footnotes` (not yet renumbered).
-- Inserts use `[${newFnNumber}]` exactly as today — but now step 6 converts the bracket to a superscript, and step 6b reorders by appearance, so FN7 will collapse to `³` (or whatever its true appearance position is) automatically. The reorder step's existing `reorderMap` rewrites `לעיל ה"ש N` cross-refs in footnote text, so any short-form citations that came from Rule 37 stay consistent.
-- Streaming-event ordering: `emitStage("statute_completion", …)` moves with the block — it now fires before `footnote_validate`. The frontend's `StageProgressList` is order-agnostic, so no client change.
-
-This single move fixes the "literal `[7]` in body" bug AND the "footnote 7 sits at end of list" bug.
-
-### Fix A2 — Make Rule 37 generator re-run after statute completion (defensive)
-
-After statute completion inserts new `[N]` markers, the same source could now appear twice in the body (e.g., drafter mentioned חוק יסוד once, and a later paragraph mentions it again — both naked, both get markers from completion, but one should become `שם` per Rule 37). The generator's first pass didn't see those markers because they didn't exist yet.
-
-Run Rule 37 generator a second time after statute completion, scoped to the newly inserted markers only. Cheap re-walk of `answerBody`; reuses `shortNameRegistry` (recomputed for the new footnotes only) and the existing rewrite logic. Telemetry merges into the same `rule37_short_forms` block (cumulative counts).
-
-### Fix A3 — Tighten statute-mention regex
-
-Current named-statute extractor produces false positives (`"חוק יעילה"` from "חקיקה יעילה", `"חוק (משטרה"` from "המאבק (משטרה ופרקליטות)"). Tighten:
-
-- Require the statute keyword (`חוק`, `חוק-יסוד`, `פקודת`, `תקנות`) to be **followed by either** a colon (basic laws) **or** a Hebrew word that doesn't start with `(` and isn't a known stop-word (`יעילה`, `מתאים`, `הולם`, `מספק`, …).
-- Require a minimum length of 2 Hebrew words after the keyword before terminating on `,`/`.`/`)`.
-- Add a denylist of generic descriptors that are never statute names.
-
-This prevents wasted Perplexity calls and downstream bogus footnotes.
-
-### Fix B1 — Tighten the rerank gate for non-caselaw
-
-Two-line change in `rerankLocalMatches` (~lines 1199–1213):
-
-- Raise the non-caselaw hard floor from `score >= 3` to `score >= 4`. Score 3 in the current rubric is "נוגע באופן רחוק / רקע כללי" — that's exactly the "תקנות דמי מחלה" failure mode. Score 4 forces the LLM to commit to "ענף דין קרוב" before passing.
-- Caselaw stays at `>= 5` (already tighter), and the safety-valve fallback for caselaw-domain questions still allows `>= 3` so we don't ever empty the caselaw bucket.
-
-### Fix B2 — Sharpen the rerank prompt with a legislation-specific example
-
-Add one line to the prompt's anti-pattern section (~line 1114):
-
-> דוגמה נוספת: שאלה על דין פלילי / סדר ציבורי + מקור על דיני עבודה, מיסוי, ביטוח לאומי = ציון 0–2, גם אם יש מילת מפתח משותפת ("דמי", "תשלום", "הסדר") — ענף הדין שונה.
-
-Single-shot prompt addition. No code branching — the rerank model already returns 0–10.
-
-### Fix B3 — Telemetry: log dropped-by-rerank doc titles + reasons
-
-Currently `console.log` shows the score map but the doc titles/reasons aren't persisted. Add a `rerank_drops` array to `qa_logs.metadata`:
+## Files created
 
 ```text
-rerank_drops: [
-  { title: "תקנות דמי מחלה …", source_type: "israeli_law", score: 3, reason: "below_floor" },
-  …
-]
+eval/regression/
+  fixtures.json              # 6 queries + tolerance bands + per-query overrides
+  assertions.mjs             # Pure shape-check functions (no I/O), exported and unit-tested
+  run-regression.mjs         # CLI: run fixtures → collect → assert → diff baseline → exit 0/1
+  baselines/
+    .gitkeep                 # Snapshots written here on first run with --update-baseline
+  README.md                  # How to run, how to update baselines, what each assertion checks
 ```
 
-Capped at 10 entries. Lets us validate the gate change against future runs without re-tracing every query.
+No changes to existing `eval/*.mjs` files. No changes to `supabase/functions/legal-qa/`.
 
-### What we are NOT doing in this pass
+---
 
-- Not retraining the rerank model — we're staying with Gemini-2.5-flash-lite. The prompt + gate change is enough.
-- Not adding source-type-vs-question-type filtering. That's heuristic territory that risks over-filtering. The rerank tightening should be sufficient.
-- Not retroactively rewriting old `qa_logs` rows.
-- Not changing the drafter prompt to force `[N]` reuse over inline `שם`. The Rule 37 generator already handles the `[N]`-reuse path; the inline `שם` path is a different (and currently-correct) drafter behavior that's unrelated to bug A.
+## What the runner does
 
-## Files touched
+```text
+┌─────────────────────────────────────────────────────────────────┐
+│ 1. Mint admin JWT (reuse stability-test.mjs auth flow)         │
+│ 2. For each fixture query:                                     │
+│      POST to /functions/v1/legal-qa                            │
+│      Wait, fetch matching qa_logs row by metadata.eval_run_id  │
+│      Capture: footnotes[], total_footnotes, metadata.*         │
+│ 3. For each result, run assertions:                            │
+│      - Count assertions (tolerance bands)                      │
+│      - Shape assertions (the bug-class checks below)           │
+│ 4. Diff result snapshot vs baselines/<query-id>.json           │
+│      - Field-level diff on counts                              │
+│      - Set diff on footnote identity keys                      │
+│ 5. Write report.md + report.json to /mnt/documents/legal-qa-   │
+│    regression/<run-id>/                                        │
+│ 6. Exit 0 if all pass, 1 if any assertion fails                │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-- `supabase/functions/legal-qa/index.ts`
-  - Move statute-completion block (~5300–5577) up to after Rule 37 (~line 4746); switch its `answer` writes to `answerBody`.
-  - Add second Rule 37 pass after statute completion, scoped to newly inserted markers.
-  - Tighten named-statute regex + denylist (~5400 area).
-  - Raise rerank non-caselaw floor `3 → 4` (~line 1199).
-  - Add legislation example to rerank prompt (~line 1114).
-  - Persist `rerank_drops` to `qa_logs.metadata` (~line 5670 area).
-- `.lovable/memory/logic/legal-qa/post-processing-cleanup.md` — note the new ordering (statute-completion now between Rule 37 pass 1 and step 6).
-- `.lovable/memory/logic/legal-qa/relevance-filtering.md` — bump documented gate threshold to `>= 4` for non-caselaw.
+---
 
-## Acceptance
+## Assertions (the checks that would have caught the recent bugs)
 
-- A repeat run of the same סחיטת-דמי-חסות query: footnote for חוק-יסוד appears as a superscript in the body (no literal `[N]`) AND lands at appearance position (≤3), not at the end.
-- `qa_logs.metadata.statute_completion.named_statutes` for that run contains only real statute names (no `"חוק יעילה"`).
-- `qa_logs.metadata.rerank_drops` includes `תקנות דמי מחלה` for that query (or it never enters retrieval at all).
-- No regression: `qa_logs.metadata.rule37_short_forms` continues to fire on queries where the drafter does reuse `[N]` markers.
-- Frontend `StageProgressList` still shows `statute_completion` event; only its position in the sequence shifts earlier.
+**Count assertions** (per query, from `fixtures.json`):
+- `total_footnotes` within `[min, max]` band (e.g. 5–12)
+- `anchored_count >= total_footnotes - 2`
+- `metadata.rerank_drops` is an array (field exists; doesn't have to be non-empty)
+
+**Shape assertions** (universal — apply to every query):
+
+1. **No duplicate statutes.** Compute a normalized identity key for each `legislation_*` footnote (mirror the logic from the DB function `compute_verified_source_identity`: strip year suffixes, gazette refs, lowercase, collapse whitespace). Fail if two FNs share a key. *Catches: duplicate `תקנות דמי מחלה` style bugs.*
+
+2. **No truncated citations.** Reject any footnote whose `citation` field matches `/התש[א-ת]?\.\s*$/` or ends mid-word (`/[א-ת]\.\s*$/` without preceding `עמ` / `ס"ח` / known abbreviations). *Catches: `התשע.` truncation.*
+
+3. **No naked anaphora as statute name.** Reject footnotes whose `citation` begins with `חוק זה`, `תקנות אלו`, `החוק האמור`, `הפקודה הנ"ל`, etc. *Catches: extractor over-matching pronouns.*
+
+4. **Min token requirement.** Any `legislation_*` citation must have ≥2 Hebrew word-tokens after `חוק`/`פקודת`/`תקנות`. *Catches: `חוק יעילה`-class fragments.*
+
+5. **Rule 37 short-form integrity.** For every body occurrence of `לעיל ה"ש N` or `שם` (Rule 37.7), verify FN N exists, is not flagged `fallback: true` in metadata, and has a non-truncated citation. *Catches: supra pointing at garbage.*
+
+6. **Legislation never gets supra.** Per Rule 37.5: no `legislation_*` footnote may be referenced via `לעיל ה"ש N` in the body. Must use `ס' X ל<lawName>` form or full re-cite. *Catches: rule violations from generator.*
+
+7. **Body coverage.** Every footnote number `[N]` referenced in `answer` body has a corresponding entry in `footnotes[]`, and vice versa (no orphans either way). *Catches: numbering drift.*
+
+8. **Identity-key set diff vs baseline.** Symmetric difference between current run's footnote identity-keys and the baseline's. Surfaces additions/removals query-by-query without requiring exact match (counts can drift by ±1 on retrieval noise without failing).
+
+Each assertion has a stable ID (`SHAPE_DUP_STATUTE`, `SHAPE_TRUNC`, etc.) so failures in `report.md` are greppable and stable across runs.
+
+---
+
+## Baseline snapshots
+
+`baselines/<query-id>.json` shape:
+
+```json
+{
+  "query_id": "Q-extort",
+  "captured_at": "2026-04-24T...",
+  "code_state": "before-C-E-B-fixes",
+  "total_footnotes": 7,
+  "anchored_count": 5,
+  "footnote_identity_keys": ["law:חוק העונשין|...", "case:6821/93", ...],
+  "known_failing_assertions": ["SHAPE_DUP_STATUTE", "SHAPE_TRUNC", "SHAPE_RULE37_INTEGRITY"]
+}
+```
+
+The `known_failing_assertions` field is the key trick: the runner expects these to fail in the baseline state, so the harness exits **0** even though the bugs are present. As we ship C, E, B, we remove items from this list. A regression appears when an assertion fails that **isn't** on the known-failing list — that's a real failure that exits 1.
+
+This is what lets us (a) capture the buggy "before" state without the harness screaming, and (b) prove that each fix removes specific assertion failures without introducing new ones.
+
+---
+
+## How we'll use this in the C → E → B turns
+
+1. **End of this turn:** harness exists, runs against deployed function, baselines captured with current bugs documented in `known_failing_assertions`. I'll report which assertions fail per fixture so you see the "before" state.
+2. **Before C:** run harness, confirm baseline state.
+3. **After C:** run harness. Expect `SHAPE_TRUNC`, `SHAPE_NAKED_ANAPHORA`, `SHAPE_MIN_TOKENS` to start passing on Q-extort and Q-basic-law. Update baselines, remove those IDs from `known_failing_assertions`. If any other assertion newly fails on any other query → C broke something, revert.
+4. **After E:** expect `SHAPE_RULE37_INTEGRITY` and `SHAPE_LEG_NO_SUPRA` to pass. Same diff discipline.
+5. **After B:** expect `SHAPE_DUP_STATUTE` to pass.
+
+---
+
+## Out of scope for this turn
+
+- No changes to `supabase/functions/legal-qa/index.ts`. Pipeline behaviour is unchanged; we're only observing it.
+- No CI integration. Harness is run-on-demand via `node eval/regression/run-regression.mjs`. CI hook is a separate decision.
+- No grounding/relevance scoring (problem D) — that needs its own scoring rubric and a different harness shape; out of scope for the C/E/B sequence.
+- No fixture for the academic-mode pipeline; this harness covers `legal-qa` research mode only.
+
+---
+
+## Risks and mitigations
+
+- **Retrieval noise:** the same query can return 6 vs 7 FNs across runs. Mitigation: tolerance bands on counts; identity-key set-diff (not exact equality) for shape; option to run each fixture N=2 times and union the assertion failures (harness flag `--repetitions`, default 1 to keep cost down).
+- **Cost:** 6 queries × ~30–60s each = 3–6 min wall time and 6 credits per run. Acceptable given we run it ~3 times across the C/E/B sequence.
+- **Auth flakiness:** reuse the proven magic-link flow from `stability-test.mjs` verbatim.
+- **`known_failing_assertions` becoming a dumping ground:** every entry must have a tracking note (which fix is expected to remove it: C, E, or B). Enforced by a comment field in the baseline JSON.
+
+---
+
+## Deliverable at end of this turn
+
+- 5 new files under `eval/regression/`.
+- Captured baseline JSONs for all 6 fixture queries (one harness run against the current deployed function).
+- A short readout in chat showing the per-query assertion-failure summary — that's the "before" snapshot we'll measure C, E, B against.
+
+After you approve, I switch to default mode and execute.
