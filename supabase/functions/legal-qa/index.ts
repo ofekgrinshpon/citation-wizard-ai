@@ -1241,7 +1241,8 @@ serve(async (req) => {
     // Resolved once here; everything downstream reads from `modeProfile`.
     // Defaults to Fast for backward compatibility (no `depth` in body = Fast).
     // Only applied to taskMode === RESEARCH_MODE; other modes ignore it.
-    const { depth: researchDepth, profile: modeProfile } = resolveModeProfile(bodyDepth);
+    // eslint-disable-next-line prefer-const
+    let { depth: researchDepth, profile: modeProfile } = resolveModeProfile(bodyDepth);
     if (taskMode === RESEARCH_MODE) {
       // Deploy marker v7.13: forces redeploy when modeProfile wiring stops appearing in metadata.profile_used.
       console.log(`[mode] depth=${researchDepth} anchor_pass=${modeProfile.anchorPassEnabled} drafter=${modeProfile.drafterVariant} retrieval_rounds=${modeProfile.retrievalRounds} e5_min=${modeProfile.perplexityCompletionMinAnchored}`);
@@ -1298,6 +1299,24 @@ serve(async (req) => {
     if (isAcademicSubModeFree) creditCost = 0;
     else if (isAcademicChapter) creditCost = 8;
     if (hasGroundingDoc && !isAcademicChapter && !isAcademicSubModeFree) creditCost += 2;
+
+    // ─── Deep pipeline opt-in for academic chapter writes ───────────
+    // Academic chapters use the same Deep behavior as research/Deep:
+    //  • full Frame→Decompose→ClaimMap→Retrieve→SourcePack→E.5→Draft pipeline
+    //  • Deep envelope (1200-2000 words, footnote floor 8, anchor pass on)
+    //  • Stage E.5 Perplexity completion when core < 6
+    //  • citation engine resolver canonicalises the parsed footnotes (below)
+    // We force the deep profile for chapters AFTER resolveModeProfile so any
+    // depth coming from the body is overridden — chapters are always Deep.
+    if (isAcademicChapter) {
+      const forced = resolveModeProfile("deep");
+      researchDepth = forced.depth;
+      modeProfile = forced.profile;
+      console.log(`[mode] academic chapter: forcing depth=deep (anchor_pass=${modeProfile.anchorPassEnabled} drafter=${modeProfile.drafterVariant} retrieval_rounds=${modeProfile.retrievalRounds})`);
+    }
+    // Single gate that drives every Deep-pipeline behaviour. Replaces the
+    // bare `taskMode === RESEARCH_MODE` check at every Deep-only stage.
+    const enableDeepPipeline = (taskMode === RESEARCH_MODE) || isAcademicChapter;
 
     const creditRequestId =
       typeof clientRequestId === "string" && clientRequestId.length >= 8
@@ -1731,7 +1750,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     __checkpointTaskMode = taskMode;
 
     const writeCheckpoint = (phase: "decomposition" | "claim_map" | "drafting_started"): void => {
-      if (taskMode !== RESEARCH_MODE) return;
+      if (!enableDeepPipeline) return;
       // Snapshot current state — note that drafting_path is "in_progress" until
       // the final block decides between "structured" / "fallback".
       const snapshot = {
@@ -1780,7 +1799,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // localSearchPromise via `await decompPromise` only at the point they're
     // actually needed (after the first wave of embeddings is in flight).
     let decompPromise: Promise<{ data: DecomposedPlan | null; run: StageRun; retryRun?: StageRun }> | null = null;
-    if (taskMode === RESEARCH_MODE && !evalForceLegacy) {
+    if (enableDeepPipeline && !evalForceLegacy) {
       const tDecompStart = Date.now();
       decompPromise = decomposeAndPlan(question)
         .then((res) => {
@@ -2606,7 +2625,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // ========= Stage C: Source Pack assembly (legal_research only, INTERNAL) =========
     let sourcePack: SourcePackEntry[] = [];
     let sourcePackV2: LegalSourcePack | null = null;
-    if (taskMode === RESEARCH_MODE) {
+    if (enableDeepPipeline) {
       sourcePack = sourceCards.map((sc) => {
         const excerpt = sc.excerpt || "";
         const anchorPresent = Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document";
@@ -2647,7 +2666,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // Validated candidates are pushed into sourceCards/sourcePack with provenance
     // "perplexity_completion", then sourcePackV2 is re-assembled so they land in
     // the core bucket before Stage D builds the claim map.
-    if (taskMode === RESEARCH_MODE && !evalForceLegacy) {
+    if (enableDeepPipeline && !evalForceLegacy) {
       const coreBefore = sourcePackV2 ? summarizeSourcePack(sourcePackV2).core : 0;
       if (coreBefore < modeProfile.perplexityCompletionMinAnchored) {
         const tE5 = Date.now();
@@ -2746,7 +2765,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // represented in sourceCards are added (deduped at the document level).
     // This widens the source pool for Deep before the claim map is built.
     if (
-      taskMode === RESEARCH_MODE &&
+      enableDeepPipeline &&
       !evalForceLegacy &&
       modeProfile.retrievalRounds >= 2 &&
       decomposedPlan
@@ -2877,7 +2896,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     let claimMapAllowedCount = 0;
     let claimMapV2: LegalClaimMap | null = null;
     let draftingInput: LegalDraftingInput | null = null;
-    if (taskMode === RESEARCH_MODE && !evalForceLegacy && decomposedPlan && sourcePack.length >= 2) {
+    if (enableDeepPipeline && !evalForceLegacy && decomposedPlan && sourcePack.length >= 2) {
       try {
         const tClaimStart = Date.now();
         // Trim before handing off to the planner. Final additional trimming
@@ -3516,12 +3535,21 @@ ${combinedContext}
     // ping-ponging between structured/fallback when Flash conservatively
     // marks 1-2 claims allowed_to_state. The compact drafter prompt + claim
     // map already handle single-claim drafting cleanly via statementMode.
-    const useStructuredDrafterPath = taskMode === RESEARCH_MODE && claimMap !== null && claimMapAllowedCount >= 1;
-    const drafterSystemPrompt = useStructuredDrafterPath
+    const useStructuredDrafterPath = enableDeepPipeline && claimMap !== null && claimMapAllowedCount >= 1;
+    let drafterSystemPrompt = useStructuredDrafterPath
       ? buildCompactStructuredPrompt()
       : systemPrompt;
+    // Academic chapter writes: prepend the academic persona/style block to the
+    // structured drafter prompt so the chapter inherits Deep scaffolding AND
+    // the high-register academic voice / narrative-citation rules.
+    if (useStructuredDrafterPath && isAcademicChapter) {
+      const academicHeader = getAcademicSubModePrompt("write_chapter", body);
+      if (academicHeader) {
+        drafterSystemPrompt = `${academicHeader}\n\n${drafterSystemPrompt}`;
+      }
+    }
     const promptLen = drafterSystemPrompt.length;
-    console.log(`Prompt length: ${promptLen} chars (variant=${useStructuredDrafterPath ? "compact" : "full"}), ${sourceCards.length} source cards`);
+    console.log(`Prompt length: ${promptLen} chars (variant=${useStructuredDrafterPath ? "compact" : "full"}${isAcademicChapter ? "+academic" : ""}), ${sourceCards.length} source cards`);
 
     // Token budget: structured drafter ceiling scales with the profile's
     // word range (~1.6 tokens per Hebrew word, plus footnote-block headroom).
@@ -3625,7 +3653,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           return new Response(JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
         }
         // Legacy Gemini drafter path — record telemetry too.
-        if (taskMode === RESEARCH_MODE) {
+        if (enableDeepPipeline) {
           stageRuns.push({
             stage: "drafting",
             provider: "gemini",
@@ -3638,7 +3666,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         }
       } catch (err) {
         console.error("AI call error:", err);
-        if (taskMode === RESEARCH_MODE) {
+        if (enableDeepPipeline) {
           stageRuns.push({
             stage: "drafting",
             provider: "gemini",
@@ -4520,6 +4548,36 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
 
     const finalFootnotes = validFootnotes;
 
+    // ===== Citation engine resolver — canonicalise chapter footnotes =====
+    // For academic chapter writes, run each parsed footnote through the same
+    // resolver Stage E.5 candidates use. When the engine resolves a citation,
+    // we overwrite `citation` with the canonical re-emission (rule template).
+    // Non-blocking: unresolved footnotes are kept as-is.
+    let chapterEngineResolvedCount = 0;
+    let chapterEngineUnresolvedCount = 0;
+    const chapterEngineDropReasons: Record<string, number> = {};
+    if (isAcademicChapter && finalFootnotes.length > 0) {
+      for (const fn of finalFootnotes) {
+        const text = fn.citation || "";
+        // Skip footnotes that have a missing-data placeholder marker.
+        if (/\[חסר/.test(text)) continue;
+        // Cheap declared-type heuristic — same split the resolver expects.
+        const declared: "statute" | "caselaw" =
+          /[א-ת]{1,3}["״׳']+[א-ת]{1,2}\s+\d+\/\d+|פ["״]ד|פד["״]ע/.test(text)
+            ? "caselaw"
+            : "statute";
+        const res = resolveCitation(text, declared);
+        if (res.resolved) {
+          fn.citation = res.canonical;
+          chapterEngineResolvedCount++;
+        } else {
+          chapterEngineUnresolvedCount++;
+          chapterEngineDropReasons[res.reason] = (chapterEngineDropReasons[res.reason] || 0) + 1;
+        }
+      }
+      console.log(`[chapter-engine] resolved=${chapterEngineResolvedCount} unresolved=${chapterEngineUnresolvedCount} reasons=${JSON.stringify(chapterEngineDropReasons)}`);
+    }
+
     console.log(`Final: answer=${answer.length} chars, footnotes=${finalFootnotes.length}, total time=${Date.now() - t0}ms`);
 
     // ===== Citation density diagnostic (log-only, non-blocking) =====
@@ -4542,7 +4600,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // (vs the proxy of footnote count) that decides whether to ship an
     // anchor-pass stage. Heuristic + log-only; never blocks the response.
     try {
-      const isStructured = taskMode === RESEARCH_MODE && useStructuredDrafterPath;
+      const isStructured = enableDeepPipeline && useStructuredDrafterPath;
       if (isStructured) {
         const cardsIn = Array.isArray(sourceCards) ? sourceCards.length : 0;
 
@@ -4650,7 +4708,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
 
       // Build internal metadata snapshot (admin-only, never exposed to UI).
       let metadata: Record<string, unknown> | null = null;
-      if (taskMode === RESEARCH_MODE) {
+      if (enableDeepPipeline) {
         const byStrength = { strong: 0, partial: 0, weak: 0 } as Record<string, number>;
         if (claimMap) {
           for (const c of claimMap) {
@@ -4697,6 +4755,12 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           // citations to satisfy a floor — read alongside total_footnotes.
           dropped_unanchored_count: droppedUnanchoredCount,
           dropped_unanchored_previews: droppedUnanchoredPreviews,
+          // Citation engine resolver pass on chapter footnotes (academic only).
+          chapter_engine: isAcademicChapter ? {
+            resolved_count: chapterEngineResolvedCount,
+            unresolved_count: chapterEngineUnresolvedCount,
+            drop_reasons: chapterEngineDropReasons,
+          } : null,
           // Honest models_used: only record a model as "used" if its stage
           // actually completed successfully. Otherwise expose null + the failure
           // status, so admins don't get the false impression that gpt-5-mini ran.
@@ -4746,7 +4810,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         total_footnotes: finalFootnotes.length,
         ...(metadata ? { metadata } : {}),
       };
-      const { data: insertedLog, error: insertErr } = taskMode === RESEARCH_MODE
+      const { data: insertedLog, error: insertErr } = enableDeepPipeline
         ? await adminClient
             .from("qa_logs")
             .upsert({ id: preallocatedQaLogId, ...finalRow }, { onConflict: "id" })
