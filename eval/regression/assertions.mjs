@@ -193,7 +193,7 @@ const STATUTE_KEYWORD_RE = /^(חוק[- ]יסוד\s*:\s*|חוק\s+|פקודת\s+|
 export function assertMinTokens(fnList) {
   const bad = [];
   for (const fn of fnList || []) {
-    if (!String(fn?.source_type || "").toLowerCase().startsWith("legislation")) continue;
+    if (!isLegislationFn(fn)) continue;
     const cit = String(fn?.citation || "").replace(/^סעיף\s+\S+\s+ל/, "").trim();
     if (!STATUTE_KEYWORD_RE.test(cit)) continue;
     // Count tokens before the year/gazette suffix; keep parentheticals (e.g. "חוק החוזים (חלק כללי)").
