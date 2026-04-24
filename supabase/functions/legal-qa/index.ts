@@ -4300,6 +4300,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // citations vs. citing the source pack.
     let droppedUnanchoredCount = 0;
     const droppedUnanchoredPreviews: string[] = [];
+    // Rule 37.7 ibid short-forms ("שם", "שם, פסקה N", "לעיל ה"ש N") legitimately
+    // reference an earlier anchored footnote and carry no URL of their own.
+    // We preserve them as source_type:"shortform" instead of dropping.
+    let keptShortformCount = 0;
 
     // Footnote dedup telemetry — when the drafter cites the same source card
     // (or, in fuzzy fallback, the same URL) under two different note numbers,
@@ -4423,6 +4427,27 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
               url: fuzzyUrl,
             });
             fuzzyUrlToNewNumber.set(fuzzyUrl, fnNum);
+            oldIdToNewNumber.set(aiFn.num, fnNum);
+            fnNum++;
+            continue;
+          }
+
+          // Rule 37.7 ibid whitelist: keep "שם" / "שם, פסקה N" / "לעיל ה"ש N"
+          // short-forms when at least one anchored footnote already exists.
+          // These have no URL by design — they reference the prior citation.
+          const trimmedFn = aiFn.text.trim();
+          const isShortform =
+            /^שם(\s*,\s*(?:פסקה|פסקאות|ע['׳"״]\s*\d+|בעמ['׳]\s*\d+|בעמוד\s+\d+|ס['׳"״]\s*[\dא-ת()()\-–.]+|סעיף\s+[\dא-ת()()\-–.]+))?\.?$/.test(trimmedFn) ||
+            /^לעיל\s+ה["״]ש\s+\d+/.test(trimmedFn);
+          if (isShortform && footnotes.length > 0) {
+            keptShortformCount++;
+            console.log(`Kept ibid short-form footnote #${aiFn.num}: "${trimmedFn.slice(0, 60)}"`);
+            footnotes.push({
+              number: fnNum,
+              citation: aiFn.text,
+              source_type: "shortform",
+              source: "shortform",
+            });
             oldIdToNewNumber.set(aiFn.num, fnNum);
             fnNum++;
             continue;
