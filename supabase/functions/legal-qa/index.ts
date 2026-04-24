@@ -5025,6 +5025,77 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           : (statuteCompletionTelemetry.triggered ? "0 חוקים" : "ללא צורך"));
     }
 
+    // ========= Step 5f: Rule 37 second pass =========
+    // After statute-completion inserted brand-new [N] markers for naked
+    // statutes, the SAME statute may be mentioned again later in the body
+    // (still naked, because pass 1 only saw it once). Walk the body again,
+    // looking only at statutes that just got their first marker, and apply
+    // Rule 37.5 (legislation): re-occurrences become "ס' X ל<lawName>." if a
+    // pinpoint follows, or are dropped entirely if not. No new footnotes are
+    // created — repeats reference the existing footnote textually per Rule
+    // 37.5 (never "לעיל ה"ש N" for legislation).
+    if (statuteCompletionTelemetry.completed_count > 0) {
+      const completedStatutes: Array<{ name: string; firstIdx: number; lawShortName: string }> = [];
+      for (const fn of footnotes) {
+        if (fn.source !== "perplexity_completion") continue;
+        const reg = shortNameRegistry.get(fn.number);
+        if (!reg || !reg.isLegislation) continue;
+        // Find every body mention of this statute beyond the first [N] occurrence.
+        const lawName = reg.shortName;
+        // Match the law name as a substring (length-bounded) in answerBody.
+        // We look for the original Hebrew form using the same heuristic as
+        // the statute extractor: keyword + descriptor.
+        const escName = lawName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const re = new RegExp(escName, "g");
+        let firstMarkerIdx = -1;
+        // First, locate the [N] marker that pass 1 inserted for this fn.
+        const markerRe = new RegExp(`\\[${fn.number}\\]`);
+        const mm = markerRe.exec(answerBody);
+        if (mm) firstMarkerIdx = mm.index;
+        if (firstMarkerIdx < 0) continue;
+        completedStatutes.push({ name: lawName, firstIdx: firstMarkerIdx, lawShortName: lawName });
+        // Walk all matches of the law name; rewrite ones that come AFTER the
+        // first marker AND aren't already followed by [N]/superscript within 30 chars.
+        const ops: Array<{ start: number; end: number; replacement: string }> = [];
+        let m: RegExpExecArray | null;
+        while ((m = re.exec(answerBody)) !== null) {
+          if (m.index <= firstMarkerIdx) continue;
+          const tail = answerBody.slice(m.index + m[0].length, m.index + m[0].length + 40);
+          if (/^\s*\[\d+\]/.test(tail) || /^[\s,]*[¹²³⁴⁵⁶⁷⁸⁹⁰]/.test(tail)) continue;
+          // Look for pinpoint immediately after.
+          const pinM = /^\s*(בעמ['׳]\s*[\dא-ת–\-]+|בס['׳]\s*[\dא-תa-z()\\.\-]+|בפס['׳]\s*[\dא-ת]+)/.exec(tail);
+          if (pinM) {
+            const pinpointStripped = pinM[1].replace(/^ב/, "");
+            const repl = `${pinpointStripped} ל${lawName}`;
+            ops.push({ start: m.index, end: m.index + m[0].length + pinM[0].length, replacement: repl });
+            rule37Telemetry.legislation_section_count++;
+          } else {
+            // Naked re-mention without pinpoint → drop the law name (Rule 37.5
+            // doesn't add a marker; the surrounding sentence still reads).
+            // Conservative: only drop when preceded by a function word so we
+            // don't break sentence structure. Otherwise leave it.
+            const before = answerBody.slice(Math.max(0, m.index - 6), m.index);
+            if (/(לפי|מכוח|על\s*פי|של|ב|ל)\s*$/.test(before)) {
+              // keep the preposition; drop just the law name
+              ops.push({ start: m.index, end: m.index + m[0].length, replacement: lawName });
+            }
+            // else: leave naked (no harm)
+          }
+          rule37Telemetry.total_repeats_expanded++;
+        }
+        if (ops.length > 0) {
+          ops.sort((a, b) => b.start - a.start);
+          for (const op of ops) {
+            answerBody = answerBody.slice(0, op.start) + op.replacement + answerBody.slice(op.end);
+          }
+          console.log(`[rule37-pass2] rewrote ${ops.length} repeat mention(s) of "${lawName}"`);
+        }
+      }
+      if (completedStatutes.length > 0) {
+        (rule37Telemetry as any).pass2_statutes = completedStatutes.map((c) => c.name);
+      }
+    }
+
 
     let answer = answerBody;
 
@@ -5619,242 +5690,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       emitStage("coverage_gap", "complete", "דילוג");
     }
 
-    // ===== Fix 2: Post-draft statute completion (Deep + academic) =====
-    // The drafter sometimes names a חוק / חוק-יסוד / פקודה / תקנה in the body
-    // text but no footnote anchors it (Stage E.5 fires pre-draft on sub-issue
-    // gaps; the anchor pass can only re-use existing cards). This stage scans
-    // the *drafted* body for unanchored statute names and runs a targeted
-    // Perplexity completion to fetch the missing bibliographic citation.
-    // Validated entries are pushed as new SourceCards + footnotes, and a
-    // `[N]` marker is inserted right after the first naked mention. Capped at
-    // 3 statutes per run.
-    const statuteCompletionTelemetry: {
-      triggered: boolean;
-      named_statutes: string[];
-      completed_count: number;
-      skipped_with_existing: number;
-      drops?: Record<string, number>;
-      status?: string;
-      duration_ms?: number;
-    } = {
-      triggered: false,
-      named_statutes: [],
-      completed_count: 0,
-      skipped_with_existing: 0,
-    };
-    if (enableDeepPipeline) {
-      emitStage("statute_completion", "running");
-      const tSC = Date.now();
-      try {
-        // 1. Scan body for Hebrew statute mentions
-        const STATUTE_RE = /(חוק[- ]יסוד[^,.\n[\]]{2,80}|חוק [^,.\n[\]]{2,80}|פקודת [^,.\n[\]]{2,80}|תקנות [^,.\n[\]]{2,80})/g;
-        const rawMatches: Array<{ name: string; index: number }> = [];
-        let scanM: RegExpExecArray | null;
-        while ((scanM = STATUTE_RE.exec(answer)) !== null) {
-          const name = scanM[1].replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
-          if (/^חוק\s+(זה|אחר|ה[^\s]+)\s*$/.test(name)) continue;
-          rawMatches.push({ name, index: scanM.index });
-        }
-        // De-dup by normalized name, keep first occurrence
-        const seenNorm = new Set<string>();
-        const uniqueMentions: Array<{ name: string; index: number }> = [];
-        for (const r of rawMatches) {
-          const norm = r.name.toLowerCase();
-          if (seenNorm.has(norm)) continue;
-          seenNorm.add(norm);
-          uniqueMentions.push(r);
-        }
-
-        // 2. Filter mentions that already have an anchor
-        const NEAR_RADIUS = 120;
-        const candidates: Array<{ name: string; index: number }> = [];
-        for (const mention of uniqueMentions) {
-          const nameKey = mention.name.replace(/^חוק[- ]יסוד\s*:?\s*/, "").trim();
-          const inExistingFn = finalFootnotes.some(
-            (fn) => fn.citation && (fn.citation.includes(mention.name) || (nameKey.length >= 6 && fn.citation.includes(nameKey))),
-          );
-          if (inExistingFn) {
-            statuteCompletionTelemetry.skipped_with_existing++;
-            continue;
-          }
-          const start = Math.max(0, mention.index);
-          const end = Math.min(answer.length, mention.index + mention.name.length + NEAR_RADIUS);
-          const window = answer.slice(start, end);
-          if (/\[\d{1,3}\]|[¹²³⁴⁵⁶⁷⁸⁹⁰]/.test(window)) {
-            statuteCompletionTelemetry.skipped_with_existing++;
-            continue;
-          }
-          candidates.push(mention);
-        }
-
-        // 3. Cap at 3
-        const targets = candidates.slice(0, 3);
-        statuteCompletionTelemetry.named_statutes = targets.map((t) => t.name);
-        statuteCompletionTelemetry.triggered = targets.length > 0;
-
-        if (targets.length > 0) {
-          console.log(`[statute-completion] triggered for ${targets.length} statute(s): ${targets.map((t) => t.name).join(" | ")}`);
-
-          const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
-          if (!PERPLEXITY_API_KEY) {
-            statuteCompletionTelemetry.status = "no_perplexity_key";
-          } else {
-            const userPrompt = [
-              `החזר ציטוט ביבליוגרפי מלא עבור החוקים/הפקודות/התקנות הבאים:`,
-              ...targets.map((t, i) => `${i + 1}. ${t.name}`),
-              "",
-              `עבור כל פריט החזר type="statute" עם השדות:`,
-              `- citation: שם מלא + שנה עברית + שנה לועזית + ס"ח/ק"ת + עמוד פתיחה. דוגמה: "חוק-יסוד: כבוד האדם וחירותו, ס\\"ח התשנ\\"ב 150."`,
-              `- year_hebrew: בפורמט התש... (חובה)`,
-              `- year_gregorian: שנת לועזית בת 4 ספרות (חובה)`,
-              `- title: שם החוק עם פרטי פרסום (חובה — חייב לכלול ס"ח/ק"ת + מספר עמוד)`,
-              `- url: קישור ישיר לנוסח הרשמי באתר nevo.co.il / fs.knesset.gov.il`,
-              "",
-              `אם אינך יכול לספק את כל השדות לפריט מסוים — אל תכלול אותו. רק JSON תקני.`,
-            ].join("\n");
-
-            const schema = {
-              type: "object",
-              properties: {
-                candidates: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      type: { type: "string", enum: ["statute"] },
-                      title: { type: "string" },
-                      citation: { type: "string" },
-                      year_hebrew: { type: "string" },
-                      year_gregorian: { type: "string" },
-                      url: { type: "string" },
-                    },
-                    required: ["type", "title", "citation", "url"],
-                  },
-                },
-              },
-              required: ["candidates"],
-            };
-
-            const ctrl = new AbortController();
-            const timeoutId = setTimeout(() => ctrl.abort(), 15_000);
-            let raw: PerplexityCompletionCandidate[] = [];
-            try {
-              const res = await fetch("https://api.perplexity.ai/chat/completions", {
-                method: "POST",
-                headers: {
-                  Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-                  "Content-Type": "application/json",
-                },
-                signal: ctrl.signal,
-                body: JSON.stringify({
-                  model: "sonar-pro",
-                  search_domain_filter: TRUSTED_LEGAL_DOMAINS,
-                  response_format: { type: "json_schema", json_schema: { name: "statute_completion", schema } },
-                  messages: [
-                    {
-                      role: "system",
-                      content:
-                        "You are a precise Israeli-law research assistant. Return ONLY statute citations you can cite with FULL bibliographic detail (Hebrew year התש..., 4-digit Gregorian year, ס\"ח or ק\"ת + opening page). If any required field is unknown, OMIT the entire entry — never invent. Output JSON matching the schema exactly.",
-                    },
-                    { role: "user", content: userPrompt },
-                  ],
-                }),
-              });
-              clearTimeout(timeoutId);
-              if (res.ok) {
-                const data = await res.json();
-                const content = data.choices?.[0]?.message?.content || "";
-                try {
-                  const parsed = JSON.parse(content);
-                  if (Array.isArray(parsed?.candidates)) raw = parsed.candidates.slice(0, 3);
-                } catch (parseErr) {
-                  console.warn("[statute-completion] JSON parse failed:", parseErr);
-                  statuteCompletionTelemetry.status = "parse_failed";
-                }
-              } else {
-                console.warn("[statute-completion] HTTP", res.status);
-                statuteCompletionTelemetry.status = "request_failed";
-              }
-            } catch (err) {
-              clearTimeout(timeoutId);
-              const isAbort = err instanceof DOMException && err.name === "AbortError";
-              statuteCompletionTelemetry.status = isAbort ? "timeout" : "request_failed";
-              console.warn("[statute-completion] fetch failed:", err);
-            }
-
-            // 5. Validate + insert
-            const drops: Record<string, number> = {};
-            let nextCardId = sourceCards.reduce((mx, c) => Math.max(mx, c.id), 0) + 1;
-            let nextFnNum = finalFootnotes.reduce((mx, f) => Math.max(mx, f.number), 0) + 1;
-
-            for (let i = 0; i < raw.length; i++) {
-              const c = raw[i];
-              const v = validatePerplexityCandidate(c);
-              if (!v.ok) {
-                drops[v.reason] = (drops[v.reason] || 0) + 1;
-                continue;
-              }
-              // Pair to a target by index, with name-overlap fallback
-              let target = targets[i];
-              if (!target && v.candidate.title) {
-                target = targets.find((t) => {
-                  const key = t.name.replace(/^חוק[- ]יסוד\s*:?\s*/, "").trim();
-                  return key.length >= 6 && (v.candidate.title?.includes(key) ?? false);
-                });
-              }
-              const matchedName = target?.name || "";
-              const matchedIndex = target?.index ?? -1;
-
-              const newCard: SourceCard = {
-                id: nextCardId++,
-                citation: v.candidate.citation,
-                source_type: "israeli_law",
-                url: v.candidate.url,
-                provenance: "perplexity_completion",
-                excerpt: "",
-                completion_candidate_type: "statute",
-              };
-              sourceCards.push(newCard);
-
-              const newFnNumber = nextFnNum++;
-              finalFootnotes.push({
-                number: newFnNumber,
-                citation: v.candidate.citation,
-                source_type: "israeli_law",
-                url: v.candidate.url,
-                source: "perplexity_completion",
-              });
-
-              // Insert [N] marker after first naked mention
-              if (matchedName) {
-                const idx = matchedIndex >= 0 && answer.slice(matchedIndex, matchedIndex + matchedName.length) === matchedName
-                  ? matchedIndex
-                  : answer.indexOf(matchedName);
-                if (idx >= 0) {
-                  const insertAt = idx + matchedName.length;
-                  answer = `${answer.slice(0, insertAt)}[${newFnNumber}]${answer.slice(insertAt)}`;
-                }
-              }
-
-              statuteCompletionTelemetry.completed_count++;
-              console.log(`[statute-completion] added FN#${newFnNumber} for "${matchedName}" → ${v.candidate.citation.slice(0, 80)}`);
-            }
-
-            if (Object.keys(drops).length > 0) statuteCompletionTelemetry.drops = drops;
-            if (!statuteCompletionTelemetry.status) statuteCompletionTelemetry.status = "ok";
-          }
-        }
-        statuteCompletionTelemetry.duration_ms = Date.now() - tSC;
-      } catch (err) {
-        console.warn("[statute-completion] stage threw:", err);
-        statuteCompletionTelemetry.status = "exception";
-        statuteCompletionTelemetry.duration_ms = Date.now() - tSC;
-      }
-      emitStage("statute_completion", "complete",
-        statuteCompletionTelemetry.completed_count > 0
-          ? `${statuteCompletionTelemetry.completed_count} חוקים`
-          : (statuteCompletionTelemetry.triggered ? "0 חוקים" : "ללא צורך"));
-    }
+    // (Statute completion now runs at Step 5e — before superscript conversion —
+    // so its inserted [N] markers go through the same superscript+reorder
+    // pipeline as drafter-emitted markers. The legacy post-draft block here was
+    // removed in v7.13.)
 
     // Footnote validation pass (post-grounding). Marks the final
     // server-side cleanup window — clients use this signal to flip the
