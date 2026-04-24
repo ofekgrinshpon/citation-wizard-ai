@@ -1,100 +1,78 @@
 
 
-# Milestone C — Citation Engine for Perplexity Candidates
+# Fix two academic-chapter citation problems
 
-Confirmed scope guardrails:
-- `src/data/citationEngine.ts` and `src/lib/citationValidation.ts` are **not modified, not imported, not symlinked**. Uniform-citation feature in the React app keeps working byte-identically.
-- The Deno copy lives under `supabase/functions/_shared/` and is used **only by `legal-qa`**.
-- Only Perplexity-completion candidates flow through the engine. Local corpus assembly is untouched.
+The last run (Q on סחיטת דמי חסות / חובה חיובית, qa_log `2c64327f...`) exposed two real bugs in the post-draft footnote pipeline. Both are fixable in `supabase/functions/legal-qa/index.ts`.
 
-## Goal
+## What actually went wrong (from the live run)
 
-Replace the brittle `STATUTE_CITATION_RE` Guard 1 in Stage E.5 with the citation engine. A Perplexity candidate is accepted iff the engine can resolve it into a structured citation. When resolved, the engine's canonical re-emission becomes the citation string the drafter sees. When unresolved, the candidate is **kept** (Guards 1+2 already passed) but flagged `engine_resolved: false` and cited as-is.
+**Problem 1 — duplicate footnotes for the same source (FN1 + FN2):**
+Both FN1 and FN2 are the same Barak family-law journal article, just formatted slightly differently by the drafter. The footnote-build loop (lines 4121-4199) matches each AI footnote to a source card via `matchFootnoteToCard`, and **does not check whether that card was already cited earlier in the loop**. So when the drafter writes two notes that resolve to the same `card.id`, both get appended as consecutive numbered footnotes pointing at the same URL.
 
-## Files to add
+Aggravating factor: that source was off-topic to begin with. Rerank kept only 4 local docs (`after_rerank: caselaw=0, knesset_research=3, journal_article=1`) — the lone journal article was Barak on family-law constitutionalization. The drafter had no relevant constitutional-law local source, so it grabbed the only journal article available, twice. The dedup fix is the immediate win; relevance is a separate, larger problem.
 
-### 1. `supabase/functions/_shared/citationEngine.ts` (new)
-Verbatim copy of the data registry from `src/data/citationEngine.ts`:
-- `GENERAL_RULES`, `CITATION_RULES`, `REPEATED_CITATION_RULES`, `PINPOINT_RULES` constants
-- `CitationRuleSet`, `CitationComponent` interfaces
-- Helper functions: `getRequiredFields`, `getFieldFormat`, `getFieldRule`, `validateCitation`
+**Problem 2 — חוק-יסוד: כבוד האדם וחירותו named in body, no footnote:**
+Stage E.5 fires *before* drafting, based on uncovered sub-issues. It pulled חוק העונשין (→ FN6) but not the Basic Law, because the planner sub-issues didn't surface "Basic Law: Human Dignity and Liberty" as a distinct missing source — even though the drafter then named it explicitly in the מסגרת נורמטיבית paragraph. The post-draft `coverage-gap` scan logs the unanchored sentence but takes no action. The anchor pass can only re-use existing source-pack cards; it cannot fetch new ones. Result: the Basic Law gets named with no citation, in violation of the prompt rule at line 3377 that explicitly demands one.
 
-No React imports (the source file already has none). Pure Deno-compatible TS.
+## Fix 1 — De-duplicate footnotes that resolve to the same source card
 
-### 2. `supabase/functions/_shared/citationResolver.ts` (new)
-Deno-only logic that does NOT exist in the React side:
+In the AI-footnote loop (lines 4121-4199), track which `card.id` values have already been emitted. When the next AI footnote matches an already-cited card:
 
-```text
-resolveCitation(candidateText, declaredType?) →
-  | { resolved: true,  sourceType, fields, canonical, missingFields: [] }
-  | { resolved: false, reason: 'classify_failed' | 'extract_failed' | 'missing_required', missingFields, partialFields }
-```
+- **Do not** append a new numbered footnote.
+- Map `aiFn.num` to the **existing** new number in `oldIdToNewNumber` so the body's `[N]` markers get rewritten to point at the first occurrence.
+- Log it as `Deduped AI footnote #N → reusing existing #M (same card "<title>...")`.
 
-Pipeline:
-1. **Classify** — map Perplexity's `type` ("statute" | "caselaw") to engine source-type keys:
-   - statute → try `basic_law` (regex: `חוק[-\s]יסוד`), else `secondary_legislation` (regex: `תקנות|צו|כללי`), else `primary_legislation`
-   - caselaw → try `case_law_published` (regex: `פ["״]ד|פד["״]ע`), else `case_law_database`
-2. **Extract** — port the field extractors from `src/lib/citationValidation.ts:extractFieldsFromResponse` for the 5 source types above only. Keep the regex behavior identical.
-3. **Validate** — call ported `validateCitation(sourceType, fields)`. Resolution succeeds when zero required fields are missing.
-4. **Emit canonical** — interpolate `ruleSet.template` with extracted field values to produce a normalized citation string. For example template `{lawName}, {hebrewYear}-{gregorianYear}, {collection} {firstPage}.` → `חוק העונשין, התשל"ז-1977, ס"ח 226.`
+Edge-case handling:
+- "Same source, different pinpoint" (e.g. one cites בעמ' 5, another cites בעמ' 12): treat as same card and reuse — the pinpoint divergence is a drafter bug, not a real second authority. We log a `dedup_with_pinpoint_conflict` warning and surface it in `qa_logs.metadata.footnote_dedup` so we can monitor.
+- Fuzzy-URL fallback matches: also dedup against URL when no card matched.
+- "שם" / "לעיל ה"ש" short-form footnotes (Rule 37.7): NOT touched — those are intentional repeats, handled elsewhere.
 
-## Files to modify
+Telemetry: add `qa_logs.metadata.footnote_dedup = { merged_count, with_pinpoint_conflict, samples }` (first 3 merge previews).
 
-### `supabase/functions/legal-qa/index.ts`
+Expected immediate effect on the failing run: FN1 and FN2 collapse into a single FN1; the `[1]` and `[2]` markers in the body both point to it. Total footnotes drops from 8 to 7.
 
-**Remove** lines 91–96 statute regex. Keep `CASE_NUMBER_RE` for now (engine handles it but we'll keep the cheap pre-check to fail fast on garbage).
+## Fix 2 — Post-draft statute completion for named-but-uncited statutes
 
-**Replace** `validatePerplexityCandidate` (lines 126–152). New logic:
+Add a new post-draft stage **after** `coverage-gap` and **before** the final footnote validation, gated by `enableDeepPipeline` (so it covers both Deep research and academic chapters):
 
 ```text
-1. Guard 1 (URL allowlist) — unchanged, runs first now.
-2. Guard 2 (engine resolution) — call resolveCitation(c.citation, c.type).
-   - If resolved: candidate.citation = canonical; engine_resolved = true.
-   - If unresolved: candidate.engine_resolved = false; candidate.engine_drop_reason = reason.
-   - Either way, accept (we already trust the URL domain).
-3. Drop only on completely unknown type or missing URL.
+1. Scan the drafted body with a Hebrew-statute regex:
+     /(חוק[- ]יסוד[^,.\n[]{2,80}|חוק [^,.\n[]{2,80}|פקודת [^,.\n[]{2,80}|תקנות [^,.\n[]{2,80})/g
+2. For each match, normalize the statute name and check:
+     a. Is there already a footnote whose citation contains this statute name? → skip
+     b. Is there a [N] marker within ~120 chars of the named statute in the body? → skip
+3. Collect remaining "named but unanchored" statutes (capped at 3).
+4. If list is non-empty, call a new helper runStatuteCompletion(statuteNames):
+     - Re-uses the Stage E.5 Perplexity client (same API key, same 15s timeout).
+     - Asks ONLY for type="statute" entries with the same strict schema (year_hebrew + year_gregorian + ס"ח/ק"ת + page + URL).
+     - Validates with the existing validatePerplexityCandidate.
+5. For each validated statute:
+     - Append it as a new SourceCard (provenance="perplexity_completion").
+     - Append a new footnote to finalFootnotes pointing at it.
+     - Insert the [N] marker in the body right after the first naked mention of the statute name.
 ```
 
-**Extend** `ValidatedCompletionCandidate` with two fields: `engine_resolved: boolean` and `engine_drop_reason?: string`.
+Telemetry: `qa_logs.metadata.statute_completion = { triggered, named_statutes, completed_count, skipped_with_existing, drops }`.
 
-**Update** Stage E.5 SourceCard creation (line 2582) to use the canonical `v.citation` (already overwritten above) and pass `engine_resolved` into the `SourceCard` and `sourcePack` entry as a metadata flag (drafter prompt does not change — it sees the citation string the same way).
+Expected effect on the failing run: חוק-יסוד: כבוד האדם וחירותו gets a real Perplexity-fetched citation with the proper התשנ"ב/1992 + ס"ח 150 fields, becomes a new footnote, and the marker is inserted at the first body mention. Total footnotes climbs from 7 (after Fix 1) to 8.
 
-**Update** telemetry block (line 2613). Add to `retrievalFunnel.perplexity_completion`:
-- `engine_resolved_count`
-- `engine_unresolved_count`
-- `engine_drop_reasons: Record<string, number>` (counts of `classify_failed` / `extract_failed` / `missing_required`)
+## What we are explicitly NOT doing in this pass
 
-This replaces the previous `drops` shape for engine outcomes; URL drops keep their own counter.
+- **Not retraining/re-prompting the rerank** to keep more relevant journal articles. That's the underlying reason FN1/FN2 ended up as Barak family-law in the first place, but it's a retrieval-quality problem that needs its own pass with eval data. Fixes 1+2 are the right surgical patches for *the post-draft footnote layer* given whatever sources retrieval delivers.
+- **Not changing Stage E.5's pre-draft trigger.** It still fires on `core < 6`. Fix 2 is a separate post-draft completion targeted only at named statutes, not a broader coverage retry.
+- **Not touching the anchor pass.** It keeps doing what it does (re-anchor sentences to existing cards). Fix 2 supplies new cards before validation, so the anchor pass has more to work with on the next iteration if needed.
 
-## Files to add (memory)
+## Files touched
 
-### `.lovable/memory/logic/legal-qa/citation-engine-perplexity-resolver.md` (new)
-Documents:
-- Two-stage pipeline: URL allowlist → engine resolve.
-- Engine resolution is **non-blocking**: unresolved candidates are kept with `engine_resolved=false`.
-- Deno engine copy is independent from React copy. Any rule changes must be ported manually (no auto-sync). When the user asks to update citation rules, both files need to change.
-- Scope: Perplexity candidates only. Local corpus is not piped through the engine yet (Milestone D).
+- `supabase/functions/legal-qa/index.ts` — Fix 1 in the footnote-build loop (lines ~4121-4199); Fix 2 as a new stage between `coverage-gap` (line ~4795) and final validation; metadata block at line ~4905 gets two new keys.
+- `.lovable/memory/logic/legal-qa/post-processing-cleanup.md` — append the dedup + statute-completion behavior so future runs know it exists.
 
-## Files NOT touched
+## Verification after deploy
 
-- `src/data/citationEngine.ts` ✋
-- `src/lib/citationValidation.ts` ✋
-- All `src/components/**`, `src/pages/**`, `src/hooks/**` ✋
+Re-run the same סחיטת דמי חסות question (or any question that names a Basic Law in the body). Confirm in `qa_logs.metadata`:
 
-## Validation plan
-
-After deploy:
-1. Run `eval/stability-v7.12-run.mjs` (18 questions). Compare against last run:
-   - `engine_resolved_count` per question
-   - `engine_unresolved_count` and breakdown of reasons
-   - `candidates_kept` should now equal `candidates_returned − url_dropped` (engine never drops)
-   - Final anchored citations in body — should not regress
-2. Spot-check 3 statute candidates that previously failed `statute_citation_shape` (e.g., `חוק חופש המידע, התשנ"ח-1998`). Confirm they now resolve with `primary_legislation` template, canonical form matches input.
-
-## Technical notes
-
-- The engine is pure data + 4 helpers, ~820 lines. No runtime cost concerns.
-- Template interpolation handles missing optional fields by leaving the placeholder empty and collapsing surrounding whitespace/punctuation (e.g., `{specificPage}` empty → no trailing comma).
-- For caselaw, `case_law_published` requires `series`/`volume`/`firstPage`; if Perplexity returns only `case_number` without these, classification falls back to `case_law_database` which only requires database name + date — much higher resolution rate.
-- `engine_resolved=false` candidates retain the raw Perplexity citation string. Drafter behavior is unchanged (it never knew about the flag).
+- `footnote_dedup.merged_count >= 1`
+- `statute_completion.completed_count >= 1` with חוק-יסוד: כבוד האדם וחירותו in `named_statutes`
+- The body contains `[N]` immediately after the first mention of the Basic Law
+- No two footnotes share the same URL + same source-card id
 
