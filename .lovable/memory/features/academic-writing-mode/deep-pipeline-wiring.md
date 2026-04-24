@@ -19,9 +19,19 @@ A single `enableDeepPipeline = (taskMode === RESEARCH_MODE) || isAcademicChapter
 - **Structured drafter** (`gpt-5` legacy variant per Deep profile) with the **5-section Deep scaffold** (שורה תחתונה / מסגרת נורמטיבית ≥3 פסקאות / סעיף לכל תת-סוגיה ≥3 פסקאות ≥250 מילים / השלכות מעשיות ≥2 פסקאות / מסקנה) and the hard 1200-word floor language.
 - **Citation engine resolver** runs on `finalFootnotes` post-parse; canonical re-emission overwrites `fn.citation` when resolved. Telemetry in `qa_logs.metadata.chapter_engine = {resolved_count, unresolved_count, drop_reasons}`.
 
-### Academic persona preserved
+### Academic persona preserved + outline context
 
 The academic system prompt (`getAcademicSubModePrompt("write_chapter", body)` — "חוקר אקדמי בכיר", high-register Hebrew, narrative citations, 12,000-char document context) is **prepended** to the structured drafter prompt when `useStructuredDrafterPath && isAcademicChapter`. The Deep scaffold and the academic voice coexist.
+
+The chapter prompt is now **outline-aware**: it parses `body.outline` (the full markdown outline produced by `propose_outline`) on the server and extracts the **thesis** (`התזה המרכזית`), **line of argument** (`קו הטיעון`), the **current chapter's description** (`הרחבה`) and **counter-arguments** (`טיעוני נגד`), plus the **titles of all other chapters**. These are injected into the prompt under explicit headers so the drafter knows what the chapter must argue and how it relates to siblings — not just the title.
+
+### Word envelope alignment
+
+The legacy fallback drafter path (used only when claim-map fails) previously hardcoded `500-1200` words for academic chapters, silently halving Deep's 1200-2000 floor on degraded runs. It now reads `${modeProfile.wordRangeMin}-${modeProfile.wordRangeMax}` when `isAcademicChapter`, so a claim-map miss no longer collapses the chapter length.
+
+### Research question lock
+
+`propose_outline` now opens with an explicit lock: "שאלת המחקר שלהלן היא קבועה ואין לשנותה…". The user's RQ is also interpolated **verbatim** into the מבוא section's "שאלת המחקר:" line (no `<...>` placeholder), preventing the model from rewriting/paraphrasing it.
 
 ### Cost / billing
 

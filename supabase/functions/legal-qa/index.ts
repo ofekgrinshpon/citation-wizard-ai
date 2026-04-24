@@ -886,11 +886,16 @@ function getAcademicSubModePrompt(academicStep: string, body: Record<string, unk
 
     case "propose_outline": {
       const rq = (body.researchQuestion as string) || "";
-      return `אתה חוקר אקדמי בכיר במשפטים. שאלת המחקר: "${rq}"
+      return `אתה חוקר אקדמי בכיר במשפטים.
+
+⚠️ שאלת המחקר שלהלן היא קבועה ואין לשנותה, לנסחה מחדש, או להחליפה. השתמש בה כפי שהיא בדיוק, מילה במילה, בלי תוספות, השמטות או שכתוב.
+
+שאלת המחקר (קבועה): "${rq}"
 
 עליך להפיק **הצעת מחקר אקדמית** לעבודה סמינריונית משפטית, במבנה מחייב של שלושה חלקים. הקפד על המבנה המדויק שלהלן — אל תוסיף, תחסיר או תשנה את שמות הכותרות.
 
 חוקים מחייבים:
+- **שאלת המחקר נעולה**: בסעיף "שאלת המחקר" במבוא, העתק את שאלת המחקר לעיל **מילה במילה**, ללא שינוי כלשהו בניסוח, בסדר המילים, או בסימני הפיסוק. אסור לפרש, לנסח מחדש, לקצר, להרחיב או להחליף את שאלת המחקר.
 - **טון טיעוני (Argumentative)**: השתמש בניסוחים כגון "פרק זה טוען ש…", "במאמר ייטען כי…", "הטענה המרכזית היא ש…". אסור להשתמש בניסוחים תיאוריים כגון "אסקור", "אבחן", "אציג", "ארצה לבדוק".
 - **זרימה לוגית — מן הכלל אל הפרט**: הפרקים חייבים להתקדם מהדין המצוי, דרך ניתוח ביקורתי/השוואתי, אל הדין הראוי / הצעה נורמטיבית. סמן בסוף כל כותרת פרק תג זרימה: "– הדין המצוי" / "– ניתוח ביקורתי" / "– משפט משווה" / "– הדין הראוי".
 - **מספר פרקים**: 4 עד 6 פרקים. אל תכלול תקציר במתווה — התקציר יסונתז בנפרד בסוף.
@@ -899,7 +904,7 @@ function getAcademicSubModePrompt(academicStep: string, body: Record<string, unk
 הפק את הפלט בדיוק לפי התבנית הבאה (שמור על הכותרות המודגשות ועל הסימונים המדויקים):
 
 **מבוא**
-- שאלת המחקר: <ניסוח מדויק של שאלת המחקר במשפט אחד>
+- שאלת המחקר: ${rq}
 - התזה המרכזית (Thesis): <טענה משפטית מרכזית במשפט אחד — מה תוכיח העבודה>
 - חשיבות ותרומה לשיח המשפטי: <2-3 שורות — מדוע הסוגיה חשובה ומה תוסיף העבודה לדיון הקיים>
 - קו הטיעון (Line of Argument): <כיצד התזה מתפתחת ומתבססת לאורך הפרקים, צעד אחר צעד>
@@ -962,9 +967,58 @@ ${allChaptersContext}
 
       let prevContext = "";
       if (prevChapters.length > 0) {
-        prevContext = "\n\n=== פרקים שנכתבו עד כה ===\n" + 
+        prevContext = "\n\n=== פרקים שנכתבו עד כה ===\n" +
           prevChapters.map(ch => `--- ${ch.title} ---\n${ch.content?.slice(0, 2000) || ""}`).join("\n\n");
       }
+
+      // ─── Outline-derived context: thesis, this chapter's role, sibling titles ───
+      const outlineRaw = (body.outline as string) || "";
+      let thesisLine = "";
+      let lineOfArgument = "";
+      let chapterDescription = "";
+      let counterArguments = "";
+      const otherChapterTitles: string[] = [];
+
+      if (outlineRaw) {
+        // Thesis: line starting with "- התזה המרכזית" or "התזה המרכזית"
+        const thesisMatch = outlineRaw.match(/(?:^|\n)\s*[-•]?\s*\*?\*?התזה[^:]*:\s*([^\n]+)/);
+        if (thesisMatch) thesisLine = thesisMatch[1].replace(/\*+/g, "").trim();
+
+        const loaMatch = outlineRaw.match(/(?:^|\n)\s*[-•]?\s*\*?\*?קו הטיעון[^:]*:\s*([^\n]+)/);
+        if (loaMatch) lineOfArgument = loaMatch[1].replace(/\*+/g, "").trim();
+
+        // Parse all numbered chapter blocks: "N. **title** ..."
+        const chapterBlockRe = /(?:^|\n)\s*(\d+)\.\s*\*\*([^*]+?)\*\*([^]*?)(?=(?:\n\s*\d+\.\s*\*\*)|(?:\n\*\*סיכום)|$)/g;
+        let m: RegExpExecArray | null;
+        while ((m = chapterBlockRe.exec(outlineRaw)) !== null) {
+          const idx = parseInt(m[1], 10);
+          const title = m[2].trim();
+          const block = m[3] || "";
+          // Match by 1-based outline index against chapterIndex (which is 0-based for the chapters array;
+          // outline index 1 → first non-abstract chapter). Also fall back to title equality.
+          const titlesMatch = title === chapterTitle.replace(/\*+/g, "").trim();
+          const indexMatch = idx === chapterIndex + (chapterTitle.includes("תקציר") ? 0 : 0) || idx === chapterIndex;
+          // Try the most reliable signal first
+          const isCurrent = titlesMatch || (idx === chapterIndex && !titlesMatch);
+          if (isCurrent) {
+            const descMatch = block.match(/[-•]\s*הרחבה[^:]*:\s*([^\n]+(?:\n(?!\s*[-•])[^\n]+)*)/);
+            if (descMatch) chapterDescription = descMatch[1].replace(/\s+/g, " ").trim();
+            const counterMatch = block.match(/[-•]\s*טיעוני נגד[^:]*:\s*([^\n]+(?:\n(?!\s*[-•])[^\n]+)*)/);
+            if (counterMatch) counterArguments = counterMatch[1].replace(/\s+/g, " ").trim();
+          } else {
+            otherChapterTitles.push(`${idx}. ${title}`);
+          }
+        }
+      }
+
+      const thesisBlock = thesisLine ? `\n\n=== התזה המרכזית של העבודה ===\n${thesisLine}` : "";
+      const loaBlock = lineOfArgument ? `\nקו הטיעון: ${lineOfArgument}` : "";
+      const roleBlock = (chapterDescription || counterArguments)
+        ? `\n\n=== תפקיד הפרק הנוכחי במבנה הטיעון ===${chapterDescription ? `\nתיאור הפרק (מן המתווה): ${chapterDescription}` : ""}${counterArguments ? `\nטיעוני נגד שצריך להתמודד איתם: ${counterArguments}` : ""}`
+        : "";
+      const siblingsBlock = otherChapterTitles.length > 0
+        ? `\n\n=== מבנה כלל הפרקים בעבודה ===\n${otherChapterTitles.join("\n")}\n(אל תחזור על תוכן של פרקים אחרים — הם מטופלים בנפרד.)`
+        : "";
 
       const userFeedback = (body.userFeedback as string) || "";
       const feedbackLine = userFeedback ? `\n\nהנחיות נוספות מהמשתמש לשכתוב הפרק:\n${userFeedback}` : "";
@@ -972,13 +1026,14 @@ ${allChaptersContext}
       return `אתה חוקר אקדמי בכיר במשפטים. כתוב את הפרק הבא בעבודה הסמינריונית.
 
 שאלת המחקר: "${rq}"
-פרק נוכחי (${chapterIndex + 1}): **${chapterTitle}**
+פרק נוכחי (${chapterIndex + 1}): **${chapterTitle}**${thesisBlock}${loaBlock}${roleBlock}${siblingsBlock}
 ${prevContext}
 
 הנחיות:
 - כתוב פרק אחד בלבד: "${chapterTitle}".
-- אורך: 500-1200 מילים (תלוי בחשיבות הפרק).
-- שמור על רצף ועקביות עם הפרקים הקודמים.
+- הפרק חייב לקדם את התזה המרכזית ולמלא את התפקיד שהוגדר לו במבנה הטיעון לעיל. אל תכתוב פרק כללי על הנושא — כתוב את **הפרק הספציפי הזה** עם הטענה הספציפית שלו.
+- אם הוגדרו טיעוני נגד — התייחס אליהם והתמודד איתם בתוך הפרק.
+- שמור על רצף ועקביות עם הפרקים הקודמים, ואל תחפוף לפרקים האחרים שכותרותיהם מופיעות לעיל.
 - השתמש בהערות שוליים מעוצבות לפי כללי האזכור האחיד.
 - העדף מקורות מאומתים ממאגר journal_article לחלקים תיאורטיים.
 - **איכות לפני כמות**: אם אין לך מספיק נתונים בשביל ציטוט תקני (שם הצדדים בפסק דין, שם המחבר במאמר, פרטי פרסום) — אל תכתוב הערת שוליים בכלל. עדיף פרק עם פחות הערות מדויקות מאשר הערות חלקיות.
@@ -3029,7 +3084,7 @@ ${taskInstructions}
 ${academicChapterContext}
 
 כללי כתיבה:
-- אורך: ${isAcademicMode ? "500-1200" : "800-1500"} מילים. כל חלק חייב להיות מהותי.
+- אורך: ${isAcademicChapter ? `${modeProfile.wordRangeMin}-${modeProfile.wordRangeMax}` : (isAcademicMode ? "500-1200" : "800-1500")} מילים. כל חלק חייב להיות מהותי.
 - אל תשתמש בסימני # לכותרות. השתמש ב-**כותרת** (הדגשה) בלבד.
 - השתמש בכותרות המודגשות שמפורטות במצב העבודה למעלה. אל תשתמש בכותרות אחרות.
 - טון: פורמלי, אובייקטיבי ואנליטי. כל טענה משפטית חייבת להיות מעוגנת בהערת שוליים.
