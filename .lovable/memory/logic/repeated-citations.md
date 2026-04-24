@@ -28,3 +28,27 @@ Implementation of the Uniform Citation Rules (2021) Rule 37 for repeated citatio
 **37.9 — Foreign sources:** Source name in original language; foreign party names italicized via `##X##`; "לעיל ה"ש N" always in Hebrew. Examples: `הלכת Brown, לעיל ה"ש 39.`, `עניין ##Donoghue v. Stevenson##, לעיל ה"ש 52, בעמ' 580.`
 
 **Preserved from earlier work:** content-aware back-ref validator (line ~2370+) and renumbering pipeline (line ~2280+) — Rule 37 cleanup runs after them, before `fixHebrewYearPrefix`.
+
+## Rule 37 Short-Form Generator (server-side, Step 5d)
+
+Runs in `legal-qa/index.ts` after the footnote-build loop normalises body markers to `[N]`, before `[N]` → superscript conversion. Solves the "same `[N]` appears multiple times in body" problem by giving every repeat its own NEW footnote with auto-generated short-form text.
+
+**Algorithm:**
+1. Build inverse map `fnNumberToCard` from `cardIdToNewNumber` + `sourceCards`.
+2. Pre-compute `shortName` per footnote via `computeShortName()` (Rule 37.2 by `source_type` + heuristics):
+   - Legislation: first segment up to `,`, strip `[נוסח חדש]` and trailing Hebrew year.
+   - Foreign (Latin-dominant): preserve `##X##`, else first capitalized phrase.
+   - Caselaw: bolded non-generic party (skip `מדינת ישראל`/`פלוני`/`יועמ"ש`), prefixed `עניין **X**`.
+   - Article: `surname "title"`. Book: `surname`. Internet: `**site** "title"`.
+   - Fallback: first ~40 chars at word boundary; counted in `shortname_fallback_count`.
+3. Walk the body, find every `[N]`. Detect inline pinpoint in 40-char window via `BODY_PINPOINT_RE` (`בעמ'/בעמוד/בס'/בסעיף/בפס'/בפסקה`); strip from body when consumed.
+4. First occurrence of a `firstFnNum` → keep `[N]` as-is. Repeats:
+   - **Legislation (Rule 37.5):** `<pinpoint-stripped-of-ב> ל<lawName>.` if pinpoint, else **drop the marker entirely** (counted in `legislation_repeat_dropped_count`).
+   - **Immediately adjacent to previous occurrence:** `שם.` / `שם, בעמ' X.`
+   - **Otherwise:** `[shortName], לעיל ה"ש N.` / `[shortName], לעיל ה"ש N, בעמ' X.`
+5. Each non-dropped repeat emits a brand-new footnote (`nextFnNum++`), inherits `source_type`/`url`/`source` from the original footnote, and the body marker is rewritten in-place. `oldIdToNewNumber.set(newFnNum, newFnNum)` keeps step 6's superscript conversion happy.
+6. Reordering (Step 6b) renumbers everything by appearance order; the back-ref validator already updates `לעיל ה"ש N` cross-refs after reordering, so generated short-forms self-correct.
+
+**Telemetry:** `qa_logs.metadata.rule37_short_forms = { total_repeats_expanded, shem_count, supra_count, legislation_section_count, legislation_repeat_dropped_count, shortname_fallback_count, samples[≤5] }`.
+
+**Interaction with existing post-processors:** The Rule 37 cleanup at lines ~4632-4668 (`lawSupraRe`, `שם, שם` collapse, בי"ת prefix on short-forms) still runs and now mostly no-ops on generator output. AI-authored short-forms continue to be passed through untouched (detected via `SUPRA_FULL`/`\bשם\b`).
