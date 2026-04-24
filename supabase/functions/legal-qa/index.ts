@@ -4548,6 +4548,36 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
 
     const finalFootnotes = validFootnotes;
 
+    // ===== Citation engine resolver — canonicalise chapter footnotes =====
+    // For academic chapter writes, run each parsed footnote through the same
+    // resolver Stage E.5 candidates use. When the engine resolves a citation,
+    // we overwrite `citation` with the canonical re-emission (rule template).
+    // Non-blocking: unresolved footnotes are kept as-is.
+    let chapterEngineResolvedCount = 0;
+    let chapterEngineUnresolvedCount = 0;
+    const chapterEngineDropReasons: Record<string, number> = {};
+    if (isAcademicChapter && finalFootnotes.length > 0) {
+      for (const fn of finalFootnotes) {
+        const text = fn.citation || "";
+        // Skip footnotes that have a missing-data placeholder marker.
+        if (/\[חסר/.test(text)) continue;
+        // Cheap declared-type heuristic — same split the resolver expects.
+        const declared: "statute" | "caselaw" =
+          /[א-ת]{1,3}["״׳']+[א-ת]{1,2}\s+\d+\/\d+|פ["״]ד|פד["״]ע/.test(text)
+            ? "caselaw"
+            : "statute";
+        const res = resolveCitation(text, declared);
+        if (res.resolved) {
+          fn.citation = res.canonical;
+          chapterEngineResolvedCount++;
+        } else {
+          chapterEngineUnresolvedCount++;
+          chapterEngineDropReasons[res.reason] = (chapterEngineDropReasons[res.reason] || 0) + 1;
+        }
+      }
+      console.log(`[chapter-engine] resolved=${chapterEngineResolvedCount} unresolved=${chapterEngineUnresolvedCount} reasons=${JSON.stringify(chapterEngineDropReasons)}`);
+    }
+
     console.log(`Final: answer=${answer.length} chars, footnotes=${finalFootnotes.length}, total time=${Date.now() - t0}ms`);
 
     // ===== Citation density diagnostic (log-only, non-blocking) =====
