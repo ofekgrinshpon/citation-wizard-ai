@@ -19,6 +19,30 @@
 
 const CASE_PREFIX_RE = /(?:בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+(\d+\/\d+)/;
 
+// Source-type buckets used across assertions.
+// Backend uses values like "israeli_law", "legislation_primary", "regulation",
+// "case_law", "caselaw", "literature", etc. Treat any of these as legislation:
+const LEGISLATION_TYPES = new Set([
+  "israeli_law",
+  "legislation",
+  "legislation_primary",
+  "legislation_secondary",
+  "regulation",
+  "regulations",
+  "basic_law",
+  "ordinance",
+]);
+
+export function isLegislationFn(footnote) {
+  const t = String(footnote?.source_type || "").toLowerCase();
+  if (!t) return false;
+  if (LEGISLATION_TYPES.has(t)) return true;
+  if (t.startsWith("legislation")) return true;
+  if (t.includes("law") && !t.includes("case")) return true;
+  if (t.includes("regulation")) return true;
+  return false;
+}
+
 export function computeIdentityKey(footnote) {
   const sourceType = String(footnote?.source_type || "").toLowerCase();
   const citation = String(footnote?.citation || "").trim();
@@ -31,7 +55,7 @@ export function computeIdentityKey(footnote) {
     return `case:${normalize(name)}|${normalize(citation).slice(0, 60)}`;
   }
 
-  if (sourceType.startsWith("legislation")) {
+  if (isLegislationFn(footnote)) {
     // Extract section if present
     const sectionMatch = citation.match(/^סעיף\s+([\dא-ת()./\\–-]+)\s+ל/);
     const section = sectionMatch ? sectionMatch[1] : null;
