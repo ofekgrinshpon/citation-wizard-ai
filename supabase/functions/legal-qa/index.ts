@@ -5021,7 +5021,12 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
          let scanM: RegExpExecArray | null;
          while ((scanM = STATUTE_RE.exec(answerBody)) !== null) {
            statuteCompletionTelemetry.regex_matches_total++;
-           let name = scanM[1].replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
+            // Defensive: fall back to scanM[0] if anyone later breaks the
+            // capturing-group contract on STATUTE_RE. Without this, a missing
+            // group makes scanM[1] undefined and the whole stage throws.
+            const matched = scanM[1] ?? scanM[0];
+            if (!matched) continue;
+            let name = matched.replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
            // Strip trailing partial paren capture if any leaked
            name = name.replace(/\s*\([^)]*$/, "").trim();
            // Reject prepositional dangle without year
