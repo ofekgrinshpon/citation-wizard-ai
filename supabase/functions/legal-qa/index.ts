@@ -1864,15 +1864,24 @@ ${(verify.fullText as string).slice(0, 50000)}
         // queries; the plan will be picked up later by the claim_map stage.
         let planForRetrieval: DecomposedPlan | null = null;
         if (decompPromise) {
-          // Race: plan vs. a tiny grace window. We've already burned ~1-3s on
-          // expandShortQuery, so most successful plans (median ~25s on mini,
-          // expected ~10s on nano) will still be in flight. Give them up to
-          // 25s more (total ~28s — within the 45s timeout) before giving up
-          // for retrieval purposes. Plan is still consumed later by claim_map
-          // even if it lands after this point.
+          // Race: plan vs. a grace window. We've already burned ~1-3s on
+          // expandShortQuery, so most successful plans will still be in flight.
+          //
+          // Fast (#3 parallelization, v7.14): retrieval uses the ORIGINAL
+          // question as the primary signal — sub-issue queries are an
+          // enrichment, not a dependency. Give the plan only a 3s grace
+          // window so retrieval starts almost immediately on the original
+          // question. If the plan lands after retrieval kicked off, it will
+          // still be consumed by claim_map downstream.
+          //
+          // Deep keeps the longer 25s window because it benefits more from
+          // plan-derived sub-issue queries seeding round-1 (round-2 is also
+          // gated on plan availability) and its overall wall budget is
+          // already higher.
+          const planGraceMs = modeProfile.retrievalRounds >= 2 ? 25000 : 3000;
           const planRace = await Promise.race([
             decompPromise.then((r) => ({ ready: true as const, plan: r.data })),
-            new Promise<{ ready: false }>((resolve) => setTimeout(() => resolve({ ready: false }), 25000)),
+            new Promise<{ ready: false }>((resolve) => setTimeout(() => resolve({ ready: false }), planGraceMs)),
           ]);
           if (planRace.ready) planForRetrieval = planRace.plan;
         }
