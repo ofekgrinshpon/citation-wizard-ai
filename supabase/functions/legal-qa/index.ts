@@ -5698,6 +5698,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           // + drop reasons. Instrumentation only — read with:
           //   select metadata->'retrieval_funnel' from qa_logs order by created_at desc limit 1;
           retrieval_funnel: retrievalFunnel,
+          // Per-doc rerank drop details (title + score + reason). Capped at 10.
+          // Lets us validate the rerank gate against future runs without re-tracing.
+          rerank_drops: rerankDrops,
           claim_map_summary: claimMapV2Summary
             ?? (claimMap ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength } : null),
           drafting_path: draftingPath,
