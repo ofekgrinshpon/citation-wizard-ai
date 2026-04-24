@@ -248,7 +248,7 @@ export function assertLegislationNoSupra(answerBody, fnList) {
   while ((m = re.exec(answerBody || "")) !== null) {
     const n = m[1];
     const fn = byNumber.get(n);
-    if (fn && String(fn.source_type || "").toLowerCase().startsWith("legislation")) {
+    if (fn && isLegislationFn(fn)) {
       bad.push(`לעיל ה"ש ${n} → legislation FN (rule 37.5 violation)`);
     }
   }
