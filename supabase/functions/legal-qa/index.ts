@@ -4021,7 +4021,16 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         console.error("[anchor-pass] unexpected error — shipping draft as-is:", (err as Error).message);
         emitStage("anchor_pass", "complete", "דילוג");
       }
+      emitStage("statute_completion", "complete",
+        statuteCompletionTelemetry.completed_count > 0
+          ? `${statuteCompletionTelemetry.completed_count} חוקים`
+          : (statuteCompletionTelemetry.triggered ? "0 חוקים" : "ללא צורך"));
     }
+
+    // Footnote validation pass (post-grounding). Marks the final
+    // server-side cleanup window — clients use this signal to flip the
+    // streamed preview to a "finalizing" state before the `final` event.
+    emitStage("footnote_validate", "running");
 
 
     // ========= Step 5: Parse AI footnotes section =========
