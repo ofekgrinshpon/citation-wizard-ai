@@ -135,6 +135,49 @@ interface ValidatedCompletionCandidate extends PerplexityCompletionCandidate {
  * registry — so requiring a match would drop legitimate primary sources
  * that simply nobody has saved yet.
  */
+// ── Fix C: shape validators (mirror eval/regression/assertions.mjs) ──
+// Reject Perplexity completion candidates whose citation text would fail
+// SHAPE_TRUNC / SHAPE_NAKED_ANAPHORA / SHAPE_MIN_TOKENS in the harness.
+// Hard drops at validation time → never enter source pack / footnotes.
+const FIXC_TRUNC_PATTERNS: RegExp[] = [
+  /התש[א-ת]?\.\s*$/,            // "התשע." truncation
+  /,\s*$/,                       // trailing comma
+  /\s+ל\s*$/,                    // "סעיף X ל" with no law name
+];
+const FIXC_YEAR_ONLY_RE = /^\s*התש[א-ת]["״]?[א-ת]?[\s\-–]*\d{4}\.?\s*$/;
+// "[ל]חוק זה / חוק אחר / תקנות אלו / הפקודה הנ"ל / החוק האמור / הוראות הנ"ל"
+const FIXC_ANAPHORA_RE =
+  /^(חוק\s+(זה|אחר|זו)|תקנות\s+(אלו|אלה|הללו|הא?לה)|הפקודה\s+ה(נ["״]ל|אמורה|זו)|החוק\s+ה(נ["״]ל|אמור|זה)|הוראות\s+ה(נ["״]ל|אמורות))(?=\s|,|\.|$|[^א-ת])/;
+const FIXC_STATUTE_KEYWORD_RE = /^(חוק[- ]יסוד\s*:\s*|חוק\s+|פקודת\s+|תקנות\s+)/;
+// Statute citation must have a publication source (ס"ח/ק"ת + page) OR an explicit
+// "(לא נמצאו פרטי פרסום)" placeholder OR "[חסר: ...]" tag. Without one of these
+// it's a Rule 2.8 violation that surfaces as "year-only" or "name + year." truncation.
+const FIXC_PUB_SOURCE_RE = /(ס["״]ח\s*\d|ק["״]ת\s*\d|ס["״]ח\s+הת|ק["״]ת\s+הת|לא נמצאו פרטי פרסום|\[חסר)/;
+
+function fixCStatuteCitationShapeError(citation: string): string | null {
+  const cit = String(citation || "").trim();
+  if (!cit) return "empty";
+  // Truncation patterns (apply to all)
+  for (const pat of FIXC_TRUNC_PATTERNS) {
+    if (pat.test(cit)) return "truncated";
+  }
+  if (FIXC_YEAR_ONLY_RE.test(cit)) return "year_only";
+  // Strip any leading "סעיף X ל" pinpoint prefix before head checks
+  const head = cit.replace(/^סעיף\s+\S+\s+ל/, "").trim();
+  if (FIXC_ANAPHORA_RE.test(head)) return "naked_anaphora";
+  if (!FIXC_STATUTE_KEYWORD_RE.test(head)) return "missing_statute_keyword";
+  // Min tokens after the keyword — at least 2 Hebrew tokens (matches assertMinTokens).
+  const after = head
+    .replace(FIXC_STATUTE_KEYWORD_RE, "")
+    .replace(/,\s*(התש|\d{4}|ס["״]ח|ק["״]ת).*$/, "")
+    .trim();
+  const hebrewTokens = after.split(/[\s()]+/).filter((t) => /[א-ת]/.test(t));
+  if (hebrewTokens.length < 2) return "min_tokens";
+  // Must carry a publication-source marker or explicit "missing" placeholder.
+  if (!FIXC_PUB_SOURCE_RE.test(cit)) return "missing_publication_source";
+  return null;
+}
+
 function validatePerplexityCandidate(
   c: PerplexityCompletionCandidate,
 ): { ok: true; candidate: ValidatedCompletionCandidate } | { ok: false; reason: string } {
@@ -145,6 +188,16 @@ function validatePerplexityCandidate(
   // Guard 1: URL allowlist (hard drop).
   if (!c.url || !isTrustedLegalUrl(c.url)) {
     return { ok: false, reason: "url_not_allowlisted" };
+  }
+
+  // Guard 1b (Fix C): Citation shape — hard drop on truncation, naked anaphora,
+  // missing statute keyword, < 2 hebrew tokens, or missing ס"ח/ק"ת page marker.
+  // Caselaw skipped (different shape rules); statute-only.
+  if (c.type === "statute") {
+    const shapeReason = fixCStatuteCitationShapeError(c.citation);
+    if (shapeReason) {
+      return { ok: false, reason: `shape_${shapeReason}` };
+    }
   }
 
   // Guard 2: engine resolution (non-blocking).
