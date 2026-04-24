@@ -1967,14 +1967,26 @@ ${(verify.fullText as string).slice(0, 50000)}
             if (p.literature_query) planQueries.push(p.literature_query);
           }
         }
-        const planQueriesUnique = Array.from(new Set(planQueries.map((q) => q.trim()).filter(Boolean))).slice(0, 5);
+        // Cap total parallel vector queries at 4. Each match_legal_chunks RPC
+        // contends for the same HNSW index and PG worker pool; pushing 6+ in
+        // parallel was causing 5-6 statement_timeouts per Deep run (see logs
+        // 2026-04-24). Budget: question + optional expansion + remaining slots
+        // for plan-derived sub-issues. Keeps retrieval breadth while ensuring
+        // each query gets enough server time to complete.
+        const MAX_PARALLEL_VECTOR_QUERIES = 4;
+        const planQueriesUnique = Array.from(
+          new Set(planQueries.map((q) => q.trim()).filter(Boolean)),
+        );
+        const reservedSlots = 1 + (expandedQuery ? 1 : 0); // question + maybe expansion
+        const planSlots = Math.max(0, MAX_PARALLEL_VECTOR_QUERIES - reservedSlots);
+        const planQueriesCapped = planQueriesUnique.slice(0, planSlots);
         const queriesForEmbedding = [
           question,
           ...(expandedQuery ? [expandedQuery] : []),
-          ...planQueriesUnique,
+          ...planQueriesCapped,
         ];
-        if (planQueriesUnique.length > 0) {
-          console.log(`[plan] adding ${planQueriesUnique.length} sub-issue queries to vector search`);
+        if (planQueriesCapped.length > 0) {
+          console.log(`[plan] adding ${planQueriesCapped.length} sub-issue queries to vector search (capped at ${MAX_PARALLEL_VECTOR_QUERIES} total parallel; ${planQueriesUnique.length - planQueriesCapped.length} dropped)`);
         } else if (decompPromise) {
           console.log(`[plan] proceeding with retrieval before plan landed (or plan was null)`);
         }
