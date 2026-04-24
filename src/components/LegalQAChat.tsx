@@ -1207,6 +1207,14 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       if (taskMode === "research") {
         body.depth = researchDepth;
       }
+      // Deep mode opts into SSE streaming so the HTTP socket stays open via
+      // 15s heartbeats during the ~150-160s pipeline. Without it, the
+      // connection drops mid-flight and the user sees a generic error even
+      // though the server already saved the result.
+      const useSseStream = taskMode === "research" && researchDepth === "deep";
+      if (useSseStream) {
+        body.stream = true;
+      }
       // Send multi-file context
       if (extractedTexts.length === 1) {
         body.documentText = extractedTexts[0].text;
@@ -1230,6 +1238,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           "Content-Type": "application/json",
           "Authorization": `Bearer ${session.access_token}`,
           "apikey": supabaseKey,
+          ...(useSseStream ? { "Accept": "text/event-stream" } : {}),
         },
         body: JSON.stringify(body),
         signal: controller.signal,
@@ -1242,7 +1251,52 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         throw new Error(`HTTP ${res.status}`);
       }
 
-      const data = await res.json();
+      // Parse the response. SSE streams emit `data: {status, body}\n\n` once
+      // (the wrapper sends a single payload event after the pipeline finishes,
+      // followed by `data: [DONE]`). Heartbeat lines (`: ping`) are ignored.
+      let data: any;
+      let effectiveStatus = res.status;
+      const contentType = res.headers.get("content-type") || "";
+      if (useSseStream && contentType.includes("text/event-stream") && res.body) {
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let payloadParsed = false;
+        let finalPayload: any = null;
+        let finalStatus = 200;
+        while (!payloadParsed) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          let nlIdx: number;
+          while ((nlIdx = buffer.indexOf("\n")) !== -1) {
+            let line = buffer.slice(0, nlIdx);
+            buffer = buffer.slice(nlIdx + 1);
+            if (line.endsWith("\r")) line = line.slice(0, -1);
+            if (line.startsWith(":") || line.trim() === "") continue;
+            if (!line.startsWith("data: ")) continue;
+            const jsonStr = line.slice(6).trim();
+            if (jsonStr === "[DONE]") { payloadParsed = true; break; }
+            try {
+              const wrapped = JSON.parse(jsonStr);
+              finalStatus = wrapped.status ?? 200;
+              finalPayload = wrapped.body ?? wrapped;
+            } catch {
+              // Partial line — re-buffer and wait for the next chunk.
+              buffer = line + "\n" + buffer;
+              break;
+            }
+          }
+        }
+        try { reader.releaseLock(); } catch { /* noop */ }
+        data = finalPayload ?? { error: "לא התקבלה תשובה. נסו שוב." };
+        effectiveStatus = finalStatus;
+        if (effectiveStatus === 401) { setError("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש."); return; }
+        if (effectiveStatus === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
+        if (effectiveStatus === 402) { setError("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות."); return; }
+      } else {
+        data = await res.json();
+      }
       if (data?.error) { setError(data.error); return; }
       if (!data?.refusal && (!data?.answer || data.answer.trim().length < 20)) { setError("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב."); return; }
 
