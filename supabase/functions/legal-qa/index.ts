@@ -4787,7 +4787,245 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       );
     }
 
-    // ========= Step 6: Replace [X] markers with superscripts =========
+    // ========= Step 5e: Post-draft statute completion =========
+    // MOVED EARLIER (was after step 6b). Detects naked statute mentions in
+    // the body, fetches missing bibliographic citations via Perplexity, and
+    // inserts [N] markers into answerBody so step 6/6b superscript+reorder
+    // them naturally. Without this earlier placement, inserts landed as
+    // literal "[7]" in the body and the new footnote sat at the end of the
+    // bibliography instead of its true appearance position.
+    const statuteCompletionTelemetry: {
+      triggered: boolean;
+      named_statutes: string[];
+      completed_count: number;
+      skipped_with_existing: number;
+      drops?: Record<string, number>;
+      status?: string;
+      duration_ms?: number;
+    } = {
+      triggered: false,
+      named_statutes: [],
+      completed_count: 0,
+      skipped_with_existing: 0,
+    };
+    if (enableDeepPipeline) {
+      emitStage("statute_completion", "running");
+      const tSC = Date.now();
+      try {
+        // 1. Scan body for Hebrew statute mentions.
+        // Tightened regex: requires ≥2 Hebrew tokens after the keyword,
+        // disallows `(` immediately after, and rejects descriptor stop-words
+        // (יעילה, מתאים, הולם, …) that produced false positives like
+        // "חוק יעילה" (from "חקיקה יעילה") and "חוק (משטרה" (paren capture).
+        const STATUTE_RE = /(חוק[- ]יסוד\s*:\s*[^,.\n[\]()]{4,80}|חוק\s+[א-ת][^,.\n[\]()]{3,80}|פקודת\s+[א-ת][^,.\n[\]()]{3,80}|תקנות\s+[א-ת][^,.\n[\]()]{3,80})/g;
+        const STATUTE_STOPWORDS = /^(יעיל[הת]?|מתאים[הת]?|הולם[הת]?|מספק[הת]?|כללי[הת]?|ספציפי[הת]?|נוסף[הת]?|אחר[הת]?|זה|זו|חדש[הת]?|חדשים|ישן[הת]?)\b/;
+        const rawMatches: Array<{ name: string; index: number }> = [];
+        let scanM: RegExpExecArray | null;
+        while ((scanM = STATUTE_RE.exec(answerBody)) !== null) {
+          let name = scanM[1].replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
+          // Strip trailing partial paren capture if any leaked
+          name = name.replace(/\s*\([^)]*$/, "").trim();
+          // Reject if the word right after "חוק "/"פקודת "/"תקנות " is a generic descriptor
+          const afterKeyword = name.replace(/^(חוק[- ]יסוד\s*:\s*|חוק\s+|פקודת\s+|תקנות\s+)/, "");
+          if (STATUTE_STOPWORDS.test(afterKeyword)) continue;
+          // Require at least 2 word-tokens of substance
+          const tokens = afterKeyword.split(/\s+/).filter(Boolean);
+          if (tokens.length < 2) continue;
+          if (/^חוק\s+(זה|אחר|ה[^\s]+)\s*$/.test(name)) continue;
+          rawMatches.push({ name, index: scanM.index });
+        }
+        // De-dup by normalized name, keep first occurrence
+        const seenNorm = new Set<string>();
+        const uniqueMentions: Array<{ name: string; index: number }> = [];
+        for (const r of rawMatches) {
+          const norm = r.name.toLowerCase();
+          if (seenNorm.has(norm)) continue;
+          seenNorm.add(norm);
+          uniqueMentions.push(r);
+        }
+
+        // 2. Filter mentions that already have an anchor
+        const NEAR_RADIUS = 120;
+        const candidates: Array<{ name: string; index: number }> = [];
+        for (const mention of uniqueMentions) {
+          const nameKey = mention.name.replace(/^חוק[- ]יסוד\s*:?\s*/, "").trim();
+          const inExistingFn = footnotes.some(
+            (fn) => fn.citation && (fn.citation.includes(mention.name) || (nameKey.length >= 6 && fn.citation.includes(nameKey))),
+          );
+          if (inExistingFn) {
+            statuteCompletionTelemetry.skipped_with_existing++;
+            continue;
+          }
+          const start = Math.max(0, mention.index);
+          const end = Math.min(answerBody.length, mention.index + mention.name.length + NEAR_RADIUS);
+          const window = answerBody.slice(start, end);
+          if (/\[\d{1,3}\]|[¹²³⁴⁵⁶⁷⁸⁹⁰]/.test(window)) {
+            statuteCompletionTelemetry.skipped_with_existing++;
+            continue;
+          }
+          candidates.push(mention);
+        }
+
+        // 3. Cap at 3
+        const targets = candidates.slice(0, 3);
+        statuteCompletionTelemetry.named_statutes = targets.map((t) => t.name);
+        statuteCompletionTelemetry.triggered = targets.length > 0;
+
+        if (targets.length > 0) {
+          console.log(`[statute-completion] triggered for ${targets.length} statute(s): ${targets.map((t) => t.name).join(" | ")}`);
+          const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
+          if (!PERPLEXITY_API_KEY) {
+            statuteCompletionTelemetry.status = "no_perplexity_key";
+          } else {
+            const userPrompt = [
+              `החזר ציטוט ביבליוגרפי מלא עבור החוקים/הפקודות/התקנות הבאים:`,
+              ...targets.map((t, i) => `${i + 1}. ${t.name}`),
+              "",
+              `עבור כל פריט החזר type="statute" עם השדות citation/year_hebrew/year_gregorian/title/url. אם חסר שדה — אל תכלול. רק JSON תקני.`,
+            ].join("\n");
+            const schema = {
+              type: "object",
+              properties: {
+                candidates: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      type: { type: "string", enum: ["statute"] },
+                      title: { type: "string" },
+                      citation: { type: "string" },
+                      year_hebrew: { type: "string" },
+                      year_gregorian: { type: "string" },
+                      url: { type: "string" },
+                    },
+                    required: ["type", "title", "citation", "url"],
+                  },
+                },
+              },
+              required: ["candidates"],
+            };
+            const ctrl = new AbortController();
+            const timeoutId = setTimeout(() => ctrl.abort(), 15_000);
+            let raw: PerplexityCompletionCandidate[] = [];
+            try {
+              const res = await fetch("https://api.perplexity.ai/chat/completions", {
+                method: "POST",
+                headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, "Content-Type": "application/json" },
+                signal: ctrl.signal,
+                body: JSON.stringify({
+                  model: "sonar-pro",
+                  search_domain_filter: TRUSTED_LEGAL_DOMAINS,
+                  response_format: { type: "json_schema", json_schema: { name: "statute_completion", schema } },
+                  messages: [
+                    { role: "system", content: "You are a precise Israeli-law research assistant. Return ONLY statute citations you can cite with FULL bibliographic detail. Omit any entry missing a required field." },
+                    { role: "user", content: userPrompt },
+                  ],
+                }),
+              });
+              clearTimeout(timeoutId);
+              if (res.ok) {
+                const data = await res.json();
+                const content = data.choices?.[0]?.message?.content || "";
+                try {
+                  const parsed = JSON.parse(content);
+                  if (Array.isArray(parsed?.candidates)) raw = parsed.candidates.slice(0, 3);
+                } catch (parseErr) {
+                  console.warn("[statute-completion] JSON parse failed:", parseErr);
+                  statuteCompletionTelemetry.status = "parse_failed";
+                }
+              } else {
+                console.warn("[statute-completion] HTTP", res.status);
+                statuteCompletionTelemetry.status = "request_failed";
+              }
+            } catch (err) {
+              clearTimeout(timeoutId);
+              const isAbort = err instanceof DOMException && err.name === "AbortError";
+              statuteCompletionTelemetry.status = isAbort ? "timeout" : "request_failed";
+              console.warn("[statute-completion] fetch failed:", err);
+            }
+
+            // 5. Validate + insert (operates on answerBody + footnotes)
+            const drops: Record<string, number> = {};
+            let nextCardId = sourceCards.reduce((mx, c) => Math.max(mx, c.id), 0) + 1;
+            let nextFnNumSC = footnotes.reduce((mx, f) => Math.max(mx, f.number), 0) + 1;
+
+            // Apply inserts in REVERSE body order so positions stay valid.
+            const inserts: Array<{ insertAt: number; marker: string; newFn: typeof footnotes[number]; newCard: SourceCard; matchedName: string }> = [];
+
+            for (let i = 0; i < raw.length; i++) {
+              const c = raw[i];
+              const v = validatePerplexityCandidate(c);
+              if (!v.ok) {
+                drops[v.reason] = (drops[v.reason] || 0) + 1;
+                continue;
+              }
+              let target = targets[i];
+              if (!target && v.candidate.title) {
+                target = targets.find((t) => {
+                  const key = t.name.replace(/^חוק[- ]יסוד\s*:?\s*/, "").trim();
+                  return key.length >= 6 && (v.candidate.title?.includes(key) ?? false);
+                });
+              }
+              const matchedName = target?.name || "";
+              const matchedIndex = target?.index ?? -1;
+              if (!matchedName) continue;
+              const idx = matchedIndex >= 0 && answerBody.slice(matchedIndex, matchedIndex + matchedName.length) === matchedName
+                ? matchedIndex
+                : answerBody.indexOf(matchedName);
+              if (idx < 0) continue;
+
+              const newFnNumber = nextFnNumSC++;
+              const newCard: SourceCard = {
+                id: nextCardId++,
+                citation: v.candidate.citation,
+                source_type: "israeli_law",
+                url: v.candidate.url,
+                provenance: "perplexity_completion",
+                excerpt: "",
+                completion_candidate_type: "statute",
+              };
+              const newFn = {
+                number: newFnNumber,
+                citation: v.candidate.citation,
+                source_type: "israeli_law",
+                url: v.candidate.url,
+                source: "perplexity_completion",
+              };
+              inserts.push({ insertAt: idx + matchedName.length, marker: `[${newFnNumber}]`, newFn, newCard, matchedName });
+              statuteCompletionTelemetry.completed_count++;
+              console.log(`[statute-completion] added FN#${newFnNumber} for "${matchedName}" → ${v.candidate.citation.slice(0, 80)}`);
+            }
+
+            // Apply inserts in reverse position order
+            inserts.sort((a, b) => b.insertAt - a.insertAt);
+            for (const ins of inserts) {
+              answerBody = answerBody.slice(0, ins.insertAt) + ins.marker + answerBody.slice(ins.insertAt);
+              sourceCards.push(ins.newCard);
+              footnotes.push(ins.newFn);
+              // Make step 6 treat this new bracket as a known mapping (identity).
+              oldIdToNewNumber.set(ins.newFn.number, ins.newFn.number);
+              cardIdToNewNumber.set(ins.newCard.id, ins.newFn.number);
+              fnNumberToCard.set(ins.newFn.number, ins.newCard);
+              shortNameRegistry.set(ins.newFn.number, computeShortName(ins.newFn));
+            }
+
+            if (Object.keys(drops).length > 0) statuteCompletionTelemetry.drops = drops;
+            if (!statuteCompletionTelemetry.status) statuteCompletionTelemetry.status = "ok";
+          }
+        }
+        statuteCompletionTelemetry.duration_ms = Date.now() - tSC;
+      } catch (err) {
+        console.warn("[statute-completion] stage threw:", err);
+        statuteCompletionTelemetry.status = "exception";
+        statuteCompletionTelemetry.duration_ms = Date.now() - tSC;
+      }
+      emitStage("statute_completion", "complete",
+        statuteCompletionTelemetry.completed_count > 0
+          ? `${statuteCompletionTelemetry.completed_count} חוקים`
+          : (statuteCompletionTelemetry.triggered ? "0 חוקים" : "ללא צורך"));
+    }
+
+
     let answer = answerBody;
 
     answer = answer.replace(/\[(\d{1,2})\]/g, (_: string, num: string) => {
