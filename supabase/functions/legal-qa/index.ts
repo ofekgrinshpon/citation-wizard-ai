@@ -2560,6 +2560,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       return { content: "", citations: [] };
     })();
 
+    emitStage("retrieve", "running");
     const [localResult, perplexityResult] = await Promise.all([localSearchPromise, perplexityPromise]);
 
     const localMatches = localResult.matches;
