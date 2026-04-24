@@ -5097,6 +5097,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     }
 
 
+    let answer = answerBody;
 
     answer = answer.replace(/\[(\d{1,2})\]/g, (_: string, num: string) => {
       const oldId = parseInt(num, 10);
