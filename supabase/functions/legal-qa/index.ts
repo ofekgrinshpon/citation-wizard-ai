@@ -1326,6 +1326,28 @@ async function runHandlerSSE(
         }
       }, 15000) as unknown as number;
 
+      // Helper to safely enqueue a named SSE event.
+      const send = (event: string, data: unknown) => {
+        try {
+          const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
+          controller.enqueue(encoder.encode(payload));
+        } catch { /* already closed */ }
+      };
+
+      // Install live emitter so handleLegalQARequest can push stage/draft events.
+      setEmitter({
+        stage: (name, status, detail) => {
+          send("stage", {
+            stage: name,
+            status,
+            label: STAGE_LABELS[name] ?? name,
+            ...(detail ? { detail } : {}),
+          });
+        },
+        draftDelta: (chunk) => { send("draft_delta", { text: chunk }); },
+        postProcessing: (label) => { send("post_processing", { label }); },
+      });
+
       try {
         const finalRes = await handler(innerReq);
         // Read the inner response as text. We expect JSON in all paths.
@@ -1335,12 +1357,14 @@ async function runHandlerSSE(
         try { JSON.parse(text); } catch {
           payloadJson = JSON.stringify({ error: "Invalid response from handler" });
         }
-        // Encode as a single SSE message. Status code is forwarded via a
-        // dedicated header field on the JSON so the client can react.
+        // Backward-compat: emit the canonical body via legacy `data:` event
+        // (so older clients still parse) AND a named `final` event for new
+        // clients that key off event types.
         const wrapped = JSON.stringify({
           status: finalRes.status,
           body: JSON.parse(payloadJson),
         });
+        send("final", JSON.parse(wrapped));
         controller.enqueue(encoder.encode(`data: ${wrapped}\n\n`));
         controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
       } catch (err) {
@@ -1351,15 +1375,18 @@ async function runHandlerSSE(
           body: { error: "שגיאה בעיבוד השאלה. נסו שוב." },
         });
         try {
+          send("final", JSON.parse(wrapped));
           controller.enqueue(encoder.encode(`data: ${wrapped}\n\n`));
           controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
         } catch { /* already closed */ }
       } finally {
+        setEmitter(null);
         if (heartbeat !== undefined) clearInterval(heartbeat);
         try { controller.close(); } catch { /* already closed */ }
       }
     },
     cancel() {
+      setEmitter(null);
       if (heartbeat !== undefined) clearInterval(heartbeat);
     },
   });
