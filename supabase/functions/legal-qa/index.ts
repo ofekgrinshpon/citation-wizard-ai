@@ -4118,10 +4118,54 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     let droppedUnanchoredCount = 0;
     const droppedUnanchoredPreviews: string[] = [];
 
+    // Footnote dedup telemetry — when the drafter cites the same source card
+    // (or, in fuzzy fallback, the same URL) under two different note numbers,
+    // we collapse them into one and rewrite the body's [N] markers via
+    // oldIdToNewNumber. "שם" / "לעיל ה"ש" short-form notes are NOT touched —
+    // those are intentional repeats handled elsewhere.
+    const cardIdToNewNumber = new Map<number, number>();        // matched card → first emitted #
+    const fuzzyUrlToNewNumber = new Map<string, number>();      // fuzzy URL → first emitted #
+    let footnoteDedupMergedCount = 0;
+    let footnoteDedupPinpointConflict = 0;
+    const footnoteDedupSamples: Array<{ from: number; into: number; title: string; pinpoint_conflict: boolean }> = [];
+    // Crude pinpoint detector: "בעמ' 12", "בעמוד 12", "ס' 17(א)", "סעיף 17"
+    const PINPOINT_RE = /(בעמ['׳]?\s*\d+|בעמוד\s+\d+|ס['׳]\s*\d+[א-ת()()\d.\-–]*|סעיף\s+\d+[א-ת()()\d.\-–]*)/;
+    const extractPinpoint = (s: string): string | null => {
+      const m = s.match(PINPOINT_RE);
+      return m ? m[1].replace(/\s+/g, " ").trim() : null;
+    };
+
     if (aiFootnoteLines.length > 0) {
       // Use AI-formatted footnotes — match each to a source card for provenance
       for (const aiFn of aiFootnoteLines) {
         const matchedCard = matchFootnoteToCard(aiFn.text, sourceCards, aiFn.num);
+        if (matchedCard) {
+          // Dedup against an already-emitted card
+          const existingNum = cardIdToNewNumber.get(matchedCard.id);
+          if (existingNum !== undefined) {
+            const existingFn = footnotes.find((f) => f.number === existingNum);
+            const newPin = extractPinpoint(aiFn.text);
+            const oldPin = existingFn ? extractPinpoint(existingFn.citation) : null;
+            const pinpointConflict = !!(newPin && oldPin && newPin !== oldPin);
+            if (pinpointConflict) footnoteDedupPinpointConflict++;
+            footnoteDedupMergedCount++;
+            if (footnoteDedupSamples.length < 3) {
+              footnoteDedupSamples.push({
+                from: aiFn.num,
+                into: existingNum,
+                title: matchedCard.citation.slice(0, 80),
+                pinpoint_conflict: pinpointConflict,
+              });
+            }
+            console.log(
+              `Deduped AI footnote #${aiFn.num} → reusing existing #${existingNum} ` +
+              `(same card "${matchedCard.citation.slice(0, 60)}...")` +
+              (pinpointConflict ? ` [pinpoint conflict: "${oldPin}" vs "${newPin}"]` : ""),
+            );
+            oldIdToNewNumber.set(aiFn.num, existingNum);
+            continue;
+          }
+        }
         if (!matchedCard) {
           // ── Fuzzy URL fallback: try to attach a URL via token overlap ──
           let fuzzyUrl: string | undefined;
@@ -4162,6 +4206,31 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           }
 
           if (fuzzyUrl) {
+            // Dedup: same fuzzy URL already cited?
+            const existingNum = fuzzyUrlToNewNumber.get(fuzzyUrl);
+            if (existingNum !== undefined) {
+              const existingFn = footnotes.find((f) => f.number === existingNum);
+              const newPin = extractPinpoint(aiFn.text);
+              const oldPin = existingFn ? extractPinpoint(existingFn.citation) : null;
+              const pinpointConflict = !!(newPin && oldPin && newPin !== oldPin);
+              if (pinpointConflict) footnoteDedupPinpointConflict++;
+              footnoteDedupMergedCount++;
+              if (footnoteDedupSamples.length < 3) {
+                footnoteDedupSamples.push({
+                  from: aiFn.num,
+                  into: existingNum,
+                  title: (fuzzyMatchedTitle || fuzzyUrl).slice(0, 80),
+                  pinpoint_conflict: pinpointConflict,
+                });
+              }
+              console.log(
+                `Deduped AI footnote #${aiFn.num} → reusing existing #${existingNum} ` +
+                `(same fuzzy URL "${fuzzyUrl}")` +
+                (pinpointConflict ? ` [pinpoint conflict: "${oldPin}" vs "${newPin}"]` : ""),
+              );
+              oldIdToNewNumber.set(aiFn.num, existingNum);
+              continue;
+            }
             console.log(`Fuzzy URL match: footnote #${aiFn.num} → "${fuzzyMatchedTitle}" (matched on: ${fuzzyMatchedTokens.join(", ")})`);
             footnotes.push({
               number: fnNum,
@@ -4170,6 +4239,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
               source: "unverified",
               url: fuzzyUrl,
             });
+            fuzzyUrlToNewNumber.set(fuzzyUrl, fnNum);
             oldIdToNewNumber.set(aiFn.num, fnNum);
             fnNum++;
             continue;
@@ -4194,6 +4264,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           url: matchedCard.url,
           source: matchedCard.provenance || "local",
         });
+        cardIdToNewNumber.set(matchedCard.id, fnNum);
         oldIdToNewNumber.set(aiFn.num, fnNum);
         fnNum++;
       }
@@ -4828,6 +4899,238 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       console.log(`Coverage gap instrumentation skipped: ${(e as Error).message}`);
     }
 
+    // ===== Fix 2: Post-draft statute completion (Deep + academic) =====
+    // The drafter sometimes names a חוק / חוק-יסוד / פקודה / תקנה in the body
+    // text but no footnote anchors it (Stage E.5 fires pre-draft on sub-issue
+    // gaps; the anchor pass can only re-use existing cards). This stage scans
+    // the *drafted* body for unanchored statute names and runs a targeted
+    // Perplexity completion to fetch the missing bibliographic citation.
+    // Validated entries are pushed as new SourceCards + footnotes, and a
+    // `[N]` marker is inserted right after the first naked mention. Capped at
+    // 3 statutes per run.
+    const statuteCompletionTelemetry: {
+      triggered: boolean;
+      named_statutes: string[];
+      completed_count: number;
+      skipped_with_existing: number;
+      drops?: Record<string, number>;
+      status?: string;
+      duration_ms?: number;
+    } = {
+      triggered: false,
+      named_statutes: [],
+      completed_count: 0,
+      skipped_with_existing: 0,
+    };
+    if (enableDeepPipeline) {
+      const tSC = Date.now();
+      try {
+        // 1. Scan body for Hebrew statute mentions
+        const STATUTE_RE = /(חוק[- ]יסוד[^,.\n[\]]{2,80}|חוק [^,.\n[\]]{2,80}|פקודת [^,.\n[\]]{2,80}|תקנות [^,.\n[\]]{2,80})/g;
+        const rawMatches: Array<{ name: string; index: number }> = [];
+        let scanM: RegExpExecArray | null;
+        while ((scanM = STATUTE_RE.exec(answer)) !== null) {
+          const name = scanM[1].replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
+          if (/^חוק\s+(זה|אחר|ה[^\s]+)\s*$/.test(name)) continue;
+          rawMatches.push({ name, index: scanM.index });
+        }
+        // De-dup by normalized name, keep first occurrence
+        const seenNorm = new Set<string>();
+        const uniqueMentions: Array<{ name: string; index: number }> = [];
+        for (const r of rawMatches) {
+          const norm = r.name.toLowerCase();
+          if (seenNorm.has(norm)) continue;
+          seenNorm.add(norm);
+          uniqueMentions.push(r);
+        }
+
+        // 2. Filter mentions that already have an anchor
+        const NEAR_RADIUS = 120;
+        const candidates: Array<{ name: string; index: number }> = [];
+        for (const mention of uniqueMentions) {
+          const nameKey = mention.name.replace(/^חוק[- ]יסוד\s*:?\s*/, "").trim();
+          const inExistingFn = finalFootnotes.some(
+            (fn) => fn.citation && (fn.citation.includes(mention.name) || (nameKey.length >= 6 && fn.citation.includes(nameKey))),
+          );
+          if (inExistingFn) {
+            statuteCompletionTelemetry.skipped_with_existing++;
+            continue;
+          }
+          const start = Math.max(0, mention.index);
+          const end = Math.min(answer.length, mention.index + mention.name.length + NEAR_RADIUS);
+          const window = answer.slice(start, end);
+          if (/\[\d{1,3}\]|[¹²³⁴⁵⁶⁷⁸⁹⁰]/.test(window)) {
+            statuteCompletionTelemetry.skipped_with_existing++;
+            continue;
+          }
+          candidates.push(mention);
+        }
+
+        // 3. Cap at 3
+        const targets = candidates.slice(0, 3);
+        statuteCompletionTelemetry.named_statutes = targets.map((t) => t.name);
+        statuteCompletionTelemetry.triggered = targets.length > 0;
+
+        if (targets.length > 0) {
+          console.log(`[statute-completion] triggered for ${targets.length} statute(s): ${targets.map((t) => t.name).join(" | ")}`);
+
+          const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
+          if (!PERPLEXITY_API_KEY) {
+            statuteCompletionTelemetry.status = "no_perplexity_key";
+          } else {
+            const userPrompt = [
+              `החזר ציטוט ביבליוגרפי מלא עבור החוקים/הפקודות/התקנות הבאים:`,
+              ...targets.map((t, i) => `${i + 1}. ${t.name}`),
+              "",
+              `עבור כל פריט החזר type="statute" עם השדות:`,
+              `- citation: שם מלא + שנה עברית + שנה לועזית + ס"ח/ק"ת + עמוד פתיחה. דוגמה: "חוק-יסוד: כבוד האדם וחירותו, ס\\"ח התשנ\\"ב 150."`,
+              `- year_hebrew: בפורמט התש... (חובה)`,
+              `- year_gregorian: שנת לועזית בת 4 ספרות (חובה)`,
+              `- title: שם החוק עם פרטי פרסום (חובה — חייב לכלול ס"ח/ק"ת + מספר עמוד)`,
+              `- url: קישור ישיר לנוסח הרשמי באתר nevo.co.il / fs.knesset.gov.il`,
+              "",
+              `אם אינך יכול לספק את כל השדות לפריט מסוים — אל תכלול אותו. רק JSON תקני.`,
+            ].join("\n");
+
+            const schema = {
+              type: "object",
+              properties: {
+                candidates: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      type: { type: "string", enum: ["statute"] },
+                      title: { type: "string" },
+                      citation: { type: "string" },
+                      year_hebrew: { type: "string" },
+                      year_gregorian: { type: "string" },
+                      url: { type: "string" },
+                    },
+                    required: ["type", "title", "citation", "url"],
+                  },
+                },
+              },
+              required: ["candidates"],
+            };
+
+            const ctrl = new AbortController();
+            const timeoutId = setTimeout(() => ctrl.abort(), 15_000);
+            let raw: PerplexityCompletionCandidate[] = [];
+            try {
+              const res = await fetch("https://api.perplexity.ai/chat/completions", {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+                  "Content-Type": "application/json",
+                },
+                signal: ctrl.signal,
+                body: JSON.stringify({
+                  model: "sonar-pro",
+                  search_domain_filter: TRUSTED_LEGAL_DOMAINS,
+                  response_format: { type: "json_schema", json_schema: { name: "statute_completion", schema } },
+                  messages: [
+                    {
+                      role: "system",
+                      content:
+                        "You are a precise Israeli-law research assistant. Return ONLY statute citations you can cite with FULL bibliographic detail (Hebrew year התש..., 4-digit Gregorian year, ס\"ח or ק\"ת + opening page). If any required field is unknown, OMIT the entire entry — never invent. Output JSON matching the schema exactly.",
+                    },
+                    { role: "user", content: userPrompt },
+                  ],
+                }),
+              });
+              clearTimeout(timeoutId);
+              if (res.ok) {
+                const data = await res.json();
+                const content = data.choices?.[0]?.message?.content || "";
+                try {
+                  const parsed = JSON.parse(content);
+                  if (Array.isArray(parsed?.candidates)) raw = parsed.candidates.slice(0, 3);
+                } catch (parseErr) {
+                  console.warn("[statute-completion] JSON parse failed:", parseErr);
+                  statuteCompletionTelemetry.status = "parse_failed";
+                }
+              } else {
+                console.warn("[statute-completion] HTTP", res.status);
+                statuteCompletionTelemetry.status = "request_failed";
+              }
+            } catch (err) {
+              clearTimeout(timeoutId);
+              const isAbort = err instanceof DOMException && err.name === "AbortError";
+              statuteCompletionTelemetry.status = isAbort ? "timeout" : "request_failed";
+              console.warn("[statute-completion] fetch failed:", err);
+            }
+
+            // 5. Validate + insert
+            const drops: Record<string, number> = {};
+            let nextCardId = sourceCards.reduce((mx, c) => Math.max(mx, c.id), 0) + 1;
+            let nextFnNum = finalFootnotes.reduce((mx, f) => Math.max(mx, f.number), 0) + 1;
+
+            for (let i = 0; i < raw.length; i++) {
+              const c = raw[i];
+              const v = validatePerplexityCandidate(c);
+              if (!v.ok) {
+                drops[v.reason] = (drops[v.reason] || 0) + 1;
+                continue;
+              }
+              // Pair to a target by index, with name-overlap fallback
+              let target = targets[i];
+              if (!target && v.candidate.title) {
+                target = targets.find((t) => {
+                  const key = t.name.replace(/^חוק[- ]יסוד\s*:?\s*/, "").trim();
+                  return key.length >= 6 && (v.candidate.title?.includes(key) ?? false);
+                });
+              }
+              const matchedName = target?.name || "";
+              const matchedIndex = target?.index ?? -1;
+
+              const newCard: SourceCard = {
+                id: nextCardId++,
+                citation: v.candidate.citation,
+                source_type: "israeli_law",
+                url: v.candidate.url,
+                provenance: "perplexity_completion",
+                excerpt: "",
+                completion_candidate_type: "statute",
+              };
+              sourceCards.push(newCard);
+
+              const newFnNumber = nextFnNum++;
+              finalFootnotes.push({
+                number: newFnNumber,
+                citation: v.candidate.citation,
+                source_type: "israeli_law",
+                url: v.candidate.url,
+                source: "perplexity_completion",
+              });
+
+              // Insert [N] marker after first naked mention
+              if (matchedName) {
+                const idx = matchedIndex >= 0 && answer.slice(matchedIndex, matchedIndex + matchedName.length) === matchedName
+                  ? matchedIndex
+                  : answer.indexOf(matchedName);
+                if (idx >= 0) {
+                  const insertAt = idx + matchedName.length;
+                  answer = `${answer.slice(0, insertAt)}[${newFnNumber}]${answer.slice(insertAt)}`;
+                }
+              }
+
+              statuteCompletionTelemetry.completed_count++;
+              console.log(`[statute-completion] added FN#${newFnNumber} for "${matchedName}" → ${v.candidate.citation.slice(0, 80)}`);
+            }
+
+            if (Object.keys(drops).length > 0) statuteCompletionTelemetry.drops = drops;
+            if (!statuteCompletionTelemetry.status) statuteCompletionTelemetry.status = "ok";
+          }
+        }
+        statuteCompletionTelemetry.duration_ms = Date.now() - tSC;
+      } catch (err) {
+        console.warn("[statute-completion] stage threw:", err);
+        statuteCompletionTelemetry.status = "exception";
+        statuteCompletionTelemetry.duration_ms = Date.now() - tSC;
+      }
+    }
+
     // ===== Post-response grounding sanity check (log-only, non-blocking) =====
     // Detect substantive statutory claims (סעיף X ל-Y ... קובע/מורה/מגדיר/אוסר/מחייב/מתיר)
     // and verify the section number + law name hint appear in at least one local chunk.
@@ -4910,6 +5213,14 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           // citations to satisfy a floor — read alongside total_footnotes.
           dropped_unanchored_count: droppedUnanchoredCount,
           dropped_unanchored_previews: droppedUnanchoredPreviews,
+          // Fix 1: footnote dedup (same source card cited under multiple #s).
+          footnote_dedup: {
+            merged_count: footnoteDedupMergedCount,
+            with_pinpoint_conflict: footnoteDedupPinpointConflict,
+            samples: footnoteDedupSamples,
+          },
+          // Fix 2: post-draft statute completion telemetry.
+          statute_completion: statuteCompletionTelemetry,
           // Citation engine resolver pass on chapter footnotes (academic only).
           chapter_engine: isAcademicChapter ? {
             resolved_count: chapterEngineResolvedCount,
