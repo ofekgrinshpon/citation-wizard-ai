@@ -272,6 +272,8 @@ export async function callDrafter(
   const openaiModel = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI : MODEL_CONFIG.DRAFTER_OPENAI;
   const geminiModel = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_GEMINI : MODEL_CONFIG.DRAFTER_GEMINI;
 
+  const promptChars = systemPrompt.length + userPrompt.length;
+
   // Try OpenAI first if available.
   if (OPENAI_API_KEY) {
     const openaiResult = await callOnce({
@@ -283,9 +285,15 @@ export async function callDrafter(
       maxTokens,
       timeoutMs,
       provider: "openai",
+      variant,
+      promptChars,
     });
     if (openaiResult) return { text: openaiResult, modelUsed: openaiModel };
-    console.log(`[drafter:${variant}] OpenAI failed — falling back to Gemini`);
+    // Explicit, structured fallback log so admins can grep for it. Keeps
+    // the earlier `[drafter:variant]` line for backward compatibility.
+    console.warn(
+      `[drafter:fallback] openai_model=${openaiModel} variant=${variant} prompt_chars=${promptChars} → falling back to gemini=${geminiModel}`,
+    );
   }
 
   if (!LOVABLE_API_KEY) {
@@ -301,6 +309,8 @@ export async function callDrafter(
     maxTokens,
     timeoutMs,
     provider: "gemini",
+    variant,
+    promptChars,
   });
   if (geminiResult) return { text: geminiResult, modelUsed: geminiModel };
   return null;
@@ -315,7 +325,10 @@ async function callOnce(opts: {
   maxTokens: number;
   timeoutMs: number;
   provider: "openai" | "gemini";
+  variant: "legacy" | "structured";
+  promptChars: number;
 }): Promise<string | null> {
+  const t0 = Date.now();
   try {
     // OpenAI's gpt-5* family on Chat Completions rejects `max_tokens`
     // ("Unsupported parameter: 'max_tokens' ... Use 'max_completion_tokens' instead").
@@ -329,6 +342,18 @@ async function callOnce(opts: {
         { role: "user", content: opts.userPrompt },
       ],
     };
+    // Drafter hardening (2026-04-24): nudge gpt-5* to spend a moderate
+    // reasoning budget. The empty-content failures we were seeing on
+    // long Deep prompts (~21KB+) coincided with the model defaulting to
+    // a low reasoning level and emitting `finish_reason: "length"` with
+    // zero content. `medium` keeps latency reasonable while preventing
+    // the silent-empty failure mode. Gemini ignores this field.
+    if (opts.provider === "openai" && /^gpt-5/.test(opts.model)) {
+      body.reasoning = { effort: "medium" };
+    }
+    console.log(
+      `[drafter:call] provider=${opts.provider} model=${opts.model} variant=${opts.variant} prompt_chars=${opts.promptChars} max_tokens=${opts.maxTokens} timeout_ms=${opts.timeoutMs}`,
+    );
     const res = await fetchWithTimeout(
       opts.url,
       {
@@ -343,18 +368,28 @@ async function callOnce(opts: {
     );
     if (!res.ok) {
       const txt = await res.text().catch(() => "");
-      console.error(`[drafter] HTTP ${res.status} (${opts.model}):`, txt.slice(0, 200));
+      console.error(`[drafter:http_error] provider=${opts.provider} model=${opts.model} status=${res.status} duration_ms=${Date.now() - t0} body=${txt.slice(0, 200)}`);
       return null;
     }
     const data = await res.json();
-    const text = data?.choices?.[0]?.message?.content;
+    const choice = data?.choices?.[0];
+    const text = choice?.message?.content;
+    const finishReason = choice?.finish_reason ?? "unknown";
+    const usage = data?.usage ?? {};
     if (!text || typeof text !== "string" || text.length < 50) {
-      console.error(`[drafter] empty response from ${opts.model}`);
+      console.error(
+        `[drafter:empty] provider=${opts.provider} model=${opts.model} finish_reason=${finishReason} duration_ms=${Date.now() - t0} prompt_chars=${opts.promptChars} prompt_tokens=${usage.prompt_tokens ?? "?"} completion_tokens=${usage.completion_tokens ?? "?"} text_len=${text?.length ?? 0}`,
+      );
       return null;
     }
+    console.log(
+      `[drafter:ok] provider=${opts.provider} model=${opts.model} finish_reason=${finishReason} duration_ms=${Date.now() - t0} text_len=${text.length} completion_tokens=${usage.completion_tokens ?? "?"}`,
+    );
     return text;
   } catch (err) {
-    console.error(`[drafter] ${opts.model} call failed:`, (err as Error).message);
+    const msg = (err as Error).message ?? String(err);
+    const isAbort = /aborted|abort/i.test(msg);
+    console.error(`[drafter:${isAbort ? "timeout" : "error"}] provider=${opts.provider} model=${opts.model} duration_ms=${Date.now() - t0} error=${msg}`);
     return null;
   }
 }
