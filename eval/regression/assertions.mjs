@@ -140,7 +140,7 @@ export function assertNoTruncation(fnList) {
   };
 }
 
-const ANAPHORA_RE = /^(חוק\s+(זה|אחר|זו)|תקנות\s+אלו|הפקודה\s+ה(נ"ל|אמורה|זו)|החוק\s+ה(נ"ל|אמור|זה))\b/;
+const ANAPHORA_RE = /^(חוק\s+(זה|אחר|זו)|תקנות\s+(אלו|אלה|הללו|אלא?ה?)|הפקודה\s+ה(נ["״]ל|אמורה|זו)|החוק\s+ה(נ["״]ל|אמור|זה)|הוראות\s+ה(נ["״]ל|אמורות))\b/;
 
 export function assertNoNakedAnaphora(fnList) {
   const bad = [];
@@ -165,8 +165,9 @@ export function assertMinTokens(fnList) {
     if (!String(fn?.source_type || "").toLowerCase().startsWith("legislation")) continue;
     const cit = String(fn?.citation || "").replace(/^סעיף\s+\S+\s+ל/, "").trim();
     if (!STATUTE_KEYWORD_RE.test(cit)) continue;
-    const after = cit.replace(STATUTE_KEYWORD_RE, "").replace(/[,(].*$/, "").trim();
-    const tokens = after.split(/\s+/).filter((t) => /[א-ת]/.test(t));
+    // Count tokens before the year/gazette suffix; keep parentheticals (e.g. "חוק החוזים (חלק כללי)").
+    const after = cit.replace(STATUTE_KEYWORD_RE, "").replace(/,\s*(התש|\d{4}|ס["״]ח|ק["״]ת).*$/, "").trim();
+    const tokens = after.split(/[\s()]+/).filter((t) => /[א-ת]/.test(t));
     if (tokens.length < 2) bad.push({ n: fn.number ?? "?", after: after.slice(0, 30) });
   }
   return {
