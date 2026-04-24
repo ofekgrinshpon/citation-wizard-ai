@@ -14,6 +14,7 @@ import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, F
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CaseSummaryReport } from "@/components/CaseSummaryReport";
 import { ResearchProgress } from "@/components/ResearchProgress";
+import { StageProgressList, type StageEvent } from "@/components/StageProgressList";
 
 // ─── Abstract chapter helpers ──────────────────────────────────────
 const ABSTRACT_LOCKED_TOOLTIP = "ניתן לייצר תקציר רק לאחר השלמת כל פרקי העבודה, כדי להבטיח שהוא משקף את המחקר במלואו";
@@ -587,6 +588,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const [extractedTexts, setExtractedTexts] = useState<Array<{ name: string; text: string }>>([]);
   const [extracting, setExtracting] = useState(false);
 
+  // ─── SSE streaming state (Fast/Deep research + academic write_chapter) ───
+  const [stageEvents, setStageEvents] = useState<StageEvent[]>([]);
+  const [postProcessingLabel, setPostProcessingLabel] = useState<string | null>(null);
+  const [streamingDraft, setStreamingDraft] = useState<string>("");
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -840,8 +846,117 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     abortControllerRef.current?.abort();
     abortControllerRef.current = null;
     setLoading(false);
+    setStageEvents([]);
+    setPostProcessingLabel(null);
+    setStreamingDraft("");
     toast.info("העיבוד הופסק");
   };
+
+  /**
+   * Consume an SSE response stream from `legal-qa`.
+   * The wrapper emits four named event types:
+   *   - `stage`           → { stage, status: "running"|"complete", label, detail? }
+   *   - `draft_delta`     → { text }
+   *   - `post_processing` → { label }
+   *   - `final`           → { status, body }   (the canonical answer)
+   * We also accept the legacy unnamed `data: <wrapped>` event for back-compat.
+   * Returns { data, status } with the final payload (as the JSON-fetch path does).
+   */
+  const consumeSseStream = async (
+    body: ReadableStream<Uint8Array>,
+    handlers: {
+      onStage: (e: StageEvent) => void;
+      onDraftDelta: (chunk: string) => void;
+      onPostProcessing: (label: string) => void;
+    },
+  ): Promise<{ data: any; status: number }> => {
+    const reader = body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let finalPayload: any = null;
+    let finalStatus = 200;
+    let done = false;
+
+    // Per SSE spec, events are separated by a blank line. We accumulate
+    // event-name + data lines until the blank, then dispatch.
+    let currentEvent = "message";
+    let currentData = "";
+
+    const dispatch = () => {
+      if (!currentData) {
+        currentEvent = "message";
+        return;
+      }
+      const raw = currentData;
+      currentData = "";
+      const evt = currentEvent;
+      currentEvent = "message";
+      if (raw === "[DONE]") { done = true; return; }
+      let parsed: any;
+      try { parsed = JSON.parse(raw); } catch { return; }
+      switch (evt) {
+        case "stage":
+          handlers.onStage({
+            stage: parsed.stage,
+            status: parsed.status,
+            label: parsed.label ?? parsed.stage,
+            detail: parsed.detail,
+          });
+          break;
+        case "draft_delta":
+          if (typeof parsed.text === "string") handlers.onDraftDelta(parsed.text);
+          break;
+        case "post_processing":
+          if (typeof parsed.label === "string") handlers.onPostProcessing(parsed.label);
+          break;
+        case "final":
+          finalStatus = parsed.status ?? 200;
+          finalPayload = parsed.body ?? parsed;
+          done = true;
+          break;
+        case "message":
+        default:
+          // Legacy unnamed event: { status, body }
+          if (parsed && typeof parsed === "object" && "body" in parsed) {
+            finalStatus = parsed.status ?? 200;
+            finalPayload = parsed.body;
+            done = true;
+          }
+          break;
+      }
+    };
+
+    try {
+      while (!done) {
+        const chunk = await reader.read();
+        if (chunk.done) break;
+        buffer += decoder.decode(chunk.value, { stream: true });
+        let nlIdx: number;
+        while ((nlIdx = buffer.indexOf("\n")) !== -1) {
+          let line = buffer.slice(0, nlIdx);
+          buffer = buffer.slice(nlIdx + 1);
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line === "") { dispatch(); continue; }      // blank line ends an event
+          if (line.startsWith(":")) continue;             // heartbeat / comment
+          if (line.startsWith("event: ")) { currentEvent = line.slice(7).trim(); continue; }
+          if (line.startsWith("data: ")) {
+            const piece = line.slice(6);
+            currentData = currentData ? currentData + "\n" + piece : piece;
+            continue;
+          }
+        }
+        if (done) break;
+      }
+    } finally {
+      try { reader.releaseLock(); } catch { /* noop */ }
+    }
+
+    return {
+      data: finalPayload ?? { error: "לא התקבלה תשובה. נסו שוב." },
+      status: finalStatus,
+    };
+  };
+
 
   // ─── Academic wizard helpers ─────────────────────────────────────
 
@@ -936,9 +1051,16 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setLoading(true);
     setResult(null);
     setError(null);
+    setStageEvents([]);
+    setPostProcessingLabel(null);
+    setStreamingDraft("");
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
+
+    // Stream chapter writes (the only academic sub-mode that runs the full
+    // research pipeline). All other sub-modes are short single-shot prompts.
+    const useSseStream = academicStep === "write_chapter";
 
     try {
       const body: Record<string, unknown> = {
@@ -972,6 +1094,10 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         body.researchQuestion = researchQuestion;
       }
 
+      if (useSseStream) {
+        body.stream = true;
+      }
+
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       const { data: { session } } = await supabase.auth.getSession();
@@ -987,6 +1113,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           "Content-Type": "application/json",
           "Authorization": `Bearer ${session.access_token}`,
           "apikey": supabaseKey,
+          ...(useSseStream ? { "Accept": "text/event-stream" } : {}),
         },
         body: JSON.stringify(body),
         signal: controller.signal,
@@ -999,9 +1126,27 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         throw new Error(`HTTP ${res.status}`);
       }
 
-      const data = await res.json();
+      let data: any;
+      let effectiveStatus = res.status;
+      const contentType = res.headers.get("content-type") || "";
+      if (useSseStream && contentType.includes("text/event-stream") && res.body) {
+        const result = await consumeSseStream(res.body, {
+          onStage: (e) => setStageEvents((prev) => [...prev, e]),
+          onDraftDelta: (chunk) => setStreamingDraft((prev) => prev + chunk),
+          onPostProcessing: (label) => setPostProcessingLabel(label),
+        });
+        data = result.data;
+        effectiveStatus = result.status;
+        if (effectiveStatus === 401) { setError("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש."); return; }
+        if (effectiveStatus === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
+        if (effectiveStatus === 402) { setError("נגמרו הקרדיטים."); return; }
+      } else {
+        data = await res.json();
+      }
+
       if (data?.error) { setError(data.error); return; }
       if (!data?.answer || data.answer.trim().length < 10) { setError("לא התקבלה תשובה. נסו שוב."); return; }
+
 
       const qaResult = data as QAResult;
       setResult(qaResult);
@@ -1040,25 +1185,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         }
       }
 
-      // Save to qa_logs
+      // qa_logs is now written canonically server-side for every academic
+      // sub-mode (with metadata.academic_step + is_abstract). Client-side
+      // insert removed to avoid duplicates. Just notify the sidebar.
       try {
-        const { data: { user: currentUser } } = await supabase.auth.getUser();
-        if (currentUser) {
-          await supabase.from("qa_logs").insert({
-            user_id: currentUser.id,
-            project_id: currentProject?.id ?? null,
-            question: q || `[academic: ${academicStep}] ${researchQuestion}`,
-            answer: qaResult.answer,
-            footnotes: qaResult.footnotes as any,
-            task_mode: "academic_writing",
-            local_footnotes_count: qaResult.footnotes.filter(f => f.source === "local").length,
-            perplexity_footnotes_count: qaResult.footnotes.filter(f => f.source === "perplexity").length,
-            total_footnotes: qaResult.footnotes.length,
-          });
-          onResultSaved?.();
-        }
+        onResultSaved?.();
       } catch (saveErr) {
-        console.error("Failed to save QA log:", saveErr);
+        console.error("onResultSaved hook failed:", saveErr);
       }
     } catch (e: any) {
       if (e.name === "AbortError") return;
@@ -1185,6 +1318,9 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setLoading(true);
     setResult(null);
     setError(null);
+    setStageEvents([]);
+    setPostProcessingLabel(null);
+    setStreamingDraft("");
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -1207,11 +1343,10 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       if (taskMode === "research") {
         body.depth = researchDepth;
       }
-      // Deep mode opts into SSE streaming so the HTTP socket stays open via
-      // 15s heartbeats during the ~150-160s pipeline. Without it, the
-      // connection drops mid-flight and the user sees a generic error even
-      // though the server already saved the result.
-      const useSseStream = taskMode === "research" && researchDepth === "deep";
+      // SSE streaming for ALL research runs (Fast + Deep). Keeps the HTTP socket
+      // open via 15s heartbeats and emits live `stage` / `draft_delta` /
+      // `post_processing` / `final` events the UI uses to render progress.
+      const useSseStream = taskMode === "research";
       if (useSseStream) {
         body.stream = true;
       }
@@ -1251,52 +1386,26 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         throw new Error(`HTTP ${res.status}`);
       }
 
-      // Parse the response. SSE streams emit `data: {status, body}\n\n` once
-      // (the wrapper sends a single payload event after the pipeline finishes,
-      // followed by `data: [DONE]`). Heartbeat lines (`: ping`) are ignored.
+      // Parse the response. Streamed runs use the named-event SSE parser;
+      // non-streamed (case_summary, pleading_analysis, …) fall back to JSON.
       let data: any;
       let effectiveStatus = res.status;
       const contentType = res.headers.get("content-type") || "";
       if (useSseStream && contentType.includes("text/event-stream") && res.body) {
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = "";
-        let payloadParsed = false;
-        let finalPayload: any = null;
-        let finalStatus = 200;
-        while (!payloadParsed) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          let nlIdx: number;
-          while ((nlIdx = buffer.indexOf("\n")) !== -1) {
-            let line = buffer.slice(0, nlIdx);
-            buffer = buffer.slice(nlIdx + 1);
-            if (line.endsWith("\r")) line = line.slice(0, -1);
-            if (line.startsWith(":") || line.trim() === "") continue;
-            if (!line.startsWith("data: ")) continue;
-            const jsonStr = line.slice(6).trim();
-            if (jsonStr === "[DONE]") { payloadParsed = true; break; }
-            try {
-              const wrapped = JSON.parse(jsonStr);
-              finalStatus = wrapped.status ?? 200;
-              finalPayload = wrapped.body ?? wrapped;
-            } catch {
-              // Partial line — re-buffer and wait for the next chunk.
-              buffer = line + "\n" + buffer;
-              break;
-            }
-          }
-        }
-        try { reader.releaseLock(); } catch { /* noop */ }
-        data = finalPayload ?? { error: "לא התקבלה תשובה. נסו שוב." };
-        effectiveStatus = finalStatus;
+        const result = await consumeSseStream(res.body, {
+          onStage: (e) => setStageEvents((prev) => [...prev, e]),
+          onDraftDelta: (chunk) => setStreamingDraft((prev) => prev + chunk),
+          onPostProcessing: (label) => setPostProcessingLabel(label),
+        });
+        data = result.data;
+        effectiveStatus = result.status;
         if (effectiveStatus === 401) { setError("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש."); return; }
         if (effectiveStatus === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
         if (effectiveStatus === 402) { setError("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות."); return; }
       } else {
         data = await res.json();
       }
+
       if (data?.error) { setError(data.error); return; }
       if (!data?.refusal && (!data?.answer || data.answer.trim().length < 20)) { setError("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב."); return; }
 
@@ -1999,8 +2108,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           </Card>
         )}
 
-        {/* Loading: dynamic step progress overlaid on blinking skeleton */}
-        {loading && taskMode !== "case_summary" && <ResearchProgress />}
+        {/* Loading: streamed runs (research + academic write_chapter) get the
+            live stage list with running/complete chips and a draft-text caret.
+            Non-streamed runs (case summary, pleading audit, short academic
+            sub-modes) keep the rotating skeleton placeholder. */}
+        {loading && taskMode !== "case_summary" && (
+          stageEvents.length > 0 || streamingDraft.length > 0 || postProcessingLabel
+            ? <StageProgressList
+                stages={stageEvents}
+                postProcessingLabel={postProcessingLabel}
+                draftText={streamingDraft}
+              />
+            : <ResearchProgress />
+        )}
 
         {/* Case-summary refusal card */}
         {!isAcademic && result?.refusal && (
