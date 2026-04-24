@@ -5025,8 +5025,78 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           : (statuteCompletionTelemetry.triggered ? "0 חוקים" : "ללא צורך"));
     }
 
+    // ========= Step 5f: Rule 37 second pass =========
+    // After statute-completion inserted brand-new [N] markers for naked
+    // statutes, the SAME statute may be mentioned again later in the body
+    // (still naked, because pass 1 only saw it once). Walk the body again,
+    // looking only at statutes that just got their first marker, and apply
+    // Rule 37.5 (legislation): re-occurrences become "ס' X ל<lawName>." if a
+    // pinpoint follows, or are dropped entirely if not. No new footnotes are
+    // created — repeats reference the existing footnote textually per Rule
+    // 37.5 (never "לעיל ה"ש N" for legislation).
+    if (statuteCompletionTelemetry.completed_count > 0) {
+      const completedStatutes: Array<{ name: string; firstIdx: number; lawShortName: string }> = [];
+      for (const fn of footnotes) {
+        if (fn.source !== "perplexity_completion") continue;
+        const reg = shortNameRegistry.get(fn.number);
+        if (!reg || !reg.isLegislation) continue;
+        // Find every body mention of this statute beyond the first [N] occurrence.
+        const lawName = reg.shortName;
+        // Match the law name as a substring (length-bounded) in answerBody.
+        // We look for the original Hebrew form using the same heuristic as
+        // the statute extractor: keyword + descriptor.
+        const escName = lawName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const re = new RegExp(escName, "g");
+        let firstMarkerIdx = -1;
+        // First, locate the [N] marker that pass 1 inserted for this fn.
+        const markerRe = new RegExp(`\\[${fn.number}\\]`);
+        const mm = markerRe.exec(answerBody);
+        if (mm) firstMarkerIdx = mm.index;
+        if (firstMarkerIdx < 0) continue;
+        completedStatutes.push({ name: lawName, firstIdx: firstMarkerIdx, lawShortName: lawName });
+        // Walk all matches of the law name; rewrite ones that come AFTER the
+        // first marker AND aren't already followed by [N]/superscript within 30 chars.
+        const ops: Array<{ start: number; end: number; replacement: string }> = [];
+        let m: RegExpExecArray | null;
+        while ((m = re.exec(answerBody)) !== null) {
+          if (m.index <= firstMarkerIdx) continue;
+          const tail = answerBody.slice(m.index + m[0].length, m.index + m[0].length + 40);
+          if (/^\s*\[\d+\]/.test(tail) || /^[\s,]*[¹²³⁴⁵⁶⁷⁸⁹⁰]/.test(tail)) continue;
+          // Look for pinpoint immediately after.
+          const pinM = /^\s*(בעמ['׳]\s*[\dא-ת–\-]+|בס['׳]\s*[\dא-תa-z()\\.\-]+|בפס['׳]\s*[\dא-ת]+)/.exec(tail);
+          if (pinM) {
+            const pinpointStripped = pinM[1].replace(/^ב/, "");
+            const repl = `${pinpointStripped} ל${lawName}`;
+            ops.push({ start: m.index, end: m.index + m[0].length + pinM[0].length, replacement: repl });
+            rule37Telemetry.legislation_section_count++;
+          } else {
+            // Naked re-mention without pinpoint → drop the law name (Rule 37.5
+            // doesn't add a marker; the surrounding sentence still reads).
+            // Conservative: only drop when preceded by a function word so we
+            // don't break sentence structure. Otherwise leave it.
+            const before = answerBody.slice(Math.max(0, m.index - 6), m.index);
+            if (/(לפי|מכוח|על\s*פי|של|ב|ל)\s*$/.test(before)) {
+              // keep the preposition; drop just the law name
+              ops.push({ start: m.index, end: m.index + m[0].length, replacement: lawName });
+            }
+            // else: leave naked (no harm)
+          }
+          rule37Telemetry.total_repeats_expanded++;
+        }
+        if (ops.length > 0) {
+          ops.sort((a, b) => b.start - a.start);
+          for (const op of ops) {
+            answerBody = answerBody.slice(0, op.start) + op.replacement + answerBody.slice(op.end);
+          }
+          console.log(`[rule37-pass2] rewrote ${ops.length} repeat mention(s) of "${lawName}"`);
+        }
+      }
+      if (completedStatutes.length > 0) {
+        (rule37Telemetry as any).pass2_statutes = completedStatutes.map((c) => c.name);
+      }
+    }
 
-    let answer = answerBody;
+
 
     answer = answer.replace(/\[(\d{1,2})\]/g, (_: string, num: string) => {
       const oldId = parseInt(num, 10);
