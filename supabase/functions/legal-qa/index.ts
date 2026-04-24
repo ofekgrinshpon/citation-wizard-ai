@@ -5816,6 +5816,8 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           // citations to satisfy a floor — read alongside total_footnotes.
           dropped_unanchored_count: droppedUnanchoredCount,
           dropped_unanchored_previews: droppedUnanchoredPreviews,
+          // Rule 37.7 ibid short-forms preserved instead of dropped.
+          kept_shortform_count: keptShortformCount,
           // Fix 1: footnote dedup (same source card cited under multiple #s).
           footnote_dedup: {
             merged_count: footnoteDedupMergedCount,
