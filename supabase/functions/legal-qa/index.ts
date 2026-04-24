@@ -5547,7 +5547,17 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         statuteCompletionTelemetry.status = "exception";
         statuteCompletionTelemetry.duration_ms = Date.now() - tSC;
       }
+      emitStage("statute_completion", "complete",
+        statuteCompletionTelemetry.completed_count > 0
+          ? `${statuteCompletionTelemetry.completed_count} חוקים`
+          : (statuteCompletionTelemetry.triggered ? "0 חוקים" : "ללא צורך"));
     }
+
+    // Footnote validation pass (post-grounding). Marks the final
+    // server-side cleanup window — clients use this signal to flip the
+    // streamed preview to a "finalizing" state before the `final` event.
+    emitStage("footnote_validate", "running");
+    emitPostProcessing("מאמת הערות שוליים");
 
     // ===== Post-response grounding sanity check (log-only, non-blocking) =====
     // Detect substantive statutory claims (סעיף X ל-Y ... קובע/מורה/מגדיר/אוסר/מחייב/מתיר)
