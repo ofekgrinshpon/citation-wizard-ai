@@ -1197,8 +1197,13 @@ ${sourceList}
     const TOP_N_DOCS = 6;
     const sortedDocs = [...docScores].sort((a, b) => b.score - a.score || a.originalIndex - b.originalIndex);
 
-    // Hard relevance gate: drop docs with score <= 2 (off-topic).
-    // For caselaw specifically: also drop score 3 (only weakly related), unless we'd end up with zero caselaw kept.
+    // Hard relevance gate.
+    // - Non-caselaw: drop docs with score <= 3 (off-topic / weak surface match).
+    //   Score 3 in our rubric is "נוגע באופן רחוק / רקע כללי" — that bucket
+    //   produced false positives like "תקנות דמי מחלה" landing on a query about
+    //   סחיטת דמי חסות. Score 4+ forces the model to commit to ענף-דין fit.
+    // - Caselaw: drop score < 5 (already strict). Safety valve below allows
+    //   score >= 3 caselaw back in for explicitly caselaw-domain questions.
     const getDocSourceType = (docId: string): string =>
       docMap.get(docId)?.match.source_type || "";
     const isCaselaw = (docId: string): boolean => {
@@ -1206,7 +1211,8 @@ ${sourceList}
       return st === "case_law" || st === "caselaw" || st === "ruling";
     };
 
-    const aboveHardFloor = sortedDocs.filter(d => d.score >= 3);
+    const NON_CASELAW_FLOOR = 4;
+    const aboveHardFloor = sortedDocs.filter(d => isCaselaw(d.docId) ? d.score >= 3 : d.score >= NON_CASELAW_FLOOR);
     const strictKept = aboveHardFloor.filter(d => !isCaselaw(d.docId) || d.score >= 5);
     // Safety valve: if filtering left zero caselaw AND the question itself is caselaw-domain
     // (explicit case markers like בג"ץ, ע"א, פס"ד, פסיקה, הלכה), allow back caselaw with score >= 3.
@@ -1225,6 +1231,25 @@ ${sourceList}
     const topDocIds = new Set(topDocs.map(d => d.docId));
     const droppedByGate = sortedDocs.length - baseKept.length;
 
+    // Capture per-doc drop details (for qa_logs.metadata.rerank_drops).
+    if (dropDetails) {
+      const keptDocIdSet = new Set(topDocs.map(d => d.docId));
+      for (const ds of sortedDocs) {
+        if (keptDocIdSet.has(ds.docId)) continue;
+        const reason = ds.score < (isCaselaw(ds.docId) ? 3 : NON_CASELAW_FLOOR)
+          ? "below_floor"
+          : (isCaselaw(ds.docId) && ds.score < 5 ? "caselaw_strict_floor" : "topN_slice");
+        if (dropDetails.length < 10) {
+          dropDetails.push({
+            title: ds.title.slice(0, 80),
+            source_type: getDocSourceType(ds.docId),
+            score: ds.score,
+            reason,
+          });
+        }
+      }
+    }
+
     const result: RankedMatch[] = [];
     const rerankScoreLog: Record<string, string> = {};
     for (const ds of docScores) {
@@ -1242,7 +1267,7 @@ ${sourceList}
 
     const keptDocs = topDocIds.size;
     console.log(`Rerank scores per doc: ${JSON.stringify(rerankScoreLog)}`);
-    console.log(`Rerank gate dropped ${droppedByGate} off-topic docs (score<3, or caselaw<4 with caselaw alternatives).`);
+    console.log(`Rerank gate dropped ${droppedByGate} off-topic docs (non-caselaw<${NON_CASELAW_FLOOR}, caselaw<5 with safety valve).`);
     console.log(`Rerank: kept top-${TOP_N_DOCS} of ${docsArr.length} docs by score`);
     console.log(`Local kept after gate + top-${TOP_N_DOCS} slice: ${keptDocs}/${docsArr.length} (active verb pairs: ${activePairsRR.length})`);
 
