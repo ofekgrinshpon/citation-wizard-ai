@@ -14,6 +14,7 @@ interface QALogRecord {
   answer: string | null;
   footnotes: any;
   task_mode: string | null;
+  metadata: any;
   created_at: string;
 }
 
@@ -39,6 +40,14 @@ const MODE_LABELS: Record<string, { label: string; icon: typeof Search }> = {
   academic_writing: { label: "כתיבה אקדמית", icon: GraduationCap },
 };
 
+// Hebrew labels for academic sub-steps surfaced in metadata.academic_step.
+const ACADEMIC_STEP_LABELS: Record<string, string> = {
+  suggest_topics: "הצעת נושאים",
+  validate_question: "אימות שאלת מחקר",
+  propose_outline: "בניית מתווה",
+  write_chapter: "כתיבת פרק",
+};
+
 export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props) {
   const { user } = useAuth();
   const [logs, setLogs] = useState<QALogRecord[]>([]);
@@ -55,7 +64,7 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
       setLoading(true);
       let query = supabase
         .from("qa_logs")
-        .select("id, question, answer, footnotes, task_mode, created_at")
+        .select("id, question, answer, footnotes, task_mode, metadata, created_at")
         .eq("user_id", user.id)
         .not("answer", "is", null)
         .order("created_at", { ascending: false })
