@@ -3536,11 +3536,20 @@ ${combinedContext}
     // marks 1-2 claims allowed_to_state. The compact drafter prompt + claim
     // map already handle single-claim drafting cleanly via statementMode.
     const useStructuredDrafterPath = enableDeepPipeline && claimMap !== null && claimMapAllowedCount >= 1;
-    const drafterSystemPrompt = useStructuredDrafterPath
+    let drafterSystemPrompt = useStructuredDrafterPath
       ? buildCompactStructuredPrompt()
       : systemPrompt;
+    // Academic chapter writes: prepend the academic persona/style block to the
+    // structured drafter prompt so the chapter inherits Deep scaffolding AND
+    // the high-register academic voice / narrative-citation rules.
+    if (useStructuredDrafterPath && isAcademicChapter) {
+      const academicHeader = getAcademicSubModePrompt("write_chapter", body);
+      if (academicHeader) {
+        drafterSystemPrompt = `${academicHeader}\n\n${drafterSystemPrompt}`;
+      }
+    }
     const promptLen = drafterSystemPrompt.length;
-    console.log(`Prompt length: ${promptLen} chars (variant=${useStructuredDrafterPath ? "compact" : "full"}), ${sourceCards.length} source cards`);
+    console.log(`Prompt length: ${promptLen} chars (variant=${useStructuredDrafterPath ? "compact" : "full"}${isAcademicChapter ? "+academic" : ""}), ${sourceCards.length} source cards`);
 
     // Token budget: structured drafter ceiling scales with the profile's
     // word range (~1.6 tokens per Hebrew word, plus footnote-block headroom).
