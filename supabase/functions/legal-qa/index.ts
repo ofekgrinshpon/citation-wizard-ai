@@ -5599,6 +5599,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             with_pinpoint_conflict: footnoteDedupPinpointConflict,
             samples: footnoteDedupSamples,
           },
+          // Rule 37 short-form generator: every repeated body citation
+          // becomes its own NEW footnote (שם / לעיל ה"ש N / ס' X ל[חוק]).
+          rule37_short_forms: rule37Telemetry,
           // Fix 2: post-draft statute completion telemetry.
           statute_completion: statuteCompletionTelemetry,
           // Citation engine resolver pass on chapter footnotes (academic only).
