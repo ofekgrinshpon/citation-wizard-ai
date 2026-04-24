@@ -140,7 +140,8 @@ export function assertNoTruncation(fnList) {
   };
 }
 
-const ANAPHORA_RE = /^(חוק\s+(זה|אחר|זו)|תקנות\s+(אלו|אלה|הללו|אלא?ה?)|הפקודה\s+ה(נ["״]ל|אמורה|זו)|החוק\s+ה(נ["״]ל|אמור|זה)|הוראות\s+ה(נ["״]ל|אמורות))\b/;
+// Note: \b doesn't work on Hebrew chars in JS regex; use end-of-string-or-non-letter lookahead.
+const ANAPHORA_RE = /^(חוק\s+(זה|אחר|זו)|תקנות\s+(אלו|אלה|הללו|הא?לה)|הפקודה\s+ה(נ["״]ל|אמורה|זו)|החוק\s+ה(נ["״]ל|אמור|זה)|הוראות\s+ה(נ["״]ל|אמורות))(?=\s|,|\.|$|[^א-ת])/;
 
 export function assertNoNakedAnaphora(fnList) {
   const bad = [];
