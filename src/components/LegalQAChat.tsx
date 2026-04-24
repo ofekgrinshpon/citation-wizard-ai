@@ -1051,9 +1051,16 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setLoading(true);
     setResult(null);
     setError(null);
+    setStageEvents([]);
+    setPostProcessingLabel(null);
+    setStreamingDraft("");
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
+
+    // Stream chapter writes (the only academic sub-mode that runs the full
+    // research pipeline). All other sub-modes are short single-shot prompts.
+    const useSseStream = academicStep === "write_chapter";
 
     try {
       const body: Record<string, unknown> = {
