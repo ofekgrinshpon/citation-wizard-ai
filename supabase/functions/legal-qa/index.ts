@@ -3136,6 +3136,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     let claimMapV2: LegalClaimMap | null = null;
     let draftingInput: LegalDraftingInput | null = null;
     if (enableDeepPipeline && !evalForceLegacy && decomposedPlan && sourcePack.length >= 2) {
+      emitStage("claim_map", "running");
       try {
         const tClaimStart = Date.now();
         // Trim before handing off to the planner. Final additional trimming
@@ -3180,12 +3181,15 @@ ${(verify.fullText as string).slice(0, 50000)}
               };
             }
           }
+          emitStage("claim_map", "complete", `${claimMapAllowedCount}/${claimMap.length} טענות`);
         } else {
           console.log(`[claim-map] returned null (status=${cmRes.run.status}, ${cmRes.run.duration_ms}ms) — drafter will fall back to legacy prompt`);
+          emitStage("claim_map", "complete", "דילוג");
         }
       } catch (cmErr) {
         console.error("[claim-map] failed (non-fatal):", cmErr);
         claimMap = null;
+        emitStage("claim_map", "complete", "שגיאה");
       }
       // Persist checkpoint after claim_map regardless of success/failure.
       writeCheckpoint("claim_map");
@@ -3827,7 +3831,28 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     const drafterStartedAt = new Date();
     const drafterStartMs = Date.now();
     if (useNewDrafter) {
-      const drafterRes = await callDrafter(drafterSystemPrompt, userMessage, aiMaxTokens, drafterTimeoutMs, drafterVariant);
+      emitStage("drafter", "running");
+      // If an SSE emitter is installed, prefer the streaming drafter so the
+      // client sees `draft_delta` events as the model emits tokens. On any
+      // streaming-level failure (parse, empty, network) the helper returns
+      // null and we fall back to the non-streaming `callDrafter`.
+      let drafterRes: { text: string; modelUsed: string } | null = null;
+      if (__activeEmitter) {
+        drafterRes = await callDrafterStreaming(
+          drafterSystemPrompt,
+          userMessage,
+          aiMaxTokens,
+          drafterTimeoutMs,
+          drafterVariant,
+          (chunk) => emitDraftDelta(chunk),
+        );
+        if (!drafterRes) {
+          console.warn("[drafter] streaming returned null — falling back to non-streaming");
+        }
+      }
+      if (!drafterRes) {
+        drafterRes = await callDrafter(drafterSystemPrompt, userMessage, aiMaxTokens, drafterTimeoutMs, drafterVariant);
+      }
       const tAi = Date.now();
       console.log(`Drafter call took ${tAi - tRetrieval}ms (used=${drafterRes?.modelUsed || "FAILED"}, variant=${drafterVariant})`);
       if (!drafterRes || drafterRes.text.length < 50) {
@@ -3841,6 +3866,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           status: "error",
           error_message: "drafter returned empty or null",
         });
+        emitStage("drafter", "complete", "שגיאה");
         return new Response(
           JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -3857,6 +3883,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         duration_ms: Date.now() - drafterStartMs,
         status: "success",
       });
+      emitStage("drafter", "complete", `${answerText.length} תווים`);
     } else {
       try {
         const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -3971,6 +3998,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
             .map((c) => ({ claim: c.claim, sourceIds: c.source_ids, authorityLevel: c.authority_level }))
         : [];
 
+      emitStage("anchor_pass", "running");
       try {
         const anchorRes = await runAnchorPass({
           body: answerText,
@@ -3988,8 +4016,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         console.log(
           `[anchor-pass] proposed=${anchorRes.patches.length} applied=${anchorPassApplied} (${Date.now() - tAnchorStart}ms; status=${anchorRes.run.status})`,
         );
+        emitStage("anchor_pass", "complete", `${anchorPassApplied} עיגונים`);
       } catch (err) {
         console.error("[anchor-pass] unexpected error — shipping draft as-is:", (err as Error).message);
+        emitStage("anchor_pass", "complete", "דילוג");
       }
     }
 
