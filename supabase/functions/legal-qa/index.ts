@@ -1241,7 +1241,8 @@ serve(async (req) => {
     // Resolved once here; everything downstream reads from `modeProfile`.
     // Defaults to Fast for backward compatibility (no `depth` in body = Fast).
     // Only applied to taskMode === RESEARCH_MODE; other modes ignore it.
-    const { depth: researchDepth, profile: modeProfile } = resolveModeProfile(bodyDepth);
+    // eslint-disable-next-line prefer-const
+    let { depth: researchDepth, profile: modeProfile } = resolveModeProfile(bodyDepth);
     if (taskMode === RESEARCH_MODE) {
       // Deploy marker v7.13: forces redeploy when modeProfile wiring stops appearing in metadata.profile_used.
       console.log(`[mode] depth=${researchDepth} anchor_pass=${modeProfile.anchorPassEnabled} drafter=${modeProfile.drafterVariant} retrieval_rounds=${modeProfile.retrievalRounds} e5_min=${modeProfile.perplexityCompletionMinAnchored}`);
