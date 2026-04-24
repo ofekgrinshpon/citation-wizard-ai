@@ -1,74 +1,97 @@
-## Goal
+## Diagnosis (Stage 5e exception path)
 
-Restore the deep pipeline's footnote density to its pre-regression level so the C/E/B citation-quality fixes can be evaluated against a meaningful baseline. Two narrow surgical changes, then re-capture baselines, then resume C.
+### Root cause — confirmed empirically
 
-## Root cause (confirmed)
+`STATUTE_RE` (built in `supabase/functions/legal-qa/index.ts` ~line 5001-5007) has **zero capturing groups**. Every alternative is wrapped in `(?:…)` and the outer wrapper is `(?:…)` as well:
 
-Three commits on 2026-04-24 ~09:31–09:32 stacked:
+```
+(?:חוק[- ]יסוד\s*:\s*…
+ |חוק\s+(?:…)…
+ |פקודת\s+(?:…)…
+ |תקנות\s+(?:…)…)
+```
 
-1. `989844d` — added rerank drop telemetry (neutral).
-2. `bb8db1a` — toughened rerank prompt to push off-branch legislation to score **0–2**.
-3. `3148013` — raised non-caselaw rerank floor from `>= 3` to **`>= 4`** (`NON_CASELAW_FLOOR = 4`).
+But the consumer at line 5021 reads `scanM[1]`:
 
-The combination is too aggressive: the prompt now drives many borderline-relevant legislation/research docs to 0–3, and the new floor 4 then deletes them. On Q6 the gate dropped 9 of 13 docs, leaving 4 local cards → 1–2 footnotes after dedup.
+```js
+let name = scanM[1].replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
+```
 
-Compounding: the unanchored-footnote dropper at `index.ts:4427` deletes any AI footnote without a URL/card match — including valid Rule 37.7 `שם, פסקה N` ibid forms that legitimately reference the prior anchored citation.
+`scanM[1]` is therefore always `undefined`, and `.replace` on `undefined` throws:
 
-## Changes
+> `TypeError: Cannot read properties of undefined (reading 'replace')`
 
-### Fix 1 — Rerank floor: revert the floor, keep the prompt
+This matches the runtime stack in the edge logs (`[statute-completion] stage threw: TypeError… handleLegalQARequest …index.ts:5064:31`). The line offset (5064 vs 5021) is bundler-shifted — the unique fingerprint is the message + the fact that it fires from inside Stage 5e's `try`.
 
-File: `supabase/functions/legal-qa/index.ts` (around line 1214–1216)
+I reproduced it locally with the exact regex and the Q21 body fragment "סעיף 17 לחוק שירות המדינה (מינויים), התשי\"ט-1959": `m[0]` correctly returns "חוק שירות המדינה (מינויים), התשי\"ט-1959", and `m[1]` is `undefined`.
 
-- Set `NON_CASELAW_FLOOR = 3` (revert of `3148013`).
-- Keep the toughened prompt from `bb8db1a` — the off-branch warning is still useful; we just stop letting it cascade into the floor.
-- Keep caselaw strict floor at 5 with the existing safety valve.
-- Add one-line code comment recording why: "raising to 4 collapsed retrieval on broad procedural questions; rely on strict-keep (>=5) and safety valve instead."
+### Why Q21 / Q22 hit it but Q6 doesn't
 
-This is a 1-line change, fully isolated. Expected effect: Q6 keeps 8–10 docs instead of 4, restoring 4–8 footnotes on most fixtures.
+- Q6's body contains no real statute name. After the new whitelist regex tightening, `regex_matches_total = 0` on Q6, so the loop body never executes and Stage 5e exits cleanly with no candidates.
+- Q21 / Q22 both contain real statute names that the new whitelist correctly matches ("חוק שירות המדינה (מינויים)" and "חוק החוזים (חלק כללי)"). The first match enters the loop, `scanM[1]` is `undefined`, the throw fires, and the outer `catch` at line 5286 sets `status: "exception"` for the whole stage.
 
-### Fix 2 — Whitelist Hebrew ibid short-forms in unanchored-drop
+### Is the exception suppressing valid statute-completion output?
 
-File: `supabase/functions/legal-qa/index.ts` (around line 4427)
+Yes — entirely. The crash happens **before** any candidate is built, before Perplexity is called, and before anything is added to footnotes. So on every query where the regex matches at least one real statute name, Stage 5e produces zero structured-completion footnotes, regardless of what Perplexity would have returned. This is exactly what we see in Q21 / Q22 footnote counts staying at 1–2.
 
-Before dropping a footnote with no card/URL match, check whether the footnote text matches a Rule 37.7 short-form pattern:
+This bug has been present since the whitelist regex landed — it's not a new regression, but it's the reason Fix E telemetry shows `structured_path: true` while no completed citations actually appear.
 
-- `^שם(\s*,\s*פסקה\s+[\dא-ת]+)?\.?$`
-- `^שם(\s*,\s*ע[''׳']\s*\d+)?\.?$`
-- `^לעיל\s+ה["״]ש\s+\d+`
+### Why the standalone regex test didn't catch it
 
-If it matches AND there is at least one anchored footnote already in the list with the same source token (or simply at least one anchored fn earlier in the body), keep it as `source_type: "shortform"` with no URL. Otherwise fall through to the existing drop.
+`eval/regex-statute-name.test.mjs` line 43 reads `m[1].replace(...)` against the same group-less regex. Every positive test case would crash with the identical error. Since the file was added but apparently not executed (or its failure was treated as "not yet wired up"), the bug shipped.
 
-Telemetry: bump a new counter `kept_shortform_count` and surface it in `metadata` next to `dropped_unanchored_count`.
+## The smallest safe fix
 
-### Fix 3 — Re-capture baselines
+Two surgical edits, both one-liner shape changes — no logic change, no tuning loop:
 
-Run `node eval/regression/run-regression.mjs --update-baselines` against the 6 fixtures after Fix 1 and Fix 2 deploy. Verify:
+### Edit 1 — `supabase/functions/legal-qa/index.ts` ~line 5001-5007
 
-- `total_fn` lands in `[3, 12]` for at least 5 of 6 fixtures.
-- `metadata.rerank_drops` shows fewer `below_floor` entries on Q6.
-- No new SHAPE_DUP_STATUTE failures introduced.
+Wrap the alternation in a single capturing group so `scanM[1]` returns the matched name. Change the outer `(?:…)` to `(…)`:
 
-If a fixture still under-counts, investigate that fixture specifically before relaxing the band.
+```diff
+ const STATUTE_RE = new RegExp(
+-  `(?:חוק[- ]יסוד\\s*:\\s*${HEB}[^,.\\n\\[\\]()]{2,80}` +
++  `(חוק[- ]יסוד\\s*:\\s*${HEB}[^,.\\n\\[\\]()]{2,80}` +
+   `|חוק\\s+${HEAD}(?:\\s+${HEAD})?${PAREN_QUAL}${YEAR_CLAUSE}` +
+   `|פקודת\\s+${HEAD}(?:\\s+${HEAD})?${PAREN_QUAL}${YEAR_CLAUSE}` +
+-  `|תקנות\\s+${HEAD}(?:\\s+${HEAD})?${PAREN_QUAL}${YEAR_CLAUSE})`,
++  `|תקנות\\s+${HEAD}(?:\\s+${HEAD})?${PAREN_QUAL}${YEAR_CLAUSE})`,
+   "g",
+ );
+```
 
-### Then — proceed to Fix C
+(Inner `(?:…)` for HEAD repetition stays non-capturing; only the outer wrapper becomes capturing. `scanM[1]` then equals `scanM[0]`.)
 
-Once baselines are healthy, implement Fix C (citation validation tightening) in a separate turn, with a regression-check between C and E.
+Defense-in-depth (recommended, still one line): make line 5021 tolerant in case anyone tweaks groups later:
 
-## Out of scope this turn
+```diff
+- let name = scanM[1].replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
++ let name = (scanM[1] ?? scanM[0]).replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
+```
 
-- Fix E (Rule 37 short-form generation) — comes after C.
-- Fix B (dedupe brittleness) — comes after E.
-- Any drafter prompt changes.
-- Any rerank prompt changes (the off-branch warning stays).
+### Edit 2 — `eval/regex-statute-name.test.mjs` ~line 28-34 and line 43
 
-## Risk and rollback
+Mirror the same change so the standalone test exercises the same shape as production:
 
-- Floor revert: low risk, restores known-good behavior. If false-positive legislation returns (the original problem `3148013` tried to fix), we'll catch it in the next baseline run as drift on Q-extort or similar; rollback = re-set floor to 4.
-- Ibid whitelist: low risk, additive. Worst case a hallucinated `שם` slips through with no anchor — caught by the upstream "earlier anchored fn exists" check.
+- Outer wrapper from `(?:…)` to `(…)`.
+- Line 43: `let name = (m[1] ?? m[0]).replace(/\s+/g, " ")…`.
 
-## Acceptance
+### Validate
 
-- All 6 fixtures produce ≥3 footnotes.
-- `metadata.rerank_drops` and `metadata.stage_runs` populated on every run.
-- Existing duplicate-statute and broken-shortform bugs still surface in the report (so we know the harness still detects them for fixes C/E/B).
+1. Run `node eval/regex-statute-name.test.mjs` — all 17 positives/negatives should now actually execute (they were silently throwing before).
+2. Re-run the regression harness on Q6, Q21, Q22.
+
+   Expected:
+   - Q6: unchanged (regex still matches nothing → no Stage 5e work).
+   - Q21 / Q22: `statute_completion.status` flips from `"exception"` to either `"ok"` (with `completed_count ≥ 1`) or whatever Perplexity returns (`not_found`, etc.). Footnote totals should rise if Perplexity resolves the names.
+
+## Out of scope (deliberately)
+
+- Regex shape, anchors, post-filters, prep-tail rule — all unchanged.
+- Drafter prompt, claim map, rerank floor — unchanged.
+- citation-chat — still untouched.
+- Telemetry counters — unchanged structure (they'll just start populating with non-zero `completed_count`).
+
+## Risk
+
+Minimal. The fix restores the contract the consumer code was already written against. If for any reason `scanM[1]` is still missing, the `?? scanM[0]` fallback prevents a future crash.

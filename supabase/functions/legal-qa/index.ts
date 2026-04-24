@@ -4998,13 +4998,16 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
          // Continuation tail: a name may extend with " ל<head>" / " של <head>"
          // to capture e.g. "חוק סדר הדין הפלילי [נוסח משולב]" — we keep it
          // simple and let the head + paren + year do the work.
-         const STATUTE_RE = new RegExp(
-           `(?:חוק[- ]יסוד\\s*:\\s*${HEB}[^,.\\n\\[\\]()]{2,80}` +
-           `|חוק\\s+${HEAD}(?:\\s+${HEAD})?${PAREN_QUAL}${YEAR_CLAUSE}` +
-           `|פקודת\\s+${HEAD}(?:\\s+${HEAD})?${PAREN_QUAL}${YEAR_CLAUSE}` +
-           `|תקנות\\s+${HEAD}(?:\\s+${HEAD})?${PAREN_QUAL}${YEAR_CLAUSE})`,
-           "g",
-         );
+          // NB: outer wrapper is CAPTURING — `scanM[1]` returns the matched
+          // statute name. Previously this was `(?:…)` which made `scanM[1]`
+          // undefined, causing Stage 5e to throw on every real match (Q21/Q22).
+          const STATUTE_RE = new RegExp(
+            `(חוק[- ]יסוד\\s*:\\s*${HEB}[^,.\\n\\[\\]()]{2,80}` +
+            `|חוק\\s+${HEAD}(?:\\s+${HEAD})?${PAREN_QUAL}${YEAR_CLAUSE}` +
+            `|פקודת\\s+${HEAD}(?:\\s+${HEAD})?${PAREN_QUAL}${YEAR_CLAUSE}` +
+            `|תקנות\\s+${HEAD}(?:\\s+${HEAD})?${PAREN_QUAL}${YEAR_CLAUSE})`,
+            "g",
+          );
          // Anchors that legitimize a short statute name — Rule 37 publication
          // codes or a pinpoint reference within ±120 chars of the mention.
          const RULE37_ANCHOR = /ס["״]ח|ק["״]ת|נ["״]ח|ע["״]ר|פ["״]ד|סעיף\s+\d|ס['׳]\s*\d|תק['׳]\s*\d/;
