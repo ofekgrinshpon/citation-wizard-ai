@@ -2861,6 +2861,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     let sourcePack: SourcePackEntry[] = [];
     let sourcePackV2: LegalSourcePack | null = null;
     if (enableDeepPipeline) {
+      emitStage("source_pack", "running");
       sourcePack = sourceCards.map((sc) => {
         const excerpt = sc.excerpt || "";
         const anchorPresent = Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document";
@@ -2893,6 +2894,9 @@ ${(verify.fullText as string).slice(0, 50000)}
         }
         const sps = summarizeSourcePack(sourcePackV2);
         console.log(`[source-pack-v2] core=${sps.core} supporting=${sps.supporting} secondary=${sps.secondary} anchored=${sps.anchored}`);
+        emitStage("source_pack", "complete", `${sps.core + sps.supporting + sps.secondary} מקורות`);
+      } else {
+        emitStage("source_pack", "complete", `${sourcePack.length} מקורות`);
       }
     }
 
