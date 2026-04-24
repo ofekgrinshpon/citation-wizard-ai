@@ -4206,6 +4206,31 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           }
 
           if (fuzzyUrl) {
+            // Dedup: same fuzzy URL already cited?
+            const existingNum = fuzzyUrlToNewNumber.get(fuzzyUrl);
+            if (existingNum !== undefined) {
+              const existingFn = footnotes.find((f) => f.number === existingNum);
+              const newPin = extractPinpoint(aiFn.text);
+              const oldPin = existingFn ? extractPinpoint(existingFn.citation) : null;
+              const pinpointConflict = !!(newPin && oldPin && newPin !== oldPin);
+              if (pinpointConflict) footnoteDedupPinpointConflict++;
+              footnoteDedupMergedCount++;
+              if (footnoteDedupSamples.length < 3) {
+                footnoteDedupSamples.push({
+                  from: aiFn.num,
+                  into: existingNum,
+                  title: (fuzzyMatchedTitle || fuzzyUrl).slice(0, 80),
+                  pinpoint_conflict: pinpointConflict,
+                });
+              }
+              console.log(
+                `Deduped AI footnote #${aiFn.num} → reusing existing #${existingNum} ` +
+                `(same fuzzy URL "${fuzzyUrl}")` +
+                (pinpointConflict ? ` [pinpoint conflict: "${oldPin}" vs "${newPin}"]` : ""),
+              );
+              oldIdToNewNumber.set(aiFn.num, existingNum);
+              continue;
+            }
             console.log(`Fuzzy URL match: footnote #${aiFn.num} → "${fuzzyMatchedTitle}" (matched on: ${fuzzyMatchedTokens.join(", ")})`);
             footnotes.push({
               number: fnNum,
@@ -4214,6 +4239,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
               source: "unverified",
               url: fuzzyUrl,
             });
+            fuzzyUrlToNewNumber.set(fuzzyUrl, fnNum);
             oldIdToNewNumber.set(aiFn.num, fnNum);
             fnNum++;
             continue;
@@ -4238,6 +4264,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           url: matchedCard.url,
           source: matchedCard.provenance || "local",
         });
+        cardIdToNewNumber.set(matchedCard.id, fnNum);
         oldIdToNewNumber.set(aiFn.num, fnNum);
         fnNum++;
       }
