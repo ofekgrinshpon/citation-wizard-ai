@@ -1299,6 +1299,26 @@ serve(async (req) => {
     else if (isAcademicChapter) creditCost = 8;
     if (hasGroundingDoc && !isAcademicChapter && !isAcademicSubModeFree) creditCost += 2;
 
+    // ─── Deep pipeline opt-in for academic chapter writes ───────────
+    // Academic chapters use the same Deep behavior as research/Deep:
+    //  • full Frame→Decompose→ClaimMap→Retrieve→SourcePack→E.5→Draft pipeline
+    //  • Deep envelope (1200-2000 words, footnote floor 8, anchor pass on)
+    //  • Stage E.5 Perplexity completion when core < 6
+    //  • citation engine resolver canonicalises the parsed footnotes (below)
+    // We force the deep profile for chapters AFTER resolveModeProfile so any
+    // depth coming from the body is overridden — chapters are always Deep.
+    let researchDepthEffective: ResearchDepth = researchDepth;
+    let modeProfileEffective: ModeProfile = modeProfile;
+    if (isAcademicChapter) {
+      const forced = resolveModeProfile("deep");
+      researchDepthEffective = forced.depth;
+      modeProfileEffective = forced.profile;
+      console.log(`[mode] academic chapter: forcing depth=deep (anchor_pass=${modeProfileEffective.anchorPassEnabled} drafter=${modeProfileEffective.drafterVariant} retrieval_rounds=${modeProfileEffective.retrievalRounds})`);
+    }
+    // Single gate that drives every Deep-pipeline behaviour. Replaces the
+    // bare `taskMode === RESEARCH_MODE` check at every Deep-only stage.
+    const enableDeepPipeline = (taskMode === RESEARCH_MODE) || isAcademicChapter;
+
     const creditRequestId =
       typeof clientRequestId === "string" && clientRequestId.length >= 8
         ? clientRequestId
