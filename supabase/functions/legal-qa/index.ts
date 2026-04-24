@@ -1308,13 +1308,11 @@ serve(async (req) => {
     //  • citation engine resolver canonicalises the parsed footnotes (below)
     // We force the deep profile for chapters AFTER resolveModeProfile so any
     // depth coming from the body is overridden — chapters are always Deep.
-    let researchDepthEffective: ResearchDepth = researchDepth;
-    let modeProfileEffective: ModeProfile = modeProfile;
     if (isAcademicChapter) {
       const forced = resolveModeProfile("deep");
-      researchDepthEffective = forced.depth;
-      modeProfileEffective = forced.profile;
-      console.log(`[mode] academic chapter: forcing depth=deep (anchor_pass=${modeProfileEffective.anchorPassEnabled} drafter=${modeProfileEffective.drafterVariant} retrieval_rounds=${modeProfileEffective.retrievalRounds})`);
+      researchDepth = forced.depth;
+      modeProfile = forced.profile;
+      console.log(`[mode] academic chapter: forcing depth=deep (anchor_pass=${modeProfile.anchorPassEnabled} drafter=${modeProfile.drafterVariant} retrieval_rounds=${modeProfile.retrievalRounds})`);
     }
     // Single gate that drives every Deep-pipeline behaviour. Replaces the
     // bare `taskMode === RESEARCH_MODE` check at every Deep-only stage.
