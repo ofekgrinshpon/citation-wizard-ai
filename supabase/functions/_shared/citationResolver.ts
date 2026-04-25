@@ -427,15 +427,28 @@ export function resolveCitation(
   // 3) Validate
   const missing = validateCitation(sourceType, fields);
   if (missing.length > 0) {
-    // v4 caselaw escalation: if the ONLY thing missing is party names AND
-    // we successfully recovered caseNumber via the bare-docket tier, signal
-    // `needs_party_lookup` instead of `missing_required` so the chapter
-    // loop can route this entry to the narrow Perplexity party-fallback
-    // step rather than treating it as a hard failure.
+    // v4 caselaw escalation: when caseNumber is present (i.e. the docket
+    // was recovered locally) and the missing fields are ONLY items a narrow
+    // party-lookup can realistically backfill (party1/party2/caseType/fullDate),
+    // signal `needs_party_lookup` so the chapter loop can route this entry
+    // to the targeted Perplexity fallback instead of dropping it.
+    const PARTY_LOOKUP_RECOVERABLE = new Set([
+      "party1",
+      "party2",
+      "caseType",
+      "fullDate",
+      "year",
+      "series",
+      "volume",
+      "firstPage",
+    ]);
     if (
       (sourceType === "case_law_database" || sourceType === "case_law_published") &&
       fields.caseNumber &&
-      missing.every((f) => f === "party1" || f === "party2")
+      missing.every((f) => PARTY_LOOKUP_RECOVERABLE.has(f)) &&
+      // Must include at least one party — otherwise the missing set is just
+      // metadata which `needs_party_lookup` shouldn't claim.
+      (missing.includes("party1") || missing.includes("party2"))
     ) {
       return {
         resolved: false,
