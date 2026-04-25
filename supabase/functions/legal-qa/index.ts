@@ -179,6 +179,63 @@ export interface StatuteFields {
 }
 
 /**
+ * Stage 5e pre-format guard. Rejects Perplexity statute candidates whose
+ * structured fields fail one of three checks (Fix F):
+ *   1. type assertion — `lawName` looks like a court case number / case-law
+ *      prose, meaning Perplexity returned the wrong source type for a
+ *      statute-completion request.
+ *   2. placeholder rejection — `lawName` is a generic stub like "פרטי מסמך",
+ *      "לא נמצא", or a bare statute keyword with no qualifier.
+ *   3. malformed publication — `collection` is not in the official allowlist,
+ *      or `page` is missing / non-numeric / ≤ 0.
+ * Returns null on success; otherwise a short reason string for telemetry.
+ * Year fields (hebrewYear / gregorianYear) are intentionally NOT validated
+ * here — the existing formatter already collapses missing years into
+ * `[חסר: שנה]` placeholders (see legislation-year-completeness memo).
+ */
+export function validateStatuteFields(f: StatuteFields): string | null {
+  const lawName = (f.lawName || "").trim();
+  const collection = (f.collection || "").trim();
+
+  // (1) Type assertion: case-law prefix + docket number embedded in lawName.
+  // Common Israeli court types — covers regex chosen by the project's existing
+  // CASE_NUMBER_RE (kept narrow on purpose; the goal is rejecting clear leakage).
+  const CASE_TYPES = /(?:בג["״]ץ|ע["״]א|ע["״]פ|רע["״]א|רע["״]פ|דנ["״]א|דנ["״]פ|ת["״]א|ת["״]פ|תפ["״]ח|בש["״]פ|עע["״]מ|בר["״]ם|עמ["״]ה)/;
+  const CASE_DOCKET_RE = new RegExp(`${CASE_TYPES.source}\\s+\\d+\\/\\d+`);
+  if (CASE_DOCKET_RE.test(lawName)) return "type_caselaw_in_lawname";
+  // Free-form case-law prose markers (no docket number): "פסק דין", " נ' "
+  if (/(?:^|\s)פסק\s+דין(?:\s|$)/.test(lawName) || /\sנ['׳]\s/.test(lawName)) {
+    return "type_caselaw_prose_in_lawname";
+  }
+
+  // (2) Placeholder / stub names. "פרטי מסמך" is the Knesset-corpus default
+  // title before recovery. Bare "חוק" / "פקודה" / "תקנות" with no qualifier
+  // (≤ 1 hebrew token after stripping leading kind word) is also rejected.
+  const PLACEHOLDER_RE = /^(?:פרטי\s+מסמך|לא\s+נמצא|לא\s+ידוע|unknown|n\/?a|מסמך|—|-)\s*\.?$/i;
+  if (PLACEHOLDER_RE.test(lawName)) return "placeholder_lawname";
+  // Strip leading kind word ("חוק", "חוק-יסוד:", "פקודת", "תקנות", "צו").
+  // Trailing \s* (not \s+) so a bare "חוק" with nothing after also collapses.
+  const stripped = lawName
+    .replace(/^חוק[- ]יסוד\s*:\s*/, "")
+    .replace(/^(?:חוק|פקודת|פקודה|תקנות|תקנה|צו|כללי)\s*/, "")
+    .trim();
+  if (!stripped || stripped.split(/\s+/).filter((t) => /[א-ת]/.test(t)).length < 1) {
+    return "placeholder_bare_keyword";
+  }
+
+  // (3) Malformed publication.
+  const ALLOWED_COLLECTIONS = new Set(['ס"ח', "ס״ח", 'ק"ת', "ק״ת", 'נ"ח', "נ״ח", 'ע"ר', "ע״ר"]);
+  if (!ALLOWED_COLLECTIONS.has(collection)) return "publication_bad_collection";
+  // Page must be numeric and > 0. Allow string or number from the model.
+  const pageRaw = f.page;
+  if (pageRaw === undefined || pageRaw === null || pageRaw === "") return "publication_missing_page";
+  const pageNum = typeof pageRaw === "number" ? pageRaw : Number(String(pageRaw).trim());
+  if (!Number.isFinite(pageNum) || pageNum <= 0) return "publication_bad_page";
+
+  return null;
+}
+
+/**
  * Build a canonical statute citation string from discrete fields.
  * Returns null when structurally critical fields are missing
  * (`lawName` or `collection`); the caller should drop the candidate.
@@ -5199,6 +5256,17 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             for (const f of rawFields) {
               if (f.found === false) {
                 formatDrops.not_found = (formatDrops.not_found || 0) + 1;
+                continue;
+              }
+              // Fix F: pre-format guards. Reject on (1) case-law leakage in
+              // lawName, (2) placeholder/stub names, (3) malformed publication
+              // (bad collection / missing or non-positive page). Year fields
+              // intentionally NOT validated — formatter handles missing-year
+              // placeholders. Counts feed `drops` so before/after telemetry
+              // distinguishes Perplexity garbage from format failures.
+              const fieldReason = validateStatuteFields(f);
+              if (fieldReason) {
+                formatDrops[fieldReason] = (formatDrops[fieldReason] || 0) + 1;
                 continue;
               }
               const formatted = formatStatuteCitation(f);
