@@ -407,7 +407,7 @@ export function resolveCitation(
       fields = extractLegislation(text, opts.titleHint);
       break;
     case "case_law_published":
-      fields = extractCaseLawPublished(text, opts.caseNumberHint);
+      fields = extractCaseLawPublished(text, opts.caseNumberHint, opts.titleHint);
       break;
     case "case_law_database":
       fields = extractCaseLawDatabase(text, opts.caseNumberHint, opts.decisionDateHint, opts.titleHint);
@@ -427,6 +427,24 @@ export function resolveCitation(
   // 3) Validate
   const missing = validateCitation(sourceType, fields);
   if (missing.length > 0) {
+    // v4 caselaw escalation: if the ONLY thing missing is party names AND
+    // we successfully recovered caseNumber via the bare-docket tier, signal
+    // `needs_party_lookup` instead of `missing_required` so the chapter
+    // loop can route this entry to the narrow Perplexity party-fallback
+    // step rather than treating it as a hard failure.
+    if (
+      (sourceType === "case_law_database" || sourceType === "case_law_published") &&
+      fields.caseNumber &&
+      missing.every((f) => f === "party1" || f === "party2")
+    ) {
+      return {
+        resolved: false,
+        reason: "needs_party_lookup",
+        missingFields: missing,
+        partialFields: fields,
+        attemptedType: sourceType,
+      };
+    }
     return {
       resolved: false,
       reason: "missing_required",
