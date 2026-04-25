@@ -169,6 +169,9 @@ ${claimsText}
   );
   const cleaned: AnchorPatch[] = [];
   const seenFragments = new Set<string>();
+  // Caller-provided cap; default 4 for back-compat (matches the previous
+  // hardcoded ceiling). Fast passes 2; Deep passes 4.
+  const cap = Math.max(0, input.maxPatches ?? 4);
   for (const p of data.patches) {
     if (!p || typeof p.sentenceFragment !== "string" || typeof p.sourceCardId !== "number") continue;
     if (!validIds.has(p.sourceCardId)) continue;
@@ -178,7 +181,7 @@ ${claimsText}
     if (seenFragments.has(frag)) continue;
     seenFragments.add(frag);
     cleaned.push({ sentenceFragment: frag, sourceCardId: p.sourceCardId });
-    if (cleaned.length >= 4) break;
+    if (cleaned.length >= cap) break;
   }
 
   return { patches: cleaned, run };
