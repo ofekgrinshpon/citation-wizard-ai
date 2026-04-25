@@ -6288,8 +6288,15 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
     //                            mandates narrative citations.
     let chapterQaGuard: Record<string, unknown> | null = null;
     if (isAcademicChapter && academicProfile) {
-      const totalFn = finalFootnotes.length;
-      const unresolvedShare = totalFn > 0 ? chapterEngineUnresolvedCount / totalFn : 0;
+      // High-unresolved-share is now a LEGAL-RESOLVER quality signal only.
+      // Bibliography items (articles, books, reports …) are NOT routed
+      // through the legal resolver, so including them in the denominator
+      // would dilute the metric and create false negatives. Formula:
+      //   legal_unresolved / max(1, legal_resolved + legal_unresolved)
+      const legalAttempted = chapterLegalResolved + chapterLegalUnresolved;
+      const unresolvedShare = legalAttempted > 0
+        ? chapterLegalUnresolved / legalAttempted
+        : 0;
 
       // Word count of the answer body (footnotes excluded).
       const ansForCount = answer || "";
@@ -6328,7 +6335,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         word_count: wordCount,
         word_floor_threshold: wordFloorThreshold,
         expected_floor: expectedFloor,
+        // Now scoped to legal-resolver attempts only — see comment above.
         unresolved_share: Number(unresolvedShare.toFixed(3)),
+        unresolved_share_basis: "legal_resolver_attempts_only",
         unresolved_share_threshold: academicProfile.qaGuardUnresolvedShareThreshold,
         narrative_violation_count: narrativeViolationCount,
         narrative_violation_threshold: academicProfile.qaGuardNarrativeViolationThreshold,
@@ -6337,9 +6346,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       };
 
       if (anyFlag) {
-        console.warn(`[chapter][qa_guard] flags raised: ${JSON.stringify(flags)} | words=${wordCount}/${wordFloorThreshold} unresolved=${unresolvedShare.toFixed(2)} narrative_viol=${narrativeViolationCount}`);
+        console.warn(`[chapter][qa_guard] flags raised: ${JSON.stringify(flags)} | words=${wordCount}/${wordFloorThreshold} legal_unresolved=${unresolvedShare.toFixed(2)} narrative_viol=${narrativeViolationCount}`);
       } else {
-        console.log(`[chapter][qa_guard] clean: words=${wordCount} unresolved=${unresolvedShare.toFixed(2)} narrative_viol=${narrativeViolationCount}`);
+        console.log(`[chapter][qa_guard] clean: words=${wordCount} legal_unresolved=${unresolvedShare.toFixed(2)} narrative_viol=${narrativeViolationCount}`);
       }
     }
 
