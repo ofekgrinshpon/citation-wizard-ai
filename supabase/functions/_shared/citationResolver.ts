@@ -44,7 +44,25 @@ export interface ResolveSuccess {
 
 export interface ResolveFailure {
   resolved: false;
-  reason: "classify_failed" | "extract_failed" | "missing_required";
+  /**
+   * - `classify_failed`     — declared type didn't map to any engine type.
+   * - `extract_failed`      — extractor produced no fields at all.
+   * - `missing_required`    — extractor produced some fields but a required
+   *                           field is missing AND we have no realistic
+   *                           recovery path (e.g. statute hebrewYear when the
+   *                           card itself lacks it).
+   * - `needs_party_lookup`  — caselaw v4: docket + court info recovered
+   *                           locally, but party names are missing AND
+   *                           neither the citation text nor the source card
+   *                           carries them. The caller should escalate to a
+   *                           narrow external party-name lookup before
+   *                           treating this as a hard failure.
+   */
+  reason:
+    | "classify_failed"
+    | "extract_failed"
+    | "missing_required"
+    | "needs_party_lookup";
   missingFields: string[];
   partialFields: Record<string, string>;
   /** When reason=missing_required, the chosen sourceType is reported for telemetry. */
@@ -155,6 +173,31 @@ const UNQUOTED_PREFIX_RE = new RegExp(
   `(?:^|\\s)(${UNQUOTED_CASE_PREFIXES.join("|")})\\s+(\\d+[/\\-]\\d+)`,
 );
 
+// v4: bare-docket pattern (e.g. "54321-03-25" / "18225-06-25"). Requires the
+// dash-separated date-bucket shape; the 2- or 4-digit year tail is the
+// distinguishing feature versus case-number/year shapes like "1234/05".
+const BARE_DOCKET_RE = /(?:^|[\s(])(\d{3,6}-\d{1,2}-\d{2,4})(?=[\s).,]|$)/;
+
+/**
+ * v4: infer the engine `caseType` from a card title's court-tier hint.
+ * Cards in our corpus carry strings like:
+ *   "(בתי המשפט המחוזיים)"   → caseType="עת״מ" is too speculative
+ *   "(בתי המשפט לענייני משפחה)" → "תמ״ש"
+ * So we ONLY infer caseType when the mapping is unambiguous. Otherwise we
+ * leave caseType undefined and let the caller decide whether to render a
+ * `[סוג ההליך חסר]` placeholder.
+ */
+function inferCaseTypeFromTitle(titleHint?: string): string | undefined {
+  if (!titleHint) return undefined;
+  // Unambiguous court-tier → caseType mappings only. Conservative on purpose.
+  if (/בית\s+הדין\s+הארצי\s+לעבודה|בתי\s+הדין\s+לעבודה.*ארצי/.test(titleHint)) return "ע״ע";
+  if (/בית\s+הדין\s+(?:האזורי\s+)?לעבודה|בתי\s+הדין\s+לעבודה/.test(titleHint)) return "סע״ש";
+  if (/בית\s+המשפט\s+לענייני\s+משפחה|בתי\s+המשפט\s+לענייני\s+משפחה/.test(titleHint)) return "תמ״ש";
+  // Supreme/district/magistrate are AMBIGUOUS without case-type hints
+  // (could be בג״ץ vs ע״א vs רע״א vs ע״פ etc.) — leave undefined.
+  return undefined;
+}
+
 function matchCaseTypeAndNumber(s: string): { caseType: string; caseNumber: string } | null {
   // Quoted abbreviations: סע"ש, עס"ק, בר"ע, ב"ל, בג"ץ, ע"א, רע"א, ע"פ, דנ"א, ת"א, etc.
   const quoted = s.match(/([א-ת]{1,3}["״׳']+[א-ת]{1,2})\s+(\d+[/\-]\d+)/);
@@ -165,20 +208,43 @@ function matchCaseTypeAndNumber(s: string): { caseType: string; caseNumber: stri
   return null;
 }
 
+/**
+ * v4: try to extract a bare docket from the text or caseNumberHint.
+ * Returns just the docket string — caseType must come from titleHint or
+ * remain undefined (handled by caller).
+ */
+function matchBareDocket(s: string | undefined): string | null {
+  if (!s) return null;
+  const m = s.match(BARE_DOCKET_RE);
+  return m ? m[1] : null;
+}
+
 function extractCaseLawCommon(
   text: string,
   caseNumberHint?: string,
+  titleHint?: string,
 ): Record<string, string> {
   const fields: Record<string, string> = {};
+  // Tier 1: prefixed shape in citation text
   const fromText = matchCaseTypeAndNumber(text);
   if (fromText) {
     fields.caseType = fromText.caseType;
     fields.caseNumber = fromText.caseNumber;
   } else if (caseNumberHint) {
+    // Tier 2: prefixed shape in caseNumberHint
     const fromHint = matchCaseTypeAndNumber(caseNumberHint);
     if (fromHint) {
       fields.caseType = fromHint.caseType;
       fields.caseNumber = fromHint.caseNumber;
+    }
+  }
+  // Tier 3 (v4): bare docket — text first, then caseNumberHint
+  if (!fields.caseNumber) {
+    const bare = matchBareDocket(text) ?? matchBareDocket(caseNumberHint);
+    if (bare) {
+      fields.caseNumber = bare;
+      const inferred = inferCaseTypeFromTitle(titleHint);
+      if (inferred) fields.caseType = inferred;
     }
   }
   // Parties — bolded **X** OR plain "X נ' Y"
@@ -199,8 +265,9 @@ function extractCaseLawCommon(
 function extractCaseLawPublished(
   text: string,
   caseNumberHint?: string,
+  titleHint?: string,
 ): Record<string, string> {
-  const fields = extractCaseLawCommon(text, caseNumberHint);
+  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint);
   // Series
   const seriesMatch = text.match(/(פ["״]ד|פד["״]ע|פ["״]מ)/);
   if (seriesMatch) fields.series = seriesMatch[1];
@@ -222,7 +289,7 @@ function extractCaseLawDatabase(
   decisionDateHint?: string,
   titleHint?: string,
 ): Record<string, string> {
-  const fields = extractCaseLawCommon(text, caseNumberHint);
+  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint);
   // Database name (optional per schema) — scan citation text first, then titleHint.
   // Perplexity often puts the database name (e.g. "נבו") in the title field
   // rather than the citation string itself.
@@ -340,7 +407,7 @@ export function resolveCitation(
       fields = extractLegislation(text, opts.titleHint);
       break;
     case "case_law_published":
-      fields = extractCaseLawPublished(text, opts.caseNumberHint);
+      fields = extractCaseLawPublished(text, opts.caseNumberHint, opts.titleHint);
       break;
     case "case_law_database":
       fields = extractCaseLawDatabase(text, opts.caseNumberHint, opts.decisionDateHint, opts.titleHint);
@@ -360,6 +427,37 @@ export function resolveCitation(
   // 3) Validate
   const missing = validateCitation(sourceType, fields);
   if (missing.length > 0) {
+    // v4 caselaw escalation: when caseNumber is present (i.e. the docket
+    // was recovered locally) and the missing fields are ONLY items a narrow
+    // party-lookup can realistically backfill (party1/party2/caseType/fullDate),
+    // signal `needs_party_lookup` so the chapter loop can route this entry
+    // to the targeted Perplexity fallback instead of dropping it.
+    const PARTY_LOOKUP_RECOVERABLE = new Set([
+      "party1",
+      "party2",
+      "caseType",
+      "fullDate",
+      "year",
+      "series",
+      "volume",
+      "firstPage",
+    ]);
+    if (
+      (sourceType === "case_law_database" || sourceType === "case_law_published") &&
+      fields.caseNumber &&
+      missing.every((f) => PARTY_LOOKUP_RECOVERABLE.has(f)) &&
+      // Must include at least one party — otherwise the missing set is just
+      // metadata which `needs_party_lookup` shouldn't claim.
+      (missing.includes("party1") || missing.includes("party2"))
+    ) {
+      return {
+        resolved: false,
+        reason: "needs_party_lookup",
+        missingFields: missing,
+        partialFields: fields,
+        attemptedType: sourceType,
+      };
+    }
     return {
       resolved: false,
       reason: "missing_required",

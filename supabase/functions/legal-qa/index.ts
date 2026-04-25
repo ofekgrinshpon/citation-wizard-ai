@@ -116,7 +116,11 @@ interface ValidatedCompletionCandidate extends PerplexityCompletionCandidate {
   /** True iff the citation engine resolved this candidate into structured fields. */
   engine_resolved: boolean;
   /** When engine_resolved=false, the resolver's failure reason for telemetry. */
-  engine_drop_reason?: "classify_failed" | "extract_failed" | "missing_required";
+  engine_drop_reason?:
+    | "classify_failed"
+    | "extract_failed"
+    | "missing_required"
+    | "needs_party_lookup";
 }
 
 /**
