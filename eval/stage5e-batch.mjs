@@ -147,7 +147,8 @@ async function runOne(jwt, q) {
   const completionFns = (fns || []).filter(f => f?.source === "perplexity_completion");
   const classified = completionFns.map((f, i) => ({
     idx: i, ...classifyCompletion(f),
-    preview: String(f?.text || f?.formatted || f?.body || f?.content || "").slice(0, 220),
+    preview: getCitationText(f).slice(0, 220),
+    url: f?.url || null,
   }));
   const useful = classified.filter(c => c.label === "useful").length;
   const noisy = classified.filter(c => c.label === "noisy").length;
