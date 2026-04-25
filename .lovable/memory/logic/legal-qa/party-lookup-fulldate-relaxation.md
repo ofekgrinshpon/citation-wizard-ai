@@ -1,32 +1,71 @@
 ---
-name: Party-Lookup fullDate Relaxation (Stage 2 retry policy)
-description: case_law_database fullDate is optional ONLY on the partyLookupRetry pass when caseType + caseNumber + party1 + party2 + (year || fullDate) are all present
+name: Stage 2 caselaw retry — relaxation + placeholder emission
+description: Deno-resolver-only policy that lets case_law_database citations recovered via the Stage 2 Perplexity party-lookup retry emit even when not fully resolved — first by dropping the fullDate requirement when caseType+caseNumber+parties+year are present, and second by filling remaining required fields with `[חסר: ...]` markers when the case is at least meaningfully identifiable. Statutes and first-pass resolution are unchanged.
 type: feature
 ---
 
-After Stage 2 of the caselaw v4 work (Perplexity party-name backfill for bare-docket citations), the after4c eval surfaced a 1-1-1 failure mix across `no_candidates` / `no_match` / `retry_still_unresolved`. The third bucket — citations where Perplexity successfully returned parties but no `dd.mm.yyyy` decision date — was a pure validation policy issue, not an external-search issue.
+## Scope
 
-### Policy
+This policy lives in `supabase/functions/_shared/citationResolver.ts` and is gated by `ResolveCitationOptions.partyLookupRetry`. It is set ONLY by the Stage 2 retry loop in `supabase/functions/legal-qa/index.ts` (`chapter-router` block), after a successful Perplexity `lookupPartyNames` hit.
 
-`supabase/functions/_shared/citationResolver.ts` accepts a new `partyLookupRetry: boolean` option on `ResolveCitationOptions`. When set to `true`, AND the source type is `case_law_database`, AND `caseType + caseNumber + party1 + party2` are all present, AND at least one of `year` / `fullDate` survived, the resolver removes `fullDate` from the required-field set and emits a fallback canonical:
+It applies to **`case_law_database` only**. First-pass resolves, statutes (`primary_legislation`, `basic_law`, `secondary_legislation`), and `case_law_published` are not affected.
 
-- `(year)` form when only year is available: `{caseType} {caseNumber} {party1} נ' {party2} ({year}).`
-- The standard `(פורסם ב{database}, {fullDate})` form when fullDate IS present (no relaxation needed).
+## Layered behavior
 
-If any precondition fails, behavior is unchanged — citation still drops as `missing_required` or `needs_party_lookup`.
+There are two layers, evaluated in order:
 
-### Scope
+### 1. Strict relaxation (drop `fullDate` from required)
+When all of the following hold, `fullDate` is removed from the missing set and a `(year)` template variant is used:
+- `partyLookupRetry === true`
+- `sourceType === "case_law_database"`
+- `caseType`, `caseNumber`, `party1`, `party2` all present and non-empty
+- at least one of `fullDate` or `year` present
+- after dropping `fullDate`, `missing.length === 0`
 
-- ONLY `case_law_database`. `case_law_published` (Rule 18) requires `series + volume + firstPage` and is NOT relaxed.
-- ONLY on the explicit retry pass. First-pass `resolveCitation` calls are unaffected.
-- ONLY in the Deno resolver. The React side `src/data/citationEngine.ts` is NOT updated — this is a Stage 2 chapter-loop policy, not a general engine rule.
+Telemetry counter: `recovered_without_full_date` (per chapter, in `qa_logs.metadata.chapter_engine.party_lookup`).
 
-### Plumbing
+### 2. Placeholder emission
+When strict relaxation didn't clear `missing` but the case is still meaningfully identifiable, emit a best-effort canonical citation with `[חסר: ...]` markers:
+- `partyLookupRetry === true`
+- `sourceType === "case_law_database"`
+- `caseNumber` present (no docket → no meaningful identity)
+- at least ONE of `party1`, `party2`, `fullDate`, `year` present (otherwise the citation would be just a docket + 4 placeholders, which has no informational value)
 
-- `RouteOptions` in `supabase/functions/_shared/chapterCitationRouter.ts` gained `partyLookupRetry?: boolean` and forwards it as-is to `resolveCitation`.
-- `supabase/functions/legal-qa/index.ts` sets `partyLookupRetry: true` on the retry call inside the chapter loop's Stage 2 block (after `lookupPartyNames` returns hits).
-- The aggregator now tracks `recovered_without_full_date` so the relaxation is observable in `qa_logs.metadata.chapter_engine.party_lookup`. A non-zero counter means the relaxation is doing real work; zero means the relaxation is wired but idle.
+Each remaining required field is replaced with a Hebrew-labeled placeholder using the engine's `description` text:
+- `caseType` → `[חסר: סוג ההליך]`
+- `caseNumber` → `[חסר: מספר התיק]` (in practice never triggered — `caseNumber` is a precondition)
+- `party1` → `[חסר: שם צד א']`
+- `party2` → `[חסר: שם צד ב']`
+- `fullDate` → `[חסר: תאריך מלא]`
 
-### Why this is narrow
+Template selection:
+- If only `year` (no `fullDate`, no `database`): use `(year)` form.
+- If neither `fullDate` nor `database`: collapse to `({fullDate})` placeholder form.
+- Otherwise: use the canonical engine template and let placeholders fill the gaps.
 
-The 1-1-1 after4c mix had no dominant bucket, so a broad Stage 2 tuning loop (widen domains, loosen prompt, relax docket normalization) would not be justified. Bucket 3 is the only one where the lookup itself succeeded — relaxing one validation field for that exact case has zero risk of corpus contamination and adds at most one canonical citation per chapter.
+The result is `resolved: true` with a non-empty `placeholders: string[]` listing the field keys that were filled with markers.
+
+## Telemetry (per chapter, under `chapter_engine.party_lookup`)
+
+- `attempted` — Stage 2 retries attempted
+- `recovered` — retries that returned `resolved: true` (clean OR placeholder)
+- `recovered_without_full_date` — subset of `recovered` where `fullDate` relaxation was the reason
+- `recovered_with_placeholders` — subset of `recovered` where one or more required fields were filled with `[חסר: ...]`. Clean resolves are NOT counted here.
+- `placeholder_fields` — `Record<fieldKey, count>` breakdown of which fields were placeholder-filled
+- `failed` — retries that did not resolve at all (no Perplexity hit OR even placeholder emission was impossible)
+- `failure_reasons` — breakdown:
+  - `no_match` / `no_candidates` / etc. — Perplexity returned nothing usable
+  - `retry_still_unresolved` — Perplexity returned a hit, but the resolver still couldn't emit even a placeholder citation (precondition failed: missing docket OR missing all four of party1/party2/fullDate/year)
+
+## Why placeholders over hard fail
+
+The `after4d` repeat runs showed the strict-relaxation path was a no-op in practice — Perplexity's hits don't usually match the exact "only fullDate missing, parties + year present" shape. But useful partial information was being discarded as `retry_still_unresolved` rather than surfaced to the user.
+
+The placeholder policy treats Stage 2 as best-effort: if Perplexity recovered enough to *identify* the case (a docket + at least one anchor), the user sees the citation with explicit holes rather than nothing at all. Honest telemetry distinguishes clean recoveries, placeholder recoveries, and true failures.
+
+## What this is NOT
+
+- Not applied to statutes (any of the three legislation types).
+- Not applied to `case_law_published` (Rule 18) — the in-print series schema is too rigid for placeholder substitution.
+- Not applied to first-pass resolution. `partyLookupRetry` is set only on the Stage 2 retry call.
+- Not ported to the React-side `src/data/citationEngine.ts` / `src/lib/citationValidation.ts`. Stage 2 only exists in the Deno resolver path.
