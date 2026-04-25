@@ -33,9 +33,13 @@ Stage 2 retry passes `party1Hint`/`party2Hint`/`fullDateHint`/`yearHint` + `part
 - **Deep (flag on)**: 8 attempted, 3 recovered + 3 with placeholders, 2 no_match, status `ok`/`no_candidates`. `wall_ms` median 60.2s vs Phase B baseline ~57s = +5.6% (well under 30% gate). Stage 2 wall_ms ~2-4s per request.
 - **Fast (flag off)**: `party_lookup === null`, mode stays `canonical_reemission`, `party_lookup_config.enabled === false`. Pure regression — gate works.
 
-## Fast Stage 2 — pending decision
+## Fast Stage 2 — REVERTED 2026-04-25 (run `phase-c-fast-on-0e91a9a7`)
 
-User wants Fast flag flipped on if added latency ≤ "few seconds" AND output quality improves meaningfully. Deep median Stage 2 cost is 2-4s per request. Fast `needs_party_lookup_candidates` is 1-2 per Q1/Q6, so a flip would add roughly the same 2-4s on caselaw-heavy questions. Pending follow-up eval per the C.2 acceptance criteria in `.lovable/plan.md`.
+Fast-on probe: Q1+Q6×2 reps with flag flipped → **6 attempts, 0 recovered, 0 placeholders, 6× `no_candidates` from Perplexity**, 0 caselaw with parties or placeholders surviving in `validFootnotes`. Latency cost was fine (~1.4–2.2s when Stage 2 ran), but recovery was zero.
+
+Root cause (verified by inspecting `qa_logs.footnotes`): Fast's drafter emits non-canonical docket strings — bare numbers without `בג"ץ`/`ע"א` prefix (e.g. `2592/20 (בית המשפט העליון)`) or district-court formats (`18225-06-25`) that Perplexity's prompt only handles for Supreme Court records on supreme.court.gov.il/nevo. Stage 2 can't fix what's broken upstream.
+
+**Reopen criteria**: Fast drafter learns canonical docket prefixes OR `lookupPartyNames` system prompt is widened to district-court records. Re-run `eval/phase-c-fast-on-probe.mjs`.
 
 ## Telemetry shape
 

@@ -112,10 +112,15 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     drafterVariant: "structured",
     drafterTimeoutMs: 120000,
     creditCost: 5,
-    // Phase C: Fast keeps Stage 2 retry OFF by default. The user has agreed
-    // to flip this to `true` only after the eval shows median wall_ms
-    // increase ≤ 5s AND at least one recovered citation surviving the
-    // post-filters. Until then, Fast stays in Phase B behaviour.
+    // Phase C: Fast keeps Stage 2 retry OFF. Fast-on probe (2026-04-25,
+    // run phase-c-fast-on-0e91a9a7) attempted 6 lookups across Q1+Q6 × 2
+    // and got 6× `no_candidates` from Perplexity — root cause is that
+    // Fast emits malformed/district-court dockets (e.g. `2592/20 (בית המשפט
+    // העליון)` without `בג"ץ` prefix, or `18225-06-25` district format)
+    // that Perplexity can't resolve against supreme.court.gov.il / nevo.
+    // Stage 2 can't fix the upstream docket-emission gap. Revisit only
+    // after Fast's drafter is taught to emit canonical docket prefixes
+    // OR Perplexity prompt is widened to district-court records.
     partyLookupRetryEnabled: false,
     partyLookupPlaceholderPolicy: "emit",
     partyLookupMaxBatchSize: 3,
