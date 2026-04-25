@@ -6390,6 +6390,19 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               if (!hit.fullDate && hit.year) {
                 chapterPartyLookup.recovered_without_full_date++;
               }
+              // v4 stage 2 placeholder-emission policy: when the resolver
+              // emitted with `[חסר: ...]` markers instead of a fully clean
+              // citation, count it separately and break down which fields
+              // were filled with placeholders. Successful clean resolves
+              // are NOT counted here.
+              const ph = (retried.result as { placeholders?: string[] }).placeholders;
+              if (ph && ph.length > 0) {
+                chapterPartyLookup.recovered_with_placeholders++;
+                for (const f of ph) {
+                  chapterPartyLookup.placeholder_fields[f] =
+                    (chapterPartyLookup.placeholder_fields[f] || 0) + 1;
+                }
+              }
             } else {
               chapterPartyLookup.failed++;
               chapterPartyLookup.failure_reasons["retry_still_unresolved"] =
