@@ -354,6 +354,13 @@ export interface RouteOptions {
   party2Hint?: string;
   fullDateHint?: string;
   yearHint?: string;
+  /**
+   * v4 stage 2 policy flag — set ONLY on the retry pass after a successful
+   * party-lookup. Forwarded as-is to `resolveCitation` so it can relax the
+   * `case_law_database` `fullDate` requirement when parties + docket + year
+   * are all present. See ResolveCitationOptions.partyLookupRetry.
+   */
+  partyLookupRetry?: boolean;
 }
 
 /**
