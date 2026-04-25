@@ -180,9 +180,10 @@ async function runOne(jwt, q) {
   const academicProfile = md.profile_used_academic || {};
   const chapterEngine = md.chapter_engine || null;
   const qaGuard = md.chapter_qa_guard || null;
-  // New type-aware shape: chapter_engine.legal_resolver / classification_counts / bibliography_routed / skipped.
+  // New type-aware shape: chapter_engine.legal_resolver / classification_counts / classify_reasons / bibliography_routed / skipped.
   const legalRes = chapterEngine?.legal_resolver || null;
   const classCounts = chapterEngine?.classification_counts || null;
+  const classifyReasons = chapterEngine?.classify_reasons || null;
   const bibRouted = chapterEngine?.bibliography_routed || null;
   const skipped = chapterEngine?.skipped || null;
   return {
@@ -205,6 +206,7 @@ async function runOne(jwt, q) {
     engine_drop_reasons: legalRes?.drop_reasons ?? chapterEngine?.drop_reasons ?? null,
     // New type-aware fields.
     classification_counts: classCounts,
+    classify_reasons: classifyReasons,
     bibliography_routed: bibRouted,
     skipped_summary: skipped,
     qa_word_count: qaGuard?.word_count ?? null,
