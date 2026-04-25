@@ -122,7 +122,25 @@ const CASELAW_PREFIX_RE =
 const CASELAW_PD_SERIES_RE = /פ["״]ד|פד["״]ע/;
 // Bare-docket pattern (e.g. `54321-03-25`) — common when the drafter drops
 // the בג"ץ/ע"א prefix in a short-form citation.
-const CASELAW_BARE_DOCKET_RE = /(?:^|[\s(])\d{3,6}[-\/]\d{1,2}[-\/]\d{2,4}(?:[\s).,]|$)/;
+//
+// v3 tightening: REQUIRE that a court-name token (`בית המשפט`, `בית הדין`,
+// `בתי המשפט`, `בתי הדין`, `בג"ץ`, `העליון`, `המחוזי`, `השלום`, `לעבודה`,
+// `לענייני`) appears within ~80 chars of the docket. This kills the
+// false-positive where statutory subsection patterns like `26(2) ו-(4)`
+// matched the bare-docket shape and bled into the caselaw bucket.
+const CASELAW_BARE_DOCKET_SHAPE_RE =
+  /(?:^|[\s(])\d{3,6}[-\/]\d{1,2}[-\/]\d{2,4}(?:[\s).,]|$)/;
+const COURT_NAME_TOKEN_RE =
+  /(?:בית\s+המשפט|בית\s+הדין|בתי\s+המשפט|בתי\s+הדין|בג["״]ץ|העליון|המחוזי|השלום|לעבודה|לענייני|הצבאי)/;
+function looksLikeBareDocket(t: string): boolean {
+  const m = t.match(CASELAW_BARE_DOCKET_SHAPE_RE);
+  if (!m) return false;
+  const idx = m.index ?? 0;
+  // Look at a ±80-char window around the docket for a court-name token.
+  const start = Math.max(0, idx - 80);
+  const end = Math.min(t.length, idx + (m[0]?.length ?? 0) + 80);
+  return COURT_NAME_TOKEN_RE.test(t.slice(start, end));
+}
 const QUOTED_TITLE_RE = /["״׳][^"״׳\n]{2,}["״׳]/;
 const ENGLISH_VOL_PAGE_RE = /\b\d+\s+[A-Z][A-Za-z .]+\s+\d+\b/;
 const BOLD_TITLE_RE = /\*\*[^*\n]{2,}\*\*|(?<!\*)\*[^*\n]{2,}\*(?!\*)/;
