@@ -400,6 +400,7 @@ export function routeChapterFootnote(
         party2Hint: opts.party2Hint,
         fullDateHint: opts.fullDateHint,
         yearHint: opts.yearHint,
+        partyLookupRetry: opts.partyLookupRetry,
       });
       return { route: "legal_resolver", sourceType, classifyReason, result };
     }
