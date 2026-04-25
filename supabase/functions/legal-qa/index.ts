@@ -4324,7 +4324,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // from additional anchoring). The redundant fast+structured carve-out
     // was removed — the profile flag is the single source of truth.
     const skipAnchorPass = !modeProfile.anchorPassEnabled;
-    if (!skipAnchorPass && answerText.length > 200 && sourcePack.length >= 2) {
+    if (!skipAnchorPass && answerText.length > 200 && sourcePack.length >= 1) {
       const tAnchorStart = Date.now();
       const anchorSourcePack: AnchorPassSourcePackItem[] = sourceCards.map((sc) => ({
         id: sc.id,
@@ -4353,6 +4353,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           body: answerText,
           sourcePack: anchorSourcePack,
           claims: anchorClaims,
+          maxPatches: modeProfile.anchorPassMaxPatches,
         });
         stageRuns.push(anchorRes.run);
         if (anchorRes.patches.length > 0) {
