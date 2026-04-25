@@ -389,6 +389,10 @@ export function routeChapterFootnote(
         caseNumberHint: opts.caseNumberHint,
         decisionDateHint: opts.decisionDateHint,
         titleHint: opts.titleHint,
+        party1Hint: opts.party1Hint,
+        party2Hint: opts.party2Hint,
+        fullDateHint: opts.fullDateHint,
+        yearHint: opts.yearHint,
       });
       return { route: "legal_resolver", sourceType, classifyReason, result };
     }
