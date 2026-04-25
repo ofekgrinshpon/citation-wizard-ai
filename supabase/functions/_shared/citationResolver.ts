@@ -537,6 +537,76 @@ export function resolveCitation(
     }
   }
 
+  // v4 stage 2 placeholder-emission policy (case_law_database retry only).
+  //
+  // When the strict relaxation above didn't clear `missing` but Perplexity
+  // still gave us enough to identify the case meaningfully (docket + at
+  // least ONE of: party1, party2, fullDate, year), emit a best-effort
+  // canonical citation with explicit `[חסר: ...]` placeholders for the
+  // remaining required fields rather than dropping the whole entry.
+  //
+  // Scope is intentionally narrow:
+  //   - opts.partyLookupRetry must be true (Stage 2 retry pass only)
+  //   - sourceType === "case_law_database" (statutes & published reports
+  //     untouched)
+  //   - caseNumber MUST be present — without a docket we can't claim to
+  //     "identify the case meaningfully"
+  //   - at least ONE of party1 / party2 / fullDate / year must be present —
+  //     a citation that is just a docket + 4 placeholders is not useful
+  //
+  // If preconditions fail, the original missing_required / needs_party_lookup
+  // path runs unchanged.
+  let placeholderFields: string[] = [];
+  if (
+    missing.length > 0 &&
+    opts.partyLookupRetry &&
+    sourceType === "case_law_database" &&
+    fields.caseNumber?.trim()
+  ) {
+    const hasMeaningfulIdentity =
+      Boolean(fields.party1?.trim()) ||
+      Boolean(fields.party2?.trim()) ||
+      Boolean(fields.fullDate?.trim()) ||
+      Boolean(fields.year?.trim());
+    if (hasMeaningfulIdentity) {
+      // Hebrew descriptions for placeholder labels (mirror citationEngine
+      // component descriptions so the markers match what other UI shows).
+      const PLACEHOLDER_LABELS: Record<string, string> = {
+        caseType: "סוג ההליך",
+        caseNumber: "מספר התיק",
+        party1: "שם צד א'",
+        party2: "שם צד ב'",
+        fullDate: "תאריך מלא",
+      };
+      const filled: Record<string, string> = { ...fields };
+      for (const f of missing) {
+        const label = PLACEHOLDER_LABELS[f] ?? f;
+        filled[f] = `[חסר: ${label}]`;
+        placeholderFields.push(f);
+      }
+      // Choose template variant. If we have neither database nor fullDate
+      // but DO have year, fall back to `(year)` form (cleaner than
+      // "(פורסם ב, [חסר: תאריך מלא])"). Otherwise keep canonical template
+      // and let placeholders fill the gaps.
+      const ruleSet = CITATION_RULES[sourceType];
+      let template = ruleSet.template;
+      if (!fields.fullDate?.trim() && fields.year?.trim()) {
+        template = "{caseType} {caseNumber} {party1} נ' {party2} ({year}).";
+      } else if (!fields.fullDate?.trim() && !fields.database?.trim()) {
+        template = "{caseType} {caseNumber} {party1} נ' {party2} ({fullDate}).";
+      }
+      const canonical = emitCanonical(template, filled);
+      return {
+        resolved: true,
+        sourceType,
+        fields: filled,
+        canonical,
+        missingFields: [],
+        placeholders: placeholderFields,
+      };
+    }
+  }
+
   if (missing.length > 0) {
     // v4 caselaw escalation: when caseNumber is present (i.e. the docket
     // was recovered locally) and the missing fields are ONLY items a narrow
