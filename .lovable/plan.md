@@ -67,15 +67,23 @@ Add classification + telemetry for Fast/Deep, NO mutation of footnote text.
   - No regression on `anchored_count`, `dropped_unanchored_count`, `qa_guard` flags.
 - If those hold, Phase A lands as a pure observability win.
 
-## Phase B — Adopt `preResolveNormalize` + canonical re-emission for legal-routed Fast/Deep footnotes
+## Phase B — Adopt `preResolveNormalize` + canonical re-emission for legal-routed Fast/Deep footnotes — **SHIPPED**
 
 Smallest behavioral change: when classifier says `statute` or `caselaw`, run cleanup + `resolveCitation`, and **only if `resolved === true`** overwrite `fn.citation` with the canonical form. Unresolved → leave the original text exactly as-is.
 
-### Code
+### Code (as shipped)
 
-- Promote Phase A's observation block: when `route === "legal_resolver"` and `result.resolved`, set `fn.citation = result.canonical` and switch the telemetry counter from `would_resolve` → `resolved`.
-- For `route === "bibliography"` (journal/book/report/web): **do NOT** overwrite in Phase B. Research mode citations are AI-generated with explicit prompt rules, and forcing `validateArticleCitation` could add `[חסר: ...]` markers that conflict with the existing `placeholder_dominant` filter. Defer to Phase D.
-- For `route === "skipped"`: telemetry only.
+- Promoted Phase A's observation block (`supabase/functions/legal-qa/index.ts` ~line 6446) to mutate `fn.citation = routed.result.canonical` when `route === "legal_resolver"` AND `result.resolved`. No-op when canonical equals original.
+- Telemetry shape changed:
+  - `mode` flipped from `"observability_only"` → `"canonical_reemission"`.
+  - `legal_resolver_dry_run` renamed → `legal_resolver` (counts are now real, not dry-run).
+  - Added `legal_resolver.canonical_rewrites` — count of entries where `canonical !== original`. `resolved_count − canonical_rewrites` = no-op rewrites where the AI already produced a canonical form.
+  - Kept `legal_resolver.needs_party_lookup_candidates` as the Phase C preview counter.
+  - Renamed `dry_run_ms` → `phase_ms`.
+  - Log line tag changed `[research-engine][phase-a]` → `[research-engine][phase-b]`.
+- For `route === "bibliography"` (journal/book/report/web): kept as DRY RUN. Research mode citations are AI-generated with explicit prompt rules, and forcing `validateArticleCitation` could add `[חסר: ...]` markers that conflict with the existing `placeholder_dominant` filter. Deferred to Phase D.
+- For `route === "skipped"`: telemetry only (unchanged).
+- No changes to `MODE_PROFILES`, no changes to anchor pass, no changes to the academic-chapter pipeline above.
 
 ### Why this is safe
 
