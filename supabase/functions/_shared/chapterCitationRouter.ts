@@ -122,7 +122,25 @@ const CASELAW_PREFIX_RE =
 const CASELAW_PD_SERIES_RE = /פ["״]ד|פד["״]ע/;
 // Bare-docket pattern (e.g. `54321-03-25`) — common when the drafter drops
 // the בג"ץ/ע"א prefix in a short-form citation.
-const CASELAW_BARE_DOCKET_RE = /(?:^|[\s(])\d{3,6}[-\/]\d{1,2}[-\/]\d{2,4}(?:[\s).,]|$)/;
+//
+// v3 tightening: REQUIRE that a court-name token (`בית המשפט`, `בית הדין`,
+// `בתי המשפט`, `בתי הדין`, `בג"ץ`, `העליון`, `המחוזי`, `השלום`, `לעבודה`,
+// `לענייני`) appears within ~80 chars of the docket. This kills the
+// false-positive where statutory subsection patterns like `26(2) ו-(4)`
+// matched the bare-docket shape and bled into the caselaw bucket.
+const CASELAW_BARE_DOCKET_SHAPE_RE =
+  /(?:^|[\s(])\d{3,6}[-\/]\d{1,2}[-\/]\d{2,4}(?:[\s).,]|$)/;
+const COURT_NAME_TOKEN_RE =
+  /(?:בית\s+המשפט|בית\s+הדין|בתי\s+המשפט|בתי\s+הדין|בג["״]ץ|העליון|המחוזי|השלום|לעבודה|לענייני|הצבאי)/;
+function looksLikeBareDocket(t: string): boolean {
+  const m = t.match(CASELAW_BARE_DOCKET_SHAPE_RE);
+  if (!m) return false;
+  const idx = m.index ?? 0;
+  // Look at a ±80-char window around the docket for a court-name token.
+  const start = Math.max(0, idx - 80);
+  const end = Math.min(t.length, idx + (m[0]?.length ?? 0) + 80);
+  return COURT_NAME_TOKEN_RE.test(t.slice(start, end));
+}
 const QUOTED_TITLE_RE = /["״׳][^"״׳\n]{2,}["״׳]/;
 const ENGLISH_VOL_PAGE_RE = /\b\d+\s+[A-Z][A-Za-z .]+\s+\d+\b/;
 const BOLD_TITLE_RE = /\*\*[^*\n]{2,}\*\*|(?<!\*)\*[^*\n]{2,}\*(?!\*)/;
@@ -175,8 +193,11 @@ export function classifyChapterFootnoteWithReason(
   if (CASELAW_PD_SERIES_RE.test(t)) {
     return { type: "caselaw", reason: "caselaw_pd_series" };
   }
-  // Bare docket only fires if the rest of the string isn't statute-like.
-  if (CASELAW_BARE_DOCKET_RE.test(t) && !STATUTE_RE.test(t)) {
+  // Bare docket only fires if (a) the rest of the string isn't statute-like
+  // AND (b) a court-name token sits within ~80 chars of the docket. Without
+  // (b), statutory subsection patterns like `26(2) ו-(4)` were leaking into
+  // the caselaw bucket and reaching the legal resolver as `extract_failed`.
+  if (looksLikeBareDocket(t) && !STATUTE_RE.test(t)) {
     return { type: "caselaw", reason: "caselaw_bare_docket" };
   }
 
@@ -274,6 +295,47 @@ function diagnoseUnknown(text: string): SkipReason {
   return "unclassified_citation_shape";
 }
 
+// ─── Pre-resolve cleanup ─────────────────────────────────────────────
+
+/**
+ * Lightweight cosmetic cleanup applied to legal-routed citations BEFORE
+ * `resolveCitation` runs. Targets the post-processing artifacts that were
+ * tripping the field extractors:
+ *
+ *   • trailing supra fragments  — ", לעיל ה"ש 16."  /  ", לעיל ה"ש 11"
+ *   • trailing dangling commas / dots — "..., ."  /  ".,."  /  ", ."
+ *   • repeated punctuation       — ".,.", ",,", "..", ";;"
+ *   • orphan opening parens with no close — "(בתי המשפט"  →  "(בתי המשפט)"
+ *
+ * No semantic content is added or removed — this is purely about giving
+ * the existing extractors clean text. If the cleanup leaves the string
+ * empty, we fall back to the original.
+ */
+const SUPRA_TAIL_RE = /,?\s*לעיל\s+ה["״׳]ש\s+\d+\s*\.?\s*$/;
+const TRAILING_PUNCT_NOISE_RE = /[\s,;.]*([.,;])[\s,;.]*$/;
+const REPEATED_PUNCT_RE = /([,.;])\1+/g;
+
+function preResolveNormalize(text: string): string {
+  let out = (text || "").trim();
+  if (!out) return out;
+  // Drop trailing supra fragments — they confuse party-name extraction.
+  out = out.replace(SUPRA_TAIL_RE, "");
+  // Collapse repeated punctuation runs.
+  out = out.replace(REPEATED_PUNCT_RE, "$1");
+  // Tidy trailing punctuation noise like ".,." or ", ." → ".".
+  out = out.replace(TRAILING_PUNCT_NOISE_RE, "$1");
+  // Balance a single dangling open paren that has no close (e.g.
+  // "52828-01-20 (בתי המשפט." → "52828-01-20 (בתי המשפט).").
+  const opens = (out.match(/\(/g) || []).length;
+  const closes = (out.match(/\)/g) || []).length;
+  if (opens === closes + 1) {
+    // Insert ')' before the trailing terminator if any, else append.
+    out = out.replace(/([.,;])?\s*$/, ")$1");
+  }
+  out = out.replace(/\s{2,}/g, " ").trim();
+  return out || text;
+}
+
 // ─── Public API ──────────────────────────────────────────────────────
 
 export interface RouteOptions {
@@ -310,7 +372,11 @@ export function routeChapterFootnote(
   switch (sourceType) {
     case "statute":
     case "caselaw": {
-      const result = resolveCitation(trimmed, sourceType, {
+      // v3: cosmetic cleanup of post-processing artifacts (supra fragments,
+      // dangling punctuation, unbalanced parens) so the existing extractors
+      // can match clean shapes. Pure plumbing — no field semantics added.
+      const cleaned = preResolveNormalize(trimmed);
+      const result = resolveCitation(cleaned, sourceType, {
         caseNumberHint: opts.caseNumberHint,
         decisionDateHint: opts.decisionDateHint,
         titleHint: opts.titleHint,
