@@ -6241,7 +6241,15 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         // Skip footnotes that already carry a missing-data placeholder marker —
         // they are intentional drafter-emitted gaps, not citations to resolve.
         if (/\[חסר/.test(text)) continue;
-        const routed = routeChapterFootnote(text);
+        // v3: pass through source-card hints so the legal resolver can use
+        // titleHint for bare-section statutes (e.g. "סעיף 17") and
+        // case_number for short-form caselaw. The card title typically
+        // carries the missing year/collection/law-name metadata that the
+        // drafter elided in the footnote string.
+        const card = fnNumberToCard.get(fn.number);
+        const titleHint = card?.citation || undefined;
+        const caseNumberHint = card?.case_number || undefined;
+        const routed = routeChapterFootnote(text, { titleHint, caseNumberHint });
         chapterClassificationCounts[routed.sourceType] =
           (chapterClassificationCounts[routed.sourceType] || 0) + 1;
         chapterClassifyReasons[routed.classifyReason] =
