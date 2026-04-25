@@ -5257,6 +5257,17 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
                 formatDrops.not_found = (formatDrops.not_found || 0) + 1;
                 continue;
               }
+              // Fix F: pre-format guards. Reject on (1) case-law leakage in
+              // lawName, (2) placeholder/stub names, (3) malformed publication
+              // (bad collection / missing or non-positive page). Year fields
+              // intentionally NOT validated — formatter handles missing-year
+              // placeholders. Counts feed `drops` so before/after telemetry
+              // distinguishes Perplexity garbage from format failures.
+              const fieldReason = validateStatuteFields(f);
+              if (fieldReason) {
+                formatDrops[fieldReason] = (formatDrops[fieldReason] || 0) + 1;
+                continue;
+              }
               const formatted = formatStatuteCitation(f);
               if (!formatted) {
                 formatDrops.missing_required = (formatDrops.missing_required || 0) + 1;
