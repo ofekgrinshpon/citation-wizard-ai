@@ -1827,10 +1827,24 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       (Array.isArray(documentTexts) && documentTexts.length > 0) ||
       (typeof documentText === "string" && documentText.trim().length > 100);
 
+    // Resolve the academic profile up-front so credit cost, context windows,
+    // and the chapter QA guard all read from a single typed source of truth.
+    // Mirrors the modeProfiles.ts pattern. Returns null for non-academic runs.
+    const academicResolution = taskMode === "academic_writing"
+      ? resolveAcademicProfile(academicStep, !!body.isAbstract)
+      : null;
+    const academicProfile: AcademicProfile | null = academicResolution?.profile ?? null;
+    const academicStepKey: AcademicStep | null = academicResolution?.step ?? null;
+
     let creditCost = 5;
-    if (isAcademicSubModeFree) creditCost = 0;
-    else if (isAcademicChapter) creditCost = 8;
-    if (hasGroundingDoc && !isAcademicChapter && !isAcademicSubModeFree) creditCost += 2;
+    if (academicProfile) {
+      // Academic sub-modes (free outline/topics/validate, 8 for chapter+abstract)
+      // are sourced from ACADEMIC_PROFILES. Document grounding surcharge does
+      // NOT apply to academic chapters/abstracts (they have their own context budget).
+      creditCost = academicProfile.creditCost;
+    } else if (hasGroundingDoc) {
+      creditCost += 2;
+    }
 
     // ─── Deep pipeline opt-in for academic chapter writes ───────────
     // Academic chapters use the same Deep behavior as research/Deep:
