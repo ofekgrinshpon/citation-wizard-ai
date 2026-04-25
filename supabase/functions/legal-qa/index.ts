@@ -5136,6 +5136,24 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       skipped_covered_by_primary?: number;
       /** Marker placement strategy used per insert: "sentence_end" or "name_adjacent" (legacy fallback). */
       insertion_placement?: string[];
+      /**
+       * QA guard. Computed at end of stage to flag regressions in the locked
+       * Fast grounding architecture. Each flag is `true` when an invariant we
+       * established during the 2026-04 validation batches is violated.
+       * Query in qa_logs:
+       *   metadata->'statute_completion'->'qa_guard'->>'any_flag' = 'true'
+       */
+      qa_guard?: {
+        name_adjacent_share: number;       // 0..1
+        trigger_share_of_named: number;    // kept_for_completion / max(named_statutes,1)
+        skipped_share: number;             // skipped_covered_by_primary / max(named_statutes,1)
+        flags: {
+          name_adjacent_present: boolean;  // ANY name_adjacent insert (should be 0)
+          excessive_trigger: boolean;      // kept_for_completion >= 5 (Fast cap signal)
+          primary_path_silent: boolean;    // ≥3 named statutes, 0 skipped_covered_by_primary
+        };
+        any_flag: boolean;
+      };
     } = {
       triggered: false,
       named_statutes: [],
