@@ -6248,6 +6248,13 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       failed: number;
       status: string;
       failure_reasons: Record<string, number>;
+      /**
+       * v4 stage 2 — counter for retries that resolved only because the
+       * `case_law_database` `fullDate` requirement was relaxed (parties +
+       * docket + year survived but no exact dd.mm.yyyy was available).
+       * Lets us tell whether the relaxation is doing real work in eval.
+       */
+      recovered_without_full_date: number;
     } | null = null;
     if (isAcademicChapter && finalFootnotes.length > 0) {
       // First pass — route everything; collect needs_party_lookup for stage 2.
