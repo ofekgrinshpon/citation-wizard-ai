@@ -6359,6 +6359,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           status: lookup.status,
           failure_reasons: {},
           recovered_without_full_date: 0,
+          recovered_with_placeholders: 0,
+          placeholder_fields: {},
         };
         for (const p of pendingPartyLookup) {
           const hit = lookup.hits.get(p.partial.caseNumber);
