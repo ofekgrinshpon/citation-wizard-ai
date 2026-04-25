@@ -1,109 +1,10 @@
-## Context
+# Phase C — Stage 2 party-lookup retry for Fast/Deep research caselaw
 
-All recent citation-quality work was scoped to the **academic chapter** path only:
+Mirror the chapter Stage 2 loop into the research-mode block (`legal-qa/index.ts` ~line 6446–6587). Add per-mode flags so the policy is data-driven and the Fast question ("worth the latency?") gets answered by the eval, not by guessing now.
 
-- Type-aware classifier + router (`chapterCitationRouter.ts`)
-- `preResolveNormalize` cosmetic cleanup before `resolveCitation`
-- Tightened bare-docket regex requiring a court-name token within ±80 chars
-- Stage 2 Perplexity party-lookup retry (`needs_party_lookup` → `lookupPartyNames` → re-route with `partyLookupRetry: true`)
-- `case_law_database` `fullDate` relaxation under Stage 2
-- Best-effort placeholder emission (`[חסר: ...]`) under Stage 2
-- Rich telemetry: `classification_counts`, `legal_resolver`, `bibliography_routed`, `chapterPartyLookup` with `recovered_without_full_date`, `recovered_with_placeholders`, `placeholder_fields`
+## What ships in Phase C
 
-In `legal-qa/index.ts` line 6272, the entire pipeline above is gated by `if (isAcademicChapter && finalFootnotes.length > 0)`. Fast/Deep research footnotes today get ONLY:
-
-1. Anchor-pass (Fast & Deep, mode-profile gated)
-2. The `reasonFor` filter (`url_only` / `broken_title` / `placeholder_dominant` / `too_short` / `missing_parties`)
-3. Renumber + orphan-superscript cleanup
-
-No classification, no `resolveCitation`, no Stage 2 party-lookup, no placeholder policy.
-
-## Goal
-
-Bring research-mode footnotes onto the same observability + recovery substrate as chapters, **without** changing Fast/Deep drafting envelopes (`MODE_PROFILES` stays put) and **without** silently changing what citations users see.
-
-Phased so each step is independently evaluable.
-
-## Phase A — Observability only (no behavior change) — **SHIPPED**
-
-Add classification + telemetry for Fast/Deep, NO mutation of footnote text.
-
-### Code (as shipped)
-
-1. After the `validFootnotes` filter (`legal-qa/index.ts` ~line 6446, immediately after the academic-chapter routing block), a `if (taskMode === RESEARCH_MODE && finalFootnotes.length > 0)` block runs `routeChapterFootnote(fn.citation)` — **dry-run only**, never overwrites `fn.citation` or any other field.
-2. The classifier is called with **no `titleHint` / `caseNumberHint`** because research mode does not maintain a `fnNumberToCard` map keyed by footnote number; that's the honest observability baseline. Phase B/C can add hints later.
-3. Aggregated under `metadata.research_engine` with the following shape (note `_dry_run` suffixes — explicit observation-only naming so future readers know Phase A didn't mutate):
-
-```json
-{
-  "depth": "fast" | "deep",
-  "mode": "observability_only",
-  "footnotes_scanned": N,
-  "classification_counts": {...},
-  "classify_reasons": {...},
-  "legal_resolver_dry_run": {
-    "resolved_count": N,
-    "unresolved_count": N,
-    "drop_reasons": {...},
-    "needs_party_lookup_candidates": N
-  },
-  "bibliography_dry_run": { "count": N, "by_type": {...}, "warnings": {...} },
-  "skipped": { "count": N, "reasons": {...} },
-  "dry_run_ms": N
-}
-```
-
-`needs_party_lookup_candidates` is the Phase C preview — count of footnotes that *would* enter the Perplexity party-lookup retry if we turned it on for this depth.
-
-4. `[research-engine][phase-a][${depth}]` log line emitted once per request for log-grep observability.
-
-### Validation
-
-- Run `eval/fast-parity-q1-q6-q21.mjs` and `eval/deep-mode-q1-q6-q21.mjs` as `phase-a-research-engine`.
-- Acceptance:
-  - `metadata.research_engine` present on every research-mode row.
-  - `classification_counts` totals + `bibliography_dry_run.count` + `skipped.count` = `footnotes_scanned`.
-  - `validFootnotes` content + `answer` body **byte-identical** to a baseline run on the same fixture (citations not mutated).
-  - No regression on `anchored_count`, `dropped_unanchored_count`, `qa_guard` flags.
-- If those hold, Phase A lands as a pure observability win.
-
-## Phase B — Adopt `preResolveNormalize` + canonical re-emission for legal-routed Fast/Deep footnotes — **SHIPPED**
-
-Smallest behavioral change: when classifier says `statute` or `caselaw`, run cleanup + `resolveCitation`, and **only if `resolved === true`** overwrite `fn.citation` with the canonical form. Unresolved → leave the original text exactly as-is.
-
-### Code (as shipped)
-
-- Promoted Phase A's observation block (`supabase/functions/legal-qa/index.ts` ~line 6446) to mutate `fn.citation = routed.result.canonical` when `route === "legal_resolver"` AND `result.resolved`. No-op when canonical equals original.
-- Telemetry shape changed:
-  - `mode` flipped from `"observability_only"` → `"canonical_reemission"`.
-  - `legal_resolver_dry_run` renamed → `legal_resolver` (counts are now real, not dry-run).
-  - Added `legal_resolver.canonical_rewrites` — count of entries where `canonical !== original`. `resolved_count − canonical_rewrites` = no-op rewrites where the AI already produced a canonical form.
-  - Kept `legal_resolver.needs_party_lookup_candidates` as the Phase C preview counter.
-  - Renamed `dry_run_ms` → `phase_ms`.
-  - Log line tag changed `[research-engine][phase-a]` → `[research-engine][phase-b]`.
-- For `route === "bibliography"` (journal/book/report/web): kept as DRY RUN. Research mode citations are AI-generated with explicit prompt rules, and forcing `validateArticleCitation` could add `[חסר: ...]` markers that conflict with the existing `placeholder_dominant` filter. Deferred to Phase D.
-- For `route === "skipped"`: telemetry only (unchanged).
-- No changes to `MODE_PROFILES`, no changes to anchor pass, no changes to the academic-chapter pipeline above.
-
-### Why this is safe
-
-`resolveCitation`'s canonical form is the *same* legal text in cleaner shape (e.g. fixes trailing supra fragments, balances parens). It cannot introduce hallucinations because it only re-emits fields it parsed.
-
-### Validation
-
-- `research-router-B` against same Q1/Q6/Q21 fixture.
-- Acceptance:
-  - For each footnote where `would_resolve` was true in Phase A, the new `canonical` string differs from the original ONLY in cosmetic ways (whitespace, punctuation noise, paren balance). Spot-check 5 examples in the eval summary.
-  - `anchored_count` unchanged or up. `dropped_unanchored_count` unchanged.
-  - No new entries in `qa_guard.flags`.
-
-## Phase C — Stage 2 party-lookup retry for Fast/Deep caselaw
-
-Mirror the chapter Stage 2 loop into research mode. This is the highest-leverage but also highest-risk step, so it lands behind a feature flag in `MODE_PROFILES`.
-
-### Mode profile addition
-
-In `supabase/functions/legal-qa/modeProfiles.ts`:
+### 1. New `MODE_PROFILES` flags (`supabase/functions/legal-qa/modeProfiles.ts`)
 
 ```ts
 /** Enable Stage 2 Perplexity party-lookup retry on caselaw footnotes
@@ -112,59 +13,108 @@ In `supabase/functions/legal-qa/modeProfiles.ts`:
 partyLookupRetryEnabled: boolean;
 
 /** When the retry succeeds but only a placeholder citation can be emitted,
- *  whether to keep it (`emit`) or drop it (`drop`). Fast: drop, Deep: emit. */
+ *  whether to keep it (`emit`) or drop it (`drop`). Mirrors the chapter
+ *  best-effort policy. */
 partyLookupPlaceholderPolicy: "emit" | "drop";
+
+/** Hard ceiling on how many dockets we will batch into a single
+ *  `lookupPartyNames` call per request. Bounds latency for caselaw-heavy
+ *  questions. */
+partyLookupMaxBatchSize: number;
 ```
 
 Defaults:
 
 | field | fast | deep |
 |---|---|---|
-| `partyLookupRetryEnabled` | `false` | `true` |
-| `partyLookupPlaceholderPolicy` | `drop` | `emit` |
+| `partyLookupRetryEnabled` | `false` (will be flipped to `true` after eval, see Phase C.2) | `true` |
+| `partyLookupPlaceholderPolicy` | `"emit"` | `"emit"` |
+| `partyLookupMaxBatchSize` | `3` | `6` |
 
-Rationale: Fast's product promise is sub-2-minute latency; an extra Perplexity round-trip per unresolved caselaw can easily add 5-15s. Deep already takes longer and benefits more from coverage. Both can be flipped per-mode without code changes.
+Rationale for "emit" on both: the user already chose `emit` for chapters because partial caselaw is more useful than no caselaw. Same product reasoning applies to research mode. The `placeholder_dominant` filter still acts as the final safety net.
 
-### Code
+### 2. Code changes in `supabase/functions/legal-qa/index.ts` (research-engine block ~6446–6587)
 
-In the Phase B block, when a legal-routed caselaw returns `reason === "needs_party_lookup"` AND `modeProfile.partyLookupRetryEnabled`:
+Restructure the existing single-pass loop to mirror the chapter block:
 
-1. Collect into `pendingPartyLookup[]` exactly like the chapter loop (lines ≈6275–6354).
-2. After the first pass, batch-call `lookupPartyNames(requests)`.
-3. Re-route each hit with `partyLookupRetry: true`.
-4. Apply the placeholder policy: if `result.placeholders?.length` and `modeProfile.partyLookupPlaceholderPolicy === "drop"`, treat as `failed` instead of `recovered`.
+```text
+research-engine block:
+  ├── pass 1: classify + apply non-caselaw + apply legal_resolver(resolved)
+  │           collect needs_party_lookup → pendingPartyLookup[]
+  ├── if (modeProfile.partyLookupRetryEnabled && pending.length > 0):
+  │     ├── lookupPartyNames(requests, capped at maxBatchSize)
+  │     ├── for each pending: re-route with partyLookupRetry: true + hints
+  │     │     ├── resolved + clean → mutate fn.citation, count recovered
+  │     │     ├── resolved + placeholders:
+  │     │     │     - if policy === "emit": mutate, count recovered_with_placeholders
+  │     │     │     - if policy === "drop": leave original, count failed
+  │     │     └── still unresolved → leave original, count failed
+  │     └── populate research_engine.party_lookup{...}
+  └── else if pending.length > 0 (flag off):
+        apply original needs_party_lookup result, party_lookup stays null
+```
 
-### Telemetry
+Implementation notes:
+- Reuse the chapter `applyRoutedResult` shape inline (no extraction to a helper — the two blocks have different telemetry counters).
+- Research mode does **not** maintain `fnNumberToCard`, so:
+  - First-pass router call stays hint-less (current Phase B behaviour).
+  - Stage 2 retry passes only `party1Hint`, `party2Hint`, `fullDateHint`, `yearHint`, `partyLookupRetry: true` — no `titleHint`/`caseNumberHint`. That's consistent with Phase B's "honest baseline".
+- Wrap the `lookupPartyNames` await in a per-call timeout already enforced inside `partyLookup.ts` (20s `AbortController`). No extra timeout needed.
+- Cap `requests.length` to `modeProfile.partyLookupMaxBatchSize`. Excess pending entries get the same fallback as `flag off` (apply original `needs_party_lookup` result, count under `failure_reasons.skipped_over_batch_cap`).
 
-Add `research_engine.party_lookup` mirroring `chapter_engine.party_lookup`:
-`attempted`, `recovered`, `recovered_without_full_date`, `recovered_with_placeholders`, `placeholder_fields`, `failed`, `failure_reasons`, `status`.
+### 3. Telemetry
 
-### Validation
+Add to `metadata.research_engine`:
 
-- Run `eval/fast-parity-q1-q6-q21.mjs` AND `eval/deep-mode-q1-q6-q21.mjs` (both have caselaw-heavy questions) as `research-router-C-fast` and `research-router-C-deep`.
+```jsonc
+"party_lookup": {
+  "attempted": N,
+  "recovered": N,
+  "recovered_without_full_date": N,
+  "recovered_with_placeholders": N,
+  "placeholder_fields": { "fullDate": N, "party1": N, ... },
+  "failed": N,
+  "failure_reasons": { "no_match": N, "retry_still_unresolved": N, "skipped_over_batch_cap": N, ... },
+  "status": "ok" | "no_perplexity_key" | "request_failed" | "timeout" | "no_candidates",
+  "wall_ms": N        // wall-clock time of the lookupPartyNames call only
+}
+```
+
+Or `null` when the flag is off OR no candidates were found. Mode label flips from `"canonical_reemission"` → `"canonical_reemission+party_lookup"`. Log tag flips from `[research-engine][phase-b]` → `[research-engine][phase-c]`.
+
+### 4. Validation matrix
+
+Two eval batches, run sequentially so we can decide Fast independently:
+
+**Deep (flag default-on):**
+- `eval/deep-mode-q1-q6-q21.mjs` x2 repeats labelled `research-router-C-deep`.
 - Acceptance:
-  - Fast: `party_lookup` field is `null` (flag off) — pure regression test that the gate works.
-  - Deep: `party_lookup.attempted > 0` on at least one of Q1/Q6 (constitutional caselaw).
-  - Deep: `wall_ms` increase ≤ 30% vs the deep-baseline measured before C.
-  - Deep: at least one `recovered` or `recovered_with_placeholders` across the 3 questions, OR a documented justification that none of the AI's caselaw citations were bare-docket form (i.e. nothing to recover).
-- If `wall_ms` blows up or recovery is 0/0 across two repeats, flip Deep's flag back to `false` and treat Phase C as wired-but-disabled, same outcome as the chapter `recovered_without_full_date` story.
+  - `party_lookup.attempted > 0` on at least one of Q1/Q6.
+  - At least one `recovered` OR `recovered_with_placeholders` across the two repeats — otherwise Phase C is a no-op (same ruling we made for the chapter `recovered_without_full_date` story).
+  - `wall_ms` increase ≤ 30% vs the deep-baseline median measured before C.
+  - No new `qa_guard.flags`. `placeholder_dominant` does not increase.
 
-## Phase D — DEFERRED (not part of this plan)
+**Fast (flag default-off baseline first, then toggle on):**
+- Step 1: `eval/fast-parity-q1-q6-q21.mjs` x1 with flag OFF — `party_lookup === null`, output byte-identical to Phase B baseline. Pure regression test that the gate works.
+- Step 2: Flip `partyLookupRetryEnabled = true` for fast in a follow-up code change AND re-run `eval/fast-parity-q1-q6-q21.mjs` x2 labelled `research-router-C-fast-on`. Acceptance to keep it on:
+  - Median `wall_ms` increase ≤ 5 seconds (user's "few seconds" bar).
+  - At least one `recovered` or `recovered_with_placeholders` across the two repeats AND that recovered citation survives the `placeholder_dominant` / `missing_parties` filters into `validFootnotes`. Recovery that gets dropped downstream doesn't count as "meaningful improvement".
+  - If both criteria hold → leave Fast flag = `true` and update `mem://logic/legal-qa/research-router.md`. If either fails → revert Fast flag to `false`, document outcome.
 
-- Bibliography route mutation (journal/book/report/web canonicalization) for research mode. Risk of conflict with `placeholder_dominant` filter and the `legislation-footnote-exception` "(לא נמצאו פרטים בבליוגרפיים)" pattern.
-- Porting Phase A–C to `taskMode === "memo"` (Legal Assistant memo). Different envelope, different prompt, separate eval.
+This matches the user's tradeoff: "few seconds AND meaningful output quality improvement = keep it on".
 
 ## Files touched
 
-- `supabase/functions/legal-qa/index.ts` — add the research-router block after `validFootnotes`, mirror chapter telemetry.
-- `supabase/functions/legal-qa/modeProfiles.ts` — add `partyLookupRetryEnabled` + `partyLookupPlaceholderPolicy` per mode.
-- `.lovable/memory/logic/legal-qa/research-router.md` — new memory documenting the research-mode router and per-mode policy.
-- `.lovable/plan.md` — replace with the C/D outcome.
+- `supabase/functions/legal-qa/modeProfiles.ts` — add three flags + Fast/Deep defaults, expand the JSDoc on the LOCKED DEFAULT block to reflect Phase C.
+- `supabase/functions/legal-qa/index.ts` — restructure research-engine block from single-pass into pass-1 + Stage 2 retry + telemetry.
+- `.lovable/memory/logic/legal-qa/research-router.md` — new memory file documenting research-mode router + per-mode policy + Fast eval outcome.
+- `.lovable/plan.md` — update Phase C status to SHIPPED with the eval results.
 
 ## What we explicitly are NOT changing
 
-- `MODE_PROFILES` drafting envelopes (word ranges, footnote floors, anchor pass settings).
-- Drafter prompts (Fast structured / Deep legacy).
-- The existing `reasonFor` filter (`url_only`, `broken_title`, `placeholder_dominant`, `too_short`, `missing_parties`) — this remains the final gate. Even after Phase C, a placeholder-emitted citation must still pass it. Specifically: `placeholder_dominant` drops unanchored citations with `[חסר]`; Stage 2 placeholder citations carry `source = "perplexity"` from `lookupPartyNames`, so they ARE anchored and survive. This is the same invariant that already protects chapters.
-- `src/data/citationEngine.ts` (React side) — Stage 2 stays Deno-only, same as chapters.
-- The academic chapter pipeline — chapter telemetry shape and behavior unchanged.
+- Chapter pipeline (lines ~6272–6444): unchanged, separate counters, separate telemetry.
+- `MODE_PROFILES` drafting envelopes (word ranges, footnote floors, anchor pass): unchanged.
+- Drafter prompts.
+- The final `reasonFor` filter: still the gate. Stage 2 placeholder-emitted citations carry `source = "perplexity"` from `lookupPartyNames`, which makes them anchored, so they survive `placeholder_dominant` (same invariant as chapters).
+- React-side citation engine — Stage 2 stays Deno-only.
+- Phase D (bibliography canonicalization, memo mode) — still deferred.
