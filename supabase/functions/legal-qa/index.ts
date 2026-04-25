@@ -6697,6 +6697,10 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               count: chapterSkippedCount,
               reasons: chapterSkippedReasons,
             },
+            // Stage 2 telemetry — Perplexity party-name backfill for caselaw
+            // bare-docket hits. Null when no needs_party_lookup citations
+            // were encountered in this chapter.
+            party_lookup: chapterPartyLookup,
           } : null,
           // Chapter QA guard — observability only, no behaviour change.
           // Mirrors statute_completion.qa_guard from research grounding.
