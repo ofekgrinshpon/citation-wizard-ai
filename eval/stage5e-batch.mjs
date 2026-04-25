@@ -223,6 +223,11 @@ async function runOne(jwt, q) {
     noisy_footnotes: totalNoisy,
     useful_ratio: totalAdded > 0 ? +(totalUseful / totalAdded).toFixed(2) : null,
     drop_reason_aggregate: dropAgg,
+    skipped_covered_by_primary_total: results.reduce((a, r) => a + (r.statute_completion?.skipped_covered_by_primary || 0), 0),
+    anchor_pass_runs: results.filter(r => r.anchor_pass).length,
+    anchor_pass_completed: results.filter(r => r.anchor_pass?.status === "complete" || r.anchor_pass?.status === "ok").length,
+    sentence_end_placements: results.reduce((a, r) => a + (r.statute_completion?.insertion_placement?.filter(p => p === "sentence_end").length || 0), 0),
+    name_adjacent_placements: results.reduce((a, r) => a + (r.statute_completion?.insertion_placement?.filter(p => p === "name_adjacent").length || 0), 0),
   };
 
   writeFileSync(`${OUT_DIR}/report.json`, JSON.stringify({ summary, results }, null, 2));
