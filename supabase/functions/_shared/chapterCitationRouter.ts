@@ -193,8 +193,11 @@ export function classifyChapterFootnoteWithReason(
   if (CASELAW_PD_SERIES_RE.test(t)) {
     return { type: "caselaw", reason: "caselaw_pd_series" };
   }
-  // Bare docket only fires if the rest of the string isn't statute-like.
-  if (CASELAW_BARE_DOCKET_RE.test(t) && !STATUTE_RE.test(t)) {
+  // Bare docket only fires if (a) the rest of the string isn't statute-like
+  // AND (b) a court-name token sits within ~80 chars of the docket. Without
+  // (b), statutory subsection patterns like `26(2) ו-(4)` were leaking into
+  // the caselaw bucket and reaching the legal resolver as `extract_failed`.
+  if (looksLikeBareDocket(t) && !STATUTE_RE.test(t)) {
     return { type: "caselaw", reason: "caselaw_bare_docket" };
   }
 
