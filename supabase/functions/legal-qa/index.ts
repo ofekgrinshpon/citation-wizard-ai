@@ -213,10 +213,11 @@ export function validateStatuteFields(f: StatuteFields): string | null {
   // (≤ 1 hebrew token after stripping leading kind word) is also rejected.
   const PLACEHOLDER_RE = /^(?:פרטי\s+מסמך|לא\s+נמצא|לא\s+ידוע|unknown|n\/?a|מסמך|—|-)\s*\.?$/i;
   if (PLACEHOLDER_RE.test(lawName)) return "placeholder_lawname";
-  // Strip leading kind word ("חוק", "חוק-יסוד:", "פקודת", "תקנות", "צו")
+  // Strip leading kind word ("חוק", "חוק-יסוד:", "פקודת", "תקנות", "צו").
+  // Trailing \s* (not \s+) so a bare "חוק" with nothing after also collapses.
   const stripped = lawName
     .replace(/^חוק[- ]יסוד\s*:\s*/, "")
-    .replace(/^(?:חוק|פקודת|פקודה|תקנות|תקנה|צו|כללי)\s+/, "")
+    .replace(/^(?:חוק|פקודת|פקודה|תקנות|תקנה|צו|כללי)\s*/, "")
     .trim();
   if (!stripped || stripped.split(/\s+/).filter((t) => /[א-ת]/.test(t)).length < 1) {
     return "placeholder_bare_keyword";
