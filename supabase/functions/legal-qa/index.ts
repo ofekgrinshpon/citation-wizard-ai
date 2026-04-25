@@ -6443,6 +6443,120 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       );
     }
 
+    // ===== Phase A — research-mode classifier OBSERVABILITY (Fast/Deep) =====
+    // Runs the same `routeChapterFootnote` classifier over Fast/Deep research
+    // footnotes WITHOUT mutating any citation text. Pure telemetry: lets us
+    // measure parity (do research-mode footnotes look like academic-chapter
+    // footnotes?) and decide whether Phase B (canonical re-emission) and
+    // Phase C (Stage 2 retry) are worth turning on per depth.
+    //
+    // Scope guards:
+    //   • taskMode === RESEARCH_MODE only — academic_writing already runs
+    //     the real router above, so this block must NOT fire there.
+    //   • finalFootnotes only — same surface as the academic block.
+    //   • DRY RUN — `routed.result.canonical` / `routed.canonical` are
+    //     observed but NEVER written back to `fn.citation`. Footnote text
+    //     and the rest of the response are byte-identical to before.
+    let researchEngine: Record<string, unknown> | null = null;
+    if (taskMode === RESEARCH_MODE && finalFootnotes.length > 0) {
+      const rClassificationCounts: Record<FootnoteSourceType, number> = {
+        statute: 0, caselaw: 0, journal_article: 0, book: 0,
+        book_chapter: 0, report: 0, web_source: 0, unknown: 0,
+      };
+      const rClassifyReasons: Record<string, number> = {};
+      let rLegalResolvedDryRun = 0;
+      let rLegalUnresolvedDryRun = 0;
+      const rLegalDropReasons: Record<string, number> = {};
+      // Stage 2 candidates we *would* retry under Phase C — observability only.
+      let rNeedsPartyLookupCandidates = 0;
+      let rBibCount = 0;
+      const rBibByType: Record<string, number> = {};
+      const rBibWarnings: Record<string, number> = {};
+      let rSkippedCount = 0;
+      const rSkippedReasons: Record<string, number> = {};
+
+      // Same pure-placeholder skip rule as the academic block.
+      const PURE_PLACEHOLDER_RE = /^\s*\[חסר[^\]]*\]\s*\.?\s*$/;
+      const t0 = Date.now();
+      for (const fn of finalFootnotes) {
+        const text = fn.citation || "";
+        if (PURE_PLACEHOLDER_RE.test(text)) continue;
+        // Note: research mode does not maintain a fnNumberToCard map keyed
+        // the same way as academic_writing. Run the classifier with no
+        // hints — that's the honest observability baseline.
+        const routed = routeChapterFootnote(text);
+        rClassificationCounts[routed.sourceType] =
+          (rClassificationCounts[routed.sourceType] || 0) + 1;
+        rClassifyReasons[routed.classifyReason] =
+          (rClassifyReasons[routed.classifyReason] || 0) + 1;
+        switch (routed.route) {
+          case "legal_resolver":
+            if (routed.result.resolved) {
+              rLegalResolvedDryRun++;
+            } else {
+              rLegalUnresolvedDryRun++;
+              const reason = routed.result.reason;
+              rLegalDropReasons[reason] = (rLegalDropReasons[reason] || 0) + 1;
+              if (
+                reason === "needs_party_lookup" &&
+                routed.result.partialFields?.caseNumber
+              ) {
+                rNeedsPartyLookupCandidates++;
+              }
+            }
+            break;
+          case "bibliography":
+            rBibCount++;
+            rBibByType[routed.sourceType] = (rBibByType[routed.sourceType] || 0) + 1;
+            for (const w of routed.warnings) {
+              rBibWarnings[w] = (rBibWarnings[w] || 0) + 1;
+            }
+            break;
+          case "skipped":
+            rSkippedCount++;
+            rSkippedReasons[routed.reason] = (rSkippedReasons[routed.reason] || 0) + 1;
+            break;
+        }
+      }
+      const dryRunMs = Date.now() - t0;
+
+      researchEngine = {
+        depth: researchDepth,
+        mode: "observability_only",
+        footnotes_scanned: finalFootnotes.length,
+        classification_counts: rClassificationCounts,
+        classify_reasons: rClassifyReasons,
+        legal_resolver_dry_run: {
+          resolved_count: rLegalResolvedDryRun,
+          unresolved_count: rLegalUnresolvedDryRun,
+          drop_reasons: rLegalDropReasons,
+          // Phase C preview: how many entries WOULD enter the Perplexity
+          // party-lookup retry if `partyLookupRetryEnabled` were on for
+          // this depth.
+          needs_party_lookup_candidates: rNeedsPartyLookupCandidates,
+        },
+        bibliography_dry_run: {
+          count: rBibCount,
+          by_type: rBibByType,
+          warnings: rBibWarnings,
+        },
+        skipped: {
+          count: rSkippedCount,
+          reasons: rSkippedReasons,
+        },
+        dry_run_ms: dryRunMs,
+      };
+      console.log(
+        `[research-engine][phase-a][${researchDepth}] ` +
+        `scanned=${finalFootnotes.length} ` +
+        `cls=${JSON.stringify(rClassificationCounts)} ` +
+        `legal_dry_run=${rLegalResolvedDryRun}/${rLegalResolvedDryRun + rLegalUnresolvedDryRun} ` +
+        `legal_drops=${JSON.stringify(rLegalDropReasons)} ` +
+        `needs_party_lookup=${rNeedsPartyLookupCandidates} ` +
+        `bib=${rBibCount} skipped=${rSkippedCount} ms=${dryRunMs}`,
+      );
+    }
+
     // ─── Chapter QA guard (academic chapters only) ───────────────────
     // Mirrors statute_completion.qa_guard from Fast/Deep grounding architecture:
     // pure observability, no behaviour change. Surfaces three signals:
@@ -6756,6 +6870,15 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             // were encountered in this chapter.
             party_lookup: chapterPartyLookup,
           } : null,
+          // Phase A — research-mode (Fast/Deep) classifier observability.
+          // Pure dry run: same `routeChapterFootnote` classifier as the
+          // academic-chapter pipeline, no footnote text mutated, no resolver
+          // canonicalization applied. Lets us measure parity (do research-
+          // mode footnotes look like academic-chapter footnotes?) and decide
+          // whether Phase B (canonical re-emission) and Phase C (Stage 2
+          // Perplexity retry) are worth turning on per depth.
+          // Null for non-research task modes.
+          research_engine: researchEngine,
           // Chapter QA guard — observability only, no behaviour change.
           // Mirrors statute_completion.qa_guard from research grounding.
           chapter_qa_guard: chapterQaGuard,
