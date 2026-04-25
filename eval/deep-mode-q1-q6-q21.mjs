@@ -14,9 +14,10 @@ if (!SUPABASE_URL || !SERVICE_ROLE || !ANON_KEY) { console.error("missing envs")
 
 const OUT_DIR = "/mnt/documents/legal-qa-eval";
 if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
-const RUN_ID = `deep-smoke-${randomUUID()}`;
-const OUT_FILE = `${OUT_DIR}/deep-mode-q1-q6-q21.json`;
-const LOG_FILE = `${OUT_DIR}/deep-mode-q1-q6-q21.log`;
+const PHASE = process.env.PHASE || "before"; // "before" | "after"
+const RUN_ID = `deep-${PHASE}-${randomUUID().slice(0, 8)}`;
+const OUT_FILE = `${OUT_DIR}/deep-${PHASE}.json`;
+const LOG_FILE = `${OUT_DIR}/deep-${PHASE}.log`;
 
 const log = (m) => { const l = `[${new Date().toISOString()}] ${m}`; console.log(l); appendFileSync(LOG_FILE, l + "\n"); };
 
