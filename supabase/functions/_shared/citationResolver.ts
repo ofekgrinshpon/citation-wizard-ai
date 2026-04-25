@@ -500,7 +500,35 @@ export function resolveCitation(
   }
 
   // 3) Validate
-  const missing = validateCitation(sourceType, fields);
+  let missing = validateCitation(sourceType, fields);
+
+  // v4 stage 2 policy: when this is the *retry* pass after a successful
+  // party-lookup, allow `case_law_database` to drop `fullDate` from the
+  // required set IF caseType + caseNumber + party1 + party2 are present
+  // and at least one temporal anchor (`year` or `fullDate`) survived.
+  // Scope is intentionally narrow:
+  //   - only `case_law_database` (Bucket 3 in the after4c diagnosis)
+  //   - only on the explicit retry flag
+  //   - only when parties + docket are all real
+  // First-pass calls and all other source types are unaffected.
+  let relaxedFullDate = false;
+  if (
+    opts.partyLookupRetry &&
+    sourceType === "case_law_database" &&
+    missing.length > 0 &&
+    fields.caseType?.trim() &&
+    fields.caseNumber?.trim() &&
+    fields.party1?.trim() &&
+    fields.party2?.trim() &&
+    (fields.fullDate?.trim() || fields.year?.trim())
+  ) {
+    const remaining = missing.filter((f) => f !== "fullDate");
+    if (remaining.length === 0) {
+      missing = remaining;
+      relaxedFullDate = !fields.fullDate?.trim();
+    }
+  }
+
   if (missing.length > 0) {
     // v4 caselaw escalation: when caseNumber is present (i.e. the docket
     // was recovered locally) and the missing fields are ONLY items a narrow
@@ -544,7 +572,19 @@ export function resolveCitation(
 
   // 4) Emit canonical
   const ruleSet = CITATION_RULES[sourceType];
-  const canonical = emitCanonical(ruleSet.template, fields);
+  // When fullDate was relaxed away under the partyLookupRetry policy, fall
+  // back to a `(year)` form (or omit the database/date parens entirely if
+  // neither year nor fullDate survived — should be impossible given the
+  // precondition, but kept defensive).
+  let template = ruleSet.template;
+  if (relaxedFullDate && sourceType === "case_law_database") {
+    if (fields.year?.trim()) {
+      template = "{caseType} {caseNumber} {party1} נ' {party2} ({year}).";
+    } else {
+      template = "{caseType} {caseNumber} {party1} נ' {party2}.";
+    }
+  }
+  const canonical = emitCanonical(template, fields);
 
   return {
     resolved: true,
