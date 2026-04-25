@@ -44,7 +44,25 @@ export interface ResolveSuccess {
 
 export interface ResolveFailure {
   resolved: false;
-  reason: "classify_failed" | "extract_failed" | "missing_required";
+  /**
+   * - `classify_failed`     — declared type didn't map to any engine type.
+   * - `extract_failed`      — extractor produced no fields at all.
+   * - `missing_required`    — extractor produced some fields but a required
+   *                           field is missing AND we have no realistic
+   *                           recovery path (e.g. statute hebrewYear when the
+   *                           card itself lacks it).
+   * - `needs_party_lookup`  — caselaw v4: docket + court info recovered
+   *                           locally, but party names are missing AND
+   *                           neither the citation text nor the source card
+   *                           carries them. The caller should escalate to a
+   *                           narrow external party-name lookup before
+   *                           treating this as a hard failure.
+   */
+  reason:
+    | "classify_failed"
+    | "extract_failed"
+    | "missing_required"
+    | "needs_party_lookup";
   missingFields: string[];
   partialFields: Record<string, string>;
   /** When reason=missing_required, the chosen sourceType is reported for telemetry. */
