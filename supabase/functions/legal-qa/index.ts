@@ -5525,9 +5525,37 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
                 url: v.candidate.url,
                 source: "perplexity_completion",
               };
-              inserts.push({ insertAt: idx + matchedName.length, marker: `[${newFnNumber}]`, newFn, newCard, matchedName });
+              // Sentence-end placement (architecture shift): citations are placed
+              // at the end of the sentence/clause that mentions the statute, not
+              // immediately after the statute's name. This matches the legal-writing
+              // convention "...סעיף 39 לחוק החוזים, אסור להתנהל שלא בתום לב.[1]"
+              // rather than "...לחוק החוזים[1], אסור להתנהל...".
+              //
+              // Strategy: from the END of the matched name, walk forward looking
+              // for the first sentence terminator (. ? ! ; or newline), skipping
+              // characters inside parentheses/brackets, and place the marker
+              // immediately BEFORE that terminator. If no terminator is found
+              // within 220 chars, fall back to legacy name-adjacent placement.
+              const nameEnd = idx + matchedName.length;
+              let sentenceEnd = -1;
+              let depth = 0; // paren/bracket depth, so we don't break on ".)" inside ()
+              const MAX_LOOK = 220;
+              const limit = Math.min(answerBody.length, nameEnd + MAX_LOOK);
+              for (let p = nameEnd; p < limit; p++) {
+                const ch = answerBody[p];
+                if (ch === "(" || ch === "[") depth++;
+                else if (ch === ")" || ch === "]") depth = Math.max(0, depth - 1);
+                else if (depth === 0 && (ch === "." || ch === "?" || ch === "!" || ch === ";" || ch === "\n")) {
+                  sentenceEnd = p;
+                  break;
+                }
+              }
+              const usedSentenceEnd = sentenceEnd >= 0;
+              const insertAt = usedSentenceEnd ? sentenceEnd : nameEnd;
+              statuteCompletionTelemetry.insertion_placement!.push(usedSentenceEnd ? "sentence_end" : "name_adjacent");
+              inserts.push({ insertAt, marker: `[${newFnNumber}]`, newFn, newCard, matchedName });
               statuteCompletionTelemetry.completed_count++;
-              console.log(`[statute-completion] added FN#${newFnNumber} for "${matchedName}" → ${v.candidate.citation.slice(0, 80)}`);
+              console.log(`[statute-completion] added FN#${newFnNumber} for "${matchedName}" placement=${usedSentenceEnd ? "sentence_end" : "name_adjacent"} → ${v.candidate.citation.slice(0, 80)}`);
             }
 
             // Apply inserts in reverse position order
