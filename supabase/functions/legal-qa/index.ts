@@ -298,14 +298,92 @@ function fixCStatuteCitationShapeError(citation: string): string | null {
   return null;
 }
 
+/**
+ * Fix G1 — Sanitize a regex-scraped statute name before sending it to
+ * Perplexity. The Stage 5e scanner regex (STATUTE_RE) sometimes bleeds the
+ * matched name into surrounding drafter prose, producing inputs like:
+ *   "חוק הגנת הפרטיות, התשמ\"א-1981 חוק הגנת הפרטיות היא"
+ *   "חוק החוזים (תרופות בשל הפרת חוזה), התשל\"א–1970 חוק התרופות"
+ *   "חוק יסוד: כבוד האדם וחירותו הוא רחב ומהותי חוק היסוד ושל הזכות"
+ *   "חוק המרכזי בישראל המקנה חוק לעידן הדיגיטלי היא הגדרת"
+ *
+ * citation-chat receives clean user-typed entities; we replicate that here.
+ *
+ * Returns { ok: true, name } when the name survives, otherwise
+ * { ok: false, reason } so Stage 5e telemetry can attribute the loss.
+ *
+ * Rules (in order):
+ *   1. If a SECOND statute keyword (חוק/פקודת/תקנות/חוק[- ]יסוד) appears,
+ *      keep only the first segment. Reason: "multi_law".
+ *   2. If a Hebrew-year + Gregorian-year clause exists ("התש... -YYYY" or
+ *      "התש..., YYYY"), truncate everything after it. Anything past the
+ *      year is drafter prose.
+ *   3. Strip trailing prose markers commonly seen at the tail (sentence
+ *      verbs/copulas: "היא", "הוא", "של", "ושל", "כי", "אשר",
+ *      "המקנה", "בעניין", "לעניין", "הגדרת").
+ *   4. After cleaning, the name (after the kind word) must contain at least
+ *      ONE of: a Hebrew-year token (`הת`), a parenthetical qualifier `(...)`,
+ *      OR ≥3 Hebrew tokens. Otherwise: "too_short".
+ */
+export function cleanStatuteCandidate(
+  raw: string,
+): { ok: true; name: string } | { ok: false; reason: string } {
+  let s = (raw || "").replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
+  if (!s) return { ok: false, reason: "empty" };
+
+  // (1) Multi-law split — keep first segment if a second kind keyword appears.
+  // We split on word-boundary occurrences, then anchor on the FIRST keyword
+  // and look for a SECOND one starting > 0 chars in.
+  const KIND_RE = /(?:חוק[- ]יסוד\s*:|חוק|פקודת|פקודה|תקנות|תקנה|צו)\s/g;
+  const kindMatches: number[] = [];
+  let km: RegExpExecArray | null;
+  while ((km = KIND_RE.exec(s)) !== null) {
+    kindMatches.push(km.index);
+    if (kindMatches.length >= 2) break;
+  }
+  if (kindMatches.length >= 2) {
+    s = s.slice(0, kindMatches[1]).trim().replace(/[,;:.]+$/, "");
+    // Mark for telemetry; caller decides whether to count as drop.
+    // We continue cleaning on the truncated head.
+  }
+
+  // (2) Truncate after the Hebrew-year + Gregorian-year clause.
+  // Pattern: הת(ש|ש) + 0-3 Heb letters + optional gershayim + (-|–|, ) + 4-digit year
+  const YEAR_TAIL_RE = /(הת?ש[\u05D0-\u05EA]{0,3}["״׳']?[\u05D0-\u05EA]?["״׳']?\s*[-–,]\s*\d{4})/;
+  const ym = s.match(YEAR_TAIL_RE);
+  if (ym && ym.index !== undefined) {
+    const cut = ym.index + ym[0].length;
+    s = s.slice(0, cut).trim().replace(/[,;:.]+$/, "");
+  }
+
+  // (3) Strip trailing prose words (Hebrew copulas/verbs). One pass; cheap.
+  const TAIL_PROSE_RE = /\s+(?:היא|הוא|הם|הן|של|ושל|כי|אשר|המקנה|בעניין|לעניין|הגדרת|המחייב|המקובל|אשרור)\b.*$/;
+  s = s.replace(TAIL_PROSE_RE, "").trim().replace(/[,;:.]+$/, "");
+
+  if (!s) return { ok: false, reason: "empty_after_clean" };
+
+  // (4) Substance check.
+  const head = s.replace(/^(?:חוק[- ]יסוד\s*:\s*|חוק\s+|פקודת\s+|פקודה\s+|תקנות\s+|תקנה\s+|צו\s+)/, "");
+  if (!head) return { ok: false, reason: "no_body" };
+  const hasHebYear = /הת?ש[\u05D0-\u05EA]/.test(s);
+  const hasParen = /\([^)]+\)/.test(s);
+  const tokens = head.split(/\s+/).filter((t) => /[\u05D0-\u05EA]/.test(t));
+  if (!hasHebYear && !hasParen && tokens.length < 3) {
+    return { ok: false, reason: "too_short" };
+  }
+
+  return { ok: true, name: s };
+}
+
 function validatePerplexityCandidate(
   c: PerplexityCompletionCandidate,
+  opts: { skipShapeAndEngine?: boolean } = {},
 ): { ok: true; candidate: ValidatedCompletionCandidate } | { ok: false; reason: string } {
   if (c.type !== "statute" && c.type !== "caselaw") {
     return { ok: false, reason: "unknown_type" };
   }
 
-  // Guard 1: URL allowlist (hard drop).
+  // Guard 1: URL allowlist (hard drop). Always applied.
   if (!c.url || !isTrustedLegalUrl(c.url)) {
     return { ok: false, reason: "url_not_allowlisted" };
   }
@@ -5012,6 +5090,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       dropped_no_anchor_short?: number;
       dropped_prep_tail?: number;
       kept_for_completion?: number;
+      // Fix G1/G2: input sanitization + per-call status
+      cleaned_names?: string[];
+      dropped_dirty_after_clean?: Record<string, number>;
+      per_call_status?: string[];
     } = {
       triggered: false,
       named_statutes: [],
@@ -5142,36 +5224,51 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         }
 
         // 3. Cap at 3
-        const targets = candidates.slice(0, 3);
-        statuteCompletionTelemetry.named_statutes = targets.map((t) => t.name);
+        const rawTargets = candidates.slice(0, 3);
+
+        // ─── Fix G1: input sanitization ─────────────────────────────
+        // Apply cleanStatuteCandidate to each scraped name BEFORE Perplexity
+        // sees it. The Stage 5e scanner regex (STATUTE_RE) sometimes bleeds
+        // the matched name into surrounding drafter prose. citation-chat
+        // works because users hand it a single clean entity; we replicate
+        // that here so Perplexity gets the same shape of input.
+        const cleanDrops: Record<string, number> = {};
+        const targets: Array<{ name: string; index: number; cleaned: string }> = [];
+        for (const t of rawTargets) {
+          const c = cleanStatuteCandidate(t.name);
+          if (c.ok) {
+            targets.push({ name: t.name, index: t.index, cleaned: c.name });
+          } else {
+            const key = `cleaner_${c.reason}`;
+            cleanDrops[key] = (cleanDrops[key] || 0) + 1;
+          }
+        }
+        statuteCompletionTelemetry.named_statutes = rawTargets.map((t) => t.name);
+        statuteCompletionTelemetry.cleaned_names = targets.map((t) => t.cleaned);
+        statuteCompletionTelemetry.dropped_dirty_after_clean = cleanDrops;
         statuteCompletionTelemetry.triggered = targets.length > 0;
 
         if (targets.length > 0) {
-          console.log(`[statute-completion] triggered for ${targets.length} statute(s): ${targets.map((t) => t.name).join(" | ")}`);
+          console.log(`[statute-completion] triggered for ${targets.length} cleaned statute(s):`);
+          for (const t of targets) console.log(`  raw="${t.name}" → cleaned="${t.cleaned}"`);
           const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
           if (!PERPLEXITY_API_KEY) {
             statuteCompletionTelemetry.status = "no_perplexity_key";
           } else {
-            // ─── Fix E (revised): structured-fields request ───
-            // Ports the proven pattern from supabase/functions/citation-chat
-            // (the user-facing "אזכור אחיד" flow). The model returns DISCRETE
-            // bibliographic fields and we assemble the citation string locally
-            // via formatStatuteCitation(). System prompt is ported verbatim
-            // from citation-chat lines 1131-1142, only adapted for plurals.
-            // citation-chat itself is NOT modified.
-            const userPrompt = [
-              `מצא את פרטי הפרסום הרשמי של החוקים/הפקודות/התקנות הבאים. החזר עבור כל פריט את כל השדות הביבליוגרפיים בנפרד. JSON תקני בלבד.`,
-              ...targets.map((t, i) => `${i + 1}. ${t.name}`),
-            ].join("\n");
-
-            // System prompt — ported VERBATIM from citation-chat/index.ts:1131-1142
-            // (booklet-vs-page disambiguation block + worked examples), with the
-            // singular "החוק" widened to plural and `kind` field added so the
-            // local formatter can route between Rule 2 / Rule 4 / Rule 6.
+            // ─── Fix G2: one Perplexity call per cleaned name ──────
+            // Replaces the previous batched 3-name call. citation-chat sends
+            // exactly one entity per call; we mirror that. Each call has its
+            // own 5s timeout so total budget ≤ 15s (matches the prior call's
+            // single-shot budget). Each call also gets a fresh failure mode
+            // so one bad input no longer poisons the whole batch.
+            //
+            // System prompt — ported VERBATIM from citation-chat/index.ts
+            // (singular form), with `kind` field added so the local formatter
+            // can route between Rule 2 / Rule 4 / Rule 6.
             const systemPrompt = `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
-חפש את פרטי הפרסום הרשמי של כל פריט. לחקיקה ראשית חפש בספר החוקים (ס"ח). לחוק-יסוד חפש בספר החוקים (ס"ח). לחקיקת משנה (תקנות, צווים) חפש בקובץ התקנות (ק"ת). לפקודות מנדטוריות בנוסח חדש חפש בנוסח חדש (נ"ח).
+חפש את פרטי הפרסום הרשמי של החוק. לחקיקה ראשית חפש בספר החוקים (ס"ח). לחוק-יסוד חפש בספר החוקים (ס"ח). לחקיקת משנה (תקנות, צווים) חפש בקובץ התקנות (ק"ת). לפקודות מנדטוריות בנוסח חדש חפש בנוסח חדש (נ"ח).
 הפורמט:
-{"candidates":[{"found":true/false,"kind":"primary_legislation|basic_law|secondary_legislation","lawName":"שם החוק המלא","hebrewYear":"שנה עברית","gregorianYear":1965,"collection":"ס\\"ח","page":63,"url":"קישור רשמי","isNewVersion":false,"isCombinedVersion":false}]}
+{"found":true/false,"kind":"primary_legislation|basic_law|secondary_legislation","lawName":"שם החוק המלא","hebrewYear":"שנה עברית","gregorianYear":1965,"collection":"ס\\"ח","page":63,"url":"קישור רשמי","isNewVersion":false,"isCombinedVersion":false}
 collection חייב להיות אחד מ: ס"ח, ק"ת, נ"ח, ע"ר
 kind=basic_law רק עבור חוקי-יסוד; lawName יוחזר ללא הקידומת "חוק-יסוד:".
 
@@ -5181,89 +5278,98 @@ kind=basic_law רק עבור חוקי-יסוד; lawName יוחזר ללא הקי
 
 isNewVersion=true אם החוק הוא בנוסח חדש (נו"ח).
 isCombinedVersion=true אם החוק הוא בנוסח משולב.
-אם פריט לא נמצא או חסרים פרטי פרסום מאומתים — החזר found=false עבורו (אל תמציא).`;
+אם לא מצאת את החוק או חסרים פרטי פרסום מאומתים — החזר found=false (אל תמציא).`;
 
-            const schema = {
+            const singleSchema = {
               type: "object",
               properties: {
-                candidates: {
-                  type: "array",
-                  items: {
-                    type: "object",
-                    properties: {
-                      found: { type: "boolean" },
-                      kind: { type: "string", enum: ["primary_legislation", "basic_law", "secondary_legislation"] },
-                      lawName: { type: "string" },
-                      hebrewYear: { type: "string" },
-                      gregorianYear: { type: "number" },
-                      collection: { type: "string", enum: ["ס\"ח", "ק\"ת", "נ\"ח", "ע\"ר"] },
-                      page: { type: "number" },
-                      url: { type: "string" },
-                      isNewVersion: { type: "boolean" },
-                      isCombinedVersion: { type: "boolean" },
-                    },
-                    required: ["found", "kind", "lawName", "collection", "url"],
-                  },
-                },
+                found: { type: "boolean" },
+                kind: { type: "string", enum: ["primary_legislation", "basic_law", "secondary_legislation"] },
+                lawName: { type: "string" },
+                hebrewYear: { type: "string" },
+                gregorianYear: { type: "number" },
+                collection: { type: "string", enum: ["ס\"ח", "ק\"ת", "נ\"ח", "ע\"ר"] },
+                page: { type: "number" },
+                url: { type: "string" },
+                isNewVersion: { type: "boolean" },
+                isCombinedVersion: { type: "boolean" },
               },
-              required: ["candidates"],
+              required: ["found", "kind", "lawName", "collection", "url"],
             };
-            const ctrl = new AbortController();
-            const timeoutId = setTimeout(() => ctrl.abort(), 15_000);
-            let rawFields: StatuteFields[] = [];
-            try {
-              const res = await fetch("https://api.perplexity.ai/chat/completions", {
-                method: "POST",
-                headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, "Content-Type": "application/json" },
-                signal: ctrl.signal,
-                body: JSON.stringify({
-                  model: "sonar-pro",
-                  search_domain_filter: TRUSTED_LEGAL_DOMAINS,
-                  response_format: { type: "json_schema", json_schema: { name: "statute_completion_structured", schema } },
-                  messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: userPrompt },
-                  ],
-                }),
-              });
-              clearTimeout(timeoutId);
-              if (res.ok) {
-                const data = await res.json();
-                const content = data.choices?.[0]?.message?.content || "";
-                try {
-                  const parsed = JSON.parse(content);
-                  if (Array.isArray(parsed?.candidates)) rawFields = parsed.candidates.slice(0, 3);
-                } catch (parseErr) {
-                  console.warn("[statute-completion] JSON parse failed:", parseErr);
-                  statuteCompletionTelemetry.status = "parse_failed";
-                }
-              } else {
-                console.warn("[statute-completion] HTTP", res.status);
-                statuteCompletionTelemetry.status = "request_failed";
-              }
-            } catch (err) {
-              clearTimeout(timeoutId);
-              const isAbort = err instanceof DOMException && err.name === "AbortError";
-              statuteCompletionTelemetry.status = isAbort ? "timeout" : "request_failed";
-              console.warn("[statute-completion] fetch failed:", err);
-            }
 
-            // Transform structured fields → synthetic PerplexityCompletionCandidate
-            // so the existing validatePerplexityCandidate guards (URL allowlist,
-            // Fix C shape backstop, engine resolver) all still apply downstream.
-            const raw: PerplexityCompletionCandidate[] = [];
+            type PerCallStatus = "ok" | "not_found" | "timeout" | "request_failed" | "parse_failed";
+            const perCallStatus: PerCallStatus[] = [];
+            const rawFields: Array<StatuteFields | null> = [];
+
+            for (const tgt of targets) {
+              const userPromptSingle = `מצא את פרטי הפרסום הרשמי של החוק הישראלי "${tgt.cleaned}". חפש באיזה ספר חוקים הוא פורסם (ס"ח / ק"ת / נ"ח / ע"ר), באיזו שנה עברית ולועזית, ומה מספר העמוד הראשון.`;
+              const ctrl = new AbortController();
+              const timeoutId = setTimeout(() => ctrl.abort(), 5_000);
+              let status: PerCallStatus = "ok";
+              let parsed: StatuteFields | null = null;
+              try {
+                const res = await fetch("https://api.perplexity.ai/chat/completions", {
+                  method: "POST",
+                  headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, "Content-Type": "application/json" },
+                  signal: ctrl.signal,
+                  body: JSON.stringify({
+                    model: "sonar-pro",
+                    search_domain_filter: TRUSTED_LEGAL_DOMAINS,
+                    response_format: { type: "json_schema", json_schema: { name: "statute_completion_single", schema: singleSchema } },
+                    messages: [
+                      { role: "system", content: systemPrompt },
+                      { role: "user", content: userPromptSingle },
+                    ],
+                  }),
+                });
+                clearTimeout(timeoutId);
+                if (res.ok) {
+                  const data = await res.json();
+                  const content = data.choices?.[0]?.message?.content || "";
+                  try {
+                    parsed = JSON.parse(content) as StatuteFields;
+                    if (parsed?.found === false) status = "not_found";
+                  } catch (parseErr) {
+                    console.warn("[statute-completion] JSON parse failed:", parseErr);
+                    status = "parse_failed";
+                  }
+                } else {
+                  console.warn("[statute-completion] HTTP", res.status, "for:", tgt.cleaned);
+                  status = "request_failed";
+                }
+              } catch (err) {
+                clearTimeout(timeoutId);
+                const isAbort = err instanceof DOMException && err.name === "AbortError";
+                status = isAbort ? "timeout" : "request_failed";
+                console.warn("[statute-completion] fetch failed for:", tgt.cleaned, err);
+              }
+              perCallStatus.push(status);
+              rawFields.push(parsed && status === "ok" ? parsed : null);
+            }
+            statuteCompletionTelemetry.per_call_status = perCallStatus;
+
+            // Transform structured fields → synthetic PerplexityCompletionCandidate.
+            // Indices align with `targets[]` so we can map a candidate back to
+            // the original body mention without title-substring guesswork.
             const formatDrops: Record<string, number> = {};
-            for (const f of rawFields) {
+            type RawWithIndex = { c: PerplexityCompletionCandidate; targetIdx: number };
+            const raw: RawWithIndex[] = [];
+            for (let i = 0; i < rawFields.length; i++) {
+              const f = rawFields[i];
+              if (!f) {
+                if (perCallStatus[i] === "not_found") {
+                  formatDrops.not_found = (formatDrops.not_found || 0) + 1;
+                } else {
+                  const k = `call_${perCallStatus[i]}`;
+                  formatDrops[k] = (formatDrops[k] || 0) + 1;
+                }
+                continue;
+              }
               if (f.found === false) {
                 formatDrops.not_found = (formatDrops.not_found || 0) + 1;
                 continue;
               }
-              // Fix F: pre-format guards. Reject on (1) case-law leakage in
-              // lawName, (2) placeholder/stub names, (3) malformed publication
-              // (bad collection / missing or non-positive page). Year fields
-              // intentionally NOT validated — formatter handles missing-year
-              // placeholders. Counts feed `drops` so before/after telemetry
-              // distinguishes Perplexity garbage from format failures.
+              // Fix F: pre-format guards (case-law leakage, placeholders, malformed publication).
               const fieldReason = validateStatuteFields(f);
               if (fieldReason) {
                 formatDrops[fieldReason] = (formatDrops[fieldReason] || 0) + 1;
@@ -5278,41 +5384,42 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               statuteCompletionTelemetry.format_kind_counts![kind] =
                 (statuteCompletionTelemetry.format_kind_counts![kind] || 0) + 1;
               raw.push({
-                type: "statute",
-                title: (f.lawName || "").trim(),
-                citation: formatted,
-                year_hebrew: f.hebrewYear,
-                year_gregorian: f.gregorianYear !== undefined ? String(f.gregorianYear) : undefined,
-                url: f.url || "",
+                targetIdx: i,
+                c: {
+                  type: "statute",
+                  title: (f.lawName || "").trim(),
+                  citation: formatted,
+                  year_hebrew: f.hebrewYear,
+                  year_gregorian: f.gregorianYear !== undefined ? String(f.gregorianYear) : undefined,
+                  url: f.url || "",
+                },
               });
             }
 
             // 5. Validate + insert (operates on answerBody + footnotes)
-            // Seed drops with pre-validation format drops (Fix E structured path)
             const drops: Record<string, number> = { ...formatDrops };
             let nextCardId = sourceCards.reduce((mx, c) => Math.max(mx, c.id), 0) + 1;
             let nextFnNumSC = footnotes.reduce((mx, f) => Math.max(mx, f.number), 0) + 1;
 
-            // Apply inserts in REVERSE body order so positions stay valid.
             const inserts: Array<{ insertAt: number; marker: string; newFn: typeof footnotes[number]; newCard: SourceCard; matchedName: string }> = [];
 
-            for (let i = 0; i < raw.length; i++) {
-              const c = raw[i];
-              const v = validatePerplexityCandidate(c);
+            for (const item of raw) {
+              // ─── Fix G3: skip Fix C shape regex + engine resolver ──
+              // The candidate's citation string was just assembled locally
+              // by formatStatuteCitation() from fields that already passed
+              // validateStatuteFields(). Re-running fixCStatuteCitationShapeError
+              // (designed for raw model output) and the engine resolver only
+              // generates false negatives. We keep Guard 1 (URL allowlist)
+              // because that's still meaningful information.
+              const v = validatePerplexityCandidate(item.c, { skipShapeAndEngine: true });
               if (!v.ok) {
                 drops[v.reason] = (drops[v.reason] || 0) + 1;
                 continue;
               }
-              let target = targets[i];
-              if (!target && v.candidate.title) {
-                target = targets.find((t) => {
-                  const key = t.name.replace(/^חוק[- ]יסוד\s*:?\s*/, "").trim();
-                  return key.length >= 6 && (v.candidate.title?.includes(key) ?? false);
-                });
-              }
-              const matchedName = target?.name || "";
-              const matchedIndex = target?.index ?? -1;
-              if (!matchedName) continue;
+              const target = targets[item.targetIdx];
+              if (!target) continue;
+              const matchedName = target.name;
+              const matchedIndex = target.index;
               const idx = matchedIndex >= 0 && answerBody.slice(matchedIndex, matchedIndex + matchedName.length) === matchedName
                 ? matchedIndex
                 : answerBody.indexOf(matchedName);
@@ -5346,16 +5453,21 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               answerBody = answerBody.slice(0, ins.insertAt) + ins.marker + answerBody.slice(ins.insertAt);
               sourceCards.push(ins.newCard);
               footnotes.push(ins.newFn);
-              // Make step 6 treat this new bracket as a known mapping (identity).
               oldIdToNewNumber.set(ins.newFn.number, ins.newFn.number);
               cardIdToNewNumber.set(ins.newCard.id, ins.newFn.number);
               fnNumberToCard.set(ins.newFn.number, ins.newCard);
               shortNameRegistry.set(ins.newFn.number, computeShortName(ins.newFn));
             }
 
+            // Fold cleaner drops into the main drops map for telemetry parity.
+            for (const [k, v] of Object.entries(cleanDrops)) drops[k] = (drops[k] || 0) + v;
             if (Object.keys(drops).length > 0) statuteCompletionTelemetry.drops = drops;
             if (!statuteCompletionTelemetry.status) statuteCompletionTelemetry.status = "ok";
           }
+        } else if (Object.keys(cleanDrops).length > 0) {
+          // All candidates dropped by the cleaner — record so telemetry isn't silent.
+          statuteCompletionTelemetry.drops = { ...cleanDrops };
+          statuteCompletionTelemetry.status = "all_dirty";
         }
         statuteCompletionTelemetry.duration_ms = Date.now() - tSC;
       } catch (err) {
