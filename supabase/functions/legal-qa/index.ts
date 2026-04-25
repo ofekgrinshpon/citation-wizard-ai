@@ -6443,21 +6443,23 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       );
     }
 
-    // ===== Phase B — research-mode classifier + canonical re-emission =====
-    // Runs the same `routeChapterFootnote` classifier over Fast/Deep research
-    // footnotes. Behaviour change vs Phase A: when the legal resolver returns
-    // `resolved === true`, we OVERWRITE `fn.citation` with the canonical
-    // re-emission (`routed.result.canonical`). All other paths remain
-    // observation-only:
-    //   • legal_resolver + unresolved → leave original text, count drop reason.
-    //   • bibliography → DRY RUN (deferred to Phase D — risk of conflicting
-    //     with `placeholder_dominant` filter and the legislation-footnote
-    //     "(לא נמצאו פרטים בבליוגרפיים)" exception).
-    //   • skipped → telemetry only.
+    // ===== Phase C — research-mode classifier + canonical re-emission +
+    //                 Stage 2 Perplexity party-lookup retry =====
+    // Mirrors the academic-chapter pipeline above (~lines 6272-6444), with
+    // two differences:
+    //   1. No `fnNumberToCard` map in research mode — first-pass router is
+    //      called hint-less. Stage 2 retry passes party/year/date hints.
+    //   2. Stage 2 retry is GATED behind `modeProfile.partyLookupRetryEnabled`.
+    //      Defaults: Deep ON, Fast OFF (latency-sensitive). Both modes use
+    //      `partyLookupPlaceholderPolicy = "emit"` per chapter precedent.
     //
-    // Stage 2 (Perplexity party-lookup retry) is NOT wired here — that's
-    // Phase C, gated behind `modeProfile.partyLookupRetryEnabled`. We do
-    // continue to count `needs_party_lookup_candidates` as a Phase C preview.
+    // Behavioural matrix:
+    //   • legal_resolver + resolved → mutate fn.citation = canonical.
+    //   • legal_resolver + needs_party_lookup → defer to Stage 2 (when flag
+    //     on), OR record original drop reason (when flag off).
+    //   • legal_resolver + other unresolved → leave original, count drop.
+    //   • bibliography → DRY RUN (deferred to Phase D).
+    //   • skipped → telemetry only.
     //
     // Scope guards:
     //   • taskMode === RESEARCH_MODE only — academic_writing already runs
@@ -6471,30 +6473,49 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         book_chapter: 0, report: 0, web_source: 0, unknown: 0,
       };
       const rClassifyReasons: Record<string, number> = {};
-      // Phase B: legal resolver now mutates on success — these are real
-      // counts, not dry-run. Field names dropped the `_dry_run` suffix.
       let rLegalResolved = 0;
       let rLegalUnresolved = 0;
       const rLegalDropReasons: Record<string, number> = {};
-      let rLegalCanonicalRewrites = 0; // entries where canonical !== original
-      // Stage 2 candidates we *would* retry under Phase C — observability only.
+      let rLegalCanonicalRewrites = 0;
+      // Phase B preview counter — kept under legal_resolver for backwards-
+      // compatible telemetry shape, even when Stage 2 is on.
       let rNeedsPartyLookupCandidates = 0;
-      // Bibliography stays dry-run in Phase B — counts only.
       let rBibCount = 0;
       const rBibByType: Record<string, number> = {};
       const rBibWarnings: Record<string, number> = {};
       let rSkippedCount = 0;
       const rSkippedReasons: Record<string, number> = {};
 
-      // Same pure-placeholder skip rule as the academic block.
+      // Stage 2 telemetry — populated only when retry runs. `null` when the
+      // flag is off OR no candidates were found.
+      type ResearchPartyLookup = {
+        attempted: number;
+        recovered: number;
+        recovered_without_full_date: number;
+        recovered_with_placeholders: number;
+        placeholder_fields: Record<string, number>;
+        failed: number;
+        failure_reasons: Record<string, number>;
+        status: string;
+        wall_ms: number;
+      };
+      let researchPartyLookup: ResearchPartyLookup | null = null;
+
+      // Pending entries for Stage 2 retry. Captured during pass 1.
+      type ResearchPending = {
+        fn: typeof finalFootnotes[number];
+        text: string;
+        partial: Record<string, string>;
+      };
+      const pendingPartyLookup: ResearchPending[] = [];
+
       const PURE_PLACEHOLDER_RE = /^\s*\[חסר[^\]]*\]\s*\.?\s*$/;
       const t0 = Date.now();
+
+      // ─── Pass 1: classify + apply non-Stage-2 outcomes ───
       for (const fn of finalFootnotes) {
         const text = fn.citation || "";
         if (PURE_PLACEHOLDER_RE.test(text)) continue;
-        // Note: research mode does not maintain a fnNumberToCard map keyed
-        // the same way as academic_writing. Run the classifier with no
-        // hints — that's the honest baseline shared with Phase A.
         const routed = routeChapterFootnote(text);
         rClassificationCounts[routed.sourceType] =
           (rClassificationCounts[routed.sourceType] || 0) + 1;
@@ -6503,11 +6524,6 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         switch (routed.route) {
           case "legal_resolver":
             if (routed.result.resolved) {
-              // Phase B mutation: replace the AI-generated citation with the
-              // resolver's canonical form. The canonical can ONLY re-emit
-              // fields the resolver successfully parsed, so this cannot
-              // introduce hallucinated content — only cosmetic cleanup
-              // (whitespace, punctuation balance, supra fragments).
               const canonical = routed.result.canonical;
               if (canonical && canonical !== text) {
                 fn.citation = canonical;
@@ -6515,19 +6531,28 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               }
               rLegalResolved++;
             } else {
-              rLegalUnresolved++;
               const reason = routed.result.reason;
-              rLegalDropReasons[reason] = (rLegalDropReasons[reason] || 0) + 1;
-              if (
+              const isPartyLookupCandidate =
                 reason === "needs_party_lookup" &&
-                routed.result.partialFields?.caseNumber
-              ) {
+                routed.result.partialFields?.caseNumber;
+              if (isPartyLookupCandidate) {
                 rNeedsPartyLookupCandidates++;
+                if (modeProfile.partyLookupRetryEnabled) {
+                  // Defer telemetry — Stage 2 will resolve OR re-record.
+                  pendingPartyLookup.push({
+                    fn,
+                    text,
+                    partial: routed.result.partialFields,
+                  });
+                  break;
+                }
               }
+              // Flag off OR not a Stage 2 candidate → record now.
+              rLegalUnresolved++;
+              rLegalDropReasons[reason] = (rLegalDropReasons[reason] || 0) + 1;
             }
             break;
           case "bibliography":
-            // Dry run only — Phase D will decide whether to canonicalise.
             rBibCount++;
             rBibByType[routed.sourceType] = (rBibByType[routed.sourceType] || 0) + 1;
             for (const w of routed.warnings) {
@@ -6540,13 +6565,120 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             break;
         }
       }
+
+      // ─── Stage 2 — Perplexity party-name backfill ───
+      // Only fires when the per-mode flag is on AND we collected candidates.
+      if (modeProfile.partyLookupRetryEnabled && pendingPartyLookup.length > 0) {
+        // Bound batch size to cap latency on caselaw-heavy questions.
+        const cap = modeProfile.partyLookupMaxBatchSize;
+        const batch = pendingPartyLookup.slice(0, cap);
+        const overflow = pendingPartyLookup.slice(cap);
+
+        const requests = batch.map((p) => ({
+          caseNumber: p.partial.caseNumber,
+          caseTypeHint: p.partial.caseType || undefined,
+        }));
+        const lookupT0 = Date.now();
+        const lookup = await lookupPartyNames(requests);
+        const lookupMs = Date.now() - lookupT0;
+
+        researchPartyLookup = {
+          attempted: lookup.attempted,
+          recovered: 0,
+          recovered_without_full_date: 0,
+          recovered_with_placeholders: 0,
+          placeholder_fields: {},
+          failed: 0,
+          failure_reasons: {},
+          status: lookup.status,
+          wall_ms: lookupMs,
+        };
+
+        for (const p of batch) {
+          const hit = lookup.hits.get(p.partial.caseNumber);
+          if (hit) {
+            const retried = routeChapterFootnote(p.text, {
+              party1Hint: hit.party1,
+              party2Hint: hit.party2,
+              fullDateHint: hit.fullDate,
+              yearHint: hit.year,
+              partyLookupRetry: true,
+            });
+            if (retried.route === "legal_resolver" && retried.result.resolved) {
+              const placeholders = (retried.result as { placeholders?: string[] }).placeholders;
+              const hasPlaceholders = !!(placeholders && placeholders.length > 0);
+
+              if (hasPlaceholders && modeProfile.partyLookupPlaceholderPolicy === "drop") {
+                // Policy: drop — count as failed, leave original text.
+                researchPartyLookup.failed++;
+                researchPartyLookup.failure_reasons["placeholder_dropped_by_policy"] =
+                  (researchPartyLookup.failure_reasons["placeholder_dropped_by_policy"] || 0) + 1;
+                rLegalUnresolved++;
+                rLegalDropReasons["needs_party_lookup"] =
+                  (rLegalDropReasons["needs_party_lookup"] || 0) + 1;
+                continue;
+              }
+
+              // Policy: emit (or no placeholders at all) — mutate citation.
+              const canonical = retried.result.canonical;
+              if (canonical && canonical !== p.text) {
+                p.fn.citation = canonical;
+                rLegalCanonicalRewrites++;
+              }
+              rLegalResolved++;
+              researchPartyLookup.recovered++;
+              if (!hit.fullDate && hit.year) {
+                researchPartyLookup.recovered_without_full_date++;
+              }
+              if (hasPlaceholders) {
+                researchPartyLookup.recovered_with_placeholders++;
+                for (const f of placeholders!) {
+                  researchPartyLookup.placeholder_fields[f] =
+                    (researchPartyLookup.placeholder_fields[f] || 0) + 1;
+                }
+              }
+            } else {
+              // Retry still unresolved — honest count.
+              researchPartyLookup.failed++;
+              researchPartyLookup.failure_reasons["retry_still_unresolved"] =
+                (researchPartyLookup.failure_reasons["retry_still_unresolved"] || 0) + 1;
+              rLegalUnresolved++;
+              rLegalDropReasons["needs_party_lookup"] =
+                (rLegalDropReasons["needs_party_lookup"] || 0) + 1;
+            }
+          } else {
+            // No party hit — record the lookup-side failure reason.
+            researchPartyLookup.failed++;
+            const reason = lookup.failures.get(p.partial.caseNumber) || "no_match";
+            researchPartyLookup.failure_reasons[reason] =
+              (researchPartyLookup.failure_reasons[reason] || 0) + 1;
+            rLegalUnresolved++;
+            rLegalDropReasons["needs_party_lookup"] =
+              (rLegalDropReasons["needs_party_lookup"] || 0) + 1;
+          }
+        }
+
+        // Overflow entries — beyond batch cap. Counted as honest failures
+        // under a dedicated reason so we can size the cap properly later.
+        for (const _p of overflow) {
+          researchPartyLookup.failed++;
+          researchPartyLookup.failure_reasons["skipped_over_batch_cap"] =
+            (researchPartyLookup.failure_reasons["skipped_over_batch_cap"] || 0) + 1;
+          rLegalUnresolved++;
+          rLegalDropReasons["needs_party_lookup"] =
+            (rLegalDropReasons["needs_party_lookup"] || 0) + 1;
+        }
+      }
       const phaseMs = Date.now() - t0;
 
       researchEngine = {
         depth: researchDepth,
-        // Mode label flips from "observability_only" → "canonical_reemission"
-        // so log readers can distinguish Phase A baselines from Phase B runs.
-        mode: "canonical_reemission",
+        // Mode label reflects what this run actually did. When the Stage 2
+        // flag is on AND we attempted a lookup, advertise it; otherwise
+        // stay on the Phase B label so log-grep history stays consistent.
+        mode: researchPartyLookup
+          ? "canonical_reemission+party_lookup"
+          : "canonical_reemission",
         footnotes_scanned: finalFootnotes.length,
         classification_counts: rClassificationCounts,
         classify_reasons: rClassifyReasons,
@@ -6554,14 +6686,20 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           resolved_count: rLegalResolved,
           unresolved_count: rLegalUnresolved,
           drop_reasons: rLegalDropReasons,
-          // How many resolved entries were actually rewritten (canonical
-          // differed from the original text). resolved_count − this number
-          // = no-op rewrites where the AI already produced a canonical form.
           canonical_rewrites: rLegalCanonicalRewrites,
-          // Phase C preview: how many entries WOULD enter the Perplexity
-          // party-lookup retry if `partyLookupRetryEnabled` were on for
-          // this depth.
+          // Backwards-compatible: still the count of entries that WOULD have
+          // entered Stage 2. Under Phase C this equals the actual Stage 2
+          // attempts (modulo cap). Under Phase B (flag off) it stays as
+          // observability only.
           needs_party_lookup_candidates: rNeedsPartyLookupCandidates,
+        },
+        party_lookup: researchPartyLookup,
+        // Per-mode flag snapshot so the eval can attribute behaviour to a
+        // specific MODE_PROFILES configuration without needing to grep code.
+        party_lookup_config: {
+          enabled: modeProfile.partyLookupRetryEnabled,
+          placeholder_policy: modeProfile.partyLookupPlaceholderPolicy,
+          max_batch_size: modeProfile.partyLookupMaxBatchSize,
         },
         bibliography_dry_run: {
           count: rBibCount,
@@ -6575,13 +6713,14 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         phase_ms: phaseMs,
       };
       console.log(
-        `[research-engine][phase-b][${researchDepth}] ` +
+        `[research-engine][phase-c][${researchDepth}] ` +
         `scanned=${finalFootnotes.length} ` +
         `cls=${JSON.stringify(rClassificationCounts)} ` +
         `legal=${rLegalResolved}/${rLegalResolved + rLegalUnresolved} ` +
         `rewrites=${rLegalCanonicalRewrites} ` +
         `legal_drops=${JSON.stringify(rLegalDropReasons)} ` +
         `needs_party_lookup=${rNeedsPartyLookupCandidates} ` +
+        `party_lookup=${researchPartyLookup ? JSON.stringify(researchPartyLookup) : "off"} ` +
         `bib=${rBibCount} skipped=${rSkippedCount} ms=${phaseMs}`,
       );
     }
