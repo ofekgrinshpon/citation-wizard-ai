@@ -164,11 +164,14 @@ async function runOne(jwt, q) {
       regex_matches_total: sc.regex_matches_total ?? null,
       kept_for_completion: sc.kept_for_completion ?? null,
       skipped_with_existing: sc.skipped_with_existing ?? null,
+      skipped_covered_by_primary: sc.skipped_covered_by_primary ?? 0,
+      insertion_placement: sc.insertion_placement ?? [],
       completed_count: sc.completed_count ?? 0,
       drops: sc.drops ?? {},
       duration_ms: sc.duration_ms ?? null,
       format_kind_counts: sc.format_kind_counts ?? null,
     } : null,
+    anchor_pass: (md?.stage_runs || []).find(s => s.stage === "anchor_pass") || null,
     completion_footnotes: {
       added: completionFns.length,
       useful, noisy,
@@ -220,6 +223,11 @@ async function runOne(jwt, q) {
     noisy_footnotes: totalNoisy,
     useful_ratio: totalAdded > 0 ? +(totalUseful / totalAdded).toFixed(2) : null,
     drop_reason_aggregate: dropAgg,
+    skipped_covered_by_primary_total: results.reduce((a, r) => a + (r.statute_completion?.skipped_covered_by_primary || 0), 0),
+    anchor_pass_runs: results.filter(r => r.anchor_pass).length,
+    anchor_pass_completed: results.filter(r => r.anchor_pass?.status === "complete" || r.anchor_pass?.status === "ok").length,
+    sentence_end_placements: results.reduce((a, r) => a + (r.statute_completion?.insertion_placement?.filter(p => p === "sentence_end").length || 0), 0),
+    name_adjacent_placements: results.reduce((a, r) => a + (r.statute_completion?.insertion_placement?.filter(p => p === "name_adjacent").length || 0), 0),
   };
 
   writeFileSync(`${OUT_DIR}/report.json`, JSON.stringify({ summary, results }, null, 2));

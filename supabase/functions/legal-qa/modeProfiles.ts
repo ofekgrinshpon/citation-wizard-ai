@@ -32,6 +32,12 @@ export interface ModeProfile {
   // ─── Anchor pass ───
   /** Run the post-draft anchor pass to inject extra footnotes. */
   anchorPassEnabled: boolean;
+  /**
+   * Cap on patches the anchor pass may apply per response. Fast keeps a
+   * tighter cap to bound latency; Deep allows the larger envelope.
+   * Replaces the previously hardcoded `>= 4` cap inside anchorPass.ts.
+   */
+  anchorPassMaxPatches: number;
 
   // ─── Models / drafter ───
   /** Drafter variant: "structured" → gpt-5-mini (fast), "legacy" → gpt-5 (deep). */
@@ -55,7 +61,12 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     footnoteTargetMax: 6,
     retrievalRounds: 1,
     perplexityCompletionMinAnchored: 2,
-    anchorPassEnabled: false, // Fast = structured path skips anchor pass (v7.6)
+    // Anchor pass is now the PRIMARY claim-to-source grounding path in Fast.
+    // Stage 5e (statute name completion) is demoted to a fallback that only
+    // fires when a named statute is not already covered by the source pack
+    // or by an anchor-pass marker. Fast cap of 2 keeps latency bounded.
+    anchorPassEnabled: true,
+    anchorPassMaxPatches: 2,
     drafterVariant: "structured",
     drafterTimeoutMs: 120000,
     creditCost: 5,
@@ -68,6 +79,7 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     retrievalRounds: 2,
     perplexityCompletionMinAnchored: 6,
     anchorPassEnabled: true,
+    anchorPassMaxPatches: 4,
     drafterVariant: "legacy", // gpt-5 instead of gpt-5-mini
     drafterTimeoutMs: 180000,
     creditCost: 5, // No multiplier yet — will be revisited once production cost is known.

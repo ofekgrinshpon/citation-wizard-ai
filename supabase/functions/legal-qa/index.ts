@@ -4324,7 +4324,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // from additional anchoring). The redundant fast+structured carve-out
     // was removed — the profile flag is the single source of truth.
     const skipAnchorPass = !modeProfile.anchorPassEnabled;
-    if (!skipAnchorPass && answerText.length > 200 && sourcePack.length >= 2) {
+    if (!skipAnchorPass && answerText.length > 200 && sourcePack.length >= 1) {
       const tAnchorStart = Date.now();
       const anchorSourcePack: AnchorPassSourcePackItem[] = sourceCards.map((sc) => ({
         id: sc.id,
@@ -4353,6 +4353,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           body: answerText,
           sourcePack: anchorSourcePack,
           claims: anchorClaims,
+          maxPatches: modeProfile.anchorPassMaxPatches,
         });
         stageRuns.push(anchorRes.run);
         if (anchorRes.patches.length > 0) {
@@ -5123,6 +5124,18 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       cleaned_names?: string[];
       dropped_dirty_after_clean?: Record<string, number>;
       per_call_status?: string[];
+      /**
+       * Demotion telemetry. After the architecture shift to claim-to-source as
+       * the primary citation mechanism, Stage 5e is supposed to fire only as a
+       * fallback. This field counts statute names that we deliberately did NOT
+       * send to Perplexity because the source pack already contains a citation
+       * for them (or because the anchor pass already attached a marker to the
+       * sentence carrying the name). High values here mean the primary path is
+       * doing its job.
+       */
+      skipped_covered_by_primary?: number;
+      /** Marker placement strategy used per insert: "sentence_end" or "name_adjacent" (legacy fallback). */
+      insertion_placement?: string[];
     } = {
       triggered: false,
       named_statutes: [],
@@ -5130,6 +5143,8 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       skipped_with_existing: 0,
       structured_path: true,
       format_kind_counts: {},
+      skipped_covered_by_primary: 0,
+      insertion_placement: [],
     };
     if (enableDeepPipeline) {
       emitStage("statute_completion", "running");
@@ -5252,8 +5267,47 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           candidates.push(mention);
         }
 
-        // 3. Cap at 3
-        const rawTargets = candidates.slice(0, 3);
+        // ─── Demotion gate (architecture shift): claim-to-source primary ───
+        // Stage 5e is now a TRUE FALLBACK. We deliberately skip any candidate
+        // that is already covered by:
+        //   (a) the local source pack (a sourceCard whose citation contains
+        //       the statute name, or whose source_type is israeli_law/basic_law
+        //       and whose title-key matches), OR
+        //   (b) an anchor-pass marker that landed within ±240 chars of the
+        //       mention (i.e. the same paragraph/sentence is already grounded).
+        // The result: Perplexity is only consulted when the primary path failed
+        // for this specific statute. High `skipped_covered_by_primary` ⇒ the
+        // primary path is doing its job; Stage 5e correctly stays quiet.
+        const primaryFiltered: Array<{ name: string; index: number }> = [];
+        for (const c of candidates) {
+          const nameKey = c.name.replace(/^חוק[- ]יסוד\s*:?\s*/, "").trim();
+          // (a) Source pack coverage — scan all sourceCards (any provenance).
+          const coveredBySourcePack = sourceCards.some((sc) => {
+            if (!sc.citation) return false;
+            if (sc.citation.includes(c.name)) return true;
+            if (nameKey.length >= 6 && sc.citation.includes(nameKey)) return true;
+            return false;
+          });
+          if (coveredBySourcePack) {
+            statuteCompletionTelemetry.skipped_covered_by_primary!++;
+            continue;
+          }
+          // (b) Anchor-pass marker within ±240 chars (1-2 sentences in Hebrew memos).
+          // Anchor pass already wrote markers into answerText/answerBody by this
+          // point; we just check for any [N] marker in the window.
+          const wStart = Math.max(0, c.index - 240);
+          const wEnd = Math.min(answerBody.length, c.index + c.name.length + 240);
+          const window = answerBody.slice(wStart, wEnd);
+          if (anchorPassApplied > 0 && /\[\d{1,3}\]/.test(window)) {
+            statuteCompletionTelemetry.skipped_covered_by_primary!++;
+            continue;
+          }
+          primaryFiltered.push(c);
+        }
+
+        // 3. Cap at 3 — applied AFTER the demotion gate so the cap counts
+        // only true fallback candidates.
+        const rawTargets = primaryFiltered.slice(0, 3);
 
         // ─── Fix G1: input sanitization ─────────────────────────────
         // Apply cleanStatuteCandidate to each scraped name BEFORE Perplexity
@@ -5471,9 +5525,37 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
                 url: v.candidate.url,
                 source: "perplexity_completion",
               };
-              inserts.push({ insertAt: idx + matchedName.length, marker: `[${newFnNumber}]`, newFn, newCard, matchedName });
+              // Sentence-end placement (architecture shift): citations are placed
+              // at the end of the sentence/clause that mentions the statute, not
+              // immediately after the statute's name. This matches the legal-writing
+              // convention "...סעיף 39 לחוק החוזים, אסור להתנהל שלא בתום לב.[1]"
+              // rather than "...לחוק החוזים[1], אסור להתנהל...".
+              //
+              // Strategy: from the END of the matched name, walk forward looking
+              // for the first sentence terminator (. ? ! ; or newline), skipping
+              // characters inside parentheses/brackets, and place the marker
+              // immediately BEFORE that terminator. If no terminator is found
+              // within 220 chars, fall back to legacy name-adjacent placement.
+              const nameEnd = idx + matchedName.length;
+              let sentenceEnd = -1;
+              let depth = 0; // paren/bracket depth, so we don't break on ".)" inside ()
+              const MAX_LOOK = 220;
+              const limit = Math.min(answerBody.length, nameEnd + MAX_LOOK);
+              for (let p = nameEnd; p < limit; p++) {
+                const ch = answerBody[p];
+                if (ch === "(" || ch === "[") depth++;
+                else if (ch === ")" || ch === "]") depth = Math.max(0, depth - 1);
+                else if (depth === 0 && (ch === "." || ch === "?" || ch === "!" || ch === ";" || ch === "\n")) {
+                  sentenceEnd = p;
+                  break;
+                }
+              }
+              const usedSentenceEnd = sentenceEnd >= 0;
+              const insertAt = usedSentenceEnd ? sentenceEnd : nameEnd;
+              statuteCompletionTelemetry.insertion_placement!.push(usedSentenceEnd ? "sentence_end" : "name_adjacent");
+              inserts.push({ insertAt, marker: `[${newFnNumber}]`, newFn, newCard, matchedName });
               statuteCompletionTelemetry.completed_count++;
-              console.log(`[statute-completion] added FN#${newFnNumber} for "${matchedName}" → ${v.candidate.citation.slice(0, 80)}`);
+              console.log(`[statute-completion] added FN#${newFnNumber} for "${matchedName}" placement=${usedSentenceEnd ? "sentence_end" : "name_adjacent"} → ${v.candidate.citation.slice(0, 80)}`);
             }
 
             // Apply inserts in reverse position order
