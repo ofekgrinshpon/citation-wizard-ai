@@ -4015,12 +4015,18 @@ ${subIssuesForDeep.map((s, i) => `${i + 1}. **${s}**`).join("\n")}
 **מסקנה**
 ${conclusionSentenceTarget}. סגור את הטיעון. אם הוצגה אי-ודאות בשורה התחתונה — חזור עליה כאן בקצרה.`;
 
-      // ─── Footnote floor language (Deep = hard floor, Fast = soft) ─
+      // ─── Footnote floor language (both modes = strong target, quality > quantity) ─
+      // Deep keeps a higher target/cap than Fast (set per profile), but the
+      // wording is a "strong target", not a hard reject — to prevent the
+      // drafter from inventing footnotes from memory just to hit a quota.
+      // Validated 2026-04: hard-floor wording in Deep was being silently
+      // ignored when sources were thin, so we mirror Fast's soft-target
+      // language and let the parser/anchor pass close any real gaps.
       const footnoteFloorBlock = researchDepth === "deep"
-        ? `- **חובה: לפחות ${fnFloor} הערות שוליים מעוגנות.** זו רצפה קשיחה, לא יעד.
-- אם בקטלוג פחות מ-${fnFloor} מקורות core — **חובה להשלים** ממקורות supporting (וב-fallback מ-secondary) עד שתגיע ל-${fnFloor} הערות מעוגנות.
-- "מעוגן" = יש לך כרטיס מקור בקטלוג שמתאים לאזכור. אם אין מקור מהקטלוג שתומך בטענה — אל תכניס [N] ואל תחבר הערת שוליים. **אין לייצר הערה ביבליוגרפית "מהזיכרון".**
-- יעד עליון: עד ${fnMax} הערות מעוגנות.`
+        ? `- **יעד חזק להערות שוליים: ${fnFloor}-${fnMax} הערות מעוגנות**, יעד מינימלי ${fnFloor}.
+- אם בקטלוג פחות מ-${fnFloor} מקורות core — השלם ממקורות supporting (וב-fallback מ-secondary) עד שתתקרב ליעד.
+- "מעוגן" = יש לך כרטיס מקור בקטלוג שמתאים לאזכור. אם אין מקור מהקטלוג שתומך בטענה — אל תכניס [N] ואל תחבר הערת שוליים. **אין לייצר הערה ביבליוגרפית "מהזיכרון" כדי להגיע ליעד.**
+- אם הקטלוג קצר/חלש — מותר לסיים עם פחות הערות מעוגנות. **טיב לפני כמות**: עדיף פחות הערות אמיתיות מאשר יותר הערות מומצאות.`
         : `- **יעד הערות שוליים: ${fnFloor}-${fnMax} הערות מעוגנות**, מינימום ${fnFloor}.
 - "מעוגן" = יש לך כרטיס מקור בקטלוג שמתאים לאזכור. אם אין מקור מהקטלוג שתומך בטענה — אל תכניס [N] ואל תחבר הערת שוליים. **אין לייצר הערה ביבליוגרפית "מהזיכרון" כדי להגיע ליעד.**
 - אם הקטלוג קצר/חלש — מותר לסיים עם פחות הערות מעוגנות. עדיף פחות הערות אמיתיות מאשר יותר הערות מומצאות.`;
