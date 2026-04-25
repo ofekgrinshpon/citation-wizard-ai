@@ -88,22 +88,27 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     creditCost: 5,
   },
   deep: {
-    // ─── DEEP TUNING (eval batch 2026-04) ────────────────────────────────
-    // Deep mirrors the same primary grounding architecture as Fast (anchor
-    // pass = primary, Stage 5e = fallback) but with a richer envelope:
-    //   • footnote floor/cap higher, but soft target wording (see index.ts
-    //     footnoteFloorBlock — quality > quantity, no hard reject).
-    //   • perplexityCompletionMinAnchored lowered 6 → 4 now that Stage 5e is
-    //     a true fallback, so it only fires when the source pack is genuinely
-    //     thin after 2 retrieval rounds.
-    //   • qaGuardExcessiveTriggerThreshold = 8 (vs Fast's 5) — Deep can
-    //     legitimately complete more statutes from its larger source pack.
+    // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
+    // Deep shares the same primary grounding architecture as Fast (anchor
+    // pass = primary, Stage 5e = fallback) and keeps the mode-aware QA
+    // guard. The two drafting-envelope softening changes attempted in the
+    // 2026-04 batch were REVERTED because the eval did not validate them:
+    //   • perplexityCompletionMinAnchored stays at 6 (the 4 attempt did
+    //     not produce a clear shrink in Stage 5e work and Q6 anchored
+    //     coverage regressed 5→3).
+    //   • The Deep footnoteFloorBlock in index.ts stays as a hard floor
+    //     ("רצפה קשיחה"), not the soft "טיב לפני כמות" target that Fast
+    //     uses — Deep's product promise is a richer envelope.
+    // What we KEPT from the batch:
+    //   • qaGuardExcessiveTriggerThreshold = 8 (vs Fast's 5) — pure
+    //     observability win, correctly identified Q21 as a list-heavy
+    //     question rather than a regression.
     wordRangeMin: 1200,
     wordRangeMax: 2000,
     footnoteFloor: 8,
     footnoteTargetMax: 14,
     retrievalRounds: 2,
-    perplexityCompletionMinAnchored: 4,
+    perplexityCompletionMinAnchored: 6,
     anchorPassEnabled: true,
     anchorPassMaxPatches: 4,
     qaGuardExcessiveTriggerThreshold: 8,

@@ -4017,16 +4017,17 @@ ${conclusionSentenceTarget}. סגור את הטיעון. אם הוצגה אי-ו
 
       // ─── Footnote floor language (both modes = strong target, quality > quantity) ─
       // Deep keeps a higher target/cap than Fast (set per profile), but the
-      // wording is a "strong target", not a hard reject — to prevent the
-      // drafter from inventing footnotes from memory just to hit a quota.
-      // Validated 2026-04: hard-floor wording in Deep was being silently
-      // ignored when sources were thin, so we mirror Fast's soft-target
-      // language and let the parser/anchor pass close any real gaps.
+      // Deep keeps the harder floor wording: the 2026-04 eval showed that
+      // mirroring Fast's soft-target language let the drafter undershoot
+      // both the word range and the footnote floor on harder questions
+      // (Q6: 1980→1119 words, anchored 5→3). Deep's product promise is a
+      // richer envelope, so we keep "רצפה קשיחה" here and rely on the
+      // larger source pack + anchor pass to actually meet it. Fast keeps
+      // the soft-target wording it was validated with.
       const footnoteFloorBlock = researchDepth === "deep"
-        ? `- **יעד חזק להערות שוליים: ${fnFloor}-${fnMax} הערות מעוגנות**, יעד מינימלי ${fnFloor}.
-- אם בקטלוג פחות מ-${fnFloor} מקורות core — השלם ממקורות supporting (וב-fallback מ-secondary) עד שתתקרב ליעד.
-- "מעוגן" = יש לך כרטיס מקור בקטלוג שמתאים לאזכור. אם אין מקור מהקטלוג שתומך בטענה — אל תכניס [N] ואל תחבר הערת שוליים. **אין לייצר הערה ביבליוגרפית "מהזיכרון" כדי להגיע ליעד.**
-- אם הקטלוג קצר/חלש — מותר לסיים עם פחות הערות מעוגנות. **טיב לפני כמות**: עדיף פחות הערות אמיתיות מאשר יותר הערות מומצאות.`
+        ? `- **רצפה קשיחה להערות שוליים: ${fnFloor}-${fnMax} הערות מעוגנות**, מינימום ${fnFloor} (לא יעד — רצפה).
+- אם בקטלוג פחות מ-${fnFloor} מקורות core — השלם ממקורות supporting (וב-fallback מ-secondary) עד שתעמוד ברצפה.
+- "מעוגן" = יש לך כרטיס מקור בקטלוג שמתאים לאזכור. אם אין מקור מהקטלוג שתומך בטענה — אל תכניס [N] ואל תחבר הערת שוליים. **אין לייצר הערה ביבליוגרפית "מהזיכרון" כדי להגיע לרצפה.**`
         : `- **יעד הערות שוליים: ${fnFloor}-${fnMax} הערות מעוגנות**, מינימום ${fnFloor}.
 - "מעוגן" = יש לך כרטיס מקור בקטלוג שמתאים לאזכור. אם אין מקור מהקטלוג שתומך בטענה — אל תכניס [N] ואל תחבר הערת שוליים. **אין לייצר הערה ביבליוגרפית "מהזיכרון" כדי להגיע ליעד.**
 - אם הקטלוג קצר/חלש — מותר לסיים עם פחות הערות מעוגנות. עדיף פחות הערות אמיתיות מאשר יותר הערות מומצאות.`;
