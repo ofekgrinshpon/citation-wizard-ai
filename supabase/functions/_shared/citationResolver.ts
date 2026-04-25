@@ -357,6 +357,21 @@ export interface ResolveCitationOptions {
    * in `title` even when the citation lacks it.
    */
   titleHint?: string;
+  /**
+   * Caselaw v4 stage 2: party-name hints recovered by the targeted Perplexity
+   * party-lookup helper. Supplied ONLY after the first resolveCitation pass
+   * returned `needs_party_lookup`. The caselaw extractors fall back to these
+   * when the citation text + bold-parties scan come up empty.
+   *
+   * `fullDateHint` / `yearHint` are accepted for symmetry — the helper
+   * sometimes returns a decision date alongside the parties, and Perplexity
+   * docket records on nevo/supreme.court.gov.il are the same source of
+   * truth as for parties so it would be wasteful to drop them.
+   */
+  party1Hint?: string;
+  party2Hint?: string;
+  fullDateHint?: string;
+  yearHint?: string;
 }
 
 /**
