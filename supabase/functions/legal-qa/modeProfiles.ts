@@ -112,11 +112,11 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     drafterVariant: "structured",
     drafterTimeoutMs: 120000,
     creditCost: 5,
-    // Phase C: Fast keeps Stage 2 retry OFF by default. The user has agreed
-    // to flip this to `true` only after the eval shows median wall_ms
-    // increase ≤ 5s AND at least one recovered citation surviving the
-    // post-filters. Until then, Fast stays in Phase B behaviour.
-    partyLookupRetryEnabled: false,
+    // Phase C — Fast-on probe (TEMPORARY, per user request 2026-04-25).
+    // Flag flipped ON for the controlled experiment. Will be reverted if
+    // the probe shows wall_ms delta > "few seconds" OR no recovered
+    // citation actually survives into validFootnotes downstream.
+    partyLookupRetryEnabled: true,
     partyLookupPlaceholderPolicy: "emit",
     partyLookupMaxBatchSize: 3,
   },
