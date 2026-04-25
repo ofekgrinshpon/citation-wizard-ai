@@ -40,6 +40,14 @@ export interface ResolveSuccess {
   /** Canonical citation re-emitted from the engine template. */
   canonical: string;
   missingFields: [];
+  /**
+   * v4 stage 2 placeholder-emission policy: when `partyLookupRetry` is set
+   * and the case_law_database citation was emitted with `[חסר: ...]` markers
+   * in place of one or more required fields, this lists the field keys that
+   * were filled with placeholders (e.g. ["fullDate", "party2"]). Empty/undef
+   * for normal fully-resolved citations.
+   */
+  placeholders?: string[];
 }
 
 export interface ResolveFailure {
