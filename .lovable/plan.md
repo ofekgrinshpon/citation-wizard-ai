@@ -1,126 +1,158 @@
-## Academic Writing — current architecture
+# Type-aware citation pipeline for academic chapters
 
-Academic Writing is **not a separate edge function**. It rides inside `supabase/functions/legal-qa/index.ts`, gated by `taskMode === "academic_writing"` plus an `academicStep` field. The whole feature is a **state machine over four sub-modes** that share the legal-qa retrieval/drafting plumbing:
+## Problem (recap)
 
-```text
-Frontend wizard (LegalQAChat.tsx + academic_sessions table)
-  │
-  ├─ suggest_topics      ─┐
-  ├─ validate_question    │  cost = 0
-  ├─ propose_outline     ─┘  light path: keyword search + single LLM call,
-  │                          NO claim map / NO Stage 5e / NO anchor pass
-  │
-  ├─ write_chapter (isAbstract=true)  cost = 8
-  │     pure synthesis of prior chapters, NO new citations,
-  │     same light path as above
-  │
-  └─ write_chapter (real chapter)      cost = 8
-        enableDeepPipeline = true  →  forced to MODE_PROFILES.deep
-        full Frame→Decompose→Plan→Retrieve→Rank→SourcePack→ClaimMap→Draft
-        Stage 5e + anchor pass + citation engine resolver all run
-        Academic system prompt is PREPENDED to the structured drafter prompt
-        Outline-aware: parses thesis / line-of-argument / chapter role /
-                       counter-arguments / sibling titles from body.outline
+The chapter footnote loop (`legal-qa/index.ts` lines 6218–6238) currently does this for every chapter footnote:
+
+1. Pick `declared = "caselaw"` if a caselaw shape regex matches, else `declared = "statute"`.
+2. Call `resolveCitation(text, declared)` — which only knows how to resolve **5 legal source types** (basic_law / primary_legislation / secondary_legislation / case_law_published / case_law_database).
+3. Anything that isn't statute/caselaw (journal article, book, book chapter, report, web source, etc.) gets routed as `statute` by default, fails `validateCitation` because it lacks `lawName` / `hebrewYear` / `firstPage`, and is logged as `engine_drop_reason: "missing_required"`.
+
+That's why Q1=0/7, Q2=3/12, Q3=1/18 in the baseline — the resolver isn't broken, it's being **fed the wrong inputs**.
+
+## Goal
+
+Stop misrouting non-legal citations through the legal resolver. Add a classifier in front, route by type, and use distinct telemetry reasons so `missing_required` only means a real legal-citation extraction failure.
+
+## Design
+
+### 1. New `chapterCitationRouter.ts` (Deno-only, in `supabase/functions/_shared/`)
+
+Single file with two responsibilities:
+
+**(a) Classifier** — `classifyChapterFootnote(text: string): FootnoteSourceType`
+
+Returns one of:
+- `"statute"` — חוק / חוק-יסוד / פקודה / תקנות / כללים / צו (matches existing legal patterns)
+- `"caselaw"` — quoted case prefixes (`בג"ץ`, `ע"א`, etc.), unquoted whitelist (`עב`, `בל`, ...), or `פ"ד`/`פד"ע` series
+- `"journal_article"` — quoted title `"…"` + Hebrew journal name from the existing `HEBREW_JOURNALS` list (or `כתב-עת`); also `Vol. N, Page` patterns for English
+- `"book"` — bold/italic title (`**…**` / `*…*`) without journal token, optional `(שנה)` at end
+- `"book_chapter"` — `"…"` (article-style title) followed by `בתוך` + book reference
+- `"report"` — opens with `דו"ח` / `דוח` / `מסמך מדיניות` / `נייר עמדה` / `המרכז למחקר ולמידע של הכנסת`
+- `"web_source"` — raw URL pattern OR `(נצפה ב-…)` / `זמין ב-` markers without other source-type signals
+- `"unknown"` — none of the above match with confidence
+
+Implementation: ordered cascade of regex tests, first match wins. Patterns reused from `bibliography-lookup` (`HEBREW_JOURNALS`, `JOURNAL_HINT_RE`) and `citationResolver` (legal patterns). Conservative: when in doubt, return `"unknown"` rather than guessing.
+
+**(b) Router** — `routeChapterFootnote(text, opts) → RouteResult`
+
+```ts
+type RouteResult =
+  | { route: "legal_resolver"; sourceType: "statute" | "caselaw"; result: ResolveResult }
+  | { route: "bibliography"; sourceType: BibliographySourceType; canonical: string; warnings: string[] }
+  | { route: "skipped"; sourceType: "unknown"; reason: string };
 ```
 
-Key contracts:
-- `enableDeepPipeline = (taskMode === RESEARCH_MODE) || isAcademicChapter` — single gate that drives every Deep stage.
-- For chapters, `modeProfile` is **force-overridden** to `MODE_PROFILES.deep` after `resolveModeProfile`, so any `depth` from the body is ignored.
-- The legacy fallback drafter (claim-map miss path) reads `modeProfile.wordRangeMin/Max` for chapters so degraded runs no longer collapse to 500–1200 words.
-- Academic persona ("חוקר אקדמי בכיר", narrative citations, high-register Hebrew) is preserved by prepending `getAcademicSubModePrompt("write_chapter", body)` to the Deep structured prompt.
-- Cost: sub-modes free, abstract synthesis 8, real chapter 8 (not 5 like research).
+- For `statute` / `caselaw` → call existing `resolveCitation(text, declared, opts)` unchanged.
+- For `journal_article` → call existing `validateArticleCitation(text, text)` from `bibliography-lookup` (move it into a shared module so both functions can import it; logic is unchanged). This catches the common drafter mistakes (`(כרך X)` wrapper, missing journal name, missing first page) and emits placeholders. **No Perplexity call** — chapter writes already cost 8 credits and adding a per-footnote network round-trip per chapter would 4-10x latency. Use the existing local validator only.
+- For `book`, `book_chapter`, `report` → light shape normalization (whitespace, quote canonicalization, missing-year placeholder) and pass through. These are accepted as-is unless they're missing obvious fields, in which case a `[חסר: …]` placeholder is added.
+- For `web_source` → pass through after URL whitespace cleanup; flag in telemetry.
+- For `unknown` → return `{ route: "skipped", reason: "unclassified_citation_shape" }`. The footnote is **kept verbatim** (matching the current non-blocking philosophy).
 
-Frontend:
-- `taskMode` toggle in `LegalQAChat.tsx` (one of four).
-- Wizard state persisted to `academic_sessions` table (cross-device resume).
-- `academic_writing` does **NOT** show the Fast/Deep toggle — it's research-only by design.
+### 2. Wire the router into the chapter loop
 
-## Legal Research — Fast/Deep architecture (what we're comparing against)
-
-`MODE_PROFILES` config object in `modeProfiles.ts` is the single source of truth:
-- Two profiles (`fast`, `deep`), every per-mode difference is a typed field.
-- `index.ts` reads `modeProfile.X` everywhere — zero `if (deep)` branches.
-- Telemetry: each `qa_logs.metadata.profile_used` records the exact resolved profile so eval runs can compare modes on identical questions.
-- Mode-aware QA guard: `qaGuardExcessiveTriggerThreshold` differs between Fast (5) and Deep (8); the guard surfaces flags in `qa_logs.metadata.statute_completion.qa_guard` with no behavior change.
-- Locked architectural invariants (Fast + Deep both): anchor pass = primary, Stage 5e = fallback gated by source-pack coverage + anchor proximity (±240 chars), sentence-end placement only.
-- Validated by a dedicated eval harness (`eval/deep-mode-q1-q6-q21.mjs`, before/after JSON snapshots, qualitative answer text captured).
-
-## What's worth adopting — recommendation
-
-Three patterns from the Fast/Deep system map cleanly onto Academic and would make it materially safer to iterate. One pattern looks attractive but should be **rejected** for academic.
-
-### 1. Adopt: a typed `AcademicProfile` (single source of truth)
-
-Today, academic-specific knobs are spread across `index.ts` as ad-hoc constants and inline overrides:
-- Force-override to `MODE_PROFILES.deep` (line ~1842).
-- Hardcoded chapter `creditCost = 8` (line ~1831).
-- Hardcoded abstract word cap of 250 inside the prompt (line ~1235).
-- Hardcoded `chunk?.content?.slice(0, 2000)` for previous-chapter context (line ~1251).
-- Hardcoded 12,000-char document context limit.
-- Hardcoded outline parsing regexes.
-
-Mirror what `MODE_PROFILES` did for research. Create a small `academicProfiles.ts`:
+Replace `legal-qa/index.ts` lines 6218–6238 with:
 
 ```text
-ACADEMIC_PROFILES = {
-  chapter: {
-    inheritsFrom: "deep",         // explicit, not a hidden override
-    creditCost: 8,
-    prevChapterContextChars: 2000,
-    documentContextChars: 12000,
-    drafterPersona: "academic-senior",
+for each footnote fn:
+  if fn.citation contains [חסר ⇒ skip (existing behaviour)
+  result = routeChapterFootnote(fn.citation)
+  switch result.route:
+    legal_resolver:
+      if result.result.resolved:
+        fn.citation = result.result.canonical
+        legalResolved++
+      else:
+        legalUnresolved++
+        legalDropReasons[result.result.reason]++   ← only legal failures
+    bibliography:
+      fn.citation = result.canonical                ← validated/normalised
+      bibRouted[result.sourceType]++
+    skipped:
+      skipped[result.reason]++                      ← NOT missing_required
+```
+
+### 3. Telemetry shape (chapter_engine block)
+
+Replace the current flat counters with a structured block:
+
+```json
+{
+  "classification_counts": {
+    "statute": 4, "caselaw": 3, "journal_article": 5,
+    "book": 2, "book_chapter": 0, "report": 1, "web_source": 1, "unknown": 1
   },
-  abstract: { wordCap: 250, creditCost: 8, ... },
-  outline:  { creditCost: 0, ... },
-  topics:   { creditCost: 0, ... },
-  validate: { creditCost: 0, ... },
+  "legal_resolver": {
+    "resolved_count": 6,
+    "unresolved_count": 1,
+    "drop_reasons": { "missing_required": 1 }   // ONLY statute/caselaw failures
+  },
+  "bibliography_routed": {
+    "count": 8,
+    "by_type": { "journal_article": 5, "book": 2, "report": 1 },
+    "warnings": { "missing_journal": 1, "missing_first_page": 2 }
+  },
+  "skipped": {
+    "count": 2,
+    "reasons": { "engine_skipped_non_legal_type": 1, "unclassified_citation_shape": 1 }
+  }
 }
 ```
 
-Why: today changing the chapter envelope or the prev-chapter context window means hunting through `index.ts`. With a profile, every academic-specific knob is one `git grep` away and is auto-logged via `metadata.profile_used`.
+`missing_required` now appears **only** under `legal_resolver.drop_reasons` and only for genuine statute/caselaw extraction failures — matching what the user asked for.
 
-### 2. Adopt: mode-aware QA guard for chapters
+### 4. Telemetry plumbing fix (carryover from previous diagnostic)
 
-The QA guard is the cheapest, lowest-risk win from the Deep eval batch. For chapters, we have a clear analogue: the **citation engine resolver** already records `chapter_engine = {resolved_count, unresolved_count, drop_reasons}` in `qa_logs.metadata`. We're not yet **flagging regressions** off it.
+Add a one-line debug log right before the `qa_logs` insert at the end of the chapter path:
 
-Add `qaGuardChapter` flags computed at end of chapter generation:
-- `unresolved_share` — `unresolved_count / max(total_footnotes, 1)`. Flag if > 0.4.
-- `under_word_floor` — answer length < `modeProfile.wordRangeMin`. Currently we silently let claim-map-miss runs collapse; this surfaces it.
-- `narrative_citation_violation` — body contains `[N]` markers without a matching narrative phrase ("בעניין X", "פרופ' Y סבור"). Academic style requires narrative citations; Deep's structured drafter doesn't enforce this.
-- `any_flag` — OR of the above, with a `[chapter][qa_guard]` warning log.
+```ts
+console.log(`[chapter][metadata] keys=${Object.keys(metadata).join(",")} academic=${!!academicProfile}`);
+```
 
-This is observability-only, no behavior change, and gives us the same ability we have for research to catch regressions in CI/eval without re-reading the answer.
+This tells us in the next eval whether `profile_used_academic` and `chapter_qa_guard` are absent at construction time (then the bug is upstream — `academicProfile` evaluating falsy) or are stripped during serialization (then the bug is in the writer). No behaviour change; one log line.
 
-### 3. Adopt: a chapter eval harness modeled on `deep-mode-q1-q6-q21.mjs`
+### 5. Update `chapter_qa_guard.high_unresolved_share`
 
-Today academic changes ship without any structured before/after measurement. The Deep batch we just ran (Q1/Q6/Q21, captured `answer_full` for qualitative diff, `anchored_count`, `wall_ms`, `qa_guard`) is the right template.
+Currently this is `unresolvedCount / totalFootnotes`. With the new split, "unresolved" should mean **legal_resolver failures only**, since bibliography items aren't even routed through the engine. Update the formula to:
 
-Create `eval/academic-chapter-q1-q3.mjs`:
-- 3 fixed (research_question, outline, chapter_index, prev_chapters) tuples spanning a constitutional, statutory, and theoretical chapter.
-- Capture `answer_words`, `anchored_count`, `unresolved_share`, `narrative_violation_count`, `chapter_engine.drop_reasons`, `wall_ms`, `answer_full`.
-- Same before/after report layout we used for Deep.
+```text
+high_unresolved_share := legal_resolver.unresolved_count / max(1, legal_resolver.resolved_count + legal_resolver.unresolved_count)
+```
 
-This is what made the Deep partial-revert decision possible — without it, we couldn't have rejected the soft-target tuning with confidence. Academic deserves the same baseline.
+The flag now correctly answers "of the citations that were SUPPOSED to be legal, how many failed?" — instead of being dominated by correctly-routed bibliography items.
 
-### 4. Reject: a Fast/Deep toggle for chapters
+### 6. Reuse from uniform-citation section
 
-It's tempting to symmetrise — give academic chapters their own Fast/Deep toggle. **Don't.** The Deep eval showed that Fast's *prompt language* (soft-target footnotes, smaller envelope) does not transfer cleanly to a richer envelope, and chapters are explicitly the richest envelope in the system (1200–2000 words, hard footnote floor, gpt-5 drafter, narrative citations). A "Fast academic chapter" would either be a worse chapter or a reskinned Fast research answer — neither is a real product.
+- `validateArticleCitation` from `bibliography-lookup/index.ts` → extract into `supabase/functions/_shared/articleCitationValidator.ts`, import from both functions. Logic byte-identical.
+- `HEBREW_JOURNALS` list and `JOURNAL_HINT_RE` → same shared module.
+- Existing `citationResolver.ts` unchanged.
+- The Perplexity-completion path inside `bibliography-lookup` is **not** wired in for chapters in this milestone — adding a network call per footnote is too expensive for an 8-credit chapter write. Documented as a future option.
 
-Keep chapter writes locked to Deep. The toggle stays research-only, as today.
+### 7. Eval
 
-## Sequencing if approved
+Re-run `PHASE=after node eval/academic-chapter-q1-q3.mjs` and compare against the saved `before` baseline. Success criteria:
 
-The three "adopt" items are independent and can ship in any order, but the natural order is:
+- `legal_resolver.drop_reasons.missing_required` for Q1 drops from 7 → ≤1 (most footnotes were never legal in the first place).
+- `bibliography_routed.count` is non-zero on all three Q's.
+- `skipped.count` for unknown shapes is small (single digits).
+- `chapter_qa_guard.high_unresolved_share` no longer lights up false-positively.
+- Word counts, narrative phrasing, qualitative chapter quality unchanged (no behaviour drift — the router only changes what reasons are reported and which cleanup function runs per type).
 
-1. **Eval harness first** — gives us a baseline before any structural change.
-2. **`AcademicProfile` extraction** — pure refactor, no behavior change; eval should produce identical numbers before/after.
-3. **QA guard** — observability layer on top of the new profile, validated by re-running the same eval and confirming flags fire on known-bad chapters from the qa_logs history.
+### 8. Files touched
 
-## Files this would touch
+**New**
+- `supabase/functions/_shared/chapterCitationRouter.ts` — classifier + router
+- `supabase/functions/_shared/articleCitationValidator.ts` — extracted from `bibliography-lookup`
 
-- `supabase/functions/legal-qa/academicProfiles.ts` (new) — typed `ACADEMIC_PROFILES` and `resolveAcademicProfile()`.
-- `supabase/functions/legal-qa/index.ts` — replace inline academic constants/overrides with profile reads; add `qaGuardChapter` block alongside the existing `chapter_engine` telemetry.
-- `eval/academic-chapter-q1-q3.mjs` (new) — chapter eval harness.
-- `.lovable/memory/features/academic-writing-mode/deep-pipeline-wiring.md` — update to reference the new profile + guard.
+**Modified**
+- `supabase/functions/legal-qa/index.ts` — replace lines ~6218–6238 (engine loop) and ~6516–6520 (chapter_engine telemetry block); add the one-line metadata-keys log; tweak `chapter_qa_guard.high_unresolved_share` formula
+- `supabase/functions/bibliography-lookup/index.ts` — replace inline `validateArticleCitation` with import from the shared module (zero behaviour change)
 
-No DB migrations, no frontend changes, no new secrets.
+**Memory**
+- Update `.lovable/memory/features/academic-writing-mode/deep-pipeline-wiring.md` to reflect the new router + telemetry shape.
+
+### Out of scope (deferred)
+
+- Wiring the Perplexity bibliography-lookup network call into the chapter loop — too expensive per footnote; revisit if classification telemetry shows we actually need it.
+- Tuning chapter writing behaviour (word counts, narrative voice, anchored thresholds) — explicitly held until the telemetry is honest.
+- Porting the router to the React/uniform-citation side — out of scope for this milestone.
