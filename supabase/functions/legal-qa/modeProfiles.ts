@@ -60,6 +60,32 @@ export interface ModeProfile {
   // switch the charge to `profile.creditCost`. For now both modes cost the
   // same so the toggle is a quality control, not a billing decision.
   creditCost: number;
+
+  // ─── Phase C — research-mode Stage 2 party-lookup retry ───
+  /**
+   * Enable Stage 2 Perplexity party-lookup retry on caselaw footnotes
+   * flagged `needs_party_lookup` by the research-mode legal resolver.
+   * Off by default for Fast (latency-sensitive); on for Deep.
+   * When false, the research-engine block stays in Phase B behaviour
+   * (canonical re-emission only).
+   */
+  partyLookupRetryEnabled: boolean;
+
+  /**
+   * When the Stage 2 retry succeeds but the resolver could only emit a
+   * citation with `[חסר: ...]` placeholders, whether to keep the partial
+   * citation (`emit`) or discard it (`drop`). Mirrors the chapter
+   * best-effort policy — partial caselaw is more useful than none.
+   */
+  partyLookupPlaceholderPolicy: "emit" | "drop";
+
+  /**
+   * Hard ceiling on dockets batched into a single `lookupPartyNames`
+   * call per request. Bounds latency for caselaw-heavy questions.
+   * Excess pending entries fall back to honest `needs_party_lookup`
+   * telemetry under `failure_reasons.skipped_over_batch_cap`.
+   */
+  partyLookupMaxBatchSize: number;
 }
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
