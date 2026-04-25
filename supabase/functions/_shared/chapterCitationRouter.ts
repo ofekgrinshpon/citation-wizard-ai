@@ -24,6 +24,7 @@
 
 import { resolveCitation, type ResolveResult } from "./citationResolver.ts";
 import {
+  ARTICLE_SHAPE_FALLBACK_RE,
   findJournalInText,
   JOURNAL_HINT_RE,
   validateArticleCitation,
@@ -39,26 +40,68 @@ export type FootnoteSourceType =
   | "web_source"
   | "unknown";
 
+/**
+ * Skip / classification debug reasons.
+ *
+ * Distinguishes:
+ *   - `unclassified_citation_shape`     truly unrecognised (no anchor at all)
+ *   - `recognized_no_journal_token`     looks like an article (quoted title +
+ *                                       year) but no journal name detectable
+ *   - `recognized_no_anchor`            has a quoted/bold title but no
+ *                                       supporting metadata (year, journal,
+ *                                       volume, pages, "בתוך")
+ *   - `garbled_text`                    short, no Hebrew letter clusters,
+ *                                       likely OCR / rendering damage
+ *   - `empty_citation`                  empty input
+ *   - `engine_skipped_non_legal_type`   reserved for future use
+ */
 export type SkipReason =
   | "engine_skipped_non_legal_type"
   | "unclassified_citation_shape"
+  | "recognized_no_journal_token"
+  | "recognized_no_anchor"
+  | "garbled_text"
   | "empty_citation";
+
+/**
+ * Why the classifier picked the source type it did. Pure observability —
+ * surfaced into telemetry so we can audit classifier decisions without
+ * re-running everything.
+ */
+export type ClassifyReason =
+  | "statute_lexical_anchor"
+  | "caselaw_prefix_shape"
+  | "caselaw_bare_docket"
+  | "caselaw_pd_series"
+  | "book_chapter_betoch_link"
+  | "journal_whitelist_hit"
+  | "journal_hint_token"
+  | "journal_english_vol_page"
+  | "journal_shape_fallback"
+  | "book_bold_title"
+  | "report_prefix"
+  | "web_url"
+  | "web_marker"
+  | "fallback_unknown";
 
 export type RouteResult =
   | {
       route: "legal_resolver";
       sourceType: "statute" | "caselaw";
+      classifyReason: ClassifyReason;
       result: ResolveResult;
     }
   | {
       route: "bibliography";
       sourceType: Exclude<FootnoteSourceType, "statute" | "caselaw" | "unknown">;
+      classifyReason: ClassifyReason;
       canonical: string;
       warnings: string[];
     }
   | {
       route: "skipped";
       sourceType: FootnoteSourceType;
+      classifyReason: ClassifyReason;
       reason: SkipReason;
     };
 
