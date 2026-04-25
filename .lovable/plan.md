@@ -24,36 +24,47 @@ Bring research-mode footnotes onto the same observability + recovery substrate a
 
 Phased so each step is independently evaluable.
 
-## Phase A — Observability only (no behavior change)
+## Phase A — Observability only (no behavior change) — **SHIPPED**
 
 Add classification + telemetry for Fast/Deep, NO mutation of footnote text.
 
-### Code
+### Code (as shipped)
 
-1. After the `validFootnotes` filter (≈line 6214 in `legal-qa/index.ts`), add a `if (taskMode === RESEARCH_MODE && finalFootnotes.length > 0)` block that runs `routeChapterFootnote(fn.citation, { titleHint, caseNumberHint })` for each surviving footnote — **only to record the route**, never to overwrite `fn.citation`.
-2. Aggregate the same shape as `chapter_engine` but write under `metadata.research_engine`:
+1. After the `validFootnotes` filter (`legal-qa/index.ts` ~line 6446, immediately after the academic-chapter routing block), a `if (taskMode === RESEARCH_MODE && finalFootnotes.length > 0)` block runs `routeChapterFootnote(fn.citation)` — **dry-run only**, never overwrites `fn.citation` or any other field.
+2. The classifier is called with **no `titleHint` / `caseNumberHint`** because research mode does not maintain a `fnNumberToCard` map keyed by footnote number; that's the honest observability baseline. Phase B/C can add hints later.
+3. Aggregated under `metadata.research_engine` with the following shape (note `_dry_run` suffixes — explicit observation-only naming so future readers know Phase A didn't mutate):
 
 ```json
 {
-  "classification_counts": { ... },
-  "legal_resolver":      { "attempted": N, "would_resolve": N, "would_unresolve": N, "drop_reasons": {...} },
-  "bibliography_routed": { ... },
-  "skipped":             { "unknown": N }
+  "depth": "fast" | "deep",
+  "mode": "observability_only",
+  "footnotes_scanned": N,
+  "classification_counts": {...},
+  "classify_reasons": {...},
+  "legal_resolver_dry_run": {
+    "resolved_count": N,
+    "unresolved_count": N,
+    "drop_reasons": {...},
+    "needs_party_lookup_candidates": N
+  },
+  "bibliography_dry_run": { "count": N, "by_type": {...}, "warnings": {...} },
+  "skipped": { "count": N, "reasons": {...} },
+  "dry_run_ms": N
 }
 ```
 
-Note `would_resolve` / `would_unresolve` (not `resolved`/`unresolved`) — explicitly observation-only naming so future readers know Phase A didn't mutate.
+`needs_party_lookup_candidates` is the Phase C preview — count of footnotes that *would* enter the Perplexity party-lookup retry if we turned it on for this depth.
 
-3. Add the same `[research-router]` log line that `chapter-router` already emits, plus a `metadata-probe` log to confirm `research_engine` is in `Object.keys(metadata)` at insert time.
+4. `[research-engine][phase-a][${depth}]` log line emitted once per request for log-grep observability.
 
 ### Validation
 
-- Run `eval/fast-parity-q1-q6-q21.mjs` as `research-router-A`.
+- Run `eval/fast-parity-q1-q6-q21.mjs` and `eval/deep-mode-q1-q6-q21.mjs` as `phase-a-research-engine`.
 - Acceptance:
-  - `research_engine` present on every Fast row.
-  - `classification_counts` totals = `finalFootnotes.length` (sanity).
-  - `validFootnotes` content + `answer` body **byte-identical** to a baseline run on the same `evalRunId` shape (citations not mutated).
-  - No regression on `anchored_count`, `dropped_unanchored_count`.
+  - `metadata.research_engine` present on every research-mode row.
+  - `classification_counts` totals + `bibliography_dry_run.count` + `skipped.count` = `footnotes_scanned`.
+  - `validFootnotes` content + `answer` body **byte-identical** to a baseline run on the same fixture (citations not mutated).
+  - No regression on `anchored_count`, `dropped_unanchored_count`, `qa_guard` flags.
 - If those hold, Phase A lands as a pure observability win.
 
 ## Phase B — Adopt `preResolveNormalize` + canonical re-emission for legal-routed Fast/Deep footnotes
