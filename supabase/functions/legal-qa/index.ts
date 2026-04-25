@@ -6240,6 +6240,15 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
     // *why* the classifier picked the type it did (e.g. journal_whitelist_hit
     // vs journal_shape_fallback) without re-running the eval.
     const chapterClassifyReasons: Record<string, number> = {};
+    // Stage 2 party-lookup telemetry (caselaw bare-docket Perplexity backfill).
+    // Null when no needs_party_lookup citations were found in this chapter.
+    let chapterPartyLookup: {
+      attempted: number;
+      recovered: number;
+      failed: number;
+      status: string;
+      failure_reasons: Record<string, number>;
+    } | null = null;
     if (isAcademicChapter && finalFootnotes.length > 0) {
       // First pass — route everything; collect needs_party_lookup for stage 2.
       type Pending = { fn: typeof finalFootnotes[number]; text: string; card: SourceCard | undefined; partial: Record<string, string>; classifyReason: string };
@@ -6688,6 +6697,10 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               count: chapterSkippedCount,
               reasons: chapterSkippedReasons,
             },
+            // Stage 2 telemetry — Perplexity party-name backfill for caselaw
+            // bare-docket hits. Null when no needs_party_lookup citations
+            // were encountered in this chapter.
+            party_lookup: chapterPartyLookup,
           } : null,
           // Chapter QA guard — observability only, no behaviour change.
           // Mirrors statute_completion.qa_guard from research grounding.
