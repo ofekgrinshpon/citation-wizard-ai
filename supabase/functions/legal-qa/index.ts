@@ -6443,20 +6443,27 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       );
     }
 
-    // ===== Phase A — research-mode classifier OBSERVABILITY (Fast/Deep) =====
+    // ===== Phase B — research-mode classifier + canonical re-emission =====
     // Runs the same `routeChapterFootnote` classifier over Fast/Deep research
-    // footnotes WITHOUT mutating any citation text. Pure telemetry: lets us
-    // measure parity (do research-mode footnotes look like academic-chapter
-    // footnotes?) and decide whether Phase B (canonical re-emission) and
-    // Phase C (Stage 2 retry) are worth turning on per depth.
+    // footnotes. Behaviour change vs Phase A: when the legal resolver returns
+    // `resolved === true`, we OVERWRITE `fn.citation` with the canonical
+    // re-emission (`routed.result.canonical`). All other paths remain
+    // observation-only:
+    //   • legal_resolver + unresolved → leave original text, count drop reason.
+    //   • bibliography → DRY RUN (deferred to Phase D — risk of conflicting
+    //     with `placeholder_dominant` filter and the legislation-footnote
+    //     "(לא נמצאו פרטים בבליוגרפיים)" exception).
+    //   • skipped → telemetry only.
+    //
+    // Stage 2 (Perplexity party-lookup retry) is NOT wired here — that's
+    // Phase C, gated behind `modeProfile.partyLookupRetryEnabled`. We do
+    // continue to count `needs_party_lookup_candidates` as a Phase C preview.
     //
     // Scope guards:
     //   • taskMode === RESEARCH_MODE only — academic_writing already runs
-    //     the real router above, so this block must NOT fire there.
+    //     the real router above (lines ~6272-6444), so this block must NOT
+    //     fire there.
     //   • finalFootnotes only — same surface as the academic block.
-    //   • DRY RUN — `routed.result.canonical` / `routed.canonical` are
-    //     observed but NEVER written back to `fn.citation`. Footnote text
-    //     and the rest of the response are byte-identical to before.
     let researchEngine: Record<string, unknown> | null = null;
     if (taskMode === RESEARCH_MODE && finalFootnotes.length > 0) {
       const rClassificationCounts: Record<FootnoteSourceType, number> = {
@@ -6464,11 +6471,15 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         book_chapter: 0, report: 0, web_source: 0, unknown: 0,
       };
       const rClassifyReasons: Record<string, number> = {};
-      let rLegalResolvedDryRun = 0;
-      let rLegalUnresolvedDryRun = 0;
+      // Phase B: legal resolver now mutates on success — these are real
+      // counts, not dry-run. Field names dropped the `_dry_run` suffix.
+      let rLegalResolved = 0;
+      let rLegalUnresolved = 0;
       const rLegalDropReasons: Record<string, number> = {};
+      let rLegalCanonicalRewrites = 0; // entries where canonical !== original
       // Stage 2 candidates we *would* retry under Phase C — observability only.
       let rNeedsPartyLookupCandidates = 0;
+      // Bibliography stays dry-run in Phase B — counts only.
       let rBibCount = 0;
       const rBibByType: Record<string, number> = {};
       const rBibWarnings: Record<string, number> = {};
@@ -6483,7 +6494,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         if (PURE_PLACEHOLDER_RE.test(text)) continue;
         // Note: research mode does not maintain a fnNumberToCard map keyed
         // the same way as academic_writing. Run the classifier with no
-        // hints — that's the honest observability baseline.
+        // hints — that's the honest baseline shared with Phase A.
         const routed = routeChapterFootnote(text);
         rClassificationCounts[routed.sourceType] =
           (rClassificationCounts[routed.sourceType] || 0) + 1;
@@ -6492,9 +6503,19 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         switch (routed.route) {
           case "legal_resolver":
             if (routed.result.resolved) {
-              rLegalResolvedDryRun++;
+              // Phase B mutation: replace the AI-generated citation with the
+              // resolver's canonical form. The canonical can ONLY re-emit
+              // fields the resolver successfully parsed, so this cannot
+              // introduce hallucinated content — only cosmetic cleanup
+              // (whitespace, punctuation balance, supra fragments).
+              const canonical = routed.result.canonical;
+              if (canonical && canonical !== text) {
+                fn.citation = canonical;
+                rLegalCanonicalRewrites++;
+              }
+              rLegalResolved++;
             } else {
-              rLegalUnresolvedDryRun++;
+              rLegalUnresolved++;
               const reason = routed.result.reason;
               rLegalDropReasons[reason] = (rLegalDropReasons[reason] || 0) + 1;
               if (
@@ -6506,6 +6527,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             }
             break;
           case "bibliography":
+            // Dry run only — Phase D will decide whether to canonicalise.
             rBibCount++;
             rBibByType[routed.sourceType] = (rBibByType[routed.sourceType] || 0) + 1;
             for (const w of routed.warnings) {
@@ -6518,18 +6540,24 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             break;
         }
       }
-      const dryRunMs = Date.now() - t0;
+      const phaseMs = Date.now() - t0;
 
       researchEngine = {
         depth: researchDepth,
-        mode: "observability_only",
+        // Mode label flips from "observability_only" → "canonical_reemission"
+        // so log readers can distinguish Phase A baselines from Phase B runs.
+        mode: "canonical_reemission",
         footnotes_scanned: finalFootnotes.length,
         classification_counts: rClassificationCounts,
         classify_reasons: rClassifyReasons,
-        legal_resolver_dry_run: {
-          resolved_count: rLegalResolvedDryRun,
-          unresolved_count: rLegalUnresolvedDryRun,
+        legal_resolver: {
+          resolved_count: rLegalResolved,
+          unresolved_count: rLegalUnresolved,
           drop_reasons: rLegalDropReasons,
+          // How many resolved entries were actually rewritten (canonical
+          // differed from the original text). resolved_count − this number
+          // = no-op rewrites where the AI already produced a canonical form.
+          canonical_rewrites: rLegalCanonicalRewrites,
           // Phase C preview: how many entries WOULD enter the Perplexity
           // party-lookup retry if `partyLookupRetryEnabled` were on for
           // this depth.
@@ -6544,16 +6572,17 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           count: rSkippedCount,
           reasons: rSkippedReasons,
         },
-        dry_run_ms: dryRunMs,
+        phase_ms: phaseMs,
       };
       console.log(
-        `[research-engine][phase-a][${researchDepth}] ` +
+        `[research-engine][phase-b][${researchDepth}] ` +
         `scanned=${finalFootnotes.length} ` +
         `cls=${JSON.stringify(rClassificationCounts)} ` +
-        `legal_dry_run=${rLegalResolvedDryRun}/${rLegalResolvedDryRun + rLegalUnresolvedDryRun} ` +
+        `legal=${rLegalResolved}/${rLegalResolved + rLegalUnresolved} ` +
+        `rewrites=${rLegalCanonicalRewrites} ` +
         `legal_drops=${JSON.stringify(rLegalDropReasons)} ` +
         `needs_party_lookup=${rNeedsPartyLookupCandidates} ` +
-        `bib=${rBibCount} skipped=${rSkippedCount} ms=${dryRunMs}`,
+        `bib=${rBibCount} skipped=${rSkippedCount} ms=${phaseMs}`,
       );
     }
 
