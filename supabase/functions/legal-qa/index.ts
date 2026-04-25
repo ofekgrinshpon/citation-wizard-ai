@@ -6870,6 +6870,15 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             // were encountered in this chapter.
             party_lookup: chapterPartyLookup,
           } : null,
+          // Phase A — research-mode (Fast/Deep) classifier observability.
+          // Pure dry run: same `routeChapterFootnote` classifier as the
+          // academic-chapter pipeline, no footnote text mutated, no resolver
+          // canonicalization applied. Lets us measure parity (do research-
+          // mode footnotes look like academic-chapter footnotes?) and decide
+          // whether Phase B (canonical re-emission) and Phase C (Stage 2
+          // Perplexity retry) are worth turning on per depth.
+          // Null for non-research task modes.
+          research_engine: researchEngine,
           // Chapter QA guard — observability only, no behaviour change.
           // Mirrors statute_completion.qa_guard from research grounding.
           chapter_qa_guard: chapterQaGuard,
