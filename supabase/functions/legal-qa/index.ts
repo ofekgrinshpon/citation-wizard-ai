@@ -28,6 +28,7 @@ import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
 import { runShadowAbComparison, buildLegacyShadowPrompt } from "./shadowAbLogger.ts";
 import { runAnchorPass, applyAnchorPatches, type AnchorPassSourcePackItem, type AnchorPassClaim } from "./anchorPass.ts";
 import { resolveCitation } from "../_shared/citationResolver.ts";
+import { routeChapterFootnote, type FootnoteSourceType } from "../_shared/chapterCitationRouter.ts";
 import { resolveModeProfile, type ModeProfile, type ResearchDepth } from "./modeProfiles.ts";
 import { resolveAcademicProfile, type AcademicProfile, type AcademicStep } from "./academicProfiles.ts";
 
@@ -6207,34 +6208,72 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
 
     const finalFootnotes = validFootnotes;
 
-    // ===== Citation engine resolver — canonicalise chapter footnotes =====
-    // For academic chapter writes, run each parsed footnote through the same
-    // resolver Stage E.5 candidates use. When the engine resolves a citation,
-    // we overwrite `citation` with the canonical re-emission (rule template).
-    // Non-blocking: unresolved footnotes are kept as-is.
-    let chapterEngineResolvedCount = 0;
-    let chapterEngineUnresolvedCount = 0;
-    const chapterEngineDropReasons: Record<string, number> = {};
+    // ===== Type-aware citation router — academic chapter footnotes =====
+    // Replaces the previous binary statute/caselaw guess that misrouted
+    // every journal article, book, report and web source through the legal
+    // resolver and reported them as `missing_required`. The router now:
+    //   1. classifies each footnote into a typed source kind,
+    //   2. routes legal kinds (statute / caselaw) to `resolveCitation`,
+    //   3. routes journal_article through the shared bibliography validator,
+    //   4. lightly normalises books / reports / web sources,
+    //   5. records `unknown` shapes as an explicit skip — never as a
+    //      legal-resolver failure.
+    // Non-blocking: footnotes that are skipped or unresolved are KEPT.
+    const chapterClassificationCounts: Record<FootnoteSourceType, number> = {
+      statute: 0, caselaw: 0, journal_article: 0, book: 0,
+      book_chapter: 0, report: 0, web_source: 0, unknown: 0,
+    };
+    let chapterLegalResolved = 0;
+    let chapterLegalUnresolved = 0;
+    const chapterLegalDropReasons: Record<string, number> = {};
+    let chapterBibCount = 0;
+    const chapterBibByType: Record<string, number> = {};
+    const chapterBibWarnings: Record<string, number> = {};
+    let chapterSkippedCount = 0;
+    const chapterSkippedReasons: Record<string, number> = {};
     if (isAcademicChapter && finalFootnotes.length > 0) {
       for (const fn of finalFootnotes) {
         const text = fn.citation || "";
-        // Skip footnotes that have a missing-data placeholder marker.
+        // Skip footnotes that already carry a missing-data placeholder marker —
+        // they are intentional drafter-emitted gaps, not citations to resolve.
         if (/\[חסר/.test(text)) continue;
-        // Cheap declared-type heuristic — same split the resolver expects.
-        const declared: "statute" | "caselaw" =
-          /[א-ת]{1,3}["״׳']+[א-ת]{1,2}\s+\d+\/\d+|פ["״]ד|פד["״]ע/.test(text)
-            ? "caselaw"
-            : "statute";
-        const res = resolveCitation(text, declared);
-        if (res.resolved) {
-          fn.citation = res.canonical;
-          chapterEngineResolvedCount++;
-        } else {
-          chapterEngineUnresolvedCount++;
-          chapterEngineDropReasons[res.reason] = (chapterEngineDropReasons[res.reason] || 0) + 1;
+        const routed = routeChapterFootnote(text);
+        chapterClassificationCounts[routed.sourceType] =
+          (chapterClassificationCounts[routed.sourceType] || 0) + 1;
+        switch (routed.route) {
+          case "legal_resolver":
+            if (routed.result.resolved) {
+              fn.citation = routed.result.canonical;
+              chapterLegalResolved++;
+            } else {
+              chapterLegalUnresolved++;
+              const r = routed.result.reason; // classify_failed | extract_failed | missing_required
+              chapterLegalDropReasons[r] = (chapterLegalDropReasons[r] || 0) + 1;
+            }
+            break;
+          case "bibliography":
+            // Overwrite with the normalised form (idempotent — equal to input
+            // when nothing changed).
+            fn.citation = routed.canonical;
+            chapterBibCount++;
+            chapterBibByType[routed.sourceType] = (chapterBibByType[routed.sourceType] || 0) + 1;
+            for (const w of routed.warnings) {
+              chapterBibWarnings[w] = (chapterBibWarnings[w] || 0) + 1;
+            }
+            break;
+          case "skipped":
+            chapterSkippedCount++;
+            chapterSkippedReasons[routed.reason] = (chapterSkippedReasons[routed.reason] || 0) + 1;
+            break;
         }
       }
-      console.log(`[chapter-engine] resolved=${chapterEngineResolvedCount} unresolved=${chapterEngineUnresolvedCount} reasons=${JSON.stringify(chapterEngineDropReasons)}`);
+      console.log(
+        `[chapter-router] cls=${JSON.stringify(chapterClassificationCounts)} ` +
+        `legal=${chapterLegalResolved}/${chapterLegalResolved + chapterLegalUnresolved} ` +
+        `legal_drops=${JSON.stringify(chapterLegalDropReasons)} ` +
+        `bib=${chapterBibCount} bib_by_type=${JSON.stringify(chapterBibByType)} ` +
+        `skipped=${chapterSkippedCount} skipped_reasons=${JSON.stringify(chapterSkippedReasons)}`,
+      );
     }
 
     // ─── Chapter QA guard (academic chapters only) ───────────────────
@@ -6249,8 +6288,15 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
     //                            mandates narrative citations.
     let chapterQaGuard: Record<string, unknown> | null = null;
     if (isAcademicChapter && academicProfile) {
-      const totalFn = finalFootnotes.length;
-      const unresolvedShare = totalFn > 0 ? chapterEngineUnresolvedCount / totalFn : 0;
+      // High-unresolved-share is now a LEGAL-RESOLVER quality signal only.
+      // Bibliography items (articles, books, reports …) are NOT routed
+      // through the legal resolver, so including them in the denominator
+      // would dilute the metric and create false negatives. Formula:
+      //   legal_unresolved / max(1, legal_resolved + legal_unresolved)
+      const legalAttempted = chapterLegalResolved + chapterLegalUnresolved;
+      const unresolvedShare = legalAttempted > 0
+        ? chapterLegalUnresolved / legalAttempted
+        : 0;
 
       // Word count of the answer body (footnotes excluded).
       const ansForCount = answer || "";
@@ -6289,7 +6335,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         word_count: wordCount,
         word_floor_threshold: wordFloorThreshold,
         expected_floor: expectedFloor,
+        // Now scoped to legal-resolver attempts only — see comment above.
         unresolved_share: Number(unresolvedShare.toFixed(3)),
+        unresolved_share_basis: "legal_resolver_attempts_only",
         unresolved_share_threshold: academicProfile.qaGuardUnresolvedShareThreshold,
         narrative_violation_count: narrativeViolationCount,
         narrative_violation_threshold: academicProfile.qaGuardNarrativeViolationThreshold,
@@ -6298,9 +6346,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       };
 
       if (anyFlag) {
-        console.warn(`[chapter][qa_guard] flags raised: ${JSON.stringify(flags)} | words=${wordCount}/${wordFloorThreshold} unresolved=${unresolvedShare.toFixed(2)} narrative_viol=${narrativeViolationCount}`);
+        console.warn(`[chapter][qa_guard] flags raised: ${JSON.stringify(flags)} | words=${wordCount}/${wordFloorThreshold} legal_unresolved=${unresolvedShare.toFixed(2)} narrative_viol=${narrativeViolationCount}`);
       } else {
-        console.log(`[chapter][qa_guard] clean: words=${wordCount} unresolved=${unresolvedShare.toFixed(2)} narrative_viol=${narrativeViolationCount}`);
+        console.log(`[chapter][qa_guard] clean: words=${wordCount} legal_unresolved=${unresolvedShare.toFixed(2)} narrative_viol=${narrativeViolationCount}`);
       }
     }
 
@@ -6512,11 +6560,27 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           rule37_short_forms: rule37Telemetry,
           // Fix 2: post-draft statute completion telemetry.
           statute_completion: statuteCompletionTelemetry,
-          // Citation engine resolver pass on chapter footnotes (academic only).
+          // Type-aware citation router pass on chapter footnotes (academic only).
+          // `legal_resolver.drop_reasons.missing_required` now ONLY counts real
+          // statute/caselaw extraction failures — non-legal citations are split
+          // into `bibliography_routed` and `skipped` so the legal-resolver
+          // metric is no longer polluted.
           chapter_engine: isAcademicChapter ? {
-            resolved_count: chapterEngineResolvedCount,
-            unresolved_count: chapterEngineUnresolvedCount,
-            drop_reasons: chapterEngineDropReasons,
+            classification_counts: chapterClassificationCounts,
+            legal_resolver: {
+              resolved_count: chapterLegalResolved,
+              unresolved_count: chapterLegalUnresolved,
+              drop_reasons: chapterLegalDropReasons,
+            },
+            bibliography_routed: {
+              count: chapterBibCount,
+              by_type: chapterBibByType,
+              warnings: chapterBibWarnings,
+            },
+            skipped: {
+              count: chapterSkippedCount,
+              reasons: chapterSkippedReasons,
+            },
           } : null,
           // Chapter QA guard — observability only, no behaviour change.
           // Mirrors statute_completion.qa_guard from research grounding.
@@ -6526,6 +6590,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           profile_used_academic: academicProfile
             ? { step: academicStepKey, ...academicProfile }
             : null,
+
           // Honest models_used: only record a model as "used" if its stage
           // actually completed successfully. Otherwise expose null + the failure
           // status, so admins don't get the false impression that gpt-5-mini ran.
@@ -6558,6 +6623,19 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
           ...(evalForceLegacy ? { eval_force_legacy: true } : {}),
         };
+        // Telemetry probe: verify the academic-mode keys we expect actually
+        // landed in the metadata object before serialization. Diagnoses the
+        // "profile_used_academic / chapter_qa_guard come back null in qa_logs"
+        // gap raised in the previous eval run. One log line per chapter run.
+        if (isAcademicChapter) {
+          console.log(
+            `[chapter][metadata-probe] keys=${Object.keys(metadata).length} ` +
+            `has_profile_used_academic=${"profile_used_academic" in metadata} ` +
+            `has_chapter_qa_guard=${"chapter_qa_guard" in metadata} ` +
+            `has_chapter_engine=${"chapter_engine" in metadata} ` +
+            `academicProfile_truthy=${!!academicProfile}`,
+          );
+        }
       }
 
       // For research mode we pre-allocated an id and may have written

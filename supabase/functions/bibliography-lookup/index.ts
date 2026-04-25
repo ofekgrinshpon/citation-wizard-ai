@@ -1,5 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  HEBREW_JOURNALS,
+  JOURNAL_HINT_RE,
+  findJournalInText,
+  validateArticleCitation,
+} from "../_shared/articleCitationValidator.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -68,110 +74,10 @@ const PERPLEXITY_SYSTEM = `אתה מומחה לכללי האזכור האחיד 
 { "isDisambiguation": false, "citation": "...", "options": [] }
 אם isDisambiguation=true, השאר citation ריק ומלא את options ברשימת המועמדים.`;
 
-const HEBREW_JOURNALS = [
-  "משפטים",
-  "עיוני משפט",
-  "הפרקליט",
-  "מחקרי משפט",
-  "דין ודברים",
-  "מאזני משפט",
-  "משפט וממשל",
-  "משפט ועסקים",
-  "המשפט",
-  "משפט חברה ותרבות",
-  "עלי משפט",
-  "ספר השנה של המשפט בישראל",
-];
+// HEBREW_JOURNALS, JOURNAL_HINT_RE, findJournalInText, validateArticleCitation
+// are imported from ../_shared/articleCitationValidator.ts so the chapter
+// citation router (legal-qa) and this function share a single implementation.
 
-const JOURNAL_HINT_RE = new RegExp(`(?:${HEBREW_JOURNALS.join("|")}|כתב[\\s-]?עת)`);
-
-function findJournalInText(text: string): string | null {
-  for (const j of HEBREW_JOURNALS) {
-    if (text.includes(j)) return j;
-  }
-  return null;
-}
-
-/**
- * Conservative validator for article-shaped citations.
- * - Strips "(כרך X)" wrapper → bare X
- * - Ensures the title is wrapped in straight quotes when a journal token is present
- * - If journal name is missing but appeared in the user's raw input, splices it back in
- *   (otherwise inserts [חסר: שם כתב העת])
- * - If opening page is missing after the volume, appends [חסר: עמוד פתיחה]
- */
-function validateArticleCitation(citation: string, rawSource: string): string {
-  if (!citation) return citation;
-  const rawJournal = findJournalInText(rawSource);
-  const citJournal = findJournalInText(citation);
-  const looksLikeArticle =
-    /["'״׳].+?["'״׳]/.test(citation) || rawJournal !== null || JOURNAL_HINT_RE.test(citation);
-  if (!looksLikeArticle) return citation;
-
-  let out = citation.trim();
-
-  // 1. Strip "(כרך X)" → bare X
-  out = out.replace(/\(\s*כרך\s+([^)]+?)\s*\)/g, "$1");
-
-  // 2. Ensure quotes around title when we have a journal token to anchor on
-  const journal = citJournal || rawJournal;
-  if (journal && !/["״]/.test(out)) {
-    // Try: "<author block> <title> <journal> ..."
-    const idx = out.indexOf(journal);
-    if (idx > 0) {
-      const before = out.slice(0, idx).trimEnd();
-      const after = out.slice(idx);
-      // Heuristic: split before-block at the last "name-like" token (Hebrew word seq).
-      // Simplest safe approach: assume first 1–6 words are author block; rest is title.
-      const tokens = before.split(/\s+/);
-      if (tokens.length >= 3) {
-        // Take last ~60% of tokens as title; first ~40% as authors. Capped: author block ≥ 1 word.
-        const splitAt = Math.max(1, Math.min(tokens.length - 1, Math.ceil(tokens.length * 0.4)));
-        const authorBlock = tokens.slice(0, splitAt).join(" ");
-        const titleBlock = tokens.slice(splitAt).join(" ").replace(/[,]\s*$/, "");
-        out = `${authorBlock} "${titleBlock}" ${after}`.replace(/\s+/g, " ").trim();
-      }
-    }
-  }
-
-  // 3. Splice journal name back if missing but raw input had it
-  if (!citJournal && rawJournal && !out.includes(rawJournal)) {
-    // Insert after the closing quote of the title if present, else at end-ish.
-    const closingQuote = out.lastIndexOf('"');
-    if (closingQuote > 0 && closingQuote < out.length - 1) {
-      out = `${out.slice(0, closingQuote + 1)} ${rawJournal}${out.slice(closingQuote + 1)}`;
-    } else {
-      out = `${out} ${rawJournal}`;
-    }
-  } else if (!citJournal && !rawJournal && /["״].+?["״]/.test(out)) {
-    // Quoted title but no journal anywhere — flag.
-    const closingQuote = out.lastIndexOf('"');
-    if (closingQuote > 0) {
-      out = `${out.slice(0, closingQuote + 1)} [חסר: שם כתב העת]${out.slice(closingQuote + 1)}`;
-    }
-  }
-
-  // 4. Ensure opening page exists after the volume (number after journal+volume).
-  // Pattern: <journal> <volume token> <page digits>?  — if no digits follow within ~2 tokens, mark missing.
-  const finalJournal = findJournalInText(out);
-  if (finalJournal) {
-    const re = new RegExp(`${finalJournal}\\s+([^\\s()]+)(?:\\s+([^\\s()]+))?`);
-    const m = out.match(re);
-    if (m) {
-      const tokenAfterVolume = m[2] || "";
-      const hasPageDigits = /^\d+$/.test(tokenAfterVolume);
-      if (!hasPageDigits && !out.includes("[חסר: עמוד פתיחה]")) {
-        // Insert placeholder right after the volume token.
-        const insertion = `${finalJournal} ${m[1]} [חסר: עמוד פתיחה]`;
-        out = out.replace(`${finalJournal} ${m[1]}`, insertion);
-      }
-    }
-  }
-
-  // Collapse extra spaces.
-  out = out.replace(/\s+/g, " ").trim();
-  return out;
-}
 
 async function callPerplexity(rawSource: string): Promise<{ isDisambiguation: boolean; citation: string; options: string[] }> {
   const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
