@@ -28,6 +28,7 @@ import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
 import { runShadowAbComparison, buildLegacyShadowPrompt } from "./shadowAbLogger.ts";
 import { runAnchorPass, applyAnchorPatches, type AnchorPassSourcePackItem, type AnchorPassClaim } from "./anchorPass.ts";
 import { resolveCitation } from "../_shared/citationResolver.ts";
+import { routeChapterFootnote, type FootnoteSourceType } from "../_shared/chapterCitationRouter.ts";
 import { resolveModeProfile, type ModeProfile, type ResearchDepth } from "./modeProfiles.ts";
 import { resolveAcademicProfile, type AcademicProfile, type AcademicStep } from "./academicProfiles.ts";
 
