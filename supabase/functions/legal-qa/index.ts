@@ -5090,6 +5090,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       dropped_no_anchor_short?: number;
       dropped_prep_tail?: number;
       kept_for_completion?: number;
+      // Fix G1/G2: input sanitization + per-call status
+      cleaned_names?: string[];
+      dropped_dirty_after_clean?: Record<string, number>;
+      per_call_status?: string[];
     } = {
       triggered: false,
       named_statutes: [],
