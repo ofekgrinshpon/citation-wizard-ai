@@ -6574,6 +6574,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           // metric is no longer polluted.
           chapter_engine: isAcademicChapter ? {
             classification_counts: chapterClassificationCounts,
+            // NEW: per-classifier-reason breakdown — observability for which
+            // heuristic decided each citation's type.
+            classify_reasons: chapterClassifyReasons,
             legal_resolver: {
               resolved_count: chapterLegalResolved,
               unresolved_count: chapterLegalUnresolved,
