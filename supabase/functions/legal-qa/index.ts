@@ -29,6 +29,7 @@ import { runShadowAbComparison, buildLegacyShadowPrompt } from "./shadowAbLogger
 import { runAnchorPass, applyAnchorPatches, type AnchorPassSourcePackItem, type AnchorPassClaim } from "./anchorPass.ts";
 import { resolveCitation } from "../_shared/citationResolver.ts";
 import { resolveModeProfile, type ModeProfile, type ResearchDepth } from "./modeProfiles.ts";
+import { resolveAcademicProfile, type AcademicProfile, type AcademicStep } from "./academicProfiles.ts";
 
 // Single source of truth for the research-mode gate. The frontend currently
 // sends `taskMode: "research"`; if that ever changes, update this constant.
@@ -1826,10 +1827,24 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       (Array.isArray(documentTexts) && documentTexts.length > 0) ||
       (typeof documentText === "string" && documentText.trim().length > 100);
 
+    // Resolve the academic profile up-front so credit cost, context windows,
+    // and the chapter QA guard all read from a single typed source of truth.
+    // Mirrors the modeProfiles.ts pattern. Returns null for non-academic runs.
+    const academicResolution = taskMode === "academic_writing"
+      ? resolveAcademicProfile(academicStep, !!body.isAbstract)
+      : null;
+    const academicProfile: AcademicProfile | null = academicResolution?.profile ?? null;
+    const academicStepKey: AcademicStep | null = academicResolution?.step ?? null;
+
     let creditCost = 5;
-    if (isAcademicSubModeFree) creditCost = 0;
-    else if (isAcademicChapter) creditCost = 8;
-    if (hasGroundingDoc && !isAcademicChapter && !isAcademicSubModeFree) creditCost += 2;
+    if (academicProfile) {
+      // Academic sub-modes (free outline/topics/validate, 8 for chapter+abstract)
+      // are sourced from ACADEMIC_PROFILES. Document grounding surcharge does
+      // NOT apply to academic chapters/abstracts (they have their own context budget).
+      creditCost = academicProfile.creditCost;
+    } else if (hasGroundingDoc) {
+      creditCost += 2;
+    }
 
     // ─── Deep pipeline opt-in for academic chapter writes ───────────
     // Academic chapters use the same Deep behavior as research/Deep:
@@ -2155,7 +2170,9 @@ ${(verify.fullText as string).slice(0, 50000)}
     // ========= Step 0: Document context (if uploaded) =========
     let documentContext = "";
     const isAcademicMode = taskMode === "academic_writing";
-    const contextCharLimit = isAcademicMode ? 12000 : MAX_CONTEXT_CHARS;
+    // Per-step context budget comes from the academic profile when available
+    // (chapter: 12000, others: 6000). Non-academic modes keep MAX_CONTEXT_CHARS.
+    const contextCharLimit = academicProfile?.documentContextChars ?? MAX_CONTEXT_CHARS;
 
     // Multi-file support
     if (documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
@@ -6220,6 +6237,73 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       console.log(`[chapter-engine] resolved=${chapterEngineResolvedCount} unresolved=${chapterEngineUnresolvedCount} reasons=${JSON.stringify(chapterEngineDropReasons)}`);
     }
 
+    // ─── Chapter QA guard (academic chapters only) ───────────────────
+    // Mirrors statute_completion.qa_guard from Fast/Deep grounding architecture:
+    // pure observability, no behaviour change. Surfaces three signals:
+    //   1. unresolved_share — citation engine resolver dropping too much.
+    //   2. under_word_floor — answer collapsed below Deep's 1200-word target
+    //                         (silent claim-map-miss regression).
+    //   3. narrative_violation — `[N]` markers without a narrative phrase
+    //                            ("בעניין X", "פרופ' Y", "ועדת Z") within
+    //                            ±120 chars before the marker. Academic style
+    //                            mandates narrative citations.
+    let chapterQaGuard: Record<string, unknown> | null = null;
+    if (isAcademicChapter && academicProfile) {
+      const totalFn = finalFootnotes.length;
+      const unresolvedShare = totalFn > 0 ? chapterEngineUnresolvedCount / totalFn : 0;
+
+      // Word count of the answer body (footnotes excluded).
+      const ansForCount = answer || "";
+      const fnSplitIdx = ansForCount.search(/---\s*הערות שוליים\s*---|\*\*\s*הערות שוליים\s*\*\*/);
+      const bodyOnly = fnSplitIdx === -1 ? ansForCount : ansForCount.slice(0, fnSplitIdx);
+      const wordCount = bodyOnly.trim().split(/\s+/).filter(Boolean).length;
+      const expectedFloor = modeProfile.wordRangeMin; // Deep = 1200
+      const wordFloorThreshold = Math.floor(expectedFloor * academicProfile.qaGuardUnderWordFloorRatio);
+      const underWordFloor = wordCount > 0 && wordCount < wordFloorThreshold;
+
+      // Narrative-citation detector: scan each `[N]` marker in the body and
+      // check the 120 chars BEFORE it for a narrative phrase. Phrases are
+      // intentionally broad — false positives here mean we silently allow a
+      // borderline case (preferred over noisy flags).
+      const narrativeRe = /(?:בעניין|בעבודת|כדבריו? של|לשיטת|לדעת|לעמדת|פרופ['׳]|ד["״]ר|השופט[ת]?|כב['׳]\s+השופט|עו["״]ד|ועדת|פסק[\s־-]?דין|פס["״]ד|חוק[\s־-])\s+/;
+      const markerRe = /\[(\d+)\]/g;
+      let narrativeViolationCount = 0;
+      const seenMarkers: number[] = [];
+      let mm: RegExpExecArray | null;
+      while ((mm = markerRe.exec(bodyOnly)) !== null) {
+        const lookback = bodyOnly.slice(Math.max(0, mm.index - 120), mm.index);
+        if (!narrativeRe.test(lookback)) {
+          narrativeViolationCount++;
+          if (seenMarkers.length < 5) seenMarkers.push(mm.index);
+        }
+      }
+
+      const flags = {
+        high_unresolved_share: unresolvedShare > academicProfile.qaGuardUnresolvedShareThreshold,
+        under_word_floor: underWordFloor,
+        narrative_violation: narrativeViolationCount >= academicProfile.qaGuardNarrativeViolationThreshold,
+      };
+      const anyFlag = flags.high_unresolved_share || flags.under_word_floor || flags.narrative_violation;
+
+      chapterQaGuard = {
+        word_count: wordCount,
+        word_floor_threshold: wordFloorThreshold,
+        expected_floor: expectedFloor,
+        unresolved_share: Number(unresolvedShare.toFixed(3)),
+        unresolved_share_threshold: academicProfile.qaGuardUnresolvedShareThreshold,
+        narrative_violation_count: narrativeViolationCount,
+        narrative_violation_threshold: academicProfile.qaGuardNarrativeViolationThreshold,
+        flags,
+        any_flag: anyFlag,
+      };
+
+      if (anyFlag) {
+        console.warn(`[chapter][qa_guard] flags raised: ${JSON.stringify(flags)} | words=${wordCount}/${wordFloorThreshold} unresolved=${unresolvedShare.toFixed(2)} narrative_viol=${narrativeViolationCount}`);
+      } else {
+        console.log(`[chapter][qa_guard] clean: words=${wordCount} unresolved=${unresolvedShare.toFixed(2)} narrative_viol=${narrativeViolationCount}`);
+      }
+    }
+
     console.log(`Final: answer=${answer.length} chars, footnotes=${finalFootnotes.length}, total time=${Date.now() - t0}ms`);
 
     // ===== Citation density diagnostic (log-only, non-blocking) =====
@@ -6434,6 +6518,14 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             unresolved_count: chapterEngineUnresolvedCount,
             drop_reasons: chapterEngineDropReasons,
           } : null,
+          // Chapter QA guard — observability only, no behaviour change.
+          // Mirrors statute_completion.qa_guard from research grounding.
+          chapter_qa_guard: chapterQaGuard,
+          // Academic profile actually used. Same shape as profile_used.
+          // Read with: select metadata->'profile_used_academic' from qa_logs ...
+          profile_used_academic: academicProfile
+            ? { step: academicStepKey, ...academicProfile }
+            : null,
           // Honest models_used: only record a model as "used" if its stage
           // actually completed successfully. Otherwise expose null + the failure
           // status, so admins don't get the false impression that gpt-5-mini ran.
