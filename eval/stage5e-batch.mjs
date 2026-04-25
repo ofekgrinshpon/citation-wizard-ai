@@ -104,8 +104,14 @@ const PUB_PAGE_RE = /(?:ס["״]ח|ק["״]ת|נ["״]ח|ע["״]ר)\s+(\d+)/;
 const CASE_DOCKET_RE = /(?:בג["״]ץ|ע["״]א|ע["״]פ|רע["״]א|רע["״]פ|דנ["״]א|דנ["״]פ|ת["״]א|ת["״]פ|תפ["״]ח|בש["״]פ|עע["״]מ|בר["״]ם|עמ["״]ה)\s+\d+\/\d+/;
 const PLACEHOLDER_RE = /(?:פרטי\s+מסמך|לא\s+נמצא|לא\s+ידוע|unknown|לא\s+נמצאו\s+פרטי\s+פרסום)/;
 
+function getCitationText(fn) {
+  // Production stores the formatted citation under `citation`. Older fixtures
+  // may use text/formatted/body/content. Read citation FIRST.
+  return String(fn?.citation || fn?.text || fn?.formatted || fn?.body || fn?.content || "").trim();
+}
+
 function classifyCompletion(fn) {
-  const text = String(fn?.text || fn?.formatted || fn?.body || fn?.content || "").trim();
+  const text = getCitationText(fn);
   if (!text) return { label: "noisy", reason: "empty_text" };
   if (CASE_DOCKET_RE.test(text)) return { label: "noisy", reason: "case_law_leakage" };
   if (PLACEHOLDER_RE.test(text)) return { label: "noisy", reason: "placeholder_in_text" };
