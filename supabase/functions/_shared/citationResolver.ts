@@ -223,6 +223,8 @@ function extractCaseLawCommon(
   text: string,
   caseNumberHint?: string,
   titleHint?: string,
+  party1Hint?: string,
+  party2Hint?: string,
 ): Record<string, string> {
   const fields: Record<string, string> = {};
   // Tier 1: prefixed shape in citation text
@@ -258,6 +260,15 @@ function extractCaseLawCommon(
       fields.party1 = plain[1].trim();
       fields.party2 = plain[2].trim();
     }
+  }
+  // v4 stage 2: party-name hints from the targeted Perplexity helper.
+  // Used ONLY when the local extraction above came up empty — never
+  // overwrite parties recovered from the citation text itself.
+  if (!fields.party1 && party1Hint && party1Hint.trim()) {
+    fields.party1 = party1Hint.trim();
+  }
+  if (!fields.party2 && party2Hint && party2Hint.trim()) {
+    fields.party2 = party2Hint.trim();
   }
   return fields;
 }
