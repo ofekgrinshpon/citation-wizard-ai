@@ -365,10 +365,39 @@ export function cleanStatuteCandidate(
   // (4) Substance check.
   const head = s.replace(/^(?:חוק[- ]יסוד\s*:\s*|חוק\s+|פקודת\s+|פקודה\s+|תקנות\s+|תקנה\s+|צו\s+)/, "");
   if (!head) return { ok: false, reason: "no_body" };
+  const hasKindKeyword = /^(?:חוק[- ]יסוד\s*:|חוק|פקודת|פקודה|תקנות|תקנה|צו)\s/.test(s);
   const hasHebYear = /הת?ש[\u05D0-\u05EA]/.test(s);
   const hasParen = /\([^)]+\)/.test(s);
   const tokens = head.split(/\s+/).filter((t) => /[\u05D0-\u05EA]/.test(t));
-  if (!hasHebYear && !hasParen && tokens.length < 3) {
+
+  // Verb/copula/prose tokens that suggest drafter prose rather than a law name.
+  // If the head's FIRST token is one of these, reject — real law names start with
+  // a noun (שוויון, הגנת, איסור, יסודות, חוזה, חברות, ...).
+  const PROSE_HEAD_TOKENS = new Set([
+    "קובע","קובעת","קובעים","מסדיר","מסדירה","מגדיר","מגדירה",
+    "מחייב","מחייבת","מאפשר","מאפשרת","אוסר","אוסרת","מתיר","מתירה",
+    "דן","דנה","עוסק","עוסקת","חל","חלה","חלים","חלות",
+    "היה","הייתה","היו","יחול","תחול","יחולו",
+    "שלגבי","לגבי","לעניין","בעניין","של","אשר","כי","אם","או","ו",
+  ]);
+  if (tokens.length > 0 && PROSE_HEAD_TOKENS.has(tokens[0])) {
+    return { ok: false, reason: "prose_head_token" };
+  }
+
+  if (hasHebYear || hasParen) return { ok: true, name: s };
+
+  // Allow 2-token head if it starts with a recognized statute keyword AND
+  // both tokens look nominal (≥3 Hebrew letters each, no prose verbs).
+  // This recovers names like "חוק שוויון הזדמנויות" while still filtering
+  // verb-led fragments like "חוק קובע הליכים".
+  if (hasKindKeyword && tokens.length >= 2) {
+    const allNominal = tokens.every(
+      (t) => t.replace(/[^\u05D0-\u05EA]/g, "").length >= 3 && !PROSE_HEAD_TOKENS.has(t),
+    );
+    if (allNominal) return { ok: true, name: s };
+  }
+
+  if (tokens.length < 3) {
     return { ok: false, reason: "too_short" };
   }
 
