@@ -277,8 +277,11 @@ function extractCaseLawPublished(
   text: string,
   caseNumberHint?: string,
   titleHint?: string,
+  party1Hint?: string,
+  party2Hint?: string,
+  yearHint?: string,
 ): Record<string, string> {
-  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint);
+  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint);
   // Series
   const seriesMatch = text.match(/(פ["״]ד|פד["״]ע|פ["״]מ)/);
   if (seriesMatch) fields.series = seriesMatch[1];
@@ -291,6 +294,10 @@ function extractCaseLawPublished(
   // Year in parens
   const yearMatch = text.match(/\((\d{4})\)/);
   if (yearMatch) fields.year = yearMatch[1];
+  // v4 stage 2: yearHint fallback (party-lookup helper sometimes returns year)
+  if (!fields.year && yearHint && /^\d{4}$/.test(yearHint.trim())) {
+    fields.year = yearHint.trim();
+  }
   return fields;
 }
 
@@ -299,8 +306,12 @@ function extractCaseLawDatabase(
   caseNumberHint?: string,
   decisionDateHint?: string,
   titleHint?: string,
+  party1Hint?: string,
+  party2Hint?: string,
+  fullDateHint?: string,
+  yearHint?: string,
 ): Record<string, string> {
-  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint);
+  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint);
   // Database name (optional per schema) — scan citation text first, then titleHint.
   // Perplexity often puts the database name (e.g. "נבו") in the title field
   // rather than the citation string itself.
@@ -314,7 +325,8 @@ function extractCaseLawDatabase(
   };
   const db = scanForDb(text) ?? scanForDb(titleHint);
   if (db) fields.database = db;
-  // Full date — accept dd.mm.yyyy from text OR fall back to decisionDateHint
+  // Full date — accept dd.mm.yyyy from text OR fall back to decisionDateHint,
+  // then to fullDateHint from the v4 party-lookup helper.
   const dateMatch = text.match(/(\d{1,2}\.\d{1,2}\.\d{4})/);
   if (dateMatch) fields.fullDate = dateMatch[1];
   else if (decisionDateHint) {
@@ -325,6 +337,14 @@ function extractCaseLawDatabase(
       const [y, m, d] = decisionDateHint.trim().split("-");
       fields.fullDate = `${parseInt(d, 10)}.${parseInt(m, 10)}.${y}`;
     }
+  }
+  if (!fields.fullDate && fullDateHint && /^\d{1,2}\.\d{1,2}\.\d{4}$/.test(fullDateHint.trim())) {
+    fields.fullDate = fullDateHint.trim();
+  }
+  // yearHint kept for symmetry — case_law_database doesn't currently use it
+  // in its template, but we accept it so callers can pass a uniform shape.
+  if (yearHint && !fields.year && /^\d{4}$/.test(yearHint.trim())) {
+    fields.year = yearHint.trim();
   }
   return fields;
 }
