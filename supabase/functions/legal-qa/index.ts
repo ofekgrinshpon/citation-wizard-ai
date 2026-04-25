@@ -5155,7 +5155,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         skipped_share: number;             // skipped_covered_by_primary / max(named_statutes,1)
         flags: {
           name_adjacent_present: boolean;  // ANY name_adjacent insert (should be 0)
-          excessive_trigger: boolean;      // kept_for_completion >= 5 (Fast cap signal)
+          excessive_trigger: boolean;      // kept_for_completion >= modeProfile.qaGuardExcessiveTriggerThreshold (Fast: 5, Deep: 8)
           primary_path_silent: boolean;    // ≥3 named statutes, 0 skipped_covered_by_primary
         };
         any_flag: boolean;
@@ -5628,7 +5628,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         const namedDen = Math.max(namedCount, 1);
         const flags = {
           name_adjacent_present: nameAdj > 0,
-          excessive_trigger: kept >= 5,
+          excessive_trigger: kept >= modeProfile.qaGuardExcessiveTriggerThreshold,
           primary_path_silent: namedCount >= 3 && skipped === 0,
         };
         const guard = {
