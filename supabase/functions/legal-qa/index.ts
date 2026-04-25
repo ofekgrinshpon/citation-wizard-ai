@@ -6345,6 +6345,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           failed: 0,
           status: lookup.status,
           failure_reasons: {},
+          recovered_without_full_date: 0,
         };
         for (const p of pendingPartyLookup) {
           const hit = lookup.hits.get(p.partial.caseNumber);
@@ -6359,11 +6360,21 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               party2Hint: hit.party2,
               fullDateHint: hit.fullDate,
               yearHint: hit.year,
+              // v4 stage 2 policy: this is the retry pass, so let the
+              // resolver relax `case_law_database` fullDate when the
+              // remaining shape is otherwise complete (caseType + docket
+              // + parties + year). See ResolveCitationOptions.partyLookupRetry.
+              partyLookupRetry: true,
             });
             // If retry resolved → counts as recovery. If it still fails, fall
             // back to honest telemetry via applyRoutedResult.
             if (retried.route === "legal_resolver" && retried.result.resolved) {
               chapterPartyLookup.recovered++;
+              // Track when the relaxed-fullDate path was the reason this
+              // retry resolved (i.e. lookup returned no fullDate but a year).
+              if (!hit.fullDate && hit.year) {
+                chapterPartyLookup.recovered_without_full_date++;
+              }
             } else {
               chapterPartyLookup.failed++;
               chapterPartyLookup.failure_reasons["retry_still_unresolved"] =
