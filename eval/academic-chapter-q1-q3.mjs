@@ -180,6 +180,11 @@ async function runOne(jwt, q) {
   const academicProfile = md.profile_used_academic || {};
   const chapterEngine = md.chapter_engine || null;
   const qaGuard = md.chapter_qa_guard || null;
+  // New type-aware shape: chapter_engine.legal_resolver / classification_counts / bibliography_routed / skipped.
+  const legalRes = chapterEngine?.legal_resolver || null;
+  const classCounts = chapterEngine?.classification_counts || null;
+  const bibRouted = chapterEngine?.bibliography_routed || null;
+  const skipped = chapterEngine?.skipped || null;
   return {
     ok, http_status: r.status, http_error: ok ? null : (r.body?.error || r.raw),
     wall_ms: wall,
@@ -194,9 +199,14 @@ async function runOne(jwt, q) {
     answer_full: ans, // for qualitative diff
     footnotes_count: Array.isArray(fn) ? fn.length : 0,
     anchored_count: anchored(fn),
-    engine_resolved: chapterEngine?.resolved_count ?? null,
-    engine_unresolved: chapterEngine?.unresolved_count ?? null,
-    engine_drop_reasons: chapterEngine?.drop_reasons ?? null,
+    // Legacy keys (pre type-aware router) — kept for backward compatibility.
+    engine_resolved: legalRes?.resolved_count ?? chapterEngine?.resolved_count ?? null,
+    engine_unresolved: legalRes?.unresolved_count ?? chapterEngine?.unresolved_count ?? null,
+    engine_drop_reasons: legalRes?.drop_reasons ?? chapterEngine?.drop_reasons ?? null,
+    // New type-aware fields.
+    classification_counts: classCounts,
+    bibliography_routed: bibRouted,
+    skipped_summary: skipped,
     qa_word_count: qaGuard?.word_count ?? null,
     qa_word_floor_threshold: qaGuard?.word_floor_threshold ?? null,
     qa_unresolved_share: qaGuard?.unresolved_share ?? null,
