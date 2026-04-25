@@ -5267,8 +5267,47 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           candidates.push(mention);
         }
 
-        // 3. Cap at 3
-        const rawTargets = candidates.slice(0, 3);
+        // ─── Demotion gate (architecture shift): claim-to-source primary ───
+        // Stage 5e is now a TRUE FALLBACK. We deliberately skip any candidate
+        // that is already covered by:
+        //   (a) the local source pack (a sourceCard whose citation contains
+        //       the statute name, or whose source_type is israeli_law/basic_law
+        //       and whose title-key matches), OR
+        //   (b) an anchor-pass marker that landed within ±240 chars of the
+        //       mention (i.e. the same paragraph/sentence is already grounded).
+        // The result: Perplexity is only consulted when the primary path failed
+        // for this specific statute. High `skipped_covered_by_primary` ⇒ the
+        // primary path is doing its job; Stage 5e correctly stays quiet.
+        const primaryFiltered: Array<{ name: string; index: number }> = [];
+        for (const c of candidates) {
+          const nameKey = c.name.replace(/^חוק[- ]יסוד\s*:?\s*/, "").trim();
+          // (a) Source pack coverage — scan all sourceCards (any provenance).
+          const coveredBySourcePack = sourceCards.some((sc) => {
+            if (!sc.citation) return false;
+            if (sc.citation.includes(c.name)) return true;
+            if (nameKey.length >= 6 && sc.citation.includes(nameKey)) return true;
+            return false;
+          });
+          if (coveredBySourcePack) {
+            statuteCompletionTelemetry.skipped_covered_by_primary!++;
+            continue;
+          }
+          // (b) Anchor-pass marker within ±240 chars (1-2 sentences in Hebrew memos).
+          // Anchor pass already wrote markers into answerText/answerBody by this
+          // point; we just check for any [N] marker in the window.
+          const wStart = Math.max(0, c.index - 240);
+          const wEnd = Math.min(answerBody.length, c.index + c.name.length + 240);
+          const window = answerBody.slice(wStart, wEnd);
+          if (anchorPassApplied > 0 && /\[\d{1,3}\]/.test(window)) {
+            statuteCompletionTelemetry.skipped_covered_by_primary!++;
+            continue;
+          }
+          primaryFiltered.push(c);
+        }
+
+        // 3. Cap at 3 — applied AFTER the demotion gate so the cap counts
+        // only true fallback candidates.
+        const rawTargets = primaryFiltered.slice(0, 3);
 
         // ─── Fix G1: input sanitization ─────────────────────────────
         // Apply cleanStatuteCandidate to each scraped name BEFORE Perplexity
