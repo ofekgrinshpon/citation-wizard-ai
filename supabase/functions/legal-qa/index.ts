@@ -6288,9 +6288,17 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         }
       };
 
+      // v4.1: tighten the `[חסר` early-skip. The previous broad rule
+      // (`if /\[חסר/.test(text) continue`) was hiding legitimate citations
+      // that merely *include* a missing-field marker — e.g. a bare-docket
+      // caselaw entry like `18225-06-25 (בית המשפט העליון) [חסר: עמוד].`
+      // never reached the router, so it surfaced nowhere in telemetry and
+      // could not benefit from Stage 2 party-lookup. Now we only skip when
+      // the citation is *essentially nothing but a placeholder*.
+      const PURE_PLACEHOLDER_RE = /^\s*\[חסר[^\]]*\]\s*\.?\s*$/;
       for (const fn of finalFootnotes) {
         const text = fn.citation || "";
-        if (/\[חסר/.test(text)) continue;
+        if (PURE_PLACEHOLDER_RE.test(text)) continue;
         const card = fnNumberToCard.get(fn.number);
         const titleHint = card?.citation || undefined;
         const caseNumberHint = card?.case_number || undefined;
