@@ -39,6 +39,15 @@ export interface ModeProfile {
    */
   anchorPassMaxPatches: number;
 
+  // ─── QA guard ───
+  /**
+   * Threshold at which the `excessive_trigger` QA flag fires for Stage 5e.
+   * Fast: 5 (Stage 5e is a tight fallback). Deep: 8 (richer source pack and
+   * larger answer envelope mean more legitimate completions are expected).
+   * Read by the qa_guard block in index.ts.
+   */
+  qaGuardExcessiveTriggerThreshold: number;
+
   // ─── Models / drafter ───
   /** Drafter variant: "structured" → gpt-5-mini (fast), "legacy" → gpt-5 (deep). */
   drafterVariant: "structured" | "legacy";
@@ -73,19 +82,31 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     perplexityCompletionMinAnchored: 2,
     anchorPassEnabled: true,
     anchorPassMaxPatches: 2,
+    qaGuardExcessiveTriggerThreshold: 5,
     drafterVariant: "structured",
     drafterTimeoutMs: 120000,
     creditCost: 5,
   },
   deep: {
+    // ─── DEEP TUNING (eval batch 2026-04) ────────────────────────────────
+    // Deep mirrors the same primary grounding architecture as Fast (anchor
+    // pass = primary, Stage 5e = fallback) but with a richer envelope:
+    //   • footnote floor/cap higher, but soft target wording (see index.ts
+    //     footnoteFloorBlock — quality > quantity, no hard reject).
+    //   • perplexityCompletionMinAnchored lowered 6 → 4 now that Stage 5e is
+    //     a true fallback, so it only fires when the source pack is genuinely
+    //     thin after 2 retrieval rounds.
+    //   • qaGuardExcessiveTriggerThreshold = 8 (vs Fast's 5) — Deep can
+    //     legitimately complete more statutes from its larger source pack.
     wordRangeMin: 1200,
     wordRangeMax: 2000,
     footnoteFloor: 8,
     footnoteTargetMax: 14,
     retrievalRounds: 2,
-    perplexityCompletionMinAnchored: 6,
+    perplexityCompletionMinAnchored: 4,
     anchorPassEnabled: true,
     anchorPassMaxPatches: 4,
+    qaGuardExcessiveTriggerThreshold: 8,
     drafterVariant: "legacy", // gpt-5 instead of gpt-5-mini
     drafterTimeoutMs: 180000,
     creditCost: 5, // No multiplier yet — will be revisited once production cost is known.
