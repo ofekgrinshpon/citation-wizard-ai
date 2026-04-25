@@ -6518,6 +6518,14 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             unresolved_count: chapterEngineUnresolvedCount,
             drop_reasons: chapterEngineDropReasons,
           } : null,
+          // Chapter QA guard — observability only, no behaviour change.
+          // Mirrors statute_completion.qa_guard from research grounding.
+          chapter_qa_guard: chapterQaGuard,
+          // Academic profile actually used. Same shape as profile_used.
+          // Read with: select metadata->'profile_used_academic' from qa_logs ...
+          profile_used_academic: academicProfile
+            ? { step: academicStepKey, ...academicProfile }
+            : null,
           // Honest models_used: only record a model as "used" if its stage
           // actually completed successfully. Otherwise expose null + the failure
           // status, so admins don't get the false impression that gpt-5-mini ran.
