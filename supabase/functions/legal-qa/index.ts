@@ -6208,34 +6208,72 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
 
     const finalFootnotes = validFootnotes;
 
-    // ===== Citation engine resolver — canonicalise chapter footnotes =====
-    // For academic chapter writes, run each parsed footnote through the same
-    // resolver Stage E.5 candidates use. When the engine resolves a citation,
-    // we overwrite `citation` with the canonical re-emission (rule template).
-    // Non-blocking: unresolved footnotes are kept as-is.
-    let chapterEngineResolvedCount = 0;
-    let chapterEngineUnresolvedCount = 0;
-    const chapterEngineDropReasons: Record<string, number> = {};
+    // ===== Type-aware citation router — academic chapter footnotes =====
+    // Replaces the previous binary statute/caselaw guess that misrouted
+    // every journal article, book, report and web source through the legal
+    // resolver and reported them as `missing_required`. The router now:
+    //   1. classifies each footnote into a typed source kind,
+    //   2. routes legal kinds (statute / caselaw) to `resolveCitation`,
+    //   3. routes journal_article through the shared bibliography validator,
+    //   4. lightly normalises books / reports / web sources,
+    //   5. records `unknown` shapes as an explicit skip — never as a
+    //      legal-resolver failure.
+    // Non-blocking: footnotes that are skipped or unresolved are KEPT.
+    const chapterClassificationCounts: Record<FootnoteSourceType, number> = {
+      statute: 0, caselaw: 0, journal_article: 0, book: 0,
+      book_chapter: 0, report: 0, web_source: 0, unknown: 0,
+    };
+    let chapterLegalResolved = 0;
+    let chapterLegalUnresolved = 0;
+    const chapterLegalDropReasons: Record<string, number> = {};
+    let chapterBibCount = 0;
+    const chapterBibByType: Record<string, number> = {};
+    const chapterBibWarnings: Record<string, number> = {};
+    let chapterSkippedCount = 0;
+    const chapterSkippedReasons: Record<string, number> = {};
     if (isAcademicChapter && finalFootnotes.length > 0) {
       for (const fn of finalFootnotes) {
         const text = fn.citation || "";
-        // Skip footnotes that have a missing-data placeholder marker.
+        // Skip footnotes that already carry a missing-data placeholder marker —
+        // they are intentional drafter-emitted gaps, not citations to resolve.
         if (/\[חסר/.test(text)) continue;
-        // Cheap declared-type heuristic — same split the resolver expects.
-        const declared: "statute" | "caselaw" =
-          /[א-ת]{1,3}["״׳']+[א-ת]{1,2}\s+\d+\/\d+|פ["״]ד|פד["״]ע/.test(text)
-            ? "caselaw"
-            : "statute";
-        const res = resolveCitation(text, declared);
-        if (res.resolved) {
-          fn.citation = res.canonical;
-          chapterEngineResolvedCount++;
-        } else {
-          chapterEngineUnresolvedCount++;
-          chapterEngineDropReasons[res.reason] = (chapterEngineDropReasons[res.reason] || 0) + 1;
+        const routed = routeChapterFootnote(text);
+        chapterClassificationCounts[routed.sourceType] =
+          (chapterClassificationCounts[routed.sourceType] || 0) + 1;
+        switch (routed.route) {
+          case "legal_resolver":
+            if (routed.result.resolved) {
+              fn.citation = routed.result.canonical;
+              chapterLegalResolved++;
+            } else {
+              chapterLegalUnresolved++;
+              const r = routed.result.reason; // classify_failed | extract_failed | missing_required
+              chapterLegalDropReasons[r] = (chapterLegalDropReasons[r] || 0) + 1;
+            }
+            break;
+          case "bibliography":
+            // Overwrite with the normalised form (idempotent — equal to input
+            // when nothing changed).
+            fn.citation = routed.canonical;
+            chapterBibCount++;
+            chapterBibByType[routed.sourceType] = (chapterBibByType[routed.sourceType] || 0) + 1;
+            for (const w of routed.warnings) {
+              chapterBibWarnings[w] = (chapterBibWarnings[w] || 0) + 1;
+            }
+            break;
+          case "skipped":
+            chapterSkippedCount++;
+            chapterSkippedReasons[routed.reason] = (chapterSkippedReasons[routed.reason] || 0) + 1;
+            break;
         }
       }
-      console.log(`[chapter-engine] resolved=${chapterEngineResolvedCount} unresolved=${chapterEngineUnresolvedCount} reasons=${JSON.stringify(chapterEngineDropReasons)}`);
+      console.log(
+        `[chapter-router] cls=${JSON.stringify(chapterClassificationCounts)} ` +
+        `legal=${chapterLegalResolved}/${chapterLegalResolved + chapterLegalUnresolved} ` +
+        `legal_drops=${JSON.stringify(chapterLegalDropReasons)} ` +
+        `bib=${chapterBibCount} bib_by_type=${JSON.stringify(chapterBibByType)} ` +
+        `skipped=${chapterSkippedCount} skipped_reasons=${JSON.stringify(chapterSkippedReasons)}`,
+      );
     }
 
     // ─── Chapter QA guard (academic chapters only) ───────────────────
