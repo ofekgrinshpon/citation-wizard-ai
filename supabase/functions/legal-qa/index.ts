@@ -29,6 +29,7 @@ import { runShadowAbComparison, buildLegacyShadowPrompt } from "./shadowAbLogger
 import { runAnchorPass, applyAnchorPatches, type AnchorPassSourcePackItem, type AnchorPassClaim } from "./anchorPass.ts";
 import { resolveCitation } from "../_shared/citationResolver.ts";
 import { resolveModeProfile, type ModeProfile, type ResearchDepth } from "./modeProfiles.ts";
+import { resolveAcademicProfile, type AcademicProfile, type AcademicStep } from "./academicProfiles.ts";
 
 // Single source of truth for the research-mode gate. The frontend currently
 // sends `taskMode: "research"`; if that ever changes, update this constant.
