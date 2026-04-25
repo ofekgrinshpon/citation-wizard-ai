@@ -403,6 +403,19 @@ export interface ResolveCitationOptions {
   party2Hint?: string;
   fullDateHint?: string;
   yearHint?: string;
+  /**
+   * v4 stage 2 policy flag: set ONLY by the chapter loop when this call is
+   * the *retry* pass after a successful party-lookup. When true, and only
+   * for `case_law_database`, `fullDate` is treated as optional provided
+   * caseType + caseNumber + party1 + party2 are present and at least one
+   * temporal anchor (`year` OR `fullDate`) survived. The canonical emitter
+   * falls back to a `(year)` form when `fullDate` is absent.
+   *
+   * Has no effect on first-pass resolution, on any other source type, or
+   * when party names are still missing — failing those preconditions just
+   * keeps the existing `missing_required` / `needs_party_lookup` behavior.
+   */
+  partyLookupRetry?: boolean;
 }
 
 /**
