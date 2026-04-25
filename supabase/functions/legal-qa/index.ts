@@ -298,14 +298,92 @@ function fixCStatuteCitationShapeError(citation: string): string | null {
   return null;
 }
 
+/**
+ * Fix G1 — Sanitize a regex-scraped statute name before sending it to
+ * Perplexity. The Stage 5e scanner regex (STATUTE_RE) sometimes bleeds the
+ * matched name into surrounding drafter prose, producing inputs like:
+ *   "חוק הגנת הפרטיות, התשמ\"א-1981 חוק הגנת הפרטיות היא"
+ *   "חוק החוזים (תרופות בשל הפרת חוזה), התשל\"א–1970 חוק התרופות"
+ *   "חוק יסוד: כבוד האדם וחירותו הוא רחב ומהותי חוק היסוד ושל הזכות"
+ *   "חוק המרכזי בישראל המקנה חוק לעידן הדיגיטלי היא הגדרת"
+ *
+ * citation-chat receives clean user-typed entities; we replicate that here.
+ *
+ * Returns { ok: true, name } when the name survives, otherwise
+ * { ok: false, reason } so Stage 5e telemetry can attribute the loss.
+ *
+ * Rules (in order):
+ *   1. If a SECOND statute keyword (חוק/פקודת/תקנות/חוק[- ]יסוד) appears,
+ *      keep only the first segment. Reason: "multi_law".
+ *   2. If a Hebrew-year + Gregorian-year clause exists ("התש... -YYYY" or
+ *      "התש..., YYYY"), truncate everything after it. Anything past the
+ *      year is drafter prose.
+ *   3. Strip trailing prose markers commonly seen at the tail (sentence
+ *      verbs/copulas: "היא", "הוא", "של", "ושל", "כי", "אשר",
+ *      "המקנה", "בעניין", "לעניין", "הגדרת").
+ *   4. After cleaning, the name (after the kind word) must contain at least
+ *      ONE of: a Hebrew-year token (`הת`), a parenthetical qualifier `(...)`,
+ *      OR ≥3 Hebrew tokens. Otherwise: "too_short".
+ */
+export function cleanStatuteCandidate(
+  raw: string,
+): { ok: true; name: string } | { ok: false; reason: string } {
+  let s = (raw || "").replace(/\s+/g, " ").trim().replace(/[,;:.]+$/, "");
+  if (!s) return { ok: false, reason: "empty" };
+
+  // (1) Multi-law split — keep first segment if a second kind keyword appears.
+  // We split on word-boundary occurrences, then anchor on the FIRST keyword
+  // and look for a SECOND one starting > 0 chars in.
+  const KIND_RE = /(?:חוק[- ]יסוד\s*:|חוק|פקודת|פקודה|תקנות|תקנה|צו)\s/g;
+  const kindMatches: number[] = [];
+  let km: RegExpExecArray | null;
+  while ((km = KIND_RE.exec(s)) !== null) {
+    kindMatches.push(km.index);
+    if (kindMatches.length >= 2) break;
+  }
+  if (kindMatches.length >= 2) {
+    s = s.slice(0, kindMatches[1]).trim().replace(/[,;:.]+$/, "");
+    // Mark for telemetry; caller decides whether to count as drop.
+    // We continue cleaning on the truncated head.
+  }
+
+  // (2) Truncate after the Hebrew-year + Gregorian-year clause.
+  // Pattern: הת(ש|ש) + 0-3 Heb letters + optional gershayim + (-|–|, ) + 4-digit year
+  const YEAR_TAIL_RE = /(הת?ש[\u05D0-\u05EA]{0,3}["״׳']?[\u05D0-\u05EA]?["״׳']?\s*[-–,]\s*\d{4})/;
+  const ym = s.match(YEAR_TAIL_RE);
+  if (ym && ym.index !== undefined) {
+    const cut = ym.index + ym[0].length;
+    s = s.slice(0, cut).trim().replace(/[,;:.]+$/, "");
+  }
+
+  // (3) Strip trailing prose words (Hebrew copulas/verbs). One pass; cheap.
+  const TAIL_PROSE_RE = /\s+(?:היא|הוא|הם|הן|של|ושל|כי|אשר|המקנה|בעניין|לעניין|הגדרת|המחייב|המקובל|אשרור)\b.*$/;
+  s = s.replace(TAIL_PROSE_RE, "").trim().replace(/[,;:.]+$/, "");
+
+  if (!s) return { ok: false, reason: "empty_after_clean" };
+
+  // (4) Substance check.
+  const head = s.replace(/^(?:חוק[- ]יסוד\s*:\s*|חוק\s+|פקודת\s+|פקודה\s+|תקנות\s+|תקנה\s+|צו\s+)/, "");
+  if (!head) return { ok: false, reason: "no_body" };
+  const hasHebYear = /הת?ש[\u05D0-\u05EA]/.test(s);
+  const hasParen = /\([^)]+\)/.test(s);
+  const tokens = head.split(/\s+/).filter((t) => /[\u05D0-\u05EA]/.test(t));
+  if (!hasHebYear && !hasParen && tokens.length < 3) {
+    return { ok: false, reason: "too_short" };
+  }
+
+  return { ok: true, name: s };
+}
+
 function validatePerplexityCandidate(
   c: PerplexityCompletionCandidate,
+  opts: { skipShapeAndEngine?: boolean } = {},
 ): { ok: true; candidate: ValidatedCompletionCandidate } | { ok: false; reason: string } {
   if (c.type !== "statute" && c.type !== "caselaw") {
     return { ok: false, reason: "unknown_type" };
   }
 
-  // Guard 1: URL allowlist (hard drop).
+  // Guard 1: URL allowlist (hard drop). Always applied.
   if (!c.url || !isTrustedLegalUrl(c.url)) {
     return { ok: false, reason: "url_not_allowlisted" };
   }
