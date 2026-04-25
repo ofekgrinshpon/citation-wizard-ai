@@ -98,10 +98,10 @@ async function fetchQaLog(evalRunId) {
 //   (c) include a publication marker (ס"ח / ק"ת / נ"ח / ע"ר) followed by a positive page,
 //   (d) NOT contain case-law dockets or placeholder strings.
 // Anything failing (a–d) is "noisy".
-const STATUTE_HEAD_RE = /^(?:חוק[- ]יסוד\s*:|חוק|פקודת|פקודה|תקנות|תקנה|צו|כללי)\b/;
+const STATUTE_HEAD_RE = /^(?:חוק[- ]יסוד\s*:|חוק|פקודת|פקודה|תקנות|תקנה|צו|כללי)(?=\s|$)/;
 const YEAR_RE = /(?:התש[א-ת]["״']?[א-ת]?|\b(?:19|20)\d{2}\b)/;
 const PUB_PAGE_RE = /(?:ס["״]ח|ק["״]ת|נ["״]ח|ע["״]ר)\s+(\d+)/;
-const CASE_DOCKET_RE = /(?:בג["״]ץ|ע["״]א|ע["״]פ|רע["״]א|רע["״]פ|דנ["״]א|דנ["״]פ|ת["״]א|ת["״]פ|תפ["״]ח|בש["״]פ|עע["״]מ|בר["״]ם|עמ["״]ה)\s+\d+\/\d+/;
+const CASE_DOCKET_RE = /(?:בג["״]ץ|ע["״]א|ע["״]פ|רע["״]א|רע["״]פ|דנ["״]א|דנ["״]פ|ת["״]א|ת["״]פ|תפ["״]ח|בש["״]פ|עע["״]מ|בר["״]ם|בר["״]ע|עמ["״]ה)\s+\d+\/\d+/;
 const PLACEHOLDER_RE = /(?:פרטי\s+מסמך|לא\s+נמצא|לא\s+ידוע|unknown|לא\s+נמצאו\s+פרטי\s+פרסום)/;
 
 function getCitationText(fn) {
