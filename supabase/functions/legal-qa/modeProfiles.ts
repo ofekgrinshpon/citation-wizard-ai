@@ -112,6 +112,13 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     drafterVariant: "structured",
     drafterTimeoutMs: 120000,
     creditCost: 5,
+    // Phase C: Fast keeps Stage 2 retry OFF by default. The user has agreed
+    // to flip this to `true` only after the eval shows median wall_ms
+    // increase ≤ 5s AND at least one recovered citation surviving the
+    // post-filters. Until then, Fast stays in Phase B behaviour.
+    partyLookupRetryEnabled: false,
+    partyLookupPlaceholderPolicy: "emit",
+    partyLookupMaxBatchSize: 3,
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
@@ -141,6 +148,15 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     drafterVariant: "legacy", // gpt-5 instead of gpt-5-mini
     drafterTimeoutMs: 180000,
     creditCost: 5, // No multiplier yet — will be revisited once production cost is known.
+    // Phase C: Deep is the default-on mode for Stage 2 retry. Deep already
+    // takes longer (legacy gpt-5 + retrievalRounds=2) so the marginal
+    // Perplexity round-trip is acceptable, and Deep's product promise is
+    // richer caselaw coverage. Placeholder policy mirrors the chapter
+    // default — partial caselaw is more useful than none, and the final
+    // `placeholder_dominant` filter still gates anything genuinely empty.
+    partyLookupRetryEnabled: true,
+    partyLookupPlaceholderPolicy: "emit",
+    partyLookupMaxBatchSize: 6,
   },
 };
 
