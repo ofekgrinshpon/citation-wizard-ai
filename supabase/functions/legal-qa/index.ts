@@ -2170,7 +2170,9 @@ ${(verify.fullText as string).slice(0, 50000)}
     // ========= Step 0: Document context (if uploaded) =========
     let documentContext = "";
     const isAcademicMode = taskMode === "academic_writing";
-    const contextCharLimit = isAcademicMode ? 12000 : MAX_CONTEXT_CHARS;
+    // Per-step context budget comes from the academic profile when available
+    // (chapter: 12000, others: 6000). Non-academic modes keep MAX_CONTEXT_CHARS.
+    const contextCharLimit = academicProfile?.documentContextChars ?? MAX_CONTEXT_CHARS;
 
     // Multi-file support
     if (documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
