@@ -47,6 +47,13 @@ export interface AnchorPassInput {
   body: string;
   sourcePack: AnchorPassSourcePackItem[];
   claims: AnchorPassClaim[];
+  /**
+   * Caller-provided cap on the number of patches to apply. Defaults to 4
+   * for back-compat. Fast mode passes 2; Deep passes 4. The LLM tool
+   * schema permits up to 6 candidates, but we hard-cap on the TS side so
+   * profile changes never require re-deploying the prompt.
+   */
+  maxPatches?: number;
 }
 
 const ANCHOR_PASS_TOOL: PlannerToolDef = {
@@ -58,7 +65,7 @@ const ANCHOR_PASS_TOOL: PlannerToolDef = {
     properties: {
       patches: {
         type: "array",
-        maxItems: 4,
+        maxItems: 6,
         items: {
           type: "object",
           properties: {
