@@ -453,10 +453,26 @@ export function resolveCitation(
       fields = extractLegislation(text, opts.titleHint);
       break;
     case "case_law_published":
-      fields = extractCaseLawPublished(text, opts.caseNumberHint, opts.titleHint);
+      fields = extractCaseLawPublished(
+        text,
+        opts.caseNumberHint,
+        opts.titleHint,
+        opts.party1Hint,
+        opts.party2Hint,
+        opts.yearHint,
+      );
       break;
     case "case_law_database":
-      fields = extractCaseLawDatabase(text, opts.caseNumberHint, opts.decisionDateHint, opts.titleHint);
+      fields = extractCaseLawDatabase(
+        text,
+        opts.caseNumberHint,
+        opts.decisionDateHint,
+        opts.titleHint,
+        opts.party1Hint,
+        opts.party2Hint,
+        opts.fullDateHint,
+        opts.yearHint,
+      );
       break;
   }
 
