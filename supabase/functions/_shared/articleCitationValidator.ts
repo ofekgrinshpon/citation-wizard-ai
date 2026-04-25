@@ -36,11 +36,41 @@ export const HEBREW_JOURNALS: readonly string[] = [
   "משפט חברה ותרבות",
   "עלי משפט",
   "ספר השנה של המשפט בישראל",
+  // Expanded — observed in academic chapter outputs but missing from the
+  // legacy whitelist. Adding them here lets the classifier route those
+  // footnotes to `journal_article` instead of `unknown`.
+  "רציו",
+  "הסניגור",
+  "תאוריה וביקורת",
+  "תיאוריה וביקורת",
+  "שערי משפט",
+  "קרית המשפט",
+  "עיוני חינוך",
+  "מגמות",
+  "מדינה וחברה",
+  "מחקרי רגולציה",
+  "ביטחון לאומי",
+  "המשפט בישראל",
+  "עיונים בביקורת המדינה",
+  "צפון אפריקה",
 ];
 
 export const JOURNAL_HINT_RE = new RegExp(
+  // Whitelist OR generic "כתב עת" wording OR a Hebrew-letter volume token
+  // immediately preceded by a closing quote — strong signal of an article
+  // citation even when the journal name is unknown.
   `(?:${HEBREW_JOURNALS.join("|")}|כתב[\\s-]?עת)`,
 );
+
+/**
+ * Generic fallback signal: a quoted (or bold) title followed by a
+ * journal-like token (a short Hebrew-letter volume in the form of `יד`,
+ * `כג`, `לב` …, OR a numeric volume) and a 4-digit year in parentheses.
+ * Used by the classifier to recognise journal articles whose journal name
+ * is not in HEBREW_JOURNALS.
+ */
+export const ARTICLE_SHAPE_FALLBACK_RE =
+  /(?:["״][^"״\n]{2,}["״]|\*\*[^*\n]{2,}\*\*)[^\n]*?\s+(?:[א-ת]{1,4}|\d{1,3})\s*(?:\(\s*(?:19|20)\d{2}\s*\)|,\s*(?:19|20)\d{2})/;
 
 export function findJournalInText(text: string): string | null {
   for (const j of HEBREW_JOURNALS) {
