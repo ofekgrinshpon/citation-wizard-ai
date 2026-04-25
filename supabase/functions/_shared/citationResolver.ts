@@ -223,6 +223,8 @@ function extractCaseLawCommon(
   text: string,
   caseNumberHint?: string,
   titleHint?: string,
+  party1Hint?: string,
+  party2Hint?: string,
 ): Record<string, string> {
   const fields: Record<string, string> = {};
   // Tier 1: prefixed shape in citation text
@@ -259,6 +261,15 @@ function extractCaseLawCommon(
       fields.party2 = plain[2].trim();
     }
   }
+  // v4 stage 2: party-name hints from the targeted Perplexity helper.
+  // Used ONLY when the local extraction above came up empty — never
+  // overwrite parties recovered from the citation text itself.
+  if (!fields.party1 && party1Hint && party1Hint.trim()) {
+    fields.party1 = party1Hint.trim();
+  }
+  if (!fields.party2 && party2Hint && party2Hint.trim()) {
+    fields.party2 = party2Hint.trim();
+  }
   return fields;
 }
 
@@ -266,8 +277,11 @@ function extractCaseLawPublished(
   text: string,
   caseNumberHint?: string,
   titleHint?: string,
+  party1Hint?: string,
+  party2Hint?: string,
+  yearHint?: string,
 ): Record<string, string> {
-  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint);
+  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint);
   // Series
   const seriesMatch = text.match(/(פ["״]ד|פד["״]ע|פ["״]מ)/);
   if (seriesMatch) fields.series = seriesMatch[1];
@@ -280,6 +294,10 @@ function extractCaseLawPublished(
   // Year in parens
   const yearMatch = text.match(/\((\d{4})\)/);
   if (yearMatch) fields.year = yearMatch[1];
+  // v4 stage 2: yearHint fallback (party-lookup helper sometimes returns year)
+  if (!fields.year && yearHint && /^\d{4}$/.test(yearHint.trim())) {
+    fields.year = yearHint.trim();
+  }
   return fields;
 }
 
@@ -288,8 +306,12 @@ function extractCaseLawDatabase(
   caseNumberHint?: string,
   decisionDateHint?: string,
   titleHint?: string,
+  party1Hint?: string,
+  party2Hint?: string,
+  fullDateHint?: string,
+  yearHint?: string,
 ): Record<string, string> {
-  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint);
+  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint);
   // Database name (optional per schema) — scan citation text first, then titleHint.
   // Perplexity often puts the database name (e.g. "נבו") in the title field
   // rather than the citation string itself.
@@ -303,7 +325,8 @@ function extractCaseLawDatabase(
   };
   const db = scanForDb(text) ?? scanForDb(titleHint);
   if (db) fields.database = db;
-  // Full date — accept dd.mm.yyyy from text OR fall back to decisionDateHint
+  // Full date — accept dd.mm.yyyy from text OR fall back to decisionDateHint,
+  // then to fullDateHint from the v4 party-lookup helper.
   const dateMatch = text.match(/(\d{1,2}\.\d{1,2}\.\d{4})/);
   if (dateMatch) fields.fullDate = dateMatch[1];
   else if (decisionDateHint) {
@@ -314,6 +337,14 @@ function extractCaseLawDatabase(
       const [y, m, d] = decisionDateHint.trim().split("-");
       fields.fullDate = `${parseInt(d, 10)}.${parseInt(m, 10)}.${y}`;
     }
+  }
+  if (!fields.fullDate && fullDateHint && /^\d{1,2}\.\d{1,2}\.\d{4}$/.test(fullDateHint.trim())) {
+    fields.fullDate = fullDateHint.trim();
+  }
+  // yearHint kept for symmetry — case_law_database doesn't currently use it
+  // in its template, but we accept it so callers can pass a uniform shape.
+  if (yearHint && !fields.year && /^\d{4}$/.test(yearHint.trim())) {
+    fields.year = yearHint.trim();
   }
   return fields;
 }
@@ -357,6 +388,21 @@ export interface ResolveCitationOptions {
    * in `title` even when the citation lacks it.
    */
   titleHint?: string;
+  /**
+   * Caselaw v4 stage 2: party-name hints recovered by the targeted Perplexity
+   * party-lookup helper. Supplied ONLY after the first resolveCitation pass
+   * returned `needs_party_lookup`. The caselaw extractors fall back to these
+   * when the citation text + bold-parties scan come up empty.
+   *
+   * `fullDateHint` / `yearHint` are accepted for symmetry — the helper
+   * sometimes returns a decision date alongside the parties, and Perplexity
+   * docket records on nevo/supreme.court.gov.il are the same source of
+   * truth as for parties so it would be wasteful to drop them.
+   */
+  party1Hint?: string;
+  party2Hint?: string;
+  fullDateHint?: string;
+  yearHint?: string;
 }
 
 /**
@@ -407,10 +453,26 @@ export function resolveCitation(
       fields = extractLegislation(text, opts.titleHint);
       break;
     case "case_law_published":
-      fields = extractCaseLawPublished(text, opts.caseNumberHint, opts.titleHint);
+      fields = extractCaseLawPublished(
+        text,
+        opts.caseNumberHint,
+        opts.titleHint,
+        opts.party1Hint,
+        opts.party2Hint,
+        opts.yearHint,
+      );
       break;
     case "case_law_database":
-      fields = extractCaseLawDatabase(text, opts.caseNumberHint, opts.decisionDateHint, opts.titleHint);
+      fields = extractCaseLawDatabase(
+        text,
+        opts.caseNumberHint,
+        opts.decisionDateHint,
+        opts.titleHint,
+        opts.party1Hint,
+        opts.party2Hint,
+        opts.fullDateHint,
+        opts.yearHint,
+      );
       break;
   }
 

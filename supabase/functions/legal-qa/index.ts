@@ -29,6 +29,7 @@ import { runShadowAbComparison, buildLegacyShadowPrompt } from "./shadowAbLogger
 import { runAnchorPass, applyAnchorPatches, type AnchorPassSourcePackItem, type AnchorPassClaim } from "./anchorPass.ts";
 import { resolveCitation } from "../_shared/citationResolver.ts";
 import { routeChapterFootnote, type FootnoteSourceType } from "../_shared/chapterCitationRouter.ts";
+import { lookupPartyNames } from "../_shared/partyLookup.ts";
 import { resolveModeProfile, type ModeProfile, type ResearchDepth } from "./modeProfiles.ts";
 import { resolveAcademicProfile, type AcademicProfile, type AcademicStep } from "./academicProfiles.ts";
 
@@ -6240,20 +6241,14 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
     // vs journal_shape_fallback) without re-running the eval.
     const chapterClassifyReasons: Record<string, number> = {};
     if (isAcademicChapter && finalFootnotes.length > 0) {
-      for (const fn of finalFootnotes) {
-        const text = fn.citation || "";
-        // Skip footnotes that already carry a missing-data placeholder marker —
-        // they are intentional drafter-emitted gaps, not citations to resolve.
-        if (/\[חסר/.test(text)) continue;
-        // v3: pass through source-card hints so the legal resolver can use
-        // titleHint for bare-section statutes (e.g. "סעיף 17") and
-        // case_number for short-form caselaw. The card title typically
-        // carries the missing year/collection/law-name metadata that the
-        // drafter elided in the footnote string.
-        const card = fnNumberToCard.get(fn.number);
-        const titleHint = card?.citation || undefined;
-        const caseNumberHint = card?.case_number || undefined;
-        const routed = routeChapterFootnote(text, { titleHint, caseNumberHint });
+      // First pass — route everything; collect needs_party_lookup for stage 2.
+      type Pending = { fn: typeof finalFootnotes[number]; text: string; card: SourceCard | undefined; partial: Record<string, string>; classifyReason: string };
+      const pendingPartyLookup: Pending[] = [];
+
+      const applyRoutedResult = (
+        fn: typeof finalFootnotes[number],
+        routed: ReturnType<typeof routeChapterFootnote>,
+      ) => {
         chapterClassificationCounts[routed.sourceType] =
           (chapterClassificationCounts[routed.sourceType] || 0) + 1;
         chapterClassifyReasons[routed.classifyReason] =
@@ -6265,13 +6260,11 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               chapterLegalResolved++;
             } else {
               chapterLegalUnresolved++;
-              const r = routed.result.reason; // classify_failed | extract_failed | missing_required
+              const r = routed.result.reason;
               chapterLegalDropReasons[r] = (chapterLegalDropReasons[r] || 0) + 1;
             }
             break;
           case "bibliography":
-            // Overwrite with the normalised form (idempotent — equal to input
-            // when nothing changed).
             fn.citation = routed.canonical;
             chapterBibCount++;
             chapterBibByType[routed.sourceType] = (chapterBibByType[routed.sourceType] || 0) + 1;
@@ -6284,14 +6277,106 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             chapterSkippedReasons[routed.reason] = (chapterSkippedReasons[routed.reason] || 0) + 1;
             break;
         }
+      };
+
+      for (const fn of finalFootnotes) {
+        const text = fn.citation || "";
+        if (/\[חסר/.test(text)) continue;
+        const card = fnNumberToCard.get(fn.number);
+        const titleHint = card?.citation || undefined;
+        const caseNumberHint = card?.case_number || undefined;
+        const routed = routeChapterFootnote(text, { titleHint, caseNumberHint });
+        // Defer telemetry for needs_party_lookup — we'll re-route after stage 2.
+        if (
+          routed.route === "legal_resolver" &&
+          !routed.result.resolved &&
+          routed.result.reason === "needs_party_lookup" &&
+          routed.result.partialFields.caseNumber
+        ) {
+          pendingPartyLookup.push({
+            fn,
+            text,
+            card,
+            partial: routed.result.partialFields,
+            classifyReason: routed.classifyReason,
+          });
+          continue;
+        }
+        applyRoutedResult(fn, routed);
       }
+
+      // ===== Stage 2 — targeted Perplexity party-name backfill =====
+      // Only fires for caselaw entries where we recovered the docket locally
+      // but parties are missing. One batched call per chapter.
+      if (pendingPartyLookup.length > 0) {
+        const requests = pendingPartyLookup.map((p) => ({
+          caseNumber: p.partial.caseNumber,
+          courtHint: p.card?.citation || undefined,
+          caseTypeHint: p.partial.caseType || undefined,
+        }));
+        const lookup = await lookupPartyNames(requests);
+        chapterPartyLookup = {
+          attempted: lookup.attempted,
+          recovered: 0,
+          failed: 0,
+          status: lookup.status,
+          failure_reasons: {},
+        };
+        for (const p of pendingPartyLookup) {
+          const hit = lookup.hits.get(p.partial.caseNumber);
+          if (hit) {
+            const card = p.card;
+            const titleHint = card?.citation || undefined;
+            const caseNumberHint = card?.case_number || undefined;
+            const retried = routeChapterFootnote(p.text, {
+              titleHint,
+              caseNumberHint,
+              party1Hint: hit.party1,
+              party2Hint: hit.party2,
+              fullDateHint: hit.fullDate,
+              yearHint: hit.year,
+            });
+            // If retry resolved → counts as recovery. If it still fails, fall
+            // back to honest telemetry via applyRoutedResult.
+            if (retried.route === "legal_resolver" && retried.result.resolved) {
+              chapterPartyLookup.recovered++;
+            } else {
+              chapterPartyLookup.failed++;
+              chapterPartyLookup.failure_reasons["retry_still_unresolved"] =
+                (chapterPartyLookup.failure_reasons["retry_still_unresolved"] || 0) + 1;
+            }
+            applyRoutedResult(p.fn, retried);
+          } else {
+            chapterPartyLookup.failed++;
+            const reason = lookup.failures.get(p.partial.caseNumber) || "no_match";
+            chapterPartyLookup.failure_reasons[reason] =
+              (chapterPartyLookup.failure_reasons[reason] || 0) + 1;
+            // No party hit — apply original needs_party_lookup result so it
+            // surfaces honestly in legal_resolver.drop_reasons.
+            applyRoutedResult(p.fn, {
+              route: "legal_resolver",
+              sourceType: "caselaw",
+              classifyReason: p.classifyReason as any,
+              result: {
+                resolved: false,
+                reason: "needs_party_lookup",
+                missingFields: [],
+                partialFields: p.partial,
+                attemptedType: "case_law_database",
+              },
+            } as any);
+          }
+        }
+      }
+
       console.log(
         `[chapter-router] cls=${JSON.stringify(chapterClassificationCounts)} ` +
         `cls_reasons=${JSON.stringify(chapterClassifyReasons)} ` +
         `legal=${chapterLegalResolved}/${chapterLegalResolved + chapterLegalUnresolved} ` +
         `legal_drops=${JSON.stringify(chapterLegalDropReasons)} ` +
         `bib=${chapterBibCount} bib_by_type=${JSON.stringify(chapterBibByType)} ` +
-        `skipped=${chapterSkippedCount} skipped_reasons=${JSON.stringify(chapterSkippedReasons)}`,
+        `skipped=${chapterSkippedCount} skipped_reasons=${JSON.stringify(chapterSkippedReasons)} ` +
+        `party_lookup=${chapterPartyLookup ? JSON.stringify(chapterPartyLookup) : "none"}`,
       );
     }
 
