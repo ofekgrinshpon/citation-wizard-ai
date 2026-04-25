@@ -5604,6 +5604,42 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         statuteCompletionTelemetry.status = "exception";
         statuteCompletionTelemetry.duration_ms = Date.now() - tSC;
       }
+
+      // ─── QA guard: detect regressions in the locked Fast architecture ───
+      // Invariants (validated 2026-04):
+      //   A. All Stage 5e markers are placed at sentence end (never name_adjacent).
+      //   B. Stage 5e is a fallback — kept_for_completion stays bounded in Fast.
+      //   C. When several statutes are named, the primary path (source pack +
+      //      anchor pass) should cover at least some of them, otherwise the
+      //      gate is silently letting Stage 5e do the whole job again.
+      try {
+        const placements = statuteCompletionTelemetry.insertion_placement || [];
+        const namedCount = (statuteCompletionTelemetry.named_statutes || []).length;
+        const kept = statuteCompletionTelemetry.kept_for_completion ?? 0;
+        const skipped = statuteCompletionTelemetry.skipped_covered_by_primary ?? 0;
+        const nameAdj = placements.filter((p) => p === "name_adjacent").length;
+        const total = placements.length;
+        const namedDen = Math.max(namedCount, 1);
+        const flags = {
+          name_adjacent_present: nameAdj > 0,
+          excessive_trigger: kept >= 5,
+          primary_path_silent: namedCount >= 3 && skipped === 0,
+        };
+        const guard = {
+          name_adjacent_share: total > 0 ? +(nameAdj / total).toFixed(3) : 0,
+          trigger_share_of_named: +(kept / namedDen).toFixed(3),
+          skipped_share: +(skipped / namedDen).toFixed(3),
+          flags,
+          any_flag: flags.name_adjacent_present || flags.excessive_trigger || flags.primary_path_silent,
+        };
+        statuteCompletionTelemetry.qa_guard = guard;
+        if (guard.any_flag) {
+          console.warn("[statute-completion][qa_guard] flags raised:", JSON.stringify(guard));
+        }
+      } catch (e) {
+        console.warn("[statute-completion][qa_guard] failed:", (e as Error)?.message || e);
+      }
+
       emitStage("statute_completion", "complete",
         statuteCompletionTelemetry.completed_count > 0
           ? `${statuteCompletionTelemetry.completed_count} חוקים`
