@@ -118,3 +118,32 @@ This matches the user's tradeoff: "few seconds AND meaningful output quality imp
 - The final `reasonFor` filter: still the gate. Stage 2 placeholder-emitted citations carry `source = "perplexity"` from `lookupPartyNames`, which makes them anchored, so they survive `placeholder_dominant` (same invariant as chapters).
 - React-side citation engine — Stage 2 stays Deno-only.
 - Phase D (bibliography canonicalization, memo mode) — still deferred.
+
+## Phase C.2 — Fast-on probe outcome (2026-04-25, run `phase-c-fast-on-0e91a9a7`)
+
+**Decision: REVERTED. Fast keeps `partyLookupRetryEnabled = false`.**
+
+Probe: Q1 + Q6 × 2 reps each, depth=fast, flag flipped on, batch cap=3, placeholder policy=emit.
+
+| metric | value |
+|---|---|
+| wall_ms median | 26.2s (Fast-on) vs ~57s reference baseline — DELTA was negative because the reference was taken from richer Phase B fast runs; latency was NOT the blocker |
+| Stage 2 attempted | 6 (across 4 runs; one Q6 rep had 0 candidates) |
+| recovered (clean) | **0** |
+| recovered_with_placeholders | **0** |
+| failed | **6** (all `failure_reasons.no_candidates` from Perplexity) |
+| caselaw with parties or placeholders surviving in `validFootnotes` | **0** |
+
+**Root cause** (verified by inspecting raw `qa_logs.footnotes`): Fast's drafter emits malformed / non-Supreme-Court docket strings — examples from Q1 r1:
+- `2592/20 (בית המשפט העליון).` — bare docket, missing `בג"ץ`/`ע"א` prefix that Perplexity's prompt requires.
+- `18225-06-25 (בית המשפט, לעיל ה"ש 3.` — district-court docket format (`NNNN-MM-YY`), not on `supreme.court.gov.il`/`nevo`.
+
+Stage 2 cannot recover these — Perplexity correctly returns empty `results` when it can't verify a docket on a trusted source. The fix has to be **upstream**: either (a) teach Fast's drafter to emit canonical docket prefixes, or (b) widen Perplexity's `lookupPartyNames` system prompt to accept district-court records. Until then, Fast Stage 2 is pure latency cost with zero improvement.
+
+**Acceptance criteria evaluation:**
+- ❌ "At least one recovered or recovered_with_placeholders that survives into validFootnotes" — failed (0).
+- ✅ "Median wall_ms increase ≤ 5s" — held (Stage 2 added ~1.4–2.2s when it ran), but irrelevant because recovery criterion failed.
+
+**Action taken:** Reverted `MODE_PROFILES.fast.partyLookupRetryEnabled = false` with a JSDoc comment recording the failure mode and reopen criteria. Deep stays ON (Phase C still shipped for Deep). `mem://logic/legal-qa/research-router.md` updated.
+
+**Reopen when:** Fast drafter learns canonical docket prefixes, OR `lookupPartyNames` is widened to district-court records. Re-run `eval/phase-c-fast-on-probe.mjs` and re-evaluate.
