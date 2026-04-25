@@ -143,7 +143,7 @@ async function main() {
   }
   lines.push(``, `## Acceptance gates`, `- profile_used.depth === "deep": ${pass.depth}/3`, `- words >= 1200: ${pass.words}/3`, `- anchored >= 6: ${pass.anch}/3`);
   const summary = lines.join("\n");
-  writeFileSync(`${OUT_DIR}/deep-mode-q1-q6-q21.summary.md`, summary);
+  writeFileSync(`${OUT_DIR}/deep-${PHASE}.summary.md`, summary);
   log(`\n${summary}`);
 }
 
