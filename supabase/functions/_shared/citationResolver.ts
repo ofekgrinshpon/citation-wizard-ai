@@ -173,6 +173,31 @@ const UNQUOTED_PREFIX_RE = new RegExp(
   `(?:^|\\s)(${UNQUOTED_CASE_PREFIXES.join("|")})\\s+(\\d+[/\\-]\\d+)`,
 );
 
+// v4: bare-docket pattern (e.g. "54321-03-25" / "18225-06-25"). Requires the
+// dash-separated date-bucket shape; the 2- or 4-digit year tail is the
+// distinguishing feature versus case-number/year shapes like "1234/05".
+const BARE_DOCKET_RE = /(?:^|[\s(])(\d{3,6}-\d{1,2}-\d{2,4})(?=[\s).,]|$)/;
+
+/**
+ * v4: infer the engine `caseType` from a card title's court-tier hint.
+ * Cards in our corpus carry strings like:
+ *   "(בתי המשפט המחוזיים)"   → caseType="עת״מ" is too speculative
+ *   "(בתי המשפט לענייני משפחה)" → "תמ״ש"
+ * So we ONLY infer caseType when the mapping is unambiguous. Otherwise we
+ * leave caseType undefined and let the caller decide whether to render a
+ * `[סוג ההליך חסר]` placeholder.
+ */
+function inferCaseTypeFromTitle(titleHint?: string): string | undefined {
+  if (!titleHint) return undefined;
+  // Unambiguous court-tier → caseType mappings only. Conservative on purpose.
+  if (/בית\s+הדין\s+הארצי\s+לעבודה|בתי\s+הדין\s+לעבודה.*ארצי/.test(titleHint)) return "ע״ע";
+  if (/בית\s+הדין\s+(?:האזורי\s+)?לעבודה|בתי\s+הדין\s+לעבודה/.test(titleHint)) return "סע״ש";
+  if (/בית\s+המשפט\s+לענייני\s+משפחה|בתי\s+המשפט\s+לענייני\s+משפחה/.test(titleHint)) return "תמ״ש";
+  // Supreme/district/magistrate are AMBIGUOUS without case-type hints
+  // (could be בג״ץ vs ע״א vs רע״א vs ע״פ etc.) — leave undefined.
+  return undefined;
+}
+
 function matchCaseTypeAndNumber(s: string): { caseType: string; caseNumber: string } | null {
   // Quoted abbreviations: סע"ש, עס"ק, בר"ע, ב"ל, בג"ץ, ע"א, רע"א, ע"פ, דנ"א, ת"א, etc.
   const quoted = s.match(/([א-ת]{1,3}["״׳']+[א-ת]{1,2})\s+(\d+[/\-]\d+)/);
@@ -183,20 +208,43 @@ function matchCaseTypeAndNumber(s: string): { caseType: string; caseNumber: stri
   return null;
 }
 
+/**
+ * v4: try to extract a bare docket from the text or caseNumberHint.
+ * Returns just the docket string — caseType must come from titleHint or
+ * remain undefined (handled by caller).
+ */
+function matchBareDocket(s: string | undefined): string | null {
+  if (!s) return null;
+  const m = s.match(BARE_DOCKET_RE);
+  return m ? m[1] : null;
+}
+
 function extractCaseLawCommon(
   text: string,
   caseNumberHint?: string,
+  titleHint?: string,
 ): Record<string, string> {
   const fields: Record<string, string> = {};
+  // Tier 1: prefixed shape in citation text
   const fromText = matchCaseTypeAndNumber(text);
   if (fromText) {
     fields.caseType = fromText.caseType;
     fields.caseNumber = fromText.caseNumber;
   } else if (caseNumberHint) {
+    // Tier 2: prefixed shape in caseNumberHint
     const fromHint = matchCaseTypeAndNumber(caseNumberHint);
     if (fromHint) {
       fields.caseType = fromHint.caseType;
       fields.caseNumber = fromHint.caseNumber;
+    }
+  }
+  // Tier 3 (v4): bare docket — text first, then caseNumberHint
+  if (!fields.caseNumber) {
+    const bare = matchBareDocket(text) ?? matchBareDocket(caseNumberHint);
+    if (bare) {
+      fields.caseNumber = bare;
+      const inferred = inferCaseTypeFromTitle(titleHint);
+      if (inferred) fields.caseType = inferred;
     }
   }
   // Parties — bolded **X** OR plain "X נ' Y"
