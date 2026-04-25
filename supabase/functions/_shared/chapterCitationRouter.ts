@@ -295,6 +295,47 @@ function diagnoseUnknown(text: string): SkipReason {
   return "unclassified_citation_shape";
 }
 
+// ─── Pre-resolve cleanup ─────────────────────────────────────────────
+
+/**
+ * Lightweight cosmetic cleanup applied to legal-routed citations BEFORE
+ * `resolveCitation` runs. Targets the post-processing artifacts that were
+ * tripping the field extractors:
+ *
+ *   • trailing supra fragments  — ", לעיל ה"ש 16."  /  ", לעיל ה"ש 11"
+ *   • trailing dangling commas / dots — "..., ."  /  ".,."  /  ", ."
+ *   • repeated punctuation       — ".,.", ",,", "..", ";;"
+ *   • orphan opening parens with no close — "(בתי המשפט"  →  "(בתי המשפט)"
+ *
+ * No semantic content is added or removed — this is purely about giving
+ * the existing extractors clean text. If the cleanup leaves the string
+ * empty, we fall back to the original.
+ */
+const SUPRA_TAIL_RE = /,?\s*לעיל\s+ה["״׳]ש\s+\d+\s*\.?\s*$/;
+const TRAILING_PUNCT_NOISE_RE = /[\s,;.]*([.,;])[\s,;.]*$/;
+const REPEATED_PUNCT_RE = /([,.;])\1+/g;
+
+function preResolveNormalize(text: string): string {
+  let out = (text || "").trim();
+  if (!out) return out;
+  // Drop trailing supra fragments — they confuse party-name extraction.
+  out = out.replace(SUPRA_TAIL_RE, "");
+  // Collapse repeated punctuation runs.
+  out = out.replace(REPEATED_PUNCT_RE, "$1");
+  // Tidy trailing punctuation noise like ".,." or ", ." → ".".
+  out = out.replace(TRAILING_PUNCT_NOISE_RE, "$1");
+  // Balance a single dangling open paren that has no close (e.g.
+  // "52828-01-20 (בתי המשפט." → "52828-01-20 (בתי המשפט).").
+  const opens = (out.match(/\(/g) || []).length;
+  const closes = (out.match(/\)/g) || []).length;
+  if (opens === closes + 1) {
+    // Insert ')' before the trailing terminator if any, else append.
+    out = out.replace(/([.,;])?\s*$/, ")$1");
+  }
+  out = out.replace(/\s{2,}/g, " ").trim();
+  return out || text;
+}
+
 // ─── Public API ──────────────────────────────────────────────────────
 
 export interface RouteOptions {
@@ -331,7 +372,11 @@ export function routeChapterFootnote(
   switch (sourceType) {
     case "statute":
     case "caselaw": {
-      const result = resolveCitation(trimmed, sourceType, {
+      // v3: cosmetic cleanup of post-processing artifacts (supra fragments,
+      // dangling punctuation, unbalanced parens) so the existing extractors
+      // can match clean shapes. Pure plumbing — no field semantics added.
+      const cleaned = preResolveNormalize(trimmed);
+      const result = resolveCitation(cleaned, sourceType, {
         caseNumberHint: opts.caseNumberHint,
         decisionDateHint: opts.decisionDateHint,
         titleHint: opts.titleHint,
