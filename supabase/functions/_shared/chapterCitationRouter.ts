@@ -110,8 +110,11 @@ export type RouteResult =
 
 // ─── Classification regex (ordered cascade) ─────────────────────────
 
+// Hebrew statute anchors. We deliberately allow a single-letter Hebrew
+// prefix (ב/ל/ה/מ) before `חוק` because Israeli citations very often appear
+// as `לחוק שירות המדינה` / `בחוק העונשין`.
 const STATUTE_RE =
-  /(?:חוק[-\s]יסוד|\bחוק\s+|פקודת|פקודה\s+|תקנות|תקנה\s+|כללי\s+|צו\s+|הצעת\s+חוק)/;
+  /(?:חוק[-\s]יסוד|(?:^|[^א-ת])[בלהמ]?חוק\s+|פקודת|פקודה\s+|תקנות|תקנה\s+|כללי\s+|צו\s+|הצעת\s+חוק)/;
 // Caselaw shape — quoted prefixes (בג"ץ, ע"א, רע"א, סע"ש …) or unquoted
 // whitelist (עב, בל, תק, …).
 const CASELAW_PREFIX_RE =
@@ -123,8 +126,10 @@ const CASELAW_BARE_DOCKET_RE = /(?:^|[\s(])\d{3,6}[-\/]\d{1,2}[-\/]\d{2,4}(?:[\s
 const QUOTED_TITLE_RE = /["״׳][^"״׳\n]{2,}["״׳]/;
 const ENGLISH_VOL_PAGE_RE = /\b\d+\s+[A-Z][A-Za-z .]+\s+\d+\b/;
 const BOLD_TITLE_RE = /\*\*[^*\n]{2,}\*\*|(?<!\*)\*[^*\n]{2,}\*(?!\*)/;
+// Report prefixes — `מ"מ` removed because it false-positives on quoted
+// fragments like `מ"מבחן המטרה"`. The Knesset RM&I full name is enough.
 const REPORT_PREFIX_RE =
-  /(?:^|\s)(?:דו["״׳']ח|דוח\s|מסמך\s+מדיניות|נייר\s+עמדה|נייר\s+מדיניות|דין\s+וחשבון|המרכז\s+למחקר\s+ולמידע\s+של\s+הכנסת|מ["״]מ|מרכז\s+המחקר\s+והמידע)/;
+  /(?:^|\s)(?:דו["״׳']ח\s|דוח\s|מסמך\s+מדיניות|נייר\s+עמדה|נייר\s+מדיניות|דין\s+וחשבון|המרכז\s+למחקר\s+ולמידע\s+של\s+הכנסת|מרכז\s+המחקר\s+והמידע)/;
 const URL_RE = /https?:\/\/\S+/i;
 const WEB_MARKER_RE = /(?:נצפה\s+ב[־-]|זמין\s+ב[־-]|אוחזר\s+מ[־-])/;
 const BOOK_CHAPTER_LINK_RE = /\bבתוך[\s:]/;
