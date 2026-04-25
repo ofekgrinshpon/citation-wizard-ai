@@ -6623,6 +6623,19 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
           ...(evalForceLegacy ? { eval_force_legacy: true } : {}),
         };
+        // Telemetry probe: verify the academic-mode keys we expect actually
+        // landed in the metadata object before serialization. Diagnoses the
+        // "profile_used_academic / chapter_qa_guard come back null in qa_logs"
+        // gap raised in the previous eval run. One log line per chapter run.
+        if (isAcademicChapter) {
+          console.log(
+            `[chapter][metadata-probe] keys=${Object.keys(metadata).length} ` +
+            `has_profile_used_academic=${"profile_used_academic" in metadata} ` +
+            `has_chapter_qa_guard=${"chapter_qa_guard" in metadata} ` +
+            `has_chapter_engine=${"chapter_engine" in metadata} ` +
+            `academicProfile_truthy=${!!academicProfile}`,
+          );
+        }
       }
 
       // For research mode we pre-allocated an id and may have written
