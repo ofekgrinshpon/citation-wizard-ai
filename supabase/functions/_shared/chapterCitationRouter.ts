@@ -345,6 +345,15 @@ export interface RouteOptions {
   decisionDateHint?: string;
   /** Optional source-card title — used by the legal resolver as a fallback. */
   titleHint?: string;
+  /**
+   * v4 stage 2 — party hints recovered by the targeted Perplexity
+   * party-lookup helper. Only populated on the *retry* pass after a
+   * first-pass `needs_party_lookup` failure.
+   */
+  party1Hint?: string;
+  party2Hint?: string;
+  fullDateHint?: string;
+  yearHint?: string;
 }
 
 /**
