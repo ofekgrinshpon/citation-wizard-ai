@@ -6255,6 +6255,19 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
        * Lets us tell whether the relaxation is doing real work in eval.
        */
       recovered_without_full_date: number;
+      /**
+       * v4 stage 2 placeholder-emission policy — counter for retries that
+       * emitted a best-effort canonical citation with `[חסר: ...]` markers
+       * instead of being dropped as `retry_still_unresolved`. Scope is
+       * narrow: case_law_database retry pass only.
+       */
+      recovered_with_placeholders: number;
+      /**
+       * Per-field breakdown of which required fields were filled with
+       * `[חסר: ...]` placeholders during placeholder-emission recoveries.
+       * Mirrors the field keys used by the citationEngine schema.
+       */
+      placeholder_fields: Record<string, number>;
     } | null = null;
     if (isAcademicChapter && finalFootnotes.length > 0) {
       // First pass — route everything; collect needs_party_lookup for stage 2.
@@ -6346,6 +6359,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           status: lookup.status,
           failure_reasons: {},
           recovered_without_full_date: 0,
+          recovered_with_placeholders: 0,
+          placeholder_fields: {},
         };
         for (const p of pendingPartyLookup) {
           const hit = lookup.hits.get(p.partial.caseNumber);
@@ -6374,6 +6389,19 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               // retry resolved (i.e. lookup returned no fullDate but a year).
               if (!hit.fullDate && hit.year) {
                 chapterPartyLookup.recovered_without_full_date++;
+              }
+              // v4 stage 2 placeholder-emission policy: when the resolver
+              // emitted with `[חסר: ...]` markers instead of a fully clean
+              // citation, count it separately and break down which fields
+              // were filled with placeholders. Successful clean resolves
+              // are NOT counted here.
+              const ph = (retried.result as { placeholders?: string[] }).placeholders;
+              if (ph && ph.length > 0) {
+                chapterPartyLookup.recovered_with_placeholders++;
+                for (const f of ph) {
+                  chapterPartyLookup.placeholder_fields[f] =
+                    (chapterPartyLookup.placeholder_fields[f] || 0) + 1;
+                }
               }
             } else {
               chapterPartyLookup.failed++;
