@@ -21,7 +21,7 @@ function validateStatuteFields(f) {
   if (PLACEHOLDER_RE.test(lawName)) return "placeholder_lawname";
   const stripped = lawName
     .replace(/^חוק[- ]יסוד\s*:\s*/, "")
-    .replace(/^(?:חוק|פקודת|פקודה|תקנות|תקנה|צו|כללי)\s+/, "")
+    .replace(/^(?:חוק|פקודת|פקודה|תקנות|תקנה|צו|כללי)\s*/, "")
     .trim();
   if (!stripped || stripped.split(/\s+/).filter((t) => /[א-ת]/.test(t)).length < 1) {
     return "placeholder_bare_keyword";
