@@ -6560,11 +6560,27 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           rule37_short_forms: rule37Telemetry,
           // Fix 2: post-draft statute completion telemetry.
           statute_completion: statuteCompletionTelemetry,
-          // Citation engine resolver pass on chapter footnotes (academic only).
+          // Type-aware citation router pass on chapter footnotes (academic only).
+          // `legal_resolver.drop_reasons.missing_required` now ONLY counts real
+          // statute/caselaw extraction failures — non-legal citations are split
+          // into `bibliography_routed` and `skipped` so the legal-resolver
+          // metric is no longer polluted.
           chapter_engine: isAcademicChapter ? {
-            resolved_count: chapterEngineResolvedCount,
-            unresolved_count: chapterEngineUnresolvedCount,
-            drop_reasons: chapterEngineDropReasons,
+            classification_counts: chapterClassificationCounts,
+            legal_resolver: {
+              resolved_count: chapterLegalResolved,
+              unresolved_count: chapterLegalUnresolved,
+              drop_reasons: chapterLegalDropReasons,
+            },
+            bibliography_routed: {
+              count: chapterBibCount,
+              by_type: chapterBibByType,
+              warnings: chapterBibWarnings,
+            },
+            skipped: {
+              count: chapterSkippedCount,
+              reasons: chapterSkippedReasons,
+            },
           } : null,
           // Chapter QA guard — observability only, no behaviour change.
           // Mirrors statute_completion.qa_guard from research grounding.
@@ -6574,6 +6590,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           profile_used_academic: academicProfile
             ? { step: academicStepKey, ...academicProfile }
             : null,
+
           // Honest models_used: only record a model as "used" if its stage
           // actually completed successfully. Otherwise expose null + the failure
           // status, so admins don't get the false impression that gpt-5-mini ran.
