@@ -5124,6 +5124,18 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       cleaned_names?: string[];
       dropped_dirty_after_clean?: Record<string, number>;
       per_call_status?: string[];
+      /**
+       * Demotion telemetry. After the architecture shift to claim-to-source as
+       * the primary citation mechanism, Stage 5e is supposed to fire only as a
+       * fallback. This field counts statute names that we deliberately did NOT
+       * send to Perplexity because the source pack already contains a citation
+       * for them (or because the anchor pass already attached a marker to the
+       * sentence carrying the name). High values here mean the primary path is
+       * doing its job.
+       */
+      skipped_covered_by_primary?: number;
+      /** Marker placement strategy used per insert: "sentence_end" or "name_adjacent" (legacy fallback). */
+      insertion_placement?: string[];
     } = {
       triggered: false,
       named_statutes: [],
@@ -5131,6 +5143,8 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       skipped_with_existing: 0,
       structured_path: true,
       format_kind_counts: {},
+      skipped_covered_by_primary: 0,
+      insertion_placement: [],
     };
     if (enableDeepPipeline) {
       emitStage("statute_completion", "running");
