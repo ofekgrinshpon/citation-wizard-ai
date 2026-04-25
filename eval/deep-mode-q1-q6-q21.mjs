@@ -14,9 +14,10 @@ if (!SUPABASE_URL || !SERVICE_ROLE || !ANON_KEY) { console.error("missing envs")
 
 const OUT_DIR = "/mnt/documents/legal-qa-eval";
 if (!existsSync(OUT_DIR)) mkdirSync(OUT_DIR, { recursive: true });
-const RUN_ID = `deep-smoke-${randomUUID()}`;
-const OUT_FILE = `${OUT_DIR}/deep-mode-q1-q6-q21.json`;
-const LOG_FILE = `${OUT_DIR}/deep-mode-q1-q6-q21.log`;
+const PHASE = process.env.PHASE || "before"; // "before" | "after"
+const RUN_ID = `deep-${PHASE}-${randomUUID().slice(0, 8)}`;
+const OUT_FILE = `${OUT_DIR}/deep-${PHASE}.json`;
+const LOG_FILE = `${OUT_DIR}/deep-${PHASE}.log`;
 
 const log = (m) => { const l = `[${new Date().toISOString()}] ${m}`; console.log(l); appendFileSync(LOG_FILE, l + "\n"); };
 
@@ -88,6 +89,8 @@ async function runOne(jwt, q) {
   const sps = md.source_pack_summary || {};
   const profile = md.profile_used || {};
   const r2 = md.retrieval_funnel?.round_2 || null;
+  const sc = md.statute_completion || {};
+  const placements = Array.isArray(sc.insertion_placement) ? sc.insertion_placement : [];
   return {
     ok, http_status: r.status, http_error: ok ? null : (r.body?.error || r.raw),
     wall_ms: wall,
@@ -97,13 +100,21 @@ async function runOne(jwt, q) {
     profile_retrieval_rounds: profile.retrievalRounds,
     profile_word_min: profile.wordRangeMin, profile_word_max: profile.wordRangeMax,
     profile_fn_floor: profile.footnoteFloor, profile_fn_max: profile.footnoteTargetMax,
+    profile_e5_min: profile.perplexityCompletionMinAnchored,
     answer_words: wordsOf(ans),
+    answer_full: ans, // for qualitative diff
     footnotes_count: Array.isArray(fn) ? fn.length : 0,
     anchored_count: anchored(fn),
     core_count: sps.core, supporting_count: sps.supporting, secondary_count: sps.secondary,
     round_2_triggered: r2?.triggered, round_2_queries: r2?.queries?.length, round_2_new_cards: r2?.new_cards, round_2_ms: r2?.duration_ms,
     e5_triggered: md.retrieval_funnel?.perplexity_completion?.triggered,
     e5_status: md.retrieval_funnel?.perplexity_completion?.status,
+    sc_kept_for_completion: sc.kept_for_completion ?? null,
+    sc_skipped_covered_by_primary: sc.skipped_covered_by_primary ?? null,
+    sc_completed_count: sc.completed_count ?? null,
+    sc_placement_sentence_end: placements.filter((p) => p === "sentence_end").length,
+    sc_placement_name_adjacent: placements.filter((p) => p === "name_adjacent").length,
+    qa_guard: sc.qa_guard ?? null,
     qa_log_id: row?.id, eval_run_id: evalRunId,
   };
 }
@@ -132,7 +143,7 @@ async function main() {
   }
   lines.push(``, `## Acceptance gates`, `- profile_used.depth === "deep": ${pass.depth}/3`, `- words >= 1200: ${pass.words}/3`, `- anchored >= 6: ${pass.anch}/3`);
   const summary = lines.join("\n");
-  writeFileSync(`${OUT_DIR}/deep-mode-q1-q6-q21.summary.md`, summary);
+  writeFileSync(`${OUT_DIR}/deep-${PHASE}.summary.md`, summary);
   log(`\n${summary}`);
 }
 
