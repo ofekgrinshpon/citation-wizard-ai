@@ -6255,6 +6255,19 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
        * Lets us tell whether the relaxation is doing real work in eval.
        */
       recovered_without_full_date: number;
+      /**
+       * v4 stage 2 placeholder-emission policy — counter for retries that
+       * emitted a best-effort canonical citation with `[חסר: ...]` markers
+       * instead of being dropped as `retry_still_unresolved`. Scope is
+       * narrow: case_law_database retry pass only.
+       */
+      recovered_with_placeholders: number;
+      /**
+       * Per-field breakdown of which required fields were filled with
+       * `[חסר: ...]` placeholders during placeholder-emission recoveries.
+       * Mirrors the field keys used by the citationEngine schema.
+       */
+      placeholder_fields: Record<string, number>;
     } | null = null;
     if (isAcademicChapter && finalFootnotes.length > 0) {
       // First pass — route everything; collect needs_party_lookup for stage 2.
