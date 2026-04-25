@@ -55,16 +55,22 @@ export interface ModeProfile {
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
   fast: {
+    // ─── LOCKED DEFAULT (validated 2026-04) ──────────────────────────────
+    // Confirmed Fast grounding architecture after multiple eval batches:
+    //   • Anchor pass = PRIMARY claim-to-source grounding path.
+    //   • Stage 5e (statute completion) = FALLBACK only, gated by source-pack
+    //     coverage and anchor-marker proximity (±240 chars).
+    //   • All Stage 5e markers placed at SENTENCE END, never name-adjacent.
+    // Regressions in these invariants are surfaced as `qa_guard.flags` in
+    // qa_logs.metadata.statute_completion (see index.ts).
+    // Do NOT change anchorPassEnabled / anchorPassMaxPatches / the Stage 5e
+    // gating in index.ts without a fresh eval batch.
     wordRangeMin: 400,
     wordRangeMax: 700,
     footnoteFloor: 2,
     footnoteTargetMax: 6,
     retrievalRounds: 1,
     perplexityCompletionMinAnchored: 2,
-    // Anchor pass is now the PRIMARY claim-to-source grounding path in Fast.
-    // Stage 5e (statute name completion) is demoted to a fallback that only
-    // fires when a named statute is not already covered by the source pack
-    // or by an anchor-pass marker. Fast cap of 2 keeps latency bounded.
     anchorPassEnabled: true,
     anchorPassMaxPatches: 2,
     drafterVariant: "structured",
