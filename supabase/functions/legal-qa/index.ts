@@ -6248,6 +6248,13 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       failed: number;
       status: string;
       failure_reasons: Record<string, number>;
+      /**
+       * v4 stage 2 — counter for retries that resolved only because the
+       * `case_law_database` `fullDate` requirement was relaxed (parties +
+       * docket + year survived but no exact dd.mm.yyyy was available).
+       * Lets us tell whether the relaxation is doing real work in eval.
+       */
+      recovered_without_full_date: number;
     } | null = null;
     if (isAcademicChapter && finalFootnotes.length > 0) {
       // First pass — route everything; collect needs_party_lookup for stage 2.
@@ -6338,6 +6345,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           failed: 0,
           status: lookup.status,
           failure_reasons: {},
+          recovered_without_full_date: 0,
         };
         for (const p of pendingPartyLookup) {
           const hit = lookup.hits.get(p.partial.caseNumber);
@@ -6352,11 +6360,21 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               party2Hint: hit.party2,
               fullDateHint: hit.fullDate,
               yearHint: hit.year,
+              // v4 stage 2 policy: this is the retry pass, so let the
+              // resolver relax `case_law_database` fullDate when the
+              // remaining shape is otherwise complete (caseType + docket
+              // + parties + year). See ResolveCitationOptions.partyLookupRetry.
+              partyLookupRetry: true,
             });
             // If retry resolved → counts as recovery. If it still fails, fall
             // back to honest telemetry via applyRoutedResult.
             if (retried.route === "legal_resolver" && retried.result.resolved) {
               chapterPartyLookup.recovered++;
+              // Track when the relaxed-fullDate path was the reason this
+              // retry resolved (i.e. lookup returned no fullDate but a year).
+              if (!hit.fullDate && hit.year) {
+                chapterPartyLookup.recovered_without_full_date++;
+              }
             } else {
               chapterPartyLookup.failed++;
               chapterPartyLookup.failure_reasons["retry_still_unresolved"] =
