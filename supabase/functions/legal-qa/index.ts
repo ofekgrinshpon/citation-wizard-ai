@@ -6231,6 +6231,10 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
     const chapterBibWarnings: Record<string, number> = {};
     let chapterSkippedCount = 0;
     const chapterSkippedReasons: Record<string, number> = {};
+    // Per-classifier-reason aggregator — debug observability so we can see
+    // *why* the classifier picked the type it did (e.g. journal_whitelist_hit
+    // vs journal_shape_fallback) without re-running the eval.
+    const chapterClassifyReasons: Record<string, number> = {};
     if (isAcademicChapter && finalFootnotes.length > 0) {
       for (const fn of finalFootnotes) {
         const text = fn.citation || "";
@@ -6240,6 +6244,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         const routed = routeChapterFootnote(text);
         chapterClassificationCounts[routed.sourceType] =
           (chapterClassificationCounts[routed.sourceType] || 0) + 1;
+        chapterClassifyReasons[routed.classifyReason] =
+          (chapterClassifyReasons[routed.classifyReason] || 0) + 1;
         switch (routed.route) {
           case "legal_resolver":
             if (routed.result.resolved) {
@@ -6269,6 +6275,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       }
       console.log(
         `[chapter-router] cls=${JSON.stringify(chapterClassificationCounts)} ` +
+        `cls_reasons=${JSON.stringify(chapterClassifyReasons)} ` +
         `legal=${chapterLegalResolved}/${chapterLegalResolved + chapterLegalUnresolved} ` +
         `legal_drops=${JSON.stringify(chapterLegalDropReasons)} ` +
         `bib=${chapterBibCount} bib_by_type=${JSON.stringify(chapterBibByType)} ` +
