@@ -40,8 +40,19 @@ function isIntroductionChapter(title: string): boolean {
 function isConclusionChapter(title: string): boolean {
   if (!title) return false;
   const t = title.trim();
-  // Hebrew: סיכום / מסקנות / סיכום ומסקנות; English: conclusion
-  if (/^(?:סיכום(?:\s+ומסקנות)?|מסקנות)\b/.test(t)) return true;
+  // Hebrew: סיכום / מסקנות / סיכום ומסקנות; English: conclusion.
+  // Note: JS regex \b does not work with Hebrew letters (treated as non-word),
+  // so we match by prefix/equality instead of using a word boundary.
+  if (
+    t === "סיכום" ||
+    t === "מסקנות" ||
+    t === "סיכום ומסקנות" ||
+    t.startsWith("סיכום ומסקנות") ||
+    t.startsWith("סיכום ") ||
+    t.startsWith("מסקנות ")
+  ) {
+    return true;
+  }
   const lower = t.toLowerCase();
   return lower === "conclusion" || lower.startsWith("conclusion");
 }
