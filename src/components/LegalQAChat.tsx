@@ -16,12 +16,41 @@ import { CaseSummaryReport } from "@/components/CaseSummaryReport";
 import { ResearchProgress } from "@/components/ResearchProgress";
 import { StageProgressList, type StageEvent } from "@/components/StageProgressList";
 
-// ─── Abstract chapter helpers ──────────────────────────────────────
-const ABSTRACT_LOCKED_TOOLTIP = "ניתן לייצר תקציר רק לאחר השלמת כל פרקי העבודה, כדי להבטיח שהוא משקף את המחקר במלואו";
+// ─── Chapter role helpers ──────────────────────────────────────────
+// Three special chapters in addition to body: abstract, introduction, conclusion.
+// They are GENERATED LATE (after body chapters) but DISPLAYED in this fixed
+// order: תקציר → מבוא → bodies → סיכום ומסקנות.
+//   - conclusion unlocks once every body chapter has content
+//   - introduction unlocks once the conclusion has content
+//   - abstract unlocks once intro + conclusion + every body chapter has content
+const ABSTRACT_LOCKED_TOOLTIP = "ניתן לייצר תקציר רק לאחר השלמת כל פרקי העבודה (כולל מבוא וסיכום), כדי שהוא ישקף את המחקר במלואו";
+const CONCLUSION_LOCKED_TOOLTIP = "ניתן לכתוב את הסיכום רק לאחר השלמת פרקי הגוף, כך שהוא מבוסס על הניתוח בפועל ולא על המתווה בלבד";
+const INTRODUCTION_LOCKED_TOOLTIP = "ניתן לכתוב את המבוא רק לאחר כתיבת פרקי הגוף והסיכום, כדי שהמבוא ימסגר את התזה כפי שהיא עולה מהעבודה בפועל";
+
 function isAbstractChapter(title: string): boolean {
   if (!title) return false;
   const t = title.trim().toLowerCase();
   return t === "תקציר" || t === "abstract" || t.startsWith("תקציר") || t.startsWith("abstract");
+}
+function isIntroductionChapter(title: string): boolean {
+  if (!title) return false;
+  const t = title.trim().toLowerCase();
+  return t === "מבוא" || t === "introduction" || t.startsWith("מבוא") || t.startsWith("introduction");
+}
+function isConclusionChapter(title: string): boolean {
+  if (!title) return false;
+  const t = title.trim();
+  // Hebrew: סיכום / מסקנות / סיכום ומסקנות; English: conclusion
+  if (/^(?:סיכום(?:\s+ומסקנות)?|מסקנות)\b/.test(t)) return true;
+  const lower = t.toLowerCase();
+  return lower === "conclusion" || lower.startsWith("conclusion");
+}
+type ChapterRole = "abstract" | "introduction" | "conclusion" | "body";
+function chapterRole(title: string): ChapterRole {
+  if (isAbstractChapter(title)) return "abstract";
+  if (isIntroductionChapter(title)) return "introduction";
+  if (isConclusionChapter(title)) return "conclusion";
+  return "body";
 }
 import * as pdfjsLib from "pdfjs-dist";
 
