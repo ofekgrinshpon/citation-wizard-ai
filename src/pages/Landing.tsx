@@ -175,34 +175,32 @@ const Landing = () => {
 
       {/* Top Navigation Bar */}
       <header
-        className="sticky top-0 z-30 w-full border-b border-border/60"
+        className="sticky top-0 z-30 w-full border-b border-white/20 shadow-sm"
         style={{
-          background: "hsla(0, 0%, 100%, 0.65)",
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
+          background: "var(--gradient-primary)",
         }}
       >
-        <nav className="max-w-6xl mx-auto h-14 md:h-16 px-4 flex items-center justify-between">
-          {/* Right side (RTL start): Logo */}
+        <nav className="max-w-6xl mx-auto h-14 md:h-16 px-4 flex items-center gap-4">
+          {/* Logo (RTL start, nudged inward) */}
           <button
             onClick={scrollToTop}
-            className="flex items-center transition-opacity hover:opacity-80"
+            className="flex items-center transition-opacity hover:opacity-80 mr-2 md:mr-4"
             aria-label="ReLex - חזרה לראש העמוד"
           >
-            <ReLexLogo size={36} />
+            <ReLexLogo size={36} className="brightness-0 invert" />
           </button>
 
-          {/* Left side (RTL end): Nav buttons */}
+          {/* Nav buttons next to logo (RTL: appear right after logo) */}
           <div className="flex items-center gap-1 md:gap-2">
             <button
               onClick={scrollToHow}
-              className="px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-foreground/80 hover:text-primary hover:bg-accent/60 transition-colors"
+              className="px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
             >
               איך זה עובד
             </button>
             <button
               onClick={scrollToPricing}
-              className="px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-foreground/80 hover:text-primary hover:bg-accent/60 transition-colors"
+              className="px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-white/90 hover:text-white hover:bg-white/15 transition-colors"
             >
               כמה זה עולה
             </button>
