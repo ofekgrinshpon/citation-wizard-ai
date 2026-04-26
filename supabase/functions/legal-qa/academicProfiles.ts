@@ -21,7 +21,9 @@ export type AcademicStep =
   | "validate"
   | "outline"
   | "abstract"
-  | "chapter";
+  | "chapter"
+  | "introduction"
+  | "conclusion";
 
 export interface AcademicProfile {
   // ─── Billing ───
