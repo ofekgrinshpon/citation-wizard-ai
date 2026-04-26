@@ -180,7 +180,7 @@ const Landing = () => {
           background: "var(--gradient-primary)",
         }}
       >
-        <nav className="w-full h-14 md:h-16 pr-1 md:pr-2 pl-4 flex items-center gap-2 md:gap-3">
+        <nav className="w-full h-14 md:h-16 pr-1 md:pr-2 pl-3 md:pl-4 flex items-center gap-2 md:gap-3">
           {/* Logo (RTL start, hugs the right edge) */}
           <button
             onClick={scrollToTop}
@@ -205,6 +205,17 @@ const Landing = () => {
               כמה זה עולה
             </button>
           </div>
+
+          {/* Spacer pushes the login button to the far left edge */}
+          <div className="flex-1" />
+
+          {/* Login button (RTL end / left side) */}
+          <button
+            onClick={() => navigate("/auth?mode=login")}
+            className="px-4 md:px-5 py-2 rounded-lg text-xs md:text-sm font-bold bg-white text-primary shadow-md hover:shadow-lg hover:bg-white/95 transition-all hover:-translate-y-0.5"
+          >
+            התחברות
+          </button>
         </nav>
       </header>
 
