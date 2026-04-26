@@ -756,6 +756,12 @@ interface SourcePackEntry {
   relevance_score?: number;
   /** Milestone B — for perplexity_completion entries; passed through to legalSourcePack mapper. */
   completion_candidate_type?: "statute" | "caselaw";
+  /** Fix C — case-law docket prefix (e.g. בג"ץ, ע"א) when meta.procedure_type
+   *  matches `looksLikeDocketPrefix`. Used as Stage 2 caseTypeHint. */
+  docket_prefix?: string;
+  /** Fix C — broad subject category (e.g. משפחה, פלילי) when procedure_type is
+   *  NOT a docket-shaped string. Weaker hint, used as fallback only. */
+  procedure_category?: string;
 }
 
 /**
@@ -1026,6 +1032,52 @@ interface SourceCard {
   relevance_score?: number;
   /** Milestone B — for perplexity_completion cards only; routed to assembleSourcePack. */
   completion_candidate_type?: "statute" | "caselaw";
+  /** Fix C — case-law docket prefix (בג"ץ, ע"א, …) when meta.procedure_type is
+   *  shaped like a docket prefix. Used as Stage 2 caseTypeHint. */
+  docket_prefix?: string;
+  /** Fix C — broad subject category (משפחה, פלילי, …) for non-prefix
+   *  procedure_type values. Weaker fallback hint for Stage 2. */
+  procedure_category?: string;
+}
+
+// ─── Fix C — Docket-prefix helpers ────────────────────────────────────
+// `legal_documents.procedure_type` is mixed: ~99 rows hold a true docket
+// prefix (`בג"ץ`, `ע"א`, `רע"א`, …) while ~10k rows hold a broad subject
+// category (`משפחה`, `פלילי`, `אזרחי`). We must distinguish the two:
+//   • prefix → safe to prepend to case_number to form `בג"ץ 18225-06-25`
+//   • category → must NOT be prepended (would corrupt the citation), but
+//     can still be passed to Perplexity as a court-context hint.
+// A docket prefix is short (≤6 chars), contains gershayim ("/׳/״) OR a
+// gershayim-looking ASCII " or ', and consists of Hebrew letters + that
+// punctuation only.
+function looksLikeDocketPrefix(s: string | undefined | null): boolean {
+  if (!s) return false;
+  const t = s.trim().replace(/[,.]+$/, "");
+  if (t.length === 0 || t.length > 6) return false;
+  // Must contain gershayim/geresh OR ASCII quote/apos (e.g. בג"ץ, ע"א, ת"א).
+  if (!/["'״׳]/.test(t)) return false;
+  // Hebrew letters + that punctuation only.
+  return /^[\u05D0-\u05EA"'״׳]+$/.test(t);
+}
+
+/**
+ * Build the canonical docket string for a case-law metadata row.
+ * Returns `${procedure_type} ${case_number}` when procedure_type is a
+ * docket-shaped prefix, otherwise the bare case_number (today's behaviour).
+ * Also returns the classified `prefix` / `category` for downstream hint use.
+ */
+function formatDocketForCaseLaw(meta: Record<string, unknown>): {
+  docket: string;
+  prefix?: string;
+  category?: string;
+} {
+  const caseNumber = ((meta.case_number as string) || "").trim();
+  const procRaw = ((meta.procedure_type as string) || "").trim().replace(/[,.]+$/, "");
+  if (!caseNumber) return { docket: "", category: procRaw || undefined };
+  if (looksLikeDocketPrefix(procRaw)) {
+    return { docket: `${procRaw} ${caseNumber}`, prefix: procRaw };
+  }
+  return { docket: caseNumber, category: procRaw || undefined };
 }
 
 // ─── Task mode → system prompt instructions ──────────────────────────
