@@ -1930,11 +1930,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 {chapters.map((ch, idx) => {
                   const isWritten = !!ch.content;
                   const isCurrent = idx === currentChapter;
-                  const isAbstract = isAbstractChapter(ch.title);
-                  const isLockedAbstract = isAbstract && !abstractUnlocked && !isWritten;
+                  const role = chapterRole(ch.title);
+                  const isSpecial = role !== "body";
+                  const locked = !isWritten && isChapterLocked(ch.title);
+                  const tooltip = locked ? lockTooltipFor(role) : null;
 
                   const baseClass = `flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs border transition-colors ${
-                    isLockedAbstract
+                    locked
                       ? "bg-muted/50 text-muted-foreground border-dashed border-border opacity-70 cursor-not-allowed"
                       : isCurrent
                         ? "bg-primary text-primary-foreground border-primary font-semibold"
@@ -1944,16 +1946,16 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   }`;
 
                   const handleClick = () => {
-                    if (isLockedAbstract) {
-                      toast.info(ABSTRACT_LOCKED_TOOLTIP);
+                    if (locked && tooltip) {
+                      toast.info(tooltip);
                       return;
                     }
                     viewChapter(idx);
                   };
 
-                  const iconNode = isLockedAbstract
+                  const iconNode = locked
                     ? <Lock className="w-3 h-3" />
-                    : isAbstract && !isWritten && abstractUnlocked
+                    : isSpecial && !isWritten
                       ? <Wand2 className="w-3 h-3" />
                       : isWritten && !isCurrent
                         ? <Check className="w-3 h-3" />
@@ -1964,7 +1966,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                       key={idx}
                       type="button"
                       onClick={handleClick}
-                      aria-disabled={isLockedAbstract}
+                      aria-disabled={locked}
                       className={baseClass}
                     >
                       {iconNode}
@@ -1972,12 +1974,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     </button>
                   );
 
-                  if (isLockedAbstract) {
+                  if (locked && tooltip) {
                     return (
                       <Tooltip key={idx}>
                         <TooltipTrigger asChild>{btn}</TooltipTrigger>
                         <TooltipContent side="top" className="max-w-xs text-xs">
-                          {ABSTRACT_LOCKED_TOOLTIP}
+                          {tooltip}
                         </TooltipContent>
                       </Tooltip>
                     );
