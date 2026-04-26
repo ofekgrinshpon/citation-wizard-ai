@@ -3322,6 +3322,10 @@ ${(verify.fullText as string).slice(0, 50000)}
           anchor_present: anchorPresent,
           // Milestone A.5: carry through for assembleSourcePack relevance gate.
           relevance_score: sc.relevance_score ?? 0,
+          // Fix C — passthrough for any future stage that wants the
+          // classified docket prefix / category.
+          docket_prefix: sc.docket_prefix,
+          procedure_category: sc.procedure_category,
         };
       });
       console.log(`[source-pack] ${sourcePack.length} entries; anchored=${sourcePack.filter((s) => s.anchor_present).length}`);
