@@ -1089,7 +1089,10 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
     // Stream chapter writes (the only academic sub-mode that runs the full
     // research pipeline). All other sub-modes are short single-shot prompts.
-    const useSseStream = academicStep === "write_chapter";
+    const useSseStream =
+      academicStep === "write_chapter" ||
+      academicStep === "write_introduction" ||
+      academicStep === "write_conclusion";
 
     try {
       const body: Record<string, unknown> = {
@@ -1105,14 +1108,49 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       }
 
       // Include previous chapters context for writing
-      if (academicStep === "write_chapter") {
+      const isLongFormWrite =
+        academicStep === "write_chapter" ||
+        academicStep === "write_introduction" ||
+        academicStep === "write_conclusion";
+      if (isLongFormWrite) {
         const isAbstract = !!extraBody?.isAbstract;
-        // For the abstract: send full content of every other chapter (cap 6,000 chars each)
-        // so the AI can synthesize the entire paper. For regular chapters, keep 2,000 cap.
-        const sliceCap = isAbstract ? 6000 : 2000;
+        const isIntro = academicStep === "write_introduction";
+        const isConclusion = academicStep === "write_conclusion";
+        // Cap per chapter:
+        //  - abstract: 6,000 — pure synthesis of the whole paper (incl. intro + conclusion).
+        //  - conclusion: 3,500 — needs richer recall to synthesize key findings.
+        //  - introduction: 2,500 — frames the paper, doesn't re-analyze it.
+        //  - body chapter: 2,000 — current behavior, used for cross-chapter coherence.
+        const sliceCap = isAbstract ? 6000 : isConclusion ? 3500 : isIntro ? 2500 : 2000;
+        // For body chapter writes the abstract chapter is excluded so the
+        // model isn't biased by a placeholder synthesis. For intro/conclusion/
+        // abstract we want only body-role chapters that have real content.
         body.previousChapters = chapters
-          .filter(ch => ch.content && (!isAbstract || !isAbstractChapter(ch.title)))
-          .map(ch => ({ title: ch.title, content: (ch.content || "").slice(0, sliceCap) }));
+          .filter((ch) => {
+            if (!ch.content) return false;
+            if (isAbstract) {
+              // Abstract sees everything except itself.
+              return !isAbstractChapter(ch.title);
+            }
+            if (isIntro || isConclusion) {
+              // Intro & conclusion synthesize the body. Skip the other special chapters.
+              const role = chapterRole(ch.title);
+              return role === "body";
+            }
+            // Regular body-chapter write: skip the abstract.
+            return !isAbstractChapter(ch.title);
+          })
+          .map((ch) => ({ title: ch.title, content: (ch.content || "").slice(0, sliceCap) }));
+
+        // Introduction also receives the conclusion draft (when it exists)
+        // so it can frame the actual final thesis, not the planned one.
+        if (isIntro) {
+          const conclusionCh = chapters.find((ch) => isConclusionChapter(ch.title) && ch.content);
+          if (conclusionCh?.content) {
+            body.conclusionContent = conclusionCh.content;
+          }
+        }
+
         body.chapterTitle = chapters[currentChapter]?.title || "";
         body.chapterIndex = currentChapter;
         body.researchQuestion = researchQuestion;
