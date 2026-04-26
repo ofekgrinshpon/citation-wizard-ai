@@ -3202,7 +3202,15 @@ ${(verify.fullText as string).slice(0, 50000)}
           url: m.source_url || undefined,
           provenance: "local",
           excerpt: m.chunk_content.slice(0, 400),
-          case_number: m.source_type === "caselaw" ? ((meta.case_number as string) || undefined) : undefined,
+          // Fix C — store the prefixed docket (e.g. בג"ץ 18225-06-25) when
+          // procedure_type is a docket prefix; otherwise the bare case_number.
+          // Stage 2's caseTypeHint construction (≈line 6400) and the resolver's
+          // caseNumberHint both consume this field.
+          case_number: m.source_type === "caselaw"
+            ? (prefixedCaseNumber || (meta.case_number as string) || undefined)
+            : undefined,
+          docket_prefix: m.source_type === "caselaw" ? docketPrefix : undefined,
+          procedure_category: m.source_type === "caselaw" ? procedureCategory : undefined,
           // Milestone A.5: carry retrieval similarity through to the source pack
           // so assembleSourcePack can apply the relevance gate when promoting
           // knesset_research / journal_article items to `core`.
