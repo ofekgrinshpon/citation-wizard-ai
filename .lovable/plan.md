@@ -1,16 +1,15 @@
-## Restyle SVG favicon: neo-grotesque "R" + brand colors
+## WhatsApp link-preview: white-bg square thumbnail
 
-Update `public/relex-icon.svg` to swap the serif Georgia "R" and "1" for a neo-grotesque sans-serif stack, and recolor them to match the app's wordmark blue + teal-green.
+WhatsApp/iMessage were showing the ReLex logo on a transparent (checkered) background because the chat-thumbnail picker prefers the small square `apple-touch-icon.png`, which was a transparent RGBA PNG.
 
-### Change
+### Changes
 
-`public/relex-icon.svg`:
-- Font: `Georgia, 'Times New Roman', serif` → `Inter, 'Helvetica Neue', Helvetica, Arial, system-ui, sans-serif`
-- "R" fill: `#3ea3d3` → `#1E9CE8` (wordmark blue)
-- "1" fill: `#36b7ad` → `#2DBF9A` (chat-bubble teal-green)
-- "1" weight bumped to `600` and nudged 2px right for better balance with the sans-serif "R"
+1. **Replaced `public/apple-touch-icon.png`** (180×180): re-rendered with a solid white background and the full ReLex wordmark + chat-bubble glyph (cropped tightly from `public/relex-logo.png`, ~8% margin), saved as opaque RGB PNG (no alpha).
+2. **Added `public/relex-og-square.png`** (1024×1024): white-background square OG image for chat apps that prefer square previews.
+3. **Updated `index.html`**: added a second `<meta property="og:image">` pointing to the new square image, listed *after* the wide social card so wide-card platforms (Twitter, Facebook) still pick the wide one and chat apps can grab the square.
+4. Favicons (`favicon-16/32.png`, `favicon.ico`, `relex-icon.svg`) left untransparent — they sit on browser-chrome and need to blend with light/dark.
 
 ### Notes
 
-- Browsers cache SVG favicons too — hard refresh after deploy.
-- This only touches the SVG favicon (referenced as the primary `<link rel="icon" type="image/svg+xml">` in `index.html`); the PNG/ICO favicons we already swapped to the chat-bubble glyph stay as-is.
+- WhatsApp aggressively caches link previews. Forced re-fetch trick: share with `?v=2` appended, or use Facebook's Sharing Debugger / WhatsApp's chat-preview cache reset.
+- Absolute `og:image` URLs only resolve on the published domain, not on the lovable preview URL.
