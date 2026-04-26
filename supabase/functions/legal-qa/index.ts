@@ -1380,9 +1380,157 @@ ${prevContext}
 - טון: עברית אקדמית ברגיסטר גבוה.${feedbackLine}`;
     }
 
+    case "write_introduction":
+      return buildIntroductionPrompt(body);
+
+    case "write_conclusion":
+      return buildConclusionPrompt(body);
+
     default:
       return null;
   }
+}
+
+// ─── Paper-level context helper for intro/conclusion prompts ────────
+// Both the introduction and conclusion are *late* chapters that synthesize
+// the paper as it actually emerged. They must be primed with paper-level
+// context (research question, full outline, all chapter titles + bodies,
+// the parsed thesis line) — NOT the per-chapter slice that body chapters
+// receive. This helper centralizes that packaging so both prompts use the
+// exact same view of the paper.
+function buildPaperLevelContext(
+  body: Record<string, unknown>,
+  perChapterCharCap: number,
+): {
+  rq: string;
+  outlineRaw: string;
+  thesisLine: string;
+  lineOfArgument: string;
+  allChapters: Array<{ title: string; content: string }>;
+  chapterTitles: string[];
+  fullChaptersBlock: string;
+  titlesBlock: string;
+  thesisBlock: string;
+  loaBlock: string;
+} {
+  const rq = (body.researchQuestion as string) || "";
+  const outlineRaw = (body.outline as string) || "";
+  const prevChapters = (body.previousChapters as Array<{ title: string; content: string }>) || [];
+
+  // Only consider body chapters with actual content. Filtering by content
+  // length means we don't pollute the prompt with empty placeholders.
+  const allChapters = prevChapters
+    .filter((ch) => ch && ch.content && ch.content.trim().length > 0)
+    .map((ch) => ({ title: ch.title, content: ch.content }));
+
+  const chapterTitles = allChapters.map((ch) => ch.title);
+
+  // Parse thesis + line of argument from the outline (same regexes used by
+  // the body-chapter prompt — keeps interpretation consistent across roles).
+  let thesisLine = "";
+  let lineOfArgument = "";
+  if (outlineRaw) {
+    const thesisMatch = outlineRaw.match(/(?:^|\n)\s*[-•]?\s*\*?\*?התזה[^:]*:\s*([^\n]+)/);
+    if (thesisMatch) thesisLine = thesisMatch[1].replace(/\*+/g, "").trim();
+    const loaMatch = outlineRaw.match(/(?:^|\n)\s*[-•]?\s*\*?\*?קו הטיעון[^:]*:\s*([^\n]+)/);
+    if (loaMatch) lineOfArgument = loaMatch[1].replace(/\*+/g, "").trim();
+  }
+
+  const fullChaptersBlock = allChapters.length > 0
+    ? allChapters
+        .map((ch) => `--- ${ch.title} ---\n${ch.content.slice(0, perChapterCharCap)}`)
+        .join("\n\n")
+    : "(לא סופקו פרקים שנכתבו)";
+
+  const titlesBlock = chapterTitles.length > 0
+    ? chapterTitles.map((t, i) => `${i + 1}. ${t}`).join("\n")
+    : "(אין רשימת פרקים)";
+
+  const thesisBlock = thesisLine ? `\n\n=== התזה המרכזית של העבודה (מן המתווה) ===\n${thesisLine}` : "";
+  const loaBlock = lineOfArgument ? `\n=== קו הטיעון (מן המתווה) ===\n${lineOfArgument}` : "";
+
+  return { rq, outlineRaw, thesisLine, lineOfArgument, allChapters, chapterTitles, fullChaptersBlock, titlesBlock, thesisBlock, loaBlock };
+}
+
+// ─── Introduction prompt ─────────────────────────────────────────────
+// Generated AFTER all body chapters and the conclusion are written.
+// Sees: research question, full outline, all chapter titles, body content,
+// and (when available) the conclusion draft so the intro can frame the
+// thesis as it actually emerged from the paper.
+function buildIntroductionPrompt(body: Record<string, unknown>): string {
+  const ctx = buildPaperLevelContext(body, 2500);
+  const userFeedback = (body.userFeedback as string) || "";
+  const feedbackLine = userFeedback ? `\n\nהנחיות נוספות מהמשתמש לשכתוב המבוא:\n${userFeedback}` : "";
+  const conclusionContent = typeof body.conclusionContent === "string" ? body.conclusionContent.slice(0, 3500) : "";
+  const conclusionBlock = conclusionContent
+    ? `\n\n=== טיוטת הסיכום שכבר נכתבה (להצצה לתזה כפי שהיא בפועל) ===\n${conclusionContent}`
+    : "";
+
+  return `אתה חוקר אקדמי בכיר במשפטים. עליך לכתוב את **פרק המבוא** של עבודה סמינריונית שכבר נכתבה ברובה.
+
+⚠️ עיקרון מנחה: המבוא נכתב מאוחר בכוונה — אחרי שגוף העבודה והסיכום כבר קיימים — כדי שיתאר את התזה ואת מבנה הטיעון כפי שהם **באמת** עולים מן המחקר, ולא כפי שתוכננו במתווה הראשוני.
+
+שאלת המחקר: "${ctx.rq}"${ctx.thesisBlock}${ctx.loaBlock}
+
+=== מבנה כלל פרקי העבודה ===
+${ctx.titlesBlock}
+
+=== תוכן פרקי הגוף שנכתבו ===
+${ctx.fullChaptersBlock}${conclusionBlock}
+
+מה על המבוא לעשות, בדיוק לפי הסדר הזה (פרוזה רציפה, לא רשימות):
+1. למסגר את התופעה / הבעיה ולהסביר את חשיבותה.
+2. להציג בקצרה את המצב המשפטי / הנורמטיבי הקיים.
+3. לזהות את הפער / הכשל / הסוגיה הבלתי-פתורה שמצדיקים את המחקר.
+4. לנסח את שאלת המחקר באופן מדויק וברור.
+5. להציג את התזה (טענת המחקר) באופן ברור והחלטי.
+6. להסביר בקצרה את המסגרת האנליטית או המתודולוגיה (אם רלוונטי).
+7. לסיים ב"מפת דרכים" קצרה של מבנה העבודה לפי שמות הפרקים שלמעלה.
+
+מגבלות כתיבה מחייבות:
+- פרוזה אקדמית רציפה. ללא נקודות תבליט, ללא רשימות ממוספרות, ללא כותרות משנה בתוך המבוא.
+- רגיסטר אקדמי / משפטי גבוה — אבל עדיין נגיש.
+- **אסור** להיכנס לניתוח דוקטרינרי מעמיק. ניתוחים ופירוטים שייכים לפרקי הגוף, לא למבוא.
+- **כמות הערות שוליים מצומצמת**: 3–6 הערות בלבד, לעיגון נקודות מסגור עיקריות (חוק יסוד / הלכה מכוננת / כתיבה אקדמית בסיסית בתחום). אל תעמיס מקורות.
+- כתוב את התזה כפי שהיא עולה מן הפרקים שלמעלה — לא כפי שנוסחה במתווה אם השניים לא תואמים.
+- אל תפתח במשפט "במאמר זה אעסוק…" או "מבוא זה…". פתח ישירות בהצגת התופעה.
+- אורך מומלץ: 800–1400 מילים.${feedbackLine}`;
+}
+
+// ─── Conclusion prompt ───────────────────────────────────────────────
+// Generated AFTER all body chapters but BEFORE the introduction.
+// Sees: research question, full outline, all chapter titles, body content.
+function buildConclusionPrompt(body: Record<string, unknown>): string {
+  const ctx = buildPaperLevelContext(body, 3500);
+  const userFeedback = (body.userFeedback as string) || "";
+  const feedbackLine = userFeedback ? `\n\nהנחיות נוספות מהמשתמש לשכתוב הסיכום:\n${userFeedback}` : "";
+
+  return `אתה חוקר אקדמי בכיר במשפטים. עליך לכתוב את **פרק הסיכום והמסקנות** של עבודה סמינריונית שגוף הפרקים שלה כבר נכתב במלואו.
+
+⚠️ עיקרון מנחה: הסיכום נכתב על-בסיס הפרקים בפועל (ראה תוכן למטה), לא על-בסיס המתווה הראשוני. נסח את התזה ואת המסקנות כפי שעלו מן הניתוח עצמו.
+
+שאלת המחקר: "${ctx.rq}"${ctx.thesisBlock}${ctx.loaBlock}
+
+=== מבנה כלל פרקי העבודה ===
+${ctx.titlesBlock}
+
+=== תוכן פרקי הגוף שנכתבו ===
+${ctx.fullChaptersBlock}
+
+מה על הסיכום לעשות, בדיוק לפי הסדר הזה (פרוזה רציפה, לא רשימות):
+1. לחזור על שאלת המחקר לאור מלוא הניתוח שנעשה.
+2. להציג את התשובה / התזה הסופית של העבודה באופן נקי, ממוקד והחלטי.
+3. לסנתז את הממצאים המרכזיים על-פני הפרקים — בלי לחזור עליהם פרק-אחר-פרק.
+4. להראות כיצד הניתוח שנעשה תומך בתזה הסופית.
+5. להזכיר מגבלות וסוגיות בלתי-פתורות, כשרלוונטי.
+6. לסיים בהשלכה הרחבה יותר של הטיעון — דוקטרינרית, נורמטיבית או מוסדית, לפי אופי העבודה.
+
+מגבלות כתיבה מחייבות:
+- פרוזה אקדמית רציפה. ללא נקודות תבליט, ללא חלוקה מכנית פרק-אחר-פרק.
+- **אסור** להעלות טיעון מהותי חדש שלא פותח בגוף העבודה. הסיכום מסכם, לא מרחיב.
+- **אסור** לחזור על המבוא — הסיכום סוגר ומעלה למסקנה, לא ממסגר מחדש.
+- העדף הערות שוליים שמעגנות סינתזות מרכזיות; אין יעד כמותי קשיח.
+- אורך מומלץ: 700–1300 מילים.${feedbackLine}`;
 }
 
 // ─── Fetch with timeout helper ───────────────────────────────────────
