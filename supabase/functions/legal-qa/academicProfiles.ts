@@ -123,6 +123,38 @@ export const ACADEMIC_PROFILES: Record<AcademicStep, AcademicProfile> = {
     qaGuardUnderWordFloorRatio: 0.7, // <70% of Deep's 1200 floor → flag
     qaGuardNarrativeViolationThreshold: 3,
   },
+  // ─── Introduction (write_introduction) ─────────────────────────────
+  // Generated LATE — after every body chapter and the conclusion are written.
+  // Inherits Deep envelope but consumes paper-level synthesis context (full
+  // body chapter content) rather than per-chapter document slices, so the
+  // local document context window is unused. Word range stays Deep-class
+  // (~800–1400 typical for an introduction); QA guard relaxes the word-floor
+  // ratio because intros legitimately come in shorter than body chapters.
+  introduction: {
+    creditCost: 8,
+    prevChapterContextChars: 0,
+    documentContextChars: 0,
+    abstractWordCap: 0,
+    enableDeepPipeline: true,
+    inheritsFrom: "deep",
+    qaGuardUnresolvedShareThreshold: 0.4,
+    qaGuardUnderWordFloorRatio: 0.5, // intros are framing — looser floor
+    qaGuardNarrativeViolationThreshold: 3,
+  },
+  // ─── Conclusion (write_conclusion) ─────────────────────────────────
+  // Generated LAST among substantive chapters. Synthesizes the actual body,
+  // not the outline. Same Deep envelope shape as introduction.
+  conclusion: {
+    creditCost: 8,
+    prevChapterContextChars: 0,
+    documentContextChars: 0,
+    abstractWordCap: 0,
+    enableDeepPipeline: true,
+    inheritsFrom: "deep",
+    qaGuardUnresolvedShareThreshold: 0.4,
+    qaGuardUnderWordFloorRatio: 0.5,
+    qaGuardNarrativeViolationThreshold: 3,
+  },
 };
 
 /**
@@ -135,6 +167,8 @@ export const ACADEMIC_PROFILES: Record<AcademicStep, AcademicProfile> = {
  *   academicStep === "propose_outline"     → outline
  *   academicStep === "write_chapter" + isAbstract → abstract
  *   academicStep === "write_chapter" (else)       → chapter
+ *   academicStep === "write_introduction"         → introduction
+ *   academicStep === "write_conclusion"           → conclusion
  */
 export function resolveAcademicProfile(
   academicStep: unknown,
@@ -152,6 +186,10 @@ export function resolveAcademicProfile(
       return isAbstract
         ? { step: "abstract", profile: ACADEMIC_PROFILES.abstract }
         : { step: "chapter", profile: ACADEMIC_PROFILES.chapter };
+    case "write_introduction":
+      return { step: "introduction", profile: ACADEMIC_PROFILES.introduction };
+    case "write_conclusion":
+      return { step: "conclusion", profile: ACADEMIC_PROFILES.conclusion };
     default:
       return null;
   }
