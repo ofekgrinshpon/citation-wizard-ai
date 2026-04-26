@@ -180,7 +180,7 @@ const Landing = () => {
           background: "var(--gradient-primary)",
         }}
       >
-        <nav className="max-w-6xl mx-auto h-14 md:h-16 px-4 flex items-center gap-4">
+        <nav className="w-full h-14 md:h-16 pr-4 md:pr-6 pl-4 flex items-center gap-4">
           {/* Logo (RTL start, nudged inward) */}
           <button
             onClick={scrollToTop}
