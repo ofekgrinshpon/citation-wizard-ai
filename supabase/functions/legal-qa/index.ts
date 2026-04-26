@@ -2028,7 +2028,10 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       typeof academicStep === "string" &&
       ["suggest_topics", "validate_question", "propose_outline"].includes(academicStep);
     const isAcademicChapter =
-      taskMode === "academic_writing" && academicStep === "write_chapter";
+      taskMode === "academic_writing" &&
+      (academicStep === "write_chapter" ||
+       academicStep === "write_introduction" ||
+       academicStep === "write_conclusion");
     const hasGroundingDoc =
       (Array.isArray(documentTexts) && documentTexts.length > 0) ||
       (typeof documentText === "string" && documentText.trim().length > 100);
