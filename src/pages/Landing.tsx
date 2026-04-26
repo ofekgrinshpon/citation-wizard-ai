@@ -165,12 +165,53 @@ const Landing = () => {
     pricingRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="min-h-screen bg-background relative" style={{ direction: "rtl" }}>
       <GeometricBackground />
 
+      {/* Top Navigation Bar */}
+      <header
+        className="sticky top-0 z-30 w-full border-b border-border/60"
+        style={{
+          background: "hsla(0, 0%, 100%, 0.65)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+        }}
+      >
+        <nav className="max-w-6xl mx-auto h-14 md:h-16 px-4 flex items-center justify-between">
+          {/* Right side (RTL start): Logo */}
+          <button
+            onClick={scrollToTop}
+            className="flex items-center transition-opacity hover:opacity-80"
+            aria-label="ReLex - חזרה לראש העמוד"
+          >
+            <ReLexLogo size={36} />
+          </button>
+
+          {/* Left side (RTL end): Nav buttons */}
+          <div className="flex items-center gap-1 md:gap-2">
+            <button
+              onClick={scrollToHow}
+              className="px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-foreground/80 hover:text-primary hover:bg-accent/60 transition-colors"
+            >
+              איך זה עובד
+            </button>
+            <button
+              onClick={scrollToPricing}
+              className="px-3 md:px-4 py-2 rounded-lg text-xs md:text-sm font-medium text-foreground/80 hover:text-primary hover:bg-accent/60 transition-colors"
+            >
+              כמה זה עולה
+            </button>
+          </div>
+        </nav>
+      </header>
+
       {/* Hero Section */}
-      <section className="min-h-screen flex flex-col items-center justify-center px-4 relative z-10">
+      <section className="min-h-[calc(100vh-3.5rem)] md:min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 relative z-10">
         {/* Glassmorphism card */}
         <div
           className="text-center space-y-6 max-w-lg w-full px-8 py-12 rounded-2xl relative"
