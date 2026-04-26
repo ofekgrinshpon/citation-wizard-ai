@@ -27,6 +27,10 @@ Three flags in `MODE_PROFILES`:
 
 Stage 2 retry passes `party1Hint`/`party2Hint`/`fullDateHint`/`yearHint` + `partyLookupRetry: true` to a re-route. Research mode does NOT pass `titleHint`/`caseNumberHint` because there is no `fnNumberToCard` map (different from chapters).
 
+## Fix C (2026-04-26) — procedure_type attached to research dockets
+
+`legal_documents.procedure_type` is mixed: ~99 rows are true docket prefixes (`בג"ץ`, `ע"א`, …) and ~10k rows are broad subject categories (`משפחה`, `פלילי`). Helpers `looksLikeDocketPrefix` + `formatDocketForCaseLaw` (in `legal-qa/index.ts`) distinguish them. Prefix → prepend to `case_number` so cards emit `בג"ץ 18225-06-25 …`; category → carried as a weaker `procedure_category` hint. Stage 2's `caseTypeHint` priority: `card.docket_prefix` → `partial.caseType` → `card.procedure_category`. `partyLookup.ts` prompt renders `${prefix} ${caseNumber}` when the hint is a docket prefix. Bare docket stays the back-merge key. Re-running the Fast-on probe is the next gate before flipping `MODE_PROFILES.fast.partyLookupRetryEnabled = true`.
+
 ## Validated 2026-04-25 (Phase C ship)
 
 `eval/phase-c-probe.mjs` Q1+Q6:
