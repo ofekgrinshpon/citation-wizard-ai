@@ -83,10 +83,21 @@ export async function lookupPartyNames(
   // Build the user prompt — list dockets with their court/type hints so the
   // model can disambiguate (some district docket numbers collide across
   // tiers when stripped of prefix).
+  //
+  // Fix C — when caseTypeHint is a true docket prefix (בג"ץ, ע"א, …), prepend
+  // it to the docket number so Perplexity sees a self-consistent Israeli
+  // citation (`בג"ץ 18225-06-25`) instead of a bare district-style number.
+  // Otherwise (subject category like "משפחה") keep it parenthesized as a
+  // disambiguation hint, since prepending it would corrupt the citation.
   const docketLines = requests
     .map((r, i) => {
-      const hints = [r.caseTypeHint, r.courtHint].filter(Boolean).join(" ");
-      return `${i + 1}. ${r.caseNumber}${hints ? ` (${hints})` : ""}`;
+      const hint = (r.caseTypeHint || "").trim();
+      const isDocketPrefix = hint.length > 0 && hint.length <= 6 && /["'״׳]/.test(hint);
+      const docket = isDocketPrefix ? `${hint} ${r.caseNumber}` : r.caseNumber;
+      const parenHints = [isDocketPrefix ? "" : hint, r.courtHint]
+        .filter(Boolean)
+        .join(" ");
+      return `${i + 1}. ${docket}${parenHints ? ` (${parenHints})` : ""}`;
     })
     .join("\n");
 
