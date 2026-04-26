@@ -112,16 +112,16 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     drafterVariant: "structured",
     drafterTimeoutMs: 120000,
     creditCost: 5,
-    // Phase C: Fast keeps Stage 2 retry OFF. Fast-on probe (2026-04-25,
-    // run phase-c-fast-on-0e91a9a7) attempted 6 lookups across Q1+Q6 × 2
-    // and got 6× `no_candidates` from Perplexity — root cause is that
-    // Fast emits malformed/district-court dockets (e.g. `2592/20 (בית המשפט
-    // העליון)` without `בג"ץ` prefix, or `18225-06-25` district format)
-    // that Perplexity can't resolve against supreme.court.gov.il / nevo.
-    // Stage 2 can't fix the upstream docket-emission gap. Revisit only
-    // after Fast's drafter is taught to emit canonical docket prefixes
-    // OR Perplexity prompt is widened to district-court records.
-    partyLookupRetryEnabled: false,
+    // Phase C: Fast Stage 2 retry — re-enabled 2026-04-26 after Fix C
+    // (canonical docket-prefix emission in research/legal-qa pipeline).
+    // Prior Fast-on probe (phase-c-fast-on-0e91a9a7, 2026-04-25) failed
+    // with 6× `no_candidates` because cards stored bare `case_number`
+    // without `בג"ץ`/`ע"א` prefix. Fix C now stores prefixed dockets in
+    // `card.case_number`, passes `card.docket_prefix` as the `caseTypeHint`
+    // priority-1 to the resolver, and partyLookup prepends the prefix to
+    // the docket line in the Perplexity prompt. Re-running Fast-on probe
+    // (Q1+Q6 × 2) to validate before locking in.
+    partyLookupRetryEnabled: true,
     partyLookupPlaceholderPolicy: "emit",
     partyLookupMaxBatchSize: 3,
   },
