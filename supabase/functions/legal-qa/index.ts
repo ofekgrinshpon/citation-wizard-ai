@@ -756,6 +756,12 @@ interface SourcePackEntry {
   relevance_score?: number;
   /** Milestone B — for perplexity_completion entries; passed through to legalSourcePack mapper. */
   completion_candidate_type?: "statute" | "caselaw";
+  /** Fix C — case-law docket prefix (e.g. בג"ץ, ע"א) when meta.procedure_type
+   *  matches `looksLikeDocketPrefix`. Used as Stage 2 caseTypeHint. */
+  docket_prefix?: string;
+  /** Fix C — broad subject category (e.g. משפחה, פלילי) when procedure_type is
+   *  NOT a docket-shaped string. Weaker hint, used as fallback only. */
+  procedure_category?: string;
 }
 
 /**
@@ -1026,6 +1032,52 @@ interface SourceCard {
   relevance_score?: number;
   /** Milestone B — for perplexity_completion cards only; routed to assembleSourcePack. */
   completion_candidate_type?: "statute" | "caselaw";
+  /** Fix C — case-law docket prefix (בג"ץ, ע"א, …) when meta.procedure_type is
+   *  shaped like a docket prefix. Used as Stage 2 caseTypeHint. */
+  docket_prefix?: string;
+  /** Fix C — broad subject category (משפחה, פלילי, …) for non-prefix
+   *  procedure_type values. Weaker fallback hint for Stage 2. */
+  procedure_category?: string;
+}
+
+// ─── Fix C — Docket-prefix helpers ────────────────────────────────────
+// `legal_documents.procedure_type` is mixed: ~99 rows hold a true docket
+// prefix (`בג"ץ`, `ע"א`, `רע"א`, …) while ~10k rows hold a broad subject
+// category (`משפחה`, `פלילי`, `אזרחי`). We must distinguish the two:
+//   • prefix → safe to prepend to case_number to form `בג"ץ 18225-06-25`
+//   • category → must NOT be prepended (would corrupt the citation), but
+//     can still be passed to Perplexity as a court-context hint.
+// A docket prefix is short (≤6 chars), contains gershayim ("/׳/״) OR a
+// gershayim-looking ASCII " or ', and consists of Hebrew letters + that
+// punctuation only.
+function looksLikeDocketPrefix(s: string | undefined | null): boolean {
+  if (!s) return false;
+  const t = s.trim().replace(/[,.]+$/, "");
+  if (t.length === 0 || t.length > 6) return false;
+  // Must contain gershayim/geresh OR ASCII quote/apos (e.g. בג"ץ, ע"א, ת"א).
+  if (!/["'״׳]/.test(t)) return false;
+  // Hebrew letters + that punctuation only.
+  return /^[\u05D0-\u05EA"'״׳]+$/.test(t);
+}
+
+/**
+ * Build the canonical docket string for a case-law metadata row.
+ * Returns `${procedure_type} ${case_number}` when procedure_type is a
+ * docket-shaped prefix, otherwise the bare case_number (today's behaviour).
+ * Also returns the classified `prefix` / `category` for downstream hint use.
+ */
+function formatDocketForCaseLaw(meta: Record<string, unknown>): {
+  docket: string;
+  prefix?: string;
+  category?: string;
+} {
+  const caseNumber = ((meta.case_number as string) || "").trim();
+  const procRaw = ((meta.procedure_type as string) || "").trim().replace(/[,.]+$/, "");
+  if (!caseNumber) return { docket: "", category: procRaw || undefined };
+  if (looksLikeDocketPrefix(procRaw)) {
+    return { docket: `${procRaw} ${caseNumber}`, prefix: procRaw };
+  }
+  return { docket: caseNumber, category: procRaw || undefined };
 }
 
 // ─── Task mode → system prompt instructions ──────────────────────────
@@ -3076,6 +3128,10 @@ ${(verify.fullText as string).slice(0, 50000)}
         let richCitation = m.document_citation;
         const meta = (m.metadata || {}) as Record<string, unknown>;
 
+        let docketPrefix: string | undefined;
+        let procedureCategory: string | undefined;
+        let prefixedCaseNumber: string | undefined;
+
         if (m.source_type === "caselaw") {
           // For case law: use case_number, court, decision_date, title.
           // Guard: skip cards without a usable title — emitting just "case_number (court)"
@@ -3092,7 +3148,14 @@ ${(verify.fullText as string).slice(0, 50000)}
             continue;
           }
           if (caseNumber) {
-            richCitation = `${caseNumber} ${m.document_title}`;
+            // Fix C — prepend procedure_type when it's a docket-shaped prefix
+            // (בג"ץ, ע"א, …). Bare district-style dockets like 18225-06-25
+            // were emitting without their prefix and breaking Stage 2 lookups.
+            const docketInfo = formatDocketForCaseLaw(meta);
+            docketPrefix = docketInfo.prefix;
+            procedureCategory = docketInfo.category;
+            prefixedCaseNumber = docketInfo.docket || caseNumber;
+            richCitation = `${docketInfo.docket} ${m.document_title}`;
             if (court) richCitation += ` (${court}`;
             if (decisionDate) richCitation += `, ${decisionDate}`;
             if (court) richCitation += ")";
@@ -3139,7 +3202,15 @@ ${(verify.fullText as string).slice(0, 50000)}
           url: m.source_url || undefined,
           provenance: "local",
           excerpt: m.chunk_content.slice(0, 400),
-          case_number: m.source_type === "caselaw" ? ((meta.case_number as string) || undefined) : undefined,
+          // Fix C — store the prefixed docket (e.g. בג"ץ 18225-06-25) when
+          // procedure_type is a docket prefix; otherwise the bare case_number.
+          // Stage 2's caseTypeHint construction (≈line 6400) and the resolver's
+          // caseNumberHint both consume this field.
+          case_number: m.source_type === "caselaw"
+            ? (prefixedCaseNumber || (meta.case_number as string) || undefined)
+            : undefined,
+          docket_prefix: m.source_type === "caselaw" ? docketPrefix : undefined,
+          procedure_category: m.source_type === "caselaw" ? procedureCategory : undefined,
           // Milestone A.5: carry retrieval similarity through to the source pack
           // so assembleSourcePack can apply the relevance gate when promoting
           // knesset_research / journal_article items to `core`.
@@ -3251,6 +3322,10 @@ ${(verify.fullText as string).slice(0, 50000)}
           anchor_present: anchorPresent,
           // Milestone A.5: carry through for assembleSourcePack relevance gate.
           relevance_score: sc.relevance_score ?? 0,
+          // Fix C — passthrough for any future stage that wants the
+          // classified docket prefix / category.
+          docket_prefix: sc.docket_prefix,
+          procedure_category: sc.procedure_category,
         };
       });
       console.log(`[source-pack] ${sourcePack.length} entries; anchored=${sourcePack.filter((s) => s.anchor_present).length}`);
@@ -6347,9 +6422,20 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       // but parties are missing. One batched call per chapter.
       if (pendingPartyLookup.length > 0) {
         const requests = pendingPartyLookup.map((p) => ({
+          // Keep the bare docket as the key — partyLookup uses this verbatim
+          // to back-merge Perplexity's results. The prefix is carried separately
+          // via caseTypeHint and rendered into the prompt by partyLookup.
           caseNumber: p.partial.caseNumber,
           courtHint: p.card?.citation || undefined,
-          caseTypeHint: p.partial.caseType || undefined,
+          // Fix C — caseTypeHint priority:
+          //   1. card.docket_prefix    (true docket prefix from procedure_type)
+          //   2. partial.caseType      (regex-extracted from citation text)
+          //   3. card.procedure_category (broad category like משפחה / פלילי)
+          caseTypeHint:
+            p.card?.docket_prefix ||
+            p.partial.caseType ||
+            p.card?.procedure_category ||
+            undefined,
         }));
         const lookup = await lookupPartyNames(requests);
         chapterPartyLookup = {

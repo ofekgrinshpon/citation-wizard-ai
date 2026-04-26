@@ -33,6 +33,11 @@ export interface InternalSourcePackEntry {
    * primary_caselaw, since these candidates are verified-source-matched.
    */
   completion_candidate_type?: "statute" | "caselaw";
+  /** Fix C — true docket prefix (בג"ץ, ע"א, …) for case-law entries. */
+  docket_prefix?: string;
+  /** Fix C — broad subject category (משפחה, פלילי, …) when procedure_type
+   *  isn't a docket-shaped prefix. */
+  procedure_category?: string;
 }
 
 /** Map the legacy 12-value authority enum to the formal 7-value enum. */
