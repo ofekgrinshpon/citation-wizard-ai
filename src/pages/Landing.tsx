@@ -187,7 +187,7 @@ const Landing = () => {
             className="flex items-center transition-opacity hover:opacity-80"
             aria-label="ReLex - חזרה לראש העמוד"
           >
-            <ReLexLogo size={36} className="brightness-0 invert" />
+            <ReLexLogo size={36} className="brightness-0 invert -translate-y-0.5 md:-translate-y-1" />
           </button>
 
           {/* Nav buttons next to logo (RTL: appear right after logo) */}
