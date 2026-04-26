@@ -3128,6 +3128,10 @@ ${(verify.fullText as string).slice(0, 50000)}
         let richCitation = m.document_citation;
         const meta = (m.metadata || {}) as Record<string, unknown>;
 
+        let docketPrefix: string | undefined;
+        let procedureCategory: string | undefined;
+        let prefixedCaseNumber: string | undefined;
+
         if (m.source_type === "caselaw") {
           // For case law: use case_number, court, decision_date, title.
           // Guard: skip cards without a usable title — emitting just "case_number (court)"
@@ -3144,7 +3148,14 @@ ${(verify.fullText as string).slice(0, 50000)}
             continue;
           }
           if (caseNumber) {
-            richCitation = `${caseNumber} ${m.document_title}`;
+            // Fix C — prepend procedure_type when it's a docket-shaped prefix
+            // (בג"ץ, ע"א, …). Bare district-style dockets like 18225-06-25
+            // were emitting without their prefix and breaking Stage 2 lookups.
+            const docketInfo = formatDocketForCaseLaw(meta);
+            docketPrefix = docketInfo.prefix;
+            procedureCategory = docketInfo.category;
+            prefixedCaseNumber = docketInfo.docket || caseNumber;
+            richCitation = `${docketInfo.docket} ${m.document_title}`;
             if (court) richCitation += ` (${court}`;
             if (decisionDate) richCitation += `, ${decisionDate}`;
             if (court) richCitation += ")";
