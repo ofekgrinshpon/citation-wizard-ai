@@ -1,149 +1,93 @@
-# Phase C — Stage 2 party-lookup retry for Fast/Deep research caselaw
+## Scope
 
-Mirror the chapter Stage 2 loop into the research-mode block (`legal-qa/index.ts` ~line 6446–6587). Add per-mode flags so the policy is data-driven and the Fast question ("worth the latency?") gets answered by the eval, not by guessing now.
+Narrowed to research-mode (`legal-qa`) only. **No changes to `citation-chat`.** The plan attaches `procedure_type` to dockets where it matters most: when we hand them to Stage 2 (party-lookup → Perplexity) and when we serialize case-law cards for the drafter.
 
-## What ships in Phase C
+If this fix unblocks Phase C.2 Fast (i.e. the Fast-on probe now shows non-zero recoveries), we'll have confirmed citation-chat doesn't need touching.
 
-### 1. New `MODE_PROFILES` flags (`supabase/functions/legal-qa/modeProfiles.ts`)
+## What's broken (research-mode only)
 
-```ts
-/** Enable Stage 2 Perplexity party-lookup retry on caselaw footnotes
- *  flagged needs_party_lookup. Off by default for Fast (latency-sensitive),
- *  on for Deep. */
-partyLookupRetryEnabled: boolean;
+In `legal-qa/index.ts` the case-law card builder (≈line 3094) constructs the rich citation as:
 
-/** When the retry succeeds but only a placeholder citation can be emitted,
- *  whether to keep it (`emit`) or drop it (`drop`). Mirrors the chapter
- *  best-effort policy. */
-partyLookupPlaceholderPolicy: "emit" | "drop";
-
-/** Hard ceiling on how many dockets we will batch into a single
- *  `lookupPartyNames` call per request. Bounds latency for caselaw-heavy
- *  questions. */
-partyLookupMaxBatchSize: number;
+```
+${case_number} ${title} (${court}, ${date})
 ```
 
-Defaults:
+For our two test docs this emits:
 
-| field | fast | deep |
-|---|---|---|
-| `partyLookupRetryEnabled` | `false` (will be flipped to `true` after eval, see Phase C.2) | `true` |
-| `partyLookupPlaceholderPolicy` | `"emit"` | `"emit"` |
-| `partyLookupMaxBatchSize` | `3` | `6` |
+- `18225-06-25 ...` — bare district-style docket, no `בג"ץ` prefix.
+- `2592/20 ...` — bare Supreme docket, no `בג"ץ` prefix.
 
-Rationale for "emit" on both: the user already chose `emit` for chapters because partial caselaw is more useful than no caselaw. Same product reasoning applies to research mode. The `placeholder_dominant` filter still acts as the final safety net.
+Even though `legal_documents.procedure_type = "בג"ץ"` for both rows, the prefix is dropped. Downstream:
 
-### 2. Code changes in `supabase/functions/legal-qa/index.ts` (research-engine block ~6446–6587)
+- The card's `case_number` field (line 3142) is also stored bare, so Stage 2's `caseTypeHint` (line 6352, sourced from regex-parsing the citation) is empty.
+- `partyLookup` then sends Perplexity bare `18225-06-25` with no hint. Perplexity assumes district court, fails, returns `no_candidates`. This matches the Phase C.2 root cause we documented.
 
-Restructure the existing single-pass loop to mirror the chapter block:
+Compounding nuance from the DB audit: `procedure_type` is sometimes a true docket prefix (`בג"ץ`, ≈99 rows) and sometimes a subject category (`משפחה`, `פלילי`, ≈10k rows). The fix must distinguish these.
 
-```text
-research-engine block:
-  ├── pass 1: classify + apply non-caselaw + apply legal_resolver(resolved)
-  │           collect needs_party_lookup → pendingPartyLookup[]
-  ├── if (modeProfile.partyLookupRetryEnabled && pending.length > 0):
-  │     ├── lookupPartyNames(requests, capped at maxBatchSize)
-  │     ├── for each pending: re-route with partyLookupRetry: true + hints
-  │     │     ├── resolved + clean → mutate fn.citation, count recovered
-  │     │     ├── resolved + placeholders:
-  │     │     │     - if policy === "emit": mutate, count recovered_with_placeholders
-  │     │     │     - if policy === "drop": leave original, count failed
-  │     │     └── still unresolved → leave original, count failed
-  │     └── populate research_engine.party_lookup{...}
-  └── else if pending.length > 0 (flag off):
-        apply original needs_party_lookup result, party_lookup stays null
+## The change
+
+### 1. `supabase/functions/legal-qa/index.ts` — case-law card builder (≈3079–3145)
+
+Add a small helper `formatDocketForCaseLaw(meta)`:
+- If `meta.procedure_type` looks like a docket prefix (`looksLikeDocketPrefix`: short string containing gershayim `״`/`"`, e.g. `בג"ץ`, `ע"א`, `רע"א`), return `${procedure_type} ${case_number}`.
+- Otherwise return bare `${case_number}` (today's behaviour) and surface `procedure_type` separately as a category hint.
+
+Use it to build `richCitation` and to populate `SourceCard.case_number`. Also store `SourceCard.procedure_category` (new optional field) for the non-prefix case so Stage 2 can pass it as a court-context hint.
+
+### 2. `SourceCard` / `InternalSourcePackEntry` shape (index.ts + legalSourcePack.ts)
+
+Add optional `procedure_category?: string` to both. Wire it through `assembleSourcePack`'s `toItem` mapper. The field is internal — it's already covered by the `BANNED_KEYS` sanitizer pattern (we'll keep it under `metadata` if needed, no contract leak).
+
+### 3. Stage 2 hint (≈line 6345–6354)
+
+When building the `lookupPartyNames` request, always derive `caseTypeHint` from the card first, falling back to the regex-parsed `partial.caseType`:
+
+```
+caseTypeHint:
+  card?.docket_prefix          // when looksLikeDocketPrefix(procedure_type)
+  ?? p.partial.caseType        // existing fallback
+  ?? card?.procedure_category  // weaker, but better than nothing
 ```
 
-Implementation notes:
-- Reuse the chapter `applyRoutedResult` shape inline (no extraction to a helper — the two blocks have different telemetry counters).
-- Research mode does **not** maintain `fnNumberToCard`, so:
-  - First-pass router call stays hint-less (current Phase B behaviour).
-  - Stage 2 retry passes only `party1Hint`, `party2Hint`, `fullDateHint`, `yearHint`, `partyLookupRetry: true` — no `titleHint`/`caseNumberHint`. That's consistent with Phase B's "honest baseline".
-- Wrap the `lookupPartyNames` await in a per-call timeout already enforced inside `partyLookup.ts` (20s `AbortController`). No extra timeout needed.
-- Cap `requests.length` to `modeProfile.partyLookupMaxBatchSize`. Excess pending entries get the same fallback as `flag off` (apply original `needs_party_lookup` result, count under `failure_reasons.skipped_over_batch_cap`).
+This means a card built from a `legal_documents` row with `procedure_type = "בג"ץ"` makes Stage 2 send Perplexity `1. בג"ץ 18225-06-25` rather than bare `1. 18225-06-25`.
 
-### 3. Telemetry
+### 4. `supabase/functions/_shared/partyLookup.ts` — prompt strengthening
 
-Add to `metadata.research_engine`:
+Tiny prompt tweak: when `caseTypeHint` is present, prepend it to the docket so the formatted line is `${caseTypeHint} ${caseNumber}` rather than `${caseNumber} (${hints})`. Keeps `courtHint` in the parenthetical. This makes the docket Perplexity sees self-consistent (prefix + number, like a real Israeli citation).
 
-```jsonc
-"party_lookup": {
-  "attempted": N,
-  "recovered": N,
-  "recovered_without_full_date": N,
-  "recovered_with_placeholders": N,
-  "placeholder_fields": { "fullDate": N, "party1": N, ... },
-  "failed": N,
-  "failure_reasons": { "no_match": N, "retry_still_unresolved": N, "skipped_over_batch_cap": N, ... },
-  "status": "ok" | "no_perplexity_key" | "request_failed" | "timeout" | "no_candidates",
-  "wall_ms": N        // wall-clock time of the lookupPartyNames call only
-}
-```
+No interface change — `PartyLookupRequest` already has `caseTypeHint`.
 
-Or `null` when the flag is off OR no candidates were found. Mode label flips from `"canonical_reemission"` → `"canonical_reemission+party_lookup"`. Log tag flips from `[research-engine][phase-b]` → `[research-engine][phase-c]`.
+### 5. `assembleSourcePack` (legalSourcePack.ts)
 
-### 4. Validation matrix
+Pass through `procedure_category` (and the prefixed-case_number) on `toItem`. No bucket-logic change. Mostly a passthrough so the field survives into the V2 contract for any future stage that wants it.
 
-Two eval batches, run sequentially so we can decide Fast independently:
+## Validation
 
-**Deep (flag default-on):**
-- `eval/deep-mode-q1-q6-q21.mjs` x2 repeats labelled `research-router-C-deep`.
-- Acceptance:
-  - `party_lookup.attempted > 0` on at least one of Q1/Q6.
-  - At least one `recovered` OR `recovered_with_placeholders` across the two repeats — otherwise Phase C is a no-op (same ruling we made for the chapter `recovered_without_full_date` story).
-  - `wall_ms` increase ≤ 30% vs the deep-baseline median measured before C.
-  - No new `qa_guard.flags`. `placeholder_dominant` does not increase.
+1. **Re-run `eval/phase-c-fast-on-probe.mjs`** after the fix, with `MODE_PROFILES.fast.partyLookupRetryEnabled = true` (only for the probe — revert before commit if results are inconclusive).
+   
+   Expected outcome if Fix C is the right diagnosis:
+   - Stage 2 attempts > 0
+   - `recovered + recovered_with_placeholders > 0` for at least Q1 (which involves landmark cases including `18225-06-25`)
+   - Wall-time delta still in the few-seconds range
 
-**Fast (flag default-off baseline first, then toggle on):**
-- Step 1: `eval/fast-parity-q1-q6-q21.mjs` x1 with flag OFF — `party_lookup === null`, output byte-identical to Phase B baseline. Pure regression test that the gate works.
-- Step 2: Flip `partyLookupRetryEnabled = true` for fast in a follow-up code change AND re-run `eval/fast-parity-q1-q6-q21.mjs` x2 labelled `research-router-C-fast-on`. Acceptance to keep it on:
-  - Median `wall_ms` increase ≤ 5 seconds (user's "few seconds" bar).
-  - At least one `recovered` or `recovered_with_placeholders` across the two repeats AND that recovered citation survives the `placeholder_dominant` / `missing_parties` filters into `validFootnotes`. Recovery that gets dropped downstream doesn't count as "meaningful improvement".
-  - If both criteria hold → leave Fast flag = `true` and update `mem://logic/legal-qa/research-router.md`. If either fails → revert Fast flag to `false`, document outcome.
+2. **Targeted spot-check via `supabase--curl_edge_functions`** with the exact two dockets the user reported (`בג"ץ 18225-06-25`, `בג"ץ 2592/20`) in research mode, and inspect `metadata.research_engine.party_lookup` + `validFootnotes` for whether the prefix appears in the final citation text.
 
-This matches the user's tradeoff: "few seconds AND meaningful output quality improvement = keep it on".
+3. **Deep regression**: re-run `eval/phase-c-probe.mjs` Deep×2 reps to confirm the existing Stage 2 recovery rate doesn't regress.
+
+4. **Telemetry sanity**: confirm `qa_logs.metadata.research_engine.party_lookup` gains no new failure_reasons, and that `caseTypeHint`-derived prompts don't increase `parse_failed`.
+
+If results 1–3 are clean, propose a separate one-line PR to flip `MODE_PROFILES.fast.partyLookupRetryEnabled = true` and update `.lovable/plan.md` Phase C.2 to SHIPPED.
 
 ## Files touched
 
-- `supabase/functions/legal-qa/modeProfiles.ts` — add three flags + Fast/Deep defaults, expand the JSDoc on the LOCKED DEFAULT block to reflect Phase C.
-- `supabase/functions/legal-qa/index.ts` — restructure research-engine block from single-pass into pass-1 + Stage 2 retry + telemetry.
-- `.lovable/memory/logic/legal-qa/research-router.md` — new memory file documenting research-mode router + per-mode policy + Fast eval outcome.
-- `.lovable/plan.md` — update Phase C status to SHIPPED with the eval results.
+- `supabase/functions/legal-qa/index.ts` — case-law card builder, `SourceCard` type, Stage 2 hint construction.
+- `supabase/functions/legal-qa/legalSourcePack.ts` — `InternalSourcePackEntry` + `toItem` passthrough.
+- `supabase/functions/_shared/partyLookup.ts` — prompt construction (caseTypeHint placement).
+- `.lovable/memory/logic/legal-qa/research-router.md` — note Phase C.2 reopen prerequisite is now satisfied; awaiting probe re-run.
+- `.lovable/plan.md` — record Fix-C done; Fast Phase C re-eval queued.
 
-## What we explicitly are NOT changing
+## Out of scope
 
-- Chapter pipeline (lines ~6272–6444): unchanged, separate counters, separate telemetry.
-- `MODE_PROFILES` drafting envelopes (word ranges, footnote floors, anchor pass): unchanged.
-- Drafter prompts.
-- The final `reasonFor` filter: still the gate. Stage 2 placeholder-emitted citations carry `source = "perplexity"` from `lookupPartyNames`, which makes them anchored, so they survive `placeholder_dominant` (same invariant as chapters).
-- React-side citation engine — Stage 2 stays Deno-only.
-- Phase D (bibliography canonicalization, memo mode) — still deferred.
-
-## Phase C.2 — Fast-on probe outcome (2026-04-25, run `phase-c-fast-on-0e91a9a7`)
-
-**Decision: REVERTED. Fast keeps `partyLookupRetryEnabled = false`.**
-
-Probe: Q1 + Q6 × 2 reps each, depth=fast, flag flipped on, batch cap=3, placeholder policy=emit.
-
-| metric | value |
-|---|---|
-| wall_ms median | 26.2s (Fast-on) vs ~57s reference baseline — DELTA was negative because the reference was taken from richer Phase B fast runs; latency was NOT the blocker |
-| Stage 2 attempted | 6 (across 4 runs; one Q6 rep had 0 candidates) |
-| recovered (clean) | **0** |
-| recovered_with_placeholders | **0** |
-| failed | **6** (all `failure_reasons.no_candidates` from Perplexity) |
-| caselaw with parties or placeholders surviving in `validFootnotes` | **0** |
-
-**Root cause** (verified by inspecting raw `qa_logs.footnotes`): Fast's drafter emits malformed / non-Supreme-Court docket strings — examples from Q1 r1:
-- `2592/20 (בית המשפט העליון).` — bare docket, missing `בג"ץ`/`ע"א` prefix that Perplexity's prompt requires.
-- `18225-06-25 (בית המשפט, לעיל ה"ש 3.` — district-court docket format (`NNNN-MM-YY`), not on `supreme.court.gov.il`/`nevo`.
-
-Stage 2 cannot recover these — Perplexity correctly returns empty `results` when it can't verify a docket on a trusted source. The fix has to be **upstream**: either (a) teach Fast's drafter to emit canonical docket prefixes, or (b) widen Perplexity's `lookupPartyNames` system prompt to accept district-court records. Until then, Fast Stage 2 is pure latency cost with zero improvement.
-
-**Acceptance criteria evaluation:**
-- ❌ "At least one recovered or recovered_with_placeholders that survives into validFootnotes" — failed (0).
-- ✅ "Median wall_ms increase ≤ 5s" — held (Stage 2 added ~1.4–2.2s when it ran), but irrelevant because recovery criterion failed.
-
-**Action taken:** Reverted `MODE_PROFILES.fast.partyLookupRetryEnabled = false` with a JSDoc comment recording the failure mode and reopen criteria. Deep stays ON (Phase C still shipped for Deep). `mem://logic/legal-qa/research-router.md` updated.
-
-**Reopen when:** Fast drafter learns canonical docket prefixes, OR `lookupPartyNames` is widened to district-court records. Re-run `eval/phase-c-fast-on-probe.mjs` and re-evaluate.
+- `citation-chat` (per your instruction).
+- DB rewrite of `verified_sources` rows with mismatched prefixes.
+- Any change to how non-caselaw sources serialize.
