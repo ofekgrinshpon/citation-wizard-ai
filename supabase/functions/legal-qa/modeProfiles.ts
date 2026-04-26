@@ -112,16 +112,21 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     drafterVariant: "structured",
     drafterTimeoutMs: 120000,
     creditCost: 5,
-    // Phase C: Fast keeps Stage 2 retry OFF. Fast-on probe (2026-04-25,
-    // run phase-c-fast-on-0e91a9a7) attempted 6 lookups across Q1+Q6 × 2
-    // and got 6× `no_candidates` from Perplexity — root cause is that
-    // Fast emits malformed/district-court dockets (e.g. `2592/20 (בית המשפט
-    // העליון)` without `בג"ץ` prefix, or `18225-06-25` district format)
-    // that Perplexity can't resolve against supreme.court.gov.il / nevo.
-    // Stage 2 can't fix the upstream docket-emission gap. Revisit only
-    // after Fast's drafter is taught to emit canonical docket prefixes
-    // OR Perplexity prompt is widened to district-court records.
-    partyLookupRetryEnabled: false,
+    // Phase C: Fast Stage 2 retry — LOCKED ON 2026-04-26.
+    // Initial Fast-on probe (phase-c-fast-on-0e91a9a7, 2026-04-25) failed
+    // 6× with `no_candidates` because cards stored bare `case_number`
+    // without `בג"ץ`/`ע"א` prefix. Fix C (2026-04-26) now stores prefixed
+    // dockets in `card.case_number`, passes `card.docket_prefix` as the
+    // `caseTypeHint` priority-1 to the resolver, and partyLookup prepends
+    // the prefix to the docket line in the Perplexity prompt.
+    // Re-probe (phase-c-fast-on-2973bd49) results across Q1+Q6 × 2:
+    //   • attempted=4, recovered=3, failed=1 (no_match)
+    //   • survival: 3/3 recovered citations appear in final response.footnotes
+    //     with real party names + dates (e.g. `בג"ץ 2592/20 בן שושן
+    //     נ' יועמ"ש לממשלה (פורסם ב, 28.5.2025)`).
+    //   • wall-time median 42.5s — well within the "few seconds" gate.
+    // Stage 2 cost: ~3s per request when triggered.
+    partyLookupRetryEnabled: true,
     partyLookupPlaceholderPolicy: "emit",
     partyLookupMaxBatchSize: 3,
   },

@@ -21,7 +21,7 @@ The Fast/Deep research pipeline runs the academic-chapter citation router (`rout
 ## Stage 2 (Phase C) — per-mode flags
 
 Three flags in `MODE_PROFILES`:
-- `partyLookupRetryEnabled` — Deep `true`, Fast `false`
+- `partyLookupRetryEnabled` — Deep `true`, Fast `true` (locked 2026-04-26 after Fix C)
 - `partyLookupPlaceholderPolicy` — both `"emit"` (partial caselaw > none, matches chapter precedent)
 - `partyLookupMaxBatchSize` — Deep `6`, Fast `3` (excess pending → `failure_reasons.skipped_over_batch_cap`)
 
@@ -29,21 +29,23 @@ Stage 2 retry passes `party1Hint`/`party2Hint`/`fullDateHint`/`yearHint` + `part
 
 ## Fix C (2026-04-26) — procedure_type attached to research dockets
 
-`legal_documents.procedure_type` is mixed: ~99 rows are true docket prefixes (`בג"ץ`, `ע"א`, …) and ~10k rows are broad subject categories (`משפחה`, `פלילי`). Helpers `looksLikeDocketPrefix` + `formatDocketForCaseLaw` (in `legal-qa/index.ts`) distinguish them. Prefix → prepend to `case_number` so cards emit `בג"ץ 18225-06-25 …`; category → carried as a weaker `procedure_category` hint. Stage 2's `caseTypeHint` priority: `card.docket_prefix` → `partial.caseType` → `card.procedure_category`. `partyLookup.ts` prompt renders `${prefix} ${caseNumber}` when the hint is a docket prefix. Bare docket stays the back-merge key. Re-running the Fast-on probe is the next gate before flipping `MODE_PROFILES.fast.partyLookupRetryEnabled = true`.
+`legal_documents.procedure_type` is mixed: ~99 rows are true docket prefixes (`בג"ץ`, `ע"א`, …) and ~10k rows are broad subject categories (`משפחה`, `פלילי`). Helpers `looksLikeDocketPrefix` + `formatDocketForCaseLaw` (in `legal-qa/index.ts`) distinguish them. Prefix → prepend to `case_number` so cards emit `בג"ץ 18225-06-25 …`; category → carried as a weaker `procedure_category` hint. Stage 2's `caseTypeHint` priority: `card.docket_prefix` → `partial.caseType` → `card.procedure_category`. `partyLookup.ts` prompt renders `${prefix} ${caseNumber}` when the hint is a docket prefix. Bare docket stays the back-merge key. `citation-chat` is intentionally out of scope.
 
-## Validated 2026-04-25 (Phase C ship)
+## Validated 2026-04-25 (Phase C ship — Deep)
 
 `eval/phase-c-probe.mjs` Q1+Q6:
 - **Deep (flag on)**: 8 attempted, 3 recovered + 3 with placeholders, 2 no_match, status `ok`/`no_candidates`. `wall_ms` median 60.2s vs Phase B baseline ~57s = +5.6% (well under 30% gate). Stage 2 wall_ms ~2-4s per request.
 - **Fast (flag off)**: `party_lookup === null`, mode stays `canonical_reemission`, `party_lookup_config.enabled === false`. Pure regression — gate works.
 
-## Fast Stage 2 — REVERTED 2026-04-25 (run `phase-c-fast-on-0e91a9a7`)
+## Validated 2026-04-26 (Fast Stage 2 LOCKED ON, run `phase-c-fast-on-2973bd49`)
 
-Fast-on probe: Q1+Q6×2 reps with flag flipped → **6 attempts, 0 recovered, 0 placeholders, 6× `no_candidates` from Perplexity**, 0 caselaw with parties or placeholders surviving in `validFootnotes`. Latency cost was fine (~1.4–2.2s when Stage 2 ran), but recovery was zero.
+After Fix C, re-ran `eval/phase-c-fast-on-probe.mjs` Q1+Q6 × 2 reps:
+- **attempted=4, recovered=3 (all with `[חסר: caseType]` placeholder), failed=1** (`no_match`).
+- **Survival**: 3/3 recovered citations appear in final `response.footnotes` with real party names + dates. Concrete example (Q1 r2 fn#5): `בג"ץ 2592/20 בן שושן נ' יועמ"ש לממשלה (פורסם ב, 28.5.2025)` — the exact resolution the user requested when typing `ע"א 2592/20` in `אזכור אחיד`.
+- **Wall-time**: median 42.5s (faster than the ~57s Phase B baseline; Stage 2 itself costs ~3s). Well within the "few seconds" gate.
+- **Caveat**: most Fast recoveries still carry a `[חסר: סוג ההליך]` placeholder for the procedure prefix because Fast's drafter sometimes emits dockets without one and `formatDocketForCaseLaw` can't synthesize a prefix it never had. Real party names + date still recovered, which is the high-value half. Future work: teach the Fast drafter to always emit a procedure prefix.
 
-Root cause (verified by inspecting `qa_logs.footnotes`): Fast's drafter emits non-canonical docket strings — bare numbers without `בג"ץ`/`ע"א` prefix (e.g. `2592/20 (בית המשפט העליון)`) or district-court formats (`18225-06-25`) that Perplexity's prompt only handles for Supreme Court records on supreme.court.gov.il/nevo. Stage 2 can't fix what's broken upstream.
-
-**Reopen criteria**: Fast drafter learns canonical docket prefixes OR `lookupPartyNames` system prompt is widened to district-court records. Re-run `eval/phase-c-fast-on-probe.mjs`.
+Prior Fast-off attempt (`phase-c-fast-on-0e91a9a7`, 2026-04-25) saw 6× `no_candidates` because cards stored bare `case_number` without prefix — Fix C resolved that.
 
 ## Telemetry shape
 
