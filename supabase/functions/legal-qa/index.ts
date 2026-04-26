@@ -6422,11 +6422,10 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       // but parties are missing. One batched call per chapter.
       if (pendingPartyLookup.length > 0) {
         const requests = pendingPartyLookup.map((p) => ({
-          // Fix C — prefer the prefixed docket from the local card so that
-          // Perplexity sees `בג"ץ 18225-06-25` instead of bare `18225-06-25`.
-          // Falls back to the regex-extracted partial.caseNumber if the card
-          // didn't carry a prefix (older cards / non-caselaw paths).
-          caseNumber: p.card?.case_number || p.partial.caseNumber,
+          // Keep the bare docket as the key — partyLookup uses this verbatim
+          // to back-merge Perplexity's results. The prefix is carried separately
+          // via caseTypeHint and rendered into the prompt by partyLookup.
+          caseNumber: p.partial.caseNumber,
           courtHint: p.card?.citation || undefined,
           // Fix C — caseTypeHint priority:
           //   1. card.docket_prefix    (true docket prefix from procedure_type)
