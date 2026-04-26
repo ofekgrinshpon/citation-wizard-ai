@@ -3858,10 +3858,13 @@ ${(verify.fullText as string).slice(0, 50000)}
     const taskInstructions = getTaskModeInstructions(taskMode);
     const citationInstructions = buildCitationInstructions();
 
-    // For academic write_chapter: use the dedicated sub-mode prompt as additional instruction
+    // For academic chapter-class writes (write_chapter / write_introduction /
+    // write_conclusion): use the dedicated sub-mode prompt as additional
+    // instruction. The role-specific prompt drives section structure.
     let academicChapterContext = "";
-    if (isAcademicMode && academicStep === "write_chapter") {
-      const subPrompt = getAcademicSubModePrompt("write_chapter", body);
+    if (isAcademicMode && typeof academicStep === "string" &&
+        (academicStep === "write_chapter" || academicStep === "write_introduction" || academicStep === "write_conclusion")) {
+      const subPrompt = getAcademicSubModePrompt(academicStep, body);
       if (subPrompt) academicChapterContext = "\n\n" + subPrompt;
     }
 
@@ -4390,8 +4393,8 @@ ${combinedContext}
     // Academic chapter writes: prepend the academic persona/style block to the
     // structured drafter prompt so the chapter inherits Deep scaffolding AND
     // the high-register academic voice / narrative-citation rules.
-    if (useStructuredDrafterPath && isAcademicChapter) {
-      const academicHeader = getAcademicSubModePrompt("write_chapter", body);
+    if (useStructuredDrafterPath && isAcademicChapter && typeof academicStep === "string") {
+      const academicHeader = getAcademicSubModePrompt(academicStep, body);
       if (academicHeader) {
         drafterSystemPrompt = `${academicHeader}\n\n${drafterSystemPrompt}`;
       }
