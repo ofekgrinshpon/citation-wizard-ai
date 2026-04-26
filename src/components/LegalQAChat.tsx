@@ -16,12 +16,41 @@ import { CaseSummaryReport } from "@/components/CaseSummaryReport";
 import { ResearchProgress } from "@/components/ResearchProgress";
 import { StageProgressList, type StageEvent } from "@/components/StageProgressList";
 
-// ─── Abstract chapter helpers ──────────────────────────────────────
-const ABSTRACT_LOCKED_TOOLTIP = "ניתן לייצר תקציר רק לאחר השלמת כל פרקי העבודה, כדי להבטיח שהוא משקף את המחקר במלואו";
+// ─── Chapter role helpers ──────────────────────────────────────────
+// Three special chapters in addition to body: abstract, introduction, conclusion.
+// They are GENERATED LATE (after body chapters) but DISPLAYED in this fixed
+// order: תקציר → מבוא → bodies → סיכום ומסקנות.
+//   - conclusion unlocks once every body chapter has content
+//   - introduction unlocks once the conclusion has content
+//   - abstract unlocks once intro + conclusion + every body chapter has content
+const ABSTRACT_LOCKED_TOOLTIP = "ניתן לייצר תקציר רק לאחר השלמת כל פרקי העבודה (כולל מבוא וסיכום), כדי שהוא ישקף את המחקר במלואו";
+const CONCLUSION_LOCKED_TOOLTIP = "ניתן לכתוב את הסיכום רק לאחר השלמת פרקי הגוף, כך שהוא מבוסס על הניתוח בפועל ולא על המתווה בלבד";
+const INTRODUCTION_LOCKED_TOOLTIP = "ניתן לכתוב את המבוא רק לאחר כתיבת פרקי הגוף והסיכום, כדי שהמבוא ימסגר את התזה כפי שהיא עולה מהעבודה בפועל";
+
 function isAbstractChapter(title: string): boolean {
   if (!title) return false;
   const t = title.trim().toLowerCase();
   return t === "תקציר" || t === "abstract" || t.startsWith("תקציר") || t.startsWith("abstract");
+}
+function isIntroductionChapter(title: string): boolean {
+  if (!title) return false;
+  const t = title.trim().toLowerCase();
+  return t === "מבוא" || t === "introduction" || t.startsWith("מבוא") || t.startsWith("introduction");
+}
+function isConclusionChapter(title: string): boolean {
+  if (!title) return false;
+  const t = title.trim();
+  // Hebrew: סיכום / מסקנות / סיכום ומסקנות; English: conclusion
+  if (/^(?:סיכום(?:\s+ומסקנות)?|מסקנות)\b/.test(t)) return true;
+  const lower = t.toLowerCase();
+  return lower === "conclusion" || lower.startsWith("conclusion");
+}
+type ChapterRole = "abstract" | "introduction" | "conclusion" | "body";
+function chapterRole(title: string): ChapterRole {
+  if (isAbstractChapter(title)) return "abstract";
+  if (isIntroductionChapter(title)) return "introduction";
+  if (isConclusionChapter(title)) return "conclusion";
+  return "body";
 }
 import * as pdfjsLib from "pdfjs-dist";
 
@@ -1060,7 +1089,10 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
     // Stream chapter writes (the only academic sub-mode that runs the full
     // research pipeline). All other sub-modes are short single-shot prompts.
-    const useSseStream = academicStep === "write_chapter";
+    const useSseStream =
+      academicStep === "write_chapter" ||
+      academicStep === "write_introduction" ||
+      academicStep === "write_conclusion";
 
     try {
       const body: Record<string, unknown> = {
@@ -1076,14 +1108,49 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       }
 
       // Include previous chapters context for writing
-      if (academicStep === "write_chapter") {
+      const isLongFormWrite =
+        academicStep === "write_chapter" ||
+        academicStep === "write_introduction" ||
+        academicStep === "write_conclusion";
+      if (isLongFormWrite) {
         const isAbstract = !!extraBody?.isAbstract;
-        // For the abstract: send full content of every other chapter (cap 6,000 chars each)
-        // so the AI can synthesize the entire paper. For regular chapters, keep 2,000 cap.
-        const sliceCap = isAbstract ? 6000 : 2000;
+        const isIntro = academicStep === "write_introduction";
+        const isConclusion = academicStep === "write_conclusion";
+        // Cap per chapter:
+        //  - abstract: 6,000 — pure synthesis of the whole paper (incl. intro + conclusion).
+        //  - conclusion: 3,500 — needs richer recall to synthesize key findings.
+        //  - introduction: 2,500 — frames the paper, doesn't re-analyze it.
+        //  - body chapter: 2,000 — current behavior, used for cross-chapter coherence.
+        const sliceCap = isAbstract ? 6000 : isConclusion ? 3500 : isIntro ? 2500 : 2000;
+        // For body chapter writes the abstract chapter is excluded so the
+        // model isn't biased by a placeholder synthesis. For intro/conclusion/
+        // abstract we want only body-role chapters that have real content.
         body.previousChapters = chapters
-          .filter(ch => ch.content && (!isAbstract || !isAbstractChapter(ch.title)))
-          .map(ch => ({ title: ch.title, content: (ch.content || "").slice(0, sliceCap) }));
+          .filter((ch) => {
+            if (!ch.content) return false;
+            if (isAbstract) {
+              // Abstract sees everything except itself.
+              return !isAbstractChapter(ch.title);
+            }
+            if (isIntro || isConclusion) {
+              // Intro & conclusion synthesize the body. Skip the other special chapters.
+              const role = chapterRole(ch.title);
+              return role === "body";
+            }
+            // Regular body-chapter write: skip the abstract.
+            return !isAbstractChapter(ch.title);
+          })
+          .map((ch) => ({ title: ch.title, content: (ch.content || "").slice(0, sliceCap) }));
+
+        // Introduction also receives the conclusion draft (when it exists)
+        // so it can frame the actual final thesis, not the planned one.
+        if (isIntro) {
+          const conclusionCh = chapters.find((ch) => isConclusionChapter(ch.title) && ch.content);
+          if (conclusionCh?.content) {
+            body.conclusionContent = conclusionCh.content;
+          }
+        }
+
         body.chapterTitle = chapters[currentChapter]?.title || "";
         body.chapterIndex = currentChapter;
         body.researchQuestion = researchQuestion;
@@ -1165,23 +1232,31 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         setProposedQuestions([]);
         setOutline(qaResult.answer);
         updateWizardStep("outline");
-      } else if (academicStep === "write_chapter") {
-        // Save chapter content
+      } else if (
+        academicStep === "write_chapter" ||
+        academicStep === "write_introduction" ||
+        academicStep === "write_conclusion"
+      ) {
+        // Save chapter content (works for body, intro, and conclusion writes)
         const updatedChapters = [...chapters];
         updatedChapters[currentChapter] = { ...updatedChapters[currentChapter], content: qaResult.answer };
         setChapters(updatedChapters);
         updateWizardStep("checkpoint");
 
-        // If this completion just unlocked the abstract, surface a toast.
-        const justWrittenIsAbstract = isAbstractChapter(updatedChapters[currentChapter]?.title || "");
-        if (!justWrittenIsAbstract) {
-          const remainingNonAbstract = updatedChapters
-            .filter(ch => !isAbstractChapter(ch.title))
-            .filter(ch => !ch.content).length;
-          const hasAbstract = updatedChapters.some(ch => isAbstractChapter(ch.title));
-          if (hasAbstract && remainingNonAbstract === 0) {
-            toast.success("כל הפרקים הושלמו — ניתן לייצר תקציר");
-          }
+        // Stage-aware unlock toasts (mirrors the lock chain: body → conclusion → intro → abstract)
+        const justWrittenTitle = updatedChapters[currentChapter]?.title || "";
+        const justRole = chapterRole(justWrittenTitle);
+        const allBodyDone = updatedChapters.filter(ch => chapterRole(ch.title) === "body").every(ch => !!ch.content);
+        const conclusionCh = updatedChapters.find(ch => chapterRole(ch.title) === "conclusion");
+        const introCh = updatedChapters.find(ch => chapterRole(ch.title) === "introduction");
+        const abstractCh = updatedChapters.find(ch => chapterRole(ch.title) === "abstract");
+
+        if (justRole === "body" && allBodyDone && conclusionCh && !conclusionCh.content) {
+          toast.success("פרקי הגוף הושלמו — ניתן לכתוב את הסיכום");
+        } else if (justRole === "conclusion" && introCh && !introCh.content) {
+          toast.success("הסיכום נכתב — ניתן עכשיו לכתוב את המבוא, מבוסס על העבודה כפי שהיא בפועל");
+        } else if (justRole === "introduction" && abstractCh && !abstractCh.content) {
+          toast.success("כל פרקי העבודה הושלמו — ניתן לייצר תקציר");
         }
       }
 
@@ -1205,46 +1280,82 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
   const approveOutline = () => {
     const lines = outline.split("\n");
-    const chapterTitles: string[] = [];
+    const bodyTitles: string[] = [];
     for (const rawLine of lines) {
-      // Only top-level numbered lines (no leading whitespace)
       const line = rawLine.replace(/\s+$/, "");
-      if (/^\s+/.test(rawLine)) continue; // skip indented sub-bullets (- הרחבה: / - טיעוני נגד:)
-      // Match "1. **Title** – tag" or legacy "1. **Title**" / "1. Title"
+      if (/^\s+/.test(rawLine)) continue;
       const match = line.match(/^\d+\.\s+\*\*(.+?)\*\*(?:\s*[–\-—]\s*.+)?$/) ||
                     line.match(/^\d+\.\s+(.+?)(?:\s*[–\-—]\s*.+)?$/);
       if (match) {
         const title = match[1].trim().replace(/\*\*/g, "");
-        if (title) chapterTitles.push(title);
+        if (!title) continue;
+        // Strip any model-emitted special chapters; we always force-inject ours.
+        const role = chapterRole(title);
+        if (role === "body") bodyTitles.push(title);
       }
     }
-    if (chapterTitles.length === 0) {
-      chapterTitles.push("תקציר", "מבוא", "המסגרת הנורמטיבית", "סקירה פסיקתית ודוקטרינרית", "ניתוח ביקורתי", "סיכום ומסקנות");
-    } else {
-      // Auto-prepend תקציר (the new outline omits it; abstract-locking flow still needs it)
-      const hasAbstract = chapterTitles.some(t => isAbstractChapter(t));
-      if (!hasAbstract) chapterTitles.unshift("תקציר");
+    if (bodyTitles.length === 0) {
+      bodyTitles.push("המסגרת הנורמטיבית", "סקירה פסיקתית ודוקטרינרית", "ניתוח ביקורתי");
     }
+    // Canonical display order: תקציר → מבוא → bodies → סיכום ומסקנות.
+    // Generation order is enforced separately by the lock chain.
+    const chapterTitles = ["תקציר", "מבוא", ...bodyTitles, "סיכום ומסקנות"];
     setChapters(chapterTitles.map(t => ({ title: t, content: null })));
-    setCurrentChapter(0);
+    // Start the user on the first body chapter — the special chapters are locked.
+    const firstBodyIdx = chapterTitles.findIndex(t => chapterRole(t) === "body");
+    setCurrentChapter(firstBodyIdx >= 0 ? firstBodyIdx : 0);
     updateWizardStep("writing");
   };
 
-  // Abstract gating: unlocked once every non-abstract chapter has content
-  const abstractIdx = chapters.findIndex(ch => isAbstractChapter(ch.title));
+  // ─── Lock chain: body → conclusion → introduction → abstract ───────
+  const bodyChapters = chapters.filter(ch => chapterRole(ch.title) === "body");
+  const allBodyDone = bodyChapters.length > 0 && bodyChapters.every(ch => !!ch.content);
+  const conclusionCh = chapters.find(ch => chapterRole(ch.title) === "conclusion");
+  const introCh = chapters.find(ch => chapterRole(ch.title) === "introduction");
+  const abstractCh = chapters.find(ch => chapterRole(ch.title) === "abstract");
+
+  const conclusionUnlocked = !conclusionCh ? true : allBodyDone;
+  const introductionUnlocked = !introCh ? true : (allBodyDone && !!conclusionCh?.content);
+  const abstractUnlocked = !abstractCh
+    ? true
+    : (allBodyDone && !!conclusionCh?.content && !!introCh?.content);
+
+  // Backward-compat aliases used elsewhere in the file
   const nonAbstractChapters = chapters.filter(ch => !isAbstractChapter(ch.title));
   const completedNonAbstract = nonAbstractChapters.filter(ch => !!ch.content).length;
   const totalNonAbstract = nonAbstractChapters.length;
-  const abstractUnlocked = abstractIdx === -1 || (totalNonAbstract > 0 && completedNonAbstract === totalNonAbstract);
   const missingChapterTitles = nonAbstractChapters.filter(ch => !ch.content).map(ch => ch.title);
 
+  function lockTooltipFor(role: ChapterRole): string {
+    if (role === "abstract") return ABSTRACT_LOCKED_TOOLTIP;
+    if (role === "conclusion") return CONCLUSION_LOCKED_TOOLTIP;
+    if (role === "introduction") return INTRODUCTION_LOCKED_TOOLTIP;
+    return "";
+  }
+  function isChapterLocked(title: string): boolean {
+    const role = chapterRole(title);
+    if (role === "conclusion") return !conclusionUnlocked;
+    if (role === "introduction") return !introductionUnlocked;
+    if (role === "abstract") return !abstractUnlocked;
+    return false;
+  }
+
   const writeCurrentChapter = () => {
-    const isAbstract = isAbstractChapter(chapters[currentChapter]?.title || "");
-    if (isAbstract && !abstractUnlocked) {
-      toast.info(ABSTRACT_LOCKED_TOOLTIP);
+    const title = chapters[currentChapter]?.title || "";
+    const role = chapterRole(title);
+    if (isChapterLocked(title)) {
+      toast.info(lockTooltipFor(role));
       return;
     }
-    handleAcademicSubmit("write_chapter", isAbstract ? { isAbstract: true } : undefined);
+    if (role === "abstract") {
+      handleAcademicSubmit("write_chapter", { isAbstract: true });
+    } else if (role === "introduction") {
+      handleAcademicSubmit("write_introduction");
+    } else if (role === "conclusion") {
+      handleAcademicSubmit("write_conclusion");
+    } else {
+      handleAcademicSubmit("write_chapter");
+    }
   };
 
   const advanceToNextChapter = () => {
