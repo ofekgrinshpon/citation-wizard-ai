@@ -180,11 +180,11 @@ const Landing = () => {
           background: "var(--gradient-primary)",
         }}
       >
-        <nav className="w-full h-14 md:h-16 pr-4 md:pr-6 pl-4 flex items-center gap-4">
-          {/* Logo (RTL start, nudged inward) */}
+        <nav className="w-full h-14 md:h-16 pr-1 md:pr-2 pl-4 flex items-center gap-2 md:gap-3">
+          {/* Logo (RTL start, hugs the right edge) */}
           <button
             onClick={scrollToTop}
-            className="flex items-center transition-opacity hover:opacity-80 mr-2 md:mr-4"
+            className="flex items-center transition-opacity hover:opacity-80"
             aria-label="ReLex - חזרה לראש העמוד"
           >
             <ReLexLogo size={36} className="brightness-0 invert" />
