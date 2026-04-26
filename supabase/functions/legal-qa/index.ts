@@ -6422,9 +6422,21 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       // but parties are missing. One batched call per chapter.
       if (pendingPartyLookup.length > 0) {
         const requests = pendingPartyLookup.map((p) => ({
-          caseNumber: p.partial.caseNumber,
+          // Fix C — prefer the prefixed docket from the local card so that
+          // Perplexity sees `בג"ץ 18225-06-25` instead of bare `18225-06-25`.
+          // Falls back to the regex-extracted partial.caseNumber if the card
+          // didn't carry a prefix (older cards / non-caselaw paths).
+          caseNumber: p.card?.case_number || p.partial.caseNumber,
           courtHint: p.card?.citation || undefined,
-          caseTypeHint: p.partial.caseType || undefined,
+          // Fix C — caseTypeHint priority:
+          //   1. card.docket_prefix    (true docket prefix from procedure_type)
+          //   2. partial.caseType      (regex-extracted from citation text)
+          //   3. card.procedure_category (broad category like משפחה / פלילי)
+          caseTypeHint:
+            p.card?.docket_prefix ||
+            p.partial.caseType ||
+            p.card?.procedure_category ||
+            undefined,
         }));
         const lookup = await lookupPartyNames(requests);
         chapterPartyLookup = {
