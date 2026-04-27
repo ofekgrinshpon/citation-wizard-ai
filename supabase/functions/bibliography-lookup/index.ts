@@ -203,6 +203,10 @@ serve(async (req) => {
     const body = await req.json();
     const rawSource: string = (body?.rawSource ?? "").toString().trim();
     const requestId: string = (body?.requestId ?? crypto.randomUUID()).toString();
+    const sourceTypeHint: string | undefined =
+      typeof body?.sourceTypeHint === "string" && body.sourceTypeHint.length > 0
+        ? body.sourceTypeHint
+        : undefined;
     creditRequestId = requestId;
 
     if (!rawSource || rawSource.length < 2) {
