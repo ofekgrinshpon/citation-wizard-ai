@@ -223,7 +223,7 @@ export function BibliographyGenerator() {
     updateItem(id, { isEditing: false });
   };
 
-  const retryLookup = async (id: string) => {
+  const retryLookup = async (id: string, hintOverride?: BibSourceCategory) => {
     const item = reviewItems.find((i) => i.id === id);
     if (!item) return;
     // Always prefer the current edit buffer if the user typed something there;
@@ -232,8 +232,9 @@ export function BibliographyGenerator() {
     const currentCitation = item.citation?.trim();
     const query = editedValue || currentCitation || item.rawInput;
     if (!query) return;
-    updateItem(id, { status: "loading", isEditing: false });
-    const r = await lookupOne(query);
+    const hint = hintOverride ?? item.sourceTypeOverride;
+    updateItem(id, { status: "loading", isEditing: false, sourceTypeOverride: hint });
+    const r = await lookupOne(query, hint);
     setReviewItems((prev) =>
       prev.map((it) =>
         it.id === id
@@ -241,6 +242,15 @@ export function BibliographyGenerator() {
           : it,
       ),
     );
+  };
+
+  const handleChangeCategory = (id: string, cat: BibSourceCategory) => {
+    updateItem(id, { sourceTypeOverride: cat });
+    if (cat !== "unknown") {
+      const label = CATEGORY_OPTIONS.find((o) => o.value === cat)?.label ?? "סוג מקור";
+      toast.message(`✓ ${label} — מחפש שוב...`);
+      retryLookup(id, cat);
+    }
   };
 
   const commitAll = (verifiedOnly = false) => {
