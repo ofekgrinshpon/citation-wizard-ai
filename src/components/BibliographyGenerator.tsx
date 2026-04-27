@@ -434,7 +434,7 @@ export function BibliographyGenerator() {
                 onRetry={() => retryLookup(item.id)}
                 onRemove={() => removeReviewItem(item.id)}
                 onPickOption={(opt) => pickDisambiguation(item.id, opt)}
-                onChangeCategory={(cat) => updateItem(item.id, { sourceTypeOverride: cat })}
+                onChangeCategory={(cat) => handleChangeCategory(item.id, cat)}
               />
             ))}
           </div>
