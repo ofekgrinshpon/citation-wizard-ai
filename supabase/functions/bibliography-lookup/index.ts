@@ -279,13 +279,14 @@ serve(async (req) => {
 
     // ── 3. Perplexity fallback ──
     try {
-      const result = await callPerplexity(rawSource);
-      const validatedCitation = result.isDisambiguation
+      const result = await callPerplexity(rawSource, sourceTypeHint);
+      const skipValidator = sourceTypeHint ? SKIP_ARTICLE_VALIDATOR.has(sourceTypeHint) : false;
+      const validatedCitation = result.isDisambiguation || skipValidator
         ? result.citation
         : validateArticleCitation(result.citation, rawSource);
-      const validatedOptions = result.isDisambiguation
-        ? result.options.map((o) => validateArticleCitation(o, rawSource))
-        : result.options;
+      const validatedOptions = result.isDisambiguation || skipValidator
+        ? result.options
+        : result.options.map((o) => validateArticleCitation(o, rawSource));
       return new Response(
         JSON.stringify({
           citation: validatedCitation,
