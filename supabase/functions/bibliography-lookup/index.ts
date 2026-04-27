@@ -79,9 +79,46 @@ const PERPLEXITY_SYSTEM = `אתה מומחה לכללי האזכור האחיד 
 // citation router (legal-qa) and this function share a single implementation.
 
 
-async function callPerplexity(rawSource: string): Promise<{ isDisambiguation: boolean; citation: string; options: string[] }> {
+// Maps the UI's BibSourceCategory to a strong instruction line for Perplexity.
+const HINT_INSTRUCTIONS: Record<string, string> = {
+  legislation_primary:
+    'המשתמש אישר במפורש שסוג המקור הוא **חקיקה ראשית** (חוק / פקודה / חוק-יסוד). נסח את האזכור לפי כלל 2 בלבד: שם החוק, שנה עברית–לועזית, ס"ח עמוד פתיחה. אסור להתייחס למקור כמאמר, ספר או פסיקה. אין לעטוף את שם החוק במירכאות ואין להוסיף שם כתב-עת.',
+  legislation_secondary:
+    'המשתמש אישר במפורש שסוג המקור הוא **חקיקת משנה** (תקנות / צו / כללים). נסח את האזכור לפי כלל 2: שם, שנה עברית–לועזית, ק"ת עמוד פתיחה. אסור להתייחס למקור כמאמר, ספר או פסיקה.',
+  caselaw_supreme:
+    'המשתמש אישר במפורש שסוג המקור הוא **פסיקת בית המשפט העליון**. נסח את האזכור לפי כלל 18: סוג הליך מספר/שנה **צד א\'** נ\' **צד ב\'**, פ"ד כרך(חלק) עמוד (שנה). אסור להתייחס למקור כמאמר או חקיקה.',
+  caselaw_district:
+    'המשתמש אישר במפורש שסוג המקור הוא **פסיקת בית משפט מחוזי**. נסח את האזכור לפי כלל 18 לפסיקה לא-מפורסמת. אסור להתייחס למקור כמאמר או חקיקה.',
+  caselaw_magistrate:
+    'המשתמש אישר במפורש שסוג המקור הוא **פסיקת בית משפט שלום**. נסח את האזכור לפי כלל 18 לפסיקה לא-מפורסמת. אסור להתייחס למקור כמאמר או חקיקה.',
+  caselaw_specialized:
+    'המשתמש אישר במפורש שסוג המקור הוא **פסיקה של בית דין מיוחד** (עבודה / משפחה / רבני וכד\'). נסח את האזכור לפי כלל 18 המתאים. אסור להתייחס למקור כמאמר או חקיקה.',
+  literature:
+    'המשתמש אישר במפורש שסוג המקור הוא **ספרות משפטית** (ספר או מאמר). נסח את האזכור לפי כלל 23 (ספרים) או כלל 24 (מאמרים) בהתאם.',
+};
+
+// Categories whose citations should NEVER be re-processed by the article
+// validator (it would inject "[חסר: שם כתב העת]" / "[חסר: עמוד פתיחה]" that
+// are only meaningful for journal articles).
+const SKIP_ARTICLE_VALIDATOR = new Set<string>([
+  "legislation_primary",
+  "legislation_secondary",
+  "caselaw_supreme",
+  "caselaw_district",
+  "caselaw_magistrate",
+  "caselaw_specialized",
+]);
+
+async function callPerplexity(
+  rawSource: string,
+  sourceTypeHint?: string,
+): Promise<{ isDisambiguation: boolean; citation: string; options: string[] }> {
   const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
   if (!PERPLEXITY_API_KEY) throw new Error("PERPLEXITY_API_KEY is not configured");
+
+  const hintLine = sourceTypeHint && HINT_INSTRUCTIONS[sourceTypeHint]
+    ? HINT_INSTRUCTIONS[sourceTypeHint] + "\n\n"
+    : "";
 
   const response = await fetch("https://api.perplexity.ai/chat/completions", {
     method: "POST",
@@ -93,7 +130,7 @@ async function callPerplexity(rawSource: string): Promise<{ isDisambiguation: bo
       model: "sonar",
       messages: [
         { role: "system", content: PERPLEXITY_SYSTEM },
-        { role: "user", content: `המקור הוא: ${rawSource}` },
+        { role: "user", content: `${hintLine}המקור הוא: ${rawSource}` },
       ],
       temperature: 0.1,
       response_format: {
