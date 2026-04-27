@@ -101,10 +101,19 @@ export function BibliographyGenerator() {
     toast.success(`${items.length} מקורות הוחזרו לשלב 2 לעריכה`);
   };
 
-  const lookupOne = async (rawInput: string): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
+  const lookupOne = async (
+    rawInput: string,
+    sourceTypeHint?: BibSourceCategory,
+  ): Promise<Omit<ReviewItem, "id" | "isEditing" | "editValue">> => {
     try {
       const { data, error } = await supabase.functions.invoke("bibliography-lookup", {
-        body: { rawSource: rawInput, requestId: crypto.randomUUID() },
+        body: {
+          rawSource: rawInput,
+          requestId: crypto.randomUUID(),
+          ...(sourceTypeHint && sourceTypeHint !== "unknown"
+            ? { sourceTypeHint }
+            : {}),
+        },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
@@ -116,13 +125,14 @@ export function BibliographyGenerator() {
           citation: "",
           isVerified: false,
           options: data.options.map((s: string) => cleanCitation(String(s))),
+          sourceTypeOverride: sourceTypeHint,
         };
       }
       const citation = cleanCitation(String(data?.citation || ""));
       if (!citation) {
-        return { rawInput, status: "error", citation: "", isVerified: false, options: [], errorMsg: "לא הוחזר אזכור" };
+        return { rawInput, status: "error", citation: "", isVerified: false, options: [], errorMsg: "לא הוחזר אזכור", sourceTypeOverride: sourceTypeHint };
       }
-      return { rawInput, status: "ok", citation, isVerified: Boolean(data?.isVerified), options: [] };
+      return { rawInput, status: "ok", citation, isVerified: Boolean(data?.isVerified), options: [], sourceTypeOverride: sourceTypeHint };
     } catch (e) {
       return {
         rawInput,
@@ -131,6 +141,7 @@ export function BibliographyGenerator() {
         isVerified: false,
         options: [],
         errorMsg: e instanceof Error ? e.message : "unknown",
+        sourceTypeOverride: sourceTypeHint,
       };
     }
   };
