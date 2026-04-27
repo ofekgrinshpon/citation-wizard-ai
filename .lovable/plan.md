@@ -1,43 +1,34 @@
-## What's happening today
+## הבעיה
 
-In Step 2 of the Bibliography Generator, each row already has a **"Source type ▾"** popover (line 605–632 in `src/components/BibliographyGenerator.tsx`). Picking an item — even the same one again — only changes the **display label / sort bucket**. It does **not**:
+בכרטיס המתווה ("ראשי פרקים") רואים שתי גרסאות שונות לשאלת המחקר:
 
-1. Re-run the lookup with that hint, so the citation stays as Perplexity returned it (incl. the bad article-validator decoration like `[חסר: שם כתב העת]`).
-2. Tell the lookup pipeline to skip the article-citation validator for non-article picks.
+- **למעלה** (תחת "מתווה לעבודה סמינריונית"): השאלה המלאה והנעולה שהמשתמש בחר —
+  *"כיצד השפיע השיח הציבורי והפוליטי בישראל… על הלגיטימציה הציבורית של בית המשפט העליון?"*
+- **בתוך פרק "מבוא"** (השדה "שאלת המחקר"): רק הנושא הכללי —
+  *"אקטיביזם שיפוטי"*.
 
-So when חוק החוזים comes back mangled, clicking "חקיקה ראשית" feels like it should fix it, but nothing actually re-runs.
+זה קורה כי שני המקומות נשאבים ממקורות שונים:
 
-## Fix — make the source-type pick a real signal
+1. הכרטיס העליון מציג את ה־prop `researchQuestion` (המקור הקנוני, נעול בצד הלקוח).
+2. שורת "שאלת המחקר" שבתוך כרטיס "מבוא" מציגה את מה שהמודל **כתב** בתבנית המתווה (`parsed.intro["שאלת המחקר"]`). למרות שה־prompt דורש "העתק מילה במילה", המודל לעיתים מקצר/מנסח־מחדש/כותב את הנושא בלבד — ואין אכיפה דטרמיניסטית בצד הלקוח.
 
-Treat the user's pick as an authoritative hint that re-runs the lookup with that category locked in, and the validator pipeline respects it.
+## הפתרון
 
-### 1. UI — `src/components/BibliographyGenerator.tsx`
+תיקון נקודתי וצר ב־`src/components/LegalQAChat.tsx` (סביב שורות 488–497):
 
-- In `onChangeCategory`, after setting `sourceTypeOverride`, automatically call `retryLookup(item.id)` so the row is re-fetched with the new hint. Even re-picking the *same* category triggers a refresh — exactly what the user described ("even if I click again חקיקה ראשית").
-- Pass the `sourceTypeOverride` into `lookupOne` → into the `bibliography-lookup` edge function call body as a new field, e.g. `sourceTypeHint: "legislation_primary"`.
-- Show a tiny "✓ סוג מקור: חקיקה ראשית — מחפש שוב…" toast/inline hint while it re-runs (re-uses existing loading state).
+- לפני שמרנדרים את `parsed.intro` בלולאת `introOrder`, **נדרוס** באופן דטרמיניסטי את הערך של המפתח `"שאלת המחקר"` עם ה־prop `researchQuestion` (אם הוא קיים).
+- כך מובטח שהשאלה המוצגת בתוך "מבוא" תהיה תמיד זהה מילה־במילה לשאלה הנעולה שמופיעה בכרטיס שמעליה — ללא תלות במה שהמודל החזיר.
+- כותרת השדה ("שאלת המחקר:") והעיצוב נשארים בדיוק כפי שהם.
 
-### 2. Edge function — `supabase/functions/bibliography-lookup/index.ts`
+בנוסף נחזק (נקודתית) את הוראות ה־prompt ב־`supabase/functions/legal-qa/index.ts` בבלוק `propose_outline` כדי להבהיר שאסור להחליף את שאלת המחקר ב"נושא" או בכותרת קצרה — אבל זאת רק חגורה נוספת; כספסל ביטחון אמיתי משמשת הדריסה בצד הלקוח.
 
-- Accept the new optional `sourceTypeHint` field on the request body.
-- When present, prepend a short, hard instruction line to the Perplexity user message, e.g.:
-  > "המשתמש אישר שסוג המקור הוא **חקיקה ראשית** — נסח את האזכור לפי כלל 2 (חוק/פקודה/חוק-יסוד) בלבד; אל תתייחס למקור כמאמר/ספר/פסיקה."
-- After Perplexity returns: route through the article validator **only** when `sourceTypeHint` is missing or explicitly an article/literature category. For `legislation_primary | legislation_secondary | caselaw_*` skip `validateArticleCitation` entirely (it's the function that injects `[חסר: שם כתב העת]`).
-- Verified-source matching is unchanged.
+## למה זה בטוח
 
-### 3. No changes to the validator itself
+- שינוי בתצוגה בלבד; לא משנה את התוכן שנשמר ב־DB / ב־`qa_logs`.
+- שאר שדות המבוא (תזה, חשיבות, קו טיעון, מבנה העבודה) ממשיכים להגיע מהמודל כרגיל.
+- אם בעתיד תופיע סוגיה דומה בסיכום או במבוא הסופי שנכתב בשלב מאוחר — נטפל בה בנפרד; ה־scope כאן הוא רק כרטיס המתווה.
 
-`articleCitationValidator.ts` stays as-is. The fix is purely "don't run the article validator on something the user just told us is legislation/case-law".
+## קבצים שיתעדכנו
 
-## Result
-
-- Click "חקיקה ראשית" on the broken חוק החוזים row → row re-runs → Perplexity is told this is primary legislation → article validator is skipped → row updates to a clean `חוק החוזים (חלק כללי), התשל"ג–1973, ס"ח 118.`
-- Re-clicking the same category again triggers another fresh search (same fix, idempotent).
-- Other rows (real journal articles) are unaffected because the validator still runs for `literature` / `unknown` / no-hint.
-
-## Files touched
-
-- `src/components/BibliographyGenerator.tsx` — pass `sourceTypeHint`, auto-retry on category click.
-- `supabase/functions/bibliography-lookup/index.ts` — accept hint, gate the article validator on it, add hint sentence to Perplexity prompt.
-
-No DB / RLS / auth changes.
+- `src/components/LegalQAChat.tsx` — דריסה דטרמיניסטית של `parsed.intro["שאלת המחקר"]`.
+- `supabase/functions/legal-qa/index.ts` (אופציונלי, חיזוק קל) — חידוד הניסוח ב־`propose_outline`.

@@ -486,7 +486,12 @@ function OutlineReport({
         <CardContent className="p-4 space-y-2">
           <h3 className="font-bold text-foreground text-sm border-b border-border pb-1.5 mb-2">מבוא</h3>
           {introOrder.map(label => {
-            const value = parsed.intro[label];
+            // Deterministically lock "שאלת המחקר" inside the intro card to the
+            // canonical research question prop, regardless of what the model
+            // wrote in the outline (it sometimes shortens it to just the topic).
+            const value = label === "שאלת המחקר" && researchQuestion
+              ? researchQuestion
+              : parsed.intro[label];
             if (!value) return null;
             return (
               <div key={label} className="text-sm leading-relaxed">
