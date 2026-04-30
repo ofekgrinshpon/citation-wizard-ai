@@ -1778,7 +1778,15 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       );
     }
 
-    return new Response(JSON.stringify({ content }), {
+    // Map the backend override label to the client SourceType identifier so the
+    // assistant message badge reflects the actual classification (e.g. when the
+    // client guessed "ספר" but backend confirmed case-law via docket prefix).
+    let sourceTypeOverride: string | null = null;
+    if (caseLawOverrideLabel === "פסיקה (דפוס)") sourceTypeOverride = "case_law_published";
+    else if (caseLawOverrideLabel === "פסיקה (מאגר)") sourceTypeOverride = "case_law_database";
+    else if (isCaseLaw) sourceTypeOverride = "case_law_database";
+
+    return new Response(JSON.stringify({ content, sourceTypeOverride }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
