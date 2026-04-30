@@ -232,7 +232,10 @@ const Index = () => {
     // Server signaled it auto-refunded the credit (e.g. AI returned a refusal).
     handleRefundResponse(data);
 
-    return data?.content || "אירעה שגיאה בעיבוד הבקשה.";
+    return {
+      content: (data?.content as string) || "אירעה שגיאה בעיבוד הבקשה.",
+      sourceTypeOverride: (data?.sourceTypeOverride as SourceType | null | undefined) ?? null,
+    };
   };
 
   const saveVerifiedSource = async (
