@@ -112,7 +112,9 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
   const isRuleLine = (line: string) =>
     /^📐|^כלל:|^Based on Rule|^Rule \d/.test(line.trim());
   const hasMissingMarker = (line: string) => /\[חסר:/.test(line);
-  const isDisambiguationLine = (line: string) => /^\d+\.\s+(?:ע|בג|ד|ר|ב|ת|ה)/.test(line.trim());
+  // Numbered list line that starts with a known Hebrew docket prefix (case-law disambiguation option).
+  const isDisambiguationLine = (line: string) =>
+    /^\d+\.\s+(?:בג["״]ץ|ע["״][אפעמ]|רע["״][אפ]|דנ["״][אפג]|בש["״][אפ]|תפ["״]ח|עש["״]מ|בר["״]ם|עמ["״]ה|עע["״]מ|ת["״][אפ]|ה["״][פמ]|פ["״]ה|ב["״]ש|סע["״]ש|ס["״]ק|ד["״]מ|תמ["״]ש|עת["״]מ|תק["״]ג|ק["״]ג|תת["״]ע)\s/.test(line.trim());
 
   return (
     <div
