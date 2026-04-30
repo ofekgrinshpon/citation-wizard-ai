@@ -161,13 +161,16 @@ export async function lookupPartyNames(
             role: "system",
             content:
               "You are a precise Israeli-court records assistant. Given docket numbers, " +
-              "return the party names exactly as they appear on the official court record " +
+              "return the party names AND the full decision date exactly as they appear on the official court record " +
               "(supreme.court.gov.il, nevo.co.il, takdin.co.il). " +
-              "SEARCH TIP: For each docket, START by querying " +
-              "https://lite.takdin.co.il/search-results?txtSearch=<docket_number> — " +
-              "this public results page exposes party names, decision date, and court " +
-              "(including the docket prefix like 'תא (ראשון לציון) 13579-11-24') directly in the snippet, " +
-              "without needing to open the paid full document. " +
+              "TWO-STEP SEARCH ON lite.takdin.co.il (fully public — only the full PDF is paywalled): " +
+              "Step 1 — IDENTIFY: query https://lite.takdin.co.il/search-results?txtSearch=<docket_number>. " +
+              "The results-page snippet exposes party names, court, and the docket prefix (e.g. 'תא (ראשון לציון) 13579-11-24'). " +
+              "Step 2 — FULL DATE: if the snippet shows only a year (or no date), FOLLOW the result link to the individual " +
+              "case page on lite.takdin.co.il. The case landing page displays the decision date in [DD.MM.YYYY] brackets — " +
+              "this page is FREE, only the full ruling PDF requires payment. " +
+              "MANDATORY: never return only a year when the case page exposes the full date. " +
+              "Populate `decision_date` as DD.MM.YYYY whenever the case page shows it. " +
               "Output Hebrew party names only. " +
               "If you cannot verify a docket from a trusted source, OMIT it from the results — never invent.",
           },
