@@ -1,44 +1,29 @@
-**What I found**
+**Plan**
 
-There are two separate bugs:
+I’ll fix the remaining route where a selected or generated case-law option can still fall through to the book resolver.
 
-1. **Still classified as a book**
-   - The frontend can classify `סע"ש קמיקר נ מדינת ישראל ורשות האוכלוסין וההגירה` as a book because the party separator is written as bare `נ` rather than `נ'` / `נגד`.
-   - Then the backend receives a prompt that starts with the book engine hint. The backend’s prefix override is currently checking the whole prompt after only partially stripping the hint. Because the prompt starts with `[סיווג אוטומטי: ספר]` and `══ מנוע אזכור ...`, the actual text `סע"ש...` is not at the start anymore, so the prefix override does not trigger.
-   - The backend logs confirm this: `isCaseLaw=false`, `partyMatch=no`, then `[book] Searching Perplexity for: סע"ש קמיקר...`.
+**What I’ll change**
 
-2. **Can’t click the options**
-   - The UI only turns option lines into clickable buttons if the line starts with a narrow set of prefixes: `ע`, `בג`, `ד`, `ר`, `ב`, `ת`, `ה`.
-   - `סע"ש ...` starts with `ס`, so those lines render as plain formatted text, not buttons.
-   - Even after clicking works, the current option handler sets input and then programmatically clicks the send button after 50ms. Because React state updates are async, it can click while the input is still empty/stale. We should send the selected option directly instead.
+1. **Treat disambiguation selections as case law even without a docket number**
+   - If the input starts with `[בחירת תוצאה]`, the backend will force case-law handling when the selected line contains case-law signals such as `נ'`, `נגד`, court names, a year, or a prior case-law result format.
+   - This prevents selected options like `תביעה לשכר עבודה ... קמיקר ... נ' מדינת ישראל...` from being searched as a book.
 
-**Implementation plan**
+2. **Do not suppress case-law handling for selections without a case number**
+   - Current logic builds a `caseLawHint` for the selection but then `shouldSearchCaseLaw` is false and the flow later reaches the book branch.
+   - I’ll make this branch stop the book resolver and continue into citation generation as case law.
 
-1. **Harden frontend source detection** in `src/data/abbreviations.ts`
-   - Add a shared case-law prefix list or extend the current detection so any input starting with a known docket prefix, including `סע"ש`, is classified as `case_law_database` even without a docket number.
-   - Support bare Hebrew `נ` as a party separator when surrounded by spaces, so `קמיקר נ מדינת ישראל` is recognized like `קמיקר נ' מדינת ישראל`.
-   - Prevent the generic Hebrew-name book heuristic from catching strings that contain known case-law prefixes or party separators.
+3. **Strip markdown/formatting before party detection**
+   - Selected options contain bold markers like `**קמיקר**`; the current party regex only accepts Hebrew letters/spaces/quotes, so `partyMatch=no`.
+   - I’ll normalize selection text by removing markdown, list numbering, and `[חסר: ...]` placeholders before party/case-law checks.
 
-2. **Harden backend prompt cleanup and case-law override** in `supabase/functions/citation-chat/index.ts`
-   - Create a robust helper to strip classification tags and the entire engine-hint block before classification checks.
-   - Run prefix-only and party-name checks against the cleaned user source text, not the full prompt.
-   - Support bare ` נ ` as a party separator for party-only case-law searches.
-   - Make case-law routing take precedence over the book branch: if a known case-law prefix or party separator is present, skip book search entirely even when the classifier label says `ספר`.
+4. **Strengthen the book hard-skip guard**
+   - The book search will be blocked not only by `isCaseLaw`, but also by case-law signals in the cleaned text: party separator, Israeli court/procedure words, court names, or `[בחירת תוצאה]` case-law selection.
+   - This is a safety net so even if the classifier says “book”, the book branch will not run for litigation references.
 
-3. **Improve party-only case-law search output** in `supabase/functions/citation-chat/index.ts`
-   - For `סע"ש` party-only searches, keep the labor-court constraint.
-   - If multiple cases are returned, emit stable, machine-readable option lines that include the docket, parties, date/year, and court.
-   - When the user selects an option, the backend should perform a focused case-number lookup if the selected option contains a docket number; otherwise it should build the final citation from the selected option’s parsed data.
+5. **Improve selected-result metadata extraction**
+   - For selections with no docket number, I’ll parse available parties/date/court/type from the selected line and inject them as a case-law hint.
+   - If the selected line has only a year and not a full date, the prompt will explicitly require a full-date lookup or `[חסר: תאריך מלא]`, rather than inventing or degrading to book output.
 
-4. **Make options reliably clickable** in `src/components/MessageBubble.tsx` and `src/pages/Index.tsx`
-   - Expand `isDisambiguationLine` to recognize all known case-law prefixes, especially `סע"ש`, `ס"ק`, `ד"מ`, etc.
-   - Use a dedicated selected-option submit function instead of `setInput(...)` + `document.querySelector('.btn-send').click()`.
-   - This will immediately send `[בחירת תוצאה] ...` with the selected line, avoiding stale state and making clicks reliable.
+**Expected result**
 
-5. **Deploy and verify**
-   - Redeploy the `citation-chat` backend function.
-   - Verify these scenarios:
-     - `סע״ש קמיקר נ מדינת ישראל ורשות האוכלוסין וההגירה` is treated as case law, not book.
-     - Multiple `סע"ש` options render as clickable buttons.
-     - Clicking option 1 or 2 sends the selection and generates a final case-law citation.
-     - `סע"ש 50358-09-16` remains classified as labor-court case law and keeps the full date when found.
+For `סע״ש קמיקר נ מדינת ישראל ורשות האוכלוסין וההגירה` and for clicking the returned option, the system should remain in case-law mode throughout and never run the book resolver.

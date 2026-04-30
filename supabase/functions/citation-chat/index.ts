@@ -854,13 +854,26 @@ serve(async (req) => {
       .replace(/\n?══\s*מקור מאומת[\s\S]*?══════════════════════════════════\n?/g, "")
       // Generic fallback: any remaining `══ ... ══` short blocks
       .replace(/\n?══[^\n]*══\n?/g, "")
+      // Strip markdown bold and list numbering so disambiguation selections (e.g. "1. ... **קמיקר** נ' ...") parse cleanly
+      .replace(/\*\*/g, "")
+      .replace(/\[חסר:[^\]]*\]/g, "")
+      .replace(/^\s*\d+\.\s*/gm, "")
       .trim();
     const prefixOnlyMatch = cleanedNormalized.match(new RegExp(`(?:^|\\n)\\s*(${prefixGroup})\\s+[\\u0590-\\u05FF]`));
     const hasCaseLawPrefix = !!prefixOnlyMatch;
 
+    // A disambiguation selection that contains case-law markers (party separator, court name,
+    // procedural keyword, or a year in parens) is unambiguously case-law even with no docket number.
+    const selectionCaseLawSignal = isDisambiguationSelection && (
+      /\sנגד\s|\sנ['׳]\s|\sנ\s/.test(cleanedNormalized) ||
+      /בית[- ]המשפט|בית[- ]הדין|פסק[- ]דין|פס["״]ד/.test(cleanedNormalized) ||
+      /ערעור|תביעה|בקשת רשות|תביעה לשכר/.test(cleanedNormalized) ||
+      /\(\d{4}\)/.test(cleanedNormalized)
+    );
+
     // Recognized docket prefix + docket number is unambiguous case-law evidence,
     // even when the upstream auto-classifier didn't tag the query as פסיקה.
-    const isCaseLaw = isCaseLawByClassifier || !!caseNumberMatch || hasCaseLawPrefix;
+    const isCaseLaw = isCaseLawByClassifier || !!caseNumberMatch || hasCaseLawPrefix || selectionCaseLawSignal;
 
     // Party-name fallback: detect "X נגד Y", "X נ' Y", or "X נ Y" (bare nun) pattern.
     // Strip a leading docket prefix first so the prefix doesn't bleed into party1
@@ -872,6 +885,9 @@ serve(async (req) => {
     const partyPrefix = hasCaseLawPrefix && !caseNumberMatch ? prefixOnlyMatch![1] : null;
     if (hasCaseLawPrefix && !caseNumberMatch) {
       console.log(`[case-law] prefix-override=true, prefix="${partyPrefix}", classifierSaidCaseLaw=${isCaseLawByClassifier}`);
+    }
+    if (selectionCaseLawSignal && !hasCaseLawPrefix && !caseNumberMatch) {
+      console.log(`[case-law] selection-override=true, signals detected in disambiguation selection`);
     }
 
     // If this is a disambiguation selection, do a focused single-case search with the case number
@@ -1422,13 +1438,29 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     const isUnknown = classMatch && /לא מזוהה|אחר/.test(classMatch[1]);
     const noClassTag = !classMatch;
     // Also trigger book search for unknown/untagged types that look like Hebrew name + title (4+ words, no legislation markers)
-    const cleanedForBookCheck = userInput.replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "").replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "").trim();
+    // Strip markdown bold (**...**), list numbering ("1. "), and [חסר: ...] placeholders before scanning for case-law signals.
+    const cleanedForBookCheck = userInput
+      .replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "")
+      .replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
+      .replace(/\[בחירת תוצאה\]\s*/g, "")
+      .replace(/\*\*/g, "")
+      .replace(/\[חסר:[^\]]*\]/g, "")
+      .replace(/^\s*\d+\.\s*/gm, "")
+      .trim();
+    // Case-law signal detector: party separator (including bare ` נ `), docket prefix,
+    // court names, or procedural keywords. Used as a safety guard against the book branch.
+    const caseLawSignalRe = new RegExp(
+      `(?:${prefixGroup})|\\sנגד\\s|\\sנ['׳]\\s|\\sנ\\s|בית[- ]המשפט|בית[- ]הדין|פסק[- ]דין|פס["״]ד|ערעור|תביעה|בקשת רשות`
+    );
+    const hasCaseLawSignal = caseLawSignalRe.test(cleanedForBookCheck);
     const looksLikeBook = (isUnknown || noClassTag) &&
       /^[\u0590-\u05FF]/.test(cleanedForBookCheck.replace(/['׳"״`]/g, '')) &&
       cleanedForBookCheck.split(/\s+/).length >= 4 &&
-      !/נ['']|נגד|\sנ\s|חוק |פקודת |תקנות|הצעת חוק|אמנ|ד["״]כ/.test(cleanedForBookCheck);
-    // Hard-skip the book branch when the query is unambiguously case-law (docket prefix or party separator).
-    if ((isBook || looksLikeBook) && !hasVerifiedCandidates && !isCaseLaw) {
+      !hasCaseLawSignal &&
+      !/חוק |פקודת |תקנות|הצעת חוק|אמנ|ד["״]כ/.test(cleanedForBookCheck);
+    // Hard-skip the book branch when the query is unambiguously case-law (docket prefix, party separator,
+    // disambiguation selection, or any other case-law signal).
+    if ((isBook || looksLikeBook) && !hasVerifiedCandidates && !isCaseLaw && !isDisambiguationSelection && !hasCaseLawSignal) {
       try {
         const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
         if (PERPLEXITY_API_KEY) {
