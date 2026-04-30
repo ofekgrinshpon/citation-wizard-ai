@@ -1069,13 +1069,10 @@ const Index = () => {
                       : undefined
                   }
                   onSelectOption={(optionText: string) => {
-                    // Prepend selection tag so edge function skips Perplexity search
+                    // Send the selection directly — avoid relying on async setInput + DOM click.
                     const tagged = `[בחירת תוצאה] ${optionText.replace(/^\d+\.\s*/, '')}`;
-                    setInput(tagged);
-                    setTimeout(() => {
-                      const sendBtn = document.querySelector('.btn-send') as HTMLButtonElement;
-                      if (sendBtn) sendBtn.click();
-                    }, 50);
+                    setInput("");
+                    handleSend(tagged);
                   }}
                 />
               ))}
