@@ -1,65 +1,54 @@
-## What's actually happening
+## What's actually failing
 
-The latest edge function logs for `סע"ש 50358-09-16` show:
+Logs for the latest two attempts on `סע"ש 50358-09-16` and `סע״ש קמיקר נ' מדינת ישראל - רשות האוכלוסין וההגירה`:
 
 ```
-[case-law] isCaseLaw=true, caseNumberMatch=סע"ש 50358-09-16
-Case law search result: {"found":true,"party1":"קמיקר","party2":"מדינת ישראל - רשות האוכלוסין וההגירה","date":"","court":"שלום תל-אביב-יפו","isPublished":false,"databaseName":"תקדין","year":"2016","confidence":"high"}
-[case-law] overrideLabel=פסיקה (מאגר), confidence=high
+[case-law] isCaseLaw=false ... caseNumberMatch=null, partyMatch=no    ← docket attempt
+[book]    Searching Perplexity for: סע"ש קמיקר נ מדינת ישראל...        ← party-only attempt
+[case-law] Date-recovery search result: I appreciate your question, but I need to be direct with you: I don't have the ability to browse websites...
 ```
 
-So:
-- Classification IS working — `isCaseLaw=true`, override label is `פסיקה (מאגר)`.
-- The court detected (`שלום תל-אביב-יפו`) is also wrong for a `סע"ש` docket — `סע"ש` is **בית הדין האזורי לעבודה**, not שלום.
-- The actual blocker is `date:""` — Perplexity's `sonar` model returned only the year. The system prompt already asks for a two-step lookup on takdin lite, but `sonar` isn't fetching the case detail page reliably.
+Three independent bugs:
 
-The "no full date" + wrong court are why the rendered citation looks wrong to you, which is also why it "doesn't feel like case law" in the output.
+### Bug 1 — Classifier regex is fed un-normalized text
+`normalizeHebrewLegalText` (which converts `״ → "`, strips niqqud, etc.) only runs *after* the case-law branch decides to run. The classifier on line 836 still tests the **raw** `userInput` for the docket regex, so an input typed with gershayim (`סע״ש`) or a stray niqqud silently fails to match `סע"ש`. Result: `caseNumberMatch=null` even though we previously matched the same docket.
 
-## Plan
+**Fix:** apply `normalizeHebrewLegalText` to the input *once at the top* of the request handler (or at least before line 836), and use the normalized string for: the AI classifier prompt, `caseNumberMatch`, and `partyMatch`. Keep the original for display only.
 
-### 1. Upgrade the case-law Perplexity model (`supabase/functions/citation-chat/index.ts`, ~line 904)
+### Bug 2 — Party-only case-law inputs are mis-classified as "book"
+When the user types a docket prefix + parties but no docket number (`סע״ש קמיקר נ' מדינת ישראל - רשות האוכלוסין וההגירה`):
+- `caseNumberMatch` is null (no number) ✓ expected
+- `partyMatch` regex on line 849 *should* fire on `נ'`, but `party1` greedily captures `סע״ש קמיקר` (bleeding the prefix into the party name), and the AI classifier returns "ספרות" because the gershayim throws it off, so `isCaseLaw=false` and we fall through to the book branch.
 
-Change `model: "sonar"` → `model: "sonar-pro"` for the case-number branch only.
-`sonar-pro` does multi-step reasoning and follows the "open the case page for the date" instruction much more reliably. The verification search and party-name branch can stay on `sonar`.
+**Fix:**
+1. Add a **prefix-only override**: if the normalized input *starts with* a known case-law prefix (`סע"ש`, `ע"א`, `בג"ץ`, …) followed by Hebrew text, force `isCaseLaw=true` regardless of the AI classifier.
+2. Strip the leading prefix from the text before applying `partyMatch`, so party1 is just `קמיקר` instead of `סע״ש קמיקר`.
+3. Pass the prefix through to the party-search branch so the Perplexity prompt knows to constrain results to that court family (e.g. `סע"ש` → labor-court cases only). This stops the search from returning irrelevant civil-court hits between the same parties and means the user's manual override produces a correct, complete citation.
 
-### 2. Add a dedicated date-recovery search when `date` is empty (~line 991, before the `dataIsUsable` check)
+### Bug 3 — Date-recovery prompt triggers a refusal
+`sonar-pro` returned a long English refusal ("I don't have the ability to browse websites…") for the date-recovery call. The model treats our user prompt as a question rather than a search task. Fix the prompt:
+- Drop the conversational framing.
+- Use a search-shaped query string (`"סע\"ש 50358-09-16" קמיקר תאריך`) as the user content.
+- Explicitly state in the system prompt: *"You have web search; use the search results from the configured domains. If no result, return `{\"date\":\"\"}`. Never explain — JSON only."*
+- Keep `search_domain_filter: ["lite.takdin.co.il", "nevo.co.il", "court.gov.il"]`.
+- Add `search_recency_filter` is **not** appropriate (judgment is from 2016); instead omit it.
 
-If `parsed.found && (!parsed.date || parsed.date.trim() === "")`, fire one focused Perplexity call:
-
-- model: `sonar-pro`
-- domain filter: `lite.takdin.co.il`, `nevo.co.il`, `court.gov.il`
-- prompt: "מצא את התאריך המלא (DD.MM.YYYY) של פסק הדין `${fullCaseRef}` בין הצדדים `${party1}` נ' `${party2}`. בדף התיק בתקדין לייט התאריך מופיע בסוגריים מרובעים [DD.MM.YYYY]. החזר JSON: `{\"date\":\"DD.MM.YYYY\"}` או `{\"date\":\"\"}` אם לא נמצא."
-- Validate `^\d{1,2}\.\d{1,2}\.\d{4}$` before merging into `parsed.date`.
-
-### 3. Add a court-correction step using the docket prefix
-
-The detected court `שלום תל-אביב-יפו` contradicts the prefix `סע"ש`. Add a small mapping of prefix → expected court family:
-
-```text
-סע"ש, ס"ק, ד"מ      → בית הדין האזורי לעבודה
-ע"ע                  → בית הדין הארצי לעבודה
-תמ"ש                 → בית המשפט לענייני משפחה
-עת"מ                 → בית המשפט לעניינים מנהליים
-```
-
-If Perplexity returns a court whose family doesn't match the prefix, override `parsed.court` to the prefix-implied family + the city Perplexity returned (e.g. `בית הדין האזורי לעבודה תל אביב`). Log the override.
-
-### 4. Loosen the "usable" gate so a verified docket+parties always renders as case-law (~line 997)
-
-Today: `dataIsUsable = parsed.found && hasValidParties && (hasValidDate || hasValidPublication)`.
-
-Change to: `dataIsUsable = parsed.found && hasValidParties` (the docket itself is the anchor, and `databaseName` will always be present for unpublished cases). When `date` is still missing after step 2, emit `[חסר: תאריך]` in the hint, but keep the `פסיקה (מאגר)` override label so the engine renders a real case-law citation rather than degrading.
-
-### 5. Redeploy `citation-chat`
-
-After the edits, deploy and re-run `סע"ש 50358-09-16` to verify the new logs show a populated `date` and a corrected court family.
+Also: when the first-pass search returns `confidence: "low"` AND `date: ""` AND parties are present, run the date-recovery call too (currently it only runs on empty date).
 
 ## Files to change
 
-- `supabase/functions/citation-chat/index.ts` (only this file)
+`supabase/functions/citation-chat/index.ts` — only this file.
 
 ## Out of scope
 
-- No frontend changes.
-- No database/migration changes.
-- The party-search branch (no docket) is unaffected.
+- Frontend, DB, other edge functions.
+- The `partyMatch` regex itself is fine; we just need to feed it normalized + de-prefixed text.
+
+## Verification
+
+After deploy, three test inputs:
+1. `סע״ש 50358-09-16` (gershayim) → `caseNumberMatch != null`, `isCaseLaw=true`, full DD.MM.YYYY date populated.
+2. `סע"ש 50358-09-16` (ASCII quote) → same as above, no regression.
+3. `סע״ש קמיקר נ' מדינת ישראל - רשות האוכלוסין וההגירה` → `isCaseLaw=true` via prefix override, party-search branch runs (not book branch), returns the labor-court case with full metadata.
+
+Then redeploy `citation-chat` and inspect logs to confirm the new `[case-law] prefix-override=true` log line and a populated `parsed.date`.

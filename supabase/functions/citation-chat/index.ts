@@ -833,21 +833,41 @@ serve(async (req) => {
     // ── Check if this is a disambiguation selection (skip Perplexity) ──
     const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(normalizedUserInput);
 
-    const caseNumberMatch = normalizedUserInput.match(/(בג"ץ|ע"א|ע"פ|רע"א|רע"פ|דנ"א|דנ"פ|ת"א|ת"פ|ע"ע|עע"מ|עש"מ|בש"א|בש"פ|תפ"ח|עמ"ה|בר"ם|סע"ש|תמ"ש|עת"מ|ה"פ|פ"ה|ב"ש|תק"ג|ק"ג|ד"מ|ס"ק|תת"ע)\s+([0-9]+(?:[\/\-][0-9]+){1,2})/);
+    const CASE_LAW_PREFIXES = [
+      'בג"ץ','ע"א','ע"פ','רע"א','רע"פ','דנ"א','דנ"פ','ת"א','ת"פ','ע"ע','עע"מ','עש"מ',
+      'בש"א','בש"פ','תפ"ח','עמ"ה','בר"ם','סע"ש','תמ"ש','עת"מ','ה"פ','פ"ה','ב"ש',
+      'תק"ג','ק"ג','ד"מ','ס"ק','תת"ע'
+    ];
+    const prefixGroup = CASE_LAW_PREFIXES.map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+    const caseNumberMatch = normalizedUserInput.match(new RegExp(`(${prefixGroup})\\s+([0-9]+(?:[\\/\\-][0-9]+){1,2})`));
 
-    // Recognized docket prefix + docket number is unambiguous case-law evidence,
-    // even when the upstream auto-classifier didn't tag the query as פסיקה.
-    const isCaseLaw = isCaseLawByClassifier || !!caseNumberMatch;
-
-    // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
-    const cleanedForParty = userInput
+    // Prefix-only override: input that STARTS with a known case-law docket prefix
+    // (e.g. `סע"ש קמיקר נ' מדינת ישראל`) is unambiguously case-law even with no
+    // docket number. Without this, the AI auto-classifier sometimes tags it as
+    // "ספרות" and the request falls through to the book branch.
+    const cleanedNormalized = normalizedUserInput
       .replace(/\[סיווג אוטומטי:.*?\]\n?/, "")
       .replace(/\[בחירת תוצאה\]\s*/, "")
       .replace(/\n?══[\s\S]*?══+\s*/g, "")
       .trim();
+    const prefixOnlyMatch = cleanedNormalized.match(new RegExp(`^(${prefixGroup})\\s+[\\u0590-\\u05FF]`));
+    const hasCaseLawPrefix = !!prefixOnlyMatch;
+
+    // Recognized docket prefix + docket number is unambiguous case-law evidence,
+    // even when the upstream auto-classifier didn't tag the query as פסיקה.
+    const isCaseLaw = isCaseLawByClassifier || !!caseNumberMatch || hasCaseLawPrefix;
+
+    // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern.
+    // Strip a leading docket prefix first so the prefix doesn't bleed into party1
+    // (e.g. `סע"ש קמיקר נ' מדינת ישראל` → match against `קמיקר נ' מדינת ישראל`).
+    const cleanedForParty = cleanedNormalized.replace(new RegExp(`^(${prefixGroup})\\s+`), "");
     const partyMatch = !caseNumberMatch
       ? cleanedForParty.match(/([\u0590-\u05FF\s'"״׳']+)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3])\s+([\u0590-\u05FF\s'"״׳']+)/)
       : null;
+    const partyPrefix = hasCaseLawPrefix && !caseNumberMatch ? prefixOnlyMatch![1] : null;
+    if (hasCaseLawPrefix && !caseNumberMatch) {
+      console.log(`[case-law] prefix-override=true, prefix="${partyPrefix}", classifierSaidCaseLaw=${isCaseLawByClassifier}`);
+    }
 
     // If this is a disambiguation selection, do a focused single-case search with the case number
     if (isDisambiguationSelection && isCaseLaw && caseNumberMatch) {
@@ -1003,15 +1023,16 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                         },
                         body: JSON.stringify({
                           model: "sonar-pro",
-                          search_domain_filter: ["lite.takdin.co.il", "nevo.co.il", "court.gov.il"],
+                          search_domain_filter: ["lite.takdin.co.il", "nevo.co.il", "court.gov.il", "psakdin.co.il"],
+                          temperature: 0,
                           messages: [
                             {
                               role: "system",
-                              content: `אתה עוזר מחקר משפטי. החזר JSON בלבד בפורמט {"date":"DD.MM.YYYY"} או {"date":""} אם לא נמצא.`,
+                              content: `You are a search-result extractor. The host runtime gives you live web search results from the configured domains. Extract the judgment date of the Israeli court case from those results and respond with JSON ONLY: {"date":"DD.MM.YYYY"} if found, or {"date":""} if not found in the search results. Never refuse. Never explain. Never apologize. Never claim you cannot browse — search results are provided to you. Output JSON only, no prose, no code fences.`,
                             },
                             {
                               role: "user",
-                              content: `מצא את התאריך המלא של מתן פסק הדין ${fullCaseRef} בין ${parsed.party1 || ""} לבין ${parsed.party2 || ""}. בדף התיק באתר תקדין לייט (lite.takdin.co.il) התאריך מופיע בסוגריים מרובעים בפורמט [DD.MM.YYYY]. אם לא מצאת בתקדין לייט נסה גם nevo.co.il ו-court.gov.il. אל תחזיר רק שנה. החזר JSON בלבד.`,
+                              content: `"${fullCaseRef}" ${parsed.party1 || ""} ${parsed.party2 || ""} תאריך פסק דין site:lite.takdin.co.il OR site:nevo.co.il`,
                             },
                           ],
                         }),
@@ -1140,7 +1161,23 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   },
                   {
                     role: "user",
-                    content: `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}. כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפד"י.`,
+                    content: (() => {
+                      const COURT_HINT_BY_PREFIX: Record<string, string> = {
+                        'סע"ש': 'בבית הדין האזורי לעבודה (סע"ש)',
+                        'ס"ק': 'בבית הדין האזורי לעבודה (ס"ק)',
+                        'ד"מ': 'בבית הדין האזורי לעבודה (ד"מ)',
+                        'ע"ע': 'בבית הדין הארצי לעבודה (ע"ע)',
+                        'תמ"ש': 'בבית המשפט לענייני משפחה (תמ"ש)',
+                        'עת"מ': 'בבית המשפט לעניינים מנהליים (עת"מ)',
+                        'בג"ץ': 'בבית המשפט העליון (בג"ץ)',
+                        'ע"א': 'בבית המשפט העליון (ע"א)',
+                        'ע"פ': 'בבית המשפט העליון (ע"פ)',
+                      };
+                      const courtConstraint = partyPrefix && COURT_HINT_BY_PREFIX[partyPrefix]
+                        ? ` הגבל את החיפוש לתיקים שנדונו ${COURT_HINT_BY_PREFIX[partyPrefix]} בלבד.`
+                        : '';
+                      return `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}.${courtConstraint} כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפד"י.`;
+                    })(),
                   },
                 ],
               }),
