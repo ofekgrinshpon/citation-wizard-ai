@@ -1,54 +1,44 @@
-## What's actually failing
+**What I found**
 
-Logs for the latest two attempts on `סע"ש 50358-09-16` and `סע״ש קמיקר נ' מדינת ישראל - רשות האוכלוסין וההגירה`:
+There are two separate bugs:
 
-```
-[case-law] isCaseLaw=false ... caseNumberMatch=null, partyMatch=no    ← docket attempt
-[book]    Searching Perplexity for: סע"ש קמיקר נ מדינת ישראל...        ← party-only attempt
-[case-law] Date-recovery search result: I appreciate your question, but I need to be direct with you: I don't have the ability to browse websites...
-```
+1. **Still classified as a book**
+   - The frontend can classify `סע"ש קמיקר נ מדינת ישראל ורשות האוכלוסין וההגירה` as a book because the party separator is written as bare `נ` rather than `נ'` / `נגד`.
+   - Then the backend receives a prompt that starts with the book engine hint. The backend’s prefix override is currently checking the whole prompt after only partially stripping the hint. Because the prompt starts with `[סיווג אוטומטי: ספר]` and `══ מנוע אזכור ...`, the actual text `סע"ש...` is not at the start anymore, so the prefix override does not trigger.
+   - The backend logs confirm this: `isCaseLaw=false`, `partyMatch=no`, then `[book] Searching Perplexity for: סע"ש קמיקר...`.
 
-Three independent bugs:
+2. **Can’t click the options**
+   - The UI only turns option lines into clickable buttons if the line starts with a narrow set of prefixes: `ע`, `בג`, `ד`, `ר`, `ב`, `ת`, `ה`.
+   - `סע"ש ...` starts with `ס`, so those lines render as plain formatted text, not buttons.
+   - Even after clicking works, the current option handler sets input and then programmatically clicks the send button after 50ms. Because React state updates are async, it can click while the input is still empty/stale. We should send the selected option directly instead.
 
-### Bug 1 — Classifier regex is fed un-normalized text
-`normalizeHebrewLegalText` (which converts `״ → "`, strips niqqud, etc.) only runs *after* the case-law branch decides to run. The classifier on line 836 still tests the **raw** `userInput` for the docket regex, so an input typed with gershayim (`סע״ש`) or a stray niqqud silently fails to match `סע"ש`. Result: `caseNumberMatch=null` even though we previously matched the same docket.
+**Implementation plan**
 
-**Fix:** apply `normalizeHebrewLegalText` to the input *once at the top* of the request handler (or at least before line 836), and use the normalized string for: the AI classifier prompt, `caseNumberMatch`, and `partyMatch`. Keep the original for display only.
+1. **Harden frontend source detection** in `src/data/abbreviations.ts`
+   - Add a shared case-law prefix list or extend the current detection so any input starting with a known docket prefix, including `סע"ש`, is classified as `case_law_database` even without a docket number.
+   - Support bare Hebrew `נ` as a party separator when surrounded by spaces, so `קמיקר נ מדינת ישראל` is recognized like `קמיקר נ' מדינת ישראל`.
+   - Prevent the generic Hebrew-name book heuristic from catching strings that contain known case-law prefixes or party separators.
 
-### Bug 2 — Party-only case-law inputs are mis-classified as "book"
-When the user types a docket prefix + parties but no docket number (`סע״ש קמיקר נ' מדינת ישראל - רשות האוכלוסין וההגירה`):
-- `caseNumberMatch` is null (no number) ✓ expected
-- `partyMatch` regex on line 849 *should* fire on `נ'`, but `party1` greedily captures `סע״ש קמיקר` (bleeding the prefix into the party name), and the AI classifier returns "ספרות" because the gershayim throws it off, so `isCaseLaw=false` and we fall through to the book branch.
+2. **Harden backend prompt cleanup and case-law override** in `supabase/functions/citation-chat/index.ts`
+   - Create a robust helper to strip classification tags and the entire engine-hint block before classification checks.
+   - Run prefix-only and party-name checks against the cleaned user source text, not the full prompt.
+   - Support bare ` נ ` as a party separator for party-only case-law searches.
+   - Make case-law routing take precedence over the book branch: if a known case-law prefix or party separator is present, skip book search entirely even when the classifier label says `ספר`.
 
-**Fix:**
-1. Add a **prefix-only override**: if the normalized input *starts with* a known case-law prefix (`סע"ש`, `ע"א`, `בג"ץ`, …) followed by Hebrew text, force `isCaseLaw=true` regardless of the AI classifier.
-2. Strip the leading prefix from the text before applying `partyMatch`, so party1 is just `קמיקר` instead of `סע״ש קמיקר`.
-3. Pass the prefix through to the party-search branch so the Perplexity prompt knows to constrain results to that court family (e.g. `סע"ש` → labor-court cases only). This stops the search from returning irrelevant civil-court hits between the same parties and means the user's manual override produces a correct, complete citation.
+3. **Improve party-only case-law search output** in `supabase/functions/citation-chat/index.ts`
+   - For `סע"ש` party-only searches, keep the labor-court constraint.
+   - If multiple cases are returned, emit stable, machine-readable option lines that include the docket, parties, date/year, and court.
+   - When the user selects an option, the backend should perform a focused case-number lookup if the selected option contains a docket number; otherwise it should build the final citation from the selected option’s parsed data.
 
-### Bug 3 — Date-recovery prompt triggers a refusal
-`sonar-pro` returned a long English refusal ("I don't have the ability to browse websites…") for the date-recovery call. The model treats our user prompt as a question rather than a search task. Fix the prompt:
-- Drop the conversational framing.
-- Use a search-shaped query string (`"סע\"ש 50358-09-16" קמיקר תאריך`) as the user content.
-- Explicitly state in the system prompt: *"You have web search; use the search results from the configured domains. If no result, return `{\"date\":\"\"}`. Never explain — JSON only."*
-- Keep `search_domain_filter: ["lite.takdin.co.il", "nevo.co.il", "court.gov.il"]`.
-- Add `search_recency_filter` is **not** appropriate (judgment is from 2016); instead omit it.
+4. **Make options reliably clickable** in `src/components/MessageBubble.tsx` and `src/pages/Index.tsx`
+   - Expand `isDisambiguationLine` to recognize all known case-law prefixes, especially `סע"ש`, `ס"ק`, `ד"מ`, etc.
+   - Use a dedicated selected-option submit function instead of `setInput(...)` + `document.querySelector('.btn-send').click()`.
+   - This will immediately send `[בחירת תוצאה] ...` with the selected line, avoiding stale state and making clicks reliable.
 
-Also: when the first-pass search returns `confidence: "low"` AND `date: ""` AND parties are present, run the date-recovery call too (currently it only runs on empty date).
-
-## Files to change
-
-`supabase/functions/citation-chat/index.ts` — only this file.
-
-## Out of scope
-
-- Frontend, DB, other edge functions.
-- The `partyMatch` regex itself is fine; we just need to feed it normalized + de-prefixed text.
-
-## Verification
-
-After deploy, three test inputs:
-1. `סע״ש 50358-09-16` (gershayim) → `caseNumberMatch != null`, `isCaseLaw=true`, full DD.MM.YYYY date populated.
-2. `סע"ש 50358-09-16` (ASCII quote) → same as above, no regression.
-3. `סע״ש קמיקר נ' מדינת ישראל - רשות האוכלוסין וההגירה` → `isCaseLaw=true` via prefix override, party-search branch runs (not book branch), returns the labor-court case with full metadata.
-
-Then redeploy `citation-chat` and inspect logs to confirm the new `[case-law] prefix-override=true` log line and a populated `parsed.date`.
+5. **Deploy and verify**
+   - Redeploy the `citation-chat` backend function.
+   - Verify these scenarios:
+     - `סע״ש קמיקר נ מדינת ישראל ורשות האוכלוסין וההגירה` is treated as case law, not book.
+     - Multiple `סע"ש` options render as clickable buttons.
+     - Clicking option 1 or 2 sends the selection and generates a final case-law citation.
+     - `סע"ש 50358-09-16` remains classified as labor-court case law and keeps the full date when found.
