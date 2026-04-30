@@ -49,6 +49,8 @@ export const CASE_TYPE_ABBREVIATIONS: Record<string, string> = {
   'דמ': 'ד"מ',
   'ד"מ': 'ד"מ',
   'עב': 'עב\'',
+  'סעש': 'סע"ש',
+  'סע"ש': 'סע"ש',
 
   // Administrative / Family
   'עתמ': 'עת"מ',
