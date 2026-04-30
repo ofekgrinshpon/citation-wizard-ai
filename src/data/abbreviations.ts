@@ -397,9 +397,9 @@ export function detectSourceType(text: string): SourceType {
   
   // Heuristic: Hebrew name (2+ words) followed by a title (3+ additional words) → likely a book
   const strippedForBook = hebrewText.trim().replace(/['׳"״`]/g, '');
-  if (/^[\u0590-\u05FF]+\s+[\u0590-\u05FF]+\s+[\u0590-\u05FF]/.test(strippedForBook) && 
+  if (/^[\u0590-\u05FF]+\s+[\u0590-\u05FF]+\s+[\u0590-\u05FF]/.test(strippedForBook) &&
       hebrewText.trim().split(/\s+/).length >= 4 &&
-      !/נ['']|נגד|חוק|פקוד|תקנ|הצעת|אמנ|ד["״]כ|חוות\s+דעת|הסכם\s+קיבוצי/.test(hebrewText)) {
+      !/נ['']|נגד|\sנ\s|חוק|פקוד|תקנ|הצעת|אמנ|ד["״]כ|חוות\s+דעת|הסכם\s+קיבוצי/.test(hebrewText)) {
     return 'book';
   }
   
