@@ -1,54 +1,53 @@
-## Goal
+# Make Perplexity follow through to the takdin case page when full date is missing
 
-Improve Perplexity grounding for case-law lookups by **explicitly hinting** that `lite.takdin.co.il/search-results` is a high-yield source for the exact fields we need (parties, date, court, docket).
+## What you reported
 
-This is a low-risk prompt + domain-filter tweak — no logic changes, no schema changes, no new dependencies.
+In אזכור אחיד you got back a citation flagged with `[חסר: תאריך מלא]` even though, when you opened the case manually on `lite.takdin.co.il`, the page clearly shows the full date in the `[DD.MM.YYYY]` format (e.g. `[19.10.2021]` in the screenshot you sent — סע"ש 50358-09-16).
 
-## Why it helps
+## Root cause (most likely)
 
-`lite.takdin.co.il/search-results?txtSearch=<docket>` returns a public snippet for almost every Israeli case that includes:
+The current prompt tells Perplexity:
 
-- Court + docket prefix (e.g. `תא (ראשון לציון) 13579-11-24`)
-- Party 1 נ' Party 2
-- Decision date
+> "התחל תמיד מ-`https://lite.takdin.co.il/search-results?txtSearch=<docket>` — דף תוצאות זה הוא ציבורי וחושף בתקציר עצמו את שמות הצדדים, תאריך ההחלטה ובית המשפט … אין צורך לפתוח את המסמך המלא בתשלום."
 
-Today Perplexity is told it *may* use takdin.co.il, but is not pointed at the specific search endpoint. The model often lands on Nevo/court paywall pages with weaker snippets.
+That instruction was correct for **parties / court / docket prefix**, but the **search-results snippet often shows only the year** — the full `DD.MM.YYYY` date sits on the **individual case landing page** (the page in your screenshot), not on the results list. So Perplexity stops at the snippet, sees only a year, and reports the date as missing.
 
-## Scope — exactly two edge functions
+The case landing page on `lite.takdin.co.il` is also free / public — the only paywalled thing is the full PDF of the ruling. So we can safely tell Perplexity to follow through one more click.
 
-### 1. `supabase/functions/case-law-search/index.ts`
+## Plan — two prompt edits, no schema/code changes
 
-This function already calls `sonar` for a single docket lookup. Two surgical edits to the request body:
+### 1. `supabase/functions/case-law-search/index.ts` (single-docket lookup, used by אזכור אחיד single-case path and BatchFootnoteBuilder)
 
-- Add `search_domain_filter: ["lite.takdin.co.il", "takdin.co.il", "nevo.co.il", "supreme.court.gov.il", "court.gov.il"]` so Perplexity prioritizes these.
-- Append an explicit hint to the **system message**:
-  > כאשר אתה מאתר תיק לפי מספר תיק, התחל מחיפוש ב-`https://lite.takdin.co.il/search-results?txtSearch=<מספר התיק>`. דף זה מכיל לרוב את שמות הצדדים, תאריך ההחלטה, ובית המשפט בתוצאת החיפוש עצמה — בלי צורך לפתוח את המסמך המלא.
+In the system prompt, replace the current "search-results page is enough" line with a two-step instruction:
 
-No change to the JSON schema, parsing, or output shape.
+- **Step 1**: hit `https://lite.takdin.co.il/search-results?txtSearch=<docket>` to identify the right case (parties, court, docket prefix).
+- **Step 2**: if the snippet does **not** include a full `DD.MM.YYYY` date (only a year, or nothing), follow the result link to the individual case page on `lite.takdin.co.il` — that page exposes the decision date in `[DD.MM.YYYY]` brackets, free of charge. Only the full PDF is paywalled.
+- Add an explicit reminder: "Do not return only a year if the full date is recoverable from the case page. Return `date` as `DD.MM.YYYY` whenever the case page shows it."
 
-### 2. `supabase/functions/_shared/partyLookup.ts`
+### 2. `supabase/functions/_shared/partyLookup.ts` (Stage-2 batch retry for chapter router)
 
-Same two edits to the batch party-lookup call (`sonar-pro`):
+Same two-step framing for the batch system prompt — the schema already has an optional `decision_date` field; we just need the model to actually populate it when the case page exposes it. The Stage-2 placeholder-emission policy stays as-is; the goal is to **reduce** how often we fall through to `[חסר: תאריך מלא]` in the first place.
 
-- Extend the existing `TRUSTED_LEGAL_DOMAINS` list with `lite.takdin.co.il` (it's the public face of `takdin.co.il`, so the trust posture is identical).
-- Add a one-line system-prompt hint pointing at `lite.takdin.co.il/search-results?txtSearch=<docket>` as the preferred starting point for each docket.
+## What this does NOT change
 
-`TRUSTED_LEGAL_DOMAINS` is also imported by Stage E.5 URL-allowlist validation in `legal-qa`, so adding the host there means citations anchored on `lite.takdin.co.il` will survive the guard — desirable, since these are real takdin pages.
+- No schema changes — `case-law-search` already returns `date: "DD.MM.YYYY"` and `partyLookup` already returns `decision_date`. We just push the model to fill it more often.
+- No domain-filter changes — `lite.takdin.co.il` is already in `search_domain_filter` for both endpoints.
+- No fallback ordering change — Nevo / supreme.court / takdin priority stays the same, and the existing `partyLookupRetry` placeholder logic remains the safety net.
+- No client-side changes (`citationValidation.ts` / `citationEngine.ts` are untouched).
 
-## Out of scope
+## Why this is the minimal fix
 
-- No HTML scraping of takdin from our side. The hint is purely instructional for Perplexity.
-- No changes to citation engine, classification, or the React side.
-- No change to `bibliography-lookup` (it handles books/articles, not case law).
-
-## Risk
-
-Minimal. Worst case: Perplexity ignores the hint and behaves as today. Best case: higher hit rate on `case-law-search.found = true` and fewer `OMIT`s in `partyLookup`.
+The symptom is specifically "Perplexity stopped one click short of where the date lives." We don't need new endpoints, scraping, or retries — we just need the prompt to stop telling it the snippet is sufficient when it isn't for the date field. The model already has the ability to follow links inside an allowed domain; it was being instructed not to.
 
 ## Validation
 
-After deploy, spot-check 3–5 dockets via the existing `case-law-search` invocation in BatchFootnoteBuilder / PartyNameCheck and confirm:
-- Returned `parties` / `date` / `court` populated more consistently.
-- Edge function logs show Perplexity citations including `lite.takdin.co.il` URLs.
+Re-run the same סע"ש 50358-09-16 query in אזכור אחיד after deploy. Expected: `date` comes back as `19.10.2021`, the `[חסר: תאריך מלא]` placeholder disappears, and the citation renders cleanly. Spot-check 2–3 more district / labor-court dockets where the search-results snippet is known to be year-only.
 
-No memory update needed unless we later promote this into a documented architectural rule.
+## Files touched on approval
+
+- `supabase/functions/case-law-search/index.ts` — system-prompt block only
+- `supabase/functions/_shared/partyLookup.ts` — system-prompt block only
+
+Both functions get redeployed (`case-law-search`, `legal-qa`).
+
+Approve and I'll make the two prompt edits and redeploy.
