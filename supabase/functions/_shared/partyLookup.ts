@@ -55,6 +55,7 @@ const TRUSTED_LEGAL_DOMAINS = [
   "gov.il",
   "nevo.co.il",
   "takdin.co.il",
+  "lite.takdin.co.il",
   "psakdin.co.il",
 ];
 
@@ -162,6 +163,11 @@ export async function lookupPartyNames(
               "You are a precise Israeli-court records assistant. Given docket numbers, " +
               "return the party names exactly as they appear on the official court record " +
               "(supreme.court.gov.il, nevo.co.il, takdin.co.il). " +
+              "SEARCH TIP: For each docket, START by querying " +
+              "https://lite.takdin.co.il/search-results?txtSearch=<docket_number> — " +
+              "this public results page exposes party names, decision date, and court " +
+              "(including the docket prefix like 'תא (ראשון לציון) 13579-11-24') directly in the snippet, " +
+              "without needing to open the paid full document. " +
               "Output Hebrew party names only. " +
               "If you cannot verify a docket from a trusted source, OMIT it from the results — never invent.",
           },
