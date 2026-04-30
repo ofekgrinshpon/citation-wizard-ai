@@ -134,6 +134,9 @@ const Index = () => {
   const [academicResumeFallback, setAcademicResumeFallback] = useState<{ question: string; result: any } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  // Override returned by the citation-chat edge function so backend-confirmed
+  // case-law replaces the client's heuristic guess (e.g. when prefix override fires).
+  const lastSourceTypeOverrideRef = useRef<SourceType | null>(null);
   
   
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
@@ -232,7 +235,12 @@ const Index = () => {
     // Server signaled it auto-refunded the credit (e.g. AI returned a refusal).
     handleRefundResponse(data);
 
-    return data?.content || "אירעה שגיאה בעיבוד הבקשה.";
+    // Stash backend's classification override (e.g. case-law confirmed by docket prefix
+    // when the client guessed "ספר") so handleSend can apply it to messageSourceTypes.
+    lastSourceTypeOverrideRef.current =
+      (data?.sourceTypeOverride as SourceType | null | undefined) ?? null;
+
+    return (data?.content as string) || "אירעה שגיאה בעיבוד הבקשה.";
   };
 
   const saveVerifiedSource = async (
@@ -351,7 +359,7 @@ const Index = () => {
       }
 
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: (lastSourceTypeOverrideRef.current ?? sourceType) as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       await subscription.incrementCount();
 
@@ -407,7 +415,7 @@ const Index = () => {
       }
 
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: (lastSourceTypeOverrideRef.current ?? sourceType) as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       await subscription.incrementCount();
 
@@ -474,7 +482,7 @@ const Index = () => {
       const reply = await callAPI(prompt, messages);
       const assistantIndex = messages.length;
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: (lastSourceTypeOverrideRef.current ?? sourceType) as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
       await subscription.incrementCount();
 
@@ -653,7 +661,7 @@ const Index = () => {
       }
 
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: (lastSourceTypeOverrideRef.current ?? effectiveSourceType) as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       // Increment guest counter
       await subscription.incrementCount();

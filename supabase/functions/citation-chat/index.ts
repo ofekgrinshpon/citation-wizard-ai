@@ -1099,10 +1099,20 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     }
                   }
 
-                  // Validate data quality: reject bogus results with empty/placeholder fields
-                  const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && parsed.date.trim() !== "";
-                  const hasValidParties = parsed.party1 && parsed.party1.trim() !== "" && parsed.party2 && parsed.party2.trim() !== "";
-                  const hasValidPublication = (parsed.isPublished && parsed.padi_volume && parsed.padi_volume.trim() !== "") || (!parsed.isPublished && parsed.databaseName && parsed.databaseName.trim() !== "");
+                  // Validate data quality: reject bogus results with empty/placeholder fields.
+                  // Perplexity often returns Hebrew "not specified" placeholders that look truthy but
+                  // are not real publication data — treat these as missing.
+                  const isPlaceholder = (v: unknown) => {
+                    if (typeof v !== "string") return true;
+                    const t = v.trim();
+                    if (!t) return true;
+                    return /^(?:לא\s*(?:צוין|ידוע|נמצא|רלוונטי)|אין|N\/?A|None|null|undefined|-|—)$/i.test(t);
+                  };
+                  const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && !isPlaceholder(parsed.date);
+                  const hasValidParties = !isPlaceholder(parsed.party1) && !isPlaceholder(parsed.party2);
+                  const hasRealPadi = !isPlaceholder(parsed.padi_volume) && !isPlaceholder(parsed.padi_page);
+                  const hasRealDatabase = !isPlaceholder(parsed.databaseName);
+                  const hasValidPublication = (parsed.isPublished && hasRealPadi) || (!parsed.isPublished && hasRealDatabase) || hasRealDatabase;
                   // The docket itself anchors the case: as long as parties are confirmed, render as case law
                   // even if the full date is missing (it will surface as [חסר: תאריך]).
                   const dataIsUsable = parsed.found && hasValidParties;
@@ -1112,18 +1122,20 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     details += `תיק: ${fullCaseRef}\n`;
                     if (hasValidParties) details += `צדדים: **${parsed.party1}** נ' **${parsed.party2}**\n`;
                     if (parsed.court) details += `בית משפט: ${parsed.court}\n`;
-                    if (parsed.isPublished && parsed.padi_volume && parsed.padi_volume.trim() !== "") {
+                    if (parsed.isPublished && hasRealPadi) {
                       caseLawOverrideLabel = "פסיקה (דפוס)";
-                      const part = parsed.padi_part ? `(${parsed.padi_part})` : "";
-                      details += `פרסום: פ"ד ${parsed.padi_volume}${part} ${parsed.padi_page || ""}\n`;
-                    }
-                    if (!parsed.isPublished && parsed.databaseName && parsed.databaseName.trim() !== "") {
+                      const part = !isPlaceholder(parsed.padi_part) ? `(${String(parsed.padi_part).trim()})` : "";
+                      details += `פרסום: פ"ד ${String(parsed.padi_volume).trim()}${part} ${!isPlaceholder(parsed.padi_page) ? String(parsed.padi_page).trim() : ""}\n`;
+                    } else if (hasRealDatabase) {
                       caseLawOverrideLabel = "פסיקה (מאגר)";
-                      details += `מאגר: ${parsed.databaseName}\n`;
-                      // Add uncertainty note for low-confidence database classifications
+                      details += `מאגר: ${String(parsed.databaseName).trim()}\n`;
                       if (parsed.confidence === "low") {
                         details += `⚠️ הערה: לא ניתן לאמת בוודאות אם פסק הדין פורסם בפ"ד. מוצג כפסיקה ממאגר. אם ידוע לך שפורסם בפ"ד, נא לציין כרך וחלק.\n`;
                       }
+                    } else {
+                      // No usable publication data → render as database case law with [חסר]
+                      caseLawOverrideLabel = "פסיקה (מאגר)";
+                      details += `מאגר: [חסר: שם מאגר]\n`;
                     }
                     if (hasValidDate) details += `תאריך: ${parsed.date}\n`;
                     if (parsed.year && parsed.year.trim() !== "") details += `שנה: ${parsed.year}\n`;
@@ -1220,26 +1232,37 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו פסקי דין בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק (למשל ע"פ 1234/56) לחיפוש מדויק יותר.\n══`;
                   } else if (results.length === 1) {
                     // Single result – use same logic as case-number search
-                    const r = results[0];
-                    const fullRef = `${r.caseType || "[חסר: סוג הליך]"} ${r.caseNumber || "[חסר: מספר תיק]"}`;
+                    const r = results[0] as Record<string, unknown>;
+                    const isPlaceholder = (v: unknown) => {
+                      if (typeof v !== "string") return true;
+                      const t = v.trim();
+                      if (!t) return true;
+                      return /^(?:לא\s*(?:צוין|ידוע|נמצא|רלוונטי)|אין|N\/?A|None|null|undefined|-|—)$/i.test(t);
+                    };
+                    const hasRealPadi = !isPlaceholder(r.padi_volume) && !isPlaceholder(r.padi_page);
+                    const hasRealDatabase = !isPlaceholder(r.databaseName);
+                    const fullRef = `${!isPlaceholder(r.caseType) ? r.caseType : "[חסר: סוג הליך]"} ${!isPlaceholder(r.caseNumber) ? r.caseNumber : "[חסר: מספר תיק]"}`;
                     let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
                     details += `תיק: ${fullRef}\n`;
-                    if (r.party1 && r.party2) details += `צדדים: **${r.party1}** נ' **${r.party2}**\n`;
-                    if (r.court) details += `בית משפט: ${r.court}\n`;
-                    if (r.isPublished && r.padi_volume) {
+                    if (!isPlaceholder(r.party1) && !isPlaceholder(r.party2)) details += `צדדים: **${r.party1}** נ' **${r.party2}**\n`;
+                    if (!isPlaceholder(r.court)) details += `בית משפט: ${r.court}\n`;
+                    if (r.isPublished && hasRealPadi) {
                       caseLawOverrideLabel = "פסיקה (דפוס)";
-                      const part = r.padi_part ? `(${r.padi_part})` : "";
-                      details += `פרסום: פ"ד ${r.padi_volume}${part} ${r.padi_page || ""}\n`;
-                    } else if (r.databaseName) {
+                      const part = !isPlaceholder(r.padi_part) ? `(${String(r.padi_part).trim()})` : "";
+                      details += `פרסום: פ"ד ${String(r.padi_volume).trim()}${part} ${!isPlaceholder(r.padi_page) ? String(r.padi_page).trim() : ""}\n`;
+                    } else if (hasRealDatabase) {
                       caseLawOverrideLabel = "פסיקה (מאגר)";
-                      details += `מאגר: ${r.databaseName}\n`;
+                      details += `מאגר: ${String(r.databaseName).trim()}\n`;
+                    } else {
+                      caseLawOverrideLabel = "פסיקה (מאגר)";
+                      details += `מאגר: [חסר: שם מאגר]\n`;
                     }
-                    if (r.date) details += `תאריך: ${r.date}\n`;
-                    if (r.year) details += `שנה: ${r.year}\n`;
+                    if (!isPlaceholder(r.date)) details += `תאריך: ${r.date}\n`;
+                    if (!isPlaceholder(r.year)) details += `שנה: ${r.year}\n`;
                     if (caseLawOverrideLabel === "פסיקה (דפוס)") {
                       details += `══ נמצא פרסום בפ"ד, לכן חובה לעצב את האזכור כפסיקה (דפוס) לפי כלל 18. ══`;
                     } else {
-                      details += `══ השתמש בנתונים אלו לעיצוב האזכור. אם הנתונים חלקיים, סמן [חסר:...] לשדות החסרים. ══`;
+                      details += `══ עצב את האזכור כפסיקה ממאגר לפי כלל 19. אם הנתונים חלקיים, סמן [חסר:...] לשדות החסרים. אל תעצב כספר. ══`;
                     }
                     caseLawHint = details;
                   } else {
@@ -1755,7 +1778,15 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       );
     }
 
-    return new Response(JSON.stringify({ content }), {
+    // Map the backend override label to the client SourceType identifier so the
+    // assistant message badge reflects the actual classification (e.g. when the
+    // client guessed "ספר" but backend confirmed case-law via docket prefix).
+    let sourceTypeOverride: string | null = null;
+    if (caseLawOverrideLabel === "פסיקה (דפוס)") sourceTypeOverride = "case_law_published";
+    else if (caseLawOverrideLabel === "פסיקה (מאגר)") sourceTypeOverride = "case_law_database";
+    else if (isCaseLaw) sourceTypeOverride = "case_law_database";
+
+    return new Response(JSON.stringify({ content, sourceTypeOverride }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
