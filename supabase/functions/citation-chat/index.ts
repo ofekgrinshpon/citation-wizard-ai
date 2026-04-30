@@ -808,12 +808,16 @@ serve(async (req) => {
     let caseLawHint = "";
     let caseLawOverrideLabel: string | null = null;
     const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
-    const isCaseLaw = classMatch && /פסיקה/.test(classMatch[1]);
-    
+    const isCaseLawByClassifier = !!(classMatch && /פסיקה/.test(classMatch[1]));
+
     // ── Check if this is a disambiguation selection (skip Perplexity) ──
     const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(userInput);
-    
-    const caseNumberMatch = userInput.match(/(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם|סע"ש|סע״ש|תמ"ש|תמ״ש|עת"מ|עת״מ|ה"פ|ה״פ|פ"ה|פ״ה|ב"ש|ב״ש|תק"ג|תק״ג)\s+([0-9]+[\/\-][0-9]+)/);
+
+    const caseNumberMatch = userInput.match(/(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם|סע"ש|סע״ש|תמ"ש|תמ״ש|עת"מ|עת״מ|ה"פ|ה״פ|פ"ה|פ״ה|ב"ש|ב״ש|תק"ג|תק״ג)\s+([0-9]+(?:[\/\-][0-9]+){1,2})/);
+
+    // Recognized docket prefix + docket number is unambiguous case-law evidence,
+    // even when the upstream auto-classifier didn't tag the query as פסיקה.
+    const isCaseLaw = isCaseLawByClassifier || !!caseNumberMatch;
 
     // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
     const cleanedForParty = userInput
