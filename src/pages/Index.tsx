@@ -482,7 +482,7 @@ const Index = () => {
       const reply = await callAPI(prompt, messages);
       const assistantIndex = messages.length;
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: (lastSourceTypeOverrideRef.current ?? sourceType) as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
       await subscription.incrementCount();
 
