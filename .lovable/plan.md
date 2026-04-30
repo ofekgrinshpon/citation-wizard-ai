@@ -1,53 +1,88 @@
-# Make Perplexity follow through to the takdin case page when full date is missing
+# Fix `סע"ש 50358-09-16` returning no date in אזכור אחיד
 
-## What you reported
+## What actually happened
 
-In אזכור אחיד you got back a citation flagged with `[חסר: תאריך מלא]` even though, when you opened the case manually on `lite.takdin.co.il`, the page clearly shows the full date in the `[DD.MM.YYYY]` format (e.g. `[19.10.2021]` in the screenshot you sent — סע"ש 50358-09-16).
+Edge function logs for your query show:
 
-## Root cause (most likely)
+```
+[case-law] isCaseLaw=false, caseNumberMatch=null, partyMatch=no
+[book] Searching Perplexity for: סע"ש קמיקר נ מדינת ישראל...
+[book] Perplexity raw response: {"found":false}
+```
 
-The current prompt tells Perplexity:
+So the citation went through the **citation-chat** function (not `case-law-search`), and inside it the case-number branch **never ran**. Two reasons:
 
-> "התחל תמיד מ-`https://lite.takdin.co.il/search-results?txtSearch=<docket>` — דף תוצאות זה הוא ציבורי וחושף בתקציר עצמו את שמות הצדדים, תאריך ההחלטה ובית המשפט … אין צורך לפתוח את המסמך המלא בתשלום."
+### Cause 1 — `סע"ש` is missing from the docket regex
 
-That instruction was correct for **parties / court / docket prefix**, but the **search-results snippet often shows only the year** — the full `DD.MM.YYYY` date sits on the **individual case landing page** (the page in your screenshot), not on the results list. So Perplexity stops at the snippet, sees only a year, and reports the date as missing.
+`supabase/functions/citation-chat/index.ts` line 816:
 
-The case landing page on `lite.takdin.co.il` is also free / public — the only paywalled thing is the full PDF of the ruling. So we can safely tell Perplexity to follow through one more click.
+```ts
+const caseNumberMatch = userInput.match(
+  /(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+([0-9]+[\/\-][0-9]+)/
+);
+```
 
-## Plan — two prompt edits, no schema/code changes
+`סע"ש` (labor court — sikhsukhei avoda) is not in the list. So `caseNumberMatch=null`, the function fell through to the party-name branch, didn't match that either, and ended up classified as a **book** search — which is why your logs show `[book] Searching Perplexity for…` returning `{"found":false}` and rendering the citation with no date.
 
-### 1. `supabase/functions/case-law-search/index.ts` (single-docket lookup, used by אזכור אחיד single-case path and BatchFootnoteBuilder)
+Other common prefixes also missing: `סע"ש`, `תמ"ש` (family), `עת"מ` (admin petitions), `ה"פ`, `פ"ה`, `תק"ג`, `ב"ש`.
 
-In the system prompt, replace the current "search-results page is enough" line with a two-step instruction:
+### Cause 2 — Branch A prompt was never updated with the takdin two-step
 
-- **Step 1**: hit `https://lite.takdin.co.il/search-results?txtSearch=<docket>` to identify the right case (parties, court, docket prefix).
-- **Step 2**: if the snippet does **not** include a full `DD.MM.YYYY` date (only a year, or nothing), follow the result link to the individual case page on `lite.takdin.co.il` — that page exposes the decision date in `[DD.MM.YYYY]` brackets, free of charge. Only the full PDF is paywalled.
-- Add an explicit reminder: "Do not return only a year if the full date is recoverable from the case page. Return `date` as `DD.MM.YYYY` whenever the case page shows it."
+Last round's fix touched `case-law-search/index.ts` and `_shared/partyLookup.ts`. But `citation-chat/index.ts` has its **own** Perplexity call for the case-number branch (lines 866–888), and it has:
 
-### 2. `supabase/functions/_shared/partyLookup.ts` (Stage-2 batch retry for chapter router)
+- No `search_domain_filter` at all — Perplexity is free to roam blogs and old summaries that only show the year.
+- No takdin two-step instruction (search-results page → click through to case landing page for `[DD.MM.YYYY]`).
+- A schema that asks for `date` but doesn't insist it be the full date when the case page exposes it.
 
-Same two-step framing for the batch system prompt — the schema already has an optional `decision_date` field; we just need the model to actually populate it when the case page exposes it. The Stage-2 placeholder-emission policy stays as-is; the goal is to **reduce** how often we fall through to `[חסר: תאריך מלא]` in the first place.
+So even if `סע"ש` were in the regex, the case-number search would still tend to return year-only on long-tail dockets — exactly the symptom you saw originally.
 
-## What this does NOT change
+## Plan — two surgical edits, one file
 
-- No schema changes — `case-law-search` already returns `date: "DD.MM.YYYY"` and `partyLookup` already returns `decision_date`. We just push the model to fill it more often.
-- No domain-filter changes — `lite.takdin.co.il` is already in `search_domain_filter` for both endpoints.
-- No fallback ordering change — Nevo / supreme.court / takdin priority stays the same, and the existing `partyLookupRetry` placeholder logic remains the safety net.
-- No client-side changes (`citationValidation.ts` / `citationEngine.ts` are untouched).
+### Edit 1 — Extend the docket regex (line 816)
 
-## Why this is the minimal fix
+Add labor/family/admin prefixes that legitimately appear in citations:
 
-The symptom is specifically "Perplexity stopped one click short of where the date lives." We don't need new endpoints, scraping, or retries — we just need the prompt to stop telling it the snippet is sufficient when it isn't for the date field. The model already has the ability to follow links inside an allowed domain; it was being instructed not to.
+```
+סע"ש | סע״ש | תמ"ש | תמ״ש | עת"מ | עת״מ | ה"פ | ה״פ | פ"ה | פ״ה | ב"ש | ב״ש | תק"ג | תק״ג
+```
+
+Same `\s+([0-9]+[\/\-][0-9]+)` tail. No change to capture-group semantics — `caseType` still ends up in `caseNumberMatch[1]`, docket in `[2]`.
+
+### Edit 2 — Bring Branch A's Perplexity call up to parity with `case-law-search`
+
+In the `fetch("https://api.perplexity.ai/chat/completions", …)` call around lines 866–888:
+
+1. **Add `search_domain_filter`** with the same trusted list already used in `case-law-search`:
+   ```
+   ["lite.takdin.co.il", "takdin.co.il", "nevo.co.il",
+    "supreme.court.gov.il", "court.gov.il", "psakdin.co.il"]
+   ```
+
+2. **Append the takdin two-step block** to the existing system prompt (the same Hebrew block that's already in `case-law-search`):
+   - Step 1: query `https://lite.takdin.co.il/search-results?txtSearch=<docket>` to identify parties / court / docket prefix.
+   - Step 2: if the snippet shows only a year, follow the result link to the individual case landing page on `lite.takdin.co.il` — the page exposes the decision date in `[DD.MM.YYYY]` brackets, free of charge (only the full PDF is paywalled).
+   - Mandatory: never return only a year if the case page exposes the full date. Populate `date` as `DD.MM.YYYY` whenever available.
+   - Fallback: if not found on takdin, try `nevo.co.il` and `supreme.court.gov.il`.
+
+3. Keep the existing JSON schema and `confidence` / `padi_*` fields — no behavioral change for already-working Supreme Court / פד"י paths.
+
+### What I will NOT change
+
+- The schema-validation block (lines 947–982) — `hasValidDate` already accepts `DD.MM.YYYY`, so once Perplexity returns it, the existing pipeline writes it into `caseLawHint` and the citation renders correctly.
+- The verification-search call (lines 902–944) — that's a separate פד"י-only check, unrelated to the date issue.
+- The party-name fallback branch (Branch B) and the book branch — they were only triggered here as **side effects** of the regex miss, not the actual problem.
+- `case-law-search/index.ts` and `_shared/partyLookup.ts` — already correct from the previous round.
+
+## Files touched
+
+- `supabase/functions/citation-chat/index.ts` — regex on line 816, Perplexity body around lines 866–888.
+
+Redeploy `citation-chat` after the edit.
 
 ## Validation
 
-Re-run the same סע"ש 50358-09-16 query in אזכור אחיד after deploy. Expected: `date` comes back as `19.10.2021`, the `[חסר: תאריך מלא]` placeholder disappears, and the citation renders cleanly. Spot-check 2–3 more district / labor-court dockets where the search-results snippet is known to be year-only.
+1. Re-run `סע"ש 50358-09-16` in אזכור אחיד. Expected: logs show `caseNumberMatch=סע"ש 50358-09-16`, Branch A fires, Perplexity returns `date: "19.10.2021"`, citation renders with the full date — no `[חסר: תאריך מלא]`.
+2. Spot-check `תמ"ש`, `עת"מ` dockets where the Takdin landing page is the only public source of the full date.
+3. Sanity-check that an existing Supreme Court query (e.g. `בג"ץ 6427/02`) still resolves with פ"ד publication unchanged.
 
-## Files touched on approval
-
-- `supabase/functions/case-law-search/index.ts` — system-prompt block only
-- `supabase/functions/_shared/partyLookup.ts` — system-prompt block only
-
-Both functions get redeployed (`case-law-search`, `legal-qa`).
-
-Approve and I'll make the two prompt edits and redeploy.
+Approve and I'll make the two edits to `citation-chat/index.ts` and redeploy.
