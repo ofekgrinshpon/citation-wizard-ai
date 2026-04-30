@@ -1232,26 +1232,37 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו פסקי דין בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק (למשל ע"פ 1234/56) לחיפוש מדויק יותר.\n══`;
                   } else if (results.length === 1) {
                     // Single result – use same logic as case-number search
-                    const r = results[0];
-                    const fullRef = `${r.caseType || "[חסר: סוג הליך]"} ${r.caseNumber || "[חסר: מספר תיק]"}`;
+                    const r = results[0] as Record<string, unknown>;
+                    const isPlaceholder = (v: unknown) => {
+                      if (typeof v !== "string") return true;
+                      const t = v.trim();
+                      if (!t) return true;
+                      return /^(?:לא\s*(?:צוין|ידוע|נמצא|רלוונטי)|אין|N\/?A|None|null|undefined|-|—)$/i.test(t);
+                    };
+                    const hasRealPadi = !isPlaceholder(r.padi_volume) && !isPlaceholder(r.padi_page);
+                    const hasRealDatabase = !isPlaceholder(r.databaseName);
+                    const fullRef = `${!isPlaceholder(r.caseType) ? r.caseType : "[חסר: סוג הליך]"} ${!isPlaceholder(r.caseNumber) ? r.caseNumber : "[חסר: מספר תיק]"}`;
                     let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
                     details += `תיק: ${fullRef}\n`;
-                    if (r.party1 && r.party2) details += `צדדים: **${r.party1}** נ' **${r.party2}**\n`;
-                    if (r.court) details += `בית משפט: ${r.court}\n`;
-                    if (r.isPublished && r.padi_volume) {
+                    if (!isPlaceholder(r.party1) && !isPlaceholder(r.party2)) details += `צדדים: **${r.party1}** נ' **${r.party2}**\n`;
+                    if (!isPlaceholder(r.court)) details += `בית משפט: ${r.court}\n`;
+                    if (r.isPublished && hasRealPadi) {
                       caseLawOverrideLabel = "פסיקה (דפוס)";
-                      const part = r.padi_part ? `(${r.padi_part})` : "";
-                      details += `פרסום: פ"ד ${r.padi_volume}${part} ${r.padi_page || ""}\n`;
-                    } else if (r.databaseName) {
+                      const part = !isPlaceholder(r.padi_part) ? `(${String(r.padi_part).trim()})` : "";
+                      details += `פרסום: פ"ד ${String(r.padi_volume).trim()}${part} ${!isPlaceholder(r.padi_page) ? String(r.padi_page).trim() : ""}\n`;
+                    } else if (hasRealDatabase) {
                       caseLawOverrideLabel = "פסיקה (מאגר)";
-                      details += `מאגר: ${r.databaseName}\n`;
+                      details += `מאגר: ${String(r.databaseName).trim()}\n`;
+                    } else {
+                      caseLawOverrideLabel = "פסיקה (מאגר)";
+                      details += `מאגר: [חסר: שם מאגר]\n`;
                     }
-                    if (r.date) details += `תאריך: ${r.date}\n`;
-                    if (r.year) details += `שנה: ${r.year}\n`;
+                    if (!isPlaceholder(r.date)) details += `תאריך: ${r.date}\n`;
+                    if (!isPlaceholder(r.year)) details += `שנה: ${r.year}\n`;
                     if (caseLawOverrideLabel === "פסיקה (דפוס)") {
                       details += `══ נמצא פרסום בפ"ד, לכן חובה לעצב את האזכור כפסיקה (דפוס) לפי כלל 18. ══`;
                     } else {
-                      details += `══ השתמש בנתונים אלו לעיצוב האזכור. אם הנתונים חלקיים, סמן [חסר:...] לשדות החסרים. ══`;
+                      details += `══ עצב את האזכור כפסיקה ממאגר לפי כלל 19. אם הנתונים חלקיים, סמן [חסר:...] לשדות החסרים. אל תעצב כספר. ══`;
                     }
                     caseLawHint = details;
                   } else {
