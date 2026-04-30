@@ -822,13 +822,18 @@ serve(async (req) => {
 
     let caseLawHint = "";
     let caseLawOverrideLabel: string | null = null;
-    const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
+    // Normalize Hebrew niqqud/quotes BEFORE running the docket/classifier regex —
+    // inputs like `סע״שׁ 50358-09-16` (shin-dot diacritic) must classify identically
+    // to `סע"ש 50358-09-16`. The original `userInput` is preserved for downstream
+    // prompt assembly so the AI still sees the user's exact text.
+    const normalizedUserInput = normalizeHebrewLegalText(userInput);
+    const classMatch = normalizedUserInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
     const isCaseLawByClassifier = !!(classMatch && /פסיקה/.test(classMatch[1]));
 
     // ── Check if this is a disambiguation selection (skip Perplexity) ──
-    const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(userInput);
+    const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(normalizedUserInput);
 
-    const caseNumberMatch = userInput.match(/(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם|סע"ש|סע״ש|תמ"ש|תמ״ש|עת"מ|עת״מ|ה"פ|ה״פ|פ"ה|פ״ה|ב"ש|ב״ש|תק"ג|תק״ג)\s+([0-9]+(?:[\/\-][0-9]+){1,2})/);
+    const caseNumberMatch = normalizedUserInput.match(/(בג"ץ|ע"א|ע"פ|רע"א|רע"פ|דנ"א|דנ"פ|ת"א|ת"פ|ע"ע|עע"מ|עש"מ|בש"א|בש"פ|תפ"ח|עמ"ה|בר"ם|סע"ש|תמ"ש|עת"מ|ה"פ|פ"ה|ב"ש|תק"ג|ק"ג|ד"מ|ס"ק|תת"ע)\s+([0-9]+(?:[\/\-][0-9]+){1,2})/);
 
     // Recognized docket prefix + docket number is unambiguous case-law evidence,
     // even when the upstream auto-classifier didn't tag the query as פסיקה.
