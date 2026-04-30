@@ -1023,15 +1023,16 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                         },
                         body: JSON.stringify({
                           model: "sonar-pro",
-                          search_domain_filter: ["lite.takdin.co.il", "nevo.co.il", "court.gov.il"],
+                          search_domain_filter: ["lite.takdin.co.il", "nevo.co.il", "court.gov.il", "psakdin.co.il"],
+                          temperature: 0,
                           messages: [
                             {
                               role: "system",
-                              content: `אתה עוזר מחקר משפטי. החזר JSON בלבד בפורמט {"date":"DD.MM.YYYY"} או {"date":""} אם לא נמצא.`,
+                              content: `You are a search-result extractor. The host runtime gives you live web search results from the configured domains. Extract the judgment date of the Israeli court case from those results and respond with JSON ONLY: {"date":"DD.MM.YYYY"} if found, or {"date":""} if not found in the search results. Never refuse. Never explain. Never apologize. Never claim you cannot browse — search results are provided to you. Output JSON only, no prose, no code fences.`,
                             },
                             {
                               role: "user",
-                              content: `מצא את התאריך המלא של מתן פסק הדין ${fullCaseRef} בין ${parsed.party1 || ""} לבין ${parsed.party2 || ""}. בדף התיק באתר תקדין לייט (lite.takdin.co.il) התאריך מופיע בסוגריים מרובעים בפורמט [DD.MM.YYYY]. אם לא מצאת בתקדין לייט נסה גם nevo.co.il ו-court.gov.il. אל תחזיר רק שנה. החזר JSON בלבד.`,
+                              content: `"${fullCaseRef}" ${parsed.party1 || ""} ${parsed.party2 || ""} תאריך פסק דין site:lite.takdin.co.il OR site:nevo.co.il`,
                             },
                           ],
                         }),
