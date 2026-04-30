@@ -1423,11 +1423,12 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     const noClassTag = !classMatch;
     // Also trigger book search for unknown/untagged types that look like Hebrew name + title (4+ words, no legislation markers)
     const cleanedForBookCheck = userInput.replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "").replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "").trim();
-    const looksLikeBook = (isUnknown || noClassTag) && 
-      /^[\u0590-\u05FF]/.test(cleanedForBookCheck.replace(/['׳"״`]/g, '')) && 
+    const looksLikeBook = (isUnknown || noClassTag) &&
+      /^[\u0590-\u05FF]/.test(cleanedForBookCheck.replace(/['׳"״`]/g, '')) &&
       cleanedForBookCheck.split(/\s+/).length >= 4 &&
-      !/נ['']|נגד|חוק |פקודת |תקנות|הצעת חוק|אמנ|ד["״]כ/.test(cleanedForBookCheck);
-    if ((isBook || looksLikeBook) && !hasVerifiedCandidates) {
+      !/נ['']|נגד|\sנ\s|חוק |פקודת |תקנות|הצעת חוק|אמנ|ד["״]כ/.test(cleanedForBookCheck);
+    // Hard-skip the book branch when the query is unambiguously case-law (docket prefix or party separator).
+    if ((isBook || looksLikeBook) && !hasVerifiedCandidates && !isCaseLaw) {
       try {
         const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
         if (PERPLEXITY_API_KEY) {
