@@ -901,7 +901,7 @@ serve(async (req) => {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                model: "sonar",
+                model: "sonar-pro",
                 search_domain_filter: [
                   "lite.takdin.co.il",
                   "takdin.co.il",
