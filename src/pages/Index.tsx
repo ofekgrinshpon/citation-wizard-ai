@@ -134,6 +134,9 @@ const Index = () => {
   const [academicResumeFallback, setAcademicResumeFallback] = useState<{ question: string; result: any } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  // Override returned by the citation-chat edge function so backend-confirmed
+  // case-law replaces the client's heuristic guess (e.g. when prefix override fires).
+  const lastSourceTypeOverrideRef = useRef<SourceType | null>(null);
   
   
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
