@@ -395,11 +395,14 @@ export function detectSourceType(text: string): SourceType {
   
   if (/ספר|מהדורה/.test(hebrewText)) return 'book';
   
-  // Heuristic: Hebrew name (2+ words) followed by a title (3+ additional words) → likely a book
+  // Heuristic: Hebrew name (2+ words) followed by a title → likely a book.
+  // Skip if any case-law signal is present (party separator, docket prefix, court keywords).
   const strippedForBook = hebrewText.trim().replace(/['׳"״`]/g, '');
+  const caseLawSignal = /\sנ['׳'']?\s|\sנגד\s|\sנ\s|בית[- ]המשפט|בית[- ]הדין|פסק[- ]דין|פס["״]ד|ערעור|תביעה|בקשת רשות|(?:^|\s)(?:בג["״]ץ|ע["״][אפעמ]|רע["״][אפ]|דנ["״][אפג]|בש["״][אפ]|תפ["״]ח|עש["״]מ|בר["״]ם|עמ["״]ה|עע["״]מ|ת["״][אפ]|ה["״][פמ]|פ["״]ה|ב["״]ש|סע["״]ש|ס["״]ק|ד["״]מ|תמ["״]ש|עת["״]מ)\s/.test(hebrewText);
   if (/^[\u0590-\u05FF]+\s+[\u0590-\u05FF]+\s+[\u0590-\u05FF]/.test(strippedForBook) &&
       hebrewText.trim().split(/\s+/).length >= 4 &&
-      !/נ['']|נגד|\sנ\s|חוק|פקוד|תקנ|הצעת|אמנ|ד["״]כ|חוות\s+דעת|הסכם\s+קיבוצי/.test(hebrewText)) {
+      !caseLawSignal &&
+      !/חוק|פקוד|תקנ|הצעת|אמנ|ד["״]כ|חוות\s+דעת|הסכם\s+קיבוצי/.test(hebrewText)) {
     return 'book';
   }
   
