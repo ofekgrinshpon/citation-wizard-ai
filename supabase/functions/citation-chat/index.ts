@@ -1122,18 +1122,20 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     details += `תיק: ${fullCaseRef}\n`;
                     if (hasValidParties) details += `צדדים: **${parsed.party1}** נ' **${parsed.party2}**\n`;
                     if (parsed.court) details += `בית משפט: ${parsed.court}\n`;
-                    if (parsed.isPublished && parsed.padi_volume && parsed.padi_volume.trim() !== "") {
+                    if (parsed.isPublished && hasRealPadi) {
                       caseLawOverrideLabel = "פסיקה (דפוס)";
-                      const part = parsed.padi_part ? `(${parsed.padi_part})` : "";
-                      details += `פרסום: פ"ד ${parsed.padi_volume}${part} ${parsed.padi_page || ""}\n`;
-                    }
-                    if (!parsed.isPublished && parsed.databaseName && parsed.databaseName.trim() !== "") {
+                      const part = !isPlaceholder(parsed.padi_part) ? `(${String(parsed.padi_part).trim()})` : "";
+                      details += `פרסום: פ"ד ${String(parsed.padi_volume).trim()}${part} ${!isPlaceholder(parsed.padi_page) ? String(parsed.padi_page).trim() : ""}\n`;
+                    } else if (hasRealDatabase) {
                       caseLawOverrideLabel = "פסיקה (מאגר)";
-                      details += `מאגר: ${parsed.databaseName}\n`;
-                      // Add uncertainty note for low-confidence database classifications
+                      details += `מאגר: ${String(parsed.databaseName).trim()}\n`;
                       if (parsed.confidence === "low") {
                         details += `⚠️ הערה: לא ניתן לאמת בוודאות אם פסק הדין פורסם בפ"ד. מוצג כפסיקה ממאגר. אם ידוע לך שפורסם בפ"ד, נא לציין כרך וחלק.\n`;
                       }
+                    } else {
+                      // No usable publication data → render as database case law with [חסר]
+                      caseLawOverrideLabel = "פסיקה (מאגר)";
+                      details += `מאגר: [חסר: שם מאגר]\n`;
                     }
                     if (hasValidDate) details += `תאריך: ${parsed.date}\n`;
                     if (parsed.year && parsed.year.trim() !== "") details += `שנה: ${parsed.year}\n`;
