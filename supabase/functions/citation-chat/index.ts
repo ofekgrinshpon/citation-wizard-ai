@@ -7,6 +7,21 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// ─── Hebrew text normalization ───
+// Strips niqqud / cantillation marks (\u0591-\u05C7, e.g. shin-dot ׁ) and
+// normalizes typographic gershayim/geresh (״ ׳) and smart quotes to ASCII.
+// Used so docket prefixes like סע״שׁ are recognized identically to סע"ש.
+function normalizeHebrewLegalText(text: string): string {
+  if (!text) return text;
+  return text
+    .replace(/[\u0591-\u05C7]/g, "")              // niqqud + cantillation marks
+    .replace(/\u05F4/g, '"')                       // gershayim ״ → "
+    .replace(/\u05F3/g, "'")                       // geresh ׳ → '
+    .replace(/[\u201C\u201D\u201E]/g, '"')          // smart double quotes
+    .replace(/[\u2018\u2019\u201A]/g, "'")          // smart single quotes
+    .replace(/[ \t]+/g, " ");                      // collapse intra-line whitespace
+}
+
 // ─── Citation input validator (mirror of src/lib/citationInputValidation.ts) ───
 const HEBREW_LETTER_RE = /[\u0590-\u05FF]/;
 const URL_RE_V = /https?:\/\/\S+/i;
