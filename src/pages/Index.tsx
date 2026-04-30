@@ -415,7 +415,7 @@ const Index = () => {
       }
 
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: (lastSourceTypeOverrideRef.current ?? sourceType) as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       await subscription.incrementCount();
 
