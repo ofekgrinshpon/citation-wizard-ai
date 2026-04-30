@@ -661,7 +661,7 @@ const Index = () => {
       }
 
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: (lastSourceTypeOverrideRef.current ?? effectiveSourceType) as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       // Increment guest counter
       await subscription.incrementCount();
