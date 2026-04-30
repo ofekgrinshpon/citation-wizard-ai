@@ -833,21 +833,41 @@ serve(async (req) => {
     // ── Check if this is a disambiguation selection (skip Perplexity) ──
     const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(normalizedUserInput);
 
-    const caseNumberMatch = normalizedUserInput.match(/(בג"ץ|ע"א|ע"פ|רע"א|רע"פ|דנ"א|דנ"פ|ת"א|ת"פ|ע"ע|עע"מ|עש"מ|בש"א|בש"פ|תפ"ח|עמ"ה|בר"ם|סע"ש|תמ"ש|עת"מ|ה"פ|פ"ה|ב"ש|תק"ג|ק"ג|ד"מ|ס"ק|תת"ע)\s+([0-9]+(?:[\/\-][0-9]+){1,2})/);
+    const CASE_LAW_PREFIXES = [
+      'בג"ץ','ע"א','ע"פ','רע"א','רע"פ','דנ"א','דנ"פ','ת"א','ת"פ','ע"ע','עע"מ','עש"מ',
+      'בש"א','בש"פ','תפ"ח','עמ"ה','בר"ם','סע"ש','תמ"ש','עת"מ','ה"פ','פ"ה','ב"ש',
+      'תק"ג','ק"ג','ד"מ','ס"ק','תת"ע'
+    ];
+    const prefixGroup = CASE_LAW_PREFIXES.map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+    const caseNumberMatch = normalizedUserInput.match(new RegExp(`(${prefixGroup})\\s+([0-9]+(?:[\\/\\-][0-9]+){1,2})`));
 
-    // Recognized docket prefix + docket number is unambiguous case-law evidence,
-    // even when the upstream auto-classifier didn't tag the query as פסיקה.
-    const isCaseLaw = isCaseLawByClassifier || !!caseNumberMatch;
-
-    // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
-    const cleanedForParty = userInput
+    // Prefix-only override: input that STARTS with a known case-law docket prefix
+    // (e.g. `סע"ש קמיקר נ' מדינת ישראל`) is unambiguously case-law even with no
+    // docket number. Without this, the AI auto-classifier sometimes tags it as
+    // "ספרות" and the request falls through to the book branch.
+    const cleanedNormalized = normalizedUserInput
       .replace(/\[סיווג אוטומטי:.*?\]\n?/, "")
       .replace(/\[בחירת תוצאה\]\s*/, "")
       .replace(/\n?══[\s\S]*?══+\s*/g, "")
       .trim();
+    const prefixOnlyMatch = cleanedNormalized.match(new RegExp(`^(${prefixGroup})\\s+[\\u0590-\\u05FF]`));
+    const hasCaseLawPrefix = !!prefixOnlyMatch;
+
+    // Recognized docket prefix + docket number is unambiguous case-law evidence,
+    // even when the upstream auto-classifier didn't tag the query as פסיקה.
+    const isCaseLaw = isCaseLawByClassifier || !!caseNumberMatch || hasCaseLawPrefix;
+
+    // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern.
+    // Strip a leading docket prefix first so the prefix doesn't bleed into party1
+    // (e.g. `סע"ש קמיקר נ' מדינת ישראל` → match against `קמיקר נ' מדינת ישראל`).
+    const cleanedForParty = cleanedNormalized.replace(new RegExp(`^(${prefixGroup})\\s+`), "");
     const partyMatch = !caseNumberMatch
       ? cleanedForParty.match(/([\u0590-\u05FF\s'"״׳']+)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3])\s+([\u0590-\u05FF\s'"״׳']+)/)
       : null;
+    const partyPrefix = hasCaseLawPrefix && !caseNumberMatch ? prefixOnlyMatch![1] : null;
+    if (hasCaseLawPrefix && !caseNumberMatch) {
+      console.log(`[case-law] prefix-override=true, prefix="${partyPrefix}", classifierSaidCaseLaw=${isCaseLawByClassifier}`);
+    }
 
     // If this is a disambiguation selection, do a focused single-case search with the case number
     if (isDisambiguationSelection && isCaseLaw && caseNumberMatch) {
