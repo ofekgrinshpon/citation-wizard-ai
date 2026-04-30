@@ -901,7 +901,7 @@ serve(async (req) => {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                model: "sonar",
+                model: "sonar-pro",
                 search_domain_filter: [
                   "lite.takdin.co.il",
                   "takdin.co.il",
@@ -990,11 +990,80 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     }
                   }
 
+                  // ── Date recovery: if Perplexity returned a case but no full date, run a focused date lookup ──
+                  const dateLooksValid = (d: any) => typeof d === "string" && /^\d{1,2}\.\d{1,2}\.\d{4}$/.test(d.trim());
+                  if (parsed.found && !dateLooksValid(parsed.date)) {
+                    console.log(`[case-law] No full date for ${fullCaseRef}, running date-recovery search...`);
+                    try {
+                      const dateResp = await fetch("https://api.perplexity.ai/chat/completions", {
+                        method: "POST",
+                        headers: {
+                          Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          model: "sonar-pro",
+                          search_domain_filter: ["lite.takdin.co.il", "nevo.co.il", "court.gov.il"],
+                          messages: [
+                            {
+                              role: "system",
+                              content: `אתה עוזר מחקר משפטי. החזר JSON בלבד בפורמט {"date":"DD.MM.YYYY"} או {"date":""} אם לא נמצא.`,
+                            },
+                            {
+                              role: "user",
+                              content: `מצא את התאריך המלא של מתן פסק הדין ${fullCaseRef} בין ${parsed.party1 || ""} לבין ${parsed.party2 || ""}. בדף התיק באתר תקדין לייט (lite.takdin.co.il) התאריך מופיע בסוגריים מרובעים בפורמט [DD.MM.YYYY]. אם לא מצאת בתקדין לייט נסה גם nevo.co.il ו-court.gov.il. אל תחזיר רק שנה. החזר JSON בלבד.`,
+                            },
+                          ],
+                        }),
+                      });
+                      if (dateResp.ok) {
+                        const dData = await dateResp.json();
+                        const dContent = dData.choices?.[0]?.message?.content || "";
+                        console.log("[case-law] Date-recovery search result:", dContent);
+                        const dJson = dContent.match(/\{[\s\S]*\}/);
+                        if (dJson) {
+                          const dParsed = JSON.parse(dJson[0]);
+                          if (dateLooksValid(dParsed.date)) {
+                            console.log(`[case-law] Date recovered: ${dParsed.date}`);
+                            parsed.date = dParsed.date.trim();
+                          }
+                        }
+                      }
+                    } catch (dateErr) {
+                      console.error("[case-law] Date-recovery search error:", dateErr);
+                    }
+                  }
+
+                  // ── Court correction: docket prefix dictates the court family ──
+                  const COURT_BY_PREFIX: Record<string, string> = {
+                    'סע"ש': 'בית הדין האזורי לעבודה',
+                    'ס"ק': 'בית הדין האזורי לעבודה',
+                    'ד"מ': 'בית הדין האזורי לעבודה',
+                    'ע"ע': 'בית הדין הארצי לעבודה',
+                    'תמ"ש': 'בית המשפט לענייני משפחה',
+                    'עת"מ': 'בית המשפט לעניינים מנהליים',
+                  };
+                  const expectedCourt = COURT_BY_PREFIX[caseType];
+                  if (expectedCourt && parsed.court && !parsed.court.includes(expectedCourt.split(" ")[1] || expectedCourt)) {
+                    // Check substring match against the family root (e.g. "הדין", "המשפט לענייני משפחה")
+                    const root = expectedCourt.replace(/^בית\s+/, "");
+                    if (!parsed.court.includes(root.split(" ")[0])) {
+                      // Extract a city from the original court string if present
+                      const cityMatch = parsed.court.match(/(תל[\s-]?אביב[^\s]*|ירושלים|חיפה|באר[\s-]?שבע|נצרת|לוד|מרכז|דרום|צפון|פתח[\s-]?תקווה|ראשון[\s-]?לציון|נתניה|כפר[\s-]?סבא|רחובות|טבריה|עכו|אשדוד|הרצליה)/);
+                      const city = cityMatch ? cityMatch[0] : "";
+                      const corrected = city ? `${expectedCourt} ${city}` : expectedCourt;
+                      console.log(`[case-law] Court family mismatch for ${caseType}: "${parsed.court}" → "${corrected}"`);
+                      parsed.court = corrected;
+                    }
+                  }
+
                   // Validate data quality: reject bogus results with empty/placeholder fields
                   const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && parsed.date.trim() !== "";
                   const hasValidParties = parsed.party1 && parsed.party1.trim() !== "" && parsed.party2 && parsed.party2.trim() !== "";
                   const hasValidPublication = (parsed.isPublished && parsed.padi_volume && parsed.padi_volume.trim() !== "") || (!parsed.isPublished && parsed.databaseName && parsed.databaseName.trim() !== "");
-                  const dataIsUsable = parsed.found && hasValidParties && (hasValidDate || hasValidPublication);
+                  // The docket itself anchors the case: as long as parties are confirmed, render as case law
+                  // even if the full date is missing (it will surface as [חסר: תאריך]).
+                  const dataIsUsable = parsed.found && hasValidParties;
                   
                   if (dataIsUsable) {
                     let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
