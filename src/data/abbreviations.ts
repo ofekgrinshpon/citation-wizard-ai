@@ -49,6 +49,8 @@ export const CASE_TYPE_ABBREVIATIONS: Record<string, string> = {
   'דמ': 'ד"מ',
   'ד"מ': 'ד"מ',
   'עב': 'עב\'',
+  'סעש': 'סע"ש',
+  'סע"ש': 'סע"ש',
 
   // Administrative / Family
   'עתמ': 'עת"מ',
@@ -283,11 +285,14 @@ export function normalizeAbbreviations(text: string): string {
   return result;
 }
 
-// Normalize Hebrew quote marks (gershayim ״/׳) to ASCII equivalents
+// Normalize Hebrew quote marks (gershayim ״/׳) to ASCII equivalents and strip
+// niqqud / cantillation marks (\u0591-\u05C7) such as the shin-dot (ׁ) that
+// otherwise breaks docket-prefix matching for inputs like `סע״שׁ`.
 function normalizeQuotes(text: string): string {
   return text
-    .replace(/\u05F4/g, '"')   // ״ → "
-    .replace(/\u05F3/g, "'")   // ׳ → '
+    .replace(/[\u0591-\u05C7]/g, '')   // strip Hebrew niqqud + cantillation marks
+    .replace(/\u05F4/g, '"')           // ״ → "
+    .replace(/\u05F3/g, "'")           // ׳ → '
     .replace(/[\u201C\u201D\u201E]/g, '"')  // smart double quotes
     .replace(/[\u2018\u2019\u201A]/g, "'"); // smart single quotes
 }

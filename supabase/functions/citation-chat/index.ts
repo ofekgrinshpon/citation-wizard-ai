@@ -7,6 +7,21 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// ─── Hebrew text normalization ───
+// Strips niqqud / cantillation marks (\u0591-\u05C7, e.g. shin-dot ׁ) and
+// normalizes typographic gershayim/geresh (״ ׳) and smart quotes to ASCII.
+// Used so docket prefixes like סע״שׁ are recognized identically to סע"ש.
+function normalizeHebrewLegalText(text: string): string {
+  if (!text) return text;
+  return text
+    .replace(/[\u0591-\u05C7]/g, "")              // niqqud + cantillation marks
+    .replace(/\u05F4/g, '"')                       // gershayim ״ → "
+    .replace(/\u05F3/g, "'")                       // geresh ׳ → '
+    .replace(/[\u201C\u201D\u201E]/g, '"')          // smart double quotes
+    .replace(/[\u2018\u2019\u201A]/g, "'")          // smart single quotes
+    .replace(/[ \t]+/g, " ");                      // collapse intra-line whitespace
+}
+
 // ─── Citation input validator (mirror of src/lib/citationInputValidation.ts) ───
 const HEBREW_LETTER_RE = /[\u0590-\u05FF]/;
 const URL_RE_V = /https?:\/\/\S+/i;
@@ -807,13 +822,18 @@ serve(async (req) => {
 
     let caseLawHint = "";
     let caseLawOverrideLabel: string | null = null;
-    const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
+    // Normalize Hebrew niqqud/quotes BEFORE running the docket/classifier regex —
+    // inputs like `סע״שׁ 50358-09-16` (shin-dot diacritic) must classify identically
+    // to `סע"ש 50358-09-16`. The original `userInput` is preserved for downstream
+    // prompt assembly so the AI still sees the user's exact text.
+    const normalizedUserInput = normalizeHebrewLegalText(userInput);
+    const classMatch = normalizedUserInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
     const isCaseLawByClassifier = !!(classMatch && /פסיקה/.test(classMatch[1]));
 
     // ── Check if this is a disambiguation selection (skip Perplexity) ──
-    const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(userInput);
+    const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(normalizedUserInput);
 
-    const caseNumberMatch = userInput.match(/(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם|סע"ש|סע״ש|תמ"ש|תמ״ש|עת"מ|עת״מ|ה"פ|ה״פ|פ"ה|פ״ה|ב"ש|ב״ש|תק"ג|תק״ג)\s+([0-9]+(?:[\/\-][0-9]+){1,2})/);
+    const caseNumberMatch = normalizedUserInput.match(/(בג"ץ|ע"א|ע"פ|רע"א|רע"פ|דנ"א|דנ"פ|ת"א|ת"פ|ע"ע|עע"מ|עש"מ|בש"א|בש"פ|תפ"ח|עמ"ה|בר"ם|סע"ש|תמ"ש|עת"מ|ה"פ|פ"ה|ב"ש|תק"ג|ק"ג|ד"מ|ס"ק|תת"ע)\s+([0-9]+(?:[\/\-][0-9]+){1,2})/);
 
     // Recognized docket prefix + docket number is unambiguous case-law evidence,
     // even when the upstream auto-classifier didn't tag the query as פסיקה.
@@ -863,9 +883,16 @@ serve(async (req) => {
           // ── Branch A: Search by case number (existing logic) ──
           if (caseNumberMatch) {
             const caseType = caseNumberMatch[1];
-            const caseNum = caseNumberMatch[2].replace('-', '/');
+            const rawCaseNum = caseNumberMatch[2];
+            // Preserve the original docket format. Lower-court / labor dockets use
+            // `NNNNN-MM-YY` (two hyphens) and MUST NOT be rewritten — Takdin/Nevo
+            // index them by that exact form. Only normalize the legacy
+            // single-separator Supreme Court form (`NNNN-NN`) to `NNNN/NN`.
+            const isMultiSeparatorDocket = (rawCaseNum.match(/[\/\-]/g) || []).length >= 2;
+            const caseNum = isMultiSeparatorDocket ? rawCaseNum : rawCaseNum.replace('-', '/');
             const fullCaseRef = `${caseType} ${caseNum}`;
-            const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חשוב מאוד: בדוק קודם כל האם פסק הדין פורסם בפד"י (פסקי דין של בית המשפט העליון). חפש את מספר התיק יחד עם המילה "פ"ד" וכרך. רק אם וידאת שהוא לא מופיע בפד"י, ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. ענה בעברית בלבד.`;
+            console.log(`[case-law] dispatching search: prefix="${caseType}", rawDocket="${rawCaseNum}", normalizedDocket="${caseNum}"`);
+            const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חפש את מספר התיק המדויק "${rawCaseNum}" באתר תקדין לייט (lite.takdin.co.il), נבו, או אתר בתי המשפט. אל תחזיר פסקי דין אחרים בעלי מספרים דומים — רק את התיק המדויק עם מספר זה. בדוק האם פסק הדין פורסם בפד"י, ואם לא — ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין המלא (DD.MM.YYYY), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. אם לא מצאת את התיק המדויק, החזר {"found":false} — אל תמציא או תחליף בתיק דומה. ענה בעברית בלבד.`;
 
             const perplexityResp = await fetch("https://api.perplexity.ai/chat/completions", {
               method: "POST",

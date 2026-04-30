@@ -1,94 +1,60 @@
-# Fix `סע"ש 50358-09-16` — round 2
+**Findings**
 
-## What the new logs show
+The latest failed entry in `citation_history` is:
 
-```
-[case-law] isCaseLaw=null, caseNumberMatch=סע"ש 50358-09, partyMatch=no
-```
+`raw_input: סע״שׁ 50358-09-16`
 
-Two distinct problems remain in `supabase/functions/citation-chat/index.ts`:
+and the returned citation was:
 
-### Problem 1 — Regex truncates the docket
+`סע"ש 50358-09-16 [חסר: שם המערער/העותר] נ' [חסר: שם המשיב] ([חסר: שם המאגר] [חסר: תאריך מלא]).`
 
-Line 816 captures the docket with `[0-9]+[\/\-][0-9]+`, which only allows **one** separator. Israeli district / labor / family dockets use the form `NNNNN-MM-YY` (two dashes), e.g. `50358-09-16`. The current regex matches only `50358-09` and drops the `-16` year tail.
+The backend logs show the real problem:
 
-That truncated docket gets sent to Perplexity, which then can't find the right case (or finds the wrong one), and the date comes back wrong / missing.
+`[case-law] isCaseLaw=false, caseNumberMatch=null`
 
-### Problem 2 — `isCaseLaw=null` blocks the case-law branch
+So the case-law lookup branch still never ran for the last query. The previous regex fix works for normal `סע"ש`, but this last input contained an extra Hebrew diacritic/mark on the final letter: `סע״שׁ` (`shin` + `shin dot`). Because neither the frontend nor the edge function strips Hebrew niqqud/cantillation marks, the regex did not recognize the docket prefix.
 
-```ts
-const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
-const isCaseLaw = classMatch && /פסיקה/.test(classMatch[1]);
-...
-const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (caseNumberMatch || partyMatch) && ...
-```
+There is a second issue: even when the search branch does run, the code converts only the first hyphen in `50358-09-16` to `/`, producing `50358/09-16`. That can make the external lookup less reliable. For Israeli lower-court/labor docket numbers, the original hyphenated format should be preserved for Takdin-style lookup.
 
-The auto-classifier didn't prepend `[סיווג אוטומטי: פסיקה]` to this query, so `isCaseLaw=null` and `shouldSearchCaseLaw=false`. Branch A never ran — even with the regex fix alone, the Perplexity case-law lookup wouldn't trigger.
+**Plan**
 
-This is brittle: when a user types a clean Israeli docket like `סע"ש 50358-09-16` directly into אזכור אחיד, **the docket prefix itself is unambiguous proof that it's case law** — we shouldn't require the upstream classifier to also agree.
+1. **Normalize Hebrew legal input before classification and regex matching**
+   - Add a small shared normalization helper in `citation-chat/index.ts` that:
+     - normalizes Hebrew geresh/gershayim to standard quote characters;
+     - removes Hebrew niqqud/cantillation marks (`\u0591-\u05C7`), including the `ׁ` that broke `סע״שׁ`;
+     - normalizes repeated whitespace.
+   - Use this normalized value for:
+     - `isValidCitationInputServer` checks where relevant;
+     - `classMatch` / `caseNumberMatch` / party matching;
+     - verified-source search token extraction.
 
-## Plan — two surgical edits to the same file
+2. **Make docket detection resilient to quote variants and diacritics**
+   - Keep support for `סע"ש`, `סע״ש`, and normalized `סע"ש`.
+   - Add missing labor/court prefixes to both frontend detection and backend detection where needed, especially `סע"ש`, `ק"ג`, `ד"מ`, `ס"ק`, and similar labor prefixes already used in search results.
+   - Ensure a recognized prefix plus `NNNNN-MM-YY` always forces `פסיקה (מאגר)` behavior even if the auto-classifier says `unknown` or `book`.
 
-### Edit 1 — Allow the optional third segment in the docket regex (line 816)
+3. **Preserve full lower-court docket numbers**
+   - Replace the current `caseNumberMatch[2].replace('-', '/')` behavior.
+   - Preserve `50358-09-16` exactly for lower-court/labor-style dockets.
+   - Only normalize slash/hyphen when appropriate for single-separator Supreme Court-style dockets.
+   - Log both the raw and normalized docket to make future failures visible.
 
-Change the docket tail from:
+4. **Improve external search reliability for this exact pattern**
+   - In the case-law lookup prompt, query with both:
+     - `סע"ש 50358-09-16`
+     - `50358-09-16 קמיקר מדינת ישראל רשות האוכלוסין וההגירה` only if parties are already known from the query or a prior hit.
+   - Make the prompt explicitly say not to return unrelated “latest cases” if the docket is not found.
+   - Consider switching this specific lookup from `sonar` to `sonar-pro` with JSON schema output, matching the more reliable pattern already used in `_shared/partyLookup.ts`.
 
-```
-[0-9]+[\/\-][0-9]+
-```
+5. **Frontend normalization parity**
+   - Update `src/data/abbreviations.ts` so `normalizeAbbreviations()` also strips Hebrew diacritics before detecting source type.
+   - Add `סע"ש` and the relevant labor docket prefixes to `CASE_TYPE_ABBREVIATIONS`, so the UI shows the case-law search state and sends the correct classification hint.
 
-to:
-
-```
-[0-9]+(?:[\/\-][0-9]+){1,2}
-```
-
-This matches both:
-- `6427/02`, `8294/14` (Supreme Court / classic)
-- `50358-09-16`, `13579-11-24` (district / labor / family — two-dash form)
-
-No change to capture-group indices. `caseNumberMatch[1]` is still the prefix, `[2]` is the docket.
-
-### Edit 2 — Treat a recognized docket prefix as sufficient evidence of case-law
-
-Replace:
-
-```ts
-const isCaseLaw = classMatch && /פסיקה/.test(classMatch[1]);
-```
-
-with:
-
-```ts
-const isCaseLawByClassifier = !!(classMatch && /פסיקה/.test(classMatch[1]));
-// fallback: a recognized Israeli docket prefix + docket number IS case-law,
-// regardless of whether the upstream classifier tagged it.
-// (caseNumberMatch is computed below, so move/duplicate the regex test up,
-// or just compute caseNumberMatch first and then derive isCaseLaw from both.)
-const isCaseLaw = isCaseLawByClassifier || !!caseNumberMatch;
-```
-
-Concretely: move the `caseNumberMatch` computation **above** the `isCaseLaw` line (it currently sits at line 816, two lines below), then OR them together. No other code in the file reads `isCaseLaw` for anything that would regress (it gates only the case-law search and the disambiguation-selection branches, both of which legitimately want to run when we have a real docket).
-
-`partyMatch` is **not** included in this fallback — "X נ' Y" is too ambiguous (could be a book title or article reference). Only an explicit docket prefix is trusted as case-law evidence.
-
-## What this does NOT change
-
-- `case-law-search/index.ts`, `_shared/partyLookup.ts` — already correct from previous rounds.
-- The validation block, the verification search, the disambiguation flow, Branch B (party search), the book branch — all untouched.
-- The takdin two-step prompt and `search_domain_filter` added last round — those stay; this fix just makes sure execution actually reaches them.
-
-## Files touched
-
-- `supabase/functions/citation-chat/index.ts` — lines ~810–816 only.
-
-Redeploy `citation-chat` after the edit.
-
-## Validation
-
-1. Re-run `סע"ש 50358-09-16` in אזכור אחיד.
-   Expected logs: `caseNumberMatch=סע"ש 50358-09-16` (full docket), `isCaseLaw=true`, Branch A fires, Perplexity returns `date: "19.10.2021"`.
-2. Spot-check a Supreme Court query (`בג"ץ 6427/02`) — should still match (single-slash form covered by `{1,2}`) and resolve פ"ד publication unchanged.
-3. Spot-check a district docket (`ת"א 13579-11-24`) — should match the full docket and route to case-law.
-
-Approve and I'll make the two edits and redeploy.
+6. **Deploy and verify**
+   - Deploy the updated `citation-chat` edge function.
+   - Test the function with the exact problematic input variants:
+     - `סע"ש 50358-09-16`
+     - `סע״ש 50358-09-16`
+     - `סע״שׁ 50358-09-16`
+   - Confirm logs now show `isCaseLaw=true` and `caseNumberMatch=סע"ש 50358-09-16`.
+   - Confirm the response no longer falls through to the generic AI path with missing parties/date.
