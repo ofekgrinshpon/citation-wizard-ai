@@ -1422,13 +1422,29 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     const isUnknown = classMatch && /לא מזוהה|אחר/.test(classMatch[1]);
     const noClassTag = !classMatch;
     // Also trigger book search for unknown/untagged types that look like Hebrew name + title (4+ words, no legislation markers)
-    const cleanedForBookCheck = userInput.replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "").replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "").trim();
+    // Strip markdown bold (**...**), list numbering ("1. "), and [חסר: ...] placeholders before scanning for case-law signals.
+    const cleanedForBookCheck = userInput
+      .replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "")
+      .replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
+      .replace(/\[בחירת תוצאה\]\s*/g, "")
+      .replace(/\*\*/g, "")
+      .replace(/\[חסר:[^\]]*\]/g, "")
+      .replace(/^\s*\d+\.\s*/gm, "")
+      .trim();
+    // Case-law signal detector: party separator (including bare ` נ `), docket prefix,
+    // court names, or procedural keywords. Used as a safety guard against the book branch.
+    const caseLawSignalRe = new RegExp(
+      `(?:${prefixGroup})|\\sנגד\\s|\\sנ['׳]\\s|\\sנ\\s|בית[- ]המשפט|בית[- ]הדין|פסק[- ]דין|פס["״]ד|ערעור|תביעה|בקשת רשות`
+    );
+    const hasCaseLawSignal = caseLawSignalRe.test(cleanedForBookCheck);
     const looksLikeBook = (isUnknown || noClassTag) &&
       /^[\u0590-\u05FF]/.test(cleanedForBookCheck.replace(/['׳"״`]/g, '')) &&
       cleanedForBookCheck.split(/\s+/).length >= 4 &&
-      !/נ['']|נגד|\sנ\s|חוק |פקודת |תקנות|הצעת חוק|אמנ|ד["״]כ/.test(cleanedForBookCheck);
-    // Hard-skip the book branch when the query is unambiguously case-law (docket prefix or party separator).
-    if ((isBook || looksLikeBook) && !hasVerifiedCandidates && !isCaseLaw) {
+      !hasCaseLawSignal &&
+      !/חוק |פקודת |תקנות|הצעת חוק|אמנ|ד["״]כ/.test(cleanedForBookCheck);
+    // Hard-skip the book branch when the query is unambiguously case-law (docket prefix, party separator,
+    // disambiguation selection, or any other case-law signal).
+    if ((isBook || looksLikeBook) && !hasVerifiedCandidates && !isCaseLaw && !isDisambiguationSelection && !hasCaseLawSignal) {
       try {
         const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
         if (PERPLEXITY_API_KEY) {
