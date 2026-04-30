@@ -1099,10 +1099,20 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     }
                   }
 
-                  // Validate data quality: reject bogus results with empty/placeholder fields
-                  const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && parsed.date.trim() !== "";
-                  const hasValidParties = parsed.party1 && parsed.party1.trim() !== "" && parsed.party2 && parsed.party2.trim() !== "";
-                  const hasValidPublication = (parsed.isPublished && parsed.padi_volume && parsed.padi_volume.trim() !== "") || (!parsed.isPublished && parsed.databaseName && parsed.databaseName.trim() !== "");
+                  // Validate data quality: reject bogus results with empty/placeholder fields.
+                  // Perplexity often returns Hebrew "not specified" placeholders that look truthy but
+                  // are not real publication data — treat these as missing.
+                  const isPlaceholder = (v: unknown) => {
+                    if (typeof v !== "string") return true;
+                    const t = v.trim();
+                    if (!t) return true;
+                    return /^(?:לא\s*(?:צוין|ידוע|נמצא|רלוונטי)|אין|N\/?A|None|null|undefined|-|—)$/i.test(t);
+                  };
+                  const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && !isPlaceholder(parsed.date);
+                  const hasValidParties = !isPlaceholder(parsed.party1) && !isPlaceholder(parsed.party2);
+                  const hasRealPadi = !isPlaceholder(parsed.padi_volume) && !isPlaceholder(parsed.padi_page);
+                  const hasRealDatabase = !isPlaceholder(parsed.databaseName);
+                  const hasValidPublication = (parsed.isPublished && hasRealPadi) || (!parsed.isPublished && hasRealDatabase) || hasRealDatabase;
                   // The docket itself anchors the case: as long as parties are confirmed, render as case law
                   // even if the full date is missing (it will surface as [חסר: תאריך]).
                   const dataIsUsable = parsed.found && hasValidParties;
