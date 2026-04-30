@@ -813,7 +813,7 @@ serve(async (req) => {
     // ── Check if this is a disambiguation selection (skip Perplexity) ──
     const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(userInput);
     
-    const caseNumberMatch = userInput.match(/(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+([0-9]+[\/\-][0-9]+)/);
+    const caseNumberMatch = userInput.match(/(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם|סע"ש|סע״ש|תמ"ש|תמ״ש|עת"מ|עת״מ|ה"פ|ה״פ|פ"ה|פ״ה|ב"ש|ב״ש|תק"ג|תק״ג)\s+([0-9]+[\/\-][0-9]+)/);
 
     // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
     const cleanedForParty = userInput
@@ -871,12 +871,27 @@ serve(async (req) => {
               },
               body: JSON.stringify({
                 model: "sonar",
+                search_domain_filter: [
+                  "lite.takdin.co.il",
+                  "takdin.co.il",
+                  "nevo.co.il",
+                  "supreme.court.gov.il",
+                  "court.gov.il",
+                  "psakdin.co.il",
+                ],
                 messages: [
                   {
                     role: "system",
                     content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
 חשוב ביותר: עדיפות ראשונה היא לבדוק פרסום בפד"י (פסקי דין). רוב פסקי הדין של בית המשפט העליון פורסמו בפד"י. אל תסתמך רק על מאגרי מידע אלקטרוניים - חפש במיוחד אם יש ציון "פ"ד" עם כרך ועמוד.
 סמן isPublished: false רק אם חיפשת במפורש פרסום בפד"י ווידאת שהוא לא קיים.
+
+טיפ חיפוש חשוב — תהליך דו-שלבי באתר תקדין לייט (ציבורי, חינמי, רק קובץ ה-PDF המלא בתשלום):
+שלב 1 — זיהוי: התחל מ-https://lite.takdin.co.il/search-results?txtSearch=<מספר התיק>. דף התוצאות חושף בתקציר את שמות הצדדים, בית המשפט, וקידומת מספר התיק.
+שלב 2 — תאריך מלא: אם תקציר התוצאות מציג רק שנה (או לא מציג תאריך כלל), **המשך אל דף התיק עצמו** באתר lite.takdin.co.il (הקישור מתוך תוצאת החיפוש). דף התיק הציבורי מציג את תאריך ההחלטה בפורמט [DD.MM.YYYY] בסוגריים מרובעים — אין שם תשלום, רק ה-PDF המלא בתשלום.
+חובה: אל תחזיר רק שנה אם התאריך המלא ניתן לשליפה מדף התיק. שדה "date" חייב להיות בפורמט DD.MM.YYYY בכל פעם שדף התיק חושף אותו.
+אם לא נמצא בתקדין לייט, נסה nevo.co.il ו-supreme.court.gov.il.
+
 הפורמט:
 {"found":true/false,"party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","confidence":"high/low"}
 שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
