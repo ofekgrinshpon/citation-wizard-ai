@@ -846,23 +846,28 @@ serve(async (req) => {
     // docket number. Without this, the AI auto-classifier sometimes tags it as
     // "ספרות" and the request falls through to the book branch.
     const cleanedNormalized = normalizedUserInput
-      .replace(/\[סיווג אוטומטי:.*?\]\n?/, "")
-      .replace(/\[בחירת תוצאה\]\s*/, "")
-      .replace(/\n?══[\s\S]*?══+\s*/g, "")
+      .replace(/\[סיווג אוטומטי:.*?\]\n?/g, "")
+      .replace(/\[בחירת תוצאה\]\s*/g, "")
+      // Engine hint block: starts with `══ מנוע אזכור ...` and ends at the long `══════...` divider.
+      .replace(/\n?══\s*מנוע אזכור[\s\S]*?══════════════════════════════════\n?/g, "")
+      // Verified-source hint block (same divider style)
+      .replace(/\n?══\s*מקור מאומת[\s\S]*?══════════════════════════════════\n?/g, "")
+      // Generic fallback: any remaining `══ ... ══` short blocks
+      .replace(/\n?══[^\n]*══\n?/g, "")
       .trim();
-    const prefixOnlyMatch = cleanedNormalized.match(new RegExp(`^(${prefixGroup})\\s+[\\u0590-\\u05FF]`));
+    const prefixOnlyMatch = cleanedNormalized.match(new RegExp(`(?:^|\\n)\\s*(${prefixGroup})\\s+[\\u0590-\\u05FF]`));
     const hasCaseLawPrefix = !!prefixOnlyMatch;
 
     // Recognized docket prefix + docket number is unambiguous case-law evidence,
     // even when the upstream auto-classifier didn't tag the query as פסיקה.
     const isCaseLaw = isCaseLawByClassifier || !!caseNumberMatch || hasCaseLawPrefix;
 
-    // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern.
+    // Party-name fallback: detect "X נגד Y", "X נ' Y", or "X נ Y" (bare nun) pattern.
     // Strip a leading docket prefix first so the prefix doesn't bleed into party1
     // (e.g. `סע"ש קמיקר נ' מדינת ישראל` → match against `קמיקר נ' מדינת ישראל`).
     const cleanedForParty = cleanedNormalized.replace(new RegExp(`^(${prefixGroup})\\s+`), "");
     const partyMatch = !caseNumberMatch
-      ? cleanedForParty.match(/([\u0590-\u05FF\s'"״׳']+)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3])\s+([\u0590-\u05FF\s'"״׳']+)/)
+      ? cleanedForParty.match(/([\u0590-\u05FF][\u0590-\u05FF\s'"״׳']*?)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3]|נ)\s+([\u0590-\u05FF][\u0590-\u05FF\s'"״׳']*)/)
       : null;
     const partyPrefix = hasCaseLawPrefix && !caseNumberMatch ? prefixOnlyMatch![1] : null;
     if (hasCaseLawPrefix && !caseNumberMatch) {
@@ -1418,11 +1423,12 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     const noClassTag = !classMatch;
     // Also trigger book search for unknown/untagged types that look like Hebrew name + title (4+ words, no legislation markers)
     const cleanedForBookCheck = userInput.replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "").replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "").trim();
-    const looksLikeBook = (isUnknown || noClassTag) && 
-      /^[\u0590-\u05FF]/.test(cleanedForBookCheck.replace(/['׳"״`]/g, '')) && 
+    const looksLikeBook = (isUnknown || noClassTag) &&
+      /^[\u0590-\u05FF]/.test(cleanedForBookCheck.replace(/['׳"״`]/g, '')) &&
       cleanedForBookCheck.split(/\s+/).length >= 4 &&
-      !/נ['']|נגד|חוק |פקודת |תקנות|הצעת חוק|אמנ|ד["״]כ/.test(cleanedForBookCheck);
-    if ((isBook || looksLikeBook) && !hasVerifiedCandidates) {
+      !/נ['']|נגד|\sנ\s|חוק |פקודת |תקנות|הצעת חוק|אמנ|ד["״]כ/.test(cleanedForBookCheck);
+    // Hard-skip the book branch when the query is unambiguously case-law (docket prefix or party separator).
+    if ((isBook || looksLikeBook) && !hasVerifiedCandidates && !isCaseLaw) {
       try {
         const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
         if (PERPLEXITY_API_KEY) {

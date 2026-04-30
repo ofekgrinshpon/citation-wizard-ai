@@ -297,15 +297,18 @@ function normalizeQuotes(text: string): string {
     .replace(/[\u2018\u2019\u201A]/g, "'"); // smart single quotes
 }
 
+// Party separator: נגד, נ', נ׳, or bare ` נ ` (Hebrew nun surrounded by spaces)
+const PARTY_SEPARATOR_HE = /(?:\s|^)(?:נגד|נ['׳'']|נ)(?=\s)/;
+
 // Detect source type from free text
 export function detectSourceType(text: string): SourceType {
   const normalized = text.toLowerCase();
   const hebrewText = normalizeQuotes(text);
-  
+
   // Check for foreign sources
   if (/[a-zA-Z]{3,}/.test(text) && /v\.|vs\./.test(normalized)) return 'foreign';
   if (/[A-Z][a-z]+\s+v\.\s+[A-Z]/.test(text)) return 'foreign';
-  
+
   // Check for case law
   for (const abbr of Object.values(CASE_TYPE_ABBREVIATIONS)) {
     if (hebrewText.includes(abbr)) {
@@ -315,11 +318,11 @@ export function detectSourceType(text: string): SourceType {
       return 'case_law_database';
     }
   }
-  if (/נ['׳'']|נגד/.test(hebrewText) && /\d+\/\d+/.test(hebrewText)) {
+  if (/נ['׳'']|נגד|\sנ\s/.test(hebrewText) && /\d+\/\d+/.test(hebrewText)) {
     return 'case_law_database';
   }
-  // Party names without case number (e.g., "מדינת ישראל נגד זדורוב" or "X נ׳ Y")
-  if (/[\u0590-\u05FF]+\s+(?:נגד|נ['׳''])\s+[\u0590-\u05FF]+/.test(hebrewText) && !/חוק|פקוד|תקנ|הצעת|אמנ|ספר|מהדורה/.test(hebrewText)) {
+  // Party names without case number (e.g., "מדינת ישראל נגד זדורוב", "X נ׳ Y", or "X נ Y")
+  if (/[\u0590-\u05FF]+\s+(?:נגד|נ['׳'']|נ)\s+[\u0590-\u05FF]+/.test(hebrewText) && !/חוק |פקוד|תקנ|הצעת|אמנ|מהדורה/.test(hebrewText)) {
     return 'case_law_database';
   }
   
@@ -394,9 +397,9 @@ export function detectSourceType(text: string): SourceType {
   
   // Heuristic: Hebrew name (2+ words) followed by a title (3+ additional words) → likely a book
   const strippedForBook = hebrewText.trim().replace(/['׳"״`]/g, '');
-  if (/^[\u0590-\u05FF]+\s+[\u0590-\u05FF]+\s+[\u0590-\u05FF]/.test(strippedForBook) && 
+  if (/^[\u0590-\u05FF]+\s+[\u0590-\u05FF]+\s+[\u0590-\u05FF]/.test(strippedForBook) &&
       hebrewText.trim().split(/\s+/).length >= 4 &&
-      !/נ['']|נגד|חוק|פקוד|תקנ|הצעת|אמנ|ד["״]כ|חוות\s+דעת|הסכם\s+קיבוצי/.test(hebrewText)) {
+      !/נ['']|נגד|\sנ\s|חוק|פקוד|תקנ|הצעת|אמנ|ד["״]כ|חוות\s+דעת|הסכם\s+קיבוצי/.test(hebrewText)) {
     return 'book';
   }
   
