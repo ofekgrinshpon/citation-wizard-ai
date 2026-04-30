@@ -232,10 +232,12 @@ const Index = () => {
     // Server signaled it auto-refunded the credit (e.g. AI returned a refusal).
     handleRefundResponse(data);
 
-    return {
-      content: (data?.content as string) || "אירעה שגיאה בעיבוד הבקשה.",
-      sourceTypeOverride: (data?.sourceTypeOverride as SourceType | null | undefined) ?? null,
-    };
+    // Stash backend's classification override (e.g. case-law confirmed by docket prefix
+    // when the client guessed "ספר") so handleSend can apply it to messageSourceTypes.
+    lastSourceTypeOverrideRef.current =
+      (data?.sourceTypeOverride as SourceType | null | undefined) ?? null;
+
+    return (data?.content as string) || "אירעה שגיאה בעיבוד הבקשה.";
   };
 
   const saveVerifiedSource = async (
