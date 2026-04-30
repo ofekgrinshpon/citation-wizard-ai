@@ -499,8 +499,8 @@ const Index = () => {
     }
   };
 
-  const handleSend = async () => {
-    const rawText = input.trim();
+  const handleSend = async (overrideText?: string) => {
+    const rawText = (overrideText ?? input).trim();
     if (!rawText || loading) return;
 
     // Pre-validate: prevent charging credits for gibberish / empty / non-legal input.
