@@ -1244,20 +1244,33 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                model: "sonar",
+                model: "sonar-pro",
+                search_domain_filter: [
+                  "supreme.court.gov.il",
+                  "court.gov.il",
+                  "gov.il",
+                  "nevo.co.il",
+                  "takdin.co.il",
+                  "lite.takdin.co.il",
+                  "psakdin.co.il",
+                ],
                 messages: [
                   {
                     role: "system",
-                    content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו. החזר תשובה בפורמט JSON בלבד.
+                    content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו, אך ורק ממקורות מוסמכים (אתר בתי המשפט, נבו, תקדין, פסקדין). החזר תשובה בפורמט JSON בלבד.
 הפורמט:
 {"results":[
-  {"found":true,"caseType":"סוג הליך","caseNumber":"מספר/שנה","party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY"}
+  {"found":true,"caseType":"סוג הליך","caseNumber":"מספר/שנה","party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","sourceUrl":"כתובת המקור המוסמך שממנו נשלפו הפרטים"}
 ]}
-כללים:
+כללים קריטיים נגד הזיות:
+- כל תוצאה חייבת להיות מבוססת על URL מוסמך אמיתי שמופיע ב-sourceUrl. אל תמציא מספרי תיקים, כרכי פ"ד או תאריכים.
+- אם אינך יכול לאמת את מספר התיק במקור מוסמך — השמט את התוצאה לחלוטין במקום לנחש.
+- שנת מספר התיק (אחרי / או -) חייבת להיות עקבית עם year (פער של עד 5 שנים).
+- אם isPublished=true, וודא ש-padi_volume תואם לשנה (פ"ד מתפרסם לרוב 1-3 שנים אחרי הגשת התיק).
 - מקסימום 5 תוצאות, ממוינות מהחדש לישן
 - שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
 - כלול את כל סוגי ההליכים (ערעור, בקשת רשות ערעור, משפט ראשוני וכו')
-- אם לא נמצאו תוצאות, החזר {"results":[]}`,
+- אם לא נמצאו תוצאות מאומתות, החזר {"results":[]}`,
                   },
                   {
                     role: "user",
@@ -1276,7 +1289,7 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                       const courtConstraint = partyPrefix && COURT_HINT_BY_PREFIX[partyPrefix]
                         ? ` הגבל את החיפוש לתיקים שנדונו ${COURT_HINT_BY_PREFIX[partyPrefix]} בלבד.`
                         : '';
-                      return `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}.${courtConstraint} כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפד"י.`;
+                      return `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}.${courtConstraint} כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפד"י. החזר רק תוצאות שאתה יכול לאמת ב-URL מוסמך.`;
                     })(),
                   },
                 ],
