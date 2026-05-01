@@ -1802,6 +1802,17 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     content = normalizeArticleYearByRule2492(content);
 
     // Post-response safety net: if the AI returned a refusal/non-meaningful answer,
+    // Map the backend override label to the client SourceType identifier so the
+    // assistant message badge reflects the actual classification (e.g. when the
+    // client guessed "ספר" but backend confirmed case-law via docket prefix).
+    // Computed BEFORE the refusal short-circuit so the badge stays correct even
+    // when the AI's prose is thin enough to look like a refusal.
+    let sourceTypeOverride: string | null = null;
+    if (caseLawOverrideLabel === "פסיקה (דפוס)") sourceTypeOverride = "case_law_published";
+    else if (caseLawOverrideLabel === "פסיקה (מאגר)") sourceTypeOverride = "case_law_database";
+    else if (isCaseLaw) sourceTypeOverride = "case_law_database";
+
+    // If the AI refused (couldn't extract a clear citation from the input), we
     // automatically refund the credit so the user isn't charged for an unusable result.
     if (isRefusalResponseServer(content)) {
       await refundIfCharged("invalid_input_refusal");
@@ -1810,18 +1821,11 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
           content,
           refunded: true,
           refundReason: "הקלט לא היה ברור דיו לעיבוד",
+          sourceTypeOverride,
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
-
-    // Map the backend override label to the client SourceType identifier so the
-    // assistant message badge reflects the actual classification (e.g. when the
-    // client guessed "ספר" but backend confirmed case-law via docket prefix).
-    let sourceTypeOverride: string | null = null;
-    if (caseLawOverrideLabel === "פסיקה (דפוס)") sourceTypeOverride = "case_law_published";
-    else if (caseLawOverrideLabel === "פסיקה (מאגר)") sourceTypeOverride = "case_law_database";
-    else if (isCaseLaw) sourceTypeOverride = "case_law_database";
 
     return new Response(JSON.stringify({ content, sourceTypeOverride }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
