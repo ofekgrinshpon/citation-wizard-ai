@@ -822,6 +822,18 @@ serve(async (req) => {
 
     let caseLawHint = "";
     let caseLawOverrideLabel: string | null = null;
+    // Verified case-law data captured from the Perplexity search branches.
+    // Used by the final-output guard to detect hallucinated parties/publication/docket
+    // in the AI gateway response and replace them with safe missing-data placeholders.
+    const verifiedCaseLawData: {
+      docket?: string;
+      docketRaw?: string;
+      party1?: string;
+      party2?: string;
+      publishedConfirmed?: boolean;
+      lookupAttempted?: boolean;
+      lookupSucceeded?: boolean;
+    } = {};
     // Normalize Hebrew niqqud/quotes BEFORE running the docket/classifier regex —
     // inputs like `סע״שׁ 50358-09-16` (shin-dot diacritic) must classify identically
     // to `סע"ש 50358-09-16`. The original `userInput` is preserved for downstream
@@ -932,6 +944,9 @@ serve(async (req) => {
             const isMultiSeparatorDocket = (rawCaseNum.match(/[\/\-]/g) || []).length >= 2;
             const caseNum = isMultiSeparatorDocket ? rawCaseNum : rawCaseNum.replace('-', '/');
             const fullCaseRef = `${caseType} ${caseNum}`;
+            verifiedCaseLawData.lookupAttempted = true;
+            verifiedCaseLawData.docket = fullCaseRef;
+            verifiedCaseLawData.docketRaw = caseNum;
             console.log(`[case-law] dispatching search: prefix="${caseType}", rawDocket="${rawCaseNum}", normalizedDocket="${caseNum}"`);
             const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חפש את מספר התיק המדויק "${rawCaseNum}" באתר תקדין לייט (lite.takdin.co.il), נבו, או אתר בתי המשפט. אל תחזיר פסקי דין אחרים בעלי מספרים דומים — רק את התיק המדויק עם מספר זה. בדוק האם פסק הדין פורסם בפד"י, ואם לא — ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין המלא (DD.MM.YYYY), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. אם לא מצאת את התיק המדויק, החזר {"found":false} — אל תמציא או תחליף בתיק דומה. ענה בעברית בלבד.`;
 
@@ -1185,6 +1200,10 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                   const dataIsUsable = parsed.found && hasValidParties;
                   
                   if (dataIsUsable) {
+                    verifiedCaseLawData.lookupSucceeded = true;
+                    verifiedCaseLawData.party1 = String(parsed.party1).trim();
+                    verifiedCaseLawData.party2 = String(parsed.party2).trim();
+                    verifiedCaseLawData.publishedConfirmed = !!(parsed.isPublished && hasRealPadi);
                     let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
                     details += `תיק: ${fullCaseRef}\n`;
                     if (hasValidParties) details += `צדדים: **${parsed.party1}** נ' **${parsed.party2}**\n`;
@@ -1331,6 +1350,39 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                     ? psParsed.results.filter((r: Record<string, unknown>) => r.found)
                     : [];
 
+                  // Build a normalized list of docket "fingerprints" found in trusted citations.
+                  // A docket fingerprint is the digit sequence with `/` or `-` separators (e.g. "158/77").
+                  // We extract these from each trusted citation URL itself (path/query) so we can
+                  // verify that a result's claimed caseNumber actually appears in a trusted source —
+                  // not just that the response cited *some* trusted URL.
+                  const extractDocketFingerprints = (text: string): string[] => {
+                    const out: string[] = [];
+                    const re = /\b(\d{1,6})[\/\-](\d{2,4})(?:[\/\-](\d{2,4}))?\b/g;
+                    let m: RegExpExecArray | null;
+                    while ((m = re.exec(text)) !== null) {
+                      out.push(m[3] ? `${m[1]}-${m[2]}-${m[3]}` : `${m[1]}/${m[2]}`);
+                    }
+                    return out;
+                  };
+                  const trustedCitationFingerprints = new Set<string>();
+                  for (const u of psCitations) {
+                    if (!isTrustedUrl(u)) continue;
+                    try {
+                      const decoded = decodeURIComponent(u);
+                      for (const fp of extractDocketFingerprints(decoded)) trustedCitationFingerprints.add(fp);
+                    } catch { /* ignore decode errors */ }
+                  }
+                  // Also mine fingerprints from the response text — Perplexity sometimes echoes
+                  // docket numbers in prose that came from a snippet, even when the URL is opaque.
+                  const responseTextFingerprints = new Set(extractDocketFingerprints(psContent));
+
+                  const normalizeDocket = (s: string) => {
+                    const t = (s || "").replace(/\s+/g, "");
+                    // Multi-segment dockets (NNNNN-MM-YY) keep hyphens; single-separator forms canonicalize to "/"
+                    if (/^\d+-\d+-\d+$/.test(t)) return t;
+                    return t.replace(/-/g, "/");
+                  };
+
                   // Sanity-check + grounding filter to remove hallucinated dockets.
                   const sanityCheck = (r: Record<string, unknown>): { ok: boolean; reason?: string } => {
                     const caseNumStr = typeof r.caseNumber === "string" ? r.caseNumber : "";
@@ -1344,12 +1396,30 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                       if (decisionYear < dy - 1) return { ok: false, reason: `decision year ${decisionYear} before docket year ${dy}` };
                       if (decisionYear > dy + 15) return { ok: false, reason: `decision year ${decisionYear} too far from docket year ${dy}` };
                     }
-                    // Per-result trust: prefer explicit sourceUrl, otherwise fall back
-                    // to the run-level citations we already validated.
+                    // Per-result grounding: the claimed docket must appear in a trusted-citation URL,
+                    // OR the result's own sourceUrl must be trusted AND contain that docket,
+                    // OR the docket must be echoed in the response text alongside a trusted citation.
+                    const claimedFp = normalizeDocket(caseNumStr);
                     const src = (r as { sourceUrl?: unknown }).sourceUrl;
-                    const trustedSrc = isTrustedUrl(src);
-                    if (!trustedSrc && !hasAnyTrustedCitation) {
-                      return { ok: false, reason: "no trusted source citation" };
+                    const srcStr = typeof src === "string" ? src : "";
+                    const trustedSrc = isTrustedUrl(srcStr);
+                    let srcContainsDocket = false;
+                    if (trustedSrc) {
+                      try {
+                        const decoded = decodeURIComponent(srcStr);
+                        srcContainsDocket = extractDocketFingerprints(decoded).includes(claimedFp);
+                      } catch { /* ignore */ }
+                    }
+                    const inTrustedCitation = trustedCitationFingerprints.has(claimedFp);
+                    const inResponseText = responseTextFingerprints.has(claimedFp);
+                    if (!srcContainsDocket && !inTrustedCitation && !inResponseText) {
+                      return { ok: false, reason: `docket ${caseNumStr} not found in trusted sources (sourceUrlTrusted=${trustedSrc})` };
+                    }
+                    if (!trustedSrc && !inTrustedCitation) {
+                      // Allow only when the docket appears in response text AND there is at least one trusted citation overall.
+                      if (!psCitations.some(isTrustedUrl)) {
+                        return { ok: false, reason: "no trusted citation in response" };
+                      }
                     }
                     return { ok: true };
                   };
@@ -1370,6 +1440,15 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                   } else if (results.length === 1) {
                     // Single result – use same logic as case-number search
                     const r = results[0] as Record<string, unknown>;
+                    verifiedCaseLawData.lookupAttempted = true;
+                    verifiedCaseLawData.lookupSucceeded = true;
+                    if (typeof r.party1 === "string") verifiedCaseLawData.party1 = r.party1.trim();
+                    if (typeof r.party2 === "string") verifiedCaseLawData.party2 = r.party2.trim();
+                    if (typeof r.caseType === "string" && typeof r.caseNumber === "string") {
+                      verifiedCaseLawData.docket = `${r.caseType} ${r.caseNumber}`.trim();
+                      verifiedCaseLawData.docketRaw = r.caseNumber.trim();
+                    }
+                    verifiedCaseLawData.publishedConfirmed = !!(r.isPublished && typeof r.padi_volume === "string" && r.padi_volume.trim() && typeof r.padi_page === "string" && r.padi_page.trim());
                     const isPlaceholder = (v: unknown) => {
                       if (typeof v !== "string") return true;
                       const t = v.trim();
@@ -1922,6 +2001,68 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     });
     content = fixHebrewYearPrefix(content);
     content = normalizeArticleYearByRule2492(content);
+
+    // ─── Final case-law output guard ───
+    // When we ran a Perplexity case-law lookup, prevent the AI from inventing
+    // publication data (פ"ד volume/part/page) or contradicting verified parties.
+    if (isCaseLaw && verifiedCaseLawData.lookupAttempted) {
+      const v = verifiedCaseLawData;
+
+      // 1) Strip hallucinated פ"ד publications when publication was NOT confirmed.
+      //    Pattern: `פ"ד <hebrew-letters>(<digit-or-letters>)? <number>` possibly preceded by `, `.
+      if (!v.publishedConfirmed) {
+        const before = content;
+        // e.g. `, פ"ד נב(5) 721` — replace the whole publication block with a missing-data marker.
+        content = content.replace(
+          /,?\s*פ["״]ד\s+[\u05D0-\u05EA]+(?:\s*\([^)]*\))?\s*\d+/g,
+          ", [חסר: פרטי פרסום]",
+        );
+        if (content !== before) {
+          console.log("[case-law] Final guard stripped unverified פ\"ד publication");
+        }
+      }
+
+      // 2) When verified parties are known, detect contradicted parties and replace with placeholders.
+      if (v.party1 && v.party2) {
+        // Look for the bolded parties block: `**X** נ' **Y**`
+        const partyRe = /\*\*([^*]+)\*\*\s*נ['׳]\s*\*\*([^*]+)\*\*/;
+        const m = content.match(partyRe);
+        if (m) {
+          const out1 = m[1].trim();
+          const out2 = m[2].trim();
+          // Build normalized token sets (Hebrew letters + spaces only)
+          const norm = (s: string) => s.replace(/["״׳']/g, "").replace(/\s+/g, " ").trim();
+          const tokens = (s: string) => norm(s).split(/\s+/).filter((t) => t.length >= 2);
+          const overlap = (a: string[], b: string[]) => a.filter((t) => b.includes(t)).length;
+          const t1v = tokens(v.party1);
+          const t2v = tokens(v.party2);
+          const t1o = tokens(out1);
+          const t2o = tokens(out2);
+          // Either side1↔verified1 + side2↔verified2, OR cross-matched (parties may swap).
+          const direct = (overlap(t1v, t1o) > 0) && (overlap(t2v, t2o) > 0);
+          const cross  = (overlap(t1v, t2o) > 0) && (overlap(t2v, t1o) > 0);
+          if (!direct && !cross) {
+            console.log(`[case-law] Final guard detected contradicted parties. verified="${v.party1} נ' ${v.party2}", output="${out1} נ' ${out2}"`);
+            content = content.replace(
+              partyRe,
+              `**${v.party1}** נ' **${v.party2}**`,
+            );
+          }
+        }
+      }
+
+      // 3) If a docket is known and the output references a *different* docket of the same prefix,
+      //    swap it back. Only act when there is exactly one docket-style token in the output.
+      if (v.docket && v.docketRaw) {
+        const docketRe = /(?:בג["״]ץ|ע["״][אפעמ]|רע["״][אפ]|דנ["״][אפג]|בש["״][אפ]|תפ["״]ח|עש["״]מ|בר["״]ם|עמ["״]ה|עע["״]מ|ת["״][אפ]|ה["״][פמ]|פ["״]ה|ב["״]ש|סע["״]ש|ס["״]ק|ד["״]מ|תמ["״]ש|עת["״]מ)\s+\d+(?:[\/\-]\d+){1,2}/g;
+        const all = content.match(docketRe) || [];
+        const verifiedNorm = v.docket.replace(/\s+/g, " ").trim();
+        if (all.length >= 1 && !all.some((d) => d.replace(/\s+/g, " ").trim() === verifiedNorm)) {
+          console.log(`[case-law] Final guard rewriting docket(s) ${JSON.stringify(all)} → "${verifiedNorm}"`);
+          content = content.replace(docketRe, () => verifiedNorm);
+        }
+      }
+    }
 
     // Post-response safety net: if the AI returned a refusal/non-meaningful answer,
     // Map the backend override label to the client SourceType identifier so the
