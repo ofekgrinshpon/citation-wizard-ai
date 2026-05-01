@@ -1440,6 +1440,15 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                   } else if (results.length === 1) {
                     // Single result – use same logic as case-number search
                     const r = results[0] as Record<string, unknown>;
+                    verifiedCaseLawData.lookupAttempted = true;
+                    verifiedCaseLawData.lookupSucceeded = true;
+                    if (typeof r.party1 === "string") verifiedCaseLawData.party1 = r.party1.trim();
+                    if (typeof r.party2 === "string") verifiedCaseLawData.party2 = r.party2.trim();
+                    if (typeof r.caseType === "string" && typeof r.caseNumber === "string") {
+                      verifiedCaseLawData.docket = `${r.caseType} ${r.caseNumber}`.trim();
+                      verifiedCaseLawData.docketRaw = r.caseNumber.trim();
+                    }
+                    verifiedCaseLawData.publishedConfirmed = !!(r.isPublished && typeof r.padi_volume === "string" && r.padi_volume.trim() && typeof r.padi_page === "string" && r.padi_page.trim());
                     const isPlaceholder = (v: unknown) => {
                       if (typeof v !== "string") return true;
                       const t = v.trim();
