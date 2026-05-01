@@ -1357,8 +1357,12 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                   // docket numbers in prose that came from a snippet, even when the URL is opaque.
                   const responseTextFingerprints = new Set(extractDocketFingerprints(psContent));
 
-                  const normalizeDocket = (s: string) =>
-                    s.replace(/\s+/g, "").replace(/-/g, /^\d+-\d+-\d+$/.test(s.replace(/\s+/g, "")) ? "-" : "/");
+                  const normalizeDocket = (s: string) => {
+                    const t = (s || "").replace(/\s+/g, "");
+                    // Multi-segment dockets (NNNNN-MM-YY) keep hyphens; single-separator forms canonicalize to "/"
+                    if (/^\d+-\d+-\d+$/.test(t)) return t;
+                    return t.replace(/-/g, "/");
+                  };
 
                   // Sanity-check + grounding filter to remove hallucinated dockets.
                   const sanityCheck = (r: Record<string, unknown>): { ok: boolean; reason?: string } => {
