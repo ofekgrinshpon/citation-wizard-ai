@@ -1,35 +1,39 @@
-I found why this can still appear as “book” even though the backend now detects the query as case law: the frontend source-type badge and the prompt sent to the AI can still carry the earlier “ספר” classification, and when the backend later discovers case-law data it only rewrites the label in some cases. The book search itself is not running in the latest logs, but the model/UI can still be guided/displayed as book.
-
 **Plan**
 
-1. **Make case-law detection authoritative before the frontend labels the source**
-   - In `src/data/abbreviations.ts`, add a shared “case-law signal” helper that recognizes:
-     - all Israeli procedure prefixes, including `סע"ש`, `ס"ק`, `ד"מ`, `עת"מ`, etc.
-     - prefixes with typographic quotes (`סע״ש`) and quote-less user input (`סעש`)
-     - party separators: `נ'`, `נ׳`, `נגד`, and bare ` נ `
-   - Run this before the book heuristic so `סע״ש קמיקר נ מדינת ישראל ורשות האוכלוסין וההגירה` is labeled `פסיקה (מאגר)` in the UI from the start.
+I found two separate issues behind this behavior:
 
-2. **Mirror the same legal-signal set in input validation**
-   - Update `src/lib/citationInputValidation.ts` and the server-side validator in `supabase/functions/citation-chat/index.ts` so lower/labor-court prefixes like `סע"ש` are treated as legal markers consistently.
-   - This avoids any “generic Hebrew title” path for labor-case queries.
+1. The backend already detects the input as case law in the logs, but if the party-name web search returns no results, the final AI call can still see stale/insufficient classification context and answer using the old “book” pattern.
+2. When you manually switch the source to case law, the reclassification prompt does not include the same case-law search/routing path as a normal send, so it can re-run the AI with “case law” wording but without the dedicated case-law lookup logic.
 
-3. **Force backend prompt classification when backend detects case law**
-   - In `supabase/functions/citation-chat/index.ts`, after backend `isCaseLaw` is true, strip any stale client-supplied book engine block and replace it with a case-law label/engine hint before the final AI call.
-   - If the Perplexity case search returns one result with a database/date, force `[סיווג אוטומטי: פסיקה (מאגר)]` and Rule 19 instructions.
-   - If the returned result lacks real פ"ד volume/page data, do not let `isPublished: true` with `"לא צוין"` switch it to printed case-law; keep it as database case-law.
+**What I’ll change**
 
-4. **Do not show “ספר” in the result badge when backend corrected the route**
-   - Return a lightweight `sourceTypeOverride` from `citation-chat` when the backend overrides the label to case law.
-   - Update `src/pages/Index.tsx` to use that override for `messageSourceTypes`, citation history, and the badge shown above the assistant response.
+1. **Make case-law classification authoritative before the AI prompt**
+   - In `supabase/functions/citation-chat/index.ts`, whenever `isCaseLaw` is true, force the last user message to contain:
+     - `[סיווג אוטומטי: פסיקה (מאגר)]` or `[סיווג אוטומטי: פסיקה (דפוס)]` when appropriate.
+     - the Rule 19/Rule 18 citation-engine hint.
+   - Strip any stale book/literature engine hint from the prompt before the AI sees it.
+   - Explicitly block `bookHint` and article/literature branches for case-law signals.
 
-5. **Add guardrails for disambiguation selections**
-   - When a clicked option is sent as `[בחירת תוצאה]`, force frontend detection to `case_law_database` even if the selected line lacks a docket number or includes markdown/bold formatting.
-   - Keep the direct-click behavior, but ensure the source badge and prompt are never `ספר` for selected case-law options.
+2. **Fix party-name case-law search for inputs like `סע״ש קמיקר נגד מדינת ישראל ורשות האוכלוסין וההגירה`**
+   - Clean the search query so the procedure prefix (`סע"ש`) is not treated as party 1.
+   - Normalize `נ`, `נ׳`, `נ'`, and `נגד` consistently.
+   - Add an alternate focused search query that includes the prefix as a court/type constraint but searches the real parties, e.g. `קמיקר נגד מדינת ישראל ורשות האוכלוסין וההגירה`.
+   - If external search still returns no result, return a case-law shaped citation with `[חסר: ...]` fields instead of allowing the AI to turn it into a book.
+
+3. **Make manual “change source to case law” use the same pipeline**
+   - In `src/pages/Index.tsx`, when the user chooses `פסיקה (מאגר)` or `פסיקה (דפוס)` from “שינוי מקור”, resend through the normal backend flow with a hard correction tag, not a lightweight reclassification prompt.
+   - Apply the backend `sourceTypeOverride` after reclassification too, so the UI badge updates correctly.
+   - Store history using the effective source type rather than the original wrong `ספר` label.
+
+4. **Improve frontend detection consistency**
+   - Extend `src/data/abbreviations.ts` and `src/lib/citationInputValidation.ts` so labor-court prefixes (`סע"ש`, `סעש`, `ס"ק`, `ד"מ`, etc.) and bare ` נ ` separators are recognized everywhere before book heuristics.
+   - Extend `MessageBubble`’s case-law fallback regex to include labor-court prefixes so the UI treats those outputs as case-law messages.
+
+5. **Add targeted debug logging**
+   - Add concise logs showing final classification, whether a stale book hint was removed, and the exact party search query used. This will make the next failure diagnosable from the edge logs instead of guessing.
 
 **Expected result**
 
-For inputs like:
-
-`סע״ש קמיקר נ מדינת ישראל ורשות האוכלוסין וההגירה`
-
-and for clicking returned options, the UI should display `פסיקה (מאגר)`, the backend should use Rule 19/case-law prompts, and the AI should no longer output or display the request as a book.
+- The same input should display as `פסיקה (מאגר)` rather than `ספר`.
+- Switching source to case law should actually trigger case-law lookup/routing.
+- If the case cannot be found by party names alone, the app should ask for a case number or produce a case-law citation with missing-field markers, not classify it as a book.

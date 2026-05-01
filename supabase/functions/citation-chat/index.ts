@@ -1695,18 +1695,40 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       }
     }
 
+    // If we determined this is case-law but Perplexity didn't return a usable record,
+    // still set caseLawOverrideLabel to a safe default so the prompt reflects "פסיקה",
+    // and inject a Rule-19 case-law engine hint to override any stale "ספר"/"ספרות" hint
+    // that may have been added by the frontend.
+    let injectedCaseLawHint = "";
+    if (isCaseLaw && !caseLawOverrideLabel) {
+      caseLawOverrideLabel = "פסיקה (מאגר)";
+    }
+    if (isCaseLaw) {
+      injectedCaseLawHint = `\n\n══ מנוע אזכור (כלל 19 – פסיקה ממאגר מידע) ══\nתבנית: {סוג הליך} {מספר} **{צד א'}** נ' **{צד ב'}** ({מאגר} {תאריך}).\nרכיבי חובה: סוג הליך, מספר תיק, שני צדדים מודגשים, שם מאגר (כלל 19.1), תאריך מלא (כלל 19.1).\nחובה מוחלטת: אסור לעצב את האזכור כספר או כמאמר. זוהי פסיקה בלבד. סמן [חסר:...] לכל שדה שאינו ידוע.\n══════════════════════════════════\n`;
+      console.log(`[case-law] Forced override label="${caseLawOverrideLabel}", injecting Rule-19 hint, suppressing book/article hints`);
+    }
+
     const enhancedMessages = messages.map((m: { role: string; content: string }, i: number) => {
       if (i === messages.length - 1 && m.role === "user") {
         let content = m.content;
         if (caseLawOverrideLabel) {
-          content = content
-            .replace(/\[סיווג אוטומטי:\s*[^\]]+\]/, `[סיווג אוטומטי: ${caseLawOverrideLabel}]`)
-            .replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "\n");
+          // Replace any existing classification tag (or insert one if missing).
+          if (/\[סיווג אוטומטי:\s*[^\]]+\]/.test(content)) {
+            content = content.replace(/\[סיווג אוטומטי:\s*[^\]]+\]/, `[סיווג אוטומטי: ${caseLawOverrideLabel}]`);
+          } else {
+            content = `[סיווג אוטומטי: ${caseLawOverrideLabel}]\n${content}`;
+          }
+          // Strip ALL stale engine-hint blocks (book, article, etc.) — we'll inject the right one below.
+          content = content.replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/gm, "\n");
         }
 
-        // Inject engine hint + verified source hints + case law search + legislation search + regulation search + book search + article search into the last user message
+        // When case-law is forced, suppress any book/article hints that may have been built earlier.
+        const safeBookHint = isCaseLaw ? "" : bookHint;
+        const safeArticleHint = isCaseLaw ? "" : articleHint;
+
+        // Inject engine hint + verified source hints + case law search + legislation/regulation/book/article hints.
         const engineHint = extractEngineHint(content);
-        const allHints = engineHint + (verifiedHint || "") + caseLawHint + legislationHint + regulationHint + bookHint + articleHint;
+        const allHints = engineHint + injectedCaseLawHint + (verifiedHint || "") + caseLawHint + legislationHint + regulationHint + safeBookHint + safeArticleHint;
         if (allHints || content !== m.content) {
           return { ...m, content: content + allHints };
         }

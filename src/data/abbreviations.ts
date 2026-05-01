@@ -300,6 +300,10 @@ function normalizeQuotes(text: string): string {
 // Party separator: נגד, נ', נ׳, or bare ` נ ` (Hebrew nun surrounded by spaces)
 const PARTY_SEPARATOR_HE = /(?:\s|^)(?:נגד|נ['׳'']|נ)(?=\s)/;
 
+// Comprehensive Israeli docket prefix regex (Supreme + District + Labor + Family + Admin).
+// Used to short-circuit case-law classification BEFORE any book/article heuristics.
+const CASE_LAW_PREFIX_RE = /(?:^|\s)(?:בג["״]ץ|ע["״][אפעמ]|רע["״][אפ]|דנ["״][אפג]|בש["״][אפ]|תפ["״]ח|עש["״]מ|בר["״]ם|עמ["״]ה|עע["״]מ|ת["״][אפ]|ה["״][פמ]|פ["״]ה|ב["״]ש|סע["״]ש|ס["״]ק|ד["״]מ|תמ["״]ש|עת["״]מ)(?:\s|$)/;
+
 // Detect source type from free text
 export function detectSourceType(text: string): SourceType {
   const normalized = text.toLowerCase();
@@ -309,7 +313,13 @@ export function detectSourceType(text: string): SourceType {
   if (/[a-zA-Z]{3,}/.test(text) && /v\.|vs\./.test(normalized)) return 'foreign';
   if (/[A-Z][a-z]+\s+v\.\s+[A-Z]/.test(text)) return 'foreign';
 
-  // Check for case law
+  // ── Case-law detection (highest priority — must run before book/article heuristics) ──
+  // 1) Any recognized Israeli docket prefix → case law.
+  if (CASE_LAW_PREFIX_RE.test(hebrewText)) {
+    if (/פ"ד|פ"מ|פד"ע/.test(hebrewText)) return 'case_law_published';
+    return 'case_law_database';
+  }
+  // 2) Legacy abbreviation map fallback.
   for (const abbr of Object.values(CASE_TYPE_ABBREVIATIONS)) {
     if (hebrewText.includes(abbr)) {
       if (hebrewText.includes('פ"ד') || hebrewText.includes('פ"מ') || hebrewText.includes('פד"ע')) {
@@ -318,11 +328,14 @@ export function detectSourceType(text: string): SourceType {
       return 'case_law_database';
     }
   }
+  // 3) Party separator + docket number.
   if (/נ['׳'']|נגד|\sנ\s/.test(hebrewText) && /\d+\/\d+/.test(hebrewText)) {
     return 'case_law_database';
   }
-  // Party names without case number (e.g., "מדינת ישראל נגד זדורוב", "X נ׳ Y", or "X נ Y")
-  if (/[\u0590-\u05FF]+\s+(?:נגד|נ['׳'']|נ)\s+[\u0590-\u05FF]+/.test(hebrewText) && !/חוק |פקוד|תקנ|הצעת|אמנ|מהדורה/.test(hebrewText)) {
+  // 4) Party-name-only pattern (no docket): "X נגד Y" / "X נ' Y" / "X נ Y".
+  //    Excludes legislation/treaty/book keywords.
+  if (/[\u0590-\u05FF]+\s+(?:נגד|נ['׳'']|נ)\s+[\u0590-\u05FF]+/.test(hebrewText) &&
+      !/חוק |פקוד|תקנ|הצעת|אמנ|מהדורה|ספר /.test(hebrewText)) {
     return 'case_law_database';
   }
   
