@@ -2002,6 +2002,68 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     content = fixHebrewYearPrefix(content);
     content = normalizeArticleYearByRule2492(content);
 
+    // ─── Final case-law output guard ───
+    // When we ran a Perplexity case-law lookup, prevent the AI from inventing
+    // publication data (פ"ד volume/part/page) or contradicting verified parties.
+    if (isCaseLaw && verifiedCaseLawData.lookupAttempted) {
+      const v = verifiedCaseLawData;
+
+      // 1) Strip hallucinated פ"ד publications when publication was NOT confirmed.
+      //    Pattern: `פ"ד <hebrew-letters>(<digit-or-letters>)? <number>` possibly preceded by `, `.
+      if (!v.publishedConfirmed) {
+        const before = content;
+        // e.g. `, פ"ד נב(5) 721` — replace the whole publication block with a missing-data marker.
+        content = content.replace(
+          /,?\s*פ["״]ד\s+[\u05D0-\u05EA]+(?:\s*\([^)]*\))?\s*\d+/g,
+          ", [חסר: פרטי פרסום]",
+        );
+        if (content !== before) {
+          console.log("[case-law] Final guard stripped unverified פ\"ד publication");
+        }
+      }
+
+      // 2) When verified parties are known, detect contradicted parties and replace with placeholders.
+      if (v.party1 && v.party2) {
+        // Look for the bolded parties block: `**X** נ' **Y**`
+        const partyRe = /\*\*([^*]+)\*\*\s*נ['׳]\s*\*\*([^*]+)\*\*/;
+        const m = content.match(partyRe);
+        if (m) {
+          const out1 = m[1].trim();
+          const out2 = m[2].trim();
+          // Build normalized token sets (Hebrew letters + spaces only)
+          const norm = (s: string) => s.replace(/["״׳']/g, "").replace(/\s+/g, " ").trim();
+          const tokens = (s: string) => norm(s).split(/\s+/).filter((t) => t.length >= 2);
+          const overlap = (a: string[], b: string[]) => a.filter((t) => b.includes(t)).length;
+          const t1v = tokens(v.party1);
+          const t2v = tokens(v.party2);
+          const t1o = tokens(out1);
+          const t2o = tokens(out2);
+          // Either side1↔verified1 + side2↔verified2, OR cross-matched (parties may swap).
+          const direct = (overlap(t1v, t1o) > 0) && (overlap(t2v, t2o) > 0);
+          const cross  = (overlap(t1v, t2o) > 0) && (overlap(t2v, t1o) > 0);
+          if (!direct && !cross) {
+            console.log(`[case-law] Final guard detected contradicted parties. verified="${v.party1} נ' ${v.party2}", output="${out1} נ' ${out2}"`);
+            content = content.replace(
+              partyRe,
+              `**${v.party1}** נ' **${v.party2}**`,
+            );
+          }
+        }
+      }
+
+      // 3) If a docket is known and the output references a *different* docket of the same prefix,
+      //    swap it back. Only act when there is exactly one docket-style token in the output.
+      if (v.docket && v.docketRaw) {
+        const docketRe = /(?:בג["״]ץ|ע["״][אפעמ]|רע["״][אפ]|דנ["״][אפג]|בש["״][אפ]|תפ["״]ח|עש["״]מ|בר["״]ם|עמ["״]ה|עע["״]מ|ת["״][אפ]|ה["״][פמ]|פ["״]ה|ב["״]ש|סע["״]ש|ס["״]ק|ד["״]מ|תמ["״]ש|עת["״]מ)\s+\d+(?:[\/\-]\d+){1,2}/g;
+        const all = content.match(docketRe) || [];
+        const verifiedNorm = v.docket.replace(/\s+/g, " ").trim();
+        if (all.length >= 1 && !all.some((d) => d.replace(/\s+/g, " ").trim() === verifiedNorm)) {
+          console.log(`[case-law] Final guard rewriting docket(s) ${JSON.stringify(all)} → "${verifiedNorm}"`);
+          content = content.replace(docketRe, () => verifiedNorm);
+        }
+      }
+    }
+
     // Post-response safety net: if the AI returned a refusal/non-meaningful answer,
     // Map the backend override label to the client SourceType identifier so the
     // assistant message badge reflects the actual classification (e.g. when the
