@@ -1299,15 +1299,6 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
             if (partySearchResp.ok) {
               const psData = await partySearchResp.json();
               const psContent = psData.choices?.[0]?.message?.content || "";
-              console.log("[case-law] Party search result:", psContent);
-
-              const psJsonMatch = psContent.match(/\{[\s\S]*\}/);
-              if (psJsonMatch) {
-                try {
-                  const psParsed = JSON.parse(psJsonMatch[0]);
-            if (partySearchResp.ok) {
-              const psData = await partySearchResp.json();
-              const psContent = psData.choices?.[0]?.message?.content || "";
               const psCitations: string[] = Array.isArray(psData.citations) ? psData.citations : [];
               console.log("[case-law] Party search result:", psContent);
               console.log("[case-law] Party search citations:", JSON.stringify(psCitations));
