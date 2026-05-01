@@ -1,46 +1,56 @@
-**What actually happened with `רבינאי נגד מן שקד`**
+**What is going wrong**
 
-I traced the run in `citation_history` and the edge logs:
+The current fix still lets bad data pass in two places:
 
-1. At 07:20 the user typed `רבינאי נגד מן שקד`. The party-name branch ran and produced an output without a docket: `[חסר: סוג הליך] [חסר: מספר תיק] **רבינאי** נ' **מן שקד**`.
-2. At 07:21 the user clicked a disambiguation result and the saved citation became:
-   `ע"א 207/79 רבינאי נ' מן שקד בע"מ (בפירוק), פ"ד לה(1) 480 (1980)`.
+1. **Party-name results are only weakly grounded.** The backend accepts a result if either its own `sourceUrl` is trusted or the overall Perplexity response has any trusted citation. In the log for `רבינאי נגד מן שקד`, Perplexity returned `ע"א 158/77` but attached the same 2022 Supreme Court URL used for `ע"א 1456/22`, so the old case was not actually proven by its own source.
+2. **The final formatter can still invent data after a failed selection.** When clicking an option like `ע"א 3901/96`, the exact-number search returns `found:false` or unusable data, but the function still falls through to the general AI citation formatter with only a “don’t invent” hint. That model then fabricated: `ע"א 3901/96 דוד מן שקד נ' שלמה רבינאי, פ"ד נב(5) 721 (1998)`.
+3. **There is no post-output case-number guard.** The final citation is not checked against the selected/input docket and the verified parties, so a fabricated citation can reach the UI.
 
-The correct answer is **ע"א 158/77 רבינאי נ' מן שקד בע"מ, פ"ד לג(2) 281 (1979)**. So the docket, the פ"ד volume, and the year are all wrong. This is a Perplexity hallucination that we accepted without any verification.
+**Implementation plan**
 
-**Root cause**
+1. **Add deterministic extraction before AI for party-name searches**
+   - Use Perplexity Search API/raw search snippets first for party-name queries.
+   - Parse docket numbers and party names from snippets/URLs deterministically.
+   - For `רבינאי נגד מן שקד`, this should surface `ע"א 158/77` and the newer `ע"א 1456/22` only if each has its own matching evidence.
 
-The party-name branch at `supabase/functions/citation-chat/index.ts:1240-1284` calls Perplexity (`sonar`) and asks it to invent JSON with a `caseNumber` field. There are three concrete weaknesses that make hallucination almost guaranteed for older cases:
+2. **Require per-result source grounding**
+   - Replace the run-level `hasAnyTrustedCitation` fallback with per-result validation.
+   - A result must have either:
+     - a trusted `sourceUrl` whose URL/title/snippet/content contains the same docket number, or
+     - a raw search result whose title/snippet contains the same docket number and both party names.
+   - If Perplexity gives `sourceUrl` for a different case, drop that result.
 
-1. **No `search_domain_filter`.** Unlike the case-number branch in `case-law-search/index.ts` (which restricts to `lite.takdin.co.il`, `nevo.co.il`, `supreme.court.gov.il`, …), the party-name call lets Perplexity use any web source, so blog summaries and memory often beat actual court records — and pre-1980 פ"ד cases are exactly where Perplexity is least reliable.
-2. **No grounding check.** We accept whatever JSON the model returns. Even if `citations[]` is empty or points to non-authoritative pages, we still display the result and offer it for the user to click.
-3. **No docket↔פ"ד consistency check.** A docket like `207/79` cannot have been published in פ"ד לה(1) of 1980 except by hallucination (לה(1) volumes are 1980 publications of late-1970s cases, but `207/79` does not match `158/77` regardless). The edge function does not cross-validate `caseNumber`, `padi_volume`, and `year` against each other.
+3. **Make disambiguation options safe**
+   - When multiple options are shown, include only validated options.
+   - Ensure the option text includes the exact docket number used for later verification.
+   - If nothing is validated, show a missing-data response asking for a precise docket instead of offering guessed options.
 
-**Plan**
+4. **Short-circuit failed exact docket selections**
+   - In the case-number branch, if exact lookup returns `found:false` or fails required checks, return a safe response immediately instead of sending the request to the general AI formatter.
+   - The response should contain `[חסר: ...]` fields or a concise message that the exact docket was not verified.
+   - This specifically prevents `ע"א 3901/96` from being repurposed into made-up parties/publication data.
 
-1. **Add domain filtering to the party-name Perplexity call** in `supabase/functions/citation-chat/index.ts` (~line 1246). Add `search_domain_filter: ["supreme.court.gov.il","court.gov.il","gov.il","nevo.co.il","takdin.co.il","lite.takdin.co.il","psakdin.co.il"]` and switch the model from `sonar` to `sonar-pro`, matching what `partyLookup.ts` already does for the academic flow. This alone removes most blog-driven hallucinations.
+5. **Add a final output validator for case-law citations**
+   - After the AI gateway response, if the request is case-law:
+     - verify the output docket matches the user input/selected docket when one exists;
+     - verify party tokens are not contradicted by verified search data;
+     - if a `פ"ד` volume/page appears, allow it only when the backend found verified publication fields.
+   - If validation fails, replace the response with the safe missing-data citation rather than showing hallucinated metadata.
 
-2. **Require source-grounded results.** After parsing `psParsed.results`, only keep entries where Perplexity returned at least one citation URL whose host matches the trusted list. The Perplexity response exposes `citations` at the top level — log them and drop any result whose docket/parties cannot be traced to a trusted URL. If nothing survives the filter, fall through to the existing "no results" hint asking the user for a docket.
+6. **Improve JSON parsing robustness**
+   - Add a reusable `extractJsonObject` helper that strips markdown fences and avoids greedy parsing problems.
+   - Use it in both the party-name and exact-number case-law branches.
 
-3. **Cross-validate docket/year/פ"ד before showing a result.** Add a small sanity check in the same block:
-   - The docket year (the digits after `/` or `-` in `caseNumber`) must be ≤ `year` and within ~5 years of it.
-   - If `isPublished=true`, `padi_volume` must be a known mapping (or at least `year >= dockerYear`); if any of these fail, drop the entry.
-   This prevents the `207/79 → לה(1) 1980` style mismatch from ever reaching the user.
-
-4. **Tighten the disambiguation UI hint** so the AI is told explicitly: *"Show the user the list, but if any field is missing or uncertain, mark it `[חסר:…]` and never invent a docket."* Also add a final warning line: *"אם לא ניתן לוודא את מספר התיק ממקור מוסמך — השמט את ההצעה."*
-
-5. **Optional but recommended — verify the chosen case after disambiguation.** When the user clicks a `[בחירת תוצאה]` line, before saving to history call `case-law-search` (already exists) with the chosen `caseType + caseNumber`. If it returns `found:false`, surface a yellow warning ("לא הצלחנו לאמת את התיק במאגרים הציבוריים — בדוק את המספר") instead of silently saving a hallucinated reference.
-
-6. **Logging.** Log Perplexity's `citations` array next to each `Party search result` line so the next time this happens we can see at a glance whether the answer was sourced or invented.
-
-**Expected result**
-
-For `רבינאי נגד מן שקד`:
-- The party-name search will be domain-restricted to court/legal databases.
-- Perplexity should now find ע"א 158/77 (it appears on supreme.court.gov.il and nevo.co.il); if not, the result is dropped instead of replaced by a hallucinated `207/79`.
-- The cross-validation guard would have caught `207/79` + `פ"ד לה(1) 1980` as inconsistent and removed it from the disambiguation list.
-- If nothing survives the guards, the user sees an honest "couldn't verify, please provide a docket" message rather than a confidently wrong citation.
+7. **Add logging for why each candidate is accepted or dropped**
+   - Log candidate docket, source URL, matched evidence, and rejection reason.
+   - This will make future failures diagnosable from Lovable Cloud logs.
 
 **Files to change**
-- `supabase/functions/citation-chat/index.ts` — party-name Perplexity call (search filter, sonar-pro, citation grounding, sanity checks, hint text, logging).
-- (Optional, step 5) `src/pages/Index.tsx` — call `case-law-search` for verification on disambiguation selection before saving.
+
+- `supabase/functions/citation-chat/index.ts`
+  - Harden party-name search validation.
+  - Add exact-selection short-circuit.
+  - Add final case-law output guard.
+  - Add safer JSON extraction and better logs.
+
+No database changes are required.
