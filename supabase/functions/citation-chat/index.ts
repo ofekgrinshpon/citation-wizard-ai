@@ -1032,62 +1032,114 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   }
 
                   // ── Date recovery: if Perplexity returned a case but no full date, run a focused date lookup ──
+                  // Strategy: deterministic extraction from Perplexity Search API snippets first
+                  // (lite.takdin.co.il search-result cards expose DD/MM/YYYY in title/snippet),
+                  // then fall back to a focused LLM read of the same cards.
                   const dateLooksValid = (d: any) => typeof d === "string" && /^\d{1,2}\.\d{1,2}\.\d{4}$/.test(d.trim());
                   if (parsed.found && !dateLooksValid(parsed.date)) {
-                    const dateRecoveryQuery = `site:lite.takdin.co.il "${fullCaseRef}" ${parsed.party1 || ""} ${parsed.party2 || ""}`.trim();
-                    console.log(`[case-law] No full date for ${fullCaseRef}, running date-recovery search... query="${dateRecoveryQuery}"`);
+                    const partyHints = [parsed.party1, parsed.party2]
+                      .filter((s: unknown) => typeof s === "string" && s.trim())
+                      .map((s: string) => s.trim())
+                      .join(" ");
+                    const searchQ = `site:lite.takdin.co.il "${rawCaseNum}" ${partyHints}`.trim();
+                    console.log(`[case-law] No full date for ${fullCaseRef}, running deterministic date search... query="${searchQ}"`);
+
+                    // Step 1 — Perplexity Search API (raw snippets, no LLM interpretation)
+                    let recovered = "";
                     try {
-                      const dateResp = await fetch("https://api.perplexity.ai/chat/completions", {
+                      const searchResp = await fetch("https://api.perplexity.ai/search", {
                         method: "POST",
                         headers: {
                           Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
                           "Content-Type": "application/json",
                         },
-                        body: JSON.stringify({
-                          model: "sonar-pro",
-                          search_domain_filter: ["lite.takdin.co.il", "nevo.co.il", "court.gov.il", "psakdin.co.il"],
-                          temperature: 0,
-                          messages: [
-                            {
-                              role: "system",
-                              content: `You extract judgment dates of Israeli court cases from live search results.
-
-CONTEXT — how to read the תקדין search-results page (lite.takdin.co.il/search-results):
-• Each result is a CARD. The card itself contains the FULL judgment date in DD/MM/YYYY format (e.g. 19/10/2021), usually in the corner / metadata line of the card.
-• You do NOT need to open the case page or any PDF. The date is on the search-results card.
-• The card also shows the parties in its title and the docket number (e.g. סע"ש 50358-09-16) with the court in parentheses.
-
-TASK:
-1. Find the search-result card whose docket number matches EXACTLY the docket given by the user.
-2. Read the DD/MM/YYYY date from that card.
-3. Convert / to . — e.g. 19/10/2021 → 19.10.2021.
-4. Reply with JSON ONLY: {"date":"DD.MM.YYYY"}.
-5. If you cannot find a card whose docket matches exactly, reply {"date":""}.
-
-NEVER refuse. NEVER explain. NEVER apologize. NEVER claim you cannot browse. Output JSON only, no prose, no code fences.`,
-                            },
-                            {
-                              role: "user",
-                              content: dateRecoveryQuery,
-                            },
-                          ],
-                        }),
+                        body: JSON.stringify({ query: searchQ }),
                       });
-                      if (dateResp.ok) {
-                        const dData = await dateResp.json();
-                        const dContent = dData.choices?.[0]?.message?.content || "";
-                        console.log("[case-law] Date-recovery search result:", dContent);
-                        const dJson = dContent.match(/\{[\s\S]*\}/);
-                        if (dJson) {
-                          const dParsed = JSON.parse(dJson[0]);
-                          if (dateLooksValid(dParsed.date)) {
-                            console.log(`[case-law] Date recovered: ${dParsed.date}`);
-                            parsed.date = dParsed.date.trim();
+                      if (searchResp.ok) {
+                        const sData = await searchResp.json();
+                        const items = Array.isArray(sData?.results) ? sData.results
+                          : Array.isArray(sData?.web_results) ? sData.web_results
+                          : Array.isArray(sData?.search_results) ? sData.search_results
+                          : [];
+                        // Look for snippet/title containing the exact docket and a DD/MM/YYYY or DD.MM.YYYY date.
+                        const dateRe = /(\b\d{1,2})[\/\.](\d{1,2})[\/\.](\d{4})\b/;
+                        for (const it of items) {
+                          const blob = `${it?.title || ""} ${it?.snippet || ""} ${it?.description || ""} ${it?.url || ""}`;
+                          if (!blob.includes(rawCaseNum)) continue;
+                          const m = blob.match(dateRe);
+                          if (m) {
+                            const dd = m[1].padStart(2, "0");
+                            const mm = m[2].padStart(2, "0");
+                            const yyyy = m[3];
+                            const candidate = `${dd}.${mm}.${yyyy}`;
+                            // sanity: year must be plausible (not in the future, after docket year)
+                            const docketYearMatch = rawCaseNum.match(/-(\d{2,4})$/);
+                            const docketYear = docketYearMatch
+                              ? (docketYearMatch[1].length === 2 ? 2000 + parseInt(docketYearMatch[1]) : parseInt(docketYearMatch[1]))
+                              : 0;
+                            const yNum = parseInt(yyyy);
+                            if (yNum >= docketYear && yNum <= new Date().getFullYear() + 1) {
+                              recovered = candidate;
+                              console.log(`[case-law] Date recovered deterministically from snippet: ${recovered}`);
+                              break;
+                            }
                           }
                         }
+                      } else {
+                        console.log(`[case-law] Perplexity Search API returned ${searchResp.status}`);
                       }
-                    } catch (dateErr) {
-                      console.error("[case-law] Date-recovery search error:", dateErr);
+                    } catch (sErr) {
+                      console.error("[case-law] Search-API date recovery error:", sErr);
+                    }
+
+                    // Step 2 — fallback to focused LLM read of takdin search-result cards
+                    if (!recovered) {
+                      try {
+                        const dateResp = await fetch("https://api.perplexity.ai/chat/completions", {
+                          method: "POST",
+                          headers: {
+                            Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            model: "sonar-pro",
+                            search_domain_filter: ["lite.takdin.co.il", "nevo.co.il", "court.gov.il", "psakdin.co.il"],
+                            temperature: 0,
+                            messages: [
+                              {
+                                role: "system",
+                                content: `Return JSON only: {"date":"DD.MM.YYYY"} or {"date":""}.
+The תקדין search-results card for the docket shows the full DD/MM/YYYY judgment date in its metadata line.
+Find the card whose docket EXACTLY matches the user input, read the date, convert / to . and return it.
+If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explain.`,
+                              },
+                              {
+                                role: "user",
+                                content: `${searchQ}\nDocket to match exactly: ${rawCaseNum}`,
+                              },
+                            ],
+                          }),
+                        });
+                        if (dateResp.ok) {
+                          const dData = await dateResp.json();
+                          const dContent = dData.choices?.[0]?.message?.content || "";
+                          console.log("[case-law] LLM date-recovery fallback result:", dContent);
+                          const dJson = dContent.match(/\{[\s\S]*\}/);
+                          if (dJson) {
+                            const dParsed = JSON.parse(dJson[0]);
+                            if (dateLooksValid(dParsed.date)) {
+                              recovered = dParsed.date.trim();
+                              console.log(`[case-law] Date recovered via LLM fallback: ${recovered}`);
+                            }
+                          }
+                        }
+                      } catch (dateErr) {
+                        console.error("[case-law] LLM date-recovery error:", dateErr);
+                      }
+                    }
+
+                    if (recovered) {
+                      parsed.date = recovered;
                     }
                   }
 
