@@ -1244,20 +1244,33 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                model: "sonar",
+                model: "sonar-pro",
+                search_domain_filter: [
+                  "supreme.court.gov.il",
+                  "court.gov.il",
+                  "gov.il",
+                  "nevo.co.il",
+                  "takdin.co.il",
+                  "lite.takdin.co.il",
+                  "psakdin.co.il",
+                ],
                 messages: [
                   {
                     role: "system",
-                    content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו. החזר תשובה בפורמט JSON בלבד.
+                    content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו, אך ורק ממקורות מוסמכים (אתר בתי המשפט, נבו, תקדין, פסקדין). החזר תשובה בפורמט JSON בלבד.
 הפורמט:
 {"results":[
-  {"found":true,"caseType":"סוג הליך","caseNumber":"מספר/שנה","party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY"}
+  {"found":true,"caseType":"סוג הליך","caseNumber":"מספר/שנה","party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","sourceUrl":"כתובת המקור המוסמך שממנו נשלפו הפרטים"}
 ]}
-כללים:
+כללים קריטיים נגד הזיות:
+- כל תוצאה חייבת להיות מבוססת על URL מוסמך אמיתי שמופיע ב-sourceUrl. אל תמציא מספרי תיקים, כרכי פ"ד או תאריכים.
+- אם אינך יכול לאמת את מספר התיק במקור מוסמך — השמט את התוצאה לחלוטין במקום לנחש.
+- שנת מספר התיק (אחרי / או -) חייבת להיות עקבית עם year (פער של עד 5 שנים).
+- אם isPublished=true, וודא ש-padi_volume תואם לשנה (פ"ד מתפרסם לרוב 1-3 שנים אחרי הגשת התיק).
 - מקסימום 5 תוצאות, ממוינות מהחדש לישן
 - שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
 - כלול את כל סוגי ההליכים (ערעור, בקשת רשות ערעור, משפט ראשוני וכו')
-- אם לא נמצאו תוצאות, החזר {"results":[]}`,
+- אם לא נמצאו תוצאות מאומתות, החזר {"results":[]}`,
                   },
                   {
                     role: "user",
@@ -1276,7 +1289,7 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                       const courtConstraint = partyPrefix && COURT_HINT_BY_PREFIX[partyPrefix]
                         ? ` הגבל את החיפוש לתיקים שנדונו ${COURT_HINT_BY_PREFIX[partyPrefix]} בלבד.`
                         : '';
-                      return `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}.${courtConstraint} כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפד"י.`;
+                      return `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}.${courtConstraint} כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפד"י. החזר רק תוצאות שאתה יכול לאמת ב-URL מוסמך.`;
                     })(),
                   },
                 ],
@@ -1286,17 +1299,74 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
             if (partySearchResp.ok) {
               const psData = await partySearchResp.json();
               const psContent = psData.choices?.[0]?.message?.content || "";
+              const psCitations: string[] = Array.isArray(psData.citations) ? psData.citations : [];
               console.log("[case-law] Party search result:", psContent);
+              console.log("[case-law] Party search citations:", JSON.stringify(psCitations));
+
+              const TRUSTED_HOSTS = [
+                "supreme.court.gov.il",
+                "court.gov.il",
+                "gov.il",
+                "nevo.co.il",
+                "takdin.co.il",
+                "lite.takdin.co.il",
+                "psakdin.co.il",
+              ];
+              const isTrustedUrl = (u: unknown): boolean => {
+                if (typeof u !== "string" || !u) return false;
+                try {
+                  const host = new URL(u).hostname.toLowerCase();
+                  return TRUSTED_HOSTS.some((h) => host === h || host.endsWith(`.${h}`));
+                } catch {
+                  return false;
+                }
+              };
+              const hasAnyTrustedCitation = psCitations.some(isTrustedUrl);
 
               const psJsonMatch = psContent.match(/\{[\s\S]*\}/);
               if (psJsonMatch) {
                 try {
                   const psParsed = JSON.parse(psJsonMatch[0]);
-                  const results = Array.isArray(psParsed.results) ? psParsed.results.filter((r: Record<string, unknown>) => r.found) : [];
+                  const rawResults = Array.isArray(psParsed.results)
+                    ? psParsed.results.filter((r: Record<string, unknown>) => r.found)
+                    : [];
+
+                  // Sanity-check + grounding filter to remove hallucinated dockets.
+                  const sanityCheck = (r: Record<string, unknown>): { ok: boolean; reason?: string } => {
+                    const caseNumStr = typeof r.caseNumber === "string" ? r.caseNumber : "";
+                    const yearStr = typeof r.year === "string" ? r.year : "";
+                    // Extract docket year (digits after / or -)
+                    const dyMatch = caseNumStr.match(/[\/\-](\d{2,4})\b/);
+                    if (dyMatch && yearStr && /^\d{4}$/.test(yearStr)) {
+                      let dy = parseInt(dyMatch[1], 10);
+                      if (dy < 100) dy = dy < 50 ? 2000 + dy : 1900 + dy;
+                      const decisionYear = parseInt(yearStr, 10);
+                      if (decisionYear < dy - 1) return { ok: false, reason: `decision year ${decisionYear} before docket year ${dy}` };
+                      if (decisionYear > dy + 15) return { ok: false, reason: `decision year ${decisionYear} too far from docket year ${dy}` };
+                    }
+                    // Per-result trust: prefer explicit sourceUrl, otherwise fall back
+                    // to the run-level citations we already validated.
+                    const src = (r as { sourceUrl?: unknown }).sourceUrl;
+                    const trustedSrc = isTrustedUrl(src);
+                    if (!trustedSrc && !hasAnyTrustedCitation) {
+                      return { ok: false, reason: "no trusted source citation" };
+                    }
+                    return { ok: true };
+                  };
+
+                  const results: Array<Record<string, unknown>> = [];
+                  for (const r of rawResults) {
+                    const check = sanityCheck(r as Record<string, unknown>);
+                    if (check.ok) {
+                      results.push(r as Record<string, unknown>);
+                    } else {
+                      console.log(`[case-law] Dropping hallucinated/unverifiable result ${r.caseType || "?"} ${r.caseNumber || "?"}: ${check.reason}`);
+                    }
+                  }
 
                   if (results.length === 0) {
-                    console.log(`[case-law] No results found for party search "${searchQuery}"`);
-                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו פסקי דין בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק (למשל ע"פ 1234/56) לחיפוש מדויק יותר.\n══`;
+                    console.log(`[case-law] No verifiable results for party search "${searchQuery}" (raw=${rawResults.length})`);
+                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו פסקי דין מאומתים במאגרים ציבוריים בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק (למשל ע"א 158/77) לחיפוש מדויק יותר.\nאל תמציא מספר תיק או פרטי פרסום.\n══`;
                   } else if (results.length === 1) {
                     // Single result – use same logic as case-number search
                     const r = results[0] as Record<string, unknown>;
@@ -1334,7 +1404,7 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                     caseLawHint = details;
                   } else {
                     // Multiple results – present disambiguation list
-                    console.log(`[case-law] Found ${results.length} results for party search "${searchQuery}"`);
+                    console.log(`[case-law] Found ${results.length} verified results for party search "${searchQuery}"`);
                     let details = `\n\n══ נמצאו מספר פסקי דין תואמים ══\n`;
                     details += `הצג למשתמש את הרשימה הבאה ובקש ממנו לבחור את פסק הדין הרלוונטי:\n\n`;
                     results.forEach((r: Record<string, unknown>, i: number) => {
@@ -1344,7 +1414,7 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                       const court = r.court || "";
                       details += `${i + 1}. ${ref} ${parties}${year ? ` (${year})` : ""}${court ? ` — ${court}` : ""}\n`;
                     });
-                    details += `\n══ שאל את המשתמש: "נמצאו מספר פסקי דין בין הצדדים. לאיזה פסק דין התכוונת?" והצג את הרשימה הממוספרת. לאחר שהמשתמש יבחר, עצב את האזכור לפי הנתונים שנמצאו. ══`;
+                    details += `\n══ שאל את המשתמש: "נמצאו מספר פסקי דין בין הצדדים. לאיזה פסק דין התכוונת?" והצג את הרשימה הממוספרת. אם שדה כלשהו חסר או לא ודאי — סמן [חסר:...] ואל תמציא מספרי תיקים, כרכי פ"ד או תאריכים. ══`;
                     caseLawHint = details;
                   }
                 } catch (e) {

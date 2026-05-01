@@ -1,59 +1,46 @@
-**What I found**
+**What actually happened with `רבינאי נגד מן שקד`**
 
-The backend is correctly recognizing `סע"ש 50358-09-16` as case law and the case-law search is running. The recent logs show:
+I traced the run in `citation_history` and the edge logs:
 
-- `isCaseLaw=true`
-- `caseNumberMatch=סע"ש 50358-09-16`
-- `overrideLabel=פסיקה (מאגר)`
-- The generated citation is: `סע"ש 50358-09-16 ... (תקדין [חסר: תאריך מלא])`
+1. At 07:20 the user typed `רבינאי נגד מן שקד`. The party-name branch ran and produced an output without a docket: `[חסר: סוג הליך] [חסר: מספר תיק] **רבינאי** נ' **מן שקד**`.
+2. At 07:21 the user clicked a disambiguation result and the saved citation became:
+   `ע"א 207/79 רבינאי נ' מן שקד בע"מ (בפירוק), פ"ד לה(1) 480 (1980)`.
 
-So the issue is not that the backend still thinks this is a book. There are two separate failures:
+The correct answer is **ע"א 158/77 רבינאי נ' מן שקד בע"מ, פ"ד לג(2) 281 (1979)**. So the docket, the פ"ד volume, and the year are all wrong. This is a Perplexity hallucination that we accepted without any verification.
 
-1. **The date recovery still returns empty**
-   - The first Perplexity lookup finds the parties and database, but returns `date:""`.
-   - The focused date-recovery lookup also returns `{"date":""}`.
-   - The current prompt asks the model to read Takdin result cards, but it still relies on the LLM search answer rather than a deterministic extraction path.
+**Root cause**
 
-2. **The displayed/history source type is still saved as unknown/null**
-   - The backend returns `sourceTypeOverride=case_law_database`, but `src/pages/Index.tsx` still saves `citation_history.source_type` from the original client-side value.
-   - In the database, the last three `סע"ש 50358-09-16` entries have `source_type = null`, which is why the UI/history can show `לא מזוהה` even though the backend classified it as case law.
+The party-name branch at `supabase/functions/citation-chat/index.ts:1240-1284` calls Perplexity (`sonar`) and asks it to invent JSON with a `caseNumber` field. There are three concrete weaknesses that make hallucination almost guaranteed for older cases:
+
+1. **No `search_domain_filter`.** Unlike the case-number branch in `case-law-search/index.ts` (which restricts to `lite.takdin.co.il`, `nevo.co.il`, `supreme.court.gov.il`, …), the party-name call lets Perplexity use any web source, so blog summaries and memory often beat actual court records — and pre-1980 פ"ד cases are exactly where Perplexity is least reliable.
+2. **No grounding check.** We accept whatever JSON the model returns. Even if `citations[]` is empty or points to non-authoritative pages, we still display the result and offer it for the user to click.
+3. **No docket↔פ"ד consistency check.** A docket like `207/79` cannot have been published in פ"ד לה(1) of 1980 except by hallucination (לה(1) volumes are 1980 publications of late-1970s cases, but `207/79` does not match `158/77` regardless). The edge function does not cross-validate `caseNumber`, `padi_volume`, and `year` against each other.
 
 **Plan**
 
-1. **Fix source-type persistence on the frontend**
-   - In `src/pages/Index.tsx`, compute an `effectiveSourceType` using the backend override:
-     - `lastSourceTypeOverrideRef.current ?? sourceType`
-   - Use that effective value consistently for:
-     - the assistant badge (`messageSourceTypes`)
-     - `citation_history.source_type`
-     - verified-source saving
-     - activity logging
-   - This should stop `source_type` being saved as `null` for backend-confirmed case-law queries.
+1. **Add domain filtering to the party-name Perplexity call** in `supabase/functions/citation-chat/index.ts` (~line 1246). Add `search_domain_filter: ["supreme.court.gov.il","court.gov.il","gov.il","nevo.co.il","takdin.co.il","lite.takdin.co.il","psakdin.co.il"]` and switch the model from `sonar` to `sonar-pro`, matching what `partyLookup.ts` already does for the academic flow. This alone removes most blog-driven hallucinations.
 
-2. **Add a backend post-processing safety net for case-law citations**
-   - In `supabase/functions/citation-chat/index.ts`, after the AI response is produced, if the request is case law and the response lacks a full date, normalize the response to keep the case-law structure and preserve the `sourceTypeOverride`.
-   - Ensure missing date is represented as `[חסר: תאריך מלא]`, not as a refusal/unknown source.
+2. **Require source-grounded results.** After parsing `psParsed.results`, only keep entries where Perplexity returned at least one citation URL whose host matches the trusted list. The Perplexity response exposes `citations` at the top level — log them and drop any result whose docket/parties cannot be traced to a trusted URL. If nothing survives the filter, fall through to the existing "no results" hint asking the user for a docket.
 
-3. **Make Takdin date extraction deterministic instead of prompt-only**
-   - Update the case-law date recovery path to use a direct search/results strategy before asking the LLM:
-     - try the Perplexity Search API or a tightly scoped search query for `lite.takdin.co.il/search-results?txtSearch=<docket>`
-     - inspect returned snippets/titles/URLs for `DD/MM/YYYY` or `DD.MM.YYYY`
-     - require exact docket match before accepting a date
-   - Only fall back to the current LLM date-recovery prompt if deterministic extraction fails.
+3. **Cross-validate docket/year/פ"ד before showing a result.** Add a small sanity check in the same block:
+   - The docket year (the digits after `/` or `-` in `caseNumber`) must be ≤ `year` and within ~5 years of it.
+   - If `isPublished=true`, `padi_volume` must be a known mapping (or at least `year >= dockerYear`); if any of these fail, drop the entry.
+   This prevents the `207/79 → לה(1) 1980` style mismatch from ever reaching the user.
 
-4. **Remove stale contradictory Takdin instructions**
-   - The main case-law search prompt still contains older instructions saying to follow the Takdin case link for the date.
-   - Replace that with the correct instruction: use the Takdin search-result card first because the docket, parties, court and date are already visible there.
+4. **Tighten the disambiguation UI hint** so the AI is told explicitly: *"Show the user the list, but if any field is missing or uncertain, mark it `[חסר:…]` and never invent a docket."* Also add a final warning line: *"אם לא ניתן לוודא את מספר התיק ממקור מוסמך — השמט את ההצעה."*
 
-5. **Add diagnostic logs for the final payload**
-   - Log the final `sourceTypeOverride`, whether a valid date was found, and what `source_type` the frontend is expected to persist.
-   - This will make the next check conclusive instead of ambiguous.
+5. **Optional but recommended — verify the chosen case after disambiguation.** When the user clicks a `[בחירת תוצאה]` line, before saving to history call `case-law-search` (already exists) with the chosen `caseType + caseNumber`. If it returns `found:false`, surface a yellow warning ("לא הצלחנו לאמת את התיק במאגרים הציבוריים — בדוק את המספר") instead of silently saving a hallucinated reference.
 
-**Expected result after implementation**
+6. **Logging.** Log Perplexity's `citations` array next to each `Party search result` line so the next time this happens we can see at a glance whether the answer was sourced or invented.
 
-For `סע"ש 50358-09-16`:
+**Expected result**
 
-- The source badge should show **פסיקה (מאגר)**, not `לא מזוהה`.
-- History should save `source_type` as `פסיקה (מאגר)` or the equivalent case-law category, not `null`.
-- If the Takdin card date can be extracted, the citation should include that full date.
-- If the date cannot be extracted reliably, the citation should still remain classified as case law and display `[חסר: תאריך מלא]` rather than falling back to unknown/book behavior.
+For `רבינאי נגד מן שקד`:
+- The party-name search will be domain-restricted to court/legal databases.
+- Perplexity should now find ע"א 158/77 (it appears on supreme.court.gov.il and nevo.co.il); if not, the result is dropped instead of replaced by a hallucinated `207/79`.
+- The cross-validation guard would have caught `207/79` + `פ"ד לה(1) 1980` as inconsistent and removed it from the disambiguation list.
+- If nothing survives the guards, the user sees an honest "couldn't verify, please provide a docket" message rather than a confidently wrong citation.
+
+**Files to change**
+- `supabase/functions/citation-chat/index.ts` — party-name Perplexity call (search filter, sonar-pro, citation grounding, sanity checks, hint text, logging).
+- (Optional, step 5) `src/pages/Index.tsx` — call `case-law-search` for verification on disambiguation selection before saving.
