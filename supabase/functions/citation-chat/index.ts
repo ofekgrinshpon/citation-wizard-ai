@@ -1331,6 +1331,35 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                     ? psParsed.results.filter((r: Record<string, unknown>) => r.found)
                     : [];
 
+                  // Build a normalized list of docket "fingerprints" found in trusted citations.
+                  // A docket fingerprint is the digit sequence with `/` or `-` separators (e.g. "158/77").
+                  // We extract these from each trusted citation URL itself (path/query) so we can
+                  // verify that a result's claimed caseNumber actually appears in a trusted source —
+                  // not just that the response cited *some* trusted URL.
+                  const extractDocketFingerprints = (text: string): string[] => {
+                    const out: string[] = [];
+                    const re = /\b(\d{1,6})[\/\-](\d{2,4})(?:[\/\-](\d{2,4}))?\b/g;
+                    let m: RegExpExecArray | null;
+                    while ((m = re.exec(text)) !== null) {
+                      out.push(m[3] ? `${m[1]}-${m[2]}-${m[3]}` : `${m[1]}/${m[2]}`);
+                    }
+                    return out;
+                  };
+                  const trustedCitationFingerprints = new Set<string>();
+                  for (const u of psCitations) {
+                    if (!isTrustedUrl(u)) continue;
+                    try {
+                      const decoded = decodeURIComponent(u);
+                      for (const fp of extractDocketFingerprints(decoded)) trustedCitationFingerprints.add(fp);
+                    } catch { /* ignore decode errors */ }
+                  }
+                  // Also mine fingerprints from the response text — Perplexity sometimes echoes
+                  // docket numbers in prose that came from a snippet, even when the URL is opaque.
+                  const responseTextFingerprints = new Set(extractDocketFingerprints(psContent));
+
+                  const normalizeDocket = (s: string) =>
+                    s.replace(/\s+/g, "").replace(/-/g, /^\d+-\d+-\d+$/.test(s.replace(/\s+/g, "")) ? "-" : "/");
+
                   // Sanity-check + grounding filter to remove hallucinated dockets.
                   const sanityCheck = (r: Record<string, unknown>): { ok: boolean; reason?: string } => {
                     const caseNumStr = typeof r.caseNumber === "string" ? r.caseNumber : "";
@@ -1344,12 +1373,30 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                       if (decisionYear < dy - 1) return { ok: false, reason: `decision year ${decisionYear} before docket year ${dy}` };
                       if (decisionYear > dy + 15) return { ok: false, reason: `decision year ${decisionYear} too far from docket year ${dy}` };
                     }
-                    // Per-result trust: prefer explicit sourceUrl, otherwise fall back
-                    // to the run-level citations we already validated.
+                    // Per-result grounding: the claimed docket must appear in a trusted-citation URL,
+                    // OR the result's own sourceUrl must be trusted AND contain that docket,
+                    // OR the docket must be echoed in the response text alongside a trusted citation.
+                    const claimedFp = normalizeDocket(caseNumStr);
                     const src = (r as { sourceUrl?: unknown }).sourceUrl;
-                    const trustedSrc = isTrustedUrl(src);
-                    if (!trustedSrc && !hasAnyTrustedCitation) {
-                      return { ok: false, reason: "no trusted source citation" };
+                    const srcStr = typeof src === "string" ? src : "";
+                    const trustedSrc = isTrustedUrl(srcStr);
+                    let srcContainsDocket = false;
+                    if (trustedSrc) {
+                      try {
+                        const decoded = decodeURIComponent(srcStr);
+                        srcContainsDocket = extractDocketFingerprints(decoded).includes(claimedFp);
+                      } catch { /* ignore */ }
+                    }
+                    const inTrustedCitation = trustedCitationFingerprints.has(claimedFp);
+                    const inResponseText = responseTextFingerprints.has(claimedFp);
+                    if (!srcContainsDocket && !inTrustedCitation && !inResponseText) {
+                      return { ok: false, reason: `docket ${caseNumStr} not found in trusted sources (sourceUrlTrusted=${trustedSrc})` };
+                    }
+                    if (!trustedSrc && !inTrustedCitation) {
+                      // Allow only when the docket appears in response text AND there is at least one trusted citation overall.
+                      if (!psCitations.some(isTrustedUrl)) {
+                        return { ok: false, reason: "no trusted citation in response" };
+                      }
                     }
                     return { ok: true };
                   };
