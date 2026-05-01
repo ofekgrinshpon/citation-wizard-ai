@@ -1034,7 +1034,8 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   // ── Date recovery: if Perplexity returned a case but no full date, run a focused date lookup ──
                   const dateLooksValid = (d: any) => typeof d === "string" && /^\d{1,2}\.\d{1,2}\.\d{4}$/.test(d.trim());
                   if (parsed.found && !dateLooksValid(parsed.date)) {
-                    console.log(`[case-law] No full date for ${fullCaseRef}, running date-recovery search...`);
+                    const dateRecoveryQuery = `site:lite.takdin.co.il "${fullCaseRef}" ${parsed.party1 || ""} ${parsed.party2 || ""}`.trim();
+                    console.log(`[case-law] No full date for ${fullCaseRef}, running date-recovery search... query="${dateRecoveryQuery}"`);
                     try {
                       const dateResp = await fetch("https://api.perplexity.ai/chat/completions", {
                         method: "POST",
@@ -1049,11 +1050,25 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                           messages: [
                             {
                               role: "system",
-                              content: `You are a search-result extractor. The host runtime gives you live web search results from the configured domains. Extract the judgment date of the Israeli court case from those results and respond with JSON ONLY: {"date":"DD.MM.YYYY"} if found, or {"date":""} if not found in the search results. Never refuse. Never explain. Never apologize. Never claim you cannot browse — search results are provided to you. Output JSON only, no prose, no code fences.`,
+                              content: `You extract judgment dates of Israeli court cases from live search results.
+
+CONTEXT — how to read the תקדין search-results page (lite.takdin.co.il/search-results):
+• Each result is a CARD. The card itself contains the FULL judgment date in DD/MM/YYYY format (e.g. 19/10/2021), usually in the corner / metadata line of the card.
+• You do NOT need to open the case page or any PDF. The date is on the search-results card.
+• The card also shows the parties in its title and the docket number (e.g. סע"ש 50358-09-16) with the court in parentheses.
+
+TASK:
+1. Find the search-result card whose docket number matches EXACTLY the docket given by the user.
+2. Read the DD/MM/YYYY date from that card.
+3. Convert / to . — e.g. 19/10/2021 → 19.10.2021.
+4. Reply with JSON ONLY: {"date":"DD.MM.YYYY"}.
+5. If you cannot find a card whose docket matches exactly, reply {"date":""}.
+
+NEVER refuse. NEVER explain. NEVER apologize. NEVER claim you cannot browse. Output JSON only, no prose, no code fences.`,
                             },
                             {
                               role: "user",
-                              content: `"${fullCaseRef}" ${parsed.party1 || ""} ${parsed.party2 || ""} תאריך פסק דין site:lite.takdin.co.il OR site:nevo.co.il`,
+                              content: dateRecoveryQuery,
                             },
                           ],
                         }),
@@ -1787,6 +1802,17 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     content = normalizeArticleYearByRule2492(content);
 
     // Post-response safety net: if the AI returned a refusal/non-meaningful answer,
+    // Map the backend override label to the client SourceType identifier so the
+    // assistant message badge reflects the actual classification (e.g. when the
+    // client guessed "ספר" but backend confirmed case-law via docket prefix).
+    // Computed BEFORE the refusal short-circuit so the badge stays correct even
+    // when the AI's prose is thin enough to look like a refusal.
+    let sourceTypeOverride: string | null = null;
+    if (caseLawOverrideLabel === "פסיקה (דפוס)") sourceTypeOverride = "case_law_published";
+    else if (caseLawOverrideLabel === "פסיקה (מאגר)") sourceTypeOverride = "case_law_database";
+    else if (isCaseLaw) sourceTypeOverride = "case_law_database";
+
+    // If the AI refused (couldn't extract a clear citation from the input), we
     // automatically refund the credit so the user isn't charged for an unusable result.
     if (isRefusalResponseServer(content)) {
       await refundIfCharged("invalid_input_refusal");
@@ -1795,18 +1821,11 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
           content,
           refunded: true,
           refundReason: "הקלט לא היה ברור דיו לעיבוד",
+          sourceTypeOverride,
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
-
-    // Map the backend override label to the client SourceType identifier so the
-    // assistant message badge reflects the actual classification (e.g. when the
-    // client guessed "ספר" but backend confirmed case-law via docket prefix).
-    let sourceTypeOverride: string | null = null;
-    if (caseLawOverrideLabel === "פסיקה (דפוס)") sourceTypeOverride = "case_law_published";
-    else if (caseLawOverrideLabel === "פסיקה (מאגר)") sourceTypeOverride = "case_law_database";
-    else if (isCaseLaw) sourceTypeOverride = "case_law_database";
 
     return new Response(JSON.stringify({ content, sourceTypeOverride }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
