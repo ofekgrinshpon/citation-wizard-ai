@@ -1200,6 +1200,10 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                   const dataIsUsable = parsed.found && hasValidParties;
                   
                   if (dataIsUsable) {
+                    verifiedCaseLawData.lookupSucceeded = true;
+                    verifiedCaseLawData.party1 = String(parsed.party1).trim();
+                    verifiedCaseLawData.party2 = String(parsed.party2).trim();
+                    verifiedCaseLawData.publishedConfirmed = !!(parsed.isPublished && hasRealPadi);
                     let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
                     details += `תיק: ${fullCaseRef}\n`;
                     if (hasValidParties) details += `צדדים: **${parsed.party1}** נ' **${parsed.party2}**\n`;
