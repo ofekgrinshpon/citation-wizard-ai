@@ -1398,8 +1398,8 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                       }
                     } catch { /* ignore */ }
                   }
+                  console.log(`[case-law] trusted-fp=${[...trustedCitationFingerprints].join(",") || "-"}, supreme-fp=${[...supremeFingerprints].join(",") || "-"}`);
 
-                  const normalizeDocket = (s: string) => {
                     const t = (s || "").replace(/\s+/g, "");
                     if (/^\d+-\d+-\d+$/.test(t)) return t;
                     return t.replace(/-/g, "/");
