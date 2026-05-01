@@ -944,6 +944,9 @@ serve(async (req) => {
             const isMultiSeparatorDocket = (rawCaseNum.match(/[\/\-]/g) || []).length >= 2;
             const caseNum = isMultiSeparatorDocket ? rawCaseNum : rawCaseNum.replace('-', '/');
             const fullCaseRef = `${caseType} ${caseNum}`;
+            verifiedCaseLawData.lookupAttempted = true;
+            verifiedCaseLawData.docket = fullCaseRef;
+            verifiedCaseLawData.docketRaw = caseNum;
             console.log(`[case-law] dispatching search: prefix="${caseType}", rawDocket="${rawCaseNum}", normalizedDocket="${caseNum}"`);
             const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חפש את מספר התיק המדויק "${rawCaseNum}" באתר תקדין לייט (lite.takdin.co.il), נבו, או אתר בתי המשפט. אל תחזיר פסקי דין אחרים בעלי מספרים דומים — רק את התיק המדויק עם מספר זה. בדוק האם פסק הדין פורסם בפד"י, ואם לא — ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין המלא (DD.MM.YYYY), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. אם לא מצאת את התיק המדויק, החזר {"found":false} — אל תמציא או תחליף בתיק דומה. ענה בעברית בלבד.`;
 
