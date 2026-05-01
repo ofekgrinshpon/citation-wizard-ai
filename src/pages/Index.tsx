@@ -644,11 +644,16 @@ const Index = () => {
       const reply = await callAPI(prompt, messages);
       const assistantIndex = newMessages.length;
 
+      // Backend may have confirmed/overridden the source type (e.g. case-law via docket prefix
+      // when client guessed "ספר"). Prefer that over the client's heuristic.
+      const backendOverride = lastSourceTypeOverrideRef.current as SourceType | null;
+
       // Re-classify source type based on AI output (e.g., database → published if פ"ד found)
-      let effectiveSourceType = sourceType as SourceType;
+      let effectiveSourceType = (backendOverride ?? sourceType) as SourceType;
       if (effectiveSourceType === "case_law_database" && /פ["״]ד\s+[א-ת]+/.test(reply)) {
         effectiveSourceType = "case_law_published";
       }
+      const effectiveSourceLabel = SOURCE_TYPE_LABELS[effectiveSourceType] || sourceLabel;
 
       // Post-response validation using the citation engine
       const validation = validateAIResponse(reply, effectiveSourceType);
@@ -661,7 +666,7 @@ const Index = () => {
       }
 
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: (lastSourceTypeOverrideRef.current ?? effectiveSourceType) as SourceType }));
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: effectiveSourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       // Increment guest counter
       await subscription.incrementCount();
@@ -673,13 +678,13 @@ const Index = () => {
       const citationPayload = {
         raw_input: fullRawInput,
         formatted_output: extractedCitation || reply,
-        source_type: sourceType !== "unknown" ? sourceLabel : null,
+        source_type: effectiveSourceType !== ("unknown" as SourceType) ? effectiveSourceLabel : null,
         user_id: user?.id || null,
         project_id: currentProject?.id || null,
       };
 
       supabase.from("citation_history").insert([citationPayload]).then(() => { setCitationRefreshKey(k => k + 1); });
-      logActivity("יצירת אזכור", { source_type: sourceLabel, raw_input: fullRawInput.slice(0, 100) });
+      logActivity("יצירת אזכור", { source_type: effectiveSourceLabel, raw_input: fullRawInput.slice(0, 100) });
 
       // Only verify if we have a real, complete citation (not a fragment, not missing data)
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
