@@ -822,6 +822,18 @@ serve(async (req) => {
 
     let caseLawHint = "";
     let caseLawOverrideLabel: string | null = null;
+    // Verified case-law data captured from the Perplexity search branches.
+    // Used by the final-output guard to detect hallucinated parties/publication/docket
+    // in the AI gateway response and replace them with safe missing-data placeholders.
+    const verifiedCaseLawData: {
+      docket?: string;
+      docketRaw?: string;
+      party1?: string;
+      party2?: string;
+      publishedConfirmed?: boolean;
+      lookupAttempted?: boolean;
+      lookupSucceeded?: boolean;
+    } = {};
     // Normalize Hebrew niqqud/quotes BEFORE running the docket/classifier regex —
     // inputs like `סע״שׁ 50358-09-16` (shin-dot diacritic) must classify identically
     // to `סע"ש 50358-09-16`. The original `userInput` is preserved for downstream
