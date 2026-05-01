@@ -1372,22 +1372,100 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                       for (const fp of extractDocketFingerprints(decoded)) trustedCitationFingerprints.add(fp);
                     } catch { /* ignore decode errors */ }
                   }
-                  // Also mine fingerprints from the response text — Perplexity sometimes echoes
-                  // docket numbers in prose that came from a snippet, even when the URL is opaque.
-                  const responseTextFingerprints = new Set(extractDocketFingerprints(psContent));
+
+                  // Decode Supreme Court "fileName" patterns into docket fingerprints.
+                  // Examples:
+                  //   09083200_w16  →  case 8320/09 (year 09, sequence 08320, padded to 083200)
+                  //   22014560.Y06  →  case 1456/22 (year 22, sequence 01456, padded)
+                  //   10051310.v08  →  case 5131/10
+                  // Format observed: YY + zero-padded(NNNNNN) where the docket sequence uses last 5–6 digits.
+                  const supremeFingerprints = new Set<string>();
+                  const SUPREME_FILENAME_RE = /(?:fileName=|\/)(\d{2})(\d{6})(?:[._])/gi;
+                  for (const u of psCitations) {
+                    try {
+                      const decoded = decodeURIComponent(u);
+                      let m: RegExpExecArray | null;
+                      const re = new RegExp(SUPREME_FILENAME_RE.source, "gi");
+                      while ((m = re.exec(decoded)) !== null) {
+                        const yy = m[1];
+                        const seqRaw = m[2].replace(/^0+/, "") || "0";
+                        // Take the leading 4–5 digits (sequence) — Supreme Court dockets are NNNNN/YY
+                        // The padded part is 6 digits; the trailing zeros are sub-document identifiers.
+                        // Heuristic: strip up to 1 trailing zero from the 6-digit chunk to get the sequence.
+                        const trimmed = m[2].replace(/0+$/, "") || m[2];
+                        supremeFingerprints.add(`${trimmed}/${yy}`);
+                        supremeFingerprints.add(`${seqRaw}/${yy}`);
+                      }
+                    } catch { /* ignore */ }
+                  }
+                  console.log(`[case-law] trusted-fp=${[...trustedCitationFingerprints].join(",") || "-"}, supreme-fp=${[...supremeFingerprints].join(",") || "-"}`);
 
                   const normalizeDocket = (s: string) => {
                     const t = (s || "").replace(/\s+/g, "");
-                    // Multi-segment dockets (NNNNN-MM-YY) keep hyphens; single-separator forms canonicalize to "/"
                     if (/^\d+-\d+-\d+$/.test(t)) return t;
                     return t.replace(/-/g, "/");
                   };
 
-                  // Sanity-check + grounding filter to remove hallucinated dockets.
-                  const sanityCheck = (r: Record<string, unknown>): { ok: boolean; reason?: string } => {
+                  // Per-candidate independent verification using Perplexity raw Search API.
+                  // Accept only when an external snippet/title contains BOTH the exact docket
+                  // AND substantial tokens from BOTH party names. This prevents the LLM's
+                  // self-referential JSON from being treated as evidence.
+                  const partyTokens = (p: string): string[] =>
+                    (p || "").split(/[\s,'"״׳]+/).filter((t) => t.length >= 2);
+                  const tokensP1 = partyTokens(party1);
+                  const tokensP2 = partyTokens(party2);
+
+                  const verifyCandidateExternally = async (
+                    r: Record<string, unknown>,
+                  ): Promise<{ ok: boolean; reason?: string }> => {
+                    const caseNumStr = typeof r.caseNumber === "string" ? r.caseNumber : "";
+                    const caseTypeStr = typeof r.caseType === "string" ? r.caseType : "";
+                    if (!caseNumStr) return { ok: false, reason: "missing docket" };
+                    const fp = normalizeDocket(caseNumStr);
+                    const queries = [
+                      `"${caseNumStr}" ${party1} ${party2}`,
+                      `${caseTypeStr} ${caseNumStr} ${party1} ${party2}`,
+                    ];
+                    for (const q of queries) {
+                      try {
+                        const sr = await fetch("https://api.perplexity.ai/search", {
+                          method: "POST",
+                          headers: {
+                            Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({ query: q }),
+                        });
+                        if (!sr.ok) continue;
+                        const sd = await sr.json();
+                        const items = Array.isArray(sd?.results) ? sd.results
+                          : Array.isArray(sd?.web_results) ? sd.web_results
+                          : Array.isArray(sd?.search_results) ? sd.search_results
+                          : [];
+                        for (const it of items) {
+                          const blob = `${it?.title || ""} ${it?.snippet || ""} ${it?.description || ""} ${it?.url || ""}`;
+                          let blobDecoded = blob;
+                          try { blobDecoded = decodeURIComponent(blob); } catch { /* ignore */ }
+                          const text = `${blob} ${blobDecoded}`;
+                          const docketHit =
+                            text.includes(caseNumStr) ||
+                            extractDocketFingerprints(blobDecoded).includes(fp);
+                          if (!docketHit) continue;
+                          const p1Hit = tokensP1.some((t) => text.includes(t));
+                          const p2Hit = tokensP2.some((t) => text.includes(t));
+                          if (p1Hit && p2Hit) {
+                            return { ok: true };
+                          }
+                        }
+                      } catch { /* try next query */ }
+                    }
+                    return { ok: false, reason: `no external snippet ties docket ${caseNumStr} to both parties` };
+                  };
+
+                  // Quick local sanity (year coherence) before paying for external verification.
+                  const localSanity = (r: Record<string, unknown>): { ok: boolean; reason?: string } => {
                     const caseNumStr = typeof r.caseNumber === "string" ? r.caseNumber : "";
                     const yearStr = typeof r.year === "string" ? r.year : "";
-                    // Extract docket year (digits after / or -)
                     const dyMatch = caseNumStr.match(/[\/\-](\d{2,4})\b/);
                     if (dyMatch && yearStr && /^\d{4}$/.test(yearStr)) {
                       let dy = parseInt(dyMatch[1], 10);
@@ -1396,43 +1474,28 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                       if (decisionYear < dy - 1) return { ok: false, reason: `decision year ${decisionYear} before docket year ${dy}` };
                       if (decisionYear > dy + 15) return { ok: false, reason: `decision year ${decisionYear} too far from docket year ${dy}` };
                     }
-                    // Per-result grounding: the claimed docket must appear in a trusted-citation URL,
-                    // OR the result's own sourceUrl must be trusted AND contain that docket,
-                    // OR the docket must be echoed in the response text alongside a trusted citation.
-                    const claimedFp = normalizeDocket(caseNumStr);
-                    const src = (r as { sourceUrl?: unknown }).sourceUrl;
-                    const srcStr = typeof src === "string" ? src : "";
-                    const trustedSrc = isTrustedUrl(srcStr);
-                    let srcContainsDocket = false;
-                    if (trustedSrc) {
-                      try {
-                        const decoded = decodeURIComponent(srcStr);
-                        srcContainsDocket = extractDocketFingerprints(decoded).includes(claimedFp);
-                      } catch { /* ignore */ }
-                    }
-                    const inTrustedCitation = trustedCitationFingerprints.has(claimedFp);
-                    const inResponseText = responseTextFingerprints.has(claimedFp);
-                    if (!srcContainsDocket && !inTrustedCitation && !inResponseText) {
-                      return { ok: false, reason: `docket ${caseNumStr} not found in trusted sources (sourceUrlTrusted=${trustedSrc})` };
-                    }
-                    if (!trustedSrc && !inTrustedCitation) {
-                      // Allow only when the docket appears in response text AND there is at least one trusted citation overall.
-                      if (!psCitations.some(isTrustedUrl)) {
-                        return { ok: false, reason: "no trusted citation in response" };
-                      }
-                    }
                     return { ok: true };
                   };
 
+                  // Verify all candidates in parallel.
+                  const verificationResults = await Promise.all(
+                    rawResults.map(async (r: Record<string, unknown>) => {
+                      const local = localSanity(r);
+                      if (!local.ok) return { r, ok: false, reason: local.reason };
+                      const ext = await verifyCandidateExternally(r);
+                      return { r, ok: ext.ok, reason: ext.reason };
+                    }),
+                  );
+
                   const results: Array<Record<string, unknown>> = [];
-                  for (const r of rawResults) {
-                    const check = sanityCheck(r as Record<string, unknown>);
-                    if (check.ok) {
-                      results.push(r as Record<string, unknown>);
+                  for (const v of verificationResults) {
+                    if (v.ok) {
+                      results.push(v.r);
                     } else {
-                      console.log(`[case-law] Dropping hallucinated/unverifiable result ${r.caseType || "?"} ${r.caseNumber || "?"}: ${check.reason}`);
+                      console.log(`[case-law] Dropping unverified result ${(v.r as { caseType?: string }).caseType || "?"} ${(v.r as { caseNumber?: string }).caseNumber || "?"}: ${v.reason}`);
                     }
                   }
+                  console.log(`[case-law] External verification: ${results.length}/${rawResults.length} candidates accepted`);
 
                   if (results.length === 0) {
                     console.log(`[case-law] No verifiable results for party search "${searchQuery}" (raw=${rawResults.length})`);

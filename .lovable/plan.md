@@ -1,56 +1,47 @@
-**What is going wrong**
+**What I found**
 
-The current fix still lets bad data pass in two places:
+The current guard is still too permissive. It accepts results because Perplexity echoed docket numbers inside its own JSON/text, not because the specific docket is independently proven by the cited source. In this example, Perplexity returned four “found” results, including the correct `158/77`, but the other three were not real matches for `רבינאי נ' מן שקד`. The code then labeled all four as “verified” because it mined docket fingerprints from the response text itself.
 
-1. **Party-name results are only weakly grounded.** The backend accepts a result if either its own `sourceUrl` is trusted or the overall Perplexity response has any trusted citation. In the log for `רבינאי נגד מן שקד`, Perplexity returned `ע"א 158/77` but attached the same 2022 Supreme Court URL used for `ע"א 1456/22`, so the old case was not actually proven by its own source.
-2. **The final formatter can still invent data after a failed selection.** When clicking an option like `ע"א 3901/96`, the exact-number search returns `found:false` or unusable data, but the function still falls through to the general AI citation formatter with only a “don’t invent” hint. That model then fabricated: `ע"א 3901/96 דוד מן שקד נ' שלמה רבינאי, פ"ד נב(5) 721 (1998)`.
-3. **There is no post-output case-number guard.** The final citation is not checked against the selected/input docket and the verified parties, so a fabricated citation can reach the UI.
+There is also a second issue: the Supreme Court download URLs are opaque/encoded. A URL like `...fileName=09083200_w16.txt` anchors docket `8320/09`, but does not prove the parties or פ"ד metadata for every result Perplexity places next to it. So URL-level trust is not enough.
 
-**Implementation plan**
+**Plan**
 
-1. **Add deterministic extraction before AI for party-name searches**
-   - Use Perplexity Search API/raw search snippets first for party-name queries.
-   - Parse docket numbers and party names from snippets/URLs deterministically.
-   - For `רבינאי נגד מן שקד`, this should surface `ע"א 158/77` and the newer `ע"א 1456/22` only if each has its own matching evidence.
+1. **Remove self-referential verification**
+   - In `supabase/functions/citation-chat/index.ts`, stop accepting a party-search result merely because its docket appears in `psContent` / the model’s JSON.
+   - Only treat a result as grounded when the docket is proven by a trusted URL or by raw search snippets returned from the Search API, not by the LLM’s generated answer.
 
-2. **Require per-result source grounding**
-   - Replace the run-level `hasAnyTrustedCitation` fallback with per-result validation.
-   - A result must have either:
-     - a trusted `sourceUrl` whose URL/title/snippet/content contains the same docket number, or
-     - a raw search result whose title/snippet contains the same docket number and both party names.
-   - If Perplexity gives `sourceUrl` for a different case, drop that result.
+2. **Add deterministic party-search verification**
+   - After Perplexity proposes candidate case-law results, run a separate raw search verification per candidate using a query like:
+     - exact docket
+     - both party names
+     - trusted domains only where possible
+   - Accept a candidate only if the same raw search item/snippet contains:
+     - the exact normalized docket, and
+     - meaningful tokens from both parties (`רבינאי` and `מן שקד`), or an authoritative citation/publication snippet tying them together.
+   - Reject candidates such as `1456/22`, `5131/10`, and `8320/09` when they do not contain both parties together in the verified snippet.
 
-3. **Make disambiguation options safe**
-   - When multiple options are shown, include only validated options.
-   - Ensure the option text includes the exact docket number used for later verification.
-   - If nothing is validated, show a missing-data response asking for a precise docket instead of offering guessed options.
+3. **Handle Supreme Court encoded dockets explicitly**
+   - Add a helper to decode Supreme Court `fileName` / `path` patterns into docket fingerprints where possible:
+     - `09083200_w16` → `8320/09`
+     - `22014560` → `1456/22`
+     - `10051310` → `5131/10`
+   - This prevents false positives from vague URL matching and helps log why a candidate was accepted or dropped.
 
-4. **Short-circuit failed exact docket selections**
-   - In the case-number branch, if exact lookup returns `found:false` or fails required checks, return a safe response immediately instead of sending the request to the general AI formatter.
-   - The response should contain `[חסר: ...]` fields or a concise message that the exact docket was not verified.
-   - This specifically prevents `ע"א 3901/96` from being repurposed into made-up parties/publication data.
+4. **Prefer exact legacy/publication hit for this pattern**
+   - For short Hebrew party-name queries where one candidate has a classic published citation (`פ"ד לג(2) 283`) and others only have unrelated/opaque database links, rank the published, party-matching candidate first.
+   - If only one candidate survives verification, return the citation directly instead of a disambiguation list.
 
-5. **Add a final output validator for case-law citations**
-   - After the AI gateway response, if the request is case-law:
-     - verify the output docket matches the user input/selected docket when one exists;
-     - verify party tokens are not contradicted by verified search data;
-     - if a `פ"ד` volume/page appears, allow it only when the backend found verified publication fields.
-   - If validation fails, replace the response with the safe missing-data citation rather than showing hallucinated metadata.
+5. **Add a fail-closed response**
+   - If no candidate can be independently verified, return a safe message asking for an exact docket number instead of showing model-generated options.
+   - Do not fall back to the general citation generator with unverified case-law data.
 
-6. **Improve JSON parsing robustness**
-   - Add a reusable `extractJsonObject` helper that strips markdown fences and avoids greedy parsing problems.
-   - Use it in both the party-name and exact-number case-law branches.
+6. **Improve logs for debugging**
+   - Log, per candidate, the verification status and reason:
+     - accepted because exact docket + both parties found in raw snippet/source
+     - rejected because docket not proven
+     - rejected because parties not tied to the docket
+     - rejected because publication metadata unverified
 
-7. **Add logging for why each candidate is accepted or dropped**
-   - Log candidate docket, source URL, matched evidence, and rejection reason.
-   - This will make future failures diagnosable from Lovable Cloud logs.
-
-**Files to change**
-
-- `supabase/functions/citation-chat/index.ts`
-  - Harden party-name search validation.
-  - Add exact-selection short-circuit.
-  - Add final case-law output guard.
-  - Add safer JSON extraction and better logs.
-
-No database changes are required.
+7. **Regression check**
+   - Test `רבינאי נגד מן שקד` after deployment and confirm the only accepted result is `ע"א 158/77`, or that the system safely asks for the exact docket if external search cannot verify it.
+   - Also test selecting a candidate from the list to ensure it cannot generate a hallucinated citation when verification fails.
