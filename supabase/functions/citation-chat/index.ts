@@ -1228,10 +1228,13 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   } else if (results.length === 1) {
                     // Single result – use same logic as case-number search
                     const r = results[0];
-                    const fullRef = `${r.caseType || "[חסר: סוג הליך]"} ${r.caseNumber || "[חסר: מספר תיק]"}`;
+                    // Fallback: if Perplexity dropped party fields, use the user-typed parties.
+                    const effP1 = (r.party1 && String(r.party1).trim()) || party1;
+                    const effP2 = (r.party2 && String(r.party2).trim()) || party2;
+                    const fullRef = `${r.caseType || userCaseTypeNorm || "[חסר: סוג הליך]"} ${r.caseNumber || "[חסר: מספר תיק]"}`;
                     let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
                     details += `תיק: ${fullRef}\n`;
-                    if (r.party1 && r.party2) details += `צדדים: **${r.party1}** נ' **${r.party2}**\n`;
+                    details += `צדדים: **${effP1}** נ' **${effP2}**\n`;
                     if (r.court) details += `בית משפט: ${r.court}\n`;
                     if (r.isPublished && r.padi_volume) {
                       caseLawOverrideLabel = "פסיקה (דפוס)";
@@ -1241,11 +1244,13 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                       caseLawOverrideLabel = "פסיקה (מאגר)";
                       details += `מאגר: ${r.databaseName}\n`;
                     }
-                    if (r.date) details += `תאריך: ${r.date}\n`;
+                    if (r.date && String(r.date).trim()) {
+                      details += `תאריך: ${r.date}\n`;
+                    } else {
+                      details += `תאריך: [חסר: תאריך]  ⚠️ חובה לכתוב במפורש "[חסר: תאריך]" באזכור — אסור להמציא תאריך.\n`;
+                    }
                     if (r.year) details += `שנה: ${r.year}\n`;
-                    const partyLockLine = (r.party1 && r.party2)
-                      ? `\n⚠️ חובה מוחלטת: השתמש בשמות הצדדים בדיוק כפי שמופיעים כאן — "${r.party1}" ו-"${r.party2}". אסור להוסיף שמות פרטיים, תארים, "עזבון", "יורשי" או כל תוספת אחרת, גם אם אתה "זוכר" אותם ממקור אחר. כלל 18.4: שם משפחה בלבד לאנשים פרטיים.\n`
-                      : "";
+                    const partyLockLine = `\n⚠️ חובה מוחלטת: השתמש בשמות הצדדים בדיוק כפי שמופיעים כאן — "${effP1}" ו-"${effP2}". אסור להוסיף שמות פרטיים, תארים, "עזבון", "יורשי" או כל תוספת אחרת, גם אם אתה "זוכר" אותם ממקור אחר. כלל 18.4: שם משפחה בלבד לאנשים פרטיים.\n`;
                     const spacingLine = `⚠️ חובה: רווח בין "פ\"ד" לכרך (למשל: פ"ד לג(2) 281, ולא פ"דלג).\n`;
                     if (caseLawOverrideLabel === "פסיקה (דפוס)") {
                       details += `${partyLockLine}${spacingLine}══ חובה לעצב כפסיקה (דפוס) לפי כלל 18, תוך שימוש בלעדי בנתונים שלמעלה. ══`;
