@@ -816,7 +816,21 @@ serve(async (req) => {
     
     // ── Check if this is a disambiguation selection (skip Perplexity) ──
     const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(userInput);
-    
+
+    // Extract embedded data blob (carried over from a prior party-search disambiguation list)
+    let selectionDataBlob: Record<string, unknown> | null = null;
+    if (isDisambiguationSelection) {
+      const blobMatch = userInput.match(/<!--DATA:([^>]+?)-->/);
+      if (blobMatch) {
+        try {
+          selectionDataBlob = JSON.parse(decodeURIComponent(blobMatch[1]));
+          console.log("[case-law] Disambiguation data blob parsed:", selectionDataBlob);
+        } catch (e) {
+          console.warn("[case-law] Failed to parse disambiguation data blob:", e);
+        }
+      }
+    }
+
     const caseNumberMatch = userInput.match(CASE_DOCKET_RE);
 
     // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
@@ -831,11 +845,29 @@ serve(async (req) => {
     const PARTY_RE = /([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])\s+(?:נגד|נ['׳״"\u2018\u2019\u05F3]?)\s+([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])/;
     const partyMatch = !caseNumberMatch ? cleanedForParty.match(PARTY_RE) : null;
 
-    // If this is a disambiguation selection, do a focused single-case search with the case number
-    if (isDisambiguationSelection && isCaseLaw && caseNumberMatch) {
-      console.log(`[case-law] Disambiguation selection detected, doing focused search for ${caseNumberMatch[0]}`);
-      // Re-use the Branch A (case number search) logic by NOT setting isDisambiguationSelection block
-      // Just let it fall through to the normal caseNumberMatch branch below
+    // If we have a data blob from prior party-search, use it directly — no Perplexity re-search
+    if (isDisambiguationSelection && isCaseLaw && selectionDataBlob) {
+      const r = selectionDataBlob as Record<string, string | boolean>;
+      const fullRef = `${r.caseType || "[חסר: סוג הליך]"} ${r.caseNumber || "[חסר: מספר תיק]"}`;
+      let details = `\n\n══ נתוני פסק דין שנבחר ══\n`;
+      details += `תיק: ${fullRef}\n`;
+      if (r.party1 && r.party2) details += `צדדים: **${r.party1}** נ' **${r.party2}**\n`;
+      if (r.court) details += `בית משפט: ${r.court}\n`;
+      if (r.isPublished && r.padi_volume) {
+        caseLawOverrideLabel = "פסיקה (דפוס)";
+        const part = r.padi_part ? `(${r.padi_part})` : "";
+        details += `פרסום: פ"ד ${r.padi_volume}${part} ${r.padi_page || ""}\n`;
+      } else if (r.databaseName) {
+        caseLawOverrideLabel = "פסיקה (מאגר)";
+        details += `מאגר: ${r.databaseName}\n`;
+      }
+      if (r.date) details += `תאריך: ${r.date}\n`;
+      if (r.year) details += `שנה: ${r.year}\n`;
+      details += `══ השתמש אך ורק בנתונים שלמעלה. אם נתון חסר — סמן [חסר:...]. ══`;
+      caseLawHint = details;
+      console.log("[case-law] Using selection data blob — skipping Perplexity");
+    } else if (isDisambiguationSelection && isCaseLaw && caseNumberMatch) {
+      console.log(`[case-law] Disambiguation selection detected (no blob), doing focused search for ${caseNumberMatch[0]}`);
     } else if (isDisambiguationSelection && isCaseLaw) {
       // No case number found in selection — build hint from text
       const selectionText = userInput.replace(/\[סיווג אוטומטי:.*?\]\n?/, "").replace(/\[בחירת תוצאה\]\s*/, "").trim();
@@ -854,8 +886,9 @@ serve(async (req) => {
     }
 
     // When disambiguation selection has a case number, allow the normal case-number search to proceed
-    const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (caseNumberMatch || partyMatch) && !(isDisambiguationSelection && !caseNumberMatch);
-    console.log(`[case-law] isCaseLaw=${isCaseLaw}, isDisambiguationSelection=${isDisambiguationSelection}, caseNumberMatch=${caseNumberMatch?.[0] ?? 'null'}, partyMatch=${partyMatch ? 'yes' : 'no'}, hasVerifiedCandidates=${hasVerifiedCandidates}`);
+    // — UNLESS we already built the hint from a data blob.
+    const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (caseNumberMatch || partyMatch) && !(isDisambiguationSelection && !caseNumberMatch) && !selectionDataBlob;
+    console.log(`[case-law] isCaseLaw=${isCaseLaw}, isDisambiguationSelection=${isDisambiguationSelection}, caseNumberMatch=${caseNumberMatch?.[0] ?? 'null'}, partyMatch=${partyMatch ? 'yes' : 'no'}, hasVerifiedCandidates=${hasVerifiedCandidates}, hasBlob=${!!selectionDataBlob}`);
 
     if (shouldSearchCaseLaw) {
       try {
@@ -865,7 +898,9 @@ serve(async (req) => {
           // ── Branch A: Search by case number (existing logic) ──
           if (caseNumberMatch) {
             const caseType = caseNumberMatch[1];
-            const caseNum = caseNumberMatch[2].replace('-', '/');
+            // Preserve original docket separator: lower-courts use dashes (e.g. סע"ש 50358-09-16),
+            // Supreme historical use slashes (e.g. ע"א 158/77). Don't normalize.
+            const caseNum = caseNumberMatch[2];
             const fullCaseRef = `${caseType} ${caseNum}`;
             const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חשוב מאוד: בדוק קודם כל האם פסק הדין פורסם בפד"י (פסקי דין של בית המשפט העליון). חפש את מספר התיק יחד עם המילה "פ"ד" וכרך. רק אם וידאת שהוא לא מופיע בפד"י, ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. ענה בעברית בלבד.`;
 
@@ -1097,11 +1132,51 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                 }
                 if (psParsed) {
                   try {
-                  const results = Array.isArray(psParsed.results) ? psParsed.results.filter((r: Record<string, unknown>) => r.found) : [];
+                  const rawResults = Array.isArray(psParsed.results) ? psParsed.results.filter((r: Record<string, unknown>) => r.found) : [];
+
+                  // ── Relevance filter: drop hallucinated results that share only a surname ──
+                  const STOPWORDS = new Set(["נ", "נגד", "של", "את", "עם", "על", "בין", "מדינת", "מדינה", "ה"]);
+                  const tokenize = (s: string): string[] =>
+                    s.split(/[\s,'"״׳\-־.()]+/u)
+                      .map((t) => t.trim())
+                      .filter((t) => t.length >= 3 && !STOPWORDS.has(t));
+                  const userP1Tokens = tokenize(party1);
+                  const userP2Tokens = tokenize(party2);
+                  const hasOverlap = (resultParty: string, tokens: string[]) =>
+                    tokens.length === 0 || tokens.some((t) => resultParty.includes(t));
+
+                  // Detect user-typed caseType prefix (e.g. "סע״ש") in original input
+                  const userCaseTypeMatch = cleanedForParty.match(CASE_TYPE_PREFIX_RE);
+                  const userCaseType = userCaseTypeMatch?.[0] || null;
+                  const normalizeQuotes = (s: string) => s.replace(/[״"]/g, '"').replace(/[׳']/g, "'");
+                  const userCaseTypeNorm = userCaseType ? normalizeQuotes(userCaseType) : null;
+
+                  const results = rawResults.filter((r: Record<string, unknown>) => {
+                    const rp1 = String(r.party1 || "");
+                    const rp2 = String(r.party2 || "");
+                    // Order-preserving: result.p1 ⊇ user.p1 AND result.p2 ⊇ user.p2
+                    const sameOrder = hasOverlap(rp1, userP1Tokens) && hasOverlap(rp2, userP2Tokens);
+                    // Reversed: drop. The user typed an order; respect it.
+                    if (!sameOrder) {
+                      console.log(`[case-law] Dropping irrelevant result: "${rp1}" נ' "${rp2}" (user typed: "${party1}" / "${party2}")`);
+                      return false;
+                    }
+                    // If user supplied a caseType prefix, drop results from a different prefix
+                    if (userCaseTypeNorm) {
+                      const rType = normalizeQuotes(String(r.caseType || ""));
+                      if (rType && rType !== userCaseTypeNorm) {
+                        console.log(`[case-law] Dropping cross-jurisdiction result: caseType=${rType}, user=${userCaseTypeNorm}`);
+                        return false;
+                      }
+                    }
+                    return true;
+                  });
+
+                  console.log(`[case-law] Filtered ${rawResults.length} → ${results.length} relevant results`);
 
                   if (results.length === 0) {
-                    console.log(`[case-law] No results found for party search "${searchQuery}"`);
-                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו פסקי דין בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק (למשל ע"פ 1234/56) לחיפוש מדויק יותר.\n══`;
+                    console.log(`[case-law] No relevant results found for party search "${searchQuery}"`);
+                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו פסקי דין רלוונטיים בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק (למשל ע"פ 1234/56) לחיפוש מדויק יותר.\n══`;
                   } else if (results.length === 1) {
                     // Single result – use same logic as case-number search
                     const r = results[0];
@@ -1131,8 +1206,8 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     }
                     caseLawHint = details;
                   } else {
-                    // Multiple results – present disambiguation list
-                    console.log(`[case-law] Found ${results.length} results for party search "${searchQuery}"`);
+                    // Multiple results – present disambiguation list with embedded data blobs
+                    console.log(`[case-law] Found ${results.length} relevant results for party search "${searchQuery}"`);
                     let details = `\n\n══ נמצאו מספר פסקי דין תואמים ══\n`;
                     details += `הצג למשתמש את הרשימה הבאה ובקש ממנו לבחור את פסק הדין הרלוונטי:\n\n`;
                     results.forEach((r: Record<string, unknown>, i: number) => {
@@ -1140,9 +1215,18 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                       const parties = (r.party1 && r.party2) ? `${r.party1} נ' ${r.party2}` : "";
                       const year = r.year || "";
                       const court = r.court || "";
-                      details += `${i + 1}. ${ref} ${parties}${year ? ` (${year})` : ""}${court ? ` — ${court}` : ""}\n`;
+                      // Embed full data so the selection branch can skip a re-search
+                      const blob = encodeURIComponent(JSON.stringify({
+                        caseType: r.caseType, caseNumber: r.caseNumber,
+                        party1: r.party1, party2: r.party2,
+                        date: r.date, court: r.court,
+                        isPublished: r.isPublished,
+                        padi_volume: r.padi_volume, padi_part: r.padi_part, padi_page: r.padi_page,
+                        databaseName: r.databaseName, year: r.year,
+                      }));
+                      details += `${i + 1}. ${ref} ${parties}${year ? ` (${year})` : ""}${court ? ` — ${court}` : ""}<!--DATA:${blob}-->\n`;
                     });
-                    details += `\n══ שאל את המשתמש: "נמצאו מספר פסקי דין בין הצדדים. לאיזה פסק דין התכוונת?" והצג את הרשימה הממוספרת. לאחר שהמשתמש יבחר, עצב את האזכור לפי הנתונים שנמצאו. ══`;
+                    details += `\n══ שאל את המשתמש: "נמצאו מספר פסקי דין בין הצדדים. לאיזה פסק דין התכוונת?" והצג את הרשימה הממוספרת בדיוק כפי שהיא, כולל הסימון <!--DATA:...--> בסוף כל שורה (זהו סימן טכני שמועבר חזרה במערכת ולא מוצג למשתמש). לאחר שהמשתמש יבחר, עצב את האזכור לפי הנתונים שנמצאו. ══`;
                     caseLawHint = details;
                   }
                   } catch (e) {
