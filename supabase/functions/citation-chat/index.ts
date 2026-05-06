@@ -816,7 +816,21 @@ serve(async (req) => {
     
     // ── Check if this is a disambiguation selection (skip Perplexity) ──
     const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(userInput);
-    
+
+    // Extract embedded data blob (carried over from a prior party-search disambiguation list)
+    let selectionDataBlob: Record<string, unknown> | null = null;
+    if (isDisambiguationSelection) {
+      const blobMatch = userInput.match(/<!--DATA:([^>]+?)-->/);
+      if (blobMatch) {
+        try {
+          selectionDataBlob = JSON.parse(decodeURIComponent(blobMatch[1]));
+          console.log("[case-law] Disambiguation data blob parsed:", selectionDataBlob);
+        } catch (e) {
+          console.warn("[case-law] Failed to parse disambiguation data blob:", e);
+        }
+      }
+    }
+
     const caseNumberMatch = userInput.match(CASE_DOCKET_RE);
 
     // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
