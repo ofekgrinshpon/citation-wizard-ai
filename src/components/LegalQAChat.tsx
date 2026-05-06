@@ -2245,25 +2245,31 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             live stage list with running/complete chips and a draft-text caret.
             Non-streamed runs (case summary, pleading audit, short academic
             sub-modes) keep the rotating skeleton placeholder. */}
-        {loading && taskMode !== "case_summary" && (
-          stageEvents.length > 0 || streamingDraft.length > 0 || postProcessingLabel
-            ? <StageProgressList
-                stages={stageEvents}
-                postProcessingLabel={postProcessingLabel}
-                draftText={streamingDraft}
-                mode={
-                  taskMode === "academic_writing" &&
-                  (lastAcademicAction === "write_chapter" ||
-                   lastAcademicAction === "write_introduction" ||
-                   lastAcademicAction === "write_conclusion")
-                    ? "academic_chapter"
-                    : researchDepth === "deep"
-                    ? "research_deep"
-                    : "research_fast"
-                }
-              />
-            : <ResearchProgress />
-        )}
+        {loading && taskMode !== "case_summary" && (() => {
+          const isAcademicChapterRun =
+            taskMode === "academic_writing" &&
+            (lastAcademicAction === "write_chapter" ||
+             lastAcademicAction === "write_introduction" ||
+             lastAcademicAction === "write_conclusion");
+          const stageMode: "research_fast" | "research_deep" | "academic_chapter" =
+            isAcademicChapterRun
+              ? "academic_chapter"
+              : researchDepth === "deep"
+              ? "research_deep"
+              : "research_fast";
+          const hasStreamSignal =
+            stageEvents.length > 0 || streamingDraft.length > 0 || !!postProcessingLabel;
+          return hasStreamSignal ? (
+            <StageProgressList
+              stages={stageEvents}
+              postProcessingLabel={postProcessingLabel}
+              draftText={streamingDraft}
+              mode={stageMode}
+            />
+          ) : (
+            <ResearchProgress mode={isAcademicChapterRun ? "academic_chapter" : "research"} />
+          );
+        })()}
 
         {/* Case-summary refusal card */}
         {!isAcademic && result?.refusal && (
