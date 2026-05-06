@@ -123,3 +123,4 @@
 - [Perplexity Takdin-Lite Hint](mem://logic/perplexity-takdin-lite-hint) — Caselaw Perplexity prompts hint lite.takdin.co.il
 - [Case Type Prefix Dictionary](mem://logic/case-type-prefix-dictionary) — Central BIU procedural-prefix list
 - [Case Disambiguation Relevance](mem://logic/case-disambiguation-relevance) — Token + caseType filter; Takdin-lite untrusted for padi_*
+- [Academic Style Guide v1](mem://features/academic-writing-mode/style-guide-v1) — Distilled, versioned Hebrew prescriptive style guide injected into Deep write_chapter drafts; admin-gated `body.styleGuideEnabled` override; `STYLE_GUIDE_ENABLED` env; telemetry `qa_logs.metadata.style_guide`
