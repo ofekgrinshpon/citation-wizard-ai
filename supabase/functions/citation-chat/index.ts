@@ -845,11 +845,29 @@ serve(async (req) => {
     const PARTY_RE = /([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])\s+(?:נגד|נ['׳״"\u2018\u2019\u05F3]?)\s+([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])/;
     const partyMatch = !caseNumberMatch ? cleanedForParty.match(PARTY_RE) : null;
 
-    // If this is a disambiguation selection, do a focused single-case search with the case number
-    if (isDisambiguationSelection && isCaseLaw && caseNumberMatch) {
-      console.log(`[case-law] Disambiguation selection detected, doing focused search for ${caseNumberMatch[0]}`);
-      // Re-use the Branch A (case number search) logic by NOT setting isDisambiguationSelection block
-      // Just let it fall through to the normal caseNumberMatch branch below
+    // If we have a data blob from prior party-search, use it directly — no Perplexity re-search
+    if (isDisambiguationSelection && isCaseLaw && selectionDataBlob) {
+      const r = selectionDataBlob as Record<string, string | boolean>;
+      const fullRef = `${r.caseType || "[חסר: סוג הליך]"} ${r.caseNumber || "[חסר: מספר תיק]"}`;
+      let details = `\n\n══ נתוני פסק דין שנבחר ══\n`;
+      details += `תיק: ${fullRef}\n`;
+      if (r.party1 && r.party2) details += `צדדים: **${r.party1}** נ' **${r.party2}**\n`;
+      if (r.court) details += `בית משפט: ${r.court}\n`;
+      if (r.isPublished && r.padi_volume) {
+        caseLawOverrideLabel = "פסיקה (דפוס)";
+        const part = r.padi_part ? `(${r.padi_part})` : "";
+        details += `פרסום: פ"ד ${r.padi_volume}${part} ${r.padi_page || ""}\n`;
+      } else if (r.databaseName) {
+        caseLawOverrideLabel = "פסיקה (מאגר)";
+        details += `מאגר: ${r.databaseName}\n`;
+      }
+      if (r.date) details += `תאריך: ${r.date}\n`;
+      if (r.year) details += `שנה: ${r.year}\n`;
+      details += `══ השתמש אך ורק בנתונים שלמעלה. אם נתון חסר — סמן [חסר:...]. ══`;
+      caseLawHint = details;
+      console.log("[case-law] Using selection data blob — skipping Perplexity");
+    } else if (isDisambiguationSelection && isCaseLaw && caseNumberMatch) {
+      console.log(`[case-law] Disambiguation selection detected (no blob), doing focused search for ${caseNumberMatch[0]}`);
     } else if (isDisambiguationSelection && isCaseLaw) {
       // No case number found in selection — build hint from text
       const selectionText = userInput.replace(/\[סיווג אוטומטי:.*?\]\n?/, "").replace(/\[בחירת תוצאה\]\s*/, "").trim();
