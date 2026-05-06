@@ -1040,10 +1040,29 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
 
           // ── Branch B: Search by party names (multi-result) ──
           } else if (partyMatch) {
-            const party1 = partyMatch[1].trim();
+            const rawParty1 = partyMatch[1].trim();
             const party2 = partyMatch[2].trim();
-            const searchQuery = `${party1} נגד ${party2}`;
-            console.log(`[case-law] Party-name search: "${searchQuery}"`);
+
+            // Strip a leading BIU procedure prefix from party1 (e.g. סע"ש, ת"א).
+            // Keep the prefix as the user-supplied caseType for filtering and search focus.
+            const normalizeQuotes = (s: string) => s.replace(/[״"]/g, '"').replace(/[׳']/g, "'");
+            let userCaseTypeNorm: string | null = null;
+            let party1 = rawParty1;
+            const leadingPrefixMatch = rawParty1.match(new RegExp("^(" + CASE_TYPE_PREFIX_RE.source + ")\\s+(.+)$"));
+            if (leadingPrefixMatch) {
+              userCaseTypeNorm = normalizeQuotes(leadingPrefixMatch[1]);
+              party1 = leadingPrefixMatch[2].trim();
+            } else if (partyMatch?.index !== undefined) {
+              // Fallback: prefix sitting just before the parties in the cleaned text.
+              const window = cleanedForParty.slice(Math.max(0, partyMatch.index - 20), partyMatch.index);
+              const localPrefix = window.match(new RegExp(CASE_TYPE_PREFIX_RE.source + "\\s*$"));
+              if (localPrefix) userCaseTypeNorm = normalizeQuotes(localPrefix[0]);
+            }
+
+            const searchQuery = userCaseTypeNorm
+              ? `${userCaseTypeNorm} ${party1} נגד ${party2}`
+              : `${party1} נגד ${party2}`;
+            console.log(`[case-law] Party-name search: "${searchQuery}" (rawParty1="${rawParty1}", party1="${party1}", party2="${party2}", caseType=${userCaseTypeNorm ?? 'none'})`);
 
             const partySearchResp = await fetch("https://api.perplexity.ai/chat/completions", {
               method: "POST",
@@ -1065,11 +1084,16 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
 - שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
 - כלול את כל סוגי ההליכים (ערעור, בקשת רשות ערעור, משפט ראשוני וכו')
 - שדה "caseType" חייב להכיל את הקיצור הרשמי של סוג ההליך לפי כללי האזכור האחיד (למשל: סע״ש, ע״א, ת״א, בג״ץ, רע״א, עת״מ, תמ״ש, תפ״ח, ת״פ). אסור להחזיר תיאור מילולי כמו "תביעה" או "תביעה פלילית".
+- חובה לכבד את סדר הצדדים שהמשתמש כתב. אם פסק הדין הרשמי הפוך (העותר/המבקש בצד השני), אל תחזיר אותו אלא אם זה אכן הפסק שהמשתמש מבקש.
+- חובה למלא את שדות party1 ו-party2 לכל תוצאה. אם לא הצלחת לאמת שמות צדדים, אל תחזיר את התוצאה.
+- אם נתון תאריך מלא (DD.MM.YYYY) לא נמצא במקור — השאר את date ריק. אל תמציא תאריך.
 - אם לא נמצאו תוצאות, החזר {"results":[]}`,
                   },
                   {
                     role: "user",
-                    content: `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}. כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפ״ד.`,
+                    content: userCaseTypeNorm
+                      ? `מצא את פסק הדין הישראלי מסוג ${userCaseTypeNorm} שבו ${party1} הוא צד א׳ ו-${party2} הוא צד ב׳. כלול את מספר התיק המלא, בית המשפט, תאריך פסק הדין המדויק (DD.MM.YYYY) ושם המאגר (תקדין/נבו/פדאור). חפש קודם ב-lite.takdin.co.il.`
+                      : `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}. כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפ״ד.`,
                   },
                 ],
                 response_format: {
@@ -1146,33 +1170,45 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   const hasOverlap = (resultParty: string, tokens: string[]) =>
                     tokens.length === 0 || tokens.some((t) => resultParty.includes(t));
 
-                  // Detect user-typed caseType prefix — must be IMMEDIATELY before the parties
-                  // (within ~20 chars), to avoid false positives from engine-hint examples
-                  // like "ת״א" that appear in the prepended classification block.
-                  const normalizeQuotes = (s: string) => s.replace(/[״"]/g, '"').replace(/[׳']/g, "'");
-                  let userCaseTypeNorm: string | null = null;
-                  if (partyMatch?.index !== undefined) {
-                    const window = cleanedForParty.slice(Math.max(0, partyMatch.index - 20), partyMatch.index);
-                    const localPrefix = window.match(new RegExp(CASE_TYPE_PREFIX_RE.source + "\\s*$"));
-                    if (localPrefix) userCaseTypeNorm = normalizeQuotes(localPrefix[0]);
-                  }
+                  // Detect user-typed caseType prefix from the outer scope (already
+                  // stripped from rawParty1 above, or detected via 20-char window).
+                  // Already declared at outer scope: `userCaseTypeNorm`, `normalizeQuotes`.
 
                   const results = rawResults.filter((r: Record<string, unknown>) => {
                     const rp1 = String(r.party1 || "");
                     const rp2 = String(r.party2 || "");
-                    // Order-preserving: result.p1 ⊇ user.p1 AND result.p2 ⊇ user.p2
-                    const sameOrder = hasOverlap(rp1, userP1Tokens) && hasOverlap(rp2, userP2Tokens);
-                    // Reversed: drop. The user typed an order; respect it.
-                    if (!sameOrder) {
-                      console.log(`[case-law] Dropping irrelevant result: "${rp1}" נ' "${rp2}" (user typed: "${party1}" / "${party2}")`);
-                      return false;
+                    const rType = normalizeQuotes(String(r.caseType || ""));
+                    const rNum = String(r.caseNumber || "").trim();
+                    const hasParties = rp1.length > 0 && rp2.length > 0;
+
+                    // Strong match: result's caseType matches user's prefix AND has a docket.
+                    // This rescues correct results where Perplexity dropped party fields.
+                    const caseTypeMatchesUser = !!userCaseTypeNorm && rType === userCaseTypeNorm;
+                    const hasDocket = /\d/.test(rNum);
+
+                    if (hasParties) {
+                      // Order-preserving: result.p1 ⊇ user.p1 AND result.p2 ⊇ user.p2
+                      const sameOrder = hasOverlap(rp1, userP1Tokens) && hasOverlap(rp2, userP2Tokens);
+                      if (!sameOrder) {
+                        // Allow if caseType+docket strongly match user's request despite reversed parties
+                        if (caseTypeMatchesUser && hasDocket) {
+                          console.log(`[case-law] Keeping reversed-parties result on caseType+docket match: ${rType} ${rNum}`);
+                        } else {
+                          console.log(`[case-law] Dropping irrelevant result: "${rp1}" נ' "${rp2}" (user typed: "${party1}" / "${party2}")`);
+                          return false;
+                        }
+                      }
+                    } else {
+                      // Empty parties — keep only if caseType+docket strongly match user's request.
+                      if (!(caseTypeMatchesUser && hasDocket)) {
+                        console.log(`[case-law] Dropping empty-parties result without strong caseType match: caseType=${rType}, num=${rNum}`);
+                        return false;
+                      }
+                      console.log(`[case-law] Accepting empty-parties result on caseType+docket match: ${rType} ${rNum}`);
                     }
-                    // If user supplied a caseType prefix, drop results from a different prefix
+
+                    // If user supplied a caseType prefix, drop results from a different known prefix
                     if (userCaseTypeNorm) {
-                      const rType = normalizeQuotes(String(r.caseType || ""));
-                      // Only drop on caseType mismatch when result's caseType is itself a known
-                      // procedural prefix. Free-text labels like "תביעה"/"תביעה פלילית" returned
-                      // by Perplexity carry no jurisdiction info — let parties + caseNumber decide.
                       const rTypeIsKnownPrefix = CASE_TYPE_PREFIXES.some(
                         (p) => normalizeQuotes(p) === rType,
                       );
@@ -1192,10 +1228,13 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   } else if (results.length === 1) {
                     // Single result – use same logic as case-number search
                     const r = results[0];
-                    const fullRef = `${r.caseType || "[חסר: סוג הליך]"} ${r.caseNumber || "[חסר: מספר תיק]"}`;
+                    // Fallback: if Perplexity dropped party fields, use the user-typed parties.
+                    const effP1 = (r.party1 && String(r.party1).trim()) || party1;
+                    const effP2 = (r.party2 && String(r.party2).trim()) || party2;
+                    const fullRef = `${r.caseType || userCaseTypeNorm || "[חסר: סוג הליך]"} ${r.caseNumber || "[חסר: מספר תיק]"}`;
                     let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
                     details += `תיק: ${fullRef}\n`;
-                    if (r.party1 && r.party2) details += `צדדים: **${r.party1}** נ' **${r.party2}**\n`;
+                    details += `צדדים: **${effP1}** נ' **${effP2}**\n`;
                     if (r.court) details += `בית משפט: ${r.court}\n`;
                     if (r.isPublished && r.padi_volume) {
                       caseLawOverrideLabel = "פסיקה (דפוס)";
@@ -1205,11 +1244,13 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                       caseLawOverrideLabel = "פסיקה (מאגר)";
                       details += `מאגר: ${r.databaseName}\n`;
                     }
-                    if (r.date) details += `תאריך: ${r.date}\n`;
+                    if (r.date && String(r.date).trim()) {
+                      details += `תאריך: ${r.date}\n`;
+                    } else {
+                      details += `תאריך: [חסר: תאריך]  ⚠️ חובה לכתוב במפורש "[חסר: תאריך]" באזכור — אסור להמציא תאריך.\n`;
+                    }
                     if (r.year) details += `שנה: ${r.year}\n`;
-                    const partyLockLine = (r.party1 && r.party2)
-                      ? `\n⚠️ חובה מוחלטת: השתמש בשמות הצדדים בדיוק כפי שמופיעים כאן — "${r.party1}" ו-"${r.party2}". אסור להוסיף שמות פרטיים, תארים, "עזבון", "יורשי" או כל תוספת אחרת, גם אם אתה "זוכר" אותם ממקור אחר. כלל 18.4: שם משפחה בלבד לאנשים פרטיים.\n`
-                      : "";
+                    const partyLockLine = `\n⚠️ חובה מוחלטת: השתמש בשמות הצדדים בדיוק כפי שמופיעים כאן — "${effP1}" ו-"${effP2}". אסור להוסיף שמות פרטיים, תארים, "עזבון", "יורשי" או כל תוספת אחרת, גם אם אתה "זוכר" אותם ממקור אחר. כלל 18.4: שם משפחה בלבד לאנשים פרטיים.\n`;
                     const spacingLine = `⚠️ חובה: רווח בין "פ\"ד" לכרך (למשל: פ"ד לג(2) 281, ולא פ"דלג).\n`;
                     if (caseLawOverrideLabel === "פסיקה (דפוס)") {
                       details += `${partyLockLine}${spacingLine}══ חובה לעצב כפסיקה (דפוס) לפי כלל 18, תוך שימוש בלעדי בנתונים שלמעלה. ══`;
@@ -1223,14 +1264,18 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     let details = `\n\n══ נמצאו מספר פסקי דין תואמים ══\n`;
                     details += `הצג למשתמש את הרשימה הבאה ובקש ממנו לבחור את פסק הדין הרלוונטי:\n\n`;
                     results.forEach((r: Record<string, unknown>, i: number) => {
-                      const ref = `${r.caseType || "?"} ${r.caseNumber || "?"}`;
-                      const parties = (r.party1 && r.party2) ? `${r.party1} נ' ${r.party2}` : "";
+                      const ref = `${r.caseType || userCaseTypeNorm || "?"} ${r.caseNumber || "?"}`;
+                      const effP1 = (r.party1 && String(r.party1).trim()) || party1;
+                      const effP2 = (r.party2 && String(r.party2).trim()) || party2;
+                      const parties = `${effP1} נ' ${effP2}`;
                       const year = r.year || "";
                       const court = r.court || "";
-                      // Embed full data so the selection branch can skip a re-search
+                      // Embed full data so the selection branch can skip a re-search.
+                      // Backfill missing parties with user-typed values so downstream is consistent.
                       const blob = encodeURIComponent(JSON.stringify({
-                        caseType: r.caseType, caseNumber: r.caseNumber,
-                        party1: r.party1, party2: r.party2,
+                        caseType: r.caseType || userCaseTypeNorm || "",
+                        caseNumber: r.caseNumber,
+                        party1: effP1, party2: effP2,
                         date: r.date, court: r.court,
                         isPublished: r.isPublished,
                         padi_volume: r.padi_volume, padi_part: r.padi_part, padi_page: r.padi_page,

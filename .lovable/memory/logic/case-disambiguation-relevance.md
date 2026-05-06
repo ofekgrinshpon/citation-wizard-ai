@@ -1,15 +1,17 @@
 ---
-name: Case-law disambiguation relevance + data carry-over
-description: Three protections in citation-chat party-search path — token-based party relevance filter, caseType-prefix filter, and embedded data blob carrying full Perplexity result into the disambiguation selection so no re-search is needed.
-type: feature
+name: Case Disambiguation Relevance
+description: Party-search filtering rules for case-law disambiguation in citation-chat
+type: logic
 ---
 
-In `supabase/functions/citation-chat/index.ts` party-name (Branch B) search:
+When the user query contains a BIU procedure prefix (e.g. סע"ש, ת"א, בג"ץ), it is stripped from `party1` before tokenization and used as `userCaseTypeNorm` for both search focusing and result filtering.
 
-1. **Relevance filter**: tokenize user-typed party1/party2 (Hebrew tokens ≥3 chars, stopwords excluded: `נ נגד של את עם על בין מדינת ה`). Drop any Perplexity result whose `party1`/`party2` don't share at least one token in the user-typed order. Order-preserving — reversed parties (e.g. user wrote `קמיקר נ מדינה`, result is `מדינה נ' קמיקר`) are dropped.
-2. **CaseType prefix filter**: if the user-typed input contained a procedural prefix (e.g. `סע״ש`), drop Perplexity results whose `caseType` doesn't match (after normalizing `״↔"`, `׳↔'`).
-3. **Data blob carry-over**: each disambiguation line now ends with `<!--DATA:{urlencoded JSON}-->` carrying the full per-result fields (date, court, isPublished, padi_*, databaseName, year, parties, caseType, caseNumber). On `[בחירת תוצאה]`, the function parses the blob and builds `caseLawHint` directly — **no second Perplexity call**, no data loss.
+Filter rules (`citation-chat/index.ts`, party-search branch):
+- Reversed-party hallucinations (`p1`/`p2` swapped vs. user) are dropped UNLESS the result's `caseType` exactly matches `userCaseTypeNorm` and a docket number exists — then keep.
+- Empty-party results are dropped UNLESS `caseType === userCaseTypeNorm` and a docket exists; in that case keep and backfill `party1`/`party2` from the user-typed values.
+- Cross-jurisdiction known prefixes (e.g. user typed סע"ש, result is ת"פ) are dropped.
+- Free-text labels like "תביעה"/"תביעה פלילית" do NOT count as known prefixes — they go through the party-token + order check instead.
+- Single-result hint always emits parties (using user fallback), and emits `[חסר: תאריך]` when `r.date` is empty. Never invent dates.
+- Multi-result blob carries `caseType: r.caseType || userCaseTypeNorm` and backfilled parties so the selection branch can format without a re-search.
 
-`MessageBubble.tsx` strips `<!--DATA:...-->` from display but passes the full line (blob included) to `onSelectOption`, so the round-trip works invisibly.
-
-Also: `caseNumberMatch[2].replace('-', '/')` was removed — lower-court dockets use dashes (e.g. `סע"ש 50358-09-16`); preserving the user's separator is required for takdin/nevo lookups to succeed.
+Perplexity prompt for party search now demands populated `party1`/`party2`, respects user-typed party order, and forbids fabricated dates. When `userCaseTypeNorm` is set, the user message is reframed as: "find the {prefix} case where {p1} is plaintiff and {p2} is defendant".
