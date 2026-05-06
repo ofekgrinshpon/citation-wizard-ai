@@ -1130,9 +1130,10 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     details += `\n══ שאל את המשתמש: "נמצאו מספר פסקי דין בין הצדדים. לאיזה פסק דין התכוונת?" והצג את הרשימה הממוספרת. לאחר שהמשתמש יבחר, עצב את האזכור לפי הנתונים שנמצאו. ══`;
                     caseLawHint = details;
                   }
-                } catch (e) {
-                  console.error("[case-law] Failed to parse party search JSON:", e);
-                  caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא הצלחתי לחפש פסקי דין בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק.\n══`;
+                  } catch (e) {
+                    console.error("[case-law] Error processing party search results:", e);
+                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא הצלחתי לחפש פסקי דין בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק.\n══`;
+                  }
                 }
               }
             } else {
