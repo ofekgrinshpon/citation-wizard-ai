@@ -1,0 +1,125 @@
+# Project Memory
+
+## Core
+- Strict adherence to Uniform Citation Rules (2021). Zero hallucinations: omit unknown metadata or use '(לא נמצאה שנת פרסום)'. Hebrew years require 'ה' prefix.
+- Legal QA responses must separate narrative body text (no technical references) from strictly formatted superscript footnotes (¹²³).
+- Use **bold** for headings; no markdown headings (#).
+- App is ReLex (RTL, inclusive Hebrew text). Models: Gemini 2.5 Flash (via Lovable Gateway), text-embedding-3-small (via OpenAI API directly).
+- Data isolated per project (`project_id` & `user_id`) using Row Level Security (RLS). Admin role checks centralized in `private` schema.
+- Edge Functions protected by mandatory JWT authorization.
+- Unsubscribed users limited to 3 queries shared across all features.
+
+## Memories
+- [Tech Stack](mem://tech/stack) — Gemini 2.5 Flash via Gateway, OpenAI API for embeddings
+- [Super Admin Configuration](mem://auth/super-admin-configuration) — Dashboard redirect and state guard logic
+- [Bibliography Generator](mem://features/bibliography-generator) — Batch processing, sync, short-form restoration
+- [Bibliography Sorting](mem://logic/bibliography-sorting) — Strict hierarchical sorting logic for bibliography
+- [Footnote Reordering](mem://features/footnote-reordering) — Drag-and-drop citation reordering
+- [Batch Footnote Builder](mem://features/batch-footnote-builder) — Parallel API calls for citations and validations
+- [Repeated Citations](mem://logic/repeated-citations) — Rule 37.7 formatting for 'שם' and 'לעיל ה"ש X'
+- [Bibliography Deduplication](mem://logic/bibliography-deduplication) — Zero duplicates using normalized citation keys
+- [Citation Extraction](mem://features/citation-extraction-logic) — Stripping emojis and rules from AI responses
+- [Publication Integrity](mem://features/publication-integrity-logic) — Rules 2.4/2.5 Hebrew vs Gregorian years enforcement
+- [Pinpoint Integration](mem://logic/pinpoint-integration) — Abbreviated pinpoint markers (ס', בעמ')
+- [Source Reclassification](mem://features/source-reclassification) — Manual citation override modal
+- [Citation Engine](mem://logic/citation-engine) — 12 source types mapping to Uniform Citation Rules
+- [Automated Citation Validation](mem://features/automated-citation-validation) — Prompt hints and post-response validation checks
+- [Bill Type Selection](mem://features/bill-type-selection) — Bill Proposal UI selector for prompts
+- [Party Name Verification](mem://features/party-name-verification) — Rule 18.4 checking for Case Law individuals vs corporations
+- [Treaty Type Selection](mem://features/treaty-type-selection) — UI for multilateral vs bilateral treaties
+- [Project Structure](mem://features/project-structure) — Default user project and Project-scoped keys
+- [Security RLS](mem://tech/security-rls) — Multi-layered RLS and privacy for tables
+- [Character Normalization](mem://logic/character-normalization) — Mapping Hebrew typographic quotes to standard ASCII
+- [Edge Function Security](mem://tech/edge-function-security) — Auth validation using internal Supabase JWT
+- [Citation History Sidebar](mem://features/citation-history-sidebar) — Recent 50 citations and click-to-copy
+- [AI Prompt Tagging](mem://logic/ai-prompt-tagging) — Prepending classification tags for the AI prompt
+- [Subscription Model](mem://monetization/subscription-model) — Subscription tiers and usage limit handling
+- [Database Security Hardening](mem://tech/database-security-hardening) — Hiding admin UUIDs from regular users
+- [Database Security Architecture](mem://tech/database-security-architecture) — Admin checks in private schema
+- [Citation Processing Pipeline](mem://tech/citation-processing-pipeline) — Pipeline logic in citation-chat function
+- [AI Model Capabilities](mem://tech/ai-model-capabilities) — Gemini constraints and anti-hallucination protocols
+- [Source Promotion](mem://logic/source-reclassification/automatic-promotion) — Upgrading case_law_database to published if פ"ד found
+- [Abbreviation Support](mem://logic/citation-validation/abbreviation-support) — Regex limits for case type abbreviations
+- [Builder Search Integration](mem://features/batch-footnote-builder/search-integration) — Parallel Perplexity searches
+- [Engine Hint Sanitization](mem://tech/edge-function-search-sanitization) — Regex for stripping edge function hint blocks
+- [Access Control and Roles](mem://auth/access-control-and-roles) — Role-based resolving and dashboard access
+- [Source Classification](mem://logic/source-classification) — Keyword heuristics for 12+ citation types
+- [Dashboard Management](mem://features/admin/dashboard-management) — Admin bulk operations and source verifications
+- [Legislation Rule 2.8](mem://logic/citation-rules/legislation-rule-2-8) — Omit issue number, use only opening page
+- [Core Principles](mem://logic/citation-rules/core-principles) — Badges, clean output policies, rule enforcement
+- [Other Category Rules](mem://logic/citation-rules/other-category) — Independence Declaration and Knesset rules
+- [Pleadings and Agreements](mem://logic/citation-rules/pleadings-and-agreements) — Rule 22.2 and 17.2 specialized rules
+- [Treaty Collections](mem://logic/citation-rules/treaty-collections) — Rule 9 treaty signing details
+- [Constraints and Naming Rules](mem://logic/citation-rules/constraints-and-naming-rules) — Names formatting for rules 2, 6, 8, 18
+- [Date Formatting](mem://logic/date-formatting) — Context-aware date rules (Gregorian vs Hebrew)
+- [Verified Sources Directory](mem://features/verified-sources-directory) — Paywalled categorized table
+- [Anti Hallucination](mem://logic/anti-hallucination) — Mandatory missing data placeholders
+- [Admin and Regulations Rules](mem://logic/citation-rules/administrative-and-regulations) — Rules for governmental decisions (Rule 15, 16)
+- [Books Rule 23](mem://logic/citation-rules/books-rule-23) — Detailed rules for book authors, volumes, and editions
+- [Formatting Rules](mem://logic/citation-rules/formatting-rules) — Comma rules (1.9) and number ranges (1.10)
+- [Article Citations](mem://logic/citation-rules/article-citations) — Rule 24 for journals, newspaper and books
+- [Academic and Encyclopedia](mem://logic/citation-rules/academic-and-encyclopedia) — Rule 25, 26 references
+- [Religious Sources](mem://logic/citation-rules/religious-sources) — Bible, Talmud, and Rabbinic texts rules (Rules 28-30)
+- [Correspondence and Media](mem://logic/citation-rules/correspondence-and-media) — Letters, interviews, and films (Rules 32-33)
+- [Internet Sources](mem://logic/citation-rules/internet-sources-rule-34-2) — URLs, comments, and social media (Rule 34)
+- [Foreign Bluebook Rule 36](mem://logic/citation-rules/foreign-bluebook-rule-36) — 9 foreign subtypes (36.1–36.9); React+Deno registries sync manually
+- [Navigation Logic Modes](mem://auth/navigation-logic-modes) — /auth interface states
+- [Dashboard Performance](mem://features/admin/performance-optimization) — Promise.all refactor for Admin dashboard
+- [Project Identity](mem://project/identity) — ReLex branding, logo, Word Add-in details
+- [Legal QA RAG](mem://architecture/legal-qa-rag) — Hybrid text/semantic search pipeline
+- [Legal QA Source Handling](mem://logic/legal-qa-source-handling) — Excluding non-authoritative URLs
+- [Legal QA Admin Ingestion](mem://features/legal-qa-admin-ingestion) — Bulk document fetching via APIs and convert-doc
+- [Legal QA Metadata Schema](mem://logic/legal-qa-metadata-schema) — Document schema containing 1500-char chunks
+- [Document Management UI](mem://features/admin/document-management-ui) — Partial failure checks and counters
+- [Scraping Constraints](mem://constraints/knesset-scraping-feasibility) — Knesset scraping feasibility
+- [Automated Citations Pipeline](mem://features/automated-citations-pipeline) — External lookups via Perplexity (sonar-pro)
+- [External Ingestion Endpoint](mem://tech/external-ingestion-endpoint) — Ingestion with APIFY_API_TOKEN
+- [Natural Language Priority](mem://logic/source-classification/natural-language-priority) — Case law priority over books
+- [Citation Disambiguation](mem://features/citation-disambiguation) — Interactive UI lines for multi-case results
+- [Document Grounding](mem://features/legal-qa/document-grounding) — Uploading PDF/DOCX for context
+- [QA Citation Engine Integration](mem://logic/legal-qa/citation-engine-integration) — Dynamic insertion of ruleset in edge function
+- [QA Retrieval Resilience](mem://logic/legal-qa/retrieval-resilience) — Fallback constraints to prevent empty AI replies
+- [Ingestion Architecture](mem://tech/ingestion-pipeline-architecture) — Deduplication and batch limits for Apify syncs
+- [QA Architecture Performance](mem://logic/legal-qa/architecture-performance) — Splitting parsed references from the body
+- [QA Search Optimization](mem://logic/legal-qa/search-optimization) — Parallelizing local + external search
+- [QA Error Handling](mem://features/legal-qa/error-handling) — Inline error cards
+- [QA Markdown Rendering](mem://logic/legal-qa/markdown-rendering-protocol) — Transforming ## headers correctly
+- [Uniform Citation Mode](mem://features/uniform-citation-mode) — Expanding input UI
+- [QA Corpus](mem://data/legal-qa-corpus) — Categories of locally loaded docs
+- [Operation Modes](mem://features/operation-modes) — App's main interface modes
+- [Rich Text Formatting](mem://features/rich-text-copy-formatting) — Copying content properly as David 12pt
+- [QA Workspace V2](mem://features/legal-qa/workspace-v2) — Workspace modes and styling
+- [QA History Sidebar](mem://features/legal-qa/history-sidebar) — Searchable history side panel
+- [QA Citation Prioritization](mem://logic/legal-qa/citation-prioritization) — Emphasizing local DB items over Perplexity
+- [QA Footnote Ordering](mem://logic/legal-qa/footnote-ordering-logic) — Left-to-right universal renumbering
+- [QA Query Control](mem://features/legal-qa/query-control) — Stop generation via AbortController
+- [Hebrew Year Prefix](mem://logic/citation-rules/hebrew-year-prefix) — Ensure all Hebrew years start with ה
+- [Layout Constraints](mem://style/layout-constraints) — Flex utility patterns for text inputs
+- [Word Addin Technical Spec](mem://architecture/word-addin/technical-spec) — Office.js Task pane functionality
+- [Verified Source Engine](mem://logic/verified-source-engine/core) — Deduplication and fuzzy source retrieval
+- [QA Journal Metadata Extraction](mem://logic/legal-qa/journal-metadata-extraction) — Fixing mishpatim URL patterns
+- [QA Relevance Filtering](mem://logic/legal-qa/relevance-filtering) — Filtering low substance chunks (< 300 chars)
+- [QA Subscription Limits](mem://monetization/legal-qa-subscription-limits) — Tying useSubscription bounds
+- [Batch Embedding Infra](mem://tech/batch-embedding-infrastructure) — Sub-batch chunk handling
+- [Admin Batch Embedding Panel](mem://features/admin/batch-embedding-panel) — Auto token refresh loop
+- [QA Retrieval Engine](mem://logic/legal-qa/retrieval-engine) — HNSW vector and text matching
+- [QA Post-Processing](mem://logic/legal-qa/post-processing-cleanup) — Final regex checks and cleanup
+- [QA Memo Output Protocol](mem://logic/legal-qa/memo-output-protocol) — No exact procedural counts in body
+- [Knesset Title Recovery](mem://features/admin/knesset-title-recovery) — Mines real titles from chunk content for placeholder Knesset docs; legal-qa filters broken ones
+- [Abstract Locking](mem://features/academic-writing-mode/abstract-locking) — Locks תקציר until all other chapters done; 250-word synthesis prompt, no retrieval, no new citations
+- [Intro & Conclusion Roles](mem://features/academic-writing-mode/intro-conclusion-roles) — Decoupled generation order vs display order
+- [Academic Wizard Cross-Device Resume](mem://features/academic-writing-mode/cross-device-resume) — Wizard state synced to academic_sessions table
+- [Legislation Footnote Exception](mem://logic/legal-qa/legislation-footnote-exception) — Mandatory bibliographic footnote when חוק/פקודה/תקנה named
+- [Anchored Partial Citations](mem://logic/legal-qa/anchored-partial-citations) — Anchored footnotes keep partial citations with [חסר: שדה]
+- [Legislation Year Completeness](mem://logic/legal-qa/legislation-year-completeness) — Auto-validator inserts [חסר: שנה] when ס"ח/ק"ת without Hebrew year
+- [Meeting Protocols Rule 8.3](mem://logic/citation-rules/meeting-protocols-rule-8-3) — Knesset/committee/government protocol citations
+- [Decomposition and Claim Map](mem://logic/legal-qa/decomposition-and-claim-map) — Frame→Decompose→Plan→Retrieve→Rank→SourcePack→ClaimMap→Draft
+- [Research Contracts](mem://logic/legal-qa/research-contracts) — Formal camelCase JSON contracts
+- [Shadow A/B Logger](mem://logic/legal-qa/shadow-ab-logger) — Background drafter call with legacy-style prompt
+- [Stage Telemetry](mem://logic/legal-qa/stage-telemetry) — Per-stage StageRun telemetry in qa_logs.metadata.stage_runs
+- [Perplexity Completion Guards](mem://logic/legal-qa/perplexity-completion-guards) — Stage E.5 uses citation-shape regex + URL allowlist
+- [Research Depth Modes](mem://features/legal-qa/research-depth-modes) — Two-button toggle (Fast/Deep)
+- [SSE Streaming UI](mem://features/legal-qa/sse-streaming-ui) — StageProgressList live events
+- [Perplexity Takdin-Lite Hint](mem://logic/perplexity-takdin-lite-hint) — Caselaw Perplexity prompts hint lite.takdin.co.il
+- [Case Type Prefix Dictionary](mem://logic/case-type-prefix-dictionary) — Central BIU procedural-prefix list
+- [Case Disambiguation Relevance](mem://logic/case-disambiguation-relevance) — Token + caseType filter; Takdin-lite untrusted for padi_*

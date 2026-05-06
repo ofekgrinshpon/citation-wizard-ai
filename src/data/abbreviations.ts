@@ -138,7 +138,16 @@ export type SourceType =
   | 'film'                  // סרט (כלל 33.1)
   | 'tv_show'               // תוכנית טלוויזיה (כלל 33.2)
   | 'radio'                 // רדיו/תסכית (כלל 33.3)
-  | 'foreign'               // לועזי
+  | 'foreign'                  // לועזי – fallback (כלל 36)
+  | 'foreign_constitution'     // חוקה לועזית (כלל 36.1)
+  | 'foreign_statute_us'       // חוק אמריקני (כלל 36.2)
+  | 'foreign_statute_uk'       // חוק אנגלי (כלל 36.3)
+  | 'foreign_case_us'          // פסיקה אמריקנית (כלל 36.4)
+  | 'foreign_case_other'       // פסיקה ממדינות אחרות (כלל 36.5)
+  | 'foreign_book'             // ספר לועזי (כלל 36.6)
+  | 'foreign_journal_article'  // מאמר בכתב עת לועזי (כלל 36.7)
+  | 'foreign_book_chapter'     // מאמר בספר לועזי (כלל 36.8)
+  | 'foreign_internet'         // מקור מרשתת לועזי (כלל 36.9)
   | 'other'                 // אחר (דברי כנסת וכו')
   | 'unknown';
 
@@ -173,6 +182,15 @@ export const REQUIRED_FIELDS: Record<SourceType, string[]> = {
   radio: ['showName', 'radioStation', 'fullDate'],
   treaty: ['treatyName', 'volume', 'firstPage', 'signingType', 'signingYear'],
   foreign: ['citation'],
+  foreign_constitution: ['jurisdiction', 'division', 'section'],
+  foreign_statute_us: ['title', 'code', 'section'],
+  foreign_statute_uk: ['statuteName', 'year', 'chapter'],
+  foreign_case_us: ['party1', 'party2', 'volume', 'reporter', 'firstPage', 'year'],
+  foreign_case_other: ['party1', 'party2', 'volumeOrYear', 'reporter', 'firstPage', 'courtAndJurisdiction'],
+  foreign_book: ['authors', 'bookTitle', 'year'],
+  foreign_journal_article: ['authors', 'articleTitle', 'volume', 'journal', 'firstPage', 'year'],
+  foreign_book_chapter: ['authors', 'articleTitle', 'bookTitle', 'firstPage', 'year'],
+  foreign_internet: ['title', 'site', 'url'],
   other: [],
   unknown: [],
 };
@@ -259,6 +277,25 @@ export const FIELD_LABELS: Record<string, string> = {
   commentNumber: 'מספר התגובה',
   originalSourceDetails: 'פרטי המקור המקורי',
   title: 'כותרת',
+  // Foreign (Bluebook – Rule 36)
+  jurisdiction: 'תחום שיפוט',
+  division: 'חלוקה (amend./art.)',
+  code: 'קוד (U.S.C.)',
+  chapter: 'פרק (chapter)',
+  regnalYear: 'שנת מלכות',
+  monarch: 'קיצור שם המלך/ה',
+  reporter: 'שם הסדרה (reporter)',
+  procPrefix: 'תחילית הליך (Ex parte/In re)',
+  volumeOrYear: 'כרך/שנה',
+  courtAndJurisdiction: 'ערכאה ותחום שיפוט',
+  subtitle: 'שם משני',
+  publisher: 'מוציא לאור',
+  handle: 'שם משתמש (@)',
+  site: 'שם האתר',
+  pinpoint: 'הפניה ספציפית',
+  statuteName: 'שם החוק',
+  authors: 'שמות המחברים',
+  journal: 'שם כתב העת',
 };
 
 // Normalize abbreviations in free text
@@ -432,6 +469,15 @@ export const SOURCE_TYPE_LABELS: Record<SourceType, string> = {
   academic_work: 'עבודה אקדמית',
   treaty: 'כתבי אמנה',
   foreign: 'מקור לועזי',
+  foreign_constitution: 'חוקה לועזית (36.1)',
+  foreign_statute_us: 'חוק אמריקני (36.2)',
+  foreign_statute_uk: 'חוק אנגלי (36.3)',
+  foreign_case_us: 'פסיקה אמריקנית (36.4)',
+  foreign_case_other: 'פסיקה לועזית אחרת (36.5)',
+  foreign_book: 'ספר לועזי (36.6)',
+  foreign_journal_article: 'מאמר לועזי בכתב עת (36.7)',
+  foreign_book_chapter: 'מאמר לועזי בספר (36.8)',
+  foreign_internet: 'מקור מרשתת לועזי (36.9)',
   other: 'אחר',
   unknown: 'לא מזוהה',
 };
@@ -467,6 +513,15 @@ export const RULE_REFERENCES: Record<SourceType, string> = {
   academic_work: 'כלל 26 – עבודות אקדמיות',
   treaty: 'כלל 9 – כתבי אמנה',
   foreign: 'כלל 36 – מקורות לועזיים (Bluebook)',
+  foreign_constitution: 'כלל 36.1 – חוקות לועזיות',
+  foreign_statute_us: 'כלל 36.2 – חוקים (ארה"ב)',
+  foreign_statute_uk: 'כלל 36.3 – חוקים (אנגליה)',
+  foreign_case_us: 'כלל 36.4 – פסיקה (ארה"ב)',
+  foreign_case_other: 'כלל 36.5 – פסיקה (מדינות אחרות)',
+  foreign_book: 'כלל 36.6 – ספרים לועזיים',
+  foreign_journal_article: 'כלל 36.7 – מאמרים בכתבי עת לועזיים',
+  foreign_book_chapter: 'כלל 36.8 – מאמרים שפורסמו בספרים לועזיים',
+  foreign_internet: 'כלל 36.9 – מקורות במרשתת לועזיים',
   other: 'כלל 8 – אחר (דברי כנסת וכו׳)',
   unknown: '',
 };

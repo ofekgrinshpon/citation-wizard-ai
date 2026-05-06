@@ -120,6 +120,129 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
       { field: "fullDate", rule: "19.1", description: "תאריך פרסום מלא", required: true, format: "plain" },
     ],
   },
+
+  // ─── Foreign sources (Bluebook – Rule 36) — minimal Deno mirror.
+  // Keep in sync with src/data/citationEngine.ts (no auto-sync). Required-fields
+  // only; full notes/templates live on the React side.
+  foreign_constitution: {
+    primaryRule: "36.1",
+    ruleTitle: "כלל 36.1 – חוקות (ארה\"ב)",
+    template: "{jurisdiction} CONST. {division} {section}.",
+    example: "U.S. CONST. amend. XV, § 1.",
+    components: [
+      { field: "jurisdiction", rule: "36.1", description: "תחום שיפוט", required: true, format: "plain" },
+      { field: "division", rule: "36.1", description: "amend./art.", required: true, format: "plain" },
+      { field: "section", rule: "36.1", description: "סעיף", required: true, format: "plain" },
+    ],
+  },
+  foreign_statute_us: {
+    primaryRule: "36.2",
+    ruleTitle: "כלל 36.2 – חוקים (ארה\"ב)",
+    template: "[{statuteName}, ]{title} {code} § {section} ({year}).",
+    example: "Sherman Act, 15 U.S.C. §§ 1–7.",
+    components: [
+      { field: "statuteName", rule: "36.2", description: "שם החוק", required: false, format: "plain" },
+      { field: "title", rule: "36.2", description: "title", required: true, format: "plain" },
+      { field: "code", rule: "36.2", description: "U.S.C.", required: true, format: "plain" },
+      { field: "section", rule: "36.2", description: "סעיף", required: true, format: "plain" },
+      { field: "year", rule: "36.2", description: "שנת הקודקס", required: false, format: "plain" },
+    ],
+  },
+  foreign_statute_uk: {
+    primaryRule: "36.3",
+    ruleTitle: "כלל 36.3 – חוקים (אנגליה)",
+    template: "{statuteName} {year}, [{regnalYear} {monarch} ]c. {chapter}[, § {section}].",
+    example: "Habeas Corpus Act 1679, 31 Car. 2 c. 2.",
+    components: [
+      { field: "statuteName", rule: "36.3", description: "שם החוק", required: true, format: "plain" },
+      { field: "year", rule: "36.3", description: "שנה", required: true, format: "plain" },
+      { field: "regnalYear", rule: "36.3", description: "שנת מלכות (עד 1962)", required: false, format: "plain" },
+      { field: "monarch", rule: "36.3", description: "קיצור שם מלך/ה", required: false, format: "plain" },
+      { field: "chapter", rule: "36.3", description: "chapter", required: true, format: "plain" },
+      { field: "section", rule: "36.3", description: "סעיף", required: false, format: "plain" },
+    ],
+  },
+  foreign_case_us: {
+    primaryRule: "36.4",
+    ruleTitle: "כלל 36.4 – פסיקה (ארה\"ב)",
+    template: "{party1} v. {party2}, {volume} {reporter} {firstPage} ([{court} ]{year}).",
+    example: "Atkins v. Virginia, 536 U.S. 304 (2002).",
+    components: [
+      { field: "party1", rule: "36.4", description: "צד א'", required: true, format: "plain" },
+      { field: "party2", rule: "36.4", description: "צד ב'", required: true, format: "plain" },
+      { field: "volume", rule: "36.4", description: "כרך", required: true, format: "plain" },
+      { field: "reporter", rule: "36.4", description: "סדרה", required: true, format: "plain" },
+      { field: "firstPage", rule: "36.4", description: "עמוד ראשון", required: true, format: "plain" },
+      { field: "court", rule: "36.4", description: "ערכאה", required: false, format: "plain" },
+      { field: "year", rule: "36.4", description: "שנה", required: true, format: "plain" },
+    ],
+  },
+  foreign_case_other: {
+    primaryRule: "36.5",
+    ruleTitle: "כלל 36.5 – פסיקה (מדינות אחרות)",
+    template: "{party1} v. {party2} {volumeOrYear} {reporter} {firstPage} ({courtAndJurisdiction}).",
+    example: "Young v. Bristol Aeroplane Co. [1944] KB 718 (CA).",
+    components: [
+      { field: "party1", rule: "36.5", description: "צד א'", required: true, format: "plain" },
+      { field: "party2", rule: "36.5", description: "צד ב'", required: true, format: "plain" },
+      { field: "volumeOrYear", rule: "36.5", description: "כרך/שנה", required: true, format: "plain" },
+      { field: "reporter", rule: "36.5", description: "סדרה", required: true, format: "plain" },
+      { field: "firstPage", rule: "36.5", description: "עמוד ראשון", required: true, format: "plain" },
+      { field: "courtAndJurisdiction", rule: "36.5", description: "ערכאה ושיפוט", required: true, format: "plain" },
+    ],
+  },
+  foreign_book: {
+    primaryRule: "36.6",
+    ruleTitle: "כלל 36.6 – ספרים לועזיים",
+    template: "##{authors}##, ##{bookTitle}## ({year}).",
+    example: "HAZEL GENN, JUDGING CIVIL JUSTICE (2010).",
+    components: [
+      { field: "authors", rule: "36.6", description: "מחברים", required: true, format: "italic" },
+      { field: "bookTitle", rule: "36.6", description: "שם הספר", required: true, format: "italic" },
+      { field: "year", rule: "36.6", description: "שנה", required: true, format: "plain" },
+    ],
+  },
+  foreign_journal_article: {
+    primaryRule: "36.7",
+    ruleTitle: "כלל 36.7 – מאמרים בכתבי עת לועזיים",
+    template: "{authors}, ##{articleTitle}##, {volume} ##{journal}## {firstPage} ({year}).",
+    example: "Ruth Gavison, Privacy and the Limits of Law, 89 YALE L.J. 421 (1980).",
+    components: [
+      { field: "authors", rule: "36.7", description: "מחברים", required: true, format: "plain" },
+      { field: "articleTitle", rule: "36.7", description: "שם המאמר", required: true, format: "italic" },
+      { field: "volume", rule: "36.7", description: "כרך", required: true, format: "plain" },
+      { field: "journal", rule: "36.7", description: "כתב עת", required: true, format: "italic" },
+      { field: "firstPage", rule: "36.7", description: "עמוד ראשון", required: true, format: "plain" },
+      { field: "year", rule: "36.7", description: "שנה", required: true, format: "plain" },
+    ],
+  },
+  foreign_book_chapter: {
+    primaryRule: "36.8",
+    ruleTitle: "כלל 36.8 – מאמרים בספרים לועזיים",
+    template: "{authors}, ##{articleTitle}##, in ##{bookTitle}## {firstPage} ({editor} eds., {year}).",
+    example: "Ayelet Shachar, Constituting Citizens, in CANADA IN THE WORLD 123 (Albert & Cameron eds., 2018).",
+    components: [
+      { field: "authors", rule: "36.8", description: "מחברים", required: true, format: "plain" },
+      { field: "articleTitle", rule: "36.8", description: "שם המאמר", required: true, format: "italic" },
+      { field: "bookTitle", rule: "36.8", description: "שם הספר", required: true, format: "italic" },
+      { field: "firstPage", rule: "36.8", description: "עמוד ראשון", required: true, format: "plain" },
+      { field: "editor", rule: "36.8", description: "עורך", required: false, format: "plain" },
+      { field: "year", rule: "36.8", description: "שנה", required: true, format: "plain" },
+    ],
+  },
+  foreign_internet: {
+    primaryRule: "36.9",
+    ruleTitle: "כלל 36.9 – מקורות במרשתת לועזיים",
+    template: "##{title}##, ##{site}## ({date}), {url}.",
+    example: "Katy Barnett, News, OPINIONS ON HIGH (Mar. 22, 2019), https://shorturl.at/ersHN.",
+    components: [
+      { field: "author", rule: "36.9", description: "מחבר", required: false, format: "plain" },
+      { field: "title", rule: "36.9", description: "שם העמוד", required: true, format: "italic" },
+      { field: "site", rule: "36.9", description: "שם האתר", required: true, format: "italic" },
+      { field: "date", rule: "36.9", description: "תאריך", required: false, format: "plain" },
+      { field: "url", rule: "36.9", description: "URL", required: true, format: "plain" },
+    ],
+  },
 };
 
 // ─── Validation helpers ─────────────────────────────────────
