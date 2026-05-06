@@ -7298,6 +7298,14 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             // were encountered in this chapter.
             party_lookup: chapterPartyLookup,
           } : null,
+          // Option B — distilled academic style guide injection telemetry.
+          // Real body chapters only; null otherwise. `source` distinguishes
+          // env default vs. admin per-request override (`body.styleGuideEnabled`).
+          style_guide: isRealChapterForStyle ? {
+            enabled: styleGuideEnabled,
+            version: styleGuideEnabled ? ACADEMIC_STYLE_GUIDE_VERSION : null,
+            source: styleGuideAdminOverride !== null ? "admin_override" : "env",
+          } : { enabled: false, version: null, source: null },
           // Phase B — research-mode (Fast/Deep) classifier + canonical
           // re-emission for legal-routed footnotes. Same `routeChapterFootnote`
           // classifier as the academic-chapter pipeline. When the legal
