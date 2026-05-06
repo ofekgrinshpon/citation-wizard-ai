@@ -77,21 +77,10 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: "sonar",
-        search_domain_filter: [
-          "lite.takdin.co.il",
-          "takdin.co.il",
-          "nevo.co.il",
-          "supreme.court.gov.il",
-          "court.gov.il",
-          "psakdin.co.il",
-        ],
         messages: [
           {
             role: "system",
             content: `אתה עוזר מחקר משפטי. כשמבקשים ממך למצוא פסק דין ישראלי, החזר את המידע בפורמט JSON מדויק בלבד, ללא טקסט נוסף.
-
-טיפ חיפוש חשוב: התחל תמיד מ-https://lite.takdin.co.il/search-results?txtSearch=<מספר התיק> — דף תוצאות זה הוא ציבורי וחושף בתקציר עצמו את שמות הצדדים, תאריך ההחלטה, ובית המשפט (כולל קידומת מספר התיק כגון "תא (ראשון לציון) 13579-11-24"), ולכן אין צורך לפתוח את המסמך המלא בתשלום. אם לא נמצא שם, נסה את nevo.co.il ואת supreme.court.gov.il.
-
 הפורמט:
 {
   "found": true/false,
