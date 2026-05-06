@@ -1040,10 +1040,29 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
 
           // ── Branch B: Search by party names (multi-result) ──
           } else if (partyMatch) {
-            const party1 = partyMatch[1].trim();
+            const rawParty1 = partyMatch[1].trim();
             const party2 = partyMatch[2].trim();
-            const searchQuery = `${party1} נגד ${party2}`;
-            console.log(`[case-law] Party-name search: "${searchQuery}"`);
+
+            // Strip a leading BIU procedure prefix from party1 (e.g. סע"ש, ת"א).
+            // Keep the prefix as the user-supplied caseType for filtering and search focus.
+            const normalizeQuotes = (s: string) => s.replace(/[״"]/g, '"').replace(/[׳']/g, "'");
+            let userCaseTypeNorm: string | null = null;
+            let party1 = rawParty1;
+            const leadingPrefixMatch = rawParty1.match(new RegExp("^(" + CASE_TYPE_PREFIX_RE.source + ")\\s+(.+)$"));
+            if (leadingPrefixMatch) {
+              userCaseTypeNorm = normalizeQuotes(leadingPrefixMatch[1]);
+              party1 = leadingPrefixMatch[2].trim();
+            } else if (partyMatch?.index !== undefined) {
+              // Fallback: prefix sitting just before the parties in the cleaned text.
+              const window = cleanedForParty.slice(Math.max(0, partyMatch.index - 20), partyMatch.index);
+              const localPrefix = window.match(new RegExp(CASE_TYPE_PREFIX_RE.source + "\\s*$"));
+              if (localPrefix) userCaseTypeNorm = normalizeQuotes(localPrefix[0]);
+            }
+
+            const searchQuery = userCaseTypeNorm
+              ? `${userCaseTypeNorm} ${party1} נגד ${party2}`
+              : `${party1} נגד ${party2}`;
+            console.log(`[case-law] Party-name search: "${searchQuery}" (rawParty1="${rawParty1}", party1="${party1}", party2="${party2}", caseType=${userCaseTypeNorm ?? 'none'})`);
 
             const partySearchResp = await fetch("https://api.perplexity.ai/chat/completions", {
               method: "POST",
