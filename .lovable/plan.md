@@ -1,60 +1,56 @@
-**What the last logs show**
+**Goal**
 
-The latest `citation-chat` logs confirm the current fix is over-filtering:
+Stop hallucinated publication metadata (e.g. `פ"ד נז 560 (2003)` for `ע״א 158/77 רבינאי נ׳ מן שקד`) caused by Takdin-lite snippet noise leaking into Perplexity output, and add a verification gate on the party-search branch.
 
-1. The query is parsed as:
-   - `party1 = "סע\"ש קמיקר"`
-   - `party2 = "מדינת ישראל ורשות האוכלוסין וההגירה"`
+**Root causes (confirmed from logs)**
 
-   That is wrong: `סע״ש` is the procedure type, not part of party 1. Party 1 should be only `קמיקר`.
+1. Party-search returned `padi_volume=נז`, `padi_page=560`, `year=2003` for a 1977 docket. The 26-year gap between the `/77` docket and `2003` year is a clear hallucination signal that is currently ignored.
+2. `lite.takdin.co.il` is in `search_domain_filter`. Its result pages mix metadata from neighboring cases, so the model picks up wrong volume/year tokens.
+3. Unlike the case-number branch, the party-search branch in `supabase/functions/citation-chat/index.ts` does not call any verification step before trusting `padi_volume / padi_page / year`.
+4. The Perplexity system prompt encourages filling `padi_*` fields rather than leaving them missing, so the model invents values when the snippet is ambiguous.
 
-2. Perplexity returned three results:
-   - `ת״פ 51883-03-22` — `מדינת ישראל` נ׳ `קמיקר`
-   - `המ״ד 45993-06-17` — `מדינת ישראל` נ׳ `קמיקר`
-   - `סע״ש 50358-09-16` — empty parties, court `תל אביב`, database `takdin`, year `2016`
+**Implementation plan (single edge function, no schema changes)**
 
-3. The reversed criminal/other results were correctly dropped.
+Edit `supabase/functions/citation-chat/index.ts` only.
 
-4. The correct `סע״ש 50358-09-16` result was also dropped because Perplexity left `party1` and `party2` empty, so the strict party-token filter treated it as irrelevant.
+1. Add a docket↔year sanity check
+   - Parse trailing 2-digit year from `caseNumber` (e.g. `158/77` → `1977`, with `/2x` → `20xx`).
+   - Mark a result as `suspect` when:
+     - `Math.abs(year - docketYear) > 3`, OR
+     - `isPublished === true` but `date` is empty, OR
+     - `padi_volume` present but `padi_page` missing (or vice versa).
 
-**Root problems**
+2. Extract a shared `verifyPadiPublication(caseType, caseNumber)` helper
+   - Reuse the existing case-number-branch verification logic (the one that calls `case-law-search` / nevo-style lookup).
+   - Returns `{ verified: boolean, padi_volume?, padi_part?, padi_page?, date?, year?, source_url? }`.
 
-- Procedure prefix is still being captured inside `party1`.
-- The filter is too strict when a result has a strong docket/procedure match but missing party fields.
-- The search prompt asks broadly for all cases “between the parties”, which invites reversed-party and unrelated cases; when a procedure prefix is present, the search should be focused around that prefix and party order.
-- Known metadata for the correct case is still incomplete (`date` is empty). If the exact date is not found by search, the system must output `[חסר: תאריך]` rather than inventing or silently degrading.
+3. Gate the party-search branch on verification
+   - After Perplexity returns the party-search result, if the result is `suspect` OR has no trusted `source_url`, call `verifyPadiPublication`.
+   - If verification confirms different values → replace `padi_*`, `date`, `year` with verified values.
+   - If verification fails → strip `padi_*` and set `isPublished = false` with `databaseName` kept (or `[חסר: פרסום בפ"ד]` placeholder); never emit fabricated `פ"ד` data.
 
-**Implementation plan**
+4. Trusted-domain allowlist for skipping verification
+   - Only treat publication fields as trusted without secondary verification when `source_url` is on:
+     `nevo.co.il`, `supreme.court.gov.il`, `court.gov.il`, `psakdin.co.il`.
+   - `lite.takdin.co.il` and `takdin.co.il` are explicitly NOT trusted for `padi_*` fields (they remain trusted for `party1/party2/caseType/caseNumber/databaseName`).
 
-1. Normalize party extraction in `supabase/functions/citation-chat/index.ts`:
-   - Detect a BIU procedure prefix immediately before party 1.
-   - Remove that prefix from the extracted `party1` before token filtering and before constructing the search query.
-   - Keep the prefix separately as `userCaseTypeNorm`.
+5. Tighten the Perplexity prompts (system + user) for party search
+   - Forbid inventing `padi_volume` / `padi_page` / `year` from Takdin-lite snippets.
+   - Require: if exact `פ"ד` publication is not visible in a single trusted source, return `padi_volume=""`, `padi_page=""`, `isPublished=false`, and (if known) the `databaseName`.
+   - Require `source_url` per result; results without it must omit publication fields.
+   - Keep the existing `[חסר: תאריך]` rule when `date` is empty.
 
-2. Make party filtering smarter:
-   - Keep dropping reversed-party results like `מדינת ישראל נ׳ קמיקר` when the user typed `קמיקר נ׳ מדינת ישראל...`.
-   - But allow a result with empty party fields if it strongly matches the user-supplied case type (`סע״ש`) and includes a valid docket number.
-   - Prefer such a prefix+docket match over reversed-party hallucinations.
+6. Logging
+   - Log the suspect flag, docketYear vs year, source_url, and whether `verifyPadiPublication` ran and what it returned.
 
-3. Strengthen the Perplexity party-search prompt:
-   - If the user supplied a procedure prefix, explicitly search for that prefix + party names first.
-   - Instruct the search to reject reversed-party results unless the official title really matches the typed order.
-   - Ask for exact metadata fields: `caseType`, `caseNumber`, `party1`, `party2`, `court`, `date`, `databaseName`, `year`.
-
-4. Improve the single-result hint builder:
-   - If the accepted result has empty parties, fill parties from the user’s parsed parties only when the case type/docket match is strong.
-   - Keep `databaseName = תקדין/takdin` from the result.
-   - Do not fake the date. If the date remains empty, force `[חסר: תאריך]` in the generated citation.
-
-5. Add more diagnostic logging:
-   - Log the parsed `rawParty1`, cleaned `party1`, `party2`, and detected user case type.
-   - Log whether a result was accepted because of `sameOrder` or because of the strong `caseType+docket` fallback.
-
-6. Update the memory note for this disambiguation logic so future work preserves:
-   - Procedure prefix must not be treated as a party token.
-   - Empty-party results may still be valid if they match the requested procedure type and docket.
-   - Reversed-party results remain disallowed.
+7. Memory
+   - Update `mem://logic/case-disambiguation-relevance` with:
+     - Takdin-lite is search-only for parties; never trusted for `padi_*`.
+     - Party-search must run `verifyPadiPublication` whenever a result is suspect or lacks a trusted `source_url`.
+     - Hallucinated publication fields are stripped, never displayed.
 
 **Expected behavior after the fix**
 
-For `סע״ש קמיקר נ מדינת ישראל ורשות האוכלוסין וההגירה`, the system should no longer say that no relevant result was found. It should accept the `סע״ש 50358-09-16` candidate, preserve `תקדין/takdin`, preserve court/year when available, and require a missing-date marker unless the search returns the exact full date.
+- `רבינאי נגד מן שקד` → returns `ע״א 158/77 רבינאי נ׳ חברת מן שקד בע״מ` with verified `פ"ד` values from a trusted source, or with `[חסר: פרסום בפ"ד]` if verification cannot confirm — never the wrong `פ"ד נז 560 (2003)`.
+- `סע״ש קמיקר` flow keeps working (Takdin still used for parties/caseType/docket).
+- No regressions on the case-number branch (uses the same extracted helper).

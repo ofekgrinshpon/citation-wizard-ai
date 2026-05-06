@@ -1077,16 +1077,18 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   {
                     role: "system",
                     content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו.
-טיפ חיפוש: ב-https://lite.takdin.co.il/search-results מופיעים בעמוד אחד שמות הצדדים, מספר התיק, בית המשפט, תאריך פסק הדין ופרסום בפ"ד — חפש שם קודם.
+טיפ חיפוש: ב-https://lite.takdin.co.il/search-results מופיעים בעמוד אחד שמות הצדדים ומספר התיק — חפש שם כדי לאתר את הצדדים והדוקט.
 חשוב: בערכי המחרוזות בתוך ה-JSON, השתמש אך ורק בגרשיים עבריים (״ U+05F4) או בגרש (׳ U+05F3) במקום במירכאות כפולות (") — למשל "פד״י" במקום "פד"י", "פ״ד" במקום "פ"ד", "ע״א" במקום "ע"א". מירכאות כפולות בתוך ערך מחרוזת ישברו את ה-JSON.
 כללים:
 - מקסימום 5 תוצאות, ממוינות מהחדש לישן
 - שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
 - כלול את כל סוגי ההליכים (ערעור, בקשת רשות ערעור, משפט ראשוני וכו')
 - שדה "caseType" חייב להכיל את הקיצור הרשמי של סוג ההליך לפי כללי האזכור האחיד (למשל: סע״ש, ע״א, ת״א, בג״ץ, רע״א, עת״מ, תמ״ש, תפ״ח, ת״פ). אסור להחזיר תיאור מילולי כמו "תביעה" או "תביעה פלילית".
-- חובה לכבד את סדר הצדדים שהמשתמש כתב. אם פסק הדין הרשמי הפוך (העותר/המבקש בצד השני), אל תחזיר אותו אלא אם זה אכן הפסק שהמשתמש מבקש.
+- חובה לכבד את סדר הצדדים שהמשתמש כתב. אם פסק הדין הרשמי הפוך, אל תחזיר אותו אלא אם זה אכן הפסק שהמשתמש מבקש.
 - חובה למלא את שדות party1 ו-party2 לכל תוצאה. אם לא הצלחת לאמת שמות צדדים, אל תחזיר את התוצאה.
 - אם נתון תאריך מלא (DD.MM.YYYY) לא נמצא במקור — השאר את date ריק. אל תמציא תאריך.
+- ⚠️ קריטי לגבי פרסום בפ"ד: סמן isPublished=true ומלא padi_volume/padi_part/padi_page/year אך ורק אם ראית את הציון "פ"ד <כרך> <עמוד>" יחד עם מספר התיק המדויק במקור מהימן (nevo.co.il, supreme.court.gov.il, court.gov.il, psakdin.co.il). אסור להסיק כרך/עמוד/שנה מתוצאות takdin/lite.takdin — שם המידע מעורבב בין תיקים סמוכים. אם אינך בטוח, החזר isPublished=false ו-padi_volume/padi_part/padi_page/year ריקים.
+- חובה לכלול source_url לכל תוצאה — הקישור המדויק שממנו לקחת את שמות הצדדים והדוקט. ללא source_url התוצאה תיפסל.
 - אם לא נמצאו תוצאות, החזר {"results":[]}`,
                   },
                   {
@@ -1120,6 +1122,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                               padi_page: { type: "string" },
                               databaseName: { type: "string" },
                               year: { type: "string" },
+                              source_url: { type: "string" },
                             },
                           },
                         },
@@ -1221,6 +1224,123 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   });
 
                   console.log(`[case-law] Filtered ${rawResults.length} → ${results.length} relevant results`);
+
+                  // ── Publication-data hallucination guard ──
+                  // Takdin/lite.takdin pages mix metadata between neighboring cases, so the
+                  // model often invents padi_volume/padi_page/year from sidebar noise.
+                  // Trust padi_* only when source_url is on a trusted publisher domain AND
+                  // the year is consistent with the docket year. Otherwise, run a focused
+                  // verification call; if that also fails, strip padi_* fields.
+                  const TRUSTED_PUB_DOMAINS = [
+                    "nevo.co.il",
+                    "supreme.court.gov.il",
+                    "court.gov.il",
+                    "psakdin.co.il",
+                  ];
+                  const docketYearOf = (caseNumber: string): number | null => {
+                    const m = String(caseNumber || "").match(/\/(\d{2,4})\b/);
+                    if (!m) return null;
+                    const n = parseInt(m[1], 10);
+                    if (Number.isNaN(n)) return null;
+                    if (n >= 1000) return n;
+                    // 2-digit: assume 19xx for ≥40, 20xx otherwise (Israeli legal docket convention)
+                    return n >= 40 ? 1900 + n : 2000 + n;
+                  };
+                  const isTrustedPubUrl = (url: unknown): boolean => {
+                    if (typeof url !== "string" || !url) return false;
+                    try {
+                      const host = new URL(url).hostname.toLowerCase();
+                      return TRUSTED_PUB_DOMAINS.some((d) => host === d || host.endsWith("." + d));
+                    } catch {
+                      return false;
+                    }
+                  };
+
+                  const verifyPadiPublication = async (
+                    caseType: string,
+                    caseNumber: string,
+                  ): Promise<{ verified: boolean; padi_volume?: string; padi_part?: string; padi_page?: string; year?: string } | null> => {
+                    try {
+                      const fullRef = `${caseType} ${caseNumber}`;
+                      const verifyResp = await fetch("https://api.perplexity.ai/chat/completions", {
+                        method: "POST",
+                        headers: {
+                          Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          model: "sonar",
+                          search_domain_filter: TRUSTED_PUB_DOMAINS,
+                          messages: [
+                            {
+                              role: "system",
+                              content: `בדוק האם פסק דין ישראלי פורסם בפד"י, רק על סמך מקורות מהימנים (nevo / supreme.court.gov.il / court.gov.il / psakdin). אל תשתמש ב-takdin. החזר JSON בלבד:\n{"isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד ראשון","year":"YYYY"}\nאם לא ראית במפורש "פ"ד <כרך> <עמוד>" יחד עם מספר התיק, החזר {"isPublished":false}.`,
+                            },
+                            {
+                              role: "user",
+                              content: `האם ${fullRef} פורסם בפד"י? חפש "${caseNumber} פ\"ד" וציין כרך, חלק, עמוד ראשון ושנת פרסום.`,
+                            },
+                          ],
+                        }),
+                      });
+                      if (!verifyResp.ok) return null;
+                      const vData = await verifyResp.json();
+                      const vContent = vData.choices?.[0]?.message?.content || "";
+                      const vJson = vContent.match(/\{[\s\S]*\}/);
+                      if (!vJson) return null;
+                      const vParsed = JSON.parse(
+                        vJson[0].replace(/([\u0590-\u05FF])"([\u0590-\u05FF])/g, "$1\u05F4$2"),
+                      );
+                      if (vParsed.isPublished && vParsed.padi_volume && String(vParsed.padi_volume).trim()) {
+                        return {
+                          verified: true,
+                          padi_volume: String(vParsed.padi_volume).trim(),
+                          padi_part: vParsed.padi_part ? String(vParsed.padi_part).trim() : "",
+                          padi_page: vParsed.padi_page ? String(vParsed.padi_page).trim() : "",
+                          year: vParsed.year ? String(vParsed.year).trim() : "",
+                        };
+                      }
+                      return { verified: false };
+                    } catch (e) {
+                      console.error("[case-law] verifyPadiPublication error:", e);
+                      return null;
+                    }
+                  };
+
+                  for (const r of results) {
+                    const claimsPub = !!r.isPublished && !!r.padi_volume && String(r.padi_volume).trim() !== "";
+                    if (!claimsPub) continue;
+                    const dy = docketYearOf(String(r.caseNumber || ""));
+                    const ry = parseInt(String(r.year || ""), 10);
+                    const yearMismatch = dy != null && !Number.isNaN(ry) && Math.abs(ry - dy) > 3;
+                    const trusted = isTrustedPubUrl(r.source_url);
+                    const halfPub = (!!r.padi_volume) !== (!!r.padi_page);
+                    const dateMissing = !r.date || !String(r.date).trim();
+                    const suspect = yearMismatch || halfPub || (claimsPub && dateMissing) || !trusted;
+                    console.log(
+                      `[case-law] pub-guard: ${r.caseType} ${r.caseNumber} ` +
+                      `dy=${dy} ry=${ry} trustedUrl=${trusted} suspect=${suspect} src=${r.source_url ?? "none"}`,
+                    );
+                    if (!suspect) continue;
+                    const v = await verifyPadiPublication(String(r.caseType || userCaseTypeNorm || ""), String(r.caseNumber || ""));
+                    if (v && v.verified && v.padi_volume) {
+                      console.log(`[case-law] pub-guard: verified, overriding padi_* for ${r.caseType} ${r.caseNumber}`);
+                      r.padi_volume = v.padi_volume;
+                      if (v.padi_part) r.padi_part = v.padi_part;
+                      if (v.padi_page) r.padi_page = v.padi_page;
+                      if (v.year) r.year = v.year;
+                      r.isPublished = true;
+                    } else {
+                      console.log(`[case-law] pub-guard: verification failed, stripping padi_* for ${r.caseType} ${r.caseNumber}`);
+                      r.padi_volume = "";
+                      r.padi_part = "";
+                      r.padi_page = "";
+                      r.isPublished = false;
+                      // Year may also be hallucinated from Takdin sidebar — keep only if it
+                      // matches the docket year window.
+                      if (yearMismatch) r.year = "";
+                    }
+                  }
 
                   if (results.length === 0) {
                     console.log(`[case-law] No relevant results found for party search "${searchQuery}"`);
