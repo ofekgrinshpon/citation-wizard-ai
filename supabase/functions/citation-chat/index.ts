@@ -898,7 +898,9 @@ serve(async (req) => {
           // ── Branch A: Search by case number (existing logic) ──
           if (caseNumberMatch) {
             const caseType = caseNumberMatch[1];
-            const caseNum = caseNumberMatch[2].replace('-', '/');
+            // Preserve original docket separator: lower-courts use dashes (e.g. סע"ש 50358-09-16),
+            // Supreme historical use slashes (e.g. ע"א 158/77). Don't normalize.
+            const caseNum = caseNumberMatch[2];
             const fullCaseRef = `${caseType} ${caseNum}`;
             const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חשוב מאוד: בדוק קודם כל האם פסק הדין פורסם בפד"י (פסקי דין של בית המשפט העליון). חפש את מספר התיק יחד עם המילה "פ"ד" וכרך. רק אם וידאת שהוא לא מופיע בפד"י, ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. ענה בעברית בלבד.`;
 
