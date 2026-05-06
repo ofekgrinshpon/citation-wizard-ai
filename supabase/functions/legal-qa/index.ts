@@ -7391,6 +7391,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           // Chapter QA guard — observability only, no behaviour change.
           // Mirrors statute_completion.qa_guard from research grounding.
           chapter_qa_guard: chapterQaGuard,
+          // Deterministic post-generation heading rewrite for real body chapters.
+          chapter_style_cleanup: isRealAcademicChapter ? chapterStyleCleanup : null,
           // Academic profile actually used. Same shape as profile_used.
           // Read with: select metadata->'profile_used_academic' from qa_logs ...
           profile_used_academic: academicProfile
