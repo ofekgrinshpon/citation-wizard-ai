@@ -6,6 +6,10 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { buildCitationInstructions } from "./citationRules.ts";
 import {
+  ACADEMIC_STYLE_GUIDE_VERSION,
+  buildStyleGuideBlock,
+} from "./academicStyleGuide.ts";
+import {
   decomposeAndPlan,
   buildClaimMap,
   summarizeClaimMap,
@@ -1974,7 +1978,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, depth: bodyDepth } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, depth: bodyDepth, styleGuideEnabled: bodyStyleGuideEnabled } = body;
 
     // ─── Mode profile (Fast / Deep) — single source of truth for per-mode knobs ───
     // Resolved once here; everything downstream reads from `modeProfile`.
@@ -4394,10 +4398,25 @@ ${combinedContext}
     // Academic chapter writes: prepend the academic persona/style block to the
     // structured drafter prompt so the chapter inherits Deep scaffolding AND
     // the high-register academic voice / narrative-citation rules.
+    // Resolve style-guide gating once, even if the academic header below is
+    // skipped — telemetry below reads these vars unconditionally.
+    const styleGuideEnvDefault = (Deno.env.get("STYLE_GUIDE_ENABLED") ?? "true") !== "false";
+    const styleGuideAdminOverride = isAdminCaller && typeof bodyStyleGuideEnabled === "boolean"
+      ? (bodyStyleGuideEnabled as boolean)
+      : null;
+    const styleGuideEnabled = styleGuideAdminOverride ?? styleGuideEnvDefault;
+    const isRealChapterForStyle = isAcademicChapter && academicStep === "write_chapter" && !isAbstract;
+
     if (useStructuredDrafterPath && isAcademicChapter && typeof academicStep === "string") {
       const academicHeader = getAcademicSubModePrompt(academicStep, body);
       if (academicHeader) {
         drafterSystemPrompt = `${academicHeader}\n\n${drafterSystemPrompt}`;
+      }
+      // Option B — distilled style guide. Real body chapters only (not abstract,
+      // intro, conclusion, outline, validate, topics). Per-request override
+      // honored only for super-admin / admin callers; everyone else follows env.
+      if (styleGuideEnabled && isRealChapterForStyle) {
+        drafterSystemPrompt = `${drafterSystemPrompt}\n\n${buildStyleGuideBlock()}`;
       }
     }
     const promptLen = drafterSystemPrompt.length;
@@ -7279,6 +7298,14 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             // were encountered in this chapter.
             party_lookup: chapterPartyLookup,
           } : null,
+          // Option B — distilled academic style guide injection telemetry.
+          // Real body chapters only; null otherwise. `source` distinguishes
+          // env default vs. admin per-request override (`body.styleGuideEnabled`).
+          style_guide: isRealChapterForStyle ? {
+            enabled: styleGuideEnabled,
+            version: styleGuideEnabled ? ACADEMIC_STYLE_GUIDE_VERSION : null,
+            source: styleGuideAdminOverride !== null ? "admin_override" : "env",
+          } : { enabled: false, version: null, source: null },
           // Phase B — research-mode (Fast/Deep) classifier + canonical
           // re-emission for legal-routed footnotes. Same `routeChapterFootnote`
           // classifier as the academic-chapter pipeline. When the legal

@@ -1,100 +1,153 @@
 ## Goal
 
-Replace the single catch-all `foreign` entry in the citation engine with **9 structured foreign source types** matching כללי האזכור האחיד 36.1–36.9 (Bluebook-aligned). Each gets its own template, required fields, formatting metadata, and rule notes — so AI output, validation, and tooltips work for foreign citations the same way they already do for Israeli sources.
+Ship **Option B — Distilled Style Profile** for academic chapter generation. Treat "how Israeli legal scholarship is written" as a versioned, human-reviewed, prescriptive asset that lives next to `citationRules.ts` and is injected verbatim into every Deep `write_chapter` draft. No retrieval-time exemplars. No model training.
 
-No new tables, no edge function rewrites — only the citation registry, type list, validators, and the Deno-side fork.
+Strictly scoped to Deep `write_chapter` for **real body chapters** — not abstract, intro, conclusion, outline, validate, topics, Fast research, or citation-chat.
 
-## New source types
+## Deliverables (in order)
 
-Added under a `foreign_*` namespace so the existing `foreign` key can stay as a fallback:
+### 1. Offline distillation harness — `eval/distill-style-guide.mjs`
 
-| Key | Rule | Description |
-|---|---|---|
-| `foreign_constitution` | 36.1 | חוקות (US federal/state) |
-| `foreign_statute_us` | 36.2 | חוקים – ארה"ב (USC) |
-| `foreign_statute_uk` | 36.3 | חוקים – אנגליה (chapter / regnal year) |
-| `foreign_case_us` | 36.4 | פסיקה אמריקנית |
-| `foreign_case_other` | 36.5 | פסיקה ממדינות אחרות (UK/Canada/Australia/…) |
-| `foreign_book` | 36.6 | ספרים לועזיים (small caps) |
-| `foreign_journal_article` | 36.7 | מאמרים בכתבי עת לועזיים |
-| `foreign_book_chapter` | 36.8 | מאמרים שפורסמו בספרים לועזיים |
-| `foreign_internet` | 36.9 | מקורות במרשתת לועזיים |
+One-shot Node script (mirrors existing `eval/*.mjs` pattern). Runs locally, never in an edge function.
 
-The legacy `foreign` entry stays in place as a free-text fallback for anything not covered.
+- **Sampling.** Stratified sample of ~150 documents from `legal_documents` where `source_type = 'journal_article'`. Stratify by `metadata->>'journal'` (fallback `metadata->>'publication'`); cap 6 per journal. Reassemble `content` chunks per `document_id`.
+- **Per-article structuring.** Slice **intro (first 2,500 chars)**, **body sample (middle 3,500 chars)**, **closing (last 1,500 chars)**. Drop articles shorter than 6,000 chars.
+- **Distillation call.** One `gpt-5` call per article (Lovable AI Gateway, `reasoning.effort: "medium"`) returning structured JSON via tool-calling. Eight dimensions:
+  1. Paragraph rhythm — sentences per paragraph, topic-sentence patterns
+  2. Opening moves — exact phrases catalog
+  3. Transitions — concession / sharpening / doctrinal pivot / comparative move
+  4. Counter-argument handling — steel-man → distinguish → resolve
+  5. Footnote density — bands by paragraph type (doctrinal / normative / comparative)
+  6. Closing moves — synthesis / open question / policy
+  7. Register — when "אטען", "ראוי", "מן הראוי", "דומני", "סבורני" appear; when not
+  8. Anti-patterns — lists where prose belongs, scare quotes, English loanwords
+- **Synthesis.** Second `gpt-5` reasoner call ("synthesizer") consumes all 150 observations and emits the Hebrew prescriptive style guide, **hard-capped at 3,000 tokens**, via a tool schema mirroring the runtime asset section structure.
+- **Output.**
+  - `eval/style-guide-output/observations-v1.json` — raw audit trail
+  - `eval/style-guide-output/draft-style-guide-v1.md` — Hebrew prescriptive draft for human review
 
-## Templates (canonical)
-
-```text
-36.1  {jurisdiction} CONST. {division} {section}.
-        e.g.  U.S. CONST. amend. XV, § 1.
-36.2  [{statuteName}, ]{title} {code} § {section} ({year}).
-        e.g.  Sherman Act, 15 U.S.C. §§ 1–7.
-36.3  {statuteName} {year}, [{regnalYear} {monarch} ]c. {chapter}[, § {section}].
-        e.g.  Habeas Corpus Act 1679, 31 Car. 2 c. 2.
-36.4  {procPrefix?} ##{party1}## v. ##{party2}##, {volume} {reporter} {firstPage}[, {pinpoint}] ({court?} {year}).
-36.5  ##{party1}## v. ##{party2}## {volumeOrYear} {reporter} {firstPage} ({courtAndJurisdiction}).
-36.6  ##{authors}##, ##{bookTitle}##[: ##{subtitle}##] [{volume} ]{pinpoint?} ([{edition}, ][{editor?} eds., ][{translator?} trans., ][{publisher?} ]{year}).
-36.7  {authors}, ##{articleTitle}##[: ##{subtitle}##], {volume} ##{journal}## {firstPage}[, {pinpoint}] ({year}).
-36.8  {authors}, ##{articleTitle}##, in ##{bookTitle}## {firstPage}[, {pinpoint}] ({editor} eds., {year}).
-36.9  {author?} ({handle?}), ##{title}##, ##{site}## ({date}), {url}.
+Run command (documented in script header):
+```
+LOVABLE_API_KEY=… node eval/distill-style-guide.mjs --sample 150 --out eval/style-guide-output
 ```
 
-Bold-small-caps names (authors, journals, sites, books) use the existing `##…##` italic marker in the renderer (same convention as the current `foreign` entry — display-only).
+### 2. Human review pass
 
-## Components / required fields (highlights)
+Out-of-band. The user (or research assistant) reads `draft-style-guide-v1.md`, cuts overfit / over-prescriptive rules, sharpens vague ones. Reviewed file becomes the source for step 3. **This step is the most important.**
 
-- **36.1**: `jurisdiction` (req), `division` (`amend.`/`art.`) (req), `section` (req).
-- **36.2**: `title` (req – e.g. `15`), `code` (req – `U.S.C.`), `section` (req), `statuteName` (opt), `year` (opt – omit if current).
-- **36.3**: `statuteName` (req), `year` (req), `chapter` (req), `regnalYear`+`monarch` (req if pre-1962), `section` (opt).
-- **36.4**: `party1`, `party2`, `volume`, `reporter`, `firstPage`, `year` (req); `procPrefix` (`Ex parte`/`In re`/`ex rel.`), `court`, `pinpoint` (opt). Note: court omitted for SCOTUS / state high court when reporter implies it.
-- **36.5**: `party1`, `party2`, `volumeOrYear`, `reporter`, `firstPage`, `courtAndJurisdiction` (req).
-- **36.6**: `authors`, `bookTitle`, `year` (req); `subtitle`, `volume`, `pinpoint`, `edition`, `editor`, `translator`, `publisher` (opt — `publisher` only pre-1900 or non-original).
-- **36.7**: `authors`, `articleTitle`, `volume`, `journal`, `firstPage`, `year` (req); `pinpoint`, `subtitle` (opt).
-- **36.8**: `authors`, `articleTitle`, `bookTitle`, `firstPage`, `year` (req); `editor`, `pinpoint` (opt).
-- **36.9**: `title`, `site`, `url` (req); `author`, `handle`, `contentType`, `date`, `pinpoint` (opt).
+### 3. Runtime asset — `supabase/functions/legal-qa/academicStyleGuide.ts`
 
-Each component carries `rule` (e.g. `"36.4"`) and `format` (`bold`/`italic`/`plain`) so the existing tooltip + validation pipeline picks them up with no UI changes.
+Sits next to `citationRules.ts`. Single-file module:
 
-## Notes (per-rule)
+```ts
+export const ACADEMIC_STYLE_GUIDE_VERSION = "v1";
+export const ACADEMIC_STYLE_GUIDE = `…reviewed Hebrew prescriptive text, ≤3000 tokens…`;
+export function buildStyleGuideBlock(): string {
+  return `כללי סגנון — לא מקור לציטוט (גרסה ${ACADEMIC_STYLE_GUIDE_VERSION})\n` +
+         `אסור לצטט, להפנות, או להעתיק ניסוח מהבלוק הזה. הוא מתאר תבניות בלבד.\n\n` +
+         ACADEMIC_STYLE_GUIDE;
+}
+```
 
-Each new entry gets a `notes:` array carrying the Hebrew rule prose verbatim from the user's spec (so tooltip and validator messages match the manual). Includes:
-- 36.2 advice: omit year when citing current code; `§§` for ranges.
-- 36.3 pre-1962 regnal-year requirement; year-in-name vs. trailing `(year)`.
-- 36.4 prefer official > regional > state reporter; SCOTUS / state high court → omit court; non-state reporter → add jurisdiction in parens.
-- 36.6 publisher only when pre-1900 or non-original publisher; volume before authors.
-- 36.7 short list of common abbreviations (Am., Br., Bull., Bus., Compar., Const., Crim., Econ., Eur., Hist., Hum., Interdisc., Int'l, J., Juris., Just., L., Mag., Med., Phil., Pol'y, Pol., Psych., Pub., Q., Rsch., Rev., Rts., Sch., Sci., Soc., Soc'y, Socio., Stud., Tax'n, Tech., Univ., Y.B.) — added as a `notes` line so the validator/tooltip can quote them.
-- 36.9 social-media handle convention `(@handle)`; URL required; date format `Mar. 22, 2019`.
+Section structure (matches distillation schema):
+1. קצב פסקה ומשפט פותח
+2. מהלכי פתיחה
+3. מהלכי קישור
+4. טיפול בטיעוני נגד
+5. צפיפות הערות שוליים
+6. מהלכי סיום
+7. רגיסטר ולשון
+8. אנטי־דפוסים
 
-## Files to change
+Runtime guard: `console.warn` if `ACADEMIC_STYLE_GUIDE.length > 12000` chars (~3K Hebrew tokens).
 
-1. **`src/data/abbreviations.ts`**
-   - Extend `SourceType` with the 9 new keys.
-   - Add `REQUIRED_FIELDS` entries for each.
-   - Add Hebrew `FIELD_LABELS` for new field names (`jurisdiction`, `division`, `code`, `chapter`, `regnalYear`, `monarch`, `reporter`, `procPrefix`, `volumeOrYear`, `courtAndJurisdiction`, `subtitle`, `publisher`, `handle`, `site`, `contentType`, `pinpoint`, `statuteName`).
-   - Add `RULE_REFERENCES` entries (`"כלל 36.X – …"`).
+### 4. Injection point — `supabase/functions/legal-qa/index.ts`
 
-2. **`src/data/citationEngine.ts`**
-   - Add the 9 `CITATION_RULES` entries described above.
-   - Keep the existing `foreign` entry as a fallback.
+Single insertion in the `useStructuredDrafterPath && isAcademicChapter` branch around line **4397–4402**:
 
-3. **`src/lib/citationValidation.ts`**
-   - Extend `ENGINE_KEY_MAP` with the 9 new keys (1:1 mapping).
-   - No regex extractors yet — validation falls back to required-field presence (same path the legacy `foreign` entry already used). Future PR can add Bluebook-specific regexes.
+```ts
+if (useStructuredDrafterPath && isAcademicChapter && typeof academicStep === "string") {
+  const academicHeader = getAcademicSubModePrompt(academicStep, body);
+  if (academicHeader) {
+    drafterSystemPrompt = academicHeader + "\n\n" + drafterSystemPrompt;
+  }
+  // NEW — only for real body chapters
+  const styleGuideEnv = (Deno.env.get("STYLE_GUIDE_ENABLED") ?? "true") !== "false";
+  const isSuperAdmin = SUPER_ADMIN_USER_IDS.has(userId);
+  const styleGuideOverride = isSuperAdmin && typeof body.styleGuideEnabled === "boolean"
+    ? (body.styleGuideEnabled as boolean)
+    : null;
+  const styleGuideEnabled = styleGuideOverride ?? styleGuideEnv;
+  const isRealChapter = academicStep === "write_chapter" && !body.isAbstract;
+  if (styleGuideEnabled && isRealChapter) {
+    drafterSystemPrompt = drafterSystemPrompt + "\n\n" + buildStyleGuideBlock();
+  }
+}
+```
 
-4. **`supabase/functions/_shared/citationEngine.ts`** (Deno fork)
-   - Mirror the 9 new entries in the Deno copy so Stage E.5 Perplexity-resolver (`citation-engine-perplexity-resolver` memory) can validate Bluebook candidates the same way. Required-fields helper auto-picks them up.
-   - Add a one-line memory note that the Bluebook entries must stay in sync between the two files.
+**Position rationale.** After the academic persona (so persona framing dominates), before the source block (so the model never confuses style with citable sources). The `כללי סגנון — לא מקור לציטוט` header makes the fence explicit.
 
-5. **`.lovable/memory/logic/citation-rules/foreign-bluebook-rule-36.md`** (new memory)
-   - Short index of the 9 entries + the 1:1 sync rule between `src/data/citationEngine.ts` and `supabase/functions/_shared/citationEngine.ts`.
+**Override gating.** `body.styleGuideEnabled` is honored **only when the request comes from a super-admin user** (UUID present in the existing `SUPER_ADMIN_USER_IDS` set used elsewhere in the file — same pattern as `evalForceLegacy`). Non-admin requests always follow the env flag. This lets the user toggle the guide per-request while testing without exposing the lever to end users.
 
-## Out of scope (intentionally deferred)
+**Excluded from injection** (out of scope per Option B framing):
+- `write_introduction`, `write_conclusion` (paper-level prompts; revisit in stage 4 if needed)
+- `write_chapter` with `isAbstract === true`
+- Fast research, citation-chat, all non-academic flows
 
-- Auto-classifier heuristics that route foreign text to the right `foreign_*` subtype — current classifier still picks `foreign`; subtypes are reachable via the manual SourceTypeConfirmation override and via AI prompt. Can be a follow-up once we have real samples to tune on.
-- Regex-based field extractors in `citationValidation.ts` for foreign citations (Bluebook strings vary too much; skipping until we have telemetry).
-- AI prompt updates inside `citation-chat` / `legal-qa` — they already read from the engine registry, so the new entries surface automatically. We'll watch logs and tighten prompts later if needed.
+### 5. Telemetry
+
+In the `qa_logs.metadata` block (around line ~7258, where `chapter_engine` is set):
+
+```ts
+style_guide: isRealChapter ? {
+  enabled: styleGuideEnabled,
+  version: styleGuideEnabled ? ACADEMIC_STYLE_GUIDE_VERSION : null,
+  source: styleGuideOverride !== null ? "admin_override" : "env",
+} : { enabled: false, version: null, source: null },
+```
+
+Enables clean A/B over time and per-version regression tracking. No new tables, no schema migration.
+
+### 6. Eval — `eval/style-guide-q1-q5.mjs`
+
+Mirrors `eval/academic-chapter-q1-q3.mjs`. Five chapter fixtures × 1 rep × 2 phases (`PHASE=before` with `styleGuideEnabled=false`, `PHASE=after` with `styleGuideEnabled=true`, both submitted as a super-admin user so the override is honored). Captures full `answer_full`, `chapter_engine`, `chapter_qa_guard`, `style_guide`. **Qualitative read by the user, not a metric.** Watch existing `chapter_qa_guard` flags (`narrative_violation`, `under_word_floor`, `high_unresolved_share`) for regressions.
+
+## Files touched
+
+| File | Change |
+|---|---|
+| `eval/distill-style-guide.mjs` | **NEW** — offline distillation harness |
+| `eval/style-guide-output/` | **NEW** dir (gitignored except final guide) |
+| `supabase/functions/legal-qa/academicStyleGuide.ts` | **NEW** — versioned runtime asset |
+| `supabase/functions/legal-qa/index.ts` | ~15 lines: import, super-admin–gated override + injection at line ~4397, telemetry at line ~7258 |
+| `eval/style-guide-q1-q5.mjs` | **NEW** — before/after eval harness |
+| `.lovable/memory/features/academic-writing-mode/style-guide-v1.md` | **NEW** memory entry |
+| `.lovable/memory/index.md` | append memory link |
+
+No DB migrations. No new tables. No new edge functions. No new packages.
+
+## Staged rollout
+
+| Stage | Action | Gate |
+|---|---|---|
+| 1 | Run distillation harness, human-review draft, commit `academicStyleGuide.ts v1` | `STYLE_GUIDE_ENABLED=false` (env default for stage 1 only) |
+| 2 | Super-admin override via `body.styleGuideEnabled=true`. Generate ~10 chapters from your account, read them | flag off for everyone else |
+| 3 | Flip `STYLE_GUIDE_ENABLED=true` env default for all Deep chapters. Watch `chapter_qa_guard` daily for a week | revert via env if regressions |
+| 4 | Quarterly refresh: re-run harness, diff `v1`→`v2` draft, human-review the diff, ship `v2` | `style_guide.version` telemetry powers A/B |
+
+Stages 5+ (targeted exemplar lane → Option D, fine-tuning → Option C) are explicitly **deferred**. Only revisit if stage-4 telemetry shows a specific rhetorical bucket plateauing.
+
+## Out of scope (intentional)
+
+- Per-run exemplar retrieval — rejected; variance is the enemy.
+- Any model training (C1/C2/C3) — rejected; regression risk on grounding.
+- Auto-regenerating the style guide on a schedule without human review.
+- Touching Fast research, citation-chat, abstract, outline, validate, topics, intro, conclusion.
+- Letting the guide grow past 3,000 tokens — hard cap in synthesizer prompt + runtime warn.
 
 ## Verification
 
-- TypeScript build passes (the harness will run it).
-- Manual sanity check: open `SourceTypeConfirmation` UI and confirm the 9 new options appear with correct Hebrew labels; pick `foreign_case_us` and verify the template + required fields render in the validator.
+- TypeScript build passes.
+- One eval run (`eval/style-guide-q1-q5.mjs`) before flipping the env default.
+- `qa_logs.metadata->'style_guide'` populated on the next 5 real Deep chapters after deploy — confirm via `supabase--read_query`.
+- Manual read of 3 chapters before/after — final sign-off is taste, not metric.
