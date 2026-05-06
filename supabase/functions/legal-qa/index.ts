@@ -1375,6 +1375,7 @@ ${prevContext}
 
 הנחיות:
 - כתוב פרק אחד בלבד: "${chapterTitle}".
+- ⚠️ **איסור מוחלט** על שימוש בכותרות הבאות בכל מקום בפרק: **שורה תחתונה**, **Bottom line**, **השלכות מעשיות**, **פתיחה**, **רקע**, **הקדמה**, **מסקנה**. אלה כותרות של מזכר משפטי-מעשי, לא של פרק אקדמי. הפרק חייב להיפתח בפסקת פרוזה ללא כותרת, והכותרת היחידה שסוגרת את הפרק היא **סיכום הפרק** (לא "מסקנה", לא "סיכום").
 - הפרק חייב לקדם את התזה המרכזית ולמלא את התפקיד שהוגדר לו במבנה הטיעון לעיל. אל תכתוב פרק כללי על הנושא — כתוב את **הפרק הספציפי הזה** עם הטענה הספציפית שלו.
 - אם הוגדרו טיעוני נגד — התייחס אליהם והתמודד איתם בתוך הפרק.
 - שמור על רצף ועקביות עם הפרקים הקודמים, ואל תחפוף לפרקים האחרים שכותרותיהם מופיעות לעיל.
@@ -4236,11 +4237,11 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
       const isAcademicChapterStructure = isAcademicChapter && !isAbstract;
 
       const structureBlock = isAcademicChapterStructure
-        ? `═══ מבנה הפרק האקדמי (חובה — אין כותרות מסוג מזכר משפטי) ═══
-כתוב פרוזה אקדמית רציפה. אסור להשתמש בכותרות "שורה תחתונה" / "השלכות מעשיות" / "Bottom line" — אלה כותרות של מזכר עורכי-דין, לא של פרק אקדמי.
+        ? `═══ מבנה הפרק האקדמי (חובה — פרוזה אקדמית, לא מזכר משפטי) ═══
 
-**פתיחה (ללא כותרת)**
-פסקת פתיחה אחת (4–7 משפטים) שממקמת את שאלת הפרק, את מקומו בקו הטיעון של המאמר, ואת הטענה המרכזית שתפותח בו. בלי הכרזות-על ("פרק זה תורם תרומה משמעותית"). ללא [N] אלא אם נשענת על מקור ספציפי.
+⚠️ איסור מוחלט על כותרות אלה: **שורה תחתונה**, **Bottom line**, **השלכות מעשיות**, **מסקנה**, **פתיחה**, **רקע**, **הקדמה**. כל פלט שמכיל אחת מהן ייפסל. הכותרות היחידות המותרות בפרק הזה הן: **מסגרת נורמטיבית**, ${deepHasSubIssues ? "כותרות תת-הסוגיות הרשומות מטה, " : "**ניתוח**, "}ו-**סיכום הפרק** בלבד.
+
+הפרק נפתח בפסקת פרוזה רציפה **ללא שום כותרת לפניה** (4–7 משפטים) שממקמת את שאלת הפרק, את מקומו בקו הטיעון של המאמר, ואת הטענה המרכזית שתפותח בו. בלי הכרזות-על ("פרק זה תורם תרומה משמעותית"). ללא [N] אלא אם נשענת על מקור ספציפי. **אל תכתוב כותרת מעל הפסקה הזאת — לא "פתיחה", לא "רקע", לא שום דבר.** הכותרת הראשונה שמופיעה בפרק חייבת להיות **מסגרת נורמטיבית**.
 
 **מסגרת נורמטיבית**
 **מינימום 3 פסקאות מהותיות.** זהה את החקיקה והפסיקה הרוחביות הרלוונטיות לפרק. אזכר נרטיבית ("חוק X", "בעניין Y", "פרופ' Z") עם [N] לאחר כל מקור מהותי. צפיפות הערות שוליים אופיינית לפסקה דוקטרינרית: 2–4. הסבר את ההיגיון המשפטי, לא רק שמות מקורות.
@@ -4260,7 +4261,7 @@ ${subIssuesForDeep.map((s, i) => `${i + 1}. **${s}**`).join("\n")}
 **מינימום 3 פסקאות מהותיות ומינימום 250 מילים.** מאחר שהפרק ממוקד בסוגיה אחת, הקדש את הסעיף לניתוח אקדמי מעמיק: רקע דוקטרינרי, פרשנות רווחת מול פרשנות חולקת, טיעון נגד אחד לפחות במבנה steel-man → distinguish → resolve, ויישום על מקרים טיפוסיים. שלב הקשר משווה כשרלוונטי לפי הוראות הסגנון.`}
 
 **סיכום הפרק**
-פסקת סינתזה אחת (4–6 משפטים, ללא bullets). חבר את הקווים שפותחו בפרק והבהר כיצד הם מקדמים את שאלת המחקר ואת הטענה המרכזית של המאמר. אסור לפתוח ב"לסיכום" / "לפיכך" / "בסיכומו של דבר". אסור משפטי קלישאה ("ימים יגידו", "תקוותנו ש…").`
+פסקת סינתזה אחת (4–6 משפטים, ללא bullets). חבר את הקווים שפותחו בפרק והבהר כיצד הם מקדמים את שאלת המחקר ואת הטענה המרכזית של המאמר. אסור לפתוח ב"לסיכום" / "לפיכך" / "בסיכומו של דבר". אסור משפטי קלישאה ("ימים יגידו", "תקוותנו ש…"). הכותרת חייבת להיות בדיוק **סיכום הפרק** — לא "מסקנה", לא "סיכום".`
         : researchDepth === "deep"
         ? `═══ מבנה התשובה למצב Deep (חובה — חמישה חלקים, ללא יוצאים) ═══
 כתוב **בדיוק** את חמשת החלקים הבאים, בסדר הזה, עם הכותרות המדויקות ב-**bold**. חלקים 2 ו-4 חובה גם אם יש רק תת-סוגיה אחת.
@@ -6494,6 +6495,44 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       answer = answer.replace(/ +([.,;:!?])/g, "$1").replace(/[ \t]{2,}/g, " ");
     }
 
+    // ===== Academic chapter heading cleanup =====
+    // Real body chapters must not surface practitioner-memo headings even
+    // if the drafter ignored the prompt's ban. Strip the offending headings
+    // deterministically while preserving the prose underneath, and log the
+    // rewrite via qa_logs.metadata.chapter_style_cleanup.
+    const chapterStyleCleanup: Record<string, number> = {
+      bottom_line_stripped: 0,
+      practical_implications_stripped: 0,
+      memo_conclusion_renamed: 0,
+      generic_intro_heading_stripped: 0,
+    };
+    const isRealAcademicChapter =
+      taskMode === "academic_writing" &&
+      academicStep === "write_chapter" &&
+      !isAbstract;
+    if (isRealAcademicChapter && typeof answer === "string" && answer.length > 0) {
+      const before = answer;
+      answer = answer.replace(/(^|\n)\s*\*\*\s*(?:שורה\s*תחתונה|Bottom\s*line)\s*\*\*\s*\n+/gi, (_m, p1) => {
+        chapterStyleCleanup.bottom_line_stripped += 1;
+        return p1 || "";
+      });
+      answer = answer.replace(/(^|\n)\s*\*\*\s*(?:פתיחה|רקע|הקדמה)\s*\*\*\s*\n+/g, (_m, p1) => {
+        chapterStyleCleanup.generic_intro_heading_stripped += 1;
+        return p1 || "";
+      });
+      answer = answer.replace(/(^|\n)\s*\*\*\s*השלכות\s*מעשיות\s*\*\*\s*\n+/g, (_m, p1) => {
+        chapterStyleCleanup.practical_implications_stripped += 1;
+        return p1 || "";
+      });
+      answer = answer.replace(/(^|\n)\s*\*\*\s*(?:מסקנה|סיכום)\s*\*\*\s*(?=\n)/g, (_m, p1) => {
+        chapterStyleCleanup.memo_conclusion_renamed += 1;
+        return `${p1 || ""}**סיכום הפרק**`;
+      });
+      if (answer !== before) {
+        console.log(`[chapter][style_cleanup] applied: ${JSON.stringify(chapterStyleCleanup)}`);
+      }
+    }
+
     const finalFootnotes = validFootnotes;
 
     // ===== Type-aware citation router — academic chapter footnotes =====
@@ -7352,6 +7391,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           // Chapter QA guard — observability only, no behaviour change.
           // Mirrors statute_completion.qa_guard from research grounding.
           chapter_qa_guard: chapterQaGuard,
+          // Deterministic post-generation heading rewrite for real body chapters.
+          chapter_style_cleanup: isRealAcademicChapter ? chapterStyleCleanup : null,
           // Academic profile actually used. Same shape as profile_used.
           // Read with: select metadata->'profile_used_academic' from qa_logs ...
           profile_used_academic: academicProfile

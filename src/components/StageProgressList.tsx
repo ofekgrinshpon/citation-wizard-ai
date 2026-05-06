@@ -23,6 +23,22 @@ const HEADER_BY_MODE: Record<NonNullable<Props["mode"]>, string> = {
   academic_chapter: "כותב פרק אקדמי (מנוע Deep)...",
 };
 
+// Stage-label overrides per mode. Keeps backend stage IDs untouched and
+// lets the UI re-skin the same Deep pipeline for academic chapter writes.
+const ACADEMIC_LABEL_OVERRIDES: Record<string, string> = {
+  frame: "ניתוח שאלת הפרק",
+  decompose: "פירוק טענות הפרק",
+  retrieve: "אחזור מקורות אקדמיים",
+  rerank: "דירוג מקורות לפרק",
+  source_pack: "בחירת מקורות לפרק",
+  claim_map: "מיפוי טענות הפרק",
+  drafter: "כתיבת טיוטת הפרק",
+  anchor_pass: "עיגון הציטוטים בפרק",
+  coverage_gap: "בדיקת כיסוי הפרק",
+  statute_completion: "השלמת חקיקה",
+  footnote_validate: "אימות הערות שוליים",
+};
+
 /**
  * Live pipeline progress for SSE-streamed legal-qa runs.
  * Each backend `stage` event appends/upgrades a row here.
@@ -33,7 +49,11 @@ export function StageProgressList({ stages, postProcessingLabel, draftText, mode
   // De-dup by stage name, keeping the latest status (so "complete" overrides "running").
   const dedup = new Map<string, StageEvent>();
   for (const s of stages) dedup.set(s.stage, s);
-  const visible = Array.from(dedup.values());
+  const visible = Array.from(dedup.values()).map((s) =>
+    mode === "academic_chapter" && ACADEMIC_LABEL_OVERRIDES[s.stage]
+      ? { ...s, label: ACADEMIC_LABEL_OVERRIDES[s.stage] }
+      : s,
+  );
 
   return (
     <Card className="mt-4 border-border" dir="rtl">
