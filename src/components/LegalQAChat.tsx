@@ -2247,6 +2247,16 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 stages={stageEvents}
                 postProcessingLabel={postProcessingLabel}
                 draftText={streamingDraft}
+                mode={
+                  taskMode === "academic_writing" &&
+                  (lastAcademicAction === "write_chapter" ||
+                   lastAcademicAction === "write_introduction" ||
+                   lastAcademicAction === "write_conclusion")
+                    ? "academic_chapter"
+                    : researchDepth === "deep"
+                    ? "research_deep"
+                    : "research_fast"
+                }
               />
             : <ResearchProgress />
         )}
