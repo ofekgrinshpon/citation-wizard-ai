@@ -886,8 +886,9 @@ serve(async (req) => {
     }
 
     // When disambiguation selection has a case number, allow the normal case-number search to proceed
-    const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (caseNumberMatch || partyMatch) && !(isDisambiguationSelection && !caseNumberMatch);
-    console.log(`[case-law] isCaseLaw=${isCaseLaw}, isDisambiguationSelection=${isDisambiguationSelection}, caseNumberMatch=${caseNumberMatch?.[0] ?? 'null'}, partyMatch=${partyMatch ? 'yes' : 'no'}, hasVerifiedCandidates=${hasVerifiedCandidates}`);
+    // — UNLESS we already built the hint from a data blob.
+    const shouldSearchCaseLaw = isCaseLaw && !hasVerifiedCandidates && (caseNumberMatch || partyMatch) && !(isDisambiguationSelection && !caseNumberMatch) && !selectionDataBlob;
+    console.log(`[case-law] isCaseLaw=${isCaseLaw}, isDisambiguationSelection=${isDisambiguationSelection}, caseNumberMatch=${caseNumberMatch?.[0] ?? 'null'}, partyMatch=${partyMatch ? 'yes' : 'no'}, hasVerifiedCandidates=${hasVerifiedCandidates}, hasBlob=${!!selectionDataBlob}`);
 
     if (shouldSearchCaseLaw) {
       try {
