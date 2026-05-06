@@ -1169,7 +1169,13 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     // If user supplied a caseType prefix, drop results from a different prefix
                     if (userCaseTypeNorm) {
                       const rType = normalizeQuotes(String(r.caseType || ""));
-                      if (rType && rType !== userCaseTypeNorm) {
+                      // Only drop on caseType mismatch when result's caseType is itself a known
+                      // procedural prefix. Free-text labels like "תביעה"/"תביעה פלילית" returned
+                      // by Perplexity carry no jurisdiction info — let parties + caseNumber decide.
+                      const rTypeIsKnownPrefix = CASE_TYPE_PREFIXES.some(
+                        (p) => normalizeQuotes(p) === rType,
+                      );
+                      if (rType && rTypeIsKnownPrefix && rType !== userCaseTypeNorm) {
                         console.log(`[case-law] Dropping cross-jurisdiction result: caseType=${rType}, user=${userCaseTypeNorm}`);
                         return false;
                       }
