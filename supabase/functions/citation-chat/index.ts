@@ -910,6 +910,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                         },
                         body: JSON.stringify({
                           model: "sonar",
+                          search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
                           messages: [
                             {
                               role: "system",
