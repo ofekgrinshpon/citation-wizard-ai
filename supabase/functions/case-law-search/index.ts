@@ -77,10 +77,12 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: "sonar",
+        search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
         messages: [
           {
             role: "system",
             content: `אתה עוזר מחקר משפטי. כשמבקשים ממך למצוא פסק דין ישראלי, החזר את המידע בפורמט JSON מדויק בלבד, ללא טקסט נוסף.
+טיפ חיפוש: בעמוד https://lite.takdin.co.il/search-results מוצגים בעמוד אחד שמות הצדדים, מספר התיק, בית המשפט, תאריך פסק הדין, ופרסום בפ"ד (אם קיים). העדף לאתר את התיק שם — זה חוסך חיפושים ומספק את כל הנתונים הנדרשים לאזכור.
 הפורמט:
 {
   "found": true/false,
