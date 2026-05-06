@@ -235,6 +235,8 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
               }
 
               if (isDisambiguationLine(line)) {
+                // Strip embedded data blob from display, but pass full line (with blob) on click
+                const displayLine = line.replace(/<!--DATA:[^>]*?-->/g, "").trim();
                 return (
                   <button
                     key={i}
@@ -242,7 +244,7 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
                     className="w-full text-right p-2 my-1 rounded-lg border border-primary/20 hover:bg-primary/10 hover:border-primary/40 transition-colors cursor-pointer block"
                     dir="rtl"
                   >
-                    <FormattedCitation text={line} enableTooltips />
+                    <FormattedCitation text={displayLine} enableTooltips />
                   </button>
                 );
               }
