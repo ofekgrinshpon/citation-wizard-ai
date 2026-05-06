@@ -134,9 +134,6 @@ const Index = () => {
   const [academicResumeFallback, setAcademicResumeFallback] = useState<{ question: string; result: any } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
-  // Override returned by the citation-chat edge function so backend-confirmed
-  // case-law replaces the client's heuristic guess (e.g. when prefix override fires).
-  const lastSourceTypeOverrideRef = useRef<SourceType | null>(null);
   
   
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
@@ -235,12 +232,7 @@ const Index = () => {
     // Server signaled it auto-refunded the credit (e.g. AI returned a refusal).
     handleRefundResponse(data);
 
-    // Stash backend's classification override (e.g. case-law confirmed by docket prefix
-    // when the client guessed "ספר") so handleSend can apply it to messageSourceTypes.
-    lastSourceTypeOverrideRef.current =
-      (data?.sourceTypeOverride as SourceType | null | undefined) ?? null;
-
-    return (data?.content as string) || "אירעה שגיאה בעיבוד הבקשה.";
+    return data?.content || "אירעה שגיאה בעיבוד הבקשה.";
   };
 
   const saveVerifiedSource = async (
@@ -359,7 +351,7 @@ const Index = () => {
       }
 
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: (lastSourceTypeOverrideRef.current ?? sourceType) as SourceType }));
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       await subscription.incrementCount();
 
@@ -415,7 +407,7 @@ const Index = () => {
       }
 
       setMessages([...newMessages, { role: "assistant", content: finalReply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: (lastSourceTypeOverrideRef.current ?? sourceType) as SourceType }));
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType as SourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawText }));
       await subscription.incrementCount();
 
@@ -482,7 +474,7 @@ const Index = () => {
       const reply = await callAPI(prompt, messages);
       const assistantIndex = messages.length;
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
-      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: (lastSourceTypeOverrideRef.current ?? sourceType) as SourceType }));
+      setMessageSourceTypes((prev) => ({ ...prev, [assistantIndex]: sourceType }));
       setMessageRawInputs((prev) => ({ ...prev, [assistantIndex]: rawInput }));
       await subscription.incrementCount();
 
@@ -507,8 +499,8 @@ const Index = () => {
     }
   };
 
-  const handleSend = async (overrideText?: string) => {
-    const rawText = (overrideText ?? input).trim();
+  const handleSend = async () => {
+    const rawText = input.trim();
     if (!rawText || loading) return;
 
     // Pre-validate: prevent charging credits for gibberish / empty / non-legal input.
@@ -644,16 +636,11 @@ const Index = () => {
       const reply = await callAPI(prompt, messages);
       const assistantIndex = newMessages.length;
 
-      // Backend may have confirmed/overridden the source type (e.g. case-law via docket prefix
-      // when client guessed "ספר"). Prefer that over the client's heuristic.
-      const backendOverride = lastSourceTypeOverrideRef.current as SourceType | null;
-
       // Re-classify source type based on AI output (e.g., database → published if פ"ד found)
-      let effectiveSourceType = (backendOverride ?? sourceType) as SourceType;
+      let effectiveSourceType = sourceType as SourceType;
       if (effectiveSourceType === "case_law_database" && /פ["״]ד\s+[א-ת]+/.test(reply)) {
         effectiveSourceType = "case_law_published";
       }
-      const effectiveSourceLabel = SOURCE_TYPE_LABELS[effectiveSourceType] || sourceLabel;
 
       // Post-response validation using the citation engine
       const validation = validateAIResponse(reply, effectiveSourceType);
@@ -678,13 +665,13 @@ const Index = () => {
       const citationPayload = {
         raw_input: fullRawInput,
         formatted_output: extractedCitation || reply,
-        source_type: effectiveSourceType !== ("unknown" as SourceType) ? effectiveSourceLabel : null,
+        source_type: sourceType !== "unknown" ? sourceLabel : null,
         user_id: user?.id || null,
         project_id: currentProject?.id || null,
       };
 
       supabase.from("citation_history").insert([citationPayload]).then(() => { setCitationRefreshKey(k => k + 1); });
-      logActivity("יצירת אזכור", { source_type: effectiveSourceLabel, raw_input: fullRawInput.slice(0, 100) });
+      logActivity("יצירת אזכור", { source_type: sourceLabel, raw_input: fullRawInput.slice(0, 100) });
 
       // Only verify if we have a real, complete citation (not a fragment, not missing data)
       const isVerifiedClean = !/\[חסר:/.test(reply) && !/⚠️/.test(reply);
@@ -1054,20 +1041,13 @@ const Index = () => {
                           try {
                             const newLabel = SOURCE_TYPE_LABELS[newType];
                             const engineHint = buildEnginePromptHint(newType);
-                            // Force the new classification tag at the very top so the backend's
-                            // case-law / legislation / book search branches route correctly.
-                            const reclassifiedPrompt = `[סיווג אוטומטי: ${newLabel}]\n[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n${engineHint}[כלל רלוונטי: ${getEngineRuleReference(newType)}]\n${rawInput}`;
+                            const reclassifiedPrompt = `[תיקון סיווג: המשתמש ציין שמדובר ב${newLabel}]\n${engineHint}[כלל רלוונטי: ${getEngineRuleReference(newType)}]\n${rawInput}`;
                             const reply = await callAPI(reclassifiedPrompt, messages.slice(0, i));
                             setMessages((prev) => {
                               const updated = [...prev];
                               updated[i] = { role: "assistant", content: reply };
                               return updated;
                             });
-                            // Apply backend override (or fall back to user's chosen type).
-                            setMessageSourceTypes((prev) => ({
-                              ...prev,
-                              [i]: (lastSourceTypeOverrideRef.current ?? newType) as SourceType,
-                            }));
                           } catch {
                             toast.error("שגיאה בעיבוד מחדש");
                           } finally {
@@ -1089,10 +1069,13 @@ const Index = () => {
                       : undefined
                   }
                   onSelectOption={(optionText: string) => {
-                    // Send the selection directly — avoid relying on async setInput + DOM click.
+                    // Prepend selection tag so edge function skips Perplexity search
                     const tagged = `[בחירת תוצאה] ${optionText.replace(/^\d+\.\s*/, '')}`;
-                    setInput("");
-                    handleSend(tagged);
+                    setInput(tagged);
+                    setTimeout(() => {
+                      const sendBtn = document.querySelector('.btn-send') as HTMLButtonElement;
+                      if (sendBtn) sendBtn.click();
+                    }, 50);
                   }}
                 />
               ))}
@@ -1190,7 +1173,7 @@ const Index = () => {
                 className="w-full flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-2.5 sm:px-3.5 py-2.5 sm:py-3 text-foreground text-sm leading-relaxed font-sans resize-none"
               />
               <button
-                onClick={() => handleSend()}
+                onClick={handleSend}
                 disabled={loading || !input.trim()}
                 className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
               >

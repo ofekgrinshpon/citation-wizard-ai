@@ -49,8 +49,6 @@ export const CASE_TYPE_ABBREVIATIONS: Record<string, string> = {
   'דמ': 'ד"מ',
   'ד"מ': 'ד"מ',
   'עב': 'עב\'',
-  'סעש': 'סע"ש',
-  'סע"ש': 'סע"ש',
 
   // Administrative / Family
   'עתמ': 'עת"מ',
@@ -285,41 +283,25 @@ export function normalizeAbbreviations(text: string): string {
   return result;
 }
 
-// Normalize Hebrew quote marks (gershayim ״/׳) to ASCII equivalents and strip
-// niqqud / cantillation marks (\u0591-\u05C7) such as the shin-dot (ׁ) that
-// otherwise breaks docket-prefix matching for inputs like `סע״שׁ`.
+// Normalize Hebrew quote marks (gershayim ״/׳) to ASCII equivalents
 function normalizeQuotes(text: string): string {
   return text
-    .replace(/[\u0591-\u05C7]/g, '')   // strip Hebrew niqqud + cantillation marks
-    .replace(/\u05F4/g, '"')           // ״ → "
-    .replace(/\u05F3/g, "'")           // ׳ → '
+    .replace(/\u05F4/g, '"')   // ״ → "
+    .replace(/\u05F3/g, "'")   // ׳ → '
     .replace(/[\u201C\u201D\u201E]/g, '"')  // smart double quotes
     .replace(/[\u2018\u2019\u201A]/g, "'"); // smart single quotes
 }
-
-// Party separator: נגד, נ', נ׳, or bare ` נ ` (Hebrew nun surrounded by spaces)
-const PARTY_SEPARATOR_HE = /(?:\s|^)(?:נגד|נ['׳'']|נ)(?=\s)/;
-
-// Comprehensive Israeli docket prefix regex (Supreme + District + Labor + Family + Admin).
-// Used to short-circuit case-law classification BEFORE any book/article heuristics.
-const CASE_LAW_PREFIX_RE = /(?:^|\s)(?:בג["״]ץ|ע["״][אפעמ]|רע["״][אפ]|דנ["״][אפג]|בש["״][אפ]|תפ["״]ח|עש["״]מ|בר["״]ם|עמ["״]ה|עע["״]מ|ת["״][אפ]|ה["״][פמ]|פ["״]ה|ב["״]ש|סע["״]ש|ס["״]ק|ד["״]מ|תמ["״]ש|עת["״]מ)(?:\s|$)/;
 
 // Detect source type from free text
 export function detectSourceType(text: string): SourceType {
   const normalized = text.toLowerCase();
   const hebrewText = normalizeQuotes(text);
-
+  
   // Check for foreign sources
   if (/[a-zA-Z]{3,}/.test(text) && /v\.|vs\./.test(normalized)) return 'foreign';
   if (/[A-Z][a-z]+\s+v\.\s+[A-Z]/.test(text)) return 'foreign';
-
-  // ── Case-law detection (highest priority — must run before book/article heuristics) ──
-  // 1) Any recognized Israeli docket prefix → case law.
-  if (CASE_LAW_PREFIX_RE.test(hebrewText)) {
-    if (/פ"ד|פ"מ|פד"ע/.test(hebrewText)) return 'case_law_published';
-    return 'case_law_database';
-  }
-  // 2) Legacy abbreviation map fallback.
+  
+  // Check for case law
   for (const abbr of Object.values(CASE_TYPE_ABBREVIATIONS)) {
     if (hebrewText.includes(abbr)) {
       if (hebrewText.includes('פ"ד') || hebrewText.includes('פ"מ') || hebrewText.includes('פד"ע')) {
@@ -328,14 +310,11 @@ export function detectSourceType(text: string): SourceType {
       return 'case_law_database';
     }
   }
-  // 3) Party separator + docket number.
-  if (/נ['׳'']|נגד|\sנ\s/.test(hebrewText) && /\d+\/\d+/.test(hebrewText)) {
+  if (/נ['׳'']|נגד/.test(hebrewText) && /\d+\/\d+/.test(hebrewText)) {
     return 'case_law_database';
   }
-  // 4) Party-name-only pattern (no docket): "X נגד Y" / "X נ' Y" / "X נ Y".
-  //    Excludes legislation/treaty/book keywords.
-  if (/[\u0590-\u05FF]+\s+(?:נגד|נ['׳'']|נ)\s+[\u0590-\u05FF]+/.test(hebrewText) &&
-      !/חוק |פקוד|תקנ|הצעת|אמנ|מהדורה|ספר /.test(hebrewText)) {
+  // Party names without case number (e.g., "מדינת ישראל נגד זדורוב" or "X נ׳ Y")
+  if (/[\u0590-\u05FF]+\s+(?:נגד|נ['׳''])\s+[\u0590-\u05FF]+/.test(hebrewText) && !/חוק|פקוד|תקנ|הצעת|אמנ|ספר|מהדורה/.test(hebrewText)) {
     return 'case_law_database';
   }
   
@@ -408,14 +387,11 @@ export function detectSourceType(text: string): SourceType {
   
   if (/ספר|מהדורה/.test(hebrewText)) return 'book';
   
-  // Heuristic: Hebrew name (2+ words) followed by a title → likely a book.
-  // Skip if any case-law signal is present (party separator, docket prefix, court keywords).
+  // Heuristic: Hebrew name (2+ words) followed by a title (3+ additional words) → likely a book
   const strippedForBook = hebrewText.trim().replace(/['׳"״`]/g, '');
-  const caseLawSignal = /\sנ['׳'']?\s|\sנגד\s|\sנ\s|בית[- ]המשפט|בית[- ]הדין|פסק[- ]דין|פס["״]ד|ערעור|תביעה|בקשת רשות|(?:^|\s)(?:בג["״]ץ|ע["״][אפעמ]|רע["״][אפ]|דנ["״][אפג]|בש["״][אפ]|תפ["״]ח|עש["״]מ|בר["״]ם|עמ["״]ה|עע["״]מ|ת["״][אפ]|ה["״][פמ]|פ["״]ה|ב["״]ש|סע["״]ש|ס["״]ק|ד["״]מ|תמ["״]ש|עת["״]מ)\s/.test(hebrewText);
-  if (/^[\u0590-\u05FF]+\s+[\u0590-\u05FF]+\s+[\u0590-\u05FF]/.test(strippedForBook) &&
+  if (/^[\u0590-\u05FF]+\s+[\u0590-\u05FF]+\s+[\u0590-\u05FF]/.test(strippedForBook) && 
       hebrewText.trim().split(/\s+/).length >= 4 &&
-      !caseLawSignal &&
-      !/חוק|פקוד|תקנ|הצעת|אמנ|ד["״]כ|חוות\s+דעת|הסכם\s+קיבוצי/.test(hebrewText)) {
+      !/נ['']|נגד|חוק|פקוד|תקנ|הצעת|אמנ|ד["״]כ|חוות\s+דעת|הסכם\s+קיבוצי/.test(hebrewText)) {
     return 'book';
   }
   

@@ -44,7 +44,7 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
 
   const isCaseLawByType = detectedType === "case_law_published" || detectedType === "case_law_database";
   // Fallback: detect case law from content patterns when detectedType is lost (e.g. after HMR)
-  const caseLawPattern = /(?:ע"א|ע״א|בג"ץ|בג״ץ|ד"נ|ד״נ|דנ"א|דנ״א|ע"פ|ע״פ|רע"א|רע״א|רע"פ|רע״פ|בש"פ|בש״פ|ת"א|ת״א|ת"פ|ת״פ|ה"פ|ה״פ|עת"מ|עת״מ|תמ"ש|תמ״ש|סע"ש|סע״ש|ס"ק|ס״ק|ד"מ|ד״מ|ע"ע|ע״ע|עע"מ|עע״מ|עש"מ|עש״מ|בר"ם|בר״ם|תפ"ח|תפ״ח|עמ"ה|עמ״ה|ב"ש|ב״ש|פ"ה|פ״ה)\s*\d/;
+  const caseLawPattern = /(?:ע"א|ע״א|בג"ץ|בג״ץ|ד"נ|ד״נ|ע"פ|ע״פ|רע"א|רע״א|בש"פ|בש״פ|ת"א|ת״א|ה"פ|ה״פ|עת"מ|עת״מ)\s*\d/;
   const isCaseLaw = isCaseLawByType || (!isUser && caseLawPattern.test(msg.content));
   const isVerifiedSource = msg.content.startsWith("✓");
 
@@ -112,9 +112,7 @@ export function MessageBubble({ msg, detectedType, onChangeSourceType, onEdit, o
   const isRuleLine = (line: string) =>
     /^📐|^כלל:|^Based on Rule|^Rule \d/.test(line.trim());
   const hasMissingMarker = (line: string) => /\[חסר:/.test(line);
-  // Numbered list line that starts with a known Hebrew docket prefix (case-law disambiguation option).
-  const isDisambiguationLine = (line: string) =>
-    /^\d+\.\s+(?:בג["״]ץ|ע["״][אפעמ]|רע["״][אפ]|דנ["״][אפג]|בש["״][אפ]|תפ["״]ח|עש["״]מ|בר["״]ם|עמ["״]ה|עע["״]מ|ת["״][אפ]|ה["״][פמ]|פ["״]ה|ב["״]ש|סע["״]ש|ס["״]ק|ד["״]מ|תמ["״]ש|עת["״]מ|תק["״]ג|ק["״]ג|תת["״]ע)\s/.test(line.trim());
+  const isDisambiguationLine = (line: string) => /^\d+\.\s+(?:ע|בג|ד|ר|ב|ת|ה)/.test(line.trim());
 
   return (
     <div

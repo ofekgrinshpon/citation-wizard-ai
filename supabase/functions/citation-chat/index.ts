@@ -7,21 +7,6 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// ─── Hebrew text normalization ───
-// Strips niqqud / cantillation marks (\u0591-\u05C7, e.g. shin-dot ׁ) and
-// normalizes typographic gershayim/geresh (״ ׳) and smart quotes to ASCII.
-// Used so docket prefixes like סע״שׁ are recognized identically to סע"ש.
-function normalizeHebrewLegalText(text: string): string {
-  if (!text) return text;
-  return text
-    .replace(/[\u0591-\u05C7]/g, "")              // niqqud + cantillation marks
-    .replace(/\u05F4/g, '"')                       // gershayim ״ → "
-    .replace(/\u05F3/g, "'")                       // geresh ׳ → '
-    .replace(/[\u201C\u201D\u201E]/g, '"')          // smart double quotes
-    .replace(/[\u2018\u2019\u201A]/g, "'")          // smart single quotes
-    .replace(/[ \t]+/g, " ");                      // collapse intra-line whitespace
-}
-
 // ─── Citation input validator (mirror of src/lib/citationInputValidation.ts) ───
 const HEBREW_LETTER_RE = /[\u0590-\u05FF]/;
 const URL_RE_V = /https?:\/\/\S+/i;
@@ -822,85 +807,23 @@ serve(async (req) => {
 
     let caseLawHint = "";
     let caseLawOverrideLabel: string | null = null;
-    // Verified case-law data captured from the Perplexity search branches.
-    // Used by the final-output guard to detect hallucinated parties/publication/docket
-    // in the AI gateway response and replace them with safe missing-data placeholders.
-    const verifiedCaseLawData: {
-      docket?: string;
-      docketRaw?: string;
-      party1?: string;
-      party2?: string;
-      publishedConfirmed?: boolean;
-      lookupAttempted?: boolean;
-      lookupSucceeded?: boolean;
-    } = {};
-    // Normalize Hebrew niqqud/quotes BEFORE running the docket/classifier regex —
-    // inputs like `סע״שׁ 50358-09-16` (shin-dot diacritic) must classify identically
-    // to `סע"ש 50358-09-16`. The original `userInput` is preserved for downstream
-    // prompt assembly so the AI still sees the user's exact text.
-    const normalizedUserInput = normalizeHebrewLegalText(userInput);
-    const classMatch = normalizedUserInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
-    const isCaseLawByClassifier = !!(classMatch && /פסיקה/.test(classMatch[1]));
-
+    const classMatch = userInput.match(/\[סיווג אוטומטי:\s*([^\]]+)\]/);
+    const isCaseLaw = classMatch && /פסיקה/.test(classMatch[1]);
+    
     // ── Check if this is a disambiguation selection (skip Perplexity) ──
-    const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(normalizedUserInput);
+    const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(userInput);
+    
+    const caseNumberMatch = userInput.match(/(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+([0-9]+[\/\-][0-9]+)/);
 
-    const CASE_LAW_PREFIXES = [
-      'בג"ץ','ע"א','ע"פ','רע"א','רע"פ','דנ"א','דנ"פ','ת"א','ת"פ','ע"ע','עע"מ','עש"מ',
-      'בש"א','בש"פ','תפ"ח','עמ"ה','בר"ם','סע"ש','תמ"ש','עת"מ','ה"פ','פ"ה','ב"ש',
-      'תק"ג','ק"ג','ד"מ','ס"ק','תת"ע'
-    ];
-    const prefixGroup = CASE_LAW_PREFIXES.map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-    const caseNumberMatch = normalizedUserInput.match(new RegExp(`(${prefixGroup})\\s+([0-9]+(?:[\\/\\-][0-9]+){1,2})`));
-
-    // Prefix-only override: input that STARTS with a known case-law docket prefix
-    // (e.g. `סע"ש קמיקר נ' מדינת ישראל`) is unambiguously case-law even with no
-    // docket number. Without this, the AI auto-classifier sometimes tags it as
-    // "ספרות" and the request falls through to the book branch.
-    const cleanedNormalized = normalizedUserInput
-      .replace(/\[סיווג אוטומטי:.*?\]\n?/g, "")
-      .replace(/\[בחירת תוצאה\]\s*/g, "")
-      // Engine hint block: starts with `══ מנוע אזכור ...` and ends at the long `══════...` divider.
-      .replace(/\n?══\s*מנוע אזכור[\s\S]*?══════════════════════════════════\n?/g, "")
-      // Verified-source hint block (same divider style)
-      .replace(/\n?══\s*מקור מאומת[\s\S]*?══════════════════════════════════\n?/g, "")
-      // Generic fallback: any remaining `══ ... ══` short blocks
-      .replace(/\n?══[^\n]*══\n?/g, "")
-      // Strip markdown bold and list numbering so disambiguation selections (e.g. "1. ... **קמיקר** נ' ...") parse cleanly
-      .replace(/\*\*/g, "")
-      .replace(/\[חסר:[^\]]*\]/g, "")
-      .replace(/^\s*\d+\.\s*/gm, "")
+    // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
+    const cleanedForParty = userInput
+      .replace(/\[סיווג אוטומטי:.*?\]\n?/, "")
+      .replace(/\[בחירת תוצאה\]\s*/, "")
+      .replace(/\n?══[\s\S]*?══+\s*/g, "")
       .trim();
-    const prefixOnlyMatch = cleanedNormalized.match(new RegExp(`(?:^|\\n)\\s*(${prefixGroup})\\s+[\\u0590-\\u05FF]`));
-    const hasCaseLawPrefix = !!prefixOnlyMatch;
-
-    // A disambiguation selection that contains case-law markers (party separator, court name,
-    // procedural keyword, or a year in parens) is unambiguously case-law even with no docket number.
-    const selectionCaseLawSignal = isDisambiguationSelection && (
-      /\sנגד\s|\sנ['׳]\s|\sנ\s/.test(cleanedNormalized) ||
-      /בית[- ]המשפט|בית[- ]הדין|פסק[- ]דין|פס["״]ד/.test(cleanedNormalized) ||
-      /ערעור|תביעה|בקשת רשות|תביעה לשכר/.test(cleanedNormalized) ||
-      /\(\d{4}\)/.test(cleanedNormalized)
-    );
-
-    // Recognized docket prefix + docket number is unambiguous case-law evidence,
-    // even when the upstream auto-classifier didn't tag the query as פסיקה.
-    const isCaseLaw = isCaseLawByClassifier || !!caseNumberMatch || hasCaseLawPrefix || selectionCaseLawSignal;
-
-    // Party-name fallback: detect "X נגד Y", "X נ' Y", or "X נ Y" (bare nun) pattern.
-    // Strip a leading docket prefix first so the prefix doesn't bleed into party1
-    // (e.g. `סע"ש קמיקר נ' מדינת ישראל` → match against `קמיקר נ' מדינת ישראל`).
-    const cleanedForParty = cleanedNormalized.replace(new RegExp(`^(${prefixGroup})\\s+`), "");
     const partyMatch = !caseNumberMatch
-      ? cleanedForParty.match(/([\u0590-\u05FF][\u0590-\u05FF\s'"״׳']*?)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3]|נ)\s+([\u0590-\u05FF][\u0590-\u05FF\s'"״׳']*)/)
+      ? cleanedForParty.match(/([\u0590-\u05FF\s'"״׳']+)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3])\s+([\u0590-\u05FF\s'"״׳']+)/)
       : null;
-    const partyPrefix = hasCaseLawPrefix && !caseNumberMatch ? prefixOnlyMatch![1] : null;
-    if (hasCaseLawPrefix && !caseNumberMatch) {
-      console.log(`[case-law] prefix-override=true, prefix="${partyPrefix}", classifierSaidCaseLaw=${isCaseLawByClassifier}`);
-    }
-    if (selectionCaseLawSignal && !hasCaseLawPrefix && !caseNumberMatch) {
-      console.log(`[case-law] selection-override=true, signals detected in disambiguation selection`);
-    }
 
     // If this is a disambiguation selection, do a focused single-case search with the case number
     if (isDisambiguationSelection && isCaseLaw && caseNumberMatch) {
@@ -936,19 +859,9 @@ serve(async (req) => {
           // ── Branch A: Search by case number (existing logic) ──
           if (caseNumberMatch) {
             const caseType = caseNumberMatch[1];
-            const rawCaseNum = caseNumberMatch[2];
-            // Preserve the original docket format. Lower-court / labor dockets use
-            // `NNNNN-MM-YY` (two hyphens) and MUST NOT be rewritten — Takdin/Nevo
-            // index them by that exact form. Only normalize the legacy
-            // single-separator Supreme Court form (`NNNN-NN`) to `NNNN/NN`.
-            const isMultiSeparatorDocket = (rawCaseNum.match(/[\/\-]/g) || []).length >= 2;
-            const caseNum = isMultiSeparatorDocket ? rawCaseNum : rawCaseNum.replace('-', '/');
+            const caseNum = caseNumberMatch[2].replace('-', '/');
             const fullCaseRef = `${caseType} ${caseNum}`;
-            verifiedCaseLawData.lookupAttempted = true;
-            verifiedCaseLawData.docket = fullCaseRef;
-            verifiedCaseLawData.docketRaw = caseNum;
-            console.log(`[case-law] dispatching search: prefix="${caseType}", rawDocket="${rawCaseNum}", normalizedDocket="${caseNum}"`);
-            const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חפש את מספר התיק המדויק "${rawCaseNum}" באתר תקדין לייט (lite.takdin.co.il), נבו, או אתר בתי המשפט. אל תחזיר פסקי דין אחרים בעלי מספרים דומים — רק את התיק המדויק עם מספר זה. בדוק האם פסק הדין פורסם בפד"י, ואם לא — ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין המלא (DD.MM.YYYY), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. אם לא מצאת את התיק המדויק, החזר {"found":false} — אל תמציא או תחליף בתיק דומה. ענה בעברית בלבד.`;
+            const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חשוב מאוד: בדוק קודם כל האם פסק הדין פורסם בפד"י (פסקי דין של בית המשפט העליון). חפש את מספר התיק יחד עם המילה "פ"ד" וכרך. רק אם וידאת שהוא לא מופיע בפד"י, ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. ענה בעברית בלבד.`;
 
             const perplexityResp = await fetch("https://api.perplexity.ai/chat/completions", {
               method: "POST",
@@ -957,28 +870,13 @@ serve(async (req) => {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                model: "sonar-pro",
-                search_domain_filter: [
-                  "lite.takdin.co.il",
-                  "takdin.co.il",
-                  "nevo.co.il",
-                  "supreme.court.gov.il",
-                  "court.gov.il",
-                  "psakdin.co.il",
-                ],
+                model: "sonar",
                 messages: [
                   {
                     role: "system",
                     content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
 חשוב ביותר: עדיפות ראשונה היא לבדוק פרסום בפד"י (פסקי דין). רוב פסקי הדין של בית המשפט העליון פורסמו בפד"י. אל תסתמך רק על מאגרי מידע אלקטרוניים - חפש במיוחד אם יש ציון "פ"ד" עם כרך ועמוד.
 סמן isPublished: false רק אם חיפשת במפורש פרסום בפד"י ווידאת שהוא לא קיים.
-
-טיפ חיפוש חשוב — תהליך דו-שלבי באתר תקדין לייט (ציבורי, חינמי, רק קובץ ה-PDF המלא בתשלום):
-שלב 1 — זיהוי: התחל מ-https://lite.takdin.co.il/search-results?txtSearch=<מספר התיק>. דף התוצאות חושף בתקציר את שמות הצדדים, בית המשפט, וקידומת מספר התיק.
-שלב 2 — תאריך מלא: אם תקציר התוצאות מציג רק שנה (או לא מציג תאריך כלל), **המשך אל דף התיק עצמו** באתר lite.takdin.co.il (הקישור מתוך תוצאת החיפוש). דף התיק הציבורי מציג את תאריך ההחלטה בפורמט [DD.MM.YYYY] בסוגריים מרובעים — אין שם תשלום, רק ה-PDF המלא בתשלום.
-חובה: אל תחזיר רק שנה אם התאריך המלא ניתן לשליפה מדף התיק. שדה "date" חייב להיות בפורמט DD.MM.YYYY בכל פעם שדף התיק חושף אותו.
-אם לא נמצא בתקדין לייט, נסה nevo.co.il ו-supreme.court.gov.il.
-
 הפורמט:
 {"found":true/false,"party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","confidence":"high/low"}
 שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
@@ -1046,182 +944,29 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     }
                   }
 
-                  // ── Date recovery: if Perplexity returned a case but no full date, run a focused date lookup ──
-                  // Strategy: deterministic extraction from Perplexity Search API snippets first
-                  // (lite.takdin.co.il search-result cards expose DD/MM/YYYY in title/snippet),
-                  // then fall back to a focused LLM read of the same cards.
-                  const dateLooksValid = (d: any) => typeof d === "string" && /^\d{1,2}\.\d{1,2}\.\d{4}$/.test(d.trim());
-                  if (parsed.found && !dateLooksValid(parsed.date)) {
-                    const partyHints = [parsed.party1, parsed.party2]
-                      .filter((s: unknown) => typeof s === "string" && s.trim())
-                      .map((s: string) => s.trim())
-                      .join(" ");
-                    const searchQ = `site:lite.takdin.co.il "${rawCaseNum}" ${partyHints}`.trim();
-                    console.log(`[case-law] No full date for ${fullCaseRef}, running deterministic date search... query="${searchQ}"`);
-
-                    // Step 1 — Perplexity Search API (raw snippets, no LLM interpretation)
-                    let recovered = "";
-                    try {
-                      const searchResp = await fetch("https://api.perplexity.ai/search", {
-                        method: "POST",
-                        headers: {
-                          Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-                          "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ query: searchQ }),
-                      });
-                      if (searchResp.ok) {
-                        const sData = await searchResp.json();
-                        const items = Array.isArray(sData?.results) ? sData.results
-                          : Array.isArray(sData?.web_results) ? sData.web_results
-                          : Array.isArray(sData?.search_results) ? sData.search_results
-                          : [];
-                        // Look for snippet/title containing the exact docket and a DD/MM/YYYY or DD.MM.YYYY date.
-                        const dateRe = /(\b\d{1,2})[\/\.](\d{1,2})[\/\.](\d{4})\b/;
-                        for (const it of items) {
-                          const blob = `${it?.title || ""} ${it?.snippet || ""} ${it?.description || ""} ${it?.url || ""}`;
-                          if (!blob.includes(rawCaseNum)) continue;
-                          const m = blob.match(dateRe);
-                          if (m) {
-                            const dd = m[1].padStart(2, "0");
-                            const mm = m[2].padStart(2, "0");
-                            const yyyy = m[3];
-                            const candidate = `${dd}.${mm}.${yyyy}`;
-                            // sanity: year must be plausible (not in the future, after docket year)
-                            const docketYearMatch = rawCaseNum.match(/-(\d{2,4})$/);
-                            const docketYear = docketYearMatch
-                              ? (docketYearMatch[1].length === 2 ? 2000 + parseInt(docketYearMatch[1]) : parseInt(docketYearMatch[1]))
-                              : 0;
-                            const yNum = parseInt(yyyy);
-                            if (yNum >= docketYear && yNum <= new Date().getFullYear() + 1) {
-                              recovered = candidate;
-                              console.log(`[case-law] Date recovered deterministically from snippet: ${recovered}`);
-                              break;
-                            }
-                          }
-                        }
-                      } else {
-                        console.log(`[case-law] Perplexity Search API returned ${searchResp.status}`);
-                      }
-                    } catch (sErr) {
-                      console.error("[case-law] Search-API date recovery error:", sErr);
-                    }
-
-                    // Step 2 — fallback to focused LLM read of takdin search-result cards
-                    if (!recovered) {
-                      try {
-                        const dateResp = await fetch("https://api.perplexity.ai/chat/completions", {
-                          method: "POST",
-                          headers: {
-                            Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-                            "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({
-                            model: "sonar-pro",
-                            search_domain_filter: ["lite.takdin.co.il", "nevo.co.il", "court.gov.il", "psakdin.co.il"],
-                            temperature: 0,
-                            messages: [
-                              {
-                                role: "system",
-                                content: `Return JSON only: {"date":"DD.MM.YYYY"} or {"date":""}.
-The תקדין search-results card for the docket shows the full DD/MM/YYYY judgment date in its metadata line.
-Find the card whose docket EXACTLY matches the user input, read the date, convert / to . and return it.
-If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explain.`,
-                              },
-                              {
-                                role: "user",
-                                content: `${searchQ}\nDocket to match exactly: ${rawCaseNum}`,
-                              },
-                            ],
-                          }),
-                        });
-                        if (dateResp.ok) {
-                          const dData = await dateResp.json();
-                          const dContent = dData.choices?.[0]?.message?.content || "";
-                          console.log("[case-law] LLM date-recovery fallback result:", dContent);
-                          const dJson = dContent.match(/\{[\s\S]*\}/);
-                          if (dJson) {
-                            const dParsed = JSON.parse(dJson[0]);
-                            if (dateLooksValid(dParsed.date)) {
-                              recovered = dParsed.date.trim();
-                              console.log(`[case-law] Date recovered via LLM fallback: ${recovered}`);
-                            }
-                          }
-                        }
-                      } catch (dateErr) {
-                        console.error("[case-law] LLM date-recovery error:", dateErr);
-                      }
-                    }
-
-                    if (recovered) {
-                      parsed.date = recovered;
-                    }
-                  }
-
-                  // ── Court correction: docket prefix dictates the court family ──
-                  const COURT_BY_PREFIX: Record<string, string> = {
-                    'סע"ש': 'בית הדין האזורי לעבודה',
-                    'ס"ק': 'בית הדין האזורי לעבודה',
-                    'ד"מ': 'בית הדין האזורי לעבודה',
-                    'ע"ע': 'בית הדין הארצי לעבודה',
-                    'תמ"ש': 'בית המשפט לענייני משפחה',
-                    'עת"מ': 'בית המשפט לעניינים מנהליים',
-                  };
-                  const expectedCourt = COURT_BY_PREFIX[caseType];
-                  if (expectedCourt && parsed.court && !parsed.court.includes(expectedCourt.split(" ")[1] || expectedCourt)) {
-                    // Check substring match against the family root (e.g. "הדין", "המשפט לענייני משפחה")
-                    const root = expectedCourt.replace(/^בית\s+/, "");
-                    if (!parsed.court.includes(root.split(" ")[0])) {
-                      // Extract a city from the original court string if present
-                      const cityMatch = parsed.court.match(/(תל[\s-]?אביב[^\s]*|ירושלים|חיפה|באר[\s-]?שבע|נצרת|לוד|מרכז|דרום|צפון|פתח[\s-]?תקווה|ראשון[\s-]?לציון|נתניה|כפר[\s-]?סבא|רחובות|טבריה|עכו|אשדוד|הרצליה)/);
-                      const city = cityMatch ? cityMatch[0] : "";
-                      const corrected = city ? `${expectedCourt} ${city}` : expectedCourt;
-                      console.log(`[case-law] Court family mismatch for ${caseType}: "${parsed.court}" → "${corrected}"`);
-                      parsed.court = corrected;
-                    }
-                  }
-
-                  // Validate data quality: reject bogus results with empty/placeholder fields.
-                  // Perplexity often returns Hebrew "not specified" placeholders that look truthy but
-                  // are not real publication data — treat these as missing.
-                  const isPlaceholder = (v: unknown) => {
-                    if (typeof v !== "string") return true;
-                    const t = v.trim();
-                    if (!t) return true;
-                    return /^(?:לא\s*(?:צוין|ידוע|נמצא|רלוונטי)|אין|N\/?A|None|null|undefined|-|—)$/i.test(t);
-                  };
-                  const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && !isPlaceholder(parsed.date);
-                  const hasValidParties = !isPlaceholder(parsed.party1) && !isPlaceholder(parsed.party2);
-                  const hasRealPadi = !isPlaceholder(parsed.padi_volume) && !isPlaceholder(parsed.padi_page);
-                  const hasRealDatabase = !isPlaceholder(parsed.databaseName);
-                  const hasValidPublication = (parsed.isPublished && hasRealPadi) || (!parsed.isPublished && hasRealDatabase) || hasRealDatabase;
-                  // The docket itself anchors the case: as long as parties are confirmed, render as case law
-                  // even if the full date is missing (it will surface as [חסר: תאריך]).
-                  const dataIsUsable = parsed.found && hasValidParties;
+                  // Validate data quality: reject bogus results with empty/placeholder fields
+                  const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && parsed.date.trim() !== "";
+                  const hasValidParties = parsed.party1 && parsed.party1.trim() !== "" && parsed.party2 && parsed.party2.trim() !== "";
+                  const hasValidPublication = (parsed.isPublished && parsed.padi_volume && parsed.padi_volume.trim() !== "") || (!parsed.isPublished && parsed.databaseName && parsed.databaseName.trim() !== "");
+                  const dataIsUsable = parsed.found && hasValidParties && (hasValidDate || hasValidPublication);
                   
                   if (dataIsUsable) {
-                    verifiedCaseLawData.lookupSucceeded = true;
-                    verifiedCaseLawData.party1 = String(parsed.party1).trim();
-                    verifiedCaseLawData.party2 = String(parsed.party2).trim();
-                    verifiedCaseLawData.publishedConfirmed = !!(parsed.isPublished && hasRealPadi);
                     let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
                     details += `תיק: ${fullCaseRef}\n`;
                     if (hasValidParties) details += `צדדים: **${parsed.party1}** נ' **${parsed.party2}**\n`;
                     if (parsed.court) details += `בית משפט: ${parsed.court}\n`;
-                    if (parsed.isPublished && hasRealPadi) {
+                    if (parsed.isPublished && parsed.padi_volume && parsed.padi_volume.trim() !== "") {
                       caseLawOverrideLabel = "פסיקה (דפוס)";
-                      const part = !isPlaceholder(parsed.padi_part) ? `(${String(parsed.padi_part).trim()})` : "";
-                      details += `פרסום: פ"ד ${String(parsed.padi_volume).trim()}${part} ${!isPlaceholder(parsed.padi_page) ? String(parsed.padi_page).trim() : ""}\n`;
-                    } else if (hasRealDatabase) {
+                      const part = parsed.padi_part ? `(${parsed.padi_part})` : "";
+                      details += `פרסום: פ"ד ${parsed.padi_volume}${part} ${parsed.padi_page || ""}\n`;
+                    }
+                    if (!parsed.isPublished && parsed.databaseName && parsed.databaseName.trim() !== "") {
                       caseLawOverrideLabel = "פסיקה (מאגר)";
-                      details += `מאגר: ${String(parsed.databaseName).trim()}\n`;
+                      details += `מאגר: ${parsed.databaseName}\n`;
+                      // Add uncertainty note for low-confidence database classifications
                       if (parsed.confidence === "low") {
                         details += `⚠️ הערה: לא ניתן לאמת בוודאות אם פסק הדין פורסם בפ"ד. מוצג כפסיקה ממאגר. אם ידוע לך שפורסם בפ"ד, נא לציין כרך וחלק.\n`;
                       }
-                    } else {
-                      // No usable publication data → render as database case law with [חסר]
-                      caseLawOverrideLabel = "פסיקה (מאגר)";
-                      details += `מאגר: [חסר: שם מאגר]\n`;
                     }
                     if (hasValidDate) details += `תאריך: ${parsed.date}\n`;
                     if (parsed.year && parsed.year.trim() !== "") details += `שנה: ${parsed.year}\n`;
@@ -1263,53 +1008,24 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                model: "sonar-pro",
-                search_domain_filter: [
-                  "supreme.court.gov.il",
-                  "court.gov.il",
-                  "gov.il",
-                  "nevo.co.il",
-                  "takdin.co.il",
-                  "lite.takdin.co.il",
-                  "psakdin.co.il",
-                ],
+                model: "sonar",
                 messages: [
                   {
                     role: "system",
-                    content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו, אך ורק ממקורות מוסמכים (אתר בתי המשפט, נבו, תקדין, פסקדין). החזר תשובה בפורמט JSON בלבד.
+                    content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו. החזר תשובה בפורמט JSON בלבד.
 הפורמט:
 {"results":[
-  {"found":true,"caseType":"סוג הליך","caseNumber":"מספר/שנה","party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","sourceUrl":"כתובת המקור המוסמך שממנו נשלפו הפרטים"}
+  {"found":true,"caseType":"סוג הליך","caseNumber":"מספר/שנה","party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY"}
 ]}
-כללים קריטיים נגד הזיות:
-- כל תוצאה חייבת להיות מבוססת על URL מוסמך אמיתי שמופיע ב-sourceUrl. אל תמציא מספרי תיקים, כרכי פ"ד או תאריכים.
-- אם אינך יכול לאמת את מספר התיק במקור מוסמך — השמט את התוצאה לחלוטין במקום לנחש.
-- שנת מספר התיק (אחרי / או -) חייבת להיות עקבית עם year (פער של עד 5 שנים).
-- אם isPublished=true, וודא ש-padi_volume תואם לשנה (פ"ד מתפרסם לרוב 1-3 שנים אחרי הגשת התיק).
+כללים:
 - מקסימום 5 תוצאות, ממוינות מהחדש לישן
 - שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
 - כלול את כל סוגי ההליכים (ערעור, בקשת רשות ערעור, משפט ראשוני וכו')
-- אם לא נמצאו תוצאות מאומתות, החזר {"results":[]}`,
+- אם לא נמצאו תוצאות, החזר {"results":[]}`,
                   },
                   {
                     role: "user",
-                    content: (() => {
-                      const COURT_HINT_BY_PREFIX: Record<string, string> = {
-                        'סע"ש': 'בבית הדין האזורי לעבודה (סע"ש)',
-                        'ס"ק': 'בבית הדין האזורי לעבודה (ס"ק)',
-                        'ד"מ': 'בבית הדין האזורי לעבודה (ד"מ)',
-                        'ע"ע': 'בבית הדין הארצי לעבודה (ע"ע)',
-                        'תמ"ש': 'בבית המשפט לענייני משפחה (תמ"ש)',
-                        'עת"מ': 'בבית המשפט לעניינים מנהליים (עת"מ)',
-                        'בג"ץ': 'בבית המשפט העליון (בג"ץ)',
-                        'ע"א': 'בבית המשפט העליון (ע"א)',
-                        'ע"פ': 'בבית המשפט העליון (ע"פ)',
-                      };
-                      const courtConstraint = partyPrefix && COURT_HINT_BY_PREFIX[partyPrefix]
-                        ? ` הגבל את החיפוש לתיקים שנדונו ${COURT_HINT_BY_PREFIX[partyPrefix]} בלבד.`
-                        : '';
-                      return `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}.${courtConstraint} כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפד"י. החזר רק תוצאות שאתה יכול לאמת ב-URL מוסמך.`;
-                    })(),
+                    content: `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}. כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפד"י.`,
                   },
                 ],
               }),
@@ -1318,235 +1034,44 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
             if (partySearchResp.ok) {
               const psData = await partySearchResp.json();
               const psContent = psData.choices?.[0]?.message?.content || "";
-              const psCitations: string[] = Array.isArray(psData.citations) ? psData.citations : [];
               console.log("[case-law] Party search result:", psContent);
-              console.log("[case-law] Party search citations:", JSON.stringify(psCitations));
-
-              const TRUSTED_HOSTS = [
-                "supreme.court.gov.il",
-                "court.gov.il",
-                "gov.il",
-                "nevo.co.il",
-                "takdin.co.il",
-                "lite.takdin.co.il",
-                "psakdin.co.il",
-              ];
-              const isTrustedUrl = (u: unknown): boolean => {
-                if (typeof u !== "string" || !u) return false;
-                try {
-                  const host = new URL(u).hostname.toLowerCase();
-                  return TRUSTED_HOSTS.some((h) => host === h || host.endsWith(`.${h}`));
-                } catch {
-                  return false;
-                }
-              };
-              const hasAnyTrustedCitation = psCitations.some(isTrustedUrl);
 
               const psJsonMatch = psContent.match(/\{[\s\S]*\}/);
               if (psJsonMatch) {
                 try {
                   const psParsed = JSON.parse(psJsonMatch[0]);
-                  const rawResults = Array.isArray(psParsed.results)
-                    ? psParsed.results.filter((r: Record<string, unknown>) => r.found)
-                    : [];
-
-                  // Build a normalized list of docket "fingerprints" found in trusted citations.
-                  // A docket fingerprint is the digit sequence with `/` or `-` separators (e.g. "158/77").
-                  // We extract these from each trusted citation URL itself (path/query) so we can
-                  // verify that a result's claimed caseNumber actually appears in a trusted source —
-                  // not just that the response cited *some* trusted URL.
-                  const extractDocketFingerprints = (text: string): string[] => {
-                    const out: string[] = [];
-                    const re = /\b(\d{1,6})[\/\-](\d{2,4})(?:[\/\-](\d{2,4}))?\b/g;
-                    let m: RegExpExecArray | null;
-                    while ((m = re.exec(text)) !== null) {
-                      out.push(m[3] ? `${m[1]}-${m[2]}-${m[3]}` : `${m[1]}/${m[2]}`);
-                    }
-                    return out;
-                  };
-                  const trustedCitationFingerprints = new Set<string>();
-                  for (const u of psCitations) {
-                    if (!isTrustedUrl(u)) continue;
-                    try {
-                      const decoded = decodeURIComponent(u);
-                      for (const fp of extractDocketFingerprints(decoded)) trustedCitationFingerprints.add(fp);
-                    } catch { /* ignore decode errors */ }
-                  }
-
-                  // Decode Supreme Court "fileName" patterns into docket fingerprints.
-                  // Examples:
-                  //   09083200_w16  →  case 8320/09 (year 09, sequence 08320, padded to 083200)
-                  //   22014560.Y06  →  case 1456/22 (year 22, sequence 01456, padded)
-                  //   10051310.v08  →  case 5131/10
-                  // Format observed: YY + zero-padded(NNNNNN) where the docket sequence uses last 5–6 digits.
-                  const supremeFingerprints = new Set<string>();
-                  const SUPREME_FILENAME_RE = /(?:fileName=|\/)(\d{2})(\d{6})(?:[._])/gi;
-                  for (const u of psCitations) {
-                    try {
-                      const decoded = decodeURIComponent(u);
-                      let m: RegExpExecArray | null;
-                      const re = new RegExp(SUPREME_FILENAME_RE.source, "gi");
-                      while ((m = re.exec(decoded)) !== null) {
-                        const yy = m[1];
-                        const seqRaw = m[2].replace(/^0+/, "") || "0";
-                        // Take the leading 4–5 digits (sequence) — Supreme Court dockets are NNNNN/YY
-                        // The padded part is 6 digits; the trailing zeros are sub-document identifiers.
-                        // Heuristic: strip up to 1 trailing zero from the 6-digit chunk to get the sequence.
-                        const trimmed = m[2].replace(/0+$/, "") || m[2];
-                        supremeFingerprints.add(`${trimmed}/${yy}`);
-                        supremeFingerprints.add(`${seqRaw}/${yy}`);
-                      }
-                    } catch { /* ignore */ }
-                  }
-                  console.log(`[case-law] trusted-fp=${[...trustedCitationFingerprints].join(",") || "-"}, supreme-fp=${[...supremeFingerprints].join(",") || "-"}`);
-
-                  const normalizeDocket = (s: string) => {
-                    const t = (s || "").replace(/\s+/g, "");
-                    if (/^\d+-\d+-\d+$/.test(t)) return t;
-                    return t.replace(/-/g, "/");
-                  };
-
-                  // Per-candidate independent verification using Perplexity raw Search API.
-                  // Accept only when an external snippet/title contains BOTH the exact docket
-                  // AND substantial tokens from BOTH party names. This prevents the LLM's
-                  // self-referential JSON from being treated as evidence.
-                  const partyTokens = (p: string): string[] =>
-                    (p || "").split(/[\s,'"״׳]+/).filter((t) => t.length >= 2);
-                  const tokensP1 = partyTokens(party1);
-                  const tokensP2 = partyTokens(party2);
-
-                  const verifyCandidateExternally = async (
-                    r: Record<string, unknown>,
-                  ): Promise<{ ok: boolean; reason?: string }> => {
-                    const caseNumStr = typeof r.caseNumber === "string" ? r.caseNumber : "";
-                    const caseTypeStr = typeof r.caseType === "string" ? r.caseType : "";
-                    if (!caseNumStr) return { ok: false, reason: "missing docket" };
-                    const fp = normalizeDocket(caseNumStr);
-                    const queries = [
-                      `"${caseNumStr}" ${party1} ${party2}`,
-                      `${caseTypeStr} ${caseNumStr} ${party1} ${party2}`,
-                    ];
-                    for (const q of queries) {
-                      try {
-                        const sr = await fetch("https://api.perplexity.ai/search", {
-                          method: "POST",
-                          headers: {
-                            Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-                            "Content-Type": "application/json",
-                          },
-                          body: JSON.stringify({ query: q }),
-                        });
-                        if (!sr.ok) continue;
-                        const sd = await sr.json();
-                        const items = Array.isArray(sd?.results) ? sd.results
-                          : Array.isArray(sd?.web_results) ? sd.web_results
-                          : Array.isArray(sd?.search_results) ? sd.search_results
-                          : [];
-                        for (const it of items) {
-                          const blob = `${it?.title || ""} ${it?.snippet || ""} ${it?.description || ""} ${it?.url || ""}`;
-                          let blobDecoded = blob;
-                          try { blobDecoded = decodeURIComponent(blob); } catch { /* ignore */ }
-                          const text = `${blob} ${blobDecoded}`;
-                          const docketHit =
-                            text.includes(caseNumStr) ||
-                            extractDocketFingerprints(blobDecoded).includes(fp);
-                          if (!docketHit) continue;
-                          const p1Hit = tokensP1.some((t) => text.includes(t));
-                          const p2Hit = tokensP2.some((t) => text.includes(t));
-                          if (p1Hit && p2Hit) {
-                            return { ok: true };
-                          }
-                        }
-                      } catch { /* try next query */ }
-                    }
-                    return { ok: false, reason: `no external snippet ties docket ${caseNumStr} to both parties` };
-                  };
-
-                  // Quick local sanity (year coherence) before paying for external verification.
-                  const localSanity = (r: Record<string, unknown>): { ok: boolean; reason?: string } => {
-                    const caseNumStr = typeof r.caseNumber === "string" ? r.caseNumber : "";
-                    const yearStr = typeof r.year === "string" ? r.year : "";
-                    const dyMatch = caseNumStr.match(/[\/\-](\d{2,4})\b/);
-                    if (dyMatch && yearStr && /^\d{4}$/.test(yearStr)) {
-                      let dy = parseInt(dyMatch[1], 10);
-                      if (dy < 100) dy = dy < 50 ? 2000 + dy : 1900 + dy;
-                      const decisionYear = parseInt(yearStr, 10);
-                      if (decisionYear < dy - 1) return { ok: false, reason: `decision year ${decisionYear} before docket year ${dy}` };
-                      if (decisionYear > dy + 15) return { ok: false, reason: `decision year ${decisionYear} too far from docket year ${dy}` };
-                    }
-                    return { ok: true };
-                  };
-
-                  // Verify all candidates in parallel.
-                  const verificationResults = await Promise.all(
-                    rawResults.map(async (r: Record<string, unknown>) => {
-                      const local = localSanity(r);
-                      if (!local.ok) return { r, ok: false, reason: local.reason };
-                      const ext = await verifyCandidateExternally(r);
-                      return { r, ok: ext.ok, reason: ext.reason };
-                    }),
-                  );
-
-                  const results: Array<Record<string, unknown>> = [];
-                  for (const v of verificationResults) {
-                    if (v.ok) {
-                      results.push(v.r);
-                    } else {
-                      console.log(`[case-law] Dropping unverified result ${(v.r as { caseType?: string }).caseType || "?"} ${(v.r as { caseNumber?: string }).caseNumber || "?"}: ${v.reason}`);
-                    }
-                  }
-                  console.log(`[case-law] External verification: ${results.length}/${rawResults.length} candidates accepted`);
+                  const results = Array.isArray(psParsed.results) ? psParsed.results.filter((r: Record<string, unknown>) => r.found) : [];
 
                   if (results.length === 0) {
-                    console.log(`[case-law] No verifiable results for party search "${searchQuery}" (raw=${rawResults.length})`);
-                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו פסקי דין מאומתים במאגרים ציבוריים בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק (למשל ע"א 158/77) לחיפוש מדויק יותר.\nאל תמציא מספר תיק או פרטי פרסום.\n══`;
+                    console.log(`[case-law] No results found for party search "${searchQuery}"`);
+                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו פסקי דין בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק (למשל ע"פ 1234/56) לחיפוש מדויק יותר.\n══`;
                   } else if (results.length === 1) {
                     // Single result – use same logic as case-number search
-                    const r = results[0] as Record<string, unknown>;
-                    verifiedCaseLawData.lookupAttempted = true;
-                    verifiedCaseLawData.lookupSucceeded = true;
-                    if (typeof r.party1 === "string") verifiedCaseLawData.party1 = r.party1.trim();
-                    if (typeof r.party2 === "string") verifiedCaseLawData.party2 = r.party2.trim();
-                    if (typeof r.caseType === "string" && typeof r.caseNumber === "string") {
-                      verifiedCaseLawData.docket = `${r.caseType} ${r.caseNumber}`.trim();
-                      verifiedCaseLawData.docketRaw = r.caseNumber.trim();
-                    }
-                    verifiedCaseLawData.publishedConfirmed = !!(r.isPublished && typeof r.padi_volume === "string" && r.padi_volume.trim() && typeof r.padi_page === "string" && r.padi_page.trim());
-                    const isPlaceholder = (v: unknown) => {
-                      if (typeof v !== "string") return true;
-                      const t = v.trim();
-                      if (!t) return true;
-                      return /^(?:לא\s*(?:צוין|ידוע|נמצא|רלוונטי)|אין|N\/?A|None|null|undefined|-|—)$/i.test(t);
-                    };
-                    const hasRealPadi = !isPlaceholder(r.padi_volume) && !isPlaceholder(r.padi_page);
-                    const hasRealDatabase = !isPlaceholder(r.databaseName);
-                    const fullRef = `${!isPlaceholder(r.caseType) ? r.caseType : "[חסר: סוג הליך]"} ${!isPlaceholder(r.caseNumber) ? r.caseNumber : "[חסר: מספר תיק]"}`;
+                    const r = results[0];
+                    const fullRef = `${r.caseType || "[חסר: סוג הליך]"} ${r.caseNumber || "[חסר: מספר תיק]"}`;
                     let details = `\n\n══ נתוני פסק דין שנמצאו בחיפוש ══\n`;
                     details += `תיק: ${fullRef}\n`;
-                    if (!isPlaceholder(r.party1) && !isPlaceholder(r.party2)) details += `צדדים: **${r.party1}** נ' **${r.party2}**\n`;
-                    if (!isPlaceholder(r.court)) details += `בית משפט: ${r.court}\n`;
-                    if (r.isPublished && hasRealPadi) {
+                    if (r.party1 && r.party2) details += `צדדים: **${r.party1}** נ' **${r.party2}**\n`;
+                    if (r.court) details += `בית משפט: ${r.court}\n`;
+                    if (r.isPublished && r.padi_volume) {
                       caseLawOverrideLabel = "פסיקה (דפוס)";
-                      const part = !isPlaceholder(r.padi_part) ? `(${String(r.padi_part).trim()})` : "";
-                      details += `פרסום: פ"ד ${String(r.padi_volume).trim()}${part} ${!isPlaceholder(r.padi_page) ? String(r.padi_page).trim() : ""}\n`;
-                    } else if (hasRealDatabase) {
+                      const part = r.padi_part ? `(${r.padi_part})` : "";
+                      details += `פרסום: פ"ד ${r.padi_volume}${part} ${r.padi_page || ""}\n`;
+                    } else if (r.databaseName) {
                       caseLawOverrideLabel = "פסיקה (מאגר)";
-                      details += `מאגר: ${String(r.databaseName).trim()}\n`;
-                    } else {
-                      caseLawOverrideLabel = "פסיקה (מאגר)";
-                      details += `מאגר: [חסר: שם מאגר]\n`;
+                      details += `מאגר: ${r.databaseName}\n`;
                     }
-                    if (!isPlaceholder(r.date)) details += `תאריך: ${r.date}\n`;
-                    if (!isPlaceholder(r.year)) details += `שנה: ${r.year}\n`;
+                    if (r.date) details += `תאריך: ${r.date}\n`;
+                    if (r.year) details += `שנה: ${r.year}\n`;
                     if (caseLawOverrideLabel === "פסיקה (דפוס)") {
                       details += `══ נמצא פרסום בפ"ד, לכן חובה לעצב את האזכור כפסיקה (דפוס) לפי כלל 18. ══`;
                     } else {
-                      details += `══ עצב את האזכור כפסיקה ממאגר לפי כלל 19. אם הנתונים חלקיים, סמן [חסר:...] לשדות החסרים. אל תעצב כספר. ══`;
+                      details += `══ השתמש בנתונים אלו לעיצוב האזכור. אם הנתונים חלקיים, סמן [חסר:...] לשדות החסרים. ══`;
                     }
                     caseLawHint = details;
                   } else {
                     // Multiple results – present disambiguation list
-                    console.log(`[case-law] Found ${results.length} verified results for party search "${searchQuery}"`);
+                    console.log(`[case-law] Found ${results.length} results for party search "${searchQuery}"`);
                     let details = `\n\n══ נמצאו מספר פסקי דין תואמים ══\n`;
                     details += `הצג למשתמש את הרשימה הבאה ובקש ממנו לבחור את פסק הדין הרלוונטי:\n\n`;
                     results.forEach((r: Record<string, unknown>, i: number) => {
@@ -1556,7 +1081,7 @@ If no exact-docket card is found, return {"date":""}. NEVER refuse, NEVER explai
                       const court = r.court || "";
                       details += `${i + 1}. ${ref} ${parties}${year ? ` (${year})` : ""}${court ? ` — ${court}` : ""}\n`;
                     });
-                    details += `\n══ שאל את המשתמש: "נמצאו מספר פסקי דין בין הצדדים. לאיזה פסק דין התכוונת?" והצג את הרשימה הממוספרת. אם שדה כלשהו חסר או לא ודאי — סמן [חסר:...] ואל תמציא מספרי תיקים, כרכי פ"ד או תאריכים. ══`;
+                    details += `\n══ שאל את המשתמש: "נמצאו מספר פסקי דין בין הצדדים. לאיזה פסק דין התכוונת?" והצג את הרשימה הממוספרת. לאחר שהמשתמש יבחר, עצב את האזכור לפי הנתונים שנמצאו. ══`;
                     caseLawHint = details;
                   }
                 } catch (e) {
@@ -1740,29 +1265,12 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     const isUnknown = classMatch && /לא מזוהה|אחר/.test(classMatch[1]);
     const noClassTag = !classMatch;
     // Also trigger book search for unknown/untagged types that look like Hebrew name + title (4+ words, no legislation markers)
-    // Strip markdown bold (**...**), list numbering ("1. "), and [חסר: ...] placeholders before scanning for case-law signals.
-    const cleanedForBookCheck = userInput
-      .replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "")
-      .replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "")
-      .replace(/\[בחירת תוצאה\]\s*/g, "")
-      .replace(/\*\*/g, "")
-      .replace(/\[חסר:[^\]]*\]/g, "")
-      .replace(/^\s*\d+\.\s*/gm, "")
-      .trim();
-    // Case-law signal detector: party separator (including bare ` נ `), docket prefix,
-    // court names, or procedural keywords. Used as a safety guard against the book branch.
-    const caseLawSignalRe = new RegExp(
-      `(?:${prefixGroup})|\\sנגד\\s|\\sנ['׳]\\s|\\sנ\\s|בית[- ]המשפט|בית[- ]הדין|פסק[- ]דין|פס["״]ד|ערעור|תביעה|בקשת רשות`
-    );
-    const hasCaseLawSignal = caseLawSignalRe.test(cleanedForBookCheck);
-    const looksLikeBook = (isUnknown || noClassTag) &&
-      /^[\u0590-\u05FF]/.test(cleanedForBookCheck.replace(/['׳"״`]/g, '')) &&
+    const cleanedForBookCheck = userInput.replace(/\[סיווג אוטומטי:\s*[^\]]+\]\s*/, "").replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "").trim();
+    const looksLikeBook = (isUnknown || noClassTag) && 
+      /^[\u0590-\u05FF]/.test(cleanedForBookCheck.replace(/['׳"״`]/g, '')) && 
       cleanedForBookCheck.split(/\s+/).length >= 4 &&
-      !hasCaseLawSignal &&
-      !/חוק |פקודת |תקנות|הצעת חוק|אמנ|ד["״]כ/.test(cleanedForBookCheck);
-    // Hard-skip the book branch when the query is unambiguously case-law (docket prefix, party separator,
-    // disambiguation selection, or any other case-law signal).
-    if ((isBook || looksLikeBook) && !hasVerifiedCandidates && !isCaseLaw && !isDisambiguationSelection && !hasCaseLawSignal) {
+      !/נ['']|נגד|חוק |פקודת |תקנות|הצעת חוק|אמנ|ד["״]כ/.test(cleanedForBookCheck);
+    if ((isBook || looksLikeBook) && !hasVerifiedCandidates) {
       try {
         const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
         if (PERPLEXITY_API_KEY) {
@@ -1974,40 +1482,18 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
       }
     }
 
-    // If we determined this is case-law but Perplexity didn't return a usable record,
-    // still set caseLawOverrideLabel to a safe default so the prompt reflects "פסיקה",
-    // and inject a Rule-19 case-law engine hint to override any stale "ספר"/"ספרות" hint
-    // that may have been added by the frontend.
-    let injectedCaseLawHint = "";
-    if (isCaseLaw && !caseLawOverrideLabel) {
-      caseLawOverrideLabel = "פסיקה (מאגר)";
-    }
-    if (isCaseLaw) {
-      injectedCaseLawHint = `\n\n══ מנוע אזכור (כלל 19 – פסיקה ממאגר מידע) ══\nתבנית: {סוג הליך} {מספר} **{צד א'}** נ' **{צד ב'}** ({מאגר} {תאריך}).\nרכיבי חובה: סוג הליך, מספר תיק, שני צדדים מודגשים, שם מאגר (כלל 19.1), תאריך מלא (כלל 19.1).\nחובה מוחלטת: אסור לעצב את האזכור כספר או כמאמר. זוהי פסיקה בלבד. סמן [חסר:...] לכל שדה שאינו ידוע.\n══════════════════════════════════\n`;
-      console.log(`[case-law] Forced override label="${caseLawOverrideLabel}", injecting Rule-19 hint, suppressing book/article hints`);
-    }
-
     const enhancedMessages = messages.map((m: { role: string; content: string }, i: number) => {
       if (i === messages.length - 1 && m.role === "user") {
         let content = m.content;
         if (caseLawOverrideLabel) {
-          // Replace any existing classification tag (or insert one if missing).
-          if (/\[סיווג אוטומטי:\s*[^\]]+\]/.test(content)) {
-            content = content.replace(/\[סיווג אוטומטי:\s*[^\]]+\]/, `[סיווג אוטומטי: ${caseLawOverrideLabel}]`);
-          } else {
-            content = `[סיווג אוטומטי: ${caseLawOverrideLabel}]\n${content}`;
-          }
-          // Strip ALL stale engine-hint blocks (book, article, etc.) — we'll inject the right one below.
-          content = content.replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/gm, "\n");
+          content = content
+            .replace(/\[סיווג אוטומטי:\s*[^\]]+\]/, `[סיווג אוטומטי: ${caseLawOverrideLabel}]`)
+            .replace(/\n?══ מנוע אזכור[\s\S]*?══════════════════════════════════\n?/m, "\n");
         }
 
-        // When case-law is forced, suppress any book/article hints that may have been built earlier.
-        const safeBookHint = isCaseLaw ? "" : bookHint;
-        const safeArticleHint = isCaseLaw ? "" : articleHint;
-
-        // Inject engine hint + verified source hints + case law search + legislation/regulation/book/article hints.
+        // Inject engine hint + verified source hints + case law search + legislation search + regulation search + book search + article search into the last user message
         const engineHint = extractEngineHint(content);
-        const allHints = engineHint + injectedCaseLawHint + (verifiedHint || "") + caseLawHint + legislationHint + regulationHint + safeBookHint + safeArticleHint;
+        const allHints = engineHint + (verifiedHint || "") + caseLawHint + legislationHint + regulationHint + bookHint + articleHint;
         if (allHints || content !== m.content) {
           return { ...m, content: content + allHints };
         }
@@ -2065,80 +1551,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
     content = fixHebrewYearPrefix(content);
     content = normalizeArticleYearByRule2492(content);
 
-    // ─── Final case-law output guard ───
-    // When we ran a Perplexity case-law lookup, prevent the AI from inventing
-    // publication data (פ"ד volume/part/page) or contradicting verified parties.
-    if (isCaseLaw && verifiedCaseLawData.lookupAttempted) {
-      const v = verifiedCaseLawData;
-
-      // 1) Strip hallucinated פ"ד publications when publication was NOT confirmed.
-      //    Pattern: `פ"ד <hebrew-letters>(<digit-or-letters>)? <number>` possibly preceded by `, `.
-      if (!v.publishedConfirmed) {
-        const before = content;
-        // e.g. `, פ"ד נב(5) 721` — replace the whole publication block with a missing-data marker.
-        content = content.replace(
-          /,?\s*פ["״]ד\s+[\u05D0-\u05EA]+(?:\s*\([^)]*\))?\s*\d+/g,
-          ", [חסר: פרטי פרסום]",
-        );
-        if (content !== before) {
-          console.log("[case-law] Final guard stripped unverified פ\"ד publication");
-        }
-      }
-
-      // 2) When verified parties are known, detect contradicted parties and replace with placeholders.
-      if (v.party1 && v.party2) {
-        // Look for the bolded parties block: `**X** נ' **Y**`
-        const partyRe = /\*\*([^*]+)\*\*\s*נ['׳]\s*\*\*([^*]+)\*\*/;
-        const m = content.match(partyRe);
-        if (m) {
-          const out1 = m[1].trim();
-          const out2 = m[2].trim();
-          // Build normalized token sets (Hebrew letters + spaces only)
-          const norm = (s: string) => s.replace(/["״׳']/g, "").replace(/\s+/g, " ").trim();
-          const tokens = (s: string) => norm(s).split(/\s+/).filter((t) => t.length >= 2);
-          const overlap = (a: string[], b: string[]) => a.filter((t) => b.includes(t)).length;
-          const t1v = tokens(v.party1);
-          const t2v = tokens(v.party2);
-          const t1o = tokens(out1);
-          const t2o = tokens(out2);
-          // Either side1↔verified1 + side2↔verified2, OR cross-matched (parties may swap).
-          const direct = (overlap(t1v, t1o) > 0) && (overlap(t2v, t2o) > 0);
-          const cross  = (overlap(t1v, t2o) > 0) && (overlap(t2v, t1o) > 0);
-          if (!direct && !cross) {
-            console.log(`[case-law] Final guard detected contradicted parties. verified="${v.party1} נ' ${v.party2}", output="${out1} נ' ${out2}"`);
-            content = content.replace(
-              partyRe,
-              `**${v.party1}** נ' **${v.party2}**`,
-            );
-          }
-        }
-      }
-
-      // 3) If a docket is known and the output references a *different* docket of the same prefix,
-      //    swap it back. Only act when there is exactly one docket-style token in the output.
-      if (v.docket && v.docketRaw) {
-        const docketRe = /(?:בג["״]ץ|ע["״][אפעמ]|רע["״][אפ]|דנ["״][אפג]|בש["״][אפ]|תפ["״]ח|עש["״]מ|בר["״]ם|עמ["״]ה|עע["״]מ|ת["״][אפ]|ה["״][פמ]|פ["״]ה|ב["״]ש|סע["״]ש|ס["״]ק|ד["״]מ|תמ["״]ש|עת["״]מ)\s+\d+(?:[\/\-]\d+){1,2}/g;
-        const all = content.match(docketRe) || [];
-        const verifiedNorm = v.docket.replace(/\s+/g, " ").trim();
-        if (all.length >= 1 && !all.some((d) => d.replace(/\s+/g, " ").trim() === verifiedNorm)) {
-          console.log(`[case-law] Final guard rewriting docket(s) ${JSON.stringify(all)} → "${verifiedNorm}"`);
-          content = content.replace(docketRe, () => verifiedNorm);
-        }
-      }
-    }
-
     // Post-response safety net: if the AI returned a refusal/non-meaningful answer,
-    // Map the backend override label to the client SourceType identifier so the
-    // assistant message badge reflects the actual classification (e.g. when the
-    // client guessed "ספר" but backend confirmed case-law via docket prefix).
-    // Computed BEFORE the refusal short-circuit so the badge stays correct even
-    // when the AI's prose is thin enough to look like a refusal.
-    let sourceTypeOverride: string | null = null;
-    if (caseLawOverrideLabel === "פסיקה (דפוס)") sourceTypeOverride = "case_law_published";
-    else if (caseLawOverrideLabel === "פסיקה (מאגר)") sourceTypeOverride = "case_law_database";
-    else if (isCaseLaw) sourceTypeOverride = "case_law_database";
-
-    // If the AI refused (couldn't extract a clear citation from the input), we
     // automatically refund the credit so the user isn't charged for an unusable result.
     if (isRefusalResponseServer(content)) {
       await refundIfCharged("invalid_input_refusal");
@@ -2147,13 +1560,12 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.`,
           content,
           refunded: true,
           refundReason: "הקלט לא היה ברור דיו לעיבוד",
-          sourceTypeOverride,
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
-    return new Response(JSON.stringify({ content, sourceTypeOverride }), {
+    return new Response(JSON.stringify({ content }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {

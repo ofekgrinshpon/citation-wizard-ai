@@ -1,47 +1,54 @@
-**What I found**
+## Goal
 
-The current guard is still too permissive. It accepts results because Perplexity echoed docket numbers inside its own JSON/text, not because the specific docket is independently proven by the cited source. In this example, Perplexity returned four “found” results, including the correct `158/77`, but the other three were not real matches for `רבינאי נ' מן שקד`. The code then labeled all four as “verified” because it mined docket fingerprints from the response text itself.
+Improve Perplexity grounding for case-law lookups by **explicitly hinting** that `lite.takdin.co.il/search-results` is a high-yield source for the exact fields we need (parties, date, court, docket).
 
-There is also a second issue: the Supreme Court download URLs are opaque/encoded. A URL like `...fileName=09083200_w16.txt` anchors docket `8320/09`, but does not prove the parties or פ"ד metadata for every result Perplexity places next to it. So URL-level trust is not enough.
+This is a low-risk prompt + domain-filter tweak — no logic changes, no schema changes, no new dependencies.
 
-**Plan**
+## Why it helps
 
-1. **Remove self-referential verification**
-   - In `supabase/functions/citation-chat/index.ts`, stop accepting a party-search result merely because its docket appears in `psContent` / the model’s JSON.
-   - Only treat a result as grounded when the docket is proven by a trusted URL or by raw search snippets returned from the Search API, not by the LLM’s generated answer.
+`lite.takdin.co.il/search-results?txtSearch=<docket>` returns a public snippet for almost every Israeli case that includes:
 
-2. **Add deterministic party-search verification**
-   - After Perplexity proposes candidate case-law results, run a separate raw search verification per candidate using a query like:
-     - exact docket
-     - both party names
-     - trusted domains only where possible
-   - Accept a candidate only if the same raw search item/snippet contains:
-     - the exact normalized docket, and
-     - meaningful tokens from both parties (`רבינאי` and `מן שקד`), or an authoritative citation/publication snippet tying them together.
-   - Reject candidates such as `1456/22`, `5131/10`, and `8320/09` when they do not contain both parties together in the verified snippet.
+- Court + docket prefix (e.g. `תא (ראשון לציון) 13579-11-24`)
+- Party 1 נ' Party 2
+- Decision date
 
-3. **Handle Supreme Court encoded dockets explicitly**
-   - Add a helper to decode Supreme Court `fileName` / `path` patterns into docket fingerprints where possible:
-     - `09083200_w16` → `8320/09`
-     - `22014560` → `1456/22`
-     - `10051310` → `5131/10`
-   - This prevents false positives from vague URL matching and helps log why a candidate was accepted or dropped.
+Today Perplexity is told it *may* use takdin.co.il, but is not pointed at the specific search endpoint. The model often lands on Nevo/court paywall pages with weaker snippets.
 
-4. **Prefer exact legacy/publication hit for this pattern**
-   - For short Hebrew party-name queries where one candidate has a classic published citation (`פ"ד לג(2) 283`) and others only have unrelated/opaque database links, rank the published, party-matching candidate first.
-   - If only one candidate survives verification, return the citation directly instead of a disambiguation list.
+## Scope — exactly two edge functions
 
-5. **Add a fail-closed response**
-   - If no candidate can be independently verified, return a safe message asking for an exact docket number instead of showing model-generated options.
-   - Do not fall back to the general citation generator with unverified case-law data.
+### 1. `supabase/functions/case-law-search/index.ts`
 
-6. **Improve logs for debugging**
-   - Log, per candidate, the verification status and reason:
-     - accepted because exact docket + both parties found in raw snippet/source
-     - rejected because docket not proven
-     - rejected because parties not tied to the docket
-     - rejected because publication metadata unverified
+This function already calls `sonar` for a single docket lookup. Two surgical edits to the request body:
 
-7. **Regression check**
-   - Test `רבינאי נגד מן שקד` after deployment and confirm the only accepted result is `ע"א 158/77`, or that the system safely asks for the exact docket if external search cannot verify it.
-   - Also test selecting a candidate from the list to ensure it cannot generate a hallucinated citation when verification fails.
+- Add `search_domain_filter: ["lite.takdin.co.il", "takdin.co.il", "nevo.co.il", "supreme.court.gov.il", "court.gov.il"]` so Perplexity prioritizes these.
+- Append an explicit hint to the **system message**:
+  > כאשר אתה מאתר תיק לפי מספר תיק, התחל מחיפוש ב-`https://lite.takdin.co.il/search-results?txtSearch=<מספר התיק>`. דף זה מכיל לרוב את שמות הצדדים, תאריך ההחלטה, ובית המשפט בתוצאת החיפוש עצמה — בלי צורך לפתוח את המסמך המלא.
+
+No change to the JSON schema, parsing, or output shape.
+
+### 2. `supabase/functions/_shared/partyLookup.ts`
+
+Same two edits to the batch party-lookup call (`sonar-pro`):
+
+- Extend the existing `TRUSTED_LEGAL_DOMAINS` list with `lite.takdin.co.il` (it's the public face of `takdin.co.il`, so the trust posture is identical).
+- Add a one-line system-prompt hint pointing at `lite.takdin.co.il/search-results?txtSearch=<docket>` as the preferred starting point for each docket.
+
+`TRUSTED_LEGAL_DOMAINS` is also imported by Stage E.5 URL-allowlist validation in `legal-qa`, so adding the host there means citations anchored on `lite.takdin.co.il` will survive the guard — desirable, since these are real takdin pages.
+
+## Out of scope
+
+- No HTML scraping of takdin from our side. The hint is purely instructional for Perplexity.
+- No changes to citation engine, classification, or the React side.
+- No change to `bibliography-lookup` (it handles books/articles, not case law).
+
+## Risk
+
+Minimal. Worst case: Perplexity ignores the hint and behaves as today. Best case: higher hit rate on `case-law-search.found = true` and fewer `OMIT`s in `partyLookup`.
+
+## Validation
+
+After deploy, spot-check 3–5 dockets via the existing `case-law-search` invocation in BatchFootnoteBuilder / PartyNameCheck and confirm:
+- Returned `parties` / `date` / `court` populated more consistently.
+- Edge function logs show Perplexity citations including `lite.takdin.co.il` URLs.
+
+No memory update needed unless we later promote this into a documented architectural rule.
