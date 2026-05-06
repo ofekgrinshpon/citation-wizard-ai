@@ -1264,14 +1264,18 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     let details = `\n\n══ נמצאו מספר פסקי דין תואמים ══\n`;
                     details += `הצג למשתמש את הרשימה הבאה ובקש ממנו לבחור את פסק הדין הרלוונטי:\n\n`;
                     results.forEach((r: Record<string, unknown>, i: number) => {
-                      const ref = `${r.caseType || "?"} ${r.caseNumber || "?"}`;
-                      const parties = (r.party1 && r.party2) ? `${r.party1} נ' ${r.party2}` : "";
+                      const ref = `${r.caseType || userCaseTypeNorm || "?"} ${r.caseNumber || "?"}`;
+                      const effP1 = (r.party1 && String(r.party1).trim()) || party1;
+                      const effP2 = (r.party2 && String(r.party2).trim()) || party2;
+                      const parties = `${effP1} נ' ${effP2}`;
                       const year = r.year || "";
                       const court = r.court || "";
-                      // Embed full data so the selection branch can skip a re-search
+                      // Embed full data so the selection branch can skip a re-search.
+                      // Backfill missing parties with user-typed values so downstream is consistent.
                       const blob = encodeURIComponent(JSON.stringify({
-                        caseType: r.caseType, caseNumber: r.caseNumber,
-                        party1: r.party1, party2: r.party2,
+                        caseType: r.caseType || userCaseTypeNorm || "",
+                        caseNumber: r.caseNumber,
+                        party1: effP1, party2: effP2,
                         date: r.date, court: r.court,
                         isPublished: r.isPublished,
                         padi_volume: r.padi_volume, padi_part: r.padi_part, padi_page: r.padi_page,
