@@ -1,50 +1,92 @@
 ## Goal
-Hint Perplexity, across every caselaw lookup in the platform, that **`lite.takdin.co.il/search-results`** is a high-yield source that exposes most fields we need for citation (parties, court, docket, decision date, פד"י publication info, judges).
+Two changes:
+1. Make caselaw detection recognize **all** Israeli court procedural prefixes from the BIU "קיצורים של סוגי הליכים" annex (sourced from the Uniform Citation Rules), not just the 13 prefixes hard-coded today.
+2. Loosen the parties-fallback regex to also match a bare `נ` between two Hebrew names (currently requires `נגד` or `נ'`/`נ״`).
 
-## Why this helps
-Today our Perplexity calls list trusted domains (`nevo.co.il`, `supreme.court.gov.il`, `takdin.co.il`, `psakdin.co.il`, …) but the prompts never tell the model that `lite.takdin.co.il`'s public search-results page already renders, on a single page, almost every metadata field we need (party names, docket, court, date, פד"י citation when published). Currently the model often goes to Nevo (paywall snippet) or Supreme Court PDFs and comes back with partial data → first-name hallucinations, missing פד"י volume, etc.
+Both fix the case where the user typed `סע״ש קמיקר נ מדינת ישראל ורשות האוכלוסין וההגירה` and the takdin-lite caselaw branch silently never fired.
 
-## Changes (all server-side, no UI work)
+## Changes
 
-### 1. `supabase/functions/legal-qa/index.ts` — TRUSTED_LEGAL_DOMAINS
-Add `lite.takdin.co.il` explicitly. (Subdomain is already covered by `takdin.co.il` for matching, but listing it explicitly in `search_domain_filter` strengthens Perplexity's preference for it.)
+### 1. New shared file: `supabase/functions/_shared/caseTypePrefixes.ts`
+Centralizes the prefix dictionary so every edge function can import the same source of truth.
 
 ```ts
-"takdin.co.il",
-"lite.takdin.co.il",   // public, indexable search-results page — best metadata yield
+// Source: https://law.biu.ac.il/sites/law/files/shared/qytsvrym_shl_svgy_hlykym.pdf
+export const CASE_TYPE_PREFIXES: readonly string[] = [
+  // 4-letter
+  'דנג"ץ', 'בשג"ץ', 'תהוצל"פ', 'ענמ"ש', 'עבמ"ץ', 'עחה"ס',
+  // 3-letter (selected — covers all common labor/family/admin/criminal/civil)
+  'בג"ץ','בד"א','בד"ם','בה"נ','בע"ם','בפ"מ','בפ"ת',
+  'בר"ם','בר"ע','בר"ש','בש"א','בש"ם','בש"פ','בש"ע',
+  'דב"ע','דנ"א','דנ"מ','דנ"פ',
+  'הפ"ב','מק"מ',
+  'סב"א','סק"ב','סע"ש','תע"א',
+  'עא"ח','עב"ל','עד"י','עד"מ','על"ע',
+  'עמ"ה','עמ"ח','עמ"י','עמ"מ','עמ"נ','עמ"ק','עמ"ש',
+  'עס"ק','עע"א','עע"ם','עע"מ',
+  'עפ"א','עפ"ג','עפ"ס','עק"מ','עק"נ','עק"פ','ער"מ',
+  'עש"א','עש"מ','עש"ר','עש"ת',
+  'עת"א','עת"מ','פל"ע','פש"ר',
+  'רמ"ש','רע"א','רע"ב','רע"פ','רצ"פ','רת"ק',
+  'תא"מ','תא"פ','תא"ק','תא"ר',
+  'תב"כ','תב"מ','תב"ע','תב"ר',
+  'תה"ג','תה"ס','תח"ח','תח"פ',
+  'תי"א','תי"פ','תמ"ש','תפ"ח','תר"מ','תת"ח','תת"ע',
+  'חס"מ','אפ"ח',
+  // 2-letter
+  'א"ב','א"צ','ב"ל','ב"ק','ב"ש','ג"ז','ד"ט','ד"מ','ד"נ',
+  'ה"כ','ה"נ','ה"ע','ה"פ','ה"ת','ו"ע','ח"א','ח"ד','ח"ש','י"ס',
+  'מ"א','מ"ח','מ"י','מ"מ','מ"ת','נ"ב','ס"ע','ס"ק',
+  'ע"א','ע"ב','ע"ו','ע"מ','ע"פ','ע"ע','ע"ר','ע"ש',
+  'פ"א','פ"ה','פ"מ','פ"פ','צ"ה','צ"ו','ק"ג','ק"פ','ר"ע',
+  'ש"ע','ש"ש',
+  'ת"א','ת"ד','ת"ט','ת"מ','ת"ע','ת"פ','ת"צ','ת"ק','ת"ת',
+  // Apostrophe-suffix forms
+  "ע'","אפ'","עז'","עב'","פל'","פר'","המ'","גזז'",
+];
+
+function escapeRegex(s: string) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+
+// Sort longest-first so e.g. בר"ם beats ב"ר; expand " → ["״] and ' → ['׳]
+// so the same dictionary accepts ASCII and Hebrew typographic forms.
+export function buildPrefixAlternation(): string {
+  const sorted = [...CASE_TYPE_PREFIXES].sort((a, b) => b.length - a.length);
+  return sorted.map(p =>
+    escapeRegex(p).replace(/"/g, '["״]').replace(/'/g, "['׳]")
+  ).join("|");
+}
+
+export const CASE_DOCKET_RE = new RegExp(
+  `(${buildPrefixAlternation()})\\s+([0-9]+[\\/\\-][0-9]+(?:[\\/\\-][0-9]+)?)`
+);
+
+export const CASE_TYPE_PREFIX_RE = new RegExp(`(?:${buildPrefixAlternation()})`);
 ```
 
-### 2. `supabase/functions/_shared/partyLookup.ts`
-- Add `lite.takdin.co.il` to `TRUSTED_LEGAL_DOMAINS` (local copy in this file).
-- Append to the system prompt one sentence: *"לאיתור מהיר של שמות הצדדים, התאריך והפרסום, חפש קודם ב-`https://lite.takdin.co.il/search-results` — הדף הציבורי מציג את כל פרטי התיק במקום אחד."*
+### 2. `supabase/functions/citation-chat/index.ts`
+- Import `CASE_DOCKET_RE`, `CASE_TYPE_PREFIX_RE` from the new shared file.
+- Replace the hard-coded `caseNumberMatch` regex on line 816 with `userInput.match(CASE_DOCKET_RE)`.
+- Replace `LEGAL_ABBR_RE_V` on line 13–14 with `CASE_TYPE_PREFIX_RE` so the input validator also accepts the full set.
+- Loosen the party regex on line 825 to accept a **bare `נ`** as a separator (currently requires `נגד|נ'|נ׳|נ״`):
+  ```ts
+  /([\u0590-\u05FF\s'"״׳']+)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3״]?)\s+([\u0590-\u05FF\s'"״׳']+)/
+  ```
+  i.e. make the gershayim/apostrophe **optional** after `נ` so a standalone `נ` still matches. Add a length guard so a single ambiguous letter mid-sentence doesn't trigger false positives — require both name groups to be ≥2 chars and contain at least one non-space.
 
-### 3. `supabase/functions/citation-chat/index.ts`
-For each of the **7 Perplexity calls** in this file (case-law branch A by docket, branch B by parties, secondary פד"י verifier, party-name search, legislation, regulations, books, articles — caselaw branches only), do two things:
-- Add `search_domain_filter: TRUSTED_LEGAL_DOMAINS` (currently missing on most of them — they call Perplexity without any domain filter at all).
-- Append to the caselaw system prompts: *"כדי לחסוך חיפושים — ב-`https://lite.takdin.co.il/search-results` תמצא בעמוד תוצאה אחד את שמות הצדדים, מספר התיק, בית המשפט, תאריך פסק הדין, ופרסום בפד"י (אם קיים). העדף לאתר את התיק שם."*
+### 3. `supabase/functions/_shared/citationResolver.ts`
+The same hard-coded list in `compute_verified_source_identity` SQL function is fine (DB-level), but the Deno-side `partyLookup.ts` already supports an open `caseTypeHint`, no change needed.
 
-This piggy-backs on the existing "hard override" logic: when Perplexity returns parties from `lite.takdin.co.il`, the downstream party-lock prompt already forces the drafter to use them verbatim (Rule 18.4).
+Other functions that have similar regex (e.g. `case-law-search`, `bibliography-lookup`) accept the prefix from the client UI as a separate field — they don't parse it from free text — so no change needed there.
 
-### 4. `supabase/functions/case-law-search/index.ts`
-- Add `search_domain_filter` (it's missing today).
-- Add the same takdin-lite hint to the system prompt.
-
-### 5. `supabase/functions/verify-case-fulltext/index.ts`
-- Add `lite.takdin.co.il` to its inline `search_domain_filter` array.
-- One-line hint in the system prompt.
-
-### 6. `supabase/functions/bibliography-lookup/index.ts` (caselaw entries only)
-- Same hint, gated to source_type=caselaw.
-
-### 7. Memory
-Add a new memory under `mem://logic/perplexity-takdin-lite-hint` describing the hint and the domain, and reference it from `mem://index.md`.
+### 4. Memory
+Add `mem://logic/case-type-prefix-dictionary` referencing the BIU PDF and the central file. Update `mem://index.md`.
 
 ## Out of scope
-- No scraping or direct API calls to takdin (their full DB is paywalled). We only **hint** Perplexity to read the public `lite.takdin.co.il/search-results` HTML — Perplexity's crawler already indexes it.
-- No UI changes.
-- No DB / RLS / migrations.
+- No DB changes. The SQL `compute_verified_source_identity` regex still uses the older short list; that only affects identity-key bucketing for verified-source dedupe and is not on the user's query-detection path.
+- No UI changes. The existing source-type dropdown is unaffected.
 
 ## Test
-After deploying, run the same `רבינאי נגד מן שקד` query and a docket-only query (e.g. `ע"א 158/77`) and confirm:
-1. Edge function logs show citations from `lite.takdin.co.il` in Perplexity's `citations` array.
-2. Final citation has correct parties (no hallucinated first names) and full פד"י publication.
+After deploy, repeat:
+- `סע״ש קמיקר נ מדינת ישראל ורשות האוכלוסין וההגירה` → logs should now show `partyMatch=yes`, the takdin-lite-hinted Perplexity call fires, and the response contains correct party/court/date.
+- `ע"א 158/77 רבינאי` → `caseNumberMatch` still fires (regression check).
+- `תמ"ש 12345-01-20` → newly detected.
