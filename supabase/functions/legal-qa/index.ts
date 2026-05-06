@@ -59,6 +59,7 @@ export const TRUSTED_LEGAL_DOMAINS: readonly string[] = [
   "supreme.court.gov.il",
   "court.gov.il",       // district / magistrate / labor courts
   "takdin.co.il",       // commercial caselaw DB
+  "lite.takdin.co.il",  // public search-results page; one-page metadata for citation
   "psakdin.co.il",
   // Legislation / official primary
   "knesset.gov.il",
