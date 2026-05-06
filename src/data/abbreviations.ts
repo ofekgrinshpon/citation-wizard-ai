@@ -138,7 +138,16 @@ export type SourceType =
   | 'film'                  // סרט (כלל 33.1)
   | 'tv_show'               // תוכנית טלוויזיה (כלל 33.2)
   | 'radio'                 // רדיו/תסכית (כלל 33.3)
-  | 'foreign'               // לועזי
+  | 'foreign'                  // לועזי – fallback (כלל 36)
+  | 'foreign_constitution'     // חוקה לועזית (כלל 36.1)
+  | 'foreign_statute_us'       // חוק אמריקני (כלל 36.2)
+  | 'foreign_statute_uk'       // חוק אנגלי (כלל 36.3)
+  | 'foreign_case_us'          // פסיקה אמריקנית (כלל 36.4)
+  | 'foreign_case_other'       // פסיקה ממדינות אחרות (כלל 36.5)
+  | 'foreign_book'             // ספר לועזי (כלל 36.6)
+  | 'foreign_journal_article'  // מאמר בכתב עת לועזי (כלל 36.7)
+  | 'foreign_book_chapter'     // מאמר בספר לועזי (כלל 36.8)
+  | 'foreign_internet'         // מקור מרשתת לועזי (כלל 36.9)
   | 'other'                 // אחר (דברי כנסת וכו')
   | 'unknown';
 
