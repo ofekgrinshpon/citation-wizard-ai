@@ -1012,11 +1012,8 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                 messages: [
                   {
                     role: "system",
-                    content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו. החזר תשובה בפורמט JSON בלבד.
-הפורמט:
-{"results":[
-  {"found":true,"caseType":"סוג הליך","caseNumber":"מספר/שנה","party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY"}
-]}
+                    content: `אתה עוזר מחקר משפטי ישראלי. מצא את כל פסקי הדין הרלוונטיים בין הצדדים שניתנו.
+חשוב: בערכי המחרוזות בתוך ה-JSON, השתמש אך ורק בגרשיים עבריים (״ U+05F4) או בגרש (׳ U+05F3) במקום במירכאות כפולות (") — למשל "פד״י" במקום "פד"י", "פ״ד" במקום "פ"ד", "ע״א" במקום "ע"א". מירכאות כפולות בתוך ערך מחרוזת ישברו את ה-JSON.
 כללים:
 - מקסימום 5 תוצאות, ממוינות מהחדש לישן
 - שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
@@ -1025,9 +1022,41 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   },
                   {
                     role: "user",
-                    content: `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}. כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפד"י.`,
+                    content: `מצא את כל פסקי הדין הישראליים בין ${party1} ל${party2}. כלול ערעורים, בקשות רשות ערעור, ודיונים נוספים בין הצדדים. בדוק גם פרסום בפ״ד.`,
                   },
                 ],
+                response_format: {
+                  type: "json_schema",
+                  json_schema: {
+                    schema: {
+                      type: "object",
+                      properties: {
+                        results: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              found: { type: "boolean" },
+                              caseType: { type: "string" },
+                              caseNumber: { type: "string" },
+                              party1: { type: "string" },
+                              party2: { type: "string" },
+                              date: { type: "string" },
+                              court: { type: "string" },
+                              isPublished: { type: "boolean" },
+                              padi_volume: { type: "string" },
+                              padi_part: { type: "string" },
+                              padi_page: { type: "string" },
+                              databaseName: { type: "string" },
+                              year: { type: "string" },
+                            },
+                          },
+                        },
+                      },
+                      required: ["results"],
+                    },
+                  },
+                },
               }),
             });
 
