@@ -55,6 +55,7 @@ const TRUSTED_LEGAL_DOMAINS = [
   "gov.il",
   "nevo.co.il",
   "takdin.co.il",
+  "lite.takdin.co.il",
   "psakdin.co.il",
 ];
 
