@@ -6495,6 +6495,44 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       answer = answer.replace(/ +([.,;:!?])/g, "$1").replace(/[ \t]{2,}/g, " ");
     }
 
+    // ===== Academic chapter heading cleanup =====
+    // Real body chapters must not surface practitioner-memo headings even
+    // if the drafter ignored the prompt's ban. Strip the offending headings
+    // deterministically while preserving the prose underneath, and log the
+    // rewrite via qa_logs.metadata.chapter_style_cleanup.
+    const chapterStyleCleanup: Record<string, number> = {
+      bottom_line_stripped: 0,
+      practical_implications_stripped: 0,
+      memo_conclusion_renamed: 0,
+      generic_intro_heading_stripped: 0,
+    };
+    const isRealAcademicChapter =
+      taskMode === "academic_writing" &&
+      academicStep === "write_chapter" &&
+      !isAbstract;
+    if (isRealAcademicChapter && typeof answer === "string" && answer.length > 0) {
+      const before = answer;
+      answer = answer.replace(/(^|\n)\s*\*\*\s*(?:שורה\s*תחתונה|Bottom\s*line)\s*\*\*\s*\n+/gi, (_m, p1) => {
+        chapterStyleCleanup.bottom_line_stripped += 1;
+        return p1 || "";
+      });
+      answer = answer.replace(/(^|\n)\s*\*\*\s*(?:פתיחה|רקע|הקדמה)\s*\*\*\s*\n+/g, (_m, p1) => {
+        chapterStyleCleanup.generic_intro_heading_stripped += 1;
+        return p1 || "";
+      });
+      answer = answer.replace(/(^|\n)\s*\*\*\s*השלכות\s*מעשיות\s*\*\*\s*\n+/g, (_m, p1) => {
+        chapterStyleCleanup.practical_implications_stripped += 1;
+        return p1 || "";
+      });
+      answer = answer.replace(/(^|\n)\s*\*\*\s*(?:מסקנה|סיכום)\s*\*\*\s*(?=\n)/g, (_m, p1) => {
+        chapterStyleCleanup.memo_conclusion_renamed += 1;
+        return `${p1 || ""}**סיכום הפרק**`;
+      });
+      if (answer !== before) {
+        console.log(`[chapter][style_cleanup] applied: ${JSON.stringify(chapterStyleCleanup)}`);
+      }
+    }
+
     const finalFootnotes = validFootnotes;
 
     // ===== Type-aware citation router — academic chapter footnotes =====
