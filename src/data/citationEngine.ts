@@ -670,6 +670,223 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
     ],
   },
 
+  // ─── חוקה לועזית (כלל 36.1) ────────────────────────────────
+  foreign_constitution: {
+    primaryRule: "36.1",
+    ruleTitle: "כלל 36.1 – חוקות (ארצות הברית)",
+    template: "{jurisdiction} CONST. {division} {section}.",
+    example: "U.S. CONST. amend. XV, § 1.",
+    components: [
+      { field: "jurisdiction", rule: "36.1", description: 'תחום השיפוט (U.S./N.Y.) – ברישיות מוקטנות', required: true, format: "plain" },
+      { field: "division", rule: "36.1", description: 'amend. (תיקון), art. (סעיף ראשי) וכו\'', required: true, format: "plain" },
+      { field: "section", rule: "36.1", description: 'מספר/§ של הסעיף המאוזכר', required: true, format: "plain" },
+    ],
+    notes: [
+      'יש לציין אם החוקה פדרלית או מדינתית. קיצור "חוקה" וציון תחום השיפוט יבואו ברישיות מוקטנות (small caps).',
+      'דוגמות: U.S. CONST. amend. XV, § 1. | N.Y. CONST. art. I, § 8.',
+    ],
+  },
+
+  // ─── חוקים לועזיים – ארה"ב (כלל 36.2) ─────────────────────
+  foreign_statute_us: {
+    primaryRule: "36.2",
+    ruleTitle: "כלל 36.2 – חוקים (ארצות הברית)",
+    template: "[{statuteName}, ]{title} {code} § {section} ({year}).",
+    example: "Sherman Act, 15 U.S.C. §§ 1–7.",
+    components: [
+      { field: "statuteName", rule: "36.2", description: "שם החוק (אופציונלי, לפני מיקום הסעיפים)", required: false, format: "plain" },
+      { field: "title", rule: "36.2", description: 'מספר ה-title בקודקס (לדוגמה: 15, 18)', required: true, format: "plain" },
+      { field: "code", rule: "36.2", description: 'שם הקודקס (U.S.C. וכו\')', required: true, format: "plain" },
+      { field: "section", rule: "36.2", description: '§ של הסעיף; לטווח – §§', required: true, format: "plain" },
+      { field: "year", rule: "36.2", description: "שנת הקודקס בסוגריים – אם הנוסח אינו עדכני", required: false, format: "plain" },
+    ],
+    notes: [
+      'תמיד יש לציין את מיקום הסעיפים בקודקס ואחר כך בסוגריים את שנת הקודקס.',
+      'אם ההפניה לנוסח העדכני – אין צורך לציין את שנת הקוד.',
+      'לטווח סעיפים – שני סימני סעיף (§§). דוגמה: 15 U.S.C. §§ 1–7.',
+      'אם יש לחוק שם מיוחד אפשר לציין אותו לפני מיקום הסעיפים. דוגמה: Sherman Act, 15 U.S.C. §§ 1–7.',
+    ],
+  },
+
+  // ─── חוקים לועזיים – אנגליה (כלל 36.3) ────────────────────
+  foreign_statute_uk: {
+    primaryRule: "36.3",
+    ruleTitle: "כלל 36.3 – חוקים (אנגליה)",
+    template: "{statuteName} {year}, [{regnalYear} {monarch} ]c. {chapter}[, § {section}].",
+    example: "Habeas Corpus Act 1679, 31 Car. 2 c. 2.",
+    components: [
+      { field: "statuteName", rule: "36.3", description: "שם החוק (אם השנה לא מופיעה בשם – תצוין בסוגריים בסוף)", required: true, format: "plain" },
+      { field: "year", rule: "36.3", description: "שנת החוק", required: true, format: "plain" },
+      { field: "regnalYear", rule: "36.3", description: "שנת המלכות – חובה לחוקים שנחקקו עד 1962", required: false, format: "plain" },
+      { field: "monarch", rule: "36.3", description: "קיצור שם המלך/ה (Car. 2 וכו') – חובה לחוקים שנחקקו עד 1962", required: false, format: "plain" },
+      { field: "chapter", rule: "36.3", description: 'מספר הפרק (c.) – המספר הסודר של החוק באותה שנה', required: true, format: "plain" },
+      { field: "section", rule: "36.3", description: "הפניה לסעיף (§) – אופציונלי", required: false, format: "plain" },
+    ],
+    notes: [
+      'יש לציין את שם החוק, את השנה ואת מספר הפרק (chapter).',
+      'חוקים שנחקקו עד 1962 – חובה לציין שנת מלכות וקיצור שם המלך/ה לפני מספר הפרק.',
+      'אם שנת החוק אינה מופיעה בשמו – יש לציינה בסוגריים בסוף האזכור.',
+      'דוגמות: Habeas Corpus Act 1679, 31 Car. 2 c. 2. | Human Rights Act 1998, c. 42, § 4.',
+    ],
+  },
+
+  // ─── פסיקה לועזית – ארה"ב (כלל 36.4) ──────────────────────
+  foreign_case_us: {
+    primaryRule: "36.4",
+    ruleTitle: "כלל 36.4 – פסקי דין (ארצות הברית)",
+    template: "[##{procPrefix}## ]{party1} v. {party2}, {volume} {reporter} {firstPage}[, {pinpoint}] ([{court} ]{year}).",
+    example: "Atkins v. Virginia, 536 U.S. 304, 317–21 (2002).",
+    components: [
+      { field: "procPrefix", rule: "36.4", description: 'תחילית הליך (Ex parte / In re / ex rel.) – באותיות מוטות. לא חל על "v."', required: false, format: "italic" },
+      { field: "party1", rule: "36.4", description: "שם הצד הראשון – ללא הדגשה באזכור המקורי", required: true, format: "plain" },
+      { field: "party2", rule: "36.4", description: "שם הצד השני – ללא הדגשה באזכור המקורי", required: true, format: "plain" },
+      { field: "volume", rule: "36.4", description: "מספר הכרך (לפני קיצור הסדרה)", required: true, format: "plain" },
+      { field: "reporter", rule: "36.4", description: "קיצור סדרת הפרסום (U.S., F.2d, N.E. וכו') – לפי נספח ט", required: true, format: "plain" },
+      { field: "firstPage", rule: "36.4", description: "מספר העמוד הראשון של פסק הדין", required: true, format: "plain" },
+      { field: "pinpoint", rule: "36.4", description: "הפניה ספציפית בפסק הדין (אחרי פסיק)", required: false, format: "plain" },
+      { field: "court", rule: "36.4", description: "פרטי הערכאה – אין לציין לעליון הפדרלי או לערכאה הגבוהה במדינה", required: false, format: "plain" },
+      { field: "year", rule: "36.4", description: "שנת מתן פסק הדין", required: true, format: "plain" },
+    ],
+    notes: [
+      'באזכור מקורי – שמות הצדדים לא יודגשו (כללי אזכור חוזר בכלל 37.9).',
+      'ביטויים הקשורים להליך (Ex parte, In re, ex rel.) – באותיות מוטות. המפריד "v." בין הצדדים – לא מוטה.',
+      'יש להעדיף פרסום רשמי על לא רשמי, ופרסום אזורי (N.E., P. וכו\') על מדינתי.',
+      'אין צורך לציין את בית המשפט העליון הפדרלי ואת הערכאה הגבוהה ביותר במדינה.',
+      'אם אין מפנים לפרסום מדינתי – יש לציין את המדינה לפני שם הערכאה.',
+      'דוגמות: Atkins v. Virginia, 536 U.S. 304, 317–21 (2002). | United States v. Van Fossan, 899 F.2d 636 (7th Cir. 1990). | Gleason v. McKay, 134 Mass. 419 (1883). | Palsgraf v. Long Island R.R. Co., 162 N.E. 99 (N.Y. 1928). | Fernandez v. United Acceptance Corp., 610 P.2d 461 (Ariz. Ct. App. 1980).',
+    ],
+  },
+
+  // ─── פסיקה לועזית – מדינות אחרות (כלל 36.5) ───────────────
+  foreign_case_other: {
+    primaryRule: "36.5",
+    ruleTitle: "כלל 36.5 – פסקי דין (מדינות אחרות)",
+    template: "{party1} v. {party2} {volumeOrYear} {reporter} {firstPage}[, {pinpoint}] ({courtAndJurisdiction}).",
+    example: "Young v. Bristol Aeroplane Co. [1944] KB 718 (CA).",
+    components: [
+      { field: "party1", rule: "36.5", description: "שם הצד הראשון", required: true, format: "plain" },
+      { field: "party2", rule: "36.5", description: "שם הצד השני", required: true, format: "plain" },
+      { field: "volumeOrYear", rule: "36.5", description: "כרך או שנה בסוגריים מרובעים [YYYY]", required: true, format: "plain" },
+      { field: "reporter", rule: "36.5", description: "קיצור הסדרה (לפי נספח י לסדרות אנגליות)", required: true, format: "plain" },
+      { field: "firstPage", rule: "36.5", description: "עמוד ראשון של פסק הדין", required: true, format: "plain" },
+      { field: "pinpoint", rule: "36.5", description: "הפניה ספציפית", required: false, format: "plain" },
+      { field: "courtAndJurisdiction", rule: "36.5", description: "ערכאה ותחום שיפוט – חובה אם שם הסדרה אינו מצביע עליהם", required: true, format: "plain" },
+    ],
+    notes: [
+      'העקרונות דומים לכלל 36.4, אלא אם נקבע אחרת לגבי המדינה.',
+      'אם אי אפשר להבין משם הסדרה באיזו ערכאה ניתן פסק הדין – יש לציינה.',
+      'לעיתים יש לציין מאיזה מחוז הגיע פסק הדין (Eng., Scot. וכו\').',
+      'באוסטרליה אין נקודה לאחר ה-v. ושמות הצדדים מוטים.',
+      'דוגמות: M\'Naghten\'s Case (1843) 8 Eng. Rep. 718 (HL) (appeal taken from Eng.). | R (Miller) v. Prime Minister [2020] AC 373 (SC) (appeals taken from Eng. & Scot.). | Young v. Bristol Aeroplane Co. [1944] KB 718 (CA). | Haaretz.com v. Goldhar, [2018] 2 S.C.R. 3. | Williams v Commonwealth [No. 2] (2014) 252 CLR 416, 467–69.',
+    ],
+  },
+
+  // ─── ספר לועזי (כלל 36.6) ──────────────────────────────────
+  foreign_book: {
+    primaryRule: "36.6",
+    ruleTitle: "כלל 36.6 – ספרים לועזיים",
+    template: "[{volume} ]##{authors}##, ##{bookTitle}##[: ##{subtitle}##][ {pinpoint}] ([{edition}, ][{editor} eds., ][{translator} trans., ][{publisher} ]{year}).",
+    example: "HAZEL GENN, JUDGING CIVIL JUSTICE (2010).",
+    components: [
+      { field: "volume", rule: "36.6", description: "מספר הכרך – לפני שם המחבר", required: false, format: "plain" },
+      { field: "authors", rule: "36.6", description: "שמות המחברים – ברישיות מוקטנות (small caps)", required: true, format: "italic" },
+      { field: "bookTitle", rule: "36.6", description: "שם הספר – ברישיות מוקטנות", required: true, format: "italic" },
+      { field: "subtitle", rule: "36.6", description: "שם משני (אחרי נקודתיים)", required: false, format: "italic" },
+      { field: "pinpoint", rule: "36.6", description: "הפניה ספציפית – לפני הסוגריים", required: false, format: "plain" },
+      { field: "edition", rule: "36.6", description: "פרטי מהדורה (3d ed. וכו')", required: false, format: "plain" },
+      { field: "editor", rule: "36.6", description: "שם העורך – לפני eds.", required: false, format: "plain" },
+      { field: "translator", rule: "36.6", description: "שם המתרגם – לפני trans.", required: false, format: "plain" },
+      { field: "publisher", rule: "36.6", description: "מוציא לאור – רק אם פורסם לפני 1900 או על ידי גורם שאינו המוציא לאור המקורי", required: false, format: "plain" },
+      { field: "year", rule: "36.6", description: "שנת פרסום הספר", required: true, format: "plain" },
+    ],
+    notes: [
+      'יש להדגיש את שמות המחברים ואת שם הספר ברישיות מוקטנות (small caps).',
+      'בין שמות המחברים לשם הספר יבוא פסיק.',
+      'שם משני מופרד בנקודתיים, אלא אם הופרד במקור בדרך אחרת.',
+      'באנגלית – כל המילים באותיות גדולות, למעט מילות יידוע/חיבור/יחס בנות פחות מחמש אותיות שאינן בתחילת השם או לאחר נקודתיים.',
+      'מוציא לאור יצוין רק אם הספר יצא לפני 1900 או על ידי מי שאינו המוציא לאור המקורי.',
+      'מספר הכרך – בתחילת האזכור, לפני שם המחבר. הפניה ספציפית – לפני הסוגריים.',
+      'דוגמות: HAZEL GENN, JUDGING CIVIL JUSTICE (2010). | DAVID KRETZMER, THE OCCUPATION OF JUSTICE: THE SUPREME COURT OF ISRAEL AND THE OCCUPIED TERRITORIES (2002). | ETHAN KATSH & ORNA RABINOVICH-EINY, DIGITAL JUSTICE (2017). | R.P. MEAGHER, W.M.C. GUMMOW & J.R.F. LEHANE, EQUITY, DOCTRINES, AND REMEDIES (3d ed. 1992). | PROPORTIONALITY: NEW FRONTIERS, NEW CHALLENGES (Vicki C. Jackson & Mark Tushnet eds., 2017). | 5 FRIEDRICH KARL VON SAVIGNY, SYSTEM DES HEUTIGEN RÖMISCHEN RECHTS §§ 206–09 (Berlin, Beit und Comp. 1841).',
+    ],
+  },
+
+  // ─── מאמר בכתב עת לועזי (כלל 36.7) ────────────────────────
+  foreign_journal_article: {
+    primaryRule: "36.7",
+    ruleTitle: "כלל 36.7 – מאמרים בכתבי עת לועזיים",
+    template: "{authors}, ##{articleTitle}##[: ##{subtitle}##], {volume} ##{journal}## {firstPage}[, {pinpoint}] ({year}).",
+    example: "Ruth Gavison, Privacy and the Limits of Law, 89 YALE L.J. 421 (1980).",
+    components: [
+      { field: "authors", rule: "36.7", description: "שמות המחברים – לא מודגשים, כפי שמופיעים במאמר", required: true, format: "plain" },
+      { field: "articleTitle", rule: "36.7", description: "שם המאמר – באותיות מוטות (italics)", required: true, format: "italic" },
+      { field: "subtitle", rule: "36.7", description: "שם משני (אחרי נקודתיים)", required: false, format: "italic" },
+      { field: "volume", rule: "36.7", description: "מספר הכרך – לפני שם כתב העת", required: true, format: "plain" },
+      { field: "journal", rule: "36.7", description: "שם כתב העת או קיצורו – ברישיות מוקטנות", required: true, format: "italic" },
+      { field: "firstPage", rule: "36.7", description: "מספר העמוד הראשון של המאמר", required: true, format: "plain" },
+      { field: "pinpoint", rule: "36.7", description: "הפניה ספציפית (אחרי פסיק)", required: false, format: "plain" },
+      { field: "year", rule: "36.7", description: "שנת פרסום בסוגריים – אלא אם מופיעה ככרך", required: true, format: "plain" },
+    ],
+    notes: [
+      'שמות המחברים לא יודגשו ויופיעו כפי שבמאמר. שם המאמר באותיות מוטות.',
+      'מילים שהוטו במקור בשם המאמר – לא יוטו באזכור.',
+      'באנגלית – כל המילים באותיות גדולות למעט מילות יידוע/חיבור/יחס בנות פחות מחמש אותיות שאינן בתחילת השם או לאחר נקודתיים.',
+      'שם כתב העת או קיצורו – ברישיות מוקטנות (רשימות הקיצורים ב-Bluebook).',
+      'מספר הכרך – לפני שם כתב העת. עמוד תחילת המאמר חובה.',
+      'קיצורים נפוצים: American–Am.; And–&; British–Br.; Bulletin–Bull.; Business–Bus.; Comparative–Compar.; Constitutional–Const.; Criminal–Crim.; Economic/Economics/Economy–Econ.; European–Eur.; Historical/History–Hist.; Human–Hum.; Interdisciplinary–Interdisc.; International–Int\'l; Journal–J.; Jurisprudence–Juris.; Justice–Just.; Law–L. (במלואה אם המילה הראשונה); Magazine–Mag.; Medical/Medicine–Med.; Philosophical/Philosophy–Phil.; Policy–Pol\'y; Political/Politics–Pol.; Psychology–Psych.; Public–Pub.; Quarterly–Q.; Research–Rsch.; Review–Rev.; Rights–Rts.; School–Sch.; Science/Scientific–Sci.; Social–Soc.; Society–Soc\'y; Sociology/Sociological–Socio.; Studies–Stud.; Taxation–Tax\'n; Technology–Tech.; University–Univ.; Yearbook/Year Book–Y.B.',
+      'דוגמות: Ruth Gavison, Privacy and the Limits of Law, 89 YALE L.J. 421 (1980). | Richard A. Posner, The Path Away from the Law, 110 HARV. L. REV. 1039, 1041–42 (1997). | Robert Cooter, Constitutional Consequentialism: Bargain Democracy Versus Median Democracy, 3 THEORETICAL INQUIRIES IN L. 1 (2002). | Suzanna Sherry, The Unmaking of a Precedent, 2003 SUP. CT. REV. 231.',
+    ],
+  },
+
+  // ─── מאמר שפורסם בספר לועזי (כלל 36.8) ────────────────────
+  foreign_book_chapter: {
+    primaryRule: "36.8",
+    ruleTitle: "כלל 36.8 – מאמרים שפורסמו בספרים לועזיים",
+    template: "{authors}, ##{articleTitle}##, in ##{bookTitle}## {firstPage}[, {pinpoint}] ({editor} eds., {year}).",
+    example: "Ayelet Shachar, Constituting Citizens: Oaths, Gender, Religious Attire, in CANADA IN THE WORLD: COMPARATIVE PERSPECTIVES ON THE CANADIAN CONSTITUTION 123 (Richard Albert & David R. Cameron eds., 2018).",
+    components: [
+      { field: "authors", rule: "36.8", description: "שמות המחברים – כללי 36.7", required: true, format: "plain" },
+      { field: "articleTitle", rule: "36.8", description: "שם המאמר – באותיות מוטות (כלל 36.7)", required: true, format: "italic" },
+      { field: "bookTitle", rule: "36.8", description: "שם הספר – ברישיות מוקטנות (כלל 36.6)", required: true, format: "italic" },
+      { field: "firstPage", rule: "36.8", description: "עמוד תחילת המאמר בספר", required: true, format: "plain" },
+      { field: "pinpoint", rule: "36.8", description: "הפניה ספציפית (אחרי פסיק)", required: false, format: "plain" },
+      { field: "editor", rule: "36.8", description: "שמות עורכי הספר", required: false, format: "plain" },
+      { field: "year", rule: "36.8", description: "שנת פרסום הספר", required: true, format: "plain" },
+    ],
+    notes: [
+      'הכללים בדבר שמות המחברים ושם המאמר זהים לכללי כלל 36.7.',
+      'פרטי הספר לפי כלל 36.6.',
+      'לפני שם הספר יבואו פסיק לא מוטה והמילה in באותיות מוטות.',
+      'לאחר שם הספר חובה לציין את עמוד תחילת המאמר.',
+    ],
+  },
+
+  // ─── מקור מרשתת לועזי (כלל 36.9) ───────────────────────────
+  foreign_internet: {
+    primaryRule: "36.9",
+    ruleTitle: "כלל 36.9 – מקורות במרשתת לועזיים",
+    template: "[{author} ([@{handle}]), ]##{title}##, [{contentType} ]##{site}## ({date}), {url}.",
+    example: "Katy Barnett, News: Vexatious litigants and the High Court, OPINIONS ON HIGH (Mar. 22, 2019), https://shorturl.at/ersHN.",
+    components: [
+      { field: "author", rule: "36.9", description: "שם המחבר – אם קיים. לא מודגש", required: false, format: "plain" },
+      { field: "handle", rule: "36.9", description: "שם משתמש במדיה חברתית (@username) – בסוגריים אחרי שם המחבר", required: false, format: "plain" },
+      { field: "title", rule: "36.9", description: "שם העמוד – באותיות מוטות (כלל 36.7)", required: true, format: "italic" },
+      { field: "contentType", rule: "36.9", description: "סוג תוכן (שרשור וכו') – אופציונלי", required: false, format: "plain" },
+      { field: "site", rule: "36.9", description: "שם האתר – ברישיות מוקטנות", required: true, format: "italic" },
+      { field: "date", rule: "36.9", description: "תאריך בתבנית 'Mar. 22, 2019' (אפשר שעה במדיה חברתית)", required: false, format: "plain" },
+      { field: "pinpoint", rule: "36.9", description: "הפניה ספציפית", required: false, format: "plain" },
+      { field: "url", rule: "36.9", description: "כתובת URL מלאה או מקוצרת", required: true, format: "plain" },
+    ],
+    notes: [
+      'מקור שמוסדר בכלל אחר ומופיע גם במרשתת – יאוזכר לפי הכלל שחל עליו, ובסוף האזכור אפשר להוסיף פסיק וכתובת URL.',
+      'מקור שאינו מוסדר בכלל אחר: שמות מחברים (אם יש), שם העמוד ושם האתר – מופרדים בפסיקים.',
+      'שם המחבר לא מודגש ויופיע כפי שבמקור. שם העמוד באותיות מוטות (כלל 36.7).',
+      'שם האתר או קיצורו – ברישיות מוקטנות.',
+      'התאריך בסוגריים – שם החודש במילה או בקיצור, היום בחודש, פסיק והשנה. דוגמה: (Mar. 22, 2019).',
+      'במדיה חברתית – שם משתמש בסוגריים אחרי שם המחבר; אפשר להוסיף שעה.',
+      'דוגמות: Katy Barnett, News: Vexatious litigants and the High Court, OPINIONS ON HIGH (Mar. 22, 2019), https://shorturl.at/ersHN. | Know Your Rights, AM. C.L. UNION (2020), https://www.aclu.org/know-your-rights. | Adam Wagner (@AdamWagner1), TWITTER (Jan. 25, 2018, 12:34 PM), https://twitter.com/AdamWagner1/status/956475282071973889. | Harv. L. Sch. (@harvardlaw), INSTAGRAM (Sept. 4, 2019), https://www.instagram.com/p/B1_xZ3cgN-I.',
+    ],
+  },
+
   // ─── מקורות לועזיים (Foreign Sources – Bluebook) ──────────
   foreign: {
     primaryRule: "36",
