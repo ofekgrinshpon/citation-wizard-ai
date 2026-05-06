@@ -3,7 +3,7 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 
-const STEPS = [
+const RESEARCH_STEPS = [
   "חושב...",
   "פותח את הספרים...",
   "מחפש בפסקי הדין...",
@@ -16,9 +16,21 @@ const STEPS = [
   "מסיים לכתוב...",
 ];
 
+const ACADEMIC_STEPS = [
+  "מתחיל לכתוב פרק אקדמי במנוע Deep...",
+  "ממפה את טענת הפרק...",
+  "אוחזר מקורות אקדמיים...",
+  "בוחר מקורות לפרק...",
+  "מנסח את טיוטת הפרק...",
+  "מעגן את הציטוטים בפרק...",
+  "מלטש את המשלב האקדמי...",
+  "מבצע בקרת איכות סופית על הפרק...",
+];
+
 const STEP_INTERVAL_MS = 10_000;
 
-export function ResearchProgress() {
+export function ResearchProgress({ mode = "research" }: { mode?: "research" | "academic_chapter" } = {}) {
+  const STEPS = mode === "academic_chapter" ? ACADEMIC_STEPS : RESEARCH_STEPS;
   // Number of steps revealed so far (0..STEPS.length).
   // The last revealed step is "active" (spinner); all earlier ones are "done".
   const [revealedCount, setRevealedCount] = useState(1);
