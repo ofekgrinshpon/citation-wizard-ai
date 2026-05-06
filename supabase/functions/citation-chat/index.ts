@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE } from "../_shared/caseTypePrefixes.ts";
+import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES } from "../_shared/caseTypePrefixes.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
