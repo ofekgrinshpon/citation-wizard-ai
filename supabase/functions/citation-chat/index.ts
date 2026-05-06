@@ -1122,6 +1122,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                               padi_page: { type: "string" },
                               databaseName: { type: "string" },
                               year: { type: "string" },
+                              source_url: { type: "string" },
                             },
                           },
                         },
