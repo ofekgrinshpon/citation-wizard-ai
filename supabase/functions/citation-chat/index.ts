@@ -1132,11 +1132,51 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                 }
                 if (psParsed) {
                   try {
-                  const results = Array.isArray(psParsed.results) ? psParsed.results.filter((r: Record<string, unknown>) => r.found) : [];
+                  const rawResults = Array.isArray(psParsed.results) ? psParsed.results.filter((r: Record<string, unknown>) => r.found) : [];
+
+                  // ── Relevance filter: drop hallucinated results that share only a surname ──
+                  const STOPWORDS = new Set(["נ", "נגד", "של", "את", "עם", "על", "בין", "מדינת", "מדינה", "ה"]);
+                  const tokenize = (s: string): string[] =>
+                    s.split(/[\s,'"״׳\-־.()]+/u)
+                      .map((t) => t.trim())
+                      .filter((t) => t.length >= 3 && !STOPWORDS.has(t));
+                  const userP1Tokens = tokenize(party1);
+                  const userP2Tokens = tokenize(party2);
+                  const hasOverlap = (resultParty: string, tokens: string[]) =>
+                    tokens.length === 0 || tokens.some((t) => resultParty.includes(t));
+
+                  // Detect user-typed caseType prefix (e.g. "סע״ש") in original input
+                  const userCaseTypeMatch = cleanedForParty.match(CASE_TYPE_PREFIX_RE);
+                  const userCaseType = userCaseTypeMatch?.[0] || null;
+                  const normalizeQuotes = (s: string) => s.replace(/[״"]/g, '"').replace(/[׳']/g, "'");
+                  const userCaseTypeNorm = userCaseType ? normalizeQuotes(userCaseType) : null;
+
+                  const results = rawResults.filter((r: Record<string, unknown>) => {
+                    const rp1 = String(r.party1 || "");
+                    const rp2 = String(r.party2 || "");
+                    // Order-preserving: result.p1 ⊇ user.p1 AND result.p2 ⊇ user.p2
+                    const sameOrder = hasOverlap(rp1, userP1Tokens) && hasOverlap(rp2, userP2Tokens);
+                    // Reversed: drop. The user typed an order; respect it.
+                    if (!sameOrder) {
+                      console.log(`[case-law] Dropping irrelevant result: "${rp1}" נ' "${rp2}" (user typed: "${party1}" / "${party2}")`);
+                      return false;
+                    }
+                    // If user supplied a caseType prefix, drop results from a different prefix
+                    if (userCaseTypeNorm) {
+                      const rType = normalizeQuotes(String(r.caseType || ""));
+                      if (rType && rType !== userCaseTypeNorm) {
+                        console.log(`[case-law] Dropping cross-jurisdiction result: caseType=${rType}, user=${userCaseTypeNorm}`);
+                        return false;
+                      }
+                    }
+                    return true;
+                  });
+
+                  console.log(`[case-law] Filtered ${rawResults.length} → ${results.length} relevant results`);
 
                   if (results.length === 0) {
-                    console.log(`[case-law] No results found for party search "${searchQuery}"`);
-                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו פסקי דין בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק (למשל ע"פ 1234/56) לחיפוש מדויק יותר.\n══`;
+                    console.log(`[case-law] No relevant results found for party search "${searchQuery}"`);
+                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו פסקי דין רלוונטיים בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק (למשל ע"פ 1234/56) לחיפוש מדויק יותר.\n══`;
                   } else if (results.length === 1) {
                     // Single result – use same logic as case-number search
                     const r = results[0];
@@ -1166,8 +1206,8 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     }
                     caseLawHint = details;
                   } else {
-                    // Multiple results – present disambiguation list
-                    console.log(`[case-law] Found ${results.length} results for party search "${searchQuery}"`);
+                    // Multiple results – present disambiguation list with embedded data blobs
+                    console.log(`[case-law] Found ${results.length} relevant results for party search "${searchQuery}"`);
                     let details = `\n\n══ נמצאו מספר פסקי דין תואמים ══\n`;
                     details += `הצג למשתמש את הרשימה הבאה ובקש ממנו לבחור את פסק הדין הרלוונטי:\n\n`;
                     results.forEach((r: Record<string, unknown>, i: number) => {
@@ -1175,9 +1215,18 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                       const parties = (r.party1 && r.party2) ? `${r.party1} נ' ${r.party2}` : "";
                       const year = r.year || "";
                       const court = r.court || "";
-                      details += `${i + 1}. ${ref} ${parties}${year ? ` (${year})` : ""}${court ? ` — ${court}` : ""}\n`;
+                      // Embed full data so the selection branch can skip a re-search
+                      const blob = encodeURIComponent(JSON.stringify({
+                        caseType: r.caseType, caseNumber: r.caseNumber,
+                        party1: r.party1, party2: r.party2,
+                        date: r.date, court: r.court,
+                        isPublished: r.isPublished,
+                        padi_volume: r.padi_volume, padi_part: r.padi_part, padi_page: r.padi_page,
+                        databaseName: r.databaseName, year: r.year,
+                      }));
+                      details += `${i + 1}. ${ref} ${parties}${year ? ` (${year})` : ""}${court ? ` — ${court}` : ""}<!--DATA:${blob}-->\n`;
                     });
-                    details += `\n══ שאל את המשתמש: "נמצאו מספר פסקי דין בין הצדדים. לאיזה פסק דין התכוונת?" והצג את הרשימה הממוספרת. לאחר שהמשתמש יבחר, עצב את האזכור לפי הנתונים שנמצאו. ══`;
+                    details += `\n══ שאל את המשתמש: "נמצאו מספר פסקי דין בין הצדדים. לאיזה פסק דין התכוונת?" והצג את הרשימה הממוספרת בדיוק כפי שהיא, כולל הסימון <!--DATA:...--> בסוף כל שורה (זהו סימן טכני שמועבר חזרה במערכת ולא מוצג למשתמש). לאחר שהמשתמש יבחר, עצב את האזכור לפי הנתונים שנמצאו. ══`;
                     caseLawHint = details;
                   }
                   } catch (e) {
