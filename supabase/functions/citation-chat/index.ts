@@ -1145,11 +1145,16 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   const hasOverlap = (resultParty: string, tokens: string[]) =>
                     tokens.length === 0 || tokens.some((t) => resultParty.includes(t));
 
-                  // Detect user-typed caseType prefix (e.g. "סע״ש") in original input
-                  const userCaseTypeMatch = cleanedForParty.match(CASE_TYPE_PREFIX_RE);
-                  const userCaseType = userCaseTypeMatch?.[0] || null;
+                  // Detect user-typed caseType prefix — must be IMMEDIATELY before the parties
+                  // (within ~20 chars), to avoid false positives from engine-hint examples
+                  // like "ת״א" that appear in the prepended classification block.
                   const normalizeQuotes = (s: string) => s.replace(/[״"]/g, '"').replace(/[׳']/g, "'");
-                  const userCaseTypeNorm = userCaseType ? normalizeQuotes(userCaseType) : null;
+                  let userCaseTypeNorm: string | null = null;
+                  if (partyMatch?.index !== undefined) {
+                    const window = cleanedForParty.slice(Math.max(0, partyMatch.index - 20), partyMatch.index);
+                    const localPrefix = window.match(new RegExp(CASE_TYPE_PREFIX_RE.source + "\\s*$"));
+                    if (localPrefix) userCaseTypeNorm = normalizeQuotes(localPrefix[0]);
+                  }
 
                   const results = rawResults.filter((r: Record<string, unknown>) => {
                     const rp1 = String(r.party1 || "");
