@@ -277,6 +277,25 @@ export const FIELD_LABELS: Record<string, string> = {
   commentNumber: 'מספר התגובה',
   originalSourceDetails: 'פרטי המקור המקורי',
   title: 'כותרת',
+  // Foreign (Bluebook – Rule 36)
+  jurisdiction: 'תחום שיפוט',
+  division: 'חלוקה (amend./art.)',
+  code: 'קוד (U.S.C.)',
+  chapter: 'פרק (chapter)',
+  regnalYear: 'שנת מלכות',
+  monarch: 'קיצור שם המלך/ה',
+  reporter: 'שם הסדרה (reporter)',
+  procPrefix: 'תחילית הליך (Ex parte/In re)',
+  volumeOrYear: 'כרך/שנה',
+  courtAndJurisdiction: 'ערכאה ותחום שיפוט',
+  subtitle: 'שם משני',
+  publisher: 'מוציא לאור',
+  handle: 'שם משתמש (@)',
+  site: 'שם האתר',
+  pinpoint: 'הפניה ספציפית',
+  statuteName: 'שם החוק',
+  authors: 'שמות המחברים',
+  journal: 'שם כתב העת',
 };
 
 // Normalize abbreviations in free text
