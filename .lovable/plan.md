@@ -1,47 +1,50 @@
-# Stop Gemini from adding first names to case parties
+## Goal
+Hint Perplexity, across every caselaw lookup in the platform, that **`lite.takdin.co.il/search-results`** is a high-yield source that exposes most fields we need for citation (parties, court, docket, decision date, פד"י publication info, judges).
 
-## What you saw
+## Why this helps
+Today our Perplexity calls list trusted domains (`nevo.co.il`, `supreme.court.gov.il`, `takdin.co.il`, `psakdin.co.il`, …) but the prompts never tell the model that `lite.takdin.co.il`'s public search-results page already renders, on a single page, almost every metadata field we need (party names, docket, court, date, פד"י citation when published). Currently the model often goes to Nevo (paywall snippet) or Supreme Court PDFs and comes back with partial data → first-name hallucinations, missing פד"י volume, etc.
 
-Output: `ע"א 158/77 ברכה רבינאי נ' מנחם מן שקד, פ"דלג(2) 281 (1979).`
+## Changes (all server-side, no UI work)
 
-Two bugs:
-
-1. **Hallucinated first names.** The Perplexity lookup correctly returned `party1: "רבינאי"`, `party2: "מן שקד"` (last names only, per Rule 18.4). But the `caseLawHint` we inject into the user message says only "use this data" — it does not forbid the drafter from *augmenting* the names with first names it "remembers". Gemini added "ברכה" and "מנחם" from training data.
-2. **Missing space:** `פ"דלג` instead of `פ"ד לג`. The hint string in the edge function builds `פ"ד ${r.padi_volume}${part}` correctly, but the drafter is re-formatting and dropping the space.
-
-The lookup is right. The drafter is over-helpful.
-
-## Fix
-
-Edit `supabase/functions/citation-chat/index.ts` in the single-result branch of the party-name search (lines ~1112–1116) to make the hint a **hard override**, not a suggestion.
-
-Replace the closing instruction with:
+### 1. `supabase/functions/legal-qa/index.ts` — TRUSTED_LEGAL_DOMAINS
+Add `lite.takdin.co.il` explicitly. (Subdomain is already covered by `takdin.co.il` for matching, but listing it explicitly in `search_domain_filter` strengthens Perplexity's preference for it.)
 
 ```ts
-const partyLockLine = (r.party1 && r.party2)
-  ? `\n⚠️ חובה מוחלטת: השתמש בשמות הצדדים בדיוק כפי שמופיעים כאן — "${r.party1}" ו-"${r.party2}". אסור להוסיף שמות פרטיים, תארים, "עזבון", "יורשי" או כל תוספת אחרת, גם אם אתה "זוכר" אותם ממקור אחר. כלל 18.4: שם משפחה בלבד לאנשים פרטיים.\n`
-  : "";
-const spacingLine = `⚠️ חובה: רווח בין "פ\"ד" לכרך (למשל: פ"ד לג(2) 281, ולא פ"דלג).\n`;
-
-if (caseLawOverrideLabel === "פסיקה (דפוס)") {
-  details += `${partyLockLine}${spacingLine}══ חובה לעצב כפסיקה (דפוס) לפי כלל 18, תוך שימוש בלעדי בנתונים שלמעלה. ══`;
-} else {
-  details += `${partyLockLine}══ השתמש אך ורק בנתונים שלמעלה. אסור להוסיף מידע מהזיכרון. אם נתון חסר — סמן [חסר:...]. ══`;
-}
+"takdin.co.il",
+"lite.takdin.co.il",   // public, indexable search-results page — best metadata yield
 ```
 
-Why this works:
-- "חובה מוחלטת" + the explicit ban list ("ברכה", "מנחם" pattern) gives Gemini a clear rule it can follow.
-- Naming the failure mode ("גם אם אתה זוכר ממקור אחר") directly addresses training-data leakage.
-- The spacing line targets the exact `פ"ד<volume>` glue bug.
+### 2. `supabase/functions/_shared/partyLookup.ts`
+- Add `lite.takdin.co.il` to `TRUSTED_LEGAL_DOMAINS` (local copy in this file).
+- Append to the system prompt one sentence: *"לאיתור מהיר של שמות הצדדים, התאריך והפרסום, חפש קודם ב-`https://lite.takdin.co.il/search-results` — הדף הציבורי מציג את כל פרטי התיק במקום אחד."*
 
-## What I'm explicitly NOT doing yet
+### 3. `supabase/functions/citation-chat/index.ts`
+For each of the **7 Perplexity calls** in this file (case-law branch A by docket, branch B by parties, secondary פד"י verifier, party-name search, legislation, regulations, books, articles — caselaw branches only), do two things:
+- Add `search_domain_filter: TRUSTED_LEGAL_DOMAINS` (currently missing on most of them — they call Perplexity without any domain filter at all).
+- Append to the caselaw system prompts: *"כדי לחסוך חיפושים — ב-`https://lite.takdin.co.il/search-results` תמצא בעמוד תוצאה אחד את שמות הצדדים, מספר התיק, בית המשפט, תאריך פסק הדין, ופרסום בפד"י (אם קיים). העדף לאתר את התיק שם."*
 
-- **Post-response validator** that compares final-answer party names against the lookup's `r.party1`/`r.party2` and rewrites if different. Better to try the prompt-level fix first; if it still leaks, we add the validator as a second line of defense.
-- Touching `caselaw-search` (single-case-number path) — same hint pattern lives there too. Want to fix it there only after confirming the party-search fix works, so we don't change two paths at once.
+This piggy-backs on the existing "hard override" logic: when Perplexity returns parties from `lite.takdin.co.il`, the downstream party-lock prompt already forces the drafter to use them verbatim (Rule 18.4).
 
-## Files
+### 4. `supabase/functions/case-law-search/index.ts`
+- Add `search_domain_filter` (it's missing today).
+- Add the same takdin-lite hint to the system prompt.
 
-- `supabase/functions/citation-chat/index.ts` — single-result branch around line 1112.
+### 5. `supabase/functions/verify-case-fulltext/index.ts`
+- Add `lite.takdin.co.il` to its inline `search_domain_filter` array.
+- One-line hint in the system prompt.
 
-After approval I'll apply the edit and deploy.
+### 6. `supabase/functions/bibliography-lookup/index.ts` (caselaw entries only)
+- Same hint, gated to source_type=caselaw.
+
+### 7. Memory
+Add a new memory under `mem://logic/perplexity-takdin-lite-hint` describing the hint and the domain, and reference it from `mem://index.md`.
+
+## Out of scope
+- No scraping or direct API calls to takdin (their full DB is paywalled). We only **hint** Perplexity to read the public `lite.takdin.co.il/search-results` HTML — Perplexity's crawler already indexes it.
+- No UI changes.
+- No DB / RLS / migrations.
+
+## Test
+After deploying, run the same `רבינאי נגד מן שקד` query and a docket-only query (e.g. `ע"א 158/77`) and confirm:
+1. Edge function logs show citations from `lite.takdin.co.il` in Perplexity's `citations` array.
+2. Final citation has correct parties (no hallucinated first names) and full פד"י publication.
