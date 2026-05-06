@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE } from "../_shared/caseTypePrefixes.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,8 +11,11 @@ const corsHeaders = {
 // ─── Citation input validator (mirror of src/lib/citationInputValidation.ts) ───
 const HEBREW_LETTER_RE = /[\u0590-\u05FF]/;
 const URL_RE_V = /https?:\/\/\S+/i;
-const LEGAL_ABBR_RE_V =
-  /(?:בג["״]ץ|ע["״]א|ע["״]פ|רע["״]א|רע["״]פ|דנ["״]א|דנ["״]פ|ת["״]א|ת["״]פ|תפ["״]ח|ע["״]ע|עע["״]מ|בש["״]פ|בש["״]א|עמ["״]ה|בר["״]ם|פ["״]ד|ס["״]ח|ק["״]ת|ה["״]ח|י["״]פ|כ["״]א)/;
+// Accept the full BIU procedural-prefix dictionary plus the publication
+// abbreviations (פ"ד, ס"ח, ק"ת, ה"ח, י"פ, כ"א) which aren't in the case-type list.
+const LEGAL_ABBR_RE_V = new RegExp(
+  `(?:${CASE_TYPE_PREFIX_RE.source}|פ["״]ד|ס["״]ח|ק["״]ת|ה["״]ח|י["״]פ|כ["״]א)`
+);
 const LEGAL_KEYWORD_RE_V =
   /(?:^|\s)(?:חוק|חוק[- ]?יסוד|פקודת|פקודה|תקנות|תקנה|צו|כללי|הוראות|סעיף|הצעת\s+חוק|אמנה|תקנון|פסק[- ]?דין|פס["״]ד|בית[- ]?המשפט|השופט[ת]?|הנשיא[ה]?|נגד|נ['׳])/;
 const CASE_NUMBER_RE_V = /\b\d+\/\d{2,4}\b/;
@@ -813,7 +817,7 @@ serve(async (req) => {
     // ── Check if this is a disambiguation selection (skip Perplexity) ──
     const isDisambiguationSelection = /\[בחירת תוצאה\]/.test(userInput);
     
-    const caseNumberMatch = userInput.match(/(בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|ת"א|ת״א|ע"ע|ע״ע|עע"מ|עע״מ|בש"פ|בש״פ|ת"פ|ת״פ|תפ"ח|תפ״ח|עמ"ה|עמ״ה|בר"ם|בר״ם)\s+([0-9]+[\/\-][0-9]+)/);
+    const caseNumberMatch = userInput.match(CASE_DOCKET_RE);
 
     // Party-name fallback: detect "X נגד Y" or "X נ' Y" pattern
     const cleanedForParty = userInput
@@ -821,9 +825,11 @@ serve(async (req) => {
       .replace(/\[בחירת תוצאה\]\s*/, "")
       .replace(/\n?══[\s\S]*?══+\s*/g, "")
       .trim();
-    const partyMatch = !caseNumberMatch
-      ? cleanedForParty.match(/([\u0590-\u05FF\s'"״׳']+)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3])\s+([\u0590-\u05FF\s'"״׳']+)/)
-      : null;
+    // Accepts: "X נגד Y", "X נ' Y", "X נ״ Y", and bare "X נ Y".
+    // Length guard: each side must contain ≥2 Hebrew letters to avoid
+    // a stray middle-word `נ` triggering false positives.
+    const PARTY_RE = /([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])\s+(?:נגד|נ['׳״"\u2018\u2019\u05F3]?)\s+([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])/;
+    const partyMatch = !caseNumberMatch ? cleanedForParty.match(PARTY_RE) : null;
 
     // If this is a disambiguation selection, do a focused single-case search with the case number
     if (isDisambiguationSelection && isCaseLaw && caseNumberMatch) {
@@ -835,7 +841,7 @@ serve(async (req) => {
       const selectionText = userInput.replace(/\[סיווג אוטומטי:.*?\]\n?/, "").replace(/\[בחירת תוצאה\]\s*/, "").trim();
       const yearMatch = selectionText.match(/\((\d{4})\)/);
       const courtMatch = selectionText.match(/—\s*(.+?)$/);
-      const partiesInSelection = selectionText.match(/([\u0590-\u05FF\s'"״׳']+)\s+(?:נגד|נ['׳''\u2018\u2019\u05F3])\s+([\u0590-\u05FF\s'"״׳']+)/);
+      const partiesInSelection = selectionText.match(/([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])\s+(?:נגד|נ['׳״"\u2018\u2019\u05F3]?)\s+([\u0590-\u05FF][\u0590-\u05FF\s'"״׳]*[\u0590-\u05FF])/);
       
       let details = `\n\n══ נתוני פסק דין שנבחר ══\n`;
       details += `פרטים: ${selectionText}\n`;
