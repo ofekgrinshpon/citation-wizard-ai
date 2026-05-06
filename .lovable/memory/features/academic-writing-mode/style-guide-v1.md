@@ -23,7 +23,7 @@ type: feature
 4. Outputs `eval/style-guide-output/observations-v1.json` + `draft-style-guide-v1.md`.
 5. **Human review is mandatory** before promoting the draft into `academicStyleGuide.ts`.
 
-**8 dimensions** (matches both observation schema and the runtime asset section structure): paragraph rhythm, opening moves, transitions, counter-argument handling, footnote density, closing moves, register, anti-patterns.
+**9 dimensions** (matches both observation schema and the runtime asset section structure): paragraph rhythm, opening moves, transitions, counter-argument handling, footnote density, closing moves, register, anti-patterns, comparative context.
 
 **Eval.** `eval/style-guide-q1-q5.mjs` — 5 fixtures × 2 phases (`PHASE=before` with `styleGuideEnabled=false`, `PHASE=after` with `=true`). Submitted as the admin user so the override is honored. Qualitative read; watch existing `chapter_qa_guard` flags (`narrative_violation`, `under_word_floor`, `high_unresolved_share`) for regressions.
 
