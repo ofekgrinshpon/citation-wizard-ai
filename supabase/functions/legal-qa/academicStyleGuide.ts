@@ -10,7 +10,7 @@
 // Hard cap: ≤ ~3,000 tokens (≤ 12,000 Hebrew chars). Beyond that, returns
 // collapse and we pay token cost on every chapter forever. Runtime warns.
 
-export const ACADEMIC_STYLE_GUIDE_VERSION = "v1.0-bootstrap";
+export const ACADEMIC_STYLE_GUIDE_VERSION = "v1.0-final";
 
 // NOTE: this v1.0-bootstrap text is a placeholder distilled by hand from the
 // existing academic profile patterns and Hebrew legal-academic conventions,
