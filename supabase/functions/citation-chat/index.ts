@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE } from "../_shared/caseTypePrefixes.ts";
+import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES } from "../_shared/caseTypePrefixes.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -1064,6 +1064,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
 - מקסימום 5 תוצאות, ממוינות מהחדש לישן
 - שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
 - כלול את כל סוגי ההליכים (ערעור, בקשת רשות ערעור, משפט ראשוני וכו')
+- שדה "caseType" חייב להכיל את הקיצור הרשמי של סוג ההליך לפי כללי האזכור האחיד (למשל: סע״ש, ע״א, ת״א, בג״ץ, רע״א, עת״מ, תמ״ש, תפ״ח, ת״פ). אסור להחזיר תיאור מילולי כמו "תביעה" או "תביעה פלילית".
 - אם לא נמצאו תוצאות, החזר {"results":[]}`,
                   },
                   {
@@ -1145,11 +1146,16 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   const hasOverlap = (resultParty: string, tokens: string[]) =>
                     tokens.length === 0 || tokens.some((t) => resultParty.includes(t));
 
-                  // Detect user-typed caseType prefix (e.g. "סע״ש") in original input
-                  const userCaseTypeMatch = cleanedForParty.match(CASE_TYPE_PREFIX_RE);
-                  const userCaseType = userCaseTypeMatch?.[0] || null;
+                  // Detect user-typed caseType prefix — must be IMMEDIATELY before the parties
+                  // (within ~20 chars), to avoid false positives from engine-hint examples
+                  // like "ת״א" that appear in the prepended classification block.
                   const normalizeQuotes = (s: string) => s.replace(/[״"]/g, '"').replace(/[׳']/g, "'");
-                  const userCaseTypeNorm = userCaseType ? normalizeQuotes(userCaseType) : null;
+                  let userCaseTypeNorm: string | null = null;
+                  if (partyMatch?.index !== undefined) {
+                    const window = cleanedForParty.slice(Math.max(0, partyMatch.index - 20), partyMatch.index);
+                    const localPrefix = window.match(new RegExp(CASE_TYPE_PREFIX_RE.source + "\\s*$"));
+                    if (localPrefix) userCaseTypeNorm = normalizeQuotes(localPrefix[0]);
+                  }
 
                   const results = rawResults.filter((r: Record<string, unknown>) => {
                     const rp1 = String(r.party1 || "");
@@ -1164,7 +1170,13 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     // If user supplied a caseType prefix, drop results from a different prefix
                     if (userCaseTypeNorm) {
                       const rType = normalizeQuotes(String(r.caseType || ""));
-                      if (rType && rType !== userCaseTypeNorm) {
+                      // Only drop on caseType mismatch when result's caseType is itself a known
+                      // procedural prefix. Free-text labels like "תביעה"/"תביעה פלילית" returned
+                      // by Perplexity carry no jurisdiction info — let parties + caseNumber decide.
+                      const rTypeIsKnownPrefix = CASE_TYPE_PREFIXES.some(
+                        (p) => normalizeQuotes(p) === rType,
+                      );
+                      if (rType && rTypeIsKnownPrefix && rType !== userCaseTypeNorm) {
                         console.log(`[case-law] Dropping cross-jurisdiction result: caseType=${rType}, user=${userCaseTypeNorm}`);
                         return false;
                       }
