@@ -1067,8 +1067,25 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
 
               const psJsonMatch = psContent.match(/\{[\s\S]*\}/);
               if (psJsonMatch) {
+                const rawJson = psJsonMatch[0];
+                // Repair: replace unescaped ASCII " sitting between Hebrew letters
+                // (e.g. פ"ד, פד"י, ס"ח, ת"א, ע"א) with Hebrew gershayim ״ (U+05F4).
+                // These are never JSON delimiters in our domain.
+                const repairedJson = rawJson.replace(/([\u0590-\u05FF])"([\u0590-\u05FF])/g, "$1\u05F4$2");
+                let psParsed: Record<string, unknown> | null = null;
                 try {
-                  const psParsed = JSON.parse(psJsonMatch[0]);
+                  psParsed = JSON.parse(repairedJson);
+                } catch (e1) {
+                  console.warn("[case-law] First parse attempt failed, trying raw:", e1);
+                  try {
+                    psParsed = JSON.parse(rawJson);
+                  } catch (e2) {
+                    console.error("[case-law] Failed to parse party search JSON:", e2);
+                    caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא הצלחתי לחפש פסקי דין בין ${party1} ל${party2}.\nבקש מהמשתמש לספק מספר תיק מדויק.\n══`;
+                  }
+                }
+                if (psParsed) {
+                  try {
                   const results = Array.isArray(psParsed.results) ? psParsed.results.filter((r: Record<string, unknown>) => r.found) : [];
 
                   if (results.length === 0) {
