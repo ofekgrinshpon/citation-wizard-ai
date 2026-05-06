@@ -871,10 +871,12 @@ serve(async (req) => {
               },
               body: JSON.stringify({
                 model: "sonar",
+                search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
                 messages: [
                   {
                     role: "system",
                     content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
+טיפ חיפוש: ב-https://lite.takdin.co.il/search-results מוצגים בעמוד אחד שמות הצדדים, מספר התיק, בית המשפט, תאריך פסק הדין ופרסום בפ"ד — חפש שם קודם כדי לאתר את כל הנתונים במקום אחד.
 חשוב ביותר: עדיפות ראשונה היא לבדוק פרסום בפד"י (פסקי דין). רוב פסקי הדין של בית המשפט העליון פורסמו בפד"י. אל תסתמך רק על מאגרי מידע אלקטרוניים - חפש במיוחד אם יש ציון "פ"ד" עם כרך ועמוד.
 סמן isPublished: false רק אם חיפשת במפורש פרסום בפד"י ווידאת שהוא לא קיים.
 הפורמט:
