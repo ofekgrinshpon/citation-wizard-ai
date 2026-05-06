@@ -4398,10 +4398,25 @@ ${combinedContext}
     // Academic chapter writes: prepend the academic persona/style block to the
     // structured drafter prompt so the chapter inherits Deep scaffolding AND
     // the high-register academic voice / narrative-citation rules.
+    // Resolve style-guide gating once, even if the academic header below is
+    // skipped — telemetry below reads these vars unconditionally.
+    const styleGuideEnvDefault = (Deno.env.get("STYLE_GUIDE_ENABLED") ?? "true") !== "false";
+    const styleGuideAdminOverride = isAdminCaller && typeof bodyStyleGuideEnabled === "boolean"
+      ? (bodyStyleGuideEnabled as boolean)
+      : null;
+    const styleGuideEnabled = styleGuideAdminOverride ?? styleGuideEnvDefault;
+    const isRealChapterForStyle = isAcademicChapter && academicStep === "write_chapter" && !isAbstract;
+
     if (useStructuredDrafterPath && isAcademicChapter && typeof academicStep === "string") {
       const academicHeader = getAcademicSubModePrompt(academicStep, body);
       if (academicHeader) {
         drafterSystemPrompt = `${academicHeader}\n\n${drafterSystemPrompt}`;
+      }
+      // Option B — distilled style guide. Real body chapters only (not abstract,
+      // intro, conclusion, outline, validate, topics). Per-request override
+      // honored only for super-admin / admin callers; everyone else follows env.
+      if (styleGuideEnabled && isRealChapterForStyle) {
+        drafterSystemPrompt = `${drafterSystemPrompt}\n\n${buildStyleGuideBlock()}`;
       }
     }
     const promptLen = drafterSystemPrompt.length;
