@@ -13,7 +13,15 @@ interface Props {
   postProcessingLabel?: string | null;
   /** Streaming draft text appended via draft_delta events. */
   draftText?: string;
+  /** Run mode for the header copy. Defaults to research_deep. */
+  mode?: "research_fast" | "research_deep" | "academic_chapter";
 }
+
+const HEADER_BY_MODE: Record<NonNullable<Props["mode"]>, string> = {
+  research_fast: "מחפש, מסכם ומעגן מקורות...",
+  research_deep: "מבצע מחקר משפטי מקיף (מנוע Deep)...",
+  academic_chapter: "כותב פרק אקדמי (מנוע Deep)...",
+};
 
 /**
  * Live pipeline progress for SSE-streamed legal-qa runs.
@@ -21,7 +29,7 @@ interface Props {
  * `draft_delta` chunks are concatenated into a streaming preview with a
  * blinking caret until the `final` event arrives.
  */
-export function StageProgressList({ stages, postProcessingLabel, draftText }: Props) {
+export function StageProgressList({ stages, postProcessingLabel, draftText, mode = "research_deep" }: Props) {
   // De-dup by stage name, keeping the latest status (so "complete" overrides "running").
   const dedup = new Map<string, StageEvent>();
   for (const s of stages) dedup.set(s.stage, s);
@@ -30,7 +38,7 @@ export function StageProgressList({ stages, postProcessingLabel, draftText }: Pr
   return (
     <Card className="mt-4 border-border" dir="rtl">
       <CardContent className="p-4 sm:p-5 space-y-3">
-        <div className="text-sm font-semibold text-foreground">מבצע מחקר משפטי...</div>
+        <div className="text-sm font-semibold text-foreground">{HEADER_BY_MODE[mode]}</div>
 
         <ol className="space-y-1.5">
           {visible.map((s) => {

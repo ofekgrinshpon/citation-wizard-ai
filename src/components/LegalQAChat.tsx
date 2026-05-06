@@ -1099,6 +1099,10 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setStageEvents([]);
     setPostProcessingLabel(null);
     setStreamingDraft("");
+    // Set last academic action up-front so the live progress panel can pick
+    // the right header copy (e.g. "כותב פרק אקדמי (מנוע Deep)…") while the
+    // chapter is streaming, not only after it completes.
+    setLastAcademicAction(academicStep);
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -2247,6 +2251,16 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 stages={stageEvents}
                 postProcessingLabel={postProcessingLabel}
                 draftText={streamingDraft}
+                mode={
+                  taskMode === "academic_writing" &&
+                  (lastAcademicAction === "write_chapter" ||
+                   lastAcademicAction === "write_introduction" ||
+                   lastAcademicAction === "write_conclusion")
+                    ? "academic_chapter"
+                    : researchDepth === "deep"
+                    ? "research_deep"
+                    : "research_fast"
+                }
               />
             : <ResearchProgress />
         )}
