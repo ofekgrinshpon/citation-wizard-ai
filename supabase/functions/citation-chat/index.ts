@@ -1170,33 +1170,45 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   const hasOverlap = (resultParty: string, tokens: string[]) =>
                     tokens.length === 0 || tokens.some((t) => resultParty.includes(t));
 
-                  // Detect user-typed caseType prefix — must be IMMEDIATELY before the parties
-                  // (within ~20 chars), to avoid false positives from engine-hint examples
-                  // like "ת״א" that appear in the prepended classification block.
-                  const normalizeQuotes = (s: string) => s.replace(/[״"]/g, '"').replace(/[׳']/g, "'");
-                  let userCaseTypeNorm: string | null = null;
-                  if (partyMatch?.index !== undefined) {
-                    const window = cleanedForParty.slice(Math.max(0, partyMatch.index - 20), partyMatch.index);
-                    const localPrefix = window.match(new RegExp(CASE_TYPE_PREFIX_RE.source + "\\s*$"));
-                    if (localPrefix) userCaseTypeNorm = normalizeQuotes(localPrefix[0]);
-                  }
+                  // Detect user-typed caseType prefix from the outer scope (already
+                  // stripped from rawParty1 above, or detected via 20-char window).
+                  // Already declared at outer scope: `userCaseTypeNorm`, `normalizeQuotes`.
 
                   const results = rawResults.filter((r: Record<string, unknown>) => {
                     const rp1 = String(r.party1 || "");
                     const rp2 = String(r.party2 || "");
-                    // Order-preserving: result.p1 ⊇ user.p1 AND result.p2 ⊇ user.p2
-                    const sameOrder = hasOverlap(rp1, userP1Tokens) && hasOverlap(rp2, userP2Tokens);
-                    // Reversed: drop. The user typed an order; respect it.
-                    if (!sameOrder) {
-                      console.log(`[case-law] Dropping irrelevant result: "${rp1}" נ' "${rp2}" (user typed: "${party1}" / "${party2}")`);
-                      return false;
+                    const rType = normalizeQuotes(String(r.caseType || ""));
+                    const rNum = String(r.caseNumber || "").trim();
+                    const hasParties = rp1.length > 0 && rp2.length > 0;
+
+                    // Strong match: result's caseType matches user's prefix AND has a docket.
+                    // This rescues correct results where Perplexity dropped party fields.
+                    const caseTypeMatchesUser = !!userCaseTypeNorm && rType === userCaseTypeNorm;
+                    const hasDocket = /\d/.test(rNum);
+
+                    if (hasParties) {
+                      // Order-preserving: result.p1 ⊇ user.p1 AND result.p2 ⊇ user.p2
+                      const sameOrder = hasOverlap(rp1, userP1Tokens) && hasOverlap(rp2, userP2Tokens);
+                      if (!sameOrder) {
+                        // Allow if caseType+docket strongly match user's request despite reversed parties
+                        if (caseTypeMatchesUser && hasDocket) {
+                          console.log(`[case-law] Keeping reversed-parties result on caseType+docket match: ${rType} ${rNum}`);
+                        } else {
+                          console.log(`[case-law] Dropping irrelevant result: "${rp1}" נ' "${rp2}" (user typed: "${party1}" / "${party2}")`);
+                          return false;
+                        }
+                      }
+                    } else {
+                      // Empty parties — keep only if caseType+docket strongly match user's request.
+                      if (!(caseTypeMatchesUser && hasDocket)) {
+                        console.log(`[case-law] Dropping empty-parties result without strong caseType match: caseType=${rType}, num=${rNum}`);
+                        return false;
+                      }
+                      console.log(`[case-law] Accepting empty-parties result on caseType+docket match: ${rType} ${rNum}`);
                     }
-                    // If user supplied a caseType prefix, drop results from a different prefix
+
+                    // If user supplied a caseType prefix, drop results from a different known prefix
                     if (userCaseTypeNorm) {
-                      const rType = normalizeQuotes(String(r.caseType || ""));
-                      // Only drop on caseType mismatch when result's caseType is itself a known
-                      // procedural prefix. Free-text labels like "תביעה"/"תביעה פלילית" returned
-                      // by Perplexity carry no jurisdiction info — let parties + caseNumber decide.
                       const rTypeIsKnownPrefix = CASE_TYPE_PREFIXES.some(
                         (p) => normalizeQuotes(p) === rType,
                       );
