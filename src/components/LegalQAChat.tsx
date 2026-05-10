@@ -2166,7 +2166,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                         </TooltipContent>
                       </Tooltip>
                     ) : (
-                      <Button onClick={writeCurrentChapter} size="sm" className="gap-1.5">
+                      <Button type="button" onClick={writeCurrentChapter} size="sm" className="gap-1.5">
                         {isAbstract && <Wand2 className="w-3.5 h-3.5" />}
                         {writeButtonLabel}
                       </Button>
