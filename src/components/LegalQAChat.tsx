@@ -849,14 +849,15 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       const localSaved = loadAcademicSession(projectId);
       // Apply localStorage immediately so the user sees something fast.
       if (localSaved && localSaved.wizardStep !== "init") {
-        setWizardStep(localSaved.wizardStep);
-        setMaxReachedStep(localSaved.maxReachedStep || localSaved.wizardStep);
-        setCurrentChapter(localSaved.currentChapter);
-        setChapters(localSaved.chapters);
-        setResearchQuestion(localSaved.researchQuestion);
-        setOutline(localSaved.outline);
-        setProposedQuestions(localSaved.proposedQuestions || []);
-        setLastAcademicAction(localSaved.lastAcademicAction || null);
+        const ns = normalizeAcademicSession(localSaved);
+        setWizardStep(ns.wizardStep);
+        setMaxReachedStep(ns.maxReachedStep || ns.wizardStep);
+        setCurrentChapter(ns.currentChapter);
+        setChapters(ns.chapters);
+        setResearchQuestion(ns.researchQuestion);
+        setOutline(ns.outline);
+        setProposedQuestions(ns.proposedQuestions || []);
+        setLastAcademicAction(ns.lastAcademicAction || null);
       } else {
         setWizardStep("init");
         setMaxReachedStep("init");
@@ -871,14 +872,15 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       (async () => {
         const dbSaved = await loadAcademicSessionFromDB(projectId);
         if (dbSaved && dbSaved.wizardStep !== "init") {
-          setWizardStep(dbSaved.wizardStep);
-          setMaxReachedStep(dbSaved.maxReachedStep || dbSaved.wizardStep);
-          setCurrentChapter(dbSaved.currentChapter);
-          setChapters(dbSaved.chapters);
-          setResearchQuestion(dbSaved.researchQuestion);
-          setOutline(dbSaved.outline);
-          setProposedQuestions(dbSaved.proposedQuestions || []);
-          setLastAcademicAction(dbSaved.lastAcademicAction || null);
+          const ns = normalizeAcademicSession(dbSaved);
+          setWizardStep(ns.wizardStep);
+          setMaxReachedStep(ns.maxReachedStep || ns.wizardStep);
+          setCurrentChapter(ns.currentChapter);
+          setChapters(ns.chapters);
+          setResearchQuestion(ns.researchQuestion);
+          setOutline(ns.outline);
+          setProposedQuestions(ns.proposedQuestions || []);
+          setLastAcademicAction(ns.lastAcademicAction || null);
         }
       })();
       setResult(null);
