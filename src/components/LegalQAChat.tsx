@@ -1145,12 +1145,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
-    // Stream chapter writes (the only academic sub-mode that runs the full
-    // research pipeline). All other sub-modes are short single-shot prompts.
+    // Stream only real body chapter writes (the Deep pipeline). Intro,
+    // conclusion, and abstract synthesize already-written chapters via the
+    // light JSON path on the backend — no streaming.
     const useSseStream =
-      academicStep === "write_chapter" ||
-      academicStep === "write_introduction" ||
-      academicStep === "write_conclusion";
+      academicStep === "write_chapter" && !extraBody?.isAbstract;
 
     try {
       const body: Record<string, unknown> = {
