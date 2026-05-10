@@ -1225,8 +1225,14 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           }
         }
 
-        body.chapterTitle = chapters[currentChapter]?.title || "";
-        body.chapterIndex = currentChapter;
+        body.chapterTitle =
+          typeof extraBody?.chapterTitle === "string"
+            ? extraBody.chapterTitle
+            : chapters[currentChapter]?.title || "";
+        body.chapterIndex =
+          typeof extraBody?.chapterIndex === "number"
+            ? extraBody.chapterIndex
+            : currentChapter;
         body.researchQuestion = effectiveResearchQuestion;
         body.outline = outline;
       }
