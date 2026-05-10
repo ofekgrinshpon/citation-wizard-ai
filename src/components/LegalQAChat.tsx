@@ -1900,6 +1900,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 />
                 <div className="flex gap-2">
                   <Button
+                    type="button"
                     onClick={() => {
                       if (!checkDestructiveEdit("topic_or_question")) return;
                       handleAcademicSubmit("suggest_topics");
@@ -1910,6 +1911,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     הצע שאלות מחקר
                   </Button>
                   <Button
+                    type="button"
                     variant="outline"
                     onClick={() => {
                       if (!checkDestructiveEdit("topic_or_question")) return;
