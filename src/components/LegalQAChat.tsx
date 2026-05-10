@@ -272,6 +272,21 @@ async function saveAcademicSessionToDB(session: AcademicSession, projectId?: str
   } catch { /* silent */ }
 }
 
+/** Normalize a restored academic session: clamp currentChapter to a valid
+ *  index. If it points outside the array, fall back to the first chapter
+ *  without content (or 0). Prevents stale sessions from landing on an
+ *  invalid chapter. */
+function normalizeAcademicSession(s: AcademicSession): AcademicSession {
+  const chs = Array.isArray(s.chapters) ? s.chapters : [];
+  if (chs.length === 0) return { ...s, chapters: [], currentChapter: 0 };
+  let idx = Number.isFinite(s.currentChapter) ? s.currentChapter : 0;
+  if (idx < 0 || idx >= chs.length) {
+    const firstEmpty = chs.findIndex((c) => !c?.content);
+    idx = firstEmpty >= 0 ? firstEmpty : 0;
+  }
+  return { ...s, chapters: chs, currentChapter: idx };
+}
+
 
 // ─── Utility components ──────────────────────────────────────────────
 
@@ -663,14 +678,15 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           ? dbSaved
           : loadAcademicSession(projectId);
         if (!cancelled && saved && saved.wizardStep !== "init") {
-          setWizardStep(saved.wizardStep);
-          setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
-          setCurrentChapter(saved.currentChapter);
-          setChapters(saved.chapters);
-          setResearchQuestion(saved.researchQuestion);
-          setOutline(saved.outline);
-          setProposedQuestions(saved.proposedQuestions || []);
-          setLastAcademicAction(saved.lastAcademicAction || null);
+          const ns = normalizeAcademicSession(saved);
+          setWizardStep(ns.wizardStep);
+          setMaxReachedStep(ns.maxReachedStep || ns.wizardStep);
+          setCurrentChapter(ns.currentChapter);
+          setChapters(ns.chapters);
+          setResearchQuestion(ns.researchQuestion);
+          setOutline(ns.outline);
+          setProposedQuestions(ns.proposedQuestions || []);
+          setLastAcademicAction(ns.lastAcademicAction || null);
         }
       })();
     }
@@ -724,17 +740,18 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         ? dbSaved
         : loadAcademicSession(projectId);
       if (saved && saved.wizardStep !== "init") {
-        setWizardStep(saved.wizardStep);
-        setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
-        setChapters(saved.chapters);
-        setResearchQuestion(saved.researchQuestion);
-        setOutline(saved.outline);
-        setProposedQuestions(saved.proposedQuestions || []);
-        setLastAcademicAction(saved.lastAcademicAction || null);
+        const ns = normalizeAcademicSession(saved);
+        setWizardStep(ns.wizardStep);
+        setMaxReachedStep(ns.maxReachedStep || ns.wizardStep);
+        setChapters(ns.chapters);
+        setResearchQuestion(ns.researchQuestion);
+        setOutline(ns.outline);
+        setProposedQuestions(ns.proposedQuestions || []);
+        setLastAcademicAction(ns.lastAcademicAction || null);
 
         // Land on the last chapter with content (or first without — whichever is further)
-        const chs = saved.chapters || [];
-        let landIdx = saved.currentChapter || 0;
+        const chs = ns.chapters || [];
+        let landIdx = ns.currentChapter || 0;
         const lastWritten = (() => {
           for (let i = chs.length - 1; i >= 0; i--) if (chs[i]?.content) return i;
           return -1;
@@ -832,14 +849,15 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       const localSaved = loadAcademicSession(projectId);
       // Apply localStorage immediately so the user sees something fast.
       if (localSaved && localSaved.wizardStep !== "init") {
-        setWizardStep(localSaved.wizardStep);
-        setMaxReachedStep(localSaved.maxReachedStep || localSaved.wizardStep);
-        setCurrentChapter(localSaved.currentChapter);
-        setChapters(localSaved.chapters);
-        setResearchQuestion(localSaved.researchQuestion);
-        setOutline(localSaved.outline);
-        setProposedQuestions(localSaved.proposedQuestions || []);
-        setLastAcademicAction(localSaved.lastAcademicAction || null);
+        const ns = normalizeAcademicSession(localSaved);
+        setWizardStep(ns.wizardStep);
+        setMaxReachedStep(ns.maxReachedStep || ns.wizardStep);
+        setCurrentChapter(ns.currentChapter);
+        setChapters(ns.chapters);
+        setResearchQuestion(ns.researchQuestion);
+        setOutline(ns.outline);
+        setProposedQuestions(ns.proposedQuestions || []);
+        setLastAcademicAction(ns.lastAcademicAction || null);
       } else {
         setWizardStep("init");
         setMaxReachedStep("init");
@@ -854,14 +872,15 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       (async () => {
         const dbSaved = await loadAcademicSessionFromDB(projectId);
         if (dbSaved && dbSaved.wizardStep !== "init") {
-          setWizardStep(dbSaved.wizardStep);
-          setMaxReachedStep(dbSaved.maxReachedStep || dbSaved.wizardStep);
-          setCurrentChapter(dbSaved.currentChapter);
-          setChapters(dbSaved.chapters);
-          setResearchQuestion(dbSaved.researchQuestion);
-          setOutline(dbSaved.outline);
-          setProposedQuestions(dbSaved.proposedQuestions || []);
-          setLastAcademicAction(dbSaved.lastAcademicAction || null);
+          const ns = normalizeAcademicSession(dbSaved);
+          setWizardStep(ns.wizardStep);
+          setMaxReachedStep(ns.maxReachedStep || ns.wizardStep);
+          setCurrentChapter(ns.currentChapter);
+          setChapters(ns.chapters);
+          setResearchQuestion(ns.researchQuestion);
+          setOutline(ns.outline);
+          setProposedQuestions(ns.proposedQuestions || []);
+          setLastAcademicAction(ns.lastAcademicAction || null);
         }
       })();
       setResult(null);
@@ -1134,13 +1153,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       }
       // fall through to fetch
     } else {
-      // Non-writing steps that genuinely need typed input.
-      const needsTypedText =
-        academicStep === "suggest_topics" ||
-        academicStep === "validate_question" ||
-        (academicStep === "propose_outline" && !effectiveResearchQuestion);
-      if (needsTypedText && !q) {
-        toast.error("יש להזין טקסט.");
+      // Non-writing steps that genuinely need typed input. Use step-specific
+      // messages so we never surface a generic "יש להזין טקסט" toast from a
+      // chapter / writing action.
+      if (academicStep === "suggest_topics" && !q) {
+        toast.error("יש להזין נושא או שאלה כדי להציע שאלות מחקר.");
+        return;
+      }
+      if (academicStep === "validate_question" && !q) {
+        toast.error("יש להזין שאלת מחקר כדי לבדוק את כדאיותה.");
+        return;
+      }
+      if (academicStep === "propose_outline" && !effectiveResearchQuestion && !q) {
+        toast.error("יש להזין שאלת מחקר לפני בניית המתווה.");
         return;
       }
     }
@@ -1894,6 +1919,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 />
                 <div className="flex gap-2">
                   <Button
+                    type="button"
                     onClick={() => {
                       if (!checkDestructiveEdit("topic_or_question")) return;
                       handleAcademicSubmit("suggest_topics");
@@ -1904,6 +1930,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     הצע שאלות מחקר
                   </Button>
                   <Button
+                    type="button"
                     variant="outline"
                     onClick={() => {
                       if (!checkDestructiveEdit("topic_or_question")) return;
@@ -2160,7 +2187,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                         </TooltipContent>
                       </Tooltip>
                     ) : (
-                      <Button onClick={writeCurrentChapter} size="sm" className="gap-1.5">
+                      <Button type="button" onClick={writeCurrentChapter} size="sm" className="gap-1.5">
                         {isAbstract && <Wand2 className="w-3.5 h-3.5" />}
                         {writeButtonLabel}
                       </Button>
