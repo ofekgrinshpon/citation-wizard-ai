@@ -1134,13 +1134,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       }
       // fall through to fetch
     } else {
-      // Non-writing steps that genuinely need typed input.
-      const needsTypedText =
-        academicStep === "suggest_topics" ||
-        academicStep === "validate_question" ||
-        (academicStep === "propose_outline" && !effectiveResearchQuestion);
-      if (needsTypedText && !q) {
-        toast.error("יש להזין טקסט.");
+      // Non-writing steps that genuinely need typed input. Use step-specific
+      // messages so we never surface a generic "יש להזין טקסט" toast from a
+      // chapter / writing action.
+      if (academicStep === "suggest_topics" && !q) {
+        toast.error("יש להזין נושא או שאלה כדי להציע שאלות מחקר.");
+        return;
+      }
+      if (academicStep === "validate_question" && !q) {
+        toast.error("יש להזין שאלת מחקר כדי לבדוק את כדאיותה.");
+        return;
+      }
+      if (academicStep === "propose_outline" && !effectiveResearchQuestion && !q) {
+        toast.error("יש להזין שאלת מחקר לפני בניית המתווה.");
         return;
       }
     }
