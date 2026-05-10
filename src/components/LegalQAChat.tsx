@@ -678,14 +678,15 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           ? dbSaved
           : loadAcademicSession(projectId);
         if (!cancelled && saved && saved.wizardStep !== "init") {
-          setWizardStep(saved.wizardStep);
-          setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
-          setCurrentChapter(saved.currentChapter);
-          setChapters(saved.chapters);
-          setResearchQuestion(saved.researchQuestion);
-          setOutline(saved.outline);
-          setProposedQuestions(saved.proposedQuestions || []);
-          setLastAcademicAction(saved.lastAcademicAction || null);
+          const ns = normalizeAcademicSession(saved);
+          setWizardStep(ns.wizardStep);
+          setMaxReachedStep(ns.maxReachedStep || ns.wizardStep);
+          setCurrentChapter(ns.currentChapter);
+          setChapters(ns.chapters);
+          setResearchQuestion(ns.researchQuestion);
+          setOutline(ns.outline);
+          setProposedQuestions(ns.proposedQuestions || []);
+          setLastAcademicAction(ns.lastAcademicAction || null);
         }
       })();
     }
