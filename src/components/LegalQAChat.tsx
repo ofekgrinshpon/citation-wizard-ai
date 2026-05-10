@@ -1088,24 +1088,34 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
   const handleAcademicSubmit = async (academicStep: string, extraBody?: Record<string, unknown>) => {
     const q = question.trim();
-    // Steps that synthesize already-written content. They MUST NOT depend on
-    // the visible textarea — the user is past the input phase. They derive
-    // their question from the saved researchQuestion.
+
+    // Classify the step. Any chapter-class write (body/intro/conclusion/abstract)
+    // is a "writing-stage" action that MUST NOT depend on the visible textarea —
+    // the user is past the input phase, and the request question is derived
+    // from the saved researchQuestion.
     const isAbstractSynthesis =
       academicStep === "write_chapter" && !!extraBody?.isAbstract;
+    const isBodyChapterWrite =
+      academicStep === "write_chapter" && !extraBody?.isAbstract;
     const isPaperLevelSynthesis =
       isAbstractSynthesis ||
       academicStep === "write_introduction" ||
       academicStep === "write_conclusion";
-    // Body chapter writes still allow optional feedback text but don't require it.
-    const isBodyChapterWrite =
-      academicStep === "write_chapter" && !extraBody?.isAbstract;
+    const isWritingStage =
+      isBodyChapterWrite || isPaperLevelSynthesis;
 
-    if (!q && !isPaperLevelSynthesis && !isBodyChapterWrite) {
+    // Steps that legitimately require typed input from the user.
+    const requiresTypedText =
+      !isWritingStage &&
+      (academicStep === "suggest_topics" ||
+        academicStep === "validate_question" ||
+        (academicStep === "propose_outline" && !researchQuestion?.trim()));
+
+    if (requiresTypedText && !q) {
       toast.error("יש להזין טקסט.");
       return;
     }
-    if ((isPaperLevelSynthesis || isBodyChapterWrite) && !researchQuestion?.trim()) {
+    if (isWritingStage && !researchQuestion?.trim()) {
       toast.error("שאלת המחקר חסרה — חזור לשלב ניסוח שאלת המחקר.");
       return;
     }

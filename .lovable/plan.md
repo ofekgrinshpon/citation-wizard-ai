@@ -1,23 +1,30 @@
+**Why it still happens**
+
+The button path is correct: `כתוב פרק זה` calls `writeCurrentChapter()`, which calls `handleAcademicSubmit("write_chapter")`.
+
+But the visible toast `יש להזין טקסט` can still appear when `handleAcademicSubmit` is entered with an empty main textarea and the runtime is using a stale guard or a non-body/synthesis call path. The current code already intends to exempt body chapter writing from textarea validation, so the safest fix is to make that exemption explicit and impossible to bypass for all writing-stage chapter buttons.
+
 **Plan**
 
-I found the previous client-side guard is present, but the current symptom still points to the academic submit flow being too dependent on the hidden `question` textarea state.
+1. Add a dedicated helper that classifies academic write actions:
+   - body chapter write
+   - introduction synthesis
+   - conclusion synthesis
+   - abstract synthesis
+   - early text-required steps
 
-**What I will change**
+2. Change the empty-text guard so `יש להזין טקסט` is only possible for early wizard steps that genuinely require user input:
+   - topic suggestions
+   - question validation
+   - outline proposal when no saved research question exists
 
-1. **Make academic generated chapters independent of the question box**
-   - For `write_conclusion`, `write_introduction`, and abstract generation, compute the request question from the saved `researchQuestion`, not from the visible textarea.
-   - Keep the textarea requirement only for the early steps where the user actually types text: topic suggestions, question validation, and outline creation.
+3. In `writeCurrentChapter()`, pass the current chapter title/role explicitly into `handleAcademicSubmit`, so the submit handler does not depend on textarea state or stale inferred state.
 
-2. **Add a specific conclusion preflight check**
-   - Before sending `write_conclusion`, verify there are completed body chapters.
-   - If none are available, show a clear Hebrew message explaining that the conclusion can only be written after body chapters exist.
+4. Add a defensive fallback for body chapters:
+   - If `question` is empty, use `researchQuestion` as the request question.
+   - If `researchQuestion` is missing, show the clearer message: `שאלת המחקר חסרה — חזור לשלב ניסוח שאלת המחקר.`
 
-3. **Stop treating intro/conclusion like Deep streamed chapter writes**
-   - Keep body chapter writing as the streamed Deep flow.
-   - Send intro/conclusion/abstract as normal synthesis requests, because the backend already routes them through the light paper-level synthesis path.
-   - This reduces the chance of UI waiting/parsing issues and matches the intended behavior.
-
-4. **Preserve the intended logic**
-   - The conclusion will synthesize the written body chapters.
-   - The introduction will be written after the conclusion and can use the conclusion draft.
-   - No backend prompt, billing, styling, or wizard-order changes unless the inspected failure requires a very small defensive backend check.
+5. Keep conclusion/introduction behavior unchanged:
+   - conclusion reads completed body chapters
+   - introduction can use the conclusion
+   - no new backend, billing, prompt, or styling changes.
