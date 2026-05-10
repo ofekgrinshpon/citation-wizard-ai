@@ -272,6 +272,21 @@ async function saveAcademicSessionToDB(session: AcademicSession, projectId?: str
   } catch { /* silent */ }
 }
 
+/** Normalize a restored academic session: clamp currentChapter to a valid
+ *  index. If it points outside the array, fall back to the first chapter
+ *  without content (or 0). Prevents stale sessions from landing on an
+ *  invalid chapter. */
+function normalizeAcademicSession(s: AcademicSession): AcademicSession {
+  const chs = Array.isArray(s.chapters) ? s.chapters : [];
+  if (chs.length === 0) return { ...s, chapters: [], currentChapter: 0 };
+  let idx = Number.isFinite(s.currentChapter) ? s.currentChapter : 0;
+  if (idx < 0 || idx >= chs.length) {
+    const firstEmpty = chs.findIndex((c) => !c?.content);
+    idx = firstEmpty >= 0 ? firstEmpty : 0;
+  }
+  return { ...s, chapters: chs, currentChapter: idx };
+}
+
 
 // ─── Utility components ──────────────────────────────────────────────
 
