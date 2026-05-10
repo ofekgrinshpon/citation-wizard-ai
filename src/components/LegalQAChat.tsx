@@ -1417,18 +1417,23 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const writeCurrentChapter = () => {
     const title = chapters[currentChapter]?.title || "";
     const role = chapterRole(title);
+    const chapterContext = {
+      chapterTitle: title,
+      chapterIndex: currentChapter,
+      researchQuestion,
+    };
     if (isChapterLocked(title)) {
       toast.info(lockTooltipFor(role));
       return;
     }
     if (role === "abstract") {
-      handleAcademicSubmit("write_chapter", { isAbstract: true });
+      handleAcademicSubmit("write_chapter", { ...chapterContext, isAbstract: true });
     } else if (role === "introduction") {
-      handleAcademicSubmit("write_introduction");
+      handleAcademicSubmit("write_introduction", chapterContext);
     } else if (role === "conclusion") {
-      handleAcademicSubmit("write_conclusion");
+      handleAcademicSubmit("write_conclusion", chapterContext);
     } else {
-      handleAcademicSubmit("write_chapter");
+      handleAcademicSubmit("write_chapter", chapterContext);
     }
   };
 
