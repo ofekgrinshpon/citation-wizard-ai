@@ -1088,6 +1088,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
   const handleAcademicSubmit = async (academicStep: string, extraBody?: Record<string, unknown>) => {
     const q = question.trim();
+    const explicitResearchQuestion =
+      typeof extraBody?.researchQuestion === "string"
+        ? extraBody.researchQuestion.trim()
+        : "";
+    const effectiveResearchQuestion = explicitResearchQuestion || researchQuestion.trim() || q;
 
     // Classify the step. Any chapter-class write (body/intro/conclusion/abstract)
     // is a "writing-stage" action that MUST NOT depend on the visible textarea —
@@ -1109,13 +1114,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       !isWritingStage &&
       (academicStep === "suggest_topics" ||
         academicStep === "validate_question" ||
-        (academicStep === "propose_outline" && !researchQuestion?.trim()));
+        (academicStep === "propose_outline" && !effectiveResearchQuestion));
 
     if (requiresTypedText && !q) {
       toast.error("יש להזין טקסט.");
       return;
     }
-    if (isWritingStage && !researchQuestion?.trim()) {
+    if (isWritingStage && !effectiveResearchQuestion) {
       toast.error("שאלת המחקר חסרה — חזור לשלב ניסוח שאלת המחקר.");
       return;
     }
@@ -1163,7 +1168,9 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
     try {
       const body: Record<string, unknown> = {
-        question: q || researchQuestion,
+        question: academicStep === "suggest_topics" || academicStep === "validate_question"
+          ? q
+          : effectiveResearchQuestion,
         taskMode: "academic_writing",
         academicStep,
         ...extraBody,
@@ -1220,12 +1227,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
         body.chapterTitle = chapters[currentChapter]?.title || "";
         body.chapterIndex = currentChapter;
-        body.researchQuestion = researchQuestion;
+        body.researchQuestion = effectiveResearchQuestion;
         body.outline = outline;
       }
 
       if (academicStep === "propose_outline") {
-        body.researchQuestion = researchQuestion;
+        body.researchQuestion = effectiveResearchQuestion;
       }
 
       if (useSseStream) {

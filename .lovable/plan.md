@@ -1,30 +1,18 @@
-**Why it still happens**
+**ממצאים**
+- ההודעה “יש להזין טקסט.” קיימת רק ב־`LegalQAChat.tsx`, בתוך `handleAcademicSubmit`.
+- למרות שה־guard הנוכחי נראה נכון, יש נקודת race: בלחיצה על שאלה מוצעת או אישור שאלת מחקר, הקוד עושה `setResearchQuestion(...)` ואז מיד קורא `handleAcademicSubmit(...)`. React עדיין לא עדכן את state, ולכן `handleAcademicSubmit` רואה `researchQuestion` ריק ועלול להפעיל את guard של “יש להזין טקסט”.
+- בנוסף, `writeCurrentChapter()` לא מעביר במפורש את פרטי הפרק הנוכחי, ולכן הוא עדיין תלוי ב־state שעלול להיות לא מסונכרן.
 
-The button path is correct: `כתוב פרק זה` calls `writeCurrentChapter()`, which calls `handleAcademicSubmit("write_chapter")`.
+**תוכנית תיקון**
+1. לעדכן את `handleAcademicSubmit` כך שיבנה `effectiveResearchQuestion` מתוך שלושה מקורות לפי סדר עדיפות:
+   - `extraBody.researchQuestion` אם הועבר במפורש.
+   - `researchQuestion` מה־state.
+   - `question.trim()` כ־fallback בשלבי מעבר מוקדמים.
+2. להחליף את כל בדיקות `researchQuestion?.trim()` בתוך `handleAcademicSubmit` ב־`effectiveResearchQuestion`, כדי למנוע קריאה ל־state ישן.
+3. בשלבי כתיבה (`write_chapter`, `write_introduction`, `write_conclusion`, abstract), לשלוח תמיד `question`, `researchQuestion`, `chapterTitle`, ו־`chapterIndex` מתוך הערכים האפקטיביים, לא מתוך textarea ריק.
+4. לעדכן את `writeCurrentChapter()` כך שיעביר במפורש את `chapterTitle`, `chapterIndex`, ו־`researchQuestion` ל־`handleAcademicSubmit`, כולל למסלולי מבוא/סיכום/תקציר.
+5. להשאיר את “יש להזין טקסט” רק לשלבים הראשונים שבאמת דורשים הקלדה ידנית: הצעת שאלות, בדיקת שאלה, ומתווה ללא שאלת מחקר שמורה.
 
-But the visible toast `יש להזין טקסט` can still appear when `handleAcademicSubmit` is entered with an empty main textarea and the runtime is using a stale guard or a non-body/synthesis call path. The current code already intends to exempt body chapter writing from textarea validation, so the safest fix is to make that exemption explicit and impossible to bypass for all writing-stage chapter buttons.
-
-**Plan**
-
-1. Add a dedicated helper that classifies academic write actions:
-   - body chapter write
-   - introduction synthesis
-   - conclusion synthesis
-   - abstract synthesis
-   - early text-required steps
-
-2. Change the empty-text guard so `יש להזין טקסט` is only possible for early wizard steps that genuinely require user input:
-   - topic suggestions
-   - question validation
-   - outline proposal when no saved research question exists
-
-3. In `writeCurrentChapter()`, pass the current chapter title/role explicitly into `handleAcademicSubmit`, so the submit handler does not depend on textarea state or stale inferred state.
-
-4. Add a defensive fallback for body chapters:
-   - If `question` is empty, use `researchQuestion` as the request question.
-   - If `researchQuestion` is missing, show the clearer message: `שאלת המחקר חסרה — חזור לשלב ניסוח שאלת המחקר.`
-
-5. Keep conclusion/introduction behavior unchanged:
-   - conclusion reads completed body chapters
-   - introduction can use the conclusion
-   - no new backend, billing, prompt, or styling changes.
+**מה לא משתנה**
+- אין שינוי ב־backend, חיוב/קרדיטים, prompts, או עיצוב.
+- אין שינוי בהתנהגות הסיכום/מבוא מעבר לכך שהם לא ידרשו textarea.
