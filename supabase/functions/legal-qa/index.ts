@@ -2033,11 +2033,19 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       taskMode === "academic_writing" &&
       typeof academicStep === "string" &&
       ["suggest_topics", "validate_question", "propose_outline"].includes(academicStep);
+    // Academic body chapters (write_chapter, non-abstract) run the full Deep
+    // pipeline. Introduction and conclusion are paper-level synthesis writes —
+    // they summarize what's already on the page and must NOT do new retrieval
+    // or invent new authorities. They route through the light synthesis path
+    // (same shape as the abstract).
+    const isAcademicPaperLevelSynthesis =
+      taskMode === "academic_writing" &&
+      (academicStep === "write_introduction" ||
+       academicStep === "write_conclusion");
     const isAcademicChapter =
       taskMode === "academic_writing" &&
-      (academicStep === "write_chapter" ||
-       academicStep === "write_introduction" ||
-       academicStep === "write_conclusion");
+      academicStep === "write_chapter" &&
+      !body.isAbstract;
     const hasGroundingDoc =
       (Array.isArray(documentTexts) && documentTexts.length > 0) ||
       (typeof documentText === "string" && documentText.trim().length > 100);
@@ -2053,7 +2061,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
 
     let creditCost = 5;
     if (academicProfile) {
-      // Academic sub-modes (free outline/topics/validate, 8 for chapter+abstract)
+      // Academic sub-modes (free outline/topics/validate, 8 for chapter+abstract+intro+conclusion)
       // are sourced from ACADEMIC_PROFILES. Document grounding surcharge does
       // NOT apply to academic chapters/abstracts (they have their own context budget).
       creditCost = academicProfile.creditCost;
@@ -2061,14 +2069,16 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       creditCost += 2;
     }
 
-    // ─── Deep pipeline opt-in for academic chapter writes ───────────
-    // Academic chapters use the same Deep behavior as research/Deep:
+    // ─── Deep pipeline opt-in for academic body chapter writes ───────────
+    // Body chapters (write_chapter, non-abstract) use the same Deep behavior
+    // as research/Deep:
     //  • full Frame→Decompose→ClaimMap→Retrieve→SourcePack→E.5→Draft pipeline
     //  • Deep envelope (1200-2000 words, footnote floor 8, anchor pass on)
     //  • Stage E.5 Perplexity completion when core < 6
     //  • citation engine resolver canonicalises the parsed footnotes (below)
     // We force the deep profile for chapters AFTER resolveModeProfile so any
-    // depth coming from the body is overridden — chapters are always Deep.
+    // depth coming from the body is overridden — body chapters are always Deep.
+    // Intro/conclusion are excluded — they're synthesis-only (light path).
     if (isAcademicChapter) {
       const forced = resolveModeProfile("deep");
       researchDepth = forced.depth;
