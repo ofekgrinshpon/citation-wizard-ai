@@ -1088,6 +1088,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
   const handleAcademicSubmit = async (academicStep: string, extraBody?: Record<string, unknown>) => {
     const q = question.trim();
+    const explicitResearchQuestion =
+      typeof extraBody?.researchQuestion === "string"
+        ? extraBody.researchQuestion.trim()
+        : "";
+    const effectiveResearchQuestion = explicitResearchQuestion || researchQuestion.trim() || q;
 
     // Classify the step. Any chapter-class write (body/intro/conclusion/abstract)
     // is a "writing-stage" action that MUST NOT depend on the visible textarea —
@@ -1109,13 +1114,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       !isWritingStage &&
       (academicStep === "suggest_topics" ||
         academicStep === "validate_question" ||
-        (academicStep === "propose_outline" && !researchQuestion?.trim()));
+        (academicStep === "propose_outline" && !effectiveResearchQuestion));
 
     if (requiresTypedText && !q) {
       toast.error("יש להזין טקסט.");
       return;
     }
-    if (isWritingStage && !researchQuestion?.trim()) {
+    if (isWritingStage && !effectiveResearchQuestion) {
       toast.error("שאלת המחקר חסרה — חזור לשלב ניסוח שאלת המחקר.");
       return;
     }
@@ -1163,7 +1168,9 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
     try {
       const body: Record<string, unknown> = {
-        question: q || researchQuestion,
+        question: academicStep === "suggest_topics" || academicStep === "validate_question"
+          ? q
+          : effectiveResearchQuestion,
         taskMode: "academic_writing",
         academicStep,
         ...extraBody,
@@ -1218,14 +1225,20 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           }
         }
 
-        body.chapterTitle = chapters[currentChapter]?.title || "";
-        body.chapterIndex = currentChapter;
-        body.researchQuestion = researchQuestion;
+        body.chapterTitle =
+          typeof extraBody?.chapterTitle === "string"
+            ? extraBody.chapterTitle
+            : chapters[currentChapter]?.title || "";
+        body.chapterIndex =
+          typeof extraBody?.chapterIndex === "number"
+            ? extraBody.chapterIndex
+            : currentChapter;
+        body.researchQuestion = effectiveResearchQuestion;
         body.outline = outline;
       }
 
       if (academicStep === "propose_outline") {
-        body.researchQuestion = researchQuestion;
+        body.researchQuestion = effectiveResearchQuestion;
       }
 
       if (useSseStream) {
@@ -1410,18 +1423,23 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const writeCurrentChapter = () => {
     const title = chapters[currentChapter]?.title || "";
     const role = chapterRole(title);
+    const chapterContext = {
+      chapterTitle: title,
+      chapterIndex: currentChapter,
+      researchQuestion,
+    };
     if (isChapterLocked(title)) {
       toast.info(lockTooltipFor(role));
       return;
     }
     if (role === "abstract") {
-      handleAcademicSubmit("write_chapter", { isAbstract: true });
+      handleAcademicSubmit("write_chapter", { ...chapterContext, isAbstract: true });
     } else if (role === "introduction") {
-      handleAcademicSubmit("write_introduction");
+      handleAcademicSubmit("write_introduction", chapterContext);
     } else if (role === "conclusion") {
-      handleAcademicSubmit("write_conclusion");
+      handleAcademicSubmit("write_conclusion", chapterContext);
     } else {
-      handleAcademicSubmit("write_chapter");
+      handleAcademicSubmit("write_chapter", chapterContext);
     }
   };
 
