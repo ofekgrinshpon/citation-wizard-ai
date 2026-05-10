@@ -1094,54 +1094,53 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         : "";
     const effectiveResearchQuestion = explicitResearchQuestion || researchQuestion.trim() || q;
 
-    // Classify the step. Any chapter-class write (body/intro/conclusion/abstract)
-    // is a "writing-stage" action that MUST NOT depend on the visible textarea —
-    // the user is past the input phase, and the request question is derived
-    // from the saved researchQuestion.
+    // Explicit per-step validation. Writing steps (body/intro/conclusion/abstract)
+    // synthesize already-written content and MUST NEVER demand typed text.
     const isAbstractSynthesis =
       academicStep === "write_chapter" && !!extraBody?.isAbstract;
     const isBodyChapterWrite =
       academicStep === "write_chapter" && !extraBody?.isAbstract;
-    const isPaperLevelSynthesis =
+    const isWritingStage =
+      isBodyChapterWrite ||
       isAbstractSynthesis ||
       academicStep === "write_introduction" ||
       academicStep === "write_conclusion";
-    const isWritingStage =
-      isBodyChapterWrite || isPaperLevelSynthesis;
 
-    // Steps that legitimately require typed input from the user.
-    const requiresTypedText =
-      !isWritingStage &&
-      (academicStep === "suggest_topics" ||
-        academicStep === "validate_question" ||
-        (academicStep === "propose_outline" && !effectiveResearchQuestion));
+    console.debug("[academic] handleAcademicSubmit", {
+      academicStep,
+      isWritingStage,
+      hasResearchQuestion: !!effectiveResearchQuestion,
+      hasTypedText: !!q,
+      currentChapter,
+      currentChapterTitle: chapters[currentChapter]?.title,
+    });
 
-    if (requiresTypedText && !q) {
-      toast.error("יש להזין טקסט.");
-      return;
-    }
-    if (isWritingStage && !effectiveResearchQuestion) {
-      toast.error("שאלת המחקר חסרה — חזור לשלב ניסוח שאלת המחקר.");
-      return;
-    }
-    // Conclusion preflight: must have at least one body chapter with content.
-    if (academicStep === "write_conclusion") {
+    if (isWritingStage) {
+      // Writing steps: require a saved research question; never typed text.
+      if (!effectiveResearchQuestion) {
+        toast.error("שאלת המחקר חסרה — חזור לשלב ניסוח שאלת המחקר.");
+        return;
+      }
       const bodyDone = chapters.some(
         (ch) => chapterRole(ch.title) === "body" && !!ch.content,
       );
-      if (!bodyDone) {
+      if (academicStep === "write_conclusion" && !bodyDone) {
         toast.error("ניתן לכתוב סיכום רק לאחר שנכתב לפחות פרק גוף אחד.");
         return;
       }
-    }
-    // Introduction preflight: needs body + conclusion (already enforced by lock,
-    // but guard defensively in case state is stale).
-    if (academicStep === "write_introduction") {
-      const bodyDone = chapters.some(
-        (ch) => chapterRole(ch.title) === "body" && !!ch.content,
-      );
-      if (!bodyDone) {
+      if (academicStep === "write_introduction" && !bodyDone) {
         toast.error("ניתן לכתוב מבוא רק לאחר שנכתבו פרקי הגוף.");
+        return;
+      }
+      // fall through to fetch
+    } else {
+      // Non-writing steps that genuinely need typed input.
+      const needsTypedText =
+        academicStep === "suggest_topics" ||
+        academicStep === "validate_question" ||
+        (academicStep === "propose_outline" && !effectiveResearchQuestion);
+      if (needsTypedText && !q) {
+        toast.error("יש להזין טקסט.");
         return;
       }
     }
