@@ -1,53 +1,23 @@
-## You're right — conclusion has no question box
+**Plan**
 
-The conclusion step has no input field by design. It's a "כתוב סיכום" button that should synthesize the body chapters that already exist. The user should never be asked to type anything.
+I found the previous client-side guard is present, but the current symptom still points to the academic submit flow being too dependent on the hidden `question` textarea state.
 
-## The bug
+**What I will change**
 
-`src/components/LegalQAChat.tsx` line 1089–1094:
+1. **Make academic generated chapters independent of the question box**
+   - For `write_conclusion`, `write_introduction`, and abstract generation, compute the request question from the saved `researchQuestion`, not from the visible textarea.
+   - Keep the textarea requirement only for the early steps where the user actually types text: topic suggestions, question validation, and outline creation.
 
-```ts
-const handleAcademicSubmit = async (academicStep: string, extraBody?: ...) => {
-  const q = question.trim();
-  if (!q && academicStep !== "write_chapter") {
-    toast.error("יש להזין טקסט.");
-    return;
-  }
-```
+2. **Add a specific conclusion preflight check**
+   - Before sending `write_conclusion`, verify there are completed body chapters.
+   - If none are available, show a clear Hebrew message explaining that the conclusion can only be written after body chapters exist.
 
-The empty-text guard exempts only `write_chapter`. So when the conclusion button fires `handleAcademicSubmit("write_conclusion")` with an empty `question` field (which is correct — there's no input to type into), the guard rejects it before the request is ever sent.
+3. **Stop treating intro/conclusion like Deep streamed chapter writes**
+   - Keep body chapter writing as the streamed Deep flow.
+   - Send intro/conclusion/abstract as normal synthesis requests, because the backend already routes them through the light paper-level synthesis path.
+   - This reduces the chance of UI waiting/parsing issues and matches the intended behavior.
 
-The body builder a few lines below already falls back correctly: `question: q || researchQuestion`. So once we get past the guard, the backend receives the saved research question + previous chapters and runs the new light synthesis path we wired up earlier.
-
-## Fix (frontend, one edit)
-
-In `src/components/LegalQAChat.tsx` ~line 1090, replace the guard with:
-
-```ts
-const isPaperLevelSynthesis =
-  academicStep === "write_chapter" ||
-  academicStep === "write_introduction" ||
-  academicStep === "write_conclusion";
-
-if (!q && !isPaperLevelSynthesis) {
-  toast.error("יש להזין טקסט.");
-  return;
-}
-
-// Defensive: synthesis steps need a saved research question
-if (isPaperLevelSynthesis && !q && !researchQuestion?.trim()) {
-  toast.error("שאלת המחקר חסרה — חזור לשלב ניסוח שאלת המחקר.");
-  return;
-}
-```
-
-That's it. No backend changes — the routing fix from the previous turn (light synthesis path for `write_introduction` / `write_conclusion`) stays as is, and the HNSW index is already built.
-
-## Files touched
-
-- `src/components/LegalQAChat.tsx` — guard at ~line 1090.
-
-## Out of scope
-
-- No backend, prompt, wizard-order, or styling changes.
-- No billing change (still 8 credits).
+4. **Preserve the intended logic**
+   - The conclusion will synthesize the written body chapters.
+   - The introduction will be written after the conclusion and can use the conclusion draft.
+   - No backend prompt, billing, styling, or wizard-order changes unless the inspected failure requires a very small defensive backend check.

@@ -1088,17 +1088,47 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
   const handleAcademicSubmit = async (academicStep: string, extraBody?: Record<string, unknown>) => {
     const q = question.trim();
+    // Steps that synthesize already-written content. They MUST NOT depend on
+    // the visible textarea — the user is past the input phase. They derive
+    // their question from the saved researchQuestion.
+    const isAbstractSynthesis =
+      academicStep === "write_chapter" && !!extraBody?.isAbstract;
     const isPaperLevelSynthesis =
-      academicStep === "write_chapter" ||
+      isAbstractSynthesis ||
       academicStep === "write_introduction" ||
       academicStep === "write_conclusion";
-    if (!q && !isPaperLevelSynthesis) {
+    // Body chapter writes still allow optional feedback text but don't require it.
+    const isBodyChapterWrite =
+      academicStep === "write_chapter" && !extraBody?.isAbstract;
+
+    if (!q && !isPaperLevelSynthesis && !isBodyChapterWrite) {
       toast.error("יש להזין טקסט.");
       return;
     }
-    if (isPaperLevelSynthesis && !q && !researchQuestion?.trim()) {
+    if ((isPaperLevelSynthesis || isBodyChapterWrite) && !researchQuestion?.trim()) {
       toast.error("שאלת המחקר חסרה — חזור לשלב ניסוח שאלת המחקר.");
       return;
+    }
+    // Conclusion preflight: must have at least one body chapter with content.
+    if (academicStep === "write_conclusion") {
+      const bodyDone = chapters.some(
+        (ch) => chapterRole(ch.title) === "body" && !!ch.content,
+      );
+      if (!bodyDone) {
+        toast.error("ניתן לכתוב סיכום רק לאחר שנכתב לפחות פרק גוף אחד.");
+        return;
+      }
+    }
+    // Introduction preflight: needs body + conclusion (already enforced by lock,
+    // but guard defensively in case state is stale).
+    if (academicStep === "write_introduction") {
+      const bodyDone = chapters.some(
+        (ch) => chapterRole(ch.title) === "body" && !!ch.content,
+      );
+      if (!bodyDone) {
+        toast.error("ניתן לכתוב מבוא רק לאחר שנכתבו פרקי הגוף.");
+        return;
+      }
     }
 
     setLoading(true);
@@ -1115,12 +1145,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
-    // Stream chapter writes (the only academic sub-mode that runs the full
-    // research pipeline). All other sub-modes are short single-shot prompts.
+    // Stream only real body chapter writes (the Deep pipeline). Intro,
+    // conclusion, and abstract synthesize already-written chapters via the
+    // light JSON path on the backend — no streaming.
     const useSseStream =
-      academicStep === "write_chapter" ||
-      academicStep === "write_introduction" ||
-      academicStep === "write_conclusion";
+      academicStep === "write_chapter" && !extraBody?.isAbstract;
 
     try {
       const body: Record<string, unknown> = {
