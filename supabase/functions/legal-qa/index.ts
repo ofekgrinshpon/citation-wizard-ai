@@ -2033,11 +2033,19 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       taskMode === "academic_writing" &&
       typeof academicStep === "string" &&
       ["suggest_topics", "validate_question", "propose_outline"].includes(academicStep);
+    // Academic body chapters (write_chapter, non-abstract) run the full Deep
+    // pipeline. Introduction and conclusion are paper-level synthesis writes —
+    // they summarize what's already on the page and must NOT do new retrieval
+    // or invent new authorities. They route through the light synthesis path
+    // (same shape as the abstract).
+    const isAcademicPaperLevelSynthesis =
+      taskMode === "academic_writing" &&
+      (academicStep === "write_introduction" ||
+       academicStep === "write_conclusion");
     const isAcademicChapter =
       taskMode === "academic_writing" &&
-      (academicStep === "write_chapter" ||
-       academicStep === "write_introduction" ||
-       academicStep === "write_conclusion");
+      academicStep === "write_chapter" &&
+      !body.isAbstract;
     const hasGroundingDoc =
       (Array.isArray(documentTexts) && documentTexts.length > 0) ||
       (typeof documentText === "string" && documentText.trim().length > 100);
@@ -2053,7 +2061,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
 
     let creditCost = 5;
     if (academicProfile) {
-      // Academic sub-modes (free outline/topics/validate, 8 for chapter+abstract)
+      // Academic sub-modes (free outline/topics/validate, 8 for chapter+abstract+intro+conclusion)
       // are sourced from ACADEMIC_PROFILES. Document grounding surcharge does
       // NOT apply to academic chapters/abstracts (they have their own context budget).
       creditCost = academicProfile.creditCost;
@@ -2061,14 +2069,16 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       creditCost += 2;
     }
 
-    // ─── Deep pipeline opt-in for academic chapter writes ───────────
-    // Academic chapters use the same Deep behavior as research/Deep:
+    // ─── Deep pipeline opt-in for academic body chapter writes ───────────
+    // Body chapters (write_chapter, non-abstract) use the same Deep behavior
+    // as research/Deep:
     //  • full Frame→Decompose→ClaimMap→Retrieve→SourcePack→E.5→Draft pipeline
     //  • Deep envelope (1200-2000 words, footnote floor 8, anchor pass on)
     //  • Stage E.5 Perplexity completion when core < 6
     //  • citation engine resolver canonicalises the parsed footnotes (below)
     // We force the deep profile for chapters AFTER resolveModeProfile so any
-    // depth coming from the body is overridden — chapters are always Deep.
+    // depth coming from the body is overridden — body chapters are always Deep.
+    // Intro/conclusion are excluded — they're synthesis-only (light path).
     if (isAcademicChapter) {
       const forced = resolveModeProfile("deep");
       researchDepth = forced.depth;
@@ -2158,15 +2168,19 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
 
     // ========= Academic sub-mode shortcut =========
     // For suggest_topics, validate_question, propose_outline: lighter flow without full retrieval.
-    // Also: write_chapter when isAbstract === true, since the abstract is pure synthesis of
-    // already-written chapters and must NOT introduce new external citations.
+    // Also: write_chapter when isAbstract === true (pure synthesis of already-written chapters,
+    // no new external citations) — and write_introduction / write_conclusion (paper-level
+    // synthesis writes that summarize the body chapters that were just produced; no retrieval,
+    // no new authorities).
     const isAbstractGeneration =
       taskMode === "academic_writing" && academicStep === "write_chapter" && !!isAbstract;
+    const isSynthesisOnly = isAbstractGeneration || isAcademicPaperLevelSynthesis;
 
     if (
       taskMode === "academic_writing" &&
       academicStep &&
-      (["suggest_topics", "validate_question", "propose_outline"].includes(academicStep) || isAbstractGeneration)
+      (["suggest_topics", "validate_question", "propose_outline"].includes(academicStep) ||
+        isSynthesisOnly)
     ) {
       const subPrompt = getAcademicSubModePrompt(academicStep, body);
       if (!subPrompt) {
@@ -2175,9 +2189,11 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         });
       }
 
-      // Quick local search for context (skipped for abstract — synthesis only)
+      // Quick local search for context (skipped for synthesis-only writes —
+      // abstract / intro / conclusion synthesize the already-written chapters
+      // and must NOT introduce fresh external citations).
       let localContext = "";
-      if (!isAbstractGeneration) {
+      if (!isSynthesisOnly) {
         try {
           const keywords = extractKeywords(question);
           const { data: textMatches } = await adminClient.rpc("search_legal_chunks_text", {
@@ -2190,22 +2206,41 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         } catch { /* non-fatal */ }
       }
 
-      // Include multi-file context if available (skipped for abstract)
+      // Include multi-file context if available (skipped for synthesis-only writes)
       let fileContext = "";
-      if (!isAbstractGeneration && documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
+      if (!isSynthesisOnly && documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
         fileContext = "\n=== מסמכים שהועלו ===\n" +
           documentTexts.map((dt: any) => `=== ${dt.name} ===\n${dt.text?.slice(0, 5000) || ""}`).join("\n\n");
       }
+
+      // Token envelope:
+      //  • abstract → 1024 tokens (~250 words cap)
+      //  • intro / conclusion → 3000 tokens (700–1400 words of academic prose)
+      //  • topics / validate / outline → 4096 tokens (existing behavior)
+      const maxTokens = isAbstractGeneration
+        ? 1024
+        : isAcademicPaperLevelSynthesis
+          ? 3000
+          : 4096;
+
+      // User-side prompt nudge per sub-mode.
+      const userPrompt = isAbstractGeneration
+        ? "כתוב את התקציר עכשיו, עד 250 מילים בלבד."
+        : academicStep === "write_introduction"
+          ? "כתוב את פרק המבוא עכשיו, על-בסיס פרקי הגוף שכבר נכתבו."
+          : academicStep === "write_conclusion"
+            ? "כתוב את פרק הסיכום והמסקנות עכשיו, על-בסיס פרקי הגוף שכבר נכתבו."
+            : question;
 
       const aiRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
         headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "google/gemini-2.5-flash",
-          max_tokens: isAbstractGeneration ? 1024 : 4096,
+          max_tokens: maxTokens,
           messages: [
             { role: "system", content: subPrompt + localContext + fileContext },
-            { role: "user", content: isAbstractGeneration ? "כתוב את התקציר עכשיו, עד 250 מילים בלבד." : question },
+            { role: "user", content: userPrompt },
           ],
         }),
       }, 60000);
@@ -2220,7 +2255,8 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       const aiData = await aiRes.json();
       let answerText = aiData.choices?.[0]?.message?.content || "";
 
-      // Defensive word-count guard for the abstract (≤250 words). Trim by sentence if exceeded.
+      // Defensive word-count guard — abstract only (≤250 words). Intro/conclusion
+      // have soft word ranges enforced via the prompt itself.
       if (isAbstractGeneration && answerText) {
         const words = answerText.trim().split(/\s+/).filter(Boolean);
         if (words.length > 250) {
@@ -2238,7 +2274,10 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         }
       }
 
-      console.log(`Academic sub-mode (${academicStep}${isAbstractGeneration ? ":abstract" : ""}): ${answerText.length} chars, ${Date.now() - t0}ms`);
+      const stepLabel = isAbstractGeneration
+        ? `${academicStep}:abstract`
+        : academicStep!;
+      console.log(`Academic sub-mode (${stepLabel}): ${answerText.length} chars, ${Date.now() - t0}ms`);
 
       // Persist academic sub-mode runs into qa_logs so the history sidebar
       // and admin dashboards can see them. The full Deep pipeline write below
@@ -2256,6 +2295,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
           metadata: {
             academic_step: academicStep,
             is_abstract: isAbstractGeneration,
+            is_paper_level_synthesis: isAcademicPaperLevelSynthesis,
             duration_ms: Date.now() - t0,
           },
         });
