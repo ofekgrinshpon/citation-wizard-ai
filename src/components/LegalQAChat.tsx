@@ -1088,8 +1088,16 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
   const handleAcademicSubmit = async (academicStep: string, extraBody?: Record<string, unknown>) => {
     const q = question.trim();
-    if (!q && academicStep !== "write_chapter") {
+    const isPaperLevelSynthesis =
+      academicStep === "write_chapter" ||
+      academicStep === "write_introduction" ||
+      academicStep === "write_conclusion";
+    if (!q && !isPaperLevelSynthesis) {
       toast.error("יש להזין טקסט.");
+      return;
+    }
+    if (isPaperLevelSynthesis && !q && !researchQuestion?.trim()) {
+      toast.error("שאלת המחקר חסרה — חזור לשלב ניסוח שאלת המחקר.");
       return;
     }
 
