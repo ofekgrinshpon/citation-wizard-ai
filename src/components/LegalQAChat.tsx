@@ -740,17 +740,18 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         ? dbSaved
         : loadAcademicSession(projectId);
       if (saved && saved.wizardStep !== "init") {
-        setWizardStep(saved.wizardStep);
-        setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
-        setChapters(saved.chapters);
-        setResearchQuestion(saved.researchQuestion);
-        setOutline(saved.outline);
-        setProposedQuestions(saved.proposedQuestions || []);
-        setLastAcademicAction(saved.lastAcademicAction || null);
+        const ns = normalizeAcademicSession(saved);
+        setWizardStep(ns.wizardStep);
+        setMaxReachedStep(ns.maxReachedStep || ns.wizardStep);
+        setChapters(ns.chapters);
+        setResearchQuestion(ns.researchQuestion);
+        setOutline(ns.outline);
+        setProposedQuestions(ns.proposedQuestions || []);
+        setLastAcademicAction(ns.lastAcademicAction || null);
 
         // Land on the last chapter with content (or first without — whichever is further)
-        const chs = saved.chapters || [];
-        let landIdx = saved.currentChapter || 0;
+        const chs = ns.chapters || [];
+        let landIdx = ns.currentChapter || 0;
         const lastWritten = (() => {
           for (let i = chs.length - 1; i >= 0; i--) if (chs[i]?.content) return i;
           return -1;
