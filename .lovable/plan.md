@@ -1,51 +1,65 @@
-**What is happening**
-
-The chapter is not being written because the request is being stopped before a valid `write_conclusion` request completes. A chapter only gets saved after `handleAcademicSubmit()` receives an AI answer and writes it into `chapters[targetIdx].content`. If the text-validation branch fires first, or the request is sent without usable `previousChapters`, the function returns early and that save block never runs.
-
 **Do I know what the issue is?**
 
-Yes. The current code has fixed part of the backend guard, but the conclusion flow still depends on live React state (`question`, `researchQuestion`, `chapters`, `currentChapter`) at click/runtime. For `סיכום ומסקנות`, that is fragile: the visible textarea can be empty, selected chapter state can drift, and `previousChapters` can be built from stale/empty state. When that happens, the flow aborts before the AI answer exists, so no chapter content is saved.
+Yes.
 
-Also, the exact old text `יש להזין טקסט` no longer exists in the current source code outside the plan/comment, so if that exact text appears it means either an older client bundle is still running, or another generic submit/validation path is being triggered instead of the conclusion writer.
+The message **"יש להזין טקסט"** means **"you must enter text"**. It is not coming from the conclusion-writing AI and not from the backend. It is a frontend validation toast.
 
-**Fix plan**
+**What is actually happening**
 
-1. **Make conclusion generation independent of the visible textarea**
-   - For `write_conclusion`, `write_introduction`, and abstract generation, build the request question only from the saved research question / outline fallback.
-   - Never read `question.trim()` as a requirement for these writing steps.
+You are currently viewing a **past preview commit**: `d778744...` with the message **"Gated intro/conclusion paths"**.
 
-2. **Snapshot chapter state at click time**
-   - In `writeCurrentChapter`, capture:
-     - selected chapter index,
-     - selected title,
-     - chapter role,
-     - full `chapters` array,
-     - saved `researchQuestion`,
-     - `outline`.
-   - Pass this snapshot into `handleAcademicSubmit()`.
-   - Build `previousChapters` from the snapshot, not from possibly stale state.
+In that exact old commit, `src/components/LegalQAChat.tsx` has this guard inside `handleAcademicSubmit`:
 
-3. **Guarantee `סיכום ומסקנות` receives body content**
-   - For `write_conclusion`, filter the snapshot to written body chapters only.
-   - If no body chapter has content, show only the correct blocker: `ניתן לכתוב סיכום רק לאחר שנכתב לפחות פרק גוף אחד.`
-   - If body content exists, always send it as `previousChapters`.
+```ts
+const q = question.trim();
+if (!q && academicStep !== "write_chapter") {
+  toast.error("יש להזין טקסט.");
+  return;
+}
+```
 
-4. **Save the returned answer to the exact selected chapter**
-   - Continue using `extraBody.chapterIndex`, but prefer the snapshot index.
-   - This prevents async drift from saving the answer into the wrong chapter or not visibly updating the conclusion.
+That is the bug.
 
-5. **Remove remaining accidental submit paths**
-   - Add `type="button"` to every remaining academic wizard button and raw button that lacks it.
-   - This prevents a generic validation/send path from firing while the academic wizard is visible.
+When you click **write conclusion**, the step is:
 
-6. **Map backend synthesis errors to the right UI message**
-   - `No previous chapter content available for synthesis` → body-chapter prerequisite message.
-   - `Missing researchQuestion for academic synthesis` → missing research-question message.
-   - Do not surface generic text-input errors for conclusion/intro/abstract.
+```ts
+academicStep === "write_conclusion"
+```
 
-7. **Add one targeted debug log**
-   - Log the academic step, selected chapter title, number of written body chapters, and request `previousChapters.length`.
-   - If anything still fails, the next browser snapshot will show exactly which branch stopped it.
+Since `write_conclusion !== "write_chapter"`, the old code incorrectly demands text in the visible textarea. But the conclusion should not depend on a textarea at all — it should be synthesized from the already-written body chapters.
+
+Because this guard returns immediately, the request never reaches `legal-qa`, which is why the logs show no matching backend request.
+
+**What I confirmed**
+
+- The exact text **"יש להזין טקסט."** exists in the old previewed commit.
+- It does **not** exist in the current source except historical/plan references.
+- The saved academic session does have written body chapters:
+  - 4 body chapters have content
+  - `current_chapter = 6`
+  - chapter 6 is `סיכום ומסקנות`
+  - conclusion content is still empty
+- So your expectation is correct: the conclusion should be generated from the existing chapters.
+
+**The actual fix**
+
+1. Stop testing from the old past-preview commit, or restore the latest working state.
+2. If that old commit was restored into the active project, apply one minimal frontend fix:
+   - `write_conclusion`, `write_introduction`, and abstract generation must bypass the typed-text validation.
+   - Only topic/question/outline steps should require typed text.
+3. Keep the request body for conclusion based on:
+   - saved research question
+   - already-written body chapters
+   - selected chapter title `סיכום ומסקנות`
+4. Add one visible debug log only if still needed:
+   - academic step
+   - selected chapter
+   - body chapter count
+   - whether the request is sent
+
+**Why previous changes did not appear to help**
+
+Because the preview you are using is not the current changed code — it is a historical preview. The old guard is still running there, so every later fix in the active source cannot affect what you are currently testing until you leave that past preview / use the latest preview.
 
 <lov-actions>
   <lov-open-history>View History</lov-open-history>
