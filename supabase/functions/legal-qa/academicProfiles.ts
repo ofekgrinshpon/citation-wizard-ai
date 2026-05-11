@@ -131,6 +131,8 @@ export const ACADEMIC_PROFILES: Record<AcademicStep, AcademicProfile> = {
     qaGuardUnresolvedShareThreshold: 0.4,
     qaGuardUnderWordFloorRatio: 0.7, // <70% of Deep's 1200 floor → flag
     qaGuardNarrativeViolationThreshold: 3,
+    criticEnabled: true,
+    criticMinCoverage: 0.7,
   },
   // ─── Introduction (write_introduction) ─────────────────────────────
   // Generated LATE — after every body chapter and the conclusion are written.
