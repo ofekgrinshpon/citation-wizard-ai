@@ -87,6 +87,12 @@ interface QAResult {
   case_summary?: boolean;
   verified_source?: "user" | "local" | "external" | "none";
   dropped_footnotes_count?: number;
+  paper_memory_delta?: unknown;
+  coherence_audit?: {
+    verdict: "pass" | "revise";
+    issues_count: number;
+    revised: boolean;
+  } | null;
   case_metadata?: {
     title?: string | null;
     citation?: string | null;
@@ -121,6 +127,10 @@ type WizardStep = "init" | "topic_or_question" | "outline" | "writing" | "checkp
 interface ChapterData {
   title: string;
   content: string | null;
+  /** Global Paper Coherence: compact ledger extracted from this chapter
+   *  after it was finalized. Re-shipped on subsequent write_chapter calls
+   *  so the model is primed with prior claims/definitions/citations. */
+  paperMemoryDelta?: unknown;
 }
 
 interface AcademicSession {
@@ -1162,6 +1172,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           })
           .map((ch) => ({ title: ch.title, content: (ch.content || "").slice(0, sliceCap) }));
 
+        // Global Paper Coherence: ship cumulative PaperMemory deltas from
+        // all previously finalized body chapters (excluding the abstract).
+        // The backend merges them into the structured prompt block so the
+        // new chapter is primed with prior claims/definitions/citations.
+        if (!isAbstract) {
+          const deltas = chapters
+            .filter((ch) => ch.paperMemoryDelta && !isAbstractChapter(ch.title))
+            .map((ch) => ch.paperMemoryDelta);
+          if (deltas.length > 0) {
+            body.paperMemoryDeltas = deltas;
+          }
+        }
+
         // Introduction also receives the conclusion draft (when it exists)
         // so it can frame the actual final thesis, not the planned one.
         if (isIntro) {
@@ -1259,7 +1282,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       ) {
         // Save chapter content (works for body, intro, and conclusion writes)
         const updatedChapters = [...chapters];
-        updatedChapters[currentChapter] = { ...updatedChapters[currentChapter], content: qaResult.answer };
+        updatedChapters[currentChapter] = {
+          ...updatedChapters[currentChapter],
+          content: qaResult.answer,
+          ...(qaResult.paper_memory_delta
+            ? { paperMemoryDelta: qaResult.paper_memory_delta }
+            : {}),
+        };
         setChapters(updatedChapters);
         updateWizardStep("checkpoint");
 
