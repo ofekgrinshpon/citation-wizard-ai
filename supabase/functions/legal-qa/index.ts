@@ -7567,6 +7567,47 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
     }
     emitStage("footnote_validate", "complete", `${finalFootnotes.length} הערות`);
 
+    // ========= Paper Memory extraction (Global Paper Coherence) =========
+    // After all post-processing, distil the finalized chapter into a compact
+    // PaperMemoryDelta and ship it back to the frontend. The frontend
+    // persists it on ChapterData and re-sends the cumulative deltas list
+    // with the next chapter request. Only for real body chapters.
+    let paperMemoryDelta: PaperMemoryDelta | null = null;
+    if (
+      coherenceEnabled &&
+      isAcademicChapter &&
+      academicStep === "write_chapter" &&
+      !isAbstract &&
+      typeof answer === "string" &&
+      answer.length >= 200
+    ) {
+      try {
+        emitStage("paper_memory_extract", "running");
+        const ext = await extractPaperMemoryDelta({
+          chapterIndex: Number(chapterIndex ?? 0),
+          chapterTitle: String(chapterTitle ?? ""),
+          chapterContent: answer,
+          thesis: typeof body.researchQuestion === "string" ? body.researchQuestion : undefined,
+          timeoutMs: 25_000,
+        });
+        stageRuns.push(ext.run);
+        paperMemoryDelta = ext.delta;
+        emitStage(
+          "paper_memory_extract",
+          "complete",
+          paperMemoryDelta
+            ? `${paperMemoryDelta.claims.length} טענות, ${paperMemoryDelta.definitions.length} הגדרות`
+            : "ריק",
+        );
+        console.log(
+          `[paper_memory] extracted: claims=${paperMemoryDelta?.claims.length ?? 0} ` +
+          `status=${ext.run.status}`,
+        );
+      } catch (pmErr) {
+        console.error("[paper_memory] non-fatal error:", (pmErr as Error).message);
+      }
+    }
+
     // Log — canonical server-side log with internal diagnostics in metadata.
     try {
       const localCount = finalFootnotes.filter((f) => f.source === "local").length;
