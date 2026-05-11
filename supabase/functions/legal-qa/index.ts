@@ -796,7 +796,15 @@ function buildResponse(
   answer: string,
   footnotes: Array<{ number: number; citation: string; source_type: string; url?: string }>,
   source_urls: string[],
-  extras: { dropped_footnotes_count?: number } = {},
+  extras: {
+    dropped_footnotes_count?: number;
+    paper_memory_delta?: PaperMemoryDelta | null;
+    coherence_audit?: {
+      verdict: "pass" | "revise";
+      issues_count: number;
+      revised: boolean;
+    } | null;
+  } = {},
 ): Response {
   // Explicitly strip the legacy `source` field on each footnote (would leak
   // "local" | "perplexity" | "unverified" provenance categorization).
@@ -813,6 +821,12 @@ function buildResponse(
   };
   if (typeof extras.dropped_footnotes_count === "number") {
     rawPayload.dropped_footnotes_count = extras.dropped_footnotes_count;
+  }
+  if (extras.paper_memory_delta) {
+    rawPayload.paper_memory_delta = extras.paper_memory_delta;
+  }
+  if (extras.coherence_audit) {
+    rawPayload.coherence_audit = extras.coherence_audit;
   }
   const payload = sanitizeResponse(rawPayload);
   return new Response(JSON.stringify(payload), {
