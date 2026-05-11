@@ -7512,6 +7512,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           // Per-doc rerank drop details (title + score + reason). Capped at 10.
           // Lets us validate the rerank gate against future runs without re-tracing.
           rerank_drops: rerankDrops,
+          ...(rerankV2Out.v2 ? { rerank_v2: rerankV2Out.v2 } : {}),
           claim_map_summary: claimMapV2Summary
             ?? (claimMap ? { total: claimMap.length, allowed: claimMapAllowedCount, by_strength: byStrength } : null),
           drafting_path: draftingPath,
