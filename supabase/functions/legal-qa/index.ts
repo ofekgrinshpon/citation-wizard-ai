@@ -4907,6 +4907,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     }
 
 
+    // ========= Step 4b: Anchor pass (Pilot v7, Fast-mode) =========
     // Post-draft Gemini Flash call: scan the drafted body for substantive
     // sentences that lack a [N] marker but have a real supporting source in
     // the source pack, and inject `[N]` + a numbered footnote line.
