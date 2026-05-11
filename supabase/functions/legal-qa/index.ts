@@ -7874,6 +7874,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
 
     return buildResponse(answer, finalFootnotes, citations, {
       dropped_footnotes_count: droppedFootnotesCount,
+      paper_memory_delta: paperMemoryDelta,
+      coherence_audit: coherenceAudit,
     });
   } catch (e) {
     console.error("legal-qa error:", e);
