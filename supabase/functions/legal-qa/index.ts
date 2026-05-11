@@ -7889,10 +7889,55 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       console.error("Failed to log QA stats (non-fatal):", logErr);
     }
 
+    // ========= Continuous footnote numbering — final offset shift =========
+    // Runs after all post-processing. finalFootnotes is the canonical local
+    // 1..K sequence; shift every number by `effectiveFootnoteOffset` so the
+    // assembled paper has one continuous footnote sequence.
+    let shiftedSuperscripts = 0;
+    let shiftedBackrefs = 0;
+    if (effectiveFootnoteOffset > 0 && finalFootnotes.length > 0) {
+      const offset = effectiveFootnoteOffset;
+      // 1) Rewrite superscripts in `answer` using two-phase placeholder
+      //    strategy to avoid 1→11 collisions when shift+digit overlaps.
+      // Sort descending so larger numbers are placeheld first (defensive).
+      const sortedNums = finalFootnotes.map((f) => f.number).sort((a, b) => b - a);
+      for (const oldNum of sortedNums) {
+        const newNum = oldNum + offset;
+        const oldSup = toSuperscript(oldNum);
+        const placeholder = `__FNSHIFT_${newNum}__`;
+        const before = answer;
+        answer = answer.replaceAll(oldSup, placeholder);
+        if (answer !== before) shiftedSuperscripts++;
+      }
+      for (const oldNum of sortedNums) {
+        const newNum = oldNum + offset;
+        answer = answer.replaceAll(`__FNSHIFT_${newNum}__`, toSuperscript(newNum));
+      }
+      // 2) Rewrite textual back-references (Rule 37.7) inside citation text.
+      const SUPRA_QUOTE = '["\u05F4\u201C\u201D]';
+      const SUPRA_RE = new RegExp(`לעיל\\s*,?\\s*ה${SUPRA_QUOTE}ש\\s+(\\d{1,3})`, "g");
+      const validOldNums = new Set(finalFootnotes.map((f) => f.number));
+      for (const fn of finalFootnotes) {
+        fn.citation = fn.citation.replace(SUPRA_RE, (match: string, num: string) => {
+          const oldNum = parseInt(num, 10);
+          if (!validOldNums.has(oldNum)) return match;
+          shiftedBackrefs++;
+          return match.replace(/(\d{1,3})/, String(oldNum + offset));
+        });
+      }
+      // 3) Rewrite the `number` field on every footnote.
+      for (const fn of finalFootnotes) {
+        fn.number = fn.number + offset;
+      }
+      console.log(`[footnote-offset] applied offset=${offset}, count=${finalFootnotes.length}, supers=${shiftedSuperscripts}, backrefs=${shiftedBackrefs}`);
+    }
+
     return buildResponse(answer, finalFootnotes, citations, {
       dropped_footnotes_count: droppedFootnotesCount,
       paper_memory_delta: paperMemoryDelta,
       coherence_audit: coherenceAudit,
+      footnotes_count: finalFootnotes.length,
+      footnote_offset_applied: effectiveFootnoteOffset,
     });
   } catch (e) {
     console.error("legal-qa error:", e);
