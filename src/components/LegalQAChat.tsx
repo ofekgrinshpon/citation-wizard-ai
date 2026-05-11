@@ -1266,6 +1266,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
       if (useSseStream) {
         body.stream = true;
+        // The backend SSE wrapper only activates for Deep-style requests.
+        // Academic body chapters are already forced onto the Deep pipeline
+        // server-side, but the request still must carry this flag so the
+        // socket stays open until the final answer is returned and saved.
+        body.depth = "deep";
       }
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
