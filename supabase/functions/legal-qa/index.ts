@@ -39,6 +39,12 @@ import { resolveAcademicProfile, type AcademicProfile, type AcademicStep } from 
 import { runChapterCritic, shouldRevise, type CriticResult } from "./critic.ts";
 import { runChapterRevision } from "./criticRevision.ts";
 import {
+  mergePaperMemoryDeltas,
+  renderPaperMemoryBlock,
+  extractPaperMemoryDelta,
+  type PaperMemoryDelta,
+} from "./paperMemory.ts";
+import {
   dynamicRerank,
   type RerankInputDoc,
   type RerankV2Telemetry,
