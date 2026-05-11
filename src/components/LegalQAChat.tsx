@@ -448,18 +448,139 @@ function FlowTagPill({ tag }: { tag: string }) {
   );
 }
 
+// ─── Inline editor for the body-chapter list (rename / reorder / add / delete)
+// Special chapters (תקציר, מבוא, סיכום) are not editable: they are always
+// force-injected by approveOutline() in the canonical display order.
+function OutlineChapterEditor({
+  initialTitles,
+  onConfirm,
+  onCancel,
+}: {
+  initialTitles: string[];
+  onConfirm: (titles: string[]) => void;
+  onCancel: () => void;
+}) {
+  const [titles, setTitles] = useState<string[]>(initialTitles.length > 0 ? initialTitles : [""]);
+
+  const move = (idx: number, delta: -1 | 1) => {
+    const j = idx + delta;
+    if (j < 0 || j >= titles.length) return;
+    const next = [...titles];
+    [next[idx], next[j]] = [next[j], next[idx]];
+    setTitles(next);
+  };
+  const rename = (idx: number, value: string) => {
+    const next = [...titles];
+    next[idx] = value;
+    setTitles(next);
+  };
+  const remove = (idx: number) => {
+    if (titles.length <= 1) {
+      toast.info("חייב להישאר לפחות פרק גוף אחד");
+      return;
+    }
+    setTitles(titles.filter((_, i) => i !== idx));
+  };
+  const add = () => setTitles([...titles, ""]);
+
+  const handleConfirm = () => {
+    const cleaned = titles.map(t => t.trim()).filter(Boolean);
+    if (cleaned.length === 0) {
+      toast.error("הוסיפו לפחות פרק גוף אחד");
+      return;
+    }
+    // Strip any user-typed special chapter names — those are auto-injected.
+    const bodyOnly = cleaned.filter(t => chapterRole(t) === "body");
+    if (bodyOnly.length === 0) {
+      toast.error("שמות הפרקים שהוזנו זוהו כפרקים מיוחדים (מבוא/סיכום/תקציר). הוסיפו פרקי גוף.");
+      return;
+    }
+    onConfirm(bodyOnly);
+  };
+
+  return (
+    <Card className="border-primary/40 bg-primary/5">
+      <CardContent className="p-4 space-y-3">
+        <div>
+          <h3 className="font-bold text-foreground text-sm">עריכת רשימת הפרקים</h3>
+          <p className="text-xs text-muted-foreground mt-1">
+            ניתן לשנות שמות, לסדר מחדש, להוסיף או למחוק פרקי גוף. פרקי "תקציר", "מבוא" ו"סיכום ומסקנות" יתווספו אוטומטית בסדר הקנוני.
+          </p>
+        </div>
+        <ol className="space-y-2">
+          {titles.map((title, idx) => (
+            <li key={idx} className="flex items-center gap-1.5 rounded-lg border border-border bg-background p-2">
+              <span className="flex-shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">
+                {idx + 1}
+              </span>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => rename(idx, e.target.value)}
+                placeholder="שם הפרק"
+                className="flex-1 min-w-0 rounded border border-border bg-background px-2 py-1 text-sm"
+                dir="rtl"
+              />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 w-7 p-0"
+                onClick={() => move(idx, -1)}
+                disabled={idx === 0}
+                aria-label="העבר למעלה"
+              >
+                <ChevronRight className="w-4 h-4 rotate-90" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 w-7 p-0"
+                onClick={() => move(idx, 1)}
+                disabled={idx === titles.length - 1}
+                aria-label="העבר למטה"
+              >
+                <ChevronLeft className="w-4 h-4 rotate-90" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 w-7 p-0 text-destructive hover:text-destructive"
+                onClick={() => remove(idx)}
+                aria-label="מחק פרק"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </li>
+          ))}
+        </ol>
+        <Button variant="outline" size="sm" onClick={add} className="gap-1">
+          <Plus className="w-3.5 h-3.5" />
+          הוסף פרק
+        </Button>
+        <div className="flex gap-2 pt-2 border-t border-border">
+          <Button size="sm" onClick={handleConfirm}>אשר ועבור לכתיבה</Button>
+          <Button variant="ghost" size="sm" onClick={onCancel}>ביטול</Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function OutlineReport({
   answer,
   researchQuestion,
   onApprove,
+  onApproveEdited,
   onBack,
 }: {
   answer: string;
   researchQuestion: string;
   onApprove: () => void;
+  onApproveEdited: (editedBodyTitles: string[]) => void;
   onBack: () => void;
 }) {
   const parsed = parseOutline(answer);
+  const [isEditing, setIsEditing] = useState(false);
 
   if (!parsed) {
     return (
@@ -477,6 +598,11 @@ function OutlineReport({
       </Card>
     );
   }
+
+  // Extract body chapter titles from the parsed outline for the editor.
+  const parsedBodyTitles = parsed.chapters
+    .map(c => c.title.trim())
+    .filter(t => t && chapterRole(t) === "body");
 
   const introOrder = ["שאלת המחקר", "התזה המרכזית (Thesis)", "חשיבות ותרומה לשיח המשפטי", "קו הטיעון (Line of Argument)", "מבנה העבודה"];
   const conclusionOrder = ["מסקנה משוערת", "תרומה משפטית"];
@@ -582,10 +708,22 @@ function OutlineReport({
         </CardContent>
       </Card>
 
-      <div className="flex gap-2 pt-1">
-        <Button size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
-        <Button variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
-      </div>
+      {isEditing ? (
+        <OutlineChapterEditor
+          initialTitles={parsedBodyTitles}
+          onConfirm={(titles) => { setIsEditing(false); onApproveEdited(titles); }}
+          onCancel={() => setIsEditing(false)}
+        />
+      ) : (
+        <div className="flex gap-2 pt-1 flex-wrap">
+          <Button size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
+          <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="gap-1">
+            <Wand2 className="w-3.5 h-3.5" />
+            ערוך רשימת פרקים
+          </Button>
+          <Button variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
+        </div>
+      )}
     </div>
   );
 }
@@ -1357,20 +1495,28 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     }
   };
 
-  const approveOutline = () => {
-    const lines = outline.split("\n");
-    const bodyTitles: string[] = [];
-    for (const rawLine of lines) {
-      const line = rawLine.replace(/\s+$/, "");
-      if (/^\s+/.test(rawLine)) continue;
-      const match = line.match(/^\d+\.\s+\*\*(.+?)\*\*(?:\s*[–\-—]\s*.+)?$/) ||
-                    line.match(/^\d+\.\s+(.+?)(?:\s*[–\-—]\s*.+)?$/);
-      if (match) {
-        const title = match[1].trim().replace(/\*\*/g, "");
-        if (!title) continue;
-        // Strip any model-emitted special chapters; we always force-inject ours.
-        const role = chapterRole(title);
-        if (role === "body") bodyTitles.push(title);
+  const approveOutline = (editedBodyTitles?: string[]) => {
+    let bodyTitles: string[] = [];
+    if (editedBodyTitles && editedBodyTitles.length > 0) {
+      // User-edited list: trust it, but still filter out any special-chapter
+      // names that may have slipped in (those are force-injected below).
+      bodyTitles = editedBodyTitles
+        .map(t => t.trim())
+        .filter(t => t && chapterRole(t) === "body");
+    } else {
+      const lines = outline.split("\n");
+      for (const rawLine of lines) {
+        const line = rawLine.replace(/\s+$/, "");
+        if (/^\s+/.test(rawLine)) continue;
+        const match = line.match(/^\d+\.\s+\*\*(.+?)\*\*(?:\s*[–\-—]\s*.+)?$/) ||
+                      line.match(/^\d+\.\s+(.+?)(?:\s*[–\-—]\s*.+)?$/);
+        if (match) {
+          const title = match[1].trim().replace(/\*\*/g, "");
+          if (!title) continue;
+          // Strip any model-emitted special chapters; we always force-inject ours.
+          const role = chapterRole(title);
+          if (role === "body") bodyTitles.push(title);
+        }
       }
     }
     if (bodyTitles.length === 0) {
@@ -1998,6 +2144,10 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 onApprove={() => {
                   if (!checkDestructiveEdit("outline")) return;
                   approveOutline();
+                }}
+                onApproveEdited={(titles) => {
+                  if (!checkDestructiveEdit("outline")) return;
+                  approveOutline(titles);
                 }}
                 onBack={() => { setResult(null); setWizardStep("topic_or_question"); }}
               />
