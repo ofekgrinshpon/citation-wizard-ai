@@ -2071,10 +2071,72 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               </div>
             )}
 
+            {/* No-coverage empty state */}
+            {wizardStep === "topic_or_question" && result && lastAcademicAction === "suggest_topics" && result.noCoverage && (
+              <Card className="border-destructive/40 bg-destructive/5">
+                <CardContent className="p-4 space-y-3" dir="rtl">
+                  <p className="text-sm font-semibold text-destructive">⚠️ אין כיסוי מקורות לנושא הזה</p>
+                  <p className="text-sm text-foreground leading-relaxed">{result.answer}</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setProposedQuestions([]);
+                      setResult(null);
+                      setLastAcademicAction(null);
+                      setQuestion("");
+                    }}
+                  >
+                    נסה נושא אחר
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Show AI response for topic suggestions / validation */}
             {wizardStep === "topic_or_question" && result && lastAcademicAction === "suggest_topics" && proposedQuestions.length > 0 && (
               <Card className="border-border">
                 <CardContent className="p-4 space-y-3">
+                  {result.topicCoverage && (
+                    <div className="flex flex-wrap items-center gap-2" dir="rtl">
+                      {result.topicCoverage.localHits > 0 && (
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-primary/15 text-primary font-medium">
+                          📚 {result.topicCoverage.localHits} במאגר
+                        </span>
+                      )}
+                      {result.topicCoverage.externalHits > 0 && (
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-accent/40 text-accent-foreground font-medium">
+                          🌐 {result.topicCoverage.externalHits} מהרשת
+                        </span>
+                      )}
+                      {!result.topicCoverage.minCoverageReached && (
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-destructive/10 text-destructive font-medium">
+                          ⚠️ כיסוי דל
+                        </span>
+                      )}
+                      {result.topicCoverage.sources.length > 0 && (
+                        <details className="text-xs w-full mt-1">
+                          <summary className="cursor-pointer text-muted-foreground hover:text-foreground select-none">
+                            ראה מקורות שנמצאו ({result.topicCoverage.sources.length})
+                          </summary>
+                          <ul className="mt-2 space-y-1 pr-3 border-r-2 border-border">
+                            {result.topicCoverage.sources.map((s, i) => (
+                              <li key={i} className="text-muted-foreground leading-relaxed">
+                                {s.url ? (
+                                  <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                                    {s.title}
+                                  </a>
+                                ) : (
+                                  <span>{s.title}</span>
+                                )}
+                                <span className="text-xs opacity-70"> · {s.source_type} · [{s.origin === "local" ? "מאגר" : "חיצוני"}]</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </details>
+                      )}
+                    </div>
+                  )}
                   <p className="text-sm font-semibold text-foreground">בחרו אחת מהשאלות המוצעות:</p>
                   <div className="space-y-2">
                     {proposedQuestions.map((q, idx) => (
