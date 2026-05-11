@@ -124,3 +124,4 @@
 - [Case Type Prefix Dictionary](mem://logic/case-type-prefix-dictionary) — Central BIU procedural-prefix list
 - [Case Disambiguation Relevance](mem://logic/case-disambiguation-relevance) — Token + caseType filter; Takdin-lite untrusted for padi_*
 - [Academic Style Guide v1](mem://features/academic-writing-mode/style-guide-v1) — Distilled, versioned Hebrew prescriptive style guide injected into Deep write_chapter drafts; admin-gated `body.styleGuideEnabled` override; `STYLE_GUIDE_ENABLED` env; telemetry `qa_logs.metadata.style_guide`
+- [Academic Chapter Critic Pass](mem://features/academic-writing-mode/critic-pass) — Post-drafter audit (gpt-5-mini, JSON tool-call) + single targeted revision; triggers on high-severity issues or coverage < profile.criticMinCoverage; env `ACADEMIC_CRITIC_ENABLED` (default on); telemetry `qa_logs.metadata.chapter_critic`
