@@ -4614,7 +4614,93 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     }
 
 
-    // ========= Step 4b: Anchor pass (Pilot v7, Fast-mode) =========
+    // ========= Step 4a: Critic pass (academic chapters only) =========
+    // Audit the drafter output against the claim map + source pack. If the
+    // critic flags material issues (high severity, multiple medium issues,
+    // or claim coverage < threshold), run a single targeted revision pass.
+    // Runs BEFORE the anchor pass so anchoring later applies to the revised
+    // body. Feature-flagged via ACADEMIC_CRITIC_ENABLED env var (default on).
+    // Failure mode: any error keeps the original draft; never blocks shipping.
+    let chapterCritic: { result: CriticResult | null; revised: boolean; revision_status?: string } | null = null;
+    const criticEnvEnabled = Deno.env.get("ACADEMIC_CRITIC_ENABLED") !== "false";
+    if (
+      criticEnvEnabled &&
+      isAcademicChapter &&
+      useStructuredDrafterPath &&
+      useNewDrafter &&
+      academicProfile?.criticEnabled &&
+      claimMapV2 &&
+      sourcePackV2 &&
+      answerText.length >= 200
+    ) {
+      try {
+        emitStage("critic", "running");
+        const criticStartedAt = new Date();
+        const cRes = await runChapterCritic({
+          draft: answerText,
+          claimMap: claimMapV2,
+          sourcePack: sourcePackV2,
+          profile: academicProfile,
+          timeoutMs: 25_000,
+        });
+        stageRuns.push(cRes.run);
+        const issuesCount = cRes.result?.issues.length ?? 0;
+        console.log(
+          `[critic] verdict=${cRes.result?.verdict ?? "null"} issues=${issuesCount} ` +
+          `coverage=${cRes.result?.coverage.claims_supported ?? 0}/${cRes.result?.coverage.claims_total ?? 0} ` +
+          `duration_ms=${Date.now() - criticStartedAt.getTime()} status=${cRes.run.status}`,
+        );
+
+        let revised = false;
+        let revisionStatus: string | undefined;
+        if (shouldRevise(cRes.result, academicProfile) && cRes.result) {
+          emitStage("revision", "running");
+          const rev = await runChapterRevision({
+            originalDraft: answerText,
+            issues: cRes.result.issues,
+            drafterSystemPrompt,
+            userMessage,
+            variant: drafterVariant,
+            maxTokens: aiMaxTokens,
+            timeoutMs: drafterTimeoutMs,
+          });
+          stageRuns.push({
+            stage: "revision",
+            provider: rev.result?.modelUsed.startsWith("gpt-") ? "openai" : "gemini",
+            model: rev.result?.modelUsed ?? MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI,
+            started_at: rev.startedAt.toISOString(),
+            completed_at: new Date().toISOString(),
+            duration_ms: rev.durationMs,
+            status: rev.status === "success" ? "success" : "error",
+            ...(rev.status !== "success" ? { error_message: `revision_${rev.status}` } : {}),
+          });
+          revisionStatus = rev.status;
+          if (rev.status === "success" && rev.result) {
+            answerText = rev.result.text;
+            drafterModelUsed = rev.result.modelUsed;
+            revised = true;
+            emitStage("revision", "complete", `${answerText.length} תווים`);
+            console.log(`[revision] applied: model=${rev.result.modelUsed} new_len=${answerText.length}`);
+          } else {
+            emitStage("revision", "complete", "ללא שינוי");
+            console.warn(`[revision] kept original: status=${rev.status}`);
+          }
+        }
+
+        chapterCritic = {
+          result: cRes.result,
+          revised,
+          ...(revisionStatus ? { revision_status: revisionStatus } : {}),
+        };
+        emitStage("critic", "complete", `${issuesCount} ממצאים`);
+      } catch (criticErr) {
+        console.error("[critic] unexpected error (non-fatal):", (criticErr as Error).message);
+        chapterCritic = { result: null, revised: false, revision_status: "error" };
+      }
+    }
+
+
+
     // Post-draft Gemini Flash call: scan the drafted body for substantive
     // sentences that lack a [N] marker but have a real supporting source in
     // the source pack, and inject `[N]` + a numbered footnote line.
