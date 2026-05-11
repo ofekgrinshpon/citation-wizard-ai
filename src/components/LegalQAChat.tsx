@@ -1309,6 +1309,14 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           ...(qaResult.paper_memory_delta
             ? { paperMemoryDelta: qaResult.paper_memory_delta }
             : {}),
+          // Continuous footnote numbering: remember how many footnotes this
+          // chapter emitted so the next chapter can compute its offset.
+          // Prefer the explicit count from the backend; fall back to the
+          // footnotes array length.
+          footnotesCount:
+            typeof qaResult.footnotes_count === "number"
+              ? qaResult.footnotes_count
+              : (qaResult.footnotes?.length ?? 0),
         };
         setChapters(updatedChapters);
         updateWizardStep("checkpoint");
