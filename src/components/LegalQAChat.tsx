@@ -1214,36 +1214,24 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         const isAbstract = !!extraBody?.isAbstract;
         const isIntro = academicStep === "write_introduction";
         const isConclusion = academicStep === "write_conclusion";
-        // Cap per chapter:
-        //  - abstract: 6,000 — pure synthesis of the whole paper (incl. intro + conclusion).
-        //  - conclusion: 3,500 — needs richer recall to synthesize key findings.
-        //  - introduction: 2,500 — frames the paper, doesn't re-analyze it.
-        //  - body chapter: 2,000 — current behavior, used for cross-chapter coherence.
         const sliceCap = isAbstract ? 6000 : isConclusion ? 3500 : isIntro ? 2500 : 2000;
-        // For body chapter writes the abstract chapter is excluded so the
-        // model isn't biased by a placeholder synthesis. For intro/conclusion/
-        // abstract we want only body-role chapters that have real content.
-        body.previousChapters = chapters
+
+        // Prefer snapshot captured at click time if provided.
+        const snapshot = Array.isArray((extraBody as any)?.snapshotChapters)
+          ? ((extraBody as any).snapshotChapters as ChapterData[])
+          : chapters;
+
+        body.previousChapters = snapshot
           .filter((ch) => {
             if (!ch.content) return false;
-            if (isAbstract) {
-              // Abstract sees everything except itself.
-              return !isAbstractChapter(ch.title);
-            }
-            if (isIntro || isConclusion) {
-              // Intro & conclusion synthesize the body. Skip the other special chapters.
-              const role = chapterRole(ch.title);
-              return role === "body";
-            }
-            // Regular body-chapter write: skip the abstract.
+            if (isAbstract) return !isAbstractChapter(ch.title);
+            if (isIntro || isConclusion) return chapterRole(ch.title) === "body";
             return !isAbstractChapter(ch.title);
           })
           .map((ch) => ({ title: ch.title, content: (ch.content || "").slice(0, sliceCap) }));
 
-        // Introduction also receives the conclusion draft (when it exists)
-        // so it can frame the actual final thesis, not the planned one.
         if (isIntro) {
-          const conclusionCh = chapters.find((ch) => isConclusionChapter(ch.title) && ch.content);
+          const conclusionCh = snapshot.find((ch) => isConclusionChapter(ch.title) && ch.content);
           if (conclusionCh?.content) {
             body.conclusionContent = conclusionCh.content;
           }
@@ -1259,6 +1247,17 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             : currentChapter;
         body.researchQuestion = effectiveResearchQuestion;
         body.outline = outline;
+
+        // Don't forward our internal snapshot field to the edge function.
+        delete (body as any).snapshotChapters;
+
+        console.debug("[academic] outgoing request", {
+          academicStep,
+          chapterTitle: body.chapterTitle,
+          chapterIndex: body.chapterIndex,
+          previousChaptersCount: (body.previousChapters as any[]).length,
+          hasRQ: !!body.researchQuestion,
+        });
       }
 
       if (academicStep === "propose_outline") {
