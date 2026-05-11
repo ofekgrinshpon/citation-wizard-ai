@@ -127,6 +127,10 @@ type WizardStep = "init" | "topic_or_question" | "outline" | "writing" | "checkp
 interface ChapterData {
   title: string;
   content: string | null;
+  /** Global Paper Coherence: compact ledger extracted from this chapter
+   *  after it was finalized. Re-shipped on subsequent write_chapter calls
+   *  so the model is primed with prior claims/definitions/citations. */
+  paperMemoryDelta?: unknown;
 }
 
 interface AcademicSession {
