@@ -133,6 +133,10 @@ interface ChapterData {
    *  after it was finalized. Re-shipped on subsequent write_chapter calls
    *  so the model is primed with prior claims/definitions/citations. */
   paperMemoryDelta?: unknown;
+  /** Continuous footnote numbering: number of footnotes emitted by this
+   *  chapter. Summed across earlier chapters (display order) to compute
+   *  the next chapter's footnoteOffset. */
+  footnotesCount?: number;
 }
 
 interface AcademicSession {
