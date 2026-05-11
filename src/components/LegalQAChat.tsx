@@ -88,6 +88,8 @@ interface QAResult {
   verified_source?: "user" | "local" | "external" | "none";
   dropped_footnotes_count?: number;
   paper_memory_delta?: unknown;
+  footnotes_count?: number;
+  footnote_offset_applied?: number;
   coherence_audit?: {
     verdict: "pass" | "revise";
     issues_count: number;
