@@ -7479,6 +7479,25 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           // Chapter QA guard — observability only, no behaviour change.
           // Mirrors statute_completion.qa_guard from research grounding.
           chapter_qa_guard: chapterQaGuard,
+          // Critic pass — verdict, issue summary, coverage, and whether a
+          // revision was applied. Null when critic disabled or pre-conditions
+          // (claim map / source pack / structured drafter) not met.
+          chapter_critic: chapterCritic
+            ? {
+                verdict: chapterCritic.result?.verdict ?? null,
+                coverage: chapterCritic.result?.coverage ?? null,
+                issues_count: chapterCritic.result?.issues.length ?? 0,
+                issues_summary: (chapterCritic.result?.issues ?? []).map((i) => ({
+                  kind: i.kind,
+                  severity: i.severity,
+                  ...(i.claim_id ? { claim_id: i.claim_id } : {}),
+                })),
+                revised: chapterCritic.revised,
+                ...(chapterCritic.revision_status
+                  ? { revision_status: chapterCritic.revision_status }
+                  : {}),
+              }
+            : null,
           // Deterministic post-generation heading rewrite for real body chapters.
           chapter_style_cleanup: isRealAcademicChapter ? chapterStyleCleanup : null,
           // Academic profile actually used. Same shape as profile_used.
