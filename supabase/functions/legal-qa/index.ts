@@ -4827,7 +4827,86 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     }
 
 
-    // ========= Step 4b: Anchor pass (Pilot v7, Fast-mode) =========
+    // ========= Step 4a.2: Coherence critic (Global Paper Coherence) =========
+    // Audit the chapter draft against the cumulative PaperMemory derived from
+    // prior chapters' deltas. Triggers a surgical revision only when high-
+    // severity contradictions / multi-medium issues are found. Behind
+    // PAPER_COHERENCE_ENABLED env flag (default on). No-op when no prior
+    // chapters exist or no deltas were shipped. Failure mode: keep draft.
+    let coherenceAudit: {
+      verdict: "pass" | "revise";
+      issues_count: number;
+      revised: boolean;
+    } | null = null;
+    const coherenceEnabled = Deno.env.get("PAPER_COHERENCE_ENABLED") !== "false";
+    const paperMemoryDeltasIn = (body.paperMemoryDeltas as PaperMemoryDelta[] | undefined) ?? null;
+    if (
+      coherenceEnabled &&
+      isAcademicChapter &&
+      academicStep === "write_chapter" &&
+      !isAbstract &&
+      Array.isArray(paperMemoryDeltasIn) &&
+      paperMemoryDeltasIn.length > 0 &&
+      answerText.length >= 200
+    ) {
+      try {
+        emitStage("coherence_critic", "running");
+        const merged = mergePaperMemoryDeltas(paperMemoryDeltasIn);
+        const coh = await runCoherenceCritic({
+          draft: answerText,
+          paperMemory: merged,
+          chapterIndex: Number(chapterIndex ?? 0),
+          chapterTitle: String(chapterTitle ?? ""),
+          timeoutMs: 25_000,
+        });
+        stageRuns.push(coh.run);
+        const issuesCount = coh.result?.issues.length ?? 0;
+        let cohRevised = false;
+        if (shouldReviseForCoherence(coh.result) && coh.result) {
+          emitStage("coherence_revision", "running");
+          const brief = coherenceIssuesAsRevisionBrief(coh.result);
+          const rev = await runChapterRevision({
+            originalDraft: answerText,
+            issues: brief as unknown as CriticResult["issues"],
+            drafterSystemPrompt,
+            userMessage,
+            variant: drafterVariant,
+            maxTokens: aiMaxTokens,
+            timeoutMs: drafterTimeoutMs,
+          });
+          stageRuns.push({
+            stage: "coherence_revision",
+            provider: rev.result?.modelUsed.startsWith("gpt-") ? "openai" : "gemini",
+            model: rev.result?.modelUsed ?? MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI,
+            started_at: rev.startedAt.toISOString(),
+            completed_at: new Date().toISOString(),
+            duration_ms: rev.durationMs,
+            status: rev.status === "success" ? "success" : "error",
+            ...(rev.status !== "success" ? { error_message: `coherence_revision_${rev.status}` } : {}),
+          });
+          if (rev.status === "success" && rev.result) {
+            answerText = rev.result.text;
+            drafterModelUsed = rev.result.modelUsed;
+            cohRevised = true;
+            emitStage("coherence_revision", "complete", `${answerText.length} תווים`);
+          } else {
+            emitStage("coherence_revision", "complete", "ללא שינוי");
+          }
+        }
+        coherenceAudit = {
+          verdict: coh.result?.verdict ?? "pass",
+          issues_count: issuesCount,
+          revised: cohRevised,
+        };
+        emitStage("coherence_critic", "complete", `${issuesCount} ממצאים`);
+        console.log(`[coherence] verdict=${coherenceAudit.verdict} issues=${issuesCount} revised=${cohRevised}`);
+      } catch (cohErr) {
+        console.error("[coherence] non-fatal error:", (cohErr as Error).message);
+        coherenceAudit = { verdict: "pass", issues_count: 0, revised: false };
+      }
+    }
+
+
     // Post-draft Gemini Flash call: scan the drafted body for substantive
     // sentences that lack a [N] marker but have a real supporting source in
     // the source pack, and inject `[N]` + a numbered footnote line.
