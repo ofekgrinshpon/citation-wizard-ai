@@ -1189,7 +1189,24 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           }
         }
 
-        // Introduction also receives the conclusion draft (when it exists)
+        // Continuous footnote numbering: sum footnotesCount of every chapter
+        // that appears BEFORE this one in display order. The chapters array is
+        // already stored in display order (תקציר → מבוא → bodies → סיכום).
+        // Abstract contributes 0 by rule (no new citations).
+        {
+          let footnoteOffset = 0;
+          for (let i = 0; i < currentChapter; i++) {
+            const ch = chapters[i];
+            if (ch && typeof ch.footnotesCount === "number" && ch.footnotesCount > 0) {
+              footnoteOffset += ch.footnotesCount;
+            }
+          }
+          if (footnoteOffset > 0) {
+            body.footnoteOffset = footnoteOffset;
+          }
+        }
+
+
         // so it can frame the actual final thesis, not the planned one.
         if (isIntro) {
           const conclusionCh = chapters.find((ch) => isConclusionChapter(ch.title) && ch.content);
