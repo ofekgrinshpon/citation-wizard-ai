@@ -804,6 +804,8 @@ function buildResponse(
       issues_count: number;
       revised: boolean;
     } | null;
+    footnotes_count?: number;
+    footnote_offset_applied?: number;
   } = {},
 ): Response {
   // Explicitly strip the legacy `source` field on each footnote (would leak
@@ -827,6 +829,12 @@ function buildResponse(
   }
   if (extras.coherence_audit) {
     rawPayload.coherence_audit = extras.coherence_audit;
+  }
+  if (typeof extras.footnotes_count === "number") {
+    rawPayload.footnotes_count = extras.footnotes_count;
+  }
+  if (typeof extras.footnote_offset_applied === "number" && extras.footnote_offset_applied > 0) {
+    rawPayload.footnote_offset_applied = extras.footnote_offset_applied;
   }
   const payload = sanitizeResponse(rawPayload);
   return new Response(JSON.stringify(payload), {
