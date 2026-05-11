@@ -42,6 +42,9 @@ import {
   mergePaperMemoryDeltas,
   renderPaperMemoryBlock,
   extractPaperMemoryDelta,
+  runCoherenceCritic,
+  shouldReviseForCoherence,
+  coherenceIssuesAsRevisionBrief,
   type PaperMemoryDelta,
 } from "./paperMemory.ts";
 import {
