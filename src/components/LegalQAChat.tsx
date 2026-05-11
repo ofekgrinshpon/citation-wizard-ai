@@ -469,8 +469,8 @@ function OutlineReport({
             <RenderMarkdown text={answer} />
           </div>
           <div className="flex gap-2 pt-2">
-            <Button size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
-            <Button variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
+            <Button type="button" size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
+            <Button type="button" variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
           </div>
         </CardContent>
       </Card>
@@ -582,8 +582,8 @@ function OutlineReport({
       </Card>
 
       <div className="flex gap-2 pt-1">
-        <Button size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
-        <Button variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
+        <Button type="button" size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
+        <Button type="button" variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
       </div>
     </div>
   );
@@ -1815,7 +1815,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             const isSelected = taskMode === m.id;
             const Icon = m.icon;
             return (
-              <button
+              <button type="button"
                 key={m.id}
                 onClick={() => handleModeChange(m.id)}
                 className={`flex flex-col items-center text-center gap-1.5 rounded-xl border transition-all ${
@@ -1852,13 +1852,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     {canGoBack && (
-                      <Button variant="ghost" size="sm" onClick={navigateBack} className="gap-1 text-xs h-7 px-2">
+                      <Button type="button" variant="ghost" size="sm" onClick={navigateBack} className="gap-1 text-xs h-7 px-2">
                         <ChevronRight className="w-3.5 h-3.5" />
                         חזרה
                       </Button>
                     )}
                     {canGoForward && (
-                      <Button variant="ghost" size="sm" onClick={navigateForward} className="gap-1 text-xs h-7 px-2">
+                      <Button type="button" variant="ghost" size="sm" onClick={navigateForward} className="gap-1 text-xs h-7 px-2">
                         קדימה
                         <ChevronLeft className="w-3.5 h-3.5" />
                       </Button>
@@ -1867,7 +1867,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
                   {/* Persistent copy button */}
                   {hasWrittenContent && (
-                    <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs h-7">
+                    <Button type="button" variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs h-7">
                       <Copy className="w-3 h-3" />
                       העתק טקסט מלא
                     </Button>
@@ -1887,7 +1887,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     return (
                       <div key={step} className="flex items-center gap-2">
                         {i > 0 && <div className={`w-6 h-px ${isCompleted || isCurrent ? "bg-primary" : "bg-border"}`} />}
-                        <button
+                        <button type="button"
                           onClick={() => {
                             if (!isClickable) return;
                             if (step === "topic_or_question") { setWizardStep("topic_or_question"); setResult(null); }
@@ -1937,7 +1937,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   <p className="text-muted-foreground text-sm mb-6">עוזר מחקר אקדמי ליצירת עבודות סמינריון ומאמרים משפטיים בשלבים</p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
-                  <Button
+                  <Button type="button"
                     variant="outline"
                     className="flex-1 h-auto py-4 flex flex-col gap-1"
                     onClick={() => {
@@ -1948,7 +1948,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     <span className="font-semibold">יש לי נושא כללי</span>
                     <span className="text-[10px] text-muted-foreground">המערכת תציע 3 שאלות מחקר</span>
                   </Button>
-                  <Button
+                  <Button type="button"
                     variant="outline"
                     className="flex-1 h-auto py-4 flex flex-col gap-1"
                     onClick={() => {
@@ -2010,7 +2010,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   <p className="text-sm font-semibold text-foreground">בחרו אחת מהשאלות המוצעות:</p>
                   <div className="space-y-2">
                     {proposedQuestions.map((q, idx) => (
-                      <button
+                      <button type="button"
                         key={idx}
                         onClick={() => {
                           if (!checkDestructiveEdit("topic_or_question")) return;
@@ -2030,7 +2030,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     ))}
                   </div>
                   <div className="flex gap-2 pt-1 border-t border-border">
-                    <Button
+                    <Button type="button"
                       variant="outline"
                       size="sm"
                       onClick={() => {
@@ -2055,7 +2055,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     <AnswerWithFootnotes text={result.answer} onFootnoteClick={scrollToFootnote} />
                   </div>
                   <div className="flex gap-2">
-                    <Button
+                    <Button type="button"
                       size="sm"
                       onClick={() => {
                         if (!checkDestructiveEdit("topic_or_question")) return;
@@ -2176,7 +2176,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                         כדי שהניתוח ההשוואתי יהיה ברמה אקדמית גבוהה, מומלץ להעלות כאן מאמרים או פסקי דין ספציפיים.
                         אני אנתח אותם ואשלב אותם בטקסט עם אזכורים מדויקים.
                       </p>
-                      <Button
+                      <Button type="button"
                         variant="outline"
                         size="sm"
                         onClick={() => fileInputRef.current?.click()}
@@ -2233,7 +2233,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span className="inline-block">
-                            <Button size="sm" disabled className="gap-1.5 cursor-not-allowed">
+                            <Button type="button" size="sm" disabled className="gap-1.5 cursor-not-allowed">
                               <Lock className="w-3.5 h-3.5" />
                               ייצר תקציר
                             </Button>
@@ -2261,7 +2261,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   <span className="text-xs text-muted-foreground font-medium">
                     פרק {currentChapter + 1}: {chapters[currentChapter]?.title}
                   </span>
-                  <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs">
+                  <Button type="button" variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs">
                     <Copy className="w-3.5 h-3.5" />
                     העתק
                   </Button>
@@ -2307,17 +2307,17 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     dir="rtl"
                   />
                   {chapterFeedback.trim() && (
-                    <Button variant="secondary" size="sm" onClick={rewriteWithFeedback} className="text-xs gap-1">
+                    <Button type="button" variant="secondary" size="sm" onClick={rewriteWithFeedback} className="text-xs gap-1">
                       שכתב עם הנחיות
                     </Button>
                   )}
                 </div>
 
                 <div className="px-4 pb-4 flex gap-2 border-t border-border pt-3">
-                  <Button size="sm" onClick={advanceToNextChapter}>
+                  <Button type="button" size="sm" onClick={advanceToNextChapter}>
                     {currentChapter < chapters.length - 1 ? "המשך לפרק הבא" : "סיים עבודה"}
                   </Button>
-                  <Button variant="outline" size="sm" onClick={editCurrentChapter}>
+                  <Button type="button" variant="outline" size="sm" onClick={editCurrentChapter}>
                     כתוב מחדש פרק זה
                   </Button>
                 </div>
@@ -2334,11 +2334,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     {chapters.filter(ch => ch.content).length} פרקים נכתבו בהצלחה.
                   </p>
                   <div className="flex gap-2 justify-center">
-                    <Button onClick={handleCopy} className="gap-1.5">
+                    <Button type="button" onClick={handleCopy} className="gap-1.5">
                       <Copy className="w-4 h-4" />
                       העתק את כל העבודה
                     </Button>
-                    <Button variant="outline" onClick={discardAcademicSession}>
+                    <Button type="button" variant="outline" onClick={discardAcademicSession}>
                       עבודה חדשה
                     </Button>
                   </div>
@@ -2349,7 +2349,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             {/* Discard button when in progress */}
             {wizardStep !== "init" && wizardStep !== "done" && !loading && (
               <div className="flex justify-end">
-                <Button variant="ghost" size="sm" className="text-xs text-destructive gap-1" onClick={discardAcademicSession}>
+                <Button type="button" variant="ghost" size="sm" className="text-xs text-destructive gap-1" onClick={discardAcademicSession}>
                   <Trash2 className="w-3 h-3" />
                   בטל עבודה
                 </Button>
@@ -2377,7 +2377,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             <CardContent className="p-6 text-center space-y-3">
               <AlertTriangle className="w-8 h-8 text-destructive mx-auto" />
               <p className="text-foreground text-sm font-medium">{error}</p>
-              <Button
+              <Button type="button"
                 variant="outline"
                 size="sm"
                 onClick={() => { setError(null); }}
@@ -2425,7 +2425,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             <AlertTriangle className="h-4 w-4 text-amber-600" />
             <AlertDescription className="text-foreground space-y-3">
               <p className="text-sm leading-relaxed">{result.message}</p>
-              <Button
+              <Button type="button"
                 size="sm"
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
@@ -2468,11 +2468,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 {TASK_MODES.find((m) => m.id === taskMode)?.label || "חוות דעת"}
               </span>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs">
+                <Button type="button" variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs">
                   <Copy className="w-3.5 h-3.5" />
                   העתק
                 </Button>
-                <Button
+                <Button type="button"
                   variant="ghost"
                   size="sm"
                   onClick={() => { setResult(null); setQuestion(""); }}
@@ -2589,7 +2589,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   dir="rtl"
                 />
                 {loading ? (
-                  <button
+                  <button type="button"
                     onClick={handleStop}
                     className="btn-send px-4 py-2.5 m-1.5 text-destructive-foreground bg-destructive text-base flex-shrink-0 hover:bg-destructive/90"
                     title="עצור"
@@ -2597,7 +2597,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     <StopCircle className="w-4 h-4" />
                   </button>
                 ) : (
-                  <button
+                  <button type="button"
                     onClick={handleSubmit}
                     disabled={
                       taskMode === "pleading_analysis"
@@ -2689,7 +2689,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               />
             </div>
             {loading && (
-              <button
+              <button type="button"
                 onClick={handleStop}
                 className="h-10 px-3 rounded-lg bg-destructive text-destructive-foreground text-xs flex items-center gap-1.5"
               >
@@ -2706,7 +2706,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             {uploadedFiles.map((f, i) => (
               <span key={i} className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/40 rounded px-1.5 py-0.5">
                 📎 {f.name}
-                <button onClick={() => removeFile(i)} className="text-destructive hover:text-destructive/80">
+                <button type="button" onClick={() => removeFile(i)} className="text-destructive hover:text-destructive/80">
                   <X className="w-2.5 h-2.5" />
                 </button>
               </span>
