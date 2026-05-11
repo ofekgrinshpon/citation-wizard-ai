@@ -1495,20 +1495,28 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     }
   };
 
-  const approveOutline = () => {
-    const lines = outline.split("\n");
-    const bodyTitles: string[] = [];
-    for (const rawLine of lines) {
-      const line = rawLine.replace(/\s+$/, "");
-      if (/^\s+/.test(rawLine)) continue;
-      const match = line.match(/^\d+\.\s+\*\*(.+?)\*\*(?:\s*[–\-—]\s*.+)?$/) ||
-                    line.match(/^\d+\.\s+(.+?)(?:\s*[–\-—]\s*.+)?$/);
-      if (match) {
-        const title = match[1].trim().replace(/\*\*/g, "");
-        if (!title) continue;
-        // Strip any model-emitted special chapters; we always force-inject ours.
-        const role = chapterRole(title);
-        if (role === "body") bodyTitles.push(title);
+  const approveOutline = (editedBodyTitles?: string[]) => {
+    let bodyTitles: string[] = [];
+    if (editedBodyTitles && editedBodyTitles.length > 0) {
+      // User-edited list: trust it, but still filter out any special-chapter
+      // names that may have slipped in (those are force-injected below).
+      bodyTitles = editedBodyTitles
+        .map(t => t.trim())
+        .filter(t => t && chapterRole(t) === "body");
+    } else {
+      const lines = outline.split("\n");
+      for (const rawLine of lines) {
+        const line = rawLine.replace(/\s+$/, "");
+        if (/^\s+/.test(rawLine)) continue;
+        const match = line.match(/^\d+\.\s+\*\*(.+?)\*\*(?:\s*[–\-—]\s*.+)?$/) ||
+                      line.match(/^\d+\.\s+(.+?)(?:\s*[–\-—]\s*.+)?$/);
+        if (match) {
+          const title = match[1].trim().replace(/\*\*/g, "");
+          if (!title) continue;
+          // Strip any model-emitted special chapters; we always force-inject ours.
+          const role = chapterRole(title);
+          if (role === "body") bodyTitles.push(title);
+        }
       }
     }
     if (bodyTitles.length === 0) {
