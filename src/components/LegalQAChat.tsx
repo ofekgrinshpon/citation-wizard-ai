@@ -881,6 +881,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         }
       })();
       setResult(null);
+    }
 
     if (uploadedFiles.length > 0 && !FILE_RELEVANT_MODES.includes(newMode)) {
       toast.warning("שימו לב: הקבצים שהועלו עדיין מצורפים.", {
