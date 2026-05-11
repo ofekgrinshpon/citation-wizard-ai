@@ -125,35 +125,35 @@ export const ACADEMIC_PROFILES: Record<AcademicStep, AcademicProfile> = {
   },
   // ─── Introduction (write_introduction) ─────────────────────────────
   // Generated LATE — after every body chapter and the conclusion are written.
-  // Pure synthesis: summarizes / frames the body chapters that already exist.
-  // Routed through the light synthesis path (same shape as abstract): NO
-  // retrieval, NO Perplexity, NO claim map, NO new authorities. Footnotes
-  // (if any) reuse citations already present in the body chapters via
-  // "לעיל ה"ש X" (Rule 37.7).
+  // Inherits Deep envelope but consumes paper-level synthesis context (full
+  // body chapter content) rather than per-chapter document slices, so the
+  // local document context window is unused. Word range stays Deep-class
+  // (~800–1400 typical for an introduction); QA guard relaxes the word-floor
+  // ratio because intros legitimately come in shorter than body chapters.
   introduction: {
     creditCost: 8,
     prevChapterContextChars: 0,
     documentContextChars: 0,
     abstractWordCap: 0,
-    enableDeepPipeline: false,
-    inheritsFrom: null,
-    qaGuardUnresolvedShareThreshold: 0,
-    qaGuardUnderWordFloorRatio: 0,
-    qaGuardNarrativeViolationThreshold: 0,
+    enableDeepPipeline: true,
+    inheritsFrom: "deep",
+    qaGuardUnresolvedShareThreshold: 0.4,
+    qaGuardUnderWordFloorRatio: 0.5, // intros are framing — looser floor
+    qaGuardNarrativeViolationThreshold: 3,
   },
   // ─── Conclusion (write_conclusion) ─────────────────────────────────
   // Generated LAST among substantive chapters. Synthesizes the actual body,
-  // not the outline. Same light synthesis path as introduction.
+  // not the outline. Same Deep envelope shape as introduction.
   conclusion: {
     creditCost: 8,
     prevChapterContextChars: 0,
     documentContextChars: 0,
     abstractWordCap: 0,
-    enableDeepPipeline: false,
-    inheritsFrom: null,
-    qaGuardUnresolvedShareThreshold: 0,
-    qaGuardUnderWordFloorRatio: 0,
-    qaGuardNarrativeViolationThreshold: 0,
+    enableDeepPipeline: true,
+    inheritsFrom: "deep",
+    qaGuardUnresolvedShareThreshold: 0.4,
+    qaGuardUnderWordFloorRatio: 0.5,
+    qaGuardNarrativeViolationThreshold: 3,
   },
 };
 

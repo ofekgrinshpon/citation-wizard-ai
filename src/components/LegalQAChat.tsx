@@ -272,21 +272,6 @@ async function saveAcademicSessionToDB(session: AcademicSession, projectId?: str
   } catch { /* silent */ }
 }
 
-/** Normalize a restored academic session: clamp currentChapter to a valid
- *  index. If it points outside the array, fall back to the first chapter
- *  without content (or 0). Prevents stale sessions from landing on an
- *  invalid chapter. */
-function normalizeAcademicSession(s: AcademicSession): AcademicSession {
-  const chs = Array.isArray(s.chapters) ? s.chapters : [];
-  if (chs.length === 0) return { ...s, chapters: [], currentChapter: 0 };
-  let idx = Number.isFinite(s.currentChapter) ? s.currentChapter : 0;
-  if (idx < 0 || idx >= chs.length) {
-    const firstEmpty = chs.findIndex((c) => !c?.content);
-    idx = firstEmpty >= 0 ? firstEmpty : 0;
-  }
-  return { ...s, chapters: chs, currentChapter: idx };
-}
-
 
 // ─── Utility components ──────────────────────────────────────────────
 
@@ -469,8 +454,8 @@ function OutlineReport({
             <RenderMarkdown text={answer} />
           </div>
           <div className="flex gap-2 pt-2">
-            <Button type="button" size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
-            <Button type="button" variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
+            <Button size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
+            <Button variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
           </div>
         </CardContent>
       </Card>
@@ -582,8 +567,8 @@ function OutlineReport({
       </Card>
 
       <div className="flex gap-2 pt-1">
-        <Button type="button" size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
-        <Button type="button" variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
+        <Button size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
+        <Button variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
       </div>
     </div>
   );
@@ -678,15 +663,14 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           ? dbSaved
           : loadAcademicSession(projectId);
         if (!cancelled && saved && saved.wizardStep !== "init") {
-          const ns = normalizeAcademicSession(saved);
-          setWizardStep(ns.wizardStep);
-          setMaxReachedStep(ns.maxReachedStep || ns.wizardStep);
-          setCurrentChapter(ns.currentChapter);
-          setChapters(ns.chapters);
-          setResearchQuestion(ns.researchQuestion);
-          setOutline(ns.outline);
-          setProposedQuestions(ns.proposedQuestions || []);
-          setLastAcademicAction(ns.lastAcademicAction || null);
+          setWizardStep(saved.wizardStep);
+          setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
+          setCurrentChapter(saved.currentChapter);
+          setChapters(saved.chapters);
+          setResearchQuestion(saved.researchQuestion);
+          setOutline(saved.outline);
+          setProposedQuestions(saved.proposedQuestions || []);
+          setLastAcademicAction(saved.lastAcademicAction || null);
         }
       })();
     }
@@ -740,18 +724,17 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         ? dbSaved
         : loadAcademicSession(projectId);
       if (saved && saved.wizardStep !== "init") {
-        const ns = normalizeAcademicSession(saved);
-        setWizardStep(ns.wizardStep);
-        setMaxReachedStep(ns.maxReachedStep || ns.wizardStep);
-        setChapters(ns.chapters);
-        setResearchQuestion(ns.researchQuestion);
-        setOutline(ns.outline);
-        setProposedQuestions(ns.proposedQuestions || []);
-        setLastAcademicAction(ns.lastAcademicAction || null);
+        setWizardStep(saved.wizardStep);
+        setMaxReachedStep(saved.maxReachedStep || saved.wizardStep);
+        setChapters(saved.chapters);
+        setResearchQuestion(saved.researchQuestion);
+        setOutline(saved.outline);
+        setProposedQuestions(saved.proposedQuestions || []);
+        setLastAcademicAction(saved.lastAcademicAction || null);
 
         // Land on the last chapter with content (or first without — whichever is further)
-        const chs = ns.chapters || [];
-        let landIdx = ns.currentChapter || 0;
+        const chs = saved.chapters || [];
+        let landIdx = saved.currentChapter || 0;
         const lastWritten = (() => {
           for (let i = chs.length - 1; i >= 0; i--) if (chs[i]?.content) return i;
           return -1;
@@ -849,15 +832,14 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       const localSaved = loadAcademicSession(projectId);
       // Apply localStorage immediately so the user sees something fast.
       if (localSaved && localSaved.wizardStep !== "init") {
-        const ns = normalizeAcademicSession(localSaved);
-        setWizardStep(ns.wizardStep);
-        setMaxReachedStep(ns.maxReachedStep || ns.wizardStep);
-        setCurrentChapter(ns.currentChapter);
-        setChapters(ns.chapters);
-        setResearchQuestion(ns.researchQuestion);
-        setOutline(ns.outline);
-        setProposedQuestions(ns.proposedQuestions || []);
-        setLastAcademicAction(ns.lastAcademicAction || null);
+        setWizardStep(localSaved.wizardStep);
+        setMaxReachedStep(localSaved.maxReachedStep || localSaved.wizardStep);
+        setCurrentChapter(localSaved.currentChapter);
+        setChapters(localSaved.chapters);
+        setResearchQuestion(localSaved.researchQuestion);
+        setOutline(localSaved.outline);
+        setProposedQuestions(localSaved.proposedQuestions || []);
+        setLastAcademicAction(localSaved.lastAcademicAction || null);
       } else {
         setWizardStep("init");
         setMaxReachedStep("init");
@@ -872,15 +854,14 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       (async () => {
         const dbSaved = await loadAcademicSessionFromDB(projectId);
         if (dbSaved && dbSaved.wizardStep !== "init") {
-          const ns = normalizeAcademicSession(dbSaved);
-          setWizardStep(ns.wizardStep);
-          setMaxReachedStep(ns.maxReachedStep || ns.wizardStep);
-          setCurrentChapter(ns.currentChapter);
-          setChapters(ns.chapters);
-          setResearchQuestion(ns.researchQuestion);
-          setOutline(ns.outline);
-          setProposedQuestions(ns.proposedQuestions || []);
-          setLastAcademicAction(ns.lastAcademicAction || null);
+          setWizardStep(dbSaved.wizardStep);
+          setMaxReachedStep(dbSaved.maxReachedStep || dbSaved.wizardStep);
+          setCurrentChapter(dbSaved.currentChapter);
+          setChapters(dbSaved.chapters);
+          setResearchQuestion(dbSaved.researchQuestion);
+          setOutline(dbSaved.outline);
+          setProposedQuestions(dbSaved.proposedQuestions || []);
+          setLastAcademicAction(dbSaved.lastAcademicAction || null);
         }
       })();
       setResult(null);
@@ -1107,67 +1088,9 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
   const handleAcademicSubmit = async (academicStep: string, extraBody?: Record<string, unknown>) => {
     const q = question.trim();
-    const explicitResearchQuestion =
-      typeof extraBody?.researchQuestion === "string"
-        ? extraBody.researchQuestion.trim()
-        : "";
-    const effectiveResearchQuestion = explicitResearchQuestion || researchQuestion.trim() || q;
-
-    // Explicit per-step validation. Writing steps (body/intro/conclusion/abstract)
-    // synthesize already-written content and MUST NEVER demand typed text.
-    const isAbstractSynthesis =
-      academicStep === "write_chapter" && !!extraBody?.isAbstract;
-    const isBodyChapterWrite =
-      academicStep === "write_chapter" && !extraBody?.isAbstract;
-    const isWritingStage =
-      isBodyChapterWrite ||
-      isAbstractSynthesis ||
-      academicStep === "write_introduction" ||
-      academicStep === "write_conclusion";
-
-    console.debug("[academic] handleAcademicSubmit", {
-      academicStep,
-      isWritingStage,
-      hasResearchQuestion: !!effectiveResearchQuestion,
-      hasTypedText: !!q,
-      currentChapter,
-      currentChapterTitle: chapters[currentChapter]?.title,
-    });
-
-    if (isWritingStage) {
-      // Writing steps: require a saved research question; never typed text.
-      if (!effectiveResearchQuestion) {
-        toast.error("שאלת המחקר חסרה — חזור לשלב ניסוח שאלת המחקר.");
-        return;
-      }
-      const bodyDone = chapters.some(
-        (ch) => chapterRole(ch.title) === "body" && !!ch.content,
-      );
-      if (academicStep === "write_conclusion" && !bodyDone) {
-        toast.error("ניתן לכתוב סיכום רק לאחר שנכתב לפחות פרק גוף אחד.");
-        return;
-      }
-      if (academicStep === "write_introduction" && !bodyDone) {
-        toast.error("ניתן לכתוב מבוא רק לאחר שנכתבו פרקי הגוף.");
-        return;
-      }
-      // fall through to fetch
-    } else {
-      // Non-writing steps that genuinely need typed input. Use step-specific
-      // messages so we never surface a generic "יש להזין טקסט" toast from a
-      // chapter / writing action.
-      if (academicStep === "suggest_topics" && !q) {
-        toast.error("יש להזין נושא או שאלה כדי להציע שאלות מחקר.");
-        return;
-      }
-      if (academicStep === "validate_question" && !q) {
-        toast.error("יש להזין שאלת מחקר כדי לבדוק את כדאיותה.");
-        return;
-      }
-      if (academicStep === "propose_outline" && !effectiveResearchQuestion && !q) {
-        toast.error("יש להזין שאלת מחקר לפני בניית המתווה.");
-        return;
-      }
+    if (!q && academicStep !== "write_chapter") {
+      toast.error("יש להזין טקסט.");
+      return;
     }
 
     setLoading(true);
@@ -1184,17 +1107,16 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
-    // Stream only real body chapter writes (the Deep pipeline). Intro,
-    // conclusion, and abstract synthesize already-written chapters via the
-    // light JSON path on the backend — no streaming.
+    // Stream chapter writes (the only academic sub-mode that runs the full
+    // research pipeline). All other sub-modes are short single-shot prompts.
     const useSseStream =
-      academicStep === "write_chapter" && !extraBody?.isAbstract;
+      academicStep === "write_chapter" ||
+      academicStep === "write_introduction" ||
+      academicStep === "write_conclusion";
 
     try {
       const body: Record<string, unknown> = {
-        question: academicStep === "suggest_topics" || academicStep === "validate_question"
-          ? q
-          : effectiveResearchQuestion,
+        question: q || researchQuestion,
         taskMode: "academic_writing",
         academicStep,
         ...extraBody,
@@ -1214,63 +1136,53 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         const isAbstract = !!extraBody?.isAbstract;
         const isIntro = academicStep === "write_introduction";
         const isConclusion = academicStep === "write_conclusion";
+        // Cap per chapter:
+        //  - abstract: 6,000 — pure synthesis of the whole paper (incl. intro + conclusion).
+        //  - conclusion: 3,500 — needs richer recall to synthesize key findings.
+        //  - introduction: 2,500 — frames the paper, doesn't re-analyze it.
+        //  - body chapter: 2,000 — current behavior, used for cross-chapter coherence.
         const sliceCap = isAbstract ? 6000 : isConclusion ? 3500 : isIntro ? 2500 : 2000;
-
-        // Prefer snapshot captured at click time if provided.
-        const snapshot = Array.isArray((extraBody as any)?.snapshotChapters)
-          ? ((extraBody as any).snapshotChapters as ChapterData[])
-          : chapters;
-
-        body.previousChapters = snapshot
+        // For body chapter writes the abstract chapter is excluded so the
+        // model isn't biased by a placeholder synthesis. For intro/conclusion/
+        // abstract we want only body-role chapters that have real content.
+        body.previousChapters = chapters
           .filter((ch) => {
             if (!ch.content) return false;
-            if (isAbstract) return !isAbstractChapter(ch.title);
-            if (isIntro || isConclusion) return chapterRole(ch.title) === "body";
+            if (isAbstract) {
+              // Abstract sees everything except itself.
+              return !isAbstractChapter(ch.title);
+            }
+            if (isIntro || isConclusion) {
+              // Intro & conclusion synthesize the body. Skip the other special chapters.
+              const role = chapterRole(ch.title);
+              return role === "body";
+            }
+            // Regular body-chapter write: skip the abstract.
             return !isAbstractChapter(ch.title);
           })
           .map((ch) => ({ title: ch.title, content: (ch.content || "").slice(0, sliceCap) }));
 
+        // Introduction also receives the conclusion draft (when it exists)
+        // so it can frame the actual final thesis, not the planned one.
         if (isIntro) {
-          const conclusionCh = snapshot.find((ch) => isConclusionChapter(ch.title) && ch.content);
+          const conclusionCh = chapters.find((ch) => isConclusionChapter(ch.title) && ch.content);
           if (conclusionCh?.content) {
             body.conclusionContent = conclusionCh.content;
           }
         }
 
-        body.chapterTitle =
-          typeof extraBody?.chapterTitle === "string"
-            ? extraBody.chapterTitle
-            : chapters[currentChapter]?.title || "";
-        body.chapterIndex =
-          typeof extraBody?.chapterIndex === "number"
-            ? extraBody.chapterIndex
-            : currentChapter;
-        body.researchQuestion = effectiveResearchQuestion;
+        body.chapterTitle = chapters[currentChapter]?.title || "";
+        body.chapterIndex = currentChapter;
+        body.researchQuestion = researchQuestion;
         body.outline = outline;
-
-        // Don't forward our internal snapshot field to the edge function.
-        delete (body as any).snapshotChapters;
-
-        console.debug("[academic] outgoing request", {
-          academicStep,
-          chapterTitle: body.chapterTitle,
-          chapterIndex: body.chapterIndex,
-          previousChaptersCount: (body.previousChapters as any[]).length,
-          hasRQ: !!body.researchQuestion,
-        });
       }
 
       if (academicStep === "propose_outline") {
-        body.researchQuestion = effectiveResearchQuestion;
+        body.researchQuestion = researchQuestion;
       }
 
       if (useSseStream) {
         body.stream = true;
-        // The backend SSE wrapper only activates for Deep-style requests.
-        // Academic body chapters are already forced onto the Deep pipeline
-        // server-side, but the request still must carry this flag so the
-        // socket stays open until the final answer is returned and saved.
-        body.depth = "deep";
       }
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -1319,23 +1231,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         data = await res.json();
       }
 
-      if (data?.error) {
-        const errStr = String(data.error);
-        if (errStr.includes("No previous chapter content")) {
-          toast.error("ניתן לכתוב סיכום רק לאחר שנכתב לפחות פרק גוף אחד.");
-          return;
-        }
-        if (errStr.includes("Missing researchQuestion")) {
-          toast.error("שאלת המחקר חסרה — חזור לשלב ניסוח שאלת המחקר.");
-          return;
-        }
-        if (errStr === "Question too short" && isWritingStage) {
-          toast.error("ניתן לכתוב סיכום רק לאחר שנכתב לפחות פרק גוף אחד.");
-          return;
-        }
-        setError(errStr);
-        return;
-      }
+      if (data?.error) { setError(data.error); return; }
       if (!data?.answer || data.answer.trim().length < 10) { setError("לא התקבלה תשובה. נסו שוב."); return; }
 
 
@@ -1361,21 +1257,14 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         academicStep === "write_introduction" ||
         academicStep === "write_conclusion"
       ) {
-        // Save chapter content. Use the explicit chapterIndex from extraBody when
-        // present (it was captured at click time) — `currentChapter` may have
-        // drifted while the async request was in flight, which would otherwise
-        // write the result into the wrong chapter slot.
-        const explicitIdx =
-          typeof extraBody?.chapterIndex === "number" ? extraBody.chapterIndex : currentChapter;
-        const targetIdx =
-          explicitIdx >= 0 && explicitIdx < chapters.length ? explicitIdx : currentChapter;
+        // Save chapter content (works for body, intro, and conclusion writes)
         const updatedChapters = [...chapters];
-        updatedChapters[targetIdx] = { ...updatedChapters[targetIdx], content: qaResult.answer };
+        updatedChapters[currentChapter] = { ...updatedChapters[currentChapter], content: qaResult.answer };
         setChapters(updatedChapters);
         updateWizardStep("checkpoint");
 
         // Stage-aware unlock toasts (mirrors the lock chain: body → conclusion → intro → abstract)
-        const justWrittenTitle = updatedChapters[targetIdx]?.title || "";
+        const justWrittenTitle = updatedChapters[currentChapter]?.title || "";
         const justRole = chapterRole(justWrittenTitle);
         const allBodyDone = updatedChapters.filter(ch => chapterRole(ch.title) === "body").every(ch => !!ch.content);
         const conclusionCh = updatedChapters.find(ch => chapterRole(ch.title) === "conclusion");
@@ -1472,60 +1361,20 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   }
 
   const writeCurrentChapter = () => {
-    // Snapshot all state at click time so the request is immune to React state
-    // drift while the async call is in flight.
-    const snapshotChapters = chapters.map((ch) => ({ title: ch.title, content: ch.content }));
-    const snapshotIdx = currentChapter;
-    const title = snapshotChapters[snapshotIdx]?.title || "";
+    const title = chapters[currentChapter]?.title || "";
     const role = chapterRole(title);
-
     if (isChapterLocked(title)) {
       toast.info(lockTooltipFor(role));
       return;
     }
-
-    // Effective research question with outline fallback. Synthesis writes must
-    // never depend on the visible textarea.
-    const effectiveRQ =
-      researchQuestion.trim() ||
-      (outline.match(/שאלת המחקר[:：]?\s*(.+)/)?.[1] || "").trim() ||
-      question.trim();
-
-    // Body chapters with usable content — what the synthesis steps need.
-    const writtenBodies = snapshotChapters
-      .filter((ch) => chapterRole(ch.title) === "body" && !!ch.content && ch.content!.trim().length > 50)
-      .map((ch) => ({ title: ch.title, content: ch.content! }));
-
-    console.debug("[academic] writeCurrentChapter snapshot", {
-      role,
-      title,
-      snapshotIdx,
-      writtenBodies: writtenBodies.length,
-      hasRQ: !!effectiveRQ,
-    });
-
-    const baseContext = {
-      chapterTitle: title,
-      chapterIndex: snapshotIdx,
-      researchQuestion: effectiveRQ,
-    };
-
     if (role === "abstract") {
-      handleAcademicSubmit("write_chapter", { ...baseContext, isAbstract: true, snapshotChapters });
+      handleAcademicSubmit("write_chapter", { isAbstract: true });
     } else if (role === "introduction") {
-      if (writtenBodies.length === 0) {
-        toast.error("ניתן לכתוב מבוא רק לאחר שנכתבו פרקי הגוף.");
-        return;
-      }
-      handleAcademicSubmit("write_introduction", { ...baseContext, snapshotChapters });
+      handleAcademicSubmit("write_introduction");
     } else if (role === "conclusion") {
-      if (writtenBodies.length === 0) {
-        toast.error("ניתן לכתוב סיכום רק לאחר שנכתב לפחות פרק גוף אחד.");
-        return;
-      }
-      handleAcademicSubmit("write_conclusion", { ...baseContext, snapshotChapters });
+      handleAcademicSubmit("write_conclusion");
     } else {
-      handleAcademicSubmit("write_chapter", { ...baseContext, snapshotChapters });
+      handleAcademicSubmit("write_chapter");
     }
   };
 
@@ -1820,7 +1669,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             const isSelected = taskMode === m.id;
             const Icon = m.icon;
             return (
-              <button type="button"
+              <button
                 key={m.id}
                 onClick={() => handleModeChange(m.id)}
                 className={`flex flex-col items-center text-center gap-1.5 rounded-xl border transition-all ${
@@ -1857,13 +1706,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     {canGoBack && (
-                      <Button type="button" variant="ghost" size="sm" onClick={navigateBack} className="gap-1 text-xs h-7 px-2">
+                      <Button variant="ghost" size="sm" onClick={navigateBack} className="gap-1 text-xs h-7 px-2">
                         <ChevronRight className="w-3.5 h-3.5" />
                         חזרה
                       </Button>
                     )}
                     {canGoForward && (
-                      <Button type="button" variant="ghost" size="sm" onClick={navigateForward} className="gap-1 text-xs h-7 px-2">
+                      <Button variant="ghost" size="sm" onClick={navigateForward} className="gap-1 text-xs h-7 px-2">
                         קדימה
                         <ChevronLeft className="w-3.5 h-3.5" />
                       </Button>
@@ -1872,7 +1721,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
                   {/* Persistent copy button */}
                   {hasWrittenContent && (
-                    <Button type="button" variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs h-7">
+                    <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs h-7">
                       <Copy className="w-3 h-3" />
                       העתק טקסט מלא
                     </Button>
@@ -1892,7 +1741,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     return (
                       <div key={step} className="flex items-center gap-2">
                         {i > 0 && <div className={`w-6 h-px ${isCompleted || isCurrent ? "bg-primary" : "bg-border"}`} />}
-                        <button type="button"
+                        <button
                           onClick={() => {
                             if (!isClickable) return;
                             if (step === "topic_or_question") { setWizardStep("topic_or_question"); setResult(null); }
@@ -1942,7 +1791,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   <p className="text-muted-foreground text-sm mb-6">עוזר מחקר אקדמי ליצירת עבודות סמינריון ומאמרים משפטיים בשלבים</p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
-                  <Button type="button"
+                  <Button
                     variant="outline"
                     className="flex-1 h-auto py-4 flex flex-col gap-1"
                     onClick={() => {
@@ -1953,7 +1802,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     <span className="font-semibold">יש לי נושא כללי</span>
                     <span className="text-[10px] text-muted-foreground">המערכת תציע 3 שאלות מחקר</span>
                   </Button>
-                  <Button type="button"
+                  <Button
                     variant="outline"
                     className="flex-1 h-auto py-4 flex flex-col gap-1"
                     onClick={() => {
@@ -1981,7 +1830,6 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 />
                 <div className="flex gap-2">
                   <Button
-                    type="button"
                     onClick={() => {
                       if (!checkDestructiveEdit("topic_or_question")) return;
                       handleAcademicSubmit("suggest_topics");
@@ -1992,7 +1840,6 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     הצע שאלות מחקר
                   </Button>
                   <Button
-                    type="button"
                     variant="outline"
                     onClick={() => {
                       if (!checkDestructiveEdit("topic_or_question")) return;
@@ -2015,7 +1862,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   <p className="text-sm font-semibold text-foreground">בחרו אחת מהשאלות המוצעות:</p>
                   <div className="space-y-2">
                     {proposedQuestions.map((q, idx) => (
-                      <button type="button"
+                      <button
                         key={idx}
                         onClick={() => {
                           if (!checkDestructiveEdit("topic_or_question")) return;
@@ -2035,7 +1882,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     ))}
                   </div>
                   <div className="flex gap-2 pt-1 border-t border-border">
-                    <Button type="button"
+                    <Button
                       variant="outline"
                       size="sm"
                       onClick={() => {
@@ -2060,7 +1907,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     <AnswerWithFootnotes text={result.answer} onFootnoteClick={scrollToFootnote} />
                   </div>
                   <div className="flex gap-2">
-                    <Button type="button"
+                    <Button
                       size="sm"
                       onClick={() => {
                         if (!checkDestructiveEdit("topic_or_question")) return;
@@ -2181,7 +2028,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                         כדי שהניתוח ההשוואתי יהיה ברמה אקדמית גבוהה, מומלץ להעלות כאן מאמרים או פסקי דין ספציפיים.
                         אני אנתח אותם ואשלב אותם בטקסט עם אזכורים מדויקים.
                       </p>
-                      <Button type="button"
+                      <Button
                         variant="outline"
                         size="sm"
                         onClick={() => fileInputRef.current?.click()}
@@ -2238,7 +2085,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span className="inline-block">
-                            <Button type="button" size="sm" disabled className="gap-1.5 cursor-not-allowed">
+                            <Button size="sm" disabled className="gap-1.5 cursor-not-allowed">
                               <Lock className="w-3.5 h-3.5" />
                               ייצר תקציר
                             </Button>
@@ -2249,7 +2096,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                         </TooltipContent>
                       </Tooltip>
                     ) : (
-                      <Button type="button" onClick={writeCurrentChapter} size="sm" className="gap-1.5">
+                      <Button onClick={writeCurrentChapter} size="sm" className="gap-1.5">
                         {isAbstract && <Wand2 className="w-3.5 h-3.5" />}
                         {writeButtonLabel}
                       </Button>
@@ -2266,7 +2113,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   <span className="text-xs text-muted-foreground font-medium">
                     פרק {currentChapter + 1}: {chapters[currentChapter]?.title}
                   </span>
-                  <Button type="button" variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs">
+                  <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs">
                     <Copy className="w-3.5 h-3.5" />
                     העתק
                   </Button>
@@ -2312,17 +2159,17 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     dir="rtl"
                   />
                   {chapterFeedback.trim() && (
-                    <Button type="button" variant="secondary" size="sm" onClick={rewriteWithFeedback} className="text-xs gap-1">
+                    <Button variant="secondary" size="sm" onClick={rewriteWithFeedback} className="text-xs gap-1">
                       שכתב עם הנחיות
                     </Button>
                   )}
                 </div>
 
                 <div className="px-4 pb-4 flex gap-2 border-t border-border pt-3">
-                  <Button type="button" size="sm" onClick={advanceToNextChapter}>
+                  <Button size="sm" onClick={advanceToNextChapter}>
                     {currentChapter < chapters.length - 1 ? "המשך לפרק הבא" : "סיים עבודה"}
                   </Button>
-                  <Button type="button" variant="outline" size="sm" onClick={editCurrentChapter}>
+                  <Button variant="outline" size="sm" onClick={editCurrentChapter}>
                     כתוב מחדש פרק זה
                   </Button>
                 </div>
@@ -2339,11 +2186,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     {chapters.filter(ch => ch.content).length} פרקים נכתבו בהצלחה.
                   </p>
                   <div className="flex gap-2 justify-center">
-                    <Button type="button" onClick={handleCopy} className="gap-1.5">
+                    <Button onClick={handleCopy} className="gap-1.5">
                       <Copy className="w-4 h-4" />
                       העתק את כל העבודה
                     </Button>
-                    <Button type="button" variant="outline" onClick={discardAcademicSession}>
+                    <Button variant="outline" onClick={discardAcademicSession}>
                       עבודה חדשה
                     </Button>
                   </div>
@@ -2354,7 +2201,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             {/* Discard button when in progress */}
             {wizardStep !== "init" && wizardStep !== "done" && !loading && (
               <div className="flex justify-end">
-                <Button type="button" variant="ghost" size="sm" className="text-xs text-destructive gap-1" onClick={discardAcademicSession}>
+                <Button variant="ghost" size="sm" className="text-xs text-destructive gap-1" onClick={discardAcademicSession}>
                   <Trash2 className="w-3 h-3" />
                   בטל עבודה
                 </Button>
@@ -2382,7 +2229,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             <CardContent className="p-6 text-center space-y-3">
               <AlertTriangle className="w-8 h-8 text-destructive mx-auto" />
               <p className="text-foreground text-sm font-medium">{error}</p>
-              <Button type="button"
+              <Button
                 variant="outline"
                 size="sm"
                 onClick={() => { setError(null); }}
@@ -2430,7 +2277,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             <AlertTriangle className="h-4 w-4 text-amber-600" />
             <AlertDescription className="text-foreground space-y-3">
               <p className="text-sm leading-relaxed">{result.message}</p>
-              <Button type="button"
+              <Button
                 size="sm"
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
@@ -2473,11 +2320,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 {TASK_MODES.find((m) => m.id === taskMode)?.label || "חוות דעת"}
               </span>
               <div className="flex gap-2">
-                <Button type="button" variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs">
+                <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5 text-xs">
                   <Copy className="w-3.5 h-3.5" />
                   העתק
                 </Button>
-                <Button type="button"
+                <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => { setResult(null); setQuestion(""); }}
@@ -2594,7 +2441,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   dir="rtl"
                 />
                 {loading ? (
-                  <button type="button"
+                  <button
                     onClick={handleStop}
                     className="btn-send px-4 py-2.5 m-1.5 text-destructive-foreground bg-destructive text-base flex-shrink-0 hover:bg-destructive/90"
                     title="עצור"
@@ -2602,7 +2449,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     <StopCircle className="w-4 h-4" />
                   </button>
                 ) : (
-                  <button type="button"
+                  <button
                     onClick={handleSubmit}
                     disabled={
                       taskMode === "pleading_analysis"
@@ -2694,7 +2541,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               />
             </div>
             {loading && (
-              <button type="button"
+              <button
                 onClick={handleStop}
                 className="h-10 px-3 rounded-lg bg-destructive text-destructive-foreground text-xs flex items-center gap-1.5"
               >
@@ -2711,7 +2558,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             {uploadedFiles.map((f, i) => (
               <span key={i} className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/40 rounded px-1.5 py-0.5">
                 📎 {f.name}
-                <button type="button" onClick={() => removeFile(i)} className="text-destructive hover:text-destructive/80">
+                <button onClick={() => removeFile(i)} className="text-destructive hover:text-destructive/80">
                   <X className="w-2.5 h-2.5" />
                 </button>
               </span>
