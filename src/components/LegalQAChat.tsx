@@ -881,25 +881,6 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         }
       })();
       setResult(null);
-        }
-
-        // Continuous footnote numbering: sum footnotesCount of every chapter
-        // that appears BEFORE this one in display order. The chapters array is
-        // already stored in display order (תקציר → מבוא → bodies → סיכום).
-        // Abstract contributes 0 by rule (no new citations).
-        {
-          let offset = 0;
-          for (let i = 0; i < currentChapter; i++) {
-            const ch = chapters[i];
-            if (ch && typeof ch.footnotesCount === "number" && ch.footnotesCount > 0) {
-              offset += ch.footnotesCount;
-            }
-          }
-          if (offset > 0) {
-            body.footnoteOffset = offset;
-          }
-        }
-
 
     if (uploadedFiles.length > 0 && !FILE_RELEVANT_MODES.includes(newMode)) {
       toast.warning("שימו לב: הקבצים שהועלו עדיין מצורפים.", {
