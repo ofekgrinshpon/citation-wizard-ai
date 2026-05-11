@@ -1314,7 +1314,23 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         data = await res.json();
       }
 
-      if (data?.error) { setError(data.error); return; }
+      if (data?.error) {
+        const errStr = String(data.error);
+        if (errStr.includes("No previous chapter content")) {
+          toast.error("ניתן לכתוב סיכום רק לאחר שנכתב לפחות פרק גוף אחד.");
+          return;
+        }
+        if (errStr.includes("Missing researchQuestion")) {
+          toast.error("שאלת המחקר חסרה — חזור לשלב ניסוח שאלת המחקר.");
+          return;
+        }
+        if (errStr === "Question too short" && isWritingStage) {
+          toast.error("ניתן לכתוב סיכום רק לאחר שנכתב לפחות פרק גוף אחד.");
+          return;
+        }
+        setError(errStr);
+        return;
+      }
       if (!data?.answer || data.answer.trim().length < 10) { setError("לא התקבלה תשובה. נסו שוב."); return; }
 
 
