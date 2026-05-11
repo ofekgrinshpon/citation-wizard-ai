@@ -2328,7 +2328,272 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
 
       // Quick local search for context (skipped for abstract — synthesis only)
       let localContext = "";
-      if (!isAbstractGeneration) {
+
+      // ───── Feature B1: Topic Reality Check (suggest_topics only) ─────
+      // Verifies real sources exist before letting the LLM advertise them.
+      type TCSource = { title: string; source_type: string; origin: "local" | "external"; url?: string };
+      let topicCoverage: {
+        queries: string[];
+        localHits: number;
+        externalHits: number;
+        sources: TCSource[];
+        minCoverageReached: boolean;
+        pplxCalled: boolean;
+        pplxDurationMs: number;
+        totalDurationMs: number;
+      } | null = null;
+      const REALITY_CHECK_ENABLED = (Deno.env.get("TOPIC_REALITY_CHECK_ENABLED") ?? "true").toLowerCase() !== "false";
+      const PPLX_ENABLED = (Deno.env.get("TOPIC_REALITY_PPLX_ENABLED") ?? "true").toLowerCase() !== "false";
+      const MIN_HITS = parseInt(Deno.env.get("TOPIC_REALITY_MIN_HITS") ?? "4", 10) || 4;
+
+      if (academicStep === "suggest_topics" && REALITY_CHECK_ENABLED && !isAbstractGeneration) {
+        const trcStart = Date.now();
+
+        // Stage 1: planner — expand the topic into 3-4 retrieval queries.
+        let queries: string[] = [question];
+        try {
+          const plannerRes = await fetchWithTimeout("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: "openai/gpt-5-mini",
+              reasoning: { effort: "minimal" },
+              messages: [
+                { role: "system", content: "אתה מתכנן שאילתות חיפוש לעבודת מחקר משפטית בעברית. החזר 3-4 ניסוחי חיפוש קצרים וממוקדים (כולל הניסוח המקורי) שיעזרו לאתר חקיקה, פסיקה וספרות אקדמית במאגר משפטי. החזר רק את ה-tool call." },
+                { role: "user", content: `נושא: ${question.slice(0, 500)}` },
+              ],
+              tools: [{
+                type: "function",
+                function: {
+                  name: "plan_queries",
+                  parameters: {
+                    type: "object",
+                    properties: { queries: { type: "array", items: { type: "string" }, minItems: 1, maxItems: 5 } },
+                    required: ["queries"], additionalProperties: false,
+                  },
+                },
+              }],
+              tool_choice: { type: "function", function: { name: "plan_queries" } },
+            }),
+          }, 8000);
+          if (plannerRes.ok) {
+            const pj = await plannerRes.json();
+            const args = pj.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments;
+            if (args) {
+              const parsed = JSON.parse(args);
+              if (Array.isArray(parsed.queries) && parsed.queries.length > 0) {
+                queries = parsed.queries.map((q: unknown) => String(q || "").trim()).filter(Boolean).slice(0, 4);
+                if (queries.length === 0) queries = [question];
+              }
+            }
+          }
+        } catch (e) {
+          console.warn("Topic-reality planner failed, using single-query fallback:", e instanceof Error ? e.message : e);
+        }
+
+        // Stage 2: hybrid local retrieval — parallel text + vector per query.
+        type LocalHit = { document_id: string; document_title: string; source_type: string; source_url?: string; metadata?: Record<string, unknown>; score: number };
+        const hitsByDoc = new Map<string, LocalHit>();
+
+        const isBrokenPlaceholder = (t: string | null | undefined) => {
+          const s = (t || "").trim();
+          if (!s) return true;
+          return /^(פרטי\s+מסמך|ללא\s+כותרת)/i.test(s);
+        };
+
+        // Local inline embedding helper (the main getQueryEmbedding lives later in the handler).
+        const embed = async (text: string): Promise<number[] | null> => {
+          try {
+            const key = Deno.env.get("OPENAI_API_KEY");
+            if (!key) return null;
+            const r = await fetchWithTimeout("https://api.openai.com/v1/embeddings", {
+              method: "POST",
+              headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+              body: JSON.stringify({ model: "text-embedding-3-small", input: text.slice(0, 2000), dimensions: 768 }),
+            }, 4000);
+            if (!r.ok) return null;
+            const d = await r.json();
+            return d.data?.[0]?.embedding || null;
+          } catch { return null; }
+        };
+
+        await Promise.all(queries.map(async (q) => {
+          const kw = extractKeywords(q) || q;
+          const [textRes, emb] = await Promise.all([
+            adminClient.rpc("search_legal_chunks_text", { search_query: kw, match_count: 8 }).then((r: any) => r).catch(() => ({ data: null })),
+            embed(q),
+          ]);
+          const vecRes = emb
+            ? await adminClient.rpc("match_legal_chunks", { query_embedding: JSON.stringify(emb), match_threshold: 0.55, match_count: 8 }).then((r: any) => r).catch(() => ({ data: null }))
+            : { data: null };
+          const merge = (rows: any[] | null, weight: number) => {
+            if (!Array.isArray(rows)) return;
+            for (const m of rows) {
+              if (isBrokenPlaceholder(m.document_title)) continue;
+              const meta = (m.metadata || {}) as Record<string, unknown>;
+              if (meta.broken_title === true) continue;
+              const prev = hitsByDoc.get(m.document_id);
+              const addScore = ((m.similarity as number) || 0) * weight;
+              if (prev) {
+                prev.score += addScore;
+              } else {
+                hitsByDoc.set(m.document_id, {
+                  document_id: m.document_id,
+                  document_title: m.document_title,
+                  source_type: m.source_type,
+                  source_url: m.source_url || undefined,
+                  metadata: meta,
+                  score: addScore,
+                });
+              }
+            }
+          };
+          merge(textRes?.data, 0.4);
+          merge(vecRes?.data, 1.0);
+        }));
+
+        const localSorted = Array.from(hitsByDoc.values()).sort((a, b) => b.score - a.score).slice(0, 12);
+        const localSources: TCSource[] = localSorted.map(h => ({
+          title: h.document_title,
+          source_type: h.source_type,
+          origin: "local" as const,
+          url: h.source_url,
+        }));
+
+        // Stage 3: Perplexity fallback (only when local hits < MIN_HITS).
+        let externalSources: TCSource[] = [];
+        let pplxCalled = false;
+        let pplxDurationMs = 0;
+        const PPLX_KEY = Deno.env.get("PERPLEXITY_API_KEY");
+        if (PPLX_ENABLED && PPLX_KEY && localSources.length < MIN_HITS) {
+          const pStart = Date.now();
+          pplxCalled = true;
+          try {
+            const pRes = await fetchWithTimeout("https://api.perplexity.ai/chat/completions", {
+              method: "POST",
+              headers: { Authorization: `Bearer ${PPLX_KEY}`, "Content-Type": "application/json" },
+              body: JSON.stringify({
+                model: "sonar",
+                messages: [
+                  { role: "system", content: "אתה מאתר מקורות משפטיים ישראליים. החזר רק JSON תקף לפי הסכמה." },
+                  { role: "user", content: `מצא עד 6 מקורות משפטיים ישראליים רלוונטיים (חקיקה, פסיקה, מאמרים אקדמיים) לנושא:\n${question.slice(0, 800)}\n\nהחזר JSON עם המפתח sources.` },
+                ],
+                search_domain_filter: ["nevo.co.il", "supremedecisions.court.gov.il", "lite.takdin.co.il", "mishpatim.ac.il", "tau.ac.il", "huji.ac.il"],
+                response_format: {
+                  type: "json_schema",
+                  json_schema: {
+                    name: "sources",
+                    schema: {
+                      type: "object",
+                      properties: {
+                        sources: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              title: { type: "string" },
+                              source_type: { type: "string" },
+                              why_relevant: { type: "string" },
+                            },
+                            required: ["title", "source_type"],
+                          },
+                        },
+                      },
+                      required: ["sources"],
+                    },
+                  },
+                },
+              }),
+            }, 15000);
+            if (pRes.ok) {
+              const pj = await pRes.json();
+              const content = pj.choices?.[0]?.message?.content || "";
+              const citations: string[] = Array.isArray(pj.citations) ? pj.citations : [];
+              try {
+                const parsed = JSON.parse(content);
+                if (Array.isArray(parsed.sources)) {
+                  externalSources = parsed.sources.slice(0, 6).map((s: any, i: number) => ({
+                    title: String(s.title || "").trim(),
+                    source_type: String(s.source_type || "אחר").trim(),
+                    origin: "external" as const,
+                    url: citations[i] || undefined,
+                  })).filter((s: TCSource) => s.title.length > 0);
+                }
+              } catch (parseErr) {
+                console.warn("Perplexity reality-check JSON parse failed:", parseErr instanceof Error ? parseErr.message : parseErr);
+              }
+            } else {
+              console.warn("Perplexity reality-check HTTP", pRes.status);
+            }
+          } catch (e) {
+            console.warn("Perplexity reality-check failed:", e instanceof Error ? e.message : e);
+          }
+          pplxDurationMs = Date.now() - pStart;
+        }
+
+        const allSources: TCSource[] = [...localSources, ...externalSources];
+        const minCoverageReached = allSources.length >= 3;
+
+        topicCoverage = {
+          queries,
+          localHits: localSources.length,
+          externalHits: externalSources.length,
+          sources: allSources,
+          minCoverageReached,
+          pplxCalled,
+          pplxDurationMs,
+          totalDurationMs: Date.now() - trcStart,
+        };
+
+        // Early-exit: no sources at all → return a guidance message, no questions.
+        if (allSources.length === 0) {
+          try {
+            await adminClient.from("qa_logs").insert({
+              user_id: user.id,
+              question: question.substring(0, 500),
+              answer: "",
+              footnotes: [],
+              task_mode: taskMode,
+              local_footnotes_count: 0,
+              perplexity_footnotes_count: 0,
+              total_footnotes: 0,
+              metadata: { academic_step: academicStep, topic_reality_check: topicCoverage, no_coverage: true, duration_ms: Date.now() - t0 },
+            });
+          } catch { /* non-fatal */ }
+          return new Response(
+            JSON.stringify({
+              answer: "לא מצאתי מקורות מספקים לנושא הזה במאגר ובחיפוש מהיר. נסה לצמצם את הנושא, לבחור זווית ספציפית יותר, או לנסח אותו אחרת.",
+              footnotes: [],
+              source_urls: [],
+              topicCoverage,
+              noCoverage: true,
+            }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        // Inject the verified source pool into the LLM prompt.
+        const localList = localSources.length > 0
+          ? localSources.map(s => `- ${s.title} (${s.source_type}) [מאגר]`).join("\n")
+          : "(אין)";
+        const externalList = externalSources.length > 0
+          ? externalSources.map(s => `- ${s.title} (${s.source_type}) [חיצוני]`).join("\n")
+          : "(לא נדרש חיפוש חיצוני)";
+        const lowCoverageNote = minCoverageReached ? "" : "\n⚠️ כיסוי מקורות דל — סמן כל שאלה שמסתמכת בעיקר על מקורות לא-מאומתים בתג \"⚠️ כיסוי דל\".";
+        localContext =
+`\n=== מקורות שאומתו לנושא (השתמש רק במקורות מהרשימה הזו תחת "מקורות זמינים") ===
+מקומיים (${localSources.length}):
+${localList}
+
+חיצוניים (${externalSources.length}):
+${externalList}
+
+חוקים נוספים:
+- ציין ליד כל מקור [מאגר] או [חיצוני] לפי הרשימה.
+- אסור להמציא מקורות שלא ברשימה.${lowCoverageNote}
+`;
+      } else if (!isAbstractGeneration) {
+        // Fallback to original light context for non-suggest_topics sub-modes.
         try {
           const keywords = extractKeywords(question);
           const { data: textMatches } = await adminClient.rpc("search_legal_chunks_text", {
@@ -2376,7 +2641,6 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         const words = answerText.trim().split(/\s+/).filter(Boolean);
         if (words.length > 250) {
           console.warn(`Abstract exceeded 250 words (got ${words.length}). Trimming.`);
-          // Trim to 250 words at a sentence boundary if possible.
           const truncated = words.slice(0, 250).join(" ");
           const lastStop = Math.max(
             truncated.lastIndexOf("."),
@@ -2389,11 +2653,8 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         }
       }
 
-      console.log(`Academic sub-mode (${academicStep}${isAbstractGeneration ? ":abstract" : ""}): ${answerText.length} chars, ${Date.now() - t0}ms`);
+      console.log(`Academic sub-mode (${academicStep}${isAbstractGeneration ? ":abstract" : ""}): ${answerText.length} chars, ${Date.now() - t0}ms${topicCoverage ? `, reality-check: local=${topicCoverage.localHits} ext=${topicCoverage.externalHits}` : ""}`);
 
-      // Persist academic sub-mode runs into qa_logs so the history sidebar
-      // and admin dashboards can see them. The full Deep pipeline write below
-      // only runs for write_chapter (non-abstract) / research mode.
       try {
         await adminClient.from("qa_logs").insert({
           user_id: user.id,
@@ -2408,6 +2669,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             academic_step: academicStep,
             is_abstract: isAbstractGeneration,
             duration_ms: Date.now() - t0,
+            ...(topicCoverage ? { topic_reality_check: topicCoverage } : {}),
           },
         });
       } catch (logErr) {
@@ -2415,7 +2677,12 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       }
 
       return new Response(
-        JSON.stringify({ answer: answerText, footnotes: [], source_urls: [] }),
+        JSON.stringify({
+          answer: answerText,
+          footnotes: [],
+          source_urls: [],
+          ...(topicCoverage ? { topicCoverage } : {}),
+        }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
