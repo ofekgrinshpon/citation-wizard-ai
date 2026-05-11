@@ -1452,25 +1452,60 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   }
 
   const writeCurrentChapter = () => {
-    const title = chapters[currentChapter]?.title || "";
+    // Snapshot all state at click time so the request is immune to React state
+    // drift while the async call is in flight.
+    const snapshotChapters = chapters.map((ch) => ({ title: ch.title, content: ch.content }));
+    const snapshotIdx = currentChapter;
+    const title = snapshotChapters[snapshotIdx]?.title || "";
     const role = chapterRole(title);
-    const chapterContext = {
-      chapterTitle: title,
-      chapterIndex: currentChapter,
-      researchQuestion,
-    };
+
     if (isChapterLocked(title)) {
       toast.info(lockTooltipFor(role));
       return;
     }
+
+    // Effective research question with outline fallback. Synthesis writes must
+    // never depend on the visible textarea.
+    const effectiveRQ =
+      researchQuestion.trim() ||
+      (outline.match(/שאלת המחקר[:：]?\s*(.+)/)?.[1] || "").trim() ||
+      question.trim();
+
+    // Body chapters with usable content — what the synthesis steps need.
+    const writtenBodies = snapshotChapters
+      .filter((ch) => chapterRole(ch.title) === "body" && !!ch.content && ch.content!.trim().length > 50)
+      .map((ch) => ({ title: ch.title, content: ch.content! }));
+
+    console.debug("[academic] writeCurrentChapter snapshot", {
+      role,
+      title,
+      snapshotIdx,
+      writtenBodies: writtenBodies.length,
+      hasRQ: !!effectiveRQ,
+    });
+
+    const baseContext = {
+      chapterTitle: title,
+      chapterIndex: snapshotIdx,
+      researchQuestion: effectiveRQ,
+    };
+
     if (role === "abstract") {
-      handleAcademicSubmit("write_chapter", { ...chapterContext, isAbstract: true });
+      handleAcademicSubmit("write_chapter", { ...baseContext, isAbstract: true, snapshotChapters });
     } else if (role === "introduction") {
-      handleAcademicSubmit("write_introduction", chapterContext);
+      if (writtenBodies.length === 0) {
+        toast.error("ניתן לכתוב מבוא רק לאחר שנכתבו פרקי הגוף.");
+        return;
+      }
+      handleAcademicSubmit("write_introduction", { ...baseContext, snapshotChapters });
     } else if (role === "conclusion") {
-      handleAcademicSubmit("write_conclusion", chapterContext);
+      if (writtenBodies.length === 0) {
+        toast.error("ניתן לכתוב סיכום רק לאחר שנכתב לפחות פרק גוף אחד.");
+        return;
+      }
+      handleAcademicSubmit("write_conclusion", { ...baseContext, snapshotChapters });
     } else {
-      handleAcademicSubmit("write_chapter", chapterContext);
+      handleAcademicSubmit("write_chapter", { ...baseContext, snapshotChapters });
     }
   };
 
