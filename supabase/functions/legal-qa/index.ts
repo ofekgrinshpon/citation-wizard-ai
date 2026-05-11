@@ -38,6 +38,11 @@ import { resolveModeProfile, type ModeProfile, type ResearchDepth } from "./mode
 import { resolveAcademicProfile, type AcademicProfile, type AcademicStep } from "./academicProfiles.ts";
 import { runChapterCritic, shouldRevise, type CriticResult } from "./critic.ts";
 import { runChapterRevision } from "./criticRevision.ts";
+import {
+  dynamicRerank,
+  type RerankInputDoc,
+  type RerankV2Telemetry,
+} from "./dynamicRerank.ts";
 
 // Single source of truth for the research-mode gate. The frontend currently
 // sends `taskMode: "research"`; if that ever changes, update this constant.
