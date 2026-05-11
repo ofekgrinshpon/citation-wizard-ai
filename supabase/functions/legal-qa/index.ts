@@ -2018,7 +2018,35 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       console.log(`[eval] forcing legacy path (run=${evalRunId} variant=${evalVariant})`);
     }
 
-    if (!question || typeof question !== "string" || question.trim().length < 3) {
+    // Academic synthesis steps (write_introduction, write_conclusion, abstract synthesis)
+    // are driven by previousChapters + researchQuestion, NOT by typed `question`.
+    // Skip the generic question-length guard for those; validate their own inputs instead.
+    const isAcademicSynthesisRequest =
+      taskMode === "academic_writing" && (
+        academicStep === "write_introduction" ||
+        academicStep === "write_conclusion" ||
+        (academicStep === "write_chapter" && !!body.isAbstract)
+      );
+
+    if (isAcademicSynthesisRequest) {
+      const rq = typeof bodyResearchQuestion === "string" ? bodyResearchQuestion.trim() : "";
+      const prevChapters = Array.isArray(previousChapters) ? previousChapters : [];
+      const hasBodyContent = prevChapters.some(
+        (ch: unknown) => typeof ch === "object" && ch !== null &&
+          typeof (ch as { content?: unknown }).content === "string" &&
+          ((ch as { content: string }).content).trim().length > 50
+      );
+      if (!rq || rq.length < 3) {
+        return new Response(JSON.stringify({ error: "Missing researchQuestion for academic synthesis" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!hasBodyContent) {
+        return new Response(JSON.stringify({ error: "No previous chapter content available for synthesis" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    } else if (!question || typeof question !== "string" || question.trim().length < 3) {
       return new Response(JSON.stringify({ error: "Question too short" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

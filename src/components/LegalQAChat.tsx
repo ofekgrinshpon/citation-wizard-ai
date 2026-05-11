@@ -1341,14 +1341,21 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         academicStep === "write_introduction" ||
         academicStep === "write_conclusion"
       ) {
-        // Save chapter content (works for body, intro, and conclusion writes)
+        // Save chapter content. Use the explicit chapterIndex from extraBody when
+        // present (it was captured at click time) — `currentChapter` may have
+        // drifted while the async request was in flight, which would otherwise
+        // write the result into the wrong chapter slot.
+        const explicitIdx =
+          typeof extraBody?.chapterIndex === "number" ? extraBody.chapterIndex : currentChapter;
+        const targetIdx =
+          explicitIdx >= 0 && explicitIdx < chapters.length ? explicitIdx : currentChapter;
         const updatedChapters = [...chapters];
-        updatedChapters[currentChapter] = { ...updatedChapters[currentChapter], content: qaResult.answer };
+        updatedChapters[targetIdx] = { ...updatedChapters[targetIdx], content: qaResult.answer };
         setChapters(updatedChapters);
         updateWizardStep("checkpoint");
 
         // Stage-aware unlock toasts (mirrors the lock chain: body → conclusion → intro → abstract)
-        const justWrittenTitle = updatedChapters[currentChapter]?.title || "";
+        const justWrittenTitle = updatedChapters[targetIdx]?.title || "";
         const justRole = chapterRole(justWrittenTitle);
         const allBodyDone = updatedChapters.filter(ch => chapterRole(ch.title) === "body").every(ch => !!ch.content);
         const conclusionCh = updatedChapters.find(ch => chapterRole(ch.title) === "conclusion");
