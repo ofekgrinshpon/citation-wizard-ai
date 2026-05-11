@@ -708,10 +708,22 @@ function OutlineReport({
         </CardContent>
       </Card>
 
-      <div className="flex gap-2 pt-1">
-        <Button size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
-        <Button variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
-      </div>
+      {isEditing ? (
+        <OutlineChapterEditor
+          initialTitles={parsedBodyTitles}
+          onConfirm={(titles) => { setIsEditing(false); onApproveEdited(titles); }}
+          onCancel={() => setIsEditing(false)}
+        />
+      ) : (
+        <div className="flex gap-2 pt-1 flex-wrap">
+          <Button size="sm" onClick={onApprove}>אשר מתווה והתחל כתיבה</Button>
+          <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="gap-1">
+            <Wand2 className="w-3.5 h-3.5" />
+            ערוך רשימת פרקים
+          </Button>
+          <Button variant="ghost" size="sm" onClick={onBack}>חזרה לעריכה</Button>
+        </div>
+      )}
     </div>
   );
 }
