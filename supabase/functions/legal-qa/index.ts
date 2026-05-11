@@ -2424,7 +2424,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             embed(q),
           ]);
           const vecRes = emb
-            ? await adminClient.rpc("match_legal_chunks", { query_embedding: emb as unknown as string, match_threshold: 0.55, match_count: 8 }).then((r: any) => r).catch(() => ({ data: null }))
+            ? await adminClient.rpc("match_legal_chunks", { query_embedding: JSON.stringify(emb), match_threshold: 0.55, match_count: 8 }).then((r: any) => r).catch(() => ({ data: null }))
             : { data: null };
           const merge = (rows: any[] | null, weight: number) => {
             if (!Array.isArray(rows)) return;
