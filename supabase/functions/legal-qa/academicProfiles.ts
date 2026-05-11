@@ -64,6 +64,15 @@ export interface AcademicProfile {
    * Academic style mandates narrative citations (see line ~1110 in index.ts).
    */
   qaGuardNarrativeViolationThreshold: number;
+
+  // ─── Critic pass (chapter-class only) ───
+  /** When true, run the critic stage after the structured drafter. */
+  criticEnabled?: boolean;
+  /**
+   * Revision triggers if `claims_supported / claims_total` falls below this.
+   * Defaults to 0.7 in `shouldRevise` when omitted.
+   */
+  criticMinCoverage?: number;
 }
 
 export const ACADEMIC_PROFILES: Record<AcademicStep, AcademicProfile> = {
