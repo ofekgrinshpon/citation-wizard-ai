@@ -1580,6 +1580,102 @@ export interface RerankDropDetail {
   reason: string;
 }
 
+// Dynamic reranker wrapper. Behind DYNAMIC_RERANK_ENABLED so we can A/B before
+// flipping default. When enabled, replaces the static caselaw>=5 / non-caselaw>=3
+// / top-6 gate with the signal-fusion + adaptive-gate + MMR pipeline in
+// dynamicRerank.ts. The legacy path below is kept verbatim as the off-branch.
+const DYNAMIC_RERANK_ENABLED = (Deno.env.get("DYNAMIC_RERANK_ENABLED") ?? "false").toLowerCase() === "true";
+
+async function rerankLocalMatchesDynamic(
+  matches: LocalMatch[],
+  question: string,
+  apiKey: string,
+  dropDetails?: RerankDropDetail[],
+  telemetryOut?: { v2?: RerankV2Telemetry },
+): Promise<RankedMatch[]> {
+  if (matches.length === 0) return [];
+
+  // Aggregate per-doc: take max similarity, concatenate first chunk slice.
+  const docMap = new Map<string, { match: LocalMatch; chunks: string[]; bestSim: number; originalIndex: number }>();
+  let idx = 0;
+  for (const m of matches) {
+    const existing = docMap.get(m.document_id);
+    if (existing) {
+      existing.chunks.push(m.chunk_content.slice(0, 300));
+      if ((m.similarity || 0) > existing.bestSim) existing.bestSim = m.similarity || 0;
+    } else {
+      docMap.set(m.document_id, {
+        match: m,
+        chunks: [m.chunk_content.slice(0, 300)],
+        bestSim: m.similarity || 0,
+        originalIndex: idx++,
+      });
+    }
+  }
+
+  const inputs: RerankInputDoc[] = Array.from(docMap.entries()).map(([docId, d]) => ({
+    docId,
+    title: d.match.document_title || "",
+    chunkText: d.chunks.join(" "),
+    vectorSim: d.bestSim,
+    // We don't carry a separate text-rank score on LocalMatch today; reuse
+    // similarity as a soft proxy. Future: thread search_legal_chunks_text rank
+    // through if/when it's added to LocalMatch.
+    textRank: d.bestSim,
+    source_type: d.match.source_type || "",
+    originalIndex: d.originalIndex,
+  }));
+
+  try {
+    const { picks, telemetry } = await dynamicRerank(inputs, {
+      question,
+      apiKey,
+      k: 6,
+      mmrLambda: 0.7,
+      gate: { absoluteMin: 0.20, deltaFromP75: 0.25 },
+    });
+    if (telemetryOut) telemetryOut.v2 = telemetry;
+
+    // Capture drop details (kept compatible with legacy rerank_drops field).
+    if (dropDetails) {
+      for (const row of telemetry.per_doc) {
+        if (row.kept) continue;
+        if (dropDetails.length >= 10) break;
+        dropDetails.push({
+          title: row.title,
+          source_type: row.source_type,
+          score: row.breakdown.final_score,
+          reason: row.drop_reason ?? "dynamic_rerank",
+        });
+      }
+    }
+
+    // Rebuild chunks for picked docs, attach final_score as relevanceScore.
+    const pickedIds = new Set(picks.map(p => p.docId));
+    const scoreByDoc = new Map(picks.map(p => [p.docId, p.breakdown.final_score]));
+    const out: RankedMatch[] = [];
+    // Preserve picks order (already in MMR order, which mixes relevance + diversity).
+    for (const p of picks) {
+      for (const m of matches) {
+        if (m.document_id === p.docId) {
+          out.push({ ...m, relevanceScore: scoreByDoc.get(p.docId) });
+        }
+      }
+    }
+    void pickedIds;
+    console.log(
+      `[rerank_v2] intent=${telemetry.profile.intent} branches=${telemetry.profile.branches.join(",")||"-"} ` +
+      `floor=${telemetry.gate_floor.toFixed(3)} kept=${picks.length}/${inputs.length} ` +
+      `batches=${telemetry.batches.total} 429=${telemetry.batches.retried_429} ` +
+      `fallback=${telemetry.batches.failed_fallback}`,
+    );
+    return out;
+  } catch (err) {
+    console.error("[rerank_v2] failed (non-fatal) — falling back to legacy:", err);
+    return rerankLocalMatches(matches, question, apiKey, dropDetails);
+  }
+}
+
 async function rerankLocalMatches(
   matches: LocalMatch[],
   question: string,
