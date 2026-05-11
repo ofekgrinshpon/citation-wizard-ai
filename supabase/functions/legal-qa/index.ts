@@ -2105,7 +2105,24 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, depth: bodyDepth, styleGuideEnabled: bodyStyleGuideEnabled } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, depth: bodyDepth, styleGuideEnabled: bodyStyleGuideEnabled, footnoteOffset: bodyFootnoteOffset } = body;
+
+    // ─── Continuous footnote numbering (academic writing only) ────────
+    // Each chapter is generated independently and produces a local 1..K
+    // footnote sequence. To make numbering continuous across the assembled
+    // paper, the frontend ships `footnoteOffset` = sum of footnotesCount of
+    // chapters that appear before this one in display order. Honored only
+    // for academic chapter-class writes; ignored otherwise.
+    const CONTINUOUS_FOOTNOTES_ENABLED = (Deno.env.get("CONTINUOUS_FOOTNOTES_ENABLED") ?? "true").toLowerCase() !== "false";
+    const isChapterClassWrite =
+      taskMode === "academic_writing" &&
+      (academicStep === "write_chapter" ||
+        academicStep === "write_introduction" ||
+        academicStep === "write_conclusion");
+    let effectiveFootnoteOffset = 0;
+    if (CONTINUOUS_FOOTNOTES_ENABLED && isChapterClassWrite && typeof bodyFootnoteOffset === "number" && Number.isFinite(bodyFootnoteOffset)) {
+      effectiveFootnoteOffset = Math.max(0, Math.min(500, Math.floor(bodyFootnoteOffset)));
+    }
 
     // ─── Mode profile (Fast / Deep) — single source of truth for per-mode knobs ───
     // Resolved once here; everything downstream reads from `modeProfile`.
