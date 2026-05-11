@@ -1,42 +1,56 @@
-**What is actually happening**
+**What is happening**
 
-The remaining failure is not the old toast string in the frontend — that exact `toast.error("יש להזין טקסט.")` no longer exists in the app code. The likely active blocker is the backend’s generic request guard:
-
-```ts
-if (!question || typeof question !== "string" || question.trim().length < 3) {
-  return { error: "Question too short" }
-}
-```
-
-That guard still runs before academic-step routing. For `סיכום ומסקנות`, the content should come from `previousChapters`, not from typed input, so this global `question` guard is conceptually wrong for `write_conclusion` / `write_introduction` / abstract synthesis.
+The chapter is not being written because the request is being stopped before a valid `write_conclusion` request completes. A chapter only gets saved after `handleAcademicSubmit()` receives an AI answer and writes it into `chapters[targetIdx].content`. If the text-validation branch fires first, or the request is sent without usable `previousChapters`, the function returns early and that save block never runs.
 
 **Do I know what the issue is?**
 
-Yes: there are two separate validation layers. We fixed the frontend generic text toast, but the backend still treats every request as requiring a non-empty `question`. For paper-level academic synthesis, the required data is `researchQuestion + previousChapters`, not the visible textarea.
+Yes. The current code has fixed part of the backend guard, but the conclusion flow still depends on live React state (`question`, `researchQuestion`, `chapters`, `currentChapter`) at click/runtime. For `סיכום ומסקנות`, that is fragile: the visible textarea can be empty, selected chapter state can drift, and `previousChapters` can be built from stale/empty state. When that happens, the flow aborts before the AI answer exists, so no chapter content is saved.
 
-**Implementation plan**
+Also, the exact old text `יש להזין טקסט` no longer exists in the current source code outside the plan/comment, so if that exact text appears it means either an older client bundle is still running, or another generic submit/validation path is being triggered instead of the conclusion writer.
 
-1. **Move academic routing before the generic backend question guard**
-   - In `supabase/functions/legal-qa/index.ts`, classify academic writing requests before validating `question`.
-   - For `write_conclusion`, `write_introduction`, and abstract synthesis, validate:
-     - `researchQuestion` is present.
-     - `previousChapters` contains at least one body chapter with content.
-   - Only keep the generic `question.trim().length < 3` guard for normal Legal QA, case summary, pleading analysis, and early academic steps that really need user text.
+**Fix plan**
 
-2. **Make frontend requests impossible to send an empty academic question**
-   - In `LegalQAChat.tsx`, compute one explicit `requestQuestion` for academic writes:
-     - use `effectiveResearchQuestion` for all academic writing steps;
-     - never depend on the visible textarea for conclusion/intro/abstract.
-   - For `writeCurrentChapter`, pass a fallback `researchQuestion: researchQuestion || outline-extracted question || question` if needed.
+1. **Make conclusion generation independent of the visible textarea**
+   - For `write_conclusion`, `write_introduction`, and abstract generation, build the request question only from the saved research question / outline fallback.
+   - Never read `question.trim()` as a requirement for these writing steps.
 
-3. **Fix the chapter-save index bug for stale React state**
-   - The response save currently writes to `updatedChapters[currentChapter]` after an async request. If the selected chapter changes while the request is running, the result can be saved into the wrong chapter.
-   - Save to `extraBody.chapterIndex` when provided. This is important for `סיכום ומסקנות`, because it is selected explicitly from the chapter list.
+2. **Snapshot chapter state at click time**
+   - In `writeCurrentChapter`, capture:
+     - selected chapter index,
+     - selected title,
+     - chapter role,
+     - full `chapters` array,
+     - saved `researchQuestion`,
+     - `outline`.
+   - Pass this snapshot into `handleAcademicSubmit()`.
+   - Build `previousChapters` from the snapshot, not from possibly stale state.
 
-4. **Finish button hardening**
-   - Add `type="button"` to the remaining academic wizard/outline/checkpoint buttons that still omit it. This avoids accidental submit behavior documented in React/HTML (`button` defaults to `submit` inside forms).
+3. **Guarantee `סיכום ומסקנות` receives body content**
+   - For `write_conclusion`, filter the snapshot to written body chapters only.
+   - If no body chapter has content, show only the correct blocker: `ניתן לכתוב סיכום רק לאחר שנכתב לפחות פרק גוף אחד.`
+   - If body content exists, always send it as `previousChapters`.
 
-5. **Validation**
-   - Search confirms the old generic Hebrew toast does not exist anywhere except a comment.
-   - Confirm `write_conclusion` can no longer hit a generic typed-text validation path.
-   - Confirm the only conclusion-specific blocker is the intended message: `ניתן לכתוב סיכום רק לאחר שנכתב לפחות פרק גוף אחד.`
+4. **Save the returned answer to the exact selected chapter**
+   - Continue using `extraBody.chapterIndex`, but prefer the snapshot index.
+   - This prevents async drift from saving the answer into the wrong chapter or not visibly updating the conclusion.
+
+5. **Remove remaining accidental submit paths**
+   - Add `type="button"` to every remaining academic wizard button and raw button that lacks it.
+   - This prevents a generic validation/send path from firing while the academic wizard is visible.
+
+6. **Map backend synthesis errors to the right UI message**
+   - `No previous chapter content available for synthesis` → body-chapter prerequisite message.
+   - `Missing researchQuestion for academic synthesis` → missing research-question message.
+   - Do not surface generic text-input errors for conclusion/intro/abstract.
+
+7. **Add one targeted debug log**
+   - Log the academic step, selected chapter title, number of written body chapters, and request `previousChapters.length`.
+   - If anything still fails, the next browser snapshot will show exactly which branch stopped it.
+
+<lov-actions>
+  <lov-open-history>View History</lov-open-history>
+</lov-actions>
+
+<lov-actions>
+<lov-link url="https://docs.lovable.dev/tips-tricks/troubleshooting">Troubleshooting docs</lov-link>
+</lov-actions>
