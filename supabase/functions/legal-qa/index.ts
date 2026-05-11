@@ -3296,10 +3296,13 @@ ${(verify.fullText as string).slice(0, 50000)}
     // ========= Step 1c: AI-based re-ranking of local sources =========
     let rankedMatches: RankedMatch[] = localMatches.map(m => ({ ...m }));
     const rerankDrops: RerankDropDetail[] = [];
+    const rerankV2Out: { v2?: RerankV2Telemetry } = {};
     if (localMatches.length > 0 && LOVABLE_API_KEY) {
       emitStage("rerank", "running");
       try {
-        rankedMatches = await rerankLocalMatches(localMatches, question, LOVABLE_API_KEY, rerankDrops);
+        rankedMatches = DYNAMIC_RERANK_ENABLED
+          ? await rerankLocalMatchesDynamic(localMatches, question, LOVABLE_API_KEY, rerankDrops, rerankV2Out)
+          : await rerankLocalMatches(localMatches, question, LOVABLE_API_KEY, rerankDrops);
         const tRerank = Date.now();
         console.log(`Re-ranking took ${tRerank - tRetrieval}ms, kept ${rankedMatches.length}/${localMatches.length} chunks`);
 
