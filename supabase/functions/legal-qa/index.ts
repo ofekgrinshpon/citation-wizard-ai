@@ -1584,7 +1584,7 @@ export interface RerankDropDetail {
 // flipping default. When enabled, replaces the static caselaw>=5 / non-caselaw>=3
 // / top-6 gate with the signal-fusion + adaptive-gate + MMR pipeline in
 // dynamicRerank.ts. The legacy path below is kept verbatim as the off-branch.
-const DYNAMIC_RERANK_ENABLED = (Deno.env.get("DYNAMIC_RERANK_ENABLED") ?? "false").toLowerCase() === "true";
+const DYNAMIC_RERANK_ENABLED = (Deno.env.get("DYNAMIC_RERANK_ENABLED") ?? "true").toLowerCase() !== "false";
 
 async function rerankLocalMatchesDynamic(
   matches: LocalMatch[],
