@@ -151,6 +151,8 @@ export const ACADEMIC_PROFILES: Record<AcademicStep, AcademicProfile> = {
     qaGuardUnresolvedShareThreshold: 0.4,
     qaGuardUnderWordFloorRatio: 0.5, // intros are framing — looser floor
     qaGuardNarrativeViolationThreshold: 3,
+    criticEnabled: true,
+    criticMinCoverage: 0.6, // intros: lighter coverage demand
   },
   // ─── Conclusion (write_conclusion) ─────────────────────────────────
   // Generated LAST among substantive chapters. Synthesizes the actual body,
@@ -165,6 +167,8 @@ export const ACADEMIC_PROFILES: Record<AcademicStep, AcademicProfile> = {
     qaGuardUnresolvedShareThreshold: 0.4,
     qaGuardUnderWordFloorRatio: 0.5,
     qaGuardNarrativeViolationThreshold: 3,
+    criticEnabled: true,
+    criticMinCoverage: 0.6,
   },
 };
 
