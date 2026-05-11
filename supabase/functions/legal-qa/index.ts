@@ -1383,7 +1383,7 @@ ${allChaptersContext}
       return `אתה חוקר אקדמי בכיר במשפטים. כתוב את הפרק הבא בעבודה הסמינריונית.
 
 שאלת המחקר: "${rq}"
-פרק נוכחי (${chapterIndex + 1}): **${chapterTitle}**${thesisBlock}${loaBlock}${roleBlock}${siblingsBlock}
+פרק נוכחי (${chapterIndex + 1}): **${chapterTitle}**${thesisBlock}${loaBlock}${roleBlock}${siblingsBlock}${renderPaperMemoryBlock(mergePaperMemoryDeltas((body.paperMemoryDeltas as PaperMemoryDelta[] | undefined) ?? null))}
 ${prevContext}
 
 הנחיות:
