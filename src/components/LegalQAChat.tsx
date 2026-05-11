@@ -1269,7 +1269,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       ) {
         // Save chapter content (works for body, intro, and conclusion writes)
         const updatedChapters = [...chapters];
-        updatedChapters[currentChapter] = { ...updatedChapters[currentChapter], content: qaResult.answer };
+        updatedChapters[currentChapter] = {
+          ...updatedChapters[currentChapter],
+          content: qaResult.answer,
+          ...(qaResult.paper_memory_delta
+            ? { paperMemoryDelta: qaResult.paper_memory_delta }
+            : {}),
+        };
         setChapters(updatedChapters);
         updateWizardStep("checkpoint");
 
