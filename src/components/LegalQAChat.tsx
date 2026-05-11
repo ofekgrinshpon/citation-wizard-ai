@@ -87,6 +87,12 @@ interface QAResult {
   case_summary?: boolean;
   verified_source?: "user" | "local" | "external" | "none";
   dropped_footnotes_count?: number;
+  paper_memory_delta?: unknown;
+  coherence_audit?: {
+    verdict: "pass" | "revise";
+    issues_count: number;
+    revised: boolean;
+  } | null;
   case_metadata?: {
     title?: string | null;
     citation?: string | null;
