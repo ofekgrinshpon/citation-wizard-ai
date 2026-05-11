@@ -88,6 +88,8 @@ interface QAResult {
   verified_source?: "user" | "local" | "external" | "none";
   dropped_footnotes_count?: number;
   paper_memory_delta?: unknown;
+  footnotes_count?: number;
+  footnote_offset_applied?: number;
   coherence_audit?: {
     verdict: "pass" | "revise";
     issues_count: number;
@@ -131,6 +133,10 @@ interface ChapterData {
    *  after it was finalized. Re-shipped on subsequent write_chapter calls
    *  so the model is primed with prior claims/definitions/citations. */
   paperMemoryDelta?: unknown;
+  /** Continuous footnote numbering: number of footnotes emitted by this
+   *  chapter. Summed across earlier chapters (display order) to compute
+   *  the next chapter's footnoteOffset. */
+  footnotesCount?: number;
 }
 
 interface AcademicSession {
@@ -877,7 +883,6 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       setResult(null);
     }
 
-
     if (uploadedFiles.length > 0 && !FILE_RELEVANT_MODES.includes(newMode)) {
       toast.warning("שימו לב: הקבצים שהועלו עדיין מצורפים.", {
         action: { label: "הסר קבצים", onClick: () => removeAllFiles() },
@@ -1185,7 +1190,24 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           }
         }
 
-        // Introduction also receives the conclusion draft (when it exists)
+        // Continuous footnote numbering: sum footnotesCount of every chapter
+        // that appears BEFORE this one in display order. The chapters array is
+        // already stored in display order (תקציר → מבוא → bodies → סיכום).
+        // Abstract contributes 0 by rule (no new citations).
+        {
+          let footnoteOffset = 0;
+          for (let i = 0; i < currentChapter; i++) {
+            const ch = chapters[i];
+            if (ch && typeof ch.footnotesCount === "number" && ch.footnotesCount > 0) {
+              footnoteOffset += ch.footnotesCount;
+            }
+          }
+          if (footnoteOffset > 0) {
+            body.footnoteOffset = footnoteOffset;
+          }
+        }
+
+
         // so it can frame the actual final thesis, not the planned one.
         if (isIntro) {
           const conclusionCh = chapters.find((ch) => isConclusionChapter(ch.title) && ch.content);
@@ -1288,6 +1310,14 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           ...(qaResult.paper_memory_delta
             ? { paperMemoryDelta: qaResult.paper_memory_delta }
             : {}),
+          // Continuous footnote numbering: remember how many footnotes this
+          // chapter emitted so the next chapter can compute its offset.
+          // Prefer the explicit count from the backend; fall back to the
+          // footnotes array length.
+          footnotesCount:
+            typeof qaResult.footnotes_count === "number"
+              ? qaResult.footnotes_count
+              : (qaResult.footnotes?.length ?? 0),
         };
         setChapters(updatedChapters);
         updateWizardStep("checkpoint");

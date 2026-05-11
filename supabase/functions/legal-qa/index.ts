@@ -804,6 +804,8 @@ function buildResponse(
       issues_count: number;
       revised: boolean;
     } | null;
+    footnotes_count?: number;
+    footnote_offset_applied?: number;
   } = {},
 ): Response {
   // Explicitly strip the legacy `source` field on each footnote (would leak
@@ -827,6 +829,12 @@ function buildResponse(
   }
   if (extras.coherence_audit) {
     rawPayload.coherence_audit = extras.coherence_audit;
+  }
+  if (typeof extras.footnotes_count === "number") {
+    rawPayload.footnotes_count = extras.footnotes_count;
+  }
+  if (typeof extras.footnote_offset_applied === "number" && extras.footnote_offset_applied > 0) {
+    rawPayload.footnote_offset_applied = extras.footnote_offset_applied;
   }
   const payload = sanitizeResponse(rawPayload);
   return new Response(JSON.stringify(payload), {
@@ -2105,7 +2113,24 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, depth: bodyDepth, styleGuideEnabled: bodyStyleGuideEnabled } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, depth: bodyDepth, styleGuideEnabled: bodyStyleGuideEnabled, footnoteOffset: bodyFootnoteOffset } = body;
+
+    // ─── Continuous footnote numbering (academic writing only) ────────
+    // Each chapter is generated independently and produces a local 1..K
+    // footnote sequence. To make numbering continuous across the assembled
+    // paper, the frontend ships `footnoteOffset` = sum of footnotesCount of
+    // chapters that appear before this one in display order. Honored only
+    // for academic chapter-class writes; ignored otherwise.
+    const CONTINUOUS_FOOTNOTES_ENABLED = (Deno.env.get("CONTINUOUS_FOOTNOTES_ENABLED") ?? "true").toLowerCase() !== "false";
+    const isChapterClassWrite =
+      taskMode === "academic_writing" &&
+      (academicStep === "write_chapter" ||
+        academicStep === "write_introduction" ||
+        academicStep === "write_conclusion");
+    let effectiveFootnoteOffset = 0;
+    if (CONTINUOUS_FOOTNOTES_ENABLED && isChapterClassWrite && typeof bodyFootnoteOffset === "number" && Number.isFinite(bodyFootnoteOffset)) {
+      effectiveFootnoteOffset = Math.max(0, Math.min(500, Math.floor(bodyFootnoteOffset)));
+    }
 
     // ─── Mode profile (Fast / Deep) — single source of truth for per-mode knobs ───
     // Resolved once here; everything downstream reads from `modeProfile`.
@@ -7872,10 +7897,55 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       console.error("Failed to log QA stats (non-fatal):", logErr);
     }
 
+    // ========= Continuous footnote numbering — final offset shift =========
+    // Runs after all post-processing. finalFootnotes is the canonical local
+    // 1..K sequence; shift every number by `effectiveFootnoteOffset` so the
+    // assembled paper has one continuous footnote sequence.
+    let shiftedSuperscripts = 0;
+    let shiftedBackrefs = 0;
+    if (effectiveFootnoteOffset > 0 && finalFootnotes.length > 0) {
+      const offset = effectiveFootnoteOffset;
+      // 1) Rewrite superscripts in `answer` using two-phase placeholder
+      //    strategy to avoid 1→11 collisions when shift+digit overlaps.
+      // Sort descending so larger numbers are placeheld first (defensive).
+      const sortedNums = finalFootnotes.map((f) => f.number).sort((a, b) => b - a);
+      for (const oldNum of sortedNums) {
+        const newNum = oldNum + offset;
+        const oldSup = toSuperscript(oldNum);
+        const placeholder = `__FNSHIFT_${newNum}__`;
+        const before = answer;
+        answer = answer.replaceAll(oldSup, placeholder);
+        if (answer !== before) shiftedSuperscripts++;
+      }
+      for (const oldNum of sortedNums) {
+        const newNum = oldNum + offset;
+        answer = answer.replaceAll(`__FNSHIFT_${newNum}__`, toSuperscript(newNum));
+      }
+      // 2) Rewrite textual back-references (Rule 37.7) inside citation text.
+      const SUPRA_QUOTE = '["\u05F4\u201C\u201D]';
+      const SUPRA_RE = new RegExp(`לעיל\\s*,?\\s*ה${SUPRA_QUOTE}ש\\s+(\\d{1,3})`, "g");
+      const validOldNums = new Set(finalFootnotes.map((f) => f.number));
+      for (const fn of finalFootnotes) {
+        fn.citation = fn.citation.replace(SUPRA_RE, (match: string, num: string) => {
+          const oldNum = parseInt(num, 10);
+          if (!validOldNums.has(oldNum)) return match;
+          shiftedBackrefs++;
+          return match.replace(/(\d{1,3})/, String(oldNum + offset));
+        });
+      }
+      // 3) Rewrite the `number` field on every footnote.
+      for (const fn of finalFootnotes) {
+        fn.number = fn.number + offset;
+      }
+      console.log(`[footnote-offset] applied offset=${offset}, count=${finalFootnotes.length}, supers=${shiftedSuperscripts}, backrefs=${shiftedBackrefs}`);
+    }
+
     return buildResponse(answer, finalFootnotes, citations, {
       dropped_footnotes_count: droppedFootnotesCount,
       paper_memory_delta: paperMemoryDelta,
       coherence_audit: coherenceAudit,
+      footnotes_count: finalFootnotes.length,
+      footnote_offset_applied: effectiveFootnoteOffset,
     });
   } catch (e) {
     console.error("legal-qa error:", e);
