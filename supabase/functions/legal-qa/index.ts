@@ -39,6 +39,12 @@ import { resolveAcademicProfile, type AcademicProfile, type AcademicStep } from 
 import { runChapterCritic, shouldRevise, type CriticResult } from "./critic.ts";
 import { runChapterRevision } from "./criticRevision.ts";
 import {
+  mergePaperMemoryDeltas,
+  renderPaperMemoryBlock,
+  extractPaperMemoryDelta,
+  type PaperMemoryDelta,
+} from "./paperMemory.ts";
+import {
   dynamicRerank,
   type RerankInputDoc,
   type RerankV2Telemetry,
@@ -1377,7 +1383,7 @@ ${allChaptersContext}
       return `אתה חוקר אקדמי בכיר במשפטים. כתוב את הפרק הבא בעבודה הסמינריונית.
 
 שאלת המחקר: "${rq}"
-פרק נוכחי (${chapterIndex + 1}): **${chapterTitle}**${thesisBlock}${loaBlock}${roleBlock}${siblingsBlock}
+פרק נוכחי (${chapterIndex + 1}): **${chapterTitle}**${thesisBlock}${loaBlock}${roleBlock}${siblingsBlock}${renderPaperMemoryBlock(mergePaperMemoryDeltas((body.paperMemoryDeltas as PaperMemoryDelta[] | undefined) ?? null))}
 ${prevContext}
 
 הנחיות:
