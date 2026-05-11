@@ -2145,6 +2145,10 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   if (!checkDestructiveEdit("outline")) return;
                   approveOutline();
                 }}
+                onApproveEdited={(titles) => {
+                  if (!checkDestructiveEdit("outline")) return;
+                  approveOutline(titles);
+                }}
                 onBack={() => { setResult(null); setWizardStep("topic_or_question"); }}
               />
             )}
