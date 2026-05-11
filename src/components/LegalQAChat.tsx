@@ -1172,6 +1172,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           })
           .map((ch) => ({ title: ch.title, content: (ch.content || "").slice(0, sliceCap) }));
 
+        // Global Paper Coherence: ship cumulative PaperMemory deltas from
+        // all previously finalized body chapters (excluding the abstract).
+        // The backend merges them into the structured prompt block so the
+        // new chapter is primed with prior claims/definitions/citations.
+        if (!isAbstract) {
+          const deltas = chapters
+            .filter((ch) => ch.paperMemoryDelta && !isAbstractChapter(ch.title))
+            .map((ch) => ch.paperMemoryDelta);
+          if (deltas.length > 0) {
+            body.paperMemoryDeltas = deltas;
+          }
+        }
+
         // Introduction also receives the conclusion draft (when it exists)
         // so it can frame the actual final thesis, not the planned one.
         if (isIntro) {
