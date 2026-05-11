@@ -64,6 +64,15 @@ export interface AcademicProfile {
    * Academic style mandates narrative citations (see line ~1110 in index.ts).
    */
   qaGuardNarrativeViolationThreshold: number;
+
+  // ─── Critic pass (chapter-class only) ───
+  /** When true, run the critic stage after the structured drafter. */
+  criticEnabled?: boolean;
+  /**
+   * Revision triggers if `claims_supported / claims_total` falls below this.
+   * Defaults to 0.7 in `shouldRevise` when omitted.
+   */
+  criticMinCoverage?: number;
 }
 
 export const ACADEMIC_PROFILES: Record<AcademicStep, AcademicProfile> = {
@@ -122,6 +131,8 @@ export const ACADEMIC_PROFILES: Record<AcademicStep, AcademicProfile> = {
     qaGuardUnresolvedShareThreshold: 0.4,
     qaGuardUnderWordFloorRatio: 0.7, // <70% of Deep's 1200 floor → flag
     qaGuardNarrativeViolationThreshold: 3,
+    criticEnabled: true,
+    criticMinCoverage: 0.7,
   },
   // ─── Introduction (write_introduction) ─────────────────────────────
   // Generated LATE — after every body chapter and the conclusion are written.
@@ -140,6 +151,8 @@ export const ACADEMIC_PROFILES: Record<AcademicStep, AcademicProfile> = {
     qaGuardUnresolvedShareThreshold: 0.4,
     qaGuardUnderWordFloorRatio: 0.5, // intros are framing — looser floor
     qaGuardNarrativeViolationThreshold: 3,
+    criticEnabled: true,
+    criticMinCoverage: 0.6, // intros: lighter coverage demand
   },
   // ─── Conclusion (write_conclusion) ─────────────────────────────────
   // Generated LAST among substantive chapters. Synthesizes the actual body,
@@ -154,6 +167,8 @@ export const ACADEMIC_PROFILES: Record<AcademicStep, AcademicProfile> = {
     qaGuardUnresolvedShareThreshold: 0.4,
     qaGuardUnderWordFloorRatio: 0.5,
     qaGuardNarrativeViolationThreshold: 3,
+    criticEnabled: true,
+    criticMinCoverage: 0.6,
   },
 };
 
