@@ -105,6 +105,17 @@ interface QAResult {
     year?: string | null;
     source_url?: string | null;
   };
+  topicCoverage?: {
+    queries: string[];
+    localHits: number;
+    externalHits: number;
+    sources: Array<{ title: string; source_type: string; origin: "local" | "external"; url?: string }>;
+    minCoverageReached: boolean;
+    pplxCalled?: boolean;
+    pplxDurationMs?: number;
+    totalDurationMs?: number;
+  };
+  noCoverage?: boolean;
 }
 
 type TaskMode = "research" | "pleading_analysis" | "case_summary" | "academic_writing";
