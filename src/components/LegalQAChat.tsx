@@ -2098,8 +2098,8 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               </div>
             )}
 
-            {/* No-coverage empty state */}
-            {wizardStep === "topic_or_question" && result && lastAcademicAction === "suggest_topics" && result.noCoverage && (
+            {/* No-coverage empty state (round 1 only) */}
+            {wizardStep === "topic_or_question" && result && lastAcademicAction === "suggest_topics" && result.noCoverage && suggestionRounds.length === 0 && (
               <Card className="border-destructive/40 bg-destructive/5">
                 <CardContent className="p-4 space-y-3" dir="rtl">
                   <p className="text-sm font-semibold text-destructive">⚠️ אין כיסוי מקורות לנושא הזה</p>
@@ -2109,6 +2109,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                     size="sm"
                     onClick={() => {
                       setProposedQuestions([]);
+                      setSuggestionRounds([]);
                       setResult(null);
                       setLastAcademicAction(null);
                       setQuestion("");
@@ -2120,90 +2121,169 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               </Card>
             )}
 
-            {/* Show AI response for topic suggestions / validation */}
-            {wizardStep === "topic_or_question" && result && lastAcademicAction === "suggest_topics" && proposedQuestions.length > 0 && (
-              <Card className="border-border">
-                <CardContent className="p-4 space-y-3">
-                  {result.topicCoverage && (
-                    <div className="flex flex-wrap items-center gap-2" dir="rtl">
-                      {result.topicCoverage.localHits > 0 && (
-                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-primary/15 text-primary font-medium">
-                          📚 {result.topicCoverage.localHits} במאגר
-                        </span>
+            {/* Multi-round suggestions */}
+            {wizardStep === "topic_or_question" && lastAcademicAction === "suggest_topics" && suggestionRounds.length > 0 && (() => {
+              const MAX_ROUNDS = 3;
+              const lastRound = suggestionRounds[suggestionRounds.length - 1];
+              const exhausted = !!lastRound?.exhausted;
+              const reachedCap = suggestionRounds.length >= MAX_ROUNDS;
+              const canRegen = !exhausted && !reachedCap;
+              return (
+                <Card className="border-border">
+                  <CardContent className="p-4 space-y-4" dir="rtl">
+                    {suggestionRounds.map((round, rIdx) => {
+                      // Compute global question index across rounds for numbering
+                      const offset = suggestionRounds
+                        .slice(0, rIdx)
+                        .reduce((acc, r) => acc + r.questions.length, 0);
+                      return (
+                        <div key={rIdx} className="space-y-3">
+                          {rIdx > 0 && (
+                            <div className="flex items-center gap-2 pt-1">
+                              <div className="flex-1 h-px bg-border" />
+                              <span className="text-xs text-muted-foreground font-medium">סבב {rIdx + 1}</span>
+                              <div className="flex-1 h-px bg-border" />
+                            </div>
+                          )}
+                          {round.coverage && (
+                            <div className="flex flex-wrap items-center gap-2">
+                              {round.coverage.localHits > 0 && (
+                                <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-primary/15 text-primary font-medium">
+                                  📚 {round.coverage.localHits} במאגר
+                                </span>
+                              )}
+                              {round.coverage.externalHits > 0 && (
+                                <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-accent/40 text-accent-foreground font-medium">
+                                  🌐 {round.coverage.externalHits} מהרשת
+                                </span>
+                              )}
+                              {!round.coverage.minCoverageReached && (
+                                <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-destructive/10 text-destructive font-medium">
+                                  ⚠️ כיסוי דל
+                                </span>
+                              )}
+                              {round.coverage.sources.length > 0 && (
+                                <details className="text-xs w-full mt-1">
+                                  <summary className="cursor-pointer text-muted-foreground hover:text-foreground select-none">
+                                    ראה מקורות שנמצאו ({round.coverage.sources.length})
+                                  </summary>
+                                  <ul className="mt-2 space-y-1 pr-3 border-r-2 border-border">
+                                    {round.coverage.sources.map((s, i) => (
+                                      <li key={i} className="text-muted-foreground leading-relaxed">
+                                        {s.url ? (
+                                          <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                                            {s.title}
+                                          </a>
+                                        ) : (
+                                          <span>{s.title}</span>
+                                        )}
+                                        <span className="text-xs opacity-70"> · {s.source_type} · [{s.origin === "local" ? "מאגר" : "חיצוני"}]</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </details>
+                              )}
+                            </div>
+                          )}
+                          {rIdx === 0 && (
+                            <p className="text-sm font-semibold text-foreground">בחרו אחת מהשאלות המוצעות:</p>
+                          )}
+                          <div className="space-y-2">
+                            {round.questions.map((q, idx) => {
+                              const globalIdx = offset + idx + 1;
+                              return (
+                                <button
+                                  key={idx}
+                                  onClick={() => {
+                                    if (!checkDestructiveEdit("topic_or_question")) return;
+                                    setResearchQuestion(q);
+                                    setQuestion(q);
+                                    setProposedQuestions([]);
+                                    setSuggestionRounds([]);
+                                    setResult(null);
+                                    setLastAcademicAction(null);
+                                    handleAcademicSubmit("propose_outline", { researchQuestion: q });
+                                  }}
+                                  className="w-full text-right p-3 rounded-lg border border-border bg-background hover:bg-primary/5 hover:border-primary/40 transition-colors text-sm leading-relaxed"
+                                  dir="rtl"
+                                >
+                                  <span className="font-bold text-primary ml-2">{globalIdx}.</span>
+                                  {q}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {/* Exhausted / cap-reached card */}
+                    {(exhausted || reachedCap) && (
+                      <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 space-y-2">
+                        <p className="text-sm font-semibold text-destructive">
+                          {exhausted
+                            ? "לא הצלחנו למצוא שאלות נוספות על הנושא הזה."
+                            : "הגעת למספר הסבבים המרבי."}
+                        </p>
+                        <p className="text-sm text-foreground leading-relaxed">
+                          ניתן לבחור באחת מהשאלות שכבר הוצעו, או לנסות נושא אחר.
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
+                      {canRegen && (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          disabled={regenerating || loading}
+                          onClick={async () => {
+                            if (!checkDestructiveEdit("topic_or_question")) return;
+                            setRegenerating(true);
+                            try {
+                              await handleAcademicSubmit("suggest_topics", {
+                                previousQuestions: proposedQuestions,
+                                round: suggestionRounds.length + 1,
+                              });
+                            } finally {
+                              setRegenerating(false);
+                            }
+                          }}
+                        >
+                          {regenerating ? "מחפש שאלות נוספות…" : "+ הצע 3 שאלות נוספות"}
+                        </Button>
                       )}
-                      {result.topicCoverage.externalHits > 0 && (
-                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-accent/40 text-accent-foreground font-medium">
-                          🌐 {result.topicCoverage.externalHits} מהרשת
-                        </span>
-                      )}
-                      {!result.topicCoverage.minCoverageReached && (
-                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-destructive/10 text-destructive font-medium">
-                          ⚠️ כיסוי דל
-                        </span>
-                      )}
-                      {result.topicCoverage.sources.length > 0 && (
-                        <details className="text-xs w-full mt-1">
-                          <summary className="cursor-pointer text-muted-foreground hover:text-foreground select-none">
-                            ראה מקורות שנמצאו ({result.topicCoverage.sources.length})
-                          </summary>
-                          <ul className="mt-2 space-y-1 pr-3 border-r-2 border-border">
-                            {result.topicCoverage.sources.map((s, i) => (
-                              <li key={i} className="text-muted-foreground leading-relaxed">
-                                {s.url ? (
-                                  <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                                    {s.title}
-                                  </a>
-                                ) : (
-                                  <span>{s.title}</span>
-                                )}
-                                <span className="text-xs opacity-70"> · {s.source_type} · [{s.origin === "local" ? "מאגר" : "חיצוני"}]</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </details>
-                      )}
-                    </div>
-                  )}
-                  <p className="text-sm font-semibold text-foreground">בחרו אחת מהשאלות המוצעות:</p>
-                  <div className="space-y-2">
-                    {proposedQuestions.map((q, idx) => (
-                      <button
-                        key={idx}
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => {
-                          if (!checkDestructiveEdit("topic_or_question")) return;
-                          setResearchQuestion(q);
-                          setQuestion(q);
                           setProposedQuestions([]);
+                          setSuggestionRounds([]);
                           setResult(null);
                           setLastAcademicAction(null);
-                          handleAcademicSubmit("propose_outline", { researchQuestion: q });
+                          setQuestion("");
                         }}
-                        className="w-full text-right p-3 rounded-lg border border-border bg-background hover:bg-primary/5 hover:border-primary/40 transition-colors text-sm leading-relaxed"
-                        dir="rtl"
                       >
-                        <span className="font-bold text-primary ml-2">{idx + 1}.</span>
-                        {q}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex gap-2 pt-1 border-t border-border">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        // Bail out: clear suggestions, return to manual entry of own research question
-                        setProposedQuestions([]);
-                        setResult(null);
-                        setLastAcademicAction(null);
-                        setQuestion("");
-                      }}
-                    >
-                      יש לי שאלת מחקר משלי
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+                        נסה נושא אחר
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setProposedQuestions([]);
+                          setSuggestionRounds([]);
+                          setResult(null);
+                          setLastAcademicAction(null);
+                          setQuestion("");
+                        }}
+                      >
+                        יש לי שאלת מחקר משלי
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })()}
 
             {wizardStep === "topic_or_question" && result && lastAcademicAction !== "suggest_topics" && (
               <Card className="border-border">
