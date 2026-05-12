@@ -1439,10 +1439,34 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
       // Handle wizard step transitions
       if (academicStep === "suggest_topics") {
-        setProposedQuestions(parseProposedQuestions(qaResult.answer));
+        const parsedQs = parseProposedQuestions(qaResult.answer);
+        const isRegen = !!extraBody?.previousQuestions;
+        const prevList = (extraBody?.previousQuestions as string[] | undefined) || [];
+        // Token-Jaccard dedup vs already-shown questions (only on regenerate).
+        const norm = (s: string) => s.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ").split(/\s+/).filter((w) => w.length > 2);
+        const jaccard = (a: string[], b: string[]) => {
+          const A = new Set(a); const B = new Set(b);
+          const inter = [...A].filter((x) => B.has(x)).length;
+          const uni = new Set([...A, ...B]).size;
+          return uni === 0 ? 0 : inter / uni;
+        };
+        const prevTokens = prevList.map(norm);
+        const fresh = parsedQs.filter((q) => {
+          const t = norm(q);
+          return !prevTokens.some((pt) => jaccard(t, pt) >= 0.75);
+        });
+        const exhausted = isRegen && fresh.length < 2;
+        const newRound = {
+          questions: exhausted ? [] : fresh,
+          coverage: qaResult.topicCoverage,
+          exhausted,
+        };
+        setSuggestionRounds((rounds) => (isRegen ? [...rounds, newRound] : [newRound]));
+        setProposedQuestions((isRegen ? [...prevList, ...fresh] : fresh));
         updateWizardStep("topic_or_question");
       } else if (academicStep === "validate_question") {
         setProposedQuestions([]);
+        setSuggestionRounds([]);
         updateWizardStep("topic_or_question");
       } else if (academicStep === "propose_outline") {
         setProposedQuestions([]);
