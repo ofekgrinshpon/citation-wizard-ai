@@ -816,6 +816,8 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const [researchQuestion, setResearchQuestion] = useState("");
   const [outline, setOutline] = useState("");
   const [proposedQuestions, setProposedQuestions] = useState<string[]>([]);
+  const [suggestionRounds, setSuggestionRounds] = useState<Array<{ questions: string[]; coverage: QAResult["topicCoverage"]; exhausted?: boolean }>>([]);
+  const [regenerating, setRegenerating] = useState(false);
   const [lastAcademicAction, setLastAcademicAction] = useState<string | null>(null);
 
   // Restore academic session on mount / project change (DB first, localStorage fallback)
