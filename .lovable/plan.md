@@ -1,92 +1,98 @@
-## Feature B1 — Topic Reality Check (mini-retrieval + Perplexity fallback)
+## Feature B1.1 — "הצע שאלות נוספות" (Regenerate research questions)
 
-מטרה: בשלב `suggest_topics`, המערכת לא תנחש "מקורות זמינים" אלא תאמת אותם — קודם מול ה-DB המקומי (HNSW + text), ואם המאגר דליל, תצא לחיפוש מהיר ב-Perplexity. המשתמש יראה badge עם מספר המקורות שאומתו לכל שאלה.
+Adds a button under the 3 suggested research questions that asks the system for 3 *more* questions on the same topic, while keeping the previous ones visible. When the system genuinely cannot produce more (no new sources / repeated suggestions), it shows a clear, actionable empty state offering to switch topic.
 
-### Backend — `supabase/functions/legal-qa/index.ts`, בלוק `academicStep === "suggest_topics"` (~שורות 2317–2392)
+### UX flow
 
-**Stage 1 — Query expansion (planner קל):**
-- קריאה ל-`gpt-5-mini` (`reasoning_effort: "minimal"`, timeout 8s) עם tool-call JSON:
-  ```
-  { queries: string[] }  // 3–4 ניסוחים: השאלה הרחבה + 2–3 וריאציות ממוקדות
-  ```
-- אם הקריאה נכשלת/timeout → fallback ל-`[question, extractKeywords(question)]`.
+```text
+[Topic input] → "הצע שאלות מחקר"
+   ↓
+Round 1: ▢ Q1  ▢ Q2  ▢ Q3        ← clickable, click = pick this question (existing behavior)
+         📚 N במאגר · 🌐 M מהרשת
+         [+ הצע 3 שאלות נוספות]   ← new
+         [יש לי שאלת מחקר משלי]   (existing)
+   ↓ (user clicks "הצע 3 שאלות נוספות")
+Round 2 appended below Round 1 (Round 1 stays clickable):
+         ──── סבב 2 ────
+         ▢ Q4  ▢ Q5  ▢ Q6
+         📚 N במאגר · 🌐 M מהרשת
+         [+ הצע 3 שאלות נוספות]
+   ↓ (system cannot produce new ones)
+         ──── סבב 3 ────
+         Card: "לא הצלחנו למצוא שאלות נוספות על הנושא הזה
+                במקורות שברשותנו. אפשר לבחור מאחת מ-6 השאלות
+                שכבר הוצעו, או לנסות נושא אחר."
+         [נסה נושא אחר]   [יש לי שאלת מחקר משלי]
+```
 
-**Stage 2 — Hybrid local retrieval (parallel לכל ה-queries):**
-- לכל query:
-  - embedding דרך `/v1/embeddings` (`google/gemini-embedding-001`, 3072) + RPC `match_legal_chunks` עם `match_threshold=0.55`, `match_count=8`.
-  - במקביל, `search_legal_chunks_text` עם `keywords` עבור אותו query, `match_count=8`.
-- מאחדים תוצאות לפי `document_id`, סכימה ציון `vector_score + 0.4*text_score`, שולפים `legal_documents` עבור הטופ 12 (title, source_type, citation, source_url).
-- מסננים placeholders ידועים ("פרטי מסמך", "ללא כותרת" — אותו broken_title filter שכבר קיים).
+Hard cap: max **3 rounds (= 9 questions)** to bound cost. After round 3 the "+ הצע 3 שאלות נוספות" button is replaced by an info note.
 
-**Stage 3 — Perplexity fallback (only if `localHits < 4`):**
-- env flag חדש: `TOPIC_REALITY_PPLX_ENABLED` (default `true`); דורש `PERPLEXITY_API_KEY` קיים.
-- קריאה אחת ל-`sonar` (לא pro, לחיסכון), timeout 15s, עם `search_domain_filter: ["nevo.co.il","supremedecisions.court.gov.il","lite.takdin.co.il","mishpatim.ac.il","tau.ac.il","huji.ac.il"]` + `search_recency_filter: "year"` להטיה לחומר רלוונטי.
-- prompt: "הצג עד 6 מקורות משפטיים ישראליים (חקיקה, פסיקה, מאמרים) שרלוונטיים לנושא: <topic>. החזר JSON: `{sources: [{title, source_type, why_relevant}]}`" עם `response_format: json_schema`.
-- כל מקור Perplexity מסומן `origin: "external"` (לעומת `origin: "local"`). לא מבצעים promotion ל-`legal_documents` בשלב הזה.
+All previous round cards remain mounted and their question buttons remain clickable at any time.
 
-**Stage 4 — Prompt rewrite:**
-- מזריקים ל-system prompt בלוק חדש:
-  ```
-  === מקורות שאומתו לנושא ===
-  מקומיים (N): <שמות מתוך ה-DB>
-  חיצוניים (M): <שמות מ-Perplexity, אם רץ>
-  ```
-- ה-prompt מתעדכן: "בכל שאלה, תחת 'מקורות זמינים', ציין **רק** מקורות מהרשימה שלמעלה. ציין `[מאגר]` ליד מקורות מקומיים ו-`[חיצוני]` ליד מקורות שנמצאו ברשת. אם פחות מ-3 מקורות סך הכל — סמן את השאלה בתג `⚠️ כיסוי דל`."
-- ה-LLM ממשיך לייצר את 3 השאלות כרגיל; אסור לו להמציא מקורות שלא ברשימה.
+### Frontend changes (`src/components/LegalQAChat.tsx`)
 
-**Stage 5 — Response shaping:**
-- `buildResponse` extras מקבל שדה חדש:
-  ```ts
-  topicCoverage: {
-    queries: string[],
-    localHits: number,
-    externalHits: number,
-    sources: Array<{ title, source_type, origin: "local"|"external", url?: string }>,
-    minCoverageReached: boolean  // localHits + externalHits >= 3
-  }
-  ```
-- אם `minCoverageReached === false` ו-`localHits + externalHits === 0` → מחזירים `answer` עם הודעת אזהרה במקום השאלות:
-  > "לא מצאתי מקורות מספקים לנושא הזה במאגר ובחיפוש מהיר. נסה לצמצם את הנושא, לבחור זווית ספציפית יותר, או לנסח אותו אחרת."
+1. Replace single `proposedQuestions: string[]` usage in the topic step with a new state shape kept locally in that view:
+   ```ts
+   type SuggestionRound = {
+     questions: string[];
+     coverage: QAResult["topicCoverage"]; // reuse existing type
+     exhausted?: boolean;                 // backend signaled "no more"
+   };
+   const [suggestionRounds, setSuggestionRounds] = useState<SuggestionRound[]>([]);
+   ```
+   Round 1 is pushed when the first `suggest_topics` response arrives; existing `proposedQuestions` is derived from `suggestionRounds.flatMap(r => r.questions)` for any code that still reads it.
 
-**Telemetry:** `qa_logs.metadata.topic_reality_check = { queries, localHits, externalHits, pplx_called, pplx_duration_ms, total_duration_ms }`. Stage telemetry מתווסף כ-`stage_runs: ["topic_planner","topic_retrieval","topic_pplx"]`.
+2. New handler `handleRegenerateTopics()`:
+   - Calls `handleAcademicSubmit("suggest_topics", { previousQuestions: allQuestionsSoFar, round: suggestionRounds.length + 1 })`.
+   - On success, **appends** a new `SuggestionRound`; never clears existing rounds.
+   - If response carries `noMoreQuestions: true` (or returns an empty `questions` array), pushes a round with `exhausted: true` and renders the empty-state card.
 
-### Frontend — `src/components/LegalQAChat.tsx`
+3. Render: map over `suggestionRounds` instead of a single block. Each round shows its own coverage badges + its own question buttons (existing onClick logic unchanged). Add a separator `──── סבב N ────` between rounds.
 
-**A. הצגת badges מתחת לכל שאלה (~שורה 2064, רנדור `lastAcademicAction === "suggest_topics"`):**
-- אם `result.topicCoverage` קיים, מציגים מתחת לכל שאלה (או פעם אחת מעל שלוש השאלות) שורת badges:
-  - `📚 X במאגר` (rendered אם `localHits > 0`, צבע `bg-primary/15 text-primary`)
-  - `🌐 Y מהרשת` (rendered אם `externalHits > 0`, צבע `bg-accent/15 text-accent-foreground`)
-  - `⚠️ כיסוי דל` אם `minCoverageReached === false`, `bg-destructive/10 text-destructive`
-- accordion קטן "ראה מקורות שנמצאו" שמציג רשימה (title + source_type + `[מאגר]/[חיצוני]`, ועם link אם `url`).
+4. Below the last round:
+   - If `rounds.length < 3` and last round is not `exhausted`: show **"+ הצע 3 שאלות נוספות"** button (loading spinner while in flight, disabled while loading).
+   - If `exhausted` or `rounds.length >= 3`: show empty-state card with two buttons: **"נסה נושא אחר"** (resets `question`, `suggestionRounds`, `result`) and **"יש לי שאלת מחקר משלי"** (existing bail-out).
 
-**B. Empty state:** אם backend החזיר את הודעת האזהרה, אין שאלות לבחירה; מציגים card עם הטקסט + כפתור "נסה נושא אחר" שמחזיר את ה-wizard ל-`enter_topic`.
+5. Keep the existing per-question click handler unchanged so all questions across all rounds remain clickable.
 
-**C. אין שינויי persistence:** `topicCoverage` חי רק בתגובה הנוכחית — לא נשמר ב-`academic_sessions` (זה חד-פעמי לבחירת השאלה).
+### Backend changes (`supabase/functions/legal-qa/index.ts`)
 
-### Performance & cost
+1. Extend the `suggest_topics` request body with two optional inputs:
+   - `previousQuestions?: string[]` — questions already shown to the user.
+   - `round?: number` — 1-based round index (defaults to 1).
 
-- Stage 1 (planner): ~0.8–1.5s
-- Stage 2 (4 embeddings + 4 RPCs במקביל): ~1.0–1.5s
-- Stage 3 (Perplexity, רק כשנדרש): ~3–6s
-- **Total typical:** 2–3s; **worst case (Perplexity fired):** 5–7s.
-- ה-UI מציג spinner קיים; אפשר להרחיב את `StageProgressList` עם stage `topic_check` (אופציונלי, לא חוסם להשקה).
+2. In `getAcademicSubModePrompt("suggest_topics", body)`:
+   - When `previousQuestions.length > 0`, prepend a block:
+     ```
+     שאלות שכבר הוצעו (אסור לחזור עליהן ואסור לנסח מחדש בווריאציה זניחה):
+     1. ...
+     2. ...
+     הצע 3 שאלות **חדשות לחלוטין** באותו נושא: זוויות שונות, היבטים שונים, או רמות הפשטה שונות.
+     ```
+   - Keeps the existing strict 3-question output format.
 
-### Feature flags
+3. Reality-check pipeline (already in place for round 1) runs again for each round:
+   - If `pplxEnabled` and round > 1, allow Perplexity even when local hits exceed `MIN_HITS`, to surface fresh angles. Cheap: same single `sonar` call already used.
 
-- `TOPIC_REALITY_CHECK_ENABLED` (default `true`) — כיבוי גלובלי, חוזר להתנהגות הנוכחית.
-- `TOPIC_REALITY_PPLX_ENABLED` (default `true`) — כיבוי רק של ה-fallback ל-Perplexity (DB-only mode).
-- `TOPIC_REALITY_MIN_HITS` (default `4`) — סף שמפעיל את Perplexity.
+4. Post-generation guard — **"no more" detection**:
+   - Normalize each new question (lowercase, strip punctuation, collapse whitespace).
+   - Compare against normalized `previousQuestions` using token-overlap ≥ 0.75 (Jaccard on word sets).
+   - Drop near-duplicates. If fewer than 2 new unique questions remain after filtering, return:
+     ```json
+     { "questions": [], "noMoreQuestions": true,
+       "answer": "לא הצלחנו לייצר שאלות נוספות על הנושא הזה...",
+       "topicCoverage": { ...same shape as today, may be empty } }
+     ```
+   - Also return `noMoreQuestions: true` if `round >= 3` (hard cap enforced server-side too).
 
-### קבצים שייגעו
+5. Telemetry: extend the existing `qa_logs.metadata.topic_reality_check` block with `round`, `previousQuestionsCount`, `dedupedDropped`, `noMoreQuestions`.
 
-- `supabase/functions/legal-qa/index.ts` — בלוק suggest_topics: planner + retrieval + Perplexity + prompt injection + response shaping + telemetry.
-- `src/components/LegalQAChat.tsx` — `topicCoverage` typing, badges, empty-state card, "ראה מקורות" accordion.
-- `.lovable/memory/features/academic-writing-mode/topic-reality-check.md` — תיעוד חדש + עדכון `mem://index.md`.
+### Cost / safety notes
+- Each "+ הצע 3 שאלות נוספות" click = 1 planner + (local search ×N) + optional 1 Perplexity `sonar` call. Same per-call cost as round 1.
+- Hard cap of 3 rounds prevents runaway usage.
+- `suggest_topics` already costs 0 credits (line 2186), so this stays free for the user, consistent with the existing wizard step.
 
-### מחוץ ל-scope
-
-- Promotion של מקורות Perplexity ל-`legal_documents` (Stage 3 רק מאמת קיום, לא מטמיע).
-- Hybrid BM25 — נסתפק ב-text + vector הקיימים.
-- מטמון של תוצאות לפי נושא (אם משתמש בודק את אותו נושא פעמיים, רץ מחדש).
-
-האם לאשר ולעבור ליישום?
+### Files touched
+- `src/components/LegalQAChat.tsx` — new state shape, regenerate handler, multi-round render, empty-state card with clickable options.
+- `supabase/functions/legal-qa/index.ts` — `suggest_topics` prompt accepts `previousQuestions`/`round`, dedup guard, `noMoreQuestions` response field, expanded telemetry.
+- `.lovable/memory/features/academic-writing-mode/topic-reality-check.md` — append a "Multi-round regeneration" section.
