@@ -1262,6 +1262,7 @@ function getAcademicSubModePrompt(academicStep: string, body: Record<string, unk
 - אל תשתמש במספור (1./2./3.) בתת-הסעיפים — השתמש במקפים (-) בלבד.
 - כל שאלה חייבת להתחיל בדיוק ב-"**שאלה N:**".
 - ענה בעברית אקדמית.`;
+    }
 
     case "validate_question":
       return `אתה חוקר אקדמי בכיר במשפטים. המשתמש הציג שאלת מחקר.
