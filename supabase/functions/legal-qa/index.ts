@@ -1233,8 +1233,15 @@ function getTaskModeInstructions(taskMode?: string): string {
 
 function getAcademicSubModePrompt(academicStep: string, body: Record<string, unknown>): string | null {
   switch (academicStep) {
-    case "suggest_topics":
-      return `אתה חוקר אקדמי בכיר במשפטים. המשתמש הציג נושא כללי.
+    case "suggest_topics": {
+      const prev = Array.isArray(body.previousQuestions)
+        ? (body.previousQuestions as unknown[]).map((q) => String(q || "").trim()).filter(Boolean)
+        : [];
+      const round = typeof body.round === "number" && body.round > 0 ? body.round : 1;
+      const prevBlock = prev.length > 0
+        ? `\n\nשאלות שכבר הוצעו למשתמש בסבבים קודמים (סבב נוכחי: ${round}). אסור לחזור עליהן ואסור לנסחן מחדש בווריאציה זניחה. הצע **3 שאלות חדשות לחלוטין** באותו נושא — זוויות שונות, היבטים שונים, או רמות הפשטה שונות:\n${prev.map((q, i) => `${i + 1}. ${q}`).join("\n")}\n`
+        : "";
+      return `אתה חוקר אקדמי בכיר במשפטים. המשתמש הציג נושא כללי.${prevBlock}
 נתח את הנושא והצע **3 שאלות מחקר** ספציפיות ומעניינות שמתאימות לעבודה סמינריונית בת 20-30 עמודים.
 
 פורמט פלט מחייב — השתמש בדיוק במבנה הבא:
