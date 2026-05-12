@@ -1470,6 +1470,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         updateWizardStep("topic_or_question");
       } else if (academicStep === "propose_outline") {
         setProposedQuestions([]);
+        setSuggestionRounds([]);
         setOutline(qaResult.answer);
         updateWizardStep("outline");
       } else if (
