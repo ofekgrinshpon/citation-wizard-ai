@@ -6900,8 +6900,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         const unbalanced = !hasBalancedParens(baseCit);
         const truncated = looksTruncated(baseCit);
         if (q.quality !== "strong" || unbalanced || truncated || reg.usedFallback) {
-          // Repeat the FULL original citation as a new footnote — never
-          // build a "שם" / "לעיל ה\"ש" form on top of a weak/truncated source.
+          // Marker-preserving fallback: do NOT create a new footnote and do NOT
+          // rewrite the marker. Leave [firstFnNum] in place so the body marker
+          // continues pointing at the original full citation. This guarantees
+          // every footnote we emit has a body marker (no orphans, no extras).
           const reasons = [...q.reasons];
           if (unbalanced) reasons.push("unbalanced_parentheses");
           if (truncated) reasons.push("truncated");
@@ -6915,27 +6917,21 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
               citation_preview: baseCit.slice(0, 120),
             });
           }
-          const newFnNum = nextFnNum++;
-          const card = fnNumberToCard.get(firstFnNum);
-          newRepeatFootnotes.push({
-            number: newFnNum,
-            citation: baseCit,
-            source_type: baseFn?.source_type || card?.source_type || "unknown",
-            url: baseFn?.url || card?.url,
-            source: baseFn?.source || card?.provenance || "local",
-          });
-          rewriteOps.push({ start: occ.start, end: occ.pinpointEnd, replacement: `[${newFnNum}]` });
-          rule37Telemetry.total_repeats_expanded++;
           if (rule37Telemetry.samples.length < 5) {
             rule37Telemetry.samples.push({
               original_marker: `[${occ.oldId}]`,
               source_type: baseFn?.source_type || "unknown",
               short_name: reg.shortName,
-              form: "full_repeat_low_quality",
+              form: "marker_preserved_low_quality" as any,
             });
           }
-          lastEmittedFnNumber = newFnNum;
-          oldIdToNewNumber.set(newFnNum, newFnNum);
+          // Strip the redundant pinpoint from body if present (the original FN
+          // already covers the source); keep marker untouched.
+          if (occ.pinpoint && occ.pinpointEnd > occ.start + `[${occ.oldId}]`.length) {
+            const markerEnd = occ.start + `[${occ.oldId}]`.length;
+            rewriteOps.push({ start: markerEnd, end: occ.pinpointEnd, replacement: "" });
+          }
+          lastEmittedFnNumber = firstFnNum;
           continue;
         }
       }
