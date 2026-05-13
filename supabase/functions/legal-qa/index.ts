@@ -8221,7 +8221,12 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
                 ? Object.keys(routerRoute.ambiguous_terms).length
                 : 0,
             },
-            // Phase 3 telemetry reverted — to be reintroduced in follow-up patch.
+            discovery: buildDiscoveryTelemetry({
+              decision: discoveryDecision ?? { triggered: false, triggers: [] },
+              run: discoveryRun,
+              discovery: discoveryResult,
+              sanitized_fields: discoverySanitized,
+            }),
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
