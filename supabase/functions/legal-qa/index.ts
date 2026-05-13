@@ -4430,7 +4430,14 @@ ${(verify.fullText as string).slice(0, 50000)}
     ).join("\n");
 
     // ========= Step 4: Gemini call — plain text, NO tool_call =========
-    const taskInstructions = getTaskModeInstructions(taskMode);
+    let taskInstructions = getTaskModeInstructions(taskMode);
+    // Phase 4: prepend the soft-gate banner when the gate flagged missing
+    // slots. We mutate `taskInstructions` (still a string going into the
+    // drafter prompt) so the banner reaches every drafter variant without
+    // touching the per-variant prompt builders.
+    if (sourcePackGateResult?.banner) {
+      taskInstructions = `${sourcePackGateResult.banner}\n\n${taskInstructions}`;
+    }
     const citationInstructions = buildCitationInstructions();
 
     // For academic chapter-class writes (write_chapter / write_introduction /
