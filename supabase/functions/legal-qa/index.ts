@@ -1119,6 +1119,11 @@ interface SourceCard {
   /** Fix C — broad subject category (משפחה, פלילי, …) for non-prefix
    *  procedure_type values. Weaker fallback hint for Stage 2. */
   procedure_category?: string;
+  /** Phase 6.6 — court name carried through for engine-first canonical
+   *  derivation (cardClaimContract). */
+  court?: string;
+  /** Phase 6.6 — decision date (ISO or dd.mm.yyyy) for caselaw resolver. */
+  decision_date?: string;
 }
 
 // ─── Fix C — Docket-prefix helpers ────────────────────────────────────
