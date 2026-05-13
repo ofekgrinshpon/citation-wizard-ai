@@ -113,5 +113,32 @@ export function useDocumentCheck() {
     }
   }, [state.sessionId]);
 
-  return { ...state, upload, analyze, setDecision, reset };
+  const loadSession = useCallback(async (sessionId: string) => {
+    setState((s) => ({ ...s, status: "extracting", error: null }));
+    const { data, error } = await supabase
+      .from("document_check_sessions")
+      .select("id, notes, summary, decisions, notes_count, metadata, status, file_name")
+      .eq("id", sessionId)
+      .maybeSingle();
+    if (error || !data) {
+      setState((s) => ({ ...s, status: "error", error: error?.message ?? "הסשן לא נמצא." }));
+      return;
+    }
+    const notes = (data.notes as unknown as DocNote[]) ?? [];
+    const summary = (data.summary as unknown as DocSummary) ?? null;
+    const decisions = (data.decisions as Record<string, DocCitation["user_decision"]>) ?? {};
+    if (data.status === "review_ready" && summary) {
+      setState({
+        sessionId, notes, summary, decisions,
+        estimatedCredits: null,
+        notesCount: data.notes_count ?? notes.length,
+        candidateCount: notes.reduce((a, n) => a + n.citations.length, 0),
+        status: "review_ready", error: null,
+      });
+    } else {
+      setState((s) => ({ ...s, status: "error", error: "הסשן עדיין לא נותח." }));
+    }
+  }, []);
+
+  return { ...state, upload, analyze, setDecision, reset, loadSession };
 }
