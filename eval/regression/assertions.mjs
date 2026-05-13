@@ -294,10 +294,65 @@ export function assertBodyCoverage(answerBody, fnList) {
   };
 }
 
+// ---------- Phase 6.5 role-telemetry assertions (opt-in per fixture) ----------
+
+export function assertRolePlanPresent(metadata) {
+  const plan = metadata?.research_safeguards?.legal_research_plan;
+  const ok = !!plan && Array.isArray(plan.required_roles) && plan.required_roles.length >= 1;
+  return {
+    id: "ROLE_PLAN_PRESENT",
+    passed: ok,
+    detail: ok
+      ? `strategy=${plan.answer_strategy} required=${plan.required_roles.length} fallback=${plan.used_fallback}`
+      : "no legal_research_plan in metadata",
+  };
+}
+
+export function assertRoleGateEvaluated(metadata) {
+  const g = metadata?.research_safeguards?.source_pack_gate_v2;
+  const ok = !!g && g.mode !== "off";
+  return {
+    id: "DOCTRINAL_GATE_ATTEMPTED",
+    passed: ok,
+    detail: ok
+      ? `mode=${g.mode} satisfied=${g.satisfied} gaps=${(g.gaps||[]).length}`
+      : "gate V2 not evaluated (mode=off or missing)",
+  };
+}
+
+export function assertNoPlaceholderAsPrimary(metadata) {
+  // Read role+quality off the (un-sanitized) source_pack_summary v2 entries.
+  // We only flag a violation when a `must` role is filled exclusively by
+  // placeholder-quality cards; pure placeholder presence is allowed.
+  const plan = metadata?.research_safeguards?.legal_research_plan;
+  const pack = metadata?.source_pack_summary;
+  if (!plan || !Array.isArray(pack?.coreSources)) {
+    return { id: "NO_PLACEHOLDER_AS_PRIMARY", passed: true, detail: "no plan or pack — skipped" };
+  }
+  const all = [
+    ...(pack.coreSources || []),
+    ...(pack.supportingSources || []),
+    ...(pack.secondarySources || []),
+  ];
+  const offenders = [];
+  for (const req of plan.required_roles || []) {
+    if (req.priority !== "must") continue;
+    const matched = all.filter((it) => it.role === req.role);
+    if (matched.length === 0) continue;
+    const allPlaceholder = matched.every((it) => it.citationQuality === "placeholder");
+    if (allPlaceholder) offenders.push(`${req.role}(${matched.length} placeholder)`);
+  }
+  return {
+    id: "NO_PLACEHOLDER_AS_PRIMARY",
+    passed: offenders.length === 0,
+    detail: offenders.length === 0 ? "no must-role filled only by placeholders" : offenders.join(" ; "),
+  };
+}
+
 // ---------- Aggregator ----------
 
-export function runAllAssertions({ answerBody, footnotes, metadata, fixtureCounts }) {
-  return [
+export function runAllAssertions({ answerBody, footnotes, metadata, fixtureCounts, assertRoleTelemetry }) {
+  const list = [
     assertCountTotal(footnotes, fixtureCounts?.total_footnotes),
     assertAnchored(footnotes, fixtureCounts?.anchored_min_delta),
     assertRerankDrops(metadata),
@@ -309,4 +364,10 @@ export function runAllAssertions({ answerBody, footnotes, metadata, fixtureCount
     assertLegislationNoSupra(answerBody, footnotes),
     assertBodyCoverage(answerBody, footnotes),
   ];
+  if (assertRoleTelemetry) {
+    list.push(assertRolePlanPresent(metadata));
+    list.push(assertRoleGateEvaluated(metadata));
+    list.push(assertNoPlaceholderAsPrimary(metadata));
+  }
+  return list;
 }
