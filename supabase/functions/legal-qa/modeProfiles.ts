@@ -264,6 +264,8 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     targetedGapRetrieval: "full",
     maxTargetedGapQueries: 6,
     targetedGapTimeoutMs: 20000,
+    // Phase 6: contract on by default; falls back to legacy when no markers.
+    cardClaimContract: "on",
   },
 };
 
