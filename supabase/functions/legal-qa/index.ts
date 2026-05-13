@@ -5107,47 +5107,6 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         }
         return new Response(JSON.stringify({ error: "תם הזמן לעיבוד השאלה. נסו שוב או קצרו את השאלה." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
-        }
-
-        // ─── Phase 3: Open Web Discovery (METADATA-ONLY, gated) ───
-        // Decision uses the router result we just produced. Discovery runs
-        // in parallel with decomposition; result is logged to telemetry only
-        // and NEVER fed into the source pack in this phase.
-        discoveryDecision = shouldRunDiscovery(
-          routerRoute,
-          question,
-          researchDepth,
-          modeProfile.openWebDiscovery,
-        );
-        if (discoveryDecision.triggered) {
-          emitStage("open_web_discovery", "running");
-          discoveryPromise = (async () => {
-            try {
-              const r = await runOpenWebDiscovery(question, routerRoute);
-              discoveryResult = r.discovery;
-              discoveryRun = r.run;
-              discoverySanitizedFields = r.sanitized_fields;
-              if (r.run) stageRuns.push(r.run);
-              emitStage(
-                "open_web_discovery",
-                "complete",
-                r.discovery
-                  ? `${r.discovery.candidate_authoritative_sources.length} מועמדים`
-                  : `fallback (${r.run.status})`,
-              );
-              console.log(
-                `[discovery] triggers=[${discoveryDecision.triggers.join(",")}] candidates=${r.discovery?.candidate_authoritative_sources.length ?? 0} status=${r.run.status} (${r.run.duration_ms}ms)`,
-              );
-            } catch (discErr) {
-              emitStage("open_web_discovery", "complete", "fallback (error)");
-              console.error("[discovery] failed (non-fatal):", discErr);
-            }
-          })();
-        } else {
-          console.log(
-            `[discovery] skipped (mode=${modeProfile.openWebDiscovery}, no triggers)`,
-          );
-        }
 
     // ========= Step 4a: Critic pass (academic chapters only) =========
     // Audit the drafter output against the claim map + source pack. If the
