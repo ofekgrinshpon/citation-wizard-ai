@@ -17,6 +17,11 @@ import {
   type DecomposedPlan,
   type ClaimMap,
 } from "./decomposition.ts";
+import {
+  routeLegalIssue,
+  raceWithTimeout,
+  type LegalIssueRoute,
+} from "./legalIssueRouter.ts";
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
   BANNED_KEYS,
@@ -3011,29 +3016,74 @@ ${(verify.fullText as string).slice(0, 50000)}
     // localSearchPromise via `await decompPromise` only at the point they're
     // actually needed (after the first wave of embeddings is in flight).
     let decompPromise: Promise<{ data: DecomposedPlan | null; run: StageRun; retryRun?: StageRun }> | null = null;
+    // Phase 1 (research safeguards): router result captured for telemetry
+    // and (in later phases) for entity_resolution / source_pack_gate.
+    let routerRoute: LegalIssueRoute | null = null;
+    let routerRun: StageRun | null = null;
+    let routerTimedOut = false;
     if (enableDeepPipeline && !evalForceLegacy) {
       // Live progress: frame is essentially "request received & validated".
       // Emit it as complete immediately so the user sees instant feedback.
       emitStage("frame", "complete");
       emitStage("decompose", "running");
       const tDecompStart = Date.now();
-      decompPromise = decomposeAndPlan(question)
-        .then((res) => {
-          emitStage("decompose", "complete",
-            res.data ? `${res.data.decomposition.sub_issues.length} תתי-סוגיות` : undefined);
+      decompPromise = (async () => {
+        // ─── Phase 1: Legal Issue Router (gated by modeProfile) ───
+        // Runs SERIALIZED before decompose so the router can bias the
+        // decomposition prompt. Bounded by `raceWithTimeout` so a slow
+        // router never starves decomposition; on timeout, decomposition
+        // runs unbiased (legacy behaviour).
+        if (modeProfile.legalIssueRouter) {
+          emitStage("legal_issue_router", "running");
+          const tRouterStart = Date.now();
+          try {
+            const raced = await raceWithTimeout(
+              routeLegalIssue(question),
+              12000,
+              "legal_issue_router",
+            );
+            routerRoute = raced.data;
+            routerRun = raced.run;
+            routerTimedOut = raced.timed_out;
+            stageRuns.push(raced.run);
+            emitStage(
+              "legal_issue_router",
+              "complete",
+              raced.data
+                ? `${raced.data.query_type} (${raced.data.confidence.toFixed(2)})`
+                : raced.timed_out
+                  ? "fallback (timeout)"
+                  : "fallback",
+            );
+            console.log(
+              `[router] ${raced.data ? `${raced.data.query_type}/${raced.data.legal_domain} conf=${raced.data.confidence.toFixed(2)}` : `null (status=${raced.run.status})`} (${Date.now() - tRouterStart}ms)`,
+            );
+          } catch (routerErr) {
+            emitStage("legal_issue_router", "complete", "fallback (error)");
+            console.error("[router] failed (non-fatal):", routerErr);
+          }
+        }
+
+        try {
+          const res = await decomposeAndPlan(question, routerRoute);
+          emitStage(
+            "decompose",
+            "complete",
+            res.data ? `${res.data.decomposition.sub_issues.length} תתי-סוגיות` : undefined,
+          );
           if (res.data) {
             console.log(
               `[plan] ${res.data.decomposition.sub_issues.length} sub-issues, ${res.data.query_plan.length} plans (${Date.now() - tDecompStart}ms; ${res.run.provider}/${res.run.model}, status=${res.run.status})`,
             );
           } else {
-            console.log(`[plan] decompose+plan returned null (status=${res.run.status}, ${res.run.duration_ms}ms) — falling back to legacy retrieval`);
+            console.log(
+              `[plan] decompose+plan returned null (status=${res.run.status}, ${res.run.duration_ms}ms) — falling back to legacy retrieval`,
+            );
           }
           return res;
-        })
-        .catch((decompErr) => {
+        } catch (decompErr) {
           emitStage("decompose", "complete");
           console.error("[plan] decompose+plan failed (non-fatal):", decompErr);
-          // Synthesize a failed StageRun so telemetry stays consistent.
           const now = new Date().toISOString();
           return {
             data: null as DecomposedPlan | null,
@@ -3048,7 +3098,8 @@ ${(verify.fullText as string).slice(0, 50000)}
               error_message: (decompErr as Error)?.message ?? String(decompErr),
             },
           };
-        });
+        }
+      })();
     }
 
     // ========= Step 1: Local search (hybrid: keyword + vector) + Perplexity IN PARALLEL =========
@@ -8083,6 +8134,29 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           // Mode profile actually used for this run. Read with:
           //   select metadata->'profile_used' from qa_logs ...
           profile_used: { depth: researchDepth, ...modeProfile },
+          // Phase 1+ (research safeguards): aggregated telemetry for the new
+          // router / discovery / source_pack_gate / domain_exclusion stages.
+          // Phases 2-6 will append more keys; readers should treat unknown
+          // keys as forward-compat additions.
+          research_safeguards: {
+            router: {
+              ran: routerRun !== null,
+              timed_out: routerTimedOut,
+              duration_ms: routerRun?.duration_ms ?? null,
+              status: routerRun?.status ?? "not_run",
+              query_type: routerRoute?.query_type ?? null,
+              legal_domain: routerRoute?.legal_domain ?? null,
+              confidence: routerRoute?.confidence ?? null,
+              forbidden_domains: routerRoute?.forbidden_domains ?? [],
+              forbidden_topics: routerRoute?.forbidden_topics ?? [],
+              target_statute: routerRoute?.target_statute ?? null,
+              requires_current_context:
+                routerRoute?.requires_current_context ?? null,
+              ambiguous_terms_count: routerRoute
+                ? Object.keys(routerRoute.ambiguous_terms).length
+                : 0,
+            },
+          },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
           ...(evalForceLegacy ? { eval_force_legacy: true } : {}),
