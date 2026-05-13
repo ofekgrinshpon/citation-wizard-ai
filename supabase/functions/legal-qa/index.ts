@@ -6898,6 +6898,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           const reasons = [...q.reasons];
           if (unbalanced) reasons.push("unbalanced_parentheses");
           if (truncated) reasons.push("truncated");
+          if (reg.usedFallback) reasons.push("shortname_fallback");
           rule37Telemetry.skipped_low_quality_count++;
           if (rule37Telemetry.skipped_low_quality_samples.length < 5) {
             rule37Telemetry.skipped_low_quality_samples.push({
