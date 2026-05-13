@@ -2141,7 +2141,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, depth: bodyDepth, styleGuideEnabled: bodyStyleGuideEnabled, footnoteOffset: bodyFootnoteOffset } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, evalForceMissingSlots: bodyEvalForceMissingSlots, depth: bodyDepth, styleGuideEnabled: bodyStyleGuideEnabled, footnoteOffset: bodyFootnoteOffset } = body;
 
     // ─── Continuous footnote numbering (academic writing only) ────────
     // Each chapter is generated independently and produces a local 1..K
@@ -2193,8 +2193,25 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     const evalVariant = isAdminCaller && (bodyEvalVariant === "legacy" || bodyEvalVariant === "structured")
       ? bodyEvalVariant
       : null;
+    // Phase 5 — eval-only forced gap injection. Admin caller + evalRunId
+    // starting with "phase5-" required. Slots are merged into the preliminary
+    // source_pack_gate.missing[] for the targeted_retrieval_round_2 decision
+    // ONLY. Never affects the real source_pack_gate result, the drafter, or
+    // production users.
+    const evalForceMissingSlots: string[] =
+      isAdminCaller &&
+      typeof evalRunId === "string" &&
+      evalRunId.startsWith("phase5-") &&
+      Array.isArray(bodyEvalForceMissingSlots)
+        ? bodyEvalForceMissingSlots.filter(
+            (s): s is string => typeof s === "string" && s.length > 0,
+          )
+        : [];
     if (evalForceLegacy) {
       console.log(`[eval] forcing legacy path (run=${evalRunId} variant=${evalVariant})`);
+    }
+    if (evalForceMissingSlots.length > 0) {
+      console.log(`[eval] forcing missing slots (run=${evalRunId}): ${evalForceMissingSlots.join(",")}`);
     }
 
     if (!question || typeof question !== "string" || question.trim().length < 3) {
@@ -3076,6 +3093,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       new_cards_added: number;
       duration_ms: number;
       timed_out: boolean;
+      forced_eval_gaps: string[];
     };
     let targetedRound2Telemetry: TargetedRound2Telemetry | null = null;
     if (enableDeepPipeline && !evalForceLegacy) {
@@ -4210,7 +4228,14 @@ ${(verify.fullText as string).slice(0, 50000)}
 
       // 1) Preliminary gate to discover missing slots (log-only, no banner).
       const prelim = identifyMissingSlots(routerRoute, sourcePackV2, question);
-      const gapsBefore = prelim.missing.slice();
+      // Eval-only forced-gap injection: merge `evalForceMissingSlots` into the
+      // preliminary missing[] so the round-2 decision treats them as gaps. Has
+      // NO effect on the real source_pack_gate / drafter / production users.
+      const prelimMissing = prelim.missing.slice();
+      for (const s of evalForceMissingSlots) {
+        if (!prelimMissing.includes(s)) prelimMissing.push(s);
+      }
+      const gapsBefore = prelimMissing;
 
       // Helper to build planner-queries filler from the existing decomposed plan.
       const buildPlannerQueries = (): string[] => {
@@ -4245,6 +4270,7 @@ ${(verify.fullText as string).slice(0, 50000)}
           new_cards_added: opts.new_cards_added ?? 0,
           duration_ms: opts.duration_ms ?? Date.now() - tR2Start,
           timed_out: opts.timed_out ?? false,
+          forced_eval_gaps: evalForceMissingSlots,
         };
       };
 
@@ -8468,6 +8494,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               new_cards_added: 0,
               duration_ms: 0,
               timed_out: false,
+              forced_eval_gaps: [],
             },
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
