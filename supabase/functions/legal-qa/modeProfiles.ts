@@ -86,6 +86,15 @@ export interface ModeProfile {
    * telemetry under `failure_reasons.skipped_over_batch_cap`.
    */
   partyLookupMaxBatchSize: number;
+
+  // ─── Phase 1 (research safeguards) — Legal Issue Router ───
+  /**
+   * When true, run `legalIssueRouter` BEFORE decomposition and bias the
+   * decomposition prompt with the route. Bounded by a 12s wall-clock
+   * timeout (`raceWithTimeout`) so a slow router never starves decomposition.
+   * On timeout, decomposition runs unbiased (legacy behaviour).
+   */
+  legalIssueRouter: boolean;
 }
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
