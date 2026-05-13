@@ -40,11 +40,20 @@ import {
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
   BANNED_KEYS,
+  type CitationQuality,
   type LegalClaimMap,
   type LegalDraftingInput,
   type LegalResearchDecomposition,
+  type LegalResearchPlan,
   type LegalSourcePack,
+  type SourcePackGateV2Result,
+  type SourceRole,
 } from "./contracts.ts";
+import { runLegalResearchPlanner } from "./legalResearchPlanner.ts";
+import { classifySourceRoles, type ClassifierInputCard } from "./sourceRoleClassifier.ts";
+import { evaluateSourcePackGateV2, buildGateV2Banner } from "./sourcePackGateV2.ts";
+import { renderRoleAwareCard, buildRoleUsageBlock, type RoleAwareCardInput } from "./roleAwarePromptHelper.ts";
+import { scoreCitationQuality } from "./citationQualityScorer.ts";
 import { mapToDecompositionV2 } from "./legalResearchDecomposition.ts";
 import { assembleSourcePack, summarizeSourcePack, countSourcesByType, type InternalSourcePackEntry } from "./legalSourcePack.ts";
 import { mapToClaimMapV2, summarizeClaimMapV2 } from "./legalClaimMap.ts";
@@ -4066,6 +4075,11 @@ ${(verify.fullText as string).slice(0, 50000)}
     // ========= Stage C: Source Pack assembly (legal_research only, INTERNAL) =========
     let sourcePack: SourcePackEntry[] = [];
     let sourcePackV2: LegalSourcePack | null = null;
+    // Phase 6.5 — role-based pipeline state (planner/classifier/gate V2).
+    let researchPlan: LegalResearchPlan | null = null;
+    let researchPlanFallback = false;
+    let gateV2Result: SourcePackGateV2Result | null = null;
+    let roleClassifierFallbackCount = 0;
     if (enableDeepPipeline) {
       emitStage("source_pack", "running");
       sourcePack = sourceCards.map((sc) => {
@@ -4643,27 +4657,147 @@ ${(verify.fullText as string).slice(0, 50000)}
       attachCanonicalCitations(sourceCards as unknown as ContractSourceCard[]);
     }
 
-    // Build source catalog string for the AI — tag local vs Perplexity distinctly
-    const sourceCatalog = sourceCards.map(
-      (sc) => {
-        const tag =
-          sc.provenance === "local"     ? " [מאומת – מקור אמת לתוכן]" :
-          sc.provenance === "perplexity" ? " [חיצוני – למטא-דאטה בלבד]" :
-          sc.provenance === "document"   ? " [מסמך משתמש]" : "";
-        const sid = (sc as unknown as ContractSourceCard).contractId;
-        const sidTag = sid ? ` {${sid}}` : "";
-        return `[${sc.id}]${sidTag}${tag} ${sc.citation}${sc.url ? ` (${sc.url})` : ""} — ${sc.source_type}`;
+    // ========= Phase 6.5: Role-Based Pipeline (planner + classifier + gate V2) =========
+    // Soft mode only: gate is informational + drafter banner; never blocks.
+    // Mutates sourcePackV2 items with role/quality + builds a contractId→meta
+    // side map used by the role-aware catalog renderer below.
+    const roleClassByContractId = new Map<string, { role?: SourceRole; roleConfidence?: "high"|"medium"|"low"; citationQuality?: CitationQuality }>();
+    if (
+      enableDeepPipeline &&
+      !evalForceLegacy &&
+      modeProfile.roleBasedRetrieval !== "off" &&
+      sourcePackV2 &&
+      decomposedPlan
+    ) {
+      const tPlan = Date.now();
+      try {
+        const plannerOut = await runLegalResearchPlanner({
+          question,
+          router: routerRoute,
+          decomposition: decomposedPlan,
+          discovery: discoveryResult,
+        });
+        if (plannerOut.run) stageRuns.push(plannerOut.run);
+        researchPlan = plannerOut.plan;
+        researchPlanFallback = plannerOut.usedFallback;
+        console.log(
+          `[role-plan] strategy=${researchPlan.answerStrategy} required=[${researchPlan.requiredRoles.map((r)=>`${r.role}/${r.priority}`).join(",")}] fallback=${plannerOut.usedFallback} (${Date.now()-tPlan}ms)`,
+        );
+
+        const classifierInputs: ClassifierInputCard[] = sourceCards
+          .map((sc) => {
+            const cid = (sc as unknown as ContractSourceCard).contractId;
+            if (!cid) return null;
+            return {
+              contractId: cid,
+              numericId: sc.id,
+              title: sc.citation,
+              sourceType: sc.source_type,
+              court: sc.docket_prefix || sc.procedure_category,
+              caseNumber: sc.case_number,
+              excerpt: sc.excerpt,
+            } as ClassifierInputCard;
+          })
+          .filter((x): x is ClassifierInputCard => x !== null);
+
+        const classOut = await classifySourceRoles(classifierInputs, researchPlan);
+        for (const r of classOut.runs) stageRuns.push(r);
+        roleClassifierFallbackCount = classOut.fallbackCount;
+
+        const itemByCid = new Map(classOut.items.map((i) => [i.contractId, i]));
+        const cidByNumericId = new Map<number, string>();
+        for (const sc of sourceCards) {
+          const cid = (sc as unknown as ContractSourceCard).contractId;
+          if (cid) cidByNumericId.set(sc.id, cid);
+        }
+        const allPackItems = [
+          ...sourcePackV2.coreSources,
+          ...sourcePackV2.supportingSources,
+          ...sourcePackV2.secondarySources,
+        ];
+        for (const it of allPackItems) {
+          const numericId = Number(String(it.sourceId).replace(/^src-/, ""));
+          const cid = cidByNumericId.get(numericId);
+          if (!cid) continue;
+          it.contractId = cid;
+          const cls = itemByCid.get(cid);
+          if (cls) {
+            it.role = cls.role;
+            it.roleConfidence = cls.roleConfidence;
+            it.roleRationale = cls.rationale;
+          }
+          const sc = sourceCards.find((s) => s.id === numericId);
+          const canonical = (sc as unknown as ContractSourceCard | undefined)?.canonicalCitation;
+          const q = scoreCitationQuality({
+            citation: canonical || sc?.citation || it.title,
+            sourceType: it.sourceType,
+            caseNumber: it.caseNumber,
+            url: it.url,
+          });
+          it.citationQuality = q.quality;
+          it.citationQualityReasons = q.reasons;
+          roleClassByContractId.set(cid, {
+            role: it.role,
+            roleConfidence: it.roleConfidence,
+            citationQuality: it.citationQuality,
+          });
+        }
+
+        gateV2Result = evaluateSourcePackGateV2(researchPlan, sourcePackV2, {
+          mode: modeProfile.roleBasedRetrieval,
+          attachBanner: modeProfile.roleBasedRetrieval === "on",
+        });
+        console.log(
+          `[role-gate-v2] mode=${gateV2Result.mode} satisfied=${gateV2Result.satisfied} gaps=[${gateV2Result.gaps.map((g)=>`${g.role}:${g.found}/${g.required}/${g.priority}`).join(",")}]`,
+        );
+      } catch (e) {
+        console.warn("[role-pipeline] failed (non-fatal):", e);
       }
-    ).join("\n");
+    }
+
+    // Build source catalog string for the AI — role-aware when planner ran.
+    const sourceCatalog = (researchPlan && roleClassByContractId.size > 0)
+      ? sourceCards.map((sc) => {
+          const cid = (sc as unknown as ContractSourceCard).contractId;
+          const meta = cid ? roleClassByContractId.get(cid) : undefined;
+          return renderRoleAwareCard({
+            contractId: cid ?? `S?${sc.id}`,
+            numericId: sc.id,
+            citation: (sc as unknown as ContractSourceCard).canonicalCitation || sc.citation,
+            sourceType: sc.source_type,
+            url: sc.url,
+            provenance: sc.provenance,
+            role: meta?.role,
+            roleConfidence: meta?.roleConfidence,
+            citationQuality: meta?.citationQuality,
+          } as RoleAwareCardInput);
+        }).join("\n")
+      : sourceCards.map(
+          (sc) => {
+            const tag =
+              sc.provenance === "local"     ? " [מאומת – מקור אמת לתוכן]" :
+              sc.provenance === "perplexity" ? " [חיצוני – למטא-דאטה בלבד]" :
+              sc.provenance === "document"   ? " [מסמך משתמש]" : "";
+            const sid = (sc as unknown as ContractSourceCard).contractId;
+            const sidTag = sid ? ` {${sid}}` : "";
+            return `[${sc.id}]${sidTag}${tag} ${sc.citation}${sc.url ? ` (${sc.url})` : ""} — ${sc.source_type}`;
+          }
+        ).join("\n");
 
     // ========= Step 4: Gemini call — plain text, NO tool_call =========
     let taskInstructions = getTaskModeInstructions(taskMode);
-    // Phase 4: prepend the soft-gate banner when the gate flagged missing
-    // slots. We mutate `taskInstructions` (still a string going into the
-    // drafter prompt) so the banner reaches every drafter variant without
-    // touching the per-variant prompt builders.
+    // Phase 4: prepend the soft-gate banner when the gate flagged missing slots.
     if (sourcePackGateResult?.banner) {
       taskInstructions = `${sourcePackGateResult.banner}\n\n${taskInstructions}`;
+    }
+    // Phase 6.5: prepend role-usage block + V2 banner (soft, log+banner only).
+    if (researchPlan) {
+      const roleBlock = buildRoleUsageBlock(researchPlan);
+      if (roleBlock) taskInstructions = `${roleBlock}\n\n${taskInstructions}`;
+    }
+    if (gateV2Result?.bannerAttached) {
+      const v2Banner = buildGateV2Banner(gateV2Result);
+      if (v2Banner) taskInstructions = `${v2Banner}\n\n${taskInstructions}`;
     }
     const citationInstructions = buildCitationInstructions();
 
@@ -8642,6 +8776,28 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               mode: modeProfile.cardClaimContract,
               ...cardClaimTelemetry,
             },
+            // Phase 6.5 — role-based pipeline telemetry (planner/classifier/gate V2).
+            legal_research_plan: researchPlan ? {
+              plan_id: researchPlan.planId,
+              answer_strategy: researchPlan.answerStrategy,
+              required_roles: researchPlan.requiredRoles,
+              preferred_roles: researchPlan.preferredRoles,
+              doctrinal_anchor_names: researchPlan.doctrinalAnchorNames ?? [],
+              statute_names: researchPlan.statuteNames ?? [],
+              canonical_search_targets: researchPlan.canonicalSearchTargets,
+              consumed_route: researchPlan.consumedRoute,
+              confidence: researchPlan.confidence,
+              used_fallback: researchPlanFallback,
+            } : null,
+            source_pack_gate_v2: gateV2Result ?? {
+              mode: modeProfile.roleBasedRetrieval,
+              satisfied: true,
+              coverage: {},
+              gaps: [],
+              blockingGaps: [],
+              bannerAttached: false,
+            },
+            role_classifier: { fallback_count: roleClassifierFallbackCount },
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),

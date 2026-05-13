@@ -151,6 +151,7 @@ async function runOne(jwt, q, attempt) {
     footnotes,
     metadata,
     fixtureCounts: q.counts,
+    assertRoleTelemetry: !!q.assertRoleTelemetry,
   });
 
   return {
