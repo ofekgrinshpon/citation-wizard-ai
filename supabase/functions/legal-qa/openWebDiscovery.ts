@@ -128,8 +128,10 @@ export function shouldRunDiscovery(
   return { triggered: triggers.length > 0, triggers };
 }
 
+// Hebrew text — \b is ASCII-only, so we use plain alternation. The phrases
+// are content-bearing enough that substring matching is safe.
 const CURRENT_CONTEXT_RE =
-  /\b(כיום|נכון לעכשיו|נכון להיום|השנה|לאחרונה|בימים אלה|עדכני|מעודכן|תיקון אחרון|נוסח מעודכן)\b/;
+  /(כיום|נכון לעכשיו|נכון להיום|השנה|לאחרונה|בימים אלה|עדכני|מעודכן|תיקון אחרון|נוסח מעודכן)/;
 
 // ---------------------------------------------------------------------------
 // Sanitization
@@ -138,21 +140,21 @@ const CURRENT_CONTEXT_RE =
 /** Phrases that indicate a legal conclusion / holding / normative claim.
  *  Snippets containing any of these are stripped from candidate sources. */
 const FORBIDDEN_CONCLUSION_PHRASES: RegExp[] = [
-  /\bנפסק\b/,
-  /\bנקבע\b/,
-  /\bקבע (?:בית המשפט|השופט)\b/,
-  /\bההלכה (?:היא|קובעת)\b/,
-  /\bהפרשנות הנכונה\b/,
-  /\bיש לפרש\b/,
-  /\bיש לקבוע\b/,
-  /\bראוי\b/,
-  /\bמן הראוי\b/,
-  /\bחייב\b/,
-  /\bאסור\b/,
-  /\bמותר\b/,
-  /\bזכאי\b/,
-  /\bהדין הוא\b/,
-  /\bהמסקנה היא\b/,
+  /נפסק/,
+  /נקבע/,
+  /קבע (?:בית המשפט|השופט)/,
+  /ההלכה (?:היא|קובעת)/,
+  /הפרשנות הנכונה/,
+  /יש לפרש/,
+  /יש לקבוע/,
+  /(?:^|\s)ראוי(?:\s|$|\.|,)/,
+  /מן הראוי/,
+  /(?:^|\s)חייב(?:\s|$|\.|,)/,
+  /(?:^|\s)אסור(?:\s|$|\.|,)/,
+  /(?:^|\s)מותר(?:\s|$|\.|,)/,
+  /(?:^|\s)זכאי(?:\s|$|\.|,)/,
+  /הדין הוא/,
+  /המסקנה היא/,
 ];
 
 /**

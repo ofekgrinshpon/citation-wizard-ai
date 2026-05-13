@@ -22,9 +22,13 @@ import {
   raceWithTimeout,
   type LegalIssueRoute,
 } from "./legalIssueRouter.ts";
-// Phase 3 (Open Web Discovery) wiring temporarily reverted to restore
-// deployability. Standalone module `./openWebDiscovery.ts` is kept on disk
-// and will be re-imported in a small follow-up patch.
+import {
+  shouldRunDiscovery,
+  runOpenWebDiscovery,
+  buildDiscoveryTelemetry,
+  type OpenWebDiscovery,
+  type DiscoveryDecision,
+} from "./openWebDiscovery.ts";
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
   BANNED_KEYS,
@@ -3024,7 +3028,16 @@ ${(verify.fullText as string).slice(0, 50000)}
     let routerRoute: LegalIssueRoute | null = null;
     let routerRun: StageRun | null = null;
     let routerTimedOut = false;
-    // Phase 3 wiring reverted — re-add in follow-up patch.
+    // Phase 3 — Open Web Discovery state. Discovery runs in PARALLEL with
+    // decomposition (it does not block the planner) but its result must be
+    // awaited before qa_logs metadata is written. Output is METADATA-ONLY:
+    // it never enters the source pack and never reaches the drafter.
+    let discoveryDecision: DiscoveryDecision | null = null;
+    let discoveryRun: StageRun | null = null;
+    let discoveryResult: OpenWebDiscovery | null = null;
+    let discoverySanitized:
+      Awaited<ReturnType<typeof runOpenWebDiscovery>>["sanitized_fields"] = null;
+    let discoveryPromise: Promise<void> | null = null;
     if (enableDeepPipeline && !evalForceLegacy) {
       // Live progress: frame is essentially "request received & validated".
       // Emit it as complete immediately so the user sees instant feedback.
@@ -3068,7 +3081,47 @@ ${(verify.fullText as string).slice(0, 50000)}
           }
         }
 
-        // Phase 3 (Open Web Discovery) orchestration reverted — see header note.
+        // ─── Phase 3: Open Web Discovery (METADATA-ONLY, fire-and-forget) ───
+        // Decision is computed AFTER the router returns so router signals
+        // (target_statute, requires_current_context, low confidence, etc.)
+        // can drive `shouldRunDiscovery`. The actual Perplexity call is
+        // kicked off but NOT awaited here — decomposition proceeds in
+        // parallel. The result is awaited later, just before qa_logs
+        // metadata is written. Discovery output never enters source_pack.
+        if (modeProfile.openWebDiscovery !== "off") {
+          discoveryDecision = shouldRunDiscovery(
+            routerRoute,
+            question,
+            researchDepth,
+            modeProfile.openWebDiscovery,
+          );
+          if (discoveryDecision.triggered) {
+            emitStage("open_web_discovery", "running");
+            const tDiscStart = Date.now();
+            discoveryPromise = runOpenWebDiscovery(question, routerRoute)
+              .then((r) => {
+                discoveryRun = r.run;
+                discoveryResult = r.discovery;
+                discoverySanitized = r.sanitized_fields;
+                stageRuns.push(r.run);
+                emitStage(
+                  "open_web_discovery",
+                  "complete",
+                  r.discovery
+                    ? `${r.discovery.candidate_authoritative_sources.length} מועמדים`
+                    : `fallback (${r.run.status})`,
+                );
+                console.log(
+                  `[discovery] status=${r.run.status} candidates=${r.discovery?.candidate_authoritative_sources.length ?? 0} (${Date.now() - tDiscStart}ms)`,
+                );
+              })
+              .catch((discErr) => {
+                emitStage("open_web_discovery", "complete", "fallback (error)");
+                console.error("[discovery] failed (non-fatal):", discErr);
+              });
+          }
+        }
+
 
         try {
           const res = await decomposeAndPlan(question, routerRoute);
@@ -7982,6 +8035,12 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         const sourcePackV2Summary = sourcePackV2 ? summarizeSourcePack(sourcePackV2) : null;
         const claimMapV2Summary = claimMapV2 ? summarizeClaimMapV2(claimMapV2) : null;
         const draftingPath: "structured" | "fallback" = draftingInput && useNewDrafter ? "structured" : "fallback";
+        // Phase 3: await Open Web Discovery (if it kicked off) before writing
+        // telemetry. Bounded by the per-request abort signal — the inner call
+        // never blocks decomposition / drafting.
+        if (discoveryPromise) {
+          try { await discoveryPromise; } catch (_e) { /* already logged */ }
+        }
         metadata = {
           decomposition: decomposedPlan?.decomposition ?? null,
           decomposition_v2: decompositionV2,
@@ -8160,7 +8219,12 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
                 ? Object.keys(routerRoute.ambiguous_terms).length
                 : 0,
             },
-            // Phase 3 telemetry reverted — to be reintroduced in follow-up patch.
+            discovery: buildDiscoveryTelemetry({
+              decision: discoveryDecision ?? { triggered: false, triggers: [] },
+              run: discoveryRun,
+              discovery: discoveryResult,
+              sanitized_fields: discoverySanitized,
+            }),
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
