@@ -139,10 +139,31 @@ export interface BuildFootnotesResult {
 }
 
 export interface FormatterUsageCounts {
-  reused_existing: number;
+  reused_existing_strong: number;
   engine_resolved: number;
+  engine_template_filled_with_placeholders: number;
   engine_unresolved_then_fallback: number;
   fallback_minimal: number;
+  fallback_weak_title_refused: number;
+}
+
+export interface CitationAssemblyTelemetry {
+  total: number;
+  source_type_normalized: number;
+  engine_first_attempted: number;
+  seed_reuse_rejected: number;
+  template_filled: number;
+  placeholder_inserted: number;
+  missing_fields_counts: Record<string, number>;
+  reused_existing_strong: number;
+  fallback_used: number;
+  examples: Array<{
+    source_id: string;
+    source_type: string;
+    formatter: CanonicalFormatter;
+    canonical: string;
+    missing_fields: string[];
+  }>;
 }
 
 export interface CardClaimContractTelemetry {
@@ -162,6 +183,7 @@ export interface CardClaimContractTelemetry {
   missing_metadata: Array<{ source_id: string; missing_fields: string[] }>;
   source_id_usage: Record<string, number>;
   formatter_usage: FormatterUsageCounts;
+  citation_assembly?: CitationAssemblyTelemetry;
   resolver_failures: Array<{
     source_id: string;
     source_type: string;
@@ -182,10 +204,12 @@ export const EMPTY_TELEMETRY: CardClaimContractTelemetry = {
   missing_metadata: [],
   source_id_usage: {},
   formatter_usage: {
-    reused_existing: 0,
+    reused_existing_strong: 0,
     engine_resolved: 0,
+    engine_template_filled_with_placeholders: 0,
     engine_unresolved_then_fallback: 0,
     fallback_minimal: 0,
+    fallback_weak_title_refused: 0,
   },
   resolver_failures: [],
 };
