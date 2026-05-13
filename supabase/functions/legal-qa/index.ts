@@ -3051,6 +3051,33 @@ ${(verify.fullText as string).slice(0, 50000)}
     // blocks; the banner is appended to the drafter's task instructions and
     // the result is logged under research_safeguards.source_pack_gate.
     let sourcePackGateResult: SourcePackGateResult | null = null;
+    // Phase 5 — Targeted Gap Retrieval (Round 2) telemetry. Populated by the
+    // gap-driven round-2 block below; surfaced under
+    // research_safeguards.targeted_retrieval_round_2.
+    type TargetedRound2Telemetry = {
+      mode: "off" | "essential_only" | "full";
+      ran: boolean;
+      reason:
+        | "ran"
+        | "mode_off"
+        | "no_decomposed_plan"
+        | "no_missing_slots"
+        | "essential_only_preferred_gaps_only"
+        | "no_queries_built"
+        | "timeout";
+      gaps_before: string[];
+      gaps_eligible: string[];
+      gaps_after: string[];
+      gap_queries: string[];
+      planner_queries: string[];
+      queries_used: string[];
+      source_pack_counts_before: { core: number; supporting: number; secondary: number };
+      source_pack_counts_after: { core: number; supporting: number; secondary: number };
+      new_cards_added: number;
+      duration_ms: number;
+      timed_out: boolean;
+    };
+    let targetedRound2Telemetry: TargetedRound2Telemetry | null = null;
     if (enableDeepPipeline && !evalForceLegacy) {
       // Live progress: frame is essentially "request received & validated".
       // Emit it as complete immediately so the user sees instant feedback.
