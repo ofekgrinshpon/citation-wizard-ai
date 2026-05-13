@@ -3028,7 +3028,18 @@ ${(verify.fullText as string).slice(0, 50000)}
     let routerRoute: LegalIssueRoute | null = null;
     let routerRun: StageRun | null = null;
     let routerTimedOut = false;
-    // Phase 3 wiring reverted — re-add in follow-up patch.
+    // Phase 3 — Open Web Discovery state. Discovery runs in PARALLEL with
+    // decomposition (it does not block the planner) but its result must be
+    // awaited before qa_logs metadata is written. Output is METADATA-ONLY:
+    // it never enters the source pack and never reaches the drafter.
+    let discoveryDecision: DiscoveryDecision | null = null;
+    let discoveryRun: StageRun | null = null;
+    let discoveryResult: OpenWebDiscovery | null = null;
+    let discoverySanitized:
+      | ReturnType<typeof buildDiscoveryTelemetry> extends infer _T
+        ? Awaited<ReturnType<typeof runOpenWebDiscovery>>["sanitized_fields"]
+        : never = null as any;
+    let discoveryPromise: Promise<void> | null = null;
     if (enableDeepPipeline && !evalForceLegacy) {
       // Live progress: frame is essentially "request received & validated".
       // Emit it as complete immediately so the user sees instant feedback.
