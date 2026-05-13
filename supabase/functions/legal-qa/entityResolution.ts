@@ -55,7 +55,7 @@ function countByClass(
 }
 
 /** Heuristic: does the question ask whether a doctrine / ruling has changed? */
-const DOCTRINE_CHANGE_RE =
+export const DOCTRINE_CHANGE_RE =
   /(שונה|שונתה|התהפכה|בוטלה|השתנתה|נדחתה|השתנו|בוטל|בוטלו|חדל|חדלה|תוקנה|הוחלפה|נסוג(?:ה)?|שינוי הלכה)/;
 
 /** Heuristic: does the question ask about prior text / legislative history? */
