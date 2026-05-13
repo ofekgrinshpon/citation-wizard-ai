@@ -4075,6 +4075,11 @@ ${(verify.fullText as string).slice(0, 50000)}
     // ========= Stage C: Source Pack assembly (legal_research only, INTERNAL) =========
     let sourcePack: SourcePackEntry[] = [];
     let sourcePackV2: LegalSourcePack | null = null;
+    // Phase 6.5 — role-based pipeline state (planner/classifier/gate V2).
+    let researchPlan: LegalResearchPlan | null = null;
+    let researchPlanFallback = false;
+    let gateV2Result: SourcePackGateV2Result | null = null;
+    let roleClassifierFallbackCount = 0;
     if (enableDeepPipeline) {
       emitStage("source_pack", "running");
       sourcePack = sourceCards.map((sc) => {
