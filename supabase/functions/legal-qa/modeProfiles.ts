@@ -177,6 +177,7 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     partyLookupRetryEnabled: true,
     partyLookupPlaceholderPolicy: "emit",
     partyLookupMaxBatchSize: 6,
+    legalIssueRouter: true,
   },
 };
 
