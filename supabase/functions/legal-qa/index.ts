@@ -22,9 +22,13 @@ import {
   raceWithTimeout,
   type LegalIssueRoute,
 } from "./legalIssueRouter.ts";
-// Phase 3 (Open Web Discovery) wiring temporarily reverted to restore
-// deployability. Standalone module `./openWebDiscovery.ts` is kept on disk
-// and will be re-imported in a small follow-up patch.
+import {
+  shouldRunDiscovery,
+  runOpenWebDiscovery,
+  buildDiscoveryTelemetry,
+  type OpenWebDiscovery,
+  type DiscoveryDecision,
+} from "./openWebDiscovery.ts";
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
   BANNED_KEYS,
