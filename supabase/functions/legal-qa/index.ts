@@ -6882,6 +6882,56 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       }
       if (reg.usedFallback) rule37Telemetry.shortname_fallback_count++;
 
+      // ── Citation-quality gate (skip short-form for weak/placeholder bases) ──
+      // Non-legislation only — legislation has a dedicated path (Rule 37.5)
+      // that doesn't reproduce the citation text.
+      if (!reg.isLegislation) {
+        const baseFn = footnotes.find((f) => f.number === firstFnNum);
+        const baseCit = baseFn?.citation || "";
+        const baseType = baseFn?.source_type || fnNumberToCard.get(firstFnNum)?.source_type || "";
+        const q = scoreCitationQuality({ citation: baseCit, sourceType: baseType, url: baseFn?.url });
+        const unbalanced = !hasBalancedParens(baseCit);
+        const truncated = looksTruncated(baseCit);
+        if (q.quality !== "strong" || unbalanced || truncated) {
+          // Repeat the FULL original citation as a new footnote — never
+          // build a "שם" / "לעיל ה\"ש" form on top of a weak/truncated source.
+          const reasons = [...q.reasons];
+          if (unbalanced) reasons.push("unbalanced_parentheses");
+          if (truncated) reasons.push("truncated");
+          rule37Telemetry.skipped_low_quality_count++;
+          if (rule37Telemetry.skipped_low_quality_samples.length < 5) {
+            rule37Telemetry.skipped_low_quality_samples.push({
+              fn_number: firstFnNum,
+              quality: q.quality,
+              reasons,
+              citation_preview: baseCit.slice(0, 120),
+            });
+          }
+          const newFnNum = nextFnNum++;
+          const card = fnNumberToCard.get(firstFnNum);
+          newRepeatFootnotes.push({
+            number: newFnNum,
+            citation: baseCit,
+            source_type: baseFn?.source_type || card?.source_type || "unknown",
+            url: baseFn?.url || card?.url,
+            source: baseFn?.source || card?.provenance || "local",
+          });
+          rewriteOps.push({ start: occ.start, end: occ.pinpointEnd, replacement: `[${newFnNum}]` });
+          rule37Telemetry.total_repeats_expanded++;
+          if (rule37Telemetry.samples.length < 5) {
+            rule37Telemetry.samples.push({
+              original_marker: `[${occ.oldId}]`,
+              source_type: baseFn?.source_type || "unknown",
+              short_name: reg.shortName,
+              form: "full_repeat_low_quality",
+            });
+          }
+          lastEmittedFnNumber = newFnNum;
+          oldIdToNewNumber.set(newFnNum, newFnNum);
+          continue;
+        }
+      }
+
       const isImmediatelyAdjacent = lastEmittedFnNumber === firstFnNum;
       let shortText: string;
       let form: typeof rule37Telemetry.samples[number]["form"];
