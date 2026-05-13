@@ -151,6 +151,9 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     partyLookupPlaceholderPolicy: "emit",
     partyLookupMaxBatchSize: 3,
     legalIssueRouter: true,
+    // Phase 3: Fast runs discovery only when triggers fire (current-context,
+    // statute target, low confidence, etc.) — keeps latency bounded.
+    openWebDiscovery: "conditional",
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
