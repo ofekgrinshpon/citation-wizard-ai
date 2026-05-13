@@ -3068,40 +3068,7 @@ ${(verify.fullText as string).slice(0, 50000)}
           }
         }
 
-        // ─── Phase 3: Open Web Discovery (METADATA-ONLY, gated) ───
-        discoveryDecision = shouldRunDiscovery(
-          routerRoute,
-          question,
-          researchDepth,
-          modeProfile.openWebDiscovery,
-        );
-        if (discoveryDecision.triggered) {
-          emitStage("open_web_discovery", "running");
-          discoveryPromise = (async () => {
-            try {
-              const r = await runOpenWebDiscovery(question, routerRoute);
-              discoveryResult = r.discovery;
-              discoveryRun = r.run;
-              discoverySanitizedFields = r.sanitized_fields;
-              if (r.run) stageRuns.push(r.run);
-              emitStage(
-                "open_web_discovery",
-                "complete",
-                r.discovery
-                  ? `${r.discovery.candidate_authoritative_sources.length} מועמדים`
-                  : `fallback (${r.run.status})`,
-              );
-              console.log(
-                `[discovery] triggers=[${discoveryDecision.triggers.join(",")}] candidates=${r.discovery?.candidate_authoritative_sources.length ?? 0} status=${r.run.status} (${r.run.duration_ms}ms)`,
-              );
-            } catch (discErr) {
-              emitStage("open_web_discovery", "complete", "fallback (error)");
-              console.error("[discovery] failed (non-fatal):", discErr);
-            }
-          })();
-        } else {
-          console.log(`[discovery] skipped (mode=${modeProfile.openWebDiscovery}, no triggers)`);
-        }
+        // Phase 3 (Open Web Discovery) orchestration reverted — see header note.
 
         try {
           const res = await decomposeAndPlan(question, routerRoute);
