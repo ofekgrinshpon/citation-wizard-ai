@@ -30,7 +30,7 @@ import {
 } from "@/lib/verifiedSources";
 import { VerifiedSuggestionCard } from "@/components/VerifiedSuggestionCard";
 import { AppSidebar } from "@/components/AppSidebar";
-import DocumentCheckPage from "@/components/document-check/DocumentCheckPage";
+import { FootnotesSection } from "@/components/FootnotesSection";
 import { CitationHistorySidebar } from "@/components/CitationHistorySidebar";
 import { QAHistorySidebar } from "@/components/QAHistorySidebar";
 import { ReLexLogo } from "@/components/ReLexLogo";
