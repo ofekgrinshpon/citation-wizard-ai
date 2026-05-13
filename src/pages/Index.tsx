@@ -879,6 +879,8 @@ const Index = () => {
           <BatchFootnoteBuilder />
         ) : mode === "bibliography" ? (
           <BibliographyGenerator />
+        ) : mode === "documentcheck" ? (
+          <DocumentCheckPage />
         ) : mode === "legalqa" ? (
           <LegalQAChat
             onResultSaved={() => setQaRefreshKey(k => k + 1)}
