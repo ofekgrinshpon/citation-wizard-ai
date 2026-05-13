@@ -95,6 +95,18 @@ export interface ModeProfile {
    * On timeout, decomposition runs unbiased (legacy behaviour).
    */
   legalIssueRouter: boolean;
+
+  // ─── Phase 3 (research safeguards) — Open Web Discovery ───
+  /**
+   * "off"        → never runs.
+   * "conditional" → runs when `shouldRunDiscovery` returns triggered.
+   * "always"     → always runs (eval / debugging only).
+   *
+   * Discovery is METADATA-ONLY. Its raw snippets MUST NOT enter the source
+   * pack or final citations — candidate URLs are only seeds for trusted
+   * retrieval in later phases. See `openWebDiscovery.ts` for full contract.
+   */
+  openWebDiscovery: "off" | "conditional" | "always";
 }
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
