@@ -31,7 +31,11 @@ import {
 } from "./openWebDiscovery.ts";
 import {
   checkSourcePackGate,
+  identifyMissingSlots,
+  classifyGap,
+  buildRound2Queries,
   type SourcePackGateResult,
+  type GapTier,
 } from "./entityResolution.ts";
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
