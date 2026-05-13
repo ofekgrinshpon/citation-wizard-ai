@@ -30,6 +30,7 @@ import {
 } from "@/lib/verifiedSources";
 import { VerifiedSuggestionCard } from "@/components/VerifiedSuggestionCard";
 import { AppSidebar } from "@/components/AppSidebar";
+import DocumentCheckPage from "@/components/document-check/DocumentCheckPage";
 import { CitationHistorySidebar } from "@/components/CitationHistorySidebar";
 import { QAHistorySidebar } from "@/components/QAHistorySidebar";
 import { ReLexLogo } from "@/components/ReLexLogo";
@@ -80,7 +81,7 @@ const CITATION_EXAMPLES = [
 ];
 
 
-type AppMode = "freetext" | "batch" | "bibliography" | "legalqa";
+type AppMode = "freetext" | "batch" | "bibliography" | "legalqa" | "documentcheck";
 
 const LS_KEY_INPUT_PREFIX = "legal_app_free_text_content";
 const LS_KEY_MESSAGES_PREFIX = "legal_app_free_text_messages";
@@ -756,6 +757,7 @@ const Index = () => {
     { id: "freetext", label: "אזכור אחיד", icon: "✨" },
     { id: "batch", label: "הערות שוליים", icon: "📑" },
     { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
+    { id: "documentcheck", label: "בדיקת מסמך", icon: "📄" },
   ];
 
   
@@ -878,6 +880,8 @@ const Index = () => {
           <BatchFootnoteBuilder />
         ) : mode === "bibliography" ? (
           <BibliographyGenerator />
+        ) : mode === "documentcheck" ? (
+          <DocumentCheckPage />
         ) : mode === "legalqa" ? (
           <LegalQAChat
             onResultSaved={() => setQaRefreshKey(k => k + 1)}

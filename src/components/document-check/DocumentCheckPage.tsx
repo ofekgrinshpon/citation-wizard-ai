@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDocumentCheck, type DocCitation, type DocNote } from "@/hooks/useDocumentCheck";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const STATUS_LABELS: Record<DocCitation["status"], string> = {
@@ -78,6 +79,17 @@ export default function DocumentCheckPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+  const [recent, setRecent] = useState<Array<{ id: string; file_name: string; created_at: string; status: string; notes_count: number; citations_count: number }>>([]);
+
+  useEffect(() => {
+    if (dc.status !== "idle") return;
+    void supabase
+      .from("document_check_sessions")
+      .select("id, file_name, created_at, status, notes_count, citations_count")
+      .order("created_at", { ascending: false })
+      .limit(20)
+      .then(({ data }) => setRecent(data ?? []));
+  }, [dc.status]);
 
   const onPick = () => fileRef.current?.click();
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,6 +129,27 @@ export default function DocumentCheckPage() {
           <input
             ref={fileRef} type="file" accept=".docx" className="hidden" onChange={onFile}
           />
+
+          {recent.length > 0 && (
+            <div className="mt-10 max-w-xl mx-auto text-right">
+              <h3 className="text-sm font-semibold text-foreground mb-2">בדיקות אחרונות</h3>
+              <div className="space-y-1.5">
+                {recent.map((r) => (
+                  <button
+                    key={r.id}
+                    onClick={() => dc.loadSession(r.id)}
+                    disabled={r.status !== "review_ready"}
+                    className="w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg border border-border bg-card hover:bg-muted text-right text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className="truncate flex-1 text-foreground">{r.file_name || "ללא שם"}</span>
+                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                      {r.notes_count} הערות · {r.citations_count} אזכורים · {new Date(r.created_at).toLocaleDateString("he-IL")}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
