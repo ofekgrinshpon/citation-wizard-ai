@@ -237,6 +237,34 @@ export async function routeLegalIssue(
 }
 
 /**
+ * Coerce planner sentinel strings into proper `null`. Some Gemini outputs
+ * return "None" / "none" / "null" / "-" / "" instead of JSON null for
+ * absent fields. Anything truthy and meaningful passes through.
+ */
+export function normalizeAmendment(value: unknown): string | null {
+  if (value === null || value === undefined) return null;
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (trimmed === "") return null;
+  if (/^(none|null|-)$/i.test(trimmed)) return null;
+  return trimmed;
+}
+
+/**
+ * Same coercion for free-form statute strings (`name`, `section`).
+ * Empty / sentinel values normalize to `null` so downstream code can rely
+ * on `if (target_statute.name)` without fearing empty strings.
+ */
+export function normalizeStatuteField(value: unknown): string | null {
+  if (value === null || value === undefined) return null;
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (trimmed === "") return null;
+  if (/^(none|null|-)$/i.test(trimmed)) return null;
+  return trimmed;
+}
+
+/**
  * Bound a router (or any other StageRun-returning) call by a wall-clock
  * timeout. On timeout we resolve with `data: null` and a synthesized
  * `timeout` StageRun so callers can keep pipeline telemetry consistent.
