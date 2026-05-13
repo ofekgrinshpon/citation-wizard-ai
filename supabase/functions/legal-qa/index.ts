@@ -40,11 +40,20 @@ import {
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
   BANNED_KEYS,
+  type CitationQuality,
   type LegalClaimMap,
   type LegalDraftingInput,
   type LegalResearchDecomposition,
+  type LegalResearchPlan,
   type LegalSourcePack,
+  type SourcePackGateV2Result,
+  type SourceRole,
 } from "./contracts.ts";
+import { runLegalResearchPlanner } from "./legalResearchPlanner.ts";
+import { classifySourceRoles, type ClassifierInputCard } from "./sourceRoleClassifier.ts";
+import { evaluateSourcePackGateV2, buildGateV2Banner } from "./sourcePackGateV2.ts";
+import { renderRoleAwareCard, buildRoleUsageBlock, type RoleAwareCardInput } from "./roleAwarePromptHelper.ts";
+import { scoreCitationQuality } from "./citationQualityScorer.ts";
 import { mapToDecompositionV2 } from "./legalResearchDecomposition.ts";
 import { assembleSourcePack, summarizeSourcePack, countSourcesByType, type InternalSourcePackEntry } from "./legalSourcePack.ts";
 import { mapToClaimMapV2, summarizeClaimMapV2 } from "./legalClaimMap.ts";
