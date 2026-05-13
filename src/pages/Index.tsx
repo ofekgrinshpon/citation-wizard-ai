@@ -876,11 +876,9 @@ const Index = () => {
           style={{ maxWidth: 860, margin: "0 auto", width: "100%" }}
         >
         {mode === "batch" ? (
-          <BatchFootnoteBuilder />
+          <FootnotesSection />
         ) : mode === "bibliography" ? (
           <BibliographyGenerator />
-        ) : mode === "documentcheck" ? (
-          <DocumentCheckPage />
         ) : mode === "legalqa" ? (
           <LegalQAChat
             onResultSaved={() => setQaRefreshKey(k => k + 1)}
