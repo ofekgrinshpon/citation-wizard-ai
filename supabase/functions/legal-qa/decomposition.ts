@@ -6,6 +6,7 @@
 // for admin diagnostics.
 
 import { callPlannerJSON, type PlannerToolDef, type StageRun } from "./aiProvider.ts";
+import { buildDecompositionBias, type LegalIssueRoute } from "./legalIssueRouter.ts";
 
 // ────────────────────────────────────────────────────────────────
 // Stage A+B: Decomposition + Query Plan (single planner call)
