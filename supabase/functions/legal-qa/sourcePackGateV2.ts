@@ -109,22 +109,52 @@ function countMatching(
 }
 
 /**
- * Build a Hebrew banner describing the gaps. Used when soft mode wants the
- * drafter to know certain roles weren't satisfied. Returns "" when no gaps.
+ * Build a Hebrew banner describing the gaps. The banner does NOT instruct
+ * the drafter to add citations — instead it tells the drafter to QUALIFY
+ * any claim that would otherwise have leaned on a missing role.
+ *
+ * Hard rules embedded in the banner:
+ *   - אל תמציא citations כדי "למלא" תפקיד חסר.
+ *   - אל תציג מקור חלש / יישומי כעוגן דוקטרינרי.
+ *   - אל תוסיף הערת שוליים אלא אם יש מסמן [cite:S#] אמיתי בגוף.
+ *   - אם תפקיד חובה חסר — סייג את המסקנה במפורש.
  */
 export function buildGateV2Banner(result: SourcePackGateV2Result): string {
   if (result.gaps.length === 0) return "";
   const lines: string[] = [];
-  lines.push("⚠️ הערת כיסוי תפקידי מקור:");
+  lines.push("⚠️ כיסוי תפקידי מקור — חסרים תפקידים נדרשים:");
   for (const gap of result.gaps) {
     const tag = gap.priority === "must" ? "חובה" : "מומלץ";
     lines.push(
       `- ${gap.role} (${tag}): נמצאו ${gap.found}/${gap.required}`,
     );
   }
-  lines.push(
-    'העדף ניסוח זהיר ("ייתכן" / "טרם הוכרע") לטענות שהיית רוצה לעגן בתפקיד שחסר.',
-  );
+  lines.push("");
+  lines.push("הוראות לטיפול בחוסר (חובה לפעול לפיהן):");
+  lines.push('• אל תטען טענות חזקות בנושא שתפקיד החובה שלו חסר; השתמש ב"ייתכן" / "טרם הוכרע במאגר" / "לא אותר מקור דוקטרינרי מספק".');
+  lines.push("• אל תצטט מקור חלש (docket-only / ערכאה דיונית / יישומי) כאוטוריטה דוקטרינרית מרכזית.");
+  lines.push("• אל תוסיף הערת שוליים אלא אם יש מסמן [cite:S#] אמיתי בגוף הטקסט שמתייחס לאותו מקור.");
+  lines.push("• אל תמציא citations חדשים כדי \"למלא\" תפקיד חסר — עדיף סעיף קצר וכן מאשר citation מומצא.");
+  return lines.join("\n");
+}
+
+/**
+ * Stronger banner used AFTER role-gap targeted retrieval has already run
+ * and required roles are STILL unsatisfied. Tells the drafter to qualify
+ * the answer rather than promote weak sources.
+ */
+export function buildGateV2QualifyBanner(result: SourcePackGateV2Result): string {
+  if (result.satisfied || result.blockingGaps.length === 0) return "";
+  const lines: string[] = [];
+  lines.push("⚠️ לאחר ריצת איסוף ממוקד — תפקידי חובה עדיין חסרים:");
+  for (const gap of result.blockingGaps) {
+    lines.push(`- ${gap.role}: ${gap.found}/${gap.required}`);
+  }
+  lines.push("");
+  lines.push("חובה: סייג את התשובה במפורש. דוגמאות לניסוח:");
+  lines.push('• "לא אותר מקור דוקטרינרי מספק במאגר לעניין זה."');
+  lines.push('• "להלן ניתוח כללי בלבד; קביעה מחייבת מצריכה עיון בהלכה הפסוקה הרלוונטית."');
+  lines.push("אסור לקדם מקור יישומי / docket-only / ערכאה דיונית כעוגן דוקטרינרי מרכזי.");
   return lines.join("\n");
 }
 
