@@ -80,7 +80,7 @@ const CITATION_EXAMPLES = [
 ];
 
 
-type AppMode = "freetext" | "batch" | "bibliography" | "legalqa";
+type AppMode = "freetext" | "batch" | "bibliography" | "legalqa" | "documentcheck";
 
 const LS_KEY_INPUT_PREFIX = "legal_app_free_text_content";
 const LS_KEY_MESSAGES_PREFIX = "legal_app_free_text_messages";
