@@ -1,414 +1,217 @@
-## Goal
 
-Add a controlled **Open Web Discovery** layer + **pre-drafting source safeguards** to the Legal Research pipeline. Single profile-driven pipeline preserved — every new stage is gated by a flag in `MODE_PROFILES`, no Fast/Deep code branches.
+# Phase 6 — Card→Claim Citation Contract (revised)
 
-## Pipeline (final order)
+Introduce an explicit contract where the drafter cites **source-card IDs** (`[cite:S3]`) instead of free-form citation strings, and final footnotes are built deterministically from `sourcePack` metadata. **All citation formatting reuses the existing ReLex citation engine** (`_shared/citationResolver.ts`, `_shared/articleCitationValidator.ts`, `_shared/chapterCitationRouter.ts`, `_shared/citationEngine.ts`); only a tiny last-resort fallback formatter lives in this phase. Legacy AI-footnote parsing remains as a fallback path. No CitationQualityGate enforcement, no strict pack gate, no removal of existing anchor enforcement.
 
-```text
-frame
-  → legal_issue_router          (NEW, profile.legalIssueRouter; awaited or short-timeout-raced before decompose)
-  → open_web_discovery          (NEW, conditional: triggers fire AND profile.openWebDiscovery !== "off")
-  → entity_resolution           (NEW, pure merge)
-  → decompose                   (existing, now consumes router-derived bias + entity_resolution exclusions)
-  → retrieve                    (existing, now appends entity_resolution.expandedQueries)
-  → rerank                      (existing, now applies topic-penalty + selective hard exclusion)
-  → source_pack                 (existing, with source_tier field added)
-  → coverage_gap                (existing instrumentation; outputs missing-slots summary)
-  → targeted_retrieval_round_2  (NEW, profile.targetedGapRetrieval && retrievalRounds > 1)
-  → source_pack_gate            (NEW, profile.sourcePackGate: "off"|"soft"|"strict")
-  → claim_map                   (existing)
-  → drafter                     (existing, injects answerTemplate by query_type + soft-gate banner)
-  → statute_completion          (existing Stage 5e)
-  → footnote_validate           (existing — UPGRADED to rollout-mode validator)
-  → anchor_pass / critic / revision  (existing, profile-gated)
+---
+
+## 1. Scope & guardrails
+
+- **In scope**: stable source IDs, drafter prompt update, marker parser, deterministic footnote builder (engine-driven), telemetry, tests, fallback path.
+- **Out of scope**: CitationQualityGate enforcement, strict `source_pack_gate`, removal of legacy parser/anchor enforcement, building any new citation formatter or duplicating Uniform-Citation logic.
+- **Non-regressions**: existing post-process validators (Rule 8.3, legislation year completeness, Rule 37.5), `placeholder_dominant`/`broken_title` filters, `dropped_unanchored_count`, regression harness assertions, SSE streaming UI.
+
+---
+
+## 2. Files to add / change
+
+**New**
+- `supabase/functions/legal-qa/cardClaimContract.ts` — ID assignment, marker parser, deterministic footnote builder, telemetry shape, **thin adapter** that calls into the shared citation engine.
+- `supabase/functions/legal-qa/cardClaimContract.test.ts` — unit tests (parser, builder, fallback, validation, engine-reuse).
+- `eval/phase6-card-claim-contract-probe.mjs` — verification script (3 queries × Fast/Deep).
+
+**Edited**
+- `supabase/functions/legal-qa/legalSourcePack.ts` — assign stable `S#` IDs and a `canonicalCitation` per card during pack assembly, computed via the shared engine (see §4).
+- `supabase/functions/legal-qa/index.ts` — render source list with `[S#]` headers in the drafter prompt; after draft, run `cardClaimContract.parse()` → if markers found use deterministic builder, else fall back to legacy. Splice telemetry under `metadata.research_safeguards.card_claim_contract`.
+- `supabase/functions/legal-qa/contracts.ts` — extend `sourcePackV2` item shape with `id` and `canonicalCitation`.
+- `supabase/functions/legal-qa/modeProfiles.ts` — add `cardClaimContract: "off" | "shadow" | "on"`. Phase 6 ships **`on`** for both Fast and Deep with legacy fallback always active.
+
+**Reused, not duplicated**
+- `_shared/citationResolver.ts` — `resolveCitation(text, declaredType, opts)` for statute / caselaw / basic-law / secondary-legislation cards.
+- `_shared/articleCitationValidator.ts` — `validateArticleCitation` for journal articles.
+- `_shared/chapterCitationRouter.ts` — `routeChapterFootnote(text)` to classify by type and pick the right validator/route.
+- `_shared/citationEngine.ts` — `getRequiredFields`, `validateCitation`, `CITATION_RULES` for required-field discovery and post-validation.
+
+---
+
+## 3. Stable source IDs
+
+In `legalSourcePack.ts`, after rerank/round-2 reassembly, walk the final pack in display order and assign `id`: `S1, S2, …` (stable for the request lifetime; persisted in telemetry). Drafter sees:
+```
+[S3] חוק החוזים (חלק כללי), התשל"ג-1973
+Type: legislation
+URL: https://…
+Excerpt: …
 ```
 
-## Refinement-driven design decisions
+---
 
-### R1. Router gates decomposition (not parallel-with-fallback-to-stale)
+## 4. `canonicalCitation` derivation — engine-first
 
-Decomposition no longer races the router. Instead:
+For each card, derive `canonicalCitation` via this strict precedence:
 
-```ts
-emitStage("legal_issue_router", "running");
-const routePromise = modeProfile.legalIssueRouter
-  ? routeLegalIssue(question)
-  : Promise.resolve({ data: null, run: synthRun("skipped") });
+1. **If the card already has a citation produced by an upstream resolver** (Perplexity-resolved cards, verified_sources hits, prior `resolveCitation` output), reuse it verbatim. This is the common case for Phase 5 rescued cards.
+2. **Else, route by type via `routeChapterFootnote`** (or by `card.source_type` if already typed) and call the matching engine path:
+   - `statute` / `caselaw` / `basic_law` / `secondary_legislation` → `resolveCitation(seedText, declaredType, hints)`. Seed text is built from card fields (`source_name`, `citation`, `case_number`, `title`) so the resolver has the same input it would normally see. Hints map: `caseNumberHint`, `decisionDateHint`, `titleHint`, `party1Hint`, `party2Hint`, `fullDateHint`, `yearHint`.
+     - If `resolveCitation` returns `{resolved: true, canonical}`, use `canonical`.
+     - If `{resolved: false}`, mark the card with `resolver_unresolved=true` plus the resolver's `reason` and `missingFields`. Fall through to step 4.
+   - `journal_article` → `validateArticleCitation`. If a clean string is produced, use it. Else fall through.
+   - `book` / `book_chapter` / `report` / `web_source` → light normalization (existing `chapterCitationRouter` "light" path). If it returns a usable string, use it. Else fall through.
+3. **Run `validateCitation` from `citationEngine.ts`** against the engine output to confirm it satisfies `getRequiredFields(sourceType)`. Missing fields are recorded in telemetry but the citation is still kept (the existing post-process validators may inject `[חסר: ...]` markers downstream as they already do today — we do not duplicate that logic here).
+4. **Last-resort fallback (only if engine could not resolve at all)** — a minimal deterministic stringifier in `cardClaimContract.ts` that assembles `source_name + url` (or `title + url`) and tags every required-but-missing field as `[חסר: <field>]` using `getRequiredFields(sourceType)`. This fallback never invents data and is the ONLY new formatter in this phase. Telemetry marks `formatter: "fallback_minimal"` so we can measure how often it fires and prioritize engine coverage gaps in a later phase.
 
-// Short bounded wait so a slow router never starves decomposition.
-const routeResult = await raceWithTimeout(routePromise, 12_000, "router_timeout");
-emitStage("legal_issue_router", "complete",
-  routeResult.data ? `${routeResult.data.query_type} (${routeResult.data.confidence.toFixed(2)})` : "fallback");
-
-// Decompose ALWAYS waits for router (or its timeout). Router output biases the
-// decomposition prompt deterministically.
-emitStage("decompose", "running");
-const decompResult = await decomposeAndPlan(question, routeResult.data ?? undefined);
+The decision is logged per card under `metadata.research_safeguards.card_claim_contract.formatter_usage`:
+```
+{ engine_resolved: 12, engine_unresolved_then_fallback: 1, reused_existing: 4, fallback_minimal: 1 }
 ```
 
-`raceWithTimeout` returns the router's actual `{data, run}` if it completes in ≤12s; otherwise returns `{data: null, run: {...status: "timeout"}}` and decomposition runs with the legacy prompt (no bias). This bounds Fast-mode latency overhead to ≤12s router worst-case while still letting fast Gemini calls (~6–10s) actually influence decomposition. Discovery (which is conditional and slower) runs in parallel with decompose, joining at `entity_resolution`.
+---
 
-### R2. OpenWebDiscovery — discovery metadata only, no conclusions
+## 5. Drafter prompt update
 
-Tightened tool-call schema and system prompt explicitly forbid:
+In `index.ts` where the drafter prompt is built (Fast structured + Deep), add:
 
-- legal opinions, holdings, doctrines, "the rule is…", or any normative claim
-- summaries of how courts ruled
-- direct quotation of statutory text presented as authoritative
+> שימוש בציטוטים: לכל טענה משפטית מהותית הוסף סמן [cite:S#] (אפשר רב-מקורי [cite:S1,S3]).
+> אסור להמציא מזהי מקור. אסור לכתוב פוטנוטים בעצמך — הם ייבנו אוטומטית.
+> אם לטענה אין מקור תומך מהרשימה — או השמט את הטענה או נסח אותה כדעה.
 
-Allowed output is limited to:
+The "write a footnote block" instructions remain in code but only fire on the legacy fallback branch.
 
-```ts
-export interface DiscoveryResult {
-  resolved_entities: Record<string, string>;        // e.g. {"חוק החוזים": "חוק החוזים (חלק כללי), התשל\"ג-1973"}
-  candidate_authoritative_sources: Array<{
-    title: string;
-    url?: string;
-    host?: string;
-    source_tier: SourceTier;                         // see R3
-    why_relevant: string;                            // ≤120 chars, descriptive only
-  }>;
-  suggested_trusted_queries: string[];               // ≤8 strings, ≤80 chars each
-  ambiguity_notes: string[];                         // factual disambiguation only
-  confidence: number;
-  must_verify_before_answering: boolean;
-}
+---
+
+## 6. Marker parser
+
+`cardClaimContract.parseMarkers(answerBody, sourcePack)` returns:
 ```
-
-System prompt enforces ("אתה לא משיב על השאלה. אתה רק מזהה ישויות ושאילתות חיפוש מהימנות. אסור לכלול מסקנות משפטיות, הלכות, פרשנות חוקית, או ציטוט נורמטיבי."). A post-call sanitizer drops any field that includes regex hits for `נפסק|הלכה|קבע|מורה|אסור|מותר|זכאי|חייב` inside `why_relevant` or `ambiguity_notes`.
-
-### R3. `source_tier` taxonomy
-
-Added to `LegalSourcePackItem` (`contracts.ts`) and to discovery candidates:
-
-```ts
-export type SourceTier =
-  | "official"             // gov.il / supremedecisions / nevo statutory pages / Knesset / Reshumot
-  | "primary_legal"        // primary case law from approved court systems / nevo case pages
-  | "approved_secondary"   // mishpatim, tau, huji journals, hapraklit, other ApprovedDomains list
-  | "open_web_untrusted";  // anything else; cannot be cited
-```
-
-Classifier `classifySourceTier(url, source_type, host)` lives in a new file `supabase/functions/legal-qa/sourceTier.ts`. **Trusted host alone is not enough** — the classifier also looks at URL path patterns (e.g. `nevo.co.il/law_html/...` vs `nevo.co.il/blog/...`), the `source_type` from local DB classification, and falls back to `open_web_untrusted` whenever uncertain.
-
-`assembleSourcePack` populates `source_tier` for every item; `sourcePackGate` and `footnote_validate` consume it.
-
-### R4. Discovery → source_pack pipeline (with hard defense-in-depth)
-
-Discovery output never directly enters `sourceCards` or `sourcePack`. Instead:
-
-1. `entity_resolution` pulls `suggested_trusted_queries` and `candidate_authoritative_sources.url` from discovery.
-2. URLs from candidates flagged `official` / `primary_legal` are pushed into the existing **trusted retrieval layer** (Perplexity sonar-pro WITH `search_domain_filter: TRUSTED_LEGAL_DOMAINS`, plus local DB embedding lookup) as **seeds for round 1 retrieval**, not as final sources.
-3. Only if that trusted re-fetch returns a usable chunk does the source enter `sourceCards` with proper `provenance` (`local` / `perplexity`) and a `source_tier` re-classified from the canonical fetched URL.
-4. `assembleSourcePack` keeps a hard guard:
-
-   ```ts
-   for (const item of items) {
-     if (item.metadata?.discovery_only === true) {
-       throw new Error("[source-pack-invariant] discovery_only item leaked into pack");
-     }
-     if (item.provenance === "open_web_discovery") {
-       throw new Error("[source-pack-invariant] open_web_discovery provenance not allowed");
-     }
-   }
-   ```
-
-   Throw → caught → logged to `qa_logs.metadata.invariant_violation`, item dropped silently in production.
-
-### R5. `citationQualityGate` rollout modes
-
-```ts
-citationQualityGate: "off" | "log_only" | "enforce";
-```
-
-Initial defaults:
-
-| Mode | Fast | Deep |
-|------|------|------|
-| citationQualityGate | `log_only` | `log_only` |
-
-`log_only` runs the full validator and writes `qa_logs.metadata.footnote_validation = { dropped: [], dropped_count: N, kept_count: M, would_drop_in_enforce: [...] }` but does NOT mutate `finalFootnotes`. After ~1 week of telemetry, flip Deep → `enforce` based on real drop rates.
-
-### R6. Domain exclusion as ranking penalty + narrow hard filter
-
-Replace the simple post-rerank filter with a two-tier policy:
-
-```ts
-if (modeProfile.domainExclusion && resolvedTarget) {
-  const beforeCount = rankedMatches.length;
-  const penaltyHits: Array<{title:string; reason:string; score_delta:number}> = [];
-  const hardDrops: Array<{title:string; reason:string}> = [];
-
-  rankedMatches = rankedMatches.flatMap((m) => {
-    const topicHit = matchAny(resolvedTarget.forbiddenTopics, m);
-    const domainHit = matchAny(resolvedTarget.forbiddenDomains, m);
-    // Hard drop ONLY when both topic AND legal domain are clearly wrong.
-    if (topicHit && domainHit) {
-      hardDrops.push({ title: m.document_title, reason: `topic+domain:${topicHit}|${domainHit}` });
-      return [];
-    }
-    // Otherwise: ranking penalty (keep but downweight).
-    if (topicHit || domainHit) {
-      const delta = topicHit ? -0.25 : -0.15;
-      penaltyHits.push({ title: m.document_title, reason: topicHit ?? domainHit!, score_delta: delta });
-      return [{ ...m, similarity: (m.similarity ?? 0) + delta }];
-    }
-    return [m];
-  }).sort((a,b) => (b.similarity ?? 0) - (a.similarity ?? 0));
-
-  qaLogsMetadata.domain_exclusion = {
-    before: beforeCount,
-    after: rankedMatches.length,
-    hard_drops: hardDrops,
-    penalties: penaltyHits,
-  };
-}
-```
-
-### R7. `sourcePackGate` for `statutory_amendment_comparison`
-
-Required slots (strict mode blocks, soft mode warns):
-
-```ts
-function gateForStatutoryAmendmentComparison(target, pack): GateResult {
-  const missing: string[] = [];
-
-  // (a) Identified statute/section/amendment OR current statutory text in pack
-  const hasStatuteIdentity = !!(target.statute?.name && (target.statute.section || target.statute.amendment));
-  const hasCurrentText = pack.coreSources.some(s =>
-    s.source_tier === "official" || s.source_tier === "primary_legal");
-  if (!hasStatuteIdentity && !hasCurrentText) missing.push("identified_statute_or_current_text");
-
-  // (b) ≥1 official/primary/approved source for the amendment or current text
-  const hasAuthoritative = pack.coreSources.some(s =>
-    ["official","primary_legal","approved_secondary"].includes(s.source_tier));
-  if (!hasAuthoritative) missing.push("authoritative_source_for_amendment");
-
-  // (c) Case-law baseline (REQUIRED only when question asks whether doctrine changed)
-  const asksDoctrineChange = target.query_type === "statutory_amendment_comparison" &&
-    /הלכה|דוקטרינה|שינוי מהותי|מהות/.test(target.originalQuestion ?? "");
-  if (asksDoctrineChange) {
-    const hasCaseBaseline = pack.coreSources.some(s => s.authorityClass === "primary_caselaw");
-    if (!hasCaseBaseline) missing.push("case_law_baseline");
-  }
-
-  // (d) Prior statutory text — STRONGLY PREFERRED, NOT ALWAYS BLOCKING.
-  // Only blocks (in strict mode) when no reliable explanatory secondary material exists.
-  const hasPriorText = pack.coreSources.some(s =>
-    /נוסח קודם|לפני התיקון|בנוסחו הקודם/.test(s.title + " " + (s.excerpt ?? "")));
-  const hasExplanatory = pack.supportingSources.some(s =>
-    s.source_tier === "approved_secondary" &&
-    /תיקון|דברי הסבר|הצעת חוק/.test(s.title + " " + (s.excerpt ?? "")));
-  if (!hasPriorText && !hasExplanatory) {
-    missing.push("prior_text_or_explanatory_material"); // soft-only signal
-  }
-
-  const blockingMissing = missing.filter(m => m !== "prior_text_or_explanatory_material");
-  return { ok: blockingMissing.length === 0, missing, blockingMissing };
-}
-```
-
-Strict mode rejects when `blockingMissing.length > 0`. Soft mode never rejects but produces `softGateBanner` from the full `missing` list.
-
-### R8. Discovery in Fast — conservative trigger set
-
-`shouldRunDiscovery` is identical for both modes; the *profile* difference is just the `openWebDiscovery` flag.
-
-| Field | Fast | Deep |
-|-------|------|------|
-| openWebDiscovery | `"conditional"` | `"conditional"` |
-| `shouldRunDiscovery` thresholds | router.confidence < **0.7** AND (current/ambiguous/latest hit OR amendment="latest") | router.confidence < **0.75** OR any single trigger fires |
-
-So in Fast, discovery only fires when the router is genuinely uncertain AND the question signals current-context. Deep is more permissive. Implementation:
-
-```ts
-export function shouldRunDiscovery(route, question, depth: ResearchDepth): boolean {
-  const triggers = {
-    requires_current: route.requires_current_context === true,
-    amendment_latest: route.target_amendment === "latest",
-    keyword_hit: /האחרון|התיקון האחרון|ההלכה החדשה|המצב כיום|לאחרונה|עדכני/.test(question),
-    low_confidence: route.confidence < (depth === "fast" ? 0.7 : 0.75),
-    ambiguous_terms: Object.keys(route.ambiguous_terms ?? {}).length > 0,
-  };
-  if (depth === "fast") {
-    // Fast: low confidence AND at least one current-context signal
-    return triggers.low_confidence && (triggers.requires_current || triggers.amendment_latest || triggers.keyword_hit);
-  }
-  // Deep: any single trigger
-  return Object.values(triggers).some(Boolean);
-}
-```
-
-The full `triggers` object is written to `qa_logs.metadata.discovery_decision` regardless of outcome — see R9.
-
-### R9. Telemetry
-
-All new telemetry lands under `qa_logs.metadata.research_safeguards`:
-
-```ts
 {
-  router: {
-    ran: boolean,
-    timed_out: boolean,
-    duration_ms: number,
-    query_type: string | null,
-    confidence: number | null,
-    forbidden_domains: string[],
-    forbidden_topics: string[],
+  markers: [{ raw, sourceIds: ["S3"], position, surroundingClaim }],
+  uniqueSourceIds: Set<string>,
+  invalidSourceIds: string[],
+}
+```
+- Regex: `\[cite:(S\d+(?:\s*,\s*S\d+)*)\]`.
+- `surroundingClaim`: ~120 chars before the marker, trimmed at sentence boundary.
+- Invalid IDs are stripped from the body and recorded.
+
+---
+
+## 7. Deterministic footnote builder
+
+`cardClaimContract.buildFootnotes(markers, sourcePack)`:
+1. Walk markers in body order; first occurrence of an ID emits a footnote `{ number, citation: card.canonicalCitation, source_name, source_type, url, source: card.provenance, source_id: card.id }`.
+2. Replace each `[cite:S#]` with the matching superscript number(s).
+3. Run **existing Rule 37 / repeated-citation logic** unchanged (so `שם` / `לעיל ה"ש`, legislation skip, all behave identically).
+4. Run **existing post-process validators** (Rule 8.3 cleanup, legislation year completeness) on the deterministic citations — they only strip / inject markers, never synthesize.
+5. Run **existing filter pipeline** (`placeholder_dominant`, `broken_title`, length thresholds) — a deterministic footnote with a fallback-minimal citation that is dominated by `[חסר: ...]` and lacks anchor proof is still dropped.
+
+If a card lacks anchor (no `url` and no real provenance), the footnote is dropped and counted under existing `dropped_unanchored_count`.
+
+---
+
+## 8. Fallback path
+
+```
+const parsed = parseMarkers(body, pack);
+if (parsed.markers.length === 0) {
+  // legacy: existing AI-footnote pipeline runs unchanged
+  contract = { used: false, legacy_fallback: true, reason: "no_cite_markers_found", ... };
+} else {
+  const { newBody, footnotes, missingMetadata, formatterUsage } = buildFootnotes(parsed, pack);
+  // run rule37 + validators + filters on `footnotes` (existing modules)
+  contract = { used: true, legacy_fallback: false, ... };
+}
+```
+Legacy parser, anchor enforcement, and validators remain bit-for-bit unchanged on the fallback branch.
+
+---
+
+## 9. Telemetry
+
+`qa_logs.metadata.research_safeguards.card_claim_contract`:
+```
+{
+  used: boolean,
+  legacy_fallback: boolean,
+  reason?: "no_cite_markers_found" | "all_invalid_ids" | null,
+  markers_found: number,
+  unique_source_ids_used: number,
+  invalid_source_ids: string[],
+  claims_with_sources: number,
+  generated_footnotes: number,
+  missing_metadata: [{ source_id, missing_fields: string[] }],
+  source_id_usage: { S1: 3, S2: 1, ... },
+  formatter_usage: {
+    reused_existing: number,
+    engine_resolved: number,
+    engine_unresolved_then_fallback: number,
+    fallback_minimal: number
   },
-  discovery: {
-    triggered: boolean,
-    triggers: { requires_current, amendment_latest, keyword_hit, low_confidence, ambiguous_terms },
-    duration_ms: number | null,
-    candidate_count: number,
-    by_tier: { official: n, primary_legal: n, approved_secondary: n, open_web_untrusted: n },
-    sanitized_fields: number,    // count of fields stripped by post-call sanitizer
-  },
-  domain_exclusion: {
-    before: number,
-    after: number,
-    hard_drops: Array<{ title, reason }>,
-    penalties: Array<{ title, reason, score_delta }>,
-  },
-  source_pack_gate: {
-    mode: "off" | "soft" | "strict",
-    ok: boolean,
-    missing: string[],
-    blocking_missing: string[],
-  },
-  footnote_validation: {
-    mode: "off" | "log_only" | "enforce",
-    kept_count: number,
-    dropped_count: number,         // 0 in log_only
-    would_drop_in_enforce: Array<{ citation, reason }>,
-  },
+  resolver_failures: [{ source_id, source_type, reason, missing_fields: [] }]
 }
 ```
 
-A small helper `pushSafeguardTelemetry(qaLogsMetadata, key, value)` keeps the call sites compact.
+---
 
-## File-by-file changes
+## 10. Validation rules
 
-### New: `supabase/functions/legal-qa/legalIssueRouter.ts`
-Single Gemini Flash call. Returns `LegalIssueRoute` with the contract above (R1). 12s hard timeout enforced by caller (`raceWithTimeout`).
+- Unknown `S#` → strip marker, push to `invalid_source_ids`, no footnote built.
+- All markers invalid → fall back to legacy.
+- Marker present but engine returns unresolved AND fallback-minimal output is too thin to anchor → drop and log under `missing_metadata`. Anchored cards (real URL / real provenance) keep their footnote with `[חסר: ...]` markers, consistent with the existing `anchored-partial-citations` rule.
 
-### New: `supabase/functions/legal-qa/openWebDiscovery.ts`
-- `shouldRunDiscovery(route, question, depth)` — R8.
-- `discoverOpenWeb(question, route)` — sonar-pro, NO `search_domain_filter` (the only such call), JSON schema response, post-call sanitizer that strips conclusion-shaped text (R2).
-- Tags every candidate with `source_tier` via `classifySourceTier` (R3).
+---
 
-### New: `supabase/functions/legal-qa/entityResolution.ts`
-- `resolveTarget(question, route, discovery, plan): ResolvedTarget`
-- `identifyMissingSlots(target, packV2)` — used by round 2.
-- `buildRound2Queries(target, gaps)` — used by round 2.
-- `checkSourcePackGate(target, packV2, mode)` — implements R7 (returns `{ok, missing, blockingMissing}`).
-- `buildSoftGateBanner(missing): string`
-- `buildAnswerTemplate(query_type, target): string` — R7's narrative scaffold.
+## 11. Tests (`cardClaimContract.test.ts`)
 
-### New: `supabase/functions/legal-qa/sourceTier.ts`
-- `classifySourceTier(url?, source_type?, host?): SourceTier` — R3.
-- `OFFICIAL_HOSTS`, `PRIMARY_LEGAL_HOST_PATHS`, `APPROVED_SECONDARY_HOSTS` constants colocated.
+- Parses `[cite:S1]` and `[cite:S1,S3]` (with whitespace variants).
+- Rejects `[cite:S99]` when `S99` not in pack; logs invalid.
+- **Engine reuse**: stub a card with statute fields → assert `resolveCitation` is invoked and its `canonical` string is used verbatim; assert no minimal-fallback path runs.
+- **Fallback path**: stub a `web_source` card the engine cannot resolve → assert `fallback_minimal` is used and required-but-missing fields appear as `[חסר: ...]`.
+- Body marker order preserved across multi-paragraph input.
+- Repeats produce one footnote, with Rule 37 applied on subsequent body refs.
+- Legislation cards never converted to `לעיל ה"ש`.
+- No markers → legacy fallback, `used=false, reason="no_cite_markers_found"`.
+- Anchored card with weak metadata → footnote kept with `[חסר: ...]`; unanchored card → dropped.
 
-### Edited: `supabase/functions/legal-qa/contracts.ts`
-- Add `SourceTier` type.
-- Add `source_tier?: SourceTier` to `LegalSourcePackItem`.
-- Add `discovery_only?: boolean` to `metadata` shape (used by the invariant guard).
+---
 
-### Edited: `supabase/functions/legal-qa/legalSourcePack.ts`
-- `assembleSourcePack` populates `source_tier` per item via `classifySourceTier`.
-- Add the R4 hard invariant guard (throws → caught upstream → logged → item dropped).
+## 12. Verification (`eval/phase6-card-claim-contract-probe.mjs`)
 
-### Edited: `supabase/functions/legal-qa/decomposition.ts`
-- `decomposeAndPlan(question, route?)` — when `route` provided, prepend a 4-line preamble: `target_statute`, `legal_domain`, `ambiguous_terms` disambiguation, `forbidden_topics`. Schema unchanged.
+Three queries × Fast + Deep (6 runs total), unique `evalRunId` each:
 
-### Edited: `supabase/functions/legal-qa/modeProfiles.ts`
-Add to `ModeProfile`:
+A. `"האם התיקון האחרון לחוק החוזים מהווה שינוי מהותי מההלכה הקיימת בפרשנות חוזים?"` (mixed)
+B. `"האם ביבי כבישים שינתה את הלכת אפרופים?"` (caselaw-heavy)
+C. `"מה הדין לגבי תנאי מקפח בחוזה אחיד?"` (legislation-heavy)
 
-```ts
-legalIssueRouter: boolean;
-openWebDiscovery: "off" | "conditional" | "always";
-sourcePackGate: "off" | "soft" | "strict";
-domainExclusion: boolean;
-citationQualityGate: "off" | "log_only" | "enforce";   // R5
-targetedGapRetrieval: boolean;
-```
+Per run, fetch `qa_logs.metadata.research_safeguards.card_claim_contract` and assert:
+- `used = true` (expected on all 6)
+- `markers_found ≥ 2`, `invalid_source_ids = []`
+- `generated_footnotes ≥ 2` and ≤ `markers_found`
+- every footnote has `source_id` matching a pack item
+- `formatter_usage.fallback_minimal` low (target 0–2; report if higher so we know which source types need engine coverage)
+- `dropped_unanchored_count = 0` on the deterministic path
+- `legacy_fallback = false`
+- answer body still renders (non-empty, no orphan `[cite:` strings, superscripts present)
 
-| Field | Fast | Deep |
-|-------|------|------|
-| legalIssueRouter | true | true |
-| openWebDiscovery | conditional | conditional |
-| sourcePackGate | soft | strict |
-| domainExclusion | true | true |
-| citationQualityGate | log_only | log_only |
-| targetedGapRetrieval | false | true |
+If any run drops to legacy, dump `reason` + first 5 markers + first 5 IDs in pack.
 
-### Edited: `supabase/functions/legal-qa/index.ts`
-- Imports for the new modules.
-- `STAGE_LABELS` extended with the 5 new keys.
-- Replace the current `decompPromise` parallel block with R1's serialized router → decompose; discovery launched in parallel with decompose.
-- Insert `entity_resolution` join + retrieval-query expansion + R6 ranking-penalty block.
-- Insert `targeted_retrieval_round_2` after source_pack v2 (gated).
-- Insert `source_pack_gate` before claim_map (gated).
-- Wire `buildAnswerTemplate(...)` and `softGateBanner` into the structured drafter system prompt.
-- Upgrade `footnote_validate` to consult `modeProfile.citationQualityGate` (R5) — `log_only` writes `would_drop_in_enforce`, `enforce` mutates.
-- Aggregate all R9 telemetry into `qa_logs.metadata.research_safeguards`.
+---
 
-### New tests
-- `legalIssueRouter.test.ts` — contracts-law amendment Q produces `query_type: "statutory_amendment_comparison"`, contract_law domain, family_law in forbidden_domains.
-- `entityResolution.test.ts` — merge precedence, `checkSourcePackGate` for the strict statutory_amendment_comparison contract (R7), `shouldRunDiscovery` Fast vs Deep matrix (R8).
-- `sourceTier.test.ts` — `nevo.co.il/law_html/...` → `official`, `nevo.co.il/blog/...` → `open_web_untrusted`, supremedecisions → `official`, mishpatim → `approved_secondary`, random ynet → `open_web_untrusted`.
-- `eval/contracts-amendment-Q.mjs` — end-to-end: asserts `metadata.research_safeguards.router.query_type === "statutory_amendment_comparison"`, no family-law titles in retrieved set, `source_pack_gate.ok === true` (or transparent uncertainty in strict).
+## 13. Rollout sequence
 
-## Phased implementation
+1. Land `cardClaimContract.ts` (with engine adapter) + tests; run `bunx vitest` / Deno tests.
+2. Wire IDs + `canonicalCitation` into `legalSourcePack.ts` (telemetry only first — no prompt change). Confirm `formatter_usage` numbers across queries.
+3. Update drafter prompt + parse/build wiring + telemetry.
+4. Deploy `legal-qa`.
+5. Run `phase6-card-claim-contract-probe.mjs`; report results.
+6. Run regression harness — confirm baselines unchanged. The deterministic path should pass `SHAPE_TRUNC`, `SHAPE_NAKED_ANAPHORA`, `SHAPE_MIN_TOKENS` more reliably; do not retune `known_failing_assertions` in this phase.
 
-| Phase | Deliverable | Files | Validation |
-|-------|-------------|-------|------------|
-| 1 | Router + bias decomposition | `legalIssueRouter.ts`, `decomposition.ts` (route param), `modeProfiles.ts` (legalIssueRouter flag), `legalIssueRouter.test.ts`, minimal index.ts wiring (router → decompose serialized via `raceWithTimeout`), R9 router telemetry | New router test passes; eval Q1 still answers correctly; `qa_logs.research_safeguards.router.query_type` populated. |
-| 2 | EntityResolution + query expansion + topic ranking penalty | `entityResolution.ts`, `sourceTier.ts`, `contracts.ts` (SourceTier + source_tier field), `legalSourcePack.ts` (populate source_tier + invariant guard), `entityResolution.test.ts`, `sourceTier.test.ts`, index.ts wiring for retrieval-query expansion and R6 ranking penalty | Eval Q1 expandedQueries appear in retrieval logs; family-law matches downweighted (visible in `domain_exclusion.penalties`); zero invariant violations. |
-| 3 | OpenWebDiscovery (metadata-only) + discovery → trusted re-fetch path | `openWebDiscovery.ts`, index.ts wiring (parallel-with-decompose discovery), R9 discovery telemetry | Discovery fires for "התיקון האחרון" Q; sanitizer drops zero conclusion-shaped fields on a clean run; candidate URLs surface in next round of trusted Perplexity retrieval. |
-| 4 | source_pack_gate (soft Fast / strict Deep) + answer template injection + soft banner | `entityResolution.ts` (`checkSourcePackGate`, `buildAnswerTemplate`, `buildSoftGateBanner`), index.ts wiring, R9 gate telemetry | Eval Q1 in Deep returns either grounded answer or transparent uncertainty; in Fast, soft banner present when slots missing. |
-| 5 | Targeted retrieval round 2 (Deep only) | `entityResolution.ts` (`identifyMissingSlots`, `buildRound2Queries`), index.ts wiring | Round-2 queries differ from round 1; Deep `coverage_gap` claims_anchored % improves on the eval suite. |
-| 6 | Citation quality gate in `log_only` for both modes | index.ts `footnote_validate` upgrade, R9 footnote_validation telemetry | `would_drop_in_enforce` counts written for ≥50 production responses across one week; review before flipping Deep → `enforce`. |
+---
 
-## Out of scope (deferred)
+## Technical notes
 
-- New AI model integrations (uses existing Gemini Flash + Perplexity sonar-pro).
-- New DB tables (everything goes in `qa_logs.metadata.research_safeguards`).
-- UI changes (StageProgressList already de-dups by stage name; new stages show up via `STAGE_LABELS`).
-- Word add-in (no `stream: true` from add-in; same JSON contract).
-- Flipping `citationQualityGate` to `enforce` (Phase 6 ships log-only; enforce flip is a separate config-only PR after telemetry review).
-
-## Risks + mitigations
-
-- **Router timeout adding latency to Fast.** 12s hard cap; on timeout, decomposition runs unbiased and the question still answers (with the legacy quality bar). `router.timed_out` telemetry catches systematic regressions.
-- **Discovery sanitizer over-stripping useful entity fields.** `sanitized_fields` count surfaces this; if >10% of discovery responses lose ≥3 fields, the conclusion-blocker regex is too aggressive.
-- **R7 strict gate rejecting too many Deep responses.** Soft gate ships first; flip to strict only after `source_pack_gate.ok` rate baseline.
-- **Source-tier classifier mis-tagging trusted hosts.** Unit tests cover the obvious cases; for edge cases the default is `open_web_untrusted` (safe — never citable).
-- **Invariant guard throwing on legitimate items.** Caught + logged + dropped silently in production; admin diagnostic surfaces `invariant_violation` count for triage.
-
-## Files
-
-### New
-- `supabase/functions/legal-qa/legalIssueRouter.ts`
-- `supabase/functions/legal-qa/openWebDiscovery.ts`
-- `supabase/functions/legal-qa/entityResolution.ts`
-- `supabase/functions/legal-qa/sourceTier.ts`
-- `supabase/functions/legal-qa/legalIssueRouter.test.ts`
-- `supabase/functions/legal-qa/entityResolution.test.ts`
-- `supabase/functions/legal-qa/sourceTier.test.ts`
-- `eval/contracts-amendment-Q.mjs`
-
-### Edited
-- `supabase/functions/legal-qa/modeProfiles.ts` (6 new flags incl. `citationQualityGate` enum)
-- `supabase/functions/legal-qa/contracts.ts` (`SourceTier` + `source_tier` field)
-- `supabase/functions/legal-qa/decomposition.ts` (optional `route` param)
-- `supabase/functions/legal-qa/legalSourcePack.ts` (populate `source_tier` + invariant guard)
-- `supabase/functions/legal-qa/index.ts` (orchestration: ~250 net new lines across the listed insertion points; STAGE_LABELS extension; footnote_validate rollout-mode upgrade; R9 telemetry aggregation)
-
-### Memory updates (after Phase 6)
-- `mem://logic/legal-qa/legal-issue-router`
-- `mem://logic/legal-qa/open-web-discovery`
-- `mem://logic/legal-qa/source-tier-taxonomy`
-- `mem://logic/legal-qa/source-pack-gate`
-- `mem://logic/legal-qa/citation-quality-gate-rollout`
-- update `mem://features/legal-qa/research-depth-modes` with the 6 new profile flags
+- `S#` IDs assigned **after** Phase 5 round-2 reassembly so rescued cards get IDs.
+- Multi-source marker `[cite:S1,S3]` renders as two adjacent superscripts — existing renumbering handles this.
+- Deterministic builder bypasses fuzzy-URL matching entirely; the marker IS the anchor.
+- Shadow A/B logger untouched.
+- Eval-only forced-gap hook from Phase 5 unaffected.
+- The minimal fallback formatter is intentionally tiny (~30 lines). If `formatter_usage.fallback_minimal` becomes non-trivial in production, that's a signal to extend the shared engine, not to grow the fallback.
