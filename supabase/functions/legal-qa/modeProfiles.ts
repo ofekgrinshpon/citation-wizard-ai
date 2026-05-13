@@ -193,6 +193,11 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     partyLookupPlaceholderPolicy: "emit",
     partyLookupMaxBatchSize: 6,
     legalIssueRouter: true,
+    // Phase 3: Deep is more permissive — opportunistic discovery is cheap
+    // relative to the rest of the Deep envelope. Same "conditional" mode but
+    // `shouldRunDiscovery` adds a `deep_opportunistic` trigger when nothing
+    // else fired.
+    openWebDiscovery: "conditional",
   },
 };
 
