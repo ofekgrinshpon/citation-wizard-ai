@@ -1,44 +1,61 @@
 ## Goal
 
-Move "בדיקת מסמך" out of the top mode tabs and nest it as an internal sub-toggle inside the existing "הערות שוליים" section. Users land on "בניית הערות שוליים" (current behavior) and can switch to "בדיקת מסמך" without leaving the section.
+Show live stage progress + streaming draft in the legal QA "מהיר (Fast)" research mode, the same way Deep already does.
 
-## UX
+## Root cause
 
-Inside the הערות שוליים tab, render a small pill toggle at the top of the section, above the existing builder UI:
+Everything for Fast streaming is already wired **except one server-side gate**:
 
-```text
-[ בניית הערות שוליים ]  [ בדיקת מסמך ]
+- Frontend (`src/components/LegalQAChat.tsx`) already sends `stream: true` for **both** Fast and Deep research, parses SSE, and renders `<StageProgressList mode="research_fast" />`.
+- Pipeline already calls `emitStage(...)` at every Fast-relevant stage (frame, decompose, retrieve, rerank, source_pack, claim_map, drafter, coverage_gap, statute_completion, footnote_validate).
+- The Fast structured drafter already prefers `callDrafterStreaming` whenever `__activeEmitter` is installed, emitting `draft_delta` chunks.
+
+But `supabase/functions/legal-qa/index.ts` line ~8304:
+
+```ts
+const wantsStream = Boolean(
+  parsedBody &&
+    parsedBody.stream === true &&
+    parsedBody.depth === "deep",   // ← this blocks Fast
+);
 ```
 
-- Default: בניית הערות שוליים (no behavior change for existing users)
-- Selecting בדיקת מסמך swaps the body to the DocumentCheckPage flow (upload → confirm → review)
-- Switching back restores the builder state (component stays mounted, or sub-state lives in the wrapper)
-- Hebrew RTL, semantic tokens, same visual language as existing mode tabs (smaller scale)
+So for Fast, the server never installs the SSE wrapper → no emitter → frontend gets a plain JSON response → falls back to `<ResearchProgress>` (the generic spinner) and no live draft.
 
-## Implementation
+## Change
 
-1. **Remove the top-level `documentcheck` mode** from `src/pages/Index.tsx`:
-   - Revert `AppMode` to `"freetext" | "batch" | "bibliography" | "legalqa"`
-   - Remove the `documentcheck` entry from `MODES`
-   - Remove the `mode === "documentcheck"` render branch
-   - Replace the `<BatchFootnoteBuilder />` render with `<FootnotesSection />`
-   - Drop the now-unused `DocumentCheckPage` import from `Index.tsx`
+**Single edit** in `supabase/functions/legal-qa/index.ts`:
 
-2. **New wrapper** `src/components/FootnotesSection.tsx`:
-   - Local state `subMode: "build" | "check"` (default `"build"`)
-   - Persist last choice in `localStorage` (`footnotes_submode`) so it sticks across reloads
-   - Renders the pill toggle, then either `<BatchFootnoteBuilder />` or `<DocumentCheckPage />`
-   - Keeps both children mounted via CSS `hidden` so builder cell state is preserved when toggling
+```ts
+const wantsStream = Boolean(
+  parsedBody && parsedBody.stream === true,
+);
+```
 
-3. **No changes** to `BatchFootnoteBuilder`, `DocumentCheckPage`, the `useDocumentCheck` hook, the edge function, or the DB schema.
+Drop the `depth === "deep"` clause. Update the surrounding comment from "Only Deep mode opts in" to reflect that both Fast and Deep now stream.
+
+## Why this is safe
+
+- Fast-only stages already exist and emit; Deep-only stages (`anchor_pass`, `critic`, `coherence_critic`, `revision`, etc.) simply never fire in Fast — `StageProgressList` dedups by stage name so missing stages just don't appear.
+- `callDrafterStreaming` already handles the structured (Fast) drafter variant and falls back to non-streaming on any failure.
+- SSE wrapper already strips `stream` from the inner request and converts the handler's JSON response into a `final` event + legacy `data:` frame, so non-SSE clients (eval scripts, Word add-in) that don't send `stream: true` are untouched.
+- Frontend `useSseStream = taskMode === "research"` and `body.stream = true` already cover Fast — no client change needed.
+
+## Verification
+
+1. Deploy `legal-qa` edge function.
+2. In the app, open העוזר המשפטי → מחקר משפטי, ensure ⚡ מהיר is selected, run a query like "חופש הביטוי בפסיקת בג״ץ".
+3. Expect: header "מחפש, מסכם ומעגן מקורות..." (the existing `research_fast` copy), live ✔/⟳ rows for frame/decompose/retrieve/rerank/source_pack/claim_map/drafter, "טיוטה חיה" with blinking caret as the structured drafter streams, then the final answer card.
+4. Check `supabase--edge_function_logs legal-qa` for `[mode] depth=fast` and stage logs to confirm SSE wrapper activated.
+5. Re-run with 🧠 מעמיק to confirm Deep still streams unchanged.
 
 ## Out of scope
 
-- Sidebar entries
-- Renaming the parent tab
-- Any change to extraction, analysis, credits, or review behavior
+- No new stages, no new labels, no telemetry changes.
+- No frontend changes (already Fast-aware).
+- No change to credit cost or `MODE_PROFILES`.
+- Word add-in / eval scripts that don't send `stream: true` keep the current JSON response.
 
 ## Files
 
-- New: `src/components/FootnotesSection.tsx`
-- Edited: `src/pages/Index.tsx`
+- Edited: `supabase/functions/legal-qa/index.ts` (gate + comment, ~3 lines)
