@@ -2193,8 +2193,25 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     const evalVariant = isAdminCaller && (bodyEvalVariant === "legacy" || bodyEvalVariant === "structured")
       ? bodyEvalVariant
       : null;
+    // Phase 5 — eval-only forced gap injection. Admin caller + evalRunId
+    // starting with "phase5-" required. Slots are merged into the preliminary
+    // source_pack_gate.missing[] for the targeted_retrieval_round_2 decision
+    // ONLY. Never affects the real source_pack_gate result, the drafter, or
+    // production users.
+    const evalForceMissingSlots: string[] =
+      isAdminCaller &&
+      typeof evalRunId === "string" &&
+      evalRunId.startsWith("phase5-") &&
+      Array.isArray(bodyEvalForceMissingSlots)
+        ? bodyEvalForceMissingSlots.filter(
+            (s): s is string => typeof s === "string" && s.length > 0,
+          )
+        : [];
     if (evalForceLegacy) {
       console.log(`[eval] forcing legacy path (run=${evalRunId} variant=${evalVariant})`);
+    }
+    if (evalForceMissingSlots.length > 0) {
+      console.log(`[eval] forcing missing slots (run=${evalRunId}): ${evalForceMissingSlots.join(",")}`);
     }
 
     if (!question || typeof question !== "string" || question.trim().length < 3) {
