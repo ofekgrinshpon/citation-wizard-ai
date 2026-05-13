@@ -1,5 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDocumentCheck, type DocCitation, type DocNote } from "@/hooks/useDocumentCheck";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const STATUS_LABELS: Record<DocCitation["status"], string> = {
