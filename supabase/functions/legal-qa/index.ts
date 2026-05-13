@@ -51,6 +51,15 @@ import { mapToClaimMapV2, summarizeClaimMapV2 } from "./legalClaimMap.ts";
 import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
 import { runShadowAbComparison, buildLegacyShadowPrompt } from "./shadowAbLogger.ts";
 import { runAnchorPass, applyAnchorPatches, type AnchorPassSourcePackItem, type AnchorPassClaim } from "./anchorPass.ts";
+import {
+  attachCanonicalCitations,
+  parseMarkers,
+  buildFootnotes,
+  buildTelemetry as buildContractTelemetry,
+  EMPTY_TELEMETRY as EMPTY_CONTRACT_TELEMETRY,
+  type CardClaimContractTelemetry,
+  type ContractSourceCard,
+} from "./cardClaimContract.ts";
 import { resolveCitation } from "../_shared/citationResolver.ts";
 import { routeChapterFootnote, type FootnoteSourceType } from "../_shared/chapterCitationRouter.ts";
 import { lookupPartyNames } from "../_shared/partyLookup.ts";
