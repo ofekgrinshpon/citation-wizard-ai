@@ -4798,7 +4798,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       gateV2Result.blockingGaps.length > 0
     ) {
       const tGapStart = Date.now();
-      gateV2ResultBefore = gateV2Result;
+      // capture snapshot of pre-rescue gate state (telemetry only)
       const gapsBefore: GapTelemetryRow[] = gateV2Result.gaps.map((g) => ({
         role: g.role, required: g.required, found: g.found, priority: g.priority,
       }));
