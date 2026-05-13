@@ -164,6 +164,9 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     // Phase 3: Fast runs discovery only when triggers fire (current-context,
     // statute target, low confidence, etc.) — keeps latency bounded.
     openWebDiscovery: "conditional",
+    // Phase 4: Soft mode — log only, never block. Banner attached to drafter
+    // when required slots are missing for the routed query type.
+    sourcePackGate: "soft",
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
