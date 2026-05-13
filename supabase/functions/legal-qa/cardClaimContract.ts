@@ -56,6 +56,12 @@ export interface ContractSourceCard {
   provenance: "local" | "perplexity" | "perplexity_completion" | "document";
   excerpt?: string;
   case_number?: string;
+  /** Phase 6.6 — structured fields plumbed in from SourceCard so the engine
+   *  can fill the rule template instead of reusing the seed string. */
+  docket_prefix?: string;
+  procedure_category?: string;
+  court?: string;
+  decision_date?: string;
   /** Set by `attachCanonicalCitations`; the deterministic citation string. */
   canonicalCitation?: string;
   /** Telemetry: which formatter produced canonicalCitation. */
@@ -64,13 +70,19 @@ export interface ContractSourceCard {
   canonicalMissingFields?: string[];
   /** Telemetry: when engine attempted but failed; the resolver reason. */
   canonicalResolverReason?: string;
+  /** Phase 6.6 — quality of the FINAL canonicalCitation (not the raw seed). */
+  citationQuality?: CitationQuality;
+  /** Phase 6.6 — true when canonicalCitation contains [חסר: ...] markers. */
+  canonicalHasPlaceholders?: boolean;
 }
 
 export type CanonicalFormatter =
-  | "reused_existing"
+  | "reused_existing_strong"
   | "engine_resolved"
+  | "engine_template_filled_with_placeholders"
   | "engine_unresolved_then_fallback"
-  | "fallback_minimal";
+  | "fallback_minimal"
+  | "fallback_weak_title_refused";
 
 export interface ParsedMarker {
   /** Raw marker text, e.g. `[cite:S1,S3]`. */
