@@ -8262,6 +8262,16 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               discovery: discoveryResult,
               sanitized_fields: discoverySanitized,
             }),
+            source_pack_gate: sourcePackGateResult
+              ? {
+                  mode: sourcePackGateResult.mode,
+                  ok: sourcePackGateResult.ok,
+                  missing: sourcePackGateResult.missing,
+                  blocking_missing: sourcePackGateResult.blocking_missing,
+                  banner_attached: !!sourcePackGateResult.banner,
+                  checks_run: sourcePackGateResult.checks_run,
+                }
+              : { mode: modeProfile.sourcePackGate, ok: true, missing: [], blocking_missing: [], banner_attached: false, checks_run: [] },
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
