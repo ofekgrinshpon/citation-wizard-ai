@@ -3093,6 +3093,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       new_cards_added: number;
       duration_ms: number;
       timed_out: boolean;
+      forced_eval_gaps: string[];
     };
     let targetedRound2Telemetry: TargetedRound2Telemetry | null = null;
     if (enableDeepPipeline && !evalForceLegacy) {
