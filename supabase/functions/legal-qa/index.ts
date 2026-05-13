@@ -5731,8 +5731,68 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       }
     }
 
+    // ========= Step 5a: Card→Claim Citation Contract (Phase 6) =========
+    // When markers `[cite:S#]` are present we deterministically rebuild
+    // body+footnotes from sourceCards canonicalCitation. Legacy AI-footnote
+    // pipeline below is bypassed for that request. When markers are absent
+    // (or contract is "off"/"shadow"), the legacy pipeline runs unchanged.
+    let cardClaimTelemetry: CardClaimContractTelemetry = { ...EMPTY_CONTRACT_TELEMETRY };
+    if (modeProfile.cardClaimContract !== "off") {
+      try {
+        const cards = sourceCards as unknown as ContractSourceCard[];
+        const parse = parseMarkers(answerBody, cards);
+        if (parse.markers.length === 0) {
+          cardClaimTelemetry = buildContractTelemetry({
+            used: false,
+            legacy_fallback: true,
+            reason: "no_cite_markers_found",
+            parse,
+          });
+          console.log(`[card-claim] no markers found — legacy fallback (mode=${modeProfile.cardClaimContract})`);
+        } else if (parse.uniqueValidSourceIds.length === 0) {
+          cardClaimTelemetry = buildContractTelemetry({
+            used: false,
+            legacy_fallback: true,
+            reason: "all_invalid_ids",
+            parse,
+          });
+          console.warn(`[card-claim] markers present but all invalid IDs — legacy fallback`);
+        } else if (modeProfile.cardClaimContract === "on" && parse.markers.length >= 2) {
+          const build = buildFootnotes(answerBody, parse, cards);
+          answerBody = build.body;
+          aiFootnoteLines.length = 0;
+          for (const fn of build.footnotes) {
+            aiFootnoteLines.push({ num: fn.number, text: fn.citation });
+          }
+          cardClaimTelemetry = buildContractTelemetry({
+            used: true,
+            legacy_fallback: false,
+            parse,
+            build,
+          });
+          console.log(`[card-claim] used=true markers=${parse.markers.length} unique_ids=${parse.uniqueValidSourceIds.length} fns=${build.footnotes.length} formatter=${JSON.stringify(build.formatterUsage)}`);
+        } else {
+          cardClaimTelemetry = buildContractTelemetry({
+            used: false,
+            legacy_fallback: true,
+            reason: "drafter_wiring_pending",
+            parse,
+          });
+          console.log(`[card-claim] shadow telemetry only — markers=${parse.markers.length} mode=${modeProfile.cardClaimContract}`);
+        }
+      } catch (err) {
+        console.error("[card-claim] unexpected error — legacy fallback:", (err as Error).message);
+        cardClaimTelemetry = buildContractTelemetry({
+          used: false,
+          legacy_fallback: true,
+          reason: "drafter_wiring_pending",
+        });
+      }
+    } else {
+      cardClaimTelemetry.reason = "mode_off";
+    }
+
     // ========= Step 5b: Match AI footnotes to source cards for provenance =========
-    // STRICT matcher: only attach a card's URL when we have high-confidence identifier overlap.
     // Returns null when uncertain — the footnote will be dropped to avoid wrong-URL leaks.
     const STOPWORDS = new Set([
       "בית", "המשפט", "העליון", "המחוזי", "השלום", "של", "את", "לפי", "על", "עם",
