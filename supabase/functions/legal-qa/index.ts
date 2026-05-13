@@ -22,6 +22,13 @@ import {
   raceWithTimeout,
   type LegalIssueRoute,
 } from "./legalIssueRouter.ts";
+import {
+  shouldRunDiscovery,
+  runOpenWebDiscovery,
+  buildDiscoveryTelemetry,
+  type OpenWebDiscovery,
+  type DiscoveryDecision,
+} from "./openWebDiscovery.ts";
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
   BANNED_KEYS,
@@ -3021,6 +3028,17 @@ ${(verify.fullText as string).slice(0, 50000)}
     let routerRoute: LegalIssueRoute | null = null;
     let routerRun: StageRun | null = null;
     let routerTimedOut = false;
+    // Phase 3 (research safeguards): Open Web Discovery — METADATA-ONLY.
+    // Runs in parallel with the rest of the pipeline; result is logged to
+    // qa_logs.metadata.research_safeguards.discovery and NEVER fed into the
+    // source pack or final citations in this phase.
+    let discoveryDecision: DiscoveryDecision = { triggered: false, triggers: [] };
+    let discoveryResult: OpenWebDiscovery | null = null;
+    let discoveryRun: StageRun | null = null;
+    let discoverySanitizedFields:
+      | ReturnType<typeof buildDiscoveryTelemetry> extends infer _ ? any : never;
+    discoverySanitizedFields = null;
+    let discoveryPromise: Promise<void> | null = null;
     if (enableDeepPipeline && !evalForceLegacy) {
       // Live progress: frame is essentially "request received & validated".
       // Emit it as complete immediately so the user sees instant feedback.
@@ -3062,6 +3080,41 @@ ${(verify.fullText as string).slice(0, 50000)}
             emitStage("legal_issue_router", "complete", "fallback (error)");
             console.error("[router] failed (non-fatal):", routerErr);
           }
+        }
+
+        // ─── Phase 3: Open Web Discovery (METADATA-ONLY, gated) ───
+        discoveryDecision = shouldRunDiscovery(
+          routerRoute,
+          question,
+          researchDepth,
+          modeProfile.openWebDiscovery,
+        );
+        if (discoveryDecision.triggered) {
+          emitStage("open_web_discovery", "running");
+          discoveryPromise = (async () => {
+            try {
+              const r = await runOpenWebDiscovery(question, routerRoute);
+              discoveryResult = r.discovery;
+              discoveryRun = r.run;
+              discoverySanitizedFields = r.sanitized_fields;
+              if (r.run) stageRuns.push(r.run);
+              emitStage(
+                "open_web_discovery",
+                "complete",
+                r.discovery
+                  ? `${r.discovery.candidate_authoritative_sources.length} מועמדים`
+                  : `fallback (${r.run.status})`,
+              );
+              console.log(
+                `[discovery] triggers=[${discoveryDecision.triggers.join(",")}] candidates=${r.discovery?.candidate_authoritative_sources.length ?? 0} status=${r.run.status} (${r.run.duration_ms}ms)`,
+              );
+            } catch (discErr) {
+              emitStage("open_web_discovery", "complete", "fallback (error)");
+              console.error("[discovery] failed (non-fatal):", discErr);
+            }
+          })();
+        } else {
+          console.log(`[discovery] skipped (mode=${modeProfile.openWebDiscovery}, no triggers)`);
         }
 
         try {
@@ -5089,8 +5142,6 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         }
         return new Response(JSON.stringify({ error: "תם הזמן לעיבוד השאלה. נסו שוב או קצרו את השאלה." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
-    }
-
 
     // ========= Step 4a: Critic pass (academic chapters only) =========
     // Audit the drafter output against the claim map + source pack. If the
@@ -5176,7 +5227,6 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         chapterCritic = { result: null, revised: false, revision_status: "error" };
       }
     }
-
 
     // ========= Step 4a.2: Coherence critic (Global Paper Coherence) =========
     // Audit the chapter draft against the cumulative PaperMemory derived from
@@ -8156,6 +8206,21 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
                 ? Object.keys(routerRoute.ambiguous_terms).length
                 : 0,
             },
+            // Phase 3: open web discovery telemetry. Always present (even
+            // when not triggered) so downstream queries can rely on the
+            // shape. See `buildDiscoveryTelemetry` for field semantics.
+            discovery: (() => {
+              try {
+                return buildDiscoveryTelemetry({
+                  decision: discoveryDecision,
+                  run: discoveryRun,
+                  discovery: discoveryResult,
+                  sanitized_fields: discoverySanitizedFields,
+                });
+              } catch (_e) {
+                return { triggered: discoveryDecision.triggered, triggers: discoveryDecision.triggers, ran: false, status: "telemetry_error" };
+              }
+            })(),
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),

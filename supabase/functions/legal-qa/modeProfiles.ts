@@ -95,6 +95,18 @@ export interface ModeProfile {
    * On timeout, decomposition runs unbiased (legacy behaviour).
    */
   legalIssueRouter: boolean;
+
+  // ─── Phase 3 (research safeguards) — Open Web Discovery ───
+  /**
+   * "off"        → never runs.
+   * "conditional" → runs when `shouldRunDiscovery` returns triggered.
+   * "always"     → always runs (eval / debugging only).
+   *
+   * Discovery is METADATA-ONLY. Its raw snippets MUST NOT enter the source
+   * pack or final citations — candidate URLs are only seeds for trusted
+   * retrieval in later phases. See `openWebDiscovery.ts` for full contract.
+   */
+  openWebDiscovery: "off" | "conditional" | "always";
 }
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
@@ -139,6 +151,9 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     partyLookupPlaceholderPolicy: "emit",
     partyLookupMaxBatchSize: 3,
     legalIssueRouter: true,
+    // Phase 3: Fast runs discovery only when triggers fire (current-context,
+    // statute target, low confidence, etc.) — keeps latency bounded.
+    openWebDiscovery: "conditional",
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
@@ -178,6 +193,11 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     partyLookupPlaceholderPolicy: "emit",
     partyLookupMaxBatchSize: 6,
     legalIssueRouter: true,
+    // Phase 3: Deep is more permissive — opportunistic discovery is cheap
+    // relative to the rest of the Deep envelope. Same "conditional" mode but
+    // `shouldRunDiscovery` adds a `deep_opportunistic` trigger when nothing
+    // else fired.
+    openWebDiscovery: "conditional",
   },
 };
 

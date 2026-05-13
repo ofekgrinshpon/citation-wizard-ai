@@ -215,9 +215,11 @@ export async function routeLegalIssue(
       ? data.forbidden_topics.filter((t) => typeof t === "string" && t.trim().length > 0)
       : [],
     target_statute: {
-      name: data.target_statute?.name ?? null,
-      section: data.target_statute?.section ?? null,
-      amendment: data.target_statute?.amendment ?? null,
+      name: normalizeStatuteField(data.target_statute?.name),
+      section: normalizeStatuteField(data.target_statute?.section),
+      // Coerce sentinel strings ("None"/"none"/"null"/"-"/"") that some
+      // planner outputs return as text instead of JSON null.
+      amendment: normalizeAmendment(data.target_statute?.amendment),
     },
     requires_current_context: data.requires_current_context === true,
     ambiguous_terms:
@@ -232,6 +234,34 @@ export async function routeLegalIssue(
   };
 
   return { data: normalized, run };
+}
+
+/**
+ * Coerce planner sentinel strings into proper `null`. Some Gemini outputs
+ * return "None" / "none" / "null" / "-" / "" instead of JSON null for
+ * absent fields. Anything truthy and meaningful passes through.
+ */
+export function normalizeAmendment(value: unknown): string | null {
+  if (value === null || value === undefined) return null;
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (trimmed === "") return null;
+  if (/^(none|null|-)$/i.test(trimmed)) return null;
+  return trimmed;
+}
+
+/**
+ * Same coercion for free-form statute strings (`name`, `section`).
+ * Empty / sentinel values normalize to `null` so downstream code can rely
+ * on `if (target_statute.name)` without fearing empty strings.
+ */
+export function normalizeStatuteField(value: unknown): string | null {
+  if (value === null || value === undefined) return null;
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (trimmed === "") return null;
+  if (/^(none|null|-)$/i.test(trimmed)) return null;
+  return trimmed;
 }
 
 /**
