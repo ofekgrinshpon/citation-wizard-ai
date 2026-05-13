@@ -4104,7 +4104,14 @@ ${(verify.fullText as string).slice(0, 50000)}
       duration_ms: 0,
       timed_out: false,
     };
-    const orphanFnPreventionTelemetry = { dropped_count: 0, dropped_samples: [] as string[] };
+    const orphanFnPreventionTelemetry = {
+      dropped_count: 0,
+      dropped_samples: [] as string[],
+      post_rule37_dropped: 0,
+      post_rule37_dropped_samples: [] as Array<{ number: number; citation: string }>,
+      post_rule37_stripped_markers: [] as number[],
+      ambiguous_superscript_splits: [] as Array<{ run: string; resolved: number[] }>,
+    };
     if (enableDeepPipeline) {
       emitStage("source_pack", "running");
       sourcePack = sourceCards.map((sc) => {
