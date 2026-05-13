@@ -42,6 +42,40 @@ export type LegalProvenanceInternal =
   | "verified"
   | "unknown";
 
+// ─── Phase 6.5 — Source role taxonomy ─────────────────────────────────
+// Roles describe HOW a source supports the answer, not WHAT court it came
+// from. A family-court ruling can be a legitimate `application_example`;
+// a Supreme Court ruling on a different doctrine is `background_context`,
+// not a `doctrinal_anchor`. The classifier (sourceRoleClassifier.ts)
+// assigns the role; the planner (legalResearchPlanner.ts) declares which
+// roles a competent answer requires.
+export type SourceRole =
+  | "doctrinal_anchor"      // landmark ruling that establishes / interprets the doctrine in question
+  | "statutory_anchor"      // the actual statute / section the question is about
+  | "legislative_history"   // bills, committee reports, Knesset research that explain a statute
+  | "academic_commentary"   // peer commentary on the doctrine / statute
+  | "theoretical_anchor"    // canonical academic position cited as a position, not as authority
+  | "policy_analysis"       // policy / institutional analysis, often by think-tanks or research bodies
+  | "case_example"          // ruling that illustrates the doctrine in practice (any court)
+  | "application_example"   // narrow application of the doctrine to specific facts (often lower courts)
+  | "counter_position"      // dissent / minority view / opposing scholarly position
+  | "institutional_context" // background on the relevant institution / process
+  | "background_context"    // general context, not directly supporting any specific claim
+  | "weak_or_uncertain";    // classifier could not place the source confidently
+
+export type CitationQuality = "strong" | "weak" | "placeholder";
+
+export type CitationQualityReason =
+  | "docket_only"            // case_number with no party names
+  | "missing_case_name"      // caselaw with no recognizable party / case identifier
+  | "court_only"             // court name with nothing else
+  | "too_short"              // total citation < 12 chars
+  | "truncated_court"        // citation appears to end in a truncated court / phrase
+  | "missing_year"           // legislation / academic missing year token
+  | "unbalanced_parentheses" // ( without matching ) etc.
+  | "placeholder_marker"     // contains [חסר: ...] markers
+  | "no_substantive_content"; // generic placeholder text only
+
 export interface LegalSourcePackItem {
   sourceId: string;            // e.g. "src-12"
   title: string;
@@ -62,6 +96,16 @@ export interface LegalSourcePackItem {
   contractId?: string;
   /** Phase 6 — deterministic citation string used by the contract footnote builder. */
   canonicalCitation?: string;
+  /** Phase 6.5 — role assigned by SourceRoleClassifier. INTERNAL. */
+  role?: SourceRole;
+  /** Phase 6.5 — classifier confidence in the role. INTERNAL. */
+  roleConfidence?: "high" | "medium" | "low";
+  /** Phase 6.5 — short Hebrew rationale from the classifier. INTERNAL. */
+  roleRationale?: string;
+  /** Phase 6.5 — deterministic citation quality (citationQualityScorer). INTERNAL. */
+  citationQuality?: CitationQuality;
+  /** Phase 6.5 — reason codes that drove citationQuality. INTERNAL. */
+  citationQualityReasons?: CitationQualityReason[];
   metadata?: Record<string, unknown>;
 }
 
@@ -101,6 +145,87 @@ export interface LegalDraftingInput {
   responseStyle?: "short" | "regular" | "detailed";
 }
 
+// ─── Phase 6.5 — Legal Research Plan (planner output) ─────────────────
+// The Planner sits between Router/Decomposition and retrieval. It declares
+// what answer SHAPE we need, which source ROLES are required vs preferred,
+// and produces canonical search targets that retrieval consumes directly
+// (not just for telemetry).
+//
+// Hierarchy:
+//   - LegalIssueRouter → query_type + legal_domain (deterministic-ish classification)
+//   - LegalResearchPlanner → answer_strategy + required source roles + search targets
+//   - If router and planner materially disagree, log telemetry but trust the
+//     planner for retrieval shaping (planner sees decomposition + discovery).
+
+export type AnswerStrategy =
+  | "doctrinal_synthesis"       // what is the doctrine; resolve a doctrinal question
+  | "statutory_application"     // apply statute X to fact pattern
+  | "amendment_comparison"      // compare pre/post amendment; did doctrine change?
+  | "theoretical_analysis"      // analyze a phenomenon (e.g. "is the court activist?")
+  | "procedural_explanation"    // explain a procedural rule / process
+  | "current_status_summary"    // what's the current state of X
+  | "comparative_analysis"      // israeli vs foreign / between domains
+  | "mixed";
+
+export interface RequiredRole {
+  role: SourceRole;
+  /** Minimum number of distinct sources that should fill this role. */
+  minCount: number;
+  /** "must" → gate gap if missing; "should" → preferred but won't trigger rescue alone. */
+  priority: "must" | "should";
+  /** Short Hebrew rationale from the planner — telemetry only. */
+  rationale: string;
+}
+
+export interface LegalResearchPlan {
+  /** Stable id (timestamp-based) for telemetry correlation. */
+  planId: string;
+  /** Snapshot of the routing the planner consumed (for disagreement diffing). */
+  consumedRoute: {
+    queryType: string | null;
+    legalDomain: string | null;
+  };
+  /** What kind of answer this question wants. Drives required roles. */
+  answerStrategy: AnswerStrategy;
+  /** Roles that MUST be present (or the gate logs a gap). */
+  requiredRoles: RequiredRole[];
+  /** Roles that strengthen the answer when present, but don't trigger rescue alone. */
+  preferredRoles: SourceRole[];
+  /** Concrete retrieval queries that go INTO round-1 retrieval, not just telemetry. */
+  canonicalSearchTargets: string[];
+  /** Optional doctrinal anchor names the planner identified with confidence. */
+  doctrinalAnchorNames?: string[];
+  /** Optional statute names the planner identified with confidence. */
+  statuteNames?: string[];
+  /** Free-text planner notes — telemetry only. */
+  notes?: string;
+  /** Planner-reported confidence (0..1). */
+  confidence: number;
+}
+
+// ─── Phase 6.5 — Source Pack Gate V2 (role-based) ─────────────────────
+export interface RoleCoverageGap {
+  role: SourceRole;
+  required: number;
+  found: number;
+  priority: "must" | "should";
+}
+
+export interface SourcePackGateV2Result {
+  /** "off" | "shadow" | "on" — mirrors the modeProfile flag. */
+  mode: "off" | "shadow" | "on";
+  /** True when all `must` roles are satisfied. */
+  satisfied: boolean;
+  /** Per-role coverage counts. */
+  coverage: Partial<Record<SourceRole, number>>;
+  /** Roles whose minCount was not met. Includes both `must` and `should` for visibility. */
+  gaps: RoleCoverageGap[];
+  /** Subset of `gaps` with priority="must" (these would trigger rescue retrieval). */
+  blockingGaps: RoleCoverageGap[];
+  /** True when the soft banner was attached to the drafter prompt. Always false in shadow mode. */
+  bannerAttached: boolean;
+}
+
 // ─── Provenance hardening ────────────────────────────────────────
 // Keys that must NEVER appear in the user-facing JSON payload.
 // `sanitizeResponse` walks the payload and strips any of these.
@@ -113,4 +238,13 @@ export const BANNED_KEYS: readonly string[] = [
   "draftingNotes",
   "uncoveredSubIssues",
   "provenance",                // legacy name on footnotes
+  // Phase 6.5 internals
+  "role",
+  "roleConfidence",
+  "roleRationale",
+  "citationQuality",
+  "citationQualityReasons",
+  "legalResearchPlan",
+  "sourcePackGateV2",
+  "roleClassification",
 ] as const;
