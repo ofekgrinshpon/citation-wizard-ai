@@ -4,10 +4,16 @@
 // different meanings of "שינוי מהותי" and contract sub-types BEFORE we
 // proceed to Phase 3 (OpenWebDiscovery).
 //
-// Usage: node eval/router-phase1-eval.mjs
+// Usage:
+//   node eval/router-phase1-eval.mjs            # run + analyze
+//   node eval/router-phase1-eval.mjs --analyze  # re-analyze most recent rows
 //
-// Reads router output from qa_logs.metadata.research_safeguards.router.
-// Hard vs soft assertions per refined plan; catastrophic failures called out.
+// Telemetry shape (flat under metadata.research_safeguards.router):
+//   { ran, status, timed_out, duration_ms, confidence, query_type,
+//     legal_domain, target_statute, forbidden_topics, forbidden_domains,
+//     requires_current_context, ambiguous_terms_count }
+// (notes / actual ambiguous terms / secondary_domains are NOT persisted —
+//  soft checks that require them are skipped.)
 
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "node:crypto";
@@ -17,6 +23,7 @@ const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
 const ADMIN_EMAIL = "ofekgrinshpon@gmail.com";
 const ADMIN_USER_ID = "c6b2fdbf-a50c-411f-9941-41f9dff80eba";
+const ANALYZE_ONLY = process.argv.includes("--analyze");
 
 if (!SUPABASE_URL || !SERVICE_ROLE || !ANON_KEY) {
   console.error("Missing SUPABASE_URL / SERVICE_ROLE / ANON_KEY env vars");
@@ -24,31 +31,6 @@ if (!SUPABASE_URL || !SERVICE_ROLE || !ANON_KEY) {
 }
 
 const admin = createClient(SUPABASE_URL, SERVICE_ROLE, { auth: { persistSession: false } });
-const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
-  type: "magiclink",
-  email: ADMIN_EMAIL,
-});
-if (linkErr) throw linkErr;
-const anon = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
-const verify = await anon.auth.verifyOtp({
-  token_hash: linkData.properties.hashed_token,
-  type: "magiclink",
-});
-if (verify.error) throw verify.error;
-const jwt = verify.data.session.access_token;
-
-// ---------------------------------------------------------------------------
-// Test cases
-// ---------------------------------------------------------------------------
-
-/** @typedef {{
- *   id: string,
- *   question: string,
- *   hard: (route: any) => string[],          // returns array of failure messages
- *   soft: (route: any) => string[],          // soft warnings only
- *   catastrophic: (route: any) => string[],  // hardest of hard — counted separately
- * }} TestCase
- */
 
 const QUERY_TYPE_FAMILIES = {
   amendment: ["statutory_amendment_comparison"],
@@ -57,9 +39,7 @@ const QUERY_TYPE_FAMILIES = {
   doctrinal: ["doctrinal"],
 };
 
-function nameHas(route, needle) {
-  return (route?.target_statute?.name ?? "").includes(needle);
-}
+const nameHas = (r, n) => (r?.target_statute?.name ?? "").includes(n);
 
 const CASES = [
   {
@@ -67,14 +47,14 @@ const CASES = [
     question:
       "האם התיקון האחרון לחוק החוזים מהווה שינוי מהותי מההלכה הקיימת בפרשנות חוזים?",
     hard: (r) => {
-      const errs = [];
+      const e = [];
       if (!QUERY_TYPE_FAMILIES.amendment.includes(r.query_type))
-        errs.push(`query_type=${r.query_type} not in {statutory_amendment_comparison}`);
+        e.push(`query_type=${r.query_type} not in {statutory_amendment_comparison}`);
       if (r.legal_domain !== "contract_law")
-        errs.push(`legal_domain=${r.legal_domain} expected contract_law`);
+        e.push(`legal_domain=${r.legal_domain} expected contract_law`);
       if (!nameHas(r, "חוק החוזים") || nameHas(r, "אחידים"))
-        errs.push(`target_statute.name=${r.target_statute?.name} should include "חוק החוזים" and not "אחידים"`);
-      return errs;
+        e.push(`target_statute.name=${r.target_statute?.name} should include "חוק החוזים" and not "אחידים"`);
+      return e;
     },
     soft: (r) => {
       const w = [];
@@ -92,12 +72,12 @@ const CASES = [
     id: "Q2-apropim-current",
     question: "מהי הלכת אפרופים כיום?",
     hard: (r) => {
-      const errs = [];
+      const e = [];
       if (!QUERY_TYPE_FAMILIES.caselaw_or_doctrinal.includes(r.query_type))
-        errs.push(`query_type=${r.query_type} not in {case_law_application, doctrinal}`);
+        e.push(`query_type=${r.query_type} not in {case_law_application, doctrinal}`);
       if (r.legal_domain !== "contract_law")
-        errs.push(`legal_domain=${r.legal_domain} expected contract_law`);
-      return errs;
+        e.push(`legal_domain=${r.legal_domain} expected contract_law`);
+      return e;
     },
     soft: (r) => {
       const w = [];
@@ -112,20 +92,16 @@ const CASES = [
     id: "Q3-bibi-roads",
     question: "האם פסק דין ביבי כבישים שינה את הלכת אפרופים?",
     hard: (r) => {
-      const errs = [];
+      const e = [];
       if (!QUERY_TYPE_FAMILIES.caselaw_or_doctrinal.includes(r.query_type))
-        errs.push(`query_type=${r.query_type} not in {case_law_application, doctrinal}`);
+        e.push(`query_type=${r.query_type} not in {case_law_application, doctrinal}`);
       if (r.legal_domain !== "contract_law")
-        errs.push(`legal_domain=${r.legal_domain} expected contract_law`);
-      return errs;
+        e.push(`legal_domain=${r.legal_domain} expected contract_law`);
+      return e;
     },
-    soft: (r) => {
-      const w = [];
-      const blob = `${r.notes ?? ""} ${Object.keys(r.ambiguous_terms ?? {}).join(" ")}`;
-      if (!/אפרופים|ביבי|פרשנות|חוז/i.test(blob))
-        w.push(`notes/ambiguous_terms missing apropim/bibi/interpretation hint`);
-      return w;
-    },
+    soft: () => [
+      // notes/ambiguous_terms not persisted in telemetry → cannot validate.
+    ],
     catastrophic: (r) =>
       r.legal_domain === "family_law" ? ["Q3 routed to family_law"] : [],
   },
@@ -134,47 +110,43 @@ const CASES = [
     question:
       "האם שינוי נסיבות מהותי מאפשר פתיחת פסק דין מזונות שניתן בעבר?",
     hard: (r) => {
-      const errs = [];
+      const e = [];
       if (!QUERY_TYPE_FAMILIES.procedural_or_doctrinal.includes(r.query_type))
-        errs.push(`query_type=${r.query_type} not in {procedural, doctrinal}`);
+        e.push(`query_type=${r.query_type} not in {procedural, doctrinal}`);
       if (r.legal_domain !== "family_law")
-        errs.push(`legal_domain=${r.legal_domain} expected family_law`);
-      return errs;
+        e.push(`legal_domain=${r.legal_domain} expected family_law`);
+      return e;
     },
     soft: (r) => {
       const w = [];
       const ft = (r.forbidden_topics ?? []).join(",");
-      const blob = `${r.notes ?? ""} ${ft}`;
-      if (!/חוז|פרשנות|אפרופים/i.test(blob))
-        w.push(`forbidden_topics/notes do not steer away from contract interpretation: [${ft}]`);
+      if (!/חוז|פרשנות|אפרופים/i.test(ft))
+        w.push(`forbidden_topics do not steer away from contract interpretation: [${ft}]`);
       return w;
     },
     catastrophic: (r) => {
-      const errs = [];
-      if (r.legal_domain === "contract_law")
-        errs.push("Q4 routed to contract_law");
-      const blob = `${r.notes ?? ""} ${r.target_statute?.name ?? ""}`;
-      if (/אפרופים/i.test(blob))
-        errs.push("Q4 mentions Apropim in router output");
-      return errs;
+      const e = [];
+      if (r.legal_domain === "contract_law") e.push("Q4 routed to contract_law");
+      const tname = r.target_statute?.name ?? "";
+      if (/אפרופים/i.test(tname)) e.push("Q4 target_statute mentions Apropim");
+      return e;
     },
   },
   {
     id: "Q5-standard-contracts",
     question: "מה הדין לגבי תנאי מקפח בחוזה אחיד?",
     hard: (r) => {
-      const errs = [];
+      const e = [];
       if (!QUERY_TYPE_FAMILIES.doctrinal.includes(r.query_type))
-        errs.push(`query_type=${r.query_type} not in {doctrinal}`);
+        e.push(`query_type=${r.query_type} not in {doctrinal}`);
       if (!["consumer_law", "contract_law"].includes(r.legal_domain))
-        errs.push(`legal_domain=${r.legal_domain} expected consumer_law or contract_law`);
+        e.push(`legal_domain=${r.legal_domain} expected consumer_law or contract_law`);
       if (!nameHas(r, "חוק החוזים האחידים"))
-        errs.push(`target_statute.name=${r.target_statute?.name} must include "חוק החוזים האחידים"`);
-      return errs;
+        e.push(`target_statute.name=${r.target_statute?.name} must include "חוק החוזים האחידים"`);
+      return e;
     },
     soft: () => [],
     catastrophic: (r) => {
-      // Catastrophic: identifies general חוק החוזים without "אחידים"
       const n = r.target_statute?.name ?? "";
       if (n.includes("חוק החוזים") && !n.includes("אחידים"))
         return [`Q5 target_statute is general חוק החוזים, not חוק החוזים האחידים`];
@@ -184,10 +156,10 @@ const CASES = [
 ];
 
 // ---------------------------------------------------------------------------
-// Runner
+// Run (or load) one case
 // ---------------------------------------------------------------------------
 
-async function runOne(tc) {
+async function callPipeline(jwt, tc) {
   const evalRunId = `router-phase1-${tc.id}-${randomUUID()}`;
   const t0 = Date.now();
   const res = await fetch(`${SUPABASE_URL}/functions/v1/legal-qa`, {
@@ -207,12 +179,9 @@ async function runOne(tc) {
     }),
   });
   const wallMs = Date.now() - t0;
-  // Drain body to free socket
-  try { await res.text(); } catch { /* ignore */ }
-
-  // Wait briefly for qa_logs row to land
+  try { await res.text(); } catch {}
   let row = null;
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 10; i++) {
     await new Promise((r) => setTimeout(r, 1500));
     const { data } = await admin
       .from("qa_logs")
@@ -223,27 +192,53 @@ async function runOne(tc) {
       .limit(1);
     if (data?.[0]) { row = data[0]; break; }
   }
+  return { httpStatus: res.status, wallMs, row };
+}
 
-  return { tc, evalRunId, httpStatus: res.status, wallMs, row };
+async function loadLatestRow(tc) {
+  const { data } = await admin
+    .from("qa_logs")
+    .select("id, metadata")
+    .eq("user_id", ADMIN_USER_ID)
+    .ilike("metadata->>eval_run_id", `router-phase1-${tc.id}-%`)
+    .order("created_at", { ascending: false })
+    .limit(1);
+  return { httpStatus: null, wallMs: null, row: data?.[0] ?? null };
+}
+
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
+
+let jwt = null;
+if (!ANALYZE_ONLY) {
+  const { data: link } = await admin.auth.admin.generateLink({
+    type: "magiclink",
+    email: ADMIN_EMAIL,
+  });
+  const anon = createClient(SUPABASE_URL, ANON_KEY, { auth: { persistSession: false } });
+  const v = await anon.auth.verifyOtp({
+    token_hash: link.properties.hashed_token,
+    type: "magiclink",
+  });
+  jwt = v.data.session.access_token;
 }
 
 const results = [];
 for (const tc of CASES) {
-  process.stdout.write(`▶ ${tc.id} ... `);
-  const r = await runOne(tc);
-  process.stdout.write(`HTTP ${r.httpStatus} (${r.wallMs}ms)\n`);
-  results.push(r);
+  process.stdout.write(`▶ ${tc.id} ${ANALYZE_ONLY ? "(analyze)" : ""} ... `);
+  const r = ANALYZE_ONLY ? await loadLatestRow(tc) : await callPipeline(jwt, tc);
+  process.stdout.write(
+    ANALYZE_ONLY ? `${r.row ? "row found" : "no row"}\n` : `HTTP ${r.httpStatus} (${r.wallMs}ms)\n`,
+  );
+  results.push({ tc, ...r });
 }
-
-// ---------------------------------------------------------------------------
-// Report
-// ---------------------------------------------------------------------------
 
 let timeouts = 0;
 const catastrophic = [];
 const summary = [];
 
-for (const { tc, evalRunId, row } of results) {
+for (const { tc, row } of results) {
   console.log(`\n=== ${tc.id} ===`);
   console.log(`Q: ${tc.question}`);
   if (!row) {
@@ -252,51 +247,46 @@ for (const { tc, evalRunId, row } of results) {
     summary.push({ id: tc.id, status: "NO_ROW" });
     continue;
   }
-  const safeguards = row.metadata?.research_safeguards ?? {};
-  const router = safeguards.router ?? {};
-  const route = router.route ?? null;
-  const timed_out = router.timed_out === true || router.run?.status === "timeout";
-  const dur = router.duration_ms ?? router.run?.duration_ms ?? null;
-
-  console.log(`router.duration_ms = ${dur}, timed_out = ${timed_out}`);
+  const router = row.metadata?.research_safeguards?.router ?? {};
+  const timed_out = router.timed_out === true || router.status === "timeout";
   if (timed_out) timeouts++;
 
-  if (!route) {
-    console.log("✗ router.route is null/missing");
+  console.log(`router.duration_ms=${router.duration_ms} status=${router.status} timed_out=${timed_out}`);
+
+  if (!router.query_type) {
+    console.log("✗ router fields missing (no query_type)");
     summary.push({ id: tc.id, status: "NO_ROUTE", timed_out });
-    if (timed_out) catastrophic.push(`${tc.id}: router timeout (no route)`);
+    if (timed_out) catastrophic.push(`${tc.id}: router timeout`);
     continue;
   }
 
-  console.log(`  query_type     = ${route.query_type}`);
-  console.log(`  legal_domain   = ${route.legal_domain}`);
-  console.log(`  secondary      = ${JSON.stringify(route.secondary_domains)}`);
-  console.log(`  forbidden_dom  = ${JSON.stringify(route.forbidden_domains)}`);
-  console.log(`  forbidden_top  = ${JSON.stringify(route.forbidden_topics)}`);
-  console.log(`  target_statute = ${JSON.stringify(route.target_statute)}`);
-  console.log(`  req_current    = ${route.requires_current_context}`);
-  console.log(`  ambiguous      = ${JSON.stringify(route.ambiguous_terms)}`);
-  console.log(`  confidence     = ${route.confidence}`);
-  console.log(`  notes          = ${route.notes}`);
+  console.log(`  query_type   = ${router.query_type}`);
+  console.log(`  legal_domain = ${router.legal_domain}`);
+  console.log(`  forbidden_dom= ${JSON.stringify(router.forbidden_domains)}`);
+  console.log(`  forbidden_top= ${JSON.stringify(router.forbidden_topics)}`);
+  console.log(`  target_statute=${JSON.stringify(router.target_statute)}`);
+  console.log(`  req_current  = ${router.requires_current_context}`);
+  console.log(`  ambig_count  = ${router.ambiguous_terms_count}`);
+  console.log(`  confidence   = ${router.confidence}`);
 
-  const cat = tc.catastrophic(route);
-  const hard = tc.hard(route);
-  const soft = tc.soft(route);
+  const cat = tc.catastrophic(router);
+  const hard = tc.hard(router);
+  const soft = tc.soft(router);
 
   for (const m of cat) { console.log(`✗✗ CATASTROPHIC: ${m}`); catastrophic.push(`${tc.id}: ${m}`); }
   for (const m of hard) console.log(`✗  HARD: ${m}`);
   for (const m of soft) console.log(`~  SOFT: ${m}`);
   if (cat.length === 0 && hard.length === 0)
-    console.log(soft.length === 0 ? "✓ PASS (all)" : "✓ PASS (with soft warnings)");
+    console.log(soft.length === 0 ? "✓ PASS" : "✓ PASS (with soft warnings)");
 
   summary.push({
     id: tc.id,
     status: cat.length ? "CATASTROPHIC" : hard.length ? "HARD_FAIL" : soft.length ? "SOFT_WARN" : "PASS",
-    query_type: route.query_type,
-    legal_domain: route.legal_domain,
-    target: route.target_statute?.name,
+    query_type: router.query_type,
+    legal_domain: router.legal_domain,
+    target: router.target_statute?.name,
     timed_out,
-    duration_ms: dur,
+    duration_ms: router.duration_ms,
   });
 }
 
@@ -310,18 +300,15 @@ console.log(`Hard fails:          ${hardFails}`);
 console.log(`Catastrophic:        ${catastrophic.length}`);
 console.log(`Router timeouts:     ${timeouts} (catastrophic if > 1)`);
 
-const blocking =
-  catastrophic.length > 0 || timeouts > 1 || passed < CASES.length - 1;
+const blocking = catastrophic.length > 0 || timeouts > 1 || passed < CASES.length - 1;
 
 if (catastrophic.length) {
   console.log("\nCATASTROPHIC FAILURES:");
   for (const c of catastrophic) console.log(`  - ${c}`);
 }
-
 console.log(
   blocking
     ? "\n⛔ BLOCK Phase 3 — fix router prompt/normalization first."
     : "\n✅ OK to proceed to Phase 3 (OpenWebDiscovery).",
 );
-
 process.exit(blocking ? 1 : 0);
