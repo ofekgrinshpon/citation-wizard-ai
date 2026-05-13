@@ -129,6 +129,27 @@ export default function DocumentCheckPage() {
           <input
             ref={fileRef} type="file" accept=".docx" className="hidden" onChange={onFile}
           />
+
+          {recent.length > 0 && (
+            <div className="mt-10 max-w-xl mx-auto text-right">
+              <h3 className="text-sm font-semibold text-foreground mb-2">בדיקות אחרונות</h3>
+              <div className="space-y-1.5">
+                {recent.map((r) => (
+                  <button
+                    key={r.id}
+                    onClick={() => dc.loadSession(r.id)}
+                    disabled={r.status !== "review_ready"}
+                    className="w-full flex items-center justify-between gap-3 px-3 py-2 rounded-lg border border-border bg-card hover:bg-muted text-right text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className="truncate flex-1 text-foreground">{r.file_name || "ללא שם"}</span>
+                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                      {r.notes_count} הערות · {r.citations_count} אזכורים · {new Date(r.created_at).toLocaleDateString("he-IL")}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
