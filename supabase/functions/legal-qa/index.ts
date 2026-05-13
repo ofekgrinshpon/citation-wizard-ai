@@ -3028,6 +3028,17 @@ ${(verify.fullText as string).slice(0, 50000)}
     let routerRoute: LegalIssueRoute | null = null;
     let routerRun: StageRun | null = null;
     let routerTimedOut = false;
+    // Phase 3 (research safeguards): Open Web Discovery — METADATA-ONLY.
+    // Runs in parallel with the rest of the pipeline; result is logged to
+    // qa_logs.metadata.research_safeguards.discovery and NEVER fed into the
+    // source pack or final citations in this phase.
+    let discoveryDecision: DiscoveryDecision = { triggered: false, triggers: [] };
+    let discoveryResult: OpenWebDiscovery | null = null;
+    let discoveryRun: StageRun | null = null;
+    let discoverySanitizedFields:
+      | ReturnType<typeof buildDiscoveryTelemetry> extends infer _ ? any : never;
+    discoverySanitizedFields = null;
+    let discoveryPromise: Promise<void> | null = null;
     if (enableDeepPipeline && !evalForceLegacy) {
       // Live progress: frame is essentially "request received & validated".
       // Emit it as complete immediately so the user sees instant feedback.
