@@ -8494,6 +8494,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               new_cards_added: 0,
               duration_ms: 0,
               timed_out: false,
+              forced_eval_gaps: [],
             },
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
