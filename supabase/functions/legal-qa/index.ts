@@ -7589,6 +7589,24 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             );
             continue;
           }
+          // Phase 6.5b — generalized orphan-FN prevention. When the
+          // deterministic contract path is on, drop ANY footnote that has no
+          // surviving body marker. This prevents the role-gap retrieval (and
+          // any other producer of generated footnotes) from leaving orphans
+          // in the final output. Logged separately under
+          // research_safeguards.orphan_fn_prevention.dropped_count.
+          if (_contractOnSC) {
+            orphanFnPreventionTelemetry.dropped_count++;
+            if (orphanFnPreventionTelemetry.dropped_samples.length < 8) {
+              orphanFnPreventionTelemetry.dropped_samples.push(
+                String(fn.citation || "").slice(0, 120),
+              );
+            }
+            console.warn(
+              `[orphan-fn-prevention] dropped FN #${fn.number} (no body marker) → ${String(fn.citation || "").slice(0, 80)}`,
+            );
+            continue;
+          }
           reorderedFootnotes.push({ ...fn, number: reorderedFootnotes.length + 1 });
         }
       }
