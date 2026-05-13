@@ -4993,6 +4993,7 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
       const wordMax = modeProfile.wordRangeMax;
       const fnFloor = modeProfile.footnoteFloor;
       const fnMax = modeProfile.footnoteTargetMax;
+      const contractOn = modeProfile.cardClaimContract === "on";
       const frameworkSentenceTarget = "6-9 משפטים";
       const applicationSentenceTarget = "6-9 משפטים";
       const conclusionSentenceTarget = "2-3 משפטים";
