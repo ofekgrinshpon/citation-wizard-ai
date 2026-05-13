@@ -82,7 +82,7 @@ export interface PlannerToolDef {
  */
 export interface StageRun {
   stage: string;
-  provider: "openai" | "gemini";
+  provider: "openai" | "gemini" | "perplexity";
   model: string;
   reasoning_effort?: "minimal" | "low" | "medium" | "high";
   started_at: string;
