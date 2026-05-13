@@ -170,3 +170,124 @@ function buildBanner(missing: string[]): string {
     "ענה בזהירות מוגברת: הימנע מקביעות פוזיטיביות שאינן עוגנות במקורות שהוצגו, וציין במפורש כשמקור חסר.",
   ].join("\n");
 }
+
+// ─────────────────────────────────────────────────────────────────────────
+// Phase 5 — gap-driven targeted retrieval (round 2)
+// Pure helpers used by index.ts to:
+//   1. identify which gate slots are missing (via checkSourcePackGate);
+//   2. classify each gap as "essential" or "preferred";
+//   3. build Hebrew retrieval queries for the missing slots.
+// No network. Easy to unit-test.
+// ─────────────────────────────────────────────────────────────────────────
+
+export type GapTier = "essential" | "preferred";
+
+/**
+ * Return the gate's missing[] / blocking_missing[] without building a banner.
+ * Thin wrapper around `checkSourcePackGate(..., "soft")` so callers don't
+ * accidentally rerun the gate in a different mode.
+ */
+export function identifyMissingSlots(
+  route: LegalIssueRoute | null,
+  pack: LegalSourcePack | null,
+  question: string,
+): { missing: string[]; blocking_missing: string[] } {
+  const r = checkSourcePackGate(route, pack, question, "soft");
+  return { missing: r.missing, blocking_missing: r.blocking_missing };
+}
+
+/**
+ * Classify a missing slot as essential vs preferred for round-2 mode policy.
+ *
+ * Essential (Fast + Deep run for these):
+ *   - statute_identified_or_present
+ *   - authoritative_source_for_amendment
+ *   - caselaw_baseline → essential ONLY when the question matches
+ *     DOCTRINE_CHANGE_RE; otherwise preferred.
+ *
+ * Preferred (Deep only):
+ *   - prior_text_or_explanatory
+ *   - committee_protocol
+ *   - approved_secondary_commentary
+ *   - anything else
+ */
+export function classifyGap(slot: string, question: string): GapTier {
+  switch (slot) {
+    case "statute_identified_or_present":
+    case "authoritative_source_for_amendment":
+      return "essential";
+    case "caselaw_baseline":
+      return DOCTRINE_CHANGE_RE.test(question) ? "essential" : "preferred";
+    default:
+      return "preferred";
+  }
+}
+
+/** Best-effort doctrine-name extraction for caselaw_baseline rescue queries. */
+export function extractDoctrineTerm(question: string): string | null {
+  // Try "הלכת X" pattern first.
+  const m = question.match(/הלכת\s+([\u0590-\u05FFA-Za-z0-9״"'׳`־\-]+)/);
+  if (m && m[1]) return m[1].trim();
+  // Try "פסק דין X" / "פסק-דין X".
+  const m2 = question.match(/פסק[־\- ]דין\s+([\u0590-\u05FFA-Za-z0-9״"'׳`־\-]+)/);
+  if (m2 && m2[1]) return m2[1].trim();
+  return null;
+}
+
+/**
+ * Build Hebrew retrieval queries for each eligible missing slot.
+ * Returns one or more queries per slot (no cap — caller applies the cap).
+ * Empty input → []. Unknown slots → skipped silently.
+ */
+export function buildRound2Queries(
+  route: LegalIssueRoute | null,
+  eligibleGaps: string[],
+  question: string,
+): string[] {
+  if (!route || eligibleGaps.length === 0) return [];
+  const statuteName = route.target_statute?.name?.trim() || null;
+  const out: string[] = [];
+
+  for (const slot of eligibleGaps) {
+    switch (slot) {
+      case "statute_identified_or_present":
+        if (statuteName) out.push(`${statuteName} נוסח מלא`);
+        break;
+      case "authoritative_source_for_amendment":
+        if (statuteName) {
+          out.push(`${statuteName} תיקון אחרון נוסח עדכני`);
+          out.push(`${statuteName} ס"ח`);
+        }
+        break;
+      case "caselaw_baseline": {
+        const doctrine = extractDoctrineTerm(question);
+        if (doctrine) out.push(`הלכת ${doctrine} פסיקה`);
+        else if (statuteName) out.push(`${statuteName} פסיקה הלכה`);
+        break;
+      }
+      case "prior_text_or_explanatory":
+        if (statuteName) out.push(`${statuteName} דברי הסבר הצעת חוק`);
+        break;
+      case "committee_protocol":
+        if (statuteName) out.push(`${statuteName} פרוטוקול ועדה`);
+        break;
+      case "approved_secondary_commentary":
+        if (statuteName) out.push(`${statuteName} מאמר אקדמי פרשנות`);
+        break;
+      default:
+        // Unknown slot — skip.
+        break;
+    }
+  }
+
+  // De-dup preserving order, by lowercased text.
+  const seen = new Set<string>();
+  const dedup: string[] = [];
+  for (const q of out) {
+    const k = q.toLowerCase();
+    if (seen.has(k)) continue;
+    seen.add(k);
+    dedup.push(q);
+  }
+  return dedup;
+}
