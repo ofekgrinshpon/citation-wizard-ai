@@ -27,7 +27,6 @@
 import {
   CITATION_RULES,
   getRequiredFields,
-  validateCitation,
 } from "../_shared/citationEngine.ts";
 import {
   resolveCitation,
@@ -38,6 +37,8 @@ import {
   classifyChapterFootnoteWithReason,
   type FootnoteSourceType,
 } from "../_shared/chapterCitationRouter.ts";
+import { scoreCitationQuality } from "./citationQualityScorer.ts";
+import type { CitationQuality } from "./contracts.ts";
 
 // ─── Public types ────────────────────────────────────────────────────
 
