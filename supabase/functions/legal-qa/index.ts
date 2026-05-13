@@ -3083,7 +3083,47 @@ ${(verify.fullText as string).slice(0, 50000)}
           }
         }
 
-        // Phase 3 (Open Web Discovery) orchestration reverted — see header note.
+        // ─── Phase 3: Open Web Discovery (METADATA-ONLY, fire-and-forget) ───
+        // Decision is computed AFTER the router returns so router signals
+        // (target_statute, requires_current_context, low confidence, etc.)
+        // can drive `shouldRunDiscovery`. The actual Perplexity call is
+        // kicked off but NOT awaited here — decomposition proceeds in
+        // parallel. The result is awaited later, just before qa_logs
+        // metadata is written. Discovery output never enters source_pack.
+        if (modeProfile.openWebDiscovery !== "off") {
+          discoveryDecision = shouldRunDiscovery(
+            routerRoute,
+            question,
+            researchDepth,
+            modeProfile.openWebDiscovery,
+          );
+          if (discoveryDecision.triggered) {
+            emitStage("open_web_discovery", "running");
+            const tDiscStart = Date.now();
+            discoveryPromise = runOpenWebDiscovery(question, routerRoute)
+              .then((r) => {
+                discoveryRun = r.run;
+                discoveryResult = r.discovery;
+                discoverySanitized = r.sanitized_fields;
+                stageRuns.push(r.run);
+                emitStage(
+                  "open_web_discovery",
+                  "complete",
+                  r.discovery
+                    ? `${r.discovery.candidate_authoritative_sources.length} מועמדים`
+                    : `fallback (${r.run.status})`,
+                );
+                console.log(
+                  `[discovery] status=${r.run.status} candidates=${r.discovery?.candidate_authoritative_sources.length ?? 0} (${Date.now() - tDiscStart}ms)`,
+                );
+              })
+              .catch((discErr) => {
+                emitStage("open_web_discovery", "complete", "fallback (error)");
+                console.error("[discovery] failed (non-fatal):", discErr);
+              });
+          }
+        }
+
 
         try {
           const res = await decomposeAndPlan(question, routerRoute);
