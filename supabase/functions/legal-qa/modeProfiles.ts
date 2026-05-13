@@ -154,6 +154,17 @@ export interface ModeProfile {
    *            legacy fallback runs unchanged.
    */
   cardClaimContract: "off" | "shadow" | "on";
+
+  // ─── Phase 6.5 — Role-Based Legal Research ─────────────────────────
+  /**
+   * "off"    → planner / role classifier / gate V2 not run. Legacy retrieval.
+   * "shadow" → planner + classifier + gate V2 run; telemetry only; drafter
+   *            prompt UNCHANGED; pipeline behaves as legacy.
+   * "on"     → planner output drives canonical_search_targets in round-1;
+   *            classifier labels cards; gate V2 evaluated soft-mode;
+   *            drafter sees role/quality labels per card.
+   */
+  roleBasedRetrieval: "off" | "shadow" | "on";
 }
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
@@ -212,6 +223,10 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     targetedGapTimeoutMs: 8000,
     // Phase 6: contract on by default; falls back to legacy when no markers.
     cardClaimContract: "on",
+    // Phase 6.5: role-based retrieval ON by default (soft mode — telemetry +
+    // banner only; never blocks). Targeted retrieval per missing role piggy-
+    // backs on the existing Phase 5 gap retrieval.
+    roleBasedRetrieval: "on",
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
@@ -266,6 +281,8 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     targetedGapTimeoutMs: 20000,
     // Phase 6: contract on by default; falls back to legacy when no markers.
     cardClaimContract: "on",
+    // Phase 6.5: same as Fast — role-based retrieval ON soft mode.
+    roleBasedRetrieval: "on",
   },
 };
 

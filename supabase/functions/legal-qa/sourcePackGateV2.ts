@@ -123,7 +123,7 @@ export function buildGateV2Banner(result: SourcePackGateV2Result): string {
     );
   }
   lines.push(
-    "טפל בכך בכך שתעדיף ניסוח זהיר ("ייתכן" / "טרם הוכרע") לטענות שהיית רוצה לעגן בתפקיד שחסר.",
+    'העדף ניסוח זהיר ("ייתכן" / "טרם הוכרע") לטענות שהיית רוצה לעגן בתפקיד שחסר.',
   );
   return lines.join("\n");
 }
