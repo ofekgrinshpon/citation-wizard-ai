@@ -60,6 +60,17 @@
         "total_footnotes": { "min": 3, "max": 12 },
         "anchored_min_delta": -2
       }
+    },
+    {
+      "id": "Q-contract-amendment",
+      "question": "האם התיקון האחרון לחוק החוזים מהווה שינוי מהותי מההלכה הקיימת בפרשנות חוזים?",
+      "bucket": "doctrinal_amendment",
+      "rationale": "Phase 6.5 — exercises role-based planner (amendment_comparison strategy + doctrinal_anchor / statutory_anchor required roles). Telemetry-driven assertions, not specific case names.",
+      "counts": {
+        "total_footnotes": { "min": 3, "max": 12 },
+        "anchored_min_delta": -2
+      },
+      "assertRoleTelemetry": true
     }
   ]
 }
