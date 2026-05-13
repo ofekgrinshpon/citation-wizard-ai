@@ -31,7 +31,11 @@ import {
 } from "./openWebDiscovery.ts";
 import {
   checkSourcePackGate,
+  identifyMissingSlots,
+  classifyGap,
+  buildRound2Queries,
   type SourcePackGateResult,
+  type GapTier,
 } from "./entityResolution.ts";
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
@@ -3047,6 +3051,33 @@ ${(verify.fullText as string).slice(0, 50000)}
     // blocks; the banner is appended to the drafter's task instructions and
     // the result is logged under research_safeguards.source_pack_gate.
     let sourcePackGateResult: SourcePackGateResult | null = null;
+    // Phase 5 — Targeted Gap Retrieval (Round 2) telemetry. Populated by the
+    // gap-driven round-2 block below; surfaced under
+    // research_safeguards.targeted_retrieval_round_2.
+    type TargetedRound2Telemetry = {
+      mode: "off" | "essential_only" | "full";
+      ran: boolean;
+      reason:
+        | "ran"
+        | "mode_off"
+        | "no_decomposed_plan"
+        | "no_missing_slots"
+        | "essential_only_preferred_gaps_only"
+        | "no_queries_built"
+        | "timeout";
+      gaps_before: string[];
+      gaps_eligible: string[];
+      gaps_after: string[];
+      gap_queries: string[];
+      planner_queries: string[];
+      queries_used: string[];
+      source_pack_counts_before: { core: number; supporting: number; secondary: number };
+      source_pack_counts_after: { core: number; supporting: number; secondary: number };
+      new_cards_added: number;
+      duration_ms: number;
+      timed_out: boolean;
+    };
+    let targetedRound2Telemetry: TargetedRound2Telemetry | null = null;
     if (enableDeepPipeline && !evalForceLegacy) {
       // Live progress: frame is essentially "request received & validated".
       // Emit it as complete immediately so the user sees instant feedback.
@@ -4149,138 +4180,288 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     }
 
-    // ========= Stage E.6: Round-2 retrieval (Deep mode only) =========
-    // Profile-gated: when modeProfile.retrievalRounds >= 2, run a second
-    // local-search pass scoped to the planner's external_query items + any
-    // remaining sub_issues. Only chunks whose document_id is NOT already
-    // represented in sourceCards are added (deduped at the document level).
-    // This widens the source pool for Deep before the claim map is built.
+    // ========= Stage E.6: Targeted Gap Retrieval (Round 2) =========
+    // Phase 5 — profile-controlled, gap-driven rescue retrieval. Replaces the
+    // legacy generic round-2 (which fired on `retrievalRounds >= 2` and was
+    // not gap-aware). Runs in BOTH Fast and Deep when the mode profile's
+    // `targetedGapRetrieval` is not "off". Trusted retrieval ONLY — no
+    // OpenWebDiscovery output enters sourcePack here.
+    //
+    //   Fast → "essential_only", maxQueries=2, timeout=8s
+    //   Deep → "full",           maxQueries=6, timeout=20s
+    //
+    // Pipeline:
+    //   snapshot pack → preliminary checkSourcePackGate(soft, log-only)
+    //   → classify gaps by tier → filter by mode policy
+    //   → build gap queries + planner-queries filler → cap → run RPC fan-out
+    //   → dedupe + add cards + reassemble pack (all wrapped in a timeout race)
+    //   → snapshot pack counts after → write telemetry
     if (
       enableDeepPipeline &&
       !evalForceLegacy &&
-      modeProfile.retrievalRounds >= 2 &&
+      modeProfile.targetedGapRetrieval !== "off" &&
       decomposedPlan
     ) {
       const tR2Start = Date.now();
-      // Build round-2 query set from planner external_query then sub_issues.
-      const planQueries: string[] = (decomposedPlan.query_plan || [])
-        .map((p) => (typeof p?.external_query === "string" ? p.external_query.trim() : ""))
-        .filter((q): q is string => q.length >= 4);
-      const subIssues: string[] = Array.isArray(decomposedPlan.decomposition?.sub_issues)
-        ? (decomposedPlan.decomposition.sub_issues as unknown[])
-            .filter((s): s is string => typeof s === "string" && s.trim().length >= 4)
-            .map((s) => s.trim())
-        : [];
-      // De-dupe by lowercased text, keep first 4 to bound latency.
-      const seenQ = new Set<string>();
-      const round2Queries: string[] = [];
-      for (const q of [...planQueries, ...subIssues]) {
-        const key = q.toLowerCase();
-        if (seenQ.has(key)) continue;
-        seenQ.add(key);
-        round2Queries.push(q);
-        if (round2Queries.length >= 4) break;
-      }
+      const mode = modeProfile.targetedGapRetrieval;
+      const countsBefore = sourcePackV2
+        ? summarizeSourcePack(sourcePackV2)
+        : { core: 0, supporting: 0, secondary: 0 };
 
-      if (round2Queries.length === 0) {
+      // 1) Preliminary gate to discover missing slots (log-only, no banner).
+      const prelim = identifyMissingSlots(routerRoute, sourcePackV2, question);
+      const gapsBefore = prelim.missing.slice();
+
+      // Helper to build planner-queries filler from the existing decomposed plan.
+      const buildPlannerQueries = (): string[] => {
+        const planQueries: string[] = (decomposedPlan.query_plan || [])
+          .map((p) => (typeof p?.external_query === "string" ? p.external_query.trim() : ""))
+          .filter((q): q is string => q.length >= 4);
+        const subIssues: string[] = Array.isArray(decomposedPlan.decomposition?.sub_issues)
+          ? (decomposedPlan.decomposition.sub_issues as unknown[])
+              .filter((s): s is string => typeof s === "string" && s.trim().length >= 4)
+              .map((s) => s.trim())
+          : [];
+        return [...planQueries, ...subIssues];
+      };
+
+      const writeTelemetry = (
+        ran: boolean,
+        reason: TargetedRound2Telemetry["reason"],
+        opts: Partial<TargetedRound2Telemetry> = {},
+      ) => {
+        targetedRound2Telemetry = {
+          mode,
+          ran,
+          reason,
+          gaps_before: gapsBefore,
+          gaps_eligible: opts.gaps_eligible ?? [],
+          gaps_after: opts.gaps_after ?? gapsBefore,
+          gap_queries: opts.gap_queries ?? [],
+          planner_queries: opts.planner_queries ?? [],
+          queries_used: opts.queries_used ?? [],
+          source_pack_counts_before: countsBefore,
+          source_pack_counts_after: opts.source_pack_counts_after ?? countsBefore,
+          new_cards_added: opts.new_cards_added ?? 0,
+          duration_ms: opts.duration_ms ?? Date.now() - tR2Start,
+          timed_out: opts.timed_out ?? false,
+        };
+      };
+
+      if (gapsBefore.length === 0) {
+        writeTelemetry(false, "no_missing_slots");
         retrievalFunnel.round_2 = {
           triggered: false,
-          reason: "no_queries",
+          reason: "no_missing_slots",
           queries: [],
           new_cards: 0,
           new_doc_ids: 0,
           duration_ms: 0,
         };
       } else {
-        // Track doc_ids already present so we can dedupe.
-        const existingDocIds = new Set<string>();
-        for (const sc of sourceCards) {
-          // sourceCards don't carry document_id directly; we use citation+url as
-          // a stable key. This is fine because round-2 chunks come from the
-          // same RPC and we have document_citation to compare against.
-          existingDocIds.add(`${sc.citation}|${sc.url ?? ""}`);
-        }
-
-        // Run round-2 searches in parallel.
-        const round2Results = await Promise.all(
-          round2Queries.map(async (q) => {
-            try {
-              const { data } = await adminClient.rpc("search_legal_chunks_text", {
-                search_query: q,
-                match_count: 6,
-              });
-              return { q, matches: Array.isArray(data) ? data : [] };
-            } catch (e) {
-              console.warn(`[round-2] query "${q.slice(0, 40)}…" failed:`, (e as Error).message);
-              return { q, matches: [] };
-            }
-          }),
+        // 2) Classify + filter by mode policy.
+        const classified: { slot: string; tier: GapTier }[] = gapsBefore.map(
+          (slot) => ({ slot, tier: classifyGap(slot, question) }),
         );
+        const eligible =
+          mode === "full"
+            ? classified.map((c) => c.slot)
+            : classified.filter((c) => c.tier === "essential").map((c) => c.slot);
 
-        // Collect new cards (deduped per document_citation+url).
-        let newCardsAdded = 0;
-        const newDocKeys = new Set<string>();
-        for (const { matches } of round2Results) {
-          for (const m of matches) {
-            const docKey = `${m.document_citation}|${m.source_url ?? ""}`;
-            if (existingDocIds.has(docKey) || newDocKeys.has(docKey)) continue;
-            newDocKeys.add(docKey);
+        if (eligible.length === 0) {
+          // essential_only mode but only preferred gaps exist → don't run.
+          writeTelemetry(false, "essential_only_preferred_gaps_only", {
+            gaps_eligible: [],
+          });
+          retrievalFunnel.round_2 = {
+            triggered: false,
+            reason: "essential_only_preferred_gaps_only",
+            queries: [],
+            new_cards: 0,
+            new_doc_ids: 0,
+            duration_ms: 0,
+          };
+        } else {
+          // 3) Build queries: gap queries first, then planner-queries filler.
+          const gapQs = buildRound2Queries(routerRoute, eligible, question);
+          const plannerQs = buildPlannerQueries();
+          const seenQ = new Set<string>();
+          const queriesUsed: string[] = [];
+          for (const q of [...gapQs, ...plannerQs]) {
+            const k = q.toLowerCase();
+            if (seenQ.has(k)) continue;
+            seenQ.add(k);
+            queriesUsed.push(q);
+            if (queriesUsed.length >= modeProfile.maxTargetedGapQueries) break;
+          }
 
-            const sourceLabel =
-              m.source_type === "caselaw" ? "פסיקה" :
-              m.source_type === "knesset_research" ? "מחקר כנסת / חקיקה" :
-              m.source_type === "journal_article" ? "מאמר אקדמי" :
-              m.source_type === "israeli_law" ? "חקיקה ישראלית" : m.source_type;
-
-            const meta = (m.metadata || {}) as Record<string, unknown>;
-            const newCard: SourceCard = {
-              id: cardId++,
-              citation: m.document_citation || m.document_title || "מקור משפטי",
-              source_type: sourceLabel,
-              url: m.source_url || undefined,
-              provenance: "local",
-              excerpt: (m.chunk_content || "").slice(0, 400),
-              case_number: m.source_type === "caselaw" ? ((meta.case_number as string) || undefined) : undefined,
-              relevance_score: typeof m.similarity === "number" ? m.similarity : 0.5,
-            };
-            sourceCards.push(newCard);
-            sourcePack.push({
-              source_id: newCard.id,
-              title: newCard.citation,
-              source_type: newCard.source_type,
-              authority_class: classifyAuthority(newCard.source_type, newCard.citation, newCard.url),
-              url: newCard.url,
-              provenance: "local",
-              excerpt: newCard.excerpt,
-              case_number: newCard.case_number,
-              usable_for_analysis: (newCard.excerpt?.length ?? 0) > 300,
-              usable_for_citation: newCard.citation.length > 15,
-              anchor_present: Boolean(newCard.url) || true, // local provenance
-              relevance_score: newCard.relevance_score ?? 0.5,
+          if (queriesUsed.length === 0) {
+            writeTelemetry(false, "no_queries_built", {
+              gaps_eligible: eligible,
+              gap_queries: gapQs,
+              planner_queries: plannerQs,
             });
-            newCardsAdded++;
+            retrievalFunnel.round_2 = {
+              triggered: false,
+              reason: "no_queries_built",
+              queries: [],
+              new_cards: 0,
+              new_doc_ids: 0,
+              duration_ms: 0,
+            };
+          } else {
+            // 4) Run round-2 retrieval, wrapped in a timeout race. On timeout,
+            //    we preserve the original sourcePackV2 and report timed_out=true.
+            const existingDocIds = new Set<string>();
+            for (const sc of sourceCards) {
+              existingDocIds.add(`${sc.citation}|${sc.url ?? ""}`);
+            }
+
+            const work = (async () => {
+              const round2Results = await Promise.all(
+                queriesUsed.map(async (q) => {
+                  try {
+                    const { data } = await adminClient.rpc("search_legal_chunks_text", {
+                      search_query: q,
+                      match_count: 6,
+                    });
+                    return { q, matches: Array.isArray(data) ? data : [] };
+                  } catch (e) {
+                    console.warn(
+                      `[round-2/gap] query "${q.slice(0, 40)}…" failed:`,
+                      (e as Error).message,
+                    );
+                    return { q, matches: [] };
+                  }
+                }),
+              );
+
+              let newCardsAdded = 0;
+              const newDocKeys = new Set<string>();
+              const stagedCards: SourceCard[] = [];
+              const stagedPackEntries: typeof sourcePack = [];
+              for (const { matches } of round2Results) {
+                for (const m of matches) {
+                  const docKey = `${m.document_citation}|${m.source_url ?? ""}`;
+                  if (existingDocIds.has(docKey) || newDocKeys.has(docKey)) continue;
+                  newDocKeys.add(docKey);
+
+                  const sourceLabel =
+                    m.source_type === "caselaw" ? "פסיקה" :
+                    m.source_type === "knesset_research" ? "מחקר כנסת / חקיקה" :
+                    m.source_type === "journal_article" ? "מאמר אקדמי" :
+                    m.source_type === "israeli_law" ? "חקיקה ישראלית" : m.source_type;
+
+                  const meta = (m.metadata || {}) as Record<string, unknown>;
+                  const newCard: SourceCard = {
+                    id: cardId++,
+                    citation: m.document_citation || m.document_title || "מקור משפטי",
+                    source_type: sourceLabel,
+                    url: m.source_url || undefined,
+                    provenance: "local",
+                    excerpt: (m.chunk_content || "").slice(0, 400),
+                    case_number:
+                      m.source_type === "caselaw"
+                        ? ((meta.case_number as string) || undefined)
+                        : undefined,
+                    relevance_score: typeof m.similarity === "number" ? m.similarity : 0.5,
+                  };
+                  stagedCards.push(newCard);
+                  stagedPackEntries.push({
+                    source_id: newCard.id,
+                    title: newCard.citation,
+                    source_type: newCard.source_type,
+                    authority_class: classifyAuthority(
+                      newCard.source_type,
+                      newCard.citation,
+                      newCard.url,
+                    ),
+                    url: newCard.url,
+                    provenance: "local",
+                    excerpt: newCard.excerpt,
+                    case_number: newCard.case_number,
+                    usable_for_analysis: (newCard.excerpt?.length ?? 0) > 300,
+                    usable_for_citation: newCard.citation.length > 15,
+                    anchor_present: Boolean(newCard.url) || true,
+                    relevance_score: newCard.relevance_score ?? 0.5,
+                  });
+                  newCardsAdded++;
+                }
+              }
+              return { newCardsAdded, newDocKeys, stagedCards, stagedPackEntries };
+            })();
+
+            const timeoutPromise = new Promise<"timeout">((resolve) =>
+              setTimeout(() => resolve("timeout"), modeProfile.targetedGapTimeoutMs),
+            );
+            const raced = await Promise.race([work, timeoutPromise]);
+
+            if (raced === "timeout") {
+              writeTelemetry(true, "timeout", {
+                gaps_eligible: eligible,
+                gap_queries: gapQs,
+                planner_queries: plannerQs,
+                queries_used: queriesUsed,
+                source_pack_counts_after: countsBefore,
+                new_cards_added: 0,
+                timed_out: true,
+              });
+              retrievalFunnel.round_2 = {
+                triggered: true,
+                reason: "superseded_by_targeted_gap_retrieval",
+                queries: queriesUsed,
+                new_cards: 0,
+                new_doc_ids: 0,
+                duration_ms: Date.now() - tR2Start,
+              };
+              console.warn(
+                `[round-2/gap] timed out after ${modeProfile.targetedGapTimeoutMs}ms; pack preserved`,
+              );
+            } else {
+              const { newCardsAdded, newDocKeys, stagedCards, stagedPackEntries } = raced;
+              for (const c of stagedCards) sourceCards.push(c);
+              for (const e of stagedPackEntries) sourcePack.push(e);
+
+              if (newCardsAdded > 0 && sourcePack.length >= 2) {
+                sourcePackV2 = assembleSourcePack(sourcePack as InternalSourcePackEntry[]);
+              }
+              const countsAfter = sourcePackV2
+                ? summarizeSourcePack(sourcePackV2)
+                : countsBefore;
+
+              // Re-run the gate (informational) to compute gaps_after.
+              const after = identifyMissingSlots(routerRoute, sourcePackV2, question);
+
+              writeTelemetry(true, "ran", {
+                gaps_eligible: eligible,
+                gaps_after: after.missing,
+                gap_queries: gapQs,
+                planner_queries: plannerQs,
+                queries_used: queriesUsed,
+                source_pack_counts_after: countsAfter,
+                new_cards_added: newCardsAdded,
+                timed_out: false,
+              });
+              retrievalFunnel.round_2 = {
+                triggered: true,
+                reason: "superseded_by_targeted_gap_retrieval",
+                queries: queriesUsed,
+                new_cards: newCardsAdded,
+                new_doc_ids: newDocKeys.size,
+                duration_ms: Date.now() - tR2Start,
+              };
+              console.log(
+                `[round-2/gap] mode=${mode} queries=${queriesUsed.length} +${newCardsAdded} cards; ` +
+                `gaps ${gapsBefore.length}→${after.missing.length}; ` +
+                `core ${countsBefore.core}→${countsAfter.core} (${Date.now() - tR2Start}ms)`,
+              );
+              
+            }
           }
         }
-
-        // Re-assemble V2 source pack so new cards can be classified into
-        // core/supporting/secondary before Stage D consumes it.
-        if (newCardsAdded > 0 && sourcePack.length >= 2) {
-          sourcePackV2 = assembleSourcePack(sourcePack as InternalSourcePackEntry[]);
-          const sps = summarizeSourcePack(sourcePackV2);
-          console.log(`[round-2] +${newCardsAdded} cards (${newDocKeys.size} new docs); pack now core=${sps.core} supporting=${sps.supporting} secondary=${sps.secondary}`);
-        }
-
-        retrievalFunnel.round_2 = {
-          triggered: true,
-          reason: "profile_retrieval_rounds_2",
-          queries: round2Queries,
-          new_cards: newCardsAdded,
-          new_doc_ids: newDocKeys.size,
-          duration_ms: Date.now() - tR2Start,
-        };
-        console.log(`[round-2] ${round2Queries.length} queries, +${newCardsAdded} cards (${Date.now() - tR2Start}ms)`);
       }
     }
+
 
     // ========= Phase 4: Source Pack Gate (soft mode — log + banner only) ====
     // Runs after the final source pack (post round-2) is assembled and before
@@ -8272,6 +8453,22 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
                   checks_run: sourcePackGateResult.checks_run,
                 }
               : { mode: modeProfile.sourcePackGate, ok: true, missing: [], blocking_missing: [], banner_attached: false, checks_run: [] },
+            targeted_retrieval_round_2: targetedRound2Telemetry ?? {
+              mode: modeProfile.targetedGapRetrieval,
+              ran: false,
+              reason: modeProfile.targetedGapRetrieval === "off" ? "mode_off" : "no_decomposed_plan",
+              gaps_before: [],
+              gaps_eligible: [],
+              gaps_after: [],
+              gap_queries: [],
+              planner_queries: [],
+              queries_used: [],
+              source_pack_counts_before: { core: 0, supporting: 0, secondary: 0 },
+              source_pack_counts_after: { core: 0, supporting: 0, secondary: 0 },
+              new_cards_added: 0,
+              duration_ms: 0,
+              timed_out: false,
+            },
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),

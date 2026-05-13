@@ -117,6 +117,32 @@ export interface ModeProfile {
    *            (NOT YET WIRED to the drafter — soft phase only).
    */
   sourcePackGate: "off" | "soft" | "strict";
+
+  // ─── Phase 5 (research safeguards) — Targeted Gap Retrieval (Round 2) ───
+  /**
+   * Profile-controlled rescue retrieval that fires AFTER source_pack_v2 is
+   * assembled and BEFORE the final source_pack_gate. Replaces the old
+   * generic planner-driven round-2 (now subsumed; legacy retrievalRounds
+   * field is no longer read for round-2 selection).
+   *
+   * "off"            → never runs.
+   * "essential_only" → runs only when at least one *essential* gap exists
+   *                    (Fast). Preferred-only gaps do not trigger it.
+   *                    Essential = statute_identified_or_present,
+   *                    authoritative_source_for_amendment, and
+   *                    caselaw_baseline when the question asks whether a
+   *                    doctrine/הלכה changed.
+   * "full"           → runs for any gap (essential or preferred) (Deep).
+   *
+   * Trusted retrieval ONLY (search_legal_chunks_text). OpenWebDiscovery
+   * output never enters source_pack here — Phase 3 invariant unchanged.
+   */
+  targetedGapRetrieval: "off" | "essential_only" | "full";
+  /** Hard cap on the number of round-2 queries fired in a single request. */
+  maxTargetedGapQueries: number;
+  /** Wall-clock budget for the entire round-2 block. On timeout the original
+   *  sourcePackV2 is preserved and telemetry records `timed_out=true`. */
+  targetedGapTimeoutMs: number;
 }
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
@@ -167,6 +193,12 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     // Phase 4: Soft mode — log only, never block. Banner attached to drafter
     // when required slots are missing for the routed query type.
     sourcePackGate: "soft",
+    // Phase 5: Fast runs a tight rescue round only for essential gaps
+    // (statute / authoritative-amendment / caselaw-baseline-when-doctrine).
+    // 8s budget keeps Fast latency-sensitive; 2-query cap bounds RPC fan-out.
+    targetedGapRetrieval: "essential_only",
+    maxTargetedGapQueries: 2,
+    targetedGapTimeoutMs: 8000,
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
@@ -213,6 +245,12 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     openWebDiscovery: "conditional",
     // Phase 4: Soft mode — Deep also log-only for now.
     sourcePackGate: "soft",
+    // Phase 5: Deep repairs both essential and preferred gaps. Wider envelope
+    // (6 queries / 20s) matches Deep's existing latency profile and lets the
+    // round close prior_text / committee / commentary slots when present.
+    targetedGapRetrieval: "full",
+    maxTargetedGapQueries: 6,
+    targetedGapTimeoutMs: 20000,
   },
 };
 
