@@ -79,6 +79,17 @@ export default function DocumentCheckPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+  const [recent, setRecent] = useState<Array<{ id: string; file_name: string; created_at: string; status: string; notes_count: number; citations_count: number }>>([]);
+
+  useEffect(() => {
+    if (dc.status !== "idle") return;
+    void supabase
+      .from("document_check_sessions")
+      .select("id, file_name, created_at, status, notes_count, citations_count")
+      .order("created_at", { ascending: false })
+      .limit(20)
+      .then(({ data }) => setRecent(data ?? []));
+  }, [dc.status]);
 
   const onPick = () => fileRef.current?.click();
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
