@@ -62,7 +62,11 @@ Deno.test("supports endnotes alongside footnotes", async () => {
     <w:p><w:r><w:t>y</w:t><w:endnoteReference w:id="1"/></w:r></w:p>
   </w:body>
 </w:document>`;
-  const buf = await buildDocx({ document: doc, footnotes: FN_XML, endnotes: en });
+  const fnSingle = `<?xml version="1.0"?>
+<w:footnotes xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:footnote w:id="1"><w:p><w:r><w:t>הערת שוליים</w:t></w:r></w:p></w:footnote>
+</w:footnotes>`;
+  const buf = await buildDocx({ document: doc, footnotes: fnSingle, endnotes: en });
   const result = await extractDocxNotes(buf);
   assertEquals(result.notes.length, 2);
   assertEquals(result.notes[0].note_type, "footnote");
