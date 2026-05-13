@@ -4270,6 +4270,7 @@ ${(verify.fullText as string).slice(0, 50000)}
           new_cards_added: opts.new_cards_added ?? 0,
           duration_ms: opts.duration_ms ?? Date.now() - tR2Start,
           timed_out: opts.timed_out ?? false,
+          forced_eval_gaps: evalForceMissingSlots,
         };
       };
 
