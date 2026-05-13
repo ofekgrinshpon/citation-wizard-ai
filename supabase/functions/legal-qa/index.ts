@@ -4228,7 +4228,14 @@ ${(verify.fullText as string).slice(0, 50000)}
 
       // 1) Preliminary gate to discover missing slots (log-only, no banner).
       const prelim = identifyMissingSlots(routerRoute, sourcePackV2, question);
-      const gapsBefore = prelim.missing.slice();
+      // Eval-only forced-gap injection: merge `evalForceMissingSlots` into the
+      // preliminary missing[] so the round-2 decision treats them as gaps. Has
+      // NO effect on the real source_pack_gate / drafter / production users.
+      const prelimMissing = prelim.missing.slice();
+      for (const s of evalForceMissingSlots) {
+        if (!prelimMissing.includes(s)) prelimMissing.push(s);
+      }
+      const gapsBefore = prelimMissing;
 
       // Helper to build planner-queries filler from the existing decomposed plan.
       const buildPlannerQueries = (): string[] => {
