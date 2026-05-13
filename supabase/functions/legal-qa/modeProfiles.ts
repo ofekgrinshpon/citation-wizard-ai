@@ -138,6 +138,7 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     partyLookupRetryEnabled: true,
     partyLookupPlaceholderPolicy: "emit",
     partyLookupMaxBatchSize: 3,
+    legalIssueRouter: true,
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
