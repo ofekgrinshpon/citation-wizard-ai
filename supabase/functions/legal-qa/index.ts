@@ -17,6 +17,11 @@ import {
   type DecomposedPlan,
   type ClaimMap,
 } from "./decomposition.ts";
+import {
+  routeLegalIssue,
+  raceWithTimeout,
+  type LegalIssueRoute,
+} from "./legalIssueRouter.ts";
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
   BANNED_KEYS,
