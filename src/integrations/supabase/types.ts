@@ -191,6 +191,54 @@ export type Database = {
         }
         Relationships: []
       }
+      document_check_sessions: {
+        Row: {
+          citations_count: number
+          created_at: string
+          decisions: Json
+          file_name: string
+          id: string
+          metadata: Json
+          notes: Json
+          notes_count: number
+          project_id: string | null
+          status: string
+          summary: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          citations_count?: number
+          created_at?: string
+          decisions?: Json
+          file_name?: string
+          id?: string
+          metadata?: Json
+          notes?: Json
+          notes_count?: number
+          project_id?: string | null
+          status?: string
+          summary?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          citations_count?: number
+          created_at?: string
+          decisions?: Json
+          file_name?: string
+          id?: string
+          metadata?: Json
+          notes?: Json
+          notes_count?: number
+          project_id?: string | null
+          status?: string
+          summary?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
