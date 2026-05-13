@@ -4634,6 +4634,15 @@ ${(verify.fullText as string).slice(0, 50000)}
 
     const combinedContext = truncateContext(contextParts.join("\n"), contextCharLimit);
 
+    // Phase 6 — Card→Claim Citation Contract: assign stable S# IDs and
+    // derive canonicalCitation per card via the shared ReLex citation engine.
+    // Safe to call when contract is "off" (cost is per-card metadata only;
+    // catalog still includes the S# tag for forward-compat). Falls back to
+    // the legacy AI-footnote pipeline when no markers are emitted.
+    if (modeProfile.cardClaimContract !== "off") {
+      attachCanonicalCitations(sourceCards as unknown as ContractSourceCard[]);
+    }
+
     // Build source catalog string for the AI — tag local vs Perplexity distinctly
     const sourceCatalog = sourceCards.map(
       (sc) => {
@@ -4641,7 +4650,9 @@ ${(verify.fullText as string).slice(0, 50000)}
           sc.provenance === "local"     ? " [מאומת – מקור אמת לתוכן]" :
           sc.provenance === "perplexity" ? " [חיצוני – למטא-דאטה בלבד]" :
           sc.provenance === "document"   ? " [מסמך משתמש]" : "";
-        return `[${sc.id}]${tag} ${sc.citation}${sc.url ? ` (${sc.url})` : ""} — ${sc.source_type}`;
+        const sid = (sc as unknown as ContractSourceCard).contractId;
+        const sidTag = sid ? ` {${sid}}` : "";
+        return `[${sc.id}]${sidTag}${tag} ${sc.citation}${sc.url ? ` (${sc.url})` : ""} — ${sc.source_type}`;
       }
     ).join("\n");
 
