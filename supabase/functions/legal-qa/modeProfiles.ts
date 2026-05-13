@@ -211,6 +211,8 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     // `shouldRunDiscovery` adds a `deep_opportunistic` trigger when nothing
     // else fired.
     openWebDiscovery: "conditional",
+    // Phase 4: Soft mode — Deep also log-only for now.
+    sourcePackGate: "soft",
   },
 };
 
