@@ -131,10 +131,19 @@ const DECOMP_SYSTEM_PROMPT = `אתה אנליסט משפטי. תפקידך לפ�
  */
 export async function decomposeAndPlan(
   question: string,
+  route?: LegalIssueRoute | null,
 ): Promise<{ data: DecomposedPlan | null; run: StageRun; retryRun?: StageRun }> {
+  // Phase 1: when the legal-issue router has resolved, prepend a short
+  // bias preamble so decomposition aligns with the routed domain / target
+  // statute / forbidden topics. The schema is unchanged — this only nudges
+  // the planner away from off-topic sub-issues.
+  const biasBlock = route ? buildDecompositionBias(route) : "";
+  const userPrompt = biasBlock
+    ? `${biasBlock}\nשאלת המחקר:\n${question}`
+    : `שאלת המחקר:\n${question}`;
   const { data, run } = await callPlannerJSON<DecomposedPlan>(
     DECOMP_SYSTEM_PROMPT,
-    `שאלת המחקר:\n${question}`,
+    userPrompt,
     DECOMP_PLAN_TOOL,
     // Pilot v7 (Fast-mode): pin decomposition to Gemini 2.5 Flash. gpt-5-mini
     // took ~25s on this schema; Flash returns the same JSON tool-call in ~6-10s.
