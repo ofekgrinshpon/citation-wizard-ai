@@ -5095,6 +5095,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         }
         return new Response(JSON.stringify({ error: "תם הזמן לעיבוד השאלה. נסו שוב או קצרו את השאלה." }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
       }
+    }
 
     // ========= Step 4a: Critic pass (academic chapters only) =========
     // Audit the drafter output against the claim map + source pack. If the
