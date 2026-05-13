@@ -27,7 +27,6 @@
 import {
   CITATION_RULES,
   getRequiredFields,
-  validateCitation,
 } from "../_shared/citationEngine.ts";
 import {
   resolveCitation,
@@ -38,6 +37,8 @@ import {
   classifyChapterFootnoteWithReason,
   type FootnoteSourceType,
 } from "../_shared/chapterCitationRouter.ts";
+import { scoreCitationQuality } from "./citationQualityScorer.ts";
+import type { CitationQuality } from "./contracts.ts";
 
 // ─── Public types ────────────────────────────────────────────────────
 
@@ -55,6 +56,12 @@ export interface ContractSourceCard {
   provenance: "local" | "perplexity" | "perplexity_completion" | "document";
   excerpt?: string;
   case_number?: string;
+  /** Phase 6.6 — structured fields plumbed in from SourceCard so the engine
+   *  can fill the rule template instead of reusing the seed string. */
+  docket_prefix?: string;
+  procedure_category?: string;
+  court?: string;
+  decision_date?: string;
   /** Set by `attachCanonicalCitations`; the deterministic citation string. */
   canonicalCitation?: string;
   /** Telemetry: which formatter produced canonicalCitation. */
@@ -63,13 +70,19 @@ export interface ContractSourceCard {
   canonicalMissingFields?: string[];
   /** Telemetry: when engine attempted but failed; the resolver reason. */
   canonicalResolverReason?: string;
+  /** Phase 6.6 — quality of the FINAL canonicalCitation (not the raw seed). */
+  citationQuality?: CitationQuality;
+  /** Phase 6.6 — true when canonicalCitation contains [חסר: ...] markers. */
+  canonicalHasPlaceholders?: boolean;
 }
 
 export type CanonicalFormatter =
-  | "reused_existing"
+  | "reused_existing_strong"
   | "engine_resolved"
+  | "engine_template_filled_with_placeholders"
   | "engine_unresolved_then_fallback"
-  | "fallback_minimal";
+  | "fallback_minimal"
+  | "fallback_weak_title_refused";
 
 export interface ParsedMarker {
   /** Raw marker text, e.g. `[cite:S1,S3]`. */
@@ -126,10 +139,31 @@ export interface BuildFootnotesResult {
 }
 
 export interface FormatterUsageCounts {
-  reused_existing: number;
+  reused_existing_strong: number;
   engine_resolved: number;
+  engine_template_filled_with_placeholders: number;
   engine_unresolved_then_fallback: number;
   fallback_minimal: number;
+  fallback_weak_title_refused: number;
+}
+
+export interface CitationAssemblyTelemetry {
+  total: number;
+  source_type_normalized: number;
+  engine_first_attempted: number;
+  seed_reuse_rejected: number;
+  template_filled: number;
+  placeholder_inserted: number;
+  missing_fields_counts: Record<string, number>;
+  reused_existing_strong: number;
+  fallback_used: number;
+  examples: Array<{
+    source_id: string;
+    source_type: string;
+    formatter: CanonicalFormatter;
+    canonical: string;
+    missing_fields: string[];
+  }>;
 }
 
 export interface CardClaimContractTelemetry {
@@ -149,6 +183,7 @@ export interface CardClaimContractTelemetry {
   missing_metadata: Array<{ source_id: string; missing_fields: string[] }>;
   source_id_usage: Record<string, number>;
   formatter_usage: FormatterUsageCounts;
+  citation_assembly?: CitationAssemblyTelemetry;
   resolver_failures: Array<{
     source_id: string;
     source_type: string;
@@ -169,10 +204,12 @@ export const EMPTY_TELEMETRY: CardClaimContractTelemetry = {
   missing_metadata: [],
   source_id_usage: {},
   formatter_usage: {
-    reused_existing: 0,
+    reused_existing_strong: 0,
     engine_resolved: 0,
+    engine_template_filled_with_placeholders: 0,
     engine_unresolved_then_fallback: 0,
     fallback_minimal: 0,
+    fallback_weak_title_refused: 0,
   },
   resolver_failures: [],
 };
@@ -187,129 +224,139 @@ export function assignContractIds(cards: ContractSourceCard[]): void {
 }
 
 // ─── Canonical citation derivation (engine-first) ────────────────────
+//
+// Phase 6.6: the upstream `card.citation` is treated as a HINT for structured
+// extraction, not as the final canonical citation. For caselaw and statute
+// types we always run the engine path first; only when the engine fails AND
+// the seed scores `strong` quality do we reuse it. Missing required fields
+// are template-filled with `[חסר: …]` placeholders.
 
-/**
- * Map a card's `source_type` (legacy 12-value enum used in index.ts) to the
- * `routeChapterFootnote`-style `FootnoteSourceType` so we can pick the right
- * engine path. Returns "unknown" when no confident mapping exists.
- */
+/** Source-type normalization: Hebrew display labels → engine routing key. */
+function normalizeSourceTypeKey(raw: string): string {
+  const t = (raw || "").trim().toLowerCase();
+  // Hebrew display labels used throughout index.ts
+  if (t === "פסיקה") return "caselaw";
+  if (t === "חקיקה ישראלית") return "primary_legislation";
+  if (t === "מחקר כנסת / חקיקה" || t === "מחקר כנסת" || t === "חקיקה / מחקר כנסת") {
+    return "knesset_research";
+  }
+  if (t === "מאמר אקדמי") return "journal_article";
+  if (t === "פרוטוקול" || t === "פרוטוקולים") return "protocol";
+  return t;
+}
+
+/** Map a (normalized) source_type to the chapter-citation router family. */
 function mapToFootnoteType(card: ContractSourceCard): FootnoteSourceType {
-  const t = (card.source_type || "").toLowerCase();
-  if (t === "caselaw" || t === "פסיקה" || t === "case_law" ||
-      t === "supreme_court" || t === "district_court" || t === "labor_court") {
+  const t = normalizeSourceTypeKey(card.source_type);
+  if (t === "caselaw" || t === "case_law" ||
+      t === "supreme_court" || t === "district_court" ||
+      t === "labor_court" || t === "family_court" ||
+      t === "case_law_database" || t === "case_law_published") {
     return "caselaw";
   }
-  if (t === "israeli_law" || t === "חקיקה ישראלית" ||
-      t === "primary_legislation" || t === "basic_law" ||
-      t === "secondary_legislation" || t === "regulation" || t === "regulations" ||
-      t === "ordinance" || t === "legislation" || t === "legislation_primary" ||
-      t === "legislation_secondary") {
+  if (t === "israeli_law" || t === "primary_legislation" ||
+      t === "basic_law" || t === "secondary_legislation" ||
+      t === "regulation" || t === "regulations" ||
+      t === "ordinance" || t === "legislation" ||
+      t === "legislation_primary" || t === "legislation_secondary") {
     return "statute";
   }
-  if (t === "journal_article" || t === "מאמר אקדמי" || t === "article") {
-    return "journal_article";
-  }
+  if (t === "journal_article" || t === "article") return "journal_article";
   if (t === "academic_book" || t === "book") return "book";
   if (t === "book_chapter") return "book_chapter";
   if (t === "knesset_research" || t === "report" || t === "protocol") return "report";
-  if (t === "external_web" || t === "web_source" || t === "document") return "web_source";
+  if (t === "external_web" || t === "web_source" || t === "web" || t === "document") return "web_source";
   return "unknown";
 }
 
 /** Engine source-type key for `validateCitation`/`getRequiredFields`. */
 function mapToEngineKey(card: ContractSourceCard): string | null {
-  const t = (card.source_type || "").toLowerCase();
-  if (t === "caselaw" || t === "case_law" || t === "supreme_court" ||
-      t === "district_court" || t === "labor_court") return "case_law_database";
+  const t = normalizeSourceTypeKey(card.source_type);
+  if (t === "caselaw" || t === "case_law" || t === "case_law_database" ||
+      t === "supreme_court" || t === "district_court" ||
+      t === "labor_court" || t === "family_court") return "case_law_database";
+  if (t === "case_law_published") return "case_law_published";
   if (t === "basic_law") return "basic_law";
   if (t === "secondary_legislation" || t === "regulation" || t === "regulations" ||
       t === "ordinance") return "secondary_legislation";
   if (t === "primary_legislation" || t === "israeli_law" || t === "legislation" ||
       t === "legislation_primary") return "primary_legislation";
-  if (t === "journal_article" || t === "article") return "academic_article" in CITATION_RULES
-    ? "academic_article" : "journal_article";
+  if (t === "journal_article" || t === "article") {
+    return "academic_article" in CITATION_RULES ? "academic_article" : "journal_article";
+  }
   return null;
 }
 
-/**
- * Derive canonicalCitation for a single card.
- *
- * Strict precedence:
- *   1. Reuse the upstream-resolved `card.citation` when it exists and looks
- *      non-trivial (length ≥ 12 and not just placeholders).
- *   2. Engine path, routed by `source_type` via `mapToFootnoteType`:
- *        - statute / caselaw         → resolveCitation(...)
- *        - journal_article           → validateArticleCitation(...)
- *        - book / report / web etc.  → minimal cleanup (passthrough)
- *      If the engine returns a usable string, use it.
- *   3. Last-resort minimal fallback in this file (`buildMinimalFallback`).
- *      Required-but-missing engine fields are tagged `[חסר: <field>]`.
- *
- * Mutates the card with `canonicalCitation`, `canonicalFormatter`,
- * `canonicalMissingFields`, and `canonicalResolverReason`.
- */
-export function deriveCanonicalCitation(card: ContractSourceCard): void {
-  const seed = (card.citation || "").trim();
-  // Step 1 — reuse if upstream produced something substantive.
-  if (seed && seed.length >= 12 && !isAllPlaceholders(seed)) {
-    card.canonicalCitation = seed;
-    card.canonicalFormatter = "reused_existing";
-    card.canonicalMissingFields = engineMissingFields(card, seed);
-    return;
-  }
+// ── Procedure-category → caseType / court name dictionaries ──────────
+//
+// `meta.procedure_type` on local DB rows is mixed: a small number of rows
+// hold a true docket prefix (`בג"ץ`, `ע"א`, …) and the rest hold a broad
+// subject category (`משפחה`, `שלום`, `מחוזי`, `עבודה`, …). We use the
+// category as a LAST-RESORT caseType inference and as a court-name fill-in
+// for the parens block when database/fullDate are missing.
+const CATEGORY_TO_CASE_TYPE: Record<string, string> = {
+  "משפחה": "תמ״ש",
+  "עבודה": "סע״ש",
+  "עבודה ארצי": "ע״ע",
+  "פלילי": "ת״פ",
+  "אזרחי": "ת״א",
+  "מנהלי": "עת״מ",
+  "תעבורה": "ת״ת",
+};
+const CATEGORY_TO_COURT: Record<string, string> = {
+  "משפחה": "בית המשפט לענייני משפחה",
+  "שלום": "בית משפט השלום",
+  "מחוזי": "בית המשפט המחוזי",
+  "עליון": "בית המשפט העליון",
+  "עבודה": "בית הדין האזורי לעבודה",
+  "עבודה ארצי": "בית הדין הארצי לעבודה",
+  "תעבורה": "בית משפט לתעבורה",
+};
 
-  // Step 2 — route by type into the shared engine.
-  const ft = mapToFootnoteType(card);
-  let engineOut: string | null = null;
-  let engineReason: string | undefined;
+function inferCaseTypeFromCategory(cat?: string): string | undefined {
+  if (!cat) return undefined;
+  return CATEGORY_TO_CASE_TYPE[cat.trim()];
+}
+function inferCourtFromCategory(cat?: string): string | undefined {
+  if (!cat) return undefined;
+  return CATEGORY_TO_COURT[cat.trim()];
+}
 
-  if (ft === "statute" || ft === "caselaw") {
-    const declared = ft === "statute" ? "statute" : "caselaw";
-    const seedText = seed || card.case_number || "";
-    if (seedText) {
-      const r: ResolveResult = resolveCitation(seedText, declared, {
-        caseNumberHint: card.case_number,
-        titleHint: extractTitleFromExcerpt(card),
-      });
-      if (r.resolved) {
-        engineOut = r.canonical;
-      } else {
-        engineReason = r.reason;
-        card.canonicalResolverReason = r.reason;
-      }
-    }
-  } else if (ft === "journal_article") {
-    const seedText = seed || card.excerpt || "";
-    const out = validateArticleCitation(seedText, seedText);
-    if (out && out.trim().length >= 12) engineOut = out.trim();
-  } else if (ft === "book" || ft === "book_chapter" || ft === "report") {
-    const seedText = seed || card.excerpt || "";
-    if (seedText.trim()) {
-      // Light passthrough: trim + ensure year placeholder if absent.
-      const hasYear = /\\((?:19|20)\\d{2}\\)|הת[שׁש][א-ת]*["״]/.test(seedText);
-      engineOut = hasYear ? seedText.trim() : `${seedText.trim()} [חסר: שנה]`;
-    }
-  } else if (ft === "web_source") {
-    const seedText = seed || card.excerpt || "";
-    if (seedText.trim()) engineOut = seedText.trim();
-  }
+// Generic "court name appears in seed" extractor (e.g. "(בית המשפט לענייני משפחה)").
+function extractCourtFromText(text?: string): string | undefined {
+  if (!text) return undefined;
+  const m = text.match(/(בית\s+המשפט[^,)]{2,40}|בית\s+הדין[^,)]{2,40}|בית\s+משפט[^,)]{2,40})/);
+  return m ? m[1].trim() : undefined;
+}
 
-  if (engineOut && engineOut.length >= 12) {
-    card.canonicalCitation = engineOut;
-    card.canonicalFormatter = engineReason
-      ? "engine_unresolved_then_fallback"
-      : "engine_resolved";
-    card.canonicalMissingFields = engineMissingFields(card, engineOut);
-    return;
-  }
+/** Hebrew label for a missing required field (used in [חסר: ...] markers). */
+function fieldLabelHebrew(field: string): string {
+  const k = field.toLowerCase();
+  if (k === "casetype") return "סוג ההליך";
+  if (k === "casenumber") return "מספר התיק";
+  if (k === "party1") return "שם צד א'";
+  if (k === "party2") return "שם צד ב'";
+  if (k === "fulldate") return "תאריך";
+  if (k === "lawname") return "שם החוק";
+  if (k === "regulationname") return "שם התקנות";
+  if (k === "hebrewyear" || k === "gregorianyear" || k === "year") return "שנה";
+  if (k === "collection") return "קובץ פרסום";
+  if (k === "firstpage") return "מספר/עמוד";
+  if (k === "series") return "סדרה";
+  if (k === "volume") return "כרך";
+  if (k === "authors" || k === "author") return "מחבר";
+  if (k === "articletitle" || k === "title") return "כותרת";
+  if (k === "journal") return "כתב עת";
+  if (k === "booktitle") return "שם הספר";
+  if (k.includes("page")) return "עמוד";
+  if (k.includes("date")) return "תאריך";
+  if (k.includes("name")) return "שם";
+  return field;
+}
 
-  // Step 3 — last-resort minimal fallback.
-  const { text, missing } = buildMinimalFallback(card);
-  card.canonicalCitation = text;
-  card.canonicalFormatter = engineReason
-    ? "engine_unresolved_then_fallback"
-    : "fallback_minimal";
-  card.canonicalMissingFields = missing;
+/** Compose `[חסר: <label>]` token. */
+function placeholderFor(field: string): string {
+  return `[חסר: ${fieldLabelHebrew(field)}]`;
 }
 
 function isAllPlaceholders(text: string): boolean {
@@ -317,67 +364,301 @@ function isAllPlaceholders(text: string): boolean {
   return stripped.length < 8;
 }
 
-function extractTitleFromExcerpt(card: ContractSourceCard): string | undefined {
-  // The drafter doesn't see this — only the resolver. Use the excerpt's first
-  // line as a title hint when no other signal is available.
-  const ex = (card.excerpt || "").split("\n")[0]?.trim();
-  return ex && ex.length > 4 ? ex.slice(0, 200) : undefined;
+function hasPlaceholderMarker(text?: string): boolean {
+  return /\[חסר:[^\]]+\]/.test(text || "");
 }
 
-function engineMissingFields(card: ContractSourceCard, citation: string): string[] {
-  const key = mapToEngineKey(card);
-  if (!key || !CITATION_RULES[key]) return [];
-  // We don't have extracted fields here, so we approximate by checking
-  // whether the citation includes obvious year/page tokens. A more precise
-  // check would re-extract — but the post-process validators already do that
-  // and inject `[חסר: ...]` markers, so we keep this lightweight.
-  const required = getRequiredFields(key);
-  const missing: string[] = [];
-  for (const f of required) {
-    if (f.toLowerCase().includes("year") &&
-        !/הת[שׁש]|התש"|\((?:19|20)\d{2}\)|–\s*(?:19|20)\d{2}/.test(citation)) {
-      missing.push(f);
-    }
-  }
-  // De-dup
-  return [...new Set(missing)];
+/** Title-strength gate for web/unknown/report sources. Refuses generic
+ *  English/short titles like "Law", "Document", "Untitled". */
+function isWeakTitle(text: string): boolean {
+  const t = text.trim();
+  if (!t) return true;
+  if (t.length < 8) return true;
+  // Generic English placeholder titles seen in production.
+  if (/^(law|document|untitled|page|article|file|pdf)$/i.test(t)) return true;
+  // Just a URL with no title.
+  if (/^https?:\/\//.test(t) && !/[א-ת]/.test(t)) return false; // url-only is acceptable for web
+  // Almost no Hebrew letters and short → weak.
+  const heb = (t.match(/[א-ת]/g) || []).length;
+  if (heb < 4 && t.length < 30) return true;
+  return false;
 }
 
-function buildMinimalFallback(
-  card: ContractSourceCard,
-): { text: string; missing: string[] } {
-  const key = mapToEngineKey(card);
-  const required = key ? getRequiredFields(key) : [];
-  const parts: string[] = [];
-  const seed = (card.citation || "").trim();
-  if (seed) parts.push(seed);
-  else if (card.excerpt) parts.push(card.excerpt.split("\n")[0].trim().slice(0, 160));
-  if (card.url) parts.push(card.url);
-  const text = parts.join(" — ").trim() || "[חסר: מקור]";
-  // Tag missing required fields as placeholders (without inventing values).
-  const missing = required.filter((f) => {
-    if (f.toLowerCase().includes("year")) {
-      return !/הת[שׁש]|\((?:19|20)\d{2}\)/.test(text);
-    }
-    return false;
+// ── Caselaw resolution ────────────────────────────────────────────────
+function tryEngineCaselaw(card: ContractSourceCard, seed: string): ResolveResult {
+  // Build the strongest hints we can: prefer prefixed docket when known.
+  const prefixedCaseNumber = card.docket_prefix && card.case_number
+    ? `${card.docket_prefix} ${card.case_number}`
+    : card.case_number;
+  return resolveCitation(seed || card.case_number || "", "caselaw", {
+    caseNumberHint: prefixedCaseNumber,
+    titleHint: seed,
+    decisionDateHint: card.decision_date,
   });
-  let out = text;
-  for (const f of missing) {
-    const label = fieldLabelHebrew(f);
-    if (!out.includes(`[חסר: ${label}]`)) out += ` [חסר: ${label}]`;
+}
+
+function fillCaselawTemplate(
+  card: ContractSourceCard,
+  partial: Record<string, string>,
+  missing: string[],
+): { text: string; missing: string[] } {
+  const filled: Record<string, string> = { ...partial };
+
+  // caseType: try inference from procedure_category, then docket_prefix.
+  if (!filled.caseType) {
+    const inferred = inferCaseTypeFromCategory(card.procedure_category) ??
+      (card.docket_prefix && card.docket_prefix.length <= 6 ? card.docket_prefix : undefined);
+    if (inferred) filled.caseType = inferred;
   }
+  // caseNumber: pull from card if extractor missed.
+  if (!filled.caseNumber && card.case_number) filled.caseNumber = card.case_number;
+
+  // Court / database substitute. Prefer extracted court from text/category.
+  const courtName = card.court ??
+    extractCourtFromText(card.citation) ??
+    extractCourtFromText(card.excerpt) ??
+    inferCourtFromCategory(card.procedure_category);
+
+  // Decide the parens block.
+  //   - If we have fullDate AND a database name, use canonical Rule-19 form.
+  //   - Else if we have a court name, render "({court}, [חסר: תאריך])" style.
+  //   - Else fall back to "([חסר: תאריך])".
+  let template: string;
+  const hasDb = Boolean(filled.database?.trim());
+  const hasDate = Boolean(filled.fullDate?.trim());
+  const partiesCollapsed = (!filled.party1?.trim() && !filled.party2?.trim());
+
+  // Template body before parens
+  let header: string;
+  if (partiesCollapsed) {
+    header = `${filled.caseType ?? placeholderFor("caseType")} ${filled.caseNumber ?? placeholderFor("caseNumber")} [חסר: שמות הצדדים]`;
+  } else {
+    const p1 = filled.party1?.trim() || placeholderFor("party1");
+    const p2 = filled.party2?.trim() || placeholderFor("party2");
+    header = `${filled.caseType ?? placeholderFor("caseType")} ${filled.caseNumber ?? placeholderFor("caseNumber")} ${p1} נ' ${p2}`;
+  }
+
+  let parens: string;
+  if (hasDb && hasDate) {
+    parens = `(פורסם ב${filled.database}, ${filled.fullDate})`;
+  } else if (courtName && !hasDate) {
+    parens = `(${courtName}, ${placeholderFor("fullDate")})`;
+  } else if (courtName && hasDate) {
+    parens = `(${courtName}, ${filled.fullDate})`;
+  } else if (hasDate) {
+    parens = `(${filled.fullDate})`;
+  } else {
+    parens = `(${placeholderFor("fullDate")})`;
+  }
+
+  template = `${header} ${parens}.`;
+
+  // Recompute missing list from what's still placeholder-tagged.
+  const stillMissing = new Set<string>(missing);
+  if (filled.caseType) stillMissing.delete("caseType");
+  if (filled.caseNumber) stillMissing.delete("caseNumber");
+  if (partiesCollapsed) {
+    stillMissing.add("party1");
+    stillMissing.add("party2");
+  }
+  if (!hasDate) stillMissing.add("fullDate");
+
+  return { text: template, missing: Array.from(stillMissing) };
+}
+
+// ── Statute resolution ───────────────────────────────────────────────
+function fillStatuteTemplate(
+  card: ContractSourceCard,
+  engineKey: string,
+  partial: Record<string, string>,
+  missing: string[],
+): { text: string; missing: string[] } {
+  const ruleSet = CITATION_RULES[engineKey];
+  if (!ruleSet) {
+    return { text: card.citation || placeholderFor("title"), missing };
+  }
+  const filled: Record<string, string> = { ...partial };
+  for (const f of missing) {
+    if (!filled[f]?.trim()) filled[f] = placeholderFor(f);
+  }
+  // Engine emit (interpolate template with missing placeholders).
+  let out = ruleSet.template.replace(/\{(\w+)\}/g, (_m, k) => filled[k] ?? "");
+  // If collection (ס"ח/ק"ת) is present but firstPage isn't, append explicit
+  // "[חסר: עמוד]" so reviewers see the gap. The base template would have
+  // emitted the page placeholder already, but for Rule 2.5 we want a clear
+  // marker even when the engine considers firstPage optional.
+  const hasColl = Boolean(filled.collection?.trim());
+  const hasPage = Boolean(filled.firstPage?.trim()) ||
+    /\[חסר: (?:עמוד|מספר\/עמוד)\]/.test(out);
+  if (hasColl && !hasPage) {
+    out = out.replace(/\.?\s*$/, "") + ` ${placeholderFor("firstPage")}.`;
+  }
+  // Tidy whitespace and stray punctuation.
+  out = out.replace(/[ \t]+/g, " ")
+    .replace(/,\s*,/g, ",")
+    .replace(/\(\s*\)/g, "")
+    .replace(/\s+,/g, ",")
+    .replace(/\s+\./g, ".")
+    .replace(/\.{2,}/g, ".")
+    .trim();
   return { text: out, missing };
 }
 
-function fieldLabelHebrew(field: string): string {
-  const k = field.toLowerCase();
-  if (k.includes("year")) return "שנה";
-  if (k.includes("page")) return "עמוד";
-  if (k.includes("name") && k.includes("law")) return "שם החוק";
-  if (k.includes("party")) return "שם בעל-דין";
-  if (k.includes("date")) return "תאריך";
-  if (k.includes("collection")) return "קובץ פרסום";
-  return field;
+// ── Article resolution (delegates to existing validator) ─────────────
+function tryArticle(card: ContractSourceCard, seed: string): string | null {
+  const seedText = seed || card.excerpt || "";
+  const out = validateArticleCitation(seedText, seedText);
+  return out && out.trim().length >= 12 ? out.trim() : null;
+}
+
+// ── Other / web / report / book ───────────────────────────────────────
+function deriveOther(card: ContractSourceCard, seed: string, ft: FootnoteSourceType):
+  { text: string; formatter: CanonicalFormatter; missing: string[] } {
+  const seedText = (seed || card.excerpt?.split("\n")[0] || "").trim();
+  const url = card.url?.trim();
+
+  if (ft === "web_source" || ft === "unknown") {
+    // Refuse weak/generic titles like "Law", "Document", "Untitled".
+    if (isWeakTitle(seedText)) {
+      const text = url ? `${placeholderFor("title")} — ${url}` : placeholderFor("title");
+      return { text, formatter: "fallback_weak_title_refused", missing: ["title"] };
+    }
+    // Acceptable web title — keep + url.
+    const text = url && !seedText.includes(url) ? `${seedText} — ${url}` : seedText;
+    return { text, formatter: "fallback_minimal", missing: [] };
+  }
+
+  // book / book_chapter / report / protocol — keep seed if substantive,
+  // append [חסר: שנה] when no year token.
+  if (!seedText || isWeakTitle(seedText)) {
+    const text = url ? `${placeholderFor("title")} — ${url}` : placeholderFor("title");
+    return { text, formatter: "fallback_weak_title_refused", missing: ["title"] };
+  }
+  const hasYear = /\((?:19|20)\d{2}\)|הת[שׁש][א-ת]*["״]/.test(seedText);
+  const text = hasYear ? seedText : `${seedText} ${placeholderFor("year")}`;
+  const missing = hasYear ? [] : ["year"];
+  return { text, formatter: "fallback_minimal", missing };
+}
+
+/**
+ * Engine-first canonical derivation. Mutates the card.
+ */
+export function deriveCanonicalCitation(card: ContractSourceCard): void {
+  const seed = (card.citation || "").trim();
+  const ft = mapToFootnoteType(card);
+  const engineKey = mapToEngineKey(card);
+  let formatter: CanonicalFormatter = "fallback_minimal";
+  let canonical = "";
+  let missing: string[] = [];
+  let resolverReason: string | undefined;
+
+  // ── CASELAW ──────────────────────────────────────────────────────
+  if (ft === "caselaw") {
+    const r = tryEngineCaselaw(card, seed);
+    if (r.resolved) {
+      canonical = r.canonical;
+      formatter = "engine_resolved";
+    } else {
+      resolverReason = r.reason;
+      // We have at least a docket → template-fill with placeholders.
+      const partial = r.partialFields ?? {};
+      const missingList = r.missingFields ?? [];
+      const haveDocket = Boolean(partial.caseNumber?.trim() || card.case_number?.trim());
+      if (haveDocket || card.procedure_category) {
+        const out = fillCaselawTemplate(card, partial, missingList);
+        canonical = out.text;
+        missing = out.missing;
+        formatter = "engine_template_filled_with_placeholders";
+      } else if (seed && seed.length >= 12) {
+        // No docket recoverable. Reuse seed only if it scores `strong`.
+        const q = scoreCitationQuality({ citation: seed, sourceType: card.source_type, caseNumber: card.case_number, url: card.url });
+        if (q.quality === "strong") {
+          canonical = seed;
+          formatter = "reused_existing_strong";
+        } else {
+          // Build a marker-only minimum to make the gap visible.
+          canonical = `${placeholderFor("caseType")} ${placeholderFor("caseNumber")} [חסר: שמות הצדדים] (${placeholderFor("fullDate")}).`;
+          missing = ["caseType", "caseNumber", "party1", "party2", "fullDate"];
+          formatter = "engine_unresolved_then_fallback";
+        }
+      } else {
+        canonical = `${placeholderFor("caseType")} ${placeholderFor("caseNumber")} [חסר: שמות הצדדים] (${placeholderFor("fullDate")}).`;
+        missing = ["caseType", "caseNumber", "party1", "party2", "fullDate"];
+        formatter = "fallback_minimal";
+      }
+    }
+  }
+  // ── STATUTE ──────────────────────────────────────────────────────
+  else if (ft === "statute" && engineKey) {
+    const r = resolveCitation(seed || "", "statute", { titleHint: seed });
+    if (r.resolved) {
+      canonical = r.canonical;
+      formatter = "engine_resolved";
+      // Post-pass: collection without firstPage → append [חסר: מספר/עמוד].
+      const hasColl = /ס["״]ח|ק["״]ת/.test(canonical);
+      const hasPage = /(?:ס["״]ח|ק["״]ת)\s+\d+/.test(canonical);
+      if (hasColl && !hasPage) {
+        canonical = canonical.replace(/\.?\s*$/, "") + ` ${placeholderFor("firstPage")}.`;
+        missing.push("firstPage");
+        formatter = "engine_template_filled_with_placeholders";
+      }
+    } else {
+      resolverReason = r.reason;
+      const partial = r.partialFields ?? {};
+      const missingList = r.missingFields ?? [];
+      const out = fillStatuteTemplate(card, engineKey, partial, missingList);
+      canonical = out.text;
+      missing = out.missing;
+      formatter = "engine_template_filled_with_placeholders";
+    }
+  }
+  // ── ARTICLE ──────────────────────────────────────────────────────
+  else if (ft === "journal_article") {
+    const out = tryArticle(card, seed);
+    if (out) {
+      canonical = out;
+      formatter = "engine_resolved";
+    } else if (seed) {
+      const q = scoreCitationQuality({ citation: seed, sourceType: card.source_type, url: card.url });
+      if (q.quality === "strong") {
+        canonical = seed;
+        formatter = "reused_existing_strong";
+      } else {
+        // Minimum: seed + [חסר: שנה] if year missing.
+        const hasYear = /\((?:19|20)\d{2}\)|הת[שׁש]/.test(seed);
+        canonical = hasYear ? seed : `${seed} ${placeholderFor("year")}`;
+        if (!hasYear) missing.push("year");
+        formatter = "fallback_minimal";
+      }
+    } else {
+      canonical = placeholderFor("title");
+      missing.push("title");
+      formatter = "fallback_minimal";
+    }
+  }
+  // ── OTHER ────────────────────────────────────────────────────────
+  else {
+    const out = deriveOther(card, seed, ft);
+    canonical = out.text;
+    formatter = out.formatter;
+    missing = out.missing;
+  }
+
+  card.canonicalCitation = canonical;
+  card.canonicalFormatter = formatter;
+  card.canonicalMissingFields = Array.from(new Set(missing));
+  card.canonicalResolverReason = resolverReason;
+  card.canonicalHasPlaceholders = hasPlaceholderMarker(canonical);
+
+  // Final quality score on the rendered canonical (NOT the seed) so
+  // downstream Rule 37 / classifier read the user-visible quality.
+  const q = scoreCitationQuality({
+    citation: canonical,
+    sourceType: card.source_type,
+    caseNumber: card.case_number,
+    url: card.url,
+  });
+  card.citationQuality = q.quality;
 }
 
 /** Walk a pack (any number of group arrays) and attach canonicalCitation + IDs.
@@ -386,6 +667,64 @@ export function attachCanonicalCitations(cards: ContractSourceCard[]): void {
   assignContractIds(cards);
   for (const c of cards) deriveCanonicalCitation(c);
 }
+
+/** Build the citation_assembly telemetry block from a derived card pack.
+ *  Pure function — call after attachCanonicalCitations. */
+export function buildCitationAssemblyTelemetry(
+  cards: ContractSourceCard[],
+): CitationAssemblyTelemetry {
+  const tel: CitationAssemblyTelemetry = {
+    total: cards.length,
+    source_type_normalized: 0,
+    engine_first_attempted: 0,
+    seed_reuse_rejected: 0,
+    template_filled: 0,
+    placeholder_inserted: 0,
+    missing_fields_counts: {},
+    reused_existing_strong: 0,
+    fallback_used: 0,
+    examples: [],
+  };
+  for (const c of cards) {
+    if (normalizeSourceTypeKey(c.source_type) !== c.source_type.toLowerCase()) {
+      tel.source_type_normalized++;
+    }
+    const ft = mapToFootnoteType(c);
+    if (ft === "caselaw" || ft === "statute" || ft === "journal_article") {
+      tel.engine_first_attempted++;
+    }
+    if (c.canonicalFormatter === "engine_template_filled_with_placeholders") tel.template_filled++;
+    if (c.canonicalHasPlaceholders) tel.placeholder_inserted++;
+    if (c.canonicalFormatter === "reused_existing_strong") tel.reused_existing_strong++;
+    if (c.canonicalFormatter === "fallback_minimal" ||
+        c.canonicalFormatter === "fallback_weak_title_refused" ||
+        c.canonicalFormatter === "engine_unresolved_then_fallback") {
+      tel.fallback_used++;
+    }
+    // Track when the seed would have been reused under the OLD shortcut
+    // but we rejected it because the engine ran first.
+    if ((c.citation || "").trim().length >= 12 &&
+        c.canonicalFormatter !== "reused_existing_strong" &&
+        (ft === "caselaw" || ft === "statute")) {
+      tel.seed_reuse_rejected++;
+    }
+    for (const f of c.canonicalMissingFields ?? []) {
+      tel.missing_fields_counts[f] = (tel.missing_fields_counts[f] ?? 0) + 1;
+    }
+    if (tel.examples.length < 8 && (c.canonicalHasPlaceholders ||
+        c.canonicalFormatter === "fallback_weak_title_refused")) {
+      tel.examples.push({
+        source_id: c.contractId ?? `id-${c.id}`,
+        source_type: c.source_type,
+        formatter: c.canonicalFormatter ?? "fallback_minimal",
+        canonical: c.canonicalCitation ?? "",
+        missing_fields: c.canonicalMissingFields ?? [],
+      });
+    }
+  }
+  return tel;
+}
+
 
 // ─── Marker parser ──────────────────────────────────────────────────
 
