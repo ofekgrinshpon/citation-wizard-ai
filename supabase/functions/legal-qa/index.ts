@@ -6533,6 +6533,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         };
         any_flag: boolean;
       };
+      // Phase 6 contract-mode orphan prevention (Step 6b post-pass).
+      skipped_orphan_prevention?: number;
+      skipped_sources?: string[];
     } = {
       triggered: false,
       named_statutes: [],
@@ -7155,9 +7158,30 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           reorderedFootnotes.push({ ...fn, number: i });
         }
       }
-      // Add any footnotes not referenced in body at the end
+      // Add any footnotes not referenced in body at the end.
+      // Orphan-prevention guard (contract mode): a statute-completion footnote
+      // that has no surviving body marker by this point would otherwise be
+      // appended as an orphan. In contract mode we drop it instead and log
+      // skipped_orphan_prevention/skipped_sources telemetry. The contract
+      // pipeline never relies on these footnotes existing without anchors.
+      const _contractOnSC = modeProfile.cardClaimContract === "on";
       for (const fn of footnotes) {
         if (!appearanceOrder.includes(fn.number)) {
+          if (_contractOnSC && fn.source === "perplexity_completion") {
+            statuteCompletionTelemetry.skipped_orphan_prevention =
+              (statuteCompletionTelemetry.skipped_orphan_prevention || 0) + 1;
+            (statuteCompletionTelemetry.skipped_sources ||= []).push(
+              String(fn.citation || "").slice(0, 120)
+            );
+            statuteCompletionTelemetry.completed_count = Math.max(
+              0,
+              (statuteCompletionTelemetry.completed_count || 0) - 1
+            );
+            console.warn(
+              `[statute-completion] orphan-prevention: dropped FN (no body marker) → ${String(fn.citation || "").slice(0, 80)}`
+            );
+            continue;
+          }
           reorderedFootnotes.push({ ...fn, number: reorderedFootnotes.length + 1 });
         }
       }
