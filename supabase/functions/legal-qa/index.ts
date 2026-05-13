@@ -3042,6 +3042,11 @@ ${(verify.fullText as string).slice(0, 50000)}
     let discoverySanitized:
       Awaited<ReturnType<typeof runOpenWebDiscovery>>["sanitized_fields"] = null;
     let discoveryPromise: Promise<void> | null = null;
+    // Phase 4 — Source Pack Gate result. Computed AFTER the final source pack
+    // is assembled (post round-2), BEFORE the drafter runs. Soft mode never
+    // blocks; the banner is appended to the drafter's task instructions and
+    // the result is logged under research_safeguards.source_pack_gate.
+    let sourcePackGateResult: SourcePackGateResult | null = null;
     if (enableDeepPipeline && !evalForceLegacy) {
       // Live progress: frame is essentially "request received & validated".
       // Emit it as complete immediately so the user sees instant feedback.
