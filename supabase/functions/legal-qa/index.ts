@@ -9071,6 +9071,10 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               bannerAttached: false,
             },
             role_classifier: { fallback_count: roleClassifierFallbackCount },
+            // Phase 6.5b — role-gap targeted retrieval telemetry.
+            role_gap_targeted_retrieval: roleGapRetrievalTelemetry,
+            // Phase 6.5b — orphan FN prevention (deterministic path).
+            orphan_fn_prevention: orphanFnPreventionTelemetry,
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
