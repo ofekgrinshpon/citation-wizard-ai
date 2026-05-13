@@ -6892,7 +6892,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         const q = scoreCitationQuality({ citation: baseCit, sourceType: baseType, url: baseFn?.url });
         const unbalanced = !hasBalancedParens(baseCit);
         const truncated = looksTruncated(baseCit);
-        if (q.quality !== "strong" || unbalanced || truncated) {
+        if (q.quality !== "strong" || unbalanced || truncated || reg.usedFallback) {
           // Repeat the FULL original citation as a new footnote — never
           // build a "שם" / "לעיל ה\"ש" form on top of a weak/truncated source.
           const reasons = [...q.reasons];
