@@ -8290,9 +8290,10 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Peek at the body to decide whether to wrap in SSE. Only Deep mode opts in
-  // (Fast finishes well within the default HTTP window). The body is consumed
-  // here, so the SSE wrapper rebuilds a fresh Request for the inner handler.
+  // Peek at the body to decide whether to wrap in SSE. Both Fast and Deep
+  // research opt in when the client sends `stream: true` so the UI can render
+  // live stage / draft progress. The body is consumed here, so the SSE wrapper
+  // rebuilds a fresh Request for the inner handler.
   let parsedBody: Record<string, unknown> | null = null;
   try {
     const cloned = req.clone();
@@ -8302,9 +8303,7 @@ serve(async (req) => {
   }
 
   const wantsStream = Boolean(
-    parsedBody &&
-      parsedBody.stream === true &&
-      parsedBody.depth === "deep",
+    parsedBody && parsedBody.stream === true,
   );
 
   if (wantsStream && parsedBody) {
