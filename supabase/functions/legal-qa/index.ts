@@ -8584,6 +8584,10 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               timed_out: false,
               forced_eval_gaps: [],
             },
+            card_claim_contract: {
+              mode: modeProfile.cardClaimContract,
+              ...cardClaimTelemetry,
+            },
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
