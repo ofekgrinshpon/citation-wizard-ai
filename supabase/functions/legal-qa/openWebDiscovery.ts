@@ -128,8 +128,10 @@ export function shouldRunDiscovery(
   return { triggered: triggers.length > 0, triggers };
 }
 
+// Hebrew text — \b is ASCII-only, so we use plain alternation. The phrases
+// are content-bearing enough that substring matching is safe.
 const CURRENT_CONTEXT_RE =
-  /\b(כיום|נכון לעכשיו|נכון להיום|השנה|לאחרונה|בימים אלה|עדכני|מעודכן|תיקון אחרון|נוסח מעודכן)\b/;
+  /(כיום|נכון לעכשיו|נכון להיום|השנה|לאחרונה|בימים אלה|עדכני|מעודכן|תיקון אחרון|נוסח מעודכן)/;
 
 // ---------------------------------------------------------------------------
 // Sanitization
