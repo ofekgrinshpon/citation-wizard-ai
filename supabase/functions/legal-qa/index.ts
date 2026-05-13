@@ -22,6 +22,13 @@ import {
   raceWithTimeout,
   type LegalIssueRoute,
 } from "./legalIssueRouter.ts";
+import {
+  shouldRunDiscovery,
+  runOpenWebDiscovery,
+  buildDiscoveryTelemetry,
+  type OpenWebDiscovery,
+  type DiscoveryDecision,
+} from "./openWebDiscovery.ts";
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
   BANNED_KEYS,
