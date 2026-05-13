@@ -29,6 +29,10 @@ import {
   type OpenWebDiscovery,
   type DiscoveryDecision,
 } from "./openWebDiscovery.ts";
+import {
+  checkSourcePackGate,
+  type SourcePackGateResult,
+} from "./entityResolution.ts";
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
   BANNED_KEYS,
