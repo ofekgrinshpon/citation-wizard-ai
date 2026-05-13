@@ -210,6 +210,8 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     targetedGapRetrieval: "essential_only",
     maxTargetedGapQueries: 2,
     targetedGapTimeoutMs: 8000,
+    // Phase 6: contract on by default; falls back to legacy when no markers.
+    cardClaimContract: "on",
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
