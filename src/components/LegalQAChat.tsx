@@ -1898,14 +1898,8 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
   return (
     <div className="flex flex-col h-full" style={{ direction: "rtl" }}>
-      {/* Top section: Disclaimer + Mode Cards */}
+      {/* Top section: Mode Cards */}
       <div className="px-2 sm:px-4 pt-4 pb-2 space-y-3">
-        <Alert className="border-destructive/30 bg-destructive/5">
-          <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
-          <AlertDescription className="text-destructive text-[10px]">
-            תשובות ReLex הן בגדר עזר בלבד ואינן מהוות ייעוץ משפטי. יש לבדוק את המקורות באופן עצמאי.
-          </AlertDescription>
-        </Alert>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {TASK_MODES.map((m) => {
