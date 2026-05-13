@@ -5063,7 +5063,13 @@ ${(verify.fullText as string).slice(0, 50000)}
       if (roleBlock) taskInstructions = `${roleBlock}\n\n${taskInstructions}`;
     }
     if (gateV2Result?.bannerAttached) {
-      const v2Banner = buildGateV2Banner(gateV2Result);
+      // If role-gap retrieval ran but blockingGaps remain → switch to the
+      // stronger qualify banner. Otherwise use the standard tightened banner.
+      const stillUnsatisfied =
+        roleGapRetrievalTelemetry.ran && !gateV2Result.satisfied && gateV2Result.blockingGaps.length > 0;
+      const v2Banner = stillUnsatisfied
+        ? buildGateV2QualifyBanner(gateV2Result)
+        : buildGateV2Banner(gateV2Result);
       if (v2Banner) taskInstructions = `${v2Banner}\n\n${taskInstructions}`;
     }
     const citationInstructions = buildCitationInstructions();
