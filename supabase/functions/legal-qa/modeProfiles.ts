@@ -107,6 +107,16 @@ export interface ModeProfile {
    * retrieval in later phases. See `openWebDiscovery.ts` for full contract.
    */
   openWebDiscovery: "off" | "conditional" | "always";
+
+  // ─── Phase 4 (research safeguards) — Source Pack Gate ───
+  /**
+   * "off"    → never runs.
+   * "soft"   → runs and logs telemetry; never blocks. Banner attached to
+   *            drafter prompt when required slots are missing.
+   * "strict" → blocks the drafter when blocking_missing is non-empty
+   *            (NOT YET WIRED to the drafter — soft phase only).
+   */
+  sourcePackGate: "off" | "soft" | "strict";
 }
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
