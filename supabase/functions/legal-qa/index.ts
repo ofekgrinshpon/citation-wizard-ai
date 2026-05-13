@@ -4079,7 +4079,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     let researchPlan: LegalResearchPlan | null = null;
     let researchPlanFallback = false;
     let gateV2Result: SourcePackGateV2Result | null = null;
-    let gateV2ResultBefore: SourcePackGateV2Result | null = null;
+    // gateV2ResultBefore snapshot is captured into telemetry below if rescue runs.
     let roleClassifierFallbackCount = 0;
     // Phase 6.5b — role-gap targeted retrieval telemetry.
     type GapTelemetryRow = { role: string; required: number; found: number; priority: string };
