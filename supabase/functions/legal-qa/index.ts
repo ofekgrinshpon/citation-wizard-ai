@@ -51,7 +51,7 @@ import {
 } from "./contracts.ts";
 import { runLegalResearchPlanner } from "./legalResearchPlanner.ts";
 import { classifySourceRoles, type ClassifierInputCard } from "./sourceRoleClassifier.ts";
-import { evaluateSourcePackGateV2, buildGateV2Banner } from "./sourcePackGateV2.ts";
+import { evaluateSourcePackGateV2, buildGateV2Banner, buildGateV2QualifyBanner, buildQueriesForMissingRole } from "./sourcePackGateV2.ts";
 import { renderRoleAwareCard, buildRoleUsageBlock, type RoleAwareCardInput } from "./roleAwarePromptHelper.ts";
 import { scoreCitationQuality } from "./citationQualityScorer.ts";
 import { mapToDecompositionV2 } from "./legalResearchDecomposition.ts";
@@ -4079,7 +4079,32 @@ ${(verify.fullText as string).slice(0, 50000)}
     let researchPlan: LegalResearchPlan | null = null;
     let researchPlanFallback = false;
     let gateV2Result: SourcePackGateV2Result | null = null;
+    // gateV2ResultBefore snapshot is captured into telemetry below if rescue runs.
     let roleClassifierFallbackCount = 0;
+    // Phase 6.5b — role-gap targeted retrieval telemetry.
+    type GapTelemetryRow = { role: string; required: number; found: number; priority: string };
+    type GateSnap = { satisfied: boolean; coverage: Record<string, number>; blockingGaps: Array<{ role: string; required: number; found: number }> };
+    let roleGapRetrievalTelemetry: {
+      ran: boolean;
+      reason?: string;
+      gaps_before: GapTelemetryRow[];
+      queries_by_role: Record<string, string[]>;
+      added_cards_by_role: Record<string, number>;
+      gate_before: GateSnap | null;
+      gate_after: GateSnap | null;
+      duration_ms: number;
+      timed_out: boolean;
+    } = {
+      ran: false,
+      gaps_before: [],
+      queries_by_role: {},
+      added_cards_by_role: {},
+      gate_before: null,
+      gate_after: null,
+      duration_ms: 0,
+      timed_out: false,
+    };
+    const orphanFnPreventionTelemetry = { dropped_count: 0, dropped_samples: [] as string[] };
     if (enableDeepPipeline) {
       emitStage("source_pack", "running");
       sourcePack = sourceCards.map((sc) => {
@@ -4755,7 +4780,249 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     }
 
-    // Build source catalog string for the AI — role-aware when planner ran.
+    // ========= Phase 6.5b — Role-Gap Targeted Retrieval =========
+    // After Gate V2 detects missing required roles, fire a bounded local-DB
+    // retrieval round per missing role using planner-derived queries. New
+    // candidates are reclassified, scored, merged, and Gate V2 is recomputed
+    // once. Trusted retrieval ONLY (search_legal_chunks_text). Discovery
+    // URLs never enter the pack here. Soft mode: never blocks.
+    const ROLE_GAP_MAX_QUERIES_TOTAL = 8;
+    const ROLE_GAP_TIMEOUT_MS = 12000;
+    if (
+      enableDeepPipeline &&
+      !evalForceLegacy &&
+      modeProfile.roleBasedRetrieval === "on" &&
+      researchPlan &&
+      sourcePackV2 &&
+      gateV2Result &&
+      gateV2Result.blockingGaps.length > 0
+    ) {
+      const tGapStart = Date.now();
+      // capture snapshot of pre-rescue gate state (telemetry only)
+      const gapsBefore: GapTelemetryRow[] = gateV2Result.gaps.map((g) => ({
+        role: g.role, required: g.required, found: g.found, priority: g.priority,
+      }));
+      const gateBeforeSnap: GateSnap = {
+        satisfied: gateV2Result.satisfied,
+        coverage: gateV2Result.coverage as Record<string, number>,
+        blockingGaps: gateV2Result.blockingGaps.map((g) => ({ role: g.role, required: g.required, found: g.found })),
+      };
+      roleGapRetrievalTelemetry.gaps_before = gapsBefore;
+      roleGapRetrievalTelemetry.gate_before = gateBeforeSnap;
+
+      // 1) Build per-role query lists (must-roles first, then should).
+      const queriesByRole: Record<string, string[]> = {};
+      const flatQueries: Array<{ role: string; q: string }> = [];
+      const ordered = [
+        ...gateV2Result.blockingGaps,
+        ...gateV2Result.gaps.filter((g) => g.priority === "should"),
+      ];
+      for (const gap of ordered) {
+        const qs = buildQueriesForMissingRole(gap.role, researchPlan, question);
+        if (qs.length === 0) continue;
+        queriesByRole[gap.role] = qs;
+        for (const q of qs) {
+          if (flatQueries.length >= ROLE_GAP_MAX_QUERIES_TOTAL) break;
+          flatQueries.push({ role: gap.role, q });
+        }
+        if (flatQueries.length >= ROLE_GAP_MAX_QUERIES_TOTAL) break;
+      }
+      roleGapRetrievalTelemetry.queries_by_role = queriesByRole;
+
+      if (flatQueries.length === 0) {
+        roleGapRetrievalTelemetry.ran = false;
+        roleGapRetrievalTelemetry.reason = "no_queries_built";
+        roleGapRetrievalTelemetry.duration_ms = Date.now() - tGapStart;
+      } else {
+        roleGapRetrievalTelemetry.ran = true;
+
+        const existingDocKeys = new Set<string>();
+        for (const sc of sourceCards) {
+          existingDocKeys.add(`${sc.citation}|${sc.url ?? ""}`);
+        }
+
+        const work = (async () => {
+          const results = await Promise.all(flatQueries.map(async ({ role, q }) => {
+            try {
+              const { data } = await adminClient.rpc("search_legal_chunks_text", {
+                search_query: q,
+                match_count: 5,
+              });
+              return { role, q, matches: Array.isArray(data) ? data : [] };
+            } catch (e) {
+              console.warn(`[role-gap] query "${q.slice(0, 40)}…" failed:`, (e as Error).message);
+              return { role, q, matches: [] as Array<Record<string, unknown>> };
+            }
+          }));
+
+          const stagedCards: SourceCard[] = [];
+          const stagedPackEntries: typeof sourcePack = [];
+          const addedByRole: Record<string, number> = {};
+          const addedDocKeys = new Set<string>();
+          // Map staged contractId-candidate-numericId → intended role
+          // (classifier will re-confirm; this just helps telemetry attribution).
+          const intendedRoleByNumericId = new Map<number, string>();
+
+          for (const { role, matches } of results) {
+            for (const m of matches) {
+              const docKey = `${(m as { document_citation?: string }).document_citation ?? ""}|${(m as { source_url?: string }).source_url ?? ""}`;
+              if (existingDocKeys.has(docKey) || addedDocKeys.has(docKey)) continue;
+              addedDocKeys.add(docKey);
+              const mm = m as Record<string, unknown>;
+              const sourceLabel =
+                mm.source_type === "caselaw" ? "פסיקה" :
+                mm.source_type === "knesset_research" ? "מחקר כנסת / חקיקה" :
+                mm.source_type === "journal_article" ? "מאמר אקדמי" :
+                mm.source_type === "israeli_law" ? "חקיקה ישראלית" : String(mm.source_type ?? "מקור משפטי");
+              const meta = (mm.metadata || {}) as Record<string, unknown>;
+              const newCard: SourceCard = {
+                id: cardId++,
+                citation: String(mm.document_citation ?? mm.document_title ?? "מקור משפטי"),
+                source_type: sourceLabel,
+                url: (mm.source_url as string | undefined) || undefined,
+                provenance: "local",
+                excerpt: String(mm.chunk_content ?? "").slice(0, 400),
+                case_number: mm.source_type === "caselaw" ? (meta.case_number as string | undefined) : undefined,
+                relevance_score: typeof mm.similarity === "number" ? (mm.similarity as number) : 0.5,
+              };
+              stagedCards.push(newCard);
+              intendedRoleByNumericId.set(newCard.id, role);
+              stagedPackEntries.push({
+                source_id: newCard.id,
+                title: newCard.citation,
+                source_type: newCard.source_type,
+                authority_class: classifyAuthority(newCard.source_type, newCard.citation, newCard.url),
+                url: newCard.url,
+                provenance: "local",
+                excerpt: newCard.excerpt,
+                case_number: newCard.case_number,
+                usable_for_analysis: (newCard.excerpt?.length ?? 0) > 300,
+                usable_for_citation: newCard.citation.length > 15,
+                anchor_present: Boolean(newCard.url) || true,
+                relevance_score: newCard.relevance_score ?? 0.5,
+              });
+              addedByRole[role] = (addedByRole[role] ?? 0) + 1;
+            }
+          }
+          return { stagedCards, stagedPackEntries, addedByRole, intendedRoleByNumericId };
+        })();
+
+        const timeoutP = new Promise<"timeout">((resolve) =>
+          setTimeout(() => resolve("timeout"), ROLE_GAP_TIMEOUT_MS),
+        );
+        const raced = await Promise.race([work, timeoutP]);
+
+        if (raced === "timeout") {
+          roleGapRetrievalTelemetry.timed_out = true;
+          roleGapRetrievalTelemetry.duration_ms = Date.now() - tGapStart;
+          console.warn(`[role-gap] timed out after ${ROLE_GAP_TIMEOUT_MS}ms; pack preserved`);
+        } else {
+          const { stagedCards, stagedPackEntries, addedByRole } = raced;
+          roleGapRetrievalTelemetry.added_cards_by_role = addedByRole;
+
+          if (stagedCards.length > 0) {
+            for (const c of stagedCards) sourceCards.push(c);
+            for (const pe of stagedPackEntries) sourcePack.push(pe);
+
+            // Reassign canonical citations on new cards if contract is on.
+            if (modeProfile.cardClaimContract !== "off") {
+              attachCanonicalCitations(sourceCards as unknown as ContractSourceCard[]);
+            }
+
+            // Reassemble pack V2.
+            sourcePackV2 = assembleSourcePack(sourcePack as InternalSourcePackEntry[]);
+
+            // Re-classify only the newly added cards.
+            try {
+              const newClassifierInputs: ClassifierInputCard[] = stagedCards
+                .map((sc) => {
+                  const cid = (sc as unknown as ContractSourceCard).contractId;
+                  if (!cid) return null;
+                  return {
+                    contractId: cid,
+                    numericId: sc.id,
+                    title: sc.citation,
+                    sourceType: sc.source_type,
+                    court: sc.docket_prefix || sc.procedure_category,
+                    caseNumber: sc.case_number,
+                    excerpt: sc.excerpt,
+                  } as ClassifierInputCard;
+                })
+                .filter((x): x is ClassifierInputCard => x !== null);
+
+              if (newClassifierInputs.length > 0) {
+                const classOut2 = await classifySourceRoles(newClassifierInputs, researchPlan!);
+                for (const r of classOut2.runs) stageRuns.push(r);
+                roleClassifierFallbackCount += classOut2.fallbackCount;
+                const itemByCid2 = new Map(classOut2.items.map((i) => [i.contractId, i]));
+                const cidByNumericId2 = new Map<number, string>();
+                for (const sc of sourceCards) {
+                  const cid = (sc as unknown as ContractSourceCard).contractId;
+                  if (cid) cidByNumericId2.set(sc.id, cid);
+                }
+                const allItems2 = [
+                  ...sourcePackV2.coreSources,
+                  ...sourcePackV2.supportingSources,
+                  ...sourcePackV2.secondarySources,
+                ];
+                for (const it of allItems2) {
+                  const numericId = Number(String(it.sourceId).replace(/^src-/, ""));
+                  const cid = cidByNumericId2.get(numericId);
+                  if (!cid) continue;
+                  it.contractId = cid;
+                  // Preserve previously-classified items; only fill new ones.
+                  if (!it.role) {
+                    const cls = itemByCid2.get(cid);
+                    if (cls) {
+                      it.role = cls.role;
+                      it.roleConfidence = cls.roleConfidence;
+                      it.roleRationale = cls.rationale;
+                    }
+                  }
+                  if (!it.citationQuality) {
+                    const sc = sourceCards.find((s) => s.id === numericId);
+                    const canonical = (sc as unknown as ContractSourceCard | undefined)?.canonicalCitation;
+                    const q = scoreCitationQuality({
+                      citation: canonical || sc?.citation || it.title,
+                      sourceType: it.sourceType,
+                      caseNumber: it.caseNumber,
+                      url: it.url,
+                    });
+                    it.citationQuality = q.quality;
+                    it.citationQualityReasons = q.reasons;
+                  }
+                  roleClassByContractId.set(cid, {
+                    role: it.role,
+                    roleConfidence: it.roleConfidence,
+                    citationQuality: it.citationQuality,
+                  });
+                }
+              }
+            } catch (e) {
+              console.warn("[role-gap] reclassify failed (non-fatal):", e);
+            }
+
+            // Recompute Gate V2 once.
+            gateV2Result = evaluateSourcePackGateV2(researchPlan!, sourcePackV2, {
+              mode: modeProfile.roleBasedRetrieval,
+              attachBanner: modeProfile.roleBasedRetrieval === "on",
+            });
+            console.log(
+              `[role-gap] added=${stagedCards.length} cards; gate-after satisfied=${gateV2Result.satisfied} gaps=[${gateV2Result.gaps.map((g)=>`${g.role}:${g.found}/${g.required}/${g.priority}`).join(",")}]`,
+            );
+          }
+
+          roleGapRetrievalTelemetry.gate_after = {
+            satisfied: gateV2Result.satisfied,
+            coverage: gateV2Result.coverage as Record<string, number>,
+            blockingGaps: gateV2Result.blockingGaps.map((g) => ({ role: g.role, required: g.required, found: g.found })),
+          };
+          roleGapRetrievalTelemetry.duration_ms = Date.now() - tGapStart;
+        }
+      }
+    }
+
+
     const sourceCatalog = (researchPlan && roleClassByContractId.size > 0)
       ? sourceCards.map((sc) => {
           const cid = (sc as unknown as ContractSourceCard).contractId;
@@ -4796,7 +5063,13 @@ ${(verify.fullText as string).slice(0, 50000)}
       if (roleBlock) taskInstructions = `${roleBlock}\n\n${taskInstructions}`;
     }
     if (gateV2Result?.bannerAttached) {
-      const v2Banner = buildGateV2Banner(gateV2Result);
+      // If role-gap retrieval ran but blockingGaps remain → switch to the
+      // stronger qualify banner. Otherwise use the standard tightened banner.
+      const stillUnsatisfied =
+        roleGapRetrievalTelemetry.ran && !gateV2Result.satisfied && gateV2Result.blockingGaps.length > 0;
+      const v2Banner = stillUnsatisfied
+        ? buildGateV2QualifyBanner(gateV2Result)
+        : buildGateV2Banner(gateV2Result);
       if (v2Banner) taskInstructions = `${v2Banner}\n\n${taskInstructions}`;
     }
     const citationInstructions = buildCitationInstructions();
@@ -7316,6 +7589,24 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             );
             continue;
           }
+          // Phase 6.5b — generalized orphan-FN prevention. When the
+          // deterministic contract path is on, drop ANY footnote that has no
+          // surviving body marker. This prevents the role-gap retrieval (and
+          // any other producer of generated footnotes) from leaving orphans
+          // in the final output. Logged separately under
+          // research_safeguards.orphan_fn_prevention.dropped_count.
+          if (_contractOnSC) {
+            orphanFnPreventionTelemetry.dropped_count++;
+            if (orphanFnPreventionTelemetry.dropped_samples.length < 8) {
+              orphanFnPreventionTelemetry.dropped_samples.push(
+                String(fn.citation || "").slice(0, 120),
+              );
+            }
+            console.warn(
+              `[orphan-fn-prevention] dropped FN #${fn.number} (no body marker) → ${String(fn.citation || "").slice(0, 80)}`,
+            );
+            continue;
+          }
           reorderedFootnotes.push({ ...fn, number: reorderedFootnotes.length + 1 });
         }
       }
@@ -8798,6 +9089,10 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               bannerAttached: false,
             },
             role_classifier: { fallback_count: roleClassifierFallbackCount },
+            // Phase 6.5b — role-gap targeted retrieval telemetry.
+            role_gap_targeted_retrieval: roleGapRetrievalTelemetry,
+            // Phase 6.5b — orphan FN prevention (deterministic path).
+            orphan_fn_prevention: orphanFnPreventionTelemetry,
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
