@@ -8134,6 +8134,29 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           // Mode profile actually used for this run. Read with:
           //   select metadata->'profile_used' from qa_logs ...
           profile_used: { depth: researchDepth, ...modeProfile },
+          // Phase 1+ (research safeguards): aggregated telemetry for the new
+          // router / discovery / source_pack_gate / domain_exclusion stages.
+          // Phases 2-6 will append more keys; readers should treat unknown
+          // keys as forward-compat additions.
+          research_safeguards: {
+            router: {
+              ran: routerRun !== null,
+              timed_out: routerTimedOut,
+              duration_ms: routerRun?.duration_ms ?? null,
+              status: routerRun?.status ?? "not_run",
+              query_type: routerRoute?.query_type ?? null,
+              legal_domain: routerRoute?.legal_domain ?? null,
+              confidence: routerRoute?.confidence ?? null,
+              forbidden_domains: routerRoute?.forbidden_domains ?? [],
+              forbidden_topics: routerRoute?.forbidden_topics ?? [],
+              target_statute: routerRoute?.target_statute ?? null,
+              requires_current_context:
+                routerRoute?.requires_current_context ?? null,
+              ambiguous_terms_count: routerRoute
+                ? Object.keys(routerRoute.ambiguous_terms).length
+                : 0,
+            },
+          },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
           ...(evalForceLegacy ? { eval_force_legacy: true } : {}),
