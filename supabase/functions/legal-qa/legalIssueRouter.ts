@@ -215,9 +215,11 @@ export async function routeLegalIssue(
       ? data.forbidden_topics.filter((t) => typeof t === "string" && t.trim().length > 0)
       : [],
     target_statute: {
-      name: data.target_statute?.name ?? null,
-      section: data.target_statute?.section ?? null,
-      amendment: data.target_statute?.amendment ?? null,
+      name: normalizeStatuteField(data.target_statute?.name),
+      section: normalizeStatuteField(data.target_statute?.section),
+      // Coerce sentinel strings ("None"/"none"/"null"/"-"/"") that some
+      // planner outputs return as text instead of JSON null.
+      amendment: normalizeAmendment(data.target_statute?.amendment),
     },
     requires_current_context: data.requires_current_context === true,
     ambiguous_terms:
