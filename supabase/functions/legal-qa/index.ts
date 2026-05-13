@@ -9042,6 +9042,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           // Rule 37 short-form generator: every repeated body citation
           // becomes its own NEW footnote (שם / לעיל ה"ש N / ס' X ל[חוק]).
           rule37_short_forms: rule37Telemetry,
+          // HTML-entity decode + Hebrew-year corruption fixes applied to
+          // footnote citations before Rule 37 / final rendering.
+          citation_normalization: citationNormalization,
           // Fix 2: post-draft statute completion telemetry.
           statute_completion: statuteCompletionTelemetry,
           // Type-aware citation router pass on chapter footnotes (academic only).
