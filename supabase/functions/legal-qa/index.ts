@@ -8205,6 +8205,21 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
                 ? Object.keys(routerRoute.ambiguous_terms).length
                 : 0,
             },
+            // Phase 3: open web discovery telemetry. Always present (even
+            // when not triggered) so downstream queries can rely on the
+            // shape. See `buildDiscoveryTelemetry` for field semantics.
+            discovery: (() => {
+              try {
+                return buildDiscoveryTelemetry({
+                  decision: discoveryDecision,
+                  run: discoveryRun,
+                  discovery: discoveryResult,
+                  sanitized_fields: discoverySanitizedFields,
+                });
+              } catch (_e) {
+                return { triggered: discoveryDecision.triggered, triggers: discoveryDecision.triggers, ran: false, status: "telemetry_error" };
+              }
+            })(),
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
