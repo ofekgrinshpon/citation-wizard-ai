@@ -75,10 +75,12 @@ Deno.test("raceWithTimeout: returns the underlying result when fast", async () =
 });
 
 Deno.test("raceWithTimeout: synthesizes a timeout StageRun when slow", async () => {
+  let slowTimer: number | undefined;
   const slow = new Promise<{ data: null; run: StageRun }>((resolve) => {
-    setTimeout(() => resolve({ data: null, run: fakeRun("success") }), 200);
+    slowTimer = setTimeout(() => resolve({ data: null, run: fakeRun("success") }), 200) as unknown as number;
   });
   const result = await raceWithTimeout(slow, 30, "legal_issue_router");
+  if (slowTimer !== undefined) clearTimeout(slowTimer);
   assertEquals(result.timed_out, true);
   assertEquals(result.data, null);
   assertEquals(result.run.status, "timeout");
