@@ -5109,6 +5109,18 @@ ${subIssuesForDeep.map((s, i) => `${i + 1}. **${s}**`).join("\n")}
 **מסקנה**
 ${conclusionSentenceTarget}. סגור את הטיעון. אם הוצגה אי-ודאות בשורה התחתונה — חזור עליה כאן בקצרה.`;
 
+      // When the Card→Claim contract is active we replace every legacy [N]
+      // mention inside structureBlock with [cite:S#] so the structural
+      // scaffolding stops cueing the drafter back into the legacy
+      // footnote-block path. Done as a string swap to avoid duplicating the
+      // 70-line scaffolding above.
+      const structureBlockResolved = contractOn
+        ? structureBlock
+            .replace(/\[N\]/g, "[cite:S#]")
+            .replace(/הערות שוליים/g, "סמני [cite:S#]")
+            .replace(/הערות שוליים/g, "סמני [cite:S#]")
+        : structureBlock;
+
       // ─── Footnote floor language (both modes = strong target, quality > quantity) ─
       // Deep keeps a higher target/cap than Fast (set per profile), but the
       // Deep keeps the harder floor wording: the 2026-04 eval showed that
