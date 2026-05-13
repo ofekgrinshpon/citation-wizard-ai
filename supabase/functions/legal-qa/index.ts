@@ -4457,7 +4457,7 @@ ${(verify.fullText as string).slice(0, 50000)}
                 `gaps ${gapsBefore.length}→${after.missing.length}; ` +
                 `core ${countsBefore.core}→${countsAfter.core} (${Date.now() - tR2Start}ms)`,
               );
-              void timedOut; // silence unused
+              
             }
           }
         }
