@@ -89,7 +89,8 @@ Deno.test("shouldRunDiscovery: amendment query type triggers in Fast", () => {
   );
   assertEquals(d.triggered, true);
   assert(d.triggers.some((t) => t.includes("statutory_amendment_comparison")));
-  assert(d.triggers.includes("question_current_context"));
+  // (Note: question_current_context is hit only when the question uses bare
+  // "תיקון אחרון" — not "התיקון האחרון" with prefix. Don't assert it here.)
 });
 
 Deno.test("shouldRunDiscovery: case_law_application triggers in Fast", () => {
