@@ -4391,14 +4391,12 @@ ${(verify.fullText as string).slice(0, 50000)}
               return { newCardsAdded, newDocKeys, stagedCards, stagedPackEntries };
             })();
 
-            let timedOut = false;
             const timeoutPromise = new Promise<"timeout">((resolve) =>
               setTimeout(() => resolve("timeout"), modeProfile.targetedGapTimeoutMs),
             );
             const raced = await Promise.race([work, timeoutPromise]);
 
             if (raced === "timeout") {
-              timedOut = true;
               writeTelemetry(true, "timeout", {
                 gaps_eligible: eligible,
                 gap_queries: gapQs,
