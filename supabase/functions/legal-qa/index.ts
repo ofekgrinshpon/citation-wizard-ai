@@ -6533,6 +6533,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         };
         any_flag: boolean;
       };
+      // Phase 6 contract-mode orphan prevention (Step 6b post-pass).
+      skipped_orphan_prevention?: number;
+      skipped_sources?: string[];
     } = {
       triggered: false,
       named_statutes: [],
