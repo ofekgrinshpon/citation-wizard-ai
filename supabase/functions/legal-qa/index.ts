@@ -8037,6 +8037,12 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
         const sourcePackV2Summary = sourcePackV2 ? summarizeSourcePack(sourcePackV2) : null;
         const claimMapV2Summary = claimMapV2 ? summarizeClaimMapV2(claimMapV2) : null;
         const draftingPath: "structured" | "fallback" = draftingInput && useNewDrafter ? "structured" : "fallback";
+        // Phase 3: await Open Web Discovery (if it kicked off) before writing
+        // telemetry. Bounded by the per-request abort signal — the inner call
+        // never blocks decomposition / drafting.
+        if (discoveryPromise) {
+          try { await discoveryPromise; } catch (_e) { /* already logged */ }
+        }
         metadata = {
           decomposition: decomposedPlan?.decomposition ?? null,
           decomposition_v2: decompositionV2,
