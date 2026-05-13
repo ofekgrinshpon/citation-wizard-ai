@@ -58,6 +58,10 @@ export interface LegalSourcePackItem {
   provenanceInternal?: LegalProvenanceInternal;
   /** INTERNAL — retrieval-stage similarity (0–1). Drives source-pack promotion gate. */
   relevanceScore?: number;
+  /** Phase 6 — stable Card→Claim contract ID, e.g. "S3". */
+  contractId?: string;
+  /** Phase 6 — deterministic citation string used by the contract footnote builder. */
+  canonicalCitation?: string;
   metadata?: Record<string, unknown>;
 }
 

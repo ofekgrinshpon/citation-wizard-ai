@@ -51,6 +51,15 @@ import { mapToClaimMapV2, summarizeClaimMapV2 } from "./legalClaimMap.ts";
 import { LEGAL_RESEARCH_MODELS } from "./legalResearchModels.ts";
 import { runShadowAbComparison, buildLegacyShadowPrompt } from "./shadowAbLogger.ts";
 import { runAnchorPass, applyAnchorPatches, type AnchorPassSourcePackItem, type AnchorPassClaim } from "./anchorPass.ts";
+import {
+  attachCanonicalCitations,
+  parseMarkers,
+  buildFootnotes,
+  buildTelemetry as buildContractTelemetry,
+  EMPTY_TELEMETRY as EMPTY_CONTRACT_TELEMETRY,
+  type CardClaimContractTelemetry,
+  type ContractSourceCard,
+} from "./cardClaimContract.ts";
 import { resolveCitation } from "../_shared/citationResolver.ts";
 import { routeChapterFootnote, type FootnoteSourceType } from "../_shared/chapterCitationRouter.ts";
 import { lookupPartyNames } from "../_shared/partyLookup.ts";
@@ -4625,6 +4634,15 @@ ${(verify.fullText as string).slice(0, 50000)}
 
     const combinedContext = truncateContext(contextParts.join("\n"), contextCharLimit);
 
+    // Phase 6 — Card→Claim Citation Contract: assign stable S# IDs and
+    // derive canonicalCitation per card via the shared ReLex citation engine.
+    // Safe to call when contract is "off" (cost is per-card metadata only;
+    // catalog still includes the S# tag for forward-compat). Falls back to
+    // the legacy AI-footnote pipeline when no markers are emitted.
+    if (modeProfile.cardClaimContract !== "off") {
+      attachCanonicalCitations(sourceCards as unknown as ContractSourceCard[]);
+    }
+
     // Build source catalog string for the AI — tag local vs Perplexity distinctly
     const sourceCatalog = sourceCards.map(
       (sc) => {
@@ -4632,7 +4650,9 @@ ${(verify.fullText as string).slice(0, 50000)}
           sc.provenance === "local"     ? " [מאומת – מקור אמת לתוכן]" :
           sc.provenance === "perplexity" ? " [חיצוני – למטא-דאטה בלבד]" :
           sc.provenance === "document"   ? " [מסמך משתמש]" : "";
-        return `[${sc.id}]${tag} ${sc.citation}${sc.url ? ` (${sc.url})` : ""} — ${sc.source_type}`;
+        const sid = (sc as unknown as ContractSourceCard).contractId;
+        const sidTag = sid ? ` {${sid}}` : "";
+        return `[${sc.id}]${sidTag}${tag} ${sc.citation}${sc.url ? ` (${sc.url})` : ""} — ${sc.source_type}`;
       }
     ).join("\n");
 
@@ -5187,7 +5207,15 @@ ${claimMapJson}
 - שנים עבריות עם 'ה' (התשס"א).
 
 ═══ רשימת מקורות זמינים ═══
+כל מקור מתויג ב-{S#} לחוזה ציטוט (Card→Claim).
 ${sourceCatalog}
+${modeProfile.cardClaimContract !== "off" ? `
+═══ חוזה ציטוט Card→Claim (חובה — בנוסף ל-[N]) ═══
+- לאחר כל קביעה מהותית הוסף סמן בצורה: [cite:S#] (ניתן לאחד מקורות: [cite:S1,S3]).
+- השתמש אך ורק במזהי {S#} שמופיעים ברשימת המקורות לעיל. **אל תמציא** מזהים שלא קיימים.
+- אסור [cite:S#] ללא כרטיס מקור תומך — אם אין מקור, אל תוסיף סמן ואל תכניס טענה הדורשת אסמכתא.
+- מקם את הסמן בסוף המשפט/הקביעה, אחרי הפיסוק. דוגמה: "...ההלכה הקיימת.[1] [cite:S3]".
+- ניתן (ומומלץ) להשתמש ב-[cite:S#] גם בלי [N] תואם — הבנייה הסופית של הערות-השוליים תיגזר אוטומטית מהסמנים האלה.` : ""}
 
 ═══ הקשר מהמקורות ═══
 ${combinedContext}
@@ -5703,8 +5731,68 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       }
     }
 
+    // ========= Step 5a: Card→Claim Citation Contract (Phase 6) =========
+    // When markers `[cite:S#]` are present we deterministically rebuild
+    // body+footnotes from sourceCards canonicalCitation. Legacy AI-footnote
+    // pipeline below is bypassed for that request. When markers are absent
+    // (or contract is "off"/"shadow"), the legacy pipeline runs unchanged.
+    let cardClaimTelemetry: CardClaimContractTelemetry = { ...EMPTY_CONTRACT_TELEMETRY };
+    if (modeProfile.cardClaimContract !== "off") {
+      try {
+        const cards = sourceCards as unknown as ContractSourceCard[];
+        const parse = parseMarkers(answerBody, cards);
+        if (parse.markers.length === 0) {
+          cardClaimTelemetry = buildContractTelemetry({
+            used: false,
+            legacy_fallback: true,
+            reason: "no_cite_markers_found",
+            parse,
+          });
+          console.log(`[card-claim] no markers found — legacy fallback (mode=${modeProfile.cardClaimContract})`);
+        } else if (parse.uniqueValidSourceIds.length === 0) {
+          cardClaimTelemetry = buildContractTelemetry({
+            used: false,
+            legacy_fallback: true,
+            reason: "all_invalid_ids",
+            parse,
+          });
+          console.warn(`[card-claim] markers present but all invalid IDs — legacy fallback`);
+        } else if (modeProfile.cardClaimContract === "on" && parse.markers.length >= 2) {
+          const build = buildFootnotes(answerBody, parse, cards);
+          answerBody = build.body;
+          aiFootnoteLines.length = 0;
+          for (const fn of build.footnotes) {
+            aiFootnoteLines.push({ num: fn.number, text: fn.citation });
+          }
+          cardClaimTelemetry = buildContractTelemetry({
+            used: true,
+            legacy_fallback: false,
+            parse,
+            build,
+          });
+          console.log(`[card-claim] used=true markers=${parse.markers.length} unique_ids=${parse.uniqueValidSourceIds.length} fns=${build.footnotes.length} formatter=${JSON.stringify(build.formatterUsage)}`);
+        } else {
+          cardClaimTelemetry = buildContractTelemetry({
+            used: false,
+            legacy_fallback: true,
+            reason: "drafter_wiring_pending",
+            parse,
+          });
+          console.log(`[card-claim] shadow telemetry only — markers=${parse.markers.length} mode=${modeProfile.cardClaimContract}`);
+        }
+      } catch (err) {
+        console.error("[card-claim] unexpected error — legacy fallback:", (err as Error).message);
+        cardClaimTelemetry = buildContractTelemetry({
+          used: false,
+          legacy_fallback: true,
+          reason: "drafter_wiring_pending",
+        });
+      }
+    } else {
+      cardClaimTelemetry.reason = "mode_off";
+    }
+
     // ========= Step 5b: Match AI footnotes to source cards for provenance =========
-    // STRICT matcher: only attach a card's URL when we have high-confidence identifier overlap.
     // Returns null when uncertain — the footnote will be dropped to avoid wrong-URL leaks.
     const STOPWORDS = new Set([
       "בית", "המשפט", "העליון", "המחוזי", "השלום", "של", "את", "לפי", "על", "עם",
@@ -8495,6 +8583,10 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               duration_ms: 0,
               timed_out: false,
               forced_eval_gaps: [],
+            },
+            card_claim_contract: {
+              mode: modeProfile.cardClaimContract,
+              ...cardClaimTelemetry,
             },
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),

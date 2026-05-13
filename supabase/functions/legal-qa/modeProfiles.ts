@@ -143,6 +143,17 @@ export interface ModeProfile {
   /** Wall-clock budget for the entire round-2 block. On timeout the original
    *  sourcePackV2 is preserved and telemetry records `timed_out=true`. */
   targetedGapTimeoutMs: number;
+
+  // ─── Phase 6 (Card→Claim Citation Contract) ───
+  /**
+   * "off"    → contract block not added to drafter prompt; legacy parse only.
+   * "shadow" → contract block added; markers parsed for telemetry only;
+   *            legacy footnote pipeline still produces the final footnotes.
+   * "on"     → contract block added; if markers_found ≥ 2 the deterministic
+   *            builder REPLACES legacy parsing for body+footnotes; otherwise
+   *            legacy fallback runs unchanged.
+   */
+  cardClaimContract: "off" | "shadow" | "on";
 }
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
@@ -199,6 +210,8 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     targetedGapRetrieval: "essential_only",
     maxTargetedGapQueries: 2,
     targetedGapTimeoutMs: 8000,
+    // Phase 6: contract on by default; falls back to legacy when no markers.
+    cardClaimContract: "on",
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
@@ -251,6 +264,8 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     targetedGapRetrieval: "full",
     maxTargetedGapQueries: 6,
     targetedGapTimeoutMs: 20000,
+    // Phase 6: contract on by default; falls back to legacy when no markers.
+    cardClaimContract: "on",
   },
 };
 
