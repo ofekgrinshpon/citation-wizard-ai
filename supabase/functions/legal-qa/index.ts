@@ -5226,6 +5226,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         console.error("[critic] unexpected error (non-fatal):", (criticErr as Error).message);
         chapterCritic = { result: null, revised: false, revision_status: "error" };
       }
+    }
 
     // ========= Step 4a.2: Coherence critic (Global Paper Coherence) =========
     // Audit the chapter draft against the cumulative PaperMemory derived from
