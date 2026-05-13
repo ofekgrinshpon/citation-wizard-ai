@@ -107,6 +107,16 @@ export interface ModeProfile {
    * retrieval in later phases. See `openWebDiscovery.ts` for full contract.
    */
   openWebDiscovery: "off" | "conditional" | "always";
+
+  // ─── Phase 4 (research safeguards) — Source Pack Gate ───
+  /**
+   * "off"    → never runs.
+   * "soft"   → runs and logs telemetry; never blocks. Banner attached to
+   *            drafter prompt when required slots are missing.
+   * "strict" → blocks the drafter when blocking_missing is non-empty
+   *            (NOT YET WIRED to the drafter — soft phase only).
+   */
+  sourcePackGate: "off" | "soft" | "strict";
 }
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
@@ -154,6 +164,9 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     // Phase 3: Fast runs discovery only when triggers fire (current-context,
     // statute target, low confidence, etc.) — keeps latency bounded.
     openWebDiscovery: "conditional",
+    // Phase 4: Soft mode — log only, never block. Banner attached to drafter
+    // when required slots are missing for the routed query type.
+    sourcePackGate: "soft",
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
@@ -198,6 +211,8 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     // `shouldRunDiscovery` adds a `deep_opportunistic` trigger when nothing
     // else fired.
     openWebDiscovery: "conditional",
+    // Phase 4: Soft mode — Deep also log-only for now.
+    sourcePackGate: "soft",
   },
 };
 

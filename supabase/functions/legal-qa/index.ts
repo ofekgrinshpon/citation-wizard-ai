@@ -29,6 +29,10 @@ import {
   type OpenWebDiscovery,
   type DiscoveryDecision,
 } from "./openWebDiscovery.ts";
+import {
+  checkSourcePackGate,
+  type SourcePackGateResult,
+} from "./entityResolution.ts";
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import {
   BANNED_KEYS,
@@ -3038,6 +3042,11 @@ ${(verify.fullText as string).slice(0, 50000)}
     let discoverySanitized:
       Awaited<ReturnType<typeof runOpenWebDiscovery>>["sanitized_fields"] = null;
     let discoveryPromise: Promise<void> | null = null;
+    // Phase 4 — Source Pack Gate result. Computed AFTER the final source pack
+    // is assembled (post round-2), BEFORE the drafter runs. Soft mode never
+    // blocks; the banner is appended to the drafter's task instructions and
+    // the result is logged under research_safeguards.source_pack_gate.
+    let sourcePackGateResult: SourcePackGateResult | null = null;
     if (enableDeepPipeline && !evalForceLegacy) {
       // Live progress: frame is essentially "request received & validated".
       // Emit it as complete immediately so the user sees instant feedback.
@@ -4273,6 +4282,27 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     }
 
+    // ========= Phase 4: Source Pack Gate (soft mode — log + banner only) ====
+    // Runs after the final source pack (post round-2) is assembled and before
+    // claim_map / drafting. Soft mode never blocks; we only attach a banner
+    // to taskInstructions later (see banner injection block) and log
+    // telemetry under research_safeguards.source_pack_gate.
+    if (enableDeepPipeline && modeProfile.sourcePackGate !== "off") {
+      try {
+        sourcePackGateResult = checkSourcePackGate(
+          routerRoute,
+          sourcePackV2,
+          question,
+          modeProfile.sourcePackGate,
+        );
+        console.log(
+          `[source_pack_gate] mode=${sourcePackGateResult.mode} ok=${sourcePackGateResult.ok} missing=[${sourcePackGateResult.missing.join(",")}] blocking=[${sourcePackGateResult.blocking_missing.join(",")}]`,
+        );
+      } catch (gateErr) {
+        console.error("[source_pack_gate] failed (non-fatal):", gateErr);
+      }
+    }
+
     // ========= Stage D: Claim Map (legal_research only, INTERNAL) =========
     let claimMap: ClaimMap | null = null;
     let claimMapAllowedCount = 0;
@@ -4400,7 +4430,14 @@ ${(verify.fullText as string).slice(0, 50000)}
     ).join("\n");
 
     // ========= Step 4: Gemini call — plain text, NO tool_call =========
-    const taskInstructions = getTaskModeInstructions(taskMode);
+    let taskInstructions = getTaskModeInstructions(taskMode);
+    // Phase 4: prepend the soft-gate banner when the gate flagged missing
+    // slots. We mutate `taskInstructions` (still a string going into the
+    // drafter prompt) so the banner reaches every drafter variant without
+    // touching the per-variant prompt builders.
+    if (sourcePackGateResult?.banner) {
+      taskInstructions = `${sourcePackGateResult.banner}\n\n${taskInstructions}`;
+    }
     const citationInstructions = buildCitationInstructions();
 
     // For academic chapter-class writes (write_chapter / write_introduction /
@@ -8225,6 +8262,16 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               discovery: discoveryResult,
               sanitized_fields: discoverySanitized,
             }),
+            source_pack_gate: sourcePackGateResult
+              ? {
+                  mode: sourcePackGateResult.mode,
+                  ok: sourcePackGateResult.ok,
+                  missing: sourcePackGateResult.missing,
+                  blocking_missing: sourcePackGateResult.blocking_missing,
+                  banner_attached: !!sourcePackGateResult.banner,
+                  checks_run: sourcePackGateResult.checks_run,
+                }
+              : { mode: modeProfile.sourcePackGate, ok: true, missing: [], blocking_missing: [], banner_attached: false, checks_run: [] },
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
