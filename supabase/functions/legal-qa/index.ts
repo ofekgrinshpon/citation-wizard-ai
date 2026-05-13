@@ -6601,13 +6601,103 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       legislation_section_count: 0,
       legislation_repeat_dropped_count: 0,
       shortname_fallback_count: 0,
+      skipped_low_quality_count: 0,
+      skipped_low_quality_samples: [] as Array<{
+        fn_number: number;
+        quality: string;
+        reasons: string[];
+        citation_preview: string;
+      }>,
       samples: [] as Array<{
         original_marker: string;
         source_type: string;
         short_name: string;
-        form: "shem" | "shem_pinpoint" | "supra" | "supra_pinpoint" | "legislation_section" | "legislation_dropped";
+        form: "shem" | "shem_pinpoint" | "supra" | "supra_pinpoint" | "legislation_section" | "legislation_dropped" | "full_repeat_low_quality";
       }>,
     };
+
+    // ── HTML-entity normalisation for footnote citations ──
+    // Decodes &#8217; / &rsquo; / &amp; etc. that occasionally bleed through
+    // from external sources and corrupt Hebrew year strings (e.g. "התשל\"ג-8217").
+    const HTML_ENTITY_MAP: Record<string, string> = {
+      "&amp;": "&",
+      "&lt;": "<",
+      "&gt;": ">",
+      "&quot;": '"',
+      "&apos;": "'",
+      "&nbsp;": " ",
+      "&rsquo;": "\u2019",
+      "&lsquo;": "\u2018",
+      "&rdquo;": "\u201D",
+      "&ldquo;": "\u201C",
+      "&ndash;": "\u2013",
+      "&mdash;": "\u2014",
+    };
+    const citationNormalization = {
+      html_entity_fixes: 0,
+      year_corruption_fixes: 0,
+      samples: [] as Array<{ before: string; after: string }>,
+    };
+    function decodeHtmlEntities(input: string): string {
+      if (!input) return input;
+      let out = input;
+      // Named entities
+      out = out.replace(/&(amp|lt|gt|quot|apos|nbsp|rsquo|lsquo|rdquo|ldquo|ndash|mdash);/g, (_m, name) => HTML_ENTITY_MAP[`&${name};`] ?? _m);
+      // Numeric decimal entities
+      out = out.replace(/&#(\d+);/g, (_m, dec) => {
+        const cp = parseInt(dec, 10);
+        if (Number.isFinite(cp) && cp > 0 && cp < 0x10ffff) return String.fromCodePoint(cp);
+        return _m;
+      });
+      // Numeric hex entities
+      out = out.replace(/&#x([0-9a-fA-F]+);/g, (_m, hex) => {
+        const cp = parseInt(hex, 16);
+        if (Number.isFinite(cp) && cp > 0 && cp < 0x10ffff) return String.fromCodePoint(cp);
+        return _m;
+      });
+      // Year corruption: Hebrew year followed by stray entity-digit fragment
+      // e.g. "התשל\"ג-8217" / "תשע\"ב-8221" — the 4-digit number is a leaked
+      // entity codepoint (8216–8221 = curly quotes), not a year.
+      out = out.replace(/(הת?ש[א-ת]{1,4}["״'׳]?[א-ת]?)[-–](82(1[6-9]|2[01]))(?!\d)/g, (_m, yr) => {
+        citationNormalization.year_corruption_fixes++;
+        return yr;
+      });
+      return out;
+    }
+    // Apply entity normalisation to every footnote in place.
+    for (const fn of footnotes) {
+      const before = fn.citation || "";
+      const after = decodeHtmlEntities(before);
+      if (before !== after) {
+        citationNormalization.html_entity_fixes++;
+        if (citationNormalization.samples.length < 5) {
+          citationNormalization.samples.push({
+            before: before.slice(0, 120),
+            after: after.slice(0, 120),
+          });
+        }
+        fn.citation = after;
+      }
+    }
+
+    // ── Balanced-parens / truncation guard ──
+    function hasBalancedParens(s: string): boolean {
+      let depth = 0;
+      for (const ch of s) {
+        if (ch === "(") depth++;
+        else if (ch === ")") { depth--; if (depth < 0) return false; }
+      }
+      return depth === 0;
+    }
+    function looksTruncated(s: string): boolean {
+      const t = (s || "").trim();
+      if (!t) return true;
+      if (/,\s*$/.test(t)) return true;
+      if (/\s+ל\s*$/.test(t)) return true;
+      // Ends mid-Hebrew word with no closing punctuation, very short → truncated.
+      if (t.length < 30 && /[א-ת]$/.test(t) && !/[).!?״"׳']$/.test(t)) return true;
+      return false;
+    }
 
     // Build inverse map: emitted footnote # → SourceCard (when matched)
     const fnNumberToCard = new Map<number, SourceCard>();
