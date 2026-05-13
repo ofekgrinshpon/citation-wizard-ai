@@ -4104,7 +4104,14 @@ ${(verify.fullText as string).slice(0, 50000)}
       duration_ms: 0,
       timed_out: false,
     };
-    const orphanFnPreventionTelemetry = { dropped_count: 0, dropped_samples: [] as string[] };
+    const orphanFnPreventionTelemetry = {
+      dropped_count: 0,
+      dropped_samples: [] as string[],
+      post_rule37_dropped: 0,
+      post_rule37_dropped_samples: [] as Array<{ number: number; citation: string }>,
+      post_rule37_stripped_markers: [] as number[],
+      ambiguous_superscript_splits: [] as Array<{ run: string; resolved: number[] }>,
+    };
     if (enableDeepPipeline) {
       emitStage("source_pack", "running");
       sourcePack = sourceCards.map((sc) => {
@@ -6893,8 +6900,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         const unbalanced = !hasBalancedParens(baseCit);
         const truncated = looksTruncated(baseCit);
         if (q.quality !== "strong" || unbalanced || truncated || reg.usedFallback) {
-          // Repeat the FULL original citation as a new footnote — never
-          // build a "שם" / "לעיל ה\"ש" form on top of a weak/truncated source.
+          // Marker-preserving fallback: do NOT create a new footnote and do NOT
+          // rewrite the marker. Leave [firstFnNum] in place so the body marker
+          // continues pointing at the original full citation. This guarantees
+          // every footnote we emit has a body marker (no orphans, no extras).
           const reasons = [...q.reasons];
           if (unbalanced) reasons.push("unbalanced_parentheses");
           if (truncated) reasons.push("truncated");
@@ -6908,27 +6917,21 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
               citation_preview: baseCit.slice(0, 120),
             });
           }
-          const newFnNum = nextFnNum++;
-          const card = fnNumberToCard.get(firstFnNum);
-          newRepeatFootnotes.push({
-            number: newFnNum,
-            citation: baseCit,
-            source_type: baseFn?.source_type || card?.source_type || "unknown",
-            url: baseFn?.url || card?.url,
-            source: baseFn?.source || card?.provenance || "local",
-          });
-          rewriteOps.push({ start: occ.start, end: occ.pinpointEnd, replacement: `[${newFnNum}]` });
-          rule37Telemetry.total_repeats_expanded++;
           if (rule37Telemetry.samples.length < 5) {
             rule37Telemetry.samples.push({
               original_marker: `[${occ.oldId}]`,
               source_type: baseFn?.source_type || "unknown",
               short_name: reg.shortName,
-              form: "full_repeat_low_quality",
+              form: "marker_preserved_low_quality" as any,
             });
           }
-          lastEmittedFnNumber = newFnNum;
-          oldIdToNewNumber.set(newFnNum, newFnNum);
+          // Strip the redundant pinpoint from body if present (the original FN
+          // already covers the source); keep marker untouched.
+          if (occ.pinpoint && occ.pinpointEnd > occ.start + `[${occ.oldId}]`.length) {
+            const markerEnd = occ.start + `[${occ.oldId}]`.length;
+            rewriteOps.push({ start: markerEnd, end: occ.pinpointEnd, replacement: "" });
+          }
+          lastEmittedFnNumber = firstFnNum;
           continue;
         }
       }
@@ -7672,13 +7675,51 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       return parseInt(s.split("").map(c => reverseMap[c] || c).join(""), 10);
     };
 
-    // Collect footnote numbers in order of first appearance
+    // Disambiguate adjacent superscript runs against the known FN-number set.
+    // Example: ¹⁰² when FN 102 doesn't exist but FN 10 + FN 2 do → split as [10,2].
+    // Greedy longest-match against existingFnNumbers; falls back to whole-run parse.
+    const existingFnNumbers = new Set<number>(footnotes.map((f) => f.number));
+    const splitSuperscriptRun = (run: string): number[] => {
+      const whole = superscriptToNum(run);
+      if (Number.isFinite(whole) && existingFnNumbers.has(whole)) return [whole];
+      // Greedy left-to-right: try longest valid prefix, then recurse.
+      const out: number[] = [];
+      let i = 0;
+      while (i < run.length) {
+        let matched = -1;
+        let matchedLen = 0;
+        for (let len = Math.min(3, run.length - i); len >= 1; len--) {
+          const cand = superscriptToNum(run.slice(i, i + len));
+          if (Number.isFinite(cand) && existingFnNumbers.has(cand)) {
+            matched = cand;
+            matchedLen = len;
+            break;
+          }
+        }
+        if (matched < 0) {
+          // No valid split — bail out and accept the whole-run parse.
+          return Number.isFinite(whole) ? [whole] : [];
+        }
+        out.push(matched);
+        i += matchedLen;
+      }
+      if (out.length > 1) {
+        if (orphanFnPreventionTelemetry.ambiguous_superscript_splits.length < 8) {
+          orphanFnPreventionTelemetry.ambiguous_superscript_splits.push({ run, resolved: out });
+        }
+      }
+      return out;
+    };
+
+    // Collect footnote numbers in order of first appearance (with disambiguation)
     const appearanceOrder: number[] = [];
     let supMatch;
     while ((supMatch = superscriptPattern.exec(answer)) !== null) {
-      const num = superscriptToNum(supMatch[0]);
-      if (!isNaN(num) && !appearanceOrder.includes(num)) {
-        appearanceOrder.push(num);
+      const nums = splitSuperscriptRun(supMatch[0]);
+      for (const num of nums) {
+        if (!isNaN(num) && !appearanceOrder.includes(num)) {
+          appearanceOrder.push(num);
+        }
       }
     }
 
@@ -7769,6 +7810,127 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
 
       footnotes.length = 0;
       footnotes.push(...reorderedFootnotes);
+    }
+
+    // ========= Post-Rule37 invariant: body markers ↔ footnotes =========
+    // Universal (mode-agnostic) final pass:
+    //   - drop any footnote whose number isn't referenced in the body;
+    //   - strip any superscript marker whose number has no footnote.
+    // Logged as research_safeguards.orphan_fn_prevention.post_rule37_*.
+    {
+      const finalFnNums = new Set<number>(footnotes.map((f) => f.number));
+      const bodyNums = new Set<number>();
+      // Re-scan with the now-final FN set so disambiguation is correct.
+      const finalSupRe = /[\u2070\u00B9\u00B2\u00B3\u2074-\u2079]+/g;
+      const splitFinal = (run: string): number[] => {
+        const whole = superscriptToNum(run);
+        if (Number.isFinite(whole) && finalFnNums.has(whole)) return [whole];
+        const out: number[] = [];
+        let i = 0;
+        while (i < run.length) {
+          let matched = -1;
+          let matchedLen = 0;
+          for (let len = Math.min(3, run.length - i); len >= 1; len--) {
+            const cand = superscriptToNum(run.slice(i, i + len));
+            if (Number.isFinite(cand) && finalFnNums.has(cand)) {
+              matched = cand;
+              matchedLen = len;
+              break;
+            }
+          }
+          if (matched < 0) return Number.isFinite(whole) ? [whole] : [];
+          out.push(matched);
+          i += matchedLen;
+        }
+        return out;
+      };
+      let m2;
+      while ((m2 = finalSupRe.exec(answer)) !== null) {
+        for (const n of splitFinal(m2[0])) bodyNums.add(n);
+      }
+      // Strip body markers with no FN.
+      const strippedMarkers: number[] = [];
+      answer = answer.replace(/[\u2070\u00B9\u00B2\u00B3\u2074-\u2079]+/g, (run) => {
+        const nums = splitFinal(run);
+        const kept = nums.filter((n) => finalFnNums.has(n));
+        for (const n of nums) if (!finalFnNums.has(n)) strippedMarkers.push(n);
+        if (kept.length === nums.length) return run;
+        if (kept.length === 0) return "";
+        return kept.map((n) => toSuperscript(n)).join("");
+      });
+      if (strippedMarkers.length > 0) {
+        orphanFnPreventionTelemetry.post_rule37_stripped_markers.push(...strippedMarkers);
+        console.warn(`[post-rule37] stripped ${strippedMarkers.length} body marker(s) with no FN: ${strippedMarkers.join(",")}`);
+      }
+      // Drop FNs with no body marker (universal — not gated on contract mode).
+      const survivors: typeof footnotes = [];
+      for (const fn of footnotes) {
+        if (bodyNums.has(fn.number)) {
+          survivors.push(fn);
+        } else {
+          orphanFnPreventionTelemetry.post_rule37_dropped++;
+          if (orphanFnPreventionTelemetry.post_rule37_dropped_samples.length < 8) {
+            orphanFnPreventionTelemetry.post_rule37_dropped_samples.push({
+              number: fn.number,
+              citation: String(fn.citation || "").slice(0, 120),
+            });
+          }
+          console.warn(`[post-rule37] dropped orphan FN #${fn.number}: ${String(fn.citation || "").slice(0, 80)}`);
+        }
+      }
+      if (survivors.length !== footnotes.length) {
+        // Compact-renumber survivors by appearance order in body.
+        const finalAppearance: number[] = [];
+        const finalSupRe2 = /[\u2070\u00B9\u00B2\u00B3\u2074-\u2079]+/g;
+        const survivorNums = new Set(survivors.map((f) => f.number));
+        const splitSurv = (run: string): number[] => {
+          const out: number[] = [];
+          let i = 0;
+          while (i < run.length) {
+            let matched = -1, matchedLen = 0;
+            for (let len = Math.min(3, run.length - i); len >= 1; len--) {
+              const c = superscriptToNum(run.slice(i, i + len));
+              if (Number.isFinite(c) && survivorNums.has(c)) { matched = c; matchedLen = len; break; }
+            }
+            if (matched < 0) return [];
+            out.push(matched); i += matchedLen;
+          }
+          return out;
+        };
+        let m3;
+        while ((m3 = finalSupRe2.exec(answer)) !== null) {
+          for (const n of splitSurv(m3[0])) {
+            if (!finalAppearance.includes(n)) finalAppearance.push(n);
+          }
+        }
+        const remap = new Map<number, number>();
+        finalAppearance.forEach((old, idx) => remap.set(old, idx + 1));
+        // Also include any survivor not in body (shouldn't happen, but be safe)
+        for (const fn of survivors) if (!remap.has(fn.number)) remap.set(fn.number, remap.size + 1);
+        for (const [oldNum, newNum] of remap) {
+          answer = answer.replaceAll(toSuperscript(oldNum), `__POSTR37_${newNum}__`);
+        }
+        for (const [, newNum] of remap) {
+          answer = answer.replaceAll(`__POSTR37_${newNum}__`, toSuperscript(newNum));
+        }
+        // Update supra cross-refs inside citations.
+        const SUPRA_QUOTE2 = '["\u05F4\u201C\u201D]';
+        const SUPRA_PATTERN2 = `לעיל\\s+ה${SUPRA_QUOTE2}ש\\s+`;
+        const renumbered = survivors.map((fn) => ({
+          ...fn,
+          number: remap.get(fn.number) ?? fn.number,
+          citation: fn.citation.replace(
+            new RegExp(SUPRA_PATTERN2 + '(\\d{1,3})', 'g'),
+            (match: string, num: string) => {
+              const oldN = parseInt(num, 10);
+              const newN = remap.get(oldN);
+              return newN ? `לעיל ה"ש ${newN}` : match;
+            }
+          ),
+        })).sort((a, b) => a.number - b.number);
+        footnotes.length = 0;
+        footnotes.push(...renumbered);
+      }
     }
 
     // ========= Step 7: Post-processing =========
