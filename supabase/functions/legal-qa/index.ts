@@ -4282,6 +4282,27 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     }
 
+    // ========= Phase 4: Source Pack Gate (soft mode — log + banner only) ====
+    // Runs after the final source pack (post round-2) is assembled and before
+    // claim_map / drafting. Soft mode never blocks; we only attach a banner
+    // to taskInstructions later (see banner injection block) and log
+    // telemetry under research_safeguards.source_pack_gate.
+    if (enableDeepPipeline && modeProfile.sourcePackGate !== "off") {
+      try {
+        sourcePackGateResult = checkSourcePackGate(
+          routerRoute,
+          sourcePackV2,
+          question,
+          modeProfile.sourcePackGate,
+        );
+        console.log(
+          `[source_pack_gate] mode=${sourcePackGateResult.mode} ok=${sourcePackGateResult.ok} missing=[${sourcePackGateResult.missing.join(",")}] blocking=[${sourcePackGateResult.blocking_missing.join(",")}]`,
+        );
+      } catch (gateErr) {
+        console.error("[source_pack_gate] failed (non-fatal):", gateErr);
+      }
+    }
+
     // ========= Stage D: Claim Map (legal_research only, INTERNAL) =========
     let claimMap: ClaimMap | null = null;
     let claimMapAllowedCount = 0;
