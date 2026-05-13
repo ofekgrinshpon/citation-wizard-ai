@@ -3036,9 +3036,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     let discoveryRun: StageRun | null = null;
     let discoveryResult: OpenWebDiscovery | null = null;
     let discoverySanitized:
-      | ReturnType<typeof buildDiscoveryTelemetry> extends infer _T
-        ? Awaited<ReturnType<typeof runOpenWebDiscovery>>["sanitized_fields"]
-        : never = null as any;
+      Awaited<ReturnType<typeof runOpenWebDiscovery>>["sanitized_fields"] = null;
     let discoveryPromise: Promise<void> | null = null;
     if (enableDeepPipeline && !evalForceLegacy) {
       // Live progress: frame is essentially "request received & validated".
