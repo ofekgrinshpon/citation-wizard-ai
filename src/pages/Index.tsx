@@ -756,6 +756,7 @@ const Index = () => {
     { id: "freetext", label: "אזכור אחיד", icon: "✨" },
     { id: "batch", label: "הערות שוליים", icon: "📑" },
     { id: "bibliography", label: "ביבליוגרפיה", icon: "📚" },
+    { id: "documentcheck", label: "בדיקת מסמך", icon: "📄" },
   ];
 
   
