@@ -4079,7 +4079,32 @@ ${(verify.fullText as string).slice(0, 50000)}
     let researchPlan: LegalResearchPlan | null = null;
     let researchPlanFallback = false;
     let gateV2Result: SourcePackGateV2Result | null = null;
+    let gateV2ResultBefore: SourcePackGateV2Result | null = null;
     let roleClassifierFallbackCount = 0;
+    // Phase 6.5b — role-gap targeted retrieval telemetry.
+    type GapTelemetryRow = { role: string; required: number; found: number; priority: string };
+    type GateSnap = { satisfied: boolean; coverage: Record<string, number>; blockingGaps: Array<{ role: string; required: number; found: number }> };
+    let roleGapRetrievalTelemetry: {
+      ran: boolean;
+      reason?: string;
+      gaps_before: GapTelemetryRow[];
+      queries_by_role: Record<string, string[]>;
+      added_cards_by_role: Record<string, number>;
+      gate_before: GateSnap | null;
+      gate_after: GateSnap | null;
+      duration_ms: number;
+      timed_out: boolean;
+    } = {
+      ran: false,
+      gaps_before: [],
+      queries_by_role: {},
+      added_cards_by_role: {},
+      gate_before: null,
+      gate_after: null,
+      duration_ms: 0,
+      timed_out: false,
+    };
+    const orphanFnPreventionTelemetry = { dropped_count: 0, dropped_samples: [] as string[] };
     if (enableDeepPipeline) {
       emitStage("source_pack", "running");
       sourcePack = sourceCards.map((sc) => {
