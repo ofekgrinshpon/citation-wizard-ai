@@ -165,6 +165,19 @@ export interface ModeProfile {
    *            drafter sees role/quality labels per card.
    */
   roleBasedRetrieval: "off" | "shadow" | "on";
+
+  // ─── Phase 6.7 — Discovery-Driven Research Planning ────────────────
+  /**
+   * Cap on how many discovery-derived queries (Discovery
+   * suggested_trusted_queries + planner.requiredVerificationTargets) may
+   * be fired against trusted retrieval (search_legal_chunks_text) to
+   * augment the source pack BEFORE the role-gap rescue runs.
+   *
+   * Discovery URLs themselves NEVER enter the source pack — only the
+   * trusted local matches surfaced by these queries become SourceCards.
+   * Skipped entirely when the planner's retrievalStrategy is "db_first".
+   */
+  discoveryQueryCapRound1: number;
 }
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
