@@ -4900,6 +4900,8 @@ ${(verify.fullText as string).slice(0, 50000)}
                 provenance: "local",
                 excerpt: String(mm.chunk_content ?? "").slice(0, 400),
                 case_number: mm.source_type === "caselaw" ? (meta.case_number as string | undefined) : undefined,
+                court: mm.source_type === "caselaw" ? (meta.court as string | undefined) : undefined,
+                decision_date: mm.source_type === "caselaw" ? (meta.decision_date as string | undefined) : undefined,
                 relevance_score: typeof mm.similarity === "number" ? (mm.similarity as number) : 0.5,
               };
               stagedCards.push(newCard);
