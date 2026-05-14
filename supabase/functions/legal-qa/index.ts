@@ -5253,6 +5253,26 @@ ${(verify.fullText as string).slice(0, 50000)}
         : buildGateV2Banner(gateV2Result);
       if (v2Banner) taskInstructions = `${v2Banner}\n\n${taskInstructions}`;
     }
+    // Phase 6.7 — verify Discovery targets against the final source pack and
+    // append a soft advisory banner when Discovery surfaced targets that
+    // retrieval did not separately verify. Discovery URLs themselves never
+    // become citeable; this only nudges the drafter to hedge.
+    let discoveryVerification: DiscoveryVerification | null = null;
+    if (discoveryResult) {
+      discoveryVerification = verifyDiscoveryTargets(discoveryResult, sourcePackV2);
+      const strategyForBanner =
+        researchPlan?.retrievalStrategy ?? retrievalStrategyEarly ?? "db_first";
+      if (
+        strategyForBanner !== "db_first" &&
+        discoveryVerification.unverified_targets.length > 0
+      ) {
+        const banner = buildUnverifiedDiscoveryBanner(
+          discoveryVerification.unverified_targets,
+        );
+        if (banner) taskInstructions = `${banner}\n\n${taskInstructions}`;
+      }
+    }
+
     const citationInstructions = buildCitationInstructions();
 
     // For academic chapter-class writes (write_chapter / write_introduction /
