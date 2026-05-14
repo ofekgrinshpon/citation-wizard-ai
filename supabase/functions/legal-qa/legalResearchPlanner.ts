@@ -402,20 +402,24 @@ function buildUserPrompt(inputs: PlannerInputs): string {
   }
 
   if (inputs.discovery) {
-    const ents = inputs.discovery.resolved_entities ?? [];
-    if (ents.length > 0) {
-      const lines = ents
+    // Phase 6.7: pass Discovery as a STRUCTURED JSON block so the planner
+    // can consume it as data (resolved_entities, suggested_trusted_queries,
+    // candidate_authoritative_sources, ambiguity_notes) rather than prose.
+    const d = inputs.discovery;
+    const structured = {
+      resolved_entities: (d.resolved_entities ?? []).slice(0, 8).map((e) => ({
+        type: e.type, name: e.name, identifier: e.identifier ?? null,
+      })),
+      suggested_trusted_queries: (d.suggested_trusted_queries ?? []).slice(0, 6),
+      candidate_authoritative_sources: (d.candidate_authoritative_sources ?? [])
         .slice(0, 6)
-        .map((e) => `- ${e.type}: ${e.name}${e.identifier ? ` (${e.identifier})` : ""}`);
-      parts.push("");
-      parts.push("ישויות שזוהו על ידי גילוי רשת פתוחה:");
-      parts.push(lines.join("\n"));
-    }
-    const sq = inputs.discovery.suggested_trusted_queries ?? [];
-    if (sq.length > 0) {
-      parts.push("");
-      parts.push(`שאילתות מוצעות מגילוי:\n- ${sq.slice(0, 4).join("\n- ")}`);
-    }
+        .map((c) => ({ title: c.title, url: c.url, tier: c.tier })),
+      ambiguity_notes: (d.ambiguity_notes ?? []).slice(0, 4),
+    };
+    parts.push("");
+    parts.push("<DISCOVERY_INPUT>");
+    parts.push(JSON.stringify(structured));
+    parts.push("</DISCOVERY_INPUT>");
   }
 
   return parts.join("\n");
