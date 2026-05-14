@@ -330,6 +330,13 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     roleBasedRetrieval: "on",
     // Phase 6.7: Deep allows up to 6 discovery-driven trusted-DB queries.
     discoveryQueryCapRound1: 6,
+    // Phase 7: Deep gets the full Issue Map + larger verification fan-out.
+    issueMap: "full",
+    candidateClaimsCap: 8,
+    claimVerificationParallel: 6,
+    claimVerificationDbCap: 6,
+    claimVerificationAllowlistCap: 3,
+    claimLedgerMode: "on",
   },
 };
 
