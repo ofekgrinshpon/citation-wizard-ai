@@ -21,8 +21,10 @@ import type { DecomposedPlan } from "./decomposition.ts";
 import type { OpenWebDiscovery } from "./openWebDiscovery.ts";
 import type {
   AnswerStrategy,
+  DiscoveryAlignment,
   LegalResearchPlan,
   RequiredRole,
+  RetrievalStrategy,
   SourceRole,
 } from "./contracts.ts";
 
