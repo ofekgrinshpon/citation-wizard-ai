@@ -4261,6 +4261,20 @@ ${(verify.fullText as string).slice(0, 50000)}
     let gateV2Result: SourcePackGateV2Result | null = null;
     // gateV2ResultBefore snapshot is captured into telemetry below if rescue runs.
     let roleClassifierFallbackCount = 0;
+    // Phase 7 — Issue Map / Candidate Claims / Claim Ledger state.
+    let phase7IssueMap: IssueMap | null = null;
+    let phase7IssueMapRawUrls: string[] = [];
+    let phase7IssueMapDurationMs = 0;
+    let phase7IssueMapStatus: string = "not_run";
+    let phase7CandidateClaims: CandidateClaim[] = [];
+    let phase7CandidateClaimsDurationMs = 0;
+    let phase7CandidateClaimsStatus: string = "not_run";
+    let phase7ClaimLedger: ClaimLedger | null = null;
+    let phase7VerificationSummary: VerificationSummary | null = null;
+    let phase7VerificationDurationMs = 0;
+    let phase7VerificationStatus: string = "not_run";
+    let phase7PrunedSourceIds: string[] = [];
+    let phase7LedgerBlock = "";
     // Phase 6.5b — role-gap targeted retrieval telemetry.
     type GapTelemetryRow = { role: string; required: number; found: number; priority: string };
     type GateSnap = { satisfied: boolean; coverage: Record<string, number>; blockingGaps: Array<{ role: string; required: number; found: number }> };
