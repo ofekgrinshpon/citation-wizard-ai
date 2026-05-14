@@ -22,6 +22,7 @@
 import type { LegalIssueRoute } from "./legalIssueRouter.ts";
 import type { ResearchDepth } from "./modeProfiles.ts";
 import type { StageRun } from "./aiProvider.ts";
+import type { LegalSourcePack, LegalSourcePackItem } from "./contracts.ts";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -517,4 +518,160 @@ export function buildDiscoveryTelemetry(args: {
     confidence: discovery?.confidence ?? null,
     sanitized_fields: sanitized_fields ?? null,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Phase 6.7 — Discovery verification (no Discovery URL ever enters the pack;
+// this only checks whether downstream retrieval *separately* surfaced any
+// item that matches a Discovery target).
+// ---------------------------------------------------------------------------
+
+export type DiscoveryVerificationMethod =
+  | "title_match"
+  | "citation_match"
+  | "url_match"
+  | "entity_token_match";
+
+export interface DiscoveryVerifiedTarget {
+  target: string;
+  method: DiscoveryVerificationMethod;
+  sourceId: string;
+}
+
+export interface DiscoveryVerification {
+  discovered_targets: string[];
+  verified_targets: DiscoveryVerifiedTarget[];
+  unverified_targets: string[];
+}
+
+function normHe(s: string | undefined | null): string {
+  if (!s) return "";
+  return s
+    .toLowerCase()
+    .replace(/[״"׳']/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function urlKey(u: string | undefined): string {
+  if (!u) return "";
+  try {
+    const url = new URL(u);
+    return (url.hostname + url.pathname).toLowerCase().replace(/\/+$/, "");
+  } catch {
+    return u.toLowerCase();
+  }
+}
+
+/**
+ * Match Discovery `resolved_entities` + `candidate_authoritative_sources`
+ * against the assembled source pack. Discovery URLs themselves never enter
+ * the pack — this function only reports which Discovery-identified targets
+ * were *separately* surfaced by trusted retrieval.
+ */
+export function verifyDiscoveryTargets(
+  discovery: OpenWebDiscovery | null,
+  pack: LegalSourcePack | null,
+): DiscoveryVerification {
+  const discovered: string[] = [];
+  if (discovery) {
+    for (const e of discovery.resolved_entities ?? []) {
+      if (e?.name && typeof e.name === "string") discovered.push(e.name.trim());
+    }
+    for (const c of discovery.candidate_authoritative_sources ?? []) {
+      if (c?.title && typeof c.title === "string" && c.title.trim().length > 2) {
+        discovered.push(c.title.trim());
+      }
+    }
+  }
+  const uniqueTargets = Array.from(new Set(discovered.filter(Boolean)));
+
+  if (!pack || uniqueTargets.length === 0) {
+    return {
+      discovered_targets: uniqueTargets,
+      verified_targets: [],
+      unverified_targets: uniqueTargets,
+    };
+  }
+
+  const allItems: LegalSourcePackItem[] = [
+    ...pack.coreSources,
+    ...pack.supportingSources,
+    ...pack.secondarySources,
+  ];
+
+  const verified: DiscoveryVerifiedTarget[] = [];
+  const unverified: string[] = [];
+
+  // Pre-index pack items.
+  const items = allItems.map((it) => ({
+    id: String(it.sourceId),
+    titleN: normHe(it.title),
+    citeN: normHe(it.canonicalCitation || ""),
+    urlK: urlKey(it.url),
+  }));
+
+  // Pre-index discovery URLs by url-key for url_match check.
+  const discoveryUrlByTitle = new Map<string, string>();
+  for (const c of discovery?.candidate_authoritative_sources ?? []) {
+    if (c?.title && c.url) discoveryUrlByTitle.set(c.title.trim(), urlKey(c.url));
+  }
+
+  for (const target of uniqueTargets) {
+    const tN = normHe(target);
+    if (!tN) {
+      unverified.push(target);
+      continue;
+    }
+    const tUrl = discoveryUrlByTitle.get(target);
+    let hit: DiscoveryVerifiedTarget | null = null;
+    for (const item of items) {
+      // 1) title containment (either direction, min length 4 to avoid noise)
+      if (tN.length >= 4 && (item.titleN.includes(tN) || tN.includes(item.titleN))) {
+        hit = { target, method: "title_match", sourceId: item.id };
+        break;
+      }
+      // 2) canonical citation containment
+      if (tN.length >= 4 && item.citeN && (item.citeN.includes(tN) || tN.includes(item.citeN))) {
+        hit = { target, method: "citation_match", sourceId: item.id };
+        break;
+      }
+      // 3) URL host+path match
+      if (tUrl && item.urlK && tUrl === item.urlK) {
+        hit = { target, method: "url_match", sourceId: item.id };
+        break;
+      }
+      // 4) entity-token match: any 3+ token of target appears in item title
+      const tokens = tN.split(" ").filter((t) => t.length >= 3);
+      if (tokens.length >= 2) {
+        const matchCount = tokens.filter((t) => item.titleN.includes(t)).length;
+        if (matchCount >= Math.min(2, tokens.length)) {
+          hit = { target, method: "entity_token_match", sourceId: item.id };
+          break;
+        }
+      }
+    }
+    if (hit) verified.push(hit);
+    else unverified.push(target);
+  }
+
+  return {
+    discovered_targets: uniqueTargets,
+    verified_targets: verified,
+    unverified_targets: unverified,
+  };
+}
+
+/** Build the Hebrew advisory line appended to the drafter's gate banner
+ *  when Discovery surfaced targets that retrieval did not separately
+ *  verify. Returns "" when there is nothing to warn about. */
+export function buildUnverifiedDiscoveryBanner(
+  unverified: string[],
+): string {
+  if (!unverified || unverified.length === 0) return "";
+  const sample = unverified.slice(0, 4).join(" · ");
+  return [
+    "⚠ גילוי רשת פתוחה זיהה יעדים פוטנציאליים שלא אומתו במאגר/מקורות מהימנים: " + sample + ".",
+    "אין להסתמך עליהם כסמכות; אם רלוונטי לדיון — הסתייג בתשובה (\"טרם אומת\") ואל תצטט אותם בהערות שוליים.",
+  ].join("\n");
 }
