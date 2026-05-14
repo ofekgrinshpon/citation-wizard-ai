@@ -6066,6 +6066,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
       // null and we fall back to the non-streaming `callDrafter`.
       let drafterRes: { text: string; modelUsed: string } | null = null;
       if (__activeEmitter) {
+        // Streaming drafter has its own OpenAI→Gemini fallback inside
+        // `streamOnce`. If it still returns null, do NOT start a second
+        // ~90s non-streaming attempt — that wastes the budget and pollutes
+        // logs with a misleading `[drafter:fallback]` event. Surface error.
         drafterRes = await callDrafterStreaming(
           drafterSystemPrompt,
           userMessage,
@@ -6075,10 +6079,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           (chunk) => emitDraftDelta(chunk),
         );
         if (!drafterRes) {
-          console.warn("[drafter] streaming returned null — falling back to non-streaming");
+          console.warn("[drafter] streaming returned null — no second non-streaming attempt (avoids duplicate work)");
         }
-      }
-      if (!drafterRes) {
+      } else {
+        // No SSE emitter (e.g. CLI / eval runs) → use non-streaming path.
         drafterRes = await callDrafter(drafterSystemPrompt, userMessage, aiMaxTokens, drafterTimeoutMs, drafterVariant);
       }
       const tAi = Date.now();
