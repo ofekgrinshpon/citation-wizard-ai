@@ -5267,40 +5267,49 @@ ${(verify.fullText as string).slice(0, 50000)}
       sourcePackV2 &&
       decompositionV2
     ) {
-      try {
-        emitStage("issue_map", "running");
-        const tIM = Date.now();
-        const imRes = await runIssueMap(question, modeProfile.issueMap);
-        phase7IssueMap = imRes.issueMap;
-        phase7IssueMapRawUrls = imRes.rawUrls;
-        phase7IssueMapDurationMs = Date.now() - tIM;
-        phase7IssueMapStatus = imRes.run.status;
-        emitStage("issue_map", "complete",
-          phase7IssueMap ? `${summarizeIssueMap(phase7IssueMap).leading_cases} פסקי דין` : "ריק");
-        console.log(`[phase7:issue_map] status=${imRes.run.status} ms=${phase7IssueMapDurationMs}`);
-      } catch (e) {
-        phase7IssueMapStatus = "error";
-        console.error("[phase7:issue_map] failed:", e);
-      }
-
-      try {
-        emitStage("candidate_claims", "running");
-        const tCC = Date.now();
-        const ccRes = await buildCandidateClaims({
+      // v7.1: Stage 1 (Issue Map) and Stage 2 (Candidate Claims) run in
+      // parallel. Stage 2 no longer blocks on Stage 1 — it consumes whatever
+      // IssueMap is ready when it starts (which, with concurrent kickoff, is
+      // `null`). Stage 3 (verification) does not depend on the IssueMap, so
+      // losing the cross-feed costs nothing on the strict-relevance path while
+      // shaving ~15-25s off wall-clock when one of the two times out.
+      emitStage("issue_map", "running");
+      emitStage("candidate_claims", "running");
+      const tIM = Date.now();
+      const tCC = Date.now();
+      const [imSettled, ccSettled] = await Promise.allSettled([
+        runIssueMap(question, modeProfile.issueMap),
+        buildCandidateClaims({
           question,
           decomposition: decompositionV2,
-          issueMap: phase7IssueMap,
+          issueMap: null, // intentionally null — concurrent with Stage 1
           cap: modeProfile.candidateClaimsCap,
-        });
-        phase7CandidateClaims = ccRes.claims;
-        phase7CandidateClaimsDurationMs = Date.now() - tCC;
-        phase7CandidateClaimsStatus = ccRes.run.status;
-        emitStage("candidate_claims", "complete", `${phase7CandidateClaims.length} השערות`);
-        console.log(`[phase7:candidate_claims] count=${phase7CandidateClaims.length} status=${ccRes.run.status} ms=${phase7CandidateClaimsDurationMs}`);
-      } catch (e) {
-        phase7CandidateClaimsStatus = "error";
-        console.error("[phase7:candidate_claims] failed:", e);
+        }),
+      ]);
+
+      if (imSettled.status === "fulfilled") {
+        phase7IssueMap = imSettled.value.issueMap;
+        phase7IssueMapRawUrls = imSettled.value.rawUrls;
+        phase7IssueMapStatus = imSettled.value.run.status;
+      } else {
+        phase7IssueMapStatus = "error";
+        console.error("[phase7:issue_map] failed:", imSettled.reason);
       }
+      phase7IssueMapDurationMs = Date.now() - tIM;
+      emitStage("issue_map", "complete",
+        phase7IssueMap ? `${summarizeIssueMap(phase7IssueMap).leading_cases} פסקי דין` : "ריק");
+      console.log(`[phase7:issue_map] status=${phase7IssueMapStatus} ms=${phase7IssueMapDurationMs}`);
+
+      if (ccSettled.status === "fulfilled") {
+        phase7CandidateClaims = ccSettled.value.claims;
+        phase7CandidateClaimsStatus = ccSettled.value.run.status;
+      } else {
+        phase7CandidateClaimsStatus = "error";
+        console.error("[phase7:candidate_claims] failed:", ccSettled.reason);
+      }
+      phase7CandidateClaimsDurationMs = Date.now() - tCC;
+      emitStage("candidate_claims", "complete", `${phase7CandidateClaims.length} השערות`);
+      console.log(`[phase7:candidate_claims] count=${phase7CandidateClaims.length} status=${phase7CandidateClaimsStatus} ms=${phase7CandidateClaimsDurationMs}`);
 
       if (phase7CandidateClaims.length > 0 && sourcePackV2) {
         try {
