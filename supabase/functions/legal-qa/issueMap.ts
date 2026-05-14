@@ -52,8 +52,11 @@ export async function runIssueMap(
 ): Promise<IssueMapResult> {
   const startedAt = new Date().toISOString();
   const tStart = Date.now();
-  const model = mode === "full" ? "sonar-pro" : "sonar";
-  const timeoutMs = mode === "full" ? 15000 : 8000;
+  // v7.1: drop to `sonar` even in Deep — `sonar-pro` consistently exceeded the
+  // 15s budget on the frozen-embryo eval. Issue Map is a broad descriptor sweep,
+  // not a citation-quality stage; `sonar` is sufficient and ~2× faster.
+  const model = "sonar";
+  const timeoutMs = mode === "full" ? 25000 : 12000;
   const baseRun: Omit<StageRun, "completed_at" | "duration_ms" | "status"> = {
     stage: "issue_map",
     provider: "perplexity",
