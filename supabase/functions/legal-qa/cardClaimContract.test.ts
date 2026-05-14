@@ -6,6 +6,7 @@ import {
   attachCanonicalCitations,
   buildFootnotes,
   buildTelemetry,
+  buildCitationAssemblyTelemetry,
   deriveCanonicalCitation,
   parseMarkers,
   type ContractSourceCard,
@@ -53,43 +54,149 @@ Deno.test("parseMarkers reports invalid IDs", () => {
   assertEquals(r.markers[1].invalidSourceIds, ["S99"]);
 });
 
-Deno.test("deriveCanonicalCitation REUSES upstream citation when substantive", () => {
+// ── Phase 6.6 — engine-first / component-first behavior ─────────────────
+
+Deno.test("engine-first: substantive statute seed routes via engine, not raw reuse", () => {
   const card = makeCard({
     id: 1,
     citation: "חוק החוזים (חלק כללי), התשל\"ג-1973, ס\"ח 118.",
     source_type: "israeli_law",
   });
   deriveCanonicalCitation(card);
-  assertEquals(card.canonicalFormatter, "reused_existing");
+  // Either engine_resolved or template_filled — but NEVER the legacy
+  // "reused_existing" formatter. reused_existing_strong is allowed only
+  // when scoreCitationQuality marks the seed as strong.
+  assert(
+    card.canonicalFormatter !== undefined &&
+      card.canonicalFormatter !== ("reused_existing" as unknown as typeof card.canonicalFormatter),
+    `unexpected formatter: ${card.canonicalFormatter}`,
+  );
+  assert(
+    ["engine_resolved", "engine_template_filled_with_placeholders", "reused_existing_strong"]
+      .includes(card.canonicalFormatter as string),
+    `formatter=${card.canonicalFormatter}`,
+  );
   assert(card.canonicalCitation && card.canonicalCitation.includes("חוק החוזים"));
 });
 
-Deno.test("deriveCanonicalCitation falls back to minimal for unresolvable web source", () => {
+Deno.test("docket-only caselaw → template with missing parties + date", () => {
   const card = makeCard({
     id: 1,
-    citation: "",
+    citation: "12727-09-21",
+    source_type: "caselaw",
+    case_number: "12727-09-21",
+    procedure_category: "משפחה",
+  });
+  deriveCanonicalCitation(card);
+  const c = card.canonicalCitation || "";
+  assert(/\[חסר: שמות הצדדים\]/.test(c), `missing parties marker not found: ${c}`);
+  assert(/\[חסר: תאריך\]/.test(c), `missing date marker not found: ${c}`);
+  assert(/12727-09-21/.test(c), `docket lost: ${c}`);
+  assertEquals(card.canonicalFormatter, "engine_template_filled_with_placeholders");
+  assert(card.canonicalHasPlaceholders === true);
+});
+
+Deno.test("legislation ending with ס״ח. (no page) → [חסר: מספר/עמוד]", () => {
+  const card = makeCard({
+    id: 1,
+    citation: "חוק החוזים (חלק כללי), התשל\"ג-1973, ס\"ח.",
+    source_type: "israeli_law",
+  });
+  deriveCanonicalCitation(card);
+  const c = card.canonicalCitation || "";
+  assert(/\[חסר: מספר\/עמוד\]|\[חסר: עמוד\]/.test(c), `expected page placeholder: ${c}`);
+});
+
+Deno.test("Hebrew source_type label 'פסיקה' maps to caselaw engine path", () => {
+  const card = makeCard({
+    id: 1,
+    citation: "26533-07-20",
+    source_type: "פסיקה",
+    case_number: "26533-07-20",
+    procedure_category: "שלום",
+  });
+  deriveCanonicalCitation(card);
+  const c = card.canonicalCitation || "";
+  // Caselaw template signature: docket present + parties placeholder
+  assert(/\[חסר: שמות הצדדים\]/.test(c), `expected caselaw template: ${c}`);
+  assertEquals(card.canonicalFormatter, "engine_template_filled_with_placeholders");
+});
+
+Deno.test("generic web title 'Law' rejected → [חסר: כותרת] — URL", () => {
+  const card = makeCard({
+    id: 1,
+    citation: "Law",
     source_type: "web_source",
-    excerpt: "דף הנחיות באתר משרד המשפטים",
-    url: "https://example.gov.il/x",
+    url: "https://example.com/x",
     provenance: "perplexity",
   });
   deriveCanonicalCitation(card);
-  assert(["engine_resolved", "fallback_minimal", "engine_unresolved_then_fallback"]
-    .includes(card.canonicalFormatter as string));
-  assert(card.canonicalCitation && card.canonicalCitation.length > 0);
+  const c = card.canonicalCitation || "";
+  assert(/\[חסר: כותרת\]/.test(c), `expected title placeholder: ${c}`);
+  assert(c.includes("https://example.com/x"), `expected URL retained: ${c}`);
+  assertEquals(card.canonicalFormatter, "fallback_weak_title_refused");
 });
 
-Deno.test("deriveCanonicalCitation tags missing year for thin book card", () => {
+Deno.test("Rule 37 gate proxy: weak / placeholder citation NOT marked strong", () => {
+  // Docket-only → template with placeholders → quality must NOT be 'strong'
   const card = makeCard({
     id: 1,
-    citation: "",
-    source_type: "book",
-    excerpt: "שלום ספרא דיני חוזים",
+    citation: "12727-09-21",
+    source_type: "caselaw",
+    case_number: "12727-09-21",
+    procedure_category: "משפחה",
   });
   deriveCanonicalCitation(card);
-  assert(card.canonicalCitation && /\[חסר:/.test(card.canonicalCitation),
-    `expected missing-marker, got: ${card.canonicalCitation}`);
+  assert(
+    card.citationQuality !== "strong",
+    `weak placeholder citation should not score strong; got: ${card.citationQuality}`,
+  );
 });
+
+Deno.test("strong substantive seed may be reused — quality is not 'weak'", () => {
+  const card = makeCard({
+    id: 1,
+    citation: "ע\"א 8294/14 פלוני נ' אלמוני, פ\"ד סא(2) 100 (2018).",
+    source_type: "caselaw",
+    case_number: "ע\"א 8294/14",
+  });
+  deriveCanonicalCitation(card);
+  // Reused only when engine couldn't resolve AND seed was strong, OR engine resolved.
+  assert(
+    ["engine_resolved", "reused_existing_strong", "engine_template_filled_with_placeholders"]
+      .includes(card.canonicalFormatter as string),
+    `formatter=${card.canonicalFormatter}`,
+  );
+  assert(card.canonicalCitation && card.canonicalCitation.length > 12);
+});
+
+Deno.test("buildCitationAssemblyTelemetry tallies normalization, fallback, placeholders", () => {
+  const cards = [
+    makeCard({
+      id: 1,
+      citation: "12727-09-21",
+      source_type: "פסיקה",
+      case_number: "12727-09-21",
+      procedure_category: "משפחה",
+    }),
+    makeCard({
+      id: 2,
+      citation: "Law",
+      source_type: "web_source",
+      url: "https://x.test/y",
+      provenance: "perplexity",
+    }),
+  ];
+  attachCanonicalCitations(cards);
+  const t = buildCitationAssemblyTelemetry(cards);
+  assertEquals(t.total, 2);
+  assert(t.source_type_normalized >= 1, "Hebrew label should count as normalized");
+  assert(t.placeholder_inserted >= 1);
+  assert(t.fallback_used >= 1);
+  assert(Object.keys(t.missing_fields_counts).length > 0);
+});
+
+// ── Existing build/telemetry behavior ────────────────────────────────
 
 Deno.test("buildFootnotes preserves body order, dedups, replaces with superscripts", () => {
   const cards = [
