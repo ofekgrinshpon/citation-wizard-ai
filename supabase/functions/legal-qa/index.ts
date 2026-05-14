@@ -4453,6 +4453,8 @@ ${(verify.fullText as string).slice(0, 50000)}
                       m.source_type === "caselaw"
                         ? ((meta.case_number as string) || undefined)
                         : undefined,
+                    court: m.source_type === "caselaw" ? ((meta.court as string) || undefined) : undefined,
+                    decision_date: m.source_type === "caselaw" ? ((meta.decision_date as string) || undefined) : undefined,
                     relevance_score: typeof m.similarity === "number" ? m.similarity : 0.5,
                   };
                   stagedCards.push(newCard);
