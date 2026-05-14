@@ -240,6 +240,8 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     // banner only; never blocks). Targeted retrieval per missing role piggy-
     // backs on the existing Phase 5 gap retrieval.
     roleBasedRetrieval: "on",
+    // Phase 6.7: Fast caps discovery-driven trusted-DB queries at 3 to bound latency.
+    discoveryQueryCapRound1: 3,
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
