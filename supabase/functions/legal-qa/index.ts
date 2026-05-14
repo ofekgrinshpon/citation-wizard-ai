@@ -94,6 +94,16 @@ import {
   type RerankInputDoc,
   type RerankV2Telemetry,
 } from "./dynamicRerank.ts";
+// Phase 7 — Issue Map → Candidate Claims → Verification → Claim Ledger
+import { runIssueMap, summarizeIssueMap } from "./issueMap.ts";
+import { buildCandidateClaims } from "./candidateClaims.ts";
+import {
+  verifyClaimsAgainstPack,
+  buildClaimLedgerPromptBlock,
+  pruneSourcePackByLedger,
+  type VerificationSummary,
+} from "./claimVerification.ts";
+import type { IssueMap, ClaimLedger, CandidateClaim } from "./contracts.ts";
 
 // Single source of truth for the research-mode gate. The frontend currently
 // sends `taskMode: "research"`; if that ever changes, update this constant.
