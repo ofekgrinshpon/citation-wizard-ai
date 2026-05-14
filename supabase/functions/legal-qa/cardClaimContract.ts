@@ -800,10 +800,12 @@ export function buildFootnotes(
   const firstOccurrence = new Map<string, number>(); // sourceId → fn number
   const footnotes: ContractFootnote[] = [];
   const formatterUsage: FormatterUsageCounts = {
-    reused_existing: 0,
+    reused_existing_strong: 0,
     engine_resolved: 0,
+    engine_template_filled_with_placeholders: 0,
     engine_unresolved_then_fallback: 0,
     fallback_minimal: 0,
+    fallback_weak_title_refused: 0,
   };
   const missingMetadata: BuildFootnotesResult["missingMetadata"] = [];
   const sourceIdUsage: Record<string, number> = {};
