@@ -94,6 +94,16 @@ import {
   type RerankInputDoc,
   type RerankV2Telemetry,
 } from "./dynamicRerank.ts";
+// Phase 7 — Issue Map → Candidate Claims → Verification → Claim Ledger
+import { runIssueMap, summarizeIssueMap } from "./issueMap.ts";
+import { buildCandidateClaims } from "./candidateClaims.ts";
+import {
+  verifyClaimsAgainstPack,
+  buildClaimLedgerPromptBlock,
+  pruneSourcePackByLedger,
+  type VerificationSummary,
+} from "./claimVerification.ts";
+import type { IssueMap, ClaimLedger, CandidateClaim } from "./contracts.ts";
 
 // Single source of truth for the research-mode gate. The frontend currently
 // sends `taskMode: "research"`; if that ever changes, update this constant.
@@ -4251,6 +4261,20 @@ ${(verify.fullText as string).slice(0, 50000)}
     let gateV2Result: SourcePackGateV2Result | null = null;
     // gateV2ResultBefore snapshot is captured into telemetry below if rescue runs.
     let roleClassifierFallbackCount = 0;
+    // Phase 7 — Issue Map / Candidate Claims / Claim Ledger state.
+    let phase7IssueMap: IssueMap | null = null;
+    let phase7IssueMapRawUrls: string[] = [];
+    let phase7IssueMapDurationMs = 0;
+    let phase7IssueMapStatus: string = "not_run";
+    let phase7CandidateClaims: CandidateClaim[] = [];
+    let phase7CandidateClaimsDurationMs = 0;
+    let phase7CandidateClaimsStatus: string = "not_run";
+    let phase7ClaimLedger: ClaimLedger | null = null;
+    let phase7VerificationSummary: VerificationSummary | null = null;
+    let phase7VerificationDurationMs = 0;
+    let phase7VerificationStatus: string = "not_run";
+    let phase7PrunedSourceIds: string[] = [];
+    let phase7LedgerBlock = "";
     // Phase 6.5b — role-gap targeted retrieval telemetry.
     type GapTelemetryRow = { role: string; required: number; found: number; priority: string };
     type GateSnap = { satisfied: boolean; coverage: Record<string, number>; blockingGaps: Array<{ role: string; required: number; found: number }> };
@@ -5232,8 +5256,91 @@ ${(verify.fullText as string).slice(0, 50000)}
           }
         ).join("\n");
 
+    // ========= Phase 7: Issue Map → Candidate Claims → Verification → Claim Ledger =========
+    // Strict relevance pipeline: only direct/partial-supporting sources may
+    // back a claim. Tangential/unrelated sources are pruned from the pack so
+    // they are physically impossible for the drafter to cite.
+    if (
+      taskMode === RESEARCH_MODE &&
+      enableDeepPipeline &&
+      modeProfile.claimLedgerMode === "on" &&
+      sourcePackV2 &&
+      decompositionV2
+    ) {
+      try {
+        emitStage("issue_map", "running");
+        const tIM = Date.now();
+        const imRes = await runIssueMap(question, modeProfile.issueMap);
+        phase7IssueMap = imRes.issueMap;
+        phase7IssueMapRawUrls = imRes.rawUrls;
+        phase7IssueMapDurationMs = Date.now() - tIM;
+        phase7IssueMapStatus = imRes.run.status;
+        emitStage("issue_map", "complete",
+          phase7IssueMap ? `${summarizeIssueMap(phase7IssueMap).leading_cases} פסקי דין` : "ריק");
+        console.log(`[phase7:issue_map] status=${imRes.run.status} ms=${phase7IssueMapDurationMs}`);
+      } catch (e) {
+        phase7IssueMapStatus = "error";
+        console.error("[phase7:issue_map] failed:", e);
+      }
+
+      try {
+        emitStage("candidate_claims", "running");
+        const tCC = Date.now();
+        const ccRes = await buildCandidateClaims({
+          question,
+          decomposition: decompositionV2,
+          issueMap: phase7IssueMap,
+          cap: modeProfile.candidateClaimsCap,
+        });
+        phase7CandidateClaims = ccRes.claims;
+        phase7CandidateClaimsDurationMs = Date.now() - tCC;
+        phase7CandidateClaimsStatus = ccRes.run.status;
+        emitStage("candidate_claims", "complete", `${phase7CandidateClaims.length} השערות`);
+        console.log(`[phase7:candidate_claims] count=${phase7CandidateClaims.length} status=${ccRes.run.status} ms=${phase7CandidateClaimsDurationMs}`);
+      } catch (e) {
+        phase7CandidateClaimsStatus = "error";
+        console.error("[phase7:candidate_claims] failed:", e);
+      }
+
+      if (phase7CandidateClaims.length > 0 && sourcePackV2) {
+        try {
+          emitStage("claim_verification", "running");
+          const tV = Date.now();
+          const vRes = await verifyClaimsAgainstPack({
+            claims: phase7CandidateClaims,
+            pack: sourcePackV2,
+          });
+          phase7ClaimLedger = vRes.ledger;
+          phase7VerificationSummary = vRes.summary;
+          phase7VerificationDurationMs = Date.now() - tV;
+          phase7VerificationStatus = vRes.run.status;
+          emitStage("claim_verification", "complete",
+            `s=${vRes.summary.supported} p=${vRes.summary.partially_supported} u=${vRes.summary.unsupported}`);
+          console.log(`[phase7:verification] supported=${vRes.summary.supported} partial=${vRes.summary.partially_supported} unsupported=${vRes.summary.unsupported} dropped_tangential=${vRes.summary.dropped_tangential} dropped_unrelated=${vRes.summary.dropped_unrelated} ms=${phase7VerificationDurationMs}`);
+
+          // Prune tangential/unrelated from the source pack (preserves
+          // primary_legislation + user_document for citation hygiene).
+          const { pruned, removedIds } = pruneSourcePackByLedger(sourcePackV2, phase7ClaimLedger);
+          phase7PrunedSourceIds = removedIds;
+          if (removedIds.length > 0) {
+            console.log(`[phase7:prune] removed ${removedIds.length} non-supporting sources: [${removedIds.join(",")}]`);
+            sourcePackV2 = pruned;
+          }
+
+          phase7LedgerBlock = buildClaimLedgerPromptBlock(phase7ClaimLedger);
+        } catch (e) {
+          phase7VerificationStatus = "error";
+          console.error("[phase7:verification] failed:", e);
+        }
+      }
+    }
+
     // ========= Step 4: Gemini call — plain text, NO tool_call =========
     let taskInstructions = getTaskModeInstructions(taskMode);
+    // Phase 7: prepend the Claim Ledger as a hard contract (highest priority).
+    if (phase7LedgerBlock) {
+      taskInstructions = `${phase7LedgerBlock}\n\n${taskInstructions}`;
+    }
     // Phase 4: prepend the soft-gate banner when the gate flagged missing slots.
     if (sourcePackGateResult?.banner) {
       taskInstructions = `${sourcePackGateResult.banner}\n\n${taskInstructions}`;
@@ -9638,6 +9745,55 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               : null,
             // Phase 6.5b — orphan FN prevention (deterministic path).
             orphan_fn_prevention: orphanFnPreventionTelemetry,
+            // Phase 7 — Issue Map / Candidate Claims / Claim Ledger telemetry.
+            issue_map: {
+              mode: modeProfile.issueMap,
+              status: phase7IssueMapStatus,
+              duration_ms: phase7IssueMapDurationMs,
+              counts: summarizeIssueMap(phase7IssueMap),
+              raw_url_count: phase7IssueMapRawUrls.length,
+              raw_urls: phase7IssueMapRawUrls.slice(0, 20),
+            },
+            candidate_claims: {
+              status: phase7CandidateClaimsStatus,
+              duration_ms: phase7CandidateClaimsDurationMs,
+              count: phase7CandidateClaims.length,
+              cap: modeProfile.candidateClaimsCap,
+              by_kind: phase7CandidateClaims.reduce<Record<string, number>>((acc, c) => {
+                acc[c.kind] = (acc[c.kind] ?? 0) + 1;
+                return acc;
+              }, {}),
+            },
+            claim_ledger: phase7ClaimLedger
+              ? {
+                  status: phase7VerificationStatus,
+                  duration_ms: phase7VerificationDurationMs,
+                  claims: phase7ClaimLedger.claims.map((c) => ({
+                    id: c.id,
+                    verdict: c.verdict,
+                    sourceIds: c.sourceIds,
+                  })),
+                }
+              : { status: phase7VerificationStatus, duration_ms: 0, claims: [] },
+            verification_summary: phase7VerificationSummary ?? {
+              supported: 0,
+              partially_supported: 0,
+              unsupported: 0,
+              dropped_tangential: 0,
+              dropped_unrelated: 0,
+              pruned_source_ids: [],
+            },
+            pruned_source_ids: phase7PrunedSourceIds,
+            relevance_scores: phase7ClaimLedger
+              ? phase7ClaimLedger.claims.flatMap((c) =>
+                  c.hits.map((h) => ({
+                    claimId: c.id,
+                    sourceId: h.sourceId,
+                    score: h.score,
+                    rationale: h.rationale,
+                  })),
+                )
+              : [],
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
