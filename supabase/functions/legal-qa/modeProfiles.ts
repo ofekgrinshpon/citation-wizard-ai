@@ -178,6 +178,27 @@ export interface ModeProfile {
    * Skipped entirely when the planner's retrievalStrategy is "db_first".
    */
   discoveryQueryCapRound1: number;
+
+  // ─── Phase 7 — Issue Map → Candidate Claims → Verification → Ledger ────
+  /** "off" → skip Stage 1 entirely. "lite" → 8s sonar. "full" → 15s sonar-pro. */
+  issueMap: "off" | "lite" | "full";
+  /** Cap on Stage 2 candidate claims. */
+  candidateClaimsCap: number;
+  /** How many Stage 3 claim verifications run in parallel. */
+  claimVerificationParallel: number;
+  /** Per-claim cap on local-DB query fan-out. */
+  claimVerificationDbCap: number;
+  /** Per-claim cap on trusted-allowlist Perplexity fan-out. */
+  claimVerificationAllowlistCap: number;
+  /**
+   * "off"     → Phase 7 disabled.
+   * "shadow"  → ledger built + logged in telemetry only; no source-pack pruning,
+   *             no drafter contract block.
+   * "on"      → Phase 7 prunes tangential/unrelated sources from the source pack
+   *             before drafting AND injects the Claim Ledger as a hard contract
+   *             into the drafter prompt.
+   */
+  claimLedgerMode: "off" | "shadow" | "on";
 }
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
@@ -242,6 +263,15 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     roleBasedRetrieval: "on",
     // Phase 6.7: Fast caps discovery-driven trusted-DB queries at 3 to bound latency.
     discoveryQueryCapRound1: 3,
+    // Phase 7: Issue Map → Verification → Ledger active in shadow until validated.
+    // Ledger MODE is "on" — the user-visible problem is tangential sources in
+    // footnotes; pruning + drafter contract is what fixes that complaint.
+    issueMap: "lite",
+    candidateClaimsCap: 4,
+    claimVerificationParallel: 3,
+    claimVerificationDbCap: 4,
+    claimVerificationAllowlistCap: 2,
+    claimLedgerMode: "on",
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
@@ -300,6 +330,13 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     roleBasedRetrieval: "on",
     // Phase 6.7: Deep allows up to 6 discovery-driven trusted-DB queries.
     discoveryQueryCapRound1: 6,
+    // Phase 7: Deep gets the full Issue Map + larger verification fan-out.
+    issueMap: "full",
+    candidateClaimsCap: 8,
+    claimVerificationParallel: 6,
+    claimVerificationDbCap: 6,
+    claimVerificationAllowlistCap: 3,
+    claimLedgerMode: "on",
   },
 };
 

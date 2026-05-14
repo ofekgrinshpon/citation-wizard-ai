@@ -253,6 +253,101 @@ export interface SourcePackGateV2Result {
   bannerAttached: boolean;
 }
 
+// ─── Phase 7 — Issue Map / Candidate Claims / Claim Ledger ─────────────
+// Stage 1 (Issue Map) explores the open web broadly to build a non-citeable
+// background map. Stage 2 (Candidate Claims) extracts hypotheses. Stage 3
+// (Claim Verification) scores each claim against local DB + trusted
+// allowlist sources only. Stage 4 (Claim Ledger) records verdicts that
+// constrain Stage 5 (the drafter): only verified, directly/partially
+// supported claims may be asserted.
+//
+// Hard invariants:
+// - Issue Map URLs/snippets NEVER enter the SourcePack.
+// - Tangential / unrelated sources NEVER support a claim, even if verified.
+
+export interface IssueMapDoctrine {
+  name: string;
+  summary: string;
+}
+export interface IssueMapCase {
+  name: string;
+  docket?: string;
+  relevance: string;
+}
+export interface IssueMapStatute {
+  name: string;
+  year?: string;
+  relevance: string;
+}
+export interface IssueMapSecondary {
+  author?: string;
+  title?: string;
+  type: "academic" | "committee" | "report" | "news" | "other";
+  relevance: string;
+}
+export interface IssueMapPosition {
+  stance: string;
+  rationale: string;
+}
+
+export interface IssueMap {
+  framing: string;
+  doctrines: IssueMapDoctrine[];
+  leading_cases: IssueMapCase[];
+  statutes: IssueMapStatute[];
+  secondary_sources: IssueMapSecondary[];
+  competing_positions: IssueMapPosition[];
+  open_questions: string[];
+}
+
+export type CandidateClaimKind =
+  | "doctrinal"
+  | "empirical"
+  | "normative"
+  | "procedural";
+
+export interface CandidateClaim {
+  id: string;                     // e.g. "C1"
+  statement: string;              // Hebrew, single sentence
+  kind: CandidateClaimKind;
+  required_evidence: Array<"statute" | "case" | "academic" | "committee" | "news">;
+  generated_search_queries: string[];
+  source_hint: "issue_map";       // marker — never citeable as-is
+}
+
+export type ClaimRelevanceScore =
+  | "direct_support"
+  | "partial_support"
+  | "tangential"
+  | "unrelated";
+
+export type ClaimVerdict =
+  | "supported"
+  | "partially_supported"
+  | "unsupported";
+
+export interface ClaimRelevanceHit {
+  /** SourcePack contract id ("S1", "S2", …) when known; otherwise numeric pack id. */
+  sourceId: string;
+  score: ClaimRelevanceScore;
+  rationale: string;
+}
+
+export interface ClaimLedgerItem {
+  id: string;
+  statement: string;
+  verdict: ClaimVerdict;
+  /** SourcePack ids that *directly* or *partially* support the claim. */
+  sourceIds: string[];
+  /** Short Hebrew note describing how the evidence supports the claim. */
+  evidenceNotes: string;
+  hits: ClaimRelevanceHit[];
+}
+
+export interface ClaimLedger {
+  claims: ClaimLedgerItem[];
+}
+
 // ─── Provenance hardening ────────────────────────────────────────
 // Keys that must NEVER appear in the user-facing JSON payload.
 // `sanitizeResponse` walks the payload and strips any of these.
@@ -278,4 +373,12 @@ export const BANNED_KEYS: readonly string[] = [
   "discoveryAlignment",
   "retrievalStrategy",
   "retrievalStrategyRationale",
+  // Phase 7 — Issue Map / Candidate Claims / Claim Ledger internals
+  "issueMap",
+  "issue_map_raw",
+  "candidateClaims",
+  "claimLedger",
+  "claim_ledger",
+  "relevance_scores",
+  "verification_summary",
 ] as const;
