@@ -1,198 +1,202 @@
+# Pipeline rebuild: Think broadly, prove narrowly
 
-# Phase 6.7 — Discovery-Driven Research Planning
-
-Goal: stop quarantining OpenWebDiscovery as prose-only. Make it structured research **guidance** that drives plan + round-1 retrieval, while preserving the absolute rule: **Discovery URLs/sources never become citeable SourceCards**.
-
-Scope: `legal-qa` only. No changes to `cardClaimContract`, `citationEngine`, Rule 37 / post-processing, Gate V2 internals, or pricing/model routing.
+**Guiding rule:** Stage 1 explores the open web freely. Stages 3+ verify strictly against local DB + trusted allowlist. Unsupported claims are **omitted by default**.
 
 ---
 
-## 1. Contract: extend Planner I/O
+## Phase 0 — Blocking bug fixes (ship first, in their own commit)
 
-**File:** `supabase/functions/legal-qa/contracts.ts`
+The current Deep run produces 227-char truncated answers because gpt-5 / gpt-5-mini reject the `reasoning: { effort }` block on Chat Completions (HTTP 400) and the streaming drafter silently falls back to Gemini Flash. Pipeline work cannot be validated until this is fixed.
 
-Add to `LegalResearchPlan`:
-```ts
-retrievalStrategy: "db_first" | "discovery_first" | "hybrid";
-retrievalStrategyRationale: string;       // short Hebrew note (telemetry only)
-discoveryAlignment?: {
-  consumedEntities: string[];             // entity names the planner adopted
-  consumedQueries: string[];              // suggested_trusted_queries adopted
-  ignoredEntities: { value: string; reason: string }[];
-  requiredVerificationTargets: string[];  // canonical names/titles to verify
-};
+### F1. `supabase/functions/legal-qa/aiProvider.ts`
+- Line ~342–344 (streaming drafter): replace `body.reasoning = { effort: "medium" }` with `body.reasoning_effort = "medium"`.
+- Line ~525–533 (non-streaming drafter): same swap; refresh the comment to state that Chat Completions accepts only the top-level `reasoning_effort` snake_case field. Keep the existing `reasoningEffort → reasoning_effort` conditional at line ~158 unchanged.
+
+### F2. `supabase/functions/legal-qa/index.ts`
+- Line ~2432 (academic `suggest_topics` planner): replace `reasoning: { effort: "minimal" }` with `reasoning_effort: "minimal"`.
+
+### Verify F1/F2 before pipeline work
+- Re-run the failing question in Deep mode. Expect `text_len > 1500` and no `[drafter:stream:http_error]`.
+- Run Q-contract-amendment + full regression (`eval/regression/run-regression.mjs`); `newFailures === 0`.
+
+---
+
+## The pipeline (5 stages)
+
+```
+1. Issue Map        — broad open web, descriptors only, never cited
+2. Candidate Claims — non-citeable hypotheses extracted from Issue Map
+3. Verification     — local DB + trusted allowlist ONLY
+4. Claim Ledger     — supported / partially_supported / unsupported
+5. Drafter          — only ledger claims; only verified SourcePack citations
 ```
 
-Add new banned key: `"discoveryAlignment"` (internal-only, sanitized out of user payload like everything else under `BANNED_KEYS`).
+---
 
-**File:** `supabase/functions/legal-qa/legalResearchPlanner.ts`
+## Stage 1 — Issue Map (broad open web)
 
-- Replace prose-only Discovery injection (lines 328–343) with a **structured JSON block** in the planner prompt:
+**New file:** `supabase/functions/legal-qa/issueMap.ts`. Wired in `index.ts` after decomposition, in parallel with the existing router.
+
+- Provider: existing `openWebDiscovery` infrastructure (Perplexity sonar / sonar-pro). **No `search_domain_filter`.** Broad web is intentional here.
+- Output (added to `contracts.ts` as `IssueMap`):
+  ```ts
+  {
+    framing: string;
+    doctrines:           { name: string; summary: string }[];
+    leading_cases:       { name: string; docket?: string; relevance: string }[];
+    statutes:            { name: string; year?: string; relevance: string }[];
+    secondary_sources:   { author?: string; title?: string;
+                           type: "academic"|"committee"|"report"|"news"|"other";
+                           relevance: string }[];
+    competing_positions: { stance: string; rationale: string }[];
+    open_questions:      string[];
+  }
   ```
-  <DISCOVERY_INPUT>
-  { "resolved_entities":[...], "suggested_trusted_queries":[...],
-    "candidate_authoritative_sources":[{title,url,type}...],
-    "ambiguity_notes":[...] }
-  </DISCOVERY_INPUT>
+- **Descriptors only.** No URLs, no quotes, no "according to X" passthrough. Raw URLs and snippets stay in telemetry (`qa_logs.metadata.issue_map_raw`) for audit only.
+- Mode caps (`MODE_PROFILES.issueMap`): Fast = `"lite"` (8s, sonar); Deep = `"full"` (15s, sonar-pro).
+- Timeout / parse error → empty IssueMap; pipeline degrades to today's behavior with no regression.
+
+## Stage 2 — Candidate Claims (hypotheses, not citations)
+
+**New file:** `supabase/functions/legal-qa/candidateClaims.ts`. Runs immediately after Stage 1.
+
+- Input: question + decomposition + IssueMap.
+- Output: `CandidateClaim[]`, each:
+  ```ts
+  { id, statement, kind: "doctrinal"|"empirical"|"normative"|"procedural",
+    required_evidence: ("statute"|"case"|"academic"|"committee"|"news")[],
+    generated_search_queries: string[],
+    source_hint: "issue_map" }   // marks them as non-citeable hypotheses
   ```
-- Extend the planner's response schema (tool/JSON schema) to require `retrievalStrategy`, `retrievalStrategyRationale`, and (when DISCOVERY_INPUT is non-empty) `discoveryAlignment`.
-- Strategy-selection rules baked into the system prompt:
-  - **db_first** → router `query_type ∈ {applied, current_status_factual}` AND decomposition has clear statute/case anchors AND no theoretical/critical/policy framing.
-  - **discovery_first** → theoretical / critical / institutional / reform / policy / academic-research / unclear-source-universe AND no obvious doctrinal anchor.
-  - **hybrid** → mixed (e.g. doctrinal anchor exists but question is also normative/critical).
-- Heuristic fallback (`buildHeuristicPlan`) gets the same field, derived from router signals (`query_type`, `requires_current_context`, low confidence) + decomposition flags.
+- Model: gpt-5-mini, structured tool call (uses fixed `aiProvider.ts`).
+- Caps: Fast = 4 claims, Deep = 8 claims.
+- The system prompt explicitly states: **claims are hypotheses; the verifier may reject any; an unverified claim cannot be asserted.**
 
-Acceptance: planner unit tests assert the three example questions resolve to the expected strategies.
+## Stage 3 — Per-Claim Verification (strict: DB + trusted allowlist only)
 
----
+**New file:** `supabase/functions/legal-qa/claimVerification.ts`. Reuses `search_legal_chunks_text` + `match_legal_chunks` RPCs and the existing trusted-Perplexity fan-out (Stage E.5 allowlist).
 
-## 2. Wire structured Discovery into the planner call
+For each candidate claim, in parallel (mode-capped):
+1. Run `claim.generated_search_queries` against local DB (text + vector).
+2. Run the same queries through Perplexity **with `search_domain_filter` = trusted allowlist**. Open web is forbidden here.
+3. Score each hit against the claim with a Gemini-Flash relevance pass (same pattern as `sourceRoleClassifier.ts`): `direct_support | partial_support | tangential | unrelated`.
+4. Verdict:
+   - `supported` → ≥1 `direct_support` from local DB or trusted allowlist.
+   - `partially_supported` → only `partial_support` matches.
+   - `unsupported` → nothing better than `tangential`.
+5. Supporting hits feed into the **existing SourcePack** via `addToSourcePack`, so Rule 37 / Card→Claim / citation engine work unchanged.
 
-**File:** `supabase/functions/legal-qa/index.ts` (~line 4716 `runLegalResearchPlanner` call)
+**Hard invariant:** Issue-Map URLs never enter the SourcePack. The pipeline that converts Stage 3 hits → SourceCards has zero codepath that reads `issueMap.*`.
 
-- Continue passing `discovery: discoveryResult`. The planner module reads it as structured (no caller change needed beyond awaiting `discoveryPromise` before this call — already done by the gate ordering).
-- Log `[role-plan] strategy=… discoveryAlignment=consumed:N/ignored:M` for observability.
+## Stage 4 — Claim Ledger
 
----
+Stored as `qa_logs.metadata.research_safeguards.claim_ledger` (BANNED_KEYS-stripped):
 
-## 3. Round-1 retrieval injection (Discovery-derived queries)
-
-**Architectural note:** Today the planner runs *after* round-1. To inject Discovery queries into round-1 we have two choices:
-
-- **3a (preferred, minimal):** Move ONLY the lightweight `retrievalStrategy + suggested_trusted_queries` decision earlier — by short-circuiting it from `discoveryResult` directly (no planner call yet). The full `runLegalResearchPlanner` still runs at its current site for role classification. We add a small `selectRetrievalStrategy(routerRoute, decomposedPlan, discoveryResult)` helper used **before** round-1 retrieval kicks off, and the planner's later `retrievalStrategy` is reconciled (logged if it disagrees, planner wins for telemetry).
-- **3b (rejected):** Move the whole planner before round-1 — touches Track A and changes pipeline order. Out of scope per user constraint.
-
-Implement **3a** in `index.ts`:
-
-- After `discoveryPromise` settles (await it before round-1 starts when `modeProfile.openWebDiscovery !== "off"`; if discovery times out, treat as `db_first`).
-- Compute `retrievalStrategyEarly` via the helper.
-- Build `discoveryDerivedQueries[]` from `discovery.suggested_trusted_queries` (and, after planner runs, `planner.requiredVerificationTargets` are added in a tight round-1.5 micro-fan-out — see below).
-- Cap by mode: **Fast = 3, Deep = 6** (new fields on `MODE_PROFILES`: `discoveryQueryCapRound1`).
-- Dedup against: lowercased+normalized user `question`, `decomposedPlan.query_plan[].external_query`, and (when available) `planner.canonicalSearchTargets`.
-- Run them through the existing `search_legal_chunks_text` + trusted-Perplexity fan-out used by round-1. **Discovery URLs themselves are NOT injected as cards** — only the resulting trusted/local matches become SourceCards via the normal path.
-
-`requiredVerificationTargets` micro-pass:
-- Runs after `runLegalResearchPlanner` returns, BEFORE the role-gap rescue block (~4808). Same RPC fan-out, same caps reduced by queries already used in round-1, same dedup.
-- Telemetry recorded under `research_safeguards.retrieval_strategy.verification_targets_run`.
-
-If `retrievalStrategy === "db_first"`, skip injection (cap = 0).
-
----
-
-## 4. Discovery verification
-
-**New helper:** `verifyDiscoveryTargets(discoveryResult, sourcePackV2)` in `openWebDiscovery.ts`.
-
-For each discovery `resolved_entity` and `candidate_authoritative_source`, attempt to match an item in the final `sourcePackV2` (any tier) by:
-- normalized title equality / containment,
-- canonical citation containment,
-- URL host+path match (against `item.url`),
-- entity-identifier match (e.g. statute name token).
-
-Output:
-```ts
-{
-  discovered_targets: string[],
-  verified_targets: { target: string; method: "local_db"|"trusted_perplexity"|"allowlist"; sourceId: string }[],
-  unverified_targets: string[],
-}
+```
+{ claims: [
+    { id, statement, verdict: "supported"|"partially_supported"|"unsupported",
+      sourceIds: number[], evidenceNotes: string }
+  ] }
 ```
 
-Called once after the role-gap rescue block, before the gate-banner is finalized.
+Drafter contract:
+- `supported` → may be asserted directly with the listed source ids.
+- `partially_supported` → may be asserted with hedging vocabulary (`יש הסוברים`, `נטען כי`, `עמדה אחת גורסת`); citation required.
+- `unsupported` → **omit by default.** Only retain when omission would create a misleading gap; in that case the drafter writes a single sentence in the form `יצוין כי טענת X לא אומתה במקור מהימן ועל כן אינה נכללת בניתוח להלן` — no footnote marker, no claim assertion.
+
+## Stage 5 — Drafter
+
+`index.ts` drafter prompt + `cardClaimContract.ts`.
+
+Inject (in addition to today's prompt):
+- Issue Map's `framing`, `doctrines`, `competing_positions` (descriptors, no URLs).
+- The Claim Ledger as a hard contract:
+  ```
+  <CLAIM_LEDGER>
+  C1 [supported]            "..."  → src=[3,7]
+  C2 [partially_supported]  "..."  → src=[5]
+  C3 [unsupported]          "..."  → src=[]      // omit unless gap-disclosure required
+  </CLAIM_LEDGER>
+  ```
+- Hard system rules:
+  1. Do not introduce any claim absent from the Ledger.
+  2. Do not cite any source absent from the SourcePack.
+  3. Issue-Map material is **not** a source. Never cite it. Never paraphrase a passage from it as if it were verified.
+  4. `unsupported` claims are omitted by default; gap disclosure is rare and never carries a footnote.
+
+Existing `[CARD:n]` markers, anchor pass, footnote parser, Rule 37, citation engine — unchanged.
 
 ---
 
-## 5. Drafter banner — unverified discovery coverage
+## Mode profile (`modeProfiles.ts`)
 
-**File:** `index.ts` where the soft gate banner is appended to drafter task instructions (`buildRoleUsageBlock` / banner section).
-
-When `unverified_targets.length > 0` AND `retrievalStrategy !== "db_first"`:
-append a Hebrew advisory line, e.g.:
-> ⚠ גילוי רשת פתוחה זיהה יעדים פוטנציאליים שלא אומתו במאגר/מקורות מהימנים: X, Y. אין להסתמך עליהם כסמכות; אם רלוונטי — הסתייג בתשובה.
-
-Hard rules in the same banner block:
-- Do NOT cite Discovery sources.
-- Do NOT introduce X/Y as anchors; only mention as "טרם אומת".
-
-The banner is **soft** (informational); never blocks; never injected as a card.
+| Field | Fast | Deep |
+|---|---|---|
+| `issueMap` | `"lite"` (8s, sonar, broad web) | `"full"` (15s, sonar-pro, broad web) |
+| `candidateClaimsCap` | 4 | 8 |
+| `claimVerificationParallel` | 3 | 6 |
+| `claimVerificationDbCap` (per claim) | 4 | 6 |
+| `claimVerificationAllowlistCap` (per claim) | 2 | 3 |
 
 ---
 
-## 6. Telemetry
+## Telemetry (`qa_logs.metadata.research_safeguards`, all stripped)
 
-In `index.ts` qa_logs metadata writer:
-
-```ts
-metadata.research_safeguards.retrieval_strategy = {
-  selected_early,                  // from helper, pre-planner
-  selected_planner,                // from runLegalResearchPlanner
-  rationale,                       // planner's retrievalStrategyRationale
-  discovery_query_count,           // queries actually injected into round-1
-  db_query_count,                  // queries from decomposedPlan + question
-  verification_targets_run,        // count of planner.requiredVerificationTargets executed
-  cap_used,                        // mode cap (3 or 6)
-};
-metadata.research_safeguards.discovery_verification = {
-  discovered_targets,
-  verified_targets,
-  unverified_targets,
-  consumed_by_planner: discoveryAlignment.consumedEntities + consumedQueries,
-  injected_into_retrieval: discoveryDerivedQueries,
-  source_pack_matches: verified_targets.map(v => ({ target: v.target, sourceId: v.sourceId })),
-};
-```
-
-Both are stripped from user payload (already covered by `sanitizeResponse` strip of `research_safeguards.*` internals — verify; if not stripped today, add to BANNED keys traversal).
+- `issue_map`: counts per category, `status`, `ms`, raw URLs (audit only).
+- `candidate_claims`: count, by-kind histogram.
+- `claim_ledger`: full `[ {id, verdict, sourceIds} ]`.
+- `verification_summary`: `{ supported, partially_supported, unsupported, db_hits, allowlist_hits, dropped_unrelated }`.
+- `discovery_isolation_check`: assertion that no SourcePack item has `provenanceInternal === "issue_map"` (must always be true; logged for audit).
 
 ---
 
-## 7. Validation probes (no baseline retune)
+## Backward compatibility
 
-Add `eval/phase6.7-discovery-driven-probe.mjs` running:
-
-- **A.** `"האם בית המשפט מתנהל באקטיביזם שיפוטי ביחס לסכסוכי עוברים מוקפאים?"`
-  - assert `retrieval_strategy.selected_planner ∈ {hybrid, discovery_first}`
-  - assert `discovery_query_count >= 1` (when discovery returned ≥1 suggested query)
-  - assert planner `requiredRoles` includes at least one of `theoretical_anchor | academic_commentary | counter_position`
-  - assert final body contains qualifying language (regex over hedging vocabulary) when `unverified_targets.length > 0`
-
-- **B.** `"האם נכון לפצל את תפקיד היועמ״ש?"`
-  - assert strategy ∈ {hybrid, discovery_first}
-  - assert `discovery_verification.verified_targets` non-empty when discovery surfaced AG/committee materials AND they exist locally
-  - assert no SourceCard has `provenanceInternal === "discovery"` (Discovery never escapes)
-
-- **C.** `"מה נקבע באפרופים?"`
-  - assert `retrieval_strategy.selected_planner === "db_first"`
-  - assert `discovery_query_count === 0`
-
-Plus full regression harness: `newFailures === 0`. Do not retune baselines.
+- Phase 6.7 is subsumed: `selectRetrievalStrategy` and `discoveryDerivedQueries` are replaced by Stages 1–3. The `verifyDiscoveryTargets` helper is reused inside Stage 3 against `issueMap.leading_cases + statutes + secondary_sources`.
+- LegalResearchPlanner / SourceRoleClassifier / Gate V2 / Card→Claim / Rule 37 / CitationEngine — **untouched**.
+- `verified_sources` table is not the citeable allowlist (it is a user-saved table). The trusted-Perplexity allowlist remains the gate.
+- Failures in Stage 1 or 2 → graceful fallback to today's pipeline.
 
 ---
 
-## Files touched
+## Validation
 
-- `supabase/functions/legal-qa/contracts.ts` — extend `LegalResearchPlan`, add banned key.
-- `supabase/functions/legal-qa/legalResearchPlanner.ts` — structured Discovery input, schema fields, heuristic fallback, strategy rules.
-- `supabase/functions/legal-qa/openWebDiscovery.ts` — add `verifyDiscoveryTargets` helper.
-- `supabase/functions/legal-qa/modeProfiles.ts` — add `discoveryQueryCapRound1` (Fast 3, Deep 6).
-- `supabase/functions/legal-qa/index.ts` — early `selectRetrievalStrategy`, await discovery before round-1 when active, round-1 injection, post-planner `requiredVerificationTargets` micro-pass, `verifyDiscoveryTargets` call, banner extension, telemetry blocks.
-- `eval/phase6.7-discovery-driven-probe.mjs` — new.
-- Unit tests: extend `legalResearchPlanner` (strategy mapping) and `openWebDiscovery` (verification matcher).
+- Failing question (`האם בית המשפט מתנהל באקטיביזם שיפוטי...`) → non-truncated answer with ≥3 footnotes, all from local DB / trusted allowlist; no `(טרם אומת)` line unless it is a genuine gap.
+- Q-contract-amendment regression — green.
+- Full regression harness — `newFailures === 0`.
+- New unit tests:
+  - `issueMap.test.ts` — schema + heuristic fallback + URL-leak guard.
+  - `claimVerification.test.ts` — verdict logic edge cases; allowlist enforcement.
+  - `cardClaimContract.test.ts` — drafter must not emit `[N]` for `unsupported` claims; must not cite an Issue-Map-only entity.
+- New probe `eval/issue-map-pipeline-probe.mjs` covering Phase 6.7's three example questions, asserting (a) Issue Map non-empty for theoretical/critical questions, (b) zero Issue-Map URLs in SourcePack, (c) `db_first` behavior on the narrow doctrinal question (`"מה נקבע באפרופים?"`).
 
-## Out of scope (untouched)
+---
 
-- LegalResearchPlanner role-classifier internals (Track A).
-- Source role classifier, Gate V2 logic (only its banner text grows).
-- Card→Claim contract, citation engine, Rule 37, post-processing.
-- CitationQualityGate enforcement (stays disabled).
-- Pricing / model routing / drafter prompt structure beyond the banner addition.
+## Files
 
-## Risk + mitigations
+**New**
+- `supabase/functions/legal-qa/issueMap.ts`
+- `supabase/functions/legal-qa/candidateClaims.ts`
+- `supabase/functions/legal-qa/claimVerification.ts`
+- `supabase/functions/legal-qa/issueMap.test.ts`
+- `supabase/functions/legal-qa/claimVerification.test.ts`
+- `eval/issue-map-pipeline-probe.mjs`
 
-- **Risk:** Awaiting `discoveryPromise` before round-1 adds latency on Fast.
-  **Mitigation:** Tight timeout (use existing discovery timeout). On timeout → `db_first` + `discovery_query_count=0`; round-1 proceeds as today.
-- **Risk:** Planner schema change destabilizes existing planner JSON parsing.
-  **Mitigation:** New fields are optional in the parser; heuristic fallback fills `retrievalStrategy` if absent.
-- **Risk:** Injected queries cause noisy SourceCards.
-  **Mitigation:** All injected queries flow through the existing trusted retrieval + dedup; URLs from Discovery itself are never promoted.
+**Edited**
+- `supabase/functions/legal-qa/aiProvider.ts` (F1)
+- `supabase/functions/legal-qa/index.ts` (F2 + Stages 1–5 wiring + telemetry + isolation check)
+- `supabase/functions/legal-qa/contracts.ts` (`IssueMap`, `CandidateClaim`, `ClaimLedger`; add to `BANNED_KEYS`)
+- `supabase/functions/legal-qa/modeProfiles.ts` (new caps)
+- `supabase/functions/legal-qa/cardClaimContract.ts` (Claim-Ledger drafter block + tests)
 
+**Deprecated (left as no-ops one release for safety)**
+- `selectRetrievalStrategy` early-injection
+- `discoveryDerivedQueries` round-1.5 micro-pass
+
+---
+
+## Risks
+
+- **Latency**: Stage 1 (broad web) runs in parallel with router/decomposition; Stage 2 starts as soon as Stage 1 returns; Stage 3 is parallel and capped. Net Deep cost ≈ +1.5–2 s.
+- **Verifier false-negatives** silently dropping real material: mitigated by the `partially_supported` tier and by the gap-disclosure escape hatch in Stage 4.
+- **Open-web leakage**: enforced structurally — Issue Map output schema contains no URL field reachable by drafter or SourcePack; the discovery_isolation_check telemetry assertion catches regressions.
