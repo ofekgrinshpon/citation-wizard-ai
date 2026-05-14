@@ -26,8 +26,11 @@ import {
   shouldRunDiscovery,
   runOpenWebDiscovery,
   buildDiscoveryTelemetry,
+  verifyDiscoveryTargets,
+  buildUnverifiedDiscoveryBanner,
   type OpenWebDiscovery,
   type DiscoveryDecision,
+  type DiscoveryVerification,
 } from "./openWebDiscovery.ts";
 import {
   checkSourcePackGate,
