@@ -9598,6 +9598,44 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             role_classifier: { fallback_count: roleClassifierFallbackCount },
             // Phase 6.5b — role-gap targeted retrieval telemetry.
             role_gap_targeted_retrieval: roleGapRetrievalTelemetry,
+            // Phase 6.7 — discovery-driven retrieval strategy + verification.
+            retrieval_strategy: {
+              selected_early: retrievalStrategyEarly,
+              selected_planner: researchPlan?.retrievalStrategy ?? null,
+              rationale: researchPlan?.retrievalStrategyRationale ?? null,
+              discovery_query_count: discoveryRound1Telemetry.queries_used.length,
+              db_query_count:
+                (decomposedPlan?.query_plan ?? []).filter(
+                  (p) => typeof (p as { external_query?: string }).external_query === "string",
+                ).length + 1, // +1 for the user question
+              cap_used: discoveryRound1Telemetry.cap_used,
+              ran: discoveryRound1Telemetry.ran,
+              reason: discoveryRound1Telemetry.reason,
+              new_cards_added: discoveryRound1Telemetry.new_cards_added,
+              duration_ms: discoveryRound1Telemetry.duration_ms,
+              timed_out: discoveryRound1Telemetry.timed_out,
+              queries_planned: discoveryRound1Telemetry.queries_planned,
+              queries_used: discoveryRound1Telemetry.queries_used,
+            },
+            discovery_verification: discoveryVerification
+              ? {
+                  discovered_targets: discoveryVerification.discovered_targets,
+                  verified_targets: discoveryVerification.verified_targets,
+                  unverified_targets: discoveryVerification.unverified_targets,
+                  consumed_by_planner: researchPlan?.discoveryAlignment
+                    ? [
+                        ...researchPlan.discoveryAlignment.consumedEntities,
+                        ...researchPlan.discoveryAlignment.consumedQueries,
+                      ]
+                    : [],
+                  injected_into_retrieval: discoveryRound1Telemetry.queries_used,
+                  source_pack_matches: discoveryVerification.verified_targets.map((v) => ({
+                    target: v.target,
+                    sourceId: v.sourceId,
+                    method: v.method,
+                  })),
+                }
+              : null,
             // Phase 6.5b — orphan FN prevention (deterministic path).
             orphan_fn_prevention: orphanFnPreventionTelemetry,
           },
