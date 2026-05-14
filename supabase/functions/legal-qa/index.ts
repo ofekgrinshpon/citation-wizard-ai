@@ -9745,6 +9745,55 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
               : null,
             // Phase 6.5b — orphan FN prevention (deterministic path).
             orphan_fn_prevention: orphanFnPreventionTelemetry,
+            // Phase 7 — Issue Map / Candidate Claims / Claim Ledger telemetry.
+            issue_map: {
+              mode: modeProfile.issueMap,
+              status: phase7IssueMapStatus,
+              duration_ms: phase7IssueMapDurationMs,
+              counts: summarizeIssueMap(phase7IssueMap),
+              raw_url_count: phase7IssueMapRawUrls.length,
+              raw_urls: phase7IssueMapRawUrls.slice(0, 20),
+            },
+            candidate_claims: {
+              status: phase7CandidateClaimsStatus,
+              duration_ms: phase7CandidateClaimsDurationMs,
+              count: phase7CandidateClaims.length,
+              cap: modeProfile.candidateClaimsCap,
+              by_kind: phase7CandidateClaims.reduce<Record<string, number>>((acc, c) => {
+                acc[c.kind] = (acc[c.kind] ?? 0) + 1;
+                return acc;
+              }, {}),
+            },
+            claim_ledger: phase7ClaimLedger
+              ? {
+                  status: phase7VerificationStatus,
+                  duration_ms: phase7VerificationDurationMs,
+                  claims: phase7ClaimLedger.claims.map((c) => ({
+                    id: c.id,
+                    verdict: c.verdict,
+                    sourceIds: c.sourceIds,
+                  })),
+                }
+              : { status: phase7VerificationStatus, duration_ms: 0, claims: [] },
+            verification_summary: phase7VerificationSummary ?? {
+              supported: 0,
+              partially_supported: 0,
+              unsupported: 0,
+              dropped_tangential: 0,
+              dropped_unrelated: 0,
+              pruned_source_ids: [],
+            },
+            pruned_source_ids: phase7PrunedSourceIds,
+            relevance_scores: phase7ClaimLedger
+              ? phase7ClaimLedger.claims.flatMap((c) =>
+                  c.hits.map((h) => ({
+                    claimId: c.id,
+                    sourceId: h.sourceId,
+                    score: h.score,
+                    rationale: h.rationale,
+                  })),
+                )
+              : [],
           },
           ...(evalRunId ? { eval_run_id: evalRunId } : {}),
           ...(evalVariant ? { eval_variant: evalVariant } : {}),
