@@ -52,7 +52,7 @@ import {
   type SourcePackGateV2Result,
   type SourceRole,
 } from "./contracts.ts";
-import { runLegalResearchPlanner } from "./legalResearchPlanner.ts";
+import { runLegalResearchPlanner, heuristicRetrievalStrategy } from "./legalResearchPlanner.ts";
 import { classifySourceRoles, type ClassifierInputCard } from "./sourceRoleClassifier.ts";
 import { evaluateSourcePackGateV2, buildGateV2Banner, buildGateV2QualifyBanner, buildQueriesForMissingRole } from "./sourcePackGateV2.ts";
 import { renderRoleAwareCard, buildRoleUsageBlock, type RoleAwareCardInput } from "./roleAwarePromptHelper.ts";
