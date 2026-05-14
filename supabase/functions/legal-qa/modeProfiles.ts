@@ -178,6 +178,27 @@ export interface ModeProfile {
    * Skipped entirely when the planner's retrievalStrategy is "db_first".
    */
   discoveryQueryCapRound1: number;
+
+  // ─── Phase 7 — Issue Map → Candidate Claims → Verification → Ledger ────
+  /** "off" → skip Stage 1 entirely. "lite" → 8s sonar. "full" → 15s sonar-pro. */
+  issueMap: "off" | "lite" | "full";
+  /** Cap on Stage 2 candidate claims. */
+  candidateClaimsCap: number;
+  /** How many Stage 3 claim verifications run in parallel. */
+  claimVerificationParallel: number;
+  /** Per-claim cap on local-DB query fan-out. */
+  claimVerificationDbCap: number;
+  /** Per-claim cap on trusted-allowlist Perplexity fan-out. */
+  claimVerificationAllowlistCap: number;
+  /**
+   * "off"     → Phase 7 disabled.
+   * "shadow"  → ledger built + logged in telemetry only; no source-pack pruning,
+   *             no drafter contract block.
+   * "on"      → Phase 7 prunes tangential/unrelated sources from the source pack
+   *             before drafting AND injects the Claim Ledger as a hard contract
+   *             into the drafter prompt.
+   */
+  claimLedgerMode: "off" | "shadow" | "on";
 }
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
