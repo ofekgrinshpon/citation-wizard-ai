@@ -298,6 +298,12 @@ export async function runLegalResearchPlanner(
       typeof data.confidence === "number" && isFinite(data.confidence)
         ? Math.max(0, Math.min(1, data.confidence))
         : 0.5,
+    retrievalStrategy: normalizeStrategyChoice(data.retrieval_strategy, inputs),
+    retrievalStrategyRationale:
+      typeof data.retrieval_strategy_rationale === "string"
+        ? data.retrieval_strategy_rationale.slice(0, 240)
+        : "",
+    discoveryAlignment: normalizeDiscoveryAlignment(data.discovery_alignment, inputs),
   };
 
   // If the model produced zero roles, fall back to heuristic to keep gate
