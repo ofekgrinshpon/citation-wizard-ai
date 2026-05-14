@@ -26,7 +26,6 @@
 
 import {
   CITATION_RULES,
-  getRequiredFields,
 } from "../_shared/citationEngine.ts";
 import {
   resolveCitation,
