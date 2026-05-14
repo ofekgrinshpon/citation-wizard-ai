@@ -228,6 +228,14 @@ interface RawPlannerOutput {
   statute_names: string[];
   notes: string;
   confidence: number;
+  retrieval_strategy?: RetrievalStrategy;
+  retrieval_strategy_rationale?: string;
+  discovery_alignment?: {
+    consumed_entities?: string[];
+    consumed_queries?: string[];
+    ignored_entities?: Array<{ value?: unknown; reason?: unknown }>;
+    required_verification_targets?: string[];
+  };
 }
 
 export interface PlannerInputs {
