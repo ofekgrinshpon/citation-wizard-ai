@@ -3989,6 +3989,8 @@ ${(verify.fullText as string).slice(0, 50000)}
             : undefined,
           docket_prefix: m.source_type === "caselaw" ? docketPrefix : undefined,
           procedure_category: m.source_type === "caselaw" ? procedureCategory : undefined,
+          court: m.source_type === "caselaw" ? ((meta.court as string) || undefined) : undefined,
+          decision_date: m.source_type === "caselaw" ? ((meta.decision_date as string) || undefined) : undefined,
           // Milestone A.5: carry retrieval similarity through to the source pack
           // so assembleSourcePack can apply the relevance gate when promoting
           // knesset_research / journal_article items to `core`.
