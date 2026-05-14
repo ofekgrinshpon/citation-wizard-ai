@@ -222,6 +222,12 @@ export interface LegalResearchPlan {
   notes?: string;
   /** Planner-reported confidence (0..1). */
   confidence: number;
+  /** Phase 6.7 — retrieval strategy decision. */
+  retrievalStrategy?: RetrievalStrategy;
+  /** Phase 6.7 — short Hebrew rationale for the strategy choice (telemetry only). */
+  retrievalStrategyRationale?: string;
+  /** Phase 6.7 — how the planner consumed Discovery output. */
+  discoveryAlignment?: DiscoveryAlignment;
 }
 
 // ─── Phase 6.5 — Source Pack Gate V2 (role-based) ─────────────────────
