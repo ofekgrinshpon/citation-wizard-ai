@@ -4083,7 +4083,166 @@ ${(verify.fullText as string).slice(0, 50000)}
       writeCheckpoint("decomposition");
     }
 
-    // ========= Stage C: Source Pack assembly (legal_research only, INTERNAL) =========
+    // ─── Phase 6.7 — Discovery-driven Round 1.5 injection ──────────────
+    // After decomposition + discovery have settled, decide a retrieval
+    // strategy. If it's not "db_first", fan a small set of Discovery-
+    // suggested queries through trusted local retrieval and append any
+    // *local* matches to sourceCards/sourcePack BEFORE the source pack v2
+    // assembly. Discovery URLs themselves NEVER enter the pack — only
+    // separately-surfaced trusted/local matches.
+    type DiscoveryRound1Telemetry = {
+      ran: boolean;
+      reason: "ran" | "mode_off" | "db_first" | "no_queries" | "no_discovery" | "timeout" | "error";
+      strategy_early: "db_first" | "discovery_first" | "hybrid" | null;
+      queries_planned: string[];
+      queries_used: string[];
+      cap_used: number;
+      new_cards_added: number;
+      duration_ms: number;
+      timed_out: boolean;
+    };
+    let discoveryRound1Telemetry: DiscoveryRound1Telemetry = {
+      ran: false,
+      reason: "no_discovery",
+      strategy_early: null,
+      queries_planned: [],
+      queries_used: [],
+      cap_used: modeProfile.discoveryQueryCapRound1 ?? 0,
+      new_cards_added: 0,
+      duration_ms: 0,
+      timed_out: false,
+    };
+    let retrievalStrategyEarly: "db_first" | "discovery_first" | "hybrid" | null = null;
+    if (
+      enableDeepPipeline &&
+      !evalForceLegacy &&
+      modeProfile.openWebDiscovery !== "off" &&
+      (modeProfile.discoveryQueryCapRound1 ?? 0) > 0
+    ) {
+      // Make sure discoveryPromise has settled before we use discoveryResult.
+      if (discoveryPromise) {
+        try { await discoveryPromise; } catch { /* already logged */ }
+      }
+      retrievalStrategyEarly = heuristicRetrievalStrategy({
+        question,
+        router: routerRoute,
+        decomposition: decomposedPlan,
+        discovery: discoveryResult,
+      });
+      discoveryRound1Telemetry.strategy_early = retrievalStrategyEarly;
+
+      if (retrievalStrategyEarly === "db_first") {
+        discoveryRound1Telemetry.reason = "db_first";
+      } else if (!discoveryResult) {
+        discoveryRound1Telemetry.reason = "no_discovery";
+      } else {
+        const cap = modeProfile.discoveryQueryCapRound1;
+        // Build dedup keyset from existing retrieval inputs.
+        const seen = new Set<string>();
+        const norm = (s: string) =>
+          s.toLowerCase().replace(/[״"׳']/g, "").replace(/\s+/g, " ").trim();
+        seen.add(norm(question));
+        for (const p of decomposedPlan?.query_plan ?? []) {
+          const eq = (p as { external_query?: string }).external_query;
+          if (typeof eq === "string" && eq.trim()) seen.add(norm(eq));
+        }
+        const planned: string[] = [];
+        for (const q of discoveryResult.suggested_trusted_queries ?? []) {
+          if (typeof q !== "string") continue;
+          const k = norm(q);
+          if (k.length < 4 || seen.has(k)) continue;
+          seen.add(k);
+          planned.push(q.trim());
+          if (planned.length >= cap) break;
+        }
+        discoveryRound1Telemetry.queries_planned = planned;
+
+        if (planned.length === 0) {
+          discoveryRound1Telemetry.reason = "no_queries";
+        } else {
+          const tDr1 = Date.now();
+          const DR1_TIMEOUT_MS = researchDepth === "deep" ? 12000 : 6000;
+          const existingDocKeys = new Set<string>();
+          for (const sc of sourceCards) {
+            existingDocKeys.add(`${sc.citation}|${sc.url ?? ""}`);
+          }
+          try {
+            const work = (async () => {
+              const results = await Promise.all(planned.map(async (q) => {
+                try {
+                  const { data } = await adminClient.rpc("search_legal_chunks_text", {
+                    search_query: q,
+                    match_count: 4,
+                  });
+                  return { q, matches: Array.isArray(data) ? data : [] };
+                } catch (e) {
+                  console.warn(`[discovery-round1] query "${q.slice(0,40)}…" failed:`, (e as Error).message);
+                  return { q, matches: [] as Array<Record<string, unknown>> };
+                }
+              }));
+              const usedQueries: string[] = [];
+              const addedDocKeys = new Set<string>();
+              let added = 0;
+              for (const { q, matches } of results) {
+                if (matches.length > 0) usedQueries.push(q);
+                for (const m of matches) {
+                  const mm = m as Record<string, unknown>;
+                  const docKey = `${mm.document_citation ?? ""}|${mm.source_url ?? ""}`;
+                  if (existingDocKeys.has(docKey) || addedDocKeys.has(docKey)) continue;
+                  addedDocKeys.add(docKey);
+                  const sourceLabel =
+                    mm.source_type === "caselaw" ? "פסיקה" :
+                    mm.source_type === "knesset_research" ? "מחקר כנסת / חקיקה" :
+                    mm.source_type === "journal_article" ? "מאמר אקדמי" :
+                    mm.source_type === "israeli_law" ? "חקיקה ישראלית" :
+                    String(mm.source_type ?? "מקור משפטי");
+                  const meta = (mm.metadata || {}) as Record<string, unknown>;
+                  const newCard: SourceCard = {
+                    id: cardId++,
+                    citation: String(mm.document_citation ?? mm.document_title ?? "מקור משפטי"),
+                    source_type: sourceLabel,
+                    url: (mm.source_url as string | undefined) || undefined,
+                    provenance: "local",
+                    excerpt: String(mm.chunk_content ?? "").slice(0, 400),
+                    case_number: mm.source_type === "caselaw" ? (meta.case_number as string | undefined) : undefined,
+                    court: mm.source_type === "caselaw" ? (meta.court as string | undefined) : undefined,
+                    decision_date: mm.source_type === "caselaw" ? (meta.decision_date as string | undefined) : undefined,
+                    relevance_score: typeof mm.similarity === "number" ? (mm.similarity as number) : 0.5,
+                  };
+                  sourceCards.push(newCard);
+                  added++;
+                }
+              }
+              return { added, usedQueries };
+            })();
+            const timeoutP = new Promise<"timeout">((resolve) =>
+              setTimeout(() => resolve("timeout"), DR1_TIMEOUT_MS),
+            );
+            const raced = await Promise.race([work, timeoutP]);
+            if (raced === "timeout") {
+              discoveryRound1Telemetry.timed_out = true;
+              discoveryRound1Telemetry.reason = "timeout";
+            } else {
+              discoveryRound1Telemetry.ran = true;
+              discoveryRound1Telemetry.reason = "ran";
+              discoveryRound1Telemetry.queries_used = raced.usedQueries;
+              discoveryRound1Telemetry.new_cards_added = raced.added;
+            }
+            discoveryRound1Telemetry.duration_ms = Date.now() - tDr1;
+            console.log(
+              `[discovery-round1] strategy=${retrievalStrategyEarly} planned=${planned.length} used=${discoveryRound1Telemetry.queries_used.length} added=${discoveryRound1Telemetry.new_cards_added} (${discoveryRound1Telemetry.duration_ms}ms)`,
+            );
+          } catch (e) {
+            discoveryRound1Telemetry.reason = "error";
+            discoveryRound1Telemetry.duration_ms = Date.now() - tDr1;
+            console.warn("[discovery-round1] failed (non-fatal):", (e as Error).message);
+          }
+        }
+      }
+    } else {
+      discoveryRound1Telemetry.reason = "mode_off";
+    }
+
     let sourcePack: SourcePackEntry[] = [];
     let sourcePackV2: LegalSourcePack | null = null;
     // Phase 6.5 — role-based pipeline state (planner/classifier/gate V2).
