@@ -340,7 +340,10 @@ async function streamOnce(opts: {
       ],
     };
     if (opts.provider === "openai" && /^gpt-5/.test(opts.model)) {
-      body.reasoning = { effort: "medium" };
+      // Chat Completions accepts only the top-level snake_case
+      // `reasoning_effort` field; the `reasoning: { effort }` block is
+      // Responses-API only and is rejected here with HTTP 400.
+      body.reasoning_effort = "medium";
     }
     console.log(
       `[drafter:stream:call] provider=${opts.provider} model=${opts.model} variant=${opts.variant} prompt_chars=${opts.promptChars} max_tokens=${opts.maxTokens} timeout_ms=${opts.timeoutMs}`,
@@ -528,8 +531,11 @@ async function callOnce(opts: {
     // a low reasoning level and emitting `finish_reason: "length"` with
     // zero content. `medium` keeps latency reasonable while preventing
     // the silent-empty failure mode. Gemini ignores this field.
+    // NOTE: Chat Completions accepts only the top-level snake_case
+    // `reasoning_effort` field — the `reasoning: { effort }` block is
+    // Responses-API only and is rejected here with HTTP 400.
     if (opts.provider === "openai" && /^gpt-5/.test(opts.model)) {
-      body.reasoning = { effort: "medium" };
+      body.reasoning_effort = "medium";
     }
     console.log(
       `[drafter:call] provider=${opts.provider} model=${opts.model} variant=${opts.variant} prompt_chars=${opts.promptChars} max_tokens=${opts.maxTokens} timeout_ms=${opts.timeoutMs}`,

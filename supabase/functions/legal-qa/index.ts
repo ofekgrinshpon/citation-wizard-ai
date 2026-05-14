@@ -2429,7 +2429,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
             body: JSON.stringify({
               model: "openai/gpt-5-mini",
-              reasoning: { effort: "minimal" },
+              reasoning_effort: "minimal",
               messages: [
                 { role: "system", content: "אתה מתכנן שאילתות חיפוש לעבודת מחקר משפטית בעברית. החזר 3-4 ניסוחי חיפוש קצרים וממוקדים (כולל הניסוח המקורי) שיעזרו לאתר חקיקה, פסיקה וספרות אקדמית במאגר משפטי. החזר רק את ה-tool call." },
                 { role: "user", content: `נושא: ${question.slice(0, 500)}` },
