@@ -263,6 +263,15 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     roleBasedRetrieval: "on",
     // Phase 6.7: Fast caps discovery-driven trusted-DB queries at 3 to bound latency.
     discoveryQueryCapRound1: 3,
+    // Phase 7: Issue Map → Verification → Ledger active in shadow until validated.
+    // Ledger MODE is "on" — the user-visible problem is tangential sources in
+    // footnotes; pruning + drafter contract is what fixes that complaint.
+    issueMap: "lite",
+    candidateClaimsCap: 4,
+    claimVerificationParallel: 3,
+    claimVerificationDbCap: 4,
+    claimVerificationAllowlistCap: 2,
+    claimLedgerMode: "on",
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
