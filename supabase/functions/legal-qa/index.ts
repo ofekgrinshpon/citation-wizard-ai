@@ -6244,6 +6244,13 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           reason: "drafter_wiring_pending",
         });
       }
+      // Phase 6.6 — attach citation_assembly telemetry from final card pack.
+      try {
+        const cards = sourceCards as unknown as ContractSourceCard[];
+        cardClaimTelemetry.citation_assembly = buildCitationAssemblyTelemetry(cards);
+      } catch (err) {
+        console.warn("[card-claim] citation_assembly telemetry failed:", (err as Error).message);
+      }
     } else {
       cardClaimTelemetry.reason = "mode_off";
     }
