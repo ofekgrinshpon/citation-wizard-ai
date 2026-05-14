@@ -274,4 +274,8 @@ export const BANNED_KEYS: readonly string[] = [
   "legalResearchPlan",
   "sourcePackGateV2",
   "roleClassification",
+  // Phase 6.7 — discovery-driven research planning internals
+  "discoveryAlignment",
+  "retrievalStrategy",
+  "retrievalStrategyRationale",
 ] as const;
