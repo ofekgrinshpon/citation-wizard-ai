@@ -108,6 +108,49 @@ const PLANNER_TOOL: PlannerToolDef = {
       },
       notes: { type: "string" },
       confidence: { type: "number" },
+      retrieval_strategy: {
+        type: "string",
+        enum: ["db_first", "discovery_first", "hybrid"],
+        description:
+          "db_first for narrow doctrinal/statutory/case-law questions with clear known anchors. discovery_first or hybrid for theoretical/critical/institutional/policy/reform/academic/unclear-source-universe questions.",
+      },
+      retrieval_strategy_rationale: {
+        type: "string",
+        description: "Short Hebrew rationale for the chosen retrieval_strategy (telemetry only).",
+      },
+      discovery_alignment: {
+        type: "object",
+        description:
+          "How the planner consumed the structured DISCOVERY_INPUT. Empty arrays when no discovery input was supplied.",
+        properties: {
+          consumed_entities: { type: "array", items: { type: "string" } },
+          consumed_queries: { type: "array", items: { type: "string" } },
+          ignored_entities: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                value: { type: "string" },
+                reason: { type: "string" },
+              },
+              required: ["value", "reason"],
+              additionalProperties: false,
+            },
+          },
+          required_verification_targets: {
+            type: "array",
+            description: "Canonical names/titles downstream retrieval should attempt to verify.",
+            items: { type: "string" },
+          },
+        },
+        required: [
+          "consumed_entities",
+          "consumed_queries",
+          "ignored_entities",
+          "required_verification_targets",
+        ],
+        additionalProperties: false,
+      },
     },
     required: [
       "answer_strategy",
@@ -118,6 +161,8 @@ const PLANNER_TOOL: PlannerToolDef = {
       "statute_names",
       "notes",
       "confidence",
+      "retrieval_strategy",
+      "retrieval_strategy_rationale",
     ],
     additionalProperties: false,
   },
