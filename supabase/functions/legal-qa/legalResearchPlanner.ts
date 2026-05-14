@@ -527,7 +527,87 @@ export function buildHeuristicPlan(inputs: PlannerInputs): LegalResearchPlan {
     statuteNames: route?.target_statute?.name ? [route.target_statute.name] : [],
     notes: "heuristic_fallback",
     confidence: 0.35,
+    retrievalStrategy: heuristicRetrievalStrategy(inputs),
+    retrievalStrategyRationale: "heuristic_fallback",
+    discoveryAlignment: emptyDiscoveryAlignment(inputs),
   };
+}
+
+// ─── Phase 6.7 helpers ────────────────────────────────────────────────
+
+const VALID_STRATEGY = new Set<RetrievalStrategy>(["db_first", "discovery_first", "hybrid"]);
+
+function normalizeStrategyChoice(
+  raw: unknown,
+  inputs: PlannerInputs,
+): RetrievalStrategy {
+  if (typeof raw === "string" && VALID_STRATEGY.has(raw as RetrievalStrategy)) {
+    return raw as RetrievalStrategy;
+  }
+  return heuristicRetrievalStrategy(inputs);
+}
+
+function normalizeDiscoveryAlignment(
+  raw: unknown,
+  inputs: PlannerInputs,
+): DiscoveryAlignment {
+  if (!raw || typeof raw !== "object") return emptyDiscoveryAlignment(inputs);
+  const obj = raw as Record<string, unknown>;
+  const arrStr = (v: unknown): string[] =>
+    Array.isArray(v)
+      ? v.filter((s): s is string => typeof s === "string" && s.trim().length > 0)
+          .map((s) => s.trim()).slice(0, 8)
+      : [];
+  const ignored = Array.isArray(obj.ignored_entities)
+    ? (obj.ignored_entities as Array<{ value?: unknown; reason?: unknown }>)
+        .filter((e) => e && typeof e === "object")
+        .map((e) => ({
+          value: typeof e.value === "string" ? e.value.slice(0, 200) : "",
+          reason: typeof e.reason === "string" ? e.reason.slice(0, 200) : "",
+        }))
+        .filter((e) => e.value.length > 0)
+        .slice(0, 8)
+    : [];
+  return {
+    consumedEntities: arrStr(obj.consumed_entities),
+    consumedQueries: arrStr(obj.consumed_queries),
+    ignoredEntities: ignored,
+    requiredVerificationTargets: arrStr(obj.required_verification_targets),
+  };
+}
+
+function emptyDiscoveryAlignment(_inputs: PlannerInputs): DiscoveryAlignment {
+  return {
+    consumedEntities: [],
+    consumedQueries: [],
+    ignoredEntities: [],
+    requiredVerificationTargets: [],
+  };
+}
+
+/**
+ * Heuristic strategy chooser used when the planner is missing or returns an
+ * invalid value. Conservative defaults:
+ *   - clear doctrinal/statutory question with a target_statute or known
+ *     case_law_application route → db_first
+ *   - policy / unclassified / low-confidence router → discovery_first
+ *   - everything else with caselaw+legislation needs → hybrid
+ */
+export function heuristicRetrievalStrategy(inputs: PlannerInputs): RetrievalStrategy {
+  const route = inputs.router;
+  const qt = route?.query_type ?? "unknown";
+  const conf = typeof route?.confidence === "number" ? route!.confidence : 0;
+  const hasStatute = !!route?.target_statute?.name;
+  const requiresCurrent = !!route?.requires_current_context;
+
+  if (qt === "policy") return "discovery_first";
+  if (qt === "doctrinal" && hasStatute) return "db_first";
+  if (qt === "case_law_application") return "db_first";
+  if (qt === "statutory_amendment_comparison") return hasStatute ? "hybrid" : "discovery_first";
+  if (qt === "procedural") return "db_first";
+  if (qt === "comparative") return "discovery_first";
+  if (conf < 0.55 || requiresCurrent) return "hybrid";
+  return hasStatute ? "db_first" : "hybrid";
 }
 
 /**
