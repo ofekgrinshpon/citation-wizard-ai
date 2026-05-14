@@ -177,6 +177,27 @@ export interface RequiredRole {
   rationale: string;
 }
 
+// Phase 6.7 — Discovery-driven retrieval strategy.
+// Discovery NEVER becomes citeable authority, but it MAY drive retrieval.
+// "db_first"        → narrow doctrinal/statutory question with clear anchors.
+// "discovery_first" → theoretical / critical / institutional / policy / reform
+//                     / academic / unclear-source-universe; discovery queries
+//                     dominate trusted-DB fan-out.
+// "hybrid"          → mixed (doctrinal anchor exists but normative/critical
+//                     framing also requires academic/policy verification).
+export type RetrievalStrategy = "db_first" | "discovery_first" | "hybrid";
+
+export interface DiscoveryAlignment {
+  /** Discovery resolved_entities the planner adopted (by name). */
+  consumedEntities: string[];
+  /** Discovery suggested_trusted_queries the planner adopted. */
+  consumedQueries: string[];
+  /** Discovery resolved_entities the planner explicitly chose to ignore + why. */
+  ignoredEntities: { value: string; reason: string }[];
+  /** Canonical names/titles the planner asks downstream retrieval to verify. */
+  requiredVerificationTargets: string[];
+}
+
 export interface LegalResearchPlan {
   /** Stable id (timestamp-based) for telemetry correlation. */
   planId: string;
