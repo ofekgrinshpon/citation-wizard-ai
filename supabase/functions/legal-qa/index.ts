@@ -65,6 +65,7 @@ import {
   parseMarkers,
   buildFootnotes,
   buildTelemetry as buildContractTelemetry,
+  buildCitationAssemblyTelemetry,
   EMPTY_TELEMETRY as EMPTY_CONTRACT_TELEMETRY,
   type CardClaimContractTelemetry,
   type ContractSourceCard,
