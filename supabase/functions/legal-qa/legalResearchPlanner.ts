@@ -197,6 +197,21 @@ const PLANNER_SYSTEM_PROMPT = `אתה מתכנן מחקר משפטי. תפקיד
 
 ביטחון (confidence): 0..1. נמוך כשהשאלה עמומה.
 
+אסטרטגיית אחזור (retrieval_strategy):
+- "db_first" — שאלה דוקטרינרית/סטטוטורית/יישום-פסיקה ממוקדת עם עוגנים ידועים ברורים (חוק יעד מזוהה, שם פס"ד מכונן ידוע, או query_type=case_law_application עם הלכה מוכרת).
+- "discovery_first" — שאלה תיאורטית / ביקורתית / מוסדית / מדיניותית / רפורמית / אקדמית / כשעולם המקורות לא ברור ואין עוגן דוקטרינרי מובהק.
+- "hybrid" — מעורב: יש עוגן דוקטרינרי או חוק יעד אבל מסגרת השאלה דורשת גם פרשנות ביקורתית / אקדמית / מדיניותית.
+
+דוגמאות:
+- "מה נקבע באפרופים?" → db_first
+- "האם נכון לפצל את תפקיד היועמ״ש?" → discovery_first / hybrid
+- "האם בית המשפט מתנהל באקטיביזם שיפוטי בסכסוכי עוברים מוקפאים?" → discovery_first / hybrid
+
+יישור גילוי (discovery_alignment):
+- אם סופק <DISCOVERY_INPUT>, מלא consumed_entities/queries לפי מה שאימצת, ignored_entities עם נימוק קצר, ו-required_verification_targets — שמות/כותרות שאחזור צריך לאמת.
+
+retrieval_strategy_rationale: משפט קצר בעברית שמסביר את הבחירה.
+
 החזר JSON בלבד דרך הכלי submit_legal_research_plan.`;
 
 interface RawPlannerOutput {
