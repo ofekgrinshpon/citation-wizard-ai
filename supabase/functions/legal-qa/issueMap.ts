@@ -112,7 +112,7 @@ export async function runIssueMap(
           { role: "user", content: `שאלת המחקר:\n${question}\n\nהחזר JSON בלבד.` },
         ],
         temperature: 0.2,
-        max_tokens: mode === "full" ? 1800 : 1000,
+        max_tokens: mode === "full" ? 1200 : 800,
         // Intentionally NO search_domain_filter — Stage 1 is BROAD by design.
       }),
       signal: ctl.signal,
