@@ -21,8 +21,10 @@ import type { DecomposedPlan } from "./decomposition.ts";
 import type { OpenWebDiscovery } from "./openWebDiscovery.ts";
 import type {
   AnswerStrategy,
+  DiscoveryAlignment,
   LegalResearchPlan,
   RequiredRole,
+  RetrievalStrategy,
   SourceRole,
 } from "./contracts.ts";
 
@@ -106,6 +108,49 @@ const PLANNER_TOOL: PlannerToolDef = {
       },
       notes: { type: "string" },
       confidence: { type: "number" },
+      retrieval_strategy: {
+        type: "string",
+        enum: ["db_first", "discovery_first", "hybrid"],
+        description:
+          "db_first for narrow doctrinal/statutory/case-law questions with clear known anchors. discovery_first or hybrid for theoretical/critical/institutional/policy/reform/academic/unclear-source-universe questions.",
+      },
+      retrieval_strategy_rationale: {
+        type: "string",
+        description: "Short Hebrew rationale for the chosen retrieval_strategy (telemetry only).",
+      },
+      discovery_alignment: {
+        type: "object",
+        description:
+          "How the planner consumed the structured DISCOVERY_INPUT. Empty arrays when no discovery input was supplied.",
+        properties: {
+          consumed_entities: { type: "array", items: { type: "string" } },
+          consumed_queries: { type: "array", items: { type: "string" } },
+          ignored_entities: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                value: { type: "string" },
+                reason: { type: "string" },
+              },
+              required: ["value", "reason"],
+              additionalProperties: false,
+            },
+          },
+          required_verification_targets: {
+            type: "array",
+            description: "Canonical names/titles downstream retrieval should attempt to verify.",
+            items: { type: "string" },
+          },
+        },
+        required: [
+          "consumed_entities",
+          "consumed_queries",
+          "ignored_entities",
+          "required_verification_targets",
+        ],
+        additionalProperties: false,
+      },
     },
     required: [
       "answer_strategy",
@@ -116,6 +161,8 @@ const PLANNER_TOOL: PlannerToolDef = {
       "statute_names",
       "notes",
       "confidence",
+      "retrieval_strategy",
+      "retrieval_strategy_rationale",
     ],
     additionalProperties: false,
   },
@@ -150,6 +197,21 @@ const PLANNER_SYSTEM_PROMPT = `אתה מתכנן מחקר משפטי. תפקיד
 
 ביטחון (confidence): 0..1. נמוך כשהשאלה עמומה.
 
+אסטרטגיית אחזור (retrieval_strategy):
+- "db_first" — שאלה דוקטרינרית/סטטוטורית/יישום-פסיקה ממוקדת עם עוגנים ידועים ברורים (חוק יעד מזוהה, שם פס"ד מכונן ידוע, או query_type=case_law_application עם הלכה מוכרת).
+- "discovery_first" — שאלה תיאורטית / ביקורתית / מוסדית / מדיניותית / רפורמית / אקדמית / כשעולם המקורות לא ברור ואין עוגן דוקטרינרי מובהק.
+- "hybrid" — מעורב: יש עוגן דוקטרינרי או חוק יעד אבל מסגרת השאלה דורשת גם פרשנות ביקורתית / אקדמית / מדיניותית.
+
+דוגמאות:
+- "מה נקבע באפרופים?" → db_first
+- "האם נכון לפצל את תפקיד היועמ״ש?" → discovery_first / hybrid
+- "האם בית המשפט מתנהל באקטיביזם שיפוטי בסכסוכי עוברים מוקפאים?" → discovery_first / hybrid
+
+יישור גילוי (discovery_alignment):
+- אם סופק <DISCOVERY_INPUT>, מלא consumed_entities/queries לפי מה שאימצת, ignored_entities עם נימוק קצר, ו-required_verification_targets — שמות/כותרות שאחזור צריך לאמת.
+
+retrieval_strategy_rationale: משפט קצר בעברית שמסביר את הבחירה.
+
 החזר JSON בלבד דרך הכלי submit_legal_research_plan.`;
 
 interface RawPlannerOutput {
@@ -166,6 +228,14 @@ interface RawPlannerOutput {
   statute_names: string[];
   notes: string;
   confidence: number;
+  retrieval_strategy?: RetrievalStrategy;
+  retrieval_strategy_rationale?: string;
+  discovery_alignment?: {
+    consumed_entities?: string[];
+    consumed_queries?: string[];
+    ignored_entities?: Array<{ value?: unknown; reason?: unknown }>;
+    required_verification_targets?: string[];
+  };
 }
 
 export interface PlannerInputs {
@@ -228,6 +298,12 @@ export async function runLegalResearchPlanner(
       typeof data.confidence === "number" && isFinite(data.confidence)
         ? Math.max(0, Math.min(1, data.confidence))
         : 0.5,
+    retrievalStrategy: normalizeStrategyChoice(data.retrieval_strategy, inputs),
+    retrievalStrategyRationale:
+      typeof data.retrieval_strategy_rationale === "string"
+        ? data.retrieval_strategy_rationale.slice(0, 240)
+        : "",
+    discoveryAlignment: normalizeDiscoveryAlignment(data.discovery_alignment, inputs),
   };
 
   // If the model produced zero roles, fall back to heuristic to keep gate
@@ -326,20 +402,24 @@ function buildUserPrompt(inputs: PlannerInputs): string {
   }
 
   if (inputs.discovery) {
-    const ents = inputs.discovery.resolved_entities ?? [];
-    if (ents.length > 0) {
-      const lines = ents
+    // Phase 6.7: pass Discovery as a STRUCTURED JSON block so the planner
+    // can consume it as data (resolved_entities, suggested_trusted_queries,
+    // candidate_authoritative_sources, ambiguity_notes) rather than prose.
+    const d = inputs.discovery;
+    const structured = {
+      resolved_entities: (d.resolved_entities ?? []).slice(0, 8).map((e) => ({
+        type: e.type, name: e.name, identifier: e.identifier ?? null,
+      })),
+      suggested_trusted_queries: (d.suggested_trusted_queries ?? []).slice(0, 6),
+      candidate_authoritative_sources: (d.candidate_authoritative_sources ?? [])
         .slice(0, 6)
-        .map((e) => `- ${e.type}: ${e.name}${e.identifier ? ` (${e.identifier})` : ""}`);
-      parts.push("");
-      parts.push("ישויות שזוהו על ידי גילוי רשת פתוחה:");
-      parts.push(lines.join("\n"));
-    }
-    const sq = inputs.discovery.suggested_trusted_queries ?? [];
-    if (sq.length > 0) {
-      parts.push("");
-      parts.push(`שאילתות מוצעות מגילוי:\n- ${sq.slice(0, 4).join("\n- ")}`);
-    }
+        .map((c) => ({ title: c.title, url: c.url, tier: c.tier })),
+      ambiguity_notes: (d.ambiguity_notes ?? []).slice(0, 4),
+    };
+    parts.push("");
+    parts.push("<DISCOVERY_INPUT>");
+    parts.push(JSON.stringify(structured));
+    parts.push("</DISCOVERY_INPUT>");
   }
 
   return parts.join("\n");
@@ -447,7 +527,87 @@ export function buildHeuristicPlan(inputs: PlannerInputs): LegalResearchPlan {
     statuteNames: route?.target_statute?.name ? [route.target_statute.name] : [],
     notes: "heuristic_fallback",
     confidence: 0.35,
+    retrievalStrategy: heuristicRetrievalStrategy(inputs),
+    retrievalStrategyRationale: "heuristic_fallback",
+    discoveryAlignment: emptyDiscoveryAlignment(inputs),
   };
+}
+
+// ─── Phase 6.7 helpers ────────────────────────────────────────────────
+
+const VALID_STRATEGY = new Set<RetrievalStrategy>(["db_first", "discovery_first", "hybrid"]);
+
+function normalizeStrategyChoice(
+  raw: unknown,
+  inputs: PlannerInputs,
+): RetrievalStrategy {
+  if (typeof raw === "string" && VALID_STRATEGY.has(raw as RetrievalStrategy)) {
+    return raw as RetrievalStrategy;
+  }
+  return heuristicRetrievalStrategy(inputs);
+}
+
+function normalizeDiscoveryAlignment(
+  raw: unknown,
+  inputs: PlannerInputs,
+): DiscoveryAlignment {
+  if (!raw || typeof raw !== "object") return emptyDiscoveryAlignment(inputs);
+  const obj = raw as Record<string, unknown>;
+  const arrStr = (v: unknown): string[] =>
+    Array.isArray(v)
+      ? v.filter((s): s is string => typeof s === "string" && s.trim().length > 0)
+          .map((s) => s.trim()).slice(0, 8)
+      : [];
+  const ignored = Array.isArray(obj.ignored_entities)
+    ? (obj.ignored_entities as Array<{ value?: unknown; reason?: unknown }>)
+        .filter((e) => e && typeof e === "object")
+        .map((e) => ({
+          value: typeof e.value === "string" ? e.value.slice(0, 200) : "",
+          reason: typeof e.reason === "string" ? e.reason.slice(0, 200) : "",
+        }))
+        .filter((e) => e.value.length > 0)
+        .slice(0, 8)
+    : [];
+  return {
+    consumedEntities: arrStr(obj.consumed_entities),
+    consumedQueries: arrStr(obj.consumed_queries),
+    ignoredEntities: ignored,
+    requiredVerificationTargets: arrStr(obj.required_verification_targets),
+  };
+}
+
+function emptyDiscoveryAlignment(_inputs: PlannerInputs): DiscoveryAlignment {
+  return {
+    consumedEntities: [],
+    consumedQueries: [],
+    ignoredEntities: [],
+    requiredVerificationTargets: [],
+  };
+}
+
+/**
+ * Heuristic strategy chooser used when the planner is missing or returns an
+ * invalid value. Conservative defaults:
+ *   - clear doctrinal/statutory question with a target_statute or known
+ *     case_law_application route → db_first
+ *   - policy / unclassified / low-confidence router → discovery_first
+ *   - everything else with caselaw+legislation needs → hybrid
+ */
+export function heuristicRetrievalStrategy(inputs: PlannerInputs): RetrievalStrategy {
+  const route = inputs.router;
+  const qt = route?.query_type ?? "unknown";
+  const conf = typeof route?.confidence === "number" ? route!.confidence : 0;
+  const hasStatute = !!route?.target_statute?.name;
+  const requiresCurrent = !!route?.requires_current_context;
+
+  if (qt === "policy") return "discovery_first";
+  if (qt === "doctrinal" && hasStatute) return "db_first";
+  if (qt === "case_law_application") return "db_first";
+  if (qt === "statutory_amendment_comparison") return hasStatute ? "hybrid" : "discovery_first";
+  if (qt === "procedural") return "db_first";
+  if (qt === "comparative") return "discovery_first";
+  if (conf < 0.55 || requiresCurrent) return "hybrid";
+  return hasStatute ? "db_first" : "hybrid";
 }
 
 /**

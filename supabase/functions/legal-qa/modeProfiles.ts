@@ -165,6 +165,19 @@ export interface ModeProfile {
    *            drafter sees role/quality labels per card.
    */
   roleBasedRetrieval: "off" | "shadow" | "on";
+
+  // ─── Phase 6.7 — Discovery-Driven Research Planning ────────────────
+  /**
+   * Cap on how many discovery-derived queries (Discovery
+   * suggested_trusted_queries + planner.requiredVerificationTargets) may
+   * be fired against trusted retrieval (search_legal_chunks_text) to
+   * augment the source pack BEFORE the role-gap rescue runs.
+   *
+   * Discovery URLs themselves NEVER enter the source pack — only the
+   * trusted local matches surfaced by these queries become SourceCards.
+   * Skipped entirely when the planner's retrievalStrategy is "db_first".
+   */
+  discoveryQueryCapRound1: number;
 }
 
 export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
@@ -227,6 +240,8 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     // banner only; never blocks). Targeted retrieval per missing role piggy-
     // backs on the existing Phase 5 gap retrieval.
     roleBasedRetrieval: "on",
+    // Phase 6.7: Fast caps discovery-driven trusted-DB queries at 3 to bound latency.
+    discoveryQueryCapRound1: 3,
   },
   deep: {
     // ─── DEEP (post-2026-04 partial revert) ──────────────────────────────
@@ -283,6 +298,8 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     cardClaimContract: "on",
     // Phase 6.5: same as Fast — role-based retrieval ON soft mode.
     roleBasedRetrieval: "on",
+    // Phase 6.7: Deep allows up to 6 discovery-driven trusted-DB queries.
+    discoveryQueryCapRound1: 6,
   },
 };
 
