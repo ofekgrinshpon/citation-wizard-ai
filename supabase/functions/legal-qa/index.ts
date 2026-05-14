@@ -65,6 +65,7 @@ import {
   parseMarkers,
   buildFootnotes,
   buildTelemetry as buildContractTelemetry,
+  buildCitationAssemblyTelemetry,
   EMPTY_TELEMETRY as EMPTY_CONTRACT_TELEMETRY,
   type CardClaimContractTelemetry,
   type ContractSourceCard,
@@ -3988,6 +3989,8 @@ ${(verify.fullText as string).slice(0, 50000)}
             : undefined,
           docket_prefix: m.source_type === "caselaw" ? docketPrefix : undefined,
           procedure_category: m.source_type === "caselaw" ? procedureCategory : undefined,
+          court: m.source_type === "caselaw" ? ((meta.court as string) || undefined) : undefined,
+          decision_date: m.source_type === "caselaw" ? ((meta.decision_date as string) || undefined) : undefined,
           // Milestone A.5: carry retrieval similarity through to the source pack
           // so assembleSourcePack can apply the relevance gate when promoting
           // knesset_research / journal_article items to `core`.
@@ -4450,6 +4453,8 @@ ${(verify.fullText as string).slice(0, 50000)}
                       m.source_type === "caselaw"
                         ? ((meta.case_number as string) || undefined)
                         : undefined,
+                    court: m.source_type === "caselaw" ? ((meta.court as string) || undefined) : undefined,
+                    decision_date: m.source_type === "caselaw" ? ((meta.decision_date as string) || undefined) : undefined,
                     relevance_score: typeof m.similarity === "number" ? m.similarity : 0.5,
                   };
                   stagedCards.push(newCard);
@@ -4895,6 +4900,8 @@ ${(verify.fullText as string).slice(0, 50000)}
                 provenance: "local",
                 excerpt: String(mm.chunk_content ?? "").slice(0, 400),
                 case_number: mm.source_type === "caselaw" ? (meta.case_number as string | undefined) : undefined,
+                court: mm.source_type === "caselaw" ? (meta.court as string | undefined) : undefined,
+                decision_date: mm.source_type === "caselaw" ? (meta.decision_date as string | undefined) : undefined,
                 relevance_score: typeof mm.similarity === "number" ? (mm.similarity as number) : 0.5,
               };
               stagedCards.push(newCard);
@@ -6236,6 +6243,13 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           legacy_fallback: true,
           reason: "drafter_wiring_pending",
         });
+      }
+      // Phase 6.6 — attach citation_assembly telemetry from final card pack.
+      try {
+        const cards = sourceCards as unknown as ContractSourceCard[];
+        cardClaimTelemetry.citation_assembly = buildCitationAssemblyTelemetry(cards);
+      } catch (err) {
+        console.warn("[card-claim] citation_assembly telemetry failed:", (err as Error).message);
       }
     } else {
       cardClaimTelemetry.reason = "mode_off";
