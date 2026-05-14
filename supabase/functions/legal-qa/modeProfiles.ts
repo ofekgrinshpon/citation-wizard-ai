@@ -298,6 +298,8 @@ export const MODE_PROFILES: Record<ResearchDepth, ModeProfile> = {
     cardClaimContract: "on",
     // Phase 6.5: same as Fast — role-based retrieval ON soft mode.
     roleBasedRetrieval: "on",
+    // Phase 6.7: Deep allows up to 6 discovery-driven trusted-DB queries.
+    discoveryQueryCapRound1: 6,
   },
 };
 
