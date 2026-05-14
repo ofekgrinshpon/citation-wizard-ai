@@ -122,7 +122,7 @@ export async function buildCandidateClaims(args: {
     TOOL,
     {
       stage: "candidate_claims",
-      timeoutMs: 25000,
+      timeoutMs: 35000,
       reasoningEffort: "minimal",
     },
   );
