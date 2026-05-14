@@ -22,6 +22,7 @@
 import type { LegalIssueRoute } from "./legalIssueRouter.ts";
 import type { ResearchDepth } from "./modeProfiles.ts";
 import type { StageRun } from "./aiProvider.ts";
+import type { LegalSourcePack, LegalSourcePackItem } from "./contracts.ts";
 
 // ---------------------------------------------------------------------------
 // Types
