@@ -6247,6 +6247,16 @@ ${combinedContext}
         drafterSystemPrompt = `${drafterSystemPrompt}\n\n${buildStyleGuideBlock()}`;
       }
     }
+    // Pass B — diversification nudge. When ≥10 verified cards are available,
+    // ask the drafter to broaden the cited set instead of stacking לעיל
+    // references on the same 3–4 favorites. Hard rule: relevance still wins —
+    // never cite a tangential card just to diversify.
+    if (useStructuredDrafterPath && Array.isArray(sourceCards) && sourceCards.length >= 10) {
+      drafterSystemPrompt = `${drafterSystemPrompt}
+
+**גיוון מקורות (חובה כאשר זמינים ≥10 מקורות מאומתים):**
+כאשר טענה חדשה ניתנת לתימוך על-ידי מקור מאומת (direct_support / partial_support) שטרם צוטט, העדף אותו על-פני חזרה עם "לעיל ה"ש X" על אותו מקור שכבר ציטטת. אל תצטט מקור שאינו רלוונטי לטענה רק כדי לגוון — רלוונטיות גוברת על גיוון.`;
+    }
     const promptLen = drafterSystemPrompt.length;
     console.log(`Prompt length: ${promptLen} chars (variant=${useStructuredDrafterPath ? "compact" : "full"}${isAcademicChapter ? "+academic" : ""}), ${sourceCards.length} source cards`);
 
