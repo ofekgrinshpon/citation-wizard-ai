@@ -3103,7 +3103,18 @@ ${(verify.fullText as string).slice(0, 50000)}
     // stage_runs, so admins can see how far the pipeline got.
     // The final block at the bottom of this handler upserts on this id with
     // the full payload (answer, footnotes, complete metadata).
-    const preallocatedQaLogId: string = crypto.randomUUID();
+    //
+    // ─── Pass E (Deep async) ─────────────────────────────────────────
+    // When the top-level `serve` wrapper has already created a qa_logs row
+    // for a Deep async job, it injects `_asyncRunId` into the body so this
+    // handler updates that row instead of inserting a new one.
+    const asyncRunId = typeof body?._asyncRunId === "string" ? body._asyncRunId : null;
+    const preallocatedQaLogId: string = asyncRunId ?? crypto.randomUUID();
+    if (asyncRunId) {
+      // Row was already inserted by the async wrapper — switch checkpoint
+      // writes to UPDATE mode from the start.
+      __checkpointInserted = true;
+    }
     // Wire to hoisted state so the outer catch can flush a final error snapshot.
     __checkpointQaLogId = preallocatedQaLogId;
     __checkpointAdmin = adminClient;
