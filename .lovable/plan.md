@@ -1,65 +1,88 @@
-**Review findings**
+## Pass D coverage for all drafter paths + Deep async frontend wiring
 
-The last Deep run shows the prior pass only partially worked:
+### Scope (no changes to retrieval, citation engine, Rule 37, baselines)
 
-- Query expansion is working: `expanded_queries` includes `סעד זמני`, `צו מניעה זמני`, `מאזן הנוחות`, `סיכויי ההליך`, `ראיות לכאורה`.
-- The junk-source problem is currently controlled: no traffic/livestock/marine-pollution regulations appeared in the latest source mix.
-- The backend itself is healthy, but the pipeline still overloads the DB vector RPCs.
-- Four `match_legal_chunks` calls still ran concurrently and all four hit `statement timeout`; the only vector contribution came from the separate caselaw-filtered RPC.
-- Candidate recall is ineffective: low-threshold pool produced only `fresh=1`, then `recovered=0`.
-- Claim Verification completed only partially: two batches timed out, one batch succeeded; because aggregate status became `success`, strict pruning removed 15 of 19 source-pack items.
-- Final answer had 6 footnotes, but only 3 unique source cards were actually cited (`cards_cited=3/19`, 16%). This explains why it “doesn’t seem like it works”: sources exist, but verification/pruning/drafting are not turning them into broad anchored support.
-- Telemetry is incomplete: `metadata.claim_verification` and `metadata.coverage_gap` are not persisted even though logs print those values, making post-run review harder.
+---
 
-**Root cause**
+### 1. Backend — Pass D must apply to every drafter path
 
-The strict proof rule is correct, but the orchestration is too brittle:
+**Problem.** Pass D currently rewires only `drafterSourceCatalog` / `drafterCombinedContext`, which are consumed by `buildCompactStructuredPrompt()`. The legacy `systemPrompt` (built at line 5672) embeds the *full* `sourceCatalog` / `combinedContext` and is used whenever:
+- `useStructuredDrafterPath` is false (no claimMap, or `claimMapAllowedCount < 1`), or
+- the structured call falls back to legacy (Gemini fallback in `aiProvider.ts`).
 
-1. Vector retrieval still fires too many heavy RPCs at once.
-2. Claim Verification treats “some batch succeeded” as enough for strict pruning, even when most sources were never verified because their batches timed out.
-3. Candidate recall cards are added to `sourceCards` before verification, and `vector_candidates_promoted` currently means “added to pack for verification,” not “proved by verification.”
-4. Coverage/verification diagnostics are log-only, not saved in `qa_logs.metadata`.
+Result: the ledger-trimmed payload is bypassed and the drafter sees the full 30–40k catalog.
 
-**Implementation plan**
+**Fix (single file: `supabase/functions/legal-qa/index.ts`).**
+1. Change `const systemPrompt` → `let systemPrompt` (line 5672).
+2. Immediately after the Pass D block (after line 6070), when `passDTelemetry.used === true`:
+   - `systemPrompt = systemPrompt.split(sourceCatalog).join(drafterSourceCatalog).split(combinedContext).join(drafterCombinedContext);`
+   - Log: `[pass-d:legacy-rewrite] systemPrompt ${before}→${after} chars`.
+3. In the `useStructuredDrafterPath ? compact : systemPrompt` branch (line 6407–6409): no change — the rewrite above means the legacy branch now also carries the compact payload.
+4. Update `passDTelemetry.prompt_chars_before` to reflect the savings on *whichever* prompt was emitted (already does via the additive delta — verify after rewrite).
+5. Telemetry addition: `passDTelemetry.applied_to = useStructuredDrafterPath ? "structured" : "legacy"`.
 
-1. **Make vector retrieval DB-safe**
-   - Replace the current `Promise.all` vector fan-out with bounded sequential or 2-at-a-time execution.
-   - Keep the query cap, but reduce actual concurrent `match_legal_chunks` pressure so statement timeouts stop cascading.
-   - Keep original query + capped expanded/planner queries; no baseline retuning.
-   - Preserve the low-threshold candidate pool as recall-only.
+**Q2 ledger-empty residual.** Phase 7 didn't run for `564eec2c` because the gate at line 5468 requires `sourcePackV2 && decompositionV2`, which were null in that async path. That's a *separate* diagnosis the user said is OK to leave for now ("Do not change retrieval"). We will only log a clearer skip reason at line 5470 so the next investigation is one query away:
+- Before the `if (...)` block, emit `console.log("[phase7:gate]", { enableDeepPipeline, claimLedgerMode, hasSourcePack: !!sourcePackV2, hasDecomp: !!decompositionV2 })`.
 
-2. **Make Claim Verification all-or-safe, not partial-strict**
-   - Track which source IDs were actually seen by successful verification batches.
-   - If any verification batch times out/fails, do **not** strict-prune unverified standard-retrieval cards.
-   - Strict-prune only sources that were actually evaluated and found non-supporting.
-   - Candidate-pool cards remain strict: they enter final sourcePack/footnotes only when they receive `direct_support` or `partial_support`.
+No verification logic, no retrieval rounds, no budgets touched.
 
-3. **Fix recall-vs-proof telemetry semantics**
-   - Rename/repurpose counters so:
-     - `vector_candidates_low_threshold` = raw fresh low-threshold candidates.
-     - `candidate_pool_cards_added` = recall candidates temporarily inserted for verification.
-     - `candidates_recovered_by_claim_verification` = only direct/partial verified candidate-pool cards.
-     - `vector_candidates_promoted` = actual direct/partial verified promotions, not temporary additions.
-   - Keep `candidates_kept_unverified` honest and only for safe-prune fallback cases.
+---
 
-4. **Persist verification and coverage diagnostics**
-   - Add `metadata.claim_verification` with supported/partial/unsupported counts, batch status, duration, and pruned IDs.
-   - Add `metadata.coverage_gap` with `cards_in`, `cards_cited`, `claims_total`, `claims_anchored`, `footnotes`, and samples.
-   - Keep logs, but make database review authoritative.
+### 2. Fast sync sanity check
 
-5. **Keep citation floor strict**
-   - No parser-side relaxation.
-   - No drafter prompt changes.
-   - No sourcePack admission without Claim Verification for candidate-pool sources.
-   - No soft-min quota filling.
-   - No baseline retuning.
+After deploy:
+- Curl `POST /functions/v1/legal-qa` with `{ question: "מהם התנאים למתן צו מניעה זמני?", depth: "fast", taskMode: "research" }`.
+- Confirm: HTTP **200** (not 202), body contains `answer`+`footnotes`, no `run_id`, total wall < 90s.
+- Confirm one Pass D telemetry row appears with `applied_to` populated.
 
-6. **Validation**
-   - Re-run the temporary-injunction Deep query and verify:
-     - `expanded_queries` still include `מאזן הנוחות`, `סיכויי ההליך`, `ראיות לכאורה`.
-     - vector RPC timeouts are eliminated or materially reduced.
-     - no traffic/livestock/marine-pollution regulations.
-     - at least 3 anchored footnotes when verified sources exist.
-     - every final cited source has direct/partial claim fit or is a preserved statutory/user-document anchor.
-     - `candidates_recovered_by_claim_verification` counts only actual direct/partial candidate recoveries.
-   - Then run Q1/Q6/Q21 and the existing regression harness without retuning baselines.
+If Fast accidentally trips the async dispatcher, the dispatcher condition will be tightened (`depth === "deep" && !req.headers.get("accept")?.includes("text/event-stream")`).
+
+---
+
+### 3. Frontend — Deep async flow
+
+**Files:**
+- `src/components/LegalQAChat.tsx` (the non-SSE Deep submit path at line ~1744).
+- New small helper: `src/lib/legalQaPolling.ts`.
+
+**Flow.**
+1. Deep submit calls `legal-qa` as today. If response is **HTTP 202** with `{ run_id, poll_endpoint }`:
+   - Set message state to "running", store `run_id` on the pending assistant bubble.
+   - Start polling `legal-qa-status?runId=<id>` every 2s (cap 10 min, backoff to 4s after 60s).
+   - On each tick, update a small progress strip under the bubble: current `checkpoint` (Hebrew label map) + completed stages count.
+2. On `status: "completed"`: hydrate the bubble with `answer` + `footnotes` + `metadata` exactly like the sync path; stop polling; persist normally.
+3. On `status: "failed"`: render a clean inline error card with `reason` (e.g. `gateway_timeout`, `background_crash`) and a "נסה שוב" button. No retry loop.
+4. AbortController integration: existing "Stop" button cancels the poller (does not kill the background job — documented in tooltip).
+5. SSE Deep (existing streaming branch) is **untouched**; only the non-stream Deep fetch handles 202.
+
+**Checkpoint → Hebrew label map** (frontend-only, no backend coupling):
+```text
+queued                 → "בתור"
+running                → "מעבד"
+legal_issue_router     → "מסווג שאלה"
+decomposition          → "מפרק לשאלות-משנה"
+open_web_discovery     → "סריקת מקורות"
+retrieval              → "אחזור מקורות"
+claim_map              → "מפת טענות"
+claim_verification     → "אימות טענות"
+drafting               → "ניסוח תשובה"
+anchor_pass            → "עיגון ציטוטים"
+```
+
+No visual redesign — reuse the existing skeleton/spinner component plus a single `<p className="text-xs text-muted-foreground">` line.
+
+---
+
+### 4. Validation
+
+1. Fast sanity (above).
+2. Deep Q1 ("צו מניעה זמני"): expect 202 → polling → final answer renders, `pass_d_compact.applied_to` populated (structured or legacy).
+3. Deep Q2 (סחיטת דמי חסות): expect 202 → polling → final renders; even if ledger is empty, no crash; if Gemini-fallback fires, telemetry shows `applied_to="legacy"` *and* compact catalog was emitted.
+4. Failed-path simulation: confirm the inline error card renders when `legal-qa-status` returns `status: "failed"`.
+
+---
+
+### Out of scope (per user)
+- Phase 7 source-pack/decomposition gating fix (separate next pass).
+- Drafter model routing changes.
+- Any retrieval, citation-engine, Rule 37, or baseline edits.

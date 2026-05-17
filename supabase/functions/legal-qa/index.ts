@@ -5465,6 +5465,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // Strict relevance pipeline: only direct/partial-supporting sources may
     // back a claim. Tangential/unrelated sources are pruned from the pack so
     // they are physically impossible for the drafter to cite.
+    console.log(`[phase7:gate] enableDeepPipeline=${enableDeepPipeline} claimLedgerMode=${modeProfile.claimLedgerMode} hasSourcePack=${!!sourcePackV2} hasDecomp=${!!decompositionV2}`);
     if (
       taskMode === RESEARCH_MODE &&
       enableDeepPipeline &&
@@ -5669,7 +5670,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       if (subPrompt) academicChapterContext = "\n\n" + subPrompt;
     }
 
-    const systemPrompt = `אתה עוזר משפטי מומחה. כתוב חוות דעת משפטית מקצועית בעברית.
+    let systemPrompt = `אתה עוזר משפטי מומחה. כתוב חוות דעת משפטית מקצועית בעברית.
 ${taskInstructions}
 ${academicChapterContext}
 
@@ -6070,6 +6071,23 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
       }
     }
 
+    // Pass D extension — when the compact payload was built, also rewrite the
+    // *legacy* systemPrompt so any drafter path that falls through to it
+    // (no claimMap, structured→legacy fallback, Gemini fallback in
+    // aiProvider.ts) still benefits from the trimmed catalog/context. Without
+    // this, the legacy prompt embeds the full 30–40k sourceCatalog and Pass D
+    // is bypassed for every non-structured drafter call.
+    // deno-lint-ignore no-explicit-any
+    (passDTelemetry as any).applied_to = null;
+    if (passDTelemetry.used && drafterSourceCatalog !== sourceCatalog) {
+      const beforeLen = systemPrompt.length;
+      systemPrompt = systemPrompt
+        .split(sourceCatalog).join(drafterSourceCatalog)
+        .split(combinedContext).join(drafterCombinedContext);
+      console.log(`[pass-d:legacy-rewrite] systemPrompt ${beforeLen}→${systemPrompt.length} chars (compact catalog now in legacy path too)`);
+    }
+
+
     // ─── Pilot v6: compact structured drafter prompt ───────────────────
     // The legacy systemPrompt above is ~28k chars. For the structured drafter
     // (claimMap !== null && claimMapAllowedCount >= 2) most of those rules are
@@ -6404,6 +6422,8 @@ ${drafterCombinedContext}
     // marks 1-2 claims allowed_to_state. The compact drafter prompt + claim
     // map already handle single-claim drafting cleanly via statementMode.
     const useStructuredDrafterPath = enableDeepPipeline && claimMap !== null && claimMapAllowedCount >= 1;
+    // deno-lint-ignore no-explicit-any
+    (passDTelemetry as any).applied_to = useStructuredDrafterPath ? "structured" : "legacy";
     let drafterSystemPrompt = useStructuredDrafterPath
       ? buildCompactStructuredPrompt()
       : systemPrompt;
