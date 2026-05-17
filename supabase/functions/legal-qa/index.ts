@@ -6070,6 +6070,23 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
       }
     }
 
+    // Pass D extension — when the compact payload was built, also rewrite the
+    // *legacy* systemPrompt so any drafter path that falls through to it
+    // (no claimMap, structured→legacy fallback, Gemini fallback in
+    // aiProvider.ts) still benefits from the trimmed catalog/context. Without
+    // this, the legacy prompt embeds the full 30–40k sourceCatalog and Pass D
+    // is bypassed for every non-structured drafter call.
+    // deno-lint-ignore no-explicit-any
+    (passDTelemetry as any).applied_to = null;
+    if (passDTelemetry.used && drafterSourceCatalog !== sourceCatalog) {
+      const beforeLen = systemPrompt.length;
+      systemPrompt = systemPrompt
+        .split(sourceCatalog).join(drafterSourceCatalog)
+        .split(combinedContext).join(drafterCombinedContext);
+      console.log(`[pass-d:legacy-rewrite] systemPrompt ${beforeLen}→${systemPrompt.length} chars (compact catalog now in legacy path too)`);
+    }
+
+
     // ─── Pilot v6: compact structured drafter prompt ───────────────────
     // The legacy systemPrompt above is ~28k chars. For the structured drafter
     // (claimMap !== null && claimMapAllowedCount >= 2) most of those rules are
