@@ -152,12 +152,18 @@ export interface VerificationSummary {
   dropped_unrelated: number;
   /** Sources that received no direct or partial support for any claim. */
   pruned_source_ids: string[];
+  /** Per-batch result counters — caller uses for safe-prune decisions. */
+  batches_total: number;
+  batches_succeeded: number;
+  batches_failed: number;
 }
 
 export interface ClaimVerificationResult {
   ledger: ClaimLedger;
   summary: VerificationSummary;
   run: StageRun;
+  /** Source ids that were actually scored by at least one successful batch. */
+  evaluatedSourceIds: string[];
 }
 
 /**
@@ -187,8 +193,10 @@ export async function verifyClaimsAgainstPack(args: {
       summary: {
         supported: 0, partially_supported: 0, unsupported: 0,
         dropped_tangential: 0, dropped_unrelated: 0, pruned_source_ids: [],
+        batches_total: 0, batches_succeeded: 0, batches_failed: 0,
       },
       run: emptyRun,
+      evaluatedSourceIds: [],
     };
   }
 
@@ -221,8 +229,10 @@ export async function verifyClaimsAgainstPack(args: {
         partially_supported: 0,
         unsupported: claims.length,
         dropped_tangential: 0, dropped_unrelated: 0, pruned_source_ids: [],
+        batches_total: 0, batches_succeeded: 0, batches_failed: 0,
       },
       run: noPackRun,
+      evaluatedSourceIds: [],
     };
   }
 
@@ -250,6 +260,10 @@ export async function verifyClaimsAgainstPack(args: {
   let lastRun: StageRun | null = null;
   let lastModel = "unknown";
   let lastProvider: "openai" | "gemini" = "gemini";
+  // Track which source ids were actually evaluated by a successful batch.
+  // Caller uses this for safe-prune: sources never evaluated must not be
+  // strict-pruned (they fall into "kept_unverified" instead).
+  const evaluatedSourceIdSet = new Set<string>();
 
   for (const batch of batches) {
     const { data, run } = await callPlannerJSON<{
@@ -274,6 +288,9 @@ export async function verifyClaimsAgainstPack(args: {
       continue;
     }
     succeededBatches++;
+    // Every source in this successful batch counts as evaluated, even if
+    // the model returned no score for it (model implicitly considered it).
+    for (const v of batch) evaluatedSourceIdSet.add(v.id);
     for (const s of data.scores) {
       if (!s || typeof s !== "object") continue;
       const cid = typeof s.claim_id === "string" ? s.claim_id : "";
@@ -346,6 +363,9 @@ export async function verifyClaimsAgainstPack(args: {
     dropped_tangential: droppedTangential,
     dropped_unrelated: droppedUnrelated,
     pruned_source_ids: pruned,
+    batches_total: batches.length,
+    batches_succeeded: succeededBatches,
+    batches_failed: failedBatches,
   };
 
   // idMap available for callers that want to inspect items by id
@@ -353,8 +373,8 @@ export async function verifyClaimsAgainstPack(args: {
 
   // Synthesise an aggregate StageRun from the per-batch runs. Status is
   // "success" iff at least one batch produced scores; "error" only when
-  // ALL batches failed (caller uses this to decide whether to keep
-  // standard-retrieval cards on timeout).
+  // ALL batches failed. Caller still inspects batches_failed to decide
+  // safe-prune (any-batch-failed) vs strict-prune (all-batches-ok).
   const aggregateRun: StageRun = {
     stage: "claim_verification",
     provider: lastProvider,
@@ -369,7 +389,12 @@ export async function verifyClaimsAgainstPack(args: {
         : undefined,
   };
   void lastRun; // last run preserved through aggregate
-  return { ledger: { claims: ledgerClaims }, summary, run: aggregateRun };
+  return {
+    ledger: { claims: ledgerClaims },
+    summary,
+    run: aggregateRun,
+    evaluatedSourceIds: Array.from(evaluatedSourceIdSet),
+  };
 }
 
 /**
@@ -395,43 +420,66 @@ export function buildClaimLedgerPromptBlock(ledger: ClaimLedger): string {
 }
 
 /**
- * Apply the Claim Ledger as a hard filter on the source pack: any pack item
- * not referenced by at least one supported/partially_supported claim is
- * removed. Statutory primary legislation kept as anchor (citation hygiene).
+ * Apply the Claim Ledger as a hard filter on the source pack.
  *
- * @param opts.restrictToCandidateRecall - when true, ONLY prune items whose
- *   provenanceInternal is "claim_verified_recall". Standard-retrieval cards
- *   (local / perplexity / document) are kept as-is. Used on verification
- *   timeout to avoid nuking legitimately-retrieved cards.
+ * Rules (in order):
+ *   1. Primary legislation / user documents are kept as anchors.
+ *   2. If `opts.restrictToCandidateRecall` is true (verification fully
+ *      failed), prune only candidate-recall items.
+ *   3. Otherwise:
+ *      - Candidate-recall items: strict. Must be in `evaluatedSourceIds`
+ *        AND `keepIds`; otherwise pruned.
+ *      - Standard-retrieval items: pruned only if they were actually
+ *        evaluated by a successful batch and received no direct/partial
+ *        support. Items never reached by verification are kept (counted
+ *        as "kept_unverified" by the caller).
+ *
+ * If `evaluatedSourceIds` is omitted, falls back to treating every pack
+ * item as evaluated (legacy strict behaviour).
  */
 export function pruneSourcePackByLedger(
   pack: LegalSourcePack,
   ledger: ClaimLedger,
-  opts: { restrictToCandidateRecall?: boolean } = {},
+  opts: {
+    restrictToCandidateRecall?: boolean;
+    evaluatedSourceIds?: string[];
+  } = {},
 ): { pruned: LegalSourcePack; removedIds: string[] } {
   const keepIds = new Set<string>();
   for (const c of ledger.claims) {
     for (const sid of c.sourceIds) keepIds.add(sid);
   }
+  const evaluated = opts.evaluatedSourceIds
+    ? new Set(opts.evaluatedSourceIds)
+    : null;
 
   const filterBucket = (bucket: LegalSourcePackItem[], removed: string[]): LegalSourcePackItem[] =>
     bucket.filter((item) => {
       const id = item.contractId || item.sourceId;
-      // Always keep primary legislation / user docs as anchors even if no
-      // claim attached — the citation engine still needs them for footnote
-      // hygiene (e.g. statute the question names by hand).
       if (
         item.authorityClass === "primary_legislation" ||
         item.authorityClass === "user_document"
       ) {
         return true;
       }
-      // Pass A safe-prune mode: only candidate-pool entries are subject to
-      // pruning. Standard cards survive whether or not verification reached
-      // them. Caller invokes this branch when verification timed out.
+      const isCandidateRecall = item.provenanceInternal === "claim_verified_recall";
       if (opts.restrictToCandidateRecall) {
-        if (item.provenanceInternal !== "claim_verified_recall") return true;
+        if (!isCandidateRecall) return true;
+        // Even in safe mode, a candidate-recall item that *was* evaluated
+        // and not supported is correctly pruned.
+        if (keepIds.has(id)) return true;
+        removed.push(id);
+        return false;
       }
+      const wasEvaluated = evaluated ? evaluated.has(id) : true;
+      if (isCandidateRecall) {
+        // Strict for candidates: must be evaluated AND supportive.
+        if (wasEvaluated && keepIds.has(id)) return true;
+        removed.push(id);
+        return false;
+      }
+      // Standard cards: keep if not evaluated (kept_unverified) or supportive.
+      if (!wasEvaluated) return true;
       if (keepIds.has(id)) return true;
       removed.push(id);
       return false;
