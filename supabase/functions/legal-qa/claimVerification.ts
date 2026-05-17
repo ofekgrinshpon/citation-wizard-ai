@@ -152,12 +152,18 @@ export interface VerificationSummary {
   dropped_unrelated: number;
   /** Sources that received no direct or partial support for any claim. */
   pruned_source_ids: string[];
+  /** Per-batch result counters — caller uses for safe-prune decisions. */
+  batches_total: number;
+  batches_succeeded: number;
+  batches_failed: number;
 }
 
 export interface ClaimVerificationResult {
   ledger: ClaimLedger;
   summary: VerificationSummary;
   run: StageRun;
+  /** Source ids that were actually scored by at least one successful batch. */
+  evaluatedSourceIds: string[];
 }
 
 /**
