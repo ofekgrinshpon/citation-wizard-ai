@@ -351,7 +351,25 @@ export async function verifyClaimsAgainstPack(args: {
   // idMap available for callers that want to inspect items by id
   void idMap;
 
-  return { ledger: { claims: ledgerClaims }, summary, run };
+  // Synthesise an aggregate StageRun from the per-batch runs. Status is
+  // "success" iff at least one batch produced scores; "error" only when
+  // ALL batches failed (caller uses this to decide whether to keep
+  // standard-retrieval cards on timeout).
+  const aggregateRun: StageRun = {
+    stage: "claim_verification",
+    provider: lastProvider,
+    model: lastModel,
+    started_at: batchStartedAt,
+    completed_at: new Date().toISOString(),
+    duration_ms: Date.now() - batchT0,
+    status: succeededBatches > 0 ? "success" : "error",
+    error_message:
+      failedBatches > 0
+        ? `batches: ${succeededBatches} ok / ${failedBatches} failed`
+        : undefined,
+  };
+  void lastRun; // last run preserved through aggregate
+  return { ledger: { claims: ledgerClaims }, summary, run: aggregateRun };
 }
 
 /**
