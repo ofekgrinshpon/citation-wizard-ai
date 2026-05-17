@@ -241,8 +241,13 @@ export async function verifyClaimsAgainstPack(args: {
   // ≤20s budget. Merge scores. Track per-batch success so callers can
   // distinguish "fully failed" (all batches errored → safe to keep
   // standard cards) from "partial" (still trustworthy enough to prune).
-  const BATCH_SIZE = 8;
-  const BATCH_TIMEOUT_MS = 20000;
+  // Pass B: smaller batches (5 instead of 8) + longer per-batch budget (35s
+  // instead of 20s) → fits Gemini Flash's actual latency for verification
+  // prompts. Concurrency=2 keeps total wall time bounded while raising
+  // evaluated-coverage from ~33% toward ≥80%.
+  const BATCH_SIZE = 5;
+  const BATCH_TIMEOUT_MS = 35000;
+  const BATCH_CONCURRENCY = 2;
   const batches: PackItemView[][] = [];
   for (let i = 0; i < views.length; i += BATCH_SIZE) {
     batches.push(views.slice(i, i + BATCH_SIZE));
@@ -265,42 +270,51 @@ export async function verifyClaimsAgainstPack(args: {
   // strict-pruned (they fall into "kept_unverified" instead).
   const evaluatedSourceIdSet = new Set<string>();
 
-  for (const batch of batches) {
-    const { data, run } = await callPlannerJSON<{
-      scores: Array<{ claim_id: string; source_id: string; score: string; rationale: string }>;
-    }>(
-      SYSTEM_PROMPT,
-      buildUserPrompt(claims, batch),
-      TOOL,
-      {
-        stage: "claim_verification",
-        timeoutMs: BATCH_TIMEOUT_MS,
-        reasoningEffort: "low",
-        forceProvider: "gemini",
-      },
+  // Run batches in waves of BATCH_CONCURRENCY to bound total wall time.
+  for (let wStart = 0; wStart < batches.length; wStart += BATCH_CONCURRENCY) {
+    const wave = batches.slice(wStart, wStart + BATCH_CONCURRENCY);
+    const results = await Promise.all(
+      wave.map((batch) =>
+        callPlannerJSON<{
+          scores: Array<{ claim_id: string; source_id: string; score: string; rationale: string }>;
+        }>(
+          SYSTEM_PROMPT,
+          buildUserPrompt(claims, batch),
+          TOOL,
+          {
+            stage: "claim_verification",
+            timeoutMs: BATCH_TIMEOUT_MS,
+            reasoningEffort: "low",
+            forceProvider: "gemini",
+          },
+        ).then((r) => ({ batch, ...r })),
+      ),
     );
-    lastRun = run;
-    lastModel = run.model;
-    lastProvider = run.provider as "openai" | "gemini";
 
-    if (run.status !== "success" || !data || !Array.isArray(data.scores)) {
-      failedBatches++;
-      continue;
-    }
-    succeededBatches++;
-    // Every source in this successful batch counts as evaluated, even if
-    // the model returned no score for it (model implicitly considered it).
-    for (const v of batch) evaluatedSourceIdSet.add(v.id);
-    for (const s of data.scores) {
-      if (!s || typeof s !== "object") continue;
-      const cid = typeof s.claim_id === "string" ? s.claim_id : "";
-      const sid = typeof s.source_id === "string" ? s.source_id : "";
-      if (!claimIds.has(cid) || !sourceIds.has(sid)) continue;
-      hitsByClaim.get(cid)!.push({
-        sourceId: sid,
-        score: normalizeScore(s.score),
-        rationale: typeof s.rationale === "string" ? s.rationale.slice(0, 200) : "",
-      });
+    for (const { batch, data, run } of results) {
+      lastRun = run;
+      lastModel = run.model;
+      lastProvider = run.provider as "openai" | "gemini";
+
+      if (run.status !== "success" || !data || !Array.isArray(data.scores)) {
+        failedBatches++;
+        continue;
+      }
+      succeededBatches++;
+      // Every source in this successful batch counts as evaluated, even if
+      // the model returned no score for it (model implicitly considered it).
+      for (const v of batch) evaluatedSourceIdSet.add(v.id);
+      for (const s of data.scores) {
+        if (!s || typeof s !== "object") continue;
+        const cid = typeof s.claim_id === "string" ? s.claim_id : "";
+        const sid = typeof s.source_id === "string" ? s.source_id : "";
+        if (!claimIds.has(cid) || !sourceIds.has(sid)) continue;
+        hitsByClaim.get(cid)!.push({
+          sourceId: sid,
+          score: normalizeScore(s.score),
+          rationale: typeof s.rationale === "string" ? s.rationale.slice(0, 200) : "",
+        });
+      }
     }
   }
 

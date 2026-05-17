@@ -6247,6 +6247,16 @@ ${combinedContext}
         drafterSystemPrompt = `${drafterSystemPrompt}\n\n${buildStyleGuideBlock()}`;
       }
     }
+    // Pass B — diversification nudge. When ≥10 verified cards are available,
+    // ask the drafter to broaden the cited set instead of stacking לעיל
+    // references on the same 3–4 favorites. Hard rule: relevance still wins —
+    // never cite a tangential card just to diversify.
+    if (useStructuredDrafterPath && Array.isArray(sourceCards) && sourceCards.length >= 10) {
+      drafterSystemPrompt = `${drafterSystemPrompt}
+
+**גיוון מקורות (חובה כאשר זמינים ≥10 מקורות מאומתים):**
+כאשר טענה חדשה ניתנת לתימוך על-ידי מקור מאומת (direct_support / partial_support) שטרם צוטט, העדף אותו על-פני חזרה עם "לעיל ה"ש X" על אותו מקור שכבר ציטטת. אל תצטט מקור שאינו רלוונטי לטענה רק כדי לגוון — רלוונטיות גוברת על גיוון.`;
+    }
     const promptLen = drafterSystemPrompt.length;
     console.log(`Prompt length: ${promptLen} chars (variant=${useStructuredDrafterPath ? "compact" : "full"}${isAcademicChapter ? "+academic" : ""}), ${sourceCards.length} source cards`);
 
@@ -9520,6 +9530,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
     // persisted to qa_logs.metadata.coverage_gap so post-run review doesn't
     // need to grep edge logs.
     let coverageGapMetric: Record<string, unknown> | null = null;
+    let drafterCardUsageMetric: Record<string, unknown> | null = null;
     emitStage("coverage_gap", "running");
     try {
       const isStructured = enableDeepPipeline && useStructuredDrafterPath;
@@ -9593,6 +9604,17 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           claims_anchored_pct: coveragePct,
           footnotes: finalFootnotes.length,
           unanchored_samples: unanchoredSamples,
+        };
+        // Pass B — drafter card-usage telemetry. citation_to_source_ratio>3
+        // signals heavy לעיל-stacking on a few favorites; <=1.5 is healthy.
+        drafterCardUsageMetric = {
+          cards_available: cardsTotal,
+          unique_cards_cited: cardsCited,
+          unique_cards_cited_pct: cardsPct,
+          footnotes: finalFootnotes.length,
+          citation_to_source_ratio: cardsCited > 0
+            ? Math.round((finalFootnotes.length / cardsCited) * 100) / 100
+            : null,
         };
         void cardsIn;
       }
@@ -9747,6 +9769,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             : null,
           // Coverage-gap metric (structured-drafter runs only).
           coverage_gap: coverageGapMetric,
+          // Pass B — per-run drafter card-usage telemetry. Helps spot
+          // "19 cards available, 4 actually cited" diversification failures.
+          drafter_card_usage: drafterCardUsageMetric,
           // Per-doc rerank drop details (title + score + reason). Capped at 10.
           // Lets us validate the rerank gate against future runs without re-tracing.
           rerank_drops: rerankDrops,
