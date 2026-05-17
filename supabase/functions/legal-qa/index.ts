@@ -9515,12 +9515,11 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
       console.log(`Citation density check skipped: ${(e as Error).message}`);
     }
 
-    // ===== Coverage gap instrumentation (Pilot v7 Step 1, log-only) =====
-    // Measures how many source cards passed to the structured drafter were
-    // actually cited, and how many substantive legal claims in the body lack
-    // an adjacent footnote marker. This is the real "coverage gap" number
-    // (vs the proxy of footnote count) that decides whether to ship an
-    // anchor-pass stage. Heuristic + log-only; never blocks the response.
+    // ===== Coverage gap instrumentation (Pilot v7 Step 1) =====
+    // Captures cards-in/cards-cited and substantive-claim coverage. Now also
+    // persisted to qa_logs.metadata.coverage_gap so post-run review doesn't
+    // need to grep edge logs.
+    let coverageGapMetric: Record<string, unknown> | null = null;
     emitStage("coverage_gap", "running");
     try {
       const isStructured = enableDeepPipeline && useStructuredDrafterPath;
@@ -9554,12 +9553,6 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           }
         }
 
-        // Substantive claims in the body that lack an adjacent footnote.
-        // A "substantive claim" is a sentence containing one of the legal
-        // anchor terms (חוק / סעיף / פס"ד / פסק דין / קבע / נפסק / הלכה / קובע / מורה).
-        // "Adjacent footnote" = a digit (which has already been normalized
-        // from superscript to e.g. ¹/[1]) within ~30 chars of the term, or
-        // a "[\d+]" / superscript anywhere in the sentence.
         const sentences = answer
           .split(/(?<=[.!?])\s+|\n+/)
           .map((s) => s.trim())
@@ -9591,6 +9584,17 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             console.log(`[coverage-gap] unanchored: "${s}"`);
           }
         }
+        coverageGapMetric = {
+          cards_in: cardsTotal,
+          cards_cited: cardsCited,
+          cards_cited_pct: cardsPct,
+          claims_total: claimsTotal,
+          claims_anchored: claimsAnchored,
+          claims_anchored_pct: coveragePct,
+          footnotes: finalFootnotes.length,
+          unanchored_samples: unanchoredSamples,
+        };
+        void cardsIn;
       }
       emitStage("coverage_gap", "complete");
     } catch (e) {
