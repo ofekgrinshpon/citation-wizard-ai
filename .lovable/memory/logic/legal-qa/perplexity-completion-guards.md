@@ -1,27 +1,35 @@
 ---
 name: Perplexity Completion Guards (Stage E.5)
-description: Two-guard model for Stage E.5 candidates — citation-shape regex + URL allowlist (TRUSTED_LEGAL_DOMAINS, 30+ domains across caselaw/legislation/regulators/think tanks/academia); CASELAW_DOMAINS subset for disambiguation
+description: Two-guard model for Stage E.5 — citation-shape regex + URL allowlist; TRUSTED_LEGAL_DOMAINS capped at 20 (Perplexity hard limit on search_domain_filter)
 type: feature
 ---
 
-Stage E.5 (Perplexity completion) fires when `coreSources.length < 2` after local source-pack assembly in `taskMode === "research"`. Each candidate returned by `sonar-pro` must clear TWO guards in `validatePerplexityCandidate` (`supabase/functions/legal-qa/index.ts`):
+Stage E.5 (Perplexity completion) fires when `coreSources.length < 2` after local source-pack assembly in `taskMode === "research"`. Candidates from `sonar-pro` must clear TWO guards in `validatePerplexityCandidate` (`supabase/functions/legal-qa/index.ts`):
 
 1. **Citation-shape regex** — `STATUTE_CITATION_RE` (ס"ח/ק"ת + digit + Hebrew year) and `CASE_NUMBER_RE` (court prefixes + `\d+/\d+`).
 2. **URL allowlist** — `isTrustedLegalUrl` matches against `TRUSTED_LEGAL_DOMAINS` (exact host or subdomain).
 
-### Two exported lists (legal-qa/index.ts)
+### CRITICAL: 20-domain cap on TRUSTED_LEGAL_DOMAINS
 
-`CASELAW_DOMAINS` — judgment DBs only, used for case disambiguation + verify-case-fulltext:
+Perplexity's `search_domain_filter` has a **hard limit of 20 entries**. Exceeding it returns `400: search_domain_filters has a max length of 20` and kills the entire Perplexity call — Stage E.5 returns 0 candidates. **Never add a 21st domain** without removing one first.
+
+The same list is also used as the URL-allowlist guard (Guard 1). Subdomains match automatically, so collapse where possible (`knesset.gov.il` covers `main.*` and any other subdomain; `takdin.co.il` covers `lite.takdin.*`; `ssrn.com` covers `papers.ssrn.com`).
+
+### Current 20-domain list
+
+`CASELAW_DOMAINS` (7) — judgment DBs only, also used by case disambiguation + verify-case-fulltext:
 nevo.co.il, supreme.court.gov.il, supremedecisions.court.gov.il, takdin.co.il, lite.takdin.co.il, psakdin.co.il, din.org.il.
 
-`TRUSTED_LEGAL_DOMAINS` — wide allowlist (caselaw + everything else), used for Source Pack / Stage E.5 / all wide Perplexity calls. Includes CASELAW_DOMAINS plus:
-- Legislation: knesset.gov.il, main.knesset.gov.il, fs.knesset.gov.il, reshumot.gov.il, justice.gov.il
+`TRUSTED_LEGAL_DOMAINS` (20 = CASELAW_DOMAINS + 13):
+- Legislation: knesset.gov.il, main.knesset.gov.il, reshumot.gov.il, justice.gov.il
 - Regulators: mevaker.gov.il, competition.gov.il, privacy.org.il, tax.gov.il, mof.gov.il
 - Think tanks: idi.org.il, kohelet.org.il, vanleer.org.il, taubcenter.org.il, inss.org.il
-- Academia: huji.ac.il, tau.ac.il (covers mishpatim.tau.ac.il), ssrn.com (covers papers.ssrn.com), jstor.org, scholar.google.com
-- Jewish law: daat.ac.il, hebrewbooks.org, sefaria.org
+- Academia / Jewish law: ssrn.com, jstor.org, scholar.google.com, daat.ac.il, hebrewbooks.org, sefaria.org
 
-**`court.gov.il` (broad) was intentionally removed** — it returned mostly press releases (spokmanship_court paths), not actual judgments. Use `supreme.court.gov.il` + `supremedecisions.court.gov.il` for Supreme Court rulings.
+**Intentionally NOT in the list** (subdomains covered by parent, or removed to stay under cap):
+- `fs.knesset.gov.il` — bill drafts; not currently in list (removed to fit cap; subdomain matching by `knesset.gov.il` may catch it depending on Perplexity's behavior).
+- `tau.ac.il`, `huji.ac.il` — Israeli law-school journals; removed to fit cap. Article retrieval still happens via local DB + ssrn.com.
+- `court.gov.il` (broad) — returns mostly press releases (spokmanship_court paths), not judgments. Use `supreme.court.gov.il` + `supremedecisions.court.gov.il`.
 
 Note: there is intentionally **no `verified_sources` cross-check** — that table is user-saved citations, not an authority registry.
 
