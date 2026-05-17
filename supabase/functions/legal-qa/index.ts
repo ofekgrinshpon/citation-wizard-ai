@@ -5915,6 +5915,150 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
   needs_pinpoint: c.needs_pinpoint,
 })), null, 2)}` : ""}`;
 
+    // ─── Pass D: Compact Claim-Ledger Drafter Payload ──────────────────
+    // When a Claim Ledger exists, restrict the drafter's source catalog
+    // and retrieved-context block to ONLY sources cited by supported /
+    // partially_supported claims. This is the primary lever to make GPT-5
+    // usable: prompts shrink from ~37–40k chars to ~12–22k chars without
+    // changing the claim contract or any rule the drafter follows.
+    //
+    // The compact builder below reads `drafterSourceCatalog` and
+    // `drafterCombinedContext` (these vars), not the raw `sourceCatalog`
+    // and `combinedContext`. If the ledger is absent / empty, both default
+    // to the original strings so behaviour is unchanged.
+    let drafterSourceCatalog = sourceCatalog;
+    let drafterCombinedContext = combinedContext;
+    // deno-lint-ignore no-explicit-any
+    const passDTelemetry: Record<string, any> = {
+      used: false,
+      prompt_chars_before: null,
+      prompt_chars_after: null,
+      compact_drafter_used: false,
+      ledger_claims_included: 0,
+      source_cards_included: 0,
+      avg_excerpt_chars: 0,
+      trim_level_applied: null,
+      target_max: null,
+    };
+
+    if (phase7ClaimLedger && Array.isArray(phase7ClaimLedger.claims) && phase7ClaimLedger.claims.length > 0) {
+      try {
+        const allowedClaims = phase7ClaimLedger.claims.filter(
+          (c) => c.verdict === "supported" || c.verdict === "partially_supported",
+        );
+        const allowedSourceIds = new Set<string>();
+        for (const c of allowedClaims) for (const sid of c.sourceIds) allowedSourceIds.add(String(sid));
+
+        const cardByAnyId = new Map<string, SourceCard>();
+        for (const sc of sourceCards) {
+          const cid = (sc as unknown as ContractSourceCard).contractId;
+          if (cid) cardByAnyId.set(cid, sc);
+          cardByAnyId.set(`src-${sc.id}`, sc);
+          cardByAnyId.set(String(sc.id), sc);
+        }
+        const citedSeen = new Set<number>();
+        const citedCards: SourceCard[] = [];
+        for (const sid of allowedSourceIds) {
+          const sc = cardByAnyId.get(sid);
+          if (sc && !citedSeen.has(sc.id)) {
+            citedSeen.add(sc.id);
+            citedCards.push(sc);
+          }
+        }
+
+        if (citedCards.length > 0) {
+          const trimExcerpt = (text: string, max: number): string => {
+            const t = (text || "").trim();
+            if (!t) return "";
+            if (t.length <= max) return t;
+            const sliced = t.slice(0, max);
+            const lastDot = sliced.lastIndexOf(".");
+            return (lastDot > max * 0.5 ? sliced.slice(0, lastDot + 1) : sliced) + "…";
+          };
+
+          const renderCatalog = (cards: SourceCard[]): string =>
+            cards.map((sc) => {
+              const ccard = sc as unknown as ContractSourceCard;
+              const cid = ccard.contractId;
+              const meta = cid ? roleClassByContractId.get(cid) : undefined;
+              const canonical = ccard.canonicalCitation || sc.citation;
+              const sidTag = cid ? ` {${cid}}` : "";
+              const provTag =
+                sc.provenance === "local" ? " [מאומת]" :
+                sc.provenance === "perplexity" ? " [חיצוני – מטא-דאטה]" :
+                sc.provenance === "perplexity_completion" ? " [חיצוני – אומת]" :
+                sc.provenance === "document" ? " [מסמך]" : "";
+              const bits: string[] = [];
+              if (meta?.role) bits.push(`role=${meta.role}`);
+              if (meta?.citationQuality) bits.push(`quality=${meta.citationQuality}`);
+              const roleStr = bits.length ? ` [${bits.join(", ")}]` : "";
+              return `[${sc.id}]${sidTag}${provTag} ${canonical} — ${sc.source_type}${roleStr}`;
+            }).join("\n");
+
+          const renderContext = (cards: SourceCard[], excerptMax: number): string =>
+            cards.map((sc) => {
+              const cid = (sc as unknown as ContractSourceCard).contractId ?? `src-${sc.id}`;
+              const ex = trimExcerpt(sc.excerpt || "", excerptMax);
+              return ex
+                ? `--- ${cid} | ${sc.citation} ---\n${ex}`
+                : `--- ${cid} | ${sc.citation} ---\n(אין תקציר זמין)`;
+            }).join("\n\n");
+
+          // Progressive trim. We measure the catalog+context length only as a
+          // proxy (full-prompt rebuild happens once below); each level keeps
+          // shrinking until proxy size fits within ~55% of the target budget,
+          // leaving headroom for the static scaffolding (~6–8k) + ledger block.
+          const targetMax = researchDepth === "deep" ? 24000 : 18000;
+          passDTelemetry.target_max = targetMax;
+          const trimLevels: Array<{ excerptMax: number; perClaimCap: number; label: string }> = [
+            { excerptMax: 320, perClaimCap: 99, label: "L0" },
+            { excerptMax: 220, perClaimCap: 99, label: "L1" },
+            { excerptMax: 160, perClaimCap: 2,  label: "L2" },
+            { excerptMax: 100, perClaimCap: 2,  label: "L3" },
+          ];
+
+          let finalCards: SourceCard[] = citedCards;
+          let finalExcerptMax = trimLevels[0].excerptMax;
+          let finalLabel = trimLevels[0].label;
+
+          for (const lvl of trimLevels) {
+            const allowedAfterCap = new Set<string>();
+            for (const c of allowedClaims) {
+              for (const sid of c.sourceIds.slice(0, lvl.perClaimCap)) allowedAfterCap.add(String(sid));
+            }
+            const cardsLvl = citedCards.filter((sc) => {
+              const cid = (sc as unknown as ContractSourceCard).contractId ?? "";
+              return allowedAfterCap.has(cid) || allowedAfterCap.has(`src-${sc.id}`) || allowedAfterCap.has(String(sc.id));
+            });
+            const cat = renderCatalog(cardsLvl);
+            const ctx = renderContext(cardsLvl, lvl.excerptMax);
+            drafterSourceCatalog = cat;
+            drafterCombinedContext = ctx;
+            finalCards = cardsLvl;
+            finalExcerptMax = lvl.excerptMax;
+            finalLabel = lvl.label;
+            const approx = cat.length + ctx.length;
+            if (approx < Math.floor(targetMax * 0.55)) break;
+          }
+
+          passDTelemetry.used = true;
+          passDTelemetry.compact_drafter_used = true;
+          passDTelemetry.ledger_claims_included = allowedClaims.length;
+          passDTelemetry.source_cards_included = finalCards.length;
+          const exLens = finalCards.map((sc) => Math.min(sc.excerpt?.length ?? 0, finalExcerptMax));
+          passDTelemetry.avg_excerpt_chars = exLens.length
+            ? Math.round(exLens.reduce((a, b) => a + b, 0) / exLens.length)
+            : 0;
+          passDTelemetry.trim_level_applied = finalLabel;
+          console.log(
+            `[pass-d:compact] ledger_claims=${allowedClaims.length} cards=${finalCards.length}/${sourceCards.length} excerpt_max=${finalExcerptMax} trim=${finalLabel} catalog+ctx≈${drafterSourceCatalog.length + drafterCombinedContext.length}`,
+          );
+        }
+      } catch (e) {
+        console.warn("[pass-d:compact] build failed, falling back to full catalog/context:", (e as Error).message);
+      }
+    }
+
     // ─── Pilot v6: compact structured drafter prompt ───────────────────
     // The legacy systemPrompt above is ~28k chars. For the structured drafter
     // (claimMap !== null && claimMapAllowedCount >= 2) most of those rules are
@@ -6226,10 +6370,10 @@ ${contractOn ? `═══ סימני הפניה ═══
 
 ═══ רשימת מקורות זמינים ═══
 כל מקור מתויג ב-{S#} ${contractOn ? "— זהו המזהה היחיד שתשתמש בו בסמני [cite:S#]" : "לחוזה ציטוט (Card→Claim)"}.
-${sourceCatalog}
+${drafterSourceCatalog}
 
 ═══ הקשר מהמקורות ═══
-${combinedContext}
+${drafterCombinedContext}
 
 ═══ תזכורת אחרונה ═══
 זהו מצב **${modeLabel}**: יעד ${wordMin}-${wordMax} מילים${researchDepth === "deep" ? `, רצפה קשיחה של ${fnFloor} ${contractOn ? "סמני [cite:S#]" : "הערות"} מעוגנים` : `, ${fnFloor}-${fnMax} ${contractOn ? "סמני [cite:S#]" : "הערות"} מעוגנים (מינימום ${fnFloor})`}.${contractOn ? ` **אין בלוק הערות שוליים ידני, אין [N], רק [cite:S#].** המערכת תבנה את הביבליוגרפיה אוטומטית.` : ` בלוק הערות שוליים בסוף. כל [N] בגוף חייב להיות מגובה בכרטיס מקור מהקטלוג. אל תמציא הערות.
@@ -6287,13 +6431,35 @@ ${combinedContext}
 כאשר טענה חדשה ניתנת לתימוך על-ידי מקור מאומת (direct_support / partial_support) שטרם צוטט, העדף אותו על-פני חזרה עם "לעיל ה"ש X" על אותו מקור שכבר ציטטת. אל תצטט מקור שאינו רלוונטי לטענה רק כדי לגוון — רלוונטיות גוברת על גיוון.`;
     }
     const promptLen = drafterSystemPrompt.length;
-    console.log(`Prompt length: ${promptLen} chars (variant=${useStructuredDrafterPath ? "compact" : "full"}${isAcademicChapter ? "+academic" : ""}), ${sourceCards.length} source cards`);
+    console.log(`Prompt length: ${promptLen} chars (variant=${useStructuredDrafterPath ? "compact" : "full"}${isAcademicChapter ? "+academic" : ""}${passDTelemetry.used ? "+passD" : ""}), ${sourceCards.length} source cards`);
+
+    // Pass D telemetry — record before/after sizes. "before" approximates
+    // what the prompt would be without compact-payload swap by adding back
+    // the catalog/context savings; "after" is the actual emitted prompt.
+    passDTelemetry.prompt_chars_after = promptLen;
+    passDTelemetry.prompt_chars_before = passDTelemetry.used
+      ? promptLen + (sourceCatalog.length - drafterSourceCatalog.length) + (combinedContext.length - drafterCombinedContext.length)
+      : promptLen;
 
     // Token budget: structured drafter ceiling scales with the profile's
     // word range (~1.6 tokens per Hebrew word, plus footnote-block headroom).
     // Fast (≤700 words) → 2048; Deep (≤2000 words) → 6144.
     const structuredDrafterMaxTokens = modeProfile.wordRangeMax >= 1500 ? 6144 : 2048;
-    const aiMaxTokens = isAcademicMode ? 12288 : (useStructuredDrafterPath ? structuredDrafterMaxTokens : 8192);
+    let aiMaxTokens = isAcademicMode ? 12288 : (useStructuredDrafterPath ? structuredDrafterMaxTokens : 8192);
+    // Pass D — when the drafter will hit gpt-5 (legacy variant OR forced
+    // gpt-5 model) AND the prompt is still >20k chars, bump the completion
+    // budget to ≥4096. gpt-5 burns the whole budget on reasoning at small
+    // ceilings on prompts this large, leaving 0 tokens for content (the
+    // "empty completion / finish_reason=length" pathology). Compact prompt
+    // remains the primary fix; this just avoids re-tripping the same trap.
+    const willUseGpt5 =
+      (forceDrafterModel ?? "").includes("gpt-5") ||
+      ((!forceDrafterModel) && (useStructuredDrafterPath ? modeProfile.drafterVariant : "legacy") === "legacy");
+    if (willUseGpt5 && promptLen > 20000 && aiMaxTokens < 4096) {
+      console.warn(`[pass-d:token-bump] gpt-5 + prompt_chars=${promptLen} > 20000 → max_completion_tokens ${aiMaxTokens} → 4096`);
+      aiMaxTokens = 4096;
+    }
+
     // For pleading_analysis with an uploaded document: the document IS the audit subject,
     // and the typed `question` becomes optional user instructions/focus directives.
     const isPleadingWithDoc = taskMode === "pleading_analysis" && (bodyHasDocument || hasDocument);
@@ -6414,7 +6580,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
                 returned_null: !drafterRes,
                 text_len: drafterRes?.text?.length ?? 0,
                 fallback_path: drafterRes?.modelUsed ?? "exhausted",
+                gpt5_empty_completion: willUseGpt5 && (!drafterRes || (drafterRes?.text?.length ?? 0) === 0),
               },
+              pass_d_compact: passDTelemetry,
             };
             const op = __checkpointInserted
               ? __checkpointAdmin.from("qa_logs")
@@ -9875,6 +10043,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           // Pass B — per-run drafter card-usage telemetry. Helps spot
           // "19 cards available, 4 actually cited" diversification failures.
           drafter_card_usage: drafterCardUsageMetric,
+          // Pass D — compact claim-ledger drafter payload telemetry.
+          pass_d_compact: passDTelemetry,
           // Per-doc rerank drop details (title + score + reason). Capped at 10.
           // Lets us validate the rerank gate against future runs without re-tracing.
           rerank_drops: rerankDrops,
