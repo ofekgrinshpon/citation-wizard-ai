@@ -3427,12 +3427,17 @@ ${(verify.fullText as string).slice(0, 50000)}
         const planQueriesCapped = planQueriesUnique.slice(0, planSlots);
         // Doctrine-expanded queries (drop the original — it's already first).
         const doctrineExpansions = expansion.expandedQueries.slice(1);
+        // Pass B: STRICT cap at MAX_PARALLEL_VECTOR_QUERIES. The previous
+        // `slice(0, MAX + doctrineExpansions.length)` made the cap a no-op
+        // and pushed 9 RPCs in parallel, triggering DB statement_timeout
+        // cascades (logs 2026-05-17). Doctrine queries now compete for the
+        // remaining slots only after question + expansion + plan queries.
         const queriesForEmbedding = [
           question,
           ...(expandedQuery ? [expandedQuery] : []),
           ...planQueriesCapped,
           ...doctrineExpansions,
-        ].slice(0, MAX_PARALLEL_VECTOR_QUERIES + doctrineExpansions.length); // doctrine queries are additive
+        ].slice(0, MAX_PARALLEL_VECTOR_QUERIES);
         if (planQueriesCapped.length > 0) {
           console.log(`[plan] adding ${planQueriesCapped.length} sub-issue queries to vector search (capped at ${MAX_PARALLEL_VECTOR_QUERIES} total parallel; ${planQueriesUnique.length - planQueriesCapped.length} dropped)`);
         } else if (decompPromise) {
