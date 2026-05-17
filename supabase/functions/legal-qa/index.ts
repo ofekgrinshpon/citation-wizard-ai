@@ -4175,6 +4175,8 @@ ${(verify.fullText as string).slice(0, 50000)}
       retrievalFunnel.vector_candidates_promoted = candidatesAdded;
       console.log(`[candidate-pool] cards added=${candidatesAdded} of ${candidatePoolLocal.length} candidates`);
     }
+
+    // Perplexity sources — extract from citations array
     if (citations.length > 0) {
       const KNESSET_PROTOCOL_RE = /fs\.knesset\.gov\.il\/(\d+)\/(?:Committees|Plenum)\//i;
       for (const citUrl of citations.slice(0, 8)) {
