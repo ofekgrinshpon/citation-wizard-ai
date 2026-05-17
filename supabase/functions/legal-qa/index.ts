@@ -125,22 +125,49 @@ const RESEARCH_MODE = "research";
 //   - `tau.ac.il` covers `mishpatim.tau.ac.il` (the law journal subdomain
 //     already special-cased in journal-metadata-extraction).
 // Keep this list in sync with verify-case-fulltext/index.ts (search_domain_filter).
-export const TRUSTED_LEGAL_DOMAINS: readonly string[] = [
-  // Caselaw — courts + major caselaw DBs
+// Caselaw-only subset — used by disambiguation / verify-case-fulltext where
+// only judgments (not policy papers or research institutes) are relevant.
+export const CASELAW_DOMAINS: readonly string[] = [
   "nevo.co.il",
   "supreme.court.gov.il",
-  "court.gov.il",       // district / magistrate / labor courts
-  "takdin.co.il",       // commercial caselaw DB
-  "lite.takdin.co.il",  // public search-results page; one-page metadata for citation
+  "supremedecisions.court.gov.il",
+  "takdin.co.il",
+  "lite.takdin.co.il",
   "psakdin.co.il",
+  "din.org.il",
+];
+
+export const TRUSTED_LEGAL_DOMAINS: readonly string[] = [
+  // Caselaw — courts + major caselaw DBs
+  ...CASELAW_DOMAINS,
   // Legislation / official primary
   "knesset.gov.il",
   "main.knesset.gov.il",
-  "reshumot.gov.il",    // official gazette (ס"ח / ק"ת)
-  "justice.gov.il",     // AG opinions, legislative drafts
-  // Academic primary (law journals)
+  "fs.knesset.gov.il",          // Knesset bill drafts (הצעות חוק)
+  "reshumot.gov.il",            // official gazette (ס"ח / ק"ת)
+  "justice.gov.il",             // AG opinions, legislative drafts
+  // Regulators / policy government bodies
+  "mevaker.gov.il",             // State Comptroller
+  "competition.gov.il",         // Competition Authority
+  "privacy.org.il",             // Privacy Protection Authority
+  "tax.gov.il",                 // Tax Authority
+  "mof.gov.il",                 // Ministry of Finance
+  // Research institutes & think tanks
+  "idi.org.il",                 // Israel Democracy Institute
+  "kohelet.org.il",             // Kohelet Policy Forum
+  "vanleer.org.il",             // Van Leer Institute
+  "taubcenter.org.il",          // Taub Center
+  "inss.org.il",                // INSS — national security research
+  // Academic primary (Israeli + international)
   "huji.ac.il",
-  "tau.ac.il",          // covers mishpatim.tau.ac.il
+  "tau.ac.il",                  // covers mishpatim.tau.ac.il
+  "ssrn.com",                   // covers papers.ssrn.com via subdomain match
+  "jstor.org",
+  "scholar.google.com",
+  // Jewish law / classical sources
+  "daat.ac.il",
+  "hebrewbooks.org",
+  "sefaria.org",
 ];
 
 // Set form for fast hostname matching in the Milestone B URL allowlist guard.
