@@ -6580,7 +6580,9 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
                 returned_null: !drafterRes,
                 text_len: drafterRes?.text?.length ?? 0,
                 fallback_path: drafterRes?.modelUsed ?? "exhausted",
+                gpt5_empty_completion: willUseGpt5 && (!drafterRes || (drafterRes?.text?.length ?? 0) === 0),
               },
+              pass_d_compact: passDTelemetry,
             };
             const op = __checkpointInserted
               ? __checkpointAdmin.from("qa_logs")
