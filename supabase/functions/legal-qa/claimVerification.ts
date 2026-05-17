@@ -236,18 +236,16 @@ export async function verifyClaimsAgainstPack(args: {
     };
   }
 
-  // Pass A: batch verification to avoid 30s timeout on large packs.
-  // Split sources into batches of ≤BATCH_SIZE; each batch gets its own
-  // ≤20s budget. Merge scores. Track per-batch success so callers can
-  // distinguish "fully failed" (all batches errored → safe to keep
-  // standard cards) from "partial" (still trustworthy enough to prune).
-  // Pass B: smaller batches (5 instead of 8) + longer per-batch budget (35s
-  // instead of 20s) → fits Gemini Flash's actual latency for verification
-  // prompts. Concurrency=2 keeps total wall time bounded while raising
-  // evaluated-coverage from ~33% toward ≥80%.
+  // Pass C: per-batch budget 35s → 45s; concurrency stays 2; batch size
+  // stays 5. After all main waves complete, retry timed-out / errored
+  // batches ONCE with a tighter 20s budget. Hard total wall-clock cap
+  // (TOTAL_BUDGET_MS) prevents verification from stalling the request even
+  // if Gemini Flash latencies spike or many batches stall.
   const BATCH_SIZE = 5;
-  const BATCH_TIMEOUT_MS = 35000;
+  const BATCH_TIMEOUT_MS = 45000;
+  const RETRY_TIMEOUT_MS = 20000;
   const BATCH_CONCURRENCY = 2;
+  const TOTAL_BUDGET_MS = 120000;
   const batches: PackItemView[][] = [];
   for (let i = 0; i < views.length; i += BATCH_SIZE) {
     batches.push(views.slice(i, i + BATCH_SIZE));
@@ -269,51 +267,89 @@ export async function verifyClaimsAgainstPack(args: {
   // Caller uses this for safe-prune: sources never evaluated must not be
   // strict-pruned (they fall into "kept_unverified" instead).
   const evaluatedSourceIdSet = new Set<string>();
+  // Track batch indices that failed in the main pass so we can retry them
+  // ONCE with a tighter budget after all main waves complete.
+  const failedBatchIndices: number[] = [];
+  let budgetExceeded = false;
 
-  // Run batches in waves of BATCH_CONCURRENCY to bound total wall time.
+  const runBatch = async (batch: PackItemView[], timeoutMs: number) =>
+    callPlannerJSON<{
+      scores: Array<{ claim_id: string; source_id: string; score: string; rationale: string }>;
+    }>(
+      SYSTEM_PROMPT,
+      buildUserPrompt(claims, batch),
+      TOOL,
+      {
+        stage: "claim_verification",
+        timeoutMs,
+        reasoningEffort: "low",
+        forceProvider: "gemini",
+      },
+    ).then((r) => ({ batch, ...r }));
+
+  const consumeResult = (batch: PackItemView[], data: { scores?: unknown } | null, run: StageRun, batchIdx: number): boolean => {
+    lastRun = run;
+    lastModel = run.model;
+    lastProvider = run.provider as "openai" | "gemini";
+    if (run.status !== "success" || !data || !Array.isArray((data as { scores?: unknown }).scores)) {
+      return false;
+    }
+    for (const v of batch) evaluatedSourceIdSet.add(v.id);
+    for (const s of (data as { scores: unknown[] }).scores) {
+      if (!s || typeof s !== "object") continue;
+      const sObj = s as { claim_id?: unknown; source_id?: unknown; score?: unknown; rationale?: unknown };
+      const cid = typeof sObj.claim_id === "string" ? sObj.claim_id : "";
+      const sid = typeof sObj.source_id === "string" ? sObj.source_id : "";
+      if (!claimIds.has(cid) || !sourceIds.has(sid)) continue;
+      hitsByClaim.get(cid)!.push({
+        sourceId: sid,
+        score: normalizeScore(sObj.score),
+        rationale: typeof sObj.rationale === "string" ? sObj.rationale.slice(0, 200) : "",
+      });
+    }
+    void batchIdx;
+    return true;
+  };
+
+  // ── Main pass: run batches in waves of BATCH_CONCURRENCY. ──
   for (let wStart = 0; wStart < batches.length; wStart += BATCH_CONCURRENCY) {
-    const wave = batches.slice(wStart, wStart + BATCH_CONCURRENCY);
-    const results = await Promise.all(
-      wave.map((batch) =>
-        callPlannerJSON<{
-          scores: Array<{ claim_id: string; source_id: string; score: string; rationale: string }>;
-        }>(
-          SYSTEM_PROMPT,
-          buildUserPrompt(claims, batch),
-          TOOL,
-          {
-            stage: "claim_verification",
-            timeoutMs: BATCH_TIMEOUT_MS,
-            reasoningEffort: "low",
-            forceProvider: "gemini",
-          },
-        ).then((r) => ({ batch, ...r })),
-      ),
-    );
+    if (Date.now() - batchT0 > TOTAL_BUDGET_MS) {
+      budgetExceeded = true;
+      // Count all remaining batches as failed (they never ran).
+      failedBatches += batches.length - wStart;
+      console.warn(`[claim_verification] total budget exceeded after ${wStart}/${batches.length} batches; skipping the rest`);
+      break;
+    }
+    const waveStart = wStart;
+    const wave = batches.slice(waveStart, waveStart + BATCH_CONCURRENCY);
+    const results = await Promise.all(wave.map((batch) => runBatch(batch, BATCH_TIMEOUT_MS)));
 
-    for (const { batch, data, run } of results) {
-      lastRun = run;
-      lastModel = run.model;
-      lastProvider = run.provider as "openai" | "gemini";
-
-      if (run.status !== "success" || !data || !Array.isArray(data.scores)) {
+    results.forEach(({ batch, data, run }, i) => {
+      const ok = consumeResult(batch, data ?? null, run, waveStart + i);
+      if (ok) succeededBatches++;
+      else {
         failedBatches++;
-        continue;
+        failedBatchIndices.push(waveStart + i);
       }
-      succeededBatches++;
-      // Every source in this successful batch counts as evaluated, even if
-      // the model returned no score for it (model implicitly considered it).
-      for (const v of batch) evaluatedSourceIdSet.add(v.id);
-      for (const s of data.scores) {
-        if (!s || typeof s !== "object") continue;
-        const cid = typeof s.claim_id === "string" ? s.claim_id : "";
-        const sid = typeof s.source_id === "string" ? s.source_id : "";
-        if (!claimIds.has(cid) || !sourceIds.has(sid)) continue;
-        hitsByClaim.get(cid)!.push({
-          sourceId: sid,
-          score: normalizeScore(s.score),
-          rationale: typeof s.rationale === "string" ? s.rationale.slice(0, 200) : "",
-        });
+    });
+  }
+
+  // ── Retry pass: ONE short attempt for failed batches, sequentially, ──
+  // respecting the remaining total budget. Promote each successful retry
+  // out of the failed count.
+  if (failedBatchIndices.length > 0 && !budgetExceeded) {
+    for (const idx of failedBatchIndices) {
+      const remaining = TOTAL_BUDGET_MS - (Date.now() - batchT0);
+      if (remaining < RETRY_TIMEOUT_MS) {
+        console.warn(`[claim_verification] retry pass aborted (remaining=${remaining}ms < ${RETRY_TIMEOUT_MS}ms)`);
+        break;
+      }
+      const { batch, data, run } = await runBatch(batches[idx], RETRY_TIMEOUT_MS);
+      const ok = consumeResult(batch, data ?? null, run, idx);
+      if (ok) {
+        succeededBatches++;
+        failedBatches--;
+        console.log(`[claim_verification] retry batch=${idx} recovered`);
       }
     }
   }

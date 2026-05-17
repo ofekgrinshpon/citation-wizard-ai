@@ -472,31 +472,38 @@ export async function callDrafter(
       promptChars,
     });
     if (openaiResult) return { text: openaiResult, modelUsed: openaiModel };
-    // Pass C: gpt-5 sometimes consumes the full max_tokens budget on
-    // reasoning alone and returns empty content (finish_reason=length,
-    // text_len=0). Retry ONCE with a larger budget (cap 8192) before
-    // falling back to Gemini, which is producing under-cited drafts.
-    const retryTokens = Math.min(8192, Math.max(maxTokens + 2048, Math.floor(maxTokens * 1.5)));
-    if (retryTokens > maxTokens && /^gpt-5/.test(openaiModel)) {
+
+    // Pass C: empty / null gpt-5 completion is treated as a failed attempt.
+    // We do NOT retry the same legacy non-streaming path with a larger
+    // token budget (that masked the real failure and wasted ~90s per loop).
+    // Instead, fall back to the structured drafter model (gpt-5-mini) on
+    // OpenAI — same prompt, faster + cheaper, far less likely to hit the
+    // "all-tokens-on-reasoning, no content" pathology. Only if that also
+    // fails do we cross to Gemini.
+    const structuredOpenaiModel = MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI;
+    if (
+      /^gpt-5/.test(openaiModel) &&
+      structuredOpenaiModel &&
+      structuredOpenaiModel !== openaiModel
+    ) {
       console.warn(
-        `[drafter:retry] openai_model=${openaiModel} variant=${variant} prompt_chars=${promptChars} max_tokens=${maxTokens}→${retryTokens} (empty completion, retrying before fallback)`,
+        `[drafter:fallback:structured-openai] openai_model=${openaiModel} → ${structuredOpenaiModel} variant=${variant} prompt_chars=${promptChars} (empty/null from legacy non-streaming gpt-5)`,
       );
-      const retryResult = await callOnce({
+      const miniResult = await callOnce({
         url: OPENAI_URL,
         apiKey: OPENAI_API_KEY,
-        model: openaiModel,
+        model: structuredOpenaiModel,
         systemPrompt,
         userPrompt,
-        maxTokens: retryTokens,
+        maxTokens,
         timeoutMs,
         provider: "openai",
         variant,
         promptChars,
       });
-      if (retryResult) return { text: retryResult, modelUsed: openaiModel };
+      if (miniResult) return { text: miniResult, modelUsed: structuredOpenaiModel };
     }
-    // Explicit, structured fallback log so admins can grep for it. Keeps
-    // the earlier `[drafter:variant]` line for backward compatibility.
+
     console.warn(
       `[drafter:fallback] openai_model=${openaiModel} variant=${variant} prompt_chars=${promptChars} → falling back to gemini=${geminiModel}`,
     );
