@@ -5669,7 +5669,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       if (subPrompt) academicChapterContext = "\n\n" + subPrompt;
     }
 
-    const systemPrompt = `אתה עוזר משפטי מומחה. כתוב חוות דעת משפטית מקצועית בעברית.
+    let systemPrompt = `אתה עוזר משפטי מומחה. כתוב חוות דעת משפטית מקצועית בעברית.
 ${taskInstructions}
 ${academicChapterContext}
 
