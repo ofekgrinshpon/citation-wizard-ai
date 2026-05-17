@@ -260,6 +260,10 @@ export async function verifyClaimsAgainstPack(args: {
   let lastRun: StageRun | null = null;
   let lastModel = "unknown";
   let lastProvider: "openai" | "gemini" = "gemini";
+  // Track which source ids were actually evaluated by a successful batch.
+  // Caller uses this for safe-prune: sources never evaluated must not be
+  // strict-pruned (they fall into "kept_unverified" instead).
+  const evaluatedSourceIdSet = new Set<string>();
 
   for (const batch of batches) {
     const { data, run } = await callPlannerJSON<{
@@ -284,6 +288,9 @@ export async function verifyClaimsAgainstPack(args: {
       continue;
     }
     succeededBatches++;
+    // Every source in this successful batch counts as evaluated, even if
+    // the model returned no score for it (model implicitly considered it).
+    for (const v of batch) evaluatedSourceIdSet.add(v.id);
     for (const s of data.scores) {
       if (!s || typeof s !== "object") continue;
       const cid = typeof s.claim_id === "string" ? s.claim_id : "";
