@@ -3007,6 +3007,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       vector_candidates_low_threshold?: number;
       vector_candidates_promoted?: number;
       candidates_recovered_by_claim_verification?: number;
+      candidates_kept_unverified?: number;
       candidates_dropped_tangential?: number;
       supplementary_rejected_low_score?: number;
       supplementary_rejected_no_claim_fit?: number;
