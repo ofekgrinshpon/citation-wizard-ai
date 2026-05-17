@@ -472,6 +472,29 @@ export async function callDrafter(
       promptChars,
     });
     if (openaiResult) return { text: openaiResult, modelUsed: openaiModel };
+    // Pass C: gpt-5 sometimes consumes the full max_tokens budget on
+    // reasoning alone and returns empty content (finish_reason=length,
+    // text_len=0). Retry ONCE with a larger budget (cap 8192) before
+    // falling back to Gemini, which is producing under-cited drafts.
+    const retryTokens = Math.min(8192, Math.max(maxTokens + 2048, Math.floor(maxTokens * 1.5)));
+    if (retryTokens > maxTokens && /^gpt-5/.test(openaiModel)) {
+      console.warn(
+        `[drafter:retry] openai_model=${openaiModel} variant=${variant} prompt_chars=${promptChars} max_tokens=${maxTokens}→${retryTokens} (empty completion, retrying before fallback)`,
+      );
+      const retryResult = await callOnce({
+        url: OPENAI_URL,
+        apiKey: OPENAI_API_KEY,
+        model: openaiModel,
+        systemPrompt,
+        userPrompt,
+        maxTokens: retryTokens,
+        timeoutMs,
+        provider: "openai",
+        variant,
+        promptChars,
+      });
+      if (retryResult) return { text: retryResult, modelUsed: openaiModel };
+    }
     // Explicit, structured fallback log so admins can grep for it. Keeps
     // the earlier `[drafter:variant]` line for backward compatibility.
     console.warn(
