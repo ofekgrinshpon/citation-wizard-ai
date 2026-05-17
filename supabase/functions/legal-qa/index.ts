@@ -9605,6 +9605,17 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           footnotes: finalFootnotes.length,
           unanchored_samples: unanchoredSamples,
         };
+        // Pass B — drafter card-usage telemetry. citation_to_source_ratio>3
+        // signals heavy לעיל-stacking on a few favorites; <=1.5 is healthy.
+        drafterCardUsageMetric = {
+          cards_available: cardsTotal,
+          unique_cards_cited: cardsCited,
+          unique_cards_cited_pct: cardsPct,
+          footnotes: finalFootnotes.length,
+          citation_to_source_ratio: cardsCited > 0
+            ? Math.round((finalFootnotes.length / cardsCited) * 100) / 100
+            : null,
+        };
         void cardsIn;
       }
       emitStage("coverage_gap", "complete");
