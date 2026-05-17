@@ -3621,7 +3621,7 @@ ${(verify.fullText as string).slice(0, 50000)}
             const lowRes = await adminClient.rpc("match_legal_chunks", {
               query_embedding: JSON.stringify(firstEmbedding),
               match_threshold: 0.35,
-              match_count: 25,
+              match_count: 15,
             });
             if (!lowRes.error && Array.isArray(lowRes.data)) {
               const inMerged = new Set(vectorMatches.map(m => m.chunk_id));
