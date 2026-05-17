@@ -270,42 +270,51 @@ export async function verifyClaimsAgainstPack(args: {
   // strict-pruned (they fall into "kept_unverified" instead).
   const evaluatedSourceIdSet = new Set<string>();
 
-  for (const batch of batches) {
-    const { data, run } = await callPlannerJSON<{
-      scores: Array<{ claim_id: string; source_id: string; score: string; rationale: string }>;
-    }>(
-      SYSTEM_PROMPT,
-      buildUserPrompt(claims, batch),
-      TOOL,
-      {
-        stage: "claim_verification",
-        timeoutMs: BATCH_TIMEOUT_MS,
-        reasoningEffort: "low",
-        forceProvider: "gemini",
-      },
+  // Run batches in waves of BATCH_CONCURRENCY to bound total wall time.
+  for (let wStart = 0; wStart < batches.length; wStart += BATCH_CONCURRENCY) {
+    const wave = batches.slice(wStart, wStart + BATCH_CONCURRENCY);
+    const results = await Promise.all(
+      wave.map((batch) =>
+        callPlannerJSON<{
+          scores: Array<{ claim_id: string; source_id: string; score: string; rationale: string }>;
+        }>(
+          SYSTEM_PROMPT,
+          buildUserPrompt(claims, batch),
+          TOOL,
+          {
+            stage: "claim_verification",
+            timeoutMs: BATCH_TIMEOUT_MS,
+            reasoningEffort: "low",
+            forceProvider: "gemini",
+          },
+        ).then((r) => ({ batch, ...r })),
+      ),
     );
-    lastRun = run;
-    lastModel = run.model;
-    lastProvider = run.provider as "openai" | "gemini";
 
-    if (run.status !== "success" || !data || !Array.isArray(data.scores)) {
-      failedBatches++;
-      continue;
-    }
-    succeededBatches++;
-    // Every source in this successful batch counts as evaluated, even if
-    // the model returned no score for it (model implicitly considered it).
-    for (const v of batch) evaluatedSourceIdSet.add(v.id);
-    for (const s of data.scores) {
-      if (!s || typeof s !== "object") continue;
-      const cid = typeof s.claim_id === "string" ? s.claim_id : "";
-      const sid = typeof s.source_id === "string" ? s.source_id : "";
-      if (!claimIds.has(cid) || !sourceIds.has(sid)) continue;
-      hitsByClaim.get(cid)!.push({
-        sourceId: sid,
-        score: normalizeScore(s.score),
-        rationale: typeof s.rationale === "string" ? s.rationale.slice(0, 200) : "",
-      });
+    for (const { batch, data, run } of results) {
+      lastRun = run;
+      lastModel = run.model;
+      lastProvider = run.provider as "openai" | "gemini";
+
+      if (run.status !== "success" || !data || !Array.isArray(data.scores)) {
+        failedBatches++;
+        continue;
+      }
+      succeededBatches++;
+      // Every source in this successful batch counts as evaluated, even if
+      // the model returned no score for it (model implicitly considered it).
+      for (const v of batch) evaluatedSourceIdSet.add(v.id);
+      for (const s of data.scores) {
+        if (!s || typeof s !== "object") continue;
+        const cid = typeof s.claim_id === "string" ? s.claim_id : "";
+        const sid = typeof s.source_id === "string" ? s.source_id : "";
+        if (!claimIds.has(cid) || !sourceIds.has(sid)) continue;
+        hitsByClaim.get(cid)!.push({
+          sourceId: sid,
+          score: normalizeScore(s.score),
+          rationale: typeof s.rationale === "string" ? s.rationale.slice(0, 200) : "",
+        });
+      }
     }
   }
 
