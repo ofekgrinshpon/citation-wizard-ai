@@ -5467,28 +5467,57 @@ ${(verify.fullText as string).slice(0, 50000)}
             `s=${vRes.summary.supported} p=${vRes.summary.partially_supported} u=${vRes.summary.unsupported}`);
           console.log(`[phase7:verification] supported=${vRes.summary.supported} partial=${vRes.summary.partially_supported} unsupported=${vRes.summary.unsupported} dropped_tangential=${vRes.summary.dropped_tangential} dropped_unrelated=${vRes.summary.dropped_unrelated} ms=${phase7VerificationDurationMs}`);
 
-          // Prune tangential/unrelated from the source pack (preserves
-          // primary_legislation + user_document for citation hygiene).
-          const { pruned, removedIds } = pruneSourcePackByLedger(sourcePackV2, phase7ClaimLedger);
+          // Pass A: on verification timeout (all batches failed), use
+          // safe-prune mode — only candidate-pool entries can be removed.
+          // Standard-retrieval cards already passed dedup+rerank+broken-title
+          // filter and stay in the pack with their original
+          // usable_for_analysis flag intact.
+          const verificationFailed = vRes.run.status !== "success";
+          const { pruned, removedIds } = pruneSourcePackByLedger(
+            sourcePackV2,
+            phase7ClaimLedger,
+            { restrictToCandidateRecall: verificationFailed },
+          );
           phase7PrunedSourceIds = removedIds;
           if (removedIds.length > 0) {
-            console.log(`[phase7:prune] removed ${removedIds.length} non-supporting sources: [${removedIds.join(",")}]`);
+            console.log(`[phase7:prune] mode=${verificationFailed ? "safe(candidate-only)" : "strict"} removed ${removedIds.length} sources: [${removedIds.join(",")}]`);
             sourcePackV2 = pruned;
           }
 
-          // Recall-vs-Proof telemetry: how many candidate-pool entries earned
-          // direct/partial support vs were pruned as tangential/unrelated.
+          // Recall-vs-Proof telemetry (honest version):
+          //   - candidates_recovered_by_claim_verification: counts only
+          //     candidate-pool ids that received direct_support or
+          //     partial_support from a claim (NOT the timeout-fallback path).
+          //   - candidates_kept_unverified: counts candidate-pool ids kept
+          //     because verification timed out and safe-prune ran instead.
+          //   - candidates_dropped_tangential: candidate-pool ids actually
+          //     pruned by either strict or safe mode.
           if (candidateRecallIds.size > 0) {
             const removedSet = new Set(removedIds.map(String));
+            const supportiveIds = new Set<string>();
+            for (const c of phase7ClaimLedger.claims) {
+              if (c.verdict === "supported" || c.verdict === "partially_supported") {
+                for (const sid of c.sourceIds) supportiveIds.add(String(sid));
+              }
+            }
             let recovered = 0;
+            let keptUnverified = 0;
             let dropped = 0;
             for (const cid of candidateRecallIds) {
-              if (removedSet.has(String(cid))) dropped++;
-              else recovered++;
+              const idStr = String(cid);
+              const contractIdStr = `src-${cid}`;
+              if (supportiveIds.has(idStr) || supportiveIds.has(contractIdStr)) {
+                recovered++;
+              } else if (removedSet.has(idStr) || removedSet.has(contractIdStr)) {
+                dropped++;
+              } else if (verificationFailed) {
+                keptUnverified++;
+              }
             }
             retrievalFunnel.candidates_recovered_by_claim_verification = recovered;
             retrievalFunnel.candidates_dropped_tangential = dropped;
-            console.log(`[recall-vs-proof] candidates: pool=${candidateRecallIds.size} recovered=${recovered} dropped_tangential=${dropped}`);
+            retrievalFunnel.candidates_kept_unverified = keptUnverified;
+            console.log(`[recall-vs-proof] candidates: pool=${candidateRecallIds.size} recovered=${recovered} kept_unverified=${keptUnverified} dropped_tangential=${dropped} (verification=${verificationFailed ? "failed" : "ok"})`);
           }
 
           phase7LedgerBlock = buildClaimLedgerPromptBlock(phase7ClaimLedger);
