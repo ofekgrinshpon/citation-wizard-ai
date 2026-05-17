@@ -5915,6 +5915,150 @@ ${JSON.stringify(claimMap.filter((c) => c.allowed_to_state).map((c) => ({
   needs_pinpoint: c.needs_pinpoint,
 })), null, 2)}` : ""}`;
 
+    // ─── Pass D: Compact Claim-Ledger Drafter Payload ──────────────────
+    // When a Claim Ledger exists, restrict the drafter's source catalog
+    // and retrieved-context block to ONLY sources cited by supported /
+    // partially_supported claims. This is the primary lever to make GPT-5
+    // usable: prompts shrink from ~37–40k chars to ~12–22k chars without
+    // changing the claim contract or any rule the drafter follows.
+    //
+    // The compact builder below reads `drafterSourceCatalog` and
+    // `drafterCombinedContext` (these vars), not the raw `sourceCatalog`
+    // and `combinedContext`. If the ledger is absent / empty, both default
+    // to the original strings so behaviour is unchanged.
+    let drafterSourceCatalog = sourceCatalog;
+    let drafterCombinedContext = combinedContext;
+    // deno-lint-ignore no-explicit-any
+    const passDTelemetry: Record<string, any> = {
+      used: false,
+      prompt_chars_before: null,
+      prompt_chars_after: null,
+      compact_drafter_used: false,
+      ledger_claims_included: 0,
+      source_cards_included: 0,
+      avg_excerpt_chars: 0,
+      trim_level_applied: null,
+      target_max: null,
+    };
+
+    if (phase7ClaimLedger && Array.isArray(phase7ClaimLedger.claims) && phase7ClaimLedger.claims.length > 0) {
+      try {
+        const allowedClaims = phase7ClaimLedger.claims.filter(
+          (c) => c.verdict === "supported" || c.verdict === "partially_supported",
+        );
+        const allowedSourceIds = new Set<string>();
+        for (const c of allowedClaims) for (const sid of c.sourceIds) allowedSourceIds.add(String(sid));
+
+        const cardByAnyId = new Map<string, SourceCard>();
+        for (const sc of sourceCards) {
+          const cid = (sc as unknown as ContractSourceCard).contractId;
+          if (cid) cardByAnyId.set(cid, sc);
+          cardByAnyId.set(`src-${sc.id}`, sc);
+          cardByAnyId.set(String(sc.id), sc);
+        }
+        const citedSeen = new Set<number>();
+        const citedCards: SourceCard[] = [];
+        for (const sid of allowedSourceIds) {
+          const sc = cardByAnyId.get(sid);
+          if (sc && !citedSeen.has(sc.id)) {
+            citedSeen.add(sc.id);
+            citedCards.push(sc);
+          }
+        }
+
+        if (citedCards.length > 0) {
+          const trimExcerpt = (text: string, max: number): string => {
+            const t = (text || "").trim();
+            if (!t) return "";
+            if (t.length <= max) return t;
+            const sliced = t.slice(0, max);
+            const lastDot = sliced.lastIndexOf(".");
+            return (lastDot > max * 0.5 ? sliced.slice(0, lastDot + 1) : sliced) + "…";
+          };
+
+          const renderCatalog = (cards: SourceCard[]): string =>
+            cards.map((sc) => {
+              const ccard = sc as unknown as ContractSourceCard;
+              const cid = ccard.contractId;
+              const meta = cid ? roleClassByContractId.get(cid) : undefined;
+              const canonical = ccard.canonicalCitation || sc.citation;
+              const sidTag = cid ? ` {${cid}}` : "";
+              const provTag =
+                sc.provenance === "local" ? " [מאומת]" :
+                sc.provenance === "perplexity" ? " [חיצוני – מטא-דאטה]" :
+                sc.provenance === "perplexity_completion" ? " [חיצוני – אומת]" :
+                sc.provenance === "document" ? " [מסמך]" : "";
+              const bits: string[] = [];
+              if (meta?.role) bits.push(`role=${meta.role}`);
+              if (meta?.citationQuality) bits.push(`quality=${meta.citationQuality}`);
+              const roleStr = bits.length ? ` [${bits.join(", ")}]` : "";
+              return `[${sc.id}]${sidTag}${provTag} ${canonical} — ${sc.source_type}${roleStr}`;
+            }).join("\n");
+
+          const renderContext = (cards: SourceCard[], excerptMax: number): string =>
+            cards.map((sc) => {
+              const cid = (sc as unknown as ContractSourceCard).contractId ?? `src-${sc.id}`;
+              const ex = trimExcerpt(sc.excerpt || "", excerptMax);
+              return ex
+                ? `--- ${cid} | ${sc.citation} ---\n${ex}`
+                : `--- ${cid} | ${sc.citation} ---\n(אין תקציר זמין)`;
+            }).join("\n\n");
+
+          // Progressive trim. We measure the catalog+context length only as a
+          // proxy (full-prompt rebuild happens once below); each level keeps
+          // shrinking until proxy size fits within ~55% of the target budget,
+          // leaving headroom for the static scaffolding (~6–8k) + ledger block.
+          const targetMax = researchDepth === "deep" ? 24000 : 18000;
+          passDTelemetry.target_max = targetMax;
+          const trimLevels: Array<{ excerptMax: number; perClaimCap: number; label: string }> = [
+            { excerptMax: 320, perClaimCap: 99, label: "L0" },
+            { excerptMax: 220, perClaimCap: 99, label: "L1" },
+            { excerptMax: 160, perClaimCap: 2,  label: "L2" },
+            { excerptMax: 100, perClaimCap: 2,  label: "L3" },
+          ];
+
+          let finalCards: SourceCard[] = citedCards;
+          let finalExcerptMax = trimLevels[0].excerptMax;
+          let finalLabel = trimLevels[0].label;
+
+          for (const lvl of trimLevels) {
+            const allowedAfterCap = new Set<string>();
+            for (const c of allowedClaims) {
+              for (const sid of c.sourceIds.slice(0, lvl.perClaimCap)) allowedAfterCap.add(String(sid));
+            }
+            const cardsLvl = citedCards.filter((sc) => {
+              const cid = (sc as unknown as ContractSourceCard).contractId ?? "";
+              return allowedAfterCap.has(cid) || allowedAfterCap.has(`src-${sc.id}`) || allowedAfterCap.has(String(sc.id));
+            });
+            const cat = renderCatalog(cardsLvl);
+            const ctx = renderContext(cardsLvl, lvl.excerptMax);
+            drafterSourceCatalog = cat;
+            drafterCombinedContext = ctx;
+            finalCards = cardsLvl;
+            finalExcerptMax = lvl.excerptMax;
+            finalLabel = lvl.label;
+            const approx = cat.length + ctx.length;
+            if (approx < Math.floor(targetMax * 0.55)) break;
+          }
+
+          passDTelemetry.used = true;
+          passDTelemetry.compact_drafter_used = true;
+          passDTelemetry.ledger_claims_included = allowedClaims.length;
+          passDTelemetry.source_cards_included = finalCards.length;
+          const exLens = finalCards.map((sc) => Math.min(sc.excerpt?.length ?? 0, finalExcerptMax));
+          passDTelemetry.avg_excerpt_chars = exLens.length
+            ? Math.round(exLens.reduce((a, b) => a + b, 0) / exLens.length)
+            : 0;
+          passDTelemetry.trim_level_applied = finalLabel;
+          console.log(
+            `[pass-d:compact] ledger_claims=${allowedClaims.length} cards=${finalCards.length}/${sourceCards.length} excerpt_max=${finalExcerptMax} trim=${finalLabel} catalog+ctx≈${drafterSourceCatalog.length + drafterCombinedContext.length}`,
+          );
+        }
+      } catch (e) {
+        console.warn("[pass-d:compact] build failed, falling back to full catalog/context:", (e as Error).message);
+      }
+    }
+
     // ─── Pilot v6: compact structured drafter prompt ───────────────────
     // The legacy systemPrompt above is ~28k chars. For the structured drafter
     // (claimMap !== null && claimMapAllowedCount >= 2) most of those rules are
