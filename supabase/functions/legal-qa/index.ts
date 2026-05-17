@@ -4118,7 +4118,63 @@ ${(verify.fullText as string).slice(0, 50000)}
       console.log(`FUNNEL FULL: ${JSON.stringify(retrievalFunnel)}`);
     }
 
-    // Perplexity sources — extract from citations array
+    // ─── Recall-vs-Proof: candidate-pool cards (claim_verified_recall) ───
+    // Build minimal cards for low-threshold candidates whose documents are
+    // NOT already represented in sourceCards. These enter the SourcePack as
+    // citation-only anchors and are subject to Claim Verification + prune.
+    // Items that do not earn direct_support / partial_support are dropped
+    // by pruneSourcePackByLedger and counted as candidates_dropped_tangential.
+    if (candidatePoolLocal.length > 0) {
+      const seenDocIds = new Set(
+        sourceCards
+          .filter(sc => sc.provenance === "local")
+          .map(sc => (sc as unknown as { document_id?: string }).document_id)
+          .filter(Boolean)
+      );
+      // Also dedup by url/citation as a fallback (sourceCards don't carry document_id today).
+      const seenCitations = new Set(sourceCards.map(sc => (sc.citation || "").trim()));
+      let candidatesAdded = 0;
+      for (const m of candidatePoolLocal) {
+        if (seenDocIds.has(m.document_id)) continue;
+        if (isBlogUrl(m.source_url || undefined)) continue;
+        // Skip broken-title knesset and untitled caselaw — same gates as the main loop.
+        if (m.source_type === "knesset_research") {
+          const titleTrim = (m.document_title || "").trim();
+          const metaFlag = (m.metadata as Record<string, unknown> | null)?.broken_title === true;
+          if (titleTrim === "פרטי מסמך" || titleTrim === "ללא כותרת" || titleTrim === "" || metaFlag) continue;
+        }
+        if (m.source_type === "caselaw") {
+          const titleTrim = (m.document_title || "").trim();
+          const hasParties = /נ['"׳״]/.test(titleTrim);
+          const isUsableTitle = titleTrim.length >= 8 && (hasParties || /[א-ת]{4,}/.test(titleTrim));
+          if (!isUsableTitle) continue;
+        }
+        const citation = (m.document_citation || m.document_title || "").trim();
+        if (!citation || seenCitations.has(citation)) continue;
+        seenCitations.add(citation);
+        const sourceLabel = m.source_type === "caselaw" ? "פסיקה" :
+          m.source_type === "knesset_research" ? "מחקר כנסת / חקיקה" :
+          m.source_type === "journal_article" ? "מאמר אקדמי" :
+          m.source_type === "israeli_law" ? "חקיקה ישראלית" : m.source_type;
+        const newId = cardId++;
+        candidateRecallIds.add(newId);
+        sourceCards.push({
+          id: newId,
+          citation,
+          source_type: sourceLabel,
+          url: m.source_url || undefined,
+          provenance: "claim_verified_recall",
+          excerpt: (m.chunk_content || "").slice(0, 400),
+          case_number: m.source_type === "caselaw"
+            ? ((m.metadata as Record<string, unknown>)?.case_number as string | undefined)
+            : undefined,
+          relevance_score: typeof m.similarity === "number" ? m.similarity : 0,
+        });
+        candidatesAdded++;
+      }
+      retrievalFunnel.vector_candidates_promoted = candidatesAdded;
+      console.log(`[candidate-pool] cards added=${candidatesAdded} of ${candidatePoolLocal.length} candidates`);
+    }
     if (citations.length > 0) {
       const KNESSET_PROTOCOL_RE = /fs\.knesset\.gov\.il\/(\d+)\/(?:Committees|Plenum)\//i;
       for (const citUrl of citations.slice(0, 8)) {
