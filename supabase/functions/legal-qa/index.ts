@@ -5492,31 +5492,47 @@ ${(verify.fullText as string).slice(0, 50000)}
             `s=${vRes.summary.supported} p=${vRes.summary.partially_supported} u=${vRes.summary.unsupported}`);
           console.log(`[phase7:verification] supported=${vRes.summary.supported} partial=${vRes.summary.partially_supported} unsupported=${vRes.summary.unsupported} dropped_tangential=${vRes.summary.dropped_tangential} dropped_unrelated=${vRes.summary.dropped_unrelated} ms=${phase7VerificationDurationMs}`);
 
-          // Pass A: on verification timeout (all batches failed), use
-          // safe-prune mode — only candidate-pool entries can be removed.
-          // Standard-retrieval cards already passed dedup+rerank+broken-title
-          // filter and stay in the pack with their original
-          // usable_for_analysis flag intact.
+          // Pass A+ : prune is now THREE-tier:
+          //   1. All batches failed (verificationFailed=true) → safe-prune mode:
+          //      only candidate-recall items can be removed; standard cards
+          //      survive untouched.
+          //   2. Any batch failed (partial coverage) → use evaluatedSourceIds:
+          //      only items actually scored by a successful batch are subject
+          //      to strict pruning; un-evaluated standard cards stay.
+          //   3. All batches succeeded → full strict pruning (legacy).
           const verificationFailed = vRes.run.status !== "success";
+          const evaluatedSourceIds = vRes.evaluatedSourceIds;
+          const partialCoverage =
+            !verificationFailed && vRes.summary.batches_failed > 0;
           const { pruned, removedIds } = pruneSourcePackByLedger(
             sourcePackV2,
             phase7ClaimLedger,
-            { restrictToCandidateRecall: verificationFailed },
+            {
+              restrictToCandidateRecall: verificationFailed,
+              evaluatedSourceIds: partialCoverage ? evaluatedSourceIds : undefined,
+            },
           );
           phase7PrunedSourceIds = removedIds;
+          const pruneMode = verificationFailed
+            ? "safe(candidate-only)"
+            : partialCoverage
+              ? `partial(evaluated=${evaluatedSourceIds.length})`
+              : "strict";
           if (removedIds.length > 0) {
-            console.log(`[phase7:prune] mode=${verificationFailed ? "safe(candidate-only)" : "strict"} removed ${removedIds.length} sources: [${removedIds.join(",")}]`);
+            console.log(`[phase7:prune] mode=${pruneMode} removed ${removedIds.length} sources: [${removedIds.join(",")}]`);
             sourcePackV2 = pruned;
+          } else {
+            console.log(`[phase7:prune] mode=${pruneMode} removed 0 sources`);
           }
 
-          // Recall-vs-Proof telemetry (honest version):
-          //   - candidates_recovered_by_claim_verification: counts only
-          //     candidate-pool ids that received direct_support or
-          //     partial_support from a claim (NOT the timeout-fallback path).
-          //   - candidates_kept_unverified: counts candidate-pool ids kept
-          //     because verification timed out and safe-prune ran instead.
-          //   - candidates_dropped_tangential: candidate-pool ids actually
-          //     pruned by either strict or safe mode.
+          // Recall-vs-Proof telemetry (honest semantics):
+          //   - candidates_recovered_by_claim_verification: candidate-pool ids
+          //     that received direct_support / partial_support from a claim.
+          //   - vector_candidates_promoted: same as above (final number of
+          //     candidate-recall items that survived into the pack).
+          //   - candidates_kept_unverified: candidate-pool ids retained
+          //     because verification didn't evaluate them (safe-prune fallback).
+          //   - candidates_dropped_tangential: candidate-pool ids removed.
           if (candidateRecallIds.size > 0) {
             const removedSet = new Set(removedIds.map(String));
             const supportiveIds = new Set<string>();
@@ -5535,14 +5551,17 @@ ${(verify.fullText as string).slice(0, 50000)}
                 recovered++;
               } else if (removedSet.has(idStr) || removedSet.has(contractIdStr)) {
                 dropped++;
-              } else if (verificationFailed) {
+              } else {
+                // Not supportive, not removed → kept without verification proof.
                 keptUnverified++;
               }
             }
             retrievalFunnel.candidates_recovered_by_claim_verification = recovered;
             retrievalFunnel.candidates_dropped_tangential = dropped;
             retrievalFunnel.candidates_kept_unverified = keptUnverified;
-            console.log(`[recall-vs-proof] candidates: pool=${candidateRecallIds.size} recovered=${recovered} kept_unverified=${keptUnverified} dropped_tangential=${dropped} (verification=${verificationFailed ? "failed" : "ok"})`);
+            // Honest promoted count = actual recovered (was inflated before).
+            retrievalFunnel.vector_candidates_promoted = recovered;
+            console.log(`[recall-vs-proof] candidates: pool=${candidateRecallIds.size} recovered=${recovered} kept_unverified=${keptUnverified} dropped_tangential=${dropped} (verification=${verificationFailed ? "failed" : partialCoverage ? "partial" : "ok"})`);
           }
 
           phase7LedgerBlock = buildClaimLedgerPromptBlock(phase7ClaimLedger);
