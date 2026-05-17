@@ -9530,6 +9530,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
     // persisted to qa_logs.metadata.coverage_gap so post-run review doesn't
     // need to grep edge logs.
     let coverageGapMetric: Record<string, unknown> | null = null;
+    let drafterCardUsageMetric: Record<string, unknown> | null = null;
     emitStage("coverage_gap", "running");
     try {
       const isStructured = enableDeepPipeline && useStructuredDrafterPath;
