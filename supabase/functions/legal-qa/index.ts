@@ -6290,7 +6290,23 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     const useNewDrafter = useStructuredDrafterPath;
     // Profile-driven timeout: Deep gets more headroom for the heavier model.
     const drafterTimeoutMs = useNewDrafter ? modeProfile.drafterTimeoutMs : 90000;
-    const drafterVariant: "structured" | "legacy" = useNewDrafter ? modeProfile.drafterVariant : "legacy";
+    let drafterVariant: "structured" | "legacy" = useNewDrafter ? modeProfile.drafterVariant : "legacy";
+
+    // Pass C — prompt-size guard. The legacy non-streaming gpt-5 path has
+    // been observed to return empty completions (finish_reason=length,
+    // text_len=0) on oversized prompts (~30k+ chars). When we're on the
+    // legacy variant AND the prompt is large, downshift to the structured
+    // variant up-front so we use gpt-5-mini instead of burning ~90s on an
+    // empty gpt-5 attempt + fallback. The full compact-prompt rebuild
+    // (Claim Ledger + supported/partial sources only) remains a follow-up.
+    const LARGE_PROMPT_THRESHOLD = 28000;
+    if (drafterVariant === "legacy" && drafterSystemPrompt.length > LARGE_PROMPT_THRESHOLD) {
+      console.warn(
+        `[drafter:size-guard] prompt_chars=${drafterSystemPrompt.length} > ${LARGE_PROMPT_THRESHOLD} → downshifting variant=legacy → structured (model=${MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI})`,
+      );
+      drafterVariant = "structured";
+    }
+
     console.log(`AI call starting (drafter=${drafterVariant}, ${drafterTimeoutMs / 1000}s timeout)...`);
     let answerText = "";
     let drafterModelUsed = "google/gemini-2.5-flash";
@@ -6323,8 +6339,11 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         // No SSE emitter (e.g. CLI / eval runs) → use non-streaming path.
         drafterRes = await callDrafter(drafterSystemPrompt, userMessage, aiMaxTokens, drafterTimeoutMs, drafterVariant);
       }
-      const tAi = Date.now();
-      console.log(`Drafter call took ${tAi - tRetrieval}ms (used=${drafterRes?.modelUsed || "FAILED"}, variant=${drafterVariant})`);
+      // Pass C — measure drafting from drafterStartMs only (was tAi -
+      // tRetrieval, which conflated drafting with prior retrieval +
+      // verification wall time).
+      const drafterDurationMs = Date.now() - drafterStartMs;
+      console.log(`Drafter call took ${drafterDurationMs}ms (used=${drafterRes?.modelUsed || "FAILED"}, variant=${drafterVariant})`);
       if (!drafterRes || drafterRes.text.length < 50) {
         stageRuns.push({
           stage: "drafting",
@@ -6332,11 +6351,57 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           model: MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI,
           started_at: drafterStartedAt.toISOString(),
           completed_at: new Date().toISOString(),
-          duration_ms: Date.now() - drafterStartMs,
+          duration_ms: drafterDurationMs,
           status: "error",
           error_message: "drafter returned empty or null",
         });
         emitStage("drafter", "complete", "שגיאה");
+        // Pass C — persist terminal failure metadata so the row does not
+        // remain stuck at drafting_path:"in_progress" forever. Fire-and-
+        // forget; never block the user-facing error response on logging.
+        try {
+          if (__checkpointQaLogId && __checkpointAdmin && __checkpointUserId) {
+            const failureSnapshot = {
+              checkpoint: "drafting_failed",
+              checkpoint_at: new Date().toISOString(),
+              drafting_path: "drafting_failed",
+              decomposition: decomposedPlan?.decomposition ?? null,
+              stage_runs: [...stageRuns],
+              drafter_failure: {
+                variant: drafterVariant,
+                model_attempted: drafterRes?.modelUsed ?? MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI,
+                prompt_chars: drafterSystemPrompt.length,
+                user_chars: userMessage.length,
+                duration_ms: drafterDurationMs,
+                returned_null: !drafterRes,
+                text_len: drafterRes?.text?.length ?? 0,
+                fallback_path: drafterRes?.modelUsed ?? "exhausted",
+              },
+            };
+            const op = __checkpointInserted
+              ? __checkpointAdmin.from("qa_logs")
+                  .update({ metadata: failureSnapshot })
+                  .eq("id", __checkpointQaLogId)
+              : __checkpointAdmin.from("qa_logs").insert({
+                  id: __checkpointQaLogId,
+                  user_id: __checkpointUserId,
+                  question: __checkpointQuestion.substring(0, 500),
+                  answer: null,
+                  footnotes: [],
+                  task_mode: __checkpointTaskMode,
+                  local_footnotes_count: 0,
+                  perplexity_footnotes_count: 0,
+                  total_footnotes: 0,
+                  metadata: failureSnapshot,
+                });
+            const promise = (op as unknown as Promise<{ error: unknown }>).catch(() => {});
+            // deno-lint-ignore no-explicit-any
+            const er = (globalThis as any).EdgeRuntime;
+            if (er && typeof er.waitUntil === "function") er.waitUntil(promise);
+          }
+        } catch (cpErr) {
+          console.error("[checkpoint:drafting_failed] flush failed (non-fatal):", cpErr);
+        }
         return new Response(
           JSON.stringify({ error: "העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב." }),
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -6350,7 +6415,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         model: drafterModelUsed,
         started_at: drafterStartedAt.toISOString(),
         completed_at: new Date().toISOString(),
-        duration_ms: Date.now() - drafterStartMs,
+        duration_ms: drafterDurationMs,
         status: "success",
       });
       emitStage("drafter", "complete", `${answerText.length} תווים`);
