@@ -4458,7 +4458,9 @@ ${(verify.fullText as string).slice(0, 50000)}
           provenance: sc.provenance,
           excerpt,
           case_number: sc.case_number,
-          usable_for_analysis: excerpt.length > 300,
+          // Recall candidates are citation-only anchors until Claim Verification
+          // earns them direct/partial support; never usable_for_analysis here.
+          usable_for_analysis: isRecallCandidate ? false : excerpt.length > 300,
           usable_for_citation: sc.citation.length > 15,
           anchor_present: anchorPresent,
           // Milestone A.5: carry through for assembleSourcePack relevance gate.
