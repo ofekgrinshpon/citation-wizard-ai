@@ -3391,14 +3391,37 @@ ${(verify.fullText as string).slice(0, 50000)}
         const planQueriesUnique = Array.from(
           new Set(planQueries.map((q) => q.trim()).filter(Boolean)),
         );
+
+        // ── Recall-vs-Proof: doctrine-aware query expansion ──────────────
+        // Expand the user's question with hand-curated doctrine synonyms
+        // (e.g. "צו מניעה זמני" → "מאזן הנוחות", "סיכויי ההליך", "ראיות
+        // לכאורה"). Cap at MAX_EXPANSIONS=6 inside the module. Expansions
+        // widen RECALL only; nothing enters the SourcePack without passing
+        // Claim Verification downstream.
+        const lexicalSynonymsFromPlan = Array.isArray(
+          (planForRetrieval as unknown as { lexical_synonyms?: string[] })?.lexical_synonyms,
+        )
+          ? (planForRetrieval as unknown as { lexical_synonyms?: string[] }).lexical_synonyms!
+          : [];
+        const expansion = expandQuery({
+          userQuestion: question,
+          mainIssue: planForRetrieval?.decomposition?.main_issue as string | undefined,
+          plannerSynonyms: lexicalSynonymsFromPlan,
+        });
+        retrievalFunnel.expanded_queries = expansion.expandedQueries.slice(0, 6);
+        console.log(`[query-expansion] source=${expansion.source} doctrineHits=[${expansion.doctrineHits.join(",")}] queries=${expansion.expandedQueries.length}`);
+
         const reservedSlots = 1 + (expandedQuery ? 1 : 0); // question + maybe expansion
         const planSlots = Math.max(0, MAX_PARALLEL_VECTOR_QUERIES - reservedSlots);
         const planQueriesCapped = planQueriesUnique.slice(0, planSlots);
+        // Doctrine-expanded queries (drop the original — it's already first).
+        const doctrineExpansions = expansion.expandedQueries.slice(1);
         const queriesForEmbedding = [
           question,
           ...(expandedQuery ? [expandedQuery] : []),
           ...planQueriesCapped,
-        ];
+          ...doctrineExpansions,
+        ].slice(0, MAX_PARALLEL_VECTOR_QUERIES + doctrineExpansions.length); // doctrine queries are additive
         if (planQueriesCapped.length > 0) {
           console.log(`[plan] adding ${planQueriesCapped.length} sub-issue queries to vector search (capped at ${MAX_PARALLEL_VECTOR_QUERIES} total parallel; ${planQueriesUnique.length - planQueriesCapped.length} dropped)`);
         } else if (decompPromise) {
