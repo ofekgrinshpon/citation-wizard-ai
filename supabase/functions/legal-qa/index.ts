@@ -143,7 +143,6 @@ export const TRUSTED_LEGAL_DOMAINS: readonly string[] = [
   // Legislation / official primary
   "knesset.gov.il",
   "main.knesset.gov.il",
-  "fs.knesset.gov.il",          // Knesset bill drafts (הצעות חוק)
   "reshumot.gov.il",            // official gazette (ס"ח / ק"ת)
   "justice.gov.il",             // AG opinions, legislative drafts
   // Regulators / policy government bodies
@@ -159,8 +158,6 @@ export const TRUSTED_LEGAL_DOMAINS: readonly string[] = [
   "taubcenter.org.il",          // Taub Center
   "inss.org.il",                // INSS — national security research
   // Academic primary (Israeli + international)
-  "huji.ac.il",
-  "tau.ac.il",                  // covers mishpatim.tau.ac.il
   "ssrn.com",                   // covers papers.ssrn.com via subdomain match
   "jstor.org",
   "scholar.google.com",
