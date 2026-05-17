@@ -6321,6 +6321,12 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     const drafterTimeoutMs = useNewDrafter ? modeProfile.drafterTimeoutMs : 90000;
     let drafterVariant: "structured" | "legacy" = useNewDrafter ? modeProfile.drafterVariant : "legacy";
 
+    // Eval override: forceDrafterVariant short-circuits profile + size-guard.
+    if (forceDrafterVariant) {
+      drafterVariant = forceDrafterVariant;
+      console.warn(`[drafter:eval-variant] forced variant=${drafterVariant} (run=${evalRunId})`);
+    }
+
     // Pass C — prompt-size guard. The legacy non-streaming gpt-5 path has
     // been observed to return empty completions (finish_reason=length,
     // text_len=0) on oversized prompts (~30k+ chars). When we're on the
@@ -6328,8 +6334,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // variant up-front so we use gpt-5-mini instead of burning ~90s on an
     // empty gpt-5 attempt + fallback. The full compact-prompt rebuild
     // (Claim Ledger + supported/partial sources only) remains a follow-up.
+    // Eval forced variant bypasses this guard so probes can exercise the
+    // exact gpt-5 path even on a large prompt.
     const LARGE_PROMPT_THRESHOLD = 28000;
-    if (drafterVariant === "legacy" && drafterSystemPrompt.length > LARGE_PROMPT_THRESHOLD) {
+    if (!forceDrafterVariant && drafterVariant === "legacy" && drafterSystemPrompt.length > LARGE_PROMPT_THRESHOLD) {
       console.warn(
         `[drafter:size-guard] prompt_chars=${drafterSystemPrompt.length} > ${LARGE_PROMPT_THRESHOLD} → downshifting variant=legacy → structured (model=${MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI})`,
       );
