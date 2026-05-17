@@ -10043,6 +10043,8 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           // Pass B — per-run drafter card-usage telemetry. Helps spot
           // "19 cards available, 4 actually cited" diversification failures.
           drafter_card_usage: drafterCardUsageMetric,
+          // Pass D — compact claim-ledger drafter payload telemetry.
+          pass_d_compact: passDTelemetry,
           // Per-doc rerank drop details (title + score + reason). Capped at 10.
           // Lets us validate the rerank gate against future runs without re-tracing.
           rerank_drops: rerankDrops,
