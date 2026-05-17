@@ -10564,6 +10564,133 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
   }
 }
 
+// ─── Pass E — Deep async dispatcher ────────────────────────────────
+// Deep mode cannot finish inside the 150s edge gateway cap (see
+// mem://logic/legal-qa/deep-async-pass-e). When a Deep research request
+// arrives WITHOUT `stream:true` and without an existing `_asyncRunId`,
+// we:
+//   1. Auth-validate the caller.
+//   2. Insert a qa_logs row with checkpoint="queued" / async_run=true.
+//   3. Spawn the full pipeline in the background via EdgeRuntime.waitUntil,
+//      passing the run_id back into the handler via `_asyncRunId`.
+//   4. Return HTTP 202 immediately with { run_id, status:"queued" }.
+// Fast mode, academic, citation-chat, and SSE streaming remain synchronous.
+async function dispatchDeepAsync(
+  req: Request,
+  parsedBody: Record<string, unknown>,
+): Promise<Response | null> {
+  try {
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) return null; // let inner handler 401
+
+    const supabaseUser = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } },
+    );
+    const token = authHeader.replace("Bearer ", "");
+    const { data: { user }, error: userErr } = await supabaseUser.auth.getUser(token);
+    if (userErr || !user) return null;
+
+    const adminClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      { auth: { persistSession: false } },
+    );
+
+    const runId = crypto.randomUUID();
+    const question = typeof parsedBody.question === "string" ? parsedBody.question : "";
+    const projectId = typeof parsedBody.projectId === "string" ? parsedBody.projectId : null;
+
+    const queuedMetadata = {
+      async_run: true,
+      depth: "deep",
+      checkpoint: "queued",
+      checkpoint_at: new Date().toISOString(),
+      eval_run_id: typeof parsedBody.evalRunId === "string" ? parsedBody.evalRunId : null,
+      stage_runs: [],
+    };
+
+    const { error: insertErr } = await adminClient.from("qa_logs").insert({
+      id: runId,
+      user_id: user.id,
+      project_id: projectId,
+      question: question.substring(0, 500),
+      answer: null,
+      footnotes: [],
+      task_mode: "research",
+      local_footnotes_count: 0,
+      perplexity_footnotes_count: 0,
+      total_footnotes: 0,
+      metadata: queuedMetadata,
+    });
+    if (insertErr) {
+      console.error("[pass-e:async] failed to insert queued row:", insertErr);
+      return new Response(
+        JSON.stringify({ error: "Failed to queue Deep job" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
+    // Build a fresh Request the inner handler can re-parse, carrying the
+    // injected _asyncRunId so preallocatedQaLogId snaps to the queued row.
+    const innerBody = { ...parsedBody, _asyncRunId: runId };
+    const innerReq = new Request(req.url, {
+      method: req.method,
+      headers: req.headers,
+      body: JSON.stringify(innerBody),
+    });
+
+    const work = (async () => {
+      try {
+        const resp = await handleLegalQARequest(innerReq);
+        // Drain body so the runtime can reclaim resources.
+        try { await resp.text(); } catch { /* ignore */ }
+      } catch (bgErr) {
+        console.error("[pass-e:async] background pipeline crashed:", bgErr);
+        try {
+          await adminClient.from("qa_logs").update({
+            metadata: {
+              ...queuedMetadata,
+              checkpoint: "failed",
+              checkpoint_at: new Date().toISOString(),
+              drafter_failure: {
+                reason: "background_crash",
+                error_message: (bgErr as Error)?.message ?? String(bgErr),
+              },
+            },
+          }).eq("id", runId);
+        } catch (logErr) {
+          console.error("[pass-e:async] failed to mark row failed:", logErr);
+        }
+      }
+    })();
+
+    // deno-lint-ignore no-explicit-any
+    const er = (globalThis as any).EdgeRuntime;
+    if (er && typeof er.waitUntil === "function") {
+      er.waitUntil(work);
+    } else {
+      // Non-Edge runtime (local dev / tests) — let it run unawaited.
+      work.catch(() => {});
+    }
+
+    console.log(`[pass-e:async] queued run_id=${runId} user=${user.id}`);
+    return new Response(
+      JSON.stringify({
+        run_id: runId,
+        status: "queued",
+        async: true,
+        poll_endpoint: "/legal-qa-status",
+      }),
+      { status: 202, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  } catch (e) {
+    console.error("[pass-e:async] dispatcher error (falling back to sync):", e);
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -10581,9 +10708,24 @@ serve(async (req) => {
     // Body unparsable / empty — let the inner handler return its own 4xx.
   }
 
-  const wantsStream = Boolean(
-    parsedBody && parsedBody.stream === true,
-  );
+  const wantsStream = Boolean(parsedBody && parsedBody.stream === true);
+
+  // ─── Pass E: Deep async ──────────────────────────────────────────
+  // Non-streaming Deep research → return 202 + run_id, run in background.
+  // Streaming Deep keeps SSE behaviour (client already gets progressive
+  // events and can survive the gateway with `Connection: keep-alive`).
+  if (
+    parsedBody &&
+    !wantsStream &&
+    parsedBody.depth === "deep" &&
+    parsedBody.taskMode === "research" &&
+    typeof parsedBody._asyncRunId !== "string"
+  ) {
+    const asyncResp = await dispatchDeepAsync(req, parsedBody);
+    if (asyncResp) return asyncResp;
+    // Fall through to sync path if dispatch failed (preserves legacy
+    // behaviour on dispatcher errors).
+  }
 
   if (wantsStream && parsedBody) {
     return runHandlerSSE(req, parsedBody, handleLegalQARequest);
