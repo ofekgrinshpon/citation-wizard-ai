@@ -38,6 +38,7 @@ export type LegalProvenanceInternal =
   | "local"
   | "perplexity"
   | "perplexity_completion"   // Milestone B — verified primary source recovered via targeted Perplexity call
+  | "claim_verified_recall"   // Recall-vs-Proof — low-threshold candidate promoted by Claim Verification
   | "document"
   | "verified"
   | "unknown";
