@@ -3454,17 +3454,23 @@ ${(verify.fullText as string).slice(0, 50000)}
           match_count: 15,
         });
 
-        // Vector search — run for original AND expanded query in parallel, merge
-        // Threshold 0.45: short Hebrew queries top out ~0.55 raw; re-ranker filters noise downstream.
-        const vectorPromises = queriesForEmbedding.map(async (q) => {
+        // Vector search — bounded concurrency to avoid DB statement_timeout
+        // cascades. Each match_legal_chunks RPC contends for HNSW + PG worker
+        // pool; firing 4-6 in parallel caused all of them to time out (logs
+        // 2026-05-17). We now build THUNKS (not started promises) and execute
+        // them in batches of VECTOR_RPC_CONCURRENCY=2, sequentially per batch.
+        // Threshold 0.45: short Hebrew queries top out ~0.55 raw; re-ranker
+        // filters noise downstream.
+        type VecRpcOut = { data: unknown; error: unknown; embedding: number[] | null; query: string };
+        const vectorRpcThunks: Array<() => Promise<VecRpcOut>> = queriesForEmbedding.map((q) => async () => {
           const embedding = await getQueryEmbedding(q);
-          if (!embedding) return { data: null, error: null, embedding: null as number[] | null, query: q };
+          if (!embedding) return { data: null, error: null, embedding: null, query: q };
           const result = await adminClient.rpc("match_legal_chunks", {
             query_embedding: JSON.stringify(embedding),
             match_threshold: 0.45,
             match_count: 15,
           });
-          return { ...result, embedding, query: q };
+          return { data: result.data, error: result.error, embedding, query: q };
         });
 
         // Fix #2: Parallel caselaw-only vector query so precedent competes against itself
@@ -3543,11 +3549,23 @@ ${(verify.fullText as string).slice(0, 50000)}
           return injected;
         })();
 
-        const [keywordResult, caselawResult, landmarkInjected, ...vectorResults] = await Promise.all([
+        // Run vector thunks with bounded concurrency. Keyword/caselaw/landmark
+        // run in parallel with the FIRST vector batch so we don't lose wall-time.
+        const VECTOR_RPC_CONCURRENCY = 2;
+        const runVectorThunksSerial = async (): Promise<VecRpcOut[]> => {
+          const out: VecRpcOut[] = [];
+          for (let i = 0; i < vectorRpcThunks.length; i += VECTOR_RPC_CONCURRENCY) {
+            const slice = vectorRpcThunks.slice(i, i + VECTOR_RPC_CONCURRENCY);
+            const batchOut = await Promise.all(slice.map((t) => t()));
+            out.push(...batchOut);
+          }
+          return out;
+        };
+        const [keywordResult, caselawResult, landmarkInjected, vectorResults] = await Promise.all([
           keywordPromise,
           caselawVectorPromise,
           landmarkPromise,
-          ...vectorPromises,
+          runVectorThunksSerial(),
         ]);
 
         const caselawMatches: LocalMatch[] = (!caselawResult.error && caselawResult.data) ? caselawResult.data as LocalMatch[] : [];
