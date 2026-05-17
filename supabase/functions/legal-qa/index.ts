@@ -3058,6 +3058,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       vector_candidates_low_threshold: 0,
       vector_candidates_promoted: 0,
       candidates_recovered_by_claim_verification: 0,
+      candidates_kept_unverified: 0,
       candidates_dropped_tangential: 0,
       supplementary_rejected_low_score: 0,
       supplementary_rejected_no_claim_fit: 0,
