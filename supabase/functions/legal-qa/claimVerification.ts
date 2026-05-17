@@ -420,43 +420,66 @@ export function buildClaimLedgerPromptBlock(ledger: ClaimLedger): string {
 }
 
 /**
- * Apply the Claim Ledger as a hard filter on the source pack: any pack item
- * not referenced by at least one supported/partially_supported claim is
- * removed. Statutory primary legislation kept as anchor (citation hygiene).
+ * Apply the Claim Ledger as a hard filter on the source pack.
  *
- * @param opts.restrictToCandidateRecall - when true, ONLY prune items whose
- *   provenanceInternal is "claim_verified_recall". Standard-retrieval cards
- *   (local / perplexity / document) are kept as-is. Used on verification
- *   timeout to avoid nuking legitimately-retrieved cards.
+ * Rules (in order):
+ *   1. Primary legislation / user documents are kept as anchors.
+ *   2. If `opts.restrictToCandidateRecall` is true (verification fully
+ *      failed), prune only candidate-recall items.
+ *   3. Otherwise:
+ *      - Candidate-recall items: strict. Must be in `evaluatedSourceIds`
+ *        AND `keepIds`; otherwise pruned.
+ *      - Standard-retrieval items: pruned only if they were actually
+ *        evaluated by a successful batch and received no direct/partial
+ *        support. Items never reached by verification are kept (counted
+ *        as "kept_unverified" by the caller).
+ *
+ * If `evaluatedSourceIds` is omitted, falls back to treating every pack
+ * item as evaluated (legacy strict behaviour).
  */
 export function pruneSourcePackByLedger(
   pack: LegalSourcePack,
   ledger: ClaimLedger,
-  opts: { restrictToCandidateRecall?: boolean } = {},
+  opts: {
+    restrictToCandidateRecall?: boolean;
+    evaluatedSourceIds?: string[];
+  } = {},
 ): { pruned: LegalSourcePack; removedIds: string[] } {
   const keepIds = new Set<string>();
   for (const c of ledger.claims) {
     for (const sid of c.sourceIds) keepIds.add(sid);
   }
+  const evaluated = opts.evaluatedSourceIds
+    ? new Set(opts.evaluatedSourceIds)
+    : null;
 
   const filterBucket = (bucket: LegalSourcePackItem[], removed: string[]): LegalSourcePackItem[] =>
     bucket.filter((item) => {
       const id = item.contractId || item.sourceId;
-      // Always keep primary legislation / user docs as anchors even if no
-      // claim attached — the citation engine still needs them for footnote
-      // hygiene (e.g. statute the question names by hand).
       if (
         item.authorityClass === "primary_legislation" ||
         item.authorityClass === "user_document"
       ) {
         return true;
       }
-      // Pass A safe-prune mode: only candidate-pool entries are subject to
-      // pruning. Standard cards survive whether or not verification reached
-      // them. Caller invokes this branch when verification timed out.
+      const isCandidateRecall = item.provenanceInternal === "claim_verified_recall";
       if (opts.restrictToCandidateRecall) {
-        if (item.provenanceInternal !== "claim_verified_recall") return true;
+        if (!isCandidateRecall) return true;
+        // Even in safe mode, a candidate-recall item that *was* evaluated
+        // and not supported is correctly pruned.
+        if (keepIds.has(id)) return true;
+        removed.push(id);
+        return false;
       }
+      const wasEvaluated = evaluated ? evaluated.has(id) : true;
+      if (isCandidateRecall) {
+        // Strict for candidates: must be evaluated AND supportive.
+        if (wasEvaluated && keepIds.has(id)) return true;
+        removed.push(id);
+        return false;
+      }
+      // Standard cards: keep if not evaluated (kept_unverified) or supportive.
+      if (!wasEvaluated) return true;
       if (keepIds.has(id)) return true;
       removed.push(id);
       return false;
