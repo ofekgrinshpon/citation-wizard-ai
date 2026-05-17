@@ -2278,6 +2278,35 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       console.log(`[eval] forcing missing slots (run=${evalRunId}): ${evalForceMissingSlots.join(",")}`);
     }
 
+    // Eval-only drafter overrides. Admin caller + evalRunId with one of
+    // the eval prefixes ("eval-", "phase-", "debug-") is required. Allows
+    // forcing a specific drafter model (e.g. openai/gpt-5 inside a Fast
+    // envelope) and a specific variant (legacy/structured). Silently
+    // ignored for any other caller.
+    const EVAL_PREFIX_RE = /^(eval-|phase-|debug-)/;
+    const evalRunIdIsEvalScoped =
+      typeof evalRunId === "string" && EVAL_PREFIX_RE.test(evalRunId);
+    const forceDrafterModel: string | null =
+      isAdminCaller &&
+      evalRunIdIsEvalScoped &&
+      typeof bodyForceDrafterModel === "string" &&
+      (bodyForceDrafterModel.startsWith("openai/") ||
+        bodyForceDrafterModel.startsWith("google/"))
+        ? bodyForceDrafterModel
+        : null;
+    const forceDrafterVariant: "legacy" | "structured" | null =
+      isAdminCaller &&
+      evalRunIdIsEvalScoped &&
+      (bodyForceDrafterVariant === "legacy" ||
+        bodyForceDrafterVariant === "structured")
+        ? bodyForceDrafterVariant
+        : null;
+    if (forceDrafterModel || forceDrafterVariant) {
+      console.warn(
+        `[eval] drafter override (run=${evalRunId}) model=${forceDrafterModel ?? "<default>"} variant=${forceDrafterVariant ?? "<default>"}`,
+      );
+    }
+
     if (!question || typeof question !== "string" || question.trim().length < 3) {
       return new Response(JSON.stringify({ error: "Question too short" }), {
         status: 400,
