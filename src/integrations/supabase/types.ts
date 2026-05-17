@@ -867,6 +867,24 @@ export type Database = {
           source_url: string
         }[]
       }
+      search_legal_chunks_trigram: {
+        Args: {
+          match_count?: number
+          search_terms: string[]
+          similarity_threshold?: number
+        }
+        Returns: {
+          chunk_content: string
+          chunk_id: string
+          document_citation: string
+          document_id: string
+          document_title: string
+          metadata: Json
+          similarity: number
+          source_type: string
+          source_url: string
+        }[]
+      }
       set_user_plan: {
         Args: { _new_plan: string; _user_id: string }
         Returns: Json
