@@ -1146,7 +1146,7 @@ interface SourceCard {
   citation: string;
   source_type: string;
   url?: string;
-  provenance: "local" | "perplexity" | "perplexity_completion" | "document";
+  provenance: "local" | "perplexity" | "perplexity_completion" | "claim_verified_recall" | "document";
   excerpt: string;
   case_number?: string;
   /** Retrieval-stage similarity score (0–1). Local cards only. */
