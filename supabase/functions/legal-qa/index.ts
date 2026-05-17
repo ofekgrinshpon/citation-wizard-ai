@@ -2587,7 +2587,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
                   { role: "system", content: "אתה מאתר מקורות משפטיים ישראליים. החזר רק JSON תקף לפי הסכמה." },
                   { role: "user", content: `מצא עד 6 מקורות משפטיים ישראליים רלוונטיים (חקיקה, פסיקה, מאמרים אקדמיים) לנושא:\n${question.slice(0, 800)}\n\nהחזר JSON עם המפתח sources.` },
                 ],
-                search_domain_filter: ["nevo.co.il", "supremedecisions.court.gov.il", "lite.takdin.co.il", "mishpatim.ac.il", "tau.ac.il", "huji.ac.il"],
+                search_domain_filter: [...CASELAW_DOMAINS, "tau.ac.il", "huji.ac.il"],
                 response_format: {
                   type: "json_schema",
                   json_schema: {
