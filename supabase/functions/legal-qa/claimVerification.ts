@@ -193,8 +193,10 @@ export async function verifyClaimsAgainstPack(args: {
       summary: {
         supported: 0, partially_supported: 0, unsupported: 0,
         dropped_tangential: 0, dropped_unrelated: 0, pruned_source_ids: [],
+        batches_total: 0, batches_succeeded: 0, batches_failed: 0,
       },
       run: emptyRun,
+      evaluatedSourceIds: [],
     };
   }
 
@@ -227,8 +229,10 @@ export async function verifyClaimsAgainstPack(args: {
         partially_supported: 0,
         unsupported: claims.length,
         dropped_tangential: 0, dropped_unrelated: 0, pruned_source_ids: [],
+        batches_total: 0, batches_succeeded: 0, batches_failed: 0,
       },
       run: noPackRun,
+      evaluatedSourceIds: [],
     };
   }
 
