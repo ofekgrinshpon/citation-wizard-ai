@@ -3001,12 +3001,22 @@ ${(verify.fullText as string).slice(0, 50000)}
       source_cards_local: FunnelStage;
       drop_reasons: Record<string, number>;
       rerank_dropped_docs: Array<{ title: string; source_type: string; score: number; reason: string }>;
+      // Recall-vs-Proof telemetry.
+      expanded_queries?: string[];
+      lexical_fallback_used?: "none" | "rpc_expanded" | "trigram" | "ilike";
+      vector_candidates_low_threshold?: number;
+      vector_candidates_promoted?: number;
+      candidates_recovered_by_claim_verification?: number;
+      candidates_dropped_tangential?: number;
+      supplementary_rejected_low_score?: number;
+      supplementary_rejected_no_claim_fit?: number;
       soft_min_supplementary?: {
         missing_types: string[];
         threshold: number;
         per_type_cap: number;
         considered_by_type: Record<string, number>;
         added_by_type: Record<string, number>;
+        disabled?: boolean;
       };
       // Milestone B — Stage E.5 Perplexity completion telemetry.
       perplexity_completion?: {
@@ -3042,6 +3052,14 @@ ${(verify.fullText as string).slice(0, 50000)}
       source_cards_local: newFunnelStage(),
       drop_reasons: {},
       rerank_dropped_docs: [],
+      expanded_queries: [],
+      lexical_fallback_used: "none",
+      vector_candidates_low_threshold: 0,
+      vector_candidates_promoted: 0,
+      candidates_recovered_by_claim_verification: 0,
+      candidates_dropped_tangential: 0,
+      supplementary_rejected_low_score: 0,
+      supplementary_rejected_no_claim_fit: 0,
     };
     const bumpDrop = (reason: string, n = 1) => {
       retrievalFunnel.drop_reasons[reason] = (retrievalFunnel.drop_reasons[reason] || 0) + n;
