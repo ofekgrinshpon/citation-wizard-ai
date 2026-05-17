@@ -6431,13 +6431,35 @@ ${drafterCombinedContext}
 כאשר טענה חדשה ניתנת לתימוך על-ידי מקור מאומת (direct_support / partial_support) שטרם צוטט, העדף אותו על-פני חזרה עם "לעיל ה"ש X" על אותו מקור שכבר ציטטת. אל תצטט מקור שאינו רלוונטי לטענה רק כדי לגוון — רלוונטיות גוברת על גיוון.`;
     }
     const promptLen = drafterSystemPrompt.length;
-    console.log(`Prompt length: ${promptLen} chars (variant=${useStructuredDrafterPath ? "compact" : "full"}${isAcademicChapter ? "+academic" : ""}), ${sourceCards.length} source cards`);
+    console.log(`Prompt length: ${promptLen} chars (variant=${useStructuredDrafterPath ? "compact" : "full"}${isAcademicChapter ? "+academic" : ""}${passDTelemetry.used ? "+passD" : ""}), ${sourceCards.length} source cards`);
+
+    // Pass D telemetry — record before/after sizes. "before" approximates
+    // what the prompt would be without compact-payload swap by adding back
+    // the catalog/context savings; "after" is the actual emitted prompt.
+    passDTelemetry.prompt_chars_after = promptLen;
+    passDTelemetry.prompt_chars_before = passDTelemetry.used
+      ? promptLen + (sourceCatalog.length - drafterSourceCatalog.length) + (combinedContext.length - drafterCombinedContext.length)
+      : promptLen;
 
     // Token budget: structured drafter ceiling scales with the profile's
     // word range (~1.6 tokens per Hebrew word, plus footnote-block headroom).
     // Fast (≤700 words) → 2048; Deep (≤2000 words) → 6144.
     const structuredDrafterMaxTokens = modeProfile.wordRangeMax >= 1500 ? 6144 : 2048;
-    const aiMaxTokens = isAcademicMode ? 12288 : (useStructuredDrafterPath ? structuredDrafterMaxTokens : 8192);
+    let aiMaxTokens = isAcademicMode ? 12288 : (useStructuredDrafterPath ? structuredDrafterMaxTokens : 8192);
+    // Pass D — when the drafter will hit gpt-5 (legacy variant OR forced
+    // gpt-5 model) AND the prompt is still >20k chars, bump the completion
+    // budget to ≥4096. gpt-5 burns the whole budget on reasoning at small
+    // ceilings on prompts this large, leaving 0 tokens for content (the
+    // "empty completion / finish_reason=length" pathology). Compact prompt
+    // remains the primary fix; this just avoids re-tripping the same trap.
+    const willUseGpt5 =
+      (forceDrafterModel ?? "").includes("gpt-5") ||
+      ((!forceDrafterModel) && (useStructuredDrafterPath ? modeProfile.drafterVariant : "legacy") === "legacy");
+    if (willUseGpt5 && promptLen > 20000 && aiMaxTokens < 4096) {
+      console.warn(`[pass-d:token-bump] gpt-5 + prompt_chars=${promptLen} > 20000 → max_completion_tokens ${aiMaxTokens} → 4096`);
+      aiMaxTokens = 4096;
+    }
+
     // For pleading_analysis with an uploaded document: the document IS the audit subject,
     // and the typed `question` becomes optional user instructions/focus directives.
     const isPleadingWithDoc = taskMode === "pleading_analysis" && (bodyHasDocument || hasDocument);
