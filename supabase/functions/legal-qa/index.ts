@@ -3541,7 +3541,30 @@ ${(verify.fullText as string).slice(0, 50000)}
           console.log(`Caselaw-filtered vector search: ${caselawMatches.length} chunks`);
         }
 
-        const keywordMatches: LocalMatch[] = (!keywordResult.error && keywordResult.data) ? keywordResult.data : [];
+        let keywordMatches: LocalMatch[] = (!keywordResult.error && keywordResult.data) ? keywordResult.data : [];
+
+        // Recall-vs-Proof: Hebrew lexical fallback when search_legal_chunks_text
+        // returns 0. Tries expanded RPC → trigram → ILIKE in that order.
+        if (keywordMatches.length === 0) {
+          try {
+            const fb = await searchLegalChunksTextResilient({
+              adminClient: adminClient as unknown as Parameters<typeof searchLegalChunksTextResilient>[0]["adminClient"],
+              originalQuery: keywords,
+              expandedQueries: retrievalFunnel.expanded_queries ?? [],
+              matchCount: 15,
+            });
+            if (fb.rows.length > 0) {
+              keywordMatches = fb.rows as LocalMatch[];
+              retrievalFunnel.lexical_fallback_used = fb.level;
+              console.log(`[lexical-fallback] level=${fb.level} rows=${fb.rows.length}`);
+            } else {
+              retrievalFunnel.lexical_fallback_used = "none";
+              console.log(`[lexical-fallback] exhausted — 0 rows`);
+            }
+          } catch (e) {
+            console.error(`[lexical-fallback] failed (non-fatal):`, e);
+          }
+        }
 
         // Surface RPC errors instead of silently dropping
         for (const r of vectorResults) {
@@ -3570,24 +3593,34 @@ ${(verify.fullText as string).slice(0, 50000)}
         }
         vectorMatches = Array.from(vecMap.values());
 
-        // Safety-net: if 0 vector hits at 0.45, retry once at 0.35 with the first available embedding
-        if (vectorMatches.length === 0) {
+        // ── Recall-vs-Proof: low-threshold CANDIDATE pool ──────────────────
+        // Separate pool at threshold 0.35 / match_count 25 used for RECALL
+        // only. Items here do NOT enter the SourcePack directly. They are
+        // verified against Candidate Claims downstream and only direct /
+        // partial supporters are promoted (provenance=claim_verified_recall).
+        const candidatePoolRaw: LocalMatch[] = [];
+        try {
           const firstEmbedding = vectorResults.find(r => r.embedding)?.embedding;
           if (firstEmbedding) {
-            console.log("Vector search safety-net retry at threshold 0.35");
-            const retry = await adminClient.rpc("match_legal_chunks", {
+            const lowRes = await adminClient.rpc("match_legal_chunks", {
               query_embedding: JSON.stringify(firstEmbedding),
               match_threshold: 0.35,
-              match_count: 8,
+              match_count: 25,
             });
-            if (retry.error) {
-              console.error(`Safety-net match_legal_chunks RPC error: ${retry.error.message || JSON.stringify(retry.error)}`);
-            } else if (retry.data) {
-              vectorMatches = retry.data as LocalMatch[];
-              console.log(`Safety-net returned ${vectorMatches.length} chunks at threshold 0.35`);
+            if (!lowRes.error && Array.isArray(lowRes.data)) {
+              const inMerged = new Set(vectorMatches.map(m => m.chunk_id));
+              for (const m of lowRes.data as LocalMatch[]) {
+                if (!inMerged.has(m.chunk_id)) candidatePoolRaw.push(m);
+              }
+              console.log(`[candidate-pool] vector recall @0.35: total=${(lowRes.data as LocalMatch[]).length} fresh=${candidatePoolRaw.length}`);
+            } else if (lowRes.error) {
+              console.error(`[candidate-pool] RPC error:`, lowRes.error);
             }
           }
+        } catch (e) {
+          console.error(`[candidate-pool] failed (non-fatal):`, e);
         }
+        retrievalFunnel.vector_candidates_low_threshold = candidatePoolRaw.length;
 
         // Diagnostic: top-3 raw vector similarities
         const topVectorSims = [...vectorMatches]
