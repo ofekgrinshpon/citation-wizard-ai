@@ -3630,6 +3630,8 @@ ${(verify.fullText as string).slice(0, 50000)}
           console.error(`[candidate-pool] failed (non-fatal):`, e);
         }
         retrievalFunnel.vector_candidates_low_threshold = candidatePoolRaw.length;
+        // Hoist for downstream candidate-card builder.
+        for (const m of candidatePoolRaw) candidatePoolLocal.push(m);
 
         // Diagnostic: top-3 raw vector similarities
         const topVectorSims = [...vectorMatches]
