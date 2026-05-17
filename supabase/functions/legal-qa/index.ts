@@ -9769,6 +9769,9 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
             : null,
           // Coverage-gap metric (structured-drafter runs only).
           coverage_gap: coverageGapMetric,
+          // Pass B — per-run drafter card-usage telemetry. Helps spot
+          // "19 cards available, 4 actually cited" diversification failures.
+          drafter_card_usage: drafterCardUsageMetric,
           // Per-doc rerank drop details (title + score + reason). Capped at 10.
           // Lets us validate the rerank gate against future runs without re-tracing.
           rerank_drops: rerankDrops,
