@@ -241,8 +241,13 @@ export async function verifyClaimsAgainstPack(args: {
   // ≤20s budget. Merge scores. Track per-batch success so callers can
   // distinguish "fully failed" (all batches errored → safe to keep
   // standard cards) from "partial" (still trustworthy enough to prune).
-  const BATCH_SIZE = 8;
-  const BATCH_TIMEOUT_MS = 20000;
+  // Pass B: smaller batches (5 instead of 8) + longer per-batch budget (35s
+  // instead of 20s) → fits Gemini Flash's actual latency for verification
+  // prompts. Concurrency=2 keeps total wall time bounded while raising
+  // evaluated-coverage from ~33% toward ≥80%.
+  const BATCH_SIZE = 5;
+  const BATCH_TIMEOUT_MS = 35000;
+  const BATCH_CONCURRENCY = 2;
   const batches: PackItemView[][] = [];
   for (let i = 0; i < views.length; i += BATCH_SIZE) {
     batches.push(views.slice(i, i + BATCH_SIZE));
