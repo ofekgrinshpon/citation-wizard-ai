@@ -6421,6 +6421,8 @@ ${drafterCombinedContext}
     // marks 1-2 claims allowed_to_state. The compact drafter prompt + claim
     // map already handle single-claim drafting cleanly via statementMode.
     const useStructuredDrafterPath = enableDeepPipeline && claimMap !== null && claimMapAllowedCount >= 1;
+    // deno-lint-ignore no-explicit-any
+    (passDTelemetry as any).applied_to = useStructuredDrafterPath ? "structured" : "legacy";
     let drafterSystemPrompt = useStructuredDrafterPath
       ? buildCompactStructuredPrompt()
       : systemPrompt;
