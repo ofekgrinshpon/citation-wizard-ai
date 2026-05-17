@@ -845,7 +845,7 @@ interface SourcePackEntry {
   source_type: string;
   authority_class: AuthorityClass;
   url?: string;
-  provenance: "local" | "perplexity" | "perplexity_completion" | "document";
+  provenance: "local" | "perplexity" | "perplexity_completion" | "claim_verified_recall" | "document";
   excerpt: string;
   case_number?: string;
   usable_for_analysis: boolean;
