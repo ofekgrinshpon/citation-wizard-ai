@@ -3340,6 +3340,15 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     }
 
+    // Recall-vs-Proof: hoisted candidate pool. Populated INSIDE
+    // localSearchPromise with low-threshold vector candidates (0.35 / 25),
+    // consumed AFTER the main source-card loop to seed verification-only
+    // candidate cards (provenance="claim_verified_recall"). Items here never
+    // enter the SourcePack unless they later pass Claim Verification as
+    // direct_support / partial_support.
+    const candidatePoolLocal: LocalMatch[] = [];
+    const candidateRecallIds = new Set<number>();
+
     const localSearchPromise = (async (): Promise<{ matches: LocalMatch[]; used: boolean }> => {
       try {
         // Step A: optionally expand short queries to a fuller legal phrasing
@@ -3621,6 +3630,8 @@ ${(verify.fullText as string).slice(0, 50000)}
           console.error(`[candidate-pool] failed (non-fatal):`, e);
         }
         retrievalFunnel.vector_candidates_low_threshold = candidatePoolRaw.length;
+        // Hoist for downstream candidate-card builder.
+        for (const m of candidatePoolRaw) candidatePoolLocal.push(m);
 
         // Diagnostic: top-3 raw vector similarities
         const topVectorSims = [...vectorMatches]
@@ -3693,66 +3704,33 @@ ${(verify.fullText as string).slice(0, 50000)}
           .sort((a, b) => b.similarity - a.similarity)
           .slice(0, 12);
 
-        // ── Soft guaranteed minimum w/ relevance floor ──────────────────
-        // For each "must-have" source type that ended up with 0 representation
-        // in the candidate pool, run a per-type supplementary vector search
-        // (top 3, similarity >= 0.45). If nothing clears the floor, accept
-        // absence — never stuff irrelevant chunks just to hit a quota.
-        // The reranker still has the final say.
-        const SOFT_MIN_TYPES = ["israeli_law", "knesset_research"] as const;
-        const SOFT_MIN_THRESHOLD = 0.45;
-        const SOFT_MIN_PER_TYPE = 3;
-        const presentTypes = new Set(mergedBase.map(m => m.source_type));
-        const missingTypes = SOFT_MIN_TYPES.filter(t => !presentTypes.has(t));
-        const supplementalAddedByType: Record<string, number> = {};
-        const supplementalConsideredByType: Record<string, number> = {};
-        if (missingTypes.length > 0) {
-          const supplementalEmbedding = vectorResults.find(r => r.embedding)?.embedding;
-          if (supplementalEmbedding) {
-            console.log(`Soft-min supplementary: missing types = [${missingTypes.join(", ")}]`);
-            const supplementalResults = await Promise.all(missingTypes.map(async (t) => {
-              const r = await adminClient.rpc("match_legal_chunks_filtered", {
-                query_embedding: JSON.stringify(supplementalEmbedding),
-                filter_source_type: t,
-                match_threshold: SOFT_MIN_THRESHOLD,
-                match_count: SOFT_MIN_PER_TYPE,
-              });
-              if (r.error) {
-                console.error(`Soft-min supplementary RPC error for ${t}: ${r.error.message || JSON.stringify(r.error)}`);
-                return { type: t, matches: [] as LocalMatch[] };
-              }
-              return { type: t, matches: (r.data || []) as LocalMatch[] };
-            }));
-            const existingIds = new Set(mergedBase.map(m => m.chunk_id));
-            for (const { type, matches } of supplementalResults) {
-              supplementalConsideredByType[type] = matches.length;
-              const fresh = matches.filter(m => !existingIds.has(m.chunk_id));
-              for (const m of fresh) {
-                mergedBase.push(m);
-                existingIds.add(m.chunk_id);
-              }
-              supplementalAddedByType[type] = fresh.length;
-              console.log(`Soft-min ${type}: considered=${matches.length} (>=${SOFT_MIN_THRESHOLD}), added=${fresh.length} (after dedup)`);
-            }
-          } else {
-            console.log(`Soft-min supplementary skipped: no embedding available for missing types [${missingTypes.join(", ")}]`);
-          }
-        } else {
-          console.log(`Soft-min supplementary: all target types present, skipping`);
-        }
+        // ── Soft-min supplementary: DISABLED (Recall-vs-Proof) ──────────
+        // Previously this block ran a per-type vector search (≥0.45) for any
+        // "must-have" source_type missing from the candidate pool and pushed
+        // matches straight into mergedBase. This was a quota-fill mechanism
+        // that bypassed Claim Verification and shoveled tangential statutes
+        // (traffic / livestock / marine pollution) into the SourcePack just
+        // to satisfy bucket minimums.
+        //
+        // New rule: nothing is added to the SourcePack to fill a quota.
+        // Recall comes exclusively from the low-threshold candidate pool
+        // (vector @0.35 / 25) populated above, and admission requires
+        // direct_support / partial_support from Claim Verification.
+        retrievalFunnel.soft_min_supplementary = {
+          missing_types: [],
+          threshold: 0,
+          per_type_cap: 0,
+          considered_by_type: {},
+          added_by_type: {},
+          disabled: true,
+        };
+        console.log(`Soft-min supplementary: DISABLED (Recall-vs-Proof; candidates flow via Claim Verification only)`);
 
         const merged = mergedBase;
         const caselawKept = merged.filter(m => m.source_type === "caselaw").length;
         console.log(`Caselaw quota: ${caselawKept} caselaw / ${merged.length - caselawKept} other (total ${merged.length})`);
-        // FUNNEL CHECKPOINT 4: after merge + dedup + 6/6 caselaw quota + soft-min supplements
+        // FUNNEL CHECKPOINT 4: after merge + dedup + 6/6 caselaw quota
         retrievalFunnel.after_dedup_quota = tallyByType(merged);
-        retrievalFunnel.soft_min_supplementary = {
-          missing_types: missingTypes,
-          threshold: SOFT_MIN_THRESHOLD,
-          per_type_cap: SOFT_MIN_PER_TYPE,
-          considered_by_type: supplementalConsideredByType,
-          added_by_type: supplementalAddedByType,
-        };
         const droppedByQuota = (retrievalFunnel.raw_keyword.total + retrievalFunnel.raw_vector.total + retrievalFunnel.raw_caselaw_filtered.total) - merged.length;
         if (droppedByQuota > 0) bumpDrop("dedup_or_quota", droppedByQuota);
         console.log(`FUNNEL after_dedup_quota: ${JSON.stringify(retrievalFunnel.after_dedup_quota)}`);
@@ -4140,6 +4118,64 @@ ${(verify.fullText as string).slice(0, 50000)}
       console.log(`FUNNEL FULL: ${JSON.stringify(retrievalFunnel)}`);
     }
 
+    // ─── Recall-vs-Proof: candidate-pool cards (claim_verified_recall) ───
+    // Build minimal cards for low-threshold candidates whose documents are
+    // NOT already represented in sourceCards. These enter the SourcePack as
+    // citation-only anchors and are subject to Claim Verification + prune.
+    // Items that do not earn direct_support / partial_support are dropped
+    // by pruneSourcePackByLedger and counted as candidates_dropped_tangential.
+    if (candidatePoolLocal.length > 0) {
+      const seenDocIds = new Set(
+        sourceCards
+          .filter(sc => sc.provenance === "local")
+          .map(sc => (sc as unknown as { document_id?: string }).document_id)
+          .filter(Boolean)
+      );
+      // Also dedup by url/citation as a fallback (sourceCards don't carry document_id today).
+      const seenCitations = new Set(sourceCards.map(sc => (sc.citation || "").trim()));
+      let candidatesAdded = 0;
+      for (const m of candidatePoolLocal) {
+        if (seenDocIds.has(m.document_id)) continue;
+        if (isBlogUrl(m.source_url || undefined)) continue;
+        // Skip broken-title knesset and untitled caselaw — same gates as the main loop.
+        if (m.source_type === "knesset_research") {
+          const titleTrim = (m.document_title || "").trim();
+          const metaFlag = (m.metadata as Record<string, unknown> | null)?.broken_title === true;
+          if (titleTrim === "פרטי מסמך" || titleTrim === "ללא כותרת" || titleTrim === "" || metaFlag) continue;
+        }
+        if (m.source_type === "caselaw") {
+          const titleTrim = (m.document_title || "").trim();
+          const hasParties = /נ['"׳״]/.test(titleTrim);
+          const isUsableTitle = titleTrim.length >= 8 && (hasParties || /[א-ת]{4,}/.test(titleTrim));
+          if (!isUsableTitle) continue;
+        }
+        const citation = (m.document_citation || m.document_title || "").trim();
+        if (!citation || seenCitations.has(citation)) continue;
+        seenCitations.add(citation);
+        const sourceLabel = m.source_type === "caselaw" ? "פסיקה" :
+          m.source_type === "knesset_research" ? "מחקר כנסת / חקיקה" :
+          m.source_type === "journal_article" ? "מאמר אקדמי" :
+          m.source_type === "israeli_law" ? "חקיקה ישראלית" : m.source_type;
+        const newId = cardId++;
+        candidateRecallIds.add(newId);
+        sourceCards.push({
+          id: newId,
+          citation,
+          source_type: sourceLabel,
+          url: m.source_url || undefined,
+          provenance: "claim_verified_recall",
+          excerpt: (m.chunk_content || "").slice(0, 400),
+          case_number: m.source_type === "caselaw"
+            ? ((m.metadata as Record<string, unknown>)?.case_number as string | undefined)
+            : undefined,
+          relevance_score: typeof m.similarity === "number" ? m.similarity : 0,
+        });
+        candidatesAdded++;
+      }
+      retrievalFunnel.vector_candidates_promoted = candidatesAdded;
+      console.log(`[candidate-pool] cards added=${candidatesAdded} of ${candidatePoolLocal.length} candidates`);
+    }
+
     // Perplexity sources — extract from citations array
     if (citations.length > 0) {
       const KNESSET_PROTOCOL_RE = /fs\.knesset\.gov\.il\/(\d+)\/(?:Committees|Plenum)\//i;
@@ -4411,7 +4447,8 @@ ${(verify.fullText as string).slice(0, 50000)}
       emitStage("source_pack", "running");
       sourcePack = sourceCards.map((sc) => {
         const excerpt = sc.excerpt || "";
-        const anchorPresent = Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document";
+        const anchorPresent = Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document" || sc.provenance === "claim_verified_recall";
+        const isRecallCandidate = sc.provenance === "claim_verified_recall";
         return {
           source_id: sc.id,
           title: sc.citation,
@@ -4421,7 +4458,9 @@ ${(verify.fullText as string).slice(0, 50000)}
           provenance: sc.provenance,
           excerpt,
           case_number: sc.case_number,
-          usable_for_analysis: excerpt.length > 300,
+          // Recall candidates are citation-only anchors until Claim Verification
+          // earns them direct/partial support; never usable_for_analysis here.
+          usable_for_analysis: isRecallCandidate ? false : excerpt.length > 300,
           usable_for_citation: sc.citation.length > 15,
           anchor_present: anchorPresent,
           // Milestone A.5: carry through for assembleSourcePack relevance gate.
@@ -5435,6 +5474,21 @@ ${(verify.fullText as string).slice(0, 50000)}
           if (removedIds.length > 0) {
             console.log(`[phase7:prune] removed ${removedIds.length} non-supporting sources: [${removedIds.join(",")}]`);
             sourcePackV2 = pruned;
+          }
+
+          // Recall-vs-Proof telemetry: how many candidate-pool entries earned
+          // direct/partial support vs were pruned as tangential/unrelated.
+          if (candidateRecallIds.size > 0) {
+            const removedSet = new Set(removedIds.map(String));
+            let recovered = 0;
+            let dropped = 0;
+            for (const cid of candidateRecallIds) {
+              if (removedSet.has(String(cid))) dropped++;
+              else recovered++;
+            }
+            retrievalFunnel.candidates_recovered_by_claim_verification = recovered;
+            retrievalFunnel.candidates_dropped_tangential = dropped;
+            console.log(`[recall-vs-proof] candidates: pool=${candidateRecallIds.size} recovered=${recovered} dropped_tangential=${dropped}`);
           }
 
           phase7LedgerBlock = buildClaimLedgerPromptBlock(phase7ClaimLedger);
