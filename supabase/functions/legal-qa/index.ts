@@ -5465,6 +5465,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // Strict relevance pipeline: only direct/partial-supporting sources may
     // back a claim. Tangential/unrelated sources are pruned from the pack so
     // they are physically impossible for the drafter to cite.
+    console.log(`[phase7:gate] enableDeepPipeline=${enableDeepPipeline} claimLedgerMode=${modeProfile.claimLedgerMode} hasSourcePack=${!!sourcePackV2} hasDecomp=${!!decompositionV2}`);
     if (
       taskMode === RESEARCH_MODE &&
       enableDeepPipeline &&
