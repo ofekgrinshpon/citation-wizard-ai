@@ -398,10 +398,16 @@ export function buildClaimLedgerPromptBlock(ledger: ClaimLedger): string {
  * Apply the Claim Ledger as a hard filter on the source pack: any pack item
  * not referenced by at least one supported/partially_supported claim is
  * removed. Statutory primary legislation kept as anchor (citation hygiene).
+ *
+ * @param opts.restrictToCandidateRecall - when true, ONLY prune items whose
+ *   provenanceInternal is "claim_verified_recall". Standard-retrieval cards
+ *   (local / perplexity / document) are kept as-is. Used on verification
+ *   timeout to avoid nuking legitimately-retrieved cards.
  */
 export function pruneSourcePackByLedger(
   pack: LegalSourcePack,
   ledger: ClaimLedger,
+  opts: { restrictToCandidateRecall?: boolean } = {},
 ): { pruned: LegalSourcePack; removedIds: string[] } {
   const keepIds = new Set<string>();
   for (const c of ledger.claims) {
@@ -419,6 +425,12 @@ export function pruneSourcePackByLedger(
         item.authorityClass === "user_document"
       ) {
         return true;
+      }
+      // Pass A safe-prune mode: only candidate-pool entries are subject to
+      // pruning. Standard cards survive whether or not verification reached
+      // them. Caller invokes this branch when verification timed out.
+      if (opts.restrictToCandidateRecall) {
+        if (item.provenanceInternal !== "claim_verified_recall") return true;
       }
       if (keepIds.has(id)) return true;
       removed.push(id);
