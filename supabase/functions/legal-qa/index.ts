@@ -2205,7 +2205,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, evalForceMissingSlots: bodyEvalForceMissingSlots, depth: bodyDepth, styleGuideEnabled: bodyStyleGuideEnabled, footnoteOffset: bodyFootnoteOffset } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, evalForceMissingSlots: bodyEvalForceMissingSlots, depth: bodyDepth, styleGuideEnabled: bodyStyleGuideEnabled, footnoteOffset: bodyFootnoteOffset, forceDrafterModel: bodyForceDrafterModel, forceDrafterVariant: bodyForceDrafterVariant } = body;
 
     // ─── Continuous footnote numbering (academic writing only) ────────
     // Each chapter is generated independently and produces a local 1..K
@@ -2276,6 +2276,35 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     }
     if (evalForceMissingSlots.length > 0) {
       console.log(`[eval] forcing missing slots (run=${evalRunId}): ${evalForceMissingSlots.join(",")}`);
+    }
+
+    // Eval-only drafter overrides. Admin caller + evalRunId with one of
+    // the eval prefixes ("eval-", "phase-", "debug-") is required. Allows
+    // forcing a specific drafter model (e.g. openai/gpt-5 inside a Fast
+    // envelope) and a specific variant (legacy/structured). Silently
+    // ignored for any other caller.
+    const EVAL_PREFIX_RE = /^(eval-|phase-|debug-)/;
+    const evalRunIdIsEvalScoped =
+      typeof evalRunId === "string" && EVAL_PREFIX_RE.test(evalRunId);
+    const forceDrafterModel: string | null =
+      isAdminCaller &&
+      evalRunIdIsEvalScoped &&
+      typeof bodyForceDrafterModel === "string" &&
+      (bodyForceDrafterModel.startsWith("openai/") ||
+        bodyForceDrafterModel.startsWith("google/"))
+        ? bodyForceDrafterModel
+        : null;
+    const forceDrafterVariant: "legacy" | "structured" | null =
+      isAdminCaller &&
+      evalRunIdIsEvalScoped &&
+      (bodyForceDrafterVariant === "legacy" ||
+        bodyForceDrafterVariant === "structured")
+        ? bodyForceDrafterVariant
+        : null;
+    if (forceDrafterModel || forceDrafterVariant) {
+      console.warn(
+        `[eval] drafter override (run=${evalRunId}) model=${forceDrafterModel ?? "<default>"} variant=${forceDrafterVariant ?? "<default>"}`,
+      );
     }
 
     if (!question || typeof question !== "string" || question.trim().length < 3) {
@@ -6292,6 +6321,12 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     const drafterTimeoutMs = useNewDrafter ? modeProfile.drafterTimeoutMs : 90000;
     let drafterVariant: "structured" | "legacy" = useNewDrafter ? modeProfile.drafterVariant : "legacy";
 
+    // Eval override: forceDrafterVariant short-circuits profile + size-guard.
+    if (forceDrafterVariant) {
+      drafterVariant = forceDrafterVariant;
+      console.warn(`[drafter:eval-variant] forced variant=${drafterVariant} (run=${evalRunId})`);
+    }
+
     // Pass C — prompt-size guard. The legacy non-streaming gpt-5 path has
     // been observed to return empty completions (finish_reason=length,
     // text_len=0) on oversized prompts (~30k+ chars). When we're on the
@@ -6299,8 +6334,10 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     // variant up-front so we use gpt-5-mini instead of burning ~90s on an
     // empty gpt-5 attempt + fallback. The full compact-prompt rebuild
     // (Claim Ledger + supported/partial sources only) remains a follow-up.
+    // Eval forced variant bypasses this guard so probes can exercise the
+    // exact gpt-5 path even on a large prompt.
     const LARGE_PROMPT_THRESHOLD = 28000;
-    if (drafterVariant === "legacy" && drafterSystemPrompt.length > LARGE_PROMPT_THRESHOLD) {
+    if (!forceDrafterVariant && drafterVariant === "legacy" && drafterSystemPrompt.length > LARGE_PROMPT_THRESHOLD) {
       console.warn(
         `[drafter:size-guard] prompt_chars=${drafterSystemPrompt.length} > ${LARGE_PROMPT_THRESHOLD} → downshifting variant=legacy → structured (model=${MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI})`,
       );
@@ -6331,13 +6368,14 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           drafterTimeoutMs,
           drafterVariant,
           (chunk) => emitDraftDelta(chunk),
+          forceDrafterModel ?? undefined,
         );
         if (!drafterRes) {
           console.warn("[drafter] streaming returned null — no second non-streaming attempt (avoids duplicate work)");
         }
       } else {
         // No SSE emitter (e.g. CLI / eval runs) → use non-streaming path.
-        drafterRes = await callDrafter(drafterSystemPrompt, userMessage, aiMaxTokens, drafterTimeoutMs, drafterVariant);
+        drafterRes = await callDrafter(drafterSystemPrompt, userMessage, aiMaxTokens, drafterTimeoutMs, drafterVariant, forceDrafterModel ?? undefined);
       }
       // Pass C — measure drafting from drafterStartMs only (was tAi -
       // tRetrieval, which conflated drafting with prior retrieval +

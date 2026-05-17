@@ -270,9 +270,19 @@ export async function callDrafterStreaming(
   timeoutMs: number,
   variant: "legacy" | "structured",
   onDelta: (chunk: string) => void,
+  modelOverride?: string,
 ): Promise<DrafterResult | null> {
-  const openaiModel = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI : MODEL_CONFIG.DRAFTER_OPENAI;
-  const geminiModel = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_GEMINI : MODEL_CONFIG.DRAFTER_GEMINI;
+  const defaultOpenai = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI : MODEL_CONFIG.DRAFTER_OPENAI;
+  const defaultGemini = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_GEMINI : MODEL_CONFIG.DRAFTER_GEMINI;
+  // Eval-only override: route the first attempt at a specific model. Fallback
+  // chain still goes to the other provider's stage default if it fails.
+  const overrideIsOpenAI = modelOverride ? modelOverride.startsWith("openai/") : false;
+  const overrideIsGemini = modelOverride ? modelOverride.startsWith("google/") : false;
+  const openaiModel = overrideIsOpenAI ? modelOverride!.replace(/^openai\//, "") : defaultOpenai;
+  const geminiModel = overrideIsGemini ? modelOverride! : defaultGemini;
+  if (modelOverride) {
+    console.warn(`[drafter:stream:override] model=${modelOverride} variant=${variant}`);
+  }
   const promptChars = systemPrompt.length + userPrompt.length;
 
   if (OPENAI_API_KEY) {
@@ -451,9 +461,17 @@ export async function callDrafter(
   maxTokens: number,
   timeoutMs = 90000,
   variant: "legacy" | "structured" = "legacy",
+  modelOverride?: string,
 ): Promise<DrafterResult | null> {
-  const openaiModel = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI : MODEL_CONFIG.DRAFTER_OPENAI;
-  const geminiModel = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_GEMINI : MODEL_CONFIG.DRAFTER_GEMINI;
+  const defaultOpenai = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_OPENAI : MODEL_CONFIG.DRAFTER_OPENAI;
+  const defaultGemini = variant === "structured" ? MODEL_CONFIG.STRUCTURED_DRAFTER_GEMINI : MODEL_CONFIG.DRAFTER_GEMINI;
+  const overrideIsOpenAI = modelOverride ? modelOverride.startsWith("openai/") : false;
+  const overrideIsGemini = modelOverride ? modelOverride.startsWith("google/") : false;
+  const openaiModel = overrideIsOpenAI ? modelOverride!.replace(/^openai\//, "") : defaultOpenai;
+  const geminiModel = overrideIsGemini ? modelOverride! : defaultGemini;
+  if (modelOverride) {
+    console.warn(`[drafter:override] model=${modelOverride} variant=${variant}`);
+  }
 
   const promptChars = systemPrompt.length + userPrompt.length;
 
