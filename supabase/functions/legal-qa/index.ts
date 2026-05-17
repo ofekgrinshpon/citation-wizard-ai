@@ -6368,13 +6368,14 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
           drafterTimeoutMs,
           drafterVariant,
           (chunk) => emitDraftDelta(chunk),
+          forceDrafterModel ?? undefined,
         );
         if (!drafterRes) {
           console.warn("[drafter] streaming returned null — no second non-streaming attempt (avoids duplicate work)");
         }
       } else {
         // No SSE emitter (e.g. CLI / eval runs) → use non-streaming path.
-        drafterRes = await callDrafter(drafterSystemPrompt, userMessage, aiMaxTokens, drafterTimeoutMs, drafterVariant);
+        drafterRes = await callDrafter(drafterSystemPrompt, userMessage, aiMaxTokens, drafterTimeoutMs, drafterVariant, forceDrafterModel ?? undefined);
       }
       // Pass C — measure drafting from drafterStartMs only (was tAi -
       // tRetrieval, which conflated drafting with prior retrieval +
