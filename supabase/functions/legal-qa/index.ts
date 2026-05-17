@@ -5476,6 +5476,21 @@ ${(verify.fullText as string).slice(0, 50000)}
             sourcePackV2 = pruned;
           }
 
+          // Recall-vs-Proof telemetry: how many candidate-pool entries earned
+          // direct/partial support vs were pruned as tangential/unrelated.
+          if (candidateRecallIds.size > 0) {
+            const removedSet = new Set(removedIds.map(String));
+            let recovered = 0;
+            let dropped = 0;
+            for (const cid of candidateRecallIds) {
+              if (removedSet.has(String(cid))) dropped++;
+              else recovered++;
+            }
+            retrievalFunnel.candidates_recovered_by_claim_verification = recovered;
+            retrievalFunnel.candidates_dropped_tangential = dropped;
+            console.log(`[recall-vs-proof] candidates: pool=${candidateRecallIds.size} recovered=${recovered} dropped_tangential=${dropped}`);
+          }
+
           phase7LedgerBlock = buildClaimLedgerPromptBlock(phase7ClaimLedger);
         } catch (e) {
           phase7VerificationStatus = "error";
