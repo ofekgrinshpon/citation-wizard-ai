@@ -18,7 +18,7 @@ export interface InternalSourcePackEntry {
   source_type: string;
   authority_class: string;            // legacy 12-value enum from index.ts
   url?: string;
-  provenance: "local" | "perplexity" | "perplexity_completion" | "document";
+  provenance: "local" | "perplexity" | "perplexity_completion" | "claim_verified_recall" | "document";
   excerpt: string;
   case_number?: string;
   usable_for_analysis: boolean;
