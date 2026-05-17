@@ -3340,6 +3340,15 @@ ${(verify.fullText as string).slice(0, 50000)}
       }
     }
 
+    // Recall-vs-Proof: hoisted candidate pool. Populated INSIDE
+    // localSearchPromise with low-threshold vector candidates (0.35 / 25),
+    // consumed AFTER the main source-card loop to seed verification-only
+    // candidate cards (provenance="claim_verified_recall"). Items here never
+    // enter the SourcePack unless they later pass Claim Verification as
+    // direct_support / partial_support.
+    const candidatePoolLocal: LocalMatch[] = [];
+    const candidateRecallIds = new Set<number>();
+
     const localSearchPromise = (async (): Promise<{ matches: LocalMatch[]; used: boolean }> => {
       try {
         // Step A: optionally expand short queries to a fuller legal phrasing
