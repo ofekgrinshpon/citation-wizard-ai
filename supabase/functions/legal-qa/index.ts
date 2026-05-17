@@ -694,7 +694,7 @@ async function runPerplexityCompletion(
       signal: ctrl.signal,
       body: JSON.stringify({
         model: "sonar-pro",
-        search_domain_filter: TRUSTED_LEGAL_DOMAINS,
+        search_domain_filter: PERPLEXITY_DOMAIN_FILTER,
         response_format: {
           type: "json_schema",
           json_schema: { name: "primary_sources", schema },
@@ -2586,7 +2586,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
                   { role: "system", content: "אתה מאתר מקורות משפטיים ישראליים. החזר רק JSON תקף לפי הסכמה." },
                   { role: "user", content: `מצא עד 6 מקורות משפטיים ישראליים רלוונטיים (חקיקה, פסיקה, מאמרים אקדמיים) לנושא:\n${question.slice(0, 800)}\n\nהחזר JSON עם המפתח sources.` },
                 ],
-                search_domain_filter: [...CASELAW_DOMAINS, "tau.ac.il", "huji.ac.il"],
+                search_domain_filter: [...CASELAW_DOMAINS],
                 response_format: {
                   type: "json_schema",
                   json_schema: {
@@ -3761,7 +3761,7 @@ ${(verify.fullText as string).slice(0, 50000)}
             },
             body: JSON.stringify({
               model: "sonar-pro",
-              search_domain_filter: TRUSTED_LEGAL_DOMAINS,
+              search_domain_filter: PERPLEXITY_DOMAIN_FILTER,
               messages: attempt.messages,
             }),
           }, attempt.timeoutMs);
@@ -7695,7 +7695,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
                   signal: ctrl.signal,
                   body: JSON.stringify({
                     model: "sonar-pro",
-                    search_domain_filter: TRUSTED_LEGAL_DOMAINS,
+                    search_domain_filter: PERPLEXITY_DOMAIN_FILTER,
                     response_format: { type: "json_schema", json_schema: { name: "statute_completion_single", schema: singleSchema } },
                     messages: [
                       { role: "system", content: systemPrompt },
