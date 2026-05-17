@@ -226,27 +226,54 @@ export async function verifyClaimsAgainstPack(args: {
     };
   }
 
-  const { data, run } = await callPlannerJSON<{
-    scores: Array<{ claim_id: string; source_id: string; score: string; rationale: string }>;
-  }>(
-    SYSTEM_PROMPT,
-    buildUserPrompt(claims, views),
-    TOOL,
-    {
-      stage: "claim_verification",
-      timeoutMs: 30000,
-      reasoningEffort: "low",
-      forceProvider: "gemini",
-    },
-  );
+  // Pass A: batch verification to avoid 30s timeout on large packs.
+  // Split sources into batches of ≤BATCH_SIZE; each batch gets its own
+  // ≤20s budget. Merge scores. Track per-batch success so callers can
+  // distinguish "fully failed" (all batches errored → safe to keep
+  // standard cards) from "partial" (still trustworthy enough to prune).
+  const BATCH_SIZE = 8;
+  const BATCH_TIMEOUT_MS = 20000;
+  const batches: PackItemView[][] = [];
+  for (let i = 0; i < views.length; i += BATCH_SIZE) {
+    batches.push(views.slice(i, i + BATCH_SIZE));
+  }
 
   const claimIds = new Set(claims.map((c) => c.id));
   const sourceIds = new Set(views.map((v) => v.id));
-
   const hitsByClaim = new Map<string, ClaimRelevanceHit[]>();
   for (const c of claims) hitsByClaim.set(c.id, []);
 
-  if (data && Array.isArray(data.scores)) {
+  const batchStartedAt = new Date().toISOString();
+  const batchT0 = Date.now();
+  let succeededBatches = 0;
+  let failedBatches = 0;
+  let lastRun: StageRun | null = null;
+  let lastModel = "unknown";
+  let lastProvider: "openai" | "gemini" = "gemini";
+
+  for (const batch of batches) {
+    const { data, run } = await callPlannerJSON<{
+      scores: Array<{ claim_id: string; source_id: string; score: string; rationale: string }>;
+    }>(
+      SYSTEM_PROMPT,
+      buildUserPrompt(claims, batch),
+      TOOL,
+      {
+        stage: "claim_verification",
+        timeoutMs: BATCH_TIMEOUT_MS,
+        reasoningEffort: "low",
+        forceProvider: "gemini",
+      },
+    );
+    lastRun = run;
+    lastModel = run.model;
+    lastProvider = run.provider as "openai" | "gemini";
+
+    if (run.status !== "success" || !data || !Array.isArray(data.scores)) {
+      failedBatches++;
+      continue;
+    }
+    succeededBatches++;
     for (const s of data.scores) {
       if (!s || typeof s !== "object") continue;
       const cid = typeof s.claim_id === "string" ? s.claim_id : "";
