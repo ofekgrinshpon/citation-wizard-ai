@@ -48,6 +48,10 @@ function mapAuthorityClass(
   completionType?: "statute" | "caselaw",
 ): LegalAuthorityClass {
   if (provenance === "document") return "user_document";
+  // Recall-vs-Proof: claim_verified_recall items are local chunks promoted via
+  // per-claim relevance. They keep their legacy authority mapping (so case-law
+  // candidates land in primary_caselaw, knesset_research in secondary_official,
+  // etc.). Fall through to the legacy switch below.
   // Milestone B: perplexity_completion candidates have already passed the
   // citation-shape regex + URL allowlist guards in runPerplexityCompletion
   // (see index.ts). Their declared type is therefore trusted and they go
