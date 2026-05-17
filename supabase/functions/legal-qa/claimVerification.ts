@@ -363,6 +363,9 @@ export async function verifyClaimsAgainstPack(args: {
     dropped_tangential: droppedTangential,
     dropped_unrelated: droppedUnrelated,
     pruned_source_ids: pruned,
+    batches_total: batches.length,
+    batches_succeeded: succeededBatches,
+    batches_failed: failedBatches,
   };
 
   // idMap available for callers that want to inspect items by id
@@ -370,8 +373,8 @@ export async function verifyClaimsAgainstPack(args: {
 
   // Synthesise an aggregate StageRun from the per-batch runs. Status is
   // "success" iff at least one batch produced scores; "error" only when
-  // ALL batches failed (caller uses this to decide whether to keep
-  // standard-retrieval cards on timeout).
+  // ALL batches failed. Caller still inspects batches_failed to decide
+  // safe-prune (any-batch-failed) vs strict-prune (all-batches-ok).
   const aggregateRun: StageRun = {
     stage: "claim_verification",
     provider: lastProvider,
@@ -386,7 +389,12 @@ export async function verifyClaimsAgainstPack(args: {
         : undefined,
   };
   void lastRun; // last run preserved through aggregate
-  return { ledger: { claims: ledgerClaims }, summary, run: aggregateRun };
+  return {
+    ledger: { claims: ledgerClaims },
+    summary,
+    run: aggregateRun,
+    evaluatedSourceIds: Array.from(evaluatedSourceIdSet),
+  };
 }
 
 /**
