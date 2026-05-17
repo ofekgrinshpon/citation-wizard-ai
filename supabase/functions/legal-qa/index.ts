@@ -6370,10 +6370,10 @@ ${contractOn ? `═══ סימני הפניה ═══
 
 ═══ רשימת מקורות זמינים ═══
 כל מקור מתויג ב-{S#} ${contractOn ? "— זהו המזהה היחיד שתשתמש בו בסמני [cite:S#]" : "לחוזה ציטוט (Card→Claim)"}.
-${sourceCatalog}
+${drafterSourceCatalog}
 
 ═══ הקשר מהמקורות ═══
-${combinedContext}
+${drafterCombinedContext}
 
 ═══ תזכורת אחרונה ═══
 זהו מצב **${modeLabel}**: יעד ${wordMin}-${wordMax} מילים${researchDepth === "deep" ? `, רצפה קשיחה של ${fnFloor} ${contractOn ? "סמני [cite:S#]" : "הערות"} מעוגנים` : `, ${fnFloor}-${fnMax} ${contractOn ? "סמני [cite:S#]" : "הערות"} מעוגנים (מינימום ${fnFloor})`}.${contractOn ? ` **אין בלוק הערות שוליים ידני, אין [N], רק [cite:S#].** המערכת תבנה את הביבליוגרפיה אוטומטית.` : ` בלוק הערות שוליים בסוף. כל [N] בגוף חייב להיות מגובה בכרטיס מקור מהקטלוג. אל תמציא הערות.
