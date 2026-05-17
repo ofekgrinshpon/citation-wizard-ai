@@ -9734,6 +9734,19 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
           // + drop reasons. Instrumentation only — read with:
           //   select metadata->'retrieval_funnel' from qa_logs order by created_at desc limit 1;
           retrieval_funnel: retrievalFunnel,
+          // Phase 7 verification snapshot — persisted so post-run review
+          // doesn't need to grep edge logs. Null when verification didn't run.
+          claim_verification: phase7VerificationSummary
+            ? {
+                ...phase7VerificationSummary,
+                status: phase7VerificationStatus,
+                duration_ms: phase7VerificationDurationMs,
+                pruned_count: phase7PrunedSourceIds.length,
+                pruned_ids: phase7PrunedSourceIds,
+              }
+            : null,
+          // Coverage-gap metric (structured-drafter runs only).
+          coverage_gap: coverageGapMetric,
           // Per-doc rerank drop details (title + score + reason). Capped at 10.
           // Lets us validate the rerank gate against future runs without re-tracing.
           rerank_drops: rerankDrops,
