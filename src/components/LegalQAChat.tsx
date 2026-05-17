@@ -1753,7 +1753,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         signal: controller.signal,
       });
 
-      if (!res.ok) {
+      if (!res.ok && res.status !== 202) {
         if (res.status === 401) { setError("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש."); return; }
         if (res.status === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
         if (res.status === 402) { setError("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות."); return; }
@@ -1762,10 +1762,52 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
       // Parse the response. Streamed runs use the named-event SSE parser;
       // non-streamed (case_summary, pleading_analysis, …) fall back to JSON.
+      // Defensive Deep-async path: if backend returns 202 + run_id, poll
+      // legal-qa-status instead of waiting on the SSE socket (avoids 150s
+      // gateway cap). Primary SSE path is unchanged.
       let data: any;
       let effectiveStatus = res.status;
       const contentType = res.headers.get("content-type") || "";
-      if (useSseStream && contentType.includes("text/event-stream") && res.body) {
+
+      if (res.status === 202) {
+        const queued = await res.json().catch(() => ({}));
+        const runId = (queued?.run_id ?? queued?.runId) as string | undefined;
+        if (!runId) {
+          setError("השרת לא החזיר מזהה ריצה. נסו שוב.");
+          return;
+        }
+        try {
+          const { pollLegalQaStatus, CHECKPOINT_LABELS_HE } = await import("@/lib/legalQaPolling");
+          const final = await pollLegalQaStatus(runId, {
+            signal: controller.signal,
+            onUpdate: (snap) => {
+              const label = CHECKPOINT_LABELS_HE[snap.checkpoint ?? ""] ?? snap.checkpoint ?? "מעבד";
+              setPostProcessingLabel(label);
+            },
+          });
+          if (final.status === "failed") {
+            const reason = final.reason ?? "unknown_error";
+            const reasonHe: Record<string, string> = {
+              gateway_timeout: "תם הזמן הקצוב — נסו שוב או פנו לתמיכה.",
+              background_crash: "שגיאה פנימית בעיבוד — נסו שוב.",
+              polling_timeout: "המחקר נמשך זמן רב מדי. נסו שוב.",
+            };
+            setError(reasonHe[reason] ?? `הבקשה נכשלה (${reason}).`);
+            return;
+          }
+          data = {
+            answer: final.answer,
+            footnotes: final.footnotes ?? [],
+            metadata: final.metadata,
+          };
+          effectiveStatus = 200;
+        } catch (pollErr) {
+          if ((pollErr as Error).name === "AbortError") return;
+          console.error("Deep polling error:", pollErr);
+          setError("שגיאה במעקב אחר עיבוד הבקשה. נסו שוב.");
+          return;
+        }
+      } else if (useSseStream && contentType.includes("text/event-stream") && res.body) {
         const result = await consumeSseStream(res.body, {
           onStage: (e) => setStageEvents((prev) => [...prev, e]),
           onDraftDelta: (chunk) => setStreamingDraft((prev) => prev + chunk),
