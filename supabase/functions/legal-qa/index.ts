@@ -104,7 +104,7 @@ import {
   type VerificationSummary,
 } from "./claimVerification.ts";
 import { expandQuery, searchLegalChunksTextResilient } from "./queryExpansion.ts";
-import type { IssueMap, ClaimLedger, CandidateClaim, LegalSourcePack as _LegalSourcePackForRecall, LegalAuthorityClass as _LegalAuthorityClassForRecall } from "./contracts.ts";
+import type { IssueMap, ClaimLedger, CandidateClaim } from "./contracts.ts";
 
 // Single source of truth for the research-mode gate. The frontend currently
 // sends `taskMode: "research"`; if that ever changes, update this constant.
