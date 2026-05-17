@@ -137,35 +137,37 @@ export const CASELAW_DOMAINS: readonly string[] = [
   "din.org.il",
 ];
 
+// IMPORTANT: Perplexity's search_domain_filter is hard-capped at 20 entries.
+// Going over returns 400 and kills the call. Keep this list ≤ 20.
+// Subdomains are matched automatically by isTrustedLegalUrl, so do NOT list
+// both a parent and its child (e.g. knesset.gov.il already covers
+// main.knesset.gov.il and fs.knesset.gov.il).
 export const TRUSTED_LEGAL_DOMAINS: readonly string[] = [
-  // Caselaw — courts + major caselaw DBs
+  // Caselaw — courts + major caselaw DBs (7, from CASELAW_DOMAINS)
   ...CASELAW_DOMAINS,
-  // Legislation / official primary
-  "knesset.gov.il",
-  "main.knesset.gov.il",
+  // Legislation / official primary (3)
+  "knesset.gov.il",             // covers main.* and fs.* via subdomain match
   "reshumot.gov.il",            // official gazette (ס"ח / ק"ת)
   "justice.gov.il",             // AG opinions, legislative drafts
-  // Regulators / policy government bodies
+  // Regulators / policy government bodies (4)
   "mevaker.gov.il",             // State Comptroller
   "competition.gov.il",         // Competition Authority
-  "privacy.org.il",             // Privacy Protection Authority
   "tax.gov.il",                 // Tax Authority
   "mof.gov.il",                 // Ministry of Finance
-  // Research institutes & think tanks
+  // Research institutes & think tanks (2)
   "idi.org.il",                 // Israel Democracy Institute
-  "kohelet.org.il",             // Kohelet Policy Forum
-  "vanleer.org.il",             // Van Leer Institute
   "taubcenter.org.il",          // Taub Center
-  "inss.org.il",                // INSS — national security research
-  // Academic primary (Israeli + international)
+  // Academic primary (2)
   "ssrn.com",                   // covers papers.ssrn.com via subdomain match
   "jstor.org",
-  "scholar.google.com",
-  // Jewish law / classical sources
+  // Jewish law / classical sources (2)
   "daat.ac.il",
-  "hebrewbooks.org",
   "sefaria.org",
 ];
+
+// Hard cap for Perplexity API: search_domain_filter rejects >20 entries.
+// Defensive slice in case the list above is ever inadvertently expanded.
+export const PERPLEXITY_DOMAIN_FILTER: readonly string[] = TRUSTED_LEGAL_DOMAINS.slice(0, 20);
 
 // Set form for fast hostname matching in the Milestone B URL allowlist guard.
 const TRUSTED_LEGAL_DOMAINS_SET = new Set(TRUSTED_LEGAL_DOMAINS);
@@ -692,7 +694,7 @@ async function runPerplexityCompletion(
       signal: ctrl.signal,
       body: JSON.stringify({
         model: "sonar-pro",
-        search_domain_filter: TRUSTED_LEGAL_DOMAINS,
+        search_domain_filter: PERPLEXITY_DOMAIN_FILTER,
         response_format: {
           type: "json_schema",
           json_schema: { name: "primary_sources", schema },
@@ -2584,7 +2586,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
                   { role: "system", content: "אתה מאתר מקורות משפטיים ישראליים. החזר רק JSON תקף לפי הסכמה." },
                   { role: "user", content: `מצא עד 6 מקורות משפטיים ישראליים רלוונטיים (חקיקה, פסיקה, מאמרים אקדמיים) לנושא:\n${question.slice(0, 800)}\n\nהחזר JSON עם המפתח sources.` },
                 ],
-                search_domain_filter: [...CASELAW_DOMAINS, "tau.ac.il", "huji.ac.il"],
+                search_domain_filter: [...CASELAW_DOMAINS],
                 response_format: {
                   type: "json_schema",
                   json_schema: {
@@ -3759,7 +3761,7 @@ ${(verify.fullText as string).slice(0, 50000)}
             },
             body: JSON.stringify({
               model: "sonar-pro",
-              search_domain_filter: TRUSTED_LEGAL_DOMAINS,
+              search_domain_filter: PERPLEXITY_DOMAIN_FILTER,
               messages: attempt.messages,
             }),
           }, attempt.timeoutMs);
@@ -7693,7 +7695,7 @@ isCombinedVersion=true אם החוק הוא בנוסח משולב.
                   signal: ctrl.signal,
                   body: JSON.stringify({
                     model: "sonar-pro",
-                    search_domain_filter: TRUSTED_LEGAL_DOMAINS,
+                    search_domain_filter: PERPLEXITY_DOMAIN_FILTER,
                     response_format: { type: "json_schema", json_schema: { name: "statute_completion_single", schema: singleSchema } },
                     messages: [
                       { role: "system", content: systemPrompt },

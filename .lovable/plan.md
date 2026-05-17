@@ -1,39 +1,29 @@
-## Delete recent broken caselaw ingest
+**Plan**
 
-The May 14 crawl inserted **2,364 caselaw documents** with avg 65-char content (title-only stubs — no extracted body text). Deleting them and their chunks so you can re-ingest after fixing the scraper.
+1. **Fix the real Perplexity failure**
+   - The current `TRUSTED_LEGAL_DOMAINS` list is still over Perplexity’s 20-domain hard limit, so the main Perplexity call still fails with `search_domain_filters has a max length of 20`.
+   - I will reduce the actual runtime list to exactly 20 domains, not just the documented list.
+   - I will also remove redundant subdomains where the parent domain already covers them, especially:
+     - `main.knesset.gov.il` because `knesset.gov.il` covers it
+     - `lite.takdin.co.il` because `takdin.co.il` covers it
 
-### Scope (verified)
+2. **Keep your requested removals enforced**
+   - Ensure these remain excluded from the main trusted list:
+     - `tau.ac.il`
+     - `huji.ac.il`
+     - `fs.knesset.gov.il` / the typo version you wrote is not present either
+   - Update the stale code comments that still say `tau.ac.il` is included.
 
-```
-SELECT date_trunc('day', created_at), COUNT(*), AVG(length(content))
-FROM legal_documents WHERE source_type='caselaw' GROUP BY 1;
+3. **Make Perplexity search less fragile**
+   - Replace all `search_domain_filter: TRUSTED_LEGAL_DOMAINS` calls with a capped 20-domain constant so a future accidental addition cannot break the API again.
+   - Keep the broader allowlist check separate if needed, but never send more than 20 entries to Perplexity.
 
- 2026-05-14 →  2,364 rows, avg   65 chars   ← DELETE
- 2026-04-14 →    573 rows, avg  427 chars   ← keep
- 2026-04-09 → 10,895 rows, avg 9,910 chars  ← keep
- 2026-04-08 →     11 rows, avg 108k chars   ← keep
-```
+4. **Improve why only 4 weak sources survive**
+   - The logs show Perplexity returned zero because of the 400 error, then local retrieval found sources but the reranker/pruning path reduced the final usable set.
+   - I will adjust the source-pack path so URL-only Perplexity citations, once the API works again, can contribute as citation anchors instead of being ignored as weak external references.
+   - I will keep citation safety guards intact: no blogs/law-firm sites, no broad `court.gov.il`, no hallucinated citation fields.
 
-### Steps
-
-1. **Snapshot the doomed IDs** into a temp list (single SELECT, for the log):
-   `SELECT id, title FROM legal_documents WHERE source_type='caselaw' AND created_at::date = '2026-05-14' AND length(content) < 200;`
-2. **Delete chunks first** (no FK cascade exists):
-   `DELETE FROM legal_document_chunks WHERE document_id IN (SELECT id FROM legal_documents WHERE source_type='caselaw' AND created_at::date='2026-05-14' AND length(content) < 200);`
-3. **Delete documents:**
-   `DELETE FROM legal_documents WHERE source_type='caselaw' AND created_at::date='2026-05-14' AND length(content) < 200;`
-4. **Verify:** re-run the daily-count query — May 14 bucket should be 0 (or only rows with real content if any slipped through with ≥200 chars).
-
-### Safety guards
-
-- `length(content) < 200` filter protects any May 14 row that *did* get full text (none expected, but cheap insurance).
-- Chunks for these docs have `embedding IS NULL`, so no vector index bloat to worry about.
-- No `verified_sources` / `qa_logs` / `citation_history` rows reference `legal_documents.id` by FK, so no cascade collateral.
-
-### Not in scope
-
-- Scraper fix (you're handling).
-- Re-ingest (will run via existing `apify-ingest-cases` after your fix).
-- Embedding batch (deferred until real content lands).
-
-Tool: this is a data delete, so it runs through `supabase--insert` (DML), not a migration.
+5. **Validate after changes**
+   - Count the exact outgoing Perplexity domain list and confirm it is 20 or fewer.
+   - Re-check the logs/code paths for the same query class to confirm the previous 400 error cannot recur.
+   - Update the project memory note so future changes do not reintroduce the over-limit list.
