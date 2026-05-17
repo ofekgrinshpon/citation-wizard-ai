@@ -103,6 +103,7 @@ import {
   pruneSourcePackByLedger,
   type VerificationSummary,
 } from "./claimVerification.ts";
+import { expandQuery, searchLegalChunksTextResilient } from "./queryExpansion.ts";
 import type { IssueMap, ClaimLedger, CandidateClaim } from "./contracts.ts";
 
 // Single source of truth for the research-mode gate. The frontend currently
@@ -845,7 +846,7 @@ interface SourcePackEntry {
   source_type: string;
   authority_class: AuthorityClass;
   url?: string;
-  provenance: "local" | "perplexity" | "perplexity_completion" | "document";
+  provenance: "local" | "perplexity" | "perplexity_completion" | "claim_verified_recall" | "document";
   excerpt: string;
   case_number?: string;
   usable_for_analysis: boolean;
@@ -1146,7 +1147,7 @@ interface SourceCard {
   citation: string;
   source_type: string;
   url?: string;
-  provenance: "local" | "perplexity" | "perplexity_completion" | "document";
+  provenance: "local" | "perplexity" | "perplexity_completion" | "claim_verified_recall" | "document";
   excerpt: string;
   case_number?: string;
   /** Retrieval-stage similarity score (0–1). Local cards only. */
@@ -3000,12 +3001,22 @@ ${(verify.fullText as string).slice(0, 50000)}
       source_cards_local: FunnelStage;
       drop_reasons: Record<string, number>;
       rerank_dropped_docs: Array<{ title: string; source_type: string; score: number; reason: string }>;
+      // Recall-vs-Proof telemetry.
+      expanded_queries?: string[];
+      lexical_fallback_used?: "none" | "rpc_expanded" | "trigram" | "ilike";
+      vector_candidates_low_threshold?: number;
+      vector_candidates_promoted?: number;
+      candidates_recovered_by_claim_verification?: number;
+      candidates_dropped_tangential?: number;
+      supplementary_rejected_low_score?: number;
+      supplementary_rejected_no_claim_fit?: number;
       soft_min_supplementary?: {
         missing_types: string[];
         threshold: number;
         per_type_cap: number;
         considered_by_type: Record<string, number>;
         added_by_type: Record<string, number>;
+        disabled?: boolean;
       };
       // Milestone B — Stage E.5 Perplexity completion telemetry.
       perplexity_completion?: {
@@ -3041,6 +3052,14 @@ ${(verify.fullText as string).slice(0, 50000)}
       source_cards_local: newFunnelStage(),
       drop_reasons: {},
       rerank_dropped_docs: [],
+      expanded_queries: [],
+      lexical_fallback_used: "none",
+      vector_candidates_low_threshold: 0,
+      vector_candidates_promoted: 0,
+      candidates_recovered_by_claim_verification: 0,
+      candidates_dropped_tangential: 0,
+      supplementary_rejected_low_score: 0,
+      supplementary_rejected_no_claim_fit: 0,
     };
     const bumpDrop = (reason: string, n = 1) => {
       retrievalFunnel.drop_reasons[reason] = (retrievalFunnel.drop_reasons[reason] || 0) + n;
@@ -3372,14 +3391,37 @@ ${(verify.fullText as string).slice(0, 50000)}
         const planQueriesUnique = Array.from(
           new Set(planQueries.map((q) => q.trim()).filter(Boolean)),
         );
+
+        // ── Recall-vs-Proof: doctrine-aware query expansion ──────────────
+        // Expand the user's question with hand-curated doctrine synonyms
+        // (e.g. "צו מניעה זמני" → "מאזן הנוחות", "סיכויי ההליך", "ראיות
+        // לכאורה"). Cap at MAX_EXPANSIONS=6 inside the module. Expansions
+        // widen RECALL only; nothing enters the SourcePack without passing
+        // Claim Verification downstream.
+        const lexicalSynonymsFromPlan = Array.isArray(
+          (planForRetrieval as unknown as { lexical_synonyms?: string[] })?.lexical_synonyms,
+        )
+          ? (planForRetrieval as unknown as { lexical_synonyms?: string[] }).lexical_synonyms!
+          : [];
+        const expansion = expandQuery({
+          userQuestion: question,
+          mainIssue: planForRetrieval?.decomposition?.main_issue as string | undefined,
+          plannerSynonyms: lexicalSynonymsFromPlan,
+        });
+        retrievalFunnel.expanded_queries = expansion.expandedQueries.slice(0, 6);
+        console.log(`[query-expansion] source=${expansion.source} doctrineHits=[${expansion.doctrineHits.join(",")}] queries=${expansion.expandedQueries.length}`);
+
         const reservedSlots = 1 + (expandedQuery ? 1 : 0); // question + maybe expansion
         const planSlots = Math.max(0, MAX_PARALLEL_VECTOR_QUERIES - reservedSlots);
         const planQueriesCapped = planQueriesUnique.slice(0, planSlots);
+        // Doctrine-expanded queries (drop the original — it's already first).
+        const doctrineExpansions = expansion.expandedQueries.slice(1);
         const queriesForEmbedding = [
           question,
           ...(expandedQuery ? [expandedQuery] : []),
           ...planQueriesCapped,
-        ];
+          ...doctrineExpansions,
+        ].slice(0, MAX_PARALLEL_VECTOR_QUERIES + doctrineExpansions.length); // doctrine queries are additive
         if (planQueriesCapped.length > 0) {
           console.log(`[plan] adding ${planQueriesCapped.length} sub-issue queries to vector search (capped at ${MAX_PARALLEL_VECTOR_QUERIES} total parallel; ${planQueriesUnique.length - planQueriesCapped.length} dropped)`);
         } else if (decompPromise) {
@@ -3499,7 +3541,30 @@ ${(verify.fullText as string).slice(0, 50000)}
           console.log(`Caselaw-filtered vector search: ${caselawMatches.length} chunks`);
         }
 
-        const keywordMatches: LocalMatch[] = (!keywordResult.error && keywordResult.data) ? keywordResult.data : [];
+        let keywordMatches: LocalMatch[] = (!keywordResult.error && keywordResult.data) ? keywordResult.data : [];
+
+        // Recall-vs-Proof: Hebrew lexical fallback when search_legal_chunks_text
+        // returns 0. Tries expanded RPC → trigram → ILIKE in that order.
+        if (keywordMatches.length === 0) {
+          try {
+            const fb = await searchLegalChunksTextResilient({
+              adminClient: adminClient as unknown as Parameters<typeof searchLegalChunksTextResilient>[0]["adminClient"],
+              originalQuery: keywords,
+              expandedQueries: retrievalFunnel.expanded_queries ?? [],
+              matchCount: 15,
+            });
+            if (fb.rows.length > 0) {
+              keywordMatches = fb.rows as LocalMatch[];
+              retrievalFunnel.lexical_fallback_used = fb.level;
+              console.log(`[lexical-fallback] level=${fb.level} rows=${fb.rows.length}`);
+            } else {
+              retrievalFunnel.lexical_fallback_used = "none";
+              console.log(`[lexical-fallback] exhausted — 0 rows`);
+            }
+          } catch (e) {
+            console.error(`[lexical-fallback] failed (non-fatal):`, e);
+          }
+        }
 
         // Surface RPC errors instead of silently dropping
         for (const r of vectorResults) {
@@ -3528,24 +3593,34 @@ ${(verify.fullText as string).slice(0, 50000)}
         }
         vectorMatches = Array.from(vecMap.values());
 
-        // Safety-net: if 0 vector hits at 0.45, retry once at 0.35 with the first available embedding
-        if (vectorMatches.length === 0) {
+        // ── Recall-vs-Proof: low-threshold CANDIDATE pool ──────────────────
+        // Separate pool at threshold 0.35 / match_count 25 used for RECALL
+        // only. Items here do NOT enter the SourcePack directly. They are
+        // verified against Candidate Claims downstream and only direct /
+        // partial supporters are promoted (provenance=claim_verified_recall).
+        const candidatePoolRaw: LocalMatch[] = [];
+        try {
           const firstEmbedding = vectorResults.find(r => r.embedding)?.embedding;
           if (firstEmbedding) {
-            console.log("Vector search safety-net retry at threshold 0.35");
-            const retry = await adminClient.rpc("match_legal_chunks", {
+            const lowRes = await adminClient.rpc("match_legal_chunks", {
               query_embedding: JSON.stringify(firstEmbedding),
               match_threshold: 0.35,
-              match_count: 8,
+              match_count: 25,
             });
-            if (retry.error) {
-              console.error(`Safety-net match_legal_chunks RPC error: ${retry.error.message || JSON.stringify(retry.error)}`);
-            } else if (retry.data) {
-              vectorMatches = retry.data as LocalMatch[];
-              console.log(`Safety-net returned ${vectorMatches.length} chunks at threshold 0.35`);
+            if (!lowRes.error && Array.isArray(lowRes.data)) {
+              const inMerged = new Set(vectorMatches.map(m => m.chunk_id));
+              for (const m of lowRes.data as LocalMatch[]) {
+                if (!inMerged.has(m.chunk_id)) candidatePoolRaw.push(m);
+              }
+              console.log(`[candidate-pool] vector recall @0.35: total=${(lowRes.data as LocalMatch[]).length} fresh=${candidatePoolRaw.length}`);
+            } else if (lowRes.error) {
+              console.error(`[candidate-pool] RPC error:`, lowRes.error);
             }
           }
+        } catch (e) {
+          console.error(`[candidate-pool] failed (non-fatal):`, e);
         }
+        retrievalFunnel.vector_candidates_low_threshold = candidatePoolRaw.length;
 
         // Diagnostic: top-3 raw vector similarities
         const topVectorSims = [...vectorMatches]
