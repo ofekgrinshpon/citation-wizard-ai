@@ -226,27 +226,54 @@ export async function verifyClaimsAgainstPack(args: {
     };
   }
 
-  const { data, run } = await callPlannerJSON<{
-    scores: Array<{ claim_id: string; source_id: string; score: string; rationale: string }>;
-  }>(
-    SYSTEM_PROMPT,
-    buildUserPrompt(claims, views),
-    TOOL,
-    {
-      stage: "claim_verification",
-      timeoutMs: 30000,
-      reasoningEffort: "low",
-      forceProvider: "gemini",
-    },
-  );
+  // Pass A: batch verification to avoid 30s timeout on large packs.
+  // Split sources into batches of ≤BATCH_SIZE; each batch gets its own
+  // ≤20s budget. Merge scores. Track per-batch success so callers can
+  // distinguish "fully failed" (all batches errored → safe to keep
+  // standard cards) from "partial" (still trustworthy enough to prune).
+  const BATCH_SIZE = 8;
+  const BATCH_TIMEOUT_MS = 20000;
+  const batches: PackItemView[][] = [];
+  for (let i = 0; i < views.length; i += BATCH_SIZE) {
+    batches.push(views.slice(i, i + BATCH_SIZE));
+  }
 
   const claimIds = new Set(claims.map((c) => c.id));
   const sourceIds = new Set(views.map((v) => v.id));
-
   const hitsByClaim = new Map<string, ClaimRelevanceHit[]>();
   for (const c of claims) hitsByClaim.set(c.id, []);
 
-  if (data && Array.isArray(data.scores)) {
+  const batchStartedAt = new Date().toISOString();
+  const batchT0 = Date.now();
+  let succeededBatches = 0;
+  let failedBatches = 0;
+  let lastRun: StageRun | null = null;
+  let lastModel = "unknown";
+  let lastProvider: "openai" | "gemini" = "gemini";
+
+  for (const batch of batches) {
+    const { data, run } = await callPlannerJSON<{
+      scores: Array<{ claim_id: string; source_id: string; score: string; rationale: string }>;
+    }>(
+      SYSTEM_PROMPT,
+      buildUserPrompt(claims, batch),
+      TOOL,
+      {
+        stage: "claim_verification",
+        timeoutMs: BATCH_TIMEOUT_MS,
+        reasoningEffort: "low",
+        forceProvider: "gemini",
+      },
+    );
+    lastRun = run;
+    lastModel = run.model;
+    lastProvider = run.provider as "openai" | "gemini";
+
+    if (run.status !== "success" || !data || !Array.isArray(data.scores)) {
+      failedBatches++;
+      continue;
+    }
+    succeededBatches++;
     for (const s of data.scores) {
       if (!s || typeof s !== "object") continue;
       const cid = typeof s.claim_id === "string" ? s.claim_id : "";
@@ -324,7 +351,25 @@ export async function verifyClaimsAgainstPack(args: {
   // idMap available for callers that want to inspect items by id
   void idMap;
 
-  return { ledger: { claims: ledgerClaims }, summary, run };
+  // Synthesise an aggregate StageRun from the per-batch runs. Status is
+  // "success" iff at least one batch produced scores; "error" only when
+  // ALL batches failed (caller uses this to decide whether to keep
+  // standard-retrieval cards on timeout).
+  const aggregateRun: StageRun = {
+    stage: "claim_verification",
+    provider: lastProvider,
+    model: lastModel,
+    started_at: batchStartedAt,
+    completed_at: new Date().toISOString(),
+    duration_ms: Date.now() - batchT0,
+    status: succeededBatches > 0 ? "success" : "error",
+    error_message:
+      failedBatches > 0
+        ? `batches: ${succeededBatches} ok / ${failedBatches} failed`
+        : undefined,
+  };
+  void lastRun; // last run preserved through aggregate
+  return { ledger: { claims: ledgerClaims }, summary, run: aggregateRun };
 }
 
 /**
@@ -353,10 +398,16 @@ export function buildClaimLedgerPromptBlock(ledger: ClaimLedger): string {
  * Apply the Claim Ledger as a hard filter on the source pack: any pack item
  * not referenced by at least one supported/partially_supported claim is
  * removed. Statutory primary legislation kept as anchor (citation hygiene).
+ *
+ * @param opts.restrictToCandidateRecall - when true, ONLY prune items whose
+ *   provenanceInternal is "claim_verified_recall". Standard-retrieval cards
+ *   (local / perplexity / document) are kept as-is. Used on verification
+ *   timeout to avoid nuking legitimately-retrieved cards.
  */
 export function pruneSourcePackByLedger(
   pack: LegalSourcePack,
   ledger: ClaimLedger,
+  opts: { restrictToCandidateRecall?: boolean } = {},
 ): { pruned: LegalSourcePack; removedIds: string[] } {
   const keepIds = new Set<string>();
   for (const c of ledger.claims) {
@@ -374,6 +425,12 @@ export function pruneSourcePackByLedger(
         item.authorityClass === "user_document"
       ) {
         return true;
+      }
+      // Pass A safe-prune mode: only candidate-pool entries are subject to
+      // pruning. Standard cards survive whether or not verification reached
+      // them. Caller invokes this branch when verification timed out.
+      if (opts.restrictToCandidateRecall) {
+        if (item.provenanceInternal !== "claim_verified_recall") return true;
       }
       if (keepIds.has(id)) return true;
       removed.push(id);

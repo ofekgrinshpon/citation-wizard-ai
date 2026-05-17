@@ -3007,6 +3007,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       vector_candidates_low_threshold?: number;
       vector_candidates_promoted?: number;
       candidates_recovered_by_claim_verification?: number;
+      candidates_kept_unverified?: number;
       candidates_dropped_tangential?: number;
       supplementary_rejected_low_score?: number;
       supplementary_rejected_no_claim_fit?: number;
@@ -3057,6 +3058,7 @@ ${(verify.fullText as string).slice(0, 50000)}
       vector_candidates_low_threshold: 0,
       vector_candidates_promoted: 0,
       candidates_recovered_by_claim_verification: 0,
+      candidates_kept_unverified: 0,
       candidates_dropped_tangential: 0,
       supplementary_rejected_low_score: 0,
       supplementary_rejected_no_claim_fit: 0,
@@ -3425,12 +3427,17 @@ ${(verify.fullText as string).slice(0, 50000)}
         const planQueriesCapped = planQueriesUnique.slice(0, planSlots);
         // Doctrine-expanded queries (drop the original — it's already first).
         const doctrineExpansions = expansion.expandedQueries.slice(1);
+        // Pass B: STRICT cap at MAX_PARALLEL_VECTOR_QUERIES. The previous
+        // `slice(0, MAX + doctrineExpansions.length)` made the cap a no-op
+        // and pushed 9 RPCs in parallel, triggering DB statement_timeout
+        // cascades (logs 2026-05-17). Doctrine queries now compete for the
+        // remaining slots only after question + expansion + plan queries.
         const queriesForEmbedding = [
           question,
           ...(expandedQuery ? [expandedQuery] : []),
           ...planQueriesCapped,
           ...doctrineExpansions,
-        ].slice(0, MAX_PARALLEL_VECTOR_QUERIES + doctrineExpansions.length); // doctrine queries are additive
+        ].slice(0, MAX_PARALLEL_VECTOR_QUERIES);
         if (planQueriesCapped.length > 0) {
           console.log(`[plan] adding ${planQueriesCapped.length} sub-issue queries to vector search (capped at ${MAX_PARALLEL_VECTOR_QUERIES} total parallel; ${planQueriesUnique.length - planQueriesCapped.length} dropped)`);
         } else if (decompPromise) {
@@ -3614,7 +3621,7 @@ ${(verify.fullText as string).slice(0, 50000)}
             const lowRes = await adminClient.rpc("match_legal_chunks", {
               query_embedding: JSON.stringify(firstEmbedding),
               match_threshold: 0.35,
-              match_count: 25,
+              match_count: 15,
             });
             if (!lowRes.error && Array.isArray(lowRes.data)) {
               const inMerged = new Set(vectorMatches.map(m => m.chunk_id));
@@ -5467,28 +5474,57 @@ ${(verify.fullText as string).slice(0, 50000)}
             `s=${vRes.summary.supported} p=${vRes.summary.partially_supported} u=${vRes.summary.unsupported}`);
           console.log(`[phase7:verification] supported=${vRes.summary.supported} partial=${vRes.summary.partially_supported} unsupported=${vRes.summary.unsupported} dropped_tangential=${vRes.summary.dropped_tangential} dropped_unrelated=${vRes.summary.dropped_unrelated} ms=${phase7VerificationDurationMs}`);
 
-          // Prune tangential/unrelated from the source pack (preserves
-          // primary_legislation + user_document for citation hygiene).
-          const { pruned, removedIds } = pruneSourcePackByLedger(sourcePackV2, phase7ClaimLedger);
+          // Pass A: on verification timeout (all batches failed), use
+          // safe-prune mode — only candidate-pool entries can be removed.
+          // Standard-retrieval cards already passed dedup+rerank+broken-title
+          // filter and stay in the pack with their original
+          // usable_for_analysis flag intact.
+          const verificationFailed = vRes.run.status !== "success";
+          const { pruned, removedIds } = pruneSourcePackByLedger(
+            sourcePackV2,
+            phase7ClaimLedger,
+            { restrictToCandidateRecall: verificationFailed },
+          );
           phase7PrunedSourceIds = removedIds;
           if (removedIds.length > 0) {
-            console.log(`[phase7:prune] removed ${removedIds.length} non-supporting sources: [${removedIds.join(",")}]`);
+            console.log(`[phase7:prune] mode=${verificationFailed ? "safe(candidate-only)" : "strict"} removed ${removedIds.length} sources: [${removedIds.join(",")}]`);
             sourcePackV2 = pruned;
           }
 
-          // Recall-vs-Proof telemetry: how many candidate-pool entries earned
-          // direct/partial support vs were pruned as tangential/unrelated.
+          // Recall-vs-Proof telemetry (honest version):
+          //   - candidates_recovered_by_claim_verification: counts only
+          //     candidate-pool ids that received direct_support or
+          //     partial_support from a claim (NOT the timeout-fallback path).
+          //   - candidates_kept_unverified: counts candidate-pool ids kept
+          //     because verification timed out and safe-prune ran instead.
+          //   - candidates_dropped_tangential: candidate-pool ids actually
+          //     pruned by either strict or safe mode.
           if (candidateRecallIds.size > 0) {
             const removedSet = new Set(removedIds.map(String));
+            const supportiveIds = new Set<string>();
+            for (const c of phase7ClaimLedger.claims) {
+              if (c.verdict === "supported" || c.verdict === "partially_supported") {
+                for (const sid of c.sourceIds) supportiveIds.add(String(sid));
+              }
+            }
             let recovered = 0;
+            let keptUnverified = 0;
             let dropped = 0;
             for (const cid of candidateRecallIds) {
-              if (removedSet.has(String(cid))) dropped++;
-              else recovered++;
+              const idStr = String(cid);
+              const contractIdStr = `src-${cid}`;
+              if (supportiveIds.has(idStr) || supportiveIds.has(contractIdStr)) {
+                recovered++;
+              } else if (removedSet.has(idStr) || removedSet.has(contractIdStr)) {
+                dropped++;
+              } else if (verificationFailed) {
+                keptUnverified++;
+              }
             }
             retrievalFunnel.candidates_recovered_by_claim_verification = recovered;
             retrievalFunnel.candidates_dropped_tangential = dropped;
-            console.log(`[recall-vs-proof] candidates: pool=${candidateRecallIds.size} recovered=${recovered} dropped_tangential=${dropped}`);
+            retrievalFunnel.candidates_kept_unverified = keptUnverified;
+            console.log(`[recall-vs-proof] candidates: pool=${candidateRecallIds.size} recovered=${recovered} kept_unverified=${keptUnverified} dropped_tangential=${dropped} (verification=${verificationFailed ? "failed" : "ok"})`);
           }
 
           phase7LedgerBlock = buildClaimLedgerPromptBlock(phase7ClaimLedger);
