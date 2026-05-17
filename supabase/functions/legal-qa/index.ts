@@ -4447,7 +4447,8 @@ ${(verify.fullText as string).slice(0, 50000)}
       emitStage("source_pack", "running");
       sourcePack = sourceCards.map((sc) => {
         const excerpt = sc.excerpt || "";
-        const anchorPresent = Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document";
+        const anchorPresent = Boolean(sc.url) || sc.provenance === "local" || sc.provenance === "document" || sc.provenance === "claim_verified_recall";
+        const isRecallCandidate = sc.provenance === "claim_verified_recall";
         return {
           source_id: sc.id,
           title: sc.citation,
