@@ -429,7 +429,7 @@ export async function retrieveClaims(
             });
           if (error) {
             const msg = String((error as any).message || "");
-            if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; rec.vec_status = "timeout"; }
+            if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; tele.vector_timeouts++; rec.vec_status = "timeout"; }
             else { tele.rpc_errors++; rec.vec_status = "error"; }
             console.error(`[retrieve_v2 fallback vec] "${claim.statement.slice(0,60)}": ${msg}`);
           } else {
