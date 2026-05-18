@@ -40,15 +40,38 @@ export interface LedgerEntry {
   sources: Array<Pick<
     ClaimCandidateSource,
     "id" | "chunkId" | "documentId" | "title" | "citation" | "sourceType" | "sourceUrl" | "excerpt"
-  > & { support: "direct" | "partial" }>;
+  > & { support: "direct" | "partial"; origin?: ClaimCandidateSource["origin"]; anchorId?: string }>;
   /** Short Hebrew note summarising why the claim survived. */
   evidenceNote: string;
+}
+
+export interface AnchorLifecycleClaim {
+  claim_id: string;
+  in_pool: number;
+  in_top5: number;
+  verified_direct: number;
+  verified_partial: number;
+  verified_tangential: number;
+  verified_unrelated: number;
+  cited: number;
+  /** Per-source breakdown (anchor-origin only): which anchor, what verdict, was it cited. */
+  candidates: Array<{
+    source_id: string;
+    anchor_id?: string;
+    document_id: string;
+    title: string;
+    in_top5: boolean;
+    verdict: V2RelevanceScore | "not_scored";
+    cited: boolean;
+  }>;
 }
 
 export interface Ledger {
   thesis?: string;
   entries: LedgerEntry[];
   dropped: Array<{ claimId: string; claim: string; reason: V2Verdict }>;
+  /** Per-claim anchor-origin candidate lifecycle (populated when AnswerMap fires). */
+  anchorLifecycle?: AnchorLifecycleClaim[];
 }
 
 const TOOL: PlannerToolDef = {
