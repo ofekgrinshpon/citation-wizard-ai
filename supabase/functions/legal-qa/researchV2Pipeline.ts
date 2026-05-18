@@ -16,7 +16,7 @@
 
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { buildResearchPlan, summarizeResearchPlan, type ResearchPlan } from "./researchPlan.ts";
-import { retrieveClaims, summarizeRetrieval, type ClaimCandidatePack, type RetrievalTelemetry } from "./claimRetrieval.ts";
+import { retrieveClaims, summarizeRetrieval, type ClaimCandidatePack, type ClaimCandidateSource, type RetrievalTelemetry } from "./claimRetrieval.ts";
 import { verifyAndBuildLedger, summarizeLedger, type Ledger } from "./ledger.ts";
 import { callDrafter } from "./aiProvider.ts";
 import {
