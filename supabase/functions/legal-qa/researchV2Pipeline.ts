@@ -59,6 +59,18 @@ export interface RunResearchV2Args {
   drafterTimeoutMs?: number;
   forceDrafterModel?: string | null;
   drafterMaxTokens?: number;
+  /**
+   * Optional promise resolving to externally-discovered doctrinal anchors
+   * (e.g. from V3 LegalResearchPlan). When provided, V2 awaits it after its
+   * own AnswerMap stage (bounded by `externalAnchorsTimeoutMs`) and merges
+   * non-duplicate anchors into the doctrinal pool BEFORE reconciliation.
+   * External anchors get fresh A-ids and behave identically to AnswerMap
+   * anchors from that point on (reconciliation → retrieval → lifecycle).
+   */
+  externalAnchorsPromise?: Promise<DoctrinalAnchor[]>;
+  externalAnchorsTimeoutMs?: number;
+  /** Source label for telemetry (`metadata.external_anchors.source`). */
+  externalAnchorsSource?: string;
 }
 
 export interface RunResearchV2Result {
