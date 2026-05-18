@@ -195,8 +195,8 @@ export async function buildResearchPlan(
       // claim_map stage name → routes to mini-class model in aiProvider.
       // ResearchPlan is roughly the same complexity (single-shot JSON tool-call).
       stage: "research_plan_v2",
-      timeoutMs: depth === "deep" ? 45000 : 25000,
-      reasoningEffort: depth === "deep" ? "low" : "minimal",
+      timeoutMs: depth === "deep" ? 90000 : 60000,
+      reasoningEffort: "minimal",
     },
   );
 
