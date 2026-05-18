@@ -88,6 +88,8 @@ export interface RetrieveClaimsArgs {
   anchorQueriesByClaim?: Map<string, string[]>;
   /** Parallel map of anchor IDs per claim (for telemetry tagging). */
   anchorIdsByClaim?: Map<string, string[]>;
+  /** Per-claim per-query anchor ownership (for precise candidate tagging). */
+  anchorQueryOwnersByClaim?: Map<string, Array<{ query: string; anchorId: string }>>;
   /** Score boost applied to anchor-origin candidates. Default 0.05. */
   anchorScoreBoost?: number;
 }
