@@ -27,7 +27,13 @@ import {
   buildFootnotes,
   type ContractSourceCard,
 } from "./cardClaimContract.ts";
-import { answerMapEnabled, buildAnswerMap, summarizeAnswerMap } from "./answerMap.ts";
+import {
+  answerMapEnabled,
+  buildAnswerMap,
+  summarizeAnswerMap,
+  type AnswerMap,
+  type DoctrinalAnchor,
+} from "./answerMap.ts";
 import { reconcileAnchors } from "./anchorReconciliation.ts";
 
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
@@ -53,6 +59,18 @@ export interface RunResearchV2Args {
   drafterTimeoutMs?: number;
   forceDrafterModel?: string | null;
   drafterMaxTokens?: number;
+  /**
+   * Optional promise resolving to externally-discovered doctrinal anchors
+   * (e.g. from V3 LegalResearchPlan). When provided, V2 awaits it after its
+   * own AnswerMap stage (bounded by `externalAnchorsTimeoutMs`) and merges
+   * non-duplicate anchors into the doctrinal pool BEFORE reconciliation.
+   * External anchors get fresh A-ids and behave identically to AnswerMap
+   * anchors from that point on (reconciliation → retrieval → lifecycle).
+   */
+  externalAnchorsPromise?: Promise<DoctrinalAnchor[]>;
+  externalAnchorsTimeoutMs?: number;
+  /** Source label for telemetry (`metadata.external_anchors.source`). */
+  externalAnchorsSource?: string;
 }
 
 export interface RunResearchV2Result {
@@ -82,6 +100,49 @@ function isBrokenSource(title: string, citation: string): boolean {
   const tStrip = t.replace(/\[חסר:[^\]]+\]/g, "").trim();
   if (!cStrip && !tStrip) return true;
   return false;
+}
+
+// ── External anchor merge ──────────────────────────────────────────
+// Dedupe key matches answerMap.sanitizeAnchorList: type|name(lower)|docket|section.
+function anchorDedupKey(a: { type: string; name: string; docket?: string; section?: string }): string {
+  return `${a.type}|${(a.name || "").trim().toLowerCase()}|${a.docket ?? ""}|${a.section ?? ""}`;
+}
+
+function mergeExternalAnchors(
+  base: AnswerMap | null,
+  external: DoctrinalAnchor[],
+): { answerMap: AnswerMap | null; added: number; deduped: number; addedIds: string[] } {
+  if (!external || external.length === 0) {
+    return { answerMap: base, added: 0, deduped: 0, addedIds: [] };
+  }
+  const existing = base?.doctrinal_anchors ?? [];
+  const seen = new Set(existing.map(anchorDedupKey));
+  const usedIds = new Set(existing.map((a) => a.id));
+  let nextIdx = existing.length;
+  const added: DoctrinalAnchor[] = [];
+  let deduped = 0;
+  for (const a of external) {
+    const key = anchorDedupKey(a);
+    if (seen.has(key)) { deduped++; continue; }
+    seen.add(key);
+    // Allocate a fresh A-id that doesn't collide with existing AnswerMap ids.
+    let id = a.id;
+    while (!id || usedIds.has(id)) {
+      nextIdx++;
+      id = `A${nextIdx}`;
+    }
+    usedIds.add(id);
+    added.push({ ...a, id });
+  }
+  if (added.length === 0) {
+    return { answerMap: base, added: 0, deduped, addedIds: [] };
+  }
+  const merged: AnswerMap = {
+    ...(base ?? { doctrinal_anchors: [], counter_anchors: [] }),
+    doctrinal_anchors: [...existing, ...added],
+    counter_anchors: base?.counter_anchors ?? [],
+  };
+  return { answerMap: merged, added: added.length, deduped, addedIds: added.map((a) => a.id) };
 }
 
 function dedupeSources(ledger: Ledger): SourceRecord[] {
@@ -213,6 +274,7 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
     string,
     { type: string; name: string; centrality: string; claim_id: string }
   >();
+  let answerMapForRecon: AnswerMap | null = null;
   if (answerMapEnabled()) {
     try {
       const amT0 = Date.now();
@@ -222,29 +284,70 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
         total_duration_ms: Date.now() - amT0,
         ...summarizeAnswerMap(amRes.answerMap),
       };
-      if (amRes.answerMap) {
-        const recon = reconcileAnchors({ plan, answerMap: amRes.answerMap, depth: "deep" });
-        metadata.anchor_reconciliation = recon.telemetry;
-        if (recon.byClaim.size > 0) {
-          anchorQueriesByClaim = recon.byClaim;
-          anchorIdsByClaim = recon.anchorsByClaim;
-          anchorQueryOwnersByClaim = recon.queryOwnersByClaim;
-        }
-        // Index anchors → claim attachment for missing_expected_anchors.
-        for (const att of recon.telemetry.attachments) {
-          const a = amRes.answerMap.doctrinal_anchors.find((x) => x.id === att.anchor_id);
-          if (a) {
-            anchorsById.set(a.id, {
-              type: a.type, name: a.name, centrality: a.centrality, claim_id: att.claim_id,
-            });
-          }
-        }
-      }
+      answerMapForRecon = amRes.answerMap;
     } catch (e) {
       metadata.answer_map_error = (e as Error).message ?? String(e);
     }
   } else {
     metadata.answer_map = { status: "skipped_disabled" };
+  }
+
+  // ── Stage 1.6: External anchor merge (e.g. V3 LegalResearchPlan) ──
+  // Awaits an externally-supplied DoctrinalAnchor[] (V3 expected_anchors,
+  // converted to V2 shape upstream) and merges non-duplicates into the
+  // doctrinal pool BEFORE reconciliation. This routes V3 anchors through
+  // the existing retrieval / lifecycle / missing_expected machinery
+  // without a parallel retrieval track.
+  if (args.externalAnchorsPromise) {
+    const extT0 = Date.now();
+    const extTimeoutMs = args.externalAnchorsTimeoutMs ?? 5000;
+    let externalAnchors: DoctrinalAnchor[] = [];
+    let extStatus: "ok" | "timeout" | "error" | "empty" = "empty";
+    let extError: string | undefined;
+    try {
+      externalAnchors = await Promise.race([
+        args.externalAnchorsPromise,
+        new Promise<DoctrinalAnchor[]>((_, rej) =>
+          setTimeout(() => rej(new Error("external_anchors_timeout")), extTimeoutMs)
+        ),
+      ]);
+      extStatus = externalAnchors.length > 0 ? "ok" : "empty";
+    } catch (e) {
+      const msg = (e as Error).message ?? String(e);
+      extStatus = /timeout/i.test(msg) ? "timeout" : "error";
+      extError = msg;
+    }
+    const merged = mergeExternalAnchors(answerMapForRecon, externalAnchors);
+    answerMapForRecon = merged.answerMap;
+    metadata.external_anchors = {
+      source: args.externalAnchorsSource ?? "external",
+      status: extStatus,
+      duration_ms: Date.now() - extT0,
+      supplied: externalAnchors.length,
+      added: merged.added,
+      deduped: merged.deduped,
+      added_ids: merged.addedIds,
+      ...(extError ? { error: extError } : {}),
+    };
+  }
+
+  if (answerMapForRecon) {
+    const recon = reconcileAnchors({ plan, answerMap: answerMapForRecon, depth: "deep" });
+    metadata.anchor_reconciliation = recon.telemetry;
+    if (recon.byClaim.size > 0) {
+      anchorQueriesByClaim = recon.byClaim;
+      anchorIdsByClaim = recon.anchorsByClaim;
+      anchorQueryOwnersByClaim = recon.queryOwnersByClaim;
+    }
+    // Index anchors → claim attachment for missing_expected_anchors.
+    for (const att of recon.telemetry.attachments) {
+      const a = answerMapForRecon.doctrinal_anchors.find((x) => x.id === att.anchor_id);
+      if (a) {
+        anchorsById.set(a.id, {
+          type: a.type, name: a.name, centrality: a.centrality, claim_id: att.claim_id,
+        });
+      }
+    }
   }
 
   // ── Stage 2: Per-claim retrieval ───────────────────────────────────
