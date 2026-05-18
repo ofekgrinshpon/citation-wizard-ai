@@ -5,7 +5,7 @@ import { useOffice } from "@/hooks/useOffice";
 import { ReLexLogo } from "@/components/ReLexLogo";
 import { GeometricBackground } from "@/components/GeometricBackground";
 import { signInWithOfficeDialog } from "@/lib/officeAuth";
-import { isCanonicalHost, PUBLIC_SITE_URL } from "@/lib/publicUrl";
+import { isCanonicalHost, PUBLIC_SITE_URL, shouldRedirectOAuthToCanonicalHost } from "@/lib/publicUrl";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
 
@@ -207,7 +207,7 @@ const Auth = () => {
                 try {
                   // Force OAuth to start from the canonical ReLex domain so users
                   // never see the oauth.lovable.app broker flash on preview hosts.
-                  if (!isCanonicalHost()) {
+                  if (shouldRedirectOAuthToCanonicalHost()) {
                     const params = new URLSearchParams();
                     params.set("mode", isLogin ? "login" : "signup");
                     if (refCode) params.set("ref", refCode);
