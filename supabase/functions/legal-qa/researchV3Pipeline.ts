@@ -49,35 +49,65 @@ const V3_TO_V2_CENTRALITY = {
 } as const;
 
 /**
- * Convert a V3 ExpectedAnchor into 1–3 concrete Hebrew search queries that
- * V2 retrieval can execute against local DB + Perplexity. Mirrors the
- * shape that AnswerMap's sanitizer enforces (≥3 chars, ≤160 chars, ≤3).
+ * Step 2.1 — Short, tight queries optimised for FTS hit rate.
+ *
+ *   • leading_case      → docket-only first (e.g. `ע"א 6821/93`), then a
+ *                         short party name (e.g. `בנק המזרחי`) without the
+ *                         long "...בע"מ נ' שר האוצר" trailer that starves
+ *                         the text index.
+ *   • statute / basic   → short title + short section, e.g.
+ *     law / regulation    `חוק-יסוד: כבוד האדם וחירותו סעיף 8`
+ *                         and the bare short title as a backup.
+ *   • academic / other  → just the short name.
+ *
+ * Cap: 2 queries per anchor (was 3); each ≤120 chars (was 160). Hebrew
+ * tokens are heavy in the FTS pipeline — shorter is better.
  */
+function shortCaseName(name: string, docket: string): string {
+  // Strip the docket if it was embedded in the name. Then take the head of
+  // the party name up to "נ'" / "נ' " / "בע"מ" / first comma.
+  let n = (name || "").trim();
+  if (docket) n = n.replace(docket, "").trim();
+  // Cut at "נ'" / "נ׳" / " נ " (the "vs.") — keep only the first party.
+  n = n.split(/\s+נ['׳]\s+/)[0];
+  // Cut at "בע"מ" / "בע״מ" — drop corporate trailer for FTS.
+  n = n.split(/\s+בע["״]מ/)[0];
+  // Cut at first comma (publication ref).
+  n = n.split(",")[0];
+  return n.trim().slice(0, 60);
+}
+
+function shortStatuteName(name: string): string {
+  // Drop the trailing ", התש...-YYYY" tail and any "ס"ח" reference. Keeps
+  // the canonical short title (e.g. `חוק-יסוד: כבוד האדם וחירותו`).
+  let n = (name || "").trim();
+  n = n.split(",")[0];
+  n = n.replace(/\s+ס["״]ח.*$/i, "").replace(/\s+ק["״]ת.*$/i, "");
+  return n.trim().slice(0, 80);
+}
+
 function buildAnchorQueries(a: V3ExpectedAnchor): string[] {
   const queries = new Set<string>();
   const name = (a.name || "").trim();
   const docket = (a.docket || "").trim();
   const section = (a.section || "").trim();
 
-  if (a.type === "leading_case" && docket) {
-    // Docket-first query is the strongest signal for case retrieval.
-    queries.add(docket.slice(0, 160));
-    if (name) {
-      // Combined docket + party name (deduped via the regex below).
-      const combo = `${docket} ${name.replace(docket, "").trim()}`.trim();
-      if (combo.length >= 3) queries.add(combo.slice(0, 160));
+  if (a.type === "leading_case") {
+    // 1. Docket-only — tightest possible FTS signal for caselaw.
+    if (docket) queries.add(docket.slice(0, 60));
+    // 2. Short party name as backup (no "נ'", no "בע"מ", no publication tail).
+    const shortName = shortCaseName(name, docket);
+    if (shortName.length >= 3) queries.add(shortName);
+  } else if (a.type === "statute_section" || a.type === "basic_law_section" || a.type === "regulation") {
+    const shortName = shortStatuteName(name);
+    if (shortName && section) {
+      queries.add(`${shortName} סעיף ${section}`.slice(0, 120));
     }
-  } else if (
-    (a.type === "statute_section" || a.type === "basic_law_section" || a.type === "regulation")
-    && section
-  ) {
-    // "סעיף N לחוק X" canonical form.
-    queries.add(`סעיף ${section} ל${name}`.slice(0, 160));
-    queries.add(name.slice(0, 160));
+    if (shortName) queries.add(shortName);
   } else if (name) {
-    queries.add(name.slice(0, 160));
+    queries.add(shortStatuteName(name));
   }
-  return [...queries].filter((q) => q.trim().length >= 3).slice(0, 3);
+  return [...queries].filter((q) => q.trim().length >= 3).slice(0, 2);
 }
 
 function convertV3AnchorsToV2(plan: LegalResearchPlanV3 | null): DoctrinalAnchor[] {
