@@ -259,7 +259,11 @@ export async function retrieveClaims(
   const { adminClient, claims, depth, embed } = args;
   const perClaimCap = args.perClaimCap ?? (depth === "deep" ? 8 : 6);
   const maxConcurrency = args.maxConcurrency ?? 3;
+  const anchorQueriesByClaim = args.anchorQueriesByClaim;
+  const anchorIdsByClaim = args.anchorIdsByClaim;
+  const anchorScoreBoost = args.anchorScoreBoost ?? 0.05;
   const t0 = Date.now();
+
 
   // ── Plan ─────────────────────────────────────────────────────────────
   // One text query per claim, one vector query per claim. Dedup by
