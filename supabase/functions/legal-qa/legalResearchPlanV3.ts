@@ -172,7 +172,7 @@ export async function buildLegalResearchPlanV3(
     TOOL,
     {
       stage: "legal_research_plan_v3",
-      timeoutMs: 45000,
+      timeoutMs: 75000,
       reasoningEffort: "minimal",
     },
   );
