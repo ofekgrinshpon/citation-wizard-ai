@@ -533,6 +533,12 @@ export async function retrieveClaims(
     for (const claim of claims) {
       const queries = anchorQueriesByClaim.get(claim.id) ?? [];
       const anchorIdsForClaim = anchorIdsByClaim?.get(claim.id) ?? [];
+      const ownersForClaim = anchorQueryOwnersByClaim?.get(claim.id) ?? [];
+      // Build query→anchorId lookup (normalized).
+      const ownerByNorm = new Map<string, string>();
+      const normalize = (s: string) => s.normalize("NFKC").replace(/\s+/g, " ").trim().toLowerCase();
+      for (const o of ownersForClaim) ownerByNorm.set(normalize(o.query), o.anchorId);
+
       if (queries.length === 0) {
         anchorTele.per_claim.push({ claim_id: claim.id, anchor_candidates: 0, anchor_ids: anchorIdsForClaim });
         continue;
@@ -540,6 +546,7 @@ export async function retrieveClaims(
       const entry = packMap.get(claim.id)!;
       const before = entry.byChunk.size;
       for (const rawQ of queries) {
+        const queryAnchorId = ownerByNorm.get(normalize(rawQ)) ?? anchorIdsForClaim[0];
         const q = rawQ.length > TEXT_QUERY_MAX_CHARS
           ? (strongTokens(rawQ, 3).join(" ") || rawQ.slice(0, TEXT_QUERY_MAX_CHARS))
           : rawQ;
@@ -568,10 +575,15 @@ export async function retrieveClaims(
             const score = Math.min(1, rawScore + anchorScoreBoost);
             const prev = entry.byChunk.get(h.chunk_id);
             if (prev) {
+              // Promote to anchor origin if this query's boosted score is higher,
+              // OR if the prior origin isn't anchor (always prefer recording anchor provenance).
               if (score > prev.score) {
                 prev.score = score;
                 prev.origin = "anchor";
-                if (anchorIdsForClaim[0]) prev.anchorId = anchorIdsForClaim[0];
+                if (queryAnchorId) prev.anchorId = queryAnchorId;
+              } else if (prev.origin !== "anchor" && queryAnchorId) {
+                prev.origin = "anchor";
+                prev.anchorId = queryAnchorId;
               }
               continue;
             }
@@ -583,7 +595,7 @@ export async function retrieveClaims(
               sourceUrl: h.source_url ?? undefined,
               excerpt: typeof h.chunk_content === "string" ? h.chunk_content.slice(0, 600) : "",
               score, origin: "anchor",
-              ...(anchorIdsForClaim[0] ? { anchorId: anchorIdsForClaim[0] } : {}),
+              ...(queryAnchorId ? { anchorId: queryAnchorId } : {}),
             });
           }
         } catch (e) {
@@ -593,7 +605,16 @@ export async function retrieveClaims(
       }
       const added = entry.byChunk.size - before;
       anchorTele.candidates_found += Math.max(0, added);
-      anchorTele.per_claim.push({ claim_id: claim.id, anchor_candidates: added, anchor_ids: anchorIdsForClaim });
+      // Surface anchor_ids actually observed on surviving candidates (not just inputs).
+      const seenAnchorIds = new Set<string>();
+      for (const c of entry.byChunk.values()) {
+        if (c.origin === "anchor" && c.anchorId) seenAnchorIds.add(c.anchorId);
+      }
+      anchorTele.per_claim.push({
+        claim_id: claim.id,
+        anchor_candidates: added,
+        anchor_ids: seenAnchorIds.size > 0 ? [...seenAnchorIds] : anchorIdsForClaim,
+      });
     }
     tele.anchor_retrieval = anchorTele;
   }
