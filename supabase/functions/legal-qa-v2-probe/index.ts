@@ -33,7 +33,7 @@ async function runProbe(question: string, depth: "fast"|"deep", adminClient: Ret
   if (!plan) {
     result = { question, error: "research_plan_failed", planRun };
   } else {
-    const packs = await retrieveClaims({ adminClient, claims: plan.claims, depth, embed });
+    const { packs, telemetry } = await retrieveClaims({ adminClient, claims: plan.claims, depth, embed });
     const { ledger, runs: verifyRuns } = await verifyAndBuildLedger({
       claims: plan.claims, packs, depth, thesis: plan.thesis,
     });
@@ -53,7 +53,8 @@ async function runProbe(question: string, depth: "fast"|"deep", adminClient: Ret
         counter_claims: plan.counter_claims,
       },
       B_retrieval: {
-        summary: summarizeRetrieval(packs),
+        telemetry,
+        summary: summarizeRetrieval({ packs, telemetry }),
         per_claim: packs.map(p => ({
           claim_id: p.claimId,
           local_text_n: p.candidates.filter(c => c.origin === "text").length,

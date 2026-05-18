@@ -1,16 +1,17 @@
-// Research V2 — Stage 2: Per-claim retrieval.
+// Research V2 — Stage 2: Per-claim retrieval (bounded, deduped, cached).
 //
-// Replaces the global source-pack pattern. Each claim is retrieved
-// independently using its own search_targets, against the same local
-// hybrid (text + vector) store the rest of the pipeline uses. Optional
-// Perplexity round is gated by depth and by whether the claim's
-// required_evidence includes types we cannot satisfy from the local DB
-// alone (academic, committee, news).
+// Design notes from probe v1 failure:
+//   - Promise.all over 6 claims × 4 queries saturated PostgREST and every
+//     RPC tripped the DB statement_timeout. Cancelled queries returned 0
+//     hits and the ledger was starved.
+//   - Fix: one bounded concurrency limiter for ALL text + vector RPCs in
+//     a run, query dedup + cache by normalized key, and at most ONE text
+//     query per claim (the most specific search_target) instead of fan-out.
+//   - Vector still runs but uses the same limiter and at most one embed
+//     call per claim. Per-claim grouping is preserved in the output.
 //
-// This module deliberately does NOT call Perplexity itself — it returns a
-// list of suggested external queries that the caller (index.ts) can fan out
-// using the existing Perplexity helper. That keeps secret access + rate
-// limits centralized.
+// Telemetry: returns RetrievalTelemetry alongside packs so callers can
+// log total/executed/cache_hits/timeouts without parsing logs.
 //
 // Gated by env `RESEARCH_V2=true`. Not yet wired in index.ts.
 
@@ -18,9 +19,7 @@ import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.4
 import type { V2Claim, V2EvidenceType } from "./researchPlan.ts";
 
 export interface ClaimCandidateSource {
-  /** Stable id within the claim's pack, e.g. "C1-S1". */
   id: string;
-  /** Underlying chunk/document id from legal_document_chunks/legal_documents. */
   chunkId: string;
   documentId: string;
   title: string;
@@ -28,21 +27,28 @@ export interface ClaimCandidateSource {
   sourceType: string;
   sourceUrl?: string;
   excerpt: string;
-  /** 0–1 hybrid score (text rank blended with cosine when both available). */
   score: number;
-  /** Where this hit came from. */
   origin: "text" | "vector" | "external_pending";
 }
 
 export interface ClaimCandidatePack {
   claimId: string;
   candidates: ClaimCandidateSource[];
-  /**
-   * Search queries that should be fanned out externally (Perplexity) when
-   * the claim's evidence requirements aren't covered locally and depth=deep.
-   * Empty when no external round is recommended.
-   */
   externalQueries: string[];
+}
+
+export interface RetrievalTelemetry {
+  total_text_queries_planned: number;
+  total_text_queries_executed: number;
+  total_vector_queries_planned: number;
+  total_vector_queries_executed: number;
+  max_concurrency: number;
+  rpc_timeouts: number;
+  rpc_errors: number;
+  cache_hits: number;
+  candidates_per_claim: Array<{ claim_id: string; n: number; top_score: number }>;
+  total_candidates: number;
+  duration_ms: number;
 }
 
 export interface RetrieveClaimsArgs {
@@ -53,109 +59,16 @@ export interface RetrieveClaimsArgs {
   perClaimCap?: number;
   /** Optional embedding function for vector search. If absent, text-only. */
   embed?: (text: string) => Promise<number[] | null>;
+  /** Hard concurrency cap across ALL RPCs in this run. Default 3. */
+  maxConcurrency?: number;
+}
+
+export interface RetrieveClaimsResult {
+  packs: ClaimCandidatePack[];
+  telemetry: RetrievalTelemetry;
 }
 
 const TYPES_REQUIRING_EXTERNAL: V2EvidenceType[] = ["academic", "committee", "news"];
-
-/**
- * Run per-claim retrieval in parallel. Pure read-only — no writes to DB,
- * no Perplexity calls. Returns one ClaimCandidatePack per claim.
- */
-export async function retrieveClaims(args: RetrieveClaimsArgs): Promise<ClaimCandidatePack[]> {
-  const { adminClient, claims, depth, embed } = args;
-  const perClaimCap = args.perClaimCap ?? (depth === "deep" ? 8 : 6);
-
-  return await Promise.all(
-    claims.map((claim) => retrieveForClaim({ claim, adminClient, depth, perClaimCap, embed })),
-  );
-}
-
-async function retrieveForClaim(args: {
-  claim: V2Claim;
-  adminClient: SupabaseClient;
-  depth: "fast" | "deep";
-  perClaimCap: number;
-  embed?: (text: string) => Promise<number[] | null>;
-}): Promise<ClaimCandidatePack> {
-  const { claim, adminClient, depth, perClaimCap, embed } = args;
-  const queries = claim.search_targets.length > 0
-    ? claim.search_targets
-    : [claim.statement];
-
-  // Text round — one RPC per query, capped small.
-  const textPromises = queries.slice(0, depth === "deep" ? 4 : 3).map(async (q) => {
-    const { data } = await adminClient
-      .rpc("search_legal_chunks_text", { search_query: q, match_count: 6 })
-      .then((r: { data: unknown }) => r)
-      .catch(() => ({ data: null }));
-    return Array.isArray(data) ? (data as RawHit[]) : [];
-  });
-
-  // Vector round — only when an embed function is available. Cap at 2 queries
-  // to bound HNSW contention; per-claim retrieval already fans out across N
-  // claims in parallel.
-  const vectorPromises: Promise<RawHit[]>[] = embed
-    ? queries.slice(0, 2).map(async (q) => {
-        try {
-          const emb = await embed(q);
-          if (!emb) return [];
-          const { data } = await adminClient
-            .rpc("match_legal_chunks", {
-              query_embedding: JSON.stringify(emb),
-              match_threshold: 0.55,
-              match_count: 6,
-            })
-            .then((r: { data: unknown }) => r)
-            .catch(() => ({ data: null }));
-          return Array.isArray(data) ? (data as RawHit[]) : [];
-        } catch {
-          return [];
-        }
-      })
-    : [];
-
-  const [textResults, vectorResults] = await Promise.all([
-    Promise.all(textPromises),
-    Promise.all(vectorPromises),
-  ]);
-
-  // Merge + dedupe by chunk_id, keep best score per chunk.
-  const byChunk = new Map<string, ClaimCandidateSource>();
-  let idx = 0;
-  const ingest = (hits: RawHit[], origin: "text" | "vector") => {
-    for (const h of hits) {
-      if (!h?.chunk_id) continue;
-      const score = typeof h.similarity === "number" ? Math.max(0, Math.min(1, h.similarity)) : 0.5;
-      const prev = byChunk.get(h.chunk_id);
-      if (prev && prev.score >= score) continue;
-      byChunk.set(h.chunk_id, {
-        id: `${claim.id}-S${++idx}`,
-        chunkId: h.chunk_id,
-        documentId: h.document_id,
-        title: h.document_title ?? "",
-        citation: h.document_citation ?? "",
-        sourceType: h.source_type ?? "",
-        sourceUrl: h.source_url ?? undefined,
-        excerpt: typeof h.chunk_content === "string" ? h.chunk_content.slice(0, 600) : "",
-        score,
-        origin,
-      });
-    }
-  };
-  textResults.forEach((r) => ingest(r, "text"));
-  vectorResults.forEach((r) => ingest(r, "vector"));
-
-  const candidates = [...byChunk.values()]
-    .sort((a, b) => b.score - a.score)
-    .slice(0, perClaimCap);
-
-  // Decide whether external (Perplexity) round is recommended for this claim.
-  const externalQueries = shouldFanOutExternal({ claim, candidates, depth })
-    ? queries.slice(0, depth === "deep" ? 2 : 1)
-    : [];
-
-  return { claimId: claim.id, candidates, externalQueries };
-}
 
 interface RawHit {
   chunk_id: string;
@@ -168,27 +81,238 @@ interface RawHit {
   similarity?: number;
 }
 
+/** Simple FIFO concurrency limiter. */
+function makeLimiter(max: number) {
+  let active = 0;
+  const queue: Array<() => void> = [];
+  const next = () => {
+    if (active >= max) return;
+    const job = queue.shift();
+    if (!job) return;
+    active++;
+    job();
+  };
+  return async function run<T>(fn: () => Promise<T>): Promise<T> {
+    return await new Promise<T>((resolve, reject) => {
+      queue.push(() => {
+        fn()
+          .then((v) => { active--; resolve(v); next(); })
+          .catch((e) => { active--; reject(e); next(); });
+      });
+      next();
+    });
+  };
+}
+
+const normalizeQuery = (q: string) =>
+  q.normalize("NFKC").replace(/[״"׳']/g, '"').replace(/\s+/g, " ").trim().toLowerCase();
+
+/** Pick the single best text query per claim: prefer the longest, most
+ *  specific `search_target` (likely contains party/section/doctrine).
+ *  Falls back to `claim.statement` truncated to a reasonable length. */
+function pickTextQuery(claim: V2Claim): string {
+  const candidates = claim.search_targets.filter((q) => q && q.trim().length >= 4);
+  if (candidates.length === 0) return claim.statement.slice(0, 160);
+  // Heuristic: longest target tends to be most specific (named parties / doctrines).
+  return [...candidates].sort((a, b) => b.length - a.length)[0];
+}
+
+function pickVectorQuery(claim: V2Claim): string {
+  // Use the claim statement directly — denser semantic signal than keyword targets.
+  return claim.statement;
+}
+
+export async function retrieveClaims(
+  args: RetrieveClaimsArgs,
+): Promise<RetrieveClaimsResult> {
+  const { adminClient, claims, depth, embed } = args;
+  const perClaimCap = args.perClaimCap ?? (depth === "deep" ? 8 : 6);
+  const maxConcurrency = args.maxConcurrency ?? 3;
+  const t0 = Date.now();
+
+  // ── Plan ─────────────────────────────────────────────────────────────
+  // One text query per claim, one vector query per claim. Dedup by
+  // normalized string so identical search_targets across claims share a
+  // single DB call.
+  const textPlan: Array<{ claimIds: string[]; query: string; norm: string }> = [];
+  const vectorPlan: Array<{ claimIds: string[]; query: string; norm: string }> = [];
+
+  const textByNorm = new Map<string, { claimIds: string[]; query: string; norm: string }>();
+  const vecByNorm = new Map<string, { claimIds: string[]; query: string; norm: string }>();
+
+  for (const claim of claims) {
+    const tq = pickTextQuery(claim);
+    const tn = normalizeQuery(tq);
+    const tex = textByNorm.get(tn);
+    if (tex) tex.claimIds.push(claim.id);
+    else {
+      const e = { claimIds: [claim.id], query: tq, norm: tn };
+      textByNorm.set(tn, e);
+      textPlan.push(e);
+    }
+
+    if (embed) {
+      const vq = pickVectorQuery(claim);
+      const vn = normalizeQuery(vq);
+      const vex = vecByNorm.get(vn);
+      if (vex) vex.claimIds.push(claim.id);
+      else {
+        const e = { claimIds: [claim.id], query: vq, norm: vn };
+        vecByNorm.set(vn, e);
+        vectorPlan.push(e);
+      }
+    }
+  }
+
+  const tele: RetrievalTelemetry = {
+    total_text_queries_planned: claims.length, // 1 per claim before dedup
+    total_text_queries_executed: 0,
+    total_vector_queries_planned: embed ? claims.length : 0,
+    total_vector_queries_executed: 0,
+    max_concurrency: maxConcurrency,
+    rpc_timeouts: 0,
+    rpc_errors: 0,
+    cache_hits: (claims.length - textPlan.length) + (embed ? claims.length - vectorPlan.length : 0),
+    candidates_per_claim: [],
+    total_candidates: 0,
+    duration_ms: 0,
+  };
+
+  const limit = makeLimiter(maxConcurrency);
+  const textResults = new Map<string, RawHit[]>(); // norm -> hits
+  const vectorResults = new Map<string, RawHit[]>(); // norm -> hits
+
+  // ── Text round ───────────────────────────────────────────────────────
+  await Promise.all(textPlan.map((p) => limit(async () => {
+    try {
+      const { data, error } = await adminClient
+        .rpc("search_legal_chunks_text", { search_query: p.query, match_count: 6 });
+      tele.total_text_queries_executed++;
+      if (error) {
+        const msg = String(error.message || "");
+        if (/statement timeout/i.test(msg)) tele.rpc_timeouts++;
+        else tele.rpc_errors++;
+        console.error(`[retrieve_v2 text] "${p.query.slice(0,60)}": ${msg}`);
+        textResults.set(p.norm, []);
+        return;
+      }
+      textResults.set(p.norm, Array.isArray(data) ? (data as RawHit[]) : []);
+    } catch (e) {
+      tele.rpc_errors++;
+      console.error(`[retrieve_v2 text throw] "${p.query.slice(0,60)}":`, String((e as any)?.message ?? e));
+      textResults.set(p.norm, []);
+    }
+  })));
+
+  // ── Vector round (bounded by same limiter) ───────────────────────────
+  if (embed && vectorPlan.length > 0) {
+    await Promise.all(vectorPlan.map((p) => limit(async () => {
+      try {
+        const emb = await embed(p.query);
+        if (!emb) { vectorResults.set(p.norm, []); return; }
+        const { data, error } = await adminClient
+          .rpc("match_legal_chunks", {
+            query_embedding: JSON.stringify(emb),
+            match_threshold: 0.55,
+            match_count: 6,
+          });
+        tele.total_vector_queries_executed++;
+        if (error) {
+          const msg = String(error.message || "");
+          if (/statement timeout/i.test(msg)) tele.rpc_timeouts++;
+          else tele.rpc_errors++;
+          console.error(`[retrieve_v2 vec] "${p.query.slice(0,60)}": ${msg}`);
+          vectorResults.set(p.norm, []);
+          return;
+        }
+        vectorResults.set(p.norm, Array.isArray(data) ? (data as RawHit[]) : []);
+      } catch (e) {
+        tele.rpc_errors++;
+        console.error(`[retrieve_v2 vec throw] "${p.query.slice(0,60)}":`, String((e as any)?.message ?? e));
+        vectorResults.set(p.norm, []);
+      }
+    })));
+  }
+
+  // ── Assemble per-claim packs ─────────────────────────────────────────
+  const packs: ClaimCandidatePack[] = claims.map((claim) => {
+    const tq = pickTextQuery(claim);
+    const tn = normalizeQuery(tq);
+    const vq = embed ? pickVectorQuery(claim) : null;
+    const vn = vq ? normalizeQuery(vq) : null;
+
+    const textHits = textResults.get(tn) ?? [];
+    const vecHits = vn ? (vectorResults.get(vn) ?? []) : [];
+
+    const byChunk = new Map<string, ClaimCandidateSource>();
+    let idx = 0;
+    const ingest = (hits: RawHit[], origin: "text" | "vector") => {
+      for (const h of hits) {
+        if (!h?.chunk_id) continue;
+        const score = typeof h.similarity === "number"
+          ? Math.max(0, Math.min(1, h.similarity))
+          : 0.5;
+        const prev = byChunk.get(h.chunk_id);
+        if (prev && prev.score >= score) continue;
+        byChunk.set(h.chunk_id, {
+          id: `${claim.id}-S${++idx}`,
+          chunkId: h.chunk_id,
+          documentId: h.document_id,
+          title: h.document_title ?? "",
+          citation: h.document_citation ?? "",
+          sourceType: h.source_type ?? "",
+          sourceUrl: h.source_url ?? undefined,
+          excerpt: typeof h.chunk_content === "string" ? h.chunk_content.slice(0, 600) : "",
+          score,
+          origin,
+        });
+      }
+    };
+    ingest(textHits, "text");
+    ingest(vecHits, "vector");
+
+    const candidates = [...byChunk.values()]
+      .sort((a, b) => b.score - a.score)
+      .slice(0, perClaimCap);
+
+    const externalQueries = shouldFanOutExternal({ claim, candidates, depth })
+      ? claim.search_targets.slice(0, depth === "deep" ? 2 : 1)
+      : [];
+
+    tele.candidates_per_claim.push({
+      claim_id: claim.id,
+      n: candidates.length,
+      top_score: candidates[0]?.score ?? 0,
+    });
+    tele.total_candidates += candidates.length;
+
+    return { claimId: claim.id, candidates, externalQueries };
+  });
+
+  tele.duration_ms = Date.now() - t0;
+  return { packs, telemetry: tele };
+}
+
 function shouldFanOutExternal(args: {
   claim: V2Claim;
   candidates: ClaimCandidateSource[];
   depth: "fast" | "deep";
 }): boolean {
   const { claim, candidates, depth } = args;
-  // Fast never fans out external by default — keeps latency tight.
   if (depth !== "deep") return false;
-  // If the claim requires external-only evidence types and local pack is thin,
-  // request an external round.
   const wantsExternalType = claim.required_evidence.some((t) =>
     TYPES_REQUIRING_EXTERNAL.includes(t),
   );
   if (wantsExternalType && candidates.length < 3) return true;
-  // Or when nothing was found locally at all.
   if (candidates.length === 0) return true;
   return false;
 }
 
 /** Telemetry summary for qa_logs.metadata.retrieval_v2. */
-export function summarizeRetrieval(packs: ClaimCandidatePack[]) {
+export function summarizeRetrieval(arg: ClaimCandidatePack[] | RetrieveClaimsResult) {
+  // Back-compat: accept the old packs-only signature OR the new {packs,telemetry} shape.
+  const packs: ClaimCandidatePack[] = Array.isArray(arg) ? arg : arg.packs;
+  const tele = Array.isArray(arg) ? null : arg.telemetry;
   return {
     per_claim: packs.map((p) => ({
       claim_id: p.claimId,
@@ -198,5 +322,6 @@ export function summarizeRetrieval(packs: ClaimCandidatePack[]) {
     })),
     total_candidates: packs.reduce((n, p) => n + p.candidates.length, 0),
     claims_with_zero: packs.filter((p) => p.candidates.length === 0).length,
+    ...(tele ? { telemetry: tele } : {}),
   };
 }
