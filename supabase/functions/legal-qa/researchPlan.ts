@@ -170,12 +170,22 @@ export interface BuildResearchPlanArgs {
 export interface BuildResearchPlanResult {
   plan: ResearchPlan | null;
   run: StageRun;
+  /** Telemetry: was a fallback Gemini call used after primary failed. */
+  fallback_model_used?: boolean;
+  /** Telemetry: human-readable reason when plan is null. */
+  fallback_reason?: string;
+  /** Telemetry: primary attempt run (when fallback ran). */
+  primary_run?: StageRun;
 }
 
 /**
- * Build the V2 ResearchPlan. Fast → minimal reasoning_effort, ~25s budget.
- * Deep → low reasoning_effort, ~45s budget. Returns plan=null on any
- * failure; caller must fall back to legacy planning chain.
+ * Build the V2 ResearchPlan. Planner-stability pass:
+ * - Primary: configured planner provider (OpenAI when key present),
+ *   reasoning_effort="minimal", 75s timeout for deep / 25s for fast.
+ * - Fallback (deep only): on primary timeout/parse_error, retry once with
+ *   Gemini (gemini-2.5-flash) using the same schema. Marks
+ *   `fallback_model_used=true` on the returned telemetry.
+ * Returns plan=null on any failure; caller must fall back to legacy planning.
  */
 export async function buildResearchPlan(
   args: BuildResearchPlanArgs,
@@ -187,33 +197,77 @@ export async function buildResearchPlan(
     : "";
   const userPrompt = `${preamble}שאלת המחקר:\n${question}\n\nהפק תכנית מחקר בודדת. עקוב במדויק אחר הסכימה של הכלי.`;
 
+  const primaryTimeoutMs = depth === "deep" ? 75000 : 25000;
+
   const { data, run } = await callPlannerJSON<ResearchPlan>(
     SYSTEM_PROMPT,
     userPrompt,
     TOOL,
     {
-      // claim_map stage name → routes to mini-class model in aiProvider.
-      // ResearchPlan is roughly the same complexity (single-shot JSON tool-call).
       stage: "research_plan_v2",
-      timeoutMs: depth === "deep" ? 45000 : 25000,
-      reasoningEffort: depth === "deep" ? "low" : "minimal",
+      timeoutMs: primaryTimeoutMs,
+      reasoningEffort: "minimal",
     },
   );
 
-  if (!data) return { plan: null, run };
+  let plan = data ? sanitizePlan(data) : null;
+  if (plan && plan.claims.length >= 2) {
+    return { plan, run };
+  }
 
-  const plan = sanitizePlan(data);
-  if (!plan || plan.claims.length < 2) {
+  // Primary failed (no data) or sanitize rejected (<2 claims). For deep,
+  // try one Gemini fallback with the same schema.
+  const primaryFailReason = !data
+    ? (run.status === "timeout" ? "primary_timeout" : (run.status === "parse_error" ? "primary_parse_error" : `primary_${run.status}`))
+    : "primary_insufficient_claims";
+
+  if (depth !== "deep") {
     return {
       plan: null,
-      run: {
-        ...run,
-        status: "parse_error",
-        error_message: "fewer than 2 valid claims after sanitization",
-      },
+      run: data && !plan
+        ? { ...run, status: "parse_error", error_message: "fewer than 2 valid claims after sanitization" }
+        : run,
+      fallback_reason: primaryFailReason,
     };
   }
-  return { plan, run };
+
+  console.log(`[research_plan_v2] primary failed (${primaryFailReason}); retrying with gemini-2.5-flash fallback`);
+
+  const { data: fbData, run: fbRun } = await callPlannerJSON<ResearchPlan>(
+    SYSTEM_PROMPT,
+    userPrompt,
+    TOOL,
+    {
+      stage: "research_plan_v2",
+      timeoutMs: 60000,
+      reasoningEffort: "minimal",
+      forceProvider: "gemini",
+    },
+  );
+
+  plan = fbData ? sanitizePlan(fbData) : null;
+  if (plan && plan.claims.length >= 2) {
+    return {
+      plan,
+      run: fbRun,
+      fallback_model_used: true,
+      primary_run: run,
+    };
+  }
+
+  const fbFailReason = !fbData
+    ? (fbRun.status === "timeout" ? "fallback_timeout" : (fbRun.status === "parse_error" ? "fallback_parse_error" : `fallback_${fbRun.status}`))
+    : "fallback_insufficient_claims";
+
+  return {
+    plan: null,
+    run: fbData && !plan
+      ? { ...fbRun, status: "parse_error", error_message: "fewer than 2 valid claims after sanitization" }
+      : fbRun,
+    fallback_model_used: true,
+    fallback_reason: `${primaryFailReason}|${fbFailReason}`,
+    primary_run: run,
+  };
 }
 
 function sanitizePlan(raw: ResearchPlan): ResearchPlan | null {
