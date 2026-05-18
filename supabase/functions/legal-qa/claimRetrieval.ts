@@ -28,13 +28,26 @@ export interface ClaimCandidateSource {
   sourceUrl?: string;
   excerpt: string;
   score: number;
-  origin: "text" | "vector" | "external_pending";
+  origin: "text" | "vector" | "external_pending" | "anchor";
+  /** When origin="anchor", the AnswerMap anchor id (e.g. "A2") that surfaced this. */
+  anchorId?: string;
 }
 
 export interface ClaimCandidatePack {
   claimId: string;
   candidates: ClaimCandidateSource[];
   externalQueries: string[];
+}
+
+export interface AnchorRetrievalTelemetry {
+  /** Total anchor queries planned across all claims. */
+  queries_planned: number;
+  queries_executed: number;
+  queries_timed_out: number;
+  queries_errored: number;
+  candidates_found: number;
+  /** Per-claim: how many anchor-origin candidates entered the pool. */
+  per_claim: Array<{ claim_id: string; anchor_candidates: number; anchor_ids: string[] }>;
 }
 
 export interface RetrievalTelemetry {
@@ -56,6 +69,8 @@ export interface RetrievalTelemetry {
   total_candidates: number;
   /** Sources skipped at ingest because their title/citation was a known placeholder. */
   broken_title_drops?: number;
+  /** Present when AnswerMap injected per-claim anchor queries. */
+  anchor_retrieval?: AnchorRetrievalTelemetry;
   duration_ms: number;
 }
 
@@ -69,12 +84,19 @@ export interface RetrieveClaimsArgs {
   embed?: (text: string) => Promise<number[] | null>;
   /** Hard concurrency cap across ALL RPCs in this run. Default 3. */
   maxConcurrency?: number;
+  /** Optional per-claim authority queries injected by AnswerMap reconciliation. */
+  anchorQueriesByClaim?: Map<string, string[]>;
+  /** Parallel map of anchor IDs per claim (for telemetry tagging). */
+  anchorIdsByClaim?: Map<string, string[]>;
+  /** Score boost applied to anchor-origin candidates. Default 0.05. */
+  anchorScoreBoost?: number;
 }
 
 export interface RetrieveClaimsResult {
   packs: ClaimCandidatePack[];
   telemetry: RetrievalTelemetry;
 }
+
 
 const TYPES_REQUIRING_EXTERNAL: V2EvidenceType[] = ["academic", "committee", "news"];
 
