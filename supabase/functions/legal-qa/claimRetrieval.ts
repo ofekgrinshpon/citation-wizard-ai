@@ -361,10 +361,15 @@ export async function retrieveClaims(
     const vq = embed ? pickVectorQuery(claim) : null;
     const vn = vq ? normalizeQuery(vq) : null;
 
+    const textHits = textResults.get(tn) ?? [];
+    const vecHits = vn ? (vectorResults.get(vn) ?? []) : [];
+    tele.text_candidates_per_claim.push({ claim_id: claim.id, n: textHits.length });
+    tele.vector_candidates_per_claim.push({ claim_id: claim.id, n: vecHits.length });
+
     const byChunk = new Map<string, ClaimCandidateSource>();
     const idxRef = { i: 0 };
-    ingestInto(byChunk, claim.id, idxRef, textResults.get(tn) ?? [], "text");
-    if (vn) ingestInto(byChunk, claim.id, idxRef, vectorResults.get(vn) ?? [], "vector");
+    ingestInto(byChunk, claim.id, idxRef, textHits, "text");
+    ingestInto(byChunk, claim.id, idxRef, vecHits, "vector");
     packMap.set(claim.id, { claim, byChunk, idxRef });
   }
 
