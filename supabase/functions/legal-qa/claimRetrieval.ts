@@ -251,11 +251,27 @@ export async function retrieveClaims(
     max_concurrency: maxConcurrency,
     rpc_timeouts: 0,
     rpc_errors: 0,
+    text_timeouts: 0,
+    vector_timeouts: 0,
     cache_hits: (claims.length - textPlan.length) + (embed ? claims.length - vectorPlan.length : 0),
     candidates_per_claim: [],
+    text_candidates_per_claim: [],
+    vector_candidates_per_claim: [],
+    vector_query_chars_before: 0,
+    vector_query_chars_after: 0,
     total_candidates: 0,
     duration_ms: 0,
   };
+
+  // Vector-input size telemetry (before vs after compaction).
+  if (embed) {
+    for (const claim of claims) {
+      tele.vector_query_chars_before += (claim.statement || "").length;
+    }
+    for (const p of vectorPlan) {
+      tele.vector_query_chars_after += p.query.length;
+    }
+  }
 
   const limit = makeLimiter(maxConcurrency);
   const textResults = new Map<string, RawHit[]>(); // norm -> hits
