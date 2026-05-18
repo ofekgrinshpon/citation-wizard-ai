@@ -398,7 +398,7 @@ export async function retrieveClaims(
           .rpc("search_legal_chunks_text", { search_query: tokenQuery, match_count: 6 });
         if (error) {
           const msg = String((error as any).message || "");
-          if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; rec.text_status = "timeout"; }
+          if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; tele.text_timeouts++; rec.text_status = "timeout"; }
           else { tele.rpc_errors++; rec.text_status = "error"; }
           console.error(`[retrieve_v2 fallback text] "${tokenQuery}": ${msg}`);
         } else {
