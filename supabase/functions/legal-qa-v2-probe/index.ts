@@ -40,85 +40,126 @@ Deno.serve(async (req) => {
       });
     }
 
+async function runProbe(question: string, depth: "fast"|"deep", adminClient: ReturnType<typeof createClient>, runId: string) {
+  const t0 = Date.now();
+  const { plan, run: planRun } = await buildResearchPlan({ question, depth });
+  let result: Record<string, unknown>;
+  if (!plan) {
+    result = { question, error: "research_plan_failed", planRun };
+  } else {
+    const packs = await retrieveClaims({ adminClient, claims: plan.claims, depth, embed });
+    const { ledger, runs: verifyRuns } = await verifyAndBuildLedger({
+      claims: plan.claims, packs, depth, thesis: plan.thesis,
+    });
+    result = {
+      question,
+      elapsed_ms: Date.now() - t0,
+      A_research_plan: {
+        summary: summarizeResearchPlan(plan, planRun),
+        thesis: plan.thesis,
+        claim_count: plan.claims.length,
+        claims: plan.claims.map(c => ({
+          id: c.id, statement: c.statement, kind: c.kind,
+          required_evidence: c.required_evidence,
+          search_targets: c.search_targets,
+          hedge_if_partial: c.hedge_if_partial,
+        })),
+        counter_claims: plan.counter_claims,
+      },
+      B_retrieval: {
+        summary: summarizeRetrieval(packs),
+        per_claim: packs.map(p => ({
+          claim_id: p.claimId,
+          local_text_n: p.candidates.filter(c => c.origin === "text").length,
+          local_vector_n: p.candidates.filter(c => c.origin === "vector").length,
+          external_queries: p.externalQueries,
+          top3: p.candidates.slice(0, 3).map(c => ({
+            id: c.id, score: +c.score.toFixed(3), origin: c.origin,
+            source_type: c.sourceType, title: c.title.slice(0, 120),
+            citation: c.citation.slice(0, 140),
+          })),
+        })),
+      },
+      C_ledger: {
+        summary: summarizeLedger(ledger),
+        kept: ledger.entries.map(e => ({
+          claim_id: e.claimId, claim: e.claim, verdict: e.verdict,
+          hedge: e.hedge, hedge_template: e.hedgeTemplate,
+          source_ids: e.sources.map(s => s.id),
+          sources: e.sources.map(s => ({
+            id: s.id, support: s.support, source_type: s.sourceType,
+            title: s.title.slice(0, 120), citation: s.citation.slice(0, 140),
+          })),
+          evidence_note: e.evidenceNote,
+        })),
+        dropped: ledger.dropped,
+        verdict_counts: {
+          kept_supported: ledger.entries.filter(e => e.verdict === "supported").length,
+          kept_partial: ledger.entries.filter(e => e.verdict === "partially_supported").length,
+          dropped_unsupported: ledger.dropped.length,
+        },
+        verify_runs: verifyRuns.map(r => ({
+          stage: r.stage, status: r.status, model: r.model, duration_ms: r.duration_ms,
+          error: r.error_message,
+        })),
+      },
+    };
+  }
+  await adminClient.from("qa_logs").insert({
+    question: `[v2_probe:${runId}] ${question}`,
+    task_mode: "v2_probe",
+    answer: "",
+    metadata: { v2_probe_run_id: runId, depth, report: result },
+  });
+}
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  try {
+    const url = new URL(req.url);
     const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE);
-    const report: unknown[] = [];
 
-    for (const question of questions) {
-      const t0 = Date.now();
-      // A. ResearchPlan
-      const { plan, run: planRun } = await buildResearchPlan({ question, depth });
-      if (!plan) {
-        report.push({ question, error: "research_plan_failed", planRun });
-        continue;
-      }
-
-      // B. ClaimRetrieval
-      const packs = await retrieveClaims({
-        adminClient, claims: plan.claims, depth, embed,
-      });
-
-      // C. Ledger
-      const { ledger, runs: verifyRuns } = await verifyAndBuildLedger({
-        claims: plan.claims, packs, depth, thesis: plan.thesis,
-      });
-
-      report.push({
-        question,
-        elapsed_ms: Date.now() - t0,
-        A_research_plan: {
-          summary: summarizeResearchPlan(plan, planRun),
-          thesis: plan.thesis,
-          claim_count: plan.claims.length,
-          claims: plan.claims.map(c => ({
-            id: c.id, statement: c.statement, kind: c.kind,
-            required_evidence: c.required_evidence,
-            search_targets: c.search_targets,
-            hedge_if_partial: c.hedge_if_partial,
-          })),
-          counter_claims: plan.counter_claims,
-        },
-        B_retrieval: {
-          summary: summarizeRetrieval(packs),
-          per_claim: packs.map(p => ({
-            claim_id: p.claimId,
-            local_text_n: p.candidates.filter(c => c.origin === "text").length,
-            local_vector_n: p.candidates.filter(c => c.origin === "vector").length,
-            external_queries: p.externalQueries,
-            top3: p.candidates.slice(0, 3).map(c => ({
-              id: c.id, score: +c.score.toFixed(3), origin: c.origin,
-              source_type: c.sourceType, title: c.title.slice(0, 120),
-              citation: c.citation.slice(0, 140),
-            })),
-          })),
-        },
-        C_ledger: {
-          summary: summarizeLedger(ledger),
-          kept: ledger.entries.map(e => ({
-            claim_id: e.claimId, claim: e.claim, verdict: e.verdict,
-            hedge: e.hedge, hedge_template: e.hedgeTemplate,
-            source_ids: e.sources.map(s => s.id),
-            sources: e.sources.map(s => ({
-              id: s.id, support: s.support, source_type: s.sourceType,
-              title: s.title.slice(0, 120), citation: s.citation.slice(0, 140),
-            })),
-            evidence_note: e.evidenceNote,
-          })),
-          dropped: ledger.dropped,
-          verdict_counts: {
-            kept_supported: ledger.entries.filter(e => e.verdict === "supported").length,
-            kept_partial: ledger.entries.filter(e => e.verdict === "partially_supported").length,
-            dropped_unsupported: ledger.dropped.length,
-          },
-          verify_runs: verifyRuns.map(r => ({
-            stage: r.stage, status: r.status, model: r.model, duration_ms: r.duration_ms,
-            error: r.error_message,
-          })),
-        },
+    // GET ?runId=xxx → fetch results
+    if (req.method === "GET") {
+      const runId = url.searchParams.get("runId");
+      if (!runId) return new Response(JSON.stringify({ error: "runId required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      const { data, error } = await adminClient.from("qa_logs")
+        .select("question,created_at,metadata")
+        .eq("task_mode", "v2_probe")
+        .like("question", `[v2_probe:${runId}]%`)
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return new Response(JSON.stringify({ runId, count: data?.length ?? 0, reports: (data ?? []).map(r => r.metadata?.report) }, null, 2), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify({ depth, report }, null, 2), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    const body = await req.json().catch(() => ({}));
+    const questions: string[] = Array.isArray(body.questions) ? body.questions : [];
+    const depth: "fast" | "deep" = body.depth === "fast" ? "fast" : "deep";
+    if (questions.length === 0) {
+      return new Response(JSON.stringify({ error: "questions[] required" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const runId = crypto.randomUUID().slice(0, 8);
+    // Fire and forget — run each probe in background
+    // @ts-ignore EdgeRuntime
+    EdgeRuntime.waitUntil((async () => {
+      for (const q of questions) {
+        try { await runProbe(q, depth, adminClient, runId); }
+        catch (e) {
+          await adminClient.from("qa_logs").insert({
+            question: `[v2_probe:${runId}] ${q}`,
+            task_mode: "v2_probe",
+            answer: "",
+            metadata: { v2_probe_run_id: runId, depth, error: String(e?.message ?? e) },
+          });
+        }
+      }
+    })());
+    return new Response(JSON.stringify({ runId, accepted: questions.length, fetch: `GET ?runId=${runId}` }), {
+      status: 202, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
     return new Response(JSON.stringify({ error: String(e?.message ?? e), stack: String(e?.stack ?? "") }), {
