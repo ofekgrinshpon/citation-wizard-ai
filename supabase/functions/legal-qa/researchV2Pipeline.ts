@@ -27,6 +27,8 @@ import {
   buildFootnotes,
   type ContractSourceCard,
 } from "./cardClaimContract.ts";
+import { answerMapEnabled, buildAnswerMap, summarizeAnswerMap } from "./answerMap.ts";
+import { reconcileAnchors } from "./anchorReconciliation.ts";
 
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 
