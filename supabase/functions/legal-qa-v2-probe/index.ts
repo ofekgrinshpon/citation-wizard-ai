@@ -136,6 +136,7 @@ Deno.serve(async (req) => {
         try { await runProbe(q, depth, adminClient, runId); }
         catch (e) {
           await adminClient.from("qa_logs").insert({
+            user_id: "65600563-6bc3-4f54-867b-d532c377f522",
             question: `[v2_probe:${runId}] ${q}`,
             task_mode: "v2_probe",
             answer: "",
