@@ -1,88 +1,160 @@
-## Pass D coverage for all drafter paths + Deep async frontend wiring
 
-### Scope (no changes to retrieval, citation engine, Rule 37, baselines)
+# Legal-QA Simplification Pass
 
----
+## Core principle
+**Think broadly, prove narrowly, write simply.** One reasoning stage plans, retrieval is claim-scoped, the drafter sees only the surviving ledger.
 
-### 1. Backend — Pass D must apply to every drafter path
+## Target pipeline (5 stages)
 
-**Problem.** Pass D currently rewires only `drafterSourceCatalog` / `drafterCombinedContext`, which are consumed by `buildCompactStructuredPrompt()`. The legacy `systemPrompt` (built at line 5672) embeds the *full* `sourceCatalog` / `combinedContext` and is used whenever:
-- `useStructuredDrafterPath` is false (no claimMap, or `claimMapAllowedCount < 1`), or
-- the structured call falls back to legacy (Gemini fallback in `aiProvider.ts`).
-
-Result: the ledger-trimmed payload is bypassed and the drafter sees the full 30–40k catalog.
-
-**Fix (single file: `supabase/functions/legal-qa/index.ts`).**
-1. Change `const systemPrompt` → `let systemPrompt` (line 5672).
-2. Immediately after the Pass D block (after line 6070), when `passDTelemetry.used === true`:
-   - `systemPrompt = systemPrompt.split(sourceCatalog).join(drafterSourceCatalog).split(combinedContext).join(drafterCombinedContext);`
-   - Log: `[pass-d:legacy-rewrite] systemPrompt ${before}→${after} chars`.
-3. In the `useStructuredDrafterPath ? compact : systemPrompt` branch (line 6407–6409): no change — the rewrite above means the legacy branch now also carries the compact payload.
-4. Update `passDTelemetry.prompt_chars_before` to reflect the savings on *whichever* prompt was emitted (already does via the additive delta — verify after rewrite).
-5. Telemetry addition: `passDTelemetry.applied_to = useStructuredDrafterPath ? "structured" : "legacy"`.
-
-**Q2 ledger-empty residual.** Phase 7 didn't run for `564eec2c` because the gate at line 5468 requires `sourcePackV2 && decompositionV2`, which were null in that async path. That's a *separate* diagnosis the user said is OK to leave for now ("Do not change retrieval"). We will only log a clearer skip reason at line 5470 so the next investigation is one query away:
-- Before the `if (...)` block, emit `console.log("[phase7:gate]", { enableDeepPipeline, claimLedgerMode, hasSourcePack: !!sourcePackV2, hasDecomp: !!decompositionV2 })`.
-
-No verification logic, no retrieval rounds, no budgets touched.
-
----
-
-### 2. Fast sync sanity check
-
-After deploy:
-- Curl `POST /functions/v1/legal-qa` with `{ question: "מהם התנאים למתן צו מניעה זמני?", depth: "fast", taskMode: "research" }`.
-- Confirm: HTTP **200** (not 202), body contains `answer`+`footnotes`, no `run_id`, total wall < 90s.
-- Confirm one Pass D telemetry row appears with `applied_to` populated.
-
-If Fast accidentally trips the async dispatcher, the dispatcher condition will be tightened (`depth === "deep" && !req.headers.get("accept")?.includes("text/event-stream")`).
-
----
-
-### 3. Frontend — Deep async flow
-
-**Files:**
-- `src/components/LegalQAChat.tsx` (the non-SSE Deep submit path at line ~1744).
-- New small helper: `src/lib/legalQaPolling.ts`.
-
-**Flow.**
-1. Deep submit calls `legal-qa` as today. If response is **HTTP 202** with `{ run_id, poll_endpoint }`:
-   - Set message state to "running", store `run_id` on the pending assistant bubble.
-   - Start polling `legal-qa-status?runId=<id>` every 2s (cap 10 min, backoff to 4s after 60s).
-   - On each tick, update a small progress strip under the bubble: current `checkpoint` (Hebrew label map) + completed stages count.
-2. On `status: "completed"`: hydrate the bubble with `answer` + `footnotes` + `metadata` exactly like the sync path; stop polling; persist normally.
-3. On `status: "failed"`: render a clean inline error card with `reason` (e.g. `gateway_timeout`, `background_crash`) and a "נסה שוב" button. No retry loop.
-4. AbortController integration: existing "Stop" button cancels the poller (does not kill the background job — documented in tooltip).
-5. SSE Deep (existing streaming branch) is **untouched**; only the non-stream Deep fetch handles 202.
-
-**Checkpoint → Hebrew label map** (frontend-only, no backend coupling):
 ```text
-queued                 → "בתור"
-running                → "מעבד"
-legal_issue_router     → "מסווג שאלה"
-decomposition          → "מפרק לשאלות-משנה"
-open_web_discovery     → "סריקת מקורות"
-retrieval              → "אחזור מקורות"
-claim_map              → "מפת טענות"
-claim_verification     → "אימות טענות"
-drafting               → "ניסוח תשובה"
-anchor_pass            → "עיגון ציטוטים"
+question
+  │
+  ▼
+┌──────────────────┐
+│ 1. ResearchPlan  │  one strong reasoning call (gpt-5-mini, Deep: gpt-5)
+│   thesis         │
+│   claims[4-8]    │  each: {id, statement, kind, required_evidence,
+│   counter_claims │                  search_targets[], hedge_if_partial}
+└────────┬─────────┘
+         ▼
+┌──────────────────┐
+│ 2. Per-claim     │  for each claim:
+│    retrieval     │    local hybrid (text+vector) on claim.search_targets
+│                  │    + Perplexity if required_evidence needs external
+│                  │  → claim.candidate_sources[]   (cap ~6/claim)
+└────────┬─────────┘
+         ▼
+┌──────────────────┐
+│ 3. Verification  │  one planner call per claim (or batched):
+│                  │    {claim, source} → direct | partial | tangential | unrelated
+│                  │  drop tangential/unrelated
+└────────┬─────────┘
+         ▼
+┌──────────────────┐
+│ 4. Final ledger  │  keep only supported / partially_supported
+│                  │  partial → mark hedge=true
+│                  │  unsupported claims dropped silently
+│                  │  counter-claims kept only if verified
+└────────┬─────────┘
+         ▼
+┌──────────────────┐
+│ 5. Drafter       │  input = ledger only (claim text + allowed source IDs +
+│                  │           minimal citation-ready metadata per ID)
+│                  │  no source pack, no discovery, no rejected sources
+│                  │  output flows through existing citation engine, Rule 37,
+│                  │  anchor enforcement, post-processing
+└──────────────────┘
 ```
 
-No visual redesign — reuse the existing skeleton/spinner component plus a single `<p className="text-xs text-muted-foreground">` line.
+Target outcome: **5–8 strong footnotes**, not 32 repetitive ones.
 
----
+## What's kept (unchanged)
+- Card→Claim contract (still the drafter's input shape — just narrower)
+- Citation engine (`_shared/citationEngine.ts` + `citationRules.ts`)
+- Rule 37 repeated-citation logic
+- `anchorPass.ts` enforcement
+- Async Deep dispatcher + `legal-qa-status` polling + SSE for Fast
+- Compact prompt (Pass D) — now trivially always-on because drafter input is already small
+- `aiProvider` with stage telemetry, `StageRun` records in `qa_logs.metadata`
+- `modeProfiles` for Fast vs Deep knobs (model, claim cap, per-claim source cap, external search on/off)
+- Shadow A/B logger (optional)
 
-### 4. Validation
+## What's removed or merged
 
-1. Fast sanity (above).
-2. Deep Q1 ("צו מניעה זמני"): expect 202 → polling → final answer renders, `pass_d_compact.applied_to` populated (structured or legacy).
-3. Deep Q2 (סחיטת דמי חסות): expect 202 → polling → final renders; even if ledger is empty, no crash; if Gemini-fallback fires, telemetry shows `applied_to="legacy"` *and* compact catalog was emitted.
-4. Failed-path simulation: confirm the inline error card renders when `legal-qa-status` returns `status: "failed"`.
+| Current | Action |
+|---|---|
+| `legalIssueRouter.ts` | **Absorb** into ResearchPlan prompt (domain bias as a single preamble line) |
+| `decomposition.ts` (Stage A+B) | **Replace** — ResearchPlan covers main_issue/sub_issues implicitly via claims |
+| `legalResearchDecomposition.ts` | **Remove** |
+| `legalResearchPlanner.ts` | **Remove** — replaced by ResearchPlan |
+| `issueMap.ts` | **Remove** — claims carry the doctrine signal |
+| `candidateClaims.ts` | **Merge into** ResearchPlan (claims are now first-class output, not a separate stage) |
+| `legalClaimMap.ts` (Stage D claim map) | **Remove** — replaced by verification + ledger |
+| `sourceRoleClassifier.ts` | **Remove** — verification verdict subsumes "role" |
+| `sourcePackGateV2.ts` | **Remove** — no global source pack anymore |
+| `legalSourcePack.ts` | **Reduce** to a thin per-claim retrieval helper, or fold into index.ts |
+| `roleAwarePromptHelper.ts` | **Remove** |
+| `dynamicRerank.ts` | **Reduce** — per-claim retrieval returns small enough sets that aggressive rerank is unnecessary; keep only a simple top-k cosine+text blend |
+| `queryExpansion.ts` | **Keep but downscope** — used only inside per-claim retrieval, driven by `claim.search_targets` |
+| `paperMemory.ts` | **Keep** (academic mode), but cut its read paths from research mode |
+| `critic.ts` / `criticRevision.ts` | **Remove** from research mode (academic mode can keep its own copy) — repair passes are the smell we're fixing |
+| `citationQualityScorer.ts` | **Keep** as drafter post-check but no longer a feedback loop into retrieval |
 
----
+`index.ts` (10.7k lines) shrinks substantially as the orchestration collapses to: `plan → retrieve(claims) → verify(claims) → ledger → draft`.
 
-### Out of scope (per user)
-- Phase 7 source-pack/decomposition gating fix (separate next pass).
-- Drafter model routing changes.
-- Any retrieval, citation-engine, Rule 37, or baseline edits.
+## New files
+
+- `supabase/functions/legal-qa/researchPlan.ts` — single planner call, JSON tool schema, returns:
+  ```ts
+  type ResearchPlan = {
+    thesis: string;
+    claims: Array<{
+      id: string;                              // C1..C8
+      statement: string;
+      kind: 'doctrinal'|'procedural'|'empirical'|'normative';
+      required_evidence: Array<'statute'|'case'|'academic'|'committee'|'news'>;
+      search_targets: string[];                // 2-4 Hebrew queries
+      hedge_if_partial: string;                // hedge wording template
+    }>;
+    counter_claims: Array<{ id: string; statement: string; search_targets: string[] }>;
+  }
+  ```
+- `supabase/functions/legal-qa/claimRetrieval.ts` — per-claim retrieval (local hybrid + optional Perplexity). Returns `{ claim_id, candidates: SourceCard[] }[]`.
+- `supabase/functions/legal-qa/ledger.ts` — verification + ledger assembly. Output:
+  ```ts
+  type Ledger = Array<{
+    claim_id: string;
+    claim: string;
+    support: 'direct'|'partial';
+    hedge: boolean;
+    source_ids: string[];   // 1-3 strongest
+  }>;
+  ```
+- Verification reuses `claimVerification.ts` (already in repo) but with the simpler 4-label verdict.
+
+## Telemetry contract (qa_logs.metadata)
+Single, flat shape replacing the layered `stage_runs` we have now:
+```
+metadata.research_plan = { thesis, claim_count, counter_count, model, ms }
+metadata.retrieval     = { per_claim: [{claim_id, local_n, external_n}], ms }
+metadata.verification  = { per_claim: [{claim_id, direct, partial, tangential, unrelated}], ms }
+metadata.ledger        = { kept, dropped, claim_ids_kept, claim_ids_dropped }
+metadata.drafter       = { model, prompt_chars, answer_len, footnotes_n }
+```
+This gives one line per stage and replaces the ten+ overlapping fields we read today (`pass_d_compact`, `phase7:gate`, `sourcePackV2`, `decompositionV2`, etc.).
+
+## Migration order (no big-bang)
+
+1. **Add** `researchPlan.ts`, `claimRetrieval.ts`, `ledger.ts` behind a feature flag `RESEARCH_V2=true` (env on edge function).
+2. **Wire** the new path in `index.ts` for Deep only, behind the flag. Fast keeps current path one release.
+3. **Validate** on the existing eval set (Q1, Q2, Q6, Q21, Q22, basic-law, extort, procedural baselines under `eval/regression/`).
+4. **Flip** Deep default to V2, keep V1 reachable for one release for diffing via shadowAbLogger.
+5. **Migrate** Fast to V2 (same code, smaller per-claim caps from `modeProfiles`).
+6. **Delete** the files in the "remove" column and the dead branches in `index.ts`.
+7. Update memories under `.lovable/memory/logic/legal-qa/` to reflect the collapsed pipeline; archive stage-specific notes (phase7 gate, sourcePackV2, decomposition V2, claim_map) as historical.
+
+## Risks & mitigations
+
+- **Risk:** ResearchPlan call becomes too long / times out.
+  Mitigation: single tool-call JSON, `reasoning_effort=minimal` on Fast, `low` on Deep; 30s/45s timeouts as today. Already proven on the existing planner stages.
+- **Risk:** Per-claim retrieval is N× slower than one global pack.
+  Mitigation: `Promise.all` over claims; cap claims at 6 (Fast) / 8 (Deep); per-claim local query is cheap (existing `match_legal_chunks` + `search_legal_chunks_text` already used).
+- **Risk:** Footnotes drop too far (under 5).
+  Mitigation: ledger guarantees ≥1 source per kept claim; if final kept claims < 3, retry retrieval round 2 on the dropped claims (config-only follow-up, no new code paths).
+- **Risk:** Regression on baselines.
+  Mitigation: flag-gated rollout + shadow A/B + existing regression harness.
+
+## Out of scope for this pass
+- Citation engine internals
+- Rule 37 logic
+- Anchor enforcement
+- Academic writing mode (its own pipeline; reuses ResearchPlan only at the chapter level later)
+- Auth, credits, RLS
+
+## Deliverables
+- New: `researchPlan.ts`, `claimRetrieval.ts`, `ledger.ts`
+- Edited: `index.ts` (orchestration collapse), `modeProfiles.ts` (per-claim caps), `contracts.ts` (new types), memory index
+- Removed (after flip): `legalResearchPlanner.ts`, `legalResearchDecomposition.ts`, `issueMap.ts`, `candidateClaims.ts`, `legalClaimMap.ts`, `sourceRoleClassifier.ts`, `sourcePackGateV2.ts`, `roleAwarePromptHelper.ts`, `legalIssueRouter.ts` (after absorb), plus their tests
+- Reduced: `dynamicRerank.ts`, `legalSourcePack.ts`, `queryExpansion.ts`, `decomposition.ts`
+
+Estimated `index.ts` reduction: ~10.7k → ~4–5k lines. Total module ~21k → ~10k lines.
