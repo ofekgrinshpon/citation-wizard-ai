@@ -1,0 +1,79 @@
+{
+  "$schema_version": "1.0",
+  "description": "Gold anchors for V3 acceptance gates. Each question lists the seminal / supporting / background authorities a competent Israeli legal researcher would expect to see in a complete answer. `centrality` controls scoring weight; `tier` controls whether the source can become a citation (A) or stays orientation-only (B). Dockets/sections are normalized; renderer is responsible for citation-formatting.",
+  "questions": {
+    "Q1": {
+      "title": "תקנה 95 לתקנות סדר הדין האזרחי — תיקון כתב טענות",
+      "anchors": [
+        { "id": "Q1-A1", "type": "regulation",       "name": "תקנות סדר הדין האזרחי, התשע\"ט–2018", "section": "תקנה 46 (לשעבר תקנה 95)", "centrality": "seminal",    "tier": "A" },
+        { "id": "Q1-A2", "type": "regulation",       "name": "תקנות סדר הדין האזרחי, התשמ\"ד–1984", "section": "תקנה 95",                  "centrality": "seminal",    "tier": "A" },
+        { "id": "Q1-A3", "type": "leading_case",     "name": "רע\"א 2345/98 דנקנר נ' ביטון",         "docket": "רע\"א 2345/98",            "centrality": "seminal",    "tier": "A" },
+        { "id": "Q1-A4", "type": "leading_case",     "name": "ע\"א 3092/90 אגמון נ' פלדבוי",          "docket": "ע\"א 3092/90",             "centrality": "supporting", "tier": "A" },
+        { "id": "Q1-A5", "type": "academic",         "name": "אורי גורן, סוגיות בסדר דין אזרחי",      "centrality": "supporting", "tier": "A" }
+      ]
+    },
+    "Q2": {
+      "title": "סעיף 18 לחוק החוזים (חלק כללי) — עושק",
+      "anchors": [
+        { "id": "Q2-A1", "type": "statute_section", "name": "חוק החוזים (חלק כללי), התשל\"ג–1973", "section": "סעיף 18",                "centrality": "seminal",    "tier": "A" },
+        { "id": "Q2-A2", "type": "leading_case",    "name": "ע\"א 403/80 סאסי נ' קיקאון",            "docket": "ע\"א 403/80",            "centrality": "seminal",    "tier": "A" },
+        { "id": "Q2-A3", "type": "leading_case",    "name": "ע\"א 11/84 רבינוביץ נ' שלב",            "docket": "ע\"א 11/84",             "centrality": "supporting", "tier": "A" },
+        { "id": "Q2-A4", "type": "academic",        "name": "דניאל פרידמן ונילי כהן, חוזים",         "centrality": "supporting", "tier": "A" }
+      ]
+    },
+    "Q3": {
+      "title": "פסילת חוק בלתי חוקתי — פסקת ההגבלה ופסילה שיפוטית",
+      "anchors": [
+        { "id": "Q3-A1", "type": "basic_law_section", "name": "חוק-יסוד: כבוד האדם וחירותו",          "section": "סעיף 8",                "centrality": "seminal",    "tier": "A" },
+        { "id": "Q3-A2", "type": "leading_case",      "name": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל", "docket": "בג\"ץ 6821/93",       "centrality": "seminal",    "tier": "A" },
+        { "id": "Q3-A3", "type": "leading_case",      "name": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",      "docket": "בג\"ץ 1715/97",         "centrality": "supporting", "tier": "A" },
+        { "id": "Q3-A4", "type": "academic",          "name": "אהרן ברק, פרשנות חוקתית",              "centrality": "supporting", "tier": "A" }
+      ]
+    },
+    "Q4": {
+      "title": "מחדל חקיקתי / כשל מערכתי להגן מפני סחיטת דמי חסות",
+      "frame": "positive constitutional obligation; systemic failure to protect; legislative/executive omission; protection-money extortion",
+      "anchors": [
+        { "id": "Q4-A1", "type": "basic_law_section", "name": "חוק-יסוד: כבוד האדם וחירותו",            "section": "סעיפים 2, 4",          "centrality": "seminal",    "tier": "A" },
+        { "id": "Q4-A2", "type": "statute_section",   "name": "חוק העונשין, התשל\"ז–1977",              "section": "סעיף 428א",            "centrality": "seminal",    "tier": "A" },
+        { "id": "Q4-A3", "type": "leading_case",      "name": "בג\"ץ 8276/05 עדאלה נ' שר הביטחון",     "docket": "בג\"ץ 8276/05",         "centrality": "seminal",    "tier": "A" },
+        { "id": "Q4-A4", "type": "committee_report",  "name": "פרוטוקול הוועדה המשותפת לחוקה ולחוץ וביטחון בנושא תיקון 146 לחוק העונשין (חוק הפרוטקשן)", "session_meta": "הכנסת ה-25, 19.07.2023", "centrality": "supporting", "tier": "A" },
+        { "id": "Q4-A5", "type": "leading_case",      "name": "בג\"ץ 295/65 אופנהיימר נ' שר הפנים",     "docket": "בג\"ץ 295/65",          "centrality": "supporting", "tier": "A" },
+        { "id": "Q4-A6", "type": "academic",          "name": "מרדכי קרמניצר ויובל שני (IDI) — חובת המדינה להגן",                                "centrality": "background", "tier": "B" }
+      ]
+    },
+    "Q5": {
+      "title": "אפרופים / תיקון חוק החוזים (תיקון מס' 2) — פרשנות חוזים",
+      "anchors": [
+        { "id": "Q5-A1", "type": "leading_case",    "name": "ע\"א 4628/93 מדינת ישראל נ' אפרופים שיכון ויזום",   "docket": "ע\"א 4628/93", "centrality": "seminal",    "tier": "A" },
+        { "id": "Q5-A2", "type": "leading_case",    "name": "דנ\"א 2045/05 ארגון מגדלי ירקות נ' מדינת ישראל",     "docket": "דנ\"א 2045/05", "centrality": "seminal",    "tier": "A" },
+        { "id": "Q5-A3", "type": "statute_section", "name": "חוק החוזים (חלק כללי), התשל\"ג–1973",                "section": "סעיף 25 (לאחר תיקון מס' 2, תשע\"א–2011)", "centrality": "seminal", "tier": "A" },
+        { "id": "Q5-A4", "type": "academic",        "name": "אייל זמיר, פרשנות חוזים",                            "centrality": "supporting", "tier": "A" }
+      ]
+    },
+    "Q6": {
+      "title": "פסקת ההגבלה — סעיף 8 לחוק-יסוד: כבוד האדם וחירותו",
+      "anchors": [
+        { "id": "Q6-A1", "type": "basic_law_section", "name": "חוק-יסוד: כבוד האדם וחירותו",          "section": "סעיף 8",                "centrality": "seminal",    "tier": "A" },
+        { "id": "Q6-A2", "type": "leading_case",      "name": "בג\"ץ 6821/93 בנק המזרחי המאוחד נ' מגדל", "docket": "בג\"ץ 6821/93",       "centrality": "seminal",    "tier": "A" },
+        { "id": "Q6-A3", "type": "leading_case",      "name": "בג\"ץ 1715/97 לשכת מנהלי ההשקעות",      "docket": "בג\"ץ 1715/97",         "centrality": "seminal",    "tier": "A" },
+        { "id": "Q6-A4", "type": "leading_case",      "name": "בג\"ץ 466/07 גלאון נ' היועץ המשפטי לממשלה", "docket": "בג\"ץ 466/07",      "centrality": "supporting", "tier": "A" },
+        { "id": "Q6-A5", "type": "academic",          "name": "אהרן ברק, מידתיות במשפט",               "centrality": "supporting", "tier": "A" }
+      ]
+    },
+    "Q7": {
+      "title": "מיצוי הליכים בבג\"ץ / סעד חלופי (גרסה שמרנית — מאומתת)",
+      "anchors": [
+        { "id": "Q7-A1", "type": "leading_case",    "name": "בג\"ץ 991/91 פסטרנק נ' שר הבינוי והשיכון", "docket": "בג\"ץ 991/91", "centrality": "seminal",    "tier": "A" },
+        { "id": "Q7-A2", "type": "statute_section", "name": "חוק בתי משפט לעניינים מינהליים, התש\"ס–2000", "section": "סעיפים 5, 8", "centrality": "seminal", "tier": "A" },
+        { "id": "Q7-A3", "type": "academic",        "name": "יצחק זמיר, הסמכות המינהלית, כרך ג",         "centrality": "seminal",    "tier": "A" },
+        { "id": "Q7-A4", "type": "academic",        "name": "יואב דותן, בג\"ץ וסעד חלופי",               "centrality": "supporting", "tier": "A" }
+      ]
+    }
+  },
+  "scoring": {
+    "recall_at_plan_min": 0.5,
+    "must_cite_seminal_min": 1,
+    "tier_b_never_citation": true
+  }
+}

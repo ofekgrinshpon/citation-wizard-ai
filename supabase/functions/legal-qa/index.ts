@@ -42,7 +42,9 @@ import {
 } from "./entityResolution.ts";
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import { runResearchV2, researchV2Enabled } from "./researchV2Pipeline.ts";
+import { runResearchV3, researchV3Enabled } from "./researchV3Pipeline.ts";
 console.log(`[boot] RESEARCH_V2 env raw="${Deno.env.get("RESEARCH_V2")}" enabled=${researchV2Enabled()}`);
+console.log(`[boot] RESEARCH_V3 env raw="${Deno.env.get("RESEARCH_V3")}" enabled=${researchV3Enabled()}`);
 import {
   BANNED_KEYS,
   type CitationQuality,
@@ -2452,19 +2454,21 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     // sourcePack→claimMap chain with: researchPlan → claimRetrieval →
     // ledger → compact drafter → Card→Claim contract. Fast remains V1.
     // Academic chapters remain V1. eval-forced legacy bypasses V2.
-    console.log(`[research_v2:diag] v2_enabled=${researchV2Enabled()} taskMode=${taskMode} RESEARCH_MODE=${RESEARCH_MODE} depth=${researchDepth} isAcademicChapter=${isAcademicChapter} evalForceLegacy=${evalForceLegacy}`);
+    console.log(`[research_v2:diag] v2_enabled=${researchV2Enabled()} v3_enabled=${researchV3Enabled()} taskMode=${taskMode} RESEARCH_MODE=${RESEARCH_MODE} depth=${researchDepth} isAcademicChapter=${isAcademicChapter} evalForceLegacy=${evalForceLegacy}`);
     if (
-      researchV2Enabled() &&
+      (researchV2Enabled() || researchV3Enabled()) &&
       taskMode === RESEARCH_MODE &&
       researchDepth === "deep" &&
       !isAcademicChapter &&
       !evalForceLegacy
     ) {
       try {
-        console.log(`[research_v2] gate ON — running V2 Deep pipeline`);
+        const useV3 = researchV3Enabled();
+        console.log(`[research_v${useV3 ? "3" : "2"}] gate ON — running Deep pipeline`);
         const asyncRunId = typeof body?._asyncRunId === "string" ? body._asyncRunId : null;
         const v2QaLogId = asyncRunId ?? crypto.randomUUID();
-        const v2 = await runResearchV2({
+        const runner = useV3 ? runResearchV3 : runResearchV2;
+        const v2 = await runner({
           question, depth: "deep", adminClient,
           drafterTimeoutMs: modeProfile.drafterTimeoutMs,
           forceDrafterModel,
