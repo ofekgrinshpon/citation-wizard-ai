@@ -157,13 +157,29 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
 
   // ── Stage 1: ResearchPlan ──────────────────────────────────────────
   const planT0 = Date.now();
-  const { plan, run: planRun } = await buildResearchPlan({ question, depth });
+  const planResult = await buildResearchPlan({ question, depth });
+  const { plan, run: planRun, fallback_model_used, fallback_reason, primary_run } = planResult;
+  const planMs = Date.now() - planT0;
+
+  // V2 planner telemetry (persisted by index.ts even when V2 falls back to V1).
+  const plannerStatus: "success" | "fallback_success" | "timeout" | "failed" = plan
+    ? (fallback_model_used ? "fallback_success" : "success")
+    : (planRun.status === "timeout" ? "timeout" : "failed");
+  metadata.research_plan_v2_attempted = true;
+  metadata.research_plan_v2_status = plannerStatus;
+  metadata.planner_model = planRun.model;
+  metadata.planner_ms = planMs;
+  if (fallback_model_used) metadata.research_plan_fallback_model_used = true;
+  if (fallback_reason) metadata.fallback_reason = fallback_reason;
+  if (primary_run) metadata.research_plan_primary_run = primary_run;
+
   metadata.research_plan = {
     ...summarizeResearchPlan(plan, planRun),
-    duration_ms: Date.now() - planT0,
+    duration_ms: planMs,
+    fallback_model_used: fallback_model_used === true,
   };
   if (!plan) {
-    metadata.fallback = { reason: "research_plan_failed", stage: "research_plan_v2" };
+    metadata.fallback = { reason: "research_plan_failed", stage: "research_plan_v2", detail: fallback_reason ?? null };
     return emptyFallback("research_plan_failed", metadata);
   }
 
