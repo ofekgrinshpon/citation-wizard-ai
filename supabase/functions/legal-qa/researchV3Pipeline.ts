@@ -157,6 +157,39 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
     return convertV3AnchorsToV2(r.plan);
   }).catch(() => []);
 
+  // ── Step 2.2: per-anchor local probe + Perplexity fallback ──────────
+  // Runs in parallel with V2. For each V3 anchor we probe local DB, and on
+  // 0 local hits fire ONE sonar-pro call scoped to that anchor with the
+  // Tier A domain filter. Validated candidates are pre-shaped as V2
+  // ClaimCandidateSource entries and handed to V2 via a new promise; V2
+  // injects them into the matching claim pack BEFORE verification, so the
+  // existing ledger/drafter/citation-engine path stays untouched.
+  let fallbackResult: AnchorFallbackResult | null = null;
+  const fallbackPromise: Promise<Map<string, ClaimCandidateSource[]>> = v3PlanPromise
+    .then(async (r) => {
+      const plan = r.plan;
+      if (!plan || plan.expected_anchors.length === 0) {
+        fallbackResult = { candidatesByAnchorKey: new Map(), perAnchor: [], wall_ms: 0 };
+        return fallbackResult.candidatesByAnchorKey;
+      }
+      const queriesByAnchorId = new Map<string, string[]>();
+      for (const a of plan.expected_anchors) {
+        queriesByAnchorId.set(a.id, buildAnchorQueries(a));
+      }
+      try {
+        fallbackResult = await runAnchorFallback({
+          anchors: plan.expected_anchors,
+          queriesByAnchorId,
+          adminClient: args.adminClient,
+        });
+      } catch (e) {
+        console.warn("[research_v3] anchor_fallback error:", (e as Error).message);
+        fallbackResult = { candidatesByAnchorKey: new Map(), perAnchor: [], wall_ms: 0 };
+      }
+      return fallbackResult.candidatesByAnchorKey;
+    })
+    .catch(() => new Map());
+
   const v2Result = await runResearchV2({
     ...args,
     externalAnchorsPromise,
@@ -164,14 +197,19 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
     // 75s gives V3 room to land before V2 reconciles, with a hard cap.
     externalAnchorsTimeoutMs: 75000,
     externalAnchorsSource: "v3_legal_research_plan",
+    externalAnchorCandidatesPromise: fallbackPromise,
+    // Anchor fallback can take up to ~20s (local probe + Perplexity).
+    externalAnchorCandidatesTimeoutMs: 30000,
   });
 
   // V3 plan result should be settled by now since V2 awaited the promise.
   if (!v3PlanResult) {
-    // Defensive: if V2 returned without awaiting (e.g. empty plan early-exit),
-    // briefly await V3 so telemetry isn't lost.
     await v3PlanPromise.catch(() => {});
   }
+  if (!fallbackResult) {
+    await fallbackPromise.catch(() => {});
+  }
+
   const v3Summary = summarizeLegalResearchPlanV3(
     v3PlanResult?.plan ?? null,
     v3PlanResult?.run ?? {
@@ -185,10 +223,37 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
     `model=${v3PlanResult?.run.model ?? "none"}`,
   );
 
+  // Backfill `verified` / `cited` from V2 anchor lifecycle (which now
+  // includes external-anchor synthetic chunks injected pre-verification).
+  const lifecycleAny = (v2Result.metadata as Record<string, unknown>)?.anchor_lifecycle as
+    | { per_claim?: Array<{ candidates?: Array<{ anchor_id?: string; verified?: string; cited?: boolean }> }> }
+    | undefined;
+  const verifiedCountByAnchor = new Map<string, number>();
+  const citedCountByAnchor = new Map<string, number>();
+  if (lifecycleAny?.per_claim) {
+    for (const pc of lifecycleAny.per_claim) {
+      for (const c of pc.candidates ?? []) {
+        if (!c.anchor_id) continue;
+        if (c.verified && c.verified !== "unrelated") {
+          verifiedCountByAnchor.set(c.anchor_id, (verifiedCountByAnchor.get(c.anchor_id) ?? 0) + 1);
+        }
+        if (c.cited) {
+          citedCountByAnchor.set(c.anchor_id, (citedCountByAnchor.get(c.anchor_id) ?? 0) + 1);
+        }
+      }
+    }
+  }
+  if (fallbackResult) {
+    for (const pa of fallbackResult.perAnchor) {
+      pa.verified = verifiedCountByAnchor.get(pa.anchor_id) ?? 0;
+      pa.cited = citedCountByAnchor.get(pa.anchor_id) ?? 0;
+    }
+  }
+
   const v3PlanWallMs = Date.now() - v3PlanT0;
   const stampedMetadata = {
     ...(v2Result.metadata ?? {}),
-    v3_path: "deep_v3_step2_anchor_merge",
+    v3_path: "deep_v3_step2_2_anchor_fallback",
     v3_approved_domains: {
       tier_a_count: TIER_A_DOMAINS.length,
       tier_b_count: TIER_B_DOMAINS.length,
@@ -201,6 +266,17 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
       anchors: v3PlanResult?.plan?.expected_anchors ?? [],
       frame: v3PlanResult?.plan?.frame ?? null,
     },
+    v3_anchor_fallback: fallbackResult
+      ? {
+          per_anchor: fallbackResult.perAnchor,
+          wall_ms: fallbackResult.wall_ms,
+          total_candidates_added: fallbackResult.perAnchor.reduce(
+            (n, p) => n + p.candidate_added, 0,
+          ),
+          total_perplexity_calls: fallbackResult.perAnchor.filter(p => p.perplexity_called).length,
+        }
+      : { per_anchor: [], wall_ms: 0, total_candidates_added: 0, total_perplexity_calls: 0 },
   };
   return { ...v2Result, metadata: stampedMetadata };
 }
+
