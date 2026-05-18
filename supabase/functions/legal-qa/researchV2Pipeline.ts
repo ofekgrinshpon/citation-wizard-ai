@@ -368,6 +368,71 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
   metadata.retrieval_v2 = summarizeRetrieval({ packs, telemetry });
   metadata.retrieval_telemetry = telemetry;
 
+  // ── Stage 2.5: External anchor candidate injection (V3 Step 2.2) ────
+  // Take Perplexity-found, Tier-A-validated candidates from V3 and push
+  // them into the matching claim pack BEFORE verification. Each candidate
+  // already carries origin="anchor" and an anchorId so the existing
+  // anchor lifecycle telemetry picks it up automatically.
+  if (args.externalAnchorCandidatesPromise && answerMapForRecon) {
+    const extT0 = Date.now();
+    const timeoutMs = args.externalAnchorCandidatesTimeoutMs ?? 30000;
+    let byKey: Map<string, ClaimCandidateSource[]> = new Map();
+    let extStatus: "ok" | "timeout" | "error" | "empty" = "empty";
+    let extError: string | undefined;
+    try {
+      byKey = await Promise.race([
+        args.externalAnchorCandidatesPromise,
+        new Promise<Map<string, ClaimCandidateSource[]>>((_, rej) =>
+          setTimeout(() => rej(new Error("external_candidates_timeout")), timeoutMs),
+        ),
+      ]);
+      extStatus = byKey.size > 0 ? "ok" : "empty";
+    } catch (e) {
+      const msg = (e as Error).message ?? String(e);
+      extStatus = /timeout/i.test(msg) ? "timeout" : "error";
+      extError = msg;
+    }
+
+    // Reverse: anchorId → claimId (from anchorIdsByClaim built earlier).
+    const claimByAnchorId = new Map<string, string>();
+    if (anchorIdsByClaim) {
+      for (const [claimId, ids] of anchorIdsByClaim) {
+        for (const id of ids) claimByAnchorId.set(id, claimId);
+      }
+    }
+
+    let totalInjected = 0;
+    const injectedPerAnchor: Array<{ anchor_id: string; claim_id: string | null; n: number }> = [];
+    if (byKey.size > 0) {
+      // Walk merged anchors → look up candidates by key → push into pack.
+      for (const a of answerMapForRecon.doctrinal_anchors) {
+        const key = `${a.type}|${(a.name || "").trim().toLowerCase()}|${a.docket ?? ""}|${a.section ?? ""}`;
+        const cands = byKey.get(key);
+        if (!cands || cands.length === 0) continue;
+        const claimId = claimByAnchorId.get(a.id) ?? packs[0]?.claimId ?? null;
+        if (!claimId) continue;
+        const pack = packs.find((p) => p.claimId === claimId);
+        if (!pack) continue;
+        for (const c of cands) {
+          // Reassign anchorId in case merge re-IDed the anchor.
+          pack.candidates.push({ ...c, anchorId: a.id });
+          totalInjected++;
+        }
+        injectedPerAnchor.push({ anchor_id: a.id, claim_id: claimId, n: cands.length });
+      }
+    }
+
+    metadata.external_anchor_candidates = {
+      status: extStatus,
+      duration_ms: Date.now() - extT0,
+      keys_supplied: byKey.size,
+      injected: totalInjected,
+      per_anchor: injectedPerAnchor,
+      ...(extError ? { error: extError } : {}),
+    };
+  }
+
+
   // ── Stage 3: Verification + ledger ─────────────────────────────────
   const { ledger, runs: verifyRuns } = await verifyAndBuildLedger({
     claims: plan.claims, packs, depth, thesis: plan.thesis,
