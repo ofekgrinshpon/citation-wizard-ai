@@ -13,6 +13,8 @@
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { runResearchV2, type RunResearchV2Args, type RunResearchV2Result } from "./researchV2Pipeline.ts";
 import { TIER_A_DOMAINS, TIER_B_DOMAINS } from "./approvedDomains.ts";
+import { runAnchorFallback, anchorKey, type AnchorFallbackResult } from "./anchorFallbackV3.ts";
+import type { ClaimCandidateSource } from "./claimRetrieval.ts";
 import {
   buildLegalResearchPlanV3,
   summarizeLegalResearchPlanV3,
