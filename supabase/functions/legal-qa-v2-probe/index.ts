@@ -91,12 +91,14 @@ async function runProbe(question: string, depth: "fast"|"deep", adminClient: Ret
       },
     };
   }
-  await adminClient.from("qa_logs").insert({
+  const { error: insErr } = await adminClient.from("qa_logs").insert({
+    user_id: "65600563-6bc3-4f54-867b-d532c377f522",
     question: `[v2_probe:${runId}] ${question}`,
     task_mode: "v2_probe",
     answer: "",
     metadata: { v2_probe_run_id: runId, depth, report: result },
   });
+  if (insErr) console.error(`[v2_probe insert] ${insErr.message}`);
 }
 
 Deno.serve(async (req) => {
