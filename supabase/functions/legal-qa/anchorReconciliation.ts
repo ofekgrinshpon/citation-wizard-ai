@@ -24,11 +24,18 @@ export interface ReconciliationTelemetry {
   query_cap_per_claim: number;
 }
 
+export interface AnchorQueryOwner {
+  query: string;
+  anchorId: string;
+}
+
 export interface ReconcileResult {
   /** Per-claim list of extra search queries to fire (deduped, capped). */
   byClaim: Map<string, string[]>;
   /** Per-claim list of anchor IDs attached (for ledger-side telemetry). */
   anchorsByClaim: Map<string, string[]>;
+  /** Per-claim list of (query → anchorId) ownership for tagging candidates. */
+  queryOwnersByClaim: Map<string, AnchorQueryOwner[]>;
   telemetry: ReconciliationTelemetry;
 }
 
