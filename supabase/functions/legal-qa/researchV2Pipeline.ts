@@ -71,6 +71,14 @@ export interface RunResearchV2Args {
   externalAnchorsTimeoutMs?: number;
   /** Source label for telemetry (`metadata.external_anchors.source`). */
   externalAnchorsSource?: string;
+  /**
+   * V3 Step 2.2 — pre-validated source candidates from per-anchor Perplexity
+   * fallback. Keyed by anchor dedup key (type|name(lower)|docket|section).
+   * Injected into the matching claim pack BEFORE verification so the existing
+   * ledger/drafter/citation-engine path stays unchanged.
+   */
+  externalAnchorCandidatesPromise?: Promise<Map<string, ClaimCandidateSource[]>>;
+  externalAnchorCandidatesTimeoutMs?: number;
 }
 
 export interface RunResearchV2Result {
