@@ -40,3 +40,24 @@ export function isCanonicalHost(): boolean {
   const host = window.location.hostname;
   return host === "relexlm.com" || host === "www.relexlm.com";
 }
+
+/** True for local/sandbox preview hosts whose auth session is origin-scoped. */
+export function isPreviewOrDevHost(): boolean {
+  if (typeof window === "undefined") return false;
+  const host = window.location.hostname;
+  return (
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host.endsWith(".lovableproject.com") ||
+    (host.startsWith("id-preview--") && host.endsWith(".lovable.app"))
+  );
+}
+
+/**
+ * Published non-canonical hosts should bounce OAuth to ReLex's public domain,
+ * but preview/dev hosts must authenticate on their own origin or /app appears
+ * logged out immediately after sign-in.
+ */
+export function shouldRedirectOAuthToCanonicalHost(): boolean {
+  return !isCanonicalHost() && !isPreviewOrDevHost();
+}
