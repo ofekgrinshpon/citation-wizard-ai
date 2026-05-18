@@ -2525,6 +2525,8 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     }
 
 
+    // ========= Academic sub-mode shortcut =========
+    // For suggest_topics, validate_question, propose_outline: lighter flow without full retrieval.
     // Also: write_chapter when isAbstract === true, since the abstract is pure synthesis of
     // already-written chapters and must NOT introduce new external citations.
     const isAbstractGeneration =
