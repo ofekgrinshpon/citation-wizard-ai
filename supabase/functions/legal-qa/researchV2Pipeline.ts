@@ -204,6 +204,15 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
 
   // ── Stage 1.5: AnswerMap / Authority Discovery (gated) ────────────
   let anchorQueriesByClaim: Map<string, string[]> | undefined;
+  let anchorIdsByClaim: Map<string, string[]> | undefined;
+  let anchorQueryOwnersByClaim:
+    | Map<string, Array<{ query: string; anchorId: string }>>
+    | undefined;
+  // anchors_by_id[anchorId] = { type, name, centrality, claim_id } for missing_expected
+  const anchorsById = new Map<
+    string,
+    { type: string; name: string; centrality: string; claim_id: string }
+  >();
   if (answerMapEnabled()) {
     try {
       const amT0 = Date.now();
@@ -216,7 +225,20 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
       if (amRes.answerMap) {
         const recon = reconcileAnchors({ plan, answerMap: amRes.answerMap, depth: "deep" });
         metadata.anchor_reconciliation = recon.telemetry;
-        if (recon.byClaim.size > 0) anchorQueriesByClaim = recon.byClaim;
+        if (recon.byClaim.size > 0) {
+          anchorQueriesByClaim = recon.byClaim;
+          anchorIdsByClaim = recon.anchorsByClaim;
+          anchorQueryOwnersByClaim = recon.queryOwnersByClaim;
+        }
+        // Index anchors → claim attachment for missing_expected_anchors.
+        for (const att of recon.telemetry.attachments) {
+          const a = amRes.answerMap.doctrinal_anchors.find((x) => x.id === att.anchor_id);
+          if (a) {
+            anchorsById.set(a.id, {
+              type: a.type, name: a.name, centrality: a.centrality, claim_id: att.claim_id,
+            });
+          }
+        }
       }
     } catch (e) {
       metadata.answer_map_error = (e as Error).message ?? String(e);
@@ -229,6 +251,8 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
   const { packs, telemetry } = await retrieveClaims({
     adminClient, claims: plan.claims, depth, embed: embedQuery, maxConcurrency: 3,
     anchorQueriesByClaim,
+    anchorIdsByClaim,
+    anchorQueryOwnersByClaim,
   });
   metadata.retrieval_v2 = summarizeRetrieval({ packs, telemetry });
   metadata.retrieval_telemetry = telemetry;
