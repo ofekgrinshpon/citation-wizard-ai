@@ -42,7 +42,9 @@ import {
 } from "./entityResolution.ts";
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
 import { runResearchV2, researchV2Enabled } from "./researchV2Pipeline.ts";
+import { runResearchV3, researchV3Enabled } from "./researchV3Pipeline.ts";
 console.log(`[boot] RESEARCH_V2 env raw="${Deno.env.get("RESEARCH_V2")}" enabled=${researchV2Enabled()}`);
+console.log(`[boot] RESEARCH_V3 env raw="${Deno.env.get("RESEARCH_V3")}" enabled=${researchV3Enabled()}`);
 import {
   BANNED_KEYS,
   type CitationQuality,
