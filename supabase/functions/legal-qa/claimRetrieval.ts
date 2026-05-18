@@ -54,6 +54,8 @@ export interface RetrievalTelemetry {
   vector_query_chars_before: number;
   vector_query_chars_after: number;
   total_candidates: number;
+  /** Sources skipped at ingest because their title/citation was a known placeholder. */
+  broken_title_drops?: number;
   duration_ms: number;
 }
 
@@ -85,6 +87,34 @@ interface RawHit {
   source_type?: string;
   source_url?: string;
   similarity?: number;
+}
+
+/**
+ * V2 broken-title / placeholder filter.
+ * Rejects sources whose title or citation is a generic ingestion placeholder
+ * that cannot be cited meaningfully. Especially aimed at Knesset MMM stubs
+ * like "פרטי מסמך (מרכז המחקר והמידע של הכנסת) [חסר: שנה]" and one-word
+ * judgment stubs like "פסק דין" / "החלטה". Source-quality only — does not
+ * affect retrieval, ledger, or drafter logic beyond skipping bad rows.
+ */
+const BROKEN_TITLE_CORE_RE =
+  /^\s*["״"׳']?\s*(?:פרטי\s+מסמך|ללא\s+כותרת|untitled|no\s+title|home|download|פסק[־\s]+דין|החלטה|תוצאות\s+חיפוש|search\s+results|מסמך)\s*["״"׳']?\s*$/i;
+// Match the Knesset MMM placeholder even when wrapped in parens / suffixed with [חסר: ...].
+const BROKEN_TITLE_KNESSET_RE =
+  /פרטי\s+מסמך\s*\([^)]*מרכז\s+המחקר\s+והמידע\s+של\s+הכנסת[^)]*\)/i;
+function isBrokenSourceTitle(title: string, citation: string): boolean {
+  const t = (title || "").trim();
+  const c = (citation || "").trim();
+  if (!t && !c) return true;
+  if (BROKEN_TITLE_CORE_RE.test(t)) return true;
+  if (BROKEN_TITLE_CORE_RE.test(c)) return true;
+  if (BROKEN_TITLE_KNESSET_RE.test(t)) return true;
+  if (BROKEN_TITLE_KNESSET_RE.test(c)) return true;
+  // Citation that is *only* a [חסר: ...] marker with no real text.
+  const cStripped = c.replace(/\[חסר:[^\]]+\]/g, "").trim();
+  const tStripped = t.replace(/\[חסר:[^\]]+\]/g, "").trim();
+  if (!cStripped && !tStripped) return true;
+  return false;
 }
 
 /** Simple FIFO concurrency limiter. */
@@ -260,6 +290,7 @@ export async function retrieveClaims(
     vector_query_chars_before: 0,
     vector_query_chars_after: 0,
     total_candidates: 0,
+    broken_title_drops: 0,
     duration_ms: 0,
   };
 
@@ -335,6 +366,12 @@ export async function retrieveClaims(
   const ingestInto = (byChunk: Map<string, ClaimCandidateSource>, claimId: string, idxRef: { i: number }, hits: RawHit[], origin: "text" | "vector") => {
     for (const h of hits) {
       if (!h?.chunk_id) continue;
+      const title = h.document_title ?? "";
+      const citation = h.document_citation ?? "";
+      if (isBrokenSourceTitle(title, citation)) {
+        tele.broken_title_drops = (tele.broken_title_drops ?? 0) + 1;
+        continue;
+      }
       const score = typeof h.similarity === "number"
         ? Math.max(0, Math.min(1, h.similarity))
         : 0.5;
@@ -344,8 +381,8 @@ export async function retrieveClaims(
         id: `${claimId}-S${++idxRef.i}`,
         chunkId: h.chunk_id,
         documentId: h.document_id,
-        title: h.document_title ?? "",
-        citation: h.document_citation ?? "",
+        title,
+        citation,
         sourceType: h.source_type ?? "",
         sourceUrl: h.source_url ?? undefined,
         excerpt: typeof h.chunk_content === "string" ? h.chunk_content.slice(0, 600) : "",

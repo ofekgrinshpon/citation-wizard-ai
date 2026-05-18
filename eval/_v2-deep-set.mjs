@@ -42,7 +42,12 @@ function dupTokens(footnotes) {
   return bad;
 }
 
+let qi = 0;
 for (const { id, q } of QUESTIONS) {
+  if (qi++ > 0) {
+    console.log(`  -- spacing 45s --`);
+    await new Promise((r) => setTimeout(r, 45000));
+  }
   const evalRunId = `v2-set-${id}-${randomUUID().slice(0, 6)}`;
   console.log(`\n══════════ ${id}: ${q}`);
   const t0 = Date.now();
