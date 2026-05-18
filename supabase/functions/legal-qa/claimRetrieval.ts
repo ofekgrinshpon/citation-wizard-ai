@@ -263,6 +263,7 @@ export async function retrieveClaims(
   const maxConcurrency = args.maxConcurrency ?? 3;
   const anchorQueriesByClaim = args.anchorQueriesByClaim;
   const anchorIdsByClaim = args.anchorIdsByClaim;
+  const anchorQueryOwnersByClaim = args.anchorQueryOwnersByClaim;
   const anchorScoreBoost = args.anchorScoreBoost ?? 0.05;
   const t0 = Date.now();
 
