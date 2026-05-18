@@ -6,9 +6,9 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { buildResearchPlan, summarizeResearchPlan } from "../legal-qa/researchPlan.ts";
-import { retrieveClaims, summarizeRetrieval } from "../legal-qa/claimRetrieval.ts";
-import { verifyAndBuildLedger, summarizeLedger } from "../legal-qa/ledger.ts";
+import { buildResearchPlan, summarizeResearchPlan } from "./researchPlan.ts";
+import { retrieveClaims, summarizeRetrieval } from "./claimRetrieval.ts";
+import { verifyAndBuildLedger, summarizeLedger } from "./ledger.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
