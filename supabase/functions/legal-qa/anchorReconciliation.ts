@@ -24,11 +24,18 @@ export interface ReconciliationTelemetry {
   query_cap_per_claim: number;
 }
 
+export interface AnchorQueryOwner {
+  query: string;
+  anchorId: string;
+}
+
 export interface ReconcileResult {
   /** Per-claim list of extra search queries to fire (deduped, capped). */
   byClaim: Map<string, string[]>;
   /** Per-claim list of anchor IDs attached (for ledger-side telemetry). */
   anchorsByClaim: Map<string, string[]>;
+  /** Per-claim list of (query → anchorId) ownership for tagging candidates. */
+  queryOwnersByClaim: Map<string, AnchorQueryOwner[]>;
   telemetry: ReconciliationTelemetry;
 }
 
@@ -103,6 +110,7 @@ export function reconcileAnchors(args: ReconcileAnchorsArgs): ReconcileResult {
 
   const byClaim = new Map<string, string[]>();
   const anchorsByClaim = new Map<string, string[]>();
+  const queryOwnersByClaim = new Map<string, AnchorQueryOwner[]>();
   const attachments: ReconciliationTelemetry["attachments"] = [];
   const orphan_anchors: ReconciliationTelemetry["orphan_anchors"] = [];
 
@@ -128,16 +136,20 @@ export function reconcileAnchors(args: ReconcileAnchorsArgs): ReconcileResult {
     // Inject anchor queries into the claim's bucket (deduped, capped).
     const bucket = byClaim.get(pick.claimId) ?? [];
     const anchorList = anchorsByClaim.get(pick.claimId) ?? [];
+    const owners = queryOwnersByClaim.get(pick.claimId) ?? [];
     for (const q of anchor.queries) {
       const norm = q.normalize("NFKC").replace(/\s+/g, " ").trim().toLowerCase();
       if (!norm) continue;
       if (bucket.some((existing) => existing.normalize("NFKC").replace(/\s+/g, " ").trim().toLowerCase() === norm)) continue;
       if (bucket.length >= queryCapPerClaim) break;
-      bucket.push(q.trim());
+      const trimmed = q.trim();
+      bucket.push(trimmed);
+      owners.push({ query: trimmed, anchorId: anchor.id });
     }
     if (!anchorList.includes(anchor.id)) anchorList.push(anchor.id);
     byClaim.set(pick.claimId, bucket);
     anchorsByClaim.set(pick.claimId, anchorList);
+    queryOwnersByClaim.set(pick.claimId, owners);
   }
 
   const queries_per_claim: Record<string, number> = {};
@@ -150,6 +162,7 @@ export function reconcileAnchors(args: ReconcileAnchorsArgs): ReconcileResult {
   return {
     byClaim,
     anchorsByClaim,
+    queryOwnersByClaim,
     telemetry: {
       attachments,
       orphan_anchors,

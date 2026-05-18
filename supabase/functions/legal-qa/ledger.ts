@@ -40,15 +40,38 @@ export interface LedgerEntry {
   sources: Array<Pick<
     ClaimCandidateSource,
     "id" | "chunkId" | "documentId" | "title" | "citation" | "sourceType" | "sourceUrl" | "excerpt"
-  > & { support: "direct" | "partial" }>;
+  > & { support: "direct" | "partial"; origin?: ClaimCandidateSource["origin"]; anchorId?: string }>;
   /** Short Hebrew note summarising why the claim survived. */
   evidenceNote: string;
+}
+
+export interface AnchorLifecycleClaim {
+  claim_id: string;
+  in_pool: number;
+  in_top5: number;
+  verified_direct: number;
+  verified_partial: number;
+  verified_tangential: number;
+  verified_unrelated: number;
+  cited: number;
+  /** Per-source breakdown (anchor-origin only): which anchor, what verdict, was it cited. */
+  candidates: Array<{
+    source_id: string;
+    anchor_id?: string;
+    document_id: string;
+    title: string;
+    in_top5: boolean;
+    verdict: V2RelevanceScore | "not_scored";
+    cited: boolean;
+  }>;
 }
 
 export interface Ledger {
   thesis?: string;
   entries: LedgerEntry[];
   dropped: Array<{ claimId: string; claim: string; reason: V2Verdict }>;
+  /** Per-claim anchor-origin candidate lifecycle (populated when AnswerMap fires). */
+  anchorLifecycle?: AnchorLifecycleClaim[];
 }
 
 const TOOL: PlannerToolDef = {
@@ -142,25 +165,44 @@ export async function verifyAndBuildLedger(args: VerifyArgs): Promise<VerifyResu
       // Cap to top-5 by retrieval score (already sorted desc) to keep
       // verifier payload within the 45s budget on deep mode.
       const candidates = allCandidates.slice(0, 5);
+
+      // Compute anchor-origin lifecycle for this claim (works even if
+      // candidates.length === 0 — we still want the in_pool / in_top5
+      // counters so missing_expected_anchors can be derived downstream).
+      const anchorInPool = allCandidates.filter((c) => c.origin === "anchor");
+      const anchorInTop5Ids = new Set(
+        candidates.filter((c) => c.origin === "anchor").map((c) => c.id),
+      );
+
       if (candidates.length === 0) {
         return {
           entry: null,
           dropped: { claimId: claim.id, claim: claim.statement, reason: "unsupported" as V2Verdict },
           run: noOpRun(claim.id, "no_candidates"),
+          lifecycle: {
+            claim_id: claim.id,
+            in_pool: anchorInPool.length,
+            in_top5: 0,
+            verified_direct: 0, verified_partial: 0,
+            verified_tangential: 0, verified_unrelated: 0,
+            cited: 0,
+            candidates: anchorInPool.map((c) => ({
+              source_id: c.id,
+              anchor_id: c.anchorId,
+              document_id: c.documentId,
+              title: c.title,
+              in_top5: false,
+              verdict: "not_scored" as const,
+              cited: false,
+            })),
+          } satisfies AnchorLifecycleClaim,
         };
       }
       const { scores, run } = await scoreClaim({ claim, candidates, depth });
       const verdict = computeVerdict(scores);
+      const scoreBySourceId = new Map(scores.map((s) => [s.source_id, s.score]));
 
-      if (verdict === "unsupported") {
-        return {
-          entry: null,
-          dropped: { claimId: claim.id, claim: claim.statement, reason: verdict },
-          run,
-        };
-      }
-
-      const supporting = candidates
+      const supportingRaw = candidates
         .map((c) => {
           const s = scores.find((x) => x.source_id === c.id);
           return s ? { c, score: s.score, rationale: s.rationale } : null;
@@ -170,19 +212,63 @@ export async function verifyAndBuildLedger(args: VerifyArgs): Promise<VerifyResu
             !!x && (x.score === "direct_support" || x.score === "partial_support"),
         )
         .sort((a, b) => rank(a.score) - rank(b.score))
-        .slice(0, 3)
-        .map(({ c, score, rationale }) => ({
-          id: c.id,
-          chunkId: c.chunkId,
-          documentId: c.documentId,
+        .slice(0, 3);
+
+      const supporting = supportingRaw.map(({ c, score, rationale }) => ({
+        id: c.id,
+        chunkId: c.chunkId,
+        documentId: c.documentId,
+        title: c.title,
+        citation: c.citation,
+        sourceType: c.sourceType,
+        sourceUrl: c.sourceUrl,
+        excerpt: c.excerpt,
+        support: score === "direct_support" ? ("direct" as const) : ("partial" as const),
+        rationale,
+        ...(c.origin ? { origin: c.origin } : {}),
+        ...(c.anchorId ? { anchorId: c.anchorId } : {}),
+      }));
+
+      // Anchor lifecycle for this claim
+      const citedIds = new Set(supporting.map((s) => s.id));
+      let vd = 0, vp = 0, vt = 0, vu = 0, cited = 0;
+      const lifecycleCandidates = anchorInPool.map((c) => {
+        const sc = scoreBySourceId.get(c.id);
+        const wasInTop5 = anchorInTop5Ids.has(c.id);
+        if (wasInTop5 && sc === "direct_support") vd++;
+        else if (wasInTop5 && sc === "partial_support") vp++;
+        else if (wasInTop5 && sc === "tangential") vt++;
+        else if (wasInTop5 && sc === "unrelated") vu++;
+        const wasCited = citedIds.has(c.id);
+        if (wasCited) cited++;
+        return {
+          source_id: c.id,
+          anchor_id: c.anchorId,
+          document_id: c.documentId,
           title: c.title,
-          citation: c.citation,
-          sourceType: c.sourceType,
-          sourceUrl: c.sourceUrl,
-          excerpt: c.excerpt,
-          support: score === "direct_support" ? ("direct" as const) : ("partial" as const),
-          rationale,
-        }));
+          in_top5: wasInTop5,
+          verdict: (wasInTop5 && sc ? sc : "not_scored") as V2RelevanceScore | "not_scored",
+          cited: wasCited,
+        };
+      });
+      const lifecycle: AnchorLifecycleClaim = {
+        claim_id: claim.id,
+        in_pool: anchorInPool.length,
+        in_top5: anchorInTop5Ids.size,
+        verified_direct: vd, verified_partial: vp,
+        verified_tangential: vt, verified_unrelated: vu,
+        cited,
+        candidates: lifecycleCandidates,
+      };
+
+      if (verdict === "unsupported") {
+        return {
+          entry: null,
+          dropped: { claimId: claim.id, claim: claim.statement, reason: verdict },
+          run,
+          lifecycle,
+        };
+      }
 
       const entry: LedgerEntry = {
         claimId: claim.id,
@@ -194,7 +280,7 @@ export async function verifyAndBuildLedger(args: VerifyArgs): Promise<VerifyResu
         sources: supporting,
         evidenceNote: supporting[0]?.rationale?.slice(0, 200) ?? "",
       };
-      return { entry, dropped: null, run };
+      return { entry, dropped: null, run, lifecycle };
     }),
   );
 
@@ -205,9 +291,16 @@ export async function verifyAndBuildLedger(args: VerifyArgs): Promise<VerifyResu
     .map((r) => r.dropped)
     .filter((d): d is { claimId: string; claim: string; reason: V2Verdict } => !!d);
   const runs = results.map((r) => r.run);
+  const anchorLifecycle = results
+    .map((r) => r.lifecycle)
+    .filter((l): l is AnchorLifecycleClaim => !!l);
+  const anyAnchorActivity = anchorLifecycle.some((l) => l.in_pool > 0);
 
   return {
-    ledger: { thesis, entries, dropped },
+    ledger: {
+      thesis, entries, dropped,
+      ...(anyAnchorActivity ? { anchorLifecycle } : {}),
+    },
     runs,
   };
 }

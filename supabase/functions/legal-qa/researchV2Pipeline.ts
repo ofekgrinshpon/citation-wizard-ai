@@ -204,6 +204,15 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
 
   // ── Stage 1.5: AnswerMap / Authority Discovery (gated) ────────────
   let anchorQueriesByClaim: Map<string, string[]> | undefined;
+  let anchorIdsByClaim: Map<string, string[]> | undefined;
+  let anchorQueryOwnersByClaim:
+    | Map<string, Array<{ query: string; anchorId: string }>>
+    | undefined;
+  // anchors_by_id[anchorId] = { type, name, centrality, claim_id } for missing_expected
+  const anchorsById = new Map<
+    string,
+    { type: string; name: string; centrality: string; claim_id: string }
+  >();
   if (answerMapEnabled()) {
     try {
       const amT0 = Date.now();
@@ -216,7 +225,20 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
       if (amRes.answerMap) {
         const recon = reconcileAnchors({ plan, answerMap: amRes.answerMap, depth: "deep" });
         metadata.anchor_reconciliation = recon.telemetry;
-        if (recon.byClaim.size > 0) anchorQueriesByClaim = recon.byClaim;
+        if (recon.byClaim.size > 0) {
+          anchorQueriesByClaim = recon.byClaim;
+          anchorIdsByClaim = recon.anchorsByClaim;
+          anchorQueryOwnersByClaim = recon.queryOwnersByClaim;
+        }
+        // Index anchors → claim attachment for missing_expected_anchors.
+        for (const att of recon.telemetry.attachments) {
+          const a = amRes.answerMap.doctrinal_anchors.find((x) => x.id === att.anchor_id);
+          if (a) {
+            anchorsById.set(a.id, {
+              type: a.type, name: a.name, centrality: a.centrality, claim_id: att.claim_id,
+            });
+          }
+        }
       }
     } catch (e) {
       metadata.answer_map_error = (e as Error).message ?? String(e);
@@ -229,6 +251,8 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
   const { packs, telemetry } = await retrieveClaims({
     adminClient, claims: plan.claims, depth, embed: embedQuery, maxConcurrency: 3,
     anchorQueriesByClaim,
+    anchorIdsByClaim,
+    anchorQueryOwnersByClaim,
   });
   metadata.retrieval_v2 = summarizeRetrieval({ packs, telemetry });
   metadata.retrieval_telemetry = telemetry;
@@ -249,6 +273,72 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
     claim_ids_kept: ledger.entries.map(e => e.claimId),
     claim_ids_dropped: ledger.dropped.map(e => e.claimId),
   };
+
+  // ── Anchor lifecycle + missing_expected_anchors ─────────────────────
+  // Anchor lifecycle = per-claim journey of anchor-origin candidates from
+  // retrieval pool → top-5 → verifier verdict → final ledger sources.
+  // missing_expected_anchors = canonical-authority anchors (statute /
+  // regulation / basic_law_section) that were discovered by AnswerMap but
+  // produced ZERO anchor-origin candidates in retrieval — i.e. no local
+  // DB row matched the authority. Recorded for corpus-ingestion triage,
+  // NOT used to force citations.
+  if (anchorsById.size > 0) {
+    const lifecycle = ledger.anchorLifecycle ?? [];
+    const lifecycleByClaim = new Map(lifecycle.map((l) => [l.claim_id, l] as const));
+    const anchorRet = telemetry.anchor_retrieval;
+    const anchorCandsByClaim = new Map<string, number>();
+    if (anchorRet) {
+      for (const pc of anchorRet.per_claim) anchorCandsByClaim.set(pc.claim_id, pc.anchor_candidates);
+    }
+    const CANONICAL_TYPES = new Set(["statute_section", "regulation", "basic_law_section"]);
+    const missing: Array<{
+      anchor_id: string; name: string; type: string; centrality: string; claim_id: string;
+      reason: "no_local_db_match";
+    }> = [];
+    for (const [aid, a] of anchorsById) {
+      if (!CANONICAL_TYPES.has(a.type)) continue;
+      const cands = anchorCandsByClaim.get(a.claim_id) ?? 0;
+      const lc = lifecycleByClaim.get(a.claim_id);
+      const hasThisAnchor = !!lc?.candidates.some((c) => c.anchor_id === aid);
+      if (cands === 0 || !hasThisAnchor) {
+        missing.push({
+          anchor_id: aid, name: a.name, type: a.type, centrality: a.centrality,
+          claim_id: a.claim_id, reason: "no_local_db_match",
+        });
+      }
+    }
+
+    const totals = lifecycle.reduce(
+      (acc, l) => {
+        acc.in_pool += l.in_pool;
+        acc.in_top5 += l.in_top5;
+        acc.verified_direct += l.verified_direct;
+        acc.verified_partial += l.verified_partial;
+        acc.verified_tangential += l.verified_tangential;
+        acc.verified_unrelated += l.verified_unrelated;
+        acc.cited += l.cited;
+        return acc;
+      },
+      { in_pool: 0, in_top5: 0, verified_direct: 0, verified_partial: 0, verified_tangential: 0, verified_unrelated: 0, cited: 0 },
+    );
+
+    metadata.anchor_lifecycle = {
+      discovered: anchorsById.size,
+      reconciled: [...anchorsById.values()].length,
+      queries_executed: anchorRet?.queries_executed ?? 0,
+      queries_timed_out: anchorRet?.queries_timed_out ?? 0,
+      candidates_in_pool: totals.in_pool,
+      candidates_in_top5: totals.in_top5,
+      verified_direct: totals.verified_direct,
+      verified_partial: totals.verified_partial,
+      verified_tangential: totals.verified_tangential,
+      verified_unrelated: totals.verified_unrelated,
+      cited: totals.cited,
+      per_claim: lifecycle,
+    };
+    metadata.missing_expected_anchors = missing;
+  }
+
 
   if (ledger.entries.length === 0) {
     metadata.fallback = { reason: "empty_ledger", stage: "ledger_v2" };
