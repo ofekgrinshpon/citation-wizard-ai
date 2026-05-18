@@ -107,14 +107,45 @@ function makeLimiter(max: number) {
 const normalizeQuery = (q: string) =>
   q.normalize("NFKC").replace(/[״"׳']/g, '"').replace(/\s+/g, " ").trim().toLowerCase();
 
-/** Pick the single best text query per claim: prefer the longest, most
- *  specific `search_target` (likely contains party/section/doctrine).
- *  Falls back to `claim.statement` truncated to a reasonable length. */
+// Hebrew stopwords — short, non-discriminating tokens. Kept local to avoid
+// cross-file coupling with queryExpansion.ts.
+const HEB_STOPWORDS_LOCAL = new Set([
+  "של","על","עם","אם","או","את","זה","זו","הוא","היא","אני","אנו","אתה",
+  "מה","מי","איך","למה","כי","גם","רק","כל","כמו","יותר","לא","כן","בין",
+  "אבל","אך","יש","אין","לפי","לפני","אחרי","אצל","מן","אל","עד","ה",
+]);
+
+function strongTokens(text: string, limit = 3): string[] {
+  const toks = (text || "")
+    .replace(/["׳״'`.,;:?!()\[\]{}]/g, " ")
+    .split(/\s+/)
+    .map((t) => t.trim())
+    .filter((t) => t.length >= 3 && !HEB_STOPWORDS_LOCAL.has(t));
+  toks.sort((a, b) => b.length - a.length);
+  return [...new Set(toks)].slice(0, limit);
+}
+
+// Max length for a single text query handed to search_legal_chunks_text.
+// Long Hebrew phrases (>~80 chars) consistently trip Postgres statement_timeout
+// on full-text search. Above this threshold we degrade to a 3-token query.
+const TEXT_QUERY_MAX_CHARS = 80;
+
+/** Pick the single best text query per claim. Prefer a search_target that is
+ *  short enough for PG full-text (<= 80 chars). If all targets are long, build
+ *  a 3-token query from the strongest tokens across targets + statement. */
 function pickTextQuery(claim: V2Claim): string {
-  const candidates = claim.search_targets.filter((q) => q && q.trim().length >= 4);
-  if (candidates.length === 0) return claim.statement.slice(0, 160);
-  // Heuristic: longest target tends to be most specific (named parties / doctrines).
-  return [...candidates].sort((a, b) => b.length - a.length)[0];
+  const candidates = (claim.search_targets || []).filter((q) => q && q.trim().length >= 4);
+  // Prefer targets that fit under the FT length cap; among those, prefer the longest
+  // (more specific). Among long-only candidates, degrade to token query.
+  const short = candidates.filter((q) => q.length <= TEXT_QUERY_MAX_CHARS);
+  if (short.length > 0) {
+    return [...short].sort((a, b) => b.length - a.length)[0];
+  }
+  const source = [claim.statement, ...candidates].join(" ");
+  const toks = strongTokens(source, 3);
+  if (toks.length >= 2) return toks.join(" ");
+  // Last resort: truncated statement.
+  return claim.statement.slice(0, TEXT_QUERY_MAX_CHARS);
 }
 
 function pickVectorQuery(claim: V2Claim): string {
