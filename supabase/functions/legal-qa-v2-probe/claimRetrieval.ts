@@ -84,11 +84,17 @@ async function retrieveForClaim(args: {
 
   // Text round — one RPC per query, capped small.
   const textPromises = queries.slice(0, depth === "deep" ? 4 : 3).map(async (q) => {
-    const { data } = await adminClient
-      .rpc("search_legal_chunks_text", { search_query: q, match_count: 6 })
-      .then((r: { data: unknown }) => r)
-      .catch(() => ({ data: null }));
-    return Array.isArray(data) ? (data as RawHit[]) : [];
+    try {
+      const { data, error } = await adminClient
+        .rpc("search_legal_chunks_text", { search_query: q, match_count: 6 });
+      if (error) console.error(`[retrieve_v2 ${claim.id}] text RPC error for "${q.slice(0,60)}":`, error.message);
+      const n = Array.isArray(data) ? data.length : 0;
+      console.log(`[retrieve_v2 ${claim.id}] text "${q.slice(0,60)}" → ${n} hits`);
+      return Array.isArray(data) ? (data as RawHit[]) : [];
+    } catch (e) {
+      console.error(`[retrieve_v2 ${claim.id}] text throw:`, String((e as any)?.message ?? e));
+      return [];
+    }
   });
 
   // Vector round — only when an embed function is available. Cap at 2 queries
