@@ -13,6 +13,8 @@
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { runResearchV2, type RunResearchV2Args, type RunResearchV2Result } from "./researchV2Pipeline.ts";
 import { TIER_A_DOMAINS, TIER_B_DOMAINS } from "./approvedDomains.ts";
+import { runAnchorFallback, anchorKey, type AnchorFallbackResult } from "./anchorFallbackV3.ts";
+import type { ClaimCandidateSource } from "./claimRetrieval.ts";
 import {
   buildLegalResearchPlanV3,
   summarizeLegalResearchPlanV3,
@@ -47,35 +49,65 @@ const V3_TO_V2_CENTRALITY = {
 } as const;
 
 /**
- * Convert a V3 ExpectedAnchor into 1–3 concrete Hebrew search queries that
- * V2 retrieval can execute against local DB + Perplexity. Mirrors the
- * shape that AnswerMap's sanitizer enforces (≥3 chars, ≤160 chars, ≤3).
+ * Step 2.1 — Short, tight queries optimised for FTS hit rate.
+ *
+ *   • leading_case      → docket-only first (e.g. `ע"א 6821/93`), then a
+ *                         short party name (e.g. `בנק המזרחי`) without the
+ *                         long "...בע"מ נ' שר האוצר" trailer that starves
+ *                         the text index.
+ *   • statute / basic   → short title + short section, e.g.
+ *     law / regulation    `חוק-יסוד: כבוד האדם וחירותו סעיף 8`
+ *                         and the bare short title as a backup.
+ *   • academic / other  → just the short name.
+ *
+ * Cap: 2 queries per anchor (was 3); each ≤120 chars (was 160). Hebrew
+ * tokens are heavy in the FTS pipeline — shorter is better.
  */
+function shortCaseName(name: string, docket: string): string {
+  // Strip the docket if it was embedded in the name. Then take the head of
+  // the party name up to "נ'" / "נ' " / "בע"מ" / first comma.
+  let n = (name || "").trim();
+  if (docket) n = n.replace(docket, "").trim();
+  // Cut at "נ'" / "נ׳" / " נ " (the "vs.") — keep only the first party.
+  n = n.split(/\s+נ['׳]\s+/)[0];
+  // Cut at "בע"מ" / "בע״מ" — drop corporate trailer for FTS.
+  n = n.split(/\s+בע["״]מ/)[0];
+  // Cut at first comma (publication ref).
+  n = n.split(",")[0];
+  return n.trim().slice(0, 60);
+}
+
+function shortStatuteName(name: string): string {
+  // Drop the trailing ", התש...-YYYY" tail and any "ס"ח" reference. Keeps
+  // the canonical short title (e.g. `חוק-יסוד: כבוד האדם וחירותו`).
+  let n = (name || "").trim();
+  n = n.split(",")[0];
+  n = n.replace(/\s+ס["״]ח.*$/i, "").replace(/\s+ק["״]ת.*$/i, "");
+  return n.trim().slice(0, 80);
+}
+
 function buildAnchorQueries(a: V3ExpectedAnchor): string[] {
   const queries = new Set<string>();
   const name = (a.name || "").trim();
   const docket = (a.docket || "").trim();
   const section = (a.section || "").trim();
 
-  if (a.type === "leading_case" && docket) {
-    // Docket-first query is the strongest signal for case retrieval.
-    queries.add(docket.slice(0, 160));
-    if (name) {
-      // Combined docket + party name (deduped via the regex below).
-      const combo = `${docket} ${name.replace(docket, "").trim()}`.trim();
-      if (combo.length >= 3) queries.add(combo.slice(0, 160));
+  if (a.type === "leading_case") {
+    // 1. Docket-only — tightest possible FTS signal for caselaw.
+    if (docket) queries.add(docket.slice(0, 60));
+    // 2. Short party name as backup (no "נ'", no "בע"מ", no publication tail).
+    const shortName = shortCaseName(name, docket);
+    if (shortName.length >= 3) queries.add(shortName);
+  } else if (a.type === "statute_section" || a.type === "basic_law_section" || a.type === "regulation") {
+    const shortName = shortStatuteName(name);
+    if (shortName && section) {
+      queries.add(`${shortName} סעיף ${section}`.slice(0, 120));
     }
-  } else if (
-    (a.type === "statute_section" || a.type === "basic_law_section" || a.type === "regulation")
-    && section
-  ) {
-    // "סעיף N לחוק X" canonical form.
-    queries.add(`סעיף ${section} ל${name}`.slice(0, 160));
-    queries.add(name.slice(0, 160));
+    if (shortName) queries.add(shortName);
   } else if (name) {
-    queries.add(name.slice(0, 160));
+    queries.add(shortStatuteName(name));
   }
-  return [...queries].filter((q) => q.trim().length >= 3).slice(0, 3);
+  return [...queries].filter((q) => q.trim().length >= 3).slice(0, 2);
 }
 
 function convertV3AnchorsToV2(plan: LegalResearchPlanV3 | null): DoctrinalAnchor[] {
@@ -125,6 +157,39 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
     return convertV3AnchorsToV2(r.plan);
   }).catch(() => []);
 
+  // ── Step 2.2: per-anchor local probe + Perplexity fallback ──────────
+  // Runs in parallel with V2. For each V3 anchor we probe local DB, and on
+  // 0 local hits fire ONE sonar-pro call scoped to that anchor with the
+  // Tier A domain filter. Validated candidates are pre-shaped as V2
+  // ClaimCandidateSource entries and handed to V2 via a new promise; V2
+  // injects them into the matching claim pack BEFORE verification, so the
+  // existing ledger/drafter/citation-engine path stays untouched.
+  let fallbackResult: AnchorFallbackResult | null = null;
+  const fallbackPromise: Promise<Map<string, ClaimCandidateSource[]>> = v3PlanPromise
+    .then(async (r) => {
+      const plan = r.plan;
+      if (!plan || plan.expected_anchors.length === 0) {
+        fallbackResult = { candidatesByAnchorKey: new Map(), perAnchor: [], wall_ms: 0 };
+        return fallbackResult.candidatesByAnchorKey;
+      }
+      const queriesByAnchorId = new Map<string, string[]>();
+      for (const a of plan.expected_anchors) {
+        queriesByAnchorId.set(a.id, buildAnchorQueries(a));
+      }
+      try {
+        fallbackResult = await runAnchorFallback({
+          anchors: plan.expected_anchors,
+          queriesByAnchorId,
+          adminClient: args.adminClient,
+        });
+      } catch (e) {
+        console.warn("[research_v3] anchor_fallback error:", (e as Error).message);
+        fallbackResult = { candidatesByAnchorKey: new Map(), perAnchor: [], wall_ms: 0 };
+      }
+      return fallbackResult.candidatesByAnchorKey;
+    })
+    .catch(() => new Map());
+
   const v2Result = await runResearchV2({
     ...args,
     externalAnchorsPromise,
@@ -132,14 +197,19 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
     // 75s gives V3 room to land before V2 reconciles, with a hard cap.
     externalAnchorsTimeoutMs: 75000,
     externalAnchorsSource: "v3_legal_research_plan",
+    externalAnchorCandidatesPromise: fallbackPromise,
+    // Anchor fallback can take up to ~20s (local probe + Perplexity).
+    externalAnchorCandidatesTimeoutMs: 30000,
   });
 
   // V3 plan result should be settled by now since V2 awaited the promise.
   if (!v3PlanResult) {
-    // Defensive: if V2 returned without awaiting (e.g. empty plan early-exit),
-    // briefly await V3 so telemetry isn't lost.
     await v3PlanPromise.catch(() => {});
   }
+  if (!fallbackResult) {
+    await fallbackPromise.catch(() => {});
+  }
+
   const v3Summary = summarizeLegalResearchPlanV3(
     v3PlanResult?.plan ?? null,
     v3PlanResult?.run ?? {
@@ -153,10 +223,37 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
     `model=${v3PlanResult?.run.model ?? "none"}`,
   );
 
+  // Backfill `verified` / `cited` from V2 anchor lifecycle (which now
+  // includes external-anchor synthetic chunks injected pre-verification).
+  const lifecycleAny = (v2Result.metadata as Record<string, unknown>)?.anchor_lifecycle as
+    | { per_claim?: Array<{ candidates?: Array<{ anchor_id?: string; verified?: string; cited?: boolean }> }> }
+    | undefined;
+  const verifiedCountByAnchor = new Map<string, number>();
+  const citedCountByAnchor = new Map<string, number>();
+  if (lifecycleAny?.per_claim) {
+    for (const pc of lifecycleAny.per_claim) {
+      for (const c of pc.candidates ?? []) {
+        if (!c.anchor_id) continue;
+        if (c.verified && c.verified !== "unrelated") {
+          verifiedCountByAnchor.set(c.anchor_id, (verifiedCountByAnchor.get(c.anchor_id) ?? 0) + 1);
+        }
+        if (c.cited) {
+          citedCountByAnchor.set(c.anchor_id, (citedCountByAnchor.get(c.anchor_id) ?? 0) + 1);
+        }
+      }
+    }
+  }
+  if (fallbackResult) {
+    for (const pa of fallbackResult.perAnchor) {
+      pa.verified = verifiedCountByAnchor.get(pa.anchor_id) ?? 0;
+      pa.cited = citedCountByAnchor.get(pa.anchor_id) ?? 0;
+    }
+  }
+
   const v3PlanWallMs = Date.now() - v3PlanT0;
   const stampedMetadata = {
     ...(v2Result.metadata ?? {}),
-    v3_path: "deep_v3_step2_anchor_merge",
+    v3_path: "deep_v3_step2_2_anchor_fallback",
     v3_approved_domains: {
       tier_a_count: TIER_A_DOMAINS.length,
       tier_b_count: TIER_B_DOMAINS.length,
@@ -169,6 +266,17 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
       anchors: v3PlanResult?.plan?.expected_anchors ?? [],
       frame: v3PlanResult?.plan?.frame ?? null,
     },
+    v3_anchor_fallback: fallbackResult
+      ? {
+          per_anchor: fallbackResult.perAnchor,
+          wall_ms: fallbackResult.wall_ms,
+          total_candidates_added: fallbackResult.perAnchor.reduce(
+            (n, p) => n + p.candidate_added, 0,
+          ),
+          total_perplexity_calls: fallbackResult.perAnchor.filter(p => p.perplexity_called).length,
+        }
+      : { per_anchor: [], wall_ms: 0, total_candidates_added: 0, total_perplexity_calls: 0 },
   };
   return { ...v2Result, metadata: stampedMetadata };
 }
+
