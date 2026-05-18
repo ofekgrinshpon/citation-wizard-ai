@@ -314,7 +314,7 @@ export async function retrieveClaims(
         tele.total_vector_queries_executed++;
         if (error) {
           const msg = String(error.message || "");
-          if (/statement timeout/i.test(msg)) tele.rpc_timeouts++;
+          if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; tele.vector_timeouts++; }
           else tele.rpc_errors++;
           console.error(`[retrieve_v2 vec] "${p.query.slice(0,60)}": ${msg}`);
           vectorResults.set(p.norm, []);
