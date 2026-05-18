@@ -2452,6 +2452,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     // sourcePack→claimMap chain with: researchPlan → claimRetrieval →
     // ledger → compact drafter → Card→Claim contract. Fast remains V1.
     // Academic chapters remain V1. eval-forced legacy bypasses V2.
+    console.log(`[research_v2:diag] v2_enabled=${researchV2Enabled()} taskMode=${taskMode} RESEARCH_MODE=${RESEARCH_MODE} depth=${researchDepth} isAcademicChapter=${isAcademicChapter} evalForceLegacy=${evalForceLegacy}`);
     if (
       researchV2Enabled() &&
       taskMode === RESEARCH_MODE &&
