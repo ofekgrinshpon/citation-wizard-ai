@@ -66,11 +66,28 @@ interface SourceRecord extends ContractSourceCard {
   documentId: string;
 }
 
+const BROKEN_TITLE_CORE_RE =
+  /^\s*["״"׳']?\s*(?:פרטי\s+מסמך|ללא\s+כותרת|untitled|no\s+title|home|download|פסק[־\s]+דין|החלטה|תוצאות\s+חיפוש|search\s+results|מסמך)\s*["״"׳']?\s*$/i;
+const BROKEN_TITLE_KNESSET_RE =
+  /פרטי\s+מסמך\s*\([^)]*מרכז\s+המחקר\s+והמידע\s+של\s+הכנסת[^)]*\)/i;
+function isBrokenSource(title: string, citation: string): boolean {
+  const t = (title || "").trim();
+  const c = (citation || "").trim();
+  if (!t && !c) return true;
+  if (BROKEN_TITLE_CORE_RE.test(t) || BROKEN_TITLE_CORE_RE.test(c)) return true;
+  if (BROKEN_TITLE_KNESSET_RE.test(t) || BROKEN_TITLE_KNESSET_RE.test(c)) return true;
+  const cStrip = c.replace(/\[חסר:[^\]]+\]/g, "").trim();
+  const tStrip = t.replace(/\[חסר:[^\]]+\]/g, "").trim();
+  if (!cStrip && !tStrip) return true;
+  return false;
+}
+
 function dedupeSources(ledger: Ledger): SourceRecord[] {
   const byDoc = new Map<string, SourceRecord>();
   let nextId = 0;
   for (const entry of ledger.entries) {
     for (const s of entry.sources) {
+      if (isBrokenSource(s.title || "", s.citation || "")) continue;
       const key = s.documentId || `${s.title}|${s.citation}`;
       if (byDoc.has(key)) continue;
       const rec: SourceRecord = {
