@@ -244,7 +244,7 @@ async function scoreClaim(args: {
     TOOL,
     {
       stage: `verify_v2:${claim.id}`,
-      timeoutMs: depth === "deep" ? 30000 : 22000,
+      timeoutMs: depth === "deep" ? 45000 : 22000,
       reasoningEffort: "minimal",
     },
   );
