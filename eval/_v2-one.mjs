@@ -39,7 +39,7 @@ const json = await resp.json().catch(() => ({}));
 console.log(`submit_wall=${Date.now()-t0}ms status=${resp.status} run_id=${json.run_id || json.runId || "?"}`);
 
 let row = null;
-for (let k = 0; k < 110; k++) { // ~7.3 min @ 4s
+for (let k = 0; k < 150; k++) { // ~10 min @ 4s
   await new Promise((r)=>setTimeout(r, 4000));
   const { data } = await admin.from("qa_logs")
     .select("id, answer, footnotes, metadata, created_at")
@@ -47,8 +47,14 @@ for (let k = 0; k < 110; k++) { // ~7.3 min @ 4s
     .filter("metadata->>eval_run_id", "eq", evalRunId)
     .order("created_at", { ascending: false }).limit(1);
   const r0 = data?.[0];
-  if (r0?.metadata?.v2_path || r0?.metadata?.fallback || (r0?.answer && r0.answer.length > 100)) { row = r0; break; }
-  if ((k+1) % 10 === 0) console.log(`  ...polling ${4*(k+1)}s checkpoint=${r0?.metadata?.checkpoint || "?"}`);
+  const done = r0 && (
+    r0.metadata?.checkpoint === "completed" ||
+    r0.metadata?.checkpoint === "failed" ||
+    r0.metadata?.fallback ||
+    (r0.answer && r0.answer.length > 100 && (r0.metadata?.v2_path || r0.metadata?.drafter))
+  );
+  if (done) { row = r0; break; }
+  if ((k+1) % 10 === 0) console.log(`  ...polling ${4*(k+1)}s checkpoint=${r0?.metadata?.checkpoint || "?"} v2_path=${r0?.metadata?.v2_path || "?"}`);
 }
 if (!row) { console.log("⚠ NO COMPLETION within poll window"); process.exit(0); }
 
