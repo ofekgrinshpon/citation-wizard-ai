@@ -1,160 +1,92 @@
+## Goal
 
-# Legal-QA Simplification Pass
+Make the V3 `expected_anchors` actually influence the answer, not just sit in telemetry. After Step 2, on Q3 the user should see Bank Mizrahi, Basic Law §8, Basic Law §4, and ידיעת מנהלי ההשקעות / proportionality material appear (or be honestly marked as not-found) in the footnotes — not the current grab-bag.
 
-## Core principle
-**Think broadly, prove narrowly, write simply.** One reasoning stage plans, retrieval is claim-scoped, the drafter sees only the surviving ledger.
-
-## Target pipeline (5 stages)
+## Architecture (no V2 deletion)
 
 ```text
 question
-  │
-  ▼
-┌──────────────────┐
-│ 1. ResearchPlan  │  one strong reasoning call (gpt-5-mini, Deep: gpt-5)
-│   thesis         │
-│   claims[4-8]    │  each: {id, statement, kind, required_evidence,
-│   counter_claims │                  search_targets[], hedge_if_partial}
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│ 2. Per-claim     │  for each claim:
-│    retrieval     │    local hybrid (text+vector) on claim.search_targets
-│                  │    + Perplexity if required_evidence needs external
-│                  │  → claim.candidate_sources[]   (cap ~6/claim)
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│ 3. Verification  │  one planner call per claim (or batched):
-│                  │    {claim, source} → direct | partial | tangential | unrelated
-│                  │  drop tangential/unrelated
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│ 4. Final ledger  │  keep only supported / partially_supported
-│                  │  partial → mark hedge=true
-│                  │  unsupported claims dropped silently
-│                  │  counter-claims kept only if verified
-└────────┬─────────┘
-         ▼
-┌──────────────────┐
-│ 5. Drafter       │  input = ledger only (claim text + allowed source IDs +
-│                  │           minimal citation-ready metadata per ID)
-│                  │  no source pack, no discovery, no rejected sources
-│                  │  output flows through existing citation engine, Rule 37,
-│                  │  anchor enforcement, post-processing
-└──────────────────┘
+   │
+   ├──► V2 planner ──► V2 retrieval (search_targets) ──┐
+   │                                                    │
+   └──► V3 LegalResearchPlan ──► V3 anchor retrieval ──►┤──► merge ──► V2 verification ──► V2 ledger ──► drafter
+                                                        │
+                              (per-anchor: local hybrid + Perplexity fallback)
 ```
 
-Target outcome: **5–8 strong footnotes**, not 32 repetitive ones.
+V3 anchor retrieval runs in parallel with V2 retrieval (no added wall time). Results are merged into the existing V2 candidate pool *before* verification, so the existing verifier/ledger/drafter/citation engine/Rule 37 path stays untouched.
 
-## What's kept (unchanged)
-- Card→Claim contract (still the drafter's input shape — just narrower)
-- Citation engine (`_shared/citationEngine.ts` + `citationRules.ts`)
-- Rule 37 repeated-citation logic
-- `anchorPass.ts` enforcement
-- Async Deep dispatcher + `legal-qa-status` polling + SSE for Fast
-- Compact prompt (Pass D) — now trivially always-on because drafter input is already small
-- `aiProvider` with stage telemetry, `StageRun` records in `qa_logs.metadata`
-- `modeProfiles` for Fast vs Deep knobs (model, claim cap, per-claim source cap, external search on/off)
-- Shadow A/B logger (optional)
+## Scope of changes
 
-## What's removed or merged
+**New file**
+- `supabase/functions/legal-qa/anchorRetrievalV3.ts`
+  - Input: `LegalResearchPlanV3.expected_anchors`
+  - Per anchor, build 1–2 targeted queries from `name` + `section` + `docket` (e.g. anchor A3 → `"בנק המזרחי 6821/93"` + `docket:"ע\"א 6821/93"`).
+  - Local: reuse existing `match_legal_chunks` (vector) + `search_legal_chunks_text` (text). No new RPC.
+  - External fallback (Deep only): single Perplexity call per anchor that returned 0 local hits, gated by existing `TIER_A_DOMAINS` / `TIER_B_DOMAINS`, using the existing completion guards (citation-shape regex + URL allowlist). No verified_sources cross-check.
+  - Output: `{ anchor_id, status: 'found_local'|'found_external'|'not_found', candidates: SourceCard[] }[]`
+  - Cap: 2 candidates per anchor (≤16 total for 8 anchors).
+  - Timeout: 20 s per anchor, `Promise.allSettled` so one slow anchor doesn't sink the batch.
 
-| Current | Action |
-|---|---|
-| `legalIssueRouter.ts` | **Absorb** into ResearchPlan prompt (domain bias as a single preamble line) |
-| `decomposition.ts` (Stage A+B) | **Replace** — ResearchPlan covers main_issue/sub_issues implicitly via claims |
-| `legalResearchDecomposition.ts` | **Remove** |
-| `legalResearchPlanner.ts` | **Remove** — replaced by ResearchPlan |
-| `issueMap.ts` | **Remove** — claims carry the doctrine signal |
-| `candidateClaims.ts` | **Merge into** ResearchPlan (claims are now first-class output, not a separate stage) |
-| `legalClaimMap.ts` (Stage D claim map) | **Remove** — replaced by verification + ledger |
-| `sourceRoleClassifier.ts` | **Remove** — verification verdict subsumes "role" |
-| `sourcePackGateV2.ts` | **Remove** — no global source pack anymore |
-| `legalSourcePack.ts` | **Reduce** to a thin per-claim retrieval helper, or fold into index.ts |
-| `roleAwarePromptHelper.ts` | **Remove** |
-| `dynamicRerank.ts` | **Reduce** — per-claim retrieval returns small enough sets that aggressive rerank is unnecessary; keep only a simple top-k cosine+text blend |
-| `queryExpansion.ts` | **Keep but downscope** — used only inside per-claim retrieval, driven by `claim.search_targets` |
-| `paperMemory.ts` | **Keep** (academic mode), but cut its read paths from research mode |
-| `critic.ts` / `criticRevision.ts` | **Remove** from research mode (academic mode can keep its own copy) — repair passes are the smell we're fixing |
-| `citationQualityScorer.ts` | **Keep** as drafter post-check but no longer a feedback loop into retrieval |
+**Edited**
+- `supabase/functions/legal-qa/researchV3Pipeline.ts`
+  - After V2 returns its candidate set and before V2 verification, await the anchor-retrieval results (already running in parallel since dispatch).
+  - Merge anchor candidates into the V2 candidate pool with a `v3_anchor_id` provenance tag. De-dupe by source URL / chunk id (anchor wins on tie so the anchor stays traceable).
+  - Stamp telemetry into `metadata.v3_anchor_retrieval`: `{ per_anchor: [{anchor_id, status, local_n, external_n, ms}], total_added, total_deduped }`.
+  - Keep `v3_path = "deep_v3_step2_anchor_retrieval"`.
 
-`index.ts` (10.7k lines) shrinks substantially as the orchestration collapses to: `plan → retrieve(claims) → verify(claims) → ledger → draft`.
+**Untouched (explicitly)**
+- `aiProvider.ts`, V2 planner, V2 verification, V2 ledger, drafter, citation engine, Rule 37, anchor pass, post-processing, async dispatcher, SSE, Fast path.
 
-## New files
+## Telemetry contract additions
 
-- `supabase/functions/legal-qa/researchPlan.ts` — single planner call, JSON tool schema, returns:
-  ```ts
-  type ResearchPlan = {
-    thesis: string;
-    claims: Array<{
-      id: string;                              // C1..C8
-      statement: string;
-      kind: 'doctrinal'|'procedural'|'empirical'|'normative';
-      required_evidence: Array<'statute'|'case'|'academic'|'committee'|'news'>;
-      search_targets: string[];                // 2-4 Hebrew queries
-      hedge_if_partial: string;                // hedge wording template
-    }>;
-    counter_claims: Array<{ id: string; statement: string; search_targets: string[] }>;
-  }
-  ```
-- `supabase/functions/legal-qa/claimRetrieval.ts` — per-claim retrieval (local hybrid + optional Perplexity). Returns `{ claim_id, candidates: SourceCard[] }[]`.
-- `supabase/functions/legal-qa/ledger.ts` — verification + ledger assembly. Output:
-  ```ts
-  type Ledger = Array<{
-    claim_id: string;
-    claim: string;
-    support: 'direct'|'partial';
-    hedge: boolean;
-    source_ids: string[];   // 1-3 strongest
-  }>;
-  ```
-- Verification reuses `claimVerification.ts` (already in repo) but with the simpler 4-label verdict.
-
-## Telemetry contract (qa_logs.metadata)
-Single, flat shape replacing the layered `stage_runs` we have now:
+`qa_logs.metadata.v3_anchor_retrieval`:
+```json
+{
+  "per_anchor": [
+    { "anchor_id": "A3", "status": "found_local", "local_n": 2, "external_n": 0, "ms": 180 }
+  ],
+  "total_added": 9,
+  "total_deduped": 2,
+  "wall_ms": 4200
+}
 ```
-metadata.research_plan = { thesis, claim_count, counter_count, model, ms }
-metadata.retrieval     = { per_claim: [{claim_id, local_n, external_n}], ms }
-metadata.verification  = { per_claim: [{claim_id, direct, partial, tangential, unrelated}], ms }
-metadata.ledger        = { kept, dropped, claim_ids_kept, claim_ids_dropped }
-metadata.drafter       = { model, prompt_chars, answer_len, footnotes_n }
-```
-This gives one line per stage and replaces the ten+ overlapping fields we read today (`pass_d_compact`, `phase7:gate`, `sourcePackV2`, `decompositionV2`, etc.).
 
-## Migration order (no big-bang)
+Plus a per-footnote stamp in the existing drafter output so we can answer "which footnotes are anchor-backed?" — adds `v3_anchor_id` to source-card metadata when present; the drafter does nothing with it, but the ledger snapshot in `metadata.ledger_v2` will show coverage.
 
-1. **Add** `researchPlan.ts`, `claimRetrieval.ts`, `ledger.ts` behind a feature flag `RESEARCH_V2=true` (env on edge function).
-2. **Wire** the new path in `index.ts` for Deep only, behind the flag. Fast keeps current path one release.
-3. **Validate** on the existing eval set (Q1, Q2, Q6, Q21, Q22, basic-law, extort, procedural baselines under `eval/regression/`).
-4. **Flip** Deep default to V2, keep V1 reachable for one release for diffing via shadowAbLogger.
-5. **Migrate** Fast to V2 (same code, smaller per-claim caps from `modeProfiles`).
-6. **Delete** the files in the "remove" column and the dead branches in `index.ts`.
-7. Update memories under `.lovable/memory/logic/legal-qa/` to reflect the collapsed pipeline; archive stage-specific notes (phase7 gate, sourcePackV2, decomposition V2, claim_map) as historical.
+## Validation (Q3 only, Deep, RESEARCH_V3=true)
 
-## Risks & mitigations
+Acceptance gates:
+1. `v3_path = deep_v3_step2_anchor_retrieval`
+2. `legal_research_plan_v3.status = success` (unchanged from Step 1)
+3. `v3_anchor_retrieval.per_anchor` has 5 entries (one per A1–A5)
+4. At least 3 anchors have `status != "not_found"`
+5. The final answer's footnotes include **at least 2 of**: Bank Mizrahi (`ע"א 6821/93`), Basic Law: Human Dignity §8, Basic Law: Freedom of Occupation §4, `בג"ץ 1715/97 לשכת מנהלי ההשקעות`
+6. V2 telemetry intact (`retrieval_v2`, `verification_v2`, `ledger_v2`, `drafter` all present)
+7. No V1 fallback
+8. Total wall ≤ current Deep wall + 5 s (anchor track is parallel)
 
-- **Risk:** ResearchPlan call becomes too long / times out.
-  Mitigation: single tool-call JSON, `reasoning_effort=minimal` on Fast, `low` on Deep; 30s/45s timeouts as today. Already proven on the existing planner stages.
-- **Risk:** Per-claim retrieval is N× slower than one global pack.
-  Mitigation: `Promise.all` over claims; cap claims at 6 (Fast) / 8 (Deep); per-claim local query is cheap (existing `match_legal_chunks` + `search_legal_chunks_text` already used).
-- **Risk:** Footnotes drop too far (under 5).
-  Mitigation: ledger guarantees ≥1 source per kept claim; if final kept claims < 3, retry retrieval round 2 on the dropped claims (config-only follow-up, no new code paths).
-- **Risk:** Regression on baselines.
-  Mitigation: flag-gated rollout + shadow A/B + existing regression harness.
+If gate 5 fails on Q3 specifically, that's a tuning issue (Perplexity prompt for anchor lookup), addressed by iterating only on `anchorRetrievalV3.ts` — V2 stays put.
 
-## Out of scope for this pass
-- Citation engine internals
-- Rule 37 logic
-- Anchor enforcement
-- Academic writing mode (its own pipeline; reuses ResearchPlan only at the chapter level later)
-- Auth, credits, RLS
+## Risk register
 
-## Deliverables
-- New: `researchPlan.ts`, `claimRetrieval.ts`, `ledger.ts`
-- Edited: `index.ts` (orchestration collapse), `modeProfiles.ts` (per-claim caps), `contracts.ts` (new types), memory index
-- Removed (after flip): `legalResearchPlanner.ts`, `legalResearchDecomposition.ts`, `issueMap.ts`, `candidateClaims.ts`, `legalClaimMap.ts`, `sourceRoleClassifier.ts`, `sourcePackGateV2.ts`, `roleAwarePromptHelper.ts`, `legalIssueRouter.ts` (after absorb), plus their tests
-- Reduced: `dynamicRerank.ts`, `legalSourcePack.ts`, `queryExpansion.ts`, `decomposition.ts`
+- **Risk**: anchor retrieval finds garbage (broken_title placeholders, wrong cases). **Mitigation**: reuse the existing `broken_title` filter and the Perplexity completion guards already in `_shared`; cap to 2 candidates/anchor.
+- **Risk**: anchor candidates push the verifier over its claim budget. **Mitigation**: anchors are merged into the existing candidate pool, not into new claims — claim count is unchanged.
+- **Risk**: parallel Perplexity calls (5 anchors × 1 call) blow budget. **Mitigation**: external fallback only when local returns 0; Deep already runs Perplexity in parallel for V2 search_targets, so the marginal cost is small. Cap external fallback at 5 calls / question.
+- **Risk**: drafter ignores anchor candidates because V2 verifier ranks them low. **Mitigation**: give anchor-tagged candidates a small score boost (additive, capped) at merge time — minimal change, easy to revert.
 
-Estimated `index.ts` reduction: ~10.7k → ~4–5k lines. Total module ~21k → ~10k lines.
+## Out of scope for Step 2
+
+- Hard "must-cite" enforcement (Step 3 candidate).
+- Coverage scoring / regression assertions in `eval/regression/`.
+- Removing or refactoring V2 planner / `search_targets`.
+- Fast mode (V3 stays Deep-only until Deep is stable).
+- Citation engine, Rule 37, anchor pass — all stay as-is.
+
+## Rollout
+
+1. Add `anchorRetrievalV3.ts` + wire in `researchV3Pipeline.ts` behind the existing `RESEARCH_V3=true` env flag (already on).
+2. Deploy `legal-qa`.
+3. Rerun Q3 only, validate gates above.
+4. If green, rerun Q1, Q6, Q21, Q22 from regression baselines for sanity (no acceptance bar, just no V2 telemetry loss / no V1 fallback / answer produced).
+5. Memory note under `.lovable/memory/architecture/legal-qa-v2-pipeline.md` describing the V3 anchor merge.
