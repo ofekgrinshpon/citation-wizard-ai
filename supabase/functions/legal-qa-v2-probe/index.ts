@@ -1,8 +1,6 @@
 // Standalone V2 dry-run probe: ResearchPlan → ClaimRetrieval → Ledger.
-// Does NOT call the drafter. Returns a structured report per question.
-//
-// POST body: { questions: string[], depth?: "fast"|"deep" }
-// Auth: requires service-role key or a logged-in user (we just need admin client).
+// Async: POST returns 202 + runId; GET ?runId=xxx returns reports.
+// Results stashed in qa_logs (task_mode='v2_probe').
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
@@ -27,18 +25,6 @@ async function embed(text: string): Promise<number[] | null> {
     return d.data?.[0]?.embedding ?? null;
   } catch { return null; }
 }
-
-Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
-  try {
-    const body = await req.json().catch(() => ({}));
-    const questions: string[] = Array.isArray(body.questions) ? body.questions : [];
-    const depth: "fast" | "deep" = body.depth === "fast" ? "fast" : "deep";
-    if (questions.length === 0) {
-      return new Response(JSON.stringify({ error: "questions[] required" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
 
 async function runProbe(question: string, depth: "fast"|"deep", adminClient: ReturnType<typeof createClient>, runId: string) {
   const t0 = Date.now();
@@ -119,7 +105,6 @@ Deno.serve(async (req) => {
     const url = new URL(req.url);
     const adminClient = createClient(SUPABASE_URL, SERVICE_ROLE);
 
-    // GET ?runId=xxx → fetch results
     if (req.method === "GET") {
       const runId = url.searchParams.get("runId");
       if (!runId) return new Response(JSON.stringify({ error: "runId required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -129,7 +114,7 @@ Deno.serve(async (req) => {
         .like("question", `[v2_probe:${runId}]%`)
         .order("created_at", { ascending: true });
       if (error) throw error;
-      return new Response(JSON.stringify({ runId, count: data?.length ?? 0, reports: (data ?? []).map(r => r.metadata?.report) }, null, 2), {
+      return new Response(JSON.stringify({ runId, count: data?.length ?? 0, reports: (data ?? []).map(r => (r as any).metadata?.report) }, null, 2), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -143,7 +128,6 @@ Deno.serve(async (req) => {
       });
     }
     const runId = crypto.randomUUID().slice(0, 8);
-    // Fire and forget — run each probe in background
     // @ts-ignore EdgeRuntime
     EdgeRuntime.waitUntil((async () => {
       for (const q of questions) {
@@ -153,7 +137,7 @@ Deno.serve(async (req) => {
             question: `[v2_probe:${runId}] ${q}`,
             task_mode: "v2_probe",
             answer: "",
-            metadata: { v2_probe_run_id: runId, depth, error: String(e?.message ?? e) },
+            metadata: { v2_probe_run_id: runId, depth, error: String((e as any)?.message ?? e) },
           });
         }
       }
@@ -162,7 +146,7 @@ Deno.serve(async (req) => {
       status: 202, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
-    return new Response(JSON.stringify({ error: String(e?.message ?? e), stack: String(e?.stack ?? "") }), {
+    return new Response(JSON.stringify({ error: String((e as any)?.message ?? e) }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
