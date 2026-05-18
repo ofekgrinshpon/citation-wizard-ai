@@ -17,7 +17,7 @@ const r = await fetch(`${SUPABASE_URL}/functions/v1/legal-qa`, {
   method: "POST",
   headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}`, apikey: ANON_KEY },
   body: JSON.stringify({
-    question, taskMode: "research", researchDepth: "deep",
+    question, taskMode: "research", depth: "deep",
     evalRunId, requestId: `eval:${evalRunId}`,
   }),
 });
