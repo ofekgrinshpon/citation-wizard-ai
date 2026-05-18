@@ -28,13 +28,26 @@ export interface ClaimCandidateSource {
   sourceUrl?: string;
   excerpt: string;
   score: number;
-  origin: "text" | "vector" | "external_pending";
+  origin: "text" | "vector" | "external_pending" | "anchor";
+  /** When origin="anchor", the AnswerMap anchor id (e.g. "A2") that surfaced this. */
+  anchorId?: string;
 }
 
 export interface ClaimCandidatePack {
   claimId: string;
   candidates: ClaimCandidateSource[];
   externalQueries: string[];
+}
+
+export interface AnchorRetrievalTelemetry {
+  /** Total anchor queries planned across all claims. */
+  queries_planned: number;
+  queries_executed: number;
+  queries_timed_out: number;
+  queries_errored: number;
+  candidates_found: number;
+  /** Per-claim: how many anchor-origin candidates entered the pool. */
+  per_claim: Array<{ claim_id: string; anchor_candidates: number; anchor_ids: string[] }>;
 }
 
 export interface RetrievalTelemetry {
@@ -56,6 +69,8 @@ export interface RetrievalTelemetry {
   total_candidates: number;
   /** Sources skipped at ingest because their title/citation was a known placeholder. */
   broken_title_drops?: number;
+  /** Present when AnswerMap injected per-claim anchor queries. */
+  anchor_retrieval?: AnchorRetrievalTelemetry;
   duration_ms: number;
 }
 
@@ -69,12 +84,19 @@ export interface RetrieveClaimsArgs {
   embed?: (text: string) => Promise<number[] | null>;
   /** Hard concurrency cap across ALL RPCs in this run. Default 3. */
   maxConcurrency?: number;
+  /** Optional per-claim authority queries injected by AnswerMap reconciliation. */
+  anchorQueriesByClaim?: Map<string, string[]>;
+  /** Parallel map of anchor IDs per claim (for telemetry tagging). */
+  anchorIdsByClaim?: Map<string, string[]>;
+  /** Score boost applied to anchor-origin candidates. Default 0.05. */
+  anchorScoreBoost?: number;
 }
 
 export interface RetrieveClaimsResult {
   packs: ClaimCandidatePack[];
   telemetry: RetrievalTelemetry;
 }
+
 
 const TYPES_REQUIRING_EXTERNAL: V2EvidenceType[] = ["academic", "committee", "news"];
 
@@ -237,7 +259,11 @@ export async function retrieveClaims(
   const { adminClient, claims, depth, embed } = args;
   const perClaimCap = args.perClaimCap ?? (depth === "deep" ? 8 : 6);
   const maxConcurrency = args.maxConcurrency ?? 3;
+  const anchorQueriesByClaim = args.anchorQueriesByClaim;
+  const anchorIdsByClaim = args.anchorIdsByClaim;
+  const anchorScoreBoost = args.anchorScoreBoost ?? 0.05;
   const t0 = Date.now();
+
 
   // ── Plan ─────────────────────────────────────────────────────────────
   // One text query per claim, one vector query per claim. Dedup by
@@ -492,6 +518,82 @@ export async function retrieveClaims(
     recovered: fallbackRecovered,
     per_claim: fallbackPerClaim,
   };
+
+  // ── Anchor retrieval round (AnswerMap-driven, optional) ──────────────
+  if (anchorQueriesByClaim && anchorQueriesByClaim.size > 0) {
+    const anchorTele: AnchorRetrievalTelemetry = {
+      queries_planned: 0, queries_executed: 0, queries_timed_out: 0,
+      queries_errored: 0, candidates_found: 0, per_claim: [],
+    };
+    for (const [, qs] of anchorQueriesByClaim) anchorTele.queries_planned += qs.length;
+
+    for (const claim of claims) {
+      const queries = anchorQueriesByClaim.get(claim.id) ?? [];
+      const anchorIdsForClaim = anchorIdsByClaim?.get(claim.id) ?? [];
+      if (queries.length === 0) {
+        anchorTele.per_claim.push({ claim_id: claim.id, anchor_candidates: 0, anchor_ids: anchorIdsForClaim });
+        continue;
+      }
+      const entry = packMap.get(claim.id)!;
+      const before = entry.byChunk.size;
+      for (const rawQ of queries) {
+        const q = rawQ.length > TEXT_QUERY_MAX_CHARS
+          ? (strongTokens(rawQ, 3).join(" ") || rawQ.slice(0, TEXT_QUERY_MAX_CHARS))
+          : rawQ;
+        try {
+          const { data, error } = await limit(() =>
+            adminClient.rpc("search_legal_chunks_text", { search_query: q, match_count: 4 }),
+          );
+          anchorTele.queries_executed++;
+          if (error) {
+            const msg = String((error as any).message || "");
+            if (/statement timeout/i.test(msg)) anchorTele.queries_timed_out++;
+            else anchorTele.queries_errored++;
+            console.error(`[retrieve_v2 anchor] "${q.slice(0,60)}": ${msg}`);
+            continue;
+          }
+          const hits = Array.isArray(data) ? (data as RawHit[]) : [];
+          for (const h of hits) {
+            if (!h?.chunk_id) continue;
+            const title = h.document_title ?? "";
+            const citation = h.document_citation ?? "";
+            if (isBrokenSourceTitle(title, citation)) {
+              tele.broken_title_drops = (tele.broken_title_drops ?? 0) + 1;
+              continue;
+            }
+            const rawScore = typeof h.similarity === "number" ? Math.max(0, Math.min(1, h.similarity)) : 0.5;
+            const score = Math.min(1, rawScore + anchorScoreBoost);
+            const prev = entry.byChunk.get(h.chunk_id);
+            if (prev) {
+              if (score > prev.score) {
+                prev.score = score;
+                prev.origin = "anchor";
+                if (anchorIdsForClaim[0]) prev.anchorId = anchorIdsForClaim[0];
+              }
+              continue;
+            }
+            entry.byChunk.set(h.chunk_id, {
+              id: `${claim.id}-A${++entry.idxRef.i}`,
+              chunkId: h.chunk_id, documentId: h.document_id,
+              title, citation,
+              sourceType: h.source_type ?? "",
+              sourceUrl: h.source_url ?? undefined,
+              excerpt: typeof h.chunk_content === "string" ? h.chunk_content.slice(0, 600) : "",
+              score, origin: "anchor",
+              ...(anchorIdsForClaim[0] ? { anchorId: anchorIdsForClaim[0] } : {}),
+            });
+          }
+        } catch (e) {
+          anchorTele.queries_errored++;
+          console.error(`[retrieve_v2 anchor throw] "${q.slice(0,60)}":`, String((e as any)?.message ?? e));
+        }
+      }
+      const added = entry.byChunk.size - before;
+      anchorTele.candidates_found += Math.max(0, added);
+      anchorTele.per_claim.push({ claim_id: claim.id, anchor_candidates: added, anchor_ids: anchorIdsForClaim });
+    }
+    tele.anchor_retrieval = anchorTele;
+  }
 
   // ── Finalize packs + telemetry counters ──────────────────────────────
   const packs: ClaimCandidatePack[] = claims.map((claim) => {
