@@ -51,16 +51,17 @@ for (const id of ids) {
   console.log(`  wall=${Date.now()-t0}ms status=${resp.status} fn=${(json.footnotes||[]).length}`);
 
   let row = null;
-  for (let k = 0; k < 40; k++) {
-    await new Promise((r)=>setTimeout(r, 3000));
+  for (let k = 0; k < 90; k++) {
+    await new Promise((r)=>setTimeout(r, 4000));
     const { data } = await admin.from("qa_logs")
       .select("id, answer, footnotes, metadata")
       .eq("user_id", ADMIN_USER_ID)
       .filter("metadata->>eval_run_id", "eq", evalRunId)
       .order("created_at", { ascending: false }).limit(1);
     const r0 = data?.[0];
-    if (r0 && (r0.metadata?.v2_path || r0.metadata?.fallback || r0.answer)) { row = r0; break; }
-    if (k === 39) row = r0;
+    // Require v2_path OR explicit fallback OR a non-empty answer to consider it done.
+    if (r0 && (r0.metadata?.v2_path || r0.metadata?.fallback || (r0.answer && r0.answer.length > 100))) { row = r0; break; }
+    if (k === 89) row = r0;
   }
   if (!row) { console.log("  NO ROW"); continue; }
   const md = row.metadata || {};
