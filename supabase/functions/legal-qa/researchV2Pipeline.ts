@@ -27,6 +27,8 @@ import {
   buildFootnotes,
   type ContractSourceCard,
 } from "./cardClaimContract.ts";
+import { answerMapEnabled, buildAnswerMap, summarizeAnswerMap } from "./answerMap.ts";
+import { reconcileAnchors } from "./anchorReconciliation.ts";
 
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 
@@ -200,9 +202,33 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
     return emptyFallback("research_plan_failed", metadata);
   }
 
+  // ── Stage 1.5: AnswerMap / Authority Discovery (gated) ────────────
+  let anchorQueriesByClaim: Map<string, string[]> | undefined;
+  if (answerMapEnabled()) {
+    try {
+      const amT0 = Date.now();
+      const amRes = await buildAnswerMap({ question, plan, depth: "deep" });
+      metadata.answer_map = {
+        ...amRes.telemetry,
+        total_duration_ms: Date.now() - amT0,
+        ...summarizeAnswerMap(amRes.answerMap),
+      };
+      if (amRes.answerMap) {
+        const recon = reconcileAnchors({ plan, answerMap: amRes.answerMap, depth: "deep" });
+        metadata.anchor_reconciliation = recon.telemetry;
+        if (recon.byClaim.size > 0) anchorQueriesByClaim = recon.byClaim;
+      }
+    } catch (e) {
+      metadata.answer_map_error = (e as Error).message ?? String(e);
+    }
+  } else {
+    metadata.answer_map = { status: "skipped_disabled" };
+  }
+
   // ── Stage 2: Per-claim retrieval ───────────────────────────────────
   const { packs, telemetry } = await retrieveClaims({
     adminClient, claims: plan.claims, depth, embed: embedQuery, maxConcurrency: 3,
+    anchorQueriesByClaim,
   });
   metadata.retrieval_v2 = summarizeRetrieval({ packs, telemetry });
   metadata.retrieval_telemetry = telemetry;
