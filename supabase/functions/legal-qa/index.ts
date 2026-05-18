@@ -41,6 +41,7 @@ import {
   type GapTier,
 } from "./entityResolution.ts";
 import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, type StageRun } from "./aiProvider.ts";
+import { runResearchV2, researchV2Enabled } from "./researchV2Pipeline.ts";
 import {
   BANNED_KEYS,
   type CitationQuality,
