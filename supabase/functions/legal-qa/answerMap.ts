@@ -341,8 +341,8 @@ export interface BuildAnswerMapResult {
 
 export async function buildAnswerMap(args: BuildAnswerMapArgs): Promise<BuildAnswerMapResult> {
   const { question, plan, depth } = args;
-  const totalBudgetMs = args.totalBudgetMs ?? (depth === "deep" ? 30000 : 20000);
-  const orientationBudgetMs = Math.min(15000, Math.floor(totalBudgetMs * 0.5));
+  const totalBudgetMs = args.totalBudgetMs ?? (depth === "deep" ? 75000 : 35000);
+  const orientationBudgetMs = Math.min(45000, Math.floor(totalBudgetMs * 0.6));
 
   const telemetry: AnswerMapTelemetry = {
     status: "error",
