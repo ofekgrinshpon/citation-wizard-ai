@@ -45,8 +45,14 @@ export interface RetrievalTelemetry {
   max_concurrency: number;
   rpc_timeouts: number;
   rpc_errors: number;
+  text_timeouts: number;
+  vector_timeouts: number;
   cache_hits: number;
   candidates_per_claim: Array<{ claim_id: string; n: number; top_score: number }>;
+  text_candidates_per_claim: Array<{ claim_id: string; n: number }>;
+  vector_candidates_per_claim: Array<{ claim_id: string; n: number }>;
+  vector_query_chars_before: number;
+  vector_query_chars_after: number;
   total_candidates: number;
   duration_ms: number;
 }
