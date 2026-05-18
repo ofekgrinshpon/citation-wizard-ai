@@ -138,7 +138,10 @@ export async function verifyAndBuildLedger(args: VerifyArgs): Promise<VerifyResu
   const results = await Promise.all(
     claims.map(async (claim) => {
       const pack = byId.get(claim.id);
-      const candidates = pack?.candidates ?? [];
+      const allCandidates = pack?.candidates ?? [];
+      // Cap to top-5 by retrieval score (already sorted desc) to keep
+      // verifier payload within the 45s budget on deep mode.
+      const candidates = allCandidates.slice(0, 5);
       if (candidates.length === 0) {
         return {
           entry: null,
@@ -241,7 +244,7 @@ async function scoreClaim(args: {
     TOOL,
     {
       stage: `verify_v2:${claim.id}`,
-      timeoutMs: depth === "deep" ? 30000 : 22000,
+      timeoutMs: depth === "deep" ? 45000 : 22000,
       reasoningEffort: "minimal",
     },
   );
