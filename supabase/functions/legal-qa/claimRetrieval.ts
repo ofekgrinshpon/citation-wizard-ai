@@ -45,8 +45,14 @@ export interface RetrievalTelemetry {
   max_concurrency: number;
   rpc_timeouts: number;
   rpc_errors: number;
+  text_timeouts: number;
+  vector_timeouts: number;
   cache_hits: number;
   candidates_per_claim: Array<{ claim_id: string; n: number; top_score: number }>;
+  text_candidates_per_claim: Array<{ claim_id: string; n: number }>;
+  vector_candidates_per_claim: Array<{ claim_id: string; n: number }>;
+  vector_query_chars_before: number;
+  vector_query_chars_after: number;
   total_candidates: number;
   duration_ms: number;
 }
@@ -148,9 +154,51 @@ function pickTextQuery(claim: V2Claim): string {
   return claim.statement.slice(0, TEXT_QUERY_MAX_CHARS);
 }
 
+// Vector input length cap. Embedding models lose discriminative signal on long
+// paragraphs and Hebrew full-claim statements consistently produce diffuse
+// matches that overlap with text retrieval. Cap at ~160 chars (Hebrew).
+const VECTOR_QUERY_MAX_CHARS = 160;
+
+/** Build a compact vector query per claim. Prefer search_targets +
+ *  required_evidence terms; fall back to strong tokens of the claim. Cap
+ *  at VECTOR_QUERY_MAX_CHARS. Never embed the full long statement. */
 function pickVectorQuery(claim: V2Claim): string {
-  // Use the claim statement directly — denser semantic signal than keyword targets.
-  return claim.statement;
+  const targets = (claim.search_targets || [])
+    .map((t) => (t || "").trim())
+    .filter((t) => t.length >= 3);
+  const evidence = (claim.required_evidence || [])
+    .map((t) => String(t || "").trim())
+    .filter(Boolean);
+
+  // Start with top 2-3 search_targets joined.
+  const parts: string[] = [];
+  for (const t of targets.slice(0, 3)) {
+    const next = parts.concat(t).join(" • ");
+    if (next.length > VECTOR_QUERY_MAX_CHARS) break;
+    parts.push(t);
+  }
+
+  // If we still have headroom, append strong tokens from the claim statement
+  // for semantic anchoring.
+  if (parts.join(" • ").length < VECTOR_QUERY_MAX_CHARS * 0.6) {
+    const toks = strongTokens(claim.statement, 4);
+    for (const tok of toks) {
+      const next = [...parts, tok].join(" • ");
+      if (next.length > VECTOR_QUERY_MAX_CHARS) break;
+      if (!parts.some((p) => p.includes(tok))) parts.push(tok);
+    }
+  }
+
+  let out = parts.join(" • ").trim();
+
+  // Last-resort: no usable targets — synthesize from strong tokens.
+  if (out.length < 4) {
+    const toks = strongTokens(`${claim.statement} ${targets.join(" ")} ${evidence.join(" ")}`, 6);
+    out = toks.join(" ");
+  }
+
+  if (out.length > VECTOR_QUERY_MAX_CHARS) out = out.slice(0, VECTOR_QUERY_MAX_CHARS);
+  return out || claim.statement.slice(0, VECTOR_QUERY_MAX_CHARS);
 }
 
 export async function retrieveClaims(
@@ -203,11 +251,27 @@ export async function retrieveClaims(
     max_concurrency: maxConcurrency,
     rpc_timeouts: 0,
     rpc_errors: 0,
+    text_timeouts: 0,
+    vector_timeouts: 0,
     cache_hits: (claims.length - textPlan.length) + (embed ? claims.length - vectorPlan.length : 0),
     candidates_per_claim: [],
+    text_candidates_per_claim: [],
+    vector_candidates_per_claim: [],
+    vector_query_chars_before: 0,
+    vector_query_chars_after: 0,
     total_candidates: 0,
     duration_ms: 0,
   };
+
+  // Vector-input size telemetry (before vs after compaction).
+  if (embed) {
+    for (const claim of claims) {
+      tele.vector_query_chars_before += (claim.statement || "").length;
+    }
+    for (const p of vectorPlan) {
+      tele.vector_query_chars_after += p.query.length;
+    }
+  }
 
   const limit = makeLimiter(maxConcurrency);
   const textResults = new Map<string, RawHit[]>(); // norm -> hits
@@ -221,7 +285,7 @@ export async function retrieveClaims(
       tele.total_text_queries_executed++;
       if (error) {
         const msg = String(error.message || "");
-        if (/statement timeout/i.test(msg)) tele.rpc_timeouts++;
+        if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; tele.text_timeouts++; }
         else tele.rpc_errors++;
         console.error(`[retrieve_v2 text] "${p.query.slice(0,60)}": ${msg}`);
         textResults.set(p.norm, []);
@@ -250,7 +314,7 @@ export async function retrieveClaims(
         tele.total_vector_queries_executed++;
         if (error) {
           const msg = String(error.message || "");
-          if (/statement timeout/i.test(msg)) tele.rpc_timeouts++;
+          if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; tele.vector_timeouts++; }
           else tele.rpc_errors++;
           console.error(`[retrieve_v2 vec] "${p.query.slice(0,60)}": ${msg}`);
           vectorResults.set(p.norm, []);
@@ -297,10 +361,15 @@ export async function retrieveClaims(
     const vq = embed ? pickVectorQuery(claim) : null;
     const vn = vq ? normalizeQuery(vq) : null;
 
+    const textHits = textResults.get(tn) ?? [];
+    const vecHits = vn ? (vectorResults.get(vn) ?? []) : [];
+    tele.text_candidates_per_claim.push({ claim_id: claim.id, n: textHits.length });
+    tele.vector_candidates_per_claim.push({ claim_id: claim.id, n: vecHits.length });
+
     const byChunk = new Map<string, ClaimCandidateSource>();
     const idxRef = { i: 0 };
-    ingestInto(byChunk, claim.id, idxRef, textResults.get(tn) ?? [], "text");
-    if (vn) ingestInto(byChunk, claim.id, idxRef, vectorResults.get(vn) ?? [], "vector");
+    ingestInto(byChunk, claim.id, idxRef, textHits, "text");
+    ingestInto(byChunk, claim.id, idxRef, vecHits, "vector");
     packMap.set(claim.id, { claim, byChunk, idxRef });
   }
 
@@ -329,7 +398,7 @@ export async function retrieveClaims(
           .rpc("search_legal_chunks_text", { search_query: tokenQuery, match_count: 6 });
         if (error) {
           const msg = String((error as any).message || "");
-          if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; rec.text_status = "timeout"; }
+          if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; tele.text_timeouts++; rec.text_status = "timeout"; }
           else { tele.rpc_errors++; rec.text_status = "error"; }
           console.error(`[retrieve_v2 fallback text] "${tokenQuery}": ${msg}`);
         } else {
@@ -360,7 +429,7 @@ export async function retrieveClaims(
             });
           if (error) {
             const msg = String((error as any).message || "");
-            if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; rec.vec_status = "timeout"; }
+            if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; tele.vector_timeouts++; rec.vec_status = "timeout"; }
             else { tele.rpc_errors++; rec.vec_status = "error"; }
             console.error(`[retrieve_v2 fallback vec] "${claim.statement.slice(0,60)}": ${msg}`);
           } else {
