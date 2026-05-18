@@ -154,9 +154,51 @@ function pickTextQuery(claim: V2Claim): string {
   return claim.statement.slice(0, TEXT_QUERY_MAX_CHARS);
 }
 
+// Vector input length cap. Embedding models lose discriminative signal on long
+// paragraphs and Hebrew full-claim statements consistently produce diffuse
+// matches that overlap with text retrieval. Cap at ~160 chars (Hebrew).
+const VECTOR_QUERY_MAX_CHARS = 160;
+
+/** Build a compact vector query per claim. Prefer search_targets +
+ *  required_evidence terms; fall back to strong tokens of the claim. Cap
+ *  at VECTOR_QUERY_MAX_CHARS. Never embed the full long statement. */
 function pickVectorQuery(claim: V2Claim): string {
-  // Use the claim statement directly — denser semantic signal than keyword targets.
-  return claim.statement;
+  const targets = (claim.search_targets || [])
+    .map((t) => (t || "").trim())
+    .filter((t) => t.length >= 3);
+  const evidence = (claim.required_evidence || [])
+    .map((t) => String(t || "").trim())
+    .filter(Boolean);
+
+  // Start with top 2-3 search_targets joined.
+  const parts: string[] = [];
+  for (const t of targets.slice(0, 3)) {
+    const next = parts.concat(t).join(" • ");
+    if (next.length > VECTOR_QUERY_MAX_CHARS) break;
+    parts.push(t);
+  }
+
+  // If we still have headroom, append strong tokens from the claim statement
+  // for semantic anchoring.
+  if (parts.join(" • ").length < VECTOR_QUERY_MAX_CHARS * 0.6) {
+    const toks = strongTokens(claim.statement, 4);
+    for (const tok of toks) {
+      const next = [...parts, tok].join(" • ");
+      if (next.length > VECTOR_QUERY_MAX_CHARS) break;
+      if (!parts.some((p) => p.includes(tok))) parts.push(tok);
+    }
+  }
+
+  let out = parts.join(" • ").trim();
+
+  // Last-resort: no usable targets — synthesize from strong tokens.
+  if (out.length < 4) {
+    const toks = strongTokens(`${claim.statement} ${targets.join(" ")} ${evidence.join(" ")}`, 6);
+    out = toks.join(" ");
+  }
+
+  if (out.length > VECTOR_QUERY_MAX_CHARS) out = out.slice(0, VECTOR_QUERY_MAX_CHARS);
+  return out || claim.statement.slice(0, VECTOR_QUERY_MAX_CHARS);
 }
 
 export async function retrieveClaims(
