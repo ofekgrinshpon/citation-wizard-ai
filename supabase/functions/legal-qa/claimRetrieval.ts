@@ -287,6 +287,7 @@ export async function retrieveClaims(
         const msg = String(error.message || "");
         if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; tele.text_timeouts++; }
         else tele.rpc_errors++;
+        console.error(`[retrieve_v2 text] "${p.query.slice(0,60)}": ${msg}`);
         textResults.set(p.norm, []);
         return;
       }
