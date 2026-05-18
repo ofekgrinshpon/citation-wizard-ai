@@ -102,6 +102,49 @@ function isBrokenSource(title: string, citation: string): boolean {
   return false;
 }
 
+// ── External anchor merge ──────────────────────────────────────────
+// Dedupe key matches answerMap.sanitizeAnchorList: type|name(lower)|docket|section.
+function anchorDedupKey(a: { type: string; name: string; docket?: string; section?: string }): string {
+  return `${a.type}|${(a.name || "").trim().toLowerCase()}|${a.docket ?? ""}|${a.section ?? ""}`;
+}
+
+function mergeExternalAnchors(
+  base: AnswerMap | null,
+  external: DoctrinalAnchor[],
+): { answerMap: AnswerMap | null; added: number; deduped: number; addedIds: string[] } {
+  if (!external || external.length === 0) {
+    return { answerMap: base, added: 0, deduped: 0, addedIds: [] };
+  }
+  const existing = base?.doctrinal_anchors ?? [];
+  const seen = new Set(existing.map(anchorDedupKey));
+  const usedIds = new Set(existing.map((a) => a.id));
+  let nextIdx = existing.length;
+  const added: DoctrinalAnchor[] = [];
+  let deduped = 0;
+  for (const a of external) {
+    const key = anchorDedupKey(a);
+    if (seen.has(key)) { deduped++; continue; }
+    seen.add(key);
+    // Allocate a fresh A-id that doesn't collide with existing AnswerMap ids.
+    let id = a.id;
+    while (!id || usedIds.has(id)) {
+      nextIdx++;
+      id = `A${nextIdx}`;
+    }
+    usedIds.add(id);
+    added.push({ ...a, id });
+  }
+  if (added.length === 0) {
+    return { answerMap: base, added: 0, deduped, addedIds: [] };
+  }
+  const merged: AnswerMap = {
+    ...(base ?? { doctrinal_anchors: [], counter_anchors: [] }),
+    doctrinal_anchors: [...existing, ...added],
+    counter_anchors: base?.counter_anchors ?? [],
+  };
+  return { answerMap: merged, added: added.length, deduped, addedIds: added.map((a) => a.id) };
+}
+
 function dedupeSources(ledger: Ledger): SourceRecord[] {
   const byDoc = new Map<string, SourceRecord>();
   let nextId = 0;
