@@ -265,44 +265,132 @@ export async function retrieveClaims(
     })));
   }
 
-  // ── Assemble per-claim packs ─────────────────────────────────────────
-  const packs: ClaimCandidatePack[] = claims.map((claim) => {
+  // ── Assemble per-claim packs (telemetry counters added AFTER fallback) ───
+  const packMap = new Map<string, { claim: V2Claim; byChunk: Map<string, ClaimCandidateSource>; idxRef: { i: number } }>();
+
+  const ingestInto = (byChunk: Map<string, ClaimCandidateSource>, claimId: string, idxRef: { i: number }, hits: RawHit[], origin: "text" | "vector") => {
+    for (const h of hits) {
+      if (!h?.chunk_id) continue;
+      const score = typeof h.similarity === "number"
+        ? Math.max(0, Math.min(1, h.similarity))
+        : 0.5;
+      const prev = byChunk.get(h.chunk_id);
+      if (prev && prev.score >= score) continue;
+      byChunk.set(h.chunk_id, {
+        id: `${claimId}-S${++idxRef.i}`,
+        chunkId: h.chunk_id,
+        documentId: h.document_id,
+        title: h.document_title ?? "",
+        citation: h.document_citation ?? "",
+        sourceType: h.source_type ?? "",
+        sourceUrl: h.source_url ?? undefined,
+        excerpt: typeof h.chunk_content === "string" ? h.chunk_content.slice(0, 600) : "",
+        score,
+        origin,
+      });
+    }
+  };
+
+  for (const claim of claims) {
     const tq = pickTextQuery(claim);
     const tn = normalizeQuery(tq);
     const vq = embed ? pickVectorQuery(claim) : null;
     const vn = vq ? normalizeQuery(vq) : null;
 
-    const textHits = textResults.get(tn) ?? [];
-    const vecHits = vn ? (vectorResults.get(vn) ?? []) : [];
-
     const byChunk = new Map<string, ClaimCandidateSource>();
-    let idx = 0;
-    const ingest = (hits: RawHit[], origin: "text" | "vector") => {
-      for (const h of hits) {
-        if (!h?.chunk_id) continue;
-        const score = typeof h.similarity === "number"
-          ? Math.max(0, Math.min(1, h.similarity))
-          : 0.5;
-        const prev = byChunk.get(h.chunk_id);
-        if (prev && prev.score >= score) continue;
-        byChunk.set(h.chunk_id, {
-          id: `${claim.id}-S${++idx}`,
-          chunkId: h.chunk_id,
-          documentId: h.document_id,
-          title: h.document_title ?? "",
-          citation: h.document_citation ?? "",
-          sourceType: h.source_type ?? "",
-          sourceUrl: h.source_url ?? undefined,
-          excerpt: typeof h.chunk_content === "string" ? h.chunk_content.slice(0, 600) : "",
-          score,
-          origin,
-        });
-      }
-    };
-    ingest(textHits, "text");
-    ingest(vecHits, "vector");
+    const idxRef = { i: 0 };
+    ingestInto(byChunk, claim.id, idxRef, textResults.get(tn) ?? [], "text");
+    if (vn) ingestInto(byChunk, claim.id, idxRef, vectorResults.get(vn) ?? [], "vector");
+    packMap.set(claim.id, { claim, byChunk, idxRef });
+  }
 
-    const candidates = [...byChunk.values()]
+  // ── Sequential fallback round for zero-candidate claims ──────────────
+  // Runs concurrency=1 to avoid re-saturating the DB queue. Each claim
+  // gets ONE text-token retry and ONE relaxed-threshold vector retry.
+  const fallbackPerClaim: Array<{ claim_id: string; attempted: boolean; recovered: number; text_status?: string; vec_status?: string; text_query?: string }> = [];
+  let fallbackAttempted = 0;
+  let fallbackRecovered = 0;
+
+  for (const claim of claims) {
+    const entry = packMap.get(claim.id)!;
+    if (entry.byChunk.size > 0) continue;
+
+    fallbackAttempted++;
+    const before = entry.byChunk.size;
+    const toks = strongTokens(`${claim.statement} ${(claim.search_targets || []).join(" ")}`, 3);
+    const tokenQuery = toks.join(" ");
+    const rec: { claim_id: string; attempted: boolean; recovered: number; text_status?: string; vec_status?: string; text_query?: string } =
+      { claim_id: claim.id, attempted: true, recovered: 0, text_query: tokenQuery };
+
+    // Token text retry
+    if (toks.length >= 2) {
+      try {
+        const { data, error } = await adminClient
+          .rpc("search_legal_chunks_text", { search_query: tokenQuery, match_count: 6 });
+        if (error) {
+          const msg = String((error as any).message || "");
+          if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; rec.text_status = "timeout"; }
+          else { tele.rpc_errors++; rec.text_status = "error"; }
+          console.error(`[retrieve_v2 fallback text] "${tokenQuery}": ${msg}`);
+        } else {
+          ingestInto(entry.byChunk, claim.id, entry.idxRef, Array.isArray(data) ? (data as RawHit[]) : [], "text");
+          rec.text_status = "ok";
+        }
+      } catch (e) {
+        tele.rpc_errors++;
+        rec.text_status = "throw";
+        console.error(`[retrieve_v2 fallback text throw] "${tokenQuery}":`, String((e as any)?.message ?? e));
+      }
+    } else {
+      rec.text_status = "skipped_no_tokens";
+    }
+
+    // Relaxed vector retry (threshold 0.45)
+    if (embed) {
+      try {
+        const emb = await embed(claim.statement);
+        if (!emb) {
+          rec.vec_status = "no_embed";
+        } else {
+          const { data, error } = await adminClient
+            .rpc("match_legal_chunks", {
+              query_embedding: JSON.stringify(emb),
+              match_threshold: 0.45,
+              match_count: 6,
+            });
+          if (error) {
+            const msg = String((error as any).message || "");
+            if (/statement timeout/i.test(msg)) { tele.rpc_timeouts++; rec.vec_status = "timeout"; }
+            else { tele.rpc_errors++; rec.vec_status = "error"; }
+            console.error(`[retrieve_v2 fallback vec] "${claim.statement.slice(0,60)}": ${msg}`);
+          } else {
+            ingestInto(entry.byChunk, claim.id, entry.idxRef, Array.isArray(data) ? (data as RawHit[]) : [], "vector");
+            rec.vec_status = "ok";
+          }
+        }
+      } catch (e) {
+        tele.rpc_errors++;
+        rec.vec_status = "throw";
+        console.error(`[retrieve_v2 fallback vec throw] "${claim.statement.slice(0,60)}":`, String((e as any)?.message ?? e));
+      }
+    }
+
+    rec.recovered = entry.byChunk.size - before;
+    if (rec.recovered > 0) fallbackRecovered++;
+    fallbackPerClaim.push(rec);
+    console.log(`[retrieve_v2 fallback] claim=${claim.id} text=${rec.text_status} vec=${rec.vec_status} recovered=${rec.recovered}`);
+  }
+
+  (tele as any).fallback = {
+    attempted: fallbackAttempted,
+    recovered: fallbackRecovered,
+    per_claim: fallbackPerClaim,
+  };
+
+  // ── Finalize packs + telemetry counters ──────────────────────────────
+  const packs: ClaimCandidatePack[] = claims.map((claim) => {
+    const entry = packMap.get(claim.id)!;
+    const candidates = [...entry.byChunk.values()]
       .sort((a, b) => b.score - a.score)
       .slice(0, perClaimCap);
 
