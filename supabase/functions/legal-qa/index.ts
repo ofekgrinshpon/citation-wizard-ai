@@ -2446,8 +2446,85 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
 
     const t0 = Date.now();
 
-    // ========= Academic sub-mode shortcut =========
-    // For suggest_topics, validate_question, propose_outline: lighter flow without full retrieval.
+    // ─── RESEARCH_V2 gate (Deep research only) ────────────────────────
+    // Behind env flag RESEARCH_V2=true. Replaces the legacy planner→
+    // sourcePack→claimMap chain with: researchPlan → claimRetrieval →
+    // ledger → compact drafter → Card→Claim contract. Fast remains V1.
+    // Academic chapters remain V1. eval-forced legacy bypasses V2.
+    if (
+      researchV2Enabled() &&
+      taskMode === RESEARCH_MODE &&
+      researchDepth === "deep" &&
+      !isAcademicChapter &&
+      !evalForceLegacy
+    ) {
+      try {
+        console.log(`[research_v2] gate ON — running V2 Deep pipeline`);
+        const asyncRunId = typeof body?._asyncRunId === "string" ? body._asyncRunId : null;
+        const v2QaLogId = asyncRunId ?? crypto.randomUUID();
+        const v2 = await runResearchV2({
+          question, depth: "deep", adminClient,
+          drafterTimeoutMs: modeProfile.drafterTimeoutMs,
+          forceDrafterModel,
+        });
+        if (v2.ok) {
+          const v2Metadata = {
+            ...v2.metadata,
+            profile_used: { depth: researchDepth, ...modeProfile },
+            credit_request_id: creditRequestId,
+            duration_ms: Date.now() - t0,
+          };
+          const finalRow = {
+            id: v2QaLogId,
+            user_id: user.id,
+            project_id: typeof body?.projectId === "string" ? body.projectId : null,
+            question: question.substring(0, 500),
+            answer: v2.answer,
+            footnotes: v2.footnotes as unknown as Record<string, unknown>[],
+            task_mode: taskMode,
+            local_footnotes_count: v2.footnotes.length,
+            perplexity_footnotes_count: 0,
+            total_footnotes: v2.footnotes.length,
+            metadata: v2Metadata,
+          };
+          const { error: upsertErr } = await adminClient
+            .from("qa_logs")
+            .upsert(finalRow, { onConflict: "id" });
+          if (upsertErr) {
+            console.error("[research_v2] qa_logs upsert failed (non-fatal):", upsertErr);
+          }
+          console.log(`[research_v2] DONE answer_len=${v2.answer.length} footnotes=${v2.footnotes.length}`);
+          return buildResponse(v2.answer, v2.footnotes, v2.citations, {
+            footnotes_count: v2.footnotes.length,
+          });
+        }
+        // V2 fell back — record the fallback row + fall through to V1.
+        console.warn(`[research_v2] fallback reason=${v2.fallbackReason} — falling back to V1`);
+        try {
+          await adminClient.from("qa_logs").upsert({
+            id: v2QaLogId,
+            user_id: user.id,
+            question: question.substring(0, 500),
+            answer: null,
+            footnotes: [],
+            task_mode: taskMode,
+            local_footnotes_count: 0,
+            perplexity_footnotes_count: 0,
+            total_footnotes: 0,
+            metadata: { ...v2.metadata, v2_fallback_to_v1: true },
+          }, { onConflict: "id" });
+        } catch (logErr) {
+          console.error("[research_v2] fallback log upsert failed:", logErr);
+        }
+        // Note: when falling back, the inner V1 pipeline will allocate its own
+        // preallocatedQaLogId (or use the same _asyncRunId) and overwrite this
+        // placeholder row at completion. Safe.
+      } catch (v2Err) {
+        console.error("[research_v2] threw — falling back to V1:", v2Err);
+      }
+    }
+
+
     // Also: write_chapter when isAbstract === true, since the abstract is pure synthesis of
     // already-written chapters and must NOT introduce new external citations.
     const isAbstractGeneration =
