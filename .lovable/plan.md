@@ -1,107 +1,64 @@
-## What happened
+## Goal
 
-You were on the academic wizard's last chapter ("סיכום ומסקנות" → `write_conclusion`). The system was streaming it. You clicked the profile avatar, which navigated to `/profile` and **unmounted `LegalQAChat`**, which:
+Reframe the conclusion chapter as a **pure synthesis** of the body chapters: ~400–600 words (1–1.5 pages), reuses citations from the body via "לעיל ה״ש X", and runs **no new retrieval** and brings **no new sources**.
 
-1. Aborted the in-flight `fetch` via the component's `AbortControllerRef`.
-2. Cleared local React state — including the `question` input (it is local-only, never persisted to `academic_sessions`).
+Today the conclusion still runs the full Deep pipeline (retrieval → claim map → drafter → Perplexity completion → critic), is sized 700–1300 words, and is allowed to mint new footnotes. That's why conclusions come out long and over-cited.
 
-When you came back to `/app`, the wizard rehydrated from `academic_sessions` (chapters, outline, `researchQuestion`, `wizardStep`, `currentChapter`), but the `question` textbox started empty.
+## Changes
 
-Clicking "כתוב פרק זה" calls `handleAcademicSubmit("write_conclusion")`. The guard at `LegalQAChat.tsx:1259` is:
+### 1. `supabase/functions/legal-qa/academicProfiles.ts` — `conclusion` profile
+
+Switch to a synthesis profile, mirroring `abstract`:
+
+- `enableDeepPipeline: false`
+- `inheritsFrom: null`
+- `criticEnabled: false` (remove `criticMinCoverage`)
+- All `qaGuard*` thresholds → `0`
+- Add a comment block matching `abstract`'s describing the new role.
+
+Credit cost stays at 8 (no billing change unless you want to lower it — flag in a question if you'd prefer).
+
+### 2. `supabase/functions/legal-qa/index.ts` — routing
+
+In the `isAbstractGeneration` gate (~line 2550), extend the synthesis branch to cover `write_conclusion`:
 
 ```ts
-if (!q && academicStep !== "write_chapter") {
-  toast.error("יש להזין טקסט.");
-  return;
-}
+const isConclusionGeneration =
+  taskMode === "academic_writing" && academicStep === "write_conclusion";
+const isSynthesisOnly = isAbstractGeneration || isConclusionGeneration;
 ```
 
-`write_conclusion` and `write_introduction` aren't whitelisted, so an empty `question` field aborts — even though the function would happily fall back to `researchQuestion` (line 1288: `question: q || researchQuestion`).
+Then replace the three `isAbstractGeneration` checks in the shortcut block (skip local search, skip document context, pick `max_tokens`) with `isSynthesisOnly`. The final-user message stays generic (`question`) for conclusion — only abstract keeps its "כתוב את התקציר עכשיו…" override. Word-count guard at ~2876 stays abstract-only.
 
-## Fix — Part A (the actual bug)
+This makes the conclusion exit through the same lightweight path as `abstract` / `outline`: one LLM call, no retrieval, no claim map, no Perplexity, no critic.
 
-`src/components/LegalQAChat.tsx` ~line 1259:
+### 3. `buildConclusionPrompt` (~line 1640) — tighten
 
-```ts
-const isLongFormWrite =
-  academicStep === "write_chapter" ||
-  academicStep === "write_introduction" ||
-  academicStep === "write_conclusion";
-if (!q && !isLongFormWrite) {
-  toast.error("יש להזין טקסט.");
-  return;
-}
-// Defensive: long-form needs *something* to write about.
-if (isLongFormWrite && !q && !researchQuestion) {
-  toast.error("לא נמצאה שאלת מחקר. חזור לשלב 'שאלה' או הקלד אותה כאן.");
-  return;
-}
-```
+Rewrite the constraints block:
 
-Pure presentation/state fix. Unblocks the current session immediately.
+- **Length**: "אורך מחייב: 400–600 מילים (1–1.5 עמודים)" (replaces the 700–1300 line).
+- **No new sources**: add an explicit rule — "אסור בהחלט להציג מקור חדש שלא מופיע בפרקי הגוף שלמעלה. הסיכום אינו מביא ראיות חדשות."
+- **Reuse via "שם" / "לעיל ה״ש X"**: add — "אם ברצונך לעגן טענה במקור שכבר צוטט בגוף — השתמש בהפניה חוזרת מקוצרת (לעיל ה״ש X / שם), לא בציטוט מלא חדש. עדיף בכלל לוותר על הערות שוליים אם הסינתזה ברורה."
+- **Footnote target**: "0–3 הערות שוליים סך הכל, כולן הפניות חוזרות לפרקי הגוף."
+- Keep the existing rules about "אל תחזור על המבוא", "אל תפתח טיעון חדש", "פרוזה רציפה ללא חלוקה פרק-אחר-פרק".
 
-## Fix — Part B: Option 2 — Server-side completion + resume on remount
+Optional: pass `body.footnoteOffset` / a list of body footnote numbers into the prompt so the model knows which `ה״ש X` numbers actually exist. (Skip unless you want it — body footnotes are already visible inside the chapter content.)
 
-Cheaper than lifting state to a context provider, and also survives full page reloads + cross-device handoff (matches the existing `cross-device-resume` memory).
+### 4. Nothing else changes
 
-### Backend side — already works
+- `write_introduction` keeps the Deep pipeline and current envelope.
+- `write_chapter` keeps the Deep pipeline.
+- Frontend wizard, credit charging, footnote numbering, and the just-shipped background-resume flow all keep working — conclusion just returns sooner and shorter.
 
-`legal-qa` finishes the run regardless of whether the client is listening. Output lands in `qa_logs`. No edge-function changes needed.
+## Out of scope
 
-### DB migration
+- Reducing credit cost (ask if you want it).
+- Touching introduction length / behavior.
+- Hard regex enforcement of "no new sources" — the prompt rule + skipping retrieval is enough; if a model ignores it, we add a post-parse stripper later.
 
-Add three nullable columns to `academic_sessions`:
+## Verification
 
-```sql
-ALTER TABLE public.academic_sessions
-  ADD COLUMN current_run_id uuid,
-  ADD COLUMN current_run_step text,
-  ADD COLUMN current_run_chapter_idx integer;
-```
-
-No new RLS — existing user-scoped policies cover them.
-
-### Client side (`LegalQAChat.tsx`)
-
-1. **On stream start** (`handleAcademicSubmit`, long-form path): write `{current_run_id, current_run_step, current_run_chapter_idx}` to `academic_sessions` as soon as we have a `qa_log` id (need backend to emit `run_id` in the first SSE event — verify; `legal-qa-status` already keys off `qa_logs.id`, so the id must already exist).
-2. **On `final` or error**: clear those three columns alongside the chapter content save.
-3. **On `LegalQAChat` mount**: if `academic_sessions.current_run_id` is set, call `legal-qa-status?runId=…`:
-   - `completed` → drop `answer`/`footnotes` into the matching chapter, `setResult`, clear marker, surface a small "הפרק הושלם ברקע" sonner.
-   - `running`/`queued` → render `StageProgressList` in a "מסתנכרן…" state and poll via the existing `pollLegalQaStatus` helper until terminal.
-   - `failed` → clear marker, show inline error card.
-4. Keep live SSE for the foreground case. Resume only kicks in when SSE was interrupted.
-
-### Navigation warning (revised per your direction)
-
-Non-blocking, informational, branched on whether the run marker was persisted.
-
-In `LegalQAChat`, while `loading && isAcademicChapterRun`:
-
-- **If `current_run_id` is persisted in `academic_sessions`** — show a one-time, non-blocking `toast.info` the first time the user clicks any nav target:
-
-  > "הפרק עדיין נכתב ברקע. אם תעבור עמוד, ההתקדמות החיה תיעצר כאן, אבל תוכל לחזור ולטעון את התוצאה כשהכתיבה תסתיים."
-
-  No `useBlocker`, no confirm dialog, navigation proceeds normally. On return to `/app` the resume effect above picks up the result.
-
-- **If `current_run_id` has NOT been persisted yet** (rare: the run started but the marker write hadn't landed before navigation) — use `useBlocker` with a confirm:
-
-  > "הפרק עדיין נכתב, וההפקה לא נשמרה עדיין לשחזור ברקע. אם תעבור עמוד עכשיו, התוצאה עלולה ללכת לאיבוד. להמשיך?"
-
-- **Never** say "ההפקה תתבטל" / "the generation will be cancelled" once Option 2 is live. The backend keeps going.
-
-Implementation note: a tiny `runPersistedRef` boolean inside `LegalQAChat`, flipped to `true` after the DB write in step 1 above, drives the branch.
-
-## Scope
-
-- **In:** Part A (toast bug), Option 2 (DB migration + resume effect + marker writes), revised non-blocking navigation toast / conditional blocker.
-- **Out:** Lifting streaming state to an App-level context (Option 1), backend pipeline changes, SSE schema changes, multi-tab live mirroring.
-
-## Recommended order
-
-1. Part A (5-line edit) — ship immediately.
-2. DB migration for the 3 marker columns.
-3. Marker write on stream start + clear on finalize/error.
-4. Resume-on-mount effect using `legal-qa-status` + `pollLegalQaStatus`.
-5. Non-blocking nav toast (with the rare-case `useBlocker` branch).
-
-Confirm and I'll implement.
+After deploy, generate one conclusion on an existing paper and check:
+- Word count ≤ ~650.
+- Footnotes either empty or only "לעיל ה״ש …" / "שם".
+- `qa_logs.metadata.profile_used_academic.step === "conclusion"` and no `chapter_engine` / `chapter_critic` / `statute_completion` keys (proves the lightweight path).

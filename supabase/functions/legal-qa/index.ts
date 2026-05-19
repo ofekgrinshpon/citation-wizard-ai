@@ -1647,7 +1647,7 @@ function buildConclusionPrompt(body: Record<string, unknown>): string {
 
   return `אתה חוקר אקדמי בכיר במשפטים. עליך לכתוב את **פרק הסיכום והמסקנות** של עבודה סמינריונית שגוף הפרקים שלה כבר נכתב במלואו.
 
-⚠️ עיקרון מנחה: הסיכום נכתב על-בסיס הפרקים בפועל (ראה תוכן למטה), לא על-בסיס המתווה הראשוני. נסח את התזה ואת המסקנות כפי שעלו מן הניתוח עצמו.
+⚠️ עיקרון מנחה: הסיכום הוא **רפלקציה תמציתית** על פרקי הגוף בלבד — לא מחקר חדש. אסור להציג מקורות חדשים, אסור לפתח טיעון חדש שלא נדון בגוף, ואסור להרחיב מעבר לנאמר.
 
 שאלת המחקר: "${ctx.rq}"${ctx.thesisBlock}${ctx.loaBlock}
 
@@ -1657,20 +1657,20 @@ ${ctx.titlesBlock}
 === תוכן פרקי הגוף שנכתבו ===
 ${ctx.fullChaptersBlock}
 
-מה על הסיכום לעשות, בדיוק לפי הסדר הזה (פרוזה רציפה, לא רשימות):
-1. לחזור על שאלת המחקר לאור מלוא הניתוח שנעשה.
-2. להציג את התשובה / התזה הסופית של העבודה באופן נקי, ממוקד והחלטי.
-3. לסנתז את הממצאים המרכזיים על-פני הפרקים — בלי לחזור עליהם פרק-אחר-פרק.
-4. להראות כיצד הניתוח שנעשה תומך בתזה הסופית.
-5. להזכיר מגבלות וסוגיות בלתי-פתורות, כשרלוונטי.
-6. לסיים בהשלכה הרחבה יותר של הטיעון — דוקטרינרית, נורמטיבית או מוסדית, לפי אופי העבודה.
+מה על הסיכום לעשות, בפרוזה רציפה (לא רשימות, לא חלוקה מכנית פרק-אחר-פרק):
+1. לחזור בקצרה על שאלת המחקר לאור הניתוח שנעשה.
+2. להציג את התשובה / התזה הסופית באופן נקי, ממוקד והחלטי.
+3. לסנתז את הממצאים המרכזיים על-פני הפרקים — בלי לחזור עליהם פרק-אחר-פרק ובלי הרחבות חדשות.
+4. להראות בקצרה כיצד הניתוח תומך בתזה.
+5. לסיים בהשלכה רחבה אחת — דוקטרינרית, נורמטיבית או מוסדית — לפי אופי העבודה.
 
 מגבלות כתיבה מחייבות:
-- פרוזה אקדמית רציפה. ללא נקודות תבליט, ללא חלוקה מכנית פרק-אחר-פרק.
-- **אסור** להעלות טיעון מהותי חדש שלא פותח בגוף העבודה. הסיכום מסכם, לא מרחיב.
+- **אורך מחייב: 400–600 מילים** (1–1.5 עמודים). אל תחרוג מעלה.
+- פרוזה אקדמית רציפה, ללא נקודות תבליט וללא כותרות משנה.
+- **אסור בהחלט** להציג מקור חדש שלא מופיע בפרקי הגוף שלמעלה. הסיכום אינו מביא ראיות חדשות.
+- **אסור בהחלט** להעלות טיעון מהותי חדש שלא פותח בגוף העבודה. הסיכום מסכם, לא מרחיב.
 - **אסור** לחזור על המבוא — הסיכום סוגר ומעלה למסקנה, לא ממסגר מחדש.
-- העדף הערות שוליים שמעגנות סינתזות מרכזיות; אין יעד כמותי קשיח.
-- אורך מומלץ: 700–1300 מילים.${feedbackLine}`;
+- **הערות שוליים**: 0–3 הערות בלבד, כולן הפניות חוזרות למקורות שכבר צוטטו בגוף (השתמש ב"לעיל ה״ש X" או "שם" — לעולם לא ציטוט מלא חדש). אם הסינתזה ברורה — עדיף לוותר על הערות שוליים לחלוטין.${feedbackLine}`;
 }
 
 // ─── Fetch with timeout helper ───────────────────────────────────────
@@ -2549,11 +2549,16 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     // already-written chapters and must NOT introduce new external citations.
     const isAbstractGeneration =
       taskMode === "academic_writing" && academicStep === "write_chapter" && !!isAbstract;
+    // Conclusion = pure synthesis of body chapters; routes through the same
+    // lightweight branch as the abstract (no retrieval, no claim map, no critic).
+    const isConclusionGeneration =
+      taskMode === "academic_writing" && academicStep === "write_conclusion";
+    const isSynthesisOnly = isAbstractGeneration || isConclusionGeneration;
 
     if (
       taskMode === "academic_writing" &&
       academicStep &&
-      (["suggest_topics", "validate_question", "propose_outline"].includes(academicStep) || isAbstractGeneration)
+      (["suggest_topics", "validate_question", "propose_outline"].includes(academicStep) || isSynthesisOnly)
     ) {
       const subPrompt = getAcademicSubModePrompt(academicStep, body);
       if (!subPrompt) {
@@ -2828,7 +2833,7 @@ ${externalList}
 - ציין ליד כל מקור [מאגר] או [חיצוני] לפי הרשימה.
 - אסור להמציא מקורות שלא ברשימה.${lowCoverageNote}
 `;
-      } else if (!isAbstractGeneration) {
+      } else if (!isSynthesisOnly) {
         // Fallback to original light context for non-suggest_topics sub-modes.
         try {
           const keywords = extractKeywords(question);
@@ -2842,9 +2847,9 @@ ${externalList}
         } catch { /* non-fatal */ }
       }
 
-      // Include multi-file context if available (skipped for abstract)
+      // Include multi-file context if available (skipped for synthesis-only flows)
       let fileContext = "";
-      if (!isAbstractGeneration && documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
+      if (!isSynthesisOnly && documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
         fileContext = "\n=== מסמכים שהועלו ===\n" +
           documentTexts.map((dt: any) => `=== ${dt.name} ===\n${dt.text?.slice(0, 5000) || ""}`).join("\n\n");
       }
@@ -2854,10 +2859,10 @@ ${externalList}
         headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "google/gemini-2.5-flash",
-          max_tokens: isAbstractGeneration ? 1024 : 4096,
+          max_tokens: isAbstractGeneration ? 1024 : (isConclusionGeneration ? 2048 : 4096),
           messages: [
             { role: "system", content: subPrompt + localContext + fileContext },
-            { role: "user", content: isAbstractGeneration ? "כתוב את התקציר עכשיו, עד 250 מילים בלבד." : question },
+            { role: "user", content: isAbstractGeneration ? "כתוב את התקציר עכשיו, עד 250 מילים בלבד." : (isConclusionGeneration ? "כתוב את פרק הסיכום והמסקנות עכשיו, 400–600 מילים בלבד, ללא מקורות חדשים." : question) },
           ],
         }),
       }, 60000);
@@ -2889,7 +2894,7 @@ ${externalList}
         }
       }
 
-      console.log(`Academic sub-mode (${academicStep}${isAbstractGeneration ? ":abstract" : ""}): ${answerText.length} chars, ${Date.now() - t0}ms${topicCoverage ? `, reality-check: local=${topicCoverage.localHits} ext=${topicCoverage.externalHits}` : ""}`);
+      console.log(`Academic sub-mode (${academicStep}${isAbstractGeneration ? ":abstract" : (isConclusionGeneration ? ":conclusion" : "")}): ${answerText.length} chars, ${Date.now() - t0}ms${topicCoverage ? `, reality-check: local=${topicCoverage.localHits} ext=${topicCoverage.externalHits}` : ""}`);
 
       try {
         await adminClient.from("qa_logs").insert({
