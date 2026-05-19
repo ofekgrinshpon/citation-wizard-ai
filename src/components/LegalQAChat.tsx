@@ -1344,6 +1344,8 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setPostProcessingLabel(null);
     setStreamingDraft("");
     setRunComplete(false);
+    runPersistedRef.current = false;
+    activeRunIdRef.current = null;
     // Set last academic action up-front so the live progress panel can pick
     // the right header copy (e.g. "כותב פרק אקדמי (מנוע Deep)…") while the
     // chapter is streaming, not only after it completes.
