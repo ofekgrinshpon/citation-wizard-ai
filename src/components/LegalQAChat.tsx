@@ -916,6 +916,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         setStageEvents([]);
         setStreamingDraft("");
         setPostProcessingLabel("מסתנכרן עם ההפקה שרצה ברקע…");
+        const { pollLegalQaStatus } = await import("@/lib/legalQaPolling");
         const final = await pollLegalQaStatus(marker.runId, {
           intervalMs: 3000,
           maxWallMs: 600_000,
