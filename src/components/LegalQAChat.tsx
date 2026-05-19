@@ -802,6 +802,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const [stageEvents, setStageEvents] = useState<StageEvent[]>([]);
   const [postProcessingLabel, setPostProcessingLabel] = useState<string | null>(null);
   const [streamingDraft, setStreamingDraft] = useState<string>("");
+  const [runComplete, setRunComplete] = useState<boolean>(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
