@@ -290,6 +290,7 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
       local_exact_found: fb?.local_found ?? 0,
       local_match_basis: fb?.local_match_basis ?? "none",
       local_confidence: fb?.local_confidence ?? "none",
+      exact_lookup_detail: fb?.exact_lookup_detail ?? null,
       perplexity_called: fb?.perplexity_called ?? false,
       approved_found: fb?.approved_found ?? 0,
       candidates_added_to_pack: fb?.candidate_added ?? 0,
