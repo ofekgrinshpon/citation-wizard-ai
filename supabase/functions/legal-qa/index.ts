@@ -2833,7 +2833,7 @@ ${externalList}
 - ציין ליד כל מקור [מאגר] או [חיצוני] לפי הרשימה.
 - אסור להמציא מקורות שלא ברשימה.${lowCoverageNote}
 `;
-      } else if (!isAbstractGeneration) {
+      } else if (!isSynthesisOnly) {
         // Fallback to original light context for non-suggest_topics sub-modes.
         try {
           const keywords = extractKeywords(question);
@@ -2847,9 +2847,9 @@ ${externalList}
         } catch { /* non-fatal */ }
       }
 
-      // Include multi-file context if available (skipped for abstract)
+      // Include multi-file context if available (skipped for synthesis-only flows)
       let fileContext = "";
-      if (!isAbstractGeneration && documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
+      if (!isSynthesisOnly && documentTexts && Array.isArray(documentTexts) && documentTexts.length > 0) {
         fileContext = "\n=== מסמכים שהועלו ===\n" +
           documentTexts.map((dt: any) => `=== ${dt.name} ===\n${dt.text?.slice(0, 5000) || ""}`).join("\n\n");
       }
@@ -2859,10 +2859,10 @@ ${externalList}
         headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({
           model: "google/gemini-2.5-flash",
-          max_tokens: isAbstractGeneration ? 1024 : 4096,
+          max_tokens: isAbstractGeneration ? 1024 : (isConclusionGeneration ? 2048 : 4096),
           messages: [
             { role: "system", content: subPrompt + localContext + fileContext },
-            { role: "user", content: isAbstractGeneration ? "כתוב את התקציר עכשיו, עד 250 מילים בלבד." : question },
+            { role: "user", content: isAbstractGeneration ? "כתוב את התקציר עכשיו, עד 250 מילים בלבד." : (isConclusionGeneration ? "כתוב את פרק הסיכום והמסקנות עכשיו, 400–600 מילים בלבד, ללא מקורות חדשים." : question) },
           ],
         }),
       }, 60000);
