@@ -855,6 +855,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  // Tracks whether `current_run_id` was successfully persisted to
+  // academic_sessions for the current in-flight academic run. Used to decide
+  // whether to show a non-blocking info toast (persisted) or a blocking
+  // confirm (not yet persisted) when the user tries to navigate away.
+  const runPersistedRef = useRef<boolean>(false);
+  const activeRunIdRef = useRef<string | null>(null);
 
   // ─── Academic wizard state ───────────────────────────────────────
   const [wizardStep, setWizardStep] = useState<WizardStep>("init");
