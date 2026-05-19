@@ -1256,8 +1256,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
   const handleAcademicSubmit = async (academicStep: string, extraBody?: Record<string, unknown>) => {
     const q = question.trim();
-    if (!q && academicStep !== "write_chapter") {
+    const isLongFormWriteGuard =
+      academicStep === "write_chapter" ||
+      academicStep === "write_introduction" ||
+      academicStep === "write_conclusion";
+    if (!q && !isLongFormWriteGuard) {
       toast.error("יש להזין טקסט.");
+      return;
+    }
+    // Defensive: long-form needs *something* to write about. After a navigation
+    // round-trip the local `question` input is empty; we fall back to the
+    // persisted `researchQuestion`. If both are empty the session is corrupted.
+    if (isLongFormWriteGuard && !q && !researchQuestion) {
+      toast.error("לא נמצאה שאלת מחקר. חזור לשלב 'שאלה' או הקלד אותה כאן.");
       return;
     }
 
