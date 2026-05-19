@@ -495,12 +495,14 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
 
 
   // ── Stage 3: Verification + ledger ─────────────────────────────────
+  emit("claim_map", "running");
   const { ledger, runs: verifyRuns } = await verifyAndBuildLedger({
     claims: plan.claims, packs, depth, thesis: plan.thesis,
   });
   metadata.verification_v2 = { runs: verifyRuns.map(r => ({
     stage: r.stage, status: r.status, model: r.model, duration_ms: r.duration_ms,
   })) };
+  emit("claim_map", "complete", `${ledger.entries.length}/${plan.claims.length} טענות`);
   metadata.ledger_v2 = {
     ...summarizeLedger(ledger),
     kept: ledger.entries.length,
