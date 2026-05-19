@@ -23,6 +23,7 @@ import { TIER_A_DOMAIN_FILTER, citationTier } from "./approvedDomains.ts";
 import {
   lookupAnchorsExact,
   type AnchorExactMatch,
+  type AnchorLookupDetail,
   type AnchorMatchBasis,
   type AnchorMatchConfidence,
 } from "./anchorExactLookup.ts";
@@ -47,6 +48,8 @@ export interface AnchorFallbackPerAnchor {
   /** Step 4 — exact local lookup result. */
   local_match_basis: AnchorMatchBasis;
   local_confidence: AnchorMatchConfidence;
+  /** Step 4 (lookup fix) — per-anchor lookup telemetry. */
+  exact_lookup_detail?: AnchorLookupDetail;
   perplexity_called: boolean;
   perplexity_returned: number;
   approved_found: number;
@@ -255,6 +258,7 @@ export async function runAnchorFallback(args: {
       local_found: exact?.docs_found ?? 0,
       local_match_basis: exact?.match_basis ?? "none",
       local_confidence: exact?.confidence ?? "none",
+      exact_lookup_detail: exact?.detail,
       perplexity_called: false,
       perplexity_returned: 0,
       approved_found: 0,
