@@ -253,7 +253,7 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
   const v3PlanWallMs = Date.now() - v3PlanT0;
   const stampedMetadata = {
     ...(v2Result.metadata ?? {}),
-    v3_path: "deep_v3_step2_3_frame_gate",
+    v3_path: "deep_v3_step3_anchor_first",
     v3_approved_domains: {
       tier_a_count: TIER_A_DOMAINS.length,
       tier_b_count: TIER_B_DOMAINS.length,
