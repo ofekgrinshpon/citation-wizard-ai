@@ -265,8 +265,11 @@ export async function verifyAndBuildLedger(args: VerifyArgs): Promise<VerifyResu
           document_id: c.documentId,
           title: c.title,
           in_top5: wasInTop5,
+          included_in_verifier_pack: wasInTop5,
+          ...(wasInTop5 ? {} : { exclusion_reason: "anchor_cap_exceeded" as const }),
           verdict: (wasInTop5 && sc ? sc : "not_scored") as V2RelevanceScore | "not_scored",
           cited: wasCited,
+          ledger_included: wasCited,
         };
       });
       const lifecycle: AnchorLifecycleClaim = {
