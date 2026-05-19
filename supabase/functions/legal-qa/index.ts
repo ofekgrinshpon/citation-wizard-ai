@@ -2040,6 +2040,13 @@ export interface SseEmitter {
   stage: (name: string, status: "running" | "complete", detail?: string) => void;
   draftDelta: (chunk: string) => void;
   postProcessing: (label: string) => void;
+  /**
+   * Emits the qa_logs row id for this run, exactly once and as early as
+   * possible. The client persists this to `academic_sessions.current_run_id`
+   * so an interrupted academic chapter write can be recovered via
+   * `legal-qa-status` after navigation/page-reload.
+   */
+  runId: (id: string) => void;
 }
 
 // Per-request emitter slot. The SSE wrapper installs this before invoking
@@ -2058,6 +2065,10 @@ function emitDraftDelta(chunk: string) {
 function emitPostProcessing(label: string) {
   if (!__activeEmitter) return;
   try { __activeEmitter.postProcessing(label); } catch { /* swallow */ }
+}
+function emitRunId(id: string) {
+  if (!__activeEmitter) return;
+  try { __activeEmitter.runId(id); } catch { /* swallow */ }
 }
 
 async function runHandlerSSE(
