@@ -48,6 +48,8 @@ export interface AnchorFallbackPerAnchor {
   /** Step 4 — exact local lookup result. */
   local_match_basis: AnchorMatchBasis;
   local_confidence: AnchorMatchConfidence;
+  /** Step 4 (lookup fix) — per-anchor lookup telemetry. */
+  exact_lookup_detail?: AnchorLookupDetail;
   perplexity_called: boolean;
   perplexity_returned: number;
   approved_found: number;
