@@ -411,6 +411,7 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
   }
 
   // ── Stage 2: Per-claim retrieval ───────────────────────────────────
+  emit("retrieve", "running");
   const { packs, telemetry } = await retrieveClaims({
     adminClient, claims: plan.claims, depth, embed: embedQuery, maxConcurrency: 3,
     anchorQueriesByClaim,
@@ -419,6 +420,14 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
   });
   metadata.retrieval_v2 = summarizeRetrieval({ packs, telemetry });
   metadata.retrieval_telemetry = telemetry;
+  {
+    const totalCands = packs.reduce((n, p) => n + p.candidates.length, 0);
+    emit("retrieve", "complete", `${totalCands} מועמדים`);
+    // V2 doesn't have a discrete rerank step — surface source_pack as the
+    // logical equivalent ("pool assembled") so the bar keeps progressing.
+    emit("source_pack", "running");
+    emit("source_pack", "complete", `${packs.length} פנקסי טענות`);
+  }
 
   // ── Stage 2.5: External anchor candidate injection (V3 Step 2.2) ────
   // Take Perplexity-found, Tier-A-validated candidates from V3 and push
