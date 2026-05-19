@@ -365,6 +365,7 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
       added: merged.added,
       deduped: merged.deduped,
       added_ids: merged.addedIds,
+      id_map: merged.idMap,
       ...(extError ? { error: extError } : {}),
     };
   }
