@@ -124,20 +124,29 @@ function anchorDedupKey(a: { type: string; name: string; docket?: string; sectio
 function mergeExternalAnchors(
   base: AnswerMap | null,
   external: DoctrinalAnchor[],
-): { answerMap: AnswerMap | null; added: number; deduped: number; addedIds: string[] } {
+): { answerMap: AnswerMap | null; added: number; deduped: number; addedIds: string[]; idMap: Record<string, string> } {
+  // idMap: external (V3) input anchor id → final id in merged AnswerMap.
+  // Telemetry bridge so V3 pipeline can resolve verifier/ledger counters
+  // keyed by the merged ids back to its original A1/A2/... ids.
+  const idMap: Record<string, string> = {};
   if (!external || external.length === 0) {
-    return { answerMap: base, added: 0, deduped: 0, addedIds: [] };
+    return { answerMap: base, added: 0, deduped: 0, addedIds: [], idMap };
   }
   const existing = base?.doctrinal_anchors ?? [];
-  const seen = new Set(existing.map(anchorDedupKey));
+  const byKey = new Map(existing.map((a) => [anchorDedupKey(a), a.id] as const));
   const usedIds = new Set(existing.map((a) => a.id));
   let nextIdx = existing.length;
   const added: DoctrinalAnchor[] = [];
   let deduped = 0;
   for (const a of external) {
     const key = anchorDedupKey(a);
-    if (seen.has(key)) { deduped++; continue; }
-    seen.add(key);
+    const dupOf = byKey.get(key);
+    if (dupOf) {
+      // Bridge V3 id → existing AnswerMap id (the one reconciliation/lifecycle use).
+      if (a.id) idMap[a.id] = dupOf;
+      deduped++;
+      continue;
+    }
     // Allocate a fresh A-id that doesn't collide with existing AnswerMap ids.
     let id = a.id;
     while (!id || usedIds.has(id)) {
@@ -145,17 +154,19 @@ function mergeExternalAnchors(
       id = `A${nextIdx}`;
     }
     usedIds.add(id);
+    byKey.set(key, id);
+    if (a.id) idMap[a.id] = id;
     added.push({ ...a, id });
   }
   if (added.length === 0) {
-    return { answerMap: base, added: 0, deduped, addedIds: [] };
+    return { answerMap: base, added: 0, deduped, addedIds: [], idMap };
   }
   const merged: AnswerMap = {
     ...(base ?? { doctrinal_anchors: [], counter_anchors: [] }),
     doctrinal_anchors: [...existing, ...added],
     counter_anchors: base?.counter_anchors ?? [],
   };
-  return { answerMap: merged, added: added.length, deduped, addedIds: added.map((a) => a.id) };
+  return { answerMap: merged, added: added.length, deduped, addedIds: added.map((a) => a.id), idMap };
 }
 
 function dedupeSources(ledger: Ledger): SourceRecord[] {
