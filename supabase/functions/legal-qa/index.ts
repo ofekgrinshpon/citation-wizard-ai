@@ -2894,7 +2894,7 @@ ${externalList}
         }
       }
 
-      console.log(`Academic sub-mode (${academicStep}${isAbstractGeneration ? ":abstract" : ""}): ${answerText.length} chars, ${Date.now() - t0}ms${topicCoverage ? `, reality-check: local=${topicCoverage.localHits} ext=${topicCoverage.externalHits}` : ""}`);
+      console.log(`Academic sub-mode (${academicStep}${isAbstractGeneration ? ":abstract" : (isConclusionGeneration ? ":conclusion" : "")}): ${answerText.length} chars, ${Date.now() - t0}ms${topicCoverage ? `, reality-check: local=${topicCoverage.localHits} ext=${topicCoverage.externalHits}` : ""}`);
 
       try {
         await adminClient.from("qa_logs").insert({
