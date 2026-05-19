@@ -312,34 +312,41 @@ async function lookupStatute(
   let lastErr: string | undefined;
 
   for (const form of forms) {
-    const pat = `%${escIlikeVal(form)}%`;
+    // Token-wildcard pattern: words must appear in order but any separators
+    // (hyphens, colons, brackets, punctuation) between them are accepted.
+    // This is the key fix for "חוק-יסוד: כבוד האדם וחירותו" etc.
+    const tokens = form.split(" ").filter((t) => t.length >= 1);
+    if (!tokens.length) continue;
+    const tokenPat = `%${tokens.map(escIlikeVal).join("%")}%`;
+    const literalPat = `%${escIlikeVal(form)}%`;
+    const patterns = literalPat === tokenPat ? [literalPat] : [tokenPat, literalPat];
 
-    // Try title first across the legislation source_types.
-    queries.push(`title ILIKE ${pat}`);
-    const t = await singleQueryIlike(client, "title", pat, MAX_DOCS_PER_ANCHOR + 3, LEGISLATION_SOURCE_TYPES);
-    if (t.error) lastErr = t.error;
-    if (t.data.length) {
-      return {
-        docs: t.data.slice(0, MAX_DOCS_PER_ANCHOR),
-        basis: form === normalizeStatuteText(stripSectionPrefix(a.name || ""))
-          ? "title_only"
-          : "normalized_title",
-        queriesAttempted: queries,
-        error: lastErr,
-      };
-    }
+    for (const pat of patterns) {
+      // Try title first across the legislation source_types.
+      queries.push(`title ILIKE ${pat}`);
+      const t = await singleQueryIlike(client, "title", pat, MAX_DOCS_PER_ANCHOR + 3, LEGISLATION_SOURCE_TYPES);
+      if (t.error) lastErr = t.error;
+      if (t.data.length) {
+        return {
+          docs: t.data.slice(0, MAX_DOCS_PER_ANCHOR),
+          basis: pat === tokenPat ? "normalized_title" : "title_only",
+          queriesAttempted: queries,
+          error: lastErr,
+        };
+      }
 
-    // Then citation.
-    queries.push(`citation ILIKE ${pat}`);
-    const c = await singleQueryIlike(client, "citation", pat, MAX_DOCS_PER_ANCHOR + 3, LEGISLATION_SOURCE_TYPES);
-    if (c.error) lastErr = c.error;
-    if (c.data.length) {
-      return {
-        docs: c.data.slice(0, MAX_DOCS_PER_ANCHOR),
-        basis: "citation_only",
-        queriesAttempted: queries,
-        error: lastErr,
-      };
+      // Then citation.
+      queries.push(`citation ILIKE ${pat}`);
+      const c = await singleQueryIlike(client, "citation", pat, MAX_DOCS_PER_ANCHOR + 3, LEGISLATION_SOURCE_TYPES);
+      if (c.error) lastErr = c.error;
+      if (c.data.length) {
+        return {
+          docs: c.data.slice(0, MAX_DOCS_PER_ANCHOR),
+          basis: "citation_only",
+          queriesAttempted: queries,
+          error: lastErr,
+        };
+      }
     }
   }
 
