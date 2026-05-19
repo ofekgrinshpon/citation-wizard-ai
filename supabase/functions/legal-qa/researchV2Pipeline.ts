@@ -636,7 +636,7 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
     totals: anchorFirst.totals,
     per_claim: anchorFirst.per_claim,
   };
-  emit("anchor_pass", "complete", `${anchorFirst.totals?.rewrites ?? 0} עיגונים`);
+  emit("anchor_pass", "complete", `${(anchorFirst.totals?.promoted ?? 0) + (anchorFirst.totals?.added ?? 0)} עיגונים`);
 
   // Re-parse the rewritten body so buildFootnotes sees the new cite order.
   emit("footnote_validate", "running");
