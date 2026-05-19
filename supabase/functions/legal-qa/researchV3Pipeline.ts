@@ -225,8 +225,13 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
 
   // Backfill `verified` / `cited` from V2 anchor lifecycle (which now
   // includes external-anchor synthetic chunks injected pre-verification).
+  // V2 ledger.anchorLifecycle exposes per-candidate `verdict` with values:
+  //   direct_support | partial_support | tangential | unrelated | not_scored
+  // (NOT "direct"/"partial"). Previously this code keyed off a non-existent
+  // `c.verified === "direct"` and silently produced 0/0 even when claims were
+  // cited. Fix: read `c.verdict` directly.
   const lifecycleAny = (v2Result.metadata as Record<string, unknown>)?.anchor_lifecycle as
-    | { per_claim?: Array<{ candidates?: Array<{ anchor_id?: string; verified?: string; cited?: boolean }> }> }
+    | { per_claim?: Array<{ candidates?: Array<{ anchor_id?: string; verdict?: string; cited?: boolean }> }> }
     | undefined;
   const verifiedCountByAnchor = new Map<string, number>();
   const verifiedDirectByAnchor = new Map<string, number>();
@@ -237,12 +242,16 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
     for (const pc of lifecycleAny.per_claim) {
       for (const c of pc.candidates ?? []) {
         if (!c.anchor_id) continue;
-        if (c.verified && c.verified !== "unrelated") {
+        const vrd = c.verdict;
+        if (vrd === "direct_support") {
+          verifiedDirectByAnchor.set(c.anchor_id, (verifiedDirectByAnchor.get(c.anchor_id) ?? 0) + 1);
           verifiedCountByAnchor.set(c.anchor_id, (verifiedCountByAnchor.get(c.anchor_id) ?? 0) + 1);
+        } else if (vrd === "partial_support") {
+          verifiedPartialByAnchor.set(c.anchor_id, (verifiedPartialByAnchor.get(c.anchor_id) ?? 0) + 1);
+          verifiedCountByAnchor.set(c.anchor_id, (verifiedCountByAnchor.get(c.anchor_id) ?? 0) + 1);
+        } else if (vrd === "tangential" || vrd === "unrelated") {
+          rejectedByAnchor.set(c.anchor_id, (rejectedByAnchor.get(c.anchor_id) ?? 0) + 1);
         }
-        if (c.verified === "direct") verifiedDirectByAnchor.set(c.anchor_id, (verifiedDirectByAnchor.get(c.anchor_id) ?? 0) + 1);
-        else if (c.verified === "partial") verifiedPartialByAnchor.set(c.anchor_id, (verifiedPartialByAnchor.get(c.anchor_id) ?? 0) + 1);
-        else if (c.verified === "tangential" || c.verified === "unrelated") rejectedByAnchor.set(c.anchor_id, (rejectedByAnchor.get(c.anchor_id) ?? 0) + 1);
         if (c.cited) {
           citedCountByAnchor.set(c.anchor_id, (citedCountByAnchor.get(c.anchor_id) ?? 0) + 1);
         }
