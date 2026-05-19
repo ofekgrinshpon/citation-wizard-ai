@@ -1,5 +1,46 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+// ── Canonical database-name mapping (Rule 19.1 + extended sources) ──
+// Maps a source URL host → canonical Hebrew database name. Used to override
+// free-form values like "המאגר של בית המשפט העליון" that Perplexity returns.
+const DB_BY_HOST: Array<[RegExp, string]> = [
+  [/(^|\.)lite\.takdin\.co\.il$/i, "תקדין"],
+  [/(^|\.)takdin\.co\.il$/i, "תקדין"],
+  [/(^|\.)supremedecisions\.court\.gov\.il$/i, "אר\u05F4ש"],
+  [/(^|\.)nevo\.co\.il$/i, "נבו"],
+  [/(^|\.)psakdin\.co\.il$/i, "פסקדין"],
+];
+const ALLOWED_DB_NAMES = new Set([
+  "נבו",
+  "פדאור",
+  "דינים",
+  "תקדין",
+  "אר\u05F4ש",
+  "פסקדין",
+]);
+function normalizeDatabaseName(urls: unknown, fallback: unknown): string {
+  const list = Array.isArray(urls) ? urls : urls ? [urls] : [];
+  for (const u of list) {
+    if (typeof u !== "string" || !u) continue;
+    let host = "";
+    try {
+      host = new URL(u).hostname.toLowerCase();
+    } catch {
+      continue;
+    }
+    for (const [re, name] of DB_BY_HOST) {
+      if (re.test(host)) return name;
+    }
+  }
+  if (typeof fallback === "string" && fallback.trim()) {
+    const f = fallback.trim();
+    for (const allowed of ALLOWED_DB_NAMES) {
+      if (f.includes(allowed)) return allowed;
+    }
+  }
+  return "";
+}
 import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES } from "../_shared/caseTypePrefixes.ts";
 
 const corsHeaders = {
