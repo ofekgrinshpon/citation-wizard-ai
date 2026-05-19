@@ -636,10 +636,13 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
     totals: anchorFirst.totals,
     per_claim: anchorFirst.per_claim,
   };
+  emit("anchor_pass", "complete", `${anchorFirst.totals?.rewrites ?? 0} עיגונים`);
 
   // Re-parse the rewritten body so buildFootnotes sees the new cite order.
+  emit("footnote_validate", "running");
   const parsed = parseMarkers(anchorFirst.body, cards);
   const built = buildFootnotes(anchorFirst.body, parsed, cards);
+  emit("footnote_validate", "complete", `${built.footnotes.length} הערות`);
 
   const sourceIdsUsed = Object.keys(built.sourceIdUsage);
   metadata.drafter = {
