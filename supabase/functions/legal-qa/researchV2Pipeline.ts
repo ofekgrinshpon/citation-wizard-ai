@@ -596,6 +596,7 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
   const promptChars = systemPrompt.length + userPrompt.length;
 
   // ── Stage 5: Drafter ───────────────────────────────────────────────
+  emit("drafter", "running");
   const drafterT0 = Date.now();
   const drafterRes = await callDrafter(
     systemPrompt, userPrompt, drafterMaxTokens, drafterTimeoutMs,
@@ -608,12 +609,16 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
       cards_cited: 0, source_ids_used: [], duration_ms: drafterMs,
       model: drafterRes?.modelUsed ?? null, status: "empty",
     };
+    emit("drafter", "complete", "ריק");
     metadata.fallback = { reason: "drafter_empty", stage: "drafter_v2" };
     return emptyFallback("drafter_empty", metadata);
   }
+  emit("drafter", "complete", `${drafterRes.text.length} תווים`);
 
   // ── Stage 6: Card→Claim contract → anchor-first enforcement → footnotes ──
+  emit("anchor_pass", "running");
   const parsedFirst = parseMarkers(drafterRes.text, cards);
+
 
   // Step 3 — anchor-first reorder INSIDE existing [cite:...] groups only.
   // Pure TS, no LLM. Never inserts cites into unrelated sentences and never
