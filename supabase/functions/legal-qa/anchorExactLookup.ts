@@ -107,16 +107,56 @@ function stripSectionPrefix(s: string): string {
   return s.replace(/^(?:סעיף|תקנה)\s+[\dא-ת()."'\-–\/]+\s+ל/, "");
 }
 
-/** Generate ktiv male/חסר variants: לעניינים ↔ לענינים, etc. */
-function ktivVariants(s: string): string[] {
-  const out = new Set<string>([s]);
-  // Common male→חסר collapse: double yod → single yod between consonants.
-  const haser = s.replace(/יי/g, "י");
-  out.add(haser);
-  // Also try male: single yod → double yod for known patterns.
-  const male = s.replace(/לענינים/g, "לעניינים");
-  out.add(male);
-  return Array.from(out).filter((x) => x && x.length >= 3);
+/**
+ * Per-token ktiv male/חסר variants. The previous version did sentence-wide
+ * `יי → י`, which incorrectly transformed "מינהליים" → "מינהלים" (DB stores
+ * "מינהליים"). Now each token contributes its own variants, and we cartesian
+ * across tokens so a name like "לעניינים מינהליים" also yields the mixed
+ * form "לענינים מינהליים" (which is how the DB actually stores it).
+ */
+function tokenKtivVariants(token: string): string[] {
+  if (token.length < 3) return [token];
+  const out = new Set<string>([token]);
+  // Plain "double yod → single yod" only if the token contains "יי" outside
+  // a final "ים" plural suffix. Skip "ליים"-style endings ("מינהליים",
+  // "אזרחיים") where the double yod is part of the stem, not a male/חסר
+  // alternation — collapsing those produces forms that do NOT exist in DB.
+  if (/יי/.test(token) && !/ליים$/.test(token) && !/חיים$/.test(token)) {
+    out.add(token.replace(/יי/g, "י"));
+  }
+  // Targeted male restoration for known patterns we have seen in plans.
+  if (/לענינים/.test(token)) out.add(token.replace(/לענינים/g, "לעניינים"));
+  if (/^ענינ/.test(token)) out.add(token.replace(/^ענינ/, "ענייני"));
+  return Array.from(out);
+}
+
+/** Cartesian product of per-token ktiv variants, capped to keep queries bounded. */
+function ktivPhraseVariants(phrase: string, cap = 6): string[] {
+  const tokens = phrase.split(" ").filter(Boolean);
+  if (!tokens.length) return [];
+  let phrases: string[] = [""];
+  for (const t of tokens) {
+    const variants = tokenKtivVariants(t);
+    const next: string[] = [];
+    for (const p of phrases) {
+      for (const v of variants) {
+        next.push(p ? `${p} ${v}` : v);
+        if (next.length >= cap * 2) break;
+      }
+      if (next.length >= cap * 2) break;
+    }
+    phrases = next;
+  }
+  // Dedup, keep original first, cap.
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const p of phrases) {
+    if (seen.has(p)) continue;
+    seen.add(p);
+    out.push(p);
+    if (out.length >= cap) break;
+  }
+  return out;
 }
 
 /** Build candidate short-name forms to try as ILIKE patterns. */
@@ -135,12 +175,14 @@ function statuteSearchForms(rawName: string): string[] {
   const noParen = normalized.replace(/\([^)]*\)/g, " ").replace(/\s+/g, " ").trim();
   if (noParen.length >= 3) candidates.add(noParen);
 
-  // Ktiv variants for each form.
+  // Per-token ktiv cartesian for each base form.
   const out = new Set<string>();
   for (const c of candidates) {
-    for (const v of ktivVariants(c)) out.add(v.slice(0, 80));
+    for (const v of ktivPhraseVariants(c, 6)) {
+      if (v.length >= 3) out.add(v.slice(0, 80));
+    }
   }
-  return Array.from(out).filter((x) => x.length >= 3);
+  return Array.from(out);
 }
 
 function normalizeDocketSlash(docket: string): string {
