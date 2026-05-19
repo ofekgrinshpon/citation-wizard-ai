@@ -1356,6 +1356,11 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   };
 
                   for (const r of results) {
+                    // Normalize databaseName for unpublished results based on source_url
+                    if (!r.isPublished) {
+                      const normalized = normalizeDatabaseName(r.source_url, r.databaseName);
+                      if (normalized) r.databaseName = normalized;
+                    }
                     const claimsPub = !!r.isPublished && !!r.padi_volume && String(r.padi_volume).trim() !== "";
                     if (!claimsPub) continue;
                     const dy = docketYearOf(String(r.caseNumber || ""));
