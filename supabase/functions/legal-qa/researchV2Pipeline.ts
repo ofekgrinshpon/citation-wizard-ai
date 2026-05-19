@@ -568,9 +568,29 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
     return emptyFallback("drafter_empty", metadata);
   }
 
-  // ── Stage 6: Card→Claim contract → footnotes ──────────────────────
-  const parsed = parseMarkers(drafterRes.text, cards);
-  const built = buildFootnotes(drafterRes.text, parsed, cards);
+  // ── Stage 6: Card→Claim contract → anchor-first enforcement → footnotes ──
+  const parsedFirst = parseMarkers(drafterRes.text, cards);
+
+  // Step 3 — anchor-first reorder INSIDE existing [cite:...] groups only.
+  // Pure TS, no LLM. Never inserts cites into unrelated sentences and never
+  // cites a source that is not in the claim's verified allowed set.
+  const docIdToContractPost = new Map<string, string>();
+  for (const c of cards) if (c.contractId) docIdToContractPost.set(c.documentId, c.contractId);
+  const anchorFirst = enforceAnchorFirst({
+    body: drafterRes.text,
+    parse: parsedFirst,
+    ledger,
+    cards,
+    docIdToContract: docIdToContractPost,
+  });
+  metadata.v3_anchor_first_enforcement = {
+    totals: anchorFirst.totals,
+    per_claim: anchorFirst.per_claim,
+  };
+
+  // Re-parse the rewritten body so buildFootnotes sees the new cite order.
+  const parsed = parseMarkers(anchorFirst.body, cards);
+  const built = buildFootnotes(anchorFirst.body, parsed, cards);
 
   const sourceIdsUsed = Object.keys(built.sourceIdUsage);
   metadata.drafter = {
