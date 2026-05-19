@@ -61,8 +61,11 @@ export interface AnchorLifecycleClaim {
     document_id: string;
     title: string;
     in_top5: boolean;
+    included_in_verifier_pack: boolean;
+    exclusion_reason?: "anchor_cap_exceeded" | "empty_candidate_pool";
     verdict: V2RelevanceScore | "not_scored";
     cited: boolean;
+    ledger_included: boolean;
   }>;
 }
 
