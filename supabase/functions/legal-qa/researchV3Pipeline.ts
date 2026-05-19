@@ -278,12 +278,22 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
   const plannedAnchors = v3PlanResult?.plan?.expected_anchors ?? [];
   const fbByAnchorId = new Map((fallbackResult?.perAnchor ?? []).map((p) => [p.anchor_id, p]));
 
+  // V3→V2 anchor-id bridge. mergeExternalAnchors may re-id V3 anchors when
+  // they collide with existing AnswerMap ids, or map them onto an existing
+  // V2 anchor when deduped. The lifecycle / reconciliation counters are
+  // keyed on the V2 id, so we must translate before lookup.
+  const idMap = ((v2Result.metadata as Record<string, unknown>)?.external_anchors as
+    | { id_map?: Record<string, string> }
+    | undefined)?.id_map ?? {};
+  const toV2 = (v3Id: string): string => idMap[v3Id] ?? v3Id;
+
   const matPerAnchor = plannedAnchors.map((a) => {
+    const v2Id = toV2(a.id);
     const fb = fbByAnchorId.get(a.id);
-    const vd = verifiedDirectByAnchor.get(a.id) ?? 0;
-    const vp = verifiedPartialByAnchor.get(a.id) ?? 0;
-    const rj = rejectedByAnchor.get(a.id) ?? 0;
-    const ct = citedCountByAnchor.get(a.id) ?? 0;
+    const vd = verifiedDirectByAnchor.get(v2Id) ?? 0;
+    const vp = verifiedPartialByAnchor.get(v2Id) ?? 0;
+    const rj = rejectedByAnchor.get(v2Id) ?? 0;
+    const ct = citedCountByAnchor.get(v2Id) ?? 0;
     let outcome: "verified_and_cited" | "verified_not_cited" | "rejected_by_verifier" | "missing_no_local_no_fallback";
     if (ct > 0) outcome = "verified_and_cited";
     else if (vd + vp > 0) outcome = "verified_not_cited";
@@ -291,11 +301,12 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
     else outcome = "missing_no_local_no_fallback";
     return {
       anchor_id: a.id,
+      v2_anchor_id: v2Id,
       name: a.name,
       type: a.type,
       centrality: a.centrality,
-      attached_claim_id: claimByAnchorId.get(a.id) ?? null,
-      attachment_reason: reasonByAnchorId.get(a.id) ?? null,
+      attached_claim_id: claimByAnchorId.get(v2Id) ?? null,
+      attachment_reason: reasonByAnchorId.get(v2Id) ?? null,
       local_exact_found: fb?.local_found ?? 0,
       local_match_basis: fb?.local_match_basis ?? "none",
       local_confidence: fb?.local_confidence ?? "none",
