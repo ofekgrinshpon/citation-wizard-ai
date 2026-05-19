@@ -299,6 +299,53 @@ async function saveAcademicSessionToDB(session: AcademicSession, projectId?: str
   } catch { /* silent */ }
 }
 
+// ─── In-progress academic run markers ──────────────────────────────
+// These three columns on academic_sessions let the client recover the result
+// of a chapter generation that finished while the user was on another page
+// (or even on a different device). See plan: Option 2 — server-side
+// completion + resume on remount.
+
+async function setAcademicRunMarker(
+  projectId: string | undefined,
+  marker: { runId: string; step: string; chapterIdx: number } | null,
+): Promise<void> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const payload = {
+      current_run_id: marker?.runId ?? null,
+      current_run_step: marker?.step ?? null,
+      current_run_chapter_idx: marker?.chapterIdx ?? null,
+    };
+    let q = supabase.from("academic_sessions").update(payload).eq("user_id", user.id);
+    q = projectId ? q.eq("project_id", projectId) : q.is("project_id", null);
+    await q;
+  } catch { /* silent */ }
+}
+
+async function loadAcademicRunMarker(
+  projectId: string | undefined,
+): Promise<{ runId: string; step: string; chapterIdx: number } | null> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+    let q = supabase
+      .from("academic_sessions")
+      .select("current_run_id, current_run_step, current_run_chapter_idx")
+      .eq("user_id", user.id);
+    q = projectId ? q.eq("project_id", projectId) : q.is("project_id", null);
+    const { data } = await q.maybeSingle();
+    if (!data?.current_run_id) return null;
+    return {
+      runId: data.current_run_id as string,
+      step: (data.current_run_step as string) ?? "write_chapter",
+      chapterIdx: (data.current_run_chapter_idx as number) ?? 0,
+    };
+  } catch { return null; }
+}
+
+
+
 
 // ─── Utility components ──────────────────────────────────────────────
 
