@@ -28,6 +28,11 @@ import {
   type ContractSourceCard,
 } from "./cardClaimContract.ts";
 import {
+  enforceAnchorFirst,
+  sortAllowedIdsByTier,
+  type AllowedSourceInfo,
+} from "./anchorFirstPass.ts";
+import {
   answerMapEnabled,
   buildAnswerMap,
   summarizeAnswerMap,
@@ -186,10 +191,23 @@ function buildDrafterPrompts(args: {
   const docIdToContract = new Map<string, string>();
   for (const c of cards) docIdToContract.set(c.documentId, c.contractId!);
 
+  // Build per-card lookup so we can tier-sort each claim's allowed sources.
+  const cardById = new Map<string, ContractSourceCard>();
+  for (const c of cards) if (c.contractId) cardById.set(c.contractId, c);
+
   const ledgerBlock = ledger.entries.map((e) => {
-    const allowedIds = e.sources
-      .map((s) => docIdToContract.get(s.documentId))
-      .filter((x): x is string => !!x);
+    const infos: AllowedSourceInfo[] = [];
+    for (const s of e.sources) {
+      const cid = docIdToContract.get(s.documentId);
+      if (!cid) continue;
+      const card = cardById.get(cid);
+      infos.push({
+        contractId: cid,
+        sourceType: (s.sourceType || card?.source_type || "").toLowerCase(),
+        hasAnchorId: !!s.anchorId,
+      });
+    }
+    const allowedIds = sortAllowedIdsByTier(infos);
     const hedgeLine = e.hedge
       ? `סייגים: דרוש ניסוח מסויג (לדוגמה: "${e.hedgeTemplate ?? "ייתכן"}").`
       : "";
@@ -213,6 +231,7 @@ function buildDrafterPrompts(args: {
 7. טענה המסומנת בסייגים — נסח אותה במפורש כסייג ("ייתכן", "לכאורה", "טרם הוכרע").
 8. שאיפת היעד: 5-8 הערות שוליים סך הכל לתשובה.
 9. אל תצטט אורגינלים מחוץ לקטלוג. אל תמציא מקורות.
+10. **כלל סדר ציטוט (anchor-first)**: רשימת "מקורות מותרים" של כל טענה ממוינת לפי עדיפות — סטטוט/תקנה/חוק־יסוד או פסיקה מנחה מאומתת מופיעים ראשונים. כאשר ברשימה קיים מקור מעוגן ומאומת כזה, חובה להציבו ראשון ב-[cite:S#] של אותה טענה. מותר להוסיף אחריו מקור משני אחד (אקדמיה/דו"ח/פסיקה תומכת) אם הוא מוסיף הסבר, ביקורת או הקשר. עיקרון: anchor-first, **not** anchor-only.
 
 פלט: רק גוף הטקסט עם סימני [cite:S#]. אין כותרת/רשימות/JSON.`;
 
@@ -549,9 +568,29 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
     return emptyFallback("drafter_empty", metadata);
   }
 
-  // ── Stage 6: Card→Claim contract → footnotes ──────────────────────
-  const parsed = parseMarkers(drafterRes.text, cards);
-  const built = buildFootnotes(drafterRes.text, parsed, cards);
+  // ── Stage 6: Card→Claim contract → anchor-first enforcement → footnotes ──
+  const parsedFirst = parseMarkers(drafterRes.text, cards);
+
+  // Step 3 — anchor-first reorder INSIDE existing [cite:...] groups only.
+  // Pure TS, no LLM. Never inserts cites into unrelated sentences and never
+  // cites a source that is not in the claim's verified allowed set.
+  const docIdToContractPost = new Map<string, string>();
+  for (const c of cards) if (c.contractId) docIdToContractPost.set(c.documentId, c.contractId);
+  const anchorFirst = enforceAnchorFirst({
+    body: drafterRes.text,
+    parse: parsedFirst,
+    ledger,
+    cards,
+    docIdToContract: docIdToContractPost,
+  });
+  metadata.v3_anchor_first_enforcement = {
+    totals: anchorFirst.totals,
+    per_claim: anchorFirst.per_claim,
+  };
+
+  // Re-parse the rewritten body so buildFootnotes sees the new cite order.
+  const parsed = parseMarkers(anchorFirst.body, cards);
+  const built = buildFootnotes(anchorFirst.body, parsed, cards);
 
   const sourceIdsUsed = Object.keys(built.sourceIdUsage);
   metadata.drafter = {
