@@ -282,12 +282,17 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
   const { question, depth, adminClient } = args;
   const drafterMaxTokens = args.drafterMaxTokens ?? 4000;
   const drafterTimeoutMs = args.drafterTimeoutMs ?? 180000;
+  // Safe stage emitter — never throws into the pipeline.
+  const emit: ResearchStageEmitter = (name, status, detail) => {
+    try { args.onStage?.(name, status, detail); } catch (_e) { /* noop */ }
+  };
   const metadata: Record<string, unknown> = {
     v2_path: "deep_v2",
     depth,
   };
 
   // ── Stage 1: ResearchPlan ──────────────────────────────────────────
+  emit("decompose", "running");
   const planT0 = Date.now();
   const planResult = await buildResearchPlan({ question, depth });
   const { plan, run: planRun, fallback_model_used, fallback_reason, primary_run } = planResult;
