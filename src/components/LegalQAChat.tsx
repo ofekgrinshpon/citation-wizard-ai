@@ -1081,6 +1081,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       onStage: (e: StageEvent) => void;
       onDraftDelta: (chunk: string) => void;
       onPostProcessing: (label: string) => void;
+      onRunId?: (runId: string) => void;
     },
   ): Promise<{ data: any; status: number }> => {
     const reader = body.getReader();
@@ -1121,6 +1122,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           break;
         case "post_processing":
           if (typeof parsed.label === "string") handlers.onPostProcessing(parsed.label);
+          break;
+        case "run_id":
+          if (handlers.onRunId && typeof parsed.runId === "string") {
+            handlers.onRunId(parsed.runId);
+          }
           break;
         case "final":
           finalStatus = parsed.status ?? 200;
