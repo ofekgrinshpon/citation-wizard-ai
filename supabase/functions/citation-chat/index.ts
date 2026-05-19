@@ -1029,6 +1029,13 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     }
                   }
 
+                  // Normalize databaseName from Perplexity citation URLs (lite.takdin → תקדין,
+                  // supremedecisions.court.gov.il → אר״ש, etc). Overrides free-form strings.
+                  if (!parsed.isPublished) {
+                    const normalized = normalizeDatabaseName(pData.citations, parsed.databaseName);
+                    if (normalized) parsed.databaseName = normalized;
+                  }
+
                   // Validate data quality: reject bogus results with empty/placeholder fields
                   const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && parsed.date.trim() !== "";
                   const hasValidParties = parsed.party1 && parsed.party1.trim() !== "" && parsed.party2 && parsed.party2.trim() !== "";
