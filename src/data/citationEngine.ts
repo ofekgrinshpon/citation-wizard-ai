@@ -173,7 +173,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
       { field: "court", rule: "18.3", description: "ערכאה ומחוז (חובה לבתי משפט שאינם העליון)", required: false, format: "plain" },
       { field: "party1", rule: "18.4", description: "שם צד א'", required: true, format: "bold" },
       { field: "party2", rule: "18.4", description: "שם צד ב'", required: true, format: "bold" },
-      { field: "database", rule: "19.1", description: "שם המאגר (נבו, פדאור, דינים)", required: true, format: "plain" },
+      { field: "database", rule: "19.1", description: "שם המאגר (נבו, תקדין, אר\u05F4ש, פדאור, דינים, פסקדין)", required: true, format: "plain" },
       { field: "fullDate", rule: "19.1", description: "תאריך פרסום מלא (יום.חודש.שנה)", required: true, format: "plain" },
       { field: "paragraph", rule: "19.2", description: "הפניה לפסקה ספציפית", required: false, format: "plain" },
     ],
