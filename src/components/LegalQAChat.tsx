@@ -1115,6 +1115,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setPostProcessingLabel(null);
     setStreamingDraft("");
     setRunComplete(false);
+    // Note: we DO NOT clear the academic run marker on stop. The backend keeps
+    // running and may produce a result; the user can come back and pick it up.
+    // If they truly want to discard, they can start a new run which will
+    // overwrite the marker.
+    runPersistedRef.current = false;
+    activeRunIdRef.current = null;
     toast.info("העיבוד הופסק");
   };
 
