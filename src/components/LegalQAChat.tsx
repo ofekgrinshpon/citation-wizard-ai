@@ -802,6 +802,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const [stageEvents, setStageEvents] = useState<StageEvent[]>([]);
   const [postProcessingLabel, setPostProcessingLabel] = useState<string | null>(null);
   const [streamingDraft, setStreamingDraft] = useState<string>("");
+  const [runComplete, setRunComplete] = useState<boolean>(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -1060,6 +1061,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setStageEvents([]);
     setPostProcessingLabel(null);
     setStreamingDraft("");
+    setRunComplete(false);
     toast.info("העיבוד הופסק");
   };
 
@@ -1265,6 +1267,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setStageEvents([]);
     setPostProcessingLabel(null);
     setStreamingDraft("");
+    setRunComplete(false);
     // Set last academic action up-front so the live progress panel can pick
     // the right header copy (e.g. "כותב פרק אקדמי (מנוע Deep)…") while the
     // chapter is streaming, not only after it completes.
@@ -1432,6 +1435,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
 
       const qaResult = data as QAResult;
+      setRunComplete(true);
       setResult(qaResult);
 
       // Track last action for UI rendering
@@ -1695,6 +1699,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setStageEvents([]);
     setPostProcessingLabel(null);
     setStreamingDraft("");
+    setRunComplete(false);
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
@@ -1826,6 +1831,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       if (!data?.refusal && (!data?.answer || data.answer.trim().length < 20)) { setError("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב."); return; }
 
       const qaResult = data as QAResult;
+      setRunComplete(true);
       setResult(qaResult);
 
       try {
@@ -2682,14 +2688,14 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               : researchDepth === "deep"
               ? "research_deep"
               : "research_fast";
-          const hasStreamSignal =
-            stageEvents.length > 0 || streamingDraft.length > 0 || !!postProcessingLabel;
-          return hasStreamSignal ? (
+          const isStreamingMode = taskMode === "research" || isAcademicChapterRun;
+          return isStreamingMode ? (
             <StageProgressList
               stages={stageEvents}
               postProcessingLabel={postProcessingLabel}
               draftText={streamingDraft}
               mode={stageMode}
+              isComplete={runComplete}
             />
           ) : (
             <ResearchProgress mode={isAcademicChapterRun ? "academic_chapter" : "research"} />

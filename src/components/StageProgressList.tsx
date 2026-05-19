@@ -80,11 +80,16 @@ export function StageProgressList({
   // De-dup by stage name, keeping the latest status (so "complete" overrides "running").
   const dedup = new Map<string, StageEvent>();
   for (const s of stages) dedup.set(s.stage, s);
-  const visible = Array.from(dedup.values()).map((s) =>
+  let visible = Array.from(dedup.values()).map((s) =>
     mode === "academic_chapter" && ACADEMIC_LABEL_OVERRIDES[s.stage]
       ? { ...s, label: ACADEMIC_LABEL_OVERRIDES[s.stage] }
       : s,
   );
+  // Show a starter row immediately so the user sees the bar before the first
+  // SSE stage event arrives (network warm-up, planner cold start, etc.).
+  if (visible.length === 0 && !isComplete) {
+    visible = [{ stage: "__starting__", status: "running", label: "מתחיל…" }];
+  }
 
   // Progress calculation: each completed stage = 1, currently-running stage = 0.5.
   const completedCount = visible.filter((s) => s.status === "complete").length;
