@@ -1,72 +1,112 @@
-# Step 2.3 — Topic-Faithful V3 Planner (revised)
+# Step 3 — Anchor-first citation priority (V3 deep)
 
 ## Goal
-Stop the V3 planner from drifting into generic constitutional anchors (Bank Mizrahi / Basic Law §8) on procedural, administrative, or contract questions — **without** banning legitimate constitutional analysis when the sub-question actually involves a right, a limitation clause, or judicial review of legislation.
+When a **verified** seminal anchor exists for a claim, it must be cited **before** any secondary source on that same claim. Secondary sources are still allowed — just demoted to second position.
 
-No change to retrieval, fallback (Step 2.2), V2 ledger, drafter, or citation engine. Prompt + sanitizer + telemetry + fixtures only.
+This is **anchor-first, not anchor-only**, and **not must-cite**:
+- Do NOT cite anchors that failed verification.
+- Do NOT cite planned anchors that were never verified.
+- Do NOT insert anchors into sentences they were not mapped to.
+- Do NOT delete drafter-chosen sources.
 
-## Scope
+Explicitly out of scope for this pass: placeholder footnote suppression, off-topic footnote suppression, citation cleanup, Rule 37 changes, citation-engine changes, retrieval changes, Perplexity changes, Fast mode, academic mode. Those are a separate citation-quality pass.
 
-### 1. `supabase/functions/legal-qa/legalResearchPlanV3.ts`
+---
 
-**Tool schema additions**
-- New required field on plan: `doctrinal_frame` (enum):
-  `constitutional | administrative | procedural_civil | procedural_admin | contract | criminal | tort | other`
-- New optional field on each anchor: `constitutional_relevance_reason?: string`
-  (≤200 chars, Hebrew). Required *only* for constitutional-type anchors when `doctrinal_frame !== "constitutional"`.
+## Priority order (verified only)
 
-**System prompt additions**
-- Declare frame taxonomy and instruct planner to set `doctrinal_frame` first, then choose anchors that match the frame.
-- **Constitutional relevance gate** (replaces the earlier blocklist idea):
-  Constitutional anchors (Basic Laws, פסקת הגבלה, Bank Mizrahi, judicial review canon) are allowed under a non-constitutional frame *only* when at least one of these holds, and the planner must state it in `constitutional_relevance_reason`:
-  1. The user question explicitly mentions Basic Laws, constitutional rights, פסקת הגבלה, ביטול חקיקה, or ביקורת שיפוטית על חקיקה.
-  2. A specific sub-question involves infringement of a constitutional right.
-  3. Concrete doctrinal reason tying the constitutional anchor to *this* sub-question (e.g. positive duty to protect life/body/dignity/property; freedom of expression vs. temporary injunction).
-- Three frame few-shots:
-  - **Procedural (Q1 — temporary injunction):** frame=`procedural_civil`; anchors: תקנה 95 לתקנות סדר הדין האזרחי, סעיף 75 לחוק בתי המשפט, רע"א 4196/93 שפע בר. *Permitted constitutional anchor* example: Basic Law: Human Dignity §§2,4 with `constitutional_relevance_reason="צו מניעה נגד פרסום פוגע בחופש הביטוי"` — only when the question scenario involves publication/expression.
-  - **Contract (Q5 — Apropim / §25):** frame=`contract`; anchors: ע"א 4628/93 אפרופים, ע"א 2825/97 מגדלי הירקות, סעיף 25 לחוק החוזים. No constitutional anchors.
-  - **Administrative-exhaustion (Q7):** frame=`procedural_admin`; anchors: בג"ץ 991/91 פסטרנק, חוק בתי משפט לעניינים מינהליים, זמיר "הסמכות המינהלית". Bank Mizrahi forbidden unless the petition itself attacks legislation.
+Within each claim's `allowed sources`, sort by:
 
-**Sanitizer logic (`sanitize` function)**
-- After existing per-anchor validation, run a `frameGate` pass:
-  - Identify constitutional anchors by: `type === "basic_law_section"` OR `name` matches a constitutional-canon regex (Bank Mizrahi / לשכת מנהלי ההשקעות / בג"ץ 5658/23 עילת הסבירות / פסקת הגבלה / ברק "מידתיות").
-  - If `doctrinal_frame === "constitutional"` → keep all.
-  - Else: keep the anchor only if `constitutional_relevance_reason` is non-empty (≥15 chars) **and** not a generic boilerplate string (reject "חשוב לנושא", "רלוונטי באופן כללי" etc. via a short reject list).
-  - Drops are recorded, not silent: push `{anchor_id, name, reason}` into `frame_mismatch_dropped` array.
-- Return the gated anchor list. If gating reduces anchors below 2, keep the plan but stamp `frame_gate_underflow=true` (V2 retrieval still proceeds via its own AnswerMap).
+```text
+tier 1  verified  statute_section / regulation / basic_law_section
+tier 2  verified  leading_case (centrality=seminal)
+tier 3  verified  leading_case (centrality=supporting) / committee_report
+tier 4  verified  academic / other secondary
+tier X  not verified → keep where it was; do NOT promote it
+```
 
-### 2. Telemetry — `qa_logs.metadata.v3_legal_research_plan`
-Add:
-- `doctrinal_frame: string`
-- `frame_mismatch_dropped: Array<{anchor_id, name, reason}>` (default `[]`)
-- `frame_mismatch_dropped_count: number`
-- `constitutional_anchors_kept_with_reason: number` (anchors that passed the gate via `constitutional_relevance_reason` under a non-constitutional frame)
-- `frame_gate_underflow?: boolean`
+"Verified" = the V2 anchor lifecycle gave a verdict of `direct` or `partial` for that source (NOT `tangential`, NOT `unrelated`, NOT missing). Non-anchor sources keep their relative drafter ordering.
 
-Update `summarizeLegalResearchPlanV3` to surface the above.
+---
 
-### 3. Fixtures + eval
-- New file: `eval/_step2_3_frame_probe.mjs` (reuse Q1/Q5/Q7 harness from `_mini-q1-q5-q7-probe.mjs`).
-- Add to `eval/regression/gold_anchors.json` (or a sibling `v3_frame_anchors.json`):
-  - **Q1**: `doctrinal_frame ∈ {procedural_civil}`, expect ≥1 of `[תקנה 95, סעיף 75, רע"א 4196/93, שפע בר]`. Constitutional anchors allowed only if scenario triggers freedom-of-expression reasoning.
-  - **Q5**: `doctrinal_frame === "contract"`, expect ≥2 of `[אפרופים, מגדלי הירקות, סעיף 25]`. Zero constitutional anchors accepted.
-  - **Q7**: `doctrinal_frame ∈ {administrative, procedural_admin}`, expect ≥1 of `[פסטרנק, חוק בתי משפט לעניינים מינהליים, זמיר]`. Bank Mizrahi only with explicit reason.
-  - **Q3 regression**: `doctrinal_frame === "constitutional"`, anchors unchanged (BL §8, BL §4, Bank Mizrahi all pass).
-  - **Q-protection-money regression** (if a fixture exists or we add a stub): non-constitutional frame BUT BL §§2,4 kept because `constitutional_relevance_reason` cites positive duty to protect life/body.
+## Implementation
 
-## Acceptance gates (deep mode rerun)
-- Q1: frame correct; ≥1 procedural seminal anchor present; any constitutional anchors carry a sub-question-specific reason.
-- Q5: frame=`contract`; ≥2 contract seminals; zero constitutional anchors kept.
-- Q7: frame admin-family; ≥1 exhaustion seminal; no Bank Mizrahi unless reasoned.
-- Q3: unchanged behavior (Step 2.2 still green, footnotes 5–8).
-- `frame_mismatch_dropped` populates with concrete entries on Q5/Q7 (proof the gate fires) and stays empty on Q3.
-- No V1 fallback. No raw open-web citations. V2 ledger/drafter untouched.
+### 1. Pre-drafter sort (cheap, free signal)
+In `buildDrafterPrompts` (`researchV2Pipeline.ts`), when building each ledger entry's `allowedIds` list, sort by the tier rule above using `anchor_lifecycle.per_claim[].candidates` to identify `verified` + `anchor_id` and card `source_type` for tier. LLMs strongly prefer the first listed source, so sorting alone already nudges the right behavior.
 
-## Out of scope
-- Must-cite enforcement (Step 3) — still deferred until 2.3 is green.
-- Any change to `anchorFallbackV3.ts`, `researchV2Pipeline.ts`, ledger, drafter, or citation engine.
-- Adding new frame categories beyond the 8 listed.
+### 2. Drafter prompt addendum
+Add one short paragraph to the system prompt in `buildDrafterPrompts`:
 
-## Risks
-- Planner writes weak/boilerplate `constitutional_relevance_reason` to bypass the gate. Mitigation: minimum length + short boilerplate reject list; surface kept-with-reason count in telemetry for audit.
-- Hybrid questions (e.g. administrative petition that attacks a regulation's constitutionality) may legitimately want frame=`administrative` *and* Bank Mizrahi. Covered by reason path; if it becomes common, add a `hybrid_constitutional: boolean` flag in a later pass.
+> כלל סדר ציטוט: כאשר רשימת המקורות המותרים לטענה כוללת מקור מעוגן ומאומת (סטטוט/תקנה/חוק־יסוד/פסיקה מנחה מאומתת), חובה להציבו ראשון ב-[cite:S#] של אותה טענה. ניתן להוסיף אחריו מקור משני אחד (אקדמיה/דו"ח/פסיקה תומכת) אם הוא מוסיף הסבר, ביקורת או הקשר. עיקרון: anchor-first, **not** anchor-only. אסור לעגן טענה במקור שלא נכלל ברשימת המקורות המותרים לאותה טענה.
+
+### 3. Post-draft anchor-first enforcement
+New module `supabase/functions/legal-qa/anchorFirstPass.ts`. Runs **after** `parseMarkers` and **before** `buildFootnotes` in `researchV2Pipeline.ts`. Pure TS, no LLM call.
+
+For each claim, look at the `[cite:S#]` token group(s) the drafter actually wrote (i.e. cites that the parser mapped to that claim's allowed set):
+- If a verified tier-1/tier-2 anchor exists in the claim's allowed set, ensure it is the **first** id in that cite group:
+  - **promoted**: the verified anchor was present but not first → reorder it to first; keep at most one tier-3/4 secondary after it (the rest are dropped from that single group, but the source cards remain available for other claims).
+  - **added**: the verified anchor was in the allowed set but the drafter never cited it on this claim → prepend it; keep the drafter's existing secondary as second.
+- **kept**: no change needed (anchor already first, or only the anchor was cited).
+- **no_anchor_available**: no verified tier-1/2 anchor exists for this claim → leave the cite group untouched.
+
+Hard constraints in code:
+- Only rewrite the cite token group(s) belonging to that claim, as identified by `parseMarkers` → claim mapping. Never touch a different claim's sentence.
+- Only operate on source ids that exist in the claim's `allowedIds`. Never insert a card the verifier didn't approve for that claim.
+- Cap each cite group at 2 ids after enforcement (anchor + one secondary). No 3-cite stacks.
+
+No footnote suppression, no body text changes, no card list changes — only the bracketed `[cite:S#,S#]` token order inside already-anchored sentences.
+
+### 4. Telemetry
+Add to `qa_logs.metadata`:
+
+```ts
+v3_anchor_first_enforcement: {
+  per_claim: [{
+    claim_id: string,
+    action: "promoted" | "added" | "kept" | "no_anchor_available",
+    anchor_id?: string,
+    before_order: string[],   // ["S3","S7"]
+    after_order: string[],    // ["S1","S3"]
+  }],
+  totals: { promoted: number, added: number, kept: number, no_anchor_available: number }
+}
+```
+
+Bump `v3_path` to `deep_v3_step3_anchor_first` in `researchV3Pipeline.ts`.
+
+---
+
+## Files touched
+
+- **NEW** `supabase/functions/legal-qa/anchorFirstPass.ts` — sort helper + post-draft reorderer + telemetry shape.
+- **EDIT** `supabase/functions/legal-qa/researchV2Pipeline.ts`
+  - `buildDrafterPrompts`: import & apply the shared sorter on `allowedIds`; append the citation-priority paragraph to the system prompt.
+  - After `parseMarkers` / before `buildFootnotes`: call `enforceAnchorFirst({ parsed, ledger, anchorLifecycle })`, attach result to `metadata.v3_anchor_first_enforcement`.
+- **EDIT** `supabase/functions/legal-qa/researchV3Pipeline.ts`
+  - `v3_path` → `"deep_v3_step3_anchor_first"`.
+
+V1 path untouched. Fast mode untouched. Academic mode untouched. Citation engine untouched. Rule 37 untouched. Drafter, ledger, retrieval, Perplexity, footnote builder all otherwise untouched.
+
+---
+
+## Validation
+
+Re-run on Q1, Q3, Q5, Q7 (deep mode). For each, report:
+- `v3_path`
+- `doctrinal_frame` (sanity — should match Step 2.3)
+- `v3_anchor_first_enforcement.totals`
+- per-claim `before_order` / `after_order` where action ≠ `kept` / `no_anchor_available`
+- First cited source for the central legal claim in the body
+
+## Acceptance gates
+
+- **Q1**: a verified procedural anchor (תקנה 95 / סעיף 75 / שפע בר if verified) is the **first** cite on the procedural claim, before any academic commentary.
+- **Q3**: a verified constitutional anchor (BL §8 / בנק המזרחי if verified) is the **first** cite on the constitutional-review claim, before ברק / proportionality literature.
+- **Q5**: a verified contract anchor (אפרופים / סעיף 25 if verified) is the **first** cite on the interpretation claim, before academic commentary.
+- **Q7**: a verified exhaustion / administrative-courts anchor (פסטרנק / חוק בתי משפט לעניינים מינהליים if verified) is the **first** cite on the exhaustion claim, before academic commentary.
+- Footnote cleanup is **not** evaluated.
+- No V1 fallback. No raw open-web citations. V2 ledger / drafter / citation engine otherwise unchanged.
+- `v3_anchor_first_enforcement.totals.promoted + added ≥ 1` on at least one of the four questions where Step 2.2 review showed the drafter had skipped a verified seminal anchor.
+
+## Out of scope (explicit)
+Placeholder suppressor, off-topic footnote suppression, citation cleanup, Rule 37 edits, citation-engine edits, retrieval changes, Perplexity changes, Fast mode, academic mode, must-cite enforcement.
