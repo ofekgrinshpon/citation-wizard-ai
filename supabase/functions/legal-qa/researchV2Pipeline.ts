@@ -28,6 +28,11 @@ import {
   type ContractSourceCard,
 } from "./cardClaimContract.ts";
 import {
+  enforceAnchorFirst,
+  sortAllowedIdsByTier,
+  type AllowedSourceInfo,
+} from "./anchorFirstPass.ts";
+import {
   answerMapEnabled,
   buildAnswerMap,
   summarizeAnswerMap,
