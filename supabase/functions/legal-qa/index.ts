@@ -2480,10 +2480,15 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         const asyncRunId = typeof body?._asyncRunId === "string" ? body._asyncRunId : null;
         const v2QaLogId = asyncRunId ?? crypto.randomUUID();
         const runner = useV3 ? runResearchV3 : runResearchV2;
+        // Live progress: flip the SSE placeholder ("מתחיל…") to a real
+        // first stage immediately so the UI doesn't sit on ~5% during the
+        // 30–60s research-plan + AnswerMap warm-up inside V2/V3.
+        emitStage("frame", "complete");
         const v2 = await runner({
           question, depth: "deep", adminClient,
           drafterTimeoutMs: modeProfile.drafterTimeoutMs,
           forceDrafterModel,
+          onStage: emitStage,
         });
         if (v2.ok) {
           const v2Metadata = {
