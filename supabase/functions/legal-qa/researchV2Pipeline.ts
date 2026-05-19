@@ -316,9 +316,11 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
     fallback_model_used: fallback_model_used === true,
   };
   if (!plan) {
+    emit("decompose", "complete", "שגיאה");
     metadata.fallback = { reason: "research_plan_failed", stage: "research_plan_v2", detail: fallback_reason ?? null };
     return emptyFallback("research_plan_failed", metadata);
   }
+  emit("decompose", "complete", `${plan.claims.length} טענות`);
 
   // ── Stage 1.5: AnswerMap / Authority Discovery (gated) ────────────
   let anchorQueriesByClaim: Map<string, string[]> | undefined;
