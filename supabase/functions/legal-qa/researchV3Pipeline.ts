@@ -229,6 +229,9 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
     | { per_claim?: Array<{ candidates?: Array<{ anchor_id?: string; verified?: string; cited?: boolean }> }> }
     | undefined;
   const verifiedCountByAnchor = new Map<string, number>();
+  const verifiedDirectByAnchor = new Map<string, number>();
+  const verifiedPartialByAnchor = new Map<string, number>();
+  const rejectedByAnchor = new Map<string, number>();
   const citedCountByAnchor = new Map<string, number>();
   if (lifecycleAny?.per_claim) {
     for (const pc of lifecycleAny.per_claim) {
@@ -237,6 +240,9 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
         if (c.verified && c.verified !== "unrelated") {
           verifiedCountByAnchor.set(c.anchor_id, (verifiedCountByAnchor.get(c.anchor_id) ?? 0) + 1);
         }
+        if (c.verified === "direct") verifiedDirectByAnchor.set(c.anchor_id, (verifiedDirectByAnchor.get(c.anchor_id) ?? 0) + 1);
+        else if (c.verified === "partial") verifiedPartialByAnchor.set(c.anchor_id, (verifiedPartialByAnchor.get(c.anchor_id) ?? 0) + 1);
+        else if (c.verified === "tangential" || c.verified === "unrelated") rejectedByAnchor.set(c.anchor_id, (rejectedByAnchor.get(c.anchor_id) ?? 0) + 1);
         if (c.cited) {
           citedCountByAnchor.set(c.anchor_id, (citedCountByAnchor.get(c.anchor_id) ?? 0) + 1);
         }
@@ -250,10 +256,68 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
     }
   }
 
+  // ── Step 4: Anchor Materialization telemetry ─────────────────────────
+  const reconAttachments = ((v2Result.metadata as Record<string, unknown>)?.anchor_reconciliation as
+    | { attachments?: Array<{ claim_id: string; anchor_id: string; reason: string }> }
+    | undefined)?.attachments ?? [];
+  const claimByAnchorId = new Map<string, string>();
+  const reasonByAnchorId = new Map<string, string>();
+  for (const att of reconAttachments) {
+    claimByAnchorId.set(att.anchor_id, att.claim_id);
+    reasonByAnchorId.set(att.anchor_id, att.reason);
+  }
+  const plannedAnchors = v3PlanResult?.plan?.expected_anchors ?? [];
+  const fbByAnchorId = new Map((fallbackResult?.perAnchor ?? []).map((p) => [p.anchor_id, p]));
+
+  const matPerAnchor = plannedAnchors.map((a) => {
+    const fb = fbByAnchorId.get(a.id);
+    const vd = verifiedDirectByAnchor.get(a.id) ?? 0;
+    const vp = verifiedPartialByAnchor.get(a.id) ?? 0;
+    const rj = rejectedByAnchor.get(a.id) ?? 0;
+    const ct = citedCountByAnchor.get(a.id) ?? 0;
+    let outcome: "verified_and_cited" | "verified_not_cited" | "rejected_by_verifier" | "missing_no_local_no_fallback";
+    if (ct > 0) outcome = "verified_and_cited";
+    else if (vd + vp > 0) outcome = "verified_not_cited";
+    else if ((fb?.candidate_added ?? 0) > 0) outcome = "rejected_by_verifier";
+    else outcome = "missing_no_local_no_fallback";
+    return {
+      anchor_id: a.id,
+      name: a.name,
+      type: a.type,
+      centrality: a.centrality,
+      attached_claim_id: claimByAnchorId.get(a.id) ?? null,
+      attachment_reason: reasonByAnchorId.get(a.id) ?? null,
+      local_exact_found: fb?.local_found ?? 0,
+      local_match_basis: fb?.local_match_basis ?? "none",
+      local_confidence: fb?.local_confidence ?? "none",
+      perplexity_called: fb?.perplexity_called ?? false,
+      approved_found: fb?.approved_found ?? 0,
+      candidates_added_to_pack: fb?.candidate_added ?? 0,
+      verified_direct: vd,
+      verified_partial: vp,
+      rejected: rj,
+      cited_after_step3: ct,
+      outcome,
+    };
+  });
+
+  const matTotals = {
+    anchors_planned: plannedAnchors.length,
+    anchors_seminal: plannedAnchors.filter((a) => a.centrality === "seminal").length,
+    anchors_attached_to_claim: matPerAnchor.filter((p) => p.attached_claim_id).length,
+    anchor_candidates_found: matPerAnchor.reduce((n, p) => n + p.local_exact_found + p.approved_found, 0),
+    anchor_candidates_added_to_verifier_pack: matPerAnchor.reduce((n, p) => n + p.candidates_added_to_pack, 0),
+    anchor_verified_direct: matPerAnchor.reduce((n, p) => n + p.verified_direct, 0),
+    anchor_verified_partial: matPerAnchor.reduce((n, p) => n + p.verified_partial, 0),
+    anchor_rejected: matPerAnchor.reduce((n, p) => n + p.rejected, 0),
+    anchor_missing: matPerAnchor.filter((p) => p.outcome === "missing_no_local_no_fallback").length,
+    anchor_cited_after_step3: matPerAnchor.reduce((n, p) => n + p.cited_after_step3, 0),
+  };
+
   const v3PlanWallMs = Date.now() - v3PlanT0;
   const stampedMetadata = {
     ...(v2Result.metadata ?? {}),
-    v3_path: "deep_v3_step3_anchor_first",
+    v3_path: "deep_v3_step4_anchor_materialization",
     v3_approved_domains: {
       tier_a_count: TIER_A_DOMAINS.length,
       tier_b_count: TIER_B_DOMAINS.length,
@@ -276,6 +340,10 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
           total_perplexity_calls: fallbackResult.perAnchor.filter(p => p.perplexity_called).length,
         }
       : { per_anchor: [], wall_ms: 0, total_candidates_added: 0, total_perplexity_calls: 0 },
+    v3_anchor_materialization: {
+      totals: matTotals,
+      per_anchor: matPerAnchor,
+    },
   };
   return { ...v2Result, metadata: stampedMetadata };
 }
