@@ -157,18 +157,21 @@ export const ACADEMIC_PROFILES: Record<AcademicStep, AcademicProfile> = {
   // ─── Conclusion (write_conclusion) ─────────────────────────────────
   // Generated LAST among substantive chapters. Synthesizes the actual body,
   // not the outline. Same Deep envelope shape as introduction.
+  // ─── Conclusion (write_conclusion) ─────────────────────────────────
+  // Synthesis-only: ~400–600 words (1–1.5 pages). Reflects on body
+  // chapters, no new retrieval, no new sources. May re-cite body
+  // citations via "לעיל ה״ש X" / "שם". Routed through the same
+  // lightweight branch as `abstract` (no Deep pipeline, no critic).
   conclusion: {
     creditCost: 8,
     prevChapterContextChars: 0,
     documentContextChars: 0,
     abstractWordCap: 0,
-    enableDeepPipeline: true,
-    inheritsFrom: "deep",
-    qaGuardUnresolvedShareThreshold: 0.4,
-    qaGuardUnderWordFloorRatio: 0.5,
-    qaGuardNarrativeViolationThreshold: 3,
-    criticEnabled: true,
-    criticMinCoverage: 0.6,
+    enableDeepPipeline: false,
+    inheritsFrom: null,
+    qaGuardUnresolvedShareThreshold: 0,
+    qaGuardUnderWordFloorRatio: 0,
+    qaGuardNarrativeViolationThreshold: 0,
   },
 };
 
