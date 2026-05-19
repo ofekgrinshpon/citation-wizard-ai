@@ -898,6 +898,108 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     return () => { cancelled = true; };
   }, [projectId]);
 
+  // ─── Resume in-progress academic run on mount ─────────────────────
+  // If a previous session started a chapter generation that the user navigated
+  // away from, recover its result (or live-poll until it's done) via
+  // legal-qa-status. Marker cleared once handled. Foreground SSE always wins:
+  // we only resume when there's no active stream.
+  useEffect(() => {
+    if (taskMode !== "academic_writing") return;
+    if (loading) return; // foreground run takes precedence
+    let cancelled = false;
+    (async () => {
+      const marker = await loadAcademicRunMarker(projectId);
+      if (cancelled || !marker) return;
+      try {
+        setLoading(true);
+        setLastAcademicAction(marker.step);
+        setStageEvents([]);
+        setStreamingDraft("");
+        setPostProcessingLabel("מסתנכרן עם ההפקה שרצה ברקע…");
+        const final = await pollLegalQaStatus(marker.runId, {
+          intervalMs: 3000,
+          maxWallMs: 600_000,
+        });
+        if (cancelled) return;
+        if (final.status === "completed" && typeof final.answer === "string" && final.answer.length > 10) {
+          const qaResult: QAResult = {
+            answer: final.answer,
+            footnotes: (final.footnotes as QAResult["footnotes"]) ?? [],
+            source_urls: [],
+          };
+          setRunComplete(true);
+          setResult(qaResult);
+          // Persist into the matching chapter slot, mirroring the SSE success path.
+          setChapters((prev) => {
+            const idx = marker.chapterIdx;
+            if (idx < 0 || idx >= prev.length) return prev;
+            const next = [...prev];
+            next[idx] = { ...next[idx], content: qaResult.answer };
+            return next;
+          });
+          toast.success("הפרק הושלם ברקע ונטען מחדש");
+        } else {
+          setError("ההפקה ברקע נכשלה. ניתן לנסות שוב.");
+        }
+      } catch (e) {
+        if ((e as Error).name !== "AbortError") {
+          console.error("Background resume failed:", e);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+          setPostProcessingLabel(null);
+        }
+        await setAcademicRunMarker(projectId, null);
+      }
+    })();
+    return () => { cancelled = true; };
+    // Intentionally only on projectId / taskMode change — not on `loading`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, taskMode]);
+
+  // ─── Non-blocking nav warning while an academic run is streaming ───
+  // Per plan: NEVER say the run will be cancelled — the backend keeps going
+  // and resume-on-mount will pick it up. Just a one-shot info toast when the
+  // user clicks any nav target while the chapter is still streaming.
+  const navToastShownRef = useRef<boolean>(false);
+  useEffect(() => {
+    const isLongFormLoading =
+      loading &&
+      (lastAcademicAction === "write_chapter" ||
+        lastAcademicAction === "write_introduction" ||
+        lastAcademicAction === "write_conclusion");
+    if (!isLongFormLoading) {
+      navToastShownRef.current = false;
+      return;
+    }
+    const onClick = (ev: MouseEvent) => {
+      if (navToastShownRef.current) return;
+      const target = (ev.target as HTMLElement | null)?.closest("a,button");
+      if (!target) return;
+      // Heuristic: only fire for nav-like elements (anchors with href, or
+      // buttons inside the sidebar). Skip the run's own controls.
+      const isAnchor = target.tagName === "A" && (target as HTMLAnchorElement).href;
+      const inSidebar = !!target.closest("aside");
+      if (!isAnchor && !inSidebar) return;
+      navToastShownRef.current = true;
+      if (runPersistedRef.current) {
+        toast.info(
+          "הפרק עדיין נכתב ברקע. אם תעבור עמוד, ההתקדמות החיה תיעצר כאן, אבל תוכל לחזור ולטעון את התוצאה כשהכתיבה תסתיים.",
+          { duration: 8000 },
+        );
+      } else {
+        toast.warning(
+          "הפרק עדיין נכתב, וההפקה לא נשמרה עדיין לשחזור ברקע. אם תעבור עמוד עכשיו, התוצאה עלולה ללכת לאיבוד.",
+          { duration: 8000 },
+        );
+      }
+    };
+    window.addEventListener("click", onClick, true);
+    return () => window.removeEventListener("click", onClick, true);
+  }, [loading, lastAcademicAction]);
+
+
   // Save academic session after chapter writes (localStorage immediate + DB sync)
   const persistAcademicSession = useCallback(() => {
     if (taskMode !== "academic_writing" || wizardStep === "init") return;
