@@ -1393,7 +1393,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                       // matches the docket year window.
                       if (yearMismatch) r.year = "";
                     }
-                    // Normalize databaseName for unpublished results based on source_url
+                    // Re-normalize if pub-guard flipped isPublished to false
                     if (!r.isPublished) {
                       const normalized = normalizeDatabaseName(r.source_url, r.databaseName);
                       if (normalized) r.databaseName = normalized;
