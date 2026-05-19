@@ -1697,6 +1697,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             typeof qaResult.footnotes_count === "number"
               ? qaResult.footnotes_count
               : (qaResult.footnotes?.length ?? 0),
+          footnotes: qaResult.footnotes ?? [],
         };
         setChapters(updatedChapters);
         updateWizardStep("checkpoint");
