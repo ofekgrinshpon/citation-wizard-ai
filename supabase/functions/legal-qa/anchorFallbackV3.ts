@@ -232,18 +232,29 @@ export async function runAnchorFallback(args: {
   const perAnchor: AnchorFallbackPerAnchor[] = [];
   const candidatesByAnchorKey = new Map<string, ClaimCandidateSource[]>();
 
-  // Run all anchors in parallel — each is independent (local probe + at
-  // most one Perplexity call). allSettled so one slow anchor cannot stall
-  // the batch.
+  // Step 4 — batch exact local lookup up-front (parallel, bounded per anchor).
+  // This replaces the loose FTS probe: an "exact hit" requires a matching
+  // docket / title+section / title+author, not just any token overlap.
+  let exactByAnchorId: Map<string, AnchorExactMatch>;
+  try {
+    exactByAnchorId = await lookupAnchorsExact(args.adminClient, args.anchors);
+  } catch (e) {
+    console.warn("[anchor_fallback] exact_lookup_error:", (e as Error).message);
+    exactByAnchorId = new Map();
+  }
+
   const tasks = args.anchors.map(async (a, anchorIdx) => {
     const aT0 = Date.now();
     const queries = args.queriesByAnchorId.get(a.id) ?? [];
+    const exact = exactByAnchorId.get(a.id);
     const tele: AnchorFallbackPerAnchor = {
       anchor_id: a.id,
       anchor_name: a.name,
       anchor_type: a.type,
       queries_tried: queries,
-      local_found: 0,
+      local_found: exact?.docs_found ?? 0,
+      local_match_basis: exact?.match_basis ?? "none",
+      local_confidence: exact?.confidence ?? "none",
       perplexity_called: false,
       perplexity_returned: 0,
       approved_found: 0,
@@ -253,15 +264,12 @@ export async function runAnchorFallback(args: {
       duration_ms: 0,
     };
 
-    // 1. Local probe.
-    try {
-      tele.local_found = await probeLocal(args.adminClient, queries);
-    } catch {
-      tele.local_found = 0;
-    }
-
-    if (tele.local_found > 0) {
-      tele.not_found_reason = "local_hit";
+    // 1. Exact local lookup hit → materialize as anchor-origin candidates,
+    //    skip Perplexity. Verifier remains the gate on the ledger side.
+    if (exact && exact.candidates.length > 0) {
+      candidatesByAnchorKey.set(anchorKey(a), exact.candidates);
+      tele.candidate_added = exact.candidates.length;
+      tele.not_found_reason = "local_exact_hit";
       tele.duration_ms = Date.now() - aT0;
       return tele;
     }
