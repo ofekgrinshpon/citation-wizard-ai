@@ -299,6 +299,53 @@ async function saveAcademicSessionToDB(session: AcademicSession, projectId?: str
   } catch { /* silent */ }
 }
 
+// ─── In-progress academic run markers ──────────────────────────────
+// These three columns on academic_sessions let the client recover the result
+// of a chapter generation that finished while the user was on another page
+// (or even on a different device). See plan: Option 2 — server-side
+// completion + resume on remount.
+
+async function setAcademicRunMarker(
+  projectId: string | undefined,
+  marker: { runId: string; step: string; chapterIdx: number } | null,
+): Promise<void> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const payload = {
+      current_run_id: marker?.runId ?? null,
+      current_run_step: marker?.step ?? null,
+      current_run_chapter_idx: marker?.chapterIdx ?? null,
+    };
+    let q = supabase.from("academic_sessions").update(payload).eq("user_id", user.id);
+    q = projectId ? q.eq("project_id", projectId) : q.is("project_id", null);
+    await q;
+  } catch { /* silent */ }
+}
+
+async function loadAcademicRunMarker(
+  projectId: string | undefined,
+): Promise<{ runId: string; step: string; chapterIdx: number } | null> {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+    let q = supabase
+      .from("academic_sessions")
+      .select("current_run_id, current_run_step, current_run_chapter_idx")
+      .eq("user_id", user.id);
+    q = projectId ? q.eq("project_id", projectId) : q.is("project_id", null);
+    const { data } = await q.maybeSingle();
+    if (!data?.current_run_id) return null;
+    return {
+      runId: data.current_run_id as string,
+      step: (data.current_run_step as string) ?? "write_chapter",
+      chapterIdx: (data.current_run_chapter_idx as number) ?? 0,
+    };
+  } catch { return null; }
+}
+
+
+
 
 // ─── Utility components ──────────────────────────────────────────────
 
@@ -808,6 +855,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  // Tracks whether `current_run_id` was successfully persisted to
+  // academic_sessions for the current in-flight academic run. Used to decide
+  // whether to show a non-blocking info toast (persisted) or a blocking
+  // confirm (not yet persisted) when the user tries to navigate away.
+  const runPersistedRef = useRef<boolean>(false);
+  const activeRunIdRef = useRef<string | null>(null);
 
   // ─── Academic wizard state ───────────────────────────────────────
   const [wizardStep, setWizardStep] = useState<WizardStep>("init");
@@ -844,6 +897,109 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     }
     return () => { cancelled = true; };
   }, [projectId]);
+
+  // ─── Resume in-progress academic run on mount ─────────────────────
+  // If a previous session started a chapter generation that the user navigated
+  // away from, recover its result (or live-poll until it's done) via
+  // legal-qa-status. Marker cleared once handled. Foreground SSE always wins:
+  // we only resume when there's no active stream.
+  useEffect(() => {
+    if (taskMode !== "academic_writing") return;
+    if (loading) return; // foreground run takes precedence
+    let cancelled = false;
+    (async () => {
+      const marker = await loadAcademicRunMarker(projectId);
+      if (cancelled || !marker) return;
+      try {
+        setLoading(true);
+        setLastAcademicAction(marker.step);
+        setStageEvents([]);
+        setStreamingDraft("");
+        setPostProcessingLabel("מסתנכרן עם ההפקה שרצה ברקע…");
+        const { pollLegalQaStatus } = await import("@/lib/legalQaPolling");
+        const final = await pollLegalQaStatus(marker.runId, {
+          intervalMs: 3000,
+          maxWallMs: 600_000,
+        });
+        if (cancelled) return;
+        if (final.status === "completed" && typeof final.answer === "string" && final.answer.length > 10) {
+          const qaResult: QAResult = {
+            answer: final.answer,
+            footnotes: (final.footnotes as QAResult["footnotes"]) ?? [],
+            source_urls: [],
+          };
+          setRunComplete(true);
+          setResult(qaResult);
+          // Persist into the matching chapter slot, mirroring the SSE success path.
+          setChapters((prev) => {
+            const idx = marker.chapterIdx;
+            if (idx < 0 || idx >= prev.length) return prev;
+            const next = [...prev];
+            next[idx] = { ...next[idx], content: qaResult.answer };
+            return next;
+          });
+          toast.success("הפרק הושלם ברקע ונטען מחדש");
+        } else {
+          setError("ההפקה ברקע נכשלה. ניתן לנסות שוב.");
+        }
+      } catch (e) {
+        if ((e as Error).name !== "AbortError") {
+          console.error("Background resume failed:", e);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+          setPostProcessingLabel(null);
+        }
+        await setAcademicRunMarker(projectId, null);
+      }
+    })();
+    return () => { cancelled = true; };
+    // Intentionally only on projectId / taskMode change — not on `loading`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, taskMode]);
+
+  // ─── Non-blocking nav warning while an academic run is streaming ───
+  // Per plan: NEVER say the run will be cancelled — the backend keeps going
+  // and resume-on-mount will pick it up. Just a one-shot info toast when the
+  // user clicks any nav target while the chapter is still streaming.
+  const navToastShownRef = useRef<boolean>(false);
+  useEffect(() => {
+    const isLongFormLoading =
+      loading &&
+      (lastAcademicAction === "write_chapter" ||
+        lastAcademicAction === "write_introduction" ||
+        lastAcademicAction === "write_conclusion");
+    if (!isLongFormLoading) {
+      navToastShownRef.current = false;
+      return;
+    }
+    const onClick = (ev: MouseEvent) => {
+      if (navToastShownRef.current) return;
+      const target = (ev.target as HTMLElement | null)?.closest("a,button");
+      if (!target) return;
+      // Heuristic: only fire for nav-like elements (anchors with href, or
+      // buttons inside the sidebar). Skip the run's own controls.
+      const isAnchor = target.tagName === "A" && (target as HTMLAnchorElement).href;
+      const inSidebar = !!target.closest("aside");
+      if (!isAnchor && !inSidebar) return;
+      navToastShownRef.current = true;
+      if (runPersistedRef.current) {
+        toast.info(
+          "הפרק עדיין נכתב ברקע. אם תעבור עמוד, ההתקדמות החיה תיעצר כאן, אבל תוכל לחזור ולטעון את התוצאה כשהכתיבה תסתיים.",
+          { duration: 8000 },
+        );
+      } else {
+        toast.warning(
+          "הפרק עדיין נכתב, וההפקה לא נשמרה עדיין לשחזור ברקע. אם תעבור עמוד עכשיו, התוצאה עלולה ללכת לאיבוד.",
+          { duration: 8000 },
+        );
+      }
+    };
+    window.addEventListener("click", onClick, true);
+    return () => window.removeEventListener("click", onClick, true);
+  }, [loading, lastAcademicAction]);
+
 
   // Save academic session after chapter writes (localStorage immediate + DB sync)
   const persistAcademicSession = useCallback(() => {
@@ -1062,6 +1218,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setPostProcessingLabel(null);
     setStreamingDraft("");
     setRunComplete(false);
+    // Note: we DO NOT clear the academic run marker on stop. The backend keeps
+    // running and may produce a result; the user can come back and pick it up.
+    // If they truly want to discard, they can start a new run which will
+    // overwrite the marker.
+    runPersistedRef.current = false;
+    activeRunIdRef.current = null;
     toast.info("העיבוד הופסק");
   };
 
@@ -1081,6 +1243,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       onStage: (e: StageEvent) => void;
       onDraftDelta: (chunk: string) => void;
       onPostProcessing: (label: string) => void;
+      onRunId?: (runId: string) => void;
     },
   ): Promise<{ data: any; status: number }> => {
     const reader = body.getReader();
@@ -1121,6 +1284,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           break;
         case "post_processing":
           if (typeof parsed.label === "string") handlers.onPostProcessing(parsed.label);
+          break;
+        case "run_id":
+          if (handlers.onRunId && typeof parsed.runId === "string") {
+            handlers.onRunId(parsed.runId);
+          }
           break;
         case "final":
           finalStatus = parsed.status ?? 200;
@@ -1256,8 +1424,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
   const handleAcademicSubmit = async (academicStep: string, extraBody?: Record<string, unknown>) => {
     const q = question.trim();
-    if (!q && academicStep !== "write_chapter") {
+    const isLongFormWriteGuard =
+      academicStep === "write_chapter" ||
+      academicStep === "write_introduction" ||
+      academicStep === "write_conclusion";
+    if (!q && !isLongFormWriteGuard) {
       toast.error("יש להזין טקסט.");
+      return;
+    }
+    // Defensive: long-form needs *something* to write about. After a navigation
+    // round-trip the local `question` input is empty; we fall back to the
+    // persisted `researchQuestion`. If both are empty the session is corrupted.
+    if (isLongFormWriteGuard && !q && !researchQuestion) {
+      toast.error("לא נמצאה שאלת מחקר. חזור לשלב 'שאלה' או הקלד אותה כאן.");
       return;
     }
 
@@ -1268,6 +1447,8 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setPostProcessingLabel(null);
     setStreamingDraft("");
     setRunComplete(false);
+    runPersistedRef.current = false;
+    activeRunIdRef.current = null;
     // Set last academic action up-front so the live progress panel can pick
     // the right header copy (e.g. "כותב פרק אקדמי (מנוע Deep)…") while the
     // chapter is streaming, not only after it completes.
@@ -1420,6 +1601,20 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           onStage: (e) => setStageEvents((prev) => [...prev, e]),
           onDraftDelta: (chunk) => setStreamingDraft((prev) => prev + chunk),
           onPostProcessing: (label) => setPostProcessingLabel(label),
+          // Persist run marker so the result can be recovered if the user
+          // navigates away mid-stream. Long-form academic writes only —
+          // other steps are fast single-shot and don't need recovery.
+          onRunId: (rid) => {
+            if (isLongFormWriteGuard) {
+              runPersistedRef.current = true;
+              activeRunIdRef.current = rid;
+              void setAcademicRunMarker(projectId, {
+                runId: rid,
+                step: academicStep,
+                chapterIdx: currentChapter,
+              });
+            }
+          },
         });
         data = result.data;
         effectiveStatus = result.status;
@@ -1534,6 +1729,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     } finally {
       abortControllerRef.current = null;
       setLoading(false);
+      // Clear the in-progress marker so a future mount doesn't try to resume
+      // a run that already terminated (success OR error path).
+      if (isLongFormWriteGuard && (runPersistedRef.current || activeRunIdRef.current)) {
+        void setAcademicRunMarker(projectId, null);
+      }
+      runPersistedRef.current = false;
+      activeRunIdRef.current = null;
     }
   };
 

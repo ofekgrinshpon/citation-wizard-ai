@@ -19,6 +19,9 @@ export type Database = {
           chapters: Json
           created_at: string
           current_chapter: number
+          current_run_chapter_idx: number | null
+          current_run_id: string | null
+          current_run_step: string | null
           id: string
           last_academic_action: string | null
           max_reached_step: string
@@ -34,6 +37,9 @@ export type Database = {
           chapters?: Json
           created_at?: string
           current_chapter?: number
+          current_run_chapter_idx?: number | null
+          current_run_id?: string | null
+          current_run_step?: string | null
           id?: string
           last_academic_action?: string | null
           max_reached_step: string
@@ -49,6 +55,9 @@ export type Database = {
           chapters?: Json
           created_at?: string
           current_chapter?: number
+          current_run_chapter_idx?: number | null
+          current_run_id?: string | null
+          current_run_step?: string | null
           id?: string
           last_academic_action?: string | null
           max_reached_step?: string
