@@ -1484,6 +1484,20 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           onStage: (e) => setStageEvents((prev) => [...prev, e]),
           onDraftDelta: (chunk) => setStreamingDraft((prev) => prev + chunk),
           onPostProcessing: (label) => setPostProcessingLabel(label),
+          // Persist run marker so the result can be recovered if the user
+          // navigates away mid-stream. Long-form academic writes only —
+          // other steps are fast single-shot and don't need recovery.
+          onRunId: (rid) => {
+            if (isLongFormWriteGuard) {
+              runPersistedRef.current = true;
+              activeRunIdRef.current = rid;
+              void setAcademicRunMarker(projectId, {
+                runId: rid,
+                step: academicStep,
+                chapterIdx: currentChapter,
+              });
+            }
+          },
         });
         data = result.data;
         effectiveStatus = result.status;
