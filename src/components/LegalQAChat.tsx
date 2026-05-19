@@ -148,6 +148,10 @@ interface ChapterData {
    *  chapter. Summed across earlier chapters (display order) to compute
    *  the next chapter's footnoteOffset. */
   footnotesCount?: number;
+  /** Saved per chapter so the full-paper copy can re-emit the
+   *  combined "הערות שוליים" section. Backend already uses continuous
+   *  global numbering across chapters. */
+  footnotes?: Footnote[];
 }
 
 interface AcademicSession {
@@ -1693,6 +1697,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             typeof qaResult.footnotes_count === "number"
               ? qaResult.footnotes_count
               : (qaResult.footnotes?.length ?? 0),
+          footnotes: qaResult.footnotes ?? [],
         };
         setChapters(updatedChapters);
         updateWizardStep("checkpoint");
@@ -2084,19 +2089,45 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
     // For academic mode, copy entire accumulated paper
     if (taskMode === "academic_writing" && chapters.some(ch => ch.content)) {
-      const fullPaper = chapters
-        .filter(ch => ch.content)
+      const written = chapters.filter(ch => ch.content);
+
+      const bodyPlain = written
         .map(ch => `**${ch.title}**\n\n${ch.content}`)
         .join("\n\n---\n\n");
 
-      const bodyHtml = fullPaper
+      // Combine footnotes across chapters (already globally numbered);
+      // de-dupe by number as a safety net.
+      const seen = new Set<number>();
+      const allFootnotes: Footnote[] = [];
+      for (const ch of written) {
+        for (const fn of ch.footnotes ?? []) {
+          if (seen.has(fn.number)) continue;
+          seen.add(fn.number);
+          allFootnotes.push(fn);
+        }
+      }
+      allFootnotes.sort((a, b) => a.number - b.number);
+
+      const footnotesPlain = allFootnotes.length
+        ? `\n\nהערות שוליים:\n` + allFootnotes.map(f => `${f.number}. ${f.citation}`).join("\n")
+        : "";
+
+      const fullPaperPlain = bodyPlain + footnotesPlain;
+
+      const bodyHtml = bodyPlain
         .replace(/^#{1,4}\s+(.+)$/gm, "<strong>$1</strong>")
         .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
         .replace(/\n/g, "<br>");
 
-      const richHtml = `<div dir="rtl" style="font-family: ${DAVID_FONT}; font-size: 12pt; line-height: 2; text-align: justify; direction: rtl;">${bodyHtml}</div>`;
-      copyRichText(richHtml, fullPaper);
-      toast.success("העבודה הועתקה ללוח");
+      const footnotesHtml = allFootnotes.length
+        ? `<br><br><div style="font-size: 10pt;"><strong>הערות שוליים:</strong><br>` +
+          allFootnotes.map(f => `<span>${f.number}. ${f.citation}</span>`).join("<br>") +
+          `</div>`
+        : "";
+
+      const richHtml = `<div dir="rtl" style="font-family: ${DAVID_FONT}; font-size: 12pt; line-height: 2; text-align: justify; direction: rtl;">${bodyHtml}${footnotesHtml}</div>`;
+      copyRichText(richHtml, fullPaperPlain);
+      toast.success(allFootnotes.length ? "העבודה הועתקה ללוח (כולל הערות שוליים)" : "העבודה הועתקה ללוח");
       return;
     }
 
