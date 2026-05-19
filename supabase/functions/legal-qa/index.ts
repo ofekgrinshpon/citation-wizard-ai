@@ -2549,11 +2549,16 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     // already-written chapters and must NOT introduce new external citations.
     const isAbstractGeneration =
       taskMode === "academic_writing" && academicStep === "write_chapter" && !!isAbstract;
+    // Conclusion = pure synthesis of body chapters; routes through the same
+    // lightweight branch as the abstract (no retrieval, no claim map, no critic).
+    const isConclusionGeneration =
+      taskMode === "academic_writing" && academicStep === "write_conclusion";
+    const isSynthesisOnly = isAbstractGeneration || isConclusionGeneration;
 
     if (
       taskMode === "academic_writing" &&
       academicStep &&
-      (["suggest_topics", "validate_question", "propose_outline"].includes(academicStep) || isAbstractGeneration)
+      (["suggest_topics", "validate_question", "propose_outline"].includes(academicStep) || isSynthesisOnly)
     ) {
       const subPrompt = getAcademicSubModePrompt(academicStep, body);
       if (!subPrompt) {
