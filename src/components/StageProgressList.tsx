@@ -1,5 +1,6 @@
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 
 export interface StageEvent {
   stage: string;
@@ -15,6 +16,8 @@ interface Props {
   draftText?: string;
   /** Run mode for the header copy. Defaults to research_deep. */
   mode?: "research_fast" | "research_deep" | "academic_chapter";
+  /** When true, force progress bar to 100% (final event received). */
+  isComplete?: boolean;
 }
 
 const HEADER_BY_MODE: Record<NonNullable<Props["mode"]>, string> = {
@@ -39,13 +42,41 @@ const ACADEMIC_LABEL_OVERRIDES: Record<string, string> = {
   footnote_validate: "אימות הערות שוליים",
 };
 
+// Expected stage sequences per mode — mirrors emitStage calls in
+// supabase/functions/legal-qa/index.ts. Used only as a denominator for the
+// progress bar; extra unexpected stages are absorbed by max().
+const EXPECTED_STAGES: Record<NonNullable<Props["mode"]>, string[]> = {
+  research_fast: [
+    "frame", "decompose", "retrieve", "rerank", "source_pack",
+    "drafter", "anchor_pass", "footnote_validate",
+  ],
+  research_deep: [
+    "frame", "decompose", "retrieve", "rerank", "source_pack",
+    "claim_map", "drafter", "anchor_pass",
+    "coverage_gap", "statute_completion", "footnote_validate",
+  ],
+  academic_chapter: [
+    "frame", "decompose", "retrieve", "rerank", "source_pack",
+    "claim_map", "drafter", "anchor_pass",
+    "coverage_gap", "statute_completion", "footnote_validate",
+  ],
+};
+
+const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
+
 /**
  * Live pipeline progress for SSE-streamed legal-qa runs.
  * Each backend `stage` event appends/upgrades a row here.
  * `draft_delta` chunks are concatenated into a streaming preview with a
  * blinking caret until the `final` event arrives.
  */
-export function StageProgressList({ stages, postProcessingLabel, draftText, mode = "research_deep" }: Props) {
+export function StageProgressList({
+  stages,
+  postProcessingLabel,
+  draftText,
+  mode = "research_deep",
+  isComplete = false,
+}: Props) {
   // De-dup by stage name, keeping the latest status (so "complete" overrides "running").
   const dedup = new Map<string, StageEvent>();
   for (const s of stages) dedup.set(s.stage, s);
@@ -55,10 +86,29 @@ export function StageProgressList({ stages, postProcessingLabel, draftText, mode
       : s,
   );
 
+  // Progress calculation: each completed stage = 1, currently-running stage = 0.5.
+  const completedCount = visible.filter((s) => s.status === "complete").length;
+  const runningCount = visible.filter((s) => s.status === "running").length;
+  const expected = EXPECTED_STAGES[mode].length;
+  const denominator = Math.max(expected, visible.length);
+  const rawPct = denominator > 0
+    ? ((completedCount + 0.5 * runningCount) / denominator) * 100
+    : 0;
+  let percent = clamp(Math.round(rawPct), 1, 99);
+  if (postProcessingLabel) percent = Math.max(percent, 95);
+  if (isComplete) percent = 100;
+
   return (
     <Card className="mt-4 border-border" dir="rtl">
       <CardContent className="p-4 sm:p-5 space-y-3">
-        <div className="text-sm font-semibold text-foreground">{HEADER_BY_MODE[mode]}</div>
+        <div className="flex items-center justify-between gap-3">
+          <div className="text-sm font-semibold text-foreground">{HEADER_BY_MODE[mode]}</div>
+          <div className="text-xs font-mono tabular-nums text-muted-foreground" aria-live="polite">
+            {percent}%
+          </div>
+        </div>
+
+        <Progress value={percent} className="h-2" aria-label={`התקדמות ${percent}%`} />
 
         <ol className="space-y-1.5">
           {visible.map((s) => {
