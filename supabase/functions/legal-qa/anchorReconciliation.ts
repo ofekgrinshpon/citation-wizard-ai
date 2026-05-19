@@ -12,7 +12,7 @@ import type { AnswerMap, DoctrinalAnchor } from "./answerMap.ts";
 export interface AnchorClaimAttachment {
   claimId: string;
   anchorId: string;
-  reason: "hint" | "lexical" | "fallback_first";
+  reason: "hint" | "lexical" | "seminal_low_overlap" | "seminal_first_claim" | "fallback_first";
 }
 
 export interface ReconciliationTelemetry {
