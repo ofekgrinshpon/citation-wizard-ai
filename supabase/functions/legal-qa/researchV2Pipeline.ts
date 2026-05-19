@@ -57,6 +57,18 @@ async function embedQuery(text: string): Promise<number[] | null> {
   } catch { return null; }
 }
 
+/**
+ * SSE stage emitter signature — matches the `emitStage` helper inside
+ * `index.ts`. Threaded into the V2/V3 pipeline so the live progress UI
+ * (`StageProgressList`) shows real steps instead of staying stuck on the
+ * "מתחיל…" placeholder.
+ */
+export type ResearchStageEmitter = (
+  name: string,
+  status: "running" | "complete",
+  detail?: string,
+) => void;
+
 export interface RunResearchV2Args {
   question: string;
   depth: "deep"; // V2 currently wired for Deep only
@@ -64,6 +76,8 @@ export interface RunResearchV2Args {
   drafterTimeoutMs?: number;
   forceDrafterModel?: string | null;
   drafterMaxTokens?: number;
+  /** Optional SSE stage emitter (no-op if omitted). */
+  onStage?: ResearchStageEmitter;
   /**
    * Optional promise resolving to externally-discovered doctrinal anchors
    * (e.g. from V3 LegalResearchPlan). When provided, V2 awaits it after its
