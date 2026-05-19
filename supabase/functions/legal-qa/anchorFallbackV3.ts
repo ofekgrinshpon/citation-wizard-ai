@@ -84,32 +84,10 @@ interface PerplexityRawCandidate {
   type?: "statute" | "caselaw";
 }
 
-async function probeLocal(
-  adminClient: SupabaseClient,
-  queries: string[],
-): Promise<number> {
-  // Single bounded text query per anchor (cheapest signal). We only need to
-  // know "does the local DB have anything plausible" — exact retrieval is
-  // V2's job downstream.
-  let total = 0;
-  for (const q of queries.slice(0, 2)) {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), LOCAL_PROBE_TIMEOUT_MS);
-    try {
-      const { data, error } = await adminClient.rpc("search_legal_chunks_text", {
-        search_query: q, match_count: 3,
-      });
-      clearTimeout(t);
-      if (error) continue;
-      const n = Array.isArray(data) ? data.length : 0;
-      total += n;
-      if (total > 0) break; // short-circuit: one hit is enough to skip Perplexity
-    } catch {
-      clearTimeout(t);
-    }
-  }
-  return total;
-}
+// Step 4 — Loose probeLocal short-circuit removed. Exact local lookup
+// (anchorExactLookup.ts) now decides whether Perplexity is needed: a hit only
+// counts if it matches the planned authority on a discriminating field
+// (docket / title+section / title+author).
 
 function buildAnchorPerplexityPrompt(a: V3ExpectedAnchor): string {
   const lines: string[] = [];
