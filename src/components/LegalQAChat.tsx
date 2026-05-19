@@ -2688,14 +2688,14 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
               : researchDepth === "deep"
               ? "research_deep"
               : "research_fast";
-          const hasStreamSignal =
-            stageEvents.length > 0 || streamingDraft.length > 0 || !!postProcessingLabel;
-          return hasStreamSignal ? (
+          const isStreamingMode = taskMode === "research" || isAcademicChapterRun;
+          return isStreamingMode ? (
             <StageProgressList
               stages={stageEvents}
               postProcessingLabel={postProcessingLabel}
               draftText={streamingDraft}
               mode={stageMode}
+              isComplete={runComplete}
             />
           ) : (
             <ResearchProgress mode={isAcademicChapterRun ? "academic_chapter" : "research"} />
