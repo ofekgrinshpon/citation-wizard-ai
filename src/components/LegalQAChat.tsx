@@ -1435,6 +1435,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
 
       const qaResult = data as QAResult;
+      setRunComplete(true);
       setResult(qaResult);
 
       // Track last action for UI rendering
