@@ -23,6 +23,7 @@ import { TIER_A_DOMAIN_FILTER, citationTier } from "./approvedDomains.ts";
 import {
   lookupAnchorsExact,
   type AnchorExactMatch,
+  type AnchorLookupDetail,
   type AnchorMatchBasis,
   type AnchorMatchConfidence,
 } from "./anchorExactLookup.ts";
