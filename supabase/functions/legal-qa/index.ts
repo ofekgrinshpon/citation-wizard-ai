@@ -2119,6 +2119,7 @@ async function runHandlerSSE(
         },
         draftDelta: (chunk) => { send("draft_delta", { text: chunk }); },
         postProcessing: (label) => { send("post_processing", { label }); },
+        runId: (id) => { send("run_id", { runId: id }); },
       });
 
       try {
