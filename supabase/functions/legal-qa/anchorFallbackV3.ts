@@ -20,10 +20,15 @@ import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.4
 import type { ClaimCandidateSource } from "./claimRetrieval.ts";
 import type { V3ExpectedAnchor } from "./legalResearchPlanV3.ts";
 import { TIER_A_DOMAIN_FILTER, citationTier } from "./approvedDomains.ts";
+import {
+  lookupAnchorsExact,
+  type AnchorExactMatch,
+  type AnchorMatchBasis,
+  type AnchorMatchConfidence,
+} from "./anchorExactLookup.ts";
 
 const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
 const PERPLEXITY_TIMEOUT_MS = 18_000;
-const LOCAL_PROBE_TIMEOUT_MS = 8_000;
 const MAX_CANDIDATES_PER_ANCHOR = 2;
 
 // Citation-shape guards (mirrors Stage E.5 in index.ts — kept local to avoid
