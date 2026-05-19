@@ -20,10 +20,15 @@ import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.4
 import type { ClaimCandidateSource } from "./claimRetrieval.ts";
 import type { V3ExpectedAnchor } from "./legalResearchPlanV3.ts";
 import { TIER_A_DOMAIN_FILTER, citationTier } from "./approvedDomains.ts";
+import {
+  lookupAnchorsExact,
+  type AnchorExactMatch,
+  type AnchorMatchBasis,
+  type AnchorMatchConfidence,
+} from "./anchorExactLookup.ts";
 
 const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY");
 const PERPLEXITY_TIMEOUT_MS = 18_000;
-const LOCAL_PROBE_TIMEOUT_MS = 8_000;
 const MAX_CANDIDATES_PER_ANCHOR = 2;
 
 // Citation-shape guards (mirrors Stage E.5 in index.ts — kept local to avoid
@@ -39,6 +44,9 @@ export interface AnchorFallbackPerAnchor {
   anchor_type: string;
   queries_tried: string[];
   local_found: number;
+  /** Step 4 — exact local lookup result. */
+  local_match_basis: AnchorMatchBasis;
+  local_confidence: AnchorMatchConfidence;
   perplexity_called: boolean;
   perplexity_returned: number;
   approved_found: number;
@@ -46,7 +54,7 @@ export interface AnchorFallbackPerAnchor {
   verified: number | null; // filled by V2 post-ledger
   cited: number | null;    // filled by V2 post-drafter
   not_found_reason?:
-    | "local_hit"            // we didn't need Perplexity
+    | "local_exact_hit"      // Step 4 — exact local match, Perplexity skipped
     | "no_perplexity_key"
     | "perplexity_error"
     | "perplexity_timeout"
@@ -76,32 +84,10 @@ interface PerplexityRawCandidate {
   type?: "statute" | "caselaw";
 }
 
-async function probeLocal(
-  adminClient: SupabaseClient,
-  queries: string[],
-): Promise<number> {
-  // Single bounded text query per anchor (cheapest signal). We only need to
-  // know "does the local DB have anything plausible" — exact retrieval is
-  // V2's job downstream.
-  let total = 0;
-  for (const q of queries.slice(0, 2)) {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), LOCAL_PROBE_TIMEOUT_MS);
-    try {
-      const { data, error } = await adminClient.rpc("search_legal_chunks_text", {
-        search_query: q, match_count: 3,
-      });
-      clearTimeout(t);
-      if (error) continue;
-      const n = Array.isArray(data) ? data.length : 0;
-      total += n;
-      if (total > 0) break; // short-circuit: one hit is enough to skip Perplexity
-    } catch {
-      clearTimeout(t);
-    }
-  }
-  return total;
-}
+// Step 4 — Loose probeLocal short-circuit removed. Exact local lookup
+// (anchorExactLookup.ts) now decides whether Perplexity is needed: a hit only
+// counts if it matches the planned authority on a discriminating field
+// (docket / title+section / title+author).
 
 function buildAnchorPerplexityPrompt(a: V3ExpectedAnchor): string {
   const lines: string[] = [];
@@ -246,18 +232,29 @@ export async function runAnchorFallback(args: {
   const perAnchor: AnchorFallbackPerAnchor[] = [];
   const candidatesByAnchorKey = new Map<string, ClaimCandidateSource[]>();
 
-  // Run all anchors in parallel — each is independent (local probe + at
-  // most one Perplexity call). allSettled so one slow anchor cannot stall
-  // the batch.
+  // Step 4 — batch exact local lookup up-front (parallel, bounded per anchor).
+  // This replaces the loose FTS probe: an "exact hit" requires a matching
+  // docket / title+section / title+author, not just any token overlap.
+  let exactByAnchorId: Map<string, AnchorExactMatch>;
+  try {
+    exactByAnchorId = await lookupAnchorsExact(args.adminClient, args.anchors);
+  } catch (e) {
+    console.warn("[anchor_fallback] exact_lookup_error:", (e as Error).message);
+    exactByAnchorId = new Map();
+  }
+
   const tasks = args.anchors.map(async (a, anchorIdx) => {
     const aT0 = Date.now();
     const queries = args.queriesByAnchorId.get(a.id) ?? [];
+    const exact = exactByAnchorId.get(a.id);
     const tele: AnchorFallbackPerAnchor = {
       anchor_id: a.id,
       anchor_name: a.name,
       anchor_type: a.type,
       queries_tried: queries,
-      local_found: 0,
+      local_found: exact?.docs_found ?? 0,
+      local_match_basis: exact?.match_basis ?? "none",
+      local_confidence: exact?.confidence ?? "none",
       perplexity_called: false,
       perplexity_returned: 0,
       approved_found: 0,
@@ -267,15 +264,12 @@ export async function runAnchorFallback(args: {
       duration_ms: 0,
     };
 
-    // 1. Local probe.
-    try {
-      tele.local_found = await probeLocal(args.adminClient, queries);
-    } catch {
-      tele.local_found = 0;
-    }
-
-    if (tele.local_found > 0) {
-      tele.not_found_reason = "local_hit";
+    // 1. Exact local lookup hit → materialize as anchor-origin candidates,
+    //    skip Perplexity. Verifier remains the gate on the ledger side.
+    if (exact && exact.candidates.length > 0) {
+      candidatesByAnchorKey.set(anchorKey(a), exact.candidates);
+      tele.candidate_added = exact.candidates.length;
+      tele.not_found_reason = "local_exact_hit";
       tele.duration_ms = Date.now() - aT0;
       return tele;
     }
