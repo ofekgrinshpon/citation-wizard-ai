@@ -1698,6 +1698,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     setStageEvents([]);
     setPostProcessingLabel(null);
     setStreamingDraft("");
+    setRunComplete(false);
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
