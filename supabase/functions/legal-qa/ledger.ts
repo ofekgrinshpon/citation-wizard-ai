@@ -162,17 +162,29 @@ export async function verifyAndBuildLedger(args: VerifyArgs): Promise<VerifyResu
     claims.map(async (claim) => {
       const pack = byId.get(claim.id);
       const allCandidates = pack?.candidates ?? [];
-      // Cap to top-5 by retrieval score (already sorted desc) to keep
-      // verifier payload within the 45s budget on deep mode.
-      const candidates = allCandidates.slice(0, 5);
+
+      // Anchor-origin candidates often carry synthetic / low retrieval scores
+      // (they come from anchor exact-lookup + Perplexity fallback, not from
+      // the vector/text retrieval RPC). Plain top-5 truncation by score
+      // would evict them before the verifier even sees them, marking them
+      // `not_scored`. Step 4 fix: reserve up to ANCHOR_CAP slots for
+      // anchor-origin candidates, then fill remaining slots from the
+      // highest-scoring non-anchor candidates. Non-anchor budget stays at
+      // NON_ANCHOR_BUDGET so the existing retrieval winners are unaffected.
+      const ANCHOR_CAP = depth === "deep" ? 3 : 2;
+      const NON_ANCHOR_BUDGET = 5;
+      const anchorPool = allCandidates.filter((c) => c.origin === "anchor");
+      const nonAnchorPool = allCandidates.filter((c) => c.origin !== "anchor");
+      const anchorPicked = anchorPool.slice(0, ANCHOR_CAP);
+      const anchorPickedIds = new Set(anchorPicked.map((c) => c.id));
+      const nonAnchorPicked = nonAnchorPool.slice(0, NON_ANCHOR_BUDGET);
+      const candidates = [...anchorPicked, ...nonAnchorPicked];
 
       // Compute anchor-origin lifecycle for this claim (works even if
       // candidates.length === 0 — we still want the in_pool / in_top5
       // counters so missing_expected_anchors can be derived downstream).
-      const anchorInPool = allCandidates.filter((c) => c.origin === "anchor");
-      const anchorInTop5Ids = new Set(
-        candidates.filter((c) => c.origin === "anchor").map((c) => c.id),
-      );
+      const anchorInPool = anchorPool;
+      const anchorInTop5Ids = anchorPickedIds;
 
       if (candidates.length === 0) {
         return {
@@ -192,8 +204,11 @@ export async function verifyAndBuildLedger(args: VerifyArgs): Promise<VerifyResu
               document_id: c.documentId,
               title: c.title,
               in_top5: false,
+              included_in_verifier_pack: false,
+              exclusion_reason: "empty_candidate_pool" as const,
               verdict: "not_scored" as const,
               cited: false,
+              ledger_included: false,
             })),
           } satisfies AnchorLifecycleClaim,
         };
