@@ -3220,6 +3220,11 @@ ${(verify.fullText as string).slice(0, 50000)}
     __checkpointQuestion = question;
     __checkpointTaskMode = taskMode;
 
+    // Emit the qa_logs row id to the SSE client as early as possible so
+    // academic chapter writes can persist `current_run_id` and recover via
+    // `legal-qa-status` after navigation/page reload. No-op outside SSE.
+    emitRunId(preallocatedQaLogId);
+
     const writeCheckpoint = (phase: "decomposition" | "claim_map" | "drafting_started"): void => {
       if (!enableDeepPipeline) return;
       // Snapshot current state — note that drafting_path is "in_progress" until
