@@ -44,6 +44,9 @@ export interface AnchorFallbackPerAnchor {
   anchor_type: string;
   queries_tried: string[];
   local_found: number;
+  /** Step 4 — exact local lookup result. */
+  local_match_basis: AnchorMatchBasis;
+  local_confidence: AnchorMatchConfidence;
   perplexity_called: boolean;
   perplexity_returned: number;
   approved_found: number;
@@ -51,7 +54,7 @@ export interface AnchorFallbackPerAnchor {
   verified: number | null; // filled by V2 post-ledger
   cited: number | null;    // filled by V2 post-drafter
   not_found_reason?:
-    | "local_hit"            // we didn't need Perplexity
+    | "local_exact_hit"      // Step 4 — exact local match, Perplexity skipped
     | "no_perplexity_key"
     | "perplexity_error"
     | "perplexity_timeout"
