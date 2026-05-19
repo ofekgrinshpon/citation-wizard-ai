@@ -258,6 +258,7 @@ export async function runAnchorFallback(args: {
       local_found: exact?.docs_found ?? 0,
       local_match_basis: exact?.match_basis ?? "none",
       local_confidence: exact?.confidence ?? "none",
+      exact_lookup_detail: exact?.detail,
       perplexity_called: false,
       perplexity_returned: 0,
       approved_found: 0,
