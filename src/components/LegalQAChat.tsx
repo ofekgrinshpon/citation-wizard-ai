@@ -1831,6 +1831,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       if (!data?.refusal && (!data?.answer || data.answer.trim().length < 20)) { setError("העוזר המשפטי לא הצליח לייצר תשובה. נסו שוב."); return; }
 
       const qaResult = data as QAResult;
+      setRunComplete(true);
       setResult(qaResult);
 
       try {
