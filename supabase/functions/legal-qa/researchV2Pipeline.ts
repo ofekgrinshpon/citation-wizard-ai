@@ -57,6 +57,18 @@ async function embedQuery(text: string): Promise<number[] | null> {
   } catch { return null; }
 }
 
+/**
+ * SSE stage emitter signature — matches the `emitStage` helper inside
+ * `index.ts`. Threaded into the V2/V3 pipeline so the live progress UI
+ * (`StageProgressList`) shows real steps instead of staying stuck on the
+ * "מתחיל…" placeholder.
+ */
+export type ResearchStageEmitter = (
+  name: string,
+  status: "running" | "complete",
+  detail?: string,
+) => void;
+
 export interface RunResearchV2Args {
   question: string;
   depth: "deep"; // V2 currently wired for Deep only
@@ -64,6 +76,8 @@ export interface RunResearchV2Args {
   drafterTimeoutMs?: number;
   forceDrafterModel?: string | null;
   drafterMaxTokens?: number;
+  /** Optional SSE stage emitter (no-op if omitted). */
+  onStage?: ResearchStageEmitter;
   /**
    * Optional promise resolving to externally-discovered doctrinal anchors
    * (e.g. from V3 LegalResearchPlan). When provided, V2 awaits it after its
@@ -268,12 +282,17 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
   const { question, depth, adminClient } = args;
   const drafterMaxTokens = args.drafterMaxTokens ?? 4000;
   const drafterTimeoutMs = args.drafterTimeoutMs ?? 180000;
+  // Safe stage emitter — never throws into the pipeline.
+  const emit: ResearchStageEmitter = (name, status, detail) => {
+    try { args.onStage?.(name, status, detail); } catch (_e) { /* noop */ }
+  };
   const metadata: Record<string, unknown> = {
     v2_path: "deep_v2",
     depth,
   };
 
   // ── Stage 1: ResearchPlan ──────────────────────────────────────────
+  emit("decompose", "running");
   const planT0 = Date.now();
   const planResult = await buildResearchPlan({ question, depth });
   const { plan, run: planRun, fallback_model_used, fallback_reason, primary_run } = planResult;
@@ -297,9 +316,11 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
     fallback_model_used: fallback_model_used === true,
   };
   if (!plan) {
+    emit("decompose", "complete", "שגיאה");
     metadata.fallback = { reason: "research_plan_failed", stage: "research_plan_v2", detail: fallback_reason ?? null };
     return emptyFallback("research_plan_failed", metadata);
   }
+  emit("decompose", "complete", `${plan.claims.length} טענות`);
 
   // ── Stage 1.5: AnswerMap / Authority Discovery (gated) ────────────
   let anchorQueriesByClaim: Map<string, string[]> | undefined;
@@ -390,6 +411,7 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
   }
 
   // ── Stage 2: Per-claim retrieval ───────────────────────────────────
+  emit("retrieve", "running");
   const { packs, telemetry } = await retrieveClaims({
     adminClient, claims: plan.claims, depth, embed: embedQuery, maxConcurrency: 3,
     anchorQueriesByClaim,
@@ -398,6 +420,14 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
   });
   metadata.retrieval_v2 = summarizeRetrieval({ packs, telemetry });
   metadata.retrieval_telemetry = telemetry;
+  {
+    const totalCands = packs.reduce((n, p) => n + p.candidates.length, 0);
+    emit("retrieve", "complete", `${totalCands} מועמדים`);
+    // V2 doesn't have a discrete rerank step — surface source_pack as the
+    // logical equivalent ("pool assembled") so the bar keeps progressing.
+    emit("source_pack", "running");
+    emit("source_pack", "complete", `${packs.length} פנקסי טענות`);
+  }
 
   // ── Stage 2.5: External anchor candidate injection (V3 Step 2.2) ────
   // Take Perplexity-found, Tier-A-validated candidates from V3 and push
@@ -465,12 +495,14 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
 
 
   // ── Stage 3: Verification + ledger ─────────────────────────────────
+  emit("claim_map", "running");
   const { ledger, runs: verifyRuns } = await verifyAndBuildLedger({
     claims: plan.claims, packs, depth, thesis: plan.thesis,
   });
   metadata.verification_v2 = { runs: verifyRuns.map(r => ({
     stage: r.stage, status: r.status, model: r.model, duration_ms: r.duration_ms,
   })) };
+  emit("claim_map", "complete", `${ledger.entries.length}/${plan.claims.length} טענות`);
   metadata.ledger_v2 = {
     ...summarizeLedger(ledger),
     kept: ledger.entries.length,
@@ -564,6 +596,7 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
   const promptChars = systemPrompt.length + userPrompt.length;
 
   // ── Stage 5: Drafter ───────────────────────────────────────────────
+  emit("drafter", "running");
   const drafterT0 = Date.now();
   const drafterRes = await callDrafter(
     systemPrompt, userPrompt, drafterMaxTokens, drafterTimeoutMs,
@@ -576,12 +609,16 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
       cards_cited: 0, source_ids_used: [], duration_ms: drafterMs,
       model: drafterRes?.modelUsed ?? null, status: "empty",
     };
+    emit("drafter", "complete", "ריק");
     metadata.fallback = { reason: "drafter_empty", stage: "drafter_v2" };
     return emptyFallback("drafter_empty", metadata);
   }
+  emit("drafter", "complete", `${drafterRes.text.length} תווים`);
 
   // ── Stage 6: Card→Claim contract → anchor-first enforcement → footnotes ──
+  emit("anchor_pass", "running");
   const parsedFirst = parseMarkers(drafterRes.text, cards);
+
 
   // Step 3 — anchor-first reorder INSIDE existing [cite:...] groups only.
   // Pure TS, no LLM. Never inserts cites into unrelated sentences and never
@@ -599,10 +636,13 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
     totals: anchorFirst.totals,
     per_claim: anchorFirst.per_claim,
   };
+  emit("anchor_pass", "complete", `${(anchorFirst.totals?.promoted ?? 0) + (anchorFirst.totals?.added ?? 0)} עיגונים`);
 
   // Re-parse the rewritten body so buildFootnotes sees the new cite order.
+  emit("footnote_validate", "running");
   const parsed = parseMarkers(anchorFirst.body, cards);
   const built = buildFootnotes(anchorFirst.body, parsed, cards);
+  emit("footnote_validate", "complete", `${built.footnotes.length} הערות`);
 
   const sourceIdsUsed = Object.keys(built.sourceIdUsage);
   metadata.drafter = {
