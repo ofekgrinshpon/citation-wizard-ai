@@ -148,6 +148,10 @@ interface ChapterData {
    *  chapter. Summed across earlier chapters (display order) to compute
    *  the next chapter's footnoteOffset. */
   footnotesCount?: number;
+  /** Saved per chapter so the full-paper copy can re-emit the
+   *  combined "הערות שוליים" section. Backend already uses continuous
+   *  global numbering across chapters. */
+  footnotes?: Footnote[];
 }
 
 interface AcademicSession {
