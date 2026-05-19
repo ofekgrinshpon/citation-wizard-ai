@@ -191,10 +191,23 @@ function buildDrafterPrompts(args: {
   const docIdToContract = new Map<string, string>();
   for (const c of cards) docIdToContract.set(c.documentId, c.contractId!);
 
+  // Build per-card lookup so we can tier-sort each claim's allowed sources.
+  const cardById = new Map<string, ContractSourceCard>();
+  for (const c of cards) if (c.contractId) cardById.set(c.contractId, c);
+
   const ledgerBlock = ledger.entries.map((e) => {
-    const allowedIds = e.sources
-      .map((s) => docIdToContract.get(s.documentId))
-      .filter((x): x is string => !!x);
+    const infos: AllowedSourceInfo[] = [];
+    for (const s of e.sources) {
+      const cid = docIdToContract.get(s.documentId);
+      if (!cid) continue;
+      const card = cardById.get(cid);
+      infos.push({
+        contractId: cid,
+        sourceType: (s.sourceType || card?.source_type || "").toLowerCase(),
+        hasAnchorId: !!s.anchorId,
+      });
+    }
+    const allowedIds = sortAllowedIdsByTier(infos);
     const hedgeLine = e.hedge
       ? `סייגים: דרוש ניסוח מסויג (לדוגמה: "${e.hedgeTemplate ?? "ייתכן"}").`
       : "";
@@ -218,6 +231,7 @@ function buildDrafterPrompts(args: {
 7. טענה המסומנת בסייגים — נסח אותה במפורש כסייג ("ייתכן", "לכאורה", "טרם הוכרע").
 8. שאיפת היעד: 5-8 הערות שוליים סך הכל לתשובה.
 9. אל תצטט אורגינלים מחוץ לקטלוג. אל תמציא מקורות.
+10. **כלל סדר ציטוט (anchor-first)**: רשימת "מקורות מותרים" של כל טענה ממוינת לפי עדיפות — סטטוט/תקנה/חוק־יסוד או פסיקה מנחה מאומתת מופיעים ראשונים. כאשר ברשימה קיים מקור מעוגן ומאומת כזה, חובה להציבו ראשון ב-[cite:S#] של אותה טענה. מותר להוסיף אחריו מקור משני אחד (אקדמיה/דו"ח/פסיקה תומכת) אם הוא מוסיף הסבר, ביקורת או הקשר. עיקרון: anchor-first, **not** anchor-only.
 
 פלט: רק גוף הטקסט עם סימני [cite:S#]. אין כותרת/רשימות/JSON.`;
 
