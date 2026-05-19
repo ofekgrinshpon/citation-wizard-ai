@@ -65,29 +65,40 @@ function overlapScore(a: Set<string>, b: Set<string>): number {
   return hit / Math.min(a.size, b.size);
 }
 
+type AttachReason = "hint" | "lexical" | "seminal_low_overlap" | "seminal_first_claim";
+
 function pickClaimForAnchor(
   anchor: DoctrinalAnchor,
   claims: V2Claim[],
   claimTokens: Map<string, Set<string>>,
-): { claimId: string; reason: "hint" | "lexical" } | null {
+): { claimId: string; reason: AttachReason } | null {
   if (anchor.claim_hint && anchor.claim_hint.length > 0) {
     const hit = anchor.claim_hint.find((id) => claims.some((c) => c.id === id));
     if (hit) return { claimId: hit, reason: "hint" };
   }
   const anchorTokens = toTokens(`${anchor.name} ${anchor.purpose} ${anchor.statute ?? ""}`);
-  if (!anchorTokens.size) return null;
+  if (!anchorTokens.size && anchor.centrality !== "seminal") return null;
+
   let bestId: string | null = null;
   let bestScore = 0;
-  for (const c of claims) {
-    const ct = claimTokens.get(c.id)!;
-    const s = overlapScore(anchorTokens, ct);
-    if (s > bestScore) {
-      bestScore = s;
-      bestId = c.id;
+  if (anchorTokens.size) {
+    for (const c of claims) {
+      const ct = claimTokens.get(c.id)!;
+      const s = overlapScore(anchorTokens, ct);
+      if (s > bestScore) {
+        bestScore = s;
+        bestId = c.id;
+      }
     }
   }
-  // Require non-trivial overlap to attach. Below threshold → orphan.
+  // Standard threshold for non-seminals. Step 4: seminals attach more eagerly
+  // because losing a seminal to "no overlap" defeats anchor-first; the
+  // verifier remains the gate downstream.
   if (bestId && bestScore >= 0.15) return { claimId: bestId, reason: "lexical" };
+  if (anchor.centrality === "seminal") {
+    if (bestId && bestScore >= 0.08) return { claimId: bestId, reason: "seminal_low_overlap" };
+    if (claims.length > 0) return { claimId: claims[0].id, reason: "seminal_first_claim" };
+  }
   return null;
 }
 
