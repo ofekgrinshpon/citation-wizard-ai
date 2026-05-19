@@ -129,9 +129,13 @@ function extractFieldsFromResponse(response: string, sourceType: SourceType): Re
   }
 
   if (sourceType === "case_law_database") {
-    // Database name
+    // Database name (Rule 19.1 + extended canonical names from source URLs)
     if (/נבו/.test(response)) fields.database = "נבו";
+    else if (/תקדין/.test(response)) fields.database = "תקדין";
+    else if (/אר["״\u05F4]ש/.test(response)) fields.database = "אר\u05F4ש";
     else if (/פדאור/.test(response)) fields.database = "פדאור";
+    else if (/דינים/.test(response)) fields.database = "דינים";
+    else if (/פסקדין/.test(response)) fields.database = "פסקדין";
     // Full date
     const dateMatch = response.match(/(\d{1,2}\.\d{1,2}\.\d{4})/);
     if (dateMatch) fields.fullDate = dateMatch[1];

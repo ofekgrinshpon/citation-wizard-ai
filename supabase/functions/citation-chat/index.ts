@@ -1,5 +1,46 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+// ── Canonical database-name mapping (Rule 19.1 + extended sources) ──
+// Maps a source URL host → canonical Hebrew database name. Used to override
+// free-form values like "המאגר של בית המשפט העליון" that Perplexity returns.
+const DB_BY_HOST: Array<[RegExp, string]> = [
+  [/(^|\.)lite\.takdin\.co\.il$/i, "תקדין"],
+  [/(^|\.)takdin\.co\.il$/i, "תקדין"],
+  [/(^|\.)supremedecisions\.court\.gov\.il$/i, "אר\u05F4ש"],
+  [/(^|\.)nevo\.co\.il$/i, "נבו"],
+  [/(^|\.)psakdin\.co\.il$/i, "פסקדין"],
+];
+const ALLOWED_DB_NAMES = new Set([
+  "נבו",
+  "פדאור",
+  "דינים",
+  "תקדין",
+  "אר\u05F4ש",
+  "פסקדין",
+]);
+function normalizeDatabaseName(urls: unknown, fallback: unknown): string {
+  const list = Array.isArray(urls) ? urls : urls ? [urls] : [];
+  for (const u of list) {
+    if (typeof u !== "string" || !u) continue;
+    let host = "";
+    try {
+      host = new URL(u).hostname.toLowerCase();
+    } catch {
+      continue;
+    }
+    for (const [re, name] of DB_BY_HOST) {
+      if (re.test(host)) return name;
+    }
+  }
+  if (typeof fallback === "string" && fallback.trim()) {
+    const f = fallback.trim();
+    for (const allowed of ALLOWED_DB_NAMES) {
+      if (f.includes(allowed)) return allowed;
+    }
+  }
+  return "";
+}
 import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES } from "../_shared/caseTypePrefixes.ts";
 
 const corsHeaders = {
@@ -988,6 +1029,13 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     }
                   }
 
+                  // Normalize databaseName from Perplexity citation URLs (lite.takdin → תקדין,
+                  // supremedecisions.court.gov.il → אר״ש, etc). Overrides free-form strings.
+                  if (!parsed.isPublished) {
+                    const normalized = normalizeDatabaseName(pData.citations, parsed.databaseName);
+                    if (normalized) parsed.databaseName = normalized;
+                  }
+
                   // Validate data quality: reject bogus results with empty/placeholder fields
                   const hasValidDate = parsed.date && !/^0+\.0+\.0+$/.test(parsed.date) && parsed.date.trim() !== "";
                   const hasValidParties = parsed.party1 && parsed.party1.trim() !== "" && parsed.party2 && parsed.party2.trim() !== "";
@@ -1308,6 +1356,11 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                   };
 
                   for (const r of results) {
+                    // Normalize databaseName for unpublished results based on source_url
+                    if (!r.isPublished) {
+                      const normalized = normalizeDatabaseName(r.source_url, r.databaseName);
+                      if (normalized) r.databaseName = normalized;
+                    }
                     const claimsPub = !!r.isPublished && !!r.padi_volume && String(r.padi_volume).trim() !== "";
                     if (!claimsPub) continue;
                     const dy = docketYearOf(String(r.caseNumber || ""));
@@ -1339,6 +1392,11 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                       // Year may also be hallucinated from Takdin sidebar — keep only if it
                       // matches the docket year window.
                       if (yearMismatch) r.year = "";
+                    }
+                    // Re-normalize if pub-guard flipped isPublished to false
+                    if (!r.isPublished) {
+                      const normalized = normalizeDatabaseName(r.source_url, r.databaseName);
+                      if (normalized) r.databaseName = normalized;
                     }
                   }
 

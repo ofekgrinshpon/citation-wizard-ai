@@ -116,7 +116,7 @@ export const CITATION_RULES: Record<string, CitationRuleSet> = {
       { field: "caseNumber", rule: "18.2", description: "מספר התיק", required: true, format: "plain" },
       { field: "party1", rule: "18.4", description: "שם צד א'", required: true, format: "bold" },
       { field: "party2", rule: "18.4", description: "שם צד ב'", required: true, format: "bold" },
-      { field: "database", rule: "19.1", description: "שם המאגר (אופציונלי)", required: false, format: "plain" },
+      { field: "database", rule: "19.1", description: "שם המאגר (נבו, תקדין, אר\u05F4ש, פדאור, דינים, פסקדין)", required: false, format: "plain" },
       { field: "fullDate", rule: "19.1", description: "תאריך פרסום מלא", required: true, format: "plain" },
     ],
   },
