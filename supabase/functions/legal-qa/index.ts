@@ -3218,6 +3218,10 @@ ${(verify.fullText as string).slice(0, 50000)}
         drafting_path: "in_progress",
         decomposition: decomposedPlan?.decomposition ?? null,
         stage_runs: [...stageRuns],
+        // Preserve eval_run_id across intermediate checkpoint overwrites so
+        // probes can poll by metadata->>eval_run_id even before the final
+        // snapshot lands. The final assembly also sets this field.
+        ...(evalRunId ? { eval_run_id: evalRunId } : {}),
         // models_used computed at finalization time; here we just expose
         // raw stage_runs so admins can correlate timing.
       };
