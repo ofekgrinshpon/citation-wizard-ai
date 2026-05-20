@@ -98,6 +98,14 @@ export interface RunResearchV2Args {
    */
   externalAnchorCandidatesPromise?: Promise<Map<string, ClaimCandidateSource[]>>;
   externalAnchorCandidatesTimeoutMs?: number;
+  /**
+   * V4 simplification: disable the internal AnswerMap stage even when the
+   * `RESEARCH_V2_ANSWER_MAP` env flag is on. V4 supplies anchors solely via
+   * `externalAnchorsPromise` (the V3 LegalResearchPlan), so the parallel
+   * AnswerMap planner is redundant — running it just adds latency, cost, and
+   * an extra anchor-merge layer V4 is explicitly trying to remove.
+   */
+  disableAnswerMap?: boolean;
 }
 
 export interface RunResearchV2Result {
