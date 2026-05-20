@@ -2537,12 +2537,40 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       let v3FallbackReason: string | undefined;
       let coreFallbackReason: string | undefined;
 
+      // Observability context for Core — accumulated across the Stage 0
+      // attempt and spread into EVERY downstream qa_logs metadata write so
+      // we can always reconstruct whether/why Core failed, even when V4/V3
+      // overwrite the row.
+      const coreCtx: Record<string, unknown> = {};
+      const isCorePilotQuestion = pipelineMode === "core" && isCorePilot(question);
+
       // ── Stage 0: Research Core (gated by RESEARCH_PIPELINE=core + pilot) ──
-      // Only the 3 pilot topics actually enter Core; everything else falls
-      // through to the existing V4 → V3 → V1 chain unchanged.
-      if (pipelineMode === "core" && isCorePilot(question)) {
+      if (isCorePilotQuestion) {
+        coreCtx.core_attempted = true;
+        coreCtx.core_pilot = corePilotLabel(question);
+
+        // Pre-insert a "Core started" row so a hard crash mid-Core still
+        // leaves a diagnosable trace in qa_logs (will be overwritten by
+        // success/fallback below).
         try {
-          console.log(`[research_core] dispatch — pilot=${corePilotLabel(question)}`);
+          await adminClient.from("qa_logs").upsert({
+            id: deepQaLogId,
+            user_id: user.id,
+            question: question.substring(0, 500),
+            answer: null,
+            footnotes: [],
+            task_mode: taskMode,
+            local_footnotes_count: 0,
+            perplexity_footnotes_count: 0,
+            total_footnotes: 0,
+            metadata: { ...coreCtx, pipeline_used: "core_running" },
+          }, { onConflict: "id" });
+        } catch (preErr) {
+          console.error("[research_core] pre-insert log failed:", preErr);
+        }
+
+        try {
+          console.log(`[research_core] dispatch — pilot=${coreCtx.core_pilot}`);
           const core = await runCore({
             question,
             adminClient,
@@ -2550,17 +2578,34 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             forceDrafterModel,
             onStage: emitStage,
           });
+
+          // Extract diagnostic context from core.metadata regardless of ok.
+          const coreInner = (core.metadata as { core?: Record<string, unknown> } | undefined)?.core;
+          const stageRuns = (coreInner?.stage_runs as Array<{ stage: string; status: string }> | undefined) ?? [];
+          const lastStage = stageRuns.length > 0 ? stageRuns[stageRuns.length - 1] : undefined;
+          if (lastStage) {
+            coreCtx.core_last_stage = lastStage.stage;
+            coreCtx.core_last_stage_status = lastStage.status;
+          }
+          coreCtx.core_stage_runs = stageRuns;
+          if (Array.isArray(coreInner?.acceptance_errors)) {
+            coreCtx.core_acceptance_errors = coreInner.acceptance_errors;
+          }
+          // Keep partial core metadata on the row even when V4/V3 overwrite.
+          if (coreInner) coreCtx.core_partial = coreInner;
+
           if (core.ok) {
-            await persistSuccess("core", core, {
-              core_pilot: corePilotLabel(question),
-            });
+            await persistSuccess("core", core, { ...coreCtx });
             console.log(`[research_core] DONE answer_len=${core.answer.length} footnotes=${core.footnotes.length}`);
             return buildResponse(core.answer, core.footnotes, core.citations, {
               footnotes_count: core.footnotes.length,
             });
           }
+
           coreFallbackReason = core.fallbackReason ?? "core_ok_false";
-          console.warn(`[research_core] fallback reason=${coreFallbackReason} — trying V4`);
+          coreCtx.core_fallback_reason = coreFallbackReason;
+          console.warn(`[research_core] fallback reason=${coreFallbackReason} last_stage=${coreCtx.core_last_stage ?? "n/a"} — trying V4`);
+
           try {
             await adminClient.from("qa_logs").upsert({
               id: deepQaLogId,
@@ -2574,17 +2619,40 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
               total_footnotes: 0,
               metadata: {
                 ...(core.metadata ?? {}),
+                ...coreCtx,
                 pipeline_used: "core_fallback",
-                core_fallback_reason: coreFallbackReason,
-                core_pilot: corePilotLabel(question),
               },
             }, { onConflict: "id" });
           } catch (logErr) {
             console.error("[research_core] fallback log upsert failed:", logErr);
           }
         } catch (coreErr) {
-          coreFallbackReason = `core_threw:${(coreErr as Error)?.message ?? String(coreErr)}`;
+          const errMsg = (coreErr as Error)?.message ?? String(coreErr);
+          coreFallbackReason = `core_threw:${errMsg}`;
+          coreCtx.core_fallback_reason = coreFallbackReason;
+          coreCtx.core_error_message = errMsg;
+          coreCtx.core_error_stack = (coreErr as Error)?.stack ?? null;
+          if (!coreCtx.core_last_stage) coreCtx.core_last_stage = "unknown_throw";
           console.error("[research_core] threw — falling through to V4:", coreErr);
+
+          // Persist the throw immediately in case V4 also crashes before
+          // its own fallback row write.
+          try {
+            await adminClient.from("qa_logs").upsert({
+              id: deepQaLogId,
+              user_id: user.id,
+              question: question.substring(0, 500),
+              answer: null,
+              footnotes: [],
+              task_mode: taskMode,
+              local_footnotes_count: 0,
+              perplexity_footnotes_count: 0,
+              total_footnotes: 0,
+              metadata: { ...coreCtx, pipeline_used: "core_threw" },
+            }, { onConflict: "id" });
+          } catch (logErr) {
+            console.error("[research_core] threw-log upsert failed:", logErr);
+          }
         }
       }
 
