@@ -5,6 +5,7 @@ import { buildEnginePromptHint } from "@/lib/citationValidation";
 import { FormattedCitation } from "./FormattedCitation";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
 import { PublicationIntegrityCard } from "./PublicationIntegrityCard";
+import { FootnoteReviewCard } from "./FootnoteReviewCard";
 import { useBibliography } from "@/hooks/useBibliography";
 import { useProjects } from "@/hooks/useProjects";
 import { useOffice } from "@/hooks/useOffice";
@@ -18,9 +19,12 @@ interface FootnoteCell {
   id: number;
   input: string;
   output: string | null;
-  status: "empty" | "loading" | "valid" | "warning" | "verified";
+  status: "empty" | "loading" | "valid" | "warning" | "verified" | "error";
   warningMsg?: string;
   verifiedCitation?: string;
+  approved?: boolean;
+  sourceTypeOverride?: SourceType;
+  detectedType?: SourceType;
 }
 
 interface PendingIntegrity {
@@ -30,6 +34,8 @@ interface PendingIntegrity {
   fullCitation: string;
   sourceType: string | null;
 }
+
+type Phase = "input" | "review" | "final";
 
 const createCell = (id: number): FootnoteCell => ({
   id,
@@ -42,12 +48,16 @@ interface BatchProps {}
 
 const CELLS_STORAGE_PREFIX = "footnote_cells";
 const SUMMARY_STORAGE_PREFIX = "footnote_summary";
+const PHASE_STORAGE_PREFIX = "footnote_phase";
 
 function getCellsKey(projectId: string | undefined) {
   return projectId ? `${CELLS_STORAGE_PREFIX}_${projectId}` : CELLS_STORAGE_PREFIX;
 }
 function getSummaryKey(projectId: string | undefined) {
   return projectId ? `${SUMMARY_STORAGE_PREFIX}_${projectId}` : SUMMARY_STORAGE_PREFIX;
+}
+function getPhaseKey(projectId: string | undefined) {
+  return projectId ? `${PHASE_STORAGE_PREFIX}_${projectId}` : PHASE_STORAGE_PREFIX;
 }
 
 function loadCells(projectId: string | undefined): FootnoteCell[] {
@@ -61,6 +71,15 @@ function loadCells(projectId: string | undefined): FootnoteCell[] {
   return Array.from({ length: 5 }, (_, i) => createCell(i + 1));
 }
 
+function loadPhase(projectId: string | undefined): Phase {
+  try {
+    const raw = localStorage.getItem(getPhaseKey(projectId));
+    if (raw === "review" || raw === "final" || raw === "input") return raw;
+  } catch {}
+  return "input";
+}
+
+
 export function BatchFootnoteBuilder({}: BatchProps) {
   const { currentProject } = useProjects();
   const { isOfficeAddin, hasDocumentAccess } = useOffice();
@@ -71,12 +90,15 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   const [insertingCellId, setInsertingCellId] = useState<number | null>(null);
   const [summary, setSummary] = useState<string | null>(() => localStorage.getItem(getSummaryKey(projectId)));
   const [pendingIntegrity, setPendingIntegrity] = useState<PendingIntegrity[]>([]);
+  const [phase, setPhase] = useState<Phase>(() => loadPhase(projectId));
+  const [finalizing, setFinalizing] = useState(false);
   const bibliography = useBibliography();
 
   // Reload when project changes
   useEffect(() => {
     setCells(loadCells(projectId));
     setSummary(localStorage.getItem(getSummaryKey(projectId)));
+    setPhase(loadPhase(projectId));
   }, [projectId]);
 
   useEffect(() => {
@@ -88,6 +110,10 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     if (summary) localStorage.setItem(key, summary);
     else localStorage.removeItem(key);
   }, [summary, projectId]);
+
+  useEffect(() => {
+    localStorage.setItem(getPhaseKey(projectId), phase);
+  }, [phase, projectId]);
 
   const updateCellInput = useCallback((id: number, value: string) => {
     setCells((prev) =>
@@ -144,7 +170,28 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     setDragIndex(null);
   }, []);
 
-  const processAllCells = async () => {
+  // Run citation-chat for a single cell. Respects sourceTypeOverride if set.
+  const runSingleCitation = async (input: string, overrideType?: SourceType): Promise<string> => {
+    const normalized = normalizeAbbreviations(input);
+    const sourceType = overrideType ?? detectSourceType(normalized);
+    const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
+
+    let prompt = normalized;
+    if (sourceType !== "unknown") {
+      const engineHint = buildEnginePromptHint(sourceType as SourceType);
+      prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
+    }
+
+    const { data, error } = await supabase.functions.invoke("citation-chat", {
+      body: { messages: [{ role: "user", content: prompt }] },
+    });
+    if (error) throw error;
+    return data?.content || "";
+  };
+
+  // Phase 1: draft all cells. No repeat-citation rules, no persistence — that
+  // happens later in finalizeApproved after the user reviews each card.
+  const draftAllCells = async () => {
     const activeCells = cells.filter((c) => c.input.trim() && c.status !== "verified");
     if (activeCells.length === 0) {
       toast.error("אנא הזן לפחות מקור אחד");
@@ -156,102 +203,178 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
     setCells((prev) =>
       prev.map((c) =>
-        c.input.trim() && c.status !== "verified" ? { ...c, status: "loading", output: null } : c
+        c.input.trim() && c.status !== "verified"
+          ? { ...c, status: "loading", output: null, approved: false }
+          : c
       )
     );
 
     try {
-      // Send individual requests per cell (enables Perplexity searches via classification tags)
       const results = await Promise.allSettled(
         activeCells.map(async (cell) => {
-          const normalized = normalizeAbbreviations(cell.input);
-          const sourceType = detectSourceType(normalized);
-          const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
-
-          let prompt = normalized;
-          if (sourceType !== "unknown") {
-            const engineHint = buildEnginePromptHint(sourceType as SourceType);
-            prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
-          }
-
-          const { data, error } = await supabase.functions.invoke("citation-chat", {
-            body: { messages: [{ role: "user", content: prompt }] },
-          });
-
-          if (error) throw error;
-          return { cellId: cell.id, content: data?.content || "" };
+          const content = await runSingleCitation(cell.input, cell.sourceTypeOverride);
+          return { cellId: cell.id, content };
         })
       );
 
-      // Map results back to cells
       const resultMap = new Map<number, string>();
-      for (const result of results) {
-        if (result.status === "fulfilled") {
-          resultMap.set(result.value.cellId, result.value.content);
-        }
+      for (const r of results) {
+        if (r.status === "fulfilled") resultMap.set(r.value.cellId, r.value.content);
       }
 
+      setCells((prev) =>
+        prev.map((c) => {
+          if (!c.input.trim() || c.status === "verified") return c;
+          const content = resultMap.get(c.id);
+          if (content === undefined) {
+            return { ...c, status: "error", output: null };
+          }
+          const detected = detectSourceType(normalizeAbbreviations(c.input));
+          const hasWarning = /\[חסר:/.test(content) || /⚠️/.test(content);
+          return {
+            ...c,
+            output: content,
+            status: hasWarning ? "warning" : "valid",
+            warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
+            detectedType: detected,
+            approved: false,
+          };
+        })
+      );
+
+      setPhase("review");
+
+      const failed = results.filter((r) => r.status === "rejected").length;
+      if (failed > 0) toast.error(`${failed} מקורות נכשלו — נסה שוב`);
+    } catch {
+      setCells((prev) =>
+        prev.map((c) => (c.status === "loading" ? { ...c, status: "error", output: null } : c))
+      );
+      toast.error("שגיאה בחיבור לשרת");
+    } finally {
+      setGlobalLoading(false);
+    }
+  };
+
+  // Re-run a single cell (e.g. user changed source type or edited input).
+  const regenerateOne = async (id: number) => {
+    const cell = cells.find((c) => c.id === id);
+    if (!cell || !cell.input.trim()) return;
+
+    setCells((prev) =>
+      prev.map((c) =>
+        c.id === id ? { ...c, status: "loading", output: null, approved: false } : c
+      )
+    );
+
+    try {
+      const content = await runSingleCitation(cell.input, cell.sourceTypeOverride);
+      const detected = detectSourceType(normalizeAbbreviations(cell.input));
+      const hasWarning = /\[חסר:/.test(content) || /⚠️/.test(content);
+      setCells((prev) =>
+        prev.map((c) =>
+          c.id === id
+            ? {
+                ...c,
+                output: content,
+                status: hasWarning ? "warning" : "valid",
+                warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
+                detectedType: detected,
+                approved: false,
+              }
+            : c
+        )
+      );
+    } catch {
+      setCells((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, status: "error", output: null } : c))
+      );
+      toast.error(`הפקה מחדש של הערה ${id} נכשלה`);
+    }
+  };
+
+  // Per-cell handlers used by the review card.
+  const handleReviewOutputChange = useCallback((id: number, value: string) => {
+    setCells((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, output: value, approved: false } : c))
+    );
+  }, []);
+
+  const handleReviewSourceTypeChange = useCallback((id: number, t: SourceType) => {
+    setCells((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, approved: false } : c))
+    );
+  }, []);
+
+  const handleReviewApproveToggle = useCallback((id: number, approved: boolean) => {
+    setCells((prev) => prev.map((c) => (c.id === id ? { ...c, approved } : c)));
+  }, []);
+
+  const approveAll = () => {
+    setCells((prev) =>
+      prev.map((c) => (c.output && c.input.trim() ? { ...c, approved: true } : c))
+    );
+  };
+
+  // Phase 2: finalize approved cards. Applies repeat-citation rules,
+  // bibliography sync, citation_history insert, verified_sources, and the
+  // legislation integrity queue. Moves UI to the "final" phase.
+  const finalizeApproved = async () => {
+    const activeCells = cells.filter((c) => c.input.trim() && c.output);
+    if (activeCells.length === 0) {
+      toast.error("אין מקורות מאושרים");
+      return;
+    }
+    const notApproved = activeCells.filter((c) => !c.approved);
+    if (notApproved.length > 0) {
+      toast.error(`יש לאשר את כל ${notApproved.length} ההערות לפני יצירת הרשימה`);
+      return;
+    }
+
+    setFinalizing(true);
+    try {
       let warningCount = 0;
       let validCount = 0;
       let nextCells: FootnoteCell[] = [];
       const updatedCells: FootnoteCell[] = [];
 
       setCells((prev) => {
-        const drafted = prev.map((c) => {
-          if (!c.input.trim() || c.status === "verified") return c;
-          const content = resultMap.get(c.id);
-          if (content === undefined) {
-            // Failed request
-            return { ...c, status: "empty" as FootnoteCell["status"], output: null };
-          }
-          return {
-            ...c,
-            output: content,
-            status: "valid" as FootnoteCell["status"],
-            warningMsg: undefined,
-          };
-        });
-
-        const normalized = applyRepeatCitationRules(drafted);
+        const normalized = applyRepeatCitationRules(prev);
         nextCells = normalized;
 
         for (const cell of normalized) {
-          if (!cell.input.trim() || !activeCells.some((ac) => ac.id === cell.id)) continue;
-          if (!resultMap.has(cell.id)) continue;
-          const hasWarning = Boolean(cell.output) && (/\[חסר:/.test(cell.output!) || /⚠️/.test(cell.output!));
+          if (!cell.input.trim() || !cell.output) continue;
+          const hasWarning = /\[חסר:/.test(cell.output) || /⚠️/.test(cell.output);
           if (hasWarning) warningCount++;
           else validCount++;
           updatedCells.push({
             ...cell,
-            status: (hasWarning ? "warning" : cell.status === "verified" ? "verified" : "valid") as FootnoteCell["status"],
+            status: hasWarning ? "warning" : cell.status === "verified" ? "verified" : "valid",
             warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
           });
         }
 
         return normalized.map((cell) => {
-          if (!activeCells.some((ac) => ac.id === cell.id)) return cell;
-          const finalCell = updatedCells.find((updated) => updated.id === cell.id);
-          return finalCell || cell;
+          const final = updatedCells.find((u) => u.id === cell.id);
+          return final ?? cell;
         });
       });
 
-      // Save to citation history, apply year preferences, and persist verified sources
       const verifiedCandidates: { rawInput: string; fullCitation: string; sourceType: string | null; yearPreferences?: YearPreferences }[] = [];
       const integrityQueue: PendingIntegrity[] = [];
 
       for (const cell of updatedCells) {
         if (!cell.output) continue;
 
-        const sourceType = detectSourceType(normalizeAbbreviations(cell.input));
+        const sourceType = cell.sourceTypeOverride ?? detectSourceType(normalizeAbbreviations(cell.input));
         const label = SOURCE_TYPE_LABELS[sourceType];
         let fullCitation = extractCitationOnly(cell.output);
         const isVerified = cell.status === "valid" && !/\[חסר:/.test(cell.output);
 
-        // For legislation, check verified_sources for stored year preferences
         if (isVerified && (isLegislationInput(cell.input) || isLegislationInput(fullCitation))) {
           const lawName = extractLawNameFromInput(cell.input) || extractLawNameFromInput(fullCitation);
-          const words = lawName.split(/[\s\-:]+/).filter(w => w.length >= 2);
-          const orConditions = words.map(w => `source_name.ilike.%${w}%`).join(',');
+          const words = lawName.split(/[\s\-:]+/).filter((w) => w.length >= 2);
+          const orConditions = words.map((w) => `source_name.ilike.%${w}%`).join(",");
 
           const { data: existingSources } = await supabase
             .from("verified_sources")
@@ -263,14 +386,14 @@ export function BatchFootnoteBuilder({}: BatchProps) {
           const existingMeta = existing?.metadata as Record<string, unknown> | null;
 
           if (existing?.verification_status === "verified" || (existingMeta && "hasHebrewYear" in existingMeta)) {
-            // Apply stored year preferences silently
             const prefs: YearPreferences = {
               hasHebrewYear: (existingMeta?.hasHebrewYear as boolean) ?? true,
               hasGregorianYear: (existingMeta?.hasGregorianYear as boolean) ?? true,
             };
             fullCitation = applyYearPreferences(fullCitation, prefs);
-            // Update the cell output with adjusted citation
-            setCells(prev => prev.map(c => c.id === cell.id ? { ...c, output: applyYearPreferences(c.output!, prefs) } : c));
+            setCells((prev) =>
+              prev.map((c) => (c.id === cell.id ? { ...c, output: applyYearPreferences(c.output!, prefs) } : c))
+            );
 
             verifiedCandidates.push({
               rawInput: cell.input,
@@ -279,7 +402,6 @@ export function BatchFootnoteBuilder({}: BatchProps) {
               yearPreferences: prefs,
             });
           } else {
-            // New legislation — queue for integrity card
             integrityQueue.push({
               cellId: cell.id,
               lawName,
@@ -296,24 +418,25 @@ export function BatchFootnoteBuilder({}: BatchProps) {
           });
         }
 
-        supabase.from("citation_history").insert({
-          raw_input: cell.input,
-          formatted_output: fullCitation,
-          source_type: label !== "לא ידוע" ? label : null,
-          is_verified: isVerified,
-        }).then(() => {});
+        supabase
+          .from("citation_history")
+          .insert({
+            raw_input: cell.input,
+            formatted_output: fullCitation,
+            source_type: label !== "לא ידוע" ? label : null,
+            is_verified: isVerified,
+          })
+          .then(() => {});
       }
 
       if (verifiedCandidates.length > 0) {
         ensureVerifiedSources(verifiedCandidates).catch(() => {});
       }
 
-      // Show integrity cards for new legislation
       if (integrityQueue.length > 0) {
         setPendingIntegrity(integrityQueue);
       }
 
-      // Recalculate bibliography from all current outputs
       const bibItems = nextCells
         .filter((cell) => {
           if (!cell.output) return false;
@@ -329,34 +452,28 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
       const syncedCount = bibliography.syncFootnoteEntries(bibItems);
       if (syncedCount > 0) {
-        toast(`${syncedCount} מקורות חושבו מחדש בביבליוגרפיה`, {
-          duration: 3000,
-          icon: "📚",
-        });
+        toast(`${syncedCount} מקורות חושבו מחדש בביבליוגרפיה`, { duration: 3000, icon: "📚" });
       }
 
-      const failedCount = results.filter(r => r.status === "rejected").length;
       const total = validCount + warningCount;
-
-      const repeatNote = nextCells.some(c => c.output && /שם|לעיל/.test(c.output))
+      const repeatNote = nextCells.some((c) => c.output && /שם|לעיל/.test(c.output))
         ? " שים לב לתיקונים בנסיבות של אזכור חוזר."
         : "";
       setSummary(
         `בניתי עבורך ${total} הערות שוליים לפי הכללים.${
           warningCount > 0 ? ` ${warningCount} הערות דורשות השלמת פרטים.` : ""
-        }${failedCount > 0 ? ` ${failedCount} מקורות נכשלו.` : ""}${repeatNote}`
+        }${repeatNote}`
       );
-    } catch {
-      setCells((prev) =>
-        prev.map((c) =>
-          c.status === "loading" ? { ...c, status: "empty", output: null } : c
-        )
-      );
-      toast.error("שגיאה בחיבור לשרת");
+
+      setPhase("final");
+    } catch (e) {
+      console.error("[finalize] failed", e);
+      toast.error("שגיאה בבניית הרשימה הסופית");
     } finally {
-      setGlobalLoading(false);
+      setFinalizing(false);
     }
   };
+
 
   const copyAll = () => {
     const outputs = cells
@@ -385,8 +502,10 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   const resetAll = () => {
     setCells(Array.from({ length: 5 }, (_, i) => createCell(i + 1)));
     setSummary(null);
+    setPhase("input");
     localStorage.removeItem(getCellsKey(projectId));
     localStorage.removeItem(getSummaryKey(projectId));
+    localStorage.removeItem(getPhaseKey(projectId));
   };
 
   const hasAnyOutput = cells.some((c) => c.output);
@@ -458,72 +577,154 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       </div>
 
       {/* === INPUT SECTION === */}
-      <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
-        <div className="space-y-2.5">
-          {cells.map((cell, index) => (
-            <div
-              key={`cell-${index}`}
-              draggable={!globalLoading}
-              onDragStart={() => handleDragStart(index)}
-              onDragEnter={() => handleDragEnter(index)}
-              onDragEnd={handleDragEnd}
-              onDragOver={(e) => e.preventDefault()}
-              className={`flex items-start gap-2 transition-opacity ${
-                dragIndex === index ? "opacity-40" : ""
-              }`}
-            >
-              <div
-                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1.5 cursor-grab active:cursor-grabbing ${
-                  cell.status === "verified" ? "bg-emerald-100 text-emerald-700" : "bg-primary/10 text-primary"
-                }`}
-                title="גרור לשינוי סדר"
-              >
-                {cell.status === "verified" ? "✓" : cell.id}
-              </div>
-              <VerifiedAutocomplete
-                value={cell.input}
-                onChange={(v) => updateCellInput(cell.id, v)}
-                onSelectCitation={(citation) => setCellVerified(cell.id, citation)}
-                placeholder="הזן מקור (פסיקה, חקיקה, ספרות...)"
-                disabled={globalLoading}
-              />
-              {cells.length > 1 && (
-                <button
-                  onClick={() => removeCell(cell.id)}
-                  className="text-[11px] text-muted-foreground hover:text-destructive px-1.5 py-2 rounded transition-colors flex-shrink-0 mt-0.5"
-                  title="הסר"
+      {phase === "input" && (
+        <>
+          <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
+            <div className="space-y-2.5">
+              {cells.map((cell, index) => (
+                <div
+                  key={`cell-${index}`}
+                  draggable={!globalLoading}
+                  onDragStart={() => handleDragStart(index)}
+                  onDragEnter={() => handleDragEnter(index)}
+                  onDragEnd={handleDragEnd}
+                  onDragOver={(e) => e.preventDefault()}
+                  className={`flex items-start gap-2 transition-opacity ${
+                    dragIndex === index ? "opacity-40" : ""
+                  }`}
                 >
-                  ✕
-                </button>
-              )}
+                  <div
+                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1.5 cursor-grab active:cursor-grabbing ${
+                      cell.status === "verified" ? "bg-emerald-100 text-emerald-700" : "bg-primary/10 text-primary"
+                    }`}
+                    title="גרור לשינוי סדר"
+                  >
+                    {cell.status === "verified" ? "✓" : cell.id}
+                  </div>
+                  <VerifiedAutocomplete
+                    value={cell.input}
+                    onChange={(v) => updateCellInput(cell.id, v)}
+                    onSelectCitation={(citation) => setCellVerified(cell.id, citation)}
+                    placeholder="הזן מקור (פסיקה, חקיקה, ספרות...)"
+                    disabled={globalLoading}
+                  />
+                  {cells.length > 1 && (
+                    <button
+                      onClick={() => removeCell(cell.id)}
+                      className="text-[11px] text-muted-foreground hover:text-destructive px-1.5 py-2 rounded transition-colors flex-shrink-0 mt-0.5"
+                      title="הסר"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
+
+            <button
+              onClick={addCell}
+              disabled={globalLoading}
+              className="mt-3 w-full py-2 border-2 border-dashed border-border hover:border-primary/40 rounded-lg text-muted-foreground hover:text-primary transition-all text-sm font-medium disabled:opacity-40"
+            >
+              + הוסף מקור
+            </button>
+          </div>
+
+          <button
+            onClick={draftAllCells}
+            disabled={globalLoading || !hasAnyInput}
+            className="mt-4 w-full py-3 rounded-xl font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{
+              background: globalLoading || !hasAnyInput ? "hsl(var(--muted))" : "var(--gradient-primary)",
+              color: globalLoading || !hasAnyInput ? "hsl(var(--muted-foreground))" : "hsl(var(--primary-foreground))",
+            }}
+          >
+            {globalLoading ? "מכין טיוטות לבדיקה..." : "⚖ בנה טיוטות לבדיקה"}
+          </button>
+        </>
+      )}
+
+      {/* === REVIEW PHASE === */}
+      {phase === "review" && (() => {
+        const reviewable = cells.filter((c) => c.input.trim());
+        const approvedCount = reviewable.filter((c) => c.approved).length;
+        const total = reviewable.length;
+        const allApproved = total > 0 && approvedCount === total;
+        return (
+          <div className="space-y-4 animate-fade-in">
+            <div className="flex items-center justify-between bg-primary/5 border border-primary/15 rounded-xl px-4 py-3">
+              <div className="text-sm text-foreground">
+                <span className="font-semibold">שלב בדיקה:</span> בדוק כל הערה, ערוך או הפק מחדש לפי הצורך, ואשר אותה.
+                <span className="block text-xs text-muted-foreground mt-0.5">
+                  אושרו {approvedCount} מתוך {total}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPhase("input")}
+                  className="text-xs text-muted-foreground hover:text-foreground px-2 py-1.5 rounded-lg transition-colors"
+                >
+                  ← חזור לעריכה
+                </button>
+                <button
+                  onClick={approveAll}
+                  disabled={total === 0}
+                  className="text-xs bg-primary/15 text-primary hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors font-medium disabled:opacity-40"
+                >
+                  ✓ אשר הכל
+                </button>
+              </div>
+            </div>
+
+            {reviewable.map((cell) => (
+              <FootnoteReviewCard
+                key={cell.id}
+                cell={cell}
+                onInputChange={updateCellInput}
+                onOutputChange={handleReviewOutputChange}
+                onSourceTypeChange={handleReviewSourceTypeChange}
+                onApproveToggle={handleReviewApproveToggle}
+                onRegenerate={regenerateOne}
+                onRemove={removeCell}
+                disabled={finalizing}
+              />
+            ))}
+
+            <button
+              onClick={finalizeApproved}
+              disabled={finalizing || !allApproved}
+              className="w-full py-3 rounded-xl font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{
+                background: !allApproved || finalizing ? "hsl(var(--muted))" : "var(--gradient-primary)",
+                color: !allApproved || finalizing ? "hsl(var(--muted-foreground))" : "hsl(var(--primary-foreground))",
+              }}
+            >
+              {finalizing
+                ? "בונה רשימה סופית..."
+                : allApproved
+                ? "🏛 בנה רשימה סופית"
+                : `יש לאשר את כל ההערות (${approvedCount}/${total})`}
+            </button>
+          </div>
+        );
+      })()}
+
+      {/* === FINAL PHASE TOP BAR === */}
+      {phase === "final" && (
+        <div className="flex items-center justify-between bg-primary/5 border border-primary/15 rounded-xl px-4 py-2.5 mb-4">
+          <span className="text-sm font-semibold text-foreground">📄 רשימה סופית</span>
+          <button
+            onClick={() => setPhase("review")}
+            className="text-xs text-primary hover:underline px-2 py-1"
+          >
+            ← חזור לעריכה ובדיקה
+          </button>
         </div>
+      )}
 
-        <button
-          onClick={addCell}
-          disabled={globalLoading}
-          className="mt-3 w-full py-2 border-2 border-dashed border-border hover:border-primary/40 rounded-lg text-muted-foreground hover:text-primary transition-all text-sm font-medium disabled:opacity-40"
-        >
-          + הוסף מקור
-        </button>
-      </div>
-
-      {/* Generate Button */}
-      <button
-        onClick={processAllCells}
-        disabled={globalLoading || !hasAnyInput}
-        className="mt-4 w-full py-3 rounded-xl font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-        style={{
-          background: globalLoading || !hasAnyInput ? "hsl(var(--muted))" : "var(--gradient-primary)",
-          color: globalLoading || !hasAnyInput ? "hsl(var(--muted-foreground))" : "hsl(var(--primary-foreground))",
-        }}
-      >
-        {globalLoading ? "מעבד הערות שוליים..." : "⚖ ייצר הערות שוליים"}
-      </button>
 
       {/* === OUTPUT SECTION === */}
-      {(hasAnyOutput || globalLoading) && (
+      {phase === "final" && (hasAnyOutput || globalLoading) && (
         <div className="mt-5 bg-card border border-border rounded-xl shadow-sm animate-fade-in">
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <h4 className="text-foreground text-sm font-bold font-sans">

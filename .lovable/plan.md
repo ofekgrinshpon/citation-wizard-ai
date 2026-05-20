@@ -1,49 +1,74 @@
 ## Goal
 
-Add diagnostic logging so we can see **which URLs** Perplexity pulled when it returned `year: 2001` for `ע"פ 4596/98`. No behavior change.
+Insert a **review step** between "user enters sources" and "final footnote list". Each input gets its own mini-card preview where the user can validate, edit, change source classification, or replace text, and the engine re-runs that single citation on demand. Only when the user clicks **"אישור הכל"** (or per-card אישור) does the consolidated final list with repeated-citation rules (שם / לעיל) get assembled.
 
-## Changes
+## New flow
 
-### 1. `supabase/functions/citation-chat/index.ts` — case-number branch (~line 1100, after `await perplexityResp.json()`)
-
-Log the citation URLs alongside the parsed JSON:
-
-```ts
-const pData = await perplexityResp.json();
-const rawContent = pData.choices?.[0]?.message?.content || "";
-console.log(`[case-law] perplexity sources for ${fullCaseRef}:`, JSON.stringify({
-  citations: pData.citations ?? null,
-  search_results: pData.search_results ?? null,
-  model: pData.model,
-}));
-console.log(`[case-law] perplexity raw content for ${fullCaseRef}:`, rawContent);
+```text
+1. User fills inputs (existing 5-row UI)
+2. Clicks "בנה הערות שוליים"  →  per-source draft (Perplexity calls run as today, in parallel)
+3. NEW: Each result shown in a "review card" with status badge
+        ┌─────────────────────────────────────────────┐
+        │ #1  [סוג: פסיקה ▾]   ● ממתין לאישור        │
+        │ קלט: ע"א 5587/93                            │
+        │ פלט: דנציגר נ' …, פ"ד מט(1) 102 (1994)     │
+        │ [✎ ערוך פלט] [🔄 חפש שוב] [✓ אשר] [✗ הסר]  │
+        └─────────────────────────────────────────────┘
+4. User can per card:
+   - Edit the citation text inline
+   - Change detected source type (dropdown) → triggers re-run
+   - Edit the raw input → triggers re-run on demand
+   - Mark "אשר" (locks card as approved)
+5. "אשר הכל ובנה רשימה סופית" button — enabled only when all non-empty
+   cards are approved. Clicking it:
+   - Applies repeated-citation rules (שם / לעיל ה"ש) across approved citations
+   - Runs bibliography sync
+   - Shows the final consolidated list (existing output UI)
+6. User can return to review (כפתור "חזור לעריכה") to tweak more.
 ```
 
-### 2. Same file — date-verification call inside `verifyDecisionDate` / `reconcilePublishedDate`
+## UI changes (`src/components/BatchFootnoteBuilder.tsx`)
 
-After the verification Perplexity response is parsed, log:
+- Add a new render mode: `phase: "input" | "review" | "final"`.
+  - `input` — current input grid + "בנה" button (label changes to "בנה לבדיקה").
+  - `review` — list of `ReviewCard` per cell that has output; final-list section hidden.
+  - `final` — current output section as today; "חזור לעריכה" button returns to `review`.
+- New component `FootnoteReviewCard.tsx` with:
+  - Status pill (`ממתין` / `אושר` / `טוען מחדש` / `שגיאה`)
+  - Read-only raw input + small "ערוך קלט" toggle
+  - Source-type Select (reuse `SOURCE_TYPE_LABELS`)
+  - Editable citation textarea (defaults to engine output)
+  - Buttons: `🔄 הפק מחדש`, `✓ אשר`, `✗ הסר`
+- Add per-card `regenerateOne(cellId)` that runs the same Perplexity path used in `processAllCells`, but for a single cell, preserving the user's edited source type / input override.
+- Approval state stored on the cell as `approved: boolean` and `userEdited: boolean`.
 
-```ts
-console.log(`[case-law] date-verify sources for ${fullCaseRef}:`, JSON.stringify({
-  citations: dvData.citations ?? null,
-  search_results: dvData.search_results ?? null,
-}));
-console.log(`[case-law] date-verify raw content:`, dvContent);
-```
+## Logic changes
 
-### 3. `supabase/functions/case-law-search/index.ts` — both Perplexity calls
+- Split current `processAllCells` into two phases:
+  1. `draftAllCells()` — runs per-cell Perplexity (existing parallel loop), **without** `applyRepeatCitationRules`, bibliography sync, history insert, or verified-source persistence. Sets `phase: "review"`.
+  2. `finalizeApproved()` — runs only on user click after all approved:
+     - Applies `applyRepeatCitationRules` to the approved outputs in current order
+     - Inserts citation_history rows
+     - Calls `ensureVerifiedSources`
+     - Triggers integrity-card queue for new legislation (existing flow)
+     - Syncs bibliography
+     - Sets `phase: "final"`, generates summary text
+- `regenerateOne(cellId)` — sets that card to `loading`, runs single `invoke("citation-chat", …)`, replaces `output`, clears `approved`. Does not touch other cards.
+- Editing the input text or changing source type clears `approved` and (optionally) auto-triggers `regenerateOne`. Editing the citation text directly does **not** re-call Perplexity — it just unlocks approval (`userEdited: true`) and requires a fresh click on אשר.
+- Drag-and-drop reorder stays available in both `input` and `review` phases (affects future "שם / לעיל" numbering).
 
-Same two log lines after each `await ...json()`. Mirrors citation-chat so the standalone path is debuggable too.
+## State persistence
 
-## What we'll do next
+- Extend cell shape: add `approved`, `userEdited`, `phase` to the localStorage payload so refresh keeps the review state. Bump storage key suffix to avoid clashes with the old format (e.g. `footnote_cells_v2_<projectId>`).
 
-After deploying, re-run `ע"פ 4596/98` and check edge function logs. The `citations[]` array will list the exact URLs Perplexity grounded on. That tells us:
+## Files touched
 
-- Whether `2001` came from a volume-catalog page, a follow-up motion, or a hallucination with no source at all.
-- Whether the date-verify retry hits the same pages (explaining why it doesn't fix the year).
-- Whether tightening `search_domain_filter` (e.g. dropping `psakdin.co.il`) or switching to `sonar-pro` would help — before committing to the Wikipedia helper.
+- `src/components/BatchFootnoteBuilder.tsx` — phase state, split processing, new buttons
+- `src/components/FootnoteReviewCard.tsx` — new
+- No edge-function changes; uses existing `citation-chat` per-cell as today
 
 ## Out of scope
 
-- Any change to the year logic, prompts, or domain filter.
-- Wikipedia helper (deferred until logs justify it).
+- No changes to the consolidated final-list rendering, copy/insert-to-Word, or bibliography UI.
+- No backend / DB schema changes.
+- No changes to the integrity card flow (still runs at finalize).
