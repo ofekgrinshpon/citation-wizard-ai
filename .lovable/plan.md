@@ -1,49 +1,48 @@
-## Goal
+## What's happening
 
-Add diagnostic logging so we can see **which URLs** Perplexity pulled when it returned `year: 2001` for `ע"פ 4596/98`. No behavior change.
+`sonar-pro` fixed the empty-result and year problems, but for `ע"פ 4596/98` it still returned a real party name (`באקו` / `בקו`) instead of the published anonymized `פלונית`. Reason: takdin's search-results page exposes the unredacted name, and Perplexity prefers it over the פ"ד headline because nothing in our prompt tells it the פ"ד name is authoritative.
 
-## Changes
+Looking at the last log, the Perplexity `search_results[].snippet` array actually contains the right name multiple times:
 
-### 1. `supabase/functions/citation-chat/index.ts` — case-number branch (~line 1100, after `await perplexityResp.json()`)
+> `ע"פ 4596/98 פלונית נ' מדינת ישראל, פ"ד נד(1) 145`
 
-Log the citation URLs alongside the parsed JSON:
+So the correct name is **already in the response payload** — we just don't use it.
 
-```ts
-const pData = await perplexityResp.json();
-const rawContent = pData.choices?.[0]?.message?.content || "";
-console.log(`[case-law] perplexity sources for ${fullCaseRef}:`, JSON.stringify({
-  citations: pData.citations ?? null,
-  search_results: pData.search_results ?? null,
-  model: pData.model,
-}));
-console.log(`[case-law] perplexity raw content for ${fullCaseRef}:`, rawContent);
+## Fix (two layers)
+
+### 1. Prompt rule (both functions)
+
+In the case-law system prompt, add an explicit anonymization rule:
+
+> אם פסק הדין פורסם בפד"י והכותרת הרשמית בפד"י משתמשת בכינוי `פלוני`/`פלונית`/`קטין`/`קטינה`/`אלמוני`/`אלמונית` — זהו שם הצד הקובע. אל תחליף אותו בשם פרטי שמופיע במאגרים אחרים (תקדין/נבו), גם אם הוא נראה מפורש יותר.
+
+### 2. Deterministic post-processing guard (both functions)
+
+After parsing Perplexity JSON, if `isPublished === true`, scan `search_results[].snippet` + `citations` text + `pContent` (raw response) for a regex like:
+
+```
+/(?:^|\s)(פלוני|פלונית|פלונים|פלוניות|קטין|קטינה|אלמוני|אלמונית)\s+נ['׳]/
 ```
 
-### 2. Same file — date-verification call inside `verifyDecisionDate` / `reconcilePublishedDate`
+near the case number. If matched, **override `parsed.party1`** with that anonymized term. This is a safety net for when the prompt rule still loses to a strong takdin snippet.
 
-After the verification Perplexity response is parsed, log:
+Apply same logic to `party2` (rarer, but e.g. `פלוני נ' פלונית`).
 
-```ts
-console.log(`[case-law] date-verify sources for ${fullCaseRef}:`, JSON.stringify({
-  citations: dvData.citations ?? null,
-  search_results: dvData.search_results ?? null,
-}));
-console.log(`[case-law] date-verify raw content:`, dvContent);
-```
+## Files
 
-### 3. `supabase/functions/case-law-search/index.ts` — both Perplexity calls
-
-Same two log lines after each `await ...json()`. Mirrors citation-chat so the standalone path is debuggable too.
-
-## What we'll do next
-
-After deploying, re-run `ע"פ 4596/98` and check edge function logs. The `citations[]` array will list the exact URLs Perplexity grounded on. That tells us:
-
-- Whether `2001` came from a volume-catalog page, a follow-up motion, or a hallucination with no source at all.
-- Whether the date-verify retry hits the same pages (explaining why it doesn't fix the year).
-- Whether tightening `search_domain_filter` (e.g. dropping `psakdin.co.il`) or switching to `sonar-pro` would help — before committing to the Wikipedia helper.
+- `supabase/functions/case-law-search/index.ts`
+  - Update system prompt (around lines 84–98)
+  - Add anonymization-override block right after `parsed = JSON.parse(...)` (~line 138), before the date-verify section
+- `supabase/functions/citation-chat/index.ts`
+  - Update system prompt in case-law branch (~lines 1093–1102)
+  - Add same override block after `parsed = JSON.parse(jsonMatch[0])` (~line 1119)
 
 ## Out of scope
 
-- Any change to the year logic, prompts, or domain filter.
-- Wikipedia helper (deferred until logs justify it).
+- No model changes (`sonar-pro` stays everywhere it was switched).
+- No changes to legislation/regulations/books/articles branches.
+- No Wikipedia verifier (deferred — year is already correct, this is only about party name).
+
+## Verification
+
+Re-run `ע"פ 4596/98`. Expected: `פלונית נ' מדינת ישראל, פ"ד נד(1) 145 (2000)`. Confirm via logs that the override fired (`[case-law] anonymization override: party1=באקו → פלונית`).
