@@ -1,40 +1,52 @@
-## Why the academic query "stopped" when you visited Profile
+## Goal
+Make the short academic-search steps (`propose_outline`, `suggest_topics`, `validate_question`) resumable after the user navigates away (e.g. clicks the Profile icon) and comes back — same UX guarantee that long-form chapter writes already have.
 
-### What's happening today
-- `/app` and `/profile` are sibling routes in `src/App.tsx`. Clicking the profile icon unmounts `Index → LegalQAChat`, which orphans the in-flight `fetch` to `legal-qa`. The backend keeps running and still writes its result to `qa_logs`, but the frontend has no way to find it again.
-- A resume mechanism already exists (`src/components/LegalQAChat.tsx` lines 905‑964 + `setAcademicRunMarker`/`pollLegalQaStatus` + `legal-qa-status` edge function), but `onRunId` only persists the marker when:
-  ```
-  academicStep === "write_chapter" | "write_introduction" | "write_conclusion"
-  ```
-  (see the `isLongFormWriteGuard` block at line 1612).
-- The "academic search" actions that build the outline / suggest topics / validate the research question (`suggest_topics`, `validate_question`, `propose_outline`) go through the same streaming `legal-qa` endpoint and the backend already emits `run_id` for them, but the client throws that id away. So when you come back, there is nothing to poll → the UI shows an empty state and it looks like the query was cancelled.
+## Root cause recap
+- These steps don't use SSE; the client just `await fetch(...)` on `legal-qa`.
+- Navigating to `/profile` unmounts `LegalQAChat`, aborting the fetch. The backend keeps running and writes to `qa_logs`, but the client has no `run_id` to poll on remount → result appears lost.
+- Long-form writes already work because SSE emits `run_id`, the client persists an academic marker, and `legal-qa-status` polling reconciles on remount.
 
-### Fix plan (frontend-only, ~30 lines)
+## Approach (Option B)
+Client generates the `runId` (UUID) *before* the request, persists the marker, and passes the id to the backend in the request body. Backend inserts a `qa_logs` row immediately with that id, runs the step, then updates the same row. On remount we poll `legal-qa-status` exactly like chapter writes do.
 
-1. **Persist the run marker for every meaningful academic step**
-   - In `LegalQAChat.tsx` widen the marker-persistence guard so the same `setAcademicRunMarker` write fires for `propose_outline`, `suggest_topics`, and `validate_question`, not just the three long-form writes.
-   - Concretely: add `const isResumableAcademicStep = isLongFormWriteGuard || ["propose_outline","suggest_topics","validate_question"].includes(academicStep);` and use that flag in the `onRunId` callback (line 1611‑1620) and in the post-stream cleanup at line 1739 that clears the marker.
+## Changes
 
-2. **Teach the resume effect how to apply non-write results**
-   - The existing resume effect (line 910‑964) assumes the recovered payload is a chapter body and writes it into `chapters[marker.chapterIdx]`. Extend it to branch on `marker.step`:
-     - `write_chapter | write_introduction | write_conclusion` → keep current behavior.
-     - `propose_outline` → call the same handler that consumes a successful outline response today (sets `outline`, advances `wizardStep` to "outline"). Find the existing success path around line 1674 (`else if (academicStep === "propose_outline")`) and refactor it into a small helper, then reuse it from the resume effect.
-     - `suggest_topics` / `validate_question` → reuse their corresponding success branches the same way.
+### Backend — `supabase/functions/legal-qa/index.ts`
+1. Accept optional `runId` in the request body (validate UUID v4 shape). If absent, generate one (preserves backward compat).
+2. For the three short academic steps (`propose_outline`, `suggest_topics`, `validate_question`):
+   - Insert a `qa_logs` row up-front with `{ id: runId, user_id, project_id, question, task_mode: 'research', answer: null, metadata: { checkpoint: 'running', academic_step } }`.
+   - After the AI call completes, `UPDATE qa_logs SET answer=..., footnotes=..., metadata=jsonb_set(metadata,'{checkpoint}','completed') WHERE id = runId`.
+   - On failure, set `metadata.checkpoint='failed'` + `error_message`.
+3. Return `runId` in the JSON response body so the client can confirm.
+4. No change to streaming write paths — they already emit `run_id` over SSE.
 
-3. **Surface a non-alarming toast on remount**
-   - Replace the chapter-specific `"הפרק הושלם ברקע ונטען מחדש"` with a step-aware label, e.g. `"השאילתה הושלמה ברקע ונטענה מחדש"` for outline/topics/validation. No behavior change beyond the string.
+### Frontend — `src/components/LegalQAChat.tsx`
+1. Add a tiny helper that, for the three short academic steps, does:
+   - `const runId = crypto.randomUUID();`
+   - `setAcademicRunMarker({ runId, step, chapterIdx: -1 });` *before* `fetch`.
+   - `fetch('legal-qa', { body: JSON.stringify({ ..., runId }) })`.
+   - On success → clear marker and apply payload via the existing per-step success handlers.
+   - On `AbortError`/network failure → leave the marker so the resume effect can take over.
+2. Extend the existing resume effect (around lines 905–964) to branch on `marker.step`:
+   - `write_chapter | write_introduction | write_conclusion` → unchanged.
+   - `propose_outline` → reuse the outline success branch (set `outline`, advance `wizardStep` to `"outline"`).
+   - `suggest_topics` → reuse topics success branch.
+   - `validate_question` → reuse validation success branch.
+   Extract each success branch into a small local helper so the resume effect and the normal success path stay in sync.
+3. Step-aware reattach toast: `"השאילתה הושלמה ברקע ונטענה מחדש"` for the three short steps; keep chapter-specific toast unchanged.
+4. `chapterIdx: -1` for non-write steps so the existing "apply to chapter slot" branch is guaranteed to be skipped.
 
-4. **Tighten the marker schema (no DB migration)**
-   - `setAcademicRunMarker` already takes `{ runId, step, chapterIdx }`. For non-write steps `chapterIdx` is meaningless — pass `-1` so the resume effect's "apply to chapter slot" branch is guaranteed to be skipped. No backend or schema change needed.
+### No-op / out of scope
+- `legal-qa-status` edge function — already returns `answer` + `footnotes` when `checkpoint === 'completed'`; no changes needed.
+- `academic_sessions` schema, RLS, `qa_logs` schema — unchanged.
+- Non-academic Legal QA — separate path, can be addressed later.
 
-### Out of scope
-- Non-academic Legal QA (regular research). It does not have a resume mechanism at all; we can address it separately if you want, but you described the academic path so I'm keeping the change focused.
-- Backend (`supabase/functions/legal-qa/index.ts`) — it already persists qa_logs and emits `run_id` for every step. No change needed.
-- No DB schema or RLS changes; `academic_sessions.current_run_id` is already in use.
+## Verification
+1. Start `propose_outline` in academic mode → click Profile mid-request → return. Expect: poll fires, outline appears, toast `"השאילתה הושלמה ברקע ונטענה מחדש"`, wizard advances to "outline".
+2. Repeat for `suggest_topics` and `validate_question`.
+3. Hard refresh mid-request (different from #1 — kills JS): expect the marker (already in `localStorage` + `academic_sessions.current_run_id`) to drive the same polling on next mount.
+4. Regression: chapter write resume continues to work; finished short steps that complete before unmount still clear the marker and don't double-toast.
 
 ### Files touched
-- `src/components/LegalQAChat.tsx` only.
-
-### How to verify after implementation
-- Start `propose_outline` in academic mode, click the profile icon mid-stream, come back. Expect: progress reattaches, finishes, outline appears, toast "השאילתה הושלמה ברקע ונטענה מחדש".
-- Repeat for a chapter write (already works today) to confirm no regression.
+- `supabase/functions/legal-qa/index.ts`
+- `src/components/LegalQAChat.tsx`
