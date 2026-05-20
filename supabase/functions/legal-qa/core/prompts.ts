@@ -40,20 +40,56 @@ Hard rules:
 3. Every claim.required_evidence[] must contain >= 1 kind appropriate to that
    claim (a caselaw claim needs binding_caselaw or persuasive_caselaw; a
    statutory-rule claim needs statute_section).
-4. search_targets.hebrew_terms must be idiomatic legal phrases ("צו מניעה
-   זמני", "מאזן הנוחות"), NOT single common words ("צו", "נוחות").
+4. search_targets.hebrew_terms must be RECOGNIZED, IDIOMATIC Hebrew legal
+   phrases as used by Israeli courts and scholars ("צו מניעה זמני",
+   "מאזן הנוחות", "מיצוי הליכים", "סעד חלופי"). REJECT any term that is
+   malformed, transliterated, mistyped, non-idiomatic, or invented
+   (e.g. "סיכוי דעתתי", "נזק חמור וסמך"). If you are unsure of the precise
+   Hebrew phrasing, prefer the canonical doctrine name from rule 5.
 5. Each search_target.doctrine must be a canonical Hebrew doctrine name
    ("סעד זמני", "ביקורת שיפוטית על שיקול דעת מנהלי", "פרשנות חוזים תכליתית").
-6. NEVER invent dockets, section numbers, or years. If you are not sure of the
-   exact docket of a case, OMIT the docket field — keep the case name only.
-7. Stay within the doctrinal field the question raises. Do NOT drift into
+6. QUALITY OVER QUANTITY for expected_authorities. If you do not know the
+   exact, real authority, OMIT THE ENTIRE AUTHORITY ENTRY. Never output:
+   - placeholder authorities such as "פסיקה עקרונית על X",
+     "הלכה כללית בעניין Y", "פסיקה בנושא Z"
+   - partial or truncated dockets, or dockets you are not certain are real
+   - invented case names (e.g. parties you cannot verify ever litigated)
+   - vague academic references ("מאמר אקדמי על X", "ספרות משפטית בנושא Y")
+   - statutes without a real name, or made-up section numbers.
+   It is BETTER to return 2 real authorities than 6 with placeholders. The
+   minimum of 2 authorities may be relaxed when the model genuinely does not
+   know more real sources for this doctrine — output as few as 1, or even an
+   empty array, rather than fabricate.
+7. NEVER invent dockets, section numbers, or years. If a docket is not
+   certain, omit the docket field (keep the case name only) OR omit the whole
+   authority per rule 6.
+8. Stay within the doctrinal field the question raises. Do NOT drift into
    constitutional review (חוק-יסוד, בנק המזרחי, מבחני פסילת חוק) unless the
    question is itself constitutional. A civil-procedure question about
    temporary injunctions must not cite חוק-יסוד.
-8. expected_authorities must be doctrinally APPROPRIATE — the seminal sources
+9. expected_authorities must be doctrinally APPROPRIATE — the seminal sources
    a practising Israeli lawyer would actually cite for this exact doctrine.
-9. 2-6 claims total. 2-8 expected authorities total.
-10. Hebrew throughout. No English in the JSON values except authority types.`;
+10. 2-6 claims total. expected_authorities: as many REAL ones as you know,
+    preferring fewer real over more fake. Empty array is permitted only if
+    you genuinely know no real authority for the doctrine.
+11. Hebrew throughout. No English in the JSON values except authority types.
+
+SELF-CHECK (perform silently before emitting JSON; do NOT include this in
+the output):
+  (a) For every authority entry: is the case/statute REAL and known to you
+      with high confidence? If not — DELETE that entry.
+  (b) For every authority with a docket: is the docket COMPLETE and CORRECT?
+      If not — delete the docket field, or delete the entry.
+  (c) For every claim: is it ATOMIC (exactly one assertion)? If not — split.
+  (d) For every hebrew_term: is it an idiomatic Hebrew legal phrase? If
+      not — replace with the canonical doctrine name or remove.
+  (e) Are there any placeholder authorities left ("פסיקה עקרונית על...",
+      "הלכה כללית...", vague academic refs)? If yes — DELETE them.
+  (f) Does every remaining claim still link to >= 1 surviving authority? If
+      a claim's only authority was deleted, either find a real replacement
+      or relax its supporting_authorities (but the claim itself stays — the
+      retrieval layer will still try).
+Only after (a)-(f) pass, emit the final JSON.`;
 
 export const PLANNER_USER = (question: string) =>
   `Question:\n${question}\n\nReturn the PlanV1 JSON now.`;
