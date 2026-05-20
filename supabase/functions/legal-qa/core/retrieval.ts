@@ -7,7 +7,7 @@
 //                         authority (docket or name). Hypothesis-driven, but
 //                         every returned candidate is a REAL row.
 //   4. approved_web     — Perplexity sonar-pro restricted to TIER_A domains,
-//                         triggered only if local coverage < WEB_TRIGGER.
+//                         runs in PARALLEL with local origins (not a fallback).
 //
 // Rules:
 //   * Planner's expected_authorities are HYPOTHESES. An authority is
