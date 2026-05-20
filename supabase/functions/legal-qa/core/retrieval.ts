@@ -410,6 +410,8 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
   for (const a of plan.expected_authorities) authMap.set(a.id, a);
 
   const packs: ClaimRetrievalPack[] = [];
+  let webBudgetRemaining = WEB_GLOBAL_CAP;
+  let webGlobalCapHit = false;
 
   for (const claim of plan.claims) {
     const terms = claim.search_targets.map((t) => t.hebrew_terms);
@@ -417,62 +419,66 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const tq = pickTextQuery(terms, plan.thesis);
     const vq = pickVectorQuery(terms, doctrine);
 
-    // Run text + vector + exact-per-authority in parallel under the limiter.
     const linkedAuths = claim.supporting_authorities
       .map((id) => authMap.get(id))
       .filter((a): a is ExpectedAuthority => !!a);
 
-    const [textHits, vecHits, exactGroups] = await Promise.all([
+    // Allowed web candidates for THIS claim — bounded by per-claim cap AND
+    // remaining global budget. approved_web is a first-class parallel origin,
+    // NOT a fallback. Skipped only when global budget is exhausted.
+    const webAllowedThisClaim = Math.min(WEB_PER_CLAIM_CANDIDATES, webBudgetRemaining);
+    const webSkippedForGlobalCap = perplexityKey ? webAllowedThisClaim <= 0 : false;
+    if (perplexityKey && webAllowedThisClaim <= 0) webGlobalCapHit = true;
+
+    // All four origins fire in parallel.
+    const [textHits, vecHits, exactGroups, webHitsRaw] = await Promise.all([
       limiter(() => localText(adminClient, tq, claim.id)),
       embed ? limiter(() => localVector(adminClient, vq, claim.id, embed)) : Promise.resolve([] as CandidateSource[]),
       Promise.all(linkedAuths.map((a) => limiter(() => exactAuthority(adminClient, a, claim.id)))),
+      perplexityKey && webAllowedThisClaim > 0
+        ? limiter(() => approvedWeb(perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal))
+        : Promise.resolve([] as CandidateSource[]),
     ]);
     const exactHits = exactGroups.flat();
+    const webHits = webHitsRaw.slice(0, webAllowedThisClaim);
+    webBudgetRemaining = Math.max(0, webBudgetRemaining - webHits.length);
 
-    // Dedup by document_id (keep first by priority: exact > text > vector).
-    const byDoc = new Map<string, CandidateSource>();
+    // Dedup by document_id / url. Priority: exact > text > vector > web.
+    const byKey = new Map<string, CandidateSource>();
     const ingest = (arr: CandidateSource[]) => {
       for (const c of arr) {
         const k = c.document_id || `${c.origin}:${c.url || c.candidate_id}`;
-        if (!byDoc.has(k)) byDoc.set(k, c);
+        if (!byKey.has(k)) byKey.set(k, c);
       }
     };
     ingest(exactHits);
     ingest(textHits);
     ingest(vecHits);
+    ingest(webHits);
 
-    let candidates = Array.from(byDoc.values());
-
-    // Web fallback if local coverage is thin.
-    let web_triggered = false;
-    let web_trigger_reason: "local_under_threshold" | undefined;
-    if (candidates.length < WEB_TRIGGER && perplexityKey) {
-      web_triggered = true;
-      web_trigger_reason = "local_under_threshold";
-      const webHits = await limiter(() =>
-        approvedWeb(perplexityKey, claim.text, doctrine, claim.id, signal),
-      );
-      for (const c of webHits) {
-        const k = c.url || c.candidate_id;
-        if (!byDoc.has(k)) byDoc.set(k, c);
-      }
-      candidates = Array.from(byDoc.values());
-    }
-
-    // Cap.
-    candidates = candidates.slice(0, PER_CLAIM_CAP);
+    const candidates = Array.from(byKey.values()).slice(0, PER_CLAIM_CAP);
 
     const counts: Record<CandidateOrigin, number> = {
       local_text: 0, local_vector: 0, exact_authority: 0, approved_web: 0,
     };
     for (const c of candidates) counts[c.origin]++;
 
+    const webDomains = Array.from(new Set(
+      candidates
+        .filter((c) => c.origin === "approved_web" && c.url)
+        .map((c) => { try { return new URL(c.url!).hostname.toLowerCase(); } catch { return ""; } })
+        .filter((h) => h.length > 0),
+    ));
+
     packs.push({
       claim_id: claim.id,
       candidates,
-      counts,
-      web_triggered,
-      web_trigger_reason,
+      local_text_count: counts.local_text,
+      local_vector_count: counts.local_vector,
+      exact_authority_count: counts.exact_authority,
+      approved_web_count: counts.approved_web,
+      approved_web_domains: webDomains,
+      web_skipped_for_global_cap: webSkippedForGlobalCap,
     });
   }
 
@@ -498,10 +504,15 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     });
   }
 
+  const totalWeb = packs.reduce((n, p) => n + p.approved_web_count, 0);
+
   return {
     packs,
     authority_resolutions,
     total_candidates: allCandidates.length,
+    total_web_candidates: totalWeb,
+    web_global_cap_hit: webGlobalCapHit,
     duration_ms: Date.now() - t0,
   };
 }
+
