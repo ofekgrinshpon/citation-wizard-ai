@@ -90,12 +90,15 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   const [insertingCellId, setInsertingCellId] = useState<number | null>(null);
   const [summary, setSummary] = useState<string | null>(() => localStorage.getItem(getSummaryKey(projectId)));
   const [pendingIntegrity, setPendingIntegrity] = useState<PendingIntegrity[]>([]);
+  const [phase, setPhase] = useState<Phase>(() => loadPhase(projectId));
+  const [finalizing, setFinalizing] = useState(false);
   const bibliography = useBibliography();
 
   // Reload when project changes
   useEffect(() => {
     setCells(loadCells(projectId));
     setSummary(localStorage.getItem(getSummaryKey(projectId)));
+    setPhase(loadPhase(projectId));
   }, [projectId]);
 
   useEffect(() => {
@@ -107,6 +110,10 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     if (summary) localStorage.setItem(key, summary);
     else localStorage.removeItem(key);
   }, [summary, projectId]);
+
+  useEffect(() => {
+    localStorage.setItem(getPhaseKey(projectId), phase);
+  }, [phase, projectId]);
 
   const updateCellInput = useCallback((id: number, value: string) => {
     setCells((prev) =>
