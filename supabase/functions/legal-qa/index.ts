@@ -2474,91 +2474,164 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
 
     const t0 = Date.now();
 
-    // ─── RESEARCH_V2 gate (Deep research only) ────────────────────────
-    // Behind env flag RESEARCH_V2=true. Replaces the legacy planner→
-    // sourcePack→claimMap chain with: researchPlan → claimRetrieval →
-    // ledger → compact drafter → Card→Claim contract. Fast remains V1.
-    // Academic chapters remain V1. eval-forced legacy bypasses V2.
-    console.log(`[research_v2:diag] v2_enabled=${researchV2Enabled()} v3_enabled=${researchV3Enabled()} taskMode=${taskMode} RESEARCH_MODE=${RESEARCH_MODE} depth=${researchDepth} isAcademicChapter=${isAcademicChapter} evalForceLegacy=${evalForceLegacy}`);
-    if (
-      (researchV2Enabled() || researchV3Enabled()) &&
+    // ─── Deep research pipeline dispatch ──────────────────────────────
+    // Default: V4 (simplified, single anchor source from V3 LegalResearchPlan,
+    //          AnswerMap disabled, citation-quality gate at the end).
+    // Fallback chain on ok:false / throw / insufficient verified sources:
+    //   V4 → V3 (re-runs WITH AnswerMap for wider recall) → V1 (legacy).
+    // Override: RESEARCH_PIPELINE=v3 skips V4 entirely.
+    // Fast research, academic chapters, and eval-forced legacy bypass this.
+    const pipelineMode = researchPipelineMode();
+    const deepDispatchEligible =
       taskMode === RESEARCH_MODE &&
       researchDepth === "deep" &&
       !isAcademicChapter &&
-      !evalForceLegacy
-    ) {
-      try {
-        const useV3 = researchV3Enabled();
-        console.log(`[research_v${useV3 ? "3" : "2"}] gate ON — running Deep pipeline`);
-        const asyncRunId = typeof body?._asyncRunId === "string" ? body._asyncRunId : null;
-        const v2QaLogId = asyncRunId ?? crypto.randomUUID();
-        const runner = useV3 ? runResearchV3 : runResearchV2;
-        // Live progress: flip the SSE placeholder ("מתחיל…") to a real
-        // first stage immediately so the UI doesn't sit on ~5% during the
-        // 30–60s research-plan + AnswerMap warm-up inside V2/V3.
-        emitStage("frame", "complete");
-        const v2 = await runner({
-          question, depth: "deep", adminClient,
-          drafterTimeoutMs: modeProfile.drafterTimeoutMs,
-          forceDrafterModel,
-          onStage: emitStage,
-        });
-        if (v2.ok) {
-          const v2Metadata = {
-            ...v2.metadata,
-            profile_used: { depth: researchDepth, ...modeProfile },
-            credit_request_id: creditRequestId,
-            duration_ms: Date.now() - t0,
-          };
-          const finalRow = {
-            id: v2QaLogId,
-            user_id: user.id,
-            project_id: typeof body?.projectId === "string" ? body.projectId : null,
-            question: question.substring(0, 500),
-            answer: v2.answer,
-            footnotes: v2.footnotes as unknown as Record<string, unknown>[],
-            task_mode: taskMode,
-            local_footnotes_count: v2.footnotes.length,
-            perplexity_footnotes_count: 0,
-            total_footnotes: v2.footnotes.length,
-            metadata: v2Metadata,
-          };
-          const { error: upsertErr } = await adminClient
-            .from("qa_logs")
-            .upsert(finalRow, { onConflict: "id" });
-          if (upsertErr) {
-            console.error("[research_v2] qa_logs upsert failed (non-fatal):", upsertErr);
-          }
-          console.log(`[research_v2] DONE answer_len=${v2.answer.length} footnotes=${v2.footnotes.length}`);
-          return buildResponse(v2.answer, v2.footnotes, v2.citations, {
-            footnotes_count: v2.footnotes.length,
-          });
+      !evalForceLegacy;
+    console.log(`[research_dispatch:diag] pipeline=${pipelineMode} v2_enabled=${researchV2Enabled()} v3_enabled=${researchV3Enabled()} taskMode=${taskMode} depth=${researchDepth} isAcademicChapter=${isAcademicChapter} evalForceLegacy=${evalForceLegacy} eligible=${deepDispatchEligible}`);
+    if (deepDispatchEligible && (pipelineMode === "v4" || researchV3Enabled() || researchV2Enabled())) {
+      const asyncRunId = typeof body?._asyncRunId === "string" ? body._asyncRunId : null;
+      const deepQaLogId = asyncRunId ?? crypto.randomUUID();
+      // Stage: flip placeholder to first real stage immediately so the
+      // UI doesn't sit on ~5% during the 30–60s plan warm-up.
+      emitStage("frame", "complete");
+
+      // Helper: persist final qa_logs row on success, with extra metadata
+      // describing which pipeline produced the answer.
+      const persistSuccess = async (
+        which: "v4" | "v3" | "v2",
+        result: { answer: string; footnotes: unknown[]; citations: string[]; metadata: Record<string, unknown> },
+        extra: Record<string, unknown> = {},
+      ) => {
+        const md = {
+          ...(result.metadata ?? {}),
+          ...extra,
+          pipeline_used: which,
+          profile_used: { depth: researchDepth, ...modeProfile },
+          credit_request_id: creditRequestId,
+          duration_ms: Date.now() - t0,
+        };
+        const row = {
+          id: deepQaLogId,
+          user_id: user.id,
+          project_id: typeof body?.projectId === "string" ? body.projectId : null,
+          question: question.substring(0, 500),
+          answer: result.answer,
+          footnotes: result.footnotes as unknown as Record<string, unknown>[],
+          task_mode: taskMode,
+          local_footnotes_count: result.footnotes.length,
+          perplexity_footnotes_count: 0,
+          total_footnotes: result.footnotes.length,
+          metadata: md,
+        };
+        const { error: upsertErr } = await adminClient
+          .from("qa_logs")
+          .upsert(row, { onConflict: "id" });
+        if (upsertErr) {
+          console.error(`[research_${which}] qa_logs upsert failed (non-fatal):`, upsertErr);
         }
-        // V2 fell back — record the fallback row + fall through to V1.
-        console.warn(`[research_v2] fallback reason=${v2.fallbackReason} — falling back to V1`);
+      };
+
+      let v4FallbackReason: string | undefined;
+      let v3FallbackReason: string | undefined;
+
+      // ── Stage A: V4 (default) ────────────────────────────────────────
+      if (pipelineMode === "v4") {
         try {
-          await adminClient.from("qa_logs").upsert({
-            id: v2QaLogId,
-            user_id: user.id,
-            question: question.substring(0, 500),
-            answer: null,
-            footnotes: [],
-            task_mode: taskMode,
-            local_footnotes_count: 0,
-            perplexity_footnotes_count: 0,
-            total_footnotes: 0,
-            metadata: { ...v2.metadata, v2_fallback_to_v1: true },
-          }, { onConflict: "id" });
-        } catch (logErr) {
-          console.error("[research_v2] fallback log upsert failed:", logErr);
+          console.log(`[research_v4] dispatch — running simplified Deep pipeline`);
+          const v4 = await runResearchV4({
+            question, depth: "deep", adminClient,
+            drafterTimeoutMs: modeProfile.drafterTimeoutMs,
+            forceDrafterModel,
+            onStage: emitStage,
+          });
+          if (v4.ok) {
+            await persistSuccess("v4", v4);
+            console.log(`[research_v4] DONE answer_len=${v4.answer.length} footnotes=${v4.footnotes.length}`);
+            return buildResponse(v4.answer, v4.footnotes, v4.citations, {
+              footnotes_count: v4.footnotes.length,
+            });
+          }
+          v4FallbackReason = v4.fallbackReason ?? "v4_ok_false";
+          console.warn(`[research_v4] fallback reason=${v4FallbackReason} — trying V3`);
+          // Log the V4 attempt row (will be overwritten by V3/V1 if they succeed).
+          try {
+            await adminClient.from("qa_logs").upsert({
+              id: deepQaLogId,
+              user_id: user.id,
+              question: question.substring(0, 500),
+              answer: null,
+              footnotes: [],
+              task_mode: taskMode,
+              local_footnotes_count: 0,
+              perplexity_footnotes_count: 0,
+              total_footnotes: 0,
+              metadata: { ...(v4.metadata ?? {}), pipeline_used: "v4_fallback", v4_fallback_reason: v4FallbackReason },
+            }, { onConflict: "id" });
+          } catch (logErr) {
+            console.error("[research_v4] fallback log upsert failed:", logErr);
+          }
+        } catch (v4Err) {
+          v4FallbackReason = `v4_threw:${(v4Err as Error)?.message ?? String(v4Err)}`;
+          console.error("[research_v4] threw — falling back to V3:", v4Err);
         }
-        // Note: when falling back, the inner V1 pipeline will allocate its own
-        // preallocatedQaLogId (or use the same _asyncRunId) and overwrite this
-        // placeholder row at completion. Safe.
-      } catch (v2Err) {
-        console.error("[research_v2] threw — falling back to V1:", v2Err);
       }
+
+      // ── Stage B: V3 fallback (or default when RESEARCH_PIPELINE=v3) ──
+      // V3 is also the safety net when V4 returns ok:false. We always call
+      // V3 here (not V2 directly) so AnswerMap is enabled and the recall
+      // pool is widest. V3 falls back through to V2 internally on its own
+      // empty-ledger conditions.
+      if (researchV3Enabled() || researchV2Enabled() || pipelineMode === "v4") {
+        try {
+          const useV3 = researchV3Enabled() || pipelineMode === "v4";
+          const runner = useV3 ? runResearchV3 : runResearchV2;
+          console.log(`[research_${useV3 ? "v3" : "v2"}] dispatch — fallback=${!!v4FallbackReason}`);
+          const fb = await runner({
+            question, depth: "deep", adminClient,
+            drafterTimeoutMs: modeProfile.drafterTimeoutMs,
+            forceDrafterModel,
+            onStage: emitStage,
+          });
+          if (fb.ok) {
+            await persistSuccess(useV3 ? "v3" : "v2", fb, {
+              ...(v4FallbackReason ? { v4_fallback_reason: v4FallbackReason } : {}),
+            });
+            console.log(`[research_${useV3 ? "v3" : "v2"}] DONE answer_len=${fb.answer.length} footnotes=${fb.footnotes.length}`);
+            return buildResponse(fb.answer, fb.footnotes, fb.citations, {
+              footnotes_count: fb.footnotes.length,
+            });
+          }
+          v3FallbackReason = fb.fallbackReason ?? "v3_ok_false";
+          console.warn(`[research_v3] fallback reason=${v3FallbackReason} — falling back to V1`);
+          try {
+            await adminClient.from("qa_logs").upsert({
+              id: deepQaLogId,
+              user_id: user.id,
+              question: question.substring(0, 500),
+              answer: null,
+              footnotes: [],
+              task_mode: taskMode,
+              local_footnotes_count: 0,
+              perplexity_footnotes_count: 0,
+              total_footnotes: 0,
+              metadata: {
+                ...(fb.metadata ?? {}),
+                pipeline_used: "v3_fallback",
+                v3_fallback_reason: v3FallbackReason,
+                ...(v4FallbackReason ? { v4_fallback_reason: v4FallbackReason } : {}),
+                v2_fallback_to_v1: true,
+              },
+            }, { onConflict: "id" });
+          } catch (logErr) {
+            console.error("[research_v3] fallback log upsert failed:", logErr);
+          }
+        } catch (fbErr) {
+          console.error("[research_v3] threw — falling back to V1:", fbErr);
+        }
+      }
+      // Fall through to V1 legacy.
     }
+
 
 
     // ========= Academic sub-mode shortcut =========
