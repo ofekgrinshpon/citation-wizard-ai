@@ -539,16 +539,20 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     if (perplexityKey && webAllowedThisClaim <= 0) webGlobalCapHit = true;
 
     // All four origins fire in parallel.
-    const [textHits, vecHits, exactGroups, webHitsRaw] = await Promise.all([
+    const [textHits, vecHits, exactGroups, webResult] = await Promise.all([
       limiter(() => localText(adminClient, tq, claim.id)),
       embed ? limiter(() => localVector(adminClient, vq, claim.id, embed)) : Promise.resolve([] as CandidateSource[]),
       Promise.all(linkedAuths.map((a) => limiter(() => exactAuthority(adminClient, a, claim.id)))),
       perplexityKey && webAllowedThisClaim > 0
         ? limiter(() => approvedWeb(perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal))
-        : Promise.resolve([] as CandidateSource[]),
+        : Promise.resolve<ApprovedWebResult>({
+            candidates: [],
+            telemetry: emptyWebTelemetry(perplexityKey ? "skipped" : "skipped"),
+          }),
     ]);
     const exactHits = exactGroups.flat();
-    const webHits = webHitsRaw.slice(0, webAllowedThisClaim);
+    const webHits = webResult.candidates.slice(0, webAllowedThisClaim);
+    const webHarvest = webResult.telemetry;
     webBudgetRemaining = Math.max(0, webBudgetRemaining - webHits.length);
 
     // Dedup by document_id / url. Priority: exact > text > vector > web.
@@ -587,6 +591,7 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
       approved_web_count: counts.approved_web,
       approved_web_domains: webDomains,
       web_skipped_for_global_cap: webSkippedForGlobalCap,
+      web_harvest: webHarvest,
     });
   }
 
