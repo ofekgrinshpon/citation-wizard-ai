@@ -143,12 +143,19 @@ export interface CoreMetadata {
   retrieval: {
     per_claim: Array<{
       claim_id: ClaimId;
-      counts: Record<CandidateOrigin, number>;
-      web_triggered: boolean;
-      web_trigger_reason?: "local_under_threshold";
+      local_text_count: number;
+      local_vector_count: number;
+      exact_authority_count: number;
+      approved_web_count: number;
+      approved_web_domains: string[];
+      web_verified_direct: number;
+      web_verified_partial: number;
+      web_rejected: number;
       candidate_ids: CandidateId[];
     }>;
     total_candidates: number;
+    total_web_candidates: number;
+    web_global_cap_hit: boolean;
   };
   verification: Array<{
     claim_id: ClaimId;
