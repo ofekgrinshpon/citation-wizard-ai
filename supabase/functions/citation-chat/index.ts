@@ -124,52 +124,158 @@ async function verifyDecisionDate(
   }
 }
 
-// Applies decision-date verification + פ"ד volume plausibility guard to a
-// parsed Perplexity case-law result. Mutates `parsed` in place.
+// Focused decision-date verification for UNPUBLISHED cases.
+// Anchored on case number + parties, with the same strict adjacency rule used
+// by the first-pass extractor: only accept a date from a dedicated case page,
+// or from a parenthetical immediately adjacent to the case+parties citation
+// inside another judgment. Refuse to guess.
+async function verifyUnpublishedDecisionDate(
+  apiKey: string,
+  caseType: string,
+  caseNumber: string,
+  party1: string,
+  party2: string,
+): Promise<{ date?: string; year?: string; confidence?: string } | null> {
+  try {
+    const fullRef = `${caseType} ${caseNumber}`;
+    const resp = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "sonar-pro",
+        search_domain_filter: ["nevo.co.il", "supreme.court.gov.il", "supremedecisions.court.gov.il", "court.gov.il", "psakdin.co.il", "takdin.co.il", "lite.takdin.co.il"],
+        messages: [
+          {
+            role: "system",
+            content: `אתה עוזר מחקר משפטי. החזר JSON בלבד: {"date":"DD.MM.YYYY","year":"YYYY","confidence":"high/low"}.
+
+כלל קריטי לחילוץ תאריך פסק דין (אסור לעבור עליו):
+1. מקור מועדף: עמוד התיק עצמו במאגר ייעודי (נבו / תקדין / פסקדין / supreme.court.gov.il / supremedecisions.court.gov.il). אם מצאת שם תאריך — החזר אותו עם confidence:"high".
+2. אם התיק מוזכר רק בתוך פסק דין אחר, מותר לקחת תאריך אך ורק אם הוא מופיע צמוד לאזכור התיק בפורמט: "[סוג] [מספר]/[שנה] [צד א] נ' [צד ב] (DD.MM.YYYY)" — בסוגריים מיד אחרי שמות הצדדים, באותה שורה. במקרה כזה החזר confidence:"low".
+3. אסור לקחת תאריך מ: דף ריכוז/רשימת תיקים שמכיל מספר תאריכים; משפט תיאורי ("נדון בעניין X", "ראו פס"ד מ-..."); הקשר של פסק דין אחר.
+4. אם אף מקור לא עומד בכללים — החזר {"date":"","year":"","confidence":"low"}. אל תנחש.`,
+          },
+          {
+            role: "user",
+            content: `מהו תאריך מתן פסק הדין ${fullRef} בעניין ${party1} נ' ${party2}? החל את הכלל הקריטי במלואו.`,
+          },
+        ],
+      }),
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const content = data.choices?.[0]?.message?.content || "";
+    console.log(`[case-law] unpub date-verify sources for ${fullRef}:`, JSON.stringify({
+      citations: data.citations ?? null,
+      search_results: data.search_results ?? null,
+    }));
+    console.log(`[case-law] unpub date-verify raw content for ${fullRef}:`, content);
+    const jm = content.match(/\{[\s\S]*\}/);
+    if (!jm) return null;
+    const parsed = JSON.parse(
+      jm[0].replace(/([\u0590-\u05FF])"([\u0590-\u05FF])/g, "$1\u05F4$2"),
+    );
+    const date = parsed.date ? String(parsed.date).trim() : "";
+    let year = parsed.year ? String(parsed.year).trim() : "";
+    const confidence = parsed.confidence ? String(parsed.confidence).trim() : "";
+    if (!year && date) {
+      const ym = date.match(/(\d{4})/);
+      if (ym) year = ym[1];
+    }
+    return { date, year, confidence };
+  } catch (e) {
+    console.error("[case-law] verifyUnpublishedDecisionDate error:", e);
+    return null;
+  }
+}
+
+// Applies decision-date verification + פ"ד volume plausibility guard.
+// Handles both published (anchored on פ"ד volume/page) and unpublished
+// (anchored on case number + parties with strict adjacency rule).
 async function reconcilePublishedDate(
   apiKey: string,
   caseType: string,
   caseNumber: string,
   parsed: Record<string, unknown>,
 ): Promise<void> {
+  if (!parsed.found) return;
   const isPub = !!parsed.isPublished;
   const vol = parsed.padi_volume ? String(parsed.padi_volume).trim() : "";
-  if (!isPub || !vol) return;
-  const part = parsed.padi_part ? String(parsed.padi_part).trim() : "";
-  const page = parsed.padi_page ? String(parsed.padi_page).trim() : "";
   const origDate = parsed.date ? String(parsed.date) : "";
   const origYear = parsed.year ? String(parsed.year) : "";
 
-  const v = await verifyDecisionDate(apiKey, caseType, caseNumber, vol, part, page);
+  if (isPub && vol) {
+    const part = parsed.padi_part ? String(parsed.padi_part).trim() : "";
+    const page = parsed.padi_page ? String(parsed.padi_page).trim() : "";
+    const v = await verifyDecisionDate(apiKey, caseType, caseNumber, vol, part, page);
+    let action: "override" | "clear" | "keep" = "keep";
+    if (v && (v.date || v.year)) {
+      parsed.date = v.date || "";
+      parsed.year = v.year || "";
+      action = "override";
+    } else if (v) {
+      parsed.date = "";
+      parsed.year = "";
+      parsed.confidence = "low";
+      action = "clear";
+    }
+    console.log(
+      `[case-law] date verification: original={date:${origDate},year:${origYear}} ` +
+      `verified=${JSON.stringify(v)} action=${action}`,
+    );
+
+    // Volume plausibility guard
+    const range = PADI_VOLUME_YEAR_RANGES[vol];
+    const yNum = parseInt(String(parsed.year || ""), 10);
+    if (range && !Number.isNaN(yNum) && (yNum < range[0] || yNum > range[1])) {
+      console.log(
+        `[case-law] volume plausibility: volume=${vol} year=${yNum} ` +
+        `range=${range[0]}-${range[1]} → out of range, cleared`,
+      );
+      parsed.year = "";
+      parsed.date = "";
+      parsed.confidence = "low";
+    }
+    return;
+  }
+
+  // Unpublished branch: only verify if we have both parties to anchor on.
+  const p1 = parsed.party1 ? String(parsed.party1).trim() : "";
+  const p2 = parsed.party2 ? String(parsed.party2).trim() : "";
+  if (!p1 || !p2) return;
+  const v = await verifyUnpublishedDecisionDate(apiKey, caseType, caseNumber, p1, p2);
   let action: "override" | "clear" | "keep" = "keep";
-  if (v && (v.date || v.year)) {
-    parsed.date = v.date || "";
-    parsed.year = v.year || "";
-    action = "override";
-  } else if (v) {
-    // Verification returned an empty result → clear hallucinated values
-    parsed.date = "";
-    parsed.year = "";
-    parsed.confidence = "low";
-    action = "clear";
+  if (v) {
+    const verifiedDate = v.date || "";
+    const verifiedYear = v.year || "";
+    if (!verifiedDate && !verifiedYear) {
+      // No source met the adjacency rule → clear the original to avoid wrong date
+      parsed.date = "";
+      parsed.year = "";
+      parsed.confidence = "low";
+      action = "clear";
+    } else if (verifiedDate && origDate && verifiedDate !== origDate) {
+      if (v.confidence === "high") {
+        parsed.date = verifiedDate;
+        parsed.year = verifiedYear || (verifiedDate.match(/\d{4}/)?.[0] ?? "");
+        action = "override";
+      } else {
+        // Low-confidence verifier disagrees with original → safer to clear
+        parsed.date = "";
+        parsed.year = "";
+        parsed.confidence = "low";
+        action = "clear";
+      }
+    } else if (verifiedDate && !origDate) {
+      parsed.date = verifiedDate;
+      parsed.year = verifiedYear || (verifiedDate.match(/\d{4}/)?.[0] ?? "");
+      action = "override";
+    }
   }
   console.log(
-    `[case-law] date verification: original={date:${origDate},year:${origYear}} ` +
+    `[case-law] unpub date-verify: original={date:${origDate},year:${origYear}} ` +
     `verified=${JSON.stringify(v)} action=${action}`,
   );
-
-  // Volume plausibility guard
-  const range = PADI_VOLUME_YEAR_RANGES[vol];
-  const yNum = parseInt(String(parsed.year || ""), 10);
-  if (range && !Number.isNaN(yNum) && (yNum < range[0] || yNum > range[1])) {
-    console.log(
-      `[case-law] volume plausibility: volume=${vol} year=${yNum} ` +
-      `range=${range[0]}-${range[1]} → out of range, cleared`,
-    );
-    parsed.year = "";
-    parsed.date = "";
-    parsed.confidence = "low";
-  }
 }
 
 const corsHeaders = {
