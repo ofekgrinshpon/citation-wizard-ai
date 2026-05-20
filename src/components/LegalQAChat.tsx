@@ -2004,6 +2004,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           ? "בצע ביקורת מקיפה על המסמך המצורף"
           : q;
 
+      // Deep research runs in the background server-side (Pass E). We mint
+      // the runId on the client and persist a marker BEFORE the fetch so
+      // navigating away (e.g. opening Profile) doesn't lose the run.
+      const isDeepResearch = taskMode === "research" && researchDepth === "deep";
+      const deepRunId: string | null = isDeepResearch ? crypto.randomUUID() : null;
+
       const body: Record<string, unknown> = {
         question: effectiveQuestion,
         taskMode,
@@ -2014,12 +2020,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       if (taskMode === "research") {
         body.depth = researchDepth;
       }
-      // SSE streaming for ALL research runs (Fast + Deep). Keeps the HTTP socket
-      // open via 15s heartbeats and emits live `stage` / `draft_delta` /
-      // `post_processing` / `final` events the UI uses to render progress.
-      const useSseStream = taskMode === "research";
+      // SSE streaming for Fast research only. Deep research uses the async
+      // (202 + run_id) path so it survives navigation / connection drops.
+      const useSseStream = taskMode === "research" && researchDepth === "fast";
       if (useSseStream) {
         body.stream = true;
+      }
+      if (deepRunId) {
+        body.runId = deepRunId;
+        body.projectId = currentProject?.id ?? null;
+        saveResearchRunMarker(
+          { runId: deepRunId, question: effectiveQuestion, depth: "deep", startedAt: Date.now() },
+          currentProject?.id,
+        );
       }
       // Send multi-file context
       if (extractedTexts.length === 1) {
