@@ -1099,6 +1099,11 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
             if (perplexityResp.ok) {
               const pData = await perplexityResp.json();
               const pContent = pData.choices?.[0]?.message?.content || "";
+              console.log(`[case-law] perplexity sources for ${fullCaseRef}:`, JSON.stringify({
+                citations: pData.citations ?? null,
+                search_results: pData.search_results ?? null,
+                model: pData.model,
+              }));
               console.log("Case law search result:", pContent);
               const jsonMatch = pContent.match(/\{[\s\S]*\}/);
               if (jsonMatch) {
