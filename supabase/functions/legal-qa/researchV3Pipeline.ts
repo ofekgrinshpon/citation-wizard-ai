@@ -200,6 +200,8 @@ export async function runResearchV3(args: RunResearchV3Args): Promise<RunResearc
     externalAnchorCandidatesPromise: fallbackPromise,
     // Anchor fallback can take up to ~20s (local probe + Perplexity).
     externalAnchorCandidatesTimeoutMs: 30000,
+    // V4 may pass disableAnswerMap=true; honor it (and any other V2 args).
+    disableAnswerMap: args.disableAnswerMap,
   });
 
   // V3 plan result should be settled by now since V2 awaited the promise.
