@@ -247,6 +247,43 @@ function clearAcademicSession(projectId?: string) {
   } catch { /* silent */ }
 }
 
+// ─── In-progress Deep research marker ──────────────────────────────
+// Persisted in localStorage BEFORE the request fires so navigating away
+// (e.g. opening the profile) doesn't lose the run id. On remount, the
+// resume effect polls legal-qa-status with this id.
+const RESEARCH_RUN_KEY = (projectId?: string) =>
+  projectId ? `relex_research_run_${projectId}` : "relex_research_run";
+const RESEARCH_RUN_TTL_MS = 30 * 60 * 1000; // 30 min — Deep cap is ~10 min
+
+type ResearchRunMarker = {
+  runId: string;
+  question: string;
+  depth: "fast" | "deep";
+  startedAt: number;
+};
+
+function loadResearchRunMarker(projectId?: string): ResearchRunMarker | null {
+  try {
+    const raw = safeStorage.getItem(RESEARCH_RUN_KEY(projectId));
+    if (!raw) return null;
+    const m = JSON.parse(raw) as ResearchRunMarker;
+    if (!m?.runId || typeof m.startedAt !== "number") return null;
+    if (Date.now() - m.startedAt > RESEARCH_RUN_TTL_MS) {
+      safeStorage.removeItem(RESEARCH_RUN_KEY(projectId));
+      return null;
+    }
+    return m;
+  } catch { return null; }
+}
+
+function saveResearchRunMarker(marker: ResearchRunMarker, projectId?: string) {
+  try { safeStorage.setItem(RESEARCH_RUN_KEY(projectId), JSON.stringify(marker)); } catch { /* silent */ }
+}
+
+function clearResearchRunMarker(projectId?: string) {
+  try { safeStorage.removeItem(RESEARCH_RUN_KEY(projectId)); } catch { /* silent */ }
+}
+
 // ─── DB-backed academic session sync ───────────────────────────────
 // Persists wizard state to academic_sessions table so users can resume
 // from any browser/device, not just the one that wrote localStorage.
@@ -990,6 +1027,67 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, taskMode]);
 
+  // ─── Resume in-progress Deep research run on mount ─────────────────
+  // If a Deep research request was in flight when the user navigated away
+  // (e.g. clicked Profile and came back), reattach to it via legal-qa-status
+  // instead of dropping the work.
+  useEffect(() => {
+    if (taskMode !== "research") return;
+    if (loading) return; // foreground request takes precedence
+    const marker = loadResearchRunMarker(currentProject?.id);
+    if (!marker) return;
+    let cancelled = false;
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    (async () => {
+      try {
+        setLoading(true);
+        setResult(null);
+        setError(null);
+        setStageEvents([]);
+        setStreamingDraft("");
+        setPostProcessingLabel("מסתנכרן עם המחקר שרץ ברקע…");
+        setQuestion(marker.question);
+        const { pollLegalQaStatus, CHECKPOINT_LABELS_HE } = await import("@/lib/legalQaPolling");
+        const final = await pollLegalQaStatus(marker.runId, {
+          signal: controller.signal,
+          onUpdate: (snap) => {
+            const label = CHECKPOINT_LABELS_HE[snap.checkpoint ?? ""] ?? snap.checkpoint ?? "מעבד";
+            setPostProcessingLabel(label);
+          },
+        });
+        if (cancelled) return;
+        if (final.status === "completed" && typeof final.answer === "string" && final.answer.length > 10) {
+          const qaResult: QAResult = {
+            answer: final.answer,
+            footnotes: (final.footnotes as QAResult["footnotes"]) ?? [],
+            source_urls: [],
+          };
+          setRunComplete(true);
+          setResult(qaResult);
+          toast.success("המחקר הושלם ברקע ונטען מחדש");
+          onResultSaved?.();
+        } else {
+          setError("המחקר ברקע נכשל. ניתן לנסות שוב.");
+        }
+      } catch (e) {
+        if ((e as Error).name !== "AbortError") {
+          console.error("Research resume failed:", e);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+          setPostProcessingLabel(null);
+        }
+        clearResearchRunMarker(currentProject?.id);
+        abortControllerRef.current = null;
+      }
+    })();
+    return () => { cancelled = true; controller.abort(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, taskMode]);
+
+
   // ─── Non-blocking nav warning while an academic run is streaming ───
   // Per plan: NEVER say the run will be cancelled — the backend keeps going
   // and resume-on-mount will pick it up. Just a one-shot info toast when the
@@ -1255,6 +1353,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     // overwrite the marker.
     runPersistedRef.current = false;
     activeRunIdRef.current = null;
+    // Deep research: stop = discard. The background job will still finish on
+    // the server, but the user explicitly asked to abandon it, so we drop the
+    // marker rather than reattach on next mount.
+    if (taskMode === "research" && researchDepth === "deep") {
+      clearResearchRunMarker(currentProject?.id);
+    }
     toast.info("העיבוד הופסק");
   };
 
@@ -1967,6 +2071,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           ? "בצע ביקורת מקיפה על המסמך המצורף"
           : q;
 
+      // Deep research runs in the background server-side (Pass E). We mint
+      // the runId on the client and persist a marker BEFORE the fetch so
+      // navigating away (e.g. opening Profile) doesn't lose the run.
+      const isDeepResearch = taskMode === "research" && researchDepth === "deep";
+      const deepRunId: string | null = isDeepResearch ? crypto.randomUUID() : null;
+
       const body: Record<string, unknown> = {
         question: effectiveQuestion,
         taskMode,
@@ -1977,12 +2087,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       if (taskMode === "research") {
         body.depth = researchDepth;
       }
-      // SSE streaming for ALL research runs (Fast + Deep). Keeps the HTTP socket
-      // open via 15s heartbeats and emits live `stage` / `draft_delta` /
-      // `post_processing` / `final` events the UI uses to render progress.
-      const useSseStream = taskMode === "research";
+      // SSE streaming for Fast research only. Deep research uses the async
+      // (202 + run_id) path so it survives navigation / connection drops.
+      const useSseStream = taskMode === "research" && researchDepth === "fast";
       if (useSseStream) {
         body.stream = true;
+      }
+      if (deepRunId) {
+        body.runId = deepRunId;
+        body.projectId = currentProject?.id ?? null;
+        saveResearchRunMarker(
+          { runId: deepRunId, question: effectiveQuestion, depth: "deep", startedAt: Date.now() },
+          currentProject?.id,
+        );
       }
       // Send multi-file context
       if (extractedTexts.length === 1) {
@@ -2123,12 +2240,27 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         console.error("Failed to save QA log:", saveErr);
       }
     } catch (e: any) {
-      if (e.name === "AbortError") return;
+      if (e.name === "AbortError") {
+        // Aborted — likely component unmounted (user navigated away). DO NOT
+        // clear the deep-research marker; the background job keeps running and
+        // the resume effect on next mount will reattach to it.
+        return;
+      }
       console.error("Legal QA error:", e);
       setError("שגיאה בעיבוד השאלה. נסו שוב.");
+      // Terminal error — drop the marker so we don't reattach to a dead run.
+      if (taskMode === "research" && researchDepth === "deep") {
+        clearResearchRunMarker(currentProject?.id);
+      }
     } finally {
+      const wasAborted = !!controller.signal.aborted;
       abortControllerRef.current = null;
       setLoading(false);
+      // Only clear on a clean completion or handled error, never on abort —
+      // abort means we want to reattach next mount.
+      if (!wasAborted && taskMode === "research" && researchDepth === "deep") {
+        clearResearchRunMarker(currentProject?.id);
+      }
     }
   };
 

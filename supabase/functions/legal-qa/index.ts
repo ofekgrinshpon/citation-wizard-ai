@@ -10799,7 +10799,14 @@ async function dispatchDeepAsync(
       { auth: { persistSession: false } },
     );
 
-    const runId = crypto.randomUUID();
+    // Accept a client-supplied runId so the UI can persist it BEFORE the
+    // request fires and reattach via legal-qa-status after navigation.
+    // Falls back to a fresh UUID if the client didn't (or sent garbage).
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const clientRunId = typeof parsedBody.runId === "string" && UUID_RE.test(parsedBody.runId)
+      ? parsedBody.runId
+      : null;
+    const runId = clientRunId ?? crypto.randomUUID();
     const question = typeof parsedBody.question === "string" ? parsedBody.question : "";
     const projectId = typeof parsedBody.projectId === "string" ? parsedBody.projectId : null;
 
@@ -10811,6 +10818,30 @@ async function dispatchDeepAsync(
       eval_run_id: typeof parsedBody.evalRunId === "string" ? parsedBody.evalRunId : null,
       stage_runs: [],
     };
+
+    // If the client reuses a runId (e.g. clicked send twice after coming back
+    // from another page), upsert so we don't trip the PK and so we don't
+    // start a second background job — caller can poll the existing run.
+    if (clientRunId) {
+      const { data: existing } = await adminClient
+        .from("qa_logs")
+        .select("id, user_id, metadata, answer")
+        .eq("id", runId)
+        .maybeSingle();
+      if (existing && existing.user_id === user.id) {
+        console.log(`[pass-e:async] reattach to existing run_id=${runId}`);
+        return new Response(
+          JSON.stringify({
+            run_id: runId,
+            status: typeof existing.answer === "string" && existing.answer.length > 0 ? "completed" : "queued",
+            async: true,
+            reattached: true,
+            poll_endpoint: "/legal-qa-status",
+          }),
+          { status: 202, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+    }
 
     const { error: insertErr } = await adminClient.from("qa_logs").insert({
       id: runId,
