@@ -1,74 +1,58 @@
-## Goal
+## Rule 37 status in BatchFootnoteBuilder — code review
 
-Insert a **review step** between "user enters sources" and "final footnote list". Each input gets its own mini-card preview where the user can validate, edit, change source classification, or replace text, and the engine re-runs that single citation on demand. Only when the user clicks **"אישור הכל"** (or per-card אישור) does the consolidated final list with repeated-citation rules (שם / לעיל) get assembled.
+The repeat-citation logic lives in `applyRepeatCitationRules` (line 889) with helpers `extractShortSourceLabel` (952), `extractReferenceSuffix` (935), `replaceCitationOnly` (970), `extractCitationOnly` (977). It runs from `finalizeApproved` at line 342.
 
-## New flow
+### What works
+- Basic detection of "same source twice" via `normalizeSourceKey` (strips pinpoints, casing, "סעיף X ל…" prefix, English equivalents).
+- Generates a שם form for the immediately-consecutive case and a לעיל ה"ש form otherwise.
+- Preserves rule/warning lines via `replaceCitationOnly`.
 
-```text
-1. User fills inputs (existing 5-row UI)
-2. Clicks "בנה הערות שוליים"  →  per-source draft (Perplexity calls run as today, in parallel)
-3. NEW: Each result shown in a "review card" with status badge
-        ┌─────────────────────────────────────────────┐
-        │ #1  [סוג: פסיקה ▾]   ● ממתין לאישור        │
-        │ קלט: ע"א 5587/93                            │
-        │ פלט: דנציגר נ' …, פ"ד מט(1) 102 (1994)     │
-        │ [✎ ערוך פלט] [🔄 חפש שוב] [✓ אשר] [✗ הסר]  │
-        └─────────────────────────────────────────────┘
-4. User can per card:
-   - Edit the citation text inline
-   - Change detected source type (dropdown) → triggers re-run
-   - Edit the raw input → triggers re-run on demand
-   - Mark "אשר" (locks card as approved)
-5. "אשר הכל ובנה רשימה סופית" button — enabled only when all non-empty
-   cards are approved. Clicking it:
-   - Applies repeated-citation rules (שם / לעיל ה"ש) across approved citations
-   - Runs bibliography sync
-   - Shows the final consolidated list (existing output UI)
-6. User can return to review (כפתור "חזור לעריכה") to tweak more.
-```
+### Bugs still live
 
-## UI changes (`src/components/BatchFootnoteBuilder.tsx`)
+**Bug A — Short-form label is garbage for case law (highest impact).**
+`extractCitationOnly` strips every `**`, so by the time `prior.fullCitation` reaches `extractShortSourceLabel`, there are no asterisks left. The case-law regex `/\*\*?([^*\n]+?)\*\*?\s+נ['׳]/` requires at least one `*` and therefore never matches. Control falls through to the English/lead branch and returns the first ~80 chars (e.g. `ע"א 2401/08 מדינת ישראל נ' גיספן`) instead of the Rule 37.2 short label `עניין גיספן`.
 
-- Add a new render mode: `phase: "input" | "review" | "final"`.
-  - `input` — current input grid + "בנה" button (label changes to "בנה לבדיקה").
-  - `review` — list of `ReviewCard` per cell that has output; final-list section hidden.
-  - `final` — current output section as today; "חזור לעריכה" button returns to `review`.
-- New component `FootnoteReviewCard.tsx` with:
-  - Status pill (`ממתין` / `אושר` / `טוען מחדש` / `שגיאה`)
-  - Read-only raw input + small "ערוך קלט" toggle
-  - Source-type Select (reuse `SOURCE_TYPE_LABELS`)
-  - Editable citation textarea (defaults to engine output)
-  - Buttons: `🔄 הפק מחדש`, `✓ אשר`, `✗ הסר`
-- Add per-card `regenerateOne(cellId)` that runs the same Perplexity path used in `processAllCells`, but for a single cell, preserving the user's edited source type / input override.
-- Approval state stored on the cell as `approved: boolean` and `userEdited: boolean`.
+**Bug B — Rule 37.5 (legislation exception) is not implemented.**
+Repeated laws produce `חוק העונשין, לעיל ה"ש 3, בעמ' 5.` The rule requires `ס' 5 לחוק העונשין.` (or `שם, בס' 5.` for adjacent repeats). There is no legislation branch in `applyRepeatCitationRules`; `isLegislationInput` from `src/lib/citationUtils.ts` exists but isn't used here.
 
-## Logic changes
+**Bug C — Rule 37.7 "intervening source" branch missing.**
+`seen` only remembers the first occurrence's index. There is no `prevCellKey` tracker, so the rule "same source as previous note but with an intervening source ⇒ `[name], שם.`" can't be expressed. Today every non-immediate repeat collapses to `לעיל ה"ש N`.
 
-- Split current `processAllCells` into two phases:
-  1. `draftAllCells()` — runs per-cell Perplexity (existing parallel loop), **without** `applyRepeatCitationRules`, bibliography sync, history insert, or verified-source persistence. Sets `phase: "review"`.
-  2. `finalizeApproved()` — runs only on user click after all approved:
-     - Applies `applyRepeatCitationRules` to the approved outputs in current order
-     - Inserts citation_history rows
-     - Calls `ensureVerifiedSources`
-     - Triggers integrity-card queue for new legislation (existing flow)
-     - Syncs bibliography
-     - Sets `phase: "final"`, generates summary text
-- `regenerateOne(cellId)` — sets that card to `loading`, runs single `invoke("citation-chat", …)`, replaces `output`, clears `approved`. Does not touch other cards.
-- Editing the input text or changing source type clears `approved` and (optionally) auto-triggers `regenerateOne`. Editing the citation text directly does **not** re-call Perplexity — it just unlocks approval (`userEdited: true`) and requires a fresh click on אשר.
-- Drag-and-drop reorder stays available in both `input` and `review` phases (affects future "שם / לעיל" numbering).
+**Bug D — Rule 37.8 בי"ת prefix not enforced on short forms.**
+`extractReferenceSuffix` returns the suffix verbatim (`עמ' 12`, `סעיף 5`, `פסקה 3`). It is then concatenated into the שם/לעיל output unchanged, producing `שם, עמ' 12.` instead of `שם, בעמ' 12.` (and `סעיף → בס'`, `פסקה → בפס'`). The server-side post-processor in `legal-qa/index.ts` does fix this, but the batch builder writes its output independently and never benefits from it.
 
-## State persistence
+**Bug E — שם detection off-by-one risk.**
+`prior.index === index` (where `prior.index = firstSeenIndex + 1` and `index` is the current 0-based loop index) means "immediate" really means "current cell is exactly 1 after the FIRST occurrence". A source seen at positions 0, 1, 2 gets `שם` at position 1 and `לעיל ה"ש 1` at position 2 — should be `שם` again at position 2.
 
-- Extend cell shape: add `approved`, `userEdited`, `phase` to the localStorage payload so refresh keeps the review state. Bump storage key suffix to avoid clashes with the old format (e.g. `footnote_cells_v2_<projectId>`).
+**Bug F (minor) — `applyRepeatCitationRules` runs inside a `setCells` updater.**
+At line 342 the function is called from within a state-updater callback. Under React 18 StrictMode the updater can run twice; the function is pure, but it makes debugging harder than computing once before `setCells`.
 
-## Files touched
+### Proposed fix scope (frontend only, ~50 lines in BatchFootnoteBuilder.tsx)
 
-- `src/components/BatchFootnoteBuilder.tsx` — phase state, split processing, new buttons
-- `src/components/FootnoteReviewCard.tsx` — new
-- No edge-function changes; uses existing `citation-chat` per-cell as today
+1. **Fix short label (Bug A + E).**
+   - Track `prevCellKey` alongside `seen`.
+   - In `extractShortSourceLabel`, drop the `\*` requirement and match `([^,\n]+?)\s+נ['׳]\s+([^,\n]+?)(?:,|$)`. Prefer the second party unless it's `מדינת ישראל`/`פלוני`/`היועץ המשפטי לממשלה`/`היועמ"ש`, in which case fall back to the first. Prepend `עניין ` for case law.
+   - Adjacent-repeat test becomes `prevCellKey === sourceKey` (not index arithmetic).
 
-## Out of scope
+2. **Legislation branch (Bug B).**
+   - Detect via `isLegislationInput(cell.input)` from `src/lib/citationUtils.ts` (already imported pattern available) or regex on the citation.
+   - Extract law name with `extractLawNameFromInput`; extract section number from `cell.input` (`סעיף\s+([\dא-ת()./–-]+)`).
+   - Adjacent same-law: `שם.` (or `שם, בס' X.` if section differs).
+   - Non-adjacent: `ס' X ל<lawName>.` (no `לעיל ה"ש`).
 
-- No changes to the consolidated final-list rendering, copy/insert-to-Word, or bibliography UI.
-- No backend / DB schema changes.
-- No changes to the integrity card flow (still runs at finalize).
+3. **בי"ת prefix helper (Bug D).**
+   - Add `withBetPrefix(suffix)` that rewrites `עמ' → בעמ'`, `סעיף → בס'`, `פסקה → בפס'`, `at 12 → at 12` (Latin unchanged), and leaves already-prefixed forms alone.
+   - Apply only on שם / לעיל branches, never on the first (full) occurrence.
+
+4. **Move out of the setCells updater (Bug F).**
+   - Compute `const normalized = applyRepeatCitationRules(cells);` before `setCells(normalized)` so it runs exactly once per click.
+
+### Out of scope
+- No edge-function changes (`legal-qa`, `citation-chat`, `case-law-search` untouched).
+- No DB / bibliography / integrity-card / final-list-rendering changes.
+- No prompt changes — purely deterministic post-processing in the builder.
+
+### Files touched
+- `src/components/BatchFootnoteBuilder.tsx` only.
+
+If you want, after I implement I can also update `mem://logic/repeated-citations` to note that the builder now mirrors the server's Rule 37 behavior.
