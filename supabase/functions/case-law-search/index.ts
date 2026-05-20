@@ -146,6 +146,55 @@ serve(async (req) => {
       );
     }
 
+    // ── Decision-date verification (Rule 18) ──
+    // For published cases, Perplexity's first-pass `date`/`year` is often the
+    // volume's print year or fabricated. Re-ask, anchored to the volume/page.
+    if (parsed.isPublished && parsed.padi_volume) {
+      try {
+        const part = parsed.padi_part ? `(${parsed.padi_part})` : "";
+        const padiRef = `פ"ד ${parsed.padi_volume}${part} ${parsed.padi_page || ""}`.trim();
+        const dvResp = await fetch("https://api.perplexity.ai/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "sonar",
+            search_domain_filter: ["nevo.co.il", "supreme.court.gov.il", "court.gov.il", "psakdin.co.il", "takdin.co.il", "lite.takdin.co.il"],
+            messages: [
+              {
+                role: "system",
+                content: `החזר JSON בלבד: {"date":"DD.MM.YYYY","year":"YYYY"}.\nהתאריך הנדרש הוא תאריך מתן פסק הדין על ידי בית המשפט — לא שנת הוצאת כרך פ"ד.\nאם לא מצאת אישור מפורש, החזר {"date":"","year":""}.`,
+              },
+              {
+                role: "user",
+                content: `מהו התאריך המדויק שבו ניתן פסק הדין ${fullCaseRef} שפורסם ב-${padiRef}?`,
+              },
+            ],
+          }),
+        });
+        if (dvResp.ok) {
+          const dvData = await dvResp.json();
+          const dvContent = dvData.choices?.[0]?.message?.content || "";
+          const dvMatch = dvContent.match(/\{[\s\S]*\}/);
+          if (dvMatch) {
+            const dvParsed = JSON.parse(dvMatch[0]);
+            const newDate = dvParsed.date ? String(dvParsed.date).trim() : "";
+            const newYear = dvParsed.year ? String(dvParsed.year).trim() : "";
+            console.log(`[case-law-search] date verification: original={date:${parsed.date},year:${parsed.year}} verified={date:${newDate},year:${newYear}}`);
+            if (newDate || newYear) {
+              parsed.date = newDate;
+              parsed.year = newYear || (newDate.match(/\d{4}/)?.[0] ?? "");
+            } else {
+              // Verification empty → drop to avoid hallucinated values
+              parsed.date = "";
+              parsed.year = "";
+            }
+          }
+        }
+      } catch (dvErr) {
+        console.error("[case-law-search] date verification error:", dvErr);
+      }
+    }
+
     // Build structured result
     const result: CaseLawResult = {
       found: true,
@@ -168,6 +217,7 @@ serve(async (req) => {
 
     // Extract year
     const year = parsed.year || (parsed.date ? (parsed.date as string).match(/\d{4}/)?.[0] : null);
+
 
     return new Response(
       JSON.stringify({ ...result, year }),
