@@ -247,6 +247,43 @@ function clearAcademicSession(projectId?: string) {
   } catch { /* silent */ }
 }
 
+// ─── In-progress Deep research marker ──────────────────────────────
+// Persisted in localStorage BEFORE the request fires so navigating away
+// (e.g. opening the profile) doesn't lose the run id. On remount, the
+// resume effect polls legal-qa-status with this id.
+const RESEARCH_RUN_KEY = (projectId?: string) =>
+  projectId ? `relex_research_run_${projectId}` : "relex_research_run";
+const RESEARCH_RUN_TTL_MS = 30 * 60 * 1000; // 30 min — Deep cap is ~10 min
+
+type ResearchRunMarker = {
+  runId: string;
+  question: string;
+  depth: "fast" | "deep";
+  startedAt: number;
+};
+
+function loadResearchRunMarker(projectId?: string): ResearchRunMarker | null {
+  try {
+    const raw = safeStorage.getItem(RESEARCH_RUN_KEY(projectId));
+    if (!raw) return null;
+    const m = JSON.parse(raw) as ResearchRunMarker;
+    if (!m?.runId || typeof m.startedAt !== "number") return null;
+    if (Date.now() - m.startedAt > RESEARCH_RUN_TTL_MS) {
+      safeStorage.removeItem(RESEARCH_RUN_KEY(projectId));
+      return null;
+    }
+    return m;
+  } catch { return null; }
+}
+
+function saveResearchRunMarker(marker: ResearchRunMarker, projectId?: string) {
+  try { safeStorage.setItem(RESEARCH_RUN_KEY(projectId), JSON.stringify(marker)); } catch { /* silent */ }
+}
+
+function clearResearchRunMarker(projectId?: string) {
+  try { safeStorage.removeItem(RESEARCH_RUN_KEY(projectId)); } catch { /* silent */ }
+}
+
 // ─── DB-backed academic session sync ───────────────────────────────
 // Persists wizard state to academic_sessions table so users can resume
 // from any browser/device, not just the one that wrote localStorage.
