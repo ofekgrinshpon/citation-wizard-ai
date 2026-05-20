@@ -1,0 +1,379 @@
+// Research Core v1 — runCore orchestrator.
+// Planner → Retrieval → Verifier → Ledger → Drafter → Canonical Citations →
+// Footnote Builder → CitationQualityPass.
+//
+// Mirrors V4 runner signature so dispatch in index.ts stays symmetric:
+//   { ok, answer, footnotes, citations, metadata, fallbackReason? }
+//
+// V2/V3/V4 are untouched; this is a parallel pipeline gated by
+// RESEARCH_PIPELINE=core + pilot-topic guard in index.ts.
+
+import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
+import type {
+  Footnote,
+  LedgerSourceId,
+  StageRun,
+} from "./types.ts";
+import { planResearch } from "./planner.ts";
+import { retrieveForPlan } from "./retrieval.ts";
+import { verify } from "./verifier.ts";
+import { buildLedger } from "./ledger.ts";
+import { draft } from "./drafter.ts";
+import { buildCitationsForLedger } from "./citations.ts";
+import { runCitationQuality } from "./citation_quality.ts";
+
+export type CoreStageEmitter = (
+  name: string,
+  status: "running" | "complete",
+  detail?: string,
+) => void;
+
+export interface RunCoreArgs {
+  question: string;
+  adminClient: SupabaseClient;
+  drafterTimeoutMs?: number;
+  forceDrafterModel?: string | null;
+  onStage?: CoreStageEmitter;
+  signal?: AbortSignal;
+}
+
+// Public footnote shape returned to the edge function. Matches V2/V3/V4
+// `RunResearchV2Result.footnotes` so `buildResponse(...)` works unchanged.
+export interface ApiFootnote {
+  number: number;
+  citation: string;
+  source_type: string;
+  url?: string;
+}
+
+export interface RunCoreResult {
+  ok: boolean;
+  fallbackReason?: string;
+  answer: string;
+  footnotes: ApiFootnote[];
+  citations: string[];
+  metadata: Record<string, unknown>;
+}
+
+function emitSafe(emit: CoreStageEmitter | undefined, name: string, status: "running" | "complete", detail?: string) {
+  if (!emit) return;
+  try { emit(name, status, detail); } catch (_e) { /* noop */ }
+}
+
+function toApiFootnote(fn: Footnote): ApiFootnote {
+  return {
+    number: fn.number,
+    citation: fn.text,
+    source_type: fn.source_type,
+    ...(fn.url ? { url: fn.url } : {}),
+  };
+}
+
+async function defaultEmbed(text: string): Promise<number[] | null> {
+  const key = Deno.env.get("OPENAI_API_KEY");
+  if (!key) return null;
+  try {
+    const r = await fetch("https://api.openai.com/v1/embeddings", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ model: "text-embedding-3-small", input: text, dimensions: 768 }),
+    });
+    if (!r.ok) { console.error("[core:embed]", r.status, await r.text()); return null; }
+    const j = await r.json();
+    return j?.data?.[0]?.embedding ?? null;
+  } catch (e) {
+    console.error("[core:embed] threw", e);
+    return null;
+  }
+}
+
+export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
+  const tStart = Date.now();
+  const { question, adminClient, onStage, signal } = args;
+  const stageRuns: StageRun[] = [];
+
+  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY") ?? "";
+  const PERPLEXITY_API_KEY = Deno.env.get("PERPLEXITY_API_KEY") ?? "";
+  if (!LOVABLE_API_KEY) {
+    return {
+      ok: false, fallbackReason: "missing_lovable_api_key",
+      answer: "", footnotes: [], citations: [],
+      metadata: { core: { error: "missing_lovable_api_key" } },
+    };
+  }
+
+  const recordStage = (s: StageRun) => stageRuns.push(s);
+
+  // ─── 1. Planner ────────────────────────────────────────────────────────
+  emitSafe(onStage, "plan", "running");
+  const tPlan = Date.now();
+  const planRes = await planResearch({ question, lovableApiKey: LOVABLE_API_KEY, signal });
+  recordStage({
+    stage: "plan",
+    duration_ms: Date.now() - tPlan,
+    status: planRes.ok ? "ok" : "error",
+    model: planRes.model,
+    ...(planRes.error ? { error: planRes.error } : {}),
+  });
+  if (!planRes.ok || !planRes.plan) {
+    emitSafe(onStage, "plan", "complete", "planner_failed");
+    return {
+      ok: false, fallbackReason: `planner_failed:${planRes.error ?? "unknown"}`,
+      answer: "", footnotes: [], citations: [],
+      metadata: { core: { stage_runs: stageRuns, error: planRes.error } },
+    };
+  }
+  const plan = planRes.plan;
+  emitSafe(onStage, "plan", "complete", `claims=${plan.claims.length} auth=${plan.expected_authorities.length}`);
+
+  // ─── 2. Retrieval ──────────────────────────────────────────────────────
+  emitSafe(onStage, "retrieval", "running");
+  const tRet = Date.now();
+  let retrieval;
+  try {
+    retrieval = await retrieveForPlan({
+      adminClient, plan,
+      embed: defaultEmbed,
+      perplexityKey: PERPLEXITY_API_KEY || undefined,
+      signal,
+    });
+  } catch (e) {
+    recordStage({ stage: "retrieval", duration_ms: Date.now() - tRet, status: "error", error: (e as Error).message });
+    emitSafe(onStage, "retrieval", "complete", "error");
+    return {
+      ok: false, fallbackReason: `retrieval_threw:${(e as Error).message}`,
+      answer: "", footnotes: [], citations: [],
+      metadata: { core: { stage_runs: stageRuns } },
+    };
+  }
+  recordStage({
+    stage: "retrieval",
+    duration_ms: Date.now() - tRet,
+    status: retrieval.total_candidates > 0 ? "ok" : "empty",
+  });
+  emitSafe(onStage, "retrieval", "complete", `candidates=${retrieval.total_candidates}`);
+
+  // ─── 3. Verifier ───────────────────────────────────────────────────────
+  emitSafe(onStage, "verify", "running");
+  const tVer = Date.now();
+  let verification;
+  try {
+    verification = await verify({
+      plan, packs: retrieval.packs, lovableApiKey: LOVABLE_API_KEY, signal,
+    });
+  } catch (e) {
+    recordStage({ stage: "verify", duration_ms: Date.now() - tVer, status: "error", error: (e as Error).message });
+    emitSafe(onStage, "verify", "complete", "error");
+    return {
+      ok: false, fallbackReason: `verify_threw:${(e as Error).message}`,
+      answer: "", footnotes: [], citations: [],
+      metadata: { core: { stage_runs: stageRuns } },
+    };
+  }
+  recordStage({
+    stage: "verify",
+    duration_ms: Date.now() - tVer,
+    status: verification.totals.direct + verification.totals.partial > 0 ? "ok" : "empty",
+  });
+  emitSafe(onStage, "verify", "complete",
+    `direct=${verification.totals.direct} partial=${verification.totals.partial}`);
+
+  // ─── 4. Ledger ─────────────────────────────────────────────────────────
+  emitSafe(onStage, "ledger", "running");
+  const tLed = Date.now();
+  const candidateMeta = new Map<string, { source_type?: string; document_id?: string }>();
+  for (const pack of retrieval.packs) {
+    for (const c of pack.candidates) {
+      candidateMeta.set(c.candidate_id, { source_type: c.source_type, document_id: c.document_id });
+    }
+  }
+  const ledger = buildLedger({
+    plan, verification,
+    authorityResolutions: retrieval.authority_resolutions,
+    candidateMeta,
+  });
+  recordStage({
+    stage: "ledger",
+    duration_ms: Date.now() - tLed,
+    status: ledger.entries.length > 0 ? "ok" : "empty",
+  });
+  emitSafe(onStage, "ledger", "complete",
+    `supported=${ledger.totals.supported} hedged=${ledger.totals.hedged} sources=${ledger.totals.sources}`);
+
+  if (ledger.entries.length === 0 || ledger.totals.sources === 0) {
+    return {
+      ok: false, fallbackReason: "ledger_insufficient",
+      answer: "", footnotes: [], citations: [],
+      metadata: {
+        core: {
+          stage_runs: stageRuns,
+          plan,
+          ledger: {
+            supported: ledger.entries.filter(e => e.status === "supported").map(e => e.claim_id),
+            hedged: ledger.entries.filter(e => e.status === "hedged").map(e => e.claim_id),
+            unsupported: ledger.unsupported_claim_ids,
+          },
+        },
+      },
+    };
+  }
+
+  // ─── 5. Drafter ────────────────────────────────────────────────────────
+  emitSafe(onStage, "draft", "running");
+  const tDr = Date.now();
+  let draftRes;
+  try {
+    draftRes = await draft({ plan, ledger, lovableApiKey: LOVABLE_API_KEY, signal });
+  } catch (e) {
+    recordStage({ stage: "draft", duration_ms: Date.now() - tDr, status: "error", error: (e as Error).message });
+    emitSafe(onStage, "draft", "complete", "error");
+    return {
+      ok: false, fallbackReason: `draft_threw:${(e as Error).message}`,
+      answer: "", footnotes: [], citations: [],
+      metadata: { core: { stage_runs: stageRuns, plan } },
+    };
+  }
+  recordStage({
+    stage: "draft",
+    duration_ms: Date.now() - tDr,
+    status: draftRes.answer ? "ok" : "empty",
+    model: draftRes.model,
+  });
+  emitSafe(onStage, "draft", "complete",
+    `paragraphs=${draftRes.paragraph_count} markers=${draftRes.citations_used.length}`);
+
+  if (!draftRes.answer?.trim()) {
+    return {
+      ok: false, fallbackReason: "drafter_empty",
+      answer: "", footnotes: [], citations: [],
+      metadata: { core: { stage_runs: stageRuns, plan, draft_warnings: draftRes.warnings } },
+    };
+  }
+
+  // ─── 6.1 Canonical Citations ───────────────────────────────────────────
+  const tCit = Date.now();
+  const citations = buildCitationsForLedger(ledger.entries) as Map<LedgerSourceId, ReturnType<typeof buildCitationsForLedger> extends Map<string, infer V> ? V : never>;
+  recordStage({ stage: "citations", duration_ms: Date.now() - tCit, status: "ok" });
+
+  // ─── 6.2 + 6.3 Footnote builder + CitationQualityPass ──────────────────
+  emitSafe(onStage, "post_processing", "running", "citation_quality");
+  const tQual = Date.now();
+  const qual = runCitationQuality({
+    answer: draftRes.answer,
+    ledger,
+    citations,
+  });
+  recordStage({
+    stage: "citation_quality",
+    duration_ms: Date.now() - tQual,
+    status: qual.status === "ok" ? "ok" : (qual.status === "needs_review" ? "ok" : "empty"),
+  });
+  emitSafe(onStage, "post_processing", "complete",
+    `status=${qual.status} fn=${qual.footnotes.length} removed=${qual.removed_citations.length}`);
+
+  // Acceptance asserts ----------------------------------------------------
+  const acceptanceErrors: string[] = [];
+  if (/\[cite:LS\d+\]/.test(qual.rendered_answer)) acceptanceErrors.push("marker_leftover_in_answer");
+  // Every superscript in rendered text resolves to a footnote number.
+  // (rendered_answer carries superscripts produced by buildFootnotes; we
+  // check that every number referenced has a matching footnote entry.)
+  const supRe = /[\u00B9\u00B2\u00B3\u2070-\u209F]+/g;
+  const fnNumbers = new Set(qual.footnotes.map(f => f.number));
+  for (const m of qual.rendered_answer.matchAll(supRe)) {
+    // Map superscript glyphs back to digits.
+    const digits = m[0].replace(/./gu, (ch) => {
+      const idx = "⁰¹²³⁴⁵⁶⁷⁸⁹".indexOf(ch);
+      return idx >= 0 ? String(idx) : "";
+    });
+    if (!digits) continue;
+    const n = parseInt(digits, 10);
+    if (!Number.isFinite(n)) continue;
+    if (!fnNumbers.has(n)) { acceptanceErrors.push(`sup_no_footnote:${n}`); break; }
+  }
+  // Placeholder footnotes are forbidden unless source explicitly partial.
+  for (const fn of qual.footnotes) {
+    if (/\(ציטוט חסר\)/.test(fn.text)) {
+      const cit = citations.get(fn.ls_id);
+      if (!cit || cit.citation_quality !== "partial") {
+        acceptanceErrors.push(`placeholder_unmarked:${fn.ls_id}`);
+        break;
+      }
+    }
+  }
+
+  const coreMetadata = {
+    version: "core_v1",
+    plan,
+    retrieval: {
+      per_claim: retrieval.packs.map((p) => ({
+        claim_id: p.claim_id,
+        local_text_count: p.local_text_count,
+        local_vector_count: p.local_vector_count,
+        exact_authority_count: p.exact_authority_count,
+        approved_web_count: p.approved_web_count,
+        approved_web_domains: p.approved_web_domains,
+        candidate_ids: p.candidates.map((c) => c.candidate_id),
+      })),
+      total_candidates: retrieval.total_candidates,
+      total_web_candidates: retrieval.total_web_candidates,
+      web_global_cap_hit: retrieval.web_global_cap_hit,
+    },
+    verification: verification.per_claim.map((cv) => ({
+      claim_id: cv.claim_id,
+      verdict_counts: cv.aggregates.counts_by_support,
+    })),
+    ledger: {
+      supported: ledger.entries.filter((e) => e.status === "supported").map((e) => e.claim_id),
+      hedged: ledger.entries.filter((e) => e.status === "hedged").map((e) => e.claim_id),
+      unsupported: ledger.unsupported_claim_ids,
+      totals: ledger.totals,
+      invariants: ledger.invariants,
+    },
+    drafter: {
+      model: draftRes.model,
+      paragraph_count: draftRes.paragraph_count,
+      citations_used: draftRes.citations_used,
+      unknown_markers: draftRes.unknown_markers,
+      unsupported_claim_leaks: draftRes.unsupported_claim_leaks,
+      insufficient_sentence_required: draftRes.insufficient_sources_sentence_required,
+      insufficient_sentence_present: draftRes.insufficient_sources_sentence_present,
+      warnings: draftRes.warnings,
+    },
+    citation_quality: {
+      status: qual.status,
+      summary: qual.citation_summary,
+      removed_citations: qual.removed_citations,
+      flagged_footnotes: qual.flagged_footnotes,
+      claims_lost_all_support: qual.claims_lost_all_support,
+      marker_to_footnote: qual.marker_to_footnote,
+    },
+    acceptance_errors: acceptanceErrors,
+    stage_runs: stageRuns,
+    total_duration_ms: Date.now() - tStart,
+  };
+
+  if (qual.status === "insufficient_verified_sources") {
+    return {
+      ok: false, fallbackReason: `quality_${qual.status}`,
+      answer: "", footnotes: [], citations: [],
+      metadata: { core: coreMetadata },
+    };
+  }
+  if (acceptanceErrors.length > 0) {
+    return {
+      ok: false, fallbackReason: `acceptance:${acceptanceErrors[0]}`,
+      answer: "", footnotes: [], citations: [],
+      metadata: { core: coreMetadata },
+    };
+  }
+
+  // qual.status === "ok" || "needs_review" → ship the answer.
+  const apiFootnotes = qual.footnotes.map(toApiFootnote);
+  return {
+    ok: true,
+    answer: qual.rendered_answer,
+    footnotes: apiFootnotes,
+    citations: apiFootnotes.map((f) => f.citation),
+    metadata: { core: coreMetadata },
+  };
+}
