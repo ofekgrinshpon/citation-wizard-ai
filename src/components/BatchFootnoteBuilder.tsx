@@ -880,34 +880,78 @@ function parseFootnotes(content: string, expectedCount: number): string[] {
 }
 
 function applyRepeatCitationRules(cells: FootnoteCell[]): FootnoteCell[] {
-  const seen = new Map<string, { index: number; fullCitation: string }>();
+  const seen = new Map<string, { index: number; fullCitation: string; isLegislation: boolean; lawName: string }>();
+  let prevCellKey: string | null = null;
 
-  return cells.map((cell, index) => {
-    if (!cell.output) return cell;
-
-    const citationOnly = extractCitationOnly(cell.output);
-    const sourceKey = normalizeSourceKey(cell.input || citationOnly);
-    if (!sourceKey) return cell;
-
-    const prior = seen.get(sourceKey);
-    const normalizedOutput = citationOnly.trim();
-
-    if (!prior) {
-      seen.set(sourceKey, { index: index + 1, fullCitation: normalizedOutput });
+  return cells.map((cell, idx) => {
+    if (!cell.output) {
+      prevCellKey = null;
       return cell;
     }
 
-    const referenceSuffix = extractReferenceSuffix(cell.input);
-    const isImmediateRepeat = prior.index === index;
-    const nextCitation = isImmediateRepeat
-      ? `שם${referenceSuffix ? `, ${referenceSuffix}` : "."}`
-      : `${extractShortSourceLabel(prior.fullCitation)}, לעיל ה"ש ${prior.index}${referenceSuffix ? `, ${referenceSuffix}` : ""}.`;
+    const citationOnly = extractCitationOnly(cell.output);
+    const sourceKey = normalizeSourceKey(cell.input || citationOnly);
+    if (!sourceKey) {
+      prevCellKey = null;
+      return cell;
+    }
 
+    const prior = seen.get(sourceKey);
+    const referenceSuffix = extractReferenceSuffix(cell.input);
+    const isLegislation = isLegislationInput(cell.input) || isLegislationInput(citationOnly);
+
+    if (!prior) {
+      const lawName = isLegislation
+        ? (extractLawNameFromInput(cell.input) || extractLawNameFromInput(citationOnly))
+        : "";
+      seen.set(sourceKey, { index: idx + 1, fullCitation: citationOnly.trim(), isLegislation, lawName });
+      prevCellKey = sourceKey;
+      return cell;
+    }
+
+    const isAdjacentRepeat = prevCellKey === sourceKey;
+    let nextCitation: string;
+
+    if (prior.isLegislation) {
+      // Rule 37.5 — never use לעיל ה"ש for legislation
+      const sectionMatch = (cell.input || "").match(/סעיף\s+([\dא-ת()./\-–]+)/);
+      const section = sectionMatch ? sectionMatch[1] : "";
+      if (isAdjacentRepeat) {
+        nextCitation = section ? `שם, בס' ${section}.` : `שם.`;
+      } else {
+        nextCitation = section && prior.lawName
+          ? `ס' ${section} ל${prior.lawName}.`
+          : prior.lawName
+            ? `${prior.lawName}, לעיל ה"ש ${prior.index}.`
+            : `שם.`;
+      }
+    } else {
+      const bSuffix = referenceSuffix ? withBetPrefix(referenceSuffix) : "";
+      if (isAdjacentRepeat) {
+        nextCitation = bSuffix ? `שם, ${bSuffix}.` : `שם.`;
+      } else {
+        const label = extractShortSourceLabel(prior.fullCitation);
+        nextCitation = `${label}, לעיל ה"ש ${prior.index}${bSuffix ? `, ${bSuffix}` : ""}.`;
+      }
+    }
+
+    prevCellKey = sourceKey;
     return {
       ...cell,
       output: replaceCitationOnly(cell.output, nextCitation),
     };
   });
+}
+
+function withBetPrefix(suffix: string): string {
+  const trimmed = suffix.trim();
+  // already has בי"ת prefix
+  if (/^(בעמ['״]|בס['״]|בפס['״])/.test(trimmed)) return trimmed;
+  if (/^עמ['״]/.test(trimmed)) return trimmed.replace(/^עמ/, "בעמ");
+  if (/^סעיף\b/.test(trimmed)) return trimmed.replace(/^סעיף\s*/, "בס' ");
+  if (/^פסקה\b/.test(trimmed)) return trimmed.replace(/^פסקה\s*/, "בפס' ");
+  // Latin (at X / para X) — leave as-is
+  return trimmed;
 }
 
 function normalizeSourceKey(text: string): string {
@@ -942,14 +986,22 @@ function extractReferenceSuffix(text: string): string {
   return "";
 }
 
+const GENERIC_PARTIES = /^(מדינת ישראל|פלוני|פלונית|אלמוני|אלמונית|היועץ המשפטי לממשלה|היועמ"ש|היועמ״ש|state of israel|attorney general)\b/i;
+
 function extractShortSourceLabel(text: string): string {
   const cleaned = text
     .replace(/\*\*/g, "")
     .replace(/##/g, "")
     .trim();
 
-  const caseMatch = cleaned.match(/\*\*?([^*\n]+?)\*\*?\s+נ['׳]/);
-  if (caseMatch) return caseMatch[1].trim();
+  // Case-law: "<party A> נ' <party B>"
+  const caseMatch = cleaned.match(/([^,\n()]+?)\s+נ['׳]\s+([^,\n()]+?)(?=\s*,|\s*\(|$)/);
+  if (caseMatch) {
+    const a = caseMatch[1].trim().replace(/^.*?\d+\/\d+\s+/, "").trim(); // strip leading docket like ע"א 2401/08
+    const b = caseMatch[2].trim();
+    const pick = GENERIC_PARTIES.test(b) ? (GENERIC_PARTIES.test(a) ? b : a) : b;
+    return `עניין ${pick}`;
+  }
 
   const hebrewLaw = cleaned.match(/(חוק[\s-]יסוד[^,\n]*|חוק[^,\n]*|פקודת[^,\n]*|פקודה[^,\n]*|תקנות[^,\n]*|צו[^,\n]*)/);
   if (hebrewLaw) return hebrewLaw[1].trim();
