@@ -93,22 +93,57 @@ export type LedgerStatus = "supported" | "hedged" | "unsupported";
 export interface LedgerSource {
   ls_id: LedgerSourceId;
   candidate_id: CandidateId;
+  claim_id: ClaimId;
+  origin: CandidateOrigin;
   support: "direct" | "partial";
   pinpoint?: string;
   title: string;
   citation: string;
   url?: string;
+  domain?: string;
+  snippet: string;
   source_type: string;
   document_id?: string;
+  normalized_key: string;
+  is_primary: boolean;
 }
 
 export interface LedgerEntry {
   claim_id: ClaimId;
+  text: string;
   status: LedgerStatus;
+  direct_count: number;
+  partial_count: number;
   sources: LedgerSource[];
 }
 
+export interface LedgerInvariants {
+  unresolved_authorities_in_ledger: number;  // must be 0
+  tangential_or_unrelated_in_ledger: number; // must be 0
+  duplicates_dropped: number;
+}
+
+export interface LedgerTotals {
+  supported: number;
+  hedged: number;
+  unsupported: number;
+  sources: number;
+  primary_sources: number;
+  secondary_sources: number;
+  by_origin: Record<CandidateOrigin, number>;
+}
+
+export interface LedgerResult {
+  entries: LedgerEntry[];                    // supported + hedged only
+  unsupported_claim_ids: ClaimId[];
+  unresolved_authority_ids: AuthorityId[];
+  totals: LedgerTotals;
+  invariants: LedgerInvariants;
+  duration_ms: number;
+}
+
 export type Ledger = LedgerEntry[];
+
 
 // ─────────────────── Step 6: Citation pass ───────────────────
 
