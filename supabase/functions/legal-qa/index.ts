@@ -2917,6 +2917,13 @@ ${externalList}
       if (!aiRes.ok) {
         const errText = await aiRes.text();
         console.error("Academic sub-mode AI error:", aiRes.status, errText);
+        if (resumableRunId) {
+          try {
+            await adminClient.from("qa_logs").update({
+              metadata: { academic_step: academicStep, checkpoint: "failed", run_id: resumableRunId, error_message: `AI ${aiRes.status}` },
+            }).eq("id", resumableRunId);
+          } catch { /* non-fatal */ }
+        }
         return new Response(JSON.stringify({ error: "שגיאה בשירות ה-AI." }), {
           status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
@@ -2944,22 +2951,36 @@ ${externalList}
       console.log(`Academic sub-mode (${academicStep}${isAbstractGeneration ? ":abstract" : (isConclusionGeneration ? ":conclusion" : "")}): ${answerText.length} chars, ${Date.now() - t0}ms${topicCoverage ? `, reality-check: local=${topicCoverage.localHits} ext=${topicCoverage.externalHits}` : ""}`);
 
       try {
-        await adminClient.from("qa_logs").insert({
-          user_id: user.id,
-          question: question.substring(0, 500),
-          answer: answerText,
-          footnotes: [],
-          task_mode: taskMode,
-          local_footnotes_count: 0,
-          perplexity_footnotes_count: 0,
-          total_footnotes: 0,
-          metadata: {
-            academic_step: academicStep,
-            is_abstract: isAbstractGeneration,
-            duration_ms: Date.now() - t0,
-            ...(topicCoverage ? { topic_reality_check: topicCoverage } : {}),
-          },
-        });
+        if (resumableRunId) {
+          await adminClient.from("qa_logs").update({
+            answer: answerText,
+            metadata: {
+              academic_step: academicStep,
+              checkpoint: "completed",
+              run_id: resumableRunId,
+              is_abstract: isAbstractGeneration,
+              duration_ms: Date.now() - t0,
+              ...(topicCoverage ? { topic_reality_check: topicCoverage } : {}),
+            },
+          }).eq("id", resumableRunId);
+        } else {
+          await adminClient.from("qa_logs").insert({
+            user_id: user.id,
+            question: question.substring(0, 500),
+            answer: answerText,
+            footnotes: [],
+            task_mode: taskMode,
+            local_footnotes_count: 0,
+            perplexity_footnotes_count: 0,
+            total_footnotes: 0,
+            metadata: {
+              academic_step: academicStep,
+              is_abstract: isAbstractGeneration,
+              duration_ms: Date.now() - t0,
+              ...(topicCoverage ? { topic_reality_check: topicCoverage } : {}),
+            },
+          });
+        }
       } catch (logErr) {
         console.error("Failed to insert academic sub-mode qa_logs row (non-fatal):", logErr);
       }
@@ -2970,6 +2991,7 @@ ${externalList}
           footnotes: [],
           source_urls: [],
           ...(topicCoverage ? { topicCoverage } : {}),
+          ...(resumableRunId ? { runId: resumableRunId } : {}),
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
