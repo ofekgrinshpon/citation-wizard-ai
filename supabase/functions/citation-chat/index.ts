@@ -43,6 +43,130 @@ function normalizeDatabaseName(urls: unknown, fallback: unknown): string {
 }
 import { CASE_DOCKET_RE, CASE_TYPE_PREFIX_RE, CASE_TYPE_PREFIXES } from "../_shared/caseTypePrefixes.ts";
 
+// ── פ"ד volume → plausible decision-year window (Rule 18) ──
+// Add entries opportunistically; unknown volumes skip the check. Ranges are
+// inclusive and intentionally generous (decision → publication can lag ~2y).
+const PADI_VOLUME_YEAR_RANGES: Record<string, [number, number]> = {
+  "נב": [1997, 1999],
+  "נג": [1998, 2000],
+  "נד": [1999, 2001],
+  "נה": [2000, 2002],
+  "נו": [2001, 2003],
+  "נז": [2002, 2004],
+  "נח": [2003, 2005],
+  "נט": [2004, 2006],
+  "ס": [2005, 2007],
+  "סא": [2006, 2008],
+  "סב": [2007, 2009],
+  "סג": [2008, 2010],
+  "סד": [2010, 2012],
+  "סה": [2011, 2013],
+};
+
+// ── Focused decision-date verification for published Supreme Court cases ──
+// Perplexity's first-pass `date`/`year` for פ"ד citations is often the
+// volume's print year (or fabricated). This re-asks specifically for the
+// decision date, anchored to the verified volume/part/page.
+async function verifyDecisionDate(
+  apiKey: string,
+  caseType: string,
+  caseNumber: string,
+  padiVolume: string,
+  padiPart: string,
+  padiPage: string,
+): Promise<{ date?: string; year?: string } | null> {
+  try {
+    const fullRef = `${caseType} ${caseNumber}`;
+    const part = padiPart ? `(${padiPart})` : "";
+    const padiRef = `פ"ד ${padiVolume}${part} ${padiPage || ""}`.trim();
+    const resp = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "sonar",
+        search_domain_filter: ["nevo.co.il", "supreme.court.gov.il", "court.gov.il", "psakdin.co.il", "takdin.co.il", "lite.takdin.co.il"],
+        messages: [
+          {
+            role: "system",
+            content: `אתה עוזר מחקר משפטי. החזר JSON בלבד: {"date":"DD.MM.YYYY","year":"YYYY","confidence":"high/low"}.\nהתאריך הנדרש הוא תאריך מתן פסק הדין על ידי בית המשפט — לא שנת הוצאת כרך פ"ד.\nאם לא מצאת אישור מפורש לתאריך מתן פסק הדין, החזר {"date":"","year":"","confidence":"low"}.`,
+          },
+          {
+            role: "user",
+            content: `מהו התאריך המדויק שבו ניתן פסק הדין ${fullRef} שפורסם ב-${padiRef}? ציין יום.חודש.שנה ושנת מתן פסק הדין.`,
+          },
+        ],
+      }),
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    const content = data.choices?.[0]?.message?.content || "";
+    const jm = content.match(/\{[\s\S]*\}/);
+    if (!jm) return null;
+    const parsed = JSON.parse(
+      jm[0].replace(/([\u0590-\u05FF])"([\u0590-\u05FF])/g, "$1\u05F4$2"),
+    );
+    const date = parsed.date ? String(parsed.date).trim() : "";
+    let year = parsed.year ? String(parsed.year).trim() : "";
+    if (!year && date) {
+      const ym = date.match(/(\d{4})/);
+      if (ym) year = ym[1];
+    }
+    if (!date && !year) return { date: "", year: "" };
+    return { date, year };
+  } catch (e) {
+    console.error("[case-law] verifyDecisionDate error:", e);
+    return null;
+  }
+}
+
+// Applies decision-date verification + פ"ד volume plausibility guard to a
+// parsed Perplexity case-law result. Mutates `parsed` in place.
+async function reconcilePublishedDate(
+  apiKey: string,
+  caseType: string,
+  caseNumber: string,
+  parsed: Record<string, unknown>,
+): Promise<void> {
+  const isPub = !!parsed.isPublished;
+  const vol = parsed.padi_volume ? String(parsed.padi_volume).trim() : "";
+  if (!isPub || !vol) return;
+  const part = parsed.padi_part ? String(parsed.padi_part).trim() : "";
+  const page = parsed.padi_page ? String(parsed.padi_page).trim() : "";
+  const origDate = parsed.date ? String(parsed.date) : "";
+  const origYear = parsed.year ? String(parsed.year) : "";
+
+  const v = await verifyDecisionDate(apiKey, caseType, caseNumber, vol, part, page);
+  let action: "override" | "clear" | "keep" = "keep";
+  if (v && (v.date || v.year)) {
+    parsed.date = v.date || "";
+    parsed.year = v.year || "";
+    action = "override";
+  } else if (v) {
+    // Verification returned an empty result → clear hallucinated values
+    parsed.date = "";
+    parsed.year = "";
+    parsed.confidence = "low";
+    action = "clear";
+  }
+  console.log(
+    `[case-law] date verification: original={date:${origDate},year:${origYear}} ` +
+    `verified=${JSON.stringify(v)} action=${action}`,
+  );
+
+  // Volume plausibility guard
+  const range = PADI_VOLUME_YEAR_RANGES[vol];
+  const yNum = parseInt(String(parsed.year || ""), 10);
+  if (range && !Number.isNaN(yNum) && (yNum < range[0] || yNum > range[1])) {
+    console.log(
+      `[case-law] volume plausibility: volume=${vol} year=${yNum} ` +
+      `range=${range[0]}-${range[1]} → out of range, cleared`,
+    );
+    parsed.year = "";
+    parsed.date = "";
+    parsed.confidence = "low";
+  }
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -964,7 +1088,8 @@ serve(async (req) => {
 הפורמט:
 {"found":true/false,"party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","confidence":"high/low"}
 שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
-confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות רבים, "low" אם יש ספק או מקור יחיד.`,
+confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות רבים, "low" אם יש ספק או מקור יחיד.
+חשוב: שדה year/date חייב להיות תאריך/שנת מתן פסק הדין על ידי בית המשפט, ולא שנת הוצאת כרך פ"ד.`,
                   },
                   { role: "user", content: query },
                 ],
@@ -1028,6 +1153,11 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                       console.error("[case-law] Verification search error:", verifyErr);
                     }
                   }
+
+                  // Reconcile decision date/year for published cases (Rule 18).
+                  // First-pass `date`/`year` is often the volume's print year or fabricated.
+                  await reconcilePublishedDate(PERPLEXITY_API_KEY, caseType, caseNum, parsed);
+
 
                   // Normalize databaseName from Perplexity citation URLs (lite.takdin → תקדין,
                   // supremedecisions.court.gov.il → אר״ש, etc). Overrides free-form strings.
@@ -1398,7 +1528,17 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                       const normalized = normalizeDatabaseName(r.source_url, r.databaseName);
                       if (normalized) r.databaseName = normalized;
                     }
+                    // Reconcile decision date/year for surviving published cases (Rule 18).
+                    if (r.isPublished && r.padi_volume) {
+                      await reconcilePublishedDate(
+                        PERPLEXITY_API_KEY,
+                        String(r.caseType || userCaseTypeNorm || ""),
+                        String(r.caseNumber || ""),
+                        r as Record<string, unknown>,
+                      );
+                    }
                   }
+
 
                   if (results.length === 0) {
                     console.log(`[case-law] No relevant results found for party search "${searchQuery}"`);

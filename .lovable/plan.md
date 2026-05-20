@@ -1,74 +1,79 @@
-# Map Perplexity source URL → canonical database name
+## Goal
 
-## Problem
+Stop emitting a wrong `(year)` for published Supreme Court case-law citations (Rule 18). The current pipeline trusts Perplexity's single-shot `date`/`year` even when it is fabricated, as just happened with `ע"פ 4596/98 פלונית נ' מדינת ישראל, פ"ד נד(1) 145` (got `(2001)`, real decision date `25.01.2000` → should be `(2000)`).
 
-For unpublished case law, Perplexity returns free-form values like `"המאגר של בית המשפט העליון"` for `databaseName`. Two issues:
+## Root cause
 
-1. The string isn't a valid database name per Rule 19.1, so the citation validator flags `"חסר: שם המאגר"`.
-2. The actual database can be inferred deterministically from the `source_url` Perplexity already returns.
+In `supabase/functions/citation-chat/index.ts` (case-number branch, ~lines 974–1075):
 
-## Mapping
+1. The first Perplexity (`sonar`) call returns `date`/`year` alongside publication fields. We accept them as-is.
+2. The "secondary verification" block (~lines 984–1029) re-asks Perplexity **only** about `isPublished/padi_volume/padi_part/padi_page`. It does not re-fetch the decision date.
+3. The system prompt does not tell Perplexity that the `year` field for a published case must be the **decision year** (Rule 18), not the volume's print year. Perplexity tends to return the volume's publication year, and sometimes invents the date outright.
+4. There is no plausibility check between the published volume (e.g. `פ"ד נד(1)`) and the returned `date`/`year`.
 
-Derive `databaseName` from the host of `parsed.source_url` (case-insensitive), overriding whatever string Perplexity returned:
+Same pattern exists in `supabase/functions/case-law-search/index.ts` (single-shot, no verification at all).
 
-| Host contains | databaseName |
-|---|---|
-| `lite.takdin.co.il` or `takdin.co.il` | `תקדין` |
-| `supremedecisions.court.gov.il` | `אר״ש` |
-| `nevo.co.il` | `נבו` |
-| `psakdin.co.il` | `פסקדין` |
-| `pador` / `padaor` | `פדאור` |
+## Fix
 
-If no `source_url` or host doesn't match, keep Perplexity's string only if it's already one of the canonical names; otherwise leave empty so the existing `[חסר: שם המאגר]` warning still fires (better than a wrong name).
+### 1. `supabase/functions/citation-chat/index.ts` — add a date-verification step
 
-## Changes
+When the (possibly verification-promoted) result has `isPublished === true` AND `padi_volume` present, run one extra focused Perplexity call (`sonar`, same `search_domain_filter`) asking **only** for the decision date:
 
-### 1. `supabase/functions/citation-chat/index.ts`
-
-Add a small helper `normalizeDatabaseName(url, fallback)` near the existing `isTrustedPubUrl` (~line 1249). Call it right after parsing the Perplexity JSON, in BOTH branches that read `parsed.databaseName`:
-
-- Primary path (~line 1007), before the `details += \`מאגר: ${parsed.databaseName}\`` line.
-- Party-search fallback path (~line 1363), same treatment.
-
-The helper:
-```ts
-const DB_BY_HOST: Array<[RegExp, string]> = [
-  [/(^|\.)lite\.takdin\.co\.il$/i, "תקדין"],
-  [/(^|\.)takdin\.co\.il$/i, "תקדין"],
-  [/(^|\.)supremedecisions\.court\.gov\.il$/i, 'אר״ש'],
-  [/(^|\.)nevo\.co\.il$/i, "נבו"],
-  [/(^|\.)psakdin\.co\.il$/i, "פסקדין"],
-];
-const ALLOWED = new Set(["נבו","פדאור","דינים","תקדין",'אר״ש',"פסקדין"]);
-function normalizeDatabaseName(url, fallback) { /* parse host, match, else allowed-fallback, else "" */ }
+```
+מהו התאריך המדויק שבו ניתן פסק הדין {fullCaseRef} שפורסם בפ"ד {volume}({part}) {page}?
+החזר JSON בלבד: {"date":"DD.MM.YYYY","year":"YYYY","confidence":"high/low"}
 ```
 
-Also update the system prompts (~line 920, ~line 1080, ~line 1090) so Perplexity is told to return `databaseName` only from the allowed set `נבו/תקדין/אר״ש/פדאור/דינים/פסקדין` — this is belt-and-suspenders; the URL mapping is authoritative.
+System message must state: "התאריך הנדרש הוא תאריך מתן פסק הדין על ידי בית המשפט (לא שנת הוצאת הכרך)."
 
-### 2. `src/lib/citationValidation.ts` (line 131–138)
+Logic:
+- If the new date parses cleanly → **override** `parsed.date` and `parsed.year` with it.
+- If the two dates disagree by more than 12 months → set `parsed.confidence = "low"` and prefer the verification result (it is anchored to a specific volume).
+- If verification fails or returns nothing → **clear** `parsed.date`/`parsed.year` so the downstream output emits `[חסר: שנה]` instead of a fabricated value (anti-hallucination policy, per `mem://logic/anti-hallucination`).
 
-Extend the regex set so `case_law_database` recognizes the additional canonical names:
+Add to the existing system prompt at line ~960: "שדה `year` חייב להיות שנת מתן פסק הדין, לא שנת הוצאת כרך פ"ד."
+
+### 2. `supabase/functions/citation-chat/index.ts` — plausibility guard
+
+Add a small `PADI_VOLUME_YEAR_RANGES` table (a handful of well-known volumes is enough; full table is not required):
 
 ```ts
-if (/נבו/.test(response)) fields.database = "נבו";
-else if (/תקדין/.test(response)) fields.database = "תקדין";
-else if (/אר["״]ש/.test(response)) fields.database = 'אר״ש';
-else if (/פדאור/.test(response)) fields.database = "פדאור";
-else if (/דינים/.test(response)) fields.database = "דינים";
-else if (/פסקדין/.test(response)) fields.database = "פסקדין";
+// volume → [earliest plausible decision year, latest plausible decision year]
+// Add entries opportunistically; unknown volumes skip the check.
+const PADI_VOLUME_YEAR_RANGES: Record<string, [number, number]> = {
+  "נד": [1999, 2001],
+  "נה": [2000, 2001],
+  // ...
+};
 ```
 
-### 3. `src/data/citationEngine.ts` (line 176) and `supabase/functions/_shared/citationEngine.ts`
+After step 1, if `parsed.padi_volume` is in the table and `Number(parsed.year)` is outside the range → clear `parsed.year`/`parsed.date` and mark confidence `low`. This catches future regressions without a network call.
 
-Update the `database` component description to reflect the expanded list:
-`"שם המאגר (נבו, תקדין, אר״ש, פדאור, דינים, פסקדין)"`. Memory `mem://logic/citation-rules/...` should also be updated to note that `תקדין` and `אר״ש` are accepted when the source URL proves the provenance.
+### 3. `supabase/functions/case-law-search/index.ts` — port the same date-verification step
+
+This function is the standalone variant used by other call sites. Apply identical logic so we do not regress through that path.
+
+### 4. Telemetry
+
+Add console logs:
+- `[case-law] date verification: original={...} verified={...} action=override|clear|keep`
+- `[case-law] volume plausibility: volume=נד year=2001 → out of range, cleared`
+
+So we can spot future hallucinations in the function logs.
 
 ## Verification
 
-Re-run `ע"א 9308/20`. Edge logs should show the Perplexity result still returns `"המאגר של בית המשפט העליון"` but the citation now reads `… (אר״ש 20.10.2021)` (since supremedecisions.court.gov.il is the source) or `… (תקדין …)` if the result actually came from lite.takdin. The `⚠️ חסרים … שם המאגר` warning should disappear.
+Re-run `ע"פ 4596/98`. Edge logs should show:
+1. First call returns `date=28.06.2001, year=2001`.
+2. Publication verification keeps `פ"ד נד(1) 145`.
+3. New date verification returns something like `date=25.01.2000, year=2000`.
+4. Override applied; final citation reads `ע"פ 4596/98 פלונית נ' מדינת ישראל, פ"ד נד(1) 145 (2000).`
+
+Also run a known-good case (e.g. one already verified) to confirm we did not regress.
 
 ## Out of scope
 
-- Changing Perplexity model / search filter.
-- Promoting unpublished → published (separate Rule 20 path, already handled).
-- Editing the bilingual citation rules document itself.
+- Switching Perplexity models or adding a different provider.
+- Changing the case-number routing or local `verified_sources` ranking.
+- Rule 19 (database) citations — this fix targets Rule 18 (published) only, where the `(year)` field is mandatory and high-visibility.
+- Building a full volume↔year mapping table for all פ"ד volumes (only seed a few; expand on demand).
