@@ -722,7 +722,7 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
 
       {/* === OUTPUT SECTION === */}
-      {(hasAnyOutput || globalLoading) && (
+      {phase === "final" && (hasAnyOutput || globalLoading) && (
         <div className="mt-5 bg-card border border-border rounded-xl shadow-sm animate-fade-in">
           <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <h4 className="text-foreground text-sm font-bold font-sans">
