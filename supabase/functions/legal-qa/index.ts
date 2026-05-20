@@ -2668,7 +2668,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             onStage: emitStage,
           });
           if (v4.ok) {
-            await persistSuccess("v4", v4, coreFallbackReason ? { core_fallback_reason: coreFallbackReason, core_pilot: corePilotLabel(question) } : {});
+            await persistSuccess("v4", v4, { ...coreCtx });
             console.log(`[research_v4] DONE answer_len=${v4.answer.length} footnotes=${v4.footnotes.length}`);
             return buildResponse(v4.answer, v4.footnotes, v4.citations, {
               footnotes_count: v4.footnotes.length,
@@ -2688,7 +2688,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
               local_footnotes_count: 0,
               perplexity_footnotes_count: 0,
               total_footnotes: 0,
-              metadata: { ...(v4.metadata ?? {}), pipeline_used: "v4_fallback", v4_fallback_reason: v4FallbackReason },
+              metadata: { ...(v4.metadata ?? {}), ...coreCtx, pipeline_used: "v4_fallback", v4_fallback_reason: v4FallbackReason },
             }, { onConflict: "id" });
           } catch (logErr) {
             console.error("[research_v4] fallback log upsert failed:", logErr);
