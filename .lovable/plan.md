@@ -1,58 +1,40 @@
-## Rule 37 status in BatchFootnoteBuilder — code review
+## Why the academic query "stopped" when you visited Profile
 
-The repeat-citation logic lives in `applyRepeatCitationRules` (line 889) with helpers `extractShortSourceLabel` (952), `extractReferenceSuffix` (935), `replaceCitationOnly` (970), `extractCitationOnly` (977). It runs from `finalizeApproved` at line 342.
+### What's happening today
+- `/app` and `/profile` are sibling routes in `src/App.tsx`. Clicking the profile icon unmounts `Index → LegalQAChat`, which orphans the in-flight `fetch` to `legal-qa`. The backend keeps running and still writes its result to `qa_logs`, but the frontend has no way to find it again.
+- A resume mechanism already exists (`src/components/LegalQAChat.tsx` lines 905‑964 + `setAcademicRunMarker`/`pollLegalQaStatus` + `legal-qa-status` edge function), but `onRunId` only persists the marker when:
+  ```
+  academicStep === "write_chapter" | "write_introduction" | "write_conclusion"
+  ```
+  (see the `isLongFormWriteGuard` block at line 1612).
+- The "academic search" actions that build the outline / suggest topics / validate the research question (`suggest_topics`, `validate_question`, `propose_outline`) go through the same streaming `legal-qa` endpoint and the backend already emits `run_id` for them, but the client throws that id away. So when you come back, there is nothing to poll → the UI shows an empty state and it looks like the query was cancelled.
 
-### What works
-- Basic detection of "same source twice" via `normalizeSourceKey` (strips pinpoints, casing, "סעיף X ל…" prefix, English equivalents).
-- Generates a שם form for the immediately-consecutive case and a לעיל ה"ש form otherwise.
-- Preserves rule/warning lines via `replaceCitationOnly`.
+### Fix plan (frontend-only, ~30 lines)
 
-### Bugs still live
+1. **Persist the run marker for every meaningful academic step**
+   - In `LegalQAChat.tsx` widen the marker-persistence guard so the same `setAcademicRunMarker` write fires for `propose_outline`, `suggest_topics`, and `validate_question`, not just the three long-form writes.
+   - Concretely: add `const isResumableAcademicStep = isLongFormWriteGuard || ["propose_outline","suggest_topics","validate_question"].includes(academicStep);` and use that flag in the `onRunId` callback (line 1611‑1620) and in the post-stream cleanup at line 1739 that clears the marker.
 
-**Bug A — Short-form label is garbage for case law (highest impact).**
-`extractCitationOnly` strips every `**`, so by the time `prior.fullCitation` reaches `extractShortSourceLabel`, there are no asterisks left. The case-law regex `/\*\*?([^*\n]+?)\*\*?\s+נ['׳]/` requires at least one `*` and therefore never matches. Control falls through to the English/lead branch and returns the first ~80 chars (e.g. `ע"א 2401/08 מדינת ישראל נ' גיספן`) instead of the Rule 37.2 short label `עניין גיספן`.
+2. **Teach the resume effect how to apply non-write results**
+   - The existing resume effect (line 910‑964) assumes the recovered payload is a chapter body and writes it into `chapters[marker.chapterIdx]`. Extend it to branch on `marker.step`:
+     - `write_chapter | write_introduction | write_conclusion` → keep current behavior.
+     - `propose_outline` → call the same handler that consumes a successful outline response today (sets `outline`, advances `wizardStep` to "outline"). Find the existing success path around line 1674 (`else if (academicStep === "propose_outline")`) and refactor it into a small helper, then reuse it from the resume effect.
+     - `suggest_topics` / `validate_question` → reuse their corresponding success branches the same way.
 
-**Bug B — Rule 37.5 (legislation exception) is not implemented.**
-Repeated laws produce `חוק העונשין, לעיל ה"ש 3, בעמ' 5.` The rule requires `ס' 5 לחוק העונשין.` (or `שם, בס' 5.` for adjacent repeats). There is no legislation branch in `applyRepeatCitationRules`; `isLegislationInput` from `src/lib/citationUtils.ts` exists but isn't used here.
+3. **Surface a non-alarming toast on remount**
+   - Replace the chapter-specific `"הפרק הושלם ברקע ונטען מחדש"` with a step-aware label, e.g. `"השאילתה הושלמה ברקע ונטענה מחדש"` for outline/topics/validation. No behavior change beyond the string.
 
-**Bug C — Rule 37.7 "intervening source" branch missing.**
-`seen` only remembers the first occurrence's index. There is no `prevCellKey` tracker, so the rule "same source as previous note but with an intervening source ⇒ `[name], שם.`" can't be expressed. Today every non-immediate repeat collapses to `לעיל ה"ש N`.
-
-**Bug D — Rule 37.8 בי"ת prefix not enforced on short forms.**
-`extractReferenceSuffix` returns the suffix verbatim (`עמ' 12`, `סעיף 5`, `פסקה 3`). It is then concatenated into the שם/לעיל output unchanged, producing `שם, עמ' 12.` instead of `שם, בעמ' 12.` (and `סעיף → בס'`, `פסקה → בפס'`). The server-side post-processor in `legal-qa/index.ts` does fix this, but the batch builder writes its output independently and never benefits from it.
-
-**Bug E — שם detection off-by-one risk.**
-`prior.index === index` (where `prior.index = firstSeenIndex + 1` and `index` is the current 0-based loop index) means "immediate" really means "current cell is exactly 1 after the FIRST occurrence". A source seen at positions 0, 1, 2 gets `שם` at position 1 and `לעיל ה"ש 1` at position 2 — should be `שם` again at position 2.
-
-**Bug F (minor) — `applyRepeatCitationRules` runs inside a `setCells` updater.**
-At line 342 the function is called from within a state-updater callback. Under React 18 StrictMode the updater can run twice; the function is pure, but it makes debugging harder than computing once before `setCells`.
-
-### Proposed fix scope (frontend only, ~50 lines in BatchFootnoteBuilder.tsx)
-
-1. **Fix short label (Bug A + E).**
-   - Track `prevCellKey` alongside `seen`.
-   - In `extractShortSourceLabel`, drop the `\*` requirement and match `([^,\n]+?)\s+נ['׳]\s+([^,\n]+?)(?:,|$)`. Prefer the second party unless it's `מדינת ישראל`/`פלוני`/`היועץ המשפטי לממשלה`/`היועמ"ש`, in which case fall back to the first. Prepend `עניין ` for case law.
-   - Adjacent-repeat test becomes `prevCellKey === sourceKey` (not index arithmetic).
-
-2. **Legislation branch (Bug B).**
-   - Detect via `isLegislationInput(cell.input)` from `src/lib/citationUtils.ts` (already imported pattern available) or regex on the citation.
-   - Extract law name with `extractLawNameFromInput`; extract section number from `cell.input` (`סעיף\s+([\dא-ת()./–-]+)`).
-   - Adjacent same-law: `שם.` (or `שם, בס' X.` if section differs).
-   - Non-adjacent: `ס' X ל<lawName>.` (no `לעיל ה"ש`).
-
-3. **בי"ת prefix helper (Bug D).**
-   - Add `withBetPrefix(suffix)` that rewrites `עמ' → בעמ'`, `סעיף → בס'`, `פסקה → בפס'`, `at 12 → at 12` (Latin unchanged), and leaves already-prefixed forms alone.
-   - Apply only on שם / לעיל branches, never on the first (full) occurrence.
-
-4. **Move out of the setCells updater (Bug F).**
-   - Compute `const normalized = applyRepeatCitationRules(cells);` before `setCells(normalized)` so it runs exactly once per click.
+4. **Tighten the marker schema (no DB migration)**
+   - `setAcademicRunMarker` already takes `{ runId, step, chapterIdx }`. For non-write steps `chapterIdx` is meaningless — pass `-1` so the resume effect's "apply to chapter slot" branch is guaranteed to be skipped. No backend or schema change needed.
 
 ### Out of scope
-- No edge-function changes (`legal-qa`, `citation-chat`, `case-law-search` untouched).
-- No DB / bibliography / integrity-card / final-list-rendering changes.
-- No prompt changes — purely deterministic post-processing in the builder.
+- Non-academic Legal QA (regular research). It does not have a resume mechanism at all; we can address it separately if you want, but you described the academic path so I'm keeping the change focused.
+- Backend (`supabase/functions/legal-qa/index.ts`) — it already persists qa_logs and emits `run_id` for every step. No change needed.
+- No DB schema or RLS changes; `academic_sessions.current_run_id` is already in use.
 
 ### Files touched
-- `src/components/BatchFootnoteBuilder.tsx` only.
+- `src/components/LegalQAChat.tsx` only.
 
-If you want, after I implement I can also update `mem://logic/repeated-citations` to note that the builder now mirrors the server's Rule 37 behavior.
+### How to verify after implementation
+- Start `propose_outline` in academic mode, click the profile icon mid-stream, come back. Expect: progress reattaches, finishes, outline appears, toast "השאילתה הושלמה ברקע ונטענה מחדש".
+- Repeat for a chapter write (already works today) to confirm no regression.
