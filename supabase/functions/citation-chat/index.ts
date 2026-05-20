@@ -1527,7 +1527,17 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                       const normalized = normalizeDatabaseName(r.source_url, r.databaseName);
                       if (normalized) r.databaseName = normalized;
                     }
+                    // Reconcile decision date/year for surviving published cases (Rule 18).
+                    if (r.isPublished && r.padi_volume) {
+                      await reconcilePublishedDate(
+                        PERPLEXITY_API_KEY,
+                        String(r.caseType || userCaseTypeNorm || ""),
+                        String(r.caseNumber || ""),
+                        r as Record<string, unknown>,
+                      );
+                    }
                   }
+
 
                   if (results.length === 0) {
                     console.log(`[case-law] No relevant results found for party search "${searchQuery}"`);
