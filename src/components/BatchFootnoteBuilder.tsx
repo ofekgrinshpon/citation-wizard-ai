@@ -170,7 +170,28 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     setDragIndex(null);
   }, []);
 
-  const processAllCells = async () => {
+  // Run citation-chat for a single cell. Respects sourceTypeOverride if set.
+  const runSingleCitation = async (input: string, overrideType?: SourceType): Promise<string> => {
+    const normalized = normalizeAbbreviations(input);
+    const sourceType = overrideType ?? detectSourceType(normalized);
+    const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
+
+    let prompt = normalized;
+    if (sourceType !== "unknown") {
+      const engineHint = buildEnginePromptHint(sourceType as SourceType);
+      prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
+    }
+
+    const { data, error } = await supabase.functions.invoke("citation-chat", {
+      body: { messages: [{ role: "user", content: prompt }] },
+    });
+    if (error) throw error;
+    return data?.content || "";
+  };
+
+  // Phase 1: draft all cells. No repeat-citation rules, no persistence — that
+  // happens later in finalizeApproved after the user reviews each card.
+  const draftAllCells = async () => {
     const activeCells = cells.filter((c) => c.input.trim() && c.status !== "verified");
     if (activeCells.length === 0) {
       toast.error("אנא הזן לפחות מקור אחד");
@@ -182,102 +203,178 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
     setCells((prev) =>
       prev.map((c) =>
-        c.input.trim() && c.status !== "verified" ? { ...c, status: "loading", output: null } : c
+        c.input.trim() && c.status !== "verified"
+          ? { ...c, status: "loading", output: null, approved: false }
+          : c
       )
     );
 
     try {
-      // Send individual requests per cell (enables Perplexity searches via classification tags)
       const results = await Promise.allSettled(
         activeCells.map(async (cell) => {
-          const normalized = normalizeAbbreviations(cell.input);
-          const sourceType = detectSourceType(normalized);
-          const sourceLabel = SOURCE_TYPE_LABELS[sourceType];
-
-          let prompt = normalized;
-          if (sourceType !== "unknown") {
-            const engineHint = buildEnginePromptHint(sourceType as SourceType);
-            prompt = `[סיווג אוטומטי: ${sourceLabel}]\n${engineHint}${normalized}`;
-          }
-
-          const { data, error } = await supabase.functions.invoke("citation-chat", {
-            body: { messages: [{ role: "user", content: prompt }] },
-          });
-
-          if (error) throw error;
-          return { cellId: cell.id, content: data?.content || "" };
+          const content = await runSingleCitation(cell.input, cell.sourceTypeOverride);
+          return { cellId: cell.id, content };
         })
       );
 
-      // Map results back to cells
       const resultMap = new Map<number, string>();
-      for (const result of results) {
-        if (result.status === "fulfilled") {
-          resultMap.set(result.value.cellId, result.value.content);
-        }
+      for (const r of results) {
+        if (r.status === "fulfilled") resultMap.set(r.value.cellId, r.value.content);
       }
 
+      setCells((prev) =>
+        prev.map((c) => {
+          if (!c.input.trim() || c.status === "verified") return c;
+          const content = resultMap.get(c.id);
+          if (content === undefined) {
+            return { ...c, status: "error", output: null };
+          }
+          const detected = detectSourceType(normalizeAbbreviations(c.input));
+          const hasWarning = /\[חסר:/.test(content) || /⚠️/.test(content);
+          return {
+            ...c,
+            output: content,
+            status: hasWarning ? "warning" : "valid",
+            warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
+            detectedType: detected,
+            approved: false,
+          };
+        })
+      );
+
+      setPhase("review");
+
+      const failed = results.filter((r) => r.status === "rejected").length;
+      if (failed > 0) toast.error(`${failed} מקורות נכשלו — נסה שוב`);
+    } catch {
+      setCells((prev) =>
+        prev.map((c) => (c.status === "loading" ? { ...c, status: "error", output: null } : c))
+      );
+      toast.error("שגיאה בחיבור לשרת");
+    } finally {
+      setGlobalLoading(false);
+    }
+  };
+
+  // Re-run a single cell (e.g. user changed source type or edited input).
+  const regenerateOne = async (id: number) => {
+    const cell = cells.find((c) => c.id === id);
+    if (!cell || !cell.input.trim()) return;
+
+    setCells((prev) =>
+      prev.map((c) =>
+        c.id === id ? { ...c, status: "loading", output: null, approved: false } : c
+      )
+    );
+
+    try {
+      const content = await runSingleCitation(cell.input, cell.sourceTypeOverride);
+      const detected = detectSourceType(normalizeAbbreviations(cell.input));
+      const hasWarning = /\[חסר:/.test(content) || /⚠️/.test(content);
+      setCells((prev) =>
+        prev.map((c) =>
+          c.id === id
+            ? {
+                ...c,
+                output: content,
+                status: hasWarning ? "warning" : "valid",
+                warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
+                detectedType: detected,
+                approved: false,
+              }
+            : c
+        )
+      );
+    } catch {
+      setCells((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, status: "error", output: null } : c))
+      );
+      toast.error(`הפקה מחדש של הערה ${id} נכשלה`);
+    }
+  };
+
+  // Per-cell handlers used by the review card.
+  const handleReviewOutputChange = useCallback((id: number, value: string) => {
+    setCells((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, output: value, approved: false } : c))
+    );
+  }, []);
+
+  const handleReviewSourceTypeChange = useCallback((id: number, t: SourceType) => {
+    setCells((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, sourceTypeOverride: t, approved: false } : c))
+    );
+  }, []);
+
+  const handleReviewApproveToggle = useCallback((id: number, approved: boolean) => {
+    setCells((prev) => prev.map((c) => (c.id === id ? { ...c, approved } : c)));
+  }, []);
+
+  const approveAll = () => {
+    setCells((prev) =>
+      prev.map((c) => (c.output && c.input.trim() ? { ...c, approved: true } : c))
+    );
+  };
+
+  // Phase 2: finalize approved cards. Applies repeat-citation rules,
+  // bibliography sync, citation_history insert, verified_sources, and the
+  // legislation integrity queue. Moves UI to the "final" phase.
+  const finalizeApproved = async () => {
+    const activeCells = cells.filter((c) => c.input.trim() && c.output);
+    if (activeCells.length === 0) {
+      toast.error("אין מקורות מאושרים");
+      return;
+    }
+    const notApproved = activeCells.filter((c) => !c.approved);
+    if (notApproved.length > 0) {
+      toast.error(`יש לאשר את כל ${notApproved.length} ההערות לפני יצירת הרשימה`);
+      return;
+    }
+
+    setFinalizing(true);
+    try {
       let warningCount = 0;
       let validCount = 0;
       let nextCells: FootnoteCell[] = [];
       const updatedCells: FootnoteCell[] = [];
 
       setCells((prev) => {
-        const drafted = prev.map((c) => {
-          if (!c.input.trim() || c.status === "verified") return c;
-          const content = resultMap.get(c.id);
-          if (content === undefined) {
-            // Failed request
-            return { ...c, status: "empty" as FootnoteCell["status"], output: null };
-          }
-          return {
-            ...c,
-            output: content,
-            status: "valid" as FootnoteCell["status"],
-            warningMsg: undefined,
-          };
-        });
-
-        const normalized = applyRepeatCitationRules(drafted);
+        const normalized = applyRepeatCitationRules(prev);
         nextCells = normalized;
 
         for (const cell of normalized) {
-          if (!cell.input.trim() || !activeCells.some((ac) => ac.id === cell.id)) continue;
-          if (!resultMap.has(cell.id)) continue;
-          const hasWarning = Boolean(cell.output) && (/\[חסר:/.test(cell.output!) || /⚠️/.test(cell.output!));
+          if (!cell.input.trim() || !cell.output) continue;
+          const hasWarning = /\[חסר:/.test(cell.output) || /⚠️/.test(cell.output);
           if (hasWarning) warningCount++;
           else validCount++;
           updatedCells.push({
             ...cell,
-            status: (hasWarning ? "warning" : cell.status === "verified" ? "verified" : "valid") as FootnoteCell["status"],
+            status: hasWarning ? "warning" : cell.status === "verified" ? "verified" : "valid",
             warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
           });
         }
 
         return normalized.map((cell) => {
-          if (!activeCells.some((ac) => ac.id === cell.id)) return cell;
-          const finalCell = updatedCells.find((updated) => updated.id === cell.id);
-          return finalCell || cell;
+          const final = updatedCells.find((u) => u.id === cell.id);
+          return final ?? cell;
         });
       });
 
-      // Save to citation history, apply year preferences, and persist verified sources
       const verifiedCandidates: { rawInput: string; fullCitation: string; sourceType: string | null; yearPreferences?: YearPreferences }[] = [];
       const integrityQueue: PendingIntegrity[] = [];
 
       for (const cell of updatedCells) {
         if (!cell.output) continue;
 
-        const sourceType = detectSourceType(normalizeAbbreviations(cell.input));
+        const sourceType = cell.sourceTypeOverride ?? detectSourceType(normalizeAbbreviations(cell.input));
         const label = SOURCE_TYPE_LABELS[sourceType];
         let fullCitation = extractCitationOnly(cell.output);
         const isVerified = cell.status === "valid" && !/\[חסר:/.test(cell.output);
 
-        // For legislation, check verified_sources for stored year preferences
         if (isVerified && (isLegislationInput(cell.input) || isLegislationInput(fullCitation))) {
           const lawName = extractLawNameFromInput(cell.input) || extractLawNameFromInput(fullCitation);
-          const words = lawName.split(/[\s\-:]+/).filter(w => w.length >= 2);
-          const orConditions = words.map(w => `source_name.ilike.%${w}%`).join(',');
+          const words = lawName.split(/[\s\-:]+/).filter((w) => w.length >= 2);
+          const orConditions = words.map((w) => `source_name.ilike.%${w}%`).join(",");
 
           const { data: existingSources } = await supabase
             .from("verified_sources")
@@ -289,14 +386,14 @@ export function BatchFootnoteBuilder({}: BatchProps) {
           const existingMeta = existing?.metadata as Record<string, unknown> | null;
 
           if (existing?.verification_status === "verified" || (existingMeta && "hasHebrewYear" in existingMeta)) {
-            // Apply stored year preferences silently
             const prefs: YearPreferences = {
               hasHebrewYear: (existingMeta?.hasHebrewYear as boolean) ?? true,
               hasGregorianYear: (existingMeta?.hasGregorianYear as boolean) ?? true,
             };
             fullCitation = applyYearPreferences(fullCitation, prefs);
-            // Update the cell output with adjusted citation
-            setCells(prev => prev.map(c => c.id === cell.id ? { ...c, output: applyYearPreferences(c.output!, prefs) } : c));
+            setCells((prev) =>
+              prev.map((c) => (c.id === cell.id ? { ...c, output: applyYearPreferences(c.output!, prefs) } : c))
+            );
 
             verifiedCandidates.push({
               rawInput: cell.input,
@@ -305,7 +402,6 @@ export function BatchFootnoteBuilder({}: BatchProps) {
               yearPreferences: prefs,
             });
           } else {
-            // New legislation — queue for integrity card
             integrityQueue.push({
               cellId: cell.id,
               lawName,
@@ -322,24 +418,25 @@ export function BatchFootnoteBuilder({}: BatchProps) {
           });
         }
 
-        supabase.from("citation_history").insert({
-          raw_input: cell.input,
-          formatted_output: fullCitation,
-          source_type: label !== "לא ידוע" ? label : null,
-          is_verified: isVerified,
-        }).then(() => {});
+        supabase
+          .from("citation_history")
+          .insert({
+            raw_input: cell.input,
+            formatted_output: fullCitation,
+            source_type: label !== "לא ידוע" ? label : null,
+            is_verified: isVerified,
+          })
+          .then(() => {});
       }
 
       if (verifiedCandidates.length > 0) {
         ensureVerifiedSources(verifiedCandidates).catch(() => {});
       }
 
-      // Show integrity cards for new legislation
       if (integrityQueue.length > 0) {
         setPendingIntegrity(integrityQueue);
       }
 
-      // Recalculate bibliography from all current outputs
       const bibItems = nextCells
         .filter((cell) => {
           if (!cell.output) return false;
@@ -355,34 +452,28 @@ export function BatchFootnoteBuilder({}: BatchProps) {
 
       const syncedCount = bibliography.syncFootnoteEntries(bibItems);
       if (syncedCount > 0) {
-        toast(`${syncedCount} מקורות חושבו מחדש בביבליוגרפיה`, {
-          duration: 3000,
-          icon: "📚",
-        });
+        toast(`${syncedCount} מקורות חושבו מחדש בביבליוגרפיה`, { duration: 3000, icon: "📚" });
       }
 
-      const failedCount = results.filter(r => r.status === "rejected").length;
       const total = validCount + warningCount;
-
-      const repeatNote = nextCells.some(c => c.output && /שם|לעיל/.test(c.output))
+      const repeatNote = nextCells.some((c) => c.output && /שם|לעיל/.test(c.output))
         ? " שים לב לתיקונים בנסיבות של אזכור חוזר."
         : "";
       setSummary(
         `בניתי עבורך ${total} הערות שוליים לפי הכללים.${
           warningCount > 0 ? ` ${warningCount} הערות דורשות השלמת פרטים.` : ""
-        }${failedCount > 0 ? ` ${failedCount} מקורות נכשלו.` : ""}${repeatNote}`
+        }${repeatNote}`
       );
-    } catch {
-      setCells((prev) =>
-        prev.map((c) =>
-          c.status === "loading" ? { ...c, status: "empty", output: null } : c
-        )
-      );
-      toast.error("שגיאה בחיבור לשרת");
+
+      setPhase("final");
+    } catch (e) {
+      console.error("[finalize] failed", e);
+      toast.error("שגיאה בבניית הרשימה הסופית");
     } finally {
-      setGlobalLoading(false);
+      setFinalizing(false);
     }
   };
+
 
   const copyAll = () => {
     const outputs = cells
