@@ -100,6 +100,11 @@ async function verifyDecisionDate(
     if (!resp.ok) return null;
     const data = await resp.json();
     const content = data.choices?.[0]?.message?.content || "";
+    console.log(`[case-law] date-verify sources for ${fullRef}:`, JSON.stringify({
+      citations: data.citations ?? null,
+      search_results: data.search_results ?? null,
+    }));
+    console.log(`[case-law] date-verify raw content for ${fullRef}:`, content);
     const jm = content.match(/\{[\s\S]*\}/);
     if (!jm) return null;
     const parsed = JSON.parse(
