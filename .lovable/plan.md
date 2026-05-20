@@ -1,34 +1,49 @@
 ## Goal
 
-Reduce flaky "1st call empty, 2nd call perfect" symptom on Supreme Court dockets (e.g. `ע"א 9308/20`, `ע"פ 4596/98` run 1) by (a) pointing Perplexity at the official Supreme Court full-text search and (b) auto-retrying once on empty.
+Add diagnostic logging so we can see **which URLs** Perplexity pulled when it returned `year: 2001` for `ע"פ 4596/98`. No behavior change.
 
 ## Changes
 
-### 1. Add Supreme Court fullsearch hint
+### 1. `supabase/functions/citation-chat/index.ts` — case-number branch (~line 1100, after `await perplexityResp.json()`)
 
-Both case-law system prompts already mention takdin-lite. Add a parallel line right after it:
+Log the citation URLs alongside the parsed JSON:
 
-> טיפ חיפוש נוסף לתיקי בית המשפט העליון (ע"א/ע"פ/בג"ץ/דנ"א/דנ"פ/רע"א/רע"פ/בש"א/בש"פ וכו'): ב-`https://supreme.court.gov.il/Pages/fullsearch.aspx` ניתן לחפש לפי מספר תיק ולקבל את פסק הדין הרשמי עם שמות הצדדים, תאריך וכרך פד"י. הצלב את הנתונים שם.
+```ts
+const pData = await perplexityResp.json();
+const rawContent = pData.choices?.[0]?.message?.content || "";
+console.log(`[case-law] perplexity sources for ${fullCaseRef}:`, JSON.stringify({
+  citations: pData.citations ?? null,
+  search_results: pData.search_results ?? null,
+  model: pData.model,
+}));
+console.log(`[case-law] perplexity raw content for ${fullCaseRef}:`, rawContent);
+```
 
-Domain `supreme.court.gov.il` is already in `search_domain_filter`, so no allow-list change.
+### 2. Same file — date-verification call inside `verifyDecisionDate` / `reconcilePublishedDate`
 
-### 2. Single auto-retry on empty first pass
+After the verification Perplexity response is parsed, log:
 
-If the first Perplexity call returns `{"found": false}` or empty `search_results[]`, fire the **same** request once more before returning. If retry also empty, return `found: false` as today.
+```ts
+console.log(`[case-law] date-verify sources for ${fullCaseRef}:`, JSON.stringify({
+  citations: dvData.citations ?? null,
+  search_results: dvData.search_results ?? null,
+}));
+console.log(`[case-law] date-verify raw content:`, dvContent);
+```
 
-Log `[case-law] empty first pass, retrying…` so we can see in logs how often it fires.
+### 3. `supabase/functions/case-law-search/index.ts` — both Perplexity calls
 
-## Files
+Same two log lines after each `await ...json()`. Mirrors citation-chat so the standalone path is debuggable too.
 
-- `supabase/functions/case-law-search/index.ts` — prompt edit (~line 85) + wrap the first Perplexity call (~lines 73–117) in a `for (let attempt = 0; attempt < 2; attempt++)` loop that breaks on non-empty result
-- `supabase/functions/citation-chat/index.ts` — same prompt edit (~line 1086) + same retry wrap in the case-law branch (~lines 1078–1118)
+## What we'll do next
+
+After deploying, re-run `ע"פ 4596/98` and check edge function logs. The `citations[]` array will list the exact URLs Perplexity grounded on. That tells us:
+
+- Whether `2001` came from a volume-catalog page, a follow-up motion, or a hallucination with no source at all.
+- Whether the date-verify retry hits the same pages (explaining why it doesn't fix the year).
+- Whether tightening `search_domain_filter` (e.g. dropping `psakdin.co.il`) or switching to `sonar-pro` would help — before committing to the Wikipedia helper.
 
 ## Out of scope
 
-- No new domains in `search_domain_filter`
-- No changes to date-verify, party-search, or legislation/regulations/books/articles branches
-- No more than one retry
-
-## Verification
-
-Re-run `ע"א 9308/20` and `ע"פ 4596/98` several times each. Expect resolution on first user-visible attempt. Logs should occasionally show the retry firing and succeeding.
+- Any change to the year logic, prompts, or domain filter.
+- Wikipedia helper (deferred until logs justify it).
