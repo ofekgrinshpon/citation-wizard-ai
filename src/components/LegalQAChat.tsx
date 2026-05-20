@@ -1757,7 +1757,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       setLoading(false);
       // Clear the in-progress marker so a future mount doesn't try to resume
       // a run that already terminated (success OR error path).
-      if (isLongFormWriteGuard && (runPersistedRef.current || activeRunIdRef.current)) {
+      if ((isLongFormWriteGuard || isResumableShortStep) && (runPersistedRef.current || activeRunIdRef.current)) {
         void setAcademicRunMarker(projectId, null);
       }
       runPersistedRef.current = false;
