@@ -568,7 +568,14 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     ingest(vecHits);
     ingest(webHits);
 
-    const candidates = Array.from(byKey.values()).slice(0, PER_CLAIM_CAP);
+    // Web is a first-class origin: reserve slots for it in the per-claim cap
+    // so noisy local hits don't crowd it out.
+    const all = Array.from(byKey.values());
+    const webKept = all.filter((c) => c.origin === "approved_web");
+    const localKept = all.filter((c) => c.origin !== "approved_web");
+    const localBudget = Math.max(0, PER_CLAIM_CAP - webKept.length);
+    const candidates = [...localKept.slice(0, localBudget), ...webKept];
+
 
     const counts: Record<CandidateOrigin, number> = {
       local_text: 0, local_vector: 0, exact_authority: 0, approved_web: 0,
