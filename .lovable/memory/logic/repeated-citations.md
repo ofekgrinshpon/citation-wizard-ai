@@ -4,7 +4,7 @@ description: Full implementation of Rule 37 (אזכור חוזר) — name selec
 type: feature
 ---
 
-Implementation of the Uniform Citation Rules (2021) Rule 37 for repeated citations across `src/data/citationEngine.ts` (`REPEATED_CITATION_RULES` keyed by 37.1–37.9) and `supabase/functions/legal-qa/index.ts`.
+Implementation of the Uniform Citation Rules (2021) Rule 37 for repeated citations across `src/data/citationEngine.ts` (`REPEATED_CITATION_RULES` keyed by 37.1–37.9), `supabase/functions/legal-qa/index.ts`, and the frontend BatchFootnoteBuilder (`src/components/BatchFootnoteBuilder.tsx` → `applyRepeatCitationRules`). The builder mirrors server behavior: tracks `prevCellKey` for adjacency, has a dedicated legislation branch (37.5 → `ס' X לחוק...`, never `לעיל ה"ש` for laws), applies `withBetPrefix` to pinpoints on שם/לעיל short forms (37.8), and uses `extractShortSourceLabel` that picks the non-generic party (skipping מדינת ישראל/פלוני/יועמ"ש) and prepends `עניין`. Runs once before `setCells` (not inside the updater) to avoid StrictMode double-application.
 
 **37.2 — Name selection:**
 - Legislation: law name only — strip year, ס"ח/ק"ת, [נוסח חדש].
