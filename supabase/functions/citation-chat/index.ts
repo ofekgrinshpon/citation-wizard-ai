@@ -1255,7 +1255,7 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                 caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${fullCaseRef}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע (צדדים, תאריך, בית משפט, פרסום/מאגר).\nאל תמציא שמות צדדים, תאריכים, או פרטי פרסום.\n══`;
               }
             } else {
-              console.error("Perplexity search failed:", perplexityResp.status);
+              console.error("Perplexity search failed for", fullCaseRef);
               caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${caseNumberMatch[0]}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע.\n══`;
             }
 
