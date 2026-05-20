@@ -116,6 +116,11 @@ serve(async (req) => {
 
     const perplexityData = await perplexityResponse.json();
     const content = perplexityData.choices?.[0]?.message?.content || "";
+    console.log(`[case-law-search] perplexity sources for ${fullCaseRef}:`, JSON.stringify({
+      citations: perplexityData.citations ?? null,
+      search_results: perplexityData.search_results ?? null,
+      model: perplexityData.model,
+    }));
     console.log("Perplexity raw response:", content);
 
     // Extract JSON from the response (may be wrapped in markdown code blocks)
@@ -174,6 +179,11 @@ serve(async (req) => {
         if (dvResp.ok) {
           const dvData = await dvResp.json();
           const dvContent = dvData.choices?.[0]?.message?.content || "";
+          console.log(`[case-law-search] date-verify sources for ${fullCaseRef}:`, JSON.stringify({
+            citations: dvData.citations ?? null,
+            search_results: dvData.search_results ?? null,
+          }));
+          console.log(`[case-law-search] date-verify raw content:`, dvContent);
           const dvMatch = dvContent.match(/\{[\s\S]*\}/);
           if (dvMatch) {
             const dvParsed = JSON.parse(dvMatch[0]);

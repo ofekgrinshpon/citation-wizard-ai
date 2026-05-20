@@ -100,6 +100,11 @@ async function verifyDecisionDate(
     if (!resp.ok) return null;
     const data = await resp.json();
     const content = data.choices?.[0]?.message?.content || "";
+    console.log(`[case-law] date-verify sources for ${fullRef}:`, JSON.stringify({
+      citations: data.citations ?? null,
+      search_results: data.search_results ?? null,
+    }));
+    console.log(`[case-law] date-verify raw content for ${fullRef}:`, content);
     const jm = content.match(/\{[\s\S]*\}/);
     if (!jm) return null;
     const parsed = JSON.parse(
@@ -1099,6 +1104,11 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
             if (perplexityResp.ok) {
               const pData = await perplexityResp.json();
               const pContent = pData.choices?.[0]?.message?.content || "";
+              console.log(`[case-law] perplexity sources for ${fullCaseRef}:`, JSON.stringify({
+                citations: pData.citations ?? null,
+                search_results: pData.search_results ?? null,
+                model: pData.model,
+              }));
               console.log("Case law search result:", pContent);
               const jsonMatch = pContent.match(/\{[\s\S]*\}/);
               if (jsonMatch) {
@@ -1315,6 +1325,11 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
             if (partySearchResp.ok) {
               const psData = await partySearchResp.json();
               const psContent = psData.choices?.[0]?.message?.content || "";
+              console.log("[case-law] party-search sources:", JSON.stringify({
+                citations: psData.citations ?? null,
+                search_results: psData.search_results ?? null,
+                model: psData.model,
+              }));
               console.log("[case-law] Party search result:", psContent);
 
               const psJsonMatch = psContent.match(/\{[\s\S]*\}/);
