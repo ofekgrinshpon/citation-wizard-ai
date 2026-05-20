@@ -934,15 +934,42 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           };
           setRunComplete(true);
           setResult(qaResult);
-          // Persist into the matching chapter slot, mirroring the SSE success path.
-          setChapters((prev) => {
-            const idx = marker.chapterIdx;
-            if (idx < 0 || idx >= prev.length) return prev;
-            const next = [...prev];
-            next[idx] = { ...next[idx], content: qaResult.answer };
-            return next;
-          });
-          toast.success("הפרק הושלם ברקע ונטען מחדש");
+
+          const isShortStep =
+            marker.step === "propose_outline" ||
+            marker.step === "suggest_topics" ||
+            marker.step === "validate_question";
+
+          if (isShortStep) {
+            // Apply per-step UI state, mirroring the foreground success path.
+            if (marker.step === "propose_outline") {
+              setProposedQuestions([]);
+              setSuggestionRounds([]);
+              setOutline(qaResult.answer);
+              updateWizardStep("outline");
+            } else if (marker.step === "validate_question") {
+              setProposedQuestions([]);
+              setSuggestionRounds([]);
+              updateWizardStep("topic_or_question");
+            } else if (marker.step === "suggest_topics") {
+              const parsedQs = parseProposedQuestions(qaResult.answer);
+              setSuggestionRounds([{ questions: parsedQs, coverage: undefined, exhausted: false }]);
+              setProposedQuestions(parsedQs);
+              updateWizardStep("topic_or_question");
+            }
+            setLastAcademicAction(marker.step);
+            toast.success("השאילתה הושלמה ברקע ונטענה מחדש");
+          } else {
+            // Long-form chapter write recovery — persist into the matching chapter slot.
+            setChapters((prev) => {
+              const idx = marker.chapterIdx;
+              if (idx < 0 || idx >= prev.length) return prev;
+              const next = [...prev];
+              next[idx] = { ...next[idx], content: qaResult.answer };
+              return next;
+            });
+            toast.success("הפרק הושלם ברקע ונטען מחדש");
+          }
         } else {
           setError("ההפקה ברקע נכשלה. ניתן לנסות שוב.");
         }
@@ -1468,11 +1495,32 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       academicStep === "write_introduction" ||
       academicStep === "write_conclusion";
 
+    // Short academic steps (propose_outline, suggest_topics, validate_question)
+    // are recoverable: client mints the runId, persists a marker BEFORE the
+    // fetch, and passes the id to the backend so the qa_logs row is created
+    // up-front. If navigation kills the fetch, the resume effect polls the
+    // same id via legal-qa-status on remount.
+    const isResumableShortStep =
+      academicStep === "propose_outline" ||
+      academicStep === "suggest_topics" ||
+      academicStep === "validate_question";
+    const shortStepRunId: string | null = isResumableShortStep ? crypto.randomUUID() : null;
+    if (shortStepRunId) {
+      runPersistedRef.current = true;
+      activeRunIdRef.current = shortStepRunId;
+      void setAcademicRunMarker(projectId, {
+        runId: shortStepRunId,
+        step: academicStep,
+        chapterIdx: -1,
+      });
+    }
+
     try {
       const body: Record<string, unknown> = {
         question: q || researchQuestion,
         taskMode: "academic_writing",
         academicStep,
+        ...(shortStepRunId ? { runId: shortStepRunId, projectId: projectId ?? null } : {}),
         ...extraBody,
       };
 
@@ -1736,7 +1784,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       setLoading(false);
       // Clear the in-progress marker so a future mount doesn't try to resume
       // a run that already terminated (success OR error path).
-      if (isLongFormWriteGuard && (runPersistedRef.current || activeRunIdRef.current)) {
+      if ((isLongFormWriteGuard || isResumableShortStep) && (runPersistedRef.current || activeRunIdRef.current)) {
         void setAcademicRunMarker(projectId, null);
       }
       runPersistedRef.current = false;

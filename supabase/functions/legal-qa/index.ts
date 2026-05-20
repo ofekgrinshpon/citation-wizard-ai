@@ -2221,7 +2221,18 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, evalForceMissingSlots: bodyEvalForceMissingSlots, depth: bodyDepth, styleGuideEnabled: bodyStyleGuideEnabled, footnoteOffset: bodyFootnoteOffset, forceDrafterModel: bodyForceDrafterModel, forceDrafterVariant: bodyForceDrafterVariant } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, evalForceMissingSlots: bodyEvalForceMissingSlots, depth: bodyDepth, styleGuideEnabled: bodyStyleGuideEnabled, footnoteOffset: bodyFootnoteOffset, forceDrafterModel: bodyForceDrafterModel, forceDrafterVariant: bodyForceDrafterVariant, runId: clientRunId, projectId: bodyProjectId } = body;
+
+    // Client-supplied run id for short academic steps (propose_outline, suggest_topics,
+    // validate_question) so the result is recoverable after page navigation. We
+    // insert a qa_logs row up-front with this id, then UPDATE it on completion.
+    // For all other paths the existing behavior (insert-on-finish) is preserved.
+    const UUID_V4_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const isShortAcademicStep = taskMode === "academic_writing" && typeof academicStep === "string" &&
+      ["propose_outline", "suggest_topics", "validate_question"].includes(academicStep);
+    const resumableRunId: string | null = isShortAcademicStep
+      ? (typeof clientRunId === "string" && UUID_V4_RE.test(clientRunId) ? clientRunId : crypto.randomUUID())
+      : null;
 
     // ─── Continuous footnote numbering (academic writing only) ────────
     // Each chapter is generated independently and produces a local 1..K
@@ -2572,6 +2583,28 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         });
       }
 
+      // Pre-insert qa_logs row with the client-supplied runId so the client
+      // can poll legal-qa-status after navigation. Only for the 3 short steps.
+      if (resumableRunId) {
+        try {
+          await adminClient.from("qa_logs").insert({
+            id: resumableRunId,
+            user_id: user.id,
+            question: question.substring(0, 500),
+            answer: null,
+            footnotes: [],
+            task_mode: taskMode,
+            project_id: typeof bodyProjectId === "string" ? bodyProjectId : null,
+            local_footnotes_count: 0,
+            perplexity_footnotes_count: 0,
+            total_footnotes: 0,
+            metadata: { academic_step: academicStep, checkpoint: "running", run_id: resumableRunId },
+          });
+        } catch (preInsertErr) {
+          console.error("Failed to pre-insert qa_logs row for resumable short step:", preInsertErr);
+        }
+      }
+
       // Quick local search for context (skipped for abstract — synthesis only)
       let localContext = "";
 
@@ -2793,26 +2826,35 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
 
         // Early-exit: no sources at all → return a guidance message, no questions.
         if (allSources.length === 0) {
+          const noCoverageAnswer = "לא מצאתי מקורות מספקים לנושא הזה במאגר ובחיפוש מהיר. נסה לצמצם את הנושא, לבחור זווית ספציפית יותר, או לנסח אותו אחרת.";
           try {
-            await adminClient.from("qa_logs").insert({
-              user_id: user.id,
-              question: question.substring(0, 500),
-              answer: "",
-              footnotes: [],
-              task_mode: taskMode,
-              local_footnotes_count: 0,
-              perplexity_footnotes_count: 0,
-              total_footnotes: 0,
-              metadata: { academic_step: academicStep, topic_reality_check: topicCoverage, no_coverage: true, duration_ms: Date.now() - t0 },
-            });
+            if (resumableRunId) {
+              await adminClient.from("qa_logs").update({
+                answer: noCoverageAnswer,
+                metadata: { academic_step: academicStep, checkpoint: "completed", run_id: resumableRunId, topic_reality_check: topicCoverage, no_coverage: true, duration_ms: Date.now() - t0 },
+              }).eq("id", resumableRunId);
+            } else {
+              await adminClient.from("qa_logs").insert({
+                user_id: user.id,
+                question: question.substring(0, 500),
+                answer: noCoverageAnswer,
+                footnotes: [],
+                task_mode: taskMode,
+                local_footnotes_count: 0,
+                perplexity_footnotes_count: 0,
+                total_footnotes: 0,
+                metadata: { academic_step: academicStep, topic_reality_check: topicCoverage, no_coverage: true, duration_ms: Date.now() - t0 },
+              });
+            }
           } catch { /* non-fatal */ }
           return new Response(
             JSON.stringify({
-              answer: "לא מצאתי מקורות מספקים לנושא הזה במאגר ובחיפוש מהיר. נסה לצמצם את הנושא, לבחור זווית ספציפית יותר, או לנסח אותו אחרת.",
+              answer: noCoverageAnswer,
               footnotes: [],
               source_urls: [],
               topicCoverage,
               noCoverage: true,
+              ...(resumableRunId ? { runId: resumableRunId } : {}),
             }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
@@ -2875,6 +2917,13 @@ ${externalList}
       if (!aiRes.ok) {
         const errText = await aiRes.text();
         console.error("Academic sub-mode AI error:", aiRes.status, errText);
+        if (resumableRunId) {
+          try {
+            await adminClient.from("qa_logs").update({
+              metadata: { academic_step: academicStep, checkpoint: "failed", run_id: resumableRunId, error_message: `AI ${aiRes.status}` },
+            }).eq("id", resumableRunId);
+          } catch { /* non-fatal */ }
+        }
         return new Response(JSON.stringify({ error: "שגיאה בשירות ה-AI." }), {
           status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
@@ -2902,22 +2951,36 @@ ${externalList}
       console.log(`Academic sub-mode (${academicStep}${isAbstractGeneration ? ":abstract" : (isConclusionGeneration ? ":conclusion" : "")}): ${answerText.length} chars, ${Date.now() - t0}ms${topicCoverage ? `, reality-check: local=${topicCoverage.localHits} ext=${topicCoverage.externalHits}` : ""}`);
 
       try {
-        await adminClient.from("qa_logs").insert({
-          user_id: user.id,
-          question: question.substring(0, 500),
-          answer: answerText,
-          footnotes: [],
-          task_mode: taskMode,
-          local_footnotes_count: 0,
-          perplexity_footnotes_count: 0,
-          total_footnotes: 0,
-          metadata: {
-            academic_step: academicStep,
-            is_abstract: isAbstractGeneration,
-            duration_ms: Date.now() - t0,
-            ...(topicCoverage ? { topic_reality_check: topicCoverage } : {}),
-          },
-        });
+        if (resumableRunId) {
+          await adminClient.from("qa_logs").update({
+            answer: answerText,
+            metadata: {
+              academic_step: academicStep,
+              checkpoint: "completed",
+              run_id: resumableRunId,
+              is_abstract: isAbstractGeneration,
+              duration_ms: Date.now() - t0,
+              ...(topicCoverage ? { topic_reality_check: topicCoverage } : {}),
+            },
+          }).eq("id", resumableRunId);
+        } else {
+          await adminClient.from("qa_logs").insert({
+            user_id: user.id,
+            question: question.substring(0, 500),
+            answer: answerText,
+            footnotes: [],
+            task_mode: taskMode,
+            local_footnotes_count: 0,
+            perplexity_footnotes_count: 0,
+            total_footnotes: 0,
+            metadata: {
+              academic_step: academicStep,
+              is_abstract: isAbstractGeneration,
+              duration_ms: Date.now() - t0,
+              ...(topicCoverage ? { topic_reality_check: topicCoverage } : {}),
+            },
+          });
+        }
       } catch (logErr) {
         console.error("Failed to insert academic sub-mode qa_logs row (non-fatal):", logErr);
       }
@@ -2928,6 +2991,7 @@ ${externalList}
           footnotes: [],
           source_urls: [],
           ...(topicCoverage ? { topicCoverage } : {}),
+          ...(resumableRunId ? { runId: resumableRunId } : {}),
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
