@@ -1325,6 +1325,11 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
             if (partySearchResp.ok) {
               const psData = await partySearchResp.json();
               const psContent = psData.choices?.[0]?.message?.content || "";
+              console.log("[case-law] party-search sources:", JSON.stringify({
+                citations: psData.citations ?? null,
+                search_results: psData.search_results ?? null,
+                model: psData.model,
+              }));
               console.log("[case-law] Party search result:", psContent);
 
               const psJsonMatch = psContent.match(/\{[\s\S]*\}/);
