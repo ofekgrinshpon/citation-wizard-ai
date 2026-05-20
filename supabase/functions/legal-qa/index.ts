@@ -2717,6 +2717,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
           });
           if (fb.ok) {
             await persistSuccess(useV3 ? "v3" : "v2", fb, {
+              ...coreCtx,
               ...(v4FallbackReason ? { v4_fallback_reason: v4FallbackReason } : {}),
             });
             console.log(`[research_${useV3 ? "v3" : "v2"}] DONE answer_len=${fb.answer.length} footnotes=${fb.footnotes.length}`);
@@ -2739,6 +2740,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
               total_footnotes: 0,
               metadata: {
                 ...(fb.metadata ?? {}),
+                ...coreCtx,
                 pipeline_used: "v3_fallback",
                 v3_fallback_reason: v3FallbackReason,
                 ...(v4FallbackReason ? { v4_fallback_reason: v4FallbackReason } : {}),
