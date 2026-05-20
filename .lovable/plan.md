@@ -1,48 +1,34 @@
-## What's happening
+## Goal
 
-`sonar-pro` fixed the empty-result and year problems, but for `ע"פ 4596/98` it still returned a real party name (`באקו` / `בקו`) instead of the published anonymized `פלונית`. Reason: takdin's search-results page exposes the unredacted name, and Perplexity prefers it over the פ"ד headline because nothing in our prompt tells it the פ"ד name is authoritative.
+Reduce flaky "1st call empty, 2nd call perfect" symptom on Supreme Court dockets (e.g. `ע"א 9308/20`, `ע"פ 4596/98` run 1) by (a) pointing Perplexity at the official Supreme Court full-text search and (b) auto-retrying once on empty.
 
-Looking at the last log, the Perplexity `search_results[].snippet` array actually contains the right name multiple times:
+## Changes
 
-> `ע"פ 4596/98 פלונית נ' מדינת ישראל, פ"ד נד(1) 145`
+### 1. Add Supreme Court fullsearch hint
 
-So the correct name is **already in the response payload** — we just don't use it.
+Both case-law system prompts already mention takdin-lite. Add a parallel line right after it:
 
-## Fix (two layers)
+> טיפ חיפוש נוסף לתיקי בית המשפט העליון (ע"א/ע"פ/בג"ץ/דנ"א/דנ"פ/רע"א/רע"פ/בש"א/בש"פ וכו'): ב-`https://supreme.court.gov.il/Pages/fullsearch.aspx` ניתן לחפש לפי מספר תיק ולקבל את פסק הדין הרשמי עם שמות הצדדים, תאריך וכרך פד"י. הצלב את הנתונים שם.
 
-### 1. Prompt rule (both functions)
+Domain `supreme.court.gov.il` is already in `search_domain_filter`, so no allow-list change.
 
-In the case-law system prompt, add an explicit anonymization rule:
+### 2. Single auto-retry on empty first pass
 
-> אם פסק הדין פורסם בפד"י והכותרת הרשמית בפד"י משתמשת בכינוי `פלוני`/`פלונית`/`קטין`/`קטינה`/`אלמוני`/`אלמונית` — זהו שם הצד הקובע. אל תחליף אותו בשם פרטי שמופיע במאגרים אחרים (תקדין/נבו), גם אם הוא נראה מפורש יותר.
+If the first Perplexity call returns `{"found": false}` or empty `search_results[]`, fire the **same** request once more before returning. If retry also empty, return `found: false` as today.
 
-### 2. Deterministic post-processing guard (both functions)
-
-After parsing Perplexity JSON, if `isPublished === true`, scan `search_results[].snippet` + `citations` text + `pContent` (raw response) for a regex like:
-
-```
-/(?:^|\s)(פלוני|פלונית|פלונים|פלוניות|קטין|קטינה|אלמוני|אלמונית)\s+נ['׳]/
-```
-
-near the case number. If matched, **override `parsed.party1`** with that anonymized term. This is a safety net for when the prompt rule still loses to a strong takdin snippet.
-
-Apply same logic to `party2` (rarer, but e.g. `פלוני נ' פלונית`).
+Log `[case-law] empty first pass, retrying…` so we can see in logs how often it fires.
 
 ## Files
 
-- `supabase/functions/case-law-search/index.ts`
-  - Update system prompt (around lines 84–98)
-  - Add anonymization-override block right after `parsed = JSON.parse(...)` (~line 138), before the date-verify section
-- `supabase/functions/citation-chat/index.ts`
-  - Update system prompt in case-law branch (~lines 1093–1102)
-  - Add same override block after `parsed = JSON.parse(jsonMatch[0])` (~line 1119)
+- `supabase/functions/case-law-search/index.ts` — prompt edit (~line 85) + wrap the first Perplexity call (~lines 73–117) in a `for (let attempt = 0; attempt < 2; attempt++)` loop that breaks on non-empty result
+- `supabase/functions/citation-chat/index.ts` — same prompt edit (~line 1086) + same retry wrap in the case-law branch (~lines 1078–1118)
 
 ## Out of scope
 
-- No model changes (`sonar-pro` stays everywhere it was switched).
-- No changes to legislation/regulations/books/articles branches.
-- No Wikipedia verifier (deferred — year is already correct, this is only about party name).
+- No new domains in `search_domain_filter`
+- No changes to date-verify, party-search, or legislation/regulations/books/articles branches
+- No more than one retry
 
 ## Verification
 
-Re-run `ע"פ 4596/98`. Expected: `פלונית נ' מדינת ישראל, פ"ד נד(1) 145 (2000)`. Confirm via logs that the override fired (`[case-law] anonymization override: party1=באקו → פלונית`).
+Re-run `ע"א 9308/20` and `ע"פ 4596/98` several times each. Expect resolution on first user-visible attempt. Logs should occasionally show the retry firing and succeeding.
