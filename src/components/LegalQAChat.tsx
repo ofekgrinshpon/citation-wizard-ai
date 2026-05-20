@@ -1493,6 +1493,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         question: q || researchQuestion,
         taskMode: "academic_writing",
         academicStep,
+        ...(shortStepRunId ? { runId: shortStepRunId, projectId: projectId ?? null } : {}),
         ...extraBody,
       };
 
