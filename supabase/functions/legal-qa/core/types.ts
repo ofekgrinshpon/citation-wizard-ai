@@ -1,0 +1,187 @@
+// Research Core v1 — shared contracts.
+// Internal name: "core_v1". Nothing here imports from V2/V3/V4 modules.
+
+export type ClaimId = `C${number}`;
+export type AuthorityId = `A${number}`;
+export type CandidateId = string;
+export type LedgerSourceId = `LS${number}`;
+
+// ─────────────────── Step 1: Planner ───────────────────
+
+export type EvidenceKind =
+  | "binding_caselaw"
+  | "persuasive_caselaw"
+  | "statute_section"
+  | "regulation"
+  | "scholarship"
+  | "doctrinal_definition";
+
+export type SourceTypeFilter = "caselaw" | "legislation" | "scholarship" | null;
+
+export interface SearchTarget {
+  hebrew_terms: string[];
+  doctrine: string;
+  source_type_filter?: SourceTypeFilter;
+}
+
+export interface ExpectedAuthority {
+  id: AuthorityId;
+  type: "caselaw" | "statute" | "regulation" | "scholarship";
+  name: string;
+  docket?: string;
+  section?: string;
+  year?: string;
+  why_central: string;
+}
+
+export interface Claim {
+  id: ClaimId;
+  text: string;
+  required_evidence: EvidenceKind[];
+  search_targets: SearchTarget[];
+  supporting_authorities: AuthorityId[];
+}
+
+export interface PlanV1 {
+  doctrinal_frame: string;
+  thesis: string;
+  claims: Claim[];
+  expected_authorities: ExpectedAuthority[];
+}
+
+// ─────────────────── Step 2: Retrieval ───────────────────
+
+export type CandidateOrigin =
+  | "local_text"
+  | "local_vector"
+  | "exact_authority"
+  | "approved_web";
+
+export interface CandidateSource {
+  candidate_id: CandidateId;
+  claim_id: ClaimId;
+  origin: CandidateOrigin;
+  document_id?: string;
+  source_type: string;
+  title: string;
+  citation: string;
+  url?: string;
+  snippet: string;
+  metadata: Record<string, unknown>;
+}
+
+// ─────────────────── Step 3: Verifier ───────────────────
+
+export type Support = "direct" | "partial" | "tangential" | "unrelated";
+
+export interface Verdict {
+  candidate_id: CandidateId;
+  support: Support;
+  rationale: string;
+  pinpoint?: string;
+}
+
+export interface VerificationResult {
+  claim_id: ClaimId;
+  verdicts: Verdict[];
+}
+
+// ─────────────────── Step 4: Ledger ───────────────────
+
+export type LedgerStatus = "supported" | "hedged" | "unsupported";
+
+export interface LedgerSource {
+  ls_id: LedgerSourceId;
+  candidate_id: CandidateId;
+  support: "direct" | "partial";
+  pinpoint?: string;
+  title: string;
+  citation: string;
+  url?: string;
+  source_type: string;
+  document_id?: string;
+}
+
+export interface LedgerEntry {
+  claim_id: ClaimId;
+  status: LedgerStatus;
+  sources: LedgerSource[];
+}
+
+export type Ledger = LedgerEntry[];
+
+// ─────────────────── Step 6: Citation pass ───────────────────
+
+export type RemovalReason =
+  | "placeholder"
+  | "off_domain"
+  | "malformed"
+  | "duplicate_secondary";
+
+export interface Footnote {
+  number: number;
+  text: string;
+  url?: string;
+  document_id?: string;
+  source_type: string;
+  ledger_source_id: LedgerSourceId;
+}
+
+// ─────────────────── Telemetry ───────────────────
+
+export interface StageRun {
+  stage: string;
+  duration_ms: number;
+  status: "ok" | "error" | "empty";
+  model?: string;
+  error?: string;
+}
+
+export interface CoreMetadata {
+  version: "core_v1";
+  plan: PlanV1;
+  retrieval: {
+    per_claim: Array<{
+      claim_id: ClaimId;
+      counts: Record<CandidateOrigin, number>;
+      web_triggered: boolean;
+      web_trigger_reason?: "local_under_threshold";
+      candidate_ids: CandidateId[];
+    }>;
+    total_candidates: number;
+  };
+  verification: Array<{
+    claim_id: ClaimId;
+    verdict_counts: Record<Support, number>;
+  }>;
+  ledger: {
+    supported: ClaimId[];
+    hedged: ClaimId[];
+    unsupported: ClaimId[];
+  };
+  citation_pass: {
+    before: number;
+    after: number;
+    removed: Array<{ candidate_id: CandidateId; reason: RemovalReason }>;
+  };
+  stage_runs: StageRun[];
+  total_duration_ms: number;
+}
+
+export type CoreResult =
+  | {
+      ok: true;
+      answer: string;
+      footnotes: Footnote[];
+      metadata: { core: CoreMetadata };
+    }
+  | {
+      ok: false;
+      reason:
+        | "insufficient_verified_sources"
+        | "planner_failed"
+        | "drafter_empty";
+      answer: string;
+      footnotes: [];
+      metadata: { core: CoreMetadata };
+    };
