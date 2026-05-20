@@ -2636,9 +2636,9 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       // V3 here (not V2 directly) so AnswerMap is enabled and the recall
       // pool is widest. V3 falls back through to V2 internally on its own
       // empty-ledger conditions.
-      if (researchV3Enabled() || researchV2Enabled() || pipelineMode === "v4") {
+      if (researchV3Enabled() || researchV2Enabled() || pipelineMode === "v4" || pipelineMode === "core") {
         try {
-          const useV3 = researchV3Enabled() || pipelineMode === "v4";
+          const useV3 = researchV3Enabled() || pipelineMode === "v4" || pipelineMode === "core";
           const runner = useV3 ? runResearchV3 : runResearchV2;
           console.log(`[research_${useV3 ? "v3" : "v2"}] dispatch — fallback=${!!v4FallbackReason}`);
           const fb = await runner({
