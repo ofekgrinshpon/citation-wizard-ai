@@ -5,6 +5,7 @@ import { buildEnginePromptHint } from "@/lib/citationValidation";
 import { FormattedCitation } from "./FormattedCitation";
 import { VerifiedAutocomplete } from "./VerifiedAutocomplete";
 import { PublicationIntegrityCard } from "./PublicationIntegrityCard";
+import { FootnoteReviewCard } from "./FootnoteReviewCard";
 import { useBibliography } from "@/hooks/useBibliography";
 import { useProjects } from "@/hooks/useProjects";
 import { useOffice } from "@/hooks/useOffice";
@@ -18,9 +19,12 @@ interface FootnoteCell {
   id: number;
   input: string;
   output: string | null;
-  status: "empty" | "loading" | "valid" | "warning" | "verified";
+  status: "empty" | "loading" | "valid" | "warning" | "verified" | "error";
   warningMsg?: string;
   verifiedCitation?: string;
+  approved?: boolean;
+  sourceTypeOverride?: SourceType;
+  detectedType?: SourceType;
 }
 
 interface PendingIntegrity {
@@ -30,6 +34,8 @@ interface PendingIntegrity {
   fullCitation: string;
   sourceType: string | null;
 }
+
+type Phase = "input" | "review" | "final";
 
 const createCell = (id: number): FootnoteCell => ({
   id,
@@ -42,12 +48,16 @@ interface BatchProps {}
 
 const CELLS_STORAGE_PREFIX = "footnote_cells";
 const SUMMARY_STORAGE_PREFIX = "footnote_summary";
+const PHASE_STORAGE_PREFIX = "footnote_phase";
 
 function getCellsKey(projectId: string | undefined) {
   return projectId ? `${CELLS_STORAGE_PREFIX}_${projectId}` : CELLS_STORAGE_PREFIX;
 }
 function getSummaryKey(projectId: string | undefined) {
   return projectId ? `${SUMMARY_STORAGE_PREFIX}_${projectId}` : SUMMARY_STORAGE_PREFIX;
+}
+function getPhaseKey(projectId: string | undefined) {
+  return projectId ? `${PHASE_STORAGE_PREFIX}_${projectId}` : PHASE_STORAGE_PREFIX;
 }
 
 function loadCells(projectId: string | undefined): FootnoteCell[] {
@@ -60,6 +70,15 @@ function loadCells(projectId: string | undefined): FootnoteCell[] {
   } catch {}
   return Array.from({ length: 5 }, (_, i) => createCell(i + 1));
 }
+
+function loadPhase(projectId: string | undefined): Phase {
+  try {
+    const raw = localStorage.getItem(getPhaseKey(projectId));
+    if (raw === "review" || raw === "final" || raw === "input") return raw;
+  } catch {}
+  return "input";
+}
+
 
 export function BatchFootnoteBuilder({}: BatchProps) {
   const { currentProject } = useProjects();
