@@ -1153,6 +1153,11 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                     }
                   }
 
+                  // Reconcile decision date/year for published cases (Rule 18).
+                  // First-pass `date`/`year` is often the volume's print year or fabricated.
+                  await reconcilePublishedDate(PERPLEXITY_API_KEY, caseType, caseNum, parsed);
+
+
                   // Normalize databaseName from Perplexity citation URLs (lite.takdin → תקדין,
                   // supremedecisions.court.gov.il → אר״ש, etc). Overrides free-form strings.
                   if (!parsed.isPublished) {
