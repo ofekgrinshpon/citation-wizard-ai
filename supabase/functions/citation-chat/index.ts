@@ -1116,6 +1116,38 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                 try {
                   let parsed = JSON.parse(jsonMatch[0]);
                   
+                  // ── Anonymization override (Rule 18.4) ──
+                  // If published in פ"ד under פלוני/פלונית/קטין/אלמוני — that
+                  // anonymized name is authoritative; takdin sometimes exposes
+                  // the real name and Perplexity picks it up.
+                  if (parsed.found && parsed.isPublished) {
+                    try {
+                      const ANON = "(?:פלוני|פלונית|פלונים|פלוניות|קטין|קטינה|קטינים|קטינות|אלמוני|אלמונית|אלמונים|אלמוניות)";
+                      const snippets: string[] = [];
+                      const sr = (pData as any).search_results;
+                      if (Array.isArray(sr)) {
+                        for (const r of sr) {
+                          if (r && typeof r.snippet === "string") snippets.push(r.snippet);
+                          if (r && typeof r.title === "string") snippets.push(r.title);
+                        }
+                      }
+                      snippets.push(pContent);
+                      const haystack = snippets.join("\n");
+                      const p1 = haystack.match(new RegExp(`(${ANON})\\s+נ['׳"]`, "u"));
+                      if (p1 && typeof parsed.party1 === "string" && parsed.party1 !== p1[1]) {
+                        console.log(`[case-law] anonymization override: party1=${parsed.party1} → ${p1[1]}`);
+                        parsed.party1 = p1[1];
+                      }
+                      const p2 = haystack.match(new RegExp(`נ['׳"]\\s+(${ANON})`, "u"));
+                      if (p2 && typeof parsed.party2 === "string" && parsed.party2 !== p2[1]) {
+                        console.log(`[case-law] anonymization override: party2=${parsed.party2} → ${p2[1]}`);
+                        parsed.party2 = p2[1];
+                      }
+                    } catch (anonErr) {
+                      console.error("[case-law] anonymization override error:", anonErr);
+                    }
+                  }
+
                   // ── Secondary verification: if Perplexity says not published, double-check with a focused query ──
                   if (parsed.found && !parsed.isPublished) {
                     console.log(`[case-law] First search says unpublished for ${fullCaseRef}, running verification search...`);
