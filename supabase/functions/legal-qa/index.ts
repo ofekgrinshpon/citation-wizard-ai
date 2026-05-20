@@ -2221,7 +2221,18 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     }
 
     const body = await req.json();
-    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, evalForceMissingSlots: bodyEvalForceMissingSlots, depth: bodyDepth, styleGuideEnabled: bodyStyleGuideEnabled, footnoteOffset: bodyFootnoteOffset, forceDrafterModel: bodyForceDrafterModel, forceDrafterVariant: bodyForceDrafterVariant } = body;
+    const { question, taskMode, documentText, documentName, academicStep, documentTexts, previousChapters, chapterTitle, chapterIndex, researchQuestion: bodyResearchQuestion, outline: bodyOutline, isAbstract, hasDocument: bodyHasDocument, requestId: clientRequestId, evalForceLegacy: bodyEvalForceLegacy, evalRunId: bodyEvalRunId, evalVariant: bodyEvalVariant, evalForceMissingSlots: bodyEvalForceMissingSlots, depth: bodyDepth, styleGuideEnabled: bodyStyleGuideEnabled, footnoteOffset: bodyFootnoteOffset, forceDrafterModel: bodyForceDrafterModel, forceDrafterVariant: bodyForceDrafterVariant, runId: clientRunId, projectId: bodyProjectId } = body;
+
+    // Client-supplied run id for short academic steps (propose_outline, suggest_topics,
+    // validate_question) so the result is recoverable after page navigation. We
+    // insert a qa_logs row up-front with this id, then UPDATE it on completion.
+    // For all other paths the existing behavior (insert-on-finish) is preserved.
+    const UUID_V4_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const isShortAcademicStep = taskMode === "academic_writing" && typeof academicStep === "string" &&
+      ["propose_outline", "suggest_topics", "validate_question"].includes(academicStep);
+    const resumableRunId: string | null = isShortAcademicStep
+      ? (typeof clientRunId === "string" && UUID_V4_RE.test(clientRunId) ? clientRunId : crypto.randomUUID())
+      : null;
 
     // ─── Continuous footnote numbering (academic writing only) ────────
     // Each chapter is generated independently and produces a local 1..K
