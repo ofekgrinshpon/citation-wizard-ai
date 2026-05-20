@@ -2583,6 +2583,28 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         });
       }
 
+      // Pre-insert qa_logs row with the client-supplied runId so the client
+      // can poll legal-qa-status after navigation. Only for the 3 short steps.
+      if (resumableRunId) {
+        try {
+          await adminClient.from("qa_logs").insert({
+            id: resumableRunId,
+            user_id: user.id,
+            question: question.substring(0, 500),
+            answer: null,
+            footnotes: [],
+            task_mode: taskMode,
+            project_id: typeof bodyProjectId === "string" ? bodyProjectId : null,
+            local_footnotes_count: 0,
+            perplexity_footnotes_count: 0,
+            total_footnotes: 0,
+            metadata: { academic_step: academicStep, checkpoint: "running", run_id: resumableRunId },
+          });
+        } catch (preInsertErr) {
+          console.error("Failed to pre-insert qa_logs row for resumable short step:", preInsertErr);
+        }
+      }
+
       // Quick local search for context (skipped for abstract — synthesis only)
       let localContext = "";
 
