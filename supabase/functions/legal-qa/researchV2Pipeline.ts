@@ -342,7 +342,9 @@ export async function runResearchV2(args: RunResearchV2Args): Promise<RunResearc
     { type: string; name: string; centrality: string; claim_id: string }
   >();
   let answerMapForRecon: AnswerMap | null = null;
-  if (answerMapEnabled()) {
+  if (args.disableAnswerMap) {
+    metadata.answer_map = { status: "skipped_v4_disabled" };
+  } else if (answerMapEnabled()) {
     try {
       const amT0 = Date.now();
       const amRes = await buildAnswerMap({ question, plan, depth: "deep" });
