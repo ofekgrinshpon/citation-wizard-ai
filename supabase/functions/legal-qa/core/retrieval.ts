@@ -337,11 +337,18 @@ async function approvedWeb(
   perplexityKey: string,
   claimText: string,
   doctrine: string,
+  authorities: ExpectedAuthority[],
   claimId: ClaimId,
   signal?: AbortSignal,
 ): Promise<CandidateSource[]> {
-  const sys = `אתה מחזיר אך ורק מקורות משפטיים ישראליים ראשוניים (פסיקה, חקיקה, תקנות) מתוך התחומים המאושרים. החזר JSON-array בלבד, ללא טקסט נוסף. כל איבר: {"title":"","citation":"","url":"","source_type":"caselaw"|"statute"|"regulation","snippet":""}.`;
-  const usr = `טענה: ${claimText}\nדוקטרינה: ${doctrine}\nהחזר עד ${WEB_K} מקורות.`;
+  // Short claim-specific query + expected-authority hints.
+  const authHints = authorities
+    .slice(0, 4)
+    .map((a) => [a.docket, a.name].filter(Boolean).join(" "))
+    .filter((s) => s.trim().length > 0);
+  const sys = `אתה מחזיר אך ורק מקורות משפטיים ישראליים ראשוניים (פסיקה, חקיקה, תקנות) מתוך התחומים המאושרים. החזר JSON-array בלבד, ללא טקסט נוסף, עד ${WEB_PER_CLAIM_CANDIDATES} פריטים. כל איבר: {"title":"","citation":"","url":"","source_type":"caselaw"|"statute"|"regulation","snippet":""}.`;
+  const hintBlock = authHints.length ? `\nרמזים לסמכויות צפויות: ${authHints.join(" ; ")}` : "";
+  const usr = `טענה: ${claimText}\nדוקטרינה: ${doctrine}${hintBlock}\nהחזר עד ${WEB_PER_CLAIM_CANDIDATES} מקורות סמכותיים בלבד.`;
   try {
     const res = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
@@ -351,7 +358,7 @@ async function approvedWeb(
         model: "sonar-pro",
         messages: [{ role: "system", content: sys }, { role: "user", content: usr }],
         temperature: 0.1,
-        max_tokens: 1200,
+        max_tokens: 800,
         search_domain_filter: TIER_A_DOMAIN_FILTER,
       }),
     });
@@ -372,7 +379,7 @@ async function approvedWeb(
     let i = 0;
     for (const h of arr) {
       if (!h?.url) continue;
-      if (citationTier(h.url) !== "A") continue;  // hard allowlist
+      if (citationTier(h.url) !== "A") continue;  // Tier A only by default
       out.push({
         candidate_id: `${claimId}-web-${++i}`,
         claim_id: claimId,
@@ -384,7 +391,7 @@ async function approvedWeb(
         snippet: (h.snippet || "").slice(0, 600),
         metadata: { tier: "A" },
       });
-      if (out.length >= WEB_K) break;
+      if (out.length >= WEB_PER_CLAIM_CANDIDATES) break;
     }
     return out;
   } catch (e) {
@@ -392,6 +399,7 @@ async function approvedWeb(
     return [];
   }
 }
+
 
 // ─── Orchestrator ─────────────────────────────────────────────────────────
 export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResult> {
