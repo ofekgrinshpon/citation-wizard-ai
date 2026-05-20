@@ -1,63 +1,49 @@
 ## Goal
 
-Fix wrong dates (e.g. `27.07.2022` instead of real `13.02.2023` for `ע"א 9308/20`) by being strict about **where** Perplexity is allowed to pull the decision date from when the only source is another judgment that mentions this case.
+Add diagnostic logging so we can see **which URLs** Perplexity pulled when it returned `year: 2001` for `ע"פ 4596/98`. No behavior change.
 
-## Two changes (in order)
+## Changes
 
-### 1. Auto-retry once on empty `sonar-pro` response
+### 1. `supabase/functions/citation-chat/index.ts` — case-number branch (~line 1100, after `await perplexityResp.json()`)
 
-In `supabase/functions/citation-chat/index.ts` (case-number branch, ~line 1077–1102) and mirror in `case-law-search/index.ts`:
+Log the citation URLs alongside the parsed JSON:
 
-If the first call returns `search_results.length === 0` or `parsed.found === false`, retry **once** with a slightly reworded query that hints `lite.takdin.co.il/search-results`. Log `[case-law] retry attempt 2`. No further retries.
+```ts
+const pData = await perplexityResp.json();
+const rawContent = pData.choices?.[0]?.message?.content || "";
+console.log(`[case-law] perplexity sources for ${fullCaseRef}:`, JSON.stringify({
+  citations: pData.citations ?? null,
+  search_results: pData.search_results ?? null,
+  model: pData.model,
+}));
+console.log(`[case-law] perplexity raw content for ${fullCaseRef}:`, rawContent);
+```
 
-Eliminates the "tried many times" friction.
+### 2. Same file — date-verification call inside `verifyDecisionDate` / `reconcilePublishedDate`
 
-### 2. Strict adjacency rule for dates pulled from other judgments
+After the verification Perplexity response is parsed, log:
 
-This is the key change. Update the **first-call extraction prompt** (around line 1097 in `citation-chat`, mirror in `case-law-search` ~line 95) to encode the user's rule explicitly:
+```ts
+console.log(`[case-law] date-verify sources for ${fullCaseRef}:`, JSON.stringify({
+  citations: dvData.citations ?? null,
+  search_results: dvData.search_results ?? null,
+}));
+console.log(`[case-law] date-verify raw content:`, dvContent);
+```
 
-> כלל לחילוץ תאריך פסק דין:
->
-> 1. **המקור המועדף** הוא עמוד התיק עצמו במאגר (נבו / תקדין / פסקדין / supreme.court.gov.il). אם מצאת שם תאריך — קח אותו וסיים.
->
-> 2. אם התיק מוזכר **בתוך פסק דין אחר** (או בכל מסמך שאינו עמוד התיק עצמו), מותר לקחת את התאריך **רק אם הוא מופיע צמוד לאזכור התיק בפורמט המקובל**, כלומר:
->    `[סוג תיק] [מספר]/[שנה] [שם צד א] נ' [שם צד ב] (DD.MM.YYYY)`
->    הסוגריים חייבים להופיע **מיד אחרי שמות הצדדים של התיק הספציפי הזה**, באותה שורה, ללא משפט מפריד.
->
-> 3. **אסור** לקחת תאריך:
->    - מדף ריכוז / רשימת תיקים שמכיל מספר תאריכים שונים;
->    - ממשפט תיאורי כמו "נדון בעניין X" או "ראו פסק דין מ-DD.MM.YYYY";
->    - מהקשר של פסק דין אחר שמצטט תאריך משלו ולא של התיק המבוקש.
->
-> 4. אם אף אחד מהמקורות אינו עומד בכללים האלה — החזר `"date":""` ו-`"year":""`. אל תנחש.
+### 3. `supabase/functions/case-law-search/index.ts` — both Perplexity calls
 
-This is the **upstream** fix. For `ע"א 9308/20`, the only source was a takdin aggregator listing many cases with many dates — Rule 3a applies, Perplexity should now return empty rather than `27.07.2022`.
+Same two log lines after each `await ...json()`. Mirrors citation-chat so the standalone path is debuggable too.
 
-### 3. Unpublished date-verify safety net (downstream)
+## What we'll do next
 
-Extend `verifyDecisionDate`/`reconcilePublishedDate` (lines 70–173 of `citation-chat/index.ts`) to also cover **unpublished** cases. Currently the safety net only fires for `isPublished && padi_volume`.
+After deploying, re-run `ע"פ 4596/98` and check edge function logs. The `citations[]` array will list the exact URLs Perplexity grounded on. That tells us:
 
-Add `verifyUnpublishedDecisionDate(caseType, caseNumber, party1, party2)` that re-asks Perplexity with the **same strict adjacency rule** as above, anchored on case number + parties. Reconciliation:
-
-- Verified date matches original → keep, `confidence: high`.
-- Verified date differs and has `confidence: high` → override, log the swap.
-- Verifier returns empty (no source met the adjacency rule) → **clear** `date`/`year`, set `confidence: low` so the AI emits `[חסר: תאריך]` instead of a wrong day.
-
-For `ע"א 9308/20` this is the second line of defense: even if the first call slipped a date through, the verifier — applying the same strict rule — would clear it.
+- Whether `2001` came from a volume-catalog page, a follow-up motion, or a hallucination with no source at all.
+- Whether the date-verify retry hits the same pages (explaining why it doesn't fix the year).
+- Whether tightening `search_domain_filter` (e.g. dropping `psakdin.co.il`) or switching to `sonar-pro` would help — before committing to the Wikipedia helper.
 
 ## Out of scope
 
-- Wikipedia verifier (strict adjacency rule should make it unnecessary).
-- Changes to party-name extraction, publication checks, or `search_domain_filter`.
-- Touching legislation/regulations/books/articles paths.
-
-## Files
-
-- `supabase/functions/citation-chat/index.ts` — retry helper, strict adjacency in extraction prompt, extended date-verify.
-- `supabase/functions/case-law-search/index.ts` — mirror all three changes (manual-entry path).
-
-## Telemetry
-
-- `[case-law] retry attempt 2`
-- `[case-law] date cleared by adjacency rule` (when first call returns empty date because no source qualified)
-- `[case-law] unpub date-verify: original=... verified=... action=keep|override|clear`
+- Any change to the year logic, prompts, or domain filter.
+- Wikipedia helper (deferred until logs justify it).
