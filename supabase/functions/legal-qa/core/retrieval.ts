@@ -34,8 +34,8 @@ const PER_CLAIM_CAP = 8;
 const LOCAL_TEXT_K = 6;
 const LOCAL_VECTOR_K = 6;
 const EXACT_AUTH_K = 3;
-const WEB_TRIGGER = 3;     // < this many local+exact candidates → web fallback
-const WEB_K = 5;
+const WEB_PER_CLAIM_CANDIDATES = 2;     // hard cap on web candidates per claim
+const WEB_GLOBAL_CAP = 10;              // hard cap on web candidates per answer
 const MAX_CONCURRENCY = 3;
 const TEXT_QUERY_MAX_CHARS = 80;
 const VECTOR_QUERY_MAX_CHARS = 160;
@@ -51,15 +51,20 @@ export interface AuthorityResolution {
 export interface ClaimRetrievalPack {
   claim_id: ClaimId;
   candidates: CandidateSource[];
-  counts: Record<CandidateOrigin, number>;
-  web_triggered: boolean;
-  web_trigger_reason?: "local_under_threshold";
+  local_text_count: number;
+  local_vector_count: number;
+  exact_authority_count: number;
+  approved_web_count: number;
+  approved_web_domains: string[];
+  web_skipped_for_global_cap: boolean;
 }
 
 export interface RetrievalResult {
   packs: ClaimRetrievalPack[];
   authority_resolutions: AuthorityResolution[];
   total_candidates: number;
+  total_web_candidates: number;
+  web_global_cap_hit: boolean;
   duration_ms: number;
 }
 
