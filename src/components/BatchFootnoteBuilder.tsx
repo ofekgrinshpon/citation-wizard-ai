@@ -335,30 +335,23 @@ export function BatchFootnoteBuilder({}: BatchProps) {
     try {
       let warningCount = 0;
       let validCount = 0;
-      let nextCells: FootnoteCell[] = [];
+      const normalized = applyRepeatCitationRules(cells);
+      const nextCells: FootnoteCell[] = normalized;
       const updatedCells: FootnoteCell[] = [];
 
-      setCells((prev) => {
-        const normalized = applyRepeatCitationRules(prev);
-        nextCells = normalized;
-
-        for (const cell of normalized) {
-          if (!cell.input.trim() || !cell.output) continue;
-          const hasWarning = /\[חסר:/.test(cell.output) || /⚠️/.test(cell.output);
-          if (hasWarning) warningCount++;
-          else validCount++;
-          updatedCells.push({
-            ...cell,
-            status: hasWarning ? "warning" : cell.status === "verified" ? "verified" : "valid",
-            warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
-          });
-        }
-
-        return normalized.map((cell) => {
-          const final = updatedCells.find((u) => u.id === cell.id);
-          return final ?? cell;
+      for (const cell of normalized) {
+        if (!cell.input.trim() || !cell.output) continue;
+        const hasWarning = /\[חסר:/.test(cell.output) || /⚠️/.test(cell.output);
+        if (hasWarning) warningCount++;
+        else validCount++;
+        updatedCells.push({
+          ...cell,
+          status: hasWarning ? "warning" : cell.status === "verified" ? "verified" : "valid",
+          warningMsg: hasWarning ? "חסרים פרטים – ראה סימון בתוצאה" : undefined,
         });
-      });
+      }
+
+      setCells(normalized.map((cell) => updatedCells.find((u) => u.id === cell.id) ?? cell));
 
       const verifiedCandidates: { rawInput: string; fullCitation: string; sourceType: string | null; yearPreferences?: YearPreferences }[] = [];
       const integrityQueue: PendingIntegrity[] = [];
