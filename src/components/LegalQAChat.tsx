@@ -1292,6 +1292,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     // overwrite the marker.
     runPersistedRef.current = false;
     activeRunIdRef.current = null;
+    // Deep research: stop = discard. The background job will still finish on
+    // the server, but the user explicitly asked to abandon it, so we drop the
+    // marker rather than reattach on next mount.
+    if (taskMode === "research" && researchDepth === "deep") {
+      clearResearchRunMarker(currentProject?.id);
+    }
     toast.info("העיבוד הופסק");
   };
 
