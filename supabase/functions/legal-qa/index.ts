@@ -10819,6 +10819,30 @@ async function dispatchDeepAsync(
       stage_runs: [],
     };
 
+    // If the client reuses a runId (e.g. clicked send twice after coming back
+    // from another page), upsert so we don't trip the PK and so we don't
+    // start a second background job — caller can poll the existing run.
+    if (clientRunId) {
+      const { data: existing } = await adminClient
+        .from("qa_logs")
+        .select("id, user_id, metadata, answer")
+        .eq("id", runId)
+        .maybeSingle();
+      if (existing && existing.user_id === user.id) {
+        console.log(`[pass-e:async] reattach to existing run_id=${runId}`);
+        return new Response(
+          JSON.stringify({
+            run_id: runId,
+            status: typeof existing.answer === "string" && existing.answer.length > 0 ? "completed" : "queued",
+            async: true,
+            reattached: true,
+            poll_endpoint: "/legal-qa-status",
+          }),
+          { status: 202, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+    }
+
     const { error: insertErr } = await adminClient.from("qa_logs").insert({
       id: runId,
       user_id: user.id,
