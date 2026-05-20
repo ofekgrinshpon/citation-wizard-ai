@@ -1073,20 +1073,9 @@ serve(async (req) => {
             const caseNum = caseNumberMatch[2];
             const fullCaseRef = `${caseType} ${caseNum}`;
             const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חשוב מאוד: בדוק קודם כל האם פסק הדין פורסם בפד"י (פסקי דין של בית המשפט העליון). חפש את מספר התיק יחד עם המילה "פ"ד" וכרך. רק אם וידאת שהוא לא מופיע בפד"י, ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. ענה בעברית בלבד.`;
+            const retryQuery = `אנא מצא שוב את פסק הדין הישראלי ${fullCaseRef}. חפש ישירות ב-https://lite.takdin.co.il/search-results ובאתר נבו את העמוד הייעודי של התיק (לא דפי ריכוז של מספר תיקים). ציין: שמות הצדדים, תאריך מתן פסק הדין המדויק, בית המשפט, פרסום בפד"י (כרך/חלק/עמוד) או שם המאגר. ענה בעברית בלבד.`;
 
-            const perplexityResp = await fetch("https://api.perplexity.ai/chat/completions", {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                model: "sonar-pro",
-                search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
-                messages: [
-                  {
-                    role: "system",
-                    content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
+            const caseSystemPrompt = `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
 טיפ חיפוש: ב-https://lite.takdin.co.il/search-results מוצגים בעמוד אחד שמות הצדדים, מספר התיק, בית המשפט, תאריך פסק הדין ופרסום בפ"ד — חפש שם קודם כדי לאתר את כל הנתונים במקום אחד.
 חשוב ביותר: עדיפות ראשונה היא לבדוק פרסום בפד"י (פסקי דין). רוב פסקי הדין של בית המשפט העליון פורסמו בפד"י. אל תסתמך רק על מאגרי מידע אלקטרוניים - חפש במיוחד אם יש ציון "פ"ד" עם כרך ועמוד.
 סמן isPublished: false רק אם חיפשת במפורש פרסום בפד"י ווידאת שהוא לא קיים.
@@ -1094,22 +1083,66 @@ serve(async (req) => {
 {"found":true/false,"party1":"שם צד א","party2":"שם צד ב","date":"DD.MM.YYYY","court":"בית המשפט","isPublished":true/false,"padi_volume":"כרך","padi_part":"חלק","padi_page":"עמוד","databaseName":"שם מאגר","year":"YYYY","confidence":"high/low"}
 שמות צדדים: שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים. ללא תארים.
 confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות רבים, "low" אם יש ספק או מקור יחיד.
-חשוב: שדה year/date חייב להיות תאריך/שנת מתן פסק הדין על ידי בית המשפט, ולא שנת הוצאת כרך פ"ד.`,
-                  },
-                  { role: "user", content: query },
-                ],
-              }),
-            });
+חשוב: שדה year/date חייב להיות תאריך/שנת מתן פסק הדין על ידי בית המשפט, ולא שנת הוצאת כרך פ"ד.
 
-            if (perplexityResp.ok) {
-              const pData = await perplexityResp.json();
+כלל קריטי לחילוץ תאריך פסק הדין (אסור לעבור עליו):
+1. מקור מועדף: עמוד התיק עצמו במאגר ייעודי (נבו / תקדין / פסקדין / supreme.court.gov.il / supremedecisions.court.gov.il). אם מצאת שם תאריך — קח אותו וסיים.
+2. אם התיק מוזכר רק בתוך פסק דין אחר או מסמך אחר, מותר לקחת את התאריך אך ורק אם הוא מופיע צמוד לאזכור התיק בפורמט המקובל: "[סוג תיק] [מספר]/[שנה] [צד א] נ' [צד ב] (DD.MM.YYYY)" — הסוגריים חייבים להופיע מיד אחרי שמות הצדדים של אותו תיק, באותה שורה, ללא משפט מפריד.
+3. אסור לקחת תאריך מהמקורות הבאים: (א) דף ריכוז / רשימת תיקים שמכיל מספר תאריכים שונים; (ב) משפט תיאורי כמו "נדון בעניין X" או "ראו פסק דין מיום ..."; (ג) הקשר של פסק דין אחר שמצטט תאריך משלו ולא של התיק המבוקש.
+4. אם אף מקור לא עומד בכללים האלה — החזר "date":"" ו-"year":"" וסמן "confidence":"low". אל תנחש לעולם.`;
+
+            const callPerplexity = async (userMsg: string, attempt: number) => {
+              const resp = await fetch("https://api.perplexity.ai/chat/completions", {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  model: "sonar-pro",
+                  search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
+                  messages: [
+                    { role: "system", content: caseSystemPrompt },
+                    { role: "user", content: userMsg },
+                  ],
+                }),
+              });
+              if (!resp.ok) {
+                console.error(`[case-law] Perplexity attempt ${attempt} failed:`, resp.status);
+                return { ok: false as const, pData: null as any, pContent: "" };
+              }
+              const pData = await resp.json();
               const pContent = pData.choices?.[0]?.message?.content || "";
-              console.log(`[case-law] perplexity sources for ${fullCaseRef}:`, JSON.stringify({
+              console.log(`[case-law] perplexity sources for ${fullCaseRef} (attempt ${attempt}):`, JSON.stringify({
                 citations: pData.citations ?? null,
                 search_results: pData.search_results ?? null,
                 model: pData.model,
               }));
-              console.log("Case law search result:", pContent);
+              console.log(`[case-law] raw content (attempt ${attempt}):`, pContent);
+              return { ok: true as const, pData, pContent };
+            };
+
+            let { ok: perplexityOk, pData, pContent } = await callPerplexity(query, 1);
+
+            // Retry once on empty/not-found result
+            if (perplexityOk) {
+              const hadResults = (pData?.search_results?.length ?? 0) > 0;
+              let firstFound = false;
+              try {
+                const m = pContent.match(/\{[\s\S]*\}/);
+                if (m) firstFound = !!JSON.parse(m[0]).found;
+              } catch { /* ignore */ }
+              if (!hadResults || !firstFound) {
+                console.log(`[case-law] retry attempt 2 for ${fullCaseRef} (hadResults=${hadResults}, firstFound=${firstFound})`);
+                const retry = await callPerplexity(retryQuery, 2);
+                if (retry.ok && (retry.pData?.search_results?.length ?? 0) > 0) {
+                  pData = retry.pData;
+                  pContent = retry.pContent;
+                }
+              }
+            }
+
+            if (perplexityOk) {
               const jsonMatch = pContent.match(/\{[\s\S]*\}/);
               if (jsonMatch) {
                 try {
