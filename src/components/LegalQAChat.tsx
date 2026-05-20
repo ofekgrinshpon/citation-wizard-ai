@@ -934,15 +934,42 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           };
           setRunComplete(true);
           setResult(qaResult);
-          // Persist into the matching chapter slot, mirroring the SSE success path.
-          setChapters((prev) => {
-            const idx = marker.chapterIdx;
-            if (idx < 0 || idx >= prev.length) return prev;
-            const next = [...prev];
-            next[idx] = { ...next[idx], content: qaResult.answer };
-            return next;
-          });
-          toast.success("הפרק הושלם ברקע ונטען מחדש");
+
+          const isShortStep =
+            marker.step === "propose_outline" ||
+            marker.step === "suggest_topics" ||
+            marker.step === "validate_question";
+
+          if (isShortStep) {
+            // Apply per-step UI state, mirroring the foreground success path.
+            if (marker.step === "propose_outline") {
+              setProposedQuestions([]);
+              setSuggestionRounds([]);
+              setOutline(qaResult.answer);
+              updateWizardStep("outline");
+            } else if (marker.step === "validate_question") {
+              setProposedQuestions([]);
+              setSuggestionRounds([]);
+              updateWizardStep("topic_or_question");
+            } else if (marker.step === "suggest_topics") {
+              const parsedQs = parseProposedQuestions(qaResult.answer);
+              setSuggestionRounds([{ questions: parsedQs, coverage: undefined, exhausted: false }]);
+              setProposedQuestions(parsedQs);
+              updateWizardStep("topic_or_question");
+            }
+            setLastAcademicAction(marker.step);
+            toast.success("השאילתה הושלמה ברקע ונטענה מחדש");
+          } else {
+            // Long-form chapter write recovery — persist into the matching chapter slot.
+            setChapters((prev) => {
+              const idx = marker.chapterIdx;
+              if (idx < 0 || idx >= prev.length) return prev;
+              const next = [...prev];
+              next[idx] = { ...next[idx], content: qaResult.answer };
+              return next;
+            });
+            toast.success("הפרק הושלם ברקע ונטען מחדש");
+          }
         } else {
           setError("ההפקה ברקע נכשלה. ניתן לנסות שוב.");
         }
