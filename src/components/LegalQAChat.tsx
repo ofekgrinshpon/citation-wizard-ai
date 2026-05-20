@@ -2240,20 +2240,25 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         console.error("Failed to save QA log:", saveErr);
       }
     } catch (e: any) {
-      if (e.name === "AbortError") return;
+      if (e.name === "AbortError") {
+        // Aborted — likely component unmounted (user navigated away). DO NOT
+        // clear the deep-research marker; the background job keeps running and
+        // the resume effect on next mount will reattach to it.
+        return;
+      }
       console.error("Legal QA error:", e);
       setError("שגיאה בעיבוד השאלה. נסו שוב.");
-      // Terminal error — drop the research marker so the user isn't reattached
-      // to a dead run on next mount.
+      // Terminal error — drop the marker so we don't reattach to a dead run.
       if (taskMode === "research" && researchDepth === "deep") {
         clearResearchRunMarker(currentProject?.id);
       }
     } finally {
+      const wasAborted = !!controller.signal.aborted;
       abortControllerRef.current = null;
       setLoading(false);
-      // Successful or refusal path: clear the marker. AbortError above already
-      // returned so this only runs on completion / handled error.
-      if (taskMode === "research" && researchDepth === "deep") {
+      // Only clear on a clean completion or handled error, never on abort —
+      // abort means we want to reattach next mount.
+      if (!wasAborted && taskMode === "research" && researchDepth === "deep") {
         clearResearchRunMarker(currentProject?.id);
       }
     }
