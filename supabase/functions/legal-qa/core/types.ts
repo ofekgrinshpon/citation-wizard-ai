@@ -145,21 +145,90 @@ export interface LedgerResult {
 export type Ledger = LedgerEntry[];
 
 
-// ─────────────────── Step 6: Citation pass ───────────────────
+// ─────────────────── Step 6: Canonical Citation + Footnotes + Quality ─────
+
+export type CitationQuality = "ok" | "partial" | "failed";
+
+export interface ShortFormInputs {
+  is_legislation: boolean;
+  law_name?: string;
+  short_label?: string;
+  default_section?: string;
+  default_pinpoint?: string;
+}
+
+export interface LedgerSourceCitation {
+  ls_id: LedgerSourceId;
+  source_type: string;
+  declared_type: "statute" | "caselaw" | "none";
+  canonical_citation: string;
+  citation_quality: CitationQuality;
+  citation_errors: string[];
+  placeholders: string[];
+  engine_used: "resolver" | "passthrough" | "none";
+  short_form_inputs: ShortFormInputs;
+}
 
 export type RemovalReason =
-  | "placeholder"
+  | "quality_failed"
   | "off_domain"
+  | "placeholder"
   | "malformed"
   | "duplicate_secondary";
 
 export interface Footnote {
   number: number;
+  ls_id: LedgerSourceId;
   text: string;
-  url?: string;
-  document_id?: string;
+  is_repeated: boolean;
+  first_footnote_number?: number;
+  repeated_citation_text?: string;
   source_type: string;
-  ledger_source_id: LedgerSourceId;
+  url?: string;
+}
+
+export interface MarkerToFootnote {
+  occurrence_index: number;
+  ls_id: LedgerSourceId;
+  footnote_number: number;
+  is_repeated: boolean;
+  first_footnote_number?: number;
+}
+
+export interface FlaggedFootnote {
+  number: number;
+  ls_id: LedgerSourceId;
+  reason: string;
+}
+
+export interface RemovedCitation {
+  ls_id: LedgerSourceId;
+  claim_id?: ClaimId;
+  reason: string;
+}
+
+export type CitationQualityStatus =
+  | "ok"
+  | "needs_review"
+  | "insufficient_verified_sources";
+
+export interface CitationQualityResult {
+  status: CitationQualityStatus;
+  rendered_answer: string;
+  footnotes: Footnote[];
+  marker_to_footnote: MarkerToFootnote[];
+  removed_citations: RemovedCitation[];
+  flagged_footnotes: FlaggedFootnote[];
+  claims_lost_all_support: ClaimId[];
+  citation_summary: {
+    ok: number;
+    partial: number;
+    failed: number;
+    off_domain: number;
+    repeated: number;
+    legislation_supra_blocked: number;
+  };
+  duration_ms: number;
 }
 
 // ─────────────────── Telemetry ───────────────────
