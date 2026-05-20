@@ -98,7 +98,8 @@ serve(async (req) => {
   "year": "שנת פסק הדין (YYYY)"
 }
 אם לא מצאת את פסק הדין, החזר {"found": false}.
-חשוב: שמות צדדים - לאנשים פרטיים שם משפחה בלבד. לתאגידים/גופים ציבוריים - שם מלא. אל תכלול תארים (עו"ד, ד"ר וכו'). אל תכלול "עזבון" או "יורשי" - רק שם המשפחה.`,
+חשוב: שמות צדדים - לאנשים פרטיים שם משפחה בלבד. לתאגידים/גופים ציבוריים - שם מלא. אל תכלול תארים (עו"ד, ד"ר וכו'). אל תכלול "עזבון" או "יורשי" - רק שם המשפחה.
+חשוב מאוד (אנונימיזציה): אם פסק הדין פורסם בפד"י והכותרת הרשמית בפד"י משתמשת בכינוי פלוני / פלונית / פלונים / פלוניות / קטין / קטינה / אלמוני / אלמונית — זהו שם הצד הקובע ויש להחזירו כפי שהוא. אל תחליף אותו בשם פרטי שמופיע במאגרים אחרים (תקדין/נבו/לייט-תקדין), גם אם נראה מפורש יותר.`,
           },
           { role: "user", content: query },
         ],
@@ -149,6 +150,41 @@ serve(async (req) => {
         JSON.stringify({ found: false }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
+    }
+
+    // ── Anonymization override (Rule 18.4) ──
+    // If the case was published in פ"ד under an anonymized headline (פלוני/פלונית/קטין/...),
+    // that name is authoritative. Other databases (takdin) sometimes expose the
+    // unredacted real name; Perplexity then picks it up. Detect anonymized
+    // headlines in the search-result snippets and override party1/party2.
+    if (parsed.found && parsed.isPublished) {
+      try {
+        const ANON = "(?:פלוני|פלונית|פלונים|פלוניות|קטין|קטינה|קטינים|קטינות|אלמוני|אלמונית|אלמונים|אלמוניות)";
+        const snippets: string[] = [];
+        const sr = (perplexityData as any).search_results;
+        if (Array.isArray(sr)) {
+          for (const r of sr) {
+            if (r && typeof r.snippet === "string") snippets.push(r.snippet);
+            if (r && typeof r.title === "string") snippets.push(r.title);
+          }
+        }
+        snippets.push(content);
+        const haystack = snippets.join("\n");
+        // party1: "<ANON> נ'"
+        const p1 = haystack.match(new RegExp(`(${ANON})\\s+נ['׳\"]`, "u"));
+        if (p1 && typeof parsed.party1 === "string" && parsed.party1 !== p1[1]) {
+          console.log(`[case-law-search] anonymization override: party1=${parsed.party1} → ${p1[1]}`);
+          parsed.party1 = p1[1];
+        }
+        // party2: "נ' <ANON>"
+        const p2 = haystack.match(new RegExp(`נ['׳\"]\\s+(${ANON})`, "u"));
+        if (p2 && typeof parsed.party2 === "string" && parsed.party2 !== p2[1]) {
+          console.log(`[case-law-search] anonymization override: party2=${parsed.party2} → ${p2[1]}`);
+          parsed.party2 = p2[1];
+        }
+      } catch (anonErr) {
+        console.error("[case-law-search] anonymization override error:", anonErr);
+      }
     }
 
     // ── Decision-date verification (Rule 18) ──
