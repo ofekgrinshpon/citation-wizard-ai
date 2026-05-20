@@ -575,69 +575,151 @@ export function BatchFootnoteBuilder({}: BatchProps) {
       </div>
 
       {/* === INPUT SECTION === */}
-      <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
-        <div className="space-y-2.5">
-          {cells.map((cell, index) => (
-            <div
-              key={`cell-${index}`}
-              draggable={!globalLoading}
-              onDragStart={() => handleDragStart(index)}
-              onDragEnter={() => handleDragEnter(index)}
-              onDragEnd={handleDragEnd}
-              onDragOver={(e) => e.preventDefault()}
-              className={`flex items-start gap-2 transition-opacity ${
-                dragIndex === index ? "opacity-40" : ""
-              }`}
-            >
-              <div
-                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1.5 cursor-grab active:cursor-grabbing ${
-                  cell.status === "verified" ? "bg-emerald-100 text-emerald-700" : "bg-primary/10 text-primary"
-                }`}
-                title="גרור לשינוי סדר"
-              >
-                {cell.status === "verified" ? "✓" : cell.id}
-              </div>
-              <VerifiedAutocomplete
-                value={cell.input}
-                onChange={(v) => updateCellInput(cell.id, v)}
-                onSelectCitation={(citation) => setCellVerified(cell.id, citation)}
-                placeholder="הזן מקור (פסיקה, חקיקה, ספרות...)"
-                disabled={globalLoading}
-              />
-              {cells.length > 1 && (
-                <button
-                  onClick={() => removeCell(cell.id)}
-                  className="text-[11px] text-muted-foreground hover:text-destructive px-1.5 py-2 rounded transition-colors flex-shrink-0 mt-0.5"
-                  title="הסר"
+      {phase === "input" && (
+        <>
+          <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
+            <div className="space-y-2.5">
+              {cells.map((cell, index) => (
+                <div
+                  key={`cell-${index}`}
+                  draggable={!globalLoading}
+                  onDragStart={() => handleDragStart(index)}
+                  onDragEnter={() => handleDragEnter(index)}
+                  onDragEnd={handleDragEnd}
+                  onDragOver={(e) => e.preventDefault()}
+                  className={`flex items-start gap-2 transition-opacity ${
+                    dragIndex === index ? "opacity-40" : ""
+                  }`}
                 >
-                  ✕
-                </button>
-              )}
+                  <div
+                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-1.5 cursor-grab active:cursor-grabbing ${
+                      cell.status === "verified" ? "bg-emerald-100 text-emerald-700" : "bg-primary/10 text-primary"
+                    }`}
+                    title="גרור לשינוי סדר"
+                  >
+                    {cell.status === "verified" ? "✓" : cell.id}
+                  </div>
+                  <VerifiedAutocomplete
+                    value={cell.input}
+                    onChange={(v) => updateCellInput(cell.id, v)}
+                    onSelectCitation={(citation) => setCellVerified(cell.id, citation)}
+                    placeholder="הזן מקור (פסיקה, חקיקה, ספרות...)"
+                    disabled={globalLoading}
+                  />
+                  {cells.length > 1 && (
+                    <button
+                      onClick={() => removeCell(cell.id)}
+                      className="text-[11px] text-muted-foreground hover:text-destructive px-1.5 py-2 rounded transition-colors flex-shrink-0 mt-0.5"
+                      title="הסר"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
+
+            <button
+              onClick={addCell}
+              disabled={globalLoading}
+              className="mt-3 w-full py-2 border-2 border-dashed border-border hover:border-primary/40 rounded-lg text-muted-foreground hover:text-primary transition-all text-sm font-medium disabled:opacity-40"
+            >
+              + הוסף מקור
+            </button>
+          </div>
+
+          <button
+            onClick={draftAllCells}
+            disabled={globalLoading || !hasAnyInput}
+            className="mt-4 w-full py-3 rounded-xl font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{
+              background: globalLoading || !hasAnyInput ? "hsl(var(--muted))" : "var(--gradient-primary)",
+              color: globalLoading || !hasAnyInput ? "hsl(var(--muted-foreground))" : "hsl(var(--primary-foreground))",
+            }}
+          >
+            {globalLoading ? "מכין טיוטות לבדיקה..." : "⚖ בנה טיוטות לבדיקה"}
+          </button>
+        </>
+      )}
+
+      {/* === REVIEW PHASE === */}
+      {phase === "review" && (() => {
+        const reviewable = cells.filter((c) => c.input.trim());
+        const approvedCount = reviewable.filter((c) => c.approved).length;
+        const total = reviewable.length;
+        const allApproved = total > 0 && approvedCount === total;
+        return (
+          <div className="space-y-4 animate-fade-in">
+            <div className="flex items-center justify-between bg-primary/5 border border-primary/15 rounded-xl px-4 py-3">
+              <div className="text-sm text-foreground">
+                <span className="font-semibold">שלב בדיקה:</span> בדוק כל הערה, ערוך או הפק מחדש לפי הצורך, ואשר אותה.
+                <span className="block text-xs text-muted-foreground mt-0.5">
+                  אושרו {approvedCount} מתוך {total}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPhase("input")}
+                  className="text-xs text-muted-foreground hover:text-foreground px-2 py-1.5 rounded-lg transition-colors"
+                >
+                  ← חזור לעריכה
+                </button>
+                <button
+                  onClick={approveAll}
+                  disabled={total === 0}
+                  className="text-xs bg-primary/15 text-primary hover:bg-primary/25 px-3 py-1.5 rounded-lg transition-colors font-medium disabled:opacity-40"
+                >
+                  ✓ אשר הכל
+                </button>
+              </div>
+            </div>
+
+            {reviewable.map((cell) => (
+              <FootnoteReviewCard
+                key={cell.id}
+                cell={cell}
+                onInputChange={updateCellInput}
+                onOutputChange={handleReviewOutputChange}
+                onSourceTypeChange={handleReviewSourceTypeChange}
+                onApproveToggle={handleReviewApproveToggle}
+                onRegenerate={regenerateOne}
+                onRemove={removeCell}
+                disabled={finalizing}
+              />
+            ))}
+
+            <button
+              onClick={finalizeApproved}
+              disabled={finalizing || !allApproved}
+              className="w-full py-3 rounded-xl font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{
+                background: !allApproved || finalizing ? "hsl(var(--muted))" : "var(--gradient-primary)",
+                color: !allApproved || finalizing ? "hsl(var(--muted-foreground))" : "hsl(var(--primary-foreground))",
+              }}
+            >
+              {finalizing
+                ? "בונה רשימה סופית..."
+                : allApproved
+                ? "🏛 בנה רשימה סופית"
+                : `יש לאשר את כל ההערות (${approvedCount}/${total})`}
+            </button>
+          </div>
+        );
+      })()}
+
+      {/* === FINAL PHASE TOP BAR === */}
+      {phase === "final" && (
+        <div className="flex items-center justify-between bg-primary/5 border border-primary/15 rounded-xl px-4 py-2.5 mb-4">
+          <span className="text-sm font-semibold text-foreground">📄 רשימה סופית</span>
+          <button
+            onClick={() => setPhase("review")}
+            className="text-xs text-primary hover:underline px-2 py-1"
+          >
+            ← חזור לעריכה ובדיקה
+          </button>
         </div>
+      )}
 
-        <button
-          onClick={addCell}
-          disabled={globalLoading}
-          className="mt-3 w-full py-2 border-2 border-dashed border-border hover:border-primary/40 rounded-lg text-muted-foreground hover:text-primary transition-all text-sm font-medium disabled:opacity-40"
-        >
-          + הוסף מקור
-        </button>
-      </div>
-
-      {/* Generate Button */}
-      <button
-        onClick={processAllCells}
-        disabled={globalLoading || !hasAnyInput}
-        className="mt-4 w-full py-3 rounded-xl font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-        style={{
-          background: globalLoading || !hasAnyInput ? "hsl(var(--muted))" : "var(--gradient-primary)",
-          color: globalLoading || !hasAnyInput ? "hsl(var(--muted-foreground))" : "hsl(var(--primary-foreground))",
-        }}
-      >
-        {globalLoading ? "מעבד הערות שוליים..." : "⚖ ייצר הערות שוליים"}
-      </button>
 
       {/* === OUTPUT SECTION === */}
       {(hasAnyOutput || globalLoading) && (
