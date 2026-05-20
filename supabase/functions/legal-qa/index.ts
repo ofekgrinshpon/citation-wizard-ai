@@ -2826,26 +2826,35 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
 
         // Early-exit: no sources at all → return a guidance message, no questions.
         if (allSources.length === 0) {
+          const noCoverageAnswer = "לא מצאתי מקורות מספקים לנושא הזה במאגר ובחיפוש מהיר. נסה לצמצם את הנושא, לבחור זווית ספציפית יותר, או לנסח אותו אחרת.";
           try {
-            await adminClient.from("qa_logs").insert({
-              user_id: user.id,
-              question: question.substring(0, 500),
-              answer: "",
-              footnotes: [],
-              task_mode: taskMode,
-              local_footnotes_count: 0,
-              perplexity_footnotes_count: 0,
-              total_footnotes: 0,
-              metadata: { academic_step: academicStep, topic_reality_check: topicCoverage, no_coverage: true, duration_ms: Date.now() - t0 },
-            });
+            if (resumableRunId) {
+              await adminClient.from("qa_logs").update({
+                answer: noCoverageAnswer,
+                metadata: { academic_step: academicStep, checkpoint: "completed", run_id: resumableRunId, topic_reality_check: topicCoverage, no_coverage: true, duration_ms: Date.now() - t0 },
+              }).eq("id", resumableRunId);
+            } else {
+              await adminClient.from("qa_logs").insert({
+                user_id: user.id,
+                question: question.substring(0, 500),
+                answer: noCoverageAnswer,
+                footnotes: [],
+                task_mode: taskMode,
+                local_footnotes_count: 0,
+                perplexity_footnotes_count: 0,
+                total_footnotes: 0,
+                metadata: { academic_step: academicStep, topic_reality_check: topicCoverage, no_coverage: true, duration_ms: Date.now() - t0 },
+              });
+            }
           } catch { /* non-fatal */ }
           return new Response(
             JSON.stringify({
-              answer: "לא מצאתי מקורות מספקים לנושא הזה במאגר ובחיפוש מהיר. נסה לצמצם את הנושא, לבחור זווית ספציפית יותר, או לנסח אותו אחרת.",
+              answer: noCoverageAnswer,
               footnotes: [],
               source_urls: [],
               topicCoverage,
               noCoverage: true,
+              ...(resumableRunId ? { runId: resumableRunId } : {}),
             }),
             { headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
