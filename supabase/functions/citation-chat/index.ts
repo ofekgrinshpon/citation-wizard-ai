@@ -1074,20 +1074,15 @@ serve(async (req) => {
             const fullCaseRef = `${caseType} ${caseNum}`;
             const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. חשוב מאוד: בדוק קודם כל האם פסק הדין פורסם בפד"י (פסקי דין של בית המשפט העליון). חפש את מספר התיק יחד עם המילה "פ"ד" וכרך. רק אם וידאת שהוא לא מופיע בפד"י, ציין באיזה מאגר (נבו/תקדין/פסקדין). ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) פרסום בפד"י: כרך, חלק ועמוד ראשון. ענה בעברית בלבד.`;
 
-            const perplexityResp = await fetch("https://api.perplexity.ai/chat/completions", {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                model: "sonar-pro",
-                search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
-                messages: [
-                  {
-                    role: "system",
-                    content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
+            const perplexityBody = JSON.stringify({
+              model: "sonar-pro",
+              search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
+              messages: [
+                {
+                  role: "system",
+                  content: `אתה עוזר מחקר משפטי ישראלי. החזר תשובה בפורמט JSON בלבד.
 טיפ חיפוש: ב-https://lite.takdin.co.il/search-results מוצגים בעמוד אחד שמות הצדדים, מספר התיק, בית המשפט, תאריך פסק הדין ופרסום בפ"ד — חפש שם קודם כדי לאתר את כל הנתונים במקום אחד.
+טיפ חיפוש נוסף לתיקי בית המשפט העליון (ע"א/ע"פ/בג"ץ/דנ"א/דנ"פ/רע"א/רע"פ/בש"א/בש"פ וכו'): ב-https://supreme.court.gov.il/Pages/fullsearch.aspx ניתן לחפש לפי מספר תיק ולקבל את פסק הדין הרשמי עם שמות הצדדים, תאריך וכרך פד"י. הצלב את הנתונים שם.
 חשוב ביותר: עדיפות ראשונה היא לבדוק פרסום בפד"י (פסקי דין). רוב פסקי הדין של בית המשפט העליון פורסמו בפד"י. אל תסתמך רק על מאגרי מידע אלקטרוניים - חפש במיוחד אם יש ציון "פ"ד" עם כרך ועמוד.
 סמן isPublished: false רק אם חיפשת במפורש פרסום בפד"י ווידאת שהוא לא קיים.
 הפורמט:
@@ -1096,25 +1091,55 @@ serve(async (req) => {
 confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות רבים, "low" אם יש ספק או מקור יחיד.
 חשוב: שדה year/date חייב להיות תאריך/שנת מתן פסק הדין על ידי בית המשפט, ולא שנת הוצאת כרך פ"ד.
 חשוב מאוד (אנונימיזציה): אם פסק הדין פורסם בפד"י והכותרת הרשמית בפד"י משתמשת בכינוי פלוני / פלונית / פלונים / פלוניות / קטין / קטינה / אלמוני / אלמונית — זהו שם הצד הקובע ויש להחזירו כפי שהוא. אל תחליף אותו בשם פרטי שמופיע במאגרים אחרים (תקדין/נבו/לייט-תקדין), גם אם נראה מפורש יותר.`,
-                  },
-                  { role: "user", content: query },
-                ],
-              }),
+                },
+                { role: "user", content: query },
+              ],
             });
 
-            if (perplexityResp.ok) {
-              const pData = await perplexityResp.json();
-              const pContent = pData.choices?.[0]?.message?.content || "";
-              console.log(`[case-law] perplexity sources for ${fullCaseRef}:`, JSON.stringify({
+            // Up to 2 attempts: sonar-pro sometimes returns empty search_results / {"found":false}
+            // on the first call for the exact same query that resolves on retry.
+            let pData: any = null;
+            let pContent = "";
+            let parsedFirst: any = null;
+            let perplexityOk = false;
+            for (let attempt = 0; attempt < 2; attempt++) {
+              const perplexityResp = await fetch("https://api.perplexity.ai/chat/completions", {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+                  "Content-Type": "application/json",
+                },
+                body: perplexityBody,
+              });
+              if (!perplexityResp.ok) { perplexityOk = false; break; }
+              perplexityOk = true;
+              pData = await perplexityResp.json();
+              pContent = pData.choices?.[0]?.message?.content || "";
+              console.log(`[case-law] perplexity sources for ${fullCaseRef} (attempt ${attempt + 1}):`, JSON.stringify({
                 citations: pData.citations ?? null,
                 search_results: pData.search_results ?? null,
                 model: pData.model,
               }));
               console.log("Case law search result:", pContent);
-              const jsonMatch = pContent.match(/\{[\s\S]*\}/);
-              if (jsonMatch) {
+              const m = pContent.match(/\{[\s\S]*\}/);
+              parsedFirst = null;
+              if (m) {
+                try { parsedFirst = JSON.parse(m[0]); } catch { parsedFirst = null; }
+              }
+              const srEmpty = !Array.isArray(pData.search_results) || pData.search_results.length === 0;
+              const foundFalse = !parsedFirst || parsedFirst.found === false;
+              if ((foundFalse || srEmpty) && attempt === 0) {
+                console.log(`[case-law] empty first pass for ${fullCaseRef} (foundFalse=${foundFalse}, srEmpty=${srEmpty}), retrying…`);
+                continue;
+              }
+              break;
+            }
+
+            if (perplexityOk) {
+              if (parsedFirst) {
                 try {
-                  let parsed = JSON.parse(jsonMatch[0]);
+                  let parsed = parsedFirst;
+
                   
                   // ── Anonymization override (Rule 18.4) ──
                   // If published in פ"ד under פלוני/פלונית/קטין/אלמוני — that
@@ -1255,9 +1280,10 @@ confidence: "high" אם מצאת מידע מפורש ומוסכם ממקורות
                 caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${fullCaseRef}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע (צדדים, תאריך, בית משפט, פרסום/מאגר).\nאל תמציא שמות צדדים, תאריכים, או פרטי פרסום.\n══`;
               }
             } else {
-              console.error("Perplexity search failed:", perplexityResp.status);
+              console.error(`Perplexity search failed for ${fullCaseRef}`);
               caseLawHint = `\n\n══ חיפוש פסק דין ══\nלא נמצאו נתונים מאומתים עבור ${caseNumberMatch[0]}.\nחובה להשתמש ב-[חסר:...] עבור כל שדה שאינו ידוע.\n══`;
             }
+
 
           // ── Branch B: Search by party names (multi-result) ──
           } else if (partyMatch) {

@@ -69,20 +69,15 @@ serve(async (req) => {
     const fullCaseRef = `${caseType} ${normalizedCaseNumber}`;
     const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) אם פורסם בפד"י - ציין כרך, חלק ועמוד ראשון, 5) אם לא פורסם בפד"י - ציין באיזה מאגר (נבו/תקדין/פסקדין). ענה בעברית בלבד.`;
 
-    const perplexityResponse = await fetch("https://api.perplexity.ai/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "sonar-pro",
-        search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
-        messages: [
-          {
-            role: "system",
-            content: `אתה עוזר מחקר משפטי. כשמבקשים ממך למצוא פסק דין ישראלי, החזר את המידע בפורמט JSON מדויק בלבד, ללא טקסט נוסף.
+    const perplexityBody = JSON.stringify({
+      model: "sonar-pro",
+      search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
+      messages: [
+        {
+          role: "system",
+          content: `אתה עוזר מחקר משפטי. כשמבקשים ממך למצוא פסק דין ישראלי, החזר את המידע בפורמט JSON מדויק בלבד, ללא טקסט נוסף.
 טיפ חיפוש: בעמוד https://lite.takdin.co.il/search-results מוצגים בעמוד אחד שמות הצדדים, מספר התיק, בית המשפט, תאריך פסק הדין, ופרסום בפ"ד (אם קיים). העדף לאתר את התיק שם — זה חוסך חיפושים ומספק את כל הנתונים הנדרשים לאזכור.
+טיפ חיפוש נוסף לתיקי בית המשפט העליון (ע"א/ע"פ/בג"ץ/דנ"א/דנ"פ/רע"א/רע"פ/בש"א/בש"פ וכו'): ב-https://supreme.court.gov.il/Pages/fullsearch.aspx ניתן לחפש לפי מספר תיק ולקבל את פסק הדין הרשמי עם שמות הצדדים, תאריך וכרך פד"י. הצלב את הנתונים שם.
 הפורמט:
 {
   "found": true/false,
@@ -100,45 +95,67 @@ serve(async (req) => {
 אם לא מצאת את פסק הדין, החזר {"found": false}.
 חשוב: שמות צדדים - לאנשים פרטיים שם משפחה בלבד. לתאגידים/גופים ציבוריים - שם מלא. אל תכלול תארים (עו"ד, ד"ר וכו'). אל תכלול "עזבון" או "יורשי" - רק שם המשפחה.
 חשוב מאוד (אנונימיזציה): אם פסק הדין פורסם בפד"י והכותרת הרשמית בפד"י משתמשת בכינוי פלוני / פלונית / פלונים / פלוניות / קטין / קטינה / אלמוני / אלמונית — זהו שם הצד הקובע ויש להחזירו כפי שהוא. אל תחליף אותו בשם פרטי שמופיע במאגרים אחרים (תקדין/נבו/לייט-תקדין), גם אם נראה מפורש יותר.`,
-          },
-          { role: "user", content: query },
-        ],
-      }),
+        },
+        { role: "user", content: query },
+      ],
     });
 
-    if (!perplexityResponse.ok) {
-      const errorText = await perplexityResponse.text();
-      console.error("Perplexity API error:", perplexityResponse.status, errorText);
-      return new Response(
-        JSON.stringify({ found: false, error: "Search service error" }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+    // Up to 2 attempts: sonar-pro sometimes returns empty search_results / {"found":false}
+    // on the first call for the exact same query that resolves on retry. One retry is cheap insurance.
+    let perplexityData: any = null;
+    let content = "";
+    let parsed: Record<string, unknown> | null = null;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const perplexityResponse = await fetch("https://api.perplexity.ai/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: perplexityBody,
+      });
+
+      if (!perplexityResponse.ok) {
+        const errorText = await perplexityResponse.text();
+        console.error("Perplexity API error:", perplexityResponse.status, errorText);
+        return new Response(
+          JSON.stringify({ found: false, error: "Search service error" }),
+          { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+
+      perplexityData = await perplexityResponse.json();
+      content = perplexityData.choices?.[0]?.message?.content || "";
+      console.log(`[case-law-search] perplexity sources for ${fullCaseRef} (attempt ${attempt + 1}):`, JSON.stringify({
+        citations: perplexityData.citations ?? null,
+        search_results: perplexityData.search_results ?? null,
+        model: perplexityData.model,
+      }));
+      console.log("Perplexity raw response:", content);
+
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          parsed = JSON.parse(jsonMatch[0]);
+        } catch {
+          console.error("Failed to parse JSON from Perplexity:", jsonMatch[0]);
+          parsed = null;
+        }
+      }
+
+      const srEmpty = !Array.isArray(perplexityData.search_results) || perplexityData.search_results.length === 0;
+      const foundFalse = !parsed || parsed.found === false;
+      if (foundFalse || srEmpty) {
+        if (attempt === 0) {
+          console.log(`[case-law-search] empty first pass for ${fullCaseRef} (foundFalse=${foundFalse}, srEmpty=${srEmpty}), retrying…`);
+          continue;
+        }
+      }
+      break;
     }
 
-    const perplexityData = await perplexityResponse.json();
-    const content = perplexityData.choices?.[0]?.message?.content || "";
-    console.log(`[case-law-search] perplexity sources for ${fullCaseRef}:`, JSON.stringify({
-      citations: perplexityData.citations ?? null,
-      search_results: perplexityData.search_results ?? null,
-      model: perplexityData.model,
-    }));
-    console.log("Perplexity raw response:", content);
-
-    // Extract JSON from the response (may be wrapped in markdown code blocks)
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      console.error("Could not extract JSON from Perplexity response");
-      return new Response(
-        JSON.stringify({ found: false }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
-
-    let parsed: Record<string, unknown>;
-    try {
-      parsed = JSON.parse(jsonMatch[0]);
-    } catch {
-      console.error("Failed to parse JSON from Perplexity:", jsonMatch[0]);
+    if (!parsed) {
+      console.error("Could not extract JSON from Perplexity response after retry");
       return new Response(
         JSON.stringify({ found: false }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -151,6 +168,8 @@ serve(async (req) => {
         { headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
+
+
 
     // ── Anonymization override (Rule 18.4) ──
     // If the case was published in פ"ד under an anonymized headline (פלוני/פלונית/קטין/...),
