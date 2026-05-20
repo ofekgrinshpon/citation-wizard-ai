@@ -344,6 +344,23 @@ async function exactAuthority(
 
 interface PerplexityHit { title: string; citation: string; url: string; snippet: string; source_type: string }
 
+interface ApprovedWebResult {
+  candidates: CandidateSource[];
+  telemetry: WebHarvestTelemetry;
+}
+
+function emptyWebTelemetry(reason: WebHarvestTelemetry["web_empty_reason"]): WebHarvestTelemetry {
+  return {
+    web_json_parse_ok: false,
+    web_from_json_count: 0,
+    web_from_citations_count: 0,
+    web_from_search_results_count: 0,
+    web_filtered_tier_a_count: 0,
+    web_rejected_domain_count: 0,
+    web_empty_reason: reason,
+  };
+}
+
 async function approvedWeb(
   perplexityKey: string,
   claimText: string,
@@ -351,8 +368,7 @@ async function approvedWeb(
   authorities: ExpectedAuthority[],
   claimId: ClaimId,
   signal?: AbortSignal,
-): Promise<CandidateSource[]> {
-  // Short claim-specific query + expected-authority hints.
+): Promise<ApprovedWebResult> {
   const authHints = authorities
     .slice(0, 4)
     .map((a) => [a.docket, a.name].filter(Boolean).join(" "))
@@ -360,6 +376,17 @@ async function approvedWeb(
   const sys = `אתה מחזיר אך ורק מקורות משפטיים ישראליים ראשוניים (פסיקה, חקיקה, תקנות) מתוך התחומים המאושרים. החזר JSON-array בלבד, ללא טקסט נוסף, עד ${WEB_PER_CLAIM_CANDIDATES} פריטים. כל איבר: {"title":"","citation":"","url":"","source_type":"caselaw"|"statute"|"regulation","snippet":""}.`;
   const hintBlock = authHints.length ? `\nרמזים לסמכויות צפויות: ${authHints.join(" ; ")}` : "";
   const usr = `טענה: ${claimText}\nדוקטרינה: ${doctrine}${hintBlock}\nהחזר עד ${WEB_PER_CLAIM_CANDIDATES} מקורות סמכותיים בלבד.`;
+
+  const telemetry: WebHarvestTelemetry = {
+    web_json_parse_ok: false,
+    web_from_json_count: 0,
+    web_from_citations_count: 0,
+    web_from_search_results_count: 0,
+    web_filtered_tier_a_count: 0,
+    web_rejected_domain_count: 0,
+  };
+
+  let data: any;
   try {
     const res = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
@@ -371,45 +398,115 @@ async function approvedWeb(
         temperature: 0.1,
         max_tokens: 800,
         search_domain_filter: TIER_A_DOMAIN_FILTER,
+        return_citations: true,
+        return_search_results: true,
       }),
     });
     if (!res.ok) {
       console.error(`[core retrieval web] ${claimId}: ${res.status}`);
-      return [];
+      telemetry.web_empty_reason = "no_response";
+      return { candidates: [], telemetry };
     }
-    const data = await res.json();
-    const raw = data?.choices?.[0]?.message?.content ?? "";
-    const cleaned = raw.replace(/^```(?:json)?\s*|\s*```$/g, "").trim();
-    const start = cleaned.indexOf("[");
-    const end = cleaned.lastIndexOf("]");
-    if (start < 0 || end <= start) return [];
-    let arr: PerplexityHit[];
-    try { arr = JSON.parse(cleaned.slice(start, end + 1)); }
-    catch { return []; }
-    const out: CandidateSource[] = [];
-    let i = 0;
-    for (const h of arr) {
-      if (!h?.url) continue;
-      if (citationTier(h.url) !== "A") continue;  // Tier A only by default
-      out.push({
-        candidate_id: `${claimId}-web-${++i}`,
-        claim_id: claimId,
-        origin: "approved_web",
-        source_type: h.source_type || "",
-        title: (h.title || "").trim(),
-        citation: (h.citation || "").trim(),
-        url: h.url,
-        snippet: (h.snippet || "").slice(0, 600),
-        metadata: { tier: "A" },
-      });
-      if (out.length >= WEB_PER_CLAIM_CANDIDATES) break;
-    }
-    return out;
+    data = await res.json();
   } catch (e) {
     console.error(`[core retrieval web throw] ${claimId}:`, (e as Error).message);
-    return [];
+    telemetry.web_empty_reason = "no_response";
+    return { candidates: [], telemetry };
   }
+
+  // ── Source 1: parsed JSON-array in message content ─────────────────────
+  const jsonHits: PerplexityHit[] = [];
+  try {
+    const raw = data?.choices?.[0]?.message?.content ?? "";
+    const cleaned = String(raw).replace(/^```(?:json)?\s*|\s*```$/g, "").trim();
+    const start = cleaned.indexOf("[");
+    const end = cleaned.lastIndexOf("]");
+    if (start >= 0 && end > start) {
+      const parsed = JSON.parse(cleaned.slice(start, end + 1));
+      if (Array.isArray(parsed)) {
+        for (const h of parsed) {
+          if (h?.url) jsonHits.push(h);
+        }
+        telemetry.web_json_parse_ok = true;
+      }
+    }
+  } catch {
+    telemetry.web_json_parse_ok = false;
+  }
+  telemetry.web_from_json_count = jsonHits.length;
+
+  // ── Source 2: data.search_results[] (preferred when JSON empty) ────────
+  const searchResults: Array<{ title?: string; url?: string; snippet?: string; date?: string }> =
+    Array.isArray(data?.search_results) ? data.search_results : [];
+  telemetry.web_from_search_results_count = searchResults.length;
+
+  // ── Source 3: data.citations[] (string URLs) ───────────────────────────
+  const citationUrls: string[] = Array.isArray(data?.citations)
+    ? data.citations.filter((u: unknown) => typeof u === "string")
+    : [];
+  telemetry.web_from_citations_count = citationUrls.length;
+
+  // ── Build unified hit list, preferring richer metadata ─────────────────
+  type Hit = { url: string; title: string; citation: string; snippet: string; source_type: string };
+  const byUrl = new Map<string, Hit>();
+  for (const h of jsonHits) {
+    if (!h?.url) continue;
+    byUrl.set(h.url, {
+      url: h.url,
+      title: (h.title || "").trim(),
+      citation: (h.citation || "").trim(),
+      snippet: (h.snippet || "").slice(0, 600),
+      source_type: h.source_type || "",
+    });
+  }
+  for (const sr of searchResults) {
+    if (!sr?.url) continue;
+    if (byUrl.has(sr.url)) continue;
+    byUrl.set(sr.url, {
+      url: sr.url,
+      title: (sr.title || "").trim(),
+      citation: "",
+      snippet: (sr.snippet || "").slice(0, 600),
+      source_type: "",
+    });
+  }
+  for (const url of citationUrls) {
+    if (!url || byUrl.has(url)) continue;
+    byUrl.set(url, { url, title: "", citation: "", snippet: "", source_type: "" });
+  }
+
+  if (byUrl.size === 0) {
+    telemetry.web_empty_reason = "no_urls";
+    return { candidates: [], telemetry };
+  }
+
+  // ── Tier A filtering ───────────────────────────────────────────────────
+  const out: CandidateSource[] = [];
+  let i = 0;
+  for (const h of byUrl.values()) {
+    if (citationTier(h.url) !== "A") {
+      telemetry.web_rejected_domain_count++;
+      continue;
+    }
+    telemetry.web_filtered_tier_a_count++;
+    out.push({
+      candidate_id: `${claimId}-web-${++i}`,
+      claim_id: claimId,
+      origin: "approved_web",
+      source_type: h.source_type,
+      title: h.title,
+      citation: h.citation,
+      url: h.url,
+      snippet: h.snippet,
+      metadata: { tier: "A" },
+    });
+    if (out.length >= WEB_PER_CLAIM_CANDIDATES) break;
+  }
+
+  telemetry.web_empty_reason = out.length === 0 ? "all_rejected" : "ok";
+  return { candidates: out, telemetry };
 }
+
 
 
 // ─── Orchestrator ─────────────────────────────────────────────────────────
