@@ -10799,7 +10799,14 @@ async function dispatchDeepAsync(
       { auth: { persistSession: false } },
     );
 
-    const runId = crypto.randomUUID();
+    // Accept a client-supplied runId so the UI can persist it BEFORE the
+    // request fires and reattach via legal-qa-status after navigation.
+    // Falls back to a fresh UUID if the client didn't (or sent garbage).
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const clientRunId = typeof parsedBody.runId === "string" && UUID_RE.test(parsedBody.runId)
+      ? parsedBody.runId
+      : null;
+    const runId = clientRunId ?? crypto.randomUUID();
     const question = typeof parsedBody.question === "string" ? parsedBody.question : "";
     const projectId = typeof parsedBody.projectId === "string" ? parsedBody.projectId : null;
 

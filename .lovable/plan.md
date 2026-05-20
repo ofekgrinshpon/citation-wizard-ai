@@ -1,52 +1,42 @@
-## Goal
-Make the short academic-search steps (`propose_outline`, `suggest_topics`, `validate_question`) resumable after the user navigates away (e.g. clicks the Profile icon) and comes back — same UX guarantee that long-form chapter writes already have.
+**What I found**
 
-## Root cause recap
-- These steps don't use SSE; the client just `await fetch(...)` on `legal-qa`.
-- Navigating to `/profile` unmounts `LegalQAChat`, aborting the fetch. The backend keeps running and writes to `qa_logs`, but the client has no `run_id` to poll on remount → result appears lost.
-- Long-form writes already work because SSE emits `run_id`, the client persists an academic marker, and `legal-qa-status` polling reconciles on remount.
+The current fix covered **Academic Writing wizard steps** (`suggest_topics`, `validate_question`, `propose_outline`, chapter writing). Your replay shows a different path: **regular legal research / Deep academic search** sends:
 
-## Approach (Option B)
-Client generates the `runId` (UUID) *before* the request, persists the marker, and passes the id to the backend in the request body. Backend inserts a `qa_logs` row immediately with that id, runs the step, then updates the same row. On remount we poll `legal-qa-status` exactly like chapter writes do.
+```text
+{ taskMode: "research", depth: "deep", stream: true }
+```
 
-## Changes
+That path still depends on a live SSE connection. When you click Profile, the React component unmounts, the browser aborts the stream, and there is no saved `run_id` marker to reattach to. The network log also shows the same Deep query being submitted twice, which explains why it appears to restart/stop instead of resume.
 
-### Backend — `supabase/functions/legal-qa/index.ts`
-1. Accept optional `runId` in the request body (validate UUID v4 shape). If absent, generate one (preserves backward compat).
-2. For the three short academic steps (`propose_outline`, `suggest_topics`, `validate_question`):
-   - Insert a `qa_logs` row up-front with `{ id: runId, user_id, project_id, question, task_mode: 'research', answer: null, metadata: { checkpoint: 'running', academic_step } }`.
-   - After the AI call completes, `UPDATE qa_logs SET answer=..., footnotes=..., metadata=jsonb_set(metadata,'{checkpoint}','completed') WHERE id = runId`.
-   - On failure, set `metadata.checkpoint='failed'` + `error_message`.
-3. Return `runId` in the JSON response body so the client can confirm.
-4. No change to streaming write paths — they already emit `run_id` over SSE.
+**Plan**
 
-### Frontend — `src/components/LegalQAChat.tsx`
-1. Add a tiny helper that, for the three short academic steps, does:
-   - `const runId = crypto.randomUUID();`
-   - `setAcademicRunMarker({ runId, step, chapterIdx: -1 });` *before* `fetch`.
-   - `fetch('legal-qa', { body: JSON.stringify({ ..., runId }) })`.
-   - On success → clear marker and apply payload via the existing per-step success handlers.
-   - On `AbortError`/network failure → leave the marker so the resume effect can take over.
-2. Extend the existing resume effect (around lines 905–964) to branch on `marker.step`:
-   - `write_chapter | write_introduction | write_conclusion` → unchanged.
-   - `propose_outline` → reuse the outline success branch (set `outline`, advance `wizardStep` to `"outline"`).
-   - `suggest_topics` → reuse topics success branch.
-   - `validate_question` → reuse validation success branch.
-   Extract each success branch into a small local helper so the resume effect and the normal success path stay in sync.
-3. Step-aware reattach toast: `"השאילתה הושלמה ברקע ונטענה מחדש"` for the three short steps; keep chapter-specific toast unchanged.
-4. `chapterIdx: -1` for non-write steps so the existing "apply to chapter slot" branch is guaranteed to be skipped.
+1. **Switch Deep research from fragile SSE to resumable async mode**
+   - For `taskMode === "research" && researchDepth === "deep"`, stop sending `stream: true`.
+   - Let the backend return `202 + run_id` immediately and continue the research job in the background.
+   - Keep Fast research streaming as-is.
 
-### No-op / out of scope
-- `legal-qa-status` edge function — already returns `answer` + `footnotes` when `checkpoint === 'completed'`; no changes needed.
-- `academic_sessions` schema, RLS, `qa_logs` schema — unchanged.
-- Non-academic Legal QA — separate path, can be addressed later.
+2. **Persist a Deep research run marker before the request starts**
+   - Add a small client-side marker for regular research runs, separate from the academic-writing marker.
+   - Store: `runId`, question, mode, depth, projectId, startedAt.
+   - Save it before calling `legal-qa`, so navigation cannot lose it.
 
-## Verification
-1. Start `propose_outline` in academic mode → click Profile mid-request → return. Expect: poll fires, outline appears, toast `"השאילתה הושלמה ברקע ונטענה מחדש"`, wizard advances to "outline".
-2. Repeat for `suggest_topics` and `validate_question`.
-3. Hard refresh mid-request (different from #1 — kills JS): expect the marker (already in `localStorage` + `academic_sessions.current_run_id`) to drive the same polling on next mount.
-4. Regression: chapter write resume continues to work; finished short steps that complete before unmount still clear the marker and don't double-toast.
+3. **Let the backend accept client-supplied `runId` for Deep async research**
+   - Reuse the same `runId` generated by the client, instead of the backend always minting a new one.
+   - Insert/update the queued `qa_logs` row with that id.
+   - This lets the UI know exactly which run to poll after coming back from Profile.
 
-### Files touched
-- `supabase/functions/legal-qa/index.ts`
-- `src/components/LegalQAChat.tsx`
+4. **Resume polling on return to `/app`**
+   - On mount, if a Deep research marker exists, call `legal-qa-status` with the stored `runId`.
+   - If completed: load the answer/footnotes into the UI and clear the marker.
+   - If failed: show a clear error and clear the marker.
+   - If still running: show the existing progress area with checkpoint labels.
+
+5. **Avoid duplicate submissions**
+   - If there is already an active Deep research marker for the same project, the send button should reattach to that run instead of starting a second paid request.
+   - This prevents accidental double charges when navigating away/back.
+
+6. **Verification**
+   - Start a Deep research query.
+   - Click Profile while it is running.
+   - Return to `/app`.
+   - Confirm it shows “syncing with background research,” polls the existing `runId`, and loads the final answer without submitting a second `legal-qa` request.
