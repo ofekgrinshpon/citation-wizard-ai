@@ -68,20 +68,9 @@ serve(async (req) => {
     const normalizedCaseNumber = caseNumber.replace('-', '/');
     const fullCaseRef = `${caseType} ${normalizedCaseNumber}`;
     const query = `מצא את פסק הדין הישראלי ${fullCaseRef}. ציין: 1) שמות הצדדים (שם משפחה בלבד לאנשים פרטיים, שם מלא לתאגידים), 2) תאריך מתן פסק הדין (יום.חודש.שנה), 3) שם בית המשפט, 4) אם פורסם בפד"י - ציין כרך, חלק ועמוד ראשון, 5) אם לא פורסם בפד"י - ציין באיזה מאגר (נבו/תקדין/פסקדין). ענה בעברית בלבד.`;
+    const retryQuery = `אנא מצא שוב את פסק הדין הישראלי ${fullCaseRef}. חפש ישירות ב-https://lite.takdin.co.il/search-results ובאתר נבו את העמוד הייעודי של התיק (לא דפי ריכוז של מספר תיקים). ציין שמות צדדים, תאריך מתן פסק הדין המדויק, בית המשפט, פרסום בפד"י (כרך/חלק/עמוד) או שם המאגר.`;
 
-    const perplexityResponse = await fetch("https://api.perplexity.ai/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${PERPLEXITY_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "sonar-pro",
-        search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
-        messages: [
-          {
-            role: "system",
-            content: `אתה עוזר מחקר משפטי. כשמבקשים ממך למצוא פסק דין ישראלי, החזר את המידע בפורמט JSON מדויק בלבד, ללא טקסט נוסף.
+    const systemPrompt = `אתה עוזר מחקר משפטי. כשמבקשים ממך למצוא פסק דין ישראלי, החזר את המידע בפורמט JSON מדויק בלבד, ללא טקסט נוסף.
 טיפ חיפוש: בעמוד https://lite.takdin.co.il/search-results מוצגים בעמוד אחד שמות הצדדים, מספר התיק, בית המשפט, תאריך פסק הדין, ופרסום בפ"ד (אם קיים). העדף לאתר את התיק שם — זה חוסך חיפושים ומספק את כל הנתונים הנדרשים לאזכור.
 הפורמט:
 {
@@ -95,33 +84,73 @@ serve(async (req) => {
   "padi_part": "חלק (מספר)",
   "padi_page": "עמוד ראשון (מספר)",
   "databaseName": "נבו/תקדין/פסקדין (רק אם לא פורסם בפד\"י)",
-  "year": "שנת פסק הדין (YYYY)"
+  "year": "שנת פסק הדין (YYYY)",
+  "confidence": "high/low"
 }
 אם לא מצאת את פסק הדין, החזר {"found": false}.
-חשוב: שמות צדדים - לאנשים פרטיים שם משפחה בלבד. לתאגידים/גופים ציבוריים - שם מלא. אל תכלול תארים (עו"ד, ד"ר וכו'). אל תכלול "עזבון" או "יורשי" - רק שם המשפחה.`,
-          },
-          { role: "user", content: query },
-        ],
-      }),
-    });
+חשוב: שמות צדדים - לאנשים פרטיים שם משפחה בלבד. לתאגידים/גופים ציבוריים - שם מלא. אל תכלול תארים (עו"ד, ד"ר וכו'). אל תכלול "עזבון" או "יורשי" - רק שם המשפחה.
 
-    if (!perplexityResponse.ok) {
-      const errorText = await perplexityResponse.text();
-      console.error("Perplexity API error:", perplexityResponse.status, errorText);
+כלל קריטי לחילוץ תאריך פסק הדין (אסור לעבור עליו):
+1. מקור מועדף: עמוד התיק עצמו במאגר ייעודי (נבו / תקדין / פסקדין / supreme.court.gov.il / supremedecisions.court.gov.il). אם מצאת שם תאריך — קח אותו וסיים.
+2. אם התיק מוזכר רק בתוך פסק דין אחר או מסמך אחר, מותר לקחת את התאריך אך ורק אם הוא מופיע צמוד לאזכור התיק בפורמט המקובל: "[סוג תיק] [מספר]/[שנה] [צד א] נ' [צד ב] (DD.MM.YYYY)" — הסוגריים מיד אחרי שמות הצדדים של אותו תיק, באותה שורה.
+3. אסור לקחת תאריך מ: דף ריכוז/רשימת תיקים שמכיל מספר תאריכים שונים; משפט תיאורי ("נדון בעניין X", "ראו פסק דין מיום ..."); או הקשר של פסק דין אחר שמצטט תאריך משלו.
+4. אם אף מקור לא עומד בכללים — החזר "date":"" ו-"year":"" וסמן "confidence":"low". אל תנחש.`;
+
+    const callPerplexity = async (userMsg: string, attempt: number) => {
+      const resp = await fetch("https://api.perplexity.ai/chat/completions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "sonar-pro",
+          search_domain_filter: ["nevo.co.il", "court.gov.il", "supreme.court.gov.il", "takdin.co.il", "lite.takdin.co.il", "psakdin.co.il"],
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userMsg },
+          ],
+        }),
+      });
+      if (!resp.ok) {
+        const errorText = await resp.text();
+        console.error(`[case-law-search] Perplexity attempt ${attempt} error:`, resp.status, errorText);
+        return { ok: false as const, data: null as any, content: "" };
+      }
+      const data = await resp.json();
+      const content = data.choices?.[0]?.message?.content || "";
+      console.log(`[case-law-search] perplexity sources for ${fullCaseRef} (attempt ${attempt}):`, JSON.stringify({
+        citations: data.citations ?? null,
+        search_results: data.search_results ?? null,
+        model: data.model,
+      }));
+      console.log(`[case-law-search] raw content (attempt ${attempt}):`, content);
+      return { ok: true as const, data, content };
+    };
+
+    let attempt1 = await callPerplexity(query, 1);
+    if (!attempt1.ok) {
       return new Response(
         JSON.stringify({ found: false, error: "Search service error" }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
-    const perplexityData = await perplexityResponse.json();
-    const content = perplexityData.choices?.[0]?.message?.content || "";
-    console.log(`[case-law-search] perplexity sources for ${fullCaseRef}:`, JSON.stringify({
-      citations: perplexityData.citations ?? null,
-      search_results: perplexityData.search_results ?? null,
-      model: perplexityData.model,
-    }));
-    console.log("Perplexity raw response:", content);
+    let perplexityData = attempt1.data;
+    let content = attempt1.content;
+
+    // Retry once on empty/not-found result
+    const hadResults1 = (perplexityData?.search_results?.length ?? 0) > 0;
+    let firstFound = false;
+    try {
+      const m = content.match(/\{[\s\S]*\}/);
+      if (m) firstFound = !!JSON.parse(m[0]).found;
+    } catch { /* ignore */ }
+    if (!hadResults1 || !firstFound) {
+      console.log(`[case-law-search] retry attempt 2 for ${fullCaseRef} (hadResults=${hadResults1}, firstFound=${firstFound})`);
+      const attempt2 = await callPerplexity(retryQuery, 2);
+      if (attempt2.ok && (attempt2.data?.search_results?.length ?? 0) > 0) {
+        perplexityData = attempt2.data;
+        content = attempt2.content;
+      }
+    }
 
     // Extract JSON from the response (may be wrapped in markdown code blocks)
     const jsonMatch = content.match(/\{[\s\S]*\}/);
@@ -151,28 +180,38 @@ serve(async (req) => {
       );
     }
 
-    // ── Decision-date verification (Rule 18) ──
-    // For published cases, Perplexity's first-pass `date`/`year` is often the
-    // volume's print year or fabricated. Re-ask, anchored to the volume/page.
-    if (parsed.isPublished && parsed.padi_volume) {
-      try {
+    // ── Decision-date verification ──
+    // Published cases: anchor on פ"ד volume/page.
+    // Unpublished cases: anchor on case number + parties with strict adjacency rule.
+    const dateVerifyPrompt = `החזר JSON בלבד: {"date":"DD.MM.YYYY","year":"YYYY","confidence":"high/low"}.
+התאריך הנדרש הוא תאריך מתן פסק הדין על ידי בית המשפט — לא שנת הוצאת כרך פ"ד.
+
+כלל קריטי לחילוץ תאריך (אסור לעבור עליו):
+1. מקור מועדף: עמוד התיק עצמו במאגר (נבו/תקדין/פסקדין/supreme.court.gov.il/supremedecisions.court.gov.il). מצאת שם — confidence:"high".
+2. אם התיק מוזכר רק בתוך פסק דין אחר, מותר לקחת תאריך אך ורק אם הוא מופיע צמוד לאזכור בפורמט: "[סוג] [מספר]/[שנה] [צד א] נ' [צד ב] (DD.MM.YYYY)" — בסוגריים מיד אחרי שמות הצדדים. במקרה זה confidence:"low".
+3. אסור לקחת תאריך מדף ריכוז/רשימת תיקים, ממשפט תיאורי, או מהקשר של פסק דין אחר.
+4. אם אף מקור לא עומד בכללים — החזר {"date":"","year":"","confidence":"low"}.`;
+
+    try {
+      let dvUserMsg = "";
+      if (parsed.isPublished && parsed.padi_volume) {
         const part = parsed.padi_part ? `(${parsed.padi_part})` : "";
         const padiRef = `פ"ד ${parsed.padi_volume}${part} ${parsed.padi_page || ""}`.trim();
+        dvUserMsg = `מהו התאריך המדויק שבו ניתן פסק הדין ${fullCaseRef} שפורסם ב-${padiRef}?`;
+      } else if (parsed.party1 && parsed.party2) {
+        dvUserMsg = `מהו תאריך מתן פסק הדין ${fullCaseRef} בעניין ${parsed.party1} נ' ${parsed.party2}? החל את הכלל הקריטי במלואו.`;
+      }
+
+      if (dvUserMsg) {
         const dvResp = await fetch("https://api.perplexity.ai/chat/completions", {
           method: "POST",
           headers: { Authorization: `Bearer ${PERPLEXITY_API_KEY}`, "Content-Type": "application/json" },
           body: JSON.stringify({
             model: "sonar-pro",
-            search_domain_filter: ["nevo.co.il", "supreme.court.gov.il", "court.gov.il", "psakdin.co.il", "takdin.co.il", "lite.takdin.co.il"],
+            search_domain_filter: ["nevo.co.il", "supreme.court.gov.il", "supremedecisions.court.gov.il", "court.gov.il", "psakdin.co.il", "takdin.co.il", "lite.takdin.co.il"],
             messages: [
-              {
-                role: "system",
-                content: `החזר JSON בלבד: {"date":"DD.MM.YYYY","year":"YYYY"}.\nהתאריך הנדרש הוא תאריך מתן פסק הדין על ידי בית המשפט — לא שנת הוצאת כרך פ"ד.\nאם לא מצאת אישור מפורש, החזר {"date":"","year":""}.`,
-              },
-              {
-                role: "user",
-                content: `מהו התאריך המדויק שבו ניתן פסק הדין ${fullCaseRef} שפורסם ב-${padiRef}?`,
-              },
+              { role: "system", content: dateVerifyPrompt },
+              { role: "user", content: dvUserMsg },
             ],
           }),
         });
@@ -189,20 +228,43 @@ serve(async (req) => {
             const dvParsed = JSON.parse(dvMatch[0]);
             const newDate = dvParsed.date ? String(dvParsed.date).trim() : "";
             const newYear = dvParsed.year ? String(dvParsed.year).trim() : "";
-            console.log(`[case-law-search] date verification: original={date:${parsed.date},year:${parsed.year}} verified={date:${newDate},year:${newYear}}`);
-            if (newDate || newYear) {
-              parsed.date = newDate;
-              parsed.year = newYear || (newDate.match(/\d{4}/)?.[0] ?? "");
+            const dvConf = dvParsed.confidence ? String(dvParsed.confidence).trim() : "";
+            const origDate = parsed.date ? String(parsed.date) : "";
+            console.log(`[case-law-search] date verification: original={date:${origDate},year:${parsed.year}} verified={date:${newDate},year:${newYear},confidence:${dvConf}}`);
+            const isPub = !!parsed.isPublished && !!parsed.padi_volume;
+
+            if (isPub) {
+              // Published: existing behavior — override with whatever verifier returns, clear if empty.
+              if (newDate || newYear) {
+                parsed.date = newDate;
+                parsed.year = newYear || (newDate.match(/\d{4}/)?.[0] ?? "");
+              } else {
+                parsed.date = "";
+                parsed.year = "";
+              }
             } else {
-              // Verification empty → drop to avoid hallucinated values
-              parsed.date = "";
-              parsed.year = "";
+              // Unpublished: stricter reconciliation.
+              if (!newDate && !newYear) {
+                parsed.date = "";
+                parsed.year = "";
+              } else if (newDate && origDate && newDate !== origDate) {
+                if (dvConf === "high") {
+                  parsed.date = newDate;
+                  parsed.year = newYear || (newDate.match(/\d{4}/)?.[0] ?? "");
+                } else {
+                  parsed.date = "";
+                  parsed.year = "";
+                }
+              } else if (newDate && !origDate) {
+                parsed.date = newDate;
+                parsed.year = newYear || (newDate.match(/\d{4}/)?.[0] ?? "");
+              }
             }
           }
         }
-      } catch (dvErr) {
-        console.error("[case-law-search] date verification error:", dvErr);
       }
+    } catch (dvErr) {
+      console.error("[case-law-search] date verification error:", dvErr);
     }
 
     // Build structured result
