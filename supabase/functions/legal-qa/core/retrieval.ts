@@ -48,6 +48,16 @@ export interface AuthorityResolution {
   reason?: "no_candidate_matched" | "no_docket_no_name" | "matched";
 }
 
+export interface WebHarvestTelemetry {
+  web_json_parse_ok: boolean;
+  web_from_json_count: number;
+  web_from_citations_count: number;
+  web_from_search_results_count: number;
+  web_filtered_tier_a_count: number;
+  web_rejected_domain_count: number;
+  web_empty_reason?: "no_response" | "no_urls" | "all_rejected" | "ok" | "skipped";
+}
+
 export interface ClaimRetrievalPack {
   claim_id: ClaimId;
   candidates: CandidateSource[];
@@ -57,6 +67,7 @@ export interface ClaimRetrievalPack {
   approved_web_count: number;
   approved_web_domains: string[];
   web_skipped_for_global_cap: boolean;
+  web_harvest: WebHarvestTelemetry;
 }
 
 export interface RetrievalResult {
