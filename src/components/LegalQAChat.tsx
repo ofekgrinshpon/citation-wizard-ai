@@ -2176,9 +2176,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       if (e.name === "AbortError") return;
       console.error("Legal QA error:", e);
       setError("שגיאה בעיבוד השאלה. נסו שוב.");
+      // Terminal error — drop the research marker so the user isn't reattached
+      // to a dead run on next mount.
+      if (taskMode === "research" && researchDepth === "deep") {
+        clearResearchRunMarker(currentProject?.id);
+      }
     } finally {
       abortControllerRef.current = null;
       setLoading(false);
+      // Successful or refusal path: clear the marker. AbortError above already
+      // returned so this only runs on completion / handled error.
+      if (taskMode === "research" && researchDepth === "deep") {
+        clearResearchRunMarker(currentProject?.id);
+      }
     }
   };
 
