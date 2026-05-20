@@ -1468,6 +1468,26 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       academicStep === "write_introduction" ||
       academicStep === "write_conclusion";
 
+    // Short academic steps (propose_outline, suggest_topics, validate_question)
+    // are recoverable: client mints the runId, persists a marker BEFORE the
+    // fetch, and passes the id to the backend so the qa_logs row is created
+    // up-front. If navigation kills the fetch, the resume effect polls the
+    // same id via legal-qa-status on remount.
+    const isResumableShortStep =
+      academicStep === "propose_outline" ||
+      academicStep === "suggest_topics" ||
+      academicStep === "validate_question";
+    const shortStepRunId: string | null = isResumableShortStep ? crypto.randomUUID() : null;
+    if (shortStepRunId) {
+      runPersistedRef.current = true;
+      activeRunIdRef.current = shortStepRunId;
+      void setAcademicRunMarker(projectId, {
+        runId: shortStepRunId,
+        step: academicStep,
+        chapterIdx: -1,
+      });
+    }
+
     try {
       const body: Record<string, unknown> = {
         question: q || researchQuestion,
