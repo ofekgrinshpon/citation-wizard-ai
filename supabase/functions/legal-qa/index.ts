@@ -44,6 +44,8 @@ import { callDrafter, callDrafterStreaming, plannerProviderLabel, MODEL_CONFIG, 
 import { runResearchV2, researchV2Enabled } from "./researchV2Pipeline.ts";
 import { runResearchV3, researchV3Enabled } from "./researchV3Pipeline.ts";
 import { runResearchV4, researchPipelineMode } from "./researchV4Pipeline.ts";
+import { runCore } from "./core/runCore.ts";
+import { isCorePilot, corePilotLabel } from "./core/pilotGate.ts";
 console.log(`[boot] RESEARCH_V2 env raw="${Deno.env.get("RESEARCH_V2")}" enabled=${researchV2Enabled()}`);
 console.log(`[boot] RESEARCH_V3 env raw="${Deno.env.get("RESEARCH_V3")}" enabled=${researchV3Enabled()}`);
 console.log(`[boot] RESEARCH_PIPELINE raw="${Deno.env.get("RESEARCH_PIPELINE")}" resolved=${researchPipelineMode()}`);
@@ -2498,7 +2500,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       // Helper: persist final qa_logs row on success, with extra metadata
       // describing which pipeline produced the answer.
       const persistSuccess = async (
-        which: "v4" | "v3" | "v2",
+        which: "core" | "v4" | "v3" | "v2",
         result: { answer: string; footnotes: unknown[]; citations: string[]; metadata: Record<string, unknown> },
         extra: Record<string, unknown> = {},
       ) => {
@@ -2533,9 +2535,62 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
 
       let v4FallbackReason: string | undefined;
       let v3FallbackReason: string | undefined;
+      let coreFallbackReason: string | undefined;
 
-      // ── Stage A: V4 (default) ────────────────────────────────────────
-      if (pipelineMode === "v4") {
+      // ── Stage 0: Research Core (gated by RESEARCH_PIPELINE=core + pilot) ──
+      // Only the 3 pilot topics actually enter Core; everything else falls
+      // through to the existing V4 → V3 → V1 chain unchanged.
+      if (pipelineMode === "core" && isCorePilot(question)) {
+        try {
+          console.log(`[research_core] dispatch — pilot=${corePilotLabel(question)}`);
+          const core = await runCore({
+            question,
+            adminClient,
+            drafterTimeoutMs: modeProfile.drafterTimeoutMs,
+            forceDrafterModel,
+            onStage: emitStage,
+          });
+          if (core.ok) {
+            await persistSuccess("core", core, {
+              core_pilot: corePilotLabel(question),
+            });
+            console.log(`[research_core] DONE answer_len=${core.answer.length} footnotes=${core.footnotes.length}`);
+            return buildResponse(core.answer, core.footnotes, core.citations, {
+              footnotes_count: core.footnotes.length,
+            });
+          }
+          coreFallbackReason = core.fallbackReason ?? "core_ok_false";
+          console.warn(`[research_core] fallback reason=${coreFallbackReason} — trying V4`);
+          try {
+            await adminClient.from("qa_logs").upsert({
+              id: deepQaLogId,
+              user_id: user.id,
+              question: question.substring(0, 500),
+              answer: null,
+              footnotes: [],
+              task_mode: taskMode,
+              local_footnotes_count: 0,
+              perplexity_footnotes_count: 0,
+              total_footnotes: 0,
+              metadata: {
+                ...(core.metadata ?? {}),
+                pipeline_used: "core_fallback",
+                core_fallback_reason: coreFallbackReason,
+                core_pilot: corePilotLabel(question),
+              },
+            }, { onConflict: "id" });
+          } catch (logErr) {
+            console.error("[research_core] fallback log upsert failed:", logErr);
+          }
+        } catch (coreErr) {
+          coreFallbackReason = `core_threw:${(coreErr as Error)?.message ?? String(coreErr)}`;
+          console.error("[research_core] threw — falling through to V4:", coreErr);
+        }
+      }
+
+      // ── Stage A: V4 (default; also runs when pipelineMode === "core" and
+      //              Core was skipped/failed for this question) ─────────────
+      if (pipelineMode === "v4" || pipelineMode === "core") {
         try {
           console.log(`[research_v4] dispatch — running simplified Deep pipeline`);
           const v4 = await runResearchV4({
@@ -2545,7 +2600,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             onStage: emitStage,
           });
           if (v4.ok) {
-            await persistSuccess("v4", v4);
+            await persistSuccess("v4", v4, coreFallbackReason ? { core_fallback_reason: coreFallbackReason, core_pilot: corePilotLabel(question) } : {});
             console.log(`[research_v4] DONE answer_len=${v4.answer.length} footnotes=${v4.footnotes.length}`);
             return buildResponse(v4.answer, v4.footnotes, v4.citations, {
               footnotes_count: v4.footnotes.length,
@@ -2581,9 +2636,9 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       // V3 here (not V2 directly) so AnswerMap is enabled and the recall
       // pool is widest. V3 falls back through to V2 internally on its own
       // empty-ledger conditions.
-      if (researchV3Enabled() || researchV2Enabled() || pipelineMode === "v4") {
+      if (researchV3Enabled() || researchV2Enabled() || pipelineMode === "v4" || pipelineMode === "core") {
         try {
-          const useV3 = researchV3Enabled() || pipelineMode === "v4";
+          const useV3 = researchV3Enabled() || pipelineMode === "v4" || pipelineMode === "core";
           const runner = useV3 ? runResearchV3 : runResearchV2;
           console.log(`[research_${useV3 ? "v3" : "v2"}] dispatch — fallback=${!!v4FallbackReason}`);
           const fb = await runner({

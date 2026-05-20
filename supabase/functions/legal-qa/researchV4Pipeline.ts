@@ -30,8 +30,9 @@ export type RunResearchV4Result = RunResearchV3Result;
  * Pipeline selector. Returns "v4" (default) or "v3".
  * Anything else (including unset) falls back to "v4".
  */
-export function researchPipelineMode(): "v4" | "v3" {
+export function researchPipelineMode(): "core" | "v4" | "v3" {
   const raw = (Deno.env.get("RESEARCH_PIPELINE") ?? "").trim().toLowerCase();
+  if (raw === "core") return "core";
   if (raw === "v3") return "v3";
   return "v4";
 }
