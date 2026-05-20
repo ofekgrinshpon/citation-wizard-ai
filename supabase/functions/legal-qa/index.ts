@@ -2500,7 +2500,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       // Helper: persist final qa_logs row on success, with extra metadata
       // describing which pipeline produced the answer.
       const persistSuccess = async (
-        which: "v4" | "v3" | "v2",
+        which: "core" | "v4" | "v3" | "v2",
         result: { answer: string; footnotes: unknown[]; citations: string[]; metadata: Record<string, unknown> },
         extra: Record<string, unknown> = {},
       ) => {
