@@ -502,8 +502,10 @@ export function BatchFootnoteBuilder({}: BatchProps) {
   const resetAll = () => {
     setCells(Array.from({ length: 5 }, (_, i) => createCell(i + 1)));
     setSummary(null);
+    setPhase("input");
     localStorage.removeItem(getCellsKey(projectId));
     localStorage.removeItem(getSummaryKey(projectId));
+    localStorage.removeItem(getPhaseKey(projectId));
   };
 
   const hasAnyOutput = cells.some((c) => c.output);
