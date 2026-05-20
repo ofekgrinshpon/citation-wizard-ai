@@ -2600,7 +2600,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             onStage: emitStage,
           });
           if (v4.ok) {
-            await persistSuccess("v4", v4);
+            await persistSuccess("v4", v4, coreFallbackReason ? { core_fallback_reason: coreFallbackReason, core_pilot: corePilotLabel(question) } : {});
             console.log(`[research_v4] DONE answer_len=${v4.answer.length} footnotes=${v4.footnotes.length}`);
             return buildResponse(v4.answer, v4.footnotes, v4.citations, {
               footnotes_count: v4.footnotes.length,
