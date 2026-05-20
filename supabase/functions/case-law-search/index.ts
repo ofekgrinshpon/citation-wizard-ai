@@ -116,6 +116,11 @@ serve(async (req) => {
 
     const perplexityData = await perplexityResponse.json();
     const content = perplexityData.choices?.[0]?.message?.content || "";
+    console.log(`[case-law-search] perplexity sources for ${fullCaseRef}:`, JSON.stringify({
+      citations: perplexityData.citations ?? null,
+      search_results: perplexityData.search_results ?? null,
+      model: perplexityData.model,
+    }));
     console.log("Perplexity raw response:", content);
 
     // Extract JSON from the response (may be wrapped in markdown code blocks)
