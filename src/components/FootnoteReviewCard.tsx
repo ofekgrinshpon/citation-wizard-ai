@@ -26,18 +26,22 @@ interface Props {
 }
 
 const TYPE_OPTIONS: SourceType[] = [
-  "case_law",
-  "legislation",
-  "regulations",
+  "case_law_published",
+  "case_law_database",
+  "primary_legislation",
+  "basic_law",
+  "secondary_legislation",
   "bill",
   "book",
   "article",
-  "knesset_record",
+  "article_in_book",
+  "regulation",
   "government_decision",
-  "court_filing",
-  "agreement",
+  "court_pleading",
+  "collective_agreement",
   "treaty",
-  "other",
+  "internet",
+  "religious",
 ];
 
 export function FootnoteReviewCard({
