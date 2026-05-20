@@ -2535,9 +2535,62 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
 
       let v4FallbackReason: string | undefined;
       let v3FallbackReason: string | undefined;
+      let coreFallbackReason: string | undefined;
 
-      // ── Stage A: V4 (default) ────────────────────────────────────────
-      if (pipelineMode === "v4") {
+      // ── Stage 0: Research Core (gated by RESEARCH_PIPELINE=core + pilot) ──
+      // Only the 3 pilot topics actually enter Core; everything else falls
+      // through to the existing V4 → V3 → V1 chain unchanged.
+      if (pipelineMode === "core" && isCorePilot(question)) {
+        try {
+          console.log(`[research_core] dispatch — pilot=${corePilotLabel(question)}`);
+          const core = await runCore({
+            question,
+            adminClient,
+            drafterTimeoutMs: modeProfile.drafterTimeoutMs,
+            forceDrafterModel,
+            onStage: emitStage,
+          });
+          if (core.ok) {
+            await persistSuccess("core", core, {
+              core_pilot: corePilotLabel(question),
+            });
+            console.log(`[research_core] DONE answer_len=${core.answer.length} footnotes=${core.footnotes.length}`);
+            return buildResponse(core.answer, core.footnotes, core.citations, {
+              footnotes_count: core.footnotes.length,
+            });
+          }
+          coreFallbackReason = core.fallbackReason ?? "core_ok_false";
+          console.warn(`[research_core] fallback reason=${coreFallbackReason} — trying V4`);
+          try {
+            await adminClient.from("qa_logs").upsert({
+              id: deepQaLogId,
+              user_id: user.id,
+              question: question.substring(0, 500),
+              answer: null,
+              footnotes: [],
+              task_mode: taskMode,
+              local_footnotes_count: 0,
+              perplexity_footnotes_count: 0,
+              total_footnotes: 0,
+              metadata: {
+                ...(core.metadata ?? {}),
+                pipeline_used: "core_fallback",
+                core_fallback_reason: coreFallbackReason,
+                core_pilot: corePilotLabel(question),
+              },
+            }, { onConflict: "id" });
+          } catch (logErr) {
+            console.error("[research_core] fallback log upsert failed:", logErr);
+          }
+        } catch (coreErr) {
+          coreFallbackReason = `core_threw:${(coreErr as Error)?.message ?? String(coreErr)}`;
+          console.error("[research_core] threw — falling through to V4:", coreErr);
+        }
+      }
+
+      // ── Stage A: V4 (default; also runs when pipelineMode === "core" and
+      //              Core was skipped/failed for this question) ─────────────
+      if (pipelineMode === "v4" || pipelineMode === "core") {
         try {
           console.log(`[research_v4] dispatch — running simplified Deep pipeline`);
           const v4 = await runResearchV4({
