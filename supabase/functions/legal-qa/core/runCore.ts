@@ -21,9 +21,13 @@ import { buildLedger } from "./ledger.ts";
 import { draft } from "./drafter.ts";
 import {
   buildCitationsForLedger,
-  enrichBareReporterCitationWithDebug,
-  type EnrichmentDebug,
 } from "./citations.ts";
+import {
+  enrichLedgerSource,
+  type EnrichmentOutput,
+  type EnrichmentPath,
+} from "./citationEnrichment.ts";
+type EnrichmentDebug = EnrichmentOutput["debug"];
 import { runCitationQuality } from "./citation_quality.ts";
 import {
   extractDocketFromText,
