@@ -157,6 +157,11 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
 
   const recordStage = (s: StageRun) => stageRuns.push(s);
 
+  const embedHealth: EmbedHealth = {
+    calls: 0, ok: 0, failed: 0, missing_key: false, total_latency_ms: 0,
+  };
+  const instrumentedEmbed = makeInstrumentedEmbed(embedHealth);
+
   // ─── 1. Planner ────────────────────────────────────────────────────────
   emitSafe(onStage, "plan", "running");
   const tPlan = Date.now();
@@ -177,7 +182,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     };
   }
   const plan = planRes.plan;
-  emitSafe(onStage, "plan", "complete", `claims=${plan.claims.length} auth=${plan.expected_authorities.length} anchors=${(plan.factual_anchor_terms?.length ?? 0)}`);
+  emitSafe(onStage, "plan", "complete", `claims=${plan.claims.length} auth=${plan.expected_authorities.length} anchors=${(plan.factual_anchor_terms?.length ?? 0)} concepts=${((plan as any).concept_anchor_terms?.length ?? 0)}`);
 
   // ─── 2. Retrieval ──────────────────────────────────────────────────────
   emitSafe(onStage, "retrieval", "running");
@@ -186,7 +191,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   try {
     retrieval = await retrieveForPlan({
       adminClient, plan,
-      embed: defaultEmbed,
+      embed: instrumentedEmbed,
       perplexityKey: PERPLEXITY_API_KEY || undefined,
       signal,
     });
