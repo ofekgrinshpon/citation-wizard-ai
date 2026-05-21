@@ -90,12 +90,16 @@ Hard rules:
     Additionally, every claim that references such a factual subject should
     include at least one search_target whose hebrew_terms contains that
     factual term alongside the doctrinal ones.
-13. concept_anchor_terms is MANDATORY. Lift 1-4 DOCTRINAL key phrases
+13. concept_anchor_terms is MANDATORY. Lift 1-5 DOCTRINAL key phrases
     DIRECTLY from the user's question — the legal-conceptual subject matter,
     in the EXACT wording the question uses. Examples:
       - "מחדל חקיקתי חלקי", "חובה לחוקק"   (when question asks about these)
       - "סעד זמני", "מאזן הנוחות"
       - "פסקת ההגבלה", "מידתיות"
+    בנוסף לפרישת המושג כפי שמופיע בשאלה, אם לדוקטרינה קיים ניסוח חלופי
+    מקובל בספרות (לדוגמה — סעד מול חובה, מלא מול חלקי, פרוצדורלי מול
+    מהותי, ראשוני מול משני) הוסף גם אותו כביטוי נפרד. עד 5 ביטויים סך
+    הכל. אל תוסיף מילים נרדפות שאינן בשימוש מקצועי שגור.
     These complement factual_anchor_terms by letting the retrieval pre-pass
     surface academic articles/monographs whose titles use a synonymous
     framing that won't appear verbatim in claim search_targets (e.g. an
