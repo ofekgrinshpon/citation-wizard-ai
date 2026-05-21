@@ -872,6 +872,15 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
   // + probe). Surfaced in metadata.core.retrieval.vector_health.
   const vectorHealth: VectorHealthDiag = newVectorHealth();
 
+  // Section B: cold-HNSW warmup before any per-claim/anchor vector RPC.
+  // Pays the index-load cost once so the first real call doesn't hit
+  // Postgres statement_timeout (57014). Result recorded in vector_health.
+  if (embed) {
+    await vectorWarmup(adminClient, vectorHealth, signal);
+  } else {
+    vectorHealth.warmup_status = "skipped";
+  }
+
   // ─── Anchor pre-pass (factual + concept) ──────────────────────────────
   // The planner often distills the question into PURELY DOCTRINAL search
   // targets ("מחדל חקיקתי", "חובות הגנה חיוביות") and drops both:
