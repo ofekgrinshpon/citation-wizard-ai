@@ -182,6 +182,12 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
   const summary = {
     ok: 0, partial: 0, failed: 0, off_domain: 0,
     repeated: 0, legislation_supra_blocked: 0,
+    partial_enriched_kept: 0,
+    footnote_text_sources: {
+      canonical_citation: 0,
+      repeated_rule37: 0,
+      passthrough_fallback: 0,
+    },
   };
   for (const [id, c] of citations) {
     const d = decideKept(c);
@@ -193,6 +199,7 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
     } else {
       if (c.citation_quality === "ok") summary.ok++;
       else summary.partial++;
+      if (d.reason === "partial_enriched_accepted") summary.partial_enriched_kept++;
     }
   }
 
