@@ -1,39 +1,54 @@
-## Make cited sources clickable to their PDF/source link
+## למה מסמך הממ"מ על "גביית דמי חסות" לא הופיע בתשובה
 
-Each footnote in the QA result already carries a `url` field (populated from local DB hits, Perplexity citations, and uploaded documents). Today the footnote list just renders the citation text — the URL is invisible. We'll surface it as a click target so the user can jump straight to the PDF / source page.
+### אישור הקיום במאגר
 
-### Scope (frontend only)
+המסמך אכן קיים ונטען במלואו:
 
-1. **Footnotes list in `LegalQAChat.tsx`** (around line 2989)
-   - When `fn.url` exists, wrap the citation text in an `<a target="_blank" rel="noopener noreferrer">` with a subtle underline + hover color (use `text-primary hover:underline`).
-   - Append a small external-link icon (`ExternalLink` from lucide) after the citation so it's visually obvious the row is clickable.
-   - When no `url`, render as today (plain text).
-   - Tooltip on hover shows the hostname (e.g. `nevo.co.il`, `supremedecisions.court.gov.il`).
+- **document_id**: `a6d79a7a-14a8-47bd-82f9-ee1747e9f6a9`
+- **כותרת**: "גביית דמי חסות – ניתוח נתוני דיווח לכנסת – תיקון"
+- **citation**: ד"ר נורית יכימוביץ-כהן, הכנסת – מרכז המחקר והמידע (2025)
+- **source_type**: `knesset_research`
+- **URL**: `https://main.knesset.gov.il/.../incident.aspx?rid=8225&businessType=1`
+- **chunks**: 9 מתוכם 9 עם embedding מלא — מוכן לאחזור hybrid (FTS + HNSW).
 
-2. **Inline superscripts in the answer body**
-   - The superscript numbers (¹²³) currently scroll to the footnote via `legalqa-footnote-{n}` anchor. Keep that behavior on plain click.
-   - Add **Ctrl/Cmd-click** (or a small ↗ affordance in the footnote row) to open the URL directly. Keeping the default click as "scroll to footnote" preserves the current UX; the link lives in the footnote row itself.
+אין כאן בעיית הזנה, אין בעיית embedding, ואין בעיית RLS (הטבלה ציבורית לקריאה).
 
-3. **Citation review mini-cards** (`CitationReviewCard.tsx`)
-   - Already receives `url`. Add the same external-link chip there so the user can verify the source while reviewing.
+### למה הוא לא נמצא — שורש הבעיה
 
-4. **Copy-to-Word / rich text export**
-   - In `copyContent` and the academic export paths, wrap the citation in an `<a href="...">` inside the HTML payload so Word preserves the hyperlink when pasted. Plain-text copy stays unchanged (URL is not appended to avoid polluting Bluebook formatting).
+בדקתי את `qa_logs` של הריצה האחרונה לאותה שאלה (`9f9a2f7b-4b0d-4a08-a53f-14af5a379fa4`). הפלן שה-planner ייצר כולל ארבע טענות (C1–C4), וכל ה-`search_targets` שלהן נסובים סביב **הדוקטרינה המשפטית בלבד**:
 
-### Out of scope
+```text
+hebrew_terms: "מחדל חקיקתי", "מחדל חקיקתי חלקי", "הסדר חקיקתי לקוי",
+              "ביקורת שיפוטית על מדיניות אכיפה", "חובת אכיפה",
+              "חובות הגנה חיוביות", "ריסון שיפוטי", "עבירת סחיטה באיומים" …
+```
 
-- No backend changes. We rely on the `url` already attached to each footnote.
-- No change to citation text formatting (Uniform Citation Rules unchanged — the URL is metadata, not part of the citation string).
-- Historical answers stored in `qa_logs` that lack `url` simply stay non-clickable.
+**המילים "דמי חסות" / "פרוטקשן" — המקבע העובדתי של השאלה — נושלו מכל ה-search_targets.** מאחר ש-`pickTextQuery` ו-`pickVectorQuery` ב-`core/retrieval.ts` מזינים אך ורק את `hebrew_terms` (ובכל הצרה — את `thesis`/`doctrine`) ל-`search_legal_chunks_text` ול-`match_legal_chunks`, כל שאילתות האחזור היו דוקטרינריות. מסמך שכותרתו "גביית דמי חסות" אינו תואם ל-"מחדל חקיקתי חלקי" לא ב-FTS ולא ב-cosine — לכן הוא לא נכנס לאף `ClaimRetrievalPack`, לא הגיע ל-source pack, ולא יכול היה להופיע בטיוטה.
 
-### Files to edit
+מבחינת זרימה: `metadata.retrieval` ו-`metadata.sourcePack` ב-qa_logs ריקים — לא בגלל כשל ריצה, אלא כי הם נשמרים תחת `metadata.core.*` במבנה הנוכחי. בדיקה ידנית של ה-`plan.claims[*].search_targets` מאשרת את ההסבר.
 
-- `src/components/LegalQAChat.tsx` — footnote `<li>` renderer + rich-text export
-- `src/components/legal-qa/CitationReviewCard.tsx` — add link chip
-- (optional) `src/components/FootnotesSection.tsx` if it's reused elsewhere
+### הצעת תיקון (frontend ו/או planner-prompt, ללא שינוי DB)
 
-### Validation
+עריכה ב-`supabase/functions/legal-qa/core/prompts.ts` (פרומפט ה-planner) + תוספת קלה ב-`retrieval.ts`:
 
-- Run a Deep query that returns a mix of local DB sources (with `url`) and Perplexity sources; confirm clickable footnotes open the correct PDF/landing page in a new tab.
-- Confirm footnotes without a `url` still render as plain text (no broken `<a>`).
-- Copy the answer to Word; confirm the hyperlink is preserved on paste.
+1. **כלל חדש בפרומפט ה-planner**:
+   "כל claim שמערב נושא עובדתי קונקרטי מהשאלה (תופעה, עבירה, מוסד, מגזר, אזור גאוגרפי, גוף ציבורי) חייב לכלול לפחות `search_target` אחד שבו `hebrew_terms` כולל את **המונח העובדתי כפי שמופיע בשאלה** (כאן: "דמי חסות", "פרוטקשן", "סחיטה באיומים בצפון") — בנוסף ל-search_targets הדוקטרינריים."
+2. **שדה אופציונלי `factual_anchor_terms: string[]`** ברמת ה-`PlanV1` שמכיל את אותם מונחים עובדתיים שחולצו ישירות מהשאלה. ה-planner מחויב להחזיר אותם גם אם הוא לא משייך אותם ל-claim ספציפי.
+3. **`retrieveForPlan`**: לפני הלולאה על ה-claims, להריץ pass נוסף של `localText` + `localVector` על `factual_anchor_terms` ולשתול את התוצאות כ-candidates משותפים לכל claim שהמסמך תואם לו לפי `source_type_filter` (או — אם אין מסנן — לכל claim). זה משריין שכנים עובדתיים (כמו דו"חות ממ"מ ועבודות הכנסת) שאליהם הדוקטרינה לבדה לא היתה מגיעה.
+4. **לוג**: לשמור את `factual_anchor_terms` ב-`qa_logs.metadata.core.factual_anchors` כדי שנוכל להריץ regression מהירה.
+
+### מה לא נדרש לשנות
+
+- אין צורך לגעת ב-`match_legal_chunks_filtered` או ב-RLS.
+- אין צורך לשנות את שכבת ה-Perplexity / ה-source pack — ברגע שה-MMM נכנס ל-candidate set, שאר הצינור (ranking, claim map, drafter) כבר מטפל בו.
+- אין שינוי בכללי הציטוט: `knesset_research` כבר ממופה דרך Rule 8 ב-`citationEngine`.
+
+### אימות לאחר היישום
+
+הרצה חוזרת של אותה שאלה צריכה להראות:
+
+- ב-`metadata.core.plan.factual_anchor_terms` — נוכחות של "דמי חסות"/"פרוטקשן".
+- ב-`metadata.core.retrieval.*` — candidate עם `document_id = a6d79a7a-…` לפחות בטענה אחת.
+- בתשובה הסופית — לפחות הערת שוליים אחת שמצטטת את הדו"ח של נורית יכימוביץ-כהן (2025).
+
+קבצים מושפעים: `supabase/functions/legal-qa/core/prompts.ts`, `core/types.ts`, `core/retrieval.ts`. אין מיגרציית DB.
