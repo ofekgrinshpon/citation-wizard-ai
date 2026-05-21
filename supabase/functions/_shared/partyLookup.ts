@@ -102,6 +102,8 @@ export async function lookupPartyNames(
   // citation (`בג"ץ 18225-06-25`) instead of a bare district-style number.
   // Otherwise (subject category like "משפחה") keep it parenthesized as a
   // disambiguation hint, since prepending it would corrupt the citation.
+  const trunc = (s: string | undefined, n: number): string =>
+    !s ? "" : (s.length > n ? s.slice(0, n).trim() + "…" : s.trim());
   const docketLines = requests
     .map((r, i) => {
       const hint = (r.caseTypeHint || "").trim();
@@ -110,7 +112,18 @@ export async function lookupPartyNames(
       const parenHints = [isDocketPrefix ? "" : hint, r.courtHint]
         .filter(Boolean)
         .join(" ");
-      return `${i + 1}. ${docket}${parenHints ? ` (${parenHints})` : ""}`;
+      let line = `${i + 1}. ${docket}${parenHints ? ` (${parenHints})` : ""}`;
+      const ctx = r.contextHints;
+      if (ctx) {
+        const ctxBits: string[] = [];
+        if (ctx.title) ctxBits.push(`כותרת: ${trunc(ctx.title, 180)}`);
+        if (ctx.reporterCitation) ctxBits.push(`ציטוט: ${trunc(ctx.reporterCitation, 120)}`);
+        if (ctx.url) ctxBits.push(`URL: ${ctx.url}`);
+        if (ctx.snippet) ctxBits.push(`קטע: ${trunc(ctx.snippet, 300)}`);
+        if (ctx.sourceType) ctxBits.push(`סוג: ${ctx.sourceType}`);
+        if (ctxBits.length > 0) line += `\n   הקשר — ${ctxBits.join(" | ")}`;
+      }
+      return line;
     })
     .join("\n");
 
