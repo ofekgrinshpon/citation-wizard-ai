@@ -709,6 +709,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
             passLabel: "party_lookup",
             recovered: {
               caseNumber: docket,
+              caseType: meta.prefix || undefined,
               party1: hit.party1,
               party2: hit.party2,
               fullDate: hit.fullDate,
