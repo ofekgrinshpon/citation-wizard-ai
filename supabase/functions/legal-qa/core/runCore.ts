@@ -24,8 +24,14 @@ import { runCitationQuality } from "./citation_quality.ts";
 import {
   extractDocketFromText,
   extractPartiesFromText,
+  extractCaseFieldsFromLedgerSource,
 } from "./citationCleanup.ts";
 import { lookupPartyNames } from "../../_shared/partyLookup.ts";
+import {
+  fetchOfficialCasePage,
+  newFetcherTelemetry,
+  isApprovedUrl,
+} from "./officialSourceFetcher.ts";
 import type { LedgerSource } from "./types.ts";
 
 export type CoreStageEmitter = (
@@ -310,15 +316,26 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   type EnrichAttempt = {
     ls_id: LedgerSourceId;
     docket: string;
-    docket_source: "metadata" | "extracted" | "none";
+    docket_source: "metadata" | "extracted" | "official_page" | "none";
     prefix?: string;
     used_metadata_parties: boolean;
+    pass?: "metadata" | "text_regex" | "official_fetch" | "party_lookup";
     title_excerpt?: string;
     snippet_excerpt?: string;
     url?: string;
     source_type?: string;
     reporter_citation?: string;
-    status: "metadata_hit" | "hit" | "no_match" | "timeout" | "parse_failed" | "request_failed" | "skipped_no_docket" | "domain_filtered";
+    status:
+      | "metadata_hit"
+      | "text_regex_hit"
+      | "official_fetch_hit"
+      | "hit"
+      | "no_match"
+      | "timeout"
+      | "parse_failed"
+      | "request_failed"
+      | "skipped_no_docket"
+      | "domain_filtered";
     rejection_reason?: string;
   };
   const enrichment = {
@@ -326,6 +343,11 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     bare_reporter_recovered: 0,
     bare_reporter_dropped: 0,
     metadata_short_circuits: 0,
+    text_regex_attempted: 0,
+    text_regex_recovered: 0,
+    official_fetch_attempted: 0,
+    official_fetch_recovered: 0,
+    official_fetch_timeouts: 0,
     party_lookup_attempted: 0,
     party_lookup_hits: 0,
     party_lookup_timeouts: 0,
@@ -375,6 +397,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
         docket: metaCase || "(from metadata.parties)",
         docket_source: metaCase ? "metadata" : "none",
         used_metadata_parties: true,
+        pass: "metadata",
         title_excerpt: truncate(ls.title, 120),
         url: ls.url,
         source_type: ls.source_type,
@@ -388,13 +411,148 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     }
   }
 
-  // Pass B — partyLookup batch for what's still bare.
-  if (stillBareAfterA.length > 0 && PERPLEXITY_API_KEY) {
+  // Pass B — text-regex extraction from title + citation + snippet + url.
+  // No external call. Recovers any case whose LedgerSource fields already
+  // expose `<P1> נ׳ <P2>` (most common path — official Israeli court titles
+  // are structured exactly this way).
+  const stillBareAfterB: LedgerSourceId[] = [];
+  for (const id of stillBareAfterA) {
+    const ls = lsById.get(id);
+    if (!ls) { stillBareAfterB.push(id); continue; }
+    enrichment.text_regex_attempted++;
+    const fields = extractCaseFieldsFromLedgerSource({
+      title: ls.title,
+      citation: ls.citation,
+      snippet: ls.snippet,
+      url: ls.url,
+    });
+    if (fields.docket && fields.party1 && fields.party2) {
+      const fresh = enrichBareReporterCitation(ls, {
+        caseNumber: fields.docket,
+        party1: fields.party1,
+        party2: fields.party2,
+        year: fields.year,
+        fullDate: fields.fullDate,
+      });
+      citations.set(id, fresh);
+      const recovered = !fresh.citation_errors.includes("failed_bare_reporter");
+      if (recovered) {
+        enrichment.bare_reporter_recovered++;
+        enrichment.text_regex_recovered++;
+      }
+      enrichment.attempts.push({
+        ls_id: id,
+        docket: fields.docket,
+        docket_source: "extracted",
+        prefix: fields.prefix,
+        used_metadata_parties: false,
+        pass: "text_regex",
+        title_excerpt: truncate(ls.title, 120),
+        snippet_excerpt: truncate(ls.snippet, 200),
+        url: ls.url,
+        source_type: ls.source_type,
+        reporter_citation: truncate(ls.citation, 120),
+        status: "text_regex_hit",
+        rejection_reason: recovered ? undefined : "rebuild_still_bare",
+      });
+      if (!recovered) stillBareAfterB.push(id);
+    } else {
+      stillBareAfterB.push(id);
+    }
+  }
+
+  // Pass C — official-URL fetch + parse. Only for LedgerSources with an
+  // approved official permalink. Parallel cap 5, 20s overall budget.
+  const stillBareAfterC: LedgerSourceId[] = [];
+  const fetcherTel = newFetcherTelemetry();
+  const cFetchable: LedgerSourceId[] = stillBareAfterB.filter((id) => {
+    const ls = lsById.get(id);
+    return !!(ls && ls.url && isApprovedUrl(ls.url));
+  });
+  const cSkipped: LedgerSourceId[] = stillBareAfterB.filter((id) => !cFetchable.includes(id));
+  // Cap to 5 concurrent fetches, 20s overall budget.
+  const C_CAP = 5;
+  const C_BUDGET_MS = 20_000;
+  const cTargets = cFetchable.slice(0, C_CAP);
+  const cExcess = cFetchable.slice(C_CAP);
+  if (cTargets.length > 0) {
+    const overallCtrl = new AbortController();
+    const overallTimer = setTimeout(() => overallCtrl.abort(), C_BUDGET_MS);
+    try {
+      const results = await Promise.allSettled(
+        cTargets.map((id) => {
+          const ls = lsById.get(id)!;
+          return fetchOfficialCasePage(ls.url!, fetcherTel, 12_000).then((r) => ({ id, ls, fields: r }));
+        }),
+      );
+      clearTimeout(overallTimer);
+      for (const r of results) {
+        if (r.status !== "fulfilled") continue;
+        const { id, ls, fields } = r.value;
+        if (fields && fields.docket && fields.party1 && fields.party2) {
+          const fresh = enrichBareReporterCitation(ls, {
+            caseNumber: fields.docket,
+            party1: fields.party1,
+            party2: fields.party2,
+            year: fields.year,
+            fullDate: fields.fullDate,
+          });
+          citations.set(id, fresh);
+          const recovered = !fresh.citation_errors.includes("failed_bare_reporter");
+          if (recovered) {
+            enrichment.bare_reporter_recovered++;
+            enrichment.official_fetch_recovered++;
+          }
+          enrichment.attempts.push({
+            ls_id: id,
+            docket: fields.docket,
+            docket_source: "official_page",
+            prefix: fields.prefix,
+            used_metadata_parties: false,
+            pass: "official_fetch",
+            title_excerpt: truncate(ls.title, 120),
+            url: ls.url,
+            source_type: ls.source_type,
+            reporter_citation: truncate(ls.citation, 120),
+            status: "official_fetch_hit",
+            rejection_reason: recovered ? undefined : "rebuild_still_bare",
+          });
+          if (!recovered) stillBareAfterC.push(id);
+        } else {
+          stillBareAfterC.push(id);
+          enrichment.attempts.push({
+            ls_id: id,
+            docket: "(none)",
+            docket_source: "none",
+            used_metadata_parties: false,
+            pass: "official_fetch",
+            title_excerpt: truncate(ls.title, 120),
+            url: ls.url,
+            source_type: ls.source_type,
+            reporter_citation: truncate(ls.citation, 120),
+            status: "no_match",
+            rejection_reason: "fetch_or_parse_returned_nothing",
+          });
+        }
+      }
+    } catch (e) {
+      console.warn("[core:enrich_citations] official_fetch threw", e);
+    }
+  }
+  // Sources we never even tried in Pass C (no approved URL, or overflow):
+  for (const id of [...cSkipped, ...cExcess]) stillBareAfterC.push(id);
+  enrichment.official_fetch_attempted = fetcherTel.attempted;
+  enrichment.official_fetch_timeouts = fetcherTel.timeouts;
+  // Persist per-url fetcher telemetry for forensics.
+  (enrichment as Record<string, unknown>).official_fetch_telemetry = fetcherTel;
+
+  // Pass D — partyLookup batch for whatever is still bare after A+B+C.
+  if (stillBareAfterC.length > 0 && PERPLEXITY_API_KEY) {
     const reqMap = new Map<string, {
       ls_id: LedgerSourceId; prefix: string; docket: string; docket_source: "metadata" | "extracted";
     }>();
     const skippedNoDocket: LedgerSourceId[] = [];
-    for (const id of stillBareAfterA) {
+    for (const id of stillBareAfterC) {
       const ls = lsById.get(id);
       if (!ls) continue;
       const rich = candidateRichMeta.get(ls.candidate_id);
@@ -418,6 +576,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
         docket: "(none)",
         docket_source: "none",
         used_metadata_parties: false,
+        pass: "party_lookup",
         title_excerpt: truncate(ls?.title, 120),
         snippet_excerpt: truncate(ls?.snippet, 200),
         url: ls?.url,
@@ -460,6 +619,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
             docket_source: meta.docket_source,
             prefix: meta.prefix || undefined,
             used_metadata_parties: false,
+            pass: "party_lookup",
             title_excerpt: truncate(ls?.title, 120),
             snippet_excerpt: truncate(ls?.snippet, 200),
             url: ls?.url,
@@ -507,6 +667,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
             docket_source: meta.docket_source,
             prefix: meta.prefix || undefined,
             used_metadata_parties: false,
+            pass: "party_lookup",
             title_excerpt: truncate(ls?.title, 120),
             snippet_excerpt: truncate(ls?.snippet, 200),
             url: ls?.url,
@@ -533,7 +694,12 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     status: "ok",
   });
   emitSafe(onStage, "enrich_citations", "complete",
-    `bare=${enrichment.bare_reporter_attempted} recovered=${enrichment.bare_reporter_recovered} dropped=${enrichment.bare_reporter_dropped}`);
+    `bare=${enrichment.bare_reporter_attempted} ` +
+    `meta=${enrichment.metadata_short_circuits} ` +
+    `regex=${enrichment.text_regex_recovered}/${enrichment.text_regex_attempted} ` +
+    `official=${enrichment.official_fetch_recovered}/${enrichment.official_fetch_attempted} ` +
+    `party=${enrichment.party_lookup_hits}/${enrichment.party_lookup_attempted} ` +
+    `recovered=${enrichment.bare_reporter_recovered} dropped=${enrichment.bare_reporter_dropped}`);
 
   // ─── 6.2 + 6.3 Footnote builder + CitationQualityPass ──────────────────
   emitSafe(onStage, "post_processing", "running", "citation_quality");
