@@ -14,12 +14,65 @@ import type {
   CitationQualityStatus,
   FlaggedFootnote,
   Footnote,
+  LedgerSource,
   LedgerSourceCitation,
   LedgerSourceId,
   RemovedCitation,
 } from "./types.ts";
 import { buildFootnotes } from "./footnotes.ts";
 import type { LedgerEntry, LedgerResult } from "./types.ts";
+
+// ── Host-based declared_type inference ────────────────────────────────────
+// Used to rescue approved_web ledger sources that the verifier marked
+// `direct` but which arrived with empty/weak source_type / title metadata
+// (e.g. "[DOC] nevo.co.il"). The host alone tells us this is a primary
+// legal source; we should not drop it just because the label is thin.
+const CASELAW_HOSTS = [
+  "supremedecisions.court.gov.il",
+  "supreme.court.gov.il",
+  "court.gov.il",
+  "takdin.co.il",
+  "lite.takdin.co.il",
+  "psakdin.co.il",
+  "din.org.il",
+];
+const LEGISLATION_HOSTS = [
+  "main.knesset.gov.il",
+  "fs.knesset.gov.il",
+  "knesset.gov.il",
+  "reshumot.gov.il",
+];
+
+const LAW_RE =
+  /(חוק|פקודת|פקודה|תקנות|תקנה|צו|כללי|הוראות|חוק[\s-]יסוד|ס["״]ח|ק["״]ת)/;
+const CASE_RE = /(נ['׳]\s|בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|פ"ד|פ״ד|תק-על|פסק[\s-]דין)/;
+
+function hostFromUrl(url?: string): string {
+  if (!url) return "";
+  try { return new URL(url).hostname.toLowerCase(); } catch { return ""; }
+}
+function hostMatchesAny(host: string, list: string[]): boolean {
+  if (!host) return false;
+  for (const h of list) if (host === h || host.endsWith("." + h)) return true;
+  return false;
+}
+function inferDeclaredFromSource(
+  ls: LedgerSource | undefined,
+): "statute" | "caselaw" | "none" {
+  if (!ls) return "none";
+  const host = hostFromUrl(ls.url);
+  const text = `${ls.title || ""}\n${ls.citation || ""}\n${ls.snippet || ""}`;
+  if (hostMatchesAny(host, CASELAW_HOSTS)) return "caselaw";
+  if (hostMatchesAny(host, LEGISLATION_HOSTS)) return "statute";
+  // nevo.co.il is mixed — disambiguate by text.
+  if (host === "nevo.co.il" || host.endsWith(".nevo.co.il")) {
+    if (CASE_RE.test(text)) return "caselaw";
+    if (LAW_RE.test(text)) return "statute";
+  }
+  // gov.il fallback: only rescue when the title/citation clearly names a law.
+  if (host.endsWith("gov.il") && LAW_RE.test(text)) return "statute";
+  return "none";
+}
 
 const INSUFFICIENT_SENTENCE =
   "המקורות המאומתים שאותרו אינם מספיקים לגיבוש מסקנה חד-משמעית.";
