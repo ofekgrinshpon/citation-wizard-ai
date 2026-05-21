@@ -241,6 +241,10 @@ type ResolverDebugSnapshot = {
 };
 let __lastResolverDebug: ResolverDebugSnapshot | null = null;
 
+function readLastResolverDebug(): ResolverDebugSnapshot | null {
+  return __lastResolverDebug;
+}
+
 export function buildCitationForSource(
   ls: LedgerSource,
   hints: BuildCitationHints = {},
