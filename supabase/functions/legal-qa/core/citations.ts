@@ -273,7 +273,7 @@ export function buildCitationForSource(
     yearHint: hints.year ?? yearFromText,
   };
 
-  let safetyNetUsed = false;
+  
   if (declared !== "none") {
     engine_used = "resolver";
     const res: ResolveResult = resolveCitation(
