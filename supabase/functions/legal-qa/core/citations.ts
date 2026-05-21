@@ -14,6 +14,7 @@ import type {
   LedgerSourceCitation,
   ShortFormInputs,
 } from "./types.ts";
+import { cleanCitationText, isUninformativeLabel } from "./citationCleanup.ts";
 
 // Hosts known to host primary legal materials (mirrors ledger.ts).
 const PRIMARY_HOSTS = [
