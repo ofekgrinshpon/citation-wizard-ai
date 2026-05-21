@@ -288,9 +288,28 @@ export function buildCitationForSource(
   const yearFromText = extractYearFromText(haystack);
   const fullDateFromText = extractFullDateFromText(haystack);
 
+  // Compose a prefixed caseNumberHint when we have both the prefix and the
+  // docket: resolver's `matchCaseTypeAndNumber` requires `<prefix> <docket>`
+  // form to fill caseType. When only a docket is available, pass it bare —
+  // resolver's Tier-2b path accepts it and pairs with caseTypeHint.
+  const composedCaseNumber: string | undefined = (() => {
+    if (hints.caseNumber && hints.caseNumber.trim()) {
+      const raw = hints.caseNumber.trim();
+      if (hints.caseType && hints.caseType.trim() && !/^[א-ת]/.test(raw.split(/\s+/)[0] ?? "")) {
+        return `${hints.caseType.trim()} ${raw}`;
+      }
+      return raw;
+    }
+    if (docketFromText) return `${docketFromText.prefix} ${docketFromText.docket}`;
+    return undefined;
+  })();
+  const composedCaseType: string | undefined =
+    (hints.caseType && hints.caseType.trim()) || docketFromText?.prefix || undefined;
+
   const resolverHints = {
     titleHint: ls.title,
-    caseNumberHint: hints.caseNumber ?? docketFromText?.docket,
+    caseNumberHint: composedCaseNumber,
+    caseTypeHint: composedCaseType,
     party1Hint: hints.party1 ?? partiesFromText?.party1,
     party2Hint: hints.party2 ?? partiesFromText?.party2,
     fullDateHint: hints.fullDate ?? fullDateFromText,
@@ -320,6 +339,7 @@ export function buildCitationForSource(
       resolverHints: {
         titleHint: resolverHints.titleHint,
         caseNumberHint: resolverHints.caseNumberHint,
+        caseTypeHint: resolverHints.caseTypeHint,
         party1Hint: resolverHints.party1Hint,
         party2Hint: resolverHints.party2Hint,
         fullDateHint: resolverHints.fullDateHint,
