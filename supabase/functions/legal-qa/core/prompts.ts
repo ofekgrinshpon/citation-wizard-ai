@@ -74,6 +74,21 @@ Hard rules:
     preferring fewer real over more fake. Empty array is permitted only if
     you genuinely know no real authority for the doctrine.
 11. Hebrew throughout. No English in the JSON values except authority types.
+12. factual_anchor_terms is MANDATORY. Lift 1-6 factual nouns or short noun
+    phrases DIRECTLY from the user's question — the concrete subject matter,
+    not the legal doctrine. Examples of what belongs here:
+      - named offences/phenomena: "דמי חסות", "פרוטקשן", "אלימות במשפחה"
+      - institutions/sectors:     "רשות חסות הנוער", "החינוך החרדי"
+      - geography/population:     "החברה הערבית", "הנגב", "צפון הארץ"
+      - public bodies/programs:   "המוסד לביטוח לאומי", "תכנית קלי"
+    Copy them in the EXACT Hebrew form the question uses (including
+    parenthetical synonyms such as "פרוטקשן" when the question writes
+    "גביית דמי חסות (פרוטקשן)"). Do NOT put doctrinal phrases here
+    ("מחדל חקיקתי", "חובות הגנה חיוביות") — those belong in search_targets.
+    If the question is purely doctrinal with no factual subject, return [].
+    Additionally, every claim that references such a factual subject should
+    include at least one search_target whose hebrew_terms contains that
+    factual term alongside the doctrinal ones.
 
 SELF-CHECK (perform silently before emitting JSON; do NOT include this in
 the output):
