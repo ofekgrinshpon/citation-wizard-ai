@@ -108,12 +108,15 @@ function trimDanglingQuoteFragment(s: string): string {
 }
 
 // ─── Public API ──────────────────────────────────────────────────────────
+// Note: trimDanglingQuoteFragment is intentionally NOT applied — Hebrew legal
+// citations use `"` as gershayim (e.g. `ע"א`, `פ"ד`, `עע"מ`), so a naive
+// quote-balance heuristic mangles legitimate text. Footnote authority over
+// truncated artifacts is left to the drafter / engine layer.
 export function cleanCitationText(input: string): string {
   if (!input) return input;
   let s = input;
   s = decodeHtmlEntities(s);
   s = dedupeDocketPrefix(s);
-  s = trimDanglingQuoteFragment(s);
   s = normalizePunctuation(s);
   return s;
 }
