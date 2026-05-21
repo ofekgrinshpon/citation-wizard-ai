@@ -297,19 +297,40 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
 
 
   // ─── 6.1.5 Enrich bare-reporter caselaw citations ──────────────────────
-  // Citations flagged `failed_bare_reporter` lack docket/parties/year.
-  // First try harder hints from the LedgerSource itself; then, only if a
-  // docket was recovered from text, fall back to a single batched
-  // partyLookup call (trusted-domain, capped). No LLM inference.
+  // Two-stage recovery:
+  //   (a) Metadata short-circuit — if candidateRichMeta has parties already,
+  //       rebuild the citation directly with no external call.
+  //   (b) partyLookup batch — for the remainder, prefer metadata.case_number
+  //       over regex extraction, and pass the full LedgerSource context
+  //       (title/snippet/url/source_type/reporter citation) to Perplexity so
+  //       it can disambiguate the docket. Trusted-domain, capped, batched.
+  // No LLM inference of parties from training memory anywhere.
   emitSafe(onStage, "enrich_citations", "running");
   const tEnr = Date.now();
+  type EnrichAttempt = {
+    ls_id: LedgerSourceId;
+    docket: string;
+    docket_source: "metadata" | "extracted" | "none";
+    prefix?: string;
+    used_metadata_parties: boolean;
+    title_excerpt?: string;
+    snippet_excerpt?: string;
+    url?: string;
+    source_type?: string;
+    reporter_citation?: string;
+    status: "metadata_hit" | "hit" | "no_match" | "timeout" | "parse_failed" | "request_failed" | "skipped_no_docket" | "domain_filtered";
+    rejection_reason?: string;
+  };
   const enrichment = {
     bare_reporter_attempted: 0,
     bare_reporter_recovered: 0,
     bare_reporter_dropped: 0,
+    metadata_short_circuits: 0,
     party_lookup_attempted: 0,
     party_lookup_hits: 0,
+    party_lookup_timeouts: 0,
     party_lookup_status: "skipped" as string,
+    attempts: [] as EnrichAttempt[],
   };
   const lsById = new Map<LedgerSourceId, LedgerSource>();
   for (const e of ledger.entries) for (const s of e.sources) lsById.set(s.ls_id, s);
@@ -320,38 +341,147 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   }
   enrichment.bare_reporter_attempted = bareIds.length;
 
-  // First pass: rebuild from LedgerSource text only (already done in
-  // buildCitationForSource — re-running here would no-op). Skip directly to
-  // partyLookup batch using dockets we can find in title+citation+snippet.
-  if (bareIds.length > 0 && PERPLEXITY_API_KEY) {
-    const reqMap = new Map<string, { ls_id: LedgerSourceId; prefix: string; docket: string }>();
-    for (const id of bareIds) {
+  const truncate = (s: string | undefined, n: number): string | undefined =>
+    !s ? undefined : (s.length > n ? s.slice(0, n) + "…" : s);
+
+  // Pass A — metadata short-circuit: rebuild any bare-reporter citation whose
+  // candidate metadata already contains structured parties. No external call.
+  const stillBareAfterA: LedgerSourceId[] = [];
+  for (const id of bareIds) {
+    const ls = lsById.get(id);
+    if (!ls) { stillBareAfterA.push(id); continue; }
+    const rich = candidateRichMeta.get(ls.candidate_id);
+    let p1: string | undefined;
+    let p2: string | undefined;
+    if (rich?.parties && typeof rich.parties === "object") {
+      p1 = rich.parties.party1;
+      p2 = rich.parties.party2;
+    }
+    const metaCase = rich?.case_number;
+    if (p1 && p2) {
+      const fresh = enrichBareReporterCitation(ls, {
+        caseNumber: metaCase,
+        party1: p1,
+        party2: p2,
+        year: rich?.year,
+        fullDate: rich?.decision_date,
+      });
+      citations.set(id, fresh);
+      const recovered = !fresh.citation_errors.includes("failed_bare_reporter");
+      if (recovered) enrichment.bare_reporter_recovered++;
+      enrichment.metadata_short_circuits++;
+      enrichment.attempts.push({
+        ls_id: id,
+        docket: metaCase || "(from metadata.parties)",
+        docket_source: metaCase ? "metadata" : "none",
+        used_metadata_parties: true,
+        title_excerpt: truncate(ls.title, 120),
+        url: ls.url,
+        source_type: ls.source_type,
+        reporter_citation: truncate(ls.citation, 120),
+        status: "metadata_hit",
+        rejection_reason: recovered ? undefined : "rebuild_still_bare",
+      });
+      if (!recovered) stillBareAfterA.push(id);
+    } else {
+      stillBareAfterA.push(id);
+    }
+  }
+
+  // Pass B — partyLookup batch for what's still bare.
+  if (stillBareAfterA.length > 0 && PERPLEXITY_API_KEY) {
+    const reqMap = new Map<string, {
+      ls_id: LedgerSourceId; prefix: string; docket: string; docket_source: "metadata" | "extracted";
+    }>();
+    const skippedNoDocket: LedgerSourceId[] = [];
+    for (const id of stillBareAfterA) {
       const ls = lsById.get(id);
       if (!ls) continue;
-      const text = `${ls.title || ""}\n${ls.citation || ""}\n${ls.snippet || ""}`;
-      const dk = extractDocketFromText(text);
-      if (!dk) continue;
-      if (reqMap.has(dk.docket)) continue;
-      reqMap.set(dk.docket, { ls_id: id, prefix: dk.prefix, docket: dk.docket });
+      const rich = candidateRichMeta.get(ls.candidate_id);
+      let docket: string | undefined = rich?.case_number;
+      let prefix = ""; // metadata case_number rarely carries a prefix
+      let docket_source: "metadata" | "extracted" = "metadata";
+      if (!docket) {
+        const text = `${ls.title || ""}\n${ls.citation || ""}\n${ls.snippet || ""}`;
+        const dk = extractDocketFromText(text);
+        if (dk) { docket = dk.docket; prefix = dk.prefix; docket_source = "extracted"; }
+      }
+      if (!docket) { skippedNoDocket.push(id); continue; }
+      if (reqMap.has(docket)) continue;
+      reqMap.set(docket, { ls_id: id, prefix, docket, docket_source });
       if (reqMap.size >= 5) break;
+    }
+    for (const id of skippedNoDocket) {
+      const ls = lsById.get(id);
+      enrichment.attempts.push({
+        ls_id: id,
+        docket: "(none)",
+        docket_source: "none",
+        used_metadata_parties: false,
+        title_excerpt: truncate(ls?.title, 120),
+        snippet_excerpt: truncate(ls?.snippet, 200),
+        url: ls?.url,
+        source_type: ls?.source_type,
+        reporter_citation: truncate(ls?.citation, 120),
+        status: "skipped_no_docket",
+        rejection_reason: "no_docket_in_metadata_or_text",
+      });
     }
     if (reqMap.size > 0) {
       enrichment.party_lookup_attempted = reqMap.size;
       try {
         const lookup = await lookupPartyNames(
-          [...reqMap.values()].map((v) => ({
-            caseNumber: v.docket,
-            caseTypeHint: v.prefix,
-          })),
+          [...reqMap.values()].map((v) => {
+            const ls = lsById.get(v.ls_id);
+            const rich = ls ? candidateRichMeta.get(ls.candidate_id) : undefined;
+            return {
+              caseNumber: v.docket,
+              caseTypeHint: v.prefix,
+              courtHint: rich?.court,
+              contextHints: ls ? {
+                title: ls.title,
+                snippet: ls.snippet,
+                url: ls.url,
+                sourceType: ls.source_type,
+                reporterCitation: ls.citation,
+              } : undefined,
+            };
+          }),
         );
         enrichment.party_lookup_status = lookup.status;
         enrichment.party_lookup_hits = lookup.hits.size;
-        // Re-build each bare-reporter citation with the recovered hints.
+        if (lookup.status === "timeout") enrichment.party_lookup_timeouts++;
         for (const [docket, meta] of reqMap) {
           const hit = lookup.hits.get(docket);
-          if (!hit) continue;
           const ls = lsById.get(meta.ls_id);
-          if (!ls) continue;
+          const baseAttempt: EnrichAttempt = {
+            ls_id: meta.ls_id,
+            docket,
+            docket_source: meta.docket_source,
+            prefix: meta.prefix || undefined,
+            used_metadata_parties: false,
+            title_excerpt: truncate(ls?.title, 120),
+            snippet_excerpt: truncate(ls?.snippet, 200),
+            url: ls?.url,
+            source_type: ls?.source_type,
+            reporter_citation: truncate(ls?.citation, 120),
+            status: "no_match",
+          };
+          if (!hit) {
+            const failureReason = lookup.failures.get(docket);
+            baseAttempt.status = (failureReason ?? "no_match") as EnrichAttempt["status"];
+            baseAttempt.rejection_reason = failureReason
+              ? `perplexity:${failureReason}`
+              : `perplexity_status:${lookup.status}`;
+            enrichment.attempts.push(baseAttempt);
+            continue;
+          }
+          if (!ls) {
+            baseAttempt.status = "no_match";
+            baseAttempt.rejection_reason = "ledger_source_missing";
+            enrichment.attempts.push(baseAttempt);
+            continue;
+          }
           const fresh = enrichBareReporterCitation(ls, {
             caseNumber: docket,
             party1: hit.party1,
@@ -360,13 +490,32 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
             year: hit.year,
           });
           citations.set(meta.ls_id, fresh);
-          if (!fresh.citation_errors.includes("failed_bare_reporter")) {
-            enrichment.bare_reporter_recovered++;
-          }
+          const recovered = !fresh.citation_errors.includes("failed_bare_reporter");
+          if (recovered) enrichment.bare_reporter_recovered++;
+          baseAttempt.status = "hit";
+          baseAttempt.rejection_reason = recovered ? undefined : "rebuild_still_bare";
+          enrichment.attempts.push(baseAttempt);
         }
       } catch (e) {
         enrichment.party_lookup_status = `error:${(e as Error).message}`;
         console.warn("[core:enrich_citations] partyLookup failed", e);
+        for (const [docket, meta] of reqMap) {
+          const ls = lsById.get(meta.ls_id);
+          enrichment.attempts.push({
+            ls_id: meta.ls_id,
+            docket,
+            docket_source: meta.docket_source,
+            prefix: meta.prefix || undefined,
+            used_metadata_parties: false,
+            title_excerpt: truncate(ls?.title, 120),
+            snippet_excerpt: truncate(ls?.snippet, 200),
+            url: ls?.url,
+            source_type: ls?.source_type,
+            reporter_citation: truncate(ls?.citation, 120),
+            status: "request_failed",
+            rejection_reason: `exception:${(e as Error).message}`,
+          });
+        }
       }
     }
   }
