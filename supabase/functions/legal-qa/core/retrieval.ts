@@ -400,12 +400,25 @@ async function localVector(
     // candidates reach ranking. Embedding sent as JSON-array string (pgvector
     // text format), which is what the supabase-js RPC client expects for the
     // `extensions.vector` parameter type.
-    const { data, error, status } = await client.rpc("match_legal_chunks", {
+    const callRpc = async (mc: number) => client.rpc("match_legal_chunks", {
       query_embedding: JSON.stringify(emb),
       match_threshold: 0.35,
-      match_count: matchCount,
+      match_count: mc,
     });
+    let { data, error, status } = await callRpc(matchCount);
     if (h) h.last_status = status;
+    // Section B: one retry on Postgres statement_timeout (57014) with halved K.
+    if (error && (error as { code?: string }).code === "57014") {
+      if (h) {
+        h.retries_57014 = (h.retries_57014 ?? 0) + 1;
+        h.last_rpc_error = `57014_retry:${error.message ?? ""}`.slice(0, 240);
+        h.last_rpc_code = "57014";
+      }
+      const halved = Math.max(1, Math.ceil(matchCount / 2));
+      console.error(`[core retrieval vec retry 57014] ${claimId}: retrying with match_count=${halved}`);
+      ({ data, error, status } = await callRpc(halved));
+      if (h) h.last_status = status;
+    }
     if (error) {
       if (h) {
         h.failed++;
