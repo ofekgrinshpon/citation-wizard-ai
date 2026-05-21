@@ -197,15 +197,32 @@ export function extractDocketFromText(text: string): { prefix: string; docket: s
 }
 
 // Scan for parties: `<X> נ' <Y>` — returns trimmed party strings.
-const PARTIES_CAPTURE_RE = /([^,\n()״"]+?)\s+נ['׳]\s+([^,\n()״"]+?)(?=\s*[,.\n(]|$)/;
+//
+// Loosened (Pass B):
+//   • tolerates Hebrew typographic quotes `״ ׳` AND ASCII `" '` inside
+//     party names (e.g. `בע"מ`, `חב' פלוני`)
+//   • accepts `נ׳ / נ' / נ"` as the separator
+//   • strips a leading docket prefix + number when present
+//   • sanity-check: both sides ≥ 2 chars and contain ≥ 1 Hebrew letter
+const PREFIX_THEN_DOCKET_RE =
+  /^[\u0590-\u05FFא-תa-zA-Z"״׳']{1,6}\s+\d{1,6}[-\/]\d{1,6}(?:[-\/]\d{1,4})?\s+/;
+const PARTIES_CAPTURE_RE = /(.+?)\s+נ['׳"״]\s+(.+?)(?=\s*$|\s*\((?:\d{4}|פ["״]ד))/;
 export function extractPartiesFromText(text: string): { party1: string; party2: string } | null {
   if (!text) return null;
-  const m = text.match(PARTIES_CAPTURE_RE);
-  if (!m) return null;
-  const p1 = m[1].trim().replace(/^.*?\d+\/\d+\s+/, "").trim();
-  const p2 = m[2].trim();
-  if (!p1 || !p2) return null;
-  return { party1: p1, party2: p2 };
+  // Try a stripped variant first (works for titles like "בג"ץ 910/86 רסלר נ' שר הביטחון").
+  const stripped = text.trim().replace(PREFIX_THEN_DOCKET_RE, "");
+  for (const cand of [stripped, text]) {
+    // Stop at the first sentence break to avoid spanning multiple cases.
+    const segment = cand.split(/[\n.;]|,\s+(?=[א-ת])/)[0] || cand;
+    const m = segment.match(PARTIES_CAPTURE_RE);
+    if (!m) continue;
+    const p1 = m[1].trim().replace(/^.*?\d+[-\/]\d+\s+/, "").trim();
+    const p2 = m[2].trim().replace(/\s*\(.*$/, "").trim();
+    if (p1.length < 2 || p2.length < 2) continue;
+    if (!/[\u0590-\u05FF]/.test(p1) || !/[\u0590-\u05FF]/.test(p2)) continue;
+    return { party1: p1, party2: p2 };
+  }
+  return null;
 }
 
 // Scan for a year (4 digits, 1900–2099).
@@ -226,6 +243,53 @@ export function extractFullDateFromText(text: string): string | undefined {
   const iso = text.match(ISODATE_RE);
   if (iso) return `${parseInt(iso[3], 10)}.${parseInt(iso[2], 10)}.${iso[1]}`;
   return undefined;
+}
+
+// ─── Pass B helper: extractCaseFieldsFromLedgerSource ────────────────────
+// Combine title + citation + snippet + url into a deterministic field set
+// for bare-reporter rebuild. No LLM. Returns whatever it could find.
+export interface CaseFieldsFromSource {
+  prefix?: string;
+  docket?: string;
+  party1?: string;
+  party2?: string;
+  year?: string;
+  fullDate?: string;
+}
+export function extractCaseFieldsFromLedgerSource(ls: {
+  title?: string;
+  citation?: string;
+  snippet?: string;
+  url?: string;
+}): CaseFieldsFromSource {
+  const out: CaseFieldsFromSource = {};
+  const titleText = ls.title || "";
+  const citationText = ls.citation || "";
+  const snippetText = ls.snippet || "";
+  // Docket: title preferred, then citation, then snippet.
+  for (const src of [titleText, citationText, snippetText]) {
+    if (out.docket) break;
+    const dk = extractDocketFromText(src);
+    if (dk) { out.prefix = dk.prefix; out.docket = dk.docket; }
+  }
+  // Parties: title preferred, then snippet, then citation.
+  for (const src of [titleText, snippetText, citationText]) {
+    if (out.party1 && out.party2) break;
+    const p = extractPartiesFromText(src);
+    if (p) { out.party1 = p.party1; out.party2 = p.party2; }
+  }
+  // Year / date: citation preferred (often "(1995)"), then snippet, then title.
+  for (const src of [citationText, snippetText, titleText]) {
+    if (!out.fullDate) {
+      const d = extractFullDateFromText(src);
+      if (d) out.fullDate = d;
+    }
+    if (!out.year) {
+      const y = extractYearFromText(src);
+      if (y) out.year = y;
+    }
+  }
+  return out;
 }
 
 // ─── Journal-article pipe-artifact handling ──────────────────────────────
