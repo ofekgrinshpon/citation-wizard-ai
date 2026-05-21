@@ -1190,21 +1190,61 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const webAll = [...primaryWebHits, ...anchorWebHits];
     ingest(webAll);
 
-    // ─── Section A + E: anchor reserve & primary preservation ──────────
+    // ─── Section A + E + F: per-layer anchor reserve & primary preservation
     const all = Array.from(byKey.values());
     const webKept = all.filter((c) => c.origin === "approved_web");
     const localOther = all.filter((c) => c.origin !== "approved_web");
     const primaryLocalCount = localOther.filter(isPrimaryLaw).length;
-
-    // When the claim needs binding law and we're light on primary local
-    // hits, only let primary anchors consume the reserve so we don't push
-    // secondary anchors ahead of binding authority.
     const needPrimary = requiresBindingLaw(claim) && primaryLocalCount < 2;
-    const filteredAnchors = needPrimary
-      ? anchorCandidates.filter(isPrimaryLaw)
-      : anchorCandidates;
-    const anchorReserve = Math.min(PER_CLAIM_ANCHOR_RESERVE, filteredAnchors.length);
-    const anchorKept = filteredAnchors.slice(0, anchorReserve);
+
+    // Section F: split the anchor candidate pool by layer so concept docs
+    // get a guaranteed slot when the layer has any hits. Falls through when
+    // a layer is empty so factual-only questions still fill both reserve
+    // slots from factual.
+    const splitByLayer = (cands: CandidateSource[]) => {
+      const factual: CandidateSource[] = [];
+      const concept: CandidateSource[] = [];
+      for (const c of cands) {
+        const layer = (c.metadata as any)?.anchor_layer;
+        if (layer === "concept") concept.push(c);
+        else factual.push(c);
+      }
+      return { factual, concept };
+    };
+    const applyPrimaryFilter = (arr: CandidateSource[]) =>
+      needPrimary ? arr.filter(isPrimaryLaw) : arr;
+
+    const { factual: factualPool, concept: conceptPool } = splitByLayer(anchorCandidates);
+    const factualFiltered = applyPrimaryFilter(factualPool);
+    const conceptFiltered = applyPrimaryFilter(conceptPool);
+
+    // Phase 1: per-layer floor (up to ANCHOR_RESERVE_PER_LAYER per layer).
+    const anchorKept: CandidateSource[] = [];
+    const layersUsed = new Set<"factual" | "concept">();
+    const takeFrom = (arr: CandidateSource[], layer: "factual" | "concept", n: number) => {
+      let taken = 0;
+      for (const c of arr) {
+        if (taken >= n) break;
+        if (anchorKept.includes(c)) continue;
+        anchorKept.push(c);
+        layersUsed.add(layer);
+        taken++;
+      }
+    };
+    takeFrom(factualFiltered, "factual", ANCHOR_RESERVE_PER_LAYER);
+    takeFrom(conceptFiltered, "concept", ANCHOR_RESERVE_PER_LAYER);
+
+    // Phase 2: fill remaining reserve slots from whichever layer still has
+    // candidates. Factual first (preserves prior behaviour for non-doctrinal
+    // questions where only factual layer has hits).
+    const remaining = PER_CLAIM_ANCHOR_RESERVE - anchorKept.length;
+    if (remaining > 0) {
+      takeFrom(factualFiltered, "factual", remaining);
+    }
+    const remaining2 = PER_CLAIM_ANCHOR_RESERVE - anchorKept.length;
+    if (remaining2 > 0) {
+      takeFrom(conceptFiltered, "concept", remaining2);
+    }
 
     const localBudget = Math.max(0, PER_CLAIM_CAP - webKept.length - anchorKept.length);
     const localKept = localOther.slice(0, localBudget);
@@ -1224,16 +1264,11 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
         anchor_doc_ids: anchorDocIds,
         anchor_source_types: anchorSrcTypes,
         anchor_displaced_primary: anchorDisplacedPrimary,
+        anchor_layers_used: Array.from(layersUsed),
       });
       // Per-layer injected counter (only when the anchor SURVIVED selection).
-      const factualDocIds = new Set(factualLayer.pool.map((c) => c.document_id));
-      const conceptDocIds = new Set(conceptLayer.pool.map((c) => c.document_id));
-      if (anchorKept.some((c) => c.document_id && factualDocIds.has(c.document_id))) {
-        factualLayer.telemetry.injected_into_claims++;
-      }
-      if (anchorKept.some((c) => c.document_id && conceptDocIds.has(c.document_id))) {
-        conceptLayer.telemetry.injected_into_claims++;
-      }
+      if (layersUsed.has("factual")) factualLayer.telemetry.injected_into_claims++;
+      if (layersUsed.has("concept")) conceptLayer.telemetry.injected_into_claims++;
     }
 
     if (stubsDroppedThisClaim > 0) {
