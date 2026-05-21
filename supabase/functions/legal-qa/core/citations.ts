@@ -231,14 +231,15 @@ export interface EnrichmentDebug {
   safety_net_used: boolean;
 }
 
-let __lastResolverDebug: {
+type ResolverDebugSnapshot = {
   resolved: boolean;
   canonical?: string;
   placeholders?: string[];
   reason?: string;
   missingFields?: string[];
   resolverHints?: Record<string, string | undefined>;
-} | null = null;
+};
+let __lastResolverDebug: ResolverDebugSnapshot | null = null;
 
 export function buildCitationForSource(
   ls: LedgerSource,
