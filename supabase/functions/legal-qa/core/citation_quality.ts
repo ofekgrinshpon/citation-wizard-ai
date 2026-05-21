@@ -45,6 +45,12 @@ function decideKept(c: LedgerSourceCitation): KeptDecision {
   if (c.citation_quality === "failed") {
     return { kept: false, reason: `quality_failed:${c.citation_errors.join(",")}` };
   }
+  // needs_review = engine produced something but it isn't safe to ship
+  // (bare reporter without docket/parties, unresolved journal pipe-artifact).
+  // Enrichment had its chance before this pass; drop here.
+  if (c.citation_quality === "needs_review") {
+    return { kept: false, reason: `needs_review:${c.citation_errors.join(",")}` };
+  }
   const offDomain = c.citation_errors.find((e) => e.startsWith("off_domain:"));
   if (offDomain) {
     return { kept: false, reason: offDomain };
