@@ -155,6 +155,12 @@ ABSOLUTE RULES:
 - You may ONLY cite the source IDs (LS#) listed in the ledger below.
 - Citations are inline as [cite:LS1], [cite:LS2], etc. Never write footnotes
   yourself — they are built downstream.
+- NEVER write footnote numbers in any form. NEVER emit Unicode superscript
+  digits such as ⁰ ¹ ² ³ ⁴ ⁵ ⁶ ⁷ ⁸ ⁹ (U+2070–U+2079, U+00B2/B3/B9).
+  Do not write "¹", do not write "ראו לעיל¹", do not append "²" after a word.
+  Footnote numbering is produced ONLY by the downstream Footnote Builder
+  from your [cite:LS#] markers. Any superscript you emit will be stripped
+  and counted as a violation.
 - If the ledger contains fewer than 2 supported claims, the body MUST include
   this exact Hebrew sentence:
     "המקורות המאומתים שאותרו אינם מספיקים לגיבוש מסקנה חד-משמעית."
