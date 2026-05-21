@@ -739,7 +739,9 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     `regex=${enrichment.text_regex_recovered}/${enrichment.text_regex_attempted} ` +
     `official=${enrichment.official_fetch_recovered}/${enrichment.official_fetch_attempted} ` +
     `party=${enrichment.party_lookup_hits}/${enrichment.party_lookup_attempted} ` +
-    `recovered=${enrichment.bare_reporter_recovered} dropped=${enrichment.bare_reporter_dropped}`);
+    `recovered=${enrichment.bare_reporter_recovered} ` +
+    `partial_enriched=${enrichment.partial_enriched} ` +
+    `dropped=${enrichment.bare_reporter_dropped}`);
 
   // ─── 6.2 + 6.3 Footnote builder + CitationQualityPass ──────────────────
   emitSafe(onStage, "post_processing", "running", "citation_quality");
