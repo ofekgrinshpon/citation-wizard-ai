@@ -41,15 +41,22 @@ clearTimeout(timer);
 const wall = Date.now() - t0;
 console.log(`  http_status=${resp?.status} wall=${wall}ms answer_len=${(json?.answer||"").length} footnotes=${json?.footnotes?.length ?? 0}`);
 
-// Find the row created after submitTs for this user
-const { data: rows } = await admin.from("qa_logs")
-  .select("id,answer,footnotes,metadata,created_at")
-  .eq("user_id", UID)
-  .gte("created_at", submitTs)
-  .order("created_at", { ascending: false })
-  .limit(3);
-const row = rows?.[0];
-if (!row) { console.log("NO ROW FOUND"); process.exit(0); }
+// Poll for completion (Deep is async via 202).
+let row = null;
+for (let k = 0; k < 90; k++) {
+  await new Promise((r) => setTimeout(r, 4000));
+  const { data: rows } = await admin.from("qa_logs")
+    .select("id,answer,footnotes,metadata,created_at")
+    .eq("user_id", UID)
+    .gte("created_at", submitTs)
+    .order("created_at", { ascending: false })
+    .limit(3);
+  const r0 = rows?.[0];
+  const pu = r0?.metadata?.pipeline_used;
+  if (r0 && pu && pu !== "core_running") { row = r0; break; }
+  if ((k + 1) % 5 === 0) console.log(`  ...polling ${4*(k+1)}s pipeline_used=${pu ?? "?"}`);
+}
+if (!row) { console.log("⚠ NO COMPLETION within poll window"); process.exit(0); }
 
 const md = row.metadata || {};
 const ans = row.answer || "";
