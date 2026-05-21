@@ -518,6 +518,7 @@ export function resolveCitation(
         opts.party2Hint,
         opts.yearHint,
         opts.caseTypeHint,
+        opts.fullDateHint,
       );
       break;
     case "case_law_database":
