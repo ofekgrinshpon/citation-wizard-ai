@@ -342,6 +342,12 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
       | "skipped_no_docket"
       | "domain_filtered";
     rejection_reason?: string;
+    enrichment_input_fields?: string[];
+    resolver_input_after_enrichment?: Record<string, string | undefined>;
+    resolver_output?: EnrichmentDebug["resolver_output"];
+    missing_fields_after_enrichment?: string[];
+    safety_net_used?: boolean;
+    partial_enriched?: boolean;
   };
   const enrichment = {
     bare_reporter_attempted: 0,
