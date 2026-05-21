@@ -465,7 +465,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
       url: ls.url,
     });
     if (fields.docket && fields.party1 && fields.party2) {
-      const fresh = enrichBareReporterCitation(ls, {
+      const { citation: fresh, debug } = enrichBareReporterCitationWithDebug(ls, {
         caseNumber: fields.docket,
         party1: fields.party1,
         party2: fields.party2,
@@ -473,12 +473,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
         fullDate: fields.fullDate,
       });
       citations.set(id, fresh);
-      const recovered = !fresh.citation_errors.includes("failed_bare_reporter");
-      if (recovered) {
-        enrichment.bare_reporter_recovered++;
-        enrichment.text_regex_recovered++;
-      }
-      enrichment.attempts.push({
+      const attempt: EnrichAttempt = {
         ls_id: id,
         docket: fields.docket,
         docket_source: "extracted",
@@ -491,8 +486,14 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
         source_type: ls.source_type,
         reporter_citation: truncate(ls.citation, 120),
         status: "text_regex_hit",
-        rejection_reason: recovered ? undefined : "rebuild_still_bare",
-      });
+      };
+      const { recovered, partial } = annotateAttempt(attempt, fresh, debug);
+      if (recovered) {
+        enrichment.bare_reporter_recovered++;
+        enrichment.text_regex_recovered++;
+      }
+      if (partial) enrichment.partial_enriched++;
+      enrichment.attempts.push(attempt);
       if (!recovered) stillBareAfterB.push(id);
     } else {
       stillBareAfterB.push(id);
