@@ -21,7 +21,6 @@ import { buildLedger } from "./ledger.ts";
 import { draft } from "./drafter.ts";
 import {
   buildCitationsForLedger,
-  enrichBareReporterCitation,
   enrichBareReporterCitationWithDebug,
   type EnrichmentDebug,
 } from "./citations.ts";
