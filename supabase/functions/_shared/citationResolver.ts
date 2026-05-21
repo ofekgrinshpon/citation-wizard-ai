@@ -233,6 +233,7 @@ function extractCaseLawCommon(
   titleHint?: string,
   party1Hint?: string,
   party2Hint?: string,
+  caseTypeHint?: string,
 ): Record<string, string> {
   const fields: Record<string, string> = {};
   // Tier 1: prefixed shape in citation text
@@ -246,6 +247,15 @@ function extractCaseLawCommon(
     if (fromHint) {
       fields.caseType = fromHint.caseType;
       fields.caseNumber = fromHint.caseNumber;
+    } else {
+      // Tier 2b: caseNumberHint is bare (e.g. "1234/56" or "18225-06-25")
+      // — accept as caseNumber directly so we can pair it with caseTypeHint
+      // / titleHint-inferred caseType. Same shape constraints the bare-docket
+      // and unquoted-prefix paths use elsewhere in this file.
+      const hintRaw = caseNumberHint.trim();
+      if (/^\d+[\/\-]\d+(?:[\/\-]\d+)?$/.test(hintRaw)) {
+        fields.caseNumber = hintRaw;
+      }
     }
   }
   // Tier 3 (v4): bare docket — text first, then caseNumberHint
@@ -256,6 +266,11 @@ function extractCaseLawCommon(
       const inferred = inferCaseTypeFromTitle(titleHint);
       if (inferred) fields.caseType = inferred;
     }
+  }
+  // Tier 4: caller-supplied caseTypeHint (docket prefix from enrichment).
+  // Only fill when text extraction couldn't recover one. Never overwrite.
+  if (!fields.caseType && caseTypeHint && caseTypeHint.trim()) {
+    fields.caseType = caseTypeHint.trim();
   }
   // Parties — bolded **X** OR plain "X נ' Y"
   const boldParties = [...text.matchAll(/\*\*([^*]+)\*\*/g)];
