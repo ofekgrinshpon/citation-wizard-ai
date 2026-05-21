@@ -76,13 +76,37 @@ export interface ClaimRetrievalPack {
   web_harvest: WebHarvestTelemetry;
 }
 
-export interface FactualAnchorTelemetry {
+export interface AnchorLayerTelemetry {
+  /** "factual" | "concept" — which anchor layer this telemetry describes. */
+  layer: "factual" | "concept";
   terms: string[];
+  per_term: Array<{ term: string; text_hits: number; vector_hits: number }>;
   text_candidates: number;
   vector_candidates: number;
-  total_unique: number;
+  unique_documents: number;
+  document_ids: string[];
   injected_into_claims: number;
+  /** Legacy field kept for back-compat with the old single-anchor telemetry. */
+  total_unique: number;
 }
+
+export interface VectorHealthDiag {
+  calls: number;
+  ok: number;
+  failed: number;
+  dim_mismatches: number;
+  last_status?: number;
+  last_rpc_error?: string;
+  last_rpc_code?: string;
+  last_embedding_length?: number;
+  /** One probe at threshold=0.0 to distinguish "RPC broken" from "over-filtered". */
+  threshold_probe_top_similarity?: number | null;
+  threshold_probe_error?: string;
+}
+
+// Legacy alias retained so callers reading retrieval.factual_anchors keep
+// compiling. Same shape as AnchorLayerTelemetry above.
+export type FactualAnchorTelemetry = AnchorLayerTelemetry;
 
 export interface RetrievalResult {
   packs: ClaimRetrievalPack[];
@@ -91,7 +115,12 @@ export interface RetrievalResult {
   total_web_candidates: number;
   web_global_cap_hit: boolean;
   duration_ms: number;
-  factual_anchors?: FactualAnchorTelemetry;
+  factual_anchors?: AnchorLayerTelemetry;
+  concept_anchors?: AnchorLayerTelemetry;
+  anchor_prepass_total_unique?: number;
+  anchor_prepass_document_ids?: string[];
+  vector_health?: VectorHealthDiag;
+  local_metadata_overrides?: number;
 }
 
 export interface RetrieveArgs {
