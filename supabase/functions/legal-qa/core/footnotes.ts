@@ -11,6 +11,7 @@ import type {
   LedgerSourceId,
   MarkerToFootnote,
 } from "./types.ts";
+import { cleanCitationText } from "./citationCleanup.ts";
 
 const CITE_RE = /\[cite:(LS\d+)\]/g;
 const SUPERS = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
