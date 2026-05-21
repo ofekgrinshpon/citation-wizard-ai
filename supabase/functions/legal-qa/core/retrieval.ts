@@ -159,6 +159,10 @@ export interface AnchorLayerTelemetry {
   injected_into_claims: number;
   /** Legacy field kept for back-compat with the old single-anchor telemetry. */
   total_unique: number;
+  /** Section G: terms added on top of planner output via doctrine synonyms. */
+  expanded_terms?: string[];
+  /** Section G: doctrine-synonym entry ids that triggered the expansion. */
+  expansion_hits?: string[];
 }
 
 export interface VectorHealthDiag {
