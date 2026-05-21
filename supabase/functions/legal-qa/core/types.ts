@@ -190,7 +190,8 @@ export interface Footnote {
 export interface MarkerToFootnote {
   occurrence_index: number;
   ls_id: LedgerSourceId;
-  footnote_number: number;
+  /** Undefined for skipped occurrences (unknown LS / dropped citation). */
+  footnote_number: number | undefined;
   is_repeated: boolean;
   first_footnote_number?: number;
 }
