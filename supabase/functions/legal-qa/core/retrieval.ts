@@ -1019,6 +1019,11 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     .map((c) => c.document_id)
     .filter((x): x is string => !!x);
 
+  // Aggregated per-claim telemetry for Sections A / C / D.
+  const anchorSlotsTelemetry: ClaimAnchorTelemetry[] = [];
+  const webStubsTelemetry: ClaimWebStubTelemetry[] = [];
+  const anchorWebTelemetry: ClaimAnchorWebTelemetry[] = [];
+
   for (const claim of plan.claims) {
     const terms = claim.search_targets.map((t) => t.hebrew_terms);
     const doctrine = claim.search_targets[0]?.doctrine || plan.doctrinal_frame;
@@ -1029,39 +1034,97 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
       .map((id) => authMap.get(id))
       .filter((a): a is ExpectedAuthority => !!a);
 
-    // Allowed web candidates for THIS claim — bounded by per-claim cap AND
-    // remaining global budget. approved_web is a first-class parallel origin,
-    // NOT a fallback. Skipped only when global budget is exhausted.
-    const webAllowedThisClaim = Math.min(WEB_PER_CLAIM_CANDIDATES, webBudgetRemaining);
-    const webSkippedForGlobalCap = perplexityKey ? webAllowedThisClaim <= 0 : false;
-    if (perplexityKey && webAllowedThisClaim <= 0) webGlobalCapHit = true;
+    // Web budget: per-claim cap (primary) + optional anchor-web boost (Section D).
+    // Both share the global budget. Skipped only when global budget is exhausted.
+    const baseWebAllowed = Math.min(WEB_PER_CLAIM_CANDIDATES, webBudgetRemaining);
+    const webSkippedForGlobalCap = perplexityKey ? baseWebAllowed <= 0 : false;
+    if (perplexityKey && baseWebAllowed <= 0) webGlobalCapHit = true;
 
-    // Allow Perplexity to return scholarship for claims that explicitly need
-    // a doctrinal definition / academic backing. Primary authority remains the
-    // default (caselaw/statute/regulation only).
-    const allowScholarship = Array.isArray(claim.required_evidence)
-      && claim.required_evidence.some((k) => k === "scholarship" || k === "doctrinal_definition");
+    const reqEv = Array.isArray(claim.required_evidence) ? claim.required_evidence : [];
+    const allowScholarship = reqEv.some((k) => k === "scholarship" || k === "doctrinal_definition");
 
-    // All four origins fire in parallel.
+    // All local origins + primary web fire in parallel.
     const [textHits, vecHits, exactGroups, webResult] = await Promise.all([
       limiter(() => localText(adminClient, tq, claim.id)),
       embed
         ? limiter(() => localVector(adminClient, vq, claim.id, embed, vectorHealth))
         : Promise.resolve([] as CandidateSource[]),
       Promise.all(linkedAuths.map((a) => limiter(() => exactAuthority(adminClient, a, claim.id)))),
-      perplexityKey && webAllowedThisClaim > 0
-        ? limiter(() => approvedWeb(perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal, allowScholarship))
+      perplexityKey && baseWebAllowed > 0
+        ? limiter(() => approvedWeb(perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal, { allowScholarship, maxCandidates: baseWebAllowed }))
         : Promise.resolve<ApprovedWebResult>({
             candidates: [],
-            telemetry: emptyWebTelemetry(perplexityKey ? "skipped" : "skipped"),
+            telemetry: emptyWebTelemetry("skipped"),
+            stubs_dropped: 0,
           }),
     ]);
     const exactHits = exactGroups.flat();
-    const webHits = webResult.candidates.slice(0, webAllowedThisClaim);
-    const webHarvest = webResult.telemetry;
-    webBudgetRemaining = Math.max(0, webBudgetRemaining - webHits.length);
+    let primaryWebHits = webResult.candidates.slice(0, baseWebAllowed);
+    let webHarvest = webResult.telemetry;
+    let stubsDroppedThisClaim = webResult.stubs_dropped;
+    webBudgetRemaining = Math.max(0, webBudgetRemaining - primaryWebHits.length);
 
-    // Dedup by document_id / url. Priority: exact > text > vector > anchor > web.
+    // ─── Section D: anchor-driven approved_web ─────────────────────────
+    // Fire extra Perplexity queries when local recall is thin OR claim
+    // explicitly needs scholarship / doctrinal_definition. Factual route
+    // → gov/regulator subset. Concept route → scholarship subset.
+    const localRecallCount = textHits.length + vecHits.length + exactHits.length;
+    const needsScholarship = allowScholarship;
+    const thinLocal = localRecallCount < ANCHOR_WEB_THIN_LOCAL_THRESHOLD;
+    const anchorWebTel: ClaimAnchorWebTelemetry = {
+      claim_id: claim.id,
+      factual_terms: [],
+      concept_terms: [],
+      factual_hits: 0,
+      concept_hits: 0,
+    };
+    const anchorWebHits: CandidateSource[] = [];
+    if (perplexityKey && webBudgetRemaining > 0 && (thinLocal || needsScholarship)) {
+      const factualBudget = thinLocal && factualTerms.length > 0
+        ? Math.min(ANCHOR_WEB_PER_CLAIM, webBudgetRemaining)
+        : 0;
+      const conceptBudget = needsScholarship && conceptTerms.length > 0
+        ? Math.min(ANCHOR_WEB_PER_CLAIM, Math.max(0, webBudgetRemaining - factualBudget))
+        : 0;
+
+      const [factualRes, conceptRes] = await Promise.all([
+        factualBudget > 0
+          ? limiter(() => approvedWeb(perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal, {
+              allowScholarship: false,
+              domainFilter: TIER_A_GOV_HOSTS,
+              anchorTerms: factualTerms,
+              maxCandidates: factualBudget,
+              candidateTag: "anchor_factual",
+            }))
+          : Promise.resolve<ApprovedWebResult>({ candidates: [], telemetry: emptyWebTelemetry("skipped"), stubs_dropped: 0 }),
+        conceptBudget > 0
+          ? limiter(() => approvedWeb(perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal, {
+              allowScholarship: true,
+              domainFilter: TIER_A_SCHOLARSHIP_HOSTS,
+              anchorTerms: conceptTerms,
+              maxCandidates: conceptBudget,
+              candidateTag: "anchor_concept",
+            }))
+          : Promise.resolve<ApprovedWebResult>({ candidates: [], telemetry: emptyWebTelemetry("skipped"), stubs_dropped: 0 }),
+      ]);
+
+      anchorWebTel.factual_terms = factualTerms.slice(0, 3);
+      anchorWebTel.concept_terms = conceptTerms.slice(0, 3);
+      anchorWebTel.factual_hits = factualRes.candidates.length;
+      anchorWebTel.concept_hits = conceptRes.candidates.length;
+      stubsDroppedThisClaim += factualRes.stubs_dropped + conceptRes.stubs_dropped;
+
+      for (const c of [...factualRes.candidates, ...conceptRes.candidates]) {
+        if (webBudgetRemaining <= 0) break;
+        anchorWebHits.push(c);
+        webBudgetRemaining--;
+      }
+    }
+    if (anchorWebTel.factual_terms.length || anchorWebTel.concept_terms.length) {
+      anchorWebTelemetry.push(anchorWebTel);
+    }
+
+    // ─── Dedup by document_id / url; keep origin priority ──────────────
     const byKey = new Map<string, CandidateSource>();
     const ingest = (arr: CandidateSource[]) => {
       for (const c of arr) {
@@ -1072,38 +1135,74 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     ingest(exactHits);
     ingest(textHits);
     ingest(vecHits);
-    // Anchor pool: re-tag each anchor candidate for THIS claim so the
-    // downstream pipeline treats it as a per-claim local hit. Preserve origin
-    // (local_text/local_vector) and the anchor_layer tag for telemetry.
-    if (mergedAnchorPool.length > 0) {
-      const reTagged: CandidateSource[] = mergedAnchorPool.map((c, i) => ({
-        ...c,
-        candidate_id: `${claim.id}-anchor-${(c.metadata as any)?.anchor_layer ?? "x"}-${c.origin}-${i}`,
-        claim_id: claim.id,
-        metadata: { ...(c.metadata || {}), factual_anchor: true },
-      }));
-      const before = byKey.size;
-      ingest(reTagged);
-      const after = byKey.size;
-      if (after > before) {
-        if (factualLayer.pool.some((c) => reTagged.find((r) => r.document_id === c.document_id))) {
-          factualLayer.telemetry.injected_into_claims++;
-        }
-        if (conceptLayer.pool.some((c) => reTagged.find((r) => r.document_id === c.document_id))) {
-          conceptLayer.telemetry.injected_into_claims++;
-        }
-      }
-    }
-    ingest(webHits);
 
-    // Web is a first-class origin: reserve slots for it in the per-claim cap
-    // so noisy local hits don't crowd it out.
+    // Anchor pool re-tagged for this claim (kept separate from byKey so it
+    // can compete for the reserved slots in Section A below).
+    const anchorRetagged: CandidateSource[] = mergedAnchorPool.map((c, i) => ({
+      ...c,
+      candidate_id: `${claim.id}-anchor-${(c.metadata as any)?.anchor_layer ?? "x"}-${c.origin}-${i}`,
+      claim_id: claim.id,
+      metadata: { ...(c.metadata || {}), factual_anchor: true },
+    }));
+    // Drop anchors already represented by a richer per-claim local hit.
+    const localKeysNow = new Set(byKey.keys());
+    const anchorCandidates = anchorRetagged.filter((c) => {
+      const k = c.document_id || `${c.origin}:${c.url || c.candidate_id}`;
+      return !localKeysNow.has(k);
+    });
+
+    const webAll = [...primaryWebHits, ...anchorWebHits];
+    ingest(webAll);
+
+    // ─── Section A + E: anchor reserve & primary preservation ──────────
     const all = Array.from(byKey.values());
     const webKept = all.filter((c) => c.origin === "approved_web");
-    const localKept = all.filter((c) => c.origin !== "approved_web");
-    const localBudget = Math.max(0, PER_CLAIM_CAP - webKept.length);
-    const candidates = [...localKept.slice(0, localBudget), ...webKept];
+    const localOther = all.filter((c) => c.origin !== "approved_web");
+    const primaryLocalCount = localOther.filter(isPrimaryLaw).length;
 
+    // When the claim needs binding law and we're light on primary local
+    // hits, only let primary anchors consume the reserve so we don't push
+    // secondary anchors ahead of binding authority.
+    const needPrimary = requiresBindingLaw(claim) && primaryLocalCount < 2;
+    const filteredAnchors = needPrimary
+      ? anchorCandidates.filter(isPrimaryLaw)
+      : anchorCandidates;
+    const anchorReserve = Math.min(PER_CLAIM_ANCHOR_RESERVE, filteredAnchors.length);
+    const anchorKept = filteredAnchors.slice(0, anchorReserve);
+
+    const localBudget = Math.max(0, PER_CLAIM_CAP - webKept.length - anchorKept.length);
+    const localKept = localOther.slice(0, localBudget);
+    const droppedLocalTail = localOther.slice(localBudget);
+    const anchorDisplacedPrimary =
+      anchorKept.length > 0 && droppedLocalTail.some(isPrimaryLaw);
+
+    const candidates = [...localKept, ...anchorKept, ...webKept];
+
+    // Telemetry: anchor injection (only when an anchor actually landed).
+    if (anchorKept.length > 0) {
+      const anchorDocIds = anchorKept.map((c) => c.document_id).filter((x): x is string => !!x);
+      const anchorSrcTypes = Array.from(new Set(anchorKept.map((c) => c.source_type || "")));
+      anchorSlotsTelemetry.push({
+        claim_id: claim.id,
+        anchor_kept: anchorKept.length,
+        anchor_doc_ids: anchorDocIds,
+        anchor_source_types: anchorSrcTypes,
+        anchor_displaced_primary: anchorDisplacedPrimary,
+      });
+      // Per-layer injected counter (only when the anchor SURVIVED selection).
+      const factualDocIds = new Set(factualLayer.pool.map((c) => c.document_id));
+      const conceptDocIds = new Set(conceptLayer.pool.map((c) => c.document_id));
+      if (anchorKept.some((c) => c.document_id && factualDocIds.has(c.document_id))) {
+        factualLayer.telemetry.injected_into_claims++;
+      }
+      if (anchorKept.some((c) => c.document_id && conceptDocIds.has(c.document_id))) {
+        conceptLayer.telemetry.injected_into_claims++;
+      }
+    }
+
+    if (stubsDroppedThisClaim > 0) {
+      webStubsTelemetry.push({ claim_id: claim.id, dropped_count: stubsDroppedThisClaim });
+    }
 
     const counts: Record<CandidateOrigin, number> = {
       local_text: 0, local_vector: 0, exact_authority: 0, approved_web: 0,
@@ -1117,6 +1216,7 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
         .filter((h) => h.length > 0),
     ));
 
+    const primaryCount = candidates.filter(isPrimaryLaw).length;
     packs.push({
       claim_id: claim.id,
       candidates,
@@ -1127,6 +1227,16 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
       approved_web_domains: webDomains,
       web_skipped_for_global_cap: webSkippedForGlobalCap,
       web_harvest: webHarvest,
+      primary_count: primaryCount,
+      secondary_count: candidates.length - primaryCount,
+      anchor_kept: anchorKept.length,
+      anchor_doc_ids: anchorKept.map((c) => c.document_id).filter((x): x is string => !!x),
+      anchor_source_types: Array.from(new Set(anchorKept.map((c) => c.source_type || ""))),
+      anchor_displaced_primary: anchorDisplacedPrimary,
+      approved_web_stubs_dropped: stubsDroppedThisClaim,
+      anchor_web: anchorWebTel.factual_terms.length || anchorWebTel.concept_terms.length
+        ? anchorWebTel
+        : undefined,
     });
   }
 
@@ -1219,6 +1329,9 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     anchor_prepass_document_ids: anchorPrepassDocumentIds,
     vector_health: vectorHealth,
     local_metadata_overrides: localMetadataOverrides,
+    anchor_slots_used_per_claim: anchorSlotsTelemetry,
+    approved_web_stubs_dropped_per_claim: webStubsTelemetry,
+    approved_web_anchor_queries: anchorWebTelemetry,
   };
 }
 
