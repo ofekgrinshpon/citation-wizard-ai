@@ -19,8 +19,14 @@ import { retrieveForPlan } from "./retrieval.ts";
 import { verify } from "./verifier.ts";
 import { buildLedger } from "./ledger.ts";
 import { draft } from "./drafter.ts";
-import { buildCitationsForLedger } from "./citations.ts";
+import { buildCitationsForLedger, enrichBareReporterCitation } from "./citations.ts";
 import { runCitationQuality } from "./citation_quality.ts";
+import {
+  extractDocketFromText,
+  extractPartiesFromText,
+} from "./citationCleanup.ts";
+import { lookupPartyNames } from "../../_shared/partyLookup.ts";
+import type { LedgerSource } from "./types.ts";
 
 export type CoreStageEmitter = (
   name: string,
@@ -255,6 +261,98 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   const citations = buildCitationsForLedger(ledger.entries) as Map<LedgerSourceId, ReturnType<typeof buildCitationsForLedger> extends Map<string, infer V> ? V : never>;
   recordStage({ stage: "citations", duration_ms: Date.now() - tCit, status: "ok" });
 
+
+
+  // ─── 6.1.5 Enrich bare-reporter caselaw citations ──────────────────────
+  // Citations flagged `failed_bare_reporter` lack docket/parties/year.
+  // First try harder hints from the LedgerSource itself; then, only if a
+  // docket was recovered from text, fall back to a single batched
+  // partyLookup call (trusted-domain, capped). No LLM inference.
+  emitSafe(onStage, "enrich_citations", "running");
+  const tEnr = Date.now();
+  const enrichment = {
+    bare_reporter_attempted: 0,
+    bare_reporter_recovered: 0,
+    bare_reporter_dropped: 0,
+    party_lookup_attempted: 0,
+    party_lookup_hits: 0,
+    party_lookup_status: "skipped" as string,
+  };
+  const lsById = new Map<LedgerSourceId, LedgerSource>();
+  for (const e of ledger.entries) for (const s of e.sources) lsById.set(s.ls_id, s);
+
+  const bareIds: LedgerSourceId[] = [];
+  for (const [id, cit] of citations) {
+    if (cit.citation_errors.includes("failed_bare_reporter")) bareIds.push(id);
+  }
+  enrichment.bare_reporter_attempted = bareIds.length;
+
+  // First pass: rebuild from LedgerSource text only (already done in
+  // buildCitationForSource — re-running here would no-op). Skip directly to
+  // partyLookup batch using dockets we can find in title+citation+snippet.
+  if (bareIds.length > 0 && PERPLEXITY_API_KEY) {
+    const reqMap = new Map<string, { ls_id: LedgerSourceId; prefix: string; docket: string }>();
+    for (const id of bareIds) {
+      const ls = lsById.get(id);
+      if (!ls) continue;
+      const text = `${ls.title || ""}\n${ls.citation || ""}\n${ls.snippet || ""}`;
+      const dk = extractDocketFromText(text);
+      if (!dk) continue;
+      if (reqMap.has(dk.docket)) continue;
+      reqMap.set(dk.docket, { ls_id: id, prefix: dk.prefix, docket: dk.docket });
+      if (reqMap.size >= 5) break;
+    }
+    if (reqMap.size > 0) {
+      enrichment.party_lookup_attempted = reqMap.size;
+      try {
+        const lookup = await lookupPartyNames(
+          [...reqMap.values()].map((v) => ({
+            caseNumber: v.docket,
+            caseTypeHint: v.prefix,
+          })),
+        );
+        enrichment.party_lookup_status = lookup.status;
+        enrichment.party_lookup_hits = lookup.hits.size;
+        // Re-build each bare-reporter citation with the recovered hints.
+        for (const [docket, meta] of reqMap) {
+          const hit = lookup.hits.get(docket);
+          if (!hit) continue;
+          const ls = lsById.get(meta.ls_id);
+          if (!ls) continue;
+          const fresh = enrichBareReporterCitation(ls, {
+            caseNumber: docket,
+            party1: hit.party1,
+            party2: hit.party2,
+            fullDate: hit.fullDate,
+            year: hit.year,
+          });
+          citations.set(meta.ls_id, fresh);
+          if (!fresh.citation_errors.includes("failed_bare_reporter")) {
+            enrichment.bare_reporter_recovered++;
+          }
+        }
+      } catch (e) {
+        enrichment.party_lookup_status = `error:${(e as Error).message}`;
+        console.warn("[core:enrich_citations] partyLookup failed", e);
+      }
+    }
+  }
+
+  // Final count of still-bare citations (will be dropped by quality pass).
+  for (const id of bareIds) {
+    const cit = citations.get(id);
+    if (cit && cit.citation_errors.includes("failed_bare_reporter")) {
+      enrichment.bare_reporter_dropped++;
+    }
+  }
+  recordStage({
+    stage: "enrich_citations",
+    duration_ms: Date.now() - tEnr,
+    status: "ok",
+  });
+  emitSafe(onStage, "enrich_citations", "complete",
+    `bare=${enrichment.bare_reporter_attempted} recovered=${enrichment.bare_reporter_recovered} dropped=${enrichment.bare_reporter_dropped}`);
+
   // ─── 6.2 + 6.3 Footnote builder + CitationQualityPass ──────────────────
   emitSafe(onStage, "post_processing", "running", "citation_quality");
   const tQual = Date.now();
@@ -355,6 +453,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
       claims_lost_all_support: qual.claims_lost_all_support,
       marker_to_footnote: qual.marker_to_footnote,
     },
+    enrichment,
     acceptance_errors: acceptanceErrors,
     stage_runs: stageRuns,
     total_duration_ms: Date.now() - tStart,

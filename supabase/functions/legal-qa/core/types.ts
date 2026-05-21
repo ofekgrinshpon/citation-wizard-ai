@@ -147,7 +147,7 @@ export type Ledger = LedgerEntry[];
 
 // ─────────────────── Step 6: Canonical Citation + Footnotes + Quality ─────
 
-export type CitationQuality = "ok" | "partial" | "failed";
+export type CitationQuality = "ok" | "partial" | "failed" | "needs_review";
 
 export interface ShortFormInputs {
   is_legislation: boolean;
