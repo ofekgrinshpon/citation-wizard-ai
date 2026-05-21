@@ -694,8 +694,13 @@ async function approvedWeb(
   authorities: ExpectedAuthority[],
   claimId: ClaimId,
   signal?: AbortSignal,
-  allowScholarship = false,
+  opts: ApprovedWebOptions = {},
 ): Promise<ApprovedWebResult> {
+  const allowScholarship = !!opts.allowScholarship;
+  const domainFilter = opts.domainFilter ?? TIER_A_DOMAIN_FILTER;
+  const maxCands = Math.max(1, opts.maxCandidates ?? WEB_PER_CLAIM_CANDIDATES);
+  const anchorTerms = (opts.anchorTerms ?? []).filter((t) => typeof t === "string" && t.trim().length >= 2);
+
   const authHints = authorities
     .slice(0, 4)
     .map((a) => [a.docket, a.name].filter(Boolean).join(" "))
@@ -706,9 +711,10 @@ async function approvedWeb(
   const allowedTypes = allowScholarship
     ? `"caselaw"|"statute"|"regulation"|"scholarship"`
     : `"caselaw"|"statute"|"regulation"`;
-  const sys = `אתה מחזיר אך ורק מקורות משפטיים ישראליים ראשוניים (פסיקה, חקיקה, תקנות) מתוך התחומים המאושרים.${scholarshipClause} החזר JSON-array בלבד, ללא טקסט נוסף, עד ${WEB_PER_CLAIM_CANDIDATES} פריטים. כל איבר: {"title":"","citation":"","url":"","source_type":${allowedTypes},"snippet":""}.`;
+  const sys = `אתה מחזיר אך ורק מקורות משפטיים ישראליים ראשוניים (פסיקה, חקיקה, תקנות) מתוך התחומים המאושרים.${scholarshipClause} החזר JSON-array בלבד, ללא טקסט נוסף, עד ${maxCands} פריטים. כל איבר: {"title":"","citation":"","url":"","source_type":${allowedTypes},"snippet":""}.`;
   const hintBlock = authHints.length ? `\nרמזים לסמכויות צפויות: ${authHints.join(" ; ")}` : "";
-  const usr = `טענה: ${claimText}\nדוקטרינה: ${doctrine}${hintBlock}\nהחזר עד ${WEB_PER_CLAIM_CANDIDATES} מקורות סמכותיים בלבד.`;
+  const anchorBlock = anchorTerms.length ? `\nמושגי-מפתח מהשאלה: ${anchorTerms.slice(0, 3).join(" ; ")}` : "";
+  const usr = `טענה: ${claimText}\nדוקטרינה: ${doctrine}${hintBlock}${anchorBlock}\nהחזר עד ${maxCands} מקורות סמכותיים בלבד.`;
 
   const telemetry: WebHarvestTelemetry = {
     web_json_parse_ok: false,
@@ -718,6 +724,7 @@ async function approvedWeb(
     web_filtered_tier_a_count: 0,
     web_rejected_domain_count: 0,
   };
+  let stubsDropped = 0;
 
   let data: any;
   try {
@@ -730,7 +737,7 @@ async function approvedWeb(
         messages: [{ role: "system", content: sys }, { role: "user", content: usr }],
         temperature: 0.1,
         max_tokens: 800,
-        search_domain_filter: TIER_A_DOMAIN_FILTER,
+        search_domain_filter: domainFilter,
         return_citations: true,
         return_search_results: true,
       }),
@@ -738,13 +745,13 @@ async function approvedWeb(
     if (!res.ok) {
       console.error(`[core retrieval web] ${claimId}: ${res.status}`);
       telemetry.web_empty_reason = "no_response";
-      return { candidates: [], telemetry };
+      return { candidates: [], telemetry, stubs_dropped: stubsDropped };
     }
     data = await res.json();
   } catch (e) {
     console.error(`[core retrieval web throw] ${claimId}:`, (e as Error).message);
     telemetry.web_empty_reason = "no_response";
-    return { candidates: [], telemetry };
+    return { candidates: [], telemetry, stubs_dropped: stubsDropped };
   }
 
   // ── Source 1: parsed JSON-array in message content ─────────────────────
@@ -810,15 +817,20 @@ async function approvedWeb(
 
   if (byUrl.size === 0) {
     telemetry.web_empty_reason = "no_urls";
-    return { candidates: [], telemetry };
+    return { candidates: [], telemetry, stubs_dropped: stubsDropped };
   }
 
-  // ── Tier A filtering ───────────────────────────────────────────────────
+  // ── Tier A filtering + Section C stub filtering ────────────────────────
   const out: CandidateSource[] = [];
   let i = 0;
   for (const h of byUrl.values()) {
     if (citationTier(h.url) !== "A") {
       telemetry.web_rejected_domain_count++;
+      continue;
+    }
+    if (isApprovedWebStub(h)) {
+      stubsDropped++;
+      console.error(`[core retrieval web stub] ${claimId}: dropped url=${h.url} title="${h.title}" cite="${h.citation}"`);
       continue;
     }
     telemetry.web_filtered_tier_a_count++;
@@ -831,13 +843,15 @@ async function approvedWeb(
       citation: h.citation,
       url: h.url,
       snippet: h.snippet,
-      metadata: { tier: "A" },
+      metadata: opts.candidateTag
+        ? { tier: "A", anchor_web_tag: opts.candidateTag }
+        : { tier: "A" },
     });
-    if (out.length >= WEB_PER_CLAIM_CANDIDATES) break;
+    if (out.length >= maxCands) break;
   }
 
   telemetry.web_empty_reason = out.length === 0 ? "all_rejected" : "ok";
-  return { candidates: out, telemetry };
+  return { candidates: out, telemetry, stubs_dropped: stubsDropped };
 }
 
 
