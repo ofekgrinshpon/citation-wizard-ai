@@ -224,6 +224,8 @@ export interface BuildCitationHints {
   fullDate?: string;
   year?: string;
   caseNumber?: string;
+  /** Docket prefix (e.g. `בג"ץ`, `ע"א`). Fed to the resolver as caseTypeHint. */
+  caseType?: string;
   /**
    * When true, this is a SECOND-pass call from the bare-reporter enrichment
    * path. The resolver is run with `partyLookupRetry: true` (enabling its
