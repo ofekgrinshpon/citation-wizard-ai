@@ -378,6 +378,12 @@ function extractCaseLawDatabase(
   if (yearHint && !fields.year && /^\d{4}$/.test(yearHint.trim())) {
     fields.year = yearHint.trim();
   }
+  // Derive year from a verified fullDate if year still missing. Verified
+  // date only — never from docket suffix.
+  if (!fields.year && fields.fullDate) {
+    const m = fields.fullDate.match(/^\d{1,2}\.\d{1,2}\.(\d{4})$/);
+    if (m) fields.year = m[1];
+  }
   return fields;
 }
 
