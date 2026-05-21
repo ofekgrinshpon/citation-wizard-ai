@@ -494,7 +494,7 @@ export function enrichBareReporterCitationWithDebug(
   const dbg = readLastResolverDebug();
   __lastResolverDebug = null;
   const inputFields: string[] = [];
-  for (const k of ["caseNumber", "party1", "party2", "year", "fullDate"] as const) {
+  for (const k of ["caseType", "caseNumber", "party1", "party2", "year", "fullDate"] as const) {
     if (hints[k] && String(hints[k]).trim()) inputFields.push(k);
   }
   const resolverHints = dbg?.resolverHints ?? {};
