@@ -271,6 +271,13 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
 
   // Repeated count.
   summary.repeated = bf.footnotes.filter((f) => f.is_repeated).length;
+  // Footnote-text-source tally (telemetry; not used for gating).
+  for (const f of bf.footnotes) {
+    const src = f.footnote_text_source;
+    if (src && src in summary.footnote_text_sources) {
+      summary.footnote_text_sources[src]++;
+    }
+  }
 
   // Lost-support analysis using surviving markers.
   const survivingMarkers = markersInAnswer(cleaned2);
