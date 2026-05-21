@@ -207,7 +207,38 @@ export interface BuildCitationHints {
   fullDate?: string;
   year?: string;
   caseNumber?: string;
+  /**
+   * When true, this is a SECOND-pass call from the bare-reporter enrichment
+   * path. The resolver is run with `partyLookupRetry: true` (enabling its
+   * placeholder-emission + relaxed-fullDate policies), and a safety-net manual
+   * canonical is emitted when docket + both parties are present but resolver
+   * still couldn't produce a string.
+   */
+  enrichmentRetry?: boolean;
 }
+
+/** Debug envelope returned alongside the enriched citation. No PII, no LLM. */
+export interface EnrichmentDebug {
+  enrichment_input_fields: string[];
+  resolver_input_after_enrichment: Record<string, string | undefined>;
+  resolver_output: {
+    resolved: boolean;
+    canonical?: string;
+    placeholders?: string[];
+    citation_errors: string[];
+  };
+  missing_fields_after_enrichment: string[];
+  safety_net_used: boolean;
+}
+
+let __lastResolverDebug: {
+  resolved: boolean;
+  canonical?: string;
+  placeholders?: string[];
+  reason?: string;
+  missingFields?: string[];
+  resolverHints?: Record<string, string | undefined>;
+} | null = null;
 
 export function buildCitationForSource(
   ls: LedgerSource,
