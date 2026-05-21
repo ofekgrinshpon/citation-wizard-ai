@@ -482,6 +482,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
         passLabel: "text_regex",
         recovered: {
           caseNumber: fields.docket,
+          caseType: fields.prefix,
           party1: fields.party1,
           party2: fields.party2,
           year: fields.year,
