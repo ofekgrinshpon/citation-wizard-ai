@@ -915,7 +915,25 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     ).slice(0, 8);
 
   const factualTerms = sanitizeTerms(plan.factual_anchor_terms);
-  const conceptTerms = sanitizeTerms((plan as any).concept_anchor_terms);
+  const plannerConceptTerms = sanitizeTerms((plan as any).concept_anchor_terms);
+
+  // Section G: doctrine-synonym expansion for concept anchors. Wires the
+  // hand-curated _shared/legalDoctrineSynonyms.ts dictionary into the
+  // concept layer when the question matches a doctrinal trigger. Purely
+  // lexical, no document-specific hardcoding.
+  const expansion = expandDoctrineTerms(
+    [
+      (plan as any).question || "",
+      plan.thesis || "",
+      plan.doctrinal_frame || "",
+    ].join(" "),
+  );
+  const expandedConcept = sanitizeTerms([
+    ...plannerConceptTerms,
+    ...expansion.synonyms,
+  ]).slice(0, CONCEPT_ANCHOR_TERMS_MAX);
+  const conceptTerms = expandedConcept;
+  const addedByExpansion = expandedConcept.filter((t) => !plannerConceptTerms.includes(t));
 
   /**
    * Run one anchor layer: FTS + vector per term, dedupe with per-document
