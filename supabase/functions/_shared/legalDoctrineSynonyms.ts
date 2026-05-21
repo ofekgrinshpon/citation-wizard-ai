@@ -103,6 +103,37 @@ export const DOCTRINE_SYNONYMS: DoctrineSynonymEntry[] = [
       "צפיות הנזק",
     ],
   },
+  {
+    // Legislative omission / duty to legislate / positive protection duties.
+    // Bridges the doctrinal phrasing the *question* tends to use
+    // ("מחדל חקיקתי", "חובות הגנה חיוביות") to the phrasing academic
+    // *titles* tend to use ("חובה לחוקק", "סעד החובה לחוקק").
+    id: "legislative_omission",
+    trigger: /(מחדל\s*חקיקתי|חובה\s*לחוקק|חקיקה\s*לוקה\s*בחסר|אכיפה\s*חסרה|חובות\s*הגנה\s*חיוביות|חובה\s*אקטיבית|סעד\s*החובה\s*לחוקק)/,
+    synonyms: [
+      "מחדל חקיקתי",
+      "מחדל חקיקתי חלקי",
+      "חובה לחוקק",
+      "סעד החובה לחוקק",
+      "חקיקה לוקה בחסר",
+      "חובות הגנה חיוביות",
+      "חובה אקטיבית",
+    ],
+  },
+  {
+    // Right to life / personal security — bridges constitutional phrasings
+    // ("הזכות לחיים", "הזכות לביטחון אישי") to statutory anchors that
+    // academic literature uses interchangeably.
+    id: "right_to_life_security",
+    trigger: /(הזכות\s*לחיים|ביטחון\s*אישי|שלמות\s*הגוף|חובות\s*מדינה\s*לחיים)/,
+    synonyms: [
+      "הזכות לחיים",
+      "הזכות לביטחון אישי",
+      "שלמות הגוף",
+      "חוק יסוד: כבוד האדם וחירותו",
+      "סעיף 4 לחוק יסוד",
+    ],
+  },
 ];
 
 export interface ExpandedTerms {

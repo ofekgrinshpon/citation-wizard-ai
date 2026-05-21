@@ -141,7 +141,14 @@ export interface AnchorLayerTelemetry {
   /** "factual" | "concept" — which anchor layer this telemetry describes. */
   layer: "factual" | "concept";
   terms: string[];
-  per_term: Array<{ term: string; text_hits: number; vector_hits: number }>;
+  per_term: Array<{
+    term: string;
+    text_hits: number;
+    vector_hits: number;
+    /** True when this term came from the doctrine-synonym dictionary,
+     *  not from the planner's verbatim anchor_terms. Additive only. */
+    is_expansion?: boolean;
+  }>;
   text_candidates: number;
   vector_candidates: number;
   unique_documents: number;
@@ -149,6 +156,20 @@ export interface AnchorLayerTelemetry {
   injected_into_claims: number;
   /** Legacy field kept for back-compat with the old single-anchor telemetry. */
   total_unique: number;
+  /** Doctrine-synonym expansion telemetry (general, no per-query hardcoding). */
+  expanded_terms?: {
+    /** Verbatim planner terms (unchanged). */
+    original: string[];
+    /** Synonyms added by the doctrine dictionary, capped per layer. */
+    expanded: string[];
+    /** Dictionary entry IDs that triggered (e.g. "legislative_omission"). */
+    dictionary_hits: string[];
+    /** Cap applied (combined original+expanded). */
+    cap: number;
+  };
+  /** document_ids whose first-encountered anchor term was an expansion term —
+   *  i.e., the document would NOT have entered the pool without expansion. */
+  expansion_document_ids?: string[];
 }
 
 export interface VectorHealthDiag {
