@@ -543,14 +543,17 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
   // Here we run a tiny FTS + one vector pass on factual_anchor_terms and
   // seed those candidates into every claim's candidate pool. They get
   // re-tagged per claim and go through the same dedup + cap logic.
-  const rawAnchors = Array.isArray(plan.factual_anchor_terms) ? plan.factual_anchor_terms : [];
+  const rawAnchors = [
+    ...(Array.isArray(plan.factual_anchor_terms) ? plan.factual_anchor_terms : []),
+    ...(Array.isArray((plan as any).concept_anchor_terms) ? (plan as any).concept_anchor_terms : []),
+  ];
   const anchorTerms = Array.from(
     new Set(
       rawAnchors
         .map((t) => (typeof t === "string" ? t.trim() : ""))
         .filter((t) => t.length >= 2 && t.length <= TEXT_QUERY_MAX_CHARS),
     ),
-  ).slice(0, 6);
+  ).slice(0, 10);
 
   const anchorPool: CandidateSource[] = [];
   const anchorTelemetry: FactualAnchorTelemetry = {
