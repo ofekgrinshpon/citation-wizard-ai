@@ -156,7 +156,7 @@ export async function lookupPartyNames(
   };
 
   const ctrl = new AbortController();
-  const timeoutId = setTimeout(() => ctrl.abort(), 20_000);
+  const timeoutId = setTimeout(() => ctrl.abort(), 45_000);
   let status: PartyLookupResult["status"] = "ok";
   let raw: Array<{
     case_number?: string;
