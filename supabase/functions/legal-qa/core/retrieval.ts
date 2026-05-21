@@ -298,36 +298,102 @@ async function localText(
   }
 }
 
+function newVectorHealth(): VectorHealthDiag {
+  return { calls: 0, ok: 0, failed: 0, dim_mismatches: 0 };
+}
+
 async function localVector(
   client: SupabaseClient,
   query: string,
   claimId: ClaimId,
   embed: (t: string) => Promise<number[] | null>,
+  health?: VectorHealthDiag,
+  matchCount: number = LOCAL_VECTOR_K,
 ): Promise<CandidateSource[]> {
+  const h = health;
   try {
     const emb = await embed(query);
     if (!emb) return [];
+    if (h) {
+      h.calls++;
+      h.last_embedding_length = emb.length;
+      if (emb.length !== EXPECTED_EMBEDDING_DIM) {
+        h.dim_mismatches++;
+        h.last_rpc_error = `dim_mismatch:expected_${EXPECTED_EMBEDDING_DIM}_got_${emb.length}`;
+        console.error(`[core retrieval vec] ${claimId}: ${h.last_rpc_error}`);
+        h.failed++;
+        return [];
+      }
+    }
     // 0.35 floor: text-embedding-3-small@768d cosine for Hebrew typically lands
-    // in 0.30-0.55. 0.55 was filtering nearly everything out (see qa_logs:
-    // 9/10 recent runs had local_vector_count=0 across all claims). The final
-    // quality gate (source_pack core-promotion at 0.55 in assembleSourcePack)
-    // still rejects weak hits — this floor just lets candidates reach ranking.
-    const { data, error } = await client.rpc("match_legal_chunks", {
+    // in 0.30-0.55. The final quality gate (source_pack core-promotion at 0.55
+    // in assembleSourcePack) still rejects weak hits — this floor just lets
+    // candidates reach ranking. Embedding sent as JSON-array string (pgvector
+    // text format), which is what the supabase-js RPC client expects for the
+    // `extensions.vector` parameter type.
+    const { data, error, status } = await client.rpc("match_legal_chunks", {
       query_embedding: JSON.stringify(emb),
       match_threshold: 0.35,
-      match_count: LOCAL_VECTOR_K,
+      match_count: matchCount,
     });
+    if (h) h.last_status = status;
     if (error) {
-      console.error(`[core retrieval vec] ${claimId}: ${error.message}`);
+      if (h) {
+        h.failed++;
+        h.last_rpc_error = `${error.message ?? ""}${error.details ? ` | ${error.details}` : ""}`.slice(0, 240);
+        h.last_rpc_code = (error as { code?: string }).code;
+      }
+      console.error(`[core retrieval vec] ${claimId}: ${error.message}`, error);
       return [];
     }
+    if (h) h.ok++;
     const rows = Array.isArray(data) ? (data as ChunkHit[]) : [];
     return rows
       .map((r, i) => chunkToCandidate(r, claimId, "local_vector", i))
       .filter((c): c is CandidateSource => !!c);
   } catch (e) {
+    if (h) {
+      h.failed++;
+      h.last_rpc_error = `throw:${(e as Error).message}`.slice(0, 240);
+    }
     console.error(`[core retrieval vec throw] ${claimId}:`, (e as Error).message);
     return [];
+  }
+}
+
+/**
+ * One-shot probe at threshold=0.0 to capture the TOP similarity actually
+ * returned by the RPC. Lets us distinguish "RPC broken / index empty" from
+ * "RPC fine but everything sits below our normal threshold."
+ */
+async function vectorThresholdProbe(
+  client: SupabaseClient,
+  embedFn: (t: string) => Promise<number[] | null>,
+  probeQuery: string,
+  health: VectorHealthDiag,
+): Promise<void> {
+  try {
+    const emb = await embedFn(probeQuery);
+    if (!emb) {
+      health.threshold_probe_top_similarity = null;
+      return;
+    }
+    const { data, error } = await client.rpc("match_legal_chunks", {
+      query_embedding: JSON.stringify(emb),
+      match_threshold: 0.0,
+      match_count: 1,
+    });
+    if (error) {
+      health.threshold_probe_error = `${error.message ?? ""}`.slice(0, 200);
+      health.threshold_probe_top_similarity = null;
+      return;
+    }
+    const rows = Array.isArray(data) ? (data as ChunkHit[]) : [];
+    health.threshold_probe_top_similarity =
+      rows.length > 0 && typeof rows[0].similarity === "number" ? rows[0].similarity : null;
+  } catch (e) {
+    health.threshold_probe_error = `throw:${(e as Error).message}`.slice(0, 200);
+    health.threshold_probe_top_similarity = null;
   }
 }
 
