@@ -57,13 +57,17 @@ export function CitationReviewPanel({ answer, footnotes, onApply, onCancel }: Pr
       if (!data?.ok || !data?.updated_citation) {
         throw new Error(data?.error ?? "השרת לא החזיר ציטוט מעודכן");
       }
+      const verified = data.verified !== false;
+      const warning: string | undefined = data.warning;
       update(id, {
         citation: data.updated_citation as string,
         refilling: false,
-        refillNote:
-          typeof data.filled_count === "number" && data.filled_count > 0
+        refillError: !verified ? `⚠ ${warning ?? "לא ניתן לאמת"}` : undefined,
+        refillNote: verified
+          ? typeof data.filled_count === "number" && data.filled_count > 0
             ? `הושלמו ${data.filled_count} שדות`
-            : "לא נמצאו פרטים חדשים",
+            : "לא נמצאו פרטים חדשים"
+          : undefined,
       });
     } catch (err) {
       update(id, {
