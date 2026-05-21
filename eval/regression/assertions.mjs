@@ -262,25 +262,49 @@ export function assertLegislationNoSupra(answerBody, fnList) {
 // Map Unicode superscript digits to their ASCII equivalents.
 const SUP_MAP = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9" };
 
-function extractBodyMarkers(answerBody) {
+function extractBodyMarkers(answerBody, fnNumsSet) {
   const nums = new Set();
   const text = String(answerBody || "");
   // [N] markers (legacy)
   const bracketRe = /\[(\d{1,3})\]/g;
   let m;
   while ((m = bracketRe.exec(text)) !== null) nums.add(Number(m[1]));
-  // Superscript Unicode runs (¹, ¹², ¹²³…)
+  // Superscript runs: greedy split against known footnote numbers so adjacent
+  // single-digit markers (¹², ³⁴) aren't misread as multi-digit footnotes.
   const supRe = /[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g;
+  const fnNums = fnNumsSet ?? new Set();
+  const maxFnLen = Math.max(1, ...[...fnNums].map((n) => String(n).length));
+  const splitRun = (digits) => {
+    const dp = (i) => {
+      if (i === digits.length) return [];
+      for (let L = Math.min(maxFnLen, digits.length - i); L >= 1; L--) {
+        const n = Number(digits.slice(i, i + L));
+        if (fnNums.has(n)) {
+          const rest = dp(i + L);
+          if (rest) return [n, ...rest];
+        }
+      }
+      return null;
+    };
+    return dp(0);
+  };
   while ((m = supRe.exec(text)) !== null) {
     const ascii = [...m[0]].map((c) => SUP_MAP[c] ?? "").join("");
-    if (ascii) nums.add(Number(ascii));
+    if (!ascii) continue;
+    const parts = splitRun(ascii);
+    if (parts) {
+      for (const n of parts) nums.add(n);
+    } else {
+      // Unparseable run: surface as a single number so the orphan check fires.
+      nums.add(Number(ascii));
+    }
   }
   return nums;
 }
 
 export function assertBodyCoverage(answerBody, fnList) {
-  const bodyNums = extractBodyMarkers(answerBody);
   const fnNums = new Set((fnList || []).map((f) => Number(f.number)).filter((n) => Number.isFinite(n)));
+  const bodyNums = extractBodyMarkers(answerBody, fnNums);
   const orphansInBody = [...bodyNums].filter((n) => !fnNums.has(n));
   const orphansInList = [...fnNums].filter((n) => !bodyNums.has(n));
   const passed = orphansInBody.length === 0 && orphansInList.length === 0;
