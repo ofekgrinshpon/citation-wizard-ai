@@ -764,17 +764,17 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   // Every superscript in rendered text resolves to a footnote number.
   // (rendered_answer carries superscripts produced by buildFootnotes; we
   // check that every number referenced has a matching footnote entry.)
-  const supRe = /[\u00B9\u00B2\u00B3\u2070-\u209F]+/g;
+  // Every superscript glyph in rendered text must resolve to a footnote
+  // number. Adjacent markers (e.g. [cite:LS4][cite:LS5]) produce two
+  // consecutive single-digit superscripts that must be validated
+  // INDIVIDUALLY — never parsed as one multi-digit number ("45").
+  const SUP_MAP: Record<string, number> = {
+    "⁰":0,"¹":1,"²":2,"³":3,"⁴":4,"⁵":5,"⁶":6,"⁷":7,"⁸":8,"⁹":9,
+  };
   const fnNumbers = new Set(qual.footnotes.map(f => f.number));
-  for (const m of qual.rendered_answer.matchAll(supRe)) {
-    // Map superscript glyphs back to digits.
-    const digits = m[0].replace(/./gu, (ch) => {
-      const idx = "⁰¹²³⁴⁵⁶⁷⁸⁹".indexOf(ch);
-      return idx >= 0 ? String(idx) : "";
-    });
-    if (!digits) continue;
-    const n = parseInt(digits, 10);
-    if (!Number.isFinite(n)) continue;
+  outer: for (const ch of qual.rendered_answer) {
+    const n = SUP_MAP[ch];
+    if (n === undefined) continue;
     if (!fnNumbers.has(n)) {
       acceptanceErrors.push(`sup_no_footnote:${n}`);
       console.error("[core:acceptance] sup_no_footnote — should be unreachable after pre-strip", {
@@ -782,9 +782,10 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
         fn_numbers: [...fnNumbers],
         marker_to_footnote: qual.marker_to_footnote,
       });
-      break;
+      break outer;
     }
   }
+
   // Placeholder footnotes are forbidden unless source explicitly partial.
   for (const fn of qual.footnotes) {
     if (/\(ציטוט חסר\)/.test(fn.text)) {
