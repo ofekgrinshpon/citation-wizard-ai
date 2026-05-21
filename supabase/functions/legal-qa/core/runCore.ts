@@ -694,7 +694,12 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     status: "ok",
   });
   emitSafe(onStage, "enrich_citations", "complete",
-    `bare=${enrichment.bare_reporter_attempted} recovered=${enrichment.bare_reporter_recovered} dropped=${enrichment.bare_reporter_dropped}`);
+    `bare=${enrichment.bare_reporter_attempted} ` +
+    `meta=${enrichment.metadata_short_circuits} ` +
+    `regex=${enrichment.text_regex_recovered}/${enrichment.text_regex_attempted} ` +
+    `official=${enrichment.official_fetch_recovered}/${enrichment.official_fetch_attempted} ` +
+    `party=${enrichment.party_lookup_hits}/${enrichment.party_lookup_attempted} ` +
+    `recovered=${enrichment.bare_reporter_recovered} dropped=${enrichment.bare_reporter_dropped}`);
 
   // ─── 6.2 + 6.3 Footnote builder + CitationQualityPass ──────────────────
   emitSafe(onStage, "post_processing", "running", "citation_quality");
