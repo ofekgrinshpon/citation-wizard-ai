@@ -27,6 +27,16 @@ export interface PartyLookupRequest {
   courtHint?: string;
   /** Optional case-type hint from local extraction (e.g. "תמ״ש", "סע״ש"). */
   caseTypeHint?: string;
+  /** Optional context block to disambiguate the docket — passed verbatim into
+   * the user prompt so Perplexity can resolve cases where the docket alone is
+   * insufficient (e.g. district numbers, post-rebrand renumberings, etc.). */
+  contextHints?: {
+    title?: string;
+    snippet?: string;
+    url?: string;
+    sourceType?: string;
+    reporterCitation?: string;
+  };
 }
 
 export interface PartyLookupHit {
@@ -49,13 +59,15 @@ export interface PartyLookupResult {
   attempted: number;
 }
 
+// `lite.takdin.co.il` removed: its search-results page is a JS-rendered SPA
+// that Perplexity's fetcher cannot render, so including it adds no recall
+// and slows the search (contributing to S7 timeouts).
 const TRUSTED_LEGAL_DOMAINS = [
   "supreme.court.gov.il",
   "court.gov.il",
   "gov.il",
   "nevo.co.il",
   "takdin.co.il",
-  "lite.takdin.co.il",
   "psakdin.co.il",
 ];
 
@@ -90,6 +102,8 @@ export async function lookupPartyNames(
   // citation (`בג"ץ 18225-06-25`) instead of a bare district-style number.
   // Otherwise (subject category like "משפחה") keep it parenthesized as a
   // disambiguation hint, since prepending it would corrupt the citation.
+  const trunc = (s: string | undefined, n: number): string =>
+    !s ? "" : (s.length > n ? s.slice(0, n).trim() + "…" : s.trim());
   const docketLines = requests
     .map((r, i) => {
       const hint = (r.caseTypeHint || "").trim();
@@ -98,7 +112,18 @@ export async function lookupPartyNames(
       const parenHints = [isDocketPrefix ? "" : hint, r.courtHint]
         .filter(Boolean)
         .join(" ");
-      return `${i + 1}. ${docket}${parenHints ? ` (${parenHints})` : ""}`;
+      let line = `${i + 1}. ${docket}${parenHints ? ` (${parenHints})` : ""}`;
+      const ctx = r.contextHints;
+      if (ctx) {
+        const ctxBits: string[] = [];
+        if (ctx.title) ctxBits.push(`כותרת: ${trunc(ctx.title, 180)}`);
+        if (ctx.reporterCitation) ctxBits.push(`ציטוט: ${trunc(ctx.reporterCitation, 120)}`);
+        if (ctx.url) ctxBits.push(`URL: ${ctx.url}`);
+        if (ctx.snippet) ctxBits.push(`קטע: ${trunc(ctx.snippet, 300)}`);
+        if (ctx.sourceType) ctxBits.push(`סוג: ${ctx.sourceType}`);
+        if (ctxBits.length > 0) line += `\n   הקשר — ${ctxBits.join(" | ")}`;
+      }
+      return line;
     })
     .join("\n");
 
@@ -131,7 +156,7 @@ export async function lookupPartyNames(
   };
 
   const ctrl = new AbortController();
-  const timeoutId = setTimeout(() => ctrl.abort(), 20_000);
+  const timeoutId = setTimeout(() => ctrl.abort(), 45_000);
   let status: PartyLookupResult["status"] = "ok";
   let raw: Array<{
     case_number?: string;
@@ -160,10 +185,13 @@ export async function lookupPartyNames(
           {
             role: "system",
             content:
-              "You are a precise Israeli-court records assistant. Given docket numbers, " +
-              "return the party names exactly as they appear on the official court record " +
+              "You are a precise Israeli-court records assistant. Given Israeli court dockets " +
+              "(with optional context: title, snippet, URL, reporter citation), return the " +
+              "party names exactly as they appear on the official record " +
               "(supreme.court.gov.il, nevo.co.il, takdin.co.il). " +
-              "TIP: the public page https://lite.takdin.co.il/search-results displays parties, docket, court, decision date, and פ\"ד publication on a single result page — prefer it for fast, complete metadata. " +
+              "Use the provided context (כותרת/קטע/URL/ציטוט) to disambiguate when the bare " +
+              "docket number is ambiguous — the URL in particular is often a deterministic " +
+              "permalink to the case page. " +
               "Output Hebrew party names only. " +
               "If you cannot verify a docket from a trusted source, OMIT it from the results — never invent.",
           },
