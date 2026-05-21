@@ -19,6 +19,7 @@
 
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { TIER_A_DOMAIN_FILTER, citationTier } from "../approvedDomains.ts";
+import { expandDoctrineTerms } from "../../_shared/legalDoctrineSynonyms.ts";
 import type {
   AuthorityId,
   CandidateId,
@@ -49,6 +50,13 @@ const EXPECTED_EMBEDDING_DIM = 768;
 // per-claim cap even when local_text already fills the budget. Reserve is for
 // RECALL — verifier still gates relevance.
 const PER_CLAIM_ANCHOR_RESERVE = 2;
+// When both anchor layers (factual + concept) have candidates, guarantee at
+// least this many slots per layer so concept docs aren't starved by factual
+// hits that always sort first in the merged pool.
+const ANCHOR_RESERVE_PER_LAYER = 1;
+// Hard cap on concept-anchor terms after merging planner output with the
+// doctrine-synonym expansion (Section G).
+const CONCEPT_ANCHOR_TERMS_MAX = 5;
 // Anchor-driven approved_web (Section D). Extra web hits when local recall is
 // thin or the claim explicitly needs scholarship/doctrinal_definition.
 const ANCHOR_WEB_PER_CLAIM = 2;
@@ -98,6 +106,8 @@ export interface ClaimAnchorTelemetry {
   anchor_doc_ids: string[];
   anchor_source_types: string[];
   anchor_displaced_primary: boolean;
+  /** Section F: which anchor layers actually contributed slots for this claim. */
+  anchor_layers_used?: Array<"factual" | "concept">;
 }
 
 export interface ClaimWebStubTelemetry {
@@ -149,6 +159,10 @@ export interface AnchorLayerTelemetry {
   injected_into_claims: number;
   /** Legacy field kept for back-compat with the old single-anchor telemetry. */
   total_unique: number;
+  /** Section G: terms added on top of planner output via doctrine synonyms. */
+  expanded_terms?: string[];
+  /** Section G: doctrine-synonym entry ids that triggered the expansion. */
+  expansion_hits?: string[];
 }
 
 export interface VectorHealthDiag {
@@ -901,7 +915,25 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     ).slice(0, 8);
 
   const factualTerms = sanitizeTerms(plan.factual_anchor_terms);
-  const conceptTerms = sanitizeTerms((plan as any).concept_anchor_terms);
+  const plannerConceptTerms = sanitizeTerms((plan as any).concept_anchor_terms);
+
+  // Section G: doctrine-synonym expansion for concept anchors. Wires the
+  // hand-curated _shared/legalDoctrineSynonyms.ts dictionary into the
+  // concept layer when the question matches a doctrinal trigger. Purely
+  // lexical, no document-specific hardcoding.
+  const expansion = expandDoctrineTerms(
+    [
+      (plan as any).question || "",
+      plan.thesis || "",
+      plan.doctrinal_frame || "",
+    ].join(" "),
+  );
+  const expandedConcept = sanitizeTerms([
+    ...plannerConceptTerms,
+    ...expansion.synonyms,
+  ]).slice(0, CONCEPT_ANCHOR_TERMS_MAX);
+  const conceptTerms = expandedConcept;
+  const addedByExpansion = expandedConcept.filter((t) => !plannerConceptTerms.includes(t));
 
   /**
    * Run one anchor layer: FTS + vector per term, dedupe with per-document
@@ -984,6 +1016,10 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     runAnchorLayer("factual", factualTerms),
     runAnchorLayer("concept", conceptTerms),
   ]);
+
+  // Section G: stamp expansion metadata onto the concept layer telemetry.
+  if (addedByExpansion.length > 0) conceptLayer.telemetry.expanded_terms = addedByExpansion;
+  if (expansion.hits.length > 0) conceptLayer.telemetry.expansion_hits = expansion.hits;
 
   // Threshold=0.0 probe: pick the longest available anchor term, or fall
   // back to the plan thesis. Fires once.
@@ -1154,21 +1190,61 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const webAll = [...primaryWebHits, ...anchorWebHits];
     ingest(webAll);
 
-    // ─── Section A + E: anchor reserve & primary preservation ──────────
+    // ─── Section A + E + F: per-layer anchor reserve & primary preservation
     const all = Array.from(byKey.values());
     const webKept = all.filter((c) => c.origin === "approved_web");
     const localOther = all.filter((c) => c.origin !== "approved_web");
     const primaryLocalCount = localOther.filter(isPrimaryLaw).length;
-
-    // When the claim needs binding law and we're light on primary local
-    // hits, only let primary anchors consume the reserve so we don't push
-    // secondary anchors ahead of binding authority.
     const needPrimary = requiresBindingLaw(claim) && primaryLocalCount < 2;
-    const filteredAnchors = needPrimary
-      ? anchorCandidates.filter(isPrimaryLaw)
-      : anchorCandidates;
-    const anchorReserve = Math.min(PER_CLAIM_ANCHOR_RESERVE, filteredAnchors.length);
-    const anchorKept = filteredAnchors.slice(0, anchorReserve);
+
+    // Section F: split the anchor candidate pool by layer so concept docs
+    // get a guaranteed slot when the layer has any hits. Falls through when
+    // a layer is empty so factual-only questions still fill both reserve
+    // slots from factual.
+    const splitByLayer = (cands: CandidateSource[]) => {
+      const factual: CandidateSource[] = [];
+      const concept: CandidateSource[] = [];
+      for (const c of cands) {
+        const layer = (c.metadata as any)?.anchor_layer;
+        if (layer === "concept") concept.push(c);
+        else factual.push(c);
+      }
+      return { factual, concept };
+    };
+    const applyPrimaryFilter = (arr: CandidateSource[]) =>
+      needPrimary ? arr.filter(isPrimaryLaw) : arr;
+
+    const { factual: factualPool, concept: conceptPool } = splitByLayer(anchorCandidates);
+    const factualFiltered = applyPrimaryFilter(factualPool);
+    const conceptFiltered = applyPrimaryFilter(conceptPool);
+
+    // Phase 1: per-layer floor (up to ANCHOR_RESERVE_PER_LAYER per layer).
+    const anchorKept: CandidateSource[] = [];
+    const layersUsed = new Set<"factual" | "concept">();
+    const takeFrom = (arr: CandidateSource[], layer: "factual" | "concept", n: number) => {
+      let taken = 0;
+      for (const c of arr) {
+        if (taken >= n) break;
+        if (anchorKept.includes(c)) continue;
+        anchorKept.push(c);
+        layersUsed.add(layer);
+        taken++;
+      }
+    };
+    takeFrom(factualFiltered, "factual", ANCHOR_RESERVE_PER_LAYER);
+    takeFrom(conceptFiltered, "concept", ANCHOR_RESERVE_PER_LAYER);
+
+    // Phase 2: fill remaining reserve slots from whichever layer still has
+    // candidates. Factual first (preserves prior behaviour for non-doctrinal
+    // questions where only factual layer has hits).
+    const remaining = PER_CLAIM_ANCHOR_RESERVE - anchorKept.length;
+    if (remaining > 0) {
+      takeFrom(factualFiltered, "factual", remaining);
+    }
+    const remaining2 = PER_CLAIM_ANCHOR_RESERVE - anchorKept.length;
+    if (remaining2 > 0) {
+      takeFrom(conceptFiltered, "concept", remaining2);
+    }
 
     const localBudget = Math.max(0, PER_CLAIM_CAP - webKept.length - anchorKept.length);
     const localKept = localOther.slice(0, localBudget);
@@ -1188,16 +1264,11 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
         anchor_doc_ids: anchorDocIds,
         anchor_source_types: anchorSrcTypes,
         anchor_displaced_primary: anchorDisplacedPrimary,
+        anchor_layers_used: Array.from(layersUsed),
       });
       // Per-layer injected counter (only when the anchor SURVIVED selection).
-      const factualDocIds = new Set(factualLayer.pool.map((c) => c.document_id));
-      const conceptDocIds = new Set(conceptLayer.pool.map((c) => c.document_id));
-      if (anchorKept.some((c) => c.document_id && factualDocIds.has(c.document_id))) {
-        factualLayer.telemetry.injected_into_claims++;
-      }
-      if (anchorKept.some((c) => c.document_id && conceptDocIds.has(c.document_id))) {
-        conceptLayer.telemetry.injected_into_claims++;
-      }
+      if (layersUsed.has("factual")) factualLayer.telemetry.injected_into_claims++;
+      if (layersUsed.has("concept")) conceptLayer.telemetry.injected_into_claims++;
     }
 
     if (stubsDroppedThisClaim > 0) {
