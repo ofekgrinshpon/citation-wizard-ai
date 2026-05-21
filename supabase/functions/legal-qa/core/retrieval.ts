@@ -1017,6 +1017,10 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     runAnchorLayer("concept", conceptTerms),
   ]);
 
+  // Section G: stamp expansion metadata onto the concept layer telemetry.
+  if (addedByExpansion.length > 0) conceptLayer.telemetry.expanded_terms = addedByExpansion;
+  if (expansion.hits.length > 0) conceptLayer.telemetry.expansion_hits = expansion.hits;
+
   // Threshold=0.0 probe: pick the longest available anchor term, or fall
   // back to the plan thesis. Fires once.
   if (embed) {
