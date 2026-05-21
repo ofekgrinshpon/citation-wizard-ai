@@ -927,6 +927,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
       marker_to_footnote: qual.marker_to_footnote,
     },
     enrichment,
+    embed_health: embedHealth,
     acceptance_errors: acceptanceErrors,
     stage_runs: stageRuns,
     total_duration_ms: Date.now() - tStart,
