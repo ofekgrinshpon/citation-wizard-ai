@@ -92,6 +92,27 @@ export interface WebHarvestTelemetry {
   web_empty_reason?: "no_response" | "no_urls" | "all_rejected" | "ok" | "skipped";
 }
 
+export interface ClaimAnchorTelemetry {
+  claim_id: ClaimId;
+  anchor_kept: number;
+  anchor_doc_ids: string[];
+  anchor_source_types: string[];
+  anchor_displaced_primary: boolean;
+}
+
+export interface ClaimWebStubTelemetry {
+  claim_id: ClaimId;
+  dropped_count: number;
+}
+
+export interface ClaimAnchorWebTelemetry {
+  claim_id: ClaimId;
+  factual_terms: string[];
+  concept_terms: string[];
+  factual_hits: number;
+  concept_hits: number;
+}
+
 export interface ClaimRetrievalPack {
   claim_id: ClaimId;
   candidates: CandidateSource[];
@@ -102,6 +123,18 @@ export interface ClaimRetrievalPack {
   approved_web_domains: string[];
   web_skipped_for_global_cap: boolean;
   web_harvest: WebHarvestTelemetry;
+  // Section E telemetry
+  primary_count: number;
+  secondary_count: number;
+  // Section A telemetry (anchor slots actually retained)
+  anchor_kept: number;
+  anchor_doc_ids: string[];
+  anchor_source_types: string[];
+  anchor_displaced_primary: boolean;
+  // Section C telemetry
+  approved_web_stubs_dropped: number;
+  // Section D telemetry
+  anchor_web: ClaimAnchorWebTelemetry;
 }
 
 export interface AnchorLayerTelemetry {
@@ -130,6 +163,10 @@ export interface VectorHealthDiag {
   /** One probe at threshold=0.0 to distinguish "RPC broken" from "over-filtered". */
   threshold_probe_top_similarity?: number | null;
   threshold_probe_error?: string;
+  /** Section B: cold-HNSW warmup ping outcome. */
+  warmup_status?: "ok" | "skipped" | "failed" | string;
+  /** Section B: count of retries triggered by Postgres statement_timeout (57014). */
+  retries_57014?: number;
 }
 
 // Legacy alias retained so callers reading retrieval.factual_anchors keep
@@ -149,6 +186,10 @@ export interface RetrievalResult {
   anchor_prepass_document_ids?: string[];
   vector_health?: VectorHealthDiag;
   local_metadata_overrides?: number;
+  // Aggregated per-claim telemetry for Section A/C/D.
+  anchor_slots_used_per_claim?: ClaimAnchorTelemetry[];
+  approved_web_stubs_dropped_per_claim?: ClaimWebStubTelemetry[];
+  approved_web_anchor_queries?: ClaimAnchorWebTelemetry[];
 }
 
 export interface RetrieveArgs {
