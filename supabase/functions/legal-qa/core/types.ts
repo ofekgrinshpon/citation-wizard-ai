@@ -232,6 +232,12 @@ export interface CitationQualityResult {
     off_domain: number;
     repeated: number;
     legislation_supra_blocked: number;
+    partial_enriched_kept: number;
+    footnote_text_sources: {
+      canonical_citation: number;
+      repeated_rule37: number;
+      passthrough_fallback: number;
+    };
   };
   duration_ms: number;
 }
