@@ -1,118 +1,74 @@
 
-## Goal
+## Root cause
 
-Recover bare-reporter caselaw citations from the LedgerSource itself (metadata → text regex → official page fetch) **before** Perplexity. When Perplexity is finally called, send the **full verified-source context** and ask it to verify (not infer) the case, returning structured fields. No bare-reporter relaxation, no GPT-memory inference.
+`enrichBareReporterCitation()` simply forwards hints to `buildCitationForSource()`, which calls `resolveCitation()` **without** `partyLookupRetry: true`. The placeholder-emission and `fullDate`-relaxation policies inside `citationResolver.ts` (lines 522–608) are gated on that flag — so when Pass B recovers `{docket, party1, party2}` but no `fullDate`/`year`, the resolver returns `needs_party_lookup` / `missing_required`, `buildCitationForSource` falls back to `passthroughCitation()` (which returns the original bare reporter text like `פ"ד מט(4) 221`), the bare-reporter gate at line 304 re-fires, `failed_bare_reporter` is re-added, and runCore logs `rebuild_still_bare`.
 
-## Scope (Research Core only)
+In other words: Pass B is finding the parties, but the resolver path inside the *enrichment* call still behaves like a first-pass strict call, so the recovered fields never make it into a canonical string.
 
-Edit:
-- `supabase/functions/legal-qa/core/citationCleanup.ts`
-- `supabase/functions/legal-qa/core/runCore.ts`
-- `supabase/functions/_shared/partyLookup.ts` (prompt + request shape only; no looser validation)
-- New: `supabase/functions/legal-qa/core/officialSourceFetcher.ts`
+## Fix scope (narrow — only the enrichment path)
 
-Do NOT touch: `BatchFootnoteBuilder`, `FootnoteReviewCard`, `citation-chat`, `src/components/**`, Planner / Retrieval / Verifier / Ledger / Drafter.
+Files touched:
+- `supabase/functions/legal-qa/core/citations.ts` — add an enrichment-mode flag, route resolver to retry policy, add safety-net manual emission.
+- `supabase/functions/legal-qa/core/runCore.ts` — pass the flag from all four enrichment passes; add the requested telemetry fields.
+- `supabase/functions/legal-qa/core/types.ts` — extend the `EnrichAttempt` shape if needed for the new telemetry fields.
 
-## New enrichment pipeline
+Explicitly **not** touched: Planner, Retrieval, Verifier, Ledger, Drafter, BatchFootnoteBuilder, FootnoteReviewCard, citation-chat, src/components/**, partyLookup prompt, citationResolver.ts (we only flip the flag it already supports).
 
-For every citation flagged `failed_bare_reporter`, run passes in order; stop at first success:
+## Changes
 
-```text
-Pass A  metadata short-circuit       (existing — keep)
-Pass B  text regex extraction        (NEW — local, deterministic)
-Pass C  official-URL fetch + parse   (NEW — verified source only)
-Pass D  partyLookup w/ full context  (HARDENED — verify, don't infer)
-```
+### 1. `citations.ts` — `BuildCitationHints` + `buildCitationForSource`
 
-### Pass B — Text regex extraction
+- Add `enrichmentRetry?: boolean` to `BuildCitationHints`.
+- When `hints.enrichmentRetry === true`, pass `partyLookupRetry: true` into `resolveCitation(...)`. This activates the existing placeholder-emission path (`[חסר: שנה]`, `[חסר: תאריך מלא]`, etc.) and the relaxed-`fullDate` policy, so resolver returns `{resolved: true, placeholders: [...]}` instead of falling through to passthrough.
+- After the resolver call, when `hints.enrichmentRetry` is true AND resolver still failed AND we have `caseNumber + party1 + party2` (from hints), **manually emit** a canonical line of the form `{prefix?} {docket} {party1} נ' {party2}.` (omit year/date — never invent them), set `canonical`, set `quality = "needs_review"`, push `partial_enriched` into `citation_errors`, and **do not push** `failed_bare_reporter`. This is the safety-net for the case where classify/extract loses parties on the second pass.
+- The bare-reporter gate at line 304 still runs, but on an enriched canonical that now contains a docket prefix + `נ'` separator, so `isBareReporter()` returns false and `failed_bare_reporter` is no longer re-added.
+- Return a side-channel debug object alongside (extend the function to also write to a `__lastResolverDebug` symbol, OR have it return a tuple via a sibling helper `enrichBareReporterCitationWithDebug()`). Pick the helper approach to avoid altering the existing return type for `buildCitationForSource()` callers.
 
-In `citationCleanup.ts`:
-- Loosen `PARTIES_CAPTURE_RE` to tolerate Hebrew typographic quotes (`״ ׳`), ASCII (`" '`), `בע"מ`, parenthesised role suffixes, and `נ׳ / נ' / נ"` separators. Sanity check: both sides ≥ 2 chars, ≥ 1 Hebrew letter.
-- Add `extractCaseFieldsFromLedgerSource(ls)` combining `title + citation + snippet + url` and returning `{ prefix, docket, party1, party2, year, fullDate }` per field.
+### 2. `runCore.ts` — wire the flag and the telemetry
 
-In `runCore.ts`, after Pass A: if Pass B yields `{docket, party1, party2}`, call `enrichBareReporterCitation`. Counters: `text_regex_attempted/recovered`. Log `pass: "text_regex"` in attempts.
+- In all four `enrichBareReporterCitation(ls, { ... })` call sites (Pass A metadata, Pass B text_regex, Pass C official_fetch, Pass D party_lookup), add `enrichmentRetry: true`.
+- Switch each site to `enrichBareReporterCitationWithDebug(...)` to capture `{ input, resolverOutput, missingAfter }`.
+- Extend the `EnrichAttempt` type with:
+  - `enrichment_input_fields?: string[]` — which hint keys were non-empty going in.
+  - `resolver_input_after_enrichment?: Record<string, string | undefined>` — the actual hint values sent.
+  - `resolver_output?: { resolved: boolean; canonical?: string; placeholders?: string[]; citation_errors: string[] }`.
+  - `missing_fields_after_enrichment?: string[]` — keys still missing after the enriched rebuild (year, fullDate, etc.).
+  - Keep the existing `rejection_reason` field; when the safety-net manual emission fires, set it to `partial_enriched` (not `rebuild_still_bare`).
+- Update the "recovered" calculation: `recovered = !fresh.citation_errors.includes("failed_bare_reporter")` stays correct, because the safety-net no longer pushes that error. `partial_enriched` results now count as recovered.
+- Bump telemetry summary line at L699 to also print `partial_enriched=N`.
 
-### Pass C — Official-URL fetch + parse
+### 3. `types.ts`
 
-New `officialSourceFetcher.ts`:
-- Host allowlist: `supreme.court.gov.il`, `supremedecisions.court.gov.il`, `versa.cardozo.yu.edu`, `nevo.co.il`, plus any host already trusted by the verified-source layer. Tight, explicit list.
-- `fetchOfficialCasePage(url)`: guarded `fetch` with 12s timeout, strip tags / decode entities, run the regex extractors over first ~8 KB + `<title>`. Returns `{docket, prefix, party1, party2, year, fullDate, source_url}` or `null`. In-run URL cache.
+Add the new optional fields to the `EnrichAttempt`-related export if it lives here (it currently appears inline in `runCore.ts`; lift only if needed for compile).
 
-In `runCore.ts`, after Pass B: parallel `Promise.allSettled` (cap 5, overall ~20s budget). If parsed fields satisfy `{docket, party1, party2}`, enrich and log `pass: "official_fetch"`. Counters: `official_fetch_attempted/recovered/timeouts`.
+## Hard rules preserved
 
-### Pass D — Hardened partyLookup (verify-only, full context)
+- No GPT/LLM call added; Pass B/C remain regex-only.
+- No fabricated `year`/`fullDate`/`parties`/`docket` — safety-net manual emission writes only what was already in `hints`.
+- Bare-reporter gate stays strict for first-pass calls (`enrichmentRetry` default false).
+- `partyLookup` prompt untouched.
+- Off-domain check, `journal_pipe`, source-type sanity checks all still run on the enriched canonical.
 
-Modify `partyLookup.ts` request:
+## Acceptance criteria (re-verified by smoke run)
 
-**Old**: docket-only string passed to Perplexity.
-
-**New** — each item now sends the full verified-source bundle:
-```ts
-{
-  caseNumber, caseTypePrefix,
-  reporterCitation,        // e.g. פ"ד לה(1) 421
-  title, snippet, url,
-  sourceType, courtHint,
-  claimContext,            // short paragraph fragment from drafter (optional)
-}
-```
-
-Updated system prompt (verbatim intent):
-
-> משימה: לאמת תיק משפטי קיים מתוך מקורות מאושרים בלבד. אסור להסיק שדות חסרים מהזיכרון. אם לא ניתן לאמת מתוך מקור מאושר — החזר `no_match`.
-> מקורות מאושרים: supreme.court.gov.il, supremedecisions.court.gov.il, nevo.co.il, versa.cardozo.yu.edu, takdin.co.il, מאגרי בתי המשפט הרשמיים.
-> קלט: docket, reporter, title, snippet, url, sourceType, court.
-> פלט JSON בלבד:
-> ```json
-> { "status":"verified"|"no_match", "party1":string|null, "party2":string|null,
->   "year":string|null, "fullDate":string|null,
->   "reporterVolume":string|null, "reporterPart":string|null, "reporterPage":string|null,
->   "url":string|null, "sourceUsed":string|null }
-> ```
-> אם אחד מהשדות לא נמצא במקור מאושר — החזר `null` לאותו שדה. אל תמציא.
-
-Keep: 45s timeout, batch cap 5, JSON `response_format`, `search_domain_filter` (without `lite.takdin.co.il`). Add: `searchAfterDate` left unset; `searchMode: "default"`.
-
-Validation layer stays strict — reject when `status !== "verified"` OR when `{party1, party2}` are null. New extracted reporter fields (`reporterVolume/Part/Page`) are passed through to `enrichBareReporterCitation` so we can rebuild the canonical reporter string deterministically.
-
-### Diagnostic step — prompt-context comparison (BEFORE shipping)
-
-Before editing `partyLookup.ts`, run a one-off `code--exec` script that calls Perplexity (`sonar-pro`) with **4 prompt variants** for the 7 bare-reporter dockets from the last smoke run:
-
-1. docket only
-2. docket + reporter
-3. docket + reporter + title
-4. docket + reporter + title + URL + snippet
-
-For each variant log: status (`verified` / `no_match` / `timeout`), parties returned, source URL used, latency. Aggregate hit-rate per variant and per docket. Output a table.
-
-This decides whether the current 0/7 recovery is a context problem (variant 4 wins) or a model problem (all four lose). Result drives the final prompt shape we commit in `partyLookup.ts`.
-
-## Telemetry
-
-Extend `metadata.core.enrichment` with per-pass counters and `pass: "metadata" | "text_regex" | "official_fetch" | "party_lookup"` on each attempt. New fields when Pass D returns: `verified_source_used`, `reporter_volume/part/page`.
-
-Single complete log line:
-```
-bare=X meta=A regex=B official=C party=D recovered=R dropped=K
-```
-
-## Constraints
-
-- No LLM in Passes B / C.
-- No relaxation of the bare-reporter gate. All passes must produce real `{docket, parties}` from real source text/pages.
-- Pass D may use rich context to **locate** a source but never to infer missing fields.
-- Tight host allowlist for Pass C; failures silent and counted.
-- No new dependencies. Pure regex + `fetch`.
+- `enrichBareReporterCitation` given `{docket, party1, party2}` (with or without year) must NOT return `rejection_reason="rebuild_still_bare"`.
+- `text_regex_recovered > 0` on S1/S4/S6/S8.
+- Recovered citations appear in final answer as either full canonical (when year/date present) or `<prefix> <docket> P1 נ' P2.` / canonical with `[חסר: ...]` markers (when temporal anchor missing), classed `partial_enriched` / `needs_review`.
+- Invariants from prior run still hold: 0 `answer=null`, 0 `[cite:LS#]` leftovers, 0 orphan superscripts, 0 `(ציטוט חסר)`, 0 bare-reporter footnotes shipped, 0 pipe artifacts, 0 raw `source_type` leaks.
+- No hallucinated year/date in any footnote.
 
 ## Validation
 
-1. Run the 4-variant Perplexity diagnostic; report which context shape actually verifies parties.
-2. Implement Passes B + C and the hardened Pass D using the winning context shape.
-3. Re-run `eval/_smoke10_v2.mjs` and report:
-   - `text_regex_attempted/recovered`
-   - `official_fetch_attempted/recovered/timeouts`
-   - `party_lookup_attempted/hits` (expected to fall sharply once B+C work)
-   - `bare_reporter_recovered/dropped`, `core_failed`
-   - Citation grades for S1, S6, S7, S8, S10 vs prior run
-4. Invariants must still hold: 0 null answers, 0 leftover markers, 0 orphan superscripts, 0 bare-reporter footnotes shipped, 0 pipe artifacts, 0 raw `source_type` leaks.
+1. Run `eval/_smoke10_v2.mjs` filtered to S1, S4, S6, S8 (add S7 if any of those still leak bare reporters).
+2. Diff each affected attempt's new telemetry block (`enrichment_input_fields`, `resolver_output`, `missing_fields_after_enrichment`) against the prior run.
+3. Report:
+   - `text_regex_attempted` / `recovered`
+   - `official_fetch_attempted` / `recovered` / `timeouts`
+   - `party_lookup_attempted` / `hits` / `timeouts`
+   - `bare_reporter_recovered` vs `bare_reporter_dropped`
+   - `partial_enriched` count
+   - `core_failed` count
+   - Two before/after footnote examples per affected case.
+4. If still bare on any S-case, inspect new telemetry to determine whether (a) Pass B regex missed parties, (b) resolver dropped them, or (c) safety-net was not triggered — and propose one targeted follow-up.
+
+No other behavior changes.
