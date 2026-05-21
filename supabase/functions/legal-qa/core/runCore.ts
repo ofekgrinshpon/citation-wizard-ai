@@ -350,6 +350,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     resolver_output?: EnrichmentDebug["resolver_output"];
     missing_fields_after_enrichment?: string[];
     safety_net_used?: boolean;
+    enrichment_path?: EnrichmentPath;
     partial_enriched?: boolean;
   };
   const enrichment = {
