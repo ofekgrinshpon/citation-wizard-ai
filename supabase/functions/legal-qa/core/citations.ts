@@ -458,11 +458,56 @@ export function buildCitationsForLedger(
  * Re-build a citation for a LedgerSource using freshly recovered party-name
  * / date hints (e.g. from `_shared/partyLookup.ts`). Returns the new
  * `LedgerSourceCitation`. Caller swaps it into the citations map.
+ *
+ * Forces `enrichmentRetry: true` so the resolver runs in retry mode (placeholder
+ * emission + relaxed fullDate) and the safety-net manual emission can fire.
  */
 export function enrichBareReporterCitation(
   ls: LedgerSource,
   hints: BuildCitationHints,
 ): LedgerSourceCitation {
-  return buildCitationForSource(ls, hints);
+  return buildCitationForSource(ls, { ...hints, enrichmentRetry: true });
 }
+
+/**
+ * Same as enrichBareReporterCitation but also returns a side-channel debug
+ * envelope describing the resolver input/output and whether the safety-net
+ * manual emission fired. For telemetry only.
+ */
+export function enrichBareReporterCitationWithDebug(
+  ls: LedgerSource,
+  hints: BuildCitationHints,
+): { citation: LedgerSourceCitation; debug: EnrichmentDebug } {
+  __lastResolverDebug = null;
+  const citation = buildCitationForSource(ls, { ...hints, enrichmentRetry: true });
+  const dbg = __lastResolverDebug;
+  __lastResolverDebug = null;
+  const inputFields: string[] = [];
+  for (const k of ["caseNumber", "party1", "party2", "year", "fullDate"] as const) {
+    if (hints[k] && String(hints[k]).trim()) inputFields.push(k);
+  }
+  const resolverHints = dbg?.resolverHints ?? {};
+  const resolverOutput = {
+    resolved: !!dbg?.resolved,
+    canonical: dbg?.canonical,
+    placeholders: dbg?.placeholders,
+    citation_errors: citation.citation_errors,
+  };
+  const missingAfter: string[] = [];
+  for (const e of citation.citation_errors) {
+    if (e.startsWith("placeholder:")) missingAfter.push(e.slice("placeholder:".length));
+    else if (e.startsWith("missing:")) missingAfter.push(e.slice("missing:".length));
+  }
+  return {
+    citation,
+    debug: {
+      enrichment_input_fields: inputFields,
+      resolver_input_after_enrichment: resolverHints,
+      resolver_output: resolverOutput,
+      missing_fields_after_enrichment: Array.from(new Set(missingAfter)),
+      safety_net_used: !!(dbg && (dbg as any).safetyNetUsed),
+    },
+  };
+}
+
 
