@@ -2988,13 +2988,28 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                       <ol className="space-y-1.5">
                         {result.footnotes.map((fn) => {
                           const badge = getSourceBadge(fn.source);
+                          let host = "";
+                          try { host = fn.url ? new URL(fn.url).hostname.replace(/^www\./, "") : ""; } catch { host = ""; }
                           return (
                             <li key={fn.number} id={`legalqa-footnote-${fn.number}`} className="flex gap-2 items-start text-foreground" style={{ fontSize: "10pt" }}>
                               <span className="text-primary font-bold shrink-0 flex items-center gap-1" style={{ fontSize: "10pt" }}>
                                 <span className="inline-block w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: badge.color }} title={badge.label} />
                                 {fn.number}.
                               </span>
-                              <div className="min-w-0"><RenderBold text={fn.citation} /></div>
+                              <div className="min-w-0 flex items-baseline gap-1.5 flex-wrap">
+                                <RenderBold text={fn.citation} />
+                                {fn.url && (
+                                  <a
+                                    href={fn.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-0.5 text-[10px] text-primary hover:underline shrink-0"
+                                    title={host || fn.url}
+                                  >
+                                    ↗ {host || "קישור"}
+                                  </a>
+                                )}
+                              </div>
                             </li>
                           );
                         })}
