@@ -24,8 +24,14 @@ import { runCitationQuality } from "./citation_quality.ts";
 import {
   extractDocketFromText,
   extractPartiesFromText,
+  extractCaseFieldsFromLedgerSource,
 } from "./citationCleanup.ts";
 import { lookupPartyNames } from "../../_shared/partyLookup.ts";
+import {
+  fetchOfficialCasePage,
+  newFetcherTelemetry,
+  isApprovedUrl,
+} from "./officialSourceFetcher.ts";
 import type { LedgerSource } from "./types.ts";
 
 export type CoreStageEmitter = (
