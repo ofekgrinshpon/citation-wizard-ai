@@ -47,6 +47,8 @@ export type PassLabel =
  */
 export interface RecoveredFields {
   caseNumber?: string;
+  /** Hebrew docket prefix (e.g. `בג"ץ`, `ע"א`, `רע"א`). */
+  caseType?: string;
   party1?: string;
   party2?: string;
   year?: string;
