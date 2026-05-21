@@ -615,13 +615,19 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const webSkippedForGlobalCap = perplexityKey ? webAllowedThisClaim <= 0 : false;
     if (perplexityKey && webAllowedThisClaim <= 0) webGlobalCapHit = true;
 
+    // Allow Perplexity to return scholarship for claims that explicitly need
+    // a doctrinal definition / academic backing. Primary authority remains the
+    // default (caselaw/statute/regulation only).
+    const allowScholarship = Array.isArray(claim.required_evidence)
+      && claim.required_evidence.some((k) => k === "scholarship" || k === "doctrinal_definition");
+
     // All four origins fire in parallel.
     const [textHits, vecHits, exactGroups, webResult] = await Promise.all([
       limiter(() => localText(adminClient, tq, claim.id)),
       embed ? limiter(() => localVector(adminClient, vq, claim.id, embed)) : Promise.resolve([] as CandidateSource[]),
       Promise.all(linkedAuths.map((a) => limiter(() => exactAuthority(adminClient, a, claim.id)))),
       perplexityKey && webAllowedThisClaim > 0
-        ? limiter(() => approvedWeb(perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal))
+        ? limiter(() => approvedWeb(perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal, allowScholarship))
         : Promise.resolve<ApprovedWebResult>({
             candidates: [],
             telemetry: emptyWebTelemetry(perplexityKey ? "skipped" : "skipped"),
