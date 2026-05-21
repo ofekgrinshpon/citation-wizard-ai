@@ -231,14 +231,19 @@ export interface EnrichmentDebug {
   safety_net_used: boolean;
 }
 
-let __lastResolverDebug: {
+type ResolverDebugSnapshot = {
   resolved: boolean;
   canonical?: string;
   placeholders?: string[];
   reason?: string;
   missingFields?: string[];
   resolverHints?: Record<string, string | undefined>;
-} | null = null;
+};
+let __lastResolverDebug: ResolverDebugSnapshot | null = null;
+
+function readLastResolverDebug(): ResolverDebugSnapshot | null {
+  return __lastResolverDebug;
+}
 
 export function buildCitationForSource(
   ls: LedgerSource,
@@ -273,7 +278,7 @@ export function buildCitationForSource(
     yearHint: hints.year ?? yearFromText,
   };
 
-  let safetyNetUsed = false;
+  
   if (declared !== "none") {
     engine_used = "resolver";
     const res: ResolveResult = resolveCitation(
@@ -349,47 +354,14 @@ export function buildCitationForSource(
   // Deterministic cleanup of the canonical text (idempotent, no LLM).
   if (canonical) canonical = cleanCitationText(canonical);
 
-  // ─── Enrichment safety-net (second-pass only) ──────────────────────────
-  // If we're on the enrichment retry pass and resolver still couldn't
-  // produce a non-bare canonical, but we DO have docket + both parties from
-  // recovered hints, emit a manual canonical straight from those verified
-  // fields. No year/date is invented — only what's in `hints`.
-  if (
-    hints.enrichmentRetry === true &&
-    declared === "caselaw" &&
-    hints.caseNumber && hints.caseNumber.trim() &&
-    hints.party1 && hints.party1.trim() &&
-    hints.party2 && hints.party2.trim() &&
-    (!canonical || isBareReporter(canonical))
-  ) {
-    const docket = hints.caseNumber.trim();
-    const p1 = hints.party1.trim();
-    const p2 = hints.party2.trim();
-    const yearOrDate = (hints.fullDate && hints.fullDate.trim())
-      ? ` (${hints.fullDate.trim()})`
-      : (hints.year && hints.year.trim())
-        ? ` (${hints.year.trim()})`
-        : "";
-    canonical = cleanCitationText(`${docket} ${p1} נ' ${p2}${yearOrDate}.`);
-    quality = "needs_review";
-    // Strip prior failure markers; this no longer reads as bare-reporter.
-    const filtered = errors.filter((e) =>
-      e !== "failed_bare_reporter" &&
-      !e.startsWith("engine:") &&
-      !e.startsWith("missing:")
-    );
-    errors.length = 0;
-    for (const e of filtered) errors.push(e);
-    if (!errors.includes("partial_enriched")) errors.push("partial_enriched");
-    if (!yearOrDate && !errors.includes("placeholder:fullDate")) {
-      errors.push("placeholder:fullDate");
-    }
-    safetyNetUsed = true;
-  }
+  // NOTE: the previous in-file "safety-net manual emission" for bare-reporter
+  // caselaw has moved OUT of this file into `core/citationEnrichment.ts`
+  // (`manualPartialEmit`). `buildCitationForSource` is now a pure citation-
+  // engine adapter (resolver + bare-reporter / off-domain / pipe gates). The
+  // Core-only Citation Enrichment layer is the sole owner of any last-resort
+  // `partial_enriched` rewrite when the engine couldn't format verified
+  // docket + parties.
 
-  if (__lastResolverDebug) {
-    (__lastResolverDebug as any).safetyNetUsed = safetyNetUsed;
-  }
 
   // ─── Bare-reporter gate (Rule 18) ──────────────────────────────────────
   // A caselaw footnote that is only `פ"ד מט(4) 221` (no docket, no parties)
@@ -480,7 +452,7 @@ export function enrichBareReporterCitationWithDebug(
 ): { citation: LedgerSourceCitation; debug: EnrichmentDebug } {
   __lastResolverDebug = null;
   const citation = buildCitationForSource(ls, { ...hints, enrichmentRetry: true });
-  const dbg = __lastResolverDebug;
+  const dbg = readLastResolverDebug();
   __lastResolverDebug = null;
   const inputFields: string[] = [];
   for (const k of ["caseNumber", "party1", "party2", "year", "fullDate"] as const) {
@@ -505,7 +477,10 @@ export function enrichBareReporterCitationWithDebug(
       resolver_input_after_enrichment: resolverHints,
       resolver_output: resolverOutput,
       missing_fields_after_enrichment: Array.from(new Set(missingAfter)),
-      safety_net_used: !!(dbg && (dbg as any).safetyNetUsed),
+      // `safety_net_used` is now always false here; the manual-partial path
+      // lives in `core/citationEnrichment.ts` and is reported via that layer's
+      // `enrichment_path === "manual_partial"`.
+      safety_net_used: false,
     },
   };
 }

@@ -1,74 +1,97 @@
 
-## Root cause
+## Goal
 
-`enrichBareReporterCitation()` simply forwards hints to `buildCitationForSource()`, which calls `resolveCitation()` **without** `partyLookupRetry: true`. The placeholder-emission and `fullDate`-relaxation policies inside `citationResolver.ts` (lines 522–608) are gated on that flag — so when Pass B recovers `{docket, party1, party2}` but no `fullDate`/`year`, the resolver returns `needs_party_lookup` / `missing_required`, `buildCitationForSource` falls back to `passthroughCitation()` (which returns the original bare reporter text like `פ"ד מט(4) 221`), the bare-reporter gate at line 304 re-fires, `failed_bare_reporter` is re-added, and runCore logs `rebuild_still_bare`.
+Centralize all per-source citation work inside a single **Core-only Citation Enrichment layer**. The citation engine stays the sole formatter. Enrichment's only job is to assemble the richest possible structured input from a verified `LedgerSource` and hand it to the engine. Manual emission becomes a true last-resort `partial_enriched` path.
 
-In other words: Pass B is finding the parties, but the resolver path inside the *enrichment* call still behaves like a first-pass strict call, so the recovered fields never make it into a canonical string.
+## Architecture
 
-## Fix scope (narrow — only the enrichment path)
+```text
+LedgerSource (verified)
+    │
+    ▼
+[citationEnrichment.ts]  ← NEW, Core-only, no LLM
+    1. collectFields(ls)            // title, citation, snippet, url, metadata,
+    │                                // source_type, origin, reporter, section, docket, pinpoint
+    2. normalizeSourceType(ls)      // reuse existing helper
+    3. extractStructured(ls, recovered)  // source-type-aware regex extractors
+    │                                    // merged with per-pass `recovered` hints
+    4. callEngine(parts)            // resolveCitation via buildCitationForSource
+    │                                // enrichmentRetry=true → engine's placeholder path
+    5. manualPartialEmit(parts)     // ONLY if engine failed AND verified
+    │                                // (docket+parties | lawName+collection) exist
+    ▼
+Citation { canonical, quality, citation_errors[], debug }
+    │
+    ▼
+CitationQualityPass (unchanged)
+```
 
-Files touched:
-- `supabase/functions/legal-qa/core/citations.ts` — add an enrichment-mode flag, route resolver to retry policy, add safety-net manual emission.
-- `supabase/functions/legal-qa/core/runCore.ts` — pass the flag from all four enrichment passes; add the requested telemetry fields.
-- `supabase/functions/legal-qa/core/types.ts` — extend the `EnrichAttempt` shape if needed for the new telemetry fields.
+## Files
 
-Explicitly **not** touched: Planner, Retrieval, Verifier, Ledger, Drafter, BatchFootnoteBuilder, FootnoteReviewCard, citation-chat, src/components/**, partyLookup prompt, citationResolver.ts (we only flip the flag it already supports).
+### New: `supabase/functions/legal-qa/core/citationEnrichment.ts`
+- Owns the full flow above.
+- Exports:
+  - `RecoveredFields` — per-pass hint shape (docket, party1, party2, year, fullDate, lawName, hebrewYear, gregorianYear, collection, firstPage, …)
+  - `EnrichmentInput` — `{ ls, recovered?, passLabel }`
+  - `EnrichmentOutput` — `{ citation, debug: { input_fields, resolver_input, resolver_output, missing_after, path: "engine" | "manual_partial" | "engine_unresolved" } }`
+  - `enrichLedgerSource(input): EnrichmentOutput`
+- Internal helpers (private to this file): `collectFields`, `extractStructured` (source-type-aware regex set lifted from current `citations.ts` first-pass), `manualPartialEmit`.
+- No GPT/LLM calls. No fabricated fields — manual emit writes only values already present in the merged parts.
 
-## Changes
+### Refactor: `supabase/functions/legal-qa/core/citations.ts`
+- Keep `buildCitationForSource` strictly as **engine adapter**: take prepared hints → `resolveCitation` → post-resolver gates (bare-reporter, off-domain, pipe artifacts, source_type sanity).
+- Remove the inline "safety-net manual emission" block (current L352–388); that responsibility moves to `manualPartialEmit` in the new layer.
+- Remove first-pass field-extraction code that duplicates `extractStructured` and move it into the new layer.
+- Remove exports: `enrichBareReporterCitation`, `enrichBareReporterCitationWithDebug` (callers switch to `enrichLedgerSource`).
+- Keep `buildCitationsForLedger` as a thin bulk wrapper that calls `enrichLedgerSource(ls, { passLabel: "initial" })` per source.
 
-### 1. `citations.ts` — `BuildCitationHints` + `buildCitationForSource`
+### Refactor: `supabase/functions/legal-qa/core/runCore.ts`
+- All four enrichment passes (A metadata, B text_regex, C official_fetch, D party_lookup) stop calling the engine directly. Each pass:
+  1. Computes a `RecoveredFields` object from its own evidence.
+  2. Calls `enrichLedgerSource(ls, { recovered, passLabel })`.
+  3. Records telemetry from `EnrichmentOutput.debug`.
+- Telemetry counters keep their existing names: `bare_reporter_recovered`, `bare_reporter_dropped`, `partial_enriched`, `core_failed`, plus the per-pass counts. A new field `enrichment_path` (`engine` | `manual_partial` | `engine_unresolved`) is added per attempt.
 
-- Add `enrichmentRetry?: boolean` to `BuildCitationHints`.
-- When `hints.enrichmentRetry === true`, pass `partyLookupRetry: true` into `resolveCitation(...)`. This activates the existing placeholder-emission path (`[חסר: שנה]`, `[חסר: תאריך מלא]`, etc.) and the relaxed-`fullDate` policy, so resolver returns `{resolved: true, placeholders: [...]}` instead of falling through to passthrough.
-- After the resolver call, when `hints.enrichmentRetry` is true AND resolver still failed AND we have `caseNumber + party1 + party2` (from hints), **manually emit** a canonical line of the form `{prefix?} {docket} {party1} נ' {party2}.` (omit year/date — never invent them), set `canonical`, set `quality = "needs_review"`, push `partial_enriched` into `citation_errors`, and **do not push** `failed_bare_reporter`. This is the safety-net for the case where classify/extract loses parties on the second pass.
-- The bare-reporter gate at line 304 still runs, but on an enriched canonical that now contains a docket prefix + `נ'` separator, so `isBareReporter()` returns false and `failed_bare_reporter` is no longer re-added.
-- Return a side-channel debug object alongside (extend the function to also write to a `__lastResolverDebug` symbol, OR have it return a tuple via a sibling helper `enrichBareReporterCitationWithDebug()`). Pick the helper approach to avoid altering the existing return type for `buildCitationForSource()` callers.
+### Types: `supabase/functions/legal-qa/core/types.ts`
+- Lift the inline `EnrichAttempt` shape so the new layer can import it.
+- Add fields: `enrichment_input_fields`, `resolver_input`, `resolver_output`, `missing_after`, `enrichment_path`.
 
-### 2. `runCore.ts` — wire the flag and the telemetry
+## Not changed
 
-- In all four `enrichBareReporterCitation(ls, { ... })` call sites (Pass A metadata, Pass B text_regex, Pass C official_fetch, Pass D party_lookup), add `enrichmentRetry: true`.
-- Switch each site to `enrichBareReporterCitationWithDebug(...)` to capture `{ input, resolverOutput, missingAfter }`.
-- Extend the `EnrichAttempt` type with:
-  - `enrichment_input_fields?: string[]` — which hint keys were non-empty going in.
-  - `resolver_input_after_enrichment?: Record<string, string | undefined>` — the actual hint values sent.
-  - `resolver_output?: { resolved: boolean; canonical?: string; placeholders?: string[]; citation_errors: string[] }`.
-  - `missing_fields_after_enrichment?: string[]` — keys still missing after the enriched rebuild (year, fullDate, etc.).
-  - Keep the existing `rejection_reason` field; when the safety-net manual emission fires, set it to `partial_enriched` (not `rebuild_still_bare`).
-- Update the "recovered" calculation: `recovered = !fresh.citation_errors.includes("failed_bare_reporter")` stays correct, because the safety-net no longer pushes that error. `partial_enriched` results now count as recovered.
-- Bump telemetry summary line at L699 to also print `partial_enriched=N`.
-
-### 3. `types.ts`
-
-Add the new optional fields to the `EnrichAttempt`-related export if it lives here (it currently appears inline in `runCore.ts`; lift only if needed for compile).
+- `supabase/functions/_shared/citationResolver.ts`
+- `supabase/functions/_shared/citationEngine.ts`
+- `supabase/functions/_shared/partyLookup.ts`
+- `supabase/functions/legal-qa/core/officialSourceFetcher.ts`
+- Planner, Verifier, Ledger, Drafter, BatchFootnoteBuilder
+- `supabase/functions/citation-chat`
+- All `src/components/**`, all `src/data/citationEngine.ts` (React copy)
+- `prompts.ts` (drafter contract is unchanged)
 
 ## Hard rules preserved
 
-- No GPT/LLM call added; Pass B/C remain regex-only.
-- No fabricated `year`/`fullDate`/`parties`/`docket` — safety-net manual emission writes only what was already in `hints`.
-- Bare-reporter gate stays strict for first-pass calls (`enrichmentRetry` default false).
-- `partyLookup` prompt untouched.
-- Off-domain check, `journal_pipe`, source-type sanity checks all still run on the enriched canonical.
+- Engine is the only formatter when sufficient structured fields exist.
+- No GPT in the enrichment layer; regex + structured metadata only.
+- No fabricated `year` / `fullDate` / `parties` / `docket` — `manualPartialEmit` only writes verified values already in the merged parts.
+- `partial_enriched` is last-resort: fires only when engine returned unresolved AND verified minimum fields are present (caselaw: docket+party1+party2; legislation: lawName+collection).
+- Bare-reporter / off-domain / pipe-artifact gates run on the engine's canonical output, same as today.
 
-## Acceptance criteria (re-verified by smoke run)
+## Telemetry / acceptance for the smoke run
 
-- `enrichBareReporterCitation` given `{docket, party1, party2}` (with or without year) must NOT return `rejection_reason="rebuild_still_bare"`.
-- `text_regex_recovered > 0` on S1/S4/S6/S8.
-- Recovered citations appear in final answer as either full canonical (when year/date present) or `<prefix> <docket> P1 נ' P2.` / canonical with `[חסר: ...]` markers (when temporal anchor missing), classed `partial_enriched` / `needs_review`.
-- Invariants from prior run still hold: 0 `answer=null`, 0 `[cite:LS#]` leftovers, 0 orphan superscripts, 0 `(ציטוט חסר)`, 0 bare-reporter footnotes shipped, 0 pipe artifacts, 0 raw `source_type` leaks.
-- No hallucinated year/date in any footnote.
+Per attempt:
+- `enrichment_path`: `engine` | `manual_partial` | `engine_unresolved`
+- `enrichment_input_fields`: keys present going in
+- `resolver_output`: `{ resolved, canonical?, placeholders?, citation_errors[] }`
+- `missing_after`: keys still missing post-resolver
+
+Aggregate must hold:
+- 0 `answer=null`, 0 `[cite:LS#]` leftovers, 0 orphan superscripts, 0 `(ציטוט חסר)`, 0 bare-reporter footnotes shipped
+- `core_failed` does not regress vs. previous run
+- S6/S7/S8 citation grades remain at or above previous run
+- `manual_partial` count ≤ previous `partial_enriched` count (engine should now handle more cases via placeholders)
 
 ## Validation
 
-1. Run `eval/_smoke10_v2.mjs` filtered to S1, S4, S6, S8 (add S7 if any of those still leak bare reporters).
-2. Diff each affected attempt's new telemetry block (`enrichment_input_fields`, `resolver_output`, `missing_fields_after_enrichment`) against the prior run.
-3. Report:
-   - `text_regex_attempted` / `recovered`
-   - `official_fetch_attempted` / `recovered` / `timeouts`
-   - `party_lookup_attempted` / `hits` / `timeouts`
-   - `bare_reporter_recovered` vs `bare_reporter_dropped`
-   - `partial_enriched` count
-   - `core_failed` count
-   - Two before/after footnote examples per affected case.
-4. If still bare on any S-case, inspect new telemetry to determine whether (a) Pass B regex missed parties, (b) resolver dropped them, or (c) safety-net was not triggered — and propose one targeted follow-up.
-
-No other behavior changes.
+1. Type-check edge functions.
+2. Run `eval/_smoke10_v2.mjs` (all 10).
+3. Report per attempt: `enrichment_path`, before/after canonical, and the aggregate counters above.
+4. Diff `engine` vs `manual_partial` distribution against the prior run.

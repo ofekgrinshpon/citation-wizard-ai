@@ -21,9 +21,13 @@ import { buildLedger } from "./ledger.ts";
 import { draft } from "./drafter.ts";
 import {
   buildCitationsForLedger,
-  enrichBareReporterCitationWithDebug,
-  type EnrichmentDebug,
 } from "./citations.ts";
+import {
+  enrichLedgerSource,
+  type EnrichmentOutput,
+  type EnrichmentPath,
+} from "./citationEnrichment.ts";
+type EnrichmentDebug = EnrichmentOutput["debug"];
 import { runCitationQuality } from "./citation_quality.ts";
 import {
   extractDocketFromText,
@@ -346,6 +350,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     resolver_output?: EnrichmentDebug["resolver_output"];
     missing_fields_after_enrichment?: string[];
     safety_net_used?: boolean;
+    enrichment_path?: EnrichmentPath;
     partial_enriched?: boolean;
   };
   const enrichment = {
@@ -378,9 +383,9 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     !s ? undefined : (s.length > n ? s.slice(0, n) + "…" : s);
 
   /**
-   * Tag an EnrichAttempt with the debug envelope from
-   * `enrichBareReporterCitationWithDebug`. Mutates `attempt` in place.
-   * Also returns derived booleans for the caller's counter logic.
+   * Tag an EnrichAttempt with the debug envelope returned by
+   * `enrichLedgerSource` (Core-only Citation Enrichment layer). Mutates
+   * `attempt` in place and returns derived booleans for counter logic.
    */
   const annotateAttempt = (
     attempt: EnrichAttempt,
@@ -392,6 +397,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     attempt.resolver_output = debug.resolver_output;
     attempt.missing_fields_after_enrichment = debug.missing_fields_after_enrichment;
     attempt.safety_net_used = debug.safety_net_used;
+    attempt.enrichment_path = debug.enrichment_path;
     const recovered = !citation.citation_errors.includes("failed_bare_reporter");
     const partial = citation.citation_errors.includes("partial_enriched");
     attempt.partial_enriched = partial;
@@ -417,12 +423,16 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     }
     const metaCase = rich?.case_number;
     if (p1 && p2) {
-      const { citation: fresh, debug } = enrichBareReporterCitationWithDebug(ls, {
-        caseNumber: metaCase,
-        party1: p1,
-        party2: p2,
-        year: rich?.year,
-        fullDate: rich?.decision_date,
+      const { citation: fresh, debug } = enrichLedgerSource({
+        ls,
+        passLabel: "metadata",
+        recovered: {
+          caseNumber: metaCase,
+          party1: p1,
+          party2: p2,
+          year: rich?.year,
+          fullDate: rich?.decision_date,
+        },
       });
       citations.set(id, fresh);
       const attempt: EnrichAttempt = {
@@ -464,12 +474,16 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
       url: ls.url,
     });
     if (fields.docket && fields.party1 && fields.party2) {
-      const { citation: fresh, debug } = enrichBareReporterCitationWithDebug(ls, {
-        caseNumber: fields.docket,
-        party1: fields.party1,
-        party2: fields.party2,
-        year: fields.year,
-        fullDate: fields.fullDate,
+      const { citation: fresh, debug } = enrichLedgerSource({
+        ls,
+        passLabel: "text_regex",
+        recovered: {
+          caseNumber: fields.docket,
+          party1: fields.party1,
+          party2: fields.party2,
+          year: fields.year,
+          fullDate: fields.fullDate,
+        },
       });
       citations.set(id, fresh);
       const attempt: EnrichAttempt = {
@@ -528,12 +542,16 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
         if (r.status !== "fulfilled") continue;
         const { id, ls, fields } = r.value;
         if (fields && fields.docket && fields.party1 && fields.party2) {
-          const { citation: fresh, debug } = enrichBareReporterCitationWithDebug(ls, {
-            caseNumber: fields.docket,
-            party1: fields.party1,
-            party2: fields.party2,
-            year: fields.year,
-            fullDate: fields.fullDate,
+          const { citation: fresh, debug } = enrichLedgerSource({
+            ls,
+            passLabel: "official_fetch",
+            recovered: {
+              caseNumber: fields.docket,
+              party1: fields.party1,
+              party2: fields.party2,
+              year: fields.year,
+              fullDate: fields.fullDate,
+            },
           });
           citations.set(id, fresh);
           const attempt: EnrichAttempt = {
@@ -681,12 +699,16 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
             enrichment.attempts.push(baseAttempt);
             continue;
           }
-          const { citation: fresh, debug } = enrichBareReporterCitationWithDebug(ls, {
-            caseNumber: docket,
-            party1: hit.party1,
-            party2: hit.party2,
-            fullDate: hit.fullDate,
-            year: hit.year,
+          const { citation: fresh, debug } = enrichLedgerSource({
+            ls,
+            passLabel: "party_lookup",
+            recovered: {
+              caseNumber: docket,
+              party1: hit.party1,
+              party2: hit.party2,
+              fullDate: hit.fullDate,
+              year: hit.year,
+            },
           });
           citations.set(meta.ls_id, fresh);
           baseAttempt.status = "hit";
