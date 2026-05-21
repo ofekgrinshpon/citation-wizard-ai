@@ -304,6 +304,7 @@ function extractCaseLawPublished(
   party2Hint?: string,
   yearHint?: string,
   caseTypeHint?: string,
+  fullDateHint?: string,
 ): Record<string, string> {
   const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint, caseTypeHint);
   // Series
@@ -318,9 +319,15 @@ function extractCaseLawPublished(
   // Year in parens
   const yearMatch = text.match(/\((\d{4})\)/);
   if (yearMatch) fields.year = yearMatch[1];
-  // v4 stage 2: yearHint fallback (party-lookup helper sometimes returns year)
+  // yearHint fallback (recovered via metadata / approved-source lookup).
   if (!fields.year && yearHint && /^\d{4}$/.test(yearHint.trim())) {
     fields.year = yearHint.trim();
+  }
+  // fullDateHint fallback — derive year from a verified dd.mm.yyyy date.
+  // Only consumes a real verified date; never derived from docket suffix.
+  if (!fields.year && fullDateHint) {
+    const m = fullDateHint.trim().match(/^\d{1,2}\.\d{1,2}\.(\d{4})$/);
+    if (m) fields.year = m[1];
   }
   return fields;
 }
