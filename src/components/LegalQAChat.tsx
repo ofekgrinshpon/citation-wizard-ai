@@ -2976,7 +2976,15 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   </div>
                   {result.footnotes.length > 0 && (
                     <div className="border-t border-border pt-4 mt-6 space-y-2">
-                      <h3 className="font-semibold text-muted-foreground" style={{ fontSize: "11pt" }}>הערות שוליים</h3>
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-muted-foreground" style={{ fontSize: "11pt" }}>הערות שוליים</h3>
+                        <button
+                          onClick={() => setReviewOpen((v) => !v)}
+                          className="text-[11px] px-2 py-1 rounded-md bg-secondary/15 text-secondary hover:bg-secondary/25 font-medium"
+                        >
+                          {reviewOpen ? "סגור בדיקה" : "בדוק ציטוטים"}
+                        </button>
+                      </div>
                       <ol className="space-y-1.5">
                         {result.footnotes.map((fn) => {
                           const badge = getSourceBadge(fn.source);
@@ -2991,6 +2999,14 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                           );
                         })}
                       </ol>
+                      {reviewOpen && (
+                        <CitationReviewPanel
+                          answer={result.answer}
+                          footnotes={result.footnotes}
+                          onApply={applyCitationReview}
+                          onCancel={() => setReviewOpen(false)}
+                        />
+                      )}
                     </div>
                   )}
                   {!!result.dropped_footnotes_count && result.dropped_footnotes_count > 0 && (
