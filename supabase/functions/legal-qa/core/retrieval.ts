@@ -50,6 +50,13 @@ const EXPECTED_EMBEDDING_DIM = 768;
 // per-claim cap even when local_text already fills the budget. Reserve is for
 // RECALL — verifier still gates relevance.
 const PER_CLAIM_ANCHOR_RESERVE = 2;
+// When both anchor layers (factual + concept) have candidates, guarantee at
+// least this many slots per layer so concept docs aren't starved by factual
+// hits that always sort first in the merged pool.
+const ANCHOR_RESERVE_PER_LAYER = 1;
+// Hard cap on concept-anchor terms after merging planner output with the
+// doctrine-synonym expansion (Section G).
+const CONCEPT_ANCHOR_TERMS_MAX = 5;
 // Anchor-driven approved_web (Section D). Extra web hits when local recall is
 // thin or the claim explicitly needs scholarship/doctrinal_definition.
 const ANCHOR_WEB_PER_CLAIM = 2;
