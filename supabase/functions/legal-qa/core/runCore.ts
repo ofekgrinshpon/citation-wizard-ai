@@ -144,7 +144,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     };
   }
   const plan = planRes.plan;
-  emitSafe(onStage, "plan", "complete", `claims=${plan.claims.length} auth=${plan.expected_authorities.length}`);
+  emitSafe(onStage, "plan", "complete", `claims=${plan.claims.length} auth=${plan.expected_authorities.length} anchors=${(plan.factual_anchor_terms?.length ?? 0)}`);
 
   // ─── 2. Retrieval ──────────────────────────────────────────────────────
   emitSafe(onStage, "retrieval", "running");
