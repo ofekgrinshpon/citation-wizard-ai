@@ -201,6 +201,23 @@ export async function draft(args: DraftArgs): Promise<DraftResult> {
   // Drop any "מקורות" list at the end if the model added one.
   raw = raw.replace(/\n+\*?\*?מקורות\*?\*?\s*:[\s\S]*$/u, "").trim();
 
+  // Strip raw Unicode superscript runs the drafter may have emitted despite
+  // the rules. Footnote numbering is owned by the Footnote Builder; any
+  // superscript here is a prompt violation that would otherwise trip the
+  // sup_no_footnote acceptance gate. We remove the run and any single
+  // space immediately preceding it (so "word¹ ." → "word.").
+  const SUP_RUN = /[\u00B2\u00B3\u00B9\u2070-\u2079]+/g;
+  const supMatches = raw.match(SUP_RUN);
+  if (supMatches && supMatches.length > 0) {
+    raw = raw
+      .replace(/ ?[\u00B2\u00B3\u00B9\u2070-\u2079]+/g, "")
+      .replace(/ {2,}/g, " ")
+      .replace(/\s+([.,;:])/g, "$1")
+      .trim();
+    warnings.push(`raw_superscript_stripped:${supMatches.length}`);
+  }
+
+
   // Strip unknown citation markers (and remember them).
   const { cleaned, unknown } = stripUnknownMarkers(raw, validIds);
   let answer = cleaned;
