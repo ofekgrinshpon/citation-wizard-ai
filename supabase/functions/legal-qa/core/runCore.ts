@@ -423,11 +423,14 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     }
     const metaCase = rich?.case_number;
     if (p1 && p2) {
+      // Scan ls fields for a docket prefix when metadata.case_number lacks one.
+      const dkFromLs = extractDocketFromText(`${ls.title || ""}\n${ls.citation || ""}\n${ls.snippet || ""}`);
       const { citation: fresh, debug } = enrichLedgerSource({
         ls,
         passLabel: "metadata",
         recovered: {
-          caseNumber: metaCase,
+          caseNumber: metaCase || dkFromLs?.docket,
+          caseType: dkFromLs?.prefix,
           party1: p1,
           party2: p2,
           year: rich?.year,
