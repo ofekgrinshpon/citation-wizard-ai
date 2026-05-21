@@ -106,6 +106,8 @@ export interface ClaimAnchorTelemetry {
   anchor_doc_ids: string[];
   anchor_source_types: string[];
   anchor_displaced_primary: boolean;
+  /** Section F: which anchor layers actually contributed slots for this claim. */
+  anchor_layers_used?: Array<"factual" | "concept">;
 }
 
 export interface ClaimWebStubTelemetry {
