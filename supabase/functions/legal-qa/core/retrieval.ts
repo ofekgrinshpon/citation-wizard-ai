@@ -54,6 +54,9 @@ const PER_CLAIM_ANCHOR_RESERVE = 2;
 // thin or the claim explicitly needs scholarship/doctrinal_definition.
 const ANCHOR_WEB_PER_CLAIM = 2;
 const ANCHOR_WEB_THIN_LOCAL_THRESHOLD = 4;
+// Combined cap (originals + doctrine-synonym expansions) per anchor layer.
+// Keeps fan-out bounded: at most this many FTS+vector pairs run per layer.
+const ANCHOR_LAYER_TERM_CAP = 6;
 // Government / regulator subset of TIER_A for factual-anchor web queries.
 const TIER_A_GOV_HOSTS: readonly string[] = [
   "knesset.gov.il",
