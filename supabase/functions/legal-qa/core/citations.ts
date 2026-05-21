@@ -207,7 +207,38 @@ export interface BuildCitationHints {
   fullDate?: string;
   year?: string;
   caseNumber?: string;
+  /**
+   * When true, this is a SECOND-pass call from the bare-reporter enrichment
+   * path. The resolver is run with `partyLookupRetry: true` (enabling its
+   * placeholder-emission + relaxed-fullDate policies), and a safety-net manual
+   * canonical is emitted when docket + both parties are present but resolver
+   * still couldn't produce a string.
+   */
+  enrichmentRetry?: boolean;
 }
+
+/** Debug envelope returned alongside the enriched citation. No PII, no LLM. */
+export interface EnrichmentDebug {
+  enrichment_input_fields: string[];
+  resolver_input_after_enrichment: Record<string, string | undefined>;
+  resolver_output: {
+    resolved: boolean;
+    canonical?: string;
+    placeholders?: string[];
+    citation_errors: string[];
+  };
+  missing_fields_after_enrichment: string[];
+  safety_net_used: boolean;
+}
+
+let __lastResolverDebug: {
+  resolved: boolean;
+  canonical?: string;
+  placeholders?: string[];
+  reason?: string;
+  missingFields?: string[];
+  resolverHints?: Record<string, string | undefined>;
+} | null = null;
 
 export function buildCitationForSource(
   ls: LedgerSource,
@@ -242,13 +273,35 @@ export function buildCitationForSource(
     yearHint: hints.year ?? yearFromText,
   };
 
+  let safetyNetUsed = false;
   if (declared !== "none") {
     engine_used = "resolver";
     const res: ResolveResult = resolveCitation(
       ls.citation || ls.title || "",
       declared as DeclaredType,
-      resolverHints,
+      {
+        ...resolverHints,
+        // Second-pass enrichment: enable placeholder-emission + relaxed
+        // fullDate policy inside the resolver so recovered docket+parties
+        // produce a canonical instead of falling through to passthrough.
+        partyLookupRetry: hints.enrichmentRetry === true,
+      },
     );
+    __lastResolverDebug = {
+      resolved: res.resolved,
+      canonical: res.resolved ? res.canonical : undefined,
+      placeholders: res.resolved ? res.placeholders : undefined,
+      reason: res.resolved ? undefined : res.reason,
+      missingFields: res.resolved ? [] : res.missingFields,
+      resolverHints: {
+        titleHint: resolverHints.titleHint,
+        caseNumberHint: resolverHints.caseNumberHint,
+        party1Hint: resolverHints.party1Hint,
+        party2Hint: resolverHints.party2Hint,
+        fullDateHint: resolverHints.fullDateHint,
+        yearHint: resolverHints.yearHint,
+      },
+    };
     if (res.resolved) {
       engineSourceType = res.sourceType;
       canonical = res.canonical;
@@ -295,6 +348,48 @@ export function buildCitationForSource(
 
   // Deterministic cleanup of the canonical text (idempotent, no LLM).
   if (canonical) canonical = cleanCitationText(canonical);
+
+  // ─── Enrichment safety-net (second-pass only) ──────────────────────────
+  // If we're on the enrichment retry pass and resolver still couldn't
+  // produce a non-bare canonical, but we DO have docket + both parties from
+  // recovered hints, emit a manual canonical straight from those verified
+  // fields. No year/date is invented — only what's in `hints`.
+  if (
+    hints.enrichmentRetry === true &&
+    declared === "caselaw" &&
+    hints.caseNumber && hints.caseNumber.trim() &&
+    hints.party1 && hints.party1.trim() &&
+    hints.party2 && hints.party2.trim() &&
+    (!canonical || isBareReporter(canonical))
+  ) {
+    const docket = hints.caseNumber.trim();
+    const p1 = hints.party1.trim();
+    const p2 = hints.party2.trim();
+    const yearOrDate = (hints.fullDate && hints.fullDate.trim())
+      ? ` (${hints.fullDate.trim()})`
+      : (hints.year && hints.year.trim())
+        ? ` (${hints.year.trim()})`
+        : "";
+    canonical = cleanCitationText(`${docket} ${p1} נ' ${p2}${yearOrDate}.`);
+    quality = "needs_review";
+    // Strip prior failure markers; this no longer reads as bare-reporter.
+    const filtered = errors.filter((e) =>
+      e !== "failed_bare_reporter" &&
+      !e.startsWith("engine:") &&
+      !e.startsWith("missing:")
+    );
+    errors.length = 0;
+    for (const e of filtered) errors.push(e);
+    if (!errors.includes("partial_enriched")) errors.push("partial_enriched");
+    if (!yearOrDate && !errors.includes("placeholder:fullDate")) {
+      errors.push("placeholder:fullDate");
+    }
+    safetyNetUsed = true;
+  }
+
+  if (__lastResolverDebug) {
+    (__lastResolverDebug as any).safetyNetUsed = safetyNetUsed;
+  }
 
   // ─── Bare-reporter gate (Rule 18) ──────────────────────────────────────
   // A caselaw footnote that is only `פ"ד מט(4) 221` (no docket, no parties)
@@ -363,11 +458,56 @@ export function buildCitationsForLedger(
  * Re-build a citation for a LedgerSource using freshly recovered party-name
  * / date hints (e.g. from `_shared/partyLookup.ts`). Returns the new
  * `LedgerSourceCitation`. Caller swaps it into the citations map.
+ *
+ * Forces `enrichmentRetry: true` so the resolver runs in retry mode (placeholder
+ * emission + relaxed fullDate) and the safety-net manual emission can fire.
  */
 export function enrichBareReporterCitation(
   ls: LedgerSource,
   hints: BuildCitationHints,
 ): LedgerSourceCitation {
-  return buildCitationForSource(ls, hints);
+  return buildCitationForSource(ls, { ...hints, enrichmentRetry: true });
 }
+
+/**
+ * Same as enrichBareReporterCitation but also returns a side-channel debug
+ * envelope describing the resolver input/output and whether the safety-net
+ * manual emission fired. For telemetry only.
+ */
+export function enrichBareReporterCitationWithDebug(
+  ls: LedgerSource,
+  hints: BuildCitationHints,
+): { citation: LedgerSourceCitation; debug: EnrichmentDebug } {
+  __lastResolverDebug = null;
+  const citation = buildCitationForSource(ls, { ...hints, enrichmentRetry: true });
+  const dbg = __lastResolverDebug;
+  __lastResolverDebug = null;
+  const inputFields: string[] = [];
+  for (const k of ["caseNumber", "party1", "party2", "year", "fullDate"] as const) {
+    if (hints[k] && String(hints[k]).trim()) inputFields.push(k);
+  }
+  const resolverHints = dbg?.resolverHints ?? {};
+  const resolverOutput = {
+    resolved: !!dbg?.resolved,
+    canonical: dbg?.canonical,
+    placeholders: dbg?.placeholders,
+    citation_errors: citation.citation_errors,
+  };
+  const missingAfter: string[] = [];
+  for (const e of citation.citation_errors) {
+    if (e.startsWith("placeholder:")) missingAfter.push(e.slice("placeholder:".length));
+    else if (e.startsWith("missing:")) missingAfter.push(e.slice("missing:".length));
+  }
+  return {
+    citation,
+    debug: {
+      enrichment_input_fields: inputFields,
+      resolver_input_after_enrichment: resolverHints,
+      resolver_output: resolverOutput,
+      missing_fields_after_enrichment: Array.from(new Set(missingAfter)),
+      safety_net_used: !!(dbg && (dbg as any).safetyNetUsed),
+    },
+  };
+}
+
 
