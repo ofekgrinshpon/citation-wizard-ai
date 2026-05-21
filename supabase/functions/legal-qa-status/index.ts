@@ -10,14 +10,41 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
-function deriveStatus(metadata: Record<string, unknown> | null, hasAnswer: boolean): string {
+const PLACEHOLDER_ANSWER = "מעבד שאלה…";
+// Watchdog: if the async worker pre-inserted a "core_running" row but never
+// finished writing the real answer (e.g. EdgeRuntime killed it for CPU/wall
+// time), surface it as failed once enough time has passed. Deep budget is
+// ~3–4 min; we give a generous buffer.
+const WORKER_TIMEOUT_MS = 6 * 60 * 1000;
+
+function deriveStatus(
+  metadata: Record<string, unknown> | null,
+  hasAnswer: boolean,
+  isPlaceholder: boolean,
+  pipelineUsed: string | null,
+  createdAtMs: number | null,
+): string {
   const cp = (metadata?.checkpoint as string | undefined) ?? null;
-  if (hasAnswer) return "completed";
+
+  // Terminal failures win first.
   if (cp === "failed" || cp === "error" || cp === "drafting_failed") return "failed";
+
+  // Worker pre-inserted a placeholder row and hasn't replaced it yet.
+  // This is NOT completed — it's still running (or silently dead).
+  const isCoreRunning = pipelineUsed === "core_running";
+  if (isPlaceholder || isCoreRunning) {
+    if (createdAtMs !== null && Date.now() - createdAtMs > WORKER_TIMEOUT_MS) {
+      return "failed";
+    }
+    return "running";
+  }
+
+  if (hasAnswer) return "completed";
   if (cp === "queued") return "queued";
   if (cp) return "running";
   return "running";
 }
+
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -75,8 +102,12 @@ Deno.serve(async (req) => {
     }
 
     const metadata = (row.metadata as Record<string, unknown> | null) ?? null;
-    const hasAnswer = typeof row.answer === "string" && row.answer.length > 0;
-    const status = deriveStatus(metadata, hasAnswer);
+    const answerStr = typeof row.answer === "string" ? row.answer : "";
+    const hasAnswer = answerStr.length > 0;
+    const isPlaceholder = answerStr.trim() === PLACEHOLDER_ANSWER;
+    const pipelineUsed = (metadata?.pipeline_used as string | undefined) ?? null;
+    const createdAtMs = row.created_at ? new Date(row.created_at as string).getTime() : null;
+    const status = deriveStatus(metadata, hasAnswer, isPlaceholder, pipelineUsed, Number.isFinite(createdAtMs as number) ? createdAtMs : null);
 
     const stageRuns = Array.isArray(metadata?.stage_runs) ? (metadata!.stage_runs as Array<Record<string, unknown>>) : [];
     const lastStage = stageRuns.length ? stageRuns[stageRuns.length - 1] : null;
@@ -91,8 +122,9 @@ Deno.serve(async (req) => {
           stages_completed: stageRuns.length,
           last_stage: lastStage?.stage ?? null,
           last_stage_status: lastStage?.status ?? null,
+          pipeline_used: pipelineUsed,
         },
-        // Only return heavy payloads when terminal.
+        // Only return heavy payloads when terminal — never leak the placeholder.
         ...(status === "completed" ? {
           question: row.question,
           answer: row.answer,
@@ -104,7 +136,11 @@ Deno.serve(async (req) => {
         ...(status === "failed" ? {
           drafter_failure: metadata?.drafter_failure ?? null,
           error_message: metadata?.error_message ?? null,
+          reason: (pipelineUsed === "core_running" && (metadata?.checkpoint !== "failed"))
+            ? "worker_timeout"
+            : ((metadata?.drafter_failure as Record<string, unknown> | null)?.reason ?? null),
         } : {}),
+
         // Lightweight metadata always useful for the UI / admins.
         metadata_summary: {
           depth: metadata?.depth ?? null,
