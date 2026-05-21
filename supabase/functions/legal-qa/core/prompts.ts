@@ -14,6 +14,7 @@ PlanV1 schema (TypeScript):
     thesis: string;                     // 1-2 Hebrew sentences, the doctrinal answer
     claims: Claim[];                    // 2-6 atomic claims
     expected_authorities: ExpectedAuthority[]; // 2-8 seminal Israeli sources
+    factual_anchor_terms: string[];     // factual nouns/phrases lifted from the question (see rule 12)
   }
   interface Claim {
     id: ClaimId;
