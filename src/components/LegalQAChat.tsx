@@ -15,6 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { CaseSummaryReport } from "@/components/CaseSummaryReport";
 import { ResearchProgress } from "@/components/ResearchProgress";
 import { StageProgressList, type StageEvent } from "@/components/StageProgressList";
+import { CitationReviewPanel } from "@/components/legal-qa/CitationReviewPanel";
 
 // ─── Chapter role helpers ──────────────────────────────────────────
 // Three special chapters in addition to body: abstract, introduction, conclusion.
@@ -863,6 +864,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
   const [question, setQuestion] = useState("");
   const [result, setResult] = useState<QAResult | null>(null);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const applyCitationReview = (next: { answer: string; footnotes: Footnote[] }) => {
+    setResult((prev) =>
+      prev ? { ...prev, answer: next.answer, footnotes: next.footnotes } : prev,
+    );
+    setReviewOpen(false);
+  };
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [taskMode, setTaskMode] = useState<TaskMode>("research");
