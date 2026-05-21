@@ -383,9 +383,9 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     !s ? undefined : (s.length > n ? s.slice(0, n) + "…" : s);
 
   /**
-   * Tag an EnrichAttempt with the debug envelope from
-   * `enrichBareReporterCitationWithDebug`. Mutates `attempt` in place.
-   * Also returns derived booleans for the caller's counter logic.
+   * Tag an EnrichAttempt with the debug envelope returned by
+   * `enrichLedgerSource` (Core-only Citation Enrichment layer). Mutates
+   * `attempt` in place and returns derived booleans for counter logic.
    */
   const annotateAttempt = (
     attempt: EnrichAttempt,
