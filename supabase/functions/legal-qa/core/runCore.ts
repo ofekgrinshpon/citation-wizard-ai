@@ -188,9 +188,42 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   emitSafe(onStage, "ledger", "running");
   const tLed = Date.now();
   const candidateMeta = new Map<string, { source_type?: string; document_id?: string }>();
+  // Richer per-candidate metadata kept locally for enrichment ONLY — does not
+  // flow into Planner/Retrieval/Verifier/Ledger. Keyed by candidate_id.
+  const candidateRichMeta = new Map<string, {
+    case_number?: string;
+    parties?: { party1?: string; party2?: string } | string;
+    decision_date?: string;
+    court?: string;
+    year?: string;
+    judges?: string;
+  }>();
   for (const pack of retrieval.packs) {
     for (const c of pack.candidates) {
       candidateMeta.set(c.candidate_id, { source_type: c.source_type, document_id: c.document_id });
+      const m = (c.metadata || {}) as Record<string, unknown>;
+      const pickStr = (k: string): string | undefined => {
+        const v = m[k];
+        return typeof v === "string" && v.trim() ? v.trim() : undefined;
+      };
+      let parties: { party1?: string; party2?: string } | string | undefined;
+      const rawParties = m.parties;
+      if (rawParties && typeof rawParties === "object") {
+        const rp = rawParties as Record<string, unknown>;
+        const p1 = typeof rp.party1 === "string" ? rp.party1.trim() : undefined;
+        const p2 = typeof rp.party2 === "string" ? rp.party2.trim() : undefined;
+        if (p1 && p2) parties = { party1: p1, party2: p2 };
+      } else if (typeof rawParties === "string" && rawParties.trim()) {
+        parties = rawParties.trim();
+      }
+      candidateRichMeta.set(c.candidate_id, {
+        case_number: pickStr("case_number"),
+        parties,
+        decision_date: pickStr("decision_date"),
+        court: pickStr("court"),
+        year: pickStr("year"),
+        judges: pickStr("judges"),
+      });
     }
   }
   const ledger = buildLedger({
