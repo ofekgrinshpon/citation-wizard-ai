@@ -15,6 +15,7 @@ PlanV1 schema (TypeScript):
     claims: Claim[];                    // 2-6 atomic claims
     expected_authorities: ExpectedAuthority[]; // 2-8 seminal Israeli sources
     factual_anchor_terms: string[];     // factual nouns/phrases lifted from the question (see rule 12)
+    concept_anchor_terms: string[];     // doctrinal key phrases lifted from the question (see rule 13)
   }
   interface Claim {
     id: ClaimId;
@@ -89,6 +90,20 @@ Hard rules:
     Additionally, every claim that references such a factual subject should
     include at least one search_target whose hebrew_terms contains that
     factual term alongside the doctrinal ones.
+13. concept_anchor_terms is MANDATORY. Lift 1-4 DOCTRINAL key phrases
+    DIRECTLY from the user's question — the legal-conceptual subject matter,
+    in the EXACT wording the question uses. Examples:
+      - "מחדל חקיקתי חלקי", "חובה לחוקק"   (when question asks about these)
+      - "סעד זמני", "מאזן הנוחות"
+      - "פסקת ההגבלה", "מידתיות"
+    These complement factual_anchor_terms by letting the retrieval pre-pass
+    surface academic articles/monographs whose titles use a synonymous
+    framing that won't appear verbatim in claim search_targets (e.g. an
+    article titled "סעד החובה לחוקק" should be reachable from the concept
+    anchor "חובה לחוקק" even when claims only mention "מחדל חקיקתי").
+    Return [] only if the question has no doctrinal content at all
+    (essentially never).
+
 
 SELF-CHECK (perform silently before emitting JSON; do NOT include this in
 the output):
