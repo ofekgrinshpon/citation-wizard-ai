@@ -303,8 +303,9 @@ function extractCaseLawPublished(
   party1Hint?: string,
   party2Hint?: string,
   yearHint?: string,
+  caseTypeHint?: string,
 ): Record<string, string> {
-  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint);
+  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint, caseTypeHint);
   // Series
   const seriesMatch = text.match(/(פ["״]ד|פד["״]ע|פ["״]מ)/);
   if (seriesMatch) fields.series = seriesMatch[1];
@@ -333,8 +334,9 @@ function extractCaseLawDatabase(
   party2Hint?: string,
   fullDateHint?: string,
   yearHint?: string,
+  caseTypeHint?: string,
 ): Record<string, string> {
-  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint);
+  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint, caseTypeHint);
   // Database name (optional per schema) — scan citation text first, then titleHint.
   // Perplexity often puts the database name (e.g. "נבו") in the title field
   // rather than the citation string itself.
