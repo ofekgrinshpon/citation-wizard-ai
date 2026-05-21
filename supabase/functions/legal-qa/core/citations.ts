@@ -273,13 +273,35 @@ export function buildCitationForSource(
     yearHint: hints.year ?? yearFromText,
   };
 
+  let safetyNetUsed = false;
   if (declared !== "none") {
     engine_used = "resolver";
     const res: ResolveResult = resolveCitation(
       ls.citation || ls.title || "",
       declared as DeclaredType,
-      resolverHints,
+      {
+        ...resolverHints,
+        // Second-pass enrichment: enable placeholder-emission + relaxed
+        // fullDate policy inside the resolver so recovered docket+parties
+        // produce a canonical instead of falling through to passthrough.
+        partyLookupRetry: hints.enrichmentRetry === true,
+      },
     );
+    __lastResolverDebug = {
+      resolved: res.resolved,
+      canonical: res.resolved ? res.canonical : undefined,
+      placeholders: res.resolved ? res.placeholders : undefined,
+      reason: res.resolved ? undefined : res.reason,
+      missingFields: res.resolved ? [] : res.missingFields,
+      resolverHints: {
+        titleHint: resolverHints.titleHint,
+        caseNumberHint: resolverHints.caseNumberHint,
+        party1Hint: resolverHints.party1Hint,
+        party2Hint: resolverHints.party2Hint,
+        fullDateHint: resolverHints.fullDateHint,
+        yearHint: resolverHints.yearHint,
+      },
+    };
     if (res.resolved) {
       engineSourceType = res.sourceType;
       canonical = res.canonical;
@@ -326,6 +348,48 @@ export function buildCitationForSource(
 
   // Deterministic cleanup of the canonical text (idempotent, no LLM).
   if (canonical) canonical = cleanCitationText(canonical);
+
+  // ─── Enrichment safety-net (second-pass only) ──────────────────────────
+  // If we're on the enrichment retry pass and resolver still couldn't
+  // produce a non-bare canonical, but we DO have docket + both parties from
+  // recovered hints, emit a manual canonical straight from those verified
+  // fields. No year/date is invented — only what's in `hints`.
+  if (
+    hints.enrichmentRetry === true &&
+    declared === "caselaw" &&
+    hints.caseNumber && hints.caseNumber.trim() &&
+    hints.party1 && hints.party1.trim() &&
+    hints.party2 && hints.party2.trim() &&
+    (!canonical || isBareReporter(canonical))
+  ) {
+    const docket = hints.caseNumber.trim();
+    const p1 = hints.party1.trim();
+    const p2 = hints.party2.trim();
+    const yearOrDate = (hints.fullDate && hints.fullDate.trim())
+      ? ` (${hints.fullDate.trim()})`
+      : (hints.year && hints.year.trim())
+        ? ` (${hints.year.trim()})`
+        : "";
+    canonical = cleanCitationText(`${docket} ${p1} נ' ${p2}${yearOrDate}.`);
+    quality = "needs_review";
+    // Strip prior failure markers; this no longer reads as bare-reporter.
+    const filtered = errors.filter((e) =>
+      e !== "failed_bare_reporter" &&
+      !e.startsWith("engine:") &&
+      !e.startsWith("missing:")
+    );
+    errors.length = 0;
+    for (const e of filtered) errors.push(e);
+    if (!errors.includes("partial_enriched")) errors.push("partial_enriched");
+    if (!yearOrDate && !errors.includes("placeholder:fullDate")) {
+      errors.push("placeholder:fullDate");
+    }
+    safetyNetUsed = true;
+  }
+
+  if (__lastResolverDebug) {
+    (__lastResolverDebug as any).safetyNetUsed = safetyNetUsed;
+  }
 
   // ─── Bare-reporter gate (Rule 18) ──────────────────────────────────────
   // A caselaw footnote that is only `פ"ד מט(4) 221` (no docket, no parties)
