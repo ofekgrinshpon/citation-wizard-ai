@@ -504,6 +504,7 @@ export function resolveCitation(
         opts.party1Hint,
         opts.party2Hint,
         opts.yearHint,
+        opts.caseTypeHint,
       );
       break;
     case "case_law_database":
@@ -516,6 +517,7 @@ export function resolveCitation(
         opts.party2Hint,
         opts.fullDateHint,
         opts.yearHint,
+        opts.caseTypeHint,
       );
       break;
   }
