@@ -288,7 +288,15 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     if (!digits) continue;
     const n = parseInt(digits, 10);
     if (!Number.isFinite(n)) continue;
-    if (!fnNumbers.has(n)) { acceptanceErrors.push(`sup_no_footnote:${n}`); break; }
+    if (!fnNumbers.has(n)) {
+      acceptanceErrors.push(`sup_no_footnote:${n}`);
+      console.error("[core:acceptance] sup_no_footnote — should be unreachable after pre-strip", {
+        missing_n: n,
+        fn_numbers: [...fnNumbers],
+        marker_to_footnote: qual.marker_to_footnote,
+      });
+      break;
+    }
   }
   // Placeholder footnotes are forbidden unless source explicitly partial.
   for (const fn of qual.footnotes) {
