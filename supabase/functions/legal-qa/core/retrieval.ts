@@ -628,6 +628,20 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     ingest(exactHits);
     ingest(textHits);
     ingest(vecHits);
+    // Factual-anchor pool: re-tag each anchor candidate for THIS claim so the
+    // downstream pipeline treats it as a per-claim local hit. Preserve origin
+    // (local_text/local_vector) for telemetry & priority.
+    if (anchorPool.length > 0) {
+      const reTagged: CandidateSource[] = anchorPool.map((c, i) => ({
+        ...c,
+        candidate_id: `${claim.id}-anchor-${c.origin}-${i}`,
+        claim_id: claim.id,
+        metadata: { ...(c.metadata || {}), factual_anchor: true },
+      }));
+      const before = byKey.size;
+      ingest(reTagged);
+      if (byKey.size > before) anchorTelemetry.injected_into_claims++;
+    }
     ingest(webHits);
 
     // Web is a first-class origin: reserve slots for it in the per-claim cap
