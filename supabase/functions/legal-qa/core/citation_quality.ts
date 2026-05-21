@@ -179,12 +179,33 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
     }
   }
 
+  // Also pre-strip any marker in the answer whose LS is unknown — either not
+  // in the ledger or not in the citations map. This prevents the drafter
+  // from emitting markers (e.g. [cite:LS23] when only 22 sources exist) that
+  // would otherwise leak through as orphan superscripts.
+  const ledgerLsIds = new Set<LedgerSourceId>();
+  for (const e of ledger.entries) for (const s of e.sources) ledgerLsIds.add(s.ls_id);
+  const extraReasons = new Map<LedgerSourceId, string>();
+  for (const m of answer.matchAll(CITE_RE)) {
+    const id = m[1] as LedgerSourceId;
+    if (dropped.has(id)) continue;
+    if (!ledgerLsIds.has(id)) {
+      dropped.add(id);
+      extraReasons.set(id, "unknown_marker_not_in_ledger");
+      summary.failed++;
+    } else if (!citations.has(id)) {
+      dropped.add(id);
+      extraReasons.set(id, "unknown_marker_not_in_citations");
+      summary.failed++;
+    }
+  }
+
   // ─── Phase B: strip dropped markers ───────────────────────────────────
   const { text: cleaned1, removed: removedIds1 } = stripMarkers(answer, dropped);
   const removed_citations: RemovedCitation[] = removedIds1.map((id) => ({
     ls_id: id,
     claim_id: claimIdForLs(id, ledger),
-    reason: decisions.get(id)?.reason ?? "unknown",
+    reason: decisions.get(id)?.reason ?? extraReasons.get(id) ?? "unknown",
   }));
 
   // Build footnotes — pass 1.
