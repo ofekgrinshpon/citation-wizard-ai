@@ -2309,7 +2309,9 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
       const footnotesHtml = allFootnotes.length
         ? `<br><br><div style="font-size: 10pt;"><strong>הערות שוליים:</strong><br>` +
-          allFootnotes.map(f => `<span>${f.number}. ${f.citation}</span>`).join("<br>") +
+          allFootnotes.map(f => f.url
+            ? `<span>${f.number}. <a href="${f.url}" target="_blank" rel="noopener noreferrer">${f.citation}</a></span>`
+            : `<span>${f.number}. ${f.citation}</span>`).join("<br>") +
           `</div>`
         : "";
 
