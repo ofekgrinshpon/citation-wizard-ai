@@ -45,6 +45,34 @@ const ANCHOR_TEXT_K = 12;
 const ANCHOR_VECTOR_K = 12;
 const ANCHOR_MAX_DOCS_PER_LAYER = 8;    // cap unique documents per anchor layer
 const EXPECTED_EMBEDDING_DIM = 768;
+// Per-claim anchor reserve: small slot quota so anchor candidates survive the
+// per-claim cap even when local_text already fills the budget. Reserve is for
+// RECALL — verifier still gates relevance.
+const PER_CLAIM_ANCHOR_RESERVE = 2;
+// Anchor-driven approved_web (Section D). Extra web hits when local recall is
+// thin or the claim explicitly needs scholarship/doctrinal_definition.
+const ANCHOR_WEB_PER_CLAIM = 2;
+const ANCHOR_WEB_THIN_LOCAL_THRESHOLD = 4;
+// Government / regulator subset of TIER_A for factual-anchor web queries.
+const TIER_A_GOV_HOSTS: readonly string[] = [
+  "knesset.gov.il",
+  "mevaker.gov.il",
+  "justice.gov.il",
+  "reshumot.gov.il",
+  "competition.gov.il",
+  "tax.gov.il",
+  "mof.gov.il",
+  "supreme.court.gov.il",
+  "supremedecisions.court.gov.il",
+];
+// Academic / scholarship subset of TIER_A for concept-anchor web queries.
+const TIER_A_SCHOLARSHIP_HOSTS: readonly string[] = [
+  "huji.ac.il",
+  "tau.ac.il",
+  "biu.ac.il",
+  "ssrn.com",
+  "jstor.org",
+];
 
 // ─── Types ────────────────────────────────────────────────────────────────
 export interface AuthorityResolution {
