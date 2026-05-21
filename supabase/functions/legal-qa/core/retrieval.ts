@@ -530,6 +530,59 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
   let webBudgetRemaining = WEB_GLOBAL_CAP;
   let webGlobalCapHit = false;
 
+  // ─── Factual-anchor pre-pass ──────────────────────────────────────────
+  // The planner often distills the question into PURELY DOCTRINAL search
+  // targets ("מחדל חקיקתי", "חובות הגנה חיוביות") and drops the factual
+  // subject ("דמי חסות", "פרוטקשן"). That makes factual reports (Knesset
+  // MMM, government background docs) invisible to per-claim retrieval.
+  // Here we run a tiny FTS + one vector pass on factual_anchor_terms and
+  // seed those candidates into every claim's candidate pool. They get
+  // re-tagged per claim and go through the same dedup + cap logic.
+  const rawAnchors = Array.isArray(plan.factual_anchor_terms) ? plan.factual_anchor_terms : [];
+  const anchorTerms = Array.from(
+    new Set(
+      rawAnchors
+        .map((t) => (typeof t === "string" ? t.trim() : ""))
+        .filter((t) => t.length >= 2 && t.length <= TEXT_QUERY_MAX_CHARS),
+    ),
+  ).slice(0, 6);
+
+  const anchorPool: CandidateSource[] = [];
+  const anchorTelemetry: FactualAnchorTelemetry = {
+    terms: anchorTerms,
+    text_candidates: 0,
+    vector_candidates: 0,
+    total_unique: 0,
+    injected_into_claims: 0,
+  };
+
+  if (anchorTerms.length > 0) {
+    const textRuns = await Promise.all(
+      anchorTerms.map((term) =>
+        limiter(() => localText(adminClient, term, "C0" as ClaimId)),
+      ),
+    );
+    const flatText = textRuns.flat();
+    anchorTelemetry.text_candidates = flatText.length;
+
+    const vecQuery = anchorTerms.join(" • ").slice(0, VECTOR_QUERY_MAX_CHARS);
+    const vecHits = embed
+      ? await limiter(() => localVector(adminClient, vecQuery, "C0" as ClaimId, embed))
+      : [];
+    anchorTelemetry.vector_candidates = vecHits.length;
+
+    const seen = new Set<string>();
+    for (const c of [...flatText, ...vecHits]) {
+      const k = c.document_id || `${c.origin}:${c.url || c.candidate_id}`;
+      if (!seen.has(k)) {
+        seen.add(k);
+        anchorPool.push(c);
+      }
+    }
+    anchorTelemetry.total_unique = anchorPool.length;
+  }
+
+
   for (const claim of plan.claims) {
     const terms = claim.search_targets.map((t) => t.hebrew_terms);
     const doctrine = claim.search_targets[0]?.doctrine || plan.doctrinal_frame;
