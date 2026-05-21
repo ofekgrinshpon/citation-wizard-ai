@@ -261,10 +261,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   const citations = buildCitationsForLedger(ledger.entries) as Map<LedgerSourceId, ReturnType<typeof buildCitationsForLedger> extends Map<string, infer V> ? V : never>;
   recordStage({ stage: "citations", duration_ms: Date.now() - tCit, status: "ok" });
 
-  // ─── 6.1 Canonical Citations ───────────────────────────────────────────
-  const tCit = Date.now();
-  const citations = buildCitationsForLedger(ledger.entries) as Map<LedgerSourceId, ReturnType<typeof buildCitationsForLedger> extends Map<string, infer V> ? V : never>;
-  recordStage({ stage: "citations", duration_ms: Date.now() - tCit, status: "ok" });
+
 
   // ─── 6.1.5 Enrich bare-reporter caselaw citations ──────────────────────
   // Citations flagged `failed_bare_reporter` lack docket/parties/year.
