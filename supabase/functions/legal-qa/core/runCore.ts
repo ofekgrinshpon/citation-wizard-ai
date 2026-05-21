@@ -423,11 +423,14 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     }
     const metaCase = rich?.case_number;
     if (p1 && p2) {
+      // Scan ls fields for a docket prefix when metadata.case_number lacks one.
+      const dkFromLs = extractDocketFromText(`${ls.title || ""}\n${ls.citation || ""}\n${ls.snippet || ""}`);
       const { citation: fresh, debug } = enrichLedgerSource({
         ls,
         passLabel: "metadata",
         recovered: {
-          caseNumber: metaCase,
+          caseNumber: metaCase || dkFromLs?.docket,
+          caseType: dkFromLs?.prefix,
           party1: p1,
           party2: p2,
           year: rich?.year,
@@ -479,6 +482,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
         passLabel: "text_regex",
         recovered: {
           caseNumber: fields.docket,
+          caseType: fields.prefix,
           party1: fields.party1,
           party2: fields.party2,
           year: fields.year,
@@ -547,6 +551,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
             passLabel: "official_fetch",
             recovered: {
               caseNumber: fields.docket,
+              caseType: fields.prefix,
               party1: fields.party1,
               party2: fields.party2,
               year: fields.year,
@@ -616,10 +621,14 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
       let docket: string | undefined = rich?.case_number;
       let prefix = ""; // metadata case_number rarely carries a prefix
       let docket_source: "metadata" | "extracted" = "metadata";
+      // Always probe ls fields for a docket-prefix — even when docket itself
+      // came from metadata — so caseTypeHint flows downstream.
+      const dkText = `${ls.title || ""}\n${ls.citation || ""}\n${ls.snippet || ""}`;
+      const dkFromLs = extractDocketFromText(dkText);
       if (!docket) {
-        const text = `${ls.title || ""}\n${ls.citation || ""}\n${ls.snippet || ""}`;
-        const dk = extractDocketFromText(text);
-        if (dk) { docket = dk.docket; prefix = dk.prefix; docket_source = "extracted"; }
+        if (dkFromLs) { docket = dkFromLs.docket; prefix = dkFromLs.prefix; docket_source = "extracted"; }
+      } else if (!prefix && dkFromLs?.prefix) {
+        prefix = dkFromLs.prefix;
       }
       if (!docket) { skippedNoDocket.push(id); continue; }
       if (reqMap.has(docket)) continue;
@@ -704,6 +713,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
             passLabel: "party_lookup",
             recovered: {
               caseNumber: docket,
+              caseType: meta.prefix || undefined,
               party1: hit.party1,
               party2: hit.party2,
               fullDate: hit.fullDate,

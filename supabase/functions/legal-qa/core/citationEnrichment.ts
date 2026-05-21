@@ -47,6 +47,8 @@ export type PassLabel =
  */
 export interface RecoveredFields {
   caseNumber?: string;
+  /** Hebrew docket prefix (e.g. `בג"ץ`, `ע"א`, `רע"א`). */
+  caseType?: string;
   party1?: string;
   party2?: string;
   year?: string;
@@ -86,6 +88,7 @@ export function enrichLedgerSource(
   //    plus a debug envelope describing resolver inputs/outputs.
   const { citation, debug } = enrichBareReporterCitationWithDebug(ls, {
     caseNumber: recovered?.caseNumber,
+    caseType: recovered?.caseType,
     party1: recovered?.party1,
     party2: recovered?.party2,
     year: recovered?.year,

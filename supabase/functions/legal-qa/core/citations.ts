@@ -114,15 +114,18 @@ function extractLawName(text: string): string | undefined {
 }
 
 // Mirrors BatchFootnoteBuilder.extractShortSourceLabel (Deno-side port).
-function extractShortLabel(text: string): string | undefined {
+// Hardened (Problem 2): rejects bare-reporter / paren-containing fallbacks
+// so a Rule-37 short form never reduces to a reporter line.
+function extractShortLabel(text: string | undefined): string | undefined {
   if (!text) return undefined;
   const cleaned = text.replace(/\*\*/g, "").replace(/##/g, "").trim();
+  if (!cleaned) return undefined;
   // caselaw: <party A> נ' <party B>
   const m = cleaned.match(
     /([^,\n()]+?)\s+נ['׳]\s+([^,\n()]+?)(?=\s*,|\s*\(|$)/,
   );
   if (m) {
-    const a = m[1].trim().replace(/^.*?\d+\/\d+\s+/, "").trim();
+    const a = m[1].trim().replace(/^.*?\d+[\/\-]\d+(?:[\/\-]\d+)?\s+/, "").trim();
     const b = m[2].trim();
     const pick = GENERIC_PARTIES.test(b)
       ? (GENERIC_PARTIES.test(a) ? b : a)
@@ -133,8 +136,17 @@ function extractShortLabel(text: string): string | undefined {
     /(חוק[\s-]יסוד[^,\n]*|חוק[^,\n]*|פקודת[^,\n]*|תקנות[^,\n]*|צו[^,\n]*)/,
   );
   if (hebrewLaw) return hebrewLaw[1].trim();
+  // Refuse to fall back to the first segment when it is just a bare reporter
+  // or contains unbalanced parentheses (e.g. a clipped passthrough like
+  // `פ"ד לה(2) 649 (supremedecisions`). Returning undefined lets the
+  // footnote builder pick a safe `לעיל ה"ש N` short form instead.
   const first = cleaned.split(/[.,\n]/)[0]?.trim();
-  return first || undefined;
+  if (!first) return undefined;
+  if (isBareReporter(first)) return undefined;
+  const opens = (first.match(/\(/g) || []).length;
+  const closes = (first.match(/\)/g) || []).length;
+  if (opens !== closes) return undefined;
+  return first;
 }
 
 function extractSection(pinpoint?: string): string | undefined {
@@ -159,9 +171,14 @@ function buildShortFormInputs(
   const law_name = is_legislation
     ? extractLawName(canonical || ls.title || ls.citation)
     : undefined;
+  // For caselaw, probe canonical → title → snippet → citation in order so a
+  // bare-reporter canonical doesn't poison the short label (Problem 2).
   const short_label = is_legislation
     ? law_name
-    : extractShortLabel(canonical || ls.title || ls.citation);
+    : (extractShortLabel(canonical)
+        ?? extractShortLabel(ls.title)
+        ?? extractShortLabel(ls.snippet)
+        ?? extractShortLabel(ls.citation));
   const default_section = extractSection(ls.pinpoint);
 
   return {
@@ -207,6 +224,8 @@ export interface BuildCitationHints {
   fullDate?: string;
   year?: string;
   caseNumber?: string;
+  /** Docket prefix (e.g. `בג"ץ`, `ע"א`). Fed to the resolver as caseTypeHint. */
+  caseType?: string;
   /**
    * When true, this is a SECOND-pass call from the bare-reporter enrichment
    * path. The resolver is run with `partyLookupRetry: true` (enabling its
@@ -269,9 +288,28 @@ export function buildCitationForSource(
   const yearFromText = extractYearFromText(haystack);
   const fullDateFromText = extractFullDateFromText(haystack);
 
+  // Compose a prefixed caseNumberHint when we have both the prefix and the
+  // docket: resolver's `matchCaseTypeAndNumber` requires `<prefix> <docket>`
+  // form to fill caseType. When only a docket is available, pass it bare —
+  // resolver's Tier-2b path accepts it and pairs with caseTypeHint.
+  const composedCaseNumber: string | undefined = (() => {
+    if (hints.caseNumber && hints.caseNumber.trim()) {
+      const raw = hints.caseNumber.trim();
+      if (hints.caseType && hints.caseType.trim() && !/^[א-ת]/.test(raw.split(/\s+/)[0] ?? "")) {
+        return `${hints.caseType.trim()} ${raw}`;
+      }
+      return raw;
+    }
+    if (docketFromText) return `${docketFromText.prefix} ${docketFromText.docket}`;
+    return undefined;
+  })();
+  const composedCaseType: string | undefined =
+    (hints.caseType && hints.caseType.trim()) || docketFromText?.prefix || undefined;
+
   const resolverHints = {
     titleHint: ls.title,
-    caseNumberHint: hints.caseNumber ?? docketFromText?.docket,
+    caseNumberHint: composedCaseNumber,
+    caseTypeHint: composedCaseType,
     party1Hint: hints.party1 ?? partiesFromText?.party1,
     party2Hint: hints.party2 ?? partiesFromText?.party2,
     fullDateHint: hints.fullDate ?? fullDateFromText,
@@ -301,6 +339,7 @@ export function buildCitationForSource(
       resolverHints: {
         titleHint: resolverHints.titleHint,
         caseNumberHint: resolverHints.caseNumberHint,
+        caseTypeHint: resolverHints.caseTypeHint,
         party1Hint: resolverHints.party1Hint,
         party2Hint: resolverHints.party2Hint,
         fullDateHint: resolverHints.fullDateHint,
@@ -455,7 +494,7 @@ export function enrichBareReporterCitationWithDebug(
   const dbg = readLastResolverDebug();
   __lastResolverDebug = null;
   const inputFields: string[] = [];
-  for (const k of ["caseNumber", "party1", "party2", "year", "fullDate"] as const) {
+  for (const k of ["caseType", "caseNumber", "party1", "party2", "year", "fullDate"] as const) {
     if (hints[k] && String(hints[k]).trim()) inputFields.push(k);
   }
   const resolverHints = dbg?.resolverHints ?? {};

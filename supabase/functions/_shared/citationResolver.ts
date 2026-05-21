@@ -233,6 +233,7 @@ function extractCaseLawCommon(
   titleHint?: string,
   party1Hint?: string,
   party2Hint?: string,
+  caseTypeHint?: string,
 ): Record<string, string> {
   const fields: Record<string, string> = {};
   // Tier 1: prefixed shape in citation text
@@ -246,6 +247,15 @@ function extractCaseLawCommon(
     if (fromHint) {
       fields.caseType = fromHint.caseType;
       fields.caseNumber = fromHint.caseNumber;
+    } else {
+      // Tier 2b: caseNumberHint is bare (e.g. "1234/56" or "18225-06-25")
+      // — accept as caseNumber directly so we can pair it with caseTypeHint
+      // / titleHint-inferred caseType. Same shape constraints the bare-docket
+      // and unquoted-prefix paths use elsewhere in this file.
+      const hintRaw = caseNumberHint.trim();
+      if (/^\d+[\/\-]\d+(?:[\/\-]\d+)?$/.test(hintRaw)) {
+        fields.caseNumber = hintRaw;
+      }
     }
   }
   // Tier 3 (v4): bare docket — text first, then caseNumberHint
@@ -256,6 +266,11 @@ function extractCaseLawCommon(
       const inferred = inferCaseTypeFromTitle(titleHint);
       if (inferred) fields.caseType = inferred;
     }
+  }
+  // Tier 4: caller-supplied caseTypeHint (docket prefix from enrichment).
+  // Only fill when text extraction couldn't recover one. Never overwrite.
+  if (!fields.caseType && caseTypeHint && caseTypeHint.trim()) {
+    fields.caseType = caseTypeHint.trim();
   }
   // Parties — bolded **X** OR plain "X נ' Y"
   const boldParties = [...text.matchAll(/\*\*([^*]+)\*\*/g)];
@@ -288,8 +303,9 @@ function extractCaseLawPublished(
   party1Hint?: string,
   party2Hint?: string,
   yearHint?: string,
+  caseTypeHint?: string,
 ): Record<string, string> {
-  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint);
+  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint, caseTypeHint);
   // Series
   const seriesMatch = text.match(/(פ["״]ד|פד["״]ע|פ["״]מ)/);
   if (seriesMatch) fields.series = seriesMatch[1];
@@ -318,8 +334,9 @@ function extractCaseLawDatabase(
   party2Hint?: string,
   fullDateHint?: string,
   yearHint?: string,
+  caseTypeHint?: string,
 ): Record<string, string> {
-  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint);
+  const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint, caseTypeHint);
   // Database name (optional per schema) — scan citation text first, then titleHint.
   // Perplexity often puts the database name (e.g. "נבו") in the title field
   // rather than the citation string itself.
@@ -412,6 +429,12 @@ export interface ResolveCitationOptions {
   fullDateHint?: string;
   yearHint?: string;
   /**
+   * Optional Hebrew docket-prefix hint (e.g. `בג"ץ`, `ע"א`, `רע"א`, `בר"ם`).
+   * Used ONLY when the local extractors (citation text + caseNumberHint)
+   * could not pull a `caseType`. Never overwrites a caseType found in text.
+   */
+  caseTypeHint?: string;
+  /**
    * v4 stage 2 policy flag: set ONLY by the chapter loop when this call is
    * the *retry* pass after a successful party-lookup. When true, and only
    * for `case_law_database`, `fullDate` is treated as optional provided
@@ -481,6 +504,7 @@ export function resolveCitation(
         opts.party1Hint,
         opts.party2Hint,
         opts.yearHint,
+        opts.caseTypeHint,
       );
       break;
     case "case_law_database":
@@ -493,6 +517,7 @@ export function resolveCitation(
         opts.party2Hint,
         opts.fullDateHint,
         opts.yearHint,
+        opts.caseTypeHint,
       );
       break;
   }
