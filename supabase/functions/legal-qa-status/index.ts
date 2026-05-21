@@ -10,14 +10,41 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
 };
 
-function deriveStatus(metadata: Record<string, unknown> | null, hasAnswer: boolean): string {
+const PLACEHOLDER_ANSWER = "מעבד שאלה…";
+// Watchdog: if the async worker pre-inserted a "core_running" row but never
+// finished writing the real answer (e.g. EdgeRuntime killed it for CPU/wall
+// time), surface it as failed once enough time has passed. Deep budget is
+// ~3–4 min; we give a generous buffer.
+const WORKER_TIMEOUT_MS = 6 * 60 * 1000;
+
+function deriveStatus(
+  metadata: Record<string, unknown> | null,
+  hasAnswer: boolean,
+  isPlaceholder: boolean,
+  pipelineUsed: string | null,
+  createdAtMs: number | null,
+): string {
   const cp = (metadata?.checkpoint as string | undefined) ?? null;
-  if (hasAnswer) return "completed";
+
+  // Terminal failures win first.
   if (cp === "failed" || cp === "error" || cp === "drafting_failed") return "failed";
+
+  // Worker pre-inserted a placeholder row and hasn't replaced it yet.
+  // This is NOT completed — it's still running (or silently dead).
+  const isCoreRunning = pipelineUsed === "core_running";
+  if (isPlaceholder || isCoreRunning) {
+    if (createdAtMs !== null && Date.now() - createdAtMs > WORKER_TIMEOUT_MS) {
+      return "failed";
+    }
+    return "running";
+  }
+
+  if (hasAnswer) return "completed";
   if (cp === "queued") return "queued";
   if (cp) return "running";
   return "running";
 }
+
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
