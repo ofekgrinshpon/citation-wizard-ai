@@ -45,10 +45,21 @@ function decideKept(c: LedgerSourceCitation): KeptDecision {
   if (c.citation_quality === "failed") {
     return { kept: false, reason: `quality_failed:${c.citation_errors.join(",")}` };
   }
+  const isPartialEnriched = c.citation_errors.includes("partial_enriched");
   // needs_review = engine produced something but it isn't safe to ship
   // (bare reporter without docket/parties, unresolved journal pipe-artifact).
-  // Enrichment had its chance before this pass; drop here.
+  // EXCEPTION: enrichment safety-net entries are marked needs_review +
+  // partial_enriched and carry a usable docket+parties canonical_citation.
+  // Keep those (the recovery pass is the whole reason they're here).
   if (c.citation_quality === "needs_review") {
+    if (
+      isPartialEnriched &&
+      !c.citation_errors.includes("failed_bare_reporter") &&
+      !c.citation_errors.includes("journal_pipe_unresolved") &&
+      c.canonical_citation && c.canonical_citation.trim()
+    ) {
+      return { kept: true, reason: "partial_enriched_accepted" };
+    }
     return { kept: false, reason: `needs_review:${c.citation_errors.join(",")}` };
   }
   const offDomain = c.citation_errors.find((e) => e.startsWith("off_domain:"));
