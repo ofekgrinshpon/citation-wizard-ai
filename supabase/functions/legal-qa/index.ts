@@ -2554,25 +2554,29 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
           if (coreInner) coreCtx.core_partial = coreInner;
         };
 
-        // Helper: build the Hebrew failure response (HTTP 200, empty footnotes).
-        const buildCoreFailureResponse = (reason: string | undefined): Response => {
+        // Helper: build the Hebrew failure body string (used both in the HTTP
+        // response and in qa_logs.answer — answer must never be null).
+        const coreFailureBody = (reason: string | undefined): string => {
           const r = (reason ?? "unknown").toLowerCase();
-          let body: string;
           if (r.startsWith("quality_insufficient_verified_sources") || r === "ledger_insufficient") {
-            body = "לא נמצאו מקורות מאומתים מספיקים לענות על השאלה במלואה. נסה לנסח מחדש את השאלה או להוסיף הקשר נוסף.";
-          } else if (r.startsWith("planner_failed")) {
-            body = "לא הצלחנו לנתח את השאלה לתכנית מחקר. נסה לנסח אותה מחדש בצורה ממוקדת יותר.";
-          } else if (r.startsWith("drafter_") || r.startsWith("draft_threw")) {
-            body = "אירעה שגיאה בשלב כתיבת התשובה. אנא נסה שוב.";
-          } else if (r.startsWith("retrieval_threw") || r.startsWith("verify_threw")) {
-            body = "אירעה שגיאה בשלב איסוף או אימות המקורות. אנא נסה שוב.";
-          } else if (r.startsWith("core_threw") || r.startsWith("acceptance:")) {
-            body = "התרחשה תקלה במהלך הפקת התשובה. אנא נסה שוב או פנה לתמיכה.";
-          } else {
-            body = `לא הצלחנו להפיק תשובה מאומתת (${reason ?? "unknown"}). אנא נסה לנסח מחדש את השאלה.`;
+            return "לא נמצאו מקורות מאומתים מספיקים לענות על השאלה במלואה. נסה לנסח מחדש את השאלה או להוסיף הקשר נוסף.";
           }
-          return buildResponse(body, [], [], { footnotes_count: 0 });
+          if (r.startsWith("planner_failed")) {
+            return "לא הצלחנו לנתח את השאלה לתכנית מחקר. נסה לנסח אותה מחדש בצורה ממוקדת יותר.";
+          }
+          if (r.startsWith("drafter_") || r.startsWith("draft_threw")) {
+            return "אירעה שגיאה בשלב כתיבת התשובה. אנא נסה שוב.";
+          }
+          if (r.startsWith("retrieval_threw") || r.startsWith("verify_threw")) {
+            return "אירעה שגיאה בשלב איסוף או אימות המקורות. אנא נסה שוב.";
+          }
+          if (r.startsWith("core_threw") || r.startsWith("acceptance:")) {
+            return "התרחשה תקלה במהלך הפקת התשובה. אנא נסה שוב או פנה לתמיכה.";
+          }
+          return `לא הצלחנו להפיק תשובה מאומתת (${reason ?? "unknown"}). אנא נסה לנסח מחדש את השאלה.`;
         };
+        const buildCoreFailureResponse = (reason: string | undefined): Response =>
+          buildResponse(coreFailureBody(reason), [], [], { footnotes_count: 0 });
 
         // Pre-insert "core_running" row so a hard crash leaves a trace.
         try {
@@ -2581,7 +2585,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             user_id: user.id,
             project_id: typeof body?.projectId === "string" ? body.projectId : null,
             question: question.substring(0, 500),
-            answer: null,
+            answer: "מעבד שאלה…",
             footnotes: [],
             task_mode: taskMode,
             local_footnotes_count: 0,
@@ -2624,7 +2628,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
               user_id: user.id,
               project_id: typeof body?.projectId === "string" ? body.projectId : null,
               question: question.substring(0, 500),
-              answer: null,
+              answer: coreFailureBody(reason),
               footnotes: [],
               task_mode: taskMode,
               local_footnotes_count: 0,
@@ -2659,7 +2663,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
               user_id: user.id,
               project_id: typeof body?.projectId === "string" ? body.projectId : null,
               question: question.substring(0, 500),
-              answer: null,
+              answer: coreFailureBody(reason),
               footnotes: [],
               task_mode: taskMode,
               local_footnotes_count: 0,
