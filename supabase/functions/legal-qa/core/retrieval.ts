@@ -272,9 +272,14 @@ async function localVector(
   try {
     const emb = await embed(query);
     if (!emb) return [];
+    // 0.35 floor: text-embedding-3-small@768d cosine for Hebrew typically lands
+    // in 0.30-0.55. 0.55 was filtering nearly everything out (see qa_logs:
+    // 9/10 recent runs had local_vector_count=0 across all claims). The final
+    // quality gate (source_pack core-promotion at 0.55 in assembleSourcePack)
+    // still rejects weak hits — this floor just lets candidates reach ranking.
     const { data, error } = await client.rpc("match_legal_chunks", {
       query_embedding: JSON.stringify(emb),
-      match_threshold: 0.55,
+      match_threshold: 0.35,
       match_count: LOCAL_VECTOR_K,
     });
     if (error) {
