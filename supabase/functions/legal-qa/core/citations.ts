@@ -448,7 +448,7 @@ export function enrichBareReporterCitationWithDebug(
 ): { citation: LedgerSourceCitation; debug: EnrichmentDebug } {
   __lastResolverDebug = null;
   const citation = buildCitationForSource(ls, { ...hints, enrichmentRetry: true });
-  const dbg: ResolverDebugSnapshot | null = __lastResolverDebug;
+  const dbg = readLastResolverDebug();
   __lastResolverDebug = null;
   const inputFields: string[] = [];
   for (const k of ["caseNumber", "party1", "party2", "year", "fullDate"] as const) {
