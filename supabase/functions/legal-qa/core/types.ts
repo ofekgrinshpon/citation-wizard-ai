@@ -55,6 +55,13 @@ export interface PlanV1 {
    * the doctrinal search_targets don't mention them.
    */
   factual_anchor_terms?: string[];
+  /**
+   * Doctrinal/conceptual key phrases lifted from the user's question
+   * (e.g. "מחדל חקיקתי חלקי", "חובה לחוקק"). Used by the same pre-pass to
+   * surface academic articles / monographs whose titles use a synonymous
+   * framing of the doctrine that doesn't appear verbatim in claim search_targets.
+   */
+  concept_anchor_terms?: string[];
 }
 
 // ─────────────────── Step 2: Retrieval ───────────────────
