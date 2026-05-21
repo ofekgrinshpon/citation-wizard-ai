@@ -230,6 +230,43 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
   const { answer, ledger, citations } = args;
 
   // ─── Phase A: filter citations ────────────────────────────────────────
+  // Pre-pass: rescue approved_web sources the verifier accepted as `direct`
+  // but whose label/source_type was uninformative. Infer declared_type from
+  // the host so the `uninformative_label && declared_type==="none"` gate in
+  // decideKept doesn't drop them and collapse claim support.
+  const lsById = new Map<LedgerSourceId, LedgerSource>();
+  for (const e of ledger.entries) for (const s of e.sources) lsById.set(s.ls_id, s);
+  let approved_web_rescued = 0;
+  for (const [id, c] of citations) {
+    if (c.declared_type !== "none") continue;
+    const hasUninformative =
+      c.citation_errors.includes("uninformative_label") ||
+      c.citation_errors.includes("empty_source_type");
+    if (!hasUninformative) continue;
+    // Hard gates still apply — don't rescue bare-reporter or pipe-artefact failures.
+    if (
+      c.citation_errors.includes("failed_bare_reporter") ||
+      c.citation_errors.includes("journal_pipe_unresolved")
+    ) continue;
+    // Off-domain stays dropped (we only rescue approved hosts).
+    if (c.citation_errors.some((e) => e.startsWith("off_domain:"))) continue;
+    const ls = lsById.get(id);
+    if (!ls || ls.origin !== "approved_web" || ls.support !== "direct") continue;
+    if (!c.canonical_citation || !c.canonical_citation.trim()) continue;
+    const inferred = inferDeclaredFromSource(ls);
+    if (inferred === "none") continue;
+    c.declared_type = inferred;
+    // Metadata is thin by definition — keep but mark partial so downstream
+    // gates treat it as needing review rather than as a strong canonical.
+    if (c.citation_quality === "ok" || c.citation_quality === "needs_review") {
+      c.citation_quality = "partial";
+    }
+    if (!c.citation_errors.includes("approved_web_inferred_type")) {
+      c.citation_errors.push("approved_web_inferred_type");
+    }
+    approved_web_rescued++;
+  }
+
   const decisions = new Map<LedgerSourceId, KeptDecision>();
   const dropped = new Set<LedgerSourceId>();
   const summary = {
