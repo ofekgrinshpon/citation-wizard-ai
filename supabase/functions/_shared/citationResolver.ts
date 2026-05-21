@@ -599,14 +599,15 @@ export function resolveCitation(
   if (
     missing.length > 0 &&
     opts.partyLookupRetry &&
-    sourceType === "case_law_database" &&
+    (sourceType === "case_law_database" || sourceType === "case_law_published") &&
     fields.caseNumber?.trim()
   ) {
     const hasMeaningfulIdentity =
       Boolean(fields.party1?.trim()) ||
       Boolean(fields.party2?.trim()) ||
       Boolean(fields.fullDate?.trim()) ||
-      Boolean(fields.year?.trim());
+      Boolean(fields.year?.trim()) ||
+      Boolean(fields.firstPage?.trim());
     if (hasMeaningfulIdentity) {
       // Hebrew descriptions for placeholder labels (mirror citationEngine
       // component descriptions so the markers match what other UI shows).
@@ -616,6 +617,10 @@ export function resolveCitation(
         party1: "שם צד א'",
         party2: "שם צד ב'",
         fullDate: "תאריך מלא",
+        year: "שנה",
+        series: "סדרת פרסום",
+        volume: "כרך",
+        firstPage: "עמוד ראשון",
       };
       const filled: Record<string, string> = { ...fields };
       for (const f of missing) {
@@ -623,17 +628,22 @@ export function resolveCitation(
         filled[f] = `[חסר: ${label}]`;
         placeholderFields.push(f);
       }
-      // Choose template variant. If we have neither database nor fullDate
-      // but DO have year, fall back to `(year)` form (cleaner than
-      // "(פורסם ב, [חסר: תאריך מלא])"). Otherwise keep canonical template
-      // and let placeholders fill the gaps.
       const ruleSet = CITATION_RULES[sourceType];
       let template = ruleSet.template;
-      if (!fields.fullDate?.trim() && fields.year?.trim()) {
-        template = "{caseType} {caseNumber} {party1} נ' {party2} ({year}).";
-      } else if (!fields.fullDate?.trim() && !fields.database?.trim()) {
-        template = "{caseType} {caseNumber} {party1} נ' {party2} ({fullDate}).";
+      if (sourceType === "case_law_database") {
+        // Choose template variant. If we have neither database nor fullDate
+        // but DO have year, fall back to `(year)` form (cleaner than
+        // "(פורסם ב, [חסר: תאריך מלא])"). Otherwise keep canonical template
+        // and let placeholders fill the gaps.
+        if (!fields.fullDate?.trim() && fields.year?.trim()) {
+          template = "{caseType} {caseNumber} {party1} נ' {party2} ({year}).";
+        } else if (!fields.fullDate?.trim() && !fields.database?.trim()) {
+          template = "{caseType} {caseNumber} {party1} נ' {party2} ({fullDate}).";
+        }
       }
+      // case_law_published keeps its native template — the {year} slot will
+      // hold `[חסר: שנה]` when no verified year/date was recovered. Year is
+      // never derived from docket suffix.
       const canonical = emitCanonical(template, filled);
       return {
         resolved: true,
