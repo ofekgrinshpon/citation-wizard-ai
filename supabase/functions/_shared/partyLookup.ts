@@ -27,6 +27,16 @@ export interface PartyLookupRequest {
   courtHint?: string;
   /** Optional case-type hint from local extraction (e.g. "תמ״ש", "סע״ש"). */
   caseTypeHint?: string;
+  /** Optional context block to disambiguate the docket — passed verbatim into
+   * the user prompt so Perplexity can resolve cases where the docket alone is
+   * insufficient (e.g. district numbers, post-rebrand renumberings, etc.). */
+  contextHints?: {
+    title?: string;
+    snippet?: string;
+    url?: string;
+    sourceType?: string;
+    reporterCitation?: string;
+  };
 }
 
 export interface PartyLookupHit {
