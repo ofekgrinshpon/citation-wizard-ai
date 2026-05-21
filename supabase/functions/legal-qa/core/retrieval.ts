@@ -39,6 +39,12 @@ const WEB_GLOBAL_CAP = 10;              // hard cap on web candidates per answer
 const MAX_CONCURRENCY = 3;
 const TEXT_QUERY_MAX_CHARS = 80;
 const VECTOR_QUERY_MAX_CHARS = 160;
+// Anchor pre-pass uses LARGER fan-out + per-document diversity. The intent
+// is recall, not precision — verifier remains the relevance gate.
+const ANCHOR_TEXT_K = 12;
+const ANCHOR_VECTOR_K = 12;
+const ANCHOR_MAX_DOCS_PER_LAYER = 8;    // cap unique documents per anchor layer
+const EXPECTED_EMBEDDING_DIM = 768;
 
 // ─── Types ────────────────────────────────────────────────────────────────
 export interface AuthorityResolution {
