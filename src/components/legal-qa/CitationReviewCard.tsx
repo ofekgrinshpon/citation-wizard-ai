@@ -93,11 +93,26 @@ export function CitationReviewCard({
       style={{ direction: "rtl" }}
     >
       <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="text-primary font-bold text-sm">[{cell.originalNumber}]</span>
           <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${statusPill.cls}`}>
             {statusPill.text}
           </span>
+          {cell.url && (() => {
+            let host = "";
+            try { host = new URL(cell.url).hostname.replace(/^www\./, ""); } catch {}
+            return (
+              <a
+                href={cell.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                title={cell.url}
+              >
+                ↗ {host || "מקור"}
+              </a>
+            );
+          })()}
         </div>
         <button
           onClick={() => onRemove(cell.id)}
