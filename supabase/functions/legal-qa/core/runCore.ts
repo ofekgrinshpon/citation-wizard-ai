@@ -397,6 +397,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     attempt.resolver_output = debug.resolver_output;
     attempt.missing_fields_after_enrichment = debug.missing_fields_after_enrichment;
     attempt.safety_net_used = debug.safety_net_used;
+    attempt.enrichment_path = debug.enrichment_path;
     const recovered = !citation.citation_errors.includes("failed_bare_reporter");
     const partial = citation.citation_errors.includes("partial_enriched");
     attempt.partial_enriched = partial;
