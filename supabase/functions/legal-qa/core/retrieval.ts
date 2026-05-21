@@ -70,6 +70,14 @@ export interface ClaimRetrievalPack {
   web_harvest: WebHarvestTelemetry;
 }
 
+export interface FactualAnchorTelemetry {
+  terms: string[];
+  text_candidates: number;
+  vector_candidates: number;
+  total_unique: number;
+  injected_into_claims: number;
+}
+
 export interface RetrievalResult {
   packs: ClaimRetrievalPack[];
   authority_resolutions: AuthorityResolution[];
@@ -77,6 +85,7 @@ export interface RetrievalResult {
   total_web_candidates: number;
   web_global_cap_hit: boolean;
   duration_ms: number;
+  factual_anchors?: FactualAnchorTelemetry;
 }
 
 export interface RetrieveArgs {
