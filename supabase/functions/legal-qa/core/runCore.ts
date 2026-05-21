@@ -682,7 +682,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
             enrichment.attempts.push(baseAttempt);
             continue;
           }
-          const fresh = enrichBareReporterCitation(ls, {
+          const { citation: fresh, debug } = enrichBareReporterCitationWithDebug(ls, {
             caseNumber: docket,
             party1: hit.party1,
             party2: hit.party2,
@@ -690,10 +690,10 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
             year: hit.year,
           });
           citations.set(meta.ls_id, fresh);
-          const recovered = !fresh.citation_errors.includes("failed_bare_reporter");
-          if (recovered) enrichment.bare_reporter_recovered++;
           baseAttempt.status = "hit";
-          baseAttempt.rejection_reason = recovered ? undefined : "rebuild_still_bare";
+          const { recovered, partial } = annotateAttempt(baseAttempt, fresh, debug);
+          if (recovered) enrichment.bare_reporter_recovered++;
+          if (partial) enrichment.partial_enriched++;
           enrichment.attempts.push(baseAttempt);
         }
       } catch (e) {
