@@ -479,6 +479,122 @@ async function vectorThresholdProbe(
   }
 }
 
+// ─── Section B: cold-HNSW warmup ──────────────────────────────────────────
+/**
+ * Fires a tiny match_legal_chunks call once before any per-claim/anchor
+ * vector RPC. Pays the HNSW load cost on the first request and prevents
+ * subsequent calls from hitting Postgres statement_timeout (57014).
+ * Errors are swallowed; outcome is recorded in `health.warmup_status`.
+ */
+async function vectorWarmup(
+  client: SupabaseClient,
+  health: VectorHealthDiag,
+  signal?: AbortSignal,
+): Promise<void> {
+  if (signal?.aborted) {
+    health.warmup_status = "skipped";
+    return;
+  }
+  try {
+    const zero = new Array(EXPECTED_EMBEDDING_DIM).fill(0);
+    const { error } = await client.rpc("match_legal_chunks", {
+      query_embedding: JSON.stringify(zero),
+      match_threshold: 0.99,
+      match_count: 1,
+    });
+    if (error) {
+      health.warmup_status = `failed:${(error as { code?: string }).code ?? "unknown"}`;
+    } else {
+      health.warmup_status = "ok";
+    }
+  } catch (e) {
+    health.warmup_status = `failed:throw:${(e as Error).message.slice(0, 60)}`;
+  }
+}
+
+// ─── Section C: approved_web stub detection ──────────────────────────────
+/**
+ * Returns true when a Perplexity-returned candidate looks like a citation
+ * stub the drafter cannot render properly (standalone placeholder titles,
+ * caselaw without party names, bare docket fragments, too-short citations).
+ * Drops happen at the retrieval layer so the citation engine, verifier,
+ * drafter, and footnote builder never see these candidates.
+ *
+ * Applied only to approved_web hits — local DB rows always pass.
+ */
+const PLACEHOLDER_TITLES = new Set([
+  "פסק דין", "החלטה", 'פס"ד', "פס״ד",
+  "פסה\"ד", "פסה״ד", "פסק־דין", "פסק-דין",
+]);
+const PARTY_INDICATOR_RE = /(?:נ['׳]\s|\sנגד\s|\sv\.\s|\sv\s)/;
+const BARE_DOCKET_RE = /^\d+(?:[./]\d+){1,2}\s*(?:\([^)]*\))?\s*$/;
+const HEB_WORD_RE = /[\u0590-\u05FF]{4,}/;
+
+function stripPunctEdges(s: string): string {
+  return (s || "")
+    .normalize("NFKC")
+    .replace(/^[\s"׳״'`.,;:?!()\[\]{}\-–—]+|[\s"׳״'`.,;:?!()\[\]{}\-–—]+$/g, "")
+    .trim();
+}
+
+function isApprovedWebStub(c: { source_type?: string; title?: string; citation?: string }): boolean {
+  const title = stripPunctEdges(c.title || "");
+  const citation = stripPunctEdges(c.citation || "");
+  const combined = `${title} ${citation}`.trim();
+
+  // 1) Standalone placeholder title.
+  if (PLACEHOLDER_TITLES.has(title)) return true;
+  if (!title && PLACEHOLDER_TITLES.has(citation)) return true;
+
+  // 2) Bare docket fragment with no real title text.
+  if (BARE_DOCKET_RE.test(citation) && !HEB_WORD_RE.test(title)) return true;
+
+  // 3) Caselaw with no party indicator AND no meaningful Hebrew title.
+  const st = (c.source_type || "").toLowerCase();
+  if (st === "caselaw") {
+    const haystack = `${title} ${citation}`;
+    if (!PARTY_INDICATOR_RE.test(haystack)) {
+      // Allow if title still has a substantive Hebrew word ≥6 chars AND ≥6 chars.
+      const titleHasWord = HEB_WORD_RE.test(title) && title.replace(/\s+/g, "").length >= 6;
+      if (!titleHasWord) return true;
+    }
+  }
+
+  // 4) Generic too-short / no Hebrew word at all.
+  if (citation.length < 20 && !HEB_WORD_RE.test(combined)) return true;
+
+  return false;
+}
+
+// ─── Section E: primary-vs-secondary classification ─────────────────────
+/**
+ * Heuristic classification of a candidate as "primary law" (statute,
+ * regulation, Supreme-Court binding caselaw, or planner-resolved exact
+ * authority) vs "secondary" (research/policy/scholarship/lower-court).
+ * Used by the anchor reserve to avoid displacing primary local hits for
+ * doctrinal claims that need binding law.
+ */
+const SUPREME_HINTS_RE = /(עליון|בג["״]?ץ|דנ["״]?א|פ["״]?ד|supreme)/i;
+function isPrimaryLaw(c: CandidateSource): boolean {
+  if (c.origin === "exact_authority") return true;
+  const st = (c.source_type || "").toLowerCase();
+  if (st === "statute" || st === "legislation" || st === "regulation") return true;
+  if (st === "caselaw") {
+    const court = String((c.metadata as Record<string, unknown> | undefined)?.court ?? "");
+    const hay = `${court} ${c.title} ${c.citation}`;
+    return SUPREME_HINTS_RE.test(hay);
+  }
+  return false;
+}
+
+function requiresBindingLaw(claim: { required_evidence?: string[] }): boolean {
+  const re = claim.required_evidence;
+  if (!Array.isArray(re)) return false;
+  return re.some((k) => k === "binding_caselaw" || k === "statute_section" || k === "regulation");
+}
+
+
+
 async function exactAuthority(
   client: SupabaseClient,
   auth: ExpectedAuthority,
