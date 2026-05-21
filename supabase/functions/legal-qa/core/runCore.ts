@@ -794,27 +794,40 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   const acceptanceErrors: string[] = [];
   if (/\[cite:LS\d+\]/.test(qual.rendered_answer)) acceptanceErrors.push("marker_leftover_in_answer");
   // Every superscript in rendered text resolves to a footnote number.
-  // (rendered_answer carries superscripts produced by buildFootnotes; we
-  // check that every number referenced has a matching footnote entry.)
-  // Every superscript glyph in rendered text must resolve to a footnote
-  // number. Adjacent markers (e.g. [cite:LS4][cite:LS5]) produce two
-  // consecutive single-digit superscripts that must be validated
-  // INDIVIDUALLY — never parsed as one multi-digit number ("45").
+  // Scan MAXIMAL runs of superscript digits, not individual glyphs:
+  // footnote #10 renders as "¹⁰" — per-char scanning would falsely flag
+  // the "⁰" as missing footnote 0. A run is valid if (a) it parses as a
+  // known footnote number, or (b) it can be split greedily into a
+  // sequence of known footnote numbers (adjacent-marker case, e.g.
+  // "¹²" = fn1+fn2 when fn12 doesn't exist).
   const SUP_MAP: Record<string, number> = {
     "⁰":0,"¹":1,"²":2,"³":3,"⁴":4,"⁵":5,"⁶":6,"⁷":7,"⁸":8,"⁹":9,
   };
   const fnNumbers = new Set(qual.footnotes.map(f => f.number));
-  outer: for (const ch of qual.rendered_answer) {
-    const n = SUP_MAP[ch];
-    if (n === undefined) continue;
-    if (!fnNumbers.has(n)) {
-      acceptanceErrors.push(`sup_no_footnote:${n}`);
-      console.error("[core:acceptance] sup_no_footnote — should be unreachable after pre-strip", {
-        missing_n: n,
+  const SUP_RUN_RE = /[\u2070-\u2079\u00B2\u00B3\u00B9]+/g;
+  const runValid = (digits: string): boolean => {
+    if (!digits) return true;
+    const asNum = Number(digits.split("").map(c => SUP_MAP[c]).join(""));
+    if (fnNumbers.has(asNum)) return true;
+    // Try greedy split: prefer longer prefix (max 3 digits) that is a known fn.
+    for (let len = Math.min(3, digits.length); len >= 1; len--) {
+      const head = Number(digits.slice(0, len).split("").map(c => SUP_MAP[c]).join(""));
+      if (fnNumbers.has(head) && runValid(digits.slice(len))) return true;
+    }
+    return false;
+  };
+  for (const m of qual.rendered_answer.matchAll(SUP_RUN_RE)) {
+    const digits = m[0];
+    if (!runValid(digits)) {
+      const asNum = Number(digits.split("").map(c => SUP_MAP[c] ?? "").join(""));
+      acceptanceErrors.push(`sup_no_footnote:${asNum}`);
+      console.error("[core:acceptance] sup_no_footnote — unresolved superscript run", {
+        run: digits,
+        as_number: asNum,
         fn_numbers: [...fnNumbers],
         marker_to_footnote: qual.marker_to_footnote,
       });
-      break outer;
+      break;
     }
   }
 
