@@ -49,6 +49,13 @@ function decideKept(c: LedgerSourceCitation): KeptDecision {
   if (offDomain) {
     return { kept: false, reason: offDomain };
   }
+  // Drop approved_web sources with uninformative labels (e.g. "[DOC] nevo.co.il")
+  // or empty source_type. Primary/local sources are kept (handled by ledger origin).
+  const hasUninformative = c.citation_errors.includes("uninformative_label") ||
+    c.citation_errors.includes("empty_source_type");
+  if (hasUninformative && c.declared_type === "none") {
+    return { kept: false, reason: "uninformative_label" };
+  }
   if (c.citation_quality === "partial") {
     if (c.placeholders.length > 0) {
       return { kept: true, reason: `placeholder_accepted:${c.placeholders.join(",")}` };
