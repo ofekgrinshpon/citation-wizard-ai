@@ -124,17 +124,17 @@ export interface ClaimRetrievalPack {
   web_skipped_for_global_cap: boolean;
   web_harvest: WebHarvestTelemetry;
   // Section E telemetry
-  primary_count: number;
-  secondary_count: number;
+  primary_count?: number;
+  secondary_count?: number;
   // Section A telemetry (anchor slots actually retained)
-  anchor_kept: number;
-  anchor_doc_ids: string[];
-  anchor_source_types: string[];
-  anchor_displaced_primary: boolean;
+  anchor_kept?: number;
+  anchor_doc_ids?: string[];
+  anchor_source_types?: string[];
+  anchor_displaced_primary?: boolean;
   // Section C telemetry
-  approved_web_stubs_dropped: number;
+  approved_web_stubs_dropped?: number;
   // Section D telemetry
-  anchor_web: ClaimAnchorWebTelemetry;
+  anchor_web?: ClaimAnchorWebTelemetry;
 }
 
 export interface AnchorLayerTelemetry {
