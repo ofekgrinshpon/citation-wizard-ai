@@ -60,11 +60,33 @@ async function runOne([tag, q]) {
   const ans = row.answer || "";
   const fns = row.footnotes || [];
   const supRe = /[\u00B9\u00B2\u00B3\u2070-\u209F]+/g;
-  const sups = [...ans.matchAll(supRe)].map((m) =>
-    parseInt(m[0].split("").map((c) => "⁰¹²³⁴⁵⁶⁷⁸⁹".indexOf(c)).join(""), 10),
-  );
   const fnNums = new Set(fns.map((f) => f.number));
-  const orphans = sups.filter((n) => !fnNums.has(n));
+  // Greedy split: mirror backend acceptance scanner. A superscript run may be a
+  // single multi-digit footnote (e.g. ¹⁰) OR a sequence of adjacent single-digit
+  // footnotes (e.g. ¹² = fn1+fn2). Try to partition each run into known fn numbers.
+  const maxFnLen = Math.max(1, ...[...fnNums].map((n) => String(n).length));
+  const splitRun = (digits) => {
+    const dp = (i) => {
+      if (i === digits.length) return [];
+      for (let L = Math.min(maxFnLen, digits.length - i); L >= 1; L--) {
+        const n = parseInt(digits.slice(i, i + L), 10);
+        if (fnNums.has(n)) {
+          const rest = dp(i + L);
+          if (rest) return [n, ...rest];
+        }
+      }
+      return null;
+    };
+    return dp(0);
+  };
+  const sups = [];
+  const orphans = [];
+  for (const m of ans.matchAll(supRe)) {
+    const digits = m[0].split("").map((c) => "⁰¹²³⁴⁵⁶⁷⁸⁹".indexOf(c)).join("");
+    const parts = splitRun(digits);
+    if (parts) sups.push(...parts);
+    else orphans.push(parseInt(digits, 10));
+  }
   const leftovers = (ans.match(/\[cite:LS\d+\]/g) || []);
   const placeholders = fns.filter((f) => /\(ציטוט חסר\)/.test(f.citation || "")).length;
   // Bare reporter detection in final footnotes

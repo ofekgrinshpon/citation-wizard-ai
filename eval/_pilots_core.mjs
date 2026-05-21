@@ -62,11 +62,26 @@ const md = row.metadata || {};
 const ans = row.answer || "";
 const fns = row.footnotes || [];
 const supRe = /[\u00B9\u00B2\u00B3\u2070-\u209F]+/g;
-const sups = [...ans.matchAll(supRe)].map(m => {
-  return m[0].split("").map(c => "⁰¹²³⁴⁵⁶⁷⁸⁹".indexOf(c)).join("");
-}).map(s => parseInt(s,10));
 const fnNums = new Set(fns.map(f => f.number));
-const orphanSups = sups.filter(n => !fnNums.has(n));
+const maxFnLen = Math.max(1, ...[...fnNums].map(n => String(n).length));
+const splitRun = (digits) => {
+  const dp = (i) => {
+    if (i === digits.length) return [];
+    for (let L = Math.min(maxFnLen, digits.length - i); L >= 1; L--) {
+      const n = parseInt(digits.slice(i, i + L), 10);
+      if (fnNums.has(n)) { const rest = dp(i + L); if (rest) return [n, ...rest]; }
+    }
+    return null;
+  };
+  return dp(0);
+};
+const sups = [];
+const orphanSups = [];
+for (const m of ans.matchAll(supRe)) {
+  const digits = m[0].split("").map(c => "⁰¹²³⁴⁵⁶⁷⁸⁹".indexOf(c)).join("");
+  const parts = splitRun(digits);
+  if (parts) sups.push(...parts); else orphanSups.push(parseInt(digits, 10));
+}
 const leftoverCites = (ans.match(/\[cite:LS\d+\]/g) || []);
 const placeholders = fns.filter(f => /\(ציטוט חסר\)/.test(f.citation || "")).map(f => f.number);
 
