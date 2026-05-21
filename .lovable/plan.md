@@ -1,99 +1,81 @@
 
-## Goal
+## Root cause
 
-After a Legal QA answer renders, let the user open a **Citation Review** panel where every footnote becomes an editable mini-card (same affordance as `FootnoteReviewCard` in the Batch Footnote Builder). The user can:
+When you submit a Deep query, `legal-qa` queues an async worker and **pre-inserts a `qa_logs` row** with `answer = "מעבד שאלה…"` and `metadata.pipeline_used = "core_running"`, so a crash leaves a trace.
 
-1. Edit the raw input (case name, law name, free text).
-2. Change the detected source type.
-3. Click **🔄 השלם פרטים חסרים** to re-run the citation through Perplexity + the citation engine to fill `[חסר: שנה]`, missing volume/page, missing law year, etc.
-4. Edit the canonical output directly.
-5. Approve a citation (✓), or remove it.
-6. When all approved, click **עדכן תשובה** → the answer text is re-rendered with the new footnote list (same superscript numbering, same Rule 37 שם/לעיל logic), and the final answer block updates in place.
+The polling endpoint `supabase/functions/legal-qa-status/index.ts` derives status like this:
 
-No backend pipeline changes for Core/Research. This is a post-generation editing layer that re-uses the existing `citation-chat` edge function (single-citation formatter) and a thin new edge function for "fill missing fields via Perplexity".
-
-## User flow
-
-```text
-Answer renders (existing)
-        │
-        ▼
-"בדוק ציטוטים" button under footnote list
-        │
-        ▼
-Citation Review panel opens (RTL, inline under answer)
-  ┌──────────────────────────────────────────────┐
-  │ [1] ✓ אושר            סוג: פסיקה ▾   ✕      │
-  │ קלט:    בג"ץ 910/86 רסלר נ' שר הביטחון      │
-  │ פלט:    בג"ץ 910/86 רסלר נ' שר הביטחון,    │
-  │         פ"ד מב(2) 441 (1988).                │
-  │ [🔄 השלם חסרים] [✎ ערוך] [✓ אשר]            │
-  └──────────────────────────────────────────────┘
-  ┌──────────────────────────────────────────────┐
-  │ [2] ⚠ דרוש בדיקה      סוג: חקיקה ▾   ✕      │
-  │ פלט:    חוק יסוד: כבוד האדם וחירותו         │
-  │         ([חסר: שנה]).                        │
-  │ [🔄 השלם חסרים]                              │
-  └──────────────────────────────────────────────┘
-        │
-        ▼
-"עדכן תשובה" → re-render answer with new footnotes
+```ts
+function deriveStatus(metadata, hasAnswer) {
+  if (hasAnswer) return "completed";   // ← bug
+  if (metadata?.checkpoint === "failed") return "failed";
+  ...
+  return "running";
+}
 ```
+
+`hasAnswer` is true the instant the placeholder row exists. So the very first poll (≈1s after submit) returns:
+
+```json
+{ "status": "completed", "answer": "מעבד שאלה…", "footnotes": [], "total_footnotes": 0 }
+```
+
+The client sees `status=completed` with no footnotes and renders the "failed to generate" error card. Confirmed in the DB right now:
+
+| run_id | pipeline_used | answer | footnotes |
+|---|---|---|---|
+| `bf4f3a4d…` | `core_running` | `מעבד שאלה…` | 0 |
+| `97337a29…` | `core_running` | `מעבד שאלה…` | 0 |
+
+Both rows are still stuck on `core_running` — the background worker never updated them. So in the UI you got two false "completed" responses while the worker was still going.
+
+A secondary signal in the same window:
+
+```
+2026-05-21T20:13:17Z ERROR [core retrieval vec] C1: canceling statement due to statement timeout
+```
+
+That's the local pgvector retrieval (`match_legal_chunks` RPC) hitting Postgres `statement_timeout` for claim C1. The retrieval code already swallows it and returns `[]`, so this is **not** what failed the run from the UI's perspective — but it's a real performance issue that can leave Deep runs with thinner local hits.
+
+So there are two issues, in priority order.
+
+## Plan
+
+### Fix 1 — Status endpoint must not treat placeholder as completed (the actual UI failure)
+
+`supabase/functions/legal-qa-status/index.ts`:
+
+- Update `deriveStatus`:
+  - A run is `completed` only when both `answer` exists **and** `metadata.pipeline_used` is one of the terminal states (`core`, `core_failed`, `v3`, `v4`, `legacy`, etc.) — i.e. **not** `core_running`. Equivalently: `metadata.checkpoint === "completed"` OR `pipeline_used !== "core_running"` with a non-placeholder answer.
+  - Add an explicit guard: if `answer === "מעבד שאלה…"` (the known placeholder), force status to `running`.
+- Also stop returning `answer`, `footnotes`, etc. in the response when status is `running` / `queued` — only emit them on `completed` or `failed`. (Today the placeholder leaks out and confuses the client.)
+
+Optional small addition: include `metadata.pipeline_used` in `progress` so we can spot stuck `core_running` rows from the client.
+
+### Fix 2 — Mark stuck `core_running` rows as failed if the worker never finishes
+
+The async dispatcher in `legal-qa/index.ts` already catches background crashes and writes `checkpoint: "failed"`, but **silent EdgeRuntime kills** (CPU/wall-time) leave the row at `core_running` forever.
+
+- Add a server-side timeout check in `legal-qa-status`: if `pipeline_used === "core_running"` AND `created_at` is older than N minutes (e.g. 6 min — Deep budget is ~3–4 min), return `status: "failed"` with `reason: "worker_timeout"`. Don't mutate the row from the status endpoint; just project the state.
+- The client already handles `failed` (shows the error card with Try Again), so no client change needed for this.
+
+### Fix 3 — pgvector timeout on C1 (lower priority, separate follow-up)
+
+The `[core retrieval vec] C1: canceling statement due to statement timeout` line means `match_legal_chunks` is too slow on some claim embeddings. Out of scope for this hotfix — flagging only. Possible follow-ups (not in this plan): a) lower `match_count`, b) split into two RPC calls, c) raise `statement_timeout` for that one RPC via `SET LOCAL`. Will open a separate investigation if you want.
 
 ## Files
 
-### New: `src/components/legal-qa/CitationReviewPanel.tsx`
-- Props: `{ answer, footnotes, onApply(updatedAnswer, updatedFootnotes) }`.
-- Local state: `cells: ReviewCitationCell[]` (one per footnote, seeded from `result.footnotes`).
-- Renders one `<CitationReviewCard>` per cell + a sticky footer with **עדכן תשובה / ביטול**.
-- On **עדכן תשובה**: builds the new footnote array (sequential numbering preserved), runs the local re-render helper, calls `onApply`.
-
-### New: `src/components/legal-qa/CitationReviewCard.tsx`
-- Mirrors `FootnoteReviewCard.tsx` visually (status pill, source-type `Select`, editable input, editable output textarea, action buttons).
-- Adds a **🔄 השלם פרטים חסרים** action button (instead of "הפק מחדש").
-- Detects missing fields from the current output (`[חסר: שנה]`, `[חסר: …]`, empty volume/page parens) and surfaces a red hint `חסר: שנה, כרך`.
-- Disabled "אשר" until output has no `[חסר: …]` placeholders (or user manually edits).
-
-### New: `src/lib/legalQa/footnoteRerender.ts`
-Pure helper, no network:
-- `renumberFootnotes(answer, originalFootnotes, edited: EditedFootnote[]) → { answer, footnotes }`
-- Re-runs the same superscript scanning logic the backend uses (greedy `¹²³⁴⁵⁶⁷⁸⁹⁰` parsing, mirroring `supabase/functions/legal-qa/core/footnotes.ts`).
-- Drops removed citations and re-flows numbering left-to-right.
-- Re-applies Rule 37 שם / לעיל ה"ש N for repeated same-source markers.
-
-### New: `supabase/functions/citation-refill/index.ts`
-Thin edge function, JWT-protected, costs 1 credit (same as a citation-chat call):
-- Input: `{ current_citation, source_type, missing_fields: string[], raw_hint?: string }`.
-- Calls Perplexity (`sonar-pro`, same provider used in `legalSourcePack.ts`) with a tight prompt: "given this citation, return ONLY the missing fields as JSON: { year?, volume?, page?, full_date?, official_publication? }". Uses `search_domain_filter` with the existing supremedecisions/nevo/knesset allowlist.
-- Merges the returned fields into the input using the existing `_shared/citationEngine.ts` resolver → returns the new canonical citation + which fields were actually filled.
-- No DB writes; logging only into `qa_logs.metadata.refill_calls` is **out of scope** for V1.
-
-### Refactor: `src/components/LegalQAChat.tsx`
-- Add a small toggle button near the "הערות שוליים" header: **"בדוק ציטוטים"** (only when `result.footnotes.length > 0` and we are in research/research-deep mode — not for case-summary).
-- When toggled, render `<CitationReviewPanel>` inline beneath the footnote list.
-- On `onApply`, replace `result.answer` and `result.footnotes` in local state. Mark the result as user-edited (`result.user_edited = true`) so downstream copy/insert uses the edited version. **No qa_logs update** — keep it client-side for V1.
-
-### Reused (no changes)
-- `citation-chat` edge function — used by `🔄 השלם פרטים חסרים` only as a fallback when refill fails to produce a clean canonical (so we still leverage its full source-type-aware formatting).
-- `FormattedCitation` — for the live preview line under each card.
-- `SOURCE_TYPE_LABELS`, `detectSourceType` from `src/data/abbreviations.ts`.
-
-## Behavior rules
-
-- **Numbering invariant**: review never breaks superscript-to-footnote alignment. The renumber helper is the only place that rewrites both. Unit-test with adjacent multi-digit cases (¹²/³⁴/⁵⁶) — same logic as the eval harness patch.
-- **Removed citation**: any superscript pointing to it is stripped from the answer text.
-- **Repeated source**: short forms are regenerated by the helper, never by Perplexity.
-- **Quality gates stay client-side**: V1 trusts the user's manual edits. Backend post-processing gates (`bare-reporter`, `journal_pipe_unresolved`, `ציטוט חסר`) are only re-checked as soft warnings on the card; the user can still approve through them.
-- **No retrieval re-run**: this is editing, not new research. We never re-query the ledger or run Core again.
-
-## Out of scope for V1
-- Persisting edited answers back into `qa_logs` (read-only history stays the raw model output).
-- Re-running CitationQuality / verifier on user edits.
-- Bulk "refill all missing fields" action — V1 is one card at a time, keeps the credit cost transparent.
-- Mobile-optimized layout — desktop only first, same as Batch Footnote Builder today.
+- `supabase/functions/legal-qa-status/index.ts` — rewrite `deriveStatus` + response payload gating.
 
 ## Validation
-1. Type-check edge function + frontend.
-2. Manual: open any S1–S10 smoke answer with `[חסר: שנה]` (S1/S4/S6/S7 currently have them), open review, click **🔄** on a card, confirm year fills, approve, click **עדכן תשובה**, confirm the answer rerenders with the year visible and superscripts still aligned.
-3. Edge case: remove footnote #3 from a 7-footnote answer → superscripts ⁴⁵⁶⁷ should renumber to ³⁴⁵⁶ and all subsequent שם/לעיל references must update.
-4. Adjacent multi-digit (¹²) regression: same case the eval harness now handles correctly.
+
+1. Submit a Deep query from the UI. Within 1–2s the status poll should return `status: "running"` (not `completed`).
+2. Wait normally; once the worker finishes and writes the real answer + footnotes, the next poll flips to `status: "completed"` with the real content.
+3. Force a crash by sending a malformed body or killing the worker; verify the row eventually reads `status: "failed"` (either via existing checkpoint or via the new 6-min watchdog).
+4. Re-check the two stuck rows from this session — they should now report `status: "failed"` (worker_timeout) instead of `completed`.
+
+## Out of scope
+
+- The `[core retrieval vec]` statement_timeout itself (Fix 3 — flag only).
+- Any change to the Core pipeline or to `legal-qa` worker logic.
+- Any UI change — the client already handles `running` / `completed` / `failed` correctly.
