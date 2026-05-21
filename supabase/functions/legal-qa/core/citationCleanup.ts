@@ -123,10 +123,149 @@ export function cleanCitationText(input: string): string {
 
 // Heuristic for uninformative web labels like "[DOC] nevo.co.il".
 const UNINFORMATIVE_TITLE_RE = /^\s*\[(DOC|PDF|HTML)\]\s+[a-z0-9.\-]+\s*$/i;
+const HOST_ONLY_RE = /^\s*(?:https?:\/\/)?(?:www\.)?[a-z0-9.\-]+\.[a-z]{2,}\s*$/i;
 export function isUninformativeLabel(title?: string): boolean {
   if (!title) return false;
   const t = title.trim();
   if (!t) return false;
   if (UNINFORMATIVE_TITLE_RE.test(t)) return true;
+  if (HOST_ONLY_RE.test(t)) return true;
   return false;
 }
+
+// ─── Source-type normalization ───────────────────────────────────────────
+// Coerces internal / external aliases into the canonical set used by the
+// citation engine. Anything not in the map passes through untouched.
+const SOURCE_TYPE_NORMALIZE: Record<string, string> = {
+  // Caselaw aliases
+  supreme_court_il: "caselaw",
+  case_law: "caselaw",
+  case_law_database: "caselaw",
+  case_law_published: "caselaw",
+  published_caselaw: "caselaw",
+  caselaw: "caselaw",
+  // Statute aliases
+  israeli_law: "statute",
+  legislation_primary: "statute",
+  primary_legislation: "statute",
+  statute: "statute",
+  legislation: "statute",
+  // Basic law
+  basic_law: "basic_law",
+  // Regulations
+  legislation_secondary: "regulation",
+  secondary_legislation: "regulation",
+  regulation: "regulation",
+  // Journal articles
+  journal: "journal_article",
+  journal_article: "journal_article",
+  article: "journal_article",
+};
+
+export function normalizeSourceType(raw: string | undefined): string {
+  const key = (raw || "").toLowerCase().trim();
+  if (!key) return "";
+  return SOURCE_TYPE_NORMALIZE[key] ?? key;
+}
+
+// ─── Bare-reporter detection ─────────────────────────────────────────────
+// A bare reporter looks like `פ"ד מט(4) 221` (optionally followed by a
+// parenthesized host or year) WITHOUT a docket prefix and WITHOUT a parties
+// separator (`X נ' Y`). These cannot stand alone as final case citations per
+// Rule 18.
+const REPORTER_RE = /פ["״]ד\s+[א-ת]+(?:\s*\(\s*\d+\s*\))?\s+\d+/;
+const PARTIES_SEP_RE = /\sנ['׳]\s/;
+
+// Lazy-import to avoid circular pull from cleanup helpers.
+import { CASE_TYPE_PREFIX_RE, CASE_DOCKET_RE } from "../../_shared/caseTypePrefixes.ts";
+
+export function isBareReporter(text: string): boolean {
+  if (!text) return false;
+  if (!REPORTER_RE.test(text)) return false;
+  if (CASE_TYPE_PREFIX_RE.test(text)) return false;
+  if (PARTIES_SEP_RE.test(text)) return false;
+  return true;
+}
+
+// Scan title/citation/snippet for a docket like `בג"ץ 1234/56` or
+// `18225-06-25` with a prefix. Returns the first prefix+docket match.
+export function extractDocketFromText(text: string): { prefix: string; docket: string } | null {
+  if (!text) return null;
+  const m = text.match(CASE_DOCKET_RE);
+  if (!m) return null;
+  return { prefix: m[1], docket: m[2] };
+}
+
+// Scan for parties: `<X> נ' <Y>` — returns trimmed party strings.
+const PARTIES_CAPTURE_RE = /([^,\n()״"]+?)\s+נ['׳]\s+([^,\n()״"]+?)(?=\s*[,.\n(]|$)/;
+export function extractPartiesFromText(text: string): { party1: string; party2: string } | null {
+  if (!text) return null;
+  const m = text.match(PARTIES_CAPTURE_RE);
+  if (!m) return null;
+  const p1 = m[1].trim().replace(/^.*?\d+\/\d+\s+/, "").trim();
+  const p2 = m[2].trim();
+  if (!p1 || !p2) return null;
+  return { party1: p1, party2: p2 };
+}
+
+// Scan for a year (4 digits, 1900–2099).
+const YEAR_RE = /\b(19\d{2}|20\d{2})\b/;
+export function extractYearFromText(text: string): string | undefined {
+  if (!text) return undefined;
+  const m = text.match(YEAR_RE);
+  return m ? m[1] : undefined;
+}
+
+// Scan for a full date dd.mm.yyyy or yyyy-mm-dd.
+const FULLDATE_RE = /\b(\d{1,2}\.\d{1,2}\.\d{4})\b/;
+const ISODATE_RE = /\b(\d{4})-(\d{2})-(\d{2})\b/;
+export function extractFullDateFromText(text: string): string | undefined {
+  if (!text) return undefined;
+  const m = text.match(FULLDATE_RE);
+  if (m) return m[1];
+  const iso = text.match(ISODATE_RE);
+  if (iso) return `${parseInt(iso[3], 10)}.${parseInt(iso[2], 10)}.${iso[1]}`;
+  return undefined;
+}
+
+// ─── Journal-article pipe-artifact handling ──────────────────────────────
+// Some upstream fetchers emit composite labels like
+//   `כותרת המאמר | שם המחבר (כרך)` or `כותרת | מחבר | 2018`.
+// Detect and split deterministically. Returns null if not a pipe artifact.
+const PIPE_RE = /\s\|\s/;
+export function isPipeArtifact(text: string): boolean {
+  return PIPE_RE.test(text || "");
+}
+
+export interface PipeParseResult {
+  title?: string;
+  author?: string;
+  volume?: string;
+  year?: string;
+  /** True when we recovered at least title + (author OR year). */
+  ok: boolean;
+}
+
+export function parsePipeArtifact(text: string): PipeParseResult {
+  if (!text || !isPipeArtifact(text)) return { ok: false };
+  const parts = text.split(PIPE_RE).map((p) => p.trim()).filter(Boolean);
+  if (parts.length === 0) return { ok: false };
+  const out: PipeParseResult = { ok: false };
+  out.title = parts[0];
+  for (let i = 1; i < parts.length; i++) {
+    const p = parts[i];
+    // Volume often appears as "(N)" or "כרך N".
+    const volM = p.match(/\((\d+)\)|כרך\s+([\dא-ת]+)/);
+    if (volM) out.volume = volM[1] || volM[2];
+    // Year — 4 digits.
+    const yM = p.match(YEAR_RE);
+    if (yM && !out.year) out.year = yM[1];
+    // Otherwise treat as author if not yet set and not pure numeric.
+    if (!out.author && !/^\d+$/.test(p) && !volM) {
+      out.author = p.replace(/\s*\(\d+\)\s*$/, "").trim();
+    }
+  }
+  out.ok = !!(out.title && (out.author || out.year));
+  return out;
+}
+
