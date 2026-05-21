@@ -45,6 +45,34 @@ const ANCHOR_TEXT_K = 12;
 const ANCHOR_VECTOR_K = 12;
 const ANCHOR_MAX_DOCS_PER_LAYER = 8;    // cap unique documents per anchor layer
 const EXPECTED_EMBEDDING_DIM = 768;
+// Per-claim anchor reserve: small slot quota so anchor candidates survive the
+// per-claim cap even when local_text already fills the budget. Reserve is for
+// RECALL — verifier still gates relevance.
+const PER_CLAIM_ANCHOR_RESERVE = 2;
+// Anchor-driven approved_web (Section D). Extra web hits when local recall is
+// thin or the claim explicitly needs scholarship/doctrinal_definition.
+const ANCHOR_WEB_PER_CLAIM = 2;
+const ANCHOR_WEB_THIN_LOCAL_THRESHOLD = 4;
+// Government / regulator subset of TIER_A for factual-anchor web queries.
+const TIER_A_GOV_HOSTS: readonly string[] = [
+  "knesset.gov.il",
+  "mevaker.gov.il",
+  "justice.gov.il",
+  "reshumot.gov.il",
+  "competition.gov.il",
+  "tax.gov.il",
+  "mof.gov.il",
+  "supreme.court.gov.il",
+  "supremedecisions.court.gov.il",
+];
+// Academic / scholarship subset of TIER_A for concept-anchor web queries.
+const TIER_A_SCHOLARSHIP_HOSTS: readonly string[] = [
+  "huji.ac.il",
+  "tau.ac.il",
+  "biu.ac.il",
+  "ssrn.com",
+  "jstor.org",
+];
 
 // ─── Types ────────────────────────────────────────────────────────────────
 export interface AuthorityResolution {
@@ -64,6 +92,27 @@ export interface WebHarvestTelemetry {
   web_empty_reason?: "no_response" | "no_urls" | "all_rejected" | "ok" | "skipped";
 }
 
+export interface ClaimAnchorTelemetry {
+  claim_id: ClaimId;
+  anchor_kept: number;
+  anchor_doc_ids: string[];
+  anchor_source_types: string[];
+  anchor_displaced_primary: boolean;
+}
+
+export interface ClaimWebStubTelemetry {
+  claim_id: ClaimId;
+  dropped_count: number;
+}
+
+export interface ClaimAnchorWebTelemetry {
+  claim_id: ClaimId;
+  factual_terms: string[];
+  concept_terms: string[];
+  factual_hits: number;
+  concept_hits: number;
+}
+
 export interface ClaimRetrievalPack {
   claim_id: ClaimId;
   candidates: CandidateSource[];
@@ -74,6 +123,18 @@ export interface ClaimRetrievalPack {
   approved_web_domains: string[];
   web_skipped_for_global_cap: boolean;
   web_harvest: WebHarvestTelemetry;
+  // Section E telemetry
+  primary_count?: number;
+  secondary_count?: number;
+  // Section A telemetry (anchor slots actually retained)
+  anchor_kept?: number;
+  anchor_doc_ids?: string[];
+  anchor_source_types?: string[];
+  anchor_displaced_primary?: boolean;
+  // Section C telemetry
+  approved_web_stubs_dropped?: number;
+  // Section D telemetry
+  anchor_web?: ClaimAnchorWebTelemetry;
 }
 
 export interface AnchorLayerTelemetry {
@@ -102,6 +163,10 @@ export interface VectorHealthDiag {
   /** One probe at threshold=0.0 to distinguish "RPC broken" from "over-filtered". */
   threshold_probe_top_similarity?: number | null;
   threshold_probe_error?: string;
+  /** Section B: cold-HNSW warmup ping outcome. */
+  warmup_status?: "ok" | "skipped" | "failed" | string;
+  /** Section B: count of retries triggered by Postgres statement_timeout (57014). */
+  retries_57014?: number;
 }
 
 // Legacy alias retained so callers reading retrieval.factual_anchors keep
@@ -121,6 +186,10 @@ export interface RetrievalResult {
   anchor_prepass_document_ids?: string[];
   vector_health?: VectorHealthDiag;
   local_metadata_overrides?: number;
+  // Aggregated per-claim telemetry for Section A/C/D.
+  anchor_slots_used_per_claim?: ClaimAnchorTelemetry[];
+  approved_web_stubs_dropped_per_claim?: ClaimWebStubTelemetry[];
+  approved_web_anchor_queries?: ClaimAnchorWebTelemetry[];
 }
 
 export interface RetrieveArgs {
@@ -331,12 +400,25 @@ async function localVector(
     // candidates reach ranking. Embedding sent as JSON-array string (pgvector
     // text format), which is what the supabase-js RPC client expects for the
     // `extensions.vector` parameter type.
-    const { data, error, status } = await client.rpc("match_legal_chunks", {
+    const callRpc = async (mc: number) => client.rpc("match_legal_chunks", {
       query_embedding: JSON.stringify(emb),
       match_threshold: 0.35,
-      match_count: matchCount,
+      match_count: mc,
     });
+    let { data, error, status } = await callRpc(matchCount);
     if (h) h.last_status = status;
+    // Section B: one retry on Postgres statement_timeout (57014) with halved K.
+    if (error && (error as { code?: string }).code === "57014") {
+      if (h) {
+        h.retries_57014 = (h.retries_57014 ?? 0) + 1;
+        h.last_rpc_error = `57014_retry:${error.message ?? ""}`.slice(0, 240);
+        h.last_rpc_code = "57014";
+      }
+      const halved = Math.max(1, Math.ceil(matchCount / 2));
+      console.error(`[core retrieval vec retry 57014] ${claimId}: retrying with match_count=${halved}`);
+      ({ data, error, status } = await callRpc(halved));
+      if (h) h.last_status = status;
+    }
     if (error) {
       if (h) {
         h.failed++;
@@ -396,6 +478,122 @@ async function vectorThresholdProbe(
     health.threshold_probe_top_similarity = null;
   }
 }
+
+// ─── Section B: cold-HNSW warmup ──────────────────────────────────────────
+/**
+ * Fires a tiny match_legal_chunks call once before any per-claim/anchor
+ * vector RPC. Pays the HNSW load cost on the first request and prevents
+ * subsequent calls from hitting Postgres statement_timeout (57014).
+ * Errors are swallowed; outcome is recorded in `health.warmup_status`.
+ */
+async function vectorWarmup(
+  client: SupabaseClient,
+  health: VectorHealthDiag,
+  signal?: AbortSignal,
+): Promise<void> {
+  if (signal?.aborted) {
+    health.warmup_status = "skipped";
+    return;
+  }
+  try {
+    const zero = new Array(EXPECTED_EMBEDDING_DIM).fill(0);
+    const { error } = await client.rpc("match_legal_chunks", {
+      query_embedding: JSON.stringify(zero),
+      match_threshold: 0.99,
+      match_count: 1,
+    });
+    if (error) {
+      health.warmup_status = `failed:${(error as { code?: string }).code ?? "unknown"}`;
+    } else {
+      health.warmup_status = "ok";
+    }
+  } catch (e) {
+    health.warmup_status = `failed:throw:${(e as Error).message.slice(0, 60)}`;
+  }
+}
+
+// ─── Section C: approved_web stub detection ──────────────────────────────
+/**
+ * Returns true when a Perplexity-returned candidate looks like a citation
+ * stub the drafter cannot render properly (standalone placeholder titles,
+ * caselaw without party names, bare docket fragments, too-short citations).
+ * Drops happen at the retrieval layer so the citation engine, verifier,
+ * drafter, and footnote builder never see these candidates.
+ *
+ * Applied only to approved_web hits — local DB rows always pass.
+ */
+const PLACEHOLDER_TITLES = new Set([
+  "פסק דין", "החלטה", 'פס"ד', "פס״ד",
+  "פסה\"ד", "פסה״ד", "פסק־דין", "פסק-דין",
+]);
+const PARTY_INDICATOR_RE = /(?:נ['׳]\s|\sנגד\s|\sv\.\s|\sv\s)/;
+const BARE_DOCKET_RE = /^\d+(?:[./]\d+){1,2}\s*(?:\([^)]*\))?\s*$/;
+const HEB_WORD_RE = /[\u0590-\u05FF]{4,}/;
+
+function stripPunctEdges(s: string): string {
+  return (s || "")
+    .normalize("NFKC")
+    .replace(/^[\s"׳״'`.,;:?!()\[\]{}\-–—]+|[\s"׳״'`.,;:?!()\[\]{}\-–—]+$/g, "")
+    .trim();
+}
+
+function isApprovedWebStub(c: { source_type?: string; title?: string; citation?: string }): boolean {
+  const title = stripPunctEdges(c.title || "");
+  const citation = stripPunctEdges(c.citation || "");
+  const combined = `${title} ${citation}`.trim();
+
+  // 1) Standalone placeholder title.
+  if (PLACEHOLDER_TITLES.has(title)) return true;
+  if (!title && PLACEHOLDER_TITLES.has(citation)) return true;
+
+  // 2) Bare docket fragment with no real title text.
+  if (BARE_DOCKET_RE.test(citation) && !HEB_WORD_RE.test(title)) return true;
+
+  // 3) Caselaw with no party indicator AND no meaningful Hebrew title.
+  const st = (c.source_type || "").toLowerCase();
+  if (st === "caselaw") {
+    const haystack = `${title} ${citation}`;
+    if (!PARTY_INDICATOR_RE.test(haystack)) {
+      // Allow if title still has a substantive Hebrew word ≥6 chars AND ≥6 chars.
+      const titleHasWord = HEB_WORD_RE.test(title) && title.replace(/\s+/g, "").length >= 6;
+      if (!titleHasWord) return true;
+    }
+  }
+
+  // 4) Generic too-short / no Hebrew word at all.
+  if (citation.length < 20 && !HEB_WORD_RE.test(combined)) return true;
+
+  return false;
+}
+
+// ─── Section E: primary-vs-secondary classification ─────────────────────
+/**
+ * Heuristic classification of a candidate as "primary law" (statute,
+ * regulation, Supreme-Court binding caselaw, or planner-resolved exact
+ * authority) vs "secondary" (research/policy/scholarship/lower-court).
+ * Used by the anchor reserve to avoid displacing primary local hits for
+ * doctrinal claims that need binding law.
+ */
+const SUPREME_HINTS_RE = /(עליון|בג["״]?ץ|דנ["״]?א|פ["״]?ד|supreme)/i;
+function isPrimaryLaw(c: CandidateSource): boolean {
+  if (c.origin === "exact_authority") return true;
+  const st = (c.source_type || "").toLowerCase();
+  if (st === "statute" || st === "legislation" || st === "regulation") return true;
+  if (st === "caselaw") {
+    const court = String((c.metadata as Record<string, unknown> | undefined)?.court ?? "");
+    const hay = `${court} ${c.title} ${c.citation}`;
+    return SUPREME_HINTS_RE.test(hay);
+  }
+  return false;
+}
+
+function requiresBindingLaw(claim: { required_evidence?: string[] }): boolean {
+  const re = claim.required_evidence;
+  if (!Array.isArray(re)) return false;
+  return re.some((k) => k === "binding_caselaw" || k === "statute_section" || k === "regulation");
+}
+
+
 
 async function exactAuthority(
   client: SupabaseClient,
@@ -462,6 +660,19 @@ interface PerplexityHit { title: string; citation: string; url: string; snippet:
 interface ApprovedWebResult {
   candidates: CandidateSource[];
   telemetry: WebHarvestTelemetry;
+  stubs_dropped: number;
+}
+
+interface ApprovedWebOptions {
+  allowScholarship?: boolean;
+  /** Override TIER_A_DOMAIN_FILTER with a narrower subset (gov/scholarship/etc). */
+  domainFilter?: readonly string[];
+  /** Extra hint terms (factual/concept anchors) appended to the user prompt. */
+  anchorTerms?: string[];
+  /** Per-call candidate cap (defaults to WEB_PER_CLAIM_CANDIDATES). */
+  maxCandidates?: number;
+  /** Tag inserted into candidate metadata so downstream telemetry can see it. */
+  candidateTag?: string;
 }
 
 function emptyWebTelemetry(reason: WebHarvestTelemetry["web_empty_reason"]): WebHarvestTelemetry {
@@ -483,8 +694,13 @@ async function approvedWeb(
   authorities: ExpectedAuthority[],
   claimId: ClaimId,
   signal?: AbortSignal,
-  allowScholarship = false,
+  opts: ApprovedWebOptions = {},
 ): Promise<ApprovedWebResult> {
+  const allowScholarship = !!opts.allowScholarship;
+  const domainFilter = opts.domainFilter ?? TIER_A_DOMAIN_FILTER;
+  const maxCands = Math.max(1, opts.maxCandidates ?? WEB_PER_CLAIM_CANDIDATES);
+  const anchorTerms = (opts.anchorTerms ?? []).filter((t) => typeof t === "string" && t.trim().length >= 2);
+
   const authHints = authorities
     .slice(0, 4)
     .map((a) => [a.docket, a.name].filter(Boolean).join(" "))
@@ -495,9 +711,10 @@ async function approvedWeb(
   const allowedTypes = allowScholarship
     ? `"caselaw"|"statute"|"regulation"|"scholarship"`
     : `"caselaw"|"statute"|"regulation"`;
-  const sys = `אתה מחזיר אך ורק מקורות משפטיים ישראליים ראשוניים (פסיקה, חקיקה, תקנות) מתוך התחומים המאושרים.${scholarshipClause} החזר JSON-array בלבד, ללא טקסט נוסף, עד ${WEB_PER_CLAIM_CANDIDATES} פריטים. כל איבר: {"title":"","citation":"","url":"","source_type":${allowedTypes},"snippet":""}.`;
+  const sys = `אתה מחזיר אך ורק מקורות משפטיים ישראליים ראשוניים (פסיקה, חקיקה, תקנות) מתוך התחומים המאושרים.${scholarshipClause} החזר JSON-array בלבד, ללא טקסט נוסף, עד ${maxCands} פריטים. כל איבר: {"title":"","citation":"","url":"","source_type":${allowedTypes},"snippet":""}.`;
   const hintBlock = authHints.length ? `\nרמזים לסמכויות צפויות: ${authHints.join(" ; ")}` : "";
-  const usr = `טענה: ${claimText}\nדוקטרינה: ${doctrine}${hintBlock}\nהחזר עד ${WEB_PER_CLAIM_CANDIDATES} מקורות סמכותיים בלבד.`;
+  const anchorBlock = anchorTerms.length ? `\nמושגי-מפתח מהשאלה: ${anchorTerms.slice(0, 3).join(" ; ")}` : "";
+  const usr = `טענה: ${claimText}\nדוקטרינה: ${doctrine}${hintBlock}${anchorBlock}\nהחזר עד ${maxCands} מקורות סמכותיים בלבד.`;
 
   const telemetry: WebHarvestTelemetry = {
     web_json_parse_ok: false,
@@ -507,6 +724,7 @@ async function approvedWeb(
     web_filtered_tier_a_count: 0,
     web_rejected_domain_count: 0,
   };
+  let stubsDropped = 0;
 
   let data: any;
   try {
@@ -519,7 +737,7 @@ async function approvedWeb(
         messages: [{ role: "system", content: sys }, { role: "user", content: usr }],
         temperature: 0.1,
         max_tokens: 800,
-        search_domain_filter: TIER_A_DOMAIN_FILTER,
+        search_domain_filter: domainFilter,
         return_citations: true,
         return_search_results: true,
       }),
@@ -527,13 +745,13 @@ async function approvedWeb(
     if (!res.ok) {
       console.error(`[core retrieval web] ${claimId}: ${res.status}`);
       telemetry.web_empty_reason = "no_response";
-      return { candidates: [], telemetry };
+      return { candidates: [], telemetry, stubs_dropped: stubsDropped };
     }
     data = await res.json();
   } catch (e) {
     console.error(`[core retrieval web throw] ${claimId}:`, (e as Error).message);
     telemetry.web_empty_reason = "no_response";
-    return { candidates: [], telemetry };
+    return { candidates: [], telemetry, stubs_dropped: stubsDropped };
   }
 
   // ── Source 1: parsed JSON-array in message content ─────────────────────
@@ -599,15 +817,20 @@ async function approvedWeb(
 
   if (byUrl.size === 0) {
     telemetry.web_empty_reason = "no_urls";
-    return { candidates: [], telemetry };
+    return { candidates: [], telemetry, stubs_dropped: stubsDropped };
   }
 
-  // ── Tier A filtering ───────────────────────────────────────────────────
+  // ── Tier A filtering + Section C stub filtering ────────────────────────
   const out: CandidateSource[] = [];
   let i = 0;
   for (const h of byUrl.values()) {
     if (citationTier(h.url) !== "A") {
       telemetry.web_rejected_domain_count++;
+      continue;
+    }
+    if (isApprovedWebStub(h)) {
+      stubsDropped++;
+      console.error(`[core retrieval web stub] ${claimId}: dropped url=${h.url} title="${h.title}" cite="${h.citation}"`);
       continue;
     }
     telemetry.web_filtered_tier_a_count++;
@@ -620,13 +843,15 @@ async function approvedWeb(
       citation: h.citation,
       url: h.url,
       snippet: h.snippet,
-      metadata: { tier: "A" },
+      metadata: opts.candidateTag
+        ? { tier: "A", anchor_web_tag: opts.candidateTag }
+        : { tier: "A" },
     });
-    if (out.length >= WEB_PER_CLAIM_CANDIDATES) break;
+    if (out.length >= maxCands) break;
   }
 
   telemetry.web_empty_reason = out.length === 0 ? "all_rejected" : "ok";
-  return { candidates: out, telemetry };
+  return { candidates: out, telemetry, stubs_dropped: stubsDropped };
 }
 
 
@@ -646,6 +871,15 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
   // Single VectorHealthDiag shared across every vector RPC (claim + anchors
   // + probe). Surfaced in metadata.core.retrieval.vector_health.
   const vectorHealth: VectorHealthDiag = newVectorHealth();
+
+  // Section B: cold-HNSW warmup before any per-claim/anchor vector RPC.
+  // Pays the index-load cost once so the first real call doesn't hit
+  // Postgres statement_timeout (57014). Result recorded in vector_health.
+  if (embed) {
+    await vectorWarmup(adminClient, vectorHealth, signal);
+  } else {
+    vectorHealth.warmup_status = "skipped";
+  }
 
   // ─── Anchor pre-pass (factual + concept) ──────────────────────────────
   // The planner often distills the question into PURELY DOCTRINAL search
