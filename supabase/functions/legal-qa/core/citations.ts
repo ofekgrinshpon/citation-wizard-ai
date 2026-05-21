@@ -472,7 +472,10 @@ export function enrichBareReporterCitationWithDebug(
       resolver_input_after_enrichment: resolverHints,
       resolver_output: resolverOutput,
       missing_fields_after_enrichment: Array.from(new Set(missingAfter)),
-      safety_net_used: !!(dbg && (dbg as any).safetyNetUsed),
+      // `safety_net_used` is now always false here; the manual-partial path
+      // lives in `core/citationEnrichment.ts` and is reported via that layer's
+      // `enrichment_path === "manual_partial"`.
+      safety_net_used: false,
     },
   };
 }
