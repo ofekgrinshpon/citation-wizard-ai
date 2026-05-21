@@ -1,112 +1,110 @@
-# Retrieval recall fix — consolidated A+B+C+D+E
+# Why the regression queries still fail (from qa_log `ce385139`)
 
-General-purpose changes to `core/retrieval.ts` and `core/runCore.ts` only. No DB migration. No changes to citation engine, drafter, verifier, ledger, footnote builder, Citation Review UI, or Batch Footnote Builder. No query-specific or document-id hardcoding.
+The previous fix works at the pool level — the MMM "סחיטת דמי חסות / גביית דמי חסות" docs (`a6d79a7a`, `f70dbf19`) reach `anchor_kept` on 5/5 claims. But two general failures remain:
 
-## A. Anchor reserve in per-claim candidate selection
+1. **The 2-slot reserve is layer-blind.** `mergedAnchorPool` always lists factual hits before concept hits. `filteredAnchors.slice(0, 2)` therefore burns both reserve slots on factual hits on every claim. `concept_anchor_candidates.injected_into_claims = 0` even when 8 unique concept docs were found. The journal-article anchor never gets a per-claim slot.
 
-`retrieval.ts:830-871` currently dedupes via `byKey` Map (ingest order: exact → text → vector → anchor → web) then slices `localKept.slice(0, localBudget)` where `localBudget = PER_CLAIM_CAP - webKept.length`. Result: anchors are appended last to the Map and routinely sliced off when text hits already fill the budget. Telemetry shows `injected_into_claims` incrementing even when the anchor was sliced.
+2. **Concept anchor terms are too narrow.** Planner emitted `["מחדל חקיקתי חלקי", "הזכות לחיים וביטחון"]`. The article we expect ("סעד החובה לחוקק") uses a synonymous framing ("חובה לחוקק"), so it never enters the concept pool at all. Same shape: a doctrinal question whose corpus uses a synonymous phrasing is silently missed.
 
-Changes:
-- New constant `PER_CLAIM_ANCHOR_RESERVE = 2`.
-- After ingest, partition `all` into `webAll`, `anchorAll` (anchors carry `metadata.factual_anchor === true`), and `localOther` (everything else).
-- `anchor_kept = anchorAll.slice(0, min(PER_CLAIM_ANCHOR_RESERVE, anchorAll.length))`.
-- `localBudget = max(0, PER_CLAIM_CAP - webKept.length - anchor_kept.length)`.
-- Final `candidates = [...localOther.slice(0, localBudget), ...anchor_kept, ...webKept]`.
-- Anchor candidates carry their original `origin` (`local_text` / `local_vector`), so verifier treats them as ordinary local hits. Anchor reserve is recall-only — verifier remains the relevance gate.
-- Fix `injected_into_claims` to increment only when an anchor candidate is in the final `candidates` array (not merely in `byKey`).
+The verifier verdicts show MMM hits landing as "tangential" (mostly), which is expected for recall-injected anchors — that's the verifier doing its job. The fix must stay in **retrieval recall**: get the right scholarship anchor *into* the pool and into the claim, then let the verifier judge.
 
-## B. Vector warmup + 57014 retry
+No hardcoded ids, no per-document logic, no per-query strings. No changes to drafter / verifier / footnote builder / source pack / ledger / DB.
 
-Edge logs show `C0-factual-0` and `C0-concept-0` timing out with Postgres `57014` (statement timeout), then later calls succeed. Cold-HNSW load on the very first call.
+# Files
 
-Changes in `retrieval.ts`:
-- New `vectorWarmup(supabase, signal)` helper called once at the top of `assembleSourcePack`, before any anchor or per-claim vector RPC. Fires `match_legal_chunks` with `match_count=1`, `match_threshold=0.99`, a zero-vector. Errors swallowed. Records `vector_health.warmup_status = "ok" | "failed:<code>"`.
-- In `localVector`, on RPC error with `code === "57014"`: retry once with `match_count = ceil(match_count / 2)`. Record `vector_health.retries_57014` counter and final outcome. Existing diagnostics (`calls`, `ok`, `failed`, `last_rpc_error`, `last_embedding_length`, `threshold_probe_top_similarity`) stay intact.
+- `supabase/functions/legal-qa/core/retrieval.ts` — per-layer reserve, doctrine-synonym anchor expansion.
+- `supabase/functions/legal-qa/core/prompts.ts` — broaden `concept_anchor_terms` instruction.
+- `supabase/functions/legal-qa/core/runCore.ts` — telemetry only.
 
-## C. Drop approved_web stubs before they reach the candidate pool
+# F. Per-layer anchor reserve (retrieval.ts)
 
-In `approvedWeb` (around line 617), after parsing each Perplexity candidate, drop it when the citation looks like a stub. New per-claim counter `approved_web_stubs_dropped`.
+Currently `mergedAnchorPool` is a single flat list ingested factual-first. Replace the single 2-slot reserve with a per-layer split.
 
-Drop rules (applied to the Perplexity-returned `citation` / `title` strings, NOT to local DB hits):
-- **Standalone placeholder titles** (exact-match, ignoring leading/trailing whitespace and quotes): `"פסק דין"`, `"החלטה"`, `"פס\"ד"`, `"פסה\"ד"`, `"פסק־דין"`.
-- **Caselaw with no party indicator**: `source_type === "caselaw"` AND citation lacks `נ'`, `נ׳`, `נגד`, or `v.` AND the remaining title text is shorter than 6 chars.
-- **Bare docket fragments**: citation matches `^\d+([./]\d+){1,2}\s*(\([^)]*\))?$` with no party text (e.g. `"24.7.9396 (בתי המשפט המחוזיים)"`).
-- **Generic too-short citation**: trimmed citation length < 20 chars AND no recognisable Hebrew word ≥ 4 chars in the title.
+Constants:
 
-Each drop is counted into `approved_web_stubs_dropped` and the candidate is excluded from the returned `candidates` array. No changes to anything downstream.
+```ts
+const PER_CLAIM_ANCHOR_RESERVE = 2;   // unchanged total
+const ANCHOR_RESERVE_PER_LAYER = 1;   // at least one slot per layer when that layer has candidates
+```
 
-## D. Extend factual/concept anchors to approved_web
+Implementation (around lines 1141–1179):
 
-Same `factual_anchor_terms` / `concept_anchor_terms` the planner already emits drive an additional approved_web query when warranted. Behaviour is general, not domain-specific.
+- Keep `factualLayer.pool` and `conceptLayer.pool` separate; do not pre-merge.
+- For each claim:
+  - Re-tag each layer's pool with `metadata.factual_anchor = true` and `metadata.anchor_layer = "factual" | "concept"`.
+  - Drop from each layer anything already in `byKey` (existing dedupe behaviour).
+  - Apply the `needPrimary` filter (Section E) per layer independently.
+  - Pick up to `ANCHOR_RESERVE_PER_LAYER` from each layer.
+  - If one layer is empty after filtering, the unused slot falls through to the other layer (so a claim with only factual anchors still gets up to 2 factual slots — preserves current behaviour for non-doctrinal questions).
+  - Total `anchorKept.length` stays bounded by `PER_CLAIM_ANCHOR_RESERVE`.
 
-Trigger (per claim, after local retrieval, before the existing approved_web call):
-- "Thin local recall" = `localKept.length + anchor_kept.length < 4` after section A runs, OR
-- claim's `required_evidence` includes one of: `scholarship`, `doctrinal_definition` (concept anchors get scholarship route), OR
-- factual_anchor pool produced documents but **0** were retained for this claim after A (signal that the factual topic isn't well covered locally).
+Telemetry change: `anchor_slots_used_per_claim[i]` adds `anchor_layers_used: ("factual" | "concept")[]`. Existing fields unchanged.
 
-When triggered:
-- Build a Perplexity query as `claim.text + " " + selected_anchor_terms.join(" ")`, where `selected_anchor_terms` are 1–3 terms drawn from `factual_anchor_terms` (factual route) and/or `concept_anchor_terms` (concept route).
-- Factual route: pass `search_domain_filter = TIER_A_DOMAIN_FILTER` filtered to gov/regulator hosts present in TIER_A (knesset.gov.il, mevaker.gov.il, justice.gov.il, reshumot.gov.il, competition.gov.il, tax.gov.il, mof.gov.il, supreme*.gov.il). No scholarship hosts here.
-- Concept route: only fires when `required_evidence` contains `scholarship` or `doctrinal_definition`. Uses TIER_A scholarship subset (huji.ac.il, tau.ac.il, biu.ac.il, ssrn.com, jstor.org).
-- These extra hits go through the SAME approved_web normalization and the same C-stage stub filter.
-- Counts written to telemetry as `approved_web_anchor_queries` (per claim: `{ factual_terms, concept_terms, factual_hits, concept_hits }`).
+# G. Doctrine-synonym anchor expansion (retrieval.ts)
 
-Local DB still wins: the existing local-DB metadata override (line 899+) is unchanged and applies to these new anchor-web hits exactly the same way — if a Perplexity URL matches a row in `legal_documents`, the local title/citation/source_type override Perplexity's metadata.
+`supabase/functions/_shared/legalDoctrineSynonyms.ts` already exists with curated, purely-lexical doctrine vocabulary. It is **not currently wired into the anchor pre-pass.** Wire it in:
 
-Anchor-web hits are still subject to per-claim cap math from A (they enter via `webKept`).
+- Import `expandDoctrineTerms` from `_shared/legalDoctrineSynonyms.ts`.
+- Compute `expansion = expandDoctrineTerms((plan.question || "") + " " + (plan.thesis || "") + " " + (plan.doctrinal_frame || ""))`.
+- Merge `expansion.synonyms` into `conceptTerms` (after planner terms, deduped, capped at total 5 concept terms — existing cap behaviour). Factual terms are unchanged.
+- Add one new entry to `DOCTRINE_SYNONYMS` in `_shared/legalDoctrineSynonyms.ts` for the broader category this regression exposed (still purely doctrinal vocabulary, no doc ids):
 
-## E. Preserve source-quality hierarchy
+```ts
+{
+  id: "legislative_omission",
+  trigger: /(מחדל\s*חקיקתי|חובה\s*לחוקק|הסדר\s*ראשוני|חסר\s*נורמטיבי)/,
+  synonyms: [
+    "מחדל חקיקתי",
+    "מחדל חקיקתי חלקי",
+    "חובה לחוקק",
+    "סעד החובה לחוקק",
+    "הסדר ראשוני",
+    "חסר נורמטיבי",
+    "בטלות יחסית",
+  ],
+},
+```
 
-Anchor reserve is for recall; primary law must still come first for doctrinal claims.
+These are doctrine triggers, not document titles. The same mechanism already exists for `basic_law_review`, `extortion`, `tort_negligence`, etc.
 
-Implementation inside the anchor-reserve partition in A:
-- Tag each anchor candidate with `is_primary_law` based on `source_type`:
-  - **primary**: `statute`, `legislation`, `regulation`, `caselaw` originating from Supreme Court (heuristic: `court` field includes `"עליון"` or `"Supreme"`) OR `exact_authority` origin.
-  - **secondary**: `knesset_research`, `journal_article`, `book_chapter`, `policy_paper`, `mmm_report`, `scholarship`, plus caselaw from lower courts.
-- For each claim, compute `primary_local_count` = number of `localOther` candidates with `is_primary_law === true` already in the budget.
-  - If `primary_local_count >= 2`: anchor reserve admits both primary and secondary anchors (existing behaviour, reserve=2).
-  - If `primary_local_count < 2` AND the claim's `required_evidence` includes a binding-law kind (`binding_caselaw`, `statute_section`, `regulation`): anchor reserve admits **only primary-tier anchors**, and any secondary anchor that would have taken a slot is deferred. The freed slot returns to `localOther` so a primary local hit gets it.
-- Telemetry per claim: `anchor_slots_used`, `anchor_source_types: string[]`, `primary_count`, `secondary_count`, `anchor_displaced_primary: boolean` (true if reserve consumed a slot that would have gone to a primary local candidate — i.e., `localOther.length > localBudget` AND any of the displaced ones had `is_primary_law`).
+Telemetry: `concept_anchor_candidates.expansion_hits: string[]` (the `expansion.hits` ids) + `concept_anchor_candidates.expanded_terms: string[]` (the terms added beyond planner output).
 
-This is general (heuristic on `source_type` + `court`), with no per-document or per-query hardcoding.
+# H. Broader concept_anchor_terms instruction (prompts.ts)
 
-## Telemetry consolidation (runCore.ts)
+Current rule 13 in the planner prompt tells the planner to emit doctrinal anchor terms. Tighten the wording so the planner also emits **one alternate phrasing** of the central doctrine when an obvious synonym exists. General rule, no specific phrasings hardcoded:
 
-Surface in `qa_logs.metadata.core.retrieval`:
-- `vector_health` — existing fields + `warmup_status`, `retries_57014`.
-- `anchor_slots_used_per_claim: Array<{claim_id, anchor_kept, anchor_doc_ids, anchor_source_types, anchor_displaced_primary}>`.
-- `per_claim[*].primary_count`, `per_claim[*].secondary_count`.
-- `approved_web_stubs_dropped_per_claim: Array<{claim_id, dropped_count}>`.
-- `approved_web_anchor_queries: Array<{claim_id, factual_terms, concept_terms, factual_hits, concept_hits}>` — empty array when never triggered for a claim.
+> "בנוסף לפרישת המושג כפי שמופיע בשאלה, אם לדוקטרינה קיים ניסוח חלופי מקובל בספרות (לדוגמה — סעד מול חובה, מלא מול חלקי, פרוצדורלי מול מהותי), הוסף גם אותו. עד 5 ביטויים סך הכל."
 
-Existing telemetry (`factual_anchor_candidates`, `concept_anchor_candidates`, `local_metadata_overrides`) stays as-is.
+Schema and cap stay the same (already cap 5 in retrieval.ts after merge with G).
 
-## Files
+# Telemetry (runCore.ts)
 
-- `supabase/functions/legal-qa/core/retrieval.ts` — A (anchor reserve), B (warmup+retry), C (stub filter), D (anchor-driven approved_web), E (primary/secondary partition + displacement logic).
-- `supabase/functions/legal-qa/core/runCore.ts` — telemetry surfacing only.
+Surface in `metadata.core.retrieval`:
 
-No other files touched. No DB migration.
+- `anchor_slots_used_per_claim[i].anchor_layers_used` (from F).
+- `concept_anchor_candidates.expanded_terms`, `.expansion_hits` (from G).
 
-## Validation
+Everything else in current telemetry is preserved.
 
-Re-run both regression queries (server-side, after deploy) and inspect `qa_logs.metadata.core.retrieval`:
+# What stays untouched
 
-**Query 1 — דמי חסות / פרוטקשן:**
-- `vector_health.warmup_status === "ok"` and `failed === 0` (or `retries_57014 ≥ 1`).
-- `factual_anchor_candidates.document_ids` non-empty (existing behaviour preserved).
-- ≥1 claim's `anchor_slots_used_per_claim[i].anchor_doc_ids` contains a Knesset MMM document id.
-- `approved_web_stubs_dropped_per_claim` shows ≥1 drop on caselaw claims; no footnote text contains standalone `"פסק דין"` or bare-docket-only citation.
-- `total_footnotes ≥ 10` with full party names + citations.
+- Citation engine, citation enrichment, drafter, verifier, ledger, footnote builder, Citation Review UI, Batch Footnote Builder.
+- `legalSourcePack.ts` (its promotion gate isn't on the Core path).
+- DB schema, RPC signatures, migrations.
+- All existing recall layers (A vector reserve, B warmup + 57014 retry, C stub filter, D anchor-driven approved_web, E primary preservation) — kept as-is.
 
-**Query 2 — מחדל חקיקתי / חובה לחוקק:**
-- `concept_anchor_candidates.document_ids` non-empty.
-- ≥1 claim with `required_evidence` including `scholarship` or `doctrinal_definition` has the local journal article in its candidates, OR `approved_web_anchor_queries` shows the concept route fired AND `local_metadata_overrides ≥ 1` (Perplexity URL resolved to local DB metadata).
-- No footnote uses only "משפטים (המאמר באתר כתב העת משפטים…)" placeholder when the local article is in candidates.
+# Validation
 
-**Acceptance:**
-- No hardcoded ids/titles/terms.
-- Existing `factual_anchor_terms` / `concept_anchor_terms` behaviour preserved (additive).
-- Verifier still gates relevance.
-- No DB migration.
-- Forbidden modules untouched.
+Re-run both regression queries (`Q-extort` analog and the concept question) and inspect `qa_logs.metadata.core.retrieval`:
+
+- `anchor_slots_used_per_claim[*].anchor_layers_used` contains `"concept"` on at least one claim of the doctrinal question.
+- `concept_anchor_candidates.expanded_terms` non-empty for the legislative-omission question, `expansion_hits` includes `"legislative_omission"`.
+- `concept_anchor_candidates.injected_into_claims >= 1` for the doctrinal question.
+- Factual-only questions (e.g. Q-extort current run) still show `anchor_slots_used_per_claim[i].anchor_layers_used == ["factual"]` with `anchor_kept` up to 2 — no regression on factual-anchor questions.
+
+# Acceptance
+
+- No hardcoded document ids, titles, or per-query strings (the new doctrine entry uses doctrinal vocabulary that appears across many questions).
+- Existing factual-anchor behaviour preserved when no concept layer is present.
+- Verifier remains the relevance gate.
+- No DB migration. No forbidden modules touched.
