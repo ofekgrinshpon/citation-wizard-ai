@@ -378,6 +378,31 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   const truncate = (s: string | undefined, n: number): string | undefined =>
     !s ? undefined : (s.length > n ? s.slice(0, n) + "…" : s);
 
+  /**
+   * Tag an EnrichAttempt with the debug envelope from
+   * `enrichBareReporterCitationWithDebug`. Mutates `attempt` in place.
+   * Also returns derived booleans for the caller's counter logic.
+   */
+  const annotateAttempt = (
+    attempt: EnrichAttempt,
+    citation: { citation_errors: string[] },
+    debug: EnrichmentDebug,
+  ): { recovered: boolean; partial: boolean } => {
+    attempt.enrichment_input_fields = debug.enrichment_input_fields;
+    attempt.resolver_input_after_enrichment = debug.resolver_input_after_enrichment;
+    attempt.resolver_output = debug.resolver_output;
+    attempt.missing_fields_after_enrichment = debug.missing_fields_after_enrichment;
+    attempt.safety_net_used = debug.safety_net_used;
+    const recovered = !citation.citation_errors.includes("failed_bare_reporter");
+    const partial = citation.citation_errors.includes("partial_enriched");
+    attempt.partial_enriched = partial;
+    attempt.rejection_reason = recovered
+      ? (partial ? "partial_enriched" : undefined)
+      : "rebuild_still_bare";
+    return { recovered, partial };
+  };
+
+
   // Pass A — metadata short-circuit: rebuild any bare-reporter citation whose
   // candidate metadata already contains structured parties. No external call.
   const stillBareAfterA: LedgerSourceId[] = [];
