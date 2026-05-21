@@ -47,6 +47,14 @@ export interface PlanV1 {
   thesis: string;
   claims: Claim[];
   expected_authorities: ExpectedAuthority[];
+  /**
+   * Factual nouns/phrases lifted DIRECTLY from the user's question
+   * (phenomena, named offences, institutions, sectors, geography, public bodies).
+   * Used by retrieveForPlan to run an extra local FTS+vector pass so factual
+   * reports (Knesset MMM, government reports) reach the candidate set even when
+   * the doctrinal search_targets don't mention them.
+   */
+  factual_anchor_terms?: string[];
 }
 
 // ─────────────────── Step 2: Retrieval ───────────────────
