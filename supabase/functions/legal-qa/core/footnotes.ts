@@ -58,21 +58,31 @@ export function buildFootnotes(args: BuildFootnotesArgs): BuildFootnotesResult {
   }
 
   const footnotes: Footnote[] = [];
+  // INVARIANT: one entry per occurrence, indexed by occurrence position.
+  // `footnote_number` is undefined for skipped (unknown / no-citation) markers
+  // so the replacement loop below cannot misalign indices.
   const marker_to_footnote: MarkerToFootnote[] = [];
   const seen = new Map<LedgerSourceId, { first_footnote_number: number; prev_footnote_number: number }>();
   let prev_ls_id: LedgerSourceId | null = null;
+  let nextNum = 1;
 
   occurrences.forEach((occ, i) => {
-    const num = i + 1;
     const cit = citations.get(occ.ls_id);
     const ls_id = occ.ls_id;
 
     if (!cit) {
-      // Should not happen (QA Phase A filters first). Drop with warning.
+      // Defensive: QA Phase A should have stripped this already.
       warnings.push(`marker_${ls_id}_has_no_citation`);
+      marker_to_footnote.push({
+        occurrence_index: i,
+        ls_id,
+        footnote_number: undefined,
+        is_repeated: false,
+      } as MarkerToFootnote);
       return;
     }
 
+    const num = nextNum++;
     const prior = seen.get(ls_id);
     const isFirst = !prior;
     const isAdjacent = prev_ls_id === ls_id;
@@ -85,6 +95,11 @@ export function buildFootnotes(args: BuildFootnotesArgs): BuildFootnotesResult {
       text = buildRule37Short(cit, prior!.first_footnote_number, isAdjacent);
       prior!.prev_footnote_number = num;
     }
+
+    // Apply deterministic cleanup to footnote text (canonical first-use form).
+    // Rule-37 short forms are already constructed deterministically; cleanup
+    // is idempotent and safe on them too.
+    text = cleanCitationText(text);
 
     const fn: Footnote = {
       number: num,
@@ -107,6 +122,7 @@ export function buildFootnotes(args: BuildFootnotesArgs): BuildFootnotesResult {
   });
 
   // Replace markers with superscripts (right-to-left to preserve indices).
+  // marker_to_footnote is guaranteed to be aligned with `occurrences`.
   let rendered = answer;
   for (let i = occurrences.length - 1; i >= 0; i--) {
     const fnNum = marker_to_footnote[i]?.footnote_number;
