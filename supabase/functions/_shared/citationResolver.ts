@@ -412,6 +412,12 @@ export interface ResolveCitationOptions {
   fullDateHint?: string;
   yearHint?: string;
   /**
+   * Optional Hebrew docket-prefix hint (e.g. `בג"ץ`, `ע"א`, `רע"א`, `בר"ם`).
+   * Used ONLY when the local extractors (citation text + caseNumberHint)
+   * could not pull a `caseType`. Never overwrites a caseType found in text.
+   */
+  caseTypeHint?: string;
+  /**
    * v4 stage 2 policy flag: set ONLY by the chapter loop when this call is
    * the *retry* pass after a successful party-lookup. When true, and only
    * for `case_law_database`, `fullDate` is treated as optional provided
