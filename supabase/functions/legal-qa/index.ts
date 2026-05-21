@@ -2585,7 +2585,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             user_id: user.id,
             project_id: typeof body?.projectId === "string" ? body.projectId : null,
             question: question.substring(0, 500),
-            answer: null,
+            answer: "מעבד שאלה…",
             footnotes: [],
             task_mode: taskMode,
             local_footnotes_count: 0,
