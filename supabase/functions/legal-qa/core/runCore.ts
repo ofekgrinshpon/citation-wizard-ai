@@ -619,6 +619,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
             docket_source: meta.docket_source,
             prefix: meta.prefix || undefined,
             used_metadata_parties: false,
+            pass: "party_lookup",
             title_excerpt: truncate(ls?.title, 120),
             snippet_excerpt: truncate(ls?.snippet, 200),
             url: ls?.url,
