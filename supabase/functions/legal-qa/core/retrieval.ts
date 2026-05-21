@@ -1329,6 +1329,9 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     anchor_prepass_document_ids: anchorPrepassDocumentIds,
     vector_health: vectorHealth,
     local_metadata_overrides: localMetadataOverrides,
+    anchor_slots_used_per_claim: anchorSlotsTelemetry,
+    approved_web_stubs_dropped_per_claim: webStubsTelemetry,
+    approved_web_anchor_queries: anchorWebTelemetry,
   };
 }
 
