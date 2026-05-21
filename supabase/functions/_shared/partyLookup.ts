@@ -59,13 +59,15 @@ export interface PartyLookupResult {
   attempted: number;
 }
 
+// `lite.takdin.co.il` removed: its search-results page is a JS-rendered SPA
+// that Perplexity's fetcher cannot render, so including it adds no recall
+// and slows the search (contributing to S7 timeouts).
 const TRUSTED_LEGAL_DOMAINS = [
   "supreme.court.gov.il",
   "court.gov.il",
   "gov.il",
   "nevo.co.il",
   "takdin.co.il",
-  "lite.takdin.co.il",
   "psakdin.co.il",
 ];
 
