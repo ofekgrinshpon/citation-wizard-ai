@@ -2330,7 +2330,9 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       .replace(/\n/g, "<br>");
 
     const footnotesHtml = result.footnotes
-      .map((f) => `<span>${f.number}. ${f.citation}</span>`)
+      .map((f) => f.url
+        ? `<span>${f.number}. <a href="${f.url}" target="_blank" rel="noopener noreferrer">${f.citation}</a></span>`
+        : `<span>${f.number}. ${f.citation}</span>`)
       .join("<br>");
 
     const richHtml = `<div dir="rtl" style="font-family: ${DAVID_FONT}; font-size: 12pt; line-height: 1.5; text-align: justify; direction: rtl;">
