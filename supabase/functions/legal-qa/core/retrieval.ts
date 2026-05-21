@@ -660,6 +660,19 @@ interface PerplexityHit { title: string; citation: string; url: string; snippet:
 interface ApprovedWebResult {
   candidates: CandidateSource[];
   telemetry: WebHarvestTelemetry;
+  stubs_dropped: number;
+}
+
+interface ApprovedWebOptions {
+  allowScholarship?: boolean;
+  /** Override TIER_A_DOMAIN_FILTER with a narrower subset (gov/scholarship/etc). */
+  domainFilter?: readonly string[];
+  /** Extra hint terms (factual/concept anchors) appended to the user prompt. */
+  anchorTerms?: string[];
+  /** Per-call candidate cap (defaults to WEB_PER_CLAIM_CANDIDATES). */
+  maxCandidates?: number;
+  /** Tag inserted into candidate metadata so downstream telemetry can see it. */
+  candidateTag?: string;
 }
 
 function emptyWebTelemetry(reason: WebHarvestTelemetry["web_empty_reason"]): WebHarvestTelemetry {
