@@ -102,8 +102,12 @@ Deno.serve(async (req) => {
     }
 
     const metadata = (row.metadata as Record<string, unknown> | null) ?? null;
-    const hasAnswer = typeof row.answer === "string" && row.answer.length > 0;
-    const status = deriveStatus(metadata, hasAnswer);
+    const answerStr = typeof row.answer === "string" ? row.answer : "";
+    const hasAnswer = answerStr.length > 0;
+    const isPlaceholder = answerStr.trim() === PLACEHOLDER_ANSWER;
+    const pipelineUsed = (metadata?.pipeline_used as string | undefined) ?? null;
+    const createdAtMs = row.created_at ? new Date(row.created_at as string).getTime() : null;
+    const status = deriveStatus(metadata, hasAnswer, isPlaceholder, pipelineUsed, Number.isFinite(createdAtMs as number) ? createdAtMs : null);
 
     const stageRuns = Array.isArray(metadata?.stage_runs) ? (metadata!.stage_runs as Array<Record<string, unknown>>) : [];
     const lastStage = stageRuns.length ? stageRuns[stageRuns.length - 1] : null;
@@ -118,8 +122,9 @@ Deno.serve(async (req) => {
           stages_completed: stageRuns.length,
           last_stage: lastStage?.stage ?? null,
           last_stage_status: lastStage?.status ?? null,
+          pipeline_used: pipelineUsed,
         },
-        // Only return heavy payloads when terminal.
+        // Only return heavy payloads when terminal — never leak the placeholder.
         ...(status === "completed" ? {
           question: row.question,
           answer: row.answer,
@@ -131,7 +136,11 @@ Deno.serve(async (req) => {
         ...(status === "failed" ? {
           drafter_failure: metadata?.drafter_failure ?? null,
           error_message: metadata?.error_message ?? null,
+          reason: (pipelineUsed === "core_running" && (metadata?.checkpoint !== "failed"))
+            ? "worker_timeout"
+            : ((metadata?.drafter_failure as Record<string, unknown> | null)?.reason ?? null),
         } : {}),
+
         // Lightweight metadata always useful for the UI / admins.
         metadata_summary: {
           depth: metadata?.depth ?? null,
