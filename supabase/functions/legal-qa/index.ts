@@ -45,7 +45,7 @@ import { runResearchV2, researchV2Enabled } from "./researchV2Pipeline.ts";
 import { runResearchV3, researchV3Enabled } from "./researchV3Pipeline.ts";
 import { runResearchV4, researchPipelineMode } from "./researchV4Pipeline.ts";
 import { runCore } from "./core/runCore.ts";
-import { isCorePilot, corePilotLabel } from "./core/pilotGate.ts";
+// Pilot gate removed — Core now runs for every Deep query.
 console.log(`[boot] RESEARCH_V2 env raw="${Deno.env.get("RESEARCH_V2")}" enabled=${researchV2Enabled()}`);
 console.log(`[boot] RESEARCH_V3 env raw="${Deno.env.get("RESEARCH_V3")}" enabled=${researchV3Enabled()}`);
 console.log(`[boot] RESEARCH_PIPELINE raw="${Deno.env.get("RESEARCH_PIPELINE")}" resolved=${researchPipelineMode()}`);
@@ -2477,11 +2477,11 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
     const t0 = Date.now();
 
     // ─── Deep research pipeline dispatch ──────────────────────────────
-    // Default: V4 (simplified, single anchor source from V3 LegalResearchPlan,
-    //          AnswerMap disabled, citation-quality gate at the end).
-    // Fallback chain on ok:false / throw / insufficient verified sources:
-    //   V4 → V3 (re-runs WITH AnswerMap for wider recall) → V1 (legacy).
-    // Override: RESEARCH_PIPELINE=v3 skips V4 entirely.
+    // Default: Core (Planner → Retrieval → Verifier → Ledger → Drafter →
+    //          Citations → Footnotes → CitationQualityPass). NO automatic
+    //          fallback — Core failure returns a clear failure response.
+    // Manual rollback: RESEARCH_PIPELINE=v4 → legacy V4→V3→V1 chain.
+    //                  RESEARCH_PIPELINE=v3 → legacy V3→V1 chain.
     // Fast research, academic chapters, and eval-forced legacy bypass this.
     const pipelineMode = researchPipelineMode();
     const deepDispatchEligible =
@@ -2490,15 +2490,13 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       !isAcademicChapter &&
       !evalForceLegacy;
     console.log(`[research_dispatch:diag] pipeline=${pipelineMode} v2_enabled=${researchV2Enabled()} v3_enabled=${researchV3Enabled()} taskMode=${taskMode} depth=${researchDepth} isAcademicChapter=${isAcademicChapter} evalForceLegacy=${evalForceLegacy} eligible=${deepDispatchEligible}`);
-    if (deepDispatchEligible && (pipelineMode === "v4" || researchV3Enabled() || researchV2Enabled())) {
+
+    if (deepDispatchEligible) {
       const asyncRunId = typeof body?._asyncRunId === "string" ? body._asyncRunId : null;
       const deepQaLogId = asyncRunId ?? crypto.randomUUID();
-      // Stage: flip placeholder to first real stage immediately so the
-      // UI doesn't sit on ~5% during the 30–60s plan warm-up.
       emitStage("frame", "complete");
 
-      // Helper: persist final qa_logs row on success, with extra metadata
-      // describing which pipeline produced the answer.
+      // Helper: persist final qa_logs row on success.
       const persistSuccess = async (
         which: "core" | "v4" | "v3" | "v2",
         result: { answer: string; footnotes: unknown[]; citations: string[]; metadata: Record<string, unknown> },
@@ -2533,29 +2531,55 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         }
       };
 
-      let v4FallbackReason: string | undefined;
-      let v3FallbackReason: string | undefined;
-      let coreFallbackReason: string | undefined;
+      // ════════════════════════════════════════════════════════════════
+      // CORE PATH (default; pipelineMode === "core")
+      // No automatic fallback to V4/V3. Failure returns a clear response.
+      // ════════════════════════════════════════════════════════════════
+      if (pipelineMode === "core") {
+        const coreCtx: Record<string, unknown> = { core_attempted: true };
 
-      // Observability context for Core — accumulated across the Stage 0
-      // attempt and spread into EVERY downstream qa_logs metadata write so
-      // we can always reconstruct whether/why Core failed, even when V4/V3
-      // overwrite the row.
-      const coreCtx: Record<string, unknown> = {};
-      const isCorePilotQuestion = pipelineMode === "core" && isCorePilot(question);
+        // Helper: hydrate coreCtx with diagnostics from a runCore result.
+        const hydrateCoreCtx = (core: { metadata?: Record<string, unknown> }) => {
+          const coreInner = (core.metadata as { core?: Record<string, unknown> } | undefined)?.core;
+          const stageRuns = (coreInner?.stage_runs as Array<{ stage: string; status: string }> | undefined) ?? [];
+          const lastStage = stageRuns.length > 0 ? stageRuns[stageRuns.length - 1] : undefined;
+          if (lastStage) {
+            coreCtx.core_last_stage = lastStage.stage;
+            coreCtx.core_last_stage_status = lastStage.status;
+          }
+          coreCtx.core_stage_runs = stageRuns;
+          if (Array.isArray(coreInner?.acceptance_errors)) {
+            coreCtx.core_acceptance_errors = coreInner.acceptance_errors;
+          }
+          if (coreInner) coreCtx.core_partial = coreInner;
+        };
 
-      // ── Stage 0: Research Core (gated by RESEARCH_PIPELINE=core + pilot) ──
-      if (isCorePilotQuestion) {
-        coreCtx.core_attempted = true;
-        coreCtx.core_pilot = corePilotLabel(question);
+        // Helper: build the Hebrew failure response (HTTP 200, empty footnotes).
+        const buildCoreFailureResponse = (reason: string | undefined): Response => {
+          const r = (reason ?? "unknown").toLowerCase();
+          let body: string;
+          if (r.startsWith("quality_insufficient_verified_sources") || r === "ledger_insufficient") {
+            body = "לא נמצאו מקורות מאומתים מספיקים לענות על השאלה במלואה. נסה לנסח מחדש את השאלה או להוסיף הקשר נוסף.";
+          } else if (r.startsWith("planner_failed")) {
+            body = "לא הצלחנו לנתח את השאלה לתכנית מחקר. נסה לנסח אותה מחדש בצורה ממוקדת יותר.";
+          } else if (r.startsWith("drafter_") || r.startsWith("draft_threw")) {
+            body = "אירעה שגיאה בשלב כתיבת התשובה. אנא נסה שוב.";
+          } else if (r.startsWith("retrieval_threw") || r.startsWith("verify_threw")) {
+            body = "אירעה שגיאה בשלב איסוף או אימות המקורות. אנא נסה שוב.";
+          } else if (r.startsWith("core_threw") || r.startsWith("acceptance:")) {
+            body = "התרחשה תקלה במהלך הפקת התשובה. אנא נסה שוב או פנה לתמיכה.";
+          } else {
+            body = `לא הצלחנו להפיק תשובה מאומתת (${reason ?? "unknown"}). אנא נסה לנסח מחדש את השאלה.`;
+          }
+          return buildResponse(body, [], [], { footnotes_count: 0 });
+        };
 
-        // Pre-insert a "Core started" row so a hard crash mid-Core still
-        // leaves a diagnosable trace in qa_logs (will be overwritten by
-        // success/fallback below).
+        // Pre-insert "core_running" row so a hard crash leaves a trace.
         try {
           await adminClient.from("qa_logs").upsert({
             id: deepQaLogId,
             user_id: user.id,
+            project_id: typeof body?.projectId === "string" ? body.projectId : null,
             question: question.substring(0, 500),
             answer: null,
             footnotes: [],
@@ -2570,7 +2594,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         }
 
         try {
-          console.log(`[research_core] dispatch — pilot=${coreCtx.core_pilot}`);
+          console.log(`[research_core] dispatch — Core is the default Deep pipeline`);
           const core = await runCore({
             question,
             adminClient,
@@ -2579,20 +2603,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             onStage: emitStage,
           });
 
-          // Extract diagnostic context from core.metadata regardless of ok.
-          const coreInner = (core.metadata as { core?: Record<string, unknown> } | undefined)?.core;
-          const stageRuns = (coreInner?.stage_runs as Array<{ stage: string; status: string }> | undefined) ?? [];
-          const lastStage = stageRuns.length > 0 ? stageRuns[stageRuns.length - 1] : undefined;
-          if (lastStage) {
-            coreCtx.core_last_stage = lastStage.stage;
-            coreCtx.core_last_stage_status = lastStage.status;
-          }
-          coreCtx.core_stage_runs = stageRuns;
-          if (Array.isArray(coreInner?.acceptance_errors)) {
-            coreCtx.core_acceptance_errors = coreInner.acceptance_errors;
-          }
-          // Keep partial core metadata on the row even when V4/V3 overwrite.
-          if (coreInner) coreCtx.core_partial = coreInner;
+          hydrateCoreCtx(core);
 
           if (core.ok) {
             await persistSuccess("core", core, { ...coreCtx });
@@ -2602,14 +2613,16 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             });
           }
 
-          coreFallbackReason = core.fallbackReason ?? "core_ok_false";
-          coreCtx.core_fallback_reason = coreFallbackReason;
-          console.warn(`[research_core] fallback reason=${coreFallbackReason} last_stage=${coreCtx.core_last_stage ?? "n/a"} — trying V4`);
+          // Core returned ok:false — persist diagnostic row, return failure response. NO fallback.
+          const reason = core.fallbackReason ?? "core_ok_false";
+          coreCtx.core_fallback_reason = reason;
+          console.warn(`[research_core] FAILED reason=${reason} last_stage=${coreCtx.core_last_stage ?? "n/a"} — returning failure response (no fallback)`);
 
           try {
             await adminClient.from("qa_logs").upsert({
               id: deepQaLogId,
               user_id: user.id,
+              project_id: typeof body?.projectId === "string" ? body.projectId : null,
               question: question.substring(0, 500),
               answer: null,
               footnotes: [],
@@ -2620,27 +2633,31 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
               metadata: {
                 ...(core.metadata ?? {}),
                 ...coreCtx,
-                pipeline_used: "core_fallback",
+                pipeline_used: "core_failed",
+                profile_used: { depth: researchDepth, ...modeProfile },
+                credit_request_id: creditRequestId,
+                duration_ms: Date.now() - t0,
               },
             }, { onConflict: "id" });
           } catch (logErr) {
-            console.error("[research_core] fallback log upsert failed:", logErr);
+            console.error("[research_core] failure-log upsert failed:", logErr);
           }
+
+          return buildCoreFailureResponse(reason);
         } catch (coreErr) {
           const errMsg = (coreErr as Error)?.message ?? String(coreErr);
-          coreFallbackReason = `core_threw:${errMsg}`;
-          coreCtx.core_fallback_reason = coreFallbackReason;
+          const reason = `core_threw:${errMsg}`;
+          coreCtx.core_fallback_reason = reason;
           coreCtx.core_error_message = errMsg;
           coreCtx.core_error_stack = (coreErr as Error)?.stack ?? null;
           if (!coreCtx.core_last_stage) coreCtx.core_last_stage = "unknown_throw";
-          console.error("[research_core] threw — falling through to V4:", coreErr);
+          console.error("[research_core] THREW — returning failure response (no fallback):", coreErr);
 
-          // Persist the throw immediately in case V4 also crashes before
-          // its own fallback row write.
           try {
             await adminClient.from("qa_logs").upsert({
               id: deepQaLogId,
               user_id: user.id,
+              project_id: typeof body?.projectId === "string" ? body.projectId : null,
               question: question.substring(0, 500),
               answer: null,
               footnotes: [],
@@ -2648,17 +2665,31 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
               local_footnotes_count: 0,
               perplexity_footnotes_count: 0,
               total_footnotes: 0,
-              metadata: { ...coreCtx, pipeline_used: "core_threw" },
+              metadata: {
+                ...coreCtx,
+                pipeline_used: "core_failed",
+                profile_used: { depth: researchDepth, ...modeProfile },
+                credit_request_id: creditRequestId,
+                duration_ms: Date.now() - t0,
+              },
             }, { onConflict: "id" });
           } catch (logErr) {
             console.error("[research_core] threw-log upsert failed:", logErr);
           }
+
+          return buildCoreFailureResponse(reason);
         }
       }
 
-      // ── Stage A: V4 (default; also runs when pipelineMode === "core" and
-      //              Core was skipped/failed for this question) ─────────────
-      if (pipelineMode === "v4" || pipelineMode === "core") {
+      // ════════════════════════════════════════════════════════════════
+      // LEGACY ROLLBACK PATH (RESEARCH_PIPELINE=v4 or v3)
+      // Unchanged V4 → V3 → V1 chain.
+      // ════════════════════════════════════════════════════════════════
+      let v4FallbackReason: string | undefined;
+      let v3FallbackReason: string | undefined;
+
+      // ── Stage A: V4 (when RESEARCH_PIPELINE=v4) ──
+      if (pipelineMode === "v4") {
         try {
           console.log(`[research_v4] dispatch — running simplified Deep pipeline`);
           const v4 = await runResearchV4({
@@ -2668,7 +2699,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             onStage: emitStage,
           });
           if (v4.ok) {
-            await persistSuccess("v4", v4, { ...coreCtx });
+            await persistSuccess("v4", v4);
             console.log(`[research_v4] DONE answer_len=${v4.answer.length} footnotes=${v4.footnotes.length}`);
             return buildResponse(v4.answer, v4.footnotes, v4.citations, {
               footnotes_count: v4.footnotes.length,
@@ -2676,11 +2707,11 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
           }
           v4FallbackReason = v4.fallbackReason ?? "v4_ok_false";
           console.warn(`[research_v4] fallback reason=${v4FallbackReason} — trying V3`);
-          // Log the V4 attempt row (will be overwritten by V3/V1 if they succeed).
           try {
             await adminClient.from("qa_logs").upsert({
               id: deepQaLogId,
               user_id: user.id,
+              project_id: typeof body?.projectId === "string" ? body.projectId : null,
               question: question.substring(0, 500),
               answer: null,
               footnotes: [],
@@ -2688,7 +2719,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
               local_footnotes_count: 0,
               perplexity_footnotes_count: 0,
               total_footnotes: 0,
-              metadata: { ...(v4.metadata ?? {}), ...coreCtx, pipeline_used: "v4_fallback", v4_fallback_reason: v4FallbackReason },
+              metadata: { ...(v4.metadata ?? {}), pipeline_used: "v4_fallback", v4_fallback_reason: v4FallbackReason },
             }, { onConflict: "id" });
           } catch (logErr) {
             console.error("[research_v4] fallback log upsert failed:", logErr);
@@ -2700,13 +2731,9 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       }
 
       // ── Stage B: V3 fallback (or default when RESEARCH_PIPELINE=v3) ──
-      // V3 is also the safety net when V4 returns ok:false. We always call
-      // V3 here (not V2 directly) so AnswerMap is enabled and the recall
-      // pool is widest. V3 falls back through to V2 internally on its own
-      // empty-ledger conditions.
-      if (researchV3Enabled() || researchV2Enabled() || pipelineMode === "v4" || pipelineMode === "core") {
+      if (researchV3Enabled() || researchV2Enabled() || pipelineMode === "v4" || pipelineMode === "v3") {
         try {
-          const useV3 = researchV3Enabled() || pipelineMode === "v4" || pipelineMode === "core";
+          const useV3 = researchV3Enabled() || pipelineMode === "v4" || pipelineMode === "v3";
           const runner = useV3 ? runResearchV3 : runResearchV2;
           console.log(`[research_${useV3 ? "v3" : "v2"}] dispatch — fallback=${!!v4FallbackReason}`);
           const fb = await runner({
@@ -2717,7 +2744,6 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
           });
           if (fb.ok) {
             await persistSuccess(useV3 ? "v3" : "v2", fb, {
-              ...coreCtx,
               ...(v4FallbackReason ? { v4_fallback_reason: v4FallbackReason } : {}),
             });
             console.log(`[research_${useV3 ? "v3" : "v2"}] DONE answer_len=${fb.answer.length} footnotes=${fb.footnotes.length}`);
@@ -2731,6 +2757,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             await adminClient.from("qa_logs").upsert({
               id: deepQaLogId,
               user_id: user.id,
+              project_id: typeof body?.projectId === "string" ? body.projectId : null,
               question: question.substring(0, 500),
               answer: null,
               footnotes: [],
@@ -2740,7 +2767,6 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
               total_footnotes: 0,
               metadata: {
                 ...(fb.metadata ?? {}),
-                ...coreCtx,
                 pipeline_used: "v3_fallback",
                 v3_fallback_reason: v3FallbackReason,
                 ...(v4FallbackReason ? { v4_fallback_reason: v4FallbackReason } : {}),

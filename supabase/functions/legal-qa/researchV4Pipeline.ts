@@ -27,14 +27,14 @@ export type RunResearchV4Args = RunResearchV3Args;
 export type RunResearchV4Result = RunResearchV3Result;
 
 /**
- * Pipeline selector. Returns "v4" (default) or "v3".
- * Anything else (including unset) falls back to "v4".
+ * Pipeline selector. Returns "core" (default), "v4", or "v3".
+ * Manual rollback to legacy pipeline: set RESEARCH_PIPELINE=v4 (or v3).
  */
 export function researchPipelineMode(): "core" | "v4" | "v3" {
   const raw = (Deno.env.get("RESEARCH_PIPELINE") ?? "").trim().toLowerCase();
-  if (raw === "core") return "core";
   if (raw === "v3") return "v3";
-  return "v4";
+  if (raw === "v4") return "v4";
+  return "core";
 }
 
 const MIN_STRONG_SOURCES = 2;
