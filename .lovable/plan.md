@@ -1,54 +1,53 @@
-## למה מסמך הממ"מ על "גביית דמי חסות" לא הופיע בתשובה
+## למה המאמר "סעד החובה לחוקק" לא הופיע בתשובה
 
 ### אישור הקיום במאגר
 
-המסמך אכן קיים ונטען במלואו:
+- **document_id**: `02fa534c-9c4d-4e1f-96f9-69235480b5ee`
+- **כותרת**: "סעד החובה לחוקק: הצעה למתווה הדרגתי"
+- **source_type**: `journal_article`, **URL**: `https://lawjournal.huji.ac.il/article/12/1366`
+- **chunks**: 60+ chunks, כולם עם embedding בממד 768 — מוכן לאחזור.
 
-- **document_id**: `a6d79a7a-14a8-47bd-82f9-ee1747e9f6a9`
-- **כותרת**: "גביית דמי חסות – ניתוח נתוני דיווח לכנסת – תיקון"
-- **citation**: ד"ר נורית יכימוביץ-כהן, הכנסת – מרכז המחקר והמידע (2025)
-- **source_type**: `knesset_research`
-- **URL**: `https://main.knesset.gov.il/.../incident.aspx?rid=8225&businessType=1`
-- **chunks**: 9 מתוכם 9 עם embedding מלא — מוכן לאחזור hybrid (FTS + HNSW).
+המאמר זמין ב-DB. הוא לא הופיע בתשובה בגלל שלושה כשלים מצטברים בצינור האחזור.
 
-אין כאן בעיית הזנה, אין בעיית embedding, ואין בעיית RLS (הטבלה ציבורית לקריאה).
+### שורש הבעיה (מבוסס על qa_log `4f5ea5bf-577f-463a-b130-93ebcdffa735`)
 
-### למה הוא לא נמצא — שורש הבעיה
+**1. Vector retrieval מחזיר 0 בכל ה-claims, בכל ההרצות האחרונות.**
+`metadata.core.retrieval.per_claim[*].local_vector_count = 0` בכל חמשת ה-claims בריצה הזו, וכך גם ב-9 מתוך 10 ההרצות האחרונות (`vc=0`). היחיד שאיתר `vc=6` הוא חריג. המשמעות: `match_legal_chunks` למעשה מושבת בפועל — או `defaultEmbed` ב-`runCore.ts` מחזיר `null` (כשל ב-OpenAI / מכסה / 429), או `match_threshold=0.55` ב-`localVector` (`core/retrieval.ts:277`) גבוה מדי ל-text-embedding-3-small dim=768 בעברית, שבו cosine טיפוסי נופל סביב 0.40-0.55. בלי vector, אין דרך סמנטית להגיע למאמר שכותרתו אינה כוללת את המונח "מחדל חקיקתי".
 
-בדקתי את `qa_logs` של הריצה האחרונה לאותה שאלה (`9f9a2f7b-4b0d-4a08-a53f-14af5a379fa4`). הפלן שה-planner ייצר כולל ארבע טענות (C1–C4), וכל ה-`search_targets` שלהן נסובים סביב **הדוקטרינה המשפטית בלבד**:
+**2. FTS לא מאתר את המאמר.**
+הרצתי `search_legal_chunks_text('מחדל חקיקתי חלקי הסדר ראשי פגיעה בזכות', 30)` — המאמר לא בטופ-30. הסיבה: ה-FTS ב-Postgres עם `simple` config הוא לקסיקלי בלבד (בלי stemming עברי), והכותרת/citation של המאמר משתמשים ב-"חובה לחוקק" ולא ב-"מחדל חקיקתי". ב-chunk-level המונח כן מופיע, אבל הוא טובע מתחת לחציון של 500 ה-candidates ב-`chunk_cands`.
 
-```text
-hebrew_terms: "מחדל חקיקתי", "מחדל חקיקתי חלקי", "הסדר חקיקתי לקוי",
-              "ביקורת שיפוטית על מדיניות אכיפה", "חובת אכיפה",
-              "חובות הגנה חיוביות", "ריסון שיפוטי", "עבירת סחיטה באיומים" …
-```
+**3. Factual anchors לא עזרו.**
+`factual_anchor_terms` שה-planner יצר: `["גביית דמי חסות (פרוטקשן)", "כישלון מערכתי באכיפה"]`. אלה עובדתיים-תחומיים, לא דוקטרינריים — לכן ה-pre-pass לא יחפש "מחדל חקיקתי" / "חובה לחוקק" וה-MMM כן הופיע אבל המאמר התאורטי הזה לא יכול היה להופיע דרך מסלול ה-anchors.
 
-**המילים "דמי חסות" / "פרוטקשן" — המקבע העובדתי של השאלה — נושלו מכל ה-search_targets.** מאחר ש-`pickTextQuery` ו-`pickVectorQuery` ב-`core/retrieval.ts` מזינים אך ורק את `hebrew_terms` (ובכל הצרה — את `thesis`/`doctrine`) ל-`search_legal_chunks_text` ול-`match_legal_chunks`, כל שאילתות האחזור היו דוקטרינריות. מסמך שכותרתו "גביית דמי חסות" אינו תואם ל-"מחדל חקיקתי חלקי" לא ב-FTS ולא ב-cosine — לכן הוא לא נכנס לאף `ClaimRetrievalPack`, לא הגיע ל-source pack, ולא יכול היה להופיע בטיוטה.
+**4. כלים נוספים שנכשלו:**
+- אין `exact_authority` עבור A1/A4 שתואם למאמר (ה-planner החזיר authorities שונים).
+- Perplexity החזיר 0 candidates ל-C2 (`approved_web_count: 0`), כי הכלל ב-`APPROVED_WEB_SYSTEM` מסנן `scholarship` ומחייב primary authority בלבד.
 
-מבחינת זרימה: `metadata.retrieval` ו-`metadata.sourcePack` ב-qa_logs ריקים — לא בגלל כשל ריצה, אלא כי הם נשמרים תחת `metadata.core.*` במבנה הנוכחי. בדיקה ידנית של ה-`plan.claims[*].search_targets` מאשרת את ההסבר.
+### הצעת תיקון (שלוש פעולות ממוקדות, ללא שינוי DB)
 
-### הצעת תיקון (frontend ו/או planner-prompt, ללא שינוי DB)
+**A. לתקן את ה-vector path — תיקון אחד שיפתור גם את MMM וגם את המאמר הזה וגם רגרסיות עתידיות.**
+- ב-`supabase/functions/legal-qa/core/runCore.ts` (`defaultEmbed`): להוסיף לוג ברור כש-`OPENAI_API_KEY` חסר/הקריאה נכשלת, ולהחזיר טלמטריה ל-`qa_logs.metadata.core.embed_health = { ok, latency_ms, status }`. ככה נדע מיידית אם הבעיה היא חוסר key, 429, או באמת ציון נמוך.
+- ב-`core/retrieval.ts:277`: להוריד את `match_threshold` מ-`0.55` ל-`0.35`. ב-text-embedding-3-small@768d לעברית, 0.55 מסנן כמעט את הכל. הציון הסופי (rerank/source-pack promotion) כבר מטפל בסינון איכותי. נשמור gate נוסף של 0.55 רק ב-`assembleSourcePack` להעלאה ל-`core` (זה ממילא קיים לפי `source-pack-classification`).
 
-עריכה ב-`supabase/functions/legal-qa/core/prompts.ts` (פרומפט ה-planner) + תוספת קלה ב-`retrieval.ts`:
+**B. הרחבת ה-factual_anchor pre-pass לכלול גם "concept anchors" מהשאלה.**
+ה-planner יקבל בנוסף ל-`factual_anchor_terms` גם `concept_anchor_terms: string[]` — 1-3 ביטויים דוקטרינריים מרכזיים שמופיעים בשאלה (כאן: "מחדל חקיקתי חלקי", "חובה לחוקק"). ה-pre-pass ב-`retrieveForPlan` ירוץ vector+FTS גם על אלה ויזריק לכל claim. זה משריין מאמרים אקדמיים שכותרתם משתמשת בניסוח חלופי לאותו רעיון.
 
-1. **כלל חדש בפרומפט ה-planner**:
-   "כל claim שמערב נושא עובדתי קונקרטי מהשאלה (תופעה, עבירה, מוסד, מגזר, אזור גאוגרפי, גוף ציבורי) חייב לכלול לפחות `search_target` אחד שבו `hebrew_terms` כולל את **המונח העובדתי כפי שמופיע בשאלה** (כאן: "דמי חסות", "פרוטקשן", "סחיטה באיומים בצפון") — בנוסף ל-search_targets הדוקטרינריים."
-2. **שדה אופציונלי `factual_anchor_terms: string[]`** ברמת ה-`PlanV1` שמכיל את אותם מונחים עובדתיים שחולצו ישירות מהשאלה. ה-planner מחויב להחזיר אותם גם אם הוא לא משייך אותם ל-claim ספציפי.
-3. **`retrieveForPlan`**: לפני הלולאה על ה-claims, להריץ pass נוסף של `localText` + `localVector` על `factual_anchor_terms` ולשתול את התוצאות כ-candidates משותפים לכל claim שהמסמך תואם לו לפי `source_type_filter` (או — אם אין מסנן — לכל claim). זה משריין שכנים עובדתיים (כמו דו"חות ממ"מ ועבודות הכנסת) שאליהם הדוקטרינה לבדה לא היתה מגיעה.
-4. **לוג**: לשמור את `factual_anchor_terms` ב-`qa_logs.metadata.core.factual_anchors` כדי שנוכל להריץ regression מהירה.
+**C. לאפשר scholarship דרך Perplexity ל-claims שדורשים `doctrinal_definition`.**
+ב-`prompts.ts` (`APPROVED_WEB_SYSTEM`): כשה-claim כולל `required_evidence: ["doctrinal_definition"]`, להחליף את הפרומפט בגרסה שמאפשרת `scholarship` עם whitelist של דומיינים אקדמיים (`lawjournal.huji.ac.il`, `law.tau.ac.il`, `idclawreview.com`, וכו'). זה fallback שלישוני.
 
 ### מה לא נדרש לשנות
 
-- אין צורך לגעת ב-`match_legal_chunks_filtered` או ב-RLS.
-- אין צורך לשנות את שכבת ה-Perplexity / ה-source pack — ברגע שה-MMM נכנס ל-candidate set, שאר הצינור (ranking, claim map, drafter) כבר מטפל בו.
-- אין שינוי בכללי הציטוט: `knesset_research` כבר ממופה דרך Rule 8 ב-`citationEngine`.
+- אין צורך לגעת ב-`search_legal_chunks_text`, ב-RLS, או ב-embedding pipeline.
+- אין שינוי בטבלאות או ב-RPCs.
+- כללי הציטוט (Rule 24 ל-journal_article) כבר ממופים נכון.
 
 ### אימות לאחר היישום
 
 הרצה חוזרת של אותה שאלה צריכה להראות:
+1. `metadata.core.embed_health.ok = true` (יחשוף אם זו באמת הבעיה).
+2. `local_vector_count > 0` לפחות ל-C2 ו-C5.
+3. `candidates` של C2 כולל `document_id = 02fa534c-9c4d-4e1f-96f9-69235480b5ee`.
+4. הערת שוליים אחת לפחות לקרן רוזן-צבי / המחבר/ת של המאמר.
 
-- ב-`metadata.core.plan.factual_anchor_terms` — נוכחות של "דמי חסות"/"פרוטקשן".
-- ב-`metadata.core.retrieval.*` — candidate עם `document_id = a6d79a7a-…` לפחות בטענה אחת.
-- בתשובה הסופית — לפחות הערת שוליים אחת שמצטטת את הדו"ח של נורית יכימוביץ-כהן (2025).
-
-קבצים מושפעים: `supabase/functions/legal-qa/core/prompts.ts`, `core/types.ts`, `core/retrieval.ts`. אין מיגרציית DB.
+קבצים מושפעים: `supabase/functions/legal-qa/core/runCore.ts`, `core/retrieval.ts`, `core/prompts.ts`, `core/types.ts`. ללא מיגרציה.
