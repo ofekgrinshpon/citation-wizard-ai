@@ -19,7 +19,12 @@ import { retrieveForPlan } from "./retrieval.ts";
 import { verify } from "./verifier.ts";
 import { buildLedger } from "./ledger.ts";
 import { draft } from "./drafter.ts";
-import { buildCitationsForLedger, enrichBareReporterCitation } from "./citations.ts";
+import {
+  buildCitationsForLedger,
+  enrichBareReporterCitation,
+  enrichBareReporterCitationWithDebug,
+  type EnrichmentDebug,
+} from "./citations.ts";
 import { runCitationQuality } from "./citation_quality.ts";
 import {
   extractDocketFromText,
