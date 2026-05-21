@@ -453,6 +453,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
       claims_lost_all_support: qual.claims_lost_all_support,
       marker_to_footnote: qual.marker_to_footnote,
     },
+    enrichment,
     acceptance_errors: acceptanceErrors,
     stage_runs: stageRuns,
     total_duration_ms: Date.now() - tStart,
