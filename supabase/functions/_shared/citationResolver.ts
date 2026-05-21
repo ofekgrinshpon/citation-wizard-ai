@@ -304,6 +304,7 @@ function extractCaseLawPublished(
   party2Hint?: string,
   yearHint?: string,
   caseTypeHint?: string,
+  fullDateHint?: string,
 ): Record<string, string> {
   const fields = extractCaseLawCommon(text, caseNumberHint, titleHint, party1Hint, party2Hint, caseTypeHint);
   // Series
@@ -318,9 +319,15 @@ function extractCaseLawPublished(
   // Year in parens
   const yearMatch = text.match(/\((\d{4})\)/);
   if (yearMatch) fields.year = yearMatch[1];
-  // v4 stage 2: yearHint fallback (party-lookup helper sometimes returns year)
+  // yearHint fallback (recovered via metadata / approved-source lookup).
   if (!fields.year && yearHint && /^\d{4}$/.test(yearHint.trim())) {
     fields.year = yearHint.trim();
+  }
+  // fullDateHint fallback — derive year from a verified dd.mm.yyyy date.
+  // Only consumes a real verified date; never derived from docket suffix.
+  if (!fields.year && fullDateHint) {
+    const m = fullDateHint.trim().match(/^\d{1,2}\.\d{1,2}\.(\d{4})$/);
+    if (m) fields.year = m[1];
   }
   return fields;
 }
@@ -370,6 +377,12 @@ function extractCaseLawDatabase(
   // in its template, but we accept it so callers can pass a uniform shape.
   if (yearHint && !fields.year && /^\d{4}$/.test(yearHint.trim())) {
     fields.year = yearHint.trim();
+  }
+  // Derive year from a verified fullDate if year still missing. Verified
+  // date only — never from docket suffix.
+  if (!fields.year && fields.fullDate) {
+    const m = fields.fullDate.match(/^\d{1,2}\.\d{1,2}\.(\d{4})$/);
+    if (m) fields.year = m[1];
   }
   return fields;
 }
@@ -505,6 +518,7 @@ export function resolveCitation(
         opts.party2Hint,
         opts.yearHint,
         opts.caseTypeHint,
+        opts.fullDateHint,
       );
       break;
     case "case_law_database":
@@ -585,14 +599,15 @@ export function resolveCitation(
   if (
     missing.length > 0 &&
     opts.partyLookupRetry &&
-    sourceType === "case_law_database" &&
+    (sourceType === "case_law_database" || sourceType === "case_law_published") &&
     fields.caseNumber?.trim()
   ) {
     const hasMeaningfulIdentity =
       Boolean(fields.party1?.trim()) ||
       Boolean(fields.party2?.trim()) ||
       Boolean(fields.fullDate?.trim()) ||
-      Boolean(fields.year?.trim());
+      Boolean(fields.year?.trim()) ||
+      Boolean(fields.firstPage?.trim());
     if (hasMeaningfulIdentity) {
       // Hebrew descriptions for placeholder labels (mirror citationEngine
       // component descriptions so the markers match what other UI shows).
@@ -602,6 +617,10 @@ export function resolveCitation(
         party1: "שם צד א'",
         party2: "שם צד ב'",
         fullDate: "תאריך מלא",
+        year: "שנה",
+        series: "סדרת פרסום",
+        volume: "כרך",
+        firstPage: "עמוד ראשון",
       };
       const filled: Record<string, string> = { ...fields };
       for (const f of missing) {
@@ -609,17 +628,22 @@ export function resolveCitation(
         filled[f] = `[חסר: ${label}]`;
         placeholderFields.push(f);
       }
-      // Choose template variant. If we have neither database nor fullDate
-      // but DO have year, fall back to `(year)` form (cleaner than
-      // "(פורסם ב, [חסר: תאריך מלא])"). Otherwise keep canonical template
-      // and let placeholders fill the gaps.
       const ruleSet = CITATION_RULES[sourceType];
       let template = ruleSet.template;
-      if (!fields.fullDate?.trim() && fields.year?.trim()) {
-        template = "{caseType} {caseNumber} {party1} נ' {party2} ({year}).";
-      } else if (!fields.fullDate?.trim() && !fields.database?.trim()) {
-        template = "{caseType} {caseNumber} {party1} נ' {party2} ({fullDate}).";
+      if (sourceType === "case_law_database") {
+        // Choose template variant. If we have neither database nor fullDate
+        // but DO have year, fall back to `(year)` form (cleaner than
+        // "(פורסם ב, [חסר: תאריך מלא])"). Otherwise keep canonical template
+        // and let placeholders fill the gaps.
+        if (!fields.fullDate?.trim() && fields.year?.trim()) {
+          template = "{caseType} {caseNumber} {party1} נ' {party2} ({year}).";
+        } else if (!fields.fullDate?.trim() && !fields.database?.trim()) {
+          template = "{caseType} {caseNumber} {party1} נ' {party2} ({fullDate}).";
+        }
       }
+      // case_law_published keeps its native template — the {year} slot will
+      // hold `[חסר: שנה]` when no verified year/date was recovered. Year is
+      // never derived from docket suffix.
       const canonical = emitCanonical(template, filled);
       return {
         resolved: true,
