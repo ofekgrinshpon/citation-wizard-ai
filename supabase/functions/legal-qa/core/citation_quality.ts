@@ -14,12 +14,65 @@ import type {
   CitationQualityStatus,
   FlaggedFootnote,
   Footnote,
+  LedgerSource,
   LedgerSourceCitation,
   LedgerSourceId,
   RemovedCitation,
 } from "./types.ts";
 import { buildFootnotes } from "./footnotes.ts";
 import type { LedgerEntry, LedgerResult } from "./types.ts";
+
+// ── Host-based declared_type inference ────────────────────────────────────
+// Used to rescue approved_web ledger sources that the verifier marked
+// `direct` but which arrived with empty/weak source_type / title metadata
+// (e.g. "[DOC] nevo.co.il"). The host alone tells us this is a primary
+// legal source; we should not drop it just because the label is thin.
+const CASELAW_HOSTS = [
+  "supremedecisions.court.gov.il",
+  "supreme.court.gov.il",
+  "court.gov.il",
+  "takdin.co.il",
+  "lite.takdin.co.il",
+  "psakdin.co.il",
+  "din.org.il",
+];
+const LEGISLATION_HOSTS = [
+  "main.knesset.gov.il",
+  "fs.knesset.gov.il",
+  "knesset.gov.il",
+  "reshumot.gov.il",
+];
+
+const LAW_RE =
+  /(חוק|פקודת|פקודה|תקנות|תקנה|צו|כללי|הוראות|חוק[\s-]יסוד|ס["״]ח|ק["״]ת)/;
+const CASE_RE = /(נ['׳]\s|בג"ץ|בג״ץ|ע"א|ע״א|ע"פ|ע״פ|רע"א|רע״א|דנ"א|דנ״א|פ"ד|פ״ד|תק-על|פסק[\s-]דין)/;
+
+function hostFromUrl(url?: string): string {
+  if (!url) return "";
+  try { return new URL(url).hostname.toLowerCase(); } catch { return ""; }
+}
+function hostMatchesAny(host: string, list: string[]): boolean {
+  if (!host) return false;
+  for (const h of list) if (host === h || host.endsWith("." + h)) return true;
+  return false;
+}
+function inferDeclaredFromSource(
+  ls: LedgerSource | undefined,
+): "statute" | "caselaw" | "none" {
+  if (!ls) return "none";
+  const host = hostFromUrl(ls.url);
+  const text = `${ls.title || ""}\n${ls.citation || ""}\n${ls.snippet || ""}`;
+  if (hostMatchesAny(host, CASELAW_HOSTS)) return "caselaw";
+  if (hostMatchesAny(host, LEGISLATION_HOSTS)) return "statute";
+  // nevo.co.il is mixed — disambiguate by text.
+  if (host === "nevo.co.il" || host.endsWith(".nevo.co.il")) {
+    if (CASE_RE.test(text)) return "caselaw";
+    if (LAW_RE.test(text)) return "statute";
+  }
+  // gov.il fallback: only rescue when the title/citation clearly names a law.
+  if (host.endsWith("gov.il") && LAW_RE.test(text)) return "statute";
+  return "none";
+}
 
 const INSUFFICIENT_SENTENCE =
   "המקורות המאומתים שאותרו אינם מספיקים לגיבוש מסקנה חד-משמעית.";
@@ -177,6 +230,43 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
   const { answer, ledger, citations } = args;
 
   // ─── Phase A: filter citations ────────────────────────────────────────
+  // Pre-pass: rescue approved_web sources the verifier accepted as `direct`
+  // but whose label/source_type was uninformative. Infer declared_type from
+  // the host so the `uninformative_label && declared_type==="none"` gate in
+  // decideKept doesn't drop them and collapse claim support.
+  const lsById = new Map<LedgerSourceId, LedgerSource>();
+  for (const e of ledger.entries) for (const s of e.sources) lsById.set(s.ls_id, s);
+  let approved_web_rescued = 0;
+  for (const [id, c] of citations) {
+    if (c.declared_type !== "none") continue;
+    const hasUninformative =
+      c.citation_errors.includes("uninformative_label") ||
+      c.citation_errors.includes("empty_source_type");
+    if (!hasUninformative) continue;
+    // Hard gates still apply — don't rescue bare-reporter or pipe-artefact failures.
+    if (
+      c.citation_errors.includes("failed_bare_reporter") ||
+      c.citation_errors.includes("journal_pipe_unresolved")
+    ) continue;
+    // Off-domain stays dropped (we only rescue approved hosts).
+    if (c.citation_errors.some((e) => e.startsWith("off_domain:"))) continue;
+    const ls = lsById.get(id);
+    if (!ls || ls.origin !== "approved_web" || ls.support !== "direct") continue;
+    if (!c.canonical_citation || !c.canonical_citation.trim()) continue;
+    const inferred = inferDeclaredFromSource(ls);
+    if (inferred === "none") continue;
+    c.declared_type = inferred;
+    // Metadata is thin by definition — keep but mark partial so downstream
+    // gates treat it as needing review rather than as a strong canonical.
+    if (c.citation_quality === "ok" || c.citation_quality === "needs_review") {
+      c.citation_quality = "partial";
+    }
+    if (!c.citation_errors.includes("approved_web_inferred_type")) {
+      c.citation_errors.push("approved_web_inferred_type");
+    }
+    approved_web_rescued++;
+  }
+
   const decisions = new Map<LedgerSourceId, KeptDecision>();
   const dropped = new Set<LedgerSourceId>();
   const summary = {
