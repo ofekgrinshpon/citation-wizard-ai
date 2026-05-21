@@ -529,7 +529,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
         if (r.status !== "fulfilled") continue;
         const { id, ls, fields } = r.value;
         if (fields && fields.docket && fields.party1 && fields.party2) {
-          const fresh = enrichBareReporterCitation(ls, {
+          const { citation: fresh, debug } = enrichBareReporterCitationWithDebug(ls, {
             caseNumber: fields.docket,
             party1: fields.party1,
             party2: fields.party2,
@@ -537,12 +537,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
             fullDate: fields.fullDate,
           });
           citations.set(id, fresh);
-          const recovered = !fresh.citation_errors.includes("failed_bare_reporter");
-          if (recovered) {
-            enrichment.bare_reporter_recovered++;
-            enrichment.official_fetch_recovered++;
-          }
-          enrichment.attempts.push({
+          const attempt: EnrichAttempt = {
             ls_id: id,
             docket: fields.docket,
             docket_source: "official_page",
@@ -554,8 +549,14 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
             source_type: ls.source_type,
             reporter_citation: truncate(ls.citation, 120),
             status: "official_fetch_hit",
-            rejection_reason: recovered ? undefined : "rebuild_still_bare",
-          });
+          };
+          const { recovered, partial } = annotateAttempt(attempt, fresh, debug);
+          if (recovered) {
+            enrichment.bare_reporter_recovered++;
+            enrichment.official_fetch_recovered++;
+          }
+          if (partial) enrichment.partial_enriched++;
+          enrichment.attempts.push(attempt);
           if (!recovered) stillBareAfterC.push(id);
         } else {
           stillBareAfterC.push(id);
