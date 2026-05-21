@@ -316,15 +316,26 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   type EnrichAttempt = {
     ls_id: LedgerSourceId;
     docket: string;
-    docket_source: "metadata" | "extracted" | "none";
+    docket_source: "metadata" | "extracted" | "official_page" | "none";
     prefix?: string;
     used_metadata_parties: boolean;
+    pass?: "metadata" | "text_regex" | "official_fetch" | "party_lookup";
     title_excerpt?: string;
     snippet_excerpt?: string;
     url?: string;
     source_type?: string;
     reporter_citation?: string;
-    status: "metadata_hit" | "hit" | "no_match" | "timeout" | "parse_failed" | "request_failed" | "skipped_no_docket" | "domain_filtered";
+    status:
+      | "metadata_hit"
+      | "text_regex_hit"
+      | "official_fetch_hit"
+      | "hit"
+      | "no_match"
+      | "timeout"
+      | "parse_failed"
+      | "request_failed"
+      | "skipped_no_docket"
+      | "domain_filtered";
     rejection_reason?: string;
   };
   const enrichment = {
@@ -332,6 +343,11 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     bare_reporter_recovered: 0,
     bare_reporter_dropped: 0,
     metadata_short_circuits: 0,
+    text_regex_attempted: 0,
+    text_regex_recovered: 0,
+    official_fetch_attempted: 0,
+    official_fetch_recovered: 0,
+    official_fetch_timeouts: 0,
     party_lookup_attempted: 0,
     party_lookup_hits: 0,
     party_lookup_timeouts: 0,
