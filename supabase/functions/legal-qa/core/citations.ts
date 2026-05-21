@@ -200,8 +200,23 @@ function offDomainError(ls: LedgerSource): string | null {
   return `off_domain:${h}`;
 }
 
-export function buildCitationForSource(ls: LedgerSource): LedgerSourceCitation {
-  const declared = declaredFor(ls.source_type);
+export interface BuildCitationHints {
+  /** Used by enrichment retries; passed straight to citationResolver. */
+  party1?: string;
+  party2?: string;
+  fullDate?: string;
+  year?: string;
+  caseNumber?: string;
+}
+
+export function buildCitationForSource(
+  ls: LedgerSource,
+  hints: BuildCitationHints = {},
+): LedgerSourceCitation {
+  // Normalize source_type up front so declaredFor and the final footnote
+  // see a canonical value (no `supreme_court_il` / `israeli_law` leaks).
+  const normalizedType = normalizeSourceType(ls.source_type);
+  const declared = declaredFor(normalizedType);
   const errors: string[] = [];
   let canonical = "";
   let quality: CitationQuality = "failed";
@@ -209,12 +224,30 @@ export function buildCitationForSource(ls: LedgerSource): LedgerSourceCitation {
   let engineSourceType: string | undefined;
   let engine_used: "resolver" | "passthrough" | "none" = "none";
 
+  // Gather case-meta hints from the LedgerSource fields themselves (title,
+  // citation, snippet, pinpoint) so the resolver can fill in docket / parties
+  // / date even when the citation string is bare. No LLM, no external lookup.
+  const haystack = `${ls.title || ""}\n${ls.citation || ""}\n${ls.snippet || ""}`;
+  const docketFromText = extractDocketFromText(haystack);
+  const partiesFromText = extractPartiesFromText(haystack);
+  const yearFromText = extractYearFromText(haystack);
+  const fullDateFromText = extractFullDateFromText(haystack);
+
+  const resolverHints = {
+    titleHint: ls.title,
+    caseNumberHint: hints.caseNumber ?? docketFromText?.docket,
+    party1Hint: hints.party1 ?? partiesFromText?.party1,
+    party2Hint: hints.party2 ?? partiesFromText?.party2,
+    fullDateHint: hints.fullDate ?? fullDateFromText,
+    yearHint: hints.year ?? yearFromText,
+  };
+
   if (declared !== "none") {
     engine_used = "resolver";
     const res: ResolveResult = resolveCitation(
       ls.citation || ls.title || "",
       declared as DeclaredType,
-      { titleHint: ls.title },
+      resolverHints,
     );
     if (res.resolved) {
       engineSourceType = res.sourceType;
@@ -252,7 +285,7 @@ export function buildCitationForSource(ls: LedgerSource): LedgerSourceCitation {
   if (off) errors.push(off);
 
   // Sanity: uninformative source_type / label (e.g. "[DOC] nevo.co.il", empty source_type).
-  const emptySourceType = !(ls.source_type && ls.source_type.trim());
+  const emptySourceType = !(normalizedType && normalizedType.trim());
   const uninformativeTitle = isUninformativeLabel(ls.title);
   if (emptySourceType) errors.push("empty_source_type");
   if (uninformativeTitle) errors.push("uninformative_label");
@@ -263,11 +296,47 @@ export function buildCitationForSource(ls: LedgerSource): LedgerSourceCitation {
   // Deterministic cleanup of the canonical text (idempotent, no LLM).
   if (canonical) canonical = cleanCitationText(canonical);
 
+  // ─── Bare-reporter gate (Rule 18) ──────────────────────────────────────
+  // A caselaw footnote that is only `פ"ד מט(4) 221` (no docket, no parties)
+  // is unacceptable as a final citation. Mark needs_review so the quality
+  // pass drops it. Enrichment may rewrite this via enrichBareReporterCitation
+  // after gathering hints from the LedgerSource / partyLookup.
+  if (declared === "caselaw" && isBareReporter(canonical)) {
+    quality = "needs_review";
+    if (!errors.includes("failed_bare_reporter")) {
+      errors.push("failed_bare_reporter");
+    }
+  }
+
+  // ─── Journal-article pipe-artifact gate ────────────────────────────────
+  // Composite labels like `כותרת | מחבר (כרך)` must not appear as-is in a
+  // final citation. Try to parse; if we can't, mark partial + journal_pipe.
+  if (canonical && isPipeArtifact(canonical) && declared === "none") {
+    const parsed = parsePipeArtifact(canonical);
+    if (parsed.ok && parsed.title && parsed.author) {
+      const volPart = parsed.volume ? ` ${parsed.volume}` : "";
+      const yearPart = parsed.year ? ` (${parsed.year})` : "";
+      canonical = `${parsed.author} "${parsed.title}"${volPart}${yearPart}.`;
+      canonical = cleanCitationText(canonical);
+      if (quality === "ok") quality = "partial";
+      errors.push("journal_pipe_parsed");
+    } else {
+      // Strip pipe to a single space so output isn't visually broken,
+      // but flag so the quality pass marks it as partial / needs_review.
+      canonical = canonical.replace(/\s\|\s/g, " — ");
+      canonical = cleanCitationText(canonical);
+      quality = "needs_review";
+      if (!errors.includes("journal_pipe_unresolved")) {
+        errors.push("journal_pipe_unresolved");
+      }
+    }
+  }
+
   const short_form_inputs = buildShortFormInputs(ls, canonical, engineSourceType);
 
   return {
     ls_id: ls.ls_id,
-    source_type: ls.source_type,
+    source_type: normalizedType || ls.source_type,
     declared_type: declared,
     canonical_citation: canonical,
     citation_quality: quality,
@@ -289,3 +358,16 @@ export function buildCitationsForLedger(
   }
   return out;
 }
+
+/**
+ * Re-build a citation for a LedgerSource using freshly recovered party-name
+ * / date hints (e.g. from `_shared/partyLookup.ts`). Returns the new
+ * `LedgerSourceCitation`. Caller swaps it into the citations map.
+ */
+export function enrichBareReporterCitation(
+  ls: LedgerSource,
+  hints: BuildCitationHints,
+): LedgerSourceCitation {
+  return buildCitationForSource(ls, hints);
+}
+
