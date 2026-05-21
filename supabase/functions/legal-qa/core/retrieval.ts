@@ -929,23 +929,75 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
   const conceptTerms = sanitizeTerms((plan as any).concept_anchor_terms);
 
   /**
+   * Doctrine-synonym expansion (general, no per-query hardcoding).
+   * Runs the verbatim originals through the shared dictionary in
+   * `_shared/legalDoctrineSynonyms.ts` and returns the merged term list
+   * (originals first, then expansions) capped at ANCHOR_LAYER_TERM_CAP.
+   * Originals are NEVER dropped; only the EXPANSION slice is truncated.
+   */
+  function expandAnchorLayer(originals: string[]): {
+    all: string[];
+    expanded: string[];
+    dictionaryHits: string[];
+  } {
+    if (originals.length === 0) {
+      return { all: [], expanded: [], dictionaryHits: [] };
+    }
+    const haystack = originals.join(" \n ");
+    const { hits, synonyms } = expandDoctrineTerms(haystack);
+    const seen = new Set(originals.map((t) => t.trim().toLowerCase()));
+    const expanded: string[] = [];
+    const slots = Math.max(0, ANCHOR_LAYER_TERM_CAP - originals.length);
+    for (const s of synonyms) {
+      if (expanded.length >= slots) break;
+      const trimmed = s.trim();
+      if (!trimmed || trimmed.length < 2 || trimmed.length > TEXT_QUERY_MAX_CHARS) continue;
+      const n = trimmed.toLowerCase();
+      if (seen.has(n)) continue;
+      seen.add(n);
+      expanded.push(trimmed);
+    }
+    return { all: [...originals, ...expanded], expanded, dictionaryHits: hits };
+  }
+
+  /**
    * Run one anchor layer: FTS + vector per term, dedupe with per-document
    * diversity (no single document allowed to crowd the pool).
+   *
+   * @param originals - planner-emitted terms (verbatim, never modified).
+   * @param expanded  - doctrine-synonym additions (may be empty).
+   * @param dictionaryHits - dictionary entry IDs that fired (telemetry only).
    */
   async function runAnchorLayer(
     layer: "factual" | "concept",
-    terms: string[],
+    originals: string[],
+    expanded: string[],
+    dictionaryHits: string[],
   ): Promise<{ pool: CandidateSource[]; telemetry: AnchorLayerTelemetry }> {
+    const terms = [...originals, ...expanded];
+    const originalCount = originals.length;
     const telemetry: AnchorLayerTelemetry = {
       layer,
       terms,
-      per_term: terms.map((term) => ({ term, text_hits: 0, vector_hits: 0 })),
+      per_term: terms.map((term, i) => ({
+        term,
+        text_hits: 0,
+        vector_hits: 0,
+        is_expansion: i >= originalCount,
+      })),
       text_candidates: 0,
       vector_candidates: 0,
       unique_documents: 0,
       document_ids: [],
       injected_into_claims: 0,
       total_unique: 0,
+      expanded_terms: {
+        original: originals,
+        expanded,
+        dictionary_hits: dictionaryHits,
+        cap: ANCHOR_LAYER_TERM_CAP,
+      },
+      expansion_document_ids: [],
     };
     if (terms.length === 0) return { pool: [], telemetry };
 
@@ -985,29 +1037,41 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
       }),
     );
 
-    const flat = perTerm.flat();
-    telemetry.text_candidates = flat.filter((c) => c.origin === "local_text").length;
-    telemetry.vector_candidates = flat.filter((c) => c.origin === "local_vector").length;
+    telemetry.text_candidates = perTerm.flat().filter((c) => c.origin === "local_text").length;
+    telemetry.vector_candidates = perTerm.flat().filter((c) => c.origin === "local_vector").length;
 
-    // Diversity: one chunk per document_id, cap unique docs.
+    // Diversity: one chunk per document_id, cap unique docs. Iterate
+    // term-by-term (originals first, then expansions) so that a document's
+    // "first-encountered term" reliably tells us whether it would have
+    // entered the pool without the doctrine expansion.
     const seenDoc = new Set<string>();
     const pool: CandidateSource[] = [];
-    for (const c of flat) {
-      const k = c.document_id || `${c.origin}:${c.url || c.candidate_id}`;
-      if (seenDoc.has(k)) continue;
-      seenDoc.add(k);
-      pool.push(c);
-      if (pool.length >= ANCHOR_MAX_DOCS_PER_LAYER) break;
+    const expansionDocIds: string[] = [];
+    outer: for (let i = 0; i < perTerm.length; i++) {
+      for (const c of perTerm[i]) {
+        const k = c.document_id || `${c.origin}:${c.url || c.candidate_id}`;
+        if (seenDoc.has(k)) continue;
+        seenDoc.add(k);
+        pool.push(c);
+        if (i >= originalCount && c.document_id) {
+          expansionDocIds.push(c.document_id);
+        }
+        if (pool.length >= ANCHOR_MAX_DOCS_PER_LAYER) break outer;
+      }
     }
     telemetry.unique_documents = pool.length;
     telemetry.total_unique = pool.length;
     telemetry.document_ids = pool.map((c) => c.document_id).filter((x): x is string => !!x);
+    telemetry.expansion_document_ids = expansionDocIds;
     return { pool, telemetry };
   }
 
+  const factualExpansion = expandAnchorLayer(factualTerms);
+  const conceptExpansion = expandAnchorLayer(conceptTerms);
+
   const [factualLayer, conceptLayer] = await Promise.all([
-    runAnchorLayer("factual", factualTerms),
-    runAnchorLayer("concept", conceptTerms),
+    runAnchorLayer("factual", factualTerms, factualExpansion.expanded, factualExpansion.dictionaryHits),
+    runAnchorLayer("concept", conceptTerms, conceptExpansion.expanded, conceptExpansion.dictionaryHits),
   ]);
 
   // Threshold=0.0 probe: pick the longest available anchor term, or fall
