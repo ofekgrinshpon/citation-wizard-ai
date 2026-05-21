@@ -185,6 +185,10 @@ export interface Footnote {
   repeated_citation_text?: string;
   source_type: string;
   url?: string;
+  /** Where the footnote text came from. Telemetry only. */
+  footnote_text_source?: "canonical_citation" | "repeated_rule37" | "passthrough_fallback";
+  /** True if this footnote text came from an enrichment safety-net rebuild. */
+  partial_enriched_used_in_footnote?: boolean;
 }
 
 export interface MarkerToFootnote {
@@ -228,6 +232,12 @@ export interface CitationQualityResult {
     off_domain: number;
     repeated: number;
     legislation_supra_blocked: number;
+    partial_enriched_kept: number;
+    footnote_text_sources: {
+      canonical_citation: number;
+      repeated_rule37: number;
+      passthrough_fallback: number;
+    };
   };
   duration_ms: number;
 }

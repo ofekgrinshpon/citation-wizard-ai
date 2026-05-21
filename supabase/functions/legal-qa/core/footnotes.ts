@@ -88,11 +88,28 @@ export function buildFootnotes(args: BuildFootnotesArgs): BuildFootnotesResult {
     const isAdjacent = prev_ls_id === ls_id;
 
     let text: string;
+    let textSource: NonNullable<Footnote["footnote_text_source"]>;
+    const isPartialEnriched = cit.citation_errors.includes("partial_enriched");
     if (isFirst) {
-      text = cit.canonical_citation || "(ציטוט חסר)";
+      // SOURCE OF TRUTH: canonical_citation (post-enrichment). Never re-derive
+      // from the original ls.citation / bare reporter for partial_enriched
+      // entries — that's exactly the regression we're guarding against.
+      if (cit.canonical_citation && cit.canonical_citation.trim()) {
+        text = cit.canonical_citation;
+        textSource = "canonical_citation";
+      } else if (cit.citation_quality !== "failed") {
+        // Last-resort fallback: only when canonical is empty AND quality
+        // wasn't outright failed. Telemetry will flag this case.
+        text = "(ציטוט חסר)";
+        textSource = "passthrough_fallback";
+      } else {
+        text = "(ציטוט חסר)";
+        textSource = "passthrough_fallback";
+      }
       seen.set(ls_id, { first_footnote_number: num, prev_footnote_number: num });
     } else {
       text = buildRule37Short(cit, prior!.first_footnote_number, isAdjacent);
+      textSource = "repeated_rule37";
       prior!.prev_footnote_number = num;
     }
 
@@ -109,6 +126,8 @@ export function buildFootnotes(args: BuildFootnotesArgs): BuildFootnotesResult {
       first_footnote_number: isFirst ? undefined : prior!.first_footnote_number,
       repeated_citation_text: isFirst ? undefined : text,
       source_type: cit.source_type,
+      footnote_text_source: textSource,
+      partial_enriched_used_in_footnote: isFirst && isPartialEnriched,
     };
     footnotes.push(fn);
     marker_to_footnote.push({

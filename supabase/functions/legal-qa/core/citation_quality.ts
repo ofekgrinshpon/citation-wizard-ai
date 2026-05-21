@@ -45,10 +45,21 @@ function decideKept(c: LedgerSourceCitation): KeptDecision {
   if (c.citation_quality === "failed") {
     return { kept: false, reason: `quality_failed:${c.citation_errors.join(",")}` };
   }
+  const isPartialEnriched = c.citation_errors.includes("partial_enriched");
   // needs_review = engine produced something but it isn't safe to ship
   // (bare reporter without docket/parties, unresolved journal pipe-artifact).
-  // Enrichment had its chance before this pass; drop here.
+  // EXCEPTION: enrichment safety-net entries are marked needs_review +
+  // partial_enriched and carry a usable docket+parties canonical_citation.
+  // Keep those (the recovery pass is the whole reason they're here).
   if (c.citation_quality === "needs_review") {
+    if (
+      isPartialEnriched &&
+      !c.citation_errors.includes("failed_bare_reporter") &&
+      !c.citation_errors.includes("journal_pipe_unresolved") &&
+      c.canonical_citation && c.canonical_citation.trim()
+    ) {
+      return { kept: true, reason: "partial_enriched_accepted" };
+    }
     return { kept: false, reason: `needs_review:${c.citation_errors.join(",")}` };
   }
   const offDomain = c.citation_errors.find((e) => e.startsWith("off_domain:"));
@@ -171,6 +182,12 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
   const summary = {
     ok: 0, partial: 0, failed: 0, off_domain: 0,
     repeated: 0, legislation_supra_blocked: 0,
+    partial_enriched_kept: 0,
+    footnote_text_sources: {
+      canonical_citation: 0,
+      repeated_rule37: 0,
+      passthrough_fallback: 0,
+    },
   };
   for (const [id, c] of citations) {
     const d = decideKept(c);
@@ -182,6 +199,7 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
     } else {
       if (c.citation_quality === "ok") summary.ok++;
       else summary.partial++;
+      if (d.reason === "partial_enriched_accepted") summary.partial_enriched_kept++;
     }
   }
 
@@ -253,6 +271,13 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
 
   // Repeated count.
   summary.repeated = bf.footnotes.filter((f) => f.is_repeated).length;
+  // Footnote-text-source tally (telemetry; not used for gating).
+  for (const f of bf.footnotes) {
+    const src = f.footnote_text_source;
+    if (src && src in summary.footnote_text_sources) {
+      summary.footnote_text_sources[src]++;
+    }
+  }
 
   // Lost-support analysis using surviving markers.
   const survivingMarkers = markersInAnswer(cleaned2);
