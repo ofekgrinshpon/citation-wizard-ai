@@ -15,6 +15,7 @@ PlanV1 schema (TypeScript):
     claims: Claim[];                    // 2-6 atomic claims
     expected_authorities: ExpectedAuthority[]; // 2-8 seminal Israeli sources
     factual_anchor_terms: string[];     // factual nouns/phrases lifted from the question (see rule 12)
+    concept_anchor_terms: string[];     // doctrinal key phrases lifted from the question (see rule 13)
   }
   interface Claim {
     id: ClaimId;
