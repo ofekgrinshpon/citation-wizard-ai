@@ -353,6 +353,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     bare_reporter_attempted: 0,
     bare_reporter_recovered: 0,
     bare_reporter_dropped: 0,
+    partial_enriched: 0,
     metadata_short_circuits: 0,
     text_regex_attempted: 0,
     text_regex_recovered: 0,
