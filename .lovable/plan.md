@@ -1,81 +1,77 @@
+## What the user saw
 
-## Root cause
+Footnote in the answer:
+`ע"א 1726/21 (supremedecisions.court.gov.il)`
 
-When you submit a Deep query, `legal-qa` queues an async worker and **pre-inserts a `qa_logs` row** with `answer = "מעבד שאלה…"` and `metadata.pipeline_used = "core_running"`, so a crash leaves a trace.
+After clicking "🔄 השלם פרטים חסרים", refill returned:
+`ע"א 1726/21 איילון חברה לביטוח בע"מ נ' פלונית [חסר: כרך] [חסר: עמוד פתיחה] (פורסם בנבו, 6.6.2023)`
 
-The polling endpoint `supabase/functions/legal-qa-status/index.ts` derives status like this:
+The real case behind that docket is **מוחמד בכרי נ׳ ניסים מגנאגי**. Perplexity hallucinated the parties.
 
-```ts
-function deriveStatus(metadata, hasAnswer) {
-  if (hasAnswer) return "completed";   // ← bug
-  if (metadata?.checkpoint === "failed") return "failed";
-  ...
-  return "running";
+## Two distinct bugs
+
+### Bug 1 — Refill hallucinates parties when only the docket is known
+
+`supabase/functions/citation-refill/index.ts` sends `current_citation` to Perplexity with a generic "fill the missing fields" instruction. When the only real fact in the input is the docket (`ע"א 1726/21`) and there are no parties, the model invents parties that "look right" for that case number. Nothing in the prompt or the post-processing forces Perplexity to *prove* the docket matched.
+
+Today's prompt also tells the model to keep `[חסר: …]` placeholders only for fields it cannot find — it does NOT tell it to refuse to invent party names, and it does not verify that the URL Perplexity cites actually contains the docket.
+
+### Bug 2 — `(supremedecisions.court.gov.il)` is leaking into citation text
+
+In `supabase/functions/legal-qa/core/citations.ts` (lines 200‑203), `passthroughCitation` appends `(${host})` to any citation whose canonical template could not be resolved:
+
+```
+if (text && ls.origin === "approved_web" && ls.url) {
+  const h = hostOf(ls.url);
+  if (h && !text.includes(h)) text = `${text} (${h})`;
 }
 ```
 
-`hasAnswer` is true the instant the placeholder row exists. So the very first poll (≈1s after submit) returns:
-
-```json
-{ "status": "completed", "answer": "מעבד שאלה…", "footnotes": [], "total_footnotes": 0 }
-```
-
-The client sees `status=completed` with no footnotes and renders the "failed to generate" error card. Confirmed in the DB right now:
-
-| run_id | pipeline_used | answer | footnotes |
-|---|---|---|---|
-| `bf4f3a4d…` | `core_running` | `מעבד שאלה…` | 0 |
-| `97337a29…` | `core_running` | `מעבד שאלה…` | 0 |
-
-Both rows are still stuck on `core_running` — the background worker never updated them. So in the UI you got two false "completed" responses while the worker was still going.
-
-A secondary signal in the same window:
-
-```
-2026-05-21T20:13:17Z ERROR [core retrieval vec] C1: canceling statement due to statement timeout
-```
-
-That's the local pgvector retrieval (`match_legal_chunks` RPC) hitting Postgres `statement_timeout` for claim C1. The retrieval code already swallows it and returns `[]`, so this is **not** what failed the run from the UI's perspective — but it's a real performance issue that can leave Deep runs with thinner local hits.
-
-So there are two issues, in priority order.
+That is a debug breadcrumb meant to say "we have a docket and an approved URL but no parties / year". It then gets shipped to the user as part of the citation string, which is why so many footnotes end with `(supremedecisions.court.gov.il)`, `(www.nevo.co.il)`, etc. It also pollutes the input that Bug 1 then sends to Perplexity.
 
 ## Plan
 
-### Fix 1 — Status endpoint must not treat placeholder as completed (the actual UI failure)
+### Fix A — Make refill refuse to invent parties (`citation-refill/index.ts`)
 
-`supabase/functions/legal-qa-status/index.ts`:
+1. **Sanitize input.** Before sending to Perplexity, strip a trailing `(<host>)` suffix from `current_citation` so the model doesn't treat the host as content.
+2. **Detect "docket-only" inputs.** A regex over the sanitized text: has a docket (`ע"א\|בג"ץ\|רע"א\|...` + `NNNN/NN`) but no `נ'` and no party-shaped Hebrew text → mark `mode = "docket_lookup"`.
+3. **Stronger prompt in docket mode.** Replace the current free-form Hebrew system prompt with explicit rules:
+   - "מצא את התיק לפי מספר תיק מדויק בלבד. אסור להמציא שמות צדדים."
+   - "אם לא מצאת את התיק עם בדיוק אותו מספר, החזר את הקלט כפי שהוא + הערה `אין אישור`. אסור להחליף לתיק אחר."
+   - "ה-URL שתחזיר חייב להכיל את מספר התיק. אחרת — אל תחזיר שמות צדדים."
+4. **Server-side verification (cheap, no extra call).** After Perplexity responds, check that at least one URL in `citations[]` literally contains the docket number (e.g. `1726/21` → `1726-21` or `1726%2F21`). If none does, **discard the model's party names** and return the sanitized original + `verified: false` + a Hebrew note `"לא נמצאו פרטים מאומתים — שמור על הקלט"`. Surface that note in the card as a yellow "לא ניתן לאמת" pill.
+5. Same checks (lighter) for non-docket modes: if the model produced a string whose docket disagrees with the input docket, reject.
 
-- Update `deriveStatus`:
-  - A run is `completed` only when both `answer` exists **and** `metadata.pipeline_used` is one of the terminal states (`core`, `core_failed`, `v3`, `v4`, `legacy`, etc.) — i.e. **not** `core_running`. Equivalently: `metadata.checkpoint === "completed"` OR `pipeline_used !== "core_running"` with a non-placeholder answer.
-  - Add an explicit guard: if `answer === "מעבד שאלה…"` (the known placeholder), force status to `running`.
-- Also stop returning `answer`, `footnotes`, etc. in the response when status is `running` / `queued` — only emit them on `completed` or `failed`. (Today the placeholder leaks out and confuses the client.)
+### Fix B — Stop leaking the host into the citation text
 
-Optional small addition: include `metadata.pipeline_used` in `progress` so we can spot stuck `core_running` rows from the client.
+In `passthroughCitation` (`core/citations.ts`):
 
-### Fix 2 — Mark stuck `core_running` rows as failed if the worker never finishes
+- Remove the `text = `${text} (${h})`` line.
+- Instead, attach the host as a separate field on the returned object (e.g. `source_host: h`) and surface it in the footnote payload as `source_host`, not inside `citation`.
+- `CitationReviewCard` already gets `url`; render the host as a small chip next to the status pill ("מקור: supremedecisions.court.gov.il"). The citation textarea stays clean.
 
-The async dispatcher in `legal-qa/index.ts` already catches background crashes and writes `checkpoint: "failed"`, but **silent EdgeRuntime kills** (CPU/wall-time) leave the row at `core_running` forever.
+This also automatically improves Fix A — refill will now see `ע"א 1726/21` only, with no host noise to anchor on.
 
-- Add a server-side timeout check in `legal-qa-status`: if `pipeline_used === "core_running"` AND `created_at` is older than N minutes (e.g. 6 min — Deep budget is ~3–4 min), return `status: "failed"` with `reason: "worker_timeout"`. Don't mutate the row from the status endpoint; just project the state.
-- The client already handles `failed` (shows the error card with Try Again), so no client change needed for this.
+### Out of scope (explicitly NOT changing here)
 
-### Fix 3 — pgvector timeout on C1 (lower priority, separate follow-up)
+- The upstream pipeline that fails to resolve parties for these dockets (Stage E.5 / party-lookup). That is a known limitation already tracked in memory (`party-lookup-fulldate-relaxation`, `case-disambiguation-relevance`). Improving it is a larger separate task.
+- Removing existing `(host)` strings from historical `qa_logs` rows. Only new answers will be clean.
+- Any change to `legal-qa` Core or Deep pipelines.
 
-The `[core retrieval vec] C1: canceling statement due to statement timeout` line means `match_legal_chunks` is too slow on some claim embeddings. Out of scope for this hotfix — flagging only. Possible follow-ups (not in this plan): a) lower `match_count`, b) split into two RPC calls, c) raise `statement_timeout` for that one RPC via `SET LOCAL`. Will open a separate investigation if you want.
+## Files touched
 
-## Files
-
-- `supabase/functions/legal-qa-status/index.ts` — rewrite `deriveStatus` + response payload gating.
+- `supabase/functions/citation-refill/index.ts` — sanitize, docket-mode prompt, post-response verification.
+- `supabase/functions/legal-qa/core/citations.ts` — stop inlining `(host)`, expose `source_host` instead.
+- `supabase/functions/legal-qa/index.ts` — propagate `source_host` into the footnote object emitted to the client (1‑line mapping).
+- `src/components/legal-qa/CitationReviewCard.tsx` — render `source_host` as a chip; render `verified: false` warning pill.
+- `src/components/legal-qa/CitationReviewPanel.tsx` — pass `source_host` + `verified`/`refillWarning` through state.
+- `src/lib/legalQa/footnoteRerender.ts` — preserve `source_host` field through re-render.
 
 ## Validation
 
-1. Submit a Deep query from the UI. Within 1–2s the status poll should return `status: "running"` (not `completed`).
-2. Wait normally; once the worker finishes and writes the real answer + footnotes, the next poll flips to `status: "completed"` with the real content.
-3. Force a crash by sending a malformed body or killing the worker; verify the row eventually reads `status: "failed"` (either via existing checkpoint or via the new 6-min watchdog).
-4. Re-check the two stuck rows from this session — they should now report `status: "failed"` (worker_timeout) instead of `completed`.
+1. Deploy `citation-refill`, then call it with:
+   - `{current_citation: "ע\"א 1726/21", source_type: "case_law_published"}` → expect either correct parties (מוחמד בכרי נ׳ ניסים מגנאגי) **with** a citing URL containing `1726/21`, OR `verified:false` and the input unchanged. Must NOT return "איילון נ' פלונית".
+2. Re-run a fresh Deep query that previously produced `(supremedecisions.court.gov.il)` footnotes; confirm the citation string no longer contains the host and that a host chip appears in the review card instead.
+3. Confirm `rerenderAnswer` keeps `source_host` on surviving footnotes.
 
-## Out of scope
-
-- The `[core retrieval vec]` statement_timeout itself (Fix 3 — flag only).
-- Any change to the Core pipeline or to `legal-qa` worker logic.
-- Any UI change — the client already handles `running` / `completed` / `failed` correctly.
+No DB migrations. No new secrets.

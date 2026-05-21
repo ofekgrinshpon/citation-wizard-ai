@@ -197,10 +197,12 @@ function passthroughCitation(ls: LedgerSource): { text: string; quality: Citatio
     const titleBit = (ls.title || "").trim();
     if (titleBit) text = titleBit;
   }
-  if (text && ls.origin === "approved_web" && ls.url) {
-    const h = hostOf(ls.url);
-    if (h && !text.includes(h)) text = `${text} (${h})`;
-  }
+  // NOTE: previously we appended `(${host})` here as a debug breadcrumb when
+  // the canonical template could not be resolved. That string leaked into
+  // user-facing footnotes (e.g. `ע"א 1726/21 (supremedecisions.court.gov.il)`)
+  // and then poisoned the citation-refill prompt. The URL is already carried
+  // separately on the ledger source; do not inline the host into the citation
+  // text. Leave `text` as-is so refill sees only real bibliographic content.
   if (!text) {
     return { text: "", quality: "failed", errors: ["passthrough_empty"] };
   }
