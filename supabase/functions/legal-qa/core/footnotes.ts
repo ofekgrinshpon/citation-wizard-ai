@@ -181,7 +181,20 @@ function buildRule37Short(
   if (isAdjacent) {
     return pinpointSuffix ? `שם, ${pinpointSuffix}.` : `שם.`;
   }
-  const label = sf.short_label || sf.law_name || "המקור";
+  // Problem 2 guard: never let a bare-reporter / unbalanced-paren string
+  // become a Rule 37 short label. Fall back to a plain `לעיל ה"ש N` with no
+  // label so the footnote stays well-formed.
+  const rawLabel = sf.short_label || sf.law_name || "";
+  const opens = (rawLabel.match(/\(/g) || []).length;
+  const closes = (rawLabel.match(/\)/g) || []).length;
+  const labelLooksBad =
+    !rawLabel ||
+    isBareReporter(rawLabel) ||
+    opens !== closes;
+  if (labelLooksBad) {
+    const tail = pinpointSuffix ? `, ${pinpointSuffix}` : "";
+    return `לעיל ה"ש ${first_footnote_number}${tail}.`;
+  }
   const tail = pinpointSuffix ? `, ${pinpointSuffix}` : "";
-  return `${label}, לעיל ה"ש ${first_footnote_number}${tail}.`;
+  return `${rawLabel}, לעיל ה"ש ${first_footnote_number}${tail}.`;
 }
