@@ -240,6 +240,18 @@ export function buildCitationForSource(ls: LedgerSource): LedgerSourceCitation {
   const off = offDomainError(ls);
   if (off) errors.push(off);
 
+  // Sanity: uninformative source_type / label (e.g. "[DOC] nevo.co.il", empty source_type).
+  const emptySourceType = !(ls.source_type && ls.source_type.trim());
+  const uninformativeTitle = isUninformativeLabel(ls.title);
+  if (emptySourceType) errors.push("empty_source_type");
+  if (uninformativeTitle) errors.push("uninformative_label");
+  if ((emptySourceType || uninformativeTitle) && quality === "ok") {
+    quality = "partial";
+  }
+
+  // Deterministic cleanup of the canonical text (idempotent, no LLM).
+  if (canonical) canonical = cleanCitationText(canonical);
+
   const short_form_inputs = buildShortFormInputs(ls, canonical, engineSourceType);
 
   return {
