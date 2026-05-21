@@ -185,10 +185,13 @@ export async function lookupPartyNames(
           {
             role: "system",
             content:
-              "You are a precise Israeli-court records assistant. Given docket numbers, " +
-              "return the party names exactly as they appear on the official court record " +
+              "You are a precise Israeli-court records assistant. Given Israeli court dockets " +
+              "(with optional context: title, snippet, URL, reporter citation), return the " +
+              "party names exactly as they appear on the official record " +
               "(supreme.court.gov.il, nevo.co.il, takdin.co.il). " +
-              "TIP: the public page https://lite.takdin.co.il/search-results displays parties, docket, court, decision date, and פ\"ד publication on a single result page — prefer it for fast, complete metadata. " +
+              "Use the provided context (כותרת/קטע/URL/ציטוט) to disambiguate when the bare " +
+              "docket number is ambiguous — the URL in particular is often a deterministic " +
+              "permalink to the case page. " +
               "Output Hebrew party names only. " +
               "If you cannot verify a docket from a trusted source, OMIT it from the results — never invent.",
           },
