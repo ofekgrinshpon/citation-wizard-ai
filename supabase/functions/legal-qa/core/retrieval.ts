@@ -643,61 +643,147 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
   let webBudgetRemaining = WEB_GLOBAL_CAP;
   let webGlobalCapHit = false;
 
-  // ─── Factual-anchor pre-pass ──────────────────────────────────────────
+  // Single VectorHealthDiag shared across every vector RPC (claim + anchors
+  // + probe). Surfaced in metadata.core.retrieval.vector_health.
+  const vectorHealth: VectorHealthDiag = newVectorHealth();
+
+  // ─── Anchor pre-pass (factual + concept) ──────────────────────────────
   // The planner often distills the question into PURELY DOCTRINAL search
-  // targets ("מחדל חקיקתי", "חובות הגנה חיוביות") and drops the factual
-  // subject ("דמי חסות", "פרוטקשן"). That makes factual reports (Knesset
-  // MMM, government background docs) invisible to per-claim retrieval.
-  // Here we run a tiny FTS + one vector pass on factual_anchor_terms and
-  // seed those candidates into every claim's candidate pool. They get
-  // re-tagged per claim and go through the same dedup + cap logic.
-  const rawAnchors = [
-    ...(Array.isArray(plan.factual_anchor_terms) ? plan.factual_anchor_terms : []),
-    ...(Array.isArray((plan as any).concept_anchor_terms) ? (plan as any).concept_anchor_terms : []),
-  ];
-  const anchorTerms = Array.from(
-    new Set(
-      rawAnchors
-        .map((t) => (typeof t === "string" ? t.trim() : ""))
-        .filter((t) => t.length >= 2 && t.length <= TEXT_QUERY_MAX_CHARS),
-    ),
-  ).slice(0, 10);
-
-  const anchorPool: CandidateSource[] = [];
-  const anchorTelemetry: FactualAnchorTelemetry = {
-    terms: anchorTerms,
-    text_candidates: 0,
-    vector_candidates: 0,
-    total_unique: 0,
-    injected_into_claims: 0,
-  };
-
-  if (anchorTerms.length > 0) {
-    const textRuns = await Promise.all(
-      anchorTerms.map((term) =>
-        limiter(() => localText(adminClient, term, "C0" as ClaimId)),
+  // targets ("מחדל חקיקתי", "חובות הגנה חיוביות") and drops both:
+  //   (a) the factual subject ("דמי חסות", "קורקינטים", "בתי אבות")
+  //   (b) the doctrinal phrasing as used by academic titles
+  //       ("חובה לחוקק" → article titled "סעד החובה לחוקק")
+  // We run two SEPARATE anchor layers — factual and concept — each with
+  // its own FTS + vector pass and per-document diversity. Candidates are
+  // seeded into every claim's pool. The verifier remains the relevance
+  // gate; anchor pre-pass only widens recall.
+  const sanitizeTerms = (raw: unknown): string[] =>
+    Array.from(
+      new Set(
+        (Array.isArray(raw) ? raw : [])
+          .map((t) => (typeof t === "string" ? t.trim() : ""))
+          .filter((t) => t.length >= 2 && t.length <= TEXT_QUERY_MAX_CHARS),
       ),
+    ).slice(0, 8);
+
+  const factualTerms = sanitizeTerms(plan.factual_anchor_terms);
+  const conceptTerms = sanitizeTerms((plan as any).concept_anchor_terms);
+
+  /**
+   * Run one anchor layer: FTS + vector per term, dedupe with per-document
+   * diversity (no single document allowed to crowd the pool).
+   */
+  async function runAnchorLayer(
+    layer: "factual" | "concept",
+    terms: string[],
+  ): Promise<{ pool: CandidateSource[]; telemetry: AnchorLayerTelemetry }> {
+    const telemetry: AnchorLayerTelemetry = {
+      layer,
+      terms,
+      per_term: terms.map((term) => ({ term, text_hits: 0, vector_hits: 0 })),
+      text_candidates: 0,
+      vector_candidates: 0,
+      unique_documents: 0,
+      document_ids: [],
+      injected_into_claims: 0,
+      total_unique: 0,
+    };
+    if (terms.length === 0) return { pool: [], telemetry };
+
+    // Per-term text + vector (larger K than per-claim; verifier filters).
+    const perTerm = await Promise.all(
+      terms.map(async (term, i) => {
+        const claimSlot = `C0-${layer}-${i}` as ClaimId;
+        const [textHits, vecHits] = await Promise.all([
+          limiter(() =>
+            adminClient
+              .rpc("search_legal_chunks_text", {
+                search_query: term,
+                match_count: ANCHOR_TEXT_K,
+              })
+              .then(({ data, error }) => {
+                if (error) {
+                  console.error(`[anchor:${layer}:text] ${term}: ${error.message}`);
+                  return [] as CandidateSource[];
+                }
+                const rows = Array.isArray(data) ? (data as ChunkHit[]) : [];
+                return rows
+                  .map((r, idx) => chunkToCandidate(r, claimSlot, "local_text", idx))
+                  .filter((c): c is CandidateSource => !!c);
+              })
+              .catch((e) => {
+                console.error(`[anchor:${layer}:text throw] ${term}:`, (e as Error).message);
+                return [] as CandidateSource[];
+              }),
+          ),
+          embed
+            ? limiter(() => localVector(adminClient, term, claimSlot, embed, vectorHealth, ANCHOR_VECTOR_K))
+            : Promise.resolve([] as CandidateSource[]),
+        ]);
+        telemetry.per_term[i].text_hits = textHits.length;
+        telemetry.per_term[i].vector_hits = vecHits.length;
+        return [...textHits, ...vecHits];
+      }),
     );
-    const flatText = textRuns.flat();
-    anchorTelemetry.text_candidates = flatText.length;
 
-    const vecQuery = anchorTerms.join(" • ").slice(0, VECTOR_QUERY_MAX_CHARS);
-    const vecHits = embed
-      ? await limiter(() => localVector(adminClient, vecQuery, "C0" as ClaimId, embed))
-      : [];
-    anchorTelemetry.vector_candidates = vecHits.length;
+    const flat = perTerm.flat();
+    telemetry.text_candidates = flat.filter((c) => c.origin === "local_text").length;
+    telemetry.vector_candidates = flat.filter((c) => c.origin === "local_vector").length;
 
-    const seen = new Set<string>();
-    for (const c of [...flatText, ...vecHits]) {
+    // Diversity: one chunk per document_id, cap unique docs.
+    const seenDoc = new Set<string>();
+    const pool: CandidateSource[] = [];
+    for (const c of flat) {
       const k = c.document_id || `${c.origin}:${c.url || c.candidate_id}`;
-      if (!seen.has(k)) {
-        seen.add(k);
-        anchorPool.push(c);
-      }
+      if (seenDoc.has(k)) continue;
+      seenDoc.add(k);
+      pool.push(c);
+      if (pool.length >= ANCHOR_MAX_DOCS_PER_LAYER) break;
     }
-    anchorTelemetry.total_unique = anchorPool.length;
+    telemetry.unique_documents = pool.length;
+    telemetry.total_unique = pool.length;
+    telemetry.document_ids = pool.map((c) => c.document_id).filter((x): x is string => !!x);
+    return { pool, telemetry };
   }
 
+  const [factualLayer, conceptLayer] = await Promise.all([
+    runAnchorLayer("factual", factualTerms),
+    runAnchorLayer("concept", conceptTerms),
+  ]);
+
+  // Threshold=0.0 probe: pick the longest available anchor term, or fall
+  // back to the plan thesis. Fires once.
+  if (embed) {
+    const probeQuery =
+      [...factualTerms, ...conceptTerms].sort((a, b) => b.length - a.length)[0] ||
+      plan.thesis ||
+      plan.doctrinal_frame ||
+      "";
+    if (probeQuery) {
+      await vectorThresholdProbe(adminClient, embed, probeQuery.slice(0, VECTOR_QUERY_MAX_CHARS), vectorHealth);
+    }
+  }
+
+  // Merge the two anchor pools (keep both layers' provenance via metadata).
+  const mergedAnchorPool: CandidateSource[] = [];
+  const mergedSeen = new Set<string>();
+  for (const layered of [
+    { pool: factualLayer.pool, layer: "factual" as const },
+    { pool: conceptLayer.pool, layer: "concept" as const },
+  ]) {
+    for (const c of layered.pool) {
+      const k = c.document_id || `${c.origin}:${c.url || c.candidate_id}`;
+      if (mergedSeen.has(k)) continue;
+      mergedSeen.add(k);
+      mergedAnchorPool.push({
+        ...c,
+        metadata: { ...(c.metadata || {}), anchor_layer: layered.layer },
+      });
+    }
+  }
+  const anchorPrepassDocumentIds = mergedAnchorPool
+    .map((c) => c.document_id)
+    .filter((x): x is string => !!x);
 
   for (const claim of plan.claims) {
     const terms = claim.search_targets.map((t) => t.hebrew_terms);
@@ -725,7 +811,9 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     // All four origins fire in parallel.
     const [textHits, vecHits, exactGroups, webResult] = await Promise.all([
       limiter(() => localText(adminClient, tq, claim.id)),
-      embed ? limiter(() => localVector(adminClient, vq, claim.id, embed)) : Promise.resolve([] as CandidateSource[]),
+      embed
+        ? limiter(() => localVector(adminClient, vq, claim.id, embed, vectorHealth))
+        : Promise.resolve([] as CandidateSource[]),
       Promise.all(linkedAuths.map((a) => limiter(() => exactAuthority(adminClient, a, claim.id)))),
       perplexityKey && webAllowedThisClaim > 0
         ? limiter(() => approvedWeb(perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal, allowScholarship))
@@ -739,7 +827,7 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const webHarvest = webResult.telemetry;
     webBudgetRemaining = Math.max(0, webBudgetRemaining - webHits.length);
 
-    // Dedup by document_id / url. Priority: exact > text > vector > web.
+    // Dedup by document_id / url. Priority: exact > text > vector > anchor > web.
     const byKey = new Map<string, CandidateSource>();
     const ingest = (arr: CandidateSource[]) => {
       for (const c of arr) {
@@ -750,19 +838,27 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     ingest(exactHits);
     ingest(textHits);
     ingest(vecHits);
-    // Factual-anchor pool: re-tag each anchor candidate for THIS claim so the
+    // Anchor pool: re-tag each anchor candidate for THIS claim so the
     // downstream pipeline treats it as a per-claim local hit. Preserve origin
-    // (local_text/local_vector) for telemetry & priority.
-    if (anchorPool.length > 0) {
-      const reTagged: CandidateSource[] = anchorPool.map((c, i) => ({
+    // (local_text/local_vector) and the anchor_layer tag for telemetry.
+    if (mergedAnchorPool.length > 0) {
+      const reTagged: CandidateSource[] = mergedAnchorPool.map((c, i) => ({
         ...c,
-        candidate_id: `${claim.id}-anchor-${c.origin}-${i}`,
+        candidate_id: `${claim.id}-anchor-${(c.metadata as any)?.anchor_layer ?? "x"}-${c.origin}-${i}`,
         claim_id: claim.id,
         metadata: { ...(c.metadata || {}), factual_anchor: true },
       }));
       const before = byKey.size;
       ingest(reTagged);
-      if (byKey.size > before) anchorTelemetry.injected_into_claims++;
+      const after = byKey.size;
+      if (after > before) {
+        if (factualLayer.pool.some((c) => reTagged.find((r) => r.document_id === c.document_id))) {
+          factualLayer.telemetry.injected_into_claims++;
+        }
+        if (conceptLayer.pool.some((c) => reTagged.find((r) => r.document_id === c.document_id))) {
+          conceptLayer.telemetry.injected_into_claims++;
+        }
+      }
     }
     ingest(webHits);
 
@@ -800,6 +896,58 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     });
   }
 
+  // ─── Local-DB metadata override for approved_web candidates ──────────
+  // When Perplexity returns a URL we already have in legal_documents, the
+  // local row is the canonical metadata source. Swap title/citation/
+  // source_type onto the web candidate so the downstream verifier and
+  // citation builder see real metadata instead of weak Perplexity strings.
+  let localMetadataOverrides = 0;
+  try {
+    const webUrls = Array.from(new Set(
+      packs.flatMap((p) => p.candidates)
+        .filter((c) => c.origin === "approved_web" && c.url)
+        .map((c) => c.url!),
+    ));
+    if (webUrls.length > 0) {
+      const { data: localRows, error: ovErr } = await adminClient
+        .from("legal_documents")
+        .select("id, title, citation, source_type, source_url")
+        .in("source_url", webUrls);
+      if (!ovErr && Array.isArray(localRows)) {
+        const byUrl = new Map<string, { id: string; title: string; citation: string; source_type: string }>();
+        for (const r of localRows as Array<{ id: string; title: string; citation: string; source_type: string; source_url: string }>) {
+          if (r.source_url && (r.title || r.citation)) {
+            byUrl.set(r.source_url, {
+              id: r.id,
+              title: r.title || "",
+              citation: r.citation || "",
+              source_type: r.source_type || "",
+            });
+          }
+        }
+        if (byUrl.size > 0) {
+          for (const p of packs) {
+            for (const c of p.candidates) {
+              if (c.origin !== "approved_web" || !c.url) continue;
+              const hit = byUrl.get(c.url);
+              if (!hit) continue;
+              c.document_id = hit.id;
+              if (hit.title) c.title = hit.title;
+              if (hit.citation) c.citation = hit.citation;
+              if (hit.source_type) c.source_type = hit.source_type;
+              c.metadata = { ...(c.metadata || {}), local_metadata_override: true };
+              localMetadataOverrides++;
+            }
+          }
+        }
+      } else if (ovErr) {
+        console.error("[core retrieval] local metadata override query failed:", ovErr.message);
+      }
+    }
+  } catch (e) {
+    console.error("[core retrieval] local metadata override threw:", (e as Error).message);
+  }
+
   // Authority resolution across all candidates of all claims.
   const allCandidates = packs.flatMap((p) => p.candidates);
   const authority_resolutions: AuthorityResolution[] = [];
@@ -831,7 +979,12 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     total_web_candidates: totalWeb,
     web_global_cap_hit: webGlobalCapHit,
     duration_ms: Date.now() - t0,
-    factual_anchors: anchorTelemetry,
+    factual_anchors: factualLayer.telemetry,
+    concept_anchors: conceptLayer.telemetry,
+    anchor_prepass_total_unique: mergedAnchorPool.length,
+    anchor_prepass_document_ids: anchorPrepassDocumentIds,
+    vector_health: vectorHealth,
+    local_metadata_overrides: localMetadataOverrides,
   };
 }
 
