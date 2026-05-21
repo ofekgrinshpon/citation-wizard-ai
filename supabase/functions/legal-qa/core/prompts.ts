@@ -102,7 +102,9 @@ Hard rules:
     article titled "סעד החובה לחוקק" should be reachable from the concept
     anchor "חובה לחוקק" even when claims only mention "מחדל חקיקתי").
     Return [] only if the question has no doctrinal content at all
-    (essentially never).
+    (essentially never). The retrieval layer will automatically expand
+    recognised doctrinal phrases to their lexical synonyms; you do NOT
+    need to enumerate synonyms yourself — copy the question's wording.
 
 
 SELF-CHECK (perform silently before emitting JSON; do NOT include this in
