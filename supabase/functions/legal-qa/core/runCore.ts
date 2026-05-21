@@ -19,8 +19,14 @@ import { retrieveForPlan } from "./retrieval.ts";
 import { verify } from "./verifier.ts";
 import { buildLedger } from "./ledger.ts";
 import { draft } from "./drafter.ts";
-import { buildCitationsForLedger } from "./citations.ts";
+import { buildCitationsForLedger, enrichBareReporterCitation } from "./citations.ts";
 import { runCitationQuality } from "./citation_quality.ts";
+import {
+  extractDocketFromText,
+  extractPartiesFromText,
+} from "./citationCleanup.ts";
+import { lookupPartyNames } from "../../_shared/partyLookup.ts";
+import type { LedgerSource } from "./types.ts";
 
 export type CoreStageEmitter = (
   name: string,
