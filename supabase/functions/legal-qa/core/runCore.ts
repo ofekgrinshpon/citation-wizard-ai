@@ -896,6 +896,15 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
       total_candidates: retrieval.total_candidates,
       total_web_candidates: retrieval.total_web_candidates,
       web_global_cap_hit: retrieval.web_global_cap_hit,
+      // Anchor pre-pass diagnostics — two layers, kept separate.
+      factual_anchor_terms: retrieval.factual_anchors?.terms ?? [],
+      concept_anchor_terms: retrieval.concept_anchors?.terms ?? [],
+      factual_anchor_candidates: retrieval.factual_anchors ?? null,
+      concept_anchor_candidates: retrieval.concept_anchors ?? null,
+      anchor_prepass_total_unique: retrieval.anchor_prepass_total_unique ?? 0,
+      anchor_prepass_document_ids: retrieval.anchor_prepass_document_ids ?? [],
+      vector_health: retrieval.vector_health ?? null,
+      local_metadata_overrides: retrieval.local_metadata_overrides ?? 0,
     },
     verification: verification.per_claim.map((cv) => ({
       claim_id: cv.claim_id,
