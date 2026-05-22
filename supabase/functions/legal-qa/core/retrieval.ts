@@ -1142,7 +1142,40 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
       anchorWebTel.concept_hits = conceptRes.candidates.length;
       stubsDroppedThisClaim += factualRes.stubs_dropped + conceptRes.stubs_dropped;
 
-      for (const c of [...factualRes.candidates, ...conceptRes.candidates]) {
+      // Unfiltered retry (factual route only): when the gov-host filter
+      // returned 0 hits but we have budget + terms, retry once WITHOUT
+      // search_domain_filter. citation_quality's off_domain gate still
+      // bounds what survives. Counter: anchor_web_unfiltered_retries.
+      let factualRetryRes: ApprovedWebResult | null = null;
+      if (
+        perplexityKey &&
+        factualBudget > 0 &&
+        factualRes.candidates.length === 0 &&
+        webBudgetRemaining - factualRes.candidates.length - conceptRes.candidates.length > 0
+      ) {
+        anchorWebUnfilteredRetries++;
+        try {
+          factualRetryRes = await limiter(() => approvedWeb(
+            perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal, {
+              allowScholarship: false,
+              // No domainFilter → defaults to TIER_A_DOMAIN_FILTER (full TIER_A).
+              anchorTerms: factualTerms,
+              maxCandidates: factualBudget,
+              candidateTag: "anchor_factual",
+            }));
+          anchorWebTel.factual_hits = factualRetryRes.candidates.length;
+          stubsDroppedThisClaim += factualRetryRes.stubs_dropped;
+        } catch (e) {
+          console.error(`[anchor_web unfiltered retry] ${claim.id}:`, (e as Error).message);
+        }
+      }
+
+      const allAnchorHits = [
+        ...factualRes.candidates,
+        ...(factualRetryRes?.candidates ?? []),
+        ...conceptRes.candidates,
+      ];
+      for (const c of allAnchorHits) {
         if (webBudgetRemaining <= 0) break;
         anchorWebHits.push(c);
         webBudgetRemaining--;
