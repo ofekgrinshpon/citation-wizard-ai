@@ -88,7 +88,11 @@ const DOCTRINES: DoctrineEntry[] = [
   },
   {
     doctrine_id: "legislative_omission_duty_to_legislate",
-    trigger: /(מחדל\s*חקיקה|החובה\s*לחוקק|אי[- ]?חקיקה|legislative\s*omission|duty\s*to\s*legislate)/i,
+    // Phase 1 — broadened to cover common Hebrew variants:
+    // מחדל חקיקתי / מחדל חקיקתי חלקי / מחדל חקיקה / חובה לחוקק /
+    // החובה לחוקק / סעד החובה לחוקק / חסר נורמטיבי / לקונה חקיקתית /
+    // אי הסדרה / היעדר הסדרה / חקיקה לוקה בחסר.
+    trigger: /(מחדל\s*חקיקתי(?:\s*חלקי)?|מחדל\s*חקיקה|(?:סעד\s*ה)?חובה\s*לחוקק|החובה\s*לחוקק|חסר\s*נורמטיבי|לקונה\s*חקיקתית|(?:אי|היעדר)[- ]?הסדרה|חקיקה\s*לוקה\s*בחסר|אי[- ]?חקיקה|legislative\s*omission|duty\s*to\s*legislate)/i,
     roles: [
       {
         role_id: "duty_legislate:bagatz_canon",
