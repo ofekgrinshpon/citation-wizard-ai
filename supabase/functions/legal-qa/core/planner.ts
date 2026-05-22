@@ -92,11 +92,13 @@ export async function planResearch(args: PlanArgs): Promise<PlanResult> {
 
     return { ok: true, plan, raw, duration_ms: Date.now() - t0, model: MODEL };
   } catch (e) {
+    const msg = (e as Error).message ?? String(e);
+    const isAbort = (e as Error).name === "AbortError" || /aborted/i.test(msg);
     return {
       ok: false,
       duration_ms: Date.now() - t0,
       model: MODEL,
-      error: `planner_threw:${(e as Error).message ?? String(e)}`,
+      error: isAbort ? `planner_timeout_${Math.round(TIMEOUT_MS / 1000)}s` : `planner_threw:${msg}`,
     };
   } finally {
     clearTimeout(t);
