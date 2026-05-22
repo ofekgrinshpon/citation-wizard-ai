@@ -316,6 +316,8 @@ export interface BuildCitationHints {
    * still couldn't produce a string.
    */
   enrichmentRetry?: boolean;
+  /** Local DB metadata for the candidate (used by local-secondary passthrough). */
+  localDocMeta?: LocalDocMeta;
 }
 
 /** Debug envelope returned alongside the enriched citation. No PII, no LLM. */
