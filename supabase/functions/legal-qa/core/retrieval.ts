@@ -579,6 +579,30 @@ function requiresBindingLaw(claim: { required_evidence?: string[] }): boolean {
   return re.some((k) => k === "binding_caselaw" || k === "statute_section" || k === "regulation");
 }
 
+// Section E refinement: a claim can simultaneously need binding law AND
+// topical secondary evidence (policy report, scholarship, doctrinal
+// background, factual anchor). In that case the primary-only filter for
+// anchor slots starves exactly the secondary anchors the claim asked for.
+// `requiresSecondaryEvidence` detects that mixed posture so the anchor
+// reserve admits secondary anchors alongside primary law.
+const SECONDARY_EVIDENCE_KINDS = new Set([
+  "scholarship",
+  "doctrinal_definition",
+  "doctrinal_background",
+  "policy_report",
+  "policy",
+  "factual_background",
+  "factual_anchor",
+  "commentary",
+  "government_report",
+  "knesset_research",
+]);
+function requiresSecondaryEvidence(claim: { required_evidence?: string[] }): boolean {
+  const re = claim.required_evidence;
+  if (!Array.isArray(re)) return false;
+  return re.some((k) => SECONDARY_EVIDENCE_KINDS.has(k));
+}
+
 
 
 async function exactAuthority(
