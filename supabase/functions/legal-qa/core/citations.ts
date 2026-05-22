@@ -384,7 +384,9 @@ export function buildCitationForSource(
   const off = offDomainError(ls);
   if (off) errors.push(off);
 
-  // Sanity: uninformative source_type / label (e.g. "[DOC] nevo.co.il", empty source_type).
+  // Sanity: uninformative source_type / label (e.g. "[DOC] nevo.co.il", empty source_type,
+  // raw court-header PDF extracts). isUninformativeLabel now also strips [PDF]/[DOC]/[HTML]
+  // prefixes before evaluating, and rejects court-header / generic-doc labels.
   const emptySourceType = !(normalizedType && normalizedType.trim());
   const uninformativeTitle = isUninformativeLabel(ls.title);
   if (emptySourceType) errors.push("empty_source_type");
@@ -393,23 +395,33 @@ export function buildCitationForSource(
     quality = "partial";
   }
 
+  // Strip leading [PDF]/[DOC]/[HTML] prefixes from any canonical text. These
+  // artifacts come from upstream PDF extractors and must never appear in a
+  // user-visible footnote.
+  if (canonical) {
+    const stripped = stripDocPrefixes(canonical);
+    if (stripped !== canonical) {
+      canonical = stripped;
+      if (!errors.includes("doc_prefix_stripped")) errors.push("doc_prefix_stripped");
+    }
+  }
+
+  // If after stripping the canonical is only a court header / empty / a host,
+  // mark needs_review so the QA pass drops it (the engine has no usable title).
+  if (canonical && declared === "none" && isUninformativeLabel(canonical)) {
+    quality = "needs_review";
+    if (!errors.includes("uninformative_canonical")) {
+      errors.push("uninformative_canonical");
+    }
+  }
+
   // Deterministic cleanup of the canonical text (idempotent, no LLM).
   if (canonical) canonical = cleanCitationText(canonical);
 
   // NOTE: the previous in-file "safety-net manual emission" for bare-reporter
-  // caselaw has moved OUT of this file into `core/citationEnrichment.ts`
-  // (`manualPartialEmit`). `buildCitationForSource` is now a pure citation-
-  // engine adapter (resolver + bare-reporter / off-domain / pipe gates). The
-  // Core-only Citation Enrichment layer is the sole owner of any last-resort
-  // `partial_enriched` rewrite when the engine couldn't format verified
-  // docket + parties.
-
+  // caselaw has moved OUT of this file into `core/citationEnrichment.ts`.
 
   // ─── Bare-reporter gate (Rule 18) ──────────────────────────────────────
-  // A caselaw footnote that is only `פ"ד מט(4) 221` (no docket, no parties)
-  // is unacceptable as a final citation. Mark needs_review so the quality
-  // pass drops it. Enrichment may rewrite this via enrichBareReporterCitation
-  // after gathering hints from the LedgerSource / partyLookup.
   if (declared === "caselaw" && isBareReporter(canonical)) {
     quality = "needs_review";
     if (!errors.includes("failed_bare_reporter")) {
@@ -419,8 +431,13 @@ export function buildCitationForSource(
 
   // ─── Journal-article pipe-artifact gate ────────────────────────────────
   // Composite labels like `כותרת | מחבר (כרך)` must not appear as-is in a
-  // final citation. Try to parse; if we can't, mark partial + journal_pipe.
-  if (canonical && isPipeArtifact(canonical) && declared === "none") {
+  // final citation. Try to parse; if even a partial Rule-24 fallback is
+  // possible (we have at least a title), build it with explicit Hebrew
+  // placeholders for missing pieces instead of dropping the source.
+  const looksJournal =
+    declared === "none" &&
+    (normalizedType === "journal_article" || /journal|article/i.test(ls.source_type || ""));
+  if (canonical && isPipeArtifact(canonical) && (declared === "none" || looksJournal)) {
     const parsed = parsePipeArtifact(canonical);
     if (parsed.ok && parsed.title && parsed.author) {
       const volPart = parsed.volume ? ` ${parsed.volume}` : "";
@@ -429,9 +446,28 @@ export function buildCitationForSource(
       canonical = cleanCitationText(canonical);
       if (quality === "ok") quality = "partial";
       errors.push("journal_pipe_parsed");
+    } else if (parsed.title) {
+      // Partial Rule-24 fallback with explicit placeholders. Never invent.
+      const author = parsed.author?.trim() || "[חסר: מחבר]";
+      const vol = parsed.volume?.trim() || "[חסר: כרך]";
+      const page = "[חסר: עמוד פתיחה]";
+      const year = parsed.year?.trim() || "[חסר: שנה]";
+      canonical = cleanCitationText(
+        `${author} "${parsed.title}" ${vol} ${page} (${year}).`,
+      );
+      quality = "needs_review";
+      if (!errors.includes("journal_pipe_partial")) {
+        errors.push("journal_pipe_partial");
+      }
+      // Mark partial_enriched so citation_quality.decideKept keeps it (the
+      // partial-enriched accept path already exists for this exact case).
+      if (!errors.includes("partial_enriched")) errors.push("partial_enriched");
+      if (!parsed.author) errors.push("placeholder:author");
+      if (!parsed.volume) errors.push("placeholder:volume");
+      if (!parsed.year) errors.push("placeholder:year");
+      errors.push("placeholder:firstPage");
     } else {
-      // Strip pipe to a single space so output isn't visually broken,
-      // but flag so the quality pass marks it as partial / needs_review.
+      // No usable title — strip pipe and flag unresolved.
       canonical = canonical.replace(/\s\|\s/g, " — ");
       canonical = cleanCitationText(canonical);
       quality = "needs_review";
@@ -440,6 +476,7 @@ export function buildCitationForSource(
       }
     }
   }
+
 
   const short_form_inputs = buildShortFormInputs(ls, canonical, engineSourceType);
 
