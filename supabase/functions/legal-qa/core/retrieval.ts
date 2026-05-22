@@ -607,6 +607,85 @@ function requiresBindingLaw(claim: { required_evidence?: string[] }): boolean {
   return re.some((k) => k === "binding_caselaw" || k === "statute_section" || k === "regulation");
 }
 
+// ─── Topical relevance scoring ──────────────────────────────────────────
+// General-purpose, deterministic scorer used to rank anchor-pool candidates
+// by how well their title/citation/snippet topically match the planner's
+// anchor terms. No document-IDs, no query-specific lists. Strong exact
+// phrase matches beat multi-token coverage; multi-token beats single shared
+// token. Title hits weighted higher than citation, citation higher than
+// snippet.
+export type TopicalTier = "strong" | "medium" | "weak" | "none";
+
+function tokenizeTerm(t: string): string[] {
+  return (t || "")
+    .toLowerCase()
+    .replace(/["״'׳().,;:!?\-–—]/g, " ")
+    .split(/\s+/)
+    .filter((w) => w.length >= 2);
+}
+
+function fieldHasPhrase(field: string, phrase: string): boolean {
+  if (!field || !phrase) return false;
+  return field.toLowerCase().includes(phrase.toLowerCase());
+}
+
+function fieldCoversAllTokens(field: string, tokens: string[]): boolean {
+  if (!field || tokens.length === 0) return false;
+  const f = field.toLowerCase();
+  return tokens.every((t) => f.includes(t));
+}
+
+function fieldHasAnyToken(field: string, tokens: string[]): boolean {
+  if (!field || tokens.length === 0) return false;
+  const f = field.toLowerCase();
+  return tokens.some((t) => f.includes(t));
+}
+
+/**
+ * Score a candidate's topical fit against a list of anchor terms.
+ * Returns numeric score and a tier label. Weights:
+ *   exact-phrase  title=12 citation=8 snippet=4
+ *   all-tokens    title=6  citation=4 snippet=2
+ *   any-token     title=1  citation=1 snippet=0.5
+ */
+export function scoreTopicalRelevance(
+  c: { title?: string; citation?: string; snippet?: string },
+  terms: string[],
+): { score: number; tier: TopicalTier } {
+  if (!Array.isArray(terms) || terms.length === 0) return { score: 0, tier: "none" };
+  const title = c.title || "";
+  const citation = c.citation || "";
+  const snippet = c.snippet || "";
+  let score = 0;
+  let sawPhrase = false;
+  let sawAllTokens = false;
+  let sawAnyToken = false;
+  for (const term of terms) {
+    const t = (term || "").trim();
+    if (t.length < 2) continue;
+    // Exact phrase tier (only meaningful for multi-char terms).
+    if (fieldHasPhrase(title, t)) { score += 12; sawPhrase = true; }
+    else if (fieldHasPhrase(citation, t)) { score += 8; sawPhrase = true; }
+    else if (fieldHasPhrase(snippet, t)) { score += 4; sawPhrase = true; }
+    const toks = tokenizeTerm(t);
+    if (toks.length >= 2) {
+      if (fieldCoversAllTokens(title, toks)) { score += 6; sawAllTokens = true; }
+      else if (fieldCoversAllTokens(citation, toks)) { score += 4; sawAllTokens = true; }
+      else if (fieldCoversAllTokens(snippet, toks)) { score += 2; sawAllTokens = true; }
+    }
+    if (fieldHasAnyToken(title, toks)) { score += 1; sawAnyToken = true; }
+    else if (fieldHasAnyToken(citation, toks)) { score += 1; sawAnyToken = true; }
+    else if (fieldHasAnyToken(snippet, toks)) { score += 0.5; sawAnyToken = true; }
+  }
+  let tier: TopicalTier = "none";
+  if (sawPhrase || sawAllTokens) tier = "strong";
+  else if (sawAnyToken && score >= 1) tier = "weak";
+  // Promote weak→medium when multiple distinct any-token hits accumulated.
+  if (tier === "weak" && score >= 2) tier = "medium";
+  if (sawPhrase) tier = "strong";
+  return { score, tier };
+}
+
 
 
 async function exactAuthority(
