@@ -20,10 +20,17 @@ import type { ClaimRetrievalPack } from "./retrieval.ts";
 const MODEL = "openai/gpt-5-mini";
 const REASONING_EFFORT: "minimal" | "low" | "medium" | "high" = "low";
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const MAX_PER_CALL = 8;          // candidates per verifier call
-const MAX_SNIPPET_CHARS = 1200;  // keep prompt small
+const MAX_BATCH = 24;            // hard cap of candidates per single LLM call
+const LEGACY_CHUNK = 8;          // historical chunk size — used only to estimate "calls_before"
+const SNIPPET_TIERS = [1200, 700, 450]; // chars for ranks [0..7], [8..15], [16..23]
 const MAX_CONCURRENCY = 3;
 const TIMEOUT_MS = 60_000;
+
+function snippetBudgetFor(rank: number): number {
+  if (rank < 8) return SNIPPET_TIERS[0];
+  if (rank < 16) return SNIPPET_TIERS[1];
+  return SNIPPET_TIERS[2];
+}
 
 export interface ClaimVerification {
   claim_id: ClaimId;
