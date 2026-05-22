@@ -176,6 +176,7 @@ export interface RetrievalResult {
   anchor_slots_used_per_claim?: ClaimAnchorTelemetry[];
   approved_web_stubs_dropped_per_claim?: ClaimWebStubTelemetry[];
   approved_web_anchor_queries?: ClaimAnchorWebTelemetry[];
+  anchor_web_unfiltered_retries?: number;
 }
 
 export interface RetrieveArgs {
