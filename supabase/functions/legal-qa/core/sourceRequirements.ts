@@ -254,6 +254,12 @@ export interface SourceRequirementsPlan {
 export interface BuildSourceRequirementsArgs {
   question: string;
   plan: PlanV1;
+  /**
+   * Phase 2 — doctrine_id values forced on by the semantic classifier
+   * (already filtered by confidence threshold in the caller). These are
+   * unioned with regex triggers.
+   */
+  forcedDoctrineIds?: string[];
 }
 
 /**
@@ -262,17 +268,18 @@ export interface BuildSourceRequirementsArgs {
 export function buildSourceRequirements(
   args: BuildSourceRequirementsArgs,
 ): SourceRequirementsPlan {
-  const { question, plan } = args;
+  const { question, plan, forcedDoctrineIds } = args;
   const globalHaystack = [
     question || "",
     plan.thesis || "",
     plan.doctrinal_frame || "",
   ].join(" \n ");
 
+  const forcedSet = new Set<string>(forcedDoctrineIds || []);
   const triggered: DoctrineEntry[] = [];
   const triggeredIds = new Set<string>();
   for (const d of DOCTRINES) {
-    if (d.trigger.test(globalHaystack)) {
+    if (d.trigger.test(globalHaystack) || forcedSet.has(d.doctrine_id)) {
       triggered.push(d);
       triggeredIds.add(d.doctrine_id);
     }
