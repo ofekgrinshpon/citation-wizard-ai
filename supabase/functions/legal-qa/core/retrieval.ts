@@ -53,26 +53,12 @@ const PER_CLAIM_ANCHOR_RESERVE = 2;
 // thin or the claim explicitly needs scholarship/doctrinal_definition.
 const ANCHOR_WEB_PER_CLAIM = 2;
 const ANCHOR_WEB_THIN_LOCAL_THRESHOLD = 4;
-// Government / regulator subset of TIER_A for factual-anchor web queries.
-const TIER_A_GOV_HOSTS: readonly string[] = [
-  "knesset.gov.il",
-  "mevaker.gov.il",
-  "justice.gov.il",
-  "reshumot.gov.il",
-  "competition.gov.il",
-  "tax.gov.il",
-  "mof.gov.il",
-  "supreme.court.gov.il",
-  "supremedecisions.court.gov.il",
-];
-// Academic / scholarship subset of TIER_A for concept-anchor web queries.
-const TIER_A_SCHOLARSHIP_HOSTS: readonly string[] = [
-  "huji.ac.il",
-  "tau.ac.il",
-  "biu.ac.il",
-  "ssrn.com",
-  "jstor.org",
-];
+// Government / scholarship host subsets are owned by core/approvedHosts.ts so
+// they cannot drift from citation_quality's off_domain gate.
+import {
+  TIER_A_GOV_HOSTS,
+  TIER_A_SCHOLARSHIP_HOSTS,
+} from "./approvedHosts.ts";
 
 // ─── Types ────────────────────────────────────────────────────────────────
 export interface AuthorityResolution {
