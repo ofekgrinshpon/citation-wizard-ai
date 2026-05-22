@@ -37,6 +37,12 @@ import {
   type SourceRequirementsReconciliation,
 } from "./sourceRequirements.ts";
 import {
+  classifyDoctrines,
+  CLASSIFIER_TO_SR_DOCTRINE,
+  CLASSIFIER_CONFIDENCE_THRESHOLD,
+  type DoctrineClassification,
+} from "./doctrineClassifier.ts";
+import {
   extractDocketFromText,
   extractPartiesFromText,
   extractCaseFieldsFromLedgerSource,
@@ -153,12 +159,50 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   const plan = planRes.plan;
   emitSafe(onStage, "plan", "complete", `claims=${plan.claims.length} auth=${plan.expected_authorities.length} anchors=${(plan.factual_anchor_terms?.length ?? 0)}`);
 
+  // ─── 1.4 Doctrine Classifier (semantic, additive) ──────────────────────
+  emitSafe(onStage, "doctrine_classifier", "running");
+  let classification: DoctrineClassification | null = null;
+  let classifierError: string | undefined;
+  try {
+    const cls = await classifyDoctrines({
+      question, plan, lovableApiKey: LOVABLE_API_KEY, signal,
+    });
+    recordStage(cls.stageRun);
+    if (cls.ok && cls.classification) {
+      classification = cls.classification;
+    } else {
+      classifierError = cls.stageRun.error;
+    }
+  } catch (e) {
+    classifierError = (e as Error).message;
+    console.warn("[core:doctrine_classifier] threw", e);
+  }
+  const forcedDoctrineIds: string[] = [];
+  if (classification) {
+    for (const d of classification.doctrines) {
+      if (d.confidence < CLASSIFIER_CONFIDENCE_THRESHOLD) continue;
+      const srId = CLASSIFIER_TO_SR_DOCTRINE[d.id];
+      if (srId) forcedDoctrineIds.push(srId);
+    }
+  }
+  emitSafe(
+    onStage,
+    "doctrine_classifier",
+    "complete",
+    classification
+      ? `doctrines=${classification.doctrines.length} forced=${forcedDoctrineIds.length}`
+      : `skipped:${classifierError ?? "unknown"}`,
+  );
+
   // ─── 1.5 Source Requirements (telemetry, no behavior change) ───────────
   emitSafe(onStage, "source_requirements", "running");
   const tSr = Date.now();
   let sourceRequirements: SourceRequirementsPlan | null = null;
   try {
-    sourceRequirements = buildSourceRequirements({ question, plan });
+    sourceRequirements = buildSourceRequirements({
+      question, plan,
+      forcedDoctrineIds: forcedDoctrineIds.length > 0 ? forcedDoctrineIds : undefined,
+    });
   } catch (e) {
     console.warn("[core:source_requirements] build failed", e);
   }
@@ -995,6 +1039,13 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
           reconciliation: sourceRequirementsReconciliation,
         }
       : null,
+    doctrine_classifier: classification
+      ? {
+          ...classification,
+          forced_doctrine_ids: forcedDoctrineIds,
+          threshold: CLASSIFIER_CONFIDENCE_THRESHOLD,
+        }
+      : { error: classifierError ?? "unavailable" },
     acceptance_errors: acceptanceErrors,
     stage_runs: stageRuns,
     total_duration_ms: Date.now() - tStart,

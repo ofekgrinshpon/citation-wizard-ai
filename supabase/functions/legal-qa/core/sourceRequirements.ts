@@ -88,7 +88,11 @@ const DOCTRINES: DoctrineEntry[] = [
   },
   {
     doctrine_id: "legislative_omission_duty_to_legislate",
-    trigger: /(מחדל\s*חקיקה|החובה\s*לחוקק|אי[- ]?חקיקה|legislative\s*omission|duty\s*to\s*legislate)/i,
+    // Phase 1 — broadened to cover common Hebrew variants:
+    // מחדל חקיקתי / מחדל חקיקתי חלקי / מחדל חקיקה / חובה לחוקק /
+    // החובה לחוקק / סעד החובה לחוקק / חסר נורמטיבי / לקונה חקיקתית /
+    // אי הסדרה / היעדר הסדרה / חקיקה לוקה בחסר.
+    trigger: /(מחדל\s*חקיקתי(?:\s*חלקי)?|מחדל\s*חקיקה|(?:סעד\s*ה)?חובה\s*לחוקק|החובה\s*לחוקק|חסר\s*נורמטיבי|לקונה\s*חקיקתית|(?:אי|היעדר)[- ]?הסדרה|חקיקה\s*לוקה\s*בחסר|אי[- ]?חקיקה|legislative\s*omission|duty\s*to\s*legislate)/i,
     roles: [
       {
         role_id: "duty_legislate:bagatz_canon",
@@ -250,6 +254,12 @@ export interface SourceRequirementsPlan {
 export interface BuildSourceRequirementsArgs {
   question: string;
   plan: PlanV1;
+  /**
+   * Phase 2 — doctrine_id values forced on by the semantic classifier
+   * (already filtered by confidence threshold in the caller). These are
+   * unioned with regex triggers.
+   */
+  forcedDoctrineIds?: string[];
 }
 
 /**
@@ -258,17 +268,18 @@ export interface BuildSourceRequirementsArgs {
 export function buildSourceRequirements(
   args: BuildSourceRequirementsArgs,
 ): SourceRequirementsPlan {
-  const { question, plan } = args;
+  const { question, plan, forcedDoctrineIds } = args;
   const globalHaystack = [
     question || "",
     plan.thesis || "",
     plan.doctrinal_frame || "",
   ].join(" \n ");
 
+  const forcedSet = new Set<string>(forcedDoctrineIds || []);
   const triggered: DoctrineEntry[] = [];
   const triggeredIds = new Set<string>();
   for (const d of DOCTRINES) {
-    if (d.trigger.test(globalHaystack)) {
+    if (d.trigger.test(globalHaystack) || forcedSet.has(d.doctrine_id)) {
       triggered.push(d);
       triggeredIds.add(d.doctrine_id);
     }
