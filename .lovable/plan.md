@@ -1,62 +1,67 @@
 ## Problem
 
-For the last query the user got *"לא הצלחנו לנתח את השאלה לתכנית מחקר. נסה לנסח אותה מחדש בצורה ממוקדת יותר."*
+The progress bar in `StageProgressList` jumps to ~96% almost immediately and doesn't reflect real backend progress. Two root causes:
 
-Edge log shows:
+1. **Stage-name mismatch.** Today the live pipeline (`supabase/functions/legal-qa/core/runCore.ts`) emits stages named `plan`, `retrieval`, `verify`, `ledger`, `draft`, `enrich_citations`, `post_processing`. But `EXPECTED_STAGES` in `StageProgressList.tsx` lists the *old* names (`frame`, `decompose`, `retrieve`, `rerank`, `source_pack`, `claim_map`, `drafter`, `anchor_pass`, `coverage_gap`, `statute_completion`, `footnote_validate`). No actual stage matches the expected list, and there are no Hebrew labels for the new names either — so the user sees raw English stage IDs.
+2. **Hard 95% floor.** `if (postProcessingLabel) percent = Math.max(percent, 95)`. The dedicated `post_processing` SSE event (emitted by `emitPostProcessing("מאמת הערות שוליים")` in `index.ts:10355`, plus the `onStage("post_processing", …)` from runCore) fires early in the tail of the pipeline and slams the bar to 95–96%, regardless of how much real work remains.
 
-```
-[research_core] FAILED reason=planner_failed:planner_threw:The signal has been aborted last_stage=plan
-```
+## Plan
 
-Root cause (in `supabase/functions/legal-qa/core/planner.ts`):
+All changes are frontend-only (UI presentation). No backend pipeline changes.
 
-- The planner calls `openai/gpt-5` with `reasoning_effort: "low"` + `response_format: { type: "json_object" }`.
-- It enforces a **90 s** local timeout via its own `AbortController`. When the gateway response is slower than 90 s, `fetch` throws `AbortError: The signal has been aborted` → caught in the outer try → returned as `planner_threw:...`.
-- `runCore` does **not** pass any parent signal; the only abort source is this internal timer, so this is purely a planner-side timeout, not a client/edge-function cancellation.
-- There is **no retry** and **no fallback model**, so a single slow gateway response fails the whole Deep run.
-- `index.ts` maps any `planner_failed*` reason to a generic "rephrase your question" message, which is misleading when the real failure is a timeout (the question was perfectly well-formed: contracts §12 / good-faith / expectation damages).
+### 1. `src/components/StageProgressList.tsx` — rebuild progress logic
 
-## Fix
+- **New stage manifest.** Replace `EXPECTED_STAGES` with a per-mode ordered list that matches what the backend actually emits today, each entry carrying:
+  - `id` (matches backend `stage` event name)
+  - `label` (Hebrew, user-facing)
+  - `weight` (rough share of total wall-time, summing to 1.0)
+  - `subtitle` (one short sentence shown next to the spinner explaining what's happening)
 
-All changes confined to two files. No DB, no client UI logic.
+  Example for `research_deep` (using runCore order):
+  ```
+  plan             0.08  "מבין את השאלה ובונה תכנית מחקר"
+  retrieval        0.22  "מאחזר פסיקה, חקיקה ומקורות אקדמיים"
+  verify           0.10  "מסנן ומדרג את המקורות לפי רלוונטיות"
+  ledger           0.05  "בונה מיפוי טענות-מקורות"
+  draft            0.30  "כותב את התשובה ומשלב הערות שוליים"
+  enrich_citations 0.15  "מאמת ומשלים פרטי ציטוטים"
+  post_processing  0.10  "בדיקת איכות סופית ועיגון מקורות"
+  ```
+  Fast / academic_chapter get their own manifests (academic keeps existing override labels; fast collapses to a shorter list).
 
-### 1. `supabase/functions/legal-qa/core/planner.ts`
+- **Weighted percent.** Compute `percent = Σ(weight) over completed stages + 0.5·weight of running stage`, clamped to 1–99 until the `final` event arrives (then 100). Drop the `postProcessingLabel → max(_, 95)` floor entirely; the post-processing row contributes its real weight like any other stage.
 
-- Raise the per-attempt timeout to **120 s** (gpt-5 with `reasoning_effort: low` + JSON mode can legitimately exceed 90 s on long Hebrew prompts).
-- Add **one automatic retry** when the first attempt fails with:
-  - `AbortError` (timeout), or
-  - HTTP `5xx` / `429` from the gateway, or
-  - `plan_json_parse` / `plan_shape_invalid`.
-- Retry uses a **faster, cheaper fallback model**: `openai/gpt-5-mini` with the same prompts and `reasoning_effort: "minimal"`, 60 s timeout. Empirically this returns in 10–25 s and produces schema-valid `PlanV1` for the same prompts.
-- Distinguish error kinds in the returned `error` string so upstream can render a better message:
-  - `planner_timeout` (was `planner_threw:The signal has been aborted`)
-  - `planner_gateway_<status>`
-  - `plan_json_parse` / `plan_shape_invalid` (unchanged)
-- Add `attempts` / `model_used` fields to `PlanResult` (telemetry only; consumed by `runCore` stage log so we can see in `qa_logs.metadata.core.stage_runs` whether the fallback fired).
+- **Smooth animation.** Maintain a `displayedPercent` in state that eases toward the target via `requestAnimationFrame` (≤2% per frame, slower when within 5% of target). This avoids visual jumps when several events arrive back-to-back, and gives a "still working" feel between events.
 
-### 2. `supabase/functions/legal-qa/index.ts`
+- **Idle creep.** When the current running stage hasn't progressed in >3s, allow `displayedPercent` to creep up to *but not past* the midpoint of that stage's allotted band (so the user always sees motion without lying about completion). Reset on the next event.
 
-In `coreFailureBody(reason)` split the `planner_failed*` branch:
+- **Unknown stages.** If the backend emits a stage we don't know about, append it after the known ones with a default weight that scales the manifest down proportionally — never let unknown stages break the math or labels.
 
-- `planner_failed:planner_timeout` → *"השרת איטי כעת ולא הצליח להפיק תכנית מחקר בזמן. נסה שוב בעוד רגע."*
-- `planner_failed:planner_gateway_*` → *"שירות ה-AI אינו זמין כרגע. נסה שוב בעוד רגע."*
-- All other `planner_failed*` (parse / shape) → keep the existing "rephrase" message.
+### 2. Spinner + current-state caption
 
-No change to `runCore`, retrieval, drafter, citations, or any client code.
+- Above the stage list, render a compact "current state" header:
+  - Large spinner (`Loader2`) + the **running stage's `label`** as the headline.
+  - One-line **subtitle** from the manifest (`subtitle`) so the user understands what the % means right now.
+  - When between stages (e.g., just after a `complete` and before the next `running`), keep the last running stage's text and append "…מסיים" so the spinner never looks frozen.
+  - On `isComplete`, replace with a `CheckCircle2` and "הושלם".
 
-## Why no broader retry layer
+- Per-row spinners (existing `<Loader2>` on running rows) stay, but the row label gets a tiny **percent-band hint** on the right (e.g., `8–30%`) so users can map the bar position to a pipeline stage at a glance.
 
-The planner is the only stage that currently has zero retry and a tight fixed timeout. Retrieval/verifier/drafter each have their own budgets and `Promise.allSettled` paths. Fixing just the planner removes the single point of failure the user hit, without changing observed behavior of the rest of the pipeline.
+### 3. Wire-up touch in `LegalQAChat.tsx`
 
-## Verification
+- No prop changes needed; `StageProgressList` already receives `stages`, `postProcessingLabel`, `draftText`, `mode`, `isComplete`.
+- Keep `postProcessingLabel` forwarded (it still shows as the footnote-validation row), but it no longer drives a special % floor — it's just another labeled row.
 
-- After deploy, re-issue the same question (good-faith / §12). Expect either:
-  - gpt-5 returns within 120 s → success, or
-  - timeout → automatic gpt-5-mini retry → success (visible in `qa_logs.metadata.core.stage_runs[0].model = "openai/gpt-5-mini"` and `error` absent).
-- Force-trigger the timeout path locally by temporarily setting attempt-1 timeout to 1 ms; confirm the fallback fires and `plan` stage ends `ok` with `model_used = "openai/gpt-5-mini"`.
-- Confirm the new Hebrew strings render via the existing `buildCoreFailureResponse` path (no UI changes needed — same `answer` field).
+### 4. Verification
+
+- Run a Deep query in the preview and confirm:
+  - Bar starts near 4–8% on `plan running`, climbs to ~30% after `retrieval complete`, ~75% after `draft complete`, 95–99% during `post_processing`, 100% on `final`.
+  - Headline + subtitle change as each `stage running` arrives.
+  - No jump straight to 96%.
+- Run a Fast query and academic chapter write to confirm their manifests behave the same way.
+- Test an artificial slow stage by throttling the network — confirm the idle creep behavior and that the bar never regresses.
 
 ## Files touched
 
-- `supabase/functions/legal-qa/core/planner.ts` — retry + fallback model + cleaner error codes.
-- `supabase/functions/legal-qa/index.ts` — split planner failure messages (≈8 lines in `coreFailureBody`).
+- `src/components/StageProgressList.tsx` (main rewrite)
+- (No backend changes; no other component changes required.)
