@@ -1290,17 +1290,51 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
       }
       return { factual, concept };
     };
-    const applyPrimaryFilter = (arr: CandidateSource[]) =>
-      needPrimary ? arr.filter(isPrimaryLaw) : arr;
 
-    const { factual: factualPool, concept: conceptPool } = splitByLayer(anchorCandidates);
+    // Topical relevance ranking. Use combined factual + concept terms so
+    // sources topical to either signal float to the top.
+    const allAnchorTerms = Array.from(new Set([...factualTerms, ...conceptTerms]));
+    const annotateAndSort = (arr: CandidateSource[]): CandidateSource[] => {
+      const scored = arr.map((c) => {
+        const { score, tier } = scoreTopicalRelevance(c, allAnchorTerms);
+        (c.metadata as any).topical_score = score;
+        (c.metadata as any).topical_tier = tier;
+        return { c, score };
+      });
+      scored.sort((a, b) => b.score - a.score);
+      return scored.map((s) => s.c);
+    };
+
+    const { factual: factualPoolRaw, concept: conceptPoolRaw } = splitByLayer(anchorCandidates);
+    const factualPool = annotateAndSort(factualPoolRaw);
+    const conceptPool = annotateAndSort(conceptPoolRaw);
+
+    // Conditional primary filter (Section: preserve primary-law hierarchy
+    // intelligently). Original behaviour: when the claim needs binding law,
+    // drop non-primary anchors so statutes are not displaced. Revised: if
+    // the layer has a directly topical secondary (strong/medium) AND no
+    // similarly topical primary, allow the secondary to survive into the
+    // verifier. Verifier/ledger remain final arbiters.
+    const isStrongOrMedium = (c: CandidateSource): boolean => {
+      const t = (c.metadata as any)?.topical_tier as TopicalTier | undefined;
+      return t === "strong" || t === "medium";
+    };
+    let primaryDisplacedForTopicalSecondary = false;
+    const applyPrimaryFilter = (arr: CandidateSource[]): CandidateSource[] => {
+      if (!needPrimary) return arr;
+      const topicalPrimary = arr.filter((c) => isPrimaryLaw(c) && isStrongOrMedium(c));
+      const topicalSecondary = arr.filter((c) => !isPrimaryLaw(c) && isStrongOrMedium(c));
+      if (topicalPrimary.length === 0 && topicalSecondary.length > 0) {
+        primaryDisplacedForTopicalSecondary = true;
+        return arr; // let topical secondaries through
+      }
+      return arr.filter(isPrimaryLaw);
+    };
+
     const factualFiltered = applyPrimaryFilter(factualPool);
     // Concept anchors carry doctrinal/scholarship support by design. When the
     // claim explicitly asks for scholarship or a doctrinal_definition, the
-    // primary-law filter must NOT strip the concept layer — otherwise the
-    // article/MMM that *is* the doctrinal evidence gets dropped to preserve
-    // primary law that already lives in the local pool. Factual anchors keep
-    // the primary filter so MMM doesn't displace statutes.
+    // primary-law filter must NOT strip the concept layer.
     const conceptFiltered = allowScholarship
       ? conceptPool
       : applyPrimaryFilter(conceptPool);
@@ -1322,8 +1356,7 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     takeFrom(conceptFiltered, "concept", ANCHOR_RESERVE_PER_LAYER);
 
     // Phase 2: fill remaining reserve slots from whichever layer still has
-    // candidates. Factual first (preserves prior behaviour for non-doctrinal
-    // questions where only factual layer has hits).
+    // candidates.
     const remaining = PER_CLAIM_ANCHOR_RESERVE - anchorKept.length;
     if (remaining > 0) {
       takeFrom(factualFiltered, "factual", remaining);
