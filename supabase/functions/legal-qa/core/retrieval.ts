@@ -1170,15 +1170,36 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const localOther = all.filter((c) => c.origin !== "approved_web");
     const primaryLocalCount = localOther.filter(isPrimaryLaw).length;
 
-    // When the claim needs binding law and we're light on primary local
-    // hits, only let primary anchors consume the reserve so we don't push
-    // secondary anchors ahead of binding authority.
-    const needPrimary = requiresBindingLaw(claim) && primaryLocalCount < 2;
-    const filteredAnchors = needPrimary
-      ? anchorCandidates.filter(isPrimaryLaw)
-      : anchorCandidates;
-    const anchorReserve = Math.min(PER_CLAIM_ANCHOR_RESERVE, filteredAnchors.length);
-    const anchorKept = filteredAnchors.slice(0, anchorReserve);
+    // Section E (refined): only force primary-only anchors when the claim
+    // ASKED FOR binding law AND has thin primary local coverage AND does
+    // not also need secondary evidence (scholarship / policy / doctrinal
+    // background / factual anchor). Pure-doctrinal claims still get a
+    // primary-only reserve; mixed-posture claims keep their topical
+    // secondary anchors. Verifier remains the relevance gate.
+    const wantsBindingLaw = requiresBindingLaw(claim);
+    const wantsSecondary = requiresSecondaryEvidence(claim);
+    const needPrimary = wantsBindingLaw && !wantsSecondary && primaryLocalCount < 2;
+
+    let anchorKept: CandidateSource[];
+    if (needPrimary) {
+      // Pure binding-law posture: primary anchors only.
+      anchorKept = anchorCandidates.filter(isPrimaryLaw).slice(0, PER_CLAIM_ANCHOR_RESERVE);
+    } else if (wantsBindingLaw && wantsSecondary && primaryLocalCount < 2) {
+      // Mixed posture: split the reserve — 1 primary slot guaranteed, the
+      // remainder open to anchors of any kind. Keeps binding law from being
+      // displaced AND topical secondary anchors from being starved.
+      const primaryAnchors = anchorCandidates.filter(isPrimaryLaw);
+      const otherAnchors = anchorCandidates.filter((c) => !isPrimaryLaw(c));
+      const merged: CandidateSource[] = [];
+      if (primaryAnchors.length) merged.push(primaryAnchors[0]);
+      for (const c of [...primaryAnchors.slice(1), ...otherAnchors]) {
+        if (merged.length >= PER_CLAIM_ANCHOR_RESERVE) break;
+        if (!merged.includes(c)) merged.push(c);
+      }
+      anchorKept = merged;
+    } else {
+      anchorKept = anchorCandidates.slice(0, PER_CLAIM_ANCHOR_RESERVE);
+    }
 
     const localBudget = Math.max(0, PER_CLAIM_CAP - webKept.length - anchorKept.length);
     const localKept = localOther.slice(0, localBudget);
