@@ -539,11 +539,15 @@ export function buildCitationForSource(
 
 export function buildCitationsForLedger(
   ledgerEntries: { sources: LedgerSource[] }[],
+  localMetaByDocId?: Map<string, LocalDocMeta>,
 ): Map<string, LedgerSourceCitation> {
   const out = new Map<string, LedgerSourceCitation>();
   for (const e of ledgerEntries) {
     for (const s of e.sources) {
-      out.set(s.ls_id, buildCitationForSource(s));
+      const localDocMeta = s.document_id && localMetaByDocId
+        ? localMetaByDocId.get(s.document_id)
+        : undefined;
+      out.set(s.ls_id, buildCitationForSource(s, { localDocMeta }));
     }
   }
   return out;
