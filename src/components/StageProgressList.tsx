@@ -64,6 +64,70 @@ const EXPECTED_STAGES: Record<NonNullable<Props["mode"]>, string[]> = {
 
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
 
+// Weighted progress model — the drafter is by far the longest phase
+// (~60-120s vs. a few seconds each for everything else), so a naive
+// "stages-completed / total-stages" ratio jumps to 80-90% within the first
+// 10-15s and then sits there for the entire generation. Instead we carve
+// the bar into bands that reflect real wall-clock weight:
+//   0–40%   pre-drafter pipeline (frame → source_pack / claim_map)
+//   40–90%  drafter — interpolated by streaming draft length while running
+//   90–98%  post-drafter passes (anchor, coverage, statute, footnote_validate)
+//   98–100% reserved until the `final` SSE event arrives (isComplete)
+const DRAFTER_STAGE = "drafter";
+const POST_DRAFTER_STAGES = new Set([
+  "anchor_pass",
+  "coverage_gap",
+  "statute_completion",
+  "footnote_validate",
+  "critic",
+  "revision",
+]);
+// Approx. chars in a typical finished chapter draft — used to interpolate
+// the drafter band by streamed text length. Tuned generously so the bar
+// keeps moving for long chapters without ever pinning at 90%.
+const DRAFT_TARGET_CHARS = 6000;
+
+function computePercent(
+  visible: StageEvent[],
+  postProcessingLabel: string | null,
+  draftText: string,
+  isComplete: boolean,
+  expectedPreDrafter: number,
+): number {
+  if (isComplete) return 100;
+
+  const isPre = (s: StageEvent) => s.stage !== DRAFTER_STAGE && !POST_DRAFTER_STAGES.has(s.stage) && s.stage !== "__starting__";
+  const preDone = visible.filter((s) => s.status === "complete" && isPre(s)).length;
+  const preRunning = visible.some((s) => s.status === "running" && isPre(s));
+  const preDenom = Math.max(expectedPreDrafter, preDone + (preRunning ? 1 : 0), 1);
+  let pct = Math.min(40, (preDone / preDenom) * 40);
+  if (preRunning) pct = Math.min(40, pct + 40 / preDenom / 2);
+
+  const drafter = visible.find((s) => s.stage === DRAFTER_STAGE);
+  if (drafter) {
+    if (drafter.status === "running") {
+      pct = 40;
+      if (draftText && draftText.length > 0) {
+        pct += 50 * Math.min(1, draftText.length / DRAFT_TARGET_CHARS);
+      } else {
+        pct += 4;
+      }
+    } else {
+      pct = 90;
+    }
+  }
+
+  const postDone = visible.filter((s) => POST_DRAFTER_STAGES.has(s.stage) && s.status === "complete").length;
+  const postRunning = visible.some((s) => POST_DRAFTER_STAGES.has(s.stage) && s.status === "running");
+  if (postDone > 0 || postRunning) {
+    const postDenom = Math.max(2, postDone + (postRunning ? 1 : 0));
+    pct = Math.max(pct, 90 + (postDone / postDenom) * 8);
+  }
+  if (postProcessingLabel) pct = Math.max(pct, 96);
+
+  return clamp(Math.round(pct), 1, 99);
+}
+
 /**
  * Live pipeline progress for SSE-streamed legal-qa runs.
  * Each backend `stage` event appends/upgrades a row here.
@@ -91,17 +155,10 @@ export function StageProgressList({
     visible = [{ stage: "__starting__", status: "running", label: "מתחיל…" }];
   }
 
-  // Progress calculation: each completed stage = 1, currently-running stage = 0.5.
-  const completedCount = visible.filter((s) => s.status === "complete").length;
-  const runningCount = visible.filter((s) => s.status === "running").length;
-  const expected = EXPECTED_STAGES[mode].length;
-  const denominator = Math.max(expected, visible.length);
-  const rawPct = denominator > 0
-    ? ((completedCount + 0.5 * runningCount) / denominator) * 100
-    : 0;
-  let percent = clamp(Math.round(rawPct), 1, 99);
-  if (postProcessingLabel) percent = Math.max(percent, 95);
-  if (isComplete) percent = 100;
+  const expectedPreDrafter = EXPECTED_STAGES[mode].filter(
+    (s) => s !== DRAFTER_STAGE && !POST_DRAFTER_STAGES.has(s),
+  ).length;
+  const percent = computePercent(visible, postProcessingLabel ?? null, draftText ?? "", isComplete, expectedPreDrafter);
 
   return (
     <Card className="mt-4 border-border" dir="rtl">
