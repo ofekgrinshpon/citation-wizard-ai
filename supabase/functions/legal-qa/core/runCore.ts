@@ -89,55 +89,22 @@ function toApiFootnote(fn: Footnote): ApiFootnote {
   };
 }
 
-interface EmbedHealth {
-  calls: number;
-  ok: number;
-  failed: number;
-  missing_key: boolean;
-  last_status?: number;
-  last_error?: string;
-  total_latency_ms: number;
-}
-
-function makeInstrumentedEmbed(health: EmbedHealth): (t: string) => Promise<number[] | null> {
-  return async (text: string) => {
-    health.calls++;
-    const key = Deno.env.get("OPENAI_API_KEY");
-    if (!key) {
-      health.missing_key = true;
-      health.failed++;
-      health.last_error = "missing_OPENAI_API_KEY";
-      console.error("[core:embed] missing OPENAI_API_KEY — vector retrieval disabled");
-      return null;
-    }
-    const t0 = Date.now();
-    try {
-      const r = await fetch("https://api.openai.com/v1/embeddings", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "text-embedding-3-small", input: text, dimensions: 768 }),
-      });
-      health.last_status = r.status;
-      health.total_latency_ms += Date.now() - t0;
-      if (!r.ok) {
-        health.failed++;
-        const body = await r.text();
-        health.last_error = `http_${r.status}:${body.slice(0, 160)}`;
-        console.error("[core:embed]", r.status, body);
-        return null;
-      }
-      const j = await r.json();
-      const emb = j?.data?.[0]?.embedding ?? null;
-      if (emb) health.ok++; else { health.failed++; health.last_error = "no_embedding_in_response"; }
-      return emb;
-    } catch (e) {
-      health.total_latency_ms += Date.now() - t0;
-      health.failed++;
-      health.last_error = (e as Error).message;
-      console.error("[core:embed] threw", e);
-      return null;
-    }
-  };
+async function defaultEmbed(text: string): Promise<number[] | null> {
+  const key = Deno.env.get("OPENAI_API_KEY");
+  if (!key) return null;
+  try {
+    const r = await fetch("https://api.openai.com/v1/embeddings", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ model: "text-embedding-3-small", input: text, dimensions: 768 }),
+    });
+    if (!r.ok) { console.error("[core:embed]", r.status, await r.text()); return null; }
+    const j = await r.json();
+    return j?.data?.[0]?.embedding ?? null;
+  } catch (e) {
+    console.error("[core:embed] threw", e);
+    return null;
+  }
 }
 
 export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
@@ -156,11 +123,6 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   }
 
   const recordStage = (s: StageRun) => stageRuns.push(s);
-
-  const embedHealth: EmbedHealth = {
-    calls: 0, ok: 0, failed: 0, missing_key: false, total_latency_ms: 0,
-  };
-  const instrumentedEmbed = makeInstrumentedEmbed(embedHealth);
 
   // ─── 1. Planner ────────────────────────────────────────────────────────
   emitSafe(onStage, "plan", "running");
@@ -182,7 +144,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     };
   }
   const plan = planRes.plan;
-  emitSafe(onStage, "plan", "complete", `claims=${plan.claims.length} auth=${plan.expected_authorities.length} anchors=${(plan.factual_anchor_terms?.length ?? 0)} concepts=${((plan as any).concept_anchor_terms?.length ?? 0)}`);
+  emitSafe(onStage, "plan", "complete", `claims=${plan.claims.length} auth=${plan.expected_authorities.length} anchors=${(plan.factual_anchor_terms?.length ?? 0)}`);
 
   // ─── 2. Retrieval ──────────────────────────────────────────────────────
   emitSafe(onStage, "retrieval", "running");
@@ -191,7 +153,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   try {
     retrieval = await retrieveForPlan({
       adminClient, plan,
-      embed: instrumentedEmbed,
+      embed: defaultEmbed,
       perplexityKey: PERPLEXITY_API_KEY || undefined,
       signal,
     });
@@ -927,7 +889,6 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
       marker_to_footnote: qual.marker_to_footnote,
     },
     enrichment,
-    embed_health: embedHealth,
     acceptance_errors: acceptanceErrors,
     stage_runs: stageRuns,
     total_duration_ms: Date.now() - tStart,

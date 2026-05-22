@@ -272,14 +272,9 @@ async function localVector(
   try {
     const emb = await embed(query);
     if (!emb) return [];
-    // 0.35 floor: text-embedding-3-small@768d cosine for Hebrew typically lands
-    // in 0.30-0.55. 0.55 was filtering nearly everything out (see qa_logs:
-    // 9/10 recent runs had local_vector_count=0 across all claims). The final
-    // quality gate (source_pack core-promotion at 0.55 in assembleSourcePack)
-    // still rejects weak hits — this floor just lets candidates reach ranking.
     const { data, error } = await client.rpc("match_legal_chunks", {
       query_embedding: JSON.stringify(emb),
-      match_threshold: 0.35,
+      match_threshold: 0.55,
       match_count: LOCAL_VECTOR_K,
     });
     if (error) {
@@ -382,19 +377,12 @@ async function approvedWeb(
   authorities: ExpectedAuthority[],
   claimId: ClaimId,
   signal?: AbortSignal,
-  allowScholarship = false,
 ): Promise<ApprovedWebResult> {
   const authHints = authorities
     .slice(0, 4)
     .map((a) => [a.docket, a.name].filter(Boolean).join(" "))
     .filter((s) => s.trim().length > 0);
-  const scholarshipClause = allowScholarship
-    ? ` בנוסף, מותר להחזיר מאמרים אקדמיים ופרקי ספרים משפטיים ישראליים מהדומיינים האקדמיים המאושרים (lawjournal.huji.ac.il, law.tau.ac.il, mishpatim.tau.ac.il, idclawreview.com וכד'); סמנם source_type:"scholarship".`
-    : "";
-  const allowedTypes = allowScholarship
-    ? `"caselaw"|"statute"|"regulation"|"scholarship"`
-    : `"caselaw"|"statute"|"regulation"`;
-  const sys = `אתה מחזיר אך ורק מקורות משפטיים ישראליים ראשוניים (פסיקה, חקיקה, תקנות) מתוך התחומים המאושרים.${scholarshipClause} החזר JSON-array בלבד, ללא טקסט נוסף, עד ${WEB_PER_CLAIM_CANDIDATES} פריטים. כל איבר: {"title":"","citation":"","url":"","source_type":${allowedTypes},"snippet":""}.`;
+  const sys = `אתה מחזיר אך ורק מקורות משפטיים ישראליים ראשוניים (פסיקה, חקיקה, תקנות) מתוך התחומים המאושרים. החזר JSON-array בלבד, ללא טקסט נוסף, עד ${WEB_PER_CLAIM_CANDIDATES} פריטים. כל איבר: {"title":"","citation":"","url":"","source_type":"caselaw"|"statute"|"regulation","snippet":""}.`;
   const hintBlock = authHints.length ? `\nרמזים לסמכויות צפויות: ${authHints.join(" ; ")}` : "";
   const usr = `טענה: ${claimText}\nדוקטרינה: ${doctrine}${hintBlock}\nהחזר עד ${WEB_PER_CLAIM_CANDIDATES} מקורות סמכותיים בלבד.`;
 
@@ -550,17 +538,14 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
   // Here we run a tiny FTS + one vector pass on factual_anchor_terms and
   // seed those candidates into every claim's candidate pool. They get
   // re-tagged per claim and go through the same dedup + cap logic.
-  const rawAnchors = [
-    ...(Array.isArray(plan.factual_anchor_terms) ? plan.factual_anchor_terms : []),
-    ...(Array.isArray((plan as any).concept_anchor_terms) ? (plan as any).concept_anchor_terms : []),
-  ];
+  const rawAnchors = Array.isArray(plan.factual_anchor_terms) ? plan.factual_anchor_terms : [];
   const anchorTerms = Array.from(
     new Set(
       rawAnchors
         .map((t) => (typeof t === "string" ? t.trim() : ""))
         .filter((t) => t.length >= 2 && t.length <= TEXT_QUERY_MAX_CHARS),
     ),
-  ).slice(0, 10);
+  ).slice(0, 6);
 
   const anchorPool: CandidateSource[] = [];
   const anchorTelemetry: FactualAnchorTelemetry = {
@@ -615,19 +600,13 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const webSkippedForGlobalCap = perplexityKey ? webAllowedThisClaim <= 0 : false;
     if (perplexityKey && webAllowedThisClaim <= 0) webGlobalCapHit = true;
 
-    // Allow Perplexity to return scholarship for claims that explicitly need
-    // a doctrinal definition / academic backing. Primary authority remains the
-    // default (caselaw/statute/regulation only).
-    const allowScholarship = Array.isArray(claim.required_evidence)
-      && claim.required_evidence.some((k) => k === "scholarship" || k === "doctrinal_definition");
-
     // All four origins fire in parallel.
     const [textHits, vecHits, exactGroups, webResult] = await Promise.all([
       limiter(() => localText(adminClient, tq, claim.id)),
       embed ? limiter(() => localVector(adminClient, vq, claim.id, embed)) : Promise.resolve([] as CandidateSource[]),
       Promise.all(linkedAuths.map((a) => limiter(() => exactAuthority(adminClient, a, claim.id)))),
       perplexityKey && webAllowedThisClaim > 0
-        ? limiter(() => approvedWeb(perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal, allowScholarship))
+        ? limiter(() => approvedWeb(perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal))
         : Promise.resolve<ApprovedWebResult>({
             candidates: [],
             telemetry: emptyWebTelemetry(perplexityKey ? "skipped" : "skipped"),

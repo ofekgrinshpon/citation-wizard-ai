@@ -7,8 +7,8 @@ import type { PlanV1 } from "./types.ts";
 import { PLANNER_SYSTEM, PLANNER_USER } from "./prompts.ts";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const MODEL = "openai/gpt-5-mini";
-const TIMEOUT_MS = 120_000;
+const MODEL = "openai/gpt-5";
+const TIMEOUT_MS = 90_000;
 
 export interface PlanArgs {
   question: string;
@@ -42,7 +42,7 @@ export async function planResearch(args: PlanArgs): Promise<PlanResult> {
       },
       body: JSON.stringify({
         model: MODEL,
-        reasoning_effort: "minimal",
+        reasoning_effort: "low",
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: PLANNER_SYSTEM },
