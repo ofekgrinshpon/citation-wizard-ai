@@ -401,6 +401,9 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
     verifier_batch_size_max: MAX_BATCH,
     verifier_batch_size_avg: callsAfter > 0 ? +(batchSizeSum / callsAfter).toFixed(2) : 0,
     verifier_calls_before_estimate: callsBeforeEstimate,
+    verifier_calls_naive_per_candidate: candidateCountTotal,
+    verifier_candidate_count_total: candidateCountTotal,
+    verifier_nonempty_pack_count: nonemptyPackCount,
     verifier_calls_after: callsAfter,
     verifier_duration_ms: duration_ms,
     prompt_tokens: sawUsage ? promptTokens : undefined,
@@ -415,8 +418,9 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
   };
 
   console.log(
-    `[verify] claims=${packs.length} before=${callsBeforeEstimate} after=${callsAfter} ` +
-    `avgBatch=${telemetry.verifier_batch_size_avg} dur=${duration_ms}ms ` +
+    `[verify] claims=${packs.length} nonempty=${nonemptyPackCount} ` +
+    `before(ceil/8)=${callsBeforeEstimate} naive(per-cand)=${candidateCountTotal} ` +
+    `after=${callsAfter} avgBatch=${telemetry.verifier_batch_size_avg} dur=${duration_ms}ms ` +
     `missing=${missingVerdictCount} malformed=${malformedBatchCount} ` +
     `zero=${zeroParseableVerdictClaimCount} http_err=${httpErrorCount} ` +
     `json_err=${jsonParseErrorCount} fallback=${batchFallbackCount} ` +
