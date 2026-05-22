@@ -896,6 +896,8 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
       total_candidates: retrieval.total_candidates,
       total_web_candidates: retrieval.total_web_candidates,
       web_global_cap_hit: retrieval.web_global_cap_hit,
+      factual_anchors: (retrieval as any).factual_anchors,
+      candidates_audit: (retrieval as any).candidates_audit,
     },
     verification: verification.per_claim.map((cv) => ({
       claim_id: cv.claim_id,
