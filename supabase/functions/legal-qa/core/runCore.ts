@@ -250,25 +250,32 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   });
   emitSafe(onStage, "retrieval", "complete", `candidates=${retrieval.total_candidates}`);
 
-  // ─── 2.5 Source Requirements Reconciliation (telemetry only) ───────────
-  let sourceRequirementsReconciliation: SourceRequirementsReconciliation | null = null;
-  if (sourceRequirements) {
+  // ─── 2.5 Source Requirements: targeted retrieval injection (flagged) ───
+  const SR_INJECT_RETRIEVAL = (Deno.env.get("SR_INJECT_RETRIEVAL") ?? "") === "1";
+  let sourceRequirementsInjection: { records: RoleInjectionRecord[]; totals: { roles: number; roles_with_injection: number; candidates_injected: number } } | null = null;
+  if (SR_INJECT_RETRIEVAL && sourceRequirements && sourceRequirements.mandatory_roles.length > 0) {
+    const tInj = Date.now();
     try {
-      sourceRequirementsReconciliation = reconcileSourceRequirements({
-        requirements: sourceRequirements,
-        packs: retrieval.packs,
+      const inj = await injectMandatoryRoleCandidates({
+        adminClient, requirements: sourceRequirements, packs: retrieval.packs,
+        plan, embed: defaultEmbed, perplexityKey: PERPLEXITY_API_KEY || undefined, signal,
       });
-      const t = sourceRequirementsReconciliation.totals;
-      emitSafe(
-        onStage,
-        "source_requirements",
-        "complete",
-        `recall=${t.roles_reached_verifier}/${t.roles} local=${t.roles_tried_local} web=${t.roles_tried_web} missing=${t.roles_missing_entirely}`,
-      );
+      sourceRequirementsInjection = { records: inj.records, totals: inj.totals };
+      recordStage({
+        stage: "source_requirements_inject",
+        duration_ms: Date.now() - tInj,
+        status: "ok",
+        metadata: inj.totals,
+      });
+      emitSafe(onStage, "source_requirements", "complete",
+        `inject roles=${inj.totals.roles_with_injection}/${inj.totals.roles} +${inj.totals.candidates_injected}`);
     } catch (e) {
-      console.warn("[core:source_requirements] reconcile failed", e);
+      recordStage({ stage: "source_requirements_inject", duration_ms: Date.now() - tInj, status: "error", error: (e as Error).message });
+      console.warn("[core:source_requirements_inject] failed", e);
     }
   }
+  // Reconciliation deferred to after verifier so we can attach verdicts.
+  let sourceRequirementsReconciliation: SourceRequirementsReconciliation | null = null;
 
   // ─── 3. Verifier ───────────────────────────────────────────────────────
   emitSafe(onStage, "verify", "running");
