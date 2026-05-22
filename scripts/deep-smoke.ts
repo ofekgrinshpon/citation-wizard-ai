@@ -61,6 +61,9 @@ const QUESTIONS: string[] = [
   "מהי דוקטרינת השימוש לרעה בזכות התביעה האזרחית, ומתי הוכרה בפסיקה כעילה לדחיית תביעה על הסף?",
 ];
 
+const LIMIT = Number(process.env.SMOKE_LIMIT ?? QUESTIONS.length);
+const QUESTIONS_TO_RUN = QUESTIONS.slice(0, LIMIT);
+
 // ─────────────────────────────────────────────────────────────────────────────
 interface SmokeRow {
   index: number;
