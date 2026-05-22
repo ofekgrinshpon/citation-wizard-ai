@@ -1415,6 +1415,7 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     anchor_slots_used_per_claim: anchorSlotsTelemetry,
     approved_web_stubs_dropped_per_claim: webStubsTelemetry,
     approved_web_anchor_queries: anchorWebTelemetry,
+    anchor_web_unfiltered_retries: anchorWebUnfilteredRetries,
   };
 }
 
