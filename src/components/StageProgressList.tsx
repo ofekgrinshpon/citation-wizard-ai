@@ -111,24 +111,46 @@ function resolveStages(
   // Compute percent bands.
   const resolved: ResolvedStage[] = [];
   let cursor = 0;
-  let runningIdx = -1;
-  let lastCompleteIdx = -1;
   for (let i = 0; i < full.length; i++) {
     const def = full[i];
     const evt = byId.get(def.id);
     let status: ResolvedStage["status"] = "pending";
     if (evt) status = evt.status === "complete" ? "complete" : "running";
-    // Treat dedicated post_processing SSE label as evidence the stage is running
-    // even if no `stage` event named "post_processing" arrived.
-    if (def.id === "post_processing" && status === "pending" && postProcessingLabel) {
-      status = "running";
-    }
     const bandStart = cursor * 100;
     cursor += def.weight;
     const bandEnd = cursor * 100;
     resolved.push({ def, status, detail: evt?.detail, bandStart, bandEnd });
-    if (status === "running") runningIdx = i;
-    if (status === "complete") lastCompleteIdx = i;
+  }
+
+  // Gate post_processing: it must not be promoted to "running" (whether by a
+  // direct stage event arriving out of order, or by the dedicated
+  // postProcessingLabel SSE event) until all preceding manifest stages are
+  // complete. Otherwise the headline would jump to "בדיקת איכות סופית"
+  // while the real work is still on plan/retrieval/draft.
+  const ppIdx = resolved.findIndex((r) => r.def.id === "post_processing");
+  if (ppIdx >= 0) {
+    const allPriorDone = resolved.slice(0, ppIdx).every((r) => r.status === "complete");
+    if (!allPriorDone && resolved[ppIdx].status === "running") {
+      resolved[ppIdx] = { ...resolved[ppIdx], status: "pending" };
+    }
+    if (allPriorDone && resolved[ppIdx].status === "pending" && postProcessingLabel) {
+      resolved[ppIdx] = { ...resolved[ppIdx], status: "running" };
+    }
+  }
+
+  // Pick the EARLIEST running stage as the headline wavefront. If none is
+  // running, surface the next pending stage after the last complete so the
+  // headline always reads forward.
+  let runningIdx = resolved.findIndex((r) => r.status === "running");
+  let lastCompleteIdx = -1;
+  for (let i = 0; i < resolved.length; i++) {
+    if (resolved[i].status === "complete") lastCompleteIdx = i;
+  }
+  if (runningIdx === -1 && lastCompleteIdx >= 0 && lastCompleteIdx < resolved.length - 1) {
+    const nextPending = resolved.findIndex(
+      (r, i) => i > lastCompleteIdx && r.status === "pending",
+    );
+    if (nextPending !== -1) runningIdx = nextPending;
   }
   return { resolved, runningIdx, lastCompleteIdx };
 }
