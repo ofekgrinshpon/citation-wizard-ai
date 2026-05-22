@@ -273,7 +273,9 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
 
   // Telemetry accumulators
   let callsAfter = 0;
-  let callsBeforeEstimate = 0;
+  let callsBeforeEstimate = 0;       // Σ ceil(candidates/8) — legacy chunked baseline
+  let candidateCountTotal = 0;       // Σ candidates — naive per-candidate upper bound
+  let nonemptyPackCount = 0;         // packs with ≥1 candidate (minimum possible calls)
   let batchSizeSum = 0;
   let promptTokens = 0;
   let completionTokens = 0;
