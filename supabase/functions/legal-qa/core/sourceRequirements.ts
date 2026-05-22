@@ -1,27 +1,18 @@
-// Research Core v1 — Source Requirements Planner.
+// Research Core v1 — Source Requirements Planner + (flagged) injector.
 //
-// Runs BETWEEN planner and retrieval. Purely additive — does NOT mutate the
-// PlanV1 and does NOT change retrieval behavior. Produces:
-//
-//   1. A list of mandatory source roles per matched doctrine (statute
-//      sections, leading caselaw families, key scholarship/regulations).
-//   2. Canonical Hebrew search queries that, if any retrieval origin tries
-//      them, should surface that role.
-//   3. A reconciler (`reconcileSourceRequirements`) that, after retrieval +
-//      verification, marks per role:
-//        - tried_local        (any local_text/local_vector/exact_authority
-//                              candidate matched a canonical query)
-//        - tried_web          (any approved_web candidate matched)
-//        - reached_verifier   (any matching candidate was in a retrieval pack
-//                              that the verifier processed — same set today)
-//
-// This is telemetry for stable canonical recall validation. Downstream
-// stages (retrieval, verifier, drafter, citations) are untouched.
+// Phase 1/2: regex + classifier-driven detection of mandatory source roles.
+// Phase 3 (this file): when SR_INJECT_RETRIEVAL=1 the runCore orchestrator
+// calls `injectMandatoryRoleCandidates(...)` to RUN targeted retrieval per
+// role and append a tiny number of candidates to existing per-claim packs.
+// Verifier remains the gate — no forced citations.
 
+import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
+import { TIER_A_DOMAIN_FILTER, citationTier } from "../approvedDomains.ts";
 import type {
   CandidateSource,
   ClaimId,
   PlanV1,
+  Support,
 } from "./types.ts";
 import type { ClaimRetrievalPack } from "./retrieval.ts";
 
@@ -29,7 +20,8 @@ export type SourceRoleKind =
   | "statute"
   | "regulation"
   | "caselaw"
-  | "scholarship";
+  | "scholarship"
+  | "factual_report";
 
 export interface MandatorySourceRole {
   /** Stable id for telemetry, e.g. "extortion:s428a". */
@@ -39,24 +31,24 @@ export interface MandatorySourceRole {
   /** Short Hebrew label shown in telemetry. */
   label: string;
   /**
-   * Canonical Hebrew query fragments. Reconciler does case-insensitive
-   * substring match against candidate.title / .citation / .snippet.
-   * Keep these specific enough to avoid false positives (e.g. include
-   * the section number "428א", not just "סחיטה").
+   * Canonical Hebrew query fragments. Used both for candidate matching
+   * (substring check) AND as queries for targeted retrieval injection.
    */
   canonical_queries: string[];
+  /**
+   * Soft hint: factual_report roles support background/enforcement claims
+   * only, not black-letter rules. Verifier still decides per claim.
+   */
+  supports_only?: "factual" | "any";
 }
 
 interface DoctrineEntry {
   doctrine_id: string;
-  /** Tested against the question + plan.thesis + plan.doctrinal_frame. */
   trigger: RegExp;
   roles: MandatorySourceRole[];
 }
 
-// ─── Small starter dictionary ─────────────────────────────────────────────
-// Keep entries narrow and primary-source-first. Scholarship roles are
-// added only where they are widely cited canon.
+// ─── Doctrine dictionary ──────────────────────────────────────────────────
 
 const DOCTRINES: DoctrineEntry[] = [
   {
@@ -68,30 +60,40 @@ const DOCTRINES: DoctrineEntry[] = [
         doctrine_id: "protection_money_extortion",
         kind: "statute",
         label: "ס׳ 427 לחוק העונשין — סחיטה בכוח",
-        canonical_queries: ["סעיף 427", "ס׳ 427", "427 לחוק העונשין", "סחיטה בכוח"],
+        canonical_queries: ["סעיף 427 לחוק העונשין", "ס׳ 427 לחוק העונשין", "427 לחוק העונשין", "סחיטה בכוח"],
       },
       {
         role_id: "extortion:s428",
         doctrine_id: "protection_money_extortion",
         kind: "statute",
         label: "ס׳ 428 לחוק העונשין — סחיטה באיומים",
-        canonical_queries: ["סעיף 428", "ס׳ 428", "428 לחוק העונשין", "סחיטה באיומים"],
+        canonical_queries: ["סעיף 428 לחוק העונשין", "ס׳ 428 לחוק העונשין", "428 לחוק העונשין", "סחיטה באיומים"],
       },
       {
         role_id: "extortion:s428a",
         doctrine_id: "protection_money_extortion",
         kind: "statute",
         label: "ס׳ 428א לחוק העונשין — גביית דמי חסות",
-        canonical_queries: ["סעיף 428א", "ס׳ 428א", "428א לחוק העונשין", "דמי חסות"],
+        canonical_queries: ["סעיף 428א לחוק העונשין", "ס׳ 428א לחוק העונשין", "428א לחוק העונשין", "גביית דמי חסות"],
+      },
+      {
+        role_id: "extortion:factual_gov_report",
+        doctrine_id: "protection_money_extortion",
+        kind: "factual_report",
+        label: "מרכז המחקר והמידע / הכנסת — דמי חסות (רקע ואכיפה)",
+        canonical_queries: [
+          "מרכז המחקר והמידע דמי חסות",
+          "הכנסת דמי חסות",
+          "פרוטקשן מרכז המחקר והמידע",
+          "גביית דמי חסות נתונים",
+          "אכיפת דמי חסות",
+        ],
+        supports_only: "factual",
       },
     ],
   },
   {
     doctrine_id: "legislative_omission_duty_to_legislate",
-    // Phase 1 — broadened to cover common Hebrew variants:
-    // מחדל חקיקתי / מחדל חקיקתי חלקי / מחדל חקיקה / חובה לחוקק /
-    // החובה לחוקק / סעד החובה לחוקק / חסר נורמטיבי / לקונה חקיקתית /
-    // אי הסדרה / היעדר הסדרה / חקיקה לוקה בחסר.
     trigger: /(מחדל\s*חקיקתי(?:\s*חלקי)?|מחדל\s*חקיקה|(?:סעד\s*ה)?חובה\s*לחוקק|החובה\s*לחוקק|חסר\s*נורמטיבי|לקונה\s*חקיקתית|(?:אי|היעדר)[- ]?הסדרה|חקיקה\s*לוקה\s*בחסר|אי[- ]?חקיקה|legislative\s*omission|duty\s*to\s*legislate)/i,
     roles: [
       {
@@ -104,7 +106,6 @@ const DOCTRINES: DoctrineEntry[] = [
           "החובה לחוקק",
           "סעד החובה לחוקק",
           "בג\"ץ רסלר",
-          "ברגיל",
         ],
       },
       {
@@ -132,12 +133,7 @@ const DOCTRINES: DoctrineEntry[] = [
         doctrine_id: "temporary_injunction",
         kind: "caselaw",
         label: "פסיקה — מאזן הנוחות וסיכויי ההליך",
-        canonical_queries: [
-          "מאזן הנוחות",
-          "סיכויי ההליך",
-          "ראיות לכאורה",
-          "נזק בלתי הפיך",
-        ],
+        canonical_queries: ["מאזן הנוחות", "סיכויי ההליך", "ראיות לכאורה", "נזק בלתי הפיך"],
       },
     ],
   },
@@ -157,12 +153,7 @@ const DOCTRINES: DoctrineEntry[] = [
         doctrine_id: "stay_of_execution",
         kind: "caselaw",
         label: "פסיקה — מבחני עיכוב ביצוע פסק דין כספי",
-        canonical_queries: [
-          "עיכוב ביצוע פסק דין",
-          "סיכויי הערעור",
-          "מאזן הנוחות",
-          "השבת המצב לקדמותו",
-        ],
+        canonical_queries: ["עיכוב ביצוע פסק דין", "סיכויי הערעור", "מאזן הנוחות", "השבת המצב לקדמותו"],
       },
     ],
   },
@@ -182,12 +173,7 @@ const DOCTRINES: DoctrineEntry[] = [
         doctrine_id: "pre_contractual_good_faith",
         kind: "caselaw",
         label: "פסיקה — פיצויי קיום בהפרת תום הלב",
-        canonical_queries: [
-          "פיצויי קיום",
-          "קל בנין",
-          "שיכון עובדים",
-          "תום לב במשא ומתן",
-        ],
+        canonical_queries: ["פיצויי קיום", "קל בנין", "שיכון עובדים", "תום לב במשא ומתן"],
       },
     ],
   },
@@ -200,11 +186,7 @@ const DOCTRINES: DoctrineEntry[] = [
         doctrine_id: "relative_voidness",
         kind: "caselaw",
         label: "פסיקה — בטלות יחסית במשפט המנהלי",
-        canonical_queries: [
-          "בטלות יחסית",
-          "בג\"ץ בטלות יחסית",
-          "תוצאת הבטלות",
-        ],
+        canonical_queries: ["בטלות יחסית", "בג\"ץ בטלות יחסית", "תוצאת הבטלות"],
       },
       {
         role_id: "rel_void:scholarship",
@@ -254,17 +236,9 @@ export interface SourceRequirementsPlan {
 export interface BuildSourceRequirementsArgs {
   question: string;
   plan: PlanV1;
-  /**
-   * Phase 2 — doctrine_id values forced on by the semantic classifier
-   * (already filtered by confidence threshold in the caller). These are
-   * unioned with regex triggers.
-   */
   forcedDoctrineIds?: string[];
 }
 
-/**
- * Build the Source Requirements plan. Does NOT modify `plan`.
- */
 export function buildSourceRequirements(
   args: BuildSourceRequirementsArgs,
 ): SourceRequirementsPlan {
@@ -285,11 +259,6 @@ export function buildSourceRequirements(
     }
   }
 
-  // Per-claim doctrine match: a doctrine attaches to a claim if it triggers
-  // globally AND (the claim text contains the trigger OR the doctrine
-  // triggered globally and the claim text mentions any of its canonical
-  // query fragments). If neither, fall back to attaching ALL globally-
-  // triggered doctrines to every claim — recall is the priority here.
   const per_claim: ClaimRoleAssignment[] = plan.claims.map((c) => {
     const matched = new Set<string>();
     const claimText = c.text || "";
@@ -330,18 +299,534 @@ export function buildSourceRequirements(
   };
 }
 
-// ─── Reconciliation ───────────────────────────────────────────────────────
+// ─── Targeted Retrieval Injection (behavioral, flag-gated) ────────────────
+
+const ROLE_LOCAL_TEXT_K = 4;
+const ROLE_LOCAL_VECTOR_K = 4;
+const ROLE_EXACT_K = 3;
+const ROLE_WEB_K = 2;
+const ROLE_MAX_INJECTED = 2;          // hard cap of injected candidates per role
+const PER_CLAIM_SR_CAP = 2;           // injected from SR per claim (across all roles)
+const VECTOR_THRESHOLD = 0.55;
+
+export type RoleMissingReason =
+  | "no_hits"
+  | "capped"
+  | "filtered"
+  | "exact_failed"
+  | "web_failed"
+  | "other";
+
+export interface RoleInjectionRecord {
+  role_id: string;
+  doctrine_id: string;
+  kind: SourceRoleKind;
+  label: string;
+  canonical_queries: string[];
+  tried_local: boolean;
+  tried_vector: boolean;
+  tried_exact_authority: boolean;
+  tried_web: boolean;
+  local_hit_count: number;
+  vector_hit_count: number;
+  exact_hit_count: number;
+  web_hit_count: number;
+  injected_candidate_ids: string[];
+  assigned_claim_ids: string[];
+  /** Filled by post-verifier reconciliation. */
+  reached_verifier?: boolean;
+  /** Filled by post-verifier reconciliation. */
+  verifier_verdicts?: Array<{ candidate_id: string; support: Support }>;
+  /** True if role produced no candidate that made it into a pack. */
+  missing_before_verifier?: boolean;
+  missing_reason?: RoleMissingReason;
+  errors: string[];
+}
+
+export interface InjectMandatoryArgs {
+  adminClient: SupabaseClient;
+  requirements: SourceRequirementsPlan;
+  packs: ClaimRetrievalPack[];
+  plan: PlanV1;
+  embed?: (text: string) => Promise<number[] | null>;
+  perplexityKey?: string;
+  signal?: AbortSignal;
+}
+
+export interface InjectMandatoryResult {
+  records: RoleInjectionRecord[];
+  /** packs is mutated in place; returned for convenience. */
+  packs: ClaimRetrievalPack[];
+  totals: {
+    roles: number;
+    roles_with_injection: number;
+    candidates_injected: number;
+  };
+}
+
+// Small helpers — duplicated locally to avoid editing retrieval.ts.
+function pickLongest(qs: string[]): string {
+  return [...qs].sort((a, b) => b.length - a.length)[0] || "";
+}
+
+function escIlike(s: string): string {
+  return s.replace(/\\/g, "\\\\").replace(/[%_]/g, "\\$&");
+}
+
+interface ChunkHit {
+  chunk_id?: string;
+  document_id: string;
+  chunk_content?: string;
+  document_title?: string;
+  document_citation?: string;
+  source_type?: string;
+  source_url?: string;
+  similarity?: number;
+}
+
+function chunkToCandidate(
+  h: ChunkHit,
+  origin: "local_text" | "local_vector",
+  role: MandatorySourceRole,
+  query: string,
+  idx: number,
+): CandidateSource | null {
+  if (!h?.document_id) return null;
+  const title = (h.document_title || "").trim();
+  const citation = (h.document_citation || "").trim();
+  if (!title && !citation) return null;
+  return {
+    candidate_id: `SR-${role.role_id}-${origin}-${idx}`,
+    claim_id: "C0" as ClaimId, // re-tagged on assignment
+    origin,
+    document_id: h.document_id,
+    source_type: h.source_type || "",
+    title,
+    citation,
+    url: h.source_url || undefined,
+    snippet: (h.chunk_content || "").slice(0, 600),
+    metadata: {
+      chunk_id: h.chunk_id,
+      similarity: h.similarity ?? null,
+      source_requirement_role: role.role_id,
+      source_requirement_query: query,
+      source_requirement_doctrine: role.doctrine_id,
+      sr_injected: true,
+    },
+  };
+}
+
+async function roleLocalText(
+  client: SupabaseClient,
+  role: MandatorySourceRole,
+): Promise<{ hits: CandidateSource[]; tried: boolean; error?: string }> {
+  const q = pickLongest(role.canonical_queries);
+  if (!q) return { hits: [], tried: false };
+  try {
+    const { data, error } = await client.rpc("search_legal_chunks_text", {
+      search_query: q,
+      match_count: ROLE_LOCAL_TEXT_K,
+    });
+    if (error) return { hits: [], tried: true, error: error.message };
+    const rows = Array.isArray(data) ? (data as ChunkHit[]) : [];
+    const cands = rows
+      .map((r, i) => chunkToCandidate(r, "local_text", role, q, i))
+      .filter((c): c is CandidateSource => !!c);
+    return { hits: cands, tried: true };
+  } catch (e) {
+    return { hits: [], tried: true, error: (e as Error).message };
+  }
+}
+
+async function roleLocalVector(
+  client: SupabaseClient,
+  role: MandatorySourceRole,
+  embed: (t: string) => Promise<number[] | null>,
+): Promise<{ hits: CandidateSource[]; tried: boolean; error?: string }> {
+  const q = role.canonical_queries.join(" • ").slice(0, 200);
+  if (!q) return { hits: [], tried: false };
+  try {
+    const emb = await embed(q);
+    if (!emb) return { hits: [], tried: true, error: "no_embedding" };
+    const { data, error } = await client.rpc("match_legal_chunks", {
+      query_embedding: JSON.stringify(emb),
+      match_threshold: VECTOR_THRESHOLD,
+      match_count: ROLE_LOCAL_VECTOR_K,
+    });
+    if (error) return { hits: [], tried: true, error: error.message };
+    const rows = Array.isArray(data) ? (data as ChunkHit[]) : [];
+    const cands = rows
+      .map((r, i) => chunkToCandidate(r, "local_vector", role, q, i))
+      .filter((c): c is CandidateSource => !!c);
+    return { hits: cands, tried: true };
+  } catch (e) {
+    return { hits: [], tried: true, error: (e as Error).message };
+  }
+}
+
+async function roleExactAuthority(
+  client: SupabaseClient,
+  role: MandatorySourceRole,
+): Promise<{ hits: CandidateSource[]; tried: boolean; error?: string }> {
+  if (role.kind !== "statute" && role.kind !== "regulation") {
+    return { hits: [], tried: false };
+  }
+  const out: CandidateSource[] = [];
+  const seen = new Set<string>();
+  let idx = 0;
+  try {
+    for (const q of role.canonical_queries) {
+      if (out.length >= ROLE_EXACT_K) break;
+      const pat = `%${escIlike(q)}%`;
+      for (const col of ["title", "citation"] as const) {
+        const { data, error } = await client
+          .from("legal_documents")
+          .select("id, title, citation, source_type, source_url, content")
+          .ilike(col, pat)
+          .limit(ROLE_EXACT_K);
+        if (error) continue;
+        for (const row of (data || []) as Array<Record<string, unknown>>) {
+          const id = String(row.id);
+          if (seen.has(id)) continue;
+          seen.add(id);
+          out.push({
+            candidate_id: `SR-${role.role_id}-exact-${++idx}`,
+            claim_id: "C0" as ClaimId,
+            origin: "exact_authority",
+            document_id: id,
+            source_type: (row.source_type as string) || "",
+            title: (row.title as string) || "",
+            citation: (row.citation as string) || "",
+            url: (row.source_url as string) || undefined,
+            snippet: ((row.content as string) || "").slice(0, 600),
+            metadata: {
+              source_requirement_role: role.role_id,
+              source_requirement_query: q,
+              source_requirement_doctrine: role.doctrine_id,
+              sr_injected: true,
+              matched_by: col,
+            },
+          });
+          if (out.length >= ROLE_EXACT_K) break;
+        }
+        if (out.length >= ROLE_EXACT_K) break;
+      }
+    }
+    return { hits: out, tried: true };
+  } catch (e) {
+    return { hits: out, tried: true, error: (e as Error).message };
+  }
+}
+
+async function roleApprovedWeb(
+  perplexityKey: string,
+  role: MandatorySourceRole,
+  signal?: AbortSignal,
+): Promise<{ hits: CandidateSource[]; tried: boolean; error?: string }> {
+  const queries = role.canonical_queries.slice(0, 4).join(" ; ");
+  const sys = `אתה מחזיר אך ורק מקורות משפטיים/ממשלתיים ישראליים סמכותיים מתוך התחומים המאושרים. החזר JSON-array בלבד, עד ${ROLE_WEB_K} פריטים. כל איבר: {"title":"","citation":"","url":"","source_type":"","snippet":""}.`;
+  const usr = `תפקיד מקור נדרש: ${role.label}\nשאילתות קנוניות: ${queries}\nהחזר עד ${ROLE_WEB_K} מקורות סמכותיים שמכסים את התפקיד.`;
+  try {
+    const res = await fetch("https://api.perplexity.ai/chat/completions", {
+      method: "POST",
+      signal,
+      headers: { Authorization: `Bearer ${perplexityKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "sonar-pro",
+        messages: [
+          { role: "system", content: sys },
+          { role: "user", content: usr },
+        ],
+        temperature: 0.1,
+        max_tokens: 700,
+        search_domain_filter: TIER_A_DOMAIN_FILTER,
+        return_citations: true,
+        return_search_results: true,
+      }),
+    });
+    if (!res.ok) {
+      return { hits: [], tried: true, error: `http_${res.status}` };
+    }
+    const data: Record<string, unknown> = await res.json();
+    type Hit = { url: string; title: string; citation: string; snippet: string; source_type: string };
+    const byUrl = new Map<string, Hit>();
+
+    // JSON-array in content
+    try {
+      const raw = (data?.choices as Array<{ message?: { content?: string } }> | undefined)?.[0]?.message?.content ?? "";
+      const cleaned = String(raw).replace(/^```(?:json)?\s*|\s*```$/g, "").trim();
+      const s = cleaned.indexOf("[");
+      const e = cleaned.lastIndexOf("]");
+      if (s >= 0 && e > s) {
+        const parsed = JSON.parse(cleaned.slice(s, e + 1));
+        if (Array.isArray(parsed)) {
+          for (const h of parsed) {
+            if (h?.url && typeof h.url === "string") {
+              byUrl.set(h.url, {
+                url: h.url,
+                title: (h.title || "").trim(),
+                citation: (h.citation || "").trim(),
+                snippet: (h.snippet || "").slice(0, 600),
+                source_type: h.source_type || "",
+              });
+            }
+          }
+        }
+      }
+    } catch (_e) { /* ignore */ }
+
+    // search_results
+    const sr = Array.isArray((data as { search_results?: unknown }).search_results)
+      ? (data as { search_results: Array<{ title?: string; url?: string; snippet?: string }> }).search_results
+      : [];
+    for (const r of sr) {
+      if (!r?.url || byUrl.has(r.url)) continue;
+      byUrl.set(r.url, {
+        url: r.url,
+        title: (r.title || "").trim(),
+        citation: "",
+        snippet: (r.snippet || "").slice(0, 600),
+        source_type: "",
+      });
+    }
+    // citations
+    const cits = Array.isArray((data as { citations?: unknown }).citations)
+      ? ((data as { citations: unknown[] }).citations as unknown[]).filter((u) => typeof u === "string") as string[]
+      : [];
+    for (const url of cits) {
+      if (!byUrl.has(url)) byUrl.set(url, { url, title: "", citation: "", snippet: "", source_type: "" });
+    }
+
+    const out: CandidateSource[] = [];
+    let i = 0;
+    for (const h of byUrl.values()) {
+      if (citationTier(h.url) !== "A") continue;
+      out.push({
+        candidate_id: `SR-${role.role_id}-web-${++i}`,
+        claim_id: "C0" as ClaimId,
+        origin: "approved_web",
+        source_type: h.source_type,
+        title: h.title,
+        citation: h.citation,
+        url: h.url,
+        snippet: h.snippet,
+        metadata: {
+          tier: "A",
+          source_requirement_role: role.role_id,
+          source_requirement_query: queries,
+          source_requirement_doctrine: role.doctrine_id,
+          sr_injected: true,
+        },
+      });
+      if (out.length >= ROLE_WEB_K) break;
+    }
+    return { hits: out, tried: true };
+  } catch (e) {
+    return { hits: [], tried: true, error: (e as Error).message };
+  }
+}
+
+/**
+ * Run targeted retrieval for each mandatory role and append a tiny number
+ * of candidates to existing per-claim packs. Caller decides whether to call
+ * this (flag-gated). Mutates `packs` in place.
+ */
+export async function injectMandatoryRoleCandidates(
+  args: InjectMandatoryArgs,
+): Promise<InjectMandatoryResult> {
+  const { adminClient, requirements, packs, embed, perplexityKey, signal } = args;
+  const records: RoleInjectionRecord[] = [];
+  const perClaimInjected = new Map<string, number>();
+  for (const p of packs) perClaimInjected.set(p.claim_id, 0);
+  const packByClaim = new Map<string, ClaimRetrievalPack>();
+  for (const p of packs) packByClaim.set(p.claim_id, p);
+
+  // Build existing document_id/url dedup set per claim.
+  const dedupByClaim = new Map<string, Set<string>>();
+  for (const p of packs) {
+    const s = new Set<string>();
+    for (const c of p.candidates) {
+      s.add(c.document_id || `${c.origin}:${c.url || c.candidate_id}`);
+    }
+    dedupByClaim.set(p.claim_id, s);
+  }
+
+  let totalInjected = 0;
+  let rolesWithInjection = 0;
+
+  for (const role of requirements.mandatory_roles) {
+    const rec: RoleInjectionRecord = {
+      role_id: role.role_id,
+      doctrine_id: role.doctrine_id,
+      kind: role.kind,
+      label: role.label,
+      canonical_queries: role.canonical_queries,
+      tried_local: false,
+      tried_vector: false,
+      tried_exact_authority: false,
+      tried_web: false,
+      local_hit_count: 0,
+      vector_hit_count: 0,
+      exact_hit_count: 0,
+      web_hit_count: 0,
+      injected_candidate_ids: [],
+      assigned_claim_ids: [],
+      errors: [],
+    };
+
+    // Fire local + exact in parallel.
+    const [localRes, vecRes, exactRes] = await Promise.all([
+      roleLocalText(adminClient, role),
+      embed ? roleLocalVector(adminClient, role, embed) : Promise.resolve({ hits: [] as CandidateSource[], tried: false }),
+      roleExactAuthority(adminClient, role),
+    ]);
+    rec.tried_local = localRes.tried;
+    if (localRes.error) rec.errors.push(`local:${localRes.error}`);
+    rec.local_hit_count = localRes.hits.length;
+    rec.tried_vector = vecRes.tried;
+    if (vecRes.error) rec.errors.push(`vector:${vecRes.error}`);
+    rec.vector_hit_count = vecRes.hits.length;
+    rec.tried_exact_authority = exactRes.tried;
+    if (exactRes.error) rec.errors.push(`exact:${exactRes.error}`);
+    rec.exact_hit_count = exactRes.hits.length;
+
+    const localTotal = rec.local_hit_count + rec.vector_hit_count + rec.exact_hit_count;
+    let webRes: { hits: CandidateSource[]; tried: boolean; error?: string } = { hits: [], tried: false };
+    if (localTotal < 1 && perplexityKey) {
+      webRes = await roleApprovedWeb(perplexityKey, role, signal);
+      rec.tried_web = webRes.tried;
+      if (webRes.error) rec.errors.push(`web:${webRes.error}`);
+      rec.web_hit_count = webRes.hits.length;
+    }
+
+    // Priority pool: exact > local_text > local_vector > approved_web.
+    const pool: CandidateSource[] = [
+      ...exactRes.hits,
+      ...localRes.hits,
+      ...vecRes.hits,
+      ...webRes.hits,
+    ].slice(0, ROLE_MAX_INJECTED * 3); // gross overshoot, dedup below
+
+    // Determine candidate claim list for assignment.
+    const assignClaimOrder = requirements.per_claim
+      .filter((a) => a.role_ids.includes(role.role_id))
+      .map((a) => a.claim_id as string);
+    const fallbackClaims = packs.map((p) => p.claim_id as string);
+    const targetClaims = assignClaimOrder.length > 0 ? assignClaimOrder : fallbackClaims;
+
+    let injectedForRole = 0;
+    for (const cand of pool) {
+      if (injectedForRole >= ROLE_MAX_INJECTED) break;
+      // Pick a target claim that hasn't filled its SR cap.
+      let assigned: string | null = null;
+      for (const cid of targetClaims) {
+        const pack = packByClaim.get(cid);
+        if (!pack) continue;
+        const used = perClaimInjected.get(cid) || 0;
+        if (used >= PER_CLAIM_SR_CAP) continue;
+        const dedup = dedupByClaim.get(cid)!;
+        const key = cand.document_id || `${cand.origin}:${cand.url || cand.candidate_id}`;
+        if (dedup.has(key)) continue;
+        assigned = cid;
+        break;
+      }
+      if (!assigned) {
+        if (!rec.missing_reason && rec.injected_candidate_ids.length === 0) {
+          rec.missing_reason = "capped";
+        }
+        continue;
+      }
+      const pack = packByClaim.get(assigned)!;
+      const reTagged: CandidateSource = {
+        ...cand,
+        candidate_id: `${assigned}-${cand.candidate_id}`,
+        claim_id: assigned as ClaimId,
+      };
+      pack.candidates.push(reTagged);
+      // Update per-pack origin counters.
+      if (reTagged.origin === "local_text") pack.local_text_count++;
+      else if (reTagged.origin === "local_vector") pack.local_vector_count++;
+      else if (reTagged.origin === "exact_authority") pack.exact_authority_count++;
+      else if (reTagged.origin === "approved_web") pack.approved_web_count++;
+      perClaimInjected.set(assigned, (perClaimInjected.get(assigned) || 0) + 1);
+      dedupByClaim.get(assigned)!.add(
+        reTagged.document_id || `${reTagged.origin}:${reTagged.url || reTagged.candidate_id}`,
+      );
+      rec.injected_candidate_ids.push(reTagged.candidate_id);
+      if (!rec.assigned_claim_ids.includes(assigned)) rec.assigned_claim_ids.push(assigned);
+      injectedForRole++;
+      totalInjected++;
+    }
+
+    if (injectedForRole > 0) rolesWithInjection++;
+
+    if (rec.injected_candidate_ids.length === 0) {
+      rec.missing_before_verifier = true;
+      if (!rec.missing_reason) {
+        if (!rec.tried_local && !rec.tried_vector && !rec.tried_exact_authority && !rec.tried_web) {
+          rec.missing_reason = "other";
+        } else if (rec.local_hit_count + rec.vector_hit_count + rec.exact_hit_count + rec.web_hit_count === 0) {
+          rec.missing_reason = rec.tried_web && webRes.error ? "web_failed"
+            : rec.tried_exact_authority && exactRes.error ? "exact_failed"
+            : "no_hits";
+        } else {
+          rec.missing_reason = "filtered";
+        }
+      }
+    } else {
+      rec.missing_before_verifier = false;
+    }
+
+    records.push(rec);
+  }
+
+  return {
+    records,
+    packs,
+    totals: {
+      roles: requirements.mandatory_roles.length,
+      roles_with_injection: rolesWithInjection,
+      candidates_injected: totalInjected,
+    },
+  };
+}
+
+// ─── Reconciliation (richer) ──────────────────────────────────────────────
 
 export interface RoleRecallStatus {
   role_id: string;
   doctrine_id: string;
   kind: SourceRoleKind;
   label: string;
+  canonical_queries: string[];
+
+  // Targeted-retrieval attempts (only meaningful when injection ran).
   tried_local: boolean;
+  tried_vector: boolean;
+  tried_exact_authority: boolean;
   tried_web: boolean;
-  reached_verifier: boolean;
+  local_hit_count: number;
+  vector_hit_count: number;
+  exact_hit_count: number;
+  web_hit_count: number;
+  injected_candidate_ids: string[];
+
+  // Substring match against final pack candidates (covers both organic
+  // retrieval hits and SR-injected hits).
   matched_candidate_ids: string[];
   matched_origins: string[];
+
+  reached_verifier: boolean;
+  missing_before_verifier: boolean;
+  missing_reason?: RoleMissingReason;
+
+  // Verifier outcome for matched candidates (if verification provided).
+  verifier_verdicts: Array<{ candidate_id: string; support: Support }>;
+  verifier_kept_direct: number;
+  verifier_kept_partial: number;
+  verifier_rejected: number;
+
+  errors: string[];
 }
 
 export interface SourceRequirementsReconciliation {
@@ -352,83 +837,133 @@ export interface SourceRequirementsReconciliation {
     roles_tried_web: number;
     roles_reached_verifier: number;
     roles_missing_entirely: number;
+    roles_injected: number;
+    candidates_injected: number;
+    candidates_injected_kept: number;
   };
+}
+
+export interface VerifierVerdictLike {
+  candidate_id: string;
+  support: Support;
 }
 
 export interface ReconcileArgs {
   requirements: SourceRequirementsPlan;
   packs: ClaimRetrievalPack[];
+  /** Per-role injection records from the injector, if it ran. */
+  injectionRecords?: RoleInjectionRecord[];
+  /** All verifier verdicts flattened across claims, if verifier ran. */
+  verdicts?: VerifierVerdictLike[];
 }
 
 function candidateMatchesRole(
   c: CandidateSource,
   role: MandatorySourceRole,
 ): boolean {
-  const hay = [
-    c.title || "",
-    c.citation || "",
-    c.snippet || "",
-  ].join(" \n ").toLowerCase();
+  // SR-injected candidates carry the role id explicitly.
+  const meta = (c.metadata || {}) as Record<string, unknown>;
+  if (meta.source_requirement_role === role.role_id) return true;
+  const hay = [c.title || "", c.citation || "", c.snippet || ""]
+    .join(" \n ")
+    .toLowerCase();
   for (const q of role.canonical_queries) {
     if (hay.includes(q.toLowerCase())) return true;
   }
   return false;
 }
 
-/**
- * Reconcile retrieval results against the source requirements plan. Today,
- * every candidate in `packs` is passed to the verifier, so
- * `reached_verifier` mirrors `tried_local || tried_web`. The field is kept
- * separate so a future verifier-side filter can flip it independently
- * without changing the reconciler shape.
- */
 export function reconcileSourceRequirements(
   args: ReconcileArgs,
 ): SourceRequirementsReconciliation {
-  const { requirements, packs } = args;
-
+  const { requirements, packs, injectionRecords, verdicts } = args;
   const allCandidates: CandidateSource[] = [];
   for (const p of packs) for (const c of p.candidates) allCandidates.push(c);
 
+  const verdictByCid = new Map<string, Support>();
+  for (const v of verdicts || []) verdictByCid.set(v.candidate_id, v.support);
+  const recById = new Map<string, RoleInjectionRecord>();
+  for (const r of injectionRecords || []) recById.set(r.role_id, r);
+
   const per_role: RoleRecallStatus[] = requirements.mandatory_roles.map((role) => {
+    const rec = recById.get(role.role_id);
     const matchedIds: string[] = [];
     const origins = new Set<string>();
-    let tried_local = false;
-    let tried_web = false;
+    let organic_tried_local = false;
+    let organic_tried_web = false;
     for (const c of allCandidates) {
       if (!candidateMatchesRole(c, role)) continue;
       matchedIds.push(c.candidate_id);
       origins.add(c.origin);
-      if (c.origin === "approved_web") tried_web = true;
-      else tried_local = true;
+      if (c.origin === "approved_web") organic_tried_web = true;
+      else organic_tried_local = true;
     }
+    const verds: Array<{ candidate_id: string; support: Support }> = [];
+    let kept_direct = 0, kept_partial = 0, rejected = 0;
+    for (const cid of matchedIds) {
+      const s = verdictByCid.get(cid);
+      if (!s) continue;
+      verds.push({ candidate_id: cid, support: s });
+      if (s === "direct") kept_direct++;
+      else if (s === "partial") kept_partial++;
+      else rejected++;
+    }
+
+    const reached_verifier = matchedIds.length > 0;
+    const missing_before_verifier = !reached_verifier;
+
     return {
       role_id: role.role_id,
       doctrine_id: role.doctrine_id,
       kind: role.kind,
       label: role.label,
-      tried_local,
-      tried_web,
-      reached_verifier: tried_local || tried_web,
-      matched_candidate_ids: matchedIds.slice(0, 20),
+      canonical_queries: role.canonical_queries,
+      tried_local: rec ? rec.tried_local : organic_tried_local,
+      tried_vector: rec ? rec.tried_vector : false,
+      tried_exact_authority: rec ? rec.tried_exact_authority : false,
+      tried_web: rec ? rec.tried_web : organic_tried_web,
+      local_hit_count: rec?.local_hit_count ?? 0,
+      vector_hit_count: rec?.vector_hit_count ?? 0,
+      exact_hit_count: rec?.exact_hit_count ?? 0,
+      web_hit_count: rec?.web_hit_count ?? 0,
+      injected_candidate_ids: rec?.injected_candidate_ids ?? [],
+      matched_candidate_ids: matchedIds.slice(0, 30),
       matched_origins: [...origins],
+      reached_verifier,
+      missing_before_verifier,
+      missing_reason: rec?.missing_reason,
+      verifier_verdicts: verds,
+      verifier_kept_direct: kept_direct,
+      verifier_kept_partial: kept_partial,
+      verifier_rejected: rejected,
+      errors: rec?.errors ?? [],
     };
   });
+
+  const candidates_injected = (injectionRecords || []).reduce(
+    (n, r) => n + r.injected_candidate_ids.length, 0,
+  );
+  const candidates_injected_kept = per_role.reduce(
+    (n, r) => n + r.injected_candidate_ids.filter((cid) => {
+      const s = verdictByCid.get(cid);
+      return s === "direct" || s === "partial";
+    }).length, 0,
+  );
 
   const totals = {
     roles: per_role.length,
     roles_tried_local: per_role.filter((r) => r.tried_local).length,
     roles_tried_web: per_role.filter((r) => r.tried_web).length,
     roles_reached_verifier: per_role.filter((r) => r.reached_verifier).length,
-    roles_missing_entirely: per_role.filter(
-      (r) => !r.tried_local && !r.tried_web,
-    ).length,
+    roles_missing_entirely: per_role.filter((r) => !r.reached_verifier).length,
+    roles_injected: per_role.filter((r) => r.injected_candidate_ids.length > 0).length,
+    candidates_injected,
+    candidates_injected_kept,
   };
 
   return { per_role, totals };
 }
 
-/** Compact telemetry summary for stage emitters / qa_logs.metadata. */
 export function summarizeRequirements(
   reqs: SourceRequirementsPlan,
 ): {
