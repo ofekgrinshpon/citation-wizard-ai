@@ -61,6 +61,8 @@ export interface DraftArgs {
   ledger: LedgerResult;
   lovableApiKey: string;
   signal?: AbortSignal;
+  timeoutMs?: number;
+  forceModel?: string | null;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
