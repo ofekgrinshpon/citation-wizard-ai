@@ -169,33 +169,39 @@ async function runOne(idx: number, question: string): Promise<SmokeRow> {
 
     outer: while (true) {
       const { value, done } = await reader.read();
-      if (done) break;
+      if (done) { row.ok = row.ok || finalAnswer.length > 0 || !!qaLogId; break; }
       buf += dec.decode(value, { stream: true });
-      // SSE messages are delimited by "\n\n"
       let split: number;
       while ((split = buf.indexOf("\n\n")) !== -1) {
         const raw = buf.slice(0, split);
         buf = buf.slice(split + 2);
-        const dataLines = raw.split("\n").filter((l) => l.startsWith("data:"));
+        let evtName = "message";
+        const dataLines: string[] = [];
+        for (const ln of raw.split("\n")) {
+          if (ln.startsWith("event:")) evtName = ln.slice(6).trim();
+          else if (ln.startsWith("data:")) dataLines.push(ln.slice(5).trim());
+        }
         if (dataLines.length === 0) continue;
-        const payload = dataLines.map((l) => l.slice(5).trim()).join("");
-        if (!payload || payload === "[DONE]") continue;
+        const payload = dataLines.join("");
+        if (!payload) continue;
+        if (payload === "[DONE]") { row.ok = true; break outer; }
         let evt: any;
         try { evt = JSON.parse(payload); } catch { continue; }
 
-        if (evt.type === "stage" && typeof evt.stage === "string") {
-          if (evt.status === "running") {
-            stageStart[evt.stage] = Date.now();
-          } else if (evt.status === "complete" && stageStart[evt.stage]) {
+        if (evtName === "stage" && typeof evt?.stage === "string") {
+          if (evt.status === "running") stageStart[evt.stage] = Date.now();
+          else if (evt.status === "complete" && stageStart[evt.stage]) {
             row.stage_durations_ms[evt.stage] =
               (row.stage_durations_ms[evt.stage] ?? 0) + (Date.now() - stageStart[evt.stage]);
             delete stageStart[evt.stage];
           }
-        } else if (evt.type === "final" || evt.type === "complete") {
-          qaLogId = evt.qa_log_id ?? evt.qaLogId ?? evt.id ?? qaLogId;
-          finalAnswer = evt.answer ?? evt.text ?? finalAnswer;
+          continue;
+        }
+        if (evtName === "final" || evt?.type === "final" || evt?.type === "complete") {
+          const body = evt?.body ?? evt;
+          qaLogId = body?.qa_log_id ?? body?.qaLogId ?? body?.id ?? qaLogId;
+          finalAnswer = body?.answer ?? body?.text ?? finalAnswer;
           row.ok = true;
-          break outer;
         }
       }
     }
