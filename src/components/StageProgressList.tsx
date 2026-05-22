@@ -123,7 +123,9 @@ function computePercent(
     const postDenom = Math.max(2, postDone + (postRunning ? 1 : 0));
     pct = Math.max(pct, 90 + (postDone / postDenom) * 8);
   }
-  if (postProcessingLabel) pct = Math.max(pct, 96);
+  // Note: postProcessingLabel is shown as a text status line only; it must NOT
+  // by itself push the progress bar forward. Real post-drafter SSE stages
+  // (anchor_pass, coverage_gap, etc.) are what advance the 90–98% band above.
 
   return clamp(Math.round(pct), 1, 99);
 }
