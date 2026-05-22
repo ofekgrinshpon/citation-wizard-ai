@@ -398,7 +398,8 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
     }
   } else if (claims_lost_all_support.length > 0) {
     status = "needs_review";
-    rendered = `${rendered}\n\nהערה למערכת: הטענות הבאות נותרו ללא אסמכתא לאחר ביקורת איכות: ${claims_lost_all_support.join(", ")}.`;
+    // Internal diagnostic — do NOT leak into rendered_answer. The structured
+    // `claims_lost_all_support` field carries the info to any UI that wants it.
   }
 
   return {

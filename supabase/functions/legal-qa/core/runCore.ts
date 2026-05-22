@@ -239,7 +239,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   // ─── 4. Ledger ─────────────────────────────────────────────────────────
   emitSafe(onStage, "ledger", "running");
   const tLed = Date.now();
-  const candidateMeta = new Map<string, { source_type?: string; document_id?: string }>();
+  const candidateMeta = new Map<string, { source_type?: string; document_id?: string; metadata?: Record<string, unknown> }>();
   // Richer per-candidate metadata kept locally for enrichment ONLY — does not
   // flow into Planner/Retrieval/Verifier/Ledger. Keyed by candidate_id.
   const candidateRichMeta = new Map<string, {
@@ -252,7 +252,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   }>();
   for (const pack of retrieval.packs) {
     for (const c of pack.candidates) {
-      candidateMeta.set(c.candidate_id, { source_type: c.source_type, document_id: c.document_id });
+      candidateMeta.set(c.candidate_id, { source_type: c.source_type, document_id: c.document_id, metadata: c.metadata });
       const m = (c.metadata || {}) as Record<string, unknown>;
       const pickStr = (k: string): string | undefined => {
         const v = m[k];
