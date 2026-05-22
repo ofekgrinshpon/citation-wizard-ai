@@ -190,104 +190,24 @@ function buildShortFormInputs(
   };
 }
 
-function passthroughCitation(
-  ls: LedgerSource,
-  localDocMeta?: LocalDocMeta,
-): { text: string; quality: CitationQuality; errors: string[] } {
+function passthroughCitation(ls: LedgerSource): { text: string; quality: CitationQuality; errors: string[] } {
   const errors: string[] = [];
-  // ─── Local-secondary passthrough (Section: Local secondary passthrough
-  // quality). When the candidate originated from a local legal_documents
-  // row of a non-statute/non-caselaw type (journal_article, knesset_research,
-  // scholarship, book, policy_paper, government_report, ...), prefer a
-  // concrete local title/citation over a generic label, and insert explicit
-  // [חסר: …] placeholders for missing bibliographic fields instead of
-  // collapsing to a generic label like "המשפטים (מאמר אקדמי)".
-  if (localDocMeta && (localDocMeta.title || localDocMeta.citation || localDocMeta.meta)) {
-    const built = buildLocalSecondaryPassthrough(ls, localDocMeta);
-    if (built) {
-      errors.push("passthrough_no_canonical_template");
-      if (built.placeholders.length > 0) {
-        errors.push("local_secondary_passthrough");
-        for (const f of built.placeholders) errors.push(`placeholder:${f}`);
-      }
-      return { text: built.text, quality: "partial", errors };
-    }
-  }
   let text = (ls.citation || "").trim();
   if (!text) {
     const titleBit = (ls.title || "").trim();
     if (titleBit) text = titleBit;
   }
+  // NOTE: previously we appended `(${host})` here as a debug breadcrumb when
+  // the canonical template could not be resolved. That string leaked into
+  // user-facing footnotes (e.g. `ע"א 1726/21 (supremedecisions.court.gov.il)`)
+  // and then poisoned the citation-refill prompt. The URL is already carried
+  // separately on the ledger source; do not inline the host into the citation
+  // text. Leave `text` as-is so refill sees only real bibliographic content.
   if (!text) {
     return { text: "", quality: "failed", errors: ["passthrough_empty"] };
   }
   errors.push("passthrough_no_canonical_template");
   return { text, quality: "partial", errors };
-}
-
-// ─── Local-secondary passthrough helpers ──────────────────────────────
-export interface LocalDocMeta {
-  title?: string;
-  citation?: string;
-  source_url?: string;
-  meta?: Record<string, unknown>;
-}
-
-const LOCAL_SECONDARY_TYPES = new Set([
-  "journal_article",
-  "knesset_research",
-  "scholarship",
-  "book",
-  "policy_paper",
-  "government_report",
-  "research_report",
-  "academic_article",
-]);
-
-function pickStr(obj: Record<string, unknown> | undefined, ...keys: string[]): string | undefined {
-  if (!obj) return undefined;
-  for (const k of keys) {
-    const v = obj[k];
-    if (typeof v === "string" && v.trim()) return v.trim();
-    if (typeof v === "number" && Number.isFinite(v)) return String(v);
-  }
-  return undefined;
-}
-
-function buildLocalSecondaryPassthrough(
-  ls: LedgerSource,
-  local: LocalDocMeta,
-): { text: string; placeholders: string[] } | null {
-  const typeLc = (ls.source_type || "").toLowerCase().trim();
-  if (typeLc && !LOCAL_SECONDARY_TYPES.has(typeLc)) return null;
-  const m = local.meta || {};
-  const title = (local.title || ls.title || pickStr(m, "title") || "").trim();
-  // Prefer a complete pre-built citation from the local row.
-  const localCitation = (local.citation || pickStr(m, "citation") || "").trim();
-  if (localCitation && localCitation.length >= 8) {
-    return { text: localCitation, placeholders: [] };
-  }
-  if (!title || title.length < 4) return null;
-
-  const author = pickStr(m, "author", "authors");
-  const year = pickStr(m, "year", "publication_year");
-  const publication = pickStr(m, "publication", "journal", "venue", "publisher");
-  const volume = pickStr(m, "volume", "vol");
-  const placeholders: string[] = [];
-
-  const authorPart = author || (placeholders.push("author"), "[חסר: מחבר]");
-  const journalPart = (typeLc === "knesset_research" || typeLc === "government_report")
-    ? (publication || "מרכז המחקר והמידע של הכנסת")
-    : (publication || (placeholders.push("journal"), "[חסר: כתב עת]"));
-  const volPart = volume ? ` ${volume}` : (typeLc === "journal_article" || typeLc === "academic_article" ? ` [חסר: כרך]` : "");
-  if (!volume && (typeLc === "journal_article" || typeLc === "academic_article")) {
-    placeholders.push("volume");
-  }
-  const yearPart = year ? ` (${year})` : ` ([חסר: שנה])`;
-  if (!year) placeholders.push("year");
-
-  const text = `${authorPart} "${title}" ${journalPart}${volPart}${yearPart}.`;
-  return { text, placeholders };
 }
 
 function offDomainError(ls: LedgerSource): string | null {
@@ -316,8 +236,6 @@ export interface BuildCitationHints {
    * still couldn't produce a string.
    */
   enrichmentRetry?: boolean;
-  /** Local DB metadata for the candidate (used by local-secondary passthrough). */
-  localDocMeta?: LocalDocMeta;
 }
 
 /** Debug envelope returned alongside the enriched citation. No PII, no LLM. */
@@ -446,7 +364,7 @@ export function buildCitationForSource(
       for (const f of res.missingFields) errors.push(`missing:${f}`);
       // Salvage attempt: if a partial citation existed, fall back to passthrough
       // so the QA pass can decide what to do (will mark quality=partial).
-      const pt = passthroughCitation(ls, hints.localDocMeta);
+      const pt = passthroughCitation(ls);
       if (pt.text && pt.quality !== "failed") {
         canonical = pt.text;
         quality = "partial";
@@ -456,7 +374,7 @@ export function buildCitationForSource(
     }
   } else {
     engine_used = "passthrough";
-    const pt = passthroughCitation(ls, hints.localDocMeta);
+    const pt = passthroughCitation(ls);
     canonical = pt.text;
     quality = pt.quality;
     for (const e of pt.errors) errors.push(e);
@@ -539,15 +457,11 @@ export function buildCitationForSource(
 
 export function buildCitationsForLedger(
   ledgerEntries: { sources: LedgerSource[] }[],
-  localMetaByDocId?: Map<string, LocalDocMeta>,
 ): Map<string, LedgerSourceCitation> {
   const out = new Map<string, LedgerSourceCitation>();
   for (const e of ledgerEntries) {
     for (const s of e.sources) {
-      const localDocMeta = s.document_id && localMetaByDocId
-        ? localMetaByDocId.get(s.document_id)
-        : undefined;
-      out.set(s.ls_id, buildCitationForSource(s, { localDocMeta }));
+      out.set(s.ls_id, buildCitationForSource(s));
     }
   }
   return out;

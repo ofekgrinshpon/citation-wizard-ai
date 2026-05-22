@@ -11108,50 +11108,14 @@ async function dispatchDeepAsync(
         const resp = await handleLegalQARequest(innerReq);
         // Drain body so the runtime can reclaim resources.
         try { await resp.text(); } catch { /* ignore */ }
-
-        // Safety net: if the inner handler returned but never replaced the
-        // placeholder row (e.g. it threw inside runCore but the catch failed
-        // to persist, or pipeline returned early), surface the run as failed
-        // instead of leaving "מעבד שאלה…" stuck until the 6-min watchdog.
-        try {
-          const { data: postRow } = await adminClient
-            .from("qa_logs")
-            .select("answer, metadata")
-            .eq("id", runId)
-            .maybeSingle();
-          const postAnswer = typeof postRow?.answer === "string" ? postRow.answer : "";
-          const postMd = (postRow?.metadata as Record<string, unknown> | null) ?? null;
-          const postPipeline = (postMd?.pipeline_used as string | undefined) ?? null;
-          const stillPlaceholder =
-            postAnswer.trim() === "מעבד שאלה…" || postAnswer.trim().length === 0;
-          const stillRunning = postPipeline === "core_running" || postPipeline === null;
-          if (stillPlaceholder && stillRunning) {
-            await adminClient.from("qa_logs").update({
-              answer: "אירעה תקלה ולא הצלחנו להפיק תשובה. אנא נסה שוב.",
-              metadata: {
-                ...(postMd ?? queuedMetadata),
-                checkpoint: "failed",
-                checkpoint_at: new Date().toISOString(),
-                pipeline_used: "core_failed",
-                drafter_failure: {
-                  reason: "worker_returned_without_terminal_state",
-                },
-              },
-            }).eq("id", runId);
-          }
-        } catch (sweepErr) {
-          console.error("[pass-e:async] post-run safety sweep failed:", sweepErr);
-        }
       } catch (bgErr) {
         console.error("[pass-e:async] background pipeline crashed:", bgErr);
         try {
           await adminClient.from("qa_logs").update({
-            answer: "אירעה תקלה ולא הצלחנו להפיק תשובה. אנא נסה שוב.",
             metadata: {
               ...queuedMetadata,
               checkpoint: "failed",
               checkpoint_at: new Date().toISOString(),
-              pipeline_used: "core_failed",
               drafter_failure: {
                 reason: "background_crash",
                 error_message: (bgErr as Error)?.message ?? String(bgErr),

@@ -19,7 +19,6 @@
 
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { TIER_A_DOMAIN_FILTER, citationTier } from "../approvedDomains.ts";
-import { expandDoctrineTerms } from "../../_shared/legalDoctrineSynonyms.ts";
 import type {
   AuthorityId,
   CandidateId,
@@ -50,13 +49,6 @@ const EXPECTED_EMBEDDING_DIM = 768;
 // per-claim cap even when local_text already fills the budget. Reserve is for
 // RECALL — verifier still gates relevance.
 const PER_CLAIM_ANCHOR_RESERVE = 2;
-// When both anchor layers (factual + concept) have candidates, guarantee at
-// least this many slots per layer so concept docs aren't starved by factual
-// hits that always sort first in the merged pool.
-const ANCHOR_RESERVE_PER_LAYER = 1;
-// Hard cap on concept-anchor terms after merging planner output with the
-// doctrine-synonym expansion (Section G).
-const CONCEPT_ANCHOR_TERMS_MAX = 5;
 // Anchor-driven approved_web (Section D). Extra web hits when local recall is
 // thin or the claim explicitly needs scholarship/doctrinal_definition.
 const ANCHOR_WEB_PER_CLAIM = 2;
@@ -106,12 +98,6 @@ export interface ClaimAnchorTelemetry {
   anchor_doc_ids: string[];
   anchor_source_types: string[];
   anchor_displaced_primary: boolean;
-  /** Section F: which anchor layers actually contributed slots for this claim. */
-  anchor_layers_used?: Array<"factual" | "concept">;
-  /** New: primary filter relaxed because topical secondary beat weak primary. */
-  anchor_primary_displaced_for_topical_secondary?: boolean;
-  /** New: per-anchor topical tier (for diagnosing weak ranking). */
-  anchor_topical_tiers?: string[];
 }
 
 export interface ClaimWebStubTelemetry {
@@ -163,10 +149,6 @@ export interface AnchorLayerTelemetry {
   injected_into_claims: number;
   /** Legacy field kept for back-compat with the old single-anchor telemetry. */
   total_unique: number;
-  /** Section G: terms added on top of planner output via doctrine synonyms. */
-  expanded_terms?: string[];
-  /** Section G: doctrine-synonym entry ids that triggered the expansion. */
-  expansion_hits?: string[];
 }
 
 export interface VectorHealthDiag {
@@ -611,85 +593,6 @@ function requiresBindingLaw(claim: { required_evidence?: string[] }): boolean {
   return re.some((k) => k === "binding_caselaw" || k === "statute_section" || k === "regulation");
 }
 
-// ─── Topical relevance scoring ──────────────────────────────────────────
-// General-purpose, deterministic scorer used to rank anchor-pool candidates
-// by how well their title/citation/snippet topically match the planner's
-// anchor terms. No document-IDs, no query-specific lists. Strong exact
-// phrase matches beat multi-token coverage; multi-token beats single shared
-// token. Title hits weighted higher than citation, citation higher than
-// snippet.
-export type TopicalTier = "strong" | "medium" | "weak" | "none";
-
-function tokenizeTerm(t: string): string[] {
-  return (t || "")
-    .toLowerCase()
-    .replace(/["״'׳().,;:!?\-–—]/g, " ")
-    .split(/\s+/)
-    .filter((w) => w.length >= 2);
-}
-
-function fieldHasPhrase(field: string, phrase: string): boolean {
-  if (!field || !phrase) return false;
-  return field.toLowerCase().includes(phrase.toLowerCase());
-}
-
-function fieldCoversAllTokens(field: string, tokens: string[]): boolean {
-  if (!field || tokens.length === 0) return false;
-  const f = field.toLowerCase();
-  return tokens.every((t) => f.includes(t));
-}
-
-function fieldHasAnyToken(field: string, tokens: string[]): boolean {
-  if (!field || tokens.length === 0) return false;
-  const f = field.toLowerCase();
-  return tokens.some((t) => f.includes(t));
-}
-
-/**
- * Score a candidate's topical fit against a list of anchor terms.
- * Returns numeric score and a tier label. Weights:
- *   exact-phrase  title=12 citation=8 snippet=4
- *   all-tokens    title=6  citation=4 snippet=2
- *   any-token     title=1  citation=1 snippet=0.5
- */
-export function scoreTopicalRelevance(
-  c: { title?: string; citation?: string; snippet?: string },
-  terms: string[],
-): { score: number; tier: TopicalTier } {
-  if (!Array.isArray(terms) || terms.length === 0) return { score: 0, tier: "none" };
-  const title = c.title || "";
-  const citation = c.citation || "";
-  const snippet = c.snippet || "";
-  let score = 0;
-  let sawPhrase = false;
-  let sawAllTokens = false;
-  let sawAnyToken = false;
-  for (const term of terms) {
-    const t = (term || "").trim();
-    if (t.length < 2) continue;
-    // Exact phrase tier (only meaningful for multi-char terms).
-    if (fieldHasPhrase(title, t)) { score += 12; sawPhrase = true; }
-    else if (fieldHasPhrase(citation, t)) { score += 8; sawPhrase = true; }
-    else if (fieldHasPhrase(snippet, t)) { score += 4; sawPhrase = true; }
-    const toks = tokenizeTerm(t);
-    if (toks.length >= 2) {
-      if (fieldCoversAllTokens(title, toks)) { score += 6; sawAllTokens = true; }
-      else if (fieldCoversAllTokens(citation, toks)) { score += 4; sawAllTokens = true; }
-      else if (fieldCoversAllTokens(snippet, toks)) { score += 2; sawAllTokens = true; }
-    }
-    if (fieldHasAnyToken(title, toks)) { score += 1; sawAnyToken = true; }
-    else if (fieldHasAnyToken(citation, toks)) { score += 1; sawAnyToken = true; }
-    else if (fieldHasAnyToken(snippet, toks)) { score += 0.5; sawAnyToken = true; }
-  }
-  let tier: TopicalTier = "none";
-  if (sawPhrase || sawAllTokens) tier = "strong";
-  else if (sawAnyToken && score >= 1) tier = "weak";
-  // Promote weak→medium when multiple distinct any-token hits accumulated.
-  if (tier === "weak" && score >= 2) tier = "medium";
-  if (sawPhrase) tier = "strong";
-  return { score, tier };
-}
-
 
 
 async function exactAuthority(
@@ -998,25 +901,7 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     ).slice(0, 8);
 
   const factualTerms = sanitizeTerms(plan.factual_anchor_terms);
-  const plannerConceptTerms = sanitizeTerms((plan as any).concept_anchor_terms);
-
-  // Section G: doctrine-synonym expansion for concept anchors. Wires the
-  // hand-curated _shared/legalDoctrineSynonyms.ts dictionary into the
-  // concept layer when the question matches a doctrinal trigger. Purely
-  // lexical, no document-specific hardcoding.
-  const expansion = expandDoctrineTerms(
-    [
-      (plan as any).question || "",
-      plan.thesis || "",
-      plan.doctrinal_frame || "",
-    ].join(" "),
-  );
-  const expandedConcept = sanitizeTerms([
-    ...plannerConceptTerms,
-    ...expansion.synonyms,
-  ]).slice(0, CONCEPT_ANCHOR_TERMS_MAX);
-  const conceptTerms = expandedConcept;
-  const addedByExpansion = expandedConcept.filter((t) => !plannerConceptTerms.includes(t));
+  const conceptTerms = sanitizeTerms((plan as any).concept_anchor_terms);
 
   /**
    * Run one anchor layer: FTS + vector per term, dedupe with per-document
@@ -1099,10 +984,6 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     runAnchorLayer("factual", factualTerms),
     runAnchorLayer("concept", conceptTerms),
   ]);
-
-  // Section G: stamp expansion metadata onto the concept layer telemetry.
-  if (addedByExpansion.length > 0) conceptLayer.telemetry.expanded_terms = addedByExpansion;
-  if (expansion.hits.length > 0) conceptLayer.telemetry.expansion_hits = expansion.hits;
 
   // Threshold=0.0 probe: pick the longest available anchor term, or fall
   // back to the plan thesis. Fires once.
@@ -1273,102 +1154,21 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const webAll = [...primaryWebHits, ...anchorWebHits];
     ingest(webAll);
 
-    // ─── Section A + E + F: per-layer anchor reserve & primary preservation
+    // ─── Section A + E: anchor reserve & primary preservation ──────────
     const all = Array.from(byKey.values());
     const webKept = all.filter((c) => c.origin === "approved_web");
     const localOther = all.filter((c) => c.origin !== "approved_web");
     const primaryLocalCount = localOther.filter(isPrimaryLaw).length;
+
+    // When the claim needs binding law and we're light on primary local
+    // hits, only let primary anchors consume the reserve so we don't push
+    // secondary anchors ahead of binding authority.
     const needPrimary = requiresBindingLaw(claim) && primaryLocalCount < 2;
-
-    // Section F: split the anchor candidate pool by layer so concept docs
-    // get a guaranteed slot when the layer has any hits. Falls through when
-    // a layer is empty so factual-only questions still fill both reserve
-    // slots from factual.
-    const splitByLayer = (cands: CandidateSource[]) => {
-      const factual: CandidateSource[] = [];
-      const concept: CandidateSource[] = [];
-      for (const c of cands) {
-        const layer = (c.metadata as any)?.anchor_layer;
-        if (layer === "concept") concept.push(c);
-        else factual.push(c);
-      }
-      return { factual, concept };
-    };
-
-    // Topical relevance ranking. Use combined factual + concept terms so
-    // sources topical to either signal float to the top.
-    const allAnchorTerms = Array.from(new Set([...factualTerms, ...conceptTerms]));
-    const annotateAndSort = (arr: CandidateSource[]): CandidateSource[] => {
-      const scored = arr.map((c) => {
-        const { score, tier } = scoreTopicalRelevance(c, allAnchorTerms);
-        (c.metadata as any).topical_score = score;
-        (c.metadata as any).topical_tier = tier;
-        return { c, score };
-      });
-      scored.sort((a, b) => b.score - a.score);
-      return scored.map((s) => s.c);
-    };
-
-    const { factual: factualPoolRaw, concept: conceptPoolRaw } = splitByLayer(anchorCandidates);
-    const factualPool = annotateAndSort(factualPoolRaw);
-    const conceptPool = annotateAndSort(conceptPoolRaw);
-
-    // Conditional primary filter (Section: preserve primary-law hierarchy
-    // intelligently). Original behaviour: when the claim needs binding law,
-    // drop non-primary anchors so statutes are not displaced. Revised: if
-    // the layer has a directly topical secondary (strong/medium) AND no
-    // similarly topical primary, allow the secondary to survive into the
-    // verifier. Verifier/ledger remain final arbiters.
-    const isStrongOrMedium = (c: CandidateSource): boolean => {
-      const t = (c.metadata as any)?.topical_tier as TopicalTier | undefined;
-      return t === "strong" || t === "medium";
-    };
-    let primaryDisplacedForTopicalSecondary = false;
-    const applyPrimaryFilter = (arr: CandidateSource[]): CandidateSource[] => {
-      if (!needPrimary) return arr;
-      const topicalPrimary = arr.filter((c) => isPrimaryLaw(c) && isStrongOrMedium(c));
-      const topicalSecondary = arr.filter((c) => !isPrimaryLaw(c) && isStrongOrMedium(c));
-      if (topicalPrimary.length === 0 && topicalSecondary.length > 0) {
-        primaryDisplacedForTopicalSecondary = true;
-        return arr; // let topical secondaries through
-      }
-      return arr.filter(isPrimaryLaw);
-    };
-
-    const factualFiltered = applyPrimaryFilter(factualPool);
-    // Concept anchors carry doctrinal/scholarship support by design. When the
-    // claim explicitly asks for scholarship or a doctrinal_definition, the
-    // primary-law filter must NOT strip the concept layer.
-    const conceptFiltered = allowScholarship
-      ? conceptPool
-      : applyPrimaryFilter(conceptPool);
-
-    // Phase 1: per-layer floor (up to ANCHOR_RESERVE_PER_LAYER per layer).
-    const anchorKept: CandidateSource[] = [];
-    const layersUsed = new Set<"factual" | "concept">();
-    const takeFrom = (arr: CandidateSource[], layer: "factual" | "concept", n: number) => {
-      let taken = 0;
-      for (const c of arr) {
-        if (taken >= n) break;
-        if (anchorKept.includes(c)) continue;
-        anchorKept.push(c);
-        layersUsed.add(layer);
-        taken++;
-      }
-    };
-    takeFrom(factualFiltered, "factual", ANCHOR_RESERVE_PER_LAYER);
-    takeFrom(conceptFiltered, "concept", ANCHOR_RESERVE_PER_LAYER);
-
-    // Phase 2: fill remaining reserve slots from whichever layer still has
-    // candidates.
-    const remaining = PER_CLAIM_ANCHOR_RESERVE - anchorKept.length;
-    if (remaining > 0) {
-      takeFrom(factualFiltered, "factual", remaining);
-    }
-    const remaining2 = PER_CLAIM_ANCHOR_RESERVE - anchorKept.length;
-    if (remaining2 > 0) {
-      takeFrom(conceptFiltered, "concept", remaining2);
-    }
+    const filteredAnchors = needPrimary
+      ? anchorCandidates.filter(isPrimaryLaw)
+      : anchorCandidates;
+    const anchorReserve = Math.min(PER_CLAIM_ANCHOR_RESERVE, filteredAnchors.length);
+    const anchorKept = filteredAnchors.slice(0, anchorReserve);
 
     const localBudget = Math.max(0, PER_CLAIM_CAP - webKept.length - anchorKept.length);
     const localKept = localOther.slice(0, localBudget);
@@ -1388,15 +1188,16 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
         anchor_doc_ids: anchorDocIds,
         anchor_source_types: anchorSrcTypes,
         anchor_displaced_primary: anchorDisplacedPrimary,
-        anchor_layers_used: Array.from(layersUsed),
-        anchor_primary_displaced_for_topical_secondary: primaryDisplacedForTopicalSecondary,
-        anchor_topical_tiers: anchorKept.map(
-          (c) => String((c.metadata as any)?.topical_tier ?? "none"),
-        ),
       });
       // Per-layer injected counter (only when the anchor SURVIVED selection).
-      if (layersUsed.has("factual")) factualLayer.telemetry.injected_into_claims++;
-      if (layersUsed.has("concept")) conceptLayer.telemetry.injected_into_claims++;
+      const factualDocIds = new Set(factualLayer.pool.map((c) => c.document_id));
+      const conceptDocIds = new Set(conceptLayer.pool.map((c) => c.document_id));
+      if (anchorKept.some((c) => c.document_id && factualDocIds.has(c.document_id))) {
+        factualLayer.telemetry.injected_into_claims++;
+      }
+      if (anchorKept.some((c) => c.document_id && conceptDocIds.has(c.document_id))) {
+        conceptLayer.telemetry.injected_into_claims++;
+      }
     }
 
     if (stubsDroppedThisClaim > 0) {
@@ -1439,80 +1240,52 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     });
   }
 
-  // ─── Local-DB metadata override ───────────────────────────────────────
-  // When a candidate's URL matches a row in legal_documents, OR when a
-  // local candidate already carries a document_id, the local row is the
-  // canonical metadata source. Swap title/citation/source_type AND attach
-  // full DB metadata (author/year/volume/journal/publication/...) as
-  // metadata.local_doc_meta so downstream citation building can use it for
-  // local-secondary passthrough with explicit placeholders.
+  // ─── Local-DB metadata override for approved_web candidates ──────────
+  // When Perplexity returns a URL we already have in legal_documents, the
+  // local row is the canonical metadata source. Swap title/citation/
+  // source_type onto the web candidate so the downstream verifier and
+  // citation builder see real metadata instead of weak Perplexity strings.
   let localMetadataOverrides = 0;
   try {
-    const allCands = packs.flatMap((p) => p.candidates);
     const webUrls = Array.from(new Set(
-      allCands.filter((c) => c.origin === "approved_web" && c.url).map((c) => c.url!),
+      packs.flatMap((p) => p.candidates)
+        .filter((c) => c.origin === "approved_web" && c.url)
+        .map((c) => c.url!),
     ));
-    const docIds = Array.from(new Set(
-      allCands.map((c) => c.document_id).filter((x): x is string => !!x),
-    ));
-
-    type Row = {
-      id: string;
-      title: string | null;
-      citation: string | null;
-      source_type: string | null;
-      source_url: string | null;
-      metadata: Record<string, unknown> | null;
-    };
-    const byUrl = new Map<string, Row>();
-    const byId = new Map<string, Row>();
-
     if (webUrls.length > 0) {
-      const { data, error } = await adminClient
+      const { data: localRows, error: ovErr } = await adminClient
         .from("legal_documents")
-        .select("id, title, citation, source_type, source_url, metadata")
+        .select("id, title, citation, source_type, source_url")
         .in("source_url", webUrls);
-      if (error) console.error("[core retrieval] local override (urls) failed:", error.message);
-      for (const r of (data || []) as Row[]) {
-        if (r.source_url) byUrl.set(r.source_url, r);
-        byId.set(r.id, r);
-      }
-    }
-    if (docIds.length > 0) {
-      const missing = docIds.filter((id) => !byId.has(id));
-      if (missing.length > 0) {
-        const { data, error } = await adminClient
-          .from("legal_documents")
-          .select("id, title, citation, source_type, source_url, metadata")
-          .in("id", missing);
-        if (error) console.error("[core retrieval] local override (ids) failed:", error.message);
-        for (const r of (data || []) as Row[]) byId.set(r.id, r);
-      }
-    }
-
-    const applyHit = (c: CandidateSource, hit: Row) => {
-      if (!hit) return;
-      c.document_id = c.document_id || hit.id;
-      if (hit.title) c.title = hit.title;
-      if (hit.citation) c.citation = hit.citation;
-      if (hit.source_type) c.source_type = hit.source_type;
-      c.metadata = {
-        ...(c.metadata || {}),
-        local_metadata_override: true,
-        local_doc_meta: hit.metadata || {},
-        local_doc_title: hit.title || undefined,
-        local_doc_citation: hit.citation || undefined,
-        local_doc_source_url: hit.source_url || undefined,
-      };
-      localMetadataOverrides++;
-    };
-
-    for (const p of packs) {
-      for (const c of p.candidates) {
-        let hit: Row | undefined;
-        if (c.origin === "approved_web" && c.url) hit = byUrl.get(c.url);
-        if (!hit && c.document_id) hit = byId.get(c.document_id);
-        if (hit) applyHit(c, hit);
+      if (!ovErr && Array.isArray(localRows)) {
+        const byUrl = new Map<string, { id: string; title: string; citation: string; source_type: string }>();
+        for (const r of localRows as Array<{ id: string; title: string; citation: string; source_type: string; source_url: string }>) {
+          if (r.source_url && (r.title || r.citation)) {
+            byUrl.set(r.source_url, {
+              id: r.id,
+              title: r.title || "",
+              citation: r.citation || "",
+              source_type: r.source_type || "",
+            });
+          }
+        }
+        if (byUrl.size > 0) {
+          for (const p of packs) {
+            for (const c of p.candidates) {
+              if (c.origin !== "approved_web" || !c.url) continue;
+              const hit = byUrl.get(c.url);
+              if (!hit) continue;
+              c.document_id = hit.id;
+              if (hit.title) c.title = hit.title;
+              if (hit.citation) c.citation = hit.citation;
+              if (hit.source_type) c.source_type = hit.source_type;
+              c.metadata = { ...(c.metadata || {}), local_metadata_override: true };
+              localMetadataOverrides++;
+            }
+          }
+        }
+      } else if (ovErr) {
+        console.error("[core retrieval] local metadata override query failed:", ovErr.message);
       }
     }
   } catch (e) {

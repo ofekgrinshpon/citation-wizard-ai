@@ -21,7 +21,6 @@ import { buildLedger } from "./ledger.ts";
 import { draft } from "./drafter.ts";
 import {
   buildCitationsForLedger,
-  type LocalDocMeta,
 } from "./citations.ts";
 import {
   enrichLedgerSource,
@@ -344,38 +343,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
 
   // ─── 6.1 Canonical Citations ───────────────────────────────────────────
   const tCit = Date.now();
-  // Build a document_id → local metadata map so the citation builder can
-  // emit concrete local-secondary passthroughs with [חסר: …] placeholders
-  // instead of collapsing to generic labels.
-  const localMetaByDocId = new Map<string, LocalDocMeta>();
-  try {
-    const docIds = Array.from(new Set(
-      ledger.entries.flatMap((e) => e.sources)
-        .map((s) => s.document_id)
-        .filter((x): x is string => !!x),
-    ));
-    if (docIds.length > 0) {
-      const { data, error } = await adminClient
-        .from("legal_documents")
-        .select("id, title, citation, source_url, metadata")
-        .in("id", docIds);
-      if (error) {
-        console.error("[core runCore] local meta fetch failed:", error.message);
-      } else {
-        for (const r of (data || []) as Array<{ id: string; title: string | null; citation: string | null; source_url: string | null; metadata: Record<string, unknown> | null }>) {
-          localMetaByDocId.set(r.id, {
-            title: r.title || undefined,
-            citation: r.citation || undefined,
-            source_url: r.source_url || undefined,
-            meta: r.metadata || {},
-          });
-        }
-      }
-    }
-  } catch (e) {
-    console.error("[core runCore] local meta fetch threw:", (e as Error).message);
-  }
-  const citations = buildCitationsForLedger(ledger.entries, localMetaByDocId) as Map<LedgerSourceId, ReturnType<typeof buildCitationsForLedger> extends Map<string, infer V> ? V : never>;
+  const citations = buildCitationsForLedger(ledger.entries) as Map<LedgerSourceId, ReturnType<typeof buildCitationsForLedger> extends Map<string, infer V> ? V : never>;
   recordStage({ stage: "citations", duration_ms: Date.now() - tCit, status: "ok" });
 
 

@@ -237,22 +237,8 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
   const lsById = new Map<LedgerSourceId, LedgerSource>();
   for (const e of ledger.entries) for (const s of e.sources) lsById.set(s.ls_id, s);
   let approved_web_rescued = 0;
-  let local_secondary_rescued = 0;
-  // Local secondary source_types we should not drop just because the engine
-  // didn't recognise a primary-law label. These come from legal_documents
-  // and carry curated titles + URLs, so they're real authorities even when
-  // the citation engine can't emit a canonical statute/caselaw form.
-  const LOCAL_SECONDARY_TYPES = new Set([
-    "knesset_research",
-    "knesset_protocol",
-    "journal_article",
-    "academic_article",
-    "scholarship",
-    "book",
-    "policy_paper",
-    "government_report",
-  ]);
   for (const [id, c] of citations) {
+    if (c.declared_type !== "none") continue;
     const hasUninformative =
       c.citation_errors.includes("uninformative_label") ||
       c.citation_errors.includes("empty_source_type");
@@ -262,55 +248,23 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
       c.citation_errors.includes("failed_bare_reporter") ||
       c.citation_errors.includes("journal_pipe_unresolved")
     ) continue;
+    // Off-domain stays dropped (we only rescue approved hosts).
     if (c.citation_errors.some((e) => e.startsWith("off_domain:"))) continue;
     const ls = lsById.get(id);
-    if (!ls) continue;
+    if (!ls || ls.origin !== "approved_web" || ls.support !== "direct") continue;
     if (!c.canonical_citation || !c.canonical_citation.trim()) continue;
-
-    // Branch 1: approved_web rescue (existing path) — only `direct` web hits
-    // with declared_type still "none", inferred from host.
-    if (
-      ls.origin === "approved_web" &&
-      ls.support === "direct" &&
-      c.declared_type === "none"
-    ) {
-      const inferred = inferDeclaredFromSource(ls);
-      if (inferred === "none") continue;
-      c.declared_type = inferred;
-      if (c.citation_quality === "ok" || c.citation_quality === "needs_review") {
-        c.citation_quality = "partial";
-      }
-      if (!c.citation_errors.includes("approved_web_inferred_type")) {
-        c.citation_errors.push("approved_web_inferred_type");
-      }
-      approved_web_rescued++;
-      continue;
+    const inferred = inferDeclaredFromSource(ls);
+    if (inferred === "none") continue;
+    c.declared_type = inferred;
+    // Metadata is thin by definition — keep but mark partial so downstream
+    // gates treat it as needing review rather than as a strong canonical.
+    if (c.citation_quality === "ok" || c.citation_quality === "needs_review") {
+      c.citation_quality = "partial";
     }
-
-    // Branch 2: local-secondary rescue — knesset_research / journal_article /
-    // scholarship etc. that the verifier accepted (direct or partial). These
-    // never had a primary declared_type to begin with; the uninformative
-    // gate fires on `declared_type === "none"`. Local DB metadata is
-    // authoritative for these source types — keep them as partial.
-    const stRaw = (ls.source_type || "").toLowerCase();
-    if (
-      (ls.origin === "local_text" || ls.origin === "local_vector" || ls.origin === "exact_authority") &&
-      LOCAL_SECONDARY_TYPES.has(stRaw) &&
-      (ls.support === "direct" || ls.support === "partial") &&
-      (ls.title || "").trim().length >= 4
-    ) {
-      // Mark as scholarship so the decideKept gate (which requires
-      // declared_type !== "none") accepts it.
-      c.declared_type = "scholarship" as unknown as typeof c.declared_type;
-      if (c.citation_quality === "ok" || c.citation_quality === "needs_review") {
-        c.citation_quality = "partial";
-      }
-      if (!c.citation_errors.includes("local_secondary_rescued")) {
-        c.citation_errors.push("local_secondary_rescued");
-      }
-      local_secondary_rescued++;
-      continue;
+    if (!c.citation_errors.includes("approved_web_inferred_type")) {
+      c.citation_errors.push("approved_web_inferred_type");
     }
+    approved_web_rescued++;
   }
 
   const decisions = new Map<LedgerSourceId, KeptDecision>();

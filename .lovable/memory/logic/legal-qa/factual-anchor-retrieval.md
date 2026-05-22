@@ -1,49 +1,36 @@
 ---
 name: factual-anchor-retrieval
-description: Planner emits factual_anchor_terms (subjects) + concept_anchor_terms (doctrinal phrases). Retrieval runs FTS+vector on both as a pre-pass, splits the per-claim 2-slot anchor reserve into ≥1 per layer, and expands concept terms via _shared/legalDoctrineSynonyms.
+description: Planner emits factual_anchor_terms (subjects) + concept_anchor_terms (doctrinal phrases) lifted from question; retrieveForPlan pre-pass runs FTS+vector on both and injects hits into every claim. Vector floor lowered to 0.35. defaultEmbed instrumented as embed_health in qa_logs metadata.
 type: feature
 ---
 
-# Anchor retrieval pre-pass + per-layer reserve + doctrine-synonym expansion
+# Anchor retrieval pre-pass + vector path hardening
 
-## Layers
+## What
 
-- **`factual_anchor_terms`** — concrete subjects from the question ("דמי חסות", "פרוטקשן"). Surfaces gov/Knesset MMM reports.
-- **`concept_anchor_terms`** — doctrinal key phrases ("חובה לחוקק", "מחדל חקיקתי"). Surfaces academic articles whose titles use a synonymous framing.
+`retrieveForPlan` runs a single FTS+vector pre-pass over question-derived anchor terms BEFORE per-claim retrieval, then injects the results into every claim's candidate pool. Two complementary anchor types:
 
-Both run independent FTS+vector passes via `runAnchorLayer` with per-document diversity (`ANCHOR_MAX_DOCS_PER_LAYER=8`). Combined cap: `CONCEPT_ANCHOR_TERMS_MAX=5` for concept, 8 for factual.
+- **`factual_anchor_terms`** — concrete subjects from the question ("דמי חסות", "פרוטקשן", "החברה הערבית"). Surfaces factual reports (Knesset MMM, gov briefs) that doctrinal `search_targets` would miss.
+- **`concept_anchor_terms`** — doctrinal key phrases from the question ("מחדל חקיקתי חלקי", "חובה לחוקק"). Surfaces academic articles/monographs whose titles use a synonymous framing of the doctrine (e.g. "סעד החובה לחוקק" reachable from "חובה לחוקק" even when claims only mention "מחדל חקיקתי").
 
-## Per-layer anchor reserve (Section F)
+Both are MANDATORY in the planner prompt (rules 12 and 13). Combined cap: 10 unique terms.
 
-`PER_CLAIM_ANCHOR_RESERVE=2` total slots per claim. `ANCHOR_RESERVE_PER_LAYER=1` guarantees one slot to each layer that has candidates, then the remainder spills to whichever layer has more. Splitting by `metadata.anchor_layer` prevents factual hits (which always sort first in the merged pool) from starving concept candidates. Factual-only questions still fill both slots from factual via the spillover phase.
+## Vector path fixes
 
-Telemetry: `anchor_slots_used_per_claim[i].anchor_layers_used: ("factual"|"concept")[]`.
+`core/retrieval.ts` `localVector` — `match_threshold` lowered from **0.55 → 0.35**. At 0.55, 9/10 recent runs returned `local_vector_count=0` across all claims because text-embedding-3-small@768d on Hebrew typically scores 0.30-0.55. The 0.55 quality gate still applies downstream at `assembleSourcePack` for core-tier promotion.
 
-## Doctrine-synonym expansion (Section G)
+`runCore.ts` `defaultEmbed` replaced with `makeInstrumentedEmbed(health)` — captures `{ calls, ok, failed, missing_key, last_status, last_error, total_latency_ms }` into `qa_logs.metadata.core.embed_health` so we can diagnose 0-vector runs immediately (missing key vs 429 vs no-match).
 
-`_shared/legalDoctrineSynonyms.ts` (`expandDoctrineTerms`) is wired into `retrieveForPlan` and merged into `conceptTerms` before the anchor pass. The dictionary is keyed by doctrine triggers (regex over question+thesis+frame) and yields purely-lexical synonyms (e.g. `legislative_omission` → `מחדל חקיקתי`, `חובה לחוקק`, `סעד החובה לחוקק`, `הסדר ראשוני`). No document-specific hardcoding. Synonyms append after the planner's terms and are capped to 5 total.
+## Perplexity scholarship allowance
 
-Telemetry on the concept layer: `expanded_terms`, `expansion_hits`.
-
-## Existing recall layers (preserved)
-
-- A: per-claim anchor reserve (now per-layer in F).
-- B: cold-HNSW vector warmup + 57014 retry in `localVector`.
-- C: approved_web stub filter (`isApprovedWebStub`).
-- D: anchor-driven Perplexity queries (gov hosts for factual, scholarship subset for concept) when local recall is thin or scholarship required.
-- E: primary-law preservation — when `requiresBindingLaw(claim) && primaryLocalCount<2`, only primary anchors compete for the reserve.
-
-## Vector path
-
-`localVector` threshold `0.35`. `makeInstrumentedEmbed` captures `embed_health`. `vectorWarmup` fires once before any per-claim/anchor RPC.
+`approvedWeb` accepts `allowScholarship=true` when `claim.required_evidence` includes `scholarship` or `doctrinal_definition`. The system prompt then adds `source_type:"scholarship"` to the allowed enum with a whitelist hint (lawjournal.huji.ac.il, law.tau.ac.il, mishpatim.tau.ac.il, idclawreview.com). TIER_A domain filter already permits these hosts.
 
 ## Files
 
-`core/types.ts` (`PlanV1.concept_anchor_terms`), `core/prompts.ts` (rule 13 — alternate phrasing instruction), `core/retrieval.ts` (per-layer reserve, doctrine expansion, vector path, approved_web extensions), `core/runCore.ts` (telemetry pass-through), `_shared/legalDoctrineSynonyms.ts` (new `legislative_omission` entry).
+`core/types.ts` (`PlanV1.concept_anchor_terms`), `core/prompts.ts` (rule 13 + schema), `core/retrieval.ts` (anchor merge, vector floor 0.35, approvedWeb signature), `core/runCore.ts` (instrumented embed + embed_health metadata).
 
-## Verification signals in qa_logs.metadata.core.retrieval
+## Verification signals in qa_logs
 
-- `anchor_slots_used_per_claim[*].anchor_layers_used` includes `"concept"` on at least one claim of a doctrinal question.
-- `concept_anchor_candidates.expanded_terms` and `expansion_hits` non-empty when triggers fire.
-- `concept_anchor_candidates.injected_into_claims > 0` for doctrinal questions.
-- Factual-only questions still show `["factual"]` with `anchor_kept` up to 2.
+- `metadata.core.embed_health.ok > 0` — vector path actually firing
+- `metadata.core.retrieval.per_claim[*].local_vector_count > 0` — HNSW returning hits
+- `plan.concept_anchor_terms` non-empty for any doctrinal question

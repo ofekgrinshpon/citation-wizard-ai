@@ -7,11 +7,8 @@ import type { PlanV1 } from "./types.ts";
 import { PLANNER_SYSTEM, PLANNER_USER } from "./prompts.ts";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
-// Planning is a constrained JSON-extraction task — gpt-5-mini handles PlanV1
-// reliably and the heavier gpt-5 was hitting the 90s timeout on Deep queries
-// with the expanded prompt. Drafter still uses the stronger model elsewhere.
-const MODEL = "openai/gpt-5-mini";
-const TIMEOUT_MS = 75_000;
+const MODEL = "openai/gpt-5";
+const TIMEOUT_MS = 90_000;
 
 export interface PlanArgs {
   question: string;
