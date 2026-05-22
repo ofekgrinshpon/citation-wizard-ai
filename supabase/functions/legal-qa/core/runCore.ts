@@ -1039,6 +1039,13 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
           reconciliation: sourceRequirementsReconciliation,
         }
       : null,
+    doctrine_classifier: classification
+      ? {
+          ...classification,
+          forced_doctrine_ids: forcedDoctrineIds,
+          threshold: CLASSIFIER_CONFIDENCE_THRESHOLD,
+        }
+      : { error: classifierError ?? "unavailable" },
     acceptance_errors: acceptanceErrors,
     stage_runs: stageRuns,
     total_duration_ms: Date.now() - tStart,
