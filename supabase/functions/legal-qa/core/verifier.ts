@@ -303,9 +303,11 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
     }
     const doctrine = claim.search_targets[0]?.doctrine || plan.doctrinal_frame;
 
-    // Estimate what the legacy chunked verifier would have done.
+    // Estimate what the legacy chunked verifier would have done, plus naive bounds.
     const legacyCallsForClaim = Math.ceil(pack.candidates.length / LEGACY_CHUNK);
     callsBeforeEstimate += legacyCallsForClaim;
+    candidateCountTotal += pack.candidates.length;
+    nonemptyPackCount += 1;
 
     // ── Attempt 1: single batched call (capped at MAX_BATCH) ──────────────
     const batch = pack.candidates.slice(0, MAX_BATCH);
