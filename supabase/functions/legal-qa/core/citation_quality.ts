@@ -20,6 +20,7 @@ import type {
   RemovedCitation,
 } from "./types.ts";
 import { buildFootnotes } from "./footnotes.ts";
+import { dedupeKeyForCaselaw } from "./citationCleanup.ts";
 import type { LedgerEntry, LedgerResult } from "./types.ts";
 
 // ── Host-based declared_type inference ────────────────────────────────────
