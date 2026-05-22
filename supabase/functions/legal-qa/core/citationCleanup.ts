@@ -354,3 +354,19 @@ export function parsePipeArtifact(text: string): PipeParseResult {
   return out;
 }
 
+// ─── Caselaw dedupe key ──────────────────────────────────────────────────
+// Build a stable key for a caselaw citation from its prefix + docket so
+// duplicate ledger sources that render the same authority (e.g. a PDF stub
+// and a bare reference to the same case) can be merged. Returns null when
+// no docket is extractable.
+export function dedupeKeyForCaselaw(text: string | undefined): string | null {
+  if (!text) return null;
+  const dk = extractDocketFromText(text);
+  if (!dk) return null;
+  const prefix = dk.prefix.replace(/["״׳']/g, "").trim();
+  const docket = dk.docket.trim();
+  if (!prefix || !docket) return null;
+  return `${prefix}|${docket}`.toLowerCase();
+}
+
+
