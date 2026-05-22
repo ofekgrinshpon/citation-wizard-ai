@@ -73,7 +73,15 @@ export interface VerifyTelemetry {
   prompt_tokens?: number;
   completion_tokens?: number;
   total_tokens?: number;
+  // Quality / safety counters
+  missing_verdict_count: number;              // sum over claims of (candidates − parsed verdicts) after final attempt
+  malformed_batch_count: number;              // batch calls where the LLM returned a non-JSON or non-array body
+  zero_parseable_verdict_claim_count: number; // claims whose batch call returned 0 usable verdicts
+  http_error_count: number;                   // non-2xx responses from the gateway
+  json_parse_error_count: number;             // JSON.parse failures on the gateway body
+  batch_fallback_count: number;               // claims that fell back to legacy chunked verification
 }
+
 
 export interface VerifyResult {
   per_claim: ClaimVerification[];
