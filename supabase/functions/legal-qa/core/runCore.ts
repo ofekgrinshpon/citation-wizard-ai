@@ -37,6 +37,12 @@ import {
   type SourceRequirementsReconciliation,
 } from "./sourceRequirements.ts";
 import {
+  classifyDoctrines,
+  CLASSIFIER_TO_SR_DOCTRINE,
+  CLASSIFIER_CONFIDENCE_THRESHOLD,
+  type DoctrineClassification,
+} from "./doctrineClassifier.ts";
+import {
   extractDocketFromText,
   extractPartiesFromText,
   extractCaseFieldsFromLedgerSource,
