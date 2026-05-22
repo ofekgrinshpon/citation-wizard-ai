@@ -275,16 +275,64 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   // ─── 5. Drafter ────────────────────────────────────────────────────────
   emitSafe(onStage, "draft", "running");
   const tDr = Date.now();
+  const drafterTimeoutMs = args.drafterTimeoutMs ?? 90_000;
   let draftRes;
   try {
-    draftRes = await draft({ plan, ledger, lovableApiKey: LOVABLE_API_KEY, signal });
+    draftRes = await draft({ plan, ledger, lovableApiKey: LOVABLE_API_KEY, signal, timeoutMs: drafterTimeoutMs });
   } catch (e) {
-    recordStage({ stage: "draft", duration_ms: Date.now() - tDr, status: "error", error: (e as Error).message });
+    const err = e as Error & {
+      aborted_by_timeout?: boolean;
+      timeout_ms?: number;
+      prompt_chars?: number;
+      ledger_source_count?: number;
+      model?: string;
+      reasoning_effort?: string;
+    };
+    const draftDuration = Date.now() - tDr;
+    const isTimeout = !!err.aborted_by_timeout;
+    const reason = isTimeout
+      ? `drafter_timeout_${Math.round((err.timeout_ms ?? drafterTimeoutMs) / 1000)}s`
+      : `draft_threw:${err.message}`;
+    recordStage({
+      stage: "draft",
+      duration_ms: draftDuration,
+      status: "error",
+      error: reason,
+      ...(err.model ? { model: err.model } : {}),
+    });
     emitSafe(onStage, "draft", "complete", "error");
+    const ledgerSummary = {
+      supported: ledger.entries.filter(e => e.status === "supported").map(e => e.claim_id),
+      hedged: ledger.entries.filter(e => e.status === "hedged").map(e => e.claim_id),
+      unsupported: ledger.unsupported_claim_ids,
+      source_count: ledger.entries.reduce((n, e) => n + e.sources.length, 0),
+      claim_count: ledger.entries.length,
+    };
+    const drafterTelemetry = {
+      model: err.model ?? null,
+      reasoning_effort: err.reasoning_effort ?? null,
+      timeout_ms: err.timeout_ms ?? drafterTimeoutMs,
+      aborted_by_timeout: isTimeout,
+      duration_ms: draftDuration,
+      prompt_chars: err.prompt_chars ?? null,
+      ledger_source_count: err.ledger_source_count ?? ledgerSummary.source_count,
+      error: err.message,
+    };
     return {
-      ok: false, fallbackReason: `draft_threw:${(e as Error).message}`,
-      answer: "", footnotes: [], citations: [],
-      metadata: { core: { stage_runs: stageRuns, plan } },
+      ok: false,
+      fallbackReason: reason,
+      answer: "",
+      footnotes: [],
+      citations: [],
+      metadata: {
+        core: {
+          stage_runs: stageRuns,
+          plan,
+          ledger: ledgerSummary,
+          drafter: drafterTelemetry,
+          fallbackReason: reason,
+        },
+      },
     };
   }
   recordStage({
