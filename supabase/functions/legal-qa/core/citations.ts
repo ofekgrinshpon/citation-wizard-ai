@@ -446,7 +446,7 @@ export function buildCitationForSource(
       for (const f of res.missingFields) errors.push(`missing:${f}`);
       // Salvage attempt: if a partial citation existed, fall back to passthrough
       // so the QA pass can decide what to do (will mark quality=partial).
-      const pt = passthroughCitation(ls);
+      const pt = passthroughCitation(ls, hints.localDocMeta);
       if (pt.text && pt.quality !== "failed") {
         canonical = pt.text;
         quality = "partial";
@@ -456,7 +456,7 @@ export function buildCitationForSource(
     }
   } else {
     engine_used = "passthrough";
-    const pt = passthroughCitation(ls);
+    const pt = passthroughCitation(ls, hints.localDocMeta);
     canonical = pt.text;
     quality = pt.quality;
     for (const e of pt.errors) errors.push(e);
