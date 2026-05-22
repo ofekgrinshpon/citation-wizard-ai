@@ -79,6 +79,20 @@ export interface FactualAnchorTelemetry {
   injected_into_claims: number;
 }
 
+export interface CandidateAuditEntry {
+  candidate_id: CandidateId;
+  claim_id: ClaimId;
+  document_id?: string;
+  title: string;
+  source_type: string;
+  origin: CandidateOrigin;
+  url?: string;
+  kept: boolean;
+  drop_reason?: string;
+  section_query?: string;
+  promoted_from_web?: boolean;
+}
+
 export interface RetrievalResult {
   packs: ClaimRetrievalPack[];
   authority_resolutions: AuthorityResolution[];
@@ -87,6 +101,7 @@ export interface RetrievalResult {
   web_global_cap_hit: boolean;
   duration_ms: number;
   factual_anchors?: FactualAnchorTelemetry;
+  candidates_audit?: CandidateAuditEntry[];
 }
 
 export interface RetrieveArgs {
