@@ -25,7 +25,7 @@ import { DRAFTER_SYSTEM, DRAFTER_USER } from "./prompts.ts";
 const MODEL = "openai/gpt-5";
 const REASONING_EFFORT: "minimal" | "low" | "medium" | "high" = "low";
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const TIMEOUT_MS = 90_000;
+const TIMEOUT_MS = 180_000;
 const MAX_SNIPPET_CHARS = 600;
 
 const INSUFFICIENT_SENTENCE =

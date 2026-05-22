@@ -29,36 +29,41 @@ const HEADER_BY_MODE: Record<NonNullable<Props["mode"]>, string> = {
 // Stage-label overrides per mode. Keeps backend stage IDs untouched and
 // lets the UI re-skin the same Deep pipeline for academic chapter writes.
 const ACADEMIC_LABEL_OVERRIDES: Record<string, string> = {
+  plan: "ניתוח שאלת הפרק",
   frame: "ניתוח שאלת הפרק",
   decompose: "פירוק טענות הפרק",
+  retrieval: "אחזור מקורות אקדמיים",
   retrieve: "אחזור מקורות אקדמיים",
   rerank: "דירוג מקורות לפרק",
   source_pack: "בחירת מקורות לפרק",
+  verify: "אימות מקורות",
+  ledger: "בניית מאגר טענות",
   claim_map: "מיפוי טענות הפרק",
+  draft: "כתיבת טיוטת הפרק",
   drafter: "כתיבת טיוטת הפרק",
   anchor_pass: "עיגון הציטוטים בפרק",
+  enrich_citations: "העשרת ציטוטים",
   coverage_gap: "בדיקת כיסוי הפרק",
   statute_completion: "השלמת חקיקה",
   footnote_validate: "אימות הערות שוליים",
+  post_processing: "עיבוד סופי",
 };
 
 // Expected stage sequences per mode — mirrors emitStage calls in
-// supabase/functions/legal-qa/index.ts. Used only as a denominator for the
-// progress bar; extra unexpected stages are absorbed by max().
+// supabase/functions/legal-qa/core/runCore.ts. Used only as a denominator
+// for the progress bar; extra unexpected stages are absorbed by max().
 const EXPECTED_STAGES: Record<NonNullable<Props["mode"]>, string[]> = {
   research_fast: [
-    "frame", "decompose", "retrieve", "rerank", "source_pack",
-    "drafter", "anchor_pass", "footnote_validate",
+    "plan", "retrieval", "verify", "ledger",
+    "draft", "enrich_citations", "post_processing",
   ],
   research_deep: [
-    "frame", "decompose", "retrieve", "rerank", "source_pack",
-    "claim_map", "drafter", "anchor_pass",
-    "coverage_gap", "statute_completion", "footnote_validate",
+    "plan", "retrieval", "verify", "ledger",
+    "draft", "enrich_citations", "post_processing",
   ],
   academic_chapter: [
-    "frame", "decompose", "retrieve", "rerank", "source_pack",
-    "claim_map", "drafter", "anchor_pass",
-    "coverage_gap", "statute_completion", "footnote_validate",
+    "plan", "retrieval", "verify", "ledger",
+    "draft", "enrich_citations", "post_processing",
   ],
 };
 
@@ -69,12 +74,14 @@ const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n
 // "stages-completed / total-stages" ratio jumps to 80-90% within the first
 // 10-15s and then sits there for the entire generation. Instead we carve
 // the bar into bands that reflect real wall-clock weight:
-//   0–40%   pre-drafter pipeline (frame → source_pack / claim_map)
+//   0–40%   pre-drafter pipeline (plan → ledger)
 //   40–90%  drafter — interpolated by streaming draft length while running
-//   90–98%  post-drafter passes (anchor, coverage, statute, footnote_validate)
+//   90–98%  post-drafter passes (enrich_citations, post_processing, ...)
 //   98–100% reserved until the `final` SSE event arrives (isComplete)
-const DRAFTER_STAGE = "drafter";
+const DRAFTER_STAGE = "draft";
 const POST_DRAFTER_STAGES = new Set([
+  "enrich_citations",
+  "post_processing",
   "anchor_pass",
   "coverage_gap",
   "statute_completion",
