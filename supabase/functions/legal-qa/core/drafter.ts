@@ -192,6 +192,12 @@ export async function draft(args: DraftArgs): Promise<DraftResult> {
     }
     const data = await res.json();
     raw = (data?.choices?.[0]?.message?.content ?? "").toString();
+  } catch (e) {
+    const isAbort = (e as Error)?.name === "AbortError" || /aborted/i.test((e as Error)?.message ?? "");
+    if (isAbort && selfTimedOut) {
+      throw new Error(`drafter_timeout_${Math.round(TIMEOUT_MS / 1000)}s`);
+    }
+    throw e;
   } finally {
     clearTimeout(timer);
     signal?.removeEventListener("abort", onAbort);
