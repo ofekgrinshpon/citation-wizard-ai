@@ -314,17 +314,6 @@ async function promoteWebCandidates(
 }
 
 
-  const flat = searchTargetTerms.flat().filter(Boolean);
-  for (const t of flat) {
-    const next = [...parts, t].join(" • ");
-    if (next.length > VECTOR_QUERY_MAX_CHARS) break;
-    if (!parts.includes(t)) parts.push(t);
-  }
-  if (parts.length === 0) parts.push(doctrine);
-  let out = parts.join(" • ");
-  if (out.length > VECTOR_QUERY_MAX_CHARS) out = out.slice(0, VECTOR_QUERY_MAX_CHARS);
-  return out;
-}
 
 // Extract a docket-like token from a string: "ע"א 4628/93", "בג"ץ 2935/13".
 const DOCKET_RE = /(?:ע["״]?א|רע["״]?א|בג["״]?ץ|בש["״]?א|דנ["״]?א|ה?פ|ע["״]?פ|רע["״]?פ)\s*\d{1,5}[\/-]\d{2,4}/g;
