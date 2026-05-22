@@ -87,6 +87,7 @@ export interface Verdict {
   support: Support;
   rationale: string;
   pinpoint?: string;
+  confidence?: number;
 }
 
 export interface VerificationResult {
