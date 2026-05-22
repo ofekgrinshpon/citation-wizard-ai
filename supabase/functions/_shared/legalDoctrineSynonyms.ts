@@ -103,19 +103,6 @@ export const DOCTRINE_SYNONYMS: DoctrineSynonymEntry[] = [
       "צפיות הנזק",
     ],
   },
-  {
-    id: "legislative_omission",
-    trigger: /(מחדל\s*חקיקתי|חובה\s*לחוקק|חסר\s*נורמטיבי|חקיקה\s*לוקה)/,
-    synonyms: [
-      "מחדל חקיקתי",
-      "מחדל חקיקתי חלקי",
-      "חובה לחוקק",
-      "סעד החובה לחוקק",
-      "חסר נורמטיבי",
-      "חקיקה לוקה בחסר",
-      "חובות הגנה חיוביות",
-    ],
-  },
 ];
 
 export interface ExpandedTerms {

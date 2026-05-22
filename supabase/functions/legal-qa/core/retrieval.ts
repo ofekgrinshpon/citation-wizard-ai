@@ -19,7 +19,6 @@
 
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { TIER_A_DOMAIN_FILTER, citationTier } from "../approvedDomains.ts";
-import { expandDoctrineTerms } from "../../_shared/legalDoctrineSynonyms.ts";
 import type {
   AuthorityId,
   CandidateId,
@@ -79,20 +78,6 @@ export interface FactualAnchorTelemetry {
   injected_into_claims: number;
 }
 
-export interface CandidateAuditEntry {
-  candidate_id: CandidateId;
-  claim_id: ClaimId;
-  document_id?: string;
-  title: string;
-  source_type: string;
-  origin: CandidateOrigin;
-  url?: string;
-  kept: boolean;
-  drop_reason?: string;
-  section_query?: string;
-  promoted_from_web?: boolean;
-}
-
 export interface RetrievalResult {
   packs: ClaimRetrievalPack[];
   authority_resolutions: AuthorityResolution[];
@@ -101,7 +86,6 @@ export interface RetrievalResult {
   web_global_cap_hit: boolean;
   duration_ms: number;
   factual_anchors?: FactualAnchorTelemetry;
-  candidates_audit?: CandidateAuditEntry[];
 }
 
 export interface RetrieveArgs {
@@ -188,132 +172,6 @@ function pickVectorQuery(searchTargetTerms: string[][], doctrine: string): strin
   if (out.length > VECTOR_QUERY_MAX_CHARS) out = out.slice(0, VECTOR_QUERY_MAX_CHARS);
   return out;
 }
-
-// ── Statute-section helpers (generic, no hardcoded laws/sections) ──────────
-function stripSectionPrefix(s: string): string {
-  return (s || "").replace(/^\s*(?:סעיף|ס['׳])\s*/, "").trim();
-}
-
-function sectionVariants(rawSection: string): string[] {
-  const s = stripSectionPrefix(rawSection);
-  if (!s) return [];
-  const v = new Set<string>();
-  v.add(s);
-  v.add(`סעיף ${s}`);
-  v.add(`ס' ${s}`);
-  // Digits + optional Hebrew suffix letter, e.g. "428א" / "428 א".
-  const m = s.match(/^(\d+)\s*([א-ת]?)$/);
-  if (m) {
-    const n = m[1];
-    const letter = m[2] || "";
-    v.add(`${n}${letter}`);
-    if (letter) {
-      v.add(`${n} ${letter}`);
-      v.add(`סעיף ${n}${letter}`);
-      v.add(`ס' ${n}${letter}`);
-    }
-  }
-  return [...v];
-}
-
-function buildSectionQueries(section: string, lawName: string): string[] {
-  const variants = sectionVariants(section);
-  const law = (lawName || "").trim();
-  const out: string[] = [];
-  for (const v of variants) {
-    if (law) {
-      out.push(`${v} ל${law}`);
-      out.push(`${v} ${law}`);
-    } else {
-      out.push(v);
-    }
-  }
-  return [...new Set(out.map((q) => q.slice(0, TEXT_QUERY_MAX_CHARS)))].slice(0, 4);
-}
-
-async function findSectionChunkContent(
-  client: SupabaseClient,
-  documentId: string,
-  section: string,
-): Promise<string | null> {
-  for (const v of sectionVariants(section)) {
-    try {
-      const { data } = await client
-        .from("legal_document_chunks")
-        .select("content")
-        .eq("document_id", documentId)
-        .ilike("content", `%${escIlike(v)}%`)
-        .order("chunk_index", { ascending: true })
-        .limit(1);
-      const c = (data || [])[0]?.content;
-      if (c && typeof c === "string" && c.trim()) return c;
-    } catch { /* try next variant */ }
-  }
-  return null;
-}
-
-// ── Web → local DB promotion (URL match against legal_documents) ──────────
-interface LocalDocRow {
-  id: string;
-  title?: string;
-  citation?: string;
-  source_type?: string;
-  source_url?: string;
-  pdf_url?: string;
-  content?: string;
-}
-
-async function tryMatchLocalByUrl(
-  client: SupabaseClient,
-  url: string,
-): Promise<LocalDocRow | null> {
-  try {
-    const cols = "id,title,citation,source_type,source_url,pdf_url,content";
-    const { data: a } = await client
-      .from("legal_documents")
-      .select(cols)
-      .eq("source_url", url)
-      .limit(1);
-    if (a && a.length > 0) return a[0] as LocalDocRow;
-    const { data: b } = await client
-      .from("legal_documents")
-      .select(cols)
-      .eq("pdf_url", url)
-      .limit(1);
-    if (b && b.length > 0) return b[0] as LocalDocRow;
-  } catch { /* ignore */ }
-  return null;
-}
-
-async function promoteWebCandidates(
-  client: SupabaseClient,
-  webHits: CandidateSource[],
-): Promise<CandidateSource[]> {
-  if (webHits.length === 0) return webHits;
-  const out: CandidateSource[] = [];
-  for (const w of webHits) {
-    if (!w.url) { out.push(w); continue; }
-    const local = await tryMatchLocalByUrl(client, w.url);
-    if (!local) { out.push(w); continue; }
-    out.push({
-      ...w,
-      document_id: local.id,
-      title: (local.title || w.title || "").trim(),
-      citation: (local.citation || w.citation || "").trim(),
-      source_type: local.source_type || w.source_type || "",
-      url: local.source_url || local.pdf_url || w.url,
-      snippet: ((local.content || w.snippet) || "").slice(0, 600),
-      metadata: {
-        ...(w.metadata || {}),
-        promoted_from_web: true,
-        original_web_url: w.url,
-      },
-    });
-  }
-  return out;
-}
-
-
 
 // Extract a docket-like token from a string: "ע"א 4628/93", "בג"ץ 2935/13".
 const DOCKET_RE = /(?:ע["״]?א|רע["״]?א|בג["״]?ץ|בש["״]?א|דנ["״]?א|ה?פ|ע["״]?פ|רע["״]?פ)\s*\d{1,5}[\/-]\d{2,4}/g;
@@ -495,22 +353,6 @@ async function exactAuthority(
       /* swallow */
     }
   }
-
-  // When the authority targets a specific section of a statute/regulation,
-  // replace the head-of-document snippet with the chunk containing that
-  // section. Generic for any section number/letter and any statute.
-  if (auth.section && out.length > 0) {
-    for (const c of out) {
-      if (!c.document_id) continue;
-      const sectionContent = await findSectionChunkContent(client, c.document_id, auth.section);
-      if (sectionContent) {
-        c.snippet = sectionContent.slice(0, 800);
-        (c.metadata as Record<string, unknown>).section_query = auth.section;
-        (c.metadata as Record<string, unknown>).snippet_source = "section_chunk";
-      }
-    }
-  }
-
   return out;
 }
 
@@ -712,42 +554,24 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     ...(Array.isArray(plan.factual_anchor_terms) ? plan.factual_anchor_terms : []),
     ...(Array.isArray((plan as any).concept_anchor_terms) ? (plan as any).concept_anchor_terms : []),
   ];
-
-  // Doctrine-synonym expansion. Triggered on the joined doctrinal frame +
-  // thesis + raw anchors. Lets a doctrinal phrase from the question
-  // ("מחדל חקיקתי") pull in synonymous framings ("חובה לחוקק", "חסר נורמטיבי")
-  // that local titles may actually use.
-  const synonymHay = [
-    plan.doctrinal_frame || "",
-    plan.thesis || "",
-    ...rawAnchors.filter((t): t is string => typeof t === "string"),
-  ].join(" \n ");
-  const expansion = expandDoctrineTerms(synonymHay);
-
   const anchorTerms = Array.from(
     new Set(
-      [...rawAnchors, ...expansion.synonyms]
+      rawAnchors
         .map((t) => (typeof t === "string" ? t.trim() : ""))
         .filter((t) => t.length >= 2 && t.length <= TEXT_QUERY_MAX_CHARS),
     ),
-  ).slice(0, 12);
+  ).slice(0, 10);
 
   const anchorPool: CandidateSource[] = [];
-  const anchorTelemetry: FactualAnchorTelemetry & {
-    synonym_hits?: string[];
-    synonym_added?: string[];
-  } = {
+  const anchorTelemetry: FactualAnchorTelemetry = {
     terms: anchorTerms,
     text_candidates: 0,
     vector_candidates: 0,
     total_unique: 0,
     injected_into_claims: 0,
-    synonym_hits: expansion.hits,
-    synonym_added: expansion.synonyms,
   };
 
   if (anchorTerms.length > 0) {
-    // Run FTS per anchor term separately (each term gets its own focused query).
     const textRuns = await Promise.all(
       anchorTerms.map((term) =>
         limiter(() => localText(adminClient, term, "C0" as ClaimId)),
@@ -756,16 +580,10 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const flatText = textRuns.flat();
     anchorTelemetry.text_candidates = flatText.length;
 
-    // Vector pre-pass runs per term too, so a short doctrinal phrase isn't
-    // diluted inside a long joined string. Cap to first 6 terms to bound cost.
-    const vecRuns = embed
-      ? await Promise.all(
-          anchorTerms.slice(0, 6).map((term) =>
-            limiter(() => localVector(adminClient, term, "C0" as ClaimId, embed)),
-          ),
-        )
+    const vecQuery = anchorTerms.join(" • ").slice(0, VECTOR_QUERY_MAX_CHARS);
+    const vecHits = embed
+      ? await limiter(() => localVector(adminClient, vecQuery, "C0" as ClaimId, embed))
       : [];
-    const vecHits = vecRuns.flat();
     anchorTelemetry.vector_candidates = vecHits.length;
 
     const seen = new Set<string>();
@@ -779,30 +597,6 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     anchorTelemetry.total_unique = anchorPool.length;
   }
 
-  // Per-candidate audit log (kept and dropped) for diagnostics.
-  const candidates_audit: CandidateAuditEntry[] = [];
-  const recordAudit = (
-    c: CandidateSource,
-    kept: boolean,
-    drop_reason?: string,
-  ) => {
-    const md = (c.metadata || {}) as Record<string, unknown>;
-    candidates_audit.push({
-      candidate_id: c.candidate_id,
-      claim_id: c.claim_id,
-      document_id: c.document_id,
-      title: c.title || "",
-      source_type: c.source_type || "",
-      origin: c.origin,
-      url: c.url,
-      kept,
-      drop_reason,
-      section_query: typeof md.section_query === "string" ? (md.section_query as string) : undefined,
-      promoted_from_web: md.promoted_from_web === true || undefined,
-    });
-  };
-
-
 
   for (const claim of plan.claims) {
     const terms = claim.search_targets.map((t) => t.hebrew_terms);
@@ -813,25 +607,6 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const linkedAuths = claim.supporting_authorities
       .map((id) => authMap.get(id))
       .filter((a): a is ExpectedAuthority => !!a);
-
-    // Statute-section focused text queries. When a linked authority is a
-    // statute/regulation WITH a section, build "סעיף X ל<law>" style queries
-    // (generic — no hardcoded laws). Lets retrieval surface the precise
-    // section chunk even when the planner's general text query misses it.
-    const sectionQueriesSet = new Set<string>();
-    const sectionQueryMeta: Array<{ query: string; auth_id: AuthorityId }> = [];
-    for (const a of linkedAuths) {
-      const isStatuteLike =
-        a.type === "statute" || a.type === "regulation";
-      if (!isStatuteLike || !a.section) continue;
-      for (const q of buildSectionQueries(a.section, a.name)) {
-        if (!sectionQueriesSet.has(q)) {
-          sectionQueriesSet.add(q);
-          sectionQueryMeta.push({ query: q, auth_id: a.id });
-        }
-      }
-    }
-    const sectionQueries = sectionQueryMeta.slice(0, 4);
 
     // Allowed web candidates for THIS claim — bounded by per-claim cap AND
     // remaining global budget. approved_web is a first-class parallel origin,
@@ -846,14 +621,11 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const allowScholarship = Array.isArray(claim.required_evidence)
       && claim.required_evidence.some((k) => k === "scholarship" || k === "doctrinal_definition");
 
-    // All origins fire in parallel.
-    const [textHits, vecHits, exactGroups, sectionGroups, webResult] = await Promise.all([
+    // All four origins fire in parallel.
+    const [textHits, vecHits, exactGroups, webResult] = await Promise.all([
       limiter(() => localText(adminClient, tq, claim.id)),
       embed ? limiter(() => localVector(adminClient, vq, claim.id, embed)) : Promise.resolve([] as CandidateSource[]),
       Promise.all(linkedAuths.map((a) => limiter(() => exactAuthority(adminClient, a, claim.id)))),
-      Promise.all(sectionQueries.map(({ query }) =>
-        limiter(() => localText(adminClient, query, claim.id)),
-      )),
       perplexityKey && webAllowedThisClaim > 0
         ? limiter(() => approvedWeb(perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal, allowScholarship))
         : Promise.resolve<ApprovedWebResult>({
@@ -862,29 +634,11 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
           }),
     ]);
     const exactHits = exactGroups.flat();
-    // Tag section_text candidates with the originating query for telemetry.
-    const sectionHits: CandidateSource[] = sectionGroups.flatMap((group, i) =>
-      group.map((c, j) => ({
-        ...c,
-        candidate_id: `${claim.id}-section_text-${i}-${j}`,
-        metadata: {
-          ...(c.metadata || {}),
-          section_query: sectionQueries[i]?.query,
-          section_query_auth: sectionQueries[i]?.auth_id,
-        },
-      })),
-    );
-
-    const rawWebHits = webResult.candidates.slice(0, webAllowedThisClaim);
-    // Web → local promotion: if a web URL matches a row in legal_documents,
-    // replace web metadata with the local row (title, citation, source_type,
-    // url, snippet). This prevents weak web labels from shadowing a richer
-    // local DB record (academic articles in particular).
-    const webHits = await promoteWebCandidates(adminClient, rawWebHits);
+    const webHits = webResult.candidates.slice(0, webAllowedThisClaim);
     const webHarvest = webResult.telemetry;
     webBudgetRemaining = Math.max(0, webBudgetRemaining - webHits.length);
 
-    // Dedup by document_id / url. Priority: exact > section_text > text > vector > web.
+    // Dedup by document_id / url. Priority: exact > text > vector > web.
     const byKey = new Map<string, CandidateSource>();
     const ingest = (arr: CandidateSource[]) => {
       for (const c of arr) {
@@ -893,7 +647,6 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
       }
     };
     ingest(exactHits);
-    ingest(sectionHits);
     ingest(textHits);
     ingest(vecHits);
     // Factual-anchor pool: re-tag each anchor candidate for THIS claim so the
@@ -919,36 +672,7 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const localKept = all.filter((c) => c.origin !== "approved_web");
     const localBudget = Math.max(0, PER_CLAIM_CAP - webKept.length);
     const candidates = [...localKept.slice(0, localBudget), ...webKept];
-    const keptIds = new Set(candidates.map((c) => c.candidate_id));
 
-    // Audit: record every candidate considered for this claim (kept or
-    // dropped by per-claim cap / dedup) so downstream diagnostics can see
-    // exactly which document_ids surfaced where and why they didn't ship.
-    const sawByKey = new Set<string>();
-    const allSeen: CandidateSource[] = [];
-    for (const arr of [exactHits, sectionHits, textHits, vecHits, webHits]) {
-      for (const c of arr) {
-        const k = `${c.candidate_id}`;
-        if (sawByKey.has(k)) continue;
-        sawByKey.add(k);
-        allSeen.push(c);
-      }
-    }
-    for (const c of allSeen) {
-      if (keptIds.has(c.candidate_id)) {
-        recordAudit(c, true);
-      } else {
-        // Distinguish dedup loss vs cap loss.
-        const dedupKey = c.document_id || `${c.origin}:${c.url || c.candidate_id}`;
-        const lostToDedup =
-          byKey.has(dedupKey) && byKey.get(dedupKey)?.candidate_id !== c.candidate_id;
-        recordAudit(
-          c,
-          false,
-          lostToDedup ? "deduped" : "per_claim_cap",
-        );
-      }
-    }
 
     const counts: Record<CandidateOrigin, number> = {
       local_text: 0, local_vector: 0, exact_authority: 0, approved_web: 0,
@@ -1007,7 +731,6 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     web_global_cap_hit: webGlobalCapHit,
     duration_ms: Date.now() - t0,
     factual_anchors: anchorTelemetry,
-    candidates_audit,
   };
 }
 

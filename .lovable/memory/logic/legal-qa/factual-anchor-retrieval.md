@@ -1,36 +1,36 @@
 ---
 name: factual-anchor-retrieval
-description: Planner emits factual_anchor_terms (subjects) + concept_anchor_terms (doctrinal phrases); retrieveForPlan pre-pass runs FTS+vector PER TERM with doctrine synonym expansion and injects hits into every claim. Adds statute-section focused queries when authority has a section, replaces exact-authority statute snippet with the chunk containing that section, promotes approved_web hits to local DB rows when URL matches legal_documents, and records per-candidate audit (kept/dropped + reason).
+description: Planner emits factual_anchor_terms (subjects) + concept_anchor_terms (doctrinal phrases) lifted from question; retrieveForPlan pre-pass runs FTS+vector on both and injects hits into every claim. Vector floor lowered to 0.35. defaultEmbed instrumented as embed_health in qa_logs metadata.
 type: feature
 ---
 
-# Retrieval pre-pass + statute-section + web→local promotion
+# Anchor retrieval pre-pass + vector path hardening
 
-## Anchor pre-pass
-- `factual_anchor_terms` (subjects from question) + `concept_anchor_terms` (doctrinal phrases) → merged with `expandDoctrineTerms()` synonyms (general dict in `_shared/legalDoctrineSynonyms.ts`, includes `legislative_omission`: `מחדל חקיקתי → חובה לחוקק / סעד החובה לחוקק / חסר נורמטיבי / חקיקה לוקה בחסר`).
-- FTS runs PER TERM separately (each anchor gets its own focused query); vector pre-pass also per-term, capped to 6 terms.
-- Combined cap raised to 12 unique terms.
+## What
 
-## Statute-section retrieval
-- When a linked authority is type `statute`/`regulation` AND has `section`, build queries `סעיף X ל<law>` / `ס' X <law>` / `X <law>` (generic, no hardcoded laws).
-- `sectionVariants()` normalizes `סעיף 428א` / `ס' 428א` / `428א` / `428 א` / digit+Hebrew-letter combos.
-- `exactAuthority`: when section present, overrides head-of-document snippet with the chunk containing that section via `findSectionChunkContent()` (ILIKE on `legal_document_chunks` per variant, first match by `chunk_index`).
-- New `section_text` candidate stream ingested between `exact` and generic `local_text`.
+`retrieveForPlan` runs a single FTS+vector pre-pass over question-derived anchor terms BEFORE per-claim retrieval, then injects the results into every claim's candidate pool. Two complementary anchor types:
 
-## Web → local promotion
-- `promoteWebCandidates()` runs after Perplexity returns. For each web hit with URL, looks up `legal_documents` by `source_url` or `pdf_url`. On match, swaps title/citation/source_type/url/snippet/document_id with the local row and tags `metadata.promoted_from_web=true` + `original_web_url`. Prevents weak web labels from shadowing richer DB rows (academic articles especially).
+- **`factual_anchor_terms`** — concrete subjects from the question ("דמי חסות", "פרוטקשן", "החברה הערבית"). Surfaces factual reports (Knesset MMM, gov briefs) that doctrinal `search_targets` would miss.
+- **`concept_anchor_terms`** — doctrinal key phrases from the question ("מחדל חקיקתי חלקי", "חובה לחוקק"). Surfaces academic articles/monographs whose titles use a synonymous framing of the doctrine (e.g. "סעד החובה לחוקק" reachable from "חובה לחוקק" even when claims only mention "מחדל חקיקתי").
 
-## Vector floor
-- `match_threshold=0.35` retained for `localVector` (Hebrew text-embedding-3-small@768d typical 0.30-0.55).
+Both are MANDATORY in the planner prompt (rules 12 and 13). Combined cap: 10 unique terms.
 
-## Per-candidate audit
-- `RetrievalResult.candidates_audit: CandidateAuditEntry[]` records every candidate considered (kept/dropped), with `document_id`, `title`, `source_type`, `origin`, `url`, `drop_reason` (`per_claim_cap` | `deduped`), `section_query`, `promoted_from_web`.
-- Surfaced under `qa_logs.metadata.core.retrieval.candidates_audit` (and `.factual_anchors` includes `synonym_hits` / `synonym_added`).
+## Vector path fixes
+
+`core/retrieval.ts` `localVector` — `match_threshold` lowered from **0.55 → 0.35**. At 0.55, 9/10 recent runs returned `local_vector_count=0` across all claims because text-embedding-3-small@768d on Hebrew typically scores 0.30-0.55. The 0.55 quality gate still applies downstream at `assembleSourcePack` for core-tier promotion.
+
+`runCore.ts` `defaultEmbed` replaced with `makeInstrumentedEmbed(health)` — captures `{ calls, ok, failed, missing_key, last_status, last_error, total_latency_ms }` into `qa_logs.metadata.core.embed_health` so we can diagnose 0-vector runs immediately (missing key vs 429 vs no-match).
+
+## Perplexity scholarship allowance
+
+`approvedWeb` accepts `allowScholarship=true` when `claim.required_evidence` includes `scholarship` or `doctrinal_definition`. The system prompt then adds `source_type:"scholarship"` to the allowed enum with a whitelist hint (lawjournal.huji.ac.il, law.tau.ac.il, mishpatim.tau.ac.il, idclawreview.com). TIER_A domain filter already permits these hosts.
 
 ## Files
-`core/retrieval.ts` (all helpers + orchestrator changes), `core/runCore.ts` (audit + anchors in metadata), `_shared/legalDoctrineSynonyms.ts` (legislative_omission entry).
 
-## Verification signals
-- `metadata.core.retrieval.candidates_audit[*]` includes the statute `document_id` with `section_query` set and `kept=true` when section-targeted.
-- `metadata.core.retrieval.factual_anchors.synonym_added` non-empty when doctrine triggers fire.
-- `candidates_audit` shows `promoted_from_web=true` when a web URL was rewritten to a local DB row.
+`core/types.ts` (`PlanV1.concept_anchor_terms`), `core/prompts.ts` (rule 13 + schema), `core/retrieval.ts` (anchor merge, vector floor 0.35, approvedWeb signature), `core/runCore.ts` (instrumented embed + embed_health metadata).
+
+## Verification signals in qa_logs
+
+- `metadata.core.embed_health.ok > 0` — vector path actually firing
+- `metadata.core.retrieval.per_claim[*].local_vector_count > 0` — HNSW returning hits
+- `plan.concept_anchor_terms` non-empty for any doctrinal question
