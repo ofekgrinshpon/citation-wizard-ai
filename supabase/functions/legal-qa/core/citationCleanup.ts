@@ -124,12 +124,33 @@ export function cleanCitationText(input: string): string {
 // Heuristic for uninformative web labels like "[DOC] nevo.co.il".
 const UNINFORMATIVE_TITLE_RE = /^\s*\[(DOC|PDF|HTML)\]\s+[a-z0-9.\-]+\s*$/i;
 const HOST_ONLY_RE = /^\s*(?:https?:\/\/)?(?:www\.)?[a-z0-9.\-]+\.[a-z]{2,}\s*$/i;
+// Court-header / generic Hebrew document prefixes that should never become
+// the citation title (e.g. raw PDF extracts that begin with "בבית המשפט העליון").
+const COURT_HEADER_RE =
+  /^\s*בבית[\s-]*ה?משפט\s+(העליון|המחוזי|השלום|לעניינים|לנוער|לתעבורה|לעבודה|לענייני\s+משפחה|למשפחה|המנהלי|המינהלי|לערעורים)/;
+const GENERIC_DOC_LABELS = new Set([
+  "פסק דין", "פסק-דין", "החלטה", "פרוטוקול",
+  "פרטי מסמך", "ללא כותרת", "מסמך", "ערעור", "בקשה",
+]);
+
+/** Strip leading `[PDF]`, `[DOC]`, `[HTML]` (case-insensitive) prefixes, repeatedly. */
+export function stripDocPrefixes(title: string): string {
+  if (!title) return title;
+  return title.replace(/^(?:\s*\[(?:PDF|DOC|HTML)\]\s*)+/i, "").trim();
+}
+
 export function isUninformativeLabel(title?: string): boolean {
   if (!title) return false;
-  const t = title.trim();
-  if (!t) return false;
-  if (UNINFORMATIVE_TITLE_RE.test(t)) return true;
+  const raw = title.trim();
+  if (!raw) return false;
+  if (UNINFORMATIVE_TITLE_RE.test(raw)) return true;
+  // Strip [PDF]/[DOC]/[HTML] prefixes before evaluating the remainder.
+  const t = stripDocPrefixes(raw);
+  if (!t) return true;
   if (HOST_ONLY_RE.test(t)) return true;
+  if (COURT_HEADER_RE.test(t)) return true;
+  const compact = t.replace(/[.,;:"״׳']/g, "").trim();
+  if (GENERIC_DOC_LABELS.has(compact)) return true;
   return false;
 }
 
@@ -332,4 +353,20 @@ export function parsePipeArtifact(text: string): PipeParseResult {
   out.ok = !!(out.title && (out.author || out.year));
   return out;
 }
+
+// ─── Caselaw dedupe key ──────────────────────────────────────────────────
+// Build a stable key for a caselaw citation from its prefix + docket so
+// duplicate ledger sources that render the same authority (e.g. a PDF stub
+// and a bare reference to the same case) can be merged. Returns null when
+// no docket is extractable.
+export function dedupeKeyForCaselaw(text: string | undefined): string | null {
+  if (!text) return null;
+  const dk = extractDocketFromText(text);
+  if (!dk) return null;
+  const prefix = dk.prefix.replace(/["״׳']/g, "").trim();
+  const docket = dk.docket.trim();
+  if (!prefix || !docket) return null;
+  return `${prefix}|${docket}`.toLowerCase();
+}
+
 

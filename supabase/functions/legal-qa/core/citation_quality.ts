@@ -20,6 +20,7 @@ import type {
   RemovedCitation,
 } from "./types.ts";
 import { buildFootnotes } from "./footnotes.ts";
+import { dedupeKeyForCaselaw } from "./citationCleanup.ts";
 import type { LedgerEntry, LedgerResult } from "./types.ts";
 
 // ── Host-based declared_type inference ────────────────────────────────────
@@ -292,6 +293,62 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
       if (d.reason === "partial_enriched_accepted") summary.partial_enriched_kept++;
     }
   }
+
+  // ─── Caselaw dedupe ────────────────────────────────────────────────────
+  // Among kept caselaw entries, group by docket key (prefix|docket). When
+  // two LS render the same authority (e.g. a PDF stub and a bare reference
+  // to the same case), keep the one with the best citation quality and drop
+  // the rest as `duplicate_case_key`.
+  const qualityRank: Record<string, number> = {
+    ok: 4,
+    partial: 3,
+    needs_review: 2,
+    failed: 1,
+  };
+  function scoreCitation(c: LedgerSourceCitation): number {
+    let s = qualityRank[c.citation_quality] ?? 0;
+    if (c.citation_errors.includes("partial_enriched")) s += 0.5;
+    if (c.canonical_citation && /נ['׳"״]/.test(c.canonical_citation)) s += 0.3;
+    if (c.canonical_citation && /\(\d{4}\)/.test(c.canonical_citation)) s += 0.2;
+    if (c.citation_errors.includes("uninformative_label")) s -= 0.5;
+    if (c.citation_errors.includes("doc_prefix_stripped")) s -= 0.2;
+    return s;
+  }
+  const dedupeGroups = new Map<string, LedgerSourceId[]>();
+  for (const [id, c] of citations) {
+    if (dropped.has(id)) continue;
+    if (c.declared_type !== "caselaw") continue;
+    const key = dedupeKeyForCaselaw(c.canonical_citation) ||
+      dedupeKeyForCaselaw(lsById.get(id)?.title) ||
+      dedupeKeyForCaselaw(lsById.get(id)?.citation);
+    if (!key) continue;
+    const arr = dedupeGroups.get(key) ?? [];
+    arr.push(id);
+    dedupeGroups.set(key, arr);
+  }
+  let duplicates_dropped = 0;
+  for (const [_key, ids] of dedupeGroups) {
+    if (ids.length < 2) continue;
+    const ranked = [...ids].sort((a, b) => {
+      const ca = citations.get(a)!;
+      const cb = citations.get(b)!;
+      return scoreCitation(cb) - scoreCitation(ca);
+    });
+    const [_winner, ...losers] = ranked;
+    for (const lid of losers) {
+      dropped.add(lid);
+      decisions.set(lid, { kept: false, reason: "duplicate_case_key" });
+      summary.failed++;
+      duplicates_dropped++;
+      // Also remove from the kept-tally we incremented above.
+      const cl = citations.get(lid)!;
+      if (cl.citation_quality === "ok") summary.ok = Math.max(0, summary.ok - 1);
+      else if (cl.citation_quality === "partial" || cl.citation_quality === "needs_review") {
+        summary.partial = Math.max(0, summary.partial - 1);
+      }
+    }
+  }
+  (summary as Record<string, unknown>).duplicates_dropped = duplicates_dropped;
 
   // Also pre-strip any marker in the answer whose LS is unknown — either not
   // in the ledger or not in the citations map. This prevents the drafter
