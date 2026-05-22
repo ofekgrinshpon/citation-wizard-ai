@@ -73,7 +73,15 @@ export interface VerifyTelemetry {
   prompt_tokens?: number;
   completion_tokens?: number;
   total_tokens?: number;
+  // Quality / safety counters
+  missing_verdict_count: number;              // sum over claims of (candidates − parsed verdicts) after final attempt
+  malformed_batch_count: number;              // batch calls where the LLM returned a non-JSON or non-array body
+  zero_parseable_verdict_claim_count: number; // claims whose batch call returned 0 usable verdicts
+  http_error_count: number;                   // non-2xx responses from the gateway
+  json_parse_error_count: number;             // JSON.parse failures on the gateway body
+  batch_fallback_count: number;               // claims that fell back to legacy chunked verification
 }
+
 
 export interface VerifyResult {
   per_claim: ClaimVerification[];
@@ -140,6 +148,9 @@ interface JudgeOutcome {
   verdicts: Verdict[];
   usage?: JudgeUsage;
   batch_size: number;
+  http_error: boolean;
+  json_parse_error: boolean;
+  malformed: boolean; // body parsed as JSON but no verdicts array
 }
 
 function clampConfidence(v: unknown): number | undefined {
@@ -173,6 +184,11 @@ async function callJudge(
   const onAbort = () => ctrl.abort();
   signal?.addEventListener("abort", onAbort);
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  const empty = (over: Partial<JudgeOutcome>): JudgeOutcome => ({
+    verdicts: [], batch_size: batch.length,
+    http_error: false, json_parse_error: false, malformed: false,
+    ...over,
+  });
   try {
     const res = await fetch(GATEWAY_URL, {
       method: "POST",
@@ -190,7 +206,7 @@ async function callJudge(
     });
     if (!res.ok) {
       console.error(`[verifier] ${claimId} ${res.status}: ${(await res.text()).slice(0, 300)}`);
-      return { verdicts: [], batch_size: batch.length };
+      return empty({ http_error: true });
     }
     const data = await res.json();
     const raw = data?.choices?.[0]?.message?.content ?? "";
@@ -200,13 +216,19 @@ async function callJudge(
       total_tokens: Number(data.usage.total_tokens) || undefined,
     } : undefined;
     let parsed: any;
+    let jsonParseError = false;
     try { parsed = JSON.parse(raw); }
     catch {
       const s = raw.indexOf("{"); const e = raw.lastIndexOf("}");
-      if (s < 0 || e <= s) return { verdicts: [], usage, batch_size: batch.length };
-      try { parsed = JSON.parse(raw.slice(s, e + 1)); } catch { return { verdicts: [], usage, batch_size: batch.length }; }
+      if (s < 0 || e <= s) return empty({ usage, json_parse_error: true });
+      try { parsed = JSON.parse(raw.slice(s, e + 1)); }
+      catch { return empty({ usage, json_parse_error: true }); }
+      jsonParseError = true; // recovered, but flag it as malformed
     }
-    const arr: RawVerdict[] = Array.isArray(parsed?.verdicts) ? parsed.verdicts : [];
+    if (!parsed || !Array.isArray(parsed.verdicts)) {
+      return empty({ usage, malformed: true, json_parse_error: jsonParseError });
+    }
+    const arr: RawVerdict[] = parsed.verdicts;
     const byId = new Map<string, CandidateSource>(batch.map((c) => [c.candidate_id, c]));
     const out: Verdict[] = [];
     for (const v of arr) {
@@ -222,15 +244,23 @@ async function callJudge(
         confidence: clampConfidence(v.confidence),
       });
     }
-    return { verdicts: out, usage, batch_size: batch.length };
+    return {
+      verdicts: out, usage, batch_size: batch.length,
+      http_error: false, json_parse_error: jsonParseError,
+      malformed: out.length === 0 && arr.length > 0, // returned an array but nothing usable
+    };
   } catch (e) {
     console.error(`[verifier throw] ${claimId}:`, (e as Error).message);
-    return { verdicts: [], batch_size: batch.length };
+    return empty({ http_error: true });
   } finally {
     clearTimeout(timer);
     signal?.removeEventListener("abort", onAbort);
   }
 }
+
+// Coverage threshold: if the batch call returns verdicts for fewer than this
+// fraction of the candidates, we fall back to the legacy chunked verifier.
+const MIN_COVERAGE_BEFORE_FALLBACK = 0.5;
 
 export async function verify(args: VerifyArgs): Promise<VerifyResult> {
   const { plan, packs, lovableApiKey, signal } = args;
@@ -246,6 +276,20 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
   let completionTokens = 0;
   let totalTokens = 0;
   let sawUsage = false;
+  let missingVerdictCount = 0;
+  let malformedBatchCount = 0;
+  let zeroParseableVerdictClaimCount = 0;
+  let httpErrorCount = 0;
+  let jsonParseErrorCount = 0;
+  let batchFallbackCount = 0;
+
+  const absorbUsage = (u?: JudgeUsage) => {
+    if (!u) return;
+    sawUsage = true;
+    promptTokens += u.prompt_tokens ?? 0;
+    completionTokens += u.completion_tokens ?? 0;
+    totalTokens += u.total_tokens ?? 0;
+  };
 
   const tasks = packs.map((pack) => limiter(async (): Promise<ClaimVerification> => {
     const claim = claimById.get(pack.claim_id);
@@ -255,25 +299,65 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
     const doctrine = claim.search_targets[0]?.doctrine || plan.doctrinal_frame;
 
     // Estimate what the legacy chunked verifier would have done.
-    callsBeforeEstimate += Math.ceil(pack.candidates.length / LEGACY_CHUNK);
+    const legacyCallsForClaim = Math.ceil(pack.candidates.length / LEGACY_CHUNK);
+    callsBeforeEstimate += legacyCallsForClaim;
 
-    // Single LLM call per claim, capped at MAX_BATCH candidates.
+    // ── Attempt 1: single batched call (capped at MAX_BATCH) ──────────────
     const batch = pack.candidates.slice(0, MAX_BATCH);
     const outcome = await callJudge(lovableApiKey, pack.claim_id, claim.text, doctrine, batch, signal);
     callsAfter += 1;
     batchSizeSum += outcome.batch_size;
-    if (outcome.usage) {
-      sawUsage = true;
-      promptTokens += outcome.usage.prompt_tokens ?? 0;
-      completionTokens += outcome.usage.completion_tokens ?? 0;
-      totalTokens += outcome.usage.total_tokens ?? 0;
+    absorbUsage(outcome.usage);
+    if (outcome.http_error) httpErrorCount += 1;
+    if (outcome.json_parse_error) jsonParseErrorCount += 1;
+    if (outcome.malformed) malformedBatchCount += 1;
+
+    let verdicts: Verdict[] = [...outcome.verdicts];
+    const coverage = batch.length > 0 ? verdicts.length / batch.length : 1;
+    const needsFallback =
+      outcome.http_error ||
+      outcome.malformed ||
+      verdicts.length === 0 ||
+      coverage < MIN_COVERAGE_BEFORE_FALLBACK;
+
+    if (verdicts.length === 0) zeroParseableVerdictClaimCount += 1;
+
+    // ── Attempt 2: legacy chunked fallback for this claim only ────────────
+    if (needsFallback) {
+      batchFallbackCount += 1;
+      console.warn(
+        `[verifier] fallback ${pack.claim_id}: coverage=${coverage.toFixed(2)} ` +
+        `http_err=${outcome.http_error} malformed=${outcome.malformed} ` +
+        `zero=${verdicts.length === 0}`,
+      );
+      const seenIds = new Set(verdicts.map((v) => v.candidate_id));
+      // Chunk the FULL pack (not just the batch slice) to maximize recovery.
+      for (let i = 0; i < pack.candidates.length; i += LEGACY_CHUNK) {
+        const chunk = pack.candidates.slice(i, i + LEGACY_CHUNK)
+          .filter((c) => !seenIds.has(c.candidate_id));
+        if (chunk.length === 0) continue;
+        const sub = await callJudge(lovableApiKey, pack.claim_id, claim.text, doctrine, chunk, signal);
+        callsAfter += 1;
+        batchSizeSum += sub.batch_size;
+        absorbUsage(sub.usage);
+        if (sub.http_error) httpErrorCount += 1;
+        if (sub.json_parse_error) jsonParseErrorCount += 1;
+        if (sub.malformed) malformedBatchCount += 1;
+        for (const v of sub.verdicts) {
+          if (!seenIds.has(v.candidate_id)) {
+            verdicts.push(v);
+            seenIds.add(v.candidate_id);
+          }
+        }
+      }
     }
-    const verdicts: Verdict[] = [...outcome.verdicts];
 
     // Ensure every candidate gets a verdict; missing → unrelated.
     const seen = new Set(verdicts.map((v) => v.candidate_id));
+    let missingForClaim = 0;
     for (const c of pack.candidates) {
       if (!seen.has(c.candidate_id)) {
+        missingForClaim += 1;
         verdicts.push({
           candidate_id: c.candidate_id,
           support: "unrelated",
@@ -281,6 +365,7 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
         });
       }
     }
+    missingVerdictCount += missingForClaim;
 
     const annot = annotate(pack.candidates, verdicts);
     return {
@@ -314,16 +399,26 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
     prompt_tokens: sawUsage ? promptTokens : undefined,
     completion_tokens: sawUsage ? completionTokens : undefined,
     total_tokens: sawUsage ? totalTokens : undefined,
+    missing_verdict_count: missingVerdictCount,
+    malformed_batch_count: malformedBatchCount,
+    zero_parseable_verdict_claim_count: zeroParseableVerdictClaimCount,
+    http_error_count: httpErrorCount,
+    json_parse_error_count: jsonParseErrorCount,
+    batch_fallback_count: batchFallbackCount,
   };
 
   console.log(
     `[verify] claims=${packs.length} before=${callsBeforeEstimate} after=${callsAfter} ` +
     `avgBatch=${telemetry.verifier_batch_size_avg} dur=${duration_ms}ms ` +
+    `missing=${missingVerdictCount} malformed=${malformedBatchCount} ` +
+    `zero=${zeroParseableVerdictClaimCount} http_err=${httpErrorCount} ` +
+    `json_err=${jsonParseErrorCount} fallback=${batchFallbackCount} ` +
     (sawUsage ? `toks=${totalTokens}` : "toks=n/a"),
   );
 
   return { per_claim, totals, duration_ms, telemetry };
 }
+
 
 function emptyVerification(claim_id: ClaimId): ClaimVerification {
   return {
