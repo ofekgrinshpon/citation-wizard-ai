@@ -288,6 +288,11 @@ export async function draft(args: DraftArgs): Promise<DraftResult> {
     insufficient_sources_sentence_required: insufficientRequired,
     duration_ms: Date.now() - t0,
     model: MODEL,
+    reasoning_effort: REASONING_EFFORT,
+    timeout_ms: effectiveTimeoutMs,
+    aborted_by_timeout: false,
+    prompt_chars: promptChars,
+    ledger_source_count: ledgerSourceCount,
     warnings,
   };
 }
