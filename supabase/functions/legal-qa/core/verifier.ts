@@ -67,8 +67,11 @@ export interface VerifyArgs {
 export interface VerifyTelemetry {
   verifier_batch_size_max: number;
   verifier_batch_size_avg: number;
-  verifier_calls_before_estimate: number;
-  verifier_calls_after: number;
+  verifier_calls_before_estimate: number;      // Σ ceil(candidates_for_claim / 8) — legacy chunked-at-8 behavior
+  verifier_calls_naive_per_candidate: number;  // Σ candidates_for_claim — naive 1-call-per-candidate upper bound
+  verifier_candidate_count_total: number;      // Σ candidates_for_claim (alias, for dashboards)
+  verifier_nonempty_pack_count: number;        // number of claim packs with ≥1 candidate (== min possible calls)
+  verifier_calls_after: number;                // actual LLM verifier calls made
   verifier_duration_ms: number;
   prompt_tokens?: number;
   completion_tokens?: number;
@@ -270,7 +273,9 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
 
   // Telemetry accumulators
   let callsAfter = 0;
-  let callsBeforeEstimate = 0;
+  let callsBeforeEstimate = 0;       // Σ ceil(candidates/8) — legacy chunked baseline
+  let candidateCountTotal = 0;       // Σ candidates — naive per-candidate upper bound
+  let nonemptyPackCount = 0;         // packs with ≥1 candidate (minimum possible calls)
   let batchSizeSum = 0;
   let promptTokens = 0;
   let completionTokens = 0;
@@ -298,9 +303,11 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
     }
     const doctrine = claim.search_targets[0]?.doctrine || plan.doctrinal_frame;
 
-    // Estimate what the legacy chunked verifier would have done.
+    // Estimate what the legacy chunked verifier would have done, plus naive bounds.
     const legacyCallsForClaim = Math.ceil(pack.candidates.length / LEGACY_CHUNK);
     callsBeforeEstimate += legacyCallsForClaim;
+    candidateCountTotal += pack.candidates.length;
+    nonemptyPackCount += 1;
 
     // ── Attempt 1: single batched call (capped at MAX_BATCH) ──────────────
     const batch = pack.candidates.slice(0, MAX_BATCH);
@@ -394,6 +401,9 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
     verifier_batch_size_max: MAX_BATCH,
     verifier_batch_size_avg: callsAfter > 0 ? +(batchSizeSum / callsAfter).toFixed(2) : 0,
     verifier_calls_before_estimate: callsBeforeEstimate,
+    verifier_calls_naive_per_candidate: candidateCountTotal,
+    verifier_candidate_count_total: candidateCountTotal,
+    verifier_nonempty_pack_count: nonemptyPackCount,
     verifier_calls_after: callsAfter,
     verifier_duration_ms: duration_ms,
     prompt_tokens: sawUsage ? promptTokens : undefined,
@@ -408,8 +418,9 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
   };
 
   console.log(
-    `[verify] claims=${packs.length} before=${callsBeforeEstimate} after=${callsAfter} ` +
-    `avgBatch=${telemetry.verifier_batch_size_avg} dur=${duration_ms}ms ` +
+    `[verify] claims=${packs.length} nonempty=${nonemptyPackCount} ` +
+    `before(ceil/8)=${callsBeforeEstimate} naive(per-cand)=${candidateCountTotal} ` +
+    `after=${callsAfter} avgBatch=${telemetry.verifier_batch_size_avg} dur=${duration_ms}ms ` +
     `missing=${missingVerdictCount} malformed=${malformedBatchCount} ` +
     `zero=${zeroParseableVerdictClaimCount} http_err=${httpErrorCount} ` +
     `json_err=${jsonParseErrorCount} fallback=${batchFallbackCount} ` +
