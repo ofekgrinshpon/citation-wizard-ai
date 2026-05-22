@@ -193,12 +193,6 @@ export function buildLedger(args: BuildLedgerArgs): LedgerResult {
         primary: isPrimary(v, meta?.source_type),
       };
     });
-        v,
-        meta,
-        key,
-        primary: isPrimary(v, meta?.source_type),
-      };
-    });
 
     // Group by key, pick survivor per group.
     const groups = new Map<string, Provisional[]>();
