@@ -28,13 +28,35 @@ import {
 } from "./citationCleanup.ts";
 
 // Hosts known to host primary legal materials (mirrors ledger.ts).
-// Host allowlists are owned by core/approvedHosts.ts so retrieval and
-// citation_quality cannot drift (anchor-driven scholarship hosts must be
-// kept, not dropped as off_domain).
-import {
-  PRIMARY_HOSTS,
-  APPROVED_SCHOLARLY_HOSTS,
-} from "./approvedHosts.ts";
+const PRIMARY_HOSTS = [
+  "nevo.co.il",
+  "supreme.court.gov.il",
+  "supremedecisions.court.gov.il",
+  "takdin.co.il",
+  "lite.takdin.co.il",
+  "psakdin.co.il",
+  "din.org.il",
+  "reshumot.gov.il",
+  "fs.knesset.gov.il",
+  "main.knesset.gov.il",
+  "knesset.gov.il",
+  "justice.gov.il",
+];
+
+// Approved Israeli legal-academic hosts (scholarly passthrough).
+const APPROVED_SCHOLARLY_HOSTS = [
+  "mishpatim.huji.ac.il",
+  "iyunim.huji.ac.il",
+  "law.huji.ac.il",
+  "law.tau.ac.il",
+  "law.haifa.ac.il",
+  "law.biu.ac.il",
+  "idi.org.il",
+  "tau.ac.il",
+  "huji.ac.il",
+  "haifa.ac.il",
+  "biu.ac.il",
+];
 
 const STATUTE_TYPES = new Set([
   "legislation",

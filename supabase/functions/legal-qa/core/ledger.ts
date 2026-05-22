@@ -73,23 +73,6 @@ const PRIMARY_SOURCE_TYPES = new Set([
   "published_caselaw",
 ]);
 
-// Pinpoint sanitization. The verifier model sometimes returns meta-phrases
-// like "שורה 1 של הקטע" (a description of WHERE in the snippet it found
-// support) instead of a real bibliographic pinpoint. These leak into the
-// footnote builder as `שם, ב-שורה 1 של הקטע.`. Drop them deterministically.
-const PINPOINT_META_RE = /(שורה|של ה?קטע|בקטע|של ה?snippet|^הקטע$)/i;
-const BARE_DIGITS_RE = /^\s*\d{1,3}\s*$/;
-function sanitizePinpoint(s?: string): string | undefined {
-  if (!s) return undefined;
-  const t = s.trim();
-  if (!t) return undefined;
-  if (t.length > 40) return undefined;
-  if (PINPOINT_META_RE.test(t)) return undefined;
-  // Bare digits with no unit (סעיף/פסקה/עמ'/ס'/ה"ש) — likely garbage from verifier.
-  if (BARE_DIGITS_RE.test(t)) return undefined;
-  return t;
-}
-
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
 function hostOf(url?: string): string {
@@ -144,11 +127,11 @@ export interface BuildLedgerArgs {
   verification: VerifyResult;
   authorityResolutions: AuthorityResolution[];
   /**
-   * Optional map of candidate_id → { source_type, document_id, metadata }. The verifier
+   * Optional map of candidate_id → { source_type, document_id }. The verifier
    * does not carry these forward, so if the runner has them on hand we use
-   * them for richer primary detection + dedup + anchor rescue. Safe to omit.
+   * them for richer primary detection + dedup. Safe to omit.
    */
-  candidateMeta?: Map<string, { source_type?: string; document_id?: string; metadata?: Record<string, unknown> }>;
+  candidateMeta?: Map<string, { source_type?: string; document_id?: string }>;
 }
 
 export function buildLedger(args: BuildLedgerArgs): LedgerResult {
@@ -180,7 +163,7 @@ export function buildLedger(args: BuildLedgerArgs): LedgerResult {
     // Hydrate provisional sources.
     type Provisional = {
       v: AnnotatedVerdict;
-      meta?: { source_type?: string; document_id?: string; metadata?: Record<string, unknown> };
+      meta?: { source_type?: string; document_id?: string };
       key: string;
       primary: boolean;
     };
@@ -189,7 +172,9 @@ export function buildLedger(args: BuildLedgerArgs): LedgerResult {
       const normUrl = normalizeUrl(v.url);
       const key = meta?.document_id ?? normUrl ?? `${v.origin}:${v.candidate_id}`;
       return {
-        v, meta, key,
+        v,
+        meta,
+        key,
         primary: isPrimary(v, meta?.source_type),
       };
     });
@@ -229,7 +214,7 @@ export function buildLedger(args: BuildLedgerArgs): LedgerResult {
       claim_id: claim.id,
       origin: p.v.origin,
       support: p.v.support as "direct" | "partial",
-      pinpoint: sanitizePinpoint(p.v.pinpoint),
+      pinpoint: p.v.pinpoint,
       title: p.v.title,
       citation: p.v.citation,
       url: p.v.url,
@@ -239,7 +224,6 @@ export function buildLedger(args: BuildLedgerArgs): LedgerResult {
       document_id: p.meta?.document_id,
       normalized_key: p.key,
       is_primary: p.primary,
-      metadata: p.meta?.metadata,
     }));
 
     // Sort within claim: primary first, then origin rank, then direct > partial.

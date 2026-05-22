@@ -121,8 +121,6 @@ export interface LedgerSource {
   document_id?: string;
   normalized_key: string;
   is_primary: boolean;
-  /** Optional candidate-origin metadata (anchor layer, anchor_web tag, etc). */
-  metadata?: Record<string, unknown>;
 }
 
 export interface LedgerEntry {

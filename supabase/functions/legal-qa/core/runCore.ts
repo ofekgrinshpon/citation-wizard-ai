@@ -239,7 +239,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   // ─── 4. Ledger ─────────────────────────────────────────────────────────
   emitSafe(onStage, "ledger", "running");
   const tLed = Date.now();
-  const candidateMeta = new Map<string, { source_type?: string; document_id?: string; metadata?: Record<string, unknown> }>();
+  const candidateMeta = new Map<string, { source_type?: string; document_id?: string }>();
   // Richer per-candidate metadata kept locally for enrichment ONLY — does not
   // flow into Planner/Retrieval/Verifier/Ledger. Keyed by candidate_id.
   const candidateRichMeta = new Map<string, {
@@ -252,7 +252,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   }>();
   for (const pack of retrieval.packs) {
     for (const c of pack.candidates) {
-      candidateMeta.set(c.candidate_id, { source_type: c.source_type, document_id: c.document_id, metadata: c.metadata });
+      candidateMeta.set(c.candidate_id, { source_type: c.source_type, document_id: c.document_id });
       const m = (c.metadata || {}) as Record<string, unknown>;
       const pickStr = (k: string): string | undefined => {
         const v = m[k];
@@ -314,14 +314,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   const tDr = Date.now();
   let draftRes;
   try {
-    draftRes = await draft({
-      plan,
-      ledger,
-      lovableApiKey: LOVABLE_API_KEY,
-      signal,
-      timeoutMs: args.drafterTimeoutMs,
-      forceModel: args.forceDrafterModel ?? null,
-    });
+    draftRes = await draft({ plan, ledger, lovableApiKey: LOVABLE_API_KEY, signal });
   } catch (e) {
     recordStage({ stage: "draft", duration_ms: Date.now() - tDr, status: "error", error: (e as Error).message });
     emitSafe(onStage, "draft", "complete", "error");
@@ -899,31 +892,10 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
         approved_web_count: p.approved_web_count,
         approved_web_domains: p.approved_web_domains,
         candidate_ids: p.candidates.map((c) => c.candidate_id),
-        primary_count: p.primary_count ?? 0,
-        secondary_count: p.secondary_count ?? 0,
-        anchor_kept: p.anchor_kept ?? 0,
-        anchor_doc_ids: p.anchor_doc_ids ?? [],
-        anchor_source_types: p.anchor_source_types ?? [],
-        anchor_displaced_primary: p.anchor_displaced_primary ?? false,
-        approved_web_stubs_dropped: p.approved_web_stubs_dropped ?? 0,
-        anchor_web: p.anchor_web ?? null,
       })),
       total_candidates: retrieval.total_candidates,
       total_web_candidates: retrieval.total_web_candidates,
       web_global_cap_hit: retrieval.web_global_cap_hit,
-      // Anchor pre-pass diagnostics — two layers, kept separate.
-      factual_anchor_terms: retrieval.factual_anchors?.terms ?? [],
-      concept_anchor_terms: retrieval.concept_anchors?.terms ?? [],
-      factual_anchor_candidates: retrieval.factual_anchors ?? null,
-      concept_anchor_candidates: retrieval.concept_anchors ?? null,
-      anchor_prepass_total_unique: retrieval.anchor_prepass_total_unique ?? 0,
-      anchor_prepass_document_ids: retrieval.anchor_prepass_document_ids ?? [],
-      vector_health: retrieval.vector_health ?? null,
-      local_metadata_overrides: retrieval.local_metadata_overrides ?? 0,
-      // Section A / C / D aggregated telemetry
-      anchor_slots_used_per_claim: retrieval.anchor_slots_used_per_claim ?? [],
-      approved_web_stubs_dropped_per_claim: retrieval.approved_web_stubs_dropped_per_claim ?? [],
-      approved_web_anchor_queries: retrieval.approved_web_anchor_queries ?? [],
     },
     verification: verification.per_claim.map((cv) => ({
       claim_id: cv.claim_id,

@@ -22,10 +22,10 @@ import type {
 } from "./types.ts";
 import { DRAFTER_SYSTEM, DRAFTER_USER } from "./prompts.ts";
 
-const DEFAULT_MODEL = "openai/gpt-5";
+const MODEL = "openai/gpt-5";
 const REASONING_EFFORT: "minimal" | "low" | "medium" | "high" = "low";
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const DEFAULT_TIMEOUT_MS = 90_000;
+const TIMEOUT_MS = 90_000;
 const MAX_SNIPPET_CHARS = 600;
 
 const INSUFFICIENT_SENTENCE =
@@ -61,8 +61,6 @@ export interface DraftArgs {
   ledger: LedgerResult;
   lovableApiKey: string;
   signal?: AbortSignal;
-  timeoutMs?: number;
-  forceModel?: string | null;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
@@ -141,9 +139,7 @@ function unsupportedLeakCheck(answer: string, plan: PlanV1, ledger: LedgerResult
 
 export async function draft(args: DraftArgs): Promise<DraftResult> {
   const t0 = Date.now();
-  const { plan, ledger, lovableApiKey, signal, timeoutMs, forceModel } = args;
-  const MODEL = (forceModel && forceModel.trim()) ? forceModel.trim() : DEFAULT_MODEL;
-  const TIMEOUT_MS = typeof timeoutMs === "number" && timeoutMs > 0 ? timeoutMs : DEFAULT_TIMEOUT_MS;
+  const { plan, ledger, lovableApiKey, signal } = args;
   const warnings: string[] = [];
 
   const validIds = new Set<LedgerSourceId>(
@@ -164,8 +160,7 @@ export async function draft(args: DraftArgs): Promise<DraftResult> {
   const ctrl = new AbortController();
   const onAbort = () => ctrl.abort();
   signal?.addEventListener("abort", onAbort);
-  let selfTimedOut = false;
-  const timer = setTimeout(() => { selfTimedOut = true; ctrl.abort(); }, TIMEOUT_MS);
+  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
 
   let raw = "";
   try {
@@ -181,7 +176,6 @@ export async function draft(args: DraftArgs): Promise<DraftResult> {
         reasoning_effort: REASONING_EFFORT,
         messages: [
           { role: "system", content: DRAFTER_SYSTEM },
-
           { role: "user", content: userMsg },
         ],
       }),
@@ -192,12 +186,6 @@ export async function draft(args: DraftArgs): Promise<DraftResult> {
     }
     const data = await res.json();
     raw = (data?.choices?.[0]?.message?.content ?? "").toString();
-  } catch (e) {
-    const isAbort = (e as Error)?.name === "AbortError" || /aborted/i.test((e as Error)?.message ?? "");
-    if (isAbort && selfTimedOut) {
-      throw new Error(`drafter_timeout_${Math.round(TIMEOUT_MS / 1000)}s`);
-    }
-    throw e;
   } finally {
     clearTimeout(timer);
     signal?.removeEventListener("abort", onAbort);
