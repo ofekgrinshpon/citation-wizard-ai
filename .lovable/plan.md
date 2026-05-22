@@ -1,67 +1,67 @@
-## Problem
+# Batch Verifier (Priority 1)
 
-The progress bar in `StageProgressList` jumps to ~96% almost immediately and doesn't reflect real backend progress. Two root causes:
+Goal: collapse the verifier from N calls per claim (chunked at 8) to **one call per claim** covering all of its top candidates, while keeping the existing verdict schema, ledger contract, and downstream stages untouched.
 
-1. **Stage-name mismatch.** Today the live pipeline (`supabase/functions/legal-qa/core/runCore.ts`) emits stages named `plan`, `retrieval`, `verify`, `ledger`, `draft`, `enrich_citations`, `post_processing`. But `EXPECTED_STAGES` in `StageProgressList.tsx` lists the *old* names (`frame`, `decompose`, `retrieve`, `rerank`, `source_pack`, `claim_map`, `drafter`, `anchor_pass`, `coverage_gap`, `statute_completion`, `footnote_validate`). No actual stage matches the expected list, and there are no Hebrew labels for the new names either — so the user sees raw English stage IDs.
-2. **Hard 95% floor.** `if (postProcessingLabel) percent = Math.max(percent, 95)`. The dedicated `post_processing` SSE event (emitted by `emitPostProcessing("מאמת הערות שוליים")` in `index.ts:10355`, plus the `onStage("post_processing", …)` from runCore) fires early in the tail of the pipeline and slams the bar to 95–96%, regardless of how much real work remains.
+## Current behavior (`supabase/functions/legal-qa/core/verifier.ts`)
 
-## Plan
+- `verify()` runs per-claim tasks with a concurrency limiter (3).
+- Inside each task, candidates are chunked `MAX_PER_CALL = 8` and `callJudge()` is invoked sequentially per chunk. So a claim with 10–16 candidates triggers 2 LLM calls; very rich claims more.
+- Each `callJudge` is a `gpt-5-mini` JSON call returning `{ verdicts: [{candidate_id, support, rationale, pinpoint?}] }`.
+- Missing verdicts are auto-filled with `unrelated`. `annotate()` + `aggregate()` produce `ClaimVerification`, which is what the ledger consumes.
 
-All changes are frontend-only (UI presentation). No backend pipeline changes.
+## Changes (single file: `verifier.ts`, plus telemetry surface in `runCore.ts`)
 
-### 1. `src/components/StageProgressList.tsx` — rebuild progress logic
+### 1. One call per claim
+- Remove the `for (… i += MAX_PER_CALL)` chunk loop. Send **all** of the pack's candidates to `callJudge` in a single batch.
+- Cap the batch defensively at `MAX_BATCH = 24` (drop tail; tail rarely has signal, and ledger will mark them `unrelated` via the existing missing-verdict fallback). Practically packs already top out around top_n × sources, so this only fires on pathological packs.
+- Tighten prompt budget so one call stays comfortably under context:
+  - `MAX_SNIPPET_CHARS`: keep 1200 for the first 8 candidates, shrink to 700 for candidates 9–16, 450 for 17–24. (Information density drops with rank.)
+  - Snippets are already truncated; just parameterize.
+- Keep `MAX_CONCURRENCY = 3` across claims. Net effect: ~1 LLM call per claim instead of ceil(N/8).
 
-- **New stage manifest.** Replace `EXPECTED_STAGES` with a per-mode ordered list that matches what the backend actually emits today, each entry carrying:
-  - `id` (matches backend `stage` event name)
-  - `label` (Hebrew, user-facing)
-  - `weight` (rough share of total wall-time, summing to 1.0)
-  - `subtitle` (one short sentence shown next to the spinner explaining what's happening)
+### 2. Verdict schema preservation + optional confidence
+- Keep `Verdict { candidate_id, support, rationale, pinpoint? }` exactly as today (don't touch `types.ts`).
+- Add optional `confidence?: number` (0–1) on `Verdict` in `types.ts` only as an optional field — backward compatible; ledger ignores it. Surface it through `AnnotatedVerdict` too.
+- Update `VERIFIER_SYSTEM` / `VERIFIER_USER` in `prompts.ts` to request `"confidence": <0..1>` alongside the existing fields, with explicit instruction: "Return one verdict per candidate. Do not omit candidates."
+- Parser: read `confidence` if present, clamp to [0,1], else leave undefined. Missing-verdict fallback unchanged.
 
-  Example for `research_deep` (using runCore order):
-  ```
-  plan             0.08  "מבין את השאלה ובונה תכנית מחקר"
-  retrieval        0.22  "מאחזר פסיקה, חקיקה ומקורות אקדמיים"
-  verify           0.10  "מסנן ומדרג את המקורות לפי רלוונטיות"
-  ledger           0.05  "בונה מיפוי טענות-מקורות"
-  draft            0.30  "כותב את התשובה ומשלב הערות שוליים"
-  enrich_citations 0.15  "מאמת ומשלים פרטי ציטוטים"
-  post_processing  0.10  "בדיקת איכות סופית ועיגון מקורות"
-  ```
-  Fast / academic_chapter get their own manifests (academic keeps existing override labels; fast collapses to a shorter list).
+### 3. Ledger contract is unchanged
+- `ClaimVerification.aggregates` and per-candidate `support` flow into the ledger exactly as today.
+- `confidence` is additive metadata only — not read by `ledger.ts`. No DB schema change, no UI change, no drafter prompt change.
 
-- **Weighted percent.** Compute `percent = Σ(weight) over completed stages + 0.5·weight of running stage`, clamped to 1–99 until the `final` event arrives (then 100). Drop the `postProcessingLabel → max(_, 95)` floor entirely; the post-processing row contributes its real weight like any other stage.
+### 4. Telemetry
+Extend `VerifyResult` with a `telemetry` block:
 
-- **Smooth animation.** Maintain a `displayedPercent` in state that eases toward the target via `requestAnimationFrame` (≤2% per frame, slower when within 5% of target). This avoids visual jumps when several events arrive back-to-back, and gives a "still working" feel between events.
+```ts
+telemetry: {
+  verifier_batch_size_max: number;          // MAX_BATCH config
+  verifier_batch_size_avg: number;          // avg candidates per call
+  verifier_calls_before_estimate: number;   // Σ ceil(candidates/8) — what the old code would have done
+  verifier_calls_after: number;             // actual LLM calls made this run
+  verifier_duration_ms: number;             // == result.duration_ms, duplicated for log clarity
+  prompt_tokens?: number;                   // sum of usage.prompt_tokens if gateway returns it
+  completion_tokens?: number;
+  total_tokens?: number;
+}
+```
 
-- **Idle creep.** When the current running stage hasn't progressed in >3s, allow `displayedPercent` to creep up to *but not past* the midpoint of that stage's allotted band (so the user always sees motion without lying about completion). Reset on the next event.
+- `callJudge` returns `{ verdicts, usage? }` so we can sum tokens (the Lovable gateway echoes OpenAI-style `usage`).
+- In `runCore.ts` verify stage, merge `verification.telemetry` into the existing `recordStage({ stage: "verify", ... })` call (it already supports a metadata object via `stage_runs`). Log line at info level for quick smoke comparison: `[verify] claims=… before=… after=… dur=…ms toks=…`.
 
-- **Unknown stages.** If the backend emits a stage we don't know about, append it after the known ones with a default weight that scales the manifest down proportionally — never let unknown stages break the math or labels.
+### 5. Acceptance / smoke
+- 10-question smoke set (existing Deep-mode harness): verify
+  - `verifier_calls_after ≤ claims` (one call per claim, possibly fewer if a pack is empty).
+  - `verifier_calls_after < verifier_calls_before_estimate` on every run.
+  - Wall-time of verify stage drops materially (target ≥30%).
+  - Ledger asserts (`quality_insufficient_verified_sources` rate, supported-claim count, drafter `cite:LS#` integrity) are equal or better.
+  - No increase in unsupported-claim leaks (sample-grade by re-running ledger invariants).
 
-### 2. Spinner + current-state caption
-
-- Above the stage list, render a compact "current state" header:
-  - Large spinner (`Loader2`) + the **running stage's `label`** as the headline.
-  - One-line **subtitle** from the manifest (`subtitle`) so the user understands what the % means right now.
-  - When between stages (e.g., just after a `complete` and before the next `running`), keep the last running stage's text and append "…מסיים" so the spinner never looks frozen.
-  - On `isComplete`, replace with a `CheckCircle2` and "הושלם".
-
-- Per-row spinners (existing `<Loader2>` on running rows) stay, but the row label gets a tiny **percent-band hint** on the right (e.g., `8–30%`) so users can map the bar position to a pipeline stage at a glance.
-
-### 3. Wire-up touch in `LegalQAChat.tsx`
-
-- No prop changes needed; `StageProgressList` already receives `stages`, `postProcessingLabel`, `draftText`, `mode`, `isComplete`.
-- Keep `postProcessingLabel` forwarded (it still shows as the footnote-validation row), but it no longer drives a special % floor — it's just another labeled row.
-
-### 4. Verification
-
-- Run a Deep query in the preview and confirm:
-  - Bar starts near 4–8% on `plan running`, climbs to ~30% after `retrieval complete`, ~75% after `draft complete`, 95–99% during `post_processing`, 100% on `final`.
-  - Headline + subtitle change as each `stage running` arrives.
-  - No jump straight to 96%.
-- Run a Fast query and academic chapter write to confirm their manifests behave the same way.
-- Test an artificial slow stage by throttling the network — confirm the idle creep behavior and that the bar never regresses.
+## Out of scope
+- Planner, retrieval, drafter, citation engine, footnote builder, enrichment, UI, DB schema — untouched.
+- No streaming verify, no entailment merging, no model swap.
 
 ## Files touched
-
-- `src/components/StageProgressList.tsx` (main rewrite)
-- (No backend changes; no other component changes required.)
+- `supabase/functions/legal-qa/core/verifier.ts` — main change.
+- `supabase/functions/legal-qa/core/prompts.ts` — add `confidence` to prompt + "one verdict per candidate" instruction.
+- `supabase/functions/legal-qa/core/types.ts` — add optional `confidence?: number` to `Verdict`.
+- `supabase/functions/legal-qa/core/runCore.ts` — propagate `verification.telemetry` into the verify stage log/metadata.

@@ -87,6 +87,7 @@ export interface Verdict {
   support: Support;
   rationale: string;
   pinpoint?: string;
+  confidence?: number;
 }
 
 export interface VerificationResult {
@@ -258,6 +259,7 @@ export interface StageRun {
   status: "ok" | "error" | "empty";
   model?: string;
   error?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface CoreMetadata {

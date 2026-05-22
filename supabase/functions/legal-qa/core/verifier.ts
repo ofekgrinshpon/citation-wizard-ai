@@ -20,10 +20,17 @@ import type { ClaimRetrievalPack } from "./retrieval.ts";
 const MODEL = "openai/gpt-5-mini";
 const REASONING_EFFORT: "minimal" | "low" | "medium" | "high" = "low";
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const MAX_PER_CALL = 8;          // candidates per verifier call
-const MAX_SNIPPET_CHARS = 1200;  // keep prompt small
+const MAX_BATCH = 24;            // hard cap of candidates per single LLM call
+const LEGACY_CHUNK = 8;          // historical chunk size — used only to estimate "calls_before"
+const SNIPPET_TIERS = [1200, 700, 450]; // chars for ranks [0..7], [8..15], [16..23]
 const MAX_CONCURRENCY = 3;
 const TIMEOUT_MS = 60_000;
+
+function snippetBudgetFor(rank: number): number {
+  if (rank < 8) return SNIPPET_TIERS[0];
+  if (rank < 16) return SNIPPET_TIERS[1];
+  return SNIPPET_TIERS[2];
+}
 
 export interface ClaimVerification {
   claim_id: ClaimId;
@@ -57,6 +64,17 @@ export interface VerifyArgs {
   signal?: AbortSignal;
 }
 
+export interface VerifyTelemetry {
+  verifier_batch_size_max: number;
+  verifier_batch_size_avg: number;
+  verifier_calls_before_estimate: number;
+  verifier_calls_after: number;
+  verifier_duration_ms: number;
+  prompt_tokens?: number;
+  completion_tokens?: number;
+  total_tokens?: number;
+}
+
 export interface VerifyResult {
   per_claim: ClaimVerification[];
   totals: {
@@ -69,6 +87,7 @@ export interface VerifyResult {
     web_dropped: number;
   };
   duration_ms: number;
+  telemetry: VerifyTelemetry;
 }
 
 function makeLimiter(max: number) {
@@ -108,6 +127,27 @@ interface RawVerdict {
   support?: string;
   rationale?: string;
   pinpoint?: string;
+  confidence?: unknown;
+}
+
+interface JudgeUsage {
+  prompt_tokens?: number;
+  completion_tokens?: number;
+  total_tokens?: number;
+}
+
+interface JudgeOutcome {
+  verdicts: Verdict[];
+  usage?: JudgeUsage;
+  batch_size: number;
+}
+
+function clampConfidence(v: unknown): number | undefined {
+  const n = typeof v === "number" ? v : typeof v === "string" ? Number(v) : NaN;
+  if (!Number.isFinite(n)) return undefined;
+  if (n < 0) return 0;
+  if (n > 1) return 1;
+  return n;
 }
 
 async function callJudge(
@@ -117,16 +157,16 @@ async function callJudge(
   doctrine: string,
   batch: CandidateSource[],
   signal?: AbortSignal,
-): Promise<Verdict[]> {
+): Promise<JudgeOutcome> {
   const userMsg = VERIFIER_USER({
     claimId,
     claimText,
     doctrine,
-    candidates: batch.map((c) => ({
+    candidates: batch.map((c, i) => ({
       candidate_id: c.candidate_id,
       title: c.title,
       citation: c.citation,
-      snippet: (c.snippet || "").slice(0, MAX_SNIPPET_CHARS),
+      snippet: (c.snippet || "").slice(0, snippetBudgetFor(i)),
     })),
   });
   const ctrl = new AbortController();
@@ -150,16 +190,21 @@ async function callJudge(
     });
     if (!res.ok) {
       console.error(`[verifier] ${claimId} ${res.status}: ${(await res.text()).slice(0, 300)}`);
-      return [];
+      return { verdicts: [], batch_size: batch.length };
     }
     const data = await res.json();
     const raw = data?.choices?.[0]?.message?.content ?? "";
+    const usage: JudgeUsage | undefined = data?.usage ? {
+      prompt_tokens: Number(data.usage.prompt_tokens) || undefined,
+      completion_tokens: Number(data.usage.completion_tokens) || undefined,
+      total_tokens: Number(data.usage.total_tokens) || undefined,
+    } : undefined;
     let parsed: any;
     try { parsed = JSON.parse(raw); }
     catch {
       const s = raw.indexOf("{"); const e = raw.lastIndexOf("}");
-      if (s < 0 || e <= s) return [];
-      try { parsed = JSON.parse(raw.slice(s, e + 1)); } catch { return []; }
+      if (s < 0 || e <= s) return { verdicts: [], usage, batch_size: batch.length };
+      try { parsed = JSON.parse(raw.slice(s, e + 1)); } catch { return { verdicts: [], usage, batch_size: batch.length }; }
     }
     const arr: RawVerdict[] = Array.isArray(parsed?.verdicts) ? parsed.verdicts : [];
     const byId = new Map<string, CandidateSource>(batch.map((c) => [c.candidate_id, c]));
@@ -174,12 +219,13 @@ async function callJudge(
         support: sup,
         rationale: (v.rationale || "").toString().slice(0, 400),
         pinpoint: v.pinpoint ? String(v.pinpoint).slice(0, 60) : undefined,
+        confidence: clampConfidence(v.confidence),
       });
     }
-    return out;
+    return { verdicts: out, usage, batch_size: batch.length };
   } catch (e) {
     console.error(`[verifier throw] ${claimId}:`, (e as Error).message);
-    return [];
+    return { verdicts: [], batch_size: batch.length };
   } finally {
     clearTimeout(timer);
     signal?.removeEventListener("abort", onAbort);
@@ -192,6 +238,15 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
   const limiter = makeLimiter(MAX_CONCURRENCY);
   const claimById = new Map(plan.claims.map((c) => [c.id, c]));
 
+  // Telemetry accumulators
+  let callsAfter = 0;
+  let callsBeforeEstimate = 0;
+  let batchSizeSum = 0;
+  let promptTokens = 0;
+  let completionTokens = 0;
+  let totalTokens = 0;
+  let sawUsage = false;
+
   const tasks = packs.map((pack) => limiter(async (): Promise<ClaimVerification> => {
     const claim = claimById.get(pack.claim_id);
     if (!claim || pack.candidates.length === 0) {
@@ -199,13 +254,21 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
     }
     const doctrine = claim.search_targets[0]?.doctrine || plan.doctrinal_frame;
 
-    // Batch in chunks of MAX_PER_CALL.
-    const verdicts: Verdict[] = [];
-    for (let i = 0; i < pack.candidates.length; i += MAX_PER_CALL) {
-      const batch = pack.candidates.slice(i, i + MAX_PER_CALL);
-      const got = await callJudge(lovableApiKey, pack.claim_id, claim.text, doctrine, batch, signal);
-      verdicts.push(...got);
+    // Estimate what the legacy chunked verifier would have done.
+    callsBeforeEstimate += Math.ceil(pack.candidates.length / LEGACY_CHUNK);
+
+    // Single LLM call per claim, capped at MAX_BATCH candidates.
+    const batch = pack.candidates.slice(0, MAX_BATCH);
+    const outcome = await callJudge(lovableApiKey, pack.claim_id, claim.text, doctrine, batch, signal);
+    callsAfter += 1;
+    batchSizeSum += outcome.batch_size;
+    if (outcome.usage) {
+      sawUsage = true;
+      promptTokens += outcome.usage.prompt_tokens ?? 0;
+      completionTokens += outcome.usage.completion_tokens ?? 0;
+      totalTokens += outcome.usage.total_tokens ?? 0;
     }
+    const verdicts: Verdict[] = [...outcome.verdicts];
 
     // Ensure every candidate gets a verdict; missing → unrelated.
     const seen = new Set(verdicts.map((v) => v.candidate_id));
@@ -241,7 +304,25 @@ export async function verify(args: VerifyArgs): Promise<VerifyResult> {
     }
   }
 
-  return { per_claim, totals, duration_ms: Date.now() - t0 };
+  const duration_ms = Date.now() - t0;
+  const telemetry: VerifyTelemetry = {
+    verifier_batch_size_max: MAX_BATCH,
+    verifier_batch_size_avg: callsAfter > 0 ? +(batchSizeSum / callsAfter).toFixed(2) : 0,
+    verifier_calls_before_estimate: callsBeforeEstimate,
+    verifier_calls_after: callsAfter,
+    verifier_duration_ms: duration_ms,
+    prompt_tokens: sawUsage ? promptTokens : undefined,
+    completion_tokens: sawUsage ? completionTokens : undefined,
+    total_tokens: sawUsage ? totalTokens : undefined,
+  };
+
+  console.log(
+    `[verify] claims=${packs.length} before=${callsBeforeEstimate} after=${callsAfter} ` +
+    `avgBatch=${telemetry.verifier_batch_size_avg} dur=${duration_ms}ms ` +
+    (sawUsage ? `toks=${totalTokens}` : "toks=n/a"),
+  );
+
+  return { per_claim, totals, duration_ms, telemetry };
 }
 
 function emptyVerification(claim_id: ClaimId): ClaimVerification {
