@@ -531,9 +531,9 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
 function sanitizeUserFacing(text: string): string {
   return text
     .replace(/\n*[ \t]*הערה למערכת:[^\n]*/g, "")
+    .replace(/\[cite:LS\d+\]/g, "")
     .replace(/\b(claims_lost_all_support|unsupported_claim_ids)\b/g, "")
     .replace(/(?<![\p{L}\p{N}])(?:C|LS)\d{1,3}(?![\p{L}\p{N}])/gu, "")
-    .replace(/\[cite:LS\d+\]/g, "")
     .replace(/[ \t]{2,}/g, " ")
     .replace(/[ \t]+([.,;:])/g, "$1")
     .replace(/\n{3,}/g, "\n\n")
