@@ -67,8 +67,11 @@ export interface VerifyArgs {
 export interface VerifyTelemetry {
   verifier_batch_size_max: number;
   verifier_batch_size_avg: number;
-  verifier_calls_before_estimate: number;
-  verifier_calls_after: number;
+  verifier_calls_before_estimate: number;      // Σ ceil(candidates_for_claim / 8) — legacy chunked-at-8 behavior
+  verifier_calls_naive_per_candidate: number;  // Σ candidates_for_claim — naive 1-call-per-candidate upper bound
+  verifier_candidate_count_total: number;      // Σ candidates_for_claim (alias, for dashboards)
+  verifier_nonempty_pack_count: number;        // number of claim packs with ≥1 candidate (== min possible calls)
+  verifier_calls_after: number;                // actual LLM verifier calls made
   verifier_duration_ms: number;
   prompt_tokens?: number;
   completion_tokens?: number;
