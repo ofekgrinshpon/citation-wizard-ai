@@ -723,8 +723,26 @@ async function approvedWeb(
     : `"caselaw"|"statute"|"regulation"`;
   const sys = `אתה מחזיר אך ורק מקורות משפטיים ישראליים ראשוניים (פסיקה, חקיקה, תקנות) מתוך התחומים המאושרים.${scholarshipClause} החזר JSON-array בלבד, ללא טקסט נוסף, עד ${maxCands} פריטים. כל איבר: {"title":"","citation":"","url":"","source_type":${allowedTypes},"snippet":""}.`;
   const hintBlock = authHints.length ? `\nרמזים לסמכויות צפויות: ${authHints.join(" ; ")}` : "";
-  const anchorBlock = anchorTerms.length ? `\nמושגי-מפתח מהשאלה: ${anchorTerms.slice(0, 3).join(" ; ")}` : "";
-  const usr = `טענה: ${claimText}\nדוקטרינה: ${doctrine}${hintBlock}${anchorBlock}\nהחזר עד ${maxCands} מקורות סמכותיים בלבד.`;
+
+  // Anchor-driven calls (candidateTag === "anchor_factual" / "anchor_concept"):
+  // lead the user prompt with the anchor terms + a SHORT doctrine word so
+  // Perplexity is not asked to find both the long claim narrative AND the
+  // anchors inside one filtered domain set. Standard calls keep the original
+  // claim-text-first prompt.
+  const isAnchorDriven =
+    anchorTerms.length > 0 &&
+    (opts.candidateTag === "anchor_factual" || opts.candidateTag === "anchor_concept");
+  let usr: string;
+  if (isAnchorDriven) {
+    const shortDoctrine = (doctrine || "").split(/[\s,;:]+/).filter(Boolean).slice(0, 3).join(" ");
+    const termHead = anchorTerms.slice(0, 4).join(" ");
+    let body = `${termHead}${shortDoctrine ? ` — ${shortDoctrine}` : ""}`;
+    if (body.length > 120) body = body.slice(0, 120);
+    usr = `${body}${hintBlock}\nהחזר עד ${maxCands} מקורות סמכותיים בלבד.`;
+  } else {
+    const anchorBlock = anchorTerms.length ? `\nמושגי-מפתח מהשאלה: ${anchorTerms.slice(0, 3).join(" ; ")}` : "";
+    usr = `טענה: ${claimText}\nדוקטרינה: ${doctrine}${hintBlock}${anchorBlock}\nהחזר עד ${maxCands} מקורות סמכותיים בלבד.`;
+  }
 
   const telemetry: WebHarvestTelemetry = {
     web_json_parse_ok: false,
