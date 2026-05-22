@@ -33,8 +33,10 @@ import {
   buildSourceRequirements,
   reconcileSourceRequirements,
   summarizeRequirements,
+  injectMandatoryRoleCandidates,
   type SourceRequirementsPlan,
   type SourceRequirementsReconciliation,
+  type RoleInjectionRecord,
 } from "./sourceRequirements.ts";
 import {
   classifyDoctrines,
