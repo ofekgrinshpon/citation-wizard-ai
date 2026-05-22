@@ -314,7 +314,14 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   const tDr = Date.now();
   let draftRes;
   try {
-    draftRes = await draft({ plan, ledger, lovableApiKey: LOVABLE_API_KEY, signal });
+    draftRes = await draft({
+      plan,
+      ledger,
+      lovableApiKey: LOVABLE_API_KEY,
+      signal,
+      timeoutMs: args.drafterTimeoutMs,
+      forceModel: args.forceDrafterModel ?? null,
+    });
   } catch (e) {
     recordStage({ stage: "draft", duration_ms: Date.now() - tDr, status: "error", error: (e as Error).message });
     emitSafe(onStage, "draft", "complete", "error");
