@@ -53,6 +53,11 @@ export interface DraftResult {
   insufficient_sources_sentence_required: boolean;
   duration_ms: number;
   model: string;
+  reasoning_effort: string;
+  timeout_ms: number;
+  aborted_by_timeout: boolean;
+  prompt_chars: number;
+  ledger_source_count: number;
   warnings: string[];
 }
 
@@ -61,6 +66,7 @@ export interface DraftArgs {
   ledger: LedgerResult;
   lovableApiKey: string;
   signal?: AbortSignal;
+  timeoutMs?: number;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
@@ -140,12 +146,14 @@ function unsupportedLeakCheck(answer: string, plan: PlanV1, ledger: LedgerResult
 export async function draft(args: DraftArgs): Promise<DraftResult> {
   const t0 = Date.now();
   const { plan, ledger, lovableApiKey, signal } = args;
+  const effectiveTimeoutMs = args.timeoutMs ?? TIMEOUT_MS;
   const warnings: string[] = [];
 
   const validIds = new Set<LedgerSourceId>(
     ledger.entries.flatMap((e) => e.sources.map((s) => s.ls_id)),
   );
   const sourceToClaim = buildSourceClaimMap(ledger.entries);
+  const ledgerSourceCount = ledger.entries.reduce((n, e) => n + e.sources.length, 0);
 
   const supportedCount = ledger.totals.supported;
   const insufficientRequired = supportedCount < 2;
@@ -156,11 +164,13 @@ export async function draft(args: DraftArgs): Promise<DraftResult> {
     thesis: plan.thesis,
     ledgerText,
   });
+  const promptChars = DRAFTER_SYSTEM.length + userMsg.length;
 
   const ctrl = new AbortController();
   const onAbort = () => ctrl.abort();
   signal?.addEventListener("abort", onAbort);
-  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; ctrl.abort(); }, effectiveTimeoutMs);
 
   let raw = "";
   try {
@@ -186,6 +196,18 @@ export async function draft(args: DraftArgs): Promise<DraftResult> {
     }
     const data = await res.json();
     raw = (data?.choices?.[0]?.message?.content ?? "").toString();
+  } catch (e) {
+    if (timedOut) {
+      const err = new Error(`drafter_timeout_${Math.round(effectiveTimeoutMs / 1000)}s`);
+      (err as Error & { aborted_by_timeout?: boolean; timeout_ms?: number; prompt_chars?: number; ledger_source_count?: number; model?: string; reasoning_effort?: string }).aborted_by_timeout = true;
+      (err as { timeout_ms?: number }).timeout_ms = effectiveTimeoutMs;
+      (err as { prompt_chars?: number }).prompt_chars = promptChars;
+      (err as { ledger_source_count?: number }).ledger_source_count = ledgerSourceCount;
+      (err as { model?: string }).model = MODEL;
+      (err as { reasoning_effort?: string }).reasoning_effort = REASONING_EFFORT;
+      throw err;
+    }
+    throw e;
   } finally {
     clearTimeout(timer);
     signal?.removeEventListener("abort", onAbort);
@@ -266,6 +288,11 @@ export async function draft(args: DraftArgs): Promise<DraftResult> {
     insufficient_sources_sentence_required: insufficientRequired,
     duration_ms: Date.now() - t0,
     model: MODEL,
+    reasoning_effort: REASONING_EFFORT,
+    timeout_ms: effectiveTimeoutMs,
+    aborted_by_timeout: false,
+    prompt_chars: promptChars,
+    ledger_source_count: ledgerSourceCount,
     warnings,
   };
 }
