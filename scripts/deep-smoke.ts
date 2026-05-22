@@ -153,7 +153,9 @@ async function runOne(idx: number, question: string): Promise<SmokeRow> {
       body: JSON.stringify({
         question,
         taskMode: "research",
-        researchDepth: RESEARCH_DEPTH,
+        // Edge function destructures body as `depth` (see index.ts:2228, resolveModeProfile).
+        // `researchDepth` is ignored → profile defaults to Fast → core/runCore.ts never runs.
+        depth: RESEARCH_DEPTH,
         projectId: PROJECT_ID,
         stream: true,
       }),
