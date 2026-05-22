@@ -1067,6 +1067,8 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
       ? {
           plan: sourceRequirements,
           reconciliation: sourceRequirementsReconciliation,
+          injection: sourceRequirementsInjection,
+          inject_flag: (Deno.env.get("SR_INJECT_RETRIEVAL") ?? "") === "1",
         }
       : null,
     doctrine_classifier: classification
