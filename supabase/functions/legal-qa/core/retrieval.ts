@@ -1018,6 +1018,7 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     web_global_cap_hit: webGlobalCapHit,
     duration_ms: Date.now() - t0,
     factual_anchors: anchorTelemetry,
+    candidates_audit,
   };
 }
 
