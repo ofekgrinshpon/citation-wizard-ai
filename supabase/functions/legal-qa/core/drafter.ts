@@ -53,6 +53,11 @@ export interface DraftResult {
   insufficient_sources_sentence_required: boolean;
   duration_ms: number;
   model: string;
+  reasoning_effort: string;
+  timeout_ms: number;
+  aborted_by_timeout: boolean;
+  prompt_chars: number;
+  ledger_source_count: number;
   warnings: string[];
 }
 
@@ -61,6 +66,7 @@ export interface DraftArgs {
   ledger: LedgerResult;
   lovableApiKey: string;
   signal?: AbortSignal;
+  timeoutMs?: number;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
