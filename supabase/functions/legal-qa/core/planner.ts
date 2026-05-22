@@ -42,7 +42,7 @@ export async function planResearch(args: PlanArgs): Promise<PlanResult> {
       },
       body: JSON.stringify({
         model: MODEL,
-        reasoning_effort: "low",
+        reasoning_effort: "minimal",
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: PLANNER_SYSTEM },
