@@ -30,6 +30,13 @@ import {
 type EnrichmentDebug = EnrichmentOutput["debug"];
 import { runCitationQuality } from "./citation_quality.ts";
 import {
+  buildSourceRequirements,
+  reconcileSourceRequirements,
+  summarizeRequirements,
+  type SourceRequirementsPlan,
+  type SourceRequirementsReconciliation,
+} from "./sourceRequirements.ts";
+import {
   extractDocketFromText,
   extractPartiesFromText,
   extractCaseFieldsFromLedgerSource,
