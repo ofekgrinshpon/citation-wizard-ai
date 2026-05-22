@@ -64,6 +64,17 @@ export interface VerifyArgs {
   signal?: AbortSignal;
 }
 
+export interface VerifyTelemetry {
+  verifier_batch_size_max: number;
+  verifier_batch_size_avg: number;
+  verifier_calls_before_estimate: number;
+  verifier_calls_after: number;
+  verifier_duration_ms: number;
+  prompt_tokens?: number;
+  completion_tokens?: number;
+  total_tokens?: number;
+}
+
 export interface VerifyResult {
   per_claim: ClaimVerification[];
   totals: {
@@ -76,6 +87,7 @@ export interface VerifyResult {
     web_dropped: number;
   };
   duration_ms: number;
+  telemetry: VerifyTelemetry;
 }
 
 function makeLimiter(max: number) {
