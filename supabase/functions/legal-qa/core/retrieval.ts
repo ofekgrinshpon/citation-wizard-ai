@@ -19,6 +19,7 @@
 
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 import { TIER_A_DOMAIN_FILTER, citationTier } from "../approvedDomains.ts";
+import { expandDoctrineTerms } from "../../_shared/legalDoctrineSynonyms.ts";
 import type {
   AuthorityId,
   CandidateId,
