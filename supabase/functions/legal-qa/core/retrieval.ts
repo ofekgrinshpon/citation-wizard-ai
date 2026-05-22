@@ -895,6 +895,7 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
   const packs: ClaimRetrievalPack[] = [];
   let webBudgetRemaining = WEB_GLOBAL_CAP;
   let webGlobalCapHit = false;
+  let anchorWebUnfilteredRetries = 0;
 
   // Single VectorHealthDiag shared across every vector RPC (claim + anchors
   // + probe). Surfaced in metadata.core.retrieval.vector_health.
