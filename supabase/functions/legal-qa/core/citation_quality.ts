@@ -427,10 +427,63 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
   }
 
   // Lost-support analysis using surviving markers.
-  const survivingMarkers = markersInAnswer(cleaned2);
-  const claims_lost_all_support = computeLostClaims(ledger, survivingMarkers);
+  let survivingMarkers = markersInAnswer(cleaned2);
+  let claims_lost_all_support = computeLostClaims(ledger, survivingMarkers);
 
-  // Status decision.
+  // ─── Lost-claim paragraph removal ───────────────────────────────────────
+  // For each paragraph in the original drafter answer, if it contained ONLY
+  // markers that were dropped AND those markers belong to a claim that lost
+  // all support, remove the whole paragraph. This prevents orphan prose
+  // (unsupported assertions with no footnote) from reaching the user.
+  if (claims_lost_all_support.length > 0) {
+    const lostClaimSet = new Set<ClaimId>(claims_lost_all_support);
+    const lostLsIds = new Set<LedgerSourceId>(
+      removed_citations
+        .filter((r) => r.claim_id && lostClaimSet.has(r.claim_id))
+        .map((r) => r.ls_id),
+    );
+    if (lostLsIds.size > 0) {
+      const origParas = answer.split(/\n{2,}/);
+      const keptParas: string[] = [];
+      let removedAny = false;
+      for (const p of origParas) {
+        const markers = [...p.matchAll(CITE_RE)].map((m) => m[1] as LedgerSourceId);
+        const hasSurviving = markers.some(
+          (id) => !dropped.has(id) && !flaggedLs.has(id),
+        );
+        const hasLost = markers.some((id) => lostLsIds.has(id));
+        if (hasLost && !hasSurviving) {
+          removedAny = true;
+          continue;
+        }
+        keptParas.push(p);
+      }
+      if (removedAny) {
+        // Rebuild from filtered paragraphs, re-strip dropped+flagged markers,
+        // then rebuild footnotes & recompute surviving / lost.
+        let recleaned = keptParas.join("\n\n");
+        recleaned = stripMarkers(recleaned, dropped).text;
+        if (flaggedLs.size > 0) recleaned = stripMarkers(recleaned, flaggedLs).text;
+        cleaned2 = recleaned;
+        bf = buildFootnotes({ answer: cleaned2, citations });
+        // Refresh repeated + footnote-text-source tallies after rebuild.
+        summary.repeated = bf.footnotes.filter((f) => f.is_repeated).length;
+        for (const k of Object.keys(summary.footnote_text_sources)) {
+          (summary.footnote_text_sources as Record<string, number>)[k] = 0;
+        }
+        for (const f of bf.footnotes) {
+          const src = f.footnote_text_source;
+          if (src && src in summary.footnote_text_sources) {
+            (summary.footnote_text_sources as Record<string, number>)[src]++;
+          }
+        }
+        survivingMarkers = markersInAnswer(cleaned2);
+        claims_lost_all_support = computeLostClaims(ledger, survivingMarkers);
+      }
+    }
+  }
+
+  // Status decision (recomputed after possible paragraph removal).
   const survivingSupported = ledger.entries.filter((e) => {
     if (e.status !== "supported") return false;
     return e.sources.some((s) => survivingMarkers.includes(s.ls_id));
@@ -444,9 +497,16 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
       rendered = `${INSUFFICIENT_SENTENCE}\n\n${rendered}`.trim();
     }
   } else if (claims_lost_all_support.length > 0) {
+    // Lost claims that survived paragraph removal (e.g. inline mid-paragraph
+    // references) → still mark needs_review for telemetry, but DO NOT leak an
+    // internal note into the user-facing answer.
     status = "needs_review";
-    rendered = `${rendered}\n\nהערה למערכת: הטענות הבאות נותרו ללא אסמכתא לאחר ביקורת איכות: ${claims_lost_all_support.join(", ")}.`;
   }
+
+  // ─── Final sanitizer (belt-and-braces) ─────────────────────────────────
+  // Strip any leaked internal tokens before returning. Footnote superscripts
+  // (¹²³…) are Unicode chars and are not matched by these patterns.
+  rendered = sanitizeUserFacing(rendered);
 
   return {
     status,
@@ -459,6 +519,25 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
     citation_summary: summary,
     duration_ms: Date.now() - t0,
   };
+}
+
+// Strip internal prose tokens that must never appear in user-facing output.
+// - "הערה למערכת: ..." lines (whole-line removal)
+// - bare ClaimId / LedgerSourceId tokens (C1, LS12) when they appear as
+//   standalone words — uses Unicode letter lookarounds so Hebrew words like
+//   "מחלקה" or numeric superscript footnotes are not touched.
+// - literal telemetry key names if they leak into prose.
+// - any residual [cite:LS#] markers (defensive — should already be stripped).
+function sanitizeUserFacing(text: string): string {
+  return text
+    .replace(/\n*[ \t]*הערה למערכת:[^\n]*/g, "")
+    .replace(/\[cite:LS\d+\]/g, "")
+    .replace(/\b(claims_lost_all_support|unsupported_claim_ids)\b/g, "")
+    .replace(/(?<![\p{L}\p{N}])(?:C|LS)\d{1,3}(?![\p{L}\p{N}])/gu, "")
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/[ \t]+([.,;:])/g, "$1")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 // Re-export to keep the runner imports tidy.
