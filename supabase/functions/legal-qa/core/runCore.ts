@@ -21,6 +21,7 @@ import { buildLedger } from "./ledger.ts";
 import { draft } from "./drafter.ts";
 import {
   buildCitationsForLedger,
+  type LocalDocMeta,
 } from "./citations.ts";
 import {
   enrichLedgerSource,
