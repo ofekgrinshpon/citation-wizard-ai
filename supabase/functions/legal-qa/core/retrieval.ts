@@ -189,6 +189,143 @@ function pickVectorQuery(searchTargetTerms: string[][], doctrine: string): strin
   return out;
 }
 
+// ── Statute-section helpers (generic, no hardcoded laws/sections) ──────────
+function stripSectionPrefix(s: string): string {
+  return (s || "").replace(/^\s*(?:סעיף|ס['׳])\s*/, "").trim();
+}
+
+function sectionVariants(rawSection: string): string[] {
+  const s = stripSectionPrefix(rawSection);
+  if (!s) return [];
+  const v = new Set<string>();
+  v.add(s);
+  v.add(`סעיף ${s}`);
+  v.add(`ס' ${s}`);
+  // Digits + optional Hebrew suffix letter, e.g. "428א" / "428 א".
+  const m = s.match(/^(\d+)\s*([א-ת]?)$/);
+  if (m) {
+    const n = m[1];
+    const letter = m[2] || "";
+    v.add(`${n}${letter}`);
+    if (letter) {
+      v.add(`${n} ${letter}`);
+      v.add(`סעיף ${n}${letter}`);
+      v.add(`ס' ${n}${letter}`);
+    }
+  }
+  return [...v];
+}
+
+function buildSectionQueries(section: string, lawName: string): string[] {
+  const variants = sectionVariants(section);
+  const law = (lawName || "").trim();
+  const out: string[] = [];
+  for (const v of variants) {
+    if (law) {
+      out.push(`${v} ל${law}`);
+      out.push(`${v} ${law}`);
+    } else {
+      out.push(v);
+    }
+  }
+  return [...new Set(out.map((q) => q.slice(0, TEXT_QUERY_MAX_CHARS)))].slice(0, 4);
+}
+
+async function findSectionChunkContent(
+  client: SupabaseClient,
+  documentId: string,
+  section: string,
+): Promise<string | null> {
+  for (const v of sectionVariants(section)) {
+    try {
+      const { data } = await client
+        .from("legal_document_chunks")
+        .select("content")
+        .eq("document_id", documentId)
+        .ilike("content", `%${escIlike(v)}%`)
+        .order("chunk_index", { ascending: true })
+        .limit(1);
+      const c = (data || [])[0]?.content;
+      if (c && typeof c === "string" && c.trim()) return c;
+    } catch { /* try next variant */ }
+  }
+  return null;
+}
+
+// ── Web → local DB promotion (URL match against legal_documents) ──────────
+interface LocalDocRow {
+  id: string;
+  title?: string;
+  citation?: string;
+  source_type?: string;
+  source_url?: string;
+  pdf_url?: string;
+  content?: string;
+}
+
+async function tryMatchLocalByUrl(
+  client: SupabaseClient,
+  url: string,
+): Promise<LocalDocRow | null> {
+  try {
+    const cols = "id,title,citation,source_type,source_url,pdf_url,content";
+    const { data: a } = await client
+      .from("legal_documents")
+      .select(cols)
+      .eq("source_url", url)
+      .limit(1);
+    if (a && a.length > 0) return a[0] as LocalDocRow;
+    const { data: b } = await client
+      .from("legal_documents")
+      .select(cols)
+      .eq("pdf_url", url)
+      .limit(1);
+    if (b && b.length > 0) return b[0] as LocalDocRow;
+  } catch { /* ignore */ }
+  return null;
+}
+
+async function promoteWebCandidates(
+  client: SupabaseClient,
+  webHits: CandidateSource[],
+): Promise<CandidateSource[]> {
+  if (webHits.length === 0) return webHits;
+  const out: CandidateSource[] = [];
+  for (const w of webHits) {
+    if (!w.url) { out.push(w); continue; }
+    const local = await tryMatchLocalByUrl(client, w.url);
+    if (!local) { out.push(w); continue; }
+    out.push({
+      ...w,
+      document_id: local.id,
+      title: (local.title || w.title || "").trim(),
+      citation: (local.citation || w.citation || "").trim(),
+      source_type: local.source_type || w.source_type || "",
+      url: local.source_url || local.pdf_url || w.url,
+      snippet: ((local.content || w.snippet) || "").slice(0, 600),
+      metadata: {
+        ...(w.metadata || {}),
+        promoted_from_web: true,
+        original_web_url: w.url,
+      },
+    });
+  }
+  return out;
+}
+
+
+  const flat = searchTargetTerms.flat().filter(Boolean);
+  for (const t of flat) {
+    const next = [...parts, t].join(" • ");
+    if (next.length > VECTOR_QUERY_MAX_CHARS) break;
+    if (!parts.includes(t)) parts.push(t);
+  }
+  if (parts.length === 0) parts.push(doctrine);
+  let out = parts.join(" • ");
+  if (out.length > VECTOR_QUERY_MAX_CHARS) out = out.slice(0, VECTOR_QUERY_MAX_CHARS);
+  return out;
+}
+
 // Extract a docket-like token from a string: "ע"א 4628/93", "בג"ץ 2935/13".
 const DOCKET_RE = /(?:ע["״]?א|רע["״]?א|בג["״]?ץ|בש["״]?א|דנ["״]?א|ה?פ|ע["״]?פ|רע["״]?פ)\s*\d{1,5}[\/-]\d{2,4}/g;
 function extractDockets(s: string): string[] {
