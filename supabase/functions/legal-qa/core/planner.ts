@@ -7,8 +7,8 @@ import type { PlanV1 } from "./types.ts";
 import { PLANNER_SYSTEM, PLANNER_USER } from "./prompts.ts";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const MODEL = "openai/gpt-5";
-const TIMEOUT_MS = 90_000;
+const MODEL = "openai/gpt-5-mini";
+const TIMEOUT_MS = 120_000;
 
 export interface PlanArgs {
   question: string;
