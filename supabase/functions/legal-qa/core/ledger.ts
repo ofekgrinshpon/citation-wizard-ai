@@ -127,11 +127,11 @@ export interface BuildLedgerArgs {
   verification: VerifyResult;
   authorityResolutions: AuthorityResolution[];
   /**
-   * Optional map of candidate_id → { source_type, document_id }. The verifier
+   * Optional map of candidate_id → { source_type, document_id, metadata }. The verifier
    * does not carry these forward, so if the runner has them on hand we use
-   * them for richer primary detection + dedup. Safe to omit.
+   * them for richer primary detection + dedup + anchor rescue. Safe to omit.
    */
-  candidateMeta?: Map<string, { source_type?: string; document_id?: string }>;
+  candidateMeta?: Map<string, { source_type?: string; document_id?: string; metadata?: Record<string, unknown> }>;
 }
 
 export function buildLedger(args: BuildLedgerArgs): LedgerResult {
@@ -163,7 +163,7 @@ export function buildLedger(args: BuildLedgerArgs): LedgerResult {
     // Hydrate provisional sources.
     type Provisional = {
       v: AnnotatedVerdict;
-      meta?: { source_type?: string; document_id?: string };
+      meta?: { source_type?: string; document_id?: string; metadata?: Record<string, unknown> };
       key: string;
       primary: boolean;
     };
@@ -172,6 +172,10 @@ export function buildLedger(args: BuildLedgerArgs): LedgerResult {
       const normUrl = normalizeUrl(v.url);
       const key = meta?.document_id ?? normUrl ?? `${v.origin}:${v.candidate_id}`;
       return {
+        v, meta, key,
+        primary: isPrimary(v, meta?.source_type),
+      };
+    });
         v,
         meta,
         key,
