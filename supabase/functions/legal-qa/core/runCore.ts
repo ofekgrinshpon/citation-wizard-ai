@@ -204,6 +204,26 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   });
   emitSafe(onStage, "retrieval", "complete", `candidates=${retrieval.total_candidates}`);
 
+  // ─── 2.5 Source Requirements Reconciliation (telemetry only) ───────────
+  let sourceRequirementsReconciliation: SourceRequirementsReconciliation | null = null;
+  if (sourceRequirements) {
+    try {
+      sourceRequirementsReconciliation = reconcileSourceRequirements({
+        requirements: sourceRequirements,
+        packs: retrieval.packs,
+      });
+      const t = sourceRequirementsReconciliation.totals;
+      emitSafe(
+        onStage,
+        "source_requirements",
+        "complete",
+        `recall=${t.roles_reached_verifier}/${t.roles} local=${t.roles_tried_local} web=${t.roles_tried_web} missing=${t.roles_missing_entirely}`,
+      );
+    } catch (e) {
+      console.warn("[core:source_requirements] reconcile failed", e);
+    }
+  }
+
   // ─── 3. Verifier ───────────────────────────────────────────────────────
   emitSafe(onStage, "verify", "running");
   const tVer = Date.now();
