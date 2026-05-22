@@ -251,7 +251,17 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
     // Off-domain stays dropped (we only rescue approved hosts).
     if (c.citation_errors.some((e) => e.startsWith("off_domain:"))) continue;
     const ls = lsById.get(id);
-    if (!ls || ls.origin !== "approved_web" || ls.support !== "direct") continue;
+    if (!ls) continue;
+    // Rescue is broader than "approved_web direct". Any anchor-injected LS
+    // (factual or concept) is allowed to be rescued from uninformative-label
+    // drop by inferring declared_type from the host. Local-text/local-vector
+    // anchors arrive with empty/thin source_type because the planner's
+    // doctrinal search_targets did not name them; the host (knesset/gov,
+    // SSRN/huji, etc.) still tells us what kind of source they are.
+    const lsMeta = (ls.metadata ?? {}) as Record<string, unknown>;
+    const isAnchored = lsMeta.factual_anchor === true || lsMeta.anchor_layer != null;
+    const isApprovedWebDirect = ls.origin === "approved_web" && ls.support === "direct";
+    if (!isAnchored && !isApprovedWebDirect) continue;
     if (!c.canonical_citation || !c.canonical_citation.trim()) continue;
     const inferred = inferDeclaredFromSource(ls);
     if (inferred === "none") continue;
@@ -388,7 +398,8 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
     }
   } else if (claims_lost_all_support.length > 0) {
     status = "needs_review";
-    rendered = `${rendered}\n\nהערה למערכת: הטענות הבאות נותרו ללא אסמכתא לאחר ביקורת איכות: ${claims_lost_all_support.join(", ")}.`;
+    // Internal diagnostic — do NOT leak into rendered_answer. The structured
+    // `claims_lost_all_support` field carries the info to any UI that wants it.
   }
 
   return {

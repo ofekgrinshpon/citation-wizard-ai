@@ -53,26 +53,12 @@ const PER_CLAIM_ANCHOR_RESERVE = 2;
 // thin or the claim explicitly needs scholarship/doctrinal_definition.
 const ANCHOR_WEB_PER_CLAIM = 2;
 const ANCHOR_WEB_THIN_LOCAL_THRESHOLD = 4;
-// Government / regulator subset of TIER_A for factual-anchor web queries.
-const TIER_A_GOV_HOSTS: readonly string[] = [
-  "knesset.gov.il",
-  "mevaker.gov.il",
-  "justice.gov.il",
-  "reshumot.gov.il",
-  "competition.gov.il",
-  "tax.gov.il",
-  "mof.gov.il",
-  "supreme.court.gov.il",
-  "supremedecisions.court.gov.il",
-];
-// Academic / scholarship subset of TIER_A for concept-anchor web queries.
-const TIER_A_SCHOLARSHIP_HOSTS: readonly string[] = [
-  "huji.ac.il",
-  "tau.ac.il",
-  "biu.ac.il",
-  "ssrn.com",
-  "jstor.org",
-];
+// Government / scholarship host subsets are owned by core/approvedHosts.ts so
+// they cannot drift from citation_quality's off_domain gate.
+import {
+  TIER_A_GOV_HOSTS,
+  TIER_A_SCHOLARSHIP_HOSTS,
+} from "./approvedHosts.ts";
 
 // ─── Types ────────────────────────────────────────────────────────────────
 export interface AuthorityResolution {
@@ -190,6 +176,7 @@ export interface RetrievalResult {
   anchor_slots_used_per_claim?: ClaimAnchorTelemetry[];
   approved_web_stubs_dropped_per_claim?: ClaimWebStubTelemetry[];
   approved_web_anchor_queries?: ClaimAnchorWebTelemetry[];
+  anchor_web_unfiltered_retries?: number;
 }
 
 export interface RetrieveArgs {
@@ -593,6 +580,30 @@ function requiresBindingLaw(claim: { required_evidence?: string[] }): boolean {
   return re.some((k) => k === "binding_caselaw" || k === "statute_section" || k === "regulation");
 }
 
+// Section E refinement: a claim can simultaneously need binding law AND
+// topical secondary evidence (policy report, scholarship, doctrinal
+// background, factual anchor). In that case the primary-only filter for
+// anchor slots starves exactly the secondary anchors the claim asked for.
+// `requiresSecondaryEvidence` detects that mixed posture so the anchor
+// reserve admits secondary anchors alongside primary law.
+const SECONDARY_EVIDENCE_KINDS = new Set([
+  "scholarship",
+  "doctrinal_definition",
+  "doctrinal_background",
+  "policy_report",
+  "policy",
+  "factual_background",
+  "factual_anchor",
+  "commentary",
+  "government_report",
+  "knesset_research",
+]);
+function requiresSecondaryEvidence(claim: { required_evidence?: string[] }): boolean {
+  const re = claim.required_evidence;
+  if (!Array.isArray(re)) return false;
+  return re.some((k) => SECONDARY_EVIDENCE_KINDS.has(k));
+}
+
 
 
 async function exactAuthority(
@@ -713,8 +724,26 @@ async function approvedWeb(
     : `"caselaw"|"statute"|"regulation"`;
   const sys = `אתה מחזיר אך ורק מקורות משפטיים ישראליים ראשוניים (פסיקה, חקיקה, תקנות) מתוך התחומים המאושרים.${scholarshipClause} החזר JSON-array בלבד, ללא טקסט נוסף, עד ${maxCands} פריטים. כל איבר: {"title":"","citation":"","url":"","source_type":${allowedTypes},"snippet":""}.`;
   const hintBlock = authHints.length ? `\nרמזים לסמכויות צפויות: ${authHints.join(" ; ")}` : "";
-  const anchorBlock = anchorTerms.length ? `\nמושגי-מפתח מהשאלה: ${anchorTerms.slice(0, 3).join(" ; ")}` : "";
-  const usr = `טענה: ${claimText}\nדוקטרינה: ${doctrine}${hintBlock}${anchorBlock}\nהחזר עד ${maxCands} מקורות סמכותיים בלבד.`;
+
+  // Anchor-driven calls (candidateTag === "anchor_factual" / "anchor_concept"):
+  // lead the user prompt with the anchor terms + a SHORT doctrine word so
+  // Perplexity is not asked to find both the long claim narrative AND the
+  // anchors inside one filtered domain set. Standard calls keep the original
+  // claim-text-first prompt.
+  const isAnchorDriven =
+    anchorTerms.length > 0 &&
+    (opts.candidateTag === "anchor_factual" || opts.candidateTag === "anchor_concept");
+  let usr: string;
+  if (isAnchorDriven) {
+    const shortDoctrine = (doctrine || "").split(/[\s,;:]+/).filter(Boolean).slice(0, 3).join(" ");
+    const termHead = anchorTerms.slice(0, 4).join(" ");
+    let body = `${termHead}${shortDoctrine ? ` — ${shortDoctrine}` : ""}`;
+    if (body.length > 120) body = body.slice(0, 120);
+    usr = `${body}${hintBlock}\nהחזר עד ${maxCands} מקורות סמכותיים בלבד.`;
+  } else {
+    const anchorBlock = anchorTerms.length ? `\nמושגי-מפתח מהשאלה: ${anchorTerms.slice(0, 3).join(" ; ")}` : "";
+    usr = `טענה: ${claimText}\nדוקטרינה: ${doctrine}${hintBlock}${anchorBlock}\nהחזר עד ${maxCands} מקורות סמכותיים בלבד.`;
+  }
 
   const telemetry: WebHarvestTelemetry = {
     web_json_parse_ok: false,
@@ -867,6 +896,7 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
   const packs: ClaimRetrievalPack[] = [];
   let webBudgetRemaining = WEB_GLOBAL_CAP;
   let webGlobalCapHit = false;
+  let anchorWebUnfilteredRetries = 0;
 
   // Single VectorHealthDiag shared across every vector RPC (claim + anchors
   // + probe). Surfaced in metadata.core.retrieval.vector_health.
@@ -1114,7 +1144,40 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
       anchorWebTel.concept_hits = conceptRes.candidates.length;
       stubsDroppedThisClaim += factualRes.stubs_dropped + conceptRes.stubs_dropped;
 
-      for (const c of [...factualRes.candidates, ...conceptRes.candidates]) {
+      // Unfiltered retry (factual route only): when the gov-host filter
+      // returned 0 hits but we have budget + terms, retry once WITHOUT
+      // search_domain_filter. citation_quality's off_domain gate still
+      // bounds what survives. Counter: anchor_web_unfiltered_retries.
+      let factualRetryRes: ApprovedWebResult | null = null;
+      if (
+        perplexityKey &&
+        factualBudget > 0 &&
+        factualRes.candidates.length === 0 &&
+        webBudgetRemaining - factualRes.candidates.length - conceptRes.candidates.length > 0
+      ) {
+        anchorWebUnfilteredRetries++;
+        try {
+          factualRetryRes = await limiter(() => approvedWeb(
+            perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal, {
+              allowScholarship: false,
+              // No domainFilter → defaults to TIER_A_DOMAIN_FILTER (full TIER_A).
+              anchorTerms: factualTerms,
+              maxCandidates: factualBudget,
+              candidateTag: "anchor_factual",
+            }));
+          anchorWebTel.factual_hits = factualRetryRes.candidates.length;
+          stubsDroppedThisClaim += factualRetryRes.stubs_dropped;
+        } catch (e) {
+          console.error(`[anchor_web unfiltered retry] ${claim.id}:`, (e as Error).message);
+        }
+      }
+
+      const allAnchorHits = [
+        ...factualRes.candidates,
+        ...(factualRetryRes?.candidates ?? []),
+        ...conceptRes.candidates,
+      ];
+      for (const c of allAnchorHits) {
         if (webBudgetRemaining <= 0) break;
         anchorWebHits.push(c);
         webBudgetRemaining--;
@@ -1160,15 +1223,36 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const localOther = all.filter((c) => c.origin !== "approved_web");
     const primaryLocalCount = localOther.filter(isPrimaryLaw).length;
 
-    // When the claim needs binding law and we're light on primary local
-    // hits, only let primary anchors consume the reserve so we don't push
-    // secondary anchors ahead of binding authority.
-    const needPrimary = requiresBindingLaw(claim) && primaryLocalCount < 2;
-    const filteredAnchors = needPrimary
-      ? anchorCandidates.filter(isPrimaryLaw)
-      : anchorCandidates;
-    const anchorReserve = Math.min(PER_CLAIM_ANCHOR_RESERVE, filteredAnchors.length);
-    const anchorKept = filteredAnchors.slice(0, anchorReserve);
+    // Section E (refined): only force primary-only anchors when the claim
+    // ASKED FOR binding law AND has thin primary local coverage AND does
+    // not also need secondary evidence (scholarship / policy / doctrinal
+    // background / factual anchor). Pure-doctrinal claims still get a
+    // primary-only reserve; mixed-posture claims keep their topical
+    // secondary anchors. Verifier remains the relevance gate.
+    const wantsBindingLaw = requiresBindingLaw(claim);
+    const wantsSecondary = requiresSecondaryEvidence(claim);
+    const needPrimary = wantsBindingLaw && !wantsSecondary && primaryLocalCount < 2;
+
+    let anchorKept: CandidateSource[];
+    if (needPrimary) {
+      // Pure binding-law posture: primary anchors only.
+      anchorKept = anchorCandidates.filter(isPrimaryLaw).slice(0, PER_CLAIM_ANCHOR_RESERVE);
+    } else if (wantsBindingLaw && wantsSecondary && primaryLocalCount < 2) {
+      // Mixed posture: split the reserve — 1 primary slot guaranteed, the
+      // remainder open to anchors of any kind. Keeps binding law from being
+      // displaced AND topical secondary anchors from being starved.
+      const primaryAnchors = anchorCandidates.filter(isPrimaryLaw);
+      const otherAnchors = anchorCandidates.filter((c) => !isPrimaryLaw(c));
+      const merged: CandidateSource[] = [];
+      if (primaryAnchors.length) merged.push(primaryAnchors[0]);
+      for (const c of [...primaryAnchors.slice(1), ...otherAnchors]) {
+        if (merged.length >= PER_CLAIM_ANCHOR_RESERVE) break;
+        if (!merged.includes(c)) merged.push(c);
+      }
+      anchorKept = merged;
+    } else {
+      anchorKept = anchorCandidates.slice(0, PER_CLAIM_ANCHOR_RESERVE);
+    }
 
     const localBudget = Math.max(0, PER_CLAIM_CAP - webKept.length - anchorKept.length);
     const localKept = localOther.slice(0, localBudget);
@@ -1332,6 +1416,7 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     anchor_slots_used_per_claim: anchorSlotsTelemetry,
     approved_web_stubs_dropped_per_claim: webStubsTelemetry,
     approved_web_anchor_queries: anchorWebTelemetry,
+    anchor_web_unfiltered_retries: anchorWebUnfilteredRetries,
   };
 }
 
