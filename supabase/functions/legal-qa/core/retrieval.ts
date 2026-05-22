@@ -825,6 +825,25 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
       .map((id) => authMap.get(id))
       .filter((a): a is ExpectedAuthority => !!a);
 
+    // Statute-section focused text queries. When a linked authority is a
+    // statute/regulation WITH a section, build "סעיף X ל<law>" style queries
+    // (generic — no hardcoded laws). Lets retrieval surface the precise
+    // section chunk even when the planner's general text query misses it.
+    const sectionQueriesSet = new Set<string>();
+    const sectionQueryMeta: Array<{ query: string; auth_id: AuthorityId }> = [];
+    for (const a of linkedAuths) {
+      const isStatuteLike =
+        a.type === "statute" || a.type === "regulation";
+      if (!isStatuteLike || !a.section) continue;
+      for (const q of buildSectionQueries(a.section, a.name)) {
+        if (!sectionQueriesSet.has(q)) {
+          sectionQueriesSet.add(q);
+          sectionQueryMeta.push({ query: q, auth_id: a.id });
+        }
+      }
+    }
+    const sectionQueries = sectionQueryMeta.slice(0, 4);
+
     // Allowed web candidates for THIS claim — bounded by per-claim cap AND
     // remaining global budget. approved_web is a first-class parallel origin,
     // NOT a fallback. Skipped only when global budget is exhausted.
@@ -838,11 +857,14 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const allowScholarship = Array.isArray(claim.required_evidence)
       && claim.required_evidence.some((k) => k === "scholarship" || k === "doctrinal_definition");
 
-    // All four origins fire in parallel.
-    const [textHits, vecHits, exactGroups, webResult] = await Promise.all([
+    // All origins fire in parallel.
+    const [textHits, vecHits, exactGroups, sectionGroups, webResult] = await Promise.all([
       limiter(() => localText(adminClient, tq, claim.id)),
       embed ? limiter(() => localVector(adminClient, vq, claim.id, embed)) : Promise.resolve([] as CandidateSource[]),
       Promise.all(linkedAuths.map((a) => limiter(() => exactAuthority(adminClient, a, claim.id)))),
+      Promise.all(sectionQueries.map(({ query }) =>
+        limiter(() => localText(adminClient, query, claim.id)),
+      )),
       perplexityKey && webAllowedThisClaim > 0
         ? limiter(() => approvedWeb(perplexityKey, claim.text, doctrine, linkedAuths, claim.id, signal, allowScholarship))
         : Promise.resolve<ApprovedWebResult>({
@@ -851,11 +873,29 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
           }),
     ]);
     const exactHits = exactGroups.flat();
-    const webHits = webResult.candidates.slice(0, webAllowedThisClaim);
+    // Tag section_text candidates with the originating query for telemetry.
+    const sectionHits: CandidateSource[] = sectionGroups.flatMap((group, i) =>
+      group.map((c, j) => ({
+        ...c,
+        candidate_id: `${claim.id}-section_text-${i}-${j}`,
+        metadata: {
+          ...(c.metadata || {}),
+          section_query: sectionQueries[i]?.query,
+          section_query_auth: sectionQueries[i]?.auth_id,
+        },
+      })),
+    );
+
+    const rawWebHits = webResult.candidates.slice(0, webAllowedThisClaim);
+    // Web → local promotion: if a web URL matches a row in legal_documents,
+    // replace web metadata with the local row (title, citation, source_type,
+    // url, snippet). This prevents weak web labels from shadowing a richer
+    // local DB record (academic articles in particular).
+    const webHits = await promoteWebCandidates(adminClient, rawWebHits);
     const webHarvest = webResult.telemetry;
     webBudgetRemaining = Math.max(0, webBudgetRemaining - webHits.length);
 
-    // Dedup by document_id / url. Priority: exact > text > vector > web.
+    // Dedup by document_id / url. Priority: exact > section_text > text > vector > web.
     const byKey = new Map<string, CandidateSource>();
     const ingest = (arr: CandidateSource[]) => {
       for (const c of arr) {
@@ -864,6 +904,7 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
       }
     };
     ingest(exactHits);
+    ingest(sectionHits);
     ingest(textHits);
     ingest(vecHits);
     // Factual-anchor pool: re-tag each anchor candidate for THIS claim so the
@@ -889,7 +930,36 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const localKept = all.filter((c) => c.origin !== "approved_web");
     const localBudget = Math.max(0, PER_CLAIM_CAP - webKept.length);
     const candidates = [...localKept.slice(0, localBudget), ...webKept];
+    const keptIds = new Set(candidates.map((c) => c.candidate_id));
 
+    // Audit: record every candidate considered for this claim (kept or
+    // dropped by per-claim cap / dedup) so downstream diagnostics can see
+    // exactly which document_ids surfaced where and why they didn't ship.
+    const sawByKey = new Set<string>();
+    const allSeen: CandidateSource[] = [];
+    for (const arr of [exactHits, sectionHits, textHits, vecHits, webHits]) {
+      for (const c of arr) {
+        const k = `${c.candidate_id}`;
+        if (sawByKey.has(k)) continue;
+        sawByKey.add(k);
+        allSeen.push(c);
+      }
+    }
+    for (const c of allSeen) {
+      if (keptIds.has(c.candidate_id)) {
+        recordAudit(c, true);
+      } else {
+        // Distinguish dedup loss vs cap loss.
+        const dedupKey = c.document_id || `${c.origin}:${c.url || c.candidate_id}`;
+        const lostToDedup =
+          byKey.has(dedupKey) && byKey.get(dedupKey)?.candidate_id !== c.candidate_id;
+        recordAudit(
+          c,
+          false,
+          lostToDedup ? "deduped" : "per_claim_cap",
+        );
+      }
+    }
 
     const counts: Record<CandidateOrigin, number> = {
       local_text: 0, local_vector: 0, exact_authority: 0, approved_web: 0,
