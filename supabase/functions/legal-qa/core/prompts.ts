@@ -137,9 +137,14 @@ Be strict. A famous case name in the citation is NOT enough — the snippet
 itself must show the rule. If the snippet is metadata only (title and
 citation but no reasoning text), mark "tangential".
 
+You MUST return exactly one verdict per candidate, in the same order as
+listed, and never omit a candidate. Also return a confidence score in
+[0,1] reflecting how certain you are of the label.
+
 Output JSON only:
   { "claim_id": "C#", "verdicts": [ { "candidate_id": "...",
     "support": "direct"|"partial"|"tangential"|"unrelated",
+    "confidence": <number 0..1>,
     "rationale": "<1 Hebrew sentence>", "pinpoint": "<optional, e.g. פסקה 14 or סעיף 25(ב)>" } ] }`;
 
 export const VERIFIER_USER = (params: {
@@ -156,7 +161,7 @@ export const VERIFIER_USER = (params: {
 claim: ${params.claimText}
 doctrine: ${params.doctrine}
 
-Candidates:
+Candidates (${params.candidates.length} total — return one verdict for each):
 ${lines.join("\n")}
 
 Return the verdicts JSON now.`;
