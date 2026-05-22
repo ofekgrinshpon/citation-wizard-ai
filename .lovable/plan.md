@@ -1,112 +1,87 @@
-# Retrieval recall fix — consolidated A+B+C+D+E
+# Post-retrieval engine fix — stop the citation_quality pipeline from undoing recall
 
-General-purpose changes to `core/retrieval.ts` and `core/runCore.ts` only. No DB migration. No changes to citation engine, drafter, verifier, ledger, footnote builder, Citation Review UI, or Batch Footnote Builder. No query-specific or document-id hardcoding.
+The recall fix (A–E) is working: the Knesset MMM report on דמי חסות and the SSRN/huji scholarship are both arriving in the candidate pool. But the downstream **citation_quality** pass and **footnote builder** are dropping them on contradictory rules, leaking internal notes, and emitting hallucinated pinpoints. Six small, general-purpose fixes — no DB migration, no changes to drafter, verifier, ledger, batch footnote builder, Citation Review UI, or the citation engine's external surface.
 
-## A. Anchor reserve in per-claim candidate selection
+## 1. Sync off_domain allowlist with TIER_A scholarship hosts
 
-`retrieval.ts:830-871` currently dedupes via `byKey` Map (ingest order: exact → text → vector → anchor → web) then slices `localKept.slice(0, localBudget)` where `localBudget = PER_CLAIM_CAP - webKept.length`. Result: anchors are appended last to the Map and routinely sliced off when text hits already fill the budget. Telemetry shows `injected_into_claims` incrementing even when the anchor was sliced.
+`citations.ts` `APPROVED_SCHOLARLY_HOSTS` is the gate for `off_domain:<host>`. `retrieval.ts` `TIER_A_SCHOLARSHIP_HOSTS` is what we deliberately query through the concept-anchor route. They drift: SSRN (`papers.ssrn.com`, `ssrn.com`), `jstor.org`, `openscholar.huji.ac.il`, `cris.huji.ac.il` are TIER_A but missing from `APPROVED_SCHOLARLY_HOSTS`, so `off_domain:papers.ssrn.com` kills exactly what we asked Perplexity to fetch.
 
-Changes:
-- New constant `PER_CLAIM_ANCHOR_RESERVE = 2`.
-- After ingest, partition `all` into `webAll`, `anchorAll` (anchors carry `metadata.factual_anchor === true`), and `localOther` (everything else).
-- `anchor_kept = anchorAll.slice(0, min(PER_CLAIM_ANCHOR_RESERVE, anchorAll.length))`.
-- `localBudget = max(0, PER_CLAIM_CAP - webKept.length - anchor_kept.length)`.
-- Final `candidates = [...localOther.slice(0, localBudget), ...anchor_kept, ...webKept]`.
-- Anchor candidates carry their original `origin` (`local_text` / `local_vector`), so verifier treats them as ordinary local hits. Anchor reserve is recall-only — verifier remains the relevance gate.
-- Fix `injected_into_claims` to increment only when an anchor candidate is in the final `candidates` array (not merely in `byKey`).
+Change: extract the host lists to one shared module (`core/approvedHosts.ts`) consumed by both `retrieval.ts` and `citations.ts`. `APPROVED_SCHOLARLY_HOSTS` becomes the superset of TIER_A scholarship. No new hosts beyond what TIER_A already approves — this is a consistency fix, not a widening.
 
-## B. Vector warmup + 57014 retry
+## 2. Don't drop `uninformative_label` when the source is anchored
 
-Edge logs show `C0-factual-0` and `C0-concept-0` timing out with Postgres `57014` (statement timeout), then later calls succeed. Cold-HNSW load on the very first call.
+`citation_quality.ts:124-128` drops any LS where `declared_type === "none"` AND label is uninformative. The pre-pass at lines 233-268 rescues by host inference, but only for `origin === "approved_web"` with `support === "direct"` — and that path doesn't cover `local_text`/`local_vector` candidates carrying `factual_anchor === true` whose `source_type` is empty or generic ("דו"ח", "knesset_research" before normalization).
 
-Changes in `retrieval.ts`:
-- New `vectorWarmup(supabase, signal)` helper called once at the top of `assembleSourcePack`, before any anchor or per-claim vector RPC. Fires `match_legal_chunks` with `match_count=1`, `match_threshold=0.99`, a zero-vector. Errors swallowed. Records `vector_health.warmup_status = "ok" | "failed:<code>"`.
-- In `localVector`, on RPC error with `code === "57014"`: retry once with `match_count = ceil(match_count / 2)`. Record `vector_health.retries_57014` counter and final outcome. Existing diagnostics (`calls`, `ok`, `failed`, `last_rpc_error`, `last_embedding_length`, `threshold_probe_top_similarity`) stay intact.
+Change: extend the rescue pre-pass to also rescue LedgerSources where `metadata.factual_anchor === true` OR `metadata.concept_anchor === true`. Use the same host-inference + thin-metadata path, mark `partial`, add `anchor_inferred_type` error tag. Anchors retain their normalized `source_type` instead of being discarded for thin labels.
 
-## C. Drop approved_web stubs before they reach the candidate pool
+Off_domain still wins over rescue (existing precedence).
 
-In `approvedWeb` (around line 617), after parsing each Perplexity candidate, drop it when the citation looks like a stub. New per-claim counter `approved_web_stubs_dropped`.
+## 3. Sanitize verifier pinpoints before they reach the footnote builder
 
-Drop rules (applied to the Perplexity-returned `citation` / `title` strings, NOT to local DB hits):
-- **Standalone placeholder titles** (exact-match, ignoring leading/trailing whitespace and quotes): `"פסק דין"`, `"החלטה"`, `"פס\"ד"`, `"פסה\"ד"`, `"פסק־דין"`.
-- **Caselaw with no party indicator**: `source_type === "caselaw"` AND citation lacks `נ'`, `נ׳`, `נגד`, or `v.` AND the remaining title text is shorter than 6 chars.
-- **Bare docket fragments**: citation matches `^\d+([./]\d+){1,2}\s*(\([^)]*\))?$` with no party text (e.g. `"24.7.9396 (בתי המשפט המחוזיים)"`).
-- **Generic too-short citation**: trimmed citation length < 20 chars AND no recognisable Hebrew word ≥ 4 chars in the title.
+Footnote 4 read `שם, ב-שורה 1 של הקטע.` — verifier model returned the literal string "שורה 1 של הקטע" as `pinpoint`. `ledger.ts:217` copies `p.v.pinpoint` straight through; `footnotes.ts:168` wraps it with `withBetPrefix` and emits.
 
-Each drop is counted into `approved_web_stubs_dropped` and the candidate is excluded from the returned `candidates` array. No changes to anything downstream.
+Change: add a `sanitizePinpoint(s)` helper in `core/ledger.ts` applied at line 217. Drop the pinpoint (set undefined) when it matches any of:
+- meta-phrases: `/שורה\s*\d+/`, `/של ה?קטע/`, `/של ה?snippet/i`, `/בקטע/`, `/^הקטע$/`
+- bare digits without unit: `/^\s*\d{1,3}\s*$/` (no `סעיף`/`פסקה`/`עמ`/`ס/ב/ה"ש` prefix)
+- length > 40 chars (real pinpoints are short references)
 
-## D. Extend factual/concept anchors to approved_web
+Keep good pinpoints (`סעיף 25(ב)`, `פסקה 14`, `עמ' 221`). Telemetry counter `pinpoints_sanitized_per_claim` on the `runCore` retrieval metadata block.
 
-Same `factual_anchor_terms` / `concept_anchor_terms` the planner already emits drive an additional approved_web query when warranted. Behaviour is general, not domain-specific.
+## 4. Stop leaking the internal `הערה למערכת` line into `rendered_answer`
 
-Trigger (per claim, after local retrieval, before the existing approved_web call):
-- "Thin local recall" = `localKept.length + anchor_kept.length < 4` after section A runs, OR
-- claim's `required_evidence` includes one of: `scholarship`, `doctrinal_definition` (concept anchors get scholarship route), OR
-- factual_anchor pool produced documents but **0** were retained for this claim after A (signal that the factual topic isn't well covered locally).
+`citation_quality.ts:391` appends `הערה למערכת: הטענות הבאות נותרו ללא אסמכתא לאחר ביקורת איכות: …` directly to `rendered`. The text is already exposed structurally as `claims_lost_all_support` in the returned object.
 
-When triggered:
-- Build a Perplexity query as `claim.text + " " + selected_anchor_terms.join(" ")`, where `selected_anchor_terms` are 1–3 terms drawn from `factual_anchor_terms` (factual route) and/or `concept_anchor_terms` (concept route).
-- Factual route: pass `search_domain_filter = TIER_A_DOMAIN_FILTER` filtered to gov/regulator hosts present in TIER_A (knesset.gov.il, mevaker.gov.il, justice.gov.il, reshumot.gov.il, competition.gov.il, tax.gov.il, mof.gov.il, supreme*.gov.il). No scholarship hosts here.
-- Concept route: only fires when `required_evidence` contains `scholarship` or `doctrinal_definition`. Uses TIER_A scholarship subset (huji.ac.il, tau.ac.il, biu.ac.il, ssrn.com, jstor.org).
-- These extra hits go through the SAME approved_web normalization and the same C-stage stub filter.
-- Counts written to telemetry as `approved_web_anchor_queries` (per claim: `{ factual_terms, concept_terms, factual_hits, concept_hits }`).
+Change: remove the append. The diagnostic survives in `metadata.core.citation_quality.claims_lost_all_support` and `status === "needs_review"`. Any UI surface that wants to show it can read the structured field. No user-facing leak.
 
-Local DB still wins: the existing local-DB metadata override (line 899+) is unchanged and applies to these new anchor-web hits exactly the same way — if a Perplexity URL matches a row in `legal_documents`, the local title/citation/source_type override Perplexity's metadata.
+## 5. Fix the `short_form_shape_invalid` self-collision
 
-Anchor-web hits are still subject to per-claim cap math from A (they enter via `webKept`).
+`citation_quality.ts:198-211`: for `is_repeated` markers the validator requires `שם / לעיל ה"ש N / legislation cross-form`. The Rule 37 builder at `footnotes.ts:182-198` only emits one of those forms when `default_pinpoint` is present and the prior occurrence is found. When the builder falls back to `שם.` for the same LS twice with empty pinpoint, the validator sometimes sees a canonical-string repeat instead (because `engine_used==="resolver"`, the first branch at line 198 fires for repeated entries that lack `is_repeated` short-form decoration) and rejects it as `short_form_shape_invalid`.
 
-## E. Preserve source-quality hierarchy
+Change: in `validateFootnote` (line 196-204), gate the canonical-mismatch check with `!fn.is_repeated && fn.short_form_used !== true`. The shape gate (208-211) already handles repeats; the canonical-equality gate must not run for them. This removes the LS2×2 drop on C1 without touching footnote generation.
 
-Anchor reserve is for recall; primary law must still come first for doctrinal claims.
+## 6. Improve anchor-driven approved_web query shape
 
-Implementation inside the anchor-reserve partition in A:
-- Tag each anchor candidate with `is_primary_law` based on `source_type`:
-  - **primary**: `statute`, `legislation`, `regulation`, `caselaw` originating from Supreme Court (heuristic: `court` field includes `"עליון"` or `"Supreme"`) OR `exact_authority` origin.
-  - **secondary**: `knesset_research`, `journal_article`, `book_chapter`, `policy_paper`, `mmm_report`, `scholarship`, plus caselaw from lower courts.
-- For each claim, compute `primary_local_count` = number of `localOther` candidates with `is_primary_law === true` already in the budget.
-  - If `primary_local_count >= 2`: anchor reserve admits both primary and secondary anchors (existing behaviour, reserve=2).
-  - If `primary_local_count < 2` AND the claim's `required_evidence` includes a binding-law kind (`binding_caselaw`, `statute_section`, `regulation`): anchor reserve admits **only primary-tier anchors**, and any secondary anchor that would have taken a slot is deferred. The freed slot returns to `localOther` so a primary local hit gets it.
-- Telemetry per claim: `anchor_slots_used`, `anchor_source_types: string[]`, `primary_count`, `secondary_count`, `anchor_displaced_primary: boolean` (true if reserve consumed a slot that would have gone to a primary local candidate — i.e., `localOther.length > localBudget` AND any of the displaced ones had `is_primary_law`).
+Telemetry showed `factual_hits = 0` on every claim despite gov hosts being in scope. The query was `claim.text + " " + all anchor_terms.join(" ")` — long claim text + 2 factual terms produced a noisy Perplexity query against `search_domain_filter`.
 
-This is general (heuristic on `source_type` + `court`), with no per-document or per-query hardcoding.
+Change in `retrieval.ts` anchor-web call site:
+- Use **anchor terms only** as the query body, not `claim.text + terms`. Format: `factual_anchor_terms.join(" ") + " " + (one short doctrine word from claim.search_targets[0].doctrine)`. Max query length 120 chars.
+- Pass `search_domain_filter` as the **bare host array** (already done) but log the resolved domains in `anchor_web` telemetry so we can see if Perplexity actually filtered or returned out-of-allowlist hits (already partially logged).
+- If `factual_hits === 0` AND TIER_A_GOV_HOSTS produced nothing, retry once with `search_domain_filter` unset (still gated downstream by `off_domain`). Counter `anchor_web_unfiltered_retries`.
 
-## Telemetry consolidation (runCore.ts)
-
-Surface in `qa_logs.metadata.core.retrieval`:
-- `vector_health` — existing fields + `warmup_status`, `retries_57014`.
-- `anchor_slots_used_per_claim: Array<{claim_id, anchor_kept, anchor_doc_ids, anchor_source_types, anchor_displaced_primary}>`.
-- `per_claim[*].primary_count`, `per_claim[*].secondary_count`.
-- `approved_web_stubs_dropped_per_claim: Array<{claim_id, dropped_count}>`.
-- `approved_web_anchor_queries: Array<{claim_id, factual_terms, concept_terms, factual_hits, concept_hits}>` — empty array when never triggered for a claim.
-
-Existing telemetry (`factual_anchor_candidates`, `concept_anchor_candidates`, `local_metadata_overrides`) stays as-is.
+No other change to D's trigger logic.
 
 ## Files
 
-- `supabase/functions/legal-qa/core/retrieval.ts` — A (anchor reserve), B (warmup+retry), C (stub filter), D (anchor-driven approved_web), E (primary/secondary partition + displacement logic).
-- `supabase/functions/legal-qa/core/runCore.ts` — telemetry surfacing only.
+- `supabase/functions/legal-qa/core/approvedHosts.ts` — **new**: shared `PRIMARY_HOSTS`, `APPROVED_SCHOLARLY_HOSTS`, `TIER_A_GOV_HOSTS`, `TIER_A_SCHOLARSHIP_HOSTS`.
+- `supabase/functions/legal-qa/core/citations.ts` — import from approvedHosts; APPROVED_SCHOLARLY_HOSTS = superset of TIER_A scholarship.
+- `supabase/functions/legal-qa/core/retrieval.ts` — import from approvedHosts; anchor-web query shape + retry (#6).
+- `supabase/functions/legal-qa/core/citation_quality.ts` — extend rescue pre-pass to anchored LS (#2); remove `הערה למערכת` append (#4); gate canonical-mismatch with `!is_repeated` (#5).
+- `supabase/functions/legal-qa/core/ledger.ts` — `sanitizePinpoint` helper applied at line 217 (#3).
+- `supabase/functions/legal-qa/core/runCore.ts` — surface `pinpoints_sanitized_per_claim`, `anchor_web_unfiltered_retries`, `approved_web_rescued`, `anchor_label_rescued` counters.
 
-No other files touched. No DB migration.
+## Not touched
+
+- Citation engine (`citationResolver`, `citationEngine.ts`).
+- Drafter prompts.
+- Verifier prompt/logic.
+- Footnote builder (`footnotes.ts`) output shape.
+- Batch Footnote Builder, Citation Review UI.
+- DB schema / migrations.
 
 ## Validation
 
-Re-run both regression queries (server-side, after deploy) and inspect `qa_logs.metadata.core.retrieval`:
+Re-run the דמי חסות / פרוטקשן query and inspect `qa_logs.metadata.core`:
 
-**Query 1 — דמי חסות / פרוטקשן:**
-- `vector_health.warmup_status === "ok"` and `failed === 0` (or `retries_57014 ≥ 1`).
-- `factual_anchor_candidates.document_ids` non-empty (existing behaviour preserved).
-- ≥1 claim's `anchor_slots_used_per_claim[i].anchor_doc_ids` contains a Knesset MMM document id.
-- `approved_web_stubs_dropped_per_claim` shows ≥1 drop on caselaw claims; no footnote text contains standalone `"פסק דין"` or bare-docket-only citation.
-- `total_footnotes ≥ 10` with full party names + citations.
+- `citation_quality.removed_citations` no longer contains `off_domain:papers.ssrn.com` (or `huji.ac.il` scholarship hosts).
+- `citation_quality.removed_citations` no longer contains `uninformative_label` for anchored LS (`anchor_label_rescued ≥ 1`).
+- `citation_quality.claims_lost_all_support` empty OR `status !== "needs_review"`.
+- `answer` does NOT end with `הערה למערכת: …`.
+- No footnote contains `שורה 1 של הקטע` or any sentence-shaped pinpoint.
+- ≥1 footnote cites the MMM doc (`a6d79a7a…`) or the SSRN/huji scholarship article.
 
-**Query 2 — מחדל חקיקתי / חובה לחוקק:**
-- `concept_anchor_candidates.document_ids` non-empty.
-- ≥1 claim with `required_evidence` including `scholarship` or `doctrinal_definition` has the local journal article in its candidates, OR `approved_web_anchor_queries` shows the concept route fired AND `local_metadata_overrides ≥ 1` (Perplexity URL resolved to local DB metadata).
-- No footnote uses only "משפטים (המאמר באתר כתב העת משפטים…)" placeholder when the local article is in candidates.
+## Acceptance
 
-**Acceptance:**
-- No hardcoded ids/titles/terms.
-- Existing `factual_anchor_terms` / `concept_anchor_terms` behaviour preserved (additive).
-- Verifier still gates relevance.
-- No DB migration.
-- Forbidden modules untouched.
+- No hardcoded document ids, query terms, or article titles.
+- One source of truth for approved hosts; TIER_A retrieval allowlist and off_domain filter cannot drift again.
+- All counters land in `metadata.core` for regression tracking.
+- No DB migration; forbidden modules untouched.
