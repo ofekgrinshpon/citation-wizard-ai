@@ -399,11 +399,11 @@ function summarize(rows: SmokeRow[]) {
 }
 
 (async () => {
-  console.log(`[deep-smoke] label=${LABEL} depth=${RESEARCH_DEPTH} questions=${QUESTIONS.length}`);
+  console.log(`[deep-smoke] label=${LABEL} depth=${RESEARCH_DEPTH} questions=${QUESTIONS_TO_RUN.length}`);
   const rows: SmokeRow[] = [];
-  for (let i = 0; i < QUESTIONS.length; i++) {
-    const q = QUESTIONS[i];
-    console.log(`\n[${i + 1}/${QUESTIONS.length}] ${q}`);
+  for (let i = 0; i < QUESTIONS_TO_RUN.length; i++) {
+    const q = QUESTIONS_TO_RUN[i];
+    console.log(`\n[${i + 1}/${QUESTIONS_TO_RUN.length}] ${q}`);
     const row = await runOne(i + 1, q);
     rows.push(row);
     console.log(
