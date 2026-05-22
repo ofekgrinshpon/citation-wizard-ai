@@ -73,6 +73,23 @@ const PRIMARY_SOURCE_TYPES = new Set([
   "published_caselaw",
 ]);
 
+// Pinpoint sanitization. The verifier model sometimes returns meta-phrases
+// like "שורה 1 של הקטע" (a description of WHERE in the snippet it found
+// support) instead of a real bibliographic pinpoint. These leak into the
+// footnote builder as `שם, ב-שורה 1 של הקטע.`. Drop them deterministically.
+const PINPOINT_META_RE = /(שורה|של ה?קטע|בקטע|של ה?snippet|^הקטע$)/i;
+const BARE_DIGITS_RE = /^\s*\d{1,3}\s*$/;
+function sanitizePinpoint(s?: string): string | undefined {
+  if (!s) return undefined;
+  const t = s.trim();
+  if (!t) return undefined;
+  if (t.length > 40) return undefined;
+  if (PINPOINT_META_RE.test(t)) return undefined;
+  // Bare digits with no unit (סעיף/פסקה/עמ'/ס'/ה"ש) — likely garbage from verifier.
+  if (BARE_DIGITS_RE.test(t)) return undefined;
+  return t;
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
 function hostOf(url?: string): string {
@@ -218,7 +235,7 @@ export function buildLedger(args: BuildLedgerArgs): LedgerResult {
       claim_id: claim.id,
       origin: p.v.origin,
       support: p.v.support as "direct" | "partial",
-      pinpoint: p.v.pinpoint,
+      pinpoint: sanitizePinpoint(p.v.pinpoint),
       title: p.v.title,
       citation: p.v.citation,
       url: p.v.url,
@@ -228,6 +245,7 @@ export function buildLedger(args: BuildLedgerArgs): LedgerResult {
       document_id: p.meta?.document_id,
       normalized_key: p.key,
       is_primary: p.primary,
+      metadata: p.meta?.metadata,
     }));
 
     // Sort within claim: primary first, then origin rank, then direct > partial.
