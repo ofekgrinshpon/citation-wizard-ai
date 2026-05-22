@@ -350,7 +350,7 @@ export function runCitationQuality(args: CitationQualityArgs): CitationQualityRe
   }
   (summary as Record<string, unknown>).duplicates_dropped = duplicates_dropped;
 
-
+  // Also pre-strip any marker in the answer whose LS is unknown — either not
   // in the ledger or not in the citations map. This prevents the drafter
   // from emitting markers (e.g. [cite:LS23] when only 22 sources exist) that
   // would otherwise leak through as orphan superscripts.
