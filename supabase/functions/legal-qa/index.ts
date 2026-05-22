@@ -2562,6 +2562,12 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             return "לא נמצאו מקורות מאומתים מספיקים לענות על השאלה במלואה. נסה לנסח מחדש את השאלה או להוסיף הקשר נוסף.";
           }
           if (r.startsWith("planner_failed")) {
+            if (r.includes("planner_timeout")) {
+              return "השרת איטי כעת ולא הצליח להפיק תכנית מחקר בזמן. נסה שוב בעוד רגע.";
+            }
+            if (r.includes("planner_gateway_") || r.includes("planner_threw")) {
+              return "שירות ה-AI אינו זמין כרגע. נסה שוב בעוד רגע.";
+            }
             return "לא הצלחנו לנתח את השאלה לתכנית מחקר. נסה לנסח אותה מחדש בצורה ממוקדת יותר.";
           }
           if (r.startsWith("drafter_") || r.startsWith("draft_threw")) {
