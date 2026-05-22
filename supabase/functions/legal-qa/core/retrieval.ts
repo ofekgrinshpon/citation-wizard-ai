@@ -723,24 +723,42 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     ...(Array.isArray(plan.factual_anchor_terms) ? plan.factual_anchor_terms : []),
     ...(Array.isArray((plan as any).concept_anchor_terms) ? (plan as any).concept_anchor_terms : []),
   ];
+
+  // Doctrine-synonym expansion. Triggered on the joined doctrinal frame +
+  // thesis + raw anchors. Lets a doctrinal phrase from the question
+  // ("מחדל חקיקתי") pull in synonymous framings ("חובה לחוקק", "חסר נורמטיבי")
+  // that local titles may actually use.
+  const synonymHay = [
+    plan.doctrinal_frame || "",
+    plan.thesis || "",
+    ...rawAnchors.filter((t): t is string => typeof t === "string"),
+  ].join(" \n ");
+  const expansion = expandDoctrineTerms(synonymHay);
+
   const anchorTerms = Array.from(
     new Set(
-      rawAnchors
+      [...rawAnchors, ...expansion.synonyms]
         .map((t) => (typeof t === "string" ? t.trim() : ""))
         .filter((t) => t.length >= 2 && t.length <= TEXT_QUERY_MAX_CHARS),
     ),
-  ).slice(0, 10);
+  ).slice(0, 12);
 
   const anchorPool: CandidateSource[] = [];
-  const anchorTelemetry: FactualAnchorTelemetry = {
+  const anchorTelemetry: FactualAnchorTelemetry & {
+    synonym_hits?: string[];
+    synonym_added?: string[];
+  } = {
     terms: anchorTerms,
     text_candidates: 0,
     vector_candidates: 0,
     total_unique: 0,
     injected_into_claims: 0,
+    synonym_hits: expansion.hits,
+    synonym_added: expansion.synonyms,
   };
 
   if (anchorTerms.length > 0) {
+    // Run FTS per anchor term separately (each term gets its own focused query).
     const textRuns = await Promise.all(
       anchorTerms.map((term) =>
         limiter(() => localText(adminClient, term, "C0" as ClaimId)),
@@ -749,10 +767,16 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     const flatText = textRuns.flat();
     anchorTelemetry.text_candidates = flatText.length;
 
-    const vecQuery = anchorTerms.join(" • ").slice(0, VECTOR_QUERY_MAX_CHARS);
-    const vecHits = embed
-      ? await limiter(() => localVector(adminClient, vecQuery, "C0" as ClaimId, embed))
+    // Vector pre-pass runs per term too, so a short doctrinal phrase isn't
+    // diluted inside a long joined string. Cap to first 6 terms to bound cost.
+    const vecRuns = embed
+      ? await Promise.all(
+          anchorTerms.slice(0, 6).map((term) =>
+            limiter(() => localVector(adminClient, term, "C0" as ClaimId, embed)),
+          ),
+        )
       : [];
+    const vecHits = vecRuns.flat();
     anchorTelemetry.vector_candidates = vecHits.length;
 
     const seen = new Set<string>();
@@ -765,6 +789,30 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     }
     anchorTelemetry.total_unique = anchorPool.length;
   }
+
+  // Per-candidate audit log (kept and dropped) for diagnostics.
+  const candidates_audit: CandidateAuditEntry[] = [];
+  const recordAudit = (
+    c: CandidateSource,
+    kept: boolean,
+    drop_reason?: string,
+  ) => {
+    const md = (c.metadata || {}) as Record<string, unknown>;
+    candidates_audit.push({
+      candidate_id: c.candidate_id,
+      claim_id: c.claim_id,
+      document_id: c.document_id,
+      title: c.title || "",
+      source_type: c.source_type || "",
+      origin: c.origin,
+      url: c.url,
+      kept,
+      drop_reason,
+      section_query: typeof md.section_query === "string" ? (md.section_query as string) : undefined,
+      promoted_from_web: md.promoted_from_web === true || undefined,
+    });
+  };
+
 
 
   for (const claim of plan.claims) {
