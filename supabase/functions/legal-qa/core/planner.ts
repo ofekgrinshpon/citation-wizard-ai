@@ -7,7 +7,7 @@ import type { PlanV1 } from "./types.ts";
 import { PLANNER_SYSTEM, PLANNER_USER } from "./prompts.ts";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const MODEL = "openai/gpt-5";
+const MODEL = "openai/gpt-5-mini";
 const TIMEOUT_MS = 90_000;
 
 export interface PlanArgs {
@@ -42,7 +42,7 @@ export async function planResearch(args: PlanArgs): Promise<PlanResult> {
       },
       body: JSON.stringify({
         model: MODEL,
-        reasoning_effort: "low",
+        reasoning_effort: "minimal",
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: PLANNER_SYSTEM },
@@ -92,11 +92,13 @@ export async function planResearch(args: PlanArgs): Promise<PlanResult> {
 
     return { ok: true, plan, raw, duration_ms: Date.now() - t0, model: MODEL };
   } catch (e) {
+    const msg = (e as Error).message ?? String(e);
+    const isAbort = (e as Error).name === "AbortError" || /aborted/i.test(msg);
     return {
       ok: false,
       duration_ms: Date.now() - t0,
       model: MODEL,
-      error: `planner_threw:${(e as Error).message ?? String(e)}`,
+      error: isAbort ? `planner_timeout_${Math.round(TIMEOUT_MS / 1000)}s` : `planner_threw:${msg}`,
     };
   } finally {
     clearTimeout(t);
