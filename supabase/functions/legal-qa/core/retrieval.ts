@@ -1389,6 +1389,10 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
         anchor_source_types: anchorSrcTypes,
         anchor_displaced_primary: anchorDisplacedPrimary,
         anchor_layers_used: Array.from(layersUsed),
+        anchor_primary_displaced_for_topical_secondary: primaryDisplacedForTopicalSecondary,
+        anchor_topical_tiers: anchorKept.map(
+          (c) => String((c.metadata as any)?.topical_tier ?? "none"),
+        ),
       });
       // Per-layer injected counter (only when the anchor SURVIVED selection).
       if (layersUsed.has("factual")) factualLayer.telemetry.injected_into_claims++;
