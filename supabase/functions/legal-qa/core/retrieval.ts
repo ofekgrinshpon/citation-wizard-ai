@@ -506,6 +506,22 @@ async function exactAuthority(
       /* swallow */
     }
   }
+
+  // When the authority targets a specific section of a statute/regulation,
+  // replace the head-of-document snippet with the chunk containing that
+  // section. Generic for any section number/letter and any statute.
+  if (auth.section && out.length > 0) {
+    for (const c of out) {
+      if (!c.document_id) continue;
+      const sectionContent = await findSectionChunkContent(client, c.document_id, auth.section);
+      if (sectionContent) {
+        c.snippet = sectionContent.slice(0, 800);
+        (c.metadata as Record<string, unknown>).section_query = auth.section;
+        (c.metadata as Record<string, unknown>).snippet_source = "section_chunk";
+      }
+    }
+  }
+
   return out;
 }
 
