@@ -108,6 +108,10 @@ export interface ClaimAnchorTelemetry {
   anchor_displaced_primary: boolean;
   /** Section F: which anchor layers actually contributed slots for this claim. */
   anchor_layers_used?: Array<"factual" | "concept">;
+  /** New: primary filter relaxed because topical secondary beat weak primary. */
+  anchor_primary_displaced_for_topical_secondary?: boolean;
+  /** New: per-anchor topical tier (for diagnosing weak ranking). */
+  anchor_topical_tiers?: string[];
 }
 
 export interface ClaimWebStubTelemetry {
