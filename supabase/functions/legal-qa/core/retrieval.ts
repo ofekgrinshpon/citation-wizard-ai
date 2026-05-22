@@ -1216,7 +1216,15 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
 
     const { factual: factualPool, concept: conceptPool } = splitByLayer(anchorCandidates);
     const factualFiltered = applyPrimaryFilter(factualPool);
-    const conceptFiltered = applyPrimaryFilter(conceptPool);
+    // Concept anchors carry doctrinal/scholarship support by design. When the
+    // claim explicitly asks for scholarship or a doctrinal_definition, the
+    // primary-law filter must NOT strip the concept layer — otherwise the
+    // article/MMM that *is* the doctrinal evidence gets dropped to preserve
+    // primary law that already lives in the local pool. Factual anchors keep
+    // the primary filter so MMM doesn't displace statutes.
+    const conceptFiltered = allowScholarship
+      ? conceptPool
+      : applyPrimaryFilter(conceptPool);
 
     // Phase 1: per-layer floor (up to ANCHOR_RESERVE_PER_LAYER per layer).
     const anchorKept: CandidateSource[] = [];
