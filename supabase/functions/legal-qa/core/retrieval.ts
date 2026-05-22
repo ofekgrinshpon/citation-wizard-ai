@@ -1439,52 +1439,80 @@ export async function retrieveForPlan(args: RetrieveArgs): Promise<RetrievalResu
     });
   }
 
-  // ─── Local-DB metadata override for approved_web candidates ──────────
-  // When Perplexity returns a URL we already have in legal_documents, the
-  // local row is the canonical metadata source. Swap title/citation/
-  // source_type onto the web candidate so the downstream verifier and
-  // citation builder see real metadata instead of weak Perplexity strings.
+  // ─── Local-DB metadata override ───────────────────────────────────────
+  // When a candidate's URL matches a row in legal_documents, OR when a
+  // local candidate already carries a document_id, the local row is the
+  // canonical metadata source. Swap title/citation/source_type AND attach
+  // full DB metadata (author/year/volume/journal/publication/...) as
+  // metadata.local_doc_meta so downstream citation building can use it for
+  // local-secondary passthrough with explicit placeholders.
   let localMetadataOverrides = 0;
   try {
+    const allCands = packs.flatMap((p) => p.candidates);
     const webUrls = Array.from(new Set(
-      packs.flatMap((p) => p.candidates)
-        .filter((c) => c.origin === "approved_web" && c.url)
-        .map((c) => c.url!),
+      allCands.filter((c) => c.origin === "approved_web" && c.url).map((c) => c.url!),
     ));
+    const docIds = Array.from(new Set(
+      allCands.map((c) => c.document_id).filter((x): x is string => !!x),
+    ));
+
+    type Row = {
+      id: string;
+      title: string | null;
+      citation: string | null;
+      source_type: string | null;
+      source_url: string | null;
+      metadata: Record<string, unknown> | null;
+    };
+    const byUrl = new Map<string, Row>();
+    const byId = new Map<string, Row>();
+
     if (webUrls.length > 0) {
-      const { data: localRows, error: ovErr } = await adminClient
+      const { data, error } = await adminClient
         .from("legal_documents")
-        .select("id, title, citation, source_type, source_url")
+        .select("id, title, citation, source_type, source_url, metadata")
         .in("source_url", webUrls);
-      if (!ovErr && Array.isArray(localRows)) {
-        const byUrl = new Map<string, { id: string; title: string; citation: string; source_type: string }>();
-        for (const r of localRows as Array<{ id: string; title: string; citation: string; source_type: string; source_url: string }>) {
-          if (r.source_url && (r.title || r.citation)) {
-            byUrl.set(r.source_url, {
-              id: r.id,
-              title: r.title || "",
-              citation: r.citation || "",
-              source_type: r.source_type || "",
-            });
-          }
-        }
-        if (byUrl.size > 0) {
-          for (const p of packs) {
-            for (const c of p.candidates) {
-              if (c.origin !== "approved_web" || !c.url) continue;
-              const hit = byUrl.get(c.url);
-              if (!hit) continue;
-              c.document_id = hit.id;
-              if (hit.title) c.title = hit.title;
-              if (hit.citation) c.citation = hit.citation;
-              if (hit.source_type) c.source_type = hit.source_type;
-              c.metadata = { ...(c.metadata || {}), local_metadata_override: true };
-              localMetadataOverrides++;
-            }
-          }
-        }
-      } else if (ovErr) {
-        console.error("[core retrieval] local metadata override query failed:", ovErr.message);
+      if (error) console.error("[core retrieval] local override (urls) failed:", error.message);
+      for (const r of (data || []) as Row[]) {
+        if (r.source_url) byUrl.set(r.source_url, r);
+        byId.set(r.id, r);
+      }
+    }
+    if (docIds.length > 0) {
+      const missing = docIds.filter((id) => !byId.has(id));
+      if (missing.length > 0) {
+        const { data, error } = await adminClient
+          .from("legal_documents")
+          .select("id, title, citation, source_type, source_url, metadata")
+          .in("id", missing);
+        if (error) console.error("[core retrieval] local override (ids) failed:", error.message);
+        for (const r of (data || []) as Row[]) byId.set(r.id, r);
+      }
+    }
+
+    const applyHit = (c: CandidateSource, hit: Row) => {
+      if (!hit) return;
+      c.document_id = c.document_id || hit.id;
+      if (hit.title) c.title = hit.title;
+      if (hit.citation) c.citation = hit.citation;
+      if (hit.source_type) c.source_type = hit.source_type;
+      c.metadata = {
+        ...(c.metadata || {}),
+        local_metadata_override: true,
+        local_doc_meta: hit.metadata || {},
+        local_doc_title: hit.title || undefined,
+        local_doc_citation: hit.citation || undefined,
+        local_doc_source_url: hit.source_url || undefined,
+      };
+      localMetadataOverrides++;
+    };
+
+    for (const p of packs) {
+      for (const c of p.candidates) {
+        let hit: Row | undefined;
+        if (c.origin === "approved_web" && c.url) hit = byUrl.get(c.url);
+        if (!hit && c.document_id) hit = byId.get(c.document_id);
+        if (hit) applyHit(c, hit);
       }
     }
   } catch (e) {
