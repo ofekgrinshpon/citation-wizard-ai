@@ -141,7 +141,9 @@ function unsupportedLeakCheck(answer: string, plan: PlanV1, ledger: LedgerResult
 
 export async function draft(args: DraftArgs): Promise<DraftResult> {
   const t0 = Date.now();
-  const { plan, ledger, lovableApiKey, signal } = args;
+  const { plan, ledger, lovableApiKey, signal, timeoutMs, forceModel } = args;
+  const MODEL = (forceModel && forceModel.trim()) ? forceModel.trim() : DEFAULT_MODEL;
+  const TIMEOUT_MS = typeof timeoutMs === "number" && timeoutMs > 0 ? timeoutMs : DEFAULT_TIMEOUT_MS;
   const warnings: string[] = [];
 
   const validIds = new Set<LedgerSourceId>(
@@ -162,7 +164,8 @@ export async function draft(args: DraftArgs): Promise<DraftResult> {
   const ctrl = new AbortController();
   const onAbort = () => ctrl.abort();
   signal?.addEventListener("abort", onAbort);
-  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+  let selfTimedOut = false;
+  const timer = setTimeout(() => { selfTimedOut = true; ctrl.abort(); }, TIMEOUT_MS);
 
   let raw = "";
   try {
@@ -178,6 +181,7 @@ export async function draft(args: DraftArgs): Promise<DraftResult> {
         reasoning_effort: REASONING_EFFORT,
         messages: [
           { role: "system", content: DRAFTER_SYSTEM },
+
           { role: "user", content: userMsg },
         ],
       }),
