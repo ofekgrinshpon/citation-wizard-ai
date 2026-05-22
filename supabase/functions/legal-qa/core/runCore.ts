@@ -153,6 +153,30 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   const plan = planRes.plan;
   emitSafe(onStage, "plan", "complete", `claims=${plan.claims.length} auth=${plan.expected_authorities.length} anchors=${(plan.factual_anchor_terms?.length ?? 0)}`);
 
+  // ─── 1.5 Source Requirements (telemetry, no behavior change) ───────────
+  emitSafe(onStage, "source_requirements", "running");
+  const tSr = Date.now();
+  let sourceRequirements: SourceRequirementsPlan | null = null;
+  try {
+    sourceRequirements = buildSourceRequirements({ question, plan });
+  } catch (e) {
+    console.warn("[core:source_requirements] build failed", e);
+  }
+  recordStage({
+    stage: "source_requirements",
+    duration_ms: Date.now() - tSr,
+    status: sourceRequirements ? "ok" : "error",
+    ...(sourceRequirements ? { metadata: summarizeRequirements(sourceRequirements) } : {}),
+  });
+  emitSafe(
+    onStage,
+    "source_requirements",
+    "complete",
+    sourceRequirements
+      ? `doctrines=${sourceRequirements.triggered_doctrines.length} roles=${sourceRequirements.mandatory_roles.length}`
+      : "skipped",
+  );
+
   // ─── 2. Retrieval ──────────────────────────────────────────────────────
   emitSafe(onStage, "retrieval", "running");
   const tRet = Date.now();
