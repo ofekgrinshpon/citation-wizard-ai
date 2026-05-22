@@ -194,6 +194,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     stage: "verify",
     duration_ms: Date.now() - tVer,
     status: verification.totals.direct + verification.totals.partial > 0 ? "ok" : "empty",
+    metadata: { verifier: verification.telemetry },
   });
   emitSafe(onStage, "verify", "complete",
     `direct=${verification.totals.direct} partial=${verification.totals.partial}`);
