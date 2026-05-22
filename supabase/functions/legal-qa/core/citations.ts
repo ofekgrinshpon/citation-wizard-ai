@@ -25,6 +25,7 @@ import {
   extractFullDateFromText,
   isPipeArtifact,
   parsePipeArtifact,
+  stripDocPrefixes,
 } from "./citationCleanup.ts";
 
 // Hosts known to host primary legal materials (mirrors ledger.ts).
