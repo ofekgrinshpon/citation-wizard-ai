@@ -259,7 +259,7 @@ export async function runLocalRetrieval(
       const normalized = normalizeQueryForFts(q.query_he);
       const clues = detectExactClues(q.query_he);
 
-      const exactP = exactAuthorityLookup(admin, clues, CAPS.LOCAL_PER_QUERY);
+      const exactP = exactAuthorityLookup(admin, clues, q.role, CAPS.LOCAL_PER_QUERY);
       const embedP = embed(normalized || q.query_he);
       const textP = runRpcDiag<RpcRow[]>(
         // deno-lint-ignore no-explicit-any
