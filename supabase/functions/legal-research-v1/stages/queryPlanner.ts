@@ -37,9 +37,10 @@ const SYSTEM_PROMPT = `אתה מתכנן שאילתות מחקר משפטי. ה�
 - ייצרו לפחות שאילתה אחת לכל claim.
 
 כללי תיוג role (קריטי):
+- אם השאלה המקורית מזכירה "סעיף X לחוק Y" — חובה לייצר שאילתת primary_statute שמכילה גם את שם החוק וגם את מספר הסעיף (לדוגמה: "סעיף 15 חוק החוזים תרופות פיצוי מוסכם"). אסור להחליף את שם החוק או להשמיט את מספר הסעיף.
 - אם השאילתה מחפשת חוק, סעיף חוק, או PDF רשמי של חקיקה (גם אם הוא מתפרסם באתר knesset.gov.il או fs.knesset.gov.il) — role חייב להיות primary_statute, ולעולם לא scholarship.
 - אם השאילתה מחפשת תקנות — role חייב להיות regulation, ולעולם לא scholarship.
-- scholarship מיועד אך ורק למאמרים אקדמיים, ספרים, או פרקים אקדמיים.
+- scholarship מיועד אך ורק למאמרים אקדמיים, ספרים, או פרקים אקדמיים. אסור לסווג PDF רשמי של חוק או הצעת חוק כ־scholarship.
 - אם השאילתה מחפשת פסק דין או החלטה שיפוטית — role חייב להיות binding_case_law (עליון/בג"ץ) או persuasive_case_law (מחוזי/שלום), ולעולם לא factual_report ולא scholarship.
 - factual_report ו־government_report מיועדים לדו"חות ולא לחוקים או פסקי דין.
 - expected_source_type חייב להתאים ל־role: statute/regulation עבור חקיקה ותקנות, case עבור פסיקה, academic עבור scholarship, report עבור דו"חות.
