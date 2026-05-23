@@ -2005,14 +2005,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       return;
     }
     if (role === "abstract") {
+      // Abstract is pure synthesis — no retrieval pipeline. Still available.
       handleAcademicSubmit("write_chapter", { isAbstract: true });
-    } else if (role === "introduction") {
-      handleAcademicSubmit("write_introduction");
-    } else if (role === "conclusion") {
-      handleAcademicSubmit("write_conclusion");
-    } else {
-      handleAcademicSubmit("write_chapter");
+      return;
     }
+    // D1: body / introduction / conclusion all route through the offline
+    // chapter engine. Block at the UI so we never even hit the 503.
+    toast.info(CHAPTER_OFFLINE_TITLE);
   };
 
   const advanceToNextChapter = () => {
