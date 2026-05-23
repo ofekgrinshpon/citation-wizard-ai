@@ -1,67 +1,65 @@
-# Batch Verifier (Priority 1)
 
-Goal: collapse the verifier from N calls per claim (chunked at 8) to **one call per claim** covering all of its top candidates, while keeping the existing verdict schema, ledger contract, and downstream stages untouched.
+## Problem
 
-## Current behavior (`supabase/functions/legal-qa/core/verifier.ts`)
+For Deep research questions, the progress bar sits at ~1% for the entire run, even though the backend is actively writing checkpoints (`decomposition`, `retrieval`, `claim_map`, `drafting`, `anchor_pass`, …) to `qa_logs.metadata.checkpoint`.
 
-- `verify()` runs per-claim tasks with a concurrency limiter (3).
-- Inside each task, candidates are chunked `MAX_PER_CALL = 8` and `callJudge()` is invoked sequentially per chunk. So a claim with 10–16 candidates triggers 2 LLM calls; very rich claims more.
-- Each `callJudge` is a `gpt-5-mini` JSON call returning `{ verdicts: [{candidate_id, support, rationale, pinpoint?}] }`.
-- Missing verdicts are auto-filled with `unrelated`. `annotate()` + `aggregate()` produce `ClaimVerification`, which is what the ledger consumes.
+## Root cause
 
-## Changes (single file: `verifier.ts`, plus telemetry surface in `runCore.ts`)
+Deep mode does not use SSE — it goes through the async dispatcher (HTTP 202 + `run_id`) and the client polls `legal-qa-status`. `StageProgressList` computes progress from the `stages` array (SSE `stage` events), so for Deep that array stays empty. The polling `onUpdate` callback in `LegalQAChat.tsx` only sets `postProcessingLabel`, but `StageProgressList` deliberately refuses to promote `post_processing` to "running" until all earlier manifest stages are complete. Result: no events ever land, the component renders the synthetic "starter" row clamped to 1–2%.
 
-### 1. One call per claim
-- Remove the `for (… i += MAX_PER_CALL)` chunk loop. Send **all** of the pack's candidates to `callJudge` in a single batch.
-- Cap the batch defensively at `MAX_BATCH = 24` (drop tail; tail rarely has signal, and ledger will mark them `unrelated` via the existing missing-verdict fallback). Practically packs already top out around top_n × sources, so this only fires on pathological packs.
-- Tighten prompt budget so one call stays comfortably under context:
-  - `MAX_SNIPPET_CHARS`: keep 1200 for the first 8 candidates, shrink to 700 for candidates 9–16, 450 for 17–24. (Information density drops with rank.)
-  - Snippets are already truncated; just parameterize.
-- Keep `MAX_CONCURRENCY = 3` across claims. Net effect: ~1 LLM call per claim instead of ceil(N/8).
+Fast mode (SSE) and academic chapter writes (SSE) are unaffected.
 
-### 2. Verdict schema preservation + optional confidence
-- Keep `Verdict { candidate_id, support, rationale, pinpoint? }` exactly as today (don't touch `types.ts`).
-- Add optional `confidence?: number` (0–1) on `Verdict` in `types.ts` only as an optional field — backward compatible; ledger ignores it. Surface it through `AnnotatedVerdict` too.
-- Update `VERIFIER_SYSTEM` / `VERIFIER_USER` in `prompts.ts` to request `"confidence": <0..1>` alongside the existing fields, with explicit instruction: "Return one verdict per candidate. Do not omit candidates."
-- Parser: read `confidence` if present, clamp to [0,1], else leave undefined. Missing-verdict fallback unchanged.
+## Fix (frontend-only)
 
-### 3. Ledger contract is unchanged
-- `ClaimVerification.aggregates` and per-candidate `support` flow into the ledger exactly as today.
-- `confidence` is additive metadata only — not read by `ledger.ts`. No DB schema change, no UI change, no drafter prompt change.
+Translate each polled `checkpoint` into synthetic, cumulative `StageEvent`s in the deep manifest's vocabulary. Reuse the existing weighted progress logic — no changes to `StageProgressList`, no backend changes.
 
-### 4. Telemetry
-Extend `VerifyResult` with a `telemetry` block:
+### 1. New helper `src/lib/legalQa/deepCheckpointToStages.ts`
 
-```ts
-telemetry: {
-  verifier_batch_size_max: number;          // MAX_BATCH config
-  verifier_batch_size_avg: number;          // avg candidates per call
-  verifier_calls_before_estimate: number;   // Σ ceil(candidates/8) — what the old code would have done
-  verifier_calls_after: number;             // actual LLM calls made this run
-  verifier_duration_ms: number;             // == result.duration_ms, duplicated for log clarity
-  prompt_tokens?: number;                   // sum of usage.prompt_tokens if gateway returns it
-  completion_tokens?: number;
-  total_tokens?: number;
-}
+Maps backend checkpoint → deep manifest stage id, and returns the cumulative event list (prior stages `complete`, current stage `running`):
+
+```text
+queued / running            → [] (keep starter)
+legal_issue_router          → plan running
+decomposition               → plan running
+open_web_discovery          → plan complete, retrieval running
+retrieval                   → plan complete, retrieval running
+claim_verification          → plan+retrieval complete, verify running
+claim_map                   → plan+retrieval+verify complete, ledger running
+drafting                    → …+ledger complete, draft running
+anchor_pass                 → …+draft complete, enrich_citations running
+completed                   → all complete
+failed                      → no-op (error surfaced elsewhere)
 ```
 
-- `callJudge` returns `{ verdicts, usage? }` so we can sum tokens (the Lovable gateway echoes OpenAI-style `usage`).
-- In `runCore.ts` verify stage, merge `verification.telemetry` into the existing `recordStage({ stage: "verify", ... })` call (it already supports a metadata object via `stage_runs`). Log line at info level for quick smoke comparison: `[verify] claims=… before=… after=… dur=…ms toks=…`.
+Function signature:
+```ts
+export function deepCheckpointToStages(checkpoint?: string | null): StageEvent[]
+```
 
-### 5. Acceptance / smoke
-- 10-question smoke set (existing Deep-mode harness): verify
-  - `verifier_calls_after ≤ claims` (one call per claim, possibly fewer if a pack is empty).
-  - `verifier_calls_after < verifier_calls_before_estimate` on every run.
-  - Wall-time of verify stage drops materially (target ≥30%).
-  - Ledger asserts (`quality_insufficient_verified_sources` rate, supported-claim count, drafter `cite:LS#` integrity) are equal or better.
-  - No increase in unsupported-claim leaks (sample-grade by re-running ledger invariants).
+### 2. Use the helper in `LegalQAChat.tsx`
+
+Three `pollLegalQaStatus` call sites all use the same pattern — update each `onUpdate`:
+
+- ~L968 (resume academic Deep mount)
+- ~L1059 (resume Deep research mount)
+- ~L2166 (live Deep submission)
+
+In each callback, in addition to (or instead of) `setPostProcessingLabel`, call `setStageEvents(deepCheckpointToStages(snap.checkpoint))`. Keep `setPostProcessingLabel` only when `snap.checkpoint === "anchor_pass"` or later, so the "post-processing" row activates correctly at the end.
+
+Reset `stageEvents` (already done at submit) — no extra reset needed.
+
+### 3. No backend, no SSE, no manifest changes
+
+The `DEEP_MANIFEST` weights already produce a smooth 0 → ~92% march; the existing idle-creep in `StageProgressList` will animate between checkpoint updates.
 
 ## Out of scope
-- Planner, retrieval, drafter, citation engine, footnote builder, enrichment, UI, DB schema — untouched.
-- No streaming verify, no entailment merging, no model swap.
 
-## Files touched
-- `supabase/functions/legal-qa/core/verifier.ts` — main change.
-- `supabase/functions/legal-qa/core/prompts.ts` — add `confidence` to prompt + "one verdict per candidate" instruction.
-- `supabase/functions/legal-qa/core/types.ts` — add optional `confidence?: number` to `Verdict`.
-- `supabase/functions/legal-qa/core/runCore.ts` — propagate `verification.telemetry` into the verify stage log/metadata.
+- Q5 timeout investigation (kept separate per prior instruction).
+- SSE for Deep (intentionally async to survive the 150s gateway cap).
+- Backend checkpoint granularity (sufficient as-is).
+
+## Verification
+
+1. Submit a Deep research question.
+2. Watch the bar advance through "תכנון מחקר" → "אחזור מקורות" → "אימות וסינון" → "מיפוי טענות" → "כתיבת התשובה" → "השלמת ציטוטים" → "בדיקת איכות סופית" as checkpoints flip.
+3. Confirm Fast mode and academic chapter SSE progress is unchanged.
