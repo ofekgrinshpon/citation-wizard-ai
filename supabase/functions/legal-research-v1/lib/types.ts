@@ -75,4 +75,37 @@ export const MODEL_FULL = "openai/gpt-5";
 export const CAPS = {
   MAX_CLAIMS: 7,
   MAX_QUERIES_PER_CLAIM: 4,
+  MAX_CANDIDATES: 30,
+  LOCAL_PER_QUERY: 6,
+  PERPLEXITY_PER_QUERY: 5,
 } as const;
+
+export type Origin = "local_db" | "perplexity";
+export type RetrievalMethod = "text" | "vector" | "perplexity";
+
+export interface Candidate {
+  candidate_id: string;
+  claim_id: string;
+  role: SourceRole;
+  origin: Origin;
+  retrieval_method: RetrievalMethod;
+  title: string;
+  source_type: string;
+  document_id?: string | null;
+  source_url?: string | null;
+  snippet?: string | null;
+  query_he: string;
+  score: number;
+  expected_source_type?: ExpectedSourceType;
+  metadata?: Record<string, unknown>;
+}
+
+export interface DroppedSource {
+  query_he: string;
+  claim_id: string;
+  role: SourceRole;
+  origin: Origin;
+  title?: string;
+  url?: string;
+  drop_reason: string;
+}
