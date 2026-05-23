@@ -272,10 +272,12 @@ export async function classifyDoctrines(args: ClassifyArgs): Promise<ClassifyRes
         duration_ms: Date.now() - t0,
         status: "ok",
         metadata: {
+          active_doctrines: classification.doctrines.map((d) => ({ id: d.id, confidence: d.confidence })),
+          unimplemented_matches: classification.unimplemented_matches.map((d) => ({ id: d.id, confidence: d.confidence })),
+          unmapped_doctrine_warnings: classification.unmapped_doctrine_warnings,
           doctrine_count: classification.doctrines.length,
-          top_doctrines: classification.doctrines
-            .slice(0, 5)
-            .map((d) => ({ id: d.id, confidence: d.confidence })),
+          unimplemented_count: classification.unimplemented_matches.length,
+          unmapped_warning_count: classification.unmapped_doctrine_warnings.length,
         },
       } as StageRun,
     };
