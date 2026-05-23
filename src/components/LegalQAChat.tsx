@@ -1927,15 +1927,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     // string cast so TS does not narrow `taskMode` and break the (still
     // present) downstream `taskMode === "research"` branches that we leave
     // in place for the eventual rebuild.
-    if ((taskMode as string) === "research") {
-      toast.info(RESEARCH_OFFLINE_TITLE);
-      return;
-    }
     // pleading_analysis is also offline while the analysis engine is rebuilt.
     if (taskMode === "pleading_analysis") {
       toast.info(PLEADING_OFFLINE_TITLE);
       return;
     }
+
 
 
     const q = question.trim();
