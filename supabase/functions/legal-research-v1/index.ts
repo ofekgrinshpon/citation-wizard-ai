@@ -36,6 +36,9 @@ function jsonResponse(status: number, body: unknown): Response {
   });
 }
 
+// deno-lint-ignore no-explicit-any
+declare const EdgeRuntime: any;
+
 async function handle(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return jsonResponse(405, { error: "method_not_allowed" });
@@ -44,19 +47,40 @@ async function handle(req: Request): Promise<Response> {
   const t_start = Date.now();
   const stage_runs: StageRun[] = [];
 
-  // ─── Auth ─────────────────────────────────────────────────────────────────
+  // ─── Auth (with internal smoke-mode bypass) ──────────────────────────────
+  // Smoke mode: header `x-smoke-mode: 1` + Authorization equal to service role
+  // key. Runs the pipeline as a background task and returns {run_id} 202.
+  // Telemetry is still written to qa_logs under the supplied smoke_user_id.
+  // Never exposed in UI; service-role only.
   const authHeader = req.headers.get("Authorization");
   if (!authHeader?.startsWith("Bearer ")) {
     return jsonResponse(401, { error: "unauthorized" });
   }
-  const userClient = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_ANON_KEY")!,
-    { global: { headers: { Authorization: authHeader } } },
-  );
   const token = authHeader.replace("Bearer ", "");
-  const { data: { user }, error: userErr } = await userClient.auth.getUser(token);
-  if (userErr || !user) return jsonResponse(401, { error: "unauthorized" });
+  const smokeMode = req.headers.get("x-smoke-mode") === "1";
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+
+  let userId: string;
+  if (smokeMode && token && token === serviceKey) {
+    // service-role bypass
+    const peekBody = await req.clone().json().catch(() => ({}));
+    const smokeUid = typeof peekBody.smoke_user_id === "string" ? peekBody.smoke_user_id : "";
+    if (!smokeUid || !UUID_RE.test(smokeUid)) {
+      return jsonResponse(400, { error: "smoke_missing_user_id" });
+    }
+    userId = smokeUid;
+  } else {
+    const userClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } },
+    );
+    const { data: { user }, error: userErr } = await userClient.auth.getUser(token);
+    if (userErr || !user) return jsonResponse(401, { error: "unauthorized" });
+    userId = user.id;
+  }
+  // Shim object so existing references to `user.id` still work.
+  const user = { id: userId } as { id: string };
 
   // ─── Body validation ─────────────────────────────────────────────────────
   let body: Record<string, unknown>;
