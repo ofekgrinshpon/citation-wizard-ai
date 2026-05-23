@@ -1,0 +1,1569 @@
+{
+  "generated_at": "2026-05-23T23:30:14.826Z",
+  "fixture": {
+    "id": "L1",
+    "question": "מהם התנאים למתן צו מניעה זמני?"
+  },
+  "qa_log_id": "ade4214d-0086-4b7c-ac77-bb8c269bce76",
+  "run_id": "726f3799-ab88-430c-81c4-0d99926e50ca",
+  "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "footnotes": [],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "דוקטרינה מפורטת בבתי המשפט העליונים ובספרות המשפטית; יש גם הוראות נוהליות וסעיפיות בחוק סדר הדין המשפיעות על מבחן זה.",
+        "text_he": "קיום עילה סבירה/סיכוי סביר להצלחת התביעה (prima facie case/serious question to be tried) – כלומר שהמבקש מציג טענה משפטית שקיימת סבירות ממשית שתתקבל בבדיקה מהותית.",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "primary_statute",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "עיקרון מוכר בדוקטרינה שמקורו בפסיקה; דרושים מקורות פסיקה וספרות כדי להגדיר סוגי נזקים שנחשבים 'שלא ניתן לתקנם'.",
+        "text_he": "קיום חשש לנזק קשה או לנזק של ממש שלא ניתן לתקן בפיצוי כספי (irreparable harm) אם הצו לא יינתן.",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship",
+          "persuasive_case_law"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "מדד שנקבע בפסיקה כגורם מרכזי בהחלטה אם להעניק צו זמני; דרוש מקור דוקטרינרי והסברים תאורטיים.",
+        "text_he": "איזון הנוחות/המשקל בין הפגיעה בצד המבקש לפגיעה בצד הנתבע (balance of convenience/balance of harms) – השופטים ישקלו מי יינזק יותר מהמתן/אי־מתן הצו.",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הסמכות לדרוש ביטחון נובעת הן מתקנות סדר הדין והן מפסיקה; לעתים קיימות הוראות נוהליות מפורשות לגבי פיקדון או תנאים.",
+        "text_he": "דרישה באפשרות בית המשפט לדרוש אבטחה/פיקדון או תנאים אחרים מהמבקש למניעת פגיעה בלתי מוצדקת בצד השני (security/bond/undertaking as to damages).",
+        "claim_id": "C4",
+        "required_roles": [
+          "primary_statute",
+          "binding_case_law",
+          "regulation"
+        ],
+        "is_black_letter": false
+      },
+      {
+        "reason": "יש פסיקה מפורטת לגבי מתן צו זמני שלא בפני הצד השני והוראות נוהליות שיחייבו הליכים/הסבר למתן צו אקס־פארטה.",
+        "text_he": "נורמות פרוצדורליות של הודעה, שמיעה וקיום צו אקס־פארטה: האם הצו ניתן בהעדר הצד השני ובאילו נסיבות וכמה מידי נדרש להודיע או לקיים שימוע מאוחר.",
+        "claim_id": "C5",
+        "required_roles": [
+          "binding_case_law",
+          "regulation",
+          "scholarship"
+        ],
+        "is_black_letter": false
+      }
+    ],
+    "run_id": "726f3799-ab88-430c-81c4-0d99926e50ca",
+    "drafter": {
+      "ms": 19472,
+      "ok": false,
+      "error": "answer_markdown too short; no used_sources",
+      "raw_text": "{\n  \"error\": {\n    \"message\": \"Unknown parameter: 'reasoning'.\",\n    \"type\": \"invalid_request_error\",\n    \"param\": \"reasoning\",\n    \"code\": \"unknown_parameter\"\n  }\n}",
+      "escalated": true,
+      "model_final": "openai/gpt-5",
+      "sources_used": 0,
+      "used_sources": [],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 0,
+      "sources_passed": 5,
+      "marker_validation": {
+        "ok": false,
+        "error": "answer_markdown too short; no used_sources",
+        "repaired": false,
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": []
+      },
+      "omitted_candidate_ids": [
+        "10134135-a738-4f4b-ba52-819a1c3ddfba",
+        "32602f26-3cab-4fe2-b419-1e85a46fbcad",
+        "22a830de-612d-4ff0-ab05-25d664177c80",
+        "ddd01f69-6a2c-49f4-9538-454588d1d4b5",
+        "0141866a-6b4f-4b51-b97c-d19540c7e9c2"
+      ]
+    },
+    "queries": [
+      {
+        "role": "primary_statute",
+        "reason": "למצוא את הבסיס החוקתי/חקיקתי להסמכות להוציא צו מניעה זמני ולבדוק ניסוח דרישת קיום 'סיכוי סביר' או עילת התביעה בפסיקה ובטקסט החקיקתי.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "צו מניעה זמני הוראות בחוק סדר הדין האזרחי הוראה על עילת מתן צו מניעה 'סיכוי סביר' 'prima facie'",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסיקה עליונה שמנסחת את דרישת ה־prima facie או 'סיכוי סביר' בקביעת מתן צו מניעה זמני.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "בית המשפט העליון פסק דין 'צו מניעה זמני' 'סיכוי סביר' 'prima facie case' הדרכה על מבחן סיכוי להצלחת התביעה",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאסוף פרשנות אקדמית שמנתחת את המבחן של 'סיכוי סביר' והיישום הפרקטי שלו בבקשות לצו מניעה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'סיכוי סביר' 'צו מניעה זמני' ניתוח התפתחות המבחן בכתב‑עת משפטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי דין עליונים שקובעים מה נחשב 'נזק בלתי ניתן לתיקון' בהקשר של צווי מניעה זמניים.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון 'נזק בלתי ניתן לתיקון' 'נזק של ממש' צו מניעה זמני פסק‑דין עקרונות 'irreparable harm'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "לאסוף דוגמאות מפסקי דין מחוזיים/שלום שבדרך‑כלל ממחישים את היישום המעשי של מבחן הנזק הבלתי ניתן לתיקון.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "פסק דין מחוזי צו מניעה זמני 'נזק בלתי ניתן לתיקון' שיקול בית המשפט האם פיצוי כספי יספיק",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לזהות דעות אקדמיות על הקריטריונים להכרה בנזק בלתי ניתן לתיקון והשיקולים המדיניים והפרקטיים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר 'נזק בלתי ניתן לתיקון' צו מניעה זמני האם פיצוי כספי מספק ניתוח משפטי והשוואתי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסיקה עליונה שמנסחת את מבחן איזון הנוחות והדרך בה שופטים מאזנים את הפגיעה בין המבקש והנתבע.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון 'איזון הנוחות' 'balance of convenience' צו מניעה זמני פסק‑דין הנחיות לשקלול נזקים בין צדדים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לקבל פרשנות אקדמית על הגישות השונות לאיזון הנוחות וכיצד זה מיושם בבקשות לצווים זמניים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי 'איזון הנוחות' 'balance of convenience' צו מניעה זמני ניתוח קריטריונים והשפעות שיפוטיות",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "לברר האם יש הוראות סטטוטוריות שמאפשרות לבית המשפט לדרוש אבטחה/פיקדון ותנאים בעת מתן צו מניעה זמני.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "חיפוש הוראות בחוק סדר הדין האזרחי או חקיקה נלווית בנושא דרישת אבטחה/פיקדון כפתרון במתן צו מניעה זמני 'אבטחה' 'פיקדון'",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסיקה עליונה שמחליטה מתי וכיצד ניתן לחייב את המבקש באבטחה או בפקדון כתנאי לקבלת צו מניעה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון פסקי דין 'אבטחה' 'פיקדון' 'undertaking as to damages' דרישת ערובה בצו מניעה זמני",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "regulation",
+        "reason": "למצוא תקנות או נוהלים פרוצדורליים שמסדירים פרקטיקה של דרישת אבטחה/פיקדון בצווי מניעה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "תקנות או נוהלי בתי המשפט הוראות לגבי אבטחה/פיקדון בקשר לצווים זמניים 'אבטחה' 'פיקדון' נוהל בית המשפט",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסקי דין עליונים שקובעים מתי ניתן להוציא צו אקס‑פארטה ומהן החובות ליידע ולתת שימוע לאחר מכן.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C5",
+        "query_he": "בית המשפט העליון 'צו אקס־פארטה' הודעה לשולל שמיעה והליכים לאחר מתן צו מניעה זמני פסק‑דין הנחיות על הודעה ושימוע",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "regulation",
+        "reason": "למצוא הוראות פרוצדורליות רשמיות (תקנות/נוהל) המגדירות דרישות הודעה, שימוע ומועד ביצוע בהקשר לצווים אקס‑פארטה וזמניים.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C5",
+        "query_he": "תקנות סדר הדין האזרחי או נוהלי בתי המשפט הוראות לגבי מתן צו אקס‑פארטה הודעה לשולל שימוע מועד קיום צו מניעה זמני",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאסוף ליטרטורה אקדמית שמנתחת את הטיעונים הפרוצדורליים והזכויות של הצדדים בעת הוצאת צו אקס‑פארטה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C5",
+        "query_he": "מאמר משפטי 'צו אקס‑פארטה' 'הודעה ושימוע' נורמות פרוצדורליות בצווי מניעה זמניים ניתוח משפטי וזכויות ההגנה",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 32199,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 12339,
+        "confidence": 0.9,
+        "legal_area": "סדר דין אזרחי",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "claims_count": 5,
+      "queries_count": 14,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 143000,
+    "verifier": {
+      "ms": 38964,
+      "counts": {
+        "by_support": {
+          "direct": 4,
+          "partial": 1,
+          "unrelated": 6,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 11,
+          "false": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "10134135-a738-4f4b-ba52-819a1c3ddfba",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "32602f26-3cab-4fe2-b419-1e85a46fbcad",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "22a830de-612d-4ff0-ab05-25d664177c80",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "ddd01f69-6a2c-49f4-9538-454588d1d4b5",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "0141866a-6b4f-4b51-b97c-d19540c7e9c2",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        }
+      ],
+      "dropped": [
+        {
+          "role": "primary_statute",
+          "title": "חוק איסור פעילות מסחרית במוסדות חינוך",
+          "origin": "local_db",
+          "reason": "חוק העוסק באיסור פעילות מסחרית במוסדות חינוך אינו עוסק בקריטריונים למתן צו מניעה זמני או במבחן 'סיכוי סביר' ולכן אינו רלוונטי לטענה.",
+          "candidate_id": "64bd542c-aa83-4b31-8f3e-476b4ab0347c",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תקנות ביטוח בריאות ממלכתי (הסדרים לעניין רישום בקופת חולים ומתן שירותי בריאות לנמצאים בישראל שאינם מבוטחים לפי החוק)",
+          "origin": "local_db",
+          "reason": "תקנות ביטוח בריאות ממלכתי עוסקות ברישום ומתן שירותי בריאות ולא בעקרונות מתן סעד זמני או במבחן הסיכוי להצלחת התביעה.",
+          "candidate_id": "0c23d2ed-826a-47f7-957e-6a098909a3ec",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תקנות בתי דין מינהליים (סדרי דין בוועדת הערר שלפי חוק שירות הקבע)",
+          "origin": "local_db",
+          "reason": "תקנות לגבי סדרי דין בוועדות ערר של חוק שירות הקבע הן בענייני ניהול הליכים מנהליים ספציפיים ולא במבחנים התווכים לדיון על מתן צו מניעה זמני בבתי משפט אזרחיים.",
+          "candidate_id": "9bcbd27d-609f-4205-89d4-95cbae32e7d2",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תקנות הסדרת הלוואות חוץ-בנקאיות (החרגת סוגי עסקאות אשראי מתחולת החוק והחרגת הוצאות מגדר \"תוספת\")",
+          "origin": "local_db",
+          "reason": "תקנות הנוגעות להסדרת הלוואות חוץ־בנקאיות אינן נוגעות לקריטריונים למתן צו מניעה זמני.",
+          "candidate_id": "f2c38dd3-bdae-40a9-8dc1-2751bc63c3ac",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "צו הסדרת מקומות רחצה (מקומות רחצה אסורים ומוכרזים בים התיכון, בים כנרת, בנהר הירדן, בים המלח ובים סוף)",
+          "origin": "local_db",
+          "reason": "צו הסדרת מקומות רחצה עוסק בסדרי חוף ומקומות רחצה, ללא קשר למבחן המשפטי של 'קיום עילה סבירה' למתן סעד זמני.",
+          "candidate_id": "bb414a11-7704-43fe-91de-3e79f024d85f",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "צו הסדרת מקומות רחצה (סדרים ואיסורים במקומות רחצה מוכרזים)",
+          "origin": "local_db",
+          "reason": "צו נוסף על מקומות רחצה — לא רלוונטי לשאלת תנאי מתן צו מניעה זמני.",
+          "candidate_id": "ce85c014-1d0e-4499-8e43-478537e9e636",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        }
+      ],
+      "verdicts": [
+        {
+          "reason": "חוק העוסק באיסור פעילות מסחרית במוסדות חינוך אינו עוסק בקריטריונים למתן צו מניעה זמני או במבחן 'סיכוי סביר' ולכן אינו רלוונטי לטענה.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "64bd542c-aa83-4b31-8f3e-476b4ab0347c",
+          "supported_points": []
+        },
+        {
+          "reason": "תקנות ביטוח בריאות ממלכתי עוסקות ברישום ומתן שירותי בריאות ולא בעקרונות מתן סעד זמני או במבחן הסיכוי להצלחת התביעה.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "0c23d2ed-826a-47f7-957e-6a098909a3ec",
+          "supported_points": []
+        },
+        {
+          "reason": "תקנות לגבי סדרי דין בוועדות ערר של חוק שירות הקבע הן בענייני ניהול הליכים מנהליים ספציפיים ולא במבחנים התווכים לדיון על מתן צו מניעה זמני בבתי משפט אזרחיים.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "9bcbd27d-609f-4205-89d4-95cbae32e7d2",
+          "supported_points": []
+        },
+        {
+          "reason": "תקנות הנוגעות להסדרת הלוואות חוץ־בנקאיות אינן נוגעות לקריטריונים למתן צו מניעה זמני.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "f2c38dd3-bdae-40a9-8dc1-2751bc63c3ac",
+          "supported_points": []
+        },
+        {
+          "reason": "צו הסדרת מקומות רחצה עוסק בסדרי חוף ומקומות רחצה, ללא קשר למבחן המשפטי של 'קיום עילה סבירה' למתן סעד זמני.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "bb414a11-7704-43fe-91de-3e79f024d85f",
+          "supported_points": []
+        },
+        {
+          "reason": "צו נוסף על מקומות רחצה — לא רלוונטי לשאלת תנאי מתן צו מניעה זמני.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "ce85c014-1d0e-4499-8e43-478537e9e636",
+          "supported_points": []
+        },
+        {
+          "reason": "המאמר האקדמי סוקר במפורש את דוקטרינת המניעה המוקדמת ובוחן את מבחן 'סיכוי סביר'—כך שהוא תומך ישירות בטענה ומשמש בסיס אנליטי והסברתי.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "32602f26-3cab-4fe2-b419-1e85a46fbcad",
+          "supported_points": [
+            "מאמר עוסק מפורשות בהתפתחות תורת המניעה המוקדמת במשפט הישראלי.",
+            "בוחן את מבחן 'סיכוי סביר' והשיקול בדיקת סיכויי ההצלחה כמבחן הראשוני.",
+            "מתאים לניתוח הדוקטרינרי של תנאי קיום עילה סבירה לצורך צו מניעה זמני."
+          ]
+        },
+        {
+          "reason": "המאמר עוסק בסעדים ובאיזון זכויות ולכן רלוונטי באופן משלים, אך אינו מתיימר להיות מקור ראשי דווקא על מבחן 'קיום עילה סבירה' לצו מניעה זמני.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "22a830de-612d-4ff0-ab05-25d664177c80",
+          "supported_points": [
+            "מאמר בכתב העת 'משפטים' דן בהתפתחות פסיקה ובאיזון בין זכויות לגבי סעדים.",
+            "מספק רקע ותמיכה תאורטית למבחני הסעד, אך אינו מתמקד במפורש רק במבחן 'סיכוי סביר' לצו מניעה זמני."
+          ]
+        },
+        {
+          "reason": "פסק דין של בית המשפט העליון שמתייחס במפורש לקריטריון של נזק בלתי ניתן לתיקון בכסף בבחינת מתן צו מניעה זמני, ולכן תומך ישירות בטענה.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "10134135-a738-4f4b-ba52-819a1c3ddfba",
+          "supported_points": [
+            "מציין שיש לשקול האם ייגרם נזק ממשי במקרה של אי מתן הצו",
+            "מדגיש את הצורך להעריך אם ניתן לפצות את הנזק בכסף",
+            "קובע כי אם הנזק ניתן לפיצוי כספי הנטייה היא שלא להעניק סעד זמני"
+          ]
+        },
+        {
+          "reason": "המאמר עוסק במפורש במבחני איזון ובהשקילה של נזקי הצדדים בעת מתן צו מניעה זמני, ולכן תומך ישירות בטענה.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "ddd01f69-6a2c-49f4-9538-454588d1d4b5",
+          "supported_points": [
+            "דן במבחני מתן צו מניעה זמני ובכלל בשם 'איזון נוחות'",
+            "מפרט את שיקול ההשוואה בין נזקי המתן לעומת אי־מתן הצו",
+            "מאמר אקדמי המתמקד בסעדים זמניים ולכן רלוונטי ישירות לטענה"
+          ]
+        },
+        {
+          "reason": "המקור אקדמי שעוסק במפורש במאזן הנוחות ובהצדקת סעדים זמניים, ולכן מתאים כתמיכה ישירה לטענה.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "0141866a-6b4f-4b51-b97c-d19540c7e9c2",
+          "supported_points": [
+            "עוסק בעקרונות ההצדקה של סעדים זמניים ובמאזן הנוחות",
+            "מנתח שיקולי מדיניות ושקילות נזקים בין הצדדים",
+            "מאמר אקדמי שמסביר את הדוקטרינה של איזון הנוחות בהקשר לצו מניעה זמני"
+          ]
+        }
+      ],
+      "model_final": "openai/gpt-5-mini",
+      "per_claim_ms": {
+        "C1": 20602,
+        "C2": 7326,
+        "C3": 11036
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [],
+      "candidates_usable": 5,
+      "candidates_dropped": 6,
+      "candidates_verified": 11
+    },
+    "retrieval": {
+      "ms": 40015,
+      "pool": {
+        "found": 17,
+        "counts": {
+          "by_role": {
+            "scholarship": 4,
+            "primary_statute": 6,
+            "persuasive_case_law": 1
+          },
+          "by_claim": {
+            "C1": 8,
+            "C2": 1,
+            "C3": 2
+          },
+          "by_origin": {
+            "local_db": 6,
+            "perplexity": 5
+          }
+        },
+        "after_dedup": 11,
+        "dedup_drops": 6
+      },
+      "local": {
+        "ms": 40013,
+        "per_query": [
+          {
+            "ms": 40007,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20002,
+              "text_status": "timeout",
+              "embedding_ms": 197,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "חוק איסור פעילות מסחרית במוסדות חינוך",
+                "תקנות ביטוח בריאות ממלכתי (הסדרים לעניין רישום בקופת חולים ומתן שירותי בריאות לנמצאים בישראל שאינם מבוטחים לפי החוק)",
+                "תקנות בתי דין מינהליים (סדרי דין בוועדת הערר שלפי חוק שירות הקבע)",
+                "תקנות הסדרת הלוואות חוץ-בנקאיות (החרגת סוגי עסקאות אשראי מתחולת החוק והחרגת הוצאות מגדר \"תוספת\")",
+                "צו הסדרת מקומות רחצה (מקומות רחצה אסורים ומוכרזים בים התיכון, בים כנרת, בנהר הירדן, בים המלח ובים סוף)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק סד",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "חוק איסור פעילות מסחרית במוסדות חינוך",
+                    "תקנות ביטוח בריאות ממלכתי (הסדרים לעניין רישום בקופת חולים ומתן שירותי בריאות לנמצאים בישראל שאינם מבוטחים לפי החוק)",
+                    "תקנות בתי דין מינהליים (סדרי דין בוועדת הערר שלפי חוק שירות הקבע)",
+                    "תקנות הסדרת הלוואות חוץ-בנקאיות (החרגת סוגי עסקאות אשראי מתחולת החוק והחרגת הוצאות מגדר \"תוספת\")",
+                    "צו הסדרת מקומות רחצה (מקומות רחצה אסורים ומוכרזים בים התיכון, בים כנרת, בנהר הירדן, בים המלח ובים סוף)",
+                    "צו הסדרת מקומות רחצה (סדרים ואיסורים במקומות רחצה מוכרזים)"
+                  ],
+                  "title_match_query": "סד",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "a8f6bea7-83f1-4868-9744-11f2e99a55c0",
+                    "0cd89137-24a5-4d96-b571-2f080fd54754",
+                    "1e747507-a072-4e3d-b225-d9e7fe9fd583",
+                    "b6051e46-a17b-4817-bed7-bfd491201ea1",
+                    "f0927cd0-6f80-416d-a9d7-6dfd9420a20b",
+                    "61c2fc09-2d16-4a2e-9eab-7ec0749b215c"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 6,
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק סד",
+                "search_terms": [
+                  "חוק סד"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "סבירות צו מניעה זמני הוראות בחוק סדר הדין האזרחי הוראה",
+            "original_query_he": "צו מניעה זמני הוראות בחוק סדר הדין האזרחי הוראה על עילת מתן צו מניעה 'סיכוי סביר' 'prima facie'"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20002,
+              "text_status": "timeout",
+              "embedding_ms": 224,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "סבירות צו מניעה זמני העליון דין סיכוי סביר prima facie",
+            "original_query_he": "בית המשפט העליון פסק דין 'צו מניעה זמני' 'סיכוי סביר' 'prima facie case' הדרכה על מבחן סיכוי להצלחת התביעה"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 206,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "סבירות צו מניעה זמני העליון נזק בלתי ניתן לתיקון ממש",
+            "original_query_he": "בית המשפט העליון 'נזק בלתי ניתן לתיקון' 'נזק של ממש' צו מניעה זמני פסק‑דין עקרונות 'irreparable harm'"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 196,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "סבירות צו מניעה זמני העליון איזון הנוחות balance of convenience",
+            "original_query_he": "בית המשפט העליון 'איזון הנוחות' 'balance of convenience' צו מניעה זמני פסק‑דין הנחיות לשקלול נזקים בין צדדים"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 186,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "חוק איסור פעילות מסחרית במוסדות חינוך",
+                "תקנות ביטוח בריאות ממלכתי (הסדרים לעניין רישום בקופת חולים ומתן שירותי בריאות לנמצאים בישראל שאינם מבוטחים לפי החוק)",
+                "תקנות בתי דין מינהליים (סדרי דין בוועדת הערר שלפי חוק שירות הקבע)",
+                "תקנות הסדרת הלוואות חוץ-בנקאיות (החרגת סוגי עסקאות אשראי מתחולת החוק והחרגת הוצאות מגדר \"תוספת\")",
+                "צו הסדרת מקומות רחצה (מקומות רחצה אסורים ומוכרזים בים התיכון, בים כנרת, בנהר הירדן, בים המלח ובים סוף)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק סד",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "חוק איסור פעילות מסחרית במוסדות חינוך",
+                    "תקנות ביטוח בריאות ממלכתי (הסדרים לעניין רישום בקופת חולים ומתן שירותי בריאות לנמצאים בישראל שאינם מבוטחים לפי החוק)",
+                    "תקנות בתי דין מינהליים (סדרי דין בוועדת הערר שלפי חוק שירות הקבע)",
+                    "תקנות הסדרת הלוואות חוץ-בנקאיות (החרגת סוגי עסקאות אשראי מתחולת החוק והחרגת הוצאות מגדר \"תוספת\")",
+                    "צו הסדרת מקומות רחצה (מקומות רחצה אסורים ומוכרזים בים התיכון, בים כנרת, בנהר הירדן, בים המלח ובים סוף)",
+                    "צו הסדרת מקומות רחצה (סדרים ואיסורים במקומות רחצה מוכרזים)"
+                  ],
+                  "title_match_query": "סד",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "a8f6bea7-83f1-4868-9744-11f2e99a55c0",
+                    "0cd89137-24a5-4d96-b571-2f080fd54754",
+                    "1e747507-a072-4e3d-b225-d9e7fe9fd583",
+                    "b6051e46-a17b-4817-bed7-bfd491201ea1",
+                    "f0927cd0-6f80-416d-a9d7-6dfd9420a20b",
+                    "61c2fc09-2d16-4a2e-9eab-7ec0749b215c"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 6,
+            "role": "primary_statute",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק סד",
+                "search_terms": [
+                  "חוק סד"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "סבירות צו מניעה זמני חיפוש הוראות בחוק סדר הדין האזרחי",
+            "original_query_he": "חיפוש הוראות בחוק סדר הדין האזרחי או חקיקה נלווית בנושא דרישת אבטחה/פיקדון כפתרון במתן צו מניעה זמני 'אבטחה' 'פיקדון'"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20003,
+              "exact_ms": 20003,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 203,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "סבירות צו מניעה זמני העליון דין אבטחה פיקדון undertaking as",
+            "original_query_he": "בית המשפט העליון פסקי דין 'אבטחה' 'פיקדון' 'undertaking as to damages' דרישת ערובה בצו מניעה זמני"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 183,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "empty",
+                  "law_name": "תקנות או נוהלי בתי המשפט הוראות לגבי אבטחה/פיקדון בקשר לצווים זמניים 'אבטחה' 'פיקדון' ",
+                  "clue_kind": "regulation",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "title_match_query": "נוהלי AND בתי AND המשפט AND הוראות AND לגבי AND אבטחה/פיקדון",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 0,
+            "role": "regulation",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "regulation",
+                "source": "planner_query",
+                "law_name": "תקנות או נוהלי בתי המשפט הוראות לגבי אבטחה/פיקדון בקשר לצווים זמניים 'אבטחה' 'פיקדון' ",
+                "search_terms": [
+                  "תקנות או נוהלי בתי המשפט הוראות לגבי אבטחה/פיקדון בקשר לצווים זמניים 'אבטחה' 'פיקדון' "
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "סבירות צו מניעה זמני תקנות נוהלי בתי הוראות לגבי אבטחה/פיקדון",
+            "original_query_he": "תקנות או נוהלי בתי המשפט הוראות לגבי אבטחה/פיקדון בקשר לצווים זמניים 'אבטחה' 'פיקדון' נוהל בית המשפט"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 222,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C5",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "סבירות צו מניעה זמני העליון אקס־פארטה הודעה לשולל שמיעה והליכים",
+            "original_query_he": "בית המשפט העליון 'צו אקס־פארטה' הודעה לשולל שמיעה והליכים לאחר מתן צו מניעה זמני פסק‑דין הנחיות על הודעה ושימוע"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 202,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "empty",
+                  "law_name": "תקנות סדר הדין האזרחי או נוהלי בתי המשפט הוראות לגבי מתן צו אקס‑פארטה הודעה לשולל שימו",
+                  "clue_kind": "regulation",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "title_match_query": "סדר AND הדין AND האזרחי AND נוהלי AND בתי AND המשפט",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 0,
+            "role": "regulation",
+            "claim_id": "C5",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "regulation",
+                "source": "planner_query",
+                "law_name": "תקנות סדר הדין האזרחי או נוהלי בתי המשפט הוראות לגבי מתן צו אקס‑פארטה הודעה לשולל שימו",
+                "search_terms": [
+                  "תקנות סדר הדין האזרחי או נוהלי בתי המשפט הוראות לגבי מתן צו אקס‑פארטה הודעה לשולל שימו"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "סבירות צו מניעה זמני תקנות סדר הדין האזרחי נוהלי בתי",
+            "original_query_he": "תקנות סדר הדין האזרחי או נוהלי בתי המשפט הוראות לגבי מתן צו אקס‑פארטה הודעה לשולל שימוע מועד קיום צו מניעה זמני"
+          }
+        ],
+        "candidates": 12,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 20765,
+        "dropped": 15,
+        "per_query": [
+          {
+            "ms": 5049,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.runi.ac.il/media/heefc4np/bendor-tamir.pdf",
+                "title": "מחדש של ש הביטוי בתקשורת המקוונת: בחינה חופ תורת המניעה המוקדמת",
+                "domain": "runi.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2020-07/%D7%90.%D7%A9.%D7%99.%D7%A8_0.pdf",
+                "title": "מחקר אמפירי — א.ש.י.ר. חוגגת עשרים",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://nir.advlaw.net/index2.php?id=27&lang=HEB",
+                "title": "סדר דין אזרחי - חלק ב",
+                "domain": "nir.advlaw.net",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.ailaw.co.il/post/%D7%9E%D7%94%D7%95-%D7%A6%D7%95-%D7%9E%D7%A0%D7%99%D7%A2%D7%94-%D7%95%D7%9C%D7%9E%D7%94-%D7%94%D7%95%D7%90-%D7%97%D7%99%D7%95%D7%A0%D7%99-%D7%A2%D7%9C-%D7%A7%D7%95%D7%A6%D7%95-%D7%A9%D7%9C-%D7%99%D7%95%D7%93",
+                "title": "מהו צו מניעה זמני ולמה הוא חיוני?",
+                "domain": "ailaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.ralc.co.il/presentation/sadzmani.htm",
+                "title": "מקור הסמכות למתן סעד זמני",
+                "domain": "ralc.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C1",
+            "query_he": "מאמר משפטי 'סיכוי סביר' 'צו מניעה זמני' ניתוח התפתחות המבחן בכתב‑עת משפטי",
+            "raw_count": 5,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5301,
+            "http": 200,
+            "role": "persuasive_case_law",
+            "results": [
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C16%2F270%2F031%2Fo03&fileName=16031270.o03&type=4",
+                "title": "רע\"א 3127/16 – החלטה (סעד זמני/צו מניעה זמני)",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.law.co.il/media/computer-law/odachi1.pdf",
+                "title": "רע\"א 40/23 – אודאצ'י נ' ... (החלטה בסעד זמני)",
+                "domain": "law.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.toledano.co.il/wp-content/uploads/2023/04/%D7%A2%D7%A6%D7%9E%D7%90%D7%95%D7%AA-%D7%A0%D7%99%D7%94%D7%95%D7%9C-%D7%9E%D7%9C%D7%95%D7%A0%D7%95%D7%AA-%D7%91%D7%A2-%D7%9E-%D7%A0.-%D7%A4%D7%9C%D7%98%D7%A8%D7%99%D7%9F-%D7%94%D7%A9%D7%A7%D7%A2%D7%95%D7%AA-%D7%91%D7%A2-%D7%9E.pdf",
+                "title": "פלטרין השקעות בע\"מ נ' עצמאות ניהול מלונות בע\"מ – בקשת רשות ערעור",
+                "domain": "toledano.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.afiklaw.com/caselaw/8792",
+                "title": "סחר ושרותי ים בע\"מ נ' חברת שלום וינשטיין בע\"מ, רע\"א 1565/95, פ\"ד נד(5) 638",
+                "domain": "he.afiklaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.blitshtein-law.com/%D7%A2%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA/%D7%A6%D7%95-%D7%9E%D7%A0%D7%99%D7%A2%D7%94-%D7%96%D7%9E%D7%A0%D7%99/",
+                "title": "עו\"ד / מאמר משפטי על צו מניעה זמני",
+                "domain": "blitshtein-law.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C2",
+            "query_he": "פסק דין מחוזי צו מניעה זמני 'נזק בלתי ניתן לתיקון' שיקול בית המשפט האם פיצוי כספי יספיק",
+            "raw_count": 5,
+            "discovery_only": 3,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 2915,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://rotenberglaw.co.il/decision41299-08-20",
+                "title": "“Injunctions and Damages in Israel: The Irreparable Harm Requirement and Monetary Compensation”",
+                "domain": "rotenberglaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://karins-law.co.il/%D7%A6%D7%95-%D7%9E%D7%A0%D7%99%D7%A2%D7%94/",
+                "title": "“Temporary Injunctions in Israeli Civil Procedure: A Comparative Analysis”",
+                "domain": "karins-law.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.blitshtein-law.com/%D7%A2%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA/%D7%A6%D7%95-%D7%9E%D7%A0%D7%99%D7%A2%D7%94-%D7%96%D7%9E%D7%A0%D7%99/",
+                "title": "“The Adequacy of Monetary Compensation as a Substitute for Injunctive Relief”",
+                "domain": "blitshtein-law.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C2",
+            "query_he": "מאמר 'נזק בלתי ניתן לתיקון' צו מניעה זמני האם פיצוי כספי מספק ניתוח משפטי והשוואתי",
+            "raw_count": 3,
+            "discovery_only": 3,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4616,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.co.il/media/computer-law/premier_league2_O3YmzfJ.pdf",
+                "title": "מיכל אגמון-גונן, פרמייר ליג: זכויות יוצרים, אינטרנט והמשתמשים בעידן הדיגיטלי",
+                "domain": "law.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.biu.ac.il/sites/default/files/shared_files/mautner_temp_relief.pdf",
+                "title": "מנחם מאוטנר, 'איזון נוחות' ו/או 'הגינות' כעיקרון מנחה בדיני הסעדים הזמניים",
+                "domain": "biu.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://papers.ssrn.com/sol3/results.cfm?txtKey_Words=temporary%20injunction%20balance%20of%20convenience",
+                "title": "גדעון ספיר, 'סעדים זמניים במשפט האזרחי: בין נוחות לצדק'",
+                "domain": "papers.ssrn.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.nli.org.il/he/search?query=%D7%A1%D7%A2%D7%93%D7%99%D7%9D%20%D7%96%D7%9E%D7%A0%D7%99%D7%99%D7%9D%20%D7%90%D7%94%D7%A8%D7%9F%20%D7%91%D7%A8%D7%A7",
+                "title": "אהרן ברק, 'שיקול דעת שיפוטי וסעדים זמניים'",
+                "domain": "nli.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.jstor.org/action/doBasicSearch?Query=temporary%20injunction%20balance%20of%20convenience%20Israel",
+                "title": "רות גביזון, 'הגנה זמנית על זכויות: עקרונות, מאזן הנוחות ושיקולי מדיניות'",
+                "domain": "jstor.org",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C3",
+            "query_he": "מאמר משפטי 'איזון הנוחות' 'balance of convenience' צו מניעה זמני ניתוח קריטריונים והשפעות שיפוטיות",
+            "raw_count": 5,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 2874,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "http://www.ralc.co.il/presentation/minhal6.htm",
+                "title": "סמכויות שיוריות - לאור סעיף 40 לחוק יסוד: הממשלה",
+                "domain": "ralc.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "http://www.ralc.co.il/presentation/minhal5.htm",
+                "title": "מזה גוף ציבורי, מה ההבדל בין גוף ציבורי לבין גוף פרטי",
+                "domain": "ralc.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C5",
+            "query_he": "מאמר משפטי 'צו אקס‑פארטה' 'הודעה ושימוע' נורמות פרוצדורליות בצווי מניעה זמניים ניתוח משפטי וזכויות ההגנה",
+            "raw_count": 2,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 5,
+        "role_corrections": []
+      }
+    },
+    "candidates": [
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק איסור פעילות מסחרית במוסדות חינוך",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "צו מניעה זמני הוראות בחוק סדר הדין האזרחי הוראה על עילת מתן צו מניעה 'סיכוי סביר' 'prima facie'",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%A4%D7%A2%D7%99%D7%9C%D7%95%D7%AA_%D7%9E%D7%A1%D7%97%D7%A8%D7%99%D7%AA_%D7%91%D7%9E%D7%95%D7%A1%D7%93%D7%95%D7%AA_%D7%97%D7%99%D7%A0%D7%95%D7%9A",
+        "document_id": "a8f6bea7-83f1-4868-9744-11f2e99a55c0",
+        "source_type": "israeli_law",
+        "candidate_id": "64bd542c-aa83-4b31-8f3e-476b4ab0347c",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "תקנות ביטוח בריאות ממלכתי (הסדרים לעניין רישום בקופת חולים ומתן שירותי בריאות לנמצאים בישראל שאינם מבוטחים לפי החוק)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "צו מניעה זמני הוראות בחוק סדר הדין האזרחי הוראה על עילת מתן צו מניעה 'סיכוי סביר' 'prima facie'",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%99%D7%98%D7%95%D7%97_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9E%D7%9E%D7%9C%D7%9B%D7%AA%D7%99_(%D7%94%D7%A1%D7%93%D7%A8%D7%99%D7%9D_%D7%9C%D7%A2%D7%A0%D7%99%D7%99%D7%9F_%D7%A8%D7%99%D7%A9%D7%95%D7%9D_%D7%91%D7%A7%D7%95%D7%A4%D7%AA_%D7%97%D7%95%D7%9C%D7%99%D7%9D_%D7%95%D7%9E%D7%AA%D7%9F_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99_%D7%91%D7%A8%D7%99%D7%90%D7%95%D7%AA_%D7%9C%D7%A0%D7%9E%D7%A6%D7%90%D7%99%D7%9D_%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C_%D7%A9%D7%90%D7%99%D7%A0%D7%9D_%D7%9E%D7%91%D7%95%D7%98%D7%97%D7%99%D7%9D_%D7%9C%D7%A4%D7%99_%D7%94%D7%97%D7%95%D7%A7)",
+        "document_id": "0cd89137-24a5-4d96-b571-2f080fd54754",
+        "source_type": "israeli_law",
+        "candidate_id": "0c23d2ed-826a-47f7-957e-6a098909a3ec",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "תקנות בתי דין מינהליים (סדרי דין בוועדת הערר שלפי חוק שירות הקבע)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "צו מניעה זמני הוראות בחוק סדר הדין האזרחי הוראה על עילת מתן צו מניעה 'סיכוי סביר' 'prima facie'",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%91%D7%AA%D7%99_%D7%93%D7%99%D7%9F_%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%99%D7%9D_(%D7%A1%D7%93%D7%A8%D7%99_%D7%93%D7%99%D7%9F_%D7%91%D7%95%D7%95%D7%A2%D7%93%D7%AA_%D7%94%D7%A2%D7%A8%D7%A8_%D7%A9%D7%9C%D7%A4%D7%99_%D7%97%D7%95%D7%A7_%D7%A9%D7%99%D7%A8%D7%95%D7%AA_%D7%94%D7%A7%D7%91%D7%A2)",
+        "document_id": "1e747507-a072-4e3d-b225-d9e7fe9fd583",
+        "source_type": "israeli_law",
+        "candidate_id": "9bcbd27d-609f-4205-89d4-95cbae32e7d2",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "תקנות הסדרת הלוואות חוץ-בנקאיות (החרגת סוגי עסקאות אשראי מתחולת החוק והחרגת הוצאות מגדר \"תוספת\")",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "צו מניעה זמני הוראות בחוק סדר הדין האזרחי הוראה על עילת מתן צו מניעה 'סיכוי סביר' 'prima facie'",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%A1%D7%93%D7%A8%D7%AA_%D7%94%D7%9C%D7%95%D7%95%D7%90%D7%95%D7%AA_%D7%97%D7%95%D7%A5-%D7%91%D7%A0%D7%A7%D7%90%D7%99%D7%95%D7%AA_(%D7%94%D7%97%D7%A8%D7%92%D7%AA_%D7%A1%D7%95%D7%92%D7%99_%D7%A2%D7%A1%D7%A7%D7%90%D7%95%D7%AA_%D7%90%D7%A9%D7%A8%D7%90%D7%99_%D7%9E%D7%AA%D7%97%D7%95%D7%9C%D7%AA_%D7%94%D7%97%D7%95%D7%A7_%D7%95%D7%94%D7%97%D7%A8%D7%92%D7%AA_%D7%94%D7%95%D7%A6%D7%90%D7%95%D7%AA_%D7%9E%D7%92%D7%93%D7%A8_%22%D7%AA%D7%95%D7%A1%D7%A4%D7%AA%22)",
+        "document_id": "b6051e46-a17b-4817-bed7-bfd491201ea1",
+        "source_type": "israeli_law",
+        "candidate_id": "f2c38dd3-bdae-40a9-8dc1-2751bc63c3ac",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "צו הסדרת מקומות רחצה (מקומות רחצה אסורים ומוכרזים בים התיכון, בים כנרת, בנהר הירדן, בים המלח ובים סוף)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "legislation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "צו מניעה זמני הוראות בחוק סדר הדין האזרחי הוראה על עילת מתן צו מניעה 'סיכוי סביר' 'prima facie'",
+        "source_url": "https://he.wikisource.org/wiki/%D7%A6%D7%95_%D7%94%D7%A1%D7%93%D7%A8%D7%AA_%D7%9E%D7%A7%D7%95%D7%9E%D7%95%D7%AA_%D7%A8%D7%97%D7%A6%D7%94_(%D7%9E%D7%A7%D7%95%D7%9E%D7%95%D7%AA_%D7%A8%D7%97%D7%A6%D7%94_%D7%90%D7%A1%D7%95%D7%A8%D7%99%D7%9D_%D7%95%D7%9E%D7%95%D7%9B%D7%A8%D7%96%D7%99%D7%9D_%D7%91%D7%99%D7%9D_%D7%94%D7%AA%D7%99%D7%9B%D7%95%D7%9F%2C_%D7%91%D7%99%D7%9D_%D7%9B%D7%A0%D7%A8%D7%AA%2C_%D7%91%D7%A0%D7%94%D7%A8_%D7%94%D7%99%D7%A8%D7%93%D7%9F%2C_%D7%91%D7%99%D7%9D_%D7%94%D7%9E%D7%9C%D7%97_%D7%95%D7%91%D7%99%D7%9D_%D7%A1%D7%95%D7%A3)",
+        "document_id": "f0927cd0-6f80-416d-a9d7-6dfd9420a20b",
+        "source_type": "israeli_law",
+        "candidate_id": "bb414a11-7704-43fe-91de-3e79f024d85f",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "צו הסדרת מקומות רחצה (סדרים ואיסורים במקומות רחצה מוכרזים)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "legislation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "צו מניעה זמני הוראות בחוק סדר הדין האזרחי הוראה על עילת מתן צו מניעה 'סיכוי סביר' 'prima facie'",
+        "source_url": "https://he.wikisource.org/wiki/%D7%A6%D7%95_%D7%94%D7%A1%D7%93%D7%A8%D7%AA_%D7%9E%D7%A7%D7%95%D7%9E%D7%95%D7%AA_%D7%A8%D7%97%D7%A6%D7%94_(%D7%A1%D7%93%D7%A8%D7%99%D7%9D_%D7%95%D7%90%D7%99%D7%A1%D7%95%D7%A8%D7%99%D7%9D_%D7%91%D7%9E%D7%A7%D7%95%D7%9E%D7%95%D7%AA_%D7%A8%D7%97%D7%A6%D7%94_%D7%9E%D7%95%D7%9B%D7%A8%D7%96%D7%99%D7%9D)",
+        "document_id": "61c2fc09-2d16-4a2e-9eab-7ec0749b215c",
+        "source_type": "israeli_law",
+        "candidate_id": "ce85c014-1d0e-4499-8e43-478537e9e636",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.95,
+        "title": "רע\"א 3127/16 – החלטה (סעד זמני/צו מניעה זמני)",
+        "origin": "perplexity",
+        "snippet": "נזכר כי בבחינת סעד זמני נשקלת גם השאלה אם ייגרם נזק ממשי ואם ניתן יהיה לפצותו בכסף; כאשר הנזק ניתן לפיצוי כספי, הנטייה שלא ליתן סעד זמני מתחזקת.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "supremedecisions.court.gov.il",
+          "classified_source_class": "official_primary"
+        },
+        "query_he": "פסק דין מחוזי צו מניעה זמני 'נזק בלתי ניתן לתיקון' שיקול בית המשפט האם פיצוי כספי יספיק",
+        "source_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C16%2F270%2F031%2Fo03&fileName=16031270.o03&type=4",
+        "source_type": "פסיקה - בית המשפט העליון",
+        "candidate_id": "10134135-a738-4f4b-ba52-819a1c3ddfba",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "מחדש של ש הביטוי בתקשורת המקוונת: בחינה חופ תורת המניעה המוקדמת",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי הסוקר את התפתחות תורת המניעה המוקדמת במשפט הישראלי, ובוחן את שיקול הדעת במתן צו מניעה זמני וצו מניעה קבוע. מתאים במיוחד לניתוח מבחן 'סיכוי סביר' וההתפתחות הדוקטרינרית. מחברים: (הקובץ נפתח ממוסד אקדמי; יש לבדוק את שמות המחברים בתוך ה-PDF). שנה: לא צוינה בבירור בקטע המצורף.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "runi.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר משפטי 'סיכוי סביר' 'צו מניעה זמני' ניתוח התפתחות המבחן בכתב‑עת משפטי",
+        "source_url": "https://www.runi.ac.il/media/heefc4np/bendor-tamir.pdf",
+        "source_type": "PDF (אקדמי)",
+        "candidate_id": "32602f26-3cab-4fe2-b419-1e85a46fbcad",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "מחקר אמפירי — א.ש.י.ר. חוגגת עשרים",
+        "origin": "perplexity",
+        "snippet": "מאמר/מחקר אקדמי בכתב העת משפטים, הדן בהתפתחות הפסיקה בתחום הסעדים והאיזון בין זכויות. מחבר/ים: קובץ אקדמי של כתב העת משפטים; יש לבדוק את פרטי המחבר ב-PDF. הוצאה: משפטים (האוניברסיטה העברית). שנה: 2020 (לפי נתיב הקובץ).",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר משפטי 'סיכוי סביר' 'צו מניעה זמני' ניתוח התפתחות המבחן בכתב‑עת משפטי",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2020-07/%D7%90.%D7%A9.%D7%99.%D7%A8_0.pdf",
+        "source_type": "כתב עת אקדמי / PDF",
+        "candidate_id": "22a830de-612d-4ff0-ab05-25d664177c80",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "מנחם מאוטנר, 'איזון נוחות' ו/או 'הגינות' כעיקרון מנחה בדיני הסעדים הזמניים",
+        "origin": "perplexity",
+        "snippet": "מאמר על הקריטריונים למתן צו מניעה זמני, ובפרט על מבחני איזון, הגינות ושיקול דעת שיפוטי. (קישור ישיר לקובץ אקדמי, אם זמין באתר המוסד).",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "biu.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר משפטי 'איזון הנוחות' 'balance of convenience' צו מניעה זמני ניתוח קריטריונים והשפעות שיפוטיות",
+        "source_url": "https://www.biu.ac.il/sites/default/files/shared_files/mautner_temp_relief.pdf",
+        "source_type": "article/book chapter",
+        "candidate_id": "ddd01f69-6a2c-49f4-9538-454588d1d4b5",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "רות גביזון, 'הגנה זמנית על זכויות: עקרונות, מאזן הנוחות ושיקולי מדיניות'",
+        "origin": "perplexity",
+        "snippet": "עיסוק אקדמי בעקרונות ההצדקה של סעדים זמניים ובמאזן הנוחות; קישור לחיפוש ב-JSTOR למציאת גרסאות/אזכורים רלוונטיים.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "jstor.org",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר משפטי 'איזון הנוחות' 'balance of convenience' צו מניעה זמני ניתוח קריטריונים והשפעות שיפוטיות",
+        "source_url": "https://www.jstor.org/action/doBasicSearch?Query=temporary%20injunction%20balance%20of%20convenience%20Israel",
+        "source_type": "article/book chapter",
+        "candidate_id": "0141866a-6b4f-4b51-b97c-d19540c7e9c2",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 12339,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial"
+      },
+      {
+        "ms": 32199,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 40013,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 20765,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 20602,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.C1.initial"
+      },
+      {
+        "ms": 7326,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.C2.initial"
+      },
+      {
+        "ms": 11036,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.C3.initial"
+      },
+      {
+        "ms": 19214,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      },
+      {
+        "ms": 257,
+        "ok": false,
+        "model": "openai/gpt-5",
+        "stage": "drafter.escalated",
+        "escalated": true
+      }
+    ],
+    "dropped_sources": [
+      {
+        "url": "https://nir.advlaw.net/index2.php?id=27&lang=HEB",
+        "role": "scholarship",
+        "title": "סדר דין אזרחי - חלק ב",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'סיכוי סביר' 'צו מניעה זמני' ניתוח התפתחות המבחן בכתב‑עת משפטי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.ailaw.co.il/post/%D7%9E%D7%94%D7%95-%D7%A6%D7%95-%D7%9E%D7%A0%D7%99%D7%A2%D7%94-%D7%95%D7%9C%D7%9E%D7%94-%D7%94%D7%95%D7%90-%D7%97%D7%99%D7%95%D7%A0%D7%99-%D7%A2%D7%9C-%D7%A7%D7%95%D7%A6%D7%95-%D7%A9%D7%9C-%D7%99%D7%95%D7%93",
+        "role": "scholarship",
+        "title": "מהו צו מניעה זמני ולמה הוא חיוני?",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'סיכוי סביר' 'צו מניעה זמני' ניתוח התפתחות המבחן בכתב‑עת משפטי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.ralc.co.il/presentation/sadzmani.htm",
+        "role": "scholarship",
+        "title": "מקור הסמכות למתן סעד זמני",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'סיכוי סביר' 'צו מניעה זמני' ניתוח התפתחות המבחן בכתב‑עת משפטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.law.co.il/media/computer-law/odachi1.pdf",
+        "role": "persuasive_case_law",
+        "title": "רע\"א 40/23 – אודאצ'י נ' ... (החלטה בסעד זמני)",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "פסק דין מחוזי צו מניעה זמני 'נזק בלתי ניתן לתיקון' שיקול בית המשפט האם פיצוי כספי יספיק",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.toledano.co.il/wp-content/uploads/2023/04/%D7%A2%D7%A6%D7%9E%D7%90%D7%95%D7%AA-%D7%A0%D7%99%D7%94%D7%95%D7%9C-%D7%9E%D7%9C%D7%95%D7%A0%D7%95%D7%AA-%D7%91%D7%A2-%D7%9E-%D7%A0.-%D7%A4%D7%9C%D7%98%D7%A8%D7%99%D7%9F-%D7%94%D7%A9%D7%A7%D7%A2%D7%95%D7%AA-%D7%91%D7%A2-%D7%9E.pdf",
+        "role": "persuasive_case_law",
+        "title": "פלטרין השקעות בע\"מ נ' עצמאות ניהול מלונות בע\"מ – בקשת רשות ערעור",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "פסק דין מחוזי צו מניעה זמני 'נזק בלתי ניתן לתיקון' שיקול בית המשפט האם פיצוי כספי יספיק",
+        "drop_reason": "class_unknown_not_admitted_for_persuasive_case_law"
+      },
+      {
+        "url": "https://he.afiklaw.com/caselaw/8792",
+        "role": "persuasive_case_law",
+        "title": "סחר ושרותי ים בע\"מ נ' חברת שלום וינשטיין בע\"מ, רע\"א 1565/95, פ\"ד נד(5) 638",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "פסק דין מחוזי צו מניעה זמני 'נזק בלתי ניתן לתיקון' שיקול בית המשפט האם פיצוי כספי יספיק",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.blitshtein-law.com/%D7%A2%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA/%D7%A6%D7%95-%D7%9E%D7%A0%D7%99%D7%A2%D7%94-%D7%96%D7%9E%D7%A0%D7%99/",
+        "role": "persuasive_case_law",
+        "title": "עו\"ד / מאמר משפטי על צו מניעה זמני",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "פסק דין מחוזי צו מניעה זמני 'נזק בלתי ניתן לתיקון' שיקול בית המשפט האם פיצוי כספי יספיק",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://rotenberglaw.co.il/decision41299-08-20",
+        "role": "scholarship",
+        "title": "“Injunctions and Damages in Israel: The Irreparable Harm Requirement and Monetary Compensation”",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'נזק בלתי ניתן לתיקון' צו מניעה זמני האם פיצוי כספי מספק ניתוח משפטי והשוואתי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://karins-law.co.il/%D7%A6%D7%95-%D7%9E%D7%A0%D7%99%D7%A2%D7%94/",
+        "role": "scholarship",
+        "title": "“Temporary Injunctions in Israeli Civil Procedure: A Comparative Analysis”",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'נזק בלתי ניתן לתיקון' צו מניעה זמני האם פיצוי כספי מספק ניתוח משפטי והשוואתי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.blitshtein-law.com/%D7%A2%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA/%D7%A6%D7%95-%D7%9E%D7%A0%D7%99%D7%A2%D7%94-%D7%96%D7%9E%D7%A0%D7%99/",
+        "role": "scholarship",
+        "title": "“The Adequacy of Monetary Compensation as a Substitute for Injunctive Relief”",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'נזק בלתי ניתן לתיקון' צו מניעה זמני האם פיצוי כספי מספק ניתוח משפטי והשוואתי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://law.co.il/media/computer-law/premier_league2_O3YmzfJ.pdf",
+        "role": "scholarship",
+        "title": "מיכל אגמון-גונן, פרמייר ליג: זכויות יוצרים, אינטרנט והמשתמשים בעידן הדיגיטלי",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי 'איזון הנוחות' 'balance of convenience' צו מניעה זמני ניתוח קריטריונים והשפעות שיפוטיות",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/results.cfm?txtKey_Words=temporary%20injunction%20balance%20of%20convenience",
+        "role": "scholarship",
+        "title": "גדעון ספיר, 'סעדים זמניים במשפט האזרחי: בין נוחות לצדק'",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי 'איזון הנוחות' 'balance of convenience' צו מניעה זמני ניתוח קריטריונים והשפעות שיפוטיות",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.nli.org.il/he/search?query=%D7%A1%D7%A2%D7%93%D7%99%D7%9D%20%D7%96%D7%9E%D7%A0%D7%99%D7%99%D7%9D%20%D7%90%D7%94%D7%A8%D7%9F%20%D7%91%D7%A8%D7%A7",
+        "role": "scholarship",
+        "title": "אהרן ברק, 'שיקול דעת שיפוטי וסעדים זמניים'",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי 'איזון הנוחות' 'balance of convenience' צו מניעה זמני ניתוח קריטריונים והשפעות שיפוטיות",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "http://www.ralc.co.il/presentation/minhal6.htm",
+        "role": "scholarship",
+        "title": "סמכויות שיוריות - לאור סעיף 40 לחוק יסוד: הממשלה",
+        "origin": "perplexity",
+        "claim_id": "C5",
+        "query_he": "מאמר משפטי 'צו אקס‑פארטה' 'הודעה ושימוע' נורמות פרוצדורליות בצווי מניעה זמניים ניתוח משפטי וזכויות ההגנה",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "http://www.ralc.co.il/presentation/minhal5.htm",
+        "role": "scholarship",
+        "title": "מזה גוף ציבורי, מה ההבדל בין גוף ציבורי לבין גוף פרטי",
+        "origin": "perplexity",
+        "claim_id": "C5",
+        "query_he": "מאמר משפטי 'צו אקס‑פארטה' 'הודעה ושימוע' נורמות פרוצדורליות בצווי מניעה זמניים ניתוח משפטי וזכויות ההגנה",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      }
+    ]
+  }
+}
