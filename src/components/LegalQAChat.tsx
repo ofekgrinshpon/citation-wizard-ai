@@ -1057,11 +1057,20 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         setPostProcessingLabel("מסתנכרן עם המחקר שרץ ברקע…");
         setQuestion(marker.question);
         const { pollLegalQaStatus, CHECKPOINT_LABELS_HE } = await import("@/lib/legalQaPolling");
+        const { deepCheckpointToStages } = await import("@/lib/legalQa/deepCheckpointToStages");
         const final = await pollLegalQaStatus(marker.runId, {
           signal: controller.signal,
           onUpdate: (snap) => {
-            const label = CHECKPOINT_LABELS_HE[snap.checkpoint ?? ""] ?? snap.checkpoint ?? "מעבד";
-            setPostProcessingLabel(label);
+            const cp = snap.checkpoint ?? null;
+            setStageEvents(deepCheckpointToStages(cp));
+            // Only surface a textual checkpoint label once we're past drafting,
+            // so the post-processing row in StageProgressList lights up.
+            if (cp === "anchor_pass" || cp === "completed") {
+              const label = CHECKPOINT_LABELS_HE[cp] ?? cp;
+              setPostProcessingLabel(label);
+            } else {
+              setPostProcessingLabel(null);
+            }
           },
         });
         if (cancelled) return;
