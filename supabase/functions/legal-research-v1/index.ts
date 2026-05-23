@@ -55,21 +55,25 @@ async function handle(req: Request): Promise<Response> {
   const authHeader = req.headers.get("Authorization");
   const smokeMode = req.headers.get("x-smoke-mode") === "1";
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
-  console.log("[lrv1 auth]", {
-    hasAuth: !!authHeader,
-    authPrefix: authHeader?.slice(0, 14),
-    smokeMode,
-    hasServiceKey: !!serviceKey,
-    tokenMatchesService: !!authHeader && authHeader.replace("Bearer ", "") === serviceKey,
-  });
   if (!authHeader?.startsWith("Bearer ")) {
     return jsonResponse(401, { error: "unauthorized", reason: "no_bearer" });
   }
   const token = authHeader.replace("Bearer ", "");
 
+  // Service-role detection: either exact env match (covers sb_secret_… keys)
+  // OR a JWT whose `role` claim is "service_role" (covers legacy JWT keys).
+  let isServiceRole = !!token && token === serviceKey;
+  if (!isServiceRole && token.split(".").length === 3) {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+      if (payload?.role === "service_role") isServiceRole = true;
+    } catch { /* not a JWT */ }
+  }
+  console.log("[lrv1 auth]", { smokeMode, isServiceRole });
+
   let userId: string;
   let userClient: ReturnType<typeof createClient> | null = null;
-  if (smokeMode && token && token === serviceKey) {
+  if (smokeMode && isServiceRole) {
     const peekBody = await req.clone().json().catch(() => ({}));
     const smokeUid = typeof (peekBody as { smoke_user_id?: unknown }).smoke_user_id === "string"
       ? (peekBody as { smoke_user_id: string }).smoke_user_id : "";
