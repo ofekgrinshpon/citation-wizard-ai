@@ -38,6 +38,10 @@ const RESEARCH_OFFLINE_MESSAGE =
 const CHAPTER_OFFLINE_TITLE = "כתיבת פרקים בשדרוג";
 const CHAPTER_OFFLINE_MESSAGE =
   "כתיבת פרקי גוף, מבוא וסיכום מושבתת זמנית. אישור שאלת מחקר, הצעת נושאים, בניית מתווה וייצור התקציר זמינים כרגיל.";
+const PLEADING_OFFLINE_TITLE = "בדיקת כתבי טענות בשדרוג";
+const PLEADING_OFFLINE_MESSAGE =
+  "בקרת מסמכים משפטיים מושבתת זמנית בזמן שדרוג מנוע הניתוח. בינתיים ניתן להשתמש בסיכום פסיקה, אזכור אחיד, ביבליוגרפיה ובשלבים המקדימים של הכתיבה האקדמית.";
+
 
 // ─── Chapter role helpers ──────────────────────────────────────────
 // Three special chapters in addition to body: abstract, introduction, conclusion.
