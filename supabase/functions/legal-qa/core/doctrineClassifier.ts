@@ -148,19 +148,33 @@ function userPrompt(args: ClassifyArgs): string {
 function sanitize(raw: unknown): DoctrineClassification {
   const obj = (raw && typeof raw === "object") ? raw as Record<string, unknown> : {};
   const docArr = Array.isArray(obj.doctrines) ? obj.doctrines : [];
-  const allowedIds = new Set<string>(DOCTRINE_TAXONOMY);
+  const activeIds = new Set<string>(ACTIVE_DOCTRINE_TAXONOMY);
+  const unimplementedIds = new Set<string>(UNIMPLEMENTED_DOCTRINES);
   const doctrines: ClassifiedDoctrine[] = [];
+  const unimplemented_matches: ClassifiedDoctrine[] = [];
+  const unmapped_doctrine_warnings: UnmappedDoctrineWarning[] = [];
   for (const d of docArr) {
     if (!d || typeof d !== "object") continue;
     const dd = d as Record<string, unknown>;
     const id = typeof dd.id === "string" ? dd.id : "";
-    if (!allowedIds.has(id)) continue;
+    if (!id) continue;
     const conf = typeof dd.confidence === "number" ? Math.max(0, Math.min(1, dd.confidence)) : 0;
     const matched = Array.isArray(dd.matched_text)
       ? dd.matched_text.filter((x): x is string => typeof x === "string").slice(0, 6)
       : [];
     const reason = typeof dd.reason === "string" ? dd.reason.slice(0, 240) : "";
-    doctrines.push({ id: id as DoctrineId, confidence: conf, matched_text: matched, reason });
+    if (activeIds.has(id)) {
+      // Invariant guard: active ID must have an SR mapping.
+      if (!CLASSIFIER_TO_SR_DOCTRINE[id as ActiveDoctrineId]) {
+        unmapped_doctrine_warnings.push({ id, confidence: conf, reason: "active_id_missing_sr_mapping" });
+        continue;
+      }
+      doctrines.push({ id: id as DoctrineId, confidence: conf, matched_text: matched, reason });
+    } else if (unimplementedIds.has(id)) {
+      unimplemented_matches.push({ id: id as DoctrineId, confidence: conf, matched_text: matched, reason });
+    } else {
+      unmapped_doctrine_warnings.push({ id, confidence: conf, reason: reason || "out_of_taxonomy" });
+    }
   }
   const allowedAreas = new Set<string>(LEGAL_AREA_TAXONOMY);
   const allowedRoles = new Set<string>(SOURCE_ROLE_TAXONOMY);
@@ -170,7 +184,7 @@ function sanitize(raw: unknown): DoctrineClassification {
   const source_roles_needed = Array.isArray(obj.source_roles_needed)
     ? obj.source_roles_needed.filter((x): x is string => typeof x === "string" && allowedRoles.has(x)).slice(0, 8)
     : [];
-  return { doctrines, legal_areas, source_roles_needed };
+  return { doctrines, unimplemented_matches, unmapped_doctrine_warnings, legal_areas, source_roles_needed };
 }
 
 export async function classifyDoctrines(args: ClassifyArgs): Promise<ClassifyResult> {
