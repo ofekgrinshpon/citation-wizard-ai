@@ -15,6 +15,26 @@ async function withTimeout<T>(p: Promise<T>, ms: number): Promise<T | null> {
   ]).catch(() => null);
 }
 
+// Diagnostic variant: distinguishes ok/empty/error/timeout and captures error msg.
+async function runRpcDiag<T = unknown>(
+  promise: PromiseLike<{ data: T | null; error: { message?: string } | null }>,
+  ms: number,
+): Promise<{ status: "ok" | "empty" | "error" | "timeout"; rows: T extends unknown[] ? T : never[]; error?: string }> {
+  let timedOut = false;
+  const timer = new Promise<null>((res) => setTimeout(() => { timedOut = true; res(null); }, ms));
+  try {
+    const res = (await Promise.race([promise, timer])) as
+      | { data: unknown; error: { message?: string } | null }
+      | null;
+    if (timedOut || !res) return { status: "timeout", rows: [] as never[] };
+    if (res.error) return { status: "error", rows: [] as never[], error: res.error.message || String(res.error) };
+    const rows = (Array.isArray(res.data) ? res.data : []) as never[];
+    return { status: rows.length ? "ok" : "empty", rows };
+  } catch (e) {
+    return { status: "error", rows: [] as never[], error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
 async function embed(text: string): Promise<number[] | null> {
   const key = Deno.env.get("OPENAI_API_KEY");
   if (!key) return null;
@@ -65,6 +85,16 @@ export interface LocalRetrievalResult {
     vector_hits: number;
     kept: number;
     ms: number;
+    diag: {
+      text_status: "ok" | "empty" | "error" | "timeout";
+      text_error?: string;
+      vector_status: "ok" | "empty" | "error" | "timeout" | "no_embedding";
+      vector_error?: string;
+      embedding_length: number | null;
+      expected_embedding_dim: number;
+      top_text_titles: string[];
+      top_vector_titles: string[];
+    };
   }>;
   stage_runs: StageRun[];
   ms: number;
@@ -82,8 +112,8 @@ export async function runLocalRetrieval(
   await Promise.all(
     targets.map(async (q) => {
       const qStart = Date.now();
-      const [textRes, vec] = await Promise.all([
-        withTimeout(
+      const [textDiag, vec] = await Promise.all([
+        runRpcDiag<RpcRow[]>(
           // deno-lint-ignore no-explicit-any
           (admin.rpc("search_legal_chunks_text", {
             search_query: q.query_he,
@@ -93,24 +123,25 @@ export async function runLocalRetrieval(
         ),
         embed(q.query_he),
       ]);
-      const vecRes = vec
-        ? await withTimeout(
-            // deno-lint-ignore no-explicit-any
-            (admin.rpc("match_legal_chunks", {
-              query_embedding: JSON.stringify(vec),
-              match_threshold: 0.5,
-              match_count: CAPS.LOCAL_PER_QUERY,
-            }) as any),
-            RPC_TIMEOUT_MS,
-          )
-        : null;
 
-      const textRows: RpcRow[] = Array.isArray((textRes as { data?: unknown[] } | null)?.data)
-        ? ((textRes as { data: RpcRow[] }).data)
-        : [];
-      const vecRows: RpcRow[] = Array.isArray((vecRes as { data?: unknown[] } | null)?.data)
-        ? ((vecRes as { data: RpcRow[] }).data)
-        : [];
+      let vectorDiag: { status: "ok" | "empty" | "error" | "timeout" | "no_embedding"; rows: RpcRow[]; error?: string };
+      if (!vec) {
+        vectorDiag = { status: "no_embedding", rows: [] };
+      } else {
+        const d = await runRpcDiag<RpcRow[]>(
+          // deno-lint-ignore no-explicit-any
+          (admin.rpc("match_legal_chunks", {
+            query_embedding: JSON.stringify(vec),
+            match_threshold: 0.5,
+            match_count: CAPS.LOCAL_PER_QUERY,
+          }) as any),
+          RPC_TIMEOUT_MS,
+        );
+        vectorDiag = d;
+      }
+
+      const textRows = textDiag.rows;
+      const vecRows = vectorDiag.rows;
 
       let kept = 0;
       const seenInQuery = new Set<string>();
@@ -150,6 +181,16 @@ export async function runLocalRetrieval(
         vector_hits: vecRows.length,
         kept,
         ms: Date.now() - qStart,
+        diag: {
+          text_status: textDiag.status,
+          text_error: textDiag.error,
+          vector_status: vectorDiag.status,
+          vector_error: vectorDiag.error,
+          embedding_length: vec ? vec.length : null,
+          expected_embedding_dim: 768,
+          top_text_titles: textRows.slice(0, 5).map((r) => r.document_title),
+          top_vector_titles: vecRows.slice(0, 5).map((r) => r.document_title),
+        },
       });
     }),
   );

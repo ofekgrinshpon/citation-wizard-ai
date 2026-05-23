@@ -1,0 +1,680 @@
+{
+  "generated_at": "2026-05-23T17:21:52.637Z",
+  "fixture": {
+    "id": "L3",
+    "question": "מתי בית המשפט יפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים תרופות?",
+    "expected_statute_terms": true,
+    "expected_black_letter": true
+  },
+  "http_status": 200,
+  "wall_ms": 83225,
+  "response": {
+    "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+    "footnotes": [],
+    "debug": {
+      "run_id": "3f0a3ed6-f30c-405f-908c-e691beb6e0b4",
+      "phase": "P3",
+      "stage_runs": [
+        {
+          "stage": "claim_analyzer.initial",
+          "model": "openai/gpt-5-mini",
+          "ms": 18680,
+          "ok": true
+        },
+        {
+          "stage": "query_planner.initial",
+          "model": "openai/gpt-5-mini",
+          "ms": 28947,
+          "ok": true
+        },
+        {
+          "stage": "local_retrieval",
+          "ms": 16005,
+          "ok": true
+        },
+        {
+          "stage": "perplexity_retrieval",
+          "ms": 34661,
+          "ok": true
+        }
+      ],
+      "planning": {
+        "analyzer": {
+          "model_initial": "openai/gpt-5-mini",
+          "model_final": "openai/gpt-5-mini",
+          "escalated_to_gpt5": false,
+          "escalation_reason": [],
+          "confidence": 0.9,
+          "legal_area": "דיני חוזים",
+          "answer_type": "doctrinal_explanation",
+          "schema_valid": true,
+          "ms": 18680
+        },
+        "planner": {
+          "model_initial": "openai/gpt-5-mini",
+          "model_final": "openai/gpt-5-mini",
+          "escalated_to_gpt5": false,
+          "escalation_reason": [],
+          "schema_valid": true,
+          "ms": 28947
+        },
+        "claims_count": 4,
+        "queries_count": 11,
+        "truncated_claims_count": 0,
+        "truncated_queries_count": 0
+      },
+      "claims": [
+        {
+          "claim_id": "C1",
+          "text_he": "האם וסעיף 15 לחוק החוזים (תרופות) חל על פיצוי מוסכם וכיצד נוסח הסעיף ומה משמעותו היסודית?",
+          "required_roles": [
+            "primary_statute",
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "שאלה חוקית בסיסית: צריך את נוסח הסעיף עצמו (חוק) ואת פסיקה מחייבת כדי לפרש את היקפו ואת הדוקטרינה המשפטית המסורתית; ספרות משפטית מסייעת בהבהרת המשמעויות ותורת היסוד."
+        },
+        {
+          "claim_id": "C2",
+          "text_he": "מה הקריטריונים והסטנדרט המשפטי שיאפשרו לבית המשפט להפחית פיצוי מוסכם לפי סעיף 15 (כגון יחס לפיצוי הסביר/צפוי, יחס בין הסכום לנזק בפועל, כוונת הצדדים, ענישה/עונשיות)?",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship",
+            "persuasive_case_law"
+          ],
+          "is_black_letter": true,
+          "reason": "זו דוקטרינה מעשית המחייבת התבססות על פסיקה מחייבת ותמיכה בספרות לגבי הקריטריונים והבדיקות שנוהגים בתי המשפט לבצע."
+        },
+        {
+          "claim_id": "C3",
+          "text_he": "אילו נסיבות עובדתיות מקובלות כמצדיקות הפחתה (הבדל מהותי בין סכום מוסכם לנזק סביר; שינוי נסיבות לאחר כריתת החוזה; קושי בחישוב נזק בעת החתימה; כוח משא/אי־שוויון במעמד הצדדים)?",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship",
+            "factual_report"
+          ],
+          "is_black_letter": false,
+          "reason": "לטענת יישום דרוש שילוב של פסיקה וספרות כדי לזהות דוגמאות עובדיות שבהן הפחתה ניתנה בפועל; דיווחים/מקרים עובדתיים עוזרים להמחיש."
+        },
+        {
+          "claim_id": "C4",
+          "text_he": "מהי נוהל בית המשפט והנטל להליך להפחתה: מי מבקש, מתי, מה נטל ההוכחה, האם בית המשפט יכול להפחית מטעמו/מראש ואילו תוצאות מעשיות (הפחתה, ביטול, או החלפת סעיף)?",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": false,
+          "reason": "נדרשת פסיקה מגבילה וספרות על נוהל והסמכות השיפוטית כדי להבין את הצעדים הפרוצדורליים, סטטוס הנטל והדיסקרטיות של בית המשפט."
+        }
+      ],
+      "queries": [
+        {
+          "claim_id": "C1",
+          "role": "primary_statute",
+          "query_he": "חוק החוזים (תרופות) סעיף 15 נוסח עדכני; נוסח הסעיף והסעיפים הסמוכים; תכלית וסמכות הפחתת פיצוי מוסכם פרשנות חקיקתית",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "statute",
+          "reason": "דרוש נוסח החוק הרשמי והקשר סעיפי כדי לקבוע האם ס.15 חל על פיצוי מוסכם ולנתח משמעות הוראת החוק והתכלית המחוקקת."
+        },
+        {
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פירוש סעיף 15 לחוק החוזים (תרופות) פיצוי מוסכם פסק דין פרשנות 'סעיף 15' 'פיצוי מוסכם' ע\"א",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "נדרש לאתר פסיקה מחייבת של בתי המשפט הגבוהים המפרשת את סעיף 15 וקובעת האם וכיצד הוא יוחל על פיצוי מוסכם."
+        },
+        {
+          "claim_id": "C1",
+          "role": "scholarship",
+          "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) פיצוי מוסכם ניתוח תכלית חוקתית משפטית",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "מחקר משפטי יבחן פרשנויות בין-תחומיות, ביקורת תכליתית והצעות לפרשנות של הסעיף מעבר לטקסט הפסיקה."
+        },
+        {
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון קריטריונים להפחתת פיצוי מוסכם לפי סעיף 15 יחס לפיצוי הסביר 'פיצוי מוסכם' 'סעיף 15' 'ענישה' פסק דין",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לאתר פסקי דין מחייבים שמנסחים את הסטנדרטים והקריטריונים (יחס לפיצוי הסביר, עונשיות, הקשר לנזק בפועל) שעל פיהם מפחיתים פיצוי מוסכם."
+        },
+        {
+          "claim_id": "C2",
+          "role": "scholarship",
+          "query_he": "מאמר ניתוח סטנדרט שיפוטי להפחתת פיצוי מוסכם סעיף 15 יחס לנזק צפוי כוונת הצדדים פרשנות שיפוטית",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "ספרות משפטית תסביר סטנדרטים ניסוחיים ומבחנים doctrinal למתי בית המשפט יחשב סכום כמופרז/עונשי ותארגן את הנושאים הרלוונטיים."
+        },
+        {
+          "claim_id": "C2",
+          "role": "persuasive_case_law",
+          "query_he": "פסיקה אנגלית Dunlop Cavendish כלל ה-penalty מבחני יחסיות 'liquidated damages' 'penalty' השפעה על פרשנות בסעיף 15 בישראל",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "case",
+          "reason": "פסיקה זרה (בריטית/קהיליה) מהווה מקור משכנע לעקרונות כמו מבחן היחסיות והעונשיות של הפיצוי המוסכם ומשמשת כהשוואה לפרשנות המקומית."
+        },
+        {
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון נסיבות להפחתת פיצוי מוסכם 'פער מהותי' 'שינוי נסיבות' 'קושי בחישוב הנזק' פסק דין 'פיצוי מוסכם'",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "יש לאתר פסקי דין שמפרטים אילו נסיבות עובדתיות הכשירו בית משפט להפחית פיצוי מוסכם ולסווג דוגמאות מוחשיות."
+        },
+        {
+          "claim_id": "C3",
+          "role": "scholarship",
+          "query_he": "מאמר דוגמאות עובדתיות להפחתת פיצוי מוסכם שינוי נסיבות אי-שוויון בכוח המשא וקושי בחישוב הנזק בסעיף 15",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "ניתוח אקדמי יספק קטלוג של נסיבות שנהגו כצדקות להפחתה ודיון תאורטי/פרקטי לגבי משקל כל נסיבה."
+        },
+        {
+          "claim_id": "C3",
+          "role": "factual_report",
+          "query_he": "דו\"ח משרד המשפטים או משרד הכלכלה על פיצוי מוסכם 'פיצויים מוסכמים' דוח ועדה הלכה ומדיניות על פגיעה בצרכן או אי-שוויון חוזי",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "report",
+          "reason": "דו\"חות ממשלתיים או ועדות עשויים להכיל נתונים/ממצאים על מקרים אופייניים שבהם פיצוי מוסכם נחשב בלתי הוגן או בעייתי בפועל."
+        },
+        {
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון הליכים להפחתת פיצוי מוסכם מי ייזום הבקשה מתי נטל ההוכחה האם בית המשפט יכול להפחית מטעמו 'פיצוי מוסכם' פסק דין נוהל",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "נדרש לאתר פסיקה שמסדירה את הנוהל הפרוצדורלי: מי מבקש, מתי והנטל להוכיח כדי לבצע הפחתה."
+        },
+        {
+          "claim_id": "C4",
+          "role": "scholarship",
+          "query_he": "מאמר נוהל ונטל הוכחה להפחתת פיצוי מוסכם סעיף 15 מי יפנה מתי אפשר לפסוק מטעמו ניתוח פרוצדורלי",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "ספרות משפטית לצדדים תסקור את הנטל הראייתי, משלבי הדיון והאם בית המשפט רשאי להפעיל את הסעיף מטעמו או רק בהיענות לבקשה."
+        }
+      ],
+      "retrieval": {
+        "ms": 34665,
+        "local": {
+          "ms": 16005,
+          "candidates": 0,
+          "per_query": [
+            {
+              "claim_id": "C3",
+              "role": "binding_case_law",
+              "query_he": "בית המשפט העליון נסיבות להפחתת פיצוי מוסכם 'פער מהותי' 'שינוי נסיבות' 'קושי בחישוב הנזק' פסק דין 'פיצוי מוסכם'",
+              "text_hits": 0,
+              "vector_hits": 0,
+              "kept": 0,
+              "ms": 8274,
+              "diag": {
+                "text_status": "empty",
+                "vector_status": "timeout",
+                "embedding_length": 768,
+                "expected_embedding_dim": 768,
+                "top_text_titles": [],
+                "top_vector_titles": []
+              }
+            },
+            {
+              "claim_id": "C1",
+              "role": "primary_statute",
+              "query_he": "חוק החוזים (תרופות) סעיף 15 נוסח עדכני; נוסח הסעיף והסעיפים הסמוכים; תכלית וסמכות הפחתת פיצוי מוסכם פרשנות חקיקתית",
+              "text_hits": 0,
+              "vector_hits": 0,
+              "kept": 0,
+              "ms": 16003,
+              "diag": {
+                "text_status": "timeout",
+                "vector_status": "timeout",
+                "embedding_length": 768,
+                "expected_embedding_dim": 768,
+                "top_text_titles": [],
+                "top_vector_titles": []
+              }
+            },
+            {
+              "claim_id": "C1",
+              "role": "binding_case_law",
+              "query_he": "בית המשפט העליון פירוש סעיף 15 לחוק החוזים (תרופות) פיצוי מוסכם פסק דין פרשנות 'סעיף 15' 'פיצוי מוסכם' ע\"א",
+              "text_hits": 0,
+              "vector_hits": 0,
+              "kept": 0,
+              "ms": 16002,
+              "diag": {
+                "text_status": "timeout",
+                "vector_status": "timeout",
+                "embedding_length": 768,
+                "expected_embedding_dim": 768,
+                "top_text_titles": [],
+                "top_vector_titles": []
+              }
+            },
+            {
+              "claim_id": "C2",
+              "role": "binding_case_law",
+              "query_he": "בית המשפט העליון קריטריונים להפחתת פיצוי מוסכם לפי סעיף 15 יחס לפיצוי הסביר 'פיצוי מוסכם' 'סעיף 15' 'ענישה' פסק דין",
+              "text_hits": 0,
+              "vector_hits": 0,
+              "kept": 0,
+              "ms": 16002,
+              "diag": {
+                "text_status": "timeout",
+                "vector_status": "timeout",
+                "embedding_length": 768,
+                "expected_embedding_dim": 768,
+                "top_text_titles": [],
+                "top_vector_titles": []
+              }
+            },
+            {
+              "claim_id": "C4",
+              "role": "binding_case_law",
+              "query_he": "בית המשפט העליון הליכים להפחתת פיצוי מוסכם מי ייזום הבקשה מתי נטל ההוכחה האם בית המשפט יכול להפחית מטעמו 'פיצוי מוסכם' פסק דין נוהל",
+              "text_hits": 0,
+              "vector_hits": 0,
+              "kept": 0,
+              "ms": 16003,
+              "diag": {
+                "text_status": "timeout",
+                "vector_status": "timeout",
+                "embedding_length": 768,
+                "expected_embedding_dim": 768,
+                "top_text_titles": [],
+                "top_vector_titles": []
+              }
+            }
+          ]
+        },
+        "perplexity": {
+          "ms": 34661,
+          "candidates": 7,
+          "dropped": 20,
+          "per_query": [
+            {
+              "claim_id": "C1",
+              "role": "scholarship",
+              "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) פיצוי מוסכם ניתוח תכלית חוקתית משפטית",
+              "http": 200,
+              "raw_count": 5,
+              "kept": 0,
+              "dropped": 5,
+              "retried": false,
+              "ms": 4782
+            },
+            {
+              "claim_id": "C2",
+              "role": "scholarship",
+              "query_he": "מאמר ניתוח סטנדרט שיפוטי להפחתת פיצוי מוסכם סעיף 15 יחס לנזק צפוי כוונת הצדדים פרשנות שיפוטית",
+              "http": 200,
+              "raw_count": 5,
+              "kept": 1,
+              "dropped": 4,
+              "retried": false,
+              "ms": 9057
+            },
+            {
+              "claim_id": "C2",
+              "role": "persuasive_case_law",
+              "query_he": "פסיקה אנגלית Dunlop Cavendish כלל ה-penalty מבחני יחסיות 'liquidated damages' 'penalty' השפעה על פרשנות בסעיף 15 בישראל",
+              "http": 200,
+              "raw_count": 4,
+              "kept": 2,
+              "dropped": 2,
+              "retried": false,
+              "ms": 5810
+            },
+            {
+              "claim_id": "C3",
+              "role": "scholarship",
+              "query_he": "מאמר דוגמאות עובדתיות להפחתת פיצוי מוסכם שינוי נסיבות אי-שוויון בכוח המשא וקושי בחישוב הנזק בסעיף 15",
+              "http": 200,
+              "raw_count": 5,
+              "kept": 1,
+              "dropped": 4,
+              "retried": false,
+              "ms": 5657
+            },
+            {
+              "claim_id": "C3",
+              "role": "factual_report",
+              "query_he": "דו\"ח משרד המשפטים או משרד הכלכלה על פיצוי מוסכם 'פיצויים מוסכמים' דוח ועדה הלכה ומדיניות על פגיעה בצרכן או אי-שוויון חוזי",
+              "http": 200,
+              "raw_count": 5,
+              "kept": 2,
+              "dropped": 3,
+              "retried": false,
+              "ms": 5274
+            },
+            {
+              "claim_id": "C4",
+              "role": "scholarship",
+              "query_he": "מאמר נוהל ונטל הוכחה להפחתת פיצוי מוסכם סעיף 15 מי יפנה מתי אפשר לפסוק מטעמו ניתוח פרוצדורלי",
+              "http": 200,
+              "raw_count": 3,
+              "kept": 1,
+              "dropped": 2,
+              "retried": false,
+              "ms": 4067
+            }
+          ]
+        },
+        "pool": {
+          "found": 7,
+          "after_dedup": 5,
+          "dedup_drops": 2,
+          "counts": {
+            "by_origin": {
+              "perplexity": 5
+            },
+            "by_role": {
+              "scholarship": 1,
+              "persuasive_case_law": 2,
+              "factual_report": 2
+            },
+            "by_claim": {
+              "C2": 3,
+              "C3": 2
+            }
+          }
+        }
+      },
+      "candidates": [
+        {
+          "candidate_id": "b175cd2d-7ad9-4372-bd3f-59cbecdca146",
+          "claim_id": "C2",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "retrieval_method": "perplexity",
+          "title": "פיצוי מוסכם – סוגיות והיבטים",
+          "source_type": "article (academic lecture paper / university PDF)",
+          "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+          "snippet": "חיבור אקדמי בעברית על סעיף 15 לחוק החוזים (תרופות), כולל ניתוח של יחס סביר לנזק צפוי, כוונת הצדדים, ומבחני ההתערבות השיפוטית בהפחתת פיצוי מוסכם.",
+          "query_he": "מאמר ניתוח סטנדרט שיפוטי להפחתת פיצוי מוסכם סעיף 15 יחס לנזק צפוי כוונת הצדדים פרשנות שיפוטית",
+          "score": 0.7,
+          "expected_source_type": "academic",
+          "metadata": {
+            "domain": "law.haifa.ac.il"
+          }
+        },
+        {
+          "candidate_id": "0b74dbe3-b540-432c-bef0-4d1079f120c8",
+          "claim_id": "C2",
+          "role": "persuasive_case_law",
+          "origin": "perplexity",
+          "retrieval_method": "perplexity",
+          "title": "עניין בריטיש איירווייס / פסיקה ישראלית בנושא פיצוי מוסכם ו'פיצויים מוסכמים'",
+          "source_type": "Israeli case reference (needs database verification)",
+          "source_url": "https://www.nevo.co.il",
+          "snippet": "לבדיקה במאגרים ישראליים: חיפוש בפסיקה ישראלית על סעיף 15 לחוק החוזים (תרופות) והבחנה בין פיצוי מוסכם לבין קנס/עונש; יש לאמת מספר תיק וערכאה במאגר.",
+          "query_he": "פסיקה אנגלית Dunlop Cavendish כלל ה-penalty מבחני יחסיות 'liquidated damages' 'penalty' השפעה על פרשנות בסעיף 15 בישראל",
+          "score": 0.7,
+          "expected_source_type": "case",
+          "metadata": {
+            "domain": "nevo.co.il"
+          }
+        },
+        {
+          "candidate_id": "87cc5001-cfcf-4534-97a8-a2f31a9ad647",
+          "claim_id": "C2",
+          "role": "persuasive_case_law",
+          "origin": "perplexity",
+          "retrieval_method": "perplexity",
+          "title": "סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה), תשל\"א-1970",
+          "source_type": "Israeli statute",
+          "source_url": "https://www.nevo.co.il/law_html/law01/500_068.htm",
+          "snippet": "הוראת החוק המרכזית בישראל לגבי הפחתת פיצויים מוסכמים כאשר אינם סבירים או אינם משקפים נזק שצפוי מראש.",
+          "query_he": "פסיקה אנגלית Dunlop Cavendish כלל ה-penalty מבחני יחסיות 'liquidated damages' 'penalty' השפעה על פרשנות בסעיף 15 בישראל",
+          "score": 0.7,
+          "expected_source_type": "case",
+          "metadata": {
+            "domain": "nevo.co.il"
+          }
+        },
+        {
+          "candidate_id": "cddca5fe-e8a0-4cca-b6eb-7b3a344ba42b",
+          "claim_id": "C3",
+          "role": "factual_report",
+          "origin": "perplexity",
+          "retrieval_method": "perplexity",
+          "title": "פסק-דין ע\"א 10208/16 (בית המשפט העליון)",
+          "source_type": "judicial decision",
+          "source_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F16%2F080%2F102%2Fw03&fileName=16102080.W03&type=2",
+          "snippet": "פסק דין על תניית פיצוי מוסכם; כולל דיון עקרוני בסמכות להפחית פיצוי מוסכם ובהתייחסות ליחס הסביר לנזק הצפוי.",
+          "query_he": "דו\"ח משרד המשפטים או משרד הכלכלה על פיצוי מוסכם 'פיצויים מוסכמים' דוח ועדה הלכה ומדיניות על פגיעה בצרכן או אי-שוויון חוזי",
+          "score": 0.7,
+          "expected_source_type": "report",
+          "metadata": {
+            "domain": "supremedecisions.court.gov.il"
+          }
+        },
+        {
+          "candidate_id": "cc919dd3-d4b9-4a0b-8cfa-e7b7ab9b9d42",
+          "claim_id": "C3",
+          "role": "factual_report",
+          "origin": "perplexity",
+          "retrieval_method": "perplexity",
+          "title": "רשות ההגבלים/התחרות – מדריכים ופרסומים בנושאי חוזים והגבלים",
+          "source_type": "official publications portal",
+          "source_url": "https://www.gov.il/he/departments/publications?OfficeId=9f7e8d4a-0f3f-4f4b-9f1b-0f4f6d7c2a8a",
+          "snippet": "פורטל פרסומים של גוף ממשלתי רלוונטי לחיפוש דוחות, סקירות ומסמכי מדיניות על כשלי שוק, פערי כוח חוזיים ורגולציה צרכנית. יש לאתר בו פרסומים ספציפיים לפי נושא.",
+          "query_he": "דו\"ח משרד המשפטים או משרד הכלכלה על פיצוי מוסכם 'פיצויים מוסכמים' דוח ועדה הלכה ומדיניות על פגיעה בצרכן או אי-שוויון חוזי",
+          "score": 0.7,
+          "expected_source_type": "report",
+          "metadata": {
+            "domain": "gov.il"
+          }
+        }
+      ],
+      "dropped_sources": [
+        {
+          "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) פיצוי מוסכם ניתוח תכלית חוקתית משפטית",
+          "claim_id": "C1",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "פיצויים מוסכמים בדיני החוזים",
+          "url": "https://weller-law-office.com/%D7%94%D7%A4%D7%A8%D7%AA-%D7%97%D7%95%D7%96%D7%94/",
+          "drop_reason": "bad_domain_for_role:weller-law-office.com"
+        },
+        {
+          "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) פיצוי מוסכם ניתוח תכלית חוקתית משפטית",
+          "claim_id": "C1",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה), תשל\"א-1970",
+          "url": "https://fs.knesset.gov.il/7/law/7_lsr_211750.PDF",
+          "drop_reason": "bad_domain_for_role:fs.knesset.gov.il"
+        },
+        {
+          "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) פיצוי מוסכם ניתוח תכלית חוקתית משפטית",
+          "claim_id": "C1",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "החוזים (תרופות בשל הפרת חוזה) – סקירת פיצויים מוסכמים",
+          "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA_%D7%91%D7%A9%D7%9C_%D7%94%D7%A4%D7%A8%D7%AA_%D7%97%D7%95%D7%96%D7%D7%94)",
+          "drop_reason": "bad_domain_for_role:kolzchut.org.il"
+        },
+        {
+          "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) פיצוי מוסכם ניתוח תכלית חוקתית משפטית",
+          "claim_id": "C1",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "הפרת חוזה ופיצויים - המדריך המשפטי המלא | וולר ושות'",
+          "url": "https://weller-law-office.com/%D7%94%D7%A4%D7%A8%D7%AA-%D7%97%D7%95%D7%96%D7%94/",
+          "drop_reason": "bad_domain_for_role:weller-law-office.com"
+        },
+        {
+          "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) פיצוי מוסכם ניתוח תכלית חוקתית משפטית",
+          "claim_id": "C1",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל\"א–1970",
+          "url": "https://fs.knesset.gov.il/7/law/7_lsr_211750.PDF",
+          "drop_reason": "bad_domain_for_role:fs.knesset.gov.il"
+        },
+        {
+          "query_he": "מאמר ניתוח סטנדרט שיפוטי להפחתת פיצוי מוסכם סעיף 15 יחס לנזק צפוי כוונת הצדדים פרשנות שיפוטית",
+          "claim_id": "C2",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "פסק-דין בתיק ע\"א 10208/16",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F16%2F080%2F102%2Fw03&fileName=16102080.W03&type=2",
+          "drop_reason": "bad_domain_for_role:supremedecisions.court.gov.il"
+        },
+        {
+          "query_he": "מאמר ניתוח סטנדרט שיפוטי להפחתת פיצוי מוסכם סעיף 15 יחס לנזק צפוי כוונת הצדדים פרשנות שיפוטית",
+          "claim_id": "C2",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "חוק החוזים (תרופות בשל הפרת חוזה) (חוק) - כל-זכות",
+          "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA_%D7%91%D7%A9%D7%9C_%D7%94%D7%A4%D7%A8%D7%AA_%D7%97%D7%95%D7%96%D7%D7%94)",
+          "drop_reason": "bad_domain_for_role:kolzchut.org.il"
+        },
+        {
+          "query_he": "מאמר ניתוח סטנדרט שיפוטי להפחתת פיצוי מוסכם סעיף 15 יחס לנזק צפוי כוונת הצדדים פרשנות שיפוטית",
+          "claim_id": "C2",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "הפחתת פיצויים מוסכמים",
+          "url": "https://lawyerhaifa.co.il/%D7%94%D7%A4%D7%97%D7%AA%D7%AA-%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D-%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D/",
+          "drop_reason": "bad_domain_for_role:lawyerhaifa.co.il"
+        },
+        {
+          "query_he": "מאמר ניתוח סטנדרט שיפוטי להפחתת פיצוי מוסכם סעיף 15 יחס לנזק צפוי כוונת הצדדים פרשנות שיפוטית",
+          "claim_id": "C2",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "כיצד אוכפים סעיף פיצויים מוסכמים בהסכם?",
+          "url": "https://kahn.co.il/he/%D7%9E%D7%90%D7%9E%D7%A8%D7%99%D7%9D-%D7%95%D7%9E%D7%93%D7%99%D7%A2/%D7%93%D7%99%D7%A0%D7%99-%D7%97%D7%95%D7%96%D7%99%D7%9D-%D7%9B%D7%99%D7%A6%D7%93-%D7%90%D7%95%D7%9B%D7%A4%D7%99%D7%9D-%D7%A1%D7%A2%D7%99%D7%A3-%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D-%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D-%D7%91%D7%94%D7%A1%D7%9B%D7%9D-%D7%A2%D7%95-%D7%93-%D7%9E%D7%A9%D7%94-%D7%9B%D7%90%D7%94%D7%9F.html",
+          "drop_reason": "bad_domain_for_role:kahn.co.il"
+        },
+        {
+          "query_he": "פסיקה אנגלית Dunlop Cavendish כלל ה-penalty מבחני יחסיות 'liquidated damages' 'penalty' השפעה על פרשנות בסעיף 15 בישראל",
+          "claim_id": "C2",
+          "role": "persuasive_case_law",
+          "origin": "perplexity",
+          "title": "דנלופ נגד ניו גאראג' ומייטון טייר (Dunlop Pneumatic Tyre Co Ltd v New Garage & Motor Co Ltd)",
+          "url": "https://www.bailii.org/uk/cases/UKHL/1914/1.html",
+          "drop_reason": "bad_domain_for_role:bailii.org"
+        },
+        {
+          "query_he": "פסיקה אנגלית Dunlop Cavendish כלל ה-penalty מבחני יחסיות 'liquidated damages' 'penalty' השפעה על פרשנות בסעיף 15 בישראל",
+          "claim_id": "C2",
+          "role": "persuasive_case_law",
+          "origin": "perplexity",
+          "title": "Cavendish Square Holding BV v Talal El Makdessi; ParkingEye Ltd v Beavis",
+          "url": "https://www.bailii.org/uk/cases/UKSC/2015/67.html",
+          "drop_reason": "bad_domain_for_role:bailii.org"
+        },
+        {
+          "query_he": "מאמר דוגמאות עובדתיות להפחתת פיצוי מוסכם שינוי נסיבות אי-שוויון בכוח המשא וקושי בחישוב הנזק בסעיף 15",
+          "claim_id": "C3",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "פיצוי מוסכם בחוזה",
+          "url": "https://iblaw.co.il/%D7%9C%D7%99%D7%98%D7%99%D7%92%D7%A6%D7%99%D7%94-%D7%A2%D7%A1%D7%A7%D7%99%D7%AA-%D7%95%D7%99%D7%A6%D7%95%D7%92-%D7%91%D7%91%D7%AA%D7%99-%D7%9E%D7%A9%D7%A4%D7%98/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D-%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D-%D7%91%D7%97%D7%95%D7%96%D7%94/",
+          "drop_reason": "bad_domain_for_role:iblaw.co.il"
+        },
+        {
+          "query_he": "מאמר דוגמאות עובדתיות להפחתת פיצוי מוסכם שינוי נסיבות אי-שוויון בכוח המשא וקושי בחישוב הנזק בסעיף 15",
+          "claim_id": "C3",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "הפרת חוזה ופיצויים - המדריך המשפטי המלא",
+          "url": "https://weller-law-office.com/%D7%94%D7%A4%D7%A8%D7%AA-%D7%97%D7%95%D7%96%D7%94/",
+          "drop_reason": "bad_domain_for_role:weller-law-office.com"
+        },
+        {
+          "query_he": "מאמר דוגמאות עובדתיות להפחתת פיצוי מוסכם שינוי נסיבות אי-שוויון בכוח המשא וקושי בחישוב הנזק בסעיף 15",
+          "claim_id": "C3",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "האם יש להפחית פיצוי מוסכם - למרות שטענת ההפחתה לא עלתה כלל בכתב הטענות",
+          "url": "https://www.gindi-caspi.co.il/blog/%D7%94%D7%90%D7%9D-%D7%99%D7%A9-%D7%9C%D7%94%D7%A4%D7%97%D7%99%D7%AA-%D7%A4%D7%99%D7%A6%D7%95%D7%99-%D7%9E%D7%95%D7%A1%D7%9B%D7%9D---%D7%9C%D7%9E%D7%A8%D7%95%D7%AA-%D7%A9%D7%98%D7%A2%D7%A0%D7%AA-%D7%94%D7%94%D7%A4%D7%97%D7%AA%D7%94-%D7%9C%D7%90-%D7%A2%D7%9C%D7%AA%D7%94-%D7%9B%D7%9C%D7%9C-%D7%91%D7%9B%D7%AA%D7%91-%D7%94%D7%98%D7%A2%D7%A0%D7%95%D7%AA",
+          "drop_reason": "bad_domain_for_role:gindi-caspi.co.il"
+        },
+        {
+          "query_he": "מאמר דוגמאות עובדתיות להפחתת פיצוי מוסכם שינוי נסיבות אי-שוויון בכוח המשא וקושי בחישוב הנזק בסעיף 15",
+          "claim_id": "C3",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "פיצוי מוסכם – סוגיות והיבטים",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C16%2F080%2F102%2FW03&fileName=16102080.W03&type=4",
+          "drop_reason": "bad_domain_for_role:supremedecisions.court.gov.il"
+        },
+        {
+          "query_he": "דו\"ח משרד המשפטים או משרד הכלכלה על פיצוי מוסכם 'פיצויים מוסכמים' דוח ועדה הלכה ומדיניות על פגיעה בצרכן או אי-שוויון חוזי",
+          "claim_id": "C3",
+          "role": "factual_report",
+          "origin": "perplexity",
+          "title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל\"א-1970",
+          "url": "https://www.nevo.co.il/law_html/law01/313_001.htm",
+          "drop_reason": "bad_domain_for_role:nevo.co.il"
+        },
+        {
+          "query_he": "דו\"ח משרד המשפטים או משרד הכלכלה על פיצוי מוסכם 'פיצויים מוסכמים' דוח ועדה הלכה ומדיניות על פגיעה בצרכן או אי-שוויון חוזי",
+          "claim_id": "C3",
+          "role": "factual_report",
+          "origin": "perplexity",
+          "title": "פיצויים מוסכמים – סוגיות והיבטים (אוניברסיטת חיפה)",
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+          "drop_reason": "bad_domain_for_role:law.haifa.ac.il"
+        },
+        {
+          "query_he": "דו\"ח משרד המשפטים או משרד הכלכלה על פיצוי מוסכם 'פיצויים מוסכמים' דוח ועדה הלכה ומדיניות על פגיעה בצרכן או אי-שוויון חוזי",
+          "claim_id": "C3",
+          "role": "factual_report",
+          "origin": "perplexity",
+          "title": "המועצה לצרכנות – פיצוי מוסכם ותניות מקפחות",
+          "url": "https://www.consumers.org.il/category/contract-terms",
+          "drop_reason": "bad_domain_for_role:consumers.org.il"
+        },
+        {
+          "query_he": "מאמר נוהל ונטל הוכחה להפחתת פיצוי מוסכם סעיף 15 מי יפנה מתי אפשר לפסוק מטעמו ניתוח פרוצדורלי",
+          "claim_id": "C4",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "הפרת חוזה ופיצויים - המדריך המשפטי המלא",
+          "url": "https://weller-law-office.com/%D7%94%D7%A4%D7%A8%D7%AA-%D7%97%D7%95%D7%96%D7%94/",
+          "drop_reason": "bad_domain_for_role:weller-law-office.com"
+        },
+        {
+          "query_he": "מאמר נוהל ונטל הוכחה להפחתת פיצוי מוסכם סעיף 15 מי יפנה מתי אפשר לפסוק מטעמו ניתוח פרוצדורלי",
+          "claim_id": "C4",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "פיצויים מוסכמים בחוזים מסחריים",
+          "url": "https://www.dt-law.co.il/articles.asp?ArticleID=16588",
+          "drop_reason": "bad_domain_for_role:dt-law.co.il"
+        }
+      ]
+    }
+  }
+}
