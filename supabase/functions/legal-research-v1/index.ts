@@ -53,12 +53,19 @@ async function handle(req: Request): Promise<Response> {
   // Telemetry is still written to qa_logs under the supplied smoke_user_id.
   // Never exposed in UI; service-role only.
   const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
-    return jsonResponse(401, { error: "unauthorized" });
-  }
-  const token = authHeader.replace("Bearer ", "");
   const smokeMode = req.headers.get("x-smoke-mode") === "1";
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+  console.log("[lrv1 auth]", {
+    hasAuth: !!authHeader,
+    authPrefix: authHeader?.slice(0, 14),
+    smokeMode,
+    hasServiceKey: !!serviceKey,
+    tokenMatchesService: !!authHeader && authHeader.replace("Bearer ", "") === serviceKey,
+  });
+  if (!authHeader?.startsWith("Bearer ")) {
+    return jsonResponse(401, { error: "unauthorized", reason: "no_bearer" });
+  }
+  const token = authHeader.replace("Bearer ", "");
 
   let userId: string;
   let userClient: ReturnType<typeof createClient> | null = null;
