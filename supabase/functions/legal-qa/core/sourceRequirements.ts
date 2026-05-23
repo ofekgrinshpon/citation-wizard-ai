@@ -217,6 +217,40 @@ const DOCTRINES: DoctrineEntry[] = [
       },
     ],
   },
+  {
+    doctrine_id: "reasonableness_review",
+    trigger: /(עילת\s*הסבירות|מתחם\s*הסבירות|חוסר\s*סבירות\s*קיצוני|אי[- ]?סבירות\s*קיצונית|סבירות\s*מנהלית|reasonableness\s*review)/i,
+    roles: [
+      {
+        role_id: "reasonableness:caselaw",
+        doctrine_id: "reasonableness_review",
+        kind: "caselaw",
+        label: "פסיקה מכוננת — עילת הסבירות ומתחם הסבירות",
+        canonical_queries: [
+          "בג\"ץ דפי זהב",
+          "דפי זהב",
+          "בג\"ץ גנור",
+          "גנור היועץ המשפטי לממשלה",
+          "התנועה לאיכות השלטון",
+          "מתחם הסבירות",
+          "עילת הסבירות",
+          "חוסר סבירות קיצוני",
+        ],
+      },
+      {
+        role_id: "reasonableness:scholarship",
+        doctrine_id: "reasonableness_review",
+        kind: "scholarship",
+        label: "ספרות — עילת הסבירות (ברק-ארז, זמיר)",
+        canonical_queries: [
+          "דפנה ברק-ארז משפט מנהלי",
+          "ברק-ארז סבירות",
+          "זמיר הסמכות המנהלית סבירות",
+          "מתחם הסבירות ספרות",
+        ],
+      },
+    ],
+  },
 ];
 
 // ─── API ──────────────────────────────────────────────────────────────────
