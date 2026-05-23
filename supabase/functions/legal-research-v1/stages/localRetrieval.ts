@@ -15,6 +15,26 @@ async function withTimeout<T>(p: Promise<T>, ms: number): Promise<T | null> {
   ]).catch(() => null);
 }
 
+// Diagnostic variant: distinguishes ok/empty/error/timeout and captures error msg.
+async function runRpcDiag<T = unknown>(
+  promise: PromiseLike<{ data: T | null; error: { message?: string } | null }>,
+  ms: number,
+): Promise<{ status: "ok" | "empty" | "error" | "timeout"; rows: T extends unknown[] ? T : never[]; error?: string }> {
+  let timedOut = false;
+  const timer = new Promise<null>((res) => setTimeout(() => { timedOut = true; res(null); }, ms));
+  try {
+    const res = (await Promise.race([promise, timer])) as
+      | { data: unknown; error: { message?: string } | null }
+      | null;
+    if (timedOut || !res) return { status: "timeout", rows: [] as never[] };
+    if (res.error) return { status: "error", rows: [] as never[], error: res.error.message || String(res.error) };
+    const rows = (Array.isArray(res.data) ? res.data : []) as never[];
+    return { status: rows.length ? "ok" : "empty", rows };
+  } catch (e) {
+    return { status: "error", rows: [] as never[], error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
 async function embed(text: string): Promise<number[] | null> {
   const key = Deno.env.get("OPENAI_API_KEY");
   if (!key) return null;
