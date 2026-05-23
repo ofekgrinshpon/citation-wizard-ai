@@ -1,0 +1,290 @@
+// =========================================================================
+// legal-research-v1 — clean-slate research pipeline
+// Phase: P1 (skeleton) + P2 (Claim Analyzer + Research Query Planner)
+//
+// Not yet implemented (intentionally):
+//   P3 retrieval, P4 verifier, P5 drafter/footnotes, P6 frontend, P7 GA.
+//
+// See README.md and .lovable/plan.md for the full plan.
+// =========================================================================
+
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+
+import { runClaimAnalyzer } from "./stages/claimAnalyzer.ts";
+import { runQueryPlanner } from "./stages/queryPlanner.ts";
+import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
+import { StageRun } from "./lib/types.ts";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+};
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const STUB_ANSWER = "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.";
+
+function jsonResponse(status: number, body: unknown): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+async function handle(req: Request): Promise<Response> {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method !== "POST") return jsonResponse(405, { error: "method_not_allowed" });
+
+  const run_id = crypto.randomUUID();
+  const t_start = Date.now();
+  const stage_runs: StageRun[] = [];
+
+  // ─── Auth ─────────────────────────────────────────────────────────────────
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return jsonResponse(401, { error: "unauthorized" });
+  }
+  const userClient = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_ANON_KEY")!,
+    { global: { headers: { Authorization: authHeader } } },
+  );
+  const token = authHeader.replace("Bearer ", "");
+  const { data: { user }, error: userErr } = await userClient.auth.getUser(token);
+  if (userErr || !user) return jsonResponse(401, { error: "unauthorized" });
+
+  // ─── Body validation ─────────────────────────────────────────────────────
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return jsonResponse(400, { error: "invalid_json" });
+  }
+  const question = typeof body.question === "string" ? body.question.trim() : "";
+  if (!question) return jsonResponse(400, { error: "invalid_input", field: "question" });
+  if (question.length > 4000) return jsonResponse(400, { error: "question_too_long" });
+
+  const project_id_raw = body.project_id;
+  let project_id: string | null = null;
+  if (project_id_raw !== undefined && project_id_raw !== null) {
+    if (typeof project_id_raw !== "string" || !UUID_RE.test(project_id_raw)) {
+      return jsonResponse(400, { error: "invalid_input", field: "project_id" });
+    }
+    project_id = project_id_raw;
+  }
+
+  // ─── Credit pre-flight (no consumption in P1/P2 — no answer produced) ────
+  // We only check `hasEnough` so the user gets early 402 feedback. Consumption
+  // begins in P5 when an actual answer is produced.
+  try {
+    const { data: profile } = await userClient
+      .from("profiles")
+      .select("included_credits_remaining, topup_credits_remaining, plan")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (profile) {
+      const plan = (profile as { plan?: string }).plan;
+      const total =
+        ((profile as { included_credits_remaining?: number }).included_credits_remaining ?? 0) +
+        ((profile as { topup_credits_remaining?: number }).topup_credits_remaining ?? 0);
+      // Admins bypass; everyone else needs ≥5 (CREDIT_COSTS.legalQa).
+      if (plan !== "admin" && total < 5) {
+        return jsonResponse(402, { error: "INSUFFICIENT_CREDITS", required: 5, remaining: total });
+      }
+    }
+  } catch (e) {
+    console.warn("[legal-research-v1] credit pre-flight skipped:", e);
+  }
+
+  const admin = makeAdminClient();
+  const telemetryBase = {
+    user_id: user.id,
+    project_id,
+    question,
+    answer: STUB_ANSWER,
+    footnotes: [] as unknown[],
+  };
+
+  // ─── P2: Claim Analyzer ──────────────────────────────────────────────────
+  let analyzerStage;
+  try {
+    analyzerStage = await runClaimAnalyzer(question);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    await writeTelemetry(admin, {
+      ...telemetryBase,
+      metadata: {
+        pipeline: "legal-research-v1",
+        phase: "P2",
+        run_id,
+        stage_runs,
+        error: { stage: "claim_analyzer", message: msg },
+      },
+    });
+    return jsonResponse(500, { error: "stage_failed", stage: "claim_analyzer", detail: msg });
+  }
+  stage_runs.push(...analyzerStage.stage_runs);
+
+  const analyzer = analyzerStage.result.value;
+  const analyzerOk = analyzerStage.result.ok && !!analyzer && analyzer.claims.length > 0;
+  if (!analyzerOk) {
+    const planning_error = {
+      stage: "claim_analyzer",
+      reasons: [
+        ...analyzerStage.escalation_reasons,
+        ...analyzerStage.result.errors,
+      ],
+    };
+    await writeTelemetry(admin, {
+      ...telemetryBase,
+      metadata: {
+        pipeline: "legal-research-v1",
+        phase: "P2",
+        run_id,
+        stage_runs,
+        planning: {
+          analyzer: {
+            model_initial: analyzerStage.model_initial,
+            model_final: analyzerStage.model_final,
+            escalated_to_gpt5: analyzerStage.escalated,
+            escalation_reason: analyzerStage.escalation_reasons,
+            confidence: analyzer?.confidence ?? null,
+            schema_valid: analyzerStage.result.ok,
+            ms: analyzerStage.stage_runs.reduce((s, r) => s + r.ms, 0),
+          },
+          claims_count: analyzer?.claims.length ?? 0,
+          queries_count: 0,
+          truncated_claims_count: analyzerStage.result.truncated_claims_count,
+          truncated_queries_count: 0,
+          planning_error,
+        },
+      },
+    });
+    return jsonResponse(422, {
+      answer: STUB_ANSWER,
+      footnotes: [],
+      debug: {
+        run_id,
+        phase: "P2",
+        stage_runs,
+        planning_error,
+        claims: analyzer?.claims ?? [],
+        queries: [],
+      },
+    });
+  }
+
+  // ─── P2: Research Query Planner ──────────────────────────────────────────
+  let plannerStage;
+  try {
+    plannerStage = await runQueryPlanner(question, analyzer);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    await writeTelemetry(admin, {
+      ...telemetryBase,
+      metadata: {
+        pipeline: "legal-research-v1",
+        phase: "P2",
+        run_id,
+        stage_runs,
+        error: { stage: "query_planner", message: msg },
+      },
+    });
+    return jsonResponse(500, { error: "stage_failed", stage: "query_planner", detail: msg });
+  }
+  stage_runs.push(...plannerStage.stage_runs);
+
+  const planner = plannerStage.result.value;
+  const plannerOk = plannerStage.result.ok && !!planner && planner.queries.length > 0;
+
+  const planningMeta = {
+    analyzer: {
+      model_initial: analyzerStage.model_initial,
+      model_final: analyzerStage.model_final,
+      escalated_to_gpt5: analyzerStage.escalated,
+      escalation_reason: analyzerStage.escalation_reasons,
+      confidence: analyzer.confidence,
+      schema_valid: analyzerStage.result.ok,
+      ms: analyzerStage.stage_runs.reduce((s, r) => s + r.ms, 0),
+    },
+    planner: {
+      model_initial: plannerStage.model_initial,
+      model_final: plannerStage.model_final,
+      escalated_to_gpt5: plannerStage.escalated,
+      escalation_reason: plannerStage.escalation_reasons,
+      schema_valid: plannerStage.result.ok,
+      ms: plannerStage.stage_runs.reduce((s, r) => s + r.ms, 0),
+    },
+    claims_count: analyzer.claims.length,
+    queries_count: planner?.queries.length ?? 0,
+    truncated_claims_count: analyzerStage.result.truncated_claims_count,
+    truncated_queries_count: plannerStage.result.truncated_queries_count,
+  };
+
+  if (!plannerOk) {
+    const planning_error = {
+      stage: "query_planner",
+      reasons: [
+        ...plannerStage.escalation_reasons,
+        ...plannerStage.result.errors,
+      ],
+    };
+    await writeTelemetry(admin, {
+      ...telemetryBase,
+      metadata: {
+        pipeline: "legal-research-v1",
+        phase: "P2",
+        run_id,
+        stage_runs,
+        planning: { ...planningMeta, planning_error },
+      },
+    });
+    return jsonResponse(422, {
+      answer: STUB_ANSWER,
+      footnotes: [],
+      debug: {
+        run_id,
+        phase: "P2",
+        stage_runs,
+        planning_error,
+        claims: analyzer.claims,
+        queries: planner?.queries ?? [],
+      },
+    });
+  }
+
+  // ─── Success: write telemetry + return P2 payload ────────────────────────
+  await writeTelemetry(admin, {
+    ...telemetryBase,
+    metadata: {
+      pipeline: "legal-research-v1",
+      phase: "P2",
+      run_id,
+      total_ms: Date.now() - t_start,
+      stage_runs,
+      planning: planningMeta,
+      claims: analyzer.claims,
+      queries: planner!.queries,
+    },
+  });
+
+  return jsonResponse(200, {
+    answer: STUB_ANSWER,
+    footnotes: [],
+    debug: {
+      run_id,
+      phase: "P2",
+      stage_runs,
+      planning: planningMeta,
+      claims: analyzer.claims,
+      queries: planner!.queries,
+      candidates_found: [],
+      candidates_used: [],
+      dropped_sources: [],
+    },
+  });
+}
+
+serve(handle);
