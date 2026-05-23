@@ -79,8 +79,24 @@ export interface ClassifiedDoctrine {
   reason: string;
 }
 
+export interface UnmappedDoctrineWarning {
+  id: string;
+  confidence: number;
+  reason: string;
+}
+
 export interface DoctrineClassification {
+  /** Active doctrines that have a SourceRequirements bundle. */
   doctrines: ClassifiedDoctrine[];
+  /** Detected but explicitly unimplemented — telemetry only, no SR trigger. */
+  unimplemented_matches: ClassifiedDoctrine[];
+  /**
+   * Emitted IDs that are neither active nor explicitly unimplemented.
+   * Should always be empty if invariants hold; presence indicates the
+   * classifier emitted an out-of-taxonomy ID or an active ID lost its
+   * SR mapping.
+   */
+  unmapped_doctrine_warnings: UnmappedDoctrineWarning[];
   legal_areas: string[];
   source_roles_needed: string[];
 }
