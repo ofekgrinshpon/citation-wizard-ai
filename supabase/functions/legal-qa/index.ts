@@ -2375,6 +2375,17 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
         { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
+    if (taskMode === "pleading_analysis") {
+      console.log("[offline] pleading_analysis engine offline — short-circuit 503");
+      return new Response(
+        JSON.stringify({
+          error: "pleading_analysis_engine_offline",
+          message: "בדיקת כתבי טענות בשדרוג. חוזרת בקרוב.",
+        }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
 
     // ===== Credit gate: consume up-front, refund automatically on failure / empty result =====
     // Cost: 5 for legal QA. Document grounding adds +2 surcharge.
