@@ -362,6 +362,16 @@ async function handle(req: Request): Promise<Response> {
       dropped_sources: pplx.dropped,
     },
   });
+  }; // end runPipeline
+
+  if (smokeMode) {
+    const bg = runPipeline().catch((e) => console.error("[lrv1 smoke bg]", e));
+    if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
+      EdgeRuntime.waitUntil(bg);
+    }
+    return jsonResponse(202, { ok: true, run_id, smoke: true });
+  }
+  return await runPipeline();
 }
 
 serve(handle);
