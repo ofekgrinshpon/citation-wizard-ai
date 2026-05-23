@@ -53,8 +53,15 @@ function summarise(fixtureId: string, qaRow: any) {
   const mv = d.marker_validation ?? {};
   console.log(`\n=== ${fixtureId} ===`);
   console.log(`run_id=${md.run_id} qa_log_id=${qaRow.id}  phase=${md.phase}`);
+  const p = md.planning ?? {};
+  const r = md.retrieval ?? {};
+  const v = md.verifier ?? {};
   console.log(
-    `drafter ok=${d.ok} escalated=${d.escalated} model=${d.model_final} ms=${d.ms} ` +
+    `timings ms: total=${md.total_ms} analyzer=${p.analyzer?.ms} planner=${p.planner?.ms} ` +
+      `retrieval=${r.ms} verifier=${v.ms} drafter=${d.ms}`,
+  );
+  console.log(
+    `drafter ok=${d.ok} escalated=${d.escalated} model=${d.model_final} ` +
       `sources_passed=${d.sources_passed} sources_used=${d.sources_used} footnotes=${d.footnote_count}`,
   );
   console.log(
@@ -62,6 +69,45 @@ function summarise(fixtureId: string, qaRow: any) {
       `missing=${JSON.stringify(mv.missing_sources)} unused=${JSON.stringify(mv.unused_sources)} ` +
       `internal_id_leak=${mv.internal_id_leak} leaked=${JSON.stringify(mv.leaked_tokens)}`,
   );
+  const sup = v.counts?.by_support ?? {};
+  console.log(
+    `support: direct=${sup.direct ?? 0} partial=${sup.partial ?? 0} ` +
+      `tangential=${sup.tangential ?? 0} unrelated=${sup.unrelated ?? 0}`,
+  );
+
+  // Coverage per claim: how many usable candidates each claim has.
+  const usable = v.usable ?? [];
+  const claims = md.claims ?? [];
+  const usableByClaim = new Map<string, number>();
+  for (const u of usable) {
+    for (const cid of u.verdict_claim_ids ?? []) {
+      usableByClaim.set(cid, (usableByClaim.get(cid) ?? 0) + 1);
+    }
+  }
+  const claimsZeroUsable = claims.filter((c: any) => (usableByClaim.get(c.claim_id) ?? 0) === 0);
+  console.log(
+    `claims=${claims.length} claims_with_zero_usable=${claimsZeroUsable.length}` +
+      (claimsZeroUsable.length
+        ? ` (${claimsZeroUsable.map((c: any) => c.claim_id).join(",")})`
+        : ""),
+  );
+
+  // Local vs Perplexity footnote split.
+  const candById = new Map((md.candidates ?? []).map((c: any) => [c.candidate_id, c]));
+  const used = d.used_sources ?? [];
+  let localN = 0, pplxN = 0;
+  for (const u of used) {
+    const c = candById.get(u.candidate_id);
+    if (c?.origin === "local_db") localN++;
+    else if (c?.origin === "perplexity") pplxN++;
+  }
+  console.log(`footnote_origin: local_db=${localN} perplexity=${pplxN}`);
+
+  // Omitted-due-to-weakness: candidates passed to drafter but not used.
+  console.log(
+    `omitted_candidate_ids=${(d.omitted_candidate_ids ?? []).length}`,
+  );
+
   if (d.error) console.log(`drafter_error: ${d.error}`);
   console.log("\n--- ANSWER ---");
   console.log(qaRow.answer);
@@ -69,9 +115,7 @@ function summarise(fixtureId: string, qaRow: any) {
   for (const f of qaRow.footnotes ?? []) {
     console.log(`  [${f.number}] ${f.title} — ${f.url ?? "(no url)"}`);
   }
-  // Cross-check: every used_source candidate_id appears in verifier.usable.
-  const usableIds = new Set((md.verifier?.usable ?? []).map((u: any) => u.candidate_id));
-  const used = d.used_sources ?? [];
+  const usableIds = new Set(usable.map((u: any) => u.candidate_id));
   const offUsable = used.filter((u: any) => !usableIds.has(u.candidate_id));
   console.log(
     `acceptance: all_used_from_usable=${offUsable.length === 0} ` +
