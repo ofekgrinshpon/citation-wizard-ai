@@ -109,3 +109,34 @@ export interface DroppedSource {
   url?: string;
   drop_reason: string;
 }
+
+// ─── P4: Verifier ──────────────────────────────────────────────────────────
+export const SUPPORT_LEVELS = ["direct", "partial", "tangential", "unrelated"] as const;
+export type SupportLevel = typeof SUPPORT_LEVELS[number];
+
+export interface Verdict {
+  candidate_id: string;
+  claim_id: string;
+  support: SupportLevel;
+  role_match: boolean;
+  supported_points: string[];
+  reason: string;
+}
+
+export interface DroppedCandidate {
+  candidate_id: string;
+  title: string;
+  role: SourceRole;
+  origin: Origin;
+  retrieval_method: RetrievalMethod;
+  reason: string;
+  worst_support: SupportLevel;
+}
+
+export interface UsableCandidate {
+  candidate_id: string;
+  best_support: SupportLevel;
+  role_match: boolean;
+  verdict_claim_ids: string[];
+}
+
