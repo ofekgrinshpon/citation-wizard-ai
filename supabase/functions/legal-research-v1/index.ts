@@ -257,18 +257,46 @@ async function handle(req: Request): Promise<Response> {
     });
   }
 
-  // ─── Success: write telemetry + return P2 payload ────────────────────────
+  // ─── P3: Retrieval (local DB + Perplexity) ───────────────────────────────
+  const tRetrieval = Date.now();
+  const [local, pplx] = await Promise.all([
+    runLocalRetrieval(admin, planner!.queries),
+    runPerplexityRetrieval(planner!.queries),
+  ]);
+  stage_runs.push(...local.stage_runs, ...pplx.stage_runs);
+  const pool = buildCandidatePool([...local.candidates, ...pplx.candidates]);
+  const retrievalMeta = {
+    ms: Date.now() - tRetrieval,
+    local: { ms: local.ms, candidates: local.candidates.length, per_query: local.per_query },
+    perplexity: {
+      ms: pplx.ms,
+      candidates: pplx.candidates.length,
+      dropped: pplx.dropped.length,
+      per_query: pplx.per_query,
+    },
+    pool: {
+      found: pool.found,
+      after_dedup: pool.after_dedup,
+      dedup_drops: pool.dedup_drops,
+      counts: pool.counts,
+    },
+  };
+
+  // ─── Success: write telemetry + return P3 payload ────────────────────────
   await writeTelemetry(admin, {
     ...telemetryBase,
     metadata: {
       pipeline: "legal-research-v1",
-      phase: "P2",
+      phase: "P3",
       run_id,
       total_ms: Date.now() - t_start,
       stage_runs,
       planning: planningMeta,
       claims: analyzer.claims,
       queries: planner!.queries,
+      retrieval: retrievalMeta,
+      candidates: pool.candidates,
+      dropped_sources: pplx.dropped,
     },
   });
 
@@ -277,14 +305,14 @@ async function handle(req: Request): Promise<Response> {
     footnotes: [],
     debug: {
       run_id,
-      phase: "P2",
+      phase: "P3",
       stage_runs,
       planning: planningMeta,
       claims: analyzer.claims,
       queries: planner!.queries,
-      candidates_found: [],
-      candidates_used: [],
-      dropped_sources: [],
+      retrieval: retrievalMeta,
+      candidates: pool.candidates,
+      dropped_sources: pplx.dropped,
     },
   });
 }
