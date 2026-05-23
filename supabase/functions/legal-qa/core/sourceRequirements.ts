@@ -500,9 +500,14 @@ async function roleExactAuthority(
   client: SupabaseClient,
   role: MandatorySourceRole,
 ): Promise<{ hits: CandidateSource[]; tried: boolean; error?: string }> {
-  if (role.kind !== "statute" && role.kind !== "regulation") {
+  // Phase 3.2 Fix B: allow factual_report roles to use exact_authority too
+  // (scoped to their own source_type whitelist below).
+  if (role.kind !== "statute" && role.kind !== "regulation" && role.kind !== "factual_report") {
     return { hits: [], tried: false };
   }
+  // Phase 3.2 Fix A: respect role kind — never let e.g. a statute role
+  // swallow a knesset_research / scholarship document via title ilike.
+  const allowedTypes = (ROLE_KIND_TO_SOURCE_TYPES[role.kind] || []).map((t) => t.toLowerCase());
   const out: CandidateSource[] = [];
   const seen = new Set<string>();
   let idx = 0;
@@ -520,6 +525,11 @@ async function roleExactAuthority(
         for (const row of (data || []) as Array<Record<string, unknown>>) {
           const id = String(row.id);
           if (seen.has(id)) continue;
+          const st = String(row.source_type || "").toLowerCase();
+          // Kind-scoped admission: row source_type must match the role's whitelist.
+          if (allowedTypes.length > 0 && !allowedTypes.some((k) => st.includes(k))) {
+            continue;
+          }
           seen.add(id);
           out.push({
             candidate_id: `SR-${role.role_id}-exact-${++idx}`,
@@ -537,6 +547,7 @@ async function roleExactAuthority(
               source_requirement_doctrine: role.doctrine_id,
               sr_injected: true,
               matched_by: col,
+              kind_scoped: true,
             },
           });
           if (out.length >= ROLE_EXACT_K) break;
