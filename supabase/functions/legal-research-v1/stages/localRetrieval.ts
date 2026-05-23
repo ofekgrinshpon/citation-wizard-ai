@@ -96,23 +96,33 @@ function detectExactClues(q: string): ExactClue[] {
 async function exactAuthorityLookup(
   admin: Admin,
   clues: ExactClue[],
+  role: string,
   perQueryLimit: number,
 ): Promise<{ rows: RpcRow[]; status: "ok" | "empty" | "error"; error?: string }> {
   if (!clues.length) return { rows: [], status: "empty" };
+  const allowedTypes: string[] | null = (() => {
+    if (role === "primary_statute" || role === "regulation") {
+      return ["legislation_primary", "legislation_secondary"];
+    }
+    if (role === "binding_case_law" || role === "persuasive_case_law") {
+      return ["caselaw"];
+    }
+    return null;
+  })();
   const collected: RpcRow[] = [];
   try {
     for (const cl of clues) {
-      // Pick the most distinctive search term for ILIKE.
       const primary = cl.law_name || cl.docket || cl.search_terms[0];
-      if (!primary) continue;
+      if (!primary || primary.length < 8) continue;
       const pat = `%${primary.replace(/[%_]/g, " ").slice(0, 80)}%`;
       const timer = new Promise<null>((res) => setTimeout(() => res(null), EXACT_TIMEOUT_MS));
       // deno-lint-ignore no-explicit-any
-      const q = (admin
+      let q: any = admin
         .from("legal_documents")
         .select("id,title,citation,source_type,source_url,metadata")
         .or(`title.ilike.${pat},citation.ilike.${pat}`)
-        .limit(perQueryLimit) as any);
+        .limit(perQueryLimit);
+      if (allowedTypes) q = q.in("source_type", allowedTypes);
       const r = await Promise.race([q, timer]);
       if (!r || r.error || !r.data) continue;
       for (const d of r.data) {
