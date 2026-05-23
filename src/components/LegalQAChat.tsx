@@ -2034,11 +2034,10 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const [viewingChapterIdx, setViewingChapterIdx] = useState<number | null>(null);
 
   const rewriteWithFeedback = () => {
-    const fb = chapterFeedback.trim();
-    if (!fb) { toast.error("יש להזין הנחיות לשכתוב."); return; }
+    // D1: chapter rewrite also routes through the offline body-chapter engine.
+    toast.info(CHAPTER_OFFLINE_TITLE);
     setChapterFeedback("");
     setViewingChapterIdx(null);
-    handleAcademicSubmit("write_chapter", { userFeedback: fb });
   };
 
   const viewChapter = (idx: number) => {
