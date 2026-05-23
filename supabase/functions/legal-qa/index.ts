@@ -2345,6 +2345,37 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
       });
     }
 
+    // ─── D2 reset: offline-engine short-circuit ──────────────────────
+    // Research mode and academic chapter writing (write_chapter /
+    // write_introduction / write_conclusion) are intentionally OFFLINE
+    // while the search engine is rebuilt. We bail BEFORE credit
+    // consumption so no user is charged for a disabled request, and we
+    // never call the Fast / Deep / Core / V2 / V3 / V4 pipelines.
+    //
+    // Short academic steps (suggest_topics / validate_question /
+    // propose_outline) and abstract synthesis (academic_writing +
+    // isAbstract) keep working — they don't use the deep pipeline.
+    if (taskMode === RESEARCH_MODE) {
+      console.log("[offline] research engine offline — short-circuit 503");
+      return new Response(
+        JSON.stringify({
+          error: "research_engine_offline",
+          message: "מצב מחקר משפטי בשדרוג. חוזר בקרוב.",
+        }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    if (isChapterClassWrite) {
+      console.log(`[offline] academic chapter engine offline — short-circuit 503 (step=${academicStep})`);
+      return new Response(
+        JSON.stringify({
+          error: "academic_chapter_engine_offline",
+          message: "כתיבת פרקים בשדרוג. חוזרת בקרוב.",
+        }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     // ===== Credit gate: consume up-front, refund automatically on failure / empty result =====
     // Cost: 5 for legal QA. Document grounding adds +2 surcharge.
     // Academic sub-modes (suggest_topics, validate_question, propose_outline) cost 0;

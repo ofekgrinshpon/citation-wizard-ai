@@ -16,6 +16,20 @@ import { CaseSummaryReport } from "@/components/CaseSummaryReport";
 import { ResearchProgress } from "@/components/ResearchProgress";
 import { StageProgressList, type StageEvent } from "@/components/StageProgressList";
 import { CitationReviewPanel } from "@/components/legal-qa/CitationReviewPanel";
+import { MaintenanceCard } from "@/components/MaintenanceCard";
+
+// ─── Offline-engine guard (D1 reset) ──────────────────────────────
+// Research mode and academic chapter generation (body/introduction/
+// conclusion) are temporarily offline while the search engine is rebuilt.
+// Short academic steps (suggest_topics / validate_question / propose_outline /
+// abstract synthesis) and all other modes (case_summary, pleading_analysis,
+// citation/bibliography) remain fully available.
+const RESEARCH_OFFLINE_TITLE = "מצב מחקר משפטי בשדרוג";
+const RESEARCH_OFFLINE_MESSAGE =
+  "אנו בונים מחדש את מנוע המחקר. בינתיים ניתן להמשיך להשתמש בסיכום פסיקה, בקרת מסמכים, אזכור אחיד, ביבליוגרפיה ובשלבים המקדימים של הכתיבה האקדמית.";
+const CHAPTER_OFFLINE_TITLE = "כתיבת פרקים בשדרוג";
+const CHAPTER_OFFLINE_MESSAGE =
+  "כתיבת פרקי גוף, מבוא וסיכום מושבתת זמנית. אישור שאלת מחקר, הצעת נושאים, בניית מתווה וייצור התקציר זמינים כרגיל.";
 
 // ─── Chapter role helpers ──────────────────────────────────────────
 // Three special chapters in addition to body: abstract, introduction, conclusion.
@@ -1991,14 +2005,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       return;
     }
     if (role === "abstract") {
+      // Abstract is pure synthesis — no retrieval pipeline. Still available.
       handleAcademicSubmit("write_chapter", { isAbstract: true });
-    } else if (role === "introduction") {
-      handleAcademicSubmit("write_introduction");
-    } else if (role === "conclusion") {
-      handleAcademicSubmit("write_conclusion");
-    } else {
-      handleAcademicSubmit("write_chapter");
+      return;
     }
+    // D1: body / introduction / conclusion all route through the offline
+    // chapter engine. Block at the UI so we never even hit the 503.
+    toast.info(CHAPTER_OFFLINE_TITLE);
   };
 
   const advanceToNextChapter = () => {
@@ -2021,11 +2034,10 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
   const [viewingChapterIdx, setViewingChapterIdx] = useState<number | null>(null);
 
   const rewriteWithFeedback = () => {
-    const fb = chapterFeedback.trim();
-    if (!fb) { toast.error("יש להזין הנחיות לשכתוב."); return; }
+    // D1: chapter rewrite also routes through the offline body-chapter engine.
+    toast.info(CHAPTER_OFFLINE_TITLE);
     setChapterFeedback("");
     setViewingChapterIdx(null);
-    handleAcademicSubmit("write_chapter", { userFeedback: fb });
   };
 
   const viewChapter = (idx: number) => {
@@ -2049,6 +2061,15 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     // Academic mode has its own submit flow
     if (taskMode === "academic_writing") {
       if (wizardStep === "init" || wizardStep === "topic_or_question") return;
+      return;
+    }
+    // D1: Research mode is offline. Never fire a request — show the
+    // maintenance notice and bail before any network call. We compare via a
+    // string cast so TS does not narrow `taskMode` and break the (still
+    // present) downstream `taskMode === "research"` branches that we leave
+    // in place for the eventual rebuild.
+    if ((taskMode as string) === "research") {
+      toast.info(RESEARCH_OFFLINE_TITLE);
       return;
     }
 
@@ -2917,9 +2938,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             {/* WRITING: show current chapter + write button */}
             {wizardStep === "writing" && !loading && !result && chapters.length > 0 && (() => {
               const currentTitle = chapters[currentChapter]?.title || "";
-              const isAbstract = isAbstractChapter(currentTitle);
+              const role = chapterRole(currentTitle);
+              const isAbstract = role === "abstract";
               const isLocked = isAbstract && !abstractUnlocked;
               const hasContent = !!chapters[currentChapter]?.content;
+              // D1: body / introduction / conclusion route to the offline
+              // chapter engine — show maintenance card instead of the write CTA.
+              const isOfflineChapter = role === "body" || role === "introduction" || role === "conclusion";
 
               const writeButtonLabel = isAbstract
                 ? (hasContent ? "ייצר תקציר מחדש" : "ייצר תקציר")
@@ -2947,13 +2972,18 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                       </div>
                     )}
 
-                    {hasContent && !isLocked && (
+                    {hasContent && !isLocked && !isOfflineChapter && (
                       <div className="text-xs text-muted-foreground p-2 bg-muted/30 rounded">
                         פרק זה כבר נכתב. לחצו "{writeButtonLabel}" לשכתוב.
                       </div>
                     )}
 
-                    {isLocked ? (
+                    {isOfflineChapter ? (
+                      <MaintenanceCard
+                        title={CHAPTER_OFFLINE_TITLE}
+                        message={CHAPTER_OFFLINE_MESSAGE}
+                      />
+                    ) : isLocked ? (
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span className="inline-block">
@@ -3114,7 +3144,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         )}
 
         {/* ── Non-academic empty state ── */}
-        {!isAcademic && !result && !loading && !error && (
+        {!isAcademic && !result && !loading && !error && taskMode === "research" && (
+          <div className="py-6">
+            <MaintenanceCard title={RESEARCH_OFFLINE_TITLE} message={RESEARCH_OFFLINE_MESSAGE} />
+          </div>
+        )}
+        {!isAcademic && !result && !loading && !error && taskMode !== "research" && (
           <div className="flex flex-col items-center justify-center h-full py-12 text-center">
             <div className="text-4xl mb-3">⚖️</div>
             <h2 className="text-foreground text-lg font-bold mb-2">העוזר המשפטי</h2>
@@ -3371,10 +3406,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   <button
                     onClick={handleSubmit}
                     disabled={
-                      taskMode === "pleading_analysis"
+                      taskMode === "research"
+                        ? true
+                        : taskMode === "pleading_analysis"
                         ? question.trim().length < 5 && uploadedFiles.length === 0
                         : question.trim().length < 5
                     }
+                    title={taskMode === "research" ? RESEARCH_OFFLINE_TITLE : undefined}
                     className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
                   >
                     ⇧
@@ -3382,57 +3420,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 )}
               </div>
 
-              {/* Integrated research depth toggle — research mode only. Quality control, not billing. */}
-              {taskMode === "research" && (
-                <div className="flex justify-end px-1.5 pb-1.5" dir="rtl">
-                  <div
-                    className="inline-flex items-center rounded-md bg-muted/50 p-0.5"
-                    role="group"
-                    aria-label="עומק מחקר"
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setResearchDepth("fast")}
-                      disabled={loading}
-                      className={`inline-flex items-center gap-1 px-2 h-6 rounded-[5px] text-[11px] font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                        researchDepth === "fast"
-                          ? "bg-card text-primary shadow-sm ring-1 ring-primary/20"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                      aria-pressed={researchDepth === "fast"}
-                    >
-                      <Zap
-                        size={13}
-                        className={`shrink-0 transition-colors ${
-                          researchDepth === "fast" ? "text-primary" : "text-muted-foreground"
-                        }`}
-                        aria-hidden="true"
-                      />
-                      <span className="leading-none">מהיר</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setResearchDepth("deep")}
-                      disabled={loading}
-                      className={`inline-flex items-center gap-1 px-2 h-6 rounded-[5px] text-[11px] font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                        researchDepth === "deep"
-                          ? "bg-card text-primary shadow-sm ring-1 ring-primary/20"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                      aria-pressed={researchDepth === "deep"}
-                    >
-                      <Brain
-                        size={13}
-                        className={`shrink-0 transition-colors ${
-                          researchDepth === "deep" ? "text-primary" : "text-muted-foreground"
-                        }`}
-                        aria-hidden="true"
-                      />
-                      <span className="leading-none">מעמיק</span>
-                    </button>
-                  </div>
-                </div>
-              )}
+              {/* D1: Fast/Deep depth toggle hidden — Research engine is offline. */}
             </div>
           </div>
         )}
