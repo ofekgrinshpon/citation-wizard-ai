@@ -1,0 +1,35 @@
+{
+  "$comment": "P2 validation fixtures for legal-research-v1. See .lovable/plan.md §6.",
+  "questions": [
+    {
+      "id": "L1",
+      "question": "מהם התנאים למתן צו מניעה זמני?",
+      "expected_statute_terms": true,
+      "expected_black_letter": true
+    },
+    {
+      "id": "L2",
+      "question": "מהי דוקטרינת ההבטחה המנהלית?",
+      "expected_statute_terms": false,
+      "expected_black_letter": true
+    },
+    {
+      "id": "L3",
+      "question": "מתי בית המשפט יפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים תרופות?",
+      "expected_statute_terms": true,
+      "expected_black_letter": true
+    },
+    {
+      "id": "L4",
+      "question": "מהי דוקטרינת השתק פלוגתא?",
+      "expected_statute_terms": false,
+      "expected_black_letter": true
+    },
+    {
+      "id": "L5",
+      "question": "מהי עילת הסבירות ומה היקף הביקורת השיפוטית עליה?",
+      "expected_statute_terms": false,
+      "expected_black_letter": true
+    }
+  ]
+}
