@@ -192,7 +192,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     "doctrine_classifier",
     "complete",
     classification
-      ? `doctrines=${classification.doctrines.length} forced=${forcedDoctrineIds.length}`
+      ? `active=${classification.doctrines.length} forced=${forcedDoctrineIds.length} unimplemented=${classification.unimplemented_matches.length} warnings=${classification.unmapped_doctrine_warnings.length}`
       : `skipped:${classifierError ?? "unknown"}`,
   );
 
