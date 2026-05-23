@@ -1922,25 +1922,25 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       if (wizardStep === "init" || wizardStep === "topic_or_question") return;
       return;
     }
-    // D1: Research mode is offline. Never fire a request — show the
-    // maintenance notice and bail before any network call. We compare via a
-    // string cast so TS does not narrow `taskMode` and break the (still
-    // present) downstream `taskMode === "research"` branches that we leave
-    // in place for the eventual rebuild.
-    // pleading_analysis is also offline while the analysis engine is rebuilt.
-    if (taskMode === "pleading_analysis") {
+    // D1/D3: Research and pleading_analysis are offline. Never fire a request —
+    // show the maintenance notice and bail before any network call. String
+    // casts prevent TS from narrowing `taskMode` and breaking downstream
+    // branches we leave in place for the eventual rebuild.
+    if ((taskMode as string) === "research") {
+      toast.info(RESEARCH_OFFLINE_TITLE);
+      return;
+    }
+    if ((taskMode as string) === "pleading_analysis") {
       toast.info(PLEADING_OFFLINE_TITLE);
       return;
     }
-
-
 
     const q = question.trim();
     const hasFile = extractedTexts.length > 0;
 
     // For pleading_analysis: allow file-only submissions (no typed text required).
     // For other modes: require ≥5 chars of typed text.
-    if (taskMode === "pleading_analysis") {
+    if ((taskMode as string) === "pleading_analysis") {
       if (!hasFile && q.length < 5) {
         toast.error("הזינו טקסט או העלו מסמך לביקורת.");
         return;
@@ -1967,9 +1967,10 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       // For pleading_analysis with a file but no typed text, send a default instruction
       // so the edge function has a non-empty `question`. The actual audit subject is the file.
       const effectiveQuestion =
-        taskMode === "pleading_analysis" && hasFile && q.length === 0
+        (taskMode as string) === "pleading_analysis" && hasFile && q.length === 0
           ? "בצע ביקורת מקיפה על המסמך המצורף"
           : q;
+
 
       // D3.1: Deep research async path removed. Research mode is offline
       // (short-circuited to 503 server-side). Fast SSE path is also dead but
