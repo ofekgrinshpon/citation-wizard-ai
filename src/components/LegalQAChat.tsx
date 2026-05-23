@@ -2936,7 +2936,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             <MaintenanceCard title={RESEARCH_OFFLINE_TITLE} message={RESEARCH_OFFLINE_MESSAGE} />
           </div>
         )}
-        {!isAcademic && !result && !loading && !error && taskMode !== "research" && (
+        {!isAcademic && !result && !loading && !error && taskMode === "pleading_analysis" && (
+          <div className="py-6">
+            <MaintenanceCard title={PLEADING_OFFLINE_TITLE} message={PLEADING_OFFLINE_MESSAGE} />
+          </div>
+        )}
+        {!isAcademic && !result && !loading && !error && taskMode !== "research" && (taskMode as string) !== "pleading_analysis" && (
+
           <div className="flex flex-col items-center justify-center h-full py-12 text-center">
             <div className="text-4xl mb-3">⚖️</div>
             <h2 className="text-foreground text-lg font-bold mb-2">העוזר המשפטי</h2>
