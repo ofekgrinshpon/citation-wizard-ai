@@ -542,6 +542,8 @@ export async function runLocalRetrieval(
           exact_status: exactRes.status,
           exact_error: exactRes.error,
           exact_ms: exactMs,
+          exact_clue_lookups: exactRes.diags,
+          role_to_source_type_filter: ROLE_SOURCE_TYPES[q.role] ?? null,
           text_status: textDiag.status,
           text_error: textDiag.error,
           text_ms: textDiag.ms,
