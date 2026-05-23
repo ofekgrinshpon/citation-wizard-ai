@@ -36,8 +36,12 @@ const DEEP_STAGE_LABELS: Record<DeepStageId, string> = {
 // Maps backend checkpoint -> which manifest stage is *currently running*.
 // Earlier stages in DEEP_STAGE_ORDER are marked "complete".
 const CHECKPOINT_TO_RUNNING: Record<string, DeepStageId | "__none__" | "__all_done__"> = {
-  queued: "__none__",
-  running: "__none__",
+  // Backend only persists `queued` before the first real checkpoint lands
+  // (decomposition can take 20–30 s on Deep). Treat it as "plan running" so
+  // the bar leaves the starter row as soon as the first poll returns,
+  // matching what's actually happening server-side.
+  queued: "plan",
+  running: "plan",
   legal_issue_router: "plan",
   decomposition: "plan",
   open_web_discovery: "retrieval",
@@ -45,6 +49,7 @@ const CHECKPOINT_TO_RUNNING: Record<string, DeepStageId | "__none__" | "__all_do
   claim_verification: "verify",
   claim_map: "ledger",
   drafting: "draft",
+  drafting_started: "draft",
   drafting_failed: "draft",
   anchor_pass: "enrich_citations",
   completed: "__all_done__",
