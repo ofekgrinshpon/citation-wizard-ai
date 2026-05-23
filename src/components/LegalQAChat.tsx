@@ -3135,7 +3135,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         )}
 
         {/* ── Non-academic empty state ── */}
-        {!isAcademic && !result && !loading && !error && (
+        {!isAcademic && !result && !loading && !error && taskMode === "research" && (
+          <div className="py-6">
+            <MaintenanceCard title={RESEARCH_OFFLINE_TITLE} message={RESEARCH_OFFLINE_MESSAGE} />
+          </div>
+        )}
+        {!isAcademic && !result && !loading && !error && taskMode !== "research" && (
           <div className="flex flex-col items-center justify-center h-full py-12 text-center">
             <div className="text-4xl mb-3">⚖️</div>
             <h2 className="text-foreground text-lg font-bold mb-2">העוזר המשפטי</h2>
