@@ -75,20 +75,30 @@ function getPath(url: string | undefined): string {
 function classify(url: string, title: string): SourceClass {
   const domain = getDomain(url);
   const path = getPath(url);
+  const titleL = (title || "").toLowerCase();
   if (!domain) return "unknown";
   if (BAD_DOMAINS.has(domain) || domain.endsWith(".wikipedia.org")) return "bad";
 
   if (OFFICIAL_COURT_DOMAINS.has(domain)) return "official_primary";
   if (KNESSET_DOMAINS.has(domain)) {
-    // Knesset PDFs of laws / committee reports → legislation/government_report
-    if (/\.pdf$/i.test(path) || /law|legislation|bill/.test(path)) return "legislation";
+    // P3.2 #4: explicit חוק / statute markers in URL or title → legislation
+    const looksLaw = /\.pdf$/i.test(path) ||
+      /law|legislation|bill/.test(path) ||
+      /חוק|הצעת\s+חוק/.test(title);
+    if (looksLaw) return "legislation";
     return "government_report";
   }
   if (domain === "justice.gov.il") return "official_primary";
 
   if (COURT_DB_DOMAINS.has(domain)) {
     if (domain === "nevo.co.il") {
-      // nevo can host books (publisher), statutes, or case-law pages.
+      // P3.2 #4: nevo law_word/*.doc is NOT auto-legislation — could be a case or DB doc.
+      if (/\/law_word\//i.test(path)) {
+        // Decide by title hints
+        if (/חוק\s|תקנות\s|פקודת\s/.test(title)) return "legislation";
+        if (/ע"?א|בג"?ץ|רע"?א|ע"?פ|פס"?ד|פסק\s*דין/.test(title)) return "court_case";
+        return "court_case"; // default lean
+      }
       if (/\/product\/book/i.test(path)) return "publisher";
       if (/\/law/i.test(path)) return "legislation";
       return "court_case";
@@ -100,21 +110,22 @@ function classify(url: string, title: string): SourceClass {
   if (/scholar\.google\./.test(domain)) return "discovery_only";
 
   if (PUBLISHER_DOMAINS.has(domain)) {
-    // SSRN/JSTOR: only direct paper pages count as publisher
     if (domain.endsWith("ssrn.com") && !/abstract|papers\.cfm/.test(path)) return "discovery_only";
     return "publisher";
   }
 
   if (ACADEMIC_SUFFIX.some((s) => domain.endsWith(s))) return "academic";
 
-  // gov.il (non-knesset, non-court) — government_report
-  if (GOV_REPORT_DOMAINS_SUFFIX.some((s) => domain.endsWith(s))) return "government_report";
+  // gov.il (non-knesset, non-court): if title says חוק/תקנות → legislation
+  if (GOV_REPORT_DOMAINS_SUFFIX.some((s) => domain.endsWith(s))) {
+    if (/חוק|תקנות|פקודה/.test(titleL) || /law|statute/.test(path)) return "legislation";
+    return "government_report";
+  }
 
-  if (DISCOVERY_ONLY_HINTS.some((s) => domain.includes(s) || (title || "").toLowerCase().includes(s))) {
+  if (DISCOVERY_ONLY_HINTS.some((s) => domain.includes(s) || titleL.includes(s))) {
     return "discovery_only";
   }
 
-  // Hebrew firm/blog heuristic — domains with "law", "din", "mishpat" not in known set
   if (/law|mishpat|din|advocate|lawyer/i.test(domain)) return "discovery_only";
 
   return "unknown";
@@ -135,6 +146,26 @@ function admitFor(role: SourceRole, cls: SourceClass): boolean {
     case "government_report":
       return cls === "government_report" || cls === "official_primary";
   }
+}
+
+// P3.2 #4: source-class override — if the source is clearly official legislation
+// or an official court case, correct the planner's role rather than dropping.
+function correctRoleForClass(
+  role: SourceRole,
+  cls: SourceClass,
+): { role: SourceRole; corrected_from?: SourceRole } {
+  // Knesset/gov-il legislation: always admit as primary_statute regardless of original role.
+  if (cls === "legislation" && role !== "primary_statute" && role !== "regulation") {
+    return { role: "primary_statute", corrected_from: role };
+  }
+  // Official Supreme Court / court.gov.il: always case law.
+  if (cls === "official_primary" && role !== "binding_case_law" && role !== "persuasive_case_law") {
+    return { role: "binding_case_law", corrected_from: role };
+  }
+  if (cls === "court_case" && role !== "binding_case_law" && role !== "persuasive_case_law") {
+    return { role: "persuasive_case_law", corrected_from: role };
+  }
+  return { role };
 }
 
 // ─── Role prompts ───────────────────────────────────────────────────────────
