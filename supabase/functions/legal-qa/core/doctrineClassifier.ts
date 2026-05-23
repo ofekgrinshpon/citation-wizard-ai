@@ -262,6 +262,19 @@ export const CLASSIFIER_TO_SR_DOCTRINE: Partial<Record<DoctrineId, string>> = {
   pre_contractual_good_faith: "pre_contractual_good_faith",
   contract_interpretation: "contract_interpretation",
   relative_voidness: "relative_voidness",
+  reasonableness_review: "reasonableness_review",
 };
+
+// Audit (2026-05-23): classifier taxonomy IDs that currently have NO matching
+// sourceRequirements doctrine bundle. Regex-only triggering still applies if
+// the question text matches a DOCTRINES[].trigger. Mapping any of these
+// requires (1) a new DOCTRINES entry in sourceRequirements.ts and (2) adding
+// the id below.
+//   - hearing_duty
+//   - alternative_remedy_exhaustion
+//   - constitutional_limitation_clause
+//   - statutory_interpretation
+//   - jurisdiction_subject_matter
+// Tracked as follow-ups; not implemented in this change.
 
 export const CLASSIFIER_CONFIDENCE_THRESHOLD = 0.65;
