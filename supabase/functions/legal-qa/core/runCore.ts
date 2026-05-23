@@ -312,8 +312,10 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
   emitSafe(onStage, "retrieval", "complete", `candidates=${retrieval.total_candidates}`);
 
   // ─── 2.5 Source Requirements: targeted retrieval injection (flagged) ───
-  const SR_INJECT_RETRIEVAL = (Deno.env.get("SR_INJECT_RETRIEVAL") ?? "") === "1";
-  const SR_PROTECT_CANDIDATES = (Deno.env.get("SR_PROTECT_CANDIDATES") ?? "1") === "1";
+  // S1 simplification: SR no longer drives retrieval by default.
+  // Both flags now default to OFF; explicit env=1 re-enables for emergency rollback.
+  const SR_INJECT_RETRIEVAL = (Deno.env.get("SR_INJECT_RETRIEVAL") ?? "0") === "1";
+  const SR_PROTECT_CANDIDATES = (Deno.env.get("SR_PROTECT_CANDIDATES") ?? "0") === "1";
   let sourceRequirementsInjection:
     | {
         records: RoleInjectionRecord[];
