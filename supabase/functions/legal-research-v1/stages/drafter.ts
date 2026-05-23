@@ -474,7 +474,6 @@ export async function runDrafter(
       system: SYSTEM_PROMPT,
       user: userMsg,
       tool,
-      reasoningEffort: "low",
     });
     stage_runs.push({
       stage: "drafter.escalated",
