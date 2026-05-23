@@ -3403,57 +3403,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 )}
               </div>
 
-              {/* Integrated research depth toggle — research mode only. Quality control, not billing. */}
-              {taskMode === "research" && (
-                <div className="flex justify-end px-1.5 pb-1.5" dir="rtl">
-                  <div
-                    className="inline-flex items-center rounded-md bg-muted/50 p-0.5"
-                    role="group"
-                    aria-label="עומק מחקר"
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setResearchDepth("fast")}
-                      disabled={loading}
-                      className={`inline-flex items-center gap-1 px-2 h-6 rounded-[5px] text-[11px] font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                        researchDepth === "fast"
-                          ? "bg-card text-primary shadow-sm ring-1 ring-primary/20"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                      aria-pressed={researchDepth === "fast"}
-                    >
-                      <Zap
-                        size={13}
-                        className={`shrink-0 transition-colors ${
-                          researchDepth === "fast" ? "text-primary" : "text-muted-foreground"
-                        }`}
-                        aria-hidden="true"
-                      />
-                      <span className="leading-none">מהיר</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setResearchDepth("deep")}
-                      disabled={loading}
-                      className={`inline-flex items-center gap-1 px-2 h-6 rounded-[5px] text-[11px] font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
-                        researchDepth === "deep"
-                          ? "bg-card text-primary shadow-sm ring-1 ring-primary/20"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
-                      aria-pressed={researchDepth === "deep"}
-                    >
-                      <Brain
-                        size={13}
-                        className={`shrink-0 transition-colors ${
-                          researchDepth === "deep" ? "text-primary" : "text-muted-foreground"
-                        }`}
-                        aria-hidden="true"
-                      />
-                      <span className="leading-none">מעמיק</span>
-                    </button>
-                  </div>
-                </div>
-              )}
+              {/* D1: Fast/Deep depth toggle hidden — Research engine is offline. */}
             </div>
           </div>
         )}
