@@ -252,15 +252,30 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
 
   // ─── 2.5 Source Requirements: targeted retrieval injection (flagged) ───
   const SR_INJECT_RETRIEVAL = (Deno.env.get("SR_INJECT_RETRIEVAL") ?? "") === "1";
-  let sourceRequirementsInjection: { records: RoleInjectionRecord[]; totals: { roles: number; roles_with_injection: number; candidates_injected: number } } | null = null;
+  const SR_PROTECT_CANDIDATES = (Deno.env.get("SR_PROTECT_CANDIDATES") ?? "1") === "1";
+  let sourceRequirementsInjection:
+    | {
+        records: RoleInjectionRecord[];
+        per_claim: import("./sourceRequirements.ts").ClaimSRSummary[];
+        totals: {
+          roles: number;
+          roles_with_injection: number;
+          candidates_injected: number;
+          roles_protected: number;
+          protected_candidates: number;
+          protected_duplicates: number;
+        };
+      }
+    | null = null;
   if (SR_INJECT_RETRIEVAL && sourceRequirements && sourceRequirements.mandatory_roles.length > 0) {
     const tInj = Date.now();
     try {
       const inj = await injectMandatoryRoleCandidates({
         adminClient, requirements: sourceRequirements, packs: retrieval.packs,
         plan, embed: defaultEmbed, perplexityKey: PERPLEXITY_API_KEY || undefined, signal,
+        protectCandidates: SR_PROTECT_CANDIDATES,
       });
-      sourceRequirementsInjection = { records: inj.records, totals: inj.totals };
+      sourceRequirementsInjection = { records: inj.records, per_claim: inj.per_claim, totals: inj.totals };
       recordStage({
         stage: "source_requirements_inject",
         duration_ms: Date.now() - tInj,
@@ -268,12 +283,13 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
         metadata: inj.totals,
       });
       emitSafe(onStage, "source_requirements", "complete",
-        `inject roles=${inj.totals.roles_with_injection}/${inj.totals.roles} +${inj.totals.candidates_injected}`);
+        `inject roles=${inj.totals.roles_with_injection}/${inj.totals.roles} +${inj.totals.candidates_injected} protected=${inj.totals.protected_candidates}`);
     } catch (e) {
       recordStage({ stage: "source_requirements_inject", duration_ms: Date.now() - tInj, status: "error", error: (e as Error).message });
       console.warn("[core:source_requirements_inject] failed", e);
     }
   }
+
   // Reconciliation deferred to after verifier so we can attach verdicts.
   let sourceRequirementsReconciliation: SourceRequirementsReconciliation | null = null;
 
