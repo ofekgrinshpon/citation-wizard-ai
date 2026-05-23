@@ -1,0 +1,1495 @@
+{
+  "generated_at": "2026-05-23T23:36:50.051Z",
+  "fixture": {
+    "id": "L5",
+    "question": "מהי עילת הסבירות ומה היקף הביקורת השיפוטית עליה?"
+  },
+  "qa_log_id": "11e8e765-0f15-42d6-904d-39d17b2772fc",
+  "run_id": "5de888b9-02b7-4c6d-b620-f8f86017f9f1",
+  "answer": "**עילת הסבירות**: זוהי עילת ביקורת שיפוטית שבוחנת האם החלטה מינהלית נופלת בתוך טווח ההחלטות ההגיוניות והמוצדקות שניתן לצפות מרשות המבצעת; מטרתה להבטיח כי השיקולים שהובילו להחלטה הם קבילים ושיש לה בסיס נורמטיבי סביר ולא להחליף שיקול דעת מנהלי סתם בשל חילוקי דעות פוליטיים או מקצועיים.¹ ²\n\n**קריטריונים ומבחנים**: בית המשפט בוחן האם התרחשה חריגה משיקולים קבילים (למשל חוסר קשר רציונלי בין יסוד לשיקול) או חוסר סבירות קיצוני המצדיק פסילה; בפועל מתמקדים במבחנים כמו פער רציונלי בין היסוד לתוצאה ובהיקף החריגה מהשיקול המקובל, וככלל נטל הראיה על המבקש להראות חוסר סבירות מהותי.³ ⁴\n\n**עצימות הביקורת (היקף הביקורת השיפוטית)**: העמדה היסודית היא ניתוח תלוי‑הקשר — בתי המשפט בדרך כלל יפגינו רמת הלימה (deference) ביחס להחלטות בתחומים טכניים או ביטחוניים, ויגבירו את עצימות הביקורת כאשר מדובר בזכויות יסוד או בהחלטות חקיקתיות/קיצוניות שבהן נדרש פיקוח חזק.¹ ⁵ ⁶\n\n**סעדים והשלכות**: כאשר מתקבל חוסר סבירות קיצוני ניתן לבטל את ההחלטה, להחזיר את ההליך לסמכות, להנפיק צו תיקון או צו זמני/השהיה לפי צורכי ההליך; לשיקול בית המשפט גם כלים ניהוליים פרוצדורליים לשמירה על הליך הוגן, אך הגשת ערעור כשלעצמה אינה תמיד מעכבת ביצוע ההחלטה אלא אם ניתנה הוראה מיוחדת.⁷ ⁸ ⁹",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F23%2F580%2F056%2Ft31&fileName=23056580.T31.SUM&type=4",
+      "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ' הכנסת ואח' (ביטול עילת הסבירות)",
+      "number": 1
+    },
+    {
+      "url": "https://www.court.gov.il",
+      "title": "בג\"ץ 2533/97 התנועה למען איכות השלטון בישראל נ' ממשלת ישראל",
+      "number": 2
+    },
+    {
+      "url": "http://lawjournal.huji.ac.il/article/12/1042",
+      "title": "עילת אי־הסבירות במשפט המנהלי",
+      "number": 3
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-tamir.pdf",
+      "title": "עילת חוסר־הוודאות במשפט הציבורי",
+      "number": 4
+    },
+    {
+      "url": "https://www.nevo.co.il",
+      "title": "בג\"ץ 3017/12 התנועה למען איכות השלטון בישראל נ' ראש הממשלה (פסק דין מנחה בנושא סבירות)",
+      "number": 5
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il",
+      "title": "בג\"ץ 5555/18 חוסן לישראל נ' הכנסת",
+      "number": 6
+    },
+    {
+      "url": "https://supreme.court.gov.il/",
+      "title": "בג\"ץ 3893/90 דפי זהב בע\"מ נ' רשות השידור",
+      "number": 7
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/16122020/he/16.12-explanatory.pdf",
+      "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 – תקנה 3 (ניהול ההליך השיפוטי)",
+      "number": 8
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/317_001.htm",
+      "title": "תקנות סדר הדין האזרחי, התשמ״ד-1984 – תקנה 466 (ערעור אינו מעכב ביצוע)",
+      "number": 9
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "הגדרת העילה היא דוקטרינרית ונקבעה בעיקר בפסיקה של בית המשפט העליון ובספרות המשפטית; צריך מקורות כבדי משקל להסביר את התשתית וההבדלים ממונחים קרובים.",
+        "text_he": "מהי עילת הסבירות — הגדרה דוקטרינרית של עילת הביקורת הפוקחת על החלטות מינהליות (מטרת העילה, היסוד הנורמטיבי שלה ומה היא בודקת)",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הכללים המעשיים של ביהמ\"ש נקבעים בפסיקה ובהשוואה למשפט זר וניתוח תאורטי בספרות; יש צורך בפסיקה מחייבת ובמקרים משכנעים/השוואתיים ובהסברים אקדמיים.",
+        "text_he": "מהם הקריטריונים/מבחנים לקביעת סבירות — אילו סטיות מהשיקולים הקבילים; מונחים כמו 'חוסר סבירות קיצוני', 'חוסר קשר רציונלי בין יסוד לשיקול', ויחס לנטל ההוכחה",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "persuasive_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "שאלת העוצמה של הביקורת היא דוקטרינית ופרקטית שנקבעת בפסיקה ותוכחת בספרות, במיוחד ביחס לתחומים שבהם צוינה דרגת סבירות גבוהה או חובת ריסון שיפוטי.",
+        "text_he": "מהו היקף הביקורת השיפוטית ('עצימות הביקורת') — האם בית המשפט מחליף שיקול דעת המנהל או רק בודק באיזו מידה צריך להתערב; האם יש דרגות סבירות לפי תחום (ביטחון, כלכלה, רווחה, זכויות יסוד ועוד)",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הסעד המעשי נגזר מתחיקת סמכויות ולפעמים מפסיקה; יש לבדוק הוראות רגולציה או חקיקה המסדירות סעד מינהלי לצד פסיקה מחייבת.",
+        "text_he": "מהם הסעדים וההשלכות כאשר החלטה מינהלית נחשבת בלתי סבירה — ביטול/השהיה/החזרת הליך/צו תיקון/השפעה על הטיפול בסמכות בעתיד",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "regulation"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "5de888b9-02b7-4c6d-b620-f8f86017f9f1",
+    "drafter": {
+      "ms": 25644,
+      "ok": true,
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 9,
+      "used_sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F23%2F580%2F056%2Ft31&fileName=23056580.T31.SUM&type=4",
+          "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ' הכנסת ואח' (ביטול עילת הסבירות)",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "supremecourt.gov.il",
+          "candidate_id": "38d980dd-7424-44ec-af2f-11c35f8c6f53"
+        },
+        {
+          "url": "https://www.court.gov.il",
+          "title": "בג\"ץ 2533/97 התנועה למען איכות השלטון בישראל נ' ממשלת ישראל",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "court.gov.il",
+          "candidate_id": "f8ec4d70-9380-429d-8fa5-c66d0df54caf"
+        },
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/1042",
+          "title": "עילת אי־הסבירות במשפט המנהלי",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "article",
+          "candidate_id": "6ff40475-78e7-495b-a3c2-49b46ec72f0c"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-tamir.pdf",
+          "title": "עילת חוסר־הוודאות במשפט הציבורי",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "article",
+          "candidate_id": "95c83771-76b7-4560-980f-8243006682a3"
+        },
+        {
+          "url": "https://www.nevo.co.il",
+          "title": "בג\"ץ 3017/12 התנועה למען איכות השלטון בישראל נ' ראש הממשלה (פסק דין מנחה בנושא סבירות)",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "nevo.co.il",
+          "candidate_id": "bce89090-88c0-43d8-9b26-01f239c6beb2"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il",
+          "title": "בג\"ץ 5555/18 חוסן לישראל נ' הכנסת",
+          "number": 6,
+          "origin": "perplexity",
+          "source_type": "supremecourt.gov.il",
+          "candidate_id": "b936f582-9cc8-4323-ac78-aeb528c67510"
+        },
+        {
+          "url": "https://supreme.court.gov.il/",
+          "title": "בג\"ץ 3893/90 דפי זהב בע\"מ נ' רשות השידור",
+          "number": 7,
+          "origin": "perplexity",
+          "source_type": "court decision (Supreme Court / HCJ)",
+          "candidate_id": "b78f5093-dd82-4062-9111-ab5baebffa79"
+        },
+        {
+          "url": "https://www.gov.il/BlobFolder/news/16122020/he/16.12-explanatory.pdf",
+          "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 – תקנה 3 (ניהול ההליך השיפוטי)",
+          "number": 8,
+          "origin": "perplexity",
+          "source_type": "gov.il (דברי הסבר)",
+          "candidate_id": "401416a9-2c1d-406f-8844-35c921967954"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/317_001.htm",
+          "title": "תקנות סדר הדין האזרחי, התשמ״ד-1984 – תקנה 466 (ערעור אינו מעכב ביצוע)",
+          "number": 9,
+          "origin": "perplexity",
+          "source_type": "nevo.co.il",
+          "candidate_id": "ef097ae1-c4d9-47eb-bd52-696e91520353"
+        }
+      ],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 9,
+      "sources_passed": 12,
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "omitted_candidate_ids": [
+        "028326f7-2b3c-46f4-9108-c3fa19b82065",
+        "eab65025-1f6b-4ade-aa26-26b69ba3ec21",
+        "26e95f2d-5b0f-4e5f-b35f-80c44b75f372"
+      ]
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי דין מנחים של בית המשפט העליון שמגדירים את עילת הסבירות, מטרתה והבסיס הנורמטיבי לביקורת על החלטות מינהליות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "בית המשפט העליון פסקי דין 'עילת הסבירות' הגדרה מטרת העילה 'ביקורת שיפוטית' 'שיקול דעת מנהלי' פסק דין מנחה",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא ניתוח אקדמי דוקטרינרי (מאמרים/פרקים) של שופטים/חוקרים (למשל אהרן ברק) המסבירים את ההגדרה והיסוד הנורמטיבי של עילת הסבירות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר עילת הסבירות הגדרה מטרת העילה 'ביקורת שיפוטית' אהרן ברק 'reasonableness' משפט מנהלי מאמר",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסיקה על המבחנים שקובעים חוסר סבירות קיצוני או חוסר קשר רציונלי, וכיצד בתי המשפט העליונים מתייחסים לנטל ההוכחה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון 'חוסר סבירות קיצוני' 'חוסר קשר רציונלי בין יסוד לשיקול' פסק דין מבחן 'סבירות' 'נטל ההוכחה'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "למצוא פסקי דין מחוזיים וייצוגים יישומיים שמדגימים את היישום המעשי של מבחני הסבירות וההבחנות בין רמות חומרה שונות.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "פסק דין בית משפט מחוזי 'חוסר סבירות' 'חוסר קשר רציונלי' 'חוסר סבירות קיצוני' החלטה מחוזית דוגמה ליישום מבחנים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא ניתוחים אקדמיים שמפרקים את הקריטריונים והמונחים (חוסר סבירות קיצוני, חוסר קשר רציונלי) והצעות חלוקה של נטל ההוכחה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר 'חוסר סבירות קיצוני' 'חוסר קשר רציונלי' מבחני סבירות משפט מנהלי אייל גרוס או מאמר סמכותי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי דין של בית המשפט העליון המתייחסים לעוצמת הביקורת השיפוטית והאם קיימות דרגות סבירות לפי תחום (ביטחון, כלכלה, זכויות יסוד וכו').",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון 'עצימות הביקורת' 'דרגות סבירות' 'החלפת שיקול דעת' ביטחון כלכלה זכויות יסוד פסק דין",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא מאמרים אקדמיים המסבירים ומנתחים את המושג עצימות הביקורת וכיצד הוא מיושם בפסיקה ובהלכה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר 'עצימות הביקורת' 'דרגות סבירות' משפט מנהלי ניתוח דוקטרינרי 'עצימות שיפוטית' אהרן ברק אייל גרוס",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי דין בהם בית המשפט קבע סעד בעקבות החלטה שנמצאה בלתי סבירה: ביטול, השהיה, החזרת הליך, צו תיקון וכו'.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון 'צו ביטול' 'החזרת הליך' 'צו תיקון' 'השהיית החלטה מנהלית' פסק דין החלטות בלתי סבירות סעד",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "regulation",
+        "reason": "למצוא תקנות ונהלים (תקנות סדר הדין האזרחי או תקנות בתי המשפט) המתייחסים לסוגי סעד אפשריים בהליכי ביקורת שיפוטית על החלטות מנהליות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "תקנות סדר הדין האזרחי צו ביניים צו לשימוע 'השעיה' 'החזרת הליך' הוראות נוגעות לסעד כנגד החלטות מנהליות תקנות",
+        "expected_source_type": "regulation"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 35706,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 20973,
+        "confidence": 0.9,
+        "legal_area": "משפט מנהלי",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "claims_count": 4,
+      "queries_count": 9,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 195526,
+    "verifier": {
+      "ms": 73185,
+      "counts": {
+        "by_support": {
+          "direct": 6,
+          "partial": 6,
+          "unrelated": 1,
+          "tangential": 1
+        },
+        "by_role_match": {
+          "true": 13,
+          "false": 1
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "38d980dd-7424-44ec-af2f-11c35f8c6f53",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "f8ec4d70-9380-429d-8fa5-c66d0df54caf",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "b936f582-9cc8-4323-ac78-aeb528c67510",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": false,
+          "best_support": "partial",
+          "candidate_id": "028326f7-2b3c-46f4-9108-c3fa19b82065",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "b78f5093-dd82-4062-9111-ab5baebffa79",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "401416a9-2c1d-406f-8844-35c921967954",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "ef097ae1-c4d9-47eb-bd52-696e91520353",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "bce89090-88c0-43d8-9b26-01f239c6beb2",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "eab65025-1f6b-4ade-aa26-26b69ba3ec21",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "26e95f2d-5b0f-4e5f-b35f-80c44b75f372",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "6ff40475-78e7-495b-a3c2-49b46ec72f0c",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "95c83771-76b7-4560-980f-8243006682a3",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        }
+      ],
+      "dropped": [
+        {
+          "role": "regulation",
+          "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 – תקנה 25(ב) (פיצול סעדים)",
+          "origin": "perplexity",
+          "reason": "תקנה 25(ב) עוסקת בפיצול סעדים ואינה נוגעת לסמכויות בית המשפט להורות על ביטול/השיהוי/החזרת הליכים בשל החלטה מנהלית בלתי סבירה.",
+          "candidate_id": "19adae04-5a4e-43e3-aa82-14c11bbeb1fc",
+          "worst_support": "unrelated",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "regulation",
+          "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 – תקנה 42 (מחיקה מחמת שימוש לרעה בהליכי משפט)",
+          "origin": "perplexity",
+          "reason": "התקנה היא כלי דיוני פרוצדורלי קשור לניהול ההליך, אך אינה דנה בדוקטרינת סבירות או בסעדים המינהליים המרכזיים כמו ביטול או החזרת הליך.",
+          "candidate_id": "c4bd0e7b-2f3e-4b6e-a5f8-f55e967eb0aa",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        }
+      ],
+      "verdicts": [
+        {
+          "reason": "פסק דין עוסק במפורש בעילת הסבירות ובהיקף הביקורת השיפוטית; ישירות רלוונטי וניתן להשתמש בו כבסיס לדיון דוקטרינרי.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "38d980dd-7424-44ec-af2f-11c35f8c6f53",
+          "supported_points": [
+            "דן בהיקף עילת הסבירות לאחר ביטול תיקון מס' 3 לחוק-יסוד: השפיטה",
+            "מכיל ניתוח של מטרת העילה והבסיס הנורמטיבי שלה",
+            "מתאר מה בוחנת הביקורת (גבולות ויישום על חקיקה והחלטות מנהליות)"
+          ]
+        },
+        {
+          "reason": "פסק דין קלאסי שמנסח את דוקטרינת הסבירות ולכן תומך ישירות בהגדרת העילה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "f8ec4d70-9380-429d-8fa5-c66d0df54caf",
+          "supported_points": [
+            "פסק דין מנחה בנוגע לשימוש בעילת הסבירות בביקורת שיפוטית על החלטות הממשלה",
+            "מנסח עקרונות לגבי מטרת העילה וגבולות השיקול המינהלי",
+            "מספק בסיס דוקטרינרי להבחנה בין סבירות לבין אמות מידה אחרות"
+          ]
+        },
+        {
+          "reason": "ממוקד בסמכות לבחון חקיקה ובמקרים חריגים; נוגע בסבירות אך אינו נותן הגדרה מקיפה של העילה עצמה.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "b936f582-9cc8-4323-ac78-aeb528c67510",
+          "supported_points": [
+            "דן בסמכות בית המשפט לבקר חקיקה יסודית במצבים חריגים שבהם נדרשת פיקוח חזק",
+            "מציין את עילת הסבירות בהקשר של ביקורת על חקיקה והחלטות קיצוניות"
+          ]
+        },
+        {
+          "reason": "מקור רקע וניתוח שאינו פסק דין מחייב; שימושי כתמיכה משלימה אך לא כבסיס דוקטרינרי מחייב.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": false,
+          "candidate_id": "028326f7-2b3c-46f4-9108-c3fa19b82065",
+          "supported_points": [
+            "מסמך רקע של הכנסת המסביר תכלית עילת הסבירות ומקומה בביקורת שיפוטית",
+            "מספק ניתוח מדיני וחוקתי של הסבירות כאמצעי בקרה על הרשות המבצעת"
+          ]
+        },
+        {
+          "reason": "פסק דין מנחה שמתרכז בעילת הסבירות ומשמש בסיס לדוקטרינה הישראלית; רלוונטי ישירות להגדרה ולמה שהיא בודקת.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "bce89090-88c0-43d8-9b26-01f239c6beb2",
+          "supported_points": [
+            "פסק דין מנחה בנושא עילת הסבירות ושיקול דעת מינהלי",
+            "מנחה כללים פרקטיים ליישום הביקורת על החלטות מינהליות"
+          ]
+        },
+        {
+          "reason": "פסק דין מוקדם ומהותי שעיצב את דוקטרינת הסבירות; תומך ישירות בהבנת מטרת העילה והיקף הביקורת.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "eab65025-1f6b-4ade-aa26-26b69ba3ec21",
+          "supported_points": [
+            "פסק דין יסוד בהתפתחות עילת הסבירות במשפט המינהלי הישראלי",
+            "מניח יסודות לדיון בדוקטרינת הביקורת והשיקול המינהלי"
+          ]
+        },
+        {
+          "reason": "מאמר שעוסק במפורש בנושא ומספק ניתוח דוקטרינרי ותאורטי; מתאים כתמיכה אקדמית ישירה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "26e95f2d-5b0f-4e5f-b35f-80c44b75f372",
+          "supported_points": [
+            "מאמר אקדמי העוסק בהתפתחות עילת הסבירות ותפקידה כביקורת שיפוטית",
+            "מספק ניתוח תאורטי ונורמטיבי של מטרת העילה והיסוד האפיסטמולוגי שלה"
+          ]
+        },
+        {
+          "reason": "פסק‑דין בג״ץ על סבירות החלטה מנהלית ומספק בסיס ישיר לסעדים המינהליים (ביטול/החזרה/התערבות שיפוטית).",
+          "support": "direct",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "b78f5093-dd82-4062-9111-ab5baebffa79",
+          "supported_points": [
+            "פסק‑דין עוסק ישירות בביקורת סבירות של החלטה מנהלית",
+            "דן בסעדים שניתנים כאשר החלטה נחשבת בלתי סבירה, כגון ביטול והחזרת ההליך"
+          ]
+        },
+        {
+          "reason": "התקנה נותנת בסיס פרוצדורלי לצווי ביניים והחלטות ניהוליות של בית המשפט אך אינה דנה ישירות בדוקטרינת סבירות או בסעדים המינהליים מהותיים.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "401416a9-2c1d-406f-8844-35c921967954",
+          "supported_points": [
+            "תקנה 3 מסמיכה את בית המשפט לנהל את ההליך ולקבל החלטות הדרושות לקידום הליך הוגן, כולל צעדים פרוצדורליים זמניים"
+          ]
+        },
+        {
+          "reason": "התקנה היא כלל פרוצדורלי־מכריע לגבי האם החלטה ממשיכה להיות מיושמת בזמן ערעור, ולכן תומכת חלקית בסוגיית הסעדים (השהיה/צו ביניים) אך אינה עוסקת בסבירות כשלעצמה.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "ef097ae1-c4d9-47eb-bd52-696e91520353",
+          "supported_points": [
+            "תקנה 466 קובעת שעצם הגשת ערעור אינה מעכבת ביצוע החלטה, רלוונטית לשאלת השהיה/מוּנעות מביצוע החלטה מנהלית"
+          ]
+        },
+        {
+          "reason": "תקנה 25(ב) עוסקת בפיצול סעדים ואינה נוגעת לסמכויות בית המשפט להורות על ביטול/השיהוי/החזרת הליכים בשל החלטה מנהלית בלתי סבירה.",
+          "support": "unrelated",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "19adae04-5a4e-43e3-aa82-14c11bbeb1fc",
+          "supported_points": []
+        },
+        {
+          "reason": "התקנה היא כלי דיוני פרוצדורלי קשור לניהול ההליך, אך אינה דנה בדוקטרינת סבירות או בסעדים המינהליים המרכזיים כמו ביטול או החזרת הליך.",
+          "support": "tangential",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "c4bd0e7b-2f3e-4b6e-a5f8-f55e967eb0aa",
+          "supported_points": [
+            "תקנה 42 מאפשרת מחיקה במקרה של שימוש לרעה בהליך — כלי פרוצדורלי שעשוי להשפיע על התנהלות ההליך לאחר בקשה לביקורת"
+          ]
+        },
+        {
+          "reason": "מאמר אקדמי שנותן ניתוח תיאורטי ומקצועי של הקריטריונים והמבחנים לקביעת סבירות, כולל מושגים כמו חוסר סבירות קיצוני; אינו פסיקה מחייבת ולכן מתאים כתמיכה משלימה ולא כבסיס משפטי מחייב (partial).",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "6ff40475-78e7-495b-a3c2-49b46ec72f0c",
+          "supported_points": [
+            "דן במבחני הסבירות המקובלים ובעילת אי‑הסבירות במשפט המנהלי",
+            "מתאר את מושג 'חוסר סבירות קיצוני' וחריגות קיצוניות משיקולים קבילים",
+            "דן במתחם הביקורת השיפוטית ובהיקף הסמכויות שנבדקות"
+          ]
+        },
+        {
+          "reason": "מאמר ביבליוגרפי/אקדמי המספק ניתוח של סף הפסילה (חוסר סבירות קיצוני) ושל היקף הביקורת; תומך בהבנת הקריטריונים אך אינו מהווה מקור מחייב של דין (partial).",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "95c83771-76b7-4560-980f-8243006682a3",
+          "supported_points": [
+            "מציין במפורש שרק חוסר סבירות קיצוני יביא לפסילת אקט מינהלי",
+            "דן בקריטריונים של ביקורת מנהלית ובהגדרת גבולות הסבירות"
+          ]
+        }
+      ],
+      "model_final": "openai/gpt-5-mini",
+      "per_claim_ms": {
+        "C1": 25683,
+        "C2": 18718,
+        "C4": 28782
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [],
+      "candidates_usable": 12,
+      "candidates_dropped": 2,
+      "candidates_verified": 14
+    },
+    "retrieval": {
+      "ms": 40008,
+      "pool": {
+        "found": 28,
+        "counts": {
+          "by_role": {
+            "regulation": 4,
+            "scholarship": 3,
+            "primary_statute": 1,
+            "binding_case_law": 6
+          },
+          "by_claim": {
+            "C1": 7,
+            "C2": 2,
+            "C4": 5
+          },
+          "by_origin": {
+            "perplexity": 14
+          }
+        },
+        "after_dedup": 14,
+        "dedup_drops": 14
+      },
+      "local": {
+        "ms": 40006,
+        "per_query": [
+          {
+            "ms": 40005,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 225,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "persuasive_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "עילת הסבירות סבירות שיקול דעת דין משפט מחוזי חוסר קשר",
+            "original_query_he": "פסק דין בית משפט מחוזי 'חוסר סבירות' 'חוסר קשר רציונלי' 'חוסר סבירות קיצוני' החלטה מחוזית דוגמה ליישום מבחנים"
+          }
+        ],
+        "candidates": 0,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 34468,
+        "dropped": 10,
+        "per_query": [
+          {
+            "ms": 3756,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F23%2F580%2F056%2Ft31&fileName=23056580.T31.SUM&type=4",
+                "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ' הכנסת ואח' (ביטול עילת הסבירות)",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il",
+                "title": "בג\"ץ 3017/12 התנועה למען איכות השלטון בישראל נ' ראש הממשלה (פסק דין מנחה בנושא סבירות)",
+                "domain": "nevo.co.il",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.psakdin.co.il",
+                "title": "בג\"ץ 389/80 דפי זהב בע\"מ נ' רשות השידור",
+                "domain": "psakdin.co.il",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.court.gov.il",
+                "title": "בג\"ץ 2533/97 התנועה למען איכות השלטון בישראל נ' ממשלת ישראל",
+                "domain": "court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il",
+                "title": "בג\"ץ 5555/18 חוסן לישראל נ' הכנסת",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C1",
+            "query_he": "בית המשפט העליון פסקי דין 'עילת הסבירות' הגדרה מטרת העילה 'ביקורת שיפוטית' 'שיקול דעת מנהלי' פסק דין מנחה",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4370,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.gov.il/BlobFolder/news/judgespeech61219/he/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA,%20%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA,%20%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA%20-%20%D7%A2%D7%A8%D7%9B%D7%99%D7%9D%20%D7%A1%D7%95%D7%91%D7%99%D7%99%D7%A7%D7%98%D7%99%D7%91%D7%99%D7%99%D7%ם,%20%D7%A9%D7%95%D7%A4%D7%98%D7%99%D7%9D%20%D7%90%D7%95%D7%91%D7%99%D7%99%D7%A7%D7%98%D7%99%D7%91%D7%99%D7%99%D7%9D.pdf",
+                "title": "פרשנות, סבירות, מידתיות: ערכים סובייקטיביים, שופטים אובייקטיביים",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_scholarship",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://law.m.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/18/4Moshe%20Cohen-Eliya.pdf",
+                "title": "על הסוציולוגיה והאפיסטמולוגיה של המשבר החוקתי: עילת הסבירות ותרבות ההצדקה",
+                "domain": "law.m.tau.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://journal.lawforum.org.il/shapira-svirut/",
+                "title": "על סבירותה של עילת הסבירות",
+                "domain": "journal.lawforum.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_2798965.pdf",
+                "title": "ביטול עילת הסבירות",
+                "domain": "fs.knesset.gov.il",
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://israeliconstitutionalism.wordpress.com/2023/09/10/100923/",
+                "title": "שלילת ביקורת שיפוטית של \"סבירות ההחלטה\": על ממשלה בלתי-מוגבלת",
+                "domain": "israeliconstitutionalism.wordpress.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C1",
+            "query_he": "מאמר עילת הסבירות הגדרה מטרת העילה 'ביקורת שיפוטית' אהרן ברק 'reasonableness' משפט מנהלי מאמר",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4428,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F80%2F389%2F000%2Fh01&fileName=80038900.H01&type=4",
+                "title": "בג\"ץ 389/80 דפי זהב בע\"מ נ' רשות השידור",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_word/law14/psika040/389-80.pdf",
+                "title": "בג\"ץ 389/80 דפי זהב בע\"מ נ' רשות השידור",
+                "domain": "nevo.co.il",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F89%2F935%2F000%2Fb11&fileName=89093500.B11&type=4",
+                "title": "בג\"ץ 935/89 גנור נ' היועץ המשפטי לממשלה",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F92%2F6163%2F000%2Fz04&fileName=92061630.Z04&type=4",
+                "title": "בג\"ץ 6163/92 אייזנברג נ' שר הבינוי והשיכון",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F85%2F399%2F000%2Fb07&fileName=85039900.B07&type=4",
+                "title": "בג\"ץ 399/85 כהנא נ' הוועד המנהל של רשות השידור",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C2",
+            "query_he": "בית המשפט העליון 'חוסר סבירות קיצוני' 'חוסר קשר רציונלי בין יסוד לשיקול' פסק דין מבחן 'סבירות' 'נטל ההוכחה'",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 3307,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "http://lawjournal.huji.ac.il/article/12/1042",
+                "title": "עילת אי־הסבירות במשפט המנהלי",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "http://www.hapraklit.co.il/_uploads/dbsattachedfiles/nun1_6.pdf",
+                "title": "על חוקתיות ועל סבירות: בעקבות בג\"ץ 5636/01 בקמן נ' שר העבודה והרווחה",
+                "domain": "hapraklit.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-tamir.pdf",
+                "title": "עילת חוסר־הוודאות במשפט הציבורי",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C2",
+            "query_he": "מאמר 'חוסר סבירות קיצוני' 'חוסר קשר רציונלי' מבחני סבירות משפט מנהלי אייל גרוס או מאמר סמכותי",
+            "raw_count": 3,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4891,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F80%2F890%2F003%2Fa08&fileName=80003890.a08&type=4",
+                "title": "בג״ץ 389/80 דפי זהב בע״מ נ׳ רשות השידור",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F86%2F910%2F002%2Fa02&fileName=86000910.a02&type=4",
+                "title": "בג״ץ 910/86 רסלר נ׳ שר הביטחון",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F97%2F533%2F026%2Fa26&fileName=97002533.a26&type=4",
+                "title": "בג״ץ 2533/97 ח״כ יוסף חזן נ׳ מנהל מקרקעי ישראל",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F94%2F541%2F004%2Fa04&fileName=94004541.a04&type=4",
+                "title": "בג״ץ 4541/94 מילר נ׳ שר הביטחון",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F02%2F427%2F022%2Fa22&fileName=02064270.a22&type=4",
+                "title": "בג״ץ 6427/02 התנועה לאיכות השלטון בישראל נ׳ הכנסת",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C3",
+            "query_he": "בית המשפט העליון 'עצימות הביקורת' 'דרגות סבירות' 'החלפת שיקול דעת' ביטחון כלכלה זכויות יסוד פסק דין",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5808,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://search.worldcat.org/search?q=%D7%A2%D7%A6%D7%99%D7%9E%D7%95%D7%AA+%D7%94%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA+%D7%94%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA+%D7%93%D7%A8%D7%92%D7%95%D7%AA+%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA",
+                "title": "עצימות הביקורת השיפוטית: על דרגות הסבירות במשפט המינהלי",
+                "domain": "search.worldcat.org",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://scholar.google.com/scholar?q=%D7%A2%D7%A6%D7%99%D7%9E%D7%95%D7%AA+%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA+%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA+%D7%93%D7%A8%D7%92%D7%95%D7%AA+%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA+%D7%9E%D7%A9%D7%A4%D7%98+%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99",
+                "title": "מנהליות, סבירות ועצימות ביקורת שיפוטית",
+                "domain": "scholar.google.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://books.google.com/books?q=Israel+administrative+law+judicial+review+reasonableness",
+                "title": "Administrative Law and Judicial Review in Israel",
+                "domain": "books.google.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://scholar.google.com/scholar?q=Aharon+Barak+reasonableness+judicial+review+Israel",
+                "title": "Aharon Barak - Reasonableness and Judicial Review (search)",
+                "domain": "scholar.google.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://scholar.google.com/scholar?q=Eyal+Gross+judicial+review+reasonableness+administrative+law+Israel",
+                "title": "Eyal Gross - administrative law judicial review reasonableness (search)",
+                "domain": "scholar.google.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C3",
+            "query_he": "מאמר 'עצימות הביקורת' 'דרגות סבירות' משפט מנהלי ניתוח דוקטרינרי 'עצימות שיפוטית' אהרן ברק אייל גרוס",
+            "raw_count": 5,
+            "discovery_only": 3,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 3861,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://supreme.court.gov.il/",
+                "title": "בג\"ץ 3893/90 דפי זהב בע\"מ נ' רשות השידור",
+                "domain": "supreme.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supreme.court.gov.il/",
+                "title": "בג\"ץ 5660/10 התנועה למען איכות השלטון בישראל נ' ראש הממשלה",
+                "domain": "supreme.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supreme.court.gov.il/",
+                "title": "בג\"ץ 5853/07 אמונה תנועת האשה הדתית לאומית נ' ראש הממשלה",
+                "domain": "supreme.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supreme.court.gov.il/",
+                "title": "בג\"ץ 10042/16 קו לעובד נ' בית הדין הארצי לעבודה",
+                "domain": "supreme.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supreme.court.gov.il/",
+                "title": "בג\"ץ 1308/17 עיריית ת\"א-יפו נ' הכנסת",
+                "domain": "supreme.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C4",
+            "query_he": "בית המשפט העליון 'צו ביטול' 'החזרת הליך' 'צו תיקון' 'השהיית החלטה מנהלית' פסק דין החלטות בלתי סבירות סעד",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4031,
+            "http": 200,
+            "role": "regulation",
+            "results": [
+              {
+                "url": "https://www.gov.il/BlobFolder/news/16122020/he/16.12-explanatory.pdf",
+                "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 – תקנה 3 (ניהול ההליך השיפוטי)",
+                "domain": "gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/23/Committees/23_cs_bg_582439.doc",
+                "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 – תקנה 42 (מחיקה מחמת שימוש לרעה בהליכי משפט)",
+                "domain": "fs.knesset.gov.il",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/317_001.htm",
+                "title": "תקנות סדר הדין האזרחי, התשמ״ד-1984 – תקנה 466 (ערעור אינו מעכב ביצוע)",
+                "domain": "nevo.co.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/500_004.htm",
+                "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 – תקנה 25(ב) (פיצול סעדים)",
+                "domain": "nevo.co.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A1%D7%93%D7%A8_%D7%94%D7%93%D7%99%D7%9F_%D7%94%D7%90%D7%96%D7%A8%D7%97%D7%99",
+                "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 – תקנה 40(א) (איחוד דיון)",
+                "domain": "he.wikisource.org",
+                "drop_reason": "class_unknown_not_admitted_for_regulation",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C4",
+            "query_he": "תקנות סדר הדין האזרחי צו ביניים צו לשימוע 'השעיה' 'החזרת הליך' הוראות נוגעות לסעד כנגד החלטות מנהליות תקנות",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 28,
+        "role_corrections": [
+          {
+            "to": "primary_statute",
+            "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_2798965.pdf",
+            "from": "scholarship",
+            "title": "ביטול עילת הסבירות",
+            "admitted": true,
+            "claim_id": "C1"
+          }
+        ]
+      }
+    },
+    "candidates": [
+      {
+        "role": "binding_case_law",
+        "score": 0.95,
+        "title": "בג\"ץ 5658/23 התנועה למען איכות השלטון בישראל נ' הכנסת ואח' (ביטול עילת הסבירות)",
+        "origin": "perplexity",
+        "snippet": "פסק דין של בית המשפט העליון בשבתו כבג\"ץ מיום 1.1.2024, בעניין ביטול תיקון מס' 3 לחוק-יסוד: השפיטה והיקף עילת הסבירות; כולל דיון בביקורת שיפוטית על חוקי יסוד ועל שיקול דעת מינהלי.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "supremedecisions.court.gov.il",
+          "classified_source_class": "official_primary"
+        },
+        "query_he": "בית המשפט העליון פסקי דין 'עילת הסבירות' הגדרה מטרת העילה 'ביקורת שיפוטית' 'שיקול דעת מנהלי' פסק דין מנחה",
+        "source_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F23%2F580%2F056%2Ft31&fileName=23056580.T31.SUM&type=4",
+        "source_type": "supremecourt.gov.il",
+        "candidate_id": "38d980dd-7424-44ec-af2f-11c35f8c6f53",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.95,
+        "title": "בג\"ץ 2533/97 התנועה למען איכות השלטון בישראל נ' ממשלת ישראל",
+        "origin": "perplexity",
+        "snippet": "פסק דין של בית המשפט העליון הנוגע לשימוש בעילת הסבירות ולביקורת שיפוטית על החלטות ממשלה ושרים; מקור כללי של מערכת בתי המשפט.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "court.gov.il",
+          "classified_source_class": "official_primary"
+        },
+        "query_he": "בית המשפט העליון פסקי דין 'עילת הסבירות' הגדרה מטרת העילה 'ביקורת שיפוטית' 'שיקול דעת מנהלי' פסק דין מנחה",
+        "source_url": "https://www.court.gov.il",
+        "source_type": "court.gov.il",
+        "candidate_id": "f8ec4d70-9380-429d-8fa5-c66d0df54caf",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.95,
+        "title": "בג\"ץ 5555/18 חוסן לישראל נ' הכנסת",
+        "origin": "perplexity",
+        "snippet": "פסק דין בעניין סמכות בית המשפט העליון להפעיל ביקורת שיפוטית על חוקי יסוד במקרים חריגים וקיצוניים; מוזכר גם בפסק הדין בעניין עילת הסבירות.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "supremedecisions.court.gov.il",
+          "classified_source_class": "official_primary"
+        },
+        "query_he": "בית המשפט העליון פסקי דין 'עילת הסבירות' הגדרה מטרת העילה 'ביקורת שיפוטית' 'שיקול דעת מנהלי' פסק דין מנחה",
+        "source_url": "https://supremedecisions.court.gov.il",
+        "source_type": "supremecourt.gov.il",
+        "candidate_id": "b936f582-9cc8-4323-ac78-aeb528c67510",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "ביטול עילת הסבירות",
+        "origin": "perplexity",
+        "snippet": "מסמך רקע של הכנסת. מסביר את תכלית עילת הסבירות ואת מקומה בביקורת שיפוטית על הרשות המבצעת.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "role_corrected_from": "scholarship",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "מאמר עילת הסבירות הגדרה מטרת העילה 'ביקורת שיפוטית' אהרן ברק 'reasonableness' משפט מנהלי מאמר",
+        "source_url": "https://fs.knesset.gov.il/25/law/25_ls_bk_2798965.pdf",
+        "source_type": "מסמך מחקר / נייר עמדה",
+        "candidate_id": "028326f7-2b3c-46f4-9108-c3fa19b82065",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.95,
+        "title": "בג\"ץ 3893/90 דפי זהב בע\"מ נ' רשות השידור",
+        "origin": "perplexity",
+        "snippet": "עתירה מנהלית-חוקתית קלאסית בעניין סבירות החלטה מנהלית וסעד של ביטול/התערבות שיפוטית. יש לאתר את פסק הדין במאגר הרשות השופטת לפי מספר התיק 3893/90.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "supreme.court.gov.il",
+          "classified_source_class": "official_primary"
+        },
+        "query_he": "בית המשפט העליון 'צו ביטול' 'החזרת הליך' 'צו תיקון' 'השהיית החלטה מנהלית' פסק דין החלטות בלתי סבירות סעד",
+        "source_url": "https://supreme.court.gov.il/",
+        "source_type": "court decision (Supreme Court / HCJ)",
+        "candidate_id": "b78f5093-dd82-4062-9111-ab5baebffa79",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "regulation",
+        "score": 0.95,
+        "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 – תקנה 3 (ניהול ההליך השיפוטי)",
+        "origin": "perplexity",
+        "snippet": "תקנה 3 מטילה על בית המשפט אחריות לנהל את ההליך השיפוטי לשם הגשמת מטרות התקנות, ולהחליט כל החלטה הדרושה לקידום הליך ראוי והוגן.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "gov.il",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "תקנות סדר הדין האזרחי צו ביניים צו לשימוע 'השעיה' 'החזרת הליך' הוראות נוגעות לסעד כנגד החלטות מנהליות תקנות",
+        "source_url": "https://www.gov.il/BlobFolder/news/16122020/he/16.12-explanatory.pdf",
+        "source_type": "gov.il (דברי הסבר)",
+        "candidate_id": "401416a9-2c1d-406f-8844-35c921967954",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "regulation",
+        "score": 0.95,
+        "title": "תקנות סדר הדין האזרחי, התשמ״ד-1984 – תקנה 466 (ערעור אינו מעכב ביצוע)",
+        "origin": "perplexity",
+        "snippet": "תקנה 466 קובעת כי הגשת ערעור לא תעכב את ביצוע ההחלטה שעליה מערערים, אלא אם ניתנה הוראה אחרת.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "תקנות סדר הדין האזרחי צו ביניים צו לשימוע 'השעיה' 'החזרת הליך' הוראות נוגעות לסעד כנגד החלטות מנהליות תקנות",
+        "source_url": "https://www.nevo.co.il/law_html/law01/317_001.htm",
+        "source_type": "nevo.co.il",
+        "candidate_id": "ef097ae1-c4d9-47eb-bd52-696e91520353",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "regulation",
+        "score": 0.95,
+        "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 – תקנה 25(ב) (פיצול סעדים)",
+        "origin": "perplexity",
+        "snippet": "תקנה 25(ב) עוסקת באיסור תביעה נוספת בשל אותה עילה שלא במסגרת אותה תובענה, אלא אם ניתנה רשות לפיצול סעדים.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "תקנות סדר הדין האזרחי צו ביניים צו לשימוע 'השעיה' 'החזרת הליך' הוראות נוגעות לסעד כנגד החלטות מנהליות תקנות",
+        "source_url": "https://www.nevo.co.il/law_html/law01/500_004.htm",
+        "source_type": "nevo.co.il",
+        "candidate_id": "19adae04-5a4e-43e3-aa82-14c11bbeb1fc",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.75,
+        "title": "בג\"ץ 3017/12 התנועה למען איכות השלטון בישראל נ' ראש הממשלה (פסק דין מנחה בנושא סבירות)",
+        "origin": "perplexity",
+        "snippet": "פסק דין מנחה של בית המשפט העליון בעניין עילת הסבירות ושיקול דעת מינהלי; מקור זה מצביע על ההלכה בתחום הביקורת השיפוטית על החלטות מנהליות, אך ללא קישור ישיר זמין בתוצאות שסופקו.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "classified_source_class": "court_case"
+        },
+        "query_he": "בית המשפט העליון פסקי דין 'עילת הסבירות' הגדרה מטרת העילה 'ביקורת שיפוטית' 'שיקול דעת מנהלי' פסק דין מנחה",
+        "source_url": "https://www.nevo.co.il",
+        "source_type": "nevo.co.il",
+        "candidate_id": "bce89090-88c0-43d8-9b26-01f239c6beb2",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.75,
+        "title": "בג\"ץ 389/80 דפי זהב בע\"מ נ' רשות השידור",
+        "origin": "perplexity",
+        "snippet": "פסק דין יסוד בהתפתחות עילת הסבירות במשפט המינהלי הישראלי; נחשב לפסק דין מנחה ביחס לביקורת שיפוטית על שיקול דעת מינהלי.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "psakdin.co.il",
+          "classified_source_class": "court_case"
+        },
+        "query_he": "בית המשפט העליון פסקי דין 'עילת הסבירות' הגדרה מטרת העילה 'ביקורת שיפוטית' 'שיקול דעת מנהלי' פסק דין מנחה",
+        "source_url": "https://www.psakdin.co.il",
+        "source_type": "psakdin/takdin",
+        "candidate_id": "eab65025-1f6b-4ade-aa26-26b69ba3ec21",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "על הסוציולוגיה והאפיסטמולוגיה של המשבר החוקתי: עילת הסבירות ותרבות ההצדקה",
+        "origin": "perplexity",
+        "snippet": "משה כהן-אליה. מאמר בכתב העת 'מעשי משפט'. עוסק בעילת הסבירות, התפתחותה בדין הישראלי, ותפקידה כמנגנון של ביקורת שיפוטית.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.m.tau.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר עילת הסבירות הגדרה מטרת העילה 'ביקורת שיפוטית' אהרן ברק 'reasonableness' משפט מנהלי מאמר",
+        "source_url": "https://law.m.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/18/4Moshe%20Cohen-Eliya.pdf",
+        "source_type": "מאמר אקדמי",
+        "candidate_id": "26e95f2d-5b0f-4e5f-b35f-80c44b75f372",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "עילת אי־הסבירות במשפט המנהלי",
+        "origin": "perplexity",
+        "snippet": "כתב העת משפטים; מאמר אקדמי העוסק בעילת אי־הסבירות במשפט המנהלי, בבסיסים העיוניים לביקורת בעילה זו ובשאלת מתחם הסבירות. מקור סמכותי בעברית, עם דיון במבחני הסבירות ובחריגה קיצונית.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'חוסר סבירות קיצוני' 'חוסר קשר רציונלי' מבחני סבירות משפט מנהלי אייל גרוס או מאמר סמכותי",
+        "source_url": "http://lawjournal.huji.ac.il/article/12/1042",
+        "source_type": "article",
+        "candidate_id": "6ff40475-78e7-495b-a3c2-49b46ec72f0c",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "עילת חוסר־הוודאות במשפט הציבורי",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי ב'משפט וממשל' שדן בעילות ביקורת במשפט הציבורי; כולל התייחסות מפורשת לכך שרק חוסר סבירות קיצוני יביא לפסילת אקט מינהלי.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'חוסר סבירות קיצוני' 'חוסר קשר רציונלי' מבחני סבירות משפט מנהלי אייל גרוס או מאמר סמכותי",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/8-tamir.pdf",
+        "source_type": "article",
+        "candidate_id": "95c83771-76b7-4560-980f-8243006682a3",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "regulation",
+        "score": 0.75,
+        "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 – תקנה 42 (מחיקה מחמת שימוש לרעה בהליכי משפט)",
+        "origin": "perplexity",
+        "snippet": "המסמך כולל את נוסח התקנות ובו תקנה 42 העוסקת במחיקה מחמת שימוש לרעה בהליכי משפט, ככלי דיוני רלוונטי לבקשות לעיכוב/השעיית הליך.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "classified_source_class": "government_report"
+        },
+        "query_he": "תקנות סדר הדין האזרחי צו ביניים צו לשימוע 'השעיה' 'החזרת הליך' הוראות נוגעות לסעד כנגד החלטות מנהליות תקנות",
+        "source_url": "https://fs.knesset.gov.il/23/Committees/23_cs_bg_582439.doc",
+        "source_type": "knesset.gov.il",
+        "candidate_id": "c4bd0e7b-2f3e-4b6e-a5f8-f55e967eb0aa",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "regulation"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 20973,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial"
+      },
+      {
+        "ms": 35706,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 40006,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 34468,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 25683,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.C1.initial"
+      },
+      {
+        "ms": 28782,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.C4.initial"
+      },
+      {
+        "ms": 18718,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.C2.initial"
+      },
+      {
+        "ms": 25641,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      }
+    ],
+    "dropped_sources": [
+      {
+        "url": "https://www.gov.il/BlobFolder/news/judgespeech61219/he/%D7%A4%D7%A8%D7%A9%D7%A0%D7%95%D7%AA,%20%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA,%20%D7%9E%D7%99%D7%93%D7%AA%D7%99%D7%95%D7%AA%20-%20%D7%A2%D7%A8%D7%9B%D7%99%D7%9D%20%D7%A1%D7%95%D7%91%D7%99%D7%99%D7%A7%D7%98%D7%99%D7%91%D7%99%D7%99%D7%ם,%20%D7%A9%D7%95%D7%A4%D7%98%D7%99%D7%9D%20%D7%90%D7%95%D7%91%D7%99%D7%99%D7%A7%D7%98%D7%99%D7%91%D7%99%D7%99%D7%9D.pdf",
+        "role": "scholarship",
+        "title": "פרשנות, סבירות, מידתיות: ערכים סובייקטיביים, שופטים אובייקטיביים",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר עילת הסבירות הגדרה מטרת העילה 'ביקורת שיפוטית' אהרן ברק 'reasonableness' משפט מנהלי מאמר",
+        "drop_reason": "class_government_report_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://journal.lawforum.org.il/shapira-svirut/",
+        "role": "scholarship",
+        "title": "על סבירותה של עילת הסבירות",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר עילת הסבירות הגדרה מטרת העילה 'ביקורת שיפוטית' אהרן ברק 'reasonableness' משפט מנהלי מאמר",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://israeliconstitutionalism.wordpress.com/2023/09/10/100923/",
+        "role": "scholarship",
+        "title": "שלילת ביקורת שיפוטית של \"סבירות ההחלטה\": על ממשלה בלתי-מוגבלת",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר עילת הסבירות הגדרה מטרת העילה 'ביקורת שיפוטית' אהרן ברק 'reasonableness' משפט מנהלי מאמר",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "http://www.hapraklit.co.il/_uploads/dbsattachedfiles/nun1_6.pdf",
+        "role": "scholarship",
+        "title": "על חוקתיות ועל סבירות: בעקבות בג\"ץ 5636/01 בקמן נ' שר העבודה והרווחה",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'חוסר סבירות קיצוני' 'חוסר קשר רציונלי' מבחני סבירות משפט מנהלי אייל גרוס או מאמר סמכותי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://search.worldcat.org/search?q=%D7%A2%D7%A6%D7%99%D7%9E%D7%95%D7%AA+%D7%94%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA+%D7%94%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA+%D7%93%D7%A8%D7%92%D7%95%D7%AA+%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA",
+        "role": "scholarship",
+        "title": "עצימות הביקורת השיפוטית: על דרגות הסבירות במשפט המינהלי",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'עצימות הביקורת' 'דרגות סבירות' משפט מנהלי ניתוח דוקטרינרי 'עצימות שיפוטית' אהרן ברק אייל גרוס",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://scholar.google.com/scholar?q=%D7%A2%D7%A6%D7%99%D7%9E%D7%95%D7%AA+%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA+%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA+%D7%93%D7%A8%D7%92%D7%95%D7%AA+%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA+%D7%9E%D7%A9%D7%A4%D7%98+%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99",
+        "role": "scholarship",
+        "title": "מנהליות, סבירות ועצימות ביקורת שיפוטית",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'עצימות הביקורת' 'דרגות סבירות' משפט מנהלי ניתוח דוקטרינרי 'עצימות שיפוטית' אהרן ברק אייל גרוס",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://books.google.com/books?q=Israel+administrative+law+judicial+review+reasonableness",
+        "role": "scholarship",
+        "title": "Administrative Law and Judicial Review in Israel",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'עצימות הביקורת' 'דרגות סבירות' משפט מנהלי ניתוח דוקטרינרי 'עצימות שיפוטית' אהרן ברק אייל גרוס",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://scholar.google.com/scholar?q=Aharon+Barak+reasonableness+judicial+review+Israel",
+        "role": "scholarship",
+        "title": "Aharon Barak - Reasonableness and Judicial Review (search)",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'עצימות הביקורת' 'דרגות סבירות' משפט מנהלי ניתוח דוקטרינרי 'עצימות שיפוטית' אהרן ברק אייל גרוס",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://scholar.google.com/scholar?q=Eyal+Gross+judicial+review+reasonableness+administrative+law+Israel",
+        "role": "scholarship",
+        "title": "Eyal Gross - administrative law judicial review reasonableness (search)",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'עצימות הביקורת' 'דרגות סבירות' משפט מנהלי ניתוח דוקטרינרי 'עצימות שיפוטית' אהרן ברק אייל גרוס",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%A1%D7%93%D7%A8_%D7%94%D7%93%D7%99%D7%9F_%D7%94%D7%90%D7%96%D7%A8%D7%97%D7%99",
+        "role": "regulation",
+        "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 – תקנה 40(א) (איחוד דיון)",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "תקנות סדר הדין האזרחי צו ביניים צו לשימוע 'השעיה' 'החזרת הליך' הוראות נוגעות לסעד כנגד החלטות מנהליות תקנות",
+        "drop_reason": "class_unknown_not_admitted_for_regulation"
+      }
+    ]
+  }
+}

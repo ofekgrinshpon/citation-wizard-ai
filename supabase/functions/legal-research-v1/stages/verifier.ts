@@ -258,7 +258,6 @@ export async function runVerifier(
           description: "Emit one verdict per provided candidate for this claim.",
           parameters: VERIFIER_TOOL_PARAMETERS,
         },
-        reasoningEffort: "low",
       });
       stage_runs.push({
         stage: `verifier.${claim_id}.escalated`,
