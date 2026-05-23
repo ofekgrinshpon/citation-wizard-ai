@@ -1,0 +1,1295 @@
+{
+  "generated_at": "2026-05-23T16:25:05.828Z",
+  "pipeline": "legal-research-v1",
+  "phase": "P2",
+  "total_wall_ms": 419504,
+  "fixture_count": 6,
+  "fixtures": [
+    {
+      "id": "L1",
+      "question": "מהם התנאים למתן צו מניעה זמני?",
+      "expectations": {
+        "statute_terms": true,
+        "black_letter": true,
+        "long_form_escalation": false
+      },
+      "http_status": 200,
+      "wall_ms": 68317,
+      "run_id": "3c8c6f60-f7f3-43b3-ac29-7b8c93c2bce4",
+      "analyzer": {
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "confidence": 0.9,
+        "schema_valid": true,
+        "ms": 24840
+      },
+      "planner": {
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "schema_valid": true,
+        "ms": 42622
+      },
+      "stage_runs": [
+        {
+          "stage": "claim_analyzer.initial",
+          "model": "openai/gpt-5-mini",
+          "ms": 24840,
+          "ok": true
+        },
+        {
+          "stage": "query_planner.initial",
+          "model": "openai/gpt-5-mini",
+          "ms": 42622,
+          "ok": true
+        }
+      ],
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0,
+      "claims_full": [
+        {
+          "claim_id": "C1",
+          "text_he": "האם על המבקש להציג קייס ראשוני (סיכוי סביר להצלחת התביעה / שאלה מהותית המגיעה לבירור) כדי לקבל צו מניעה זמני?",
+          "required_roles": [
+            "binding_case_law",
+            "persuasive_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "העמדה של 'קייס ראשוני' היא דוקטרינית ונקבעה בפסיקה התקיפה; יש צורך בפסיקה מחייבת ובמאמרים להסבר והבחנה בין ניסוחים שונים (סיכוי להצלחה/שאלה מהותית)."
+        },
+        {
+          "claim_id": "C2",
+          "text_he": "האם המבקש חייב להוכיח חשש לנזק חמור ובלתי הפיך ובחוסר הסעד הולם בפיצוי כספי (irreparable harm / lack of adequate remedy)?",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "שאלת הנזק הבלתי הפיך והיעדר פתרון כספי היא מרכיב מפתח במבחן לצווי מניעה שנקבע בפסיקה ובספרות המשפטית המחייבת ניתוח של המונחים והמעשים המעשיים."
+        },
+        {
+          "claim_id": "C3",
+          "text_he": "האם והיכן מבוצעת שקילת אינטרסים (balance of convenience/public interest) — כיצד שוקלים את נזק הצד המבקש מול נזקו של הצד הנתבע והתחשבות בציבור?",
+          "required_roles": [
+            "binding_case_law",
+            "persuasive_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "השיקול של איזון נזקים ועניין הציבור מהווה שלב דוקטרינרי בפסיקה; יש צורך בפסיקה מחייבת ומקורות משווים ליישום ועקרונות."
+        },
+        {
+          "claim_id": "C4",
+          "text_he": "מהם תנאי הפרוצדורה והסמכויות השיפוטיות לגבי מתן צו מניעה זמני (לדוגמה: הליכים במעמד צד אחד/דו‑צדדי, חובה בערבות/התחייבות לפיצוי, משך הצו ותיקונו)?",
+          "required_roles": [
+            "binding_case_law",
+            "regulation",
+            "persuasive_case_law"
+          ],
+          "is_black_letter": false,
+          "reason": "מדובר בשילוב של הדין הפרוצדורלי (כללי סדר הדין ותקנות בית המשפט) ובפסקי דין שמקיימים או מפרשים את כללי הפרוצדורה; חלק מהאיסורים וההנחיות הם ענייני שיקול שיפוטי פחות 'ספרי' ולכן לא כל הטענות הן black‑letter."
+        },
+        {
+          "claim_id": "C5",
+          "text_he": "האם קיימים שינויים או דגשים ייחודיים במתן צווי מניעה זמניים בסוגי תיקים מסוימים (למשל: צווי מניעה בתחום בעלות/Injunctions in IP or labor contexts)?",
+          "required_roles": [
+            "persuasive_case_law",
+            "scholarship",
+            "binding_case_law"
+          ],
+          "is_black_letter": false,
+          "reason": "בעוד עקרונות היסוד דומים, ישנם הבדלים יישומיים לפי תחום המקרה; נדרש עיון בפסיקה תחומית ובספרות להשוואה והבהרה."
+        }
+      ],
+      "queries_full": [
+        {
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "query_he": "צו מניעה זמני סיכוי סביר להצלחת התביעה 'סיכוי להצלחה' 'בית המשפט העליון' פסק דין קווים מנחים 'סיכוי ראשוני'",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לחפש פסיקה מחייבת של בית המשפט העליון שמנסחת את דרישת ה‑prima facie/קייס ראשוני לצו מניעה זמני."
+        },
+        {
+          "claim_id": "C1",
+          "role": "persuasive_case_law",
+          "query_he": "צו מניעה זמני 'סיכוי ראשוני' 'סיכוי להצלחה' פסק דין מחוזי או בתי משפט לערעורים דוגמאות להחלת הקריטריון",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "case",
+          "reason": "להשיג פסקי דין שאינם עליונים (מחוזי/ערעורים) שמיישמים או מפרשים את דרישת הסיכוי הראשוני בהליכים שונים."
+        },
+        {
+          "claim_id": "C1",
+          "role": "scholarship",
+          "query_he": "מאמר 'סיכוי ראשוני' 'צו מניעה זמני' ניתוח תביעתי 'prima facie' כתב עת למשפטים ישראלי ביקורת",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "למצוא ניתוחים אקדמיים המבהירים מה הכוונה ב‑'קייס ראשוני' וכיצד יישומו בפסיקה."
+        },
+        {
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "query_he": "צו מניעה זמני 'נזק חמור ובלתי הפיך' 'חוסר סעד הולם' 'בית המשפט העליון' פסק דין תקדימתי על הדרישה ל‑irreparable harm",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לזהות פסיקה עליונה שקובעת את הדרישה להוכחת נזק בלתי הפיך וחוסר סעד הולם לצורך מתן צו מניעה זמני."
+        },
+        {
+          "claim_id": "C2",
+          "role": "scholarship",
+          "query_he": "מאמר 'נזק בלתי הפיך' 'חוסר סעד הולם' צו מניעה זמני סקירה משפטית השוואתית דיני סעד זמני",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "למצוא מאמרים שמתמצתים את המונחים ותנאי ההוכחה, כולל השוואה לדוקטרינות זרות (irreparable harm, adequate remedy)."
+        },
+        {
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "query_he": "צו מניעה זמני 'איזון אינטרסים' 'איזון נוחות' 'טובת הציבור' 'בית המשפט העליון' פסק דין על שקלול נזק המבקש מול נזק הנתבע",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לחפש פסיקה עליונה שמפרטת היכן וכיצד מתבצע שקלול האינטרסים והאם יש התחשבות בטובת הציבור."
+        },
+        {
+          "claim_id": "C3",
+          "role": "persuasive_case_law",
+          "query_he": "צו מניעה זמני 'איזון נוחות' פסק דין מחוזי 'שקלול נזק' 'טובת הציבור' דוגמאות לשיקלול במקרים מעשיים",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "case",
+          "reason": "להביא פסקי דין מעשיים ממחוזי שמדגימים את השיקולים והשיטות לשקלול אינטרסים בסוגיות שונות."
+        },
+        {
+          "claim_id": "C3",
+          "role": "scholarship",
+          "query_he": "מאמר 'איזון אינטרסים' 'balance of convenience' 'צו מניעה זמני' ניתוח תיאורטי Israel comparative law כתב עת משפטים",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "למצוא מאמרים שמנתחים את עקרון איזון האינטרסים וכיצד לשקללו, כולל התייחסות לטובת הציבור."
+        },
+        {
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "query_he": "מעמד צד אחד צו מניעה זמני 'מעמד צד אחד' 'הליך ללא הודעה' 'ערבות' 'התחייבות לפיצוי' 'משך הצו' פסק דין בית המשפט העליון",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לזהות פסיקה מחייבת המסדירה סמכויות שיפוטיות והליך במעמד צד אחד, וחיובי ערבות או התחייבות לפיצוי."
+        },
+        {
+          "claim_id": "C4",
+          "role": "regulation",
+          "query_he": "חוק סדר הדין האזרחי, התשמ\"ד-1984 'צו מניעה' הוראות פרוצדורליות תקנות סדר הדין האזרחי 'צו מניעה' הודעה לעותר/משך צו/ערבות",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "regulation",
+          "reason": "למצוא הוראות חקיקה ותקנות סדר הדין האזרחי המסדירות את ההליך והסמכויות בנוגע לצווי מניעה זמניים."
+        },
+        {
+          "claim_id": "C4",
+          "role": "persuasive_case_law",
+          "query_he": "צו מניעה זמני פרוצדורה 'תקן ערבות' 'התחייבות פיצוי' 'תיקון צו' פסק דין מחוזי או ערעור על החלטת בתי משפט ראשון מטעם הצדדים",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "case",
+          "reason": "לאסוף פסקי דין מעשיים המבהירים נוהל פרוצדורלי, דרישות ערבויות ואורכי צווי מניעה זמניים בבתי משפט נמוכים יותר."
+        },
+        {
+          "claim_id": "C5",
+          "role": "persuasive_case_law",
+          "query_he": "צו מניעה זמני קניין רוחני 'פטנט' 'סימן מסחרי' 'הגנה זמנית' פסק דין מחוזי/ערעור דוגמאות ליישום שונה בתחום IP",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "case",
+          "reason": "למצוא פסקי דין שמציגים דגשים או התאמות בפרקטיקה של צווי מניעה זמניים בהליכים של קניין רוחני."
+        },
+        {
+          "claim_id": "C5",
+          "role": "scholarship",
+          "query_he": "מאמר 'צו מניעה זמני' 'קניין רוחני' 'דיני עבודה' השוואה פרוצדורלית דגשים מיוחדים כתב עת למשפטים ישראלי",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "לחפש מאמרים שמנתחים הבדלים פרוצדורליים ופרקטיקה ייחודית בסוגי תיקים שונים (IP, עבודה וכו')."
+        },
+        {
+          "claim_id": "C5",
+          "role": "binding_case_law",
+          "query_he": "צו מניעה זמני בתחום העבודה 'שימור מקום עבודה' 'צו מניעה כנגד פיטורים' 'בית הדין לעבודה' 'בית הדין הארצי' או 'בית המשפט העליון' פסק דין תקדימי",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "למצוא פסיקה מחייבת או תקדימית בתחום דיני עבודה שבה הוחלו תנאים מיוחדים על מתן צווי מניעה זמניים."
+        }
+      ],
+      "planning_error": null,
+      "raw_error": null
+    },
+    {
+      "id": "L2",
+      "question": "מהי דוקטרינת ההבטחה המנהלית?",
+      "expectations": {
+        "statute_terms": false,
+        "black_letter": true,
+        "long_form_escalation": false
+      },
+      "http_status": 200,
+      "wall_ms": 58556,
+      "run_id": "c7b8cb69-87c6-4b2d-9680-d2a456f1c082",
+      "analyzer": {
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "confidence": 0.9,
+        "schema_valid": true,
+        "ms": 19278
+      },
+      "planner": {
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "schema_valid": true,
+        "ms": 38924
+      },
+      "stage_runs": [
+        {
+          "stage": "claim_analyzer.initial",
+          "model": "openai/gpt-5-mini",
+          "ms": 19278,
+          "ok": true
+        },
+        {
+          "stage": "query_planner.initial",
+          "model": "openai/gpt-5-mini",
+          "ms": 38924,
+          "ok": true
+        }
+      ],
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0,
+      "claims_full": [
+        {
+          "claim_id": "C1",
+          "text_he": "הגדרה: מהי דוקטרינת ההבטחה המנהלית — האם קביעה/התחייבות של רשות מנהלית יכולה ליצור זכויות או לצמוח להטבות בעבור אדם שנכנס להסתמכות על ההבטחה",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "הדוקטרינה היא עקרון שפותח בפסיקה; מקורות חובה הם פסקי דין שעיצבו את התוכן, ותיאור דוקטרינרי בספרות משפטית שמבהיר את המשמעות והגבולות."
+        },
+        {
+          "claim_id": "C2",
+          "text_he": "תנאים/יסודות החלות — אילו רכיבים נדרש להוכיח כדי שהבטחה מנהלית תיחשב מחייבת (למשל: הבטחה ברורה/חד‑משמעית, הסתמכות של הפרט, הסתמכות סבירה וגורם לנזק/ויתור, היעדר פגיעה בריבונות לרשות או באינטרס הציבורי)",
+          "required_roles": [
+            "binding_case_law",
+            "persuasive_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "הגדרת היסודות היא תוצאה של פסיקה שקובעת מבחנים; פסיקה משכנעת והשירה המשפטית מסייעות לפרש ולגבש את המבחנים."
+        },
+        {
+          "claim_id": "C3",
+          "text_he": "ההשלכות והסעד — איזה סעד ניתן לקבל בעקבות הבטחה מנהלית (אכיפה של ההבטחה, פיצוי על הסתמכות, או מניעת נסיגה חד‑צדדית של הרשות) ומהו היקף הסעד",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "הסעד והיקפו נקבעים בפסיקה ובהבחנות דוקטריניות; הספרות המשפטית מסבירה אופני יישום והבחנה בין אכיפה לבין פיצוי."
+        },
+        {
+          "claim_id": "C4",
+          "text_he": "מגבלות וחריגים — מתי הרשות רשאית להתנער מההבטחה (התנגשות עם חקיקה/תקנה, שינוי מדיניות מהותי, אינטרס ציבורי כבד, אי־חוקיות של ההבטחה), ואיזון בין הגנת ההסתמכות לבין סמכות הרשות המינהלית",
+          "required_roles": [
+            "binding_case_law",
+            "primary_statute",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "החריגים נובעים הן מפסיקה שמגבילה את הדוקטרינה והן מהתנגשות אפשרית עם חקיקה תקנית; לכן צריך להסתמך על פסקי דין, על החוק ועל מאמרים שמנתחים את המתח בין ההגנה לפרט לבין סמכות הרשות."
+        }
+      ],
+      "queries_full": [
+        {
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון \"הבטחה מנהלית\" \"דוקטרינת ההבטחה\" הגדרה האם הבטחה של רשות מנהלית יוצרת זכויות או הטבות בעקבות הסתמכות; מפסקי דין מובילים המסבירים את עקרון ההבטחה המנהלית",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "למצוא פסיקה מחייבת של בית המשפט העליון שמגדירה את דוקטרינת ההבטחה המנהלית וקובעת האם התחייבות רשות יכולה ליצור זכויות לאזרח."
+        },
+        {
+          "claim_id": "C1",
+          "role": "scholarship",
+          "query_he": "מאמר משפטי \"הבטחה מנהלית\" הגדרה דוקטרינה \"הסתמכות\" \"זכויות\" \"משפט מנהלי\" סקירה תיאורטית",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "למצוא ניתוח אקדמי וסקירות דוקטרינליות המסבירות הגדרה ותאורטיזציה של דוקטרינת ההבטחה המנהלית."
+        },
+        {
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון \"הבטחה מנהלית\" \"הבטחה ברורה\" \"הסתמכות סבירה\" \"נזק\" תנאים יסודות מתי ההבטחה מחייבת; פסקי דין שנוסחו כקביעת תנאי המחייבות",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לזהות פסיקה מחייבת המפרטת את הרכיבים הנדרשים (הבטחה ברורה, הסתמכות, נזק ועוד) כדי שהבטחה מנהלית תהיה מחייבת."
+        },
+        {
+          "claim_id": "C2",
+          "role": "persuasive_case_law",
+          "query_he": "פסק דין מחוזי או מנהלי \"הבטחה מנהלית\" \"הסתמכות סבירה\" \"הבטחה חד־משמעית\" תיאור דרישות ותנאים; ע\"א/רע\"א/ע\"מ/בג\"צ שלא בבית המשפט העליון כפסיקה משכנעת",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "case",
+          "reason": "לספק דוגמאות פסיקה שאינן מחייבות של בתי משפט נמוכים או בג\"ץ שלא כרוטר, המציגות ניסוחים ופרקטיקה מקומית לגבי התנאים."
+        },
+        {
+          "claim_id": "C2",
+          "role": "scholarship",
+          "query_he": "מאמר משפטי תנאי ההבטחה המנהלית 'הבטחה ברורה', 'הסתמכות', 'הסתמכות סבירה', 'נזק' ניתוח השוואתי במשפט הישראלי והמשפט המשווה",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "לאסוף ניתוחים אקדמיים המשווים ניסוחי תנאים שונים ומבקרים את מסגרות ההוכחה הקיימות."
+        },
+        {
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסק דין סעד בעקבות הבטחה מנהלית אכיפה של הבטחה פיצוי על הסתמכות 'צו מניעה' 'צו בקשה' דוגמאות והיקף הסעד",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "למצוא פסקי דין מחייבים שבהם הוכר סעד בעקבות הבטחה מנהלית — אכיפתה, מתן פיצוי או צו מונע נסיגה — וכיצד הוגדר היקף הסעד."
+        },
+        {
+          "claim_id": "C3",
+          "role": "scholarship",
+          "query_he": "מאמר משפטי סעד בעקבות הבטחה מנהלית 'אכיפת הבטחה', 'פיצוי על הסתמכות', 'היקף סעד' משפט מנהלי ניתוח סעדי",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "לאתר ניתוחים אקדמיים על סוגי הסעדים הרלוונטיים, קריטריונים להענקת פיצוי או אכיפה והגבלות על היקף הסעד."
+        },
+        {
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון 'התנערות מהבטחה' 'נסיגה חד־צדדית' 'אינטרס ציבורי כבד' 'התנגשות עם חקיקה' פסקי דין שקובעים מתי רשות רשאית להתנער מהבטחה מנהלית",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "למצוא פסיקה מחייבת המסדירה את המגבלות והחריגים להתנערות מרעות הבטחה של רשות — מתי המנהל יכול לשנות החלטה שניתנה והאיזון מול אינטרס הציבור."
+        },
+        {
+          "claim_id": "C4",
+          "role": "primary_statute",
+          "query_he": "חקיקה הגבלת סמכות רשות מנהלית התנגשות עם חקיקה 'הסמכות המנהלית' 'התנערות מהחלטה מנהלית' חיפוש חוקים ותקנות המסדירים מקרים של שינוי מדיניות או הסתמכות הציבור",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "statute",
+          "reason": "לזהות הוראות חוקיות או סעיפים בחקיקה שמגבילים את נסיגת הרשות או מסמיכים אותה לשנות מדיניות, ולבדוק האם קיימת חקיקה מפורשת המתייחסת להשלכות הבטחה מנהלית."
+        },
+        {
+          "claim_id": "C4",
+          "role": "scholarship",
+          "query_he": "מאמר/סקירה 'מגבלות על ההבטחה המנהלית' 'אינטרס ציבורי' 'שינוי מדיניות' 'התנגשות עם חקיקה' משפט מנהלי מאמר ביקורתי",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "לאתר ניתוחים אקדמיים הבוחנים את המתח בין הגנת ההסתמכות לבין סמכות השלטון, כולל עקרונות כמו אינטרס ציבורי ושינוי מדיניות."
+        }
+      ],
+      "planning_error": null,
+      "raw_error": null
+    },
+    {
+      "id": "L3",
+      "question": "מתי בית המשפט יפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים תרופות?",
+      "expectations": {
+        "statute_terms": true,
+        "black_letter": true,
+        "long_form_escalation": false
+      },
+      "http_status": 200,
+      "wall_ms": 55266,
+      "run_id": "038dfd4d-78d7-48d2-85c7-1795495ba215",
+      "analyzer": {
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "confidence": 0.9,
+        "schema_valid": true,
+        "ms": 24928
+      },
+      "planner": {
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "schema_valid": true,
+        "ms": 29965
+      },
+      "stage_runs": [
+        {
+          "stage": "claim_analyzer.initial",
+          "model": "openai/gpt-5-mini",
+          "ms": 24928,
+          "ok": true
+        },
+        {
+          "stage": "query_planner.initial",
+          "model": "openai/gpt-5-mini",
+          "ms": 29965,
+          "ok": true
+        }
+      ],
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0,
+      "claims_full": [
+        {
+          "claim_id": "C1",
+          "text_he": "האם וסמוך על איזה יסוד בסעיף 15 לחוק החוזים (תרופות) בית המשפט יכול להפחית פיצוי מוסכם; מהם תנאי הסף החוקי להפחתה.",
+          "required_roles": [
+            "primary_statute",
+            "binding_case_law"
+          ],
+          "is_black_letter": true,
+          "reason": "השאלה נוגעת לזכותה המנוסחת של בית המשפט לפי סעיף ספציפי בחוק — יש צורך בטקסט החוקי עצמו ובפסיקה מחייבת המפרשת את הסעיף כדי לקבוע מתי מותרים הפחתות."
+        },
+        {
+          "claim_id": "C2",
+          "text_he": "אילו שיקולים וגורמים שופטים לוקחים בחשבון כשמחליטים להפחית פיצוי מוסכם (למשל: פרופורציונליות בין הפיצוי לנזק, כוונת הצדדים, האם מדובר בהערכה מוקדמת לעומת סעיף עונשי, עוצמת ההפרה ורמת המשא-ומתן).",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship",
+            "persuasive_case_law"
+          ],
+          "is_black_letter": true,
+          "reason": "הבחינה המעשית של חובת השיקול היא דוקטרינלית ותלויה בפירוש הפסיקה הרחבה ובהסברים אקדמיים לגבי גורמים רלוונטים."
+        },
+        {
+          "claim_id": "C3",
+          "text_he": "איזה הליך ונטל הוכחה חלים על הצד המבקש להפחתה — מתי יש להגיש בקשה, מי נושא בנטל, האם בית המשפט יכול להפחית באופן חלקי או לבטל כלל את הסעיף.",
+          "required_roles": [
+            "primary_statute",
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": false,
+          "reason": "זו שאלה פרוצדוראלית-דוקטרינלית שדורשת שילוב של יסוד חוקי ופסיקה מנחה וכן פרשנות אקדמית ליישום הליכים ונטל הראיה."
+        },
+        {
+          "claim_id": "C4",
+          "text_he": "כיצד פועל הקשר בין הפחתה לפי סעיף 15 לבין שאר הסעדים — האם ההפחתה מותירה את הסעיף בתוקף כמפורטת או כמתוקנת, ומה השפעתה על תביעות נזיקין נוספות, ריבית והפעלות משלימות של תקנות/סעדים אחרים.",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship",
+            "persuasive_case_law"
+          ],
+          "is_black_letter": false,
+          "reason": "ניתוח זה מצריך הבנה מעשית של תוצאות ההפחתה בפסיקה וההשפעה על מערכות סעד שונות, שנמצאת בעיקר בפסיקה ובפרשנות אקדמית."
+        }
+      ],
+      "queries_full": [
+        {
+          "claim_id": "C1",
+          "role": "primary_statute",
+          "query_he": "סעיף 15 לחוק החוזים (תרופות) הוראות הטקסט: סמכויות בית המשפט להפחתת פיצוי מוסכם, ניסוח החוק, תנאי סף להפחתה, האם יש תנאים מפורשים בנוסח הסעיף",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "statute",
+          "reason": "לקבוע את נוסח החוק המדויק, סמכויות בית המשפט ותנאי הסף החוקיים המפורשים בסעיף 15."
+        },
+        {
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פיצוי מוסכם סעיף 15 לחוק החוזים (תרופות) פסק דין \"הפחתת פיצוי מוסכם\" קביעת תנאי סף ומבחנים משפטיים",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "למצוא פסיקה מחייבת שמפרשת את סעיף 15, קובעת את תנאי הסף ומבהירה כיצד בית המשפט מיישם את הסעיף."
+        },
+        {
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון שיקולים להפחתת פיצוי מוסכם פרופורציונליות כוונת הצדדים הערכת נזק מוקדמת מול סעיף עונשי חומרת ההפרה עוצמת משא ומתן פסק דין",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לזהות פסקי דין מחייבים שמפרטים את השיקולים והגורמים ששופטים מאזכרים כשהם מפחיתים פיצוי מוסכם."
+        },
+        {
+          "claim_id": "C2",
+          "role": "scholarship",
+          "query_he": "מאמר דיני חוזים פיצוי מוסכם סעיף 15 שיקולים להפחתה פרופורציונליות כוונת הצדדים סעיף עונשי מאמר ב\"משפטים\" או בעיוני משפט או מאמר של פרופ'/ד\"ר בתחום חוזים",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "לחפש ניתוחים אקדמיים שמסבירים את הגורמים המשקללים והמבחנים התיאורטיים שישמשו את בתי המשפט."
+        },
+        {
+          "claim_id": "C2",
+          "role": "persuasive_case_law",
+          "query_he": "פסק דין מחוזי או ערכאה נמוכה פיצוי מוסכם סעיף 15 שיקולים פרופורציונליות כוונת הצדדים הערכה מוקדמת סעיף עונשי החלטה תובעת/נתבעת",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "case",
+          "reason": "לאסוף פסיקה לא מחייבת (מחוזי/שלום/ערעורים) שתתמוך בהבנת מגוון השיקולים והיישומים בפרקטיקה השיפוטית."
+        },
+        {
+          "claim_id": "C3",
+          "role": "primary_statute",
+          "query_he": "סעיף 15 לחוק החוזים (תרופות) הוראות לגבי הליך בקשה להפחתה מתי יש להגיש בקשה סמכות בית המשפט להפחית באופן חלקי או לבטל את הסעיף היבטים פורמליים ופרוצדורליים",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "statute",
+          "reason": "לאתר הוראות חוקיות מפורשות לגבי ההליך, מועד הבקשה והאם הסמכות כוללת הפחתה חלקית או ביטול מלא."
+        },
+        {
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון נטל הוכחה הפחתת פיצוי מוסכם סעיף 15 מתי תוגש הבקשה מי נושא בנטל האם ניתן הפחתה חלקית או ביטול פסק דין",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לקבל פסיקה מחייבת המבהירה את נטל ההוכחה, מועד ההגשה והאם ניתן להפחית באופן חלקי או לבטל את סעיף הפיצוי."
+        },
+        {
+          "claim_id": "C3",
+          "role": "scholarship",
+          "query_he": "מאמרים/ספרות משפטית נטל הוכחה וההליך בבקשות להפחתת פיצוי מוסכם סעיף 15 דיון בפרוצדורה ופירושי בתי המשפט",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "לאתר ניתוחים אקדמיים על הנטל וההליך, שיטות הוכחה והמלצות פרשניות."
+        },
+        {
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פיצוי מוסכם סעיף 15 השפעה על שאר הסעדים האם ההפחתה משאירה את הסעיף בתוקף כמתוקן או פסול השפעה על תביעות נזיקין ריבית ואכיפת פסק דין פסקי דין רלוונטיים",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "למצוא פסיקה מחייבת שמבהירה את הקשר בין הפחתת פיצוי מוסכם לסעדים אחרים ולמעשה ההסעתי של פסקי הדין."
+        },
+        {
+          "claim_id": "C4",
+          "role": "scholarship",
+          "query_he": "מאמר משפטי השפעת הפחתת פיצוי מוסכם על תביעות נזיקין, ריבית, סעד משלימי ופרשנות של סעיף 15 ניתוח תכליתי ומשפטי",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "לאתר ספרות שמנתחת כיצד הפחתה לפי סעיף 15 משפיעה על זכויות נוספות, ריבית וסעדים משלימים."
+        },
+        {
+          "claim_id": "C4",
+          "role": "persuasive_case_law",
+          "query_he": "פסקי דין מחוזיים/שלום פיצוי מוסכם סעיף 15 השפעה על תביעות נזיקין ריבית והסעדים הנוספים האם השינוי בחישוב משנה את אכיפת ההוראה",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "case",
+          "reason": "לאסוף פסקי דין שאינם מחייבים המדגימים בשטח את הקשר בין הפחתה לפי סעיף 15 לסעדים אחרים."
+        }
+      ],
+      "planning_error": null,
+      "raw_error": null
+    },
+    {
+      "id": "L4",
+      "question": "מהי דוקטרינת השתק פלוגתא?",
+      "expectations": {
+        "statute_terms": false,
+        "black_letter": true,
+        "long_form_escalation": false
+      },
+      "http_status": 200,
+      "wall_ms": 70589,
+      "run_id": "f9b4be5a-4f82-455f-8768-2016c66491dc",
+      "analyzer": {
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "confidence": 0.9,
+        "schema_valid": true,
+        "ms": 26472
+      },
+      "planner": {
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "schema_valid": true,
+        "ms": 43834
+      },
+      "stage_runs": [
+        {
+          "stage": "claim_analyzer.initial",
+          "model": "openai/gpt-5-mini",
+          "ms": 26472,
+          "ok": true
+        },
+        {
+          "stage": "query_planner.initial",
+          "model": "openai/gpt-5-mini",
+          "ms": 43834,
+          "ok": true
+        }
+      ],
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0,
+      "claims_full": [
+        {
+          "claim_id": "C1",
+          "text_he": "מהי דוקטרינת השתק פלוגתא — הגדרה ואלמנטים נדרשים (ייצוג/התנהגות של צד, הסתמכות של הצד השני, שינוי עמדת הצד הניזוק/נזק או חוסר הוגנות כתוצאה מההתנהגות)",
+          "required_roles": [
+            "binding_case_law",
+            "persuasive_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "לניסוח מדויק של אלמנטים דוקטרינריים צריך הסתמכות על פסיקה מחייבת וניתוח ספרותי והחלטות אחרות שמבהירות את העקרונות והמרחקים בהם מיושמת הדוקטרינה."
+        },
+        {
+          "claim_id": "C2",
+          "text_he": "האם יש תשתית חקיקתית בישראל לדוקטרינה והאם בתי המשפט בישראל מכירים ומחילים את השתק פלוגתא; זיהוי פסקי דין מרכזיים ותמצית ההכרעות",
+          "required_roles": [
+            "binding_case_law",
+            "primary_statute",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "שאלת הכרת הדוקטרינה דורשת בדיקה האם קיימת הוראה חקיקתית ישירה או שהדוקטרינה התגבשה בפסיקה המחייבת; לכן נחוצים מקורות חקיקתיים ופסיקה מחייבת וכן פרשנות אקדמית."
+        },
+        {
+          "claim_id": "C3",
+          "text_he": "כיצד משווה השתק פלוגתא לדוקטרינות קרובות (למשל promissory estoppel, estoppel by representation, estoppel by convention) ומה ההבחנות המעשיות ביניהן",
+          "required_roles": [
+            "binding_case_law",
+            "persuasive_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": false,
+          "reason": "השוואה דוקטרינרית מצריכה בירור פסיקה מפרקטיקות שונות וספרות מוסמכת כדי להבחין בין סוגי ה־estoppel והיישום שלהם."
+        },
+        {
+          "claim_id": "C4",
+          "text_he": "אילו סעדות וסייגים מציעים בתי המשפט כאשר הם מיישמים השתק פלוגתא (צו מניעה, סעד תיקוני, פיצוי) ומה הגבולות וההתנגדויות להבאת הדוקטרינה (נושאים ציבוריים, סמכויות חקיקה, עניינים פרוצדורליים)",
+          "required_roles": [
+            "binding_case_law",
+            "persuasive_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "כדי לדעת אילו סעדות ניתנות ומתי יש לבדוק פסיקה מפורשת והנמקותיה וכן ניתוחים אקדמיים לגבי ההיקף והסייגים של הדוקטרינה."
+        }
+      ],
+      "queries_full": [
+        {
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "query_he": "פסק דין בית המשפט העליון 'השתק פלוגתא' הגדרה אלמנטים 'הסתמכות' 'שינוי מעמד' 'חוסר הוגנות' תמצית ההכרעה",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "למצוא פסיקה מחייבת ישראלית שמגדירה את הדוקטרינה ומפרטת את האלמנטים הנדרשים (ייצוג/התנהגות, הסתמכות, שינוי/נזק או חוסר הוגנות)."
+        },
+        {
+          "claim_id": "C1",
+          "role": "persuasive_case_law",
+          "query_he": "פסקי דין זרים promissory estoppel 'High Trees' 'Central London' 'D & C Builders v Rees' 'Waltons Stores v Maher' תמצית אלמנטים והנמקות",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "case",
+          "reason": "להשיג פסיקה זרה משפיעה המסבירה עקרונות ואלמנטים של promissory estoppel והשוואת היסודות התוכניים."
+        },
+        {
+          "claim_id": "C1",
+          "role": "scholarship",
+          "query_he": "מאמר משפטי 'השתק פלוגתא' הגדרה אלמנטים 'הסתמכות' 'שינוי עמדת הניזוק' חוסר הוגנות ביקורת משפטית",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "למצוא ניתוחים אקדמיים בעברית/באנגלית שמפרקים את האלמנטים ועוסקים בדרישות הראייתיות והתיאורטיות של הדוקטרינה."
+        },
+        {
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "query_he": "פסקי דין מרכזיים בישראל 'השתק פלוגתא' בית המשפט העליון ניסוח ההכרעה השפעה על הדין החוזי 'פסק דין' תמצית",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לזהות פסקי דין ישראליים מרכזיים שמכירים או דנים ביישום השתק פלוגתא ולתמצת את הכרעותיהם."
+        },
+        {
+          "claim_id": "C2",
+          "role": "primary_statute",
+          "query_he": "קיום תשתית חקיקתית בישראל ל'השׁתק פלוגתא' חיפוש בחוקים: 'חוק החוזים' 'חוק החוזים (חלק כללי)' 'חוק החוזים (תרופות)' 'נזיקין' 'השתק' האם יש אזכור בחקיקה",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "statute",
+          "reason": "לבדוק אם יש תיקון/סעיף בחקיקה הישראלית שמסמיך או מתאר דוקטרינה דומה, או לציין חוסר תשתית חקיקתית."
+        },
+        {
+          "claim_id": "C2",
+          "role": "scholarship",
+          "query_he": "מאמר משפטי 'השתק פלוגתא' בישראל היכן מוכר הדוקטרינה כיצד בתי המשפט מחילים אותה סקירה פסקי דין מרכזיים",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "למצוא ניתוחים וביקורות אקדמיות על מידת ההכרה והיישום של השתק פלוגתא בישראל וסיכום פסקי הדין המרכזיים."
+        },
+        {
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "query_he": "פסקי דין ישראליים שמשווים 'השׁתק פלוגתא' ל-'estoppel by representation' או 'estoppel by convention' 'בית המשפט העליון' הבחנה בין דוקטרינות",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "למצוא מקור מחייב ישראלי שמבצע הבחנה בין דוקטרינות קרובות ומבהיר את הגבולות ביניהן."
+        },
+        {
+          "claim_id": "C3",
+          "role": "persuasive_case_law",
+          "query_he": "פסיקה זרה 'distinction promissory estoppel and estoppel by representation' 'estoppel by convention' התיקונים וההבחנות המעשיות דוגמאות מהחקיקה האנגלית/אוסטרלית/אמריקאית",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "case",
+          "reason": "להשיג פסיקה זרה שמבהירה את ההבחנות התכליתיות והמעשיות בין סוגי ה-estoppel לצורך השוואה."
+        },
+        {
+          "claim_id": "C3",
+          "role": "scholarship",
+          "query_he": "מאמר השוואתי 'promissory estoppel' 'estoppel by representation' 'estoppel by convention' הבחנות תכליתיות מעשיות משפט אנגלי אמריקאי אוסטרלי",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "למצוא ניתוחים אקדמיים המשווים בין הדוקטרינות ומפרטים את ההבדלים המעשים וההשלכות הפרקטיות."
+        },
+        {
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "query_he": "פסקי דין ישראליים 'השתק פלוגתא' סעדות 'צו מניעה' 'פיצוי' 'סעד תיקוני' גבולות וסייגים decyzיה בית המשפט העליון",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לזהות כיצד בתי המשפט בישראל פורמלית מבקשים סעד כאשר הם מיישמים השתק פלוגתא ואילו מגבלות הוטלו בפסיקה."
+        },
+        {
+          "claim_id": "C4",
+          "role": "persuasive_case_law",
+          "query_he": "פסיקה זרה 'remedies promissory estoppel' 'injunction' 'specific performance' 'compensation' 'Waltons Stores v Maher' 'High Trees' גישות לסעד והגבלות",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "case",
+          "reason": "להביא דוגמאות פסיקה זרה לגבי סוגי סעד שניתנים במסגרת estoppel וההגבלות הציבוריות/פרוצדורליות שצוינו."
+        },
+        {
+          "claim_id": "C4",
+          "role": "scholarship",
+          "query_he": "מאמרים 'השתק פלוגתא' סעדות וסייגים 'צו מניעה' 'פיצוי' 'עניינים ציבוריים' 'סמכות חקיקה' דיון ביקורתי",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "לזהות המלצות אקדמיות לגבי סעדות מקובלות, סייגים משפטיים וטיעונים נגד החלת הדוקטרינה במקרים ציבוריים או פרוצדורליים."
+        }
+      ],
+      "planning_error": null,
+      "raw_error": null
+    },
+    {
+      "id": "L5",
+      "question": "מהי עילת הסבירות ומה היקף הביקורת השיפוטית עליה?",
+      "expectations": {
+        "statute_terms": false,
+        "black_letter": true,
+        "long_form_escalation": false
+      },
+      "http_status": 200,
+      "wall_ms": 64398,
+      "run_id": "22b76bc7-be4a-4454-9624-7d2edf44cb36",
+      "analyzer": {
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "confidence": 0.9,
+        "schema_valid": true,
+        "ms": 18491
+      },
+      "planner": {
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "schema_valid": true,
+        "ms": 45545
+      },
+      "stage_runs": [
+        {
+          "stage": "claim_analyzer.initial",
+          "model": "openai/gpt-5-mini",
+          "ms": 18491,
+          "ok": true
+        },
+        {
+          "stage": "query_planner.initial",
+          "model": "openai/gpt-5-mini",
+          "ms": 45545,
+          "ok": true
+        }
+      ],
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0,
+      "claims_full": [
+        {
+          "claim_id": "C1",
+          "text_he": "מהו המושג 'עילת הסבירות' במשפט המינהלי — הגדרה תכליתית וערכית של העילה ומהם מרכיביה העקרוניים (למשל: קשר סיבתי בין הנתונים להחלטה, חוסר קיצוניות מוחשית, אי שימוש בשיקולים זרים וכו')",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "עילת הסבירות היא דוקטרינה שהתפתחה בעיקר בפסיקה של בתי המשפט העליונים; ספרות משפטית מסייעת להבהיר מרכיבים ותתי־בחינות שלה."
+        },
+        {
+          "claim_id": "C2",
+          "text_he": "מהי הבסיס החוקי/פסיקתי לעילת הסבירות — מקור העילה והיחס שלה לחקיקה ולקונספטים אחרים (כגון מידת הסבירות לעומת מידת ההגיון המשפטי או עילת האי־השתלבות/אפליה)",
+          "required_roles": [
+            "binding_case_law",
+            "primary_statute",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "יש לברר האם העילה נגזרת מפסיקה בלבד או שיש לה בסיס תקדימי/חוקי; לכן דרושים פסקי דין מחייבים ובחינה של חקיקה רלוונטית וספרות."
+        },
+        {
+          "claim_id": "C3",
+          "text_he": "מה היקף הביקורת השיפוטית על עילת הסבירות — מבחנים/סטנדרטים שהשופט נוקט (רמת הפטור/ההשתלבות, תכליתיות, מידת הצניעות/מדרגיות), והחומרה של פיקוח הביקורת במצבים שונים (תחומי שיפוט, שיקולי מדיניות, עניינים פוליטיים, ביטחון)",
+          "required_roles": [
+            "binding_case_law",
+            "persuasive_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "מאפייני היקף הביקורת נקבעים בפסיקה המחייבת ונושאים להשפעה של פסקי דין משכנעים וספרות שמנתחת הבדלים קונטקסטואליים."
+        },
+        {
+          "claim_id": "C4",
+          "text_he": "מהם המגבלות וההשפעות הפרקטיות של עילת הסבירות — סייגים (אי־התערבות בזכות הפרלמנט/מענה למינהל), ההשלכות על אמצעי סעד (ביטול החלטה, החזרת החלטה לשיקול מחדש, צווי ביניים), ונקודות מחלוקת עקרוניות בסביבה החוקתית הישראלית",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship",
+            "government_report"
+          ],
+          "is_black_letter": false,
+          "reason": "שאלות אלה משיקות לפרקטיקה המנהלית והמדיניות ציבורית; יש צורך בפסיקה למחייבת, בניתוח אקדמי ובעתים בדוחות ממשלתיים המתארים השפעות ומנהגים מינהליים."
+        }
+      ],
+      "queries_full": [
+        {
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "query_he": "פסקי-דין של בית המשפט העליון שהגדירו את עילת הסבירות והסבירו את מרכיביה התכליתיים והערכיים — חיפוש מונחים: \"עילת הסבירות\" \"הגדרה\" \"קשר סיבתי\" \"חוסר קיצוניות\" \"שיקולים זרים\" \"אי הסבר\"",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "למצוא פסקי-דין מחייבים שבהם הוסברה מהי עילת הסבירות ומהם המרכיבים העקרוניים שהשופטים ביססו בפסיקה הישראלית."
+        },
+        {
+          "claim_id": "C1",
+          "role": "scholarship",
+          "query_he": "מאמרים אקדמיים בעברית ובאנגלית על הגדרת עילת הסבירות במשפט המינהלי בישראל — חיפוש מונחים: \"עילת הסבירות\" \"הגדרה תכליתית\" \"קשר סיבתי\" \"שיקולים זרים\" כתב עת משפטי",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "לגיבוי תיאור מרכיבי העילה בפרשנות אקדמית, ניתוחים תכליתיים ודיונים ערכיים המשולבים בפסיקה."
+        },
+        {
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "query_he": "פסקי-דין של בית המשפט העליון הדנים במקור החוקי/הפסיקתי של עילת הסבירות והקשר בינה לבין חקיקה ומושגים אחרים (\"מידת הסבירות\" מול \"מידת ההגיון המשפטי\"; עילת האי-השתלבות/אפליה)",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לזהות כיצד בתי המשפט ניסחו את היסוד המשפטי של העילה ואיך הם יחסו אותה למושגים סמוכים בפסיקה המחייבת."
+        },
+        {
+          "claim_id": "C2",
+          "role": "primary_statute",
+          "query_he": "האם יש עיגון חקיקתי לעילת הסבירות בישראל — חיפוש בקטלוג החקיקה: \"חוק יסוד: כבוד האדם וחירותו\" \"חוק בתי המשפט\" \"היקף ביקורת שיפוטית\" \"עילת הסבירות\" (חיפוש אחר אזכורים בחקיקה או בתקנות המאזכרים הגבלת סמכות או ביקורת שיפוטית)",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "statute",
+          "reason": "לבחון האם קיימת עיגון חוקי ישיר או הוראות בחקיקה שמשפיעות על מעמד עילת הסבירות והיחס בינה לבין סמכויות המחוקק/המינהל."
+        },
+        {
+          "claim_id": "C2",
+          "role": "scholarship",
+          "query_he": "מאמרים משפטיים וסקירות ספרותיות על מקורות עילת הסבירות וזיקה בינה לבין מידת ההגיון המשפטי ועילות כמו אי-השתלבות או אפליה — חיפוש מונחים: \"מקור עילת הסבירות\" \"מידת ההגיון המשפטי\" \"אי-השתלבות\" כתבי עת אקדמיים",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "לאסוף ניתוחים תאורטיים והצעות פרשניות על מקור העילה והיחס שלה לנורמות חוקתיות ושונות."
+        },
+        {
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "query_he": "פסקי-דין של בית המשפט העליון שקבעו מבחנים או סטנדרטים לביקורת סבירות — מונחים לחיפוש: \"מדרגיות\" \"צניעות שיפוטית\" \"היקף הביקורת\" \"שיקולי מדיניות\" \"ענייני ביטחון\"",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "למצוא את הפסיקה המחייבת שקובעת את רמות העוצמה של ביקורת הסבירות וכיצד הן מוחלות בהקשרים שונים."
+        },
+        {
+          "claim_id": "C3",
+          "role": "persuasive_case_law",
+          "query_he": "פסיקות זרות בנוגע לביקורת סבירות/unreasonableness והשוואת סטנדרטים: UK Wednesbury \"Wednesbury unreasonableness\"; קנדה Dunsmuir 2008 \"reasonableness\"; ארה\"ב Chevron/Skidmore בהקשר של מידת הפיקוח (מונחי חיפוש בעברית ובאנגלית)",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "case",
+          "reason": "לקבל מסגרות השוואתיות וניתוח של מבחנים זרים שעיצבו את שיטות הביקורת המנהלית ולהשוות למודל הישראלי."
+        },
+        {
+          "claim_id": "C3",
+          "role": "scholarship",
+          "query_he": "מאמרים והשוואות אקדמיות על היקף ועוצמת הביקורת השיפוטית בעילת הסבירות — חיפוש מונחים: \"מדרגיות\" \"צניעות שיפוטית\" \"היקף הביקורת\" השוואה ישראל-בריטניה-קנדה",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "לאפשר ניתוח תאורטי והשוואתי כיצד שופטים מנסחים מבחנים שונים ובאילו נסיבות מחריפות או מרככות את הביקורת."
+        },
+        {
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "query_he": "פסיקות בית המשפט העליון העוסקות במגבלות ובהשפעות הפרקטיות של עילת הסבירות — סייגי אי-התערבות, יחסי פרלמנט-בית משפט, והכרעות בנוגע לסעד: \"ביטול החלטה\" \"החזרת החלטה לשיקול מחדש\" \"צו ביניים\"",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לזהות בקביעות מחייבות איך בתי המשפט מטפלים בסעד ומתי הם נמנעים מהתערבות מטעמי משילות או פרלמנטיות."
+        },
+        {
+          "claim_id": "C4",
+          "role": "scholarship",
+          "query_he": "מאמרים ודעות אקדמיות על סייגים לעילת הסבירות וההשלכות החוקתיות בישראל — חיפוש מונחים: \"אי-התערבות\" \"ריבונות פרלמנטרית\" \"השלכות פרקטיות\" \"סעד\" כתבי עת משפטיים",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "לאסוף ניתוחים על ההשלכות העקרוניות והיישומיות של עילת הסבירות במסגרת המשטר החוקתי הישראלי."
+        },
+        {
+          "claim_id": "C4",
+          "role": "government_report",
+          "query_he": "דו\"חות ממשלתיים/ועדות כנסת על סמכות שיפוטית וביקורת מנהלית המתייחסים לעילת הסבירות — חיפוש מונחים: \"דו\"ח\" \"ועדה\" \"ביקורת שיפוטית\" \"עילת הסבירות\" \"משרד המשפטים\" \"ועדת חקיקה\"",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "report",
+          "reason": "למצוא דו\"חות רשמיים או המלצות של ועדות/משרדי ממשלה הנוגעים למגבלות ופיקוח שיפוטי בהליכים מנהליים."
+        }
+      ],
+      "planning_error": null,
+      "raw_error": null
+    },
+    {
+      "id": "L6",
+      "question": "נניח שרשות מקומית נתנה ליזם התחייבות כתובה לקדם תב\"ע מסוימת ואף אפשרה לו להשקיע כספים בהסתמך על אותה התחייבות, אך לאחר חילופי הנהלה הרשות חזרה בה בטענה שההתחייבות ניתנה בחוסר סמכות ושקיים אינטרס ציבורי לשנות את המדיניות. מהם התנאים לאכיפת הבטחה מנהלית במקרה כזה, ומה משקלם של הסתמכות, סמכות, ושינוי נסיבות?",
+      "expectations": {
+        "statute_terms": false,
+        "black_letter": false,
+        "long_form_escalation": true
+      },
+      "http_status": 200,
+      "wall_ms": 102374,
+      "run_id": "24c07d4c-564f-4765-a82e-742454f9381c",
+      "analyzer": {
+        "model_initial": "openai/gpt-5",
+        "model_final": "openai/gpt-5",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [
+          "A1:question.length>200"
+        ],
+        "confidence": 0.8,
+        "schema_valid": true,
+        "ms": 69583
+      },
+      "planner": {
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [],
+        "schema_valid": true,
+        "ms": 32435
+      },
+      "stage_runs": [
+        {
+          "stage": "claim_analyzer.initial",
+          "model": "openai/gpt-5",
+          "ms": 69583,
+          "ok": true
+        },
+        {
+          "stage": "query_planner.initial",
+          "model": "openai/gpt-5-mini",
+          "ms": 32435,
+          "ok": true
+        }
+      ],
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0,
+      "claims_full": [
+        {
+          "claim_id": "C1",
+          "text_he": "התנאים הכלליים לאכיפת הבטחה מנהלית: הבטחה מפורשת, ברורה וקונקרטית; ניתנה על-ידי גורם מוסמך; אינה נוגדת הוראת חוק; ניתנה ונבחנת בתום-לב; קיימת הסתמכות סבירה של המובטח; ואין אינטרס ציבורי כבד-משקל המצדיק חזרה מן ההבטחה לאחר איזון ומידתיות.",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "דיני ההבטחה המנהלית בישראל מעוצבים בעיקר בפסיקה המחייבת של בית המשפט העליון ומוסברים בכתביהם של מלומדים; יש להציג את המבחנים והאיזונים מתוך הדין המחייב ולהיתמך בפרשנות המלומדים."
+        },
+        {
+          "claim_id": "C2",
+          "text_he": "משמעות טענת חוסר סמכות: אם ההבטחה ניתנה בחוסר סמכות מהותית או בניגוד מפורש לחוק – ככלל אין לאוכפה; אם קיים פגם שאינו שולל סמכות מהותית (למשל פגם פרוצדורלי) והרשות הייתה בעלת סמכות עקרונית – ניתן לשקול אכיפה או תרופות חלופיות בכפוף לדיני הסבירות והמידתיות.",
+          "required_roles": [
+            "primary_statute",
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "שאלת היקף וסוג הסמכות נגזרת מהסדרים סטטוטוריים, והשלכות פגם סמכותי על אכיפה של הבטחה נקבעו בפסיקה המחייבת ומעובדות בדוקטרינה האקדמית."
+        },
+        {
+          "claim_id": "C3",
+          "text_he": "משקל ההסתמכות: הסתמכות משמעותית ותמת-לב של הניצג (השקעות, שינוי מצב לרעה) מחזקת את הנטייה לאכוף או לכל הפחות להעניק סעד חלופי כגון פיצויי הסתמכות או הסדרי מעבר; נדרשת הוכחת קשר סיבתי וצפיות סבירה להסתמכות.",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "האיזון בין הסתמכות פרטית לבין אינטרס ציבורי עוצב בפסיקה (כולל מבחני עוצמת ההסתמכות והסעד ההולם) ומבואר בהרחבה בספרות."
+        },
+        {
+          "claim_id": "C4",
+          "text_he": "שינוי נסיבות או שינוי מדיניות: לרשות מינהלית סמכות לשנות מדיניות ואף לחזור מהבטחה כאשר קיים שינוי מהותי בנסיבות או אינטרס ציבורי כבד-משקל; עם זאת, החזרה כפופה למבחני סבירות, מידתיות, חובת שימוע, בחינת חלופות ושקילת מתן פיצוי או הקלות עקב הסתמכות.",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "הדין המחייב משרטט את גבולות החזרה מהבטחה בשל אינטרס ציבורי ושינויי נסיבות, לרבות חובת ההליך ההוגן והאיזונים, והדבר נלמד מן הפסיקה ומבואר בדוקטרינה."
+        },
+        {
+          "claim_id": "C5",
+          "text_he": "הקשר התכנוני (תב\"ע): התחייבות רשות מקומית לקדם תכנית כפופה למסגרת הסטטוטורית של דיני התכנון והבניה ואינה יכולה לכבול שיקול דעת סטטוטורי של מוסדות התכנון או להבטיח תוצאה תכנונית; לכל היותר ניתן להתחייב לפעול לקידום בהתאם לדין, והאכיפה בהקשר זה מצומצמת במיוחד לנוכח האינטרס הציבורי והמנגנונים הסטטוטוריים.",
+          "required_roles": [
+            "primary_statute",
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "היקף סמכויות הרשות והמגבלות על הבטחות בתחום התכנון והבניה נובעים ישירות מהוראות חוק התכנון והבניה ומההלכה הפסוקה האוסרת כבילת שיקול דעת סטטוטורי; הספרות מסבירה את יישום המגבלות הללו בפועל."
+        }
+      ],
+      "queries_full": [
+        {
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "query_he": "פסקי דין של בית המשפט העליון על 'הבטחה מנהלית' ו'אכיפת הבטחה מנהלית' הכוללים דיון בהכרחיות הבטחה מפורשת, בהירות וקונקרטיות ובדיני הסתמכות (מילות חיפוש: \"הבטחה מנהלית\" \"אכיפת הבטחה\" \"הסתמכות\" \"בהירות\" \"בית המשפט העליון\")",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לאסוף פסיקה מחייבת שקבעה את התנאים הכלליים לאכיפת הבטחה מנהלית (בהירות, קונקרטיות, הסתמכות וכו')"
+        },
+        {
+          "claim_id": "C1",
+          "role": "scholarship",
+          "query_he": "מאמרים אקדמיים בעברית על עקרונות אכיפת הבטחה מנהלית, כולל ניתוח תנאי הבהירות, סמכות, תום-לב והאיזון בין אינטרס פרטי לציבורי (מילות חיפוש: \"הבטחה מנהלית\" \"אכיפת הבטחה\" \"תום-לב\" \"הסתמכות\" \"מאמר\")",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "ניתוח תיאורטי והסברים אקדמיים שמפרקים את רכיבי הכלל ומה משקל כל רכיב בדיון המשפטי"
+        },
+        {
+          "claim_id": "C2",
+          "role": "primary_statute",
+          "query_he": "חוק הרשויות המקומיות סמכויות הרשות המקומית התחייבויות כלפי צדדים שלישיים; חיפוש במקורות הממסדיים של סעיפי חוק המגדירים סמכויות ותחומי סמכות הרשות המקומית (מילות חיפוש: \"חוק הרשויות המקומיות\" \"סמכויות\" \"התחייבות\" \"התחייבות בכתב\")",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "statute",
+          "reason": "לבחון את המסגרת הסטטוטורית המכתיבה את גבולות הסמכות של רשות מקומית כדי להכריע מתי הבטחה ניתנה בחוסר סמכות מהותית"
+        },
+        {
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "query_he": "פסקי דין של בית המשפט העליון על חוסר סמכות בהבטחות מנהליות; חיפוש תיקים שבהם בית המשפט דן בהשלכות של חוסר סמכות מהותית לעומת פגמים פרוצדורליים ביחס לאכיפת הבטחה (מילות חיפוש: \"חוסר סמכות\" \"הבטחה מנהלית\" \"בית המשפט העליון\" \"אכיפה\" \"פגם פרוצדורלי\")",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "למצוא פסיקה מחייבת שקובעת מתי חוסר סמכות שולל אכיפה ומתי ניתן לשקול סעד חלופי"
+        },
+        {
+          "claim_id": "C2",
+          "role": "scholarship",
+          "query_he": "מאמרים וביקורת משפטית על משמעות חוסר סמכות במינהל וביחס להבטחות מנהליות: הבחנה בין חוסר סמכות מהותי לפרוצדורלי והסתמכות על סמכות עקרונית (מילות חיפוש: \"חוסר סמכות\" \"הבטחה מנהלית\" \"פגם פרוצדורלי\" \"מאמר\")",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "מקורות אקדמיים שידונו בקריטריונים ובהצעות טיפול משפטי במקרים של חוסר סמכות שאינו מהותי"
+        },
+        {
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "query_he": "פסקי דין בית המשפט העליון על משקל ההסתמכות באכיפת הבטחה מנהלית, כולל מקרים שבהם הוכרז על פיצויי הסתמכות או קיומו של סעד חלופי (מילות חיפוש: \"פיצויי הסתמכות\" \"הסתמכות סבירה\" \"הבטחה מנהלית\" \"בית המשפט העליון\")",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לזהות פסיקה שמסבירה את משקל ההסתמכות, דרישות הוכחה (קשר סיבתי, נזק) וסוגי סעד שניתנים בעקבות הסתמכות"
+        },
+        {
+          "claim_id": "C3",
+          "role": "scholarship",
+          "query_he": "מאמרים וספרות מקצועית בעברית על פיצויי הסתמכות וסעד חלופי בהקשרים מנהליים, כולל דיון בקריטריונים להוכחת קשר סיבתי והצפיות הסבירות של הניצג (מילות חיפוש: \"פיצויי הסתמכות\" \"אכיפת הבטחה\" \"הסתמכות\" \"כספים שהושקעו\")",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "להבין את עקרונות הראיות והכלכליות בפסיקה ובספרות לגבי מתי מותרים פיצויי הסתמכות או סעד חלופי"
+        },
+        {
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "query_he": "פסקי דין של בית המשפט העליון בנושא שינוי מדיניות או שינוי נסיבות על-ידי רשויות ציבוריות והשלכות על התחייבויות קודמות; חפש מקרים שבהם נדון אכיפת הבטחה אחרי שינוי נסיבות, כולל דרישות שימוע, מידתיות ובדיקת חלופות (מילות חיפוש: \"שינוי מדיניות\" \"שינוי נסיבות\" \"הבטחה מנהלית\" \"חובת שימוע\" \"מידתיות\" \"בית המשפט העליון\")",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "למצוא פסיקה שקובעת מתי ניתן לחזור מהבטחה עקב שינוי נסיבות ומהם תנאי הסבירות והמידתיות החלים"
+        },
+        {
+          "claim_id": "C4",
+          "role": "scholarship",
+          "query_he": "מאמרים אקדמיים על זכויות הסתמכות מול זכות המנהל לשנות מדיניות: דיון בשקלול אינטרס ציבורי, חובת שימוע, מידתיות ומתן פיצוי במקרי חזרה מהבטחה (מילות חיפוש: \"שינוי מדיניות\" \"אכיפת הבטחה\" \"חובת שימוע\" \"מידתיות\" \"מאמר\")",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "להשיג ניתוחים אקדמיים על האיזון בין אינטרס ציבורי להסתמכות והפרקטיקה של יחס המנהל למצבים כאלה"
+        },
+        {
+          "claim_id": "C5",
+          "role": "primary_statute",
+          "query_he": "חיפוש פסקי דין ותגובות בחוק התכנון והבניה לגבי התחייבויות רשות מקומית לקדם תכנית (תב\"ע) וסמכויות מוסדות התכנון; מילות חיפוש: \"חוק התכנון והבניה\" \"תב\"ע\" \"סמכויות הועדות\" \"התחייבות לקדם תכנית\"",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "statute",
+          "reason": "לאחריות התכנונית יש מסגרת סטטוטורית ברורה: יש לבדוק מה מאפשר החוק לרשויות המקומיות להבטיח וכיצד זה משפיע על אכיפת התחייבות לקדם תב\"ע"
+        },
+        {
+          "claim_id": "C5",
+          "role": "binding_case_law",
+          "query_he": "פסקי דין בנושאי התחייבות רשות מקומית לקידום תב\"ע: מקרים שבהם נידונה אכיפת התחייבות לשיתוף פעולה בקידום תכנית, הגבולות של התחייבות מול סמכותם של הוועדות המחוזיות/המקומיות (מילות חיפוש: \"תב\"ע\" \"התחייבות לקדם תכנית\" \"בית המשפט העליון\" \"ועדה לתכנון\" \"אכיפה\")",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "להבין כיצד בתי המשפט מפרשים התחייבויות תכנוניות והאם הם מגבילים אכיפה בגלל מנגנונים תכנוניים ואינטרס ציבורי"
+        },
+        {
+          "claim_id": "C5",
+          "role": "scholarship",
+          "query_he": "מאמרים מקצועיים על גבולות ההתחייבות התכנונית של רשויות מקומיות לקדם תב\"ע, כולל ניתוח השפעת המנגנונים הסטטוטוריים והתנגשות עם שיקול הדעת הסטטוטורי של מועצות ותכניות (מילות חיפוש: \"התחייבות תכנית\" \"תב\"ע\" \"אכיפה\" \"מנגנונים סטטוטוריים\" \"מאמר\")",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "למצוא ניתוחים אקדמיים שמבהירים מדוע אכיפה בתחום התכנון מצומצמת וכיצד יש לשקלל אינטרס ציבורי ומנגנוני תכנון"
+        }
+      ],
+      "planning_error": null,
+      "raw_error": null
+    }
+  ]
+}
