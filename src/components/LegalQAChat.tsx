@@ -13,8 +13,16 @@ import { copyRichText } from "@/lib/clipboard";
 import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, GraduationCap, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, Lock, Wand2, Zap, Brain, type LucideIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CaseSummaryReport } from "@/components/CaseSummaryReport";
-import { ResearchProgress } from "@/components/ResearchProgress";
-import { StageProgressList, type StageEvent } from "@/components/StageProgressList";
+
+// D3.1: ResearchProgress / StageProgressList removed (Research + chapter
+// streaming engine is offline). Keep a minimal StageEvent type so the
+// (now-dead) SSE consumer keeps compiling.
+type StageEvent = {
+  stage: string;
+  status: "running" | "complete";
+  label: string;
+  detail?: string;
+};
 import { CitationReviewPanel } from "@/components/legal-qa/CitationReviewPanel";
 import { MaintenanceCard } from "@/components/MaintenanceCard";
 
@@ -262,41 +270,22 @@ function clearAcademicSession(projectId?: string) {
   } catch { /* silent */ }
 }
 
-// ─── In-progress Deep research marker ──────────────────────────────
-// Persisted in localStorage BEFORE the request fires so navigating away
-// (e.g. opening the profile) doesn't lose the run id. On remount, the
-// resume effect polls legal-qa-status with this id.
-const RESEARCH_RUN_KEY = (projectId?: string) =>
-  projectId ? `relex_research_run_${projectId}` : "relex_research_run";
-const RESEARCH_RUN_TTL_MS = 30 * 60 * 1000; // 30 min — Deep cap is ~10 min
+// D3.1: Deep research marker helpers removed. Research is offline; the
+// async polling path against legal-qa-status no longer exists. We still
+// proactively wipe any stale `relex_research_run_*` key from older sessions
+// on mount (see clearStaleResearchMarkers below) so users do not poll a
+// deleted endpoint.
+const RESEARCH_RUN_KEY_PREFIX = "relex_research_run";
 
-type ResearchRunMarker = {
-  runId: string;
-  question: string;
-  depth: "fast" | "deep";
-  startedAt: number;
-};
-
-function loadResearchRunMarker(projectId?: string): ResearchRunMarker | null {
+function clearStaleResearchMarkers() {
   try {
-    const raw = safeStorage.getItem(RESEARCH_RUN_KEY(projectId));
-    if (!raw) return null;
-    const m = JSON.parse(raw) as ResearchRunMarker;
-    if (!m?.runId || typeof m.startedAt !== "number") return null;
-    if (Date.now() - m.startedAt > RESEARCH_RUN_TTL_MS) {
-      safeStorage.removeItem(RESEARCH_RUN_KEY(projectId));
-      return null;
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(RESEARCH_RUN_KEY_PREFIX)) keysToRemove.push(k);
     }
-    return m;
-  } catch { return null; }
-}
-
-function saveResearchRunMarker(marker: ResearchRunMarker, projectId?: string) {
-  try { safeStorage.setItem(RESEARCH_RUN_KEY(projectId), JSON.stringify(marker)); } catch { /* silent */ }
-}
-
-function clearResearchRunMarker(projectId?: string) {
-  try { safeStorage.removeItem(RESEARCH_RUN_KEY(projectId)); } catch { /* silent */ }
+    keysToRemove.forEach((k) => safeStorage.removeItem(k));
+  } catch { /* silent */ }
 }
 
 // ─── DB-backed academic session sync ───────────────────────────────
