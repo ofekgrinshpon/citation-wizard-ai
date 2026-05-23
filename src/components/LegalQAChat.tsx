@@ -16,6 +16,20 @@ import { CaseSummaryReport } from "@/components/CaseSummaryReport";
 import { ResearchProgress } from "@/components/ResearchProgress";
 import { StageProgressList, type StageEvent } from "@/components/StageProgressList";
 import { CitationReviewPanel } from "@/components/legal-qa/CitationReviewPanel";
+import { MaintenanceCard } from "@/components/MaintenanceCard";
+
+// ─── Offline-engine guard (D1 reset) ──────────────────────────────
+// Research mode and academic chapter generation (body/introduction/
+// conclusion) are temporarily offline while the search engine is rebuilt.
+// Short academic steps (suggest_topics / validate_question / propose_outline /
+// abstract synthesis) and all other modes (case_summary, pleading_analysis,
+// citation/bibliography) remain fully available.
+const RESEARCH_OFFLINE_TITLE = "מצב מחקר משפטי בשדרוג";
+const RESEARCH_OFFLINE_MESSAGE =
+  "אנו בונים מחדש את מנוע המחקר. בינתיים ניתן להמשיך להשתמש בסיכום פסיקה, בקרת מסמכים, אזכור אחיד, ביבליוגרפיה ובשלבים המקדימים של הכתיבה האקדמית.";
+const CHAPTER_OFFLINE_TITLE = "כתיבת פרקים בשדרוג";
+const CHAPTER_OFFLINE_MESSAGE =
+  "כתיבת פרקי גוף, מבוא וסיכום מושבתת זמנית. אישור שאלת מחקר, הצעת נושאים, בניית מתווה וייצור התקציר זמינים כרגיל.";
 
 // ─── Chapter role helpers ──────────────────────────────────────────
 // Three special chapters in addition to body: abstract, introduction, conclusion.
