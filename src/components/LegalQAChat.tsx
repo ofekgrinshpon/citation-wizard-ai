@@ -1313,12 +1313,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     // overwrite the marker.
     runPersistedRef.current = false;
     activeRunIdRef.current = null;
-    // Deep research: stop = discard. The background job will still finish on
-    // the server, but the user explicitly asked to abandon it, so we drop the
-    // marker rather than reattach on next mount.
-    if (taskMode === "research" && researchDepth === "deep") {
-      clearResearchRunMarker(currentProject?.id);
-    }
+    // D3.1: Deep research stop-discard removed — research is offline.
     toast.info("העיבוד הופסק");
   };
 
@@ -2038,36 +2033,15 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           ? "בצע ביקורת מקיפה על המסמך המצורף"
           : q;
 
-      // Deep research runs in the background server-side (Pass E). We mint
-      // the runId on the client and persist a marker BEFORE the fetch so
-      // navigating away (e.g. opening Profile) doesn't lose the run.
-      const isDeepResearch = taskMode === "research" && researchDepth === "deep";
-      const deepRunId: string | null = isDeepResearch ? crypto.randomUUID() : null;
-
+      // D3.1: Deep research async path removed. Research mode is offline
+      // (short-circuited to 503 server-side). Fast SSE path is also dead but
+      // left intact for any future revival.
       const body: Record<string, unknown> = {
         question: effectiveQuestion,
         taskMode,
         hasDocument: hasFile,
       };
-      // Send research depth ("fast" | "deep") only for research mode — other
-      // modes ignore it server-side.
-      if (taskMode === "research") {
-        body.depth = researchDepth;
-      }
-      // SSE streaming for Fast research only. Deep research uses the async
-      // (202 + run_id) path so it survives navigation / connection drops.
-      const useSseStream = taskMode === "research" && researchDepth === "fast";
-      if (useSseStream) {
-        body.stream = true;
-      }
-      if (deepRunId) {
-        body.runId = deepRunId;
-        body.projectId = currentProject?.id ?? null;
-        saveResearchRunMarker(
-          { runId: deepRunId, question: effectiveQuestion, depth: "deep", startedAt: Date.now() },
-          currentProject?.id,
-        );
-      }
+      const useSseStream = false;
       // Send multi-file context
       if (extractedTexts.length === 1) {
         body.documentText = extractedTexts[0].text;
@@ -2215,26 +2189,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       }
     } catch (e: any) {
       if (e.name === "AbortError") {
-        // Aborted — likely component unmounted (user navigated away). DO NOT
-        // clear the deep-research marker; the background job keeps running and
-        // the resume effect on next mount will reattach to it.
         return;
       }
       console.error("Legal QA error:", e);
       setError("שגיאה בעיבוד השאלה. נסו שוב.");
-      // Terminal error — drop the marker so we don't reattach to a dead run.
-      if (taskMode === "research" && researchDepth === "deep") {
-        clearResearchRunMarker(currentProject?.id);
-      }
     } finally {
-      const wasAborted = !!controller.signal.aborted;
       abortControllerRef.current = null;
       setLoading(false);
-      // Only clear on a clean completion or handled error, never on abort —
-      // abort means we want to reattach next mount.
-      if (!wasAborted && taskMode === "research" && researchDepth === "deep") {
-        clearResearchRunMarker(currentProject?.id);
-      }
     }
   };
 
@@ -3108,35 +3069,16 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           </Card>
         )}
 
-        {/* Loading: streamed runs (research + academic write_chapter) get the
-            live stage list with running/complete chips and a draft-text caret.
-            Non-streamed runs (case summary, pleading audit, short academic
-            sub-modes) keep the rotating skeleton placeholder. */}
-        {loading && taskMode !== "case_summary" && (() => {
-          const isAcademicChapterRun =
-            taskMode === "academic_writing" &&
-            (lastAcademicAction === "write_chapter" ||
-             lastAcademicAction === "write_introduction" ||
-             lastAcademicAction === "write_conclusion");
-          const stageMode: "research_fast" | "research_deep" | "academic_chapter" =
-            isAcademicChapterRun
-              ? "academic_chapter"
-              : researchDepth === "deep"
-              ? "research_deep"
-              : "research_fast";
-          const isStreamingMode = taskMode === "research" || isAcademicChapterRun;
-          return isStreamingMode ? (
-            <StageProgressList
-              stages={stageEvents}
-              postProcessingLabel={postProcessingLabel}
-              draftText={streamingDraft}
-              mode={stageMode}
-              isComplete={runComplete}
-            />
-          ) : (
-            <ResearchProgress mode={isAcademicChapterRun ? "academic_chapter" : "research"} />
-          );
-        })()}
+        {/* D3.1: Loading indicator — Research / chapter streaming UIs removed.
+            Show a minimal spinner for any non-case_summary loading state. */}
+        {loading && taskMode !== "case_summary" && (
+          <Card className="mt-4 border-border/40">
+            <CardContent className="flex items-center gap-3 py-4">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+              <p className="text-sm text-muted-foreground">מעבד…</p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Case-summary refusal card */}
         {!isAcademic && result?.refusal && (
