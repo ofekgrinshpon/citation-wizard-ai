@@ -23,19 +23,57 @@ const QS = [
   "מהי דרישת מיצוי ההליכים והסעד החלופי בעתירה לבג\"ץ?",
 ];
 
+async function submitOne(i, q, evalRunId, retry = false) {
+  const ctrl = new AbortController();
+  const to = setTimeout(() => ctrl.abort(), 120000);
+  try {
+    const r = await fetch(`${SUPABASE_URL}/functions/v1/legal-qa`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}`, apikey: ANON_KEY },
+      body: JSON.stringify({ question: q, taskMode: "research", depth: "deep", evalRunId, requestId: `eval:${evalRunId}` }),
+      signal: ctrl.signal,
+    });
+    const text = await r.text();
+    console.log(`[${i}] status=${r.status} body=${text.slice(0, 400)}`);
+    if (!r.ok && !retry) {
+      console.log(`[${i}] retrying once...`);
+      await new Promise(r => setTimeout(r, 2000));
+      return submitOne(i, q, evalRunId, true);
+    }
+    return { ok: r.ok, status: r.status, body: text };
+  } catch (e) {
+    console.log(`[${i}] ERR ${e.message}`);
+    if (!retry) {
+      await new Promise(r => setTimeout(r, 2000));
+      return submitOne(i, q, evalRunId, true);
+    }
+    return { ok: false, error: e.message };
+  } finally {
+    clearTimeout(to);
+  }
+}
+
 const runs = [];
 for (let i = 0; i < QS.length; i++) {
-  const q = QS[i];
-  const evalRunId = `qual8-${i+1}-${randomUUID().slice(0,6)}`;
-  console.log(`[${i+1}] submitting: ${q.slice(0,60)}...`);
-  // fire and don't wait for body
-  fetch(`${SUPABASE_URL}/functions/v1/legal-qa`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwt}`, apikey: ANON_KEY },
-    body: JSON.stringify({ question: q, taskMode: "research", depth: "deep", evalRunId, requestId: `eval:${evalRunId}` }),
-  }).then(r=>r.text()).catch(e=>console.log(`  fire err ${i+1}: ${e.message}`));
-  runs.push({ idx: i+1, q, evalRunId });
-  await new Promise(r=>setTimeout(r, 1500));
+  const evalRunId = `qual8-${i + 1}-${randomUUID().slice(0, 6)}`;
+  console.log(`\n[${i + 1}/${QS.length}] submitting: ${QS[i].slice(0, 60)}...  eid=${evalRunId}`);
+  const res = await submitOne(i + 1, QS[i], evalRunId);
+  runs.push({ idx: i + 1, q: QS[i], evalRunId, res });
+  await new Promise(r => setTimeout(r, 1000));
 }
-console.log("\nSUBMITTED:");
-console.log(JSON.stringify(runs, null, 2));
+
+console.log("\n\nSUBMITTED:");
+console.log(JSON.stringify(runs.map(r => ({ idx: r.idx, evalRunId: r.evalRunId, ok: r.res?.ok, status: r.res?.status })), null, 2));
+
+// Poll for rows
+console.log("\nPolling qa_logs for qual8-% rows...");
+const start = Date.now();
+while (Date.now() - start < 60000) {
+  const { count } = await admin.from("qa_logs").select("id", { count: "exact", head: true }).like("metadata->>eval_run_id", "qual8-%").gte("created_at", new Date(start - 5 * 60000).toISOString());
+  console.log(`t=${Math.round((Date.now() - start) / 1000)}s rows_with_qual8_eid=${count}`);
+  if ((count ?? 0) >= QS.length) break;
+  await new Promise(r => setTimeout(r, 5000));
+}
+
+console.log("\nEIDs for poller:");
+console.log(runs.map(r => `["${r.evalRunId}", ${r.idx}]`).join(", "));
