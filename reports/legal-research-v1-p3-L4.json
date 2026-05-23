@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-23T17:15:15.931Z",
+  "generated_at": "2026-05-23T17:38:12.220Z",
   "fixture": {
     "id": "L4",
     "question": "מהי דוקטרינת השתק פלוגתא?",
@@ -7,34 +7,34 @@
     "expected_black_letter": true
   },
   "http_status": 200,
-  "wall_ms": 72249,
+  "wall_ms": 99978,
   "response": {
     "answer": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
     "footnotes": [],
     "debug": {
-      "run_id": "9e17973c-e772-488a-a480-429279b61c82",
+      "run_id": "72b1db6e-e68b-40d7-88f9-635a0ca00bc6",
       "phase": "P3",
       "stage_runs": [
         {
           "stage": "claim_analyzer.initial",
           "model": "openai/gpt-5-mini",
-          "ms": 16571,
+          "ms": 22430,
           "ok": true
         },
         {
           "stage": "query_planner.initial",
           "model": "openai/gpt-5-mini",
-          "ms": 28654,
+          "ms": 38904,
           "ok": true
         },
         {
           "stage": "local_retrieval",
-          "ms": 16004,
+          "ms": 37693,
           "ok": true
         },
         {
           "stage": "perplexity_retrieval",
-          "ms": 26082,
+          "ms": 18946,
           "ok": true
         }
       ],
@@ -48,7 +48,7 @@
           "legal_area": "סדר דין אזרחי",
           "answer_type": "doctrinal_explanation",
           "schema_valid": true,
-          "ms": 16571
+          "ms": 22430
         },
         "planner": {
           "model_initial": "openai/gpt-5-mini",
@@ -56,499 +56,1357 @@
           "escalated_to_gpt5": false,
           "escalation_reason": [],
           "schema_valid": true,
-          "ms": 28654
+          "ms": 38904
         },
-        "claims_count": 4,
-        "queries_count": 10,
+        "claims_count": 5,
+        "queries_count": 11,
         "truncated_claims_count": 0,
         "truncated_queries_count": 0
       },
       "claims": [
         {
           "claim_id": "C1",
-          "text_he": "מהי הגדרה דוקטרינלית של 'השתק פלוגתא' ומהו הייעוד התכליתי של הדוקטרינה?",
+          "text_he": "מהות דוקטרינת 'השתק פלוגתא' — העיקרון שפסיקה סופית שקובעת עובדה או שאלה משפטית אוסרת ביהמ\"ש או צד להעלות מחדש את אותה שאלה בהליך אחר (issue preclusion).",
           "required_roles": [
             "binding_case_law",
             "scholarship"
           ],
           "is_black_letter": true,
-          "reason": "צורך בבסיס דוקטרינלי מחייב וטיעוני: ההגדרה והייעוד של הדוקטרינה נקבעים בעיקר בפסיקה מחייבת ובניתוח ספרותי משפטי."
+          "reason": "הגדרה ודוקטרינה מקורן בפסיקה ובספרות; יש להסתמך על החלטות המובהקות של בתי המשפט ושל הסברים ספרותיים."
         },
         {
           "claim_id": "C2",
-          "text_he": "מהם התנאים/אלמנטים הדרושים כדי שהשתק פלוגתא יחול (למשל: זהות פלוגתא, פסק דין חלוט, הכרעה חיונית, צדדים או חליפיהם, הזדמנות להתדיין)?",
-          "required_roles": [
-            "binding_case_law",
-            "scholarship",
-            "persuasive_case_law"
-          ],
-          "is_black_letter": true,
-          "reason": "אלמנטים אלו הם דוקטרינליים ונקבעים בפסיקה; יש להשלים בפירושים ובדוגמאות מתוך ספרות ופסקי דין משני ערכאות."
-        },
-        {
-          "claim_id": "C3",
-          "text_he": "מהו היקף ההשפעה של השתק פלוגתא — מה היא חוסמת, במקרים התקפים ומהן ההשפעות במשפטים משניים (למשל: האם חוסמת רק נקודה עובדתית או גם טענת משפט) ומה ההבדל בין השתק פלוגתא להשק עילה/res judicata?",
+          "text_he": "תנאי החלת ההשתק פלוגתא — אילו מרכיבים נדרשים כדי שהדוקטרינה תחול (פסיקה סופית, זהות פלוגתא/issue-identicality, הכרעה חיונית/נחוצה להכרעת הדין, צדדים זהים או חליפים/נציגים, הזדמנות מלאה והתדיינות הוגנת על הנושא).",
           "required_roles": [
             "binding_case_law",
             "scholarship"
           ],
           "is_black_letter": true,
-          "reason": "חובה להסתמך על פסיקה מחייבת להסביר את היקף האפקט התכליתי וההבדלים בין דוקטרינות קרובות, בתמיכה אנליטית מספקת."
+          "reason": "אלמנטים אלו הם ליבת הדוקטרינה ויש להצביע עליהם בפסיקה המחייבת ובדיונים ספרותיים."
+        },
+        {
+          "claim_id": "C3",
+          "text_he": "היקף ההשפעה וההבחנה בין 'השתק פלוגתא' ל'שיתוק עילה' (res judicata/claim preclusion) — מה בדיוק נחסם, האם ההשפעה חלה רק בסכסוך בין אותן טענות או גם בהליכים שונים, ומתי מתחיל ומסתיים היעדר האפשרות להעלות את הטענה מחדש.",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "דרושים מקורות מחייבים וספרותיים כדי להבדיל בין שתי דוקטרינות ולתאר את אפקט ההשתק בפועל."
         },
         {
           "claim_id": "C4",
-          "text_he": "אילו חריגים ומגבלות קיימים ליישום הדוקטרינה (למשל: שינוי נסיבות או החוק, היעדר הזדמנות מלאה להתדיין, ערעור תלוי ועומד, ראיות חדשות), וכיצד בתי המשפט נוהגים להתמודד עם חריגים אלה?",
+          "text_he": "חריגים והגנות כנגד הסרת ההשפעה — מקרים בהם ההשתק לא יחול או ישוחרר (למשל חוסר סמכות של בית הדין המקורי, חוסר הזדמנות הוגנת להתדיין, ראיות חדשות מהותיות, שינוי מהותי בחוק, שיקולי צדק בסיסיים, הבדלים בין שימוש התקפה/הגנתית בהשתק).",
           "required_roles": [
             "binding_case_law",
             "persuasive_case_law",
             "scholarship"
           ],
           "is_black_letter": false,
-          "reason": "חריגים ופיתוחיהם מעוגנים בפסיקה ובהיגיון משפטי תאורטי; דרוש שילוב של פסיקה מחייבת, פסיקה משכנעת וניתוח ספרותי כדי למפותם."
+          "reason": "חריגים נבנים בפסיקה ודיון ספרותי; חלקם מבוססים בפסיקה מחייבת וחלקם נימוקים שכנויים ומשכנעים."
+        },
+        {
+          "claim_id": "C5",
+          "text_he": "מעמדה של דוקטרינת ההשתק פלוגתא במשפט הישראלי — האם וכיצד בתי המשפט בישראל מיישמים את הדוקטרינה, מהן פסיקות־מפתח, ומהן ההשלכות הפרקטיות על פרקטיקה משפטית בישראל.",
+          "required_roles": [
+            "binding_case_law",
+            "scholarship"
+          ],
+          "is_black_letter": true,
+          "reason": "הבהרת הסטטוס הישראלית דורשת הצגות של פסקי־דין עליונים וניתוחים ספרותיים של היישום המקומי."
         }
       ],
       "queries": [
         {
           "claim_id": "C1",
           "role": "binding_case_law",
-          "query_he": "בית המשפט העליון \"השתק פלוגתא\" הגדרה דוקטרינלית יעוד תכלית",
+          "query_he": "השתק פלוגתא \"issue preclusion\" \"בית המשפט העליון\" הגדרה עקרונית \"השתק פלוגתא\" החלטה סופית קובעת עובדה או שאלה משפטית אסור להעלות מחדש",
           "targets": [
             "local_db"
           ],
           "expected_source_type": "case",
-          "reason": "צריך פסיקה מחייבת של בית המשפט העליון שמנסחת הגדרה דוקטרינלית ותכלית הדוקטרינה."
+          "reason": "לחפש פסיקה מחייבת של בית המשפט העליון שמנוסחת כהגדרה או תקדימית לגבי מהות הדוקטרינה והעקרון שאסור להעלאת אותה שאלה מחדש (issue preclusion)."
         },
         {
           "claim_id": "C1",
           "role": "scholarship",
-          "query_he": "מאמר משפטי \"השתק פלוגתא\" הגדרה תכליתית דוקטרינה סדר דין אזרחי",
+          "query_he": "מאמר \"השתק פלוגתא\" \"issue preclusion\" ישראל \"עיקרון\" \"השתק\" כתב-עת משפטי ניתוח תיאורטי",
           "targets": [
             "perplexity"
           ],
           "expected_source_type": "academic",
-          "reason": "לניתוח תכליתי והגדרתי מעמיק ישמשו מאמרים אקדמיים שמסבירים מקורות, מטרות וביקורות של הדוקטרינה."
+          "reason": "למצוא מקורות אקדמיים שמגדירים ומנתחים את מהות הדוקטרינה, מושגיה והתרגום שלה במשפט הישראלי ובספרות ההשוואתית."
         },
         {
           "claim_id": "C2",
           "role": "binding_case_law",
-          "query_he": "בית המשפט העליון \"השתק פלוגתא\" תנאים זהות פלוגתא פסק דין חלוט הכרעה חיונית צדדים הזדמנות להתדיין",
+          "query_he": "בית המשפט העליון \"השתק פלוגתא\" \"זהות פלוגתא\" \"הכרעה חיונית\" \"הזדמנות מלאה להתדיין\" תנאים להחלת השתק פלוגתא",
           "targets": [
             "local_db"
           ],
           "expected_source_type": "case",
-          "reason": "למציאת רשימת האלמנטים המשפטיים כפי שנוסחו בפסיקה המחייבת של העליון."
+          "reason": "לחפש פסקי-דין על ידי בית המשפט העליון שמפרטים או מסכמים את המרכיבים הדרושים לחלות ההשתק פלוגתא (זהות, הכרעה נחוצה, צדדים, הזדמנות להתדיין)."
         },
         {
           "claim_id": "C2",
           "role": "scholarship",
-          "query_he": "מאמר \"תנאים להשתק פלוגתא\" זהות פלוגתא פסק-דין חלוט הכרעה חיונית הזדמנות להתדיין",
+          "query_he": "מאמר \"תנאי השתק פלוגתא\" \"זהות פלוגתא\" \"הכרעה נחוצה\" \"הזדמנות להתדיין\" כתב-עת משפטי ישראלי ניתוח מרכיבי ההשתק",
           "targets": [
             "perplexity"
           ],
           "expected_source_type": "academic",
-          "reason": "מחקרים משווים וספרות משפטית מסבירים ומבקרים את ניסוחי התנאים ומציעים ניסוחים פרקטיים."
-        },
-        {
-          "claim_id": "C2",
-          "role": "persuasive_case_law",
-          "query_he": "פסק-דין בית משפט מחוזי \"השתק פלוגתא\" זהות פלוגתא הזדמנות להתדיין ראו גם ע\"א",
-          "targets": [
-            "local_db"
-          ],
-          "expected_source_type": "case",
-          "reason": "פסקי דין של בתי משפט מחוזיים ושיפוטים נמוכים מראים יישום פרקטי של התנאים ויכולים לשמש כהשפעה משכנעת."
+          "reason": "למצוא מאמרים אקדמיים שמנתחים את המרכיבים המשפטיים והמדיניות שמאחורי תנאי החלת ההשתק פלוגתא."
         },
         {
           "claim_id": "C3",
           "role": "binding_case_law",
-          "query_he": "בית המשפט העליון \"השתק פלוגתא\" היקף השפעה חוסמת טענה עובדתית או גם טענת משפט \"res judicata\" השוואה להשק עילה",
+          "query_he": "בית המשפט העליון \"השתק פלוגתא\" מול \"שיתוק עילה\" \"res judicata\" הבחנה היקף מה נחסם הליך אחר",
           "targets": [
             "local_db"
           ],
           "expected_source_type": "case",
-          "reason": "נדרש קו בפסיקה המחייב שמבהיר אילו סוגי טענות נחסמות על ידי הדוקטרינה וכיצד מייחסים אותה ל־res judicata/השק עילה."
+          "reason": "לחפש פסיקות על ידי העליון שמבחינות בין השתק פלוגתא לשיתוק עילה ומבהירות היקף החסימה — האם רק טענות זהות או גם הליכים שונים."
         },
         {
           "claim_id": "C3",
           "role": "scholarship",
-          "query_he": "מאמר השתק פלוגתא היקף חסימה טענה עובדתית משפטית השוואה res judicata השק עילה",
+          "query_he": "מאמר השוואתי \"השתק פלוגתא\" vs \"שיתוק עילה\" res judicata \"מבחן זהות\" \"חלוף הזמן\" ניתוח ישראלי",
           "targets": [
             "perplexity"
           ],
           "expected_source_type": "academic",
-          "reason": "ספרות משפטית מסבירה את ההבחנות בין חסימה של עובדות לעומת טענות משפטיות ומנתחת את יחס הדוקטרינות."
+          "reason": "למצוא עבודות אקדמיות שמנתחות את ההבחנה התיאורטית והמעשית בין שני המוסדות וההשלכות על פתיחת הליכים חוזרים."
         },
         {
           "claim_id": "C4",
           "role": "binding_case_law",
-          "query_he": "בית המשפט העליון \"השתק פלוגתא\" חריגים שינוי נסיבות היעדר הזדמנות להתדיין ערעור תלוי ראיות חדשות",
+          "query_he": "בית המשפט העליון \"חריגים להשתק פלוגתא\" \"חוסר סמכות\" \"ראיות חדשות\" חשבון פתיחת השתק מתי משחררים השתק",
           "targets": [
             "local_db"
           ],
           "expected_source_type": "case",
-          "reason": "לזהות איך הפסיקה המחייבת מטפלת בחריגים כגון שינוי נסיבות, היעדר הזדמנות להתדיין וראיות חדשות."
+          "reason": "לזהות פסיקות עליונות שבית המשפט קבע מתי לא יחול השתק או מתי יש לשחררו בשל חוסר סמכות, ראיות חדשות או עילות מהותיות אחרות."
         },
         {
           "claim_id": "C4",
           "role": "persuasive_case_law",
-          "query_he": "פסק-דין בית משפט מחוזי \"השתק פלוגתא\" חריגים ראיות חדשות ערעור תלוי ועומד שינוי נסיבות",
+          "query_he": "ע״א OR מחוזי \"השתק פלוגתא\" שחרור השתק \"הזדמנות להתדיין\" החלטת בית משפט מחוזי דוגמה חריג",
           "targets": [
-            "perplexity"
+            "local_db"
           ],
           "expected_source_type": "case",
-          "reason": "פסקי דין של בתי-משפט מחוזיים ומשפט זר יכולים להראות גישות שכנועיות להתמודדות עם חריגים בפועל."
+          "reason": "למצוא פסקי-דין של בתי משפט מחוזיים או ערעוריים שמדגימים חריגים או הבדלים בתכלול ההשתק, שימושים הגנתיים מול התקפיים ושיקולי שיפוט נמוכים יותר."
         },
         {
           "claim_id": "C4",
           "role": "scholarship",
-          "query_he": "מאמר משפטי \"חריגים השתק פלוגתא\" היעדר הזדמנות להתדיין ראיות חדשות שינוי נסיבות בתי משפט",
+          "query_he": "מאמר \"חריגים להשתק פלוגתא\" \"ראיות חדשות\" \"חוסר סמכות\" \"השתק התקפתי והשתק הגנתי\" פרשנות משפטית בישראל",
           "targets": [
             "perplexity"
           ],
           "expected_source_type": "academic",
-          "reason": "ניתוח אקדמי יספק דיון ביקורתי על החריגים והמלצות כיצד בתי המשפט נוהגים או צריכים להתייחס אליהם."
+          "reason": "לאסוף ניתוחים אקדמיים המפרטים חריגים והגנות כנגד החלת ההשתק ותפקידם במדיניות שיפוטית."
+        },
+        {
+          "claim_id": "C5",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון \"השתק פלוגתא\" \"פסיקות מפתח\" השפעה מעשית על הליכים אזרחיים ישראלי",
+          "targets": [
+            "local_db"
+          ],
+          "expected_source_type": "case",
+          "reason": "לזהות פסקי-דין מפתח של בית המשפט העליון שקבעו את מעמד הדוקטרינה והשתמשו בה במקרים מעשיים."
+        },
+        {
+          "claim_id": "C5",
+          "role": "scholarship",
+          "query_he": "מאמר \"מעמד השתק פלוגתא במשפט הישראלי\" \"השפעות פרקטיות\" \"הנחיות לעורכי דין\" כתב-עת משפטי ביקורת/ניתוח",
+          "targets": [
+            "perplexity"
+          ],
+          "expected_source_type": "academic",
+          "reason": "למצוא מאמרים שמסכמים את מצב היישום של הדוקטרינה בישראל ואת השלכותיה על פרקטיקה משפטית והמלצות פרקטיות."
         }
       ],
       "retrieval": {
-        "ms": 26085,
+        "ms": 37695,
         "local": {
-          "ms": 16004,
-          "candidates": 0,
+          "ms": 37693,
+          "candidates": 35,
           "per_query": [
             {
-              "claim_id": "C1",
-              "role": "binding_case_law",
-              "query_he": "בית המשפט העליון \"השתק פלוגתא\" הגדרה דוקטרינלית יעוד תכלית",
-              "text_hits": 0,
-              "vector_hits": 0,
-              "kept": 0,
-              "ms": 16002
-            },
-            {
               "claim_id": "C2",
               "role": "binding_case_law",
-              "query_he": "בית המשפט העליון \"השתק פלוגתא\" תנאים זהות פלוגתא פסק דין חלוט הכרעה חיונית צדדים הזדמנות להתדיין",
+              "original_query_he": "בית המשפט העליון \"השתק פלוגתא\" \"זהות פלוגתא\" \"הכרעה חיונית\" \"הזדמנות מלאה להתדיין\" תנאים להחלת השתק פלוגתא",
+              "normalized_query_he": "העליון השתק פלוגתא זהות הכרעה חיונית הזדמנות מלאה להתדיין להחלת",
+              "exact_clues": [],
+              "exact_hits": 0,
               "text_hits": 0,
-              "vector_hits": 0,
-              "kept": 0,
-              "ms": 16001
-            },
-            {
-              "claim_id": "C2",
-              "role": "persuasive_case_law",
-              "query_he": "פסק-דין בית משפט מחוזי \"השתק פלוגתא\" זהות פלוגתא הזדמנות להתדיין ראו גם ע\"א",
-              "text_hits": 0,
-              "vector_hits": 0,
-              "kept": 0,
-              "ms": 16002
+              "vector_hits": 6,
+              "kept": 6,
+              "ms": 37454,
+              "diag": {
+                "exact_status": "empty",
+                "exact_ms": 20001,
+                "text_status": "timeout",
+                "text_ms": 20001,
+                "vector_status": "ok",
+                "vector_ms": 17451,
+                "embedding_length": 768,
+                "embedding_ms": 189,
+                "expected_embedding_dim": 768,
+                "top_exact_titles": [],
+                "top_text_titles": [],
+                "top_vector_titles": [
+                  "סעדים בגין מצגי שווא: ניתוח כלכלי",
+                  "סיבתיות עמומה – הרחבה מתבקשת או אימפריאליזם סיבתי? | טל אלמקיס ואסף יעקב (רוב, מיעוט וכללי הכרעה)",
+                  "ביהמ\"ש המחוזי בתל אביב, השופטת אירית קלמן ברום: פס\"ד בתביעת תאומות סיאמיות שהופרדו מיד לאחר לידתן לפיצויים בגין \"חיים בעוולה\" (ת\"א 49805-08-15)",
+                  "בימ\"ש המחוזי ב\"ש, השופטת פאני גילת כהן: החלטה בבקשת רשות ערעור על החלטה לבטל חיוב המשיב במזונות רטרואקטיבית (רמ\"ש 23274-10-22)",
+                  "ביהמ\"ש השלום ת\"א, השופט הבכיר ד\"ר מנחם (מריו) קליין: פס\"ד בעניין נשיכת כלב במשפט העברי (ת\"א 60090-08-18)"
+                ]
+              }
             },
             {
               "claim_id": "C3",
               "role": "binding_case_law",
-              "query_he": "בית המשפט העליון \"השתק פלוגתא\" היקף השפעה חוסמת טענה עובדתית או גם טענת משפט \"res judicata\" השוואה להשק עילה",
+              "original_query_he": "בית המשפט העליון \"השתק פלוגתא\" מול \"שיתוק עילה\" \"res judicata\" הבחנה היקף מה נחסם הליך אחר",
+              "normalized_query_he": "העליון השתק פלוגתא מול שיתוק עילה res judicata הבחנה היקף נחסם הליך אחר",
+              "exact_clues": [],
+              "exact_hits": 0,
               "text_hits": 0,
-              "vector_hits": 0,
-              "kept": 0,
-              "ms": 16002
+              "vector_hits": 6,
+              "kept": 6,
+              "ms": 37457,
+              "diag": {
+                "exact_status": "empty",
+                "exact_ms": 20001,
+                "text_status": "timeout",
+                "text_ms": 20001,
+                "vector_status": "ok",
+                "vector_ms": 17455,
+                "embedding_length": 768,
+                "embedding_ms": 214,
+                "expected_embedding_dim": 768,
+                "top_exact_titles": [],
+                "top_text_titles": [],
+                "top_vector_titles": [
+                  "בית משפט השלום בירושלים, השופט מוחמד חאג' יחיא: פס''ד בבקשות מטעם נתבעות בעניין סילוק תביעה על הסףו בקשה להורות לתובע להפקיד ערובה (ת\"א 42295-06-23)",
+                  "ביהמ\"ש לענייני משפחה ירושלים, השופט פליקס גורודצקי: פס\"ד בעניין עזבון מנוחה (תה\"ס 3833-06-22)",
+                  "ביהמ\"ש לענייני משפחה בחיפה, השופט טל פפרני: פס\"ד לסילוק על הסף - ביטול צו ירושה שניתן ביום 22/1/2023 בעניינה של המנוחה אלמונית ז\"ל (ת\"ע 42215-01-249)",
+                  "בית משפט לענייני משפחה בקריות, השופטת מאיה לוי: החלטה בבקשה לסילוק על הסף (ת\"ע 55994-10-21)",
+                  "רע\"א 5268/22 יואר אלזו השקעות בע\"מ נ׳ אאורה ישראל יזמות והשקעות פסק דין (07.06.2022)"
+                ]
+              }
+            },
+            {
+              "claim_id": "C1",
+              "role": "binding_case_law",
+              "original_query_he": "השתק פלוגתא \"issue preclusion\" \"בית המשפט העליון\" הגדרה עקרונית \"השתק פלוגתא\" החלטה סופית קובעת עובדה או שאלה משפטית אסור להעלות מחדש",
+              "normalized_query_he": "השתק פלוגתא issue preclusion העליון הגדרה עקרונית החלטה סופית קובעת עובדה שאלה משפטית אסור להעלות מחדש",
+              "exact_clues": [],
+              "exact_hits": 0,
+              "text_hits": 0,
+              "vector_hits": 6,
+              "kept": 6,
+              "ms": 37460,
+              "diag": {
+                "exact_status": "empty",
+                "exact_ms": 20000,
+                "text_status": "timeout",
+                "text_ms": 20000,
+                "vector_status": "ok",
+                "vector_ms": 17457,
+                "embedding_length": 768,
+                "embedding_ms": 173,
+                "expected_embedding_dim": 768,
+                "top_exact_titles": [],
+                "top_text_titles": [],
+                "top_vector_titles": [
+                  "רע\"א 8223/22 כוכב הצפון יזמות בע\"מ נ׳ גלילאו טק בע\"מ פסק דין (20.10.2022)",
+                  "רע\"א 5107/22 אפ.סי.סי.שיפינג בע\"מ נ׳ רקלה ארסבן החלטה (31.05.2022)",
+                  "רע\"א 7162/20 לובה יונתוב נ׳ התחנה המרכזית החדשה בתל אביב יפו בע\"מ החלטה (13.08.2020)",
+                  "ע\"א 3581-04 - קיבוץ בית ניר, אגודה שיתופית חקלאית נ. אלה שק",
+                  "ע\"א 213/20 רשות מקרקעי ישראל נ׳ מעונות ילדים בישראל קרית הילד ירושלים פסק דין (24.11.2019)"
+                ]
+              }
             },
             {
               "claim_id": "C4",
               "role": "binding_case_law",
-              "query_he": "בית המשפט העליון \"השתק פלוגתא\" חריגים שינוי נסיבות היעדר הזדמנות להתדיין ערעור תלוי ראיות חדשות",
+              "original_query_he": "בית המשפט העליון \"חריגים להשתק פלוגתא\" \"חוסר סמכות\" \"ראיות חדשות\" חשבון פתיחת השתק מתי משחררים השתק",
+              "normalized_query_he": "העליון חריגים להשתק פלוגתא חוסר סמכות ראיות חדשות חשבון פתיחת השתק משחררים",
+              "exact_clues": [],
+              "exact_hits": 0,
               "text_hits": 0,
-              "vector_hits": 0,
-              "kept": 0,
-              "ms": 16003
+              "vector_hits": 6,
+              "kept": 6,
+              "ms": 37458,
+              "diag": {
+                "exact_status": "empty",
+                "exact_ms": 20001,
+                "text_status": "timeout",
+                "text_ms": 20001,
+                "vector_status": "ok",
+                "vector_ms": 17456,
+                "embedding_length": 768,
+                "embedding_ms": 202,
+                "expected_embedding_dim": 768,
+                "top_exact_titles": [],
+                "top_text_titles": [],
+                "top_vector_titles": [
+                  "ערבות בנקאית: החריגים לעקרון העצמאות",
+                  "חזות של זכויות, מהות של צדק – סיפורה הרטורי והמהותי של ההכרעה הפלילית | אסף הרדוף (כרך ח)",
+                  "רע\"א 7763/21 רפי ביסקר נ׳ ראובן רוזנפלד פסק דין (14.11.2022)",
+                  "מ\"ח 3489/22 אהרון חסין נ׳ מדינת ישראל – פרקליטות המדינה החלטה",
+                  "בג\"ץ 3240/19 דרור סוראדו נ׳ כנסת פסק דין"
+                ]
+              }
+            },
+            {
+              "claim_id": "C5",
+              "role": "binding_case_law",
+              "original_query_he": "בית המשפט העליון \"השתק פלוגתא\" \"פסיקות מפתח\" השפעה מעשית על הליכים אזרחיים ישראלי",
+              "normalized_query_he": "העליון השתק פלוגתא פסיקות מפתח השפעה מעשית הליכים אזרחיים ישראלי",
+              "exact_clues": [],
+              "exact_hits": 0,
+              "text_hits": 0,
+              "vector_hits": 6,
+              "kept": 6,
+              "ms": 37522,
+              "diag": {
+                "exact_status": "empty",
+                "exact_ms": 20002,
+                "text_status": "timeout",
+                "text_ms": 20002,
+                "vector_status": "ok",
+                "vector_ms": 17520,
+                "embedding_length": 768,
+                "embedding_ms": 188,
+                "expected_embedding_dim": 768,
+                "top_exact_titles": [],
+                "top_text_titles": [],
+                "top_vector_titles": [
+                  "ביהמ\"ש השלום בפתח תקווה, השופטת לימור חלד-רון: החלטה בבקשה להארכת מעצרם של שני חשודים בחשד לביצוע עבירות של הפרעה לשוטר במילוי תפקידו ועוד (מ\"י 12982-01-24)",
+                  "אזרחות ומהלכים לשחיקתה: משפט, מוסר ותחשיבי תועלת בנוגע להצעות &quot;ישראל ביתנו&quot; לחילופי שטחים מאוכלסים ולהתניית הזכות לבחור לכנסת בשבועת אמונים",
+                  "בר\"מ 4413-23 מדינת ישראל רשות המיסים נ׳ ניב נוימן פסק דין",
+                  "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+                  "ע\"פ 1301-06 - עזבון המנוח יוני אלזם ז\"ל נ. מדינת ישראל"
+                ]
+              }
+            },
+            {
+              "claim_id": "C4",
+              "role": "persuasive_case_law",
+              "original_query_he": "ע״א OR מחוזי \"השתק פלוגתא\" שחרור השתק \"הזדמנות להתדיין\" החלטת בית משפט מחוזי דוגמה חריג",
+              "normalized_query_he": "OR מחוזי השתק פלוגתא שחרור הזדמנות להתדיין החלטת משפט דוגמה חריג",
+              "exact_clues": [],
+              "exact_hits": 0,
+              "text_hits": 0,
+              "vector_hits": 6,
+              "kept": 5,
+              "ms": 37690,
+              "diag": {
+                "exact_status": "empty",
+                "exact_ms": 20002,
+                "text_status": "timeout",
+                "text_ms": 20002,
+                "vector_status": "ok",
+                "vector_ms": 17687,
+                "embedding_length": 768,
+                "embedding_ms": 202,
+                "expected_embedding_dim": 768,
+                "top_exact_titles": [],
+                "top_text_titles": [],
+                "top_vector_titles": [
+                  "רע\"א 8813-05 - עמותת במות נ. מדינת ישראל",
+                  "בש\"פ 5894/20 מדינת ישראל נ׳ מועתז דיבא פסק דין (16.09.2020)",
+                  "הבראה ללא הקפאה: הצעה למשטר חדש להסדרי חוב באג\"ח סחירות | אסף חמדני ויוסף קלמנוביץ&#8217; (כרך כ)",
+                  "רע\"א 8813-05 - עמותת במות נ. מדינת ישראל",
+                  "בש\"פ 8432/22 מדינת ישראל נ׳ גוריק מרזייב החלטה (15.12.2022)"
+                ]
+              }
             }
           ]
         },
         "perplexity": {
-          "ms": 26082,
-          "candidates": 12,
-          "dropped": 13,
+          "ms": 18946,
+          "candidates": 0,
+          "dropped": 17,
           "per_query": [
             {
               "claim_id": "C1",
               "role": "scholarship",
-              "query_he": "מאמר משפטי \"השתק פלוגתא\" הגדרה תכליתית דוקטרינה סדר דין אזרחי",
+              "query_he": "מאמר \"השתק פלוגתא\" \"issue preclusion\" ישראל \"עיקרון\" \"השתק\" כתב-עת משפטי ניתוח תיאורטי",
               "http": 200,
-              "raw_count": 5,
-              "kept": 1,
-              "dropped": 4,
-              "retried": false,
-              "ms": 4957
+              "raw_count": 3,
+              "discovery_only": 2,
+              "admitted": 0,
+              "followup_terms": [],
+              "followup_admitted": 0,
+              "ms": 2843,
+              "results": [
+                {
+                  "title": "Res Judicata in Israel: Between Finality and Fairness",
+                  "url": "https://papers.ssrn.com/sol3/results.cfm",
+                  "domain": "papers.ssrn.com",
+                  "classified_source_class": "discovery_only",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "discovery_only"
+                },
+                {
+                  "title": "Finality, Fairness, and the Doctrine of Res Judicata in Israeli Law",
+                  "url": "https://search.worldcat.org/",
+                  "domain": "search.worldcat.org",
+                  "classified_source_class": "unknown",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "class_unknown_not_admitted_for_scholarship"
+                },
+                {
+                  "title": "מעשה בית דין והשתק פלוגתא במשפט הישראלי",
+                  "url": "https://scholar.google.com/",
+                  "domain": "scholar.google.com",
+                  "classified_source_class": "discovery_only",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "discovery_only"
+                }
+              ]
             },
             {
               "claim_id": "C2",
               "role": "scholarship",
-              "query_he": "מאמר \"תנאים להשתק פלוגתא\" זהות פלוגתא פסק-דין חלוט הכרעה חיונית הזדמנות להתדיין",
+              "query_he": "מאמר \"תנאי השתק פלוגתא\" \"זהות פלוגתא\" \"הכרעה נחוצה\" \"הזדמנות להתדיין\" כתב-עת משפטי ישראלי ניתוח מרכיבי ההשתק",
               "http": 200,
-              "raw_count": 5,
-              "kept": 5,
-              "dropped": 0,
-              "retried": false,
-              "ms": 4091
+              "raw_count": 2,
+              "discovery_only": 1,
+              "admitted": 0,
+              "followup_terms": [],
+              "followup_admitted": 0,
+              "ms": 2849,
+              "results": [
+                {
+                  "title": "הערך שבשימור תנאי ההדדיות בדוקטרינת השתק פלוגתא",
+                  "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID3690287_code3487662.pdf?abstractid=3690287&mirid=1",
+                  "domain": "papers.ssrn.com",
+                  "classified_source_class": "discovery_only",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "discovery_only"
+                },
+                {
+                  "title": "מעשה בית דין / השתק פלוגתא – פסקי דין ומראי מקום",
+                  "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision8996-10-16/he/8996-10-16%20(002).docx",
+                  "domain": "gov.il",
+                  "classified_source_class": "government_report",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "class_government_report_not_admitted_for_scholarship"
+                }
+              ]
             },
             {
               "claim_id": "C3",
               "role": "scholarship",
-              "query_he": "מאמר השתק פלוגתא היקף חסימה טענה עובדתית משפטית השוואה res judicata השק עילה",
+              "query_he": "מאמר השוואתי \"השתק פלוגתא\" vs \"שיתוק עילה\" res judicata \"מבחן זהות\" \"חלוף הזמן\" ניתוח ישראלי",
               "http": 200,
-              "raw_count": 5,
-              "kept": 5,
-              "dropped": 0,
-              "retried": false,
-              "ms": 4245
-            },
-            {
-              "claim_id": "C4",
-              "role": "persuasive_case_law",
-              "query_he": "פסק-דין בית משפט מחוזי \"השתק פלוגתא\" חריגים ראיות חדשות ערעור תלוי ועומד שינוי נסיבות",
-              "http": 200,
-              "raw_count": 5,
-              "kept": 1,
-              "dropped": 4,
-              "retried": false,
-              "ms": 4988
+              "raw_count": 4,
+              "discovery_only": 1,
+              "admitted": 0,
+              "followup_terms": [],
+              "followup_admitted": 0,
+              "ms": 3790,
+              "results": [
+                {
+                  "title": "מעשה בית דין – השתק עילה והשתק פלוגתא",
+                  "url": "https://yuvalb.org/blog/post/%D7%9E%D7%A2%D7%A9%D7%94+%D7%91%D7%99%D7%AA+%D7%93%D7%99%D7%9F+%E2%80%93+%D7%94%D7%A9%D7%AA%D7%A7+%D7%A2%D7%99%D7%9C%D7%94+%D7%95%D7%94%D7%A9%D7%AA%D7%A7+%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90",
+                  "domain": "yuvalb.org",
+                  "classified_source_class": "unknown",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "class_unknown_not_admitted_for_scholarship"
+                },
+                {
+                  "title": "Reconsidering Res Judicata: A Comparative Perspective",
+                  "url": "https://scholarship.law.duke.edu/cgi/viewcontent.cgi?article=1025&context=djcil",
+                  "domain": "scholarship.law.duke.edu",
+                  "classified_source_class": "discovery_only",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "discovery_only"
+                },
+                {
+                  "title": "חוזה הפסיכולוגי בדיני עבודה? (לא זוהה כמקור מתאים לשאילתה)",
+                  "url": "https://dictionary.justia.com/res-judicata",
+                  "domain": "dictionary.justia.com",
+                  "classified_source_class": "unknown",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "class_unknown_not_admitted_for_scholarship"
+                },
+                {
+                  "title": "השתק עילה והשתק פלוגתא בפסיקה הישראלית",
+                  "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F17%2F760%2F045%2Fy08&fileName=17045760.Y08&type=2",
+                  "domain": "supremedecisions.court.gov.il",
+                  "classified_source_class": "official_primary",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "class_official_primary_not_admitted_for_scholarship"
+                }
+              ]
             },
             {
               "claim_id": "C4",
               "role": "scholarship",
-              "query_he": "מאמר משפטי \"חריגים השתק פלוגתא\" היעדר הזדמנות להתדיין ראיות חדשות שינוי נסיבות בתי משפט",
+              "query_he": "מאמר \"חריגים להשתק פלוגתא\" \"ראיות חדשות\" \"חוסר סמכות\" \"השתק התקפתי והשתק הגנתי\" פרשנות משפטית בישראל",
               "http": 200,
-              "raw_count": 5,
-              "kept": 0,
-              "dropped": 5,
-              "retried": false,
-              "ms": 7792
+              "raw_count": 4,
+              "discovery_only": 1,
+              "admitted": 0,
+              "followup_terms": [],
+              "followup_admitted": 0,
+              "ms": 3744,
+              "results": [
+                {
+                  "title": "הערך שבשימור תנאי ההדדיות בדוקטרינת השתק פלוגתא",
+                  "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID3690287_code3487662.pdf?abstractid=3690287&mirid=1",
+                  "domain": "papers.ssrn.com",
+                  "classified_source_class": "discovery_only",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "discovery_only"
+                },
+                {
+                  "title": "ההליך האזרחי",
+                  "url": "https://www.nevo.co.il/law_html/law01/p231_001.htm",
+                  "domain": "nevo.co.il",
+                  "classified_source_class": "legislation",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "class_legislation_not_admitted_for_scholarship"
+                },
+                {
+                  "title": "סדר הדין האזרחי",
+                  "url": "https://www.nevo.co.il/law_html/law01/p231_001.htm",
+                  "domain": "nevo.co.il",
+                  "classified_source_class": "legislation",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "class_legislation_not_admitted_for_scholarship"
+                },
+                {
+                  "title": "Commentaries on the Law of Civil Procedure in Israel",
+                  "url": "https://www.martinusnijhoff.com/view/title/7095",
+                  "domain": "martinusnijhoff.com",
+                  "classified_source_class": "unknown",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "class_unknown_not_admitted_for_scholarship"
+                }
+              ]
+            },
+            {
+              "claim_id": "C5",
+              "role": "scholarship",
+              "query_he": "מאמר \"מעמד השתק פלוגתא במשפט הישראלי\" \"השפעות פרקטיות\" \"הנחיות לעורכי דין\" כתב-עת משפטי ביקורת/ניתוח",
+              "http": 200,
+              "raw_count": 4,
+              "discovery_only": 2,
+              "admitted": 0,
+              "followup_terms": [],
+              "followup_admitted": 0,
+              "ms": 5714,
+              "results": [
+                {
+                  "title": "השתק פלוגתא – מהו?",
+                  "url": "https://www.cmichael-law.co.il/%D7%94%D7%A9%D7%AA%D7%A7-%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90.html",
+                  "domain": "cmichael-law.co.il",
+                  "classified_source_class": "discovery_only",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "discovery_only"
+                },
+                {
+                  "title": "מעשה בית דין – השתק עילה והשתק פלוגתא",
+                  "url": "https://yuvalb.org/blog/post/%D7%9E%D7%A2%D7%A9%D7%94+%D7%91%D7%99%D7%AA+%D7%93%D7%99%D7%9F+%E2%80%93+%D7%94%D7%A9%D7%AA%D7%A7+%D7%A2%D7%99%D7%9C%D7%94+%D7%95%D7%94%D7%A9%D7%AA%D7%A7+%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90",
+                  "domain": "yuvalb.org",
+                  "classified_source_class": "unknown",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "class_unknown_not_admitted_for_scholarship"
+                },
+                {
+                  "title": "השתק פלוגתא לעומת השתק עילה - מה ההבדל בין הטענות?",
+                  "url": "https://www.blitshtein-law.com/%D7%A2%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA/%D7%94%D7%A9%D7%AA%D7%A7-%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90-%D7%9C%D7%A2%D7%95%D7%9E%D7%AA-%D7%94%D7%A9%D7%AA%D7%A7-%D7%A2%D7%99%D7%9C%D7%94/",
+                  "domain": "blitshtein-law.com",
+                  "classified_source_class": "discovery_only",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "discovery_only"
+                },
+                {
+                  "title": "החלטה בתיק ע\"א 4576/17",
+                  "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F17%2F760%2F045%2Fy08&fileName=17045760.Y08&type=2",
+                  "domain": "supremedecisions.court.gov.il",
+                  "classified_source_class": "official_primary",
+                  "admitted_to_candidate_pool": false,
+                  "drop_reason": "class_official_primary_not_admitted_for_scholarship"
+                }
+              ]
             }
           ]
         },
         "pool": {
-          "found": 12,
-          "after_dedup": 5,
-          "dedup_drops": 7,
+          "found": 35,
+          "after_dedup": 23,
+          "dedup_drops": 12,
           "counts": {
             "by_origin": {
-              "perplexity": 5
+              "local_db": 23
             },
             "by_role": {
-              "scholarship": 4,
-              "persuasive_case_law": 1
+              "persuasive_case_law": 5,
+              "binding_case_law": 18
             },
             "by_claim": {
-              "C1": 1,
-              "C2": 2,
-              "C3": 1,
-              "C4": 1
+              "C4": 11,
+              "C5": 3,
+              "C1": 5,
+              "C3": 2,
+              "C2": 2
             }
           }
         }
       },
       "candidates": [
         {
-          "candidate_id": "1176df98-5dc1-48f3-8b77-468b3ada3d4a",
-          "claim_id": "C1",
-          "role": "scholarship",
-          "origin": "perplexity",
-          "retrieval_method": "perplexity",
-          "title": "זלצמן, נינה — מעשה בית דין בהליך אזרחי",
-          "source_type": "ספר",
-          "source_url": "https://law.haifa.ac.il/index.php/he/research/publications",
-          "snippet": "הפניה מוסדית כללית לחיפוש פרסומים אקדמיים של הפקולטה למשפטים; יש לחפש שם את הספר/פרק הרלוונטי. לא סופק קישור ישיר לפרסום.",
-          "query_he": "מאמר משפטי \"השתק פלוגתא\" הגדרה תכליתית דוקטרינה סדר דין אזרחי",
-          "score": 0.7,
-          "expected_source_type": "academic",
-          "metadata": {
-            "domain": "law.haifa.ac.il"
-          }
-        },
-        {
-          "candidate_id": "c898d23a-88e9-4f29-b628-703e38db91b2",
-          "claim_id": "C2",
-          "role": "scholarship",
-          "origin": "perplexity",
-          "retrieval_method": "perplexity",
-          "title": "מעשה בית דין והשתק פלוגתא",
-          "source_type": "book/chapter",
-          "source_url": "https://www.nevo.co.il/",
-          "snippet": "מחברת: נינה זלצמן. ספר/פרק אקדמי קלאסי העוסק בתנאים להשתק פלוגתא, לרבות זהות הפלוגתא, הכרעה חיונית, ופסק-דין חלוט. קישור לאתר נבו (אין בידי URL ישיר לפריט הספציפי ללא המצאה).",
-          "query_he": "מאמר \"תנאים להשתק פלוגתא\" זהות פלוגתא פסק-דין חלוט הכרעה חיונית הזדמנות להתדיין",
-          "score": 0.7,
-          "expected_source_type": "academic",
-          "metadata": {
-            "domain": "nevo.co.il"
-          }
-        },
-        {
-          "candidate_id": "bcc52cad-5fff-464e-ad38-9c8f1e3a3cdb",
-          "claim_id": "C2",
-          "role": "scholarship",
-          "origin": "perplexity",
-          "retrieval_method": "perplexity",
-          "title": "Finality and Issue Preclusion in Israeli Civil Procedure",
-          "source_type": "article",
-          "source_url": "https://papers.ssrn.com/",
-          "snippet": "מחבר/ת: ניתן לאתר ב-SSRN לפי נושא (issue preclusion / collateral estoppel / Israeli civil procedure). לא צורף URL ישיר לפריט משום שלא אומת מקור ספציפי.",
-          "query_he": "מאמר \"תנאים להשתק פלוגתא\" זהות פלוגתא פסק-דין חלוט הכרעה חיונית הזדמנות להתדיין",
-          "score": 0.7,
-          "expected_source_type": "academic",
-          "metadata": {
-            "domain": "papers.ssrn.com"
-          }
-        },
-        {
-          "candidate_id": "44e40535-1e07-4cbb-a92e-623471593a69",
-          "claim_id": "C3",
-          "role": "scholarship",
-          "origin": "perplexity",
-          "retrieval_method": "perplexity",
-          "title": "Res Judicata in Israeli Law: Issue Preclusion and Claim Preclusion",
-          "source_type": "article/book/chapter",
-          "source_url": "https://ssrn.com/",
-          "snippet": "חיפוש ב-SSRN לפי נושא: השוואה בין res judicata, issue preclusion (השתק פלוגתא) ו-claim preclusion (השתק עילה), כולל היקף החסימה של טענות עובדתיות ומשפטיות.",
-          "query_he": "מאמר השתק פלוגתא היקף חסימה טענה עובדתית משפטית השוואה res judicata השק עילה",
-          "score": 0.7,
-          "expected_source_type": "academic",
-          "metadata": {
-            "domain": "ssrn.com"
-          }
-        },
-        {
-          "candidate_id": "7c8f0eaf-972e-4339-a277-9c773b698a30",
+          "candidate_id": "3189026c-a698-4e95-aa20-b7fb6fe46019",
           "claim_id": "C4",
           "role": "persuasive_case_law",
-          "origin": "perplexity",
-          "retrieval_method": "perplexity",
-          "title": "ע\"א 4576/17 (החלטה)",
-          "source_type": "פסיקה - בית המשפט העליון",
-          "source_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F17%2F760%2F045%2Fy08&fileName=17045760.Y08&type=2",
-          "snippet": "נידון חריג 'השתק הגנה' בהקשר של מעשה בית דין; רלוונטי לבחינת גבולות ההשתק וחריגים לו.",
-          "query_he": "פסק-דין בית משפט מחוזי \"השתק פלוגתא\" חריגים ראיות חדשות ערעור תלוי ועומד שינוי נסיבות",
-          "score": 0.7,
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "רע\"א 8813-05 - עמותת במות נ. מדינת ישראל",
+          "source_type": "supreme_court_il",
+          "document_id": "57d3fe88-3da2-4976-a677-b78399e44697",
+          "source_url": "https://supremedecisions.court.gov.il/Home/Download?path=PediVerdicts/61/2&fileName=SA2_10_8813-05.pdf&type=2",
+          "snippet": "בע עשוי לפטור בקשתו את הדוחה החלטה על יג\nמאגרה ,לבקשה\n הנעתרת החלטה על להשיג עשויים והנתבע המדינה ואילו .\n דין בעלת בה שרואים בין קיימת ההחלטה על להשיג המדינה של זכותה\nלאגרה באשר הביניים הליך לעניין פורמלית , דין בעלת מהווה היא שאין ובין\nכאמור .זאת ,בסוגיית ההחלטה שכןבזכויותיה מכריעה האגרה ) 809ג -ד(.  \nב.  )1(  ככלל ,כ ההחלטה \nשל מסיווגה נגזר שיפוטית החלטה על ההשגה אופן\" פסק\nדין \"כ או\"אחרת החלטה ",
+          "query_he": "ע״א OR מחוזי \"השתק פלוגתא\" שחרור השתק \"הזדמנות להתדיין\" החלטת בית משפט מחוזי דוגמה חריג",
+          "score": 0.656795218490262,
           "expected_source_type": "case",
           "metadata": {
-            "domain": "supremedecisions.court.gov.il"
+            "page": 795,
+            "year": 2006,
+            "volume": "ס\"א",
+            "doc_type": "padi",
+            "case_name": "עמותת במות נ. מדינת ישראל",
+            "source_site": "supreme_court_il",
+            "verdict_type": "פד\"י"
+          }
+        },
+        {
+          "candidate_id": "e5af1fc2-5555-4461-9fbf-7845a74b4746",
+          "claim_id": "C4",
+          "role": "persuasive_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "בש\"פ 5894/20 מדינת ישראל נ׳ מועתז דיבא פסק דין (16.09.2020)",
+          "source_type": "caselaw",
+          "document_id": "b08b7007-91c2-47f8-be78-32b6fdf2f581",
+          "source_url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-5894-20-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%9e%d7%95%d7%a2%d7%aa%d7%96-%d7%93%d7%99%d7%91%d7%90-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "וב לבקשה השלום משפט בית נעתר ,19.8.2020 ביום .דנן הערר הגשת נוכח\n.הביצוע\n.שלפנַי הערר מכאן\n אינה ההחלטה ,לדידה .המחוזי המשפט בית הכרעת על להשיג מבקשת העוררת.8\n אישום כתב הגשת ,המשפטית בשיטתנו .הפלילי ההליך של היסוד עקרונות עם מתיישבת\n לבין ,התביעה רשויות ידי-על התיק ובחינת החקירה שלב שבין 'המים פרשת קו' הריהי\n כל ,אישום כתב שמוגש משעה ,לכך בהתאם .המשפט בבית הפלילי ההליך ניהול שלב\n אחר החבל הלך' בב",
+          "query_he": "ע״א OR מחוזי \"השתק פלוגתא\" שחרור השתק \"הזדמנות להתדיין\" החלטת בית משפט מחוזי דוגמה חריג",
+          "score": 0.655274413637246,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "מדינת ישראל נ׳ מועתז דיבא",
+            "raw_title": "בש\"פ 5894/20 מדינת ישראל נ. מועתז דיבא פסק דין מיום 16.09.2020",
+            "source_site": "toledano.co.il",
+            "decision_date": "16.09.2020",
+            "decision_kind": "פסק דין",
+            "document_kind": "caselaw",
+            "local_pdf_file": "02385 - בש פ 5894 20 מדינת ישראל נ׳ מועתז דיבא פסק דין (16.09.2020).pdf",
+            "procedure_type": "בש\"פ",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "5894/20"
+          }
+        },
+        {
+          "candidate_id": "7613110e-0f63-4336-8b1b-7dabde2d4b33",
+          "claim_id": "C4",
+          "role": "persuasive_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "הבראה ללא הקפאה: הצעה למשטר חדש להסדרי חוב באג\"ח סחירות | אסף חמדני ויוסף קלמנוביץ&#8217; (כרך כ)",
+          "source_type": "journal_article",
+          "document_id": "6e105eae-621f-4a45-ad9b-0d6623dd6512",
+          "source_url": "https://runilawreview.org/2017/10/22/vol20_hamdani_kalmenovitz/",
+          "snippet": "ס להסדרי חוב באג\"ח סחירות. ביסוד \nגישתנו עומדת ההנחה שאין הצדקה ליצירת משטר חדלות פירעון ייחודי לחברות \nשהנפיקו אגרות\n-\nחוב סחירות, ושבוודאי אין הצדקה ליצירת משטר חדלות פירעון \nהמעניק לנושים המחזיקים באג\"ח הגנה פחותה מזו המוענקת לנושים אחרים. מסקנה זו \nמחייבת התייחסות לשתי סוגיות נפרדות: האחת היא אם לאפשר בכלל הסדרי חוב מחוץ \nלחדלות פירעון; והאחרת היא אם יש לנקוט כלים של חדלות פירעון ביחס להסדר חו",
+          "query_he": "ע״א OR מחוזי \"השתק פלוגתא\" שחרור השתק \"הזדמנות להתדיין\" החלטת בית משפט מחוזי דוגמה חריג",
+          "score": 0.642344051896374,
+          "expected_source_type": "case",
+          "metadata": {
+            "abstract": "רשימה זו מנתחת באופן ביקורתי את המשטר החל על הסדרי חוב של אגרות-חוב סחירות בישראל, כפי שהתפתח בפסיקה, ומציעה משטר חדש להסדרי חוב. במישור הדין הקיים, טענתנו המרכזית היא שבתי-המשפט בישראל פיתחו בשנים האחרונות משטר משפטי ייחודי של חדלות פירעון ...",
+            "source_site": "reichman_law_review"
+          }
+        },
+        {
+          "candidate_id": "07f189bd-dd90-46b4-ac6a-7e39e3ad2b2b",
+          "claim_id": "C4",
+          "role": "persuasive_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "בש\"פ 8432/22 מדינת ישראל נ׳ גוריק מרזייב החלטה (15.12.2022)",
+          "source_type": "caselaw",
+          "document_id": "97235529-d779-4022-8c24-2656b1da32e3",
+          "source_url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-8432-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%92%d7%95%d7%a8%d7%99%d7%a7-%d7%9e%d7%a8%d7%96%d7%99%d7%99%d7%91-%d7%94%d7%97%d7%9c%d7%98%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "ולית המסגרת את למצוא לשאוף יש כאמור ולכן ,יקרה כך כי\n .למשיב\n ככל ,8.1.22022 מיום האחרונה בהחלטתו השלום משפט בית גם שציין כפי\n לשוב תוכל היא ,לבחון שיש נוספים נתונים וישנם נוסף זמן שחלף תמצא שההגנה\n הדיון במסגרת כזו לאפשרות להידרש ניתן לא כי מובן .חוזר לעיון נוספת בקשה ולהגיש\n5\n\n המשפט לבית ולפנות לשוב המשיב בפני הדלת נסגרה שלא בכך ודי ,בפניי שהתנהל\n .בעתיד\n מיום החל המשיב של מעצרו הארכת על מורה א",
+          "query_he": "ע״א OR מחוזי \"השתק פלוגתא\" שחרור השתק \"הזדמנות להתדיין\" החלטת בית משפט מחוזי דוגמה חריג",
+          "score": 0.641357667167356,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "מדינת ישראל נ׳ גוריק מרזייב",
+            "raw_title": "בש\"פ 8432/22 מדינת ישראל נ. גוריק מרזייב החלטה מיום 15.12.2022",
+            "source_site": "toledano.co.il",
+            "decision_date": "15.12.2022",
+            "decision_kind": "החלטה",
+            "document_kind": "caselaw",
+            "local_pdf_file": "00698 - בש פ 8432 22 מדינת ישראל נ׳ גוריק מרזייב החלטה (15.12.2022).pdf",
+            "procedure_type": "בש\"פ",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "8432/22"
+          }
+        },
+        {
+          "candidate_id": "12e43509-d1e5-4a25-a973-67d88ae923c6",
+          "claim_id": "C4",
+          "role": "persuasive_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "בימ\"ש לנוער תל אביב, השופטת אורית קליינפלד: החלטה בבקשה למעצר עד תום ההליכים המשפטיים נגד קטין (1202-03-25)",
+          "source_type": "caselaw",
+          "document_id": "47bf251b-8ce2-4402-a85c-ced4ec440270",
+          "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=320",
+          "snippet": "פט עמדו בשורה של החלטות מהעת האחרונה על כך שהמצב הביטחוני הרגיש בו מצויה המדינה מזה למעלה משנה , מחייב זהירות נוספת, שכן בעת הזו קושי נוסף על גבי הקושי הרגיל בהבטחת התייצבות של מי שמתגורר בשטחי הרשות הפלסטינאית, על כך שלא ניתן לאיין את החשש מהימלטות הליכי שפיטה בערבויות כספיות בלבד בעניינם של תושבי האזור המעורבים בעבירות רכוש, לכך שנהיגה ברכב ללא רישיון נהיגה וללא פוליסת ביטוח מציבים רף חומרה שאינ",
+          "query_he": "ע״א OR מחוזי \"השתק פלוגתא\" שחרור השתק \"הזדמנות להתדיין\" החלטת בית משפט מחוזי דוגמה חריג",
+          "score": 0.63840427484842,
+          "expected_source_type": "case",
+          "metadata": {
+            "court": "בתי משפט לנוער",
+            "judges": "אורית קליינפלד",
+            "district": "מחוז תל-אביב",
+            "procedure_type": "נוער"
+          }
+        },
+        {
+          "candidate_id": "09da0c0e-3319-4aa0-abf4-adda33c023c9",
+          "claim_id": "C5",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "אזרחות ומהלכים לשחיקתה: משפט, מוסר ותחשיבי תועלת בנוגע להצעות &quot;ישראל ביתנו&quot; לחילופי שטחים מאוכלסים ולהתניית הזכות לבחור לכנסת בשבועת אמונים",
+          "source_type": "journal_article",
+          "document_id": "4a31ec6e-cf22-46eb-9cee-04f557a67ec6",
+          "source_url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/sabanmeodkan.pdf",
+          "snippet": "יה לסמליה ,ולשרהמדינה את ת ,לכך שאדרש ככל ,\nצבאי בשירות , בטחון שירות בחוק כמשמעותו]משולב נוסח[ ,התשמ\"ו–1986 או \nחלופי בשירות ,בחוק שיקבע כפי'\".\n24\n  \n                                                           \n22\n  יואב דותן \"ישראל למדינת חוקה?  לאחר הקונסטיטוציוני הדיאלוג'החוקתית המהפכה'\" \nמשפטים כח 149 ,192–199 ,203–207 )1997( ; סבן אילן\"המיע של הקיבוציות הזכויות וט\nהערבי\n -\nפלסטיני :היש ,הטאבּ",
+          "query_he": "בית המשפט העליון \"השתק פלוגתא\" \"פסיקות מפתח\" השפעה מעשית על הליכים אזרחיים ישראלי",
+          "score": 0.61774405519172,
+          "expected_source_type": "case",
+          "metadata": {
+            "author": "ד&quot;ר אילן סבן",
+            "volume": "כרך נא(1), יוני 2011",
+            "source_site": "hapraklit"
+          }
+        },
+        {
+          "candidate_id": "57f3094e-7cfa-4361-9324-95a5dd71ec85",
+          "claim_id": "C5",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "בר\"מ 4413-23 מדינת ישראל רשות המיסים נ׳ ניב נוימן פסק דין",
+          "source_type": "caselaw",
+          "document_id": "993d26fb-8bd8-4f72-a5f9-62e03541aac9",
+          "source_url": "https://www.toledano.co.il/%d7%91%d7%a8%d7%9e-4413-23-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a8%d7%a9%d7%95%d7%aa-%d7%94%d7%9e%d7%99%d7%a1%d7%99%d7%9d-%d7%a0-%d7%a0%d7%99%d7%91-%d7%a0%d7%95%d7%99/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "עיתים הגם ,תכליתו את תואם שאינו\n .בעולם ייעודו את להגשים הצליח שלא החוק של הפרספקטיבה מן\n ,הלשון לרכיב בהשוואה התכלית רכיב למרכזיות בנוגע ,זו פרשנית תפיסה.6\n כי ,נקבע היתר בין .אלה רכיבים שני שבין ליחס הנוגעות שונות הלכות לקביעת הובילה\n ההלימה מידת ,הכרחי הוא לחוק המוענקת המשמעות לבין הלשון בין שהקשר הגם\n כך .לכך הקוראת ברורה תכלית בהינתן ,ביותר מצומצמת ותהיה יכול הנדרשת הלשונית\n לשוני בעוגן אף לה",
+          "query_he": "בית המשפט העליון \"השתק פלוגתא\" \"פסיקות מפתח\" השפעה מעשית על הליכים אזרחיים ישראלי",
+          "score": 0.617197572261794,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "מדינת ישראל רשות המיסים נ׳ ניב נוימן",
+            "raw_title": "בר\"מ 4413-23 מדינת ישראל רשות המיסים נ. ניב נוימן",
+            "source_site": "toledano.co.il",
+            "decision_date": null,
+            "decision_kind": "פסק דין",
+            "document_kind": "caselaw",
+            "local_pdf_file": "00029 - בר מ 4413-23 מדינת ישראל רשות המיסים נ׳ ניב נוימן פסק דין.pdf",
+            "procedure_type": "בר\"מ",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "4413-23"
+          }
+        },
+        {
+          "candidate_id": "a4bf0473-a519-4caa-b9c2-622caca15a0f",
+          "claim_id": "C5",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021)",
+          "source_type": "caselaw",
+          "document_id": "c819f8f8-e0df-423d-944e-7a2d68b08de2",
+          "source_url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-5555-18-%d7%97%d7%9b-%d7%90%d7%9b%d7%a8%d7%9d-%d7%97%d7%a1%d7%95%d7%9f-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%99%d7%a8%d7%95%d7%a9%d7%9c%d7%99%d7%9d-%d7%a4%d7%a1%d7%a7-%d7%93/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "עדאלה\n מהאדם טול .החברתית זהותנו ואת ייחודנו את ,עצמנו את מבטאים אנו השפה באמצעות\n 'בעמ ,מהנדסים ראם עניין :גם ראו ;413 'בעמ ,שם) \"עצמו את ממנו ונטלת ,שפתו את\n .(201\n אחרות שפות לדוברי ביחס והן הרוב שפת לדוברי ביחס הן יפים אלה דברים\n המיעוט את לכבד\" מחויבת ודמוקרטית יהודית כמדינה ישראל מדינת .בישראל החיים\n .(142 'בעמ ,מרעי עניין) \"האדם של שפתו את ,האדם של תרבותו את ,האדם את :שבה\n השפה שזו משום הן ",
+          "query_he": "בית המשפט העליון \"השתק פלוגתא\" \"פסיקות מפתח\" השפעה מעשית על הליכים אזרחיים ישראלי",
+          "score": 0.614100145161948,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "ח\"כ אכרם חסון נ׳ כנסת ירושלים",
+            "raw_title": "בג\"ץ 5555/18 ח\"כ אכרם חסון נ. כנסת ירושלים פסק דין מיום 08.07.2021",
+            "source_site": "toledano.co.il",
+            "decision_date": "08.07.2021",
+            "decision_kind": "פסק דין",
+            "document_kind": "caselaw",
+            "local_pdf_file": "01613 - בג ץ 5555 18 ח כ אכרם חסון נ׳ כנסת ירושלים פסק דין (08.07.2021).pdf",
+            "procedure_type": "בג\"ץ",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "5555/18"
+          }
+        },
+        {
+          "candidate_id": "f1723e6a-4f48-4ce4-996f-140100a44693",
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "רע\"א 8223/22 כוכב הצפון יזמות בע\"מ נ׳ גלילאו טק בע\"מ פסק דין (20.10.2022)",
+          "source_type": "caselaw",
+          "document_id": "6e0d602d-a1cc-434b-a725-87320032a0b0",
+          "source_url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-8223-22-%d7%9b%d7%95%d7%9b%d7%91-%d7%94%d7%a6%d7%a4%d7%95%d7%9f-%d7%99%d7%96%d7%9e%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%92%d7%9c%d7%99%d7%9c%d7%90%d7%95-%d7%98%d7%a7/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "החלטה לפיה עובדתית קביעה\n רשות בקשת במסגרת לראשונה המועלית ,המבקשת לטענות בניגוד זאת .התביעה הגשת\n .בפועל האופציות את לממש תבחר שהיא וודאות כל אין כי ,הערעור\n7\n\n רק תחליט היא לפיה המבקשת טענת את לדחות יש כי המשיבה מוסיפה עוד\n האופציות של ההבשלה שמועד מהטעם גם ,האופציות את לממש ומתי האם בעתיד\n לשיטת .2021 באוקטובר כבר היה הפעילות רכישת להסכם 6.3 סעיף מכוח שנתבעו\n על .מכן לאחר סביר זמן תוך להיות צרי",
+          "query_he": "השתק פלוגתא \"issue preclusion\" \"בית המשפט העליון\" הגדרה עקרונית \"השתק פלוגתא\" החלטה סופית קובעת עובדה או שאלה משפטית אסור להעלות מחדש",
+          "score": 0.60390616929489,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "כוכב הצפון יזמות בע\"מ נ׳ גלילאו טק בע\"מ",
+            "raw_title": "רע\"א 8223/22 כוכב הצפון יזמות בע\"מ נ. גלילאו טק בע\"מ פסק דין",
+            "source_site": "toledano.co.il",
+            "decision_date": "20.10.2022",
+            "decision_kind": "פסק דין",
+            "document_kind": "caselaw",
+            "local_pdf_file": "00650 - רע א 8223 22 כוכב הצפון יזמות בע מ נ׳ גלילאו טק בע מ פסק דין (20.10.2022).pdf",
+            "procedure_type": "רע\"א",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "8223/22"
+          }
+        },
+        {
+          "candidate_id": "a94196fc-d0c5-4e97-8cf5-d899e345169f",
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "רע\"א 5107/22 אפ.סי.סי.שיפינג בע\"מ נ׳ רקלה ארסבן החלטה (31.05.2022)",
+          "source_type": "caselaw",
+          "document_id": "4096a823-09de-41ef-8170-9aa79f4c3f1d",
+          "source_url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5107-22-%d7%90%d7%a4-%d7%a1%d7%99-%d7%a1%d7%99-%d7%a9%d7%99%d7%a4%d7%99%d7%a0%d7%92-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%a8%d7%a7%d7%9c%d7%94-%d7%90%d7%a8%d7%a1%d7%91%d7%9f-%d7%94/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "המשיבה הוכח לא כי וקבע\n פסק של האחר החלק על המשיבה ערעור את קיבל אף המחוזי המשפט ובית זו קביעה\n רשות בבקשת המבקשת מציגה אותה השאלה ,משכך .השלום משפט בית של דינו\n .העניין לנסיבות רלוונטית אינה כלל הערעור\n9\n\n צו אין ,תשובה נתבקשה משלא .נדחית הערעור רשות בקשת ,כן על אשר.23\n .להוצאות\n.(13.10.2022) ג\"התשפ בתשרי ח\"י ,היום ניתנה\nט פ ו ש\n_________________________\nמג 22051070_L01.docx \nhttps://supreme.cour",
+          "query_he": "השתק פלוגתא \"issue preclusion\" \"בית המשפט העליון\" הגדרה עקרונית \"השתק פלוגתא\" החלטה סופית קובעת עובדה או שאלה משפטית אסור להעלות מחדש",
+          "score": 0.60112627067247,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "אפ.סי.סי.שיפינג בע\"מ נ׳ רקלה ארסבן",
+            "raw_title": "רע\"א 5107/22 אפ.סי.סי.שיפינג בע\"מ נ. רקלה ארסבן החלטה",
+            "source_site": "toledano.co.il",
+            "decision_date": "31.05.2022",
+            "decision_kind": "החלטה",
+            "document_kind": "caselaw",
+            "local_pdf_file": "00971 - רע א 5107 22 אפ.סי.סי.שיפינג בע מ נ׳ רקלה ארסבן החלטה (31.05.2022).pdf",
+            "procedure_type": "רע\"א",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "5107/22"
+          }
+        },
+        {
+          "candidate_id": "26598414-5127-4883-b0e5-a8b4ab7d2c92",
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "רע\"א 7162/20 לובה יונתוב נ׳ התחנה המרכזית החדשה בתל אביב יפו בע\"מ החלטה (13.08.2020)",
+          "source_type": "caselaw",
+          "document_id": "0b08b2dc-0b04-40e5-98fb-b86bfb0925d5",
+          "source_url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7162-20-%d7%9c%d7%95%d7%91%d7%94-%d7%99%d7%95%d7%a0%d7%aa%d7%95%d7%91-%d7%a0-%d7%94%d7%aa%d7%97%d7%a0%d7%94-%d7%94%d7%9e%d7%a8%d7%9b%d7%96%d7%99%d7%aa-%d7%94%d7%97%d7%93%d7%a9/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": " נקבע לאשר\nMotta v. ,למשל ,ראו) התובע מבחינת מובהקים יתרונות היו הפשרה להשגת ,גיסא\nDistrict Dir. of INS., 61 F.3d 117 (1st Cir. 1995); Major League Baseball Prop. \nv. Pacific Trading Cards, 150 F.3d 149 (2nd Cir. 1998); Hartford Cas. Ins. Co. \n .(v. Crum & Forster Spec. Ins. Co., 828 F.3d 1331 (11th Cir. 2016)\n דין פסק לבטל הצדדים לבקשת להיענות ביחס הראויה המדיניות תהא אשר תהא.10\n עסקינן בו במקרה ",
+          "query_he": "השתק פלוגתא \"issue preclusion\" \"בית המשפט העליון\" הגדרה עקרונית \"השתק פלוגתא\" החלטה סופית קובעת עובדה או שאלה משפטית אסור להעלות מחדש",
+          "score": 0.599774418798856,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "לובה יונתוב נ׳ התחנה המרכזית החדשה בתל אביב יפו בע\"מ",
+            "raw_title": "רע\"א 7162/20 לובה יונתוב נ. התחנה המרכזית החדשה בתל אביב יפו בע\"מ החלטה",
+            "source_site": "toledano.co.il",
+            "decision_date": "13.08.2020",
+            "decision_kind": "החלטה",
+            "document_kind": "caselaw",
+            "local_pdf_file": "02185 - רע א 7162 20 לובה יונתוב נ׳ התחנה המרכזית החדשה בתל אביב יפו בע מ החלטה (13.08.2020).pdf",
+            "procedure_type": "רע\"א",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "7162/20"
+          }
+        },
+        {
+          "candidate_id": "fe4aae30-d824-4d42-baf3-04dfc9a029f7",
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "ערבות בנקאית: החריגים לעקרון העצמאות",
+          "source_type": "journal_article",
+          "document_id": "0cb5310d-2f59-4038-afb1-3cb25cce5161",
+          "source_url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/arvot.pdf",
+          "snippet": "ומית בנקאית5מ יש ליון\"ח . סמכויות הוענקו להסכם בהתאם\nלרו ונאמנות בוררות\"ח הכרעה סמכויות וכן פלדמןשונות \n . הוטלה סטייט סיטי על\n של בסך מס חבות36מ יש ליון\"ח ,רו שכרת פשרה בהסכם הופחתה אשר\" פלדמן ח\n של לסך16.6מ י ליון₪ .במקביל ,רו חייב\" של בהשתתפות סטייט סיטי את פלדמן ח\n2 מליון ₪ . את לקבוע פלדמן של לסמכותו בנוגע מחלוקת התעוררה הצדדים בין\n ההשתתפות שיעור)המח סמכותו הפעלת משאלת ונבעה בעיקרה דיונית הי",
+          "query_he": "בית המשפט העליון \"חריגים להשתק פלוגתא\" \"חוסר סמכות\" \"ראיות חדשות\" חשבון פתיחת השתק מתי משחררים השתק",
+          "score": 0.596020469121525,
+          "expected_source_type": "case",
+          "metadata": {
+            "author": "ד&quot;ר רוי בר-קהן",
+            "volume": "כרך נ(2), אפריל 2010",
+            "source_site": "hapraklit"
+          }
+        },
+        {
+          "candidate_id": "0b69338e-e745-41c1-94e7-68d5dd3af692",
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "חזות של זכויות, מהות של צדק – סיפורה הרטורי והמהותי של ההכרעה הפלילית | אסף הרדוף (כרך ח)",
+          "source_type": "journal_article",
+          "document_id": "2158c714-4ddb-4f9d-a6f7-6b82dfcaea56",
+          "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/h1_1.pdf",
+          "snippet": "ק פעולות של רחב לסוג העליון המשפט בית מטעם כללית הכשרה\nלהתיר לנכון, ביקש שהוא להבין ניתן ואףלשללן סמכות לשוטר מלתת נמנע המחוקק .\n חיפוש אצל אדםש כנגדו נתגבש לא ,אמורפי מונח כמובן הוא הסביר החשד .סביר חשד\nבר\n-\nובר תמרון\n-\nשקר אך ,הוא זאת בכל חלק הוא הסביר החשד .כלום איננו הוא ,משהו\n ,הפלילי הדין סדר של רכואו לכל ששזורה ,המחוקק של כוללת מתפיסהו בטרם לפיה\n :מסוים רף לצלוח יש ,כלשהו באופן כלשהי פרט בז",
+          "query_he": "בית המשפט העליון \"חריגים להשתק פלוגתא\" \"חוסר סמכות\" \"ראיות חדשות\" חשבון פתיחת השתק מתי משחררים השתק",
+          "score": 0.594428169510304,
+          "expected_source_type": "case",
+          "metadata": {
+            "part": "חלק 1",
+            "year": "תשע\"ד-תשע\"ה",
+            "author": "אסף הרדוף",
+            "volume": "כרך ח",
+            "journal": "דין ודברים",
+            "pdf_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/h1_1.pdf",
+            "section": null,
+            "citation": "אסף הרדוף, \"חזות של זכויות, מהות של צדק – סיפורה הרטורי והמהותי של ההכרעה הפלילית\" דין ודברים ח 33 (תשע\"ד-תשע\"ה)",
+            "pdf_pages": 66,
+            "publisher": "הפקולטה למשפטים, אוניברסיטת חיפה",
+            "volume_he": "ח",
+            "first_page": "33",
+            "landing_url": "https://law.haifa.ac.il/law-journals/haifa-law-review/",
+            "source_site": "haifa_law_review",
+            "article_title": "חזות של זכויות, מהות של צדק – סיפורה הרטורי והמהותי של ההכרעה הפלילית",
+            "raw_list_text": "אסף הרדוף, חזות של זכויות, מהות של צדק – סיפורה הרטורי והמהותי של ההכרעה הפלילית 33",
+            "local_pdf_file": "00101 - חזות של זכויות, מהות של צדק – סיפורה הרטורי והמהותי של ההכרעה הפלילית אסף הרדוף (כרך ח).pdf",
+            "journal_english": "Haifa Law Review"
+          }
+        },
+        {
+          "candidate_id": "03514d2f-5cca-46cc-bf25-59a24211482d",
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "רע\"א 5268/22 יואר אלזו השקעות בע\"מ נ׳ אאורה ישראל יזמות והשקעות פסק דין (07.06.2022)",
+          "source_type": "caselaw",
+          "document_id": "3829d6c2-434f-4f54-937d-cb78a9b88e7b",
+          "source_url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-5268-22-%d7%99%d7%95%d7%90%d7%a8-%d7%90%d7%9c%d7%96%d7%95-%d7%94%d7%a9%d7%a7%d7%a2%d7%95%d7%aa-%d7%91%d7%a2%d7%9e-%d7%a0-%d7%90%d7%90%d7%95%d7%a8%d7%94-%d7%99%d7%a9%d7%a8%d7%90/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "העליון המשפט בבית\n5268/22 א\"רע\nגרוסקופף 'ע השופט כבוד:לפני\nמ\"בע השקעות אלזו יואר:המבקשת\nד ג נ\nמ\"בע והשקעות יזמות - ישראל אאורה .1:המשיבים\nי'אטרקצ יעקב - יגאל .2\nמ\"בע השקעות אאורה .3\n בתל המחוזי המשפט בית החלטת על ערעור רשות בקשת\n על שניתנה 3223-03-19 א\"בת 7.6.2022 מיום יפו-אביב\nפלינר חנה השופטת 'כב ידי\nהחלטה\n יפו-אביב בתל המחוזי המשפט בית של החלטתו על ערעור רשות בקשת לפניי\n נדחתה במסגרתה ,7.6.2022",
+          "query_he": "בית המשפט העליון \"השתק פלוגתא\" מול \"שיתוק עילה\" \"res judicata\" הבחנה היקף מה נחסם הליך אחר",
+          "score": 0.593379631081883,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "יואר אלזו השקעות בע\"מ נ׳ אאורה ישראל יזמות והשקעות",
+            "raw_title": "רע\"א 5268/22 יואר אלזו השקעות בע\"מ נ. אאורה ישראל יזמות והשקעות",
+            "source_site": "toledano.co.il",
+            "decision_date": "07.06.2022",
+            "decision_kind": "פסק דין",
+            "document_kind": "caselaw",
+            "local_pdf_file": "01030 - רע א 5268 22 יואר אלזו השקעות בע מ נ׳ אאורה ישראל יזמות והשקעות פסק דין (07.06.2022).pdf",
+            "procedure_type": "רע\"א",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "5268/22"
+          }
+        },
+        {
+          "candidate_id": "b285174d-40c5-4778-9854-ecde453dd5cd",
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "ע\"א 213/20 רשות מקרקעי ישראל נ׳ מעונות ילדים בישראל קרית הילד ירושלים פסק דין (24.11.2019)",
+          "source_type": "caselaw",
+          "document_id": "1603215e-7e48-48c1-b5dd-620d9faef576",
+          "source_url": "https://www.toledano.co.il/%d7%a2%d7%90-213-20-%d7%a8%d7%a9%d7%95%d7%aa-%d7%9e%d7%a7%d7%a8%d7%a7%d7%a2%d7%99-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%9e%d7%a2%d7%95%d7%a0%d7%95%d7%aa-%d7%99%d7%9c%d7%93%d7%99%d7%9d-%d7%91/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "ע על .בכך הכרוכים לסיכונים מלאה מודעות ומתוך הפרויקט מן העצמאית\n ההסכמות את העוקפת בדרך נוספות עלויות י\"רמ על להטיל לעמותה לאפשר ניתן\n של החשובה בתרומה אף ראש להקל מקום אין כי להוסיף יש כך על .ביניהן החוזיות\n שהפיק מי אל \"להסתפח\" מבקשת הרשות שבו במקום מדובר אין .הקרקע – לעסקה י\"רמ\n.הכלל טובת את גם זה במקרה המשרתת ,חוזיות זכויות על מוצדקת בעמידה אלא ,רווח\nת ט פ ו ש\n:שטיין 'א השופט\n כל ועם ,שטייניץ-",
+          "query_he": "השתק פלוגתא \"issue preclusion\" \"בית המשפט העליון\" הגדרה עקרונית \"השתק פלוגתא\" החלטה סופית קובעת עובדה או שאלה משפטית אסור להעלות מחדש",
+          "score": 0.591948700641007,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "רשות מקרקעי ישראל נ׳ מעונות ילדים בישראל קרית הילד ירושלים",
+            "raw_title": "ע\"א 213/20 רשות מקרקעי ישראל נ. מעונות ילדים בישראל קרית הילד ירושלים",
+            "source_site": "toledano.co.il",
+            "decision_date": "24.11.2019",
+            "decision_kind": "פסק דין",
+            "document_kind": "caselaw",
+            "local_pdf_file": "00945 - ע א 213 20 רשות מקרקעי ישראל נ׳ מעונות ילדים בישראל קרית הילד ירושלים פסק דין (24.11.2019).pdf",
+            "procedure_type": "ע\"א",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "213/20"
+          }
+        },
+        {
+          "candidate_id": "d48eb1b2-25e6-4ab8-9f64-c1e6a17718ef",
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "בש\"פ 5842/22 מדינת ישראל נ׳ האני אבו סביתאן החלטה (21.09.2022)",
+          "source_type": "caselaw",
+          "document_id": "44fb6049-d0b1-493b-8730-9b771b062a24",
+          "source_url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-5842-22-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a0-%d7%94%d7%90%d7%a0%d7%99-%d7%90%d7%91%d7%95-%d7%a1%d7%91%d7%99%d7%aa%d7%90%d7%9f-%d7%94%d7%97%d7%9c/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "העליון המשפט בבית\n5842/22 פ\"בש\nכבוב 'ח השופט כבוד:לפני\nישראל מדינת:המבקשת\nד ג נ\n \nסביתאן אבו האני .1:המשיבים\nסביתאן אבו בדר .2\n הדין סדר לחוק 62 סעיף לפי מעצר להארכת בקשה\n1996-ו\"התשנ ,(מעצרים – אכיפה סמכויות) הפלילי\n(20.09.2022) ב\"התשפ באלול ד\"כ:הישיבה תאריך\nרוזנברג-פטל אושרה ד\"עו:המבקשת בשם\nשגב מאור ד\"עו ;יפתח דוד ד\"עו:המשיבים בשם\nהחלטה\n סדר לחוק 62 סעיף לפי המשיבים של מעצרם להארכת ראשונה בקשה לפ",
+          "query_he": "בית המשפט העליון \"השתק פלוגתא\" מול \"שיתוק עילה\" \"res judicata\" הבחנה היקף מה נחסם הליך אחר",
+          "score": 0.590683151044342,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "מדינת ישראל נ׳ האני אבו סביתאן",
+            "raw_title": "בש\"פ 5842/22 מדינת ישראל נ. האני אבו סביתאן החלטה מיום 21.09.2022",
+            "source_site": "toledano.co.il",
+            "decision_date": "21.09.2022",
+            "decision_kind": "החלטה",
+            "document_kind": "caselaw",
+            "local_pdf_file": "01009 - בש פ 5842 22 מדינת ישראל נ׳ האני אבו סביתאן החלטה (21.09.2022).pdf",
+            "procedure_type": "בש\"פ",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "5842/22"
+          }
+        },
+        {
+          "candidate_id": "2521f8b0-a4f6-40e2-bf4f-669b7c565ffb",
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "בג\"ץ 483/21 פלוני נ׳ בית הדין הרבני הגדול בירושלים פסק דין (31.01.2021)",
+          "source_type": "caselaw",
+          "document_id": "b8a72f84-1b39-455e-876a-3d32e979c19b",
+          "source_url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-483-21-%d7%a4%d7%9c%d7%95%d7%a0%d7%99-%d7%a0-%d7%91%d7%99%d7%aa-%d7%94%d7%93%d7%99%d7%9f-%d7%94%d7%a8%d7%91%d7%a0%d7%99-%d7%94%d7%92%d7%93%d7%95%d7%9c-%d7%91%d7%99%d7%a8%d7%95/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "ס פעולה מנקיטת להימנע בהגינותו\n לפנים זאת ואף הנסיבות במכלול .15.2.2021 ליום עד ,הבית לפינוי קצרה ארכה לעותרת\n.להוצאות צו עושים איננו ,הדין משורת\n.(31.1.2021) א\"התשפ בשבט ח\"י ,היום ניתן\nת ט פ ו ש ט פ ו שת ט פ ו ש\n_________________________\nעכ 21004830_A07.docx \nhttp://supreme.court.gov.il ,אינטרנט אתר ; *3852 ,077-2703333 'טל ,מידע מרכז\n6",
+          "query_he": "השתק פלוגתא \"issue preclusion\" \"בית המשפט העליון\" הגדרה עקרונית \"השתק פלוגתא\" החלטה סופית קובעת עובדה או שאלה משפטית אסור להעלות מחדש",
+          "score": 0.5899949472881,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "פלוני נ׳ בית הדין הרבני הגדול בירושלים",
+            "raw_title": "בג\"ץ 483/21 פלוני נ. בית הדין הרבני הגדול בירושלים פסק דין מיום 31.01.2021",
+            "source_site": "toledano.co.il",
+            "decision_date": "31.01.2021",
+            "decision_kind": "פסק דין",
+            "document_kind": "caselaw",
+            "local_pdf_file": "02132 - בג ץ 483 21 פלוני נ׳ בית הדין הרבני הגדול בירושלים פסק דין (31.01.2021).pdf",
+            "procedure_type": "בג\"ץ",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "483/21"
+          }
+        },
+        {
+          "candidate_id": "2ad31e16-854f-40aa-9f1d-309ea644faf4",
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "רע\"א 7763/21 רפי ביסקר נ׳ ראובן רוזנפלד פסק דין (14.11.2022)",
+          "source_type": "caselaw",
+          "document_id": "8792a16b-b796-4117-be91-91343e8b1364",
+          "source_url": "https://www.toledano.co.il/%d7%a8%d7%a2%d7%90-7763-21-%d7%a8%d7%a4%d7%99-%d7%91%d7%99%d7%a1%d7%a7%d7%a8-%d7%a0-%d7%a8%d7%90%d7%95%d7%91%d7%9f-%d7%a8%d7%95%d7%96%d7%a0%d7%a4%d7%9c%d7%93-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "ת ,מאור 'נ פרל 33726-12-09\n אמני של מבצעים לזכויות החברה אשכולות 'נ בישראל השחקנים ארגון – ם\"שח 07-19\n כלל 'נ ספיר 66493-11-21 (א\"ת כלכלית) ג\"תנ ;(25.3.2021) 22 פסקה ,מ\"בע ישראל\n פסחו הצדדים ,בענייננו .((16.1.2022) 12-11-ו 8 פסקאות ,מ\"בע ביטוח עסקי החזקות\n ההליך לסיום הצדדים בין שהושג הסכם\" המסמך את והגדירו ,הסעיפים שני על\n לתובענה הנוגע בהליך פשרה כהסכם ההסכם את נבחן ,ההחמרה דרך על .\"המשפטי\n אלא ",
+          "query_he": "בית המשפט העליון \"חריגים להשתק פלוגתא\" \"חוסר סמכות\" \"ראיות חדשות\" חשבון פתיחת השתק מתי משחררים השתק",
+          "score": 0.587195736114789,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "רפי ביסקר נ׳ ראובן רוזנפלד",
+            "raw_title": "רע\"א 7763/21 רפי ביסקר נ. ראובן רוזנפלד פסק דין מיום 14.11.2022",
+            "source_site": "toledano.co.il",
+            "decision_date": "14.11.2022",
+            "decision_kind": "פסק דין",
+            "document_kind": "caselaw",
+            "local_pdf_file": "00856 - רע א 7763 21 רפי ביסקר נ׳ ראובן רוזנפלד פסק דין (14.11.2022).pdf",
+            "procedure_type": "רע\"א",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "7763/21"
+          }
+        },
+        {
+          "candidate_id": "2b4e08d9-4e22-4e19-a5f8-5fc5a19e8699",
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "סעדים בגין מצגי שווא: ניתוח כלכלי",
+          "source_type": "journal_article",
+          "document_id": "283629c2-f4da-49bd-9e17-7cd4d391b4de",
+          "source_url": "https://lawjournal.huji.ac.il/article/12/1056",
+          "snippet": "צג  להשתחרר  מ\u000b  הסיכו\u000b  א\u001b  מבלי  שעמד  בנטל  ההוכחה .חלופה  זו  תהא  \nעדיפה בנסיבות שבה\u000b החשש להרתעת חסר ,שיתעורר א\u0006 יידרש לעמוד בנטל ,גובר על \nהחשש להרתעת יתר ,שיתעורר בשל הסבת הסיכוני\u0006 בדיעבד לפתחו של המציג.  \nלבסו\u001b נדונה השאלה באילו נסיבות יש לסווג מצג שווא כהפרה של חובה נזיקית או \n טרו\u0006חוזית ,ומתי יש לראות בו הפרה של חיוב חוזי מלא .מנקודת המבט ההרתעתית ,\nההכרעה בי\u000b שתי האפשרויות היא אנלוגית ",
+          "query_he": "בית המשפט העליון \"השתק פלוגתא\" \"זהות פלוגתא\" \"הכרעה חיונית\" \"הזדמנות מלאה להתדיין\" תנאים להחלת השתק פלוגתא",
+          "score": 0.586405423356464,
+          "expected_source_type": "case",
+          "metadata": {
+            "tags": [
+              "דיני חוזים",
+              "ניתוח כלכלי של המשפט",
+              "דיני חוזים",
+              "דיני חוזים",
+              "הערת פסיקה"
+            ],
+            "volume": "כרך מג",
+            "source_site": "mishpatim"
+          }
+        },
+        {
+          "candidate_id": "efa11446-a7c9-4bf3-86f4-86bb37ff3a3d",
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "מ\"ח 3489/22 אהרון חסין נ׳ מדינת ישראל – פרקליטות המדינה החלטה",
+          "source_type": "caselaw",
+          "document_id": "c1a8dec0-495e-4e03-a341-61989acdce1e",
+          "source_url": "https://www.toledano.co.il/%d7%9e%d7%97-3489-22-%d7%90%d7%94%d7%a8%d7%95%d7%9f-%d7%97%d7%a1%d7%99%d7%9f-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%a4%d7%a8%d7%a7%d7%9c%d7%99%d7%98%d7%95%d7%aa/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "יף שקבועה העילה של להתקיימותה הטוען על.10\n אמינות\" בעלות הן שבידיו העובדות או הראיות כי להוכיח ועליו ,כבד נטל מוטל\n פוטנציאל ,(המשפט בית לפני שהוצג החומר עם בהשתלבותן או) בהן שיש ;\"לכאורה\n תוצאת לשינוי להביא כדי בו שיש \"סגולי משקל\" בעלות הן וכי ;בעניינו ההכרעה לשינוי\n 1830/19 ח\"מ ;(14.7.2022) 3 פסקה ,ישראל מדינת 'נ אוטמזגין 4496/22 ח\"מ) המשפט\n בתי לחוק 22 'מס תיקון לאחר ,בנוסף .((10.12.2020) 14 פס",
+          "query_he": "בית המשפט העליון \"חריגים להשתק פלוגתא\" \"חוסר סמכות\" \"ראיות חדשות\" חשבון פתיחת השתק מתי משחררים השתק",
+          "score": 0.584052624520331,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "אהרון חסין נ׳ מדינת ישראל – פרקליטות המדינה",
+            "raw_title": "מ\"ח 3489/22 אהרון חסין נ. מדינת ישראל – פרקליטות המדינה החלטה",
+            "source_site": "toledano.co.il",
+            "decision_date": null,
+            "decision_kind": "החלטה",
+            "document_kind": "caselaw",
+            "local_pdf_file": "00760 - מ ח 3489 22 אהרון חסין נ׳ מדינת ישראל – פרקליטות המדינה החלטה.pdf",
+            "procedure_type": "מ\"ח",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "3489/22"
+          }
+        },
+        {
+          "candidate_id": "b73e2408-38ae-4dd0-9a3e-f9f9b55ea347",
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "בג\"ץ 3240/19 דרור סוראדו נ׳ כנסת פסק דין",
+          "source_type": "caselaw",
+          "document_id": "0fe384ca-6581-4134-8904-5a7c50004473",
+          "source_url": "https://www.toledano.co.il/%d7%91%d7%92%d7%a5-3240-19-%d7%93%d7%a8%d7%95%d7%a8-%d7%a1%d7%95%d7%a8%d7%90%d7%93%d7%95-%d7%a0-%d7%9b%d7%a0%d7%a1%d7%aa-%d7%a4%d7%a1%d7%a7-%d7%93%d7%99%d7%9f-07-01-2020/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "להניח שבכוחו\n בנסיבות .רב כסף עולות הסתם שמן פיתוח עבודות בהן ומתבצעות ולרוכשים לקבלנים\n של טענות העותרים בפי כי סברנו אילו גם לאחור הגלגל את להחזיר בידינו היה לא ,אלו\n ולאיון י\"רמ ידי על המפסיק התנאי של הפעלתו לביטול להביא עשויות אשר ממש\n.לקרקע ביחס שנעשו הנוספות המשפטיות הפעולות\n .רלבנטיים דין בעלי של צירופם-באי לוקה זו עתירה ,שמניתי הפגמים כל לצד.15\n את גם אלא ,במספר ושניים-עשרים ,החסרים הקרקע ",
+          "query_he": "בית המשפט העליון \"חריגים להשתק פלוגתא\" \"חוסר סמכות\" \"ראיות חדשות\" חשבון פתיחת השתק מתי משחררים השתק",
+          "score": 0.580417931973953,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "דרור סוראדו נ׳ כנסת",
+            "raw_title": "בג\"ץ 3240/19 דרור סוראדו נ. כנסת פסק דין 07.01.2020",
+            "source_site": "toledano.co.il",
+            "decision_date": null,
+            "decision_kind": "פסק דין",
+            "document_kind": "caselaw",
+            "local_pdf_file": "02940 - בג ץ 3240 19 דרור סוראדו נ׳ כנסת פסק דין.pdf",
+            "procedure_type": "בג\"ץ",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "3240/19"
+          }
+        },
+        {
+          "candidate_id": "b53eb9eb-daa2-470a-81dc-d3fca7cf16b0",
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "סיבתיות עמומה – הרחבה מתבקשת או אימפריאליזם סיבתי? | טל אלמקיס ואסף יעקב (רוב, מיעוט וכללי הכרעה)",
+          "source_type": "journal_article",
+          "document_id": "f34b3c7d-390a-4bc1-828e-bf2cbb2c8a0a",
+          "source_url": "https://runilawreview.org/2024/09/18/elmakiess-jacob/",
+          "snippet": "ט וללא כל תלות באש  ם, לראשון יש \nאפשרויות \"מילוט\" – גם אם מצומצמות – במסגרת ההגנות שמוקנות לו. ברם, גם כאן החלת כללים \nשל אחריות יחסית עלולה להתברר כבעייתית, שכן גם כאן, בניגוד למשטר של רשלנות, לא יוכל \nהיצרן לפטור את עצמו מאחריות על ידי כך שיפעל מראש בצורה סבירה. יודגש כי אף שקיימות \nליצרן הגנות במסגרת חוק האחריות למוצרים פגומים, אלה מצומצמות יותר ותלויות בחלקן בניזוק, \nבניגוד לאפשרות לנקוט פעול",
+          "query_he": "בית המשפט העליון \"השתק פלוגתא\" \"זהות פלוגתא\" \"הכרעה חיונית\" \"הזדמנות מלאה להתדיין\" תנאים להחלת השתק פלוגתא",
+          "score": 0.578377417396779,
+          "expected_source_type": "case",
+          "metadata": {
+            "abstract": "המאמר עוסק בשילובם של כללי האחריות היחסית במצבים של סיבתיות עמומה, תוך התייחסות לשני כלים משפטיים הנוהגים כיום במשפט הישראלי – חריג ההטיה הנשנית והדוקטרינה של אובדן סיכויי החלמה. טענתנו היא כי יישומם של כללים אלו במשטרי אחריות שונים לא ...",
+            "source_site": "reichman_law_review"
+          }
+        },
+        {
+          "candidate_id": "8da6ae6a-3e5f-4546-b467-1c729d0e3c98",
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "origin": "local_db",
+          "retrieval_method": "vector",
+          "title": "בש\"פ 9023/20 עומרי ואזנה נ׳ מדינת ישראל החלטה (01.01.2021)",
+          "source_type": "caselaw",
+          "document_id": "d4bb3592-9ac5-4409-b0fb-39470d2acf8b",
+          "source_url": "https://www.toledano.co.il/%d7%91%d7%a9%d7%a4-9023-20-%d7%a2%d7%95%d7%9e%d7%a8%d7%99-%d7%95%d7%90%d7%96%d7%a0%d7%94-%d7%a0-%d7%9e%d7%93%d7%99%d7%a0%d7%aa-%d7%99%d7%a9%d7%a8%d7%90%d7%9c-%d7%94%d7%97%d7%9c%d7%98%d7%94-%d7%9e/%d7%a4%d7%a1%d7%99%d7%a7%d7%94-%d7%97%d7%99%d7%a0%d7%9d/",
+          "snippet": "העליון המשפט בבית\n9023/20 פ\"בש\nשטיין 'א השופט כבוד:לפני\nואזנה עומרי:העורר\nד ג נ\nישראל מדינת:המשיבה\n סמכויות) הפלילי הדין סדר לחוק (א)53 סעיף לפי ערר\n שניתנה החלטה על ,1996-ו\"התשנ ,(מעצרים – אכיפה\n שבע באר המחוזי המשפט בית ידי על 26.11.2020 ביום\n9804-08-20 ת\"במ (טהה אבו 'נ השופט)\nחסונה .ס אכרם ד\"עו:העורר בשם\nאבגז שבע בת ד\"עו:המשיבה בשם\nהחלטה\n ,(מעצרים-אכיפה סמכויות) הפלילי הדין סדר לחוק (א)53 סעיף ",
+          "query_he": "בית המשפט העליון \"חריגים להשתק פלוגתא\" \"חוסר סמכות\" \"ראיות חדשות\" חשבון פתיחת השתק מתי משחררים השתק",
+          "score": 0.578190821288163,
+          "expected_source_type": "case",
+          "metadata": {
+            "parties": "עומרי ואזנה נ׳ מדינת ישראל",
+            "raw_title": "בש\"פ 9023/20 עומרי ואזנה נ. מדינת ישראל החלטה מיום 01.01.2021",
+            "source_site": "toledano.co.il",
+            "decision_date": "01.01.2021",
+            "decision_kind": "החלטה",
+            "document_kind": "caselaw",
+            "local_pdf_file": "02187 - בש פ 9023 20 עומרי ואזנה נ׳ מדינת ישראל החלטה (01.01.2021).pdf",
+            "procedure_type": "בש\"פ",
+            "source_category": "פסיקה חינם",
+            "procedure_number": "9023/20"
           }
         }
       ],
       "dropped_sources": [
         {
-          "query_he": "מאמר משפטי \"השתק פלוגתא\" הגדרה תכליתית דוקטרינה סדר דין אזרחי",
+          "query_he": "מאמר \"השתק פלוגתא\" \"issue preclusion\" ישראל \"עיקרון\" \"השתק\" כתב-עת משפטי ניתוח תיאורטי",
           "claim_id": "C1",
           "role": "scholarship",
           "origin": "perplexity",
-          "title": "מעשה בית דין בהליך אזרחי",
-          "url": "https://he.wikipedia.org/wiki/%D7%9E%D7%A2%D7%A9%D7%94_%D7%91%D7%99%D7%AA_%D7%93%D7%99%D7%9F",
-          "drop_reason": "bad_domain_for_role:he.wikipedia.org"
+          "title": "Res Judicata in Israel: Between Finality and Fairness",
+          "url": "https://papers.ssrn.com/sol3/results.cfm",
+          "drop_reason": "discovery_only"
         },
         {
-          "query_he": "מאמר משפטי \"השתק פלוגתא\" הגדרה תכליתית דוקטרינה סדר דין אזרחי",
+          "query_he": "מאמר \"השתק פלוגתא\" \"issue preclusion\" ישראל \"עיקרון\" \"השתק\" כתב-עת משפטי ניתוח תיאורטי",
           "claim_id": "C1",
           "role": "scholarship",
           "origin": "perplexity",
-          "title": "מעשה בית דין ודוקטרינת ההשתק בדין האזרחי",
-          "url": "https://scholar.google.com/scholar?q=%22%D7%9E%D7%A2%D7%A9%D7%94+%D7%91%D7%99%D7%AA+%D7%93%D7%99%D7%9F%22+%D7%94%D7%A9%D7%AA%D7%A7+%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90+%D7%A1%D7%93%D7%A8+%D7%93%D7%99%D7%9F+%D7%90%D7%96%D7%A8%D7%97%D7%99",
-          "drop_reason": "bad_domain_for_role:scholar.google.com"
+          "title": "Finality, Fairness, and the Doctrine of Res Judicata in Israeli Law",
+          "url": "https://search.worldcat.org/",
+          "drop_reason": "class_unknown_not_admitted_for_scholarship"
         },
         {
-          "query_he": "מאמר משפטי \"השתק פלוגתא\" הגדרה תכליתית דוקטרינה סדר דין אזרחי",
+          "query_he": "מאמר \"השתק פלוגתא\" \"issue preclusion\" ישראל \"עיקרון\" \"השתק\" כתב-עת משפטי ניתוח תיאורטי",
           "claim_id": "C1",
           "role": "scholarship",
           "origin": "perplexity",
-          "title": "השתק פלוגתא - דיני מעשה בית דין",
-          "url": "https://scholar.google.com/scholar?q=%22%D7%94%D7%A9%D7%AA%D7%A7+%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90%22+%D7%9E%D7%90%D7%9E%D7%A8+%D7%9E%D7%A9%D7%A4%D7%98%D7%99",
-          "drop_reason": "bad_domain_for_role:scholar.google.com"
+          "title": "מעשה בית דין והשתק פלוגתא במשפט הישראלי",
+          "url": "https://scholar.google.com/",
+          "drop_reason": "discovery_only"
         },
         {
-          "query_he": "מאמר משפטי \"השתק פלוגתא\" הגדרה תכליתית דוקטרינה סדר דין אזרחי",
-          "claim_id": "C1",
+          "query_he": "מאמר \"תנאי השתק פלוגתא\" \"זהות פלוגתא\" \"הכרעה נחוצה\" \"הזדמנות להתדיין\" כתב-עת משפטי ישראלי ניתוח מרכיבי ההשתק",
+          "claim_id": "C2",
           "role": "scholarship",
           "origin": "perplexity",
-          "title": "Res Judicata in Israeli Civil Procedure",
-          "url": "https://scholar.google.com/scholar?q=site%3Asrn%2Fssrn.com+res+judicata+israel+civil+procedure",
-          "drop_reason": "bad_domain_for_role:scholar.google.com"
+          "title": "הערך שבשימור תנאי ההדדיות בדוקטרינת השתק פלוגתא",
+          "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID3690287_code3487662.pdf?abstractid=3690287&mirid=1",
+          "drop_reason": "discovery_only"
         },
         {
-          "query_he": "פסק-דין בית משפט מחוזי \"השתק פלוגתא\" חריגים ראיות חדשות ערעור תלוי ועומד שינוי נסיבות",
-          "claim_id": "C4",
-          "role": "persuasive_case_law",
+          "query_he": "מאמר \"תנאי השתק פלוגתא\" \"זהות פלוגתא\" \"הכרעה נחוצה\" \"הזדמנות להתדיין\" כתב-עת משפטי ישראלי ניתוח מרכיבי ההשתק",
+          "claim_id": "C2",
+          "role": "scholarship",
           "origin": "perplexity",
-          "title": "ע\"א 8444/19 ישעיהו גיבור נ' אזורים",
-          "url": "https://www.toledano.co.il/wp-content/uploads/2022/05/%D7%99%D7%A9%D7%A2%D7%99%D7%94%D7%95-%D7%92%D7%99%D7%91%D7%95%D7%A8-%D7%A0-%D7%90%D7%96%D7%95%D7%A8%D7%99%D7%9D.pdf",
-          "drop_reason": "bad_domain_for_role:toledano.co.il"
+          "title": "מעשה בית דין / השתק פלוגתא – פסקי דין ומראי מקום",
+          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision8996-10-16/he/8996-10-16%20(002).docx",
+          "drop_reason": "class_government_report_not_admitted_for_scholarship"
         },
         {
-          "query_he": "פסק-דין בית משפט מחוזי \"השתק פלוגתא\" חריגים ראיות חדשות ערעור תלוי ועומד שינוי נסיבות",
-          "claim_id": "C4",
-          "role": "persuasive_case_law",
+          "query_he": "מאמר השוואתי \"השתק פלוגתא\" vs \"שיתוק עילה\" res judicata \"מבחן זהות\" \"חלוף הזמן\" ניתוח ישראלי",
+          "claim_id": "C3",
+          "role": "scholarship",
           "origin": "perplexity",
-          "title": "ה\"פ 13008-11-18 / ע\"א 8444/19 – אזורים",
-          "url": "https://www.toledano.co.il/wp-content/uploads/2022/05/%D7%99%D7%A9%D7%A2%D7%99%D7%94%D7%95-%D7%92%D7%99%D7%91%D7%95%D7%A8-%D7%A0-%D7%90%D7%96%D7%95%D7%A8%D7%99%D7%9D.pdf",
-          "drop_reason": "bad_domain_for_role:toledano.co.il"
+          "title": "מעשה בית דין – השתק עילה והשתק פלוגתא",
+          "url": "https://yuvalb.org/blog/post/%D7%9E%D7%A2%D7%A9%D7%94+%D7%91%D7%99%D7%AA+%D7%93%D7%99%D7%9F+%E2%80%93+%D7%94%D7%A9%D7%AA%D7%A7+%D7%A2%D7%99%D7%9C%D7%94+%D7%95%D7%94%D7%A9%D7%AA%D7%A7+%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90",
+          "drop_reason": "class_unknown_not_admitted_for_scholarship"
         },
         {
-          "query_he": "פסק-דין בית משפט מחוזי \"השתק פלוגתא\" חריגים ראיות חדשות ערעור תלוי ועומד שינוי נסיבות",
-          "claim_id": "C4",
-          "role": "persuasive_case_law",
+          "query_he": "מאמר השוואתי \"השתק פלוגתא\" vs \"שיתוק עילה\" res judicata \"מבחן זהות\" \"חלוף הזמן\" ניתוח ישראלי",
+          "claim_id": "C3",
+          "role": "scholarship",
           "origin": "perplexity",
-          "title": "ת\"א 19181-07-20 / ערעור אזרחי (מסמך Gov.il)",
-          "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision19181-07-20/he/19181-07-20.pdf",
-          "drop_reason": "bad_domain_for_role:gov.il"
+          "title": "Reconsidering Res Judicata: A Comparative Perspective",
+          "url": "https://scholarship.law.duke.edu/cgi/viewcontent.cgi?article=1025&context=djcil",
+          "drop_reason": "discovery_only"
         },
         {
-          "query_he": "פסק-דין בית משפט מחוזי \"השתק פלוגתא\" חריגים ראיות חדשות ערעור תלוי ועומד שינוי נסיבות",
-          "claim_id": "C4",
-          "role": "persuasive_case_law",
+          "query_he": "מאמר השוואתי \"השתק פלוגתא\" vs \"שיתוק עילה\" res judicata \"מבחן זהות\" \"חלוף הזמן\" ניתוח ישראלי",
+          "claim_id": "C3",
+          "role": "scholarship",
           "origin": "perplexity",
-          "title": "לוד - בית המשפט המחוזי מרכז (PDF ב-law.co.il)",
-          "url": "https://www.law.co.il/media/computer-law/l_p.pdf",
-          "drop_reason": "bad_domain_for_role:law.co.il"
+          "title": "חוזה הפסיכולוגי בדיני עבודה? (לא זוהה כמקור מתאים לשאילתה)",
+          "url": "https://dictionary.justia.com/res-judicata",
+          "drop_reason": "class_unknown_not_admitted_for_scholarship"
         },
         {
-          "query_he": "מאמר משפטי \"חריגים השתק פלוגתא\" היעדר הזדמנות להתדיין ראיות חדשות שינוי נסיבות בתי משפט",
+          "query_he": "מאמר השוואתי \"השתק פלוגתא\" vs \"שיתוק עילה\" res judicata \"מבחן זהות\" \"חלוף הזמן\" ניתוח ישראלי",
+          "claim_id": "C3",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "השתק עילה והשתק פלוגתא בפסיקה הישראלית",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F17%2F760%2F045%2Fy08&fileName=17045760.Y08&type=2",
+          "drop_reason": "class_official_primary_not_admitted_for_scholarship"
+        },
+        {
+          "query_he": "מאמר \"חריגים להשתק פלוגתא\" \"ראיות חדשות\" \"חוסר סמכות\" \"השתק התקפתי והשתק הגנתי\" פרשנות משפטית בישראל",
           "claim_id": "C4",
           "role": "scholarship",
           "origin": "perplexity",
-          "title": "השתק פלוגתא - מאמר משפטי/סקירה",
+          "title": "הערך שבשימור תנאי ההדדיות בדוקטרינת השתק פלוגתא",
+          "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID3690287_code3487662.pdf?abstractid=3690287&mirid=1",
+          "drop_reason": "discovery_only"
+        },
+        {
+          "query_he": "מאמר \"חריגים להשתק פלוגתא\" \"ראיות חדשות\" \"חוסר סמכות\" \"השתק התקפתי והשתק הגנתי\" פרשנות משפטית בישראל",
+          "claim_id": "C4",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "ההליך האזרחי",
+          "url": "https://www.nevo.co.il/law_html/law01/p231_001.htm",
+          "drop_reason": "class_legislation_not_admitted_for_scholarship"
+        },
+        {
+          "query_he": "מאמר \"חריגים להשתק פלוגתא\" \"ראיות חדשות\" \"חוסר סמכות\" \"השתק התקפתי והשתק הגנתי\" פרשנות משפטית בישראל",
+          "claim_id": "C4",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "סדר הדין האזרחי",
+          "url": "https://www.nevo.co.il/law_html/law01/p231_001.htm",
+          "drop_reason": "class_legislation_not_admitted_for_scholarship"
+        },
+        {
+          "query_he": "מאמר \"חריגים להשתק פלוגתא\" \"ראיות חדשות\" \"חוסר סמכות\" \"השתק התקפתי והשתק הגנתי\" פרשנות משפטית בישראל",
+          "claim_id": "C4",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "Commentaries on the Law of Civil Procedure in Israel",
+          "url": "https://www.martinusnijhoff.com/view/title/7095",
+          "drop_reason": "class_unknown_not_admitted_for_scholarship"
+        },
+        {
+          "query_he": "מאמר \"מעמד השתק פלוגתא במשפט הישראלי\" \"השפעות פרקטיות\" \"הנחיות לעורכי דין\" כתב-עת משפטי ביקורת/ניתוח",
+          "claim_id": "C5",
+          "role": "scholarship",
+          "origin": "perplexity",
+          "title": "השתק פלוגתא – מהו?",
           "url": "https://www.cmichael-law.co.il/%D7%94%D7%A9%D7%AA%D7%A7-%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90.html",
-          "drop_reason": "bad_domain_for_role:cmichael-law.co.il"
+          "drop_reason": "discovery_only"
         },
         {
-          "query_he": "מאמר משפטי \"חריגים השתק פלוגתא\" היעדר הזדמנות להתדיין ראיות חדשות שינוי נסיבות בתי משפט",
-          "claim_id": "C4",
+          "query_he": "מאמר \"מעמד השתק פלוגתא במשפט הישראלי\" \"השפעות פרקטיות\" \"הנחיות לעורכי דין\" כתב-עת משפטי ביקורת/ניתוח",
+          "claim_id": "C5",
           "role": "scholarship",
           "origin": "perplexity",
-          "title": "טענת השתק פלוגתא בהכרעה לפי סעיף 79א' לחוק בתי המשפט",
-          "url": "https://www.dinrega.com/gs/%D7%98%D7%A2%D7%A0%D7%AA%20%D7%94%D7%A9%D7%AA%D7%A7%20%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90%20%D7%91%D7%94%D7%9B%D7%A8%D7%A2%D7%94%20%D7%9C%D7%A4%D7%99%20%D7%A1%D7%A2%D7%99%D7%A3%2079%D7%90'%20%D7%9C%D7%97%D7%95%D7%A7%20%D7%91%D7%AA%D7%99%20%D7%94%D7%9E%D7%A9%D7%A4%D7%98",
-          "drop_reason": "bad_domain_for_role:dinrega.com"
+          "title": "מעשה בית דין – השתק עילה והשתק פלוגתא",
+          "url": "https://yuvalb.org/blog/post/%D7%9E%D7%A2%D7%A9%D7%94+%D7%91%D7%99%D7%AA+%D7%93%D7%99%D7%9F+%E2%80%93+%D7%94%D7%A9%D7%AA%D7%A7+%D7%A2%D7%99%D7%9C%D7%94+%D7%95%D7%94%D7%A9%D7%AA%D7%A7+%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90",
+          "drop_reason": "class_unknown_not_admitted_for_scholarship"
         },
         {
-          "query_he": "מאמר משפטי \"חריגים השתק פלוגתא\" היעדר הזדמנות להתדיין ראיות חדשות שינוי נסיבות בתי משפט",
-          "claim_id": "C4",
+          "query_he": "מאמר \"מעמד השתק פלוגתא במשפט הישראלי\" \"השפעות פרקטיות\" \"הנחיות לעורכי דין\" כתב-עת משפטי ביקורת/ניתוח",
+          "claim_id": "C5",
           "role": "scholarship",
           "origin": "perplexity",
           "title": "השתק פלוגתא לעומת השתק עילה - מה ההבדל בין הטענות?",
           "url": "https://www.blitshtein-law.com/%D7%A2%D7%95%D7%A8%D7%9A-%D7%93%D7%99%D7%9F-%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA/%D7%94%D7%A9%D7%AA%D7%A7-%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90-%D7%9C%D7%A2%D7%95%D7%9E%D7%AA-%D7%94%D7%A9%D7%AA%D7%A7-%D7%A2%D7%99%D7%9C%D7%94/",
-          "drop_reason": "bad_domain_for_role:blitshtein-law.com"
+          "drop_reason": "discovery_only"
         },
         {
-          "query_he": "מאמר משפטי \"חריגים השתק פלוגתא\" היעדר הזדמנות להתדיין ראיות חדשות שינוי נסיבות בתי משפט",
-          "claim_id": "C4",
+          "query_he": "מאמר \"מעמד השתק פלוגתא במשפט הישראלי\" \"השפעות פרקטיות\" \"הנחיות לעורכי דין\" כתב-עת משפטי ביקורת/ניתוח",
+          "claim_id": "C5",
           "role": "scholarship",
           "origin": "perplexity",
-          "title": "סיכומים - ערעור בעניין השתק פלוגתא השתק עילה",
-          "url": "https://www.barelaw.co.il/he/%D7%A1%D7%99%D7%9B%D7%95%D7%9E%D7%99%D7%9D-%D7%A2%D7%A8%D7%A2%D7%95%D7%A8-%D7%91%D7%A2%D7%A0%D7%99%D7%99%D7%9F-%D7%94%D7%A9%D7%AA%D7%A7-%D7%A4%D7%9C%D7%95%D7%92%D7%AA%D7%90-%D7%94%D7%A9%D7%AA%D7%A7-%D7%A2%D7%99%D7%9C%D7%94.html",
-          "drop_reason": "bad_domain_for_role:barelaw.co.il"
-        },
-        {
-          "query_he": "מאמר משפטי \"חריגים השתק פלוגתא\" היעדר הזדמנות להתדיין ראיות חדשות שינוי נסיבות בתי משפט",
-          "claim_id": "C4",
-          "role": "scholarship",
-          "origin": "perplexity",
-          "title": "צקליסט.docx - השתק פלוגתא לא הדדי",
-          "url": "https://hamishpat.com/wp-content/uploads/2021/01/%D7%A6%D7%A7%D7%9C%D7%99%D7%A1%D7%98.docx",
-          "drop_reason": "bad_domain_for_role:hamishpat.com"
+          "title": "החלטה בתיק ע\"א 4576/17",
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F17%2F760%2F045%2Fy08&fileName=17045760.Y08&type=2",
+          "drop_reason": "class_official_primary_not_admitted_for_scholarship"
         }
       ]
     }

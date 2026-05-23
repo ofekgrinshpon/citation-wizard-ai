@@ -1,0 +1,2 @@
+ALTER FUNCTION public.search_legal_chunks_text(text, integer) SET statement_timeout = '25s';
+ALTER FUNCTION public.match_legal_chunks(extensions.vector, double precision, integer) SET statement_timeout = '25s';
