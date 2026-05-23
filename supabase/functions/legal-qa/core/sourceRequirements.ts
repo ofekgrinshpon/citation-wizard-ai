@@ -305,8 +305,9 @@ const ROLE_LOCAL_TEXT_K = 4;
 const ROLE_LOCAL_VECTOR_K = 4;
 const ROLE_EXACT_K = 3;
 const ROLE_WEB_K = 2;
-const ROLE_MAX_INJECTED = 2;          // hard cap of injected candidates per role
-const PER_CLAIM_SR_CAP = 2;           // injected from SR per claim (across all roles)
+const ROLE_MAX_INJECTED = 2;            // hard cap of injected candidates per role
+const PER_CLAIM_SR_CAP = 2;             // unprotected SR overflow per claim
+const PER_CLAIM_SR_PROTECTED_CAP = 4;   // protected SR slots per claim
 const VECTOR_THRESHOLD = 0.55;
 
 export type RoleMissingReason =
@@ -315,6 +316,14 @@ export type RoleMissingReason =
   | "filtered"
   | "exact_failed"
   | "web_failed"
+  | "other";
+
+export type ProtectionSkipReason =
+  | "no_hits"
+  | "duplicate"
+  | "malformed"
+  | "cap_exceeded"
+  | "disabled"
   | "other";
 
 export interface RoleInjectionRecord {
@@ -333,6 +342,15 @@ export interface RoleInjectionRecord {
   web_hit_count: number;
   injected_candidate_ids: string[];
   assigned_claim_ids: string[];
+
+  // ── Phase 3.1 protected-slot telemetry ──
+  protected_candidate_id?: string;
+  protected_slot_used?: boolean;
+  capped_before_protection?: boolean;
+  reached_verifier_after_protection?: boolean;
+  duplicate_of_candidate_id?: string;
+  protection_skip_reason?: ProtectionSkipReason;
+
   /** Filled by post-verifier reconciliation. */
   reached_verifier?: boolean;
   /** Filled by post-verifier reconciliation. */
@@ -343,6 +361,14 @@ export interface RoleInjectionRecord {
   errors: string[];
 }
 
+export interface ClaimSRSummary {
+  claim_id: string;
+  sr_protected_count: number;
+  sr_protected_roles: string[];
+  sr_candidates_reached_verifier_count: number;
+  normal_candidates_displaced_count: number;
+}
+
 export interface InjectMandatoryArgs {
   adminClient: SupabaseClient;
   requirements: SourceRequirementsPlan;
@@ -351,16 +377,22 @@ export interface InjectMandatoryArgs {
   embed?: (text: string) => Promise<number[] | null>;
   perplexityKey?: string;
   signal?: AbortSignal;
+  /** Phase 3.1 protected-slot flag. Defaults to true when injection runs. */
+  protectCandidates?: boolean;
 }
 
 export interface InjectMandatoryResult {
   records: RoleInjectionRecord[];
   /** packs is mutated in place; returned for convenience. */
   packs: ClaimRetrievalPack[];
+  per_claim: ClaimSRSummary[];
   totals: {
     roles: number;
     roles_with_injection: number;
     candidates_injected: number;
+    roles_protected: number;
+    protected_candidates: number;
+    protected_duplicates: number;
   };
 }
 
