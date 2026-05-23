@@ -2172,11 +2172,18 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         }
         try {
           const { pollLegalQaStatus, CHECKPOINT_LABELS_HE } = await import("@/lib/legalQaPolling");
+          const { deepCheckpointToStages } = await import("@/lib/legalQa/deepCheckpointToStages");
           const final = await pollLegalQaStatus(runId, {
             signal: controller.signal,
             onUpdate: (snap) => {
-              const label = CHECKPOINT_LABELS_HE[snap.checkpoint ?? ""] ?? snap.checkpoint ?? "מעבד";
-              setPostProcessingLabel(label);
+              const cp = snap.checkpoint ?? null;
+              setStageEvents(deepCheckpointToStages(cp));
+              if (cp === "anchor_pass" || cp === "completed") {
+                const label = CHECKPOINT_LABELS_HE[cp] ?? cp;
+                setPostProcessingLabel(label);
+              } else {
+                setPostProcessingLabel(null);
+              }
             },
           });
           if (final.status === "failed") {
