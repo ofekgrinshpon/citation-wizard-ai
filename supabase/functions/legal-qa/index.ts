@@ -2585,6 +2585,17 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
           buildResponse(coreFailureBody(reason), [], [], { footnotes_count: 0 });
 
         // Pre-insert "core_running" row so a hard crash leaves a trace.
+        // IMPORTANT: preserve `checkpoint: "queued"` + `stage_runs: []` so the
+        // async Deep polling UI (legal-qa-status → deepCheckpointToStages) can
+        // leave the starter row and show "תכנון מחקר" immediately. Without
+        // this, polling returns `checkpoint: null` and the bar sits at 2%.
+        const corePreMetadata: Record<string, unknown> = {
+          ...coreCtx,
+          pipeline_used: "core_running",
+          checkpoint: "queued",
+          checkpoint_at: new Date().toISOString(),
+          stage_runs: [],
+        };
         try {
           await adminClient.from("qa_logs").upsert({
             id: deepQaLogId,
@@ -2597,11 +2608,56 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             local_footnotes_count: 0,
             perplexity_footnotes_count: 0,
             total_footnotes: 0,
-            metadata: { ...coreCtx, pipeline_used: "core_running" },
+            metadata: corePreMetadata,
           }, { onConflict: "id" });
         } catch (preErr) {
           console.error("[research_core] pre-insert log failed:", preErr);
         }
+
+        // Core-stage → qa_logs.metadata.checkpoint bridge for async Deep
+        // polling. SSE emitter still receives every stage call unchanged.
+        // We only update the checkpoint name (frontend mapper already knows
+        // these IDs); we never mutate other metadata fields here.
+        const CORE_STAGE_TO_CHECKPOINT: Record<string, string> = {
+          plan: "decomposition",          // mapper: plan running
+          doctrine_classifier: "decomposition",
+          source_requirements: "decomposition",
+          retrieval: "retrieval",
+          source_requirements_inject: "retrieval",
+          verify: "verify",               // new mapper alias
+          ledger: "ledger",               // new mapper alias
+          draft: "draft",                 // new mapper alias
+          enrich_citations: "enrich_citations",
+          citation_quality: "anchor_pass",
+        };
+        let __lastCoreCheckpoint: string | null = null;
+        const writeCoreCheckpoint = (phase: string): void => {
+          if (phase === __lastCoreCheckpoint) return;
+          __lastCoreCheckpoint = phase;
+          const snapshot = {
+            ...corePreMetadata,
+            checkpoint: phase,
+            checkpoint_at: new Date().toISOString(),
+          };
+          const promise = adminClient
+            .from("qa_logs")
+            .update({ metadata: snapshot })
+            .eq("id", deepQaLogId)
+            .then((res: { error: unknown }) => {
+              if (res?.error) console.error(`[core-checkpoint:${phase}] write failed (non-fatal):`, res.error);
+            });
+          // deno-lint-ignore no-explicit-any
+          const er = (globalThis as any).EdgeRuntime;
+          if (er && typeof er.waitUntil === "function") er.waitUntil(promise);
+          else (promise as Promise<unknown>).catch(() => {});
+        };
+        const coreStageBridge = (name: string, status: "running" | "complete", detail?: string) => {
+          emitStage(name, status, detail);
+          if (status === "running") {
+            const phase = CORE_STAGE_TO_CHECKPOINT[name];
+            if (phase) writeCoreCheckpoint(phase);
+          }
+        };
 
         try {
           console.log(`[research_core] dispatch — Core is the default Deep pipeline`);
@@ -2610,7 +2666,7 @@ async function handleLegalQARequest(req: Request): Promise<Response> {
             adminClient,
             drafterTimeoutMs: modeProfile.drafterTimeoutMs,
             forceDrafterModel,
-            onStage: emitStage,
+            onStage: coreStageBridge,
           });
 
           hydrateCoreCtx(core);
