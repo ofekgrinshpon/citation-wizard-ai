@@ -38,6 +38,10 @@ const RESEARCH_OFFLINE_MESSAGE =
 const CHAPTER_OFFLINE_TITLE = "כתיבת פרקים בשדרוג";
 const CHAPTER_OFFLINE_MESSAGE =
   "כתיבת פרקי גוף, מבוא וסיכום מושבתת זמנית. אישור שאלת מחקר, הצעת נושאים, בניית מתווה וייצור התקציר זמינים כרגיל.";
+const PLEADING_OFFLINE_TITLE = "בדיקת כתבי טענות בשדרוג";
+const PLEADING_OFFLINE_MESSAGE =
+  "בקרת מסמכים משפטיים מושבתת זמנית בזמן שדרוג מנוע הניתוח. בינתיים ניתן להשתמש בסיכום פסיקה, אזכור אחיד, ביבליוגרפיה ובשלבים המקדימים של הכתיבה האקדמית.";
+
 
 // ─── Chapter role helpers ──────────────────────────────────────────
 // Three special chapters in addition to body: abstract, introduction, conclusion.
@@ -1918,13 +1922,16 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       if (wizardStep === "init" || wizardStep === "topic_or_question") return;
       return;
     }
-    // D1: Research mode is offline. Never fire a request — show the
-    // maintenance notice and bail before any network call. We compare via a
-    // string cast so TS does not narrow `taskMode` and break the (still
-    // present) downstream `taskMode === "research"` branches that we leave
-    // in place for the eventual rebuild.
+    // D1/D3: Research and pleading_analysis are offline. Never fire a request —
+    // show the maintenance notice and bail before any network call. String
+    // casts prevent TS from narrowing `taskMode` and breaking downstream
+    // branches we leave in place for the eventual rebuild.
     if ((taskMode as string) === "research") {
       toast.info(RESEARCH_OFFLINE_TITLE);
+      return;
+    }
+    if ((taskMode as string) === "pleading_analysis") {
+      toast.info(PLEADING_OFFLINE_TITLE);
       return;
     }
 
@@ -1933,7 +1940,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
     // For pleading_analysis: allow file-only submissions (no typed text required).
     // For other modes: require ≥5 chars of typed text.
-    if (taskMode === "pleading_analysis") {
+    if ((taskMode as string) === "pleading_analysis") {
       if (!hasFile && q.length < 5) {
         toast.error("הזינו טקסט או העלו מסמך לביקורת.");
         return;
@@ -1960,9 +1967,10 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       // For pleading_analysis with a file but no typed text, send a default instruction
       // so the edge function has a non-empty `question`. The actual audit subject is the file.
       const effectiveQuestion =
-        taskMode === "pleading_analysis" && hasFile && q.length === 0
+        (taskMode as string) === "pleading_analysis" && hasFile && q.length === 0
           ? "בצע ביקורת מקיפה על המסמך המצורף"
           : q;
+
 
       // D3.1: Deep research async path removed. Research mode is offline
       // (short-circuited to 503 server-side). Fast SSE path is also dead but
@@ -2928,7 +2936,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             <MaintenanceCard title={RESEARCH_OFFLINE_TITLE} message={RESEARCH_OFFLINE_MESSAGE} />
           </div>
         )}
-        {!isAcademic && !result && !loading && !error && taskMode !== "research" && (
+        {!isAcademic && !result && !loading && !error && taskMode === "pleading_analysis" && (
+          <div className="py-6">
+            <MaintenanceCard title={PLEADING_OFFLINE_TITLE} message={PLEADING_OFFLINE_MESSAGE} />
+          </div>
+        )}
+        {!isAcademic && !result && !loading && !error && taskMode !== "research" && (taskMode as string) !== "pleading_analysis" && (
+
           <div className="flex flex-col items-center justify-center h-full py-12 text-center">
             <div className="text-4xl mb-3">⚖️</div>
             <h2 className="text-foreground text-lg font-bold mb-2">העוזר המשפטי</h2>
@@ -3166,13 +3180,18 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   <button
                     onClick={handleSubmit}
                     disabled={
-                      taskMode === "research"
+                      taskMode === "research" || (taskMode as string) === "pleading_analysis"
                         ? true
-                        : taskMode === "pleading_analysis"
-                        ? question.trim().length < 5 && uploadedFiles.length === 0
                         : question.trim().length < 5
                     }
-                    title={taskMode === "research" ? RESEARCH_OFFLINE_TITLE : undefined}
+                    title={
+                      taskMode === "research"
+                        ? RESEARCH_OFFLINE_TITLE
+                        : (taskMode as string) === "pleading_analysis"
+                        ? PLEADING_OFFLINE_TITLE
+                        : undefined
+                    }
+
                     className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
                   >
                     ⇧
