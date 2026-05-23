@@ -1,8 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
 const RUNS = [
-  ["qual8-1-af57fc", 1], ["qual8-2-432d43", 2], ["qual8-3-6e0ad7", 3], ["qual8-4-7aa3e2", 4],
-  ["qual8-5-6d8ce9", 5], ["qual8-6-f30dd1", 6], ["qual8-7-6618d2", 7], ["qual8-8-713547", 8],
+  ["qual8-1-13bada", 1], ["qual8-2-5eb0a2", 2], ["qual8-3-0f8e7c", 3], ["qual8-4-75552e", 4],
+  ["qual8-5-a243a7", 5], ["qual8-6-8c9533", 6], ["qual8-7-8f8a01", 7], ["qual8-8-78ef71", 8],
 ];
 
 async function fetchAll() {
@@ -19,13 +19,13 @@ async function fetchAll() {
 
 const start = Date.now();
 let last;
-while (Date.now() - start < 12*60*1000) {
+while (Date.now() - start < 15 * 60 * 1000) {
   const rows = await fetchAll();
-  const done = rows.filter(r => r.row && r.row.answer && (r.row.metadata?.pipeline_used || r.row.metadata?.total_duration_ms));
-  console.log(`t=${Math.round((Date.now()-start)/1000)}s done=${done.length}/8 ` + rows.map(r=>r.row?.answer?'✓':'·').join(''));
+  const done = rows.filter(r => r.row && r.row.answer);
+  console.log(`t=${Math.round((Date.now() - start) / 1000)}s done=${done.length}/8 ` + rows.map(r => r.row?.answer ? '✓' : (r.row ? '·' : '_')).join(''));
   last = rows;
   if (done.length === 8) break;
-  await new Promise(r=>setTimeout(r, 20000));
+  await new Promise(r => setTimeout(r, 20000));
 }
 
 console.log("\n\n========= RESULTS =========");
@@ -37,13 +37,12 @@ for (const { idx, eid, row } of last) {
   const cq = md.citation_quality || md.core?.citation_quality || {};
   const inj = sr.injection || {};
   const rec = sr.reconciliation || {};
-  // build roles reached
   const reached = [];
-  for (const [role, info] of Object.entries(inj.roles || {})) {
-    const r = rec.roles?.[role];
-    if (r?.reached_verifier) reached.push(role);
+  for (const role of Object.keys(inj.roles || {})) {
+    if (rec.roles?.[role]?.reached_verifier) reached.push(role);
   }
   console.log("qa_log_id:", row.id);
+  console.log("question:", row.question);
   console.log("pipeline_used:", md.pipeline_used);
   console.log("triggered_doctrines:", JSON.stringify(sr.triggered_doctrines || []));
   console.log("roles reached verifier:", JSON.stringify(reached));
@@ -51,12 +50,12 @@ for (const { idx, eid, row } of last) {
   console.log("claims_lost_all_support:", md.core?.claims_lost_all_support ?? md.claims_lost_all_support ?? "n/a");
   console.log("footnotes_count:", (row.footnotes || []).length);
   const removed = cq.removed || md.removed_citations || [];
-  console.log("removed_citations:", JSON.stringify(removed).slice(0, 500));
+  console.log("removed_citations:", JSON.stringify(removed).slice(0, 800));
   console.log("\n--- ANSWER ---");
   console.log(row.answer || "(empty)");
   console.log("\n--- FOOTNOTES ---");
   (row.footnotes || []).forEach((f, i) => {
     const txt = typeof f === 'string' ? f : (f.text || f.citation || JSON.stringify(f));
-    console.log(`[${i+1}] ${txt}`);
+    console.log(`[${i + 1}] ${txt}`);
   });
 }
