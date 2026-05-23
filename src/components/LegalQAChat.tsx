@@ -2020,51 +2020,8 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         setError("מצב מחקר משפטי בשדרוג. נסו שוב מאוחר יותר.");
         return;
       }
-        const queued = await res.json().catch(() => ({}));
-        const runId = (queued?.run_id ?? queued?.runId) as string | undefined;
-        if (!runId) {
-          setError("השרת לא החזיר מזהה ריצה. נסו שוב.");
-          return;
-        }
-        try {
-          const { pollLegalQaStatus, CHECKPOINT_LABELS_HE } = await import("@/lib/legalQaPolling");
-          const { deepCheckpointToStages } = await import("@/lib/legalQa/deepCheckpointToStages");
-          const final = await pollLegalQaStatus(runId, {
-            signal: controller.signal,
-            onUpdate: (snap) => {
-              const cp = snap.checkpoint ?? null;
-              setStageEvents(deepCheckpointToStages(cp));
-              if (cp === "anchor_pass" || cp === "completed") {
-                const label = CHECKPOINT_LABELS_HE[cp] ?? cp;
-                setPostProcessingLabel(label);
-              } else {
-                setPostProcessingLabel(null);
-              }
-            },
-          });
-          if (final.status === "failed") {
-            const reason = final.reason ?? "unknown_error";
-            const reasonHe: Record<string, string> = {
-              gateway_timeout: "תם הזמן הקצוב — נסו שוב או פנו לתמיכה.",
-              background_crash: "שגיאה פנימית בעיבוד — נסו שוב.",
-              polling_timeout: "המחקר נמשך זמן רב מדי. נסו שוב.",
-            };
-            setError(reasonHe[reason] ?? `הבקשה נכשלה (${reason}).`);
-            return;
-          }
-          data = {
-            answer: final.answer,
-            footnotes: final.footnotes ?? [],
-            metadata: final.metadata,
-          };
-          effectiveStatus = 200;
-        } catch (pollErr) {
-          if ((pollErr as Error).name === "AbortError") return;
-          console.error("Deep polling error:", pollErr);
-          setError("שגיאה במעקב אחר עיבוד הבקשה. נסו שוב.");
-          return;
-        }
-      } else if (useSseStream && contentType.includes("text/event-stream") && res.body) {
+
+      if (useSseStream && contentType.includes("text/event-stream") && res.body) {
         const result = await consumeSseStream(res.body, {
           onStage: (e) => setStageEvents((prev) => [...prev, e]),
           onDraftDelta: (chunk) => setStreamingDraft((prev) => prev + chunk),
