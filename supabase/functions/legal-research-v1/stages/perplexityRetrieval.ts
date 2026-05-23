@@ -88,7 +88,8 @@ function classify(url: string, title: string): SourceClass {
 
   if (COURT_DB_DOMAINS.has(domain)) {
     if (domain === "nevo.co.il") {
-      // nevo can host either case-law or statute pages
+      // nevo can host books (publisher), statutes, or case-law pages.
+      if (/\/product\/book/i.test(path)) return "publisher";
       if (/\/law/i.test(path)) return "legislation";
       return "court_case";
     }
