@@ -17,6 +17,7 @@ import { runLocalRetrieval } from "./stages/localRetrieval.ts";
 import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { runVerifier } from "./stages/verifier.ts";
+import { runDrafter } from "./stages/drafter.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
 import { StageRun } from "./lib/types.ts";
 
@@ -360,12 +361,41 @@ async function handle(req: Request): Promise<Response> {
     errors: verifier.errors,
   };
 
-  // ─── Success: write telemetry + return P4 payload ────────────────────────
+  // ─── P5: Drafter + simple linked footnotes ───────────────────────────────
+  const drafter = await runDrafter(
+    question,
+    analyzer.claims,
+    pool.candidates,
+    { usable: verifier.usable, verdicts: verifier.verdicts },
+  );
+  stage_runs.push(...drafter.stage_runs);
+  const drafterMeta = {
+    ok: drafter.ok,
+    model_initial: drafter.model_initial,
+    model_final: drafter.model_final,
+    escalated: drafter.escalated,
+    ms: drafter.ms,
+    sources_passed: drafter.sources_passed,
+    sources_used: drafter.sources_used,
+    footnote_count: drafter.footnotes.length,
+    marker_validation: drafter.marker_validation,
+    omitted_candidate_ids: drafter.omitted_candidate_ids,
+    used_sources: drafter.used_sources,
+    error: drafter.error,
+    raw_text: drafter.raw_text,
+  };
+
+  const finalAnswer = drafter.ok ? drafter.answer_markdown : STUB_ANSWER;
+  const finalFootnotes = drafter.ok ? drafter.footnotes : [];
+
+  // ─── Success: write telemetry + return P5 payload ────────────────────────
   await writeTelemetry(admin, {
     ...telemetryBase,
+    answer: finalAnswer,
+    footnotes: finalFootnotes,
     metadata: {
       pipeline: "legal-research-v1",
-      phase: "P4",
+      phase: "P5",
       run_id,
       total_ms: Date.now() - t_start,
       stage_runs,
@@ -376,15 +406,17 @@ async function handle(req: Request): Promise<Response> {
       candidates: pool.candidates,
       dropped_sources: pplx.dropped,
       verifier: verifierMeta,
+      drafter: drafterMeta,
     },
   });
 
   return jsonResponse(200, {
-    answer: STUB_ANSWER,
-    footnotes: [],
+    answer: finalAnswer,
+    footnotes: finalFootnotes,
+    used_sources: drafter.ok ? drafter.used_sources : [],
     debug: {
       run_id,
-      phase: "P4",
+      phase: "P5",
       stage_runs,
       planning: planningMeta,
       claims: analyzer.claims,
@@ -393,6 +425,7 @@ async function handle(req: Request): Promise<Response> {
       candidates: pool.candidates,
       dropped_sources: pplx.dropped,
       verifier: verifierMeta,
+      drafter: drafterMeta,
     },
   });
   }; // end runPipeline

@@ -140,3 +140,31 @@ export interface UsableCandidate {
   verdict_claim_ids: string[];
 }
 
+// ─── P5: Drafter ───────────────────────────────────────────────────────────
+export interface UsedSource {
+  candidate_id: string;
+  number: number;
+  title: string;
+  url: string | null;
+  source_type: string;
+  origin: Origin;
+}
+
+export interface Footnote {
+  number: number;
+  title: string;
+  url: string | null;
+}
+
+export interface MarkerValidation {
+  ok: boolean;
+  markers_in_answer: number[];
+  unused_sources: number[];
+  missing_sources: number[];
+  internal_id_leak: boolean;
+  leaked_tokens: string[];
+  repaired: boolean;
+  error?: string;
+}
+
+
