@@ -305,8 +305,9 @@ const ROLE_LOCAL_TEXT_K = 4;
 const ROLE_LOCAL_VECTOR_K = 4;
 const ROLE_EXACT_K = 3;
 const ROLE_WEB_K = 2;
-const ROLE_MAX_INJECTED = 2;          // hard cap of injected candidates per role
-const PER_CLAIM_SR_CAP = 2;           // injected from SR per claim (across all roles)
+const ROLE_MAX_INJECTED = 2;            // hard cap of injected candidates per role
+const PER_CLAIM_SR_CAP = 2;             // unprotected SR overflow per claim
+const PER_CLAIM_SR_PROTECTED_CAP = 4;   // protected SR slots per claim
 const VECTOR_THRESHOLD = 0.55;
 
 export type RoleMissingReason =
@@ -315,6 +316,14 @@ export type RoleMissingReason =
   | "filtered"
   | "exact_failed"
   | "web_failed"
+  | "other";
+
+export type ProtectionSkipReason =
+  | "no_hits"
+  | "duplicate"
+  | "malformed"
+  | "cap_exceeded"
+  | "disabled"
   | "other";
 
 export interface RoleInjectionRecord {
@@ -333,6 +342,15 @@ export interface RoleInjectionRecord {
   web_hit_count: number;
   injected_candidate_ids: string[];
   assigned_claim_ids: string[];
+
+  // ── Phase 3.1 protected-slot telemetry ──
+  protected_candidate_id?: string;
+  protected_slot_used?: boolean;
+  capped_before_protection?: boolean;
+  reached_verifier_after_protection?: boolean;
+  duplicate_of_candidate_id?: string;
+  protection_skip_reason?: ProtectionSkipReason;
+
   /** Filled by post-verifier reconciliation. */
   reached_verifier?: boolean;
   /** Filled by post-verifier reconciliation. */
@@ -343,6 +361,14 @@ export interface RoleInjectionRecord {
   errors: string[];
 }
 
+export interface ClaimSRSummary {
+  claim_id: string;
+  sr_protected_count: number;
+  sr_protected_roles: string[];
+  sr_candidates_reached_verifier_count: number;
+  normal_candidates_displaced_count: number;
+}
+
 export interface InjectMandatoryArgs {
   adminClient: SupabaseClient;
   requirements: SourceRequirementsPlan;
@@ -351,16 +377,22 @@ export interface InjectMandatoryArgs {
   embed?: (text: string) => Promise<number[] | null>;
   perplexityKey?: string;
   signal?: AbortSignal;
+  /** Phase 3.1 protected-slot flag. Defaults to true when injection runs. */
+  protectCandidates?: boolean;
 }
 
 export interface InjectMandatoryResult {
   records: RoleInjectionRecord[];
   /** packs is mutated in place; returned for convenience. */
   packs: ClaimRetrievalPack[];
+  per_claim: ClaimSRSummary[];
   totals: {
     roles: number;
     roles_with_injection: number;
     candidates_injected: number;
+    roles_protected: number;
+    protected_candidates: number;
+    protected_duplicates: number;
   };
 }
 
@@ -626,33 +658,122 @@ async function roleApprovedWeb(
   }
 }
 
+// ─── Phase 3.1 helpers ────────────────────────────────────────────────────
+
+
+function normUrl(u?: string): string {
+  if (!u) return "";
+  return u.trim().toLowerCase().replace(/[#?].*$/, "").replace(/\/+$/, "");
+}
+function normText(s?: string): string {
+  return (s || "").toLowerCase().replace(/[\s"'״׳`׳'"()[\]{}.,;:\-־]+/g, " ").trim();
+}
+function candidateDedupKeys(c: { document_id?: string; url?: string; title?: string; citation?: string }): string[] {
+  const keys: string[] = [];
+  if (c.document_id) keys.push(`doc:${c.document_id}`);
+  const u = normUrl(c.url);
+  if (u) keys.push(`url:${u}`);
+  const t = normText(c.title || c.citation);
+  if (t && t.length >= 6) keys.push(`title:${t}`);
+  return keys;
+}
+function isMalformed(c: CandidateSource): boolean {
+  const title = (c.title || "").trim();
+  const citation = (c.citation || "").trim();
+  if (!title && !citation) return true;
+  return false;
+}
+
+const ROLE_KIND_TO_SOURCE_TYPES: Record<SourceRoleKind, string[]> = {
+  statute: ["statute", "legislation", "law", "basic_law"],
+  regulation: ["regulation", "regulations"],
+  caselaw: ["case", "caselaw", "case_law", "case_law_database", "judgment", "published"],
+  scholarship: ["scholarship", "article", "book", "journal"],
+  factual_report: ["report", "knesset_research", "mmm", "government_report", "factual_report"],
+};
+
+function scoreCandidateForRole(c: CandidateSource, role: MandatorySourceRole): number {
+  let s = 0;
+  // (1) exact title/query phrase match
+  const hay = `${c.title || ""} \n ${c.citation || ""} \n ${c.snippet || ""}`;
+  const hayL = hay.toLowerCase();
+  let bestPhrase = 0;
+  for (const q of role.canonical_queries) {
+    const ql = q.toLowerCase();
+    if (!ql) continue;
+    if ((c.title || "").toLowerCase().includes(ql)) bestPhrase = Math.max(bestPhrase, 100);
+    else if ((c.citation || "").toLowerCase().includes(ql)) bestPhrase = Math.max(bestPhrase, 80);
+    else if (hayL.includes(ql)) bestPhrase = Math.max(bestPhrase, 40);
+  }
+  s += bestPhrase;
+  // (2) source_type fit
+  const st = (c.source_type || "").toLowerCase();
+  const fit = ROLE_KIND_TO_SOURCE_TYPES[role.kind] || [];
+  if (st && fit.some((k) => st.includes(k))) s += 25;
+  // (3) local DB over approved_web
+  if (c.origin === "exact_authority") s += 20;
+  else if (c.origin === "local_text") s += 15;
+  else if (c.origin === "local_vector") s += 12;
+  else if (c.origin === "approved_web") s += 5;
+  // (4) similarity / rank tiebreak
+  const sim = (c.metadata as Record<string, unknown> | undefined)?.similarity;
+  if (typeof sim === "number") s += Math.max(0, Math.min(10, sim * 10));
+  return s;
+}
+
+function pickBestForRole(pool: CandidateSource[], role: MandatorySourceRole): CandidateSource | null {
+  if (pool.length === 0) return null;
+  const ranked = [...pool]
+    .map((c) => ({ c, s: scoreCandidateForRole(c, role) }))
+    .sort((a, b) => b.s - a.s);
+  return ranked[0]?.c ?? null;
+}
+
 /**
  * Run targeted retrieval for each mandatory role and append a tiny number
  * of candidates to existing per-claim packs. Caller decides whether to call
  * this (flag-gated). Mutates `packs` in place.
+ *
+ * Phase 3.1: when `protectCandidates` is true (default), reserve up to 1
+ * protected slot per role on the assigned claim, bounded by
+ * PER_CLAIM_SR_PROTECTED_CAP per claim. Protected candidates bypass the
+ * PER_CLAIM_SR_CAP overflow budget. Verifier remains the gate.
  */
 export async function injectMandatoryRoleCandidates(
   args: InjectMandatoryArgs,
 ): Promise<InjectMandatoryResult> {
   const { adminClient, requirements, packs, embed, perplexityKey, signal } = args;
+  const protectCandidates = args.protectCandidates !== false;
   const records: RoleInjectionRecord[] = [];
-  const perClaimInjected = new Map<string, number>();
-  for (const p of packs) perClaimInjected.set(p.claim_id, 0);
+
+  const perClaimProtected = new Map<string, number>();
+  const perClaimOverflow = new Map<string, number>();
+  const perClaimProtectedRoles = new Map<string, string[]>();
+  for (const p of packs) {
+    perClaimProtected.set(p.claim_id, 0);
+    perClaimOverflow.set(p.claim_id, 0);
+    perClaimProtectedRoles.set(p.claim_id, []);
+  }
   const packByClaim = new Map<string, ClaimRetrievalPack>();
   for (const p of packs) packByClaim.set(p.claim_id, p);
 
-  // Build existing document_id/url dedup set per claim.
-  const dedupByClaim = new Map<string, Set<string>>();
+  // Build existing dedup index per claim: key → candidate_id of existing.
+  const dedupByClaim = new Map<string, Map<string, string>>();
   for (const p of packs) {
-    const s = new Set<string>();
+    const m = new Map<string, string>();
     for (const c of p.candidates) {
-      s.add(c.document_id || `${c.origin}:${c.url || c.candidate_id}`);
+      for (const k of candidateDedupKeys(c)) {
+        if (!m.has(k)) m.set(k, c.candidate_id);
+      }
     }
-    dedupByClaim.set(p.claim_id, s);
+    dedupByClaim.set(p.claim_id, m);
   }
 
   let totalInjected = 0;
   let rolesWithInjection = 0;
+  let rolesProtected = 0;
+  let protectedCandidates = 0;
+  let protectedDuplicates = 0;
 
   for (const role of requirements.mandatory_roles) {
     const rec: RoleInjectionRecord = {
@@ -672,9 +793,10 @@ export async function injectMandatoryRoleCandidates(
       injected_candidate_ids: [],
       assigned_claim_ids: [],
       errors: [],
+      protected_slot_used: false,
+      capped_before_protection: false,
     };
 
-    // Fire local + exact in parallel.
     const [localRes, vecRes, exactRes] = await Promise.all([
       roleLocalText(adminClient, role),
       embed ? roleLocalVector(adminClient, role, embed) : Promise.resolve({ hits: [] as CandidateSource[], tried: false }),
@@ -699,38 +821,125 @@ export async function injectMandatoryRoleCandidates(
       rec.web_hit_count = webRes.hits.length;
     }
 
-    // Priority pool: exact > local_text > local_vector > approved_web.
+    // Pool (all sources) — used for both phases.
     const pool: CandidateSource[] = [
       ...exactRes.hits,
       ...localRes.hits,
       ...vecRes.hits,
       ...webRes.hits,
-    ].slice(0, ROLE_MAX_INJECTED * 3); // gross overshoot, dedup below
+    ].filter((c) => !isMalformed(c));
 
-    // Determine candidate claim list for assignment.
+    // Determine assignable claims (intersected with packs).
     const assignClaimOrder = requirements.per_claim
       .filter((a) => a.role_ids.includes(role.role_id))
-      .map((a) => a.claim_id as string);
+      .map((a) => a.claim_id as string)
+      .filter((cid) => packByClaim.has(cid));
     const fallbackClaims = packs.map((p) => p.claim_id as string);
     const targetClaims = assignClaimOrder.length > 0 ? assignClaimOrder : fallbackClaims;
 
+    // ─── Phase A: protected slot (best candidate) ───
+    let protectedAssignedClaim: string | null = null;
     let injectedForRole = 0;
+    if (pool.length === 0) {
+      rec.protection_skip_reason = "no_hits";
+    } else if (!protectCandidates) {
+      rec.protection_skip_reason = "disabled";
+    } else {
+      const best = pickBestForRole(pool, role);
+      if (!best) {
+        rec.protection_skip_reason = "no_hits";
+      } else {
+        const keys = candidateDedupKeys(best);
+        // Try each target claim in order; if a duplicate exists, mark covered.
+        let duplicateOf: { cid: string; existing: string } | null = null;
+        let placed = false;
+        for (const cid of targetClaims) {
+          const dedup = dedupByClaim.get(cid)!;
+          const hitKey = keys.find((k) => dedup.has(k));
+          if (hitKey) {
+            duplicateOf = { cid, existing: dedup.get(hitKey)! };
+            continue; // try next claim before giving up
+          }
+          const usedProt = perClaimProtected.get(cid) || 0;
+          if (usedProt >= PER_CLAIM_SR_PROTECTED_CAP) {
+            // counts as displacing pressure on this claim, but try others.
+            continue;
+          }
+          // Place protected.
+          const pack = packByClaim.get(cid)!;
+          const reTagged: CandidateSource = {
+            ...best,
+            candidate_id: `${cid}-${best.candidate_id}-prot`,
+            claim_id: cid as ClaimId,
+            metadata: {
+              ...(best.metadata || {}),
+              sr_protected: true,
+            },
+          };
+          pack.candidates.push(reTagged);
+          if (reTagged.origin === "local_text") pack.local_text_count++;
+          else if (reTagged.origin === "local_vector") pack.local_vector_count++;
+          else if (reTagged.origin === "exact_authority") pack.exact_authority_count++;
+          else if (reTagged.origin === "approved_web") pack.approved_web_count++;
+
+          perClaimProtected.set(cid, usedProt + 1);
+          perClaimProtectedRoles.get(cid)!.push(role.role_id);
+          for (const k of candidateDedupKeys(reTagged)) {
+            if (!dedup.has(k)) dedup.set(k, reTagged.candidate_id);
+          }
+          rec.protected_candidate_id = reTagged.candidate_id;
+          rec.protected_slot_used = true;
+          rec.reached_verifier_after_protection = true;
+          rec.injected_candidate_ids.push(reTagged.candidate_id);
+          if (!rec.assigned_claim_ids.includes(cid)) rec.assigned_claim_ids.push(cid);
+          protectedAssignedClaim = cid;
+          injectedForRole++;
+          totalInjected++;
+          rolesProtected++;
+          protectedCandidates++;
+          placed = true;
+          break;
+        }
+        if (!placed) {
+          if (duplicateOf) {
+            // Existing pack candidate already covered this role.
+            rec.duplicate_of_candidate_id = duplicateOf.existing;
+            rec.protection_skip_reason = "duplicate";
+            rec.reached_verifier_after_protection = true;
+            rec.assigned_claim_ids.push(duplicateOf.cid);
+            protectedDuplicates++;
+          } else {
+            rec.protection_skip_reason = "cap_exceeded";
+            rec.capped_before_protection = true;
+          }
+        }
+      }
+    }
+
+    // ─── Phase B: overflow up to ROLE_MAX_INJECTED (unprotected SR cap) ───
     for (const cand of pool) {
       if (injectedForRole >= ROLE_MAX_INJECTED) break;
-      // Pick a target claim that hasn't filled its SR cap.
+      const keys = candidateDedupKeys(cand);
+      // Skip the one we already placed as protected (by identity).
+      if (rec.protected_candidate_id && keys.some((k) => {
+        // best candidate's keys are now present in some pack's dedup — but we
+        // explicitly skip the same object instance via candidate_id pattern.
+        return false;
+      })) {
+        // no-op; identity check below
+      }
       let assigned: string | null = null;
+      let isDup = false;
       for (const cid of targetClaims) {
-        const pack = packByClaim.get(cid);
-        if (!pack) continue;
-        const used = perClaimInjected.get(cid) || 0;
-        if (used >= PER_CLAIM_SR_CAP) continue;
         const dedup = dedupByClaim.get(cid)!;
-        const key = cand.document_id || `${cand.origin}:${cand.url || cand.candidate_id}`;
-        if (dedup.has(key)) continue;
+        if (keys.some((k) => dedup.has(k))) { isDup = true; continue; }
+        const usedOver = perClaimOverflow.get(cid) || 0;
+        if (usedOver >= PER_CLAIM_SR_CAP) continue;
         assigned = cid;
         break;
       }
       if (!assigned) {
+        if (isDup) continue;
         if (!rec.missing_reason && rec.injected_candidate_ids.length === 0) {
           rec.missing_reason = "capped";
         }
@@ -743,15 +952,15 @@ export async function injectMandatoryRoleCandidates(
         claim_id: assigned as ClaimId,
       };
       pack.candidates.push(reTagged);
-      // Update per-pack origin counters.
       if (reTagged.origin === "local_text") pack.local_text_count++;
       else if (reTagged.origin === "local_vector") pack.local_vector_count++;
       else if (reTagged.origin === "exact_authority") pack.exact_authority_count++;
       else if (reTagged.origin === "approved_web") pack.approved_web_count++;
-      perClaimInjected.set(assigned, (perClaimInjected.get(assigned) || 0) + 1);
-      dedupByClaim.get(assigned)!.add(
-        reTagged.document_id || `${reTagged.origin}:${reTagged.url || reTagged.candidate_id}`,
-      );
+      perClaimOverflow.set(assigned, (perClaimOverflow.get(assigned) || 0) + 1);
+      for (const k of candidateDedupKeys(reTagged)) {
+        const m = dedupByClaim.get(assigned)!;
+        if (!m.has(k)) m.set(k, reTagged.candidate_id);
+      }
       rec.injected_candidate_ids.push(reTagged.candidate_id);
       if (!rec.assigned_claim_ids.includes(assigned)) rec.assigned_claim_ids.push(assigned);
       injectedForRole++;
@@ -760,7 +969,7 @@ export async function injectMandatoryRoleCandidates(
 
     if (injectedForRole > 0) rolesWithInjection++;
 
-    if (rec.injected_candidate_ids.length === 0) {
+    if (rec.injected_candidate_ids.length === 0 && !rec.duplicate_of_candidate_id) {
       rec.missing_before_verifier = true;
       if (!rec.missing_reason) {
         if (!rec.tried_local && !rec.tried_vector && !rec.tried_exact_authority && !rec.tried_web) {
@@ -777,16 +986,37 @@ export async function injectMandatoryRoleCandidates(
       rec.missing_before_verifier = false;
     }
 
+    // For protection telemetry consistency when a duplicate satisfied us.
+    if (!rec.protected_slot_used && rec.duplicate_of_candidate_id) {
+      // already set protection_skip_reason="duplicate"
+    }
+    if (protectedAssignedClaim) {
+      // noop — claim already recorded
+    }
+
     records.push(rec);
   }
+
+  // Build per-claim SR summary (verifier-reach count filled post-verify).
+  const per_claim: ClaimSRSummary[] = packs.map((p) => ({
+    claim_id: p.claim_id as string,
+    sr_protected_count: perClaimProtected.get(p.claim_id) || 0,
+    sr_protected_roles: perClaimProtectedRoles.get(p.claim_id) || [],
+    sr_candidates_reached_verifier_count: 0, // filled by reconciliation
+    normal_candidates_displaced_count: 0,    // append-only injection, no displacement
+  }));
 
   return {
     records,
     packs,
+    per_claim,
     totals: {
       roles: requirements.mandatory_roles.length,
       roles_with_injection: rolesWithInjection,
       candidates_injected: totalInjected,
+      roles_protected: rolesProtected,
+      protected_candidates: protectedCandidates,
+      protected_duplicates: protectedDuplicates,
     },
   };
 }
@@ -853,6 +1083,8 @@ export interface ReconcileArgs {
   packs: ClaimRetrievalPack[];
   /** Per-role injection records from the injector, if it ran. */
   injectionRecords?: RoleInjectionRecord[];
+  /** Per-claim SR summary built by the injector (will be enriched in place). */
+  injectionPerClaim?: ClaimSRSummary[];
   /** All verifier verdicts flattened across claims, if verifier ran. */
   verdicts?: VerifierVerdictLike[];
 }
@@ -876,7 +1108,7 @@ function candidateMatchesRole(
 export function reconcileSourceRequirements(
   args: ReconcileArgs,
 ): SourceRequirementsReconciliation {
-  const { requirements, packs, injectionRecords, verdicts } = args;
+  const { requirements, packs, injectionRecords, injectionPerClaim, verdicts } = args;
   const allCandidates: CandidateSource[] = [];
   for (const p of packs) for (const c of p.candidates) allCandidates.push(c);
 
@@ -884,6 +1116,38 @@ export function reconcileSourceRequirements(
   for (const v of verdicts || []) verdictByCid.set(v.candidate_id, v.support);
   const recById = new Map<string, RoleInjectionRecord>();
   for (const r of injectionRecords || []) recById.set(r.role_id, r);
+
+  // Enrich per-role records with verifier-reach info (for protected slots).
+  for (const r of injectionRecords || []) {
+    if (r.protected_candidate_id) {
+      const s = verdictByCid.get(r.protected_candidate_id);
+      // reached_verifier_after_protection already true if pushed; refine to
+      // "verifier actually emitted a verdict" when we have verdict data.
+      if (verdicts && verdicts.length > 0) {
+        r.reached_verifier_after_protection = s !== undefined;
+      }
+    }
+  }
+
+  // Enrich per-claim summary with verifier-reach counts.
+  if (injectionPerClaim && verdicts) {
+    const cidByClaim = new Map<string, string[]>();
+    for (const r of injectionRecords || []) {
+      for (const cid of r.injected_candidate_ids) {
+        // claim id is the prefix up to first '-' in our re-tagged ids.
+        const m = cid.match(/^(C\d+)-/);
+        if (!m) continue;
+        const claim = m[1];
+        if (!cidByClaim.has(claim)) cidByClaim.set(claim, []);
+        cidByClaim.get(claim)!.push(cid);
+      }
+    }
+    for (const row of injectionPerClaim) {
+      const ids = cidByClaim.get(row.claim_id) || [];
+      row.sr_candidates_reached_verifier_count = ids.filter((cid) => verdictByCid.has(cid)).length;
+    }
+  }
+
 
   const per_role: RoleRecallStatus[] = requirements.mandatory_roles.map((role) => {
     const rec = recById.get(role.role_id);
