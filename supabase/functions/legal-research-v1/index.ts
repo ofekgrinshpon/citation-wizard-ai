@@ -16,6 +16,7 @@ import { runQueryPlanner } from "./stages/queryPlanner.ts";
 import { runLocalRetrieval } from "./stages/localRetrieval.ts";
 import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
+import { runVerifier } from "./stages/verifier.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
 import { StageRun } from "./lib/types.ts";
 
@@ -340,12 +341,31 @@ async function handle(req: Request): Promise<Response> {
     },
   };
 
-  // ─── Success: write telemetry + return P3 payload ────────────────────────
+  // ─── P4: Source Verifier ─────────────────────────────────────────────────
+  const verifier = await runVerifier(question, analyzer.claims, pool.candidates);
+  stage_runs.push(...verifier.stage_runs);
+  const verifierMeta = {
+    ms: verifier.ms,
+    model_initial: verifier.model_initial,
+    model_final: verifier.model_final,
+    escalated_claims: verifier.escalated_claims,
+    per_claim_ms: verifier.per_claim_ms,
+    counts: verifier.counts,
+    candidates_verified: verifier.candidates_verified,
+    candidates_usable: verifier.candidates_usable,
+    candidates_dropped: verifier.candidates_dropped,
+    verdicts: verifier.verdicts,
+    usable: verifier.usable,
+    dropped: verifier.dropped,
+    errors: verifier.errors,
+  };
+
+  // ─── Success: write telemetry + return P4 payload ────────────────────────
   await writeTelemetry(admin, {
     ...telemetryBase,
     metadata: {
       pipeline: "legal-research-v1",
-      phase: "P3",
+      phase: "P4",
       run_id,
       total_ms: Date.now() - t_start,
       stage_runs,
@@ -355,6 +375,7 @@ async function handle(req: Request): Promise<Response> {
       retrieval: retrievalMeta,
       candidates: pool.candidates,
       dropped_sources: pplx.dropped,
+      verifier: verifierMeta,
     },
   });
 
@@ -363,7 +384,7 @@ async function handle(req: Request): Promise<Response> {
     footnotes: [],
     debug: {
       run_id,
-      phase: "P3",
+      phase: "P4",
       stage_runs,
       planning: planningMeta,
       claims: analyzer.claims,
@@ -371,6 +392,7 @@ async function handle(req: Request): Promise<Response> {
       retrieval: retrievalMeta,
       candidates: pool.candidates,
       dropped_sources: pplx.dropped,
+      verifier: verifierMeta,
     },
   });
   }; // end runPipeline
