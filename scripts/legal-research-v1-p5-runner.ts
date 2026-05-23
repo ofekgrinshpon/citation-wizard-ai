@@ -9,8 +9,12 @@ const SR_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const SMOKE_USER_ID = process.env.SMOKE_USER_ID ?? "65600563-6bc3-4f54-867b-d532c377f522";
 
 const FIXTURES: Array<{ id: string; question: string }> = [
+  { id: "L1", question: "מהם התנאים למתן צו מניעה זמני?" },
+  { id: "L2", question: "מהי דוקטרינת ההבטחה המנהלית?" },
   { id: "L3", question: "מתי בית המשפט יפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים תרופות?" },
   { id: "L4", question: "מהי דוקטרינת השתק פלוגתא?" },
+  { id: "L5", question: "מהי עילת הסבירות ומה היקף הביקורת השיפוטית עליה?" },
+  { id: "L6", question: "רשות מקומית נתנה הבטחה מנהלית לאזרח אשר הסתמך עליה, ולאחר מכן חל שינוי נסיבות מהותי. מהם השיקולים והכללים החלים על אכיפת ההבטחה אל מול שינוי הנסיבות, ומה היחס בין סמכות הרשות, אינטרס ההסתמכות של האזרח, והאינטרס הציבורי?" },
 ];
 
 async function trigger(question: string) {
