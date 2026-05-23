@@ -1,5 +1,9 @@
 // Phase 3.2 5× regression — reads from metadata.core.source_requirements
-// (NOT metadata.source_requirements) and reports per-role injection/reconciliation.
+// Schema:
+//   .plan.{per_claim, mandatory_roles, triggered_doctrines}
+//   .injection.{totals, records[]}
+//   .reconciliation.{totals, per_role[]}
+//   .inject_flag, .protect_flag
 import { createClient } from "@supabase/supabase-js";
 
 const URL = process.env.SUPABASE_URL;
@@ -15,33 +19,27 @@ const anon = createClient(URL, ANON, { auth: { persistSession: false } });
 const v = await anon.auth.verifyOtp({ token_hash: link.properties.hashed_token, type: "magiclink" });
 const jwt = v.data.session.access_token;
 
-function summarizeRole(roleId, sr, verification) {
-  const inj = (sr.injection || []).find((x) => x.role_id === roleId) || {};
-  const rec = (sr.reconciliation || []).find((x) => x.role_id === roleId) || {};
-  // verifier verdict: scan verification[] for any candidate_id in inj.injected_candidate_ids
-  const injIds = new Set(inj.injected_candidate_ids || []);
-  const verdicts = [];
-  for (const vr of (verification || [])) {
-    for (const vd of (vr.verdicts || [])) {
-      if (injIds.has(vd.candidate_id)) verdicts.push({ cid: vd.candidate_id, support: vd.support });
-    }
-  }
+function summarizeRole(roleId, inj, rec) {
+  const i = (inj.records || []).find((r) => r.role_id === roleId) || {};
+  const r = (rec.per_role || []).find((r) => r.role_id === roleId) || {};
   return {
     role_id: roleId,
-    tried_local: inj.tried_local,
-    tried_vector: inj.tried_vector,
-    tried_exact_authority: inj.tried_exact_authority,
-    tried_web: inj.tried_web,
-    local_hit_count: inj.local_hit_count,
-    vector_hit_count: inj.vector_hit_count,
-    web_hit_count: inj.web_hit_count,
-    injected_candidate_ids: inj.injected_candidate_ids,
-    protected_candidate_id: inj.protected_candidate_id,
-    protected_slot_used: inj.protected_slot_used,
-    reached_verifier: rec.reached_verifier,
-    missing_before_verifier: rec.missing_before_verifier,
-    missing_reason: rec.missing_reason,
-    verifier_verdicts: verdicts,
+    kind: i.kind ?? r.kind,
+    tried_local: i.tried_local,
+    tried_vector: i.tried_vector,
+    tried_exact_authority: i.tried_exact_authority,
+    tried_web: i.tried_web,
+    local_hit_count: i.local_hit_count,
+    vector_hit_count: i.vector_hit_count,
+    exact_hit_count: i.exact_hit_count,
+    web_hit_count: i.web_hit_count,
+    injected_candidate_ids: i.injected_candidate_ids,
+    protected_candidate_id: i.protected_candidate_id,
+    protected_slot_used: i.protected_slot_used,
+    reached_verifier: r.reached_verifier,
+    missing_before_verifier: r.missing_before_verifier ?? i.missing_before_verifier,
+    missing_reason: r.missing_reason,
+    verifier_verdicts: r.verifier_verdicts,
   };
 }
 
@@ -63,7 +61,7 @@ async function runOne(i) {
   for (let k = 0; k < 90; k++) {
     await new Promise((r) => setTimeout(r, 4000));
     const { data: rows } = await admin.from("qa_logs")
-      .select("id,total_footnotes,metadata,question")
+      .select("id,total_footnotes,metadata,question,created_at")
       .eq("user_id", UID)
       .gte("created_at", submitTs)
       .order("created_at", { ascending: false })
@@ -77,16 +75,16 @@ async function runOne(i) {
   const md = row.metadata || {};
   const core = md.core || {};
   const sr = core.source_requirements || {};
+  const plan = sr.plan || {};
+  const inj = sr.injection || {};
+  const rec = sr.reconciliation || {};
   const cq = core.citation_quality || md.citation_quality || {};
-  const verification = core.verification || [];
 
-  const roleIds = [
-    ...new Set([
-      ...(sr.plan?.roles || []).map((r) => r.id || r.role_id).filter(Boolean),
-      ...(sr.injection || []).map((r) => r.role_id),
-      ...(sr.reconciliation || []).map((r) => r.role_id),
-    ]),
-  ];
+  const roleIds = [...new Set([
+    ...(plan.mandatory_roles || []).map((x) => x.role_id),
+    ...(inj.records || []).map((x) => x.role_id),
+    ...(rec.per_role || []).map((x) => x.role_id),
+  ])];
 
   const out = {
     run: i,
@@ -96,9 +94,11 @@ async function runOne(i) {
     sr_exists: !!core.source_requirements,
     inject_flag: sr.inject_flag,
     protect_flag: sr.protect_flag,
-    triggered_doctrines: sr.plan?.triggered_doctrines,
-    roles_generated: (sr.plan?.roles || []).map((r) => ({ id: r.id || r.role_id, kind: r.kind })),
-    per_role: roleIds.map((rid) => summarizeRole(rid, sr, verification)),
+    triggered_doctrines: plan.triggered_doctrines,
+    roles_generated: (plan.mandatory_roles || []).map((r) => ({ role_id: r.role_id, kind: r.kind, label: r.label })),
+    injection_totals: inj.totals,
+    reconciliation_totals: rec.totals,
+    per_role: roleIds.map((rid) => summarizeRole(rid, inj, rec)),
     final: {
       citation_quality_status: cq.status,
       core_failed: core.failed || md.core_failed || false,
