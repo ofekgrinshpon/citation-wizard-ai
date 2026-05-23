@@ -658,15 +658,8 @@ async function roleApprovedWeb(
   }
 }
 
-/**
- * Run targeted retrieval for each mandatory role and append a tiny number
- * of candidates to existing per-claim packs. Caller decides whether to call
- * this (flag-gated). Mutates `packs` in place.
- */
-export async function injectMandatoryRoleCandidates(
-  args: InjectMandatoryArgs,
-): Promise<InjectMandatoryResult> {
 // ─── Phase 3.1 helpers ────────────────────────────────────────────────────
+
 
 function normUrl(u?: string): string {
   if (!u) return "";
