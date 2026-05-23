@@ -52,19 +52,37 @@ export interface PoolResult {
   };
 }
 
+const MAX_VECTOR_PER_CLAIM = 2;
+
 export function buildCandidatePool(all: Candidate[]): PoolResult {
   const seenDoc = new Set<string>();
   const seenUrl = new Set<string>();
   const seenStatute = new Set<string>();
   const seenDocket = new Set<string>();
   const seenTitle = new Map<string, Candidate>(); // role+normTitle → kept
+  const vectorPerClaim = new Map<string, number>();
 
-  // Sort by score desc so the highest-scoring duplicate wins.
-  const sorted = [...all].sort((a, b) => b.score - a.score);
+  // P3.2 #3: priority — exact_authority > text > perplexity > vector.
+  // Score still tie-breaks within a tier.
+  const tierOf = (c: Candidate): number => {
+    if (c.retrieval_method === "exact_authority") return 0;
+    if (c.retrieval_method === "text") return 1;
+    if (c.retrieval_method === "perplexity") return 2;
+    return 3; // vector
+  };
+  const sorted = [...all].sort((a, b) => {
+    const t = tierOf(a) - tierOf(b);
+    if (t !== 0) return t;
+    return b.score - a.score;
+  });
   const out: Candidate[] = [];
   let dedup_drops = 0;
 
   for (const c of sorted) {
+    if (c.retrieval_method === "vector") {
+      const n = vectorPerClaim.get(c.claim_id) ?? 0;
+      if (n >= MAX_VECTOR_PER_CLAIM) { dedup_drops++; continue; }
+    }
     const docId = c.document_id ? `doc:${c.document_id}` : "";
     const url = normUrl(c.source_url);
     const urlKey = url ? `url:${url}` : "";
@@ -85,6 +103,9 @@ export function buildCandidatePool(all: Candidate[]): PoolResult {
     if (stK) seenStatute.add(stK);
     if (dk) seenDocket.add(dk);
     seenTitle.set(ttKey, c);
+    if (c.retrieval_method === "vector") {
+      vectorPerClaim.set(c.claim_id, (vectorPerClaim.get(c.claim_id) ?? 0) + 1);
+    }
     out.push(c);
     if (out.length >= CAPS.MAX_CANDIDATES) break;
   }
