@@ -330,6 +330,7 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
         requirements: sourceRequirements,
         packs: retrieval.packs,
         injectionRecords: sourceRequirementsInjection?.records,
+        injectionPerClaim: sourceRequirementsInjection?.per_claim,
         verdicts,
       });
       const t = sourceRequirementsReconciliation.totals;
