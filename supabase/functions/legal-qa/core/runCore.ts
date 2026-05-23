@@ -1154,9 +1154,18 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
       ? {
           ...classification,
           forced_doctrine_ids: forcedDoctrineIds,
-          threshold: CLASSIFIER_CONFIDENCE_THRESHOLD,
+          threshold: DOCTRINE_PROTECT_THRESHOLD,
+          legacy_threshold: CLASSIFIER_CONFIDENCE_THRESHOLD,
+          per_doctrine: classifierTelemetry.per_doctrine,
+          would_have_injected_roles: classifierTelemetry.would_have_injected_roles,
         }
       : { error: classifierError ?? "unavailable" },
+    research_queries: {
+      by_claim: researchQueriesByClaim,
+      summary: summarizeResearchQueries(researchQueriesByClaim),
+      run: researchQueriesRun,
+      used_by_retrieval: false,
+    },
     acceptance_errors: acceptanceErrors,
     stage_runs: stageRuns,
     total_duration_ms: Date.now() - tStart,
