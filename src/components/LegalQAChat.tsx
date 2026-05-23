@@ -2938,9 +2938,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             {/* WRITING: show current chapter + write button */}
             {wizardStep === "writing" && !loading && !result && chapters.length > 0 && (() => {
               const currentTitle = chapters[currentChapter]?.title || "";
-              const isAbstract = isAbstractChapter(currentTitle);
+              const role = chapterRole(currentTitle);
+              const isAbstract = role === "abstract";
               const isLocked = isAbstract && !abstractUnlocked;
               const hasContent = !!chapters[currentChapter]?.content;
+              // D1: body / introduction / conclusion route to the offline
+              // chapter engine — show maintenance card instead of the write CTA.
+              const isOfflineChapter = role === "body" || role === "introduction" || role === "conclusion";
 
               const writeButtonLabel = isAbstract
                 ? (hasContent ? "ייצר תקציר מחדש" : "ייצר תקציר")
@@ -2968,13 +2972,18 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                       </div>
                     )}
 
-                    {hasContent && !isLocked && (
+                    {hasContent && !isLocked && !isOfflineChapter && (
                       <div className="text-xs text-muted-foreground p-2 bg-muted/30 rounded">
                         פרק זה כבר נכתב. לחצו "{writeButtonLabel}" לשכתוב.
                       </div>
                     )}
 
-                    {isLocked ? (
+                    {isOfflineChapter ? (
+                      <MaintenanceCard
+                        title={CHAPTER_OFFLINE_TITLE}
+                        message={CHAPTER_OFFLINE_MESSAGE}
+                      />
+                    ) : isLocked ? (
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span className="inline-block">
