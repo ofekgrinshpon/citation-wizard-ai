@@ -102,27 +102,26 @@ async function handle(req: Request): Promise<Response> {
     project_id = project_id_raw;
   }
 
-  // ─── Credit pre-flight (no consumption in P1/P2 — no answer produced) ────
-  // We only check `hasEnough` so the user gets early 402 feedback. Consumption
-  // begins in P5 when an actual answer is produced.
-  try {
-    const { data: profile } = await userClient
-      .from("profiles")
-      .select("included_credits_remaining, topup_credits_remaining, plan")
-      .eq("id", user.id)
-      .maybeSingle();
-    if (profile) {
-      const plan = (profile as { plan?: string }).plan;
-      const total =
-        ((profile as { included_credits_remaining?: number }).included_credits_remaining ?? 0) +
-        ((profile as { topup_credits_remaining?: number }).topup_credits_remaining ?? 0);
-      // Admins bypass; everyone else needs ≥5 (CREDIT_COSTS.legalQa).
-      if (plan !== "admin" && total < 5) {
-        return jsonResponse(402, { error: "INSUFFICIENT_CREDITS", required: 5, remaining: total });
+  // ─── Credit pre-flight (skipped in smoke mode) ───────────────────────────
+  if (!smokeMode && userClient) {
+    try {
+      const { data: profile } = await userClient
+        .from("profiles")
+        .select("included_credits_remaining, topup_credits_remaining, plan")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (profile) {
+        const plan = (profile as { plan?: string }).plan;
+        const total =
+          ((profile as { included_credits_remaining?: number }).included_credits_remaining ?? 0) +
+          ((profile as { topup_credits_remaining?: number }).topup_credits_remaining ?? 0);
+        if (plan !== "admin" && total < 5) {
+          return jsonResponse(402, { error: "INSUFFICIENT_CREDITS", required: 5, remaining: total });
+        }
       }
+    } catch (e) {
+      console.warn("[legal-research-v1] credit pre-flight skipped:", e);
     }
-  } catch (e) {
-    console.warn("[legal-research-v1] credit pre-flight skipped:", e);
   }
 
   const admin = makeAdminClient();
@@ -133,6 +132,9 @@ async function handle(req: Request): Promise<Response> {
     answer: STUB_ANSWER,
     footnotes: [] as unknown[],
   };
+
+  // Wrap the whole pipeline so smoke mode can run it in the background.
+  const runPipeline = async (): Promise<Response> => {
 
   // ─── P2: Claim Analyzer ──────────────────────────────────────────────────
   let analyzerStage;
