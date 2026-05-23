@@ -3535,7 +3535,7 @@ ${(verify.fullText as string).slice(0, 50000)}
     // `legal-qa-status` after navigation/page reload. No-op outside SSE.
     emitRunId(preallocatedQaLogId);
 
-    const writeCheckpoint = (phase: "decomposition" | "claim_map" | "drafting_started"): void => {
+    const writeCheckpoint = (phase: "decomposition" | "retrieval" | "claim_map" | "drafting_started" | "anchor_pass"): void => {
       if (!enableDeepPipeline) return;
       // Snapshot current state — note that drafting_path is "in_progress" until
       // the final block decides between "structured" / "fallback".
@@ -4971,6 +4971,11 @@ ${(verify.fullText as string).slice(0, 50000)}
         emitStage("source_pack", "complete", `${sourcePack.length} מקורות`);
       }
     }
+
+    // Persist retrieval checkpoint so async Deep pollers can advance the UI
+    // progress bar past "תכנון מחקר" once round-1 retrieval + source pack
+    // assembly is done. No effect on SSE clients.
+    writeCheckpoint("retrieval");
 
     // ========= Stage E.5: Perplexity Completion (Milestone B) =========
     // Fires only if local source-pack assembly produced fewer than 2 core items.
@@ -6965,6 +6970,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
     const drafterStartMs = Date.now();
     if (useNewDrafter) {
       emitStage("drafter", "running");
+      writeCheckpoint("drafting_started");
       // If an SSE emitter is installed, prefer the streaming drafter so the
       // client sees `draft_delta` events as the model emits tokens. On any
       // streaming-level failure (parse, empty, network) the helper returns
@@ -7352,6 +7358,7 @@ ${question.trim() || "ללא הנחיות נוספות — בצע ביקורת �
         : [];
 
       emitStage("anchor_pass", "running");
+      writeCheckpoint("anchor_pass");
       try {
         const anchorRes = await runAnchorPass({
           body: answerText,
