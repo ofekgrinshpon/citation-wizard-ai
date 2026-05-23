@@ -2063,6 +2063,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       if (wizardStep === "init" || wizardStep === "topic_or_question") return;
       return;
     }
+    // D1: Research mode is offline. Never fire a request — show the
+    // maintenance notice and bail before any network call.
+    if (taskMode === "research") {
+      toast.info(RESEARCH_OFFLINE_TITLE);
+      return;
+    }
 
     const q = question.trim();
     const hasFile = extractedTexts.length > 0;
