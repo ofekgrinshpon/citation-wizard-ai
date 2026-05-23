@@ -1,65 +1,60 @@
+## Why the bar stays on "מתחבר למנוע המחקר"
 
-## Problem
+After yesterday's fix, Deep polling does translate `qa_logs.metadata.checkpoint` into stage events — but only **two checkpoints are actually written by the backend**:
 
-For Deep research questions, the progress bar sits at ~1% for the entire run, even though the backend is actively writing checkpoints (`decomposition`, `retrieval`, `claim_map`, `drafting`, `anchor_pass`, …) to `qa_logs.metadata.checkpoint`.
+| Code location | Checkpoint phase emitted |
+|---|---|
+| dispatcher (`index.ts:11049`) | `queued` (at submit) |
+| `writeCheckpoint("decomposition")` (`index.ts:4712`) | after decomposition completes |
+| `writeCheckpoint("claim_map")` (`index.ts:5448`) | after claim_map completes |
 
-## Root cause
+The other checkpoint names referenced in `legalQaPolling.ts` / `deepCheckpointToStages.ts` (`legal_issue_router`, `open_web_discovery`, `retrieval`, `claim_verification`, `drafting`, `anchor_pass`) are SSE-only `emitStage()` calls and are **never persisted to `qa_logs.metadata`**, so the polled snapshot never sees them.
 
-Deep mode does not use SSE — it goes through the async dispatcher (HTTP 202 + `run_id`) and the client polls `legal-qa-status`. `StageProgressList` computes progress from the `stages` array (SSE `stage` events), so for Deep that array stays empty. The polling `onUpdate` callback in `LegalQAChat.tsx` only sets `postProcessingLabel`, but `StageProgressList` deliberately refuses to promote `post_processing` to "running" until all earlier manifest stages are complete. Result: no events ever land, the component renders the synthetic "starter" row clamped to 1–2%.
-
-Fast mode (SSE) and academic chapter writes (SSE) are unaffected.
-
-## Fix (frontend-only)
-
-Translate each polled `checkpoint` into synthetic, cumulative `StageEvent`s in the deep manifest's vocabulary. Reuse the existing weighted progress logic — no changes to `StageProgressList`, no backend changes.
-
-### 1. New helper `src/lib/legalQa/deepCheckpointToStages.ts`
-
-Maps backend checkpoint → deep manifest stage id, and returns the cumulative event list (prior stages `complete`, current stage `running`):
+Result for a typical Deep run:
 
 ```text
-queued / running            → [] (keep starter)
-legal_issue_router          → plan running
-decomposition               → plan running
-open_web_discovery          → plan complete, retrieval running
-retrieval                   → plan complete, retrieval running
-claim_verification          → plan+retrieval complete, verify running
-claim_map                   → plan+retrieval+verify complete, ledger running
-drafting                    → …+ledger complete, draft running
-anchor_pass                 → …+draft complete, enrich_citations running
-completed                   → all complete
-failed                      → no-op (error surfaced elsewhere)
+0 → ~25–35s : checkpoint="queued"      → deepCheckpointToStages → []  → starter row, 1–2 %
+~25–60s      : checkpoint="decomposition" → plan running           → ~4 %
+~60–110s     : checkpoint="claim_map"     → ledger running          → ~32 %
+final        : answer arrives             → 100 %
 ```
 
-Function signature:
+The first ~30 s — the loudest user-visible symptom — is entirely the starter phase, because `queued` maps to `[]`.
+
+## Fix
+
+Two coordinated, minimal changes. Keep async dispatch and the existing SSE path untouched.
+
+### 1. Frontend: never sit on starter once polling is alive
+
+`src/lib/legalQa/deepCheckpointToStages.ts`
+
+- Map `queued` and `running` to `plan running` (instead of `[]`). The moment the first poll returns (≤ 2 s after submit), the UI leaves "מתחיל / מתחבר למנוע המחקר" and shows "תכנון מחקר…" with the plan band's idle creep — matching what's actually happening server-side.
+- Keep `legal_issue_router`, `decomposition`, `open_web_discovery`, `retrieval`, `claim_verification`, `drafting`, `anchor_pass`, `completed` mappings as-is (they'll start working once step 2 lands).
+
+### 2. Backend: persist three more checkpoints so polling has real data points
+
+`supabase/functions/legal-qa/index.ts`, mirror the existing `writeCheckpoint(...)` pattern (fire-and-forget upsert into `qa_logs.metadata.checkpoint`). Extend the phase union to:
+
 ```ts
-export function deepCheckpointToStages(checkpoint?: string | null): StageEvent[]
+"decomposition" | "retrieval" | "claim_map" | "drafting_started" | "anchor_pass"
 ```
 
-### 2. Use the helper in `LegalQAChat.tsx`
+Add calls at:
 
-Three `pollLegalQaStatus` call sites all use the same pattern — update each `onUpdate`:
+- `retrieval` — right after the round-1 local source pack is assembled and before claim_map starts (between current `writeCheckpoint("decomposition")` and `writeCheckpoint("claim_map")`).
+- `drafting_started` — at the moment the drafter call is dispatched (search for the drafter invocation that follows `writeCheckpoint("claim_map")`).
+- `anchor_pass` — right before the anchor/citation-enrichment pass runs at the tail of the pipeline.
 
-- ~L968 (resume academic Deep mount)
-- ~L1059 (resume Deep research mount)
-- ~L2166 (live Deep submission)
+No new metadata keys, no changes to the row schema, no change to retrieval/verifier/drafter logic, no change to SSE for Fast/academic.
 
-In each callback, in addition to (or instead of) `setPostProcessingLabel`, call `setStageEvents(deepCheckpointToStages(snap.checkpoint))`. Keep `setPostProcessingLabel` only when `snap.checkpoint === "anchor_pass"` or later, so the "post-processing" row activates correctly at the end.
+### 3. Smoke-check after deploy
 
-Reset `stageEvents` (already done at submit) — no extra reset needed.
-
-### 3. No backend, no SSE, no manifest changes
-
-The `DEEP_MANIFEST` weights already produce a smooth 0 → ~92% march; the existing idle-creep in `StageProgressList` will animate between checkpoint updates.
+- Submit one Deep question. Watch the bar transition through `plan → retrieval → ledger → draft → enrich_citations → post_processing → 100%` instead of jumping plan → ledger → done.
+- Confirm Fast and academic SSE progress is unchanged (no code path they share is touched besides the helper, which keeps existing mappings).
 
 ## Out of scope
 
-- Q5 timeout investigation (kept separate per prior instruction).
-- SSE for Deep (intentionally async to survive the 150s gateway cap).
-- Backend checkpoint granularity (sufficient as-is).
-
-## Verification
-
-1. Submit a Deep research question.
-2. Watch the bar advance through "תכנון מחקר" → "אחזור מקורות" → "אימות וסינון" → "מיפוי טענות" → "כתיבת התשובה" → "השלמת ציטוטים" → "בדיקת איכות סופית" as checkpoints flip.
-3. Confirm Fast mode and academic chapter SSE progress is unchanged.
+- Q5 timeout investigation (still separate).
+- True per-stage telemetry/SSE for Deep — explicitly avoided because Deep must stay async (150 s gateway cap).
+- Reducing wall-clock time of the pipeline.
