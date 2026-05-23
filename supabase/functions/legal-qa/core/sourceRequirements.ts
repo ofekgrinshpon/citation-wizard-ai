@@ -1108,7 +1108,7 @@ function candidateMatchesRole(
 export function reconcileSourceRequirements(
   args: ReconcileArgs,
 ): SourceRequirementsReconciliation {
-  const { requirements, packs, injectionRecords, verdicts } = args;
+  const { requirements, packs, injectionRecords, injectionPerClaim, verdicts } = args;
   const allCandidates: CandidateSource[] = [];
   for (const p of packs) for (const c of p.candidates) allCandidates.push(c);
 
@@ -1116,6 +1116,38 @@ export function reconcileSourceRequirements(
   for (const v of verdicts || []) verdictByCid.set(v.candidate_id, v.support);
   const recById = new Map<string, RoleInjectionRecord>();
   for (const r of injectionRecords || []) recById.set(r.role_id, r);
+
+  // Enrich per-role records with verifier-reach info (for protected slots).
+  for (const r of injectionRecords || []) {
+    if (r.protected_candidate_id) {
+      const s = verdictByCid.get(r.protected_candidate_id);
+      // reached_verifier_after_protection already true if pushed; refine to
+      // "verifier actually emitted a verdict" when we have verdict data.
+      if (verdicts && verdicts.length > 0) {
+        r.reached_verifier_after_protection = s !== undefined;
+      }
+    }
+  }
+
+  // Enrich per-claim summary with verifier-reach counts.
+  if (injectionPerClaim && verdicts) {
+    const cidByClaim = new Map<string, string[]>();
+    for (const r of injectionRecords || []) {
+      for (const cid of r.injected_candidate_ids) {
+        // claim id is the prefix up to first '-' in our re-tagged ids.
+        const m = cid.match(/^(C\d+)-/);
+        if (!m) continue;
+        const claim = m[1];
+        if (!cidByClaim.has(claim)) cidByClaim.set(claim, []);
+        cidByClaim.get(claim)!.push(cid);
+      }
+    }
+    for (const row of injectionPerClaim) {
+      const ids = cidByClaim.get(row.claim_id) || [];
+      row.sr_candidates_reached_verifier_count = ids.filter((cid) => verdictByCid.has(cid)).length;
+    }
+  }
+
 
   const per_role: RoleRecallStatus[] = requirements.mandatory_roles.map((role) => {
     const rec = recById.get(role.role_id);
