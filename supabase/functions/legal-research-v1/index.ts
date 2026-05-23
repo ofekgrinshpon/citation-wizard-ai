@@ -84,7 +84,7 @@ async function handle(req: Request): Promise<Response> {
       { global: { headers: { Authorization: authHeader } } },
     );
     const { data: { user }, error: userErr } = await userClient.auth.getUser(token);
-    if (userErr || !user) return jsonResponse(401, { error: "unauthorized" });
+    if (userErr || !user) return jsonResponse(401, { error: "unauthorized", reason: "getuser_failed", err: userErr?.message });
     userId = user.id;
   }
   const user = { id: userId };
