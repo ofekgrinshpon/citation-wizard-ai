@@ -13,8 +13,16 @@ import { copyRichText } from "@/lib/clipboard";
 import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, GraduationCap, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, Lock, Wand2, Zap, Brain, type LucideIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CaseSummaryReport } from "@/components/CaseSummaryReport";
-import { ResearchProgress } from "@/components/ResearchProgress";
-import { StageProgressList, type StageEvent } from "@/components/StageProgressList";
+
+// D3.1: ResearchProgress / StageProgressList removed (Research + chapter
+// streaming engine is offline). Keep a minimal StageEvent type so the
+// (now-dead) SSE consumer keeps compiling.
+type StageEvent = {
+  stage: string;
+  status: "running" | "complete";
+  label: string;
+  detail?: string;
+};
 import { CitationReviewPanel } from "@/components/legal-qa/CitationReviewPanel";
 import { MaintenanceCard } from "@/components/MaintenanceCard";
 
@@ -262,41 +270,22 @@ function clearAcademicSession(projectId?: string) {
   } catch { /* silent */ }
 }
 
-// ─── In-progress Deep research marker ──────────────────────────────
-// Persisted in localStorage BEFORE the request fires so navigating away
-// (e.g. opening the profile) doesn't lose the run id. On remount, the
-// resume effect polls legal-qa-status with this id.
-const RESEARCH_RUN_KEY = (projectId?: string) =>
-  projectId ? `relex_research_run_${projectId}` : "relex_research_run";
-const RESEARCH_RUN_TTL_MS = 30 * 60 * 1000; // 30 min — Deep cap is ~10 min
+// D3.1: Deep research marker helpers removed. Research is offline; the
+// async polling path against legal-qa-status no longer exists. We still
+// proactively wipe any stale `relex_research_run_*` key from older sessions
+// on mount (see clearStaleResearchMarkers below) so users do not poll a
+// deleted endpoint.
+const RESEARCH_RUN_KEY_PREFIX = "relex_research_run";
 
-type ResearchRunMarker = {
-  runId: string;
-  question: string;
-  depth: "fast" | "deep";
-  startedAt: number;
-};
-
-function loadResearchRunMarker(projectId?: string): ResearchRunMarker | null {
+function clearStaleResearchMarkers() {
   try {
-    const raw = safeStorage.getItem(RESEARCH_RUN_KEY(projectId));
-    if (!raw) return null;
-    const m = JSON.parse(raw) as ResearchRunMarker;
-    if (!m?.runId || typeof m.startedAt !== "number") return null;
-    if (Date.now() - m.startedAt > RESEARCH_RUN_TTL_MS) {
-      safeStorage.removeItem(RESEARCH_RUN_KEY(projectId));
-      return null;
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(RESEARCH_RUN_KEY_PREFIX)) keysToRemove.push(k);
     }
-    return m;
-  } catch { return null; }
-}
-
-function saveResearchRunMarker(marker: ResearchRunMarker, projectId?: string) {
-  try { safeStorage.setItem(RESEARCH_RUN_KEY(projectId), JSON.stringify(marker)); } catch { /* silent */ }
-}
-
-function clearResearchRunMarker(projectId?: string) {
-  try { safeStorage.removeItem(RESEARCH_RUN_KEY(projectId)); } catch { /* silent */ }
+    keysToRemove.forEach((k) => safeStorage.removeItem(k));
+  } catch { /* silent */ }
 }
 
 // ─── DB-backed academic session sync ───────────────────────────────
@@ -961,162 +950,33 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     return () => { cancelled = true; };
   }, [projectId]);
 
-  // ─── Resume in-progress academic run on mount ─────────────────────
-  // If a previous session started a chapter generation that the user navigated
-  // away from, recover its result (or live-poll until it's done) via
-  // legal-qa-status. Marker cleared once handled. Foreground SSE always wins:
-  // we only resume when there's no active stream.
+  // ─── D3.1: Background academic resume removed ─────────────────────
+  // Previously this effect polled legal-qa-status to recover short-academic
+  // results across navigation. legal-qa-status is being deleted; short steps
+  // still work in the foreground but no longer auto-resume after navigation.
+  // We still clear any stale academic run marker on mount so the wizard
+  // does not stay in a fake "loading" state.
   useEffect(() => {
     if (taskMode !== "academic_writing") return;
-    if (loading) return; // foreground run takes precedence
     let cancelled = false;
     (async () => {
       const marker = await loadAcademicRunMarker(projectId);
       if (cancelled || !marker) return;
-      try {
-        setLoading(true);
-        setLastAcademicAction(marker.step);
-        setStageEvents([]);
-        setStreamingDraft("");
-        setPostProcessingLabel("מסתנכרן עם ההפקה שרצה ברקע…");
-        const { pollLegalQaStatus } = await import("@/lib/legalQaPolling");
-        const final = await pollLegalQaStatus(marker.runId, {
-          intervalMs: 3000,
-          maxWallMs: 600_000,
-        });
-        if (cancelled) return;
-        if (final.status === "completed" && typeof final.answer === "string" && final.answer.length > 10) {
-          const qaResult: QAResult = {
-            answer: final.answer,
-            footnotes: (final.footnotes as QAResult["footnotes"]) ?? [],
-            source_urls: [],
-          };
-          setRunComplete(true);
-          setResult(qaResult);
-
-          const isShortStep =
-            marker.step === "propose_outline" ||
-            marker.step === "suggest_topics" ||
-            marker.step === "validate_question";
-
-          if (isShortStep) {
-            // Apply per-step UI state, mirroring the foreground success path.
-            if (marker.step === "propose_outline") {
-              setProposedQuestions([]);
-              setSuggestionRounds([]);
-              setOutline(qaResult.answer);
-              updateWizardStep("outline");
-            } else if (marker.step === "validate_question") {
-              setProposedQuestions([]);
-              setSuggestionRounds([]);
-              updateWizardStep("topic_or_question");
-            } else if (marker.step === "suggest_topics") {
-              const parsedQs = parseProposedQuestions(qaResult.answer);
-              setSuggestionRounds([{ questions: parsedQs, coverage: undefined, exhausted: false }]);
-              setProposedQuestions(parsedQs);
-              updateWizardStep("topic_or_question");
-            }
-            setLastAcademicAction(marker.step);
-            toast.success("השאילתה הושלמה ברקע ונטענה מחדש");
-          } else {
-            // Long-form chapter write recovery — persist into the matching chapter slot.
-            setChapters((prev) => {
-              const idx = marker.chapterIdx;
-              if (idx < 0 || idx >= prev.length) return prev;
-              const next = [...prev];
-              next[idx] = { ...next[idx], content: qaResult.answer };
-              return next;
-            });
-            toast.success("הפרק הושלם ברקע ונטען מחדש");
-          }
-        } else {
-          setError("ההפקה ברקע נכשלה. ניתן לנסות שוב.");
-        }
-      } catch (e) {
-        if ((e as Error).name !== "AbortError") {
-          console.error("Background resume failed:", e);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-          setPostProcessingLabel(null);
-        }
-        await setAcademicRunMarker(projectId, null);
-      }
+      await setAcademicRunMarker(projectId, null);
     })();
     return () => { cancelled = true; };
-    // Intentionally only on projectId / taskMode change — not on `loading`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, taskMode]);
 
-  // ─── Resume in-progress Deep research run on mount ─────────────────
-  // If a Deep research request was in flight when the user navigated away
-  // (e.g. clicked Profile and came back), reattach to it via legal-qa-status
-  // instead of dropping the work.
+
+  // ─── D3.1: Deep research resume removed ────────────────────────────
+  // Research is offline. The Deep async path against legal-qa-status no
+  // longer exists. On mount we wipe any stale `relex_research_run_*` key
+  // so users with leftover markers from before the offline switch do not
+  // poll a deleted endpoint.
   useEffect(() => {
-    if (taskMode !== "research") return;
-    if (loading) return; // foreground request takes precedence
-    const marker = loadResearchRunMarker(currentProject?.id);
-    if (!marker) return;
-    let cancelled = false;
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-    (async () => {
-      try {
-        setLoading(true);
-        setResult(null);
-        setError(null);
-        setStageEvents([]);
-        setStreamingDraft("");
-        setPostProcessingLabel("מסתנכרן עם המחקר שרץ ברקע…");
-        setQuestion(marker.question);
-        const { pollLegalQaStatus, CHECKPOINT_LABELS_HE } = await import("@/lib/legalQaPolling");
-        const { deepCheckpointToStages } = await import("@/lib/legalQa/deepCheckpointToStages");
-        const final = await pollLegalQaStatus(marker.runId, {
-          signal: controller.signal,
-          onUpdate: (snap) => {
-            const cp = snap.checkpoint ?? null;
-            setStageEvents(deepCheckpointToStages(cp));
-            // Only surface a textual checkpoint label once we're past drafting,
-            // so the post-processing row in StageProgressList lights up.
-            if (cp === "anchor_pass" || cp === "completed") {
-              const label = CHECKPOINT_LABELS_HE[cp] ?? cp;
-              setPostProcessingLabel(label);
-            } else {
-              setPostProcessingLabel(null);
-            }
-          },
-        });
-        if (cancelled) return;
-        if (final.status === "completed" && typeof final.answer === "string" && final.answer.length > 10) {
-          const qaResult: QAResult = {
-            answer: final.answer,
-            footnotes: (final.footnotes as QAResult["footnotes"]) ?? [],
-            source_urls: [],
-          };
-          setRunComplete(true);
-          setResult(qaResult);
-          toast.success("המחקר הושלם ברקע ונטען מחדש");
-          onResultSaved?.();
-        } else {
-          setError("המחקר ברקע נכשל. ניתן לנסות שוב.");
-        }
-      } catch (e) {
-        if ((e as Error).name !== "AbortError") {
-          console.error("Research resume failed:", e);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-          setPostProcessingLabel(null);
-        }
-        clearResearchRunMarker(currentProject?.id);
-        abortControllerRef.current = null;
-      }
-    })();
-    return () => { cancelled = true; controller.abort(); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId, taskMode]);
+    clearStaleResearchMarkers();
+  }, []);
 
 
   // ─── Non-blocking nav warning while an academic run is streaming ───
@@ -1384,12 +1244,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     // overwrite the marker.
     runPersistedRef.current = false;
     activeRunIdRef.current = null;
-    // Deep research: stop = discard. The background job will still finish on
-    // the server, but the user explicitly asked to abandon it, so we drop the
-    // marker rather than reattach on next mount.
-    if (taskMode === "research" && researchDepth === "deep") {
-      clearResearchRunMarker(currentProject?.id);
-    }
+    // D3.1: Deep research stop-discard removed — research is offline.
     toast.info("העיבוד הופסק");
   };
 
@@ -2109,36 +1964,15 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           ? "בצע ביקורת מקיפה על המסמך המצורף"
           : q;
 
-      // Deep research runs in the background server-side (Pass E). We mint
-      // the runId on the client and persist a marker BEFORE the fetch so
-      // navigating away (e.g. opening Profile) doesn't lose the run.
-      const isDeepResearch = taskMode === "research" && researchDepth === "deep";
-      const deepRunId: string | null = isDeepResearch ? crypto.randomUUID() : null;
-
+      // D3.1: Deep research async path removed. Research mode is offline
+      // (short-circuited to 503 server-side). Fast SSE path is also dead but
+      // left intact for any future revival.
       const body: Record<string, unknown> = {
         question: effectiveQuestion,
         taskMode,
         hasDocument: hasFile,
       };
-      // Send research depth ("fast" | "deep") only for research mode — other
-      // modes ignore it server-side.
-      if (taskMode === "research") {
-        body.depth = researchDepth;
-      }
-      // SSE streaming for Fast research only. Deep research uses the async
-      // (202 + run_id) path so it survives navigation / connection drops.
-      const useSseStream = taskMode === "research" && researchDepth === "fast";
-      if (useSseStream) {
-        body.stream = true;
-      }
-      if (deepRunId) {
-        body.runId = deepRunId;
-        body.projectId = currentProject?.id ?? null;
-        saveResearchRunMarker(
-          { runId: deepRunId, question: effectiveQuestion, depth: "deep", startedAt: Date.now() },
-          currentProject?.id,
-        );
-      }
+      const useSseStream = false;
       // Send multi-file context
       if (extractedTexts.length === 1) {
         body.documentText = extractedTexts[0].text;
@@ -2175,61 +2009,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         throw new Error(`HTTP ${res.status}`);
       }
 
-      // Parse the response. Streamed runs use the named-event SSE parser;
-      // non-streamed (case_summary, pleading_analysis, …) fall back to JSON.
-      // Defensive Deep-async path: if backend returns 202 + run_id, poll
-      // legal-qa-status instead of waiting on the SSE socket (avoids 150s
-      // gateway cap). Primary SSE path is unchanged.
+      // D3.1: 202 + run_id async polling path removed (legal-qa-status
+      // is being deleted). Treat 202 as an error so users do not hang
+      // waiting for a poll that will never resolve.
       let data: any;
       let effectiveStatus = res.status;
       const contentType = res.headers.get("content-type") || "";
 
       if (res.status === 202) {
-        const queued = await res.json().catch(() => ({}));
-        const runId = (queued?.run_id ?? queued?.runId) as string | undefined;
-        if (!runId) {
-          setError("השרת לא החזיר מזהה ריצה. נסו שוב.");
-          return;
-        }
-        try {
-          const { pollLegalQaStatus, CHECKPOINT_LABELS_HE } = await import("@/lib/legalQaPolling");
-          const { deepCheckpointToStages } = await import("@/lib/legalQa/deepCheckpointToStages");
-          const final = await pollLegalQaStatus(runId, {
-            signal: controller.signal,
-            onUpdate: (snap) => {
-              const cp = snap.checkpoint ?? null;
-              setStageEvents(deepCheckpointToStages(cp));
-              if (cp === "anchor_pass" || cp === "completed") {
-                const label = CHECKPOINT_LABELS_HE[cp] ?? cp;
-                setPostProcessingLabel(label);
-              } else {
-                setPostProcessingLabel(null);
-              }
-            },
-          });
-          if (final.status === "failed") {
-            const reason = final.reason ?? "unknown_error";
-            const reasonHe: Record<string, string> = {
-              gateway_timeout: "תם הזמן הקצוב — נסו שוב או פנו לתמיכה.",
-              background_crash: "שגיאה פנימית בעיבוד — נסו שוב.",
-              polling_timeout: "המחקר נמשך זמן רב מדי. נסו שוב.",
-            };
-            setError(reasonHe[reason] ?? `הבקשה נכשלה (${reason}).`);
-            return;
-          }
-          data = {
-            answer: final.answer,
-            footnotes: final.footnotes ?? [],
-            metadata: final.metadata,
-          };
-          effectiveStatus = 200;
-        } catch (pollErr) {
-          if ((pollErr as Error).name === "AbortError") return;
-          console.error("Deep polling error:", pollErr);
-          setError("שגיאה במעקב אחר עיבוד הבקשה. נסו שוב.");
-          return;
-        }
-      } else if (useSseStream && contentType.includes("text/event-stream") && res.body) {
+        setError("מצב מחקר משפטי בשדרוג. נסו שוב מאוחר יותר.");
+        return;
+      }
+
+      if (useSseStream && contentType.includes("text/event-stream") && res.body) {
         const result = await consumeSseStream(res.body, {
           onStage: (e) => setStageEvents((prev) => [...prev, e]),
           onDraftDelta: (chunk) => setStreamingDraft((prev) => prev + chunk),
@@ -2286,26 +2078,13 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       }
     } catch (e: any) {
       if (e.name === "AbortError") {
-        // Aborted — likely component unmounted (user navigated away). DO NOT
-        // clear the deep-research marker; the background job keeps running and
-        // the resume effect on next mount will reattach to it.
         return;
       }
       console.error("Legal QA error:", e);
       setError("שגיאה בעיבוד השאלה. נסו שוב.");
-      // Terminal error — drop the marker so we don't reattach to a dead run.
-      if (taskMode === "research" && researchDepth === "deep") {
-        clearResearchRunMarker(currentProject?.id);
-      }
     } finally {
-      const wasAborted = !!controller.signal.aborted;
       abortControllerRef.current = null;
       setLoading(false);
-      // Only clear on a clean completion or handled error, never on abort —
-      // abort means we want to reattach next mount.
-      if (!wasAborted && taskMode === "research" && researchDepth === "deep") {
-        clearResearchRunMarker(currentProject?.id);
-      }
     }
   };
 
@@ -3179,35 +2958,16 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           </Card>
         )}
 
-        {/* Loading: streamed runs (research + academic write_chapter) get the
-            live stage list with running/complete chips and a draft-text caret.
-            Non-streamed runs (case summary, pleading audit, short academic
-            sub-modes) keep the rotating skeleton placeholder. */}
-        {loading && taskMode !== "case_summary" && (() => {
-          const isAcademicChapterRun =
-            taskMode === "academic_writing" &&
-            (lastAcademicAction === "write_chapter" ||
-             lastAcademicAction === "write_introduction" ||
-             lastAcademicAction === "write_conclusion");
-          const stageMode: "research_fast" | "research_deep" | "academic_chapter" =
-            isAcademicChapterRun
-              ? "academic_chapter"
-              : researchDepth === "deep"
-              ? "research_deep"
-              : "research_fast";
-          const isStreamingMode = taskMode === "research" || isAcademicChapterRun;
-          return isStreamingMode ? (
-            <StageProgressList
-              stages={stageEvents}
-              postProcessingLabel={postProcessingLabel}
-              draftText={streamingDraft}
-              mode={stageMode}
-              isComplete={runComplete}
-            />
-          ) : (
-            <ResearchProgress mode={isAcademicChapterRun ? "academic_chapter" : "research"} />
-          );
-        })()}
+        {/* D3.1: Loading indicator — Research / chapter streaming UIs removed.
+            Show a minimal spinner for any non-case_summary loading state. */}
+        {loading && taskMode !== "case_summary" && (
+          <Card className="mt-4 border-border/40">
+            <CardContent className="flex items-center gap-3 py-4">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+              <p className="text-sm text-muted-foreground">מעבד…</p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Case-summary refusal card */}
         {!isAcademic && result?.refusal && (
