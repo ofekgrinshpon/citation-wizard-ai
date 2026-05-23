@@ -206,6 +206,8 @@ async function handle(req: Request): Promise<Response> {
       escalated_to_gpt5: analyzerStage.escalated,
       escalation_reason: analyzerStage.escalation_reasons,
       confidence: analyzer.confidence,
+      legal_area: analyzer.legal_area,
+      answer_type: analyzer.answer_type,
       schema_valid: analyzerStage.result.ok,
       ms: analyzerStage.stage_runs.reduce((s, r) => s + r.ms, 0),
     },
