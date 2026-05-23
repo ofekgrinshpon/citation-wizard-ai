@@ -13,6 +13,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 import { runClaimAnalyzer } from "./stages/claimAnalyzer.ts";
 import { runQueryPlanner } from "./stages/queryPlanner.ts";
+import { runLocalRetrieval } from "./stages/localRetrieval.ts";
+import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
+import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
 import { StageRun } from "./lib/types.ts";
 
