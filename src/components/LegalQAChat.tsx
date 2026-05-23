@@ -950,93 +950,24 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     return () => { cancelled = true; };
   }, [projectId]);
 
-  // ─── Resume in-progress academic run on mount ─────────────────────
-  // If a previous session started a chapter generation that the user navigated
-  // away from, recover its result (or live-poll until it's done) via
-  // legal-qa-status. Marker cleared once handled. Foreground SSE always wins:
-  // we only resume when there's no active stream.
+  // ─── D3.1: Background academic resume removed ─────────────────────
+  // Previously this effect polled legal-qa-status to recover short-academic
+  // results across navigation. legal-qa-status is being deleted; short steps
+  // still work in the foreground but no longer auto-resume after navigation.
+  // We still clear any stale academic run marker on mount so the wizard
+  // does not stay in a fake "loading" state.
   useEffect(() => {
     if (taskMode !== "academic_writing") return;
-    if (loading) return; // foreground run takes precedence
     let cancelled = false;
     (async () => {
       const marker = await loadAcademicRunMarker(projectId);
       if (cancelled || !marker) return;
-      try {
-        setLoading(true);
-        setLastAcademicAction(marker.step);
-        setStageEvents([]);
-        setStreamingDraft("");
-        setPostProcessingLabel("מסתנכרן עם ההפקה שרצה ברקע…");
-        const { pollLegalQaStatus } = await import("@/lib/legalQaPolling");
-        const final = await pollLegalQaStatus(marker.runId, {
-          intervalMs: 3000,
-          maxWallMs: 600_000,
-        });
-        if (cancelled) return;
-        if (final.status === "completed" && typeof final.answer === "string" && final.answer.length > 10) {
-          const qaResult: QAResult = {
-            answer: final.answer,
-            footnotes: (final.footnotes as QAResult["footnotes"]) ?? [],
-            source_urls: [],
-          };
-          setRunComplete(true);
-          setResult(qaResult);
-
-          const isShortStep =
-            marker.step === "propose_outline" ||
-            marker.step === "suggest_topics" ||
-            marker.step === "validate_question";
-
-          if (isShortStep) {
-            // Apply per-step UI state, mirroring the foreground success path.
-            if (marker.step === "propose_outline") {
-              setProposedQuestions([]);
-              setSuggestionRounds([]);
-              setOutline(qaResult.answer);
-              updateWizardStep("outline");
-            } else if (marker.step === "validate_question") {
-              setProposedQuestions([]);
-              setSuggestionRounds([]);
-              updateWizardStep("topic_or_question");
-            } else if (marker.step === "suggest_topics") {
-              const parsedQs = parseProposedQuestions(qaResult.answer);
-              setSuggestionRounds([{ questions: parsedQs, coverage: undefined, exhausted: false }]);
-              setProposedQuestions(parsedQs);
-              updateWizardStep("topic_or_question");
-            }
-            setLastAcademicAction(marker.step);
-            toast.success("השאילתה הושלמה ברקע ונטענה מחדש");
-          } else {
-            // Long-form chapter write recovery — persist into the matching chapter slot.
-            setChapters((prev) => {
-              const idx = marker.chapterIdx;
-              if (idx < 0 || idx >= prev.length) return prev;
-              const next = [...prev];
-              next[idx] = { ...next[idx], content: qaResult.answer };
-              return next;
-            });
-            toast.success("הפרק הושלם ברקע ונטען מחדש");
-          }
-        } else {
-          setError("ההפקה ברקע נכשלה. ניתן לנסות שוב.");
-        }
-      } catch (e) {
-        if ((e as Error).name !== "AbortError") {
-          console.error("Background resume failed:", e);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-          setPostProcessingLabel(null);
-        }
-        await setAcademicRunMarker(projectId, null);
-      }
+      await setAcademicRunMarker(projectId, null);
     })();
     return () => { cancelled = true; };
-    // Intentionally only on projectId / taskMode change — not on `loading`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, taskMode]);
+
 
   // ─── D3.1: Deep research resume removed ────────────────────────────
   // Research is offline. The Deep async path against legal-qa-status no
@@ -2078,16 +2009,17 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         throw new Error(`HTTP ${res.status}`);
       }
 
-      // Parse the response. Streamed runs use the named-event SSE parser;
-      // non-streamed (case_summary, pleading_analysis, …) fall back to JSON.
-      // Defensive Deep-async path: if backend returns 202 + run_id, poll
-      // legal-qa-status instead of waiting on the SSE socket (avoids 150s
-      // gateway cap). Primary SSE path is unchanged.
+      // D3.1: 202 + run_id async polling path removed (legal-qa-status
+      // is being deleted). Treat 202 as an error so users do not hang
+      // waiting for a poll that will never resolve.
       let data: any;
       let effectiveStatus = res.status;
       const contentType = res.headers.get("content-type") || "";
 
       if (res.status === 202) {
+        setError("מצב מחקר משפטי בשדרוג. נסו שוב מאוחר יותר.");
+        return;
+      }
         const queued = await res.json().catch(() => ({}));
         const runId = (queued?.run_id ?? queued?.runId) as string | undefined;
         if (!runId) {
