@@ -317,9 +317,6 @@ export function StageProgressList({
               r.def.id === "post_processing" && postProcessingLabel && !r.detail
                 ? postProcessingLabel
                 : r.detail;
-            const bandText = r.bandEnd > 0
-              ? `${Math.round(r.bandStart)}–${Math.round(r.bandEnd)}%`
-              : null;
             return (
               <li
                 key={r.def.id}
@@ -347,11 +344,6 @@ export function StageProgressList({
                 </span>
                 {detail && (
                   <span className="text-xs text-muted-foreground truncate">— {detail}</span>
-                )}
-                {bandText && !isPending && (
-                  <span className="ms-auto text-[10px] font-mono tabular-nums text-muted-foreground/60">
-                    {bandText}
-                  </span>
                 )}
               </li>
             );
