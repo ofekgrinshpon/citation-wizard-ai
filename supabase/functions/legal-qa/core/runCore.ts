@@ -42,8 +42,12 @@ import {
   classifyDoctrines,
   CLASSIFIER_TO_SR_DOCTRINE,
   CLASSIFIER_CONFIDENCE_THRESHOLD,
+  DOCTRINE_PROTECT_THRESHOLD,
+  doctrineApplyStatus,
   type DoctrineClassification,
+  type DoctrineApplyStatus,
 } from "./doctrineClassifier.ts";
+import { buildResearchQueries, summarizeResearchQueries } from "./researchQueryPlanner.ts";
 import {
   extractDocketFromText,
   extractPartiesFromText,
