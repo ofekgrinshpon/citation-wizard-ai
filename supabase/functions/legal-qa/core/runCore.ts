@@ -1148,8 +1148,8 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
           plan: sourceRequirements,
           reconciliation: sourceRequirementsReconciliation,
           injection: sourceRequirementsInjection,
-          inject_flag: (Deno.env.get("SR_INJECT_RETRIEVAL") ?? "") === "1",
-          protect_flag: (Deno.env.get("SR_PROTECT_CANDIDATES") ?? "1") === "1",
+          inject_flag: (Deno.env.get("SR_INJECT_RETRIEVAL") ?? "0") === "1",
+          protect_flag: (Deno.env.get("SR_PROTECT_CANDIDATES") ?? "0") === "1",
         }
       : null,
     doctrine_classifier: classification
