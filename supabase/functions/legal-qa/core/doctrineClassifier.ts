@@ -328,4 +328,32 @@ for (const id of ACTIVE_DOCTRINE_TAXONOMY) {
   }
 }
 
+// Legacy threshold (kept for back-compat; no longer used to gate SR
+// injection). Use DOCTRINE_PROTECT_THRESHOLD instead.
 export const CLASSIFIER_CONFIDENCE_THRESHOLD = 0.65;
+
+/**
+ * Phase A — Recalibration.
+ *
+ * Only doctrines whose confidence ≥ this threshold AND whose id is an exact
+ * member of ACTIVE_DOCTRINE_TAXONOMY may promote to SourceRequirements roles
+ * ("protected") and bias retrieval. Anything below is `hint_only` (recorded
+ * as telemetry but not acted on) or `below_threshold`.
+ */
+export const DOCTRINE_PROTECT_THRESHOLD = 0.85;
+
+export type DoctrineApplyStatus = "applied" | "hint_only" | "below_threshold";
+
+/**
+ * Decide per-doctrine apply status. "applied" requires (a) confidence at or
+ * above DOCTRINE_PROTECT_THRESHOLD, (b) an active taxonomy id with an SR
+ * mapping. Sub-threshold but recognized = hint_only. Unknown/unmapped =
+ * below_threshold (caller already records the warning separately).
+ */
+export function doctrineApplyStatus(d: ClassifiedDoctrine): DoctrineApplyStatus {
+  const isActive = (ACTIVE_DOCTRINE_TAXONOMY as readonly string[]).includes(d.id);
+  const hasSr = isActive && !!CLASSIFIER_TO_SR_DOCTRINE[d.id as ActiveDoctrineId];
+  if (isActive && hasSr && d.confidence >= DOCTRINE_PROTECT_THRESHOLD) return "applied";
+  if (isActive) return "hint_only";
+  return "below_threshold";
+}
