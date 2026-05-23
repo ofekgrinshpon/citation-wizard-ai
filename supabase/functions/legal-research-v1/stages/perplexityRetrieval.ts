@@ -303,6 +303,8 @@ interface PplxResultRow {
   admitted_to_candidate_pool: boolean;
   drop_reason?: string;
   extracted_followup_terms?: string[];
+  role_corrected_from?: SourceRole;
+  role_corrected_to?: SourceRole;
 }
 
 function processRaw(
@@ -331,7 +333,10 @@ function processRaw(
         admitted_to_candidate_pool: false, drop_reason: "bad_source" });
       continue;
     }
-    const admit = admitFor(query.role, cls);
+
+    // P3.2 #4: role correction before admission
+    const { role: effectiveRole, corrected_from } = correctRoleForClass(query.role, cls);
+    const admit = admitFor(effectiveRole, cls);
     if (!admit) {
       const followup = cls === "discovery_only" ? extractFollowupTerms(title, s.snippet) : [];
       followup.forEach((t) => followupTerms.add(t));
@@ -339,17 +344,23 @@ function processRaw(
         title, url, domain,
         classified_source_class: cls,
         admitted_to_candidate_pool: false,
-        drop_reason: cls === "discovery_only" ? "discovery_only" : `class_${cls}_not_admitted_for_${query.role}`,
+        drop_reason: cls === "discovery_only" ? "discovery_only" : `class_${cls}_not_admitted_for_${effectiveRole}`,
         extracted_followup_terms: followup.length ? followup : undefined,
+        role_corrected_from: corrected_from,
+        role_corrected_to: corrected_from ? effectiveRole : undefined,
       });
       continue;
     }
-    rows.push({ title, url, domain, classified_source_class: cls,
-      admitted_to_candidate_pool: true });
+    rows.push({
+      title, url, domain, classified_source_class: cls,
+      admitted_to_candidate_pool: true,
+      role_corrected_from: corrected_from,
+      role_corrected_to: corrected_from ? effectiveRole : undefined,
+    });
     admitted.push({
       candidate_id: crypto.randomUUID(),
       claim_id: query.claim_id,
-      role: query.role,
+      role: effectiveRole,
       origin: "perplexity",
       retrieval_method: "perplexity",
       title,
@@ -359,7 +370,10 @@ function processRaw(
       query_he: query.query_he,
       score: cls === "official_primary" || cls === "legislation" ? 0.95 : 0.75,
       expected_source_type: query.expected_source_type,
-      metadata: { domain, classified_source_class: cls },
+      metadata: {
+        domain, classified_source_class: cls,
+        role_corrected_from: corrected_from,
+      },
     });
   }
   return { admitted, rows, followupTerms: [...followupTerms].slice(0, 2) };
