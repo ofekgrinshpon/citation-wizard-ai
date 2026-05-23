@@ -268,14 +268,32 @@ async function handle(req: Request): Promise<Response> {
   ]);
   stage_runs.push(...local.stage_runs, ...pplx.stage_runs);
   const pool = buildCandidatePool([...local.candidates, ...pplx.candidates]);
+  const role_corrections = pplx.per_query.flatMap((pq) =>
+    pq.results
+      .filter((r) => r.role_corrected_from)
+      .map((r) => ({
+        claim_id: pq.claim_id,
+        from: r.role_corrected_from,
+        to: r.role_corrected_to,
+        url: r.url,
+        title: r.title,
+        admitted: r.admitted_to_candidate_pool,
+      })),
+  );
   const retrievalMeta = {
     ms: Date.now() - tRetrieval,
-    local: { ms: local.ms, candidates: local.candidates.length, per_query: local.per_query },
+    local: {
+      ms: local.ms,
+      candidates: local.candidates.length,
+      per_query: local.per_query,
+      global_exact: local.global_exact,
+    },
     perplexity: {
       ms: pplx.ms,
       candidates: pplx.candidates.length,
       dropped: pplx.dropped.length,
       per_query: pplx.per_query,
+      role_corrections,
     },
     pool: {
       found: pool.found,
