@@ -42,8 +42,12 @@ import {
   classifyDoctrines,
   CLASSIFIER_TO_SR_DOCTRINE,
   CLASSIFIER_CONFIDENCE_THRESHOLD,
+  DOCTRINE_PROTECT_THRESHOLD,
+  doctrineApplyStatus,
   type DoctrineClassification,
+  type DoctrineApplyStatus,
 } from "./doctrineClassifier.ts";
+import { buildResearchQueries, summarizeResearchQueries } from "./researchQueryPlanner.ts";
 import {
   extractDocketFromText,
   extractPartiesFromText,
@@ -179,21 +183,78 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
     classifierError = (e as Error).message;
     console.warn("[core:doctrine_classifier] threw", e);
   }
+  // Phase A — only doctrines that clear DOCTRINE_PROTECT_THRESHOLD AND
+  // are exact active-taxonomy members may promote to SR roles / protected
+  // candidates. Everything else is recorded as telemetry only.
   const forcedDoctrineIds: string[] = [];
+  const doctrineStatuses: Array<{
+    id: string; confidence: number; status: DoctrineApplyStatus; sr_id: string | null;
+  }> = [];
+  const wouldHaveInjectedRoles: string[] = [];
   if (classification) {
     for (const d of classification.doctrines) {
-      if (d.confidence < CLASSIFIER_CONFIDENCE_THRESHOLD) continue;
-      const srId = CLASSIFIER_TO_SR_DOCTRINE[d.id];
-      if (srId) forcedDoctrineIds.push(srId);
+      const status = doctrineApplyStatus(d);
+      const srId = CLASSIFIER_TO_SR_DOCTRINE[d.id as keyof typeof CLASSIFIER_TO_SR_DOCTRINE] ?? null;
+      doctrineStatuses.push({ id: d.id, confidence: d.confidence, status, sr_id: srId });
+      if (status === "applied" && srId) {
+        forcedDoctrineIds.push(srId);
+      } else if (srId) {
+        // Hypothetical: what the old behavior (≥0.65) would have injected.
+        if (d.confidence >= CLASSIFIER_CONFIDENCE_THRESHOLD) wouldHaveInjectedRoles.push(srId);
+      }
     }
   }
+  const classifierTelemetry = {
+    threshold: DOCTRINE_PROTECT_THRESHOLD,
+    legacy_threshold: CLASSIFIER_CONFIDENCE_THRESHOLD,
+    per_doctrine: doctrineStatuses,
+    applied_sr_ids: forcedDoctrineIds,
+    would_have_injected_roles: wouldHaveInjectedRoles,
+  };
   emitSafe(
     onStage,
     "doctrine_classifier",
     "complete",
     classification
-      ? `active=${classification.doctrines.length} forced=${forcedDoctrineIds.length} unimplemented=${classification.unimplemented_matches.length} warnings=${classification.unmapped_doctrine_warnings.length}`
+      ? `applied=${forcedDoctrineIds.length} hint_only=${doctrineStatuses.filter(s => s.status === "hint_only").length} below=${doctrineStatuses.filter(s => s.status === "below_threshold").length} would_have=${wouldHaveInjectedRoles.length}`
       : `skipped:${classifierError ?? "unknown"}`,
+  );
+
+  // ─── 1.4b Research Query Planner (Phase B — telemetry only) ───────────
+  // Generates structured per-claim research queries (primary_statute,
+  // binding_case_law, scholarship, etc.). NOT used by retrieval yet.
+  emitSafe(onStage, "research_queries", "running");
+  const tRq = Date.now();
+  let researchQueriesByClaim: Awaited<ReturnType<typeof buildResearchQueries>>["byClaim"] = {};
+  let researchQueriesRun: { ok: boolean; error?: string; model?: string; duration_ms: number; raw_count: number } | null = null;
+  try {
+    const rq = await buildResearchQueries({
+      question, plan, lovableApiKey: LOVABLE_API_KEY, signal,
+    });
+    researchQueriesByClaim = rq.byClaim;
+    researchQueriesRun = { ok: rq.ok, error: rq.error, model: rq.model, duration_ms: Date.now() - tRq, raw_count: rq.totalQueries };
+    // Attach onto plan claims for downstream observability (read-only; retrieval ignores it in Phase B).
+    for (const c of plan.claims) {
+      const qs = researchQueriesByClaim[c.id];
+      if (qs && qs.length) (c as unknown as Record<string, unknown>).research_queries = qs;
+    }
+  } catch (e) {
+    researchQueriesRun = { ok: false, error: (e as Error).message, duration_ms: Date.now() - tRq, raw_count: 0 };
+    console.warn("[core:research_queries] threw", e);
+  }
+  recordStage({
+    stage: "research_queries",
+    duration_ms: researchQueriesRun?.duration_ms ?? (Date.now() - tRq),
+    status: researchQueriesRun?.ok ? "ok" : "error",
+    model: researchQueriesRun?.model,
+    ...(researchQueriesRun?.error ? { error: researchQueriesRun.error } : {}),
+    metadata: summarizeResearchQueries(researchQueriesByClaim),
+  });
+  emitSafe(
+    onStage,
+    "research_queries",
+    "complete",
+    `claims=${Object.keys(researchQueriesByClaim).length} queries=${researchQueriesRun?.raw_count ?? 0}${researchQueriesRun?.ok ? "" : `:${researchQueriesRun?.error ?? "err"}`}`,
   );
 
   // ─── 1.5 Source Requirements (telemetry, no behavior change) ───────────
@@ -1093,9 +1154,18 @@ export async function runCore(args: RunCoreArgs): Promise<RunCoreResult> {
       ? {
           ...classification,
           forced_doctrine_ids: forcedDoctrineIds,
-          threshold: CLASSIFIER_CONFIDENCE_THRESHOLD,
+          threshold: DOCTRINE_PROTECT_THRESHOLD,
+          legacy_threshold: CLASSIFIER_CONFIDENCE_THRESHOLD,
+          per_doctrine: classifierTelemetry.per_doctrine,
+          would_have_injected_roles: classifierTelemetry.would_have_injected_roles,
         }
       : { error: classifierError ?? "unavailable" },
+    research_queries: {
+      by_claim: researchQueriesByClaim,
+      summary: summarizeResearchQueries(researchQueriesByClaim),
+      run: researchQueriesRun,
+      used_by_retrieval: false,
+    },
     acceptance_errors: acceptanceErrors,
     stage_runs: stageRuns,
     total_duration_ms: Date.now() - tStart,
