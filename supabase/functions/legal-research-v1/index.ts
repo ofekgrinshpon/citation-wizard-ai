@@ -17,6 +17,7 @@ import { runLocalRetrieval } from "./stages/localRetrieval.ts";
 import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { runVerifier } from "./stages/verifier.ts";
+import { runDrafter } from "./stages/drafter.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
 import { StageRun } from "./lib/types.ts";
 
