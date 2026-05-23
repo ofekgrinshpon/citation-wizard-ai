@@ -1083,6 +1083,8 @@ export interface ReconcileArgs {
   packs: ClaimRetrievalPack[];
   /** Per-role injection records from the injector, if it ran. */
   injectionRecords?: RoleInjectionRecord[];
+  /** Per-claim SR summary built by the injector (will be enriched in place). */
+  injectionPerClaim?: ClaimSRSummary[];
   /** All verifier verdicts flattened across claims, if verifier ran. */
   verdicts?: VerifierVerdictLike[];
 }
