@@ -1038,74 +1038,14 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, taskMode]);
 
-  // ─── Resume in-progress Deep research run on mount ─────────────────
-  // If a Deep research request was in flight when the user navigated away
-  // (e.g. clicked Profile and came back), reattach to it via legal-qa-status
-  // instead of dropping the work.
+  // ─── D3.1: Deep research resume removed ────────────────────────────
+  // Research is offline. The Deep async path against legal-qa-status no
+  // longer exists. On mount we wipe any stale `relex_research_run_*` key
+  // so users with leftover markers from before the offline switch do not
+  // poll a deleted endpoint.
   useEffect(() => {
-    if (taskMode !== "research") return;
-    if (loading) return; // foreground request takes precedence
-    const marker = loadResearchRunMarker(currentProject?.id);
-    if (!marker) return;
-    let cancelled = false;
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-    (async () => {
-      try {
-        setLoading(true);
-        setResult(null);
-        setError(null);
-        setStageEvents([]);
-        setStreamingDraft("");
-        setPostProcessingLabel("מסתנכרן עם המחקר שרץ ברקע…");
-        setQuestion(marker.question);
-        const { pollLegalQaStatus, CHECKPOINT_LABELS_HE } = await import("@/lib/legalQaPolling");
-        const { deepCheckpointToStages } = await import("@/lib/legalQa/deepCheckpointToStages");
-        const final = await pollLegalQaStatus(marker.runId, {
-          signal: controller.signal,
-          onUpdate: (snap) => {
-            const cp = snap.checkpoint ?? null;
-            setStageEvents(deepCheckpointToStages(cp));
-            // Only surface a textual checkpoint label once we're past drafting,
-            // so the post-processing row in StageProgressList lights up.
-            if (cp === "anchor_pass" || cp === "completed") {
-              const label = CHECKPOINT_LABELS_HE[cp] ?? cp;
-              setPostProcessingLabel(label);
-            } else {
-              setPostProcessingLabel(null);
-            }
-          },
-        });
-        if (cancelled) return;
-        if (final.status === "completed" && typeof final.answer === "string" && final.answer.length > 10) {
-          const qaResult: QAResult = {
-            answer: final.answer,
-            footnotes: (final.footnotes as QAResult["footnotes"]) ?? [],
-            source_urls: [],
-          };
-          setRunComplete(true);
-          setResult(qaResult);
-          toast.success("המחקר הושלם ברקע ונטען מחדש");
-          onResultSaved?.();
-        } else {
-          setError("המחקר ברקע נכשל. ניתן לנסות שוב.");
-        }
-      } catch (e) {
-        if ((e as Error).name !== "AbortError") {
-          console.error("Research resume failed:", e);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-          setPostProcessingLabel(null);
-        }
-        clearResearchRunMarker(currentProject?.id);
-        abortControllerRef.current = null;
-      }
-    })();
-    return () => { cancelled = true; controller.abort(); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId, taskMode]);
+    clearStaleResearchMarkers();
+  }, []);
 
 
   // ─── Non-blocking nav warning while an academic run is streaming ───
