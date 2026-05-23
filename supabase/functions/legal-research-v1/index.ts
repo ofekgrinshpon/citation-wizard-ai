@@ -36,6 +36,9 @@ function jsonResponse(status: number, body: unknown): Response {
   });
 }
 
+// deno-lint-ignore no-explicit-any
+declare const EdgeRuntime: any;
+
 async function handle(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return jsonResponse(405, { error: "method_not_allowed" });
@@ -44,19 +47,40 @@ async function handle(req: Request): Promise<Response> {
   const t_start = Date.now();
   const stage_runs: StageRun[] = [];
 
-  // ─── Auth ─────────────────────────────────────────────────────────────────
+  // ─── Auth (with internal smoke-mode bypass) ──────────────────────────────
+  // Smoke mode: header `x-smoke-mode: 1` + Authorization equal to service role
+  // key. Runs the pipeline as a background task and returns {run_id} 202.
+  // Telemetry is still written to qa_logs under the supplied smoke_user_id.
+  // Never exposed in UI; service-role only.
   const authHeader = req.headers.get("Authorization");
   if (!authHeader?.startsWith("Bearer ")) {
     return jsonResponse(401, { error: "unauthorized" });
   }
-  const userClient = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_ANON_KEY")!,
-    { global: { headers: { Authorization: authHeader } } },
-  );
   const token = authHeader.replace("Bearer ", "");
-  const { data: { user }, error: userErr } = await userClient.auth.getUser(token);
-  if (userErr || !user) return jsonResponse(401, { error: "unauthorized" });
+  const smokeMode = req.headers.get("x-smoke-mode") === "1";
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+
+  let userId: string;
+  let userClient: ReturnType<typeof createClient> | null = null;
+  if (smokeMode && token && token === serviceKey) {
+    const peekBody = await req.clone().json().catch(() => ({}));
+    const smokeUid = typeof (peekBody as { smoke_user_id?: unknown }).smoke_user_id === "string"
+      ? (peekBody as { smoke_user_id: string }).smoke_user_id : "";
+    if (!smokeUid || !UUID_RE.test(smokeUid)) {
+      return jsonResponse(400, { error: "smoke_missing_user_id" });
+    }
+    userId = smokeUid;
+  } else {
+    userClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } },
+    );
+    const { data: { user }, error: userErr } = await userClient.auth.getUser(token);
+    if (userErr || !user) return jsonResponse(401, { error: "unauthorized" });
+    userId = user.id;
+  }
+  const user = { id: userId };
 
   // ─── Body validation ─────────────────────────────────────────────────────
   let body: Record<string, unknown>;
@@ -78,27 +102,26 @@ async function handle(req: Request): Promise<Response> {
     project_id = project_id_raw;
   }
 
-  // ─── Credit pre-flight (no consumption in P1/P2 — no answer produced) ────
-  // We only check `hasEnough` so the user gets early 402 feedback. Consumption
-  // begins in P5 when an actual answer is produced.
-  try {
-    const { data: profile } = await userClient
-      .from("profiles")
-      .select("included_credits_remaining, topup_credits_remaining, plan")
-      .eq("id", user.id)
-      .maybeSingle();
-    if (profile) {
-      const plan = (profile as { plan?: string }).plan;
-      const total =
-        ((profile as { included_credits_remaining?: number }).included_credits_remaining ?? 0) +
-        ((profile as { topup_credits_remaining?: number }).topup_credits_remaining ?? 0);
-      // Admins bypass; everyone else needs ≥5 (CREDIT_COSTS.legalQa).
-      if (plan !== "admin" && total < 5) {
-        return jsonResponse(402, { error: "INSUFFICIENT_CREDITS", required: 5, remaining: total });
+  // ─── Credit pre-flight (skipped in smoke mode) ───────────────────────────
+  if (!smokeMode && userClient) {
+    try {
+      const { data: profile } = await userClient
+        .from("profiles")
+        .select("included_credits_remaining, topup_credits_remaining, plan")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (profile) {
+        const plan = (profile as { plan?: string }).plan;
+        const total =
+          ((profile as { included_credits_remaining?: number }).included_credits_remaining ?? 0) +
+          ((profile as { topup_credits_remaining?: number }).topup_credits_remaining ?? 0);
+        if (plan !== "admin" && total < 5) {
+          return jsonResponse(402, { error: "INSUFFICIENT_CREDITS", required: 5, remaining: total });
+        }
       }
+    } catch (e) {
+      console.warn("[legal-research-v1] credit pre-flight skipped:", e);
     }
-  } catch (e) {
-    console.warn("[legal-research-v1] credit pre-flight skipped:", e);
   }
 
   const admin = makeAdminClient();
@@ -109,6 +132,9 @@ async function handle(req: Request): Promise<Response> {
     answer: STUB_ANSWER,
     footnotes: [] as unknown[],
   };
+
+  // Wrap the whole pipeline so smoke mode can run it in the background.
+  const runPipeline = async (): Promise<Response> => {
 
   // ─── P2: Claim Analyzer ──────────────────────────────────────────────────
   let analyzerStage;
@@ -336,6 +362,16 @@ async function handle(req: Request): Promise<Response> {
       dropped_sources: pplx.dropped,
     },
   });
+  }; // end runPipeline
+
+  if (smokeMode) {
+    const bg = runPipeline().catch((e) => console.error("[lrv1 smoke bg]", e));
+    if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
+      EdgeRuntime.waitUntil(bg);
+    }
+    return jsonResponse(202, { ok: true, run_id, smoke: true });
+  }
+  return await runPipeline();
 }
 
 serve(handle);
