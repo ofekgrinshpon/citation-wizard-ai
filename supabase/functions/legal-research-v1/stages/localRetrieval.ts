@@ -397,6 +397,8 @@ export interface LocalRetrievalResult {
       exact_status: "ok" | "empty" | "error";
       exact_error?: string;
       exact_ms: number;
+      exact_clue_lookups: ClueLookupDiag[];
+      role_to_source_type_filter: string[] | null;
       text_status: "ok" | "empty" | "error" | "timeout";
       text_error?: string;
       text_ms: number;
