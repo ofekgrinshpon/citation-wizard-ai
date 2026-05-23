@@ -15,23 +15,40 @@ const MODEL = "openai/gpt-5-mini";
 const TIMEOUT_MS = 20_000;
 
 // Controlled taxonomy — keep narrow on purpose.
-export const DOCTRINE_TAXONOMY = [
+//
+// Coverage invariant: every ID in ACTIVE_DOCTRINE_TAXONOMY MUST have a
+// SourceRequirements bundle reachable via CLASSIFIER_TO_SR_DOCTRINE.
+// IDs we recognize semantically but have NOT implemented yet live in
+// UNIMPLEMENTED_DOCTRINES — the classifier is allowed to detect them
+// (so we get telemetry), but they are NOT promoted to active doctrines
+// and do NOT trigger source_requirements.
+export const ACTIVE_DOCTRINE_TAXONOMY = [
   "temporary_injunction",
   "stay_of_execution",
   "pre_contractual_good_faith",
   "contract_interpretation",
   "relative_voidness",
   "reasonableness_review",
-  "hearing_duty",
-  "alternative_remedy_exhaustion",
   "protection_money_extortion",
   "legislative_omission",
+] as const;
+
+export const UNIMPLEMENTED_DOCTRINES = [
+  "hearing_duty",
+  "alternative_remedy_exhaustion",
   "constitutional_limitation_clause",
   "statutory_interpretation",
   "jurisdiction_subject_matter",
 ] as const;
 
+export const DOCTRINE_TAXONOMY = [
+  ...ACTIVE_DOCTRINE_TAXONOMY,
+  ...UNIMPLEMENTED_DOCTRINES,
+] as const;
+
 export type DoctrineId = typeof DOCTRINE_TAXONOMY[number];
+export type ActiveDoctrineId = typeof ACTIVE_DOCTRINE_TAXONOMY[number];
+export type UnimplementedDoctrineId = typeof UNIMPLEMENTED_DOCTRINES[number];
 
 export const LEGAL_AREA_TAXONOMY = [
   "criminal_law",
