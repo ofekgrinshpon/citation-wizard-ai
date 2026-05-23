@@ -299,11 +299,14 @@ export async function classifyDoctrines(args: ClassifyArgs): Promise<ClassifyRes
 }
 
 /**
- * Map classifier doctrine IDs → sourceRequirements doctrine_id values.
- * Only entries here can be promoted via the classifier path. Unmapped IDs
- * are ignored (regex path still works).
+ * Map ACTIVE classifier doctrine IDs → sourceRequirements doctrine_id values.
+ *
+ * Coverage invariant: this map MUST cover every entry in
+ * ACTIVE_DOCTRINE_TAXONOMY. The runtime assertion below guards against
+ * drift. IDs in UNIMPLEMENTED_DOCTRINES intentionally do NOT appear here —
+ * they are recorded as telemetry only.
  */
-export const CLASSIFIER_TO_SR_DOCTRINE: Partial<Record<DoctrineId, string>> = {
+export const CLASSIFIER_TO_SR_DOCTRINE: Record<ActiveDoctrineId, string> = {
   protection_money_extortion: "protection_money_extortion",
   legislative_omission: "legislative_omission_duty_to_legislate",
   temporary_injunction: "temporary_injunction",
@@ -314,16 +317,15 @@ export const CLASSIFIER_TO_SR_DOCTRINE: Partial<Record<DoctrineId, string>> = {
   reasonableness_review: "reasonableness_review",
 };
 
-// Audit (2026-05-23): classifier taxonomy IDs that currently have NO matching
-// sourceRequirements doctrine bundle. Regex-only triggering still applies if
-// the question text matches a DOCTRINES[].trigger. Mapping any of these
-// requires (1) a new DOCTRINES entry in sourceRequirements.ts and (2) adding
-// the id below.
-//   - hearing_duty
-//   - alternative_remedy_exhaustion
-//   - constitutional_limitation_clause
-//   - statutory_interpretation
-//   - jurisdiction_subject_matter
-// Tracked as follow-ups; not implemented in this change.
+// Coverage invariant — fail loudly on module load if any active doctrine
+// lacks an SR mapping. Cheap O(n) check at import time.
+for (const id of ACTIVE_DOCTRINE_TAXONOMY) {
+  if (!CLASSIFIER_TO_SR_DOCTRINE[id]) {
+    throw new Error(
+      `[doctrineClassifier] coverage invariant violated: active doctrine '${id}' has no SourceRequirements mapping. ` +
+      `Either add a bundle + entry in CLASSIFIER_TO_SR_DOCTRINE, or move the id to UNIMPLEMENTED_DOCTRINES.`,
+    );
+  }
+}
 
 export const CLASSIFIER_CONFIDENCE_THRESHOLD = 0.65;
