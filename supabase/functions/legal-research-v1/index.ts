@@ -61,16 +61,17 @@ async function handle(req: Request): Promise<Response> {
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 
   let userId: string;
+  let userClient: ReturnType<typeof createClient> | null = null;
   if (smokeMode && token && token === serviceKey) {
-    // service-role bypass
     const peekBody = await req.clone().json().catch(() => ({}));
-    const smokeUid = typeof peekBody.smoke_user_id === "string" ? peekBody.smoke_user_id : "";
+    const smokeUid = typeof (peekBody as { smoke_user_id?: unknown }).smoke_user_id === "string"
+      ? (peekBody as { smoke_user_id: string }).smoke_user_id : "";
     if (!smokeUid || !UUID_RE.test(smokeUid)) {
       return jsonResponse(400, { error: "smoke_missing_user_id" });
     }
     userId = smokeUid;
   } else {
-    const userClient = createClient(
+    userClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!,
       { global: { headers: { Authorization: authHeader } } },
@@ -79,8 +80,7 @@ async function handle(req: Request): Promise<Response> {
     if (userErr || !user) return jsonResponse(401, { error: "unauthorized" });
     userId = user.id;
   }
-  // Shim object so existing references to `user.id` still work.
-  const user = { id: userId } as { id: string };
+  const user = { id: userId };
 
   // ─── Body validation ─────────────────────────────────────────────────────
   let body: Record<string, unknown>;
