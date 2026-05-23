@@ -140,40 +140,108 @@ function dedupeClues(clues: ExactClue[]): ExactClue[] {
   return [...seen.values()];
 }
 
+// P3.3: planner-role → DB source_type. DB actually uses these values:
+//   caselaw, knesset_research, israeli_law, journal_article, supreme_court_il
+// (legislation_primary / legislation_secondary do NOT exist).
+export const ROLE_SOURCE_TYPES: Record<string, string[]> = {
+  primary_statute: ["israeli_law"],
+  regulation: ["israeli_law"],
+  binding_case_law: ["caselaw", "supreme_court_il"],
+  persuasive_case_law: ["caselaw", "supreme_court_il"],
+  scholarship: ["journal_article"],
+  factual_report: ["knesset_research"],
+  government_report: ["knesset_research"],
+};
+
+const TITLE_STOPWORDS = new Set([
+  "של", "על", "את", "אל", "עם", "או", "גם", "כי", "אם", "ל", "לכך",
+  "חוק", "תקנות", "צו", "פקודה", "פקודת", "התש", "תש",
+]);
+
+function titleTokens(name: string): string[] {
+  return name
+    .replace(/[()[\]{}"׳״''`,.;:?!<>«»—–]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ")
+    .filter((t) => t.length >= 2 && !TITLE_STOPWORDS.has(t))
+    .slice(0, 6);
+}
+
+interface ClueLookupDiag {
+  clue_kind: ExactClue["kind"];
+  clue_source: ExactClue["source"];
+  law_name?: string;
+  section?: string;
+  title_match_query: string;
+  source_type_filter: string[] | null;
+  matched_document_ids: string[];
+  matched_titles: string[];
+  matched_chunk_id?: string;
+  status: "ok" | "empty" | "error" | "timeout";
+  error?: string;
+}
+
 async function exactAuthorityLookup(
   admin: Admin,
   clues: ExactClue[],
   role: string,
   perQueryLimit: number,
-): Promise<{ rows: RpcRow[]; status: "ok" | "empty" | "error"; error?: string }> {
-  if (!clues.length) return { rows: [], status: "empty" };
-  const allowedTypes: string[] | null = (() => {
-    if (role === "primary_statute" || role === "regulation") {
-      return ["legislation_primary", "legislation_secondary"];
-    }
-    if (role === "binding_case_law" || role === "persuasive_case_law") {
-      return ["caselaw"];
-    }
-    return null;
-  })();
+): Promise<{
+  rows: RpcRow[];
+  status: "ok" | "empty" | "error";
+  error?: string;
+  diags: ClueLookupDiag[];
+}> {
+  const diags: ClueLookupDiag[] = [];
+  if (!clues.length) return { rows: [], status: "empty", diags };
+  const allowedTypes: string[] | null = ROLE_SOURCE_TYPES[role] ?? null;
   const collected: RpcRow[] = [];
+  // Track which collected row came from which clue (for section snippet lookup).
+  const rowClue = new Map<string, ExactClue>();
   try {
     for (const cl of clues) {
       const primary = cl.law_name || cl.docket || cl.search_terms[0];
       if (!primary || primary.length < 6) continue;
-      const pat = `%${primary.replace(/[%_]/g, " ").slice(0, 80)}%`;
+      const cleaned = primary.replace(/[%_]/g, " ").slice(0, 120);
+      const diag: ClueLookupDiag = {
+        clue_kind: cl.kind, clue_source: cl.source,
+        law_name: cl.law_name, section: cl.section,
+        title_match_query: cleaned,
+        source_type_filter: allowedTypes,
+        matched_document_ids: [], matched_titles: [], status: "empty",
+      };
       const timer = new Promise<null>((res) => setTimeout(() => res(null), EXACT_TIMEOUT_MS));
       // deno-lint-ignore no-explicit-any
       let q: any = admin
         .from("legal_documents")
         .select("id,title,citation,source_type,source_url,metadata")
-        .or(`title.ilike.${pat},citation.ilike.${pat}`)
         .limit(perQueryLimit);
+      if (cl.kind === "docket") {
+        // Docket: keep substring OR match.
+        const pat = `%${cleaned}%`;
+        q = q.or(`title.ilike.${pat},citation.ilike.${pat}`);
+      } else {
+        // Statute / regulation: tokenized AND across title (handles parenthetical
+        // canonical names like "חוק החוזים (תרופות בשל הפרת חוזה)").
+        const toks = titleTokens(cleaned);
+        if (!toks.length) continue;
+        for (const t of toks) q = q.ilike("title", `%${t}%`);
+        diag.title_match_query = toks.join(" AND ");
+      }
       if (allowedTypes) q = q.in("source_type", allowedTypes);
-      const r = await Promise.race([q, timer]);
-      if (!r || r.error || !r.data) continue;
-      for (const d of r.data) {
-        collected.push({
+      const r = (await Promise.race([q, timer])) as
+        | { data: Array<{ id: string; title: string; citation: string; source_type: string; source_url: string | null; metadata: Record<string, unknown> }> | null; error: { message?: string } | null }
+        | null;
+      if (!r) { diag.status = "timeout"; diags.push(diag); continue; }
+      if (r.error) {
+        diag.status = "error"; diag.error = r.error.message || String(r.error);
+        diags.push(diag); continue;
+      }
+      const data = r.data || [];
+      if (!data.length) { diag.status = "empty"; diags.push(diag); continue; }
+      for (const d of data) {
+        const row: RpcRow = {
           document_id: d.id,
           document_title: d.title,
           source_type: d.source_type,
@@ -181,20 +249,70 @@ async function exactAuthorityLookup(
           chunk_content: null,
           metadata: d.metadata || {},
           similarity: cl.kind === "statute_section" ? 1.0 : 0.9,
-        });
+        };
+        collected.push(row);
+        rowClue.set(d.id, cl);
+        diag.matched_document_ids.push(d.id);
+        diag.matched_titles.push(d.title);
+      }
+      diag.status = "ok";
+      diags.push(diag);
+    }
+
+    // Section-snippet enrichment for statute_section clues.
+    const sectionTargets = collected.filter((r) => {
+      const cl = rowClue.get(r.document_id);
+      return cl?.kind === "statute_section" && cl.section;
+    });
+    for (const row of sectionTargets) {
+      const cl = rowClue.get(row.document_id)!;
+      const section = cl.section!;
+      // Match e.g. "15. ", "15.", "סעיף 15", "פיצויים מוסכמים"
+      const pats = [
+        `${section}.`,
+        `סעיף ${section}`,
+      ];
+      const orExpr = pats.map((p) => `content.ilike.%${p.replace(/[%_]/g, " ")}%`).join(",");
+      const timer = new Promise<null>((res) => setTimeout(() => res(null), EXACT_TIMEOUT_MS));
+      // deno-lint-ignore no-explicit-any
+      const cq: any = admin
+        .from("legal_document_chunks")
+        .select("id,content,chunk_index")
+        .eq("document_id", row.document_id)
+        .or(orExpr)
+        .order("chunk_index", { ascending: true })
+        .limit(1);
+      const cr = (await Promise.race([cq, timer])) as
+        | { data: Array<{ id: string; content: string }> | null; error: unknown }
+        | null;
+      if (cr && !("error" in cr && cr.error) && cr.data && cr.data.length) {
+        const chunk = cr.data[0];
+        const content: string = chunk.content || "";
+        // Centre snippet around section marker if found.
+        const idx = content.indexOf(`${section}.`) >= 0
+          ? content.indexOf(`${section}.`)
+          : content.indexOf(`סעיף ${section}`);
+        const start = idx > 200 ? idx - 200 : 0;
+        row.chunk_content = content.slice(start, start + 600);
+        // attach matched_chunk_id to the corresponding diag entry
+        const d = diags.find((x) => x.matched_document_ids.includes(row.document_id));
+        if (d) d.matched_chunk_id = chunk.id;
       }
     }
   } catch (e) {
-    return { rows: collected, status: "error", error: e instanceof Error ? e.message : String(e) };
+    return {
+      rows: collected, status: "error",
+      error: e instanceof Error ? e.message : String(e), diags,
+    };
   }
-  // Dedup by document_id
-  const seen = new Set<string>();
-  const unique = collected.filter((r) => {
-    if (seen.has(r.document_id)) return false;
-    seen.add(r.document_id);
-    return true;
-  });
-  return { rows: unique, status: unique.length ? "ok" : "empty" };
+  // Dedup by document_id (prefer rows that gained a snippet).
+  const byId = new Map<string, RpcRow>();
+  for (const r of collected) {
+    const prev = byId.get(r.document_id);
+    if (!prev || (!prev.chunk_content && r.chunk_content)) byId.set(r.document_id, r);
+  }
+  const unique = [...byId.values()];
+  return { rows: unique, status: unique.length ? "ok" : "empty", diags };
 }
 
 // ─── RPC helpers ────────────────────────────────────────────────────────────
