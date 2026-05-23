@@ -2064,8 +2064,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       return;
     }
     // D1: Research mode is offline. Never fire a request — show the
-    // maintenance notice and bail before any network call.
-    if (taskMode === "research") {
+    // maintenance notice and bail before any network call. We compare via a
+    // string cast so TS does not narrow `taskMode` and break the (still
+    // present) downstream `taskMode === "research"` branches that we leave
+    // in place for the eventual rebuild.
+    if ((taskMode as string) === "research") {
       toast.info(RESEARCH_OFFLINE_TITLE);
       return;
     }
