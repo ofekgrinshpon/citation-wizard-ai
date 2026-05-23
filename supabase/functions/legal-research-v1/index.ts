@@ -263,7 +263,7 @@ async function handle(req: Request): Promise<Response> {
   // ─── P3: Retrieval (local DB + Perplexity) ───────────────────────────────
   const tRetrieval = Date.now();
   const [local, pplx] = await Promise.all([
-    runLocalRetrieval(admin, planner!.queries),
+    runLocalRetrieval(admin, planner!.queries, { question, claims: analyzer.claims }),
     runPerplexityRetrieval(planner!.queries),
   ]);
   stage_runs.push(...local.stage_runs, ...pplx.stage_runs);
