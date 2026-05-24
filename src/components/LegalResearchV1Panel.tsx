@@ -429,60 +429,62 @@ export function LegalResearchV1Panel() {
               </div>
             )}
 
-            <Collapsible defaultOpen={dbgOpenDefault}>
-              <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                <ChevronDown className="w-3.5 h-3.5" />
-                דיבאג / Debug trace
-              </CollapsibleTrigger>
-              <CollapsibleContent className="mt-2 space-y-3">
-                <DebugBlock title="run_id / qa_log_id" data={debug.run_id} />
-                <DebugBlock title="phase" data={debug.phase} />
-                <DebugBlock
-                  title="timings (ms)"
-                  data={{
-                    total: debug.total_ms ?? null,
-                    stage_runs: debug.stage_runs ?? null,
-                    analyzer: debug.planning?.analyzer?.ms ?? null,
-                    planner: debug.planning?.planner?.ms ?? null,
-                    retrieval: debug.retrieval?.ms ?? null,
-                    local: debug.retrieval?.local?.ms ?? null,
-                    perplexity: debug.retrieval?.perplexity?.ms ?? null,
-                    verifier: debug.verifier?.ms ?? null,
-                    drafter: debug.drafter?.ms ?? null,
-                  }}
-                />
-                <DebugBlock
-                  title="source split (local vs Perplexity)"
-                  data={{
-                    local_candidates: debug.retrieval?.local?.candidates ?? null,
-                    perplexity_candidates: debug.retrieval?.perplexity?.candidates ?? null,
-                    pool: debug.retrieval?.pool ?? null,
-                  }}
-                />
-                <DebugBlock title="claims" data={debug.claims} />
-                <DebugBlock title="queries" data={debug.queries} />
-                <DebugBlock
-                  title="verifier summary"
-                  data={{
-                    counts: debug.verifier?.counts ?? null,
-                    candidates_verified: debug.verifier?.candidates_verified ?? null,
-                    candidates_usable: debug.verifier?.candidates_usable ?? null,
-                    candidates_dropped: debug.verifier?.candidates_dropped ?? null,
-                  }}
-                />
-                <DebugBlock title="used_sources" data={result.used_sources} />
-                <DebugBlock title="footnotes" data={result.footnotes} />
-                <DebugBlock
-                  title="drafter"
-                  data={{
-                    marker_validation: debug.drafter?.marker_validation ?? null,
-                    sources_passed: debug.drafter?.sources_passed ?? null,
-                    sources_used: debug.drafter?.sources_used ?? null,
-                    omitted_candidate_ids: debug.drafter?.omitted_candidate_ids ?? null,
-                  }}
-                />
-              </CollapsibleContent>
-            </Collapsible>
+            {import.meta.env.DEV && (
+              <Collapsible defaultOpen={dbgOpenDefault}>
+                <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                  <ChevronDown className="w-3.5 h-3.5" />
+                  דיבאג / Debug trace
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-2 space-y-3">
+                  <DebugBlock title="run_id / qa_log_id" data={debug.run_id} />
+                  <DebugBlock title="phase" data={debug.phase} />
+                  <DebugBlock
+                    title="timings (ms)"
+                    data={{
+                      total: debug.total_ms ?? null,
+                      stage_runs: debug.stage_runs ?? null,
+                      analyzer: debug.planning?.analyzer?.ms ?? null,
+                      planner: debug.planning?.planner?.ms ?? null,
+                      retrieval: debug.retrieval?.ms ?? null,
+                      local: debug.retrieval?.local?.ms ?? null,
+                      perplexity: debug.retrieval?.perplexity?.ms ?? null,
+                      verifier: debug.verifier?.ms ?? null,
+                      drafter: debug.drafter?.ms ?? null,
+                    }}
+                  />
+                  <DebugBlock
+                    title="source split (local vs Perplexity)"
+                    data={{
+                      local_candidates: debug.retrieval?.local?.candidates ?? null,
+                      perplexity_candidates: debug.retrieval?.perplexity?.candidates ?? null,
+                      pool: debug.retrieval?.pool ?? null,
+                    }}
+                  />
+                  <DebugBlock title="claims" data={debug.claims} />
+                  <DebugBlock title="queries" data={debug.queries} />
+                  <DebugBlock
+                    title="verifier summary"
+                    data={{
+                      counts: debug.verifier?.counts ?? null,
+                      candidates_verified: debug.verifier?.candidates_verified ?? null,
+                      candidates_usable: debug.verifier?.candidates_usable ?? null,
+                      candidates_dropped: debug.verifier?.candidates_dropped ?? null,
+                    }}
+                  />
+                  <DebugBlock title="used_sources" data={result.used_sources} />
+                  <DebugBlock title="footnotes" data={result.footnotes} />
+                  <DebugBlock
+                    title="drafter"
+                    data={{
+                      marker_validation: debug.drafter?.marker_validation ?? null,
+                      sources_passed: debug.drafter?.sources_passed ?? null,
+                      sources_used: debug.drafter?.sources_used ?? null,
+                      omitted_candidate_ids: debug.drafter?.omitted_candidate_ids ?? null,
+                    }}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
+            )}
           </div>
         )}
       </div>
