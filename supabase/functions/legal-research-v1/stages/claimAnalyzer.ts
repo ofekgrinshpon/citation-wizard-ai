@@ -53,13 +53,37 @@ export interface AnalyzerStageResult {
   stage_runs: StageRun[];
   raw_text_initial: string;
   raw_text_final: string;
+  /**
+   * True when escalation never produced a usable response from the model
+   * because every attempt failed at the transport/gateway layer (network,
+   * 429/5xx, malformed gateway payload). Distinct from a model response that
+   * arrived but failed schema validation. The caller should surface a clean
+   * "temporarily unavailable" state instead of the P2 stub answer.
+   */
+  transport_failed: boolean;
+  attempts_summary: Array<{
+    attempt: number;
+    ms: number;
+    http_status?: number;
+    http_error?: string;
+    parse_error?: string;
+    got_data: boolean;
+  }>;
 }
+
+// HTTP statuses we'll retry. 0 means thrown/network. 408/429/5xx are
+// classic transient gateway/provider failures.
+const RETRYABLE_HTTP = new Set([0, 408, 429, 500, 502, 503, 504]);
+const MAX_FULL_ATTEMPTS = 3;
+const BACKOFF_MS = [1000, 3000]; // between attempts 1->2 and 2->3
 
 export async function runClaimAnalyzer(question: string): Promise<AnalyzerStageResult> {
   const preReasons = shouldPreEscalateAnalyzer(question);
   const initialModel = preReasons.length > 0 ? MODEL_FULL : MODEL_MINI;
 
   const stage_runs: StageRun[] = [];
+  const attempts_summary: AnalyzerStageResult["attempts_summary"] = [];
+
   const t0 = Date.now();
   const first = await callOpenAIJsonTool<unknown>({
     model: initialModel,
@@ -76,6 +100,9 @@ export async function runClaimAnalyzer(question: string): Promise<AnalyzerStageR
     model: initialModel,
     ms: Date.now() - t0,
     ok: !!first.data,
+    http_status: first.http_status,
+    http_error: first.http_error,
+    parse_error: first.parse_error,
   });
 
   let validated = validateAnalyzer(first.data);
@@ -92,6 +119,8 @@ export async function runClaimAnalyzer(question: string): Promise<AnalyzerStageR
       stage_runs,
       raw_text_initial: first.raw_text,
       raw_text_final: first.raw_text,
+      transport_failed: !first.data && RETRYABLE_HTTP.has(first.http_status ?? 0),
+      attempts_summary,
     };
   }
 
@@ -105,15 +134,14 @@ export async function runClaimAnalyzer(question: string): Promise<AnalyzerStageR
       stage_runs,
       raw_text_initial: first.raw_text,
       raw_text_final: first.raw_text,
+      transport_failed: false,
+      attempts_summary,
     };
   }
 
-  // Escalate to gpt-5. Attempt 1; if it looks like a transient transport
-  // failure (threw, or returned no data in <2s), retry once after 800ms.
-  // A real schema-invalid response from the model is NOT retried.
-  const TRANSIENT_MS = 2000;
-  const RETRY_DELAY_MS = 800;
-
+  // Escalate to gpt-5. Up to 3 attempts. Retry ONLY on transport-class
+  // failures (network throw, 408/429/5xx). A schema-invalid response from
+  // the model is NOT a transport failure and is not retried.
   const callEscalation = () =>
     callOpenAIJsonTool<unknown>({
       model: MODEL_FULL,
@@ -127,46 +155,61 @@ export async function runClaimAnalyzer(question: string): Promise<AnalyzerStageR
       reasoningEffort: "medium",
     });
 
-  const t1 = Date.now();
-  let retry: { data: unknown; raw_text: string } | null = null;
-  let attempt1Threw = false;
-  try {
-    retry = await callEscalation();
-  } catch (_e) {
-    attempt1Threw = true;
-  }
-  const attempt1Ms = Date.now() - t1;
-  stage_runs.push({
-    stage: "claim_analyzer.escalated",
-    model: MODEL_FULL,
-    ms: attempt1Ms,
-    ok: !!retry?.data,
-    escalated: true,
-  });
+  let last: { data: unknown; raw_text: string; http_status?: number; http_error?: string; parse_error?: string } | null = null;
+  let allTransport = true;
 
-  const attempt1Transient =
-    !retry?.data && (attempt1Threw || attempt1Ms < TRANSIENT_MS);
-
-  if (attempt1Transient) {
-    await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
-    const t2 = Date.now();
-    let retry2: { data: unknown; raw_text: string } | null = null;
+  for (let i = 0; i < MAX_FULL_ATTEMPTS; i++) {
+    if (i > 0) await new Promise((r) => setTimeout(r, BACKOFF_MS[i - 1] ?? 3000));
+    const tA = Date.now();
+    let resp: Awaited<ReturnType<typeof callEscalation>> | null = null;
+    let threw = false;
     try {
-      retry2 = await callEscalation();
+      resp = await callEscalation();
     } catch (_e) {
-      retry2 = null;
+      threw = true;
     }
+    const ms = Date.now() - tA;
+    const status = resp?.http_status ?? 0;
+    const gotData = !!resp?.data;
+    const isTransport = threw || !resp || (!gotData && RETRYABLE_HTTP.has(status));
+
+    const stageName =
+      i === 0 ? "claim_analyzer.escalated" : `claim_analyzer.escalated_retry${i > 1 ? `_${i}` : ""}`;
     stage_runs.push({
-      stage: "claim_analyzer.escalated_retry",
+      stage: stageName,
       model: MODEL_FULL,
-      ms: Date.now() - t2,
-      ok: !!retry2?.data,
+      ms,
+      ok: gotData,
       escalated: true,
+      http_status: status,
+      http_error: resp?.http_error,
+      parse_error: resp?.parse_error,
+      retry_skipped_reason: !gotData && !isTransport ? "non_retryable_response" : undefined,
     });
-    if (retry2) retry = retry2;
+    attempts_summary.push({
+      attempt: i + 1,
+      ms,
+      http_status: status,
+      http_error: resp?.http_error,
+      parse_error: resp?.parse_error,
+      got_data: gotData,
+    });
+
+    if (resp) last = resp;
+    if (gotData) {
+      allTransport = false;
+      break;
+    }
+    if (!isTransport) {
+      // Real model response that failed (e.g. parse error of valid HTTP 200);
+      // don't waste more attempts.
+      allTransport = false;
+      break;
+    }
+    // else: transport failure → loop continues if attempts remain.
   }
 
-  validated = validateAnalyzer(retry?.data);
+  validated = validateAnalyzer(last?.data);
 
   return {
     result: validated,
@@ -176,6 +219,8 @@ export async function runClaimAnalyzer(question: string): Promise<AnalyzerStageR
     escalation_reasons: postReasons,
     stage_runs,
     raw_text_initial: first.raw_text,
-    raw_text_final: retry?.raw_text ?? "",
+    raw_text_final: last?.raw_text ?? "",
+    transport_failed: !last?.data && allTransport,
+    attempts_summary,
   };
 }
