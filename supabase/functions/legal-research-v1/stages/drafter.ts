@@ -30,24 +30,15 @@ function toSuperscript(n: number): string {
 }
 
 function extractMarkers(text: string): number[] {
-  // Find runs of superscript digits and convert each run to an integer.
+  // P5.1a: treat each superscript digit as its own marker (no multi-digit
+  // integers). v1 caps footnotes well below 10, so ¹² means markers [1, 2],
+  // not 12. Zero is not a valid marker.
   const out: number[] = [];
-  let i = 0;
-  while (i < text.length) {
-    const ch = text[i];
-    if (SUP_TO_DIGIT[ch] !== undefined) {
-      let run = "";
-      while (i < text.length && SUP_TO_DIGIT[text[i]] !== undefined) {
-        run += SUP_TO_DIGIT[text[i]];
-        i++;
-      }
-      if (run.length > 0) {
-        const n = parseInt(run, 10);
-        if (Number.isFinite(n) && n > 0) out.push(n);
-      }
-    } else {
-      i++;
-    }
+  for (const ch of text) {
+    const d = SUP_TO_DIGIT[ch];
+    if (d === undefined) continue;
+    const n = Number(d);
+    if (n > 0) out.push(n);
   }
   return out;
 }
@@ -305,25 +296,23 @@ function deterministicRepair(
   const positions: Array<{ start: number; end: number; oldNum: number }> = [];
   let i = 0;
   while (i < answer.length) {
-    if (SUP_TO_DIGIT[answer[i]] !== undefined) {
-      const start = i;
-      let run = "";
-      while (i < answer.length && SUP_TO_DIGIT[answer[i]] !== undefined) {
-        run += SUP_TO_DIGIT[answer[i]];
-        i++;
-      }
-      const end = i;
-      const n = parseInt(run, 10);
-      if (!Number.isFinite(n) || n < 1) continue;
-      if (!oldNumToRef.has(n)) return null; // marker with no source → cannot mechanically fix
-      if (!seen.has(n)) {
-        seen.add(n);
-        firstOrder.push(n);
-      }
-      positions.push({ start, end, oldNum: n });
-    } else {
+    const d = SUP_TO_DIGIT[answer[i]];
+    if (d === undefined) {
       i++;
+      continue;
     }
+    // P5.1a: one superscript char == one marker. ¹² => [1, 2], not 12.
+    const start = i;
+    const end = i + 1;
+    const n = Number(d);
+    i = end;
+    if (!Number.isFinite(n) || n < 1) continue;
+    if (!oldNumToRef.has(n)) return null; // marker with no source → cannot mechanically fix
+    if (!seen.has(n)) {
+      seen.add(n);
+      firstOrder.push(n);
+    }
+    positions.push({ start, end, oldNum: n });
   }
   if (positions.length === 0) return null;
 
