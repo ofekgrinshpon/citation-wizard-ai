@@ -119,7 +119,7 @@ export function LegalResearchV1Panel() {
         if (status === "done") {
           stopAll(100);
           setStageIdx(STAGES.length - 1);
-          setResult((data as { result: ResearchResponse }).result);
+          setResult((data as unknown as { result: ResearchResponse }).result);
           setLoading(false);
         } else if (status === "error") {
           stopAll(progress);
