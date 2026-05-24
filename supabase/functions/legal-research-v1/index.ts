@@ -45,6 +45,18 @@ async function handle(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return jsonResponse(405, { error: "method_not_allowed" });
 
+  // job row helper (declared early so runPipeline closure can use it)
+  let jobId: string | null = null;
+  const adminEarly = makeAdminClient();
+  const setJobStatus = async (patch: Record<string, unknown>) => {
+    if (!jobId) return;
+    try {
+      await adminEarly.from("legal_research_jobs").update({ ...patch }).eq("id", jobId);
+    } catch (e) {
+      console.error("[lrv1 job update failed]", e);
+    }
+  };
+
   const run_id = crypto.randomUUID();
   const t_start = Date.now();
   const stage_runs: StageRun[] = [];
