@@ -134,6 +134,11 @@ async function main() {
     process.exit(1);
   }
   const triggered: Array<{ id: string; run_id: string; question: string }> = [];
+  const summary: { tag: string; generated_at: string; fixtures: any[]; aggregate?: any } = {
+    tag: "p7-phaseA",
+    generated_at: new Date().toISOString(),
+    fixtures: [],
+  };
   for (const fx of FIXTURES) {
     const t = await trigger(fx.question);
     console.log(`triggered ${fx.id} status=${t.status} run_id=${t.run_id}`);
