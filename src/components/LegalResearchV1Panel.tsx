@@ -250,9 +250,35 @@ export function LegalResearchV1Panel() {
             <span>{fmtElapsed(elapsed)}</span>
           </div>
           <Progress value={progress} className="h-2" />
-          <p className="text-xs text-muted-foreground">
-            זה עשוי לקחת 2–3 דקות
-          </p>
+          {elapsed < SOFT_NOTICE_1_MS && (
+            <p className="text-xs text-muted-foreground">
+              זה עשוי לקחת 2–3 דקות
+            </p>
+          )}
+          {elapsed >= SOFT_NOTICE_1_MS && elapsed < SOFT_NOTICE_2_MS && (
+            <p className="text-xs text-muted-foreground">
+              עדיין עובד… זה לוקח יותר מהרגיל
+            </p>
+          )}
+          {elapsed >= SOFT_NOTICE_2_MS && (
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs text-muted-foreground">
+                עדיין עובד ברקע, אפשר להמתין או לבטל
+              </p>
+            </div>
+          )}
+          {jobId && (
+            <div className="flex justify-end pt-1">
+              <Button
+                onClick={handleCancel}
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2 text-xs"
+              >
+                בטל
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
