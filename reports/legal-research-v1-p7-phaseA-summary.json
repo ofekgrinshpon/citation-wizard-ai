@@ -1,0 +1,103 @@
+{
+  "tag": "p7-phaseA",
+  "generated_at": "2026-05-24T18:07:40.752Z",
+  "fixtures": [
+    {
+      "fixture_id": "L1",
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "cluster_count": null,
+      "out_of_order_count": null,
+      "end_paragraph_dump_count": null,
+      "placement_ok": null,
+      "placement_repaired": false,
+      "placement_repair_failed": false,
+      "used_sources_count": 9,
+      "used_sources_subset_of_usable": true,
+      "footnote_count": 9
+    },
+    {
+      "fixture_id": "L2",
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "cluster_count": null,
+      "out_of_order_count": null,
+      "end_paragraph_dump_count": null,
+      "placement_ok": null,
+      "placement_repaired": false,
+      "placement_repair_failed": false,
+      "used_sources_count": 4,
+      "used_sources_subset_of_usable": true,
+      "footnote_count": 4
+    },
+    {
+      "fixture_id": "L3",
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "cluster_count": null,
+      "out_of_order_count": null,
+      "end_paragraph_dump_count": null,
+      "placement_ok": null,
+      "placement_repaired": false,
+      "placement_repair_failed": false,
+      "used_sources_count": 5,
+      "used_sources_subset_of_usable": true,
+      "footnote_count": 5
+    },
+    {
+      "fixture_id": "L4",
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "cluster_count": null,
+      "out_of_order_count": null,
+      "end_paragraph_dump_count": null,
+      "placement_ok": null,
+      "placement_repaired": false,
+      "placement_repair_failed": false,
+      "used_sources_count": 7,
+      "used_sources_subset_of_usable": true,
+      "footnote_count": 7
+    },
+    {
+      "fixture_id": "L5",
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "cluster_count": null,
+      "out_of_order_count": null,
+      "end_paragraph_dump_count": null,
+      "placement_ok": null,
+      "placement_repaired": false,
+      "placement_repair_failed": false,
+      "used_sources_count": 7,
+      "used_sources_subset_of_usable": true,
+      "footnote_count": 7
+    },
+    {
+      "fixture_id": "L6",
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "cluster_count": null,
+      "out_of_order_count": null,
+      "end_paragraph_dump_count": null,
+      "placement_ok": null,
+      "placement_repaired": false,
+      "placement_repair_failed": false,
+      "used_sources_count": 7,
+      "used_sources_subset_of_usable": true,
+      "footnote_count": 7
+    }
+  ],
+  "aggregate": {
+    "count": 6,
+    "marker_ok": 6,
+    "no_leak": 6,
+    "placement_ok": 0,
+    "placement_repair_triggered": 0,
+    "placement_repair_accepted": 0,
+    "placement_repair_discarded": 0,
+    "all_used_in_usable": 6,
+    "total_clusters": 0,
+    "total_end_dumps": 0,
+    "total_out_of_order": 0
+  }
+}
