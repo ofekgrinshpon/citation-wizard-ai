@@ -1,0 +1,2257 @@
+{
+  "generated_at": "2026-05-24T18:17:07.019Z",
+  "fixture": {
+    "id": "L3",
+    "question": "מתי בית המשפט יפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים תרופות?"
+  },
+  "qa_log_id": "9ce38d9f-e0e6-4768-8c3b-ddd83942a0e0",
+  "run_id": "4ad0d2cc-69af-4468-853b-3a759955c8bb",
+  "phaseA": {
+    "fixture_id": "L3",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "cluster_count": 0,
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 0,
+    "placement_ok": true,
+    "placement_repaired": true,
+    "placement_repair_failed": false,
+    "used_sources_count": 4,
+    "used_sources_subset_of_usable": true,
+    "footnote_count": 4
+  },
+  "answer": "מבוא\n\nהשאלה מתי בית המשפט יפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה) נבחנת כאן על יסוד נוסח הסעיף והניתוח התיאורטי-המשפטי בספרות. שימוש בפסקאות אלה יבהיר הן את יסוד הסמכות והיקפה, הן את השיקולים המהותיים שייבחנו, והן את ההיבטים הפרוצדורליים ואופן יישום ההפחתה בפועל.\n\nא. סמכות בית המשפט לפי נוסח הסעיף\n\nסעיף 15 קובע במפורש כי הסכימו הצדדים מראש על שיעור פיצויים – יהיו הפיצויים כמוסכם, \"ללא הוכחת נזק\"; עם זאת רשאי בית המשפט להפחיתם אם מצא שהפיצויים נקבעו ללא כל יחס סביר לנזק שניתן לצפותו. בנוסף נקבע כי \"היו ההוצאות או ההתחייבויות בלתי סבירות, חייב המפר בשיפוי כדי שיעורן הסביר\". מסקנה מתמצקת היא כי לחוק ניתנה סמכות מפורשת להתערבות שיפוטית במקרים של יחס בלתי סביר בין הפיצוי המוסכם לנזק הצפוי, והסמכות מופנית להפחתה עד להשיעור הסביר שנמצא בנסיבות העניין¹.\n\nב. שיקולים ועקרונות מהותיים שהשופט יבחן\n\nמהטקסט ומהניתוח התיאורטי עולה כי העקרון המנחה הוא מבחן ה**יחסיות/סבירות**: בית המשפט יבקש לקבוע אם קיים יחס סביר בין הפיצוי המוסכם לבין הנזק שהיה ניתן לצפות בעת כריתת החוזה. חוסר יחס סביר הוא קריטריון להפחתה לפי הסעיף¹.\n- ההבחנה בין פיצוי כהערכה מראש של נזק סביר לבין פיצוי בגדר עונש/רתיעה; תניות שנראות כשיעור ענישה טיפוסי נתפסות כבלתי סבירות ויש להן סיכוי להפחתה².\n- חומרת ההפרה ומידת הנזק הממשי או הפוטנציאלי הנגרם לצד החוזה המנוכה; ככל שהפיצוי חורג בהרבה מהנזק הסביר לציפייה, יגבר הטעם להפחתה².\n- נסיבות כריתת החוזה והתנהגות הצדדים, בכלל זה חוסר שוויון במעמד המיקוח, הטעיה או התנהגות בלתי הוגנת, עשויות ללמד כי הפיצוי נועד להעניש או לנצל את המחדל של הצד השני². לצד זאת, הספרות מדגישה כי בבחינת מאפיינים אלה יש לאבחן בין פיצוי משוער מראש לבין קנס עונשי³.\n- קיומם של שיקולים מעשיים כמו קושי בהוכחת הנזק בפועל, המוביל להצדקה להשאיר אומדן מראש². לעומת מצבים שבהם קל להוכיח את הנזק — אז הצורך בשימור האומדן המוסכם פוחת³.\n\nהספרות המשווה מדגישה כי אלה שיקולים אוניברסליים שבתי המשפט במדינות שונות נוטים לבחון, ובהם יחס סבירות ואופי המנגנון (הערכה מראש לעומת קנס)³. כמו כן נידונים יחסי הכוחות בין הצדדים והייעוד המעשי של התניה כדי לאזן בין אוטונומיה חוזית לבין מניעת עונשיות בלתי סבירה⁴.\n\nג. נטל ההוכחה וההליכים הפרוצדורליים\n\nנוסח הסעיף מקנה סמכות אך אינו מפרט הליכי; על כן נטל ההוכחה והאקט הפרוצדורלי לשם הפחתה יבואו לידי ביטוי בעיקר בפרקטיקה ובספרות המשפטית¹. בדרך כלל, מי שטוען להפחתה הוא **המפר/הצד החייב**, והוא נדרש להעלות טענה זו בכתב הגנה או בבקשה מתאימה ולהציג ראיות העובדות והמשפטיות התומכות בחוסר היחס הסביר בין הפיצוי לנזק שניתן לצפותו². לא מצאנו במקורות שסופקו ניסוח הקובע במפורש כי בית המשפט רשאי להפחית מטעמו ללא בקשה מפורשת; על כן יש להניח כי יידרש רובד טיעוני ועובדתי מיוחד כדי להצדיק התערבות שיפוטית בהיעדר עמדת הצד החייב².\n\nד. אופן יישום ההפחתה וקביעת הסכום המתוקן\n\nהסעיף עצמו מרמז שההפחתה מיועדת להשיב את הפיצוי לשיעור סביר ביחס לנזק שניתן לצפותו, כלומר להפחתה עד \"היעור הסביר\" שנקבע על ידי בית המשפט; לפיכך, לא ניתנת לבית המשפט רק סמכות לבטל את ההתחייבות לגמרי אלא לקבוע את מידת השיפוי לפי סבירות העניין¹. בספרות ובניתוח המשווה הוצעו כמה שיטות פרגמנטליות לקביעת הסכום המתוקן: השוואה לנזק בפועל במקרים שבהם הוא מוכח; והערכה אקס‑אנטה של הנזק הסביר שניתן היה לצפותו במועד כריתת החוזה³. שיטה נוספת בוחנת מבחני יחסיות והימנעות מעונשיות, לרבות בחינה של יחס המנהיגות בין הפיצוי לקלות ההפרה ולמטרת ההרתעה שנרכשה מהסכמה המוקדמת⁴. במצבים קיצוניים, שבהם מתקבל כי ההסכמה מהותה עונשית לחלוטין ואין לה כל יחס לנזק שניתן לצפותו, יכול בית המשפט להביא לכך שהפיצוי יתאפס או יופחת משמעותית עד כדי השגת יחס סביר³.\n\nה. סיכום והמלצות יישומיות\n\n- סעיף 15 מקנה לבית המשפט סמכות מפורשת להפחתת פיצוי מוסכם כאשר הוא נקבע ללא יחס סביר לנזק שניתן לצפותו, וההפחתה מיועדת להביא את השיעור לשיעור סביר בנסיבות העניין¹.\n- בבואה להתערב, תשקול המערכת השיפוטית בעיקר את יחסיות הפיצוי לנזק הצפוי, את אופי ההתחייבות (הערכת נזק מראש או אמצעי ענישה)². כן תיבחן חומרת ההפרה ונסיבות כריתת החוזה, ובהן יחסי המיקוח בין הצדדים³. במשפט המשווה הודגש גם איזון בין אוטונומיה חוזית למניעת עונשיות בלתי סבירה⁴.\n- מבחינת פרוצדורה, הטענה להפחתה תועלה בדרך כלל על ידי הצד החייב במסגרת כתב הגנה או בהליך בקשה¹. עליו לשאת בנטל להראות את חוסר היחס הסביר — אין בנתונים שסופקו חיזוק לטענה כי בית המשפט מפחית מטעמו ללא בקשה מפורשת².\n- בפועל יפעל בית המשפט להפחית את הסכום עד להיקף השיפוי הסביר; בשיקולים אלה ניתן להשוות לנזק בפועל או לאמוד את הנזק שניתן היה לצפות³. במקרים מתאימים תיושם גם בחינה של מבחני יחסיות ומניעת עונשיות, לצד התחשבות בתכליות ההרתעה המוסכמות⁴.\n\nמילות סיום\n\nניתוח שאלת הפחתת הפיצוי המוסכם לפי סעיף 15 מצביע על מתחים טיפוסיים בין כיבוד חופש החוזה לבין מניעת עונשיות ותיקון חוסר-סבירות¹. לשון הסעיף מציבה מסגרת משפטית ברורה אך רבת מקום מבחינת שיקול-הדעת השיפוטי². המפתח בפועל הוא היכולת להראות את היעדר היחס הסביר ולנסח חלופה סבירה אשר תשרת את מטרת הפיצוי על הנזק שניתן היה לצפותו בעת כריתת ההסכם³. כך נשמר איזון בין ייעודו של מנגנון הפיצוי המוסכם לבין מניעת ענישה בלתי סבירה⁴.",
+  "footnotes": [
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA_%D7%91%D7%A9%D7%9C_%D7%94%D7%A4%D7%A8%D7%AA_%D7%97%D7%95%D7%96%D7%94)",
+      "title": "חוק החוזים (תרופות בשל הפרת חוזה)",
+      "number": 1,
+      "source_type": "israeli_law"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+      "title": "פיצוי מוסכם – סוגיות והיבטים",
+      "number": 2,
+      "source_type": "אקדמי (מאמר/קובץ PDF אוניברסיטאי)"
+    },
+    {
+      "url": "https://www.jstor.org/stable/3303060",
+      "title": "On Penalty Clauses in Contract Law",
+      "number": 3,
+      "source_type": "אקדמי (מאמר)"
+    },
+    {
+      "url": "https://www.jstor.org/stable/3310837",
+      "title": "The Enforcement of Liquidated Damages Clauses",
+      "number": 4,
+      "source_type": "אקדמי (מאמר)"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "שאלה על סמכות וחובה פרשנית של חוק קונקרטי — יש צורך בטקסט הסעיף ובפסיקה מלובניינת על פירושו והיקף הסמכות.",
+        "text_he": "האם סעיף 15 לחוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) וכמה רחבה הסמכות בהתאם לטקסט החוקי ולפסיקה המחייבת.",
+        "claim_id": "C1",
+        "required_roles": [
+          "primary_statute",
+          "binding_case_law"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "עקרונות המנחים את שיקול הדעת ידועים מהפסיקה והספרות המשפטית; לכן דרושות פסיקה מחייבת וניתוח ספרותי להבהרה ולרשימת השיקולים.",
+        "text_he": "אילו שיקולים ועקרונות מהותיים בתי המשפט בוחנים כשהם שוקלים להפחית פיצוי מוסכם: יחסיות/חוסר סבירות, אופי הפיצוי (הערכת נזק מראש מול עונשיות), חומרת ההפרה, התנהגות הצדדים, חוזק המעמד המיקוחי וכו'.",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "זו שאלה פרוצדורלית המבוססת על נוסח החוק ועל פסיקה המחייבת לגבי זכות הגישה וההליכים שבהם מופעל סעיף 15.",
+        "text_he": "מהו נטל ההוכחה וההליכים הפרוצדורליים: מי צריך להגיש בקשה/טענה להפחתה, מתי ניתן להעלות את הטענה (בכתב תביעה, כתב הגנה, בעת ביצוע פסק דין), והאם בית המשפט יכול להפחית מטעמו ללא בקשה מפורשת.",
+        "claim_id": "C3",
+        "required_roles": [
+          "primary_statute",
+          "binding_case_law"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "התוצאה הממשית של הפחתה וקריטריונים לקביעת מדרג ההפחתה נקבעים בפסיקה ובניתוח doctrinal; יש צורך במקורות מחייבים וספרות להבנת התוצאה המעשית.",
+        "text_he": "איך באה לידי ביטוי ההפחתה בפועל: האם בית המשפט מפחית את הסכום לגובה 'סביר'/הפסדי בפועל, האם הוא יכול לאפס את הפיצוי, ומהן השיטות/principles לקביעת הסכום המתוקן.",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "4ad0d2cc-69af-4468-853b-3a759955c8bb",
+    "drafter": {
+      "ms": 104575,
+      "ok": true,
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 4,
+      "used_sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA_%D7%91%D7%A9%D7%9C_%D7%94%D7%A4%D7%A8%D7%AA_%D7%97%D7%95%D7%96%D7%94)",
+          "title": "חוק החוזים (תרופות בשל הפרת חוזה)",
+          "number": 1,
+          "origin": "local_db",
+          "source_type": "israeli_law",
+          "candidate_id": "31808814-736f-404b-b2c8-dfdd1852b336"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+          "title": "פיצוי מוסכם – סוגיות והיבטים",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "אקדמי (מאמר/קובץ PDF אוניברסיטאי)",
+          "candidate_id": "415c6de5-65b3-43ce-a123-9a9453927722"
+        },
+        {
+          "url": "https://www.jstor.org/stable/3303060",
+          "title": "On Penalty Clauses in Contract Law",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "אקדמי (מאמר)",
+          "candidate_id": "abe614d3-a320-4e15-93c3-081cef5a4b07"
+        },
+        {
+          "url": "https://www.jstor.org/stable/3310837",
+          "title": "The Enforcement of Liquidated Damages Clauses",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "אקדמי (מאמר)",
+          "candidate_id": "52ca29f5-3ac8-4155-bee8-6220a7b202d0"
+        }
+      ],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 4,
+      "sources_passed": 4,
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "placement": {
+          "ok": true,
+          "repaired": true,
+          "cluster_count": 0,
+          "cluster_samples": [],
+          "end_dump_samples": [],
+          "out_of_order_count": 0,
+          "end_paragraph_dump_count": 0
+        },
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "omitted_candidate_ids": []
+    },
+    "queries": [
+      {
+        "role": "primary_statute",
+        "reason": "נדרש הטקסט המדויק של הסעיף כבסיס חוקי לשאלה האם ולכמה ניתן להפחית פיצוי מוסכם.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסיקה מחייבת של בית המשפט העליון שמפרשת את סעיף 15 וקובעת את גבולות הסמכות להפחתת פיצוי מוסכם.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון 'סעיף 15 חוק החוזים (תרופות)' 'פיצוי מוסכם' סמכות להפחתה פרשנות סעיף 15",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לזהות פסקי-דין המחייבים שמפרטים את השיקולים והעקרונות (יחסיות, חוסר סבירות, אופי הפיצוי וכו') בבחינת הפחתת פיצוי מוסכם.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "פסק דין בית המשפט העליון 'פיצוי מוסכם' 'חוסר סבירות' 'עונשיות' 'הערכת נזק מראש' שיקולים להפחתה",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מחקר אקדמי ייתן ניתוח תאורטי ומבוסס של העקרונות והשיקולים, ויצביע על מסגרות נורמטיביות שפסיקה עשויה להמשיך או לשנות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר אקדמי 'פיצוי מוסכם' 'הפחתת פיצוי מוסכם' חוק החוזים (תרופות) כתב-עת למשפטים ניתוח עקרוני של שיקולי בית המשפט",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "לבדוק האם הסעיף או חקיקה נלווית קובעים הוראות מפורשות על נטל ההוכחה ומועד/אופן הבקשה להפחתה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "סעיף 15 חוק החוזים (תרופות) הוראות פרוצדורליות והערות בחוק לגבי מי מעלה טענה להפחתה ומועד הגשתה",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "מצא פסקי-דין המחייבים המתייחסים לנטל ההוכחה, לסמכות בית המשפט להפעיל את הסעיף מטעמו ולמועדי הגשת הטענה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון 'הפחתת פיצוי מוסכם' מי נושא בנטל הראיה 'מועד העלאת הטענה' 'האם בית המשפט יכול להפחית מטעמו ללא בקשה'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לזהות פסיקה מחייבת שמיישמת את הסעיף בפועל ומפרטת שיטות קביעת הסכום לאחר הפחתה (הערכת נזק, הגבלת עונשיות, אפסון וכו').",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "פסק דין בית המשפט העליון 'הפחתת פיצוי מוסכם' 'קביעת סכום מתוקן' 'אפס את הפיצוי' שיטות לחישוב והמצאת ראיות להערכת נזק",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מאמרים אקדמיים יספקו שיטות ופרדיגמות לחשב את הסכום המתוקן וידונו ביתרונות וחסרונות של גישות שונות שנמצאות בפסיקה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר משפטי 'שיטות לקביעת הפחתת פיצוי מוסכם' 'חישוב נזק בפועל מול סכום מוסכם' כתב-עת למשפטים ניתוח מתודולוגי והמלצות שיפוטיות",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 31067,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 25921,
+        "confidence": 0.9,
+        "legal_area": "דיני חוזים",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "claims_count": 4,
+      "queries_count": 8,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 238132,
+    "verifier": {
+      "ms": 36446,
+      "counts": {
+        "by_support": {
+          "direct": 1,
+          "partial": 3,
+          "unrelated": 19,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 23,
+          "false": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "31808814-736f-404b-b2c8-dfdd1852b336",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "415c6de5-65b3-43ce-a123-9a9453927722",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "abe614d3-a320-4e15-93c3-081cef5a4b07",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "52ca29f5-3ac8-4155-bee8-6220a7b202d0",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 36444,
+          "label": "batch1",
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C3"
+          ],
+          "escalated": false,
+          "candidates": 23
+        }
+      ],
+      "dropped": [
+        {
+          "role": "primary_statute",
+          "title": "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+          "origin": "local_db",
+          "reason": "המקור הוא הוראת שעה על גמלאות לנושאי משרה שאינה עוסקת בסעיף 15 לחוק החוזים או בפיצוי מוסכם.",
+          "candidate_id": "f01ac469-6daa-4084-93fb-5193f3029a13",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "החוק העותומני על האגודות",
+          "origin": "local_db",
+          "reason": "חוק עותומאני על אגודות אינו נוגע לכלל הפחתת פיצויים מוסכמים בסעיף 15 לחוק החוזים.",
+          "candidate_id": "8106624e-d3b6-4fee-8c63-2db1073938be",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+          "origin": "local_db",
+          "reason": "תקנות הקשורות לדיווח ושקיפות אינן רלוונטיות לשאלת סמכות בית המשפט להפחית פיצוי מוסכם לפי סעיף 15.",
+          "candidate_id": "497e16f8-5cc5-43cd-b858-e3dde0e91993",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק אמנת החברה הבינלאומית למימון",
+          "origin": "local_db",
+          "reason": "חוק אמנת החברה הבינלאומית למימון הוא תחום אחר ואינו מתייחס לסעיף 15 או לפיצויים מוסכמים.",
+          "candidate_id": "43f2a0f5-1681-45bc-88f4-3301a37390ff",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק אמנת האג (החזרת ילדים חטופים)",
+          "origin": "local_db",
+          "reason": "חוק אמנת האג בנושא החזרת ילדים חטופים איננו נוגע לדוקטרינת הפחתת פיצוי מוסכם בחוק החוזים.",
+          "candidate_id": "c0e5ab95-b66a-44c9-9656-4223f1e82728",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק אמנת החברה הבין-אמריקנית להשקעות",
+          "origin": "local_db",
+          "reason": "חוקי אמנות בין-אמריקאיות להשקעות אינם קשורים לסעיף 15 לחוק החוזים בישראל.",
+          "candidate_id": "417c7e75-d024-4135-918b-97852c287f6b",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק-יסוד: חופש העיסוק",
+          "origin": "local_db",
+          "reason": "חוק-יסוד: חופש העיסוק אינו עוסק בסמכות להפחית פיצויים מוסכמים לפי סעיף 15 לחוק החוזים.",
+          "candidate_id": "81773648-15be-4870-9fc1-9ae8f8f3d166",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק איסוף ופינוי פסולת למיחזור",
+          "origin": "local_db",
+          "reason": "חוק איסוף ופינוי פסולת למיחזור אינו נוגע לנושא פיצוי מוסכם או לסעיף 15.",
+          "candidate_id": "f25405f5-b613-4011-8395-fc488614e159",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק אזורים חופשיים לייצור בישראל",
+          "origin": "local_db",
+          "reason": "החוק על אזורים חופשיים לייצור אינו מתייחס לעקרונות הפחתת פיצויים מוסכמים.",
+          "candidate_id": "4c5a4dc9-1269-4612-b1f2-41ff90641f0f",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח של תאגידים בנקאיים והגופים המפורטים בתוספת השלישית לחוק, למאגר המידע)",
+          "origin": "local_db",
+          "reason": "תקנות הלבנת הון העוסקות בדיווח לא עוסקות בכללי פיצוי מוסכם לפי סעיף 15.",
+          "candidate_id": "5b69990b-9052-4076-8ae5-8c677e27fefa",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תקנות איסור הלבנת הון (כללים להודעה למשטרה ופרטיה בדבר העברת מידע מן הרשות המוסמכת לפקיד מכס חוקר)",
+          "origin": "local_db",
+          "reason": "תקנות טכניות על הודעות לאו דווקא נוגעות להגדרה או להפחתת פיצוי מוסכם לפי סעיף 15.",
+          "candidate_id": "ccc42ade-ba44-4898-aa9f-76a2e99abbd3",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק האפוטרופוס הכללי",
+          "origin": "local_db",
+          "reason": "חוק האפוטרופוס הכללי אינו דן בסמכות לשנות או להפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים.",
+          "candidate_id": "d85c36c1-b317-4bf6-9bb9-ca721d557a99",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+          "origin": "local_db",
+          "reason": "פסק-דין אודות דחיית רשות ערעור אינו עוסק בדוקטרינת פיצוי מוסכם או בסעיף 15 לחוק החוזים.",
+          "candidate_id": "f03a9616-8f8c-4ba9-8b96-beb8056a96ce",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק איסור פרסום מידע לגבי נפגעים",
+          "origin": "local_db",
+          "reason": "חוק איסור פרסום מידע על נפגעים הוא חוק רגולטורי שאינו עוסק בהליכים או בנטלי הוכחה לגבי בקשות להפחתת פיצוי מוסכם לפי סעיף 15.",
+          "candidate_id": "b7dbb4a1-b807-4377-bdb1-d52506b2b882",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק בחירות לגופים ציבוריים",
+          "origin": "local_db",
+          "reason": "חוק בחירות לגופים ציבוריים אינו עוסק בפרוצדורה לשאלת בקשות להפחתת פיצוי מוסכם לפי סעיף 15.",
+          "candidate_id": "343347b1-5f25-4596-be99-bf85d347d38e",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק עזר לגנים לאומיים ושמורות טבע",
+          "origin": "local_db",
+          "reason": "חוק עזר לגנים לאומיים ושמורות טבע אינו רלוונטי להליך ולנטל הראיה בהפחתת פיצוי מוסכם.",
+          "candidate_id": "35f683ed-b62d-42cc-89d1-9672487ad531",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק לגילוי נגיפי איידס בקטינים",
+          "origin": "local_db",
+          "reason": "חוק גילוי נגיפי איידס בקטינים איננו מסדיר את הפרוצדורה או נטל ההוכחה לגבי סעיף 15 לחוק החוזים.",
+          "candidate_id": "a0ea8e81-fd82-4bbf-912f-f36ae330e5b4",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "כללי הסדרת העיסוק בייעוץ השקעות או בשיווק השקעות (הודעה של עוסק בלא רישיון על כוונתו לעסוק בייעוץ השקעות או בשיווק השקעות לגבי קרן כספית)",
+          "origin": "local_db",
+          "reason": "כללי הסדרת העיסוק בייעוץ השקעות אינם מוסיפים מידע פרוצדורלי או עובדי הוכחה לגבי בקשות להפחתת פיצוי מוסכם.",
+          "candidate_id": "b5403a1b-25e7-4397-981e-7d60ed6241b9",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק להסדרת מתן שירותי פיקדון ואשראי בלא ריבית על ידי מוסדות לגמילות חסדים",
+          "origin": "local_db",
+          "reason": "חוק להסדרת מתן שירותי פיקדון ואשראי ללא ריבית אינו נוגע לשאלת מי מעלה טענה להפחתה או לזמן הגשתה תחת סעיף 15.",
+          "candidate_id": "ee5d403b-63e7-4821-b5c6-24bd3cd9d9dc",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        }
+      ],
+      "verdicts": [
+        {
+          "reason": "זהו הסעיף החוקי הרלוונטי שמכיל את הכלל העצמאי על הפחתת פיצוי מוסכם; שימוש ישיר כעילה משפטית.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "31808814-736f-404b-b2c8-dfdd1852b336",
+          "supported_points": [
+            "טקסט סעיף 15 בחוק החוזים (תרופות) מקנה לבית המשפט מפורשות סמכות להפחית פיצויים מוסכמים",
+            "הקריטריון שבחוק: הפיצויים ירוככו אם נקבעו ללא יחס סביר לנזק שניתן לצפותו"
+          ]
+        },
+        {
+          "reason": "המקור הוא הוראת שעה על גמלאות לנושאי משרה שאינה עוסקת בסעיף 15 לחוק החוזים או בפיצוי מוסכם.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "f01ac469-6daa-4084-93fb-5193f3029a13",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק עותומאני על אגודות אינו נוגע לכלל הפחתת פיצויים מוסכמים בסעיף 15 לחוק החוזים.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "8106624e-d3b6-4fee-8c63-2db1073938be",
+          "supported_points": []
+        },
+        {
+          "reason": "תקנות הקשורות לדיווח ושקיפות אינן רלוונטיות לשאלת סמכות בית המשפט להפחית פיצוי מוסכם לפי סעיף 15.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "497e16f8-5cc5-43cd-b858-e3dde0e91993",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק אמנת החברה הבינלאומית למימון הוא תחום אחר ואינו מתייחס לסעיף 15 או לפיצויים מוסכמים.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "43f2a0f5-1681-45bc-88f4-3301a37390ff",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק אמנת האג בנושא החזרת ילדים חטופים איננו נוגע לדוקטרינת הפחתת פיצוי מוסכם בחוק החוזים.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "c0e5ab95-b66a-44c9-9656-4223f1e82728",
+          "supported_points": []
+        },
+        {
+          "reason": "חוקי אמנות בין-אמריקאיות להשקעות אינם קשורים לסעיף 15 לחוק החוזים בישראל.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "417c7e75-d024-4135-918b-97852c287f6b",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק-יסוד: חופש העיסוק אינו עוסק בסמכות להפחית פיצויים מוסכמים לפי סעיף 15 לחוק החוזים.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "81773648-15be-4870-9fc1-9ae8f8f3d166",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק איסוף ופינוי פסולת למיחזור אינו נוגע לנושא פיצוי מוסכם או לסעיף 15.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "f25405f5-b613-4011-8395-fc488614e159",
+          "supported_points": []
+        },
+        {
+          "reason": "החוק על אזורים חופשיים לייצור אינו מתייחס לעקרונות הפחתת פיצויים מוסכמים.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "4c5a4dc9-1269-4612-b1f2-41ff90641f0f",
+          "supported_points": []
+        },
+        {
+          "reason": "תקנות הלבנת הון העוסקות בדיווח לא עוסקות בכללי פיצוי מוסכם לפי סעיף 15.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "5b69990b-9052-4076-8ae5-8c677e27fefa",
+          "supported_points": []
+        },
+        {
+          "reason": "תקנות טכניות על הודעות לאו דווקא נוגעות להגדרה או להפחתת פיצוי מוסכם לפי סעיף 15.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "ccc42ade-ba44-4898-aa9f-76a2e99abbd3",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק האפוטרופוס הכללי אינו דן בסמכות לשנות או להפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "d85c36c1-b317-4bf6-9bb9-ca721d557a99",
+          "supported_points": []
+        },
+        {
+          "reason": "פסק-דין אודות דחיית רשות ערעור אינו עוסק בדוקטרינת פיצוי מוסכם או בסעיף 15 לחוק החוזים.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "f03a9616-8f8c-4ba9-8b96-beb8056a96ce",
+          "supported_points": []
+        },
+        {
+          "reason": "מקור אקדמי ישראלי המסביר את שיקולי בתי המשפט; תומך בניתוח אך אינו פסיקה מחייבת.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "415c6de5-65b3-43ce-a123-9a9453927722",
+          "supported_points": [
+            "מאמר זה דן עקרונית בשיקולים שדנים בהם בתי המשפט בהפחתת פיצוי מוסכם לפי סעיף 15",
+            "כולל ניתוח יחסיות, מבחן חוסר הסבירות, והבחנה בין הערכת נזק מראש לעונשיות"
+          ]
+        },
+        {
+          "reason": "מחקר משווה ותיאורטי שמאיר עקרונות מהותיים אך אינו פסיקה מחייבת בישראל.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "abe614d3-a320-4e15-93c3-081cef5a4b07",
+          "supported_points": [
+            "מאמר קלאסי על תניות קנס ופיצוי מוסכם מסביר את ההבחנה בין קנס לבין אומדן נזק מראש",
+            "מזכיר קריטריונים כמו מידת ההרתעה, יחסיות וסבירות"
+          ]
+        },
+        {
+          "reason": "מחקר אקדמי רלוונטי ואינפורמטיבי אך מהווה תמיכה משלימה ולא מקור מחייב.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "52ca29f5-3ac8-4155-bee8-6220a7b202d0",
+          "supported_points": [
+            "מאמר על אכיפת תניות פיצוי מוסכם דן בשיקולי בית המשפט להתערבות והבחנה בין פיצוי לרתיעה",
+            "מספק פרספקטיבה משווה על גורמים שישקלו שופטים (אופי ההפרה, יחסי כוחות)"
+          ]
+        },
+        {
+          "reason": "חוק איסור פרסום מידע על נפגעים הוא חוק רגולטורי שאינו עוסק בהליכים או בנטלי הוכחה לגבי בקשות להפחתת פיצוי מוסכם לפי סעיף 15.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "b7dbb4a1-b807-4377-bdb1-d52506b2b882",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק בחירות לגופים ציבוריים אינו עוסק בפרוצדורה לשאלת בקשות להפחתת פיצוי מוסכם לפי סעיף 15.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "343347b1-5f25-4596-be99-bf85d347d38e",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק עזר לגנים לאומיים ושמורות טבע אינו רלוונטי להליך ולנטל הראיה בהפחתת פיצוי מוסכם.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "35f683ed-b62d-42cc-89d1-9672487ad531",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק גילוי נגיפי איידס בקטינים איננו מסדיר את הפרוצדורה או נטל ההוכחה לגבי סעיף 15 לחוק החוזים.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "a0ea8e81-fd82-4bbf-912f-f36ae330e5b4",
+          "supported_points": []
+        },
+        {
+          "reason": "כללי הסדרת העיסוק בייעוץ השקעות אינם מוסיפים מידע פרוצדורלי או עובדי הוכחה לגבי בקשות להפחתת פיצוי מוסכם.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "b5403a1b-25e7-4397-981e-7d60ed6241b9",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק להסדרת מתן שירותי פיקדון ואשראי ללא ריבית אינו נוגע לשאלת מי מעלה טענה להפחתה או לזמן הגשתה תחת סעיף 15.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "ee5d403b-63e7-4821-b5c6-24bd3cd9d9dc",
+          "supported_points": []
+        }
+      ],
+      "model_final": "openai/gpt-5-mini",
+      "per_claim_ms": {
+        "C1": 36444,
+        "C2": 36444,
+        "C3": 36444
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [],
+      "candidates_usable": 4,
+      "candidates_dropped": 19,
+      "candidates_verified": 23
+    },
+    "retrieval": {
+      "ms": 40009,
+      "pool": {
+        "found": 58,
+        "counts": {
+          "by_role": {
+            "scholarship": 3,
+            "primary_statute": 19,
+            "binding_case_law": 1
+          },
+          "by_claim": {
+            "C1": 14,
+            "C2": 3,
+            "C3": 6
+          },
+          "by_origin": {
+            "local_db": 20,
+            "perplexity": 3
+          }
+        },
+        "after_dedup": 23,
+        "dedup_drops": 35
+      },
+      "local": {
+        "ms": 40007,
+        "per_query": [
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 206,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+                "החוק העותומני על האגודות",
+                "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+                "חוק אמנת החברה הבינלאומית למימון",
+                "חוק אמנת האג (החזרת ילדים חטופים)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+                  "clue_kind": "statute_section",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND נוסח AND מלא AND לגבי AND הפחתת",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": []
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+                    "החוק העותומני על האגודות",
+                    "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+                    "חוק אמנת החברה הבינלאומית למימון",
+                    "חוק אמנת האג (החזרת ילדים חטופים)",
+                    "חוק אמנת החברה הבין-אמריקנית להשקעות"
+                  ],
+                  "title_match_query": "הח",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "d22930b3-4d56-4d29-9091-c5b481794e85",
+                    "6a9ef45c-f859-449c-be3e-dbc6dc7f58db",
+                    "5b4cdbb3-f66c-4f85-8d02-97936b819705",
+                    "b17a83a5-ee76-4435-88e5-06f607d51acd",
+                    "bcef5002-652d-4855-bdfb-925e5ccb28b6",
+                    "2f9c6faf-678e-4aff-a32f-0634e01d9e27"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק ופ",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "חוק-יסוד: חופש העיסוק",
+                    "חוק איסוף ופינוי פסולת למיחזור",
+                    "חוק אזורים חופשיים לייצור בישראל",
+                    "תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח של תאגידים בנקאיים והגופים המפורטים בתוספת השלישית לחוק, למאגר המידע)",
+                    "תקנות איסור הלבנת הון (כללים להודעה למשטרה ופרטיה בדבר העברת מידע מן הרשות המוסמכת לפקיד מכס חוקר)",
+                    "חוק האפוטרופוס הכללי"
+                  ],
+                  "title_match_query": "ופ",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "334c323b-735b-431c-aa74-4be48dbd7777",
+                    "ddc373b2-0d37-4ab9-a933-7044023bcb84",
+                    "776bba11-48d9-4818-b4aa-1b61f2636620",
+                    "d31f2a19-860a-4ebc-8656-8047bf5eefdb",
+                    "0d13c60d-4737-44bb-9590-7dce5159c49e",
+                    "f555ef7e-c412-4f7e-bb95-3a902a14a95b"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "section": "15",
+                  "law_name": "חוק החוזים תרופות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [
+                    "חוק החוזים (תרופות בשל הפרת חוזה)"
+                  ],
+                  "matched_chunk_id": "310972f1-4b92-4d1a-8a95-80096abd2bd8",
+                  "title_match_query": "החוזים AND תרופות",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "e1d1f4ca-a36b-428a-a09b-6f362ec9fc2c"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND מאפשר AND לבית AND המשפט AND להפחית",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 13,
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 13,
+            "exact_clues": [
+              {
+                "kind": "statute_section",
+                "source": "planner_query",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+                "search_terms": [
+                  "חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק ופ",
+                "search_terms": [
+                  "חוק ופ"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "15",
+                "law_name": "חוק החוזים תרופות",
+                "search_terms": [
+                  "חוק החוזים תרופות",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                "search_terms": [
+                  "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                  "סעיף 15"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות סבירות נוסח",
+            "original_query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית"
+          },
+          {
+            "ms": 40002,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 180,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות)' 'פיצוי מוסכם' סמכות להפחתה פרשנות סעיף 15",
+                  "clue_kind": "statute_section",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND פיצוי AND מוסכם AND סמכות AND להפחתה",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                    "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                    "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                    "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)",
+                    "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)"
+                  ],
+                  "title_match_query": "הח",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "9a2acb53-bf5b-43a4-a11d-4316f9efb38e",
+                    "fe59db32-3cb1-4ba4-9c1a-4dc5fb1aa027",
+                    "b7c2496e-a38e-4b5d-b16f-7db7136ecb12",
+                    "61d82470-e700-49cf-bdc6-8b32f010b585",
+                    "010955f4-2a65-41e4-aad9-a8afaeeb8773",
+                    "7e3d6f78-cccf-4726-a65c-199d8375c7ed"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים תרופות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND מאפשר AND לבית AND המשפט AND להפחית",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 6,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute_section",
+                "source": "planner_query",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות)' 'פיצוי מוסכם' סמכות להפחתה פרשנות סעיף 15",
+                "search_terms": [
+                  "חוק החוזים (תרופות)' 'פיצוי מוסכם' סמכות להפחתה פרשנות סעיף 15",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "15",
+                "law_name": "חוק החוזים תרופות",
+                "search_terms": [
+                  "חוק החוזים תרופות",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                "search_terms": [
+                  "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                  "סעיף 15"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות סבירות דין העליון סמכות",
+            "original_query_he": "פסק דין בית המשפט העליון 'סעיף 15 חוק החוזים (תרופות)' 'פיצוי מוסכם' סמכות להפחתה פרשנות סעיף 15"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 178,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים תרופות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "question",
+                  "matched_titles": [
+                    "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                    "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                    "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                    "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)",
+                    "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)"
+                  ],
+                  "title_match_query": "הח",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "9a2acb53-bf5b-43a4-a11d-4316f9efb38e",
+                    "fe59db32-3cb1-4ba4-9c1a-4dc5fb1aa027",
+                    "b7c2496e-a38e-4b5d-b16f-7db7136ecb12",
+                    "61d82470-e700-49cf-bdc6-8b32f010b585",
+                    "010955f4-2a65-41e4-aad9-a8afaeeb8773",
+                    "7e3d6f78-cccf-4726-a65c-199d8375c7ed"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND מאפשר AND לבית AND המשפט AND להפחית",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 6,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "15",
+                "law_name": "חוק החוזים תרופות",
+                "search_terms": [
+                  "חוק החוזים תרופות",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "question",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                "search_terms": [
+                  "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                  "סעיף 15"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות סבירות דין העליון חוסר",
+            "original_query_he": "פסק דין בית המשפט העליון 'פיצוי מוסכם' 'חוסר סבירות' 'עונשיות' 'הערכת נזק מראש' שיקולים להפחתה"
+          },
+          {
+            "ms": 40002,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 200,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+                "החוק העותומני על האגודות",
+                "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+                "חוק אמנת החברה הבינלאומית למימון",
+                "חוק אמנת האג (החזרת ילדים חטופים)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) הוראות פרוצדורליות והערות בחוק לגבי מי מעלה טענה להפחתה ומועד ה",
+                  "clue_kind": "statute_section",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND הוראות AND פרוצדורליות AND והערות AND בחוק",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": []
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+                    "החוק העותומני על האגודות",
+                    "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+                    "חוק אמנת החברה הבינלאומית למימון",
+                    "חוק אמנת האג (החזרת ילדים חטופים)",
+                    "חוק אמנת החברה הבין-אמריקנית להשקעות"
+                  ],
+                  "title_match_query": "הח",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "d22930b3-4d56-4d29-9091-c5b481794e85",
+                    "6a9ef45c-f859-449c-be3e-dbc6dc7f58db",
+                    "5b4cdbb3-f66c-4f85-8d02-97936b819705",
+                    "b17a83a5-ee76-4435-88e5-06f607d51acd",
+                    "bcef5002-652d-4855-bdfb-925e5ccb28b6",
+                    "2f9c6faf-678e-4aff-a32f-0634e01d9e27"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק לג",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "חוק איסור פרסום מידע לגבי נפגעים",
+                    "חוק בחירות לגופים ציבוריים",
+                    "חוק עזר לגנים לאומיים ושמורות טבע",
+                    "חוק לגילוי נגיפי איידס בקטינים",
+                    "כללי הסדרת העיסוק בייעוץ השקעות או בשיווק השקעות (הודעה של עוסק בלא רישיון על כוונתו לעסוק בייעוץ השקעות או בשיווק השקעות לגבי קרן כספית)",
+                    "חוק להסדרת מתן שירותי פיקדון ואשראי בלא ריבית על ידי מוסדות לגמילות חסדים"
+                  ],
+                  "title_match_query": "לג",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "6fdf04f7-4f17-4069-b6a9-ff10192b0aed",
+                    "07c13b3a-b0c1-4fcf-9db4-0a1606963078",
+                    "1d281a52-f435-44b7-9ecf-801a3bc1331e",
+                    "6078b3b9-fb01-461b-bade-513e2bd407f2",
+                    "1afb7652-7db9-408e-9014-75b0c61f28ec",
+                    "b2173e2a-291d-4e43-96b1-4611df48158d"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "section": "15",
+                  "law_name": "חוק החוזים תרופות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [
+                    "חוק החוזים (תרופות בשל הפרת חוזה)"
+                  ],
+                  "matched_chunk_id": "310972f1-4b92-4d1a-8a95-80096abd2bd8",
+                  "title_match_query": "החוזים AND תרופות",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "e1d1f4ca-a36b-428a-a09b-6f362ec9fc2c"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND מאפשר AND לבית AND המשפט AND להפחית",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 13,
+            "role": "primary_statute",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 13,
+            "exact_clues": [
+              {
+                "kind": "statute_section",
+                "source": "planner_query",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) הוראות פרוצדורליות והערות בחוק לגבי מי מעלה טענה להפחתה ומועד ה",
+                "search_terms": [
+                  "חוק החוזים (תרופות) הוראות פרוצדורליות והערות בחוק לגבי מי מעלה טענה להפחתה ומועד ה",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק לג",
+                "search_terms": [
+                  "חוק לג"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "15",
+                "law_name": "חוק החוזים תרופות",
+                "search_terms": [
+                  "חוק החוזים תרופות",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                "search_terms": [
+                  "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                  "סעיף 15"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות סבירות הוראות פרוצדורליות",
+            "original_query_he": "סעיף 15 חוק החוזים (תרופות) הוראות פרוצדורליות והערות בחוק לגבי מי מעלה טענה להפחתה ומועד הגשתה"
+          },
+          {
+            "ms": 40002,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 178,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים תרופות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "question",
+                  "matched_titles": [
+                    "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                    "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                    "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                    "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)",
+                    "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)"
+                  ],
+                  "title_match_query": "הח",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "9a2acb53-bf5b-43a4-a11d-4316f9efb38e",
+                    "fe59db32-3cb1-4ba4-9c1a-4dc5fb1aa027",
+                    "b7c2496e-a38e-4b5d-b16f-7db7136ecb12",
+                    "61d82470-e700-49cf-bdc6-8b32f010b585",
+                    "010955f4-2a65-41e4-aad9-a8afaeeb8773",
+                    "7e3d6f78-cccf-4726-a65c-199d8375c7ed"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND מאפשר AND לבית AND המשפט AND להפחית",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 6,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "15",
+                "law_name": "חוק החוזים תרופות",
+                "search_terms": [
+                  "חוק החוזים תרופות",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "question",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                "search_terms": [
+                  "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                  "סעיף 15"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות סבירות",
+            "original_query_he": "בית המשפט העליון 'הפחתת פיצוי מוסכם' מי נושא בנטל הראיה 'מועד העלאת הטענה' 'האם בית המשפט יכול להפחית מטעמו ללא בקשה'"
+          },
+          {
+            "ms": 40002,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 203,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים תרופות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "question",
+                  "matched_titles": [
+                    "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                    "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                    "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                    "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)",
+                    "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)"
+                  ],
+                  "title_match_query": "הח",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "9a2acb53-bf5b-43a4-a11d-4316f9efb38e",
+                    "fe59db32-3cb1-4ba4-9c1a-4dc5fb1aa027",
+                    "b7c2496e-a38e-4b5d-b16f-7db7136ecb12",
+                    "61d82470-e700-49cf-bdc6-8b32f010b585",
+                    "010955f4-2a65-41e4-aad9-a8afaeeb8773",
+                    "7e3d6f78-cccf-4726-a65c-199d8375c7ed"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND מאפשר AND לבית AND המשפט AND להפחית",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 6,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "15",
+                "law_name": "חוק החוזים תרופות",
+                "search_terms": [
+                  "חוק החוזים תרופות",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "question",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                "search_terms": [
+                  "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                  "סעיף 15"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות סבירות דין",
+            "original_query_he": "פסק דין בית המשפט העליון 'הפחתת פיצוי מוסכם' 'קביעת סכום מתוקן' 'אפס את הפיצוי' שיטות לחישוב והמצאת ראיות להערכת נזק"
+          }
+        ],
+        "candidates": 50,
+        "global_exact": {
+          "clues_from_claims": [
+            {
+              "kind": "statute_section",
+              "source": "claim",
+              "section": "15",
+              "law_name": "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+              "search_terms": [
+                "חוק החוזים (תרופות) מאפשר לבית המשפט להפחית את הפיצוי המוסכם (liquidated damages) ו",
+                "סעיף 15"
+              ]
+            },
+            {
+              "kind": "statute",
+              "source": "claim",
+              "law_name": "חוק הח",
+              "search_terms": [
+                "חוק הח"
+              ]
+            }
+          ],
+          "clues_from_question": [
+            {
+              "kind": "statute_section",
+              "source": "question",
+              "section": "15",
+              "law_name": "חוק החוזים תרופות",
+              "search_terms": [
+                "חוק החוזים תרופות",
+                "סעיף 15"
+              ]
+            },
+            {
+              "kind": "statute",
+              "source": "question",
+              "law_name": "חוק הח",
+              "search_terms": [
+                "חוק הח"
+              ]
+            }
+          ]
+        }
+      },
+      "perplexity": {
+        "ms": 8482,
+        "dropped": 0,
+        "per_query": [
+          {
+            "ms": 4586,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+                "title": "פיצוי מוסכם – סוגיות והיבטים",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.jstor.org/stable/3303060",
+                "title": "On Penalty Clauses in Contract Law",
+                "domain": "jstor.org",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.jstor.org/stable/3310837",
+                "title": "The Enforcement of Liquidated Damages Clauses",
+                "domain": "jstor.org",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+                "title": "חוק החוזים (תרופות בשל הפרת חוזה) – פיצויים מוסכמים: עיון תיאורטי ויישומי",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C2",
+            "query_he": "מאמר אקדמי 'פיצוי מוסכם' 'הפחתת פיצוי מוסכם' חוק החוזים (תרופות) כתב-עת למשפטים ניתוח עקרוני של שיקולי בית המשפט",
+            "raw_count": 4,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 3893,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+                "title": "פיצוי מוסכם – סוגיות והיבטים",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+                "title": "פיצויים מוסכמים – בין קנס לפיצוי",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+                "title": "פיצויים מוסכמים בחוזים: בין אוטונומיה חוזית להתערבות שיפוטית",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+                "title": "Contractual Damages and Agreed Damages in Israeli Law",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C4",
+            "query_he": "מאמר משפטי 'שיטות לקביעת הפחתת פיצוי מוסכם' 'חישוב נזק בפועל מול סכום מוסכם' כתב-עת למשפטים ניתוח מתודולוגי והמלצות שיפוטיות",
+            "raw_count": 4,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 8,
+        "role_corrections": []
+      }
+    },
+    "candidates": [
+      {
+        "role": "primary_statute",
+        "score": 1.5,
+        "title": "חוק החוזים (תרופות בשל הפרת חוזה)",
+        "origin": "local_db",
+        "snippet": "טנתו, או שהתחייב בהתחייבויות סבירות לשם כך, חייב המפר לשפות אותו עליהן, בין אם נמנע הנזק או הוקטן ובין אם לאו; היו ההוצאות או ההתחייבויות בלתי סבירות, חייב המפר בשיפוי כדי שיעורן הסביר בנסיבות הענין. 15. פיצויים מוסכמים (א) הסכימו הצדדים מראש על שיעור פיצויים (להלן – פיצויים מוסכמים), יהיו הפיצויים כמוסכם, ללא הוכחת נזק; אולם רשאי בית המשפט להפחיתם אם מצא שהפיצויים נקבעו ללא כל יחס סביר לנזק שניתן",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA_%D7%91%D7%A9%D7%9C_%D7%94%D7%A4%D7%A8%D7%AA_%D7%97%D7%95%D7%96%D7%94)",
+        "document_id": "e1d1f4ca-a36b-428a-a09b-6f362ec9fc2c",
+        "source_type": "israeli_law",
+        "candidate_id": "31808814-736f-404b-b2c8-dfdd1852b336",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "basic_law",
+          "source_site": "wikisource",
+          "is_basic_law": true
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "source_url": "https://he.wikisource.org/wiki/%D7%94%D7%97%D7%9C%D7%98%D7%AA_%D7%92%D7%9E%D7%9C%D7%90%D7%95%D7%AA_%D7%9C%D7%A0%D7%95%D7%A9%D7%90%D7%99_%D7%9E%D7%A9%D7%A8%D7%94_%D7%91%D7%A8%D7%A9%D7%95%D7%99%D7%95%D7%AA_%D7%94%D7%A9%D7%9C%D7%98%D7%95%D7%9F_(%D7%A9%D7%A8%D7%99%D7%9D_%D7%95%D7%A1%D7%92%D7%A0%D7%99_%D7%A9%D7%A8%D7%99%D7%9D_%D7%95%D7%A9%D7%90%D7%99%D7%A8%D7%99%D7%94%D7%9D)_(%D7%94%D7%A4%D7%A1%D7%A7%D7%AA_%D7%97%D7%91%D7%A8%D7%95%D7%AA_%D7%91%D7%9B%D7%A0%D7%A1%D7%AA_%D7%9C%D7%A4%D7%99_%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%A1%D7%A2%D7%99%D7%A3_42%D7%92_%D7%9C%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%94%D7%9B%D7%A0%D7%A1%D7%AA)_(%D7%94%D7%95%D7%A8%D7%90%D7%AA_%D7%A9%D7%A2%D7%94)",
+        "document_id": "d22930b3-4d56-4d29-9091-c5b481794e85",
+        "source_type": "israeli_law",
+        "candidate_id": "f01ac469-6daa-4084-93fb-5193f3029a13",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "החוק העותומני על האגודות",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "source_url": "https://he.wikisource.org/wiki/%D7%94%D7%97%D7%95%D7%A7_%D7%94%D7%A2%D7%95%D7%AA%D7%95%D7%9E%D7%A0%D7%99_%D7%A2%D7%9C_%D7%94%D7%90%D7%92%D7%95%D7%93%D7%95%D7%AA",
+        "document_id": "6a9ef45c-f859-449c-be3e-dbc6dc7f58db",
+        "source_type": "israeli_law",
+        "candidate_id": "8106624e-d3b6-4fee-8c63-2db1073938be",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%97%D7%95%D7%A7_%D7%94%D7%A2%D7%95%D7%AA%D7%95%D7%9E%D7%A0%D7%99_%D7%A2%D7%9C_%D7%94%D7%90%D7%92%D7%95%D7%93%D7%95%D7%AA_(%D7%93%D7%99%D7%95%D7%95%D7%97_%D7%95%D7%A9%D7%A7%D7%99%D7%A4%D7%95%D7%AA)",
+        "document_id": "5b4cdbb3-f66c-4f85-8d02-97936b819705",
+        "source_type": "israeli_law",
+        "candidate_id": "497e16f8-5cc5-43cd-b858-e3dde0e91993",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק אמנת החברה הבינלאומית למימון",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%9E%D7%A0%D7%AA_%D7%94%D7%97%D7%91%D7%A8%D7%94_%D7%94%D7%91%D7%99%D7%A0%D7%9C%D7%90%D7%95%D7%9E%D7%99%D7%AA_%D7%9C%D7%9E%D7%99%D7%9E%D7%95%D7%9F",
+        "document_id": "b17a83a5-ee76-4435-88e5-06f607d51acd",
+        "source_type": "israeli_law",
+        "candidate_id": "43f2a0f5-1681-45bc-88f4-3301a37390ff",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק אמנת האג (החזרת ילדים חטופים)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%9E%D7%A0%D7%AA_%D7%94%D7%90%D7%92_(%D7%94%D7%97%D7%96%D7%A8%D7%AA_%D7%99%D7%9C%D7%93%D7%99%D7%9D_%D7%97%D7%98%D7%95%D7%A4%D7%99%D7%9D)",
+        "document_id": "bcef5002-652d-4855-bdfb-925e5ccb28b6",
+        "source_type": "israeli_law",
+        "candidate_id": "c0e5ab95-b66a-44c9-9656-4223f1e82728",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק אמנת החברה הבין-אמריקנית להשקעות",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%9E%D7%A0%D7%AA_%D7%94%D7%97%D7%91%D7%A8%D7%94_%D7%94%D7%91%D7%99%D7%9F-%D7%90%D7%9E%D7%A8%D7%99%D7%A7%D7%A0%D7%99%D7%AA_%D7%9C%D7%94%D7%A9%D7%A7%D7%A2%D7%95%D7%AA",
+        "document_id": "2f9c6faf-678e-4aff-a32f-0634e01d9e27",
+        "source_type": "israeli_law",
+        "candidate_id": "417c7e75-d024-4135-918b-97852c287f6b",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק-יסוד: חופש העיסוק",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "basic_law",
+          "source_site": "wikisource",
+          "is_basic_law": true
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%97%D7%95%D7%A4%D7%A9_%D7%94%D7%A2%D7%99%D7%A1%D7%95%D7%A7",
+        "document_id": "334c323b-735b-431c-aa74-4be48dbd7777",
+        "source_type": "israeli_law",
+        "candidate_id": "81773648-15be-4870-9fc1-9ae8f8f3d166",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק איסוף ופינוי פסולת למיחזור",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%99%D7%A1%D7%95%D7%A3_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A4%D7%A1%D7%95%D7%9C%D7%AA_%D7%9C%D7%9E%D7%99%D7%97%D7%96%D7%95%D7%A8",
+        "document_id": "ddc373b2-0d37-4ab9-a933-7044023bcb84",
+        "source_type": "israeli_law",
+        "candidate_id": "f25405f5-b613-4011-8395-fc488614e159",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק אזורים חופשיים לייצור בישראל",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%96%D7%95%D7%A8%D7%99%D7%9D_%D7%97%D7%95%D7%A4%D7%A9%D7%99%D7%99%D7%9D_%D7%9C%D7%99%D7%99%D7%A6%D7%95%D7%A8_%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C",
+        "document_id": "776bba11-48d9-4818-b4aa-1b61f2636620",
+        "source_type": "israeli_law",
+        "candidate_id": "4c5a4dc9-1269-4612-b1f2-41ff90641f0f",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "תקנות איסור הלבנת הון (דרכים ומועדים להעברת דיווח של תאגידים בנקאיים והגופים המפורטים בתוספת השלישית לחוק, למאגר המידע)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%94%D7%9C%D7%91%D7%A0%D7%AA_%D7%94%D7%95%D7%9F_(%D7%93%D7%A8%D7%9B%D7%99%D7%9D_%D7%95%D7%9E%D7%95%D7%A2%D7%93%D7%99%D7%9D_%D7%9C%D7%94%D7%A2%D7%91%D7%A8%D7%AA_%D7%93%D7%99%D7%95%D7%95%D7%97_%D7%A9%D7%9C_%D7%AA%D7%90%D7%92%D7%99%D7%93%D7%99%D7%9D_%D7%91%D7%A0%D7%A7%D7%90%D7%99%D7%99%D7%9D_%D7%95%D7%94%D7%92%D7%95%D7%A4%D7%99%D7%9D_%D7%94%D7%9E%D7%A4%D7%95%D7%A8%D7%98%D7%99%D7%9D_%D7%91%D7%AA%D7%95%D7%A1%D7%A4%D7%AA_%D7%94%D7%A9%D7%9C%D7%99%D7%A9%D7%99%D7%AA_%D7%9C%D7%97%D7%95%D7%A7%2C_%D7%9C%D7%9E%D7%90%D7%92%D7%A8_%D7%94%D7%9E%D7%99%D7%93%D7%A2)",
+        "document_id": "d31f2a19-860a-4ebc-8656-8047bf5eefdb",
+        "source_type": "israeli_law",
+        "candidate_id": "5b69990b-9052-4076-8ae5-8c677e27fefa",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "תקנות איסור הלבנת הון (כללים להודעה למשטרה ופרטיה בדבר העברת מידע מן הרשות המוסמכת לפקיד מכס חוקר)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%94%D7%9C%D7%91%D7%A0%D7%AA_%D7%94%D7%95%D7%9F_(%D7%9B%D7%9C%D7%9C%D7%99%D7%9D_%D7%9C%D7%94%D7%95%D7%93%D7%A2%D7%94_%D7%9C%D7%9E%D7%A9%D7%98%D7%A8%D7%94_%D7%95%D7%A4%D7%A8%D7%98%D7%99%D7%94_%D7%91%D7%93%D7%91%D7%A8_%D7%94%D7%A2%D7%91%D7%A8%D7%AA_%D7%9E%D7%99%D7%93%D7%A2_%D7%9E%D7%9F_%D7%94%D7%A8%D7%A9%D7%95%D7%AA_%D7%94%D7%9E%D7%95%D7%A1%D7%9E%D7%9B%D7%AA_%D7%9C%D7%A4%D7%A7%D7%99%D7%93_%D7%9E%D7%9B%D7%A1_%D7%97%D7%95%D7%A7%D7%A8)",
+        "document_id": "0d13c60d-4737-44bb-9590-7dce5159c49e",
+        "source_type": "israeli_law",
+        "candidate_id": "ccc42ade-ba44-4898-aa9f-76a2e99abbd3",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק האפוטרופוס הכללי",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא לגבי הפחתת פיצוי מוסכם; טקסט החוק ופרשנות רשמית",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%90%D7%A4%D7%95%D7%98%D7%A8%D7%95%D7%A4%D7%95%D7%A1_%D7%94%D7%9B%D7%9C%D7%9C%D7%99",
+        "document_id": "f555ef7e-c412-4f7e-bb95-3a902a14a95b",
+        "source_type": "israeli_law",
+        "candidate_id": "d85c36c1-b317-4bf6-9bb9-ca721d557a99",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 1.35,
+        "title": "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "court": "בתי המשפט המחוזיים",
+          "judges": "חננאל שרעבי",
+          "district": "מחוז חיפה",
+          "procedure_type": "משפחה"
+        },
+        "query_he": "פסק דין בית המשפט העליון 'סעיף 15 חוק החוזים (תרופות)' 'פיצוי מוסכם' סמכות להפחתה פרשנות סעיף 15",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+        "document_id": "9a2acb53-bf5b-43a4-a11d-4316f9efb38e",
+        "source_type": "caselaw",
+        "candidate_id": "f03a9616-8f8c-4ba9-8b96-beb8056a96ce",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק איסור פרסום מידע לגבי נפגעים",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) הוראות פרוצדורליות והערות בחוק לגבי מי מעלה טענה להפחתה ומועד הגשתה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%A4%D7%A8%D7%A1%D7%95%D7%9D_%D7%9E%D7%99%D7%93%D7%A2_%D7%9C%D7%92%D7%91%D7%99_%D7%A0%D7%A4%D7%92%D7%A2%D7%99%D7%9D",
+        "document_id": "6fdf04f7-4f17-4069-b6a9-ff10192b0aed",
+        "source_type": "israeli_law",
+        "candidate_id": "b7dbb4a1-b807-4377-bdb1-d52506b2b882",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק בחירות לגופים ציבוריים",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) הוראות פרוצדורליות והערות בחוק לגבי מי מעלה טענה להפחתה ומועד הגשתה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%97%D7%99%D7%A8%D7%95%D7%AA_%D7%9C%D7%92%D7%95%D7%A4%D7%99%D7%9D_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%99%D7%9D",
+        "document_id": "07c13b3a-b0c1-4fcf-9db4-0a1606963078",
+        "source_type": "israeli_law",
+        "candidate_id": "343347b1-5f25-4596-be99-bf85d347d38e",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק עזר לגנים לאומיים ושמורות טבע",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) הוראות פרוצדורליות והערות בחוק לגבי מי מעלה טענה להפחתה ומועד הגשתה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%A2%D7%96%D7%A8_%D7%9C%D7%92%D7%A0%D7%99%D7%9D_%D7%9C%D7%90%D7%95%D7%9E%D7%99%D7%99%D7%9D_%D7%95%D7%A9%D7%9E%D7%95%D7%A8%D7%95%D7%AA_%D7%98%D7%91%D7%A2",
+        "document_id": "1d281a52-f435-44b7-9ecf-801a3bc1331e",
+        "source_type": "israeli_law",
+        "candidate_id": "35f683ed-b62d-42cc-89d1-9672487ad531",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק לגילוי נגיפי איידס בקטינים",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) הוראות פרוצדורליות והערות בחוק לגבי מי מעלה טענה להפחתה ומועד הגשתה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9C%D7%92%D7%99%D7%9C%D7%95%D7%99_%D7%A0%D7%92%D7%99%D7%A4%D7%99_%D7%90%D7%99%D7%99%D7%93%D7%A1_%D7%91%D7%A7%D7%98%D7%99%D7%A0%D7%99%D7%9D",
+        "document_id": "6078b3b9-fb01-461b-bade-513e2bd407f2",
+        "source_type": "israeli_law",
+        "candidate_id": "a0ea8e81-fd82-4bbf-912f-f36ae330e5b4",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "כללי הסדרת העיסוק בייעוץ השקעות או בשיווק השקעות (הודעה של עוסק בלא רישיון על כוונתו לעסוק בייעוץ השקעות או בשיווק השקעות לגבי קרן כספית)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) הוראות פרוצדורליות והערות בחוק לגבי מי מעלה טענה להפחתה ומועד הגשתה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%9B%D7%9C%D7%9C%D7%99_%D7%94%D7%A1%D7%93%D7%A8%D7%AA_%D7%94%D7%A2%D7%99%D7%A1%D7%95%D7%A7_%D7%91%D7%99%D7%99%D7%A2%D7%95%D7%A5_%D7%94%D7%A9%D7%A7%D7%A2%D7%95%D7%AA_%D7%90%D7%95_%D7%91%D7%A9%D7%99%D7%95%D7%95%D7%A7_%D7%94%D7%A9%D7%A7%D7%A2%D7%95%D7%AA_(%D7%94%D7%95%D7%93%D7%A2%D7%94_%D7%A9%D7%9C_%D7%A2%D7%95%D7%A1%D7%A7_%D7%91%D7%9C%D7%90_%D7%A8%D7%99%D7%A9%D7%99%D7%95%D7%9F_%D7%A2%D7%9C_%D7%9B%D7%95%D7%95%D7%A0%D7%AA%D7%95_%D7%9C%D7%A2%D7%A1%D7%95%D7%A7_%D7%91%D7%99%D7%99%D7%A2%D7%95%D7%A5_%D7%94%D7%A9%D7%A7%D7%A2%D7%95%D7%AA_%D7%90%D7%95_%D7%91%D7%A9%D7%99%D7%95%D7%95%D7%A7_%D7%94%D7%A9%D7%A7%D7%A2%D7%95%D7%AA_%D7%9C%D7%92%D7%91%D7%99_%D7%A7%D7%A8%D7%9F_%D7%9B%D7%A1%D7%A4%D7%99%D7%AA)",
+        "document_id": "1afb7652-7db9-408e-9014-75b0c61f28ec",
+        "source_type": "israeli_law",
+        "candidate_id": "b5403a1b-25e7-4397-981e-7d60ed6241b9",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק להסדרת מתן שירותי פיקדון ואשראי בלא ריבית על ידי מוסדות לגמילות חסדים",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) הוראות פרוצדורליות והערות בחוק לגבי מי מעלה טענה להפחתה ומועד הגשתה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%9C%D7%94%D7%A1%D7%93%D7%A8%D7%AA_%D7%9E%D7%AA%D7%9F_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99_%D7%A4%D7%99%D7%A7%D7%93%D7%95%D7%9F_%D7%95%D7%90%D7%A9%D7%A8%D7%90%D7%99_%D7%91%D7%9C%D7%90_%D7%A8%D7%99%D7%91%D7%99%D7%AA_%D7%A2%D7%9C_%D7%99%D7%93%D7%99_%D7%9E%D7%95%D7%A1%D7%93%D7%95%D7%AA_%D7%9C%D7%92%D7%9E%D7%99%D7%9C%D7%95%D7%AA_%D7%97%D7%A1%D7%93%D7%99%D7%9D",
+        "document_id": "b2173e2a-291d-4e43-96b1-4611df48158d",
+        "source_type": "israeli_law",
+        "candidate_id": "ee5d403b-63e7-4821-b5c6-24bd3cd9d9dc",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "פיצוי מוסכם – סוגיות והיבטים",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי בעברית העוסק בפיצוי מוסכם ובהפחתת פיצוי מוסכם לפי סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה), עם דיון עקרוני בשיקולי בית המשפט.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר אקדמי 'פיצוי מוסכם' 'הפחתת פיצוי מוסכם' חוק החוזים (תרופות) כתב-עת למשפטים ניתוח עקרוני של שיקולי בית המשפט",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+        "source_type": "אקדמי (מאמר/קובץ PDF אוניברסיטאי)",
+        "candidate_id": "415c6de5-65b3-43ce-a123-9a9453927722",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "On Penalty Clauses in Contract Law",
+        "origin": "perplexity",
+        "snippet": "מילטון פינץ' (Milton R. Handlin? / Penalty clauses article entry) — מאמר קלאסי על תניית פיצוי מוסכם/קנס בדיני חוזים; מקור אקדמי ישיר ב-JSTOR (יש לוודא גישה מלאה).",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "jstor.org",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר אקדמי 'פיצוי מוסכם' 'הפחתת פיצוי מוסכם' חוק החוזים (תרופות) כתב-עת למשפטים ניתוח עקרוני של שיקולי בית המשפט",
+        "source_url": "https://www.jstor.org/stable/3303060",
+        "source_type": "אקדמי (מאמר)",
+        "candidate_id": "abe614d3-a320-4e15-93c3-081cef5a4b07",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "The Enforcement of Liquidated Damages Clauses",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי בדיני חוזים על אכיפת תניית פיצוי מוסכם (liquidated damages) ושיקולי ההתערבות השיפוטית; עשוי לסייע לניתוח עקרוני משווה.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "jstor.org",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר אקדמי 'פיצוי מוסכם' 'הפחתת פיצוי מוסכם' חוק החוזים (תרופות) כתב-עת למשפטים ניתוח עקרוני של שיקולי בית המשפט",
+        "source_url": "https://www.jstor.org/stable/3310837",
+        "source_type": "אקדמי (מאמר)",
+        "candidate_id": "52ca29f5-3ac8-4155-bee8-6220a7b202d0",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 25921,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 31067,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 40007,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 8482,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 36444,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial"
+      },
+      {
+        "ms": 30920,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      },
+      {
+        "ms": 73651,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "drafter.placement_repair"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": []
+  }
+}

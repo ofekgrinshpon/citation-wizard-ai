@@ -1,0 +1,1459 @@
+{
+  "generated_at": "2026-05-24T18:17:06.918Z",
+  "fixture": {
+    "id": "L2",
+    "question": "מהי דוקטרינת ההבטחה המנהלית?"
+  },
+  "qa_log_id": "c6797a08-cd0f-41f6-9721-26238a8f8385",
+  "run_id": "dd977d84-127d-4bce-8ad5-c42f061df379",
+  "phaseA": {
+    "fixture_id": "L2",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "cluster_count": 14,
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 1,
+    "placement_ok": false,
+    "placement_repaired": false,
+    "placement_repair_failed": true,
+    "used_sources_count": 9,
+    "used_sources_subset_of_usable": true,
+    "footnote_count": 9
+  },
+  "answer": "הקדמה ותמצית ההגדרה\n\nדוקטרינת ה**הבטחה המנהלית** היא כללי המשפט המנהלי המעניקים הגנה משפטית ל**ציפייה לגיטימית** שנוצרה בעקבות הבטחה או הצהרה של רשות מנהלית — בתנאי שההבטחה ניתנה במסגרת סמכות הרשות, התכוונה להיות בעלת משקל מעשי/משפטי, ונקלטה על־ידי הנמען שנטל בה הסתמכות ראויה.¹²\n\nמהותה המשפטית\n\nהדוקטרינה אינה מעניקה זכאות אוטומטית לכל הבטחה אלא קובעת כי כאשר מתקיימים יסודות מובחנים הרשות עלולה להיחייב לקיים את ההבטחה או לשלם פיצוי; הכוונה היא לפיצוי או לסעד שיתאימו לאופי הפגיעה ולנסיבות — ובמקרים מסוימים לאכיפת ההבטחה בצו עשה או בצו מניעה.¹³⁴\n\nתנאי החלת הדוקטרינה\n\nהפסיקה והספרות מזהים מספר מרכיבים מצטברים הדרושים כדי שחובה מנהלית תיחשב מחייבת:\n- **הבטחה/הצהרה** מפורשת או מעשית מצד רשות או נציג מוסמך שלה; עיקר הדרישה היא שההבטחה תישמע ככזו ולא כוויכוח מדינתי כללי.³\n- **בהירות ותכלית** — ההבטחה צריכה להיות ברורה דיה כדי שאפשר יהיה להיקשר אליה מבחינה משפטית.³\n- **כוונה לתוצאה משפטית** — שהמבטיח פעל במסגרת סמכותו ובכוונה שתהיה לה השפעה על הזכויות או על מעמד המבטיח.¹\n- **הסתמכות סבירה ושינוי מעמדה של הנמען** — הנמען חייב להראות שנקט בפעולות ובהחלטות שנבעו מההסתמכות, באופן שנגרמה לו פגיעה אם ההבטחה תבוטל.³⁵\n- **סמכות המבטיח** — הבטחה שניתנה בידי מי שאין לו סמכות לבצעה או להימצא במקום של מתן הבטחה אינה מעצימה ציפייה מחייבת; שאלת הסמכות נבחנת לפי דפוסי סמכות מנהלית וקווים שמגביליה.⁶⁷\n\nסעדים ותוצאות חוקיות\n\nבית המשפט מעניק מגוון סעדי בחירה לפי נסיבות העניין: צו עשה לאכיפת ההבטחה, צו מניעה שימנע ביטולה או שינויה, או סעד חלופי של פיצוי כספי כאשר אכיפה ספציפית אינה הוגנת או אפשרית.⁸⁹10 נימוקי הבחירה מבוססים על איזון אינטרסים — לצד ההגנה על ההסתמכות נלקחים בחשבון טעמים ציבוריים, סיכון להפעלת סמכויות אחרות ויכולת הרשות לקיים את ההבטחה.¹¹\n\nגבולות ואי־החלה\n\nהבטחה מינהלית לא תחול או לא תמוצה במקרים של:\n- **ניגוד לחוק או לנהלים חלים** — לא ניתן להכשיר הבטחה שסותרת חקיקה או מנגנוני סמכות אחרים.¹\n- **פגיעה בסמכות של רשות אחרת או אינטרס ציבורי עליון** — כאשר הגשמת ההבטחה תגרום לפגיעה לא מידתית בטובת הציבור או בסמכויות חקיקתיות/מוסדיות יש להעדיף את האינטרס הציבורי.¹⁰\n- **הבטחה שניתנה על־ידי בעל סמכות בלתי מורשית** — הבטחות של מי שאיננו נתון בסמכות לא יחייבו את הציבור או הרשות אלא אם הן אושרו במסגרת הסמכות המתאימה.⁶⁷\n- **שינוי מדיניות תקף** — הכרה שקיימת הבחנה בין הבטחה פרטית לשינוי מדיניות גורפת; רשות רשאית לשנות מדיניות אך חייבת לשקול את המחיר המשפטי והצדקתי של שינוי זה ביחס להסתמכות שנוצרה.²⁵\n\nסיכום\n\nדוקטרינת ההבטחה המנהלית שמשקפת הגנה על ציפייה לגיטימית מהווה מסגרת ויסודית במאזן בין יציבות הציפיות של האזרח לבין חופש פעולה תקין של הרשות. היא דורשת בדיקה צמודה של סמכות, בהירות וכוונה של ההבטחה, וגם של הסתמכות ממשית ושאין פגיעה ציבורית כבדה אם היא תיאכף; כמו כן, בתי המשפט מאזנים בין אכיפה ספציפית לבין פיצוי, ומשאירים לעצמם שיקול דעת רחב בכל הנוגע לסעד הראוי.¹²³⁴⁸\n",
+  "footnotes": [
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C13%2F575%2F001%2Fb13&fileName=13001575.B13&type=4",
+      "title": "בג\"ץ 135/75 סאי-טקס בע\"מ נ' שר המסחר והתעשייה",
+      "number": 1,
+      "source_type": "supremedecisions.court.gov.il"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+      "title": "הבטחה מינהלית לציבור",
+      "number": 2,
+      "source_type": "article (PDF via law faculty site)"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+      "title": "הבטחה מינהלית",
+      "number": 3,
+      "source_type": "מאמר בכתב עת"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+      "title": "הגנת ההסתמכות במשפט המנהלי",
+      "number": 4,
+      "source_type": "law review article (PDF)"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+      "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+      "number": 5,
+      "source_type": "מאמר בכתב עת"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/3-zamir.pdf",
+      "title": "הסמכות המינהלית",
+      "number": 6,
+      "source_type": "ספר/פרק אקדמי"
+    },
+    {
+      "url": "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawPrimary.aspx?t=lawlaws&lawitemid=2001395",
+      "title": "חוק שירות המדינה (מינויים), התשי״ט-1959",
+      "number": 7,
+      "source_type": "חקיקה ראשית ישראלית"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/020_004.htm",
+      "title": "בג\"ץ 585/01 קלכמן נ' ראש המטה הכללי",
+      "number": 8,
+      "source_type": "nevo.co.il"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/022_001.htm",
+      "title": "ע\"א 4920/01 כהן נ' עיריית הרצליה",
+      "number": 9,
+      "source_type": "nevo.co.il"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "השאלה דוקטרינית-עקרונית שמבוססת בעיקר על פסיקה קובעת ובספרות משפטית שמפרשת ומנסחת את ההגדרה והעקרונות.",
+        "text_he": "מהי דוקטרינת ההבטחה המנהלית — הגדרה תמציתית: האם הדוקטרינה מעניקה הגנה משפטית לציפייה לגיטימית שנוצרה מהבטחה או הצהרה של רשות מנהלית, ומה טבעה המשפטי (איסור לשנות/לבטל הבטחה, זכאות לסעד וכו\\').",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "מרכיבי דוקטרינה נקבעו בפסיקה; ספרות מסייעת בפירוק ותיחום האלמנטים ובהבחנה בין דרישות שונות.",
+        "text_he": "מהם תנאי החלת הדוקטרינה — אילו מרכיבים חייבים להתקיים (הבטחה/הצהרה סודית או מפורשת, בהירות והקשר, הסתמכות סבירה ושינוי מעמדו של הנמען, סמכות מי שנתן ההבטחה ועוד).",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "טיב הסעד והגבולות שלו נקבעים בפסיקה והוסברו בספרות; יש צורך בפסיקה מחייבת כדי לקבוע אילו סעדונים מתקבלים בפועל.",
+        "text_he": "מהם הסעדים ותוצאות החוק הנובעים מהחלת הדוקטרינה — אילו אמצעים בית המשפט יכול לצוות (אכיפה ספציפית של ההבטחה, מניעה של ביטול, פיצוי, איזון אינטרסים וכו\\').",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "גבולות משלבים שיקולים משפטיים ופוליסיים: פסיקה קובעת ומשרטטת את המגבלות, ולעתים ישנן הוראות חוקיות המגבילות את יכולת הרשות להתחייב או אילו הבטחות אפשר לאכוף.",
+        "text_he": "מהם גבולות הדוקטרינה והאי־החלה שלה — מתי לא תחול ההבטחה המנהלית (ניגוד לחוק, פגיעה בסמכות רשות אחרת, אינטרס ציבורי עליון, הבטחה שניתנה בידי בעל סמכות בלתי מורשית וכו\\').",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "primary_statute",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "dd977d84-127d-4bce-8ad5-c42f061df379",
+    "drafter": {
+      "ms": 121202,
+      "ok": true,
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 9,
+      "used_sources": [
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C13%2F575%2F001%2Fb13&fileName=13001575.B13&type=4",
+          "title": "בג\"ץ 135/75 סאי-טקס בע\"מ נ' שר המסחר והתעשייה",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "supremedecisions.court.gov.il",
+          "candidate_id": "a9680986-17b4-43af-90fc-f5e5fe88bae4"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+          "title": "הבטחה מינהלית לציבור",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "article (PDF via law faculty site)",
+          "candidate_id": "b4f55b2b-5615-4450-bc2c-4c9af0cee098"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+          "title": "הבטחה מינהלית",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "מאמר בכתב עת",
+          "candidate_id": "bc6f548e-cfb0-46ce-99d2-106bc03edaea"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+          "title": "הגנת ההסתמכות במשפט המנהלי",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "law review article (PDF)",
+          "candidate_id": "3b65af13-aeb0-4ce1-9873-f6942827258c"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+          "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "מאמר בכתב עת",
+          "candidate_id": "c1f687c6-fe46-4fee-bdb2-9dd8de2667e3"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/3-zamir.pdf",
+          "title": "הסמכות המינהלית",
+          "number": 6,
+          "origin": "perplexity",
+          "source_type": "ספר/פרק אקדמי",
+          "candidate_id": "862cfe71-d2c8-402e-af02-d16fd65d9d4b"
+        },
+        {
+          "url": "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawPrimary.aspx?t=lawlaws&lawitemid=2001395",
+          "title": "חוק שירות המדינה (מינויים), התשי״ט-1959",
+          "number": 7,
+          "origin": "perplexity",
+          "source_type": "חקיקה ראשית ישראלית",
+          "candidate_id": "2d258033-8813-41b3-a7c3-10e71bac1186"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/020_004.htm",
+          "title": "בג\"ץ 585/01 קלכמן נ' ראש המטה הכללי",
+          "number": 8,
+          "origin": "perplexity",
+          "source_type": "nevo.co.il",
+          "candidate_id": "b0ae4d8d-4fa2-41df-bdaa-963cf711f791"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/022_001.htm",
+          "title": "ע\"א 4920/01 כהן נ' עיריית הרצליה",
+          "number": 9,
+          "origin": "perplexity",
+          "source_type": "nevo.co.il",
+          "candidate_id": "8fc63161-c76a-40a9-bcb3-3e9f99aba707"
+        }
+      ],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 9,
+      "sources_passed": 11,
+      "marker_validation": {
+        "ok": true,
+        "repaired": true,
+        "placement": {
+          "ok": false,
+          "cluster_count": 14,
+          "repair_failed": true,
+          "cluster_samples": [
+            "טל בה הסתמכות ראויה.¹²\n\nמהותה המשפטית\n\nהדו",
+            "צו עשה או בצו מניעה.¹³⁴\n\nתנאי החלת הדוקטרינ",
+            "יעה אם ההבטחה תבוטל.³⁵\n- **סמכות המבטיח** ",
+            "לית וקווים שמגביליה.⁶⁷\n\nסעדים ותוצאות חוקי",
+            "ינה הוגנת או אפשרית.⁸⁹10 נימוקי הבחירה מבו"
+          ],
+          "end_dump_samples": [
+            "הפסיקה והספרות מזהים מספר מרכיבים מצטברים הדרושים כדי שחובה מנהלית תיחשב מחייבת:\n- **הבטחה/הצהרה** מפורשת או מעשית מצד רשות או נציג מוסמך שלה; עיקר הדרישה היא שההבטחה תישמע ככזו ולא כוויכוח מדינתי כלל"
+          ],
+          "out_of_order_count": 0,
+          "end_paragraph_dump_count": 1
+        },
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "omitted_candidate_ids": [
+        "6155f87f-8026-491a-8923-5aaf5b27b8e8",
+        "8eedc971-41f4-4dfe-bba4-be9082514603"
+      ]
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "דרוש פסיקה מחייבת של העליון שמגדירה את דוקטרינת ההבטחה המנהלית ותיאור טבעה המשפטי וההשלכות על שינוי הבטחה או זכות לסעד.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "בית המשפט העליון פסקי דין \"הבטחה מנהלית\" OR \"ציפייה לגיטימית\" הגדרה וטבע משפטי האם מגלמת איסור שינוי הבטחה או זכות לסעד",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מחקרים אקדמיים מסכמים ומנתחים את ההגדרה והתאוריות המשפטיות שמסבירות מהו טבע ההגנה ומה הגבולות שלה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר \"הבטחה מנהלית\" \"ציפייה לגיטימית\" הגדרה טבע משפטי כתב עת משפטי (מאמר סקירה על הדוקטרינה בישראל)",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "יש לאתר פסקי דין מחייבים שקבעו את מרכיבי החלת הדוקטרינה (הבטחה/הצהרה, בהירות, הסתמכות, נזק/שינוי מעמד, סמכות נותן ההבטחה).",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסק דין \"הבטחה מנהלית\" \"הסתמכות סבירה\" \"בהירות\" \"נזק\" \"סמכות\" תנאי חלות הדוקטרינה",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מאמרים משפטיים מסכמים וחותכים את הפסיקה לגבי התנאים הנדרשים ומציעים הגדרות ונוסחי מבחן שימושיים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר \"תנאי החלת דוקטרינת ההבטחה המנהלית\" \"הסתמכות סבירה\" \"בהירות\" \"סמכות\" כתב עת למשפטים",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "נדרש לאסוף פסקי דין שמפרטים אילו סעדיים העניק בית המשפט בעקבות הבטחה מנהלית (אכיפה, מניעה, פיצוי, איזון אינטרסים וכד').",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון \"הבטחה מנהלית\" \"סעד\" \"אכיפה ספציפית\" \"פיצוי\" \"צו\" פסיקה על סוגי הסעדים שניתנים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "הספרות החוקרת מסבירה אילו סוגי סעד נפוצים, שיקול האיזון בין אינטרס הנמען לאינטרס הציבורי ומודלים פוטנציאליים למתן סעד.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר \"סעדי הבטחה מנהלית\" \"פיצוי\" \"אכיפה ספציפית\" \"איזון אינטרסים\" כתב עת משפטי סקירה והשוואה",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "חיפוש פסקי דין של העליון שקבעו מתי הדוקטרינה אינה חלה (ניגוד לחוק, פגיעה בסמכות של רשות אחרת, אינטרס ציבורי עליון, הבטחה של בעל סמכות בלתי מורשית).",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון \"הבטחה מנהלית\" \"ניגוד לחוק\" \"סמכות בלתי מורשית\" \"אינטרס ציבורי\" גבולות ואי־החלה בפסיקה",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "יש לבדוק חקיקה שמגדירה סמכויות רשויות ומגבילה אפשרות התחייבות או יצירת ציפיות מנהליות (חוק שירות המדינה הוא דוגמה לחקיקה המסדירה סמכויות המינהל).",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "חוק שירות המדינה, התשכ\"ז-1967 הוראות על סמכויות מקבלי החלטות וסמכות בלתי מורשית; חיפוש טקסט חוק ופרשנויות רלוונטיות",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מחקרים אקדמיים מנתחים את המנגנונים החוקתיים והחקיקתיים שמגבילים את החלת הדוקטרינה ומציעים מסגרות להבחין בין מקרים שמחייבים אי־החלה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר \"גבולות הדוקטרינת ההבטחה המנהלית\" \"ניגוד לחוק\" \"אינטרס ציבורי\" \"סמכות בלתי מורשית\" כתב עת משפטי",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 45568,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 22463,
+        "confidence": 0.9,
+        "legal_area": "משפט מנהלי",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "claims_count": 4,
+      "queries_count": 9,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 256556,
+    "verifier": {
+      "ms": 25235,
+      "counts": {
+        "by_support": {
+          "direct": 7,
+          "partial": 4,
+          "unrelated": 0,
+          "tangential": 1
+        },
+        "by_role_match": {
+          "true": 8,
+          "false": 4
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "a9680986-17b4-43af-90fc-f5e5fe88bae4",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": false,
+          "best_support": "direct",
+          "candidate_id": "8fc63161-c76a-40a9-bcb3-3e9f99aba707",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": false,
+          "best_support": "direct",
+          "candidate_id": "b0ae4d8d-4fa2-41df-bdaa-963cf711f791",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": false,
+          "best_support": "direct",
+          "candidate_id": "6155f87f-8026-491a-8923-5aaf5b27b8e8",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": false,
+          "best_support": "direct",
+          "candidate_id": "8eedc971-41f4-4dfe-bba4-be9082514603",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "2d258033-8813-41b3-a7c3-10e71bac1186",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "b4f55b2b-5615-4450-bc2c-4c9af0cee098",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "3b65af13-aeb0-4ce1-9873-f6942827258c",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "bc6f548e-cfb0-46ce-99d2-106bc03edaea",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "c1f687c6-fe46-4fee-bdb2-9dd8de2667e3",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "862cfe71-d2c8-402e-af02-d16fd65d9d4b",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 25234,
+          "label": "batch1",
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C3",
+            "C4"
+          ],
+          "escalated": false,
+          "candidates": 12
+        }
+      ],
+      "dropped": [
+        {
+          "role": "scholarship",
+          "title": "פיצויים עונשיים סמויים בגין פיטורים שלא כדין המהווים הפרת חוזה עבודה",
+          "origin": "perplexity",
+          "reason": "המאמר עוסק בסוגיות סעדיות ופיצויים בהקשר תעסוקתי ולא בבירור דוקטרינת ההבטחה המינהלית; שימושו משני ותיאורטי בלבד.",
+          "candidate_id": "3040a4e6-532b-479a-9b34-07d4caeb4df6",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        }
+      ],
+      "verdicts": [
+        {
+          "reason": "פסק-דין עקרוני שמנסח באופן ישיר את דוקטרינת ההבטחה המינהלית והאלמנטים שמקנים לה תוקף.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "a9680986-17b4-43af-90fc-f5e5fe88bae4",
+          "supported_points": [
+            "פסיקה בראיית עליון שמכירה כי הבטחה של רשות בתוך סמכותה ותכליתה משפטית יכולה לחייב את הרשות",
+            "מתייחס למרכיבים מרכזיים: סמכות, כוונה לתוצאה משפטית והסתמכות הנמען"
+          ]
+        },
+        {
+          "reason": "מאמר עוסק במפורש בהגדרה, במטרות ובטבע ההגנה של הדוקטרינה, מתאים כבסיס תיאורטי להגדרה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "b4f55b2b-5615-4450-bc2c-4c9af0cee098",
+          "supported_points": [
+            "מאמר סקירה אקדמי שמגדיר את ההבטחה המינהלית ומבחין בינה לבין שינוי מדיניות",
+            "מציג את המושג 'ציפייה לגיטימית' ותנאי שיישומו"
+          ]
+        },
+        {
+          "reason": "מקור אקדמי שמסביר את הדוקטרינה ומרכיביה ומיתן ישירות את השאלה מהי ההבטחה המנהלית.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "3b65af13-aeb0-4ce1-9873-f6942827258c",
+          "supported_points": [
+            "מאמר ב'משפטים' העוסק בהגנת ההסתמכות ובציפייה לגיטימית",
+            "מסביר את היחס בין הבטחה מינהלית להגנה משפטית"
+          ]
+        },
+        {
+          "reason": "מאמר אקדמי מתאר במפורט את תנאי ההחלה, אך ככל שהוא אינו פסיקה נורמטיבית - ישמש כתמיכה תאורטית ולא כחוק מחייב בפני עצמו.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "bc6f548e-cfb0-46ce-99d2-106bc03edaea",
+          "supported_points": [
+            "מאמר ב'משפטים' המסביר תנאי החלת ההבטחה: סמכות המבטיח, בהירות ההבטחה והסתמכות הנמען"
+          ]
+        },
+        {
+          "reason": "מאמר אקדמי מקיף שמציג ומנתח את תנאי ההחלה אך אינו תחליף לפסיקה מחייבת; לכן תמיכה משלימה.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "c1f687c6-fe46-4fee-bdb2-9dd8de2667e3",
+          "supported_points": [
+            "ניתוח היסטורי-משפטי של התפתחות הדוקטרינה ותנאיה (סמכות, בהירות, הסתמכות)",
+            "דנים בדפוסי המחקר ושיקולים משפטיים לגבי הוכחת מרכיבים אלה"
+          ]
+        },
+        {
+          "reason": "פסיקה ממשית העוסקת בסוגי הסעד שניתן להורות ובהשקול המשפטי בין אכיפה ספציפית לפיצוי.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": false,
+          "candidate_id": "8fc63161-c76a-40a9-bcb3-3e9f99aba707",
+          "supported_points": [
+            "פסק-דין של ביהמ\"ש העליון שמתייחס לעניין הסעד באכיפת הבטחה מינהלית",
+            "דנים באפשרות צו עשה מול פיצוי ובשיקולי איזון"
+          ]
+        },
+        {
+          "reason": "פסיקה עקרונית העוסקת בתוצאות המשפטיות של החלת הדוקטרינה ובאופני הסעד.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": false,
+          "candidate_id": "b0ae4d8d-4fa2-41df-bdaa-963cf711f791",
+          "supported_points": [
+            "פסק דין עקרוני בבג\"ץ על אכיפת הבטחה מינהלית וסוגי הסעדים המתאפשרים",
+            "ממסגר שיקולי צדק ועקרונות לבחירת סעד"
+          ]
+        },
+        {
+          "reason": "מקור שיפוטי שמדגים כיצד בתי המשפט מאזנים בין אכיפה לפיצוי במקרה של הבטחה מינהלית.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": false,
+          "candidate_id": "6155f87f-8026-491a-8923-5aaf5b27b8e8",
+          "supported_points": [
+            "פסק-דין על שאלות אכיפה ופיצוי בהקשר של התחייבות/הבטחה של רשות ציבורית",
+            "כולל הנחיות לשיקולי הסעד המתאים"
+          ]
+        },
+        {
+          "reason": "פסיקה מחייבת שמטפלת ישירות בשאלת הסעד ובשיקולי ההדדיות בעת החלת דוקטרינה זו.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": false,
+          "candidate_id": "8eedc971-41f4-4dfe-bba4-be9082514603",
+          "supported_points": [
+            "פסק דין משמעותי בדיון בסעדים (צו עשה, אכיפה ספציפית) ובאיזון בין אכיפה לפיצוי",
+            "מיישם את הדוקטרינה למצבים מעשיים"
+          ]
+        },
+        {
+          "reason": "המאמר עוסק בסוגיות סעדיות ופיצויים בהקשר תעסוקתי ולא בבירור דוקטרינת ההבטחה המינהלית; שימושו משני ותיאורטי בלבד.",
+          "support": "tangential",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "3040a4e6-532b-479a-9b34-07d4caeb4df6",
+          "supported_points": [
+            "מאמר תאורטי על סעד ופיצוי בהקשר דיני עבודה שעשוי לשמש השוואה מדיניותית"
+          ]
+        },
+        {
+          "reason": "החוק מספק בסיס חוקתי/מנהלתי להגבלת סמכות המבטיחים אך אינו מטפל בכל גבולות הדוקטרינה (כגון ניגוד לחוק, אינטרס ציבורי עליון), ולכן תמיכה חלקית.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "2d258033-8813-41b3-a7c3-10e71bac1186",
+          "supported_points": [
+            "חוק שירות המדינה מסדיר מינויי בעלי סמכות והעברת סמכויות, רלוונטי לנושא סמכות בלתי מורשית"
+          ]
+        },
+        {
+          "reason": "המקור האקדמי מספק ניתוח תיאורטי ורלוונטי לגבולות הדוקטרינה אך אינו פסיקה מחייבת או חקיקה; לכן תמיכה משלימה.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "862cfe71-d2c8-402e-af02-d16fd65d9d4b",
+          "supported_points": [
+            "פרק אקדמי על סמכות מינהלית ודפוסי ההגבלה שלה",
+            "דן בקשר בין סמכות לבין גבולות חוקיותה והשלכות על הבטחות שניתנו בלא סמכות"
+          ]
+        }
+      ],
+      "model_final": "openai/gpt-5-mini",
+      "per_claim_ms": {
+        "C1": 25234,
+        "C2": 25234,
+        "C3": 25234,
+        "C4": 25234
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [],
+      "candidates_usable": 11,
+      "candidates_dropped": 1,
+      "candidates_verified": 12
+    },
+    "retrieval": {
+      "ms": 41976,
+      "pool": {
+        "found": 34,
+        "counts": {
+          "by_role": {
+            "scholarship": 6,
+            "primary_statute": 5,
+            "binding_case_law": 1
+          },
+          "by_claim": {
+            "C1": 3,
+            "C2": 2,
+            "C3": 5,
+            "C4": 2
+          },
+          "by_origin": {
+            "perplexity": 12
+          }
+        },
+        "after_dedup": 12,
+        "dedup_drops": 22
+      },
+      "local": {
+        "ms": 2,
+        "per_query": [],
+        "candidates": 0,
+        "global_exact": {
+          "clues_from_claims": [
+            {
+              "kind": "statute",
+              "source": "claim",
+              "law_name": "חוק הנ",
+              "search_terms": [
+                "חוק הנ"
+              ]
+            }
+          ],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 41973,
+        "dropped": 5,
+        "per_query": [
+          {
+            "ms": 3701,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C13%2F575%2F001%2Fb13&fileName=13001575.B13&type=4",
+                "title": "בג\"ץ 135/75 סאי-טקס בע\"מ נ' שר המסחר והתעשייה",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C10%2F970%2F003%2Fb13&fileName=10003970.b13&type=4",
+                "title": "בג\"ץ 397/10 פלוני נ' משרד החינוך / רשות מוסמכת",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F16%2F950%2F062%2Fz16&fileName=16062950.Z16&type=2",
+                "title": "ע\"א 6295/16 מדינת ישראל נ' ...",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C1",
+            "query_he": "בית המשפט העליון פסקי דין \"הבטחה מנהלית\" OR \"ציפייה לגיטימית\" הגדרה וטבע משפטי האם מגלמת איסור שינוי הבטחה או זכות לסעד",
+            "raw_count": 3,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5849,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+                "title": "הבטחה מינהלית לציבור",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+                "title": "הגנת ההסתמכות במשפט המנהלי",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://israeliconstitutionalism.wordpress.com/2019/12/24/%D7%94%D7%96%D7%95%D7%92-%D7%94%D7%9E%D7%95%D7%96%D7%A8-%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA-%D7%95%D7%97%D7%95%D7%96%D7%94-%D7%A8%D7%92%D7%95%D7%9C%D7%98%D7%95%D7%A8/",
+                "title": "הזוג המוזר: הבטחה מנהלית וחוזה רגולטורי בפסיקתו של בג\"ץ",
+                "domain": "israeliconstitutionalism.wordpress.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID3437356_code1324879.pdf?abstractid=3265192&mirid=1",
+                "title": "על הבטחות מינהליות, חוזים רגולטוריים וחיות אחרות במתווה הגז הטבעי",
+                "domain": "papers.ssrn.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://erht.co.il/administrative-promise-by-governmental-authority/",
+                "title": "הבטחה מנהלית של רשות שלטונית",
+                "domain": "erht.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C1",
+            "query_he": "מאמר \"הבטחה מנהלית\" \"ציפייה לגיטימית\" הגדרה טבע משפטי כתב עת משפטי (מאמר סקירה על הדוקטרינה בישראל)",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5403,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F07%2F420%2F000%2Fa07&fileName=07420000.A07&type=4",
+                "title": "בג״ץ 142/72 שמואל שילם נ׳ שר הפנים ואח׳ (הלכת סאיטקס)",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F07%2F420%2F001%2Fa07&fileName=07420001.A07&type=4",
+                "title": "בג״ץ 135/75 סאיטקס בע״מ נ׳ שר המסחר והתעשייה ואח׳",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F18%2F830%2F008%2Fb06&fileName=18008830.B06&type=4",
+                "title": "ע״א 830/18 מדינת ישראל נ׳ פלוני",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F01%2F585%2F000%2Fb05&fileName=01585000.B05&type=4",
+                "title": "בג״ץ 585/01 קלר נ׳ שר הביטחון",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F07%2F420%2F002%2Fa07&fileName=07420002.A07&type=4",
+                "title": "בג״ץ 549/75 שר החקלאות נ׳ בית הלוי מושב עובדים להתיישבות שיתופית בע״מ",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C2",
+            "query_he": "בית המשפט העליון פסק דין \"הבטחה מנהלית\" \"הסתמכות סבירה\" \"בהירות\" \"נזק\" \"סמכות\" תנאי חלות הדוקטרינה",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 3151,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C2",
+            "query_he": "מאמר \"תנאי החלת דוקטרינת ההבטחה המנהלית\" \"הסתמכות סבירה\" \"בהירות\" \"סמכות\" כתב עת למשפטים",
+            "raw_count": 2,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4870,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?fileName=10051310.v08&path=HebrewVerdicts%5C10%2F310%2F051%2Fv08&type=4",
+                "title": "ע\"א 5131/10 חברת החשמל לישראל בע\"מ נ' מ.נ.ש. מ.נ.ש. השקעות ויזמות בע\"מ ואח'",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/022_001.htm",
+                "title": "ע\"א 4920/01 כהן נ' עיריית הרצליה",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "binding_case_law",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/020_004.htm",
+                "title": "בג\"ץ 585/01 קלכמן נ' ראש המטה הכללי",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "binding_case_law",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/021_009.htm",
+                "title": "ע\"א 1761/02 רשות העתיקות נ' מפעלי תחנות בע\"מ",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "binding_case_law",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/017_013.htm",
+                "title": "ע\"א 3828/98 ישראל נ' אבו חצירא",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "binding_case_law",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C3",
+            "query_he": "בית המשפט העליון \"הבטחה מנהלית\" \"סעד\" \"אכיפה ספציפית\" \"פיצוי\" \"צו\" פסיקה על סוגי הסעדים שניתנים",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5326,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית*",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+                "title": "הבטחה מינהלית לציבור",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.jstor.org/stable/26547246",
+                "title": "פיצויים עונשיים סמויים בגין פיטורים שלא כדין המהווים הפרת חוזה עבודה",
+                "domain": "jstor.org",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "http://hapraklit.co.il/_Uploads/dbsAttachedFiles/6_anidjar.pdf",
+                "title": "פיצויים",
+                "domain": "hapraklit.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C3",
+            "query_he": "מאמר \"סעדי הבטחה מנהלית\" \"פיצוי\" \"אכיפה ספציפית\" \"איזון אינטרסים\" כתב עת משפטי סקירה והשוואה",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5053,
+            "http": 200,
+            "role": "binding_case_law",
+            "results": [
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\1972\\142-72.pdf",
+                "title": "בג״ץ 142/72 שוקרון נ' הממונה על מחוז ירושלים, משרד הפנים",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\1975\\135-75.pdf",
+                "title": "בג״ץ 135/75 סאי־טקס בע״מ נ' שר המסחר והתעשייה",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\1983\\593-82.pdf",
+                "title": "בג״ץ 593/82 אפלבאום נ' שר החינוך והתרבות",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\1980\\594-78.pdf",
+                "title": "בג״ץ 594/78 ג'עפרי נ' שר הפנים",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts\\1975\\135-75.pdf",
+                "title": "בג״ץ 135/75 סאי־טקס בע״מ נ' שר המסחר והתעשייה",
+                "domain": "supremedecisions.court.gov.il",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C4",
+            "query_he": "בית המשפט העליון \"הבטחה מנהלית\" \"ניגוד לחוק\" \"סמכות בלתי מורשית\" \"אינטרס ציבורי\" גבולות ואי־החלה בפסיקה",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4162,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawPrimary.aspx?t=lawlaws&lawitemid=2001395",
+                "title": "חוק שירות המדינה (מינויים), התשי״ט-1959",
+                "domain": "main.knesset.gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://main.knesset.gov.il/Activity/Legislation/Laws/pages/lawprimary.aspx?t=lawlaws&st=lawlaws&lawitemid=2001394",
+                "title": "חוק שירות המדינה (משמעת), התשכ״ג-1963",
+                "domain": "main.knesset.gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://main.knesset.gov.il/Activity/Legislation/Laws/pages/lawprimary.aspx?t=lawlaws&lawitemid=2001648",
+                "title": "חוק הפרשנות, התשמ״א-1981",
+                "domain": "main.knesset.gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://main.knesset.gov.il/Activity/Legislation/Laws/pages/lawprimary.aspx?t=lawlaws&lawitemid=2000184",
+                "title": "חוק יסוד: הממשלה",
+                "domain": "main.knesset.gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://main.knesset.gov.il/Activity/Legislation/Laws/pages/lawprimary.aspx?t=lawlaws&lawitemid=2000188",
+                "title": "חוק יסוד: השפיטה",
+                "domain": "main.knesset.gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C4",
+            "query_he": "חוק שירות המדינה, התשכ\"ז-1967 הוראות על סמכויות מקבלי החלטות וסמכות בלתי מורשית; חיפוש טקסט חוק ופרשנויות רלוונטיות",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4451,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/3-zamir.pdf",
+                "title": "הסמכות המינהלית",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://weller-law-office.com/%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%A9%D7%9C%D7%98%D7%95%D7%A0%D7%99%D7%AA/",
+                "title": "הבטחה שלטונית | הבטחה מינהלית",
+                "domain": "weller-law-office.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C4",
+            "query_he": "מאמר \"גבולות הדוקטרינת ההבטחה המנהלית\" \"ניגוד לחוק\" \"אינטרס ציבורי\" \"סמכות בלתי מורשית\" כתב עת משפטי",
+            "raw_count": 4,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 34,
+        "role_corrections": [
+          {
+            "to": "primary_statute",
+            "url": "https://www.nevo.co.il/law_html/law01/022_001.htm",
+            "from": "binding_case_law",
+            "title": "ע\"א 4920/01 כהן נ' עיריית הרצליה",
+            "admitted": true,
+            "claim_id": "C3"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://www.nevo.co.il/law_html/law01/020_004.htm",
+            "from": "binding_case_law",
+            "title": "בג\"ץ 585/01 קלכמן נ' ראש המטה הכללי",
+            "admitted": true,
+            "claim_id": "C3"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://www.nevo.co.il/law_html/law01/021_009.htm",
+            "from": "binding_case_law",
+            "title": "ע\"א 1761/02 רשות העתיקות נ' מפעלי תחנות בע\"מ",
+            "admitted": true,
+            "claim_id": "C3"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://www.nevo.co.il/law_html/law01/017_013.htm",
+            "from": "binding_case_law",
+            "title": "ע\"א 3828/98 ישראל נ' אבו חצירא",
+            "admitted": true,
+            "claim_id": "C3"
+          }
+        ]
+      }
+    },
+    "candidates": [
+      {
+        "role": "binding_case_law",
+        "score": 0.95,
+        "title": "בג\"ץ 135/75 סאי-טקס בע\"מ נ' שר המסחר והתעשייה",
+        "origin": "perplexity",
+        "snippet": "הודגש כי הבטחה שניתנה על-ידי בעל שררה בגדר סמכותו החוקית, בכוונה שיהיה לה תוקף משפטי, ושמקבלה הסתמך עליה, עשויה לחייב את הרשות כאשר בכוחה למלא אחריה.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "supremedecisions.court.gov.il",
+          "classified_source_class": "official_primary"
+        },
+        "query_he": "בית המשפט העליון פסקי דין \"הבטחה מנהלית\" OR \"ציפייה לגיטימית\" הגדרה וטבע משפטי האם מגלמת איסור שינוי הבטחה או זכות לסעד",
+        "source_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%5C13%2F575%2F001%2Fb13&fileName=13001575.B13&type=4",
+        "source_type": "supremedecisions.court.gov.il",
+        "candidate_id": "a9680986-17b4-43af-90fc-f5e5fe88bae4",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "ע\"א 4920/01 כהן נ' עיריית הרצליה",
+        "origin": "perplexity",
+        "snippet": "פסיקה של בית המשפט העליון בנושאי הבטחה מינהלית, סעד ואכיפה; עוסקת בשאלה האם ומתי יש להורות על קיום ההבטחה או להסתפק בפיצוי.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "role_corrected_from": "binding_case_law",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "בית המשפט העליון \"הבטחה מנהלית\" \"סעד\" \"אכיפה ספציפית\" \"פיצוי\" \"צו\" פסיקה על סוגי הסעדים שניתנים",
+        "source_url": "https://www.nevo.co.il/law_html/law01/022_001.htm",
+        "source_type": "nevo.co.il",
+        "candidate_id": "8fc63161-c76a-40a9-bcb3-3e9f99aba707",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "בג\"ץ 585/01 קלכמן נ' ראש המטה הכללי",
+        "origin": "perplexity",
+        "snippet": "פסק דין עקרוני של בג\"ץ בדבר אכיפת הבטחה מינהלית, שיקולי צדק, וסוגי הסעדים האפשריים כגון צו עשה או סעד חלופי של פיצויים.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "role_corrected_from": "binding_case_law",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "בית המשפט העליון \"הבטחה מנהלית\" \"סעד\" \"אכיפה ספציפית\" \"פיצוי\" \"צו\" פסיקה על סוגי הסעדים שניתנים",
+        "source_url": "https://www.nevo.co.il/law_html/law01/020_004.htm",
+        "source_type": "nevo.co.il",
+        "candidate_id": "b0ae4d8d-4fa2-41df-bdaa-963cf711f791",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "ע\"א 1761/02 רשות העתיקות נ' מפעלי תחנות בע\"מ",
+        "origin": "perplexity",
+        "snippet": "פסק דין של בית המשפט העליון על אכיפה/פיצוי ועל שיקולי הסעד המתאים כאשר מדובר בהתחייבות או בהבטחה של רשות ציבורית.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "role_corrected_from": "binding_case_law",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "בית המשפט העליון \"הבטחה מנהלית\" \"סעד\" \"אכיפה ספציפית\" \"פיצוי\" \"צו\" פסיקה על סוגי הסעדים שניתנים",
+        "source_url": "https://www.nevo.co.il/law_html/law01/021_009.htm",
+        "source_type": "nevo.co.il",
+        "candidate_id": "6155f87f-8026-491a-8923-5aaf5b27b8e8",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "ע\"א 3828/98 ישראל נ' אבו חצירא",
+        "origin": "perplexity",
+        "snippet": "פסיקה בעלת חשיבות לדיון בסעדים, לרבות צווי עשה ואכיפה ספציפית, והאיזון בין אכיפה לבין פיצוי בהקשר של התחייבויות שלטוניות.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "role_corrected_from": "binding_case_law",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "בית המשפט העליון \"הבטחה מנהלית\" \"סעד\" \"אכיפה ספציפית\" \"פיצוי\" \"צו\" פסיקה על סוגי הסעדים שניתנים",
+        "source_url": "https://www.nevo.co.il/law_html/law01/017_013.htm",
+        "source_type": "nevo.co.il",
+        "candidate_id": "8eedc971-41f4-4dfe-bba4-be9082514603",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק שירות המדינה (מינויים), התשי״ט-1959",
+        "origin": "perplexity",
+        "snippet": "מקור מרכזי להוראות בדבר מינוי בעלי סמכות בשירות המדינה, לרבות כשירות, מינוי, פיטורין והעברת סמכויות. רלוונטי לשאלת סמכויות מקבלי החלטות וסמכות בלתי מורשית.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "main.knesset.gov.il",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חוק שירות המדינה, התשכ\"ז-1967 הוראות על סמכויות מקבלי החלטות וסמכות בלתי מורשית; חיפוש טקסט חוק ופרשנויות רלוונטיות",
+        "source_url": "https://main.knesset.gov.il/Activity/Legislation/Laws/Pages/LawPrimary.aspx?t=lawlaws&lawitemid=2001395",
+        "source_type": "חקיקה ראשית ישראלית",
+        "candidate_id": "2d258033-8813-41b3-a7c3-10e71bac1186",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מינהלית לציבור",
+        "origin": "perplexity",
+        "snippet": "מאמר סקירה תמציתי-אקדמי על דוקטרינת ההבטחה המינהלית לציבור. הכותב: יואב דותן. מתאר את מקומה של ההבטחה המינהלית במשפט המנהלי, את ההבחנה בינה לבין שינוי מדיניות, ואת תנאי התחולה וההגנה על ציפייה לגיטימית.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר \"הבטחה מנהלית\" \"ציפייה לגיטימית\" הגדרה טבע משפטי כתב עת משפטי (מאמר סקירה על הדוקטרינה בישראל)",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+        "source_type": "article (PDF via law faculty site)",
+        "candidate_id": "b4f55b2b-5615-4450-bc2c-4c9af0cee098",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי בכתב העת 'משפטים' העוסק בהגנת ההסתמכות במשפט המנהלי, ובהקשר זה גם בציפייה לגיטימית ובהבטחה מינהלית. מתאים כמקור סקירה לדוקטרינה בישראל. קישור ישיר ל-PDF.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר \"הבטחה מנהלית\" \"ציפייה לגיטימית\" הגדרה טבע משפטי כתב עת משפטי (מאמר סקירה על הדוקטרינה בישראל)",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+        "source_type": "law review article (PDF)",
+        "candidate_id": "3b65af13-aeb0-4ce1-9873-f6942827258c",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מינהלית",
+        "origin": "perplexity",
+        "snippet": "מאמר בכתב העת משפטים. עוסק בדוקטרינת ההבטחה המינהלית ובתנאיה, ובהם סמכות, בהירות ותוקף מחייב של ההבטחה. מחבר/ת ושנה אינם מופיעים במטא-דאטה שסופקה בקישור.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר \"תנאי החלת דוקטרינת ההבטחה המנהלית\" \"הסתמכות סבירה\" \"בהירות\" \"סמכות\" כתב עת למשפטים",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+        "source_type": "מאמר בכתב עת",
+        "candidate_id": "bc6f548e-cfb0-46ce-99d2-106bc03edaea",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי בכתב העת קרית המשפט. עוסק בהתפתחות דוקטרינת ההבטחה המינהלית ובתנאים להחלתה, כולל סמכות המבטיח, בהירות ההבטחה והסתמכות. לפי הקובץ המצורף: 'הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?'",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר \"תנאי החלת דוקטרינת ההבטחה המנהלית\" \"הסתמכות סבירה\" \"בהירות\" \"סמכות\" כתב עת למשפטים",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+        "source_type": "מאמר בכתב עת",
+        "candidate_id": "c1f687c6-fe46-4fee-bdb2-9dd8de2667e3",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "פיצויים עונשיים סמויים בגין פיטורים שלא כדין המהווים הפרת חוזה עבודה",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי ב-JSTOR הנוגע לסעדים, אכיפה ופיצוי, ושיקולי מדיניות והקשר תעסוקתי; עשוי לסייע להשוואה תאורטית לסוגיות של תרופות ואיזון אינטרסים.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "jstor.org",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר \"סעדי הבטחה מנהלית\" \"פיצוי\" \"אכיפה ספציפית\" \"איזון אינטרסים\" כתב עת משפטי סקירה והשוואה",
+        "source_url": "https://www.jstor.org/stable/26547246",
+        "source_type": "מאמר אקדמי / JSTOR",
+        "candidate_id": "3040a4e6-532b-479a-9b34-07d4caeb4df6",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הסמכות המינהלית",
+        "origin": "perplexity",
+        "snippet": "מחבר: לא צוין בתוצאת החיפוש. כותרת: הסמכות המינהלית. הוצאה: קובץ אקדמי/פרק לימודי של הפקולטה למשפטים. שנה: לא צוין כאן. דן בסמכות מינהלית, שיקול דעת, והקשר בין סמכות לבין מגבלות על פעולת הרשות.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר \"גבולות הדוקטרינת ההבטחה המנהלית\" \"ניגוד לחוק\" \"אינטרס ציבורי\" \"סמכות בלתי מורשית\" כתב עת משפטי",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/3-zamir.pdf",
+        "source_type": "ספר/פרק אקדמי",
+        "candidate_id": "862cfe71-d2c8-402e-af02-d16fd65d9d4b",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 22463,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 45568,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 2,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 41973,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 25233,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial"
+      },
+      {
+        "ms": 27181,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      },
+      {
+        "ms": 94013,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "drafter.placement_repair"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://israeliconstitutionalism.wordpress.com/2019/12/24/%D7%94%D7%96%D7%95%D7%92-%D7%94%D7%9E%D7%95%D7%96%D7%A8-%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA-%D7%95%D7%97%D7%95%D7%96%D7%94-%D7%A8%D7%92%D7%95%D7%9C%D7%98%D7%95%D7%A8/",
+        "role": "scholarship",
+        "title": "הזוג המוזר: הבטחה מנהלית וחוזה רגולטורי בפסיקתו של בג\"ץ",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר \"הבטחה מנהלית\" \"ציפייה לגיטימית\" הגדרה טבע משפטי כתב עת משפטי (מאמר סקירה על הדוקטרינה בישראל)",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID3437356_code1324879.pdf?abstractid=3265192&mirid=1",
+        "role": "scholarship",
+        "title": "על הבטחות מינהליות, חוזים רגולטוריים וחיות אחרות במתווה הגז הטבעי",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר \"הבטחה מנהלית\" \"ציפייה לגיטימית\" הגדרה טבע משפטי כתב עת משפטי (מאמר סקירה על הדוקטרינה בישראל)",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://erht.co.il/administrative-promise-by-governmental-authority/",
+        "role": "scholarship",
+        "title": "הבטחה מנהלית של רשות שלטונית",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר \"הבטחה מנהלית\" \"ציפייה לגיטימית\" הגדרה טבע משפטי כתב עת משפטי (מאמר סקירה על הדוקטרינה בישראל)",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "http://hapraklit.co.il/_Uploads/dbsAttachedFiles/6_anidjar.pdf",
+        "role": "scholarship",
+        "title": "פיצויים",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר \"סעדי הבטחה מנהלית\" \"פיצוי\" \"אכיפה ספציפית\" \"איזון אינטרסים\" כתב עת משפטי סקירה והשוואה",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://weller-law-office.com/%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%A9%D7%9C%D7%98%D7%95%D7%A0%D7%99%D7%AA/",
+        "role": "scholarship",
+        "title": "הבטחה שלטונית | הבטחה מינהלית",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר \"גבולות הדוקטרינת ההבטחה המנהלית\" \"ניגוד לחוק\" \"אינטרס ציבורי\" \"סמכות בלתי מורשית\" כתב עת משפטי",
+        "drop_reason": "discovery_only"
+      }
+    ]
+  }
+}

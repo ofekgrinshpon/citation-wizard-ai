@@ -69,6 +69,11 @@ function summarise(fixtureId: string, qaRow: any) {
       `missing=${JSON.stringify(mv.missing_sources)} unused=${JSON.stringify(mv.unused_sources)} ` +
       `internal_id_leak=${mv.internal_id_leak} leaked=${JSON.stringify(mv.leaked_tokens)}`,
   );
+  const pl = mv.placement ?? {};
+  console.log(
+    `placement.ok=${pl.ok} clusters=${pl.cluster_count} out_of_order=${pl.out_of_order_count} ` +
+      `end_dumps=${pl.end_paragraph_dump_count} repaired=${pl.repaired ?? false} repair_failed=${pl.repair_failed ?? false}`,
+  );
   const sup = v.counts?.by_support ?? {};
   console.log(
     `support: direct=${sup.direct ?? 0} partial=${sup.partial ?? 0} ` +
@@ -129,6 +134,11 @@ async function main() {
     process.exit(1);
   }
   const triggered: Array<{ id: string; run_id: string; question: string }> = [];
+  const summary: { tag: string; generated_at: string; fixtures: any[]; aggregate?: any } = {
+    tag: "p7-phaseA",
+    generated_at: new Date().toISOString(),
+    fixtures: [],
+  };
   for (const fx of FIXTURES) {
     const t = await trigger(fx.question);
     console.log(`triggered ${fx.id} status=${t.status} run_id=${t.run_id}`);
@@ -147,7 +157,29 @@ async function main() {
       continue;
     }
     summarise(t.id, row);
-    const reportPath = `reports/legal-research-v1-p5-${t.id}.json`;
+    const reportPath = `reports/legal-research-v1-p7-phaseA-${t.id}.json`;
+    const md = row.metadata ?? {};
+    const d = md.drafter ?? {};
+    const mv = d.marker_validation ?? {};
+    const pl = mv.placement ?? {};
+    const v = md.verifier ?? {};
+    const usableIds = new Set((v.usable ?? []).map((u: any) => u.candidate_id));
+    const used = d.used_sources ?? [];
+    const phaseA = {
+      fixture_id: t.id,
+      marker_validation_ok: !!mv.ok,
+      internal_id_leak: !!mv.internal_id_leak,
+      cluster_count: pl.cluster_count ?? null,
+      out_of_order_count: pl.out_of_order_count ?? null,
+      end_paragraph_dump_count: pl.end_paragraph_dump_count ?? null,
+      placement_ok: pl.ok ?? null,
+      placement_repaired: pl.repaired ?? false,
+      placement_repair_failed: pl.repair_failed ?? false,
+      used_sources_count: used.length,
+      used_sources_subset_of_usable: used.every((u: any) => usableIds.has(u.candidate_id)),
+      footnote_count: (row.footnotes ?? []).length,
+    };
+    summary.fixtures.push(phaseA);
     await Bun.write(
       reportPath,
       JSON.stringify(
@@ -156,6 +188,7 @@ async function main() {
           fixture: { id: t.id, question: t.question },
           qa_log_id: row.id,
           run_id: t.run_id,
+          phaseA,
           answer: row.answer,
           footnotes: row.footnotes,
           metadata: row.metadata,
@@ -166,6 +199,28 @@ async function main() {
     );
     console.log(`wrote ${reportPath}`);
   }
+
+  // Aggregate Phase A summary.
+  const f = summary.fixtures;
+  summary.aggregate = {
+    count: f.length,
+    marker_ok: f.filter((x: any) => x.marker_validation_ok).length,
+    no_leak: f.filter((x: any) => !x.internal_id_leak).length,
+    placement_ok: f.filter((x: any) => x.placement_ok).length,
+    placement_repair_triggered: f.filter((x: any) => x.placement_repaired || x.placement_repair_failed).length,
+    placement_repair_accepted: f.filter((x: any) => x.placement_repaired).length,
+    placement_repair_discarded: f.filter((x: any) => x.placement_repair_failed).length,
+    all_used_in_usable: f.filter((x: any) => x.used_sources_subset_of_usable).length,
+    total_clusters: f.reduce((s: number, x: any) => s + (x.cluster_count ?? 0), 0),
+    total_end_dumps: f.reduce((s: number, x: any) => s + (x.end_paragraph_dump_count ?? 0), 0),
+    total_out_of_order: f.reduce((s: number, x: any) => s + (x.out_of_order_count ?? 0), 0),
+  };
+  await Bun.write(
+    "reports/legal-research-v1-p7-phaseA-summary.json",
+    JSON.stringify(summary, null, 2),
+  );
+  console.log("\n=== Phase A summary ===");
+  console.log(JSON.stringify(summary.aggregate, null, 2));
 }
 
 main().catch((e) => {

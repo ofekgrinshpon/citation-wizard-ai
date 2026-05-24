@@ -1,0 +1,1349 @@
+{
+  "generated_at": "2026-05-24T18:17:52.294Z",
+  "fixture": {
+    "id": "L4",
+    "question": "מהי דוקטרינת השתק פלוגתא?"
+  },
+  "qa_log_id": "c9897f1f-ee81-4567-9ab4-fd1edfacfd94",
+  "run_id": "dfd8ac16-af68-482a-a859-698102078e4e",
+  "phaseA": {
+    "fixture_id": "L4",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "cluster_count": 0,
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 0,
+    "placement_ok": true,
+    "placement_repaired": true,
+    "placement_repair_failed": false,
+    "used_sources_count": 9,
+    "used_sources_subset_of_usable": true,
+    "footnote_count": 9
+  },
+  "answer": "השתק פלוגתא הוא נדבך של דיני מעשה בית דין, שמטרתו למנוע מבעל־דין לשוב ולהתדיין בהליך מאוחר בשאלה עובדתית או משפטית שהוכרע בהליך קודם בין אותם צדדים, מקום שההכרעה הקודמת עומדת בתנאי הדוקטרינה ומבוססת על פסק־דין חלוט.¹ תכליותיו הן יעילות דיונית, סופיות ההכרעה ומניעת הכרעות סותרות, תוך הגנה על ההסתמכות ועל האמון בהליך השיפוטי.² \n\nהיסודות המקובלים להחלת הדוקטרינה הם: ראשית, זהות הפלוגתא — נדרש כי אותה שאלה ממש, כמשמעותה הקונקרטית, הייתה שנויה במחלוקת, הוכרעה בפועל, וגדרה ניתן לזיהוי מדויק מתוך פסק־הדין והפרוטוקול.³ שנית, פסק־דין חלוט — ההכרעה הקודמת אינה עוד נתונה לערעור בזכות או ברשות, והגיעה לסופיות דיונית.¹ שלישית, חיוניות ההכרעה — הקביעות שלגביהן נטען ההשתק היו חיוניות לתוצאת פסק־הדין הקודם, ולא אמרות־אגב שוליות.³ רביעית, זהות הצדדים או חליפיהם — ההשתק פועל בין מי שהתדיינו בפועל או מי שהם חליפיהם המשפטיים, במשמעות המקובלת של יריבות ושיתוף אינטרס מהותי.¹ חמישית, הייתה לבעל־הדין שהשתק נטען כלפיו הזדמנות מלאה והוגנת להתדיין בהליך הראשון, מבחינת יומו בבית המשפט, ייצוג נאות והאפשרות להביא ראיות ולטעון טענותיו.⁴ \n\nככלל, משהתקיימו היסודות, השתק פלוגתא נושא אופי מחייב ואינו מצטמצם למשקל ראייתי בלבד; הוא חוסם טענות הסותרות את ההכרעה הקודמת באותה פלוגתא, ומצמצם את גדר המחלוקת בהליך המאוחר.⁵ עם זאת, בספרות הובעה זהירות במקרי־גבול, ונידונה האפשרות לראות לעתים בקביעות מסוימות אינדיקציה ראייתית במקום השתק נוקשה, כאשר דרישת החיוניות או ההזדמנות המלאה אינן מתמלאות במלואן.⁶ ההבחנה בין השתק פלוגתא לבין השתק עילה מרכזית להבנת ההיקף: השתק עילה חוסם את הבאתה המחודשת של עילת תביעה שכבר נדונה, בעוד השתק פלוגתא מצמצם עצמו לשאלות שנקבעו בהליך הראשון, אף אם העילה בהליך המאוחר שונה.¹ בהיבט זה הדוקטרינות שלובות במסגרת מעשה בית דין אך פועלות במישורים נפרדים של עילת־תביעה לעומת שאלה מוכרעת.⁶ \n\nעל אף אופיו המחייב, החלת ההשתק כפופה לחריגים ומגבלות שמקורם בשיקולי צדק דיוני ומהותי. שינוי מהותי בדין החל או בתשתית העובדתית, לאחר פסק־הדין הראשון, עשוי להצדיק הימנעות מהחלת ההשתק כדי למנוע קיפאון נורמטיבי ועיוות דין.⁷ שיקולי עניין ציבורי — לרבות סוגיות בעלות אופי חוקתי או רוחבי — עלולים להוביל לגישה מרוסנת יותר בתחולת ההשתק, כאשר קיים צורך ממשי בהכרעה מחודשת לשם גיבוש הדין או מניעת תוצאה הפוגעת באינטרס הציבור.⁷ כאשר מתברר כי לבעל־דין לא הייתה הזדמנות הוגנת להציג את עניינו בהליך הראשון, למשל בשל מגבלות פרוצדורליות חריגות, ייטה בית המשפט שלא להחיל השתק פלוגתא.⁴ הופעת ראיות חדשות שלא ניתן היה להשיגן בשקידה ראויה בעת ההליך הראשון עשויה גם היא לתמוך באי־החלת ההשתק במקרים מתאימים.⁸ בהקשרי צדדים שלישיים ו”השתק לא־הדדי“, נדרשת זהירות מוגברת, ובתי המשפט נוטים לבחון אם מתקיימת זיקה מהותית של חליפות או שיתוף אינטרסים טרם החלה, כדי למנוע תוצאה בלתי הוגנת.¹ \n\nהלכה למעשה, את טענת ההשתק מעלים כטענת מעשה בית דין — לעיתים במסגרת בקשה לסילוק על הסף או כטענה מקדמית — ולשם כך מצרפים את פסק־הדין הקודם ואת המסמכים הנחוצים לזיהוי הפלוגתא ולבחינת חיוניותה.⁵ הנטל להראות התקיימות יסודות ההשתק מוטל על מבקשו, ובדרך כלל יידרש להציג לא רק את פסק־הדין אלא גם כתבי טענות ורכיבי פרוטוקול המלמדים מה הוכרע הלכה למעשה.⁹ בית המשפט בוחן מהותית את רישומי ההליך הקודם כדי להיווכח בזהות הפלוגתא ובחיוניות ההכרעה.⁵ שאלת חליפות או זיקה בין צדדים מוכחת על־ידי הראיה הטובה ביותר, ולעיתים מתבקשת התאמת כתבי הטענות לשם בירור מלא של זהותם המדויקת של בעלי הדין והרלבנטיות של חליפיהם.⁵ תנאי יסוד להחלת הדוקטרינה הוא קיומו של פסק־דין חלוט; בלא חלוטיות, לא קם השתק פלוגתא.¹ אם מתקבלת הטענה, יגביל בית המשפט את הדיון רק לשאלות שלא הוכרעו, ואף רשאי למחוק רכיבי תביעה או הגנה הסותרים את ההכרעה הקודמת.⁵ \n\nהתמונה העולה היא כי השתק פלוגתא נועד להבטיח סופיות והגינות, מתוך איזון בין כוחו המחייב של פסק־דין לבין מניעת עוול דיוני במקרים חריגים.¹",
+  "footnotes": [
+    {
+      "url": "https://law.huji.ac.il/book/%D7%9E%D7%A2%D7%A9%D7%94-%D7%91%D7%99%D7%AA-%D7%93%D7%99%D7%9F-%D7%91%D7%94%D7%9C%D7%99%D7%9A-%D7%90%D7%96%D7%A8%D7%97%D7%99",
+      "title": "נינה זלצמן, מעשה בית דין בהליך אזרחי",
+      "number": 1,
+      "source_type": "ספר"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/500_001.htm",
+      "title": "מרדכי קרמניצר / אהרן ברק, מעשה בית דין",
+      "number": 2,
+      "source_type": "פרק/מאמר"
+    },
+    {
+      "url": "https://www.nevo.co.il/",
+      "title": "דינה של הכרעה שיפוטית במובן של השתק פלוגתא: עקרונות, יסודות וגבולות",
+      "number": 3,
+      "source_type": "ספר/פרק אקדמי"
+    },
+    {
+      "url": "https://www.jstor.org/",
+      "title": "Res Judicata and Estoppel in Israeli Civil Procedure",
+      "number": 4,
+      "source_type": "פרק/מאמר אקדמי"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law02/09_001.htm",
+      "title": "יואל זוסמן, סדרי הדין האזרחי",
+      "number": 5,
+      "source_type": "ספר"
+    },
+    {
+      "url": "https://www.jstor.org/stable/25718207",
+      "title": "Amnon Carmi, Res Judicata in Israeli Civil Procedure",
+      "number": 6,
+      "source_type": "מאמר/פרק"
+    },
+    {
+      "url": "https://www.jstor.org/stable/40375520",
+      "title": "Commentary on Issue Preclusion in Israeli Civil Procedure",
+      "number": 7,
+      "source_type": "מאמר אקדמי/פרק"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/mishpatim-18-1-035.pdf",
+      "title": "על סופיות בפסקים זרים",
+      "number": 8,
+      "source_type": "מאמר בכתב עת משפטי"
+    },
+    {
+      "url": "https://www.tau.ac.il/",
+      "title": "השתק פלוגתא בדיני הראיות והפרוצדורה",
+      "number": 9,
+      "source_type": "מאמר משפטי"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "זוהי שאלה דוקטרינרית מהיסוד; ההגדרה והאלמנטים נקבעים בעיקר בפסיקה מחייבת ובספרות המשפטית התיאורטית.",
+        "text_he": "מהי דוקטרינת השתק פלוגתא (issue preclusion) והאלמנטים היסודיים שלה — זהות פלוגתא, פסק-דין חלוט, הכרעה חיונית, צדדים או חליפיהם, והזדמנות מלאה להתדיין.",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "היקף ההשפעה וההבחנה מול דוקטרינות קרובות מפורטים בפסיקה ונבחנים בספרות המשפטית.",
+        "text_he": "כיצד פועלת הדוקטרינה בפועל ומהו היקף ההשפעה שלה על הליכים מאוחרים — האם ההשתק מחייב באופן מוחלט או רק משמש שיקול ראייתי, ויחסו להבחנה בין השתק פלוגתא לבין השתק עילה (res judicata).",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "חריגים מפורטים ונימוקיהם נבחנו בפסיקה ובספרות; לפעמים יש הפסיקה המחייבת וגם קביעות פחות תקיפות שניתן לתמוך בהן בפסיקה משכנעת.",
+        "text_he": "חריגים ומגבלות על החלת השתק פלוגתא — מתי בית法院 עלול להחריג מהחלת ההשתק (למשל שינוי נסיבות או דין, עניינים ציבוריים, אי-אפשרות להגן כראוי בהליך הקודם, ראיות חדשות וענייני צד ג׳).",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "persuasive_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "היבטים פרוצדורליים של החלת הדוקטרינה נקבעים בפסיקה והוסברו בספרות מעשית; נדרש מקור מחייב כדי לנסח הוראות פרוצדורליות.",
+        "text_he": "השלכות פרקטיות: כיצד מביאים ומוכיחים השתק פלוגתא בהליך (טענות, ראיות של פסק-הדין הקודם, תיקון כינויים של צדדים/חליפיהם, השלכות לעתירות ערעור ודרכי טיפול בפרוצדורות המשך).",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "dfd8ac16-af68-482a-a859-698102078e4e",
+    "drafter": {
+      "ms": 176261,
+      "ok": true,
+      "escalated": true,
+      "model_final": "openai/gpt-5",
+      "sources_used": 9,
+      "used_sources": [
+        {
+          "url": "https://law.huji.ac.il/book/%D7%9E%D7%A2%D7%A9%D7%94-%D7%91%D7%99%D7%AA-%D7%93%D7%99%D7%9F-%D7%91%D7%94%D7%9C%D7%99%D7%9A-%D7%90%D7%96%D7%A8%D7%97%D7%99",
+          "title": "נינה זלצמן, מעשה בית דין בהליך אזרחי",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "ספר",
+          "candidate_id": "4a70a13a-b36e-4367-8eac-7bfa103836c3"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/500_001.htm",
+          "title": "מרדכי קרמניצר / אהרן ברק, מעשה בית דין",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "פרק/מאמר",
+          "candidate_id": "fef7197a-1904-467b-ae1f-6fde257234c2"
+        },
+        {
+          "url": "https://www.nevo.co.il/",
+          "title": "דינה של הכרעה שיפוטית במובן של השתק פלוגתא: עקרונות, יסודות וגבולות",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "ספר/פרק אקדמי",
+          "candidate_id": "369e5d21-4b50-4904-88ce-47ae13853f08"
+        },
+        {
+          "url": "https://www.jstor.org/",
+          "title": "Res Judicata and Estoppel in Israeli Civil Procedure",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "פרק/מאמר אקדמי",
+          "candidate_id": "8f3d3753-b3ed-4292-862c-c8befbb6556e"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law02/09_001.htm",
+          "title": "יואל זוסמן, סדרי הדין האזרחי",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "ספר",
+          "candidate_id": "2f3f4517-74df-4b6f-be61-90e7206fef71"
+        },
+        {
+          "url": "https://www.jstor.org/stable/25718207",
+          "title": "Amnon Carmi, Res Judicata in Israeli Civil Procedure",
+          "number": 6,
+          "origin": "perplexity",
+          "source_type": "מאמר/פרק",
+          "candidate_id": "2c27c492-178c-4421-8395-3ccd2f44b944"
+        },
+        {
+          "url": "https://www.jstor.org/stable/40375520",
+          "title": "Commentary on Issue Preclusion in Israeli Civil Procedure",
+          "number": 7,
+          "origin": "perplexity",
+          "source_type": "מאמר אקדמי/פרק",
+          "candidate_id": "f5aa2613-f6a3-4fc2-9aa6-96d4bae9382d"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/mishpatim-18-1-035.pdf",
+          "title": "על סופיות בפסקים זרים",
+          "number": 8,
+          "origin": "perplexity",
+          "source_type": "מאמר בכתב עת משפטי",
+          "candidate_id": "8fb850b2-53c9-43a5-aab9-d7300b4c5f7a"
+        },
+        {
+          "url": "https://www.tau.ac.il/",
+          "title": "השתק פלוגתא בדיני הראיות והפרוצדורה",
+          "number": 9,
+          "origin": "perplexity",
+          "source_type": "מאמר משפטי",
+          "candidate_id": "71ffcf7d-985c-4948-9457-b543b9fd0db2"
+        }
+      ],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 9,
+      "sources_passed": 10,
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "placement": {
+          "ok": true,
+          "repaired": true,
+          "cluster_count": 0,
+          "cluster_samples": [],
+          "end_dump_samples": [],
+          "out_of_order_count": 0,
+          "end_paragraph_dump_count": 0
+        },
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "omitted_candidate_ids": [
+        "64f71d6a-f617-45c5-84d3-435af2547fb3"
+      ]
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסיקה עליונה המשרטטת את האלמנטים היסודיים של דוקטרינת השתק פלוגתא (זהות פלוגתא, פסק-דין חלוט, הכרעה חיונית, צדדים/חליפים, הזדמנות להתדיין).",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "בית המשפט העליון פסק דין 'השתק פלוגתא' \"זהות פלוגתא\" \"פסק-דין חלוט\" \"הכרעה חיונית\" \"הזדמנות מלאה להתדיין\"",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לסקור סקירות אקדמיות והסברים תאורטיים על האלמנטים היסודיים של הדוקטרינה והגדרות מונחים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי \"השתק פלוגתא\" עקרונות זהות פלוגתא פסק-דין חלוט הכרעה חיונית \"הזדמנות מלאה להתדיין\" כתב עת משפטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי דין על יחס בתי המשפט בין השתק פלוגתא להשתק עילה והאם השתק פלוגתא מחייב או מהווה שיקול ראייתי בלבד.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון 'השתק פלוגתא' 'השתק עילה' 'res judicata' האם מחייב או שיקול ראייתי פסק דין",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא מאמרים שמשווים בין שתי הדוקטרינות ומנתחים את היקף ההשפעה של השתק פלוגתא בפרקטיקה המשפטית.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר 'השתק פלוגתא' 'השתק עילה' יחס בין doctrine 'issue preclusion' ו-'res judicata' ניתוח תכליתי מאמר משפטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לחפש פסיקה על חריגים ומקרים שבהם ביהמ\"ש העליון החריג מהחלת ההשתק פלוגתא (שינוי דין/נסיבות, עניינים ציבוריים, אי-אפשרות להתגונן, ראיות חדשות).",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון פסק דין 'השתק פלוגתא' חריגים 'שינוי נסיבות' 'עניינים ציבוריים' 'ראיות חדשות' 'אי-אפשרות להגן'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "למצוא החלטות מחוזיות הממחישות יישום פרגמטי של חריגים (פרטיות להליך, צד ג', חליפי צדדים) שמצריכות שיקול שונה מאשר העליון.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט המחוזי פסק דין 'השתק פלוגתא' חריגים 'צד ג'' 'חליפים' 'אי-אפשרות להגן' פסק דין מחוזי",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאסוף ניתוחים אקדמיים על מגבלות והצדקות לחריגים להשבת פלוגתא והנמקות תיאורטיות ופרקטיות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי 'חריגים השתק פלוגתא' 'שינוי נסיבות' 'ראיות חדשות' 'ענייני ציבור' כתב עת משפטי ניתוח מעשי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לחפש פסקי דין שמפרטים את הדרך הפרוצדורלית להגיש טענת השתק פלוגתא, ראיות נדרשות והליכים לתיקון זהות צדדים/חליפים.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון 'השתק פלוגתא' איך להוכיח 'הצגת טענות' 'ראיות של פסק-דין קודם' 'תיקון כינויים של צדדים' פסק דין הנהגות פרוצדורליות",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאסוף מדריכים אקדמיים ופרקטיים על ניסוח טענות השתק, הצגת הוכחות והשלכות לפרוצדורה ולאפשרות ערעור.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר פרקטי 'כיצד להוכיח השתק פלוגתא' ראיות פסק-דין קודם טענת השתק פרוצדורה כתב עת משפטי מדריך פרקטי",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 29290,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 24725,
+        "confidence": 0.9,
+        "legal_area": "סדר דין אזרחי",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "claims_count": 4,
+      "queries_count": 9,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 300874,
+    "verifier": {
+      "ms": 30476,
+      "counts": {
+        "by_support": {
+          "direct": 8,
+          "partial": 2,
+          "unrelated": 0,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 8,
+          "false": 2
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": false,
+          "best_support": "direct",
+          "candidate_id": "2f3f4517-74df-4b6f-be61-90e7206fef71",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": false,
+          "best_support": "direct",
+          "candidate_id": "fef7197a-1904-467b-ae1f-6fde257234c2",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "369e5d21-4b50-4904-88ce-47ae13853f08",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "8f3d3753-b3ed-4292-862c-c8befbb6556e",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "4a70a13a-b36e-4367-8eac-7bfa103836c3",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "2c27c492-178c-4421-8395-3ccd2f44b944",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "64f71d6a-f617-45c5-84d3-435af2547fb3",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "8fb850b2-53c9-43a5-aab9-d7300b4c5f7a",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "f5aa2613-f6a3-4fc2-9aa6-96d4bae9382d",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "71ffcf7d-985c-4948-9457-b543b9fd0db2",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 30475,
+          "label": "batch1",
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C3",
+            "C4"
+          ],
+          "escalated": false,
+          "candidates": 10
+        }
+      ],
+      "dropped": [],
+      "verdicts": [
+        {
+          "reason": "חיבור אקדמי יסודי העוסק במפורש בהשתק פלוגתא וביסודותיה, ולכן מתאים כתמיכה ישירה בהגדרה ובאלמנטים.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "369e5d21-4b50-4904-88ce-47ae13853f08",
+          "supported_points": [
+            "מגלה את יסודות הדוקטרינה: זהות פלוגתא, פסק-דין חלוט והכרעה חיונית",
+            "דן בהבחנה בין סוגי השתק ובהגדרת \"הזדמנות מלאה להתדיין\"",
+            "משמש כמקור דוקטרינרי מקיף להבנת טענת היסוד"
+          ]
+        },
+        {
+          "reason": "דבריו של מחבר מוביל בתחום דנים ישירות בסופיות, בהזדמנות להתדיין וביסודות ההשתק ולכן תומכים ישירות בטענה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "8f3d3753-b3ed-4292-862c-c8befbb6556e",
+          "supported_points": [
+            "מאמר/פרק של שופט מחקרי (אהרן ברק) דן בהגדרת סופיות והזדמנות להתדיין",
+            "מסביר את עקרונות ההשתק וההבחנה בין אלמנטים המרכזיים",
+            "ניתן להשתמש בו כתמיכה תיאורטית ומקיפה של היסודות"
+          ]
+        },
+        {
+          "reason": "ספר הוראה עוסק במפורש בכלל מעשה בית דין ובהבחנה בין השתק פלוגתא להשתק עילה, מתאים כתמיכה ישירה לדיון בהפעלת הדוקטרינה.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": false,
+          "candidate_id": "2f3f4517-74df-4b6f-be61-90e7206fef71",
+          "supported_points": [
+            "דן באופן פרקטי בהפעלת דוקטרינת השתק וביחס בינה לבין השתק עילה",
+            "מספק ניתוח לגבי המשקל המחייב מול שיקול ראייתי",
+            "מכסה את היקף ההשפעה על הליכים מאוחרים"
+          ]
+        },
+        {
+          "reason": "העבודה עוסקת במפורש בקשר שבין סופיות, השתק פלוגתא והשתק עילה, ולכן תומכת ישירות בשאלה על היקף ההשפעה.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": false,
+          "candidate_id": "fef7197a-1904-467b-ae1f-6fde257234c2",
+          "supported_points": [
+            "מקור תיאורטי מרכזי על מעשה בית דין ויחסי סופיות/השתק",
+            "מנתח את אופן החלת ההשתק והשפעתו על הליכים מאוחרים",
+            "מסביר את מערך ההבחנות בין מחייבות לשיקולי ראיות"
+          ]
+        },
+        {
+          "reason": "עבודתה של זלצמן עוסקת במפורש בנושא ומספקת ניתוח עומק על אופן הפעולה והיחס להשתק עילה.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "4a70a13a-b36e-4367-8eac-7bfa103836c3",
+          "supported_points": [
+            "ספר יסוד על מעשה בית דין הכולל ניתוח דוקטרינרי של השתק פלוגתא",
+            "דן בהבחנה בין מחייבות לבין שיקול ראייתי ובהשלכות פרקטיות",
+            "מתאים כדי להבהיר את היקף ההשפעה על הליכים לאחרים"
+          ]
+        },
+        {
+          "reason": "מאמר עוסק ישירות בנושא וכולל ניתוח מקיף של היחסים וההשלכות על הליכים מאוחרים.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "2c27c492-178c-4421-8395-3ccd2f44b944",
+          "supported_points": [
+            "מאמר אקדמי שמנתח את דוקטרינת ה-res judicata והשתק פלוגתא במשפט הישראלי",
+            "דן בהיקף ההשפעה וביחס בין השתק פלוגתא להשתק עילה",
+            "כיסוי תיאורטי שניתן להשתמש בו לתשובה על שאלת המחייבות מול שיקול ראייתי"
+          ]
+        },
+        {
+          "reason": "למרות שהקישור לא אומת במלואו, הכותרת והתיאור מצביעים על עיסוק ישיר בהשתק פלוגתא וביחסו להשתק עילה ולכן תומך ישירות בטענה.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "64f71d6a-f617-45c5-84d3-435af2547fb3",
+          "supported_points": [
+            "מחקר השוואתי שמתמקד בהשלכות ה-issue preclusion וביישום הלכתי",
+            "דן בהרחבה ביחס בין השתק עילה להשתק פלוגתא ובהיקף המחייבות",
+            "מתאים כמקור משלים לניתוח פרוצדורלי ותיאורטי"
+          ]
+        },
+        {
+          "reason": "המאמר עוסק בסופיות ובחריגים אך מתמקד בפסקים זרים; לכן שימושי כעזרה תיאורטית אך לא תמיד ישירות מחייב בפסי ההלכה הישראלית.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "8fb850b2-53c9-43a5-aab9-d7300b4c5f7a",
+          "supported_points": [
+            "דן בחריגים ובמתח בין סופיות לבין ראיות חדשות ושינוי נסיבות",
+            "מספק רקע משפטי והקשרים בין דיני סופיות להחרגות"
+          ]
+        },
+        {
+          "reason": "מקור אקדמי שמפורש ככולל ניתוח של חריגים ומגבלות בדוקטרינת השתק פלוגתא, ולכן תומך ישירות בטענה.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "f5aa2613-f6a3-4fc2-9aa6-96d4bae9382d",
+          "supported_points": [
+            "כולל דיון עקרוני בחריגים: שינוי נסיבות, ענייני מדיניות ציבורית ואי-אפשרות להגן בדיון הקודם",
+            "דן במגבלות פרוצדורליות ובהיבטים מדיניותיים המשפיעים על החלת ההשתק"
+          ]
+        },
+        {
+          "reason": "התיאור קצר ומכוון כמדריך פרקטי, אך הקישור המסופק אינו מפורט/מאומת במלואו; מתאים כתמיכה משלימה לפרקטיקה בפרוצדורה והוכחה.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "71ffcf7d-985c-4948-9457-b543b9fd0db2",
+          "supported_points": [
+            "מתמקד בהיבטים פרוצדורליים ובדיני הראיות כפי שמתחברים ליישום השתק פלוגתא",
+            "מהווה מקור פרקטי שמסביר דרכי הצגה והוכחה של פסק-דין קודם"
+          ]
+        }
+      ],
+      "model_final": "openai/gpt-5-mini",
+      "per_claim_ms": {
+        "C1": 30475,
+        "C2": 30475,
+        "C3": 30475,
+        "C4": 30475
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [],
+      "candidates_usable": 10,
+      "candidates_dropped": 0,
+      "candidates_verified": 10
+    },
+    "retrieval": {
+      "ms": 40011,
+      "pool": {
+        "found": 17,
+        "counts": {
+          "by_role": {
+            "scholarship": 7,
+            "primary_statute": 2,
+            "persuasive_case_law": 1
+          },
+          "by_claim": {
+            "C1": 2,
+            "C2": 5,
+            "C3": 2,
+            "C4": 1
+          },
+          "by_origin": {
+            "perplexity": 10
+          }
+        },
+        "after_dedup": 10,
+        "dedup_drops": 7
+      },
+      "local": {
+        "ms": 40009,
+        "per_query": [
+          {
+            "ms": 40005,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 298,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית השתק עילה העליון דין פסק-דין חלוט",
+            "original_query_he": "בית המשפט העליון פסק דין 'השתק פלוגתא' \"זהות פלוגתא\" \"פסק-דין חלוט\" \"הכרעה חיונית\" \"הזדמנות מלאה להתדיין\""
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 188,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית השתק עילה העליון res judicata מחייב",
+            "original_query_he": "בית המשפט העליון 'השתק פלוגתא' 'השתק עילה' 'res judicata' האם מחייב או שיקול ראייתי פסק דין"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20002,
+              "text_status": "timeout",
+              "embedding_ms": 280,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית השתק עילה העליון דין חריגים שינוי",
+            "original_query_he": "בית המשפט העליון פסק דין 'השתק פלוגתא' חריגים 'שינוי נסיבות' 'עניינים ציבוריים' 'ראיות חדשות' 'אי-אפשרות להגן'"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 187,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "persuasive_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית השתק עילה המחוזי דין חריגים צד",
+            "original_query_he": "בית המשפט המחוזי פסק דין 'השתק פלוגתא' חריגים 'צד ג'' 'חליפים' 'אי-אפשרות להגן' פסק דין מחוזי"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20003,
+              "exact_ms": 20003,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 195,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית השתק עילה העליון להוכיח הצגת טענות",
+            "original_query_he": "בית המשפט העליון 'השתק פלוגתא' איך להוכיח 'הצגת טענות' 'ראיות של פסק-דין קודם' 'תיקון כינויים של צדדים' פסק דין הנהגות פרוצדורליות"
+          }
+        ],
+        "candidates": 0,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 20503,
+        "dropped": 3,
+        "per_query": [
+          {
+            "ms": 5014,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.nevo.co.il/",
+                "title": "דינה של הכרעה שיפוטית במובן של השתק פלוגתא: עקרונות, יסודות וגבולות",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "persuasive_case_law",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/",
+                "title": "מעשה בית דין בהליך האזרחי",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "persuasive_case_law",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/",
+                "title": "השתק פלוגתא – עקרונות ויישום",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "persuasive_case_law",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.jstor.org/",
+                "title": "Res Judicata and Estoppel in Israeli Civil Procedure",
+                "domain": "jstor.org",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://papers.ssrn.com/",
+                "title": "The Doctrine of Issue Estoppel in Israeli Law",
+                "domain": "papers.ssrn.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C1",
+            "query_he": "מאמר משפטי \"השתק פלוגתא\" עקרונות זהות פלוגתא פסק-דין חלוט הכרעה חיונית \"הזדמנות מלאה להתדיין\" כתב עת משפטי",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4424,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.huji.ac.il/book/%D7%9E%D7%A2%D7%A9%D7%94-%D7%91%D7%99%D7%AA-%D7%93%D7%99%D7%9F-%D7%91%D7%94%D7%9C%D7%99%D7%9A-%D7%90%D7%96%D7%A8%D7%97%D7%99",
+                "title": "נינה זלצמן, מעשה בית דין בהליך אזרחי",
+                "domain": "law.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law02/09_001.htm",
+                "title": "יואל זוסמן, סדרי הדין האזרחי",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.jstor.org/stable/25718207",
+                "title": "Amnon Carmi, Res Judicata in Israeli Civil Procedure",
+                "domain": "jstor.org",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=XXXXXXX",
+                "title": "Michael H. Heller & Roy Kreitner, Beyond the Res Judicata: Issue Preclusion and Civil Procedure in Israel",
+                "domain": "papers.ssrn.com",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/500_001.htm",
+                "title": "מרדכי קרמניצר / אהרן ברק, מעשה בית דין",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C2",
+            "query_he": "מאמר 'השתק פלוגתא' 'השתק עילה' יחס בין doctrine 'issue preclusion' ו-'res judicata' ניתוח תכליתי מאמר משפטי",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5840,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/mishpatim-18-1-035.pdf",
+                "title": "על סופיות בפסקים זרים",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.jstor.org/stable/40375520",
+                "title": "Commentary on Issue Preclusion in Israeli Civil Procedure",
+                "domain": "jstor.org",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=????",
+                "title": "Conclusive Judgments and Res Judicata in Israel",
+                "domain": "papers.ssrn.com",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://books.google.com/books?vid=ISBN0000000000",
+                "title": "השתק פלוגתא במשפט הישראלי: בין סופיות ליעילות",
+                "domain": "books.google.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.nevo.co.il/",
+                "title": "מעשה בית דין והשתק פלוגתא: חריגים ומדיניות שיפוטית",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "persuasive_case_law",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C3",
+            "query_he": "מאמר משפטי 'חריגים השתק פלוגתא' 'שינוי נסיבות' 'ראיות חדשות' 'ענייני ציבור' כתב עת משפטי ניתוח מעשי",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5220,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.nevo.co.il/",
+                "title": "מעשה בית-דין בהליך האזרחי",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "persuasive_case_law",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.jstor.org/",
+                "title": "השתק פלוגתא וראיות בפסק-דין קודם",
+                "domain": "jstor.org",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://papers.ssrn.com/",
+                "title": "השתק פלוגתא: תנאיו וחריגיו",
+                "domain": "papers.ssrn.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.nevo.co.il/",
+                "title": "מעשה בית דין, השתק עילה והשתק פלוגתא",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "persuasive_case_law",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.tau.ac.il/",
+                "title": "השתק פלוגתא בדיני הראיות והפרוצדורה",
+                "domain": "tau.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C4",
+            "query_he": "מאמר פרקטי 'כיצד להוכיח השתק פלוגתא' ראיות פסק-דין קודם טענת השתק פרוצדורה כתב עת משפטי מדריך פרקטי",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 17,
+        "role_corrections": [
+          {
+            "to": "persuasive_case_law",
+            "url": "https://www.nevo.co.il/",
+            "from": "scholarship",
+            "title": "דינה של הכרעה שיפוטית במובן של השתק פלוגתא: עקרונות, יסודות וגבולות",
+            "admitted": true,
+            "claim_id": "C1"
+          },
+          {
+            "to": "persuasive_case_law",
+            "url": "https://www.nevo.co.il/",
+            "from": "scholarship",
+            "title": "מעשה בית דין בהליך האזרחי",
+            "admitted": true,
+            "claim_id": "C1"
+          },
+          {
+            "to": "persuasive_case_law",
+            "url": "https://www.nevo.co.il/",
+            "from": "scholarship",
+            "title": "השתק פלוגתא – עקרונות ויישום",
+            "admitted": true,
+            "claim_id": "C1"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://www.nevo.co.il/law_html/law02/09_001.htm",
+            "from": "scholarship",
+            "title": "יואל זוסמן, סדרי הדין האזרחי",
+            "admitted": true,
+            "claim_id": "C2"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://www.nevo.co.il/law_html/law01/500_001.htm",
+            "from": "scholarship",
+            "title": "מרדכי קרמניצר / אהרן ברק, מעשה בית דין",
+            "admitted": true,
+            "claim_id": "C2"
+          },
+          {
+            "to": "persuasive_case_law",
+            "url": "https://www.nevo.co.il/",
+            "from": "scholarship",
+            "title": "מעשה בית דין והשתק פלוגתא: חריגים ומדיניות שיפוטית",
+            "admitted": true,
+            "claim_id": "C3"
+          },
+          {
+            "to": "persuasive_case_law",
+            "url": "https://www.nevo.co.il/",
+            "from": "scholarship",
+            "title": "מעשה בית-דין בהליך האזרחי",
+            "admitted": true,
+            "claim_id": "C4"
+          },
+          {
+            "to": "persuasive_case_law",
+            "url": "https://www.nevo.co.il/",
+            "from": "scholarship",
+            "title": "מעשה בית דין, השתק עילה והשתק פלוגתא",
+            "admitted": true,
+            "claim_id": "C4"
+          }
+        ]
+      }
+    },
+    "candidates": [
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "יואל זוסמן, סדרי הדין האזרחי",
+        "origin": "perplexity",
+        "snippet": "הוצאה: שוקן / מהדורות מאוחרות בהוצאת נבו; שנה משתנה לפי מהדורה. עוסק בהרחבה בכללי מעשה בית דין, לרבות השתק עילה והשתק פלוגתא.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "role_corrected_from": "scholarship",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "מאמר 'השתק פלוגתא' 'השתק עילה' יחס בין doctrine 'issue preclusion' ו-'res judicata' ניתוח תכליתי מאמר משפטי",
+        "source_url": "https://www.nevo.co.il/law_html/law02/09_001.htm",
+        "source_type": "ספר",
+        "candidate_id": "2f3f4517-74df-4b6f-be61-90e7206fef71",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "מרדכי קרמניצר / אהרן ברק, מעשה בית דין",
+        "origin": "perplexity",
+        "snippet": "מקור אקדמי/ספרותי משפטי העוסק במעשה בית דין, לרבות הקשר בין סופיות הדיון, השתק פלוגתא והשתק עילה. יש לאמת מהדורה ושנת פרסום לפי המקור.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "role_corrected_from": "scholarship",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "מאמר 'השתק פלוגתא' 'השתק עילה' יחס בין doctrine 'issue preclusion' ו-'res judicata' ניתוח תכליתי מאמר משפטי",
+        "source_url": "https://www.nevo.co.il/law_html/law01/500_001.htm",
+        "source_type": "פרק/מאמר",
+        "candidate_id": "fef7197a-1904-467b-ae1f-6fde257234c2",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.75,
+        "title": "דינה של הכרעה שיפוטית במובן של השתק פלוגתא: עקרונות, יסודות וגבולות",
+        "origin": "perplexity",
+        "snippet": "מחברת: נינה זלצמן. הוצאה: אוניברסיטת תל-אביב / הוצאה משפטית (בספרות הישראלית מצוטט כעבודה יסודית על מעשה בית דין). שנה: 1991. מקור מרכזי לדיני השתק פלוגתא, זהות פלוגתא, פסק-דין חלוט והכרעה חיונית.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "role_corrected_from": "scholarship",
+          "classified_source_class": "court_case"
+        },
+        "query_he": "מאמר משפטי \"השתק פלוגתא\" עקרונות זהות פלוגתא פסק-דין חלוט הכרעה חיונית \"הזדמנות מלאה להתדיין\" כתב עת משפטי",
+        "source_url": "https://www.nevo.co.il/",
+        "source_type": "ספר/פרק אקדמי",
+        "candidate_id": "369e5d21-4b50-4904-88ce-47ae13853f08",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "Res Judicata and Estoppel in Israeli Civil Procedure",
+        "origin": "perplexity",
+        "snippet": "מחבר: Aharon Barak. כתב עת/הוצאה: legal academic publication (לא אותר קישור ישיר בתוצאות שסופקו). שנה: לא אותרה בוודאות. דיון עקרוני בהשתק פלוגתא, חלוטיות והזדמנות מלאה להתדיין.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "jstor.org",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר משפטי \"השתק פלוגתא\" עקרונות זהות פלוגתא פסק-דין חלוט הכרעה חיונית \"הזדמנות מלאה להתדיין\" כתב עת משפטי",
+        "source_url": "https://www.jstor.org/",
+        "source_type": "פרק/מאמר אקדמי",
+        "candidate_id": "8f3d3753-b3ed-4292-862c-c8befbb6556e",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "נינה זלצמן, מעשה בית דין בהליך אזרחי",
+        "origin": "perplexity",
+        "snippet": "הוצאה: האוניברסיטה העברית בירושלים, תשנ״א (1991). ספר יסוד על השתק עילה והשתק פלוגתא, כולל ניתוח דוקטרינרי והשוואתי של מעשה בית דין.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "law.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'השתק פלוגתא' 'השתק עילה' יחס בין doctrine 'issue preclusion' ו-'res judicata' ניתוח תכליתי מאמר משפטי",
+        "source_url": "https://law.huji.ac.il/book/%D7%9E%D7%A2%D7%A9%D7%94-%D7%91%D7%99%D7%AA-%D7%93%D7%99%D7%9F-%D7%91%D7%94%D7%9C%D7%99%D7%9A-%D7%90%D7%96%D7%A8%D7%97%D7%99",
+        "source_type": "ספר",
+        "candidate_id": "4a70a13a-b36e-4367-8eac-7bfa103836c3",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "Amnon Carmi, Res Judicata in Israeli Civil Procedure",
+        "origin": "perplexity",
+        "snippet": "Journal of Israeli Law Review / academic article on res judicata and issue preclusion in Israeli civil procedure. Please verify access via JSTOR.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "jstor.org",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר 'השתק פלוגתא' 'השתק עילה' יחס בין doctrine 'issue preclusion' ו-'res judicata' ניתוח תכליתי מאמר משפטי",
+        "source_url": "https://www.jstor.org/stable/25718207",
+        "source_type": "מאמר/פרק",
+        "candidate_id": "2c27c492-178c-4421-8395-3ccd2f44b944",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "Michael H. Heller & Roy Kreitner, Beyond the Res Judicata: Issue Preclusion and Civil Procedure in Israel",
+        "origin": "perplexity",
+        "snippet": "I could not verify a direct SSRN record from the provided results, so I am not supplying an unverified link. If you want, I can search again and return only verified academic URLs.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "papers.ssrn.com",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר 'השתק פלוגתא' 'השתק עילה' יחס בין doctrine 'issue preclusion' ו-'res judicata' ניתוח תכליתי מאמר משפטי",
+        "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=XXXXXXX",
+        "source_type": "מאמר",
+        "candidate_id": "64f71d6a-f617-45c5-84d3-435af2547fb3",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "על סופיות בפסקים זרים",
+        "origin": "perplexity",
+        "snippet": "סיליה וסרשטיין פסברג, משפטים י״ח (תשמ״ח). עוסק בסופיות, השתק עילה והשתק פלוגתא, ובין היתר במתח בין סופיות לבין ראיות חדשות ושינויים שחלו לאחר פסק הדין.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר משפטי 'חריגים השתק פלוגתא' 'שינוי נסיבות' 'ראיות חדשות' 'ענייני ציבור' כתב עת משפטי ניתוח מעשי",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/mishpatim-18-1-035.pdf",
+        "source_type": "מאמר בכתב עת משפטי",
+        "candidate_id": "8fb850b2-53c9-43a5-aab9-d7300b4c5f7a",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "Commentary on Issue Preclusion in Israeli Civil Procedure",
+        "origin": "perplexity",
+        "snippet": "עמנואל גרוס / או מקור אקדמי דומה ב-JSTOR על דוקטרינות מעשה בית דין במשפט הישראלי. כולל דיון עקרוני בחריגים, שינוי נסיבות והיבטי מדיניות ציבורית. [קישור JSTOR ישיר אם זמין למנוי]",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "jstor.org",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר משפטי 'חריגים השתק פלוגתא' 'שינוי נסיבות' 'ראיות חדשות' 'ענייני ציבור' כתב עת משפטי ניתוח מעשי",
+        "source_url": "https://www.jstor.org/stable/40375520",
+        "source_type": "מאמר אקדמי/פרק",
+        "candidate_id": "f5aa2613-f6a3-4fc2-9aa6-96d4bae9382d",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "השתק פלוגתא בדיני הראיות והפרוצדורה",
+        "origin": "perplexity",
+        "snippet": "חיפוש במאגרי האוניברסיטאות ובכתבי עת משפטיים ישראליים למאמרים פרקטיים בנושא. מומלץ לחפש בכתבי עת כמו משפטים, מחקרי משפט, עיוני משפט וקרית המשפט.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "tau.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר פרקטי 'כיצד להוכיח השתק פלוגתא' ראיות פסק-דין קודם טענת השתק פרוצדורה כתב עת משפטי מדריך פרקטי",
+        "source_url": "https://www.tau.ac.il/",
+        "source_type": "מאמר משפטי",
+        "candidate_id": "71ffcf7d-985c-4948-9457-b543b9fd0db2",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 24725,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 29290,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 40009,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 20503,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 30475,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial"
+      },
+      {
+        "ms": 31098,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      },
+      {
+        "ms": 68381,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "drafter.escalated",
+        "escalated": true
+      },
+      {
+        "ms": 76772,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "drafter.placement_repair"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://papers.ssrn.com/",
+        "role": "scholarship",
+        "title": "The Doctrine of Issue Estoppel in Israeli Law",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי \"השתק פלוגתא\" עקרונות זהות פלוגתא פסק-דין חלוט הכרעה חיונית \"הזדמנות מלאה להתדיין\" כתב עת משפטי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://books.google.com/books?vid=ISBN0000000000",
+        "role": "scholarship",
+        "title": "השתק פלוגתא במשפט הישראלי: בין סופיות ליעילות",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר משפטי 'חריגים השתק פלוגתא' 'שינוי נסיבות' 'ראיות חדשות' 'ענייני ציבור' כתב עת משפטי ניתוח מעשי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://papers.ssrn.com/",
+        "role": "scholarship",
+        "title": "השתק פלוגתא: תנאיו וחריגיו",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר פרקטי 'כיצד להוכיח השתק פלוגתא' ראיות פסק-דין קודם טענת השתק פרוצדורה כתב עת משפטי מדריך פרקטי",
+        "drop_reason": "discovery_only"
+      }
+    ]
+  }
+}
