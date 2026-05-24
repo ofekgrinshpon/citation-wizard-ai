@@ -3116,7 +3116,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       {/* Bottom: Input bar pinned */}
       <div className="mt-auto px-2 sm:px-4 pb-2 pt-2 space-y-1.5 border-t border-border bg-background">
         {/* Hide input bar for academic mode (it has its own UI) unless in non-wizard steps */}
-        {!isAcademic && (
+        {!isAcademic && taskMode !== "research" && (
           <div className="flex gap-2 items-end">
             {/* File upload zone */}
             <div
