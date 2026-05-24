@@ -149,7 +149,7 @@ async function handle(req: Request): Promise<Response> {
     }
   }
 
-  const admin = makeAdminClient();
+  const admin = adminEarly;
   const telemetryBase = {
     user_id: user.id,
     project_id,
@@ -158,7 +158,23 @@ async function handle(req: Request): Promise<Response> {
     footnotes: [] as unknown[],
   };
 
-  // Wrap the whole pipeline so smoke mode can run it in the background.
+  // ─── Create job row so the client can poll for status/result ─────────────
+  try {
+    const { data: jobRow, error: jobErr } = await admin
+      .from("legal_research_jobs")
+      .insert({ user_id: user.id, project_id, question, status: "running" })
+      .select("id")
+      .single();
+    if (jobErr || !jobRow) {
+      console.error("[lrv1] job insert failed:", jobErr);
+      return jsonResponse(500, { error: "job_insert_failed", detail: jobErr?.message });
+    }
+    jobId = (jobRow as { id: string }).id;
+  } catch (e) {
+    return jsonResponse(500, { error: "job_insert_threw", detail: e instanceof Error ? e.message : String(e) });
+  }
+
+  // Wrap the whole pipeline so it runs in the background.
   const runPipeline = async (): Promise<Response> => {
 
   // ─── P2: Claim Analyzer ──────────────────────────────────────────────────
