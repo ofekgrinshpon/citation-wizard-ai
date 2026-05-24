@@ -334,16 +334,82 @@ export function LegalResearchV1Panel() {
           placeholder="לדוגמה: מתי בית המשפט יפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים (תרופות)?"
           className="w-full bg-background border border-input rounded-md px-3 py-2 text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-ring"
         />
+        {/* ── Attachments ── */}
+        <div className="rounded-md border border-dashed border-border bg-muted/20 p-3 space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Paperclip className="w-3.5 h-3.5" />
+              <span>קבצים מצורפים (PDF/DOCX, עד {MAX_FILES} קבצים · {fmtSize(MAX_FILE_BYTES)} לקובץ)</span>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={loading || uploadingFiles || files.length >= MAX_FILES}
+            >
+              הוסף קובץ
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                handleAddFiles(e.target.files);
+                if (e.target) e.target.value = "";
+              }}
+            />
+          </div>
+          {files.length > 0 && (
+            <ul className="space-y-1">
+              {files.map((f) => (
+                <li key={f.id} className="flex items-center justify-between gap-2 text-xs bg-background border border-border rounded px-2 py-1">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                    <span className="truncate" title={f.file.name}>{f.file.name}</span>
+                    <span className="text-muted-foreground shrink-0">{fmtSize(f.file.size)}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(f.id)}
+                    disabled={loading || uploadingFiles}
+                    className="text-muted-foreground hover:text-destructive disabled:opacity-40"
+                    aria-label="הסר קובץ"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          {files.length > 0 && (
+            <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
+              <input
+                type="checkbox"
+                checked={useAsSource}
+                onChange={(e) => setUseAsSource(e.target.checked)}
+                disabled={loading || uploadingFiles}
+                className="accent-primary"
+              />
+              <span>השתמש בקבצים גם כמקור בתשובה (יצוטטו כהערות שוליים)</span>
+            </label>
+          )}
+        </div>
+
         <div className="flex justify-end">
           <Button
             onClick={handleSubmit}
-            disabled={loading || question.trim().length < 5}
+            disabled={loading || uploadingFiles || question.trim().length < 5}
             className="gap-1.5"
           >
             <Send className="w-4 h-4" />
-            שלח לחקירה משפטית
+            {uploadingFiles ? "מעלה קבצים…" : "שלח לחקירה משפטית"}
           </Button>
         </div>
+
       </div>
 
       {/* ── Loading progress ── */}
