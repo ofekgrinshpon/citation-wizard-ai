@@ -458,14 +458,33 @@ async function handle(req: Request): Promise<Response> {
   });
   }; // end runPipeline
 
-  if (smokeMode) {
-    const bg = runPipeline().catch((e) => console.error("[lrv1 smoke bg]", e));
-    if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
-      EdgeRuntime.waitUntil(bg);
+  const bg = (async () => {
+    try {
+      const resp = await runPipeline();
+      const payload = await resp.clone().json().catch(() => null);
+      if (resp.status === 200) {
+        await setJobStatus({ status: "done", result: payload });
+      } else {
+        const errMsg = (payload && typeof payload === "object")
+          ? JSON.stringify(payload).slice(0, 4000)
+          : `http_${resp.status}`;
+        await setJobStatus({ status: "error", error: errMsg, result: payload });
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error("[lrv1 bg]", msg);
+      await setJobStatus({ status: "error", error: msg });
     }
-    return jsonResponse(202, { ok: true, run_id, smoke: true });
+  })();
+  if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
+    EdgeRuntime.waitUntil(bg);
   }
-  return await runPipeline();
+  return jsonResponse(202, {
+    ok: true,
+    run_id,
+    job_id: jobId,
+    status: smokeMode ? "queued_smoke" : "queued",
+  });
 }
 
 serve(handle);
