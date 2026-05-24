@@ -195,6 +195,66 @@ export function LegalResearchV1Panel() {
   }, []);
 
 
+  const handleAddFiles = (incoming: FileList | File[] | null) => {
+    if (!incoming) return;
+    const arr = Array.from(incoming);
+    const accepted: StagedFile[] = [];
+    const rejected: string[] = [];
+    for (const f of arr) {
+      if (!ACCEPT_MIME.includes(f.type) && !ACCEPT_EXT.test(f.name)) {
+        rejected.push(`${f.name}: סוג קובץ לא נתמך (רק PDF/DOCX)`);
+        continue;
+      }
+      if (f.size > MAX_FILE_BYTES) {
+        rejected.push(`${f.name}: חורג מ-${fmtSize(MAX_FILE_BYTES)}`);
+        continue;
+      }
+      accepted.push({ id: crypto.randomUUID(), file: f });
+    }
+    setFiles((prev) => {
+      const merged = [...prev, ...accepted];
+      if (merged.length > MAX_FILES) {
+        rejected.push(`ניתן לצרף עד ${MAX_FILES} קבצים`);
+        return merged.slice(0, MAX_FILES);
+      }
+      return merged;
+    });
+    if (rejected.length) setError(rejected.join(" · "));
+    else setError(null);
+  };
+
+  const removeFile = (id: string) => {
+    setFiles((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const uploadStagedFiles = async (uploadJobToken: string) => {
+    if (files.length === 0) return [] as Array<{
+      storage_path: string; file_name: string; mime_type: string; size: number;
+    }>;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("יש להתחבר כדי לצרף קבצים");
+    const out: Array<{ storage_path: string; file_name: string; mime_type: string; size: number }> = [];
+    for (let i = 0; i < files.length; i++) {
+      const sf = files[i];
+      const safe = sanitizeFileName(sf.file.name);
+      const path = `${user.id}/research/${uploadJobToken}/${i}-${safe}`;
+      const { error: upErr } = await supabase.storage
+        .from("user-documents")
+        .upload(path, sf.file, {
+          contentType: sf.file.type || "application/octet-stream",
+          upsert: false,
+        });
+      if (upErr) throw new Error(`שגיאה בהעלאת ${sf.file.name}: ${upErr.message}`);
+      out.push({
+        storage_path: path,
+        file_name: sf.file.name,
+        mime_type: sf.file.type || (ACCEPT_EXT.test(sf.file.name) ? "application/pdf" : "application/octet-stream"),
+        size: sf.file.size,
+      });
+    }
+    return out;
+  };
+
   const handleSubmit = async () => {
     const q = question.trim();
     if (q.length < 5) {
@@ -203,6 +263,21 @@ export function LegalResearchV1Panel() {
     }
     setError(null);
     setResult(null);
+
+    let attachmentsPayload: Array<{ storage_path: string; file_name: string; mime_type: string; size: number }> = [];
+    if (files.length > 0) {
+      setUploadingFiles(true);
+      try {
+        const token = crypto.randomUUID();
+        attachmentsPayload = await uploadStagedFiles(token);
+      } catch (e) {
+        setUploadingFiles(false);
+        setError(e instanceof Error ? e.message : String(e));
+        return;
+      }
+      setUploadingFiles(false);
+    }
+
     setLoading(true);
     startProgress();
 
@@ -215,6 +290,8 @@ export function LegalResearchV1Panel() {
         body: {
           question: q,
           project_id: currentProject?.id ?? null,
+          attachments: attachmentsPayload,
+          use_as_source: useAsSource,
         },
       });
 
@@ -239,6 +316,7 @@ export function LegalResearchV1Panel() {
       setError(msg || "שגיאה לא ידועה.");
     }
   };
+
 
   const debug = (result?.debug ?? {}) as Record<string, any>;
   const dbgOpenDefault = import.meta.env.DEV;
