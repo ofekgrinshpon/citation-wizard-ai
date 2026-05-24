@@ -1,52 +1,67 @@
 
-# P6 — Minimal frontend hookup to `legal-research-v1`
+# P6.1 — Queue + poll for `legal-research-v1`
 
-Goal: let the user run end-to-end Research v1 from the UI and visually review answer, footnotes, latency, and debug trace. No backend changes. No citation/URL polish.
+## Problem
+
+The synchronous edge-function call hits Supabase's hard 150s idle-timeout (pipeline takes ~2–3 min). User saw 504 at ~2:30. P6 frontend is fine; the runtime has to move off the request/response thread.
 
 ## Approach
 
-`LegalQAChat.tsx` is ~3260 lines and currently short-circuits Research mode to `MaintenanceCard`. Instead of weaving v1 into the existing standard submit flow, build a **self-contained panel** and mount it where the Research maintenance card renders. This keeps blast radius tiny and avoids touching academic/legal-qa/pleading paths.
+Reuse the existing smoke-mode background path (`EdgeRuntime.waitUntil(runPipeline())` already returns `202` with a `run_id`). Generalize it to all callers, persist a job row, and poll it from the panel.
 
-## New file
+No retrieval / verifier / drafter / prompt changes. No new auth flow.
 
-`src/components/LegalResearchV1Panel.tsx` — single component owning input, submit, loading, progress, result, debug.
+## Database (one migration)
 
-- One `<Textarea>` (Hebrew, RTL) + one submit `<Button>`.
-- On submit: `supabase.functions.invoke("legal-research-v1", { body: { question, project_id } })`, with `project_id` pulled from `useProjects()` (current selected project, optional).
-- Request timeout: client-side `Promise.race` with `AbortController` at 300s. On timeout show: `"הבקשה ארכה זמן רב מדי. נסה שוב או קצר את השאלה."`
-- Loading UI:
-  - `<Progress>` bar
-  - current stage label from a fixed array of 6 Hebrew stages (as specified in request).
-  - Elapsed time `mm:ss`.
-  - Note: `"זה עשוי לקחת 2–3 דקות"`.
-  - Progress driver: `setInterval` 1s. Start at 5%. Walk stage-by-stage on a soft schedule (e.g. ~25s per stage budget → ≈15% per stage), capped at 90%. On success → 100%. On error → freeze + error message. No backend polling, no streaming.
-- Result UI:
-  - Answer rendered as plain markdown-ish text. Use existing pattern (whitespace-pre-wrap on `<div>`), no new markdown lib — answer is short Hebrew prose with `¹²³` superscripts already in text.
-  - Footnotes list below: `{n}. {title} — <a href={url} target="_blank" rel="noreferrer">{url}</a>`. If `url` missing/empty, render title only. No filtering on URL quality.
-  - `used_sources` chips (optional small render — title + source_type), still shown even if URL weak.
-- Debug `<Collapsible>` (default open in dev, closed in prod via `import.meta.env.DEV`):
-  - `run_id`, `total_ms`, per-stage timings from `debug.stage_runs` / `debug.planning` / `debug.retrieval` / `debug.verifier` / `debug.drafter`.
-  - claims, queries (compact JSON).
-  - verifier summary (`counts`, `candidates_usable`, `candidates_dropped`).
-  - used_sources & footnotes raw.
-  - Local vs Perplexity split from `debug.retrieval.local.candidates` / `debug.retrieval.perplexity.candidates`.
-  - Rendered as `<pre>` blocks for nested objects.
+New table `legal_research_jobs`:
+- `id uuid pk default gen_random_uuid()`
+- `user_id uuid not null` (auth.uid())
+- `project_id uuid null`
+- `question text not null`
+- `status text not null default 'pending'`  — `pending | running | done | error`
+- `result jsonb null`  — full success payload `{answer, footnotes, used_sources, debug}`
+- `error text null`
+- `created_at timestamptz default now()`
+- `updated_at timestamptz default now()`
+- trigger `update_updated_at_column`
+- index on `(user_id, created_at desc)`
 
-## Edit
+RLS:
+- SELECT: `auth.uid() = user_id`
+- INSERT: `auth.uid() = user_id`
+- No client UPDATE/DELETE (service role only — writes from the edge function bypass RLS).
 
-`src/components/LegalQAChat.tsx` — only two surgical changes:
+No realtime subscription — simple polling is fine.
 
-1. Replace the Research `MaintenanceCard` render (line ~2934–2938) with `<LegalResearchV1Panel />` (or wrap the whole research empty-state branch). The panel handles its own loading/result so we render it whenever `taskMode === "research"` and bypass the existing `result`/`loading`/`error` chrome for that mode.
-2. Remove the `if ((taskMode as string) === "research") { toast.info(...); return; }` short-circuit in `handleSubmit` (line ~1929–1932) — Research no longer uses the global submit; the panel owns its submit. (Actually simpler: leave the short-circuit in place — the panel renders before submit can be reached because research mode hides the standard input bar… verify with quick read.) If the global input is still visible for research mode, also hide it for `taskMode === "research"`.
+## Edge function `legal-research-v1` (single file edit, ~40 lines)
 
-No changes to: `legal-qa`, drafter, verifier, retrieval, schemas, DB, Fast/Deep code, citation engine, MaintenanceCard component itself.
+Restructure the existing `handle`:
 
-## Out of scope (explicitly)
+1. After auth + body validation + credit pre-flight (unchanged), insert a row into `legal_research_jobs` with `status='pending'`.
+2. Return **immediately** with `202 { run_id, job_id, status: 'queued' }`.
+3. Wrap `runPipeline()` so that on entry it `UPDATE … status='running'`, on success it writes `status='done', result=<payload>`, on error `status='error', error=<message>`. Also keep existing `writeTelemetry` calls (no change).
+4. Always use `EdgeRuntime.waitUntil(runPipeline())` (already conditionally used for smoke mode). Drop the `await runPipeline()` branch — every request becomes async.
+5. Smoke-mode path can stay as-is (already returns 202) — collapse into the same code path.
 
-URL hygiene, citation cleanup, Uniform Citation Rules, "שם" / "לעיל ה״ש", bibliography, streaming, polling, Fast/Deep, DoctrineClassifier, SourceRequirements, marker parser, retrieval/verifier/drafter prompt changes, DB schema changes.
+Add a thin `GET /legal-research-v1/status?job_id=…` (handled in the same `serve`) or a second function. Cleanest: keep a single function, add `if (req.method === 'GET') return getStatus(...)` that selects from `legal_research_jobs` with the user's client (RLS enforces ownership) and returns `{ status, result, error }`.
+
+## Frontend `LegalResearchV1Panel.tsx`
+
+Replace the single `invoke` + `Promise.race` with:
+
+1. POST to `legal-research-v1` → `{ job_id }`.
+2. Poll every 2s via `supabase.functions.invoke('legal-research-v1', { method: 'GET', body: undefined })` passing `job_id` as a query param (use `supabase.functions.invoke` with `headers` doesn't accept query — switch to `fetch(${SUPABASE_URL}/functions/v1/legal-research-v1?job_id=…)` with the session JWT, or just `supabase.from('legal_research_jobs').select().eq('id', jobId).single()` which is simpler and RLS-safe).
+3. Prefer the **direct DB read**: no second endpoint needed, RLS already protects rows. Each poll = one tiny indexed `SELECT`.
+4. Stop polling on `status === 'done'` or `'error'`, or on client 5-min hard cap (still show timeout message).
+5. Progress bar logic unchanged — driven by `setInterval` and `STAGES`.
+
+## Out of scope (explicit)
+
+URL hygiene, citation cleanup, Uniform Citation Rules, "שם" / "לעיל ה״ש", bibliography, streaming, realtime channels, Fast/Deep, DoctrineClassifier, SourceRequirements, marker parser, retrieval/verifier/drafter prompt changes.
 
 ## Verification
 
-- Build passes.
-- Submit a test question in `/app` Research tab → progress runs → answer + footnotes appear → debug section shows run_id and timings.
-- Error path: kill network → timeout message renders, progress freezes.
+- Migration applies cleanly.
+- Submit a question in `/app` Research tab → 202 + `job_id` → row visible in `legal_research_jobs` → row flips to `done` within ~3 min → panel renders answer + footnotes + debug.
+- Kill network mid-run: job continues in background, next refresh of the panel can re-poll using the stored `job_id` if we keep it in `sessionStorage` (optional; defer).
+- Error path (force pipeline throw): row goes to `status='error'`, panel shows the error.
