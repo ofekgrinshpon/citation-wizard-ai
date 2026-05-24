@@ -135,7 +135,7 @@ async function main() {
   }
   const triggered: Array<{ id: string; run_id: string; question: string }> = [];
   const summary: { tag: string; generated_at: string; fixtures: any[]; aggregate?: any } = {
-    tag: "p7-phaseA",
+    tag: "p7-phaseA1",
     generated_at: new Date().toISOString(),
     fixtures: [],
   };
@@ -157,7 +157,7 @@ async function main() {
       continue;
     }
     summarise(t.id, row);
-    const reportPath = `reports/legal-research-v1-p7-phaseA-${t.id}.json`;
+    const reportPath = `reports/legal-research-v1-p7-phaseA1-${t.id}.json`;
     const md = row.metadata ?? {};
     const d = md.drafter ?? {};
     const mv = d.marker_validation ?? {};
@@ -216,7 +216,7 @@ async function main() {
     total_out_of_order: f.reduce((s: number, x: any) => s + (x.out_of_order_count ?? 0), 0),
   };
   await Bun.write(
-    "reports/legal-research-v1-p7-phaseA-summary.json",
+    "reports/legal-research-v1-p7-phaseA1-summary.json",
     JSON.stringify(summary, null, 2),
   );
   console.log("\n=== Phase A summary ===");
