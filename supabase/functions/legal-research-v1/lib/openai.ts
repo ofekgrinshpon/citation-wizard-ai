@@ -48,7 +48,11 @@ export async function callOpenAIJsonTool<T>(opts: {
     ],
     tool_choice: { type: "function", function: { name: opts.tool.name } },
   };
-  if (opts.reasoningEffort) body.reasoning = { effort: opts.reasoningEffort };
+  // NOTE: `reasoning` parameter is intentionally NOT sent. The Lovable AI
+  // Gateway returns 400 "Unknown parameter: 'reasoning'" for the gpt-5
+  // family on /v1/chat/completions. The `reasoningEffort` option is kept
+  // on the interface for future compatibility but currently a no-op.
+  void opts.reasoningEffort;
 
   let resp: Response;
   try {
