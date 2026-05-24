@@ -1,7 +1,10 @@
-// P4 — Source Verifier.
-// For each P3 candidate, emit one verdict per claim it was retrieved for.
-// One LLM call per claim (batched over its candidates). gpt-5-mini default,
-// escalate that single claim once to gpt-5 if the response is invalid/short.
+// P4 — Source Verifier (P6.2a: batched).
+// Verifier runs at most 1–2 batched LLM calls per run instead of one call per
+// claim. Each batch contains one or more whole claims plus all their
+// candidates; the model emits one verdict per (candidate_id, claim_id) pair
+// it was given. role_match is still computed deterministically in code.
+// Acceptance behavior (direct/partial usable, tangential/unrelated dropped)
+// and per-candidate aggregation are unchanged from the per-claim version.
 
 import { callOpenAIJsonTool } from "../lib/openai.ts";
 import {
@@ -18,9 +21,15 @@ import {
   Verdict,
 } from "../lib/types.ts";
 
+// Batching threshold (total candidates across all claims in this run).
+const SINGLE_BATCH_MAX = 24;
+// If any individual claim has more candidates than this, it gets its own call.
+const PER_CLAIM_OVERSIZED = 24;
+
 const SYSTEM_PROMPT = `אתה מאמת מקורות משפטי (Source Verifier) במערכת מחקר משפטי ישראלית.
-תקבל טענה משפטית אחת (claim) ורשימת מועמדים (candidates) שאוחזרו עבורה.
-המשימה: לקבוע עבור כל מועמד עד כמה הוא תומך בטענה.
+תקבל שאלה אחת של המשתמש, רשימת טענות משפטיות (claims), ורשימת מועמדים (candidates) שאוחזרו עבורן.
+כל מועמד מתויג עם ה-claim_id של הטענה שעבורה אוחזר.
+המשימה: לקבוע עבור כל זוג (candidate_id, claim_id) שסיפקתי לך עד כמה המועמד תומך בטענה הספציפית הזו.
 
 ערכי support מותרים: direct, partial, tangential, unrelated.
 
@@ -40,7 +49,7 @@ const SYSTEM_PROMPT = `אתה מאמת מקורות משפטי (Source Verifier)
 - supported_points: 1–3 נקודות קצרות בעברית המסבירות *מה* בדיוק תומך (ריק אם unrelated).
 - reason: משפט קצר בעברית המסביר את ההחלטה, ובפרט עבור tangential/unrelated — מדוע נדחה.
 
-החזר רק דרך הקריאה לכלי emit_verdicts. כלול verdict אחד לכל מועמד שקיבלת, לפי אותם candidate_id וclaim_id שסיפקתי.`;
+החזר רק דרך הקריאה לכלי emit_verdicts. כלול verdict אחד לכל זוג (candidate_id, claim_id) שסיפקתי לך — בדיוק לפי אותם candidate_id ו-claim_id, ללא המצאות.`;
 
 const VERIFIER_TOOL_PARAMETERS: Record<string, unknown> = {
   type: "object",
@@ -78,10 +87,13 @@ interface RawVerdict {
   reason?: unknown;
 }
 
-function validateVerdicts(
+function pairKey(candidate_id: string, claim_id: string): string {
+  return `${candidate_id}::${claim_id}`;
+}
+
+function validateBatchVerdicts(
   raw: unknown,
-  expectedClaimId: string,
-  expectedCandidateIds: Set<string>,
+  expectedPairs: Set<string>,
 ): { ok: boolean; verdicts: Verdict[]; errors: string[]; missing: string[] } {
   const errors: string[] = [];
   const r = (raw ?? {}) as Record<string, unknown>;
@@ -90,13 +102,18 @@ function validateVerdicts(
   const seen = new Set<string>();
   for (const v of arr) {
     const candidate_id = typeof v.candidate_id === "string" ? v.candidate_id : "";
-    const claim_id = typeof v.claim_id === "string" ? v.claim_id : expectedClaimId;
-    if (!candidate_id || !expectedCandidateIds.has(candidate_id)) {
-      errors.push(`unknown candidate_id: ${candidate_id}`);
+    const claim_id = typeof v.claim_id === "string" ? v.claim_id : "";
+    if (!candidate_id || !claim_id) {
+      errors.push(`missing candidate_id/claim_id`);
       continue;
     }
-    if (claim_id !== expectedClaimId) {
-      errors.push(`wrong claim_id for ${candidate_id}: ${claim_id}`);
+    const key = pairKey(candidate_id, claim_id);
+    if (!expectedPairs.has(key)) {
+      errors.push(`unknown pair: ${key}`);
+      continue;
+    }
+    if (seen.has(key)) {
+      errors.push(`duplicate pair: ${key}`);
       continue;
     }
     const support = typeof v.support === "string" &&
@@ -104,14 +121,14 @@ function validateVerdicts(
       ? (v.support as SupportLevel)
       : null;
     if (!support) {
-      errors.push(`invalid support for ${candidate_id}: ${String(v.support)}`);
+      errors.push(`invalid support for ${key}: ${String(v.support)}`);
       continue;
     }
     const supported_points = Array.isArray(v.supported_points)
       ? (v.supported_points as unknown[]).filter((p): p is string => typeof p === "string" && p.length > 0).slice(0, 3)
       : [];
     const reason = typeof v.reason === "string" ? v.reason : "";
-    seen.add(candidate_id);
+    seen.add(key);
     verdicts.push({
       candidate_id,
       claim_id,
@@ -122,26 +139,37 @@ function validateVerdicts(
     });
   }
   const missing: string[] = [];
-  for (const id of expectedCandidateIds) {
-    if (!seen.has(id)) missing.push(id);
+  for (const k of expectedPairs) {
+    if (!seen.has(k)) missing.push(k);
   }
-  return { ok: errors.length === 0 && missing.length === 0, verdicts, errors, missing };
+  // We tolerate a few unknown-pair errors without failing the whole batch,
+  // but require that no expected pair is missing for the batch to be "ok".
+  return { ok: missing.length === 0 && errors.length === 0, verdicts, errors, missing };
 }
 
-function buildUserMessage(question: string, claim: Claim, cands: Candidate[]): string {
+function buildBatchUserMessage(
+  question: string,
+  claims: Claim[],
+  cands: Candidate[],
+): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
   lines.push("");
-  lines.push(`טענה (${claim.claim_id}):`);
-  lines.push(claim.text_he);
-  lines.push(`required_roles: ${claim.required_roles.join(", ") || "(none)"}`);
-  lines.push(`is_black_letter: ${claim.is_black_letter}`);
+  lines.push(`טענות בקבוצה זו (${claims.length}):`);
+  for (const cl of claims) {
+    lines.push("---");
+    lines.push(`claim_id: ${cl.claim_id}`);
+    lines.push(`טענה: ${cl.text_he}`);
+    lines.push(`required_roles: ${cl.required_roles.join(", ") || "(none)"}`);
+    lines.push(`is_black_letter: ${cl.is_black_letter}`);
+  }
   lines.push("");
-  lines.push(`מועמדים (${cands.length}):`);
+  lines.push(`מועמדים בקבוצה זו (${cands.length}). כל מועמד אוחזר עבור claim_id הספציפי שלו ויש לחוות עליו דעה ביחס לאותה טענה בלבד:`);
   for (const c of cands) {
     const snip = (c.snippet || "").replace(/\s+/g, " ").trim().slice(0, 600);
     lines.push("---");
     lines.push(`candidate_id: ${c.candidate_id}`);
+    lines.push(`claim_id: ${c.claim_id}`);
     lines.push(`role: ${c.role}`);
     lines.push(`source_type: ${c.source_type}`);
     lines.push(`origin: ${c.origin} (${c.retrieval_method})`);
@@ -151,7 +179,7 @@ function buildUserMessage(question: string, claim: Claim, cands: Candidate[]): s
   }
   lines.push("");
   lines.push(
-    `החזר verdicts עבור כל ${cands.length} המועמדים, באמצעות אותם candidate_id ועם claim_id="${claim.claim_id}".`,
+    `החזר verdicts עבור כל ${cands.length} הזוגות (candidate_id, claim_id) לעיל, בשימוש באותם מזהים בדיוק.`,
   );
   return lines.join("\n");
 }
@@ -159,7 +187,6 @@ function buildUserMessage(question: string, claim: Claim, cands: Candidate[]): s
 function rolesMatch(candidateRole: SourceRole, required: SourceRole[]): boolean {
   if (required.length === 0) return true;
   if (required.includes(candidateRole)) return true;
-  // Treat persuasive/binding as interchangeable for role_match purposes.
   if (
     (candidateRole === "binding_case_law" && required.includes("persuasive_case_law")) ||
     (candidateRole === "persuasive_case_law" && required.includes("binding_case_law"))
@@ -192,6 +219,71 @@ export interface VerifierResult {
   dropped: DroppedCandidate[];
   stage_runs: StageRun[];
   errors: Array<{ claim_id: string; reason: string }>;
+  batches: Array<{ label: string; claim_ids: string[]; candidates: number; escalated: boolean; ms: number }>;
+}
+
+interface Batch {
+  label: string;
+  claims: Claim[];
+  candidates: Candidate[];
+}
+
+function planBatches(claims: Claim[], byClaim: Map<string, Candidate[]>): Batch[] {
+  const present = claims.filter((c) => (byClaim.get(c.claim_id)?.length ?? 0) > 0);
+  if (present.length === 0) return [];
+
+  const oversized: Claim[] = [];
+  const normal: Claim[] = [];
+  for (const c of present) {
+    const n = byClaim.get(c.claim_id)?.length ?? 0;
+    if (n > PER_CLAIM_OVERSIZED) oversized.push(c);
+    else normal.push(c);
+  }
+
+  const batches: Batch[] = [];
+  // Oversized claims each get a dedicated batch.
+  for (const c of oversized) {
+    batches.push({
+      label: `oversized.${c.claim_id}`,
+      claims: [c],
+      candidates: byClaim.get(c.claim_id) ?? [],
+    });
+  }
+
+  const totalNormal = normal.reduce((s, c) => s + (byClaim.get(c.claim_id)?.length ?? 0), 0);
+  if (totalNormal === 0) return batches;
+
+  if (totalNormal <= SINGLE_BATCH_MAX) {
+    batches.push({
+      label: `batch1`,
+      claims: normal,
+      candidates: normal.flatMap((c) => byClaim.get(c.claim_id) ?? []),
+    });
+    return batches;
+  }
+
+  // Split normal claims greedily into 2 buckets balanced by candidate count,
+  // largest-first.
+  const sorted = [...normal].sort(
+    (a, b) => (byClaim.get(b.claim_id)?.length ?? 0) - (byClaim.get(a.claim_id)?.length ?? 0),
+  );
+  const buckets: Claim[][] = [[], []];
+  const sizes = [0, 0];
+  for (const c of sorted) {
+    const n = byClaim.get(c.claim_id)?.length ?? 0;
+    const target = sizes[0] <= sizes[1] ? 0 : 1;
+    buckets[target].push(c);
+    sizes[target] += n;
+  }
+  buckets.forEach((claimsInBucket, i) => {
+    if (claimsInBucket.length === 0) return;
+    batches.push({
+      label: `batch${i + 1}`,
+      claims: claimsInBucket,
+      candidates: claimsInBucket.flatMap((c) => byClaim.get(c.claim_id) ?? []),
+    });
+  });
+  return batches;
 }
 
 export async function runVerifier(
@@ -205,6 +297,7 @@ export async function runVerifier(
   const per_claim_ms: Record<string, number> = {};
   const escalated_claims: string[] = [];
   const allVerdicts: Verdict[] = [];
+  const batchesMeta: VerifierResult["batches"] = [];
 
   // Group candidates by claim_id.
   const byClaim = new Map<string, Candidate[]>();
@@ -215,75 +308,88 @@ export async function runVerifier(
   }
   const claimsById = new Map(claims.map((c) => [c.claim_id, c]));
 
-  for (const [claim_id, cands] of byClaim) {
-    if (cands.length === 0) continue;
-    const claim = claimsById.get(claim_id);
-    if (!claim) {
-      errors.push({ claim_id, reason: "claim not found in analyzer output" });
-      continue;
+  const batches = planBatches(claims, byClaim);
+
+  let anyEscalated = false;
+
+  for (const batch of batches) {
+    // Validate that all batch claims exist in analyzer output.
+    for (const cl of batch.claims) {
+      if (!claimsById.has(cl.claim_id)) {
+        errors.push({ claim_id: cl.claim_id, reason: "claim not found in analyzer output" });
+      }
     }
-    const expectedIds = new Set(cands.map((c) => c.candidate_id));
-    const userMsg = buildUserMessage(question, claim, cands);
+    const expectedPairs = new Set<string>(
+      batch.candidates.map((c) => pairKey(c.candidate_id, c.claim_id)),
+    );
+    const userMsg = buildBatchUserMessage(question, batch.claims, batch.candidates);
     const t0 = Date.now();
-    let modelUsed: string = MODEL_MINI;
     let resp = await callOpenAIJsonTool<unknown>({
       model: MODEL_MINI,
       system: SYSTEM_PROMPT,
       user: userMsg,
       tool: {
         name: "emit_verdicts",
-        description: "Emit one verdict per provided candidate for this claim.",
+        description: "Emit one verdict per (candidate_id, claim_id) pair provided.",
         parameters: VERIFIER_TOOL_PARAMETERS,
       },
     });
     stage_runs.push({
-      stage: `verifier.${claim_id}.initial`,
+      stage: `verifier.${batch.label}.initial`,
       model: MODEL_MINI,
       ms: Date.now() - t0,
       ok: !!resp.data,
     });
-    let parsed = validateVerdicts(resp.data, claim_id, expectedIds);
+    let parsed = validateBatchVerdicts(resp.data, expectedPairs);
+    let escalated = false;
 
     if (!parsed.ok) {
-      // Escalate this single claim once.
-      escalated_claims.push(claim_id);
+      escalated = true;
+      anyEscalated = true;
+      for (const cl of batch.claims) escalated_claims.push(cl.claim_id);
       const t1 = Date.now();
-      modelUsed = MODEL_FULL;
       resp = await callOpenAIJsonTool<unknown>({
         model: MODEL_FULL,
         system: SYSTEM_PROMPT,
         user: userMsg,
         tool: {
           name: "emit_verdicts",
-          description: "Emit one verdict per provided candidate for this claim.",
+          description: "Emit one verdict per (candidate_id, claim_id) pair provided.",
           parameters: VERIFIER_TOOL_PARAMETERS,
         },
       });
       stage_runs.push({
-        stage: `verifier.${claim_id}.escalated`,
+        stage: `verifier.${batch.label}.escalated`,
         model: MODEL_FULL,
         ms: Date.now() - t1,
         ok: !!resp.data,
         escalated: true,
       });
-      parsed = validateVerdicts(resp.data, claim_id, expectedIds);
+      parsed = validateBatchVerdicts(resp.data, expectedPairs);
     }
 
     if (parsed.errors.length) {
-      errors.push({ claim_id, reason: parsed.errors.slice(0, 3).join("; ") });
+      errors.push({
+        claim_id: batch.claims.map((c) => c.claim_id).join(","),
+        reason: parsed.errors.slice(0, 3).join("; "),
+      });
     }
-    // Fill in role_match deterministically; backfill missing as 'unrelated'.
-    const candById = new Map(cands.map((c) => [c.candidate_id, c]));
+
+    // Fill role_match deterministically + backfill missing pairs as unrelated.
+    const candById = new Map(batch.candidates.map((c) => [c.candidate_id, c]));
     for (const v of parsed.verdicts) {
       const cand = candById.get(v.candidate_id);
-      if (cand) v.role_match = rolesMatch(cand.role, claim.required_roles);
+      const claim = claimsById.get(v.claim_id);
+      if (cand && claim) v.role_match = rolesMatch(cand.role, claim.required_roles);
       allVerdicts.push(v);
     }
-    for (const missingId of parsed.missing) {
-      const cand = candById.get(missingId);
-      if (!cand) continue;
+    for (const missingKey of parsed.missing) {
+      const [candidate_id, claim_id] = missingKey.split("::");
+      const cand = candById.get(candidate_id);
+      const claim = claimsById.get(claim_id);
+      if (!cand || !claim) continue;
       allVerdicts.push({
-        candidate_id: missingId,
+        candidate_id,
         claim_id,
         support: "unrelated",
         role_match: rolesMatch(cand.role, claim.required_roles),
@@ -291,7 +397,16 @@ export async function runVerifier(
         reason: "verifier did not return a verdict for this candidate",
       });
     }
-    per_claim_ms[claim_id] = Date.now() - t0;
+
+    const batchMs = Date.now() - t0;
+    for (const cl of batch.claims) per_claim_ms[cl.claim_id] = batchMs;
+    batchesMeta.push({
+      label: batch.label,
+      claim_ids: batch.claims.map((c) => c.claim_id),
+      candidates: batch.candidates.length,
+      escalated,
+      ms: batchMs,
+    });
   }
 
   // Aggregate per-candidate best/worst across all its verdicts.
@@ -324,8 +439,6 @@ export async function runVerifier(
         verdict_claim_ids: Array.from(new Set(claimIds)),
       });
     } else {
-      // Pick the most informative rejection reason: prefer tangential over
-      // unrelated when both exist (tangential explains *why* it nearly fit).
       const verdicts = allByCand.get(c.candidate_id) ?? [];
       const tangential = verdicts.find((v) => v.support === "tangential" && v.reason);
       const unrelated = verdicts.find((v) => v.support === "unrelated" && v.reason);
@@ -337,7 +450,7 @@ export async function runVerifier(
         origin: c.origin,
         retrieval_method: c.retrieval_method,
         reason: chosen.reason || "no reason given",
-        worst_support: best.support, // best == worst here since all are tangential/unrelated
+        worst_support: best.support,
       });
     }
   }
@@ -355,8 +468,8 @@ export async function runVerifier(
   return {
     ms: Date.now() - t_total,
     model_initial: MODEL_MINI,
-    model_final: escalated_claims.length > 0 ? MODEL_FULL : MODEL_MINI,
-    escalated_claims,
+    model_final: anyEscalated ? MODEL_FULL : MODEL_MINI,
+    escalated_claims: Array.from(new Set(escalated_claims)),
     per_claim_ms,
     verdicts: allVerdicts,
     counts,
@@ -367,5 +480,6 @@ export async function runVerifier(
     dropped,
     stage_runs,
     errors,
+    batches: batchesMeta,
   };
 }
