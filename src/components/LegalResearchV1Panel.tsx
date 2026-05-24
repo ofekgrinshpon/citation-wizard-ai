@@ -78,9 +78,15 @@ export function LegalResearchV1Panel() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ResearchResponse | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
+  const [files, setFiles] = useState<StagedFile[]>([]);
+  const [useAsSource, setUseAsSource] = useState(true);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const progressTimerRef = useRef<number | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
+
 
   useEffect(() => {
     return () => {
