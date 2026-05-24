@@ -462,8 +462,9 @@ function RenderBold({ text }: { text?: string | null }) {
   );
 }
 
-function RenderMarkdown({ text }: { text: string }) {
-  const lines = text.split("\n");
+function RenderMarkdown({ text }: { text?: string | null }) {
+  const safe = typeof text === "string" ? text : "";
+  const lines = safe.split("\n");
   return (
     <>
       {lines.map((line, i) => (
