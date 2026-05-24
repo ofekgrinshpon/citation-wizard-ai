@@ -161,6 +161,17 @@ export interface Footnote {
   source_type?: string;
 }
 
+export interface PlacementReport {
+  ok: boolean;
+  cluster_count: number;
+  cluster_samples: string[];
+  out_of_order_count: number;
+  end_paragraph_dump_count: number;
+  end_dump_samples: string[];
+  repaired?: boolean;
+  repair_failed?: boolean;
+}
+
 export interface MarkerValidation {
   ok: boolean;
   markers_in_answer: number[];
@@ -170,6 +181,7 @@ export interface MarkerValidation {
   leaked_tokens: string[];
   repaired: boolean;
   error?: string;
+  placement?: PlacementReport;
 }
 
 
