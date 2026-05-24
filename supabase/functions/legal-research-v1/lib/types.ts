@@ -151,13 +151,14 @@ export interface UsedSource {
   title: string;
   url: string | null;
   source_type: string;
-  origin: Origin;
+  origin: Origin | "user_upload";
 }
 
 export interface Footnote {
   number: number;
   title: string;
   url: string | null;
+  source_type?: string;
 }
 
 export interface MarkerValidation {

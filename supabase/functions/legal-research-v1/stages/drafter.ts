@@ -4,6 +4,7 @@
 // deterministic footnote list. No advanced citation formatting.
 
 import { callOpenAIJsonTool } from "../lib/openai.ts";
+import type { UserDocument } from "../lib/attachments.ts";
 import {
   Candidate,
   Claim,
@@ -62,7 +63,7 @@ function detectInternalIdLeak(text: string): { leak: boolean; tokens: string[] }
   return { leak: tokens.size > 0, tokens: [...tokens] };
 }
 
-const SYSTEM_PROMPT = `אתה כותב משפטי ישראלי בסגנון אקדמי. תקבל שאלת משתמש, רשימת טענות (claims), ורשימת מקורות מאומתים בלבד.
+const SYSTEM_PROMPT = `אתה כותב משפטי ישראלי בסגנון אקדמי. תקבל שאלת משתמש, רשימת טענות (claims), ורשימת מקורות מאומתים בלבד. ייתכן שיופיעו גם מקורות שצורפו על־ידי המשתמש (ref מסוג u1p1, u1p2, u2p1 וכד'). אלו ציטוטים ישירים ממסמכים שצירף המשתמש, מותר לצטט מהם, אבל אין להתייחס אליהם כאל פסיקה או חקיקה מחייבת, ואין לגזור מהם דוקטרינה משפטית כללית — רק את מה שהם אומרים בפועל.
 כל מקור מסומן ב-ref כגון s1, s2, s3 ועוד.
 המשימה: לכתוב תשובה משפטית מפותחת ומבוססת בעברית, עם הערות שוליים מספריות.
 
@@ -132,6 +133,8 @@ function buildInputSources(
   candidates: Candidate[],
   verdicts: Verdict[],
   usable: UsableCandidate[],
+  userDocs: UserDocument[],
+  useAsSource: boolean,
 ): DrafterInputSource[] {
   const candById = new Map(candidates.map((c) => [c.candidate_id, c]));
   const verdictsByCand = new Map<string, Verdict[]>();
@@ -165,6 +168,27 @@ function buildInputSources(
       snippet: (c.snippet || "").replace(/\s+/g, " ").trim().slice(0, 500) || null,
     });
   }
+  if (useAsSource) {
+    for (const d of userDocs) {
+      if (d.chunks.length === 0) continue;
+      for (const ch of d.chunks) {
+        const title = `מסמך משתמש "${d.file_name}", עמ' ${ch.page} (צורף על־ידי המשתמש).`;
+        out.push({
+          ref: ch.ref, // e.g. u1p3
+          candidate_id: `user:${d.id}:p${ch.page}`,
+          title,
+          url: d.signed_url,
+          source_type: "user_document",
+          role: "user_document",
+          origin: "user_upload",
+          best_support: "direct",
+          supported_points: [ch.text.replace(/\s+/g, " ").slice(0, 220)],
+          claim_ids: [],
+          snippet: ch.text.replace(/\s+/g, " ").trim().slice(0, 500) || null,
+        });
+      }
+    }
+  }
   return out;
 }
 
@@ -172,6 +196,8 @@ function buildUserMessage(
   question: string,
   claims: Claim[],
   sources: DrafterInputSource[],
+  userDocs: UserDocument[],
+  useAsSource: boolean,
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
@@ -183,7 +209,7 @@ function buildUserMessage(
     );
   }
   lines.push("");
-  lines.push(`מקורות מאומתים זמינים (${sources.length}) — השתמש אך ורק בהם:`);
+  lines.push(`מקורות זמינים (${sources.length}) — השתמש אך ורק בהם:`);
   for (const s of sources) {
     lines.push("---");
     lines.push(`ref: ${s.ref}`);
@@ -197,6 +223,18 @@ function buildUserMessage(
       for (const p of s.supported_points) lines.push(`  • ${p}`);
     }
     if (s.snippet) lines.push(`snippet: ${s.snippet}`);
+  }
+  // Soft context: attached docs are background only, not citable.
+  if (!useAsSource && userDocs.some((d) => d.chunks.length > 0)) {
+    lines.push("");
+    lines.push("הקשר רך מהמסמכים שצירף המשתמש (לרקע בלבד — אסור לצטט מהם ואסור להוסיף להם הערות שוליים):");
+    for (const d of userDocs) {
+      for (const ch of d.chunks) {
+        lines.push("---");
+        lines.push(`קובץ: ${d.file_name} | עמ' ${ch.page}`);
+        lines.push(ch.text.slice(0, 1500));
+      }
+    }
   }
   lines.push("");
   lines.push(
@@ -369,11 +407,21 @@ export async function runDrafter(
   claims: Claim[],
   candidates: Candidate[],
   verifier: { usable: UsableCandidate[]; verdicts: Verdict[] },
+  opts?: { userDocs?: UserDocument[]; useAsSource?: boolean },
 ): Promise<DrafterResult> {
   const t_total = Date.now();
   const stage_runs: StageRun[] = [];
 
-  const inputSources = buildInputSources(candidates, verifier.verdicts, verifier.usable);
+  const userDocs = opts?.userDocs ?? [];
+  const useAsSource = opts?.useAsSource ?? false;
+
+  const inputSources = buildInputSources(
+    candidates,
+    verifier.verdicts,
+    verifier.usable,
+    userDocs,
+    useAsSource,
+  );
   const sources_passed = inputSources.length;
 
   if (sources_passed === 0) {
@@ -404,7 +452,7 @@ export async function runDrafter(
     };
   }
 
-  const userMsg = buildUserMessage(question, claims, inputSources);
+  const userMsg = buildUserMessage(question, claims, inputSources, userDocs, useAsSource);
   const tool = {
     name: "emit_draft",
     description: "Emit the Hebrew legal answer with footnote markers and used_sources list.",
@@ -528,6 +576,7 @@ export async function runDrafter(
     number: u.number,
     title: u.title,
     url: u.url,
+    source_type: u.source_type,
   }));
 
   const usedCandIds = new Set(used_sources.map((u) => u.candidate_id));

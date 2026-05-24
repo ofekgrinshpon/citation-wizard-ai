@@ -19,6 +19,7 @@ import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
+import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
 import { StageRun } from "./lib/types.ts";
 
 const corsHeaders = {
@@ -127,6 +128,23 @@ async function handle(req: Request): Promise<Response> {
     project_id = project_id_raw;
   }
 
+  // Attachments (optional). Up to MAX_FILES PDF/DOCX uploaded to user-documents
+  // under {user.id}/research/...
+  const attachmentsRaw = Array.isArray(body.attachments) ? body.attachments : [];
+  const attachments: AttachmentInput[] = [];
+  for (const a of attachmentsRaw.slice(0, ATTACHMENT_LIMITS.MAX_FILES)) {
+    const obj = (a ?? {}) as Record<string, unknown>;
+    const sp = typeof obj.storage_path === "string" ? obj.storage_path : "";
+    const fn = typeof obj.file_name === "string" ? obj.file_name : "";
+    const mt = typeof obj.mime_type === "string" ? obj.mime_type : "";
+    const sz = typeof obj.size === "number" ? obj.size : undefined;
+    if (!sp || !fn || !mt) {
+      return jsonResponse(400, { error: "invalid_input", field: "attachments[*]" });
+    }
+    attachments.push({ storage_path: sp, file_name: fn, mime_type: mt, size: sz });
+  }
+  const useAsSource = body.use_as_source !== false; // default true
+
   // ─── Credit pre-flight (skipped in smoke mode) ───────────────────────────
   if (!smokeMode && userClient) {
     try {
@@ -177,10 +195,23 @@ async function handle(req: Request): Promise<Response> {
   // Wrap the whole pipeline so it runs in the background.
   const runPipeline = async (): Promise<Response> => {
 
+  // ─── P1.5: Extract attachments (PDF/DOCX) ────────────────────────────────
+  const attachmentResult = attachments.length > 0
+    ? await extractAttachments(admin, user.id, attachments)
+    : { documents: [], total_chars: 0, global_truncated: false, errors: [], ms: 0 };
+  if (attachments.length > 0) {
+    stage_runs.push({
+      stage: "attachments.extract",
+      ms: attachmentResult.ms,
+      ok: attachmentResult.documents.some((d) => d.chunks.length > 0),
+    });
+  }
+  const analyzerContext = buildAnalyzerContext(attachmentResult.documents);
+
   // ─── P2: Claim Analyzer ──────────────────────────────────────────────────
   let analyzerStage;
   try {
-    analyzerStage = await runClaimAnalyzer(question);
+    analyzerStage = await runClaimAnalyzer(question, { attachmentsContext: analyzerContext });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     await writeTelemetry(admin, {
