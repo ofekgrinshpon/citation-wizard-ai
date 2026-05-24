@@ -448,7 +448,9 @@ async function handle(req: Request): Promise<Response> {
     analyzer.claims,
     pool.candidates,
     { usable: verifier.usable, verdicts: verifier.verdicts },
+    { userDocs: attachmentResult.documents, useAsSource },
   );
+
   stage_runs.push(...drafter.stage_runs);
   const drafterMeta = {
     ok: drafter.ok,
@@ -488,7 +490,21 @@ async function handle(req: Request): Promise<Response> {
       dropped_sources: pplx.dropped,
       verifier: verifierMeta,
       drafter: drafterMeta,
+      attachments: {
+        count: attachmentResult.documents.length,
+        use_as_source: useAsSource,
+        total_chars: attachmentResult.total_chars,
+        global_truncated: attachmentResult.global_truncated,
+        errors: attachmentResult.errors,
+        documents: attachmentResult.documents.map((d) => ({
+          id: d.id,
+          file_name: d.file_name,
+          chunk_count: d.chunks.length,
+          truncated: d.truncated,
+        })),
+      },
     },
+
   });
 
   return jsonResponse(200, {

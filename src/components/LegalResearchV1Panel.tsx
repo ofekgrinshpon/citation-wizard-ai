@@ -8,7 +8,27 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown, Send } from "lucide-react";
+import { ChevronDown, Paperclip, Send, X, FileText } from "lucide-react";
+
+const MAX_FILES = 5;
+const MAX_FILE_BYTES = 8 * 1024 * 1024;
+const ACCEPT_MIME = [
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+const ACCEPT_EXT = /\.(pdf|docx)$/i;
+
+type StagedFile = { id: string; file: File };
+
+function sanitizeFileName(name: string) {
+  return name.replace(/[^\w.\-]+/g, "_").slice(0, 120);
+}
+function fmtSize(b: number) {
+  if (b < 1024) return `${b} B`;
+  if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`;
+  return `${(b / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 
 // ─── Loading stages (Hebrew, ordered) ──────────────────────────────────────
 const STAGES = [
@@ -58,9 +78,15 @@ export function LegalResearchV1Panel() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ResearchResponse | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
+  const [files, setFiles] = useState<StagedFile[]>([]);
+  const [useAsSource, setUseAsSource] = useState(true);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const progressTimerRef = useRef<number | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
+
 
   useEffect(() => {
     return () => {
@@ -130,7 +156,9 @@ export function LegalResearchV1Panel() {
           setResult((data as unknown as { result: ResearchResponse }).result);
           setLoading(false);
           setJobId(null);
+          setFiles([]);
           clearResume();
+
         } else if (status === "error") {
           stopAll(progress);
           setLoading(false);
@@ -169,6 +197,66 @@ export function LegalResearchV1Panel() {
   }, []);
 
 
+  const handleAddFiles = (incoming: FileList | File[] | null) => {
+    if (!incoming) return;
+    const arr = Array.from(incoming);
+    const accepted: StagedFile[] = [];
+    const rejected: string[] = [];
+    for (const f of arr) {
+      if (!ACCEPT_MIME.includes(f.type) && !ACCEPT_EXT.test(f.name)) {
+        rejected.push(`${f.name}: סוג קובץ לא נתמך (רק PDF/DOCX)`);
+        continue;
+      }
+      if (f.size > MAX_FILE_BYTES) {
+        rejected.push(`${f.name}: חורג מ-${fmtSize(MAX_FILE_BYTES)}`);
+        continue;
+      }
+      accepted.push({ id: crypto.randomUUID(), file: f });
+    }
+    setFiles((prev) => {
+      const merged = [...prev, ...accepted];
+      if (merged.length > MAX_FILES) {
+        rejected.push(`ניתן לצרף עד ${MAX_FILES} קבצים`);
+        return merged.slice(0, MAX_FILES);
+      }
+      return merged;
+    });
+    if (rejected.length) setError(rejected.join(" · "));
+    else setError(null);
+  };
+
+  const removeFile = (id: string) => {
+    setFiles((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const uploadStagedFiles = async (uploadJobToken: string) => {
+    if (files.length === 0) return [] as Array<{
+      storage_path: string; file_name: string; mime_type: string; size: number;
+    }>;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("יש להתחבר כדי לצרף קבצים");
+    const out: Array<{ storage_path: string; file_name: string; mime_type: string; size: number }> = [];
+    for (let i = 0; i < files.length; i++) {
+      const sf = files[i];
+      const safe = sanitizeFileName(sf.file.name);
+      const path = `${user.id}/research/${uploadJobToken}/${i}-${safe}`;
+      const { error: upErr } = await supabase.storage
+        .from("user-documents")
+        .upload(path, sf.file, {
+          contentType: sf.file.type || "application/octet-stream",
+          upsert: false,
+        });
+      if (upErr) throw new Error(`שגיאה בהעלאת ${sf.file.name}: ${upErr.message}`);
+      out.push({
+        storage_path: path,
+        file_name: sf.file.name,
+        mime_type: sf.file.type || (ACCEPT_EXT.test(sf.file.name) ? "application/pdf" : "application/octet-stream"),
+        size: sf.file.size,
+      });
+    }
+    return out;
+  };
+
   const handleSubmit = async () => {
     const q = question.trim();
     if (q.length < 5) {
@@ -177,6 +265,21 @@ export function LegalResearchV1Panel() {
     }
     setError(null);
     setResult(null);
+
+    let attachmentsPayload: Array<{ storage_path: string; file_name: string; mime_type: string; size: number }> = [];
+    if (files.length > 0) {
+      setUploadingFiles(true);
+      try {
+        const token = crypto.randomUUID();
+        attachmentsPayload = await uploadStagedFiles(token);
+      } catch (e) {
+        setUploadingFiles(false);
+        setError(e instanceof Error ? e.message : String(e));
+        return;
+      }
+      setUploadingFiles(false);
+    }
+
     setLoading(true);
     startProgress();
 
@@ -189,6 +292,8 @@ export function LegalResearchV1Panel() {
         body: {
           question: q,
           project_id: currentProject?.id ?? null,
+          attachments: attachmentsPayload,
+          use_as_source: useAsSource,
         },
       });
 
@@ -214,6 +319,7 @@ export function LegalResearchV1Panel() {
     }
   };
 
+
   const debug = (result?.debug ?? {}) as Record<string, any>;
   const dbgOpenDefault = import.meta.env.DEV;
 
@@ -230,16 +336,82 @@ export function LegalResearchV1Panel() {
           placeholder="לדוגמה: מתי בית המשפט יפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים (תרופות)?"
           className="w-full bg-background border border-input rounded-md px-3 py-2 text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-ring"
         />
+        {/* ── Attachments ── */}
+        <div className="rounded-md border border-dashed border-border bg-muted/20 p-3 space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Paperclip className="w-3.5 h-3.5" />
+              <span>קבצים מצורפים (PDF/DOCX, עד {MAX_FILES} קבצים · {fmtSize(MAX_FILE_BYTES)} לקובץ)</span>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={loading || uploadingFiles || files.length >= MAX_FILES}
+            >
+              הוסף קובץ
+            </Button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                handleAddFiles(e.target.files);
+                if (e.target) e.target.value = "";
+              }}
+            />
+          </div>
+          {files.length > 0 && (
+            <ul className="space-y-1">
+              {files.map((f) => (
+                <li key={f.id} className="flex items-center justify-between gap-2 text-xs bg-background border border-border rounded px-2 py-1">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                    <span className="truncate" title={f.file.name}>{f.file.name}</span>
+                    <span className="text-muted-foreground shrink-0">{fmtSize(f.file.size)}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(f.id)}
+                    disabled={loading || uploadingFiles}
+                    className="text-muted-foreground hover:text-destructive disabled:opacity-40"
+                    aria-label="הסר קובץ"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          {files.length > 0 && (
+            <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
+              <input
+                type="checkbox"
+                checked={useAsSource}
+                onChange={(e) => setUseAsSource(e.target.checked)}
+                disabled={loading || uploadingFiles}
+                className="accent-primary"
+              />
+              <span>השתמש בקבצים גם כמקור בתשובה (יצוטטו כהערות שוליים)</span>
+            </label>
+          )}
+        </div>
+
         <div className="flex justify-end">
           <Button
             onClick={handleSubmit}
-            disabled={loading || question.trim().length < 5}
+            disabled={loading || uploadingFiles || question.trim().length < 5}
             className="gap-1.5"
           >
             <Send className="w-4 h-4" />
-            שלח לחקירה משפטית
+            {uploadingFiles ? "מעלה קבצים…" : "שלח לחקירה משפטית"}
           </Button>
         </div>
+
       </div>
 
       {/* ── Loading progress ── */}
