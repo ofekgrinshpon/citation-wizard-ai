@@ -153,7 +153,7 @@ export async function runClaimAnalyzer(
     callOpenAIJsonTool<unknown>({
       model: MODEL_FULL,
       system: SYSTEM_PROMPT,
-      user: question,
+      user: userPrompt,
       tool: {
         name: "emit_claim_analysis",
         description: "Emit the structured claim analysis for a Hebrew legal question.",
