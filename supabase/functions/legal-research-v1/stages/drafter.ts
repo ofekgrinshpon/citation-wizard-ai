@@ -4,6 +4,7 @@
 // deterministic footnote list. No advanced citation formatting.
 
 import { callOpenAIJsonTool } from "../lib/openai.ts";
+import type { UserDocument } from "../lib/attachments.ts";
 import {
   Candidate,
   Claim,
