@@ -1,34 +1,25 @@
 ## Problem
 
-Clicking a history item crashes with `Cannot read properties of undefined (reading 'split')` at `RenderBold` (`src/components/LegalQAChat.tsx:453`). Old `qa_logs.footnotes` rows contain entries where `citation` is `undefined`/missing, and `RenderBold` is called with `fn.citation` (lines 2838, 3088). `text.split(...)` then throws and the ErrorBoundary takes over.
+Clicking a history item for a `legal_research_v1` answer renders footnotes as bare numbered rows with only an external-link arrow — no citation text. Cause: `legal-research-v1` writes footnotes as `{ number, title, url, source_type }` (no `citation` field), but `QAHistorySidebar.handleClick` sanitizes `citation` to `""` when missing, and `LegalQAChat` renders `fn.citation` (line 3091).
 
-## Fix (UI only, no backend changes)
+Verified in DB: e.g. `qa_logs.id = ff150ac3…` (task_mode `legal_research_v1`) has `footnotes[0] = { url, title, number, source_type }`.
 
-**`src/components/LegalQAChat.tsx`**
+## Fix (UI only)
 
-1. **Harden `RenderBold`** (~line 452): coerce `text` to string and bail on empty:
-   ```ts
-   function RenderBold({ text }: { text?: string | null }) {
-     const safe = typeof text === "string" ? text : "";
-     const parts = safe.split(/\*\*(.*?)\*\*/g);
-     ...
-   }
-   ```
-   Also harden `RenderMarkdown` / `RenderMarkdownLine` the same way (any `.split("\n")` on `text`/`line`).
+**`src/components/QAHistorySidebar.tsx`** — in the array-footnotes branch of `handleClick` (~line 108), fall back `citation` to `title` when `citation` is missing:
 
-2. **Sanitize footnotes when loading history** — in `QAHistorySidebar.handleClick` (`src/components/QAHistorySidebar.tsx`, ~line 108), map array footnotes to ensure each item has string `citation`, numeric `number`, and string `source_type`:
-   ```ts
-   footnotes: Array.isArray(fn)
-     ? fn.map((f: any, i: number) => ({
-         number: typeof f?.number === "number" ? f.number : i + 1,
-         citation: typeof f?.citation === "string" ? f.citation : "",
-         source_type: typeof f?.source_type === "string" ? f.source_type : "unknown",
-         url: typeof f?.url === "string" ? f.url : undefined,
-         source: f?.source,
-       }))
-     : [],
-   ```
+```ts
+citation:
+  typeof f?.citation === "string" && f.citation.trim() !== ""
+    ? f.citation
+    : typeof f?.title === "string"
+    ? f.title
+    : "",
+```
+
+That's the only change. No backend changes, no schema changes, no other components touched.
 
 ## Out of scope
-- Trash-can behavior, Enter-to-send, and any other unrelated UI work.
-- Backfilling old `qa_logs` rows.
+- Routing `legal_research_v1` history items to `LegalResearchV1Panel` instead of `LegalQAChat` (separate UX decision).
+- Backfilling old rows.
+- Any other unrelated UI work.
