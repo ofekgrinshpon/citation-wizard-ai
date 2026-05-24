@@ -93,39 +93,32 @@ export function LegalResearchV1Panel() {
     setError("הבקשה בוטלה. הפעלת חיפוש חדשה תפתח עבודה חדשה.");
   };
 
-  const startProgress = () => {
-    startRef.current = Date.now();
-    setProgress(5);
-    setStageIdx(0);
-    setElapsed(0);
+  const startProgress = (startedAt?: number) => {
+    startRef.current = startedAt ?? Date.now();
+    const initialEl = Date.now() - startRef.current;
+    setProgress(Math.min(95, 5 + (initialEl / (STAGES.length * STAGE_BUDGET_MS)) * 85));
+    setStageIdx(Math.min(STAGES.length - 1, Math.floor(initialEl / STAGE_BUDGET_MS)));
+    setElapsed(initialEl);
     if (progressTimerRef.current) window.clearInterval(progressTimerRef.current);
     progressTimerRef.current = window.setInterval(() => {
       const el = Date.now() - startRef.current;
       setElapsed(el);
       setStageIdx(Math.min(STAGES.length - 1, Math.floor(el / STAGE_BUDGET_MS)));
       const pct = 5 + (el / (STAGES.length * STAGE_BUDGET_MS)) * 85;
-      setProgress(Math.min(90, pct));
+      setProgress(Math.min(95, pct));
     }, 1000);
   };
 
-  const pollJob = (jobId: string) => {
+  const pollJob = (jid: string) => {
     if (pollTimerRef.current) window.clearInterval(pollTimerRef.current);
     pollTimerRef.current = window.setInterval(async () => {
-      const el = Date.now() - startRef.current;
-      if (el > HARD_CAP_MS) {
-        stopAll(progress);
-        setLoading(false);
-        setError("הבקשה ארכה זמן רב מדי. נסה שוב או קצר את השאלה.");
-        return;
-      }
       try {
         const { data, error: qErr } = await supabase
           .from("legal_research_jobs")
           .select("status, result, error")
-          .eq("id", jobId)
+          .eq("id", jid)
           .maybeSingle();
         if (qErr) {
-          // transient; keep polling
           console.warn("[lrv1 poll]", qErr.message);
           return;
         }
@@ -136,9 +129,13 @@ export function LegalResearchV1Panel() {
           setStageIdx(STAGES.length - 1);
           setResult((data as unknown as { result: ResearchResponse }).result);
           setLoading(false);
+          setJobId(null);
+          clearResume();
         } else if (status === "error") {
           stopAll(progress);
           setLoading(false);
+          setJobId(null);
+          clearResume();
           setError(
             (data as { error?: string }).error ||
               "אירעה שגיאה בעיבוד הבקשה.",
@@ -149,6 +146,26 @@ export function LegalResearchV1Panel() {
       }
     }, POLL_INTERVAL_MS);
   };
+
+  // Resume-on-mount: if a job was active in this tab, keep polling it.
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(RESUME_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { jobId: string; startedAt: number };
+      if (!parsed?.jobId) return;
+      setJobId(parsed.jobId);
+      setLoading(true);
+      setError(null);
+      setResult(null);
+      startProgress(parsed.startedAt);
+      pollJob(parsed.jobId);
+    } catch {
+      /* ignore corrupt resume state */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   const handleSubmit = async () => {
     const q = question.trim();
