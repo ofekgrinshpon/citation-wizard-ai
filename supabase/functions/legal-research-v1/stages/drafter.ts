@@ -296,25 +296,23 @@ function deterministicRepair(
   const positions: Array<{ start: number; end: number; oldNum: number }> = [];
   let i = 0;
   while (i < answer.length) {
-    if (SUP_TO_DIGIT[answer[i]] !== undefined) {
-      const start = i;
-      let run = "";
-      while (i < answer.length && SUP_TO_DIGIT[answer[i]] !== undefined) {
-        run += SUP_TO_DIGIT[answer[i]];
-        i++;
-      }
-      const end = i;
-      const n = parseInt(run, 10);
-      if (!Number.isFinite(n) || n < 1) continue;
-      if (!oldNumToRef.has(n)) return null; // marker with no source → cannot mechanically fix
-      if (!seen.has(n)) {
-        seen.add(n);
-        firstOrder.push(n);
-      }
-      positions.push({ start, end, oldNum: n });
-    } else {
+    const d = SUP_TO_DIGIT[answer[i]];
+    if (d === undefined) {
       i++;
+      continue;
     }
+    // P5.1a: one superscript char == one marker. ¹² => [1, 2], not 12.
+    const start = i;
+    const end = i + 1;
+    const n = Number(d);
+    i = end;
+    if (!Number.isFinite(n) || n < 1) continue;
+    if (!oldNumToRef.has(n)) return null; // marker with no source → cannot mechanically fix
+    if (!seen.has(n)) {
+      seen.add(n);
+      firstOrder.push(n);
+    }
+    positions.push({ start, end, oldNum: n });
   }
   if (positions.length === 0) return null;
 
