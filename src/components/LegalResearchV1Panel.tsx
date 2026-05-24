@@ -488,7 +488,7 @@ export function LegalResearchV1Panel() {
       </div>
 
       {/* ── Composer (bottom, sticky via mt-auto) ── */}
-      <div className="mt-auto pt-2 border-t border-border bg-background">
+      <div className="mt-auto pt-2">
         <div className="flex gap-2 items-end pt-2">
           {hasContentToClear && (
             <button
@@ -503,7 +503,7 @@ export function LegalResearchV1Panel() {
             </button>
           )}
 
-          <div className="flex flex-1 min-w-0 items-end bg-background border border-input rounded-xl focus-within:ring-2 focus-within:ring-ring">
+          <div className="input-field flex flex-1 min-w-0 items-end">
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
