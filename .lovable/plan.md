@@ -1,70 +1,73 @@
+**P6.5 — Claim Analyzer escalation: retry on transient failure (analyzer-only)**
 
-# P6.3 — Drafter Style-Only Refinement
+**Problem recap**
 
-Single, very narrow change. Goal: make answers read as natural, polished Hebrew legal-academic prose without changing any grounding, selection, validation, or pipeline behavior.
+Your last query hit this exact failure mode:
+- `claim_analyzer.initial` (gpt-5-mini): 19.5s, returned a degenerate tool payload (empty `claims`, missing `legal_area`/`answer_type`, non-finite `confidence`).
+- `claim_analyzer.escalated` (gpt-5): **279ms, ok:false** — that's a transient upstream/network failure from the AI gateway, not a real model run.
+- Pipeline short-circuits at P2 and returns the P2 stub answer (`"[stub] התשובה תיווצר בשלב P5…"`).
 
-## Scope
+Today the escalation runs **exactly once**. One blip kills the whole job.
 
-**One file, prompt-only edit:** `supabase/functions/legal-research-v1/stages/drafter.ts`
-- Edit the `SYSTEM_PROMPT` style block (lines ~69–73) and the closing line in `buildUserMessage` (line ~202).
-- No code changes. No new LLM call. No new pass. No schema/tool changes.
+**Scope (very narrow)**
 
-## What changes
+Change only the escalation path inside `supabase/functions/legal-research-v1/stages/claimAnalyzer.ts`. Nothing else.
 
-### SYSTEM_PROMPT — "כללי כתיבה — סגנון" block
+**Changes**
 
-Replace current style bullets with refined Hebrew-natural guidance:
+1. In `runClaimAnalyzer`, wrap the existing gpt-5 escalation `callOpenAIJsonTool(...)` in a small retry helper:
+   - **Max 2 attempts** total for the escalation (i.e. 1 retry after the first failure).
+   - **Retry condition**: only when the call returns no usable `data` AND the elapsed time is clearly a transient failure (e.g. `ms < 2000`), OR the call throws. Do NOT retry on a real schema-invalid response from the model (that's a content issue, not a transport issue).
+   - **Backoff**: 800ms fixed delay between attempts (no exponential, no jitter — keep it boring).
+   - **No new timeout logic, no new network code** beyond the retry loop.
 
-- כתוב עברית משפטית טבעית, מדויקת ואקדמית — כפי שכותב משפטן ישראלי, לא כתרגום מאנגלית. הימנע מתחביר מסורבל, מצירופים מתורגמים, ומחזרות מיותרות.
-- העדף מינוח משפטי ישראלי מקובל (למשל "השתק פלוגתא", "צו מניעה זמני", "פיצוי מוסכם", "סבירות", "הבטחה מנהלית"). השתמש במונח לועזי רק כשהוא מקובל בפועל בשיח המשפטי הישראלי או כשאין לו חלופה עברית טבעית.
-- התאם את המבנה לסוג השאלה: שאלת דוקטרינה תיענה בהגדרה→יסודות→יישום→סייגים; שאלת פרשנות סעיף תיענה בלשון הסעיף→תכלית→פסיקה; שאלה השוואתית או עובדתית תיענה במבנה שמתאים לה. **אל תכפה תבנית דוקטרינרית קשיחה כאשר היא לא מתאימה לשאלה.**
-- שאף לכתיבה רציפה וקוהרנטית: פסקאות מתפתחות, מעברים טבעיים, ולא רשימות מקוטעות. השתמש ברשימות (•/-) רק כשהן באמת מבהירות את התוכן.
-- אורך התשובה ייקבע מעומק המקורות. אל תקצר באופן מלאכותי ואל תמתח באופן מלאכותי.
+2. Record both attempts in `stage_runs`:
+   - `claim_analyzer.escalated` (attempt 1) — as today.
+   - `claim_analyzer.escalated_retry` (attempt 2, only if it happened) — with `model: MODEL_FULL`, its own `ms`, `ok`, `escalated: true`.
 
-### `buildUserMessage` closing line
+3. The final `validated` value is taken from whichever attempt succeeded last (same as today, just over the retry result).
 
-Replace with:
-> "כתוב תשובה משפטית בעברית טבעית ומדויקת, מבוססת אך ורק על המקורות שסופקו, עם הערות שוליים בכתב עילי. התאם את מבנה התשובה לאופי השאלה, ושמור על כתיבה רציפה וקוהרנטית."
+4. `escalation_reasons` returned unchanged.
 
-## What stays untouched (explicit)
+**Out of scope (do not touch)**
 
-All grounding & guardrail rules in SYSTEM_PROMPT remain verbatim:
-- "השתמש אך ורק במקורות שסופקו" / no invention.
-- Every substantive legal proposition carries a footnote marker.
-- partial → qualify or omit.
-- No internal id leaks (candidate_id / claim_id / C# / S# / LS# / "verifier").
-- Source names only if explicit in title/supported_points.
-- **bold** for emphasis; no `#` headings.
-- emit_draft tool schema and used_sources contract.
+- `claim_analyzer.initial` behavior (no retry on mini).
+- Query planner, retrieval, verifier, drafter, marker validator, footnotes, citation engine.
+- `legal-qa/*`, write_chapter, pleading_analysis (still offline).
+- `LegalResearchV1Panel.tsx` and any other frontend file.
+- Source quality, Perplexity admission, ranking, verifier batching/prompt, drafter prompt.
+- No new env flags, no config.toml changes, no schema changes.
 
-No changes to:
-- Retrieval, candidate pool, Perplexity admission, URL hygiene.
-- Verifier (logic, batching, role_match, usable/dropped).
-- `buildInputSources`, validation, marker validation, deterministic repair, internal-id leak detector.
-- Escalation to gpt-5.
-- Footnote rendering, citation formatting, bibliography, "שם" / "לעיל ה״ש".
-- Frontend (`LegalResearchV1Panel.tsx`), `legal-qa/index.ts`, DB schema, Fast/Deep, DoctrineClassifier, SourceRequirements.
+**Risk**
 
-## Validation
+Effectively zero on the happy path: when the first escalation succeeds, behavior is byte-identical to today. The only added cost is one extra gpt-5 call in the rare case the first escalation fails transiently — and in that case today's behavior is a hard 422 + stub answer, so any successful retry is strictly better.
 
-Re-run the same 6 fixtures (L1–L6) via the existing `scripts/legal-research-v1-p6.2b-runner.ts` (or a thin p6.3 copy), persist to `reports/legal-research-v1-p6.3-L{1..6}.json` + `summary.json`. Acceptance:
+**Validation**
 
-- `marker_validation.ok` true on all 6.
-- `internal_id_leak` false on all 6.
-- `used_sources` ⊆ `verifier.usable` on all 6.
-- L3 still cites סעיף 15 footnote; L4 issue-preclusion only (no promissory-estoppel drift); L6 still completes.
-- Word counts within roughly ±25% of P6.2b — no bloat, no over-shrinking.
-- Qualitative spot-check per fixture (1–2 sentences): reads as natural Hebrew legal-academic prose; structure adapted to question type; no awkward translated phrasing; no rigid template forced.
+- Deploy `legal-research-v1`.
+- Re-run the failing query from the UI; expect either a real P5 answer or, if the model genuinely cannot analyze, a `planning_error` with the analyzer escalation showing **two** stage_runs (`escalated` + `escalated_retry`) — not a 279ms one-shot.
+- Spot-check 1–2 fixtures from `eval/legal-research-v1/fixtures.json` via the existing P6.3 runner pattern (no new runner needed) to confirm no regression on the happy path. Acceptance: same `marker_validation.ok`, same `used_sources ⊆ verifier.usable`, no change in word counts beyond noise.
+- No full 6-fixture smoke required (change is isolated to a transient-error branch that doesn't fire on the happy path).
 
-**Stop condition.** If any fixture regresses on grounding (leak, missing/extra markers, used not in usable, drift), revert prompt and report instead of shipping.
+**Technical detail**
 
-## Order
+```text
+runClaimAnalyzer
+├── initial call (mini or full per pre-escalation)         [unchanged]
+├── if initial on gpt-5 → return                            [unchanged]
+├── if post-checks ok → return                              [unchanged]
+└── escalation block:
+    ├── attempt 1: callOpenAIJsonTool(gpt-5, reasoning:medium)
+    │     push stage_run "claim_analyzer.escalated"
+    ├── if attempt 1 has no usable data AND (threw OR ms < 2000):
+    │     wait 800ms
+    │     attempt 2: callOpenAIJsonTool(gpt-5, reasoning:medium)
+    │     push stage_run "claim_analyzer.escalated_retry"
+    │     validated = validateAnalyzer(attempt 2.data)
+    │     raw_text_final = attempt 2.raw_text
+    └── else: validated = validateAnalyzer(attempt 1.data)   [unchanged]
+```
 
-1. Apply prompt edit.
-2. Deploy `legal-research-v1`.
-3. Run 6-fixture smoke; persist reports.
-4. Post summary with per-fixture qualitative note + acceptance table.
+**Stop condition**
 
-## Out of scope
-
-retrieval, Perplexity, URL hygiene, citation formatting, footnote renderer, marker parser, frontend, verifier, legal-qa, schema, streaming, Fast/Deep.
+If the retry attempt itself also fails or returns invalid schema → fall through to the existing `planning_error` path. No further retries, no fallback to mini, no behavior change downstream.
