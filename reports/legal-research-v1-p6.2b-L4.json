@@ -1,0 +1,79 @@
+{
+  "fixture": {
+    "id": "L4",
+    "question": "מהי דוקטרינת השתק פלוגתא?"
+  },
+  "run_id": "51d82e04-fbca-4956-b6bc-131517098abf",
+  "qa_log_id": "bce90783-86ab-461c-b4ab-f90f0d162b10",
+  "timings_ms": {
+    "total": 81986,
+    "analyzer": 19150,
+    "planner": 22717,
+    "retrieval": 40007,
+    "verifier": 0,
+    "drafter": 0
+  },
+  "answer_word_count": 14,
+  "answer_markdown": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "footnotes": [],
+  "used_sources": [],
+  "used_sources_usability": [],
+  "acceptance": {
+    "marker_validation_ok": false,
+    "internal_id_leak": false,
+    "all_used_in_verifier_usable": false,
+    "repaired": false,
+    "leaked_tokens": [],
+    "missing_sources": [],
+    "unused_sources": []
+  },
+  "marker_validation": {
+    "ok": false,
+    "error": "no_usable_candidates",
+    "repaired": false,
+    "leaked_tokens": [],
+    "unused_sources": [],
+    "missing_sources": [],
+    "internal_id_leak": false,
+    "markers_in_answer": []
+  },
+  "support_distribution": {
+    "direct": 0,
+    "partial": 0,
+    "unrelated": 0,
+    "tangential": 0
+  },
+  "footnote_origin_split": {
+    "local_db": 0,
+    "perplexity": 0
+  },
+  "drafter": {
+    "ok": false,
+    "escalated": false,
+    "model_final": "openai/gpt-5-mini",
+    "sources_passed": 0,
+    "sources_used": 0,
+    "footnote_count": 0,
+    "omitted_candidate_ids": [],
+    "error": "no_usable_candidates"
+  },
+  "verifier_summary": {
+    "ms": 0,
+    "counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 0,
+        "unrelated": 0,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 0,
+        "false": 0
+      }
+    },
+    "batches": [],
+    "escalated_claims": []
+  },
+  "qualitative_note": null,
+  "generated_at": "2026-05-24T06:41:09.148Z"
+}

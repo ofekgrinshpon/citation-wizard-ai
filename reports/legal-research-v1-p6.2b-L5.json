@@ -1,0 +1,285 @@
+{
+  "fixture": {
+    "id": "L5",
+    "question": "מהי עילת הסבירות ומה היקף הביקורת השיפוטית עליה?"
+  },
+  "run_id": "31089a11-e3dd-464c-aac0-1e5cd37063c8",
+  "qa_log_id": "11530415-f26a-48c7-a8d0-fabe597be19d",
+  "timings_ms": {
+    "total": 141238,
+    "analyzer": 13947,
+    "planner": 23249,
+    "retrieval": 40007,
+    "verifier": 37239,
+    "drafter": 26660
+  },
+  "answer_word_count": 844,
+  "answer_markdown": "הקדמה ותמצית כללית\n\nעילת ה**סבירות** היא דוקטרינה מרכזית במשפט המנהלי הישראלית הנועדה למנוע הוראות מינהליות בלתי מתקבלות על הדעת — החלטות שאין להן בסיס 합תי או ההגיון המינימלי המצופה מהשלטון הציבורי.¹ עילת הסבירות אינה מבטאת פרשנות צרה של חוקיות פורמלית בלבד, אלא דרישה שמנהל הציבורי יפעיל שיקול דעת סביר, מבוסס ומוצדק מבחינה עובדתית ונורמטיבית.²\n\n1. מהות העילה — הגדרה, מקור נורמטי ובסיס משפטי\n\n- הגדרת הדוקטרינה: עילת הסבירות מתקיימת כאשר פעולת המנהל עומדת מעבר לסף סביר של קבלת החלטות — כלומר כאשר ההחלטה מנותקת מהעובדות, מהעקרונות הרלוונטיים או מסגרת ההצדקה הציבורית המצופה, עד כדי כך שדרושה התערבות שיפוטית.³\n- מקור נורמטי ובסיס משפטי: בעזרת נימוקי \"תרבות ההצדקה\" ושליטת עקרונות השלטון החוקתי, התפתחה הסבירות כתכלית בדיקה שיפוטית המשלימה ולעתים מחליפה את שיקול הבדיקה הפורמלית.⁴ החוקיות היחידה אינה מספיקה; הבסיס לעילה משולב בפרשנות הפסיקה והדיון התיאורטי על תפקידה של ביקורת שיפוטית במערכת דמוקרטית.⁵\n\n2. יסודותיה ומבחני הסבירות (קריטריונים מהותיים)\n\nניתן לסכם את מבחני הסבירות במספר קריטריונים פרקטיים אשר בדיקתם איננה בהכרח חשבונית אלא איכותית ומותאמת להקשר:\n\n- סבירות עובדתית: האם ההחלטה נשענת על עובדות רלוונטיות ותומכות? האם קיים קשר סיבתי סביר בין המסקנה לעובדות?⁶\n- סבירות נורמטיבית/הצדקתית: האם הוצגו עילות הנמקות מספקות להחלטה? האם המענה של הרשות מוכן להצדיק את צעדיה מבחינה משפטית־מנהלית?⁷\n- היעדר התעלמות משיקולים חיוניים: האם הרשות התעלמה משיקולים שיש להם משמעות מהותית להחלטה?⁸\n- הופעת שיקולים זרים או שאינם רלוונטיים: האם הרשות נשענה על שיקולים שאינם חלק ממטרות הסמכות?⁹\n- קצוות של אי־סבירות קיצונית (irrationality / Wednesbury‑type): האם ההחלטה כה בלתי מתקבלת על הדעת עד כי היא נחשבת כ\"משוללת תבונה\"?¹⁰\n\nכל אחד מהקריטריונים נבחן לאור ההקשר, טבע ההחלטה והמידה בה רשות נדרשת לאזן ערכים ציבוריים.¹¹\n\n3. היקף ועוצמת הביקורת השיפוטית על עילת הסבירות\n\n- עקרון המידתיות בביקורת: בית המשפט נדרש לאזן בין הצורך במתן הגנה לאזרח מפני החלטות בלתי סבירות לבין עקרון ה**כבוד לרשות המינהלית** והשמירה על מרחב שיקול דעתה.¹²\n- משתנים המשפיעים על עוצמת הביקורת: סוג הרשות (שיפוטית/מינהלית/תכנונית), תחום הסמכות (מדיניות ציבורית לעומת יישום טכני), מידת המורכבות המקצועית של ההחלטה, והיקף הפגיעה בזכויות הפרט — כל אלו משפיעים על מידת הפיקוח השיפוטי (החל מביקורת מצומצמת ועד ביקורת מוגברת).¹³\n- אילוצים פרקטיים: כאשר מעורבים שיקולים פוליטיים גבוהים או הערכות כלכליות־מדיניות, בתי המשפט נוטים לגבש ביקורת מצומצמת; לעומת זאת, בעניינים של זכויות יסוד, פגיעות חמורות או במצבים של אי־נמקות בולטת — תיתכן ביקורת מחמירה.¹⁴\n- דיון על התפתחות ההלכה: הפסיקה העליונה בוחנת לעתים באופן פרטני את מאזן הכבוד לרשות מול החובה להגן על הציבור מנימוקים בלתי סבירים, ובכך מציעה ניסוח רגיש לאופני הביקורת השיפוטית.¹⁵\n\n4. יחסי הגומלין עם עילות ביקורת אחרות — מתי להעדיף אי־חוקיות, פגם בהליך או יחסיות על פני סבירות\n\n- סדרת עדיפויות עקרונית: כאשר ניתן להצביע על **אי־חוקיות גלויה** (קיום פגיעה בסמכות פלילית/חוקית) או על ליקוי מהותי ביישום החוק — יש נוהל משפטי לעיתים שמשקלו של טיעון אי־חוקיות גובר על טיעון אי־סבירות, שכן אי־חוקיות שוללת את יסוד הסמכות.¹⁶\n- פגם בהליך: כשניתן להצביע על הלכות פרוצדורליות (אי־שמיעת טענות, חוסר נימוק מהותי של החלטה) — הטיפול בהליך עשוי להביא לתיקון מהיר ובירור עובדות, ולעיתים הוא יועדף על פני הוכחת אי־סבירות מהותית.¹⁷\n- יחסיות והיעדר פנייה: במקרים שנדרש איזון בין זכויות או בחינת מידתיות המעשה, בדיקת ה**יחסיות** יכולה להיות כלי יעיל יותר מהאבחנה הכללית של \"אי־סבירות\" משום שהיא מטמיעה מבחנים של הכרחיות והתאמת המטרה לאמצעים.¹⁸\n- עקרון המיזוג וההשלמה: ביישום מעשי יש לעיתים חפיפה בין העילות — טענה של אי־סבירות עשויה לכלול תובנות מבדיקת הליך או יחסיות ולהיפך; המחקר והפסיקה מזהירים מפירוד מלא בין העילות וממליצים על גישה אינטגרטיבית.¹⁹\n\n5. תוצאות פרקטיות וסעדים — מה נדרש כשהחלטה נאמדת כבלתי סבירה\n\n- סעדים אופייניים: ביטול החלטה מנהלית (צו ביטול), צו השבה לדיון שבו יינתנו הוראות להעמדת שיקולים רלוונטיים, ולפעמים פסיקה משמרת הנועדה להגביל את סמכויות הרשות ולצוות על אופן שיקול הדעת העתידי.²⁰\n- הגבלת סמכות ופסקיות: במקרים קיצוניים של אי־סבירות קיצונית או של חריגה מסמכות ייתכן שלבית המשפט יש סמכות להגביל את יכולת הרשות לפעול באותו אופן בעתיד, או להורות על קבלת החלטה אחרת במסגרת סמכותה (פשיטה זהירה על החלפת שיקול דעת).²¹\n- מתי בית המשפט יחליף שיקול דעת של הרשות: הכלל המקובל הוא כי החלפת שיקול דעת היא חריגה, ורק כשקיים ליקוי בלתי מתקן או אי־סבירות קיצונית שתפגע באינטרסים בסיסיים של הצדדים ובסמכות עצמה — תיתכן החלפה.²² בפסיקה והספרות נידונה ההצטמצמות של הנטייה להחליף שיקול דעת, כאמצעי לשמור על ריסון שיפוטי, אך במצבים מתאימים יימצא כי החלפת שיקול הדעת מוצדקת.²³\n\n6. דגשים פרקטיים והמלצות להליך עילת הסבירות\n\n- יש לבחון כל טענה במסגרת הקשר החלטתי רחב: סוג ההחלטה, טבען של ראיות, מידת הפגיעה בזכויות והמודעות של הרשות לצורך בנימוק — כל אלה קובעים את דרגת הביקורת השיפוטית.²⁴\n- במחלוקת פרוצדורלית או בתחום תכנוני/טכני יש לקבל בחשבון פסיקה מחוזית ופרקטיקות שבוחנות את מידת ההשגחה; דוגמאות מתחום התכנון ממחוזות שונות ממחישות את המנעד האפשרי בבדיקת סבירות.²⁵\n\nסיכום\n\nעילת הסבירות היא כלי שבמרכזו עומדת חובת ההצדקה של הממשל והגנה על האזרח מפני החלטות שאינן עומדות בסף מינימלי של תבונה ציבורית. אמנם היא אינה הנס הראשון לביקורת — יש חשיבות למתן מקום לסמכות המינהלית — אך היא מספקת מסגרת ערכית ותהליכית לאבחון החלטות בלתי מתקבלות על הדעת. בבחינת החלטה יפעל בית המשפט במשקל מאוזן של מבחנים עובדתיים, נורמטיביים ופרוצדורליים, תוך התחשבות בסוג ותחום ההחלטה, ובהבנה כי רק במקרים קיצוניים יוחלף שיקול הדעת המנהלי על־ידי בית המשפט.²⁶",
+  "footnotes": [
+    {
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Vol21No2/21%20TLR%20233.pdf",
+      "title": "Reasonableness and Judicial Review",
+      "number": 1
+    },
+    {
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/18/4Moshe%20Cohen-Eliya.pdf",
+      "title": "The Reasonableness Doctrine in Administrative Law",
+      "number": 2
+    },
+    {
+      "url": "https://law.haifa.ac.il/images/law/research/lawreview/volumes/33-1/33-1-1.pdf",
+      "title": "On the Rationality of Reasonableness: Administrative Law, the Reasonableness Standard and the Israeli Legal System",
+      "number": 3
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%9C%D7%AA%20%D7%90%D7%99%D6%BE%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+      "title": "עילת אי־הסבירות במשפט המינהלי",
+      "number": 4
+    },
+    {
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/dotan.pdf",
+      "title": "עקרונות יסוד – חלק ראשון – ביקורת שיפוטית: יתרונות וחסרונות",
+      "number": 5
+    },
+    {
+      "url": "https://www.runi.ac.il/media/hfaja1so/zamir.pdf",
+      "title": "ביקורת שיפוטית על החלטות מינהליות: תיאוריה ופרקטיקה",
+      "number": 6
+    },
+    {
+      "url": "https://supreme.court.gov.il/sites/default/files/fulltext/09/240/066/66240660.l09.pdf",
+      "title": "עע\"מ 6624/11 ד\"ר דוד זליגמן נ' עיריית תל אביב-יפו ואח'",
+      "number": 7
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2022-02/%D7%A9%D7%A0%D7%99%20%D7%9E%D7%95%D7%A9%D7%92%D7%99%D7%9D%20%D7%A9%D7%9C%20%D7%A8%D7%99%D7%A1%D7%95%D7%9F%20-%20%D7%95%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA.pdf",
+      "title": "שני מושגים של ריסון – וסבירות",
+      "number": 8
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/post/weill2",
+      "title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית",
+      "number": 9
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Vol21No2/21%20TLR%20233.pdf",
+      "title": "Reasonableness and Judicial Review",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "Journal article (law review)",
+      "candidate_id": "af57b4fa-b3f2-4953-8e24-4d329d5d83a4"
+    },
+    {
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/18/4Moshe%20Cohen-Eliya.pdf",
+      "title": "The Reasonableness Doctrine in Administrative Law",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "Book chapter / academic chapter",
+      "candidate_id": "d7c7ddbc-0314-4fda-be72-ac33cd9573eb"
+    },
+    {
+      "url": "https://law.haifa.ac.il/images/law/research/lawreview/volumes/33-1/33-1-1.pdf",
+      "title": "On the Rationality of Reasonableness: Administrative Law, the Reasonableness Standard and the Israeli Legal System",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "Journal article",
+      "candidate_id": "fa7f94dc-6a2c-4ba6-82bc-a6b6f1ff8aa3"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%9C%D7%AA%20%D7%90%D7%99%D6%BE%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+      "title": "עילת אי־הסבירות במשפט המינהלי",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "מאמר אקדמי",
+      "candidate_id": "f8ecbcc6-7462-4ee7-8154-98a79023de5f"
+    },
+    {
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/dotan.pdf",
+      "title": "עקרונות יסוד – חלק ראשון – ביקורת שיפוטית: יתרונות וחסרונות",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "PDF / מאמר אקדמי",
+      "candidate_id": "fb84f71f-6a19-4ca1-b90a-1a0e4bf7b9d0"
+    },
+    {
+      "url": "https://www.runi.ac.il/media/hfaja1so/zamir.pdf",
+      "title": "ביקורת שיפוטית על החלטות מינהליות: תיאוריה ופרקטיקה",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "PDF / מאמר אקדמי",
+      "candidate_id": "b88de3ff-9f6e-44aa-b693-86b2fd3e7e9b"
+    },
+    {
+      "url": "https://supreme.court.gov.il/sites/default/files/fulltext/09/240/066/66240660.l09.pdf",
+      "title": "עע\"מ 6624/11 ד\"ר דוד זליגמן נ' עיריית תל אביב-יפו ואח'",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "פסיקה – בית המשפט העליון",
+      "candidate_id": "5809ce2c-3b16-4aee-b079-bda28d719a68"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2022-02/%D7%A9%D7%A0%D7%99%20%D7%9E%D7%95%D7%A9%D7%92%D7%99%D7%9D%20%D7%A9%D7%9C%20%D7%A8%D7%99%D7%A1%D7%95%D7%9F%20-%20%D7%95%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA.pdf",
+      "title": "שני מושגים של ריסון – וסבירות",
+      "number": 8,
+      "origin": "perplexity",
+      "source_type": "מאמר אקדמי (כתב עת משפטי)",
+      "candidate_id": "e2177015-5096-4c2a-a108-1f5f94274711"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/post/weill2",
+      "title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית",
+      "number": 9,
+      "origin": "perplexity",
+      "source_type": "מאמר אקדמי/פרשנות משפטית",
+      "candidate_id": "65061bde-23d5-4e41-a73b-73c249c4b475"
+    }
+  ],
+  "used_sources_usability": [
+    {
+      "candidate_id": "af57b4fa-b3f2-4953-8e24-4d329d5d83a4",
+      "number": 1,
+      "title": "Reasonableness and Judicial Review",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "d7c7ddbc-0314-4fda-be72-ac33cd9573eb",
+      "number": 2,
+      "title": "The Reasonableness Doctrine in Administrative Law",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "fa7f94dc-6a2c-4ba6-82bc-a6b6f1ff8aa3",
+      "number": 3,
+      "title": "On the Rationality of Reasonableness: Administrative Law, the Reasonableness Standard and the Israeli Legal System",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "f8ecbcc6-7462-4ee7-8154-98a79023de5f",
+      "number": 4,
+      "title": "עילת אי־הסבירות במשפט המינהלי",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "fb84f71f-6a19-4ca1-b90a-1a0e4bf7b9d0",
+      "number": 5,
+      "title": "עקרונות יסוד – חלק ראשון – ביקורת שיפוטית: יתרונות וחסרונות",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "b88de3ff-9f6e-44aa-b693-86b2fd3e7e9b",
+      "number": 6,
+      "title": "ביקורת שיפוטית על החלטות מינהליות: תיאוריה ופרקטיקה",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "5809ce2c-3b16-4aee-b079-bda28d719a68",
+      "number": 7,
+      "title": "עע\"מ 6624/11 ד\"ר דוד זליגמן נ' עיריית תל אביב-יפו ואח'",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "e2177015-5096-4c2a-a108-1f5f94274711",
+      "number": 8,
+      "title": "שני מושגים של ריסון – וסבירות",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "65061bde-23d5-4e41-a73b-73c249c4b475",
+      "number": 9,
+      "title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית",
+      "in_verifier_usable": true
+    }
+  ],
+  "acceptance": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "all_used_in_verifier_usable": true,
+    "repaired": true,
+    "leaked_tokens": [],
+    "missing_sources": [],
+    "unused_sources": []
+  },
+  "marker_validation": {
+    "ok": true,
+    "repaired": true,
+    "leaked_tokens": [],
+    "unused_sources": [],
+    "missing_sources": [],
+    "internal_id_leak": false,
+    "markers_in_answer": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ]
+  },
+  "support_distribution": {
+    "direct": 13,
+    "partial": 4,
+    "unrelated": 0,
+    "tangential": 0
+  },
+  "footnote_origin_split": {
+    "local_db": 0,
+    "perplexity": 9
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "model_final": "openai/gpt-5-mini",
+    "sources_passed": 17,
+    "sources_used": 9,
+    "footnote_count": 9,
+    "omitted_candidate_ids": [
+      "3527eb72-dabc-4c0e-a761-b9f126c3bd66",
+      "1c6fe93e-d720-47bd-b88b-99324c377701",
+      "a64fad71-da46-48a2-80da-78acd0a4df59",
+      "dca48dbd-98f7-4963-8632-5645c5ecaefd",
+      "dc5ce122-3bd3-43d2-b3d8-7f24282a73aa",
+      "2780878e-55f8-415a-963c-5f3163b63825",
+      "1d41bffa-cca1-458b-be9d-9614474e0513",
+      "dcedeb1a-641b-4ae5-a2d5-6ba06a9b0e72"
+    ],
+    "error": null
+  },
+  "verifier_summary": {
+    "ms": 37239,
+    "counts": {
+      "by_support": {
+        "direct": 13,
+        "partial": 4,
+        "unrelated": 0,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 16,
+        "false": 1
+      }
+    },
+    "batches": [
+      {
+        "ms": 37239,
+        "label": "batch1",
+        "claim_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C4",
+          "C5"
+        ],
+        "escalated": false,
+        "candidates": 17
+      }
+    ],
+    "escalated_claims": []
+  },
+  "qualitative_note": null,
+  "generated_at": "2026-05-24T06:41:09.250Z"
+}
