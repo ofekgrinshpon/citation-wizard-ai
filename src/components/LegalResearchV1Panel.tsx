@@ -8,7 +8,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown, Paperclip, Send, X, FileText } from "lucide-react";
+import { ChevronDown, Paperclip, X, FileText, Trash2, ArrowUp, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
