@@ -200,12 +200,16 @@ async function handle(req: Request): Promise<Response> {
   const analyzer = analyzerStage.result.value;
   const analyzerOk = analyzerStage.result.ok && !!analyzer && analyzer.claims.length > 0;
   if (!analyzerOk) {
+    const transport_failed = analyzerStage.transport_failed;
     const planning_error = {
       stage: "claim_analyzer",
       reasons: [
         ...analyzerStage.escalation_reasons,
         ...analyzerStage.result.errors,
+        ...(transport_failed ? ["transport_failed"] : []),
       ],
+      transport_failed,
+      attempts: analyzerStage.attempts_summary,
     };
     await writeTelemetry(admin, {
       ...telemetryBase,
@@ -222,6 +226,8 @@ async function handle(req: Request): Promise<Response> {
             escalation_reason: analyzerStage.escalation_reasons,
             confidence: analyzer?.confidence ?? null,
             schema_valid: analyzerStage.result.ok,
+            transport_failed,
+            attempts: analyzerStage.attempts_summary,
             ms: analyzerStage.stage_runs.reduce((s, r) => s + r.ms, 0),
           },
           claims_count: analyzer?.claims.length ?? 0,
@@ -232,6 +238,20 @@ async function handle(req: Request): Promise<Response> {
         },
       },
     });
+    if (transport_failed) {
+      return jsonResponse(503, {
+        error: "analyzer_escalation_unavailable",
+        message: "מודל הניתוח המשפטי לא היה זמין רגעית. נסו שוב בעוד דקה.",
+        debug: {
+          run_id,
+          phase: "P2",
+          stage_runs,
+          planning_error,
+          claims: [],
+          queries: [],
+        },
+      });
+    }
     return jsonResponse(422, {
       answer: STUB_ANSWER,
       footnotes: [],
@@ -245,6 +265,7 @@ async function handle(req: Request): Promise<Response> {
       },
     });
   }
+
 
   // ─── P2: Research Query Planner ──────────────────────────────────────────
   let plannerStage;
