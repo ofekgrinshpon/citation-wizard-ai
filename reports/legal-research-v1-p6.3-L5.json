@@ -1,0 +1,281 @@
+{
+  "fixture": {
+    "id": "L5",
+    "question": "מהי עילת הסבירות ומה היקף הביקורת השיפוטית עליה?"
+  },
+  "run_id": "59573c95-5c26-42da-a59f-10c9be0206dc",
+  "qa_log_id": "4701e4f7-d048-4ee8-9fee-c4c2f95a3cd6",
+  "timings_ms": {
+    "total": 205779,
+    "analyzer": 15773,
+    "planner": 42670,
+    "retrieval": 40008,
+    "verifier": 35411,
+    "drafter": 71812
+  },
+  "answer_word_count": 430,
+  "answer_markdown": "עילת הסבירות במשפט המינהלי הישראלי היא עילה כללית המפקחת על אופן הפעלת שיקול הדעת השלטוני. בליבה עומדת החובה להעניק משקל הולם לשיקולים הרלוונטיים, לא להתעלם משיקולים מהותיים, ולהימנע ממתן משקל מכריע לשיקולים זרים; החלטה שתועדף בה העדפה בלתי־מאוזנת של השיקולים – או שתישען על הנחות עובדתיות בלתי־סבירות – עלולה להיחשב \"לא סבירה\" לצורך ביקורת שיפוטית¹². בדוקטרינה הישראלית מתקיים ויכוח אם מדובר במבחן מוגדר ונורמטיבי או בכלי שיפוטי רחב וגמיש יותר, אולם המוקד הפרשני נותר בהערכת איכות האיזון המנהלי בין השיקולים הרלוונטיים³.\n\nקריטריונים מעשיים להפעלת העילה התגבשו בפסיקה ובספרות: התעלמות משיקולים מהותיים; הסתמכות על שיקולים בלתי־רלוונטיים; היעדר תשתית עובדתית מספקת; ופגמים חמורים בהיגיון ההכרעה, המעידים על חריגה ממתחם סבירות מנהלי. יישום המבחנים הוא קונקרטי-נסיבתי, ונועד לבחון אם ההחלטה מצויה בתוך \"מתחם סבירות\" סביר, להבדיל מהחלפת שיקול הדעת המנהלי בשיקול דעתו של השופט⁴. בהיבט השוואתי, מבחן Wednesbury מדגים את ההיגיון שבביקורת עצורה על \"אי־סבירות קיצונית\" – כאשר ההחלטה חורגת באופן בוטה מן התבונה המינהלית – ואת ההשלכות על עיצוב הסעד⁵.\n\nהיקף ועוצמת הביקורת השיפוטית בעילת הסבירות משתנים לפי הקשר. גישת היסוד מצדדת בריסון מוסדי כאשר מדובר בהכרעות מדיניות-ערכיות של רשויות נבחרות או בתחומי מומחיות מובהקים, ובהגברת עוצמת הביקורת מקום שנפגעות זכויות יסוד, קיים חשש לשקילת שיקולים זרים, או כשמדובר בפגמים אנושיים מובהקים בהליך⁶⁷⁸. עוצמת הביקורת מושפעת, בין היתר, מטיב הגורם המחליט (נבחר/מקצועי), טבע הסמכות, חומרת הפגיעה והאינטרס הציבורי המעורב; ככל שהחלטה קרובה לליבת המדיניות הדמוקרטית – תגבר הנטייה לריסון; וככל שיש פגיעה משמעותית בפרט – תגבר הביקורת⁶⁷⁸.\n\nכאשר בית המשפט קובע שהחלטה לוקה באי־סבירות, הסעד השכיח הוא ביטול ההחלטה או השבת העניין לשולחן הרשות בצו המורה על הפעלת שיקול הדעת מחדש לפי אמות מידה סבירות; לעיתים יינתנו צווים מניעתיים או עשה ממוקדים. בחירת הסעד היא יחסית ותלויה במידת הפגם ובהשלכות הציבוריות, מתוך מגמה לצמצם פגיעה בהתנהלות המינהלית התקינה ולהותיר מרחב פעולה לרשות²⁵.\n\nיחסי הגומלין בין עילת הסבירות לבין מבחן ה\"מידתיות\" (הפרופורציונליות) מתחדדים כאשר החלטה מנהלית פוגעת בזכויות חוקתיות: מכוח פסקת ההגבלה בחוק־יסוד: כבוד האדם וחירותו, פגיעה בזכויות תיבחן לפי תנאי ההסמכה, התכלית הראויה ומבחני המידתיות, המהווים את מסגרת הביקורת החוקתית⁹¹⁰. בספרות הישראלית הוצע לראות במידתיות את המבחן המרכזי בהקשרים חוקתיים, בעוד שעילת הסבירות משמשת, במישור המנהלי, לבחינת איכות האיזון המנהלי ולזיהוי חריגות מובהקות ממתחם סבירות⁽¹¹⁴¹²⁾. הלכה למעשה, קיומה של פגיעה בזכות חוקתית נוטה להעצים את עוצמת הביקורת, בעוד שבהיעדר פגיעה כזו תידרש הצדקה מוגברת טרם ייקבע כי החלטה חרגה ממתחם הסבירות⁸.\n\nלסיכום: עילת הסבירות בישראל היא כלי ביקורת מנהלי כללי הבוחן את איכות האיזון בין השיקולים המנהליים ואת תקינות התשתית העובדתית, תוך התאמת עוצמת הביקורת להקשר המוסדי ולפגיעות בזכויות. כאשר מתעוררת שאלה חוקתית, מבחן המידתיות מכוון את הדיון, אך עילת הסבירות מוסיפה לשמש מנגנון חיוני לשמירת ההיגיון המינהלי והמשקל הראוי לשיקולים הרלוונטיים¹⁴⁹¹¹.\n",
+  "footnotes": [
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_2798965.pdf",
+      "title": "ביטול עילת הסבירות - מסמך רקע של הכנסת",
+      "number": 1
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%9C%D7%AA%20%D7%90%D7%99%D6%BE%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+      "title": "עילת אי־הסבירות במשפט המינהלי",
+      "number": 2
+    },
+    {
+      "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/18/7Raphael%20Bitton.pdf",
+      "title": "על עילת הסבירות הישראלית ככלי לביסוס עליונות שיפוטית",
+      "number": 3
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+      "title": "נדב דגן, \"מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי ...\"",
+      "number": 4
+    },
+    {
+      "url": "https://www.jstor.org/stable/750624",
+      "title": "Judicial Review of Administrative Action by Means of the Wednesbury Unreasonableness Test: A Comparative Overview",
+      "number": 5
+    },
+    {
+      "url": "https://www.runi.ac.il/media/xgqbcm1v/18-%D7%94%D7%95%D7%A1%D7%98%D7%95%D7%91%D7%A1%D7%A7%D7%99-%D7%A8%D7%95%D7%96%D7%A0%D7%90%D7%99.pdf",
+      "title": "פסק דין הסבירות: עיונים ראשונים",
+      "number": 6
+    },
+    {
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/18/5Yaacov%20Ben-Shemesh.pdf",
+      "title": "על חוסר הסבירות הקיצוני של בג\"ץ",
+      "number": 7
+    },
+    {
+      "url": "https://law.biu.ac.il/sites/law/files/shared/segel/%D7%A9%D7%97%D7%A8-%D7%9C%D7%99%D7%A4%D7%A9%D7%99%D7%A5-%D7%9C%D7%90%D7%95%D7%9D-%D7%9E%D7%95%D7%9C-%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA.pdf",
+      "title": "\"פסיקת בג\"ץ בסוגיות של לאום אל מול סבירות – הבדלים ומבט לעתיד\"",
+      "number": 8
+    },
+    {
+      "url": "https://fs.knesset.gov.il/law/12/lssr_186067.PDF",
+      "title": "חוק יסוד: כבוד האדם וחירותו, תשנ\"ב-1992 — סעיף 8 (פגיעה בזכויות)",
+      "number": 9
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_2798965.pdf",
+      "title": "ביטול עילת הסבירות - מסמך רקע של הכנסת",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "מסמך מחקרי/פרלמנטרי",
+      "candidate_id": "c8e6704c-cbd4-4c50-8c45-09fd10ee050c"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%9C%D7%AA%20%D7%90%D7%99%D6%BE%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+      "title": "עילת אי־הסבירות במשפט המינהלי",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "מאמר אקדמי (PDF)",
+      "candidate_id": "dd8e9155-004e-4936-962a-99cfe2c7e0a0"
+    },
+    {
+      "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/18/7Raphael%20Bitton.pdf",
+      "title": "על עילת הסבירות הישראלית ככלי לביסוס עליונות שיפוטית",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "מאמר אקדמי (PDF, כתב עת/פרסום אקדמי)",
+      "candidate_id": "3977f9cd-b195-4dff-93ba-cc9e71a2dced"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2022/05/%D7%A0%D7%93%D7%91-%D7%93%D7%92%D7%9F-461.pdf",
+      "title": "נדב דגן, \"מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי ...\"",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "עבודת מחקר / PDF אקדמי",
+      "candidate_id": "53c1ecfb-39df-4a94-a44c-91d3dc0a76bf"
+    },
+    {
+      "url": "https://www.jstor.org/stable/750624",
+      "title": "Judicial Review of Administrative Action by Means of the Wednesbury Unreasonableness Test: A Comparative Overview",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "מאמר אקדמי",
+      "candidate_id": "22f8c3f5-e6ef-4e0b-9b41-389bcca2ae28"
+    },
+    {
+      "url": "https://www.runi.ac.il/media/xgqbcm1v/18-%D7%94%D7%95%D7%A1%D7%98%D7%95%D7%91%D7%A1%D7%A7%D7%99-%D7%A8%D7%95%D7%96%D7%A0%D7%90%D7%99.pdf",
+      "title": "פסק דין הסבירות: עיונים ראשונים",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "book chapter / academic collection",
+      "candidate_id": "00080482-2f42-4025-8459-77e8f871084c"
+    },
+    {
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/18/5Yaacov%20Ben-Shemesh.pdf",
+      "title": "על חוסר הסבירות הקיצוני של בג\"ץ",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "article",
+      "candidate_id": "dc88295f-bef8-4e00-b2f2-e2a8640a799f"
+    },
+    {
+      "url": "https://law.biu.ac.il/sites/law/files/shared/segel/%D7%A9%D7%97%D7%A8-%D7%9C%D7%99%D7%A4%D7%A9%D7%99%D7%A5-%D7%9C%D7%90%D7%95%D7%9D-%D7%9E%D7%95%D7%9C-%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA.pdf",
+      "title": "\"פסיקת בג\"ץ בסוגיות של לאום אל מול סבירות – הבדלים ומבט לעתיד\"",
+      "number": 8,
+      "origin": "perplexity",
+      "source_type": "article",
+      "candidate_id": "cf7dc046-9a4c-49fe-af87-6b5a56f57106"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/law/12/lssr_186067.PDF",
+      "title": "חוק יסוד: כבוד האדם וחירותו, תשנ\"ב-1992 — סעיף 8 (פגיעה בזכויות)",
+      "number": 9,
+      "origin": "perplexity",
+      "source_type": "חקיקה ראשית ישראלית",
+      "candidate_id": "b382279e-b43e-4139-9fe7-66200b1ac268"
+    }
+  ],
+  "used_sources_usability": [
+    {
+      "candidate_id": "c8e6704c-cbd4-4c50-8c45-09fd10ee050c",
+      "number": 1,
+      "title": "ביטול עילת הסבירות - מסמך רקע של הכנסת",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "dd8e9155-004e-4936-962a-99cfe2c7e0a0",
+      "number": 2,
+      "title": "עילת אי־הסבירות במשפט המינהלי",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "3977f9cd-b195-4dff-93ba-cc9e71a2dced",
+      "number": 3,
+      "title": "על עילת הסבירות הישראלית ככלי לביסוס עליונות שיפוטית",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "53c1ecfb-39df-4a94-a44c-91d3dc0a76bf",
+      "number": 4,
+      "title": "נדב דגן, \"מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי ...\"",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "22f8c3f5-e6ef-4e0b-9b41-389bcca2ae28",
+      "number": 5,
+      "title": "Judicial Review of Administrative Action by Means of the Wednesbury Unreasonableness Test: A Comparative Overview",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "00080482-2f42-4025-8459-77e8f871084c",
+      "number": 6,
+      "title": "פסק דין הסבירות: עיונים ראשונים",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "dc88295f-bef8-4e00-b2f2-e2a8640a799f",
+      "number": 7,
+      "title": "על חוסר הסבירות הקיצוני של בג\"ץ",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "cf7dc046-9a4c-49fe-af87-6b5a56f57106",
+      "number": 8,
+      "title": "\"פסיקת בג\"ץ בסוגיות של לאום אל מול סבירות – הבדלים ומבט לעתיד\"",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "b382279e-b43e-4139-9fe7-66200b1ac268",
+      "number": 9,
+      "title": "חוק יסוד: כבוד האדם וחירותו, תשנ\"ב-1992 — סעיף 8 (פגיעה בזכויות)",
+      "in_verifier_usable": true
+    }
+  ],
+  "acceptance": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "all_used_in_verifier_usable": true,
+    "repaired": true,
+    "leaked_tokens": [],
+    "missing_sources": [],
+    "unused_sources": []
+  },
+  "marker_validation": {
+    "ok": true,
+    "repaired": true,
+    "leaked_tokens": [],
+    "unused_sources": [],
+    "missing_sources": [],
+    "internal_id_leak": false,
+    "markers_in_answer": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ]
+  },
+  "support_distribution": {
+    "direct": 12,
+    "partial": 1,
+    "unrelated": 0,
+    "tangential": 1
+  },
+  "footnote_origin_split": {
+    "local_db": 0,
+    "perplexity": 9
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": true,
+    "model_final": "openai/gpt-5",
+    "sources_passed": 13,
+    "sources_used": 9,
+    "footnote_count": 9,
+    "omitted_candidate_ids": [
+      "6f34153f-36ed-425c-92a2-960b9fb44b54",
+      "d197261a-5e26-44e4-9432-61db415338b8",
+      "da7a6b9e-4591-4701-9359-66cf948f9b12",
+      "ae8f0694-023a-4613-b1e8-f243b1e32d3a"
+    ],
+    "error": null
+  },
+  "verifier_summary": {
+    "ms": 35411,
+    "counts": {
+      "by_support": {
+        "direct": 12,
+        "partial": 1,
+        "unrelated": 0,
+        "tangential": 1
+      },
+      "by_role_match": {
+        "true": 13,
+        "false": 1
+      }
+    },
+    "batches": [
+      {
+        "ms": 35411,
+        "label": "batch1",
+        "claim_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C4",
+          "C5"
+        ],
+        "escalated": false,
+        "candidates": 14
+      }
+    ],
+    "escalated_claims": []
+  },
+  "qualitative_note": null,
+  "generated_at": "2026-05-24T07:40:49.957Z"
+}
