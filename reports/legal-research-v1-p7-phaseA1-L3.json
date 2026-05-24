@@ -1,0 +1,2417 @@
+{
+  "generated_at": "2026-05-24T18:53:26.713Z",
+  "fixture": {
+    "id": "L3",
+    "question": "מתי בית המשפט יפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים תרופות?"
+  },
+  "qa_log_id": "1318d0a9-9903-4e99-a617-ff0c1474dc59",
+  "run_id": "017d9c65-f51d-424d-80ed-e74291725e22",
+  "phaseA": {
+    "fixture_id": "L3",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "cluster_count": 2,
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 1,
+    "placement_ok": false,
+    "placement_repaired": true,
+    "placement_repair_failed": false,
+    "used_sources_count": 9,
+    "used_sources_subset_of_usable": true,
+    "footnote_count": 9
+  },
+  "answer": "מסגרת הסעיף ותכליתו. סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה) מעגן את מוסד ה-**פיצוי המוסכם**: מקום שבו \"הסכימו הצדדים מראש על שיעור פיצויים… יהיו הפיצויים כמוסכם, ללא הוכחת נזק\".¹ עם זאת, נתונה לבית המשפט סמכות שיקול־דעת \"להפחיתם אם מצא שהפיצויים נקבעו ללא כל יחס סביר לנזק שניתן היה לראותו מראש בשעת כריתת החוזה\".² הסעיף חל על תניות פיצוי מוסכם בכלל החוזים ומגדיר אמת־מידה אובייקטיבית של יחס סביר לנזק הצפוי בעת הכריתה, ולא לנזק שהוכח בדיעבד. התערבות שיפוטית נעשית במקרים חריגים,³ תוך איזון בין אוטונומיית הרצון החוזי לבין מניעת תוצאות עונשיות או בלתי מידתיות.⁴ \n\nהמבחן להפחתה והקריטריונים המנחים. נקודת המוצא היא מבחן ה-**\"ללא כל יחס סביר לנזק הצפוי\"**.² רק כאשר הקשר בין הסכום המוסכם לבין הנזק שניתן היה לצפות במועד הכריתה ניתק במידה חריפה, קמה עילת התערבות.³ בהפעלת המבחן נשקלים, בין היתר: (א) הזיקה בין הסכום המוסכם לבין אומדן ex ante של הסיכון והנזק הטיפוסי לעסקה;³ (ב) טיבה של ההפרה ותכלית התנאי – פיצויית/הרתעתית לעומת עונשית;⁴ (ג) סימטריה פנימית של התנאי (למשל, קביעת אותו סכום לכל הפרה קלה או חמורה); (ד) מאפייני השוק וההתקשרות, לרבות **חוסר שוויון בכוח המיקוח** וחוזי הצטרפות/צרכניים;⁵⁶ (ה) הנזק בפועל כאינדיקציה ראייתית, אף שהמבחן נותר ex ante.⁷ שיקולים אלה עולים בפסיקה ובהגות, ומכוונים את שיקול־הדעת להפחתה.⁸ \n\nדפוסים יישומיים מן הפסיקה. בתי המשפט עושים שימוש בסמכות ההפחתה בעיקר כאשר: (א) סכום ה-**פיצוי המוסכם** מופרז בעליל ביחס לנזק הצפוי;³ (ב) התנאי משמש למעשה כסנקציה עונשית במסווה של פיצוי;⁴ (ג) מדובר בחוזי הצטרפות/צרכניים או הקשרים עם פערי כוחות מובהק;⁵ (ד) נקבע סכום אחיד לכל סוגי ההפרות ללא הבחנה וללא זיקה עניינית לנזק; (ה) הצטברות מכאנית של סכומים מביאה לתוצאה דרקונית שאינה משקפת את הסיכון החוזי. דפוסים אלה זכו לבחינה ולהנחיה עקרונית בפסיקת בית המשפט העליון ולהדגמות בהקשרים צרכניים ומסחריים. \n\nהיבטים דיוניים והשלכות הלכתיות. \n- **נטל הראיה**: ככלל, על המבקש להפחית את הסכום המוסכם (בדרך כלל המפר הנתבע) להראות כי מדובר בסכום שנקבע \"ללא כל יחס סביר\" לנזק הצפוי;⁹ לשם כך ניתן להסתייע בראיות על אומדני נזק מקובלים בענף, על היקף העסקה, ועל העדר זיקה בין הסכום להפרה.⁴ \n- **עיתוי וטקטיקה דיונית**: בקשת ההפחתה תועלה בכתבי הטענות ובהתנהלות הדיונית הרגילה כתשובה לעילת התביעה על יסוד הפיצוי המוסכם; אין דרישה להליך נפרד, אך הימנעות מהעלאת הטענה עלולה להיחשב ויתור דיוני.⁹⁴ \n- **טווח ההפחתה**: בית המשפט אינו כבול לנזק שהוכח בפועל;³ ההפחתה מכוונת לקביעת **\"סכום סביר\"** במונחי ex ante,⁴ המשקף יחס סביר לנזק שניתן היה לצפות בעת הכריתה.¹ הנזק בפועל עשוי לשמש אינדיקציה מסייעת, אך אינו אמת־המידה הנורמטיבית. במקרים חריגים, כאשר התנאי קנסי גרידא וחסר זיקה לפיצוי, ההפחתה עשויה להגיע כדי אפס,⁹ שאז למעשה נמנעת גבייה על יסוד התנאי במתכונתו.⁴ \n\nתמצית: בית המשפט יפחית פיצוי מוסכם כאשר ייווכח כי הסכום שנקבע מראש מנותק \"ללא כל יחס סביר\" מן הנזק שהיה ניתן לצפות בעת הכריתה.² התערבות בסכום תיעשה במתווה חריג וזהיר.³ הפעלת הסמכות היא מצומצמת ומהוססת, אך במקום שבו מתגלה אי־מידתיות קיצונית – ייקבע סכום חלופי סביר, ולעיתים תסוכל גבייה של סכום עונשי במסווה פיצויי.⁴",
+  "footnotes": [
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA_%D7%91%D7%A9%D7%9C_%D7%94%D7%A4%D7%A8%D7%AA_%D7%97%D7%95%D7%96%D7%94)",
+      "title": "חוק החוזים (תרופות בשל הפרת חוזה)",
+      "number": 1,
+      "source_type": "israeli_law"
+    },
+    {
+      "url": "https://fs.knesset.gov.il/7/law/7_lsr_211750.PDF",
+      "title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל״א–1970",
+      "number": 2,
+      "source_type": "טקסט חוק רשמי (לא ספרות אקדמית)"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F16%2F080%2F102%2Fw03&fileName=16102080.W03&type=2",
+      "title": "פסק-דין בתיק ע\"א 10208/16",
+      "number": 3,
+      "source_type": "פסק דין בית המשפט העליון (מקור משלים)"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D%20%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D%20-%20%D7%91%D7%99%D7%9F%20%D7%90%D7%95%D7%98%D7%95%D7%A0%D7%95%D7%9E%D7%99%D7%94%20%D7%9C%D7%94%D7%AA%D7%A2%D7%A8%D7%91%D7%95%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA.pdf",
+      "title": "פיצויים מוסכמים בדיני החוזים: בין אוטונומיה להתערבות שיפוטית",
+      "number": 4,
+      "source_type": "ספר / פרק משפטי"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+      "title": "פיצוי מוסכם – סוגיות והיבטים",
+      "number": 5,
+      "source_type": "PDF / מאמר אקדמי (אוניברסיטת חיפה)"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A4%D7%92%D7%9E%D7%99%D7%9D%20%D7%91%D7%9B%D7%A8%D7%99%D7%AA%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94%20-%20%D7%A7%D7%95%D7%95%D7%99%D7%9D%20%D7%9E%D7%A0%D7%97%D7%99%D7%9D.pdf",
+      "title": "פגמים בכריתת החוזה — קווים מנחים",
+      "number": 6,
+      "source_type": "מאמר אקדמי / כתב עת משפטי"
+    },
+    {
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Cegla/%D7%A0%D7%9E%D7%A8%D7%95%D7%93%20%D7%90%D7%91%D7%A8%D7%9E%D7%95%D7%91%20%D7%95%D7%A2%D7%9E%D7%A8%D7%99%20%D7%A8%D7%97%D7%95%D7%9D-%D7%98%D7%95%D7%95%D7%99%D7%92.pdf",
+      "title": "אכיפה בהעדר חוזה מחייב ופריזמת ההסכמה — מבט תרופתי על חוקי איסור הפליה",
+      "number": 7,
+      "source_type": "מאמר אקדמי (PDF, אוניברסיטת תל אביב)"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m5.pdf",
+      "title": "לקראת התקרבות גלובלית של דיני אכיפת חוזה",
+      "number": 8,
+      "source_type": "מאמר אקדמי (PDF, אוניברסיטת חיפה)"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D%20%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D%20-%20%D7%92%D7%91%D7%95%D7%9C%D7%95%D7%AA%20%D7%94%D7%94%D7%AA%D7%A2%D7%A8%D7%91%D7%95%D7%AA%20%D7%94%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%91%D7%A1%D7%A2%D7%99%D7%A3%2015%20%D7%9C%D7%97%D7%95%D7%A7%20%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D%20(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA%20%D7%91%D7%A9%D7%9C%20%D7%94%D7%A4%D7%A8%D7%AA%20%D7%97%D7%95%D7%96%D7%94).pdf",
+      "title": "פיצויים מוסכמים: גבולות ההתערבות השיפוטית בסעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה)",
+      "number": 9,
+      "source_type": "מאמר אקדמי / כתב עת משפטי"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "שאלה על פרשנות הסעיף עצמה מחייבת עיון בטקסט החוקי כדי לקבוע את הסמכות, הניסוח והמגבלות המפורשות שבחוק.",
+        "text_he": "מהי נוסחת הסעיף 15 לחוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פיצוי מוסכם) ומהו טווח היישום של הסעיף",
+        "claim_id": "C1",
+        "required_roles": [
+          "primary_statute"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "זוהי טענה דוקטרינרית הנבנית על פסיקה מחייבת ופרשנות ספרותית של אופן יישום הסעיף; דרוש גם טקסט הסעיף כרקע.",
+        "text_he": "מה מבחן המשפטי שחולש על קביעת 'אי־הגינות' או 'אי־התאמה' של פיצוי מוסכם, ומה הקריטריונים המהותיים שהבתי־משפט בודקים (כגון יחס לסיכון צפוי, יחס לנזק בפועל, כוונת הצדדים, חוסר שוויון בכוח המיקוח וכו׳)",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship",
+          "primary_statute"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "להבהיר את היישום המעשיי של הסעיף דרושה פסיקה מחייבת ומקרה מדריך, וכן ספרות שמנתחת דוגמאות; טענה זו אינה רק ניסוח חוקי אלא אפליקציה עובדתית של הפסיקה.",
+        "text_he": "באילו נסיבות מעשיות בתי־המשפט הפחיתו או דחו גביית פיצוי מוסכם בפסיקה הישראלית (דוגמאות סיגנוניות: סכום מופרז ביחס לנזק צפוי, חוזי הצטרפות/צרכנים, תכלית הענישה/רתיעה של הסעיף ועוד)",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "persuasive_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": false
+      },
+      {
+        "reason": "טענות פרוצדורליות ותוצאה אופרטיבית של יישום הסעיף נשענות על נוסח החוק והפסיקה המחייבת כדי לדעת מי הנטל ומה תוצאת ההפחתה.",
+        "text_he": "נוהלי הוכחה וההשלכות ההלכתיות: מי נושא בנטל להראות אי־הגינות, מתי יש להגיש בקשה להפחתה, והאם בית־המשפט מפחית עד לסכום של הנזק שבאמת נגרם או לקובע 'סכום סביר' שנקבע שיקולתי",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "primary_statute",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "017d9c65-f51d-424d-80ed-e74291725e22",
+    "drafter": {
+      "ms": 175670,
+      "ok": true,
+      "escalated": true,
+      "model_final": "openai/gpt-5",
+      "sources_used": 9,
+      "used_sources": [
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA_%D7%91%D7%A9%D7%9C_%D7%94%D7%A4%D7%A8%D7%AA_%D7%97%D7%95%D7%96%D7%94)",
+          "title": "חוק החוזים (תרופות בשל הפרת חוזה)",
+          "number": 1,
+          "origin": "local_db",
+          "source_type": "israeli_law",
+          "candidate_id": "8433390f-6703-4e08-9c3c-49a1e2a512b9"
+        },
+        {
+          "url": "https://fs.knesset.gov.il/7/law/7_lsr_211750.PDF",
+          "title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל״א–1970",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "טקסט חוק רשמי (לא ספרות אקדמית)",
+          "candidate_id": "95a3f690-9719-4933-b26f-a6bc1a4ed6f5"
+        },
+        {
+          "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F16%2F080%2F102%2Fw03&fileName=16102080.W03&type=2",
+          "title": "פסק-דין בתיק ע\"א 10208/16",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "פסק דין בית המשפט העליון (מקור משלים)",
+          "candidate_id": "ec3a1b63-3049-44ed-85a2-54d60058f914"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D%20%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D%20-%20%D7%91%D7%99%D7%9F%20%D7%90%D7%95%D7%98%D7%95%D7%A0%D7%95%D7%9E%D7%99%D7%94%20%D7%9C%D7%94%D7%AA%D7%A2%D7%A8%D7%91%D7%95%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA.pdf",
+          "title": "פיצויים מוסכמים בדיני החוזים: בין אוטונומיה להתערבות שיפוטית",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "ספר / פרק משפטי",
+          "candidate_id": "e3b8bcc2-76d9-4721-ab11-e1a35ba510f0"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+          "title": "פיצוי מוסכם – סוגיות והיבטים",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "PDF / מאמר אקדמי (אוניברסיטת חיפה)",
+          "candidate_id": "89a4fa51-ad8a-48ad-b788-a4730d3726e6"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A4%D7%92%D7%9E%D7%99%D7%9D%20%D7%91%D7%9B%D7%A8%D7%99%D7%AA%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94%20-%20%D7%A7%D7%95%D7%95%D7%99%D7%9D%20%D7%9E%D7%A0%D7%97%D7%99%D7%9D.pdf",
+          "title": "פגמים בכריתת החוזה — קווים מנחים",
+          "number": 6,
+          "origin": "perplexity",
+          "source_type": "מאמר אקדמי / כתב עת משפטי",
+          "candidate_id": "c9cbba79-eabe-4223-bf47-948c0802badb"
+        },
+        {
+          "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Cegla/%D7%A0%D7%9E%D7%A8%D7%95%D7%93%20%D7%90%D7%91%D7%A8%D7%9E%D7%95%D7%91%20%D7%95%D7%A2%D7%9E%D7%A8%D7%99%20%D7%A8%D7%97%D7%95%D7%9D-%D7%98%D7%95%D7%95%D7%99%D7%92.pdf",
+          "title": "אכיפה בהעדר חוזה מחייב ופריזמת ההסכמה — מבט תרופתי על חוקי איסור הפליה",
+          "number": 7,
+          "origin": "perplexity",
+          "source_type": "מאמר אקדמי (PDF, אוניברסיטת תל אביב)",
+          "candidate_id": "e0130c0c-d145-478e-8cba-bcb165b1725f"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m5.pdf",
+          "title": "לקראת התקרבות גלובלית של דיני אכיפת חוזה",
+          "number": 8,
+          "origin": "perplexity",
+          "source_type": "מאמר אקדמי (PDF, אוניברסיטת חיפה)",
+          "candidate_id": "a41fc609-dc8d-465b-b2e5-c0dd7920fcc6"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D%20%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D%20-%20%D7%92%D7%91%D7%95%D7%9C%D7%95%D7%AA%20%D7%94%D7%94%D7%AA%D7%A2%D7%A8%D7%91%D7%95%D7%AA%20%D7%94%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%91%D7%A1%D7%A2%D7%99%D7%A3%2015%20%D7%9C%D7%97%D7%95%D7%A7%20%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D%20(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA%20%D7%91%D7%A9%D7%9C%20%D7%94%D7%A4%D7%A8%D7%AA%20%D7%97%D7%95%D7%96%D7%94).pdf",
+          "title": "פיצויים מוסכמים: גבולות ההתערבות השיפוטית בסעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה)",
+          "number": 9,
+          "origin": "perplexity",
+          "source_type": "מאמר אקדמי / כתב עת משפטי",
+          "candidate_id": "d1f9ae0e-8ae6-419e-bce4-c7c7f79220c8"
+        }
+      ],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 9,
+      "sources_passed": 9,
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "placement": {
+          "ok": false,
+          "repaired": true,
+          "cluster_count": 2,
+          "cluster_samples": [
+            "וזי הצטרפות/צרכניים;⁵⁶ (ה) הנזק בפועל כאינ",
+            " להיחשב ויתור דיוני.⁹⁴ \n- **טווח ההפחתה**:"
+          ],
+          "end_dump_samples": [
+            "נקודת המוצא היא מבחן ה-**\"ללא כל יחס סביר לנזק הצפוי\"**.² רק כאשר הקשר בין הסכום המוסכם לבין הנזק שניתן היה לצפות במועד הכריתה ניתק במידה חריפה, קמה עילת התערבות.³ בהפעלת המבחן נשקלים, בין היתר: (א) ה"
+          ],
+          "out_of_order_count": 0,
+          "end_paragraph_dump_count": 1
+        },
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "omitted_candidate_ids": []
+    },
+    "queries": [
+      {
+        "role": "primary_statute",
+        "reason": "נדרש הנוסח המדויק של הסעיף וההוראות החוקתיות לגבי סמכות הערכאה ושאלת טווח היישום.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא; הסמכות להפחית או למנוע גביית פיצוי מוסכם; גבולות טווח היישום של הסעיף",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "חיפוש פסקי-דין מחייבים של בית המשפט העליון שמנסחים את מבחן ה\"אי-הגינות\"/\"אי-התאמה\" וקובעים קריטריונים מהותיים.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון \"סעיף 15\" \"חוק החוזים (תרופות)\" מבחן אי-הגינות או אי-התאמה של פיצוי מוסכם קריטריונים \"יחס לנזק\" \"כוונת הצדדים\" \"כוח המיקוח\"",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ניתוח אקדמי וספרות מקצועית יפרטו מבחנים וקריטריונים משפטיים וירוכזו עמדות מחוקרים לגבי הפירוש והשימוש בסעיף.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר \"סעיף 15\" \"חוק החוזים (תרופות)\" אי-הגינות אי-התאמה פיצוי מוסכם קריטריונים יחס לנזק כוונת הצדדים כוח מיקוח",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "לאתר שוב את נוסח הסעיף בהקשר של שאלת המבחן החוקי והסמכות, כדי לשלב פרשנות פסיקתית ואקדמית מול הטקסט החוקי.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "חוק החוזים (תרופות) סעיף 15 ניסוח הסעיף ביחס לשיקולי אי-הגינות/אי-התאמה והסמכות המשפטית להפחתה או מניעת גבייה",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לבדיקת דוגמאות של מקרים בהם עליון הפחית או מנע גבייה בפועל ולמיפוי נסיבות פרקטיות ופסקי-דין מובילים.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון פסקי-דין \"פיצוי מוסכם\" \"חוק החוזים (תרופות)\" סעיף 15 דחיית גבייה או הפחתת סכום דוגמאות נסיבות מקרה \"סכום מופרז\"",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "לאסוף פסקי-דין משכנעים (מחוזי/שלום) עם נסיבות מעשיות סיגנוניות כמו חוזי הצטרפות, צרכנים ותכלית ענישה/רתיעה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט המחוזי 'פיצוי מוסכם' 'חוק החוזים (תרופות) סעיף 15' דוגמה 'חוזה הצטרפות' 'צרכנים' 'סכום מופרז ביחס לנזק צפוי'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מחקרים ואנליזות המפרטים קטלוג של נסיבות מעשיות והמחקר המשפטי לגבי דפוסי החלטה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר דיני חוזים פיצוי מוסכם דוגמאות מעשיות הפחתה לפי סעיף 15 'חוק החוזים (תרופות)' מקרים סיגנוניים 'חוזי הצטרפות' 'צרכני'",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "לבדוק האם הסעיף עצמו מכיל הוראות פרוצדורליות/הנחיות לגבי הוכחה, נטל הראיה ומועד הבקשה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "חוק החוזים (תרופות) סעיף 15 נוסח והוראות פרוצדורליות כלשהן בנוגע לנטל הראיה או למועד הגשת בקשת הפחתה",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "מציאת פסיקה מעשית שמכריעה לגבי נטל הראיה, מועד ההגשה והאם ההפחתה מוגבלת לנזק בפועל או סכום שיקולתי שהשופט קובע.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון 'נטל הראיה' 'סעיף 15' 'חוק החוזים (תרופות)' מי נושא בנטל להראות אי-הגינות מתי יש להגיש בקשה להפחתה האם מפחיתים עד לנזק בפועל או סכום סביר",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ניתוח אקדמי של ההלכה והפרקטיקה בנוגע לנהלי הוכחה, הנטל והמודל הפסקני - האם הפחתה מתאימה לנזק בפועל או לסכום שיפוטי סביר.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר משפטי 'נטל הראיה' 'סעיף 15' 'חוק החוזים (תרופות)' מתי להגיש בקשה להפחתה 'סכום סביר' 'השלכות הלכתיות'",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 19684,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 12601,
+        "confidence": 0.9,
+        "legal_area": "דיני חוזים",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "claims_count": 4,
+      "queries_count": 10,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 286037,
+    "verifier": {
+      "ms": 37957,
+      "counts": {
+        "by_support": {
+          "direct": 2,
+          "partial": 7,
+          "unrelated": 7,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 16,
+          "false": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "8433390f-6703-4e08-9c3c-49a1e2a512b9",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "95a3f690-9719-4933-b26f-a6bc1a4ed6f5",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "ec3a1b63-3049-44ed-85a2-54d60058f914",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "e0130c0c-d145-478e-8cba-bcb165b1725f",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "a41fc609-dc8d-465b-b2e5-c0dd7920fcc6",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "89a4fa51-ad8a-48ad-b788-a4730d3726e6",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "d1f9ae0e-8ae6-419e-bce4-c7c7f79220c8",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "e3b8bcc2-76d9-4721-ab11-e1a35ba510f0",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "c9cbba79-eabe-4223-bf47-948c0802badb",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 37957,
+          "label": "batch1",
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C3",
+            "C4"
+          ],
+          "escalated": false,
+          "candidates": 16
+        }
+      ],
+      "dropped": [
+        {
+          "role": "primary_statute",
+          "title": "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+          "origin": "local_db",
+          "reason": "מסמך על החלטות גמלאות לשרים/הוראת שעה אינו עוסק בחוק החוזים (תרופות) וסעיף 15; לא רלוונטי.",
+          "candidate_id": "a7328088-03ba-486d-ad4b-56ae64d195d9",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "החוק העותומני על האגודות",
+          "origin": "local_db",
+          "reason": "חוק עותומני על האגודות אינו נוגע לתכולת סעיף 15 לחוק החוזים (תרופות).",
+          "candidate_id": "6c3f434a-5817-4af2-a519-1a3dd53c81a9",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+          "origin": "local_db",
+          "reason": "תקנות חוק עותומני על האגודות אינן רלוונטיות לסעיף 15 בחוק החוזים (תרופות).",
+          "candidate_id": "48dac264-4b35-4e51-ad7e-659905e3ae1f",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק אמנת החברה הבינלאומית למימון",
+          "origin": "local_db",
+          "reason": "חוק אמנת החברה הבינלאומית למימון איננו נוגע לשאלת פיצוי מוסכם בסעיף 15 של חוק החוזים (תרופות).",
+          "candidate_id": "6e89ad5e-5f95-4dd0-b5f8-876eaab35587",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק אמנת האג (החזרת ילדים חטופים)",
+          "origin": "local_db",
+          "reason": "חוק אמנת האג (החזרת ילדים) אינו נוגע לפיצויים מוסכמים ולבסיס הסמכות לפי סעיף 15 בחוק החוזים.    ",
+          "candidate_id": "eb91bbd7-5555-40e6-83a4-4b8cb3b045b4",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק אמנת החברה הבין-אמריקנית להשקעות",
+          "origin": "local_db",
+          "reason": "חוק אמנת החברה הבין-אמריקנית להשקעות אינו רלוונטי לטענה על נוסחת סעיף 15 בחוק החוזים. ",
+          "candidate_id": "22bd38f9-7b31-4480-86e3-668f7bd96dca",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+          "origin": "local_db",
+          "reason": "המחאה (פסק-דין על דחיית רשות ערעור/החלטה דיונית) אינה עוסקת בקריטריונים או במבחן 'אי־הגינות' לפי סעיף 15; לא רלוונטי.",
+          "candidate_id": "a680804e-7c9c-4de5-be5b-53c156544287",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        }
+      ],
+      "verdicts": [
+        {
+          "reason": "מקור סטטוטורי ישיר; נוסח הסעיף הוא ההסמכה הישירה לשאלה על נוסחת הסעיף וטווח הסמכות.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "8433390f-6703-4e08-9c3c-49a1e2a512b9",
+          "supported_points": [
+            "נוסח סעיף 15 במלואו המעניק לבית המשפט סמכות להפחית פיצוי מוסכם",
+            "המניין המשפטי 'רשאי בית המשפט להפחיתם אם מצא שהפיצויים נקבעו ללא כל יחס סביר לנזק' מופיע במקור"
+          ]
+        },
+        {
+          "reason": "מסמך על החלטות גמלאות לשרים/הוראת שעה אינו עוסק בחוק החוזים (תרופות) וסעיף 15; לא רלוונטי.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "a7328088-03ba-486d-ad4b-56ae64d195d9",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק עותומני על האגודות אינו נוגע לתכולת סעיף 15 לחוק החוזים (תרופות).",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "6c3f434a-5817-4af2-a519-1a3dd53c81a9",
+          "supported_points": []
+        },
+        {
+          "reason": "תקנות חוק עותומני על האגודות אינן רלוונטיות לסעיף 15 בחוק החוזים (תרופות).",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "48dac264-4b35-4e51-ad7e-659905e3ae1f",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק אמנת החברה הבינלאומית למימון איננו נוגע לשאלת פיצוי מוסכם בסעיף 15 של חוק החוזים (תרופות).",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "6e89ad5e-5f95-4dd0-b5f8-876eaab35587",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק אמנת האג (החזרת ילדים) אינו נוגע לפיצויים מוסכמים ולבסיס הסמכות לפי סעיף 15 בחוק החוזים.    ",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "eb91bbd7-5555-40e6-83a4-4b8cb3b045b4",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק אמנת החברה הבין-אמריקנית להשקעות אינו רלוונטי לטענה על נוסחת סעיף 15 בחוק החוזים. ",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "22bd38f9-7b31-4480-86e3-668f7bd96dca",
+          "supported_points": []
+        },
+        {
+          "reason": "המחאה (פסק-דין על דחיית רשות ערעור/החלטה דיונית) אינה עוסקת בקריטריונים או במבחן 'אי־הגינות' לפי סעיף 15; לא רלוונטי.",
+          "support": "unrelated",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "a680804e-7c9c-4de5-be5b-53c156544287",
+          "supported_points": []
+        },
+        {
+          "reason": "הטקסט הסטטוטורי מספק את הנוסח הבסיסי אך לא מפרט את המבחנים והקריטריונים המעשי שבהם בתי־המשפט דנים.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "95a3f690-9719-4933-b26f-a6bc1a4ed6f5",
+          "supported_points": [
+            "נוסח החוק הרשמי ובפרט הביטוי 'ללא כל יחס סביר לנזק'",
+            "מהווה בסיס לשאלת אי־התאמה אך אינו מנסח מבחן שיפוטי מלא"
+          ]
+        },
+        {
+          "reason": "כתיבה אקדמית מסבירה ומנתחת את מבחני ההגינות והקריטריונים הרלוונטיים אך אינה תחליף לפסיקה מחייבת.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "e0130c0c-d145-478e-8cba-bcb165b1725f",
+          "supported_points": [
+            "מאמר אקדמי העוסק בדיני תרופות ובניתוח הנהלים השיפוטיים",
+            "מספק פרשנות וקריטריונים עיוניים לבחינת 'אי־הגינות' או 'אי־התאמה'"
+          ]
+        },
+        {
+          "reason": "הרקע האקדמי רלוונטי לבניית המבחן אך אינו מהווה פסק־דין מחייב.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "a41fc609-dc8d-465b-b2e5-c0dd7920fcc6",
+          "supported_points": [
+            "מאמר השוואתי על דיני אכיפת חוזה שמדגים שיקולים שיפוטיים",
+            "מספק רקע תיאורטי ומחקרי לניסוח מבחנים להערכת פיצוי מוסכם"
+          ]
+        },
+        {
+          "reason": "פסיקה עליונה העוסקת ישירות בנסיבות מעשיות של הפחתת פיצוי מוסכם מתאימה כראיה ישירה לטענה על מתי הורו בתי־המשפט להקטין או לדחות גבייה.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "ec3a1b63-3049-44ed-85a2-54d60058f914",
+          "supported_points": [
+            "פסק־דין עליון מרכזי הנוגע לתניית פיצוי מוסכם והיקף ההתערבות השיפוטית",
+            "מכיל דוגמאות והנחיות פרקטיות שבהן נעשתה הפחתה/התערבות"
+          ]
+        },
+        {
+          "reason": "מסמך אקדמי מועיל להצגת נסיבות טיפוסיות אך אינו פסיקה מחייבת.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "89a4fa51-ad8a-48ad-b788-a4730d3726e6",
+          "supported_points": [
+            "מאמר אקדמי המנתח סוגיות והיבטים מעשיים של פיצוי מוסכם",
+            "כולל דוגמאות סוגיות לחוזים צרכניים וקבלנות שבהן בוחנים הפחתה"
+          ]
+        },
+        {
+          "reason": "מאמר אקדמי מספק ניתוח ראייתי והלכתי רלוונטי אך אינו מהווה פסיקה מחייבת.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "d1f9ae0e-8ae6-419e-bce4-c7c7f79220c8",
+          "supported_points": [
+            "מאמר שמתמקד בנטל הראיה ובהשלכות ההלכתיות של בקשות להפחתה תחת סעיף 15",
+            "דן במושג 'סכום סביר' ובמתי ראוי להגיש בקשה להפחתה"
+          ]
+        },
+        {
+          "reason": "פרק/ספר משפטי מספק מסגרת תיאורטית ומדריכים פרקטיים אך אינו מחליף הוראה סטטוטורית או פסיקה מחייבת.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "e3b8bcc2-76d9-4721-ab11-e1a35ba510f0",
+          "supported_points": [
+            "דיון עיוני על גבולות ההתערבות השיפוטית ובשאלת הנטל והסכום הסביר",
+            "מתייחס להיבטים פרוצדורליים והראייתיים של בקשת הפחתה"
+          ]
+        },
+        {
+          "reason": "רלוונטי לנטל הראיה וטיעונים פרוצדורליים אך הינו מקורות אקדמיים ולא פסיקה מחייבת.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "c9cbba79-eabe-4223-bf47-948c0802badb",
+          "supported_points": [
+            "מאמר על פגמי כריתת חוזה שמקשר בין טענות חוקתיות/כוח מיקוח לבין סוגיות הראייה והפיצויים",
+            "מספק קווים מנחים להוכחת אי־שוויון והשפעתו על הפיצוי המוסכם"
+          ]
+        }
+      ],
+      "model_final": "openai/gpt-5-mini",
+      "per_claim_ms": {
+        "C1": 37957,
+        "C2": 37957,
+        "C3": 37957,
+        "C4": 37957
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [],
+      "candidates_usable": 9,
+      "candidates_dropped": 7,
+      "candidates_verified": 16
+    },
+    "retrieval": {
+      "ms": 40008,
+      "pool": {
+        "found": 54,
+        "counts": {
+          "by_role": {
+            "scholarship": 6,
+            "primary_statute": 8,
+            "binding_case_law": 2
+          },
+          "by_claim": {
+            "C1": 7,
+            "C2": 4,
+            "C3": 2,
+            "C4": 3
+          },
+          "by_origin": {
+            "local_db": 8,
+            "perplexity": 8
+          }
+        },
+        "after_dedup": 16,
+        "dedup_drops": 38
+      },
+      "local": {
+        "ms": 40007,
+        "per_query": [
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20000,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 1206,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+                "החוק העותומני על האגודות",
+                "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+                "חוק אמנת החברה הבינלאומית למימון",
+                "חוק אמנת האג (החזרת ילדים חטופים)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) נוסח מלא; הסמכות להפחית או למנוע גביית פיצוי מוסכם; גבולות טווח",
+                  "clue_kind": "statute_section",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND נוסח AND מלא AND הסמכות AND להפחית",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": []
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+                    "החוק העותומני על האגודות",
+                    "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+                    "חוק אמנת החברה הבינלאומית למימון",
+                    "חוק אמנת האג (החזרת ילדים חטופים)",
+                    "חוק אמנת החברה הבין-אמריקנית להשקעות"
+                  ],
+                  "title_match_query": "הח",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "d22930b3-4d56-4d29-9091-c5b481794e85",
+                    "6a9ef45c-f859-449c-be3e-dbc6dc7f58db",
+                    "5b4cdbb3-f66c-4f85-8d02-97936b819705",
+                    "b17a83a5-ee76-4435-88e5-06f607d51acd",
+                    "bcef5002-652d-4855-bdfb-925e5ccb28b6",
+                    "2f9c6faf-678e-4aff-a32f-0634e01d9e27"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "section": "15",
+                  "law_name": "חוק החוזים תרופות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [
+                    "חוק החוזים (תרופות בשל הפרת חוזה)"
+                  ],
+                  "matched_chunk_id": "310972f1-4b92-4d1a-8a95-80096abd2bd8",
+                  "title_match_query": "החוזים AND תרופות",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "e1d1f4ca-a36b-428a-a09b-6f362ec9fc2c"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND מה AND הסמכות AND הנתונה AND לערכאה",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 7,
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 7,
+            "exact_clues": [
+              {
+                "kind": "statute_section",
+                "source": "planner_query",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) נוסח מלא; הסמכות להפחית או למנוע גביית פיצוי מוסכם; גבולות טווח",
+                "search_terms": [
+                  "חוק החוזים (תרופות) נוסח מלא; הסמכות להפחית או למנוע גביית פיצוי מוסכם; גבולות טווח",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "15",
+                "law_name": "חוק החוזים תרופות",
+                "search_terms": [
+                  "חוק החוזים תרופות",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                "search_terms": [
+                  "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "סעיף 15"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות נוסח מלא הסמכות להפחית למנוע",
+            "original_query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא; הסמכות להפחית או למנוע גביית פיצוי מוסכם; גבולות טווח היישום של הסעיף"
+          },
+          {
+            "ms": 40002,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 1215,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                    "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                    "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                    "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)",
+                    "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)"
+                  ],
+                  "title_match_query": "הח",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "9a2acb53-bf5b-43a4-a11d-4316f9efb38e",
+                    "fe59db32-3cb1-4ba4-9c1a-4dc5fb1aa027",
+                    "b7c2496e-a38e-4b5d-b16f-7db7136ecb12",
+                    "61d82470-e700-49cf-bdc6-8b32f010b585",
+                    "010955f4-2a65-41e4-aad9-a8afaeeb8773",
+                    "7e3d6f78-cccf-4726-a65c-199d8375c7ed"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים תרופות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND מה AND הסמכות AND הנתונה AND לערכאה",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 6,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "15",
+                "law_name": "חוק החוזים תרופות",
+                "search_terms": [
+                  "חוק החוזים תרופות",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                "search_terms": [
+                  "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "סעיף 15"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון מבחן אי-הגינות",
+            "original_query_he": "בית המשפט העליון \"סעיף 15\" \"חוק החוזים (תרופות)\" מבחן אי-הגינות או אי-התאמה של פיצוי מוסכם קריטריונים \"יחס לנזק\" \"כוונת הצדדים\" \"כוח המיקוח\""
+          },
+          {
+            "ms": 40002,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 1220,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+                "החוק העותומני על האגודות",
+                "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+                "חוק אמנת החברה הבינלאומית למימון",
+                "חוק אמנת האג (החזרת ילדים חטופים)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+                    "החוק העותומני על האגודות",
+                    "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+                    "חוק אמנת החברה הבינלאומית למימון",
+                    "חוק אמנת האג (החזרת ילדים חטופים)",
+                    "חוק אמנת החברה הבין-אמריקנית להשקעות"
+                  ],
+                  "title_match_query": "הח",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "d22930b3-4d56-4d29-9091-c5b481794e85",
+                    "6a9ef45c-f859-449c-be3e-dbc6dc7f58db",
+                    "5b4cdbb3-f66c-4f85-8d02-97936b819705",
+                    "b17a83a5-ee76-4435-88e5-06f607d51acd",
+                    "bcef5002-652d-4855-bdfb-925e5ccb28b6",
+                    "2f9c6faf-678e-4aff-a32f-0634e01d9e27"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "section": "15",
+                  "law_name": "חוק החוזים תרופות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [
+                    "חוק החוזים (תרופות בשל הפרת חוזה)"
+                  ],
+                  "matched_chunk_id": "310972f1-4b92-4d1a-8a95-80096abd2bd8",
+                  "title_match_query": "החוזים AND תרופות",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "e1d1f4ca-a36b-428a-a09b-6f362ec9fc2c"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND מה AND הסמכות AND הנתונה AND לערכאה",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 7,
+            "role": "primary_statute",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 7,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "15",
+                "law_name": "חוק החוזים תרופות",
+                "search_terms": [
+                  "חוק החוזים תרופות",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                "search_terms": [
+                  "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "סעיף 15"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות ניסוח הסעיף ביחס לשיקולי",
+            "original_query_he": "חוק החוזים (תרופות) סעיף 15 ניסוח הסעיף ביחס לשיקולי אי-הגינות/אי-התאמה והסמכות המשפטית להפחתה או מניעת גבייה"
+          },
+          {
+            "ms": 40002,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 1178,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                    "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                    "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                    "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)",
+                    "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)"
+                  ],
+                  "title_match_query": "הח",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "9a2acb53-bf5b-43a4-a11d-4316f9efb38e",
+                    "fe59db32-3cb1-4ba4-9c1a-4dc5fb1aa027",
+                    "b7c2496e-a38e-4b5d-b16f-7db7136ecb12",
+                    "61d82470-e700-49cf-bdc6-8b32f010b585",
+                    "010955f4-2a65-41e4-aad9-a8afaeeb8773",
+                    "7e3d6f78-cccf-4726-a65c-199d8375c7ed"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים תרופות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND מה AND הסמכות AND הנתונה AND לערכאה",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 6,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "15",
+                "law_name": "חוק החוזים תרופות",
+                "search_terms": [
+                  "חוק החוזים תרופות",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                "search_terms": [
+                  "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "סעיף 15"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון פסקי-דין דחיית גבייה",
+            "original_query_he": "בית המשפט העליון פסקי-דין \"פיצוי מוסכם\" \"חוק החוזים (תרופות)\" סעיף 15 דחיית גבייה או הפחתת סכום דוגמאות נסיבות מקרה \"סכום מופרז\""
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20002,
+              "text_status": "timeout",
+              "embedding_ms": 1146,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                    "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                    "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                    "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)",
+                    "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)"
+                  ],
+                  "title_match_query": "הח",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "9a2acb53-bf5b-43a4-a11d-4316f9efb38e",
+                    "fe59db32-3cb1-4ba4-9c1a-4dc5fb1aa027",
+                    "b7c2496e-a38e-4b5d-b16f-7db7136ecb12",
+                    "61d82470-e700-49cf-bdc6-8b32f010b585",
+                    "010955f4-2a65-41e4-aad9-a8afaeeb8773",
+                    "7e3d6f78-cccf-4726-a65c-199d8375c7ed"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים תרופות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND מה AND הסמכות AND הנתונה AND לערכאה",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 6,
+            "role": "persuasive_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "15",
+                "law_name": "חוק החוזים תרופות",
+                "search_terms": [
+                  "חוק החוזים תרופות",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                "search_terms": [
+                  "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "סעיף 15"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות המחוזי דוגמה חוזה הצטרפות",
+            "original_query_he": "בית המשפט המחוזי 'פיצוי מוסכם' 'חוק החוזים (תרופות) סעיף 15' דוגמה 'חוזה הצטרפות' 'צרכנים' 'סכום מופרז ביחס לנזק צפוי'"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 1180,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+                "החוק העותומני על האגודות",
+                "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+                "חוק אמנת החברה הבינלאומית למימון",
+                "חוק אמנת האג (החזרת ילדים חטופים)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+                    "החוק העותומני על האגודות",
+                    "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+                    "חוק אמנת החברה הבינלאומית למימון",
+                    "חוק אמנת האג (החזרת ילדים חטופים)",
+                    "חוק אמנת החברה הבין-אמריקנית להשקעות"
+                  ],
+                  "title_match_query": "הח",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "d22930b3-4d56-4d29-9091-c5b481794e85",
+                    "6a9ef45c-f859-449c-be3e-dbc6dc7f58db",
+                    "5b4cdbb3-f66c-4f85-8d02-97936b819705",
+                    "b17a83a5-ee76-4435-88e5-06f607d51acd",
+                    "bcef5002-652d-4855-bdfb-925e5ccb28b6",
+                    "2f9c6faf-678e-4aff-a32f-0634e01d9e27"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "section": "15",
+                  "law_name": "חוק החוזים תרופות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [
+                    "חוק החוזים (תרופות בשל הפרת חוזה)"
+                  ],
+                  "matched_chunk_id": "310972f1-4b92-4d1a-8a95-80096abd2bd8",
+                  "title_match_query": "החוזים AND תרופות",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "e1d1f4ca-a36b-428a-a09b-6f362ec9fc2c"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND מה AND הסמכות AND הנתונה AND לערכאה",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 7,
+            "role": "primary_statute",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 7,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "15",
+                "law_name": "חוק החוזים תרופות",
+                "search_terms": [
+                  "חוק החוזים תרופות",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                "search_terms": [
+                  "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "סעיף 15"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות נוסח והוראות פרוצדורליות",
+            "original_query_he": "חוק החוזים (תרופות) סעיף 15 נוסח והוראות פרוצדורליות כלשהן בנוגע לנטל הראיה או למועד הגשת בקשת הפחתה"
+          },
+          {
+            "ms": 40002,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 1266,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק הח",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בבקשת קטין לעיון מחדש בתנאי מעצרו ( ת\"פ 21202-11-24)",
+                    "ועדת שחרורים במקום מושבה בבית הסוהר מעשיהו, ש' בדימוס אורית אפעל-גבאי, חברת ועדה ענבר יונת, חבר ועדה אברהם יערי, מזכיר הועדה חנן אביקסיס: החלטה בנוגע לשחרור (וש\"מ 45745-11-16)",
+                    "ביהמ\"ש לענייני משפחה בקרית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בעניין זימון עד (ת\"ע 78707-01-23 )",
+                    "בימ\"ש השלום לנוער נתניה, השופט בן ציון קבלר: החלטה בנושא צו פיקוח על קטין שהואשם בעבירה של מעשה מגונה, מכוח הגנה על הציבור מעבירות מין (pg\"n 66632-05-25)",
+                    "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)"
+                  ],
+                  "title_match_query": "הח",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "9a2acb53-bf5b-43a4-a11d-4316f9efb38e",
+                    "fe59db32-3cb1-4ba4-9c1a-4dc5fb1aa027",
+                    "b7c2496e-a38e-4b5d-b16f-7db7136ecb12",
+                    "61d82470-e700-49cf-bdc6-8b32f010b585",
+                    "010955f4-2a65-41e4-aad9-a8afaeeb8773",
+                    "7e3d6f78-cccf-4726-a65c-199d8375c7ed"
+                  ]
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים תרופות",
+                  "clue_kind": "statute_section",
+                  "clue_source": "question",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                },
+                {
+                  "status": "empty",
+                  "section": "15",
+                  "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "clue_kind": "statute_section",
+                  "clue_source": "claim",
+                  "matched_titles": [],
+                  "title_match_query": "החוזים AND תרופות AND מה AND הסמכות AND הנתונה AND לערכאה",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 6,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הח",
+                "search_terms": [
+                  "חוק הח"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "question",
+                "section": "15",
+                "law_name": "חוק החוזים תרופות",
+                "search_terms": [
+                  "חוק החוזים תרופות",
+                  "סעיף 15"
+                ]
+              },
+              {
+                "kind": "statute_section",
+                "source": "claim",
+                "section": "15",
+                "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                "search_terms": [
+                  "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                  "סעיף 15"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון נטל הראיה מי נושא",
+            "original_query_he": "בית המשפט העליון 'נטל הראיה' 'סעיף 15' 'חוק החוזים (תרופות)' מי נושא בנטל להראות אי-הגינות מתי יש להגיש בקשה להפחתה האם מפחיתים עד לנזק בפועל או סכום סביר"
+          }
+        ],
+        "candidates": 45,
+        "global_exact": {
+          "clues_from_claims": [
+            {
+              "kind": "statute_section",
+              "source": "claim",
+              "section": "15",
+              "law_name": "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+              "search_terms": [
+                "חוק החוזים (תרופות) – מה הסמכות הנתונה לערכאה השיפוטית (להפחית או למנוע גבייה של פי",
+                "סעיף 15"
+              ]
+            },
+            {
+              "kind": "statute",
+              "source": "claim",
+              "law_name": "חוק הח",
+              "search_terms": [
+                "חוק הח"
+              ]
+            }
+          ],
+          "clues_from_question": [
+            {
+              "kind": "statute_section",
+              "source": "question",
+              "section": "15",
+              "law_name": "חוק החוזים תרופות",
+              "search_terms": [
+                "חוק החוזים תרופות",
+                "סעיף 15"
+              ]
+            },
+            {
+              "kind": "statute",
+              "source": "question",
+              "law_name": "חוק הח",
+              "search_terms": [
+                "חוק הח"
+              ]
+            }
+          ]
+        }
+      },
+      "perplexity": {
+        "ms": 27679,
+        "dropped": 14,
+        "per_query": [
+          {
+            "ms": 10015,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://scholar.google.com/scholar?q=%22%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D+%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D%22+%D7%A1%D7%A2%D7%99%D7%A3+15+%D7%97%D7%95%D7%A7+%D7%94%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA",
+                "title": "פיצויים מוסכמים בחוזים: בין אוטונומיית הרצון לביקורת שיפוטית לפי סעיף 15 לחוק התרופות",
+                "domain": "scholar.google.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 15 לחוק התרופות חיפוש ממוקד למאמרים אקדמיים בעברית על סעיף 15 לחוק "
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://scholar.google.com/scholar?q=%22%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94+%D7%A9%D7%9C%D7%95%22+%D7%99%D7%94%D7%95%D7%93%D7%94+%D7%90%D7%93%D7%A8+%D7%93%D7%99%D7%A0%D7%99+%D7%97%D7%95%D7%96%D7%99%D7%9D+%D7%94%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA",
+                "title": "גבריאלה שלו ויהודה אדר, דיני חוזים – התרופות",
+                "domain": "scholar.google.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 15 לחוק התרופות"
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://scholar.google.com/scholar?q=%22%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D+%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D+%D7%95%D7%94%D7%A4%D7%97%D7%AA%D7%AA%D7%9D%22+%D7%A1%D7%A2%D7%99%D7%A3+15",
+                "title": "עופר גרוסקופף, פיצויים מוסכמים והפחתתם: פרשנות סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה)",
+                "domain": "scholar.google.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה) כיוון חיפוש למאמר אקדמי העוסק"
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://scholar.google.com/scholar?q=%22%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D+%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D%22+%D7%AA%D7%95%D7%9D+%D7%9C%D7%91+%D7%9B%D7%95%D7%97+%D7%9E%D7%99%D7%A7%D7%95%D7%97",
+                "title": "נילי כהן, פיצויים מוסכמים: תכלית, תום לב וכוח מיקוח בחוזה",
+                "domain": "scholar.google.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://scholar.google.com/scholar?q=%22%D7%93%D7%A0%D7%99%D7%90%D7%9C+%D7%A4%D7%A8%D7%99%D7%93%D7%9E%D7%9F%22+%D7%A0%D7%99%D7%9C%D7%99+%D7%9B%D7%94%D7%9F+%D7%97%D7%95%D7%96%D7%99%D7%9D+%D7%A1%D7%A2%D7%99%D7%A3+15+%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D+%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D",
+                "title": "דניאל פרידמן ונילי כהן, חוזים",
+                "domain": "scholar.google.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Cegla/%D7%A0%D7%9E%D7%A8%D7%95%D7%93%20%D7%90%D7%91%D7%A8%D7%9E%D7%95%D7%91%20%D7%95%D7%A2%D7%9E%D7%A8%D7%99%20%D7%A8%D7%97%D7%95%D7%9D-%D7%98%D7%95%D7%95%D7%99%D7%92.pdf",
+                "title": "אכיפה בהעדר חוזה מחייב ופריזמת ההסכמה — מבט תרופתי על חוקי איסור הפליה",
+                "domain": "law.tau.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m5.pdf",
+                "title": "לקראת התקרבות גלובלית של דיני אכיפת חוזה",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/7/law/7_lsr_211750.PDF",
+                "title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל״א–1970",
+                "domain": "fs.knesset.gov.il",
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C2",
+            "query_he": "מאמר \"סעיף 15\" \"חוק החוזים (תרופות)\" אי-הגינות אי-התאמה פיצוי מוסכם קריטריונים יחס לנזק כוונת הצדדים כוח מיקוח",
+            "raw_count": 5,
+            "discovery_only": 5,
+            "followup_terms": [
+              "סעיף 15 לחוק התרופות חיפוש ממוקד למאמרים אקדמיים בעברית על סעיף 15 לחוק ",
+              "סעיף 15 לחוק התרופות"
+            ],
+            "followup_admitted": 3
+          },
+          {
+            "ms": 10405,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+                "title": "פיצוי מוסכם – סוגיות והיבטים",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.blitshtein-law.com/%d7%a2%d7%95%d7%a8%d7%9a-%d7%93%d7%99%d7%9f-%d7%97%d7%95%d7%96%d7%99%d7%9d/",
+                "title": "פיצוי מוסכם בחוזה – באילו מקרים וכיצד ניתן לקבל אותו?",
+                "domain": "blitshtein-law.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.gindi-caspi.co.il/blog/%D7%91%D7%90%D7%99%D7%9C%D7%95-%D7%AA%D7%A0%D7%90%D7%99%D7%9D-%D7%99%D7%A9-%D7%9C%D7%97%D7%99%D7%99%D7%91-%D7%91%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99-%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA-%D7%91%D7%9E%D7%A7%D7%91%D7%99%D7%9C-%D7%9C%D7%A4%D7%99%D7%A6%D7%95%D7%99-%D7%9E%D7%95%D7%A1%D7%9B%D7%9D-%D7%9C%D7%9C%D7%90-%D7%94%D7%95%D7%9B%D7%97%D7%AA-%D7%A0%D7%96%D7%A7",
+                "title": "באילו תנאים יש לחייב בפיצויי הסתמכות במקביל לפיצוי מוסכם ללא הוכחת נזק?",
+                "domain": "gindi-caspi.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://ygoldlaw.co.il/real-estate-lawyer/contracts/agreed-compensation/",
+                "title": "פיצויים מוסכמים בגין הפרת חוזה מכר דירה",
+                "domain": "ygoldlaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "extracted_followup_terms": [
+                  "סעיף 15 לחוק התרופות"
+                ],
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F16%2F080%2F102%2Fw03&fileName=16102080.W03&type=2",
+                "title": "פסק-דין בתיק ע\"א 10208/16",
+                "domain": "supremedecisions.court.gov.il",
+                "role_corrected_to": "binding_case_law",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "official_primary",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+                "title": "פיצוי מוסכם – סוגיות והיבטים",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://weller-law-office.com/%D7%94%D7%A4%D7%A8%D7%AA-%D7%97%D7%95%D7%96%D7%94/",
+                "title": "פיצויים מוסכמים: התערבות בית המשפט והפחתה לפי סעיף 15",
+                "domain": "weller-law-office.com",
+                "drop_reason": "followup:discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://lawyerhaifa.co.il/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D-%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D/",
+                "title": "פיצויים מוסכמים - משרד עורכי דין קולצינסקי",
+                "domain": "lawyerhaifa.co.il",
+                "drop_reason": "followup:discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://kahn.co.il/he/%D7%9E%D7%90%D7%9E%D7%A8%D7%99%D7%9D-%D7%95%D7%9E%D7%93%D7%99%D7%94/%D7%93%D7%99%D7%A0%D7%99-%D7%97%D7%95%D7%96%D7%99%D7%9D-%D7%9B%D7%99%D7%A6%D7%93-%D7%90%D7%95%D7%9B%D7%A4%D7%99%D7%9D-%D7%A1%D7%A2%D7%99%D7%A3-%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D-%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D-%D7%91%D7%94%D7%A1%D7%9B%D7%9D-%D7%A2%D7%95-%D7%93-%D7%9E%D7%A9%D7%94-%D7%9B%D7%90%D7%94%D7%9F.html",
+                "title": "כיצד אוכפים סעיף פיצויים מוסכמים בהסכם?",
+                "domain": "kahn.co.il",
+                "drop_reason": "followup:class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.barelaw.co.il/he/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D-%D7%A2%D7%9C-%D7%94%D7%A4%D7%A8%D7%AA-%D7%97%D7%95%D7%96%D7%94.html",
+                "title": "פיצויים על הפרת חוזה - מדריך לאכיפה, ביטול וזכויות הנפגע",
+                "domain": "barelaw.co.il",
+                "drop_reason": "followup:discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C3",
+            "query_he": "מאמר דיני חוזים פיצוי מוסכם דוגמאות מעשיות הפחתה לפי סעיף 15 'חוק החוזים (תרופות)' מקרים סיגנוניים 'חוזי הצטרפות' 'צרכני'",
+            "raw_count": 5,
+            "discovery_only": 5,
+            "followup_terms": [
+              "סעיף 15 לחוק התרופות"
+            ],
+            "followup_admitted": 1
+          },
+          {
+            "ms": 7246,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D%20%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D%20-%20%D7%92%D7%91%D7%95%D7%9C%D7%95%D7%AA%20%D7%94%D7%94%D7%AA%D7%A2%D7%A8%D7%91%D7%95%D7%AA%20%D7%94%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%91%D7%A1%D7%A2%D7%99%D7%A3%2015%20%D7%9C%D7%97%D7%95%D7%A7%20%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D%20(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA%20%D7%91%D7%A9%D7%9C%20%D7%94%D7%A4%D7%A8%D7%AA%20%D7%97%D7%95%D7%96%D7%94).pdf",
+                "title": "פיצויים מוסכמים: גבולות ההתערבות השיפוטית בסעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה)",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D%20%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D%20-%20%D7%91%D7%99%D7%9F%20%D7%90%D7%95%D7%98%D7%95%D7%A0%D7%95%D7%9E%D7%99%D7%94%20%D7%9C%D7%94%D7%AA%D7%A2%D7%A8%D7%91%D7%95%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA.pdf",
+                "title": "פיצויים מוסכמים בדיני החוזים: בין אוטונומיה להתערבות שיפוטית",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision34533-09-20/he/34533-09-20.docx",
+                "title": "חוזים (תרופות בשל הפרת חוזה) – פיצויים מוסכמים ונטל ההוכחה",
+                "domain": "gov.il",
+                "drop_reason": "class_government_report_not_admitted_for_scholarship",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A4%D7%92%D7%9E%D7%99%D7%9D%20%D7%91%D7%9B%D7%A8%D7%99%D7%AA%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94%20-%20%D7%A7%D7%95%D7%95%D7%99%D7%9D%20%D7%9E%D7%A0%D7%97%D7%99%D7%9D.pdf",
+                "title": "פגמים בכריתת החוזה — קווים מנחים",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA_%D7%91%D7%A9%D7%9C_%D7%94%D7%A4%D7%A8%D7%AA_%D7%97%D7%95%D7%96%D7%94)",
+                "title": "חוק החוזים (תרופות בשל הפרת חוזה): עקרונות, תחולה והפחתת פיצויים מוסכמים",
+                "domain": "kolzchut.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C4",
+            "query_he": "מאמר משפטי 'נטל הראיה' 'סעיף 15' 'חוק החוזים (תרופות)' מתי להגיש בקשה להפחתה 'סכום סביר' 'השלכות הלכתיות'",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 9,
+        "role_corrections": [
+          {
+            "to": "primary_statute",
+            "url": "https://fs.knesset.gov.il/7/law/7_lsr_211750.PDF",
+            "from": "scholarship",
+            "title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל״א–1970",
+            "admitted": true,
+            "claim_id": "C2"
+          },
+          {
+            "to": "binding_case_law",
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F16%2F080%2F102%2Fw03&fileName=16102080.W03&type=2",
+            "from": "scholarship",
+            "title": "פסק-דין בתיק ע\"א 10208/16",
+            "admitted": true,
+            "claim_id": "C3"
+          }
+        ]
+      }
+    },
+    "candidates": [
+      {
+        "role": "primary_statute",
+        "score": 1.5,
+        "title": "חוק החוזים (תרופות בשל הפרת חוזה)",
+        "origin": "local_db",
+        "snippet": "טנתו, או שהתחייב בהתחייבויות סבירות לשם כך, חייב המפר לשפות אותו עליהן, בין אם נמנע הנזק או הוקטן ובין אם לאו; היו ההוצאות או ההתחייבויות בלתי סבירות, חייב המפר בשיפוי כדי שיעורן הסביר בנסיבות הענין. 15. פיצויים מוסכמים (א) הסכימו הצדדים מראש על שיעור פיצויים (להלן – פיצויים מוסכמים), יהיו הפיצויים כמוסכם, ללא הוכחת נזק; אולם רשאי בית המשפט להפחיתם אם מצא שהפיצויים נקבעו ללא כל יחס סביר לנזק שניתן",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא; הסמכות להפחית או למנוע גביית פיצוי מוסכם; גבולות טווח היישום של הסעיף",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA_%D7%91%D7%A9%D7%9C_%D7%94%D7%A4%D7%A8%D7%AA_%D7%97%D7%95%D7%96%D7%94)",
+        "document_id": "e1d1f4ca-a36b-428a-a09b-6f362ec9fc2c",
+        "source_type": "israeli_law",
+        "candidate_id": "8433390f-6703-4e08-9c3c-49a1e2a512b9",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "basic_law",
+          "source_site": "wikisource",
+          "is_basic_law": true
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא; הסמכות להפחית או למנוע גביית פיצוי מוסכם; גבולות טווח היישום של הסעיף",
+        "source_url": "https://he.wikisource.org/wiki/%D7%94%D7%97%D7%9C%D7%98%D7%AA_%D7%92%D7%9E%D7%9C%D7%90%D7%95%D7%AA_%D7%9C%D7%A0%D7%95%D7%A9%D7%90%D7%99_%D7%9E%D7%A9%D7%A8%D7%94_%D7%91%D7%A8%D7%A9%D7%95%D7%99%D7%95%D7%AA_%D7%94%D7%A9%D7%9C%D7%98%D7%95%D7%9F_(%D7%A9%D7%A8%D7%99%D7%9D_%D7%95%D7%A1%D7%92%D7%A0%D7%99_%D7%A9%D7%A8%D7%99%D7%9D_%D7%95%D7%A9%D7%90%D7%99%D7%A8%D7%99%D7%94%D7%9D)_(%D7%94%D7%A4%D7%A1%D7%A7%D7%AA_%D7%97%D7%91%D7%A8%D7%95%D7%AA_%D7%91%D7%9B%D7%A0%D7%A1%D7%AA_%D7%9C%D7%A4%D7%99_%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%A1%D7%A2%D7%99%D7%A3_42%D7%92_%D7%9C%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%94%D7%9B%D7%A0%D7%A1%D7%AA)_(%D7%94%D7%95%D7%A8%D7%90%D7%AA_%D7%A9%D7%A2%D7%94)",
+        "document_id": "d22930b3-4d56-4d29-9091-c5b481794e85",
+        "source_type": "israeli_law",
+        "candidate_id": "a7328088-03ba-486d-ad4b-56ae64d195d9",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "החוק העותומני על האגודות",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא; הסמכות להפחית או למנוע גביית פיצוי מוסכם; גבולות טווח היישום של הסעיף",
+        "source_url": "https://he.wikisource.org/wiki/%D7%94%D7%97%D7%95%D7%A7_%D7%94%D7%A2%D7%95%D7%AA%D7%95%D7%9E%D7%A0%D7%99_%D7%A2%D7%9C_%D7%94%D7%90%D7%92%D7%95%D7%93%D7%95%D7%AA",
+        "document_id": "6a9ef45c-f859-449c-be3e-dbc6dc7f58db",
+        "source_type": "israeli_law",
+        "candidate_id": "6c3f434a-5817-4af2-a519-1a3dd53c81a9",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא; הסמכות להפחית או למנוע גביית פיצוי מוסכם; גבולות טווח היישום של הסעיף",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%97%D7%95%D7%A7_%D7%94%D7%A2%D7%95%D7%AA%D7%95%D7%9E%D7%A0%D7%99_%D7%A2%D7%9C_%D7%94%D7%90%D7%92%D7%95%D7%93%D7%95%D7%AA_(%D7%93%D7%99%D7%95%D7%95%D7%97_%D7%95%D7%A9%D7%A7%D7%99%D7%A4%D7%95%D7%AA)",
+        "document_id": "5b4cdbb3-f66c-4f85-8d02-97936b819705",
+        "source_type": "israeli_law",
+        "candidate_id": "48dac264-4b35-4e51-ad7e-659905e3ae1f",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק אמנת החברה הבינלאומית למימון",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא; הסמכות להפחית או למנוע גביית פיצוי מוסכם; גבולות טווח היישום של הסעיף",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%9E%D7%A0%D7%AA_%D7%94%D7%97%D7%91%D7%A8%D7%94_%D7%94%D7%91%D7%99%D7%A0%D7%9C%D7%90%D7%95%D7%9E%D7%99%D7%AA_%D7%9C%D7%9E%D7%99%D7%9E%D7%95%D7%9F",
+        "document_id": "b17a83a5-ee76-4435-88e5-06f607d51acd",
+        "source_type": "israeli_law",
+        "candidate_id": "6e89ad5e-5f95-4dd0-b5f8-876eaab35587",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק אמנת האג (החזרת ילדים חטופים)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא; הסמכות להפחית או למנוע גביית פיצוי מוסכם; גבולות טווח היישום של הסעיף",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%9E%D7%A0%D7%AA_%D7%94%D7%90%D7%92_(%D7%94%D7%97%D7%96%D7%A8%D7%AA_%D7%99%D7%9C%D7%93%D7%99%D7%9D_%D7%97%D7%98%D7%95%D7%A4%D7%99%D7%9D)",
+        "document_id": "bcef5002-652d-4855-bdfb-925e5ccb28b6",
+        "source_type": "israeli_law",
+        "candidate_id": "eb91bbd7-5555-40e6-83a4-4b8cb3b045b4",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק אמנת החברה הבין-אמריקנית להשקעות",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "סעיף 15 חוק החוזים (תרופות) נוסח מלא; הסמכות להפחית או למנוע גביית פיצוי מוסכם; גבולות טווח היישום של הסעיף",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%9E%D7%A0%D7%AA_%D7%94%D7%97%D7%91%D7%A8%D7%94_%D7%94%D7%91%D7%99%D7%9F-%D7%90%D7%9E%D7%A8%D7%99%D7%A7%D7%A0%D7%99%D7%AA_%D7%9C%D7%94%D7%A9%D7%A7%D7%A2%D7%95%D7%AA",
+        "document_id": "2f9c6faf-678e-4aff-a32f-0634e01d9e27",
+        "source_type": "israeli_law",
+        "candidate_id": "22bd38f9-7b31-4480-86e3-668f7bd96dca",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 1.35,
+        "title": "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C2",
+        "metadata": {
+          "court": "בתי המשפט המחוזיים",
+          "judges": "חננאל שרעבי",
+          "district": "מחוז חיפה",
+          "procedure_type": "משפחה"
+        },
+        "query_he": "בית המשפט העליון \"סעיף 15\" \"חוק החוזים (תרופות)\" מבחן אי-הגינות או אי-התאמה של פיצוי מוסכם קריטריונים \"יחס לנזק\" \"כוונת הצדדים\" \"כוח המיקוח\"",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+        "document_id": "9a2acb53-bf5b-43a4-a11d-4316f9efb38e",
+        "source_type": "caselaw",
+        "candidate_id": "a680804e-7c9c-4de5-be5b-53c156544287",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל״א–1970",
+        "origin": "perplexity",
+        "snippet": "נוסח החוק הרשמי; רלוונטי במיוחד לסעיף 15 (פיצויים מוסכמים) ולקריאה ממוקדת של דרישת 'ללא כל יחס סביר לנזק'.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "role_corrected_from": "scholarship",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "מאמר \"סעיף 15\" \"חוק החוזים (תרופות)\" אי-הגינות אי-התאמה פיצוי מוסכם קריטריונים יחס לנזק כוונת הצדדים כוח מיקוח",
+        "source_url": "https://fs.knesset.gov.il/7/law/7_lsr_211750.PDF",
+        "source_type": "טקסט חוק רשמי (לא ספרות אקדמית)",
+        "candidate_id": "95a3f690-9719-4933-b26f-a6bc1a4ed6f5",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.95,
+        "title": "פסק-דין בתיק ע\"א 10208/16",
+        "origin": "perplexity",
+        "snippet": "לא מאמר אקדמי, אך מקור פסיקתי מרכזי לניתוח תניית פיצוי מוסכם והיקף ההתערבות של בית המשפט בה.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "supremedecisions.court.gov.il",
+          "role_corrected_from": "scholarship",
+          "classified_source_class": "official_primary"
+        },
+        "query_he": "מאמר דיני חוזים פיצוי מוסכם דוגמאות מעשיות הפחתה לפי סעיף 15 'חוק החוזים (תרופות)' מקרים סיגנוניים 'חוזי הצטרפות' 'צרכני'",
+        "source_url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F16%2F080%2F102%2Fw03&fileName=16102080.W03&type=2",
+        "source_type": "פסק דין בית המשפט העליון (מקור משלים)",
+        "candidate_id": "ec3a1b63-3049-44ed-85a2-54d60058f914",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "אכיפה בהעדר חוזה מחייב ופריזמת ההסכמה — מבט תרופתי על חוקי איסור הפליה",
+        "origin": "perplexity",
+        "snippet": "נמרוד אברמוב, עמירי רחום-טוויג; עוסק בדיני תרופות ובהקשרים של אכיפה ופיצויים, כולל התייחסות משיקה לסעיפים בחוק החוזים (תרופות בשל הפרת חוזה).",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "law.tau.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר \"סעיף 15\" \"חוק החוזים (תרופות)\" אי-הגינות אי-התאמה פיצוי מוסכם קריטריונים יחס לנזק כוונת הצדדים כוח מיקוח",
+        "source_url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Cegla/%D7%A0%D7%9E%D7%A8%D7%95%D7%93%20%D7%90%D7%91%D7%A8%D7%9E%D7%95%D7%91%20%D7%95%D7%A2%D7%9E%D7%A8%D7%99%20%D7%A8%D7%97%D7%95%D7%9D-%D7%98%D7%95%D7%95%D7%99%D7%92.pdf",
+        "source_type": "מאמר אקדמי (PDF, אוניברסיטת תל אביב)",
+        "candidate_id": "e0130c0c-d145-478e-8cba-bcb165b1725f",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "לקראת התקרבות גלובלית של דיני אכיפת חוזה",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי בעברית מאת מחבר/ים מאוניברסיטת חיפה; עוסק בדיני אכיפת חוזה ובהשוואה גלובלית, עם זיקה ישירה לדיני התרופות ולסעיפי החוק הרלוונטיים.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר \"סעיף 15\" \"חוק החוזים (תרופות)\" אי-הגינות אי-התאמה פיצוי מוסכם קריטריונים יחס לנזק כוונת הצדדים כוח מיקוח",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m5.pdf",
+        "source_type": "מאמר אקדמי (PDF, אוניברסיטת חיפה)",
+        "candidate_id": "a41fc609-dc8d-465b-b2e5-c0dd7920fcc6",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "פיצוי מוסכם – סוגיות והיבטים",
+        "origin": "perplexity",
+        "snippet": "דנה בחוזים צרכניים, חוזי מכר, קבלנות ושכירות; עוסקת בסעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה) ובהפחתת פיצוי מוסכם, כולל היבטים מעשיים ודוגמאות.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר דיני חוזים פיצוי מוסכם דוגמאות מעשיות הפחתה לפי סעיף 15 'חוק החוזים (תרופות)' מקרים סיגנוניים 'חוזי הצטרפות' 'צרכני'",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+        "source_type": "PDF / מאמר אקדמי (אוניברסיטת חיפה)",
+        "candidate_id": "89a4fa51-ad8a-48ad-b788-a4730d3726e6",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "פיצויים מוסכמים: גבולות ההתערבות השיפוטית בסעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה)",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי על סעיף 15 לחוק התרופות, נטל הראיה בהפחתת פיצויים מוסכמים, ומבחן 'הסכום הסביר' והשלכות ההפחתה. מתאים במיוחד לשאלות על מתי מגישים בקשה להפחתה.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר משפטי 'נטל הראיה' 'סעיף 15' 'חוק החוזים (תרופות)' מתי להגיש בקשה להפחתה 'סכום סביר' 'השלכות הלכתיות'",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D%20%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D%20-%20%D7%92%D7%91%D7%95%D7%9C%D7%95%D7%AA%20%D7%94%D7%94%D7%AA%D7%A2%D7%A8%D7%91%D7%95%D7%AA%20%D7%94%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA%20%D7%91%D7%A1%D7%A2%D7%99%D7%A3%2015%20%D7%9C%D7%97%D7%95%D7%A7%20%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D%20(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA%20%D7%91%D7%A9%D7%9C%20%D7%94%D7%A4%D7%A8%D7%AA%20%D7%97%D7%95%D7%96%D7%94).pdf",
+        "source_type": "מאמר אקדמי / כתב עת משפטי",
+        "candidate_id": "d1f9ae0e-8ae6-419e-bce4-c7c7f79220c8",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "פיצויים מוסכמים בדיני החוזים: בין אוטונומיה להתערבות שיפוטית",
+        "origin": "perplexity",
+        "snippet": "דיון עיוני בסעיף 15, בתנאי ההפחתה ובשיקולים הראייתיים וההלכתיים סביב פיצויים מוסכמים. מקושר בדרך כלל לניתוח 'סכום סביר' ולשאלת הנטל על המבקש להפחית.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר משפטי 'נטל הראיה' 'סעיף 15' 'חוק החוזים (תרופות)' מתי להגיש בקשה להפחתה 'סכום סביר' 'השלכות הלכתיות'",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D%20%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D%20-%20%D7%91%D7%99%D7%9F%20%D7%90%D7%95%D7%98%D7%95%D7%A0%D7%95%D7%9E%D7%99%D7%94%20%D7%9C%D7%94%D7%AA%D7%A2%D7%A8%D7%91%D7%95%D7%AA%20%D7%A9%D7%99%D7%A4%D7%95%D7%98%D7%99%D7%AA.pdf",
+        "source_type": "ספר / פרק משפטי",
+        "candidate_id": "e3b8bcc2-76d9-4721-ab11-e1a35ba510f0",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "פגמים בכריתת החוזה — קווים מנחים",
+        "origin": "perplexity",
+        "snippet": "מאמר יסוד של פרופ' גבריאלה שלו/מחקר אקדמי על דיני תרופות, כולל אזכורים לסעיף 15, טענות הטעיה ופיצויים שליליים, ולקשר בין ביטול, פיצויים והוכחת נזק.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר משפטי 'נטל הראיה' 'סעיף 15' 'חוק החוזים (תרופות)' מתי להגיש בקשה להפחתה 'סכום סביר' 'השלכות הלכתיות'",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A4%D7%92%D7%9E%D7%99%D7%9D%20%D7%91%D7%9B%D7%A8%D7%99%D7%AA%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%94%20-%20%D7%A7%D7%95%D7%95%D7%99%D7%9D%20%D7%9E%D7%A0%D7%97%D7%99%D7%9D.pdf",
+        "source_type": "מאמר אקדמי / כתב עת משפטי",
+        "candidate_id": "c9cbba79-eabe-4223-bf47-948c0802badb",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 12601,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 19684,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 40007,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 27679,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 37957,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial"
+      },
+      {
+        "ms": 39043,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      },
+      {
+        "ms": 58025,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "drafter.escalated",
+        "escalated": true
+      },
+      {
+        "ms": 78599,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "drafter.placement_repair"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://scholar.google.com/scholar?q=%22%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D+%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D%22+%D7%A1%D7%A2%D7%99%D7%A3+15+%D7%97%D7%95%D7%A7+%D7%94%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA",
+        "role": "scholarship",
+        "title": "פיצויים מוסכמים בחוזים: בין אוטונומיית הרצון לביקורת שיפוטית לפי סעיף 15 לחוק התרופות",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר \"סעיף 15\" \"חוק החוזים (תרופות)\" אי-הגינות אי-התאמה פיצוי מוסכם קריטריונים יחס לנזק כוונת הצדדים כוח מיקוח",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://scholar.google.com/scholar?q=%22%D7%92%D7%91%D7%A8%D7%99%D7%90%D7%9C%D7%94+%D7%A9%D7%9C%D7%95%22+%D7%99%D7%94%D7%95%D7%93%D7%94+%D7%90%D7%93%D7%A8+%D7%93%D7%99%D7%A0%D7%99+%D7%97%D7%95%D7%96%D7%99%D7%9D+%D7%94%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA",
+        "role": "scholarship",
+        "title": "גבריאלה שלו ויהודה אדר, דיני חוזים – התרופות",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר \"סעיף 15\" \"חוק החוזים (תרופות)\" אי-הגינות אי-התאמה פיצוי מוסכם קריטריונים יחס לנזק כוונת הצדדים כוח מיקוח",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://scholar.google.com/scholar?q=%22%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D+%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D+%D7%95%D7%94%D7%A4%D7%97%D7%AA%D7%AA%D7%9D%22+%D7%A1%D7%A2%D7%99%D7%A3+15",
+        "role": "scholarship",
+        "title": "עופר גרוסקופף, פיצויים מוסכמים והפחתתם: פרשנות סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה)",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר \"סעיף 15\" \"חוק החוזים (תרופות)\" אי-הגינות אי-התאמה פיצוי מוסכם קריטריונים יחס לנזק כוונת הצדדים כוח מיקוח",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://scholar.google.com/scholar?q=%22%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D+%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D%22+%D7%AA%D7%95%D7%9D+%D7%9C%D7%91+%D7%9B%D7%95%D7%97+%D7%9E%D7%99%D7%A7%D7%95%D7%97",
+        "role": "scholarship",
+        "title": "נילי כהן, פיצויים מוסכמים: תכלית, תום לב וכוח מיקוח בחוזה",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר \"סעיף 15\" \"חוק החוזים (תרופות)\" אי-הגינות אי-התאמה פיצוי מוסכם קריטריונים יחס לנזק כוונת הצדדים כוח מיקוח",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://scholar.google.com/scholar?q=%22%D7%93%D7%A0%D7%99%D7%90%D7%9C+%D7%A4%D7%A8%D7%99%D7%93%D7%9E%D7%9F%22+%D7%A0%D7%99%D7%9C%D7%99+%D7%9B%D7%94%D7%9F+%D7%97%D7%95%D7%96%D7%99%D7%9D+%D7%A1%D7%A2%D7%99%D7%A3+15+%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D+%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D",
+        "role": "scholarship",
+        "title": "דניאל פרידמן ונילי כהן, חוזים",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר \"סעיף 15\" \"חוק החוזים (תרופות)\" אי-הגינות אי-התאמה פיצוי מוסכם קריטריונים יחס לנזק כוונת הצדדים כוח מיקוח",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.blitshtein-law.com/%d7%a2%d7%95%d7%a8%d7%9a-%d7%93%d7%99%d7%9f-%d7%97%d7%95%d7%96%d7%99%d7%9d/",
+        "role": "scholarship",
+        "title": "פיצוי מוסכם בחוזה – באילו מקרים וכיצד ניתן לקבל אותו?",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר דיני חוזים פיצוי מוסכם דוגמאות מעשיות הפחתה לפי סעיף 15 'חוק החוזים (תרופות)' מקרים סיגנוניים 'חוזי הצטרפות' 'צרכני'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.gindi-caspi.co.il/blog/%D7%91%D7%90%D7%99%D7%9C%D7%95-%D7%AA%D7%A0%D7%90%D7%99%D7%9D-%D7%99%D7%A9-%D7%9C%D7%97%D7%99%D7%99%D7%91-%D7%91%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99-%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA-%D7%91%D7%9E%D7%A7%D7%91%D7%99%D7%9C-%D7%9C%D7%A4%D7%99%D7%A6%D7%95%D7%99-%D7%9E%D7%95%D7%A1%D7%9B%D7%9D-%D7%9C%D7%9C%D7%90-%D7%94%D7%95%D7%9B%D7%97%D7%AA-%D7%A0%D7%96%D7%A7",
+        "role": "scholarship",
+        "title": "באילו תנאים יש לחייב בפיצויי הסתמכות במקביל לפיצוי מוסכם ללא הוכחת נזק?",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר דיני חוזים פיצוי מוסכם דוגמאות מעשיות הפחתה לפי סעיף 15 'חוק החוזים (תרופות)' מקרים סיגנוניים 'חוזי הצטרפות' 'צרכני'",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://ygoldlaw.co.il/real-estate-lawyer/contracts/agreed-compensation/",
+        "role": "scholarship",
+        "title": "פיצויים מוסכמים בגין הפרת חוזה מכר דירה",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר דיני חוזים פיצוי מוסכם דוגמאות מעשיות הפחתה לפי סעיף 15 'חוק החוזים (תרופות)' מקרים סיגנוניים 'חוזי הצטרפות' 'צרכני'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://weller-law-office.com/%D7%94%D7%A4%D7%A8%D7%AA-%D7%97%D7%95%D7%96%D7%94/",
+        "role": "scholarship",
+        "title": "פיצויים מוסכמים: התערבות בית המשפט והפחתה לפי סעיף 15",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר דיני חוזים פיצוי מוסכם דוגמאות מעשיות הפחתה לפי סעיף 15 'חוק החוזים (תרופות)' מקרים סיגנוניים 'חוזי הצטרפות' 'צרכני'",
+        "drop_reason": "followup:discovery_only"
+      },
+      {
+        "url": "https://lawyerhaifa.co.il/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D-%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D/",
+        "role": "scholarship",
+        "title": "פיצויים מוסכמים - משרד עורכי דין קולצינסקי",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר דיני חוזים פיצוי מוסכם דוגמאות מעשיות הפחתה לפי סעיף 15 'חוק החוזים (תרופות)' מקרים סיגנוניים 'חוזי הצטרפות' 'צרכני'",
+        "drop_reason": "followup:discovery_only"
+      },
+      {
+        "url": "https://kahn.co.il/he/%D7%9E%D7%90%D7%9E%D7%A8%D7%99%D7%9D-%D7%95%D7%9E%D7%93%D7%99%D7%94/%D7%93%D7%99%D7%A0%D7%99-%D7%97%D7%95%D7%96%D7%99%D7%9D-%D7%9B%D7%99%D7%A6%D7%93-%D7%90%D7%95%D7%9B%D7%A4%D7%99%D7%9D-%D7%A1%D7%A2%D7%99%D7%A3-%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D-%D7%9E%D7%95%D7%A1%D7%9B%D7%9E%D7%99%D7%9D-%D7%91%D7%94%D7%A1%D7%9B%D7%9D-%D7%A2%D7%95-%D7%93-%D7%9E%D7%A9%D7%94-%D7%9B%D7%90%D7%94%D7%9F.html",
+        "role": "scholarship",
+        "title": "כיצד אוכפים סעיף פיצויים מוסכמים בהסכם?",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר דיני חוזים פיצוי מוסכם דוגמאות מעשיות הפחתה לפי סעיף 15 'חוק החוזים (תרופות)' מקרים סיגנוניים 'חוזי הצטרפות' 'צרכני'",
+        "drop_reason": "followup:class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.barelaw.co.il/he/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D-%D7%A2%D7%9C-%D7%94%D7%A4%D7%A8%D7%AA-%D7%97%D7%95%D7%96%D7%94.html",
+        "role": "scholarship",
+        "title": "פיצויים על הפרת חוזה - מדריך לאכיפה, ביטול וזכויות הנפגע",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר דיני חוזים פיצוי מוסכם דוגמאות מעשיות הפחתה לפי סעיף 15 'חוק החוזים (תרופות)' מקרים סיגנוניים 'חוזי הצטרפות' 'צרכני'",
+        "drop_reason": "followup:discovery_only"
+      },
+      {
+        "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/decision34533-09-20/he/34533-09-20.docx",
+        "role": "scholarship",
+        "title": "חוזים (תרופות בשל הפרת חוזה) – פיצויים מוסכמים ונטל ההוכחה",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר משפטי 'נטל הראיה' 'סעיף 15' 'חוק החוזים (תרופות)' מתי להגיש בקשה להפחתה 'סכום סביר' 'השלכות הלכתיות'",
+        "drop_reason": "class_government_report_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.kolzchut.org.il/he/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA_%D7%91%D7%A9%D7%9C_%D7%94%D7%A4%D7%A8%D7%AA_%D7%97%D7%95%D7%96%D7%94)",
+        "role": "scholarship",
+        "title": "חוק החוזים (תרופות בשל הפרת חוזה): עקרונות, תחולה והפחתת פיצויים מוסכמים",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר משפטי 'נטל הראיה' 'סעיף 15' 'חוק החוזים (תרופות)' מתי להגיש בקשה להפחתה 'סכום סביר' 'השלכות הלכתיות'",
+        "drop_reason": "discovery_only"
+      }
+    ]
+  }
+}
