@@ -324,36 +324,201 @@ export function LegalResearchV1Panel() {
   const debug = (result?.debug ?? {}) as Record<string, any>;
   const dbgOpenDefault = import.meta.env.DEV;
 
+  const hasContentToClear =
+    question.trim().length > 0 || files.length > 0 || !!result || !!error;
+
+  const handleClearAll = () => {
+    if (loading || uploadingFiles) return;
+    const doClear = () => {
+      setQuestion("");
+      setFiles([]);
+      setResult(null);
+      setError(null);
+    };
+    if (result || question.trim().length > 100) {
+      toast("לנקות הכל?", {
+        action: { label: "מחק", onClick: doClear },
+        cancel: { label: "ביטול", onClick: () => {} },
+      });
+    } else {
+      doClear();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (!loading && !uploadingFiles && question.trim().length >= 5) {
+        handleSubmit();
+      }
+    }
+  };
+
+  const sendDisabled = loading || uploadingFiles || question.trim().length < 5;
+  const isBusy = loading || uploadingFiles;
+
   return (
-    <div className="space-y-4" dir="rtl">
-      {/* ── Input ── */}
-      <div className="space-y-2">
-        <textarea
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          disabled={loading}
-          rows={3}
-          dir="rtl"
-          placeholder="לדוגמה: מתי בית המשפט יפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים (תרופות)?"
-          className="w-full bg-background border border-input rounded-md px-3 py-2 text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-ring"
-        />
-        {/* ── Attachments ── */}
-        <div className="rounded-md border border-dashed border-border bg-muted/20 p-3 space-y-2">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Paperclip className="w-3.5 h-3.5" />
-              <span>קבצים מצורפים (PDF/DOCX, עד {MAX_FILES} קבצים · {fmtSize(MAX_FILE_BYTES)} לקובץ)</span>
+    <div className="flex flex-col h-full min-h-0" dir="rtl">
+      {/* ── Top region: loading / error / result (scrollable) ── */}
+      <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pb-4">
+        {loading && (
+          <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2">
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span className="font-medium text-foreground">{STAGES[stageIdx]}</span>
+              <span>{fmtElapsed(elapsed)}</span>
             </div>
-            <Button
+            <Progress value={progress} className="h-2" />
+            {elapsed < SOFT_NOTICE_1_MS && (
+              <p className="text-xs text-muted-foreground">זה עשוי לקחת 2–3 דקות</p>
+            )}
+            {elapsed >= SOFT_NOTICE_1_MS && elapsed < SOFT_NOTICE_2_MS && (
+              <p className="text-xs text-muted-foreground">עדיין עובד… זה לוקח יותר מהרגיל</p>
+            )}
+            {elapsed >= SOFT_NOTICE_2_MS && (
+              <p className="text-xs text-muted-foreground">עדיין עובד ברקע, אפשר להמתין או לבטל</p>
+            )}
+            {jobId && (
+              <div className="flex justify-end pt-1">
+                <Button onClick={handleCancel} variant="ghost" size="sm" className="h-7 px-2 text-xs">
+                  בטל
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {error && !loading && (
+          <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
+            {error}
+          </div>
+        )}
+
+        {result && !loading && (
+          <div className="space-y-4">
+            <div className="rounded-lg border border-border bg-card p-4">
+              <h3 className="text-sm font-bold text-foreground mb-2">תשובה</h3>
+              <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+                {result.answer}
+              </div>
+            </div>
+
+            {result.footnotes?.length > 0 && (
+              <div className="rounded-lg border border-border bg-card p-4">
+                <h3 className="text-sm font-bold text-foreground mb-2">הערות שוליים</h3>
+                <ol className="space-y-1.5 text-sm text-foreground">
+                  {result.footnotes.map((fn) => (
+                    <li key={fn.number} className="leading-relaxed">
+                      <span className="font-medium">{fn.number}.</span>{" "}
+                      <span>{fn.title}</span>
+                      {fn.url ? (
+                        <>
+                          {" — "}
+                          <a
+                            href={fn.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-primary underline break-all"
+                          >
+                            {fn.url}
+                          </a>
+                        </>
+                      ) : null}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
+            <Collapsible defaultOpen={dbgOpenDefault}>
+              <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                <ChevronDown className="w-3.5 h-3.5" />
+                דיבאג / Debug trace
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-2 space-y-3">
+                <DebugBlock title="run_id / qa_log_id" data={debug.run_id} />
+                <DebugBlock title="phase" data={debug.phase} />
+                <DebugBlock
+                  title="timings (ms)"
+                  data={{
+                    total: debug.total_ms ?? null,
+                    stage_runs: debug.stage_runs ?? null,
+                    analyzer: debug.planning?.analyzer?.ms ?? null,
+                    planner: debug.planning?.planner?.ms ?? null,
+                    retrieval: debug.retrieval?.ms ?? null,
+                    local: debug.retrieval?.local?.ms ?? null,
+                    perplexity: debug.retrieval?.perplexity?.ms ?? null,
+                    verifier: debug.verifier?.ms ?? null,
+                    drafter: debug.drafter?.ms ?? null,
+                  }}
+                />
+                <DebugBlock
+                  title="source split (local vs Perplexity)"
+                  data={{
+                    local_candidates: debug.retrieval?.local?.candidates ?? null,
+                    perplexity_candidates: debug.retrieval?.perplexity?.candidates ?? null,
+                    pool: debug.retrieval?.pool ?? null,
+                  }}
+                />
+                <DebugBlock title="claims" data={debug.claims} />
+                <DebugBlock title="queries" data={debug.queries} />
+                <DebugBlock
+                  title="verifier summary"
+                  data={{
+                    counts: debug.verifier?.counts ?? null,
+                    candidates_verified: debug.verifier?.candidates_verified ?? null,
+                    candidates_usable: debug.verifier?.candidates_usable ?? null,
+                    candidates_dropped: debug.verifier?.candidates_dropped ?? null,
+                  }}
+                />
+                <DebugBlock title="used_sources" data={result.used_sources} />
+                <DebugBlock title="footnotes" data={result.footnotes} />
+                <DebugBlock
+                  title="drafter"
+                  data={{
+                    marker_validation: debug.drafter?.marker_validation ?? null,
+                    sources_passed: debug.drafter?.sources_passed ?? null,
+                    sources_used: debug.drafter?.sources_used ?? null,
+                    omitted_candidate_ids: debug.drafter?.omitted_candidate_ids ?? null,
+                  }}
+                />
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
+        )}
+      </div>
+
+      {/* ── Composer (bottom, sticky via mt-auto) ── */}
+      <div className="mt-auto pt-2 border-t border-border bg-background">
+        <div className="flex gap-2 items-end pt-2">
+          {hasContentToClear && (
+            <button
               type="button"
-              variant="outline"
-              size="sm"
-              className="h-7 px-2 text-xs"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={loading || uploadingFiles || files.length >= MAX_FILES}
+              onClick={handleClearAll}
+              disabled={isBusy}
+              className="p-2.5 bg-surface border border-border rounded-xl text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-all flex-shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
+              title="נקה הכל"
+              aria-label="נקה הכל"
             >
-              הוסף קובץ
-            </Button>
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+
+          <div className="flex flex-1 min-w-0 items-end bg-background border border-input rounded-xl focus-within:ring-2 focus-within:ring-ring">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isBusy || files.length >= MAX_FILES}
+              className="relative p-2.5 m-1 text-muted-foreground hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+              title={`צרף קובץ PDF/DOCX (עד ${MAX_FILES} · ${fmtSize(MAX_FILE_BYTES)} לקובץ)`}
+              aria-label="צרף קובץ"
+            >
+              <Paperclip className="w-4 h-4" />
+              {files.length > 0 && (
+                <span className="absolute -top-0.5 -left-0.5 min-w-[16px] h-4 px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
+                  {files.length}
+                </span>
+              )}
+            </button>
             <input
               ref={fileInputRef}
               type="file"
@@ -365,11 +530,43 @@ export function LegalResearchV1Panel() {
                 if (e.target) e.target.value = "";
               }}
             />
+
+            <textarea
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              onKeyDown={handleKeyDown}
+              disabled={loading}
+              rows={2}
+              dir="rtl"
+              placeholder="תארו שאלה משפטית לסקירה מקיפה..."
+              className="w-full flex-1 bg-transparent border-none outline-none focus:outline-none focus:ring-0 px-2 py-2.5 text-foreground text-sm leading-relaxed resize-none"
+            />
+
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={sendDisabled}
+              className="btn-send px-3 py-2.5 m-1 rounded-lg text-primary-foreground flex-shrink-0 disabled:text-muted-foreground"
+              title={uploadingFiles ? "מעלה קבצים…" : "שלח"}
+              aria-label="שלח"
+            >
+              {isBusy ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <ArrowUp className="w-4 h-4" />
+              )}
+            </button>
           </div>
-          {files.length > 0 && (
+        </div>
+
+        {files.length > 0 && (
+          <div className="mt-2 space-y-1.5">
             <ul className="space-y-1">
               {files.map((f) => (
-                <li key={f.id} className="flex items-center justify-between gap-2 text-xs bg-background border border-border rounded px-2 py-1">
+                <li
+                  key={f.id}
+                  className="flex items-center justify-between gap-2 text-xs bg-muted/30 border border-border rounded px-2 py-1"
+                >
                   <div className="flex items-center gap-2 min-w-0">
                     <FileText className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                     <span className="truncate" title={f.file.name}>{f.file.name}</span>
@@ -378,7 +575,7 @@ export function LegalResearchV1Panel() {
                   <button
                     type="button"
                     onClick={() => removeFile(f.id)}
-                    disabled={loading || uploadingFiles}
+                    disabled={isBusy}
                     className="text-muted-foreground hover:text-destructive disabled:opacity-40"
                     aria-label="הסר קובץ"
                   >
@@ -387,186 +584,23 @@ export function LegalResearchV1Panel() {
                 </li>
               ))}
             </ul>
-          )}
-          {files.length > 0 && (
             <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
               <input
                 type="checkbox"
                 checked={useAsSource}
                 onChange={(e) => setUseAsSource(e.target.checked)}
-                disabled={loading || uploadingFiles}
+                disabled={isBusy}
                 className="accent-primary"
               />
               <span>השתמש בקבצים גם כמקור בתשובה (יצוטטו כהערות שוליים)</span>
             </label>
-          )}
-        </div>
-
-        <div className="flex justify-end">
-          <Button
-            onClick={handleSubmit}
-            disabled={loading || uploadingFiles || question.trim().length < 5}
-            className="gap-1.5"
-          >
-            <Send className="w-4 h-4" />
-            {uploadingFiles ? "מעלה קבצים…" : "שלח לחקירה משפטית"}
-          </Button>
-        </div>
-
+          </div>
+        )}
       </div>
-
-      {/* ── Loading progress ── */}
-      {loading && (
-        <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2">
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span className="font-medium text-foreground">
-              {STAGES[stageIdx]}
-            </span>
-            <span>{fmtElapsed(elapsed)}</span>
-          </div>
-          <Progress value={progress} className="h-2" />
-          {elapsed < SOFT_NOTICE_1_MS && (
-            <p className="text-xs text-muted-foreground">
-              זה עשוי לקחת 2–3 דקות
-            </p>
-          )}
-          {elapsed >= SOFT_NOTICE_1_MS && elapsed < SOFT_NOTICE_2_MS && (
-            <p className="text-xs text-muted-foreground">
-              עדיין עובד… זה לוקח יותר מהרגיל
-            </p>
-          )}
-          {elapsed >= SOFT_NOTICE_2_MS && (
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-xs text-muted-foreground">
-                עדיין עובד ברקע, אפשר להמתין או לבטל
-              </p>
-            </div>
-          )}
-          {jobId && (
-            <div className="flex justify-end pt-1">
-              <Button
-                onClick={handleCancel}
-                variant="ghost"
-                size="sm"
-                className="h-7 px-2 text-xs"
-              >
-                בטל
-              </Button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ── Error ── */}
-      {error && !loading && (
-        <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
-          {error}
-        </div>
-      )}
-
-      {/* ── Result ── */}
-      {result && !loading && (
-        <div className="space-y-4">
-          <div className="rounded-lg border border-border bg-card p-4">
-            <h3 className="text-sm font-bold text-foreground mb-2">תשובה</h3>
-            <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-              {result.answer}
-            </div>
-          </div>
-
-          {result.footnotes?.length > 0 && (
-            <div className="rounded-lg border border-border bg-card p-4">
-              <h3 className="text-sm font-bold text-foreground mb-2">
-                הערות שוליים
-              </h3>
-              <ol className="space-y-1.5 text-sm text-foreground">
-                {result.footnotes.map((fn) => (
-                  <li key={fn.number} className="leading-relaxed">
-                    <span className="font-medium">{fn.number}.</span>{" "}
-                    <span>{fn.title}</span>
-                    {fn.url ? (
-                      <>
-                        {" — "}
-                        <a
-                          href={fn.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-primary underline break-all"
-                        >
-                          {fn.url}
-                        </a>
-                      </>
-                    ) : null}
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
-
-          {/* ── Debug ── */}
-          <Collapsible defaultOpen={dbgOpenDefault}>
-            <CollapsibleTrigger className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
-              <ChevronDown className="w-3.5 h-3.5" />
-              דיבאג / Debug trace
-            </CollapsibleTrigger>
-            <CollapsibleContent className="mt-2 space-y-3">
-              <DebugBlock title="run_id / qa_log_id" data={debug.run_id} />
-              <DebugBlock title="phase" data={debug.phase} />
-              <DebugBlock
-                title="timings (ms)"
-                data={{
-                  total: debug.total_ms ?? null,
-                  stage_runs: debug.stage_runs ?? null,
-                  analyzer: debug.planning?.analyzer?.ms ?? null,
-                  planner: debug.planning?.planner?.ms ?? null,
-                  retrieval: debug.retrieval?.ms ?? null,
-                  local: debug.retrieval?.local?.ms ?? null,
-                  perplexity: debug.retrieval?.perplexity?.ms ?? null,
-                  verifier: debug.verifier?.ms ?? null,
-                  drafter: debug.drafter?.ms ?? null,
-                }}
-              />
-              <DebugBlock
-                title="source split (local vs Perplexity)"
-                data={{
-                  local_candidates: debug.retrieval?.local?.candidates ?? null,
-                  perplexity_candidates:
-                    debug.retrieval?.perplexity?.candidates ?? null,
-                  pool: debug.retrieval?.pool ?? null,
-                }}
-              />
-              <DebugBlock title="claims" data={debug.claims} />
-              <DebugBlock title="queries" data={debug.queries} />
-              <DebugBlock
-                title="verifier summary"
-                data={{
-                  counts: debug.verifier?.counts ?? null,
-                  candidates_verified:
-                    debug.verifier?.candidates_verified ?? null,
-                  candidates_usable: debug.verifier?.candidates_usable ?? null,
-                  candidates_dropped:
-                    debug.verifier?.candidates_dropped ?? null,
-                }}
-              />
-              <DebugBlock title="used_sources" data={result.used_sources} />
-              <DebugBlock title="footnotes" data={result.footnotes} />
-              <DebugBlock
-                title="drafter"
-                data={{
-                  marker_validation: debug.drafter?.marker_validation ?? null,
-                  sources_passed: debug.drafter?.sources_passed ?? null,
-                  sources_used: debug.drafter?.sources_used ?? null,
-                  omitted_candidate_ids:
-                    debug.drafter?.omitted_candidate_ids ?? null,
-                }}
-              />
-            </CollapsibleContent>
-          </Collapsible>
-        </div>
-      )}
     </div>
   );
 }
+
 
 function DebugBlock({ title, data }: { title: string; data: unknown }) {
   if (data === undefined || data === null) return null;
