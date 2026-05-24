@@ -448,7 +448,9 @@ async function handle(req: Request): Promise<Response> {
     analyzer.claims,
     pool.candidates,
     { usable: verifier.usable, verdicts: verifier.verdicts },
+    { userDocs: attachmentResult.documents, useAsSource },
   );
+
   stage_runs.push(...drafter.stage_runs);
   const drafterMeta = {
     ok: drafter.ok,
