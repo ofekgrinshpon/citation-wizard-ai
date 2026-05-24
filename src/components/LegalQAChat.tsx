@@ -2191,7 +2191,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     return { color: "hsl(var(--muted-foreground))", label: "חיפוש אינטרנט" };
   };
 
-  const activeMode = TASK_MODES.find((m) => m.id === taskMode)!;
+  const activeMode = TASK_MODES.find((m) => m.id === taskMode) ?? TASK_MODES[0];
   const isAcademic = taskMode === "academic_writing";
 
   return (
