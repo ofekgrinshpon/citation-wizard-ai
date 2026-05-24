@@ -319,6 +319,144 @@ function runMarkerValidation(
   };
 }
 
+// ─── Placement validator (Phase A) ─────────────────────────────────────────
+// Pure read-only. Detects three issues:
+//   1. Adjacent superscript runs on the same token (¹², ¹²³…).
+//   2. First-appearance order not strictly 1,2,3,…
+//   3. End-of-paragraph dumps: ≥3 distinct first-appearance markers in the
+//      last sentence of any paragraph.
+function validatePlacement(answer: string): import("../lib/types.ts").PlacementReport {
+  // 1. Clusters: runs of ≥2 superscript digits with no non-superscript char between.
+  const clusterRe = /[⁰¹²³⁴⁵⁶⁷⁸⁹]{2,}/gu;
+  let cluster_count = 0;
+  const cluster_samples: string[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = clusterRe.exec(answer)) !== null) {
+    cluster_count += m[0].length - 1;
+    if (cluster_samples.length < 5) {
+      const s = Math.max(0, m.index - 20);
+      const e = Math.min(answer.length, m.index + m[0].length + 20);
+      cluster_samples.push(answer.slice(s, e));
+    }
+  }
+
+  // 2. Out-of-order: collect first-appearance sequence of markers.
+  const firstOrder: number[] = [];
+  const seen = new Set<number>();
+  for (const ch of answer) {
+    const d = SUP_TO_DIGIT[ch];
+    if (d === undefined) continue;
+    const n = Number(d);
+    if (n < 1) continue;
+    if (!seen.has(n)) {
+      seen.add(n);
+      firstOrder.push(n);
+    }
+  }
+  let out_of_order_count = 0;
+  let maxSoFar = 0;
+  for (const n of firstOrder) {
+    if (n < maxSoFar) out_of_order_count++;
+    else if (n > maxSoFar) maxSoFar = n;
+  }
+
+  // 3. End-paragraph dumps: split on blank lines, look at the tail of each.
+  let end_paragraph_dump_count = 0;
+  const end_dump_samples: string[] = [];
+  const paragraphs = answer.split(/\n\s*\n+/);
+  const firstAppearancePos = new Map<number, number>();
+  {
+    let cursor = 0;
+    const seen2 = new Set<number>();
+    for (let idx = 0; idx < answer.length; idx++) {
+      const d = SUP_TO_DIGIT[answer[idx]];
+      if (d === undefined) continue;
+      const n = Number(d);
+      if (n < 1 || seen2.has(n)) continue;
+      seen2.add(n);
+      firstAppearancePos.set(n, idx);
+    }
+    cursor; // silence
+  }
+  let paraOffset = 0;
+  for (const para of paragraphs) {
+    // Last sentence: split on .?!׃ followed by space/end. Take final non-empty chunk.
+    const sentences = para.split(/(?<=[\.!?׃])\s+/u).filter((s) => s.trim().length > 0);
+    const tail = sentences.length ? sentences[sentences.length - 1] : "";
+    if (tail) {
+      const tailStartInAnswer = paraOffset + para.lastIndexOf(tail);
+      const newMarkersInTail = new Set<number>();
+      for (let i = 0; i < tail.length; i++) {
+        const d = SUP_TO_DIGIT[tail[i]];
+        if (d === undefined) continue;
+        const n = Number(d);
+        if (n < 1) continue;
+        const firstPos = firstAppearancePos.get(n);
+        if (firstPos !== undefined && firstPos >= tailStartInAnswer) {
+          newMarkersInTail.add(n);
+        }
+      }
+      if (newMarkersInTail.size >= 3) {
+        end_paragraph_dump_count++;
+        if (end_dump_samples.length < 3) end_dump_samples.push(tail.slice(0, 200));
+      }
+    }
+    paraOffset += para.length + 2; // approx for blank-line separator
+  }
+
+  return {
+    ok: cluster_count === 0 && out_of_order_count === 0 && end_paragraph_dump_count === 0,
+    cluster_count,
+    cluster_samples,
+    out_of_order_count,
+    end_paragraph_dump_count,
+    end_dump_samples,
+  };
+}
+
+function buildPlacementRepairUserMessage(
+  originalUserMsg: string,
+  currentAnswer: string,
+  used: Array<{ ref: string; number: number; candidate_id: string }>,
+  placement: import("../lib/types.ts").PlacementReport,
+): string {
+  const lines: string[] = [];
+  lines.push(originalUserMsg);
+  lines.push("");
+  lines.push("=== מצב תיקון מיקום הערות שוליים בלבד ===");
+  lines.push("התשובה הקודמת שלך:");
+  lines.push(currentAnswer);
+  lines.push("");
+  lines.push("בעיות מיקום שזוהו:");
+  if (placement.cluster_count > 0) {
+    lines.push(`- ${placement.cluster_count} צמדי סימוני־על סמוכים על אותה מילה. דוגמאות:`);
+    for (const s of placement.cluster_samples) lines.push(`  • ${s}`);
+  }
+  if (placement.end_paragraph_dump_count > 0) {
+    lines.push(`- ${placement.end_paragraph_dump_count} פסקאות מסתיימות בריכוז הערות. דוגמאות:`);
+    for (const s of placement.end_dump_samples) lines.push(`  • ${s}`);
+  }
+  if (placement.out_of_order_count > 0) {
+    lines.push(`- ${placement.out_of_order_count} הערות שאינן בסדר כרונולוגי לפי הופעה ראשונה.`);
+  }
+  lines.push("");
+  lines.push("הוראות תיקון מחייבות:");
+  lines.push("- מותר להזיז סימוני־על למיקום מתאים יותר במשפט/בפסקה.");
+  lines.push("- מותר לפזר סימונים סמוכים על פני המשפטים הרלוונטיים באותה פסקה.");
+  lines.push("- מותר לפצל משפט בודד לשני משפטים כשהדבר הכרחי לפיזור הסימונים.");
+  lines.push("- אסור להסיר סימוני־על. אסור להסיר מקורות. אסור לשנות את רשימת used_sources, את מיפוי ref→candidate_id, או את המספרים שהוקצו למקורות.");
+  lines.push("- אסור לשנות את הניסוח המשפטי או להוסיף קביעות חדשות. השינוי היחיד המותר הוא הזזת סימונים ופיצול משפטים נחוץ.");
+  lines.push("- אסור להוסיף מקורות חדשים.");
+  lines.push("- שמור על אותו מספר סימונים בדיוק, ועל אותם מספרי הערות כפי שמופיעים כעת.");
+  lines.push("");
+  lines.push("מספרי הערות נוכחיים (אסור לשנותם):");
+  for (const u of used) lines.push(`  - ${u.ref} → ${u.number}`);
+  lines.push("");
+  lines.push("החזר את התשובה המתוקנת דרך emit_draft עם אותו used_sources בדיוק.");
+  return lines.join("\n");
+}
+
+
 /**
  * Deterministic, NUMBERING-ONLY repair.
  *
