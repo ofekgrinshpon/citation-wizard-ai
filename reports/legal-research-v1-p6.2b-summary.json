@@ -1,6 +1,5 @@
 {
   "tag": "p6.2b",
-  "generated_at": "2026-05-24T06:41:09.352Z",
   "fixtures": [
     {
       "id": "L1",
@@ -35,20 +34,6 @@
         "local_db": 0,
         "perplexity": 7
       },
-      "verifier_batches": [
-        {
-          "ms": 18960,
-          "label": "batch1",
-          "claim_ids": [
-            "C1",
-            "C2",
-            "C3",
-            "C4"
-          ],
-          "escalated": false,
-          "candidates": 9
-        }
-      ],
       "drafter_model_final": "openai/gpt-5",
       "drafter_escalated": true
     },
@@ -85,21 +70,6 @@
         "local_db": 0,
         "perplexity": 9
       },
-      "verifier_batches": [
-        {
-          "ms": 23530,
-          "label": "batch1",
-          "claim_ids": [
-            "C1",
-            "C2",
-            "C3",
-            "C4",
-            "C5"
-          ],
-          "escalated": false,
-          "candidates": 12
-        }
-      ],
       "drafter_model_final": "openai/gpt-5-mini",
       "drafter_escalated": false
     },
@@ -136,57 +106,47 @@
         "local_db": 1,
         "perplexity": 2
       },
-      "verifier_batches": [
-        {
-          "ms": 18511,
-          "label": "batch1",
-          "claim_ids": [
-            "C1",
-            "C2"
-          ],
-          "escalated": false,
-          "candidates": 10
-        }
-      ],
       "drafter_model_final": "openai/gpt-5",
-      "drafter_escalated": true
+      "drafter_escalated": true,
+      "L3_mentions_section_15": true
     },
     {
       "id": "L4",
-      "run_id": "51d82e04-fbca-4956-b6bc-131517098abf",
-      "qa_log_id": "bce90783-86ab-461c-b4ab-f90f0d162b10",
+      "run_id": "43bfe08d-7dd0-4750-9372-3a57932376b1",
+      "qa_log_id": "7a6f3823-394f-4242-9a60-405c050bdd3c",
       "timings_ms": {
-        "total": 81986,
-        "analyzer": 19150,
-        "planner": 22717,
-        "retrieval": 40007,
-        "verifier": 0,
-        "drafter": 0
+        "total": 166979,
+        "analyzer": 11590,
+        "planner": 27717,
+        "retrieval": 31580,
+        "verifier": 47201,
+        "drafter": 48769
       },
-      "answer_word_count": 14,
-      "footnote_count": 0,
+      "answer_word_count": 870,
+      "footnote_count": 9,
       "acceptance": {
-        "marker_validation_ok": false,
+        "marker_validation_ok": true,
         "internal_id_leak": false,
-        "all_used_in_verifier_usable": false,
+        "all_used_in_verifier_usable": true,
         "repaired": false,
         "leaked_tokens": [],
         "missing_sources": [],
         "unused_sources": []
       },
       "support_distribution": {
-        "direct": 0,
-        "partial": 0,
-        "unrelated": 0,
-        "tangential": 0
+        "direct": 8,
+        "partial": 3,
+        "unrelated": 3,
+        "tangential": 1
       },
       "footnote_origin_split": {
-        "local_db": 0,
-        "perplexity": 0
+        "local_db": 4,
+        "perplexity": 5
       },
-      "verifier_batches": [],
       "drafter_model_final": "openai/gpt-5-mini",
-      "drafter_escalated": false
+      "drafter_escalated": false,
+      "L4_mentions_issue_preclusion": true,
+      "L4_promissory_estoppel_drift": false
     },
     {
       "id": "L5",
@@ -221,21 +181,6 @@
         "local_db": 0,
         "perplexity": 9
       },
-      "verifier_batches": [
-        {
-          "ms": 37239,
-          "label": "batch1",
-          "claim_ids": [
-            "C1",
-            "C2",
-            "C3",
-            "C4",
-            "C5"
-          ],
-          "escalated": false,
-          "candidates": 17
-        }
-      ],
       "drafter_model_final": "openai/gpt-5-mini",
       "drafter_escalated": false
     },
@@ -272,29 +217,14 @@
         "local_db": 2,
         "perplexity": 5
       },
-      "verifier_batches": [
-        {
-          "ms": 31469,
-          "label": "batch1",
-          "claim_ids": [
-            "C1",
-            "C2",
-            "C3",
-            "C4",
-            "C5"
-          ],
-          "escalated": false,
-          "candidates": 15
-        }
-      ],
       "drafter_model_final": "openai/gpt-5-mini",
       "drafter_escalated": false
     }
   ],
   "aggregate": {
     "count": 6,
-    "marker_ok_count": 5,
-    "no_leak_count": 6,
-    "all_used_in_usable_count": 5
+    "marker_ok": 6,
+    "no_leak": 6,
+    "all_used_in_usable": 6
   }
 }
