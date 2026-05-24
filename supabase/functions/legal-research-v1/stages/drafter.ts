@@ -407,11 +407,21 @@ export async function runDrafter(
   claims: Claim[],
   candidates: Candidate[],
   verifier: { usable: UsableCandidate[]; verdicts: Verdict[] },
+  opts?: { userDocs?: UserDocument[]; useAsSource?: boolean },
 ): Promise<DrafterResult> {
   const t_total = Date.now();
   const stage_runs: StageRun[] = [];
 
-  const inputSources = buildInputSources(candidates, verifier.verdicts, verifier.usable);
+  const userDocs = opts?.userDocs ?? [];
+  const useAsSource = opts?.useAsSource ?? false;
+
+  const inputSources = buildInputSources(
+    candidates,
+    verifier.verdicts,
+    verifier.usable,
+    userDocs,
+    useAsSource,
+  );
   const sources_passed = inputSources.length;
 
   if (sources_passed === 0) {
@@ -442,7 +452,7 @@ export async function runDrafter(
     };
   }
 
-  const userMsg = buildUserMessage(question, claims, inputSources);
+  const userMsg = buildUserMessage(question, claims, inputSources, userDocs, useAsSource);
   const tool = {
     name: "emit_draft",
     description: "Emit the Hebrew legal answer with footnote markers and used_sources list.",
