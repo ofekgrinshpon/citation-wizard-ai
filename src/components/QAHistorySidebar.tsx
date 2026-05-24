@@ -107,7 +107,15 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
         }
       : {
           answer: log.answer,
-          footnotes: Array.isArray(fn) ? (fn as any) : [],
+          footnotes: Array.isArray(fn)
+            ? (fn as any[]).map((f, i) => ({
+                number: typeof f?.number === "number" ? f.number : i + 1,
+                citation: typeof f?.citation === "string" ? f.citation : "",
+                source_type: typeof f?.source_type === "string" ? f.source_type : "unknown",
+                url: typeof f?.url === "string" ? f.url : undefined,
+                source: f?.source,
+              }))
+            : [],
           source_urls: [],
         };
     onLoadResult(log.question, result, log.task_mode || "research");

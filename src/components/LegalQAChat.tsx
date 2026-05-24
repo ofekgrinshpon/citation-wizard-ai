@@ -438,19 +438,21 @@ function AnswerWithFootnotes({ text, onFootnoteClick }: { text: string; onFootno
   );
 }
 
-function RenderMarkdownLine({ line }: { line: string }) {
-  const headingMatch = line.match(/^(#{1,4})\s+(.*)/);
+function RenderMarkdownLine({ line }: { line?: string | null }) {
+  const safe = typeof line === "string" ? line : "";
+  const headingMatch = safe.match(/^(#{1,4})\s+(.*)/);
   if (headingMatch) {
     const level = headingMatch[1].length;
     const content = headingMatch[2];
     const className = level <= 2 ? "text-base font-bold" : "text-sm font-semibold";
     return <div className={className}><RenderBold text={content} /></div>;
   }
-  return <RenderBold text={line} />;
+  return <RenderBold text={safe} />;
 }
 
-function RenderBold({ text }: { text: string }) {
-  const parts = text.split(/\*\*(.*?)\*\*/g);
+function RenderBold({ text }: { text?: string | null }) {
+  const safe = typeof text === "string" ? text : "";
+  const parts = safe.split(/\*\*(.*?)\*\*/g);
   return (
     <>
       {parts.map((segment, i) =>
@@ -460,8 +462,9 @@ function RenderBold({ text }: { text: string }) {
   );
 }
 
-function RenderMarkdown({ text }: { text: string }) {
-  const lines = text.split("\n");
+function RenderMarkdown({ text }: { text?: string | null }) {
+  const safe = typeof text === "string" ? text : "";
+  const lines = safe.split("\n");
   return (
     <>
       {lines.map((line, i) => (
