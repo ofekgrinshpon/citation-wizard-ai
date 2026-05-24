@@ -25,6 +25,7 @@ type StageEvent = {
 };
 import { CitationReviewPanel } from "@/components/legal-qa/CitationReviewPanel";
 import { MaintenanceCard } from "@/components/MaintenanceCard";
+import { LegalResearchV1Panel } from "@/components/LegalResearchV1Panel";
 
 // ─── Offline-engine guard (D1 reset) ──────────────────────────────
 // Research mode and academic chapter generation (body/introduction/
@@ -2931,9 +2932,9 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         )}
 
         {/* ── Non-academic empty state ── */}
-        {!isAcademic && !result && !loading && !error && taskMode === "research" && (
-          <div className="py-6">
-            <MaintenanceCard title={RESEARCH_OFFLINE_TITLE} message={RESEARCH_OFFLINE_MESSAGE} />
+        {!isAcademic && taskMode === "research" && (
+          <div className="py-4">
+            <LegalResearchV1Panel />
           </div>
         )}
         {!isAcademic && !result && !loading && !error && taskMode === "pleading_analysis" && (
@@ -3115,7 +3116,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       {/* Bottom: Input bar pinned */}
       <div className="mt-auto px-2 sm:px-4 pb-2 pt-2 space-y-1.5 border-t border-border bg-background">
         {/* Hide input bar for academic mode (it has its own UI) unless in non-wizard steps */}
-        {!isAcademic && (
+        {!isAcademic && taskMode !== "research" && (
           <div className="flex gap-2 items-end">
             {/* File upload zone */}
             <div
@@ -3180,14 +3181,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   <button
                     onClick={handleSubmit}
                     disabled={
-                      taskMode === "research" || (taskMode as string) === "pleading_analysis"
+                      (taskMode as string) === "pleading_analysis"
                         ? true
                         : question.trim().length < 5
                     }
                     title={
-                      taskMode === "research"
-                        ? RESEARCH_OFFLINE_TITLE
-                        : (taskMode as string) === "pleading_analysis"
+                      (taskMode as string) === "pleading_analysis"
                         ? PLEADING_OFFLINE_TITLE
                         : undefined
                     }
