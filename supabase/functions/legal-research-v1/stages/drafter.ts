@@ -576,6 +576,7 @@ export async function runDrafter(
     number: u.number,
     title: u.title,
     url: u.url,
+    source_type: u.source_type,
   }));
 
   const usedCandIds = new Set(used_sources.map((u) => u.candidate_id));
