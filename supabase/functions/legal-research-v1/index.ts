@@ -19,6 +19,7 @@ import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
+import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
 import { StageRun } from "./lib/types.ts";
 
 const corsHeaders = {
