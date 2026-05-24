@@ -20,9 +20,11 @@ const STAGES = [
   "מסדר הערות שוליים",
 ];
 
-const HARD_CAP_MS = 300_000; // 5 min client-side hard cap
 const STAGE_BUDGET_MS = 25_000;
 const POLL_INTERVAL_MS = 2_000;
+const SOFT_NOTICE_1_MS = 180_000; // 3 min
+const SOFT_NOTICE_2_MS = 300_000; // 5 min
+const RESUME_STORAGE_KEY = "lrv1:active_job";
 
 type Footnote = { number: number; title: string; url?: string | null };
 type UsedSource = {
