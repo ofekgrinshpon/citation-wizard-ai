@@ -69,6 +69,11 @@ function summarise(fixtureId: string, qaRow: any) {
       `missing=${JSON.stringify(mv.missing_sources)} unused=${JSON.stringify(mv.unused_sources)} ` +
       `internal_id_leak=${mv.internal_id_leak} leaked=${JSON.stringify(mv.leaked_tokens)}`,
   );
+  const pl = mv.placement ?? {};
+  console.log(
+    `placement.ok=${pl.ok} clusters=${pl.cluster_count} out_of_order=${pl.out_of_order_count} ` +
+      `end_dumps=${pl.end_paragraph_dump_count} repaired=${pl.repaired ?? false} repair_failed=${pl.repair_failed ?? false}`,
+  );
   const sup = v.counts?.by_support ?? {};
   console.log(
     `support: direct=${sup.direct ?? 0} partial=${sup.partial ?? 0} ` +
