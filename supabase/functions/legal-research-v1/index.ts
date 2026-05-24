@@ -195,10 +195,23 @@ async function handle(req: Request): Promise<Response> {
   // Wrap the whole pipeline so it runs in the background.
   const runPipeline = async (): Promise<Response> => {
 
+  // ─── P1.5: Extract attachments (PDF/DOCX) ────────────────────────────────
+  const attachmentResult = attachments.length > 0
+    ? await extractAttachments(admin, user.id, attachments)
+    : { documents: [], total_chars: 0, global_truncated: false, errors: [], ms: 0 };
+  if (attachments.length > 0) {
+    stage_runs.push({
+      stage: "attachments.extract",
+      ms: attachmentResult.ms,
+      ok: attachmentResult.documents.some((d) => d.chunks.length > 0),
+    });
+  }
+  const analyzerContext = buildAnalyzerContext(attachmentResult.documents);
+
   // ─── P2: Claim Analyzer ──────────────────────────────────────────────────
   let analyzerStage;
   try {
-    analyzerStage = await runClaimAnalyzer(question);
+    analyzerStage = await runClaimAnalyzer(question, { attachmentsContext: analyzerContext });
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
     await writeTelemetry(admin, {
