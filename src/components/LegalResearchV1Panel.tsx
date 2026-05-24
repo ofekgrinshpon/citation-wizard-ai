@@ -136,10 +136,12 @@ export function LegalResearchV1Panel() {
           setLoading(false);
           setJobId(null);
           clearResume();
-          setError(
-            (data as { error?: string }).error ||
-              "אירעה שגיאה בעיבוד הבקשה.",
-          );
+          const rawErr = (data as { error?: string }).error || "";
+          if (rawErr.includes("analyzer_escalation_unavailable")) {
+            setError("מודל הניתוח המשפטי לא היה זמין רגעית. נסו שוב בעוד דקה.");
+          } else {
+            setError(rawErr || "אירעה שגיאה בעיבוד הבקשה.");
+          }
         }
       } catch (e) {
         console.warn("[lrv1 poll threw]", e);

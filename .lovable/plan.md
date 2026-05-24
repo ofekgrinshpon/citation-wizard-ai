@@ -1,73 +1,76 @@
-**P6.5 — Claim Analyzer escalation: retry on transient failure (analyzer-only)**
+**Diagnosis**
 
-**Problem recap**
+This is the same failure class, but now P6.5 proves the retry branch ran:
 
-Your last query hit this exact failure mode:
-- `claim_analyzer.initial` (gpt-5-mini): 19.5s, returned a degenerate tool payload (empty `claims`, missing `legal_area`/`answer_type`, non-finite `confidence`).
-- `claim_analyzer.escalated` (gpt-5): **279ms, ok:false** — that's a transient upstream/network failure from the AI gateway, not a real model run.
-- Pipeline short-circuits at P2 and returns the P2 stub answer (`"[stub] התשובה תיווצר בשלב P5…"`).
+```text
+claim_analyzer.initial         gpt-5-mini   10.4s  ok:true, but invalid/empty analyzer payload
+claim_analyzer.escalated       gpt-5        270ms  ok:false
+claim_analyzer.escalated_retry gpt-5        350ms  ok:false
+```
 
-Today the escalation runs **exactly once**. One blip kills the whole job.
+The two `gpt-5` failures are too fast to be real model reasoning. They are almost certainly AI gateway transport/provider failures, rate-limit/credit errors, or immediate 5xx-style rejects. Because the current debug only records `ok:false`, we cannot see the exact `http_status`/error body in the UI.
 
-**Scope (very narrow)**
+**P6.6 approved-scope proposal**
 
-Change only the escalation path inside `supabase/functions/legal-research-v1/stages/claimAnalyzer.ts`. Nothing else.
+Keep source quality untouched. Do not change retrieval, Perplexity, verifier, drafter, grounding, citations, or answer quality logic.
 
-**Changes**
+**1. Add clear escalation diagnostics**
 
-1. In `runClaimAnalyzer`, wrap the existing gpt-5 escalation `callOpenAIJsonTool(...)` in a small retry helper:
-   - **Max 2 attempts** total for the escalation (i.e. 1 retry after the first failure).
-   - **Retry condition**: only when the call returns no usable `data` AND the elapsed time is clearly a transient failure (e.g. `ms < 2000`), OR the call throws. Do NOT retry on a real schema-invalid response from the model (that's a content issue, not a transport issue).
-   - **Backoff**: 800ms fixed delay between attempts (no exponential, no jitter — keep it boring).
-   - **No new timeout logic, no new network code** beyond the retry loop.
+Update only the analyzer/gateway debug metadata so each escalation attempt records:
 
-2. Record both attempts in `stage_runs`:
-   - `claim_analyzer.escalated` (attempt 1) — as today.
-   - `claim_analyzer.escalated_retry` (attempt 2, only if it happened) — with `model: MODEL_FULL`, its own `ms`, `ok`, `escalated: true`.
+- `http_status`
+- short `http_error` or `parse_error`
+- whether it was retried
+- why retry did or did not happen
 
-3. The final `validated` value is taken from whichever attempt succeeded last (same as today, just over the retry result).
+This will tell us whether the repeated failure is `429`, `402`, `5xx`, network `0`, malformed gateway response, etc.
 
-4. `escalation_reasons` returned unchanged.
+**2. Retry only true retryable failures**
 
-**Out of scope (do not touch)**
+Replace the current `ms < 2000` heuristic with explicit retry rules:
 
-- `claim_analyzer.initial` behavior (no retry on mini).
-- Query planner, retrieval, verifier, drafter, marker validator, footnotes, citation engine.
-- `legal-qa/*`, write_chapter, pleading_analysis (still offline).
-- `LegalResearchV1Panel.tsx` and any other frontend file.
-- Source quality, Perplexity admission, ranking, verifier batching/prompt, drafter prompt.
-- No new env flags, no config.toml changes, no schema changes.
+- Retry: `http_status === 0`, `408`, `429`, `500`, `502`, `503`, `504`, or thrown errors.
+- Do not retry: `402` credits/payment, `400/401/403` config/auth problems, or model responses that arrived but failed analyzer schema validation.
 
-**Risk**
+Use up to **3 full-model attempts total** for analyzer escalation, with small backoff, for example:
 
-Effectively zero on the happy path: when the first escalation succeeds, behavior is byte-identical to today. The only added cost is one extra gpt-5 call in the rare case the first escalation fails transiently — and in that case today's behavior is a hard 422 + stub answer, so any successful retry is strictly better.
+```text
+attempt 1
+wait 1s
+attempt 2
+wait 3s
+attempt 3
+```
+
+This does not weaken answer/source quality. It only gives the high-quality escalation model more than one chance when the gateway rejects immediately.
+
+**3. Stop showing the P2 stub as if it were an answer**
+
+If analyzer escalation fails because all full-model attempts were transport failures, return a clean error state instead of the old P2 stub answer:
+
+- Backend error code: `analyzer_escalation_unavailable`
+- Hebrew UI message: “מודל הניתוח המשפטי לא היה זמין רגעית. נסו שוב בעוד דקה.”
+- Keep full debug collapsed for development/admin inspection.
+
+This prevents users from seeing `[stub] ...` and thinking a legal answer was generated.
+
+**4. No quality-affecting fallback**
+
+Do **not** proceed to query planning/retrieval using empty or low-confidence claims.
+
+No heuristic claim generation, no cheaper fallback model, no relaxed schema, no fewer sources, no Perplexity reduction, no verifier reduction.
+
+**Files likely touched**
+
+- `supabase/functions/legal-research-v1/stages/claimAnalyzer.ts`
+- `supabase/functions/legal-research-v1/lib/types.ts`
+- possibly `supabase/functions/legal-research-v1/index.ts` to map analyzer transport failure to a clean job error
+- possibly `src/components/LegalResearchV1Panel.tsx` to display that clean error instead of raw JSON
 
 **Validation**
 
-- Deploy `legal-research-v1`.
-- Re-run the failing query from the UI; expect either a real P5 answer or, if the model genuinely cannot analyze, a `planning_error` with the analyzer escalation showing **two** stage_runs (`escalated` + `escalated_retry`) — not a 279ms one-shot.
-- Spot-check 1–2 fixtures from `eval/legal-research-v1/fixtures.json` via the existing P6.3 runner pattern (no new runner needed) to confirm no regression on the happy path. Acceptance: same `marker_validation.ok`, same `used_sources ⊆ verifier.usable`, no change in word counts beyond noise.
-- No full 6-fixture smoke required (change is isolated to a transient-error branch that doesn't fire on the happy path).
-
-**Technical detail**
-
-```text
-runClaimAnalyzer
-├── initial call (mini or full per pre-escalation)         [unchanged]
-├── if initial on gpt-5 → return                            [unchanged]
-├── if post-checks ok → return                              [unchanged]
-└── escalation block:
-    ├── attempt 1: callOpenAIJsonTool(gpt-5, reasoning:medium)
-    │     push stage_run "claim_analyzer.escalated"
-    ├── if attempt 1 has no usable data AND (threw OR ms < 2000):
-    │     wait 800ms
-    │     attempt 2: callOpenAIJsonTool(gpt-5, reasoning:medium)
-    │     push stage_run "claim_analyzer.escalated_retry"
-    │     validated = validateAnalyzer(attempt 2.data)
-    │     raw_text_final = attempt 2.raw_text
-    └── else: validated = validateAnalyzer(attempt 1.data)   [unchanged]
-```
-
-**Stop condition**
-
-If the retry attempt itself also fails or returns invalid schema → fall through to the existing `planning_error` path. No further retries, no fallback to mini, no behavior change downstream.
+- Re-run the same failing query from the UI.
+- If the gateway recovers: answer reaches P5 normally.
+- If it still fails: UI shows a clean temporary-unavailable message, not `[stub]` or raw JSON.
+- Debug must show exact statuses for all full-model attempts.
+- Confirm no changes to retrieval, Perplexity, verifier, drafter, citation/source selection, or source-quality thresholds.
