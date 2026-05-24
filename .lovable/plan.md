@@ -1,19 +1,16 @@
-## Goal
-Make the מחקר משפטי composer match the אזכור אחיד input: white card background, sticky at the very bottom, no divider line above it.
+## Problem
+The composer is floating in the middle because its wrapper sits inside a `overflow-y-auto` scroll container. `flex-1` doesn't stretch in a non-flex parent, so `mt-auto` on the composer has no room to push it down.
 
-## Changes
+## Change
 
-**`src/components/LegalResearchV1Panel.tsx`** (composer block around lines 490–560)
+**`src/components/LegalQAChat.tsx` (line 2936)**
 
-1. Remove the top divider on the composer wrapper so the input floats as a card (matching אזכור אחיד):
-   - From: `<div className="mt-auto pt-2 border-t border-border bg-background">`
-   - To: `<div className="mt-auto pt-2">`
+Swap the research-mode wrapper so it always fills at least the scroll area's height:
 
-2. Swap the inner input shell to use the shared `.input-field` token (white `--card` bg + border + shadow + focus ring), instead of the ad-hoc background/border:
-   - From: `<div className="flex flex-1 min-w-0 items-end bg-background border border-input rounded-xl focus-within:ring-2 focus-within:ring-ring">`
-   - To: `<div className="input-field flex flex-1 min-w-0 items-end">`
+- From: `<div className="flex-1 min-h-0 flex flex-col py-4">`
+- To: `<div className="min-h-full flex flex-col py-4">`
 
-3. No DOM/order changes: trash stays outside on the right (RTL), paperclip + textarea + send arrow stay inside the white field; file chips list and "השתמש בקבצים כמקור" toggle remain below.
+With `min-h-full`, the wrapper stretches to the full height of the scroll container; the panel's existing `h-full flex flex-col` + composer `mt-auto` then dock the composer at the bottom.
 
 ## Out of scope
-No backend changes, no validation/limit changes, no edits to other panels or modes, no design-token changes.
+No edits to LegalResearchV1Panel, no other modes, no design tokens.
