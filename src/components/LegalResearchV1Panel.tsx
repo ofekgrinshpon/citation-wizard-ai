@@ -8,7 +8,27 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown, Send } from "lucide-react";
+import { ChevronDown, Paperclip, Send, X, FileText } from "lucide-react";
+
+const MAX_FILES = 5;
+const MAX_FILE_BYTES = 8 * 1024 * 1024;
+const ACCEPT_MIME = [
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+const ACCEPT_EXT = /\.(pdf|docx)$/i;
+
+type StagedFile = { id: string; file: File };
+
+function sanitizeFileName(name: string) {
+  return name.replace(/[^\w.\-]+/g, "_").slice(0, 120);
+}
+function fmtSize(b: number) {
+  if (b < 1024) return `${b} B`;
+  if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`;
+  return `${(b / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 
 // ─── Loading stages (Hebrew, ordered) ──────────────────────────────────────
 const STAGES = [
