@@ -196,6 +196,13 @@ export function LegalResearchV1Panel() {
         setError(invokeErr?.message || "לא הצלחנו לפתוח את הבקשה.");
         return;
       }
+      setJobId(data.job_id);
+      try {
+        sessionStorage.setItem(
+          RESUME_STORAGE_KEY,
+          JSON.stringify({ jobId: data.job_id, startedAt: startRef.current }),
+        );
+      } catch { /* ignore quota */ }
       pollJob(data.job_id);
     } catch (e) {
       stopAll(progress);
