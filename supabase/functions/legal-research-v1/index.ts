@@ -387,6 +387,7 @@ async function handle(req: Request): Promise<Response> {
     usable: verifier.usable,
     dropped: verifier.dropped,
     errors: verifier.errors,
+    batches: verifier.batches,
   };
 
   // ─── P5: Drafter + simple linked footnotes ───────────────────────────────
