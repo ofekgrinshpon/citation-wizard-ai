@@ -67,6 +67,10 @@ export interface StageRun {
   ms: number;
   ok: boolean;
   escalated?: boolean;
+  http_status?: number;
+  http_error?: string;
+  parse_error?: string;
+  retry_skipped_reason?: string;
 }
 
 export const MODEL_MINI = "openai/gpt-5-mini";
