@@ -449,8 +449,9 @@ function RenderMarkdownLine({ line }: { line: string }) {
   return <RenderBold text={line} />;
 }
 
-function RenderBold({ text }: { text: string }) {
-  const parts = text.split(/\*\*(.*?)\*\*/g);
+function RenderBold({ text }: { text?: string | null }) {
+  const safe = typeof text === "string" ? text : "";
+  const parts = safe.split(/\*\*(.*?)\*\*/g);
   return (
     <>
       {parts.map((segment, i) =>
