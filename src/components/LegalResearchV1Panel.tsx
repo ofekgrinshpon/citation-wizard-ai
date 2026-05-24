@@ -57,6 +57,7 @@ export function LegalResearchV1Panel() {
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ResearchResponse | null>(null);
+  const [jobId, setJobId] = useState<string | null>(null);
   const progressTimerRef = useRef<number | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
@@ -78,6 +79,18 @@ export function LegalResearchV1Panel() {
       pollTimerRef.current = null;
     }
     if (typeof finalPct === "number") setProgress(finalPct);
+  };
+
+  const clearResume = () => {
+    try { sessionStorage.removeItem(RESUME_STORAGE_KEY); } catch { /* ignore */ }
+  };
+
+  const handleCancel = () => {
+    stopAll(progress);
+    setLoading(false);
+    setJobId(null);
+    clearResume();
+    setError("הבקשה בוטלה. הפעלת חיפוש חדשה תפתח עבודה חדשה.");
   };
 
   const startProgress = () => {
