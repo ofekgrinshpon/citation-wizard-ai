@@ -20,8 +20,9 @@ const STAGES = [
   "מסדר הערות שוליים",
 ];
 
-const TIMEOUT_MS = 300_000; // 5 min hard cap on client
-const STAGE_BUDGET_MS = 25_000; // ~25s per stage = 90% at ~150s
+const HARD_CAP_MS = 300_000; // 5 min client-side hard cap
+const STAGE_BUDGET_MS = 25_000;
+const POLL_INTERVAL_MS = 2_000;
 
 type Footnote = { number: number; title: string; url?: string | null };
 type UsedSource = {
@@ -54,38 +55,84 @@ export function LegalResearchV1Panel() {
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ResearchResponse | null>(null);
+  const progressTimerRef = useRef<number | null>(null);
+  const pollTimerRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
-  const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
-      if (timerRef.current) window.clearInterval(timerRef.current);
+      if (progressTimerRef.current) window.clearInterval(progressTimerRef.current);
+      if (pollTimerRef.current) window.clearInterval(pollTimerRef.current);
     };
   }, []);
+
+  const stopAll = (finalPct?: number) => {
+    if (progressTimerRef.current) {
+      window.clearInterval(progressTimerRef.current);
+      progressTimerRef.current = null;
+    }
+    if (pollTimerRef.current) {
+      window.clearInterval(pollTimerRef.current);
+      pollTimerRef.current = null;
+    }
+    if (typeof finalPct === "number") setProgress(finalPct);
+  };
 
   const startProgress = () => {
     startRef.current = Date.now();
     setProgress(5);
     setStageIdx(0);
     setElapsed(0);
-    if (timerRef.current) window.clearInterval(timerRef.current);
-    timerRef.current = window.setInterval(() => {
+    if (progressTimerRef.current) window.clearInterval(progressTimerRef.current);
+    progressTimerRef.current = window.setInterval(() => {
       const el = Date.now() - startRef.current;
       setElapsed(el);
-      const idx = Math.min(STAGES.length - 1, Math.floor(el / STAGE_BUDGET_MS));
-      setStageIdx(idx);
-      // 5% → 90% over (STAGES.length * STAGE_BUDGET_MS)
+      setStageIdx(Math.min(STAGES.length - 1, Math.floor(el / STAGE_BUDGET_MS)));
       const pct = 5 + (el / (STAGES.length * STAGE_BUDGET_MS)) * 85;
       setProgress(Math.min(90, pct));
     }, 1000);
   };
 
-  const stopProgress = (finalPct: number) => {
-    if (timerRef.current) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    setProgress(finalPct);
+  const pollJob = (jobId: string) => {
+    if (pollTimerRef.current) window.clearInterval(pollTimerRef.current);
+    pollTimerRef.current = window.setInterval(async () => {
+      const el = Date.now() - startRef.current;
+      if (el > HARD_CAP_MS) {
+        stopAll(progress);
+        setLoading(false);
+        setError("הבקשה ארכה זמן רב מדי. נסה שוב או קצר את השאלה.");
+        return;
+      }
+      try {
+        const { data, error: qErr } = await supabase
+          .from("legal_research_jobs")
+          .select("status, result, error")
+          .eq("id", jobId)
+          .maybeSingle();
+        if (qErr) {
+          // transient; keep polling
+          console.warn("[lrv1 poll]", qErr.message);
+          return;
+        }
+        if (!data) return;
+        const status = (data as { status: string }).status;
+        if (status === "done") {
+          stopAll(100);
+          setStageIdx(STAGES.length - 1);
+          setResult((data as unknown as { result: ResearchResponse }).result);
+          setLoading(false);
+        } else if (status === "error") {
+          stopAll(progress);
+          setLoading(false);
+          setError(
+            (data as { error?: string }).error ||
+              "אירעה שגיאה בעיבוד הבקשה.",
+          );
+        }
+      } catch (e) {
+        console.warn("[lrv1 poll threw]", e);
+      }
+    }, POLL_INTERVAL_MS);
   };
 
   const handleSubmit = async () => {
@@ -99,59 +146,30 @@ export function LegalResearchV1Panel() {
     setLoading(true);
     startProgress();
 
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), TIMEOUT_MS);
-
     try {
-      const invokePromise = supabase.functions.invoke<ResearchResponse>(
-        "legal-research-v1",
-        {
-          body: {
-            question: q,
-            project_id: currentProject?.id ?? null,
-          },
+      const { data, error: invokeErr } = await supabase.functions.invoke<{
+        job_id: string;
+        run_id: string;
+        status: string;
+      }>("legal-research-v1", {
+        body: {
+          question: q,
+          project_id: currentProject?.id ?? null,
         },
-      );
-
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        controller.signal.addEventListener("abort", () =>
-          reject(new Error("__timeout__")),
-        );
       });
 
-      const { data, error: invokeErr } = (await Promise.race([
-        invokePromise,
-        timeoutPromise,
-      ])) as Awaited<typeof invokePromise>;
-
-      window.clearTimeout(timeoutId);
-
-      if (invokeErr) {
-        stopProgress(progress);
-        setError(invokeErr.message || "אירעה שגיאה בעיבוד הבקשה.");
+      if (invokeErr || !data?.job_id) {
+        stopAll(progress);
         setLoading(false);
+        setError(invokeErr?.message || "לא הצלחנו לפתוח את הבקשה.");
         return;
       }
-      if (!data) {
-        stopProgress(progress);
-        setError("לא התקבלה תשובה מהשרת.");
-        setLoading(false);
-        return;
-      }
-      setResult(data);
-      setStageIdx(STAGES.length - 1);
-      stopProgress(100);
-      setLoading(false);
+      pollJob(data.job_id);
     } catch (e) {
-      window.clearTimeout(timeoutId);
-      stopProgress(progress);
+      stopAll(progress);
       setLoading(false);
       const msg = e instanceof Error ? e.message : String(e);
-      if (msg === "__timeout__") {
-        setError("הבקשה ארכה זמן רב מדי. נסה שוב או קצר את השאלה.");
-      } else {
-        setError(msg || "שגיאה לא ידועה.");
-      }
+      setError(msg || "שגיאה לא ידועה.");
     }
   };
 

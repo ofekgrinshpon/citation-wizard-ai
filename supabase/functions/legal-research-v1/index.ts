@@ -45,6 +45,18 @@ async function handle(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return jsonResponse(405, { error: "method_not_allowed" });
 
+  // job row helper (declared early so runPipeline closure can use it)
+  let jobId: string | null = null;
+  const adminEarly = makeAdminClient();
+  const setJobStatus = async (patch: Record<string, unknown>) => {
+    if (!jobId) return;
+    try {
+      await adminEarly.from("legal_research_jobs").update({ ...patch }).eq("id", jobId);
+    } catch (e) {
+      console.error("[lrv1 job update failed]", e);
+    }
+  };
+
   const run_id = crypto.randomUUID();
   const t_start = Date.now();
   const stage_runs: StageRun[] = [];
@@ -137,7 +149,7 @@ async function handle(req: Request): Promise<Response> {
     }
   }
 
-  const admin = makeAdminClient();
+  const admin = adminEarly;
   const telemetryBase = {
     user_id: user.id,
     project_id,
@@ -146,7 +158,23 @@ async function handle(req: Request): Promise<Response> {
     footnotes: [] as unknown[],
   };
 
-  // Wrap the whole pipeline so smoke mode can run it in the background.
+  // ─── Create job row so the client can poll for status/result ─────────────
+  try {
+    const { data: jobRow, error: jobErr } = await admin
+      .from("legal_research_jobs")
+      .insert({ user_id: user.id, project_id, question, status: "running" })
+      .select("id")
+      .single();
+    if (jobErr || !jobRow) {
+      console.error("[lrv1] job insert failed:", jobErr);
+      return jsonResponse(500, { error: "job_insert_failed", detail: jobErr?.message });
+    }
+    jobId = (jobRow as { id: string }).id;
+  } catch (e) {
+    return jsonResponse(500, { error: "job_insert_threw", detail: e instanceof Error ? e.message : String(e) });
+  }
+
+  // Wrap the whole pipeline so it runs in the background.
   const runPipeline = async (): Promise<Response> => {
 
   // ─── P2: Claim Analyzer ──────────────────────────────────────────────────
@@ -430,14 +458,33 @@ async function handle(req: Request): Promise<Response> {
   });
   }; // end runPipeline
 
-  if (smokeMode) {
-    const bg = runPipeline().catch((e) => console.error("[lrv1 smoke bg]", e));
-    if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
-      EdgeRuntime.waitUntil(bg);
+  const bg = (async () => {
+    try {
+      const resp = await runPipeline();
+      const payload = await resp.clone().json().catch(() => null);
+      if (resp.status === 200) {
+        await setJobStatus({ status: "done", result: payload });
+      } else {
+        const errMsg = (payload && typeof payload === "object")
+          ? JSON.stringify(payload).slice(0, 4000)
+          : `http_${resp.status}`;
+        await setJobStatus({ status: "error", error: errMsg, result: payload });
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error("[lrv1 bg]", msg);
+      await setJobStatus({ status: "error", error: msg });
     }
-    return jsonResponse(202, { ok: true, run_id, smoke: true });
+  })();
+  if (typeof EdgeRuntime !== "undefined" && EdgeRuntime?.waitUntil) {
+    EdgeRuntime.waitUntil(bg);
   }
-  return await runPipeline();
+  return jsonResponse(202, {
+    ok: true,
+    run_id,
+    job_id: jobId,
+    status: smokeMode ? "queued_smoke" : "queued",
+  });
 }
 
 serve(handle);
