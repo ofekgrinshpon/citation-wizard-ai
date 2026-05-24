@@ -2933,10 +2933,11 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
         {/* ── Non-academic empty state ── */}
         {!isAcademic && taskMode === "research" && (
-          <div className="py-4">
+          <div className="flex-1 min-h-0 flex flex-col py-4">
             <LegalResearchV1Panel />
           </div>
         )}
+
         {!isAcademic && !result && !loading && !error && taskMode === "pleading_analysis" && (
           <div className="py-6">
             <MaintenanceCard title={PLEADING_OFFLINE_TITLE} message={PLEADING_OFFLINE_MESSAGE} />

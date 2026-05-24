@@ -1,76 +1,70 @@
-**Diagnosis**
+**Goal**
 
-This is the same failure class, but now P6.5 proves the retry branch ran:
+Match the `אזכור אחיד` (freetext) UX in `מחקר משפטי`: textarea pinned to the bottom, send arrow inside the input, paperclip moved inside, trash icon outside-left, and the loading panel appears below the top tabs (above the textarea) instead of immediately under it.
 
-```text
-claim_analyzer.initial         gpt-5-mini   10.4s  ok:true, but invalid/empty analyzer payload
-claim_analyzer.escalated       gpt-5        270ms  ok:false
-claim_analyzer.escalated_retry gpt-5        350ms  ok:false
-```
+**Layout change**
 
-The two `gpt-5` failures are too fast to be real model reasoning. They are almost certainly AI gateway transport/provider failures, rate-limit/credit errors, or immediate 5xx-style rejects. Because the current debug only records `ok:false`, we cannot see the exact `http_status`/error body in the UI.
-
-**P6.6 approved-scope proposal**
-
-Keep source quality untouched. Do not change retrieval, Perplexity, verifier, drafter, grounding, citations, or answer quality logic.
-
-**1. Add clear escalation diagnostics**
-
-Update only the analyzer/gateway debug metadata so each escalation attempt records:
-
-- `http_status`
-- short `http_error` or `parse_error`
-- whether it was retried
-- why retry did or did not happen
-
-This will tell us whether the repeated failure is `429`, `402`, `5xx`, network `0`, malformed gateway response, etc.
-
-**2. Retry only true retryable failures**
-
-Replace the current `ms < 2000` heuristic with explicit retry rules:
-
-- Retry: `http_status === 0`, `408`, `429`, `500`, `502`, `503`, `504`, or thrown errors.
-- Do not retry: `402` credits/payment, `400/401/403` config/auth problems, or model responses that arrived but failed analyzer schema validation.
-
-Use up to **3 full-model attempts total** for analyzer escalation, with small backoff, for example:
+Restructure `LegalResearchV1Panel` into a 3-row flex column (`h-full flex flex-col`):
 
 ```text
-attempt 1
-wait 1s
-attempt 2
-wait 3s
-attempt 3
+┌───────────────────────────────────────────────┐
+│  tabs (מחקר משפטי | בקרה | סיכום | אקדמית)   │   ← parent
+├───────────────────────────────────────────────┤
+│  loading panel + error + result               │   ← top region, scrollable
+│  (stage, progress bar, elapsed, cancel)       │
+│                                               │
+│  ↓ empty space pushes composer down ↓         │
+├───────────────────────────────────────────────┤
+│  [🗑]  [ textarea …………… 📎  ⇧ ]              │   ← sticky composer
+│         file chips + "use as source" toggle   │
+└───────────────────────────────────────────────┘
 ```
 
-This does not weaken answer/source quality. It only gives the high-quality escalation model more than one chance when the gateway rejects immediately.
+Wrapper in `LegalQAChat.tsx` (`<div className="py-4">` around `<LegalResearchV1Panel />`) becomes `className="flex-1 min-h-0 flex flex-col"` so the panel can occupy full height of the task pane.
 
-**3. Stop showing the P2 stub as if it were an answer**
+**Composer (bottom)**
 
-If analyzer escalation fails because all full-model attempts were transport failures, return a clean error state instead of the old P2 stub answer:
+Mirrors the freetext input bar styling (`input-bar`, `input-field`, `btn-send`):
 
-- Backend error code: `analyzer_escalation_unavailable`
-- Hebrew UI message: “מודל הניתוח המשפטי לא היה זמין רגעית. נסו שוב בעוד דקה.”
-- Keep full debug collapsed for development/admin inspection.
+- Outer-left trash button (visible only when there is content to clear: question text, staged files, result, or error). On click, asks confirm via `sonner` toast when there's a result or long question, otherwise clears immediately. Clears: `question`, `files`, `result`, `error`.
+- Textarea (existing `<textarea>`) inside the `input-field` rounded container.
+- Inline **paperclip** icon button inside the input-field (right side in RTL = leading edge), opens the same hidden `<input type=file>`. Disabled while loading/uploading or when `files.length >= MAX_FILES`. Shows a small count badge when files are attached.
+- Send button replaced from "שלח לחקירה משפטית" → arrow only (`⇧` character to match freetext, lucide `ArrowUp` for clarity is also acceptable; will use the same `⇧` glyph + `btn-send` class for visual parity). While uploading or loading, shows a spinner.
+- File chips list + "השתמש בקבצים גם כמקור בתשובה" checkbox render directly under the input-field, inside the sticky container (compact). Drag/drop not required; existing click-to-add only.
 
-This prevents users from seeing `[stub] ...` and thinking a legal answer was generated.
+**Loading / progress (top)**
 
-**4. No quality-affecting fallback**
+Move the existing loading panel (`{loading && (...)}`) and error block and result block to the **top region** (above the composer). They render in normal flow at the top of the scrollable area, so they appear directly under the task tabs as requested. No visual changes to the loading panel itself (stage label, progress bar, elapsed, soft notices, cancel).
 
-Do **not** proceed to query planning/retrieval using empty or low-confidence claims.
+When neither loading nor result is present, the top region is empty and the composer sits near the top via natural flex; on `justify-end`-style flex with `mt-auto` on composer wrapper it will stick to the bottom regardless.
 
-No heuristic claim generation, no cheaper fallback model, no relaxed schema, no fewer sources, no Perplexity reduction, no verifier reduction.
+**Trash behavior**
 
-**Files likely touched**
+- Visible if `question.trim() || files.length || result || error`.
+- Active job (`loading === true`): trash is disabled; user must use the existing "בטל" inside loading panel first.
+- On click: small `sonner` confirm toast ("לנקות הכל?") with מחק / ביטול actions when `result` exists or `question.length > 100`; otherwise clear immediately.
 
-- `supabase/functions/legal-research-v1/stages/claimAnalyzer.ts`
-- `supabase/functions/legal-research-v1/lib/types.ts`
-- possibly `supabase/functions/legal-research-v1/index.ts` to map analyzer transport failure to a clean job error
-- possibly `src/components/LegalResearchV1Panel.tsx` to display that clean error instead of raw JSON
+**Files / send unchanged**
 
-**Validation**
+- File limits, MIME/extension allow-list, per-file size cap, upload flow to `user-documents/{uid}/research/{token}/…`, `use_as_source` payload — all unchanged from current implementation.
+- Footnotes / debug / result rendering unchanged in structure; only their position moves above the composer.
 
-- Re-run the same failing query from the UI.
-- If the gateway recovers: answer reaches P5 normally.
-- If it still fails: UI shows a clean temporary-unavailable message, not `[stub]` or raw JSON.
-- Debug must show exact statuses for all full-model attempts.
-- Confirm no changes to retrieval, Perplexity, verifier, drafter, citation/source selection, or source-quality thresholds.
+**Files to touch**
+
+1. `src/components/LegalResearchV1Panel.tsx`
+   - Wrap in `flex flex-col h-full`.
+   - Move composer block to bottom (`mt-auto`), sticky if needed inside the scroll container.
+   - Replace standalone "הוסף קובץ" Button with inline paperclip inside the input.
+   - Replace "שלח לחקירה משפטית" Button with arrow-only `btn-send`-styled button inside the input.
+   - Add outer trash button with `handleClearAll`.
+   - Reorder JSX so loading/error/result render before the composer.
+
+2. `src/components/LegalQAChat.tsx`
+   - Change the `<div className="py-4">` wrapper around `<LegalResearchV1Panel />` to `className="flex-1 min-h-0 flex flex-col py-4"` so the panel can fill vertical space and the composer can dock at the bottom.
+
+**Out of scope**
+
+- No backend / edge function changes.
+- No change to file size/count limits, attachment processing, footnote format, or debug block.
+- No change to other task modes (case_summary, academic_writing, pleading_analysis).
+- No design-system color changes.
