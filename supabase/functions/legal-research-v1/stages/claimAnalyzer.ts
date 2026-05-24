@@ -108,27 +108,65 @@ export async function runClaimAnalyzer(question: string): Promise<AnalyzerStageR
     };
   }
 
-  // Escalate once to gpt-5.
+  // Escalate to gpt-5. Attempt 1; if it looks like a transient transport
+  // failure (threw, or returned no data in <2s), retry once after 800ms.
+  // A real schema-invalid response from the model is NOT retried.
+  const TRANSIENT_MS = 2000;
+  const RETRY_DELAY_MS = 800;
+
+  const callEscalation = () =>
+    callOpenAIJsonTool<unknown>({
+      model: MODEL_FULL,
+      system: SYSTEM_PROMPT,
+      user: question,
+      tool: {
+        name: "emit_claim_analysis",
+        description: "Emit the structured claim analysis for a Hebrew legal question.",
+        parameters: ANALYZER_TOOL_PARAMETERS,
+      },
+      reasoningEffort: "medium",
+    });
+
   const t1 = Date.now();
-  const retry = await callOpenAIJsonTool<unknown>({
-    model: MODEL_FULL,
-    system: SYSTEM_PROMPT,
-    user: question,
-    tool: {
-      name: "emit_claim_analysis",
-      description: "Emit the structured claim analysis for a Hebrew legal question.",
-      parameters: ANALYZER_TOOL_PARAMETERS,
-    },
-    reasoningEffort: "medium",
-  });
+  let retry: { data: unknown; raw_text: string } | null = null;
+  let attempt1Threw = false;
+  try {
+    retry = await callEscalation();
+  } catch (_e) {
+    attempt1Threw = true;
+  }
+  const attempt1Ms = Date.now() - t1;
   stage_runs.push({
     stage: "claim_analyzer.escalated",
     model: MODEL_FULL,
-    ms: Date.now() - t1,
-    ok: !!retry.data,
+    ms: attempt1Ms,
+    ok: !!retry?.data,
     escalated: true,
   });
-  validated = validateAnalyzer(retry.data);
+
+  const attempt1Transient =
+    !retry?.data && (attempt1Threw || attempt1Ms < TRANSIENT_MS);
+
+  if (attempt1Transient) {
+    await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+    const t2 = Date.now();
+    let retry2: { data: unknown; raw_text: string } | null = null;
+    try {
+      retry2 = await callEscalation();
+    } catch (_e) {
+      retry2 = null;
+    }
+    stage_runs.push({
+      stage: "claim_analyzer.escalated_retry",
+      model: MODEL_FULL,
+      ms: Date.now() - t2,
+      ok: !!retry2?.data,
+      escalated: true,
+    });
+    if (retry2) retry = retry2;
+  }
+
+  validated = validateAnalyzer(retry?.data);
 
   return {
     result: validated,
@@ -138,6 +176,6 @@ export async function runClaimAnalyzer(question: string): Promise<AnalyzerStageR
     escalation_reasons: postReasons,
     stage_runs,
     raw_text_initial: first.raw_text,
-    raw_text_final: retry.raw_text,
+    raw_text_final: retry?.raw_text ?? "",
   };
 }
