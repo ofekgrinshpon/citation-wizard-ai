@@ -156,7 +156,9 @@ export function LegalResearchV1Panel() {
           setResult((data as unknown as { result: ResearchResponse }).result);
           setLoading(false);
           setJobId(null);
+          setFiles([]);
           clearResume();
+
         } else if (status === "error") {
           stopAll(progress);
           setLoading(false);
