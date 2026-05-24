@@ -128,6 +128,23 @@ async function handle(req: Request): Promise<Response> {
     project_id = project_id_raw;
   }
 
+  // Attachments (optional). Up to MAX_FILES PDF/DOCX uploaded to user-documents
+  // under {user.id}/research/...
+  const attachmentsRaw = Array.isArray(body.attachments) ? body.attachments : [];
+  const attachments: AttachmentInput[] = [];
+  for (const a of attachmentsRaw.slice(0, ATTACHMENT_LIMITS.MAX_FILES)) {
+    const obj = (a ?? {}) as Record<string, unknown>;
+    const sp = typeof obj.storage_path === "string" ? obj.storage_path : "";
+    const fn = typeof obj.file_name === "string" ? obj.file_name : "";
+    const mt = typeof obj.mime_type === "string" ? obj.mime_type : "";
+    const sz = typeof obj.size === "number" ? obj.size : undefined;
+    if (!sp || !fn || !mt) {
+      return jsonResponse(400, { error: "invalid_input", field: "attachments[*]" });
+    }
+    attachments.push({ storage_path: sp, file_name: fn, mime_type: mt, size: sz });
+  }
+  const useAsSource = body.use_as_source !== false; // default true
+
   // ─── Credit pre-flight (skipped in smoke mode) ───────────────────────────
   if (!smokeMode && userClient) {
     try {
