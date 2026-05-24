@@ -3181,14 +3181,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                   <button
                     onClick={handleSubmit}
                     disabled={
-                      taskMode === "research" || (taskMode as string) === "pleading_analysis"
+                      (taskMode as string) === "pleading_analysis"
                         ? true
                         : question.trim().length < 5
                     }
                     title={
-                      taskMode === "research"
-                        ? RESEARCH_OFFLINE_TITLE
-                        : (taskMode as string) === "pleading_analysis"
+                      (taskMode as string) === "pleading_analysis"
                         ? PLEADING_OFFLINE_TITLE
                         : undefined
                     }
