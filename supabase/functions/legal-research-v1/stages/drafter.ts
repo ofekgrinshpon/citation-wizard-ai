@@ -133,6 +133,8 @@ function buildInputSources(
   candidates: Candidate[],
   verdicts: Verdict[],
   usable: UsableCandidate[],
+  userDocs: UserDocument[],
+  useAsSource: boolean,
 ): DrafterInputSource[] {
   const candById = new Map(candidates.map((c) => [c.candidate_id, c]));
   const verdictsByCand = new Map<string, Verdict[]>();
@@ -166,6 +168,27 @@ function buildInputSources(
       snippet: (c.snippet || "").replace(/\s+/g, " ").trim().slice(0, 500) || null,
     });
   }
+  if (useAsSource) {
+    for (const d of userDocs) {
+      if (d.chunks.length === 0) continue;
+      for (const ch of d.chunks) {
+        const title = `מסמך משתמש "${d.file_name}", עמ' ${ch.page} (צורף על־ידי המשתמש).`;
+        out.push({
+          ref: ch.ref, // e.g. u1p3
+          candidate_id: `user:${d.id}:p${ch.page}`,
+          title,
+          url: d.signed_url,
+          source_type: "user_document",
+          role: "user_document",
+          origin: "user_upload",
+          best_support: "direct",
+          supported_points: [ch.text.replace(/\s+/g, " ").slice(0, 220)],
+          claim_ids: [],
+          snippet: ch.text.replace(/\s+/g, " ").trim().slice(0, 500) || null,
+        });
+      }
+    }
+  }
   return out;
 }
 
@@ -173,6 +196,8 @@ function buildUserMessage(
   question: string,
   claims: Claim[],
   sources: DrafterInputSource[],
+  userDocs: UserDocument[],
+  useAsSource: boolean,
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
@@ -184,7 +209,7 @@ function buildUserMessage(
     );
   }
   lines.push("");
-  lines.push(`מקורות מאומתים זמינים (${sources.length}) — השתמש אך ורק בהם:`);
+  lines.push(`מקורות זמינים (${sources.length}) — השתמש אך ורק בהם:`);
   for (const s of sources) {
     lines.push("---");
     lines.push(`ref: ${s.ref}`);
@@ -198,6 +223,18 @@ function buildUserMessage(
       for (const p of s.supported_points) lines.push(`  • ${p}`);
     }
     if (s.snippet) lines.push(`snippet: ${s.snippet}`);
+  }
+  // Soft context: attached docs are background only, not citable.
+  if (!useAsSource && userDocs.some((d) => d.chunks.length > 0)) {
+    lines.push("");
+    lines.push("הקשר רך מהמסמכים שצירף המשתמש (לרקע בלבד — אסור לצטט מהם ואסור להוסיף להם הערות שוליים):");
+    for (const d of userDocs) {
+      for (const ch of d.chunks) {
+        lines.push("---");
+        lines.push(`קובץ: ${d.file_name} | עמ' ${ch.page}`);
+        lines.push(ch.text.slice(0, 1500));
+      }
+    }
   }
   lines.push("");
   lines.push(
