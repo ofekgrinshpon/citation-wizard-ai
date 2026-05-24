@@ -1,0 +1,1223 @@
+{
+  "generated_at": "2026-05-24T18:51:52.290Z",
+  "fixture": {
+    "id": "L2",
+    "question": "מהי דוקטרינת ההבטחה המנהלית?"
+  },
+  "qa_log_id": "512dfd5b-9a05-4fc0-be92-cd51402bfdee",
+  "run_id": "500a9500-5dc5-4a16-8c53-9590efdc27cd",
+  "phaseA": {
+    "fixture_id": "L2",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "cluster_count": 0,
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 0,
+    "placement_ok": true,
+    "placement_repaired": true,
+    "placement_repair_failed": false,
+    "used_sources_count": 7,
+    "used_sources_subset_of_usable": true,
+    "footnote_count": 7
+  },
+  "answer": "הקדמה והגדרה\n\nדוקטרינת ה**הבטחה המנהלית** היא עיקרון משפטי המסמך חובת המדינה או הרשות הציבורית שלא לחזור בה מהתחייבויות מפורשות או משאירות־רושם שהן יצרו כלפי הציבור, כאשר נשענו על כך יחידים והסתמכותם הייתה סבירה.¹ מטרת הדוקטרינה לשמור על יציבות הציפיות, הגינות והמשכיות בהפעלת השלטון הציבורי.²\n\nתשתית נורמטיבית ותולדותיה\n\nהבסיס לתפיסה זו נמצא בדיונים בפסיקה ובספרות על מושגים של \"הגנת הסתמכות\" ו\"הציפיות החוקיות\" שנוצרות בהקשר מנהלי.¹ המחקר מספק נימוקים עקרוניים מבוססי שלטון החוק, אמון ציבורי והגינות מנהלית להתערבות שיפוטית כאשר הרשות משנה עמדה באופן שגורם עוול למסתמכים.³\n\nיסודות לקיומה של הבטחה מנהלית\n\nבפרקטיקה הספרותית והערכית מקובל לזהות ארבעת יסודות הליבה הבאים:\n- עשה או הצהרה של הרשות המעידה על התחייבות¹ או על מדיניות מחייבת כלפי הציבור או כלפי יחיד.²\n- **הסתמכות סבירה** מצד המסתמך על ההצהרה או המעשה — כלומר שההתרשמות ממעשיה של הרשות הייתה רציונלית ונשענת על לחיצת המציאות ולא על אשליה;⁴\n- שינוי מעמד או נזק שנגרם למסתמך כתוצאה מהסתמכות זו (הוצאות, השקעות, הפסד הזדמנויות וכדומה)⁴;⁵\n- קשר סיבתי בין ההסתמכות לבין הפעולה או הנזק שנגרם — יש להראות כי ההסתמכות הייתה הגורם המכריע בשינוי המצב.⁴\n\nעל יסודות אלה יש לגשת בשים לב לפרופורציה ולבדיקת סבירות ההסתמכות אל מול שיקולי הציבור² והמסגרת החוקית שבה פועלת הרשות.⁵\n\nתחום ההחלה ומגבלות\n\nהחלת ההבטחה המנהלית איננה מוחלטת. בתי המשפט והמחקר מזהים מגבלות משמעותיות שמונעות קיום הבטחה מחייבת במצבים מסוימים, לרבות:\n- מניעי סדר ציבורי או טובת הציבור העולים על האינטרס של המסתמך;²\n- היקף שיקול הדעת הנתון לרשות בהסדר החקיקתי² — כאשר לחיקה של הרשות יש סמכות שיפוטית רחבה יתקשה להטיל התחייבות פרטית מחייבת;⁵\n- שינוי נסיבות מהותי שלא היה צפוי בעת ההבטחה,³ כך שהקיום המעשי של ההבטחה עלול לגרום לתוצאה בלתי סבירה או בלתי אפשרית;²\n- שקילה של עקרון השוויון בין אוכלוסיות שונות כאשר יישום הבטחה פרטנית יפגע בשוויון כלפי אחרים או ייצור קבוצה מועדפת ללא הצדקה;³\n- הבחנה בין **הבטחה** למידיניות מנהלית בלבד — מדיניות עקבית של הרשות אינה תמיד נושאת אופי של התחייבות אישית מחייבת אלא יכולה להיחשב כלי ניהולי פנימי.⁵\n\nחשיבות ההבחנה בין נסיבות אלו חשובה: הכרת הבטחה בגדר מחייב תיעשה באופן מצומצם ומנוטר² כדי לא לפגוע ביכולת הרשות לנהל מדיניות ציבורית לכשנדרש.⁵\n\nסעדים והשלכות של הפרת הבטחה מנהלית\n\nהספרות והניתוח התודעתי של תורת הסעדים מצביעים על כמה אפשרויות סעדיות אופרטיביות כאשר הבטחה מנהלית מוכרת:\n- צו מניעה או צו עשה שמחייב את הרשות לקיים את ההבטחה⁴ או להימנע משינוי בלתי מוצדק במדיניותה;⁶\n- צו אכיפה או צווים ניתנים לעיצוב שיפוטי המיטיבים עם המסתמך ומסתירים את תוצאת השינוי;⁶\n- סעד קונסטרוקטיבי או פיצוי — במקרים שבהם ביצוע ההבטחה אינו אפשרי או בלתי סביר,⁴ יש מקום לשקול פיצוי הולם או סעד תיקוני אחר שמאזן בין האינטרסים.⁶\n\nהגישה הכללית בספרות היא שיש לאמץ סעד אפקטיבי⁶ המותאם לנסיבות ולקיימות שיקולי הציבור; תורת הסעדים מספקת כלים להערכת מידתיות ולבחירת סעד שישיג תיקון הולם دون פגיעה מופרזת ביכולת הממשלתית לנהל עניינים ציבוריים.⁷\n\nהבחנות לדוקטרינות קרובות\n\nהמונח הדומה של *estoppel* באנגלית נוגע אף הוא להגנה מפני נסיגה מהתחייבות,³ אך הספרות המקומית מדגישה הבדלים מהותיים בין ההגנה המנהלית לבין דוקטרינות חוזיות או כללי ההשתק/res judicata: הבטחה מנהלית נבחנת בהקשר של זכות הציבור והיחיד אל מול הכוח המנהלי,¹ תוך בחינת הטעם הציבורי לשמירת ההבטחה, בעוד שהשתק או עקרונות חוזיים נסמכים על עקרונות של סוף נטל או אמינות במשפט הפרטי.⁵\n\nלסיכום — קווים מעשיים\n\nההבטחה המנהלית היא כלי צנוע אך משמעותי במנגנון הביקורת על המנהל: היא צפויה להיטען כאשר יש הצהרה או מעשה ברור של הרשות,ⁱ הסתמכות סבירה⁴ ושינוי מעמד/נזק²; יחד עם זאת, חלות עליה מגבלות הנובעות משיקולי סדר ציבורי, שיקול דעת מנהלי ושינוי נסיבות⁵, והסעד שיומלץ יותאם מאזן בין זכות המסתמך לזכות הציבור.⁶",
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+      "title": "הבטחה מינהלית*",
+      "number": 1,
+      "source_type": "מאמר בכתב עת משפטי"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+      "title": "הבטחה מינהלית לציבור",
+      "number": 2,
+      "source_type": "מאמר בכתב עת משפטי"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+      "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+      "number": 3,
+      "source_type": "מאמר בכתב עת משפטי"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%משפט%20המנותלי.pdf",
+      "title": "הגנת ההסתמכות במשפט המנהלי",
+      "number": 4,
+      "source_type": "כתב עת אקדמי / מאמר משפטי"
+    },
+    {
+      "url": "https://www.runi.ac.il/media/0ocekxxk/braverman.pdf",
+      "title": "היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המנהל",
+      "number": 5,
+      "source_type": "פרק/מאמר אקדמי (PDF)"
+    },
+    {
+      "url": "https://www.runi.ac.il/media/pzqbm43b/barak.pdf",
+      "title": "על תורת הסעדים החוקתיים",
+      "number": 6,
+      "source_type": "מאמר אקדמי"
+    },
+    {
+      "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue4/7.pdf",
+      "title": "החיפוש אחר \"סעדים חברתיים\"",
+      "number": 7,
+      "source_type": "מאמר בכתב עת אקדמי"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "השאלה עוסקת ביסוד ודוקטרינה משפטית; יש להסתמך על פסיקה מחייבת של בתי המשפט בישראל ומאמרי פסיקה/ספרות להסבר המושג והתשתית התיאורטית.",
+        "text_he": "מהי דוקטרינת ההבטחה המנהלית – הגדרה ותשתית משפטית בפסקי דין ובספרות",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "על מנת לקבוע את הדרישות האובייקטיביות והסבירות יש צורך בפסיקת ביה\"מ המחייבת ובניתוח מסורטי של הספרות המשפטית שמנסחת את המרכיבים.",
+        "text_he": "מהם אלמנטי היסוד הנדרשים לקיום ההבטחה המנהלית (למשל: הצהרה/מעשה מצד הרשות, הסתמכות סבירה, שינוי מעמד/נזק, וקשר סיבתי)",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "התשובה דורשת שיקול של פסיקה קובעת וגם של נימוקים וסייגים שנבחנו בפסיקה משנית וספרות; חלק מהנימוקים מתפתחים והם לא תמיד \"חוק קשה\", לכן גם פסיקה משכנעת וספרות נחוצים.",
+        "text_he": "מהם תחום ההחלה והמגבלות של ההבטחה המנהלית — מתי היא אינה חלה (מניעי סדר ציבורי, שיקול דעת רחב של רשות, שינוי נסיבות, עקרון השוויון וכד׳)",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship",
+          "persuasive_case_law"
+        ],
+        "is_black_letter": false
+      },
+      {
+        "reason": "הגדרת הסעדים מבוססת על פסיקה מחייבת והניתוח הדוקטרינרי בספרות המנהלת את גבולות הסעד.",
+        "text_he": "מהן ההשלכות והסעד שניתן להכשיר בגין הפרת הבטחה מנהלית (צו מניעה, צו אכיפה, סעד קונסטרוקטיבי/פיצוי)",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הבחנה בין דוקטרינות דורשת השוואת פסיקה מחייבת לבין פסיקה ופירושים משכנעים וכן ניתוח ספרותי כדי למנוע בלבול מושגי ולהבהיר שימושים שונים של מונחים.",
+        "text_he": "כיצד נבדלת ההבטחה המנהלית מדוקטרינות קרובות (כגון estoppel/קירבה לחובת נוטריון, הבדל בין השתק/res judicata והסתמכות חוזית)",
+        "claim_id": "C5",
+        "required_roles": [
+          "binding_case_law",
+          "persuasive_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": false
+      }
+    ],
+    "run_id": "500a9500-5dc5-4a16-8c53-9590efdc27cd",
+    "drafter": {
+      "ms": 96030,
+      "ok": true,
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 7,
+      "used_sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+          "title": "הבטחה מינהלית*",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "מאמר בכתב עת משפטי",
+          "candidate_id": "82bd36f5-14eb-4503-9c13-d6252ab1c250"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+          "title": "הבטחה מינהלית לציבור",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "מאמר בכתב עת משפטי",
+          "candidate_id": "80831120-5945-4429-bb31-10baea1992cf"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+          "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "מאמר בכתב עת משפטי",
+          "candidate_id": "9e0788f7-1307-46eb-8be6-9562c4a2faac"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%משפט%20המנותלי.pdf",
+          "title": "הגנת ההסתמכות במשפט המנהלי",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "כתב עת אקדמי / מאמר משפטי",
+          "candidate_id": "7dc414a0-ff34-46c0-8fdd-c968c6d93623"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/0ocekxxk/braverman.pdf",
+          "title": "היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המנהל",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "פרק/מאמר אקדמי (PDF)",
+          "candidate_id": "89e1bd1f-0600-427f-995f-e056ba5e70d6"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/pzqbm43b/barak.pdf",
+          "title": "על תורת הסעדים החוקתיים",
+          "number": 6,
+          "origin": "perplexity",
+          "source_type": "מאמר אקדמי",
+          "candidate_id": "b07525b7-4028-4631-a90f-c92034dc3837"
+        },
+        {
+          "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue4/7.pdf",
+          "title": "החיפוש אחר \"סעדים חברתיים\"",
+          "number": 7,
+          "origin": "perplexity",
+          "source_type": "מאמר בכתב עת אקדמי",
+          "candidate_id": "8518b677-a135-4da1-9b5d-9da66640cb8f"
+        }
+      ],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 7,
+      "sources_passed": 7,
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "placement": {
+          "ok": true,
+          "repaired": true,
+          "cluster_count": 0,
+          "cluster_samples": [],
+          "end_dump_samples": [],
+          "out_of_order_count": 0,
+          "end_paragraph_dump_count": 0
+        },
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      "omitted_candidate_ids": []
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסקי-דין עליונים שמגדירים ומבססים את דוקטרינת ההבטחה המנהלית כעקרון משפטי",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "בית המשפט העליון 'הבטחה מנהלית' דוקטרינת ההבטחה המנהלית הגדרה תשתית משפטית פסק דין",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאסוף סקירות ספרותיות ומאמרים אקדמיים שמציגים הגדרות, התפתחות הדיון ותשתית רעיונית",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר 'הבטחה מנהלית' דוקטרינת ההבטחה המינהלית סקירה ספרותית 'מאמר משפטי' 'כתב עת משפט'",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסקי-דין עליונים שמפרטים את האלמנטים הנדרשים לקיומה של הבטחה מנהלית (הצהרה/מעשה, הסתמכות, נזק וקשר סיבתי)",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון 'הסתמכות סבירה' 'הבטחה מנהלית' 'שינוי מעמד' 'נזק' פסק דין אלמנטים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאתר מאמרים אקדמיים שמנתחים וממסדים את מרכיבי היסוד של ההבטחה המנהלית ודיונים תאורטיים עליהם",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר 'אלמנטים הבטחה מנהלית' הצהרה רשות הסתמכות שינוי מעמד פיצוי 'מאמר משפטי'",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסקי-דין עליונים שקובעים מתי הדוקטרינה אינה חלה ומהם המניעים המגבילים שלה (שיקול דעת, סדר ציבורי, שוויון וכו')",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון 'הבטחה מנהלית' 'שיקול דעת' 'סדר ציבורי' 'שוויון' פסק דין מגבלות תחום ההחלה",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "לאסוף פסיקה מחוזית/מנהלית שמיישמת או דוחה את הדוקטרינה לצורך ניתוח מגבלות והשלכות מעשיות",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט המחוזי 'הבטחה מנהלית' שינוי נסיבות 'עקרון השוויון' פסיקה דוגמאות למגבלות",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאתר ניתוחים אקדמיים וביקורתיים על תחום ההחלה והמגבלות של ההבטחה המנהלית",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר 'הגבלות הבטחה מנהלית' שיקול דעת הרשות שינוי נסיבות שוויון ביקורת ספרות 'מאמר משפטי'",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסקי-דין עליונים שקובעים אילו סעדות ניתן להעניק בהפרת הבטחה מנהלית (צו מניעה, צו אכיפה, סעד קונסטרוקטיבי, פיצוי)",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון 'הבטחה מנהלית' סעד צו מניעה צו אכיפה פיצוי 'פסק דין' השלכות סעד",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאתר מאמרים שמנתחים את סוגי הסעדים והשיקולים להענקתם בהקשר של הבטחה מנהלית",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר 'סעד בהבטחה מנהלית' צו מניעה צו קונסטרוקטיבי פיצוי ניתוח משפטי 'מאמר משפטי'",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסקי-דין עליונים שמראים את ההבדלים והגבולות בין הבטחה מנהלית לבין דוקטרינות קרובות (השתק, estoppel, הסתמכות חוזית)",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C5",
+        "query_he": "בית המשפט העליון 'הבחנה בין הבטחה מנהלית להשתק' 'estoppel' 'הסתמכות חוזית' פסק דין",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "לאסוף פסיקה מחוזית שמיישמת השוואה בין הדוקטרינות או דנה במקרים חופפים לצורך ניתוח משכנע",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C5",
+        "query_he": "בית המשפט המחוזי 'הבטחה מנהלית' השתק res judicata 'השתק' השוואת דוקטרינות פסיקה",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאתר ניתוחים אקדמיים המשווים בין הדוקטרינות ומנתחים הבדלי מהות ושימושים פרקטיים",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C5",
+        "query_he": "מאמר השוואתי 'הבטחה מנהלית' מול estoppel/השתק/הסתמכות חוזית 'מאמר משפטי' 'השוואת דוקטרינות'",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 24523,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 11320,
+        "confidence": 0.9,
+        "legal_area": "משפט מינהלי",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "claims_count": 5,
+      "queries_count": 12,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 188273,
+    "verifier": {
+      "ms": 16260,
+      "counts": {
+        "by_support": {
+          "direct": 0,
+          "partial": 7,
+          "unrelated": 0,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 7,
+          "false": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "82bd36f5-14eb-4503-9c13-d6252ab1c250",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "80831120-5945-4429-bb31-10baea1992cf",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "9e0788f7-1307-46eb-8be6-9562c4a2faac",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "7dc414a0-ff34-46c0-8fdd-c968c6d93623",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "89e1bd1f-0600-427f-995f-e056ba5e70d6",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "b07525b7-4028-4631-a90f-c92034dc3837",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "8518b677-a135-4da1-9b5d-9da66640cb8f",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 16259,
+          "label": "batch1",
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C4"
+          ],
+          "escalated": false,
+          "candidates": 7
+        }
+      ],
+      "dropped": [],
+      "verdicts": [
+        {
+          "reason": "מאמר בכתב-עת מתאר ומנתח את הדוקטרינה, אך כמאמר אקדמי אינו מהווה מקור מחייב (לא פסיקה מחייבת), לכן תמיכה משלים/פרשנית ולא direct.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "82bd36f5-14eb-4503-9c13-d6252ab1c250",
+          "supported_points": [
+            "מספק הגדרה ודון בדוקטרינת ההבטחה המינהלית ובהיקפה",
+            "מנתח תשתית נורמטיבית ומביא אזכורים של פסיקה רלוונטית",
+            "מתאים כבסיס להסבר אקדמי אך אינו פסיקה מחייבת"
+          ]
+        },
+        {
+          "reason": "מאמר אקדמי רלוונטי להגדרת הדוקטרינה ותשתיתה אך אינו תחליף לפסקי דין מחייבים, לכן partial.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "80831120-5945-4429-bb31-10baea1992cf",
+          "supported_points": [
+            "דן בהתפתחות הדין ובהבחנה בין הבטחה למדיניות מנהלית",
+            "מציג נימוקים ותיאור של תשתית משפטית בפסיקה ובספרות",
+            "עוזר להבהרת המושג ולגבולות היישום"
+          ]
+        },
+        {
+          "reason": "מאמר הסוקר את לידת הדוקטרינה וטיעוניה התיאורטיים תומך בהגדרה ובהבהרת התשתית, אך כעבודת ספרות אינו מקור מחייב.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "9e0788f7-1307-46eb-8be6-9562c4a2faac",
+          "supported_points": [
+            "מספק סקירה היסטורית ונורמטיבית של ההבטחה המנהלית",
+            "דן בעיצוב הנורמטיבי ובוויכוח על תוקף מחייב של ההבטחה"
+          ]
+        },
+        {
+          "reason": "מאמר על הגנת ההסתמכות רלוונטי מאד לאלמנטי היסוד (הצהרה/מעשה, הסתמכות, נזק וקשר סיבתי), אך מאמר אקדמי אינו פסיקה מחייבת ולכן partial.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "7dc414a0-ff34-46c0-8fdd-c968c6d93623",
+          "supported_points": [
+            "מציין את אלמנט ההסתמכות והצדקותיה הנורמטיביות",
+            "דן בסעדים האפשריים כשיש שינוי מצד הרשות (מניעה, פיצוי)"
+          ]
+        },
+        {
+          "reason": "המקור עוסק באספקט מרכזי של אלמנט היסוד (הבחנה בין הבטחה למדיניות ושאלת שינוי מעמד), אך הוא מאמר אקדמי ולכן משלים ולא מחייב.",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "89e1bd1f-0600-427f-995f-e056ba5e70d6",
+          "supported_points": [
+            "מבחין בין הבטחה מנהלית למדיניות עקבית ומדון מתי שינוי מדיניות נעשה מחייב",
+            "משפיע על השאלה האם קיים שינוי מעמד/הסתמכות המוליד תביעה"
+          ]
+        },
+        {
+          "reason": "מאמר תיאורטי על תורת הסעדים מספק בסיס לניתוח אילו סעדי בית המשפט עשויים להעניק בהפרת הבטחה מנהלית, אך אינו מהווה פסיקה מחייבת.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "b07525b7-4028-4631-a90f-c92034dc3837",
+          "supported_points": [
+            "דן בתורת הסעדים, כולל סעד אפקטיבי, השבה והרחקת נזק",
+            "רלוונטי לדיון בצווי מניעה, צו אכיפה ופיצוי/סעד קונסטרוקטיבי"
+          ]
+        },
+        {
+          "reason": "מאמר אקדמי המנתח סוגי סעדים רלוונטי להשלכות ולסעד בהפרת הבטחה מנהלית, אך כאמור אינו פסיקה מחייבת ולכן partial.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "8518b677-a135-4da1-9b5d-9da66640cb8f",
+          "supported_points": [
+            "ממיין סוגי סעדים ומתייחס לצווים וצוואי הצהרתי כאלטרנטיבות",
+            "מסייע לבחון ישימותם של צוים ופיצוי בהקשרים חברתיים ומנהליים"
+          ]
+        }
+      ],
+      "model_final": "openai/gpt-5-mini",
+      "per_claim_ms": {
+        "C1": 16259,
+        "C2": 16259,
+        "C4": 16259
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [],
+      "candidates_usable": 7,
+      "candidates_dropped": 0,
+      "candidates_verified": 7
+    },
+    "retrieval": {
+      "ms": 40010,
+      "pool": {
+        "found": 15,
+        "counts": {
+          "by_role": {
+            "scholarship": 7
+          },
+          "by_claim": {
+            "C1": 3,
+            "C2": 2,
+            "C4": 2
+          },
+          "by_origin": {
+            "perplexity": 7
+          }
+        },
+        "after_dedup": 7,
+        "dedup_drops": 8
+      },
+      "local": {
+        "ms": 40009,
+        "per_query": [
+          {
+            "ms": 40005,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20002,
+              "text_status": "timeout",
+              "embedding_ms": 145,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית שיקול דעת העליון דוקטרינת ההבטחה המנהלית הגדרה תשתית",
+            "original_query_he": "בית המשפט העליון 'הבטחה מנהלית' דוקטרינת ההבטחה המנהלית הגדרה תשתית משפטית פסק דין"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 157,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית שיקול דעת העליון הסתמכות סבירה שינוי מעמד נזק",
+            "original_query_he": "בית המשפט העליון 'הסתמכות סבירה' 'הבטחה מנהלית' 'שינוי מעמד' 'נזק' פסק דין אלמנטים"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 134,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית שיקול דעת העליון סדר ציבורי שוויון דין מגבלות",
+            "original_query_he": "בית המשפט העליון 'הבטחה מנהלית' 'שיקול דעת' 'סדר ציבורי' 'שוויון' פסק דין מגבלות תחום ההחלה"
+          },
+          {
+            "ms": 40005,
+            "diag": {
+              "text_ms": 20003,
+              "exact_ms": 20003,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 164,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "persuasive_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית שיקול דעת המחוזי שינוי נסיבות עקרון השוויון פסיקה",
+            "original_query_he": "בית המשפט המחוזי 'הבטחה מנהלית' שינוי נסיבות 'עקרון השוויון' פסיקה דוגמאות למגבלות"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20003,
+              "exact_ms": 20003,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 151,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית שיקול דעת העליון סעד צו מניעה אכיפה פיצוי",
+            "original_query_he": "בית המשפט העליון 'הבטחה מנהלית' סעד צו מניעה צו אכיפה פיצוי 'פסק דין' השלכות סעד"
+          },
+          {
+            "ms": 40005,
+            "diag": {
+              "text_ms": 20003,
+              "exact_ms": 20003,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 151,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C5",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית שיקול דעת העליון הבחנה בין להשתק estoppel הסתמכות",
+            "original_query_he": "בית המשפט העליון 'הבחנה בין הבטחה מנהלית להשתק' 'estoppel' 'הסתמכות חוזית' פסק דין"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20003,
+              "exact_ms": 20003,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 153,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "persuasive_case_law",
+            "claim_id": "C5",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית שיקול דעת המחוזי השתק res judicata השוואת דוקטרינות",
+            "original_query_he": "בית המשפט המחוזי 'הבטחה מנהלית' השתק res judicata 'השתק' השוואת דוקטרינות פסיקה"
+          }
+        ],
+        "candidates": 0,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 20139,
+        "dropped": 4,
+        "per_query": [
+          {
+            "ms": 4237,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית*",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+                "title": "הבטחה מינהלית לציבור",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C1",
+            "query_he": "מאמר 'הבטחה מנהלית' דוקטרינת ההבטחה המינהלית סקירה ספרותית 'מאמר משפטי' 'כתב עת משפט'",
+            "raw_count": 3,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4177,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%משפט%20המנותלי.pdf",
+                "title": "הגנת ההסתמכות במשפט המנהלי",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.runi.ac.il/media/0ocekxxk/braverman.pdf",
+                "title": "היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המנהל",
+                "domain": "runi.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C2",
+            "query_he": "מאמר 'אלמנטים הבטחה מנהלית' הצהרה רשות הסתמכות שינוי מעמד פיצוי 'מאמר משפטי'",
+            "raw_count": 4,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4383,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID3437356_code1324879.pdf?abstractid=3265192&mirid=1",
+                "title": "על הבטחות מינהליות, חוזים רגולטוריים וחיות אחרות במתווה הגז הטבעי",
+                "domain": "papers.ssrn.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+                "title": "הגנת ההסתמכות במשפט המנהלי",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/Zeidman_Article.pdf",
+                "title": "המשפט המינהלי הישראלי, מי את?",
+                "domain": "hapraklit.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://law.acri.org.il/he/wp-content/uploads/2014/07/sidrey-minhal.pdf",
+                "title": "תזכיר חוק – סדרי מינהל (הסדרת עבודת הרשות המינהלית וזכויות הפונה לרשות)",
+                "domain": "law.acri.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C3",
+            "query_he": "מאמר 'הגבלות הבטחה מנהלית' שיקול דעת הרשות שינוי נסיבות שוויון ביקורת ספרות 'מאמר משפטי'",
+            "raw_count": 5,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 3769,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+                "title": "הגנת ההסתמכות במשפט המנהלי",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.runi.ac.il/media/pzqbm43b/barak.pdf",
+                "title": "על תורת הסעדים החוקתיים",
+                "domain": "runi.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue4/7.pdf",
+                "title": "החיפוש אחר \"סעדים חברתיים\"",
+                "domain": "en-law.tau.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C4",
+            "query_he": "מאמר 'סעד בהבטחה מנהלית' צו מניעה צו קונסטרוקטיבי פיצוי ניתוח משפטי 'מאמר משפטי'",
+            "raw_count": 4,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 3568,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://en.wikipedia.org/wiki/Estoppel_in_English_law",
+                "title": "Estoppel in English law",
+                "domain": "en.wikipedia.org",
+                "drop_reason": "bad_source",
+                "classified_source_class": "bad",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C5",
+            "query_he": "מאמר השוואתי 'הבטחה מנהלית' מול estoppel/השתק/הסתמכות חוזית 'מאמר משפטי' 'השוואת דוקטרינות'",
+            "raw_count": 3,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 15,
+        "role_corrections": []
+      }
+    },
+    "candidates": [
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מינהלית*",
+        "origin": "perplexity",
+        "snippet": "מחבר לא צוין במקטע שסופק; מופיע כמאמר בכתב העת 'משפטים' (Hebrew University Law Journal). עוסק בדוקטרינת ההבטחה המינהלית, תחולתה והיקפה.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'הבטחה מנהלית' דוקטרינת ההבטחה המינהלית סקירה ספרותית 'מאמר משפטי' 'כתב עת משפט'",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+        "source_type": "מאמר בכתב עת משפטי",
+        "candidate_id": "82bd36f5-14eb-4503-9c13-d6252ab1c250",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מינהלית לציבור",
+        "origin": "perplexity",
+        "snippet": "דן דותן, 'הבטחה מינהלית לציבור', מאמר אקדמי משפטי; קובץ PDF של הפקולטה למשפטים, אוניברסיטת חיפה. עוסק בהתפתחות הדין והבחנה בין הבטחה למדיניות.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'הבטחה מנהלית' דוקטרינת ההבטחה המינהלית סקירה ספרותית 'מאמר משפטי' 'כתב עת משפט'",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+        "source_type": "מאמר בכתב עת משפטי",
+        "candidate_id": "80831120-5945-4429-bb31-10baea1992cf",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי בכתב העת 'קרית המשפט'. עוסק בהבטחה המינהלית, עיצובה הנורמטיבי, והדיון בשאלת תוקפה המחייב והצדקותיה.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'הבטחה מנהלית' דוקטרינת ההבטחה המינהלית סקירה ספרותית 'מאמר משפטי' 'כתב עת משפט'",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+        "source_type": "מאמר בכתב עת משפטי",
+        "candidate_id": "9e0788f7-1307-46eb-8be6-9562c4a2faac",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "origin": "perplexity",
+        "snippet": "מאמר העוסק בהגנה על הסתמכות הפרט על פעולות מנהליות, בצידוקים הנורמטיביים, ובסעדים אפשריים לרבות מניעת שינוי החלטה ופיצוי. כתב עת: משפטים. שנה: לא מצוינת בקובץ המצורף.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'אלמנטים הבטחה מנהלית' הצהרה רשות הסתמכות שינוי מעמד פיצוי 'מאמר משפטי'",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%משפט%20המנותלי.pdf",
+        "source_type": "כתב עת אקדמי / מאמר משפטי",
+        "candidate_id": "7dc414a0-ff34-46c0-8fdd-c968c6d93623",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המנהל",
+        "origin": "perplexity",
+        "snippet": "עוסק בהבחנה בין הבטחה מנהלית לבין מדיניות מנהלית עקבית, ובשאלה מתי שינוי מדיניות עשוי להיחשב כבעל אופי מחייב. הוצאה/מסגרת: אוניברסיטת רייכמן / קובץ אקדמי. שנה: לא מצוינת בקובץ המצורף.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "runi.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'אלמנטים הבטחה מנהלית' הצהרה רשות הסתמכות שינוי מעמד פיצוי 'מאמר משפטי'",
+        "source_url": "https://www.runi.ac.il/media/0ocekxxk/braverman.pdf",
+        "source_type": "פרק/מאמר אקדמי (PDF)",
+        "candidate_id": "89e1bd1f-0600-427f-995f-e056ba5e70d6",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "על תורת הסעדים החוקתיים",
+        "origin": "perplexity",
+        "snippet": "מאמר עיוני על תורת הסעדים, כולל סעד אפקטיבי, הרתעה, והשבה; רלוונטי לניתוח פיצוי וצווי עשה/מניעה.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "runi.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'סעד בהבטחה מנהלית' צו מניעה צו קונסטרוקטיבי פיצוי ניתוח משפטי 'מאמר משפטי'",
+        "source_url": "https://www.runi.ac.il/media/pzqbm43b/barak.pdf",
+        "source_type": "מאמר אקדמי",
+        "candidate_id": "b07525b7-4028-4631-a90f-c92034dc3837",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "החיפוש אחר \"סעדים חברתיים\"",
+        "origin": "perplexity",
+        "snippet": "מאמר העוסק בתורת הסעדים ובהבחנה בין סוגי סעדים, לרבות צוים, סעד הצהרתי והקשר לתיקון פגיעה.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "en-law.tau.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'סעד בהבטחה מנהלית' צו מניעה צו קונסטרוקטיבי פיצוי ניתוח משפטי 'מאמר משפטי'",
+        "source_url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/Law/maasei%20mishpat/Issue4/7.pdf",
+        "source_type": "מאמר בכתב עת אקדמי",
+        "candidate_id": "8518b677-a135-4da1-9b5d-9da66640cb8f",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 11320,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 24523,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 40009,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 20139,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 16259,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial"
+      },
+      {
+        "ms": 31560,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      },
+      {
+        "ms": 64464,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "drafter.placement_repair"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID3437356_code1324879.pdf?abstractid=3265192&mirid=1",
+        "role": "scholarship",
+        "title": "על הבטחות מינהליות, חוזים רגולטוריים וחיות אחרות במתווה הגז הטבעי",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'הגבלות הבטחה מנהלית' שיקול דעת הרשות שינוי נסיבות שוויון ביקורת ספרות 'מאמר משפטי'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/Zeidman_Article.pdf",
+        "role": "scholarship",
+        "title": "המשפט המינהלי הישראלי, מי את?",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'הגבלות הבטחה מנהלית' שיקול דעת הרשות שינוי נסיבות שוויון ביקורת ספרות 'מאמר משפטי'",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://law.acri.org.il/he/wp-content/uploads/2014/07/sidrey-minhal.pdf",
+        "role": "scholarship",
+        "title": "תזכיר חוק – סדרי מינהל (הסדרת עבודת הרשות המינהלית וזכויות הפונה לרשות)",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'הגבלות הבטחה מנהלית' שיקול דעת הרשות שינוי נסיבות שוויון ביקורת ספרות 'מאמר משפטי'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://en.wikipedia.org/wiki/Estoppel_in_English_law",
+        "role": "scholarship",
+        "title": "Estoppel in English law",
+        "origin": "perplexity",
+        "claim_id": "C5",
+        "query_he": "מאמר השוואתי 'הבטחה מנהלית' מול estoppel/השתק/הסתמכות חוזית 'מאמר משפטי' 'השוואת דוקטרינות'",
+        "drop_reason": "bad_source"
+      }
+    ]
+  }
+}
