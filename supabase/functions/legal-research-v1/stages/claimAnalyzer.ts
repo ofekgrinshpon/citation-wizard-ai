@@ -77,18 +77,25 @@ const RETRYABLE_HTTP = new Set([0, 408, 429, 500, 502, 503, 504]);
 const MAX_FULL_ATTEMPTS = 3;
 const BACKOFF_MS = [1000, 3000]; // between attempts 1->2 and 2->3
 
-export async function runClaimAnalyzer(question: string): Promise<AnalyzerStageResult> {
+export async function runClaimAnalyzer(
+  question: string,
+  opts?: { attachmentsContext?: string },
+): Promise<AnalyzerStageResult> {
   const preReasons = shouldPreEscalateAnalyzer(question);
   const initialModel = preReasons.length > 0 ? MODEL_FULL : MODEL_MINI;
 
   const stage_runs: StageRun[] = [];
   const attempts_summary: AnalyzerStageResult["attempts_summary"] = [];
 
+  const userPrompt = opts?.attachmentsContext
+    ? `${opts.attachmentsContext}\n\nשאלת המשתמש: ${question}`
+    : question;
+
   const t0 = Date.now();
   const first = await callOpenAIJsonTool<unknown>({
     model: initialModel,
     system: SYSTEM_PROMPT,
-    user: question,
+    user: userPrompt,
     tool: {
       name: "emit_claim_analysis",
       description: "Emit the structured claim analysis for a Hebrew legal question.",
