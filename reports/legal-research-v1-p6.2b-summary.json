@@ -1,0 +1,230 @@
+{
+  "tag": "p6.2b",
+  "fixtures": [
+    {
+      "id": "L1",
+      "run_id": "b76f0dbb-073b-4224-804f-e1731170308d",
+      "qa_log_id": "4601a0a7-c3b9-425b-ac52-580ff9f8ea50",
+      "timings_ms": {
+        "total": 242777,
+        "analyzer": 16409,
+        "planner": 20532,
+        "retrieval": 40006,
+        "verifier": 18961,
+        "drafter": 146731
+      },
+      "answer_word_count": 584,
+      "footnote_count": 7,
+      "acceptance": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "all_used_in_verifier_usable": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "missing_sources": [],
+        "unused_sources": []
+      },
+      "support_distribution": {
+        "direct": 1,
+        "partial": 6,
+        "unrelated": 0,
+        "tangential": 2
+      },
+      "footnote_origin_split": {
+        "local_db": 0,
+        "perplexity": 7
+      },
+      "drafter_model_final": "openai/gpt-5",
+      "drafter_escalated": true
+    },
+    {
+      "id": "L2",
+      "run_id": "023d2a13-1bb7-4f61-9b44-4899b175aef7",
+      "qa_log_id": "a9644ac1-e533-4b51-9deb-ad3bd60a05c1",
+      "timings_ms": {
+        "total": 125174,
+        "analyzer": 17561,
+        "planner": 18185,
+        "retrieval": 40007,
+        "verifier": 23530,
+        "drafter": 25759
+      },
+      "answer_word_count": 881,
+      "footnote_count": 9,
+      "acceptance": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "all_used_in_verifier_usable": true,
+        "repaired": true,
+        "leaked_tokens": [],
+        "missing_sources": [],
+        "unused_sources": []
+      },
+      "support_distribution": {
+        "direct": 10,
+        "partial": 2,
+        "unrelated": 0,
+        "tangential": 0
+      },
+      "footnote_origin_split": {
+        "local_db": 0,
+        "perplexity": 9
+      },
+      "drafter_model_final": "openai/gpt-5-mini",
+      "drafter_escalated": false
+    },
+    {
+      "id": "L3",
+      "run_id": "436120a5-4d65-4470-9fca-f1894deed017",
+      "qa_log_id": "4db33ed8-9ed7-4ca2-b657-c20b8adce571",
+      "timings_ms": {
+        "total": 212018,
+        "analyzer": 14053,
+        "planner": 24824,
+        "retrieval": 40011,
+        "verifier": 18511,
+        "drafter": 114492
+      },
+      "answer_word_count": 644,
+      "footnote_count": 3,
+      "acceptance": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "all_used_in_verifier_usable": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "missing_sources": [],
+        "unused_sources": []
+      },
+      "support_distribution": {
+        "direct": 2,
+        "partial": 1,
+        "unrelated": 7,
+        "tangential": 0
+      },
+      "footnote_origin_split": {
+        "local_db": 1,
+        "perplexity": 2
+      },
+      "drafter_model_final": "openai/gpt-5",
+      "drafter_escalated": true,
+      "L3_mentions_section_15": true
+    },
+    {
+      "id": "L4",
+      "run_id": "43bfe08d-7dd0-4750-9372-3a57932376b1",
+      "qa_log_id": "7a6f3823-394f-4242-9a60-405c050bdd3c",
+      "timings_ms": {
+        "total": 166979,
+        "analyzer": 11590,
+        "planner": 27717,
+        "retrieval": 31580,
+        "verifier": 47201,
+        "drafter": 48769
+      },
+      "answer_word_count": 870,
+      "footnote_count": 9,
+      "acceptance": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "all_used_in_verifier_usable": true,
+        "repaired": false,
+        "leaked_tokens": [],
+        "missing_sources": [],
+        "unused_sources": []
+      },
+      "support_distribution": {
+        "direct": 8,
+        "partial": 3,
+        "unrelated": 3,
+        "tangential": 1
+      },
+      "footnote_origin_split": {
+        "local_db": 4,
+        "perplexity": 5
+      },
+      "drafter_model_final": "openai/gpt-5-mini",
+      "drafter_escalated": false,
+      "L4_mentions_issue_preclusion": true,
+      "L4_promissory_estoppel_drift": false
+    },
+    {
+      "id": "L5",
+      "run_id": "31089a11-e3dd-464c-aac0-1e5cd37063c8",
+      "qa_log_id": "11530415-f26a-48c7-a8d0-fabe597be19d",
+      "timings_ms": {
+        "total": 141238,
+        "analyzer": 13947,
+        "planner": 23249,
+        "retrieval": 40007,
+        "verifier": 37239,
+        "drafter": 26660
+      },
+      "answer_word_count": 844,
+      "footnote_count": 9,
+      "acceptance": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "all_used_in_verifier_usable": true,
+        "repaired": true,
+        "leaked_tokens": [],
+        "missing_sources": [],
+        "unused_sources": []
+      },
+      "support_distribution": {
+        "direct": 13,
+        "partial": 4,
+        "unrelated": 0,
+        "tangential": 0
+      },
+      "footnote_origin_split": {
+        "local_db": 0,
+        "perplexity": 9
+      },
+      "drafter_model_final": "openai/gpt-5-mini",
+      "drafter_escalated": false
+    },
+    {
+      "id": "L6",
+      "run_id": "5f604011-0b85-4b7a-8321-1b8232fd5fb7",
+      "qa_log_id": "35a6ba26-c6a3-40c4-84f7-b82798ff9eec",
+      "timings_ms": {
+        "total": 144882,
+        "analyzer": 30087,
+        "planner": 27211,
+        "retrieval": 33902,
+        "verifier": 31470,
+        "drafter": 22093
+      },
+      "answer_word_count": 731,
+      "footnote_count": 7,
+      "acceptance": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "all_used_in_verifier_usable": true,
+        "repaired": true,
+        "leaked_tokens": [],
+        "missing_sources": [],
+        "unused_sources": []
+      },
+      "support_distribution": {
+        "direct": 5,
+        "partial": 3,
+        "unrelated": 5,
+        "tangential": 2
+      },
+      "footnote_origin_split": {
+        "local_db": 2,
+        "perplexity": 5
+      },
+      "drafter_model_final": "openai/gpt-5-mini",
+      "drafter_escalated": false
+    }
+  ],
+  "aggregate": {
+    "count": 6,
+    "marker_ok": 6,
+    "no_leak": 6,
+    "all_used_in_usable": 6
+  }
+}

@@ -1,0 +1,235 @@
+{
+  "fixture": {
+    "id": "L1",
+    "question": "מהם התנאים למתן צו מניעה זמני?"
+  },
+  "run_id": "b76f0dbb-073b-4224-804f-e1731170308d",
+  "qa_log_id": "4601a0a7-c3b9-425b-ac52-580ff9f8ea50",
+  "timings_ms": {
+    "total": 242777,
+    "analyzer": 16409,
+    "planner": 20532,
+    "retrieval": 40006,
+    "verifier": 18961,
+    "drafter": 146731
+  },
+  "answer_word_count": 584,
+  "answer_markdown": "צו מניעה זמני הוא סעד ביניים שבית המשפט מוסמך ליתן לשם שימור מצב קיים והגנה זמנית על זכויות נטענות עד להכרעה בהליך העיקרי, וזאת בהתאם לתקנה 94 לתקנות סדר הדין האזרחי, התשע\"ט-2018, המסדירה את עקרונות מתן הסעד, את תנאי הסף ואת המימד הפרוצדורלי הנלווה לו.‏¹ דברי ההסבר לתקנות מאירים את התכליות שביסוד ההסדרה – ייעול ההליך, הבהרת העקרונות החלים על סעדים זמניים, ועיצוב מנגנון הערובה – ובכך מספקים הקשר תכליתי למסגרת הנורמטיבית של צווי מניעה זמניים.‏² \n\nהתנאים העיקריים למתן צו מניעה זמני\n\n1) עילת תביעה לכאורה (prima facie case). על המבקש להראות כי תביעתו מגלה עילת תביעה לכאורה וכי עומד לו בסיס עובדתי־משפטי אפשרי במידה הדרושה לשלב המקדמי של בקשה לסעד זמני; זהו תנאי סף מהותי שנגזר מתקנה 94 ומכוון לסינון בקשות שאין להן יסוד ממשי.‏¹ בהקשרים שבהם הבקשה נוגעת לזכויות חוקתיות, המסגרת האנליטית של תורת שלושת השלבים – זיהוי הזכות, קיומה של פגיעה, ובחינת המידתיות – יכולה לשמש אמת־מידה לסיכוי הלכאורי ולהמחיש כיצד נבחנת באופן ראשוני קיומה של תשתית נורמטיבית מוצקה לבקשה.‏³ \n\n2) נזק חמור ובלתי הפיך. אחד השיקולים המרכזיים בבחינת סעד מניעתי הוא שאלת קיומו של נזק חמור או בלתי הפיך למבקש עד להכרעה, נזק שאינו ניתן לריפוי הולם בפיצוי כספי; שיקול זה מהווה נדבך משמעותי במבחן מאזן הנוחות בדין ובספרות ההשוואתית על אודות סעדים מניעתיים, ומכוון את בית המשפט לזיקה בין טיב הנזק לבין הצורך במניעה מוקדמת.‏⁴ ‏¹ \n\n3) מאזן הנוחות ואינטרס הציבור. בית המשפט ישווה בין הנזק הצפוי למבקש אם לא יינתן הצו לבין הנזק הצפוי למשיב אם יינתן, ויבחן היכן מצוי שיווי המשקל הראוי בנסיבות. שיקול זה הוא ליבת ההכרעה בבקשות לסעד זמני לפי תקנה 94.‏¹ בתוך כך, אינטרס הציבור עשוי להטות את הכף בעד או נגד מתן הצו, במיוחד כאשר הסעד הזמני נוגע לשוק רחב או לזרימת מידע ויצירה; כך הודגש בספרות שעסקה בסעדים מניעתיים בדיני זכויות יוצרים, המבליטה כי שיקולי מדיניות כלליים ואינטרס הציבור רלוונטיים להיקף המניעה, והדברים משקפים עיקרון רחב בדבר שקילת השלכות חוץ־צדדיות במתן סעד מניעתי.‏⁵ כמו כן, הזיקה שבין פרוצדורה למהות מצדיקה שיקול דעת גמיש בבחינת מאזן הנוחות, בהתחשב בתוצאות המעשיות של סעד זמני על ניהול ההליך ועל זכויות הצדדים.‏⁶ \n\n4) דחיפות והצורך המיידי בסעד. תקנה 94 מטעימה את ממד הדחיפות כקריטריון משלים: ככל שהסיכון לפגיעה נוכחית ומיידית גבוה יותר, כך גובר הצורך בהגנה זמנית עד להכרעה, ולהפך.‏¹ \n\n5) התחייבות עצמית וערובה. מתן צו מניעה זמני מותנה, ככלל, בהמצאת התחייבות עצמית ולעיתים גם ערובה או עירבון, שמטרתם להבטיח את נזקי המשיב אם יימצא בדיעבד כי לא היה יסוד למתן הסעד, וזאת כתנאי אינהרנטי למשטר הסעדים הזמניים בתקנות.‏¹ מנגנון זה מעוגן במדיניות התקנות ובהסדרת הדיון בסעדים זמניים, והוא נועד לייעל את ההליכים ולהבטיח הוגנות דיונית בין הצדדים.‏² במישור הפרקטי, הרשות השופטת מבהירה כי במסגרת בקשות לסעד זמני יש לצרף התחייבות עצמית וערובה לפי העניין, כמכשיר אופרטיבי ליישום תנאי התקנות.‏⁷ \n\nהדגשים המתודולוגיים והיחסים בין היסודות\n\nהפעלת התנאים דלעיל נעשית במתח דינמי: ככל שמאזן הנוחות נוטה בעוצמה לטובת המבקש – למשל, כשנשקף נזק בלתי הפיך משמעותי – די לעיתים בהצגת תשתית לכאורית חזקה־פחות, ולהפך; שיקול הדעת בהקשר זה גמיש ומכוּון לתכלית ההוגנות הדיונית ותוצאות הסעד על מהלך ההתדיינות.‏¹ ‏⁴ ‏⁶ לצד זאת, כאשר נקודת המחלוקת משיקה לזכויות חוקתיות, נדרשת הקפדה מושכלת על בחינה אנליטית מוקדמת של עילת התביעה הלכאורית באמצעות מבחני פגיעה ומידתיות, כדי שלא לכרסם בזכויות בהליך ביניים מבלי תשתית נורמטיבית הולמת.‏³ \n\nסיכום\n\nבמישור הנורמטיבי־יישומי, מתן צו מניעה זמני מותנה בהתקיימות מצטברת של: עילת תביעה לכאורה; חשש לנזק חמור או בלתי הפיך עד לפסק הדין; מאזן נוחות הנוטה לטובת מתן הצו, לרבות שקלול אינטרס הציבור; ודחיפות הממחישה את נחיצות ההגנה הזמנית – והכול בכפוף להפקדת התחייבות עצמית וערובה כפי שיורה בית המשפט.‏¹ ‏² ‏⁴ ‏⁵ ‏⁷",
+  "footnotes": [
+    {
+      "url": "https://fs.knesset.gov.il/23/Committees/23_cs_bg_582439.doc",
+      "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 — תקנה 94 (צו מניעה זמני)",
+      "number": 1
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/16122020/he/16.12-explanatory.pdf",
+      "title": "דברי הסבר לתקנות סדר הדין האזרחי, התשע״ט-2018",
+      "number": 2
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/Aharon-Barak.pdf",
+      "title": "תורת שלושת השלבי: הזכות החוקתית והפגיעה בה",
+      "number": 3
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1737116",
+      "title": "An Empirical Study of the Relationship Between Remedies and Injunctions",
+      "number": 4
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/07-YaelNissan.pdf",
+      "title": "יעל ניסן-אלון, \"אשם בדיני זכויות יוצרים: נטע זר או שיקול תקף?\"",
+      "number": 5
+    },
+    {
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Law_Society_Culture/books/procedurot/ProceduresMalcaiLevin.pdf",
+      "title": "עפר מלכאי ורונית לוין-שנור, \"היחס בין פרוצדורה למהות: מה קודם למה?\"",
+      "number": 6
+    },
+    {
+      "url": "https://www.gov.il/he/service/obligation_statement",
+      "title": "התחייבות עצמית וערובה בבקשה לסעד זמני",
+      "number": 7
+    }
+  ],
+  "used_sources": [
+    {
+      "url": "https://fs.knesset.gov.il/23/Committees/23_cs_bg_582439.doc",
+      "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 — תקנה 94 (צו מניעה זמני)",
+      "number": 1,
+      "origin": "perplexity",
+      "source_type": "חקיקת משנה / מאגר רשמי",
+      "candidate_id": "a605bec6-8ffc-4349-8f4e-58e9902729a9"
+    },
+    {
+      "url": "https://www.gov.il/BlobFolder/news/16122020/he/16.12-explanatory.pdf",
+      "title": "דברי הסבר לתקנות סדר הדין האזרחי, התשע״ט-2018",
+      "number": 2,
+      "origin": "perplexity",
+      "source_type": "gov.il / מסמך רשמי",
+      "candidate_id": "6954e123-41f6-4839-81a0-bd3645a7d18a"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/Aharon-Barak.pdf",
+      "title": "תורת שלושת השלבי: הזכות החוקתית והפגיעה בה",
+      "number": 3,
+      "origin": "perplexity",
+      "source_type": "מאמר אקדמי",
+      "candidate_id": "61cfb216-45fe-4af2-bbe8-9d16d195e34a"
+    },
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1737116",
+      "title": "An Empirical Study of the Relationship Between Remedies and Injunctions",
+      "number": 4,
+      "origin": "perplexity",
+      "source_type": "Law review article (academic journal article)",
+      "candidate_id": "bfdc0ad0-25a0-48f9-957d-69bb0d79890a"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/07-YaelNissan.pdf",
+      "title": "יעל ניסן-אלון, \"אשם בדיני זכויות יוצרים: נטע זר או שיקול תקף?\"",
+      "number": 5,
+      "origin": "perplexity",
+      "source_type": "מאמר אקדמי (כתב עת משפטי)",
+      "candidate_id": "4bbe221c-c107-4c09-8b75-885a1eb4624e"
+    },
+    {
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Law_Society_Culture/books/procedurot/ProceduresMalcaiLevin.pdf",
+      "title": "עפר מלכאי ורונית לוין-שנור, \"היחס בין פרוצדורה למהות: מה קודם למה?\"",
+      "number": 6,
+      "origin": "perplexity",
+      "source_type": "פרק/ספר אקדמי משפטי",
+      "candidate_id": "6151e244-e239-47df-91e5-9eb6c2e0a5a9"
+    },
+    {
+      "url": "https://www.gov.il/he/service/obligation_statement",
+      "title": "התחייבות עצמית וערובה בבקשה לסעד זמני",
+      "number": 7,
+      "origin": "perplexity",
+      "source_type": "gov.il",
+      "candidate_id": "d7adca96-fcb1-40ef-a07e-d84379938d4b"
+    }
+  ],
+  "used_sources_usability": [
+    {
+      "candidate_id": "a605bec6-8ffc-4349-8f4e-58e9902729a9",
+      "number": 1,
+      "title": "תקנות סדר הדין האזרחי, התשע״ט-2018 — תקנה 94 (צו מניעה זמני)",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "6954e123-41f6-4839-81a0-bd3645a7d18a",
+      "number": 2,
+      "title": "דברי הסבר לתקנות סדר הדין האזרחי, התשע״ט-2018",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "61cfb216-45fe-4af2-bbe8-9d16d195e34a",
+      "number": 3,
+      "title": "תורת שלושת השלבי: הזכות החוקתית והפגיעה בה",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "bfdc0ad0-25a0-48f9-957d-69bb0d79890a",
+      "number": 4,
+      "title": "An Empirical Study of the Relationship Between Remedies and Injunctions",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "4bbe221c-c107-4c09-8b75-885a1eb4624e",
+      "number": 5,
+      "title": "יעל ניסן-אלון, \"אשם בדיני זכויות יוצרים: נטע זר או שיקול תקף?\"",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "6151e244-e239-47df-91e5-9eb6c2e0a5a9",
+      "number": 6,
+      "title": "עפר מלכאי ורונית לוין-שנור, \"היחס בין פרוצדורה למהות: מה קודם למה?\"",
+      "in_verifier_usable": true
+    },
+    {
+      "candidate_id": "d7adca96-fcb1-40ef-a07e-d84379938d4b",
+      "number": 7,
+      "title": "התחייבות עצמית וערובה בבקשה לסעד זמני",
+      "in_verifier_usable": true
+    }
+  ],
+  "acceptance": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "all_used_in_verifier_usable": true,
+    "repaired": false,
+    "leaked_tokens": [],
+    "missing_sources": [],
+    "unused_sources": []
+  },
+  "marker_validation": {
+    "ok": true,
+    "repaired": false,
+    "leaked_tokens": [],
+    "unused_sources": [],
+    "missing_sources": [],
+    "internal_id_leak": false,
+    "markers_in_answer": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "support_distribution": {
+    "direct": 1,
+    "partial": 6,
+    "unrelated": 0,
+    "tangential": 2
+  },
+  "footnote_origin_split": {
+    "local_db": 0,
+    "perplexity": 7
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": true,
+    "model_final": "openai/gpt-5",
+    "sources_passed": 7,
+    "sources_used": 7,
+    "footnote_count": 7,
+    "omitted_candidate_ids": [],
+    "error": null
+  },
+  "verifier_summary": {
+    "ms": 18961,
+    "counts": {
+      "by_support": {
+        "direct": 1,
+        "partial": 6,
+        "unrelated": 0,
+        "tangential": 2
+      },
+      "by_role_match": {
+        "true": 9,
+        "false": 0
+      }
+    },
+    "batches": [
+      {
+        "ms": 18960,
+        "label": "batch1",
+        "claim_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "escalated": false,
+        "candidates": 9
+      }
+    ],
+    "escalated_claims": []
+  },
+  "qualitative_note": null,
+  "generated_at": "2026-05-24T06:41:08.842Z"
+}
