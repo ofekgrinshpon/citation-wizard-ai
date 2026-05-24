@@ -20,9 +20,11 @@ const STAGES = [
   "מסדר הערות שוליים",
 ];
 
-const HARD_CAP_MS = 300_000; // 5 min client-side hard cap
 const STAGE_BUDGET_MS = 25_000;
 const POLL_INTERVAL_MS = 2_000;
+const SOFT_NOTICE_1_MS = 180_000; // 3 min
+const SOFT_NOTICE_2_MS = 300_000; // 5 min
+const RESUME_STORAGE_KEY = "lrv1:active_job";
 
 type Footnote = { number: number; title: string; url?: string | null };
 type UsedSource = {
@@ -55,6 +57,7 @@ export function LegalResearchV1Panel() {
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ResearchResponse | null>(null);
+  const [jobId, setJobId] = useState<string | null>(null);
   const progressTimerRef = useRef<number | null>(null);
   const pollTimerRef = useRef<number | null>(null);
   const startRef = useRef<number>(0);
@@ -78,39 +81,44 @@ export function LegalResearchV1Panel() {
     if (typeof finalPct === "number") setProgress(finalPct);
   };
 
-  const startProgress = () => {
-    startRef.current = Date.now();
-    setProgress(5);
-    setStageIdx(0);
-    setElapsed(0);
+  const clearResume = () => {
+    try { sessionStorage.removeItem(RESUME_STORAGE_KEY); } catch { /* ignore */ }
+  };
+
+  const handleCancel = () => {
+    stopAll(progress);
+    setLoading(false);
+    setJobId(null);
+    clearResume();
+    setError("הבקשה בוטלה. הפעלת חיפוש חדשה תפתח עבודה חדשה.");
+  };
+
+  const startProgress = (startedAt?: number) => {
+    startRef.current = startedAt ?? Date.now();
+    const initialEl = Date.now() - startRef.current;
+    setProgress(Math.min(95, 5 + (initialEl / (STAGES.length * STAGE_BUDGET_MS)) * 85));
+    setStageIdx(Math.min(STAGES.length - 1, Math.floor(initialEl / STAGE_BUDGET_MS)));
+    setElapsed(initialEl);
     if (progressTimerRef.current) window.clearInterval(progressTimerRef.current);
     progressTimerRef.current = window.setInterval(() => {
       const el = Date.now() - startRef.current;
       setElapsed(el);
       setStageIdx(Math.min(STAGES.length - 1, Math.floor(el / STAGE_BUDGET_MS)));
       const pct = 5 + (el / (STAGES.length * STAGE_BUDGET_MS)) * 85;
-      setProgress(Math.min(90, pct));
+      setProgress(Math.min(95, pct));
     }, 1000);
   };
 
-  const pollJob = (jobId: string) => {
+  const pollJob = (jid: string) => {
     if (pollTimerRef.current) window.clearInterval(pollTimerRef.current);
     pollTimerRef.current = window.setInterval(async () => {
-      const el = Date.now() - startRef.current;
-      if (el > HARD_CAP_MS) {
-        stopAll(progress);
-        setLoading(false);
-        setError("הבקשה ארכה זמן רב מדי. נסה שוב או קצר את השאלה.");
-        return;
-      }
       try {
         const { data, error: qErr } = await supabase
           .from("legal_research_jobs")
           .select("status, result, error")
-          .eq("id", jobId)
+          .eq("id", jid)
           .maybeSingle();
         if (qErr) {
-          // transient; keep polling
           console.warn("[lrv1 poll]", qErr.message);
           return;
         }
@@ -121,9 +129,13 @@ export function LegalResearchV1Panel() {
           setStageIdx(STAGES.length - 1);
           setResult((data as unknown as { result: ResearchResponse }).result);
           setLoading(false);
+          setJobId(null);
+          clearResume();
         } else if (status === "error") {
           stopAll(progress);
           setLoading(false);
+          setJobId(null);
+          clearResume();
           setError(
             (data as { error?: string }).error ||
               "אירעה שגיאה בעיבוד הבקשה.",
@@ -134,6 +146,26 @@ export function LegalResearchV1Panel() {
       }
     }, POLL_INTERVAL_MS);
   };
+
+  // Resume-on-mount: if a job was active in this tab, keep polling it.
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(RESUME_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { jobId: string; startedAt: number };
+      if (!parsed?.jobId) return;
+      setJobId(parsed.jobId);
+      setLoading(true);
+      setError(null);
+      setResult(null);
+      startProgress(parsed.startedAt);
+      pollJob(parsed.jobId);
+    } catch {
+      /* ignore corrupt resume state */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   const handleSubmit = async () => {
     const q = question.trim();
@@ -164,6 +196,13 @@ export function LegalResearchV1Panel() {
         setError(invokeErr?.message || "לא הצלחנו לפתוח את הבקשה.");
         return;
       }
+      setJobId(data.job_id);
+      try {
+        sessionStorage.setItem(
+          RESUME_STORAGE_KEY,
+          JSON.stringify({ jobId: data.job_id, startedAt: startRef.current }),
+        );
+      } catch { /* ignore quota */ }
       pollJob(data.job_id);
     } catch (e) {
       stopAll(progress);
@@ -211,9 +250,35 @@ export function LegalResearchV1Panel() {
             <span>{fmtElapsed(elapsed)}</span>
           </div>
           <Progress value={progress} className="h-2" />
-          <p className="text-xs text-muted-foreground">
-            זה עשוי לקחת 2–3 דקות
-          </p>
+          {elapsed < SOFT_NOTICE_1_MS && (
+            <p className="text-xs text-muted-foreground">
+              זה עשוי לקחת 2–3 דקות
+            </p>
+          )}
+          {elapsed >= SOFT_NOTICE_1_MS && elapsed < SOFT_NOTICE_2_MS && (
+            <p className="text-xs text-muted-foreground">
+              עדיין עובד… זה לוקח יותר מהרגיל
+            </p>
+          )}
+          {elapsed >= SOFT_NOTICE_2_MS && (
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs text-muted-foreground">
+                עדיין עובד ברקע, אפשר להמתין או לבטל
+              </p>
+            </div>
+          )}
+          {jobId && (
+            <div className="flex justify-end pt-1">
+              <Button
+                onClick={handleCancel}
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2 text-xs"
+              >
+                בטל
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
