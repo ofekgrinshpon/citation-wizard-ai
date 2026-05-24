@@ -2933,7 +2933,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
         {/* ── Non-academic empty state ── */}
         {!isAcademic && taskMode === "research" && (
-          <div className="min-h-full flex flex-col py-4">
+          <div className="h-full flex flex-col py-4">
             <LegalResearchV1Panel />
           </div>
         )}
