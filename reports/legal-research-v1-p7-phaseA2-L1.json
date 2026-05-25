@@ -1,0 +1,1282 @@
+{
+  "generated_at": "2026-05-25T06:32:49.882Z",
+  "fixture": {
+    "id": "L1",
+    "question": "מהם התנאים למתן צו מניעה זמני?"
+  },
+  "qa_log_id": "7fcb7e25-8e1e-4878-8390-10c1de3cebdb",
+  "run_id": "13d024fb-d9d3-477f-9bb6-e1f8ec8a6261",
+  "phaseA": {
+    "fixture_id": "L1",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "cluster_count": 0,
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 0,
+    "placement_ok": true,
+    "placement_repaired": true,
+    "placement_repair_failed": false,
+    "superscript_parens_count": 0,
+    "used_sources_count": 7,
+    "used_sources_subset_of_usable": true,
+    "footnote_count": 7
+  },
+  "answer": "המבחנים המתבקשים במערכת המשפט למתן **צו מניעה זמני** כוללים מספר יסודות מצטברים אשר יש להציג בבקשה על־מנת להצדיק מתן סעד זמני לפני הכרעה מהותית בתיק. יסודות אלה נבחנים בדרך כלל כיחידה אחת שבה כל אלמנט משפיע על שיקול הדעת השיפוטי הכללי: קיומה של **עילת תביעה סבירה / סיכוי ממשי להצלחה**, סכנת **נזק בלתי הפיך**, **איזון נזקי הצדדים** (פרופורציונליות/balance of convenience) וכן עניינים פרוצדורליים ודרישות **בטוחות/ערובה** ויעילות טכנית של הבקשה.\n\n- עילת תביעה סבירה / סיכוי ממשי להצלחה (prima facie case / likelihood of success). בית המשפט בוחן האם המבקש הציג לפניו עילה שיש בה סיכוי ממשי להצלחה בעילת היסוד; דרישה זו אינה מחייבת הכרעה סופית בשלב הקדם־אנדטיבי, אך כן מחייבת הצגה של טיעון משפטי ותמיכה עובדתית מספקת כדי שהבקשה תיחשב ככדאית להמשך בירור שיפוטי.¹ מבחן זה מובחן ונבחן ביחס לאחרים: ככל שסיכויי ההצלחה חלשים יותר – יש לדרוש הוכחות חזקות יותר לאלמנטים האחרים (למשל לנזק בלתי הפיך או לאיזון נזקים) וכמו־כן לשקול את חומרת הפגיעה בשיקול הכללי.²\n\n- סכנה של נזק בלתי הפיך (irreparable harm). ההצדקה המרכזית לסעד זמני היא מניעת פגיעה שלא ניתן לתקן לאחר־העובדה או פגיעה שאינה ניתנת לפיצוי מלא בכסף; המבקש נדרש להראות כי בהיעדר צו ייגרם לו נזק יסודי שאינו מתוקן בהליך הרגיל.² בפועל ההוכחה היא עובדתית ותלויה באופי הזכויות המעורבות ובמשקל ההשפעה הכלכלית או המוסרית של הפגיעה; כמו כן נבחנות אלטרנטיבות הקיימות למתן גמול לאחר המעמד.\n\n- איזון נזקי הצדדים ופרופורציונליות (balance of convenience / proportionality). אף אם קיימת עילת תביעה סבירה וסכנה לנזק בלתי הפיך, בית המשפט ישקול³ האם מתן הצו יגרום לנזק בלתי סביר לנתבע או לציבור, ומאזן בין הפגיעה האפשרית במבקש אל מול הפגיעה האפשרית בצד השני ובאינטרסים ציבוריים. בשיקול זה נכללים גם שיקולי חופש הביטוי, אפקט מצנן והשפעה מערכתית של צווי מניעה, ובמקרים של התנגשות בין זכויות יש להפעיל מבחני פרופורציונליות מתאימים לאמוד את נטל הפגיעה והצורך בהגבלת הזכות.⁴ ההערכה יכולה לכלול גם שיקולים כלכליים של עלות־תועלת ושל הרתעה בעת קבלת החלטה בדבר מידת הנזק וצמצום הסעד.\n\n- דרישות פרוצדורליות ובטוחות (ערובה, הפקדה) ויעילות טכנית. הפרקטיקה השיפוטית נוטה להטיל תנאי בטחוני כגון ערובה או הפקדת סכום כמכשיר שימנע עיוות או פיצוי עתידי אם יימצא שאין מקום לצו, והן מהוות חלק משיקולי ההיתכנות למתן סעד זמני.⁵ בנוסף, בקשת סעד זמני תבחן את דחיפות הבקשה, סמכות בית המשפט, ודיוק הבקשה (בהירות, גבולות הצו ומידת התאמתו למניעת הנזק),⁶ ואף את נכונות המבקש להתחייבות עצמית או תנאים אופרטיביים אחרים.⁶\n\nסיכום מעשי תמציתי: על המבקש להציג בקשת סעד זמני כוללת המשלבת (1) טיעון משפטי ותמיכה עובדתית² המספקים עילת תביעה סבירה;¹ (2) ראיות לנזק בלתי הפיך² או לנזק שלא ייעשה בו משפטית תיקון מלא;⁶ (3) ניתוח איזון נזקים³ המצדד בהענקת הצו תוך התייחסות להשפעה על הציבור⁷ וזכויות יסוד הרלוונטיות⁴; וכן (4) התייחסות לפרוצדורה ולקיומן של בטוחות נדרשות⁵, והצעת אמצעי צמצום או ערובה שיקטינו את הסיכון לנתבע.⁶ בנוסף, ניתוח האיזון יכול להישען גם על שיקולי עלות־תועלת.⁷\n\nהדגשים נוספים: אין יסוד יחיד נלחץ על פני האחרים — השיקול הכללי נותר עניין שיפוטי שבו כל אחד מן האלמנטים משפיע על האחרים; במקרים מסוימים, למשל כשמדובר בזכויות חופש הביטוי³, האיזון והפרופורציונליות יקבלו משקל מכריע.",
+  "footnotes": [
+    {
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1675630",
+      "title": "The Standard for Granting Interim Relief: Prima Facie Case and Balance of Convenience",
+      "number": 1,
+      "source_type": "academic article"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/999_027.htm",
+      "title": "סעדים זמניים במשפט האזרחי",
+      "number": 2,
+      "source_type": "ספר משפטי"
+    },
+    {
+      "url": "https://www.runi.ac.il/media/heefc4np/bendor-tamir.pdf",
+      "title": "חופש הביטוי בתקשורת המקוונת: בחינה מחדש של תורת המניעה המוקדמת",
+      "number": 3,
+      "source_type": "מאמר אקדמי (כתב עת משפטי)"
+    },
+    {
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/mdynh_vshgb-_svpyt_yntrntyt.pdf",
+      "title": "התנגשות בין זכויות: אפיון-מחדש של מהותו של איזון אופקי",
+      "number": 4,
+      "source_type": "מאמר אקדמי (קובץ מאמר/כתב עת משפטי)"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/999_002.htm",
+      "title": "הערובה והבטוחות בהליכים אזרחיים",
+      "number": 5,
+      "source_type": "ספר/פרק אקדמי"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/999_193.htm",
+      "title": "בקשה לסעד זמני: ערובה, התחייבות עצמית ושיקול דעת שיפוטי",
+      "number": 6,
+      "source_type": "מאמר משפטי"
+    },
+    {
+      "url": "https://www.tau.ac.il/law/members/porat-ariel/nezikin6-8-12.pdf",
+      "title": "אריאל פורת, הגישה הכלכלית למשפט – דיני הנזיקין (פרק/הרצאה)",
+      "number": 7,
+      "source_type": "פרק/חומר אקדמי"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "נסיבות מתן צו מניעה זמני מבוססות בדוקטרינה שפותחה בפסיקה: יש לדרוש הצגה ראשונית של עילת תביעה סבירה או סיכוי ממשי להצלחה כדי שלא להטיל עיכוב על זכותו של הנתבע להגן על טענותיו. מקורות מחייבים בפסיקה והסבר אקדמי דרושים כדי להגדיר את המבחן והיקפו.",
+        "text_he": "האם המבקש הציג עילת תביעה סבירה או סיכוי ממשי להצלחה בעילת היסוד (prima facie case / likelihood of success) כדבר יסוד למתן צו מניעה זמני?",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "אחת הדרישות היסודיות למתן צו מניעה זמני היא סכנה ממשית ואינה נעצרת בפיצוי כספי בלבד; יש צורך בפסיקה ובספרות כדי להגדיר מה נחשב \"נזק בלתי הפיך\" בהקשר המקומי וכיצד בוחנים אותו.",
+        "text_he": "האם קיימת סכנה של נזק בלתי הפיך או נזק שלא ניתן לתקן לאחר המיזמה (irreparable harm) אם לא יינתן הצו הזמני?",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "בתי המשפט בוחנים איזון נוחות ויחס תועלת/פגיעה בעת מתן צווים זמניים; החלטות קודמות בפסיקה וניתוחים ספרותיים מסבירים את אופן שיקול מאזן זה ואת משקלו ביחס אל שאר התנאים.",
+        "text_he": "האם האיזון בין הנזק שייגרם למבקש אם הצו לא יינתן לבין הנזק שייגרם לנתבע או לציבור אם הצו יינתן נוטה לטובת מתן הצו (balance of convenience / proportionality)?",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "מסגרת ההליך והדרישות הפרוצדורליות (רישום הבקשה, מתן ערובה, תקנות לבית המשפט) נובעות גם מתקנות/נהלים וגם מהפסיקה; יש להביא גם מקורות תקנתיים (אם קיימים) ויסוד משפטי מהפסיקה כדי לענות על שאלה זו. זו טענה משולבת פרוצדורלית ולכן אינה \"ספרי לימוד\" טהורה בלבד.",
+        "text_he": "האם יש עמידה בדרישות פרוצדורליות ותנאי ביטחון (כגון הצבת ערובה/פיקדון) ויעילות טכנית אחרת (דחיפות, סמכות, טיב הבקשה) הנדרשים לפני מתן צו זמני?",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "regulation",
+          "scholarship"
+        ],
+        "is_black_letter": false
+      }
+    ],
+    "run_id": "13d024fb-d9d3-477f-9bb6-e1f8ec8a6261",
+    "drafter": {
+      "ms": 162082,
+      "ok": true,
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 7,
+      "used_sources": [
+        {
+          "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1675630",
+          "title": "The Standard for Granting Interim Relief: Prima Facie Case and Balance of Convenience",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "academic article",
+          "candidate_id": "534f1933-e817-4a23-8fb7-8eac8912e6aa"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_027.htm",
+          "title": "סעדים זמניים במשפט האזרחי",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "ספר משפטי",
+          "candidate_id": "09410fc8-d29b-4cc2-98dc-1154d581f2f9"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/heefc4np/bendor-tamir.pdf",
+          "title": "חופש הביטוי בתקשורת המקוונת: בחינה מחדש של תורת המניעה המוקדמת",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "מאמר אקדמי (כתב עת משפטי)",
+          "candidate_id": "c356dcc4-b34c-4ee3-a433-27d49c5ee522"
+        },
+        {
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/mdynh_vshgb-_svpyt_yntrntyt.pdf",
+          "title": "התנגשות בין זכויות: אפיון-מחדש של מהותו של איזון אופקי",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "מאמר אקדמי (קובץ מאמר/כתב עת משפטי)",
+          "candidate_id": "ca330e15-fedf-47cf-95ad-be3b4be02b58"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_002.htm",
+          "title": "הערובה והבטוחות בהליכים אזרחיים",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "ספר/פרק אקדמי",
+          "candidate_id": "237fa41f-3c79-4a02-a683-46495ae91c71"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/999_193.htm",
+          "title": "בקשה לסעד זמני: ערובה, התחייבות עצמית ושיקול דעת שיפוטי",
+          "number": 6,
+          "origin": "perplexity",
+          "source_type": "מאמר משפטי",
+          "candidate_id": "5aa89857-4420-4d03-9099-f1abc5b826e3"
+        },
+        {
+          "url": "https://www.tau.ac.il/law/members/porat-ariel/nezikin6-8-12.pdf",
+          "title": "אריאל פורת, הגישה הכלכלית למשפט – דיני הנזיקין (פרק/הרצאה)",
+          "number": 7,
+          "origin": "perplexity",
+          "source_type": "פרק/חומר אקדמי",
+          "candidate_id": "6d8d5fbc-6505-45ce-a0f0-075e8ca71e7c"
+        }
+      ],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 7,
+      "sources_passed": 8,
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "placement": {
+          "ok": true,
+          "repaired": true,
+          "cluster_count": 0,
+          "cluster_samples": [],
+          "end_dump_samples": [],
+          "out_of_order_count": 0,
+          "end_paragraph_dump_count": 0,
+          "superscript_parens_count": 0
+        },
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      "omitted_candidate_ids": [
+        "65530ee5-0838-44c3-8150-11e7e05db6f6"
+      ]
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "להבנת הדין המחייב והנוסח הפסוקי של הקריטריון הראשוני לצו מניעה זמני — יש לחפש פסקי-דין עליונים שמגדירים ומיישמים את המבחן.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "פסקי דין של בית המשפט העליון בנושא קריטריון 'עילת תביעה סבירה' / 'סיכוי ממשי להצלחה' (prima facie case / likelihood of success) כבסיס למתן צו מניעה זמני; חפש ניסוחים כגון 'סיכוי ממשי', 'עילת יסוד', 'צו מניעה זמני'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ניתוח אקדמי יספק הבהרות היסטוריות, השוואתיות והטיעונים התיאורטיים מאחורי מבחן הסיכוי להצלחה, המשלים לפסיקה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי בעברית או באנגלית על הדוקטרינה 'prima facie case' / 'likelihood of success' בצו מניעה זמני; חיפוש ב'כתב־עת משפטי' כמו 'משפטים' או 'Israel Law Review' על הסטנדרטים והניתוח התיאורטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "יש לאתר פסיקה מחייבת שמגדירה מהו 'נזק בלתי הפיך' וכיצד בתי המשפט הישראלים מעריכים את הסכנה במשקל לשם מתן צו זמני.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "פסקי דין של בית המשפט העליון העוסקים בקריטריון 'נזק בלתי הפיך' או 'irreparable harm' במתן צו מניעה זמני; חפש ביטויים כמו 'נזק שלא ניתן לתקן', 'נזק בלתי הפיך', 'irreparable'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "הספרות תסייע בפירוש המושג ובהבחנה בין נזק שניתן לתקן לבין נזק בלתי הפיך ובהצעת מבחנים מעשיים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמרים וספרות משפטית על ההגדרה והמדידה של 'נזק בלתי הפיך' בצו מניעה זמני בישראל; חפש 'נזק בלתי הפיך' ו'irreparable harm' בכתב־עת משפטי ובמאגר מאמרים אקדמיים",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למציאת המסגרות הפסיקתיות שבהן בתי המשפט מאזנים את הנזקים והאינטרסים כדי לקבוע האם להעניק צו זמני.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "פסקי דין של בית המשפט העליון בנושא 'איזון נזקין' / 'balance of convenience' בצו מניעה זמני; חפש ניסוחים הכוללים 'איזון נוחות', 'איזון נזקין', 'proportionality' בהקשר לצווים זמניים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מחקר אקדמי מסביר את התאוריה מאחורי איזון הנזקין, השיטות השיפוטיות והביקורת על היישום בפסיקה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמרים אקדמיים על עקרון 'איזון נזקין' ו'פרופורציונליות' בצווי מניעה זמניים; חפש במאגרי ספרות משפטית ניתוח השוואתי של קריטריון זה והשפעתו על קבלת הצו",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "יש לאתר פסיקה שקובעת מתי בית המשפט מחייב הצבת ערובה או פיקדון, ולבחון קווים פרוצדורליים אחרים לפני מתן צו זמני.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "פסקי דין של בתי המשפט (בעיקר בית המשפט העליון) העוסקים בדרישות פרוצדורליות ותנאי ביטחון לפני מתן צו מניעה זמני, כולל דרישה לערבות/פיקדון, הסדרי דחיפות וסמכות ביניים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "regulation",
+        "reason": "למציאת כללים פרוצדורליים כתובים ומתן סמכות חוקית להטלת דרישות ביטחון או נוהלי בקשה לצו זמני.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "תקנות סדר הדין או נוהלים רלוונטיים בהקשר לצו מניעה זמני: חפש 'תקנות סדר הדין האזרחי' או 'נוהל בקשה לצו מניעה זמני' הוראות על ערבות/פיקדון, ניסוח בקשה, וסמכויות שיפוטיות",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "scholarship",
+        "reason": "הספרות תספק ניתוח ביקורתי של הדרישות הפרוצדורליות וההיגיון מאחורי הצבת ערובה או מנגנוני יישום אחרים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמרים משפטיים על פרוצדורה ותנאי ביטחון במתן צו מניעה זמני (כגון ערובה ופיקדון), חפש ניתוחים פרקטיים והמלצות ב'כתב־עת משפטי' ובמאגרי מחקר",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 30097,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 28724,
+        "confidence": 0.9,
+        "legal_area": "סדר דין אזרחי",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "claims_count": 4,
+      "queries_count": 9,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 285103,
+    "verifier": {
+      "ms": 24078,
+      "counts": {
+        "by_support": {
+          "direct": 6,
+          "partial": 2,
+          "unrelated": 0,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 5,
+          "false": 3
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": false,
+          "best_support": "direct",
+          "candidate_id": "237fa41f-3c79-4a02-a683-46495ae91c71",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": false,
+          "best_support": "direct",
+          "candidate_id": "09410fc8-d29b-4cc2-98dc-1154d581f2f9",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": false,
+          "best_support": "direct",
+          "candidate_id": "5aa89857-4420-4d03-9099-f1abc5b826e3",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "534f1933-e817-4a23-8fb7-8eac8912e6aa",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "65530ee5-0838-44c3-8150-11e7e05db6f6",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "c356dcc4-b34c-4ee3-a433-27d49c5ee522",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "ca330e15-fedf-47cf-95ad-be3b4be02b58",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "6d8d5fbc-6505-45ce-a0f0-075e8ca71e7c",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 24077,
+          "label": "batch1",
+          "claim_ids": [
+            "C1",
+            "C3",
+            "C4"
+          ],
+          "escalated": false,
+          "candidates": 8
+        }
+      ],
+      "dropped": [],
+      "verdicts": [
+        {
+          "reason": "מאמר אקדמי העוסק ישירות בסטנדרטים למתן סעד זמני ובחובת הצגת סיכוי ממשי להצלחה; מתאים כתמיכה ישירה בטענה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "534f1933-e817-4a23-8fb7-8eac8912e6aa",
+          "supported_points": [
+            "מנתח במפורש את מבחן ה-prima facie / likelihood of success",
+            "מציג את דרישות הסעד הזמני בקונטקסט של הדיון על צווי מניעה",
+            "משווה את מבחן התביעה הסבירה לאלמנטים אחרים (כגון איזון נזקים)"
+          ]
+        },
+        {
+          "reason": "כותרת וסיכום רלוונטיים אך הקישור הוא לדף חיפוש/נחיתה ולא למאמר ישיר; מספק תמיכה תיאורטית אך לא מקור שיפוטי ישיר.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "65530ee5-0838-44c3-8150-11e7e05db6f6",
+          "supported_points": [
+            "נושא המאמר מציין במפורש את דרישת ה-prima facie בהקשר הישראלי",
+            "מהווה מקור רקע אקדמי לדיון על סיכוי ההצלחה כיסוד לסעד זמני"
+          ]
+        },
+        {
+          "reason": "מאמר משפטי ישראלי העוסק באופן ממוקד באיזון נזקים בפרקטיקה של צווי מניעה; תומך ישירות בטענה.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "c356dcc4-b34c-4ee3-a433-27d49c5ee522",
+          "supported_points": [
+            "דן במפורש בשיקולי פרופורציונליות ואיזון נזקים בהקשר למניעה מוקדמת",
+            "מתייחס לאפקט המצנן והשפעת צווי מניעה על חופש הביטוי",
+            "מציע קווים שיפוטיים ליישום איזון הנזקים בעת מתן צו זמני"
+          ]
+        },
+        {
+          "reason": "סקירה משפטית של איזון זכויות ופרופורציונליות רלוונטית ישירות להערכת 'balance of convenience' בצווים זמניים.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "ca330e15-fedf-47cf-95ad-be3b4be02b58",
+          "supported_points": [
+            "מנתח את תורת האיזון בין זכויות וגישת הפרופורציונליות",
+            "מספק מבחני הכרעה רלוונטיים להערכת נטל הפגיעה והצדקת סעד מניעתי"
+          ]
+        },
+        {
+          "reason": "הגישה הכלכלית רלוונטית לתאורטיזציה של איזון הנזקים אך אינה מתמקדת בפסיקה או במבחנים פרוצדורליים של צווי מניעה.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "6d8d5fbc-6505-45ce-a0f0-075e8ca71e7c",
+          "supported_points": [
+            "מספק מסגרת כלכלית לניתוח עלות מול תועלת בהקשר של הרתעה ואיזון נזקים",
+            "יכול לתמוך בניתוח שיפוטי של איזון נזקי הצדדים באופן תיאורטי"
+          ]
+        },
+        {
+          "reason": "מקור המתמקד בדרישות בטוחה וערובה רלוונטיות כشرط לפרקטיקה של מתן צו זמני; תומך ישירות בטענה על דרישות ביטחון ופרוצדורה.",
+          "support": "direct",
+          "claim_id": "C4",
+          "role_match": false,
+          "candidate_id": "237fa41f-3c79-4a02-a683-46495ae91c71",
+          "supported_points": [
+            "עוסק במפורט בערובה, פיקדון ובטוחות בהליכים אזרחיים",
+            "מפרט שיקולים פרוצדורליים שהמערכת שוקלת לפני מתן סעד זמני"
+          ]
+        },
+        {
+          "reason": "מקור פירוטי על תנאי הסעד הזמני והנורמות הפרוצדורליות התומך ישירות בטענה.",
+          "support": "direct",
+          "claim_id": "C4",
+          "role_match": false,
+          "candidate_id": "09410fc8-d29b-4cc2-98dc-1154d581f2f9",
+          "supported_points": [
+            "ספר יסוד בנושא סעדים זמניים עם ניתוח של תנאי מתן צו זמני",
+            "כולל דיון על דרישות ערובה, הפקדה ושיקולים פרוצדורליים"
+          ]
+        },
+        {
+          "reason": "מקור יישומי המתייחס במפורש לתנאים ולבטחונות הנדרשים לפני מתן צו זמני; תומך ישירות בטענה.",
+          "support": "direct",
+          "claim_id": "C4",
+          "role_match": false,
+          "candidate_id": "5aa89857-4420-4d03-9099-f1abc5b826e3",
+          "supported_points": [
+            "מאמר פרקטי העוסק באופן ספציפי בדרישת ערובה והתחייבות עצמית בבקשות לסעד זמני",
+            "מפרט המלצות אופרטיביות לניסוח הבקשה והתמודדות עם סיכוני נזק"
+          ]
+        }
+      ],
+      "model_final": "openai/gpt-5-mini",
+      "per_claim_ms": {
+        "C1": 24077,
+        "C3": 24077,
+        "C4": 24077
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [],
+      "candidates_usable": 8,
+      "candidates_dropped": 0,
+      "candidates_verified": 8
+    },
+    "retrieval": {
+      "ms": 40021,
+      "pool": {
+        "found": 9,
+        "counts": {
+          "by_role": {
+            "scholarship": 5,
+            "primary_statute": 3
+          },
+          "by_claim": {
+            "C1": 2,
+            "C3": 3,
+            "C4": 3
+          },
+          "by_origin": {
+            "perplexity": 8
+          }
+        },
+        "after_dedup": 8,
+        "dedup_drops": 1
+      },
+      "local": {
+        "ms": 40020,
+        "per_query": [
+          {
+            "ms": 40009,
+            "diag": {
+              "text_ms": 20003,
+              "exact_ms": 20003,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 271,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "צו מניעה זמני דין העליון בנושא קריטריון עילת תביעה סבירה",
+            "original_query_he": "פסקי דין של בית המשפט העליון בנושא קריטריון 'עילת תביעה סבירה' / 'סיכוי ממשי להצלחה' (prima facie case / likelihood of success) כבסיס למתן צו מניעה זמני; חפש ניסוחים כגון 'סיכוי ממשי', 'עילת יסוד', 'צו מניעה זמני'"
+          },
+          {
+            "ms": 40007,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20002,
+              "text_status": "timeout",
+              "embedding_ms": 268,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "צו מניעה זמני דין העליון העוסקים בקריטריון נזק בלתי הפיך",
+            "original_query_he": "פסקי דין של בית המשפט העליון העוסקים בקריטריון 'נזק בלתי הפיך' או 'irreparable harm' במתן צו מניעה זמני; חפש ביטויים כמו 'נזק שלא ניתן לתקן', 'נזק בלתי הפיך', 'irreparable'"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 319,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "צו מניעה זמני דין העליון בנושא איזון נזקין balance of",
+            "original_query_he": "פסקי דין של בית המשפט העליון בנושא 'איזון נזקין' / 'balance of convenience' בצו מניעה זמני; חפש ניסוחים הכוללים 'איזון נוחות', 'איזון נזקין', 'proportionality' בהקשר לצווים זמניים"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 265,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "צו מניעה זמני דין בתי בעיקר העליון העוסקים בדרישות פרוצדורליות",
+            "original_query_he": "פסקי דין של בתי המשפט (בעיקר בית המשפט העליון) העוסקים בדרישות פרוצדורליות ותנאי ביטחון לפני מתן צו מניעה זמני, כולל דרישה לערבות/פיקדון, הסדרי דחיפות וסמכות ביניים"
+          },
+          {
+            "ms": 40007,
+            "diag": {
+              "text_ms": 20003,
+              "exact_ms": 20003,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 261,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "empty",
+                  "law_name": "תקנות סדר הדין או נוהלים רלוונטיים בהקשר לצו מניעה זמני: חפש 'תקנות סדר הדין האזרחי' א",
+                  "clue_kind": "regulation",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "title_match_query": "סדר AND הדין AND נוהלים AND רלוונטיים AND בהקשר AND לצו",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 0,
+            "role": "regulation",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "regulation",
+                "source": "planner_query",
+                "law_name": "תקנות סדר הדין או נוהלים רלוונטיים בהקשר לצו מניעה זמני: חפש 'תקנות סדר הדין האזרחי' א",
+                "search_terms": [
+                  "תקנות סדר הדין או נוהלים רלוונטיים בהקשר לצו מניעה זמני: חפש 'תקנות סדר הדין האזרחי' א"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "צו מניעה זמני תקנות סדר הדין נוהלים רלוונטיים בהקשר לצו",
+            "original_query_he": "תקנות סדר הדין או נוהלים רלוונטיים בהקשר לצו מניעה זמני: חפש 'תקנות סדר הדין האזרחי' או 'נוהל בקשה לצו מניעה זמני' הוראות על ערבות/פיקדון, ניסוח בקשה, וסמכויות שיפוטיות"
+          }
+        ],
+        "candidates": 0,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 24142,
+        "dropped": 11,
+        "per_query": [
+          {
+            "ms": 3512,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1675630",
+                "title": "The Standard for Granting Interim Relief: Prima Facie Case and Balance of Convenience",
+                "domain": "papers.ssrn.com",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.jstor.org/",
+                "title": "Temporary Injunctions in Israel: The Prima Facie Case Requirement",
+                "domain": "jstor.org",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://books.google.com/",
+                "title": "Israeli Civil Procedure and Interim Remedies",
+                "domain": "books.google.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.idi.org.il/media/17839/slapps-characteristics-dangers-and-ways-of-contending-with-them.pdf",
+                "title": "תביעות השתקה: מאפיינים, סכנות ודרכי התמודדות",
+                "domain": "idi.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.idi.org.il/media/3434/pp97.pdf",
+                "title": "שוברים אי־שוויון: התמודדות עם אפליית ערבים בשוק העבודה הישראלי",
+                "domain": "idi.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C1",
+            "query_he": "מאמר אקדמי בעברית או באנגלית על הדוקטרינה 'prima facie case' / 'likelihood of success' בצו מניעה זמני; חיפוש ב'כתב־עת משפטי' כמו 'משפטים' או 'Israel Law Review' על הסטנדרטים והניתוח התיאורטי",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 7108,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://papers.ssrn.com/sol3/results.cfm?txtKey_Words=%22irreparable%20harm%22%20Israel%20injunction",
+                "title": "Ex parte Interim Injunctions in Israel: The Requirement of Irreparable Harm and the Balance of Convenience",
+                "domain": "papers.ssrn.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://scholar.google.com/scholar?q=%22%D7%A0%D7%96%D7%A7+%D7%91%D7%9C%D7%AA%D7%99+%D7%94%D7%A4%D7%99%D7%9A%22+%22%D7%A6%D7%95+%D7%9E%D7%A0%D7%99%D7%A2%D7%94+%D7%96%D7%9E%D7%A0%D7%99%22",
+                "title": "Search results for “נזק בלתי הפיך” and “צו מניעה זמני”",
+                "domain": "scholar.google.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://scholar.google.com/scholar?q=%22irreparable+harm%22+Israel+%22interim+injunction%22",
+                "title": "Search results for “irreparable harm” and “interim injunction” Israel law review",
+                "domain": "scholar.google.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://scholar.google.com/scholar?q=%22%D7%A0%D7%96%D7%A7+%D7%91%D7%9C%D7%AA%D7%99+%D7%94%D7%A4%D7%99%D7%9A%22+site%3Aac.il+law+journal",
+                "title": "Search results for “נזק בלתי הפיך” site:hebrewjournals.org or legal journal repositories",
+                "domain": "scholar.google.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://scholar.google.com/scholar?q=%22interim+injunctions%22+Israel+civil+procedure+law+review",
+                "title": "Interim Injunctions in Israeli Civil Procedure",
+                "domain": "scholar.google.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C2",
+            "query_he": "מאמרים וספרות משפטית על ההגדרה והמדידה של 'נזק בלתי הפיך' בצו מניעה זמני בישראל; חפש 'נזק בלתי הפיך' ו'irreparable harm' בכתב־עת משפטי ובמאגר מאמרים אקדמיים",
+            "raw_count": 5,
+            "discovery_only": 5,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5604,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.runi.ac.il/media/heefc4np/bendor-tamir.pdf",
+                "title": "חופש הביטוי בתקשורת המקוונת: בחינה מחדש של תורת המניעה המוקדמת",
+                "domain": "runi.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.huji.ac.il/sites/default/files/law/files/mdynh_vshgb-_svpyt_yntrntyt.pdf",
+                "title": "התנגשות בין זכויות: אפיון-מחדש של מהותו של איזון אופקי",
+                "domain": "law.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.tau.ac.il/law/members/porat-ariel/nezikin6-8-12.pdf",
+                "title": "אריאל פורת, הגישה הכלכלית למשפט – דיני הנזיקין (פרק/הרצאה)",
+                "domain": "tau.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.idi.org.il/media/4476/pp_75.pdf",
+                "title": "השימוש בעקרון המידתיות במשפט הבין־לאומי",
+                "domain": "idi.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.inss.org.il/he/strategic_assessment/fifth-leg/",
+                "title": "מזכר מיוחד: מניעה אסטרטגית כ'רגל חמישית' בתפיסת הביטחון הלאומי של ישראל",
+                "domain": "inss.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C3",
+            "query_he": "מאמרים אקדמיים על עקרון 'איזון נזקין' ו'פרופורציונליות' בצווי מניעה זמניים; חפש במאגרי ספרות משפטית ניתוח השוואתי של קריטריון זה והשפעתו על קבלת הצו",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 7911,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/999_002.htm",
+                "title": "הערובה והבטוחות בהליכים אזרחיים",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/999_027.htm",
+                "title": "סעדים זמניים במשפט האזרחי",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2500000",
+                "title": "Temporary Injunctions in Israeli Civil Procedure",
+                "domain": "papers.ssrn.com",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://scholar.google.com/scholar?q=site%3Ajstor.org+Israel+temporary+injunction+security+undertaking",
+                "title": "Interim Relief and Security Requirements in Civil Litigation",
+                "domain": "scholar.google.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/999_193.htm",
+                "title": "בקשה לסעד זמני: ערובה, התחייבות עצמית ושיקול דעת שיפוטי",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C4",
+            "query_he": "מאמרים משפטיים על פרוצדורה ותנאי ביטחון במתן צו מניעה זמני (כגון ערובה ופיקדון), חפש ניתוחים פרקטיים והמלצות ב'כתב־עת משפטי' ובמאגרי מחקר",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 9,
+        "role_corrections": [
+          {
+            "to": "primary_statute",
+            "url": "https://www.nevo.co.il/law_html/law01/999_002.htm",
+            "from": "scholarship",
+            "title": "הערובה והבטוחות בהליכים אזרחיים",
+            "admitted": true,
+            "claim_id": "C4"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://www.nevo.co.il/law_html/law01/999_027.htm",
+            "from": "scholarship",
+            "title": "סעדים זמניים במשפט האזרחי",
+            "admitted": true,
+            "claim_id": "C4"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://www.nevo.co.il/law_html/law01/999_193.htm",
+            "from": "scholarship",
+            "title": "בקשה לסעד זמני: ערובה, התחייבות עצמית ושיקול דעת שיפוטי",
+            "admitted": true,
+            "claim_id": "C4"
+          }
+        ]
+      }
+    },
+    "candidates": [
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "הערובה והבטוחות בהליכים אזרחיים",
+        "origin": "perplexity",
+        "snippet": "מאת ד\"ר דוד שורץ. פרק העוסק בערובה, פיקדון ובטוחות בהליכים אזרחיים, כולל היבטים פרוצדורליים ומעשיים הרלוונטיים גם לבקשות לסעדים זמניים, ובפרט לשיקולי בית המשפט בהטלת בטוחות כתנאי למתן סעד זמני.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "role_corrected_from": "scholarship",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "מאמרים משפטיים על פרוצדורה ותנאי ביטחון במתן צו מניעה זמני (כגון ערובה ופיקדון), חפש ניתוחים פרקטיים והמלצות ב'כתב־עת משפטי' ובמאגרי מחקר",
+        "source_url": "https://www.nevo.co.il/law_html/law01/999_002.htm",
+        "source_type": "ספר/פרק אקדמי",
+        "candidate_id": "237fa41f-3c79-4a02-a683-46495ae91c71",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "סעדים זמניים במשפט האזרחי",
+        "origin": "perplexity",
+        "snippet": "מאת ד\"ר יששכר רוזן־צבי. ספר יסוד על סדרי דין וסעדים זמניים, עם ניתוח של תנאים למתן סעד זמני, איזון נזקים, ושאלות של ערובה והפקדה במתן צו מניעה זמני.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "role_corrected_from": "scholarship",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "מאמרים משפטיים על פרוצדורה ותנאי ביטחון במתן צו מניעה זמני (כגון ערובה ופיקדון), חפש ניתוחים פרקטיים והמלצות ב'כתב־עת משפטי' ובמאגרי מחקר",
+        "source_url": "https://www.nevo.co.il/law_html/law01/999_027.htm",
+        "source_type": "ספר משפטי",
+        "candidate_id": "09410fc8-d29b-4cc2-98dc-1154d581f2f9",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "בקשה לסעד זמני: ערובה, התחייבות עצמית ושיקול דעת שיפוטי",
+        "origin": "perplexity",
+        "snippet": "מאמר פרקטי בכתב־עת/מאגר משפטי העוסק בתנאים למתן סעד זמני, לרבות דרישת ערובה והתחייבות עצמית, והמלצות אופרטיביות לניסוח הבקשה ולהתמודדות עם סיכוני נזק.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "role_corrected_from": "scholarship",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "מאמרים משפטיים על פרוצדורה ותנאי ביטחון במתן צו מניעה זמני (כגון ערובה ופיקדון), חפש ניתוחים פרקטיים והמלצות ב'כתב־עת משפטי' ובמאגרי מחקר",
+        "source_url": "https://www.nevo.co.il/law_html/law01/999_193.htm",
+        "source_type": "מאמר משפטי",
+        "candidate_id": "5aa89857-4420-4d03-9099-f1abc5b826e3",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "The Standard for Granting Interim Relief: Prima Facie Case and Balance of Convenience",
+        "origin": "perplexity",
+        "snippet": "An academic discussion of interim injunction standards, including prima facie case / likelihood of success and balance of convenience.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "papers.ssrn.com",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר אקדמי בעברית או באנגלית על הדוקטרינה 'prima facie case' / 'likelihood of success' בצו מניעה זמני; חיפוש ב'כתב־עת משפטי' כמו 'משפטים' או 'Israel Law Review' על הסטנדרטים והניתוח התיאורטי",
+        "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1675630",
+        "source_type": "academic article",
+        "candidate_id": "534f1933-e817-4a23-8fb7-8eac8912e6aa",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "Temporary Injunctions in Israel: The Prima Facie Case Requirement",
+        "origin": "perplexity",
+        "snippet": "Relevant Israel-focused legal scholarship on temporary injunction standards; JSTOR search landing page only, not a direct article URL.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "jstor.org",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר אקדמי בעברית או באנגלית על הדוקטרינה 'prima facie case' / 'likelihood of success' בצו מניעה זמני; חיפוש ב'כתב־עת משפטי' כמו 'משפטים' או 'Israel Law Review' על הסטנדרטים והניתוח התיאורטי",
+        "source_url": "https://www.jstor.org/",
+        "source_type": "academic article",
+        "candidate_id": "65530ee5-0838-44c3-8150-11e7e05db6f6",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "חופש הביטוי בתקשורת המקוונת: בחינה מחדש של תורת המניעה המוקדמת",
+        "origin": "perplexity",
+        "snippet": "אריאל בנדור ומיכל טמיר, משפט ועסקים כו (2022), 273–323. עוסק במניעה מוקדמת, כולל הסבר על האפקט המצנן, שיקולי פרופורציונליות/איזון נזקים, והצעה לגישה שיפוטית למתן צווים זמניים.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "runi.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמרים אקדמיים על עקרון 'איזון נזקין' ו'פרופורציונליות' בצווי מניעה זמניים; חפש במאגרי ספרות משפטית ניתוח השוואתי של קריטריון זה והשפעתו על קבלת הצו",
+        "source_url": "https://www.runi.ac.il/media/heefc4np/bendor-tamir.pdf",
+        "source_type": "מאמר אקדמי (כתב עת משפטי)",
+        "candidate_id": "c356dcc4-b34c-4ee3-a433-27d49c5ee522",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "התנגשות בין זכויות: אפיון-מחדש של מהותו של איזון אופקי",
+        "origin": "perplexity",
+        "snippet": "עוסק בתורת האיזון בין זכויות ובמבחני ההכרעה כאשר יש פגיעה בזכות חוקתית. רלוונטי במיוחד לניתוח פרופורציונליות והצדקה למתן סעד מניעתי כאשר יש התנגשות בין זכויות.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "law.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמרים אקדמיים על עקרון 'איזון נזקין' ו'פרופורציונליות' בצווי מניעה זמניים; חפש במאגרי ספרות משפטית ניתוח השוואתי של קריטריון זה והשפעתו על קבלת הצו",
+        "source_url": "https://law.huji.ac.il/sites/default/files/law/files/mdynh_vshgb-_svpyt_yntrntyt.pdf",
+        "source_type": "מאמר אקדמי (קובץ מאמר/כתב עת משפטי)",
+        "candidate_id": "ca330e15-fedf-47cf-95ad-be3b4be02b58",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "אריאל פורת, הגישה הכלכלית למשפט – דיני הנזיקין (פרק/הרצאה)",
+        "origin": "perplexity",
+        "snippet": "אריאל פורת, פרק על דיני הנזיקין. מסביר הרתעה אופטימלית, עלות מניעה ותועלת, ומציע מסגרת כלכלית שמתחברת ל'איזון נזקים' ופרופורציונליות בשיקולי מניעה.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "tau.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמרים אקדמיים על עקרון 'איזון נזקין' ו'פרופורציונליות' בצווי מניעה זמניים; חפש במאגרי ספרות משפטית ניתוח השוואתי של קריטריון זה והשפעתו על קבלת הצו",
+        "source_url": "https://www.tau.ac.il/law/members/porat-ariel/nezikin6-8-12.pdf",
+        "source_type": "פרק/חומר אקדמי",
+        "candidate_id": "6d8d5fbc-6505-45ce-a0f0-075e8ca71e7c",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 28724,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 30097,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 40020,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 24142,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 24077,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial"
+      },
+      {
+        "ms": 21398,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      },
+      {
+        "ms": 140676,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "drafter.placement_repair"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://books.google.com/",
+        "role": "scholarship",
+        "title": "Israeli Civil Procedure and Interim Remedies",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי בעברית או באנגלית על הדוקטרינה 'prima facie case' / 'likelihood of success' בצו מניעה זמני; חיפוש ב'כתב־עת משפטי' כמו 'משפטים' או 'Israel Law Review' על הסטנדרטים והניתוח התיאורטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.idi.org.il/media/17839/slapps-characteristics-dangers-and-ways-of-contending-with-them.pdf",
+        "role": "scholarship",
+        "title": "תביעות השתקה: מאפיינים, סכנות ודרכי התמודדות",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי בעברית או באנגלית על הדוקטרינה 'prima facie case' / 'likelihood of success' בצו מניעה זמני; חיפוש ב'כתב־עת משפטי' כמו 'משפטים' או 'Israel Law Review' על הסטנדרטים והניתוח התיאורטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.idi.org.il/media/3434/pp97.pdf",
+        "role": "scholarship",
+        "title": "שוברים אי־שוויון: התמודדות עם אפליית ערבים בשוק העבודה הישראלי",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי בעברית או באנגלית על הדוקטרינה 'prima facie case' / 'likelihood of success' בצו מניעה זמני; חיפוש ב'כתב־עת משפטי' כמו 'משפטים' או 'Israel Law Review' על הסטנדרטים והניתוח התיאורטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/results.cfm?txtKey_Words=%22irreparable%20harm%22%20Israel%20injunction",
+        "role": "scholarship",
+        "title": "Ex parte Interim Injunctions in Israel: The Requirement of Irreparable Harm and the Balance of Convenience",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמרים וספרות משפטית על ההגדרה והמדידה של 'נזק בלתי הפיך' בצו מניעה זמני בישראל; חפש 'נזק בלתי הפיך' ו'irreparable harm' בכתב־עת משפטי ובמאגר מאמרים אקדמיים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://scholar.google.com/scholar?q=%22%D7%A0%D7%96%D7%A7+%D7%91%D7%9C%D7%AA%D7%99+%D7%94%D7%A4%D7%99%D7%9A%22+%22%D7%A6%D7%95+%D7%9E%D7%A0%D7%99%D7%A2%D7%94+%D7%96%D7%9E%D7%A0%D7%99%22",
+        "role": "scholarship",
+        "title": "Search results for “נזק בלתי הפיך” and “צו מניעה זמני”",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמרים וספרות משפטית על ההגדרה והמדידה של 'נזק בלתי הפיך' בצו מניעה זמני בישראל; חפש 'נזק בלתי הפיך' ו'irreparable harm' בכתב־עת משפטי ובמאגר מאמרים אקדמיים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://scholar.google.com/scholar?q=%22irreparable+harm%22+Israel+%22interim+injunction%22",
+        "role": "scholarship",
+        "title": "Search results for “irreparable harm” and “interim injunction” Israel law review",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמרים וספרות משפטית על ההגדרה והמדידה של 'נזק בלתי הפיך' בצו מניעה זמני בישראל; חפש 'נזק בלתי הפיך' ו'irreparable harm' בכתב־עת משפטי ובמאגר מאמרים אקדמיים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://scholar.google.com/scholar?q=%22%D7%A0%D7%96%D7%A7+%D7%91%D7%9C%D7%AA%D7%99+%D7%94%D7%A4%D7%99%D7%9A%22+site%3Aac.il+law+journal",
+        "role": "scholarship",
+        "title": "Search results for “נזק בלתי הפיך” site:hebrewjournals.org or legal journal repositories",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמרים וספרות משפטית על ההגדרה והמדידה של 'נזק בלתי הפיך' בצו מניעה זמני בישראל; חפש 'נזק בלתי הפיך' ו'irreparable harm' בכתב־עת משפטי ובמאגר מאמרים אקדמיים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://scholar.google.com/scholar?q=%22interim+injunctions%22+Israel+civil+procedure+law+review",
+        "role": "scholarship",
+        "title": "Interim Injunctions in Israeli Civil Procedure",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמרים וספרות משפטית על ההגדרה והמדידה של 'נזק בלתי הפיך' בצו מניעה זמני בישראל; חפש 'נזק בלתי הפיך' ו'irreparable harm' בכתב־עת משפטי ובמאגר מאמרים אקדמיים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.idi.org.il/media/4476/pp_75.pdf",
+        "role": "scholarship",
+        "title": "השימוש בעקרון המידתיות במשפט הבין־לאומי",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמרים אקדמיים על עקרון 'איזון נזקין' ו'פרופורציונליות' בצווי מניעה זמניים; חפש במאגרי ספרות משפטית ניתוח השוואתי של קריטריון זה והשפעתו על קבלת הצו",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.inss.org.il/he/strategic_assessment/fifth-leg/",
+        "role": "scholarship",
+        "title": "מזכר מיוחד: מניעה אסטרטגית כ'רגל חמישית' בתפיסת הביטחון הלאומי של ישראל",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמרים אקדמיים על עקרון 'איזון נזקין' ו'פרופורציונליות' בצווי מניעה זמניים; חפש במאגרי ספרות משפטית ניתוח השוואתי של קריטריון זה והשפעתו על קבלת הצו",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://scholar.google.com/scholar?q=site%3Ajstor.org+Israel+temporary+injunction+security+undertaking",
+        "role": "scholarship",
+        "title": "Interim Relief and Security Requirements in Civil Litigation",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמרים משפטיים על פרוצדורה ותנאי ביטחון במתן צו מניעה זמני (כגון ערובה ופיקדון), חפש ניתוחים פרקטיים והמלצות ב'כתב־עת משפטי' ובמאגרי מחקר",
+        "drop_reason": "discovery_only"
+      }
+    ]
+  }
+}
