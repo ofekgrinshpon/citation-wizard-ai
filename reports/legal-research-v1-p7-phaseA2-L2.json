@@ -1,0 +1,1016 @@
+{
+  "generated_at": "2026-05-25T06:32:49.987Z",
+  "fixture": {
+    "id": "L2",
+    "question": "מהי דוקטרינת ההבטחה המנהלית?"
+  },
+  "qa_log_id": "ee270b6d-c123-4dce-9d66-5182c33c6c27",
+  "run_id": "cc8f84ad-38a9-4992-8575-85d7f22b0793",
+  "phaseA": {
+    "fixture_id": "L2",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "cluster_count": 0,
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 0,
+    "placement_ok": true,
+    "placement_repaired": true,
+    "placement_repair_failed": false,
+    "superscript_parens_count": 0,
+    "used_sources_count": 3,
+    "used_sources_subset_of_usable": true,
+    "footnote_count": 3
+  },
+  "answer": "הקדמה — הגדרה ומהותה\n\n**דוקטרינת ההבטחה המנהלית** עוסקת בהכרה בנסיבות שבהן התנהגות, הבהרה או התחייבות של רשות מנהלית יוצרת ליחיד או לציבור ציפייה סבירה לכך שהרשות תפעל בדרך מסוימת, וכי ציפייה זו תזכה להגנה משפטית משטרית מפני שינוי בלתי הוגן מצד הרשות.¹ ההדגש בדוקטרינה אינו על מקור זכות קנייני מפורש, אלא על מנגנון של **הגנה מפני חוסר צדק** הנובע מהסתמכות לגיטימית על אמירה או מעשה של הרשות.²\n\nהיקף ההגדרה ותכליתה מוכרים בספרות המשפטית בישראל כרלוונטיים הן ביחסי היחיד–רשות והן ביחסי הציבור–רשות¹: הדוקטרינה חותרת לצמצם את העיוות שנוצר כאשר רשות מובילה הסתמכות סבירה ומשנה מדיניות או לא ממלאת את הבטחתה, תוך שמירה על שיקול הדעת המינהלי והאינטרס הציבורי.³\n\nיסודות והמרכיבים הנדרשים\n\nא. הצגה או התחייבות מצד הרשות\n\nיסוד ראשון הוא **הצהרה/התנהגות של הרשות**¹ שהניבה ציפייה אצל המסתמך — בין אם הבטחה ישירה ובין אם מדיניות עקיפה או הנחיה כלפי הציבור². ההצגה צריכה להיות ברורה דיין במובנים מעשיים כדי להצדיק הסתמכות; עם זאת גם דפוסי התנהגות עקיף עשויים להספיק בנסיבות מסוימות.¹\n\nב. הסתמכות סבירה\n\nיסוד מרכזי הוא **הסתמכות סבירה** מצד המסתמך על ההבטחה, שנבחנת אובייקטיבית: האם אדם סביר תחת הנסיבות היה סומך על אמירת הרשות². בבחינת הסבירות נלקחים בחשבון טיב ההצהרה, מעמדה של הרשות¹, והאם נעשתה הבהרה מפורשת באשר לתקפותה או להיקף התקשרותה.³\n\nג. נזק או עוול כתוצאה מהסתמכות\n\nעל המסתמך להראות כי הסתמכותו הביאה ל**חוסר צדק או לנזק** ממשי — הפסד ממשי, שינוי מעמד או פגיעה בהשקעה שנעשו בהתבסס על ההבטחה.² במקרים שבהם אכיפת ההבטחה היא בלתי אפשרית¹, נדרש להראות כי אי-הגנה יוצר עיוות בלתי מושכל.²\n\nד. סבירות ואיזון מול האינטרס הציבורי\n\nההטלה של חובת ההבטחה אינה אוטומטית גם אם מתקיימים שלושת היסודות; בית המשפט מבצע **איזון שיפוטי**¹ בין ההגנה על ההסתמכות לבין שיקול הדעת המינהלי והאינטרס הציבורי הרחב.³\n\nמבחן היישום המעשי\n\nבפועל בוחנים הערכאה השופטת את המכלול: בהצגת ההבטחה נבדקת נפח הבטחה והאם היא ניתנה על ידי גורם מוסמך¹; בהסתמכות נבדקת האובייקטיביות והסיבתיות בין ההבטחה לנזק²; ובהערכת הסעד נשקול מידת הפגיעה באינטרס הציבורי ובשיקול הדעת של הרשות were השינוי המדיניות נחוץ או סביר³.\n\nהסעדין האפשריים וההשפעה המשפטית\n\nהדוקטרינה מאפשרת מגוון סעדין, בהיקף ותלות בנסיבות: בתי המשפט יכולים להורות על **המשכה של ההבטחה באמצעות צו מניעה או צו ביצוע**², לדרוש מהרשות לקיים התחייבות שהציגה או להתאים את המעשה המנהלי למערכת הציפיות שנוצרה; במקרים אחרים יינתנו **סעדים תיקוניים** כאמצעי ליישום ההגנה.¹\n\nבנוסף, במקרים שבהם אכיפת ההבטחה המעשית אינה אפשרית או לא מספיקה לתקן את העוול, נדון פיצוי כספי² כפתרון חלופי, כדי לספק תיקון לנזק שנגרם מהסתמכות.³\n\nחשוב להבהיר: ההבטחה המינהלית אינה בדרך כלל יוצרת אוטומטית **זכות קניינית מוחלטת**¹ בשטח. ההגנה המינתחת עלולה לעגן זכויות מעשיות או לשנות את שיקול הדעת המנהלי באופן שיביא לחיוב הרשות לפעול על פי ההתחייבות, אך תמיד במסגרת האיזון בין הגנת הסתמכות לשיקולי הציבור ושיקול הדעת של הרשות.³\n\nמגבלות, חריגים ומאזן האינטרסים\n\nא. אינטרס ציבורי חזק ושינוי מדיניות\n\nכאשר עומד להיפגע אינטרס ציבורי מהותי, או כאשר שינוי מדיניות מהותי נדרש לטובת ציבור רחב¹, רשאית הרשות לשנות עמדות הקודמות — והאכיפה של הבטחה מנהלית תפוסה לשקלול זה; בית המשפט משתמש בכלי האיזון כדי לקבוע אם שינוי זה מוצדק ביחס לפגיעה בהסתמכות.²\n\nב. חוסר סמכות של המבטיח וטעות בשיקול דעת\n\nהבטחות שניתנו על ידי גורם חסר סמכות¹ לא ייצרו בדרך כלל חובת הבטחה כלפי הציבור; כמו כן, כאשר ההחלטה המקורית נבעה מטעות בשיקול דעת או מפרקטיקה בלתי ראויה, ייבחן שוב המעמד של ההבטחה לאור המציאות הניהולית והמשפטית.²\n\nג. מגבלות תקציביות וארגוניות\n\nשיקולים מעשיים כגון עומס תקציבי או מנגנוני ביצוע עשויים להצדיק חריגה מההבטחה, ולצמצם את תחולת האכיפה השיפוטית¹ כאשר האכיפה המלאה תגרום פגיעה בלתי פרופורציונלית בתכלית הציבורית.³\n\nסיכום\n\nדוקטרינת ההבטחה המנהלית במדינת ישראל היא מנגנון דוקטרינרי המיועד להגן על הסתמכות סבירה שנוצרה עקב אמירה או התנהגות של רשות¹, ולמנוע חוסר צדק כאשר רשות משנה עמדתה באופן פתאומי או בלתי סביר; היא בנויה על יסודות של הצגה/התחייבות מצד הרשות, הסתמכות סבירה ונזק/עוול כתוצאה מהסתמכות², וכל יישומה כפוף לאיזון בין ההגנה על הפרט לבין שיקולי הציבור ושיקול הדעת המנהלי.³",
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+      "title": "הבטחה מינהלית",
+      "number": 1,
+      "source_type": "article"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+      "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+      "number": 2,
+      "source_type": "article"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+      "title": "הבטחה מינהלית לציבור",
+      "number": 3,
+      "source_type": "article"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "הדוקטרינה היא יצירה שיפוטית; יש להסתמך בעיקר על פסיקה מחייבת של בתי המשפט ועל ספרות מקצועית שמסבירה את ההגדרה וההיקף, וכן על פסיקה משכנעת להשלמות והבהרות.",
+        "text_he": "מהי דוקטרינת ההבטחה המנהלית — הגדרת הדוקטרינה והיקפה: האם מדובר בכללי שוויון וציפייה שנוצרו על ידי התנהגות / הצהרה של רשות מנהלית, ומהם היסודות התאורטיים והמשפטיים שלה בישראל.",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship",
+          "persuasive_case_law"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "שאלת מרכיבי הדוקטרינה היא דוקטרינלית וחייבת תמיכה בפסיקה מחייבת וספרות להבהרת הקריטריונים ולנורמות היישום.",
+        "text_he": "מהם היסודות והמרכיבים הנדרשים להטלת חובת ההבטחה המנהלית (למשל הצגה/הבטחה מצד הרשות, הסתמכות סבירה, נזק/חוסר צדק כתוצאה מהסתמכות): ניסוח תנאים מדויקים וכיצד בוחנים כל מרכיב בפועל.",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship",
+          "persuasive_case_law"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "השפעת הדוקטרינה והסעדים הניתנים נידונים בפסיקה; דרוש מקור מחייב לסיווג הסעד והגבלותיו, וספרות לניתוח ההיקף וההגבלות המעשיות.",
+        "text_he": "מהו ההשפעה המשפטית של ההבטחה המנהלית — אילו סעדין יכול בית המשפט להעניק (מניעה של פעולה מנהלית, נקיטת סעד תיקוני, פיצוי), והאם ההבטחה יכולה לעגן זכויות קנייניות או לשנות שיקול דעת מנהלי.",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship",
+          "persuasive_case_law"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הגבלות וחילופי אינטרסים הם נושא אשר הפסיקה מפרשת; יש להביא פסיקה מחייבת וספרות להראות את קווי ההבחנה והקריטריונים לשקלול.",
+        "text_he": "מגבלות וחריגים: מתי דוקטרינת ההבטחה לא תחול (אינטרס ציבורי חזק, שינוי מדיניות סביר, חוסר סמכות של המבטיח, טעות בשיקול דעת, עומס תקציבי וכו'), ואיך מאזנים בין ההגנה על הסתמכות לבין האינטרס הציבורי.",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship",
+          "persuasive_case_law"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "cc8f84ad-38a9-4992-8575-85d7f22b0793",
+    "drafter": {
+      "ms": 123283,
+      "ok": true,
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 3,
+      "used_sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+          "title": "הבטחה מינהלית",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "article",
+          "candidate_id": "53b69842-18da-41a4-b30a-cbcd909083bc"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+          "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "article",
+          "candidate_id": "0d875243-ca3f-4de3-95d9-599c4de2ec4c"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+          "title": "הבטחה מינהלית לציבור",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "article",
+          "candidate_id": "82e8ae96-f33d-4a22-95de-8763aa141504"
+        }
+      ],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 3,
+      "sources_passed": 3,
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "placement": {
+          "ok": true,
+          "repaired": true,
+          "cluster_count": 0,
+          "cluster_samples": [],
+          "end_dump_samples": [],
+          "out_of_order_count": 0,
+          "end_paragraph_dump_count": 0,
+          "superscript_parens_count": 0
+        },
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3
+        ]
+      },
+      "omitted_candidate_ids": []
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי דין עליונים מעוגנים שמגדירים את דוקטרינת ההבטחה המנהלית ואת היקפה כעיקרון משפטי בישראל.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "פסקי דין בית המשפט העליון דוקטרינת ההבטחה המנהלית הגדרת הדוקטרינה היקפה 'הבטחה מנהלית' 'הסתמכות' 'שוויון' החלטה עקרונית",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לניתוח תאורטי-היסטורי ואקדמי של המושג, יסודותיו ותאוריות משפטיות התומכות בו.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר דוקטרינת ההבטחה המנהלית בישראל הגדרת הדוקטרינה היקף תיאוריה משפטית 'הבטחה מנהלית' 'הסתמכות סבירה' כתב-עת משפטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "למצוא פסיקה משכנעת מערכאות נמוכות שמסבירה את היקף הדוקטרינה ומספקת דוגמאות יישומיות.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "פסקי דין מחוזיים שלום 'הבטחה מנהלית' 'דוקטרינת ההבטחה' הגדרת הדוקטרינה היקפה הסתמכות החלטות בין-ערכאיות",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי דין עליונים שקבעו את מרכיבי הדוקטרינה וניסחו את התנאים המשפטיים להטלת חובת הבטחה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון תנאים להטלת חובת הבטחה מנהלית 'הצגה הבטחה' 'הסתמכות סבירה' 'נזק' פסק דין מגדיר תנאים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לניתוח אקדמי של ניסוח התנאים, קריטריונים עמיתים ושיטות בדיקה של כל מרכיב בפועל.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר תנאים להטלת חובת ההבטחה המנהלית הצגה הבטחה הסתמכות סבירה נזק איך בוחנים מרכיבים 'מאמר משפטי' ישראל",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "למצוא פסיקה מערכאות קמא שמיישמת את הקריטריונים ובוחנת כל מרכיב בנסיבות מעשיות.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "פסקי דין מחוזיים 'הצגה הבטחה' 'הסתמכות סבירה' 'נזק כתוצאה מהסתמכות' הבהרת מרכיבים פרקטיים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לזהות פסקי דין עליונים שקבעו אילו סעדין ניתנים בגין הפרת הבטחה מנהלית וכיצד הם מיושמים.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון סעדי הבטחה מנהלית 'מניעה של פעולה מנהלית' 'סעד תיקוני' 'פיצויים' פסק דין קביעת סעד",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לעיון בדיון אקדמי על טווח הסעדין, יכולת עיגון זכויות קנייניות והשפעה על שיקול דעת מנהלי.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר השלכות משפטיות של הבטחה מנהלית סעד פיצוי זכויות קניין שינוי שיקול דעת ניתוח משפטי 'מאמר' ישראל",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "למצוא מקרים ערכאתיים שמורטים סעד מחוץ להלכה העליונה או מספקים פתרונות מעשיים שונים.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "פסקי דין מחוזיים הבטחה מנהלית סעד פיצוי 'זכות קניין' 'שינוי שיקול דעת' דוגמאות פרקטיות להענקת סעד",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לזהות פסקי דין עליונים המגדירים חריגים ומאזנים בין הגנת ההסתמכות לאינטרס הציבורי.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון מגבלות דוקטרינת ההבטחה המנהלית 'אינטרס ציבורי' 'שינוי מדיניות' 'חוסר סמכות' פסק דין חריגים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לסקירת הטיעונים האקדמיים סביב חריגים, קריטריוני איזון והנימוקים להסרת ההגנה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר מגבלות דוקטרינת ההבטחה המנהלית אינטרס ציבורי שינוי מדיניות חוסר סמכות עומס תקציבי איזון בין הסתמכות לאינטרס הציבורי 'מאמר משפטי'",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "למצוא פסיקה מעשית שבה נדחתה חובת ההבטחה בשל שיקולים ציבוריים או תקציביים כהמחשה לחריגים.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "פסקי דין מחוזיים מגבלות הבטחה מנהלית 'אינטרס ציבורי' 'שינוי מדיניות' 'עומס תקציבי' מקרים בהם דחו טענת הבטחה",
+        "expected_source_type": "case"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 22622,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 21234,
+        "confidence": 0.9,
+        "legal_area": "משפט מנהלי",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "claims_count": 4,
+      "queries_count": 12,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 216114,
+    "verifier": {
+      "ms": 8890,
+      "counts": {
+        "by_support": {
+          "direct": 3,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 3,
+          "false": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "53b69842-18da-41a4-b30a-cbcd909083bc",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "0d875243-ca3f-4de3-95d9-599c4de2ec4c",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "82e8ae96-f33d-4a22-95de-8763aa141504",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 8890,
+          "label": "batch1",
+          "claim_ids": [
+            "C1"
+          ],
+          "escalated": false,
+          "candidates": 3
+        }
+      ],
+      "dropped": [],
+      "verdicts": [
+        {
+          "reason": "מאמר אקדמי שעוסק במפורש בהגדרה, היקף ותנאים של ההבטחה המינהלית ולכן תומך ישירות בטענה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "53b69842-18da-41a4-b30a-cbcd909083bc",
+          "supported_points": [
+            "מגדיר את דוקטרינת ההבטחה המינהלית ודן בהיקפה",
+            "מפרט את תנאי ההסתמכות ואת האיזון מול שיקול הדעת המנהלי",
+            "מספק רקע תיאורטי ומשפטי הרלוונטי לישראל"
+          ]
+        },
+        {
+          "reason": "מאמר אקדמי המוקדש להתפתחות ולמעמדה של ההבטחה המינהלית ולכן מהווה תמיכה ישירה לשאלה על הגדרה והיסודות.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "0d875243-ca3f-4de3-95d9-599c4de2ec4c",
+          "supported_points": [
+            "דן בהתפתחות הדוקטרינה ומעמדה הדוקטרינרי בישראל",
+            "מתאר את תנאי ההסתמכות והאכיפה כלפי הרשות",
+            "עוסק בהיבטים משפטיים ותיאורטיים של ההבטחה המינהלית"
+          ]
+        },
+        {
+          "reason": "מאמר אקדמי שבו הנושא המרכזי הוא ההבטחה המינהלית כלפי הציבור, ולכן תומך ישירות בהגדרה ובהסבר היסודות המשפטיים.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "82e8ae96-f33d-4a22-95de-8763aa141504",
+          "supported_points": [
+            "בחינה של התפתחות הדין בישראל ומעמדה של ההבטחה המינהלית כלפי הציבור",
+            "דן בהסתמכות סבירה ובהיקף חובת הרשות",
+            "מספק ניתוח תיאורטי ומשפטי הרלוונטי להגדרת הדוקטרינה"
+          ]
+        }
+      ],
+      "model_final": "openai/gpt-5-mini",
+      "per_claim_ms": {
+        "C1": 8890
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [],
+      "candidates_usable": 3,
+      "candidates_dropped": 0,
+      "candidates_verified": 3
+    },
+    "retrieval": {
+      "ms": 40011,
+      "pool": {
+        "found": 12,
+        "counts": {
+          "by_role": {
+            "scholarship": 3
+          },
+          "by_claim": {
+            "C1": 3
+          },
+          "by_origin": {
+            "perplexity": 3
+          }
+        },
+        "after_dedup": 3,
+        "dedup_drops": 9
+      },
+      "local": {
+        "ms": 40010,
+        "per_query": [
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 174,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית חוסר סמכות שיקול דעת דין העליון דוקטרינת ההבטחה המנהלית",
+            "original_query_he": "פסקי דין בית המשפט העליון דוקטרינת ההבטחה המנהלית הגדרת הדוקטרינה היקפה 'הבטחה מנהלית' 'הסתמכות' 'שוויון' החלטה עקרונית"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 190,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "persuasive_case_law",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית חוסר סמכות שיקול דעת דין מחוזיים שלום דוקטרינת ההבטחה",
+            "original_query_he": "פסקי דין מחוזיים שלום 'הבטחה מנהלית' 'דוקטרינת ההבטחה' הגדרת הדוקטרינה היקפה הסתמכות החלטות בין-ערכאיות"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 205,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית חוסר סמכות שיקול דעת העליון להטלת חובת הצגה הסתמכות",
+            "original_query_he": "בית המשפט העליון תנאים להטלת חובת הבטחה מנהלית 'הצגה הבטחה' 'הסתמכות סבירה' 'נזק' פסק דין מגדיר תנאים"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 312,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "persuasive_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "חוסר סמכות שיקול דעת דין מחוזיים הצגה הבטחה הסתמכות סבירה",
+            "original_query_he": "פסקי דין מחוזיים 'הצגה הבטחה' 'הסתמכות סבירה' 'נזק כתוצאה מהסתמכות' הבהרת מרכיבים פרקטיים"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 202,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית חוסר סמכות שיקול דעת העליון סעדי מניעה פעולה סעד",
+            "original_query_he": "בית המשפט העליון סעדי הבטחה מנהלית 'מניעה של פעולה מנהלית' 'סעד תיקוני' 'פיצויים' פסק דין קביעת סעד"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20003,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 229,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "persuasive_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית חוסר סמכות שיקול דעת דין מחוזיים סעד פיצוי זכות",
+            "original_query_he": "פסקי דין מחוזיים הבטחה מנהלית סעד פיצוי 'זכות קניין' 'שינוי שיקול דעת' דוגמאות פרקטיות להענקת סעד"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 230,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "חוסר סמכות שיקול דעת העליון מגבלות דוקטרינת ההבטחה המנהלית אינטרס",
+            "original_query_he": "בית המשפט העליון מגבלות דוקטרינת ההבטחה המנהלית 'אינטרס ציבורי' 'שינוי מדיניות' 'חוסר סמכות' פסק דין חריגים"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20003,
+              "exact_ms": 20003,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 176,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "persuasive_case_law",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית חוסר סמכות שיקול דעת דין מחוזיים מגבלות אינטרס ציבורי",
+            "original_query_he": "פסקי דין מחוזיים מגבלות הבטחה מנהלית 'אינטרס ציבורי' 'שינוי מדיניות' 'עומס תקציבי' מקרים בהם דחו טענת הבטחה"
+          }
+        ],
+        "candidates": 0,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 19881,
+        "dropped": 5,
+        "per_query": [
+          {
+            "ms": 3504,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+                "title": "הבטחה מינהלית לציבור",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C1",
+            "query_he": "מאמר דוקטרינת ההבטחה המנהלית בישראל הגדרת הדוקטרינה היקף תיאוריה משפטית 'הבטחה מנהלית' 'הסתמכות סבירה' כתב-עת משפטי",
+            "raw_count": 3,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4926,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.dinrega.com/gs/%D7%90%D7%9B%D7%99%D7%A4%D7%AA%20%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA:%20%D7%90%D7%9B%D7%99%D7%A4%D7%AA%20%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%A9%D7%A0%D7%99%D7%AA%D7%A0%D7%94%20%D7%A2%D7%9C%20%D7%99%D7%93%D7%99%20%D7%A8%D7%A9%D7%95%D7%AA%20%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA",
+                "title": "אכיפת הבטחה שניתנה על ידי רשות מנהלית",
+                "domain": "dinrega.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://weller-law-office.com/%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%A9%D7%9C%D7%98%D7%95%D7%A0%D7%99%D7%AA/",
+                "title": "הבטחה שלטונית | הבטחה מינהלית",
+                "domain": "weller-law-office.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C2",
+            "query_he": "מאמר תנאים להטלת חובת ההבטחה המנהלית הצגה הבטחה הסתמכות סבירה נזק איך בוחנים מרכיבים 'מאמר משפטי' ישראל",
+            "raw_count": 4,
+            "discovery_only": 2,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4408,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית*",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+                "title": "הבטחה מינהלית לציבור",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://israeliconstitutionalism.wordpress.com/2019/12/24/%D7%94%D7%96%D7%95%D7%92-%D7%94%D7%9E%D7%95%D7%96%D7%A8-%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA-%D7%95%D7%97%D7%95%D7%96%D7%94-%D7%A8%D7%92%D7%95%D7%9C%D7%98%D7%95%D7%A8/",
+                "title": "הזוג המוזר: הבטחה מנהלית וחוזה רגולטורי בפסיקתו של בג\"ץ / שרון ידין",
+                "domain": "israeliconstitutionalism.wordpress.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://weller-law-office.com/%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%A9%D7%9C%D7%98%D7%95%D7%A0%D7%99%D7%AA/",
+                "title": "הבטחה שלטונית | הבטחה מינהלית",
+                "domain": "weller-law-office.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C3",
+            "query_he": "מאמר השלכות משפטיות של הבטחה מנהלית סעד פיצוי זכויות קניין שינוי שיקול דעת ניתוח משפטי 'מאמר' ישראל",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 7039,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+                "title": "הבטחה מינהלית לציבור",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://israeliconstitutionalism.wordpress.com/2019/12/24/%D7%94%D7%96%D7%95%D7%92-%D7%94%D7%9E%D7%95%D7%96%D7%A8-%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA-%D7%95%D7%97%D7%95%D7%96%D7%94-%D7%A8%D7%92%D7%95%D7%9C%D7%98%D7%95%D7%A8/",
+                "title": "הזוג המוזר: הבטחה מנהלית וחוזה רגולטורי בפסיקתו של בג\"ץ",
+                "domain": "israeliconstitutionalism.wordpress.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מינהלית",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C4",
+            "query_he": "מאמר מגבלות דוקטרינת ההבטחה המנהלית אינטרס ציבורי שינוי מדיניות חוסר סמכות עומס תקציבי איזון בין הסתמכות לאינטרס הציבורי 'מאמר משפטי'",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 12,
+        "role_corrections": []
+      }
+    },
+    "candidates": [
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מינהלית",
+        "origin": "perplexity",
+        "snippet": "מאמר בכתב העת 'משפטים' העוסק בהגדרת הדוקטרינה, היקפה ותנאיה; מתמקד בשאלת ההבטחה המינהלית, תחולת ההסתמכות והאיזון מול שיקול הדעת המינהלי.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר דוקטרינת ההבטחה המנהלית בישראל הגדרת הדוקטרינה היקף תיאוריה משפטית 'הבטחה מנהלית' 'הסתמכות סבירה' כתב-עת משפטי",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+        "source_type": "article",
+        "candidate_id": "53b69842-18da-41a4-b30a-cbcd909083bc",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי ב'קרית המשפט' הדן בהתפתחות ההבטחה המינהלית, במעמדה הדוקטרינרי ובתנאי ההסתמכות והאכיפה כלפי הרשות.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר דוקטרינת ההבטחה המנהלית בישראל הגדרת הדוקטרינה היקף תיאוריה משפטית 'הבטחה מנהלית' 'הסתמכות סבירה' כתב-עת משפטי",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+        "source_type": "article",
+        "candidate_id": "0d875243-ca3f-4de3-95d9-599c4de2ec4c",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מינהלית לציבור",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי הבוחן את התפתחות הדין בישראל ואת מעמדה של ההבטחה המינהלית כלפי הציבור; רלוונטי במיוחד לשאלת ההסתמכות הסבירה והיקף החיוב של הרשות.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר דוקטרינת ההבטחה המנהלית בישראל הגדרת הדוקטרינה היקף תיאוריה משפטית 'הבטחה מנהלית' 'הסתמכות סבירה' כתב-עת משפטי",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+        "source_type": "article",
+        "candidate_id": "82e8ae96-f33d-4a22-95de-8763aa141504",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 21234,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 22622,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 40010,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 19881,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 8890,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial"
+      },
+      {
+        "ms": 18986,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      },
+      {
+        "ms": 104289,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "drafter.placement_repair"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://www.dinrega.com/gs/%D7%90%D7%9B%D7%99%D7%A4%D7%AA%20%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA:%20%D7%90%D7%9B%D7%99%D7%A4%D7%AA%20%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%A9%D7%A0%D7%99%D7%AA%D7%A0%D7%94%20%D7%A2%D7%9C%20%D7%99%D7%93%D7%99%20%D7%A8%D7%A9%D7%95%D7%AA%20%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA",
+        "role": "scholarship",
+        "title": "אכיפת הבטחה שניתנה על ידי רשות מנהלית",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר תנאים להטלת חובת ההבטחה המנהלית הצגה הבטחה הסתמכות סבירה נזק איך בוחנים מרכיבים 'מאמר משפטי' ישראל",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://weller-law-office.com/%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%A9%D7%9C%D7%98%D7%95%D7%A0%D7%99%D7%AA/",
+        "role": "scholarship",
+        "title": "הבטחה שלטונית | הבטחה מינהלית",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר תנאים להטלת חובת ההבטחה המנהלית הצגה הבטחה הסתמכות סבירה נזק איך בוחנים מרכיבים 'מאמר משפטי' ישראל",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://israeliconstitutionalism.wordpress.com/2019/12/24/%D7%94%D7%96%D7%95%D7%92-%D7%94%D7%9E%D7%95%D7%96%D7%A8-%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA-%D7%95%D7%97%D7%95%D7%96%D7%94-%D7%A8%D7%92%D7%95%D7%9C%D7%98%D7%95%D7%A8/",
+        "role": "scholarship",
+        "title": "הזוג המוזר: הבטחה מנהלית וחוזה רגולטורי בפסיקתו של בג\"ץ / שרון ידין",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר השלכות משפטיות של הבטחה מנהלית סעד פיצוי זכויות קניין שינוי שיקול דעת ניתוח משפטי 'מאמר' ישראל",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://weller-law-office.com/%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%A9%D7%9C%D7%98%D7%95%D7%A0%D7%99%D7%AA/",
+        "role": "scholarship",
+        "title": "הבטחה שלטונית | הבטחה מינהלית",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר השלכות משפטיות של הבטחה מנהלית סעד פיצוי זכויות קניין שינוי שיקול דעת ניתוח משפטי 'מאמר' ישראל",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://israeliconstitutionalism.wordpress.com/2019/12/24/%D7%94%D7%96%D7%95%D7%92-%D7%94%D7%9E%D7%95%D7%96%D7%A8-%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA-%D7%95%D7%97%D7%95%D7%96%D7%94-%D7%A8%D7%92%D7%95%D7%9C%D7%98%D7%95%D7%A8/",
+        "role": "scholarship",
+        "title": "הזוג המוזר: הבטחה מנהלית וחוזה רגולטורי בפסיקתו של בג\"ץ",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר מגבלות דוקטרינת ההבטחה המנהלית אינטרס ציבורי שינוי מדיניות חוסר סמכות עומס תקציבי איזון בין הסתמכות לאינטרס הציבורי 'מאמר משפטי'",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      }
+    ]
+  }
+}

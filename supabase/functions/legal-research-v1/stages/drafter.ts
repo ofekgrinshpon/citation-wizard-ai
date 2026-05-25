@@ -102,6 +102,7 @@ const SYSTEM_PROMPT = `אתה כותב משפטי ישראלי בסגנון אק
   * מותר להחזיר את אותו מספר הערה במקום מאוחר יותר בתשובה לתמיכה בקביעה אחרת מאותו מקור.
 - פורמט סמנים:
   * השתמש תמיד בספרות עליונות יוניקוד (⁰¹²³⁴⁵⁶⁷⁸⁹) לכל ספרות הסמן, כולל מספרים דו־ספרתיים (למשל ¹⁰, ¹¹, ¹²), לעולם לא בספרות ASCII רגילות כמו 10, 11.
+  * הערת שוליים תופיע כספרות עיליות בלבד, ללא סוגריים וללא תווים נוספים. כתוב ¹, ², ³, ¹⁰ — ולא ⁽¹⁾, לא (1), לא [1], ולא 10. אין לעטוף סימוני הערות בסוגריים עיליים (⁽ ⁾), בסוגריים רגילים, או בסוגריים מרובעים.
 
 פורמט החזרה: רק דרך הקריאה לכלי emit_draft.
 - answer_markdown: טקסט התשובה בעברית, עם מספרי הערות בכתב עילי (¹ ² ³ …).
@@ -417,6 +418,11 @@ function validatePlacement(answer: string): import("../lib/types.ts").PlacementR
     paraOffset += para.length + 2; // approx for blank-line separator
   }
 
+  // Phase A.2: report-only count of superscript parentheses around markers
+  // (e.g., ⁽¹⁾, ⁽²⁾). Does NOT gate placement.ok and does NOT feed repair.
+  const parensRe = /[⁽⁾]/gu;
+  const superscript_parens_count = (answer.match(parensRe) ?? []).length;
+
   return {
     ok: cluster_count === 0 && out_of_order_count === 0 && end_paragraph_dump_count === 0,
     cluster_count,
@@ -424,6 +430,7 @@ function validatePlacement(answer: string): import("../lib/types.ts").PlacementR
     out_of_order_count,
     end_paragraph_dump_count,
     end_dump_samples,
+    superscript_parens_count,
   };
 }
 

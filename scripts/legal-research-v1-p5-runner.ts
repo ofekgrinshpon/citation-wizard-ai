@@ -135,7 +135,7 @@ async function main() {
   }
   const triggered: Array<{ id: string; run_id: string; question: string }> = [];
   const summary: { tag: string; generated_at: string; fixtures: any[]; aggregate?: any } = {
-    tag: "p7-phaseA1",
+    tag: "p7-phaseA2",
     generated_at: new Date().toISOString(),
     fixtures: [],
   };
@@ -157,7 +157,7 @@ async function main() {
       continue;
     }
     summarise(t.id, row);
-    const reportPath = `reports/legal-research-v1-p7-phaseA1-${t.id}.json`;
+    const reportPath = `reports/legal-research-v1-p7-phaseA2-${t.id}.json`;
     const md = row.metadata ?? {};
     const d = md.drafter ?? {};
     const mv = d.marker_validation ?? {};
@@ -175,6 +175,7 @@ async function main() {
       placement_ok: pl.ok ?? null,
       placement_repaired: pl.repaired ?? false,
       placement_repair_failed: pl.repair_failed ?? false,
+      superscript_parens_count: pl.superscript_parens_count ?? 0,
       used_sources_count: used.length,
       used_sources_subset_of_usable: used.every((u: any) => usableIds.has(u.candidate_id)),
       footnote_count: (row.footnotes ?? []).length,
@@ -214,9 +215,11 @@ async function main() {
     total_clusters: f.reduce((s: number, x: any) => s + (x.cluster_count ?? 0), 0),
     total_end_dumps: f.reduce((s: number, x: any) => s + (x.end_paragraph_dump_count ?? 0), 0),
     total_out_of_order: f.reduce((s: number, x: any) => s + (x.out_of_order_count ?? 0), 0),
+    total_superscript_parens: f.reduce((s: number, x: any) => s + (x.superscript_parens_count ?? 0), 0),
+    fixtures_with_parens: f.filter((x: any) => (x.superscript_parens_count ?? 0) > 0).length,
   };
   await Bun.write(
-    "reports/legal-research-v1-p7-phaseA1-summary.json",
+    "reports/legal-research-v1-p7-phaseA2-summary.json",
     JSON.stringify(summary, null, 2),
   );
   console.log("\n=== Phase A summary ===");

@@ -168,6 +168,7 @@ export interface PlacementReport {
   out_of_order_count: number;
   end_paragraph_dump_count: number;
   end_dump_samples: string[];
+  superscript_parens_count?: number;
   repaired?: boolean;
   repair_failed?: boolean;
 }
