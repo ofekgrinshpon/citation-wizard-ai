@@ -6,9 +6,12 @@
 import { callOpenAIJsonTool } from "../lib/openai.ts";
 import type { UserDocument } from "../lib/attachments.ts";
 import {
+  AtomicMode,
+  AtomicReport,
   Candidate,
   Claim,
   Footnote,
+  MarkerFormat,
   MarkerValidation,
   MODEL_FULL,
   MODEL_MINI,
@@ -41,7 +44,98 @@ function extractMarkers(text: string): number[] {
     if (d === undefined) continue;
     const n = Number(d);
     if (n > 0) out.push(n);
+}
+
+// ─── Phase C.1: Atomic marker helpers ──────────────────────────────────────
+// Internal token: [[fn:N]]. Deterministic, unambiguous (no greedy parsing).
+// extractAtomicMarkers / validateAtomicMarkers mirror the superscript versions.
+const ATOMIC_RE = /\[\[fn:(\d+)\]\]/g;
+
+function extractAtomicMarkers(text: string): number[] {
+  const out: number[] = [];
+  let m: RegExpExecArray | null;
+  ATOMIC_RE.lastIndex = 0;
+  while ((m = ATOMIC_RE.exec(text)) !== null) {
+    const n = Number(m[1]);
+    if (Number.isFinite(n) && n > 0) out.push(n);
   }
+  return out;
+}
+
+// Deterministic: walks the answer, replaces every run of superscript digits
+// with the concatenation [[fn:N]][[fn:N]]... using per-char tokenization
+// (one superscript char == one marker — same rule as extractMarkers).
+// Refuses if the input already contains [[fn:...]] tokens, or if any marker
+// number is not in `used`.
+function normalizeToAtomic(
+  answer: string,
+  used: Array<{ number: number }>,
+): { atomic: string; ok: boolean; reason?: string } {
+  if (/\[\[fn:/.test(answer)) {
+    return { atomic: answer, ok: false, reason: "preexisting_atomic_tokens" };
+  }
+  const numberSet = new Set(used.map((u) => u.number));
+  let out = "";
+  let i = 0;
+  while (i < answer.length) {
+    const ch = answer[i];
+    const d = SUP_TO_DIGIT[ch];
+    if (d === undefined) {
+      out += ch;
+      i++;
+      continue;
+    }
+    // Walk the run of superscript chars.
+    let j = i;
+    while (j < answer.length && SUP_TO_DIGIT[answer[j]] !== undefined) j++;
+    for (let k = i; k < j; k++) {
+      const n = Number(SUP_TO_DIGIT[answer[k]]);
+      if (n <= 0) continue; // zero is not a valid marker (matches extractMarkers)
+      if (!numberSet.has(n)) {
+        return { atomic: answer, ok: false, reason: `unknown_marker_${n}` };
+      }
+      out += `[[fn:${n}]]`;
+    }
+    i = j;
+  }
+  return { atomic: out, ok: true };
+}
+
+function validateAtomicMarkers(
+  answer: string,
+  used: Array<{ number: number }>,
+): MarkerValidation {
+  const markers = extractAtomicMarkers(answer);
+  const markerSet = new Set(markers);
+  const numberSet = new Set(used.map((u) => u.number));
+  const unused_sources: number[] = [];
+  for (const n of numberSet) if (!markerSet.has(n)) unused_sources.push(n);
+  const missing_sources: number[] = [];
+  for (const n of markerSet) if (!numberSet.has(n)) missing_sources.push(n);
+  const leak = detectInternalIdLeak(answer);
+  // Reject any residual superscript digits — atomic answers must not mix.
+  const hasResidualSup = /[⁰¹²³⁴⁵⁶⁷⁸⁹]/.test(answer);
+  // Reject malformed atomic fragments ([[fn:... not closed, or stray ]] etc.).
+  const stripped = answer.replace(ATOMIC_RE, "");
+  const hasStrayAtomic = /\[\[fn:|\bfn:\d+\]\]/.test(stripped);
+  const extraErrors: string[] = [];
+  if (hasResidualSup) extraErrors.push("residual_superscript");
+  if (hasStrayAtomic) extraErrors.push("malformed_atomic_token");
+  return {
+    ok:
+      unused_sources.length === 0 &&
+      missing_sources.length === 0 &&
+      !leak.leak &&
+      extraErrors.length === 0,
+    markers_in_answer: Array.from(markerSet).sort((a, b) => a - b),
+    unused_sources: unused_sources.sort((a, b) => a - b),
+    missing_sources: missing_sources.sort((a, b) => a - b),
+    internal_id_leak: leak.leak,
+    leaked_tokens: leak.tokens,
+    repaired: false,
+    error: extraErrors.length ? extraErrors.join("; ") : undefined,
+  };
+}
   return out;
 }
 
@@ -823,6 +917,8 @@ export interface DrafterResult {
   footnotes: Footnote[];
   marker_validation: MarkerValidation;
   rule37?: Rule37Report;
+  marker_format: MarkerFormat;
+  atomic?: AtomicReport;
   omitted_candidate_ids: string[];
   stage_runs: StageRun[];
   error?: string;
@@ -834,10 +930,16 @@ export async function runDrafter(
   claims: Claim[],
   candidates: Candidate[],
   verifier: { usable: UsableCandidate[]; verdicts: Verdict[] },
-  opts?: { userDocs?: UserDocument[]; useAsSource?: boolean; useRule37?: boolean },
+  opts?: {
+    userDocs?: UserDocument[];
+    useAsSource?: boolean;
+    useRule37?: boolean;
+    atomicMode?: AtomicMode;
+  },
 ): Promise<DrafterResult> {
   const t_total = Date.now();
   const stage_runs: StageRun[] = [];
+
 
   const userDocs = opts?.userDocs ?? [];
   const useAsSource = opts?.useAsSource ?? false;
@@ -873,6 +975,7 @@ export async function runDrafter(
         repaired: false,
         error: "no_usable_candidates",
       },
+      marker_format: "legacy_superscript",
       omitted_candidate_ids: [],
       stage_runs,
       error: "no_usable_candidates",
@@ -1092,6 +1195,59 @@ export async function runDrafter(
     }
   }
 
+  // ─── Phase C.1: Atomic marker normalization (post-Rule-37) ─────────────
+  // Three modes:
+  //   off      — pipeline unchanged, ships superscripts (default).
+  //   validate — normalize + validate in-memory, ship superscripts.
+  //   emit     — ship atomic [[fn:N]] tokens; on any failure, fall back to
+  //              superscript output with marker_format = legacy_superscript_fallback.
+  let marker_format: MarkerFormat = "legacy_superscript";
+  let atomicReport: AtomicReport | undefined;
+  const envAtomic = (Deno.env.get("LEGAL_RESEARCH_V1_ATOMIC_MARKERS") ?? "off").toLowerCase();
+  const envMode: AtomicMode =
+    envAtomic === "emit" ? "emit" : envAtomic === "validate" ? "validate" : "off";
+  // opts.atomicMode is set by index.ts ONLY for service-role/smoke requests,
+  // so prod users can never trigger atomic mode via header. Env value is the
+  // default for organic traffic.
+  const atomicMode: AtomicMode = opts?.atomicMode ?? envMode;
+
+  if (ok && atomicMode !== "off") {
+    const usedForAtomic = finalFootnotes.map((f) => ({ number: f.number }));
+    const supCount = extractMarkers(finalAnswer).length;
+    const norm = normalizeToAtomic(finalAnswer, usedForAtomic);
+    let validation: MarkerValidation | null = null;
+    let atomicCount = 0;
+    let byteEqual = false;
+    if (norm.ok) {
+      validation = validateAtomicMarkers(norm.atomic, usedForAtomic);
+      atomicCount = extractAtomicMarkers(norm.atomic).length;
+      byteEqual = atomicCount === supCount;
+    }
+    const allOk = norm.ok && validation !== null && validation.ok && byteEqual;
+    atomicReport = {
+      mode: atomicMode,
+      normalize_ok: norm.ok,
+      normalize_reason: norm.reason,
+      validation,
+      used_sources_byte_equal: byteEqual,
+      superscript_marker_count: supCount,
+      atomic_marker_count: atomicCount,
+    };
+    if (atomicMode === "emit") {
+      if (allOk) {
+        finalAnswer = norm.atomic;
+        marker_format = "atomic";
+      } else {
+        marker_format = "legacy_superscript_fallback";
+        atomicReport.emit_fallback_reason = !norm.ok
+          ? `normalize_failed:${norm.reason ?? "unknown"}`
+          : !byteEqual
+          ? "marker_count_mismatch"
+          : `validation_failed:${validation?.error ?? "unknown"}`;
+      }
+    }
+  }
+
   return {
     ok,
     ms: Date.now() - t_total,
@@ -1105,6 +1261,8 @@ export async function runDrafter(
     footnotes: finalFootnotes,
     marker_validation: marker,
     rule37: rule37Report,
+    marker_format,
+    atomic: atomicReport,
     omitted_candidate_ids,
     stage_runs,
     error: ok ? undefined : (marker.error || parsed.errors.join("; ") || "drafter_failed"),
