@@ -215,6 +215,8 @@ async function main() {
     total_clusters: f.reduce((s: number, x: any) => s + (x.cluster_count ?? 0), 0),
     total_end_dumps: f.reduce((s: number, x: any) => s + (x.end_paragraph_dump_count ?? 0), 0),
     total_out_of_order: f.reduce((s: number, x: any) => s + (x.out_of_order_count ?? 0), 0),
+    total_superscript_parens: f.reduce((s: number, x: any) => s + (x.superscript_parens_count ?? 0), 0),
+    fixtures_with_parens: f.filter((x: any) => (x.superscript_parens_count ?? 0) > 0).length,
   };
   await Bun.write(
     "reports/legal-research-v1-p7-phaseA2-summary.json",
