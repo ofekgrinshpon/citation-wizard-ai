@@ -138,8 +138,6 @@ function validateAtomicMarkers(
     error: extraErrors.length ? extraErrors.join("; ") : undefined,
   };
 }
-  return out;
-}
 
 const INTERNAL_ID_PATTERNS: Array<{ re: RegExp; label: string }> = [
   { re: /candidate_id/gi, label: "candidate_id" },
