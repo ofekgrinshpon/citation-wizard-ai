@@ -44,6 +44,8 @@ function extractMarkers(text: string): number[] {
     if (d === undefined) continue;
     const n = Number(d);
     if (n > 0) out.push(n);
+  }
+  return out;
 }
 
 // ─── Phase C.1: Atomic marker helpers ──────────────────────────────────────
