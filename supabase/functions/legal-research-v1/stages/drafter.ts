@@ -550,6 +550,272 @@ function deterministicRepair(
   return { answer_markdown: newAnswer, used_sources: newUsed };
 }
 
+
+// ─── Phase B: Rule 37 short-forms (post-pass) ──────────────────────────────
+// Pure post-pass. Never mutates `used_sources` or invents sources. If anything
+// looks off, returns null and the caller ships the pre-Rule-37 answer.
+
+const SHEM_ADJACENT_MAX_GAP = 240; // chars between same-source occurrences for שם
+
+function computeShortName(title: string): { shortName: string; fallback: boolean } {
+  const raw = (title || "").trim();
+  if (!raw) return { shortName: "(ללא שם)", fallback: true };
+  // Take substring before the first separator (comma, open-paren, dash).
+  const cut = raw.search(/[,(\(\[\u2013\u2014]| - /u);
+  let s = cut > 0 ? raw.slice(0, cut).trim() : raw;
+  if (s.length > 60) s = s.slice(0, 60).trim();
+  if (s.length < 4) {
+    return { shortName: raw.slice(0, 40).trim() || "(ללא שם)", fallback: true };
+  }
+  return { shortName: s, fallback: false };
+}
+
+interface Rule37Outcome {
+  newAnswer: string;
+  extraFootnotes: Footnote[];
+  report: Rule37Report;
+}
+
+function applyRule37(
+  answer: string,
+  used: Array<{ ref: string; number: number; candidate_id: string }>,
+  inputByRef: Map<string, DrafterInputSource>,
+  enabled: boolean,
+): Rule37Outcome {
+  const baseReport: Rule37Report = {
+    enabled,
+    applied: false,
+    discarded_reason: null,
+    validation_failed: null,
+    total_repeats_rewritten: 0,
+    shem_count: 0,
+    supra_count: 0,
+    shortname_fallback_count: 0,
+    pre_footnote_count: used.length,
+    post_footnote_count: used.length,
+    wrong_back_references: 0,
+    samples: [],
+  };
+  if (!enabled) {
+    return { newAnswer: answer, extraFootnotes: [], report: baseReport };
+  }
+
+  // Walk markers: collect {pos, oldNum}. Single superscript char == one marker.
+  const numToUsed = new Map<number, { ref: string; candidate_id: string }>();
+  for (const u of used) numToUsed.set(u.number, { ref: u.ref, candidate_id: u.candidate_id });
+
+  interface Occ { pos: number; oldNum: number; candId: string }
+  const occs: Occ[] = [];
+  for (let i = 0; i < answer.length; i++) {
+    const d = SUP_TO_DIGIT[answer[i]];
+    if (d === undefined) continue;
+    const n = Number(d);
+    if (n < 1) continue;
+    const u = numToUsed.get(n);
+    if (!u) {
+      // Orphan marker — caller would never reach here (marker_validation.ok), but be safe.
+      return {
+        newAnswer: answer,
+        extraFootnotes: [],
+        report: { ...baseReport, discarded_reason: "orphan_marker" },
+      };
+    }
+    occs.push({ pos: i, oldNum: n, candId: u.candidate_id });
+  }
+  if (occs.length === 0) {
+    return { newAnswer: answer, extraFootnotes: [], report: baseReport };
+  }
+
+  // First-citation original number per candidate.
+  const firstNumByCand = new Map<string, number>();
+  for (const o of occs) {
+    if (!firstNumByCand.has(o.candId)) firstNumByCand.set(o.candId, o.oldNum);
+  }
+
+  // Per-candidate cached shortName.
+  const shortNameCache = new Map<string, { shortName: string; fallback: boolean }>();
+  for (const u of used) {
+    const src = inputByRef.get(u.ref);
+    const title = src?.title ?? "";
+    shortNameCache.set(u.candidate_id, computeShortName(title));
+  }
+
+  // Decide per occurrence: first → keep; otherwise → שם or supra.
+  // New footnote numbers continue from max(used.number) + 1.
+  let nextNum = used.reduce((m, u) => Math.max(m, u.number), 0) + 1;
+  const seenCand = new Set<string>();
+  const extras: Footnote[] = [];
+  const rewrites: Array<{ pos: number; newNum: number }> = [];
+
+  let lastAnyOcc: Occ | null = null;
+  let lastSameOccByCand = new Map<string, Occ>();
+
+  for (const occ of occs) {
+    if (!seenCand.has(occ.candId)) {
+      // First occurrence — keep marker as-is.
+      seenCand.add(occ.candId);
+      lastAnyOcc = occ;
+      lastSameOccByCand.set(occ.candId, occ);
+      continue;
+    }
+    // Repeat.
+    const prevSame = lastSameOccByCand.get(occ.candId)!;
+    const adjacent = lastAnyOcc !== null && lastAnyOcc.candId === occ.candId;
+    const between = answer.slice(prevSame.pos + 1, occ.pos);
+    const hasParaBreak = /\n\s*\n/.test(between);
+    const gapOk = between.length <= SHEM_ADJACENT_MAX_GAP && !hasParaBreak;
+    const useShem = adjacent && gapOk;
+
+    const src = inputByRef.get(numToUsed.get(occ.oldNum)!.ref);
+    const url = src?.url ?? null;
+    const source_type = src?.source_type;
+    const firstNum = firstNumByCand.get(occ.candId)!;
+    const sn = shortNameCache.get(occ.candId)!;
+    if (sn.fallback) baseReport.shortname_fallback_count++;
+
+    let title: string;
+    let kind: "shem" | "supra";
+    if (useShem) {
+      title = "שם.";
+      kind = "shem";
+      baseReport.shem_count++;
+    } else {
+      title = `${sn.shortName}, לעיל ה"ש ${firstNum}.`;
+      kind = "supra";
+      baseReport.supra_count++;
+    }
+
+    const newNum = nextNum++;
+    extras.push({
+      number: newNum,
+      title,
+      url,
+      source_type,
+      is_short_form: true,
+      short_form_of: firstNum,
+      candidate_id: occ.candId,
+      short_form_kind: kind,
+    });
+    rewrites.push({ pos: occ.pos, newNum });
+    if (baseReport.samples.length < 5) {
+      baseReport.samples.push({ from_num: occ.oldNum, to_num: newNum, kind, short_text: title });
+    }
+    baseReport.total_repeats_rewritten++;
+
+    lastAnyOcc = occ;
+    lastSameOccByCand.set(occ.candId, occ);
+  }
+
+  if (rewrites.length === 0) {
+    // Nothing to do — no repeats. Treat as applied=true but no change.
+    baseReport.applied = true;
+    return { newAnswer: answer, extraFootnotes: [], report: baseReport };
+  }
+
+  // Rewrite right-to-left to keep positions stable. Each rewrite replaces ONE
+  // char with toSuperscript(newNum) which may be multi-char (e.g. ¹⁰).
+  let out = answer;
+  for (let i = rewrites.length - 1; i >= 0; i--) {
+    const { pos, newNum } = rewrites[i];
+    out = out.slice(0, pos) + toSuperscript(newNum) + out.slice(pos + 1);
+  }
+
+  baseReport.post_footnote_count = used.length + extras.length;
+  baseReport.applied = true;
+  return { newAnswer: out, extraFootnotes: extras, report: baseReport };
+}
+
+// Back-reference validator. Returns { ok, reason, wrong_back_references }.
+function validateRule37(
+  newAnswer: string,
+  used: Array<{ ref: string; number: number; candidate_id: string }>,
+  extras: Footnote[],
+  inputByRef: Map<string, DrafterInputSource>,
+): { ok: boolean; reason: string | null; wrong_back_references: number } {
+  // Build full footnote map: number → { candidate_id, is_short_form }.
+  const fullByNum = new Map<number, string>(); // num → cand_id (full citations)
+  const refToCand = new Map<string, string>();
+  for (const u of used) {
+    fullByNum.set(u.number, u.candidate_id);
+    refToCand.set(u.ref, u.candidate_id);
+  }
+  const allByNum = new Map<number, { candId: string; isShort: boolean }>();
+  for (const u of used) allByNum.set(u.number, { candId: u.candidate_id, isShort: false });
+  for (const f of extras) {
+    if (!f.candidate_id) return { ok: false, reason: "extra_missing_candidate_id", wrong_back_references: 0 };
+    allByNum.set(f.number, { candId: f.candidate_id, isShort: true });
+  }
+  const usedCandIds = new Set(used.map((u) => u.candidate_id));
+
+  // Walk newAnswer markers in order; record (pos, num, candId).
+  interface M { pos: number; num: number; candId: string }
+  const markers: M[] = [];
+  for (let i = 0; i < newAnswer.length; i++) {
+    const d = SUP_TO_DIGIT[newAnswer[i]];
+    if (d === undefined) continue;
+    const n = Number(d);
+    if (n < 1) continue;
+    // Multi-digit superscripts (e.g. ¹⁰) — collect consecutive superscript chars.
+    let j = i + 1;
+    let buf = String(n);
+    while (j < newAnswer.length) {
+      const d2 = SUP_TO_DIGIT[newAnswer[j]];
+      if (d2 === undefined) break;
+      buf += d2;
+      j++;
+    }
+    const num = Number(buf);
+    const entry = allByNum.get(num);
+    if (!entry) return { ok: false, reason: `marker_${num}_has_no_footnote`, wrong_back_references: 0 };
+    markers.push({ pos: i, num, candId: entry.candId });
+    i = j - 1;
+  }
+
+  // 1. שם footnotes: corresponding marker's immediately-preceding marker must
+  //    point to a footnote with the same candidate_id.
+  // 2. Supra footnotes: parse N from "לעיל ה"ש N"; require N < this.number;
+  //    full citation (not short); same cand_id; cand in used.
+  let wrong = 0;
+  const supraRe = /לעיל ה"ש (\d+)/;
+  for (const f of extras) {
+    if (f.short_form_kind === "shem") {
+      // Find marker(s) for this footnote number.
+      const occIdx = markers.findIndex((m) => m.num === f.number);
+      if (occIdx < 0) return { ok: false, reason: `shem_footnote_${f.number}_no_marker`, wrong_back_references: wrong };
+      if (occIdx === 0) { wrong++; return { ok: false, reason: `shem_${f.number}_is_first_marker`, wrong_back_references: wrong }; }
+      const prev = markers[occIdx - 1];
+      if (prev.candId !== f.candidate_id) {
+        wrong++;
+        return { ok: false, reason: `shem_${f.number}_prev_cand_mismatch`, wrong_back_references: wrong };
+      }
+    } else if (f.short_form_kind === "supra") {
+      const m = supraRe.exec(f.title);
+      if (!m) { wrong++; return { ok: false, reason: `supra_${f.number}_no_n`, wrong_back_references: wrong }; }
+      const N = Number(m[1]);
+      if (!Number.isFinite(N) || N >= f.number) {
+        wrong++;
+        return { ok: false, reason: `supra_${f.number}_bad_n_${N}`, wrong_back_references: wrong };
+      }
+      const target = fullByNum.get(N);
+      if (!target) { wrong++; return { ok: false, reason: `supra_${f.number}_target_${N}_not_full`, wrong_back_references: wrong }; }
+      if (target !== f.candidate_id) {
+        wrong++;
+        return { ok: false, reason: `supra_${f.number}_cand_mismatch`, wrong_back_references: wrong };
+      }
+      if (!usedCandIds.has(f.candidate_id)) {
+        wrong++;
+        return { ok: false, reason: `supra_${f.number}_cand_not_used`, wrong_back_references: wrong };
+      }
+    }
+  }
+
+  // 3. No internal id leak in newAnswer.
+  if (detectInternalIdLeak(newAnswer).leak) {
+    return { ok: false, reason: "internal_id_leak_after_rule37", wrong_back_references: wrong };
+  }
+  return { ok: true, reason: null, wrong_back_references: wrong };
+}
+
 export interface DrafterResult {
   ok: boolean;
   ms: number;
@@ -562,6 +828,7 @@ export interface DrafterResult {
   used_sources: UsedSource[];
   footnotes: Footnote[];
   marker_validation: MarkerValidation;
+  rule37?: Rule37Report;
   omitted_candidate_ids: string[];
   stage_runs: StageRun[];
   error?: string;
@@ -573,7 +840,7 @@ export async function runDrafter(
   claims: Claim[],
   candidates: Candidate[],
   verifier: { usable: UsableCandidate[]; verdicts: Verdict[] },
-  opts?: { userDocs?: UserDocument[]; useAsSource?: boolean },
+  opts?: { userDocs?: UserDocument[]; useAsSource?: boolean; useRule37?: boolean },
 ): Promise<DrafterResult> {
   const t_total = Date.now();
   const stage_runs: StageRun[] = [];
