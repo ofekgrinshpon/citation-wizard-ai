@@ -453,7 +453,7 @@ async function handle(req: Request): Promise<Response> {
     analyzer.claims,
     pool.candidates,
     { usable: verifier.usable, verdicts: verifier.verdicts },
-    { userDocs: attachmentResult.documents, useAsSource },
+    { userDocs: attachmentResult.documents, useAsSource, useRule37 },
   );
 
   stage_runs.push(...drafter.stage_runs);
