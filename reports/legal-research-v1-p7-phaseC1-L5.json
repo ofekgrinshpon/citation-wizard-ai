@@ -1,0 +1,73 @@
+{
+  "generated_at": "2026-05-25T21:50:03.840Z",
+  "fixture": {
+    "id": "L5",
+    "question": "מהי עילת הסבירות ומה היקף הביקורת השיפוטית עליה?"
+  },
+  "qa_log_id": "6d6fdd7e-d463-4dce-870d-302d468b8c84",
+  "run_id": "d5f3dfbe-ea82-4b17-939f-99631d530221",
+  "row_summary": {
+    "fixture_id": "L5",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 9,
+    "used_sources_subset_of_usable": true,
+    "marker_format": "atomic",
+    "atomic_mode": "emit",
+    "atomic_normalize_ok": true,
+    "atomic_normalize_reason": null,
+    "atomic_validation_ok": true,
+    "atomic_validation_error": null,
+    "atomic_used_sources_byte_equal": true,
+    "atomic_superscript_count": 25,
+    "atomic_token_count": 25,
+    "atomic_emit_fallback_reason": null,
+    "final_answer_atomic_token_count": 25,
+    "final_answer_superscript_count": 0,
+    "rule37_enabled": false,
+    "rule37_applied": false,
+    "rule37_discarded_reason": null
+  },
+  "atomic": {
+    "mode": "emit",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 25,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 25
+  },
+  "rule37": {
+    "applied": false,
+    "enabled": false,
+    "samples": [],
+    "shem_count": 0,
+    "supra_count": 0,
+    "discarded_reason": null,
+    "validation_failed": null,
+    "pre_footnote_count": 9,
+    "post_footnote_count": 9,
+    "wrong_back_references": 0,
+    "total_repeats_rewritten": 0,
+    "shortname_fallback_count": 0
+  },
+  "answer_preview": "הקדמה\nעילת ה**סבירות** (או: עילת אי־הסבירות) היא כלי דוקטרינלי מרכזי בביקורת השיפוטית על החלטות מנהליות שבוחן האם החלטת הרשות נמצאת מחוץ לטווח ההחלטות הסבירות שאדם מוסמך היה יכול לקבל.[[fn:1]] עילה זו נועדה לזהות מקרים שבהם השיקול המינהלי מצא קיצון טכני או רעיוני, או שבו נפלה טעות בהשקפת הנתונים עד כדי הפיכת החלטת הרשות לבלתי מתקבלת על הדעת מבחינה שיפוטית.[[fn:2]]\n\nהגדרה ועקרונות היסוד\nהגדרת עילת הסבירות מתמקדת בשאלה האם ההחלטה היא **מחוץ לטווח הסביר** (outside the range of reasonable decisions) — כלומר לא רק שגויה מבחינה מקצועית, אלא כוללת מענה שהוא מופרך או חסר כל בסיס סביר ביחס למידע והסמכו",
+  "marker_format": "atomic"
+}

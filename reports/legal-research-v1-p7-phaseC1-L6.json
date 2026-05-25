@@ -1,0 +1,71 @@
+{
+  "generated_at": "2026-05-25T21:55:22.539Z",
+  "fixture": {
+    "id": "L6",
+    "question": "רשות מקומית נתנה הבטחה מנהלית לאזרח אשר הסתמך עליה, ולאחר מכן חל שינוי נסיבות מהותי. מהם השיקולים והכללים החלים על אכיפת ההבטחה אל מול שינוי הנסיבות, ומה היחס בין סמכות הרשות, אינטרס ההסתמכות של האזרח, והאינטרס הציבורי?"
+  },
+  "qa_log_id": "d4434d6c-fe16-478c-9660-22abdfe08af9",
+  "run_id": "644b68cd-b14c-4a6a-959c-b870c91ec774",
+  "row_summary": {
+    "fixture_id": "L6",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 7,
+    "used_sources_subset_of_usable": true,
+    "marker_format": "atomic",
+    "atomic_mode": "emit",
+    "atomic_normalize_ok": true,
+    "atomic_normalize_reason": null,
+    "atomic_validation_ok": true,
+    "atomic_validation_error": null,
+    "atomic_used_sources_byte_equal": true,
+    "atomic_superscript_count": 26,
+    "atomic_token_count": 26,
+    "atomic_emit_fallback_reason": null,
+    "final_answer_atomic_token_count": 26,
+    "final_answer_superscript_count": 0,
+    "rule37_enabled": false,
+    "rule37_applied": false,
+    "rule37_discarded_reason": null
+  },
+  "atomic": {
+    "mode": "emit",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 26,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 26
+  },
+  "rule37": {
+    "applied": false,
+    "enabled": false,
+    "samples": [],
+    "shem_count": 0,
+    "supra_count": 0,
+    "discarded_reason": null,
+    "validation_failed": null,
+    "pre_footnote_count": 7,
+    "post_footnote_count": 7,
+    "wrong_back_references": 0,
+    "total_repeats_rewritten": 0,
+    "shortname_fallback_count": 0
+  },
+  "answer_preview": "הצגת הבעיה ומבנה התשובה\n\nהנושא מתחלק לשלושה חלקים: (א) יסודות אכיפת ההבטחה המנהלית; (ב) השפעת שינוי נסיבות מהותי על חובת הרשות כלפי ההבטחה; (ג) איזון בין סמכות הרשות, אינטרס ההסתמכות של האזרח והאינטרס הציבורי — כולל הליכים וסעד.\n\nא. יסודות אכיפת ההבטחה המנהלית\n\nכדי שהבטחה מנהלית תזכה לאכיפה יש בראש ובראשונה להצטייר כלפי הנמען כ**הבטחה ברורה וספציפית**[[fn:1]]; כלומר הודעה או הודעה מעשית שהרשות נתנה כך שניתן להסיק ממנה ציפייה קונקרטית לגבי התנהגותה בעתיד. בהגדרה זו נכלל גם עניין היות ההבטחה מכוונת לנמען וניתנת בהקשר שמאפשר לו להסתמך עליה.[[fn:2]] בנוסף, יש לבדוק כי ההבטחה ניתנה על־ידי **גורם מו",
+  "marker_format": "atomic"
+}
