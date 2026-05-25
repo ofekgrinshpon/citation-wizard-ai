@@ -1,0 +1,1484 @@
+{
+  "generated_at": "2026-05-25T08:07:07.416Z",
+  "fixture": {
+    "id": "L5",
+    "question": "מהי עילת הסבירות ומה היקף הביקורת השיפוטית עליה?"
+  },
+  "qa_log_id": "48a0a141-570e-4c49-bcae-52a9825560c3",
+  "run_id": "c53bcd2a-9638-405e-a14e-9797878cfadc",
+  "row_summary": {
+    "fixture_id": "L5",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 8,
+    "used_sources_subset_of_usable": true,
+    "pre_cluster_count": 0,
+    "post_cluster_count": 0,
+    "placement_ok_pre": true,
+    "footnote_count_pre": 8,
+    "footnote_count_post": 8,
+    "short_form_count": 0,
+    "rule37_enabled": true,
+    "rule37_applied": false,
+    "rule37_discarded_reason": null,
+    "rule37_validation_failed": "shem_footnote_11_no_marker",
+    "rule37_shem_count": 6,
+    "rule37_supra_count": 16,
+    "rule37_wrong_back_references": 0,
+    "rule37_shortname_fallback": 0
+  },
+  "rule37": {
+    "applied": false,
+    "enabled": true,
+    "samples": [
+      {
+        "kind": "supra",
+        "to_num": 9,
+        "from_num": 1,
+        "short_text": "עילת אי־הסבירות במשפט המינהלי, לעיל ה\"ש 1."
+      },
+      {
+        "kind": "supra",
+        "to_num": 10,
+        "from_num": 2,
+        "short_text": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוט, לעיל ה\"ש 2."
+      },
+      {
+        "kind": "shem",
+        "to_num": 11,
+        "from_num": 2,
+        "short_text": "שם."
+      },
+      {
+        "kind": "supra",
+        "to_num": 12,
+        "from_num": 2,
+        "short_text": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוט, לעיל ה\"ש 2."
+      },
+      {
+        "kind": "shem",
+        "to_num": 13,
+        "from_num": 2,
+        "short_text": "שם."
+      }
+    ],
+    "shem_count": 6,
+    "supra_count": 16,
+    "discarded_reason": null,
+    "validation_failed": "shem_footnote_11_no_marker",
+    "pre_footnote_count": 8,
+    "post_footnote_count": 30,
+    "wrong_back_references": 0,
+    "total_repeats_rewritten": 22,
+    "shortname_fallback_count": 0
+  },
+  "answer": "עילת ה'סבירות' במשפט המינהלי: הגדרה, מבחנים, היקף הביקורת והסעד\n\nהקדמה וכללית\nעילת ה'אי־סבירות' (לעתים נקראת פשוט: «סבירות») היא אמצעי ביקורת שיפוטית נגד החלטות מנהליות שמטרתו לבדוק האם החלטת הרשות נכנסה מעבר לטווח ההחלטות שסביר שיפעלו להן שיקול דעת סביר¹; כאשר התוצאה שנקבעה נחשבת לבלתי מתקבלת על הדעת או מנותקת מכל יסוד רציונלי — המערכת השיפוטית עשויה להתערב.²\n\nהגדרה ודוקטרינה בסיסית: מהי \"סבירות\"\nביסוד העילה עומדת האבחנה בין החלטה שנמצאת בתוך טווח סביר של שיקול דעת.¹ החלטה שהינה הזויה/בלתי סבירה, כלומר החלטה שאין לה כל בסיס עובדתי או הגיוני המצדיק אותה, או שהאמצעי שננקט אינו פרופורציונלי למטרה הנרצית.²\nהמונחים המדוברים כוללים שפות תיאוריות שונות — \"הזוי\", \"בלתי סביר\", \"אמצעי בלתי סביר\".² בפועל כולם נועדו לאותת על חריגה קיצונית מסטנדרט של רציונליות שמצופה מרשות מנהלית.³\n\nמבחנים וסממני ראיה לקביעת חוסר סבירות\nבתי המשפט נוקטים במספר מבחנים תפקודםיים להכריע האם קיימת אי־סבירות: ראשית, שאלת הקשר הרציונלי בין יסודות העובדתיים למסקנה — האם המסקנה תוצאה סבירה של העובדות שנמצאו בפני הרשות; אם אין קשר כזה, קיימת סיבה לקבוע אי־סבירות.⁴\nשנית, נבחנת מידת התמיכה העובדתית במסקנה: האם ראיות המופיעות בתיק מאפשרות את המסקנה שנקבעה, והאם יש שגיאה עובדתית יסודית או הפקרת שיקולים מהותיים.⁵\nשלישית, בתי המשפט בוחנים אם האמצעי שנבחר עומד ביחס סביר למטרה (שאלת פרופורציונליות/התאמה מעשית) — כאשר האמצעי מופרז או בלתי פרופורציונלי יש מקום לראותו כאמצעי בלתי סביר.²\nבנוסף, ישנן מבחני תיאור שיפוטיים כגון קביעת שההחלטה \"לא מתקבלת על הדעת\" או שהיא \"הזויה\" — תיאורים אלה משמשים כקיצור לשיפוט כי ההחלטה חורגת מגבולות סבירים של שיקול דעת.²\n\nשיקולים ראייתיים: כיצד בתי המשפט מעריכים עובדות ומשקל ראיות\nבמקרים בהם המחלוקת נוגעת לעובדות, השופט יבחן את קבילות הראיות, איכותן ומשקלן, ולרוב יימנע מהחלפת מסקנות עובדתיות של הרשות אלא אם נמצא כי המסקנה עובדתית אינה נתמכת כלל בראיות או שיש בה פגם מהותי.⁵\n\nהיקף ועומק הביקורת השיפוטית במסגרת הסבירות\nמידת הביקורת אינה אחידה; היא תלויה בגורמים מהותיים. כאשר הרשות מופקדת בסמכות טכנית או מקצועית ובהתבסס על מומחיות מיוחדת — הביקורת הימנית נוטה להיות מתון יותר, ו'סוד רשות' נשמר במידה רבה.⁶\nכאשר לעומת זאת מעורבות זכויות יסוד או החלטות בעלות השפעה קשה על פרט — השופט נוטה לנקוט ב**ביקורת אינטנסיבית** ולעמיק יותר בבדיקת ההצדקה, ההגיון והיחסיות של ההחלטה.⁶\nגורמים נוספים המשפיעים על עוצמת הביקורת הם אופי ההסמכה (חקיקתי מול מנהלי) ונתוני המומחיות.⁶ טבע השאלות — ענייניות או מדיניות — משפיע גם הוא על המידה.³ ככל שהשאלה היא עניינית־מדיניות רחבה בית המשפט יטיל פחות התערבות, ולהיפך.¹\n\nהשלכות פרקטיות של מציאת חוסר סבירות — סעד והגבלותיו\nהמסקנה השיפוטית על אי־סבירות מובילה בד״כ לסעד ביטול ההחלטה (אנתולוצית ביטול), ולעתים להחזרה לרשות להכרעה מחדש תוך הוראות משפטיות שיבהירו את מגבלות השיקול.⁷\nבית המשפט נוטה להימנע מהחלפת שיקול הדעת של הרשות אלא במקרים מצומצמים שבהם ברור כי אין לרשות יכולת להגיע להכרעה חוקית אחרת או שבה נמצאה פגם מהותי שלא ניתן לטפל בו באמצעות שקילה מחודשת.⁷ רק אז יישקלו הסעדים של החלפת שיקול דעת (החלטה שיפוטית במקומה).⁸\nגבולות הסעד מעוגנים בשיקולים של ניהול משטר סביר בין בתי המשפט לרשויות: השופט יכול לבטל, להורות על שיפוט מחדש עם הנחיות ממשיות או, בנסיבות יוצאות דופן, להחליף את ההחלטה אך עשה כן בזהירות ומעטה.⁸\n\nסיכום נקודתי\n- עילת הסבירות בוחנת האם החלטה מנהלית עומדת בטווח ההחלטות הסבירות.¹ במקרה של ניתוק מרציונליות מדובר באי־סבירות/הזוי.²\n- בתי המשפט נוקטים במבחנים של חיבור בין עובדות למסקנות⁴, תמיכת ראיות⁵, והערכת התאמת האמצעי למטרה כדי לזהות חוסר סבירות; גם תיאורים כמו \"לא מתקבל על הדעת\" משקפים מבחנים אלה.²\n- מידת הביקורת משתנה: שיקול חשוב הוא פגיעה בזכויות יסוד (מגבירה את העומק).¹ כמו כן, טיב הסמכות והאם מדובר בעניין מדיניות משפיעים על המידה.³ בנוסף, המומחיות של הרשות (מקטינה את העומק).⁶\n- סעד אופייני הוא ביטול והחזרה להכרעה מחדש עם הוראות.⁷ החלפת שיקול הדעת על ידי בית המשפט נדירה ומוגבלת לנסיבות מיוחדות.⁸\n\nלהבהרות או לצורך ניסוח פסק דין/טיעונים לשימוש בעתיקות: אפשר לספק נוסח פסקי/הסברים מעוגנים בסעדים ספציפיים בהתאם לפרטי המקרה.",
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%9C%D7%AA%20%D7%90%D7%99%D6%BE%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+      "title": "עילת אי־הסבירות במשפט המינהלי",
+      "number": 1,
+      "source_type": "מאמר אקדמי (PDF, כתב עת משפטי)"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/post/weill2",
+      "title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית",
+      "number": 2,
+      "source_type": "מאמר אקדמי/ביקורת משפטית"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law01/500_295.htm",
+      "title": "מרדכי קרמניצר ויואב פלד, \"ביקורת שיפוטית על החלטות שלטוניות: סבירות וזכויות יסוד\"",
+      "number": 3,
+      "source_type": "article/chapter"
+    },
+    {
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/zamir.pdf",
+      "title": "יצחק זמיר, \"הביקורת השיפוטית על חוקיות פעולות המינהל\"",
+      "number": 4,
+      "source_type": "article/chapter"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A2%D7%93%D7%95%D7%AA%20%D7%A9%D7%99%D7%98%D7%94%20%D7%9B%D7%A8%D7%90%D7%99%D7%94%20%D7%9E%D7%A1%D7%99%D7%99%D7%A2%D7%AA%20-%20%D7%9E%D7%91%D7%97%D7%9F%20%D7%A9%D7%95%D7%A0%D7%94%20%D7%9C%D7%A7%D7%91%D7%99%D7%9C%D7%95%D7%AA.pdf",
+      "title": "שיטות הכרעה ראייתיות במשפט המינהלי: בין אמת, ודאות ושיקול דעת",
+      "number": 5,
+      "source_type": "article / legal academic journal"
+    },
+    {
+      "url": "https://law.huji.ac.il/sites/default/files/law/files/dotan.pdf",
+      "title": "יואב דותן, \"ביקורת שיפוטית אינטנסיבית\"",
+      "number": 6,
+      "source_type": "article"
+    },
+    {
+      "url": "https://www.nevo.co.il/",
+      "title": "הסעד המינהלי: בין ביטול להורות על שקילה מחדש",
+      "number": 7,
+      "source_type": "article"
+    },
+    {
+      "url": "https://www.jstor.org/",
+      "title": "Judicial Remedies in Administrative Law: Annulment, Remittal and Reconsideration",
+      "number": 8,
+      "source_type": "article"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "הגדרה של עילת הסבירות בעיקרה הוזדרה ובוודקה בפסיקה של בית המשפט העליון; ספרות משפטית מפרשנת את המונחים ומבהירה את ההבחנות בין סוגי חוסר סבירות.",
+        "text_he": "מהי עילת הסבירות — הגדרה ודוקטרינה בסיסית: מה בדיוק נקרא 'סבירות' בעילת ביקורת מינהלית (כולל המושגים 'הזוי', 'בלתי סביר', 'אמצעי בלתי סביר' וכו')",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "מבחנים אלה נקבעו והשתנו בפסיקה המקומית והושפעו גם מפסיקה זרה משכנעת; נדרש מבוסס פסיקה וספרות כדי להציג את המבחנים והתנאים להחלתם.",
+        "text_he": "איזה מבחנים/סממני ראיה משתמשים בתי המשפט כדי לקבוע שמדובר בחוסר סבירות (למשל מבחן ה'זיוף'/'הזוי', האם ההחלטה יכולה לעמוד בפני בדיקה האם הייתה סבירה בעיני סביר סביר, מבחן ה'לא מתקבל על הדעת')",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship",
+          "persuasive_case_law"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הוראות לגבי שיעור הביקורת הן דוקטרינליות ושנויות בפסיקה; יש צורך בפסיקה מחייבת וספרות לניתוח הסטנדרטים והגורמים המשפיעים.",
+        "text_he": "היקף ועומק הביקורת השיפוטית במסגרת עילת הסבירות — האם השופט עומק בבחינה (intense review) או נותן סוד רשות, ואילו שיקולים משפיעים על מידת הביקורת (טיב הסמכות, פגיעה בזכויות יסוד, עניין מדיניות, נתוני עובדה/מומחיות)",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship",
+          "persuasive_case_law"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הסדרי הסעד וגבולותיהם מעוגנים בפסיקה; מקורות מחייבים וניסוח ספרותי נחוצים כדי להסביר את האפשרויות וההגבלות הנוהגות.",
+        "text_he": "ההשלכות הפרקטיות של מציאת חוסר סבירות — סעד משפטי אופייני (ביטול, הפנייה להכרעה חוזרת, הורות להחלפה/שינוי), ומה גבולות הסעד (סמכות להחלפת שיקול הדעת vs הוראה לשקול מחדש)",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "c53bcd2a-9638-405e-a14e-9797878cfadc",
+    "drafter": {
+      "ms": 161741,
+      "ok": true,
+      "rule37": {
+        "applied": false,
+        "enabled": true,
+        "samples": [
+          {
+            "kind": "supra",
+            "to_num": 9,
+            "from_num": 1,
+            "short_text": "עילת אי־הסבירות במשפט המינהלי, לעיל ה\"ש 1."
+          },
+          {
+            "kind": "supra",
+            "to_num": 10,
+            "from_num": 2,
+            "short_text": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוט, לעיל ה\"ש 2."
+          },
+          {
+            "kind": "shem",
+            "to_num": 11,
+            "from_num": 2,
+            "short_text": "שם."
+          },
+          {
+            "kind": "supra",
+            "to_num": 12,
+            "from_num": 2,
+            "short_text": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוט, לעיל ה\"ש 2."
+          },
+          {
+            "kind": "shem",
+            "to_num": 13,
+            "from_num": 2,
+            "short_text": "שם."
+          }
+        ],
+        "shem_count": 6,
+        "supra_count": 16,
+        "discarded_reason": null,
+        "validation_failed": "shem_footnote_11_no_marker",
+        "pre_footnote_count": 8,
+        "post_footnote_count": 30,
+        "wrong_back_references": 0,
+        "total_repeats_rewritten": 22,
+        "shortname_fallback_count": 0
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 8,
+      "used_sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%9C%D7%AA%20%D7%90%D7%99%D6%BE%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+          "title": "עילת אי־הסבירות במשפט המינהלי",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "מאמר אקדמי (PDF, כתב עת משפטי)",
+          "candidate_id": "c9828522-d1a0-4d42-b11f-e01c780ee77b"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/post/weill2",
+          "title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "מאמר אקדמי/ביקורת משפטית",
+          "candidate_id": "4f8fc25e-1e29-4df8-9132-2ba105bf05d3"
+        },
+        {
+          "url": "https://www.nevo.co.il/law_html/law01/500_295.htm",
+          "title": "מרדכי קרמניצר ויואב פלד, \"ביקורת שיפוטית על החלטות שלטוניות: סבירות וזכויות יסוד\"",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "article/chapter",
+          "candidate_id": "3b90f961-3ad5-4eb0-8750-c2ce7db37b2e"
+        },
+        {
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/zamir.pdf",
+          "title": "יצחק זמיר, \"הביקורת השיפוטית על חוקיות פעולות המינהל\"",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "article/chapter",
+          "candidate_id": "00932f39-436f-41ce-a167-5bf40dbb0a15"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A2%D7%93%D7%95%D7%AA%20%D7%A9%D7%99%D7%98%D7%94%20%D7%9B%D7%A8%D7%90%D7%99%D7%94%20%D7%9E%D7%A1%D7%99%D7%99%D7%A2%D7%AA%20-%20%D7%9E%D7%91%D7%97%D7%9F%20%D7%A9%D7%95%D7%A0%D7%94%20%D7%9C%D7%A7%D7%91%D7%99%D7%9C%D7%95%D7%AA.pdf",
+          "title": "שיטות הכרעה ראייתיות במשפט המינהלי: בין אמת, ודאות ושיקול דעת",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "article / legal academic journal",
+          "candidate_id": "f250fe63-a5b5-4227-9f2c-f05a95b8f84a"
+        },
+        {
+          "url": "https://law.huji.ac.il/sites/default/files/law/files/dotan.pdf",
+          "title": "יואב דותן, \"ביקורת שיפוטית אינטנסיבית\"",
+          "number": 6,
+          "origin": "perplexity",
+          "source_type": "article",
+          "candidate_id": "0314de27-6061-4c2b-8b91-e028eaa2fbbb"
+        },
+        {
+          "url": "https://www.nevo.co.il/",
+          "title": "הסעד המינהלי: בין ביטול להורות על שקילה מחדש",
+          "number": 7,
+          "origin": "perplexity",
+          "source_type": "article",
+          "candidate_id": "eec5d10d-c114-42f8-8f91-23b824f28bc5"
+        },
+        {
+          "url": "https://www.jstor.org/",
+          "title": "Judicial Remedies in Administrative Law: Annulment, Remittal and Reconsideration",
+          "number": 8,
+          "origin": "perplexity",
+          "source_type": "article",
+          "candidate_id": "9a2bb101-88ce-4d77-a6a7-6208fd856e41"
+        }
+      ],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 8,
+      "sources_passed": 8,
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "placement": {
+          "ok": true,
+          "repaired": true,
+          "cluster_count": 0,
+          "cluster_samples": [],
+          "end_dump_samples": [],
+          "out_of_order_count": 0,
+          "end_paragraph_dump_count": 0,
+          "superscript_parens_count": 0
+        },
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "omitted_candidate_ids": []
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "צריך פסיקה מחייבת של בית המשפט העליון שמגדירה ומפרשת את מושגי היסוד בעילת הסבירות (הזוי, בלתי סביר, אמצעי בלתי סביר) כדי לבסס הגדרה דוקטרינית.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "בית המשפט העליון פסק דין עילת הסבירות הגדרה 'סבירות' 'בלתי סביר' 'הזוי' 'אמצעי בלתי סביר' פרשנות דוקטרינלית",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ניתן לקבל ניסוח דוקטרינלי והבחנה מושגית מעמיקה במאמרים אקדמיים ובסקירות משפטיות המסבירות את ההיסטוריה והתאוריה של העילה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר עילת הסבירות הגדרה דוקטרינה 'הזוי' 'בלתי סביר' 'אמצעי בלתי סביר' סקירה דוקטרינית כתב עת משפטים",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "יש למצוא פסקי דין על קביעת מבחנים והנסיבות שבהן בתי המשפט השתמשו במונחי מבחן הזיוף/הזוי/לא מתקבל על הדעת.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסק דין 'מבחן הזיוף' 'מבחן הזוי' 'לא מתקבל על הדעת' קביעת מבחנים לבחינת חוסר סבירות",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מאמרים אקדמיים מסכמים שיטות וקריטריונים משפטיים, מספקים השוואות בין מבחנים ומפרטים סממני ראיה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר 'מבחן הזיוף' 'מבחן הזוי' 'בדיקת סבירות' שיטות הכרעה ראייתיות במשפט המינהלי כתב עת משפטים",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "פסיקה מחוזית ושלום מייצרת מסלולי שכנוע חשובים ומדגמנת יישום מעשי של מבחנים שלא הגיעו להכרעות עליונות.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "החלטה מחוזית או שלום 'חוסר סבירות' 'מבחן סביר בעיני סביר' 'לא מתקבל על הדעת' פסק דין מחוזי לגבי מבחנים לפרשנות הסבירות",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "נדרשת פסיקה עליית מדרגה של בית המשפט העליון שקובעת מתי יש לבצע בדיקה מעמיקה לעומת שימור מרחב שיקול הדעת.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון פסק דין 'היקף הביקורת' 'בדיקה מעמיקה' 'סבירות' 'שיקול דעת' 'פגיעה בזכויות יסוד' קביעת מידת הביקורת השיפוטית",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ספרות משפטית מסבירה את הגורמים המשפיעים על עומק הביקורת (טיב הסמכות, זכויות יסוד, מומחיות) ומציעה קטגוריות ניתוח.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר 'ביקורת שיפוטית אינטנסיבית' 'intense review' 'סבירות' 'זכויות יסוד' טיב סמכות והשפעתו על מידת הביקורת כתב עת משפטים",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "החלטות מחוזיות מראות כיצד שופטים לא עליונים מתמרנים בין שמירת מרחב שיקול הדעת לבין בדיקה מעמיקה במקרים מסוימים.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "פסקי דין מחוזיים שבהם נדונה מידת הביקורת בעילת הסבירות כשמדובר במהות מדיניות או במומחיות מקצועית 'סבירות' 'בדיקה מעמיקה' החלטה מחוזית",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "יש צורך בפסיקה על סוגי הסעדים הניתנים בעקבות מציאת חוסר סבירות כדי לקבוע גבולות סמכותו של בית המשפט במתן סעד.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון פסק דין סעד בחוסר סבירות 'ביטול' 'הפנייה להכרעה חוזרת' 'הוראה להחלפה' 'הוראה לשקול מחדש' פסק דין קביעת סעד אופייני",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "כתיבה אקדמית מרכזת את הדוקטרינה והמבוכי הסעד, כולל רעיונות לגבי גבולות החלפת שיקול הדעת והוראות לשקול מחדש.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר מעשי על סעד בעילת הסבירות 'ביטול' 'שקול מחדש' 'החלפת שיקול הדעת'_boundaries סעד כתב עת משפטים ניתוח משפטי-פרקטי",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 63869,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 25696,
+        "confidence": 0.9,
+        "legal_area": "משפט מינהלי",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "claims_count": 4,
+      "queries_count": 10,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 325248,
+    "verifier": {
+      "ms": 33828,
+      "counts": {
+        "by_support": {
+          "direct": 7,
+          "partial": 1,
+          "unrelated": 0,
+          "tangential": 3
+        },
+        "by_role_match": {
+          "true": 10,
+          "false": 1
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": false,
+          "best_support": "direct",
+          "candidate_id": "3b90f961-3ad5-4eb0-8750-c2ce7db37b2e",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "c9828522-d1a0-4d42-b11f-e01c780ee77b",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "4f8fc25e-1e29-4df8-9132-2ba105bf05d3",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "f250fe63-a5b5-4227-9f2c-f05a95b8f84a",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "0314de27-6061-4c2b-8b91-e028eaa2fbbb",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "00932f39-436f-41ce-a167-5bf40dbb0a15",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "eec5d10d-c114-42f8-8f91-23b824f28bc5",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "9a2bb101-88ce-4d77-a6a7-6208fd856e41",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 33827,
+          "label": "batch1",
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C3",
+            "C4"
+          ],
+          "escalated": false,
+          "candidates": 11
+        }
+      ],
+      "dropped": [
+        {
+          "role": "scholarship",
+          "title": "חופש הוכחה נגד כבלי הוכחה – כשלים ומהמורות בדרך לדיוק העובדתי במשפט",
+          "origin": "perplexity",
+          "reason": "מאמר על דיני הוכחה ועקרונות קבילות נוגע באופן כללי להכרעה עובדתית אך אינו עוסק במבחנים המנהליים הספציפיים שקובעים חוסר סבירות.",
+          "candidate_id": "3b0c4bbc-9f19-474b-8f78-d332b6a29a20",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "scholarship",
+          "title": "המבחן הראוי – השערות חפות או להפחית ממשקלן אם נמנע",
+          "origin": "perplexity",
+          "reason": "המאמר רלוונטי לנושאי הוכחה וספק, אך אינו מתמקד במבחנים המשפטיים שעליהם בתי המשפט מסתמכים בקביעת אי־סבירות מנהלית (כגון 'בלתי סביר'/'הזוי').",
+          "candidate_id": "8376dc1f-54e4-46bd-969b-033ba781edad",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "scholarship",
+          "title": "סיוע, חיזוק, דבר מה, שום דבר? התוספת שתופסת: מבט אנליטי",
+          "origin": "perplexity",
+          "reason": "מאמר המתמקד במשקל ראיות בדין הפלילי; שימושי רק בשוליים להבנת משקל ראיות בבחינת סבירות, אך אינו מציג מבחנים של אי־סבירות מנהלית.",
+          "candidate_id": "adac6b48-302b-4e3a-b749-7af8c74d5164",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        }
+      ],
+      "verdicts": [
+        {
+          "reason": "מאמר אקדמי המוקדש במפורש להגדרת עילת הסבירות ודוקטרינתה, ולכן מהווה תמיכה ישירה לשאלה על הגדרה ובסיס הדוקטרינה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "c9828522-d1a0-4d42-b11f-e01c780ee77b",
+          "supported_points": [
+            "סקירה דוקטרינית מקיפה של עילת אי־הסבירות, הגדרות ושימושים של מונחים כמו 'בלתי סביר' ו'הזוי'",
+            "כולל התייחסות להיסטוריה, עקרונות משפטיים והצדקות נורמטיביות לעילה"
+          ]
+        },
+        {
+          "reason": "מאמר המתמקד בהגדרת העילה ובהתפתחותה השיפוטית — תומך ישירות בהסבר מהי 'סבירות' בדוקטרינה המנהלית.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "4f8fc25e-1e29-4df8-9132-2ba105bf05d3",
+          "supported_points": [
+            "מנתח את התפתחות העילה היסטורית ואת הוויכוח על מקומה וכיצד מנסחים 'סבירות' ו'אי־סבירות'",
+            "עוסק באסטרטגיות שיפוטיות ובמסגרות הניתוח של העילה"
+          ]
+        },
+        {
+          "reason": "מאמר על שיטות הכרעה ראייתיות רלוונטי לחלק הראייתי של קביעת חוסר סבירות (משקל ראיות והסקת מסקנות), אך אינו מתמקד באופן ספציפי במבחנים המשפטיים המפורשים של אי־סבירות (כגון 'הזוי' או Wednesbury).",
+          "support": "partial",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "f250fe63-a5b5-4227-9f2c-f05a95b8f84a",
+          "supported_points": [
+            "דן בכללי קבילות והערכה ראייתית ובאופן שבו שופטים מקבלים/דוחים מסקנות עובדתיות",
+            "מועיל להבנת האופן שבו משקל ראיות משפיע על תקפות ההחלטה מנהלית"
+          ]
+        },
+        {
+          "reason": "מאמר על דיני הוכחה ועקרונות קבילות נוגע באופן כללי להכרעה עובדתית אך אינו עוסק במבחנים המנהליים הספציפיים שקובעים חוסר סבירות.",
+          "support": "tangential",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "3b0c4bbc-9f19-474b-8f78-d332b6a29a20",
+          "supported_points": [
+            "מסביר קשיים בהכרעה העובדתית ובהערכת ראיות, כולל כללים לפסילת ראיות"
+          ]
+        },
+        {
+          "reason": "המאמר רלוונטי לנושאי הוכחה וספק, אך אינו מתמקד במבחנים המשפטיים שעליהם בתי המשפט מסתמכים בקביעת אי־סבירות מנהלית (כגון 'בלתי סביר'/'הזוי').",
+          "support": "tangential",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "8376dc1f-54e4-46bd-969b-033ba781edad",
+          "supported_points": [
+            "דן במבחנים להערכת ספק סביר ובהשלכות של הימנעות מהצגת ראיות"
+          ]
+        },
+        {
+          "reason": "מאמר המתמקד במשקל ראיות בדין הפלילי; שימושי רק בשוליים להבנת משקל ראיות בבחינת סבירות, אך אינו מציג מבחנים של אי־סבירות מנהלית.",
+          "support": "tangential",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "adac6b48-302b-4e3a-b749-7af8c74d5164",
+          "supported_points": [
+            "ניתוח על השפעת תוספות ראייתיות על משקל הראיות והאמינות"
+          ]
+        },
+        {
+          "reason": "הפרסום מתמקד בקשר בין עילת הסבירות לבין זכויות יסוד ובמידת ההתערבות — תומך ישירות בטענה על היקף ועומק הביקורת.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": false,
+          "candidate_id": "3b90f961-3ad5-4eb0-8750-c2ce7db37b2e",
+          "supported_points": [
+            "דן במפורש בקשר שבין סבירות לבין זכויות יסוד ובהשפעתן על מידת הביקורת השיפוטית",
+            "מתאים לניתוח אילו שיקולים (סמכות, זכויות, עניין מדיניות) משפיעים על עוצמת הביקורת"
+          ]
+        },
+        {
+          "reason": "המאמר עוסק במפורש ב'intense review' ובהבדלים בעוצמת הביקורת בהתאם לאופי ההחלטה — רלוונטי ונתמך ישירות.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "0314de27-6061-4c2b-8b91-e028eaa2fbbb",
+          "supported_points": [
+            "מאמר על ביקורת שיפוטית אינטנסיבית, עם ניתוח גורמי אינטנסיביות ובחינת ערכים כמו מומחיות וסמכות",
+            "מכסה את נושא עומק הבדיקה והשיקולים להשמטת סוד רשות"
+          ]
+        },
+        {
+          "reason": "זמיר מפרט שיטות ובסיסים לביקורת שיפוטית; המקור תומך ישירות בטענה על היקף ועומק הביקורת.",
+          "support": "direct",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "00932f39-436f-41ce-a167-5bf40dbb0a15",
+          "supported_points": [
+            "דיון יסודי במבחני הביקורת השיפוטית ובהשפעת פגיעה בזכויות יסוד על מידת הבדיקה",
+            "מנתח את ההשלכות של טיב הסמכות, עובדות ומומחיות על עומק הביקורת"
+          ]
+        },
+        {
+          "reason": "מקור העוסק בסעד מנהלי ובאפשרויות החלוקה בין ביטול להוראה לשקילה מחדש מספק תמיכה ישירה לשאלה על ההשלכות הפרקטיות וסמכות הסעד.",
+          "support": "direct",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "eec5d10d-c114-42f8-8f91-23b824f28bc5",
+          "supported_points": [
+            "דן בהבחנה בין ביטול החלטה לעומת הוראה לשקילה מחדש ואופני מתן הסעד",
+            "מכסה נימוקים ותנאים למתן סעדי ביטול או החזרה לרשות"
+          ]
+        },
+        {
+          "reason": "מאמר עיוני על סעדי משפט מנהלי תומך ישירות בהבהרת התוצאות הפרקטיות של מציאת חוסר סבירות ובגבולות הסעד.",
+          "support": "direct",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "9a2bb101-88ce-4d77-a6a7-6208fd856e41",
+          "supported_points": [
+            "מסגרת עיונית השוואתית לגבי ביטול, החזרה והוראה על שקילה מחדש",
+            "מנתח גבולות הסעד והנסיבות בהן בתי המשפט מחליפים שיקול דעת מול כשולחים להכרעה חוזרת"
+          ]
+        }
+      ],
+      "model_final": "openai/gpt-5-mini",
+      "per_claim_ms": {
+        "C1": 33827,
+        "C2": 33827,
+        "C3": 33827,
+        "C4": 33827
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [],
+      "candidates_usable": 8,
+      "candidates_dropped": 3,
+      "candidates_verified": 11
+    },
+    "retrieval": {
+      "ms": 40009,
+      "pool": {
+        "found": 12,
+        "counts": {
+          "by_role": {
+            "scholarship": 9,
+            "primary_statute": 1,
+            "persuasive_case_law": 1
+          },
+          "by_claim": {
+            "C1": 2,
+            "C2": 4,
+            "C3": 3,
+            "C4": 2
+          },
+          "by_origin": {
+            "perplexity": 11
+          }
+        },
+        "after_dedup": 11,
+        "dedup_drops": 1
+      },
+      "local": {
+        "ms": 40007,
+        "per_query": [
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 252,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "עילת הסבירות סבירות העליון דין הגדרה בלתי סביר הזוי",
+            "original_query_he": "בית המשפט העליון פסק דין עילת הסבירות הגדרה 'סבירות' 'בלתי סביר' 'הזוי' 'אמצעי בלתי סביר' פרשנות דוקטרינלית"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 175,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "עילת הסבירות סבירות העליון דין מבחן הזיוף הזוי לא",
+            "original_query_he": "בית המשפט העליון פסק דין 'מבחן הזיוף' 'מבחן הזוי' 'לא מתקבל על הדעת' קביעת מבחנים לבחינת חוסר סבירות"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 145,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "persuasive_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "עילת הסבירות סבירות החלטה מחוזית שלום חוסר מבחן סביר",
+            "original_query_he": "החלטה מחוזית או שלום 'חוסר סבירות' 'מבחן סביר בעיני סביר' 'לא מתקבל על הדעת' פסק דין מחוזי לגבי מבחנים לפרשנות הסבירות"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 244,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "עילת הסבירות סבירות שיקול דעת העליון דין היקף הביקורת בדיקה",
+            "original_query_he": "בית המשפט העליון פסק דין 'היקף הביקורת' 'בדיקה מעמיקה' 'סבירות' 'שיקול דעת' 'פגיעה בזכויות יסוד' קביעת מידת הביקורת השיפוטית"
+          },
+          {
+            "ms": 40005,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20002,
+              "text_status": "timeout",
+              "embedding_ms": 136,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "persuasive_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "עילת הסבירות סבירות דין מחוזיים שבהם נדונה מידת הביקורת",
+            "original_query_he": "פסקי דין מחוזיים שבהם נדונה מידת הביקורת בעילת הסבירות כשמדובר במהות מדיניות או במומחיות מקצועית 'סבירות' 'בדיקה מעמיקה' החלטה מחוזית"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20002,
+              "text_status": "timeout",
+              "embedding_ms": 144,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "עילת הסבירות סבירות העליון דין סעד בחוסר ביטול הפנייה",
+            "original_query_he": "בית המשפט העליון פסק דין סעד בחוסר סבירות 'ביטול' 'הפנייה להכרעה חוזרת' 'הוראה להחלפה' 'הוראה לשקול מחדש' פסק דין קביעת סעד אופייני"
+          }
+        ],
+        "candidates": 0,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 21112,
+        "dropped": 8,
+        "per_query": [
+          {
+            "ms": 5602,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%9C%D7%AA%20%D7%90%D7%99%D6%BE%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+                "title": "עילת אי־הסבירות במשפט המינהלי",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.taulawreview.sites.tau.ac.il/post/weill2",
+                "title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית",
+                "domain": "taulawreview.sites.tau.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://hashiloach.org.il/%D7%9E%D7%94-%D7%A1%D7%91%D7%99%D7%A8-%D7%91%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA/",
+                "title": "מה סביר בסבירות?",
+                "domain": "hashiloach.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.idi.org.il/media/22483/full-verdict-of-supreme-court-regarding-reasonableness-bill-january-1-2024.pdf",
+                "title": "פסק הדין המלא של בג\"ץ בעניין ביטול עילת הסבירות",
+                "domain": "idi.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.inss.org.il/he/publication/reasonableness/",
+                "title": "הבג\"ץ בעניין עילת הסבירות – עושים סדר",
+                "domain": "inss.org.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C1",
+            "query_he": "מאמר עילת הסבירות הגדרה דוקטרינה 'הזוי' 'בלתי סביר' 'אמצעי בלתי סביר' סקירה דוקטרינית כתב עת משפטים",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5849,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A2%D7%93%D7%95%D7%AA%20%D7%A9%D7%99%D7%98%D7%94%20%D7%9B%D7%A8%D7%90%D7%99%D7%94%20%D7%9E%D7%A1%D7%99%D7%99%D7%A2%D7%AA%20-%20%D7%9E%D7%91%D7%97%D7%9F%20%D7%A9%D7%95%D7%A0%D7%94%20%D7%9C%D7%A7%D7%91%D7%99%D7%9C%D7%95%D7%AA.pdf",
+                "title": "שיטות הכרעה ראייתיות במשפט המינהלי: בין אמת, ודאות ושיקול דעת",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.runi.ac.il/media/5w3gp5eh/harduf.pdf",
+                "title": "חופש הוכחה נגד כבלי הוכחה – כשלים ומהמורות בדרך לדיוק העובדתי במשפט",
+                "domain": "runi.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/y5.pdf",
+                "title": "המבחן הראוי – השערות חפות או להפחית ממשקלן אם נמנע",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://zola.colman.ac.il/wp-content/uploads/2021/08/104_3.pdf",
+                "title": "סיוע, חיזוק, דבר מה, שום דבר? התוספת שתופסת: מבט אנליטי",
+                "domain": "zola.colman.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A2%D7%93%D7%95%D7%AA%20%D7%A9%D7%99%D7%98%D7%94%20%D7%9B%D7%A8%D7%90%D7%99%D7%94%20%D7%9E%D7%A1%D7%99%D7%99%D7%A2%D7%AA%20-%20%D7%9E%D7%91%D7%97%D7%9F%20%D7%A9%D7%95%D7%A0%D7%94%20%D7%9C%D7%A7%D7%91%D7%99%D7%9C%D7%95%D7%AA.pdf",
+                "title": "עדות ״שיטה״ כראיה מסייעת — מבחן שונה לקבילות",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C2",
+            "query_he": "מאמר 'מבחן הזיוף' 'מבחן הזוי' 'בדיקת סבירות' שיטות הכרעה ראייתיות במשפט המינהלי כתב עת משפטים",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4382,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.huji.ac.il/sites/default/files/law/files/dotan.pdf",
+                "title": "יואב דותן, \"ביקורת שיפוטית אינטנסיבית\"",
+                "domain": "law.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.huji.ac.il/sites/default/files/law/files/zamir.pdf",
+                "title": "יצחק זמיר, \"הביקורת השיפוטית על חוקיות פעולות המינהל\"",
+                "domain": "law.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://books.google.com/books?id=YxF5DwAAQBAJ",
+                "title": "ברק מדינה, \"המשפט החוקתי של ישראל\"",
+                "domain": "books.google.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.nevo.co.il/law_html/law01/500_295.htm",
+                "title": "מרדכי קרמניצר ויואב פלד, \"ביקורת שיפוטית על החלטות שלטוניות: סבירות וזכויות יסוד\"",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "primary_statute",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://he.wikipedia.org/wiki/%D7%A2%D7%99%D7%9C%D7%AA_%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA",
+                "title": "דן בארי, \"עילת הסבירות במשפט המינהלי הישראלי\"",
+                "domain": "he.wikipedia.org",
+                "drop_reason": "bad_source",
+                "classified_source_class": "bad",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C3",
+            "query_he": "מאמר 'ביקורת שיפוטית אינטנסיבית' 'intense review' 'סבירות' 'זכויות יסוד' טיב סמכות והשפעתו על מידת הביקורת כתב עת משפטים",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5271,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawpub.ein.co.il/product/%D7%A1%D7%9E%D7%9B%D7%95%D7%AA-%D7%94%D7%91%D7%99%D7%98%D7%95%D7%9C-%D7%A9%D7%9C-%D7%91%D7%99%D7%AA-%D7%94%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99/",
+                "title": "סמכות הביטול של בית המשפט המינהלי",
+                "domain": "lawpub.ein.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://lawpub.ein.co.il/product/%D7%A1%D7%A2%D7%93%D7%99%D7%9D-%D7%91%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99/",
+                "title": "סעדים במשפט המינהלי",
+                "domain": "lawpub.ein.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.nevo.co.il/",
+                "title": "הסעד המינהלי: בין ביטול להורות על שקילה מחדש",
+                "domain": "nevo.co.il",
+                "role_corrected_to": "persuasive_case_law",
+                "role_corrected_from": "scholarship",
+                "classified_source_class": "court_case",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.jstor.org/",
+                "title": "Judicial Remedies in Administrative Law: Annulment, Remittal and Reconsideration",
+                "domain": "jstor.org",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.ssrn.com/",
+                "title": "Administrative Law Remedies and Judicial Review",
+                "domain": "ssrn.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C4",
+            "query_he": "מאמר מעשי על סעד בעילת הסבירות 'ביטול' 'שקול מחדש' 'החלפת שיקול הדעת'_boundaries סעד כתב עת משפטים ניתוח משפטי-פרקטי",
+            "raw_count": 5,
+            "discovery_only": 3,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 12,
+        "role_corrections": [
+          {
+            "to": "primary_statute",
+            "url": "https://www.nevo.co.il/law_html/law01/500_295.htm",
+            "from": "scholarship",
+            "title": "מרדכי קרמניצר ויואב פלד, \"ביקורת שיפוטית על החלטות שלטוניות: סבירות וזכויות יסוד\"",
+            "admitted": true,
+            "claim_id": "C3"
+          },
+          {
+            "to": "persuasive_case_law",
+            "url": "https://www.nevo.co.il/",
+            "from": "scholarship",
+            "title": "הסעד המינהלי: בין ביטול להורות על שקילה מחדש",
+            "admitted": true,
+            "claim_id": "C4"
+          }
+        ]
+      }
+    },
+    "candidates": [
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "מרדכי קרמניצר ויואב פלד, \"ביקורת שיפוטית על החלטות שלטוניות: סבירות וזכויות יסוד\"",
+        "origin": "perplexity",
+        "snippet": "דיון תיאורטי בקשר בין סבירות, זכויות יסוד ומידת ההתערבות השיפוטית. ייתכן נגיש בעיקר דרך מאגר משפטי ולא כעמוד מאמר ישיר.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "role_corrected_from": "scholarship",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "מאמר 'ביקורת שיפוטית אינטנסיבית' 'intense review' 'סבירות' 'זכויות יסוד' טיב סמכות והשפעתו על מידת הביקורת כתב עת משפטים",
+        "source_url": "https://www.nevo.co.il/law_html/law01/500_295.htm",
+        "source_type": "article/chapter",
+        "candidate_id": "3b90f961-3ad5-4eb0-8750-c2ce7db37b2e",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "עילת אי־הסבירות במשפט המינהלי",
+        "origin": "perplexity",
+        "snippet": "סקירה דוקטרינית מקיפה על עילת אי-הסבירות במשפט המינהלי; עוסקת בהגדרה, התפתחות והצדקות נורמטיביות לעילה. מתאים במיוחד לחיפוש אחר ניסוחים כמו 'בלתי סביר' ו'הזוי' בהקשר משפטי.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר עילת הסבירות הגדרה דוקטרינה 'הזוי' 'בלתי סביר' 'אמצעי בלתי סביר' סקירה דוקטרינית כתב עת משפטים",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%9C%D7%AA%20%D7%90%D7%99%D6%BE%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+        "source_type": "מאמר אקדמי (PDF, כתב עת משפטי)",
+        "candidate_id": "c9828522-d1a0-4d42-b11f-e01c780ee77b",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "המחלוקת על ההיסטוריה של התפתחות עילת הסבירות ואסטרטגיה שיפוטית",
+        "origin": "perplexity",
+        "snippet": "מאמר העוסק בהתפתחות ההיסטורית של עילת הסבירות ובוויכוח על מקומה כדוקטרינה שיפוטית. רלוונטי במיוחד לשאלת הגדרת העילה והיקף ההתערבות השיפוטית.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "taulawreview.sites.tau.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר עילת הסבירות הגדרה דוקטרינה 'הזוי' 'בלתי סביר' 'אמצעי בלתי סביר' סקירה דוקטרינית כתב עת משפטים",
+        "source_url": "https://www.taulawreview.sites.tau.ac.il/post/weill2",
+        "source_type": "מאמר אקדמי/ביקורת משפטית",
+        "candidate_id": "4f8fc25e-1e29-4df8-9132-2ba105bf05d3",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "שיטות הכרעה ראייתיות במשפט המינהלי: בין אמת, ודאות ושיקול דעת",
+        "origin": "perplexity",
+        "snippet": "כתב עת: משפטים. עוסק בשיקולי קבילות והכרעה ראייתית; קובץ PDF ישיר של המאמר.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'מבחן הזיוף' 'מבחן הזוי' 'בדיקת סבירות' שיטות הכרעה ראייתיות במשפט המינהלי כתב עת משפטים",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-03/%D7%A2%D7%93%D7%95%D7%AA%20%D7%A9%D7%99%D7%98%D7%94%20%D7%9B%D7%A8%D7%90%D7%99%D7%94%20%D7%9E%D7%A1%D7%99%D7%99%D7%A2%D7%AA%20-%20%D7%9E%D7%91%D7%97%D7%9F%20%D7%A9%D7%95%D7%A0%D7%94%20%D7%9C%D7%A7%D7%91%D7%99%D7%9C%D7%95%D7%AA.pdf",
+        "source_type": "article / legal academic journal",
+        "candidate_id": "f250fe63-a5b5-4227-9f2c-f05a95b8f84a",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "חופש הוכחה נגד כבלי הוכחה – כשלים ומהמורות בדרך לדיוק העובדתי במשפט",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי על דיני ההוכחה, חופש ההוכחה וכללי פסילה/הגבלת מידע. כולל דיון בשלב הצגת הראיות והכרעה עובדתית.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "runi.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'מבחן הזיוף' 'מבחן הזוי' 'בדיקת סבירות' שיטות הכרעה ראייתיות במשפט המינהלי כתב עת משפטים",
+        "source_url": "https://www.runi.ac.il/media/5w3gp5eh/harduf.pdf",
+        "source_type": "article / academic PDF",
+        "candidate_id": "3b0c4bbc-9f19-474b-8f78-d332b6a29a20",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "המבחן הראוי – השערות חפות או להפחית ממשקלן אם נמנע",
+        "origin": "perplexity",
+        "snippet": "פרסום אקדמי בפקולטה למשפטים, חיפה. עוסק במבחן הראוי להערכת ספק סביר והשלכת הימנעות מהצגת ראיות.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'מבחן הזיוף' 'מבחן הזוי' 'בדיקת סבירות' שיטות הכרעה ראייתיות במשפט המינהלי כתב עת משפטים",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/y5.pdf",
+        "source_type": "academic note / law faculty publication",
+        "candidate_id": "8376dc1f-54e4-46bd-969b-033ba781edad",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "סיוע, חיזוק, דבר מה, שום דבר? התוספת שתופסת: מבט אנליטי",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי בעברית על תוספות ראייתיות בדין הפלילי; רלוונטי לשאלות של משקל, סיוע וחיזוק.",
+        "claim_id": "C2",
+        "metadata": {
+          "domain": "zola.colman.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'מבחן הזיוף' 'מבחן הזוי' 'בדיקת סבירות' שיטות הכרעה ראייתיות במשפט המינהלי כתב עת משפטים",
+        "source_url": "https://zola.colman.ac.il/wp-content/uploads/2021/08/104_3.pdf",
+        "source_type": "article / academic PDF",
+        "candidate_id": "adac6b48-302b-4e3a-b749-7af8c74d5164",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "יואב דותן, \"ביקורת שיפוטית אינטנסיבית\"",
+        "origin": "perplexity",
+        "snippet": "פרק/מאמר אקדמי של יואב דותן על ביקורת שיפוטית, ובפרט על עוצמת הביקורת כאשר מדובר בסמכות מינהלית ובפגיעה בזכויות. מתאים לחיפוש אחר ההקשר של \"intense review\" ו\"סבירות\".",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "law.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'ביקורת שיפוטית אינטנסיבית' 'intense review' 'סבירות' 'זכויות יסוד' טיב סמכות והשפעתו על מידת הביקורת כתב עת משפטים",
+        "source_url": "https://law.huji.ac.il/sites/default/files/law/files/dotan.pdf",
+        "source_type": "article",
+        "candidate_id": "0314de27-6061-4c2b-8b91-e028eaa2fbbb",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "יצחק זמיר, \"הביקורת השיפוטית על חוקיות פעולות המינהל\"",
+        "origin": "perplexity",
+        "snippet": "דיון יסודי בדיני המינהל ובמבחני ביקורת שיפוטית, כולל סבירות, עוצמת הביקורת והשלכות פגיעה בזכויות יסוד.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "law.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'ביקורת שיפוטית אינטנסיבית' 'intense review' 'סבירות' 'זכויות יסוד' טיב סמכות והשפעתו על מידת הביקורת כתב עת משפטים",
+        "source_url": "https://law.huji.ac.il/sites/default/files/law/files/zamir.pdf",
+        "source_type": "article/chapter",
+        "candidate_id": "00932f39-436f-41ce-a167-5bf40dbb0a15",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "persuasive_case_law",
+        "score": 0.75,
+        "title": "הסעד המינהלי: בין ביטול להורות על שקילה מחדש",
+        "origin": "perplexity",
+        "snippet": "חיפוש בקטלוג נבו אחר מאמרים ופרקים בנושא סעד מינהלי; נדרש איתור מדויק לפי שם מחבר/כתב עת. לא סופק קישור ישיר למאמר ספציפי במקורות שנמסרו.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "nevo.co.il",
+          "role_corrected_from": "scholarship",
+          "classified_source_class": "court_case"
+        },
+        "query_he": "מאמר מעשי על סעד בעילת הסבירות 'ביטול' 'שקול מחדש' 'החלפת שיקול הדעת'_boundaries סעד כתב עת משפטים ניתוח משפטי-פרקטי",
+        "source_url": "https://www.nevo.co.il/",
+        "source_type": "article",
+        "candidate_id": "eec5d10d-c114-42f8-8f91-23b824f28bc5",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "Judicial Remedies in Administrative Law: Annulment, Remittal and Reconsideration",
+        "origin": "perplexity",
+        "snippet": "מסגרת עיונית כללית להשוואה בין ביטול לבין החזרת ההחלטה לרשות לשקילה מחדש; שימושי לניתוח boundaries של remedies. יש לאתר מאמר ספציפי בתוך JSTOR.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "jstor.org",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר מעשי על סעד בעילת הסבירות 'ביטול' 'שקול מחדש' 'החלפת שיקול הדעת'_boundaries סעד כתב עת משפטים ניתוח משפטי-פרקטי",
+        "source_url": "https://www.jstor.org/",
+        "source_type": "article",
+        "candidate_id": "9a2bb101-88ce-4d77-a6a7-6208fd856e41",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 25696,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 63869,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 40007,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 21112,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 33827,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial"
+      },
+      {
+        "ms": 38447,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      },
+      {
+        "ms": 123287,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "drafter.placement_repair"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://hashiloach.org.il/%D7%9E%D7%94-%D7%A1%D7%91%D7%99%D7%A8-%D7%91%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA/",
+        "role": "scholarship",
+        "title": "מה סביר בסבירות?",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר עילת הסבירות הגדרה דוקטרינה 'הזוי' 'בלתי סביר' 'אמצעי בלתי סביר' סקירה דוקטרינית כתב עת משפטים",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.idi.org.il/media/22483/full-verdict-of-supreme-court-regarding-reasonableness-bill-january-1-2024.pdf",
+        "role": "scholarship",
+        "title": "פסק הדין המלא של בג\"ץ בעניין ביטול עילת הסבירות",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר עילת הסבירות הגדרה דוקטרינה 'הזוי' 'בלתי סביר' 'אמצעי בלתי סביר' סקירה דוקטרינית כתב עת משפטים",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.inss.org.il/he/publication/reasonableness/",
+        "role": "scholarship",
+        "title": "הבג\"ץ בעניין עילת הסבירות – עושים סדר",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר עילת הסבירות הגדרה דוקטרינה 'הזוי' 'בלתי סביר' 'אמצעי בלתי סביר' סקירה דוקטרינית כתב עת משפטים",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://books.google.com/books?id=YxF5DwAAQBAJ",
+        "role": "scholarship",
+        "title": "ברק מדינה, \"המשפט החוקתי של ישראל\"",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'ביקורת שיפוטית אינטנסיבית' 'intense review' 'סבירות' 'זכויות יסוד' טיב סמכות והשפעתו על מידת הביקורת כתב עת משפטים",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://he.wikipedia.org/wiki/%D7%A2%D7%99%D7%9C%D7%AA_%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA",
+        "role": "scholarship",
+        "title": "דן בארי, \"עילת הסבירות במשפט המינהלי הישראלי\"",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'ביקורת שיפוטית אינטנסיבית' 'intense review' 'סבירות' 'זכויות יסוד' טיב סמכות והשפעתו על מידת הביקורת כתב עת משפטים",
+        "drop_reason": "bad_source"
+      },
+      {
+        "url": "https://lawpub.ein.co.il/product/%D7%A1%D7%9E%D7%9B%D7%95%D7%AA-%D7%94%D7%91%D7%99%D7%98%D7%95%D7%9C-%D7%A9%D7%9C-%D7%91%D7%99%D7%AA-%D7%94%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99/",
+        "role": "scholarship",
+        "title": "סמכות הביטול של בית המשפט המינהלי",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר מעשי על סעד בעילת הסבירות 'ביטול' 'שקול מחדש' 'החלפת שיקול הדעת'_boundaries סעד כתב עת משפטים ניתוח משפטי-פרקטי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://lawpub.ein.co.il/product/%D7%A1%D7%A2%D7%93%D7%99%D7%9D-%D7%91%D7%9E%D7%A9%D7%A4%D7%98-%D7%94%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99/",
+        "role": "scholarship",
+        "title": "סעדים במשפט המינהלי",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר מעשי על סעד בעילת הסבירות 'ביטול' 'שקול מחדש' 'החלפת שיקול הדעת'_boundaries סעד כתב עת משפטים ניתוח משפטי-פרקטי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.ssrn.com/",
+        "role": "scholarship",
+        "title": "Administrative Law Remedies and Judicial Review",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר מעשי על סעד בעילת הסבירות 'ביטול' 'שקול מחדש' 'החלפת שיקול הדעת'_boundaries סעד כתב עת משפטים ניתוח משפטי-פרקטי",
+        "drop_reason": "discovery_only"
+      }
+    ]
+  }
+}

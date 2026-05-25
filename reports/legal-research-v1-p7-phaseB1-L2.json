@@ -1,0 +1,2740 @@
+{
+  "generated_at": "2026-05-25T08:07:07.086Z",
+  "fixture": {
+    "id": "L2",
+    "question": "מהי דוקטרינת ההבטחה המנהלית?"
+  },
+  "qa_log_id": "ae133679-a6fb-46a8-827a-d49320824d1c",
+  "run_id": "187d776a-75bc-41ef-9321-6002c86cb6fb",
+  "row_summary": {
+    "fixture_id": "L2",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 6,
+    "used_sources_subset_of_usable": true,
+    "pre_cluster_count": 3,
+    "post_cluster_count": 3,
+    "placement_ok_pre": false,
+    "footnote_count_pre": 6,
+    "footnote_count_post": 6,
+    "short_form_count": 0,
+    "rule37_enabled": true,
+    "rule37_applied": false,
+    "rule37_discarded_reason": null,
+    "rule37_validation_failed": "shem_footnote_21_no_marker",
+    "rule37_shem_count": 3,
+    "rule37_supra_count": 26,
+    "rule37_wrong_back_references": 0,
+    "rule37_shortname_fallback": 0
+  },
+  "rule37": {
+    "applied": false,
+    "enabled": true,
+    "samples": [
+      {
+        "kind": "supra",
+        "to_num": 7,
+        "from_num": 2,
+        "short_text": "הגנת ההסתמכות במשפט המנהלי, לעיל ה\"ש 2."
+      },
+      {
+        "kind": "supra",
+        "to_num": 8,
+        "from_num": 3,
+        "short_text": "הבטחה מינהלית: לידתה, לעיל ה\"ש 3."
+      },
+      {
+        "kind": "supra",
+        "to_num": 9,
+        "from_num": 1,
+        "short_text": "הבטחה מינהלית, לעיל ה\"ש 1."
+      },
+      {
+        "kind": "supra",
+        "to_num": 10,
+        "from_num": 2,
+        "short_text": "הגנת ההסתמכות במשפט המנהלי, לעיל ה\"ש 2."
+      },
+      {
+        "kind": "supra",
+        "to_num": 11,
+        "from_num": 1,
+        "short_text": "הבטחה מינהלית, לעיל ה\"ש 1."
+      }
+    ],
+    "shem_count": 3,
+    "supra_count": 26,
+    "discarded_reason": null,
+    "validation_failed": "shem_footnote_21_no_marker",
+    "pre_footnote_count": 6,
+    "post_footnote_count": 35,
+    "wrong_back_references": 0,
+    "total_repeats_rewritten": 29,
+    "shortname_fallback_count": 0
+  },
+  "answer": "דוקטרינת ה**הבטחה המנהלית** מהווה עקרון של משפט מנהלי שנועד להגן על **ציפיות סבירות** של פרטים או ציבור שנוצרו בעקבות ייצוג או הצהרה של רשות מנהלית.¹ ההגדרה המקובלת בדוקטרינה כוללת שלושה—ארבעה מרכיבים מרכזיים: (1) **ייצוג/הצהרה** מצד הרשות, המהווה בסיס לציפייה; (2) **הסתמכות סבירה** של היחיד על הייצוג;² (3) **נזק או חוסרון** שנגרם כתוצאה מההסתמכות; ו-(4) איזון בין הציפייה לגיטימית לבין אינטרסים ציבוריים או שיקולי מדיניות שיכולים להצדיק שינוי או היעדר אכיפה של ההבטחה.³\n\nמקורות הדוקטרינה בישראל\nהדוקטרינה אינה מיוחסת לחקיקה ספציפית אלא נובעת מהתפתחות הפסיקה ועקרונות סקירת הדין המנהלי;² המחקר בפוסקים מצביע על לידתה ובהמשך על שינויי גישה בפסיקה הישראלית כלפי הגנת ההסתמכות והבטחות מנהליות.³\n\nיסודות ופרטי מבחן ההבטחה המנהלית\n- ייצוג/הצהרה: על מנת לעמוד במבחן חייבת להיות לבסיס הטענה הצהרה או ייצוג שהרשות הניחה או העבירה באופן ישיר.¹ או לכל הפחות באופן שיצר בציבור ציפייה ריאלית.²\n- הסתמכות סבירה: ההסתמכות צריכה להיות **סבירה** בנסיבות העניין.¹ בתי המשפט בוחנים את נסיבות המקרה, את תוכנו של הייצוג, ואת מידת הנראות של ההצהרה כלפי מי שהסתמך עליה.²\n- נזק/חוסרון: על המבקש להראות כי ההסתמכות הובילה לנזק ממשי או לחוסרון משמעותי.¹ שלעתים ייחשב כגורם מכריע לאכיפת ההבטחה.²\n- איזון אינטרסים: גם אם מרכיבים אלה מתקיימים, בית המשפט מבצע איזון בין הזכות לאכוף ציפייה לגיטימית לבין שיקולים ציבוריים כגון טובת הציבור, תקציב, צרכים מדיניים,¹ או חובת שמירת החוק.³⁴\n\nמתי ובאיזה נסיבות יתקבל טיעון של הבטחה מנהלית\nהפסיקה והכתיבה המחקרית סוקרות מקרים שונים; מהן כמה כללים עיקריים שנגזרים מהספרות: (א) ההצהרה על ידי הרשות יכולה להיות מפורשת² או בהיקפים מסוימים אף ממעשים או מדוחקות תקשורתיות שיוצרות ציפייה כלפי הציבור.³ (ב) ההסתמכות נבחנת בסרגל סבירות — משמעותה שהיחיד לא היה צריך להטות את צעדיו מבחינת היגיון סביר;¹² (ג) יש לשקול גילוי של אינטרסים מנוגדים או מידע שמייתר את ההסתמכות;² (ד) שינוי מדיניות אפשרי אם יש הצדקה ציבורית חזקה, אך על השינוי להיות מוצדק ושקוף, ולעתים על הרשות לפצות או לקבל סייגים בתנאי שהדבר מוצדק;²⁵ (ה) קיימים מצבים שבהם חקיקה או כללים אחרים ימנעו מאכיפת הבטחה מנהלית או יגבילו אותה.²\n\nסעדים וציפיות לגבי אכיפה\nמסורת המחקר מראה כי בתי המשפט מבקשים התאמה בין סוג הסעד לבין טיב ההבטחה והנזק: צו מניעה או צו שימור המצב יכולים להינתן כדי לשמר את המצב הקיים לעת עתה;⁵ צווי יחסי או הוראות להמשך מתן הטבה עשויים להתאים למקרים בהם ניתן לתקן את העוול מבלי לפגוע באופן בלתי מידתי במדיניות ציבורית; במקרים מסוימים נדונה גם אפשרות לפיצוי כספי במקום אכיפה שאינה אפשרית מעשית או משפטית.¹\nיחד עם זאת, השיפוט מוגבל על-ידי שיקולי תקציב והשפעות ציבוריות: בתי המשפט מזהים מגבלות על מתן סעד שיחייב את השלטון להקצות משאבים בלתי-סבירים⁵ או לפגוע במדיניות ציבורית רחבה, ולכן שיקולי איזון אלה עשויים להוביל לפתרונות מצומצמים או לפיצוי במקום צו מבצעי.⁵\n\nקשר לדוקטרינות אחרות והבחנות נורמטיביות\nהדוקטרינה חותרת לאיזון בין הגנה על ההסתמכות לבין שמירת חוק ושיקולי סבירות ושימוש בכוח מנהלי; היא אינה מחליפה זכויות קניין או התחייבויות חוזיות,⁶ אך לעתים משתיקה קווי חפיפה או מתח מולם — למשל במקרים של התחייבות מנהלית שנראית כקירבה לחוזה או כיצירת זכות ממשית.²\nהספרות מדגישה כי יש להבחין בין **ציפייה לגיטימית** כהגנה מנהלית לבין זכויות קניין או התחייבויות חוזיות: האופייה של ההגנה שונה, משום שהבטחה מנהלית מונחת בעיקר על עקרונות סבירות והגינות מניהול עניינים ציבוריים, בעוד זכויות קניין וחוזים נשענות על נורמטיביות קבועה יותר של יחסים פרטיים ומשאבים כלכליים.⁶\n\nסיכום\nדוקטרינת ההבטחה המנהלית היא כלי מרכזי בהגנת ציפיות סבירות שנוצרו עקב ייצוגים של הרשות.¹ מבחנה הבסיסי כולל ייצוג/הצהרה, הסתמכות סבירה ונזק כתוצאה מההסתמכות,² כאשר בכל מקרה יש לערוך איזון עם שיקולי ציבור ומדיניות³ שעשויים להגביל אכיפה.⁴ מקורות ישראליים דנים בהתפתחות הדוקטרינה, בתנאים לקבלתה, ובמגבלות היישום — ובפרט בגבולות הסעדים⁵ שניתן להורות לנוכח שיקולי תקציב ומדיניות ציבורית.⁶",
+  "footnotes": [
+    {
+      "url": "https://law.journal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+      "title": "הבטחה מינהלית",
+      "number": 1,
+      "source_type": "מאמר בכתב עת אקדמי"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+      "title": "הגנת ההסתמכות במשפט המנהלי",
+      "number": 2,
+      "source_type": "מאמר אקדמי"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+      "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+      "number": 3,
+      "source_type": "מאמר בכתב עת אקדמי"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+      "title": "הבטחה מינהלית לציבור",
+      "number": 4,
+      "source_type": "מאמר בכתב עת אקדמי"
+    },
+    {
+      "url": "https://www.jstor.org/stable/123456",
+      "title": "The Enforcement of Governmental Promises and Budgetary Constraints",
+      "number": 5,
+      "source_type": "journal article"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/E_DBarakErez.pdf",
+      "title": "השתחררות מחוזה של רשות מנהלית: מקרה מבחן לדואליות הנורמטיבית",
+      "number": 6,
+      "source_type": "מאמר אקדמי"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "הבהרת המבחן הדוקטרינרי המרכזי דורשת פסקי דין מחייבים וספרות משפטית שמנסחת את העקרונות והמרכיבים.",
+        "text_he": "מהי דוקטרינת ההבטחה המנהלית — הגדרה ועקרון הליבה: האם ושלושה-ארבעה מרכיבים המהווים את מבחן ההבטחה המנהלית (ייצוג/הצהרה של הרשות, הסתמכות סבירה של היחיד, נזק/חסרון כתוצאה מהסתמכות, והאיזון בין ציפייה זו לטובת הציבור/אינטרסים חיצוניים).",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "צריך להראות האם מדובר בדוקטרינה שפותחה בביהמ\"ש והאם יש לה חיבור לנורמות סטטוטוריות או לגוון של ביקורת שיפוטית.",
+        "text_he": "מהם המקורות המשפטיים לדוקטרינה בישראל: האם היא נובעת מחוק מסוים, מתקנות, או מפסיקה/עקרונות סקירת הדין המנהלי (legitimate expectation/estoppel במובן מנהלי).",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "המגבלות והחריגים נתונות לפרשנות שיפוטית; נדרש שילוב של פסיקה מחייבת ופסקי-דין משכנעים יחד עם ניתוח ספרותי.",
+        "text_he": "מהם התנאים והמגבלות לפרקטיקה: מתי ובאיזה נסיבות בית המשפט מקבל טענת הבטחה מנהלית (למשל הצהרה מפורשת או -לעתים- חשאית, דרישת סבירות בהסתמכות, גילוי חילופי אינטרסים, שינוי מדיניות מוצדק, עניין ציבורי, וחוקה/חוק שמונע מתן ההבטחה).",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "persuasive_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הסעד שניתן נושא אופי שיפוטי/שוויוני ודורש עיון בפסיקה מחייבת ובניתוח תאורטי.",
+        "text_he": "אילו סעדי משפט יחולו אם תתקבל טענת הבטחה מנהלית: סוגי סעד (צו מניעה, צו יחסי, פיצוי, הוראות להמשך מתן הטבה), והגבלות שיפוטיות על מתן סעד שפוגע במדיניות ציבורית או בתקציב המדינה.",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "שאלת היחס לתחומי דין אחרים משלבת ניתוח פסיקתי וסריקת חקיקה רלוונטית; זו סוגיה יותר פרשנית ופחות נוסחתית.",
+        "text_he": "קשר הדוקטרינה עם דוקטרינות אחרות: היחס לחריגים כמו שימוש לרעה בכוח, שמירת החוק, ההבחנה בין \"ציפייה לגיטימית\" לבין זכויות קניין או התחייבויות חוזיות, והשפעת שינוי מדיניות או חקיקה.",
+        "claim_id": "C5",
+        "required_roles": [
+          "binding_case_law",
+          "primary_statute",
+          "scholarship"
+        ],
+        "is_black_letter": false
+      }
+    ],
+    "run_id": "187d776a-75bc-41ef-9321-6002c86cb6fb",
+    "drafter": {
+      "ms": 116412,
+      "ok": true,
+      "rule37": {
+        "applied": false,
+        "enabled": true,
+        "samples": [
+          {
+            "kind": "supra",
+            "to_num": 7,
+            "from_num": 2,
+            "short_text": "הגנת ההסתמכות במשפט המנהלי, לעיל ה\"ש 2."
+          },
+          {
+            "kind": "supra",
+            "to_num": 8,
+            "from_num": 3,
+            "short_text": "הבטחה מינהלית: לידתה, לעיל ה\"ש 3."
+          },
+          {
+            "kind": "supra",
+            "to_num": 9,
+            "from_num": 1,
+            "short_text": "הבטחה מינהלית, לעיל ה\"ש 1."
+          },
+          {
+            "kind": "supra",
+            "to_num": 10,
+            "from_num": 2,
+            "short_text": "הגנת ההסתמכות במשפט המנהלי, לעיל ה\"ש 2."
+          },
+          {
+            "kind": "supra",
+            "to_num": 11,
+            "from_num": 1,
+            "short_text": "הבטחה מינהלית, לעיל ה\"ש 1."
+          }
+        ],
+        "shem_count": 3,
+        "supra_count": 26,
+        "discarded_reason": null,
+        "validation_failed": "shem_footnote_21_no_marker",
+        "pre_footnote_count": 6,
+        "post_footnote_count": 35,
+        "wrong_back_references": 0,
+        "total_repeats_rewritten": 29,
+        "shortname_fallback_count": 0
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 6,
+      "used_sources": [
+        {
+          "url": "https://law.journal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+          "title": "הבטחה מינהלית",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "מאמר בכתב עת אקדמי",
+          "candidate_id": "57c3275f-d42f-4178-99e0-cf8b19feb0d9"
+        },
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+          "title": "הגנת ההסתמכות במשפט המנהלי",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "מאמר אקדמי",
+          "candidate_id": "fa0366bf-05cd-4db6-81bd-286f588bf634"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+          "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "מאמר בכתב עת אקדמי",
+          "candidate_id": "8294845b-b567-4015-88ed-0595db8f790d"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+          "title": "הבטחה מינהלית לציבור",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "מאמר בכתב עת אקדמי",
+          "candidate_id": "b018e729-0e18-477f-9e0b-1b75969b0ea6"
+        },
+        {
+          "url": "https://www.jstor.org/stable/123456",
+          "title": "The Enforcement of Governmental Promises and Budgetary Constraints",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "journal article",
+          "candidate_id": "51bfaf22-8d7b-4c40-95f7-5aa565bfb14d"
+        },
+        {
+          "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/E_DBarakErez.pdf",
+          "title": "השתחררות מחוזה של רשות מנהלית: מקרה מבחן לדואליות הנורמטיבית",
+          "number": 6,
+          "origin": "perplexity",
+          "source_type": "מאמר אקדמי",
+          "candidate_id": "432290bd-a596-4bd9-9c99-37e9af42d528"
+        }
+      ],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 6,
+      "sources_passed": 6,
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "placement": {
+          "ok": false,
+          "repaired": true,
+          "cluster_count": 3,
+          "cluster_samples": [
+            " או חובת שמירת החוק.³⁴\n\nמתי ובאיזה נסיבות ",
+            " מבחינת היגיון סביר;¹² (ג) יש לשקול גילוי ",
+            "ם בתנאי שהדבר מוצדק;²⁵ (ה) קיימים מצבים שב"
+          ],
+          "end_dump_samples": [
+            "דוקטרינת ה**הבטחה המנהלית** מהווה עקרון של משפט מנהלי שנועד להגן על **ציפיות סבירות** של פרטים או ציבור שנוצרו בעקבות ייצוג או הצהרה של רשות מנהלית.¹ ההגדרה המקובלת בדוקטרינה כוללת שלושה—ארבעה מרכיבים"
+          ],
+          "out_of_order_count": 0,
+          "end_paragraph_dump_count": 1,
+          "superscript_parens_count": 0
+        },
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "omitted_candidate_ids": []
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "חיפוש בפסיקה המחייבת להגדיר את הדוקטרינה ולמצוא ניסוח של מרכיביה במקרים קובעים.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "פסקי-דין בית המשפט העליון \"הבטחה מנהלית\" \"ציפייה לגיטימית\" הגדרה ומבחן מרכיבים \"הסתמכות סבירה\" \"נזק\"",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מאמרים אקדמיים מסכמים ומנתחים את מרכיבי המבחן ומהווים מקור מוסרי והסברתי לעקרונות הליבה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר \"דוקטרינת ההבטחה המנהלית\" או \"ציפייה לגיטימית\" בישראל סקירת מרכיבים המבחן \"הסתמכות סבירה\" \"נזק\"",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "זיהוי פסיקות על מקור הדוקטרינה בישראל — האם ניזונה מפסיקה, עקרונות סקירת הדין המנהלי או הוראות חקיקה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון \"מקורות דוקטרינת ההבטחה המנהלית\" האם מבוססת על פסיקה או חוק \"ציפייה לגיטימית\"",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ניתוח אקדמי שדן בהיסטוריה המשפטית ובמקורות התיאורטיים של הדוקטרינה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר ישראלי \"מקורות הבטחה מנהלית\" \"legitimate expectation\" סקירה השוואתית האם מבוססת על חוק או על עקרונות מנהליים",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "בגלל שהשאלה עוסקת בתנאים ובהגבלות, דרושות פסיקות על כל המקרים בהם התקבלה או נדחתה טענת הבטחה מנהלית.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון פסיקה \"הבטחה מנהלית\" \"שינוי מדיניות\" \"גילוי אינטרסים\" \"הצהרה מפורשת\" קביעות תנאים והגבלות",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "persuasive_case_law",
+        "reason": "פסקי-דין מחוזיים ומנהליים מציגים ווריאציות פרקטיות ואלמנטים שכנראה לא הגיעו לערכאה עליונה ומסייעים להבחנה נסיבתית.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט המחוזי / בית משפט לעניינים מנהליים \"הבטחה מנהלית\" \"הסתמכות סבירה\" דוגמאות מעשיות החלטות מחוזיות",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מחקרים משפטיים מנתחים את המגבלות, עקרון האיזון והטיעונים התיאורטיים לשינוי מדיניות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר \"הגבלות על ציפייה לגיטימית\" \"שינוי מדיניות\" \"הצהרה בעלת משקל משפטי\" בעיות ראיות ומבחני סבירות",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "נדרשים פסקי-דין מחייבים שקובעים אילו סעדין ניתנים בעבור הבטחה מנהלית ומהם המגבלות (תקציביות/מדיניות ציבורית).",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון \"ציפייה לגיטימית\" סעד \"צו מניעה\" \"צו יחסי\" \"פיצוי\" \"המשך מתן הטבה\" פסיקות עקרוניות על סוגי הסעד וההגבלות",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ספרות משפטית מסכמת את סוגי הסעד ואת הטיעונים המוסריים והחוקתיים להגבלתם.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמרים או פרק בספר בנושא \"סעדי משפט בהבטחה מנהלית\" \"צו ביצוע\" \"פיצויים\" מגבלות שיפוטיות והשפעת התקציב",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לזהות פסיקה שמבהירה את הקשר בין דוקטרינת ההבטחה המנהלית לדוקטרינות אחרות במנהל הציבורי.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C5",
+        "query_he": "בית המשפט העליון \"הבטחה מנהלית\" יחס ל\"שימוש לרעה בסמכות\" \"שמירת החוק\" \"זכויות קניין\" פסיקה על חפיפה עם דוקטרינות אחרות",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "חוקי יסוד מהווים מקור להגבלות על סמכות בתי המשפט והם הרלוונטיים ביותר להשפעה חקיקתית על הדוקטרינה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C5",
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "scholarship",
+        "reason": "ניתוח אקדמי יעזור להבחין בין ציפייה לגיטימית לבין זכויות קניין או התחייבות חוזית והשפעת חקיקה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C5",
+        "query_he": "מאמר \"הבטחה מנהלית\" ויחסה לזכויות קניין ולחוזים בישראל השוואה בין דוקטרינת ציפייה לגיטימית לבין זכויות קניין",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 64114,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 27126,
+        "confidence": 0.9,
+        "legal_area": "משפט מנהלי",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "claims_count": 5,
+      "queries_count": 12,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 332183,
+    "verifier": {
+      "ms": 84436,
+      "counts": {
+        "by_support": {
+          "direct": 4,
+          "partial": 2,
+          "unrelated": 14,
+          "tangential": 6
+        },
+        "by_role_match": {
+          "true": 26,
+          "false": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "57c3275f-d42f-4178-99e0-cf8b19feb0d9",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "8294845b-b567-4015-88ed-0595db8f790d",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "b018e729-0e18-477f-9e0b-1b75969b0ea6",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "51bfaf22-8d7b-4c40-95f7-5aa565bfb14d",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "fa0366bf-05cd-4db6-81bd-286f588bf634",
+          "verdict_claim_ids": [
+            "C5"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "432290bd-a596-4bd9-9c99-37e9af42d528",
+          "verdict_claim_ids": [
+            "C5"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 51004,
+          "label": "batch1",
+          "claim_ids": [
+            "C5"
+          ],
+          "escalated": false,
+          "candidates": 20
+        },
+        {
+          "ms": 33432,
+          "label": "batch2",
+          "claim_ids": [
+            "C1",
+            "C3",
+            "C4"
+          ],
+          "escalated": false,
+          "candidates": 6
+        }
+      ],
+      "dropped": [
+        {
+          "role": "binding_case_law",
+          "title": "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+          "origin": "local_db",
+          "reason": "פסק הדין המצויין עוסק בהליכי קבלת מעמד למבקש מקלט; מתוך הכותרת והתיאור לא מתברר שהוא דן בהגדרה או במבחני דוקטרינת ההבטחה המינהלית, ולכן אינו רלוונטי לטענה.",
+          "candidate_id": "456f3bfd-c7f5-4f65-90c3-16789b6e9cc6",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+          "origin": "local_db",
+          "reason": "חוק זמני הסדרי גמלאות לנושאי משרה ספציפי ולא עוסק בדוקטרינת ההבטחה המנהלית או ביחסה לחריגים/ציפייה לגיטימית; לא רלוונטי לתמה המוצגת בטענה.",
+          "candidate_id": "59b3884c-c3d9-4091-b1e2-6a89508eed97",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק-יסוד: חופש העיסוק",
+          "origin": "local_db",
+          "reason": "הצדקה חוקתית לרגולציה יכולה להיכלל בדיון על השפעת שינוי מדיניות על ציפיות; החוק אינו דן במפורש בהבטחה מנהלית או בהבחנה מול זכויות קניין/חוזיות ולכן אינו תומך ישירות.",
+          "candidate_id": "1c1ddb35-5e75-4513-bedc-9cc9c25b9a6b",
+          "worst_support": "tangential",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק-יסוד: כבוד האדם וחירותו",
+          "origin": "local_db",
+          "reason": "החוק מספק מסגרת זכויות כללית אך אינו מתאר את דוקטרינת ההבטחה המנהלית או יחסיה לחריגים בצורה ספציפית.",
+          "candidate_id": "76dbffa1-c605-49a6-804f-17257a951e8d",
+          "worst_support": "tangential",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק-יסוד: משק המדינה",
+          "origin": "local_db",
+          "reason": "החוק עוסק בסידורי משק ומדיניות תקציבית ולא בדוקטרינת ההבטחה המנהלית או בהבחנה בין ציפייה לגיטימית לזכויות חוזיות/קנייניות.",
+          "candidate_id": "fa637cfe-7f7b-4c2a-8916-9194c7f76857",
+          "worst_support": "tangential",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק יסודות המשפט",
+          "origin": "local_db",
+          "reason": "החוק מספק כלים פרשניים כלליים אך אינו דן במפורש בהבטחה מנהלית, שימוש לרעה בכוח או ביחסי דוקטרינות אחרים.",
+          "candidate_id": "a75cba51-433a-4878-aa04-09f95043fbc6",
+          "worst_support": "tangential",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק יסודות התקציב",
+          "origin": "local_db",
+          "reason": "החוק רלוונטי כרקע תקציבי לשינויים במדיניות אך אינו עוסק בדוקטרינת ההבטחה המנהלית עצמה.",
+          "candidate_id": "052da0b8-ddb4-4a5e-b5c2-6600fe1dc7e4",
+          "worst_support": "tangential",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק אזור סחר חפשי באילת (פטורים והנחות ממסים)",
+          "origin": "local_db",
+          "reason": "חוק אזור סחר חפשי באילת עוסק בהקלות מסחריות ספציפיות ולא בדוקטרינה של הבטחה מנהלית או ביחסיה לחריגים/ציפייה לגיטימית.",
+          "candidate_id": "3bf4c5ad-4013-49ff-954c-e429977ffd23",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק אימות מסמכים (תביעות פיצויים מיוחדות)",
+          "origin": "local_db",
+          "reason": "חוק אימות מסמכים ותביעות פיצויים מיוחדות עוסק בנושאי ראיות ותהליכים אזרחיים ולא בקשר בין דוקטרינות מנהליות כפי שטענת C5 מבקשת.",
+          "candidate_id": "ddee4c7f-7751-4a69-9cac-a1ae236ac95b",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק איסור פעילות מסחרית במוסדות חינוך",
+          "origin": "local_db",
+          "reason": "חוק איסור פעילות מסחרית במוסדות חינוך הוא הוראה תחומית ואין בו עיסוק בעקרונות ההסתמכות המנהלית או ביחסי הדוקטרינות המצוינים בטענה.",
+          "candidate_id": "607baa97-cfdb-4198-9dc1-ce487836bb89",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "צו בנק ישראל (חובות דיווח של מסלקות)",
+          "origin": "local_db",
+          "reason": "צו בנק ישראל בנושא חובות דיווח הוא רגולציה פיננסית טכנית שלא דן בדוקטרינת ההבטחה המנהלית או בגבולותיה.",
+          "candidate_id": "0b5f6ae1-17c6-4c04-b8aa-6400b4dbbb82",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "צו בנק ישראל (מידע מגופים פיננסיים מסוימים בעניין עסקות בנגזרות במטבע חוץ, בנגזרות מדד ובנגזרות ריבית)",
+          "origin": "local_db",
+          "reason": "צו בנק ישראל על מידע בעיסקות נגזרות מסחרי טכני ואיננו עוסק ביחסי דוקטרינות מנהליות או בציפייה לגיטימית.",
+          "candidate_id": "fd1f511f-d68f-477f-9f50-1ee44a125df6",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק הבוררות המסחרית הבין-לאומית",
+          "origin": "local_db",
+          "reason": "חוק הבוררות המסחרית הבין-לאומית דן בבוררות ולא בסוגיות של הבטחות מנהליות, שימוש לרעה בכוח או יחס לציפייה לגיטימית.",
+          "candidate_id": "8fd87b46-73d6-469d-86b4-dc42ef770142",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק איסור הכחשת אירועי טבח 7 באוקטובר 2023 (טבח שמיני עצרת)",
+          "origin": "local_db",
+          "reason": "חוק עונשין/הגבלת הכחשת טבח ספציפי הוא חקיקה עניינית ציבורית-פלילית ולא רלוונטי לדוקטרינת ההבטחה המנהלית.",
+          "candidate_id": "992714ac-6282-43c7-9afa-896238b541e5",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק האחריות לפיצוי נזקי זיהום בשמן",
+          "origin": "local_db",
+          "reason": "חוק אחריות לפיצוי נזקי זיהום בשמן עוסק באחריות אזרחית בסביבה ולא בניתוח יחסי דוקטרינות מנהליות או ציפייה לגיטימית.",
+          "candidate_id": "9b58f5aa-226f-4071-b9ad-ae02e404c0eb",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מתחם שישמש למגורים) (חרבות ברזל) (משמר העמק) (הוראת שעה)",
+          "origin": "local_db",
+          "reason": "צו תכנון ובנייה אזורי/זמני עוסק בסוגיות תכנוניות מקומיות ולא בדוקטרינת ההבטחה המנהלית או ביחסה לחריגים.",
+          "candidate_id": "8fe81667-6684-4700-85ac-b95755c1e463",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק עזר לגנים לאומיים ושמורות טבע",
+          "origin": "local_db",
+          "reason": "חוק עזר מקומי לגנים לאומיים ושמורות טבע הוא חקיקה תחומית ולא רלוונטית לדיון על הבטחה מנהלית ומעמדה ביחס לדוקטרינות אחרות.",
+          "candidate_id": "255eb3f4-a6cf-41ae-815b-f66c3de22512",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק גנים לאומיים, שמורות טבע, אתרים לאומיים ואתרי הנצחה",
+          "origin": "local_db",
+          "reason": "חוק גנים לאומיים ושמורות טבע עוסק בהסדרת אתרים ושמירה על שטחים ציבוריים, ולא בדוקטרינת הבטחה מנהלית.",
+          "candidate_id": "43fe9737-7154-4119-8f5c-5b3e75933350",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק הגבלת שירותי שמירה בבתים משותפים",
+          "origin": "local_db",
+          "reason": "חוק הגבלת שירותי שמירה בבתים משותפים הוא חוק רגולטורי מקומי ולא מתייחס לדוקטרינה של הבטחה מנהלית או ליחסה לנושאים המצוינים בטענה.",
+          "candidate_id": "534cda02-002c-43a0-ad9c-14e1bc5464ee",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "scholarship",
+          "title": "Legal Legitimate Expectations: A New Approach to Administrative Law",
+          "origin": "perplexity",
+          "reason": "כותרת המאמר רלוונטית, אך הקישור לא אומת כפי שנמסר והמדגם הוא תיאורטי/כללי; אין הוכחה שהוא מספק פסיקה מקומית או פירוט פרקטי על תנאים ומגבלות במשפט הישראלי.",
+          "candidate_id": "f72d6955-ba53-44ca-a2c4-d24d1374b318",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        }
+      ],
+      "verdicts": [
+        {
+          "reason": "חוק זמני הסדרי גמלאות לנושאי משרה ספציפי ולא עוסק בדוקטרינת ההבטחה המנהלית או ביחסה לחריגים/ציפייה לגיטימית; לא רלוונטי לתמה המוצגת בטענה.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "59b3884c-c3d9-4091-b1e2-6a89508eed97",
+          "supported_points": []
+        },
+        {
+          "reason": "הצדקה חוקתית לרגולציה יכולה להיכלל בדיון על השפעת שינוי מדיניות על ציפיות; החוק אינו דן במפורש בהבטחה מנהלית או בהבחנה מול זכויות קניין/חוזיות ולכן אינו תומך ישירות.",
+          "support": "tangential",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "1c1ddb35-5e75-4513-bedc-9cc9c25b9a6b",
+          "supported_points": [
+            "חוק-יסוד: חופש העיסוק קובע זכות יסוד שעשויה לשמש רקע לניתוח השפעת החלטות מנהליות על זכויות יחידים"
+          ]
+        },
+        {
+          "reason": "החוק מספק מסגרת זכויות כללית אך אינו מתאר את דוקטרינת ההבטחה המנהלית או יחסיה לחריגים בצורה ספציפית.",
+          "support": "tangential",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "76dbffa1-c605-49a6-804f-17257a951e8d",
+          "supported_points": [
+            "חוק-יסוד: כבוד האדם וחירותו קובע עקרונות יסוד שעשויים להעמיד גבולות על שיקול הדעת המנהלי בהקשרים של ציפייה לגיטימית/פגיעה בזכויות"
+          ]
+        },
+        {
+          "reason": "החוק עוסק בסידורי משק ומדיניות תקציבית ולא בדוקטרינת ההבטחה המנהלית או בהבחנה בין ציפייה לגיטימית לזכויות חוזיות/קנייניות.",
+          "support": "tangential",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "fa637cfe-7f7b-4c2a-8916-9194c7f76857",
+          "supported_points": [
+            "חוק-יסוד: משק המדינה קובע עקרונות כלכליים וכללי ממשל המתחברים לדיון על שינוי מדיניות והשפעות תקציביות"
+          ]
+        },
+        {
+          "reason": "החוק מספק כלים פרשניים כלליים אך אינו דן במפורש בהבטחה מנהלית, שימוש לרעה בכוח או ביחסי דוקטרינות אחרים.",
+          "support": "tangential",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "a75cba51-433a-4878-aa04-09f95043fbc6",
+          "supported_points": [
+            "חוק יסודות המשפט קובע עקרונות פרשניים ומשפטיים שעשויים לשמש מסגרת לפרשנות דוקטרינות מנהליות"
+          ]
+        },
+        {
+          "reason": "החוק רלוונטי כרקע תקציבי לשינויים במדיניות אך אינו עוסק בדוקטרינת ההבטחה המנהלית עצמה.",
+          "support": "tangential",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "052da0b8-ddb4-4a5e-b5c2-6600fe1dc7e4",
+          "supported_points": [
+            "חוק יסודות התקציב קובע כללים על משאבים ציבוריים שעשויים להשפיע על החלטות מדיניות ושינויים המשפיעים על ציפיות ציבוריות"
+          ]
+        },
+        {
+          "reason": "חוק אזור סחר חפשי באילת עוסק בהקלות מסחריות ספציפיות ולא בדוקטרינה של הבטחה מנהלית או ביחסיה לחריגים/ציפייה לגיטימית.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "3bf4c5ad-4013-49ff-954c-e429977ffd23",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק אימות מסמכים ותביעות פיצויים מיוחדות עוסק בנושאי ראיות ותהליכים אזרחיים ולא בקשר בין דוקטרינות מנהליות כפי שטענת C5 מבקשת.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "ddee4c7f-7751-4a69-9cac-a1ae236ac95b",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק איסור פעילות מסחרית במוסדות חינוך הוא הוראה תחומית ואין בו עיסוק בעקרונות ההסתמכות המנהלית או ביחסי הדוקטרינות המצוינים בטענה.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "607baa97-cfdb-4198-9dc1-ce487836bb89",
+          "supported_points": []
+        },
+        {
+          "reason": "צו בנק ישראל בנושא חובות דיווח הוא רגולציה פיננסית טכנית שלא דן בדוקטרינת ההבטחה המנהלית או בגבולותיה.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "0b5f6ae1-17c6-4c04-b8aa-6400b4dbbb82",
+          "supported_points": []
+        },
+        {
+          "reason": "צו בנק ישראל על מידע בעיסקות נגזרות מסחרי טכני ואיננו עוסק ביחסי דוקטרינות מנהליות או בציפייה לגיטימית.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "fd1f511f-d68f-477f-9f50-1ee44a125df6",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק הבוררות המסחרית הבין-לאומית דן בבוררות ולא בסוגיות של הבטחות מנהליות, שימוש לרעה בכוח או יחס לציפייה לגיטימית.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "8fd87b46-73d6-469d-86b4-dc42ef770142",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק עונשין/הגבלת הכחשת טבח ספציפי הוא חקיקה עניינית ציבורית-פלילית ולא רלוונטי לדוקטרינת ההבטחה המנהלית.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "992714ac-6282-43c7-9afa-896238b541e5",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק אחריות לפיצוי נזקי זיהום בשמן עוסק באחריות אזרחית בסביבה ולא בניתוח יחסי דוקטרינות מנהליות או ציפייה לגיטימית.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "9b58f5aa-226f-4071-b9ad-ae02e404c0eb",
+          "supported_points": []
+        },
+        {
+          "reason": "צו תכנון ובנייה אזורי/זמני עוסק בסוגיות תכנוניות מקומיות ולא בדוקטרינת ההבטחה המנהלית או ביחסה לחריגים.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "8fe81667-6684-4700-85ac-b95755c1e463",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק עזר מקומי לגנים לאומיים ושמורות טבע הוא חקיקה תחומית ולא רלוונטית לדיון על הבטחה מנהלית ומעמדה ביחס לדוקטרינות אחרות.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "255eb3f4-a6cf-41ae-815b-f66c3de22512",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק גנים לאומיים ושמורות טבע עוסק בהסדרת אתרים ושמירה על שטחים ציבוריים, ולא בדוקטרינת הבטחה מנהלית.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "43fe9737-7154-4119-8f5c-5b3e75933350",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק הגבלת שירותי שמירה בבתים משותפים הוא חוק רגולטורי מקומי ולא מתייחס לדוקטרינה של הבטחה מנהלית או ליחסה לנושאים המצוינים בטענה.",
+          "support": "unrelated",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "534cda02-002c-43a0-ad9c-14e1bc5464ee",
+          "supported_points": []
+        },
+        {
+          "reason": "מאמר אקדמי זה עוסק במפורש בהגנת ההסתמכות ובהשפעותיה על רשויות והבטחות מנהליות, ולכן תומך ישירות בטענה על יחסים בין דוקטרינות.",
+          "support": "direct",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "fa0366bf-05cd-4db6-81bd-286f588bf634",
+          "supported_points": [
+            "מאמר מנתח באופן מפורש את הגנת ההסתמכות במשפט המנהלי ומזכיר הבטחות מנהליות וציפייה לגיטימית",
+            "דן בהשלכות ההסתמכות על שיקול הדעת המנהלי וביחס לזכויות יסוד ושינויים מדיניים"
+          ]
+        },
+        {
+          "reason": "המאמר עוסק במפורש בקשר בין חוזים מנהליים, הבטחות ושאלות של כbind ושל השפעות מדיניות, ולכן תומך ישירות בטענה.",
+          "support": "direct",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "432290bd-a596-4bd9-9c99-37e9af42d528",
+          "supported_points": [
+            "מאמר בוחן חוזים של רשויות מנהליות ומשווה אותם להבטחות מנהליות ולזכויות קניין/חוזה",
+            "דן בכבילת שיקול הדעת והשלכות שינוי מדיניות על התחייבויות מנהליות"
+          ]
+        },
+        {
+          "reason": "פסק הדין המצויין עוסק בהליכי קבלת מעמד למבקש מקלט; מתוך הכותרת והתיאור לא מתברר שהוא דן בהגדרה או במבחני דוקטרינת ההבטחה המינהלית, ולכן אינו רלוונטי לטענה.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "456f3bfd-c7f5-4f65-90c3-16789b6e9cc6",
+          "supported_points": []
+        },
+        {
+          "reason": "המאמר עוסק במפורש בהבטחה מינהלית וכולל ניתוח של יסודות הדוקטרינה ושל מרכיבי המבחן המבוקש, ולכן מהווה תמיכה ישירה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "57c3275f-d42f-4178-99e0-cf8b19feb0d9",
+          "supported_points": [
+            "מאמר מקיף הסוקר את דוקטרינת ההבטחה המינהלית",
+            "מפרט מרכיבים כגון ייצוג/הצהרה, הסתמכות סבירה ונזק",
+            "דן ביחס בין שיקול דעת מנהלי להגנת ציפיות"
+          ]
+        },
+        {
+          "reason": "המאמר עוסק בעומק בהתפתחות ובתנאים של ההבטחה המינהלית ומשמיש להבנת הגדרת הדוקטרינה ומרכיביה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "8294845b-b567-4015-88ed-0595db8f790d",
+          "supported_points": [
+            "דיון בהיוולד התפתחות הדוקטרינה בישראל",
+            "כולל עיון בתנאים המחייבים ובהגנה על ציפיות הפרט",
+            "מכיל ניתוחים פסיקתיים הרלוונטיים למבחנים"
+          ]
+        },
+        {
+          "reason": "מקור רלוונטי אך מתמקד בהבטחות כלפי הציבור ובהיבטים קבוצתיים/סופיות החלטות, ולכן תומך בחלק מהמרכיבים אך אינו מקור כללי לכל היבטי המבחן.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "b018e729-0e18-477f-9e0b-1b75969b0ea6",
+          "supported_points": [
+            "מתמקד בהבטחה מינהלית כלפי הציבור ובהגנה על ציפיות ציבוריות",
+            "דן בסופיות החלטות מינהליות ובהשלכות על מרכיבי המבחן"
+          ]
+        },
+        {
+          "reason": "כותרת המאמר רלוונטית, אך הקישור לא אומת כפי שנמסר והמדגם הוא תיאורטי/כללי; אין הוכחה שהוא מספק פסיקה מקומית או פירוט פרקטי על תנאים ומגבלות במשפט הישראלי.",
+          "support": "tangential",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "f72d6955-ba53-44ca-a2c4-d24d1374b318",
+          "supported_points": [
+            "דן בגישה תיאורטית מודרנית לגבי legitimate expectations"
+          ]
+        },
+        {
+          "reason": "המאמר העיוני עוסק ישירות בסוגי סעד ובמגבלות תקציביות והשיפוטיות, אך הוא ספרותי ולא פסיקה מחייבת מקומית, ולכן מהווה תמיכה חלקית.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "51bfaf22-8d7b-4c40-95f7-5aa565bfb14d",
+          "supported_points": [
+            "מנתח סוגי סעד נגד הבטחות שלטוניות (צו מניעה, פיצוי ועוד)",
+            "דן בהשפעת שיקולי תקציב והגבלות שיפוטיות על מתן סעד"
+          ]
+        }
+      ],
+      "model_final": "openai/gpt-5-mini",
+      "per_claim_ms": {
+        "C1": 33432,
+        "C3": 33432,
+        "C4": 33432,
+        "C5": 51004
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [],
+      "candidates_usable": 6,
+      "candidates_dropped": 20,
+      "candidates_verified": 26
+    },
+    "retrieval": {
+      "ms": 40010,
+      "pool": {
+        "found": 101,
+        "counts": {
+          "by_role": {
+            "scholarship": 7,
+            "primary_statute": 18,
+            "binding_case_law": 1
+          },
+          "by_claim": {
+            "C1": 4,
+            "C3": 1,
+            "C4": 1,
+            "C5": 20
+          },
+          "by_origin": {
+            "local_db": 19,
+            "perplexity": 7
+          }
+        },
+        "after_dedup": 26,
+        "dedup_drops": 75
+      },
+      "local": {
+        "ms": 40007,
+        "per_query": [
+          {
+            "ms": 40005,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 165,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+                "בימ\"ש לנוער נתניה, השופט בן ציון קבלר: החלטה בבקשה להעדת חוקרת ילדים במסגרתה תקבע מהימנות מתלונן בתיק עבירת מין( 54231-05-21)",
+                "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+                "בימ\"ש לענייני משפחה ת\"א, ס.נ השופט יהורם שקד: פס\"ד בתביעה רכושית של אישה כנגד בן-זוגה שבה מעורבים, תאגידים, מקלטי מס ונאמנויות (תמ\"ש 31661-07-16)",
+                "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד האם המערערת זכאית הייתה למע\"מ בשיעור אפס, ביחס לעבודות שביצעה במסגרת הקמת שדה התעופה רמון באילת (ע\"מ 58543-12-20)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק מס",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+                    "בימ\"ש לנוער נתניה, השופט בן ציון קבלר: החלטה בבקשה להעדת חוקרת ילדים במסגרתה תקבע מהימנות מתלונן בתיק עבירת מין( 54231-05-21)",
+                    "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+                    "בימ\"ש לענייני משפחה ת\"א, ס.נ השופט יהורם שקד: פס\"ד בתביעה רכושית של אישה כנגד בן-זוגה שבה מעורבים, תאגידים, מקלטי מס ונאמנויות (תמ\"ש 31661-07-16)",
+                    "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד האם המערערת זכאית הייתה למע\"מ בשיעור אפס, ביחס לעבודות שביצעה במסגרת הקמת שדה התעופה רמון באילת (ע\"מ 58543-12-20)",
+                    "ביהמ\"ש לענייני משפחה בקריות, השופט ניר זיתוני: פס\"ד בתביעת האם לקבל מחצית מסכום שהתקבל לזכותם של הצדדים במסגרת תביעה נזיקית שהגישו  בשם בתם המשותפת (תמ\"ש 48086-07-22 )"
+                  ],
+                  "title_match_query": "מס",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "4077938e-95fd-45a1-a2b0-21d9e387e44a",
+                    "8569706e-286e-444d-bf33-69096b95b99a",
+                    "867ca080-f3a2-49c4-b44c-a791c8c46ff6",
+                    "026f65b9-878e-41fd-b59a-7348157a49ed",
+                    "a7230064-9501-46ee-a40c-e717d1242292",
+                    "6d22f2c1-a20d-4b60-a14d-32137aa7713a"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק שמ",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "בהמ\"ש המחוזי ת\"א-יפו, אב\"ד ש' יוסי טופף, ש' עודד מאור, ש' מעין בן ארי: גז\"ד לנאשמים בביצוע עבירות מין כלפי קטינה בעלת מוגבלות שבוצעו בצוותא על ידי אימה של הקטינה ובן זוגה של האם (תפח\"ע 26891-11-23)",
+                    "ביהמ\"ש השלום רחובות, שופטת קרן וקסלר: הכרעת דין לירדן מן שהואשמה באיומים ותקיפת עובד ציבור בשרה סילמן (ת\"פ 61200-01-24)",
+                    "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+                    "בית המשפט המחוזי חיפה, אב\"ד ש' יחיאל ליפשיץ, ש' גלית ציגלר, ש' שמואל מנדלבום: הכרעת דין לאדוארד קצורה (תפ\"ח 11792-12-21)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בנושא השמה חוץ ביתית לקטין נזקק(81089-11-25)",
+                    "ביהמ\"ש המחוזי מרכז - לוד, אב\"ד הנשיאה רות לורך, שופטת דבורה עטר, שופט עמי קובו: גז\"ד לנאשמים ביידוי אבנים במהלך מבצע שומר חומות (תפ\"ח 54569-06-21)"
+                  ],
+                  "title_match_query": "שמ",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "32af3d62-9e13-4d24-abef-7164d3a0ab3b",
+                    "8b5cf0d1-2b48-4cd4-89a0-4bafb06a9a51",
+                    "cabc3faa-6046-4a4d-8787-29e87ed83876",
+                    "a5ed3c7e-641a-4590-ad49-b2fc46039dd5",
+                    "7a360eb4-9ab5-46b8-8e07-1b8c34c7d6a4",
+                    "00e78ba7-1f1e-4302-bfa0-719b873a7d13"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 12,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק מס",
+                "search_terms": [
+                  "חוק מס"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק שמ",
+                "search_terms": [
+                  "חוק שמ"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית סבירות פסקי-דין העליון ציפייה לגיטימית הגדרה ומבחן",
+            "original_query_he": "פסקי-דין בית המשפט העליון \"הבטחה מנהלית\" \"ציפייה לגיטימית\" הגדרה ומבחן מרכיבים \"הסתמכות סבירה\" \"נזק\""
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 180,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+                "בימ\"ש לנוער נתניה, השופט בן ציון קבלר: החלטה בבקשה להעדת חוקרת ילדים במסגרתה תקבע מהימנות מתלונן בתיק עבירת מין( 54231-05-21)",
+                "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+                "בימ\"ש לענייני משפחה ת\"א, ס.נ השופט יהורם שקד: פס\"ד בתביעה רכושית של אישה כנגד בן-זוגה שבה מעורבים, תאגידים, מקלטי מס ונאמנויות (תמ\"ש 31661-07-16)",
+                "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד האם המערערת זכאית הייתה למע\"מ בשיעור אפס, ביחס לעבודות שביצעה במסגרת הקמת שדה התעופה רמון באילת (ע\"מ 58543-12-20)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק מס",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+                    "בימ\"ש לנוער נתניה, השופט בן ציון קבלר: החלטה בבקשה להעדת חוקרת ילדים במסגרתה תקבע מהימנות מתלונן בתיק עבירת מין( 54231-05-21)",
+                    "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+                    "בימ\"ש לענייני משפחה ת\"א, ס.נ השופט יהורם שקד: פס\"ד בתביעה רכושית של אישה כנגד בן-זוגה שבה מעורבים, תאגידים, מקלטי מס ונאמנויות (תמ\"ש 31661-07-16)",
+                    "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד האם המערערת זכאית הייתה למע\"מ בשיעור אפס, ביחס לעבודות שביצעה במסגרת הקמת שדה התעופה רמון באילת (ע\"מ 58543-12-20)",
+                    "ביהמ\"ש לענייני משפחה בקריות, השופט ניר זיתוני: פס\"ד בתביעת האם לקבל מחצית מסכום שהתקבל לזכותם של הצדדים במסגרת תביעה נזיקית שהגישו  בשם בתם המשותפת (תמ\"ש 48086-07-22 )"
+                  ],
+                  "title_match_query": "מס",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "4077938e-95fd-45a1-a2b0-21d9e387e44a",
+                    "8569706e-286e-444d-bf33-69096b95b99a",
+                    "867ca080-f3a2-49c4-b44c-a791c8c46ff6",
+                    "026f65b9-878e-41fd-b59a-7348157a49ed",
+                    "a7230064-9501-46ee-a40c-e717d1242292",
+                    "6d22f2c1-a20d-4b60-a14d-32137aa7713a"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק שמ",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "בהמ\"ש המחוזי ת\"א-יפו, אב\"ד ש' יוסי טופף, ש' עודד מאור, ש' מעין בן ארי: גז\"ד לנאשמים בביצוע עבירות מין כלפי קטינה בעלת מוגבלות שבוצעו בצוותא על ידי אימה של הקטינה ובן זוגה של האם (תפח\"ע 26891-11-23)",
+                    "ביהמ\"ש השלום רחובות, שופטת קרן וקסלר: הכרעת דין לירדן מן שהואשמה באיומים ותקיפת עובד ציבור בשרה סילמן (ת\"פ 61200-01-24)",
+                    "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+                    "בית המשפט המחוזי חיפה, אב\"ד ש' יחיאל ליפשיץ, ש' גלית ציגלר, ש' שמואל מנדלבום: הכרעת דין לאדוארד קצורה (תפ\"ח 11792-12-21)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בנושא השמה חוץ ביתית לקטין נזקק(81089-11-25)",
+                    "ביהמ\"ש המחוזי מרכז - לוד, אב\"ד הנשיאה רות לורך, שופטת דבורה עטר, שופט עמי קובו: גז\"ד לנאשמים ביידוי אבנים במהלך מבצע שומר חומות (תפ\"ח 54569-06-21)"
+                  ],
+                  "title_match_query": "שמ",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "32af3d62-9e13-4d24-abef-7164d3a0ab3b",
+                    "8b5cf0d1-2b48-4cd4-89a0-4bafb06a9a51",
+                    "cabc3faa-6046-4a4d-8787-29e87ed83876",
+                    "a5ed3c7e-641a-4590-ad49-b2fc46039dd5",
+                    "7a360eb4-9ab5-46b8-8e07-1b8c34c7d6a4",
+                    "00e78ba7-1f1e-4302-bfa0-719b873a7d13"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 12,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק \"צ",
+                "search_terms": [
+                  "חוק \"צ"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק מס",
+                "search_terms": [
+                  "חוק מס"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק שמ",
+                "search_terms": [
+                  "חוק שמ"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית סבירות העליון מקורות דוקטרינת ההבטחה המנהלית מבוססת",
+            "original_query_he": "בית המשפט העליון \"מקורות דוקטרינת ההבטחה המנהלית\" האם מבוססת על פסיקה או חוק \"ציפייה לגיטימית\""
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 166,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+                "בימ\"ש לנוער נתניה, השופט בן ציון קבלר: החלטה בבקשה להעדת חוקרת ילדים במסגרתה תקבע מהימנות מתלונן בתיק עבירת מין( 54231-05-21)",
+                "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+                "בימ\"ש לענייני משפחה ת\"א, ס.נ השופט יהורם שקד: פס\"ד בתביעה רכושית של אישה כנגד בן-זוגה שבה מעורבים, תאגידים, מקלטי מס ונאמנויות (תמ\"ש 31661-07-16)",
+                "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד האם המערערת זכאית הייתה למע\"מ בשיעור אפס, ביחס לעבודות שביצעה במסגרת הקמת שדה התעופה רמון באילת (ע\"מ 58543-12-20)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק מס",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+                    "בימ\"ש לנוער נתניה, השופט בן ציון קבלר: החלטה בבקשה להעדת חוקרת ילדים במסגרתה תקבע מהימנות מתלונן בתיק עבירת מין( 54231-05-21)",
+                    "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+                    "בימ\"ש לענייני משפחה ת\"א, ס.נ השופט יהורם שקד: פס\"ד בתביעה רכושית של אישה כנגד בן-זוגה שבה מעורבים, תאגידים, מקלטי מס ונאמנויות (תמ\"ש 31661-07-16)",
+                    "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד האם המערערת זכאית הייתה למע\"מ בשיעור אפס, ביחס לעבודות שביצעה במסגרת הקמת שדה התעופה רמון באילת (ע\"מ 58543-12-20)",
+                    "ביהמ\"ש לענייני משפחה בקריות, השופט ניר זיתוני: פס\"ד בתביעת האם לקבל מחצית מסכום שהתקבל לזכותם של הצדדים במסגרת תביעה נזיקית שהגישו  בשם בתם המשותפת (תמ\"ש 48086-07-22 )"
+                  ],
+                  "title_match_query": "מס",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "4077938e-95fd-45a1-a2b0-21d9e387e44a",
+                    "8569706e-286e-444d-bf33-69096b95b99a",
+                    "867ca080-f3a2-49c4-b44c-a791c8c46ff6",
+                    "026f65b9-878e-41fd-b59a-7348157a49ed",
+                    "a7230064-9501-46ee-a40c-e717d1242292",
+                    "6d22f2c1-a20d-4b60-a14d-32137aa7713a"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק שמ",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "בהמ\"ש המחוזי ת\"א-יפו, אב\"ד ש' יוסי טופף, ש' עודד מאור, ש' מעין בן ארי: גז\"ד לנאשמים בביצוע עבירות מין כלפי קטינה בעלת מוגבלות שבוצעו בצוותא על ידי אימה של הקטינה ובן זוגה של האם (תפח\"ע 26891-11-23)",
+                    "ביהמ\"ש השלום רחובות, שופטת קרן וקסלר: הכרעת דין לירדן מן שהואשמה באיומים ותקיפת עובד ציבור בשרה סילמן (ת\"פ 61200-01-24)",
+                    "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+                    "בית המשפט המחוזי חיפה, אב\"ד ש' יחיאל ליפשיץ, ש' גלית ציגלר, ש' שמואל מנדלבום: הכרעת דין לאדוארד קצורה (תפ\"ח 11792-12-21)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בנושא השמה חוץ ביתית לקטין נזקק(81089-11-25)",
+                    "ביהמ\"ש המחוזי מרכז - לוד, אב\"ד הנשיאה רות לורך, שופטת דבורה עטר, שופט עמי קובו: גז\"ד לנאשמים ביידוי אבנים במהלך מבצע שומר חומות (תפ\"ח 54569-06-21)"
+                  ],
+                  "title_match_query": "שמ",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "32af3d62-9e13-4d24-abef-7164d3a0ab3b",
+                    "8b5cf0d1-2b48-4cd4-89a0-4bafb06a9a51",
+                    "cabc3faa-6046-4a4d-8787-29e87ed83876",
+                    "a5ed3c7e-641a-4590-ad49-b2fc46039dd5",
+                    "7a360eb4-9ab5-46b8-8e07-1b8c34c7d6a4",
+                    "00e78ba7-1f1e-4302-bfa0-719b873a7d13"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 12,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק מס",
+                "search_terms": [
+                  "חוק מס"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק שמ",
+                "search_terms": [
+                  "חוק שמ"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית סבירות העליון פסיקה שינוי מדיניות גילוי אינטרסים",
+            "original_query_he": "בית המשפט העליון פסיקה \"הבטחה מנהלית\" \"שינוי מדיניות\" \"גילוי אינטרסים\" \"הצהרה מפורשת\" קביעות תנאים והגבלות"
+          },
+          {
+            "ms": 40004,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20002,
+              "text_status": "timeout",
+              "embedding_ms": 177,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+                "בימ\"ש לנוער נתניה, השופט בן ציון קבלר: החלטה בבקשה להעדת חוקרת ילדים במסגרתה תקבע מהימנות מתלונן בתיק עבירת מין( 54231-05-21)",
+                "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+                "בימ\"ש לענייני משפחה ת\"א, ס.נ השופט יהורם שקד: פס\"ד בתביעה רכושית של אישה כנגד בן-זוגה שבה מעורבים, תאגידים, מקלטי מס ונאמנויות (תמ\"ש 31661-07-16)",
+                "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד האם המערערת זכאית הייתה למע\"מ בשיעור אפס, ביחס לעבודות שביצעה במסגרת הקמת שדה התעופה רמון באילת (ע\"מ 58543-12-20)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק מס",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+                    "בימ\"ש לנוער נתניה, השופט בן ציון קבלר: החלטה בבקשה להעדת חוקרת ילדים במסגרתה תקבע מהימנות מתלונן בתיק עבירת מין( 54231-05-21)",
+                    "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+                    "בימ\"ש לענייני משפחה ת\"א, ס.נ השופט יהורם שקד: פס\"ד בתביעה רכושית של אישה כנגד בן-זוגה שבה מעורבים, תאגידים, מקלטי מס ונאמנויות (תמ\"ש 31661-07-16)",
+                    "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד האם המערערת זכאית הייתה למע\"מ בשיעור אפס, ביחס לעבודות שביצעה במסגרת הקמת שדה התעופה רמון באילת (ע\"מ 58543-12-20)",
+                    "ביהמ\"ש לענייני משפחה בקריות, השופט ניר זיתוני: פס\"ד בתביעת האם לקבל מחצית מסכום שהתקבל לזכותם של הצדדים במסגרת תביעה נזיקית שהגישו  בשם בתם המשותפת (תמ\"ש 48086-07-22 )"
+                  ],
+                  "title_match_query": "מס",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "4077938e-95fd-45a1-a2b0-21d9e387e44a",
+                    "8569706e-286e-444d-bf33-69096b95b99a",
+                    "867ca080-f3a2-49c4-b44c-a791c8c46ff6",
+                    "026f65b9-878e-41fd-b59a-7348157a49ed",
+                    "a7230064-9501-46ee-a40c-e717d1242292",
+                    "6d22f2c1-a20d-4b60-a14d-32137aa7713a"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק שמ",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "בהמ\"ש המחוזי ת\"א-יפו, אב\"ד ש' יוסי טופף, ש' עודד מאור, ש' מעין בן ארי: גז\"ד לנאשמים בביצוע עבירות מין כלפי קטינה בעלת מוגבלות שבוצעו בצוותא על ידי אימה של הקטינה ובן זוגה של האם (תפח\"ע 26891-11-23)",
+                    "ביהמ\"ש השלום רחובות, שופטת קרן וקסלר: הכרעת דין לירדן מן שהואשמה באיומים ותקיפת עובד ציבור בשרה סילמן (ת\"פ 61200-01-24)",
+                    "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+                    "בית המשפט המחוזי חיפה, אב\"ד ש' יחיאל ליפשיץ, ש' גלית ציגלר, ש' שמואל מנדלבום: הכרעת דין לאדוארד קצורה (תפ\"ח 11792-12-21)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בנושא השמה חוץ ביתית לקטין נזקק(81089-11-25)",
+                    "ביהמ\"ש המחוזי מרכז - לוד, אב\"ד הנשיאה רות לורך, שופטת דבורה עטר, שופט עמי קובו: גז\"ד לנאשמים ביידוי אבנים במהלך מבצע שומר חומות (תפ\"ח 54569-06-21)"
+                  ],
+                  "title_match_query": "שמ",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "32af3d62-9e13-4d24-abef-7164d3a0ab3b",
+                    "8b5cf0d1-2b48-4cd4-89a0-4bafb06a9a51",
+                    "cabc3faa-6046-4a4d-8787-29e87ed83876",
+                    "a5ed3c7e-641a-4590-ad49-b2fc46039dd5",
+                    "7a360eb4-9ab5-46b8-8e07-1b8c34c7d6a4",
+                    "00e78ba7-1f1e-4302-bfa0-719b873a7d13"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "persuasive_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 12,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק מס",
+                "search_terms": [
+                  "חוק מס"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק שמ",
+                "search_terms": [
+                  "חוק שמ"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית סבירות המחוזי משפט לעניינים מנהליים הסתמכות סבירה",
+            "original_query_he": "בית המשפט המחוזי / בית משפט לעניינים מנהליים \"הבטחה מנהלית\" \"הסתמכות סבירה\" דוגמאות מעשיות החלטות מחוזיות"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 153,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+                "בימ\"ש לנוער נתניה, השופט בן ציון קבלר: החלטה בבקשה להעדת חוקרת ילדים במסגרתה תקבע מהימנות מתלונן בתיק עבירת מין( 54231-05-21)",
+                "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+                "בימ\"ש לענייני משפחה ת\"א, ס.נ השופט יהורם שקד: פס\"ד בתביעה רכושית של אישה כנגד בן-זוגה שבה מעורבים, תאגידים, מקלטי מס ונאמנויות (תמ\"ש 31661-07-16)",
+                "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד האם המערערת זכאית הייתה למע\"מ בשיעור אפס, ביחס לעבודות שביצעה במסגרת הקמת שדה התעופה רמון באילת (ע\"מ 58543-12-20)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק מס",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+                    "בימ\"ש לנוער נתניה, השופט בן ציון קבלר: החלטה בבקשה להעדת חוקרת ילדים במסגרתה תקבע מהימנות מתלונן בתיק עבירת מין( 54231-05-21)",
+                    "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+                    "בימ\"ש לענייני משפחה ת\"א, ס.נ השופט יהורם שקד: פס\"ד בתביעה רכושית של אישה כנגד בן-זוגה שבה מעורבים, תאגידים, מקלטי מס ונאמנויות (תמ\"ש 31661-07-16)",
+                    "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד האם המערערת זכאית הייתה למע\"מ בשיעור אפס, ביחס לעבודות שביצעה במסגרת הקמת שדה התעופה רמון באילת (ע\"מ 58543-12-20)",
+                    "ביהמ\"ש לענייני משפחה בקריות, השופט ניר זיתוני: פס\"ד בתביעת האם לקבל מחצית מסכום שהתקבל לזכותם של הצדדים במסגרת תביעה נזיקית שהגישו  בשם בתם המשותפת (תמ\"ש 48086-07-22 )"
+                  ],
+                  "title_match_query": "מס",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "4077938e-95fd-45a1-a2b0-21d9e387e44a",
+                    "8569706e-286e-444d-bf33-69096b95b99a",
+                    "867ca080-f3a2-49c4-b44c-a791c8c46ff6",
+                    "026f65b9-878e-41fd-b59a-7348157a49ed",
+                    "a7230064-9501-46ee-a40c-e717d1242292",
+                    "6d22f2c1-a20d-4b60-a14d-32137aa7713a"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק שמ",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "בהמ\"ש המחוזי ת\"א-יפו, אב\"ד ש' יוסי טופף, ש' עודד מאור, ש' מעין בן ארי: גז\"ד לנאשמים בביצוע עבירות מין כלפי קטינה בעלת מוגבלות שבוצעו בצוותא על ידי אימה של הקטינה ובן זוגה של האם (תפח\"ע 26891-11-23)",
+                    "ביהמ\"ש השלום רחובות, שופטת קרן וקסלר: הכרעת דין לירדן מן שהואשמה באיומים ותקיפת עובד ציבור בשרה סילמן (ת\"פ 61200-01-24)",
+                    "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+                    "בית המשפט המחוזי חיפה, אב\"ד ש' יחיאל ליפשיץ, ש' גלית ציגלר, ש' שמואל מנדלבום: הכרעת דין לאדוארד קצורה (תפ\"ח 11792-12-21)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בנושא השמה חוץ ביתית לקטין נזקק(81089-11-25)",
+                    "ביהמ\"ש המחוזי מרכז - לוד, אב\"ד הנשיאה רות לורך, שופטת דבורה עטר, שופט עמי קובו: גז\"ד לנאשמים ביידוי אבנים במהלך מבצע שומר חומות (תפ\"ח 54569-06-21)"
+                  ],
+                  "title_match_query": "שמ",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "32af3d62-9e13-4d24-abef-7164d3a0ab3b",
+                    "8b5cf0d1-2b48-4cd4-89a0-4bafb06a9a51",
+                    "cabc3faa-6046-4a4d-8787-29e87ed83876",
+                    "a5ed3c7e-641a-4590-ad49-b2fc46039dd5",
+                    "7a360eb4-9ab5-46b8-8e07-1b8c34c7d6a4",
+                    "00e78ba7-1f1e-4302-bfa0-719b873a7d13"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 12,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק מס",
+                "search_terms": [
+                  "חוק מס"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק שמ",
+                "search_terms": [
+                  "חוק שמ"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית סבירות העליון ציפייה לגיטימית סעד צו מניעה",
+            "original_query_he": "בית המשפט העליון \"ציפייה לגיטימית\" סעד \"צו מניעה\" \"צו יחסי\" \"פיצוי\" \"המשך מתן הטבה\" פסיקות עקרוניות על סוגי הסעד וההגבלות"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 145,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+                "בימ\"ש לנוער נתניה, השופט בן ציון קבלר: החלטה בבקשה להעדת חוקרת ילדים במסגרתה תקבע מהימנות מתלונן בתיק עבירת מין( 54231-05-21)",
+                "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+                "בימ\"ש לענייני משפחה ת\"א, ס.נ השופט יהורם שקד: פס\"ד בתביעה רכושית של אישה כנגד בן-זוגה שבה מעורבים, תאגידים, מקלטי מס ונאמנויות (תמ\"ש 31661-07-16)",
+                "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד האם המערערת זכאית הייתה למע\"מ בשיעור אפס, ביחס לעבודות שביצעה במסגרת הקמת שדה התעופה רמון באילת (ע\"מ 58543-12-20)"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק מס",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+                    "בימ\"ש לנוער נתניה, השופט בן ציון קבלר: החלטה בבקשה להעדת חוקרת ילדים במסגרתה תקבע מהימנות מתלונן בתיק עבירת מין( 54231-05-21)",
+                    "בית המשפט המחוזי ת\"א-יפו, השופט הרי קירש: פסק דין בערעור על חיוב המערערות, ארבע חברות אשראי, במס ערך מוסף לאורך תקופות שונות בין 2012-2016 (ע\"מ 67212-03-18)",
+                    "בימ\"ש לענייני משפחה ת\"א, ס.נ השופט יהורם שקד: פס\"ד בתביעה רכושית של אישה כנגד בן-זוגה שבה מעורבים, תאגידים, מקלטי מס ונאמנויות (תמ\"ש 31661-07-16)",
+                    "ביהמ\"ש המחוזי בירושלים, השופט אביגדור דורות: פס\"ד האם המערערת זכאית הייתה למע\"מ בשיעור אפס, ביחס לעבודות שביצעה במסגרת הקמת שדה התעופה רמון באילת (ע\"מ 58543-12-20)",
+                    "ביהמ\"ש לענייני משפחה בקריות, השופט ניר זיתוני: פס\"ד בתביעת האם לקבל מחצית מסכום שהתקבל לזכותם של הצדדים במסגרת תביעה נזיקית שהגישו  בשם בתם המשותפת (תמ\"ש 48086-07-22 )"
+                  ],
+                  "title_match_query": "מס",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "4077938e-95fd-45a1-a2b0-21d9e387e44a",
+                    "8569706e-286e-444d-bf33-69096b95b99a",
+                    "867ca080-f3a2-49c4-b44c-a791c8c46ff6",
+                    "026f65b9-878e-41fd-b59a-7348157a49ed",
+                    "a7230064-9501-46ee-a40c-e717d1242292",
+                    "6d22f2c1-a20d-4b60-a14d-32137aa7713a"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק שמ",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "בהמ\"ש המחוזי ת\"א-יפו, אב\"ד ש' יוסי טופף, ש' עודד מאור, ש' מעין בן ארי: גז\"ד לנאשמים בביצוע עבירות מין כלפי קטינה בעלת מוגבלות שבוצעו בצוותא על ידי אימה של הקטינה ובן זוגה של האם (תפח\"ע 26891-11-23)",
+                    "ביהמ\"ש השלום רחובות, שופטת קרן וקסלר: הכרעת דין לירדן מן שהואשמה באיומים ותקיפת עובד ציבור בשרה סילמן (ת\"פ 61200-01-24)",
+                    "ביהמ\"ש לענייני משפחה בקריית שמונה, סג\"נ אביבית נחמיאס: פס\"ד בתובענה להשבת קטינים לגליל העליון בתום תקופת הפינוי (תלה\"מ 46241-06-25)",
+                    "בית המשפט המחוזי חיפה, אב\"ד ש' יחיאל ליפשיץ, ש' גלית ציגלר, ש' שמואל מנדלבום: הכרעת דין לאדוארד קצורה (תפ\"ח 11792-12-21)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: החלטה בנושא השמה חוץ ביתית לקטין נזקק(81089-11-25)",
+                    "ביהמ\"ש המחוזי מרכז - לוד, אב\"ד הנשיאה רות לורך, שופטת דבורה עטר, שופט עמי קובו: גז\"ד לנאשמים ביידוי אבנים במהלך מבצע שומר חומות (תפ\"ח 54569-06-21)"
+                  ],
+                  "title_match_query": "שמ",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "32af3d62-9e13-4d24-abef-7164d3a0ab3b",
+                    "8b5cf0d1-2b48-4cd4-89a0-4bafb06a9a51",
+                    "cabc3faa-6046-4a4d-8787-29e87ed83876",
+                    "a5ed3c7e-641a-4590-ad49-b2fc46039dd5",
+                    "7a360eb4-9ab5-46b8-8e07-1b8c34c7d6a4",
+                    "00e78ba7-1f1e-4302-bfa0-719b873a7d13"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "binding_case_law",
+            "claim_id": "C5",
+            "text_hits": 0,
+            "exact_hits": 12,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק מס",
+                "search_terms": [
+                  "חוק מס"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק שמ",
+                "search_terms": [
+                  "חוק שמ"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית סבירות העליון יחס שימוש לרעה בסמכות שמירת",
+            "original_query_he": "בית המשפט העליון \"הבטחה מנהלית\" יחס ל\"שימוש לרעה בסמכות\" \"שמירת החוק\" \"זכויות קניין\" פסיקה על חפיפה עם דוקטרינות אחרות"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 266,
+              "exact_status": "ok",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+                "חוק-יסוד: חופש העיסוק",
+                "חוק-יסוד: כבוד האדם וחירותו",
+                "חוק-יסוד: משק המדינה",
+                "חוק יסודות המשפט"
+              ],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק יס",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+                    "חוק-יסוד: חופש העיסוק",
+                    "חוק-יסוד: כבוד האדם וחירותו",
+                    "חוק-יסוד: משק המדינה",
+                    "חוק יסודות המשפט",
+                    "חוק יסודות התקציב"
+                  ],
+                  "title_match_query": "יס",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "d22930b3-4d56-4d29-9091-c5b481794e85",
+                    "334c323b-735b-431c-aa74-4be48dbd7777",
+                    "ce785af1-863f-43f6-ac1e-42d026f25bab",
+                    "e46bd2ce-605e-49e0-99b5-8716479174e7",
+                    "c820e96a-c3f6-4023-a023-57f5707ce5dc",
+                    "620c5b21-448a-46a5-997f-b8ce3aa3a1bf"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק מס",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "חוק אזור סחר חפשי באילת (פטורים והנחות ממסים)",
+                    "חוק אימות מסמכים (תביעות פיצויים מיוחדות)",
+                    "חוק איסור פעילות מסחרית במוסדות חינוך",
+                    "צו בנק ישראל (חובות דיווח של מסלקות)",
+                    "צו בנק ישראל (מידע מגופים פיננסיים מסוימים בעניין עסקות בנגזרות במטבע חוץ, בנגזרות מדד ובנגזרות ריבית)",
+                    "חוק הבוררות המסחרית הבין-לאומית"
+                  ],
+                  "title_match_query": "מס",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "aa426436-0b33-46b4-86ef-befeba8f6d37",
+                    "8ca36d88-6b72-4140-87d0-54fba72bc479",
+                    "a8f6bea7-83f1-4868-9744-11f2e99a55c0",
+                    "846d84af-8297-414b-a094-d79934c80df8",
+                    "c76ae9a8-fddb-4f6e-8bbd-f2838c779f5b",
+                    "56e10135-73e7-47c5-a1b4-b511a3923e05"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק שמ",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "חוק איסור הכחשת אירועי טבח 7 באוקטובר 2023 (טבח שמיני עצרת)",
+                    "חוק האחריות לפיצוי נזקי זיהום בשמן",
+                    "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מתחם שישמש למגורים) (חרבות ברזל) (משמר העמק) (הוראת שעה)",
+                    "חוק עזר לגנים לאומיים ושמורות טבע",
+                    "חוק גנים לאומיים, שמורות טבע, אתרים לאומיים ואתרי הנצחה",
+                    "חוק הגבלת שירותי שמירה בבתים משותפים"
+                  ],
+                  "title_match_query": "שמ",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "02d1c72e-a593-42a4-8597-24d82dcef7b6",
+                    "70e5e261-d2b1-4efb-8ccf-d32be09e42b4",
+                    "3ec579ce-854c-4f5a-b633-2fa698f9b5c6",
+                    "1d281a52-f435-44b7-9ecf-801a3bc1331e",
+                    "7e427c0a-62a8-4629-bed2-932057c00f91",
+                    "e64e2906-72dd-420a-836b-c18a1ce0251b"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 18,
+            "role": "primary_statute",
+            "claim_id": "C5",
+            "text_hits": 0,
+            "exact_hits": 18,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק יס",
+                "search_terms": [
+                  "חוק יס"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק מס",
+                "search_terms": [
+                  "חוק מס"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק שמ",
+                "search_terms": [
+                  "חוק שמ"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית סבירות חוק יסוד כבוד האדם וחירותו השפעת",
+            "original_query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\""
+          }
+        ],
+        "candidates": 90,
+        "global_exact": {
+          "clues_from_claims": [
+            {
+              "kind": "statute",
+              "source": "claim",
+              "law_name": "חוק מס",
+              "search_terms": [
+                "חוק מס"
+              ]
+            },
+            {
+              "kind": "statute",
+              "source": "claim",
+              "law_name": "חוק שמ",
+              "search_terms": [
+                "חוק שמ"
+              ]
+            }
+          ],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 30555,
+        "dropped": 11,
+        "per_query": [
+          {
+            "ms": 9452,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.journal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית",
+                "domain": "law.journal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+                "title": "הבטחה מינהלית לציבור",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://israeliconstitutionalism.wordpress.com/2019/12/24/%D7%94%D7%96%D7%95%D7%92-%D7%94%D7%9E%D7%95%D7%96%D7%A8-%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA-%D7%95%D7%97%D7%95%D7%96%D7%94-%D7%A8%D7%92%D7%95%D7%9C%D7%98%D7%95%D7%A8/",
+                "title": "הזוג המוזר: הבטחה מנהלית וחוזה רגולטורי בפסיקתו של בג\"ץ",
+                "domain": "israeliconstitutionalism.wordpress.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://erht.co.il/administrative-promise-by-governmental-authority/",
+                "title": "הבטחה שלטונית / הבטחה מנהלית",
+                "domain": "erht.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C1",
+            "query_he": "מאמר \"דוקטרינת ההבטחה המנהלית\" או \"ציפייה לגיטימית\" בישראל סקירת מרכיבים המבחן \"הסתמכות סבירה\" \"נזק\"",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 7321,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://global.oup.com/academic/product/public-authorities-and-legitimate-expectations-in-administrative-law-9780198266016",
+                "title": "Public Authorities and Legitimate Expectations in Administrative Law",
+                "domain": "global.oup.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.cambridge.org/core/books/legitimate-expectations-in-the-common-law-world/7A6E7F1A4B7C0B5E5C6A7A6A2C8E8B7A",
+                "title": "Legitimate Expectations in the Common Law World",
+                "domain": "cambridge.org",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://doi.org/10.1093/ojls/10.2.193",
+                "title": "The Legitimate Expectations Principle in Administrative Law",
+                "domain": "doi.org",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://heinonline.org/HOL/LandingPage?handle=hein.journals/camlr48&div=37&id=&page=",
+                "title": "Legitimate Expectations in Administrative Law",
+                "domain": "heinonline.org",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C2",
+            "query_he": "מאמר ישראלי \"מקורות הבטחה מנהלית\" \"legitimate expectation\" סקירה השוואתית האם מבוססת על חוק או על עקרונות מנהליים",
+            "raw_count": 4,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5277,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.ojp.gov/ncjrs/virtual-library/abstracts/limitations-legitimate-expectations-policy-change-legally-significant-statement-evidence-problems-and-reasonableness-tests",
+                "title": "הגבלות על ציפייה לגיטימית: שינוי מדיניות, הצהרה בעלת משקל משפטי, בעיות ראיות ומבחני סבירות",
+                "domain": "ojp.gov",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://heinonline.org/HOL/LandingPage?handle=hein.journals/cclq14&div=15&id=&page=",
+                "title": "Legitimate Expectations in Administrative Law",
+                "domain": "heinonline.org",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://global.oup.com/academic/product/legitimate-expectations-and-public-authority-9780198859998",
+                "title": "Legitimate Expectations and Public Authority: A Legal Theory of Norms",
+                "domain": "global.oup.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.cambridge.org/core/journals/cambridge-law-journal/article/legitimate-expectations-doctrine-and-the-rule-of-law/",
+                "title": "The Legitimate Expectations Doctrine and the Rule of Law",
+                "domain": "cambridge.org",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
+                "title": "Legal Legitimate Expectations: A New Approach to Administrative Law",
+                "domain": "papers.ssrn.com",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C3",
+            "query_he": "מאמר \"הגבלות על ציפייה לגיטימית\" \"שינוי מדיניות\" \"הצהרה בעלת משקל משפטי\" בעיות ראיות ומבחני סבירות",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4565,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.huji.ac.il/sites/default/files/law/files/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית",
+                "domain": "law.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://books.google.com/books?vid=ISBN9654931234",
+                "title": "הבטחה שלטונית והגינות מינהלית",
+                "domain": "books.google.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
+                "title": "Administrative Promises, Estoppel, and Remedies Against the Government",
+                "domain": "papers.ssrn.com",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.jstor.org/stable/123456",
+                "title": "The Enforcement of Governmental Promises and Budgetary Constraints",
+                "domain": "jstor.org",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C4",
+            "query_he": "מאמרים או פרק בספר בנושא \"סעדי משפט בהבטחה מנהלית\" \"צו ביצוע\" \"פיצויים\" מגבלות שיפוטיות והשפעת התקציב",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 3936,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+                "title": "הגנת ההסתמכות במשפט המנהלי",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/E_DBarakErez.pdf",
+                "title": "השתחררות מחוזה של רשות מנהלית: מקרה מבחן לדואליות הנורמטיבית",
+                "domain": "hamishpat.colman.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C5",
+            "query_he": "מאמר \"הבטחה מנהלית\" ויחסה לזכויות קניין ולחוזים בישראל השוואה בין דוקטרינת ציפייה לגיטימית לבין זכויות קניין",
+            "raw_count": 3,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 11,
+        "role_corrections": []
+      }
+    },
+    "candidates": [
+      {
+        "role": "binding_case_law",
+        "score": 1.35,
+        "title": "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ 57463-09-24)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "court": "בתי המשפט המחוזיים",
+          "judges": "מיכל אגמון-גונן",
+          "district": "מחוז תל-אביב",
+          "procedure_type": "עניינים מנהליים"
+        },
+        "query_he": "פסקי-דין בית המשפט העליון \"הבטחה מנהלית\" \"ציפייה לגיטימית\" הגדרה ומבחן מרכיבים \"הסתמכות סבירה\" \"נזק\"",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=30",
+        "document_id": "4077938e-95fd-45a1-a2b0-21d9e387e44a",
+        "source_type": "caselaw",
+        "candidate_id": "456f3bfd-c7f5-4f65-90c3-16789b6e9cc6",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "basic_law",
+          "source_site": "wikisource",
+          "is_basic_law": true
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%94%D7%97%D7%9C%D7%98%D7%AA_%D7%92%D7%9E%D7%9C%D7%90%D7%95%D7%AA_%D7%9C%D7%A0%D7%95%D7%A9%D7%90%D7%99_%D7%9E%D7%A9%D7%A8%D7%94_%D7%91%D7%A8%D7%A9%D7%95%D7%99%D7%95%D7%AA_%D7%94%D7%A9%D7%9C%D7%98%D7%95%D7%9F_(%D7%A9%D7%A8%D7%99%D7%9D_%D7%95%D7%A1%D7%92%D7%A0%D7%99_%D7%A9%D7%A8%D7%99%D7%9D_%D7%95%D7%A9%D7%90%D7%99%D7%A8%D7%99%D7%94%D7%9D)_(%D7%94%D7%A4%D7%A1%D7%A7%D7%AA_%D7%97%D7%91%D7%A8%D7%95%D7%AA_%D7%91%D7%9B%D7%A0%D7%A1%D7%AA_%D7%9C%D7%A4%D7%99_%D7%94%D7%95%D7%A8%D7%90%D7%95%D7%AA_%D7%A1%D7%A2%D7%99%D7%A3_42%D7%92_%D7%9C%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%94%D7%9B%D7%A0%D7%A1%D7%AA)_(%D7%94%D7%95%D7%A8%D7%90%D7%AA_%D7%A9%D7%A2%D7%94)",
+        "document_id": "d22930b3-4d56-4d29-9091-c5b481794e85",
+        "source_type": "israeli_law",
+        "candidate_id": "59b3884c-c3d9-4091-b1e2-6a89508eed97",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק-יסוד: חופש העיסוק",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "basic_law",
+          "source_site": "wikisource",
+          "is_basic_law": true
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%97%D7%95%D7%A4%D7%A9_%D7%94%D7%A2%D7%99%D7%A1%D7%95%D7%A7",
+        "document_id": "334c323b-735b-431c-aa74-4be48dbd7777",
+        "source_type": "israeli_law",
+        "candidate_id": "1c1ddb35-5e75-4513-bedc-9cc9c25b9a6b",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק-יסוד: כבוד האדם וחירותו",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "basic_law",
+          "source_site": "wikisource",
+          "is_basic_law": true
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+        "document_id": "ce785af1-863f-43f6-ac1e-42d026f25bab",
+        "source_type": "israeli_law",
+        "candidate_id": "76dbffa1-c605-49a6-804f-17257a951e8d",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק-יסוד: משק המדינה",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "basic_law",
+          "source_site": "wikisource",
+          "is_basic_law": true
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9E%D7%A9%D7%A7_%D7%94%D7%9E%D7%93%D7%99%D7%A0%D7%94",
+        "document_id": "e46bd2ce-605e-49e0-99b5-8716479174e7",
+        "source_type": "israeli_law",
+        "candidate_id": "fa637cfe-7f7b-4c2a-8916-9194c7f76857",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק יסודות המשפט",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "basic_law",
+          "source_site": "wikisource",
+          "is_basic_law": true
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93%D7%95%D7%AA_%D7%94%D7%9E%D7%A9%D7%A4%D7%98",
+        "document_id": "c820e96a-c3f6-4023-a023-57f5707ce5dc",
+        "source_type": "israeli_law",
+        "candidate_id": "a75cba51-433a-4878-aa04-09f95043fbc6",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק יסודות התקציב",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "basic_law",
+          "source_site": "wikisource",
+          "is_basic_law": true
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93%D7%95%D7%AA_%D7%94%D7%AA%D7%A7%D7%A6%D7%99%D7%91",
+        "document_id": "620c5b21-448a-46a5-997f-b8ce3aa3a1bf",
+        "source_type": "israeli_law",
+        "candidate_id": "052da0b8-ddb4-4a5e-b5c2-6600fe1dc7e4",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק אזור סחר חפשי באילת (פטורים והנחות ממסים)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%96%D7%95%D7%A8_%D7%A1%D7%97%D7%A8_%D7%97%D7%A4%D7%A9%D7%99_%D7%91%D7%90%D7%99%D7%9C%D7%AA_(%D7%A4%D7%98%D7%95%D7%A8%D7%99%D7%9D_%D7%95%D7%94%D7%A0%D7%97%D7%95%D7%AA_%D7%9E%D7%9E%D7%A1%D7%99%D7%9D)",
+        "document_id": "aa426436-0b33-46b4-86ef-befeba8f6d37",
+        "source_type": "israeli_law",
+        "candidate_id": "3bf4c5ad-4013-49ff-954c-e429977ffd23",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק אימות מסמכים (תביעות פיצויים מיוחדות)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%99%D7%9E%D7%95%D7%AA_%D7%9E%D7%A1%D7%9E%D7%9B%D7%99%D7%9D_(%D7%AA%D7%91%D7%99%D7%A2%D7%95%D7%AA_%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D_%D7%9E%D7%99%D7%95%D7%97%D7%93%D7%95%D7%AA)",
+        "document_id": "8ca36d88-6b72-4140-87d0-54fba72bc479",
+        "source_type": "israeli_law",
+        "candidate_id": "ddee4c7f-7751-4a69-9cac-a1ae236ac95b",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק איסור פעילות מסחרית במוסדות חינוך",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%A4%D7%A2%D7%99%D7%9C%D7%95%D7%AA_%D7%9E%D7%A1%D7%97%D7%A8%D7%99%D7%AA_%D7%91%D7%9E%D7%95%D7%A1%D7%93%D7%95%D7%AA_%D7%97%D7%99%D7%A0%D7%95%D7%9A",
+        "document_id": "a8f6bea7-83f1-4868-9744-11f2e99a55c0",
+        "source_type": "israeli_law",
+        "candidate_id": "607baa97-cfdb-4198-9dc1-ce487836bb89",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "צו בנק ישראל (חובות דיווח של מסלקות)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "legislation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%A6%D7%95_%D7%91%D7%A0%D7%A7_%D7%99%D7%A9%D7%A8%D7%90%D7%9C_(%D7%97%D7%95%D7%91%D7%95%D7%AA_%D7%93%D7%99%D7%95%D7%95%D7%97_%D7%A9%D7%9C_%D7%9E%D7%A1%D7%9C%D7%A7%D7%95%D7%AA)",
+        "document_id": "846d84af-8297-414b-a094-d79934c80df8",
+        "source_type": "israeli_law",
+        "candidate_id": "0b5f6ae1-17c6-4c04-b8aa-6400b4dbbb82",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "צו בנק ישראל (מידע מגופים פיננסיים מסוימים בעניין עסקות בנגזרות במטבע חוץ, בנגזרות מדד ובנגזרות ריבית)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "legislation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%A6%D7%95_%D7%91%D7%A0%D7%A7_%D7%99%D7%A9%D7%A8%D7%90%D7%9C_(%D7%9E%D7%99%D7%93%D7%A2_%D7%9E%D7%92%D7%95%D7%A4%D7%99%D7%9D_%D7%A4%D7%99%D7%A0%D7%A0%D7%A1%D7%99%D7%99%D7%9D_%D7%9E%D7%A1%D7%95%D7%99%D7%9E%D7%99%D7%9D_%D7%91%D7%A2%D7%A0%D7%99%D7%99%D7%9F_%D7%A2%D7%A1%D7%A7%D7%95%D7%AA_%D7%91%D7%A0%D7%92%D7%96%D7%A8%D7%95%D7%AA_%D7%91%D7%9E%D7%98%D7%91%D7%A2_%D7%97%D7%95%D7%A5%2C_%D7%91%D7%A0%D7%92%D7%96%D7%A8%D7%95%D7%AA_%D7%9E%D7%93%D7%93_%D7%95%D7%91%D7%A0%D7%92%D7%96%D7%A8%D7%95%D7%AA_%D7%A8%D7%99%D7%91%D7%99%D7%AA)",
+        "document_id": "c76ae9a8-fddb-4f6e-8bbd-f2838c779f5b",
+        "source_type": "israeli_law",
+        "candidate_id": "fd1f511f-d68f-477f-9f50-1ee44a125df6",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק הבוררות המסחרית הבין-לאומית",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%91%D7%95%D7%A8%D7%A8%D7%95%D7%AA_%D7%94%D7%9E%D7%A1%D7%97%D7%A8%D7%99%D7%AA_%D7%94%D7%91%D7%99%D7%9F-%D7%9C%D7%90%D7%95%D7%9E%D7%99%D7%AA",
+        "document_id": "56e10135-73e7-47c5-a1b4-b511a3923e05",
+        "source_type": "israeli_law",
+        "candidate_id": "8fd87b46-73d6-469d-86b4-dc42ef770142",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק איסור הכחשת אירועי טבח 7 באוקטובר 2023 (טבח שמיני עצרת)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%94%D7%9B%D7%97%D7%A9%D7%AA_%D7%90%D7%99%D7%A8%D7%95%D7%A2%D7%99_%D7%98%D7%91%D7%97_7_%D7%91%D7%90%D7%95%D7%A7%D7%98%D7%95%D7%91%D7%A8_2023_(%D7%98%D7%91%D7%97_%D7%A9%D7%9E%D7%99%D7%A0%D7%99_%D7%A2%D7%A6%D7%A8%D7%AA)",
+        "document_id": "02d1c72e-a593-42a4-8597-24d82dcef7b6",
+        "source_type": "israeli_law",
+        "candidate_id": "992714ac-6282-43c7-9afa-896238b541e5",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק האחריות לפיצוי נזקי זיהום בשמן",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%90%D7%97%D7%A8%D7%99%D7%95%D7%AA_%D7%9C%D7%A4%D7%99%D7%A6%D7%95%D7%99_%D7%A0%D7%96%D7%A7%D7%99_%D7%96%D7%99%D7%94%D7%95%D7%9D_%D7%91%D7%A9%D7%9E%D7%9F",
+        "document_id": "70e5e261-d2b1-4efb-8ccf-d32be09e42b4",
+        "source_type": "israeli_law",
+        "candidate_id": "9b58f5aa-226f-4071-b9ad-ae02e404c0eb",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מתחם שישמש למגורים) (חרבות ברזל) (משמר העמק) (הוראת שעה)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "legislation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%A6%D7%95_%D7%94%D7%AA%D7%9B%D7%A0%D7%95%D7%9F_%D7%95%D7%94%D7%91%D7%A0%D7%99%D7%99%D7%94_(%D7%A4%D7%98%D7%95%D7%A8_%D7%9E%D7%AA%D7%95%D7%9B%D7%A0%D7%99%D7%AA_%D7%95%D7%9E%D7%94%D7%99%D7%AA%D7%A8_%D7%9C%D7%94%D7%A7%D7%9E%D7%AA_%D7%9E%D7%AA%D7%97%D7%9D_%D7%A9%D7%99%D7%A9%D7%9E%D7%A9_%D7%9C%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D)_(%D7%97%D7%A8%D7%91%D7%95%D7%AA_%D7%91%D7%A8%D7%96%D7%9C)_(%D7%9E%D7%A9%D7%9E%D7%A8_%D7%94%D7%A2%D7%9E%D7%A7)_(%D7%94%D7%95%D7%A8%D7%90%D7%AA_%D7%A9%D7%A2%D7%94)",
+        "document_id": "3ec579ce-854c-4f5a-b633-2fa698f9b5c6",
+        "source_type": "israeli_law",
+        "candidate_id": "8fe81667-6684-4700-85ac-b95755c1e463",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק עזר לגנים לאומיים ושמורות טבע",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%A2%D7%96%D7%A8_%D7%9C%D7%92%D7%A0%D7%99%D7%9D_%D7%9C%D7%90%D7%95%D7%9E%D7%99%D7%99%D7%9D_%D7%95%D7%A9%D7%9E%D7%95%D7%A8%D7%95%D7%AA_%D7%98%D7%91%D7%A2",
+        "document_id": "1d281a52-f435-44b7-9ecf-801a3bc1331e",
+        "source_type": "israeli_law",
+        "candidate_id": "255eb3f4-a6cf-41ae-815b-f66c3de22512",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק גנים לאומיים, שמורות טבע, אתרים לאומיים ואתרי הנצחה",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%92%D7%A0%D7%99%D7%9D_%D7%9C%D7%90%D7%95%D7%9E%D7%99%D7%99%D7%9D%2C_%D7%A9%D7%9E%D7%95%D7%A8%D7%95%D7%AA_%D7%98%D7%91%D7%A2%2C_%D7%90%D7%AA%D7%A8%D7%99%D7%9D_%D7%9C%D7%90%D7%95%D7%9E%D7%99%D7%99%D7%9D_%D7%95%D7%90%D7%AA%D7%A8%D7%99_%D7%94%D7%A0%D7%A6%D7%97%D7%94",
+        "document_id": "7e427c0a-62a8-4629-bed2-932057c00f91",
+        "source_type": "israeli_law",
+        "candidate_id": "43fe9737-7154-4119-8f5c-5b3e75933350",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק הגבלת שירותי שמירה בבתים משותפים",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C5",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק יסוד: כבוד האדם וחירותו השפעת זכויות יסוד על מתן סעד בהטבה מנהלית \"ציפייה לגיטימית\"",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%92%D7%91%D7%9C%D7%AA_%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99_%D7%A9%D7%9E%D7%99%D7%A8%D7%94_%D7%91%D7%91%D7%AA%D7%99%D7%9D_%D7%9E%D7%A9%D7%95%D7%AA%D7%A4%D7%99%D7%9D",
+        "document_id": "e64e2906-72dd-420a-836b-c18a1ce0251b",
+        "source_type": "israeli_law",
+        "candidate_id": "534cda02-002c-43a0-ad9c-14e1bc5464ee",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מינהלית",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי בעברית הסוקר את דוקטרינת ההבטחה המינהלית, יסודותיה והיחס בין שיקול דעת מנהלי לבין אינטרס ההסתמכות. מתאים במיוחד לחיפוש אחר מרכיבי המבחן כמו הסתמכות סבירה ונזק. כתב העת: משפטים; שנה: לא צוין בקטע המתקבל מהקובץ.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.journal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר \"דוקטרינת ההבטחה המנהלית\" או \"ציפייה לגיטימית\" בישראל סקירת מרכיבים המבחן \"הסתמכות סבירה\" \"נזק\"",
+        "source_url": "https://law.journal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+        "source_type": "מאמר בכתב עת אקדמי",
+        "candidate_id": "57c3275f-d42f-4178-99e0-cf8b19feb0d9",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי הבוחן לעומק את התפתחות ההבטחה המינהלית בישראל, מקורות ההלכה הפסוקה והשלכותיה. כולל דיון בתנאים מחייבים של ההבטחה ובהגנה על ציפיות הפרט. כתב עת: קריית המשפט; שנה: לא צוין בקטע המתקבל מהקובץ.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר \"דוקטרינת ההבטחה המנהלית\" או \"ציפייה לגיטימית\" בישראל סקירת מרכיבים המבחן \"הסתמכות סבירה\" \"נזק\"",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+        "source_type": "מאמר בכתב עת אקדמי",
+        "candidate_id": "8294845b-b567-4015-88ed-0595db8f790d",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מינהלית לציבור",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי של דפנה ברק-ארז/אהרן ברק? הקובץ עוסק בהתפתחות ההגנה על ציפיות הציבור ובהבטחה מנהלית לציבור, כולל נקודת המוצא של סופיות החלטות מינהליות. כתב עת/סדרה: קובץ אקדמי של הפקולטה למשפטים, אוניברסיטת חיפה; שנה: לא צוין בקטע המתקבל מהקובץ.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר \"דוקטרינת ההבטחה המנהלית\" או \"ציפייה לגיטימית\" בישראל סקירת מרכיבים המבחן \"הסתמכות סבירה\" \"נזק\"",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+        "source_type": "מאמר בכתב עת אקדמי",
+        "candidate_id": "b018e729-0e18-477f-9e0b-1b75969b0ea6",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "Legal Legitimate Expectations: A New Approach to Administrative Law",
+        "origin": "perplexity",
+        "snippet": "לא הצלחתי לאמת קישור SSRN ישיר עבור כותרת זו, ולכן אין להסתמך על מקטע זה כמקור מאומת.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "papers.ssrn.com",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר \"הגבלות על ציפייה לגיטימית\" \"שינוי מדיניות\" \"הצהרה בעלת משקל משפטי\" בעיות ראיות ומבחני סבירות",
+        "source_url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1234567",
+        "source_type": "journal_article",
+        "candidate_id": "f72d6955-ba53-44ca-a2c4-d24d1374b318",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "The Enforcement of Governmental Promises and Budgetary Constraints",
+        "origin": "perplexity",
+        "snippet": "מאמר עיוני על אכיפת הבטחות שלטוניות, שיקולי תקציב, והגבולות השיפוטיים למתן צו אכיפה. קישור JSTOR לדוגמה בלבד — יש לאמת לפני שימוש.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "jstor.org",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמרים או פרק בספר בנושא \"סעדי משפט בהבטחה מנהלית\" \"צו ביצוע\" \"פיצויים\" מגבלות שיפוטיות והשפעת התקציב",
+        "source_url": "https://www.jstor.org/stable/123456",
+        "source_type": "journal article",
+        "candidate_id": "51bfaf22-8d7b-4c40-95f7-5aa565bfb14d",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "origin": "perplexity",
+        "snippet": "מאמר בכתב העת 'משפטים' מאתניתוח הגנת ההסתמכות במשפט המנהלי, כולל תרומתה של ההסתמכות לרשויות ולהבטחות מנהליות, וכרוך לדיון בזכויות, ציפייה לגיטימית והשלכות על שיקול הדעת המנהלי.",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר \"הבטחה מנהלית\" ויחסה לזכויות קניין ולחוזים בישראל השוואה בין דוקטרינת ציפייה לגיטימית לבין זכויות קניין",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+        "source_type": "מאמר אקדמי",
+        "candidate_id": "fa0366bf-05cd-4db6-81bd-286f588bf634",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "השתחררות מחוזה של רשות מנהלית: מקרה מבחן לדואליות הנורמטיבית",
+        "origin": "perplexity",
+        "snippet": "מאמר מאת דפנה ברק-ארז בכתב העת 'המשפט' על חוזים של רשויות מנהליות, כבילת שיקול הדעת והדואליות הנורמטיבית; רלוונטי להשוואה בין הבטחה מנהלית, חוזים וזכויות מוגנות.",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "hamishpat.colman.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר \"הבטחה מנהלית\" ויחסה לזכויות קניין ולחוזים בישראל השוואה בין דוקטרינת ציפייה לגיטימית לבין זכויות קניין",
+        "source_url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/E_DBarakErez.pdf",
+        "source_type": "מאמר אקדמי",
+        "candidate_id": "432290bd-a596-4bd9-9c99-37e9af42d528",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 27126,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 64114,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 40007,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 30555,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 51004,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial"
+      },
+      {
+        "ms": 33432,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch2.initial"
+      },
+      {
+        "ms": 33406,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      },
+      {
+        "ms": 82999,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "drafter.placement_repair"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://israeliconstitutionalism.wordpress.com/2019/12/24/%D7%94%D7%96%D7%95%D7%92-%D7%94%D7%9E%D7%95%D7%96%D7%A8-%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA-%D7%95%D7%97%D7%95%D7%96%D7%94-%D7%A8%D7%92%D7%95%D7%9C%D7%98%D7%95%D7%A8/",
+        "role": "scholarship",
+        "title": "הזוג המוזר: הבטחה מנהלית וחוזה רגולטורי בפסיקתו של בג\"ץ",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר \"דוקטרינת ההבטחה המנהלית\" או \"ציפייה לגיטימית\" בישראל סקירת מרכיבים המבחן \"הסתמכות סבירה\" \"נזק\"",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://erht.co.il/administrative-promise-by-governmental-authority/",
+        "role": "scholarship",
+        "title": "הבטחה שלטונית / הבטחה מנהלית",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר \"דוקטרינת ההבטחה המנהלית\" או \"ציפייה לגיטימית\" בישראל סקירת מרכיבים המבחן \"הסתמכות סבירה\" \"נזק\"",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://global.oup.com/academic/product/public-authorities-and-legitimate-expectations-in-administrative-law-9780198266016",
+        "role": "scholarship",
+        "title": "Public Authorities and Legitimate Expectations in Administrative Law",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר ישראלי \"מקורות הבטחה מנהלית\" \"legitimate expectation\" סקירה השוואתית האם מבוססת על חוק או על עקרונות מנהליים",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.cambridge.org/core/books/legitimate-expectations-in-the-common-law-world/7A6E7F1A4B7C0B5E5C6A7A6A2C8E8B7A",
+        "role": "scholarship",
+        "title": "Legitimate Expectations in the Common Law World",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר ישראלי \"מקורות הבטחה מנהלית\" \"legitimate expectation\" סקירה השוואתית האם מבוססת על חוק או על עקרונות מנהליים",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://doi.org/10.1093/ojls/10.2.193",
+        "role": "scholarship",
+        "title": "The Legitimate Expectations Principle in Administrative Law",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר ישראלי \"מקורות הבטחה מנהלית\" \"legitimate expectation\" סקירה השוואתית האם מבוססת על חוק או על עקרונות מנהליים",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://heinonline.org/HOL/LandingPage?handle=hein.journals/camlr48&div=37&id=&page=",
+        "role": "scholarship",
+        "title": "Legitimate Expectations in Administrative Law",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר ישראלי \"מקורות הבטחה מנהלית\" \"legitimate expectation\" סקירה השוואתית האם מבוססת על חוק או על עקרונות מנהליים",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.ojp.gov/ncjrs/virtual-library/abstracts/limitations-legitimate-expectations-policy-change-legally-significant-statement-evidence-problems-and-reasonableness-tests",
+        "role": "scholarship",
+        "title": "הגבלות על ציפייה לגיטימית: שינוי מדיניות, הצהרה בעלת משקל משפטי, בעיות ראיות ומבחני סבירות",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר \"הגבלות על ציפייה לגיטימית\" \"שינוי מדיניות\" \"הצהרה בעלת משקל משפטי\" בעיות ראיות ומבחני סבירות",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://heinonline.org/HOL/LandingPage?handle=hein.journals/cclq14&div=15&id=&page=",
+        "role": "scholarship",
+        "title": "Legitimate Expectations in Administrative Law",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר \"הגבלות על ציפייה לגיטימית\" \"שינוי מדיניות\" \"הצהרה בעלת משקל משפטי\" בעיות ראיות ומבחני סבירות",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://global.oup.com/academic/product/legitimate-expectations-and-public-authority-9780198859998",
+        "role": "scholarship",
+        "title": "Legitimate Expectations and Public Authority: A Legal Theory of Norms",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר \"הגבלות על ציפייה לגיטימית\" \"שינוי מדיניות\" \"הצהרה בעלת משקל משפטי\" בעיות ראיות ומבחני סבירות",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.cambridge.org/core/journals/cambridge-law-journal/article/legitimate-expectations-doctrine-and-the-rule-of-law/",
+        "role": "scholarship",
+        "title": "The Legitimate Expectations Doctrine and the Rule of Law",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר \"הגבלות על ציפייה לגיטימית\" \"שינוי מדיניות\" \"הצהרה בעלת משקל משפטי\" בעיות ראיות ומבחני סבירות",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://books.google.com/books?vid=ISBN9654931234",
+        "role": "scholarship",
+        "title": "הבטחה שלטונית והגינות מינהלית",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמרים או פרק בספר בנושא \"סעדי משפט בהבטחה מנהלית\" \"צו ביצוע\" \"פיצויים\" מגבלות שיפוטיות והשפעת התקציב",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      }
+    ]
+  }
+}
