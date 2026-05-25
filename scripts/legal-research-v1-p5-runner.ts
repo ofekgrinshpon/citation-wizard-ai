@@ -175,6 +175,7 @@ async function main() {
       placement_ok: pl.ok ?? null,
       placement_repaired: pl.repaired ?? false,
       placement_repair_failed: pl.repair_failed ?? false,
+      superscript_parens_count: pl.superscript_parens_count ?? 0,
       used_sources_count: used.length,
       used_sources_subset_of_usable: used.every((u: any) => usableIds.has(u.candidate_id)),
       footnote_count: (row.footnotes ?? []).length,
