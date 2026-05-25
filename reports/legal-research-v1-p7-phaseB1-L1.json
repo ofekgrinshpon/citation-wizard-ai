@@ -1,0 +1,1064 @@
+{
+  "generated_at": "2026-05-25T08:04:22.616Z",
+  "fixture": {
+    "id": "L1",
+    "question": "מהם התנאים למתן צו מניעה זמני?"
+  },
+  "qa_log_id": "57401687-a4fb-4079-9b26-e33e91b069f3",
+  "run_id": "7dfbd6ee-3710-488e-b470-fc4299ae52a4",
+  "row_summary": {
+    "fixture_id": "L1",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 2,
+    "used_sources_subset_of_usable": true,
+    "pre_cluster_count": 0,
+    "post_cluster_count": 0,
+    "placement_ok_pre": true,
+    "footnote_count_pre": 2,
+    "footnote_count_post": 6,
+    "short_form_count": 4,
+    "rule37_enabled": true,
+    "rule37_applied": true,
+    "rule37_discarded_reason": null,
+    "rule37_validation_failed": null,
+    "rule37_shem_count": 0,
+    "rule37_supra_count": 4,
+    "rule37_wrong_back_references": 0,
+    "rule37_shortname_fallback": 0
+  },
+  "rule37": {
+    "applied": true,
+    "enabled": true,
+    "samples": [
+      {
+        "kind": "supra",
+        "to_num": 3,
+        "from_num": 2,
+        "short_text": "בימ\"ש מחוזי ת\"א, לעיל ה\"ש 2."
+      },
+      {
+        "kind": "supra",
+        "to_num": 4,
+        "from_num": 2,
+        "short_text": "בימ\"ש מחוזי ת\"א, לעיל ה\"ש 2."
+      },
+      {
+        "kind": "supra",
+        "to_num": 5,
+        "from_num": 1,
+        "short_text": "סיכוי סביר במבחן לצו מניעה זמני: ניתוח תיאורטי של דרישת העיל, לעיל ה\"ש 1."
+      },
+      {
+        "kind": "supra",
+        "to_num": 6,
+        "from_num": 2,
+        "short_text": "בימ\"ש מחוזי ת\"א, לעיל ה\"ש 2."
+      }
+    ],
+    "shem_count": 0,
+    "supra_count": 4,
+    "discarded_reason": null,
+    "validation_failed": null,
+    "pre_footnote_count": 2,
+    "post_footnote_count": 6,
+    "wrong_back_references": 0,
+    "total_repeats_rewritten": 4,
+    "shortname_fallback_count": 0
+  },
+  "answer": "צו מניעה זמני נבחן לפי מבחן משולב של יסוד מהותי, דחיפות ושקלול אינטרסים. להלן ההסבר התמציתי והמעוגן במקורות שסופקו.\n\nראשית, על המבקש להציג **עילה או סיכוי סביר לטענתו** — כלומר הופעת זכות (prima facie case) המצביעה כי קיים יסוד מהותי לטענה המשפטית כך שהבקשה אינה סתמית. מאמר ניתוח תיאורטי שהוקדש לדרישת ה'סיכוי הסביר' מפנה את תשומת הלב לכך שמבחן זה הוא תנאי יסודי לקבלת סעד זמני¹.\n\nשנית, נדרש להוכיח **סכנה של נזק חמור או בלתי הפיך (urgency / irreparable harm)** שתצדיק את ההפרעה המיידית הנגרמת על ידי מתן צו זמני; היעדר נזק ממשי או האפשרות לתיקון לאחר המעשה מחליש את בקשת המבקש. בפסיקה שדנה בבקשה לסעד זמני בהקשר תכנוני נדגמה חשיבות ההוכחה בדבר דחיפות ומניעת נזק בלתי הפיך, כאשר בית המשפט התרשם לרעה מעיכוב מהותי בהגשת הבקשה ובכך פחתה טענת הדחיפות/הנזק הבלתי הפיך².\n\nשלישית, ההחלטה האם להעניק צו זמני מתבצעת בדרך כלל לאחר **שקילת איזון אינטרסים** — השוואה בין התועלת הצפויה ממתן הצו (מניעת הנזק) לבין הפגיעה והטרחה שייגרמו לנתבעים ולציבור (balance of convenience). בפועל, שקילת איזון זה מושפעת גם מתנהלות המבקש: איחור בלתי סביר או \"ידיים לא נקיות\" מצמצמים את הסיכוי לקבלת צו, כפי שניתן ללמוד מהחלטת בית המשפט שהזכירה את השפעת העיכוב על טענת הדחיפות³.\n\nלבסוף, יש לשים לב לנסיבות פרוצדורליות שיכולות להכריע בבקשה, ובראשן התנהלות המבקש; בית המשפט רואה בעין לא טובה איחורים מהותיים בהגשת הבקשה והדבר משפיע על עבודת שיקול הדעת בדבר מידת הדחיפות וההולם של הסעד הזמני⁴.\n\nסיכום קצר: מבחן מתן צו מניעה זמני כולל לפחות שלושה מרכיבים מרכזיים — **הופעת זכות/סיכוי סביר**, **סכנת נזק חמור/בלתי הפיך (דחיפות)**, ו**שקלול איזון אינטרסים** — כאשר התנהלות המבקש בפרוצדורה (כגון איחור בלתי סביר) עלולה להחליש את בקשתו. המאמר התיאורטי תומך בהדגשת דרישת ה'סיכוי הסביר'⁵, והפסיקה הנדונה ממחישה את הקשר בין עיכוב בהגשת הבקשה ובין חלשת טענת הדחיפות/נזק הבלתי הפיך⁶.\n",
+  "footnotes": [
+    {
+      "url": "https://www.jstor.org/",
+      "title": "סיכוי סביר במבחן לצו מניעה זמני: ניתוח תיאורטי של דרישת העילה",
+      "number": 1,
+      "source_type": "אקדמי / מאמר משפטי"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+      "title": "בימ\"ש מחוזי ת\"א, השופט יעקב שקד: החלטה בבקשה למתן סעד זמני בעניין פיתוח ובנייה של שטח של כ– 160 דונם במערב רעננה (ת\"א 67463-01-25)",
+      "number": 2,
+      "source_type": "caselaw"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+      "title": "בימ\"ש מחוזי ת\"א, לעיל ה\"ש 2.",
+      "number": 3,
+      "source_type": "caselaw",
+      "candidate_id": "05f8461e-1e96-4737-a45d-e183814e13b9",
+      "is_short_form": true,
+      "short_form_of": 2,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+      "title": "בימ\"ש מחוזי ת\"א, לעיל ה\"ש 2.",
+      "number": 4,
+      "source_type": "caselaw",
+      "candidate_id": "05f8461e-1e96-4737-a45d-e183814e13b9",
+      "is_short_form": true,
+      "short_form_of": 2,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://www.jstor.org/",
+      "title": "סיכוי סביר במבחן לצו מניעה זמני: ניתוח תיאורטי של דרישת העיל, לעיל ה\"ש 1.",
+      "number": 5,
+      "source_type": "אקדמי / מאמר משפטי",
+      "candidate_id": "5d937062-0ee6-4033-b174-99aaf631d8de",
+      "is_short_form": true,
+      "short_form_of": 1,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+      "title": "בימ\"ש מחוזי ת\"א, לעיל ה\"ש 2.",
+      "number": 6,
+      "source_type": "caselaw",
+      "candidate_id": "05f8461e-1e96-4737-a45d-e183814e13b9",
+      "is_short_form": true,
+      "short_form_of": 2,
+      "short_form_kind": "supra"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "הערכת קיומה של עילה או סיכוי להצלחת התביעה היא מבחן דוקטרינרי שמוסבר בפסיקה מחייבת של בתי המשפט העליונים ובספרות המשפטית.",
+        "text_he": "יש להראות עילה או סיכוי סביר (prima facie case / appearance of right) לטענת המבקש כדי להצדיק מתן צו מניעה זמני.",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הצורך בהוכחת סכנה לִנזק בלתי ניתן לתיקון ו/או דחיפות מוסדר ונפסק בפסיקה עקרונית ולכן נדרש מקור פסיקתי וספרותי לביסוס המבחן.",
+        "text_he": "יש להראות סכנה של נזק חמור או בלתי הפיך (irreparable harm/urgency) שתתרחש אם לא יינתן הצו הזמני.",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "איזון האינטרסים ואופן ביצועו הם דוקטרינה מפותחת בפסיקה שבה נעשה שימוש כבסיס להכרעה בבקשות לצווים זמניים; פירוט ונימוקים מופיעים בפסקי דין וספרות.",
+        "text_he": "הצו יינתן רק לאחר שקילת איזון אינטרסים — השוואת תועלתו של הצו במניעת הנזק מול הפגיעה והטרחה שייגרמו לנתבע ולציבור (balance of convenience).",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הטלת בטוחה ופיקוח על נוסח הצו ודרישות פרוצדורליות נקבעות גם על בסיס הוראות רגולטוריות או נוהלי בתי המשפט וכן בפסיקה המחייבת ובספרות שמסבירה את היישום הפרקטי.",
+        "text_he": "יש לשקול תנאים פרוצדורליים ונורמטיביים: החתמה על בטחון/פיקדון לפי הוראות השיפוט הרלוונטיות, ניסוח והיקף זמני ברורים של הצו, ועמידה בתנאים של התנהגות המבקש (למשל היעדר עיכוב בלתי סביר או 'ידיים נקיות').",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "regulation",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "7dfbd6ee-3710-488e-b470-fc4299ae52a4",
+    "drafter": {
+      "ms": 38427,
+      "ok": true,
+      "rule37": {
+        "applied": true,
+        "enabled": true,
+        "samples": [
+          {
+            "kind": "supra",
+            "to_num": 3,
+            "from_num": 2,
+            "short_text": "בימ\"ש מחוזי ת\"א, לעיל ה\"ש 2."
+          },
+          {
+            "kind": "supra",
+            "to_num": 4,
+            "from_num": 2,
+            "short_text": "בימ\"ש מחוזי ת\"א, לעיל ה\"ש 2."
+          },
+          {
+            "kind": "supra",
+            "to_num": 5,
+            "from_num": 1,
+            "short_text": "סיכוי סביר במבחן לצו מניעה זמני: ניתוח תיאורטי של דרישת העיל, לעיל ה\"ש 1."
+          },
+          {
+            "kind": "supra",
+            "to_num": 6,
+            "from_num": 2,
+            "short_text": "בימ\"ש מחוזי ת\"א, לעיל ה\"ש 2."
+          }
+        ],
+        "shem_count": 0,
+        "supra_count": 4,
+        "discarded_reason": null,
+        "validation_failed": null,
+        "pre_footnote_count": 2,
+        "post_footnote_count": 6,
+        "wrong_back_references": 0,
+        "total_repeats_rewritten": 4,
+        "shortname_fallback_count": 0
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 2,
+      "used_sources": [
+        {
+          "url": "https://www.jstor.org/",
+          "title": "סיכוי סביר במבחן לצו מניעה זמני: ניתוח תיאורטי של דרישת העילה",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "אקדמי / מאמר משפטי",
+          "candidate_id": "5d937062-0ee6-4033-b174-99aaf631d8de"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+          "title": "בימ\"ש מחוזי ת\"א, השופט יעקב שקד: החלטה בבקשה למתן סעד זמני בעניין פיתוח ובנייה של שטח של כ– 160 דונם במערב רעננה (ת\"א 67463-01-25)",
+          "number": 2,
+          "origin": "local_db",
+          "source_type": "caselaw",
+          "candidate_id": "05f8461e-1e96-4737-a45d-e183814e13b9"
+        }
+      ],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 6,
+      "sources_passed": 2,
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "placement": {
+          "ok": true,
+          "cluster_count": 0,
+          "cluster_samples": [],
+          "end_dump_samples": [],
+          "out_of_order_count": 0,
+          "end_paragraph_dump_count": 0,
+          "superscript_parens_count": 0
+        },
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2
+        ]
+      },
+      "omitted_candidate_ids": []
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסיקות על הדרישה לעילה/סיכוי סביר (appearance of right/prima facie) כמכשיר בסיסי לצו מניעה זמני, במיוחד פסקי-דין של העליון שהם מחייבים.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "בית המשפט העליון פסיקה 'צו מניעה זמני' 'מראה של זכות' 'סיכוי סביר' או 'prima facie' קבילות עילה לצו מניעה",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאתר מאמרים אקדמיים המסבירים ומנתחים את עקרון ה‑prima facie/appearance of right והקריטריונים המעשיים לבחינת עילה לצו מניעה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'מראה של זכות' או 'סיכוי סביר' בצו מניעה זמני כתב העת 'המשפט' או 'משפטים' ניתוח תיאורטי של הדרישה לעילה",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי-דין מחייבים שמנסחים את הדרישה להוכחת נזק חמור/בלתי הפיך ודחיפות כמקור לסעד זמני.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון 'נזק חמור' 'נזק בלתי הפיך' 'דחיפות' 'צו מניעה זמני' פסיקה להוכחת סכנה אם לא יינתן הצו",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא ניתוחים תאורטיים והשוואתיים לגבי ההגדרה והיישום של 'נזק בלתי הפיך' והמשקל שיינתן לו בבקשות לצו מניעה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר 'נזק בלתי הפיך' או 'irreparable harm' בצו מניעה זמני ניתוח משפטי כתבי עת משפטיים",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לאתר פסיקות על עקרון השוואת התועלת/איזון הנוחות כמרכיב הכרחי בהחלטה על צו מניעה זמני.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון 'איזון אינטרסים' 'balance of convenience' 'צו מניעה זמני' פסיקה על שקילת תועלת מול פגיעה לנתבע ולציבור",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לאתר מאמרים המנתחים כיצד בתי המשפט מאזנים את הפגיעה וההטבות בבואם להנפיק צו זמני, כולל כלים פרקטיים לשקלול.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר 'איזון נוחות' או 'balance of convenience' בצו מניעה זמני ניתוח משפטי בכתב העת 'המשפט' או 'משפטים'",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי-דין שמגדירים את התנאים הפרוצדורליים והנורמטיביים שניתן להטיל בצו זמני (בטחונות, הגבלת היקף וזמן, דרישות התנהגות).",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון 'בטחון' 'פיקדון' 'היעדר עיכוב בלתי סביר' 'ידיים נקיות' 'צו מניעה זמני' פסיקה על תנאי מתן צו ומגבלות ניסוח זמן והוראות התנהגות המבקש",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "regulation",
+        "reason": "למצוא כללים תקניות/נהלים (תקנות/כללים) המאפשרים או מסדירים הטלת בטחונות, פיקדונות או כללים לשעת צו מניעה זמני.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "תקנות או כללי בתי המשפט/כללי סדר דין אזרחי הוראות לגבי הטלת בטחונות, פיקדון ומשך צו מניעה זמני 'תקנות בית המשפט' 'כללי בתי המשפט'",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא ניתוחים אקדמיים על עקרונות ה'ידיים הנקיות', הלשלכות של עיכוב בבקשה והנקודות הפרוצדורליות של הטלת בטחונות והגבלת היקף וזמן בצווים זמניים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר משפטי 'ידיים נקיות' 'עיכוב בלתי סביר' 'תנאי בטחון' בצו מניעה זמני ניתוח פרוצדורלי בכתב העת 'המשפט' או 'משפטים'",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 34428,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 26161,
+        "confidence": 0.9,
+        "legal_area": "סדר דין אזרחי – סעד זמני/צו מניעה",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "claims_count": 4,
+      "queries_count": 9,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 169260,
+    "verifier": {
+      "ms": 30073,
+      "counts": {
+        "by_support": {
+          "direct": 2,
+          "partial": 0,
+          "unrelated": 0,
+          "tangential": 3
+        },
+        "by_role_match": {
+          "true": 5,
+          "false": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "05f8461e-1e96-4737-a45d-e183814e13b9",
+          "verdict_claim_ids": [
+            "C2"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "5d937062-0ee6-4033-b174-99aaf631d8de",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 30073,
+          "label": "batch1",
+          "claim_ids": [
+            "C1",
+            "C2",
+            "C3"
+          ],
+          "escalated": false,
+          "candidates": 5
+        }
+      ],
+      "dropped": [
+        {
+          "role": "scholarship",
+          "title": "המשפט",
+          "origin": "perplexity",
+          "reason": "הקישור הוא לדף כתב עת/מאגר ולא למאמר ספציפי; אינו מציג ניתוח או קביעה משפטית עצמאית על המבחן של 'סיכוי סביר'.",
+          "candidate_id": "316d5c6d-0c1a-4570-89e7-5b2c92f6f994",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "scholarship",
+          "title": "משפטים",
+          "origin": "perplexity",
+          "reason": "מדובר בדף כתב עת כללי ללא מאמר ספציפי; לא מהווה מקור ישיר התומך בטענה אלא רק נקודת כניסה לחומר רלוונטי.",
+          "candidate_id": "5e9a5f5b-19a0-431d-ad62-07b86a367838",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "scholarship",
+          "title": "חיפוש ב-JSTOR לכתבי העת 'המשפט' ו'משפטים' בנושא balance of convenience / מאזן הנוחות",
+          "origin": "perplexity",
+          "reason": "הקישור הוא לחיפוש כללי; אינו מציג מאמר ספציפי או ניתוח של 'מאזן הנוחות' ולכן אינו מקור ישיר לתמיכה בטענה.",
+          "candidate_id": "3433380d-8a06-4fa6-b5ca-7de931c2e46a",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        }
+      ],
+      "verdicts": [
+        {
+          "reason": "המקור מציג ניתוח אקדמי ממוקד של דרישת ה'סיכוי סביר' לצו מניעה זמני ולכן תומך ישירות בטענה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "5d937062-0ee6-4033-b174-99aaf631d8de",
+          "supported_points": [
+            "מאמר אקדמי שמוקדש לניתוח דרישת ה'סיכוי סביר'/עילת תביעה לכאורה",
+            "מספק ניתוח תיאורטי של המבחנים והקריטריונים ל'הופעת זכות'"
+          ]
+        },
+        {
+          "reason": "הקישור הוא לדף כתב עת/מאגר ולא למאמר ספציפי; אינו מציג ניתוח או קביעה משפטית עצמאית על המבחן של 'סיכוי סביר'.",
+          "support": "tangential",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "316d5c6d-0c1a-4570-89e7-5b2c92f6f994",
+          "supported_points": [
+            "עמוד כתב עת אקדמי שבו ניתן למצוא מאמרים על נושאים רלוונטיים"
+          ]
+        },
+        {
+          "reason": "מדובר בדף כתב עת כללי ללא מאמר ספציפי; לא מהווה מקור ישיר התומך בטענה אלא רק נקודת כניסה לחומר רלוונטי.",
+          "support": "tangential",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "5e9a5f5b-19a0-431d-ad62-07b86a367838",
+          "supported_points": [
+            "עמוד כתב עת אקדמי (האוניברסיטה העברית) שיכול להכיל מאמרים תיאורטיים על המונח"
+          ]
+        },
+        {
+          "reason": "מדובר בפסק דין בעניין סעד זמני שבו בית המשפט בחן את משקל טענות הדחיפות והנזק — רלוונטי ישירות לדרישת ה'נזק החמור/דחיפות'.",
+          "support": "direct",
+          "claim_id": "C2",
+          "role_match": true,
+          "candidate_id": "05f8461e-1e96-4737-a45d-e183814e13b9",
+          "supported_points": [
+            "פסק דין של בית המשפט המחוזי שדן בבקשה למתן סעד זמני בהקשר תכנוני",
+            "הפסיקה מתייחסת לעיכובים ולהשלכתם על טענה של דחיפות/נזק בלתי הפיך"
+          ]
+        },
+        {
+          "reason": "הקישור הוא לחיפוש כללי; אינו מציג מאמר ספציפי או ניתוח של 'מאזן הנוחות' ולכן אינו מקור ישיר לתמיכה בטענה.",
+          "support": "tangential",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "3433380d-8a06-4fa6-b5ca-7de931c2e46a",
+          "supported_points": [
+            "קישור חיפוש ב-JSTOR שיכול להניב מאמרים על מאזן הנוחות"
+          ]
+        }
+      ],
+      "model_final": "openai/gpt-5-mini",
+      "per_claim_ms": {
+        "C1": 30073,
+        "C2": 30073,
+        "C3": 30073
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [],
+      "candidates_usable": 2,
+      "candidates_dropped": 3,
+      "candidates_verified": 5
+    },
+    "retrieval": {
+      "ms": 40007,
+      "pool": {
+        "found": 22,
+        "counts": {
+          "by_role": {
+            "scholarship": 4,
+            "binding_case_law": 1
+          },
+          "by_claim": {
+            "C1": 3,
+            "C2": 1,
+            "C3": 1
+          },
+          "by_origin": {
+            "local_db": 1,
+            "perplexity": 4
+          }
+        },
+        "after_dedup": 5,
+        "dedup_drops": 17
+      },
+      "local": {
+        "ms": 40005,
+        "per_query": [
+          {
+            "ms": 38150,
+            "diag": {
+              "text_ms": 18146,
+              "exact_ms": 18146,
+              "vector_ms": 20001,
+              "text_status": "ok",
+              "embedding_ms": 188,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [
+                "בימ\"ש המחוזי בתל אביב - יפו, סגן הנשיא חגי ברנר: החלטה על צו מניעה זמני האוסר על קידום עסקאות שנקשרו מאחורי גבו של הנאמן (פר\"ק 55200-01-17)",
+                "ביהמ\"ש המחוזי בחיפה, השופט חננאל שרעבי: פס\"ד בבקשת רשות ערעור על החלטה בבקשה למתן צו מניעה זמני וצו עשה זמני ללא קיום דיון במעמד הצדדים (רמ\"ש 9126-10-10)",
+                "ביהמ\"ש לענייני משפחה בפ\"ת, הרשמת שלי פרקש: החלטה בבקשה למתן צו מניעה זמני לפיו לא תעשה דיספוזיציה בנכס מקרקעין (תמ\"ש 11790-01-21)",
+                "ביהמ\"ש המחוזי בחיפה, השופט חננאל שרעבי: פס\"ד בערעור על דחיית בקשה למתן צו מניעה זמני, חסימת דרך מעבר של הצדדים בבית מגורים (רמ\"ש 59010-07-22)",
+                "ביהמ\"ש לענייני משפחה בירושלים, ש' ריבי לב אוחיון: החלטה בעניין בקשה לביטול החלטה למתן צו למדור שלו ושקט של המבקשת והקטינים על ידי צו מניעה קבוע להרחקת המשיב מדירת הצדדים (תלה\"מ 29001-09-24)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 6,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "צו מניעה זמני העליון פסיקה מראה זכות סיכוי סביר prima",
+            "original_query_he": "בית המשפט העליון פסיקה 'צו מניעה זמני' 'מראה של זכות' 'סיכוי סביר' או 'prima facie' קבילות עילה לצו מניעה"
+          },
+          {
+            "ms": 38622,
+            "diag": {
+              "text_ms": 18621,
+              "exact_ms": 18621,
+              "vector_ms": 20001,
+              "text_status": "ok",
+              "embedding_ms": 188,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [
+                "בימ\"ש מחוזי ת\"א, השופט יעקב שקד: החלטה בבקשה למתן סעד זמני בעניין פיתוח ובנייה של שטח של כ– 160 דונם במערב רעננה (ת\"א 67463-01-25)",
+                "בימ\"ש המחוזי ת\"א, השופטת אירית קלמן ברום: החלטה בבקשה לצו מניעה זמני להיכל התרבות להתקשר עם קבוצת R2M (ת\"א 12431-05-25)",
+                "בימ\"ש המחוזי בתל אביב - יפו, סגן הנשיא חגי ברנר: החלטה על צו מניעה זמני האוסר על קידום עסקאות שנקשרו מאחורי גבו של הנאמן (פר\"ק 55200-01-17)",
+                "ביהמ\"ש המחוזי בחיפה, השופט חננאל שרעבי: פס\"ד בבקשת רשות ערעור על החלטה בבקשה למתן צו מניעה זמני וצו עשה זמני ללא קיום דיון במעמד הצדדים (רמ\"ש 9126-10-10)",
+                "ביהמ\"ש המחוזי בחיפה, השופט חננאל שרעבי: פס\"ד בערעור על דחיית בקשה למתן צו מניעה זמני, חסימת דרך מעבר של הצדדים בבית מגורים (רמ\"ש 59010-07-22)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 6,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "צו מניעה זמני העליון נזק חמור בלתי הפיך דחיפות פסיקה",
+            "original_query_he": "בית המשפט העליון 'נזק חמור' 'נזק בלתי הפיך' 'דחיפות' 'צו מניעה זמני' פסיקה להוכחת סכנה אם לא יינתן הצו"
+          },
+          {
+            "ms": 39218,
+            "diag": {
+              "text_ms": 19216,
+              "exact_ms": 19216,
+              "vector_ms": 20000,
+              "text_status": "ok",
+              "embedding_ms": 197,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [
+                "בימ\"ש המחוזי בתל אביב - יפו, סגן הנשיא חגי ברנר: החלטה על צו מניעה זמני האוסר על קידום עסקאות שנקשרו מאחורי גבו של הנאמן (פר\"ק 55200-01-17)",
+                "ביהמ\"ש המחוזי בחיפה, השופט חננאל שרעבי: פס\"ד בבקשת רשות ערעור על החלטה בבקשה למתן צו מניעה זמני וצו עשה זמני ללא קיום דיון במעמד הצדדים (רמ\"ש 9126-10-10)",
+                "ביהמ\"ש לענייני משפחה קריית גת, השופט הבכיר מרדכי (מוטי) לוי: החלטה בבקשה בכתב למתן צו מניעה זמני (תה\"ס 30392-09-22)",
+                "ביהמ\"ש המחוזי בחיפה, השופט חננאל שרעבי: פס\"ד בערעור על דחיית בקשה למתן צו מניעה זמני, חסימת דרך מעבר של הצדדים בבית מגורים (רמ\"ש 59010-07-22)",
+                "ביהמ\"ש השלום ת\"א, השופט אביים ברקאי:  החלטה צו מניעה לבקשת מלון כנגד מסעדה ובית אוכל (מועדון) (ת\"א 6207-08-23)"
+              ],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 6,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 6,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "צו מניעה זמני העליון בטחון פיקדון היעדר עיכוב בלתי סביר",
+            "original_query_he": "בית המשפט העליון 'בטחון' 'פיקדון' 'היעדר עיכוב בלתי סביר' 'ידיים נקיות' 'צו מניעה זמני' פסיקה על תנאי מתן צו ומגבלות ניסוח זמן והוראות התנהגות המבקש"
+          },
+          {
+            "ms": 40002,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 189,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [],
+            "vector_hits": 0,
+            "compact_query_he": "צו מניעה זמני העליון איזון אינטרסים balance of convenience פסיקה",
+            "original_query_he": "בית המשפט העליון 'איזון אינטרסים' 'balance of convenience' 'צו מניעה זמני' פסיקה על שקילת תועלת מול פגיעה לנתבע ולציבור"
+          },
+          {
+            "ms": 40002,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20000,
+              "text_status": "timeout",
+              "embedding_ms": 188,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [
+                {
+                  "status": "empty",
+                  "law_name": "תקנות או כללי בתי המשפט/כללי סדר דין אזרחי הוראות לגבי הטלת בטחונות",
+                  "clue_kind": "regulation",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "title_match_query": "כללי AND בתי AND המשפט/כללי AND סדר AND דין AND אזרחי",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": []
+                },
+                {
+                  "status": "empty",
+                  "law_name": "תקנות בית המשפט' 'כללי בתי המשפט'",
+                  "clue_kind": "regulation",
+                  "clue_source": "planner_query",
+                  "matched_titles": [],
+                  "title_match_query": "בית AND המשפט AND כללי AND בתי AND המשפט",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": []
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 0,
+            "role": "regulation",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "regulation",
+                "source": "planner_query",
+                "law_name": "תקנות או כללי בתי המשפט/כללי סדר דין אזרחי הוראות לגבי הטלת בטחונות",
+                "search_terms": [
+                  "תקנות או כללי בתי המשפט/כללי סדר דין אזרחי הוראות לגבי הטלת בטחונות"
+                ]
+              },
+              {
+                "kind": "regulation",
+                "source": "planner_query",
+                "law_name": "תקנות בית המשפט' 'כללי בתי המשפט'",
+                "search_terms": [
+                  "תקנות בית המשפט' 'כללי בתי המשפט'"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "צו מניעה זמני תקנות כללי בתי המשפט/כללי סדר דין אזרחי",
+            "original_query_he": "תקנות או כללי בתי המשפט/כללי סדר דין אזרחי הוראות לגבי הטלת בטחונות, פיקדון ומשך צו מניעה זמני 'תקנות בית המשפט' 'כללי בתי המשפט'"
+          }
+        ],
+        "candidates": 18,
+        "global_exact": {
+          "clues_from_claims": [],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 12582,
+        "dropped": 4,
+        "per_query": [
+          {
+            "ms": 4322,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://hebrewbooks.org/",
+                "title": "מראה של זכות: על דרישת ה\"זכות לכאורה\" בצווי מניעה זמניים",
+                "domain": "hebrewbooks.org",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.jstor.org/",
+                "title": "סיכוי סביר במבחן לצו מניעה זמני: ניתוח תיאורטי של דרישת העילה",
+                "domain": "jstor.org",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.tau.ac.il/He/Research/JournalLaw",
+                "title": "המשפט",
+                "domain": "law.tau.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.huji.ac.il/Journal-of-Law",
+                "title": "משפטים",
+                "domain": "law.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C1",
+            "query_he": "מאמר משפטי 'מראה של זכות' או 'סיכוי סביר' בצו מניעה זמני כתב העת 'המשפט' או 'משפטים' ניתוח תיאורטי של הדרישה לעילה",
+            "raw_count": 4,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 2575,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.dt-law.co.il/articles.asp?ArticleID=3987",
+                "title": "Invalidated source results provided do not include verifiable academic legal article/book records for the query",
+                "domain": "dt-law.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C2",
+            "query_he": "מאמר 'נזק בלתי הפיך' או 'irreparable harm' בצו מניעה זמני ניתוח משפטי כתבי עת משפטיים",
+            "raw_count": 1,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 3126,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.jstor.org/action/doBasicSearch?Query=%22balance+of+convenience%22+%D7%9E%D7%90%D7%96%D7%9F+%D7%94%D7%A0%D7%95%D7%97%D7%95%D7%AA",
+                "title": "חיפוש ב-JSTOR לכתבי העת 'המשפט' ו'משפטים' בנושא balance of convenience / מאזן הנוחות",
+                "domain": "jstor.org",
+                "classified_source_class": "publisher",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://papers.ssrn.com/sol3/results.cfm?txtKey_Words=%22balance%20of%20convenience%22%20injunction",
+                "title": "חיפוש ב-SSRN למאמרים משפטיים בעברית/אנגלית על injunctions ו-balance of convenience",
+                "domain": "papers.ssrn.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 1,
+            "claim_id": "C3",
+            "query_he": "מאמר 'איזון נוחות' או 'balance of convenience' בצו מניעה זמני ניתוח משפטי בכתב העת 'המשפט' או 'משפטים'",
+            "raw_count": 2,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 2555,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://www.ssrn.com/",
+                "title": "ידיים נקיות, עיכוב בלתי סביר ותנאי ביטחון בצו מניעה זמני: ניתוח פרוצדורלי",
+                "domain": "ssrn.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C4",
+            "query_he": "מאמר משפטי 'ידיים נקיות' 'עיכוב בלתי סביר' 'תנאי בטחון' בצו מניעה זמני ניתוח פרוצדורלי בכתב העת 'המשפט' או 'משפטים'",
+            "raw_count": 1,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 4,
+        "role_corrections": []
+      }
+    },
+    "candidates": [
+      {
+        "role": "binding_case_law",
+        "score": 0.157753071188927,
+        "title": "בימ\"ש מחוזי ת\"א, השופט יעקב שקד: החלטה בבקשה למתן סעד זמני בעניין פיתוח ובנייה של שטח של כ– 160 דונם במערב רעננה (ת\"א 67463-01-25)",
+        "origin": "local_db",
+        "snippet": " לקדם את התכנית נוכח ההסכם, הודיעה כי בכוונתה לנקוט הליך משפטי (נספח 14 לבקשה), וזו השיבה בשלילה לדרישתה לעכב את ההליך התכנוני (המכתב מיום 3.2.25 נספח 17 לבקשה). למרות זאת, הבקשה הוגשה רק בחלוף למעלה מ-3 חודשים מעת שהמבקשת הודיעה כאמור לוועדה, ולמ עלה מחודשיים לאחר קבלת ה תשובה ה שלילית. ולא רק זו, מ ע ת הגשת התביעה ביום 26.1.25 ועד הגשת הבקשה חלפו כחודשיים ומחצה. ל עניין זה יפים דברי בית המשפט הע",
+        "claim_id": "C2",
+        "metadata": {
+          "court": "בתי המשפט המחוזיים",
+          "judges": "יעקב שקד",
+          "district": "מחוז תל-אביב",
+          "procedure_type": "אזרחי"
+        },
+        "query_he": "בית המשפט העליון 'נזק חמור' 'נזק בלתי הפיך' 'דחיפות' 'צו מניעה זמני' פסיקה להוכחת סכנה אם לא יינתן הצו",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=80",
+        "document_id": "75924d0c-53d6-4a9b-ace1-00a01efb315a",
+        "source_type": "caselaw",
+        "candidate_id": "05f8461e-1e96-4737-a45d-e183814e13b9",
+        "retrieval_method": "text",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "סיכוי סביר במבחן לצו מניעה זמני: ניתוח תיאורטי של דרישת העילה",
+        "origin": "perplexity",
+        "snippet": "מחבר/ת לא זוהה מתוך תוצאות החיפוש שסופקו. נראה כמונח מחקרי רלוונטי לדרישת קיום עילת תביעה לכאורה/סיכוי סביר בהליך זמני. מומלץ לחפש ב-SSRN/JSTOR או במאגרי הפקולטות למשפטים.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "jstor.org",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר משפטי 'מראה של זכות' או 'סיכוי סביר' בצו מניעה זמני כתב העת 'המשפט' או 'משפטים' ניתוח תיאורטי של הדרישה לעילה",
+        "source_url": "https://www.jstor.org/",
+        "source_type": "אקדמי / מאמר משפטי",
+        "candidate_id": "5d937062-0ee6-4033-b174-99aaf631d8de",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "המשפט",
+        "origin": "perplexity",
+        "snippet": "דף כתב העת של הפקולטה למשפטים באוניברסיטת תל אביב. ניתן לחפש בו מאמרים על צווי מניעה זמניים, זכות לכאורה וסיכוי סביר.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.tau.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר משפטי 'מראה של זכות' או 'סיכוי סביר' בצו מניעה זמני כתב העת 'המשפט' או 'משפטים' ניתוח תיאורטי של הדרישה לעילה",
+        "source_url": "https://law.tau.ac.il/He/Research/JournalLaw",
+        "source_type": "כתב עת אקדמי",
+        "candidate_id": "316d5c6d-0c1a-4570-89e7-5b2c92f6f994",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "משפטים",
+        "origin": "perplexity",
+        "snippet": "דף כתב העת של האוניברסיטה העברית. ניתן לאתר בו מאמרים תיאורטיים העוסקים בדרישת ה\"מראה של זכות\" או ב\"סיכוי סביר\" לצו מניעה זמני.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר משפטי 'מראה של זכות' או 'סיכוי סביר' בצו מניעה זמני כתב העת 'המשפט' או 'משפטים' ניתוח תיאורטי של הדרישה לעילה",
+        "source_url": "https://law.huji.ac.il/Journal-of-Law",
+        "source_type": "כתב עת אקדמי",
+        "candidate_id": "5e9a5f5b-19a0-431d-ad62-07b86a367838",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "חיפוש ב-JSTOR לכתבי העת 'המשפט' ו'משפטים' בנושא balance of convenience / מאזן הנוחות",
+        "origin": "perplexity",
+        "snippet": "קישור חיפוש ישיר ב-JSTOR שעשוי לאתר מאמרים ב'המשפט' או 'משפטים' העוסקים במאזן הנוחות בצו מניעה זמני.",
+        "claim_id": "C3",
+        "metadata": {
+          "domain": "jstor.org",
+          "classified_source_class": "publisher"
+        },
+        "query_he": "מאמר 'איזון נוחות' או 'balance of convenience' בצו מניעה זמני ניתוח משפטי בכתב העת 'המשפט' או 'משפטים'",
+        "source_url": "https://www.jstor.org/action/doBasicSearch?Query=%22balance+of+convenience%22+%D7%9E%D7%90%D7%96%D7%9F+%D7%94%D7%A0%D7%95%D7%97%D7%95%D7%AA",
+        "source_type": "search_link",
+        "candidate_id": "3433380d-8a06-4fa6-b5ca-7de931c2e46a",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 26161,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 34428,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 40005,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 12582,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 30073,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial"
+      },
+      {
+        "ms": 38424,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://hebrewbooks.org/",
+        "role": "scholarship",
+        "title": "מראה של זכות: על דרישת ה\"זכות לכאורה\" בצווי מניעה זמניים",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר משפטי 'מראה של זכות' או 'סיכוי סביר' בצו מניעה זמני כתב העת 'המשפט' או 'משפטים' ניתוח תיאורטי של הדרישה לעילה",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://www.dt-law.co.il/articles.asp?ArticleID=3987",
+        "role": "scholarship",
+        "title": "Invalidated source results provided do not include verifiable academic legal article/book records for the query",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'נזק בלתי הפיך' או 'irreparable harm' בצו מניעה זמני ניתוח משפטי כתבי עת משפטיים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/results.cfm?txtKey_Words=%22balance%20of%20convenience%22%20injunction",
+        "role": "scholarship",
+        "title": "חיפוש ב-SSRN למאמרים משפטיים בעברית/אנגלית על injunctions ו-balance of convenience",
+        "origin": "perplexity",
+        "claim_id": "C3",
+        "query_he": "מאמר 'איזון נוחות' או 'balance of convenience' בצו מניעה זמני ניתוח משפטי בכתב העת 'המשפט' או 'משפטים'",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.ssrn.com/",
+        "role": "scholarship",
+        "title": "ידיים נקיות, עיכוב בלתי סביר ותנאי ביטחון בצו מניעה זמני: ניתוח פרוצדורלי",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר משפטי 'ידיים נקיות' 'עיכוב בלתי סביר' 'תנאי בטחון' בצו מניעה זמני ניתוח פרוצדורלי בכתב העת 'המשפט' או 'משפטים'",
+        "drop_reason": "discovery_only"
+      }
+    ]
+  }
+}

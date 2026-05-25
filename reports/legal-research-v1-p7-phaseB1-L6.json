@@ -1,0 +1,2699 @@
+{
+  "generated_at": "2026-05-25T08:07:19.861Z",
+  "fixture": {
+    "id": "L6",
+    "question": "רשות מקומית נתנה הבטחה מנהלית לאזרח אשר הסתמך עליה, ולאחר מכן חל שינוי נסיבות מהותי. מהם השיקולים והכללים החלים על אכיפת ההבטחה אל מול שינוי הנסיבות, ומה היחס בין סמכות הרשות, אינטרס ההסתמכות של האזרח, והאינטרס הציבורי?"
+  },
+  "qa_log_id": "67350f19-7b23-45b7-b1e6-c67ae32d2a23",
+  "run_id": "91ada048-1b90-4bab-b7c9-3fbcfbb8215f",
+  "row_summary": {
+    "fixture_id": "L6",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 5,
+    "used_sources_subset_of_usable": true,
+    "pre_cluster_count": 0,
+    "post_cluster_count": 0,
+    "placement_ok_pre": true,
+    "footnote_count_pre": 5,
+    "footnote_count_post": 5,
+    "short_form_count": 0,
+    "rule37_enabled": true,
+    "rule37_applied": false,
+    "rule37_discarded_reason": null,
+    "rule37_validation_failed": "shem_footnote_12_no_marker",
+    "rule37_shem_count": 13,
+    "rule37_supra_count": 20,
+    "rule37_wrong_back_references": 0,
+    "rule37_shortname_fallback": 0
+  },
+  "rule37": {
+    "applied": false,
+    "enabled": true,
+    "samples": [
+      {
+        "kind": "shem",
+        "to_num": 6,
+        "from_num": 1,
+        "short_text": "שם."
+      },
+      {
+        "kind": "supra",
+        "to_num": 7,
+        "from_num": 1,
+        "short_text": "הבטחה מנהלית: לידתה, לעיל ה\"ש 1."
+      },
+      {
+        "kind": "shem",
+        "to_num": 8,
+        "from_num": 1,
+        "short_text": "שם."
+      },
+      {
+        "kind": "shem",
+        "to_num": 9,
+        "from_num": 1,
+        "short_text": "שם."
+      },
+      {
+        "kind": "supra",
+        "to_num": 10,
+        "from_num": 1,
+        "short_text": "הבטחה מנהלית: לידתה, לעיל ה\"ש 1."
+      }
+    ],
+    "shem_count": 13,
+    "supra_count": 20,
+    "discarded_reason": null,
+    "validation_failed": "shem_footnote_12_no_marker",
+    "pre_footnote_count": 5,
+    "post_footnote_count": 38,
+    "wrong_back_references": 0,
+    "total_repeats_rewritten": 33,
+    "shortname_fallback_count": 0
+  },
+  "answer": "פתרון משפטי לשאלה: עקרונות וכללים כשיש הבטחה מנהלית של רשות מקומית ושינוי נסיבות מהותי\n\nהקדמה — מסגרת הבעיה\nכאשר רשות מקומית ניתנה ליחיד **הבטחה מנהלית** והאזרח הסתמך עליה, ועומד כעת שינוי נסיבות מהותי, נתעוררת שאלה משפטית מרכזית: באילו תנאים תיאכף ההבטחה כנגד הרשות ומה המשקל שיש להקנות לסמכות הרשות, לאינטרס ההסתמכות של האזרח ולאינטרס הציבורי הרחב. המוסד, תנאיו והקשיים ביישומו ברשויות מקומיות מתוארים בספרות המשפטית ובדיונים תיאורטיים על הגנת ההסתמכות והאכיפה ההדדית בין האינטרסים המעורבים¹.¹\n\nתנאים להיווצרות ולאכיפת הבטחה מנהלית\nכדי שהבטחה מנהלית של רשות מקומית תיחשב לנתמכת משפטית ולשתהא לה אפשרות אכיפה נדרשים כמה יסודות: ראשית — **סמכות מהותית** של הרשות ושל נותן ההבטחה לקבוע או להבטיח את הנסיבות שעליהן הובטחה ההטבה; היעדר סמכות מהותית חוסם אכיפה⁽¹⁾.¹\nשנית — שההבטחה תהיה **ברורה ומכוונת** כלפי האדם הספציפי או קבוצת מקובלים כך שנוצרה ציפייה ריאלית שניתן להסתמך עליה⁽¹⁾.²\nשלישית — **הסתמכות ששינתה את המצב לרעה** עבור המבטח: על המבטח להראות שמשקעים כלכליים, גמישות מקצועית או זיקה אחרת נגרמו כתוצאה מההכרה בהבטחה, וכי חזרה ממנה תפגע בו באופן מהותי⁽¹⁾.²\nרביעית — **היעדר \"איסור בדין\"** — כלומר שהאכיפה לא תתנגש באיסורים שיוצאים מן הדין, לרבות מגבלות תקציביות והתקשרויות ללא מקור תקציבי הפוגעות בתוקף ההתחייבות המנהלית⁽³⁾.³\nולבסוף — התאמה לערכי שלטון החוק ושיקולים ציבוריים: גם בעת עמידת התנאים הראשוניים יש לבחון האם אכיפת ההבטחה עולה בקנה אחד עם השקפות חובת השוויון, סבירות ושיקולי מדיניות ציבורית רחבים⁽¹⁾.¹\n\nהשפעת שינוי נסיבות מהותי — אמות מידה להחלטה לשנות או לחזור מההבטחה\nבעת שינוי נסיבות מהותי יש להפעיל איזון משפטי בין זכויות המסתמכן לבין שיקולי הציבור והרשות: הנזקים וההסתמכות הם גורמי-מפתח (עוצמת ההסתמכות, היקף הנזק הצפוי לחוזה ההסתמכות), אך גם צפיות הלגיטימיות שביחס להן יכול השינוי להיחשב צפוי או בלתי צפוי. יש לשקול זמני חלוף והאם המסתמך נקט בתום לב; ככל שההסתמכות חזקה ונטלה סיכונים ממשיים — נוטה השקלור המאזן לטובת אכיפה או פיצוי⁽²⁾.²\n\nבבחינת אפשרות החזרה על הבטחה יש להפעיל גם מבחנים פרוצדורליים: לפני חזרה משמעותית מן ההבטחה ראוי לקיים הליך של שימוע והימנעות מהחלטות פתאומיות ללא הנמקה מספקת, וזאת כדי לאפשר לצד המסתמך להתאים את מעשיו ולהציע חלופות פחות פוגעניות⁽¹⁾.²\n\nגבולות האכיפה\nאף שכללי ההגנה על הסתמכות מחזקים את מעמד האזרח המסתמך, יש גבולות ברורים: אין לאכוף הבטחה שהיא מחוץ להיקף הסמכות של הרשות, שאוסרתה הוראה מפורשת של הדין או שאכיפתה תגרום לכפל פגיעה בזכות של צדדים אחרים או לכפייה בלתי ראויה על שיקול דעתו של המנהל⁽¹⁾.⁴\nהעיקרון שאף הבטחה לא תוכל לעקוף הוראת חוק או לאורו לאכוף פגיעה בתקציב המדינה או הרשות ללא מקור תקציבי חזק — מודגש במיוחד בעיגון המגבלות התקציביות ובהשלכותיהן על תוקף התחייבויות ציבוריות⁽³⁾.³\n\nתרופות והסדרים חלופיים כשאכיפה אינה אפשרית או אינה ראויה\nכאשר אכיפת ההבטחה אינה אפשרית או אינה סבירה בשל שינוי נסיבות מהותי, עומדות ברשות המנהל חלופות: פיצוי בגין הסתמכות (להחזיר המצב למצב בו היה אילו לא ניתנה ההבטחה), הסדרי מעבר מדורגים, כיבוד חלקי של ההבטחה או דחיית מועד הביצוע — כל אלה בכפוף לעקרונות השוויון, הסבירות והמדרגתיות בשיקול הסעד⁽²⁾.¹\nמנגד, כל הסדר פיצוי או ויתור חייב להיבחן לאור התקציב והסיכונים הציבוריים, ולהיות מוצדק מבחינה מנהלית וטכנית; המענה היעיל עשוי להימצא לא תמיד באכיפה פורמלית אלא בהסדרים מותאמים שמאזנים בין האינטרסים⁽²⁾.⁵\n\nמסגרת האיזון בין סמכות הרשות, אינטרס ההסתמכות והאינטרס הציבורי\nיש לראות ב**חוקיות ובסמכות** תנאי-סף לכל אכיפה של הבטחה מנהלית; בהיעדרם הדין חוסם את האכיפה. רק לאחר שלימות דרישות אלה ניתן לעבור לאיזון מהותי: להכיר בחשיבות ההסתמכות של האזרח אך לשקלל אותה מול פררוגטיבה ציבורית רחבה — לרבות מגבלות תקציב, שיקולי תכנון, שוויון בין אזרחים והצדקה ציבורית לשינוי מדיניות⁽⁴⁾.⁵\nframework זו מעגנת כי לא די בהוכחת הסתמכות חזקה כדי לתת את הדעת לאינטרס האישי בלבד; יש לבחון האם קיום ההבטחה במתכונתה המקורית פוגע בזכויות ציבוריות אחרות או בפרט בניהול תקציב ותכנון של הרשות המקומית⁽³⁾.³\n\nהנחיות מעשיות לרשויות מקומיות המתמודדות עם בקשה לחזרה או שינוי הבטחה\n- קודם כל לאמת את **הסמכות** והחוקיות של ההבטחה ולבחון מנגנונים תקציביים הרלוונטיים⁽³⁾.³\n- להעריך את עוצמת ההסתמכות והנזק: האם ההסתמכות הייתה צפויה, האם ננקטו צעדים כלכליים או אחרים בתלות בהבטחה והאם קיימות חלופות שפחות פוגעות⁽²⁾.²\n- לקיים הליכי שימוע והנמקה מספקת לפני שינוי מהותי של ההבטחה, ולשקול פתרונות מתונים כגון דחייה, כיבוד חלקי או פיצוי מדרגי במקום הפסקה פתאומית⁽²⁾.¹\n- לוודא כי כל שינוי מנומק מבחינה תקציבית, תכנונית ושוויונית, ולהדגיש את יחסו לחובת שלטון החוק והמנהל התקין⁽³⁾.³\n\nסיכום\nהתמודדות עם הבטחה מנהלית שניתנה על ידי רשות מקומית ונפגעה משינוי נסיבות מהותי דורשת פנייה מרוכזת ומדורגת: בדיקת סמכות וחוקיות כבסיס, בחינת עוצמת הסתמכות ונזק, איזון בין האינטרסים הרלוונטיים, וקביעת סעד מותאם — אכיפה, כיבוד חלקי או פיצוי — בהתאם לעקרונות הסבירות, השוויון והמדרגתיות שבשלטון החוק¹.¹\n\n\n",
+  "footnotes": [
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+      "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+      "number": 1,
+      "source_type": "article_pdf"
+    },
+    {
+      "url": "http://lawjournal.huji.ac.il/article/12/707",
+      "title": "הגנת ההסתמכות במשפט המנהלי",
+      "number": 2,
+      "source_type": "article"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93%D7%95%D7%AA_%D7%94%D7%AA%D7%A7%D7%A6%D7%99%D7%91",
+      "title": "חוק יסודות התקציב",
+      "number": 3,
+      "source_type": "israeli_law"
+    },
+    {
+      "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_7b0bf39549074d089519f2211e3040d6.pdf",
+      "title": "פתח-דבר: מה צריך ל משפט ומדוע?",
+      "number": 4,
+      "source_type": "journal_article"
+    },
+    {
+      "url": "https://www.runi.ac.il/media/0ocekxxk/braverman.pdf",
+      "title": "היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המנהל",
+      "number": 5,
+      "source_type": "article_pdf"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "המסגרת הנורמטיבית נקבעה בפסיקת בית המשפט העליון; יש להצליב עם דברי חקיקה המסדירים סמכויות של רשויות מקומיות; ספרות מסבירה את היקף היסודות והוצאתם לפועל.",
+        "text_he": "התנאים להיווצרות ולאכיפת הבטחה מנהלית של רשות מקומית: סמכות מהותית של הרשות ושל נותן ההבטחה, הבטחה ברורה ומכוונת, הסתמכות ושינוי מצב לרעה, היעדר איסור בדין, ותאימות לערכי שלטון החוק ולשיקולים ציבוריים.",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "primary_statute",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "כללי האיזון בעת שינוי נסיבות ומבחני החזרה מקורם בפסיקה; חובת ההנמקה ושימוע נשענות על פסיקה ולעיתים על חקיקה מנהלית ייעודית; ספרות מחדדת את פרטי המבחנים.",
+        "text_he": "השפעת שינוי נסיבות מהותי: אמות מידה להחלטה לחזור מהבטחה או לשנותה (עוצמת ההסתמכות והפגיעה, צפיות השינוי, חלוף הזמן, תום לב, חלופות פוגעניות-פחות) וחובות פרוצדורליות טרם החזרה (שימוע, הנמקה).",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "primary_statute",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "היקף הסמכות נקבע בדברי החקיקה המסמיכים; עקרונות \"אין השתק נגד החוק\" ואי-כבילת שיקול דעת הם דוקטרינות פסיקתיות מחייבות.",
+        "text_he": "גבולות האכיפה: אין לאכוף הבטחה החורגת מסמכות, הסותרת דין או הכובלת את שיקול הדעת המנהלי באופן פסול; אין השתק כנגד הוראת חוק.",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "primary_statute"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "הכרעות לגבי תרופות חלופיות ועיצוב הסדרי מעבר מעוגנות בפסיקה; ספרות מבהירה את סוגי הסעדים והנימוקים להעדפתם.",
+        "text_he": "תרופות והסדרים חלופיים כשהאכיפה אינה אפשרית או אינה ראויה בשל שינוי נסיבות: פיצוי הסתמכות, הסדרי מעבר, כיבוד חלקי או דחיית מועד, בכפוף לשוויון, סבירות ומידתיות.",
+        "claim_id": "C4",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "מבחני האיזון וההיררכיה הנורמטיבית בין שיקולים מעוצבים בפסיקה; ספרות תורמת להמשגה וליישום עקבי של האיזונים.",
+        "text_he": "מסגרת האיזון בין סמכות הרשות, אינטרס ההסתמכות והאינטרס הציבורי: חוקיות וסמכות הן תנאי-סף; בהתקיימם—איזון מהותי בין ההסתמכות לפררוגטיבה הציבורית והאינטרס הכללי, לרבות שיקולי תקציב, שוויון ותכנון.",
+        "claim_id": "C5",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "91ada048-1b90-4bab-b7c9-3fbcfbb8215f",
+    "drafter": {
+      "ms": 45804,
+      "ok": true,
+      "rule37": {
+        "applied": false,
+        "enabled": true,
+        "samples": [
+          {
+            "kind": "shem",
+            "to_num": 6,
+            "from_num": 1,
+            "short_text": "שם."
+          },
+          {
+            "kind": "supra",
+            "to_num": 7,
+            "from_num": 1,
+            "short_text": "הבטחה מנהלית: לידתה, לעיל ה\"ש 1."
+          },
+          {
+            "kind": "shem",
+            "to_num": 8,
+            "from_num": 1,
+            "short_text": "שם."
+          },
+          {
+            "kind": "shem",
+            "to_num": 9,
+            "from_num": 1,
+            "short_text": "שם."
+          },
+          {
+            "kind": "supra",
+            "to_num": 10,
+            "from_num": 1,
+            "short_text": "הבטחה מנהלית: לידתה, לעיל ה\"ש 1."
+          }
+        ],
+        "shem_count": 13,
+        "supra_count": 20,
+        "discarded_reason": null,
+        "validation_failed": "shem_footnote_12_no_marker",
+        "pre_footnote_count": 5,
+        "post_footnote_count": 38,
+        "wrong_back_references": 0,
+        "total_repeats_rewritten": 33,
+        "shortname_fallback_count": 0
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 5,
+      "used_sources": [
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+          "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "article_pdf",
+          "candidate_id": "4a77cee7-effa-4cb4-a110-e06c90e58868"
+        },
+        {
+          "url": "http://lawjournal.huji.ac.il/article/12/707",
+          "title": "הגנת ההסתמכות במשפט המנהלי",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "article",
+          "candidate_id": "220377b7-b43e-4559-8366-0b6db478abe7"
+        },
+        {
+          "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93%D7%95%D7%AA_%D7%94%D7%AA%D7%A7%D7%A6%D7%99%D7%91",
+          "title": "חוק יסודות התקציב",
+          "number": 3,
+          "origin": "local_db",
+          "source_type": "israeli_law",
+          "candidate_id": "820e7df1-7cfb-4ce6-bc81-7d1b82df3177"
+        },
+        {
+          "url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_7b0bf39549074d089519f2211e3040d6.pdf",
+          "title": "פתח-דבר: מה צריך ל משפט ומדוע?",
+          "number": 4,
+          "origin": "local_db",
+          "source_type": "journal_article",
+          "candidate_id": "2c73aab9-ce7d-4c23-9d76-8d8c0fc6157b"
+        },
+        {
+          "url": "https://www.runi.ac.il/media/0ocekxxk/braverman.pdf",
+          "title": "היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המנהל",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "article_pdf",
+          "candidate_id": "d0c2aa67-c813-4da0-ab69-2e7c4945040c"
+        }
+      ],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 5,
+      "sources_passed": 5,
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "placement": {
+          "ok": true,
+          "cluster_count": 0,
+          "cluster_samples": [],
+          "end_dump_samples": [],
+          "out_of_order_count": 0,
+          "end_paragraph_dump_count": 0,
+          "superscript_parens_count": 34
+        },
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "omitted_candidate_ids": []
+    },
+    "queries": [
+      {
+        "role": "primary_statute",
+        "reason": "הבסיס החוקי לסמכות הרשות המקומית לפעול ולהתחייב בענייני תכנון ובנייה; חוק התכנון והבנייה הוא החוק המרכזי שמגדיר סמכויות רשות מקומית בהקשר זה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "חוק התכנון והבנייה, תשכ\"ה-1965 הוראות סמכות רשות מקומית החלטות מתן היתרים והבטחות מנהליות",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "דרוש פסיקה מחייבת של העליון המנסחת את תנאי ההיווצרות והאכיפה של הבטחה מנהלית (בהתמקדות בהיררכיית הסמכות, בהירות ההבטחה וההסתמכות).",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "בית המשפט העליון פסק דין 'הבטחה מנהלית' 'הסתמכות' עקרון הבטחה מנהלית פסקי-דין מובילים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "לניתוח תיאורטי וניתוח איכותי של תנאי האכיפה והעמידה בתנאי שלטון החוק נדרשים מאמרים אקדמיים וסקירות משפטיות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר 'הבטחה מנהלית' 'הסתמכות' נורמות אזרחיות וניהוליות כתב-עת משפטי ישראלי 'משפטים' 'המשפט'",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "לטענת החובה הפרוצדורלית יש לבדוק אם קיימת חובת שימוע/הנמקה בחוק או בתקנות החלות על רשויות מקומיות.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "חיפוש הוראות חקיקה לגבי חובת שימוע לפני שינוי החלטה מנהלית 'שימוע' 'הודעה' חובת הנמקה חקיקה ישראלית",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "נדרש לאתר פסיקה מחייבת שקבעה אמות מידה לעצירת ההבטחה או חזרתה בעקבות שינוי נסיבות והחובות הפרוצדורליות.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסק דין חזרה מהבטחה מנהלית שינוי נסיבות שימוע הנמקה מידתיות 'הסתמכות' 'שינוי נסיבות'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מאמרים אקדמיים ידונו בגורמים והשיקולים השונים (עוצמת ההסתמכות, חלף הזמן, תום לב) ובגיבוש אמות מידה פרוצדורליות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר 'שינוי נסיבות מהותי' 'החזרה מהבטחה' 'שימוע' 'הנמקה' כתב-עת משפטי ישראלי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "לברר מה הן גבולות הסמכות המוענקים לרשות המקומית בחקיקה וכיצד מוגדר איסור חריגה מסמכות.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "יש לאתר פסיקה מחייבת שקבעה כי הבטחה החורגת מהסמכות או הסותרת דין אינה ניתנת לאכיפה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון פסק דין אכיפת הבטחה מנהלית חורגת סמכות סותרת דין 'חריגה מסמכות' 'כיבוי שיקול דעת'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לחפש פסקי-דין שמצאו אפשרות של פיצוי או פתרונות חלופיים כאשר האכיפה הישירה אינה אפשרית.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון פסק דין פיצוי הסתמכות עקב ביטול הבטחה מנהלית 'פיצוי הסתמכות' 'הסדר מעבר' 'דחיית מועד'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "נדרש ניתוח תאורטי על זכות לפיצוי, סוגי הפיצויים והקריטריונים המשפטיים (מידתיות, שוויון).",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "מאמר פיצוי הסתמכות בהבטחה מנהלית 'פיצוי הסתמכות' 'הסדרי מעבר' מאמרים בכתבי-עת משפטיים",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסיקות על כלל האיזון בין סמכות הרשות, אינטרס הציבור וההסתמכות הפרטית, כולל שיקולים תקציביים, שוויון ותכנון.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C5",
+        "query_he": "בית המשפט העליון איזון בין סמכות מנהלית לאינטרס הציבורי מול זכות הסתמכות האזרח 'איזון' 'הסתמכות' פסקי-דין מרכזיים",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מאמרים אקדמיים יערכו מסגרת תאורטית לאיזון בין זכויות ופרגמטיקה של קבלת החלטות מנהליות במסגרת רשות מקומית.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C5",
+        "query_he": "מאמר 'איזון בין סמכות ציבורית להסתמכות פרטית' 'שוויון' 'מִדַּתיות' 'תקציב' כתב-עת משפטי ישראלי",
+        "expected_source_type": "academic"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 70041,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 42307,
+        "confidence": 0.9,
+        "legal_area": "משפט מינהלי",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5",
+        "escalated_to_gpt5": false,
+        "escalation_reason": [
+          "A1:question.length>200"
+        ]
+      },
+      "claims_count": 5,
+      "queries_count": 12,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 341264,
+    "verifier": {
+      "ms": 146130,
+      "counts": {
+        "by_support": {
+          "direct": 2,
+          "partial": 3,
+          "unrelated": 20,
+          "tangential": 5
+        },
+        "by_role_match": {
+          "true": 30,
+          "false": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "820e7df1-7cfb-4ce6-bc81-7d1b82df3177",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "220377b7-b43e-4559-8366-0b6db478abe7",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "4a77cee7-effa-4cb4-a110-e06c90e58868",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "d0c2aa67-c813-4da0-ab69-2e7c4945040c",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "2c73aab9-ce7d-4c23-9d76-8d8c0fc6157b",
+          "verdict_claim_ids": [
+            "C3"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 31667,
+          "label": "batch1",
+          "claim_ids": [
+            "C3"
+          ],
+          "escalated": false,
+          "candidates": 15
+        },
+        {
+          "ms": 114463,
+          "label": "batch2",
+          "claim_ids": [
+            "C1",
+            "C4",
+            "C5"
+          ],
+          "escalated": true,
+          "candidates": 15
+        }
+      ],
+      "dropped": [
+        {
+          "role": "binding_case_law",
+          "title": "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת אליה נוס: פס\"ד בתביעה להכרזה כפסולת דין שהוגשה על ידי אפוטרופוס לרכוש (תמ\"ש 66413-06-22)",
+          "origin": "local_db",
+          "reason": "פסק‑דין של בית‑המשפט לענייני משפחה בענייני אפוטרופסות ורכוש אינו עוסק באכיפת הבטחות מנהליות או בכלל על חורגות סמכות/השתק; לא רלוונטי לטענה.",
+          "candidate_id": "e5216e73-425e-4d6b-abce-324db8798530",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תקנות איסור הלבנת הון (כללים לבקשת מידע והעברתו מן הרשות המוסמכת לחוקר ניירות ערך)",
+          "origin": "local_db",
+          "reason": "תקנות למניעת הלבנת הון המנחות העברת מידע אינן נוגעות לכלל על אכיפת הבטחות מנהליות החורגות מסמכות; לא רלוונטיות.",
+          "candidate_id": "5467c61e-f773-4fb3-9f27-364726f9604f",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תקנות איסור הלבנת הון (כללים להודעה למשטרה ופרטיה בדבר העברת מידע מן הרשות המוסמכת לפקיד מכס חוקר)",
+          "origin": "local_db",
+          "reason": "תקנה פרוצדורלית הנוגעת להעברת מידע למשטרה אינה תומכת בגבולות אכיפת הבטחות מנהליות; לא רלוונטית.",
+          "candidate_id": "f927a07c-4a1e-4d29-9c25-eecb103359bb",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תקנות איסור הלבנת הון (כללים לבקשת מידע והעברתו מן הרשות המוסמכת לפקיד מכס חוקר)",
+          "origin": "local_db",
+          "reason": "תקנות פרוצדורליות בתחום הלבנת הון ופיקוח שקשורות להעברת מידע לפקיד מכס אינן נוגעות לטענת האכיפה מול שינוי נסיבות; לא רלוונטיות.",
+          "candidate_id": "f8865690-0195-467e-b386-b5ff592d19ca",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק איסור לשון הרע",
+          "origin": "local_db",
+          "reason": "חוק איסור לשון הרע אינו עוסק בכלל של אי‑אכיפת הבטחות מנהליות החורגות מסמכות או הסותרות דין באופן ישיר; לא רלוונטי.",
+          "candidate_id": "c26cf190-0840-4d50-a12d-b987e2f49be7",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק בנימין זאב הרצל (ציון זכרו ופועלו)",
+          "origin": "local_db",
+          "reason": "חוק ציון זכרו של הרצל הינו חוק תמציתי שאינו נוגע לשאלות אכיפת הבטחות מנהליות או השתק; לא רלוונטי.",
+          "candidate_id": "3f214600-b0b0-4fcd-b2c7-a94fe99d3037",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "צו הסדרת מקומות רחצה (מקומות רחצה אסורים ומוכרזים בים התיכון, בים כנרת, בנהר הירדן, בים המלח ובים סוף)",
+          "origin": "local_db",
+          "reason": "צו הסדרת מקומות רחצה הינו רגולציה תחומית שאינה עוסקת בעקרונות אכיפת הבטחות מנהליות החורגות מסמכות; לא רלוונטי.",
+          "candidate_id": "cd9e6bfd-8fe1-4b14-9cd2-459eb97f3537",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק איסוף ופינוי פסולת למיחזור",
+          "origin": "local_db",
+          "reason": "חוק איסוף ופינוי פסולת למיחזור אינו מתייחס לכללי אכיפת הבטחות מנהליות או לעקרון שאין השתק כנגד הוראת חוק; לא רלוונטי.",
+          "candidate_id": "2d136c64-2dcf-44ee-9a8e-82ea059f0618",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תקנות איסור הלבנת הון (כללים לשימוש במידע שהועבר לפקיד מכס חוקר לשם חקירת עבירות נוספות ולהעברתו לרשות אחרת)",
+          "origin": "local_db",
+          "reason": "תקנות בנוגע לשימוש במידע שהועבר לפקיד מכס לחקירות נוספות הן תקנות פרוצדורליות שאינן תומכות בטענה לגבי גבולות אכיפת הבטחות מנהליות.",
+          "candidate_id": "a0fc0494-64ab-4fe7-a40a-793e1756ce2f",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק איסור גידול חזיר",
+          "origin": "local_db",
+          "reason": "חוק איסור גידול חזיר עוסק איסורים ספציפיים על חקלאות ואינו נוגע לכללי אכיפת הבטחות מנהליות; לא רלוונטי.",
+          "candidate_id": "9e34021d-7287-4d0d-a8d8-6389a1ccb9eb",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תקנות איסור הלבנת הון (כללים לשימוש במידע שהועבר לחוקר ניירות ערך לשם חקירת עבירות נוספות ולהעברתו לרשות אחרת)",
+          "origin": "local_db",
+          "reason": "תקנות פרוצדורליות הנוגעות לחוקר ניירות ערך ושימוש במידע אינן עוסקות בהיקף אכיפת הבטחות מנהליות או במגבלות סמכות; לא רלוונטיות.",
+          "candidate_id": "605c7669-3502-4bc5-b39b-4da59caa2151",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק איסור הפליה במוצרים, בשירותים ובכניסה למקומות בידור ולמקומות ציבוריים",
+          "origin": "local_db",
+          "reason": "החוק עצמו אינו דן במנגנון אכיפת הבטחות מנהליות, אך מהווה דוגמה לחקיקה מהותית שיכולה לחייב דחיית הבטחה סותרת; לכן נוגע בשוליים.",
+          "candidate_id": "34b86318-d1c8-4450-b24f-76e4440667af",
+          "worst_support": "tangential",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק האנטומיה והפתולוגיה",
+          "origin": "local_db",
+          "reason": "חוק האנטומיה והפתולוגיה הינו ענייני רפואי/פורנזי ולא עוסק בכלל על אי‑אכיפת הבטחות מנהליות או בהשתק כנגד חוק.",
+          "candidate_id": "6dfbe1be-c385-422c-9477-753a153212e3",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "חוק איסור התערבות גנטית (שיבוט אדם ושינוי גנטי בתאים) (הוראת שעה)",
+          "origin": "local_db",
+          "reason": "חוק בתחום ביורפואי שאינו עוסק בהבטחה מנהלית, בסמכות רשות מקומית או בהסתמכות.",
+          "candidate_id": "a9d26042-6281-497c-813b-de75559a8587",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מבנים יבילים זמניים ותשתיות ציבוריות זמניות) (חרבות ברזל – חצרים) (הוראת שעה)",
+          "origin": "local_db",
+          "reason": "הוראת שעה תכנונית-ביצועית שאינה דנה בדוקטרינת ההבטחה המנהלית או בתנאיה.",
+          "candidate_id": "bafa337d-24b0-41cd-957f-b05fd132e7b9",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מיתקני אגירת אנרגיה במיתקני קליטה מקומיים ובמרכזי הפעלה) (חרבות ברזל) (הוראת שעה)",
+          "origin": "local_db",
+          "reason": "צו תכנון נקודתי שאינו נוגע לתנאי היווצרות/אכיפת הבטחה מנהלית.",
+          "candidate_id": "d5c2f8e5-5355-4ae9-98fd-074235d12ecc",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "צו בנק ישראל (מידע בעניין התפתחויות בשוק מטבע החוץ בישראל)",
+          "origin": "local_db",
+          "reason": "צו של בנק ישראל על מידע בשוק מטבע חוץ, ללא זיקה לדוקטרינת ההבטחה המנהלית.",
+          "candidate_id": "9574883e-1ba0-4dbb-a6f5-92a87bd2d6be",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "primary_statute",
+          "title": "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מתחם שישמש למגורים) (חרבות ברזל) (משמר העמק) (הוראת שעה)",
+          "origin": "local_db",
+          "reason": "הוראת שעה תכנונית למתחם מגורים; אין בה דיון בהבטחות מנהליות או תנאיהן.",
+          "candidate_id": "1af4e3bb-e564-4db3-8277-eb2dfd9be83b",
+          "worst_support": "unrelated",
+          "retrieval_method": "exact_authority"
+        },
+        {
+          "role": "scholarship",
+          "title": "תרופות בשל הפרת חוזה - פיצויי ציפייה, פיצויי הסתמכות, השבת התעשרות ושחזור השקילות החוזית בעקבות ארבוס נ' רובינשטיין",
+          "origin": "perplexity",
+          "reason": "מקור בדיני חוזים; מסייע בהיקש לרעיון פיצויי הסתמכות אך אינו עוסק בהבטחות מנהליות או בשינוי נסיבות מנהלי.",
+          "candidate_id": "78754e1c-9685-4228-a559-c35d67d0a42a",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "scholarship",
+          "title": "משפט ציבורי: תיאוריה, פרדיגמה של אסדרת רשתות חברתיות דרך ויישום",
+          "origin": "perplexity",
+          "reason": "מאמר תחומי על אסדרת רשתות חברתיות; נוגע בעקרונות איזון כלליים אך לא בהבטחות מנהליות.",
+          "candidate_id": "c177449c-314c-4c00-a307-f8eaec4d5dec",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "scholarship",
+          "title": "הגבול שבין חופש הביטוי ל בין בריונות רשת",
+          "origin": "perplexity",
+          "reason": "מאמר על חופש ביטוי וברשת; התועלת היא כללית ועקיפה, לא יישומית לנושא האיזון בין הסתמכות לפררוגטיבה מנהלית.",
+          "candidate_id": "30f8146b-7250-498f-9221-91e8558ca8db",
+          "worst_support": "tangential",
+          "retrieval_method": "perplexity"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "צו בדבר הגנה על עדים (יהודה ושומרון)",
+          "origin": "local_db",
+          "reason": "צו צבאי על הגנת עדים; אינו פסיקה ואינו דן בתרופות או הסדרים חלופיים להבטחה מנהלית.",
+          "candidate_id": "0612bca3-87c5-443e-be28-eef87ac6302e",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "binding_case_law",
+          "title": "אי-קיום החלטות בג\"ץ ככשל מוסדי: הצעה למודל של אכיפה שיפוטית | אורי אהרונסון (כרך יט)",
+          "origin": "local_db",
+          "reason": "המאמר עוסק באכיפת פסקי‑דין ובהיבטים מוסדיים של אכיפה, עניין קרוב לעקרון האכיפה אך לא מטפל ישירות בהבטחות מנהליות החורגות מסמכות או בהשתק כנגד חוק.",
+          "candidate_id": "e9d05ddb-23c6-44ac-8461-daa0522f861c",
+          "worst_support": "tangential",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תקנות הבטיחות בעבודה (עבודות בניה)",
+          "origin": "local_db",
+          "reason": "תקנות בטיחות בעבודה אינן עוסקות בדוקטרינת הבטחה מנהלית או בתנאיה.",
+          "candidate_id": "757b17a5-50ae-4c9d-9660-c6c8b4783fca",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        },
+        {
+          "role": "primary_statute",
+          "title": "תכניות בינוי מפורטות ביישובים דרוזיים וצ'רקסיים",
+          "origin": "local_db",
+          "reason": "מסמך מחקר כנסת על תכנון ביישובים; אינו נוגע להבטחות מנהליות או לתנאיהן.",
+          "candidate_id": "94a710e8-b642-4e03-b52c-7558cb45824e",
+          "worst_support": "unrelated",
+          "retrieval_method": "vector"
+        }
+      ],
+      "verdicts": [
+        {
+          "reason": "פסק‑דין של בית‑המשפט לענייני משפחה בענייני אפוטרופסות ורכוש אינו עוסק באכיפת הבטחות מנהליות או בכלל על חורגות סמכות/השתק; לא רלוונטי לטענה.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "e5216e73-425e-4d6b-abce-324db8798530",
+          "supported_points": []
+        },
+        {
+          "reason": "תקנות למניעת הלבנת הון המנחות העברת מידע אינן נוגעות לכלל על אכיפת הבטחות מנהליות החורגות מסמכות; לא רלוונטיות.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "5467c61e-f773-4fb3-9f27-364726f9604f",
+          "supported_points": []
+        },
+        {
+          "reason": "תקנה פרוצדורלית הנוגעת להעברת מידע למשטרה אינה תומכת בגבולות אכיפת הבטחות מנהליות; לא רלוונטית.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "f927a07c-4a1e-4d29-9c25-eecb103359bb",
+          "supported_points": []
+        },
+        {
+          "reason": "תקנות פרוצדורליות בתחום הלבנת הון ופיקוח שקשורות להעברת מידע לפקיד מכס אינן נוגעות לטענת האכיפה מול שינוי נסיבות; לא רלוונטיות.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "f8865690-0195-467e-b386-b5ff592d19ca",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק איסור לשון הרע אינו עוסק בכלל של אי‑אכיפת הבטחות מנהליות החורגות מסמכות או הסותרות דין באופן ישיר; לא רלוונטי.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "c26cf190-0840-4d50-a12d-b987e2f49be7",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק ציון זכרו של הרצל הינו חוק תמציתי שאינו נוגע לשאלות אכיפת הבטחות מנהליות או השתק; לא רלוונטי.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "3f214600-b0b0-4fcd-b2c7-a94fe99d3037",
+          "supported_points": []
+        },
+        {
+          "reason": "צו הסדרת מקומות רחצה הינו רגולציה תחומית שאינה עוסקת בעקרונות אכיפת הבטחות מנהליות החורגות מסמכות; לא רלוונטי.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "cd9e6bfd-8fe1-4b14-9cd2-459eb97f3537",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק איסוף ופינוי פסולת למיחזור אינו מתייחס לכללי אכיפת הבטחות מנהליות או לעקרון שאין השתק כנגד הוראת חוק; לא רלוונטי.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "2d136c64-2dcf-44ee-9a8e-82ea059f0618",
+          "supported_points": []
+        },
+        {
+          "reason": "תקנות בנוגע לשימוש במידע שהועבר לפקיד מכס לחקירות נוספות הן תקנות פרוצדורליות שאינן תומכות בטענה לגבי גבולות אכיפת הבטחות מנהליות.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "a0fc0494-64ab-4fe7-a40a-793e1756ce2f",
+          "supported_points": []
+        },
+        {
+          "reason": "חוק איסור גידול חזיר עוסק איסורים ספציפיים על חקלאות ואינו נוגע לכללי אכיפת הבטחות מנהליות; לא רלוונטי.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "9e34021d-7287-4d0d-a8d8-6389a1ccb9eb",
+          "supported_points": []
+        },
+        {
+          "reason": "תקנות פרוצדורליות הנוגעות לחוקר ניירות ערך ושימוש במידע אינן עוסקות בהיקף אכיפת הבטחות מנהליות או במגבלות סמכות; לא רלוונטיות.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "605c7669-3502-4bc5-b39b-4da59caa2151",
+          "supported_points": []
+        },
+        {
+          "reason": "החוק עצמו אינו דן במנגנון אכיפת הבטחות מנהליות, אך מהווה דוגמה לחקיקה מהותית שיכולה לחייב דחיית הבטחה סותרת; לכן נוגע בשוליים.",
+          "support": "tangential",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "34b86318-d1c8-4450-b24f-76e4440667af",
+          "supported_points": [
+            "חוק הפליה הוא דוגמה לחקיקה שיכולה למנוע אכיפה של סכמה/הבטחה הסותרת הוראה מפורשת של חוק"
+          ]
+        },
+        {
+          "reason": "חוק האנטומיה והפתולוגיה הינו ענייני רפואי/פורנזי ולא עוסק בכלל על אי‑אכיפת הבטחות מנהליות או בהשתק כנגד חוק.",
+          "support": "unrelated",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "6dfbe1be-c385-422c-9477-753a153212e3",
+          "supported_points": []
+        },
+        {
+          "reason": "מאמר עוסק בשאלות של סמכות, איכות שיקול‑הדין ואלה נוגעות ישירות לגבולות שבהם יש לאכוף הבטחה מנהלית; מספק תמיכה חלקית אך אינו פסיקה מחייבת.",
+          "support": "partial",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "2c73aab9-ce7d-4c23-9d76-8d8c0fc6157b",
+          "supported_points": [
+            "דן בשאלת ישימות הסמכות ובהיקף שיקול הדעת של הרשות",
+            "מתייחס למי הראוי להחליט ולבחינת כישורי והרציונליות של הרשות"
+          ]
+        },
+        {
+          "reason": "המאמר עוסק באכיפת פסקי‑דין ובהיבטים מוסדיים של אכיפה, עניין קרוב לעקרון האכיפה אך לא מטפל ישירות בהבטחות מנהליות החורגות מסמכות או בהשתק כנגד חוק.",
+          "support": "tangential",
+          "claim_id": "C3",
+          "role_match": true,
+          "candidate_id": "e9d05ddb-23c6-44ac-8461-daa0522f861c",
+          "supported_points": [
+            "דן בסוגיית אכיפת החלטות ובהיבטים מוסדיים של אכיפה שיפוטית"
+          ]
+        },
+        {
+          "reason": "תורם להיבט 'איסור בדין' וסמכות תקציבית אך אינו מגדיר את תנאי ההבטחה המנהלית במישרין.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "820e7df1-7cfb-4ce6-bc81-7d1b82df3177",
+          "supported_points": [
+            "קובע מגבלות על התחייבויות והתקשרויות ציבוריות ללא מקור תקציבי, המשפיעות על תוקף ואכיפת הבטחה מנהלית",
+            "מספק 'איסור בדין' היכול למנוע אכיפה של הבטחה שניתנה בלא סמכות תקציבית",
+            "משקף דרישת סמכות תקציבית כחלק מערכי שלטון החוק"
+          ]
+        },
+        {
+          "reason": "חוק בתחום ביורפואי שאינו עוסק בהבטחה מנהלית, בסמכות רשות מקומית או בהסתמכות.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "a9d26042-6281-497c-813b-de75559a8587",
+          "supported_points": []
+        },
+        {
+          "reason": "הוראת שעה תכנונית-ביצועית שאינה דנה בדוקטרינת ההבטחה המנהלית או בתנאיה.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "bafa337d-24b0-41cd-957f-b05fd132e7b9",
+          "supported_points": []
+        },
+        {
+          "reason": "צו תכנון נקודתי שאינו נוגע לתנאי היווצרות/אכיפת הבטחה מנהלית.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "d5c2f8e5-5355-4ae9-98fd-074235d12ecc",
+          "supported_points": []
+        },
+        {
+          "reason": "צו של בנק ישראל על מידע בשוק מטבע חוץ, ללא זיקה לדוקטרינת ההבטחה המנהלית.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "9574883e-1ba0-4dbb-a6f5-92a87bd2d6be",
+          "supported_points": []
+        },
+        {
+          "reason": "הוראת שעה תכנונית למתחם מגורים; אין בה דיון בהבטחות מנהליות או תנאיהן.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "1af4e3bb-e564-4db3-8277-eb2dfd9be83b",
+          "supported_points": []
+        },
+        {
+          "reason": "מאמר ישיר על הגנת ההסתמכות והבטחה מנהלית, התואם את תנאי הטענה.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "220377b7-b43e-4559-8366-0b6db478abe7",
+          "supported_points": [
+            "דן בעקרון ההסתמכות במשפט המנהלי וביישומו כלפי פעולות והבטחות של רשויות",
+            "מפרט תנאים כגון הבטחה ברורה, הסתמכות ושינוי מצב לרעה והאיזון עם שיקולים ציבוריים",
+            "ממקד בשאלת אכיפה מול שינויי מדיניות ונורמות של שלטון החוק"
+          ]
+        },
+        {
+          "reason": "עוסק מפורשות בהבטחה מנהלית ובתנאיה ולכן תומך ישירות.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "4a77cee7-effa-4cb4-a110-e06c90e58868",
+          "supported_points": [
+            "סוקר את מוסד ההבטחה המנהלית ותנאיו: סמכות, בהירות כוונה, הסתמכות ושינוי מצב לרעה",
+            "דן בהיקף האכיפה ובהשפעת שיקולים ציבוריים ושלטון החוק",
+            "מביא סקירה שיטתית של ההלכה והקשיים ביישומה ברשויות מקומיות"
+          ]
+        },
+        {
+          "reason": "מת聚קד בשינוי מדיניות ובציפיות, לא מנסח את מכלול תנאי ההבטחה אך רלוונטי לחלקם.",
+          "support": "partial",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "d0c2aa67-c813-4da0-ab69-2e7c4945040c",
+          "supported_points": [
+            "מבחין בין שינוי מדיניות לבין הבטחה מנהלית ואת משקל ההסתמכות שנוצרה",
+            "דן בציפיות לגיטימיות ובאיזון עם אינטרס ציבורי בעת שינוי כיוון מנהלי",
+            "מספק מסגרת ביקורת שיפוטית הרלוונטית לתנאי אכיפה"
+          ]
+        },
+        {
+          "reason": "תקנות בטיחות בעבודה אינן עוסקות בדוקטרינת הבטחה מנהלית או בתנאיה.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "757b17a5-50ae-4c9d-9660-c6c8b4783fca",
+          "supported_points": []
+        },
+        {
+          "reason": "מסמך מחקר כנסת על תכנון ביישובים; אינו נוגע להבטחות מנהליות או לתנאיהן.",
+          "support": "unrelated",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "94a710e8-b642-4e03-b52c-7558cb45824e",
+          "supported_points": []
+        },
+        {
+          "reason": "מקור בדיני חוזים; מסייע בהיקש לרעיון פיצויי הסתמכות אך אינו עוסק בהבטחות מנהליות או בשינוי נסיבות מנהלי.",
+          "support": "tangential",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "78754e1c-9685-4228-a559-c35d67d0a42a",
+          "supported_points": [
+            "מציג ומנתח את דיני פיצויי הסתמכות בדיני חוזים",
+            "מבהיר את ההבחנה בין פיצויי הסתמכות לציפייה ככלי תרופותי",
+            "יכול לשמש בהיקש להבנת תרופה חלופית כשאכיפה מנהלית אינה אפשרית"
+          ]
+        },
+        {
+          "reason": "צו צבאי על הגנת עדים; אינו פסיקה ואינו דן בתרופות או הסדרים חלופיים להבטחה מנהלית.",
+          "support": "unrelated",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "0612bca3-87c5-443e-be28-eef87ac6302e",
+          "supported_points": []
+        },
+        {
+          "reason": "מאמר תחומי על אסדרת רשתות חברתיות; נוגע בעקרונות איזון כלליים אך לא בהבטחות מנהליות.",
+          "support": "tangential",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "c177449c-314c-4c00-a307-f8eaec4d5dec",
+          "supported_points": [
+            "דן במסגרת איזונים במשפט הציבורי בין סמכות שלטונית לזכויות ולאינטרס הציבורי",
+            "כולל עקרונות סבירות, שוויון ומידתיות הרלוונטיים לאיזון כללי",
+            "מספק תובנות נורמטיביות שניתן להקיש מהן למסגרת האיזון המבוקשת"
+          ]
+        },
+        {
+          "reason": "מאמר על חופש ביטוי וברשת; התועלת היא כללית ועקיפה, לא יישומית לנושא האיזון בין הסתמכות לפררוגטיבה מנהלית.",
+          "support": "tangential",
+          "claim_id": "C5",
+          "role_match": true,
+          "candidate_id": "30f8146b-7250-498f-9221-91e8558ca8db",
+          "supported_points": [
+            "מציג מבחני איזון ומידתיות בין אינטרסים ציבוריים לזכויות הפרט",
+            "מדגים שיקולי מדיניות כלליים (לרבות הגנה על הציבור)",
+            "יכול לשמש רק כרקע תיאורטי לאיזון, לא לדיני הבטחה מנהלית"
+          ]
+        }
+      ],
+      "model_final": "openai/gpt-5",
+      "per_claim_ms": {
+        "C1": 114463,
+        "C3": 31667,
+        "C4": 114463,
+        "C5": 114463
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [
+        "C1",
+        "C4",
+        "C5"
+      ],
+      "candidates_usable": 5,
+      "candidates_dropped": 25,
+      "candidates_verified": 30
+    },
+    "retrieval": {
+      "ms": 36836,
+      "pool": {
+        "found": 114,
+        "counts": {
+          "by_role": {
+            "scholarship": 6,
+            "primary_statute": 20,
+            "binding_case_law": 4
+          },
+          "by_claim": {
+            "C1": 11,
+            "C3": 15,
+            "C4": 2,
+            "C5": 2
+          },
+          "by_origin": {
+            "local_db": 24,
+            "perplexity": 6
+          }
+        },
+        "after_dedup": 30,
+        "dedup_drops": 48
+      },
+      "local": {
+        "ms": 36834,
+        "per_query": [
+          {
+            "ms": 36802,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 16800,
+              "text_status": "timeout",
+              "embedding_ms": 177,
+              "exact_status": "ok",
+              "vector_status": "ok",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת אליה נוס: פס\"ד בתביעה להכרזה כפסולת דין שהוגשה על ידי אפוטרופוס לרכוש (תמ\"ש 66413-06-22)",
+                "ביהמ\"ש המחוזי מרכז לוד, אב\"ד השופטת הדס רוזנברג-שיינרט, שופט עמית מכליס, שופט רון סולקין: גז\"ד לסב שנאשם בעבירות מין בנכדתו (תפח\"ע 33469-06-23)",
+                "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+                "ביהמ\"ש לענייני משפחה בחיפה, השופטת הילה גורביץ עובדיה: פס\"ד בתביעות לשיתוף בזכויות מקרקעין, לאיזון משאבים ולפירוק שיתוף ולמזונות קטינים (תלה\"מ 54474-07-20 ,תלה\"מ 52536-10-20,תלה\"מ 21711-01-21)",
+                "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)"
+              ],
+              "top_vector_titles": [
+                "פתח-דבר: מה צריך ל משפט ומדוע?",
+                "אי-קיום החלטות בג\"ץ ככשל מוסדי: הצעה למודל של אכיפה שיפוטית | אורי אהרונסון (כרך יט)",
+                "ע\"א 5858/19 פסגות קופות גמל פנסיה בע\"מ נ׳ חיים אופיר פס\"ד פסק דין (05.07.2022)",
+                "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+                "\"משנים מפני השלום\": חופש הציווי או חופש החוזים? חופש החוזים עדיף – היבטים עיוניים ומעשיים בהסדרתה של הצוואה ההדדית | עירית רייך־זיו (כרך כד)"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק ול",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת אליה נוס: פס\"ד בתביעה להכרזה כפסולת דין שהוגשה על ידי אפוטרופוס לרכוש (תמ\"ש 66413-06-22)",
+                    "ביהמ\"ש המחוזי מרכז לוד, אב\"ד השופטת הדס רוזנברג-שיינרט, שופט עמית מכליס, שופט רון סולקין: גז\"ד לסב שנאשם בעבירות מין בנכדתו (תפח\"ע 33469-06-23)",
+                    "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+                    "ביהמ\"ש לענייני משפחה בחיפה, השופטת הילה גורביץ עובדיה: פס\"ד בתביעות לשיתוף בזכויות מקרקעין, לאיזון משאבים ולפירוק שיתוף ולמזונות קטינים (תלה\"מ 54474-07-20 ,תלה\"מ 52536-10-20,תלה\"מ 21711-01-21)",
+                    "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: בקשה להארכת צו דרכי טיפול לקטינים נזקקים (תנ\"ז 37454-10-25)"
+                  ],
+                  "title_match_query": "ול",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "520ee6b0-caa1-41d3-acef-e5319685dc43",
+                    "c305aa88-117a-4845-8061-5112122a0797",
+                    "7e3d6f78-cccf-4726-a65c-199d8375c7ed",
+                    "504263b6-7524-4be4-b037-32e6012e6270",
+                    "cca24cd9-4cdd-48e0-a2cd-18bed5f4df58",
+                    "c426fbff-f72b-4c27-966e-838e1bcea2f6"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק ול",
+                "search_terms": [
+                  "חוק ול"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "compact_query_he": "הבטחה מנהלית סבירות מידתיות תום לב שיקול דעת העליון דין אכיפת",
+            "original_query_he": "בית המשפט העליון פסק דין אכיפת הבטחה מנהלית חורגת סמכות סותרת דין 'חריגה מסמכות' 'כיבוי שיקול דעת'"
+          },
+          {
+            "ms": 36810,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 16807,
+              "text_status": "timeout",
+              "embedding_ms": 247,
+              "exact_status": "ok",
+              "vector_status": "ok",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת אליה נוס: פס\"ד בתביעה להכרזה כפסולת דין שהוגשה על ידי אפוטרופוס לרכוש (תמ\"ש 66413-06-22)",
+                "ביהמ\"ש המחוזי מרכז לוד, אב\"ד השופטת הדס רוזנברג-שיינרט, שופט עמית מכליס, שופט רון סולקין: גז\"ד לסב שנאשם בעבירות מין בנכדתו (תפח\"ע 33469-06-23)",
+                "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+                "ביהמ\"ש לענייני משפחה בחיפה, השופטת הילה גורביץ עובדיה: פס\"ד בתביעות לשיתוף בזכויות מקרקעין, לאיזון משאבים ולפירוק שיתוף ולמזונות קטינים (תלה\"מ 54474-07-20 ,תלה\"מ 52536-10-20,תלה\"מ 21711-01-21)",
+                "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)"
+              ],
+              "top_vector_titles": [
+                "יובל פרוקצ’יה על התאוריה של חוזה המתנה 661 (כרך ט\"ו)",
+                "יובל פרוקצ’יה על התאוריה של חוזה המתנה 661 (כרך ט\"ו)",
+                "ע\"א 206/20 טבע תעשיות פרמצבטיות בע\"מ נ׳ טי.אנד.אם גושן פסק דין (13.12.2021)",
+                "חוזר הממונה בביטוח סיעודי | אמיר ויצנבליט (כרך לב)",
+                "תחרות בלי ערכים או תחרות בין ערכים? טענות בדבר הסדר כובל המועלות בידי צד לחוזה | אמיר ישראלי (כרך ב)"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק ול",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת אליה נוס: פס\"ד בתביעה להכרזה כפסולת דין שהוגשה על ידי אפוטרופוס לרכוש (תמ\"ש 66413-06-22)",
+                    "ביהמ\"ש המחוזי מרכז לוד, אב\"ד השופטת הדס רוזנברג-שיינרט, שופט עמית מכליס, שופט רון סולקין: גז\"ד לסב שנאשם בעבירות מין בנכדתו (תפח\"ע 33469-06-23)",
+                    "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+                    "ביהמ\"ש לענייני משפחה בחיפה, השופטת הילה גורביץ עובדיה: פס\"ד בתביעות לשיתוף בזכויות מקרקעין, לאיזון משאבים ולפירוק שיתוף ולמזונות קטינים (תלה\"מ 54474-07-20 ,תלה\"מ 52536-10-20,תלה\"מ 21711-01-21)",
+                    "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: בקשה להארכת צו דרכי טיפול לקטינים נזקקים (תנ\"ז 37454-10-25)"
+                  ],
+                  "title_match_query": "ול",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "520ee6b0-caa1-41d3-acef-e5319685dc43",
+                    "c305aa88-117a-4845-8061-5112122a0797",
+                    "7e3d6f78-cccf-4726-a65c-199d8375c7ed",
+                    "504263b6-7524-4be4-b037-32e6012e6270",
+                    "cca24cd9-4cdd-48e0-a2cd-18bed5f4df58",
+                    "c426fbff-f72b-4c27-966e-838e1bcea2f6"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 11,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק ול",
+                "search_terms": [
+                  "חוק ול"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "compact_query_he": "הבטחה מנהלית סבירות מידתיות תום לב העליון דין חזרה מהבטחה",
+            "original_query_he": "בית המשפט העליון פסק דין חזרה מהבטחה מנהלית שינוי נסיבות שימוע הנמקה מידתיות 'הסתמכות' 'שינוי נסיבות'"
+          },
+          {
+            "ms": 36816,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 16814,
+              "text_status": "timeout",
+              "embedding_ms": 135,
+              "exact_status": "ok",
+              "vector_status": "ok",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "תקנות איסור הלבנת הון (כללים לבקשת מידע והעברתו מן הרשות המוסמכת לחוקר ניירות ערך)",
+                "תקנות איסור הלבנת הון (כללים להודעה למשטרה ופרטיה בדבר העברת מידע מן הרשות המוסמכת לפקיד מכס חוקר)",
+                "תקנות איסור הלבנת הון (כללים לבקשת מידע והעברתו מן הרשות המוסמכת לפקיד מכס חוקר)",
+                "חוק איסור לשון הרע",
+                "חוק בנימין זאב הרצל (ציון זכרו ופועלו)"
+              ],
+              "top_vector_titles": [
+                "פרטי מסמך",
+                "תקנות הפיקוח על ייצוא ביטחוני (פטור מרישיון ייצוא ביטחוני)",
+                "תקנות התכנון והבנייה (התקנת מיתקן גישה אלחוטית לתקשורת בשיטה התאית)",
+                "תקנות הטיס (מערכת ניהול בטיחות)",
+                "תקנות הבטיחות בעבודה (מחצבות-אבן)"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק הר",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "תקנות איסור הלבנת הון (כללים לבקשת מידע והעברתו מן הרשות המוסמכת לחוקר ניירות ערך)",
+                    "תקנות איסור הלבנת הון (כללים להודעה למשטרה ופרטיה בדבר העברת מידע מן הרשות המוסמכת לפקיד מכס חוקר)",
+                    "תקנות איסור הלבנת הון (כללים לבקשת מידע והעברתו מן הרשות המוסמכת לפקיד מכס חוקר)",
+                    "חוק איסור לשון הרע",
+                    "חוק בנימין זאב הרצל (ציון זכרו ופועלו)",
+                    "צו הסדרת מקומות רחצה (מקומות רחצה אסורים ומוכרזים בים התיכון, בים כנרת, בנהר הירדן, בים המלח ובים סוף)"
+                  ],
+                  "title_match_query": "הר",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "11deec54-6761-41c6-b07c-5a0c3a17a925",
+                    "0d13c60d-4737-44bb-9590-7dce5159c49e",
+                    "c25d8a65-2d6e-449c-9a8a-4b69f79e6da9",
+                    "44fd4c6a-01e2-4377-a22a-1e03dc9dd8dd",
+                    "2d38122a-d0d6-4b7a-9601-039e7c478151",
+                    "f0927cd0-6f80-416d-a9d7-6dfd9420a20b"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק ול",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "חוק איסוף ופינוי פסולת למיחזור",
+                    "תקנות איסור הלבנת הון (כללים לשימוש במידע שהועבר לפקיד מכס חוקר לשם חקירת עבירות נוספות ולהעברתו לרשות אחרת)",
+                    "חוק איסור גידול חזיר",
+                    "תקנות איסור הלבנת הון (כללים לשימוש במידע שהועבר לחוקר ניירות ערך לשם חקירת עבירות נוספות ולהעברתו לרשות אחרת)",
+                    "חוק איסור הפליה במוצרים, בשירותים ובכניסה למקומות בידור ולמקומות ציבוריים",
+                    "חוק האנטומיה והפתולוגיה"
+                  ],
+                  "title_match_query": "ול",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "ddc373b2-0d37-4ab9-a933-7044023bcb84",
+                    "580ce466-c210-4494-98d3-d4b2c400c4d7",
+                    "dbfd48e4-d64d-4607-8414-addcadf5c60c",
+                    "33e02a51-49ed-4002-abb7-25a778e0c50b",
+                    "00869140-5687-414f-9993-6fe2a45d91e9",
+                    "3da3b25c-9b48-4cb1-8277-30d294898f95"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 17,
+            "role": "primary_statute",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 12,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הר",
+                "search_terms": [
+                  "חוק הר"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק ול",
+                "search_terms": [
+                  "חוק ול"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "compact_query_he": "הבטחה מנהלית סבירות מידתיות תום לב חוק הרשויות המקומיות הוראות",
+            "original_query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה"
+          },
+          {
+            "ms": 36825,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 16823,
+              "text_status": "timeout",
+              "embedding_ms": 327,
+              "exact_status": "ok",
+              "vector_status": "ok",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "חוק איסוף ופינוי פסולת למיחזור",
+                "תקנות איסור הלבנת הון (כללים לשימוש במידע שהועבר לפקיד מכס חוקר לשם חקירת עבירות נוספות ולהעברתו לרשות אחרת)",
+                "חוק איסור גידול חזיר",
+                "תקנות איסור הלבנת הון (כללים לשימוש במידע שהועבר לחוקר ניירות ערך לשם חקירת עבירות נוספות ולהעברתו לרשות אחרת)",
+                "חוק איסור הפליה במוצרים, בשירותים ובכניסה למקומות בידור ולמקומות ציבוריים"
+              ],
+              "top_vector_titles": [
+                "גב הביטוי חופש ולותבאינטרנט",
+                "גב הביטוי חופש ולותבאינטרנט",
+                "צו בדבר הגנה על עדים (יהודה ושומרון)",
+                "חוק הטיס",
+                "הכנסת – הלשכה המשפטית – תחום חקיקה ומחקר משפטי"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק ול",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "חוק איסוף ופינוי פסולת למיחזור",
+                    "תקנות איסור הלבנת הון (כללים לשימוש במידע שהועבר לפקיד מכס חוקר לשם חקירת עבירות נוספות ולהעברתו לרשות אחרת)",
+                    "חוק איסור גידול חזיר",
+                    "תקנות איסור הלבנת הון (כללים לשימוש במידע שהועבר לחוקר ניירות ערך לשם חקירת עבירות נוספות ולהעברתו לרשות אחרת)",
+                    "חוק איסור הפליה במוצרים, בשירותים ובכניסה למקומות בידור ולמקומות ציבוריים",
+                    "חוק האנטומיה והפתולוגיה"
+                  ],
+                  "title_match_query": "ול",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "ddc373b2-0d37-4ab9-a933-7044023bcb84",
+                    "580ce466-c210-4494-98d3-d4b2c400c4d7",
+                    "dbfd48e4-d64d-4607-8414-addcadf5c60c",
+                    "33e02a51-49ed-4002-abb7-25a778e0c50b",
+                    "00869140-5687-414f-9993-6fe2a45d91e9",
+                    "3da3b25c-9b48-4cb1-8277-30d294898f95"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 11,
+            "role": "primary_statute",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק ול",
+                "search_terms": [
+                  "חוק ול"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "compact_query_he": "הבטחה מנהלית סבירות מידתיות תום לב חיפוש הוראות חקיקה לגבי",
+            "original_query_he": "חיפוש הוראות חקיקה לגבי חובת שימוע לפני שינוי החלטה מנהלית 'שימוע' 'הודעה' חובת הנמקה חקיקה ישראלית"
+          },
+          {
+            "ms": 36826,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 16824,
+              "text_status": "timeout",
+              "embedding_ms": 154,
+              "exact_status": "ok",
+              "vector_status": "ok",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת אליה נוס: פס\"ד בתביעה להכרזה כפסולת דין שהוגשה על ידי אפוטרופוס לרכוש (תמ\"ש 66413-06-22)",
+                "ביהמ\"ש המחוזי מרכז לוד, אב\"ד השופטת הדס רוזנברג-שיינרט, שופט עמית מכליס, שופט רון סולקין: גז\"ד לסב שנאשם בעבירות מין בנכדתו (תפח\"ע 33469-06-23)",
+                "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+                "ביהמ\"ש לענייני משפחה בחיפה, השופטת הילה גורביץ עובדיה: פס\"ד בתביעות לשיתוף בזכויות מקרקעין, לאיזון משאבים ולפירוק שיתוף ולמזונות קטינים (תלה\"מ 54474-07-20 ,תלה\"מ 52536-10-20,תלה\"מ 21711-01-21)",
+                "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)"
+              ],
+              "top_vector_titles": [
+                "צו בדבר הגנה על עדים (יהודה ושומרון)",
+                "התביעה הנגזרת בישראל – סיכום ביניים ומבט לעתיד | מעין ויסמן, אסף חמדני וקובי קסטיאל (כרך כד(2))",
+                "יובל פרוקצ’יה על התאוריה של חוזה המתנה 661 (כרך ט\"ו)",
+                "מי הזיז את העכבר שלי? טכנולוגיה, שירותים משפטיים מקוונים ואתיקה מקצועית",
+                "חוק ארגון הפיקוח על העבודה"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק ול",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת אליה נוס: פס\"ד בתביעה להכרזה כפסולת דין שהוגשה על ידי אפוטרופוס לרכוש (תמ\"ש 66413-06-22)",
+                    "ביהמ\"ש המחוזי מרכז לוד, אב\"ד השופטת הדס רוזנברג-שיינרט, שופט עמית מכליס, שופט רון סולקין: גז\"ד לסב שנאשם בעבירות מין בנכדתו (תפח\"ע 33469-06-23)",
+                    "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+                    "ביהמ\"ש לענייני משפחה בחיפה, השופטת הילה גורביץ עובדיה: פס\"ד בתביעות לשיתוף בזכויות מקרקעין, לאיזון משאבים ולפירוק שיתוף ולמזונות קטינים (תלה\"מ 54474-07-20 ,תלה\"מ 52536-10-20,תלה\"מ 21711-01-21)",
+                    "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: בקשה להארכת צו דרכי טיפול לקטינים נזקקים (תנ\"ז 37454-10-25)"
+                  ],
+                  "title_match_query": "ול",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "520ee6b0-caa1-41d3-acef-e5319685dc43",
+                    "c305aa88-117a-4845-8061-5112122a0797",
+                    "7e3d6f78-cccf-4726-a65c-199d8375c7ed",
+                    "504263b6-7524-4be4-b037-32e6012e6270",
+                    "cca24cd9-4cdd-48e0-a2cd-18bed5f4df58",
+                    "c426fbff-f72b-4c27-966e-838e1bcea2f6"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק ול",
+                "search_terms": [
+                  "חוק ול"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "compact_query_he": "הבטחה מנהלית סבירות מידתיות תום לב העליון דין פיצוי הסתמכות",
+            "original_query_he": "בית המשפט העליון פסק דין פיצוי הסתמכות עקב ביטול הבטחה מנהלית 'פיצוי הסתמכות' 'הסדר מעבר' 'דחיית מועד'"
+          },
+          {
+            "ms": 36830,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 16827,
+              "text_status": "timeout",
+              "embedding_ms": 147,
+              "exact_status": "ok",
+              "vector_status": "ok",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "חוק יסודות התקציב",
+                "חוק איסור התערבות גנטית (שיבוט אדם ושינוי גנטי בתאים) (הוראת שעה)",
+                "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מבנים יבילים זמניים ותשתיות ציבוריות זמניות) (חרבות ברזל – חצרים) (הוראת שעה)",
+                "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מיתקני אגירת אנרגיה במיתקני קליטה מקומיים ובמרכזי הפעלה) (חרבות ברזל) (הוראת שעה)",
+                "צו בנק ישראל (מידע בעניין התפתחויות בשוק מטבע החוץ בישראל)"
+              ],
+              "top_vector_titles": [
+                "תקנות הבטיחות בעבודה (עבודות בניה)",
+                "תכניות בינוי מפורטות ביישובים דרוזיים וצ'רקסיים",
+                "תקנות ארגון הפיקוח על העבודה (תכנית לניהול הבטיחות)",
+                "תקנות התכנון והבניה (התרת שינויים בהיתר על ידי מהנדס ועדה מקומית)",
+                "ביהמ\"ש השלום ת\"א, השופט הבכיר ד\"ר מנחם (מריו) קליין: פס\"ד בעניין נשיכת כלב במשפט העברי (ת\"א 60090-08-18)"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק הת",
+                  "clue_kind": "statute",
+                  "clue_source": "planner_query",
+                  "matched_titles": [
+                    "חוק יסודות התקציב",
+                    "חוק איסור התערבות גנטית (שיבוט אדם ושינוי גנטי בתאים) (הוראת שעה)",
+                    "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מבנים יבילים זמניים ותשתיות ציבוריות זמניות) (חרבות ברזל – חצרים) (הוראת שעה)",
+                    "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מיתקני אגירת אנרגיה במיתקני קליטה מקומיים ובמרכזי הפעלה) (חרבות ברזל) (הוראת שעה)",
+                    "צו בנק ישראל (מידע בעניין התפתחויות בשוק מטבע החוץ בישראל)",
+                    "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מתחם שישמש למגורים) (חרבות ברזל) (משמר העמק) (הוראת שעה)"
+                  ],
+                  "title_match_query": "הת",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "620c5b21-448a-46a5-997f-b8ce3aa3a1bf",
+                    "cedb5607-2673-4aa8-be5f-9fb0380696ed",
+                    "81916685-4ced-4f15-af19-19a4c80571e3",
+                    "c5cad04e-5803-4b16-b2cf-38da6b5667ea",
+                    "aed76314-d741-4535-bed0-a34ce2fa3349",
+                    "3ec579ce-854c-4f5a-b633-2fa698f9b5c6"
+                  ]
+                },
+                {
+                  "status": "ok",
+                  "law_name": "חוק ול",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "חוק איסוף ופינוי פסולת למיחזור",
+                    "תקנות איסור הלבנת הון (כללים לשימוש במידע שהועבר לפקיד מכס חוקר לשם חקירת עבירות נוספות ולהעברתו לרשות אחרת)",
+                    "חוק איסור גידול חזיר",
+                    "תקנות איסור הלבנת הון (כללים לשימוש במידע שהועבר לחוקר ניירות ערך לשם חקירת עבירות נוספות ולהעברתו לרשות אחרת)",
+                    "חוק איסור הפליה במוצרים, בשירותים ובכניסה למקומות בידור ולמקומות ציבוריים",
+                    "חוק האנטומיה והפתולוגיה"
+                  ],
+                  "title_match_query": "ול",
+                  "source_type_filter": [
+                    "israeli_law"
+                  ],
+                  "matched_document_ids": [
+                    "ddc373b2-0d37-4ab9-a933-7044023bcb84",
+                    "580ce466-c210-4494-98d3-d4b2c400c4d7",
+                    "dbfd48e4-d64d-4607-8414-addcadf5c60c",
+                    "33e02a51-49ed-4002-abb7-25a778e0c50b",
+                    "00869140-5687-414f-9993-6fe2a45d91e9",
+                    "3da3b25c-9b48-4cb1-8277-30d294898f95"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "israeli_law"
+              ]
+            },
+            "kept": 18,
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 12,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "planner_query",
+                "law_name": "חוק הת",
+                "search_terms": [
+                  "חוק הת"
+                ]
+              },
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק ול",
+                "search_terms": [
+                  "חוק ול"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "compact_query_he": "הבטחה מנהלית סבירות מידתיות תום לב חוק התכנון והבנייה תשכ",
+            "original_query_he": "חוק התכנון והבנייה, תשכ\"ה-1965 הוראות סמכות רשות מקומית החלטות מתן היתרים והבטחות מנהליות"
+          },
+          {
+            "ms": 36828,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 16826,
+              "text_status": "timeout",
+              "embedding_ms": 251,
+              "exact_status": "ok",
+              "vector_status": "ok",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת אליה נוס: פס\"ד בתביעה להכרזה כפסולת דין שהוגשה על ידי אפוטרופוס לרכוש (תמ\"ש 66413-06-22)",
+                "ביהמ\"ש המחוזי מרכז לוד, אב\"ד השופטת הדס רוזנברג-שיינרט, שופט עמית מכליס, שופט רון סולקין: גז\"ד לסב שנאשם בעבירות מין בנכדתו (תפח\"ע 33469-06-23)",
+                "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+                "ביהמ\"ש לענייני משפחה בחיפה, השופטת הילה גורביץ עובדיה: פס\"ד בתביעות לשיתוף בזכויות מקרקעין, לאיזון משאבים ולפירוק שיתוף ולמזונות קטינים (תלה\"מ 54474-07-20 ,תלה\"מ 52536-10-20,תלה\"מ 21711-01-21)",
+                "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)"
+              ],
+              "top_vector_titles": [
+                "חה של לבקשתה נכתב זה מסמך\"אברהם רוחמה כ . תוך הזכיינות שיטת על רקע מובא במסמך",
+                "תקנות הבטיחות בעבודה (גיליון בטיחות, סיווג, אריזה, תיווי וסימון של אריזות)",
+                "הזכות הטבועה להגנה עצמית ומידתיות במסגרת Jus ad Bellum | דוד קרצמר (כרך יז)",
+                "מה הבעיה בהסכמה לחיפוש משטרתי?",
+                "תקנות ארגון הפיקוח על העבודה (תכנית לניהול הבטיחות)"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק ול",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת אליה נוס: פס\"ד בתביעה להכרזה כפסולת דין שהוגשה על ידי אפוטרופוס לרכוש (תמ\"ש 66413-06-22)",
+                    "ביהמ\"ש המחוזי מרכז לוד, אב\"ד השופטת הדס רוזנברג-שיינרט, שופט עמית מכליס, שופט רון סולקין: גז\"ד לסב שנאשם בעבירות מין בנכדתו (תפח\"ע 33469-06-23)",
+                    "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+                    "ביהמ\"ש לענייני משפחה בחיפה, השופטת הילה גורביץ עובדיה: פס\"ד בתביעות לשיתוף בזכויות מקרקעין, לאיזון משאבים ולפירוק שיתוף ולמזונות קטינים (תלה\"מ 54474-07-20 ,תלה\"מ 52536-10-20,תלה\"מ 21711-01-21)",
+                    "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: בקשה להארכת צו דרכי טיפול לקטינים נזקקים (תנ\"ז 37454-10-25)"
+                  ],
+                  "title_match_query": "ול",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "520ee6b0-caa1-41d3-acef-e5319685dc43",
+                    "c305aa88-117a-4845-8061-5112122a0797",
+                    "7e3d6f78-cccf-4726-a65c-199d8375c7ed",
+                    "504263b6-7524-4be4-b037-32e6012e6270",
+                    "cca24cd9-4cdd-48e0-a2cd-18bed5f4df58",
+                    "c426fbff-f72b-4c27-966e-838e1bcea2f6"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "binding_case_law",
+            "claim_id": "C5",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק ול",
+                "search_terms": [
+                  "חוק ול"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "compact_query_he": "הבטחה מנהלית סבירות מידתיות תום לב העליון איזון בין סמכות",
+            "original_query_he": "בית המשפט העליון איזון בין סמכות מנהלית לאינטרס הציבורי מול זכות הסתמכות האזרח 'איזון' 'הסתמכות' פסקי-דין מרכזיים"
+          },
+          {
+            "ms": 36832,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 16829,
+              "text_status": "timeout",
+              "embedding_ms": 186,
+              "exact_status": "ok",
+              "vector_status": "ok",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [
+                "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת אליה נוס: פס\"ד בתביעה להכרזה כפסולת דין שהוגשה על ידי אפוטרופוס לרכוש (תמ\"ש 66413-06-22)",
+                "ביהמ\"ש המחוזי מרכז לוד, אב\"ד השופטת הדס רוזנברג-שיינרט, שופט עמית מכליס, שופט רון סולקין: גז\"ד לסב שנאשם בעבירות מין בנכדתו (תפח\"ע 33469-06-23)",
+                "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+                "ביהמ\"ש לענייני משפחה בחיפה, השופטת הילה גורביץ עובדיה: פס\"ד בתביעות לשיתוף בזכויות מקרקעין, לאיזון משאבים ולפירוק שיתוף ולמזונות קטינים (תלה\"מ 54474-07-20 ,תלה\"מ 52536-10-20,תלה\"מ 21711-01-21)",
+                "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)"
+              ],
+              "top_vector_titles": [
+                "תקנות סמכויות מיוחדות להתמודדות עם נגיף הקורונה החדש (הגבלות במערכת בתי הדין הדתיים הדרוזיים) (הוראת שעה) (מס' 2)",
+                "חוק ארגון הפיקוח על העבודה",
+                "תקנות לתיקון סדרי הדין (חקירת עדים) (גביית עדות מתלונן בשל עבירת מין שלא בפני הנאשם)",
+                "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת שירלי שי: החלטה בבקשה למחיקה על הסף בטענה של תביעת חסימה (תלה\"מ 26520-07-23)",
+                "ביהמ\"ש לענייני משפחה בחדרה, השופטת  יפעת שקדי שץ: פס\"ד במחלוקת הצדדים בני הליכים:  ביטול הסכם מתנה וטענות לנזק כספי (תמ\"ש 17203-02-20; תמ\"ש 23586-09-20)"
+              ],
+              "exact_clue_lookups": [
+                {
+                  "status": "ok",
+                  "law_name": "חוק ול",
+                  "clue_kind": "statute",
+                  "clue_source": "claim",
+                  "matched_titles": [
+                    "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת אליה נוס: פס\"ד בתביעה להכרזה כפסולת דין שהוגשה על ידי אפוטרופוס לרכוש (תמ\"ש 66413-06-22)",
+                    "ביהמ\"ש המחוזי מרכז לוד, אב\"ד השופטת הדס רוזנברג-שיינרט, שופט עמית מכליס, שופט רון סולקין: גז\"ד לסב שנאשם בעבירות מין בנכדתו (תפח\"ע 33469-06-23)",
+                    "ביהמ\"ש המחוזי מרכז-לוד, השופט רון סולקין: החלטה בערר על החלטה על מעצרו עד תום ההליכים של העורר (עת\"מ 32358-01-26)",
+                    "ביהמ\"ש לענייני משפחה בחיפה, השופטת הילה גורביץ עובדיה: פס\"ד בתביעות לשיתוף בזכויות מקרקעין, לאיזון משאבים ולפירוק שיתוף ולמזונות קטינים (תלה\"מ 54474-07-20 ,תלה\"מ 52536-10-20,תלה\"מ 21711-01-21)",
+                    "בימ\"ש השלום ירושלים, השופט אלעד לנג: פס\"ד בתביעת פיצויים בגין ביטול טיסה (ת\"א 65400-06-22)",
+                    "בימ\"ש השלום לנוער באר שבע, השופטת מירב הרשקוביץ יצחקי: בקשה להארכת צו דרכי טיפול לקטינים נזקקים (תנ\"ז 37454-10-25)"
+                  ],
+                  "title_match_query": "ול",
+                  "source_type_filter": [
+                    "caselaw",
+                    "supreme_court_il"
+                  ],
+                  "matched_document_ids": [
+                    "520ee6b0-caa1-41d3-acef-e5319685dc43",
+                    "c305aa88-117a-4845-8061-5112122a0797",
+                    "7e3d6f78-cccf-4726-a65c-199d8375c7ed",
+                    "504263b6-7524-4be4-b037-32e6012e6270",
+                    "cca24cd9-4cdd-48e0-a2cd-18bed5f4df58",
+                    "c426fbff-f72b-4c27-966e-838e1bcea2f6"
+                  ]
+                }
+              ],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 12,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 6,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק ול",
+                "search_terms": [
+                  "חוק ול"
+                ]
+              }
+            ],
+            "vector_hits": 6,
+            "compact_query_he": "הבטחה מנהלית סבירות מידתיות תום לב העליון דין הסתמכות עקרון",
+            "original_query_he": "בית המשפט העליון פסק דין 'הבטחה מנהלית' 'הסתמכות' עקרון הבטחה מנהלית פסקי-דין מובילים"
+          }
+        ],
+        "candidates": 105,
+        "global_exact": {
+          "clues_from_claims": [
+            {
+              "kind": "statute",
+              "source": "claim",
+              "law_name": "חוק ול",
+              "search_terms": [
+                "חוק ול"
+              ]
+            }
+          ],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 20565,
+        "dropped": 8,
+        "per_query": [
+          {
+            "ms": 5514,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "http://lawjournal.huji.ac.il/article/12/707",
+                "title": "הגנת ההסתמכות במשפט המנהלי",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+                "title": "הגנת ההסתמכות במשפט המנהלי",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.runi.ac.il/media/0ocekxxk/braverman.pdf",
+                "title": "היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המנהל",
+                "domain": "runi.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/Zeidman_Article.pdf",
+                "title": "המשפט המנהלי הישראלי, מי אתה?",
+                "domain": "hapraklit.co.il",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C1",
+            "query_he": "מאמר 'הבטחה מנהלית' 'הסתמכות' נורמות אזרחיות וניהוליות כתב-עת משפטי ישראלי 'משפטים' 'המשפט'",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5210,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID2997048_code1934527.pdf?abstractid=2812196&mirid=1",
+                "title": "הסטנדרט המעורפל של שינוי נסיבות: עיון מחודש בדיני המשפחה",
+                "domain": "papers.ssrn.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://dmlawyer.co.il/%D7%A9%D7%99%D7%A0%D7%95%D7%99-%D7%A0%D7%A1%D7%99%D7%91%D7%95%D7%AA-%D7%9E%D7%94%D7%95%D7%AA%D7%99/",
+                "title": "שינוי נסיבות מהותי בדיני המשפחה: סטנדרט השינוי והנמקה שיפוטית",
+                "domain": "dmlawyer.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://rotenberglaw.co.il/substantial-change-in-circumstances",
+                "title": "מהו שינוי נסיבות מהותי?",
+                "domain": "rotenberglaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://rotenberglaw.co.il/retroactive-application-of-919-15",
+                "title": "האם בע\"מ 919/15 מהווה שינוי נסיבות?",
+                "domain": "rotenberglaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 0,
+            "claim_id": "C2",
+            "query_he": "מאמר 'שינוי נסיבות מהותי' 'החזרה מהבטחה' 'שימוע' 'הנמקה' כתב-עת משפטי ישראלי",
+            "raw_count": 4,
+            "discovery_only": 4,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 5940,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA%20%D7%91%D7%A9%D7%9C%20%D7%94%D7%A4%D7%A8%D7%AA%20%D7%97%D7%95%D7%96%D7%94%20-%20%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%20%D7%A6%D7%99%D7%A4%D7%99%D7%99%D7%94,%20%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%20%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA,%20%D7%94%D7%A9%D7%91%D7%AA%20%D7%94%D7%AA%D7%A2%D7%A9%D7%A8%D7%95%D7%AA%20%D7%95%D7%A9%D7%97%D7%96%D7%95%D7%A8%20%D7%94%D7%A9%D7%A7%D7%99%D7%לו%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%99%D7%AA%20%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA%20%D7%90%D7%A8%D7%91%D7%95%D7%A1%20%D7%A0'%20%D7%A8%D7%95%D7%91%D7%99%D7%A0%D7%A9%D7%98%D7%99%D7%99%D7%9F_0.pdf",
+                "title": "תרופות בשל הפרת חוזה - פיצויי ציפייה, פיצויי הסתמכות, השבת התעשרות ושחזור השקילות החוזית בעקבות ארבוס נ' רובינשטיין",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.barelaw.co.il/he/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D-%D7%A2%D7%9C-%D7%94%D7%A4%D7%A8%D7%AA-%D7%97%D7%95%D7%96%D7%94.html",
+                "title": "פיצויים על הפרת חוזה - אכיפה, ביטול וזכויות הנפגע",
+                "domain": "barelaw.co.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://he.afiklaw.com/updates/6023",
+                "title": "פיצוי בגין הפרת הבטחה שלטונית והסתמכות על הבטחה מנהלית",
+                "domain": "he.afiklaw.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.beitdin.org.il/Show_tora_law_in_piskey_din/5",
+                "title": "פיצוי לרוכשי דירה בשל ביטול עסקת המכר – חוקי התורה: פיצויי הסתמכות",
+                "domain": "beitdin.org.il",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C4",
+            "query_he": "מאמר פיצוי הסתמכות בהבטחה מנהלית 'פיצוי הסתמכות' 'הסדרי מעבר' מאמרים בכתבי-עת משפטיים",
+            "raw_count": 5,
+            "discovery_only": 3,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 3898,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+                "title": "הגנת ההסתמכות במשפט המנהלי",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2025-01/%D7%90%D7%A1%D7%93%D7%A8%D7%AA%20%D7%A8%D7%A9%D7%AA%D7%95%D7%AA%20%D7%97%D7%91%D7%A8%D7%AA%D7%99%D7%95%D7%AA.pdf",
+                "title": "משפט ציבורי: תיאוריה, פרדיגמה של אסדרת רשתות חברתיות דרך ויישום",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.runi.ac.il/media/3ieojutn/lior.pdf",
+                "title": "הגבול שבין חופש הביטוי ל בין בריונות רשת",
+                "domain": "runi.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C5",
+            "query_he": "מאמר 'איזון בין סמכות ציבורית להסתמכות פרטית' 'שוויון' 'מִדַּתיות' 'תקציב' כתב-עת משפטי ישראלי",
+            "raw_count": 3,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 9,
+        "role_corrections": []
+      }
+    },
+    "candidates": [
+      {
+        "role": "binding_case_law",
+        "score": 1.35,
+        "title": "ביהמ\"ש לענייני משפחה בפ\"ת, השופטת אליה נוס: פס\"ד בתביעה להכרזה כפסולת דין שהוגשה על ידי אפוטרופוס לרכוש (תמ\"ש 66413-06-22)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "court": "בתי המשפט לענייני משפחה",
+          "judges": "אליה נוס",
+          "district": "מחוז מרכז",
+          "procedure_type": "אזרחי"
+        },
+        "query_he": "בית המשפט העליון פסק דין אכיפת הבטחה מנהלית חורגת סמכות סותרת דין 'חריגה מסמכות' 'כיבוי שיקול דעת'",
+        "source_url": "https://www.gov.il/he/departments/dynamiccollectors/spokmanship_court?skip=2020",
+        "document_id": "520ee6b0-caa1-41d3-acef-e5319685dc43",
+        "source_type": "caselaw",
+        "candidate_id": "e5216e73-425e-4d6b-abce-324db8798530",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "תקנות איסור הלבנת הון (כללים לבקשת מידע והעברתו מן הרשות המוסמכת לחוקר ניירות ערך)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%94%D7%9C%D7%91%D7%A0%D7%AA_%D7%94%D7%95%D7%9F_(%D7%9B%D7%9C%D7%9C%D7%99%D7%9D_%D7%9C%D7%91%D7%A7%D7%A9%D7%AA_%D7%9E%D7%99%D7%93%D7%A2_%D7%95%D7%94%D7%A2%D7%91%D7%A8%D7%AA%D7%95_%D7%9E%D7%9F_%D7%94%D7%A8%D7%A9%D7%95%D7%AA_%D7%94%D7%9E%D7%95%D7%A1%D7%9E%D7%9B%D7%AA_%D7%9C%D7%97%D7%95%D7%A7%D7%A8_%D7%A0%D7%99%D7%99%D7%A8%D7%95%D7%AA_%D7%A2%D7%A8%D7%9A)",
+        "document_id": "11deec54-6761-41c6-b07c-5a0c3a17a925",
+        "source_type": "israeli_law",
+        "candidate_id": "5467c61e-f773-4fb3-9f27-364726f9604f",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "תקנות איסור הלבנת הון (כללים להודעה למשטרה ופרטיה בדבר העברת מידע מן הרשות המוסמכת לפקיד מכס חוקר)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%94%D7%9C%D7%91%D7%A0%D7%AA_%D7%94%D7%95%D7%9F_(%D7%9B%D7%9C%D7%9C%D7%99%D7%9D_%D7%9C%D7%94%D7%95%D7%93%D7%A2%D7%94_%D7%9C%D7%9E%D7%A9%D7%98%D7%A8%D7%94_%D7%95%D7%A4%D7%A8%D7%98%D7%99%D7%94_%D7%91%D7%93%D7%91%D7%A8_%D7%94%D7%A2%D7%91%D7%A8%D7%AA_%D7%9E%D7%99%D7%93%D7%A2_%D7%9E%D7%9F_%D7%94%D7%A8%D7%A9%D7%95%D7%AA_%D7%94%D7%9E%D7%95%D7%A1%D7%9E%D7%9B%D7%AA_%D7%9C%D7%A4%D7%A7%D7%99%D7%93_%D7%9E%D7%9B%D7%A1_%D7%97%D7%95%D7%A7%D7%A8)",
+        "document_id": "0d13c60d-4737-44bb-9590-7dce5159c49e",
+        "source_type": "israeli_law",
+        "candidate_id": "f927a07c-4a1e-4d29-9c25-eecb103359bb",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "תקנות איסור הלבנת הון (כללים לבקשת מידע והעברתו מן הרשות המוסמכת לפקיד מכס חוקר)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%94%D7%9C%D7%91%D7%A0%D7%AA_%D7%94%D7%95%D7%9F_(%D7%9B%D7%9C%D7%9C%D7%99%D7%9D_%D7%9C%D7%91%D7%A7%D7%A9%D7%AA_%D7%9E%D7%99%D7%93%D7%A2_%D7%95%D7%94%D7%A2%D7%91%D7%A8%D7%AA%D7%95_%D7%9E%D7%9F_%D7%94%D7%A8%D7%A9%D7%95%D7%AA_%D7%94%D7%9E%D7%95%D7%A1%D7%9E%D7%9B%D7%AA_%D7%9C%D7%A4%D7%A7%D7%99%D7%93_%D7%9E%D7%9B%D7%A1_%D7%97%D7%95%D7%A7%D7%A8)",
+        "document_id": "c25d8a65-2d6e-449c-9a8a-4b69f79e6da9",
+        "source_type": "israeli_law",
+        "candidate_id": "f8865690-0195-467e-b386-b5ff592d19ca",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק איסור לשון הרע",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%9C%D7%A9%D7%95%D7%9F_%D7%94%D7%A8%D7%A2",
+        "document_id": "44fd4c6a-01e2-4377-a22a-1e03dc9dd8dd",
+        "source_type": "israeli_law",
+        "candidate_id": "c26cf190-0840-4d50-a12d-b987e2f49be7",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק בנימין זאב הרצל (ציון זכרו ופועלו)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%91%D7%A0%D7%99%D7%9E%D7%99%D7%9F_%D7%96%D7%90%D7%91_%D7%94%D7%A8%D7%A6%D7%9C_(%D7%A6%D7%99%D7%95%D7%9F_%D7%96%D7%9B%D7%A8%D7%95_%D7%95%D7%A4%D7%95%D7%A2%D7%9C%D7%95)",
+        "document_id": "2d38122a-d0d6-4b7a-9601-039e7c478151",
+        "source_type": "israeli_law",
+        "candidate_id": "3f214600-b0b0-4fcd-b2c7-a94fe99d3037",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "צו הסדרת מקומות רחצה (מקומות רחצה אסורים ומוכרזים בים התיכון, בים כנרת, בנהר הירדן, בים המלח ובים סוף)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "legislation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%A6%D7%95_%D7%94%D7%A1%D7%93%D7%A8%D7%AA_%D7%9E%D7%A7%D7%95%D7%9E%D7%95%D7%AA_%D7%A8%D7%97%D7%A6%D7%94_(%D7%9E%D7%A7%D7%95%D7%9E%D7%95%D7%AA_%D7%A8%D7%97%D7%A6%D7%94_%D7%90%D7%A1%D7%95%D7%A8%D7%99%D7%9D_%D7%95%D7%9E%D7%95%D7%9B%D7%A8%D7%96%D7%99%D7%9D_%D7%91%D7%99%D7%9D_%D7%94%D7%AA%D7%99%D7%9B%D7%95%D7%9F%2C_%D7%91%D7%99%D7%9D_%D7%9B%D7%A0%D7%A8%D7%AA%2C_%D7%91%D7%A0%D7%94%D7%A8_%D7%94%D7%99%D7%A8%D7%93%D7%9F%2C_%D7%91%D7%99%D7%9D_%D7%94%D7%9E%D7%9C%D7%97_%D7%95%D7%91%D7%99%D7%9D_%D7%A1%D7%95%D7%A3)",
+        "document_id": "f0927cd0-6f80-416d-a9d7-6dfd9420a20b",
+        "source_type": "israeli_law",
+        "candidate_id": "cd9e6bfd-8fe1-4b14-9cd2-459eb97f3537",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק איסוף ופינוי פסולת למיחזור",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%99%D7%A1%D7%95%D7%A3_%D7%95%D7%A4%D7%99%D7%A0%D7%95%D7%99_%D7%A4%D7%A1%D7%95%D7%9C%D7%AA_%D7%9C%D7%9E%D7%99%D7%97%D7%96%D7%95%D7%A8",
+        "document_id": "ddc373b2-0d37-4ab9-a933-7044023bcb84",
+        "source_type": "israeli_law",
+        "candidate_id": "2d136c64-2dcf-44ee-9a8e-82ea059f0618",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "תקנות איסור הלבנת הון (כללים לשימוש במידע שהועבר לפקיד מכס חוקר לשם חקירת עבירות נוספות ולהעברתו לרשות אחרת)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%94%D7%9C%D7%91%D7%A0%D7%AA_%D7%94%D7%95%D7%9F_(%D7%9B%D7%9C%D7%9C%D7%99%D7%9D_%D7%9C%D7%A9%D7%99%D7%9E%D7%95%D7%A9_%D7%91%D7%9E%D7%99%D7%93%D7%A2_%D7%A9%D7%94%D7%95%D7%A2%D7%91%D7%A8_%D7%9C%D7%A4%D7%A7%D7%99%D7%93_%D7%9E%D7%9B%D7%A1_%D7%97%D7%95%D7%A7%D7%A8_%D7%9C%D7%A9%D7%9D_%D7%97%D7%A7%D7%99%D7%A8%D7%AA_%D7%A2%D7%91%D7%99%D7%A8%D7%95%D7%AA_%D7%A0%D7%95%D7%A1%D7%A4%D7%95%D7%AA_%D7%95%D7%9C%D7%94%D7%A2%D7%91%D7%A8%D7%AA%D7%95_%D7%9C%D7%A8%D7%A9%D7%95%D7%AA_%D7%90%D7%97%D7%A8%D7%AA)",
+        "document_id": "580ce466-c210-4494-98d3-d4b2c400c4d7",
+        "source_type": "israeli_law",
+        "candidate_id": "a0fc0494-64ab-4fe7-a40a-793e1756ce2f",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק איסור גידול חזיר",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%92%D7%99%D7%93%D7%95%D7%9C_%D7%97%D7%96%D7%99%D7%A8",
+        "document_id": "dbfd48e4-d64d-4607-8414-addcadf5c60c",
+        "source_type": "israeli_law",
+        "candidate_id": "9e34021d-7287-4d0d-a8d8-6389a1ccb9eb",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "תקנות איסור הלבנת הון (כללים לשימוש במידע שהועבר לחוקר ניירות ערך לשם חקירת עבירות נוספות ולהעברתו לרשות אחרת)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%94%D7%9C%D7%91%D7%A0%D7%AA_%D7%94%D7%95%D7%9F_(%D7%9B%D7%9C%D7%9C%D7%99%D7%9D_%D7%9C%D7%A9%D7%99%D7%9E%D7%95%D7%A9_%D7%91%D7%9E%D7%99%D7%93%D7%A2_%D7%A9%D7%94%D7%95%D7%A2%D7%91%D7%A8_%D7%9C%D7%97%D7%95%D7%A7%D7%A8_%D7%A0%D7%99%D7%99%D7%A8%D7%95%D7%AA_%D7%A2%D7%A8%D7%9A_%D7%9C%D7%A9%D7%9D_%D7%97%D7%A7%D7%99%D7%A8%D7%AA_%D7%A2%D7%91%D7%99%D7%A8%D7%95%D7%AA_%D7%A0%D7%95%D7%A1%D7%A4%D7%95%D7%AA_%D7%95%D7%9C%D7%94%D7%A2%D7%91%D7%A8%D7%AA%D7%95_%D7%9C%D7%A8%D7%A9%D7%95%D7%AA_%D7%90%D7%97%D7%A8%D7%AA)",
+        "document_id": "33e02a51-49ed-4002-abb7-25a778e0c50b",
+        "source_type": "israeli_law",
+        "candidate_id": "605c7669-3502-4bc5-b39b-4da59caa2151",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק איסור הפליה במוצרים, בשירותים ובכניסה למקומות בידור ולמקומות ציבוריים",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%94%D7%A4%D7%9C%D7%99%D7%94_%D7%91%D7%9E%D7%95%D7%A6%D7%A8%D7%99%D7%9D%2C_%D7%91%D7%A9%D7%99%D7%A8%D7%95%D7%AA%D7%99%D7%9D_%D7%95%D7%91%D7%9B%D7%A0%D7%99%D7%A1%D7%94_%D7%9C%D7%9E%D7%A7%D7%95%D7%9E%D7%95%D7%AA_%D7%91%D7%99%D7%93%D7%95%D7%A8_%D7%95%D7%9C%D7%9E%D7%A7%D7%95%D7%9E%D7%95%D7%AA_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%99%D7%9D",
+        "document_id": "00869140-5687-414f-9993-6fe2a45d91e9",
+        "source_type": "israeli_law",
+        "candidate_id": "34b86318-d1c8-4450-b24f-76e4440667af",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק האנטומיה והפתולוגיה",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C3",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק הרשויות המקומיות הוראות סמכויות 'סמכות הרשות' הגבלה חורגת סמכות איסור הכפיית פסיקה",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%90%D7%A0%D7%98%D7%95%D7%9E%D7%99%D7%94_%D7%95%D7%94%D7%A4%D7%AA%D7%95%D7%9C%D7%95%D7%92%D7%99%D7%94",
+        "document_id": "3da3b25c-9b48-4cb1-8277-30d294898f95",
+        "source_type": "israeli_law",
+        "candidate_id": "6dfbe1be-c385-422c-9477-753a153212e3",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק יסודות התקציב",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "basic_law",
+          "source_site": "wikisource",
+          "is_basic_law": true
+        },
+        "query_he": "חוק התכנון והבנייה, תשכ\"ה-1965 הוראות סמכות רשות מקומית החלטות מתן היתרים והבטחות מנהליות",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93%D7%95%D7%AA_%D7%94%D7%AA%D7%A7%D7%A6%D7%99%D7%91",
+        "document_id": "620c5b21-448a-46a5-997f-b8ce3aa3a1bf",
+        "source_type": "israeli_law",
+        "candidate_id": "820e7df1-7cfb-4ce6-bc81-7d1b82df3177",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "חוק איסור התערבות גנטית (שיבוט אדם ושינוי גנטי בתאים) (הוראת שעה)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "law",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק התכנון והבנייה, תשכ\"ה-1965 הוראות סמכות רשות מקומית החלטות מתן היתרים והבטחות מנהליות",
+        "source_url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%90%D7%99%D7%A1%D7%95%D7%A8_%D7%94%D7%AA%D7%A2%D7%A8%D7%91%D7%95%D7%AA_%D7%92%D7%A0%D7%98%D7%99%D7%AA_(%D7%A9%D7%99%D7%91%D7%95%D7%98_%D7%90%D7%93%D7%9D_%D7%95%D7%A9%D7%99%D7%A0%D7%95%D7%99_%D7%92%D7%A0%D7%98%D7%99_%D7%91%D7%AA%D7%90%D7%99%D7%9D)_(%D7%94%D7%95%D7%A8%D7%90%D7%AA_%D7%A9%D7%A2%D7%94)",
+        "document_id": "cedb5607-2673-4aa8-be5f-9fb0380696ed",
+        "source_type": "israeli_law",
+        "candidate_id": "a9d26042-6281-497c-813b-de75559a8587",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מבנים יבילים זמניים ותשתיות ציבוריות זמניות) (חרבות ברזל – חצרים) (הוראת שעה)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "legislation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק התכנון והבנייה, תשכ\"ה-1965 הוראות סמכות רשות מקומית החלטות מתן היתרים והבטחות מנהליות",
+        "source_url": "https://he.wikisource.org/wiki/%D7%A6%D7%95_%D7%94%D7%AA%D7%9B%D7%A0%D7%95%D7%9F_%D7%95%D7%94%D7%91%D7%A0%D7%99%D7%99%D7%94_(%D7%A4%D7%98%D7%95%D7%A8_%D7%9E%D7%AA%D7%95%D7%9B%D7%A0%D7%99%D7%AA_%D7%95%D7%9E%D7%94%D7%99%D7%AA%D7%A8_%D7%9C%D7%94%D7%A7%D7%9E%D7%AA_%D7%9E%D7%91%D7%A0%D7%99%D7%9D_%D7%99%D7%91%D7%99%D7%9C%D7%99%D7%9D_%D7%96%D7%9E%D7%A0%D7%99%D7%99%D7%9D_%D7%95%D7%AA%D7%A9%D7%AA%D7%99%D7%95%D7%AA_%D7%A6%D7%99%D7%91%D7%95%D7%A8%D7%99%D7%95%D7%AA_%D7%96%D7%9E%D7%A0%D7%99%D7%95%D7%AA)_(%D7%97%D7%A8%D7%91%D7%95%D7%AA_%D7%91%D7%A8%D7%96%D7%9C_%E2%80%93_%D7%97%D7%A6%D7%A8%D7%99%D7%9D)_(%D7%94%D7%95%D7%A8%D7%90%D7%AA_%D7%A9%D7%A2%D7%94)",
+        "document_id": "81916685-4ced-4f15-af19-19a4c80571e3",
+        "source_type": "israeli_law",
+        "candidate_id": "bafa337d-24b0-41cd-957f-b05fd132e7b9",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מיתקני אגירת אנרגיה במיתקני קליטה מקומיים ובמרכזי הפעלה) (חרבות ברזל) (הוראת שעה)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "legislation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק התכנון והבנייה, תשכ\"ה-1965 הוראות סמכות רשות מקומית החלטות מתן היתרים והבטחות מנהליות",
+        "source_url": "https://he.wikisource.org/wiki/%D7%A6%D7%95_%D7%94%D7%AA%D7%9B%D7%A0%D7%95%D7%9F_%D7%95%D7%94%D7%91%D7%A0%D7%99%D7%99%D7%94_(%D7%A4%D7%98%D7%95%D7%A8_%D7%9E%D7%AA%D7%95%D7%9B%D7%A0%D7%99%D7%AA_%D7%95%D7%9E%D7%94%D7%99%D7%AA%D7%A8_%D7%9C%D7%94%D7%A7%D7%9E%D7%AA_%D7%9E%D7%99%D7%AA%D7%A7%D7%A0%D7%99_%D7%90%D7%92%D7%99%D7%A8%D7%AA_%D7%90%D7%A0%D7%A8%D7%92%D7%99%D7%94_%D7%91%D7%9E%D7%99%D7%AA%D7%A7%D7%A0%D7%99_%D7%A7%D7%9C%D7%99%D7%98%D7%94_%D7%9E%D7%A7%D7%95%D7%9E%D7%99%D7%99%D7%9D_%D7%95%D7%91%D7%9E%D7%A8%D7%9B%D7%96%D7%99_%D7%94%D7%A4%D7%A2%D7%9C%D7%94)_(%D7%97%D7%A8%D7%91%D7%95%D7%AA_%D7%91%D7%A8%D7%96%D7%9C)_(%D7%94%D7%95%D7%A8%D7%90%D7%AA_%D7%A9%D7%A2%D7%94)",
+        "document_id": "c5cad04e-5803-4b16-b2cf-38da6b5667ea",
+        "source_type": "israeli_law",
+        "candidate_id": "d5c2f8e5-5355-4ae9-98fd-074235d12ecc",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "צו בנק ישראל (מידע בעניין התפתחויות בשוק מטבע החוץ בישראל)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "legislation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק התכנון והבנייה, תשכ\"ה-1965 הוראות סמכות רשות מקומית החלטות מתן היתרים והבטחות מנהליות",
+        "source_url": "https://he.wikisource.org/wiki/%D7%A6%D7%95_%D7%91%D7%A0%D7%A7_%D7%99%D7%A9%D7%A8%D7%90%D7%9C_(%D7%9E%D7%99%D7%93%D7%A2_%D7%91%D7%A2%D7%A0%D7%99%D7%99%D7%9F_%D7%94%D7%AA%D7%A4%D7%AA%D7%97%D7%95%D7%99%D7%95%D7%AA_%D7%91%D7%A9%D7%95%D7%A7_%D7%9E%D7%98%D7%91%D7%A2_%D7%94%D7%97%D7%95%D7%A5_%D7%91%D7%99%D7%A9%D7%A8%D7%90%D7%9C)",
+        "document_id": "aed76314-d741-4535-bed0-a34ce2fa3349",
+        "source_type": "israeli_law",
+        "candidate_id": "9574883e-1ba0-4dbb-a6f5-92a87bd2d6be",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 1.35,
+        "title": "צו התכנון והבנייה (פטור מתוכנית ומהיתר להקמת מתחם שישמש למגורים) (חרבות ברזל) (משמר העמק) (הוראת שעה)",
+        "origin": "local_db",
+        "snippet": "",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "legislation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק התכנון והבנייה, תשכ\"ה-1965 הוראות סמכות רשות מקומית החלטות מתן היתרים והבטחות מנהליות",
+        "source_url": "https://he.wikisource.org/wiki/%D7%A6%D7%95_%D7%94%D7%AA%D7%9B%D7%A0%D7%95%D7%9F_%D7%95%D7%94%D7%91%D7%A0%D7%99%D7%99%D7%94_(%D7%A4%D7%98%D7%95%D7%A8_%D7%9E%D7%AA%D7%95%D7%9B%D7%A0%D7%99%D7%AA_%D7%95%D7%9E%D7%94%D7%99%D7%AA%D7%A8_%D7%9C%D7%94%D7%A7%D7%9E%D7%AA_%D7%9E%D7%AA%D7%97%D7%9D_%D7%A9%D7%99%D7%A9%D7%9E%D7%A9_%D7%9C%D7%9E%D7%92%D7%95%D7%A8%D7%99%D7%9D)_(%D7%97%D7%A8%D7%91%D7%95%D7%AA_%D7%91%D7%A8%D7%96%D7%9C)_(%D7%9E%D7%A9%D7%9E%D7%A8_%D7%94%D7%A2%D7%9E%D7%A7)_(%D7%94%D7%95%D7%A8%D7%90%D7%AA_%D7%A9%D7%A2%D7%94)",
+        "document_id": "3ec579ce-854c-4f5a-b633-2fa698f9b5c6",
+        "source_type": "israeli_law",
+        "candidate_id": "1af4e3bb-e564-4db3-8277-eb2dfd9be83b",
+        "retrieval_method": "exact_authority",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הגנת ההסתמכות במשפט המנהלי",
+        "origin": "perplexity",
+        "snippet": "מאמר בכתב העת משפטים; עוסק בהגנה על הסתמכותם של אזרחים על פעולות מנהליות וביישומה במשפט המנהלי. מתאים במיוחד לצירוף החיפושי 'הבטחה מנהלית' ו'הסתמכות'.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'הבטחה מנהלית' 'הסתמכות' נורמות אזרחיות וניהוליות כתב-עת משפטי ישראלי 'משפטים' 'המשפט'",
+        "source_url": "http://lawjournal.huji.ac.il/article/12/707",
+        "source_type": "article",
+        "candidate_id": "220377b7-b43e-4559-8366-0b6db478abe7",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי משפטי בעברית על מוסד ההבטחה המנהלית, תולדותיו והיקפו. פורסם בכתב העת קריית המשפט (אוניברסיטת חיפה).",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'הבטחה מנהלית' 'הסתמכות' נורמות אזרחיות וניהוליות כתב-עת משפטי ישראלי 'משפטים' 'המשפט'",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+        "source_type": "article_pdf",
+        "candidate_id": "4a77cee7-effa-4cb4-a110-e06c90e58868",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המנהל",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי העוסק בציפיות שנוצרות מפעולת המנהל, בהבחנה בין מדיניות להבטחה מנהלית ובביקורת שיפוטית על שינוי מדיניות.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "runi.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'הבטחה מנהלית' 'הסתמכות' נורמות אזרחיות וניהוליות כתב-עת משפטי ישראלי 'משפטים' 'המשפט'",
+        "source_url": "https://www.runi.ac.il/media/0ocekxxk/braverman.pdf",
+        "source_type": "article_pdf",
+        "candidate_id": "d0c2aa67-c813-4da0-ab69-2e7c4945040c",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "תרופות בשל הפרת חוזה - פיצויי ציפייה, פיצויי הסתמכות, השבת התעשרות ושחזור השקילות החוזית בעקבות ארבוס נ' רובינשטיין",
+        "origin": "perplexity",
+        "snippet": "מאמר בכתב עת משפטי של האוניברסיטה העברית, עם דיון בפיצויי הסתמכות, אינטרס ההסתמכות והבחנה בינם לבין פיצויי ציפייה.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר פיצוי הסתמכות בהבטחה מנהלית 'פיצוי הסתמכות' 'הסדרי מעבר' מאמרים בכתבי-עת משפטיים",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA%20%D7%91%D7%A9%D7%9C%20%D7%94%D7%A4%D7%A8%D7%AA%20%D7%97%D7%95%D7%96%D7%94%20-%20%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%20%D7%A6%D7%99%D7%A4%D7%99%D7%99%D7%94,%20%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%20%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA,%20%D7%94%D7%A9%D7%91%D7%AA%20%D7%94%D7%AA%D7%A2%D7%A9%D7%A8%D7%95%D7%AA%20%D7%95%D7%A9%D7%97%D7%96%D7%95%D7%A8%20%D7%94%D7%A9%D7%A7%D7%99%D7%לו%D7%AA%20%D7%94%D7%97%D7%95%D7%96%D7%99%D7%AA%20%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA%20%D7%90%D7%A8%D7%91%D7%95%D7%A1%20%D7%A0'%20%D7%A8%D7%95%D7%91%D7%99%D7%A0%D7%A9%D7%98%D7%99%D7%99%D7%9F_0.pdf",
+        "source_type": "כתב עת משפטי / מאמר אקדמי",
+        "candidate_id": "78754e1c-9685-4228-a559-c35d67d0a42a",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "משפט ציבורי: תיאוריה, פרדיגמה של אסדרת רשתות חברתיות דרך ויישום",
+        "origin": "perplexity",
+        "snippet": "מאמר במשפט ציבורי על אסדרת רשתות חברתיות; נוגע לאיזונים בין ערכים, סמכות שלטונית, אחריות ופגיעה בזכויות, עם רלוונטיות לדיון בתקציב, שוויון ומידתיות.",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'איזון בין סמכות ציבורית להסתמכות פרטית' 'שוויון' 'מִדַּתיות' 'תקציב' כתב-עת משפטי ישראלי",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2025-01/%D7%90%D7%A1%D7%93%D7%A8%D7%AA%20%D7%A8%D7%A9%D7%AA%D7%95%D7%AA%20%D7%97%D7%91%D7%A8%D7%AA%D7%99%D7%95%D7%AA.pdf",
+        "source_type": "מאמר בכתב־עת משפטי ישראלי",
+        "candidate_id": "c177449c-314c-4c00-a307-f8eaec4d5dec",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הגבול שבין חופש הביטוי ל בין בריונות רשת",
+        "origin": "perplexity",
+        "snippet": "מאמר העוסק באיזון בין חופש הביטוי לבין הגנה על הציבור; כולל דיון במידתיות ובמסגרת אסדרתית, ויכול לשמש מקור משיק לשאלת איזון בין סמכות ציבורית להסתמכות פרטית.",
+        "claim_id": "C5",
+        "metadata": {
+          "domain": "runi.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר 'איזון בין סמכות ציבורית להסתמכות פרטית' 'שוויון' 'מִדַּתיות' 'תקציב' כתב-עת משפטי ישראלי",
+        "source_url": "https://www.runi.ac.il/media/3ieojutn/lior.pdf",
+        "source_type": "מאמר אקדמי משפטי",
+        "candidate_id": "30f8146b-7250-498f-9221-91e8558ca8db",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.3739178853904314,
+        "title": "פתח-דבר: מה צריך ל משפט ומדוע?",
+        "origin": "local_db",
+        "snippet": " שהועלתה על־ידי מדינה וסבן, שלפיה השאלה אם לפרטים יש \"זכות \nלביטחון\" צריכה להיות מוכרעת על בסיס \"שיקולים אפיסטמיים\", דהיינו, על בסיס השאלה \nאיזה גוף עתיד להחליט החלטה \"נכונה יותר\" או \"ראויה יותר\". השאלה מי יחליט החלטה \nראויה יותר תלויה הן בידע ובבקיאות של הרשות הרלוונטית והן בשאלה אם המניעים של \nהרשות ראויים ואם יש לה אינטרס שעלול להטות את שיקול־דעתה. מדינה וסבן סבורים \nכי כל רשות צריכה לדון בשיקו",
+        "claim_id": "C3",
+        "metadata": {
+          "author": "",
+          "volume_url": "https://www.taulawreview.sites.tau.ac.il/lz-2",
+          "source_site": "tau_law_review"
+        },
+        "query_he": "בית המשפט העליון פסק דין אכיפת הבטחה מנהלית חורגת סמכות סותרת דין 'חריגה מסמכות' 'כיבוי שיקול דעת'",
+        "source_url": "https://www.taulawreview.sites.tau.ac.il/_files/ugd/e74fa2_7b0bf39549074d089519f2211e3040d6.pdf",
+        "document_id": "3b221375-eda1-407a-8b32-6975815f9070",
+        "source_type": "journal_article",
+        "candidate_id": "2c73aab9-ce7d-4c23-9d76-8d8c0fc6157b",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.3663865546098084,
+        "title": "צו בדבר הגנה על עדים (יהודה ושומרון)",
+        "origin": "local_db",
+        "snippet": "טחון , ובלבד שהדבר נדרש לצורך מימוש סמכויות המאבטח המפורטות בסעיף זה, ורשאי המאבטח אף להרחיק אדם שסירב לדרישות הזדהות, לחיפוש או לתפיסה לפי סעיף זה מסביבתו הקרובה של העד המוגן, ואף להשתמש בכוח סביר לשם כך. (ב) לשם אבטחה של עד מוגן ולשם מניעת פגיעה בתכנית הגנה, ייראו מאבטח שהוא עובד מדינה, בעת מילוי תפקידו, כחייל, לעניין סמכויות מעצר לפי סעיפים 30 ו־31 לצו בדבר הוראות ביטחון , וכן לעניין סמכות חיפו",
+        "claim_id": "C4",
+        "metadata": {
+          "law_type": "legislation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "בית המשפט העליון פסק דין פיצוי הסתמכות עקב ביטול הבטחה מנהלית 'פיצוי הסתמכות' 'הסדר מעבר' 'דחיית מועד'",
+        "source_url": "https://he.wikisource.org/wiki/%D7%A6%D7%95_%D7%91%D7%93%D7%91%D7%A8_%D7%94%D7%92%D7%A0%D7%94_%D7%A2%D7%9C_%D7%A2%D7%93%D7%99%D7%9D_(%D7%99%D7%94%D7%95%D7%93%D7%94_%D7%95%D7%A9%D7%95%D7%9E%D7%A8%D7%95%D7%9F)",
+        "document_id": "97366814-aced-43a7-a5d5-575e4a5676e6",
+        "source_type": "israeli_law",
+        "candidate_id": "0612bca3-87c5-443e-be28-eef87ac6302e",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "binding_case_law",
+        "score": 0.365860529094771,
+        "title": "אי-קיום החלטות בג\"ץ ככשל מוסדי: הצעה למודל של אכיפה שיפוטית | אורי אהרונסון (כרך יט)",
+        "origin": "local_db",
+        "snippet": " בית\n-\nהמשפט העליון עצמו, המזהה פסיקה שמחייבת מעקב נמשך אחר \nקיומה, או לבקשת בעל\n-\nדין. \nהאפשרות האחרת היא להסמיך את ערכאת הדיון שבידיה תופקד סמכות האכיפה \nלקבוע אם יש מקום להפעיל סמכות זו ביחס לפסק\n-\nדין נתון של בג\"ץ. כאן מתבקש \nליצור הסדר של \"רשות אכיפה\" (על משקל \"רשות ערעור\"), שבו עותר הסבור כי נדרשת \nאכיפה שיפוטית נמשכת של פסק\n-\nדין של בג\"ץ י  פנה בקשה בעניין לערכאה האוכפת, וזו \nתשמע טיעון בנו",
+        "claim_id": "C3",
+        "metadata": {
+          "abstract": "אי-קיום החלטות של בג\"ץ על-ידי המדינה מסתמן בשנים האחרונות כתופעה של ממש. משאין בידיו אמצעים אפקטיביים לאכיפת צוויו, ואף לא לפיקוח על מאמצי המדינה לקיימם, בית-המשפט העליון מוצא את עצמו בדילמה: מצד אחד, הוא נזהר לא להוביל את המערכת למשבר ...",
+          "source_site": "reichman_law_review"
+        },
+        "query_he": "בית המשפט העליון פסק דין אכיפת הבטחה מנהלית חורגת סמכות סותרת דין 'חריגה מסמכות' 'כיבוי שיקול דעת'",
+        "source_url": "https://runilawreview.org/2017/03/19/volume19_aronson/",
+        "document_id": "fb2d4ed3-622c-49bc-aa5c-d4b965150e24",
+        "source_type": "journal_article",
+        "candidate_id": "e9d05ddb-23c6-44ac-8461-daa0522f861c",
+        "retrieval_method": "vector",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.3641833292921484,
+        "title": "תקנות הבטיחות בעבודה (עבודות בניה)",
+        "origin": "local_db",
+        "snippet": "סר העתק מהתוכנית המאושרת וכל עדכון בה לבקר הבטיחות ולמנהל האתר; העתק תוכנית הבטיחות יצורף לפנקס הכללי ויימצא באתר הבנייה; (4) הוא קיבל אישור בכתב מהמזמין להתחיל בביצוע עבודות הבנייה או הבנייה ההנדסית, למעט אם עבודת הבנייה היא אחד מסוגי העבודות המפורטים בתקנה 2(ז) , או עבודת בנייה עצמית. (ב) מבצע בנייה לא יבצע עבודות בנייה או בנייה הנדסית אלא בנוכחותו ובהשגחתו של מנהל העבודה באתר הבנייה, ולא יעסיק ",
+        "claim_id": "C1",
+        "metadata": {
+          "law_type": "regulation",
+          "source_site": "wikisource",
+          "is_basic_law": false
+        },
+        "query_he": "חוק התכנון והבנייה, תשכ\"ה-1965 הוראות סמכות רשות מקומית החלטות מתן היתרים והבטחות מנהליות",
+        "source_url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%91%D7%95%D7%93%D7%95%D7%AA_%D7%91%D7%A0%D7%99%D7%94)",
+        "document_id": "062f8bd9-9847-45a5-8c21-02e7ee23f23c",
+        "source_type": "israeli_law",
+        "candidate_id": "757b17a5-50ae-4c9d-9660-c6c8b4783fca",
+        "retrieval_method": "vector",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.3621172722012468,
+        "title": "תכניות בינוי מפורטות ביישובים דרוזיים וצ'רקסיים",
+        "origin": "local_db",
+        "snippet": "סקי הטמון בה, גורם למיעוט סחר בקרקע באופן כללי, קל וחומר לצרכי תכנון ובניה \nלמטרות יזמיות של רווח כלכלי; הבניה ביישובים אלו היא בדרך כלל משפחתית, ונעשית בצפיפות נמוכה, בעוד \nשכמעט ואין תכנון  ובניה יזמיים או בניה למכירה או להשכרה בצפיפות גבוה יותר, הנדרשת כדי לתת מענה הולם \nלצרכי הדיור ביישובים אלו. \nריבוי בעלויות על הקרקע, קיומן של בעלויות שאינן רשומות ורישום בעלויות לא עדכני: נושא רישום הבעלויות",
+        "claim_id": "C1",
+        "metadata": {
+          "author": null,
+          "authors": "מתן שחק",
+          "doc_type": null,
+          "category_id": 1,
+          "broken_title": false,
+          "recovered_at": "2026-04-19T17:29:19.752Z",
+          "requested_by": "הוועדה המיוחדת לענייני החברה הערבית",
+          "category_name": "מדינה וממשל",
+          "recovered_title": true,
+          "recovery_method": "after_section_label",
+          "publication_date": "22 בפברואר 2022",
+          "publication_year": "2022"
+        },
+        "query_he": "חוק התכנון והבנייה, תשכ\"ה-1965 הוראות סמכות רשות מקומית החלטות מתן היתרים והבטחות מנהליות",
+        "source_url": "https://main.knesset.gov.il/Activity/Info/Research/Pages/incident.aspx?rid=7246&businessType=1",
+        "document_id": "f5811554-7252-444c-afc9-c2fcb7311b0b",
+        "source_type": "knesset_research",
+        "candidate_id": "94a710e8-b642-4e03-b52c-7558cb45824e",
+        "retrieval_method": "vector",
+        "expected_source_type": "statute"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 42307,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 70041,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 36834,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 20565,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 31667,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial"
+      },
+      {
+        "ms": 52140,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch2.initial"
+      },
+      {
+        "ms": 62323,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "verifier.batch2.escalated",
+        "escalated": true
+      },
+      {
+        "ms": 45799,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "http://www.hapraklit.co.il/_Uploads/dbsAttachedFiles/Zeidman_Article.pdf",
+        "role": "scholarship",
+        "title": "המשפט המנהלי הישראלי, מי אתה?",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר 'הבטחה מנהלית' 'הסתמכות' נורמות אזרחיות וניהוליות כתב-עת משפטי ישראלי 'משפטים' 'המשפט'",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID2997048_code1934527.pdf?abstractid=2812196&mirid=1",
+        "role": "scholarship",
+        "title": "הסטנדרט המעורפל של שינוי נסיבות: עיון מחודש בדיני המשפחה",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'שינוי נסיבות מהותי' 'החזרה מהבטחה' 'שימוע' 'הנמקה' כתב-עת משפטי ישראלי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://dmlawyer.co.il/%D7%A9%D7%99%D7%A0%D7%95%D7%99-%D7%A0%D7%A1%D7%99%D7%91%D7%95%D7%AA-%D7%9E%D7%94%D7%95%D7%AA%D7%99/",
+        "role": "scholarship",
+        "title": "שינוי נסיבות מהותי בדיני המשפחה: סטנדרט השינוי והנמקה שיפוטית",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'שינוי נסיבות מהותי' 'החזרה מהבטחה' 'שימוע' 'הנמקה' כתב-עת משפטי ישראלי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://rotenberglaw.co.il/substantial-change-in-circumstances",
+        "role": "scholarship",
+        "title": "מהו שינוי נסיבות מהותי?",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'שינוי נסיבות מהותי' 'החזרה מהבטחה' 'שימוע' 'הנמקה' כתב-עת משפטי ישראלי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://rotenberglaw.co.il/retroactive-application-of-919-15",
+        "role": "scholarship",
+        "title": "האם בע\"מ 919/15 מהווה שינוי נסיבות?",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר 'שינוי נסיבות מהותי' 'החזרה מהבטחה' 'שימוע' 'הנמקה' כתב-עת משפטי ישראלי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.barelaw.co.il/he/%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%D7%9D-%D7%A2%D7%9C-%D7%94%D7%A4%D7%A8%D7%AA-%D7%97%D7%95%D7%96%D7%94.html",
+        "role": "scholarship",
+        "title": "פיצויים על הפרת חוזה - אכיפה, ביטול וזכויות הנפגע",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר פיצוי הסתמכות בהבטחה מנהלית 'פיצוי הסתמכות' 'הסדרי מעבר' מאמרים בכתבי-עת משפטיים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://he.afiklaw.com/updates/6023",
+        "role": "scholarship",
+        "title": "פיצוי בגין הפרת הבטחה שלטונית והסתמכות על הבטחה מנהלית",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר פיצוי הסתמכות בהבטחה מנהלית 'פיצוי הסתמכות' 'הסדרי מעבר' מאמרים בכתבי-עת משפטיים",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://www.beitdin.org.il/Show_tora_law_in_piskey_din/5",
+        "role": "scholarship",
+        "title": "פיצוי לרוכשי דירה בשל ביטול עסקת המכר – חוקי התורה: פיצויי הסתמכות",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "מאמר פיצוי הסתמכות בהבטחה מנהלית 'פיצוי הסתמכות' 'הסדרי מעבר' מאמרים בכתבי-עת משפטיים",
+        "drop_reason": "discovery_only"
+      }
+    ]
+  }
+}
