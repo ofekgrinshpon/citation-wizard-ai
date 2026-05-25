@@ -149,6 +149,14 @@ async function handle(req: Request): Promise<Response> {
     rule37Header === "1" || rule37Header === "on" ? true
       : rule37Header === "0" || rule37Header === "off" ? false
       : undefined;
+  const atomicHeader = (req.headers.get("x-atomic-markers") ?? "").toLowerCase();
+  // Gate: header is honored only for service-role/smoke requests, so prod
+  // clients can never flip atomic emission via header.
+  const atomicMode: "off" | "validate" | "emit" | undefined =
+    (smokeMode || isServiceRole) &&
+    (atomicHeader === "emit" || atomicHeader === "validate" || atomicHeader === "off")
+      ? (atomicHeader as "off" | "validate" | "emit")
+      : undefined;
 
   // ─── Credit pre-flight (skipped in smoke mode) ───────────────────────────
   if (!smokeMode && userClient) {
@@ -453,7 +461,7 @@ async function handle(req: Request): Promise<Response> {
     analyzer.claims,
     pool.candidates,
     { usable: verifier.usable, verdicts: verifier.verdicts },
-    { userDocs: attachmentResult.documents, useAsSource, useRule37 },
+    { userDocs: attachmentResult.documents, useAsSource, useRule37, atomicMode },
   );
 
   stage_runs.push(...drafter.stage_runs);
@@ -470,6 +478,8 @@ async function handle(req: Request): Promise<Response> {
     omitted_candidate_ids: drafter.omitted_candidate_ids,
     used_sources: drafter.used_sources,
     rule37: drafter.rule37,
+    marker_format: drafter.marker_format,
+    atomic: drafter.atomic,
     error: drafter.error,
     raw_text: drafter.raw_text,
   };
@@ -517,6 +527,7 @@ async function handle(req: Request): Promise<Response> {
     answer: finalAnswer,
     footnotes: finalFootnotes,
     used_sources: drafter.ok ? drafter.used_sources : [],
+    marker_format: drafter.marker_format,
     debug: {
       run_id,
       phase: "P5",

@@ -166,6 +166,21 @@ export interface Footnote {
   short_form_kind?: "shem" | "supra";
 }
 
+// ─── Phase C.1: Atomic marker representation ──────────────────────────────
+export type AtomicMode = "off" | "validate" | "emit";
+export type MarkerFormat = "legacy_superscript" | "legacy_superscript_fallback" | "atomic";
+
+export interface AtomicReport {
+  mode: AtomicMode;
+  normalize_ok: boolean;
+  normalize_reason?: string;
+  validation: MarkerValidation | null;
+  used_sources_byte_equal: boolean;
+  superscript_marker_count: number;
+  atomic_marker_count: number;
+  emit_fallback_reason?: string;
+}
+
 export interface Rule37Report {
   enabled: boolean;
   applied: boolean;             // false if disabled, no-op, discarded, or validation failed
