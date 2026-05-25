@@ -748,6 +748,11 @@ function validateRule37(
   const usedCandIds = new Set(used.map((u) => u.candidate_id));
 
   // Walk newAnswer markers in order; record (pos, num, candId).
+  // Phase B.1: align tokenizer with extractMarkers / runMarkerValidation /
+  // applyRule37 — one superscript char == one marker. Adjacent superscripts
+  // (¹²³, ⁴⁰⁴¹, ¹⁰¹¹) are interpreted as separate single-digit markers,
+  // NOT as a concatenated multi-digit footnote number. This eliminates the
+  // false `marker_<concat>_has_no_footnote` failures we saw in Phase B.
   interface M { pos: number; num: number; candId: string }
   const markers: M[] = [];
   for (let i = 0; i < newAnswer.length; i++) {
@@ -755,20 +760,9 @@ function validateRule37(
     if (d === undefined) continue;
     const n = Number(d);
     if (n < 1) continue;
-    // Multi-digit superscripts (e.g. ¹⁰) — collect consecutive superscript chars.
-    let j = i + 1;
-    let buf = String(n);
-    while (j < newAnswer.length) {
-      const d2 = SUP_TO_DIGIT[newAnswer[j]];
-      if (d2 === undefined) break;
-      buf += d2;
-      j++;
-    }
-    const num = Number(buf);
-    const entry = allByNum.get(num);
-    if (!entry) return { ok: false, reason: `marker_${num}_has_no_footnote`, wrong_back_references: 0 };
-    markers.push({ pos: i, num, candId: entry.candId });
-    i = j - 1;
+    const entry = allByNum.get(n);
+    if (!entry) return { ok: false, reason: `marker_${n}_has_no_footnote`, wrong_back_references: 0 };
+    markers.push({ pos: i, num: n, candId: entry.candId });
   }
 
   // 1. שם footnotes: corresponding marker's immediately-preceding marker must
