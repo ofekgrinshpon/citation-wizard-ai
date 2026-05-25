@@ -1,0 +1,72 @@
+{
+  "generated_at": "2026-05-25T15:33:44.940Z",
+  "fixture": {
+    "id": "L2",
+    "question": "מהי דוקטרינת ההבטחה המנהלית?"
+  },
+  "qa_log_id": "aa7b83b9-6335-4c95-befd-e7ae5ddc360b",
+  "run_id": "1b673a70-7410-4473-80ff-fefefeb8efcf",
+  "row_summary": {
+    "fixture_id": "L2",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 8,
+    "used_sources_subset_of_usable": true,
+    "marker_format": "atomic",
+    "atomic_mode": "emit",
+    "atomic_normalize_ok": true,
+    "atomic_normalize_reason": null,
+    "atomic_validation_ok": true,
+    "atomic_validation_error": null,
+    "atomic_used_sources_byte_equal": true,
+    "atomic_superscript_count": 31,
+    "atomic_token_count": 31,
+    "atomic_emit_fallback_reason": null,
+    "final_answer_atomic_token_count": 31,
+    "final_answer_superscript_count": 0,
+    "rule37_enabled": false,
+    "rule37_applied": false,
+    "rule37_discarded_reason": null
+  },
+  "atomic": {
+    "mode": "emit",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 31,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 31
+  },
+  "rule37": {
+    "applied": false,
+    "enabled": false,
+    "samples": [],
+    "shem_count": 0,
+    "supra_count": 0,
+    "discarded_reason": null,
+    "validation_failed": null,
+    "pre_footnote_count": 8,
+    "post_footnote_count": 8,
+    "wrong_back_references": 0,
+    "total_repeats_rewritten": 0,
+    "shortname_fallback_count": 0
+  },
+  "answer_preview": "הקדמה והגדרה: הדוקטרינה המכונה **\"הבטחה מנהלית\"** עוסקת במצבים בהם רשות ציבורית נותנת התחייבות, הבטחה או מצג[[fn:1]] אשר יוצר אצל האזרח **ציפייה לגיטימית**[[fn:2]] שהרשות תפעל או תסכים בדרך מסוימת; במקרים מסוימים עשויה ההבטחה לכבול את הרשות או לחייב פיצוי על הסתמכות סבירה של האזרח על ההבטחה הזאת.[[fn:3]]\n\nיסודות ותנאים להטמעה: ההלכה והספרות מזהים מספר יסודות מקובלים שעל־פיהם תבחן חובת הרשות לכבד הבטחה מנהלית. ראשית, ההבטחה נדרשת להיגרם על־ידי אדם או גוף שהמחוקק או הנהלים סיכנו שליחותו סמכות להעניק הבטחות בתחום הנדון; קרי, סמכות נותן ההבטחה.[[fn:4]]\n\nשנית, נדרש שההבטחה תהיה ברורה ומפורשת[[fn:4]",
+  "marker_format": "atomic"
+}
