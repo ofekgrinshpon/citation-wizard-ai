@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-05-25T21:46:01.486Z",
+  "fixture": {
+    "id": "L4",
+    "question": "מהי דוקטרינת השתק פלוגתא?"
+  },
+  "qa_log_id": "b022a715-54da-4667-a116-07b0e80719aa",
+  "run_id": "0fa5a3c8-31af-4943-9410-ea03157e8db6",
+  "row_summary": {
+    "fixture_id": "L4",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 6,
+    "used_sources_subset_of_usable": true,
+    "marker_format": "atomic",
+    "atomic_mode": "emit",
+    "atomic_normalize_ok": true,
+    "atomic_normalize_reason": null,
+    "atomic_validation_ok": true,
+    "atomic_validation_error": null,
+    "atomic_used_sources_byte_equal": true,
+    "atomic_superscript_count": 31,
+    "atomic_token_count": 31,
+    "atomic_emit_fallback_reason": null,
+    "final_answer_atomic_token_count": 31,
+    "final_answer_superscript_count": 0,
+    "rule37_enabled": false,
+    "rule37_applied": false,
+    "rule37_discarded_reason": null
+  },
+  "atomic": {
+    "mode": "emit",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 31,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 31
+  },
+  "rule37": {
+    "applied": false,
+    "enabled": false,
+    "samples": [],
+    "shem_count": 0,
+    "supra_count": 0,
+    "discarded_reason": null,
+    "validation_failed": null,
+    "pre_footnote_count": 6,
+    "post_footnote_count": 6,
+    "wrong_back_references": 0,
+    "total_repeats_rewritten": 0,
+    "shortname_fallback_count": 0
+  },
+  "answer_preview": "להלן הסבר דוקטרינרי מקיף על **השתק פלוגתא** במשפט הישראלי — מהותה, יסודותיה, היקף השפעתה ויחסה לדוקטרינות קרובות.\n\nהגדרה ותכלית כללית\n\nה\"**השתק פלוגתא**\" מציין את הדוקטרינה המונעת מהרשות השופטת (או הצדדים) לחדש דיון או להכריע בשאלה עובדתית או משפטית שכבר הוכרעה באופן סופי בעילה אחרת בין אותם צדדים (או מחליפיהם), במסגרת עקרון רחב של \"מעשה בית דין\" וסופיות הדיון.[[fn:1]] מטרת הדוקטרינה היא להגן על סופיות הדיון, להימנע מפיצול הליכים וסתירות בין פסקי דין, ולהבטיח יעילות והגנה על הסדר הציבורי של הכרעות סופיות.[[fn:2]]\n\nיסודות ותנאים להחלה\n\nהפסיקה והספרות מצביעות על סדרת אלמנטים שעל המבקש להחילם כדי",
+  "marker_format": "atomic"
+}
