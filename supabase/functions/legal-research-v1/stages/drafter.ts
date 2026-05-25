@@ -418,6 +418,11 @@ function validatePlacement(answer: string): import("../lib/types.ts").PlacementR
     paraOffset += para.length + 2; // approx for blank-line separator
   }
 
+  // Phase A.2: report-only count of superscript parentheses around markers
+  // (e.g., ⁽¹⁾, ⁽²⁾). Does NOT gate placement.ok and does NOT feed repair.
+  const parensRe = /[⁽⁾]/gu;
+  const superscript_parens_count = (answer.match(parensRe) ?? []).length;
+
   return {
     ok: cluster_count === 0 && out_of_order_count === 0 && end_paragraph_dump_count === 0,
     cluster_count,
@@ -425,6 +430,7 @@ function validatePlacement(answer: string): import("../lib/types.ts").PlacementR
     out_of_order_count,
     end_paragraph_dump_count,
     end_dump_samples,
+    superscript_parens_count,
   };
 }
 
