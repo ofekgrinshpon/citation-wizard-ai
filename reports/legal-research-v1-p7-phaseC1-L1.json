@@ -1,0 +1,68 @@
+{
+  "generated_at": "2026-05-25T15:29:01.670Z",
+  "fixture": {
+    "id": "L1",
+    "question": "מהם התנאים למתן צו מניעה זמני?"
+  },
+  "qa_log_id": "70d1042e-b12e-4140-b582-32cf17679eef",
+  "run_id": "9e9a937e-06c4-4b1e-b0dc-807d60cf7a60",
+  "row_summary": {
+    "fixture_id": "L1",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 4,
+    "used_sources_subset_of_usable": true,
+    "marker_format": "atomic",
+    "atomic_mode": "emit",
+    "atomic_normalize_ok": true,
+    "atomic_normalize_reason": null,
+    "atomic_validation_ok": true,
+    "atomic_validation_error": null,
+    "atomic_used_sources_byte_equal": true,
+    "atomic_superscript_count": 16,
+    "atomic_token_count": 16,
+    "atomic_emit_fallback_reason": null,
+    "final_answer_atomic_token_count": 16,
+    "final_answer_superscript_count": 0,
+    "rule37_enabled": false,
+    "rule37_applied": false,
+    "rule37_discarded_reason": null
+  },
+  "atomic": {
+    "mode": "emit",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 16,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 16
+  },
+  "rule37": {
+    "applied": false,
+    "enabled": false,
+    "samples": [],
+    "shem_count": 0,
+    "supra_count": 0,
+    "discarded_reason": null,
+    "validation_failed": null,
+    "pre_footnote_count": 4,
+    "post_footnote_count": 4,
+    "wrong_back_references": 0,
+    "total_repeats_rewritten": 0,
+    "shortname_fallback_count": 0
+  },
+  "answer_preview": "להלן עיקרי התנאים למתן **צו מניעה זמני** והבהרת משמעותם הפרקטית.\n\n1. עילת תביעה ראשונית / סיכוי סביר להצלחה (prima facie case / likelihood of success). יש להראות טענה משפטית מבוססת אשר אינה נראית כבלתי סבירה, קרי קיומה של עילת תביעה ראשונית שסיכוייה להצלחתה במשפט מלא אינם שוללים מתן סעד זמני. את הדרישה להשעיה על יסוד טענה ראשונית מוסבר הניתוח התיאורטי של המושג «סיכוי סביר» וכן הצורך בבחינה ראשונית של עמדות הצדדים לפני מתן הצו.[[fn:1]]\n\n2. דחיפות והצורך במניעה מיידית. המבקש חייב להראות כי הסעד הזמני נחוץ כיוון שאין סעד אחר יעיל או כי המתנה להכרעה על התביעה העיקרית תגרום לנזק בלתי‑הפיך או לנזק ח",
+  "marker_format": "atomic"
+}

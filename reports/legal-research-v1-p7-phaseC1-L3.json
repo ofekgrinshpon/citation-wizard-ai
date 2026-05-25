@@ -1,0 +1,72 @@
+{
+  "generated_at": "2026-05-25T15:38:27.430Z",
+  "fixture": {
+    "id": "L3",
+    "question": "מתי בית המשפט יפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים תרופות?"
+  },
+  "qa_log_id": "0133eea8-eaa4-47c4-8726-25f6793409c2",
+  "run_id": "d2f25223-d94f-4bc0-9a0e-2bf6d759f4d5",
+  "row_summary": {
+    "fixture_id": "L3",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 8,
+    "used_sources_subset_of_usable": true,
+    "marker_format": "atomic",
+    "atomic_mode": "emit",
+    "atomic_normalize_ok": true,
+    "atomic_normalize_reason": null,
+    "atomic_validation_ok": true,
+    "atomic_validation_error": null,
+    "atomic_used_sources_byte_equal": true,
+    "atomic_superscript_count": 22,
+    "atomic_token_count": 22,
+    "atomic_emit_fallback_reason": null,
+    "final_answer_atomic_token_count": 22,
+    "final_answer_superscript_count": 0,
+    "rule37_enabled": false,
+    "rule37_applied": false,
+    "rule37_discarded_reason": null
+  },
+  "atomic": {
+    "mode": "emit",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 22,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 22
+  },
+  "rule37": {
+    "applied": false,
+    "enabled": false,
+    "samples": [],
+    "shem_count": 0,
+    "supra_count": 0,
+    "discarded_reason": null,
+    "validation_failed": null,
+    "pre_footnote_count": 8,
+    "post_footnote_count": 8,
+    "wrong_back_references": 0,
+    "total_repeats_rewritten": 0,
+    "shortname_fallback_count": 0
+  },
+  "answer_preview": "הקדמה\nלהלן ניתוח החוקתי–דוקטרינרי ושיקולים פרוצדורליים עקרוניים בנוגע ליישום סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה) לגבי **פיצוי מוסכם** (liquidated damages): מתי בית המשפט רשאי להפחית את הסכום שנקבע בחוזה, אילו קריטריונים הוא בוחן, מהו נטל ההוכחה ומהן ההשלכות על דוקטרינות קרובות וניסוח חוזי.\n\n1. יסוד החוק וסמכות ההפחתה\nסעיף 15 מקנה מעמד מיוחד ל\"פיצויים מוסכמים\": כאשר הצדדים הסכימו מראש על שיעור פיצויים – הם יהיו כמוסכם וללא צורך בהוכחת נזק; יחד עם זאת, הסמכות להפחתת סכום זה שמורה לבית המשפט אם נמצאו הפיצויים \"נקבעו ללא כל יחס סביר לנזק שניתן היה לצפותו מראש בעת כריתת החוזה\".[[fn:1]] נוסח ",
+  "marker_format": "atomic"
+}
