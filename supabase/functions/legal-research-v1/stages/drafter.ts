@@ -1072,6 +1072,32 @@ export async function runDrafter(
   if (repaired) marker.repaired = true;
 
   const ok = parsed.ok && marker.ok;
+
+  // ─── Phase B: Rule 37 short-form post-pass (gated) ──────────────────────
+  // Pure post-pass on the already-validated answer. Never touches used_sources.
+  // On any guard/validation failure, ship the pre-Rule-37 answer + footnotes.
+  let finalAnswer = answer;
+  let finalFootnotes = footnotes;
+  let rule37Report: Rule37Report | undefined;
+  if (ok) {
+    const envOn = (Deno.env.get("LEGAL_RESEARCH_V1_RULE37") ?? "off").toLowerCase() === "on";
+    const enabled = opts?.useRule37 === true || (opts?.useRule37 !== false && envOn);
+    const inputByRef = new Map(inputSources.map((s) => [s.ref, s]));
+    const outcome = applyRule37(answer, used, inputByRef, enabled);
+    rule37Report = outcome.report;
+    if (enabled && outcome.report.applied && outcome.extraFootnotes.length > 0) {
+      const v = validateRule37(outcome.newAnswer, used, outcome.extraFootnotes, inputByRef);
+      rule37Report.wrong_back_references = v.wrong_back_references;
+      if (!v.ok) {
+        rule37Report.applied = false;
+        rule37Report.validation_failed = v.reason;
+      } else {
+        finalAnswer = outcome.newAnswer;
+        finalFootnotes = [...footnotes, ...outcome.extraFootnotes].sort((a, b) => a.number - b.number);
+      }
+    }
+  }
+
   return {
     ok,
     ms: Date.now() - t_total,
@@ -1080,10 +1106,11 @@ export async function runDrafter(
     escalated,
     sources_passed,
     sources_used: used_sources.length,
-    answer_markdown: answer,
+    answer_markdown: finalAnswer,
     used_sources,
-    footnotes,
+    footnotes: finalFootnotes,
     marker_validation: marker,
+    rule37: rule37Report,
     omitted_candidate_ids,
     stage_runs,
     error: ok ? undefined : (marker.error || parsed.errors.join("; ") || "drafter_failed"),
