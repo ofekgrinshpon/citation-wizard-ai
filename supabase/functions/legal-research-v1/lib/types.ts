@@ -159,6 +159,26 @@ export interface Footnote {
   title: string;
   url: string | null;
   source_type?: string;
+  // Phase B (Rule 37) telemetry — UI ignores these optional fields.
+  is_short_form?: boolean;
+  short_form_of?: number;       // full-citation footnote number this short-forms
+  candidate_id?: string;        // for back-reference validation only
+  short_form_kind?: "shem" | "supra";
+}
+
+export interface Rule37Report {
+  enabled: boolean;
+  applied: boolean;             // false if disabled, no-op, discarded, or validation failed
+  discarded_reason: string | null;
+  validation_failed: string | null;
+  total_repeats_rewritten: number;
+  shem_count: number;
+  supra_count: number;
+  shortname_fallback_count: number;
+  pre_footnote_count: number;
+  post_footnote_count: number;
+  wrong_back_references: number;
+  samples: Array<{ from_num: number; to_num: number; kind: "shem" | "supra"; short_text: string }>;
 }
 
 export interface PlacementReport {

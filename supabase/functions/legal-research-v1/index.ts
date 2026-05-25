@@ -144,6 +144,11 @@ async function handle(req: Request): Promise<Response> {
     attachments.push({ storage_path: sp, file_name: fn, mime_type: mt, size: sz });
   }
   const useAsSource = body.use_as_source !== false; // default true
+  const rule37Header = req.headers.get("x-rule37");
+  const useRule37: boolean | undefined =
+    rule37Header === "1" || rule37Header === "on" ? true
+      : rule37Header === "0" || rule37Header === "off" ? false
+      : undefined;
 
   // ─── Credit pre-flight (skipped in smoke mode) ───────────────────────────
   if (!smokeMode && userClient) {
@@ -448,7 +453,7 @@ async function handle(req: Request): Promise<Response> {
     analyzer.claims,
     pool.candidates,
     { usable: verifier.usable, verdicts: verifier.verdicts },
-    { userDocs: attachmentResult.documents, useAsSource },
+    { userDocs: attachmentResult.documents, useAsSource, useRule37 },
   );
 
   stage_runs.push(...drafter.stage_runs);
@@ -464,6 +469,7 @@ async function handle(req: Request): Promise<Response> {
     marker_validation: drafter.marker_validation,
     omitted_candidate_ids: drafter.omitted_candidate_ids,
     used_sources: drafter.used_sources,
+    rule37: drafter.rule37,
     error: drafter.error,
     raw_text: drafter.raw_text,
   };

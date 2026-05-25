@@ -1,0 +1,1636 @@
+{
+  "generated_at": "2026-05-25T06:51:46.453Z",
+  "fixture": {
+    "id": "L2",
+    "question": "מהי דוקטרינת ההבטחה המנהלית?"
+  },
+  "qa_log_id": "2a72e262-e126-4d3d-ac40-82fd7c22ff36",
+  "run_id": "03318314-c210-481a-aa10-264a55545d55",
+  "row_summary": {
+    "fixture_id": "L2",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 9,
+    "used_sources_subset_of_usable": true,
+    "pre_cluster_count": 0,
+    "post_cluster_count": 23,
+    "placement_ok_pre": false,
+    "footnote_count_pre": 9,
+    "footnote_count_post": 32,
+    "short_form_count": 23,
+    "rule37_enabled": true,
+    "rule37_applied": true,
+    "rule37_discarded_reason": null,
+    "rule37_validation_failed": null,
+    "rule37_shem_count": 0,
+    "rule37_supra_count": 23,
+    "rule37_wrong_back_references": 0,
+    "rule37_shortname_fallback": 0
+  },
+  "rule37": {
+    "applied": true,
+    "enabled": true,
+    "samples": [
+      {
+        "kind": "supra",
+        "to_num": 10,
+        "from_num": 1,
+        "short_text": "הבטחה מינהלית, לעיל ה\"ש 1."
+      },
+      {
+        "kind": "supra",
+        "to_num": 11,
+        "from_num": 2,
+        "short_text": "הבטחה מינהלית לציבור, לעיל ה\"ש 2."
+      },
+      {
+        "kind": "supra",
+        "to_num": 12,
+        "from_num": 1,
+        "short_text": "הבטחה מינהלית, לעיל ה\"ש 1."
+      },
+      {
+        "kind": "supra",
+        "to_num": 13,
+        "from_num": 2,
+        "short_text": "הבטחה מינהלית לציבור, לעיל ה\"ש 2."
+      },
+      {
+        "kind": "supra",
+        "to_num": 14,
+        "from_num": 3,
+        "short_text": "הבטחה מינהלית: לידתה, לעיל ה\"ש 3."
+      }
+    ],
+    "shem_count": 0,
+    "supra_count": 23,
+    "discarded_reason": null,
+    "validation_failed": null,
+    "pre_footnote_count": 9,
+    "post_footnote_count": 32,
+    "wrong_back_references": 0,
+    "total_repeats_rewritten": 23,
+    "shortname_fallback_count": 0
+  },
+  "answer": "דוקטרינת ה**הבטחה המנהלית** — הגדרה, יסודות, סעד ומגבלות\n\nהגדרה והיקף\n\nהביטוי \"הבטחה מינהלית\" מתייחס לעמדה או להצהרה של רשות מנהלית שעליה נעשה הסתמכות סבירה מצד יחיד או ציבור, ואשר מבטיח קיום מעשה, תנאי או זכאות שבעתיד; הדוקטרינה נועדה להגן על ציפיות אלו שבוּטחו על‑ידי הרשות כדי למנוע עוול הנובע מביטול פתאומי של ההבטחה או מהסגת הרגלי מנהל שנתמכו בהן.¹ ההגדרה הדוקטרינלית כוללת הן הבטחות פרטניות כלפי יחיד והן הבטחות המיועדות לציבור הרחב, כשהמשקל שונה לפי אופייה של ההצהרה והסתמכות הציבורית עליה.² תולדות הדין מציגות את הדוקטרינה כתולדה של צורך לאזן בין סבירות ההסתמכות לבין חובת הרשות לפעול במסגרת החוק והאינטרס הציבורי.³\n\nמרכיבי הבקשה להחלת הדוקטרינה\n\nכדי שבית משפט מנהלי יכיר בהבטחה מנהלית ולחייב את הרשות לפעול לפיה יש להוכיח מספר יסודות מרכזיים: ראשית, כי התקיימה **הצהרת מנהלית/הבטחה** מצד גוף בעל סמכות (או שהופיעה בעמדה שניתן להעניק לה משקל מחייב), כלומר שהרשות הוציאה מסר שקיומו נתפס כמיועד להוות התחייבות כלפי הנמשך בהסתמכות.¹⁰ שנית, כי התקיימה **הסתמכות סבירה** מצד המבקש — הסתמכות שנמדדת על פי הנורמות והנסיבות והאם הייתה צפויה מבחינה אובייקטיבית.¹¹ שלישית, כי ההסתמכות הובילה ל**שינוי מצבו של הפרט** או לנזק כלכלי/משפטי ממשי.¹² למשל, השקעה, ויתור על זכות או קבלת החלטה מושפעת מההבטחה.⁴ ולבסוף, כי ביטול ההבטחה יגרום **פגיעה משמעותית בציפיות המבוססות**.¹³ באופן שיצריך תיקון כדי להימנע מחוסר צדק יסודי.¹⁴\n\nסוגי סעד ותכלית האיזון\n\nהסעד שהמערכת המנהלית ובית המשפט עשויים להורות משתנה בהתאם לנסיבות ולמניעת הנזק והאיזון בין זכויות הפרט לאינטרס הציבורי. הסעדים הנפוצים שנדונים בדוקטרינה כוללים: שמירה על ההבטחה או מניעה מביטולה (צו שמורה/צו מניעה זמני), הכרה בזכאות או בהבטחה בצורת **הצהרת זכויות**, וכן במקרים המתאימים **פיצויים** כנגד הרשות במקום אכיפה ישירה.¹⁵ אם אכיפה סותרת אינטרסים ציבוריים כבדים.¹⁶\n\nבפני מתן סעד שומר בית המשפט על איזון בין ההגנה על ציפיות המבקשים לבין שיקולים ציבוריים, כגון תקציב הציבור, שוויון וגישה להליך (למשל חובת מכרזים).⁵ והעדפת ניהול תקין של שירות המדינה; במאזן זה יינתן משקל לעתים קרובות למניעת עוול חמור שנגרם לפרט עקב הסתמכות ממשית.¹⁷ אך לא באופן שמאפשר לרשות לעקוף חובה סטטוטורית משמעותית.¹⁸\n\nמגבלות והחרגות\n\nהדוקטרינה אינה מוחלטת ויש לה מספר הגבלות ברורות. ראשית, הבטחה מנהלית אינה יכולה לעמוד במניעה מול הוראה מפורשת בחוק או בתקנה — אם מימוש ההבטחה יצריך סטייה מהליך סטטוטורי שקבוע בחוק (למשל תהליך התנגדויות בתכנון), הרי שהדוקטרינה נחלשת או נפסלת.¹⁹\n\nשנית, חובות סטטוטוריות מסוימות (כגון חובת מכרזים בעסקאות ציבוריות²⁰ או במינויים לשירות המדינה⁶) מהוות גבול מהותי ליכולתה של רשות להעניק הבטחה מנהלית שמעקפת את נורמות השוויון והתחרות; היעדר התאמה לחובה שכזו עלול להביא לכישלון ההכרה בהבטחה.\n\nשלישית, בתחום של זכויות סוציאליות וגמלאות — חקיקה שקובעת תנאי זכאות ברורים תפקידה למנוע הרחבה מנהלית של זכאות מעבר למה שהחוק מאפשר; הבטחה מינהלית להרחבת זכאות תיתקל במגבלות משפטיות חזקות.⁷\n\nרביעית, גם תקנות ודרישות רגולטוריות ענפיות⁸ יכולות לחסום מימוש הבטחה אם היא סותרת דרישות תקניות מחייבות (כולל טיוטאות תקנות שמטילות דרישות תכן מחייבות בתחום הבנייה).⁹ ולכן יש לבחון תמיד את יחסי הגומלין בין ההבטחה לבין המסגרת הרגולטורית הספציפית.\n\nהשלכות יישומיות ושיקומי\n\nבפני בקשת סעד על בסיס הבטחה מינהלית יש לבחון נאמנה את מכלול הראיות: תוכן ההצהרה²¹, זהותו וסמכותו של המבטיח, טבע ההסתמכות והיקפה²², אופי הנזק ותדירותו, וכן האיזון עם אינטרסים ציבוריים ועם מגבלות סטטוטוריות או תקנתיות²³.\n\nלסיכום, דוקטרינת ההבטחה המנהלית היא כלי מרכזי להגנת ציפיות והסתמכות כלפי הרשויות²⁴ אך אינה מעניקה זכויות מוחלטות²⁵; היא כפופה לשיקולי סמכות²⁶, לחובות סטטוטוריות²⁷ ולצורך באיזון בין טובת היחיד לטובת הציבור²⁸, ולעתים יתווך הסעד²⁹ כך שיפצה את העוול³⁰ מבלי לעקור³¹ מדיניות ציבורית מחייבת³².",
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+      "title": "הבטחה מינהלית",
+      "number": 1,
+      "source_type": "מאמר בכתב עת משפטי (משפטים)"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+      "title": "הבטחה מינהלית לציבור",
+      "number": 2,
+      "source_type": "מאמר אקדמי"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+      "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+      "number": 3,
+      "source_type": "מאמר בכתב עת משפטי"
+    },
+    {
+      "url": "https://fs.knesset.gov.il//11/law/11_ls1_234972.PDF",
+      "title": "חוק התכנון והבניה, התשכ\"ה-1965 – סעיף 149 (התנגדויות לתכנית)",
+      "number": 4,
+      "source_type": "חקיקה ראשית ישראלית"
+    },
+    {
+      "url": "https://fs.knesset.gov.il//12/law/12_ls1_204000.PDF",
+      "title": "חוק חובת המכרזים, התשנ\"ב-1992 – סעיף 2 (חובת מכרז)",
+      "number": 5,
+      "source_type": "חקיקה ראשית ישראלית"
+    },
+    {
+      "url": "https://fs.knesset.gov.il//13/law/13_ls1_212084.PDF",
+      "title": "חוק שירות המדינה (מינויים), התשי\"ט-1959 – סעיף 19 (מכרז למשרה)",
+      "number": 6,
+      "source_type": "חקיקה ראשית ישראלית"
+    },
+    {
+      "url": "https://fs.knesset.gov.il//14/law/14_ls1_214474.PDF",
+      "title": "חוק שירות המדינה (גמלאות) [נוסח משולב], התש\"ל-1970 – סעיף 29 (זכאות לגמלה)",
+      "number": 7,
+      "source_type": "חקיקה ראשית ישראלית"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/legalinfo?OfficeId=2574c957-2109-4270-9586-62ca2d37857e",
+      "title": "תקנות התכנון והבנייה (בקשה להיתר, תנאיו ואגרות)",
+      "number": 8,
+      "source_type": "gov.il"
+    },
+    {
+      "url": "https://www.tazkirim.gov.il/s/detail/a093Y00001hhDLFQA2",
+      "title": "טיוטת תקנות התכנון והבניה (תכן הבניה) (הגנה מפני רטיבות ולחות), התשפ\"ד",
+      "number": 9,
+      "source_type": "gov.il"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+      "title": "הבטחה מינהלית, לעיל ה\"ש 1.",
+      "number": 10,
+      "source_type": "מאמר בכתב עת משפטי (משפטים)",
+      "candidate_id": "51b322cf-f8e2-4014-8849-a602d65b90b4",
+      "is_short_form": true,
+      "short_form_of": 1,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+      "title": "הבטחה מינהלית לציבור, לעיל ה\"ש 2.",
+      "number": 11,
+      "source_type": "מאמר אקדמי",
+      "candidate_id": "fb9545ea-e0a8-4c33-8fdf-6fd64990a39b",
+      "is_short_form": true,
+      "short_form_of": 2,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+      "title": "הבטחה מינהלית, לעיל ה\"ש 1.",
+      "number": 12,
+      "source_type": "מאמר בכתב עת משפטי (משפטים)",
+      "candidate_id": "51b322cf-f8e2-4014-8849-a602d65b90b4",
+      "is_short_form": true,
+      "short_form_of": 1,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+      "title": "הבטחה מינהלית לציבור, לעיל ה\"ש 2.",
+      "number": 13,
+      "source_type": "מאמר אקדמי",
+      "candidate_id": "fb9545ea-e0a8-4c33-8fdf-6fd64990a39b",
+      "is_short_form": true,
+      "short_form_of": 2,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+      "title": "הבטחה מינהלית: לידתה, לעיל ה\"ש 3.",
+      "number": 14,
+      "source_type": "מאמר בכתב עת משפטי",
+      "candidate_id": "bed490f5-6875-4cb2-b688-d5be152620f7",
+      "is_short_form": true,
+      "short_form_of": 3,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+      "title": "הבטחה מינהלית, לעיל ה\"ש 1.",
+      "number": 15,
+      "source_type": "מאמר בכתב עת משפטי (משפטים)",
+      "candidate_id": "51b322cf-f8e2-4014-8849-a602d65b90b4",
+      "is_short_form": true,
+      "short_form_of": 1,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+      "title": "הבטחה מינהלית לציבור, לעיל ה\"ש 2.",
+      "number": 16,
+      "source_type": "מאמר אקדמי",
+      "candidate_id": "fb9545ea-e0a8-4c33-8fdf-6fd64990a39b",
+      "is_short_form": true,
+      "short_form_of": 2,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+      "title": "הבטחה מינהלית, לעיל ה\"ש 1.",
+      "number": 17,
+      "source_type": "מאמר בכתב עת משפטי (משפטים)",
+      "candidate_id": "51b322cf-f8e2-4014-8849-a602d65b90b4",
+      "is_short_form": true,
+      "short_form_of": 1,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://fs.knesset.gov.il//11/law/11_ls1_234972.PDF",
+      "title": "חוק התכנון והבניה, לעיל ה\"ש 4.",
+      "number": 18,
+      "source_type": "חקיקה ראשית ישראלית",
+      "candidate_id": "fa1d5351-65fa-40e3-8429-0b307ad7972d",
+      "is_short_form": true,
+      "short_form_of": 4,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://fs.knesset.gov.il//11/law/11_ls1_234972.PDF",
+      "title": "חוק התכנון והבניה, לעיל ה\"ש 4.",
+      "number": 19,
+      "source_type": "חקיקה ראשית ישראלית",
+      "candidate_id": "fa1d5351-65fa-40e3-8429-0b307ad7972d",
+      "is_short_form": true,
+      "short_form_of": 4,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://fs.knesset.gov.il//12/law/12_ls1_204000.PDF",
+      "title": "חוק חובת המכרזים, לעיל ה\"ש 5.",
+      "number": 20,
+      "source_type": "חקיקה ראשית ישראלית",
+      "candidate_id": "c5c95e44-6809-4c04-a8dd-7e8da1aacc76",
+      "is_short_form": true,
+      "short_form_of": 5,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+      "title": "הבטחה מינהלית, לעיל ה\"ש 1.",
+      "number": 21,
+      "source_type": "מאמר בכתב עת משפטי (משפטים)",
+      "candidate_id": "51b322cf-f8e2-4014-8849-a602d65b90b4",
+      "is_short_form": true,
+      "short_form_of": 1,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+      "title": "הבטחה מינהלית לציבור, לעיל ה\"ש 2.",
+      "number": 22,
+      "source_type": "מאמר אקדמי",
+      "candidate_id": "fb9545ea-e0a8-4c33-8fdf-6fd64990a39b",
+      "is_short_form": true,
+      "short_form_of": 2,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://fs.knesset.gov.il//12/law/12_ls1_204000.PDF",
+      "title": "חוק חובת המכרזים, לעיל ה\"ש 5.",
+      "number": 23,
+      "source_type": "חקיקה ראשית ישראלית",
+      "candidate_id": "c5c95e44-6809-4c04-a8dd-7e8da1aacc76",
+      "is_short_form": true,
+      "short_form_of": 5,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+      "title": "הבטחה מינהלית, לעיל ה\"ש 1.",
+      "number": 24,
+      "source_type": "מאמר בכתב עת משפטי (משפטים)",
+      "candidate_id": "51b322cf-f8e2-4014-8849-a602d65b90b4",
+      "is_short_form": true,
+      "short_form_of": 1,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+      "title": "הבטחה מינהלית לציבור, לעיל ה\"ש 2.",
+      "number": 25,
+      "source_type": "מאמר אקדמי",
+      "candidate_id": "fb9545ea-e0a8-4c33-8fdf-6fd64990a39b",
+      "is_short_form": true,
+      "short_form_of": 2,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+      "title": "הבטחה מינהלית: לידתה, לעיל ה\"ש 3.",
+      "number": 26,
+      "source_type": "מאמר בכתב עת משפטי",
+      "candidate_id": "bed490f5-6875-4cb2-b688-d5be152620f7",
+      "is_short_form": true,
+      "short_form_of": 3,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://fs.knesset.gov.il//11/law/11_ls1_234972.PDF",
+      "title": "חוק התכנון והבניה, לעיל ה\"ש 4.",
+      "number": 27,
+      "source_type": "חקיקה ראשית ישראלית",
+      "candidate_id": "fa1d5351-65fa-40e3-8429-0b307ad7972d",
+      "is_short_form": true,
+      "short_form_of": 4,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://fs.knesset.gov.il//12/law/12_ls1_204000.PDF",
+      "title": "חוק חובת המכרזים, לעיל ה\"ש 5.",
+      "number": 28,
+      "source_type": "חקיקה ראשית ישראלית",
+      "candidate_id": "c5c95e44-6809-4c04-a8dd-7e8da1aacc76",
+      "is_short_form": true,
+      "short_form_of": 5,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://fs.knesset.gov.il//13/law/13_ls1_212084.PDF",
+      "title": "חוק שירות המדינה, לעיל ה\"ש 6.",
+      "number": 29,
+      "source_type": "חקיקה ראשית ישראלית",
+      "candidate_id": "a9d5f429-d570-4520-a3b8-ab49d0b1fa3f",
+      "is_short_form": true,
+      "short_form_of": 6,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://fs.knesset.gov.il//14/law/14_ls1_214474.PDF",
+      "title": "חוק שירות המדינה, לעיל ה\"ש 7.",
+      "number": 30,
+      "source_type": "חקיקה ראשית ישראלית",
+      "candidate_id": "121e621f-a35a-4b90-8436-42144fecb457",
+      "is_short_form": true,
+      "short_form_of": 7,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://www.gov.il/he/departments/legalinfo?OfficeId=2574c957-2109-4270-9586-62ca2d37857e",
+      "title": "תקנות התכנון והבנייה, לעיל ה\"ש 8.",
+      "number": 31,
+      "source_type": "gov.il",
+      "candidate_id": "c7bbfaa7-8fd0-4d7e-bcff-942de4d69d9a",
+      "is_short_form": true,
+      "short_form_of": 8,
+      "short_form_kind": "supra"
+    },
+    {
+      "url": "https://www.tazkirim.gov.il/s/detail/a093Y00001hhDLFQA2",
+      "title": "טיוטת תקנות התכנון והבניה, לעיל ה\"ש 9.",
+      "number": 32,
+      "source_type": "gov.il",
+      "candidate_id": "8ffb139c-7475-4f19-b094-dbb0e99bb4b7",
+      "is_short_form": true,
+      "short_form_of": 9,
+      "short_form_kind": "supra"
+    }
+  ],
+  "metadata": {
+    "phase": "P5",
+    "claims": [
+      {
+        "reason": "זהו טיעון דוקטרינרי בסיסי שמבוסס על הפסיקה המחייבת והפרשנות בספרות המשפטית שמבהירה את היסודות והקווים המבדילים אותה מדוקטרינות אחרות (כגון 'ציפייה לגיטימית').",
+        "text_he": "הגדרה והיקף של דוקטרינת ההבטחה המנהלית: מה משמעותה, אילו התנהגויות מנהליות היא מכסה ומתי היא נועדה להגן על ציפיות של יחידים מפני ביטול הבטחה או הצהרה של רשות ציבורית",
+        "claim_id": "C1",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "מרכיבים אלה נקבעים בפסיקה המחייבת ובניתוח ספרותי של דיני המינהל; יש צורך בהפניות לפסיקה וכיוון דוקטרינרי להבהרת מבחנים ותנאים.",
+        "text_he": "מרכיבי הבקשה להחלת הדוקטרינה: מהם הקריטריונים שנדרש להוכיח (למשל: הצהרת מנהל/הבטחה מצידה של רשות בעלת סמכות, הסתמכות סבירה של הפרט, שינוי מקום או נזק כתוצאה מהסתמכות, ופגיעה חמורה בציפיות)",
+        "claim_id": "C2",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "היקף הסעד ודינמיקת האיזון בין האינטרסים נקבעים בפסיקה המחייבת ובניתוח אקדמי של מטרות ההלכה.",
+        "text_he": "סוגי הסעד ותכלית האיזון: אילו סעדי בית משפט מנהלי יכול להורות (שימור ההבטחה, מניעה מביטול, פיצויים, הצהרת זכויות), וכיצד שוקל בית המשפט את האינטרסים הציבוריים מול זכויות המבקש",
+        "claim_id": "C3",
+        "required_roles": [
+          "binding_case_law",
+          "scholarship"
+        ],
+        "is_black_letter": true
+      },
+      {
+        "reason": "החרגות ותקרות היישום תלויות במרחק בין ההבטחה לבין ההסמכה החוקית והרגולטורית; לכן נדרש הצבעה על חוקים/תקנות רלוונטיים ובפסיקה המחייבת שמדגישה את המגבלות.",
+        "text_he": "מגבלות והחרגות: מתי הדוקטרינה אינה חלה (התנגשות עם חוק או תקנה, פעולה בלתי בסמכות, אינטרס ציבורי כבד, חשיבות תפקודית-תקציבית), וכיצד יש להתייחס לה בשל קיום רגולציה ספציפית",
+        "claim_id": "C4",
+        "required_roles": [
+          "primary_statute",
+          "regulation",
+          "binding_case_law"
+        ],
+        "is_black_letter": true
+      }
+    ],
+    "run_id": "03318314-c210-481a-aa10-264a55545d55",
+    "drafter": {
+      "ms": 117721,
+      "ok": true,
+      "rule37": {
+        "applied": true,
+        "enabled": true,
+        "samples": [
+          {
+            "kind": "supra",
+            "to_num": 10,
+            "from_num": 1,
+            "short_text": "הבטחה מינהלית, לעיל ה\"ש 1."
+          },
+          {
+            "kind": "supra",
+            "to_num": 11,
+            "from_num": 2,
+            "short_text": "הבטחה מינהלית לציבור, לעיל ה\"ש 2."
+          },
+          {
+            "kind": "supra",
+            "to_num": 12,
+            "from_num": 1,
+            "short_text": "הבטחה מינהלית, לעיל ה\"ש 1."
+          },
+          {
+            "kind": "supra",
+            "to_num": 13,
+            "from_num": 2,
+            "short_text": "הבטחה מינהלית לציבור, לעיל ה\"ש 2."
+          },
+          {
+            "kind": "supra",
+            "to_num": 14,
+            "from_num": 3,
+            "short_text": "הבטחה מינהלית: לידתה, לעיל ה\"ש 3."
+          }
+        ],
+        "shem_count": 0,
+        "supra_count": 23,
+        "discarded_reason": null,
+        "validation_failed": null,
+        "pre_footnote_count": 9,
+        "post_footnote_count": 32,
+        "wrong_back_references": 0,
+        "total_repeats_rewritten": 23,
+        "shortname_fallback_count": 0
+      },
+      "escalated": false,
+      "model_final": "openai/gpt-5-mini",
+      "sources_used": 9,
+      "used_sources": [
+        {
+          "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+          "title": "הבטחה מינהלית",
+          "number": 1,
+          "origin": "perplexity",
+          "source_type": "מאמר בכתב עת משפטי (משפטים)",
+          "candidate_id": "51b322cf-f8e2-4014-8849-a602d65b90b4"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+          "title": "הבטחה מינהלית לציבור",
+          "number": 2,
+          "origin": "perplexity",
+          "source_type": "מאמר אקדמי",
+          "candidate_id": "fb9545ea-e0a8-4c33-8fdf-6fd64990a39b"
+        },
+        {
+          "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+          "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+          "number": 3,
+          "origin": "perplexity",
+          "source_type": "מאמר בכתב עת משפטי",
+          "candidate_id": "bed490f5-6875-4cb2-b688-d5be152620f7"
+        },
+        {
+          "url": "https://fs.knesset.gov.il//11/law/11_ls1_234972.PDF",
+          "title": "חוק התכנון והבניה, התשכ\"ה-1965 – סעיף 149 (התנגדויות לתכנית)",
+          "number": 4,
+          "origin": "perplexity",
+          "source_type": "חקיקה ראשית ישראלית",
+          "candidate_id": "fa1d5351-65fa-40e3-8429-0b307ad7972d"
+        },
+        {
+          "url": "https://fs.knesset.gov.il//12/law/12_ls1_204000.PDF",
+          "title": "חוק חובת המכרזים, התשנ\"ב-1992 – סעיף 2 (חובת מכרז)",
+          "number": 5,
+          "origin": "perplexity",
+          "source_type": "חקיקה ראשית ישראלית",
+          "candidate_id": "c5c95e44-6809-4c04-a8dd-7e8da1aacc76"
+        },
+        {
+          "url": "https://fs.knesset.gov.il//13/law/13_ls1_212084.PDF",
+          "title": "חוק שירות המדינה (מינויים), התשי\"ט-1959 – סעיף 19 (מכרז למשרה)",
+          "number": 6,
+          "origin": "perplexity",
+          "source_type": "חקיקה ראשית ישראלית",
+          "candidate_id": "a9d5f429-d570-4520-a3b8-ab49d0b1fa3f"
+        },
+        {
+          "url": "https://fs.knesset.gov.il//14/law/14_ls1_214474.PDF",
+          "title": "חוק שירות המדינה (גמלאות) [נוסח משולב], התש\"ל-1970 – סעיף 29 (זכאות לגמלה)",
+          "number": 7,
+          "origin": "perplexity",
+          "source_type": "חקיקה ראשית ישראלית",
+          "candidate_id": "121e621f-a35a-4b90-8436-42144fecb457"
+        },
+        {
+          "url": "https://www.gov.il/he/departments/legalinfo?OfficeId=2574c957-2109-4270-9586-62ca2d37857e",
+          "title": "תקנות התכנון והבנייה (בקשה להיתר, תנאיו ואגרות)",
+          "number": 8,
+          "origin": "perplexity",
+          "source_type": "gov.il",
+          "candidate_id": "c7bbfaa7-8fd0-4d7e-bcff-942de4d69d9a"
+        },
+        {
+          "url": "https://www.tazkirim.gov.il/s/detail/a093Y00001hhDLFQA2",
+          "title": "טיוטת תקנות התכנון והבניה (תכן הבניה) (הגנה מפני רטיבות ולחות), התשפ\"ד",
+          "number": 9,
+          "origin": "perplexity",
+          "source_type": "gov.il",
+          "candidate_id": "8ffb139c-7475-4f19-b094-dbb0e99bb4b7"
+        }
+      ],
+      "model_initial": "openai/gpt-5-mini",
+      "footnote_count": 32,
+      "sources_passed": 10,
+      "marker_validation": {
+        "ok": true,
+        "repaired": false,
+        "placement": {
+          "ok": false,
+          "repaired": true,
+          "cluster_count": 0,
+          "cluster_samples": [],
+          "end_dump_samples": [
+            "הביטוי \"הבטחה מינהלית\" מתייחס לעמדה או להצהרה של רשות מנהלית שעליה נעשה הסתמכות סבירה מצד יחיד או ציבור, ואשר מבטיח קיום מעשה, תנאי או זכאות שבעתיד; הדוקטרינה נועדה להגן על ציפיות אלו שבוּטחו על‑ידי ה"
+          ],
+          "out_of_order_count": 0,
+          "end_paragraph_dump_count": 1,
+          "superscript_parens_count": 0
+        },
+        "leaked_tokens": [],
+        "unused_sources": [],
+        "missing_sources": [],
+        "internal_id_leak": false,
+        "markers_in_answer": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "omitted_candidate_ids": [
+        "c1c43f36-0348-4ef2-bee2-dc2344f373f7"
+      ]
+    },
+    "queries": [
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסקי-דין מחייבים של בית המשפט העליון שמגדירים את הדוקטרינה, מסבירים את משמעותה ואת תחולתה על התנהגות של רשויות ציבוריות.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C1",
+        "query_he": "פסק דין בית המשפט העליון דוקטרינת ההבטחה המנהלית \"הבטחה מנהלית\" \"הסתמכות\" \"שימור ההבטחה\" החלטה עקרונית",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "למצוא מקורות אקדמיים המספקים הגדרות, דיונים תאורטיים ורקע היסטורי על היקף הדוקטרינה ותפקידה בהגנת ציפיות פרטיות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי \"דוקטרינת ההבטחה המנהלית\" בישראל סקירה תאורטית \"הבטחה מנהלית\" \"עקרון ההסתמכות\" כתב עת משפטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לזהות פסקי-דין מחייבים שקבעו את המרכיבים הנדרשים להחלת הדוקטרינה (הצהרה/הבטחה, הסתמכות סבירה, שינוי מצב או נזק כתוצאה מהסתמכות וכו').",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C2",
+        "query_he": "בית המשפט העליון פסק דין קריטריונים להחלת הדוקטרינה 'הבטחה מנהלית' 'הסתמכות סבירה' 'שינוי מקום' 'נזק' 'עילת סעד'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מאמרים משפטיים שמנתחים ומסכמים את הקריטריונים שנקבעו בפסיקה ומציעים ניסוח מסודר של המרכיבים.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C2",
+        "query_he": "מאמר קריטריונים להחלת דוקטרינת ההבטחה המנהלית 'הסתמכות סבירה' 'נזק' 'שינוי מעמד' ניתוח משפטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "לעיין בפסקי-דין שבהם נקבעים סוגי הסעד שניתנים כשמבקשים להגן על הבטחה מנהלית ובאילו נסיבות הושתלו פיצויים או סעדים אחרים.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C3",
+        "query_he": "בית המשפט העליון פסק דין סעדי הבטחה מנהלית 'שימור הבטחה' 'מניעה מביטול' 'פיצויים' 'הצהרת זכויות'",
+        "expected_source_type": "case"
+      },
+      {
+        "role": "scholarship",
+        "reason": "מקורות אקדמיים שמנתחים את תכלית הסעדים, שיקולים לאיזון בין עניין הציבור לבין זכויות המבקש והנמקות לפיצויים מול שימור הבטחה.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C3",
+        "query_he": "מאמר סעדי דוקטרינת ההבטחה המנהלית 'פיצויים' 'שימור הבטחה' 'איזון אינטרסים ציבוריים' כתב עת משפטי",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "primary_statute",
+        "reason": "לזהות חוקים ספציפיים עם הוראות שמטילות הגבלות או יוצאות נגד אפשרות לשימור הבטחה מנהלית (כלומר חקיקה שעשויה להוות חריגה או מניעה של הדוקטרינה).",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "חיפוש חקיקה שעשויה להתנגש עם הבטחה מנהלית: חוקים רלוונטיים בשם 'חוק התכנון והבנייה' 'חוק המכרזים' 'חוק שירות המדינה' הוראות שעלולות למנוע שימור הבטחה מנהלית",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "regulation",
+        "reason": "למצוא תקנות ספציפיות שעשויות לצקת תוכן להגבלות על התחייבויות מנהליות או להסדיר כשלא ניתן להמשיך בהבטחה בשל הוראות תקנות.",
+        "targets": [
+          "perplexity"
+        ],
+        "claim_id": "C4",
+        "query_he": "תקנות רלוונטיות להתנגשות עם הבטחה מנהלית 'תקנות התכנון והבנייה' 'תקנות מכרזים' הוראות תקניות שמונעות הענקת זכויות או שמסדירות הסרת הבטחות מנהליות",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "binding_case_law",
+        "reason": "למצוא פסיקה מחייבת שבה בית המשפט העליון דן במגבלות הדוקטרינה, במצבים של התנגשות עם חוק, אינטרס ציבורי כבד או כשיש חשיבות תפקודית־תקציבית שמניעה את שימור ההבטחה.",
+        "targets": [
+          "local_db"
+        ],
+        "claim_id": "C4",
+        "query_he": "בית המשפט העליון פסק דין 'התנגשות עם חוק' 'ביטול הבטחה מנהלית עקב אינטרס ציבורי' 'הגבלות הדוקטרינה'",
+        "expected_source_type": "case"
+      }
+    ],
+    "pipeline": "legal-research-v1",
+    "planning": {
+      "planner": {
+        "ms": 26647,
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "analyzer": {
+        "ms": 13080,
+        "confidence": 0.9,
+        "legal_area": "משפט מנהלי",
+        "answer_type": "doctrinal_explanation",
+        "model_final": "openai/gpt-5-mini",
+        "schema_valid": true,
+        "model_initial": "openai/gpt-5-mini",
+        "escalated_to_gpt5": false,
+        "escalation_reason": []
+      },
+      "claims_count": 4,
+      "queries_count": 9,
+      "truncated_claims_count": 0,
+      "truncated_queries_count": 0
+    },
+    "total_ms": 218853,
+    "verifier": {
+      "ms": 21280,
+      "counts": {
+        "by_support": {
+          "direct": 8,
+          "partial": 2,
+          "unrelated": 0,
+          "tangential": 0
+        },
+        "by_role_match": {
+          "true": 10,
+          "false": 0
+        }
+      },
+      "errors": [],
+      "usable": [
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "fa1d5351-65fa-40e3-8429-0b307ad7972d",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "c5c95e44-6809-4c04-a8dd-7e8da1aacc76",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "a9d5f429-d570-4520-a3b8-ab49d0b1fa3f",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "121e621f-a35a-4b90-8436-42144fecb457",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "c7bbfaa7-8fd0-4d7e-bcff-942de4d69d9a",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "8ffb139c-7475-4f19-b094-dbb0e99bb4b7",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "partial",
+          "candidate_id": "c1c43f36-0348-4ef2-bee2-dc2344f373f7",
+          "verdict_claim_ids": [
+            "C4"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "51b322cf-f8e2-4014-8849-a602d65b90b4",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "bed490f5-6875-4cb2-b688-d5be152620f7",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        },
+        {
+          "role_match": true,
+          "best_support": "direct",
+          "candidate_id": "fb9545ea-e0a8-4c33-8fdf-6fd64990a39b",
+          "verdict_claim_ids": [
+            "C1"
+          ]
+        }
+      ],
+      "batches": [
+        {
+          "ms": 21279,
+          "label": "batch1",
+          "claim_ids": [
+            "C1",
+            "C4"
+          ],
+          "escalated": false,
+          "candidates": 10
+        }
+      ],
+      "dropped": [],
+      "verdicts": [
+        {
+          "reason": "מאמר אקדמי בעברית שמנתח ישירות את הדוקטרינה ומהווה מקור scholarship תיאורי ותומך בהגדרה והיקף.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "51b322cf-f8e2-4014-8849-a602d65b90b4",
+          "supported_points": [
+            "מאמר עוסק במפורש בדוקטרינת ההבטחה המינהלית ובהגדרתה",
+            "דן בעקרון ההסתמכות ובתנאים לביסוס חובת הרשות לקיים הבטחה",
+            "סוקר סמכות הרשות והשלכות ביטול הבטחה על ציפיות היחידים"
+          ]
+        },
+        {
+          "reason": "מאמר ביקורתי המתמקד בדיוק בשאלת לידתה, תולדותיה ותכליתה של הבטחה מינהלית ולכן תומך ישירות בהגדרה והיקף.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "bed490f5-6875-4cb2-b688-d5be152620f7",
+          "supported_points": [
+            "מספק סקירה היסטורית ותיאורטית של התפתחות הדוקטרינה",
+            "מנתח את הקשר בין הבטחה מינהלית לבין הגנת ציפיות והסתמכות",
+            "מתאים כהסבר לשאלת משמעות והיקף הדוקטרינה"
+          ]
+        },
+        {
+          "reason": "מאמר אקדמי שמוקדש לנושא ההבטחה המינהלית לציבור ולכן תומך ישירות בהסבר ההגדרה וההיקף.",
+          "support": "direct",
+          "claim_id": "C1",
+          "role_match": true,
+          "candidate_id": "fb9545ea-e0a8-4c33-8fdf-6fd64990a39b",
+          "supported_points": [
+            "דן במפורש בבסיס העקרוני של ההסתמכות והציפיות בדוקטרינה",
+            "מציג התפתחויות הדין ביחס להבטחה מינהלית לציבור",
+            "מספק ניתוח תיאורטי שימושי להגדרת המושג ומקרי החלות"
+          ]
+        },
+        {
+          "reason": "סעיף בחוק התכנון והבניה מקנה זכות הליךית מחייבת ולכן מהווה מחסום סטטוטורי להטלת הבטחה מנהלית שאינה עומדת בהליכים.",
+          "support": "direct",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "fa1d5351-65fa-40e3-8429-0b307ad7972d",
+          "supported_points": [
+            "סעיף 149 מכתיב הליך התנגדויות לתוכניות שמייצר מסגרת סטטוטורית מחייבת",
+            "מראה כי הבטחה מינהלית המצריך סטייה מהליך התכנוני עלולה להתנגש עם הוראת חוק",
+            "משמש דוגמה לחוקה סטטוטורית שמגבילה אפשרות קיום הבטחה מנהלית"
+          ]
+        },
+        {
+          "reason": "הוראת חובת המכרז בחוק מהווה סייג ישיר לביצוע הבטחות מנהליות הנוגדות חובת מכרז.",
+          "support": "direct",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "c5c95e44-6809-4c04-a8dd-7e8da1aacc76",
+          "supported_points": [
+            "סעיף 2 מטיל חובת מכרז שעלולה למנוע מתן התקשרות על בסיס הבטחה מנהלית ללא מכרז",
+            "מצביע על מגבלה סטטוטורית שמונעת עקיפת נורמות שוויון ותחרות",
+            "דוגמה לקונפליקט בין הבטחה מנהלית לבין חובת הליך סטטוטורי"
+          ]
+        },
+        {
+          "reason": "הוראת החוק המחייבת הליך מינוי תחרותי מהווה מגבלה סטטוטורית ישירה על הבטחות מנהליות בנוגע למינויים.",
+          "support": "direct",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "a9d5f429-d570-4520-a3b8-ab49d0b1fa3f",
+          "supported_points": [
+            "סעיף 19 מעגן עקרון המכרז/תחרות במינויים לשירות המדינה",
+            "מדגים כי הבטחה למינוי ללא הליך תחרותי עלולה להתנגש בחוקה סטטוטורית",
+            "ממחיש מגבלה על סמכות הרשות להעניק הבטחות בתחומי מינויים"
+          ]
+        },
+        {
+          "reason": "חוק גמלאות שמסדיר זכאות ותנאים מספק מגבלה סטטוטורית על הבטחות מנהליות המרחיבות זכויות חוקיות.",
+          "support": "direct",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "121e621f-a35a-4b90-8436-42144fecb457",
+          "supported_points": [
+            "סעיף 29 קובע תנאי זכאות לגמלה ומגביל הרחבת זכאות באופן מנהלי",
+            "מראה כי הבטחה להרחבת זכאות מעבר למה שהחוק מאפשר עשויה להיות בלתי אפשרית",
+            "ממחיש מחסום חוקי בסוגיות של זכויות וגמלאות"
+          ]
+        },
+        {
+          "reason": "תקנות רשמיות הקשורות להיתרי בניה והליכי תכנון מהוות מקור רגולטורי המחייב שיכול לצמצם את היקף ההבטחה המינהלית.",
+          "support": "direct",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "c7bbfaa7-8fd0-4d7e-bcff-942de4d69d9a",
+          "supported_points": [
+            "תקנות התכנון והבנייה כוללות דרישות ונהלים ליתר ובקשות שעלולים לחייב הליכים רגולטוריים",
+            "מראות כיצד נורמות תקנותיות קובעות מסגרת שמגבילה אפשרות לאכוף הבטחות מנהליות סותרות",
+            "שימושיות לבחינת יחסי הגומלין בין הבטחה מנהלית לבין רגולציה ענפית"
+          ]
+        },
+        {
+          "reason": "מדובר בטיוטת תקנות (לאו דווקא מחייבת סופית), ולכן רלוונטית אך חלשה יותר כעדות רגולטורית מחייבת.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "8ffb139c-7475-4f19-b094-dbb0e99bb4b7",
+          "supported_points": [
+            "טיוטת תקנות מטילה דרישות תכן מחייבות שיכולות להמחיש קונפליקט עקרוני בין הבטחות מנהליות לבין דרישות תקניות",
+            "מתאימה לרקע על ההשפעה של דרישות תקניות על יכולת לממש הבטחות מנהליות"
+          ]
+        },
+        {
+          "reason": "המסמך הוא אוסף/מסמך כללי של חקיקת משנה ודורש זיהוי נוסח תקנה ספציפי כדי לשמש כמקור מחייב, לכן הוא תומך באופן חלקי.",
+          "support": "partial",
+          "claim_id": "C4",
+          "role_match": true,
+          "candidate_id": "c1c43f36-0348-4ef2-bee2-dc2344f373f7",
+          "supported_points": [
+            "מסמך עוסק בחקיקת משנה ובנושאי בניה ויכול להכיל נוסחים של תקנות הרלוונטיות למגבלות",
+            "ניתן להשתמש בו לאיתור תקנות ספציפיות שמגבילות הבטחות מנהליות"
+          ]
+        }
+      ],
+      "model_final": "openai/gpt-5-mini",
+      "per_claim_ms": {
+        "C1": 21279,
+        "C4": 21279
+      },
+      "model_initial": "openai/gpt-5-mini",
+      "escalated_claims": [],
+      "candidates_usable": 10,
+      "candidates_dropped": 0,
+      "candidates_verified": 10
+    },
+    "retrieval": {
+      "ms": 40008,
+      "pool": {
+        "found": 18,
+        "counts": {
+          "by_role": {
+            "regulation": 3,
+            "scholarship": 3,
+            "primary_statute": 4
+          },
+          "by_claim": {
+            "C1": 3,
+            "C4": 7
+          },
+          "by_origin": {
+            "perplexity": 10
+          }
+        },
+        "after_dedup": 10,
+        "dedup_drops": 8
+      },
+      "local": {
+        "ms": 40006,
+        "per_query": [
+          {
+            "ms": 40005,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20002,
+              "text_status": "timeout",
+              "embedding_ms": 164,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק או",
+                "search_terms": [
+                  "חוק או"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית דין העליון דוקטרינת ההבטחה המנהלית הסתמכות שימור",
+            "original_query_he": "פסק דין בית המשפט העליון דוקטרינת ההבטחה המנהלית \"הבטחה מנהלית\" \"הסתמכות\" \"שימור ההבטחה\" החלטה עקרונית"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 156,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק או",
+                "search_terms": [
+                  "חוק או"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית העליון דין קריטריונים להחלת הדוקטרינה הסתמכות סבירה",
+            "original_query_he": "בית המשפט העליון פסק דין קריטריונים להחלת הדוקטרינה 'הבטחה מנהלית' 'הסתמכות סבירה' 'שינוי מקום' 'נזק' 'עילת סעד'"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20001,
+              "exact_ms": 20001,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 177,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק או",
+                "search_terms": [
+                  "חוק או"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית העליון דין סעדי שימור מניעה מביטול פיצויים",
+            "original_query_he": "בית המשפט העליון פסק דין סעדי הבטחה מנהלית 'שימור הבטחה' 'מניעה מביטול' 'פיצויים' 'הצהרת זכויות'"
+          },
+          {
+            "ms": 40003,
+            "diag": {
+              "text_ms": 20002,
+              "exact_ms": 20002,
+              "vector_ms": 20001,
+              "text_status": "timeout",
+              "embedding_ms": 278,
+              "exact_status": "empty",
+              "vector_status": "timeout",
+              "top_text_titles": [],
+              "embedding_length": 768,
+              "top_exact_titles": [],
+              "top_vector_titles": [],
+              "exact_clue_lookups": [],
+              "role_to_source_type_filter": [
+                "caselaw",
+                "supreme_court_il"
+              ]
+            },
+            "kept": 0,
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "text_hits": 0,
+            "exact_hits": 0,
+            "exact_clues": [
+              {
+                "kind": "statute",
+                "source": "claim",
+                "law_name": "חוק או",
+                "search_terms": [
+                  "חוק או"
+                ]
+              }
+            ],
+            "vector_hits": 0,
+            "compact_query_he": "הבטחה מנהלית העליון דין התנגשות חוק ביטול עקב אינטרס",
+            "original_query_he": "בית המשפט העליון פסק דין 'התנגשות עם חוק' 'ביטול הבטחה מנהלית עקב אינטרס ציבורי' 'הגבלות הדוקטרינה'"
+          }
+        ],
+        "candidates": 0,
+        "global_exact": {
+          "clues_from_claims": [
+            {
+              "kind": "statute",
+              "source": "claim",
+              "law_name": "חוק או",
+              "search_terms": [
+                "חוק או"
+              ]
+            }
+          ],
+          "clues_from_question": []
+        }
+      },
+      "perplexity": {
+        "ms": 26136,
+        "dropped": 4,
+        "per_query": [
+          {
+            "ms": 4696,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+                "title": "הבטחה מינהלית לציבור",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://israeliconstitutionalism.wordpress.com/2019/12/24/%D7%94%D7%96%D7%95%D7%92-%D7%94%D7%9E%D7%95%D7%96%D7%A8-%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA-%D7%95%D7%97%D7%95%D7%96%D7%94-%D7%A8%D7%92%D7%95%D7%9C%D7%98%D7%95%D7%A8/",
+                "title": "הזוג המוזר: הבטחה מנהלית וחוזה רגולטורי בפסיקתו של בג\"ץ / שרון ידין",
+                "domain": "israeliconstitutionalism.wordpress.com",
+                "drop_reason": "class_unknown_not_admitted_for_scholarship",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://weller-law-office.com/%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%A9%D7%9C%D7%98%D7%95%D7%A0%D7%99%D7%AA/",
+                "title": "הבטחה שלטונית | הבטחה מינהלית",
+                "domain": "weller-law-office.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 3,
+            "claim_id": "C1",
+            "query_he": "מאמר אקדמי \"דוקטרינת ההבטחה המנהלית\" בישראל סקירה תאורטית \"הבטחה מנהלית\" \"עקרון ההסתמכות\" כתב עת משפטי",
+            "raw_count": 5,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4286,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID3437356_code1324879.pdf?abstractid=3265192&mirid=1",
+                "title": "On Administrative Promises, Regulatory Contracts and Other Creatures in the Natural Gas Outline",
+                "domain": "papers.ssrn.com",
+                "drop_reason": "discovery_only",
+                "classified_source_class": "discovery_only",
+                "admitted_to_candidate_pool": false
+              }
+            ],
+            "admitted": 2,
+            "claim_id": "C2",
+            "query_he": "מאמר קריטריונים להחלת דוקטרינת ההבטחה המנהלית 'הסתמכות סבירה' 'נזק' 'שינוי מעמד' ניתוח משפטי",
+            "raw_count": 3,
+            "discovery_only": 1,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 7338,
+            "http": 200,
+            "role": "scholarship",
+            "results": [
+              {
+                "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+                "title": "הבטחה מינהלית*",
+                "domain": "lawjournal.huji.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+                "title": "הבטחה מינהלית לציבור",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+                "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+                "title": "The Administrative Promise in Israeli Law",
+                "domain": "law.haifa.ac.il",
+                "classified_source_class": "academic",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C3",
+            "query_he": "מאמר סעדי דוקטרינת ההבטחה המנהלית 'פיצויים' 'שימור הבטחה' 'איזון אינטרסים ציבוריים' כתב עת משפטי",
+            "raw_count": 4,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4864,
+            "http": 200,
+            "role": "primary_statute",
+            "results": [
+              {
+                "url": "https://fs.knesset.gov.il//11/law/11_ls1_234972.PDF",
+                "title": "חוק התכנון והבניה, התשכ\"ה-1965 – סעיף 149 (התנגדויות לתכנית)",
+                "domain": "fs.knesset.gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il//11/law/11_ls1_234972.PDF",
+                "title": "חוק התכנון והבניה, התשכ\"ה-1965 – סעיף 145 (היתר בנייה)",
+                "domain": "fs.knesset.gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il//12/law/12_ls1_204000.PDF",
+                "title": "חוק חובת המכרזים, התשנ\"ב-1992 – סעיף 2 (חובת מכרז)",
+                "domain": "fs.knesset.gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il//13/law/13_ls1_212084.PDF",
+                "title": "חוק שירות המדינה (מינויים), התשי\"ט-1959 – סעיף 19 (מכרז למשרה)",
+                "domain": "fs.knesset.gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il//14/law/14_ls1_214474.PDF",
+                "title": "חוק שירות המדינה (גמלאות) [נוסח משולב], התש\"ל-1970 – סעיף 29 (זכאות לגמלה)",
+                "domain": "fs.knesset.gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 5,
+            "claim_id": "C4",
+            "query_he": "חיפוש חקיקה שעשויה להתנגש עם הבטחה מנהלית: חוקים רלוונטיים בשם 'חוק התכנון והבנייה' 'חוק המכרזים' 'חוק שירות המדינה' הוראות שעלולות למנוע שימור הבטחה מנהלית",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          },
+          {
+            "ms": 4946,
+            "http": 200,
+            "role": "regulation",
+            "results": [
+              {
+                "url": "https://www.gov.il/he/departments/legalinfo?OfficeId=2574c957-2109-4270-9586-62ca2d37857e",
+                "title": "תקנות התכנון והבנייה (בקשה להיתר, תנאיו ואגרות)",
+                "domain": "gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%91%D7%95%D7%93%D7%95%D7%AA_%D7%91%D7%A0%D7%99%D7%94)",
+                "title": "תקנות הבטיחות בעבודה (עבודות בניה)",
+                "domain": "he.wikisource.org",
+                "drop_reason": "class_unknown_not_admitted_for_regulation",
+                "classified_source_class": "unknown",
+                "admitted_to_candidate_pool": false
+              },
+              {
+                "url": "https://www.tazkirim.gov.il/s/detail/a093Y00001hhDLFQA2",
+                "title": "טיוטת תקנות התכנון והבניה (תכן הבניה) (הגנה מפני רטיבות ולחות), התשפ\"ד",
+                "domain": "tazkirim.gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://fs.knesset.gov.il/25/SecondaryLaw/25_scl_rv_2880144.docx",
+                "title": "[DOC] אתר הכנסת - Secondary Law",
+                "domain": "fs.knesset.gov.il",
+                "classified_source_class": "legislation",
+                "admitted_to_candidate_pool": true
+              },
+              {
+                "url": "https://www.gov.il/he/departments/legalinfo?OfficeId=2574c957-2109-4270-9586-62ca2d37857e",
+                "title": "מידע משפטי - Gov.il",
+                "domain": "gov.il",
+                "classified_source_class": "government_report",
+                "admitted_to_candidate_pool": true
+              }
+            ],
+            "admitted": 4,
+            "claim_id": "C4",
+            "query_he": "תקנות רלוונטיות להתנגשות עם הבטחה מנהלית 'תקנות התכנון והבנייה' 'תקנות מכרזים' הוראות תקניות שמונעות הענקת זכויות או שמסדירות הסרת הבטחות מנהליות",
+            "raw_count": 5,
+            "discovery_only": 0,
+            "followup_terms": [],
+            "followup_admitted": 0
+          }
+        ],
+        "candidates": 18,
+        "role_corrections": []
+      }
+    },
+    "candidates": [
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק התכנון והבניה, התשכ\"ה-1965 – סעיף 149 (התנגדויות לתכנית)",
+        "origin": "perplexity",
+        "snippet": "סעיף 149 קובע את זכות ההתנגדות לתוכניות ואת מסגרת ההליך, ועלול להתנגש עם הבטחה מינהלית אם מימוש ההבטחה מחייב סטייה מהליך סטטוטורי או מפגיעה בזכות להתנגד.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חיפוש חקיקה שעשויה להתנגש עם הבטחה מנהלית: חוקים רלוונטיים בשם 'חוק התכנון והבנייה' 'חוק המכרזים' 'חוק שירות המדינה' הוראות שעלולות למנוע שימור הבטחה מנהלית",
+        "source_url": "https://fs.knesset.gov.il//11/law/11_ls1_234972.PDF",
+        "source_type": "חקיקה ראשית ישראלית",
+        "candidate_id": "fa1d5351-65fa-40e3-8429-0b307ad7972d",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק חובת המכרזים, התשנ\"ב-1992 – סעיף 2 (חובת מכרז)",
+        "origin": "perplexity",
+        "snippet": "סעיף 2 קובע את חובת קיום מכרז פומבי בעסקאות מסוימות של המדינה וגופים ציבוריים. לכן הבטחה מינהלית להעניק התקשרות בלי מכרז עלולה להיתקל במניעה סטטוטורית.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חיפוש חקיקה שעשויה להתנגש עם הבטחה מנהלית: חוקים רלוונטיים בשם 'חוק התכנון והבנייה' 'חוק המכרזים' 'חוק שירות המדינה' הוראות שעלולות למנוע שימור הבטחה מנהלית",
+        "source_url": "https://fs.knesset.gov.il//12/law/12_ls1_204000.PDF",
+        "source_type": "חקיקה ראשית ישראלית",
+        "candidate_id": "c5c95e44-6809-4c04-a8dd-7e8da1aacc76",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק שירות המדינה (מינויים), התשי\"ט-1959 – סעיף 19 (מכרז למשרה)",
+        "origin": "perplexity",
+        "snippet": "סעיף 19 מעגן את עקרון המכרז במינויים לשירות המדינה. הבטחה מינהלית לקליטה או מינוי ללא מכרז עשויה להתנגש בהוראת החוק.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חיפוש חקיקה שעשויה להתנגש עם הבטחה מנהלית: חוקים רלוונטיים בשם 'חוק התכנון והבנייה' 'חוק המכרזים' 'חוק שירות המדינה' הוראות שעלולות למנוע שימור הבטחה מנהלית",
+        "source_url": "https://fs.knesset.gov.il//13/law/13_ls1_212084.PDF",
+        "source_type": "חקיקה ראשית ישראלית",
+        "candidate_id": "a9d5f429-d570-4520-a3b8-ab49d0b1fa3f",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "primary_statute",
+        "score": 0.95,
+        "title": "חוק שירות המדינה (גמלאות) [נוסח משולב], התש\"ל-1970 – סעיף 29 (זכאות לגמלה)",
+        "origin": "perplexity",
+        "snippet": "הוראות זכאות לגמלה ותנאי הזכאות נקבעים בחוק. הבטחה מינהלית המרחיבה זכאות מעבר למה שהחוק מתיר עלולה שלא להתקיים בשל מחסום חוקי.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "חיפוש חקיקה שעשויה להתנגש עם הבטחה מנהלית: חוקים רלוונטיים בשם 'חוק התכנון והבנייה' 'חוק המכרזים' 'חוק שירות המדינה' הוראות שעלולות למנוע שימור הבטחה מנהלית",
+        "source_url": "https://fs.knesset.gov.il//14/law/14_ls1_214474.PDF",
+        "source_type": "חקיקה ראשית ישראלית",
+        "candidate_id": "121e621f-a35a-4b90-8436-42144fecb457",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "statute"
+      },
+      {
+        "role": "regulation",
+        "score": 0.95,
+        "title": "תקנות התכנון והבנייה (בקשה להיתר, תנאיו ואגרות)",
+        "origin": "perplexity",
+        "snippet": "מידע משפטי על תקנות התכנון והבנייה (בקשה להיתר, תנאיו ואגרות) ותיקוניהן. רלוונטי ככל שמבקשים לבדוק האם הבטחה מנהלית ניתנת לעקיפה/שינוי במסגרת הליכי היתר ובנייה.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "gov.il",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "תקנות רלוונטיות להתנגשות עם הבטחה מנהלית 'תקנות התכנון והבנייה' 'תקנות מכרזים' הוראות תקניות שמונעות הענקת זכויות או שמסדירות הסרת הבטחות מנהליות",
+        "source_url": "https://www.gov.il/he/departments/legalinfo?OfficeId=2574c957-2109-4270-9586-62ca2d37857e",
+        "source_type": "gov.il",
+        "candidate_id": "c7bbfaa7-8fd0-4d7e-bcff-942de4d69d9a",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "regulation",
+        "score": 0.95,
+        "title": "טיוטת תקנות התכנון והבניה (תכן הבניה) (הגנה מפני רטיבות ולחות), התשפ\"ד",
+        "origin": "perplexity",
+        "snippet": "טיוטת תקנות שמטילות דרישות תכן בנייה מחייבות. עשויה להיות רלוונטית לשאלה האם ניתן להעניק הבטחה מנהלית הסותרת דרישות תקניות מחייבות בתחום הבנייה.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "tazkirim.gov.il",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "תקנות רלוונטיות להתנגשות עם הבטחה מנהלית 'תקנות התכנון והבנייה' 'תקנות מכרזים' הוראות תקניות שמונעות הענקת זכויות או שמסדירות הסרת הבטחות מנהליות",
+        "source_url": "https://www.tazkirim.gov.il/s/detail/a093Y00001hhDLFQA2",
+        "source_type": "gov.il",
+        "candidate_id": "8ffb139c-7475-4f19-b094-dbb0e99bb4b7",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "regulation",
+        "score": 0.95,
+        "title": "[DOC] אתר הכנסת - Secondary Law",
+        "origin": "perplexity",
+        "snippet": "מסמך חקיקת משנה של הכנסת בנושאי בנייה; עשוי לשמש כמקור ישיר לנוסח תקנות/תיקונים, אך נדרש לאתר את שם התקנות המדויק מתוך המסמך.",
+        "claim_id": "C4",
+        "metadata": {
+          "domain": "fs.knesset.gov.il",
+          "classified_source_class": "legislation"
+        },
+        "query_he": "תקנות רלוונטיות להתנגשות עם הבטחה מנהלית 'תקנות התכנון והבנייה' 'תקנות מכרזים' הוראות תקניות שמונעות הענקת זכויות או שמסדירות הסרת הבטחות מנהליות",
+        "source_url": "https://fs.knesset.gov.il/25/SecondaryLaw/25_scl_rv_2880144.docx",
+        "source_type": "knesset.gov.il",
+        "candidate_id": "c1c43f36-0348-4ef2-bee2-dc2344f373f7",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "regulation"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מינהלית",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי בעברית בכתב העת משפטים, עוסק בהבטחה מינהלית, יסודות הדוקטרינה, סמכות הרשות ועקרון ההסתמכות.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "lawjournal.huji.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר אקדמי \"דוקטרינת ההבטחה המנהלית\" בישראל סקירה תאורטית \"הבטחה מנהלית\" \"עקרון ההסתמכות\" כתב עת משפטי",
+        "source_url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+        "source_type": "מאמר בכתב עת משפטי (משפטים)",
+        "candidate_id": "51b322cf-f8e2-4014-8849-a602d65b90b4",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+        "origin": "perplexity",
+        "snippet": "מאמר תיאורטי-ביקורתי על התפתחות ההבטחה המינהלית, תולדות הדוקטרינה והקשר שלה להגנה על ציפיות והסתמכות.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר אקדמי \"דוקטרינת ההבטחה המנהלית\" בישראל סקירה תאורטית \"הבטחה מנהלית\" \"עקרון ההסתמכות\" כתב עת משפטי",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+        "source_type": "מאמר בכתב עת משפטי",
+        "candidate_id": "bed490f5-6875-4cb2-b688-d5be152620f7",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      },
+      {
+        "role": "scholarship",
+        "score": 0.75,
+        "title": "הבטחה מינהלית לציבור",
+        "origin": "perplexity",
+        "snippet": "מאמר אקדמי על הבטחה מינהלית לציבור, התפתחות הדין והבסיס העקרוני של ההסתמכות והציפיות במשפט המנהלי.",
+        "claim_id": "C1",
+        "metadata": {
+          "domain": "law.haifa.ac.il",
+          "classified_source_class": "academic"
+        },
+        "query_he": "מאמר אקדמי \"דוקטרינת ההבטחה המנהלית\" בישראל סקירה תאורטית \"הבטחה מנהלית\" \"עקרון ההסתמכות\" כתב עת משפטי",
+        "source_url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+        "source_type": "מאמר אקדמי",
+        "candidate_id": "fb9545ea-e0a8-4c33-8fdf-6fd64990a39b",
+        "retrieval_method": "perplexity",
+        "expected_source_type": "academic"
+      }
+    ],
+    "stage_runs": [
+      {
+        "ms": 13080,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "claim_analyzer.initial",
+        "http_status": 200
+      },
+      {
+        "ms": 26647,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "query_planner.initial"
+      },
+      {
+        "ms": 40006,
+        "ok": true,
+        "stage": "local_retrieval"
+      },
+      {
+        "ms": 26136,
+        "ok": true,
+        "stage": "perplexity_retrieval"
+      },
+      {
+        "ms": 21279,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "verifier.batch1.initial"
+      },
+      {
+        "ms": 21190,
+        "ok": true,
+        "model": "openai/gpt-5-mini",
+        "stage": "drafter.initial"
+      },
+      {
+        "ms": 96526,
+        "ok": true,
+        "model": "openai/gpt-5",
+        "stage": "drafter.placement_repair"
+      }
+    ],
+    "attachments": {
+      "count": 0,
+      "errors": [],
+      "documents": [],
+      "total_chars": 0,
+      "use_as_source": true,
+      "global_truncated": false
+    },
+    "dropped_sources": [
+      {
+        "url": "https://israeliconstitutionalism.wordpress.com/2019/12/24/%D7%94%D7%96%D7%95%D7%92-%D7%94%D7%9E%D7%95%D7%96%D7%A8-%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%9E%D7%A0%D7%94%D7%9C%D7%99%D7%AA-%D7%95%D7%97%D7%95%D7%96%D7%94-%D7%A8%D7%92%D7%95%D7%9C%D7%98%D7%95%D7%A8/",
+        "role": "scholarship",
+        "title": "הזוג המוזר: הבטחה מנהלית וחוזה רגולטורי בפסיקתו של בג\"ץ / שרון ידין",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי \"דוקטרינת ההבטחה המנהלית\" בישראל סקירה תאורטית \"הבטחה מנהלית\" \"עקרון ההסתמכות\" כתב עת משפטי",
+        "drop_reason": "class_unknown_not_admitted_for_scholarship"
+      },
+      {
+        "url": "https://weller-law-office.com/%D7%94%D7%91%D7%98%D7%97%D7%94-%D7%A9%D7%9C%D7%98%D7%95%D7%A0%D7%99%D7%AA/",
+        "role": "scholarship",
+        "title": "הבטחה שלטונית | הבטחה מינהלית",
+        "origin": "perplexity",
+        "claim_id": "C1",
+        "query_he": "מאמר אקדמי \"דוקטרינת ההבטחה המנהלית\" בישראל סקירה תאורטית \"הבטחה מנהלית\" \"עקרון ההסתמכות\" כתב עת משפטי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID3437356_code1324879.pdf?abstractid=3265192&mirid=1",
+        "role": "scholarship",
+        "title": "On Administrative Promises, Regulatory Contracts and Other Creatures in the Natural Gas Outline",
+        "origin": "perplexity",
+        "claim_id": "C2",
+        "query_he": "מאמר קריטריונים להחלת דוקטרינת ההבטחה המנהלית 'הסתמכות סבירה' 'נזק' 'שינוי מעמד' ניתוח משפטי",
+        "drop_reason": "discovery_only"
+      },
+      {
+        "url": "https://he.wikisource.org/wiki/%D7%AA%D7%A7%D7%A0%D7%95%D7%AA_%D7%94%D7%91%D7%98%D7%99%D7%97%D7%95%D7%AA_%D7%91%D7%A2%D7%91%D7%95%D7%93%D7%94_(%D7%A2%D7%91%D7%95%D7%93%D7%95%D7%AA_%D7%91%D7%A0%D7%99%D7%94)",
+        "role": "regulation",
+        "title": "תקנות הבטיחות בעבודה (עבודות בניה)",
+        "origin": "perplexity",
+        "claim_id": "C4",
+        "query_he": "תקנות רלוונטיות להתנגשות עם הבטחה מנהלית 'תקנות התכנון והבנייה' 'תקנות מכרזים' הוראות תקניות שמונעות הענקת זכויות או שמסדירות הסרת הבטחות מנהליות",
+        "drop_reason": "class_unknown_not_admitted_for_regulation"
+      }
+    ]
+  }
+}
