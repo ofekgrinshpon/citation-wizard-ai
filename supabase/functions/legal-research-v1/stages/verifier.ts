@@ -639,5 +639,16 @@ export async function runVerifier(
     stage_runs,
     errors,
     batches: batchesMeta,
+    parallel: true,
+    concurrency_limit: VERIFIER_BATCH_CONCURRENCY,
+    batch_count: batches.length,
+    batch_ms: batch_ms_arr,
+    total_wall_ms,
+    total_sum_ms,
+    escalated_batches,
+    merge_order_preserved,
+    rate_limit_count,
+    retry_count,
+    fallback_to_sequential,
   };
 }
