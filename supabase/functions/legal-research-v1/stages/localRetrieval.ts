@@ -467,9 +467,10 @@ export async function runLocalRetrieval(
         RPC_TIMEOUT_MS,
       );
 
-      const exactT0 = Date.now();
+      const parallelT0 = Date.now();
       const [exactRes, embedRes, textDiag] = await Promise.all([exactP, embedP, textP]);
-      const exactMs = Date.now() - exactT0;
+      const parallelBatchMs = Date.now() - parallelT0;
+      const exactMs = exactRes.ms;
 
       let vectorDiag: {
         status: "ok" | "empty" | "error" | "timeout" | "no_embedding";
