@@ -2018,6 +2018,16 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
         if (res.status === 401) { setError("פג תוקף ההתחברות. רעננו את הדף והתחברו מחדש."); return; }
         if (res.status === 429) { setError("יותר מדי בקשות. נסו שוב בעוד דקה."); return; }
         if (res.status === 402) { setError("נגמרו הקרדיטים. יש להוסיף קרדיטים בהגדרות."); return; }
+        if (res.status === 503) {
+          let msg = "השירות בשדרוג. חוזר בקרוב.";
+          try {
+            const j = await res.clone().json();
+            if (j?.message) msg = j.message;
+          } catch { /* ignore */ }
+          setError(msg);
+          toast.info(msg);
+          return;
+        }
         throw new Error(`HTTP ${res.status}`);
       }
 
