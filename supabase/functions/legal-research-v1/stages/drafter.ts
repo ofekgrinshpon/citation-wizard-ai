@@ -15,7 +15,6 @@ import {
   MarkerValidation,
   MODEL_FULL,
   MODEL_MINI,
-  Rule37Report,
   StageRun,
   UsableCandidate,
   UsedSource,
@@ -529,47 +528,6 @@ function validatePlacement(answer: string): import("../lib/types.ts").PlacementR
   };
 }
 
-function buildPlacementRepairUserMessage(
-  originalUserMsg: string,
-  currentAnswer: string,
-  used: Array<{ ref: string; number: number; candidate_id: string }>,
-  placement: import("../lib/types.ts").PlacementReport,
-): string {
-  const lines: string[] = [];
-  lines.push(originalUserMsg);
-  lines.push("");
-  lines.push("=== מצב תיקון מיקום הערות שוליים בלבד ===");
-  lines.push("התשובה הקודמת שלך:");
-  lines.push(currentAnswer);
-  lines.push("");
-  lines.push("בעיות מיקום שזוהו:");
-  if (placement.cluster_count > 0) {
-    lines.push(`- ${placement.cluster_count} צמדי סימוני־על סמוכים על אותה מילה. דוגמאות:`);
-    for (const s of placement.cluster_samples) lines.push(`  • ${s}`);
-  }
-  if (placement.end_paragraph_dump_count > 0) {
-    lines.push(`- ${placement.end_paragraph_dump_count} פסקאות מסתיימות בריכוז הערות. דוגמאות:`);
-    for (const s of placement.end_dump_samples) lines.push(`  • ${s}`);
-  }
-  if (placement.out_of_order_count > 0) {
-    lines.push(`- ${placement.out_of_order_count} הערות שאינן בסדר כרונולוגי לפי הופעה ראשונה.`);
-  }
-  lines.push("");
-  lines.push("הוראות תיקון מחייבות:");
-  lines.push("- מותר להזיז סימוני־על למיקום מתאים יותר במשפט/בפסקה.");
-  lines.push("- מותר לפזר סימונים סמוכים על פני המשפטים הרלוונטיים באותה פסקה.");
-  lines.push("- מותר לפצל משפט בודד לשני משפטים כשהדבר הכרחי לפיזור הסימונים.");
-  lines.push("- אסור להסיר סימוני־על. אסור להסיר מקורות. אסור לשנות את רשימת used_sources, את מיפוי ref→candidate_id, או את המספרים שהוקצו למקורות.");
-  lines.push("- אסור לשנות את הניסוח המשפטי או להוסיף קביעות חדשות. השינוי היחיד המותר הוא הזזת סימונים ופיצול משפטים נחוץ.");
-  lines.push("- אסור להוסיף מקורות חדשים.");
-  lines.push("- שמור על אותו מספר סימונים בדיוק, ועל אותם מספרי הערות כפי שמופיעים כעת.");
-  lines.push("");
-  lines.push("מספרי הערות נוכחיים (אסור לשנותם):");
-  for (const u of used) lines.push(`  - ${u.ref} → ${u.number}`);
-  lines.push("");
-  lines.push("החזר את התשובה המתוקנת דרך emit_draft עם אותו used_sources בדיוק.");
-  return lines.join("\n");
-}
 
 
 /**
@@ -645,264 +603,6 @@ function deterministicRepair(
 }
 
 
-// ─── Phase B: Rule 37 short-forms (post-pass) ──────────────────────────────
-// Pure post-pass. Never mutates `used_sources` or invents sources. If anything
-// looks off, returns null and the caller ships the pre-Rule-37 answer.
-
-const SHEM_ADJACENT_MAX_GAP = 240; // chars between same-source occurrences for שם
-
-function computeShortName(title: string): { shortName: string; fallback: boolean } {
-  const raw = (title || "").trim();
-  if (!raw) return { shortName: "(ללא שם)", fallback: true };
-  // Take substring before the first separator (comma, open-paren, dash).
-  const cut = raw.search(/[,(\(\[\u2013\u2014]| - /u);
-  let s = cut > 0 ? raw.slice(0, cut).trim() : raw;
-  if (s.length > 60) s = s.slice(0, 60).trim();
-  if (s.length < 4) {
-    return { shortName: raw.slice(0, 40).trim() || "(ללא שם)", fallback: true };
-  }
-  return { shortName: s, fallback: false };
-}
-
-interface Rule37Outcome {
-  newAnswer: string;
-  extraFootnotes: Footnote[];
-  report: Rule37Report;
-}
-
-function applyRule37(
-  answer: string,
-  used: Array<{ ref: string; number: number; candidate_id: string }>,
-  inputByRef: Map<string, DrafterInputSource>,
-  enabled: boolean,
-): Rule37Outcome {
-  const baseReport: Rule37Report = {
-    enabled,
-    applied: false,
-    discarded_reason: null,
-    validation_failed: null,
-    total_repeats_rewritten: 0,
-    shem_count: 0,
-    supra_count: 0,
-    shortname_fallback_count: 0,
-    pre_footnote_count: used.length,
-    post_footnote_count: used.length,
-    wrong_back_references: 0,
-    samples: [],
-  };
-  if (!enabled) {
-    return { newAnswer: answer, extraFootnotes: [], report: baseReport };
-  }
-
-  // Walk markers: collect {pos, oldNum}. Single superscript char == one marker.
-  const numToUsed = new Map<number, { ref: string; candidate_id: string }>();
-  for (const u of used) numToUsed.set(u.number, { ref: u.ref, candidate_id: u.candidate_id });
-
-  interface Occ { pos: number; oldNum: number; candId: string }
-  const occs: Occ[] = [];
-  for (let i = 0; i < answer.length; i++) {
-    const d = SUP_TO_DIGIT[answer[i]];
-    if (d === undefined) continue;
-    const n = Number(d);
-    if (n < 1) continue;
-    const u = numToUsed.get(n);
-    if (!u) {
-      // Orphan marker — caller would never reach here (marker_validation.ok), but be safe.
-      return {
-        newAnswer: answer,
-        extraFootnotes: [],
-        report: { ...baseReport, discarded_reason: "orphan_marker" },
-      };
-    }
-    occs.push({ pos: i, oldNum: n, candId: u.candidate_id });
-  }
-  if (occs.length === 0) {
-    return { newAnswer: answer, extraFootnotes: [], report: baseReport };
-  }
-
-  // First-citation original number per candidate.
-  const firstNumByCand = new Map<string, number>();
-  for (const o of occs) {
-    if (!firstNumByCand.has(o.candId)) firstNumByCand.set(o.candId, o.oldNum);
-  }
-
-  // Per-candidate cached shortName.
-  const shortNameCache = new Map<string, { shortName: string; fallback: boolean }>();
-  for (const u of used) {
-    const src = inputByRef.get(u.ref);
-    const title = src?.title ?? "";
-    shortNameCache.set(u.candidate_id, computeShortName(title));
-  }
-
-  // Decide per occurrence: first → keep; otherwise → שם or supra.
-  // New footnote numbers continue from max(used.number) + 1.
-  let nextNum = used.reduce((m, u) => Math.max(m, u.number), 0) + 1;
-  const seenCand = new Set<string>();
-  const extras: Footnote[] = [];
-  const rewrites: Array<{ pos: number; newNum: number }> = [];
-
-  let lastAnyOcc: Occ | null = null;
-  let lastSameOccByCand = new Map<string, Occ>();
-
-  for (const occ of occs) {
-    if (!seenCand.has(occ.candId)) {
-      // First occurrence — keep marker as-is.
-      seenCand.add(occ.candId);
-      lastAnyOcc = occ;
-      lastSameOccByCand.set(occ.candId, occ);
-      continue;
-    }
-    // Repeat.
-    const prevSame = lastSameOccByCand.get(occ.candId)!;
-    const adjacent = lastAnyOcc !== null && lastAnyOcc.candId === occ.candId;
-    const between = answer.slice(prevSame.pos + 1, occ.pos);
-    const hasParaBreak = /\n\s*\n/.test(between);
-    const gapOk = between.length <= SHEM_ADJACENT_MAX_GAP && !hasParaBreak;
-    const useShem = adjacent && gapOk;
-
-    const src = inputByRef.get(numToUsed.get(occ.oldNum)!.ref);
-    const url = src?.url ?? null;
-    const source_type = src?.source_type;
-    const firstNum = firstNumByCand.get(occ.candId)!;
-    const sn = shortNameCache.get(occ.candId)!;
-    if (sn.fallback) baseReport.shortname_fallback_count++;
-
-    let title: string;
-    let kind: "shem" | "supra";
-    if (useShem) {
-      title = "שם.";
-      kind = "shem";
-      baseReport.shem_count++;
-    } else {
-      title = `${sn.shortName}, לעיל ה"ש ${firstNum}.`;
-      kind = "supra";
-      baseReport.supra_count++;
-    }
-
-    const newNum = nextNum++;
-    extras.push({
-      number: newNum,
-      title,
-      url,
-      source_type,
-      is_short_form: true,
-      short_form_of: firstNum,
-      candidate_id: occ.candId,
-      short_form_kind: kind,
-    });
-    rewrites.push({ pos: occ.pos, newNum });
-    if (baseReport.samples.length < 5) {
-      baseReport.samples.push({ from_num: occ.oldNum, to_num: newNum, kind, short_text: title });
-    }
-    baseReport.total_repeats_rewritten++;
-
-    lastAnyOcc = occ;
-    lastSameOccByCand.set(occ.candId, occ);
-  }
-
-  if (rewrites.length === 0) {
-    // Nothing to do — no repeats. Treat as applied=true but no change.
-    baseReport.applied = true;
-    return { newAnswer: answer, extraFootnotes: [], report: baseReport };
-  }
-
-  // Rewrite right-to-left to keep positions stable. Each rewrite replaces ONE
-  // char with toSuperscript(newNum) which may be multi-char (e.g. ¹⁰).
-  let out = answer;
-  for (let i = rewrites.length - 1; i >= 0; i--) {
-    const { pos, newNum } = rewrites[i];
-    out = out.slice(0, pos) + toSuperscript(newNum) + out.slice(pos + 1);
-  }
-
-  baseReport.post_footnote_count = used.length + extras.length;
-  baseReport.applied = true;
-  return { newAnswer: out, extraFootnotes: extras, report: baseReport };
-}
-
-// Back-reference validator. Returns { ok, reason, wrong_back_references }.
-function validateRule37(
-  newAnswer: string,
-  used: Array<{ ref: string; number: number; candidate_id: string }>,
-  extras: Footnote[],
-  inputByRef: Map<string, DrafterInputSource>,
-): { ok: boolean; reason: string | null; wrong_back_references: number } {
-  // Build full footnote map: number → { candidate_id, is_short_form }.
-  const fullByNum = new Map<number, string>(); // num → cand_id (full citations)
-  const refToCand = new Map<string, string>();
-  for (const u of used) {
-    fullByNum.set(u.number, u.candidate_id);
-    refToCand.set(u.ref, u.candidate_id);
-  }
-  const allByNum = new Map<number, { candId: string; isShort: boolean }>();
-  for (const u of used) allByNum.set(u.number, { candId: u.candidate_id, isShort: false });
-  for (const f of extras) {
-    if (!f.candidate_id) return { ok: false, reason: "extra_missing_candidate_id", wrong_back_references: 0 };
-    allByNum.set(f.number, { candId: f.candidate_id, isShort: true });
-  }
-  const usedCandIds = new Set(used.map((u) => u.candidate_id));
-
-  // Walk newAnswer markers in order; record (pos, num, candId).
-  // Phase B.1: align tokenizer with extractMarkers / runMarkerValidation /
-  // applyRule37 — one superscript char == one marker. Adjacent superscripts
-  // (¹²³, ⁴⁰⁴¹, ¹⁰¹¹) are interpreted as separate single-digit markers,
-  // NOT as a concatenated multi-digit footnote number. This eliminates the
-  // false `marker_<concat>_has_no_footnote` failures we saw in Phase B.
-  interface M { pos: number; num: number; candId: string }
-  const markers: M[] = [];
-  for (let i = 0; i < newAnswer.length; i++) {
-    const d = SUP_TO_DIGIT[newAnswer[i]];
-    if (d === undefined) continue;
-    const n = Number(d);
-    if (n < 1) continue;
-    const entry = allByNum.get(n);
-    if (!entry) return { ok: false, reason: `marker_${n}_has_no_footnote`, wrong_back_references: 0 };
-    markers.push({ pos: i, num: n, candId: entry.candId });
-  }
-
-  // 1. שם footnotes: corresponding marker's immediately-preceding marker must
-  //    point to a footnote with the same candidate_id.
-  // 2. Supra footnotes: parse N from "לעיל ה"ש N"; require N < this.number;
-  //    full citation (not short); same cand_id; cand in used.
-  let wrong = 0;
-  const supraRe = /לעיל ה"ש (\d+)/;
-  for (const f of extras) {
-    if (f.short_form_kind === "shem") {
-      // Find marker(s) for this footnote number.
-      const occIdx = markers.findIndex((m) => m.num === f.number);
-      if (occIdx < 0) return { ok: false, reason: `shem_footnote_${f.number}_no_marker`, wrong_back_references: wrong };
-      if (occIdx === 0) { wrong++; return { ok: false, reason: `shem_${f.number}_is_first_marker`, wrong_back_references: wrong }; }
-      const prev = markers[occIdx - 1];
-      if (prev.candId !== f.candidate_id) {
-        wrong++;
-        return { ok: false, reason: `shem_${f.number}_prev_cand_mismatch`, wrong_back_references: wrong };
-      }
-    } else if (f.short_form_kind === "supra") {
-      const m = supraRe.exec(f.title);
-      if (!m) { wrong++; return { ok: false, reason: `supra_${f.number}_no_n`, wrong_back_references: wrong }; }
-      const N = Number(m[1]);
-      if (!Number.isFinite(N) || N >= f.number) {
-        wrong++;
-        return { ok: false, reason: `supra_${f.number}_bad_n_${N}`, wrong_back_references: wrong };
-      }
-      const target = fullByNum.get(N);
-      if (!target) { wrong++; return { ok: false, reason: `supra_${f.number}_target_${N}_not_full`, wrong_back_references: wrong }; }
-      if (target !== f.candidate_id) {
-        wrong++;
-        return { ok: false, reason: `supra_${f.number}_cand_mismatch`, wrong_back_references: wrong };
-      }
-      if (!usedCandIds.has(f.candidate_id)) {
-        wrong++;
-        return { ok: false, reason: `supra_${f.number}_cand_not_used`, wrong_back_references: wrong };
-      }
-    }
-  }
-
-  // 3. No internal id leak in newAnswer.
-  if (detectInternalIdLeak(newAnswer).leak) {
-    return { ok: false, reason: "internal_id_leak_after_rule37", wrong_back_references: wrong };
-  }
-  return { ok: true, reason: null, wrong_back_references: wrong };
-}
 
 export interface DrafterResult {
   ok: boolean;
@@ -916,7 +616,6 @@ export interface DrafterResult {
   used_sources: UsedSource[];
   footnotes: Footnote[];
   marker_validation: MarkerValidation;
-  rule37?: Rule37Report;
   marker_format: MarkerFormat;
   atomic?: AtomicReport;
   omitted_candidate_ids: string[];
@@ -933,7 +632,6 @@ export async function runDrafter(
   opts?: {
     userDocs?: UserDocument[];
     useAsSource?: boolean;
-    useRule37?: boolean;
     atomicMode?: AtomicMode;
   },
 ): Promise<DrafterResult> {
@@ -1085,56 +783,12 @@ export async function runDrafter(
     }
   }
 
-  // ─── Phase A: placement discipline ──────────────────────────────────────
+  // ─── Phase D: placement telemetry (read-only, no repair, no LLM call) ───
+  // We record placement metrics for observability only. Placement is never
+  // gated, never blocked, never rewritten. Aesthetics-only repairs were
+  // removed because they cost ~136s on gpt-5 without affecting correctness.
   if (parsed.ok && marker.ok) {
-    const placement = validatePlacement(answer);
-    marker.placement = placement;
-    if (!placement.ok) {
-      const placementRepairMsg = buildPlacementRepairUserMessage(userMsg, answer, used, placement);
-      const tp = Date.now();
-      const respP = await callOpenAIJsonTool<unknown>({
-        model: MODEL_FULL,
-        system: SYSTEM_PROMPT,
-        user: placementRepairMsg,
-        tool,
-      });
-      stage_runs.push({
-        stage: "drafter.placement_repair",
-        model: MODEL_FULL,
-        ms: Date.now() - tp,
-        ok: !!respP.data,
-      });
-      const parsedP = validateDraftShape(respP.data, inputSources);
-      let accepted = false;
-      if (parsedP.ok) {
-        const oldKey = used.map((u) => `${u.ref}|${u.number}|${u.candidate_id}`).sort().join(",");
-        const newKey = parsedP.used_sources.map((u) => `${u.ref}|${u.number}|${u.candidate_id}`).sort().join(",");
-        if (oldKey === newKey) {
-          const mP = runMarkerValidation(parsedP.answer_markdown, parsedP.used_sources);
-          if (mP.ok && !mP.internal_id_leak) {
-            const placementP = validatePlacement(parsedP.answer_markdown);
-            const better =
-              placementP.cluster_count <= placement.cluster_count &&
-              placementP.end_paragraph_dump_count <= placement.end_paragraph_dump_count &&
-              placementP.out_of_order_count <= placement.out_of_order_count &&
-              (placementP.cluster_count < placement.cluster_count ||
-                placementP.end_paragraph_dump_count < placement.end_paragraph_dump_count ||
-                placementP.out_of_order_count < placement.out_of_order_count);
-            if (better) {
-              answer = parsedP.answer_markdown;
-              used = parsedP.used_sources;
-              marker = {
-                ...mP,
-                repaired: marker.repaired,
-                placement: { ...placementP, repaired: true },
-              };
-              accepted = true;
-            }
-          }
-        }
-      }
-      if (!accepted) marker.placement = { ...placement, repair_failed: true };
-    }
+    marker.placement = validatePlacement(answer);
   }
 
   // Build UsedSource + Footnote outputs from inputSources × used.
@@ -1170,48 +824,20 @@ export async function runDrafter(
 
   const ok = parsed.ok && marker.ok;
 
-  // ─── Phase B: Rule 37 short-form post-pass (gated) ──────────────────────
-  // Pure post-pass on the already-validated answer. Never touches used_sources.
-  // On any guard/validation failure, ship the pre-Rule-37 answer + footnotes.
-  let finalAnswer = answer;
-  let finalFootnotes = footnotes;
-  let rule37Report: Rule37Report | undefined;
-  if (ok) {
-    const envOn = (Deno.env.get("LEGAL_RESEARCH_V1_RULE37") ?? "off").toLowerCase() === "on";
-    const enabled = opts?.useRule37 === true || (opts?.useRule37 !== false && envOn);
-    const inputByRef = new Map(inputSources.map((s) => [s.ref, s]));
-    const outcome = applyRule37(answer, used, inputByRef, enabled);
-    rule37Report = outcome.report;
-    if (enabled && outcome.report.applied && outcome.extraFootnotes.length > 0) {
-      const v = validateRule37(outcome.newAnswer, used, outcome.extraFootnotes, inputByRef);
-      rule37Report.wrong_back_references = v.wrong_back_references;
-      if (!v.ok) {
-        rule37Report.applied = false;
-        rule37Report.validation_failed = v.reason;
-      } else {
-        finalAnswer = outcome.newAnswer;
-        finalFootnotes = [...footnotes, ...outcome.extraFootnotes].sort((a, b) => a.number - b.number);
-      }
-    }
-  }
-
-  // ─── Phase C.1: Atomic marker normalization (post-Rule-37) ─────────────
-  // Three modes:
+  // ─── Phase D: Atomic marker validation (telemetry-only) ─────────────────
+  // Two modes:
   //   off      — pipeline unchanged, ships superscripts (default).
   //   validate — normalize + validate in-memory, ship superscripts.
-  //   emit     — ship atomic [[fn:N]] tokens; on any failure, fall back to
-  //              superscript output with marker_format = legacy_superscript_fallback.
-  let marker_format: MarkerFormat = "legacy_superscript";
+  // The "emit" mode was removed in Phase D — atomic tokens never reach users.
+  const finalAnswer = answer;
+  const finalFootnotes = footnotes;
+  const marker_format: MarkerFormat = "legacy_superscript";
   let atomicReport: AtomicReport | undefined;
-  const envAtomic = (Deno.env.get("LEGAL_RESEARCH_V1_ATOMIC_MARKERS") ?? "off").toLowerCase();
-  const envMode: AtomicMode =
-    envAtomic === "emit" ? "emit" : envAtomic === "validate" ? "validate" : "off";
-  // opts.atomicMode is set by index.ts ONLY for service-role/smoke requests,
-  // so prod users can never trigger atomic mode via header. Env value is the
-  // default for organic traffic.
+  const envAtomic = (Deno.env.get("LEGAL_RESEARCH_V1_ATOMIC_MARKERS") ?? "validate").toLowerCase();
+  const envMode: AtomicMode = envAtomic === "validate" ? "validate" : "off";
   const atomicMode: AtomicMode = opts?.atomicMode ?? envMode;
 
-  if (ok && atomicMode !== "off") {
+  if (ok && atomicMode === "validate") {
     const usedForAtomic = finalFootnotes.map((f) => ({ number: f.number }));
     const supCount = extractMarkers(finalAnswer).length;
     const norm = normalizeToAtomic(finalAnswer, usedForAtomic);
@@ -1223,7 +849,6 @@ export async function runDrafter(
       atomicCount = extractAtomicMarkers(norm.atomic).length;
       byteEqual = atomicCount === supCount;
     }
-    const allOk = norm.ok && validation !== null && validation.ok && byteEqual;
     atomicReport = {
       mode: atomicMode,
       normalize_ok: norm.ok,
@@ -1233,19 +858,6 @@ export async function runDrafter(
       superscript_marker_count: supCount,
       atomic_marker_count: atomicCount,
     };
-    if (atomicMode === "emit") {
-      if (allOk) {
-        finalAnswer = norm.atomic;
-        marker_format = "atomic";
-      } else {
-        marker_format = "legacy_superscript_fallback";
-        atomicReport.emit_fallback_reason = !norm.ok
-          ? `normalize_failed:${norm.reason ?? "unknown"}`
-          : !byteEqual
-          ? "marker_count_mismatch"
-          : `validation_failed:${validation?.error ?? "unknown"}`;
-      }
-    }
   }
 
   return {
@@ -1260,7 +872,6 @@ export async function runDrafter(
     used_sources,
     footnotes: finalFootnotes,
     marker_validation: marker,
-    rule37: rule37Report,
     marker_format,
     atomic: atomicReport,
     omitted_candidate_ids,

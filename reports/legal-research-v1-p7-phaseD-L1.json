@@ -1,0 +1,109 @@
+{
+  "generated_at": "2026-05-26T07:34:53.937Z",
+  "fixture": {
+    "id": "L1",
+    "question": "מהם התנאים למתן צו מניעה זמני?"
+  },
+  "qa_log_id": "9005344f-fa8b-456f-be32-324dacb227ad",
+  "run_id": "d8b32964-d2aa-423e-859f-5ca603dec68f",
+  "row_summary": {
+    "fixture_id": "L1",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 4,
+    "footnote_count": 4,
+    "footnote_eq_used": true,
+    "used_sources_subset_of_usable": true,
+    "no_raw_atomic_tokens": true,
+    "no_candidate_id_leak": true,
+    "atomic_mode": "validate",
+    "atomic_normalize_ok": true,
+    "atomic_validation_ok": true,
+    "atomic_used_sources_byte_equal": true,
+    "placement_telemetry": {
+      "ok": false,
+      "cluster_count": 12,
+      "out_of_order_count": 0,
+      "end_paragraph_dump_count": 1
+    },
+    "drafter_ms": 24662,
+    "total_ms": 118897,
+    "baseline_drafter_ms": null,
+    "baseline_total_ms": null,
+    "drafter_ms_delta": null,
+    "total_ms_delta": null,
+    "source_set_equals_baseline": false,
+    "source_set_added": [
+      "7c3038b1-6cdb-40f7-9f2f-0a88e55b0675",
+      "9a88a74b-05ac-4fde-85da-927e43950efd",
+      "3c59a4e7-28c5-4091-9836-0a15a451a4b4",
+      "76b5039a-91be-4a31-8c49-e63cc4539abb"
+    ],
+    "source_set_removed": []
+  },
+  "atomic": {
+    "mode": "validate",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 24,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 24
+  },
+  "placement": {
+    "ok": false,
+    "cluster_count": 12,
+    "cluster_samples": [
+      "ce/public interest).¹²³\n\n1. האם נדרש \"סיכוי",
+      "ץ זכות בעילת התביעה.¹²³ משמעות זו אינה דריש",
+      " אם להעניק סעד זמני.¹³\n\n2. האם נדרש נזק בל",
+      "ם תומך במתן צו זמני.¹³ בהתאם לכך, הצגת פגי",
+      " ובשקלול טעם הציבור.¹³ השקלול הזה מביא בחש"
+    ],
+    "end_dump_samples": [
+      "מענה כללי\nבתחום הסעדים הזמניים בספרות המשפטית הנהוגה בישראל מקובל לנסח את מבחן מתן צו מניעה זמני כמשולש עקרונות: (1) **חוזק הטענה/סיכויי ההליך** (prima facie case), (2) **נזק בלתי הפיך או אי־אפשרות פי"
+    ],
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 1,
+    "superscript_parens_count": 0
+  },
+  "answer_preview": "מענה כללי\nבתחום הסעדים הזמניים בספרות המשפטית הנהוגה בישראל מקובל לנסח את מבחן מתן צו מניעה זמני כמשולש עקרונות: (1) **חוזק הטענה/סיכויי ההליך** (prima facie case), (2) **נזק בלתי הפיך או אי־אפשרות פיצוי כספי** (irreparable harm), ו‑(3) **איזון נוחות/טעם הציבור** (balance of convenience/public interest).¹²³\n\n1. האם נדרש \"סיכוי סביר\" (prima facie case)?\nהספרות הדנה בסעדים זמניים מדגישה כי יש לבחון את **חוזק הטענה** של העותר בקבלה ראשונית: לא די בטענה תאורטית בלבד, אלא יש להראות עילת תביעה שיש לה סיכוי ממשי להצלחתה בפסק־דין — כלומר בחינת היתכנות סבירה של ההסתברות לפרץ זכות בעילת התביעה.¹²³ משמעות זו אינה דרישה להוכחה מוחלטת בשלב הזה, אלא הערכה ראשונית של סיכויי ההליך כמרכיב מכריע בהחלטה אם להעניק סעד זמני.¹³\n\n2. האם נדרש נזק בלתי הפיך (irreparable harm)?\nהמקורות מייחסים חשיבות להוכחת **נזק ש",
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il",
+      "title": "דורון קפלן, \"המבחנים למתן צו מניעה זמני\"",
+      "number": 1,
+      "source_type": "מאמר משפטי / כתב עת משפטי"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il",
+      "title": "אליהו וינרוט, \"צווי מניעה זמניים\"",
+      "number": 2,
+      "source_type": "מאמר משפטי / כתב עת משפטי"
+    },
+    {
+      "url": "https://law.huji.ac.il",
+      "title": "רות גביזון, \"סעד זמני: עילות, שיקולים ואיזונים\"",
+      "number": 3,
+      "source_type": "מאמר משפטי / ספרות משפטית"
+    },
+    {
+      "url": "https://www.nevo.co.il",
+      "title": "יגאל מרזל, \"סעדים זמניים\"",
+      "number": 4,
+      "source_type": "ספר / ספרות משפטית"
+    }
+  ]
+}

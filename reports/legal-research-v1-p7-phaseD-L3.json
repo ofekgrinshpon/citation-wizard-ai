@@ -1,0 +1,109 @@
+{
+  "generated_at": "2026-05-26T07:35:31.115Z",
+  "fixture": {
+    "id": "L3",
+    "question": "מתי בית המשפט יפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים תרופות?"
+  },
+  "qa_log_id": "7c4e2999-a75b-49a2-9231-4373a82fe54f",
+  "run_id": "d29139be-c71a-4866-8b83-5fa09eaf67b1",
+  "row_summary": {
+    "fixture_id": "L3",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 5,
+    "footnote_count": 5,
+    "footnote_eq_used": true,
+    "used_sources_subset_of_usable": true,
+    "no_raw_atomic_tokens": true,
+    "no_candidate_id_leak": true,
+    "atomic_mode": "validate",
+    "atomic_normalize_ok": true,
+    "atomic_validation_ok": true,
+    "atomic_used_sources_byte_equal": true,
+    "placement_telemetry": {
+      "ok": true,
+      "cluster_count": 0,
+      "out_of_order_count": 0,
+      "end_paragraph_dump_count": 0
+    },
+    "drafter_ms": 19827,
+    "total_ms": 154804,
+    "baseline_drafter_ms": null,
+    "baseline_total_ms": null,
+    "drafter_ms_delta": null,
+    "total_ms_delta": null,
+    "source_set_equals_baseline": false,
+    "source_set_added": [
+      "2fba14ad-d229-4a5c-923c-faa3acda5ab0",
+      "7b2445ce-bdae-4210-995c-e8a0d2db308b",
+      "707c53ab-f907-4f3e-8df5-993593c9ff7d",
+      "496b656c-8a6d-4d0a-8236-19ea5e6d83a9",
+      "cdf127fd-bb23-4b37-a56e-19aa3c6c3360"
+    ],
+    "source_set_removed": []
+  },
+  "atomic": {
+    "mode": "validate",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 23,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 23
+  },
+  "placement": {
+    "ok": true,
+    "cluster_count": 0,
+    "cluster_samples": [],
+    "end_dump_samples": [],
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 0,
+    "superscript_parens_count": 0
+  },
+  "answer_preview": "הקדמה\nבעניינים של **פיצוי מוסכם** על פי חוק החוזים (תרופות בשל הפרת חוזה), החוק מיטיב לייצב את כוחם של הצדדים לקבוע מראש את שיעור הפיצויים, אך גם מאפשר לבית המשפט להתערב ולהפחית את הסכומים כאשר הם נקבעו ללא יחס סביר לנזק שניתן היה לראותו מראש.¹\n\n1. יסוד החוק וסמכות ההפחתה (מבחן הסעיף)\nסעיף 15 קובע באופן מפורש כי כאשר הצדדים הסכימו מראש על שיעור פיצויים, יהיו הפיצויים כמוסכם וללא הוכחת נזק; לעומת זאת, **בית המשפט רשאי להפחיתם** אם מצא כי הפיצויים נקבעו ללא כל יחס סביר לנזק שניתן היה לראותו מראש.¹\nמכאן שיסוד סמכות בית המשפט הוא מבחן ה־**\"יחס סביר לנזק שניתן היה לראותו מראש\"** — מבחן שעומד בלב הסמכות להפחית את הפיצוי המוסכם ונותן לבית המשפט מרחב ביקורתי לבחון את התאמת הסכום לנזק הסביר בעת כריתת החוזה.¹\n\n2. שיקולים ועקרונות המופעלים בבחינת האם הפיצוי מהווה קנס או מופרז\nבית המשפט מפעיל כלים דוק",
+  "footnotes": [
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%94%D7%97%D7%95%D7%96%D7%99%D7%9D_(%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA_%D7%91%D7%A9%D7%9C_%D7%94%D7%A4%D7%A8%D7%AA_%D7%97%D7%95%D7%96%D7%94)",
+      "title": "חוק החוזים (תרופות בשל הפרת חוזה)",
+      "number": 1,
+      "source_type": "israeli_law"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F16%2F080%2F102%2Fw03&fileName=16102080.W03&type=2",
+      "title": "תניית פיצוי מוסכם היא מסוג החיובים שהצדדים קובעים מראש...",
+      "number": 2,
+      "source_type": "פסק דין / בית המשפט העליון"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/m1.pdf",
+      "title": "פיצוי מוסכם – סוגיות והיבטים",
+      "number": 3,
+      "source_type": "מאמר אקדמי (PDF, אוניברסיטת חיפה)"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_word/law14/w66.pdf",
+      "title": "דיני חוזים – פיצויים מוסכמים: היבטים עיוניים ופסיקתיים",
+      "number": 4,
+      "source_type": "ספר/פרק משפטי"
+    },
+    {
+      "url": "https://www.nevo.co.il/law_html/law35/301_123.htm",
+      "title": "פיצויים מוסכמים בחוזים – ניתוח סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה)",
+      "number": 5,
+      "source_type": "מאמר אקדמי / ספרות משפטית"
+    }
+  ]
+}

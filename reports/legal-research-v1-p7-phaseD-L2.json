@@ -1,0 +1,123 @@
+{
+  "generated_at": "2026-05-26T07:34:58.146Z",
+  "fixture": {
+    "id": "L2",
+    "question": "מהי דוקטרינת ההבטחה המנהלית?"
+  },
+  "qa_log_id": "6ce4c720-14e2-4eec-8951-11a5a14fa78d",
+  "run_id": "fde443bb-92ab-4678-a8c1-03c65f37e22e",
+  "row_summary": {
+    "fixture_id": "L2",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 6,
+    "footnote_count": 6,
+    "footnote_eq_used": true,
+    "used_sources_subset_of_usable": true,
+    "no_raw_atomic_tokens": true,
+    "no_candidate_id_leak": true,
+    "atomic_mode": "validate",
+    "atomic_normalize_ok": true,
+    "atomic_validation_ok": true,
+    "atomic_used_sources_byte_equal": true,
+    "placement_telemetry": {
+      "ok": false,
+      "cluster_count": 17,
+      "out_of_order_count": 0,
+      "end_paragraph_dump_count": 0
+    },
+    "drafter_ms": 24673,
+    "total_ms": 120026,
+    "baseline_drafter_ms": null,
+    "baseline_total_ms": null,
+    "drafter_ms_delta": null,
+    "total_ms_delta": null,
+    "source_set_equals_baseline": false,
+    "source_set_added": [
+      "ac946ce1-73c8-4557-9e55-723c7b997a2b",
+      "3bce43f4-38ad-45ee-bcba-919a478fb8f4",
+      "08dce689-0079-4101-8273-3b23f417a8de",
+      "973a8036-39b4-4c1c-a8c7-95c08737849d",
+      "4455f9aa-31b2-4956-b932-67445d02b6fc",
+      "ea0157cc-7610-4312-b8ab-f9490536f79b"
+    ],
+    "source_set_removed": []
+  },
+  "atomic": {
+    "mode": "validate",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 34,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 34
+  },
+  "placement": {
+    "ok": false,
+    "cluster_count": 17,
+    "cluster_samples": [
+      "עמומה או ספקולטיבית.¹²\n- **סמכות המבטיח** ",
+      "הינתן נסיבות העניין.¹²³\n- **נזק או פגיעה נו",
+      " או נזק ממשי להסתמך.¹³\nהספרות מדגישה ששלמו",
+      " לאינטרס ציבורי רחב.³⁵¹\nהמשמעות הפורמלית של",
+      "ולים תקציביים קשים).¹³\n\nמגבלות, שיקולים וח"
+    ],
+    "end_dump_samples": [],
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 0,
+    "superscript_parens_count": 0
+  },
+  "answer_preview": "דוקטרינת **ההבטחה המנהלית** היא עיקרון בדין המנהלי הקובע כי הבטחה או ייצוג שניתנו על־ידי רשות ציבורית — בנסיבות מסוימות וברמת ודאות מספקת — עלולים ליצור מחויבות משפטית כלפי אדם פרטי או הציבור, והדבר עשוי לחייב את הרשות ליישם, לשמור או לשאת בתוצאות ההסתמכות שנוצרה עקב ההבטחה.¹\n\nביסודה של הדוקטרינה עומדת ההכרה כי חופש השיקול המנהלי אינו מוחלט וכי יש למלא משקל נורמטיבי גם לאינטרס ההסתמכות והציפייה שהרשות עצמה יצרה בנתינָה של הודעה, הבטחה או ייצוג.² דוקטרינה זו מציבה אפוא איזון בין חופש ההחלטה הממשלתית לבין עקרונות של יציבות, סבירות והגנה על מי שהסתמך על דברי הרשות.³\n\nיסודות ותנאים (אלמנטים) להכרה בהבטחה מנהלית\n- קיומה של **הבטחה או ייצוג ברור** מצד הרשות — כלומר הצהרה שניתן להבין ממנה שהרשות מתכוונת לפעול בדרך מסוימת או לא לשנות מדיניות כלפי היחיד/ציבור מסוים; אין די בהבטחה עמומה או ספקולטיבי",
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+      "title": "הבטחה מינהלית*",
+      "number": 1,
+      "source_type": "כתב עת משפטי / PDF"
+    },
+    {
+      "url": "https://www.daat.ac.il/mishpat-ivri/havat/44-2.htm",
+      "title": "הבטחה מינהלית / ד\"ר מיכאל ויגודה",
+      "number": 2,
+      "source_type": "מאמר משפטי"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+      "title": "הבטחה מינהלית לציבור",
+      "number": 3,
+      "source_type": "ספרות אקדמית / מאמר בכתב עת"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2017/05/kiryat-hamishpat-03-591.pdf",
+      "title": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+      "number": 4,
+      "source_type": "כתב עת משפטי / PDF"
+    },
+    {
+      "url": "https://hamishpat.colman.ac.il/wp-content/uploads/2018/11/E_DBarakErez.pdf",
+      "title": "השתחררות מחוזה של רשות מנהלית: מקרה מבחן לדואליות הנורמטיבית",
+      "number": 5,
+      "source_type": "מאמר אקדמי / PDF"
+    },
+    {
+      "url": "https://www.jstor.org/",
+      "title": "Promissory Estoppel and Public Law",
+      "number": 6,
+      "source_type": "מאמר אקדמי"
+    }
+  ]
+}

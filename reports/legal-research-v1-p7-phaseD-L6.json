@@ -1,0 +1,141 @@
+{
+  "generated_at": "2026-05-26T07:37:26.380Z",
+  "fixture": {
+    "id": "L6",
+    "question": "רשות מקומית נתנה הבטחה מנהלית לאזרח אשר הסתמך עליה, ולאחר מכן חל שינוי נסיבות מהותי. מהם השיקולים והכללים החלים על אכיפת ההבטחה אל מול שינוי הנסיבות, ומה היחס בין סמכות הרשות, אינטרס ההסתמכות של האזרח, והאינטרס הציבורי?"
+  },
+  "qa_log_id": "76276284-e562-4a47-bd5a-125aaf2245eb",
+  "run_id": "9437b91d-f1b0-46c3-9f8e-d4e542061606",
+  "row_summary": {
+    "fixture_id": "L6",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 8,
+    "footnote_count": 8,
+    "footnote_eq_used": true,
+    "used_sources_subset_of_usable": true,
+    "no_raw_atomic_tokens": true,
+    "no_candidate_id_leak": true,
+    "atomic_mode": "validate",
+    "atomic_normalize_ok": true,
+    "atomic_validation_ok": true,
+    "atomic_used_sources_byte_equal": true,
+    "placement_telemetry": {
+      "ok": false,
+      "cluster_count": 21,
+      "out_of_order_count": 0,
+      "end_paragraph_dump_count": 1
+    },
+    "drafter_ms": 23013,
+    "total_ms": 269059,
+    "baseline_drafter_ms": null,
+    "baseline_total_ms": null,
+    "drafter_ms_delta": null,
+    "total_ms_delta": null,
+    "source_set_equals_baseline": false,
+    "source_set_added": [
+      "af78f268-e5c3-4420-ad02-7697bec85248",
+      "b77ef1ef-45bd-4094-a879-0f90981163bb",
+      "77a37d0e-51a9-4c4e-a214-415dc05f6c15",
+      "520f7649-5615-4c50-927b-6fd5a1620304",
+      "c48eab64-9b41-4823-9135-97be21e05b28",
+      "a9b3488a-d597-4f06-86d9-0e94d644c0a5",
+      "e6189010-2c9d-46ac-8f36-e8ee5b6220c0",
+      "bb4509be-a0b8-44a9-ac56-4c86d530289c"
+    ],
+    "source_set_removed": []
+  },
+  "atomic": {
+    "mode": "validate",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 35,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 35
+  },
+  "placement": {
+    "ok": false,
+    "cluster_count": 21,
+    "cluster_samples": [
+      " שיקול מרכזי לאכיפה.¹²³\n\nאכיפה ונורמות יסוד",
+      " או אי־אכיפה מוחלטת.²³\n\n2. בהירות וסתירה ל",
+      " יוצרת מנגנון אכיפה.³¹\n\n3. משקל הסתמכות הא",
+      "למציאת תרופה חלופית.¹²\n\nשינוי נסיבות מהותי",
+      "נטרס ההסתמכות הפרטי.⁴¹\n\nמבחני איזון ועקרונ"
+    ],
+    "end_dump_samples": [
+      "**תנאי ההתגבשות המרכזיים** כוללים דרישת סמכות אצל המבטיח, כוונה להתחייב מבחינת הרשות, בהירות והגדרה של ההבטחה, והיעדר סתירה לחוק או לאינטרס הציבורי; לצד אלה נבחן משקל אינטרס ההסתמכות של האזרח ככל שיקו"
+    ],
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 1,
+    "superscript_parens_count": 0
+  },
+  "answer_preview": "המבנה הנורמטיבי של \"הבטחה מינהלית\" והיחס אל מול שינוי נסיבות\n\nהגדרה ותנאי היווצרות: הבטחה מינהלית היא מצג מעשי או מילולי של רשות או נציג ממנה, שיוצר ציפייה או הסתמכות בקרב הציבור או אדם מסוים לקיומו של מעשה מנהלי עתידי, ובנסיבות מסוימות זוכה ליישום או לאכיפה על ידי בתי המשפט המנהליים כזכות מוגנת. **תנאי ההתגבשות המרכזיים** כוללים דרישת סמכות אצל המבטיח, כוונה להתחייב מבחינת הרשות, בהירות והגדרה של ההבטחה, והיעדר סתירה לחוק או לאינטרס הציבורי; לצד אלה נבחן משקל אינטרס ההסתמכות של האזרח ככל שיקול מרכזי לאכיפה.¹²³\n\nאכיפה ונורמות יסוד\n\n1. סמכות המבטיח וכוונה להתחייב – האכיפה של הבטחה תלויה בכך שההבטחה ניתנה בידי מי שהיה מוסמך או נתן רושם של סמכות מספקת, וכי נבעה ממנה כוונה להשאיר התחייבות כלפי המבטחים. במקרים שבהם ההבטחה ניתנה מחוץ למסגרת סמכות הרשות או חורג מסמכות נבחנת היתכנות האכיפה אחרת או",
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%91%D7%98%D7%97%D7%94%20%D7%9E%D7%99%D7%A0%D7%94%D7%9C%D7%99%D7%AA.pdf",
+      "title": "הבטחה מינהלית*",
+      "number": 1,
+      "source_type": "כתב עת אקדמי"
+    },
+    {
+      "url": "https://law.haifa.ac.il/wp-content/uploads/2021/11/7-dotan.pdf",
+      "title": "הבטחה מינהלית לציבור",
+      "number": 2,
+      "source_type": "מאמר אקדמי / PDF מוסדי"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/article/12/1094",
+      "title": "הבטחה מינהלית",
+      "number": 3,
+      "source_type": "journal_article"
+    },
+    {
+      "url": "https://www.runi.ac.il/media/0ocekxxk/braverman.pdf",
+      "title": "היקף הביקורת השיפוטית על שינוי מדיניות עקבית של רשויות המנהל",
+      "number": 4,
+      "source_type": "מאמר אקדמי / PDF מוסדי"
+    },
+    {
+      "url": "https://www.runi.ac.il/media/ee0huj0a/eckstein.pdf",
+      "title": "מי מפקח על המפקחת? ואת מי היא משתפת? רשות ניירות ערך הישראלית",
+      "number": 5,
+      "source_type": "אוניברסיטת רייכמן / PDF אקדמי"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%AA%D7%A8%D7%95%D7%A4%D7%95%D7%AA%20%D7%91%D7%A9%D7%9C%20%D7%94%D7%A4%D7%A8%D7%AA%20%D7%97%D7%95%D7%96%D7%94%20-%20%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%20%D7%A6%D7%99%D7%A4%D7%99%D7%99%D7%94,%20%D7%A4%D7%99%D7%A6%D7%95%D7%99%D7%99%20%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA,%20%D7%94%D7%A9%D7%91%D7%AA%20%D7%94%D7%AA%D7%A2%D7%A9%D7%95%D7%AA%20%D7%95%D7%A9%D7%97%D7%96%D7%95%D7%A8%20%D7%94%D7%A9%D7%A7%D7%99%D7%9לות%20%D7%94%D7%97%D7%95%D7%96%D7%99%D7%AA%20%D7%91%D7%A2%D7%A7%D7%91%D7%95%D7%AA%20%D7%90%D7%A8%D7%91%D7%95%D7%A1%20%D7%A0'%20%D7%A8%D7%95%D7%91%D7%99%D7%A0%D7%A9%D7%98%D7%99%D7%99%D7%9F_0.pdf",
+      "title": "תרופות בשל הפרת חוזה – פיצויי ציפייה, פיצויי הסתמכות, השבת התעשרות ושחזור השקילות החוזית בעקבות ארבוס נ' רובינשטיין",
+      "number": 6,
+      "source_type": "מאמר אקדמי"
+    },
+    {
+      "url": "https://law.haifa.ac.il/images/Publications/%D7%92%D7%A8%D7%A1%D7%94_%D7%A1%D7%95%D7%A4%D7%99%D7%AA_%D7%95%D7%95%D7%A8%D7%93_19.2.12.pdf",
+      "title": "קרן אור על אינטרס ההסתמכות",
+      "number": 7,
+      "source_type": "מאמר אקדמי"
+    },
+    {
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Cegla/%D7%A0%D7%9E%D7%A8%D7%95%D7%93%20%D7%90%D7%91%D7%A8%D7%9E%D7%95%D7%91%20%D7%95%D7%A2%D7%9E%D7%A8%D7%99%20%D7%A8%D7%97%D7%95%D7%9D-%D7%98%D7%95%D7%95%D7%99%D7%92.pdf",
+      "title": "אכיפה בהעדר חוזה מחייב ופריזמת ההסכמה — מבט תרופתי על חוקי איסור הפליה",
+      "number": 8,
+      "source_type": "מאמר אקדמי"
+    }
+  ]
+}
