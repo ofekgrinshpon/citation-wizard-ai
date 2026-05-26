@@ -1,0 +1,169 @@
+{
+  "fixture_id": "L4",
+  "run_id": "e7af2ffb-b267-42a9-88d1-3feeecf96e1e",
+  "qa_log_id": "add9e2a7-2539-40bf-abf4-de6bdbea4d00",
+  "local_retrieval": {
+    "wall_ms": 37947,
+    "candidates": 30,
+    "aggregate": {
+      "wall_ms": 37947,
+      "max_query_ms": 37942,
+      "sum_query_ms": 187938,
+      "slowest_query": {
+        "ms": 37942,
+        "role": "binding_case_law",
+        "text_ms": 17940,
+        "claim_id": "C4",
+        "exact_ms": 0,
+        "query_he": "פסק דין בית המשפט העליון חריגים ליישום 'השתק פלוגתא' – התייחסות ל: פסק דין ביניים/זמני, ראיות חדשות, עניינים ציבוריים/חוקתיים, כשל בייצוג",
+        "vector_ms": 20002,
+        "embedding_ms": 186
+      },
+      "slowest_method": "vector",
+      "method_total_ms": {
+        "text": 87925,
+        "exact": 0,
+        "vector": 100008,
+        "embedding": 950
+      },
+      "queries_executed": 5,
+      "exact_error_count": 0,
+      "text_timeout_count": 0,
+      "candidates_by_method": {
+        "text": 30,
+        "vector": 0,
+        "exact_authority": 0
+      },
+      "vector_timeout_count": 5,
+      "bottleneck_hypothesis": "rpc_timeout_cap (text_timeouts=0, vector_timeouts=5, RPC_TIMEOUT_MS=20000)",
+      "duplicate_query_count": 0
+    },
+    "per_query": [
+      {
+        "claim_id": "C1",
+        "role": "binding_case_law",
+        "query_he": "פסק דין בית המשפט העליון הגדרה ועקרונות דוקטרינת 'השתק פלוגתא' (issue preclusion) – קביעות המבהירות מה מונע מהצד להעלות טענות חוזרות וכיצד הדוקטרינה פועלת",
+        "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית פסק דין חלוט העליון הגדרה ועקרונות",
+        "total_query_ms": 37256,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 17252,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 185,
+          "rpc_ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "parallel_batch_ms": 17251,
+        "kept": 6
+      },
+      {
+        "claim_id": "C2",
+        "role": "binding_case_law",
+        "query_he": "פסק דין בית המשפט העליון תנאים ליישום 'השתק פלוגתא' – זהות פלוגתא, פסק דין חלוט/הכרעה חיונית, זהות צדדים/חליפים, הזדמנות מלאה להתדיין",
+        "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית פסק דין חלוט העליון ליישום חלוט/הכרעה",
+        "total_query_ms": 37537,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 17535,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 188,
+          "rpc_ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "parallel_batch_ms": 17535,
+        "kept": 6
+      },
+      {
+        "claim_id": "C3",
+        "role": "binding_case_law",
+        "query_he": "פסק דין בית המשפט העליון השפעות משפטיות של 'השתק פלוגתא' – מה מונע מהצד לעשות אחרי פסק הדין, סייגים פרוצדורליים וסייגים חוקתיים בהפעלת הדוקטרינה",
+        "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית פסק דין חלוט העליון השפעות משפטיות מונע",
+        "total_query_ms": 37582,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 17579,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 187,
+          "rpc_ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "parallel_batch_ms": 17579,
+        "kept": 6
+      },
+      {
+        "claim_id": "C4",
+        "role": "persuasive_case_law",
+        "query_he": "פסקי-דין מחוזיים/שלום 'השתק פלוגתא' חריגים ויישום מעשי – דוגמאות של פסק דין מחוזי על ראיות חדשות, פס״ד ביניים, כשל בייצוג והתייחסותו לבית המשפט המחוזי",
+        "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית פסק דין חלוט פסקי-דין מחוזיים/שלום חריגים",
+        "total_query_ms": 37621,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 17619,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 204,
+          "rpc_ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "parallel_batch_ms": 17619,
+        "kept": 6
+      },
+      {
+        "claim_id": "C4",
+        "role": "binding_case_law",
+        "query_he": "פסק דין בית המשפט העליון חריגים ליישום 'השתק פלוגתא' – התייחסות ל: פסק דין ביניים/זמני, ראיות חדשות, עניינים ציבוריים/חוקתיים, כשל בייצוג",
+        "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית פסק דין חלוט העליון חריגים ליישום התייחסות",
+        "total_query_ms": 37942,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 17940,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 186,
+          "rpc_ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "parallel_batch_ms": 17940,
+        "kept": 6
+      }
+    ]
+  }
+}

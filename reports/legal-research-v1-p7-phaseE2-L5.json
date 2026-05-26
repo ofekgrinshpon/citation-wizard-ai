@@ -1,0 +1,194 @@
+{
+  "fixture_id": "L5",
+  "run_id": "cc8051c5-0147-454a-9f06-3259f62daf71",
+  "qa_log_id": "043ce0e7-f2e1-4b2d-9cdf-95c7847c4f6a",
+  "local_retrieval": {
+    "wall_ms": 40007,
+    "candidates": 6,
+    "aggregate": {
+      "wall_ms": 40007,
+      "max_query_ms": 40003,
+      "sum_query_ms": 240014,
+      "slowest_query": {
+        "ms": 40003,
+        "role": "binding_case_law",
+        "text_ms": 20001,
+        "claim_id": "C1",
+        "exact_ms": 153,
+        "query_he": "בית המשפט העליון פסק דין עילת הסבירות 'אי סבירות' 'חוסר קשר סיבתי רציונלי בין עובדות להחלטה' 'התעלמות משיקולים מהותיים' 'שיקולים זניחים' 'החלטה שרירותית'",
+        "vector_ms": 20000,
+        "embedding_ms": 264
+      },
+      "slowest_method": "text",
+      "method_total_ms": {
+        "text": 120006,
+        "exact": 1445,
+        "vector": 120003,
+        "embedding": 1825
+      },
+      "queries_executed": 6,
+      "exact_error_count": 0,
+      "text_timeout_count": 6,
+      "candidates_by_method": {
+        "text": 0,
+        "vector": 0,
+        "exact_authority": 6
+      },
+      "vector_timeout_count": 6,
+      "bottleneck_hypothesis": "rpc_timeout_cap (text_timeouts=6, vector_timeouts=6, RPC_TIMEOUT_MS=20000)",
+      "duplicate_query_count": 0
+    },
+    "per_query": [
+      {
+        "claim_id": "C1",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסק דין עילת הסבירות 'אי סבירות' 'חוסר קשר סיבתי רציונלי בין עובדות להחלטה' 'התעלמות משיקולים מהותיים' 'שיקולים זניחים' 'החלטה שרירותית'",
+        "compact_query_he": "עילת הסבירות סבירות העליון דין אי חוסר קשר סיבתי",
+        "total_query_ms": 40003,
+        "exact": {
+          "ms": 153,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 264,
+          "rpc_ms": 20000,
+          "status": "timeout",
+          "hits": 0
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 0
+      },
+      {
+        "claim_id": "C2",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון 'סבירות קיצונית' 'Wednesbury' פסק דין 'סף הוכחה' 'מתי נמצא אי־סבירות' 'מבחנים מרוככים' בישראל",
+        "compact_query_he": "עילת הסבירות סבירות העליון קיצונית Wednesbury דין סף הוכחה",
+        "total_query_ms": 40002,
+        "exact": {
+          "ms": 154,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 280,
+          "rpc_ms": 20000,
+          "status": "timeout",
+          "hits": 0
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 0
+      },
+      {
+        "claim_id": "C3",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון 'מידתיות הביקורת' 'עוצמת הביקורת' 'variable intensity' פסק דין היקף הביקורת השיפוטית בעניינים טכניים ביטחון לאומי מדיניות תקציבית",
+        "compact_query_he": "עילת הסבירות סבירות מידתיות העליון הביקורת עוצמת variable intensity",
+        "total_query_ms": 40002,
+        "exact": {
+          "ms": 317,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 209,
+          "rpc_ms": 20000,
+          "status": "timeout",
+          "hits": 0
+        },
+        "parallel_batch_ms": 20000,
+        "kept": 0
+      },
+      {
+        "claim_id": "C4",
+        "role": "primary_statute",
+        "query_he": "חוק יסוד: כבוד האדם וחירותו טקסט החוק PDF 'סעיפי הגבלה' 'הגבלת חופש' 'שאלת יחסיות'",
+        "compact_query_he": "עילת הסבירות סבירות חוק יסוד כבוד האדם וחירותו טקסט",
+        "total_query_ms": 40002,
+        "exact": {
+          "ms": 524,
+          "status": "ok",
+          "hits": 6
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 755,
+          "rpc_ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 6
+      },
+      {
+        "claim_id": "C4",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון 'סבירות מול יחסיות' 'האם סבירות עומדת כעילה עצמאית' 'פסיקה חוקתית' פסק דין החלטה",
+        "compact_query_he": "עילת הסבירות סבירות העליון מול יחסיות עומדת כעילה עצמאית",
+        "total_query_ms": 40002,
+        "exact": {
+          "ms": 151,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 152,
+          "rpc_ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 0
+      },
+      {
+        "claim_id": "C5",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסק דין תוצאות מציאת אי־סבירות 'ביטול ההחלטה' 'החזרה לדיון' 'החלפה בהחלטה' 'הקשחת דרישת נימוקים'",
+        "compact_query_he": "עילת הסבירות סבירות העליון דין תוצאות מציאת אי־סבירות ביטול",
+        "total_query_ms": 40003,
+        "exact": {
+          "ms": 146,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 165,
+          "rpc_ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 0
+      }
+    ]
+  }
+}
