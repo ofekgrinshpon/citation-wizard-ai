@@ -271,9 +271,9 @@ function planBatches(claims: Claim[], byClaim: Map<string, Candidate[]>): Batch[
   if (totalNormal === 0) return batches;
 
   // Test-only: force splitting into 2 buckets to exercise the parallel path.
-  // Triggered via env var VERIFIER_FORCE_SPLIT=1 (set by E.1 validation runner
-  // only). Production paths never set this; behavior is identical when unset.
-  const forceSplit = (Deno.env.get("VERIFIER_FORCE_SPLIT") ?? "") === "1";
+  // Triggered via planOpts.forceSplit (set by runVerifier when caller passes
+  // opts.forceSplit). Production paths never pass this; behavior is identical.
+  const forceSplit = planOpts?.forceSplit === true;
 
   if (!forceSplit && totalNormal <= SINGLE_BATCH_MAX) {
     batches.push({
