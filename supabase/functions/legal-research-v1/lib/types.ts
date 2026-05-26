@@ -167,7 +167,7 @@ export interface Footnote {
 }
 
 // ─── Phase C.1: Atomic marker representation ──────────────────────────────
-export type AtomicMode = "off" | "validate" | "emit";
+export type AtomicMode = "off" | "validate";
 export type MarkerFormat = "legacy_superscript";
 
 export interface AtomicReport {
@@ -178,23 +178,8 @@ export interface AtomicReport {
   used_sources_byte_equal: boolean;
   superscript_marker_count: number;
   atomic_marker_count: number;
-  emit_fallback_reason?: string;
 }
 
-export interface Rule37Report {
-  enabled: boolean;
-  applied: boolean;             // false if disabled, no-op, discarded, or validation failed
-  discarded_reason: string | null;
-  validation_failed: string | null;
-  total_repeats_rewritten: number;
-  shem_count: number;
-  supra_count: number;
-  shortname_fallback_count: number;
-  pre_footnote_count: number;
-  post_footnote_count: number;
-  wrong_back_references: number;
-  samples: Array<{ from_num: number; to_num: number; kind: "shem" | "supra"; short_text: string }>;
-}
 
 export interface PlacementReport {
   ok: boolean;
