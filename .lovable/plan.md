@@ -1,34 +1,37 @@
 ## Goal
-In the legal research loading state, replace the two stacked ghost cards (answer + footnotes) with a single ghost card whose blurred lines appear progressively over time, giving the impression that text is being "written in real time."
+Delete the "בקרה למסמכים משפטיים" (`pleading_analysis`) task mode from the Legal QA task picker. The mode is currently offline (MaintenanceCard) and serves no purpose to users. Leave the working "בדיקת מסמך" tool (FootnotesSection → DocumentCheckPage) and Landing page copy untouched.
 
-## File
-`src/components/LegalResearchV1Panel.tsx` — only the `GhostAnswer` component (~lines 666–693) and its usage at line 427.
+## Scope
+Frontend / presentation only. No backend, no edge function changes, no DB changes.
 
-## Changes
+## Files to edit
 
-### 1. Single card, progressive reveal
-Rewrite `GhostAnswer` so it renders one card with:
-- A small title bar (blurred).
-- A list of ~10 blurred lines of varied widths.
-- An internal `useState` counter (`visibleCount`) that increments via `setInterval` every ~600–900ms (slight jitter for natural feel), capped at the total number of lines.
-- Each newly revealed line uses a short fade/slide-in (existing `animate-fade-in` utility) so it visibly appears rather than just popping.
-- When all lines are revealed, restart from a smaller subset (e.g., wrap-around or just stop and keep gently pulsing) so a long-running job still feels alive. Decision: stop adding lines once full, but keep the existing `animate-pulse` shimmer on all rendered lines.
-- Cleanup the interval on unmount.
+### `src/components/LegalQAChat.tsx`
+- Remove `pleading_analysis` from the `TaskMode` union (line 149) and from `FILE_RELEVANT_MODES` (line 151).
+- Remove the `pleading_analysis` entry from `TASK_MODES` (line 155).
+- Remove the two constants `PLEADING_OFFLINE_TITLE` and `PLEADING_OFFLINE_MESSAGE` (lines 42–43) and their imports if unused.
+- In `handleSubmit` (lines 1929–1976): drop the `pleading_analysis` early-return toast, the file-only branch, and the `effectiveQuestion` special-case. Keep the `research` offline guard as-is.
+- Remove the MaintenanceCard render block for `pleading_analysis` (lines 2954–2958) and simplify the sibling empty-state condition (line 2959) to drop the `pleading_analysis` exclusion.
+- Simplify the submit button's `disabled` / `title` (lines 3196–3206) to drop the `pleading_analysis` branches.
+- Drop `FileSearch` from the lucide-react import if it becomes unused after removing the TASK_MODES entry.
 
-### 2. Remove the second card
-Delete the footnotes ghost card block. Only the single answer card remains under the progress checklist.
+### `src/components/QAHistorySidebar.tsx`
+- Remove the `pleading_analysis` entry from the icon/label map (line 38) and drop `FileSearch` from the lucide-react import if no longer used.
 
-### 3. Visual polish (kept minimal)
-- Keep current blur/`bg-muted`/rounded styling so it matches the rest of the UI.
-- RTL-safe: widths via Tailwind `w-*` classes already work in RTL.
-- `aria-hidden` retained.
+### `src/pages/Profile.tsx`
+- Remove the `pleading_analysis: "עוזר משפטי – ביקורת מסמך"` label entry (line 65).
 
-## Out of scope
-- No changes to the progress checklist, timing copy, cancel button, or any pipeline/backend logic.
-- No new dependencies; pure React state + Tailwind.
+### `src/pages/Index.tsx`
+- Narrow the two inline `TaskMode` unions (lines 133 and 1208) from `"research" | "pleading_analysis" | "case_summary" | "academic_writing"` to drop `"pleading_analysis"`.
+
+## Out of scope (intentionally NOT touched)
+- `FootnotesSection` / `DocumentCheckPage` / `useDocumentCheck` / `supabase/functions/document-check` — the actual document-checking tool stays.
+- `src/pages/Landing.tsx` hero copy and chips ("בקרה למסמכים").
+- Backend, DB, RLS, credits, edge functions.
+- Memory note about offline modes — will be updated separately if/when all offline modes are removed.
 
 ## Acceptance
-- Only one ghost card is visible during loading.
-- Lines appear one-by-one over time (not all at once), looking like text being written.
-- No console errors; interval is cleared on unmount.
-- Existing loading checklist, elapsed timer, and cancel button are unchanged.
+- The task picker in Legal QA shows three modes: מחקר משפטי, סיכום פסיקה, כתיבה אקדמית.
+- No reference to `pleading_analysis` remains in `src/`.
+- Build/typecheck pass; no dead imports.
+- History sidebar still renders correctly for the three remaining modes; any pre-existing history rows tagged `pleading_analysis` will fall back gracefully (verify the lookup handles a missing key — add an `|| { label: taskMode, icon: ... }` fallback if needed).
