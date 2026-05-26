@@ -192,9 +192,11 @@ async function exactAuthorityLookup(
   status: "ok" | "empty" | "error";
   error?: string;
   diags: ClueLookupDiag[];
+  ms: number;
 }> {
+  const t0 = Date.now();
   const diags: ClueLookupDiag[] = [];
-  if (!clues.length) return { rows: [], status: "empty", diags };
+  if (!clues.length) return { rows: [], status: "empty", diags, ms: Date.now() - t0 };
   const allowedTypes: string[] | null = ROLE_SOURCE_TYPES[role] ?? null;
   const collected: RpcRow[] = [];
   // Track which collected row came from which clue (for section snippet lookup).
@@ -303,6 +305,7 @@ async function exactAuthorityLookup(
     return {
       rows: collected, status: "error",
       error: e instanceof Error ? e.message : String(e), diags,
+      ms: Date.now() - t0,
     };
   }
   // Dedup by document_id (prefer rows that gained a snippet).
@@ -312,7 +315,7 @@ async function exactAuthorityLookup(
     if (!prev || (!prev.chunk_content && r.chunk_content)) byId.set(r.document_id, r);
   }
   const unique = [...byId.values()];
-  return { rows: unique, status: unique.length ? "ok" : "empty", diags };
+  return { rows: unique, status: unique.length ? "ok" : "empty", diags, ms: Date.now() - t0 };
 }
 
 // ─── RPC helpers ────────────────────────────────────────────────────────────
@@ -397,6 +400,7 @@ export interface LocalRetrievalResult {
       exact_status: "ok" | "empty" | "error";
       exact_error?: string;
       exact_ms: number;
+      parallel_batch_ms: number;
       exact_clue_lookups: ClueLookupDiag[];
       role_to_source_type_filter: string[] | null;
       text_status: "ok" | "empty" | "error" | "timeout";
@@ -418,6 +422,21 @@ export interface LocalRetrievalResult {
   global_exact: {
     clues_from_question: ExactClue[];
     clues_from_claims: ExactClue[];
+  };
+  aggregate: {
+    wall_ms: number;
+    queries_executed: number;
+    duplicate_query_count: number;
+    text_timeout_count: number;
+    vector_timeout_count: number;
+    exact_error_count: number;
+    sum_query_ms: number;
+    max_query_ms: number;
+    slowest_query: { claim_id: string; role: string; query_he: string; ms: number; exact_ms: number; text_ms: number; vector_ms: number; embedding_ms: number } | null;
+    method_total_ms: { exact: number; text: number; embedding: number; vector: number };
+    slowest_method: "exact" | "text" | "embedding" | "vector";
+    candidates_by_method: { exact_authority: number; text: number; vector: number };
+    bottleneck_hypothesis: string;
   };
 }
 
@@ -464,9 +483,10 @@ export async function runLocalRetrieval(
         RPC_TIMEOUT_MS,
       );
 
-      const exactT0 = Date.now();
+      const parallelT0 = Date.now();
       const [exactRes, embedRes, textDiag] = await Promise.all([exactP, embedP, textP]);
-      const exactMs = Date.now() - exactT0;
+      const parallelBatchMs = Date.now() - parallelT0;
+      const exactMs = exactRes.ms;
 
       let vectorDiag: {
         status: "ok" | "empty" | "error" | "timeout" | "no_embedding";
@@ -542,6 +562,7 @@ export async function runLocalRetrieval(
           exact_status: exactRes.status,
           exact_error: exactRes.error,
           exact_ms: exactMs,
+          parallel_batch_ms: parallelBatchMs,
           exact_clue_lookups: exactRes.diags,
           role_to_source_type_filter: ROLE_SOURCE_TYPES[q.role] ?? null,
           text_status: textDiag.status,
@@ -561,14 +582,80 @@ export async function runLocalRetrieval(
     }),
   );
 
+  const wallMs = Date.now() - t0;
+
+  // ── Aggregate telemetry (P7 E.2) ─────────────────────────────────────────
+  const seenQ = new Map<string, number>();
+  for (const pq of per_query) {
+    const k = pq.original_query_he;
+    seenQ.set(k, (seenQ.get(k) ?? 0) + 1);
+  }
+  const duplicate_query_count = [...seenQ.values()].reduce((s, n) => s + (n > 1 ? n - 1 : 0), 0);
+  const text_timeout_count = per_query.filter((p) => p.diag.text_status === "timeout").length;
+  const vector_timeout_count = per_query.filter((p) => p.diag.vector_status === "timeout").length;
+  const exact_error_count = per_query.filter((p) => p.diag.exact_status === "error").length;
+  const sum_query_ms = per_query.reduce((s, p) => s + p.ms, 0);
+  let slowest = per_query[0] ?? null;
+  for (const p of per_query) if (!slowest || p.ms > slowest.ms) slowest = p;
+  const method_total_ms = {
+    exact: per_query.reduce((s, p) => s + (p.diag.exact_ms || 0), 0),
+    text: per_query.reduce((s, p) => s + (p.diag.text_ms || 0), 0),
+    embedding: per_query.reduce((s, p) => s + (p.diag.embedding_ms || 0), 0),
+    vector: per_query.reduce((s, p) => s + (p.diag.vector_ms || 0), 0),
+  };
+  const slowest_method = (Object.entries(method_total_ms).sort((a, b) => b[1] - a[1])[0]?.[0]
+    ?? "text") as "exact" | "text" | "embedding" | "vector";
+  const candidates_by_method = {
+    exact_authority: candidates.filter((c) => c.retrieval_method === "exact_authority").length,
+    text: candidates.filter((c) => c.retrieval_method === "text").length,
+    vector: candidates.filter((c) => c.retrieval_method === "vector").length,
+  };
+  const max_query_ms = slowest?.ms ?? 0;
+  let bottleneck_hypothesis = "unknown";
+  if (text_timeout_count + vector_timeout_count > 0) {
+    bottleneck_hypothesis = `rpc_timeout_cap (text_timeouts=${text_timeout_count}, vector_timeouts=${vector_timeout_count}, RPC_TIMEOUT_MS=${RPC_TIMEOUT_MS})`;
+  } else if (max_query_ms > 0 && max_query_ms >= wallMs * 0.85 && per_query.length > 1) {
+    bottleneck_hypothesis = `single_slow_query (max=${max_query_ms}ms ≈ wall=${wallMs}ms)`;
+  } else if (max_query_ms > 0 && max_query_ms < wallMs * 0.6) {
+    bottleneck_hypothesis = `parallel_aggregate (wall=${wallMs}ms >> max_query=${max_query_ms}ms; serialization or contention)`;
+  } else {
+    bottleneck_hypothesis = `dominant_method=${slowest_method} (sum=${method_total_ms[slowest_method]}ms across ${per_query.length} queries)`;
+  }
+
   return {
     candidates,
     per_query,
-    stage_runs: [{ stage: "local_retrieval", ms: Date.now() - t0, ok: true }],
-    ms: Date.now() - t0,
+    stage_runs: [{ stage: "local_retrieval", ms: wallMs, ok: true }],
+    ms: wallMs,
     global_exact: {
       clues_from_question: questionClues,
       clues_from_claims: claimClues,
+    },
+    aggregate: {
+      wall_ms: wallMs,
+      queries_executed: per_query.length,
+      duplicate_query_count,
+      text_timeout_count,
+      vector_timeout_count,
+      exact_error_count,
+      sum_query_ms,
+      max_query_ms,
+      slowest_query: slowest
+        ? {
+            claim_id: slowest.claim_id,
+            role: slowest.role,
+            query_he: slowest.original_query_he,
+            ms: slowest.ms,
+            exact_ms: slowest.diag.exact_ms,
+            text_ms: slowest.diag.text_ms,
+            vector_ms: slowest.diag.vector_ms,
+            embedding_ms: slowest.diag.embedding_ms,
+          }
+        : null,
+      method_total_ms,
+      slowest_method,
+      candidates_by_method,
+      bottleneck_hypothesis,
     },
   };
 }

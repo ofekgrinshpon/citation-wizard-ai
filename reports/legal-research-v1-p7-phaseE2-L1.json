@@ -1,0 +1,144 @@
+{
+  "fixture_id": "L1",
+  "run_id": "2fb1f046-94e7-4725-b2de-e17026430791",
+  "qa_log_id": "5a4856f4-a9b1-40f8-a68a-804fd30b0d50",
+  "local_retrieval": {
+    "wall_ms": 20787,
+    "candidates": 32,
+    "aggregate": {
+      "wall_ms": 20787,
+      "max_query_ms": 20787,
+      "sum_query_ms": 82838,
+      "slowest_query": {
+        "ms": 20787,
+        "role": "binding_case_law",
+        "text_ms": 11079,
+        "claim_id": "C1",
+        "exact_ms": 0,
+        "query_he": "צו מניעה זמני \"עילת תביעה ממשית\" \"נקודה מהותית לדיון\" \"טענת תביעה ממשית\" \"prima facie\" \"בית המשפט העליון\" פסק דין",
+        "vector_ms": 9707,
+        "embedding_ms": 181
+      },
+      "slowest_method": "text",
+      "method_total_ms": {
+        "text": 49922,
+        "exact": 0,
+        "vector": 32913,
+        "embedding": 1503
+      },
+      "queries_executed": 4,
+      "exact_error_count": 0,
+      "text_timeout_count": 0,
+      "candidates_by_method": {
+        "text": 24,
+        "vector": 8,
+        "exact_authority": 0
+      },
+      "vector_timeout_count": 0,
+      "bottleneck_hypothesis": "single_slow_query (max=20787ms ≈ wall=20787ms)",
+      "duplicate_query_count": 0
+    },
+    "per_query": [
+      {
+        "claim_id": "C4",
+        "role": "binding_case_law",
+        "query_he": "\"צו אקס פרטה\" \"מהירות/dחיפות\" \"בטחונות\" צו מניעה זמני \"בית המשפט העליון\" פסק דין",
+        "compact_query_he": "צו מניעה זמני אקס פרטה מהירות/dחיפות בטחונות העליון דין",
+        "total_query_ms": 20655,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 12931,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 177,
+          "rpc_ms": 7723,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 12931,
+        "kept": 8
+      },
+      {
+        "claim_id": "C3",
+        "role": "binding_case_law",
+        "query_he": "\"איזון עניינים\" \"איזון הנוחות\" \"אינטרס הציבורי\" צו מניעה זמני \"בית המשפט העליון\" פסק דין",
+        "compact_query_he": "צו מניעה זמני איזון עניינים הנוחות אינטרס הציבורי העליון דין",
+        "total_query_ms": 20660,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 13597,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 584,
+          "rpc_ms": 7063,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 13597,
+        "kept": 8
+      },
+      {
+        "claim_id": "C2",
+        "role": "binding_case_law",
+        "query_he": "\"נזק בלתי הפיך\" \"נזק שלא ניתן לתקן\" צו מניעה זמני \"בית המשפט העליון\" פסק דין",
+        "compact_query_he": "צו מניעה זמני נזק בלתי הפיך שלא ניתן לתקן העליון",
+        "total_query_ms": 20736,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 12315,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 561,
+          "rpc_ms": 8420,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 12315,
+        "kept": 8
+      },
+      {
+        "claim_id": "C1",
+        "role": "binding_case_law",
+        "query_he": "צו מניעה זמני \"עילת תביעה ממשית\" \"נקודה מהותית לדיון\" \"טענת תביעה ממשית\" \"prima facie\" \"בית המשפט העליון\" פסק דין",
+        "compact_query_he": "צו מניעה זמני עילת תביעה ממשית נקודה מהותית לדיון טענת",
+        "total_query_ms": 20787,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 11079,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 181,
+          "rpc_ms": 9707,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 11079,
+        "kept": 8
+      }
+    ]
+  }
+}
