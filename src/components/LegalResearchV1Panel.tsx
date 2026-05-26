@@ -2,13 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useProjects } from "@/hooks/useProjects";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown, Paperclip, X, FileText, Trash2, ArrowUp, Loader2 } from "lucide-react";
+import { ChevronDown, Paperclip, X, FileText, Trash2, ArrowUp, Loader2, Check } from "lucide-react";
 import { toast } from "sonner";
 
 const MAX_FILES = 5;
@@ -30,18 +29,17 @@ function fmtSize(b: number) {
   return `${(b / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-
-// ─── Loading stages (Hebrew, ordered) ──────────────────────────────────────
-const STAGES = [
-  "מנתח את השאלה",
-  "מתכנן חיפושים משפטיים",
-  "מחפש מקורות",
-  "מאמת את המקורות",
-  "כותב תשובה",
-  "מסדר הערות שוליים",
+// Stage keys must match what the edge function writes into
+// legal_research_jobs.current_stage / completed_stages.
+const STAGES: Array<{ key: string; label: string }> = [
+  { key: "analyzer",  label: "מנתח את השאלה" },
+  { key: "planner",   label: "מתכנן חיפושים משפטיים" },
+  { key: "retrieval", label: "מחפש מקורות" },
+  { key: "verifier",  label: "מאמת את המקורות" },
+  { key: "drafter",   label: "כותב תשובה" },
+  { key: "finalize",  label: "מסדר הערות שוליים" },
 ];
 
-const STAGE_BUDGET_MS = 25_000;
 const POLL_INTERVAL_MS = 2_000;
 const SOFT_NOTICE_1_MS = 180_000; // 3 min
 const SOFT_NOTICE_2_MS = 300_000; // 5 min
@@ -73,8 +71,8 @@ export function LegalResearchV1Panel() {
   const { currentProject } = useProjects();
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [stageIdx, setStageIdx] = useState(0);
+  const [currentStage, setCurrentStage] = useState<string | null>(null);
+  const [completedStages, setCompletedStages] = useState<string[]>([]);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ResearchResponse | null>(null);
@@ -96,7 +94,7 @@ export function LegalResearchV1Panel() {
     };
   }, []);
 
-  const stopAll = (finalPct?: number) => {
+  const stopAll = () => {
     if (progressTimerRef.current) {
       window.clearInterval(progressTimerRef.current);
       progressTimerRef.current = null;
@@ -105,7 +103,6 @@ export function LegalResearchV1Panel() {
       window.clearInterval(pollTimerRef.current);
       pollTimerRef.current = null;
     }
-    if (typeof finalPct === "number") setProgress(finalPct);
   };
 
   const clearResume = () => {
@@ -113,7 +110,7 @@ export function LegalResearchV1Panel() {
   };
 
   const handleCancel = () => {
-    stopAll(progress);
+    stopAll();
     setLoading(false);
     setJobId(null);
     clearResume();
@@ -122,17 +119,12 @@ export function LegalResearchV1Panel() {
 
   const startProgress = (startedAt?: number) => {
     startRef.current = startedAt ?? Date.now();
-    const initialEl = Date.now() - startRef.current;
-    setProgress(Math.min(95, 5 + (initialEl / (STAGES.length * STAGE_BUDGET_MS)) * 85));
-    setStageIdx(Math.min(STAGES.length - 1, Math.floor(initialEl / STAGE_BUDGET_MS)));
-    setElapsed(initialEl);
+    setElapsed(Date.now() - startRef.current);
+    setCurrentStage(null);
+    setCompletedStages([]);
     if (progressTimerRef.current) window.clearInterval(progressTimerRef.current);
     progressTimerRef.current = window.setInterval(() => {
-      const el = Date.now() - startRef.current;
-      setElapsed(el);
-      setStageIdx(Math.min(STAGES.length - 1, Math.floor(el / STAGE_BUDGET_MS)));
-      const pct = 5 + (el / (STAGES.length * STAGE_BUDGET_MS)) * 85;
-      setProgress(Math.min(95, pct));
+      setElapsed(Date.now() - startRef.current);
     }, 1000);
   };
 
@@ -142,7 +134,7 @@ export function LegalResearchV1Panel() {
       try {
         const { data, error: qErr } = await supabase
           .from("legal_research_jobs")
-          .select("status, result, error")
+          .select("status, result, error, current_stage, completed_stages")
           .eq("id", jid)
           .maybeSingle();
         if (qErr) {
@@ -150,22 +142,35 @@ export function LegalResearchV1Panel() {
           return;
         }
         if (!data) return;
-        const status = (data as { status: string }).status;
-        if (status === "done") {
-          stopAll(100);
-          setStageIdx(STAGES.length - 1);
-          setResult((data as unknown as { result: ResearchResponse }).result);
+        const row = data as {
+          status: string;
+          result?: ResearchResponse;
+          error?: string;
+          current_stage?: string | null;
+          completed_stages?: string[] | null;
+        };
+        // Live stage progress
+        if (Array.isArray(row.completed_stages)) {
+          setCompletedStages(row.completed_stages);
+        }
+        if (typeof row.current_stage === "string" || row.current_stage === null) {
+          setCurrentStage(row.current_stage ?? null);
+        }
+        if (row.status === "done") {
+          stopAll();
+          setCurrentStage(null);
+          setCompletedStages(STAGES.map((s) => s.key));
+          setResult(row.result as ResearchResponse);
           setLoading(false);
           setJobId(null);
           setFiles([]);
           clearResume();
-
-        } else if (status === "error") {
-          stopAll(progress);
+        } else if (row.status === "error") {
+          stopAll();
           setLoading(false);
           setJobId(null);
           clearResume();
-          const rawErr = (data as { error?: string }).error || "";
+          const rawErr = row.error || "";
           if (rawErr.includes("analyzer_escalation_unavailable")) {
             setError("מודל הניתוח המשפטי לא היה זמין רגעית. נסו שוב בעוד דקה.");
           } else {
@@ -299,7 +304,7 @@ export function LegalResearchV1Panel() {
       });
 
       if (invokeErr || !data?.job_id) {
-        stopAll(progress);
+        stopAll();
         setLoading(false);
         setError(invokeErr?.message || "לא הצלחנו לפתוח את הבקשה.");
         return;
@@ -313,7 +318,7 @@ export function LegalResearchV1Panel() {
       } catch { /* ignore quota */ }
       pollJob(data.job_id);
     } catch (e) {
-      stopAll(progress);
+      stopAll();
       setLoading(false);
       const msg = e instanceof Error ? e.message : String(e);
       setError(msg || "שגיאה לא ידועה.");
@@ -362,28 +367,64 @@ export function LegalResearchV1Panel() {
       {/* ── Top region: loading / error / result (scrollable) ── */}
       <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pb-4">
         {loading && (
-          <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2">
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span className="font-medium text-foreground">{STAGES[stageIdx]}</span>
-              <span>{fmtElapsed(elapsed)}</span>
-            </div>
-            <Progress value={progress} className="h-2" />
-            {elapsed < SOFT_NOTICE_1_MS && (
-              <p className="text-xs text-muted-foreground">זה עשוי לקחת 2–3 דקות</p>
-            )}
-            {elapsed >= SOFT_NOTICE_1_MS && elapsed < SOFT_NOTICE_2_MS && (
-              <p className="text-xs text-muted-foreground">עדיין עובד… זה לוקח יותר מהרגיל</p>
-            )}
-            {elapsed >= SOFT_NOTICE_2_MS && (
-              <p className="text-xs text-muted-foreground">עדיין עובד ברקע, אפשר להמתין או לבטל</p>
-            )}
-            {jobId && (
-              <div className="flex justify-end pt-1">
-                <Button onClick={handleCancel} variant="ghost" size="sm" className="h-7 px-2 text-xs">
-                  בטל
-                </Button>
+          <div className="space-y-3 animate-fade-in">
+            <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-3">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span className="font-medium text-foreground">מבצע סקירה משפטית…</span>
+                <span>{fmtElapsed(elapsed)}</span>
               </div>
-            )}
+              <ol className="space-y-2">
+                {STAGES.map((stage) => {
+                  const isDone = completedStages.includes(stage.key);
+                  const isActive = !isDone && currentStage === stage.key;
+                  return (
+                    <li
+                      key={stage.key}
+                      className="flex items-center gap-2.5 text-sm"
+                    >
+                      <span className="flex w-5 h-5 items-center justify-center shrink-0">
+                        {isDone ? (
+                          <Check className="w-4 h-4 text-primary" />
+                        ) : isActive ? (
+                          <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                        ) : (
+                          <span className="w-3.5 h-3.5 rounded-full border border-border" />
+                        )}
+                      </span>
+                      <span
+                        className={
+                          isDone
+                            ? "text-foreground"
+                            : isActive
+                            ? "text-foreground font-medium"
+                            : "text-muted-foreground"
+                        }
+                      >
+                        {stage.label}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
+              {elapsed < SOFT_NOTICE_1_MS && (
+                <p className="text-xs text-muted-foreground">זה עשוי לקחת 2–3 דקות</p>
+              )}
+              {elapsed >= SOFT_NOTICE_1_MS && elapsed < SOFT_NOTICE_2_MS && (
+                <p className="text-xs text-muted-foreground">עדיין עובד… זה לוקח יותר מהרגיל</p>
+              )}
+              {elapsed >= SOFT_NOTICE_2_MS && (
+                <p className="text-xs text-muted-foreground">עדיין עובד ברקע, אפשר להמתין או לבטל</p>
+              )}
+              {jobId && (
+                <div className="flex justify-end pt-1">
+                  <Button onClick={handleCancel} variant="ghost" size="sm" className="h-7 px-2 text-xs">
+                    בטל
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <GhostAnswer />
           </div>
         )}
 
@@ -621,4 +662,62 @@ function DebugBlock({ title, data }: { title: string; data: unknown }) {
   );
 }
 
+
+function GhostAnswer() {
+  const answerLines = ["w-11/12", "w-full", "w-10/12", "w-11/12", "w-9/12", "w-full", "w-8/12"];
+  const footnoteLines = ["w-7/12", "w-8/12", "w-6/12"];
+  return (
+    <div className="space-y-4 animate-fade-in" aria-hidden>
+      <div className="rounded-lg border border-border bg-card p-4 space-y-2.5">
+        <div className="h-4 w-24 rounded bg-muted blur-[1px] animate-pulse" />
+        {answerLines.map((w, i) => (
+          <div
+            key={i}
+            className={`h-3 ${w} rounded bg-muted blur-[2px] animate-pulse`}
+            style={{ animationDelay: `${i * 120}ms` }}
+          />
+        ))}
+      </div>
+      <div className="rounded-lg border border-border bg-card p-4 space-y-2">
+        <div className="h-4 w-32 rounded bg-muted blur-[1px] animate-pulse" />
+        {footnoteLines.map((w, i) => (
+          <div
+            key={i}
+            className={`h-2.5 ${w} rounded bg-muted blur-[2px] animate-pulse`}
+            style={{ animationDelay: `${(i + 2) * 120}ms` }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 export default LegalResearchV1Panel;
+
+function GhostAnswer() {
+  const answerLines = ["w-11/12", "w-full", "w-10/12", "w-11/12", "w-9/12", "w-full", "w-8/12"];
+  const footnoteLines = ["w-7/12", "w-8/12", "w-6/12"];
+  return (
+    <div className="space-y-4 animate-fade-in" aria-hidden>
+      <div className="rounded-lg border border-border bg-card p-4 space-y-2.5">
+        <div className="h-4 w-24 rounded bg-muted blur-[1px] animate-pulse" />
+        {answerLines.map((w, i) => (
+          <div
+            key={i}
+            className={`h-3 ${w} rounded bg-muted blur-[2px] animate-pulse`}
+            style={{ animationDelay: `${i * 120}ms` }}
+          />
+        ))}
+      </div>
+      <div className="rounded-lg border border-border bg-card p-4 space-y-2">
+        <div className="h-4 w-32 rounded bg-muted blur-[1px] animate-pulse" />
+        {footnoteLines.map((w, i) => (
+          <div
+            key={i}
+            className={`h-2.5 ${w} rounded bg-muted blur-[2px] animate-pulse`}
+            style={{ animationDelay: `${(i + 2) * 120}ms` }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}

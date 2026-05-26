@@ -58,6 +58,30 @@ async function handle(req: Request): Promise<Response> {
     }
   };
 
+  // Per-stage progress tracking for the client UI.
+  const completedStages: string[] = [];
+  let currentStage: string | null = null;
+  const markStage = async (stage: string) => {
+    if (currentStage && !completedStages.includes(currentStage)) {
+      completedStages.push(currentStage);
+    }
+    currentStage = stage;
+    await setJobStatus({
+      current_stage: stage,
+      completed_stages: completedStages,
+    });
+  };
+  const completeAllStages = async () => {
+    if (currentStage && !completedStages.includes(currentStage)) {
+      completedStages.push(currentStage);
+    }
+    currentStage = null;
+    await setJobStatus({
+      current_stage: null,
+      completed_stages: completedStages,
+    });
+  };
+
   const run_id = crypto.randomUUID();
   const t_start = Date.now();
   const stage_runs: StageRun[] = [];
@@ -218,6 +242,7 @@ async function handle(req: Request): Promise<Response> {
   const analyzerContext = buildAnalyzerContext(attachmentResult.documents);
 
   // ─── P2: Claim Analyzer ──────────────────────────────────────────────────
+  await markStage("analyzer");
   let analyzerStage;
   try {
     analyzerStage = await runClaimAnalyzer(question, { attachmentsContext: analyzerContext });
@@ -308,6 +333,7 @@ async function handle(req: Request): Promise<Response> {
 
 
   // ─── P2: Research Query Planner ──────────────────────────────────────────
+  await markStage("planner");
   let plannerStage;
   try {
     plannerStage = await runQueryPlanner(question, analyzer);
@@ -389,6 +415,7 @@ async function handle(req: Request): Promise<Response> {
   }
 
   // ─── P3: Retrieval (local DB + Perplexity) ───────────────────────────────
+  await markStage("retrieval");
   const tRetrieval = Date.now();
   const [local, pplx] = await Promise.all([
     runLocalRetrieval(admin, planner!.queries, { question, claims: analyzer.claims }),
@@ -443,6 +470,7 @@ async function handle(req: Request): Promise<Response> {
   };
 
   // ─── P4: Source Verifier ─────────────────────────────────────────────────
+  await markStage("verifier");
   const forceSplit = (req.headers.get("x-verifier-force-split") ?? "") === "1";
   const verifier = await runVerifier(question, analyzer.claims, pool.candidates, { forceSplit });
   stage_runs.push(...verifier.stage_runs);
@@ -475,6 +503,7 @@ async function handle(req: Request): Promise<Response> {
   };
 
   // ─── P5: Drafter + simple linked footnotes ───────────────────────────────
+  await markStage("drafter");
   const drafter = await runDrafter(
     question,
     analyzer.claims,
@@ -504,6 +533,10 @@ async function handle(req: Request): Promise<Response> {
 
   const finalAnswer = drafter.ok ? drafter.answer_markdown : STUB_ANSWER;
   const finalFootnotes = drafter.ok ? drafter.footnotes : [];
+
+  // Mark final stage (footnote rendering / finalize) as active then complete.
+  await markStage("finalize");
+  await completeAllStages();
 
   // ─── Success: write telemetry + return P5 payload ────────────────────────
   await writeTelemetry(admin, {

@@ -444,7 +444,9 @@ export type Database = {
       }
       legal_research_jobs: {
         Row: {
+          completed_stages: string[]
           created_at: string
+          current_stage: string | null
           error: string | null
           id: string
           project_id: string | null
@@ -455,7 +457,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          completed_stages?: string[]
           created_at?: string
+          current_stage?: string | null
           error?: string | null
           id?: string
           project_id?: string | null
@@ -466,7 +470,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          completed_stages?: string[]
           created_at?: string
+          current_stage?: string | null
           error?: string | null
           id?: string
           project_id?: string | null
