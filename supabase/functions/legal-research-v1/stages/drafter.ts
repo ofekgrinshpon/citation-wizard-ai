@@ -783,56 +783,12 @@ export async function runDrafter(
     }
   }
 
-  // ─── Phase A: placement discipline ──────────────────────────────────────
+  // ─── Phase D: placement telemetry (read-only, no repair, no LLM call) ───
+  // We record placement metrics for observability only. Placement is never
+  // gated, never blocked, never rewritten. Aesthetics-only repairs were
+  // removed because they cost ~136s on gpt-5 without affecting correctness.
   if (parsed.ok && marker.ok) {
-    const placement = validatePlacement(answer);
-    marker.placement = placement;
-    if (!placement.ok) {
-      const placementRepairMsg = buildPlacementRepairUserMessage(userMsg, answer, used, placement);
-      const tp = Date.now();
-      const respP = await callOpenAIJsonTool<unknown>({
-        model: MODEL_FULL,
-        system: SYSTEM_PROMPT,
-        user: placementRepairMsg,
-        tool,
-      });
-      stage_runs.push({
-        stage: "drafter.placement_repair",
-        model: MODEL_FULL,
-        ms: Date.now() - tp,
-        ok: !!respP.data,
-      });
-      const parsedP = validateDraftShape(respP.data, inputSources);
-      let accepted = false;
-      if (parsedP.ok) {
-        const oldKey = used.map((u) => `${u.ref}|${u.number}|${u.candidate_id}`).sort().join(",");
-        const newKey = parsedP.used_sources.map((u) => `${u.ref}|${u.number}|${u.candidate_id}`).sort().join(",");
-        if (oldKey === newKey) {
-          const mP = runMarkerValidation(parsedP.answer_markdown, parsedP.used_sources);
-          if (mP.ok && !mP.internal_id_leak) {
-            const placementP = validatePlacement(parsedP.answer_markdown);
-            const better =
-              placementP.cluster_count <= placement.cluster_count &&
-              placementP.end_paragraph_dump_count <= placement.end_paragraph_dump_count &&
-              placementP.out_of_order_count <= placement.out_of_order_count &&
-              (placementP.cluster_count < placement.cluster_count ||
-                placementP.end_paragraph_dump_count < placement.end_paragraph_dump_count ||
-                placementP.out_of_order_count < placement.out_of_order_count);
-            if (better) {
-              answer = parsedP.answer_markdown;
-              used = parsedP.used_sources;
-              marker = {
-                ...mP,
-                repaired: marker.repaired,
-                placement: { ...placementP, repaired: true },
-              };
-              accepted = true;
-            }
-          }
-        }
-      }
-      if (!accepted) marker.placement = { ...placement, repair_failed: true };
-    }
+    marker.placement = validatePlacement(answer);
   }
 
   // Build UsedSource + Footnote outputs from inputSources × used.
