@@ -1,0 +1,61 @@
+{
+  "results": [
+    {
+      "fixture_id": "L1",
+      "run_id": "7c494069-902a-4493-9d96-c672351958bb",
+      "qa_log_id": "1f4d99ab-f9b4-47ca-8764-77596a30b145",
+      "total_ms": 175852,
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "footnote_count": 6,
+      "used_sources_count": 6,
+      "footnote_eq_used": true,
+      "used_subset_of_usable": true,
+      "drafter_ok": true,
+      "stub_answer": false,
+      "verifier_usable": 7,
+      "answer_len_chars": 1986,
+      "baseline_len_chars": 2826,
+      "len_ratio": 0.7,
+      "len_within_25pct": false
+    },
+    {
+      "fixture_id": "L2",
+      "run_id": "146b11e1-0779-495e-8fa3-741e78c6ddb0",
+      "qa_log_id": "31bdd9aa-2327-4e98-9027-a729f6a7e400",
+      "total_ms": 175228,
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "footnote_count": 7,
+      "used_sources_count": 7,
+      "footnote_eq_used": true,
+      "used_subset_of_usable": true,
+      "drafter_ok": true,
+      "stub_answer": false,
+      "verifier_usable": 7,
+      "answer_len_chars": 2314,
+      "baseline_len_chars": 4151,
+      "len_ratio": 0.56,
+      "len_within_25pct": false
+    },
+    {
+      "fixture_id": "L6",
+      "run_id": "a43dec60-1e24-4614-9df7-899adec02bf3",
+      "qa_log_id": "81937ab3-db66-4fdd-b47e-e4b7df312726",
+      "total_ms": 189931,
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "footnote_count": 9,
+      "used_sources_count": 9,
+      "footnote_eq_used": true,
+      "used_subset_of_usable": true,
+      "drafter_ok": true,
+      "stub_answer": false,
+      "verifier_usable": 13,
+      "answer_len_chars": 3056,
+      "baseline_len_chars": 4731,
+      "len_ratio": 0.65,
+      "len_within_25pct": false
+    }
+  ]
+}
