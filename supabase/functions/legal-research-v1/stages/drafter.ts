@@ -824,48 +824,20 @@ export async function runDrafter(
 
   const ok = parsed.ok && marker.ok;
 
-  // ─── Phase B: Rule 37 short-form post-pass (gated) ──────────────────────
-  // Pure post-pass on the already-validated answer. Never touches used_sources.
-  // On any guard/validation failure, ship the pre-Rule-37 answer + footnotes.
-  let finalAnswer = answer;
-  let finalFootnotes = footnotes;
-  let rule37Report: Rule37Report | undefined;
-  if (ok) {
-    const envOn = (Deno.env.get("LEGAL_RESEARCH_V1_RULE37") ?? "off").toLowerCase() === "on";
-    const enabled = opts?.useRule37 === true || (opts?.useRule37 !== false && envOn);
-    const inputByRef = new Map(inputSources.map((s) => [s.ref, s]));
-    const outcome = applyRule37(answer, used, inputByRef, enabled);
-    rule37Report = outcome.report;
-    if (enabled && outcome.report.applied && outcome.extraFootnotes.length > 0) {
-      const v = validateRule37(outcome.newAnswer, used, outcome.extraFootnotes, inputByRef);
-      rule37Report.wrong_back_references = v.wrong_back_references;
-      if (!v.ok) {
-        rule37Report.applied = false;
-        rule37Report.validation_failed = v.reason;
-      } else {
-        finalAnswer = outcome.newAnswer;
-        finalFootnotes = [...footnotes, ...outcome.extraFootnotes].sort((a, b) => a.number - b.number);
-      }
-    }
-  }
-
-  // ─── Phase C.1: Atomic marker normalization (post-Rule-37) ─────────────
-  // Three modes:
+  // ─── Phase D: Atomic marker validation (telemetry-only) ─────────────────
+  // Two modes:
   //   off      — pipeline unchanged, ships superscripts (default).
   //   validate — normalize + validate in-memory, ship superscripts.
-  //   emit     — ship atomic [[fn:N]] tokens; on any failure, fall back to
-  //              superscript output with marker_format = legacy_superscript_fallback.
-  let marker_format: MarkerFormat = "legacy_superscript";
+  // The "emit" mode was removed in Phase D — atomic tokens never reach users.
+  const finalAnswer = answer;
+  const finalFootnotes = footnotes;
+  const marker_format: MarkerFormat = "legacy_superscript";
   let atomicReport: AtomicReport | undefined;
-  const envAtomic = (Deno.env.get("LEGAL_RESEARCH_V1_ATOMIC_MARKERS") ?? "off").toLowerCase();
-  const envMode: AtomicMode =
-    envAtomic === "emit" ? "emit" : envAtomic === "validate" ? "validate" : "off";
-  // opts.atomicMode is set by index.ts ONLY for service-role/smoke requests,
-  // so prod users can never trigger atomic mode via header. Env value is the
-  // default for organic traffic.
+  const envAtomic = (Deno.env.get("LEGAL_RESEARCH_V1_ATOMIC_MARKERS") ?? "validate").toLowerCase();
+  const envMode: AtomicMode = envAtomic === "validate" ? "validate" : "off";
   const atomicMode: AtomicMode = opts?.atomicMode ?? envMode;
 
-  if (ok && atomicMode !== "off") {
+  if (ok && atomicMode === "validate") {
     const usedForAtomic = finalFootnotes.map((f) => ({ number: f.number }));
     const supCount = extractMarkers(finalAnswer).length;
     const norm = normalizeToAtomic(finalAnswer, usedForAtomic);
@@ -877,7 +849,6 @@ export async function runDrafter(
       atomicCount = extractAtomicMarkers(norm.atomic).length;
       byteEqual = atomicCount === supCount;
     }
-    const allOk = norm.ok && validation !== null && validation.ok && byteEqual;
     atomicReport = {
       mode: atomicMode,
       normalize_ok: norm.ok,
@@ -887,19 +858,6 @@ export async function runDrafter(
       superscript_marker_count: supCount,
       atomic_marker_count: atomicCount,
     };
-    if (atomicMode === "emit") {
-      if (allOk) {
-        finalAnswer = norm.atomic;
-        marker_format = "atomic";
-      } else {
-        marker_format = "legacy_superscript_fallback";
-        atomicReport.emit_fallback_reason = !norm.ok
-          ? `normalize_failed:${norm.reason ?? "unknown"}`
-          : !byteEqual
-          ? "marker_count_mismatch"
-          : `validation_failed:${validation?.error ?? "unknown"}`;
-      }
-    }
   }
 
   return {
@@ -914,7 +872,6 @@ export async function runDrafter(
     used_sources,
     footnotes: finalFootnotes,
     marker_validation: marker,
-    rule37: rule37Report,
     marker_format,
     atomic: atomicReport,
     omitted_candidate_ids,
