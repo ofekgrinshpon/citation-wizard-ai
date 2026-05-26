@@ -1205,7 +1205,7 @@ const Index = () => {
                     setAcademicResumeFallback({ question, result });
                     setAcademicResumeSignal(Date.now());
                   } else {
-                    setQaExternalResult({ question, result, taskMode: taskMode as "research" | "pleading_analysis" | "case_summary" | "academic_writing" });
+                    setQaExternalResult({ question, result, taskMode: taskMode as "research" | "case_summary" | "academic_writing" });
                   }
                 }}
               />
