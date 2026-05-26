@@ -415,6 +415,7 @@ async function handle(req: Request): Promise<Response> {
       candidates: local.candidates.length,
       per_query: local.per_query,
       global_exact: local.global_exact,
+      aggregate: local.aggregate,
     },
     perplexity: {
       ms: pplx.ms,
