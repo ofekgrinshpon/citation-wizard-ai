@@ -582,14 +582,80 @@ export async function runLocalRetrieval(
     }),
   );
 
+  const wallMs = Date.now() - t0;
+
+  // ── Aggregate telemetry (P7 E.2) ─────────────────────────────────────────
+  const seenQ = new Map<string, number>();
+  for (const pq of per_query) {
+    const k = pq.original_query_he;
+    seenQ.set(k, (seenQ.get(k) ?? 0) + 1);
+  }
+  const duplicate_query_count = [...seenQ.values()].reduce((s, n) => s + (n > 1 ? n - 1 : 0), 0);
+  const text_timeout_count = per_query.filter((p) => p.diag.text_status === "timeout").length;
+  const vector_timeout_count = per_query.filter((p) => p.diag.vector_status === "timeout").length;
+  const exact_error_count = per_query.filter((p) => p.diag.exact_status === "error").length;
+  const sum_query_ms = per_query.reduce((s, p) => s + p.ms, 0);
+  let slowest = per_query[0] ?? null;
+  for (const p of per_query) if (!slowest || p.ms > slowest.ms) slowest = p;
+  const method_total_ms = {
+    exact: per_query.reduce((s, p) => s + (p.diag.exact_ms || 0), 0),
+    text: per_query.reduce((s, p) => s + (p.diag.text_ms || 0), 0),
+    embedding: per_query.reduce((s, p) => s + (p.diag.embedding_ms || 0), 0),
+    vector: per_query.reduce((s, p) => s + (p.diag.vector_ms || 0), 0),
+  };
+  const slowest_method = (Object.entries(method_total_ms).sort((a, b) => b[1] - a[1])[0]?.[0]
+    ?? "text") as "exact" | "text" | "embedding" | "vector";
+  const candidates_by_method = {
+    exact_authority: candidates.filter((c) => c.retrieval_method === "exact_authority").length,
+    text: candidates.filter((c) => c.retrieval_method === "text").length,
+    vector: candidates.filter((c) => c.retrieval_method === "vector").length,
+  };
+  const max_query_ms = slowest?.ms ?? 0;
+  let bottleneck_hypothesis = "unknown";
+  if (text_timeout_count + vector_timeout_count > 0) {
+    bottleneck_hypothesis = `rpc_timeout_cap (text_timeouts=${text_timeout_count}, vector_timeouts=${vector_timeout_count}, RPC_TIMEOUT_MS=${RPC_TIMEOUT_MS})`;
+  } else if (max_query_ms > 0 && max_query_ms >= wallMs * 0.85 && per_query.length > 1) {
+    bottleneck_hypothesis = `single_slow_query (max=${max_query_ms}ms ≈ wall=${wallMs}ms)`;
+  } else if (max_query_ms > 0 && max_query_ms < wallMs * 0.6) {
+    bottleneck_hypothesis = `parallel_aggregate (wall=${wallMs}ms >> max_query=${max_query_ms}ms; serialization or contention)`;
+  } else {
+    bottleneck_hypothesis = `dominant_method=${slowest_method} (sum=${method_total_ms[slowest_method]}ms across ${per_query.length} queries)`;
+  }
+
   return {
     candidates,
     per_query,
-    stage_runs: [{ stage: "local_retrieval", ms: Date.now() - t0, ok: true }],
-    ms: Date.now() - t0,
+    stage_runs: [{ stage: "local_retrieval", ms: wallMs, ok: true }],
+    ms: wallMs,
     global_exact: {
       clues_from_question: questionClues,
       clues_from_claims: claimClues,
+    },
+    aggregate: {
+      wall_ms: wallMs,
+      queries_executed: per_query.length,
+      duplicate_query_count,
+      text_timeout_count,
+      vector_timeout_count,
+      exact_error_count,
+      sum_query_ms,
+      max_query_ms,
+      slowest_query: slowest
+        ? {
+            claim_id: slowest.claim_id,
+            role: slowest.role,
+            query_he: slowest.original_query_he,
+            ms: slowest.ms,
+            exact_ms: slowest.diag.exact_ms,
+            text_ms: slowest.diag.text_ms,
+            vector_ms: slowest.diag.vector_ms,
+            embedding_ms: slowest.diag.embedding_ms,
+          }
+        : null,
+      method_total_ms,
+      slowest_method,
+      candidates_by_method,
+      bottleneck_hypothesis,
     },
   };
 }
