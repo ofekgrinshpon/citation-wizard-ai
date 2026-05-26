@@ -662,6 +662,16 @@ export interface DrafterResult {
   stage_runs: StageRun[];
   error?: string;
   raw_text?: string;
+  internal_id_scrub?: {
+    attempted: boolean;
+    accepted: boolean;
+    patterns: string[];
+    rejected_reason?:
+      | "no_pattern_matched"
+      | "marker_validation_failed"
+      | "residual_leak"
+      | "marker_count_changed";
+  };
 }
 
 export async function runDrafter(
