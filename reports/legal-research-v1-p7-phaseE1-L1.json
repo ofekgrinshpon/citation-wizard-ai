@@ -1,0 +1,141 @@
+{
+  "generated_at": "2026-05-26T07:59:39.990Z",
+  "fixture": {
+    "id": "L1",
+    "question": "מהם התנאים למתן צו מניעה זמני?"
+  },
+  "qa_log_id": "741cab05-feac-4c33-8fd9-3b9cc98fd150",
+  "run_id": "d928193f-684b-449a-a02f-6fd2ef507c86",
+  "row_summary": {
+    "fixture_id": "L1",
+    "marker_validation_ok": false,
+    "internal_id_leak": true,
+    "used_sources_count": 1,
+    "footnote_count": 0,
+    "footnote_eq_used": false,
+    "used_sources_subset_of_usable": true,
+    "no_raw_atomic_tokens": true,
+    "no_candidate_id_leak": true,
+    "atomic_validation_ok": null,
+    "verifier": {
+      "parallel": true,
+      "concurrency_limit": 2,
+      "batch_count": 1,
+      "batch_ms": [
+        11456
+      ],
+      "total_wall_ms": 11457,
+      "total_sum_ms": 11456,
+      "escalated_batches": 0,
+      "merge_order_preserved": true,
+      "rate_limit_count": 0,
+      "retry_count": 0,
+      "fallback_to_sequential": false,
+      "candidates_verified": 1,
+      "candidates_usable": 1,
+      "candidates_dropped": 0,
+      "batches_labels": [
+        "batch1"
+      ]
+    },
+    "drafter_ms": 82287,
+    "total_ms": 199354,
+    "baseline_drafter_ms": 24662,
+    "baseline_total_ms": 118897,
+    "total_ms_delta": 80457,
+    "baseline_used_sources_count": 4,
+    "used_sources_count_delta": -3,
+    "source_set_equals_baseline": false,
+    "source_set_added": [
+      "82fbf20a-7c12-46b0-acc6-4e5a310373d3"
+    ],
+    "source_set_removed": [
+      "7c3038b1-6cdb-40f7-9f2f-0a88e55b0675",
+      "9a88a74b-05ac-4fde-85da-927e43950efd",
+      "3c59a4e7-28c5-4091-9836-0a15a451a4b4",
+      "76b5039a-91be-4a31-8c49-e63cc4539abb"
+    ],
+    "placement_telemetry": {
+      "ok": null,
+      "cluster_count": null,
+      "end_paragraph_dump_count": null
+    }
+  },
+  "verifier_full": {
+    "ms": 11457,
+    "counts": {
+      "by_support": {
+        "direct": 0,
+        "partial": 1,
+        "unrelated": 0,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 1,
+        "false": 0
+      }
+    },
+    "errors": [],
+    "usable": [
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "82fbf20a-7c12-46b0-acc6-4e5a310373d3",
+        "verdict_claim_ids": [
+          "C5"
+        ]
+      }
+    ],
+    "batches": [
+      {
+        "ms": 11456,
+        "label": "batch1",
+        "claim_ids": [
+          "C5"
+        ],
+        "escalated": false,
+        "candidates": 1
+      }
+    ],
+    "dropped": [],
+    "batch_ms": [
+      11456
+    ],
+    "parallel": true,
+    "verdicts": [
+      {
+        "reason": "מאמר אקדמי העוסק בהוגנות ובממתח סביב פניות ex parte תומך באופן משלימי בטענות לגבי חובת הגילוי וההשלכות של רשלנות בחומרי המסירה, אך אינו פסיקה או תקנה שחוסכת צורך בסמכות מחייבת — לכן partial.",
+        "support": "partial",
+        "claim_id": "C5",
+        "role_match": true,
+        "candidate_id": "82fbf20a-7c12-46b0-acc6-4e5a310373d3",
+        "supported_points": [
+          "דן במתח בין בקשות במעמד צד אחד לחובת גילוי והגינות דיונית.",
+          "מתייחס לרלוונטיות של חומרי המסירה והשלכות של חוסר גילוי/רשלנות בהם.",
+          "מספק ניתוח אקדמי של העקרונות (הוגנות, הודעה מוקדמת, דחיפות) אך אינו מקור מחייב משפטית."
+        ]
+      }
+    ],
+    "batch_count": 1,
+    "model_final": "openai/gpt-5-mini",
+    "retry_count": 0,
+    "per_claim_ms": {
+      "C5": 11456
+    },
+    "total_sum_ms": 11456,
+    "model_initial": "openai/gpt-5-mini",
+    "total_wall_ms": 11457,
+    "escalated_claims": [],
+    "rate_limit_count": 0,
+    "candidates_usable": 1,
+    "concurrency_limit": 2,
+    "escalated_batches": 0,
+    "candidates_dropped": 0,
+    "candidates_verified": 1,
+    "merge_order_preserved": true,
+    "fallback_to_sequential": false
+  },
+  "atomic": null,
+  "placement": {},
+  "answer_preview": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+}

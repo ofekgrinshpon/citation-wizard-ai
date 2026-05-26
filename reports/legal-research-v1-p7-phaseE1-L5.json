@@ -1,0 +1,618 @@
+{
+  "generated_at": "2026-05-26T08:00:42.064Z",
+  "fixture": {
+    "id": "L5",
+    "question": "מהי עילת הסבירות ומה היקף הביקורת השיפוטית עליה?"
+  },
+  "qa_log_id": "63d2e331-7ee8-4533-bb92-5cdf4fc1cea5",
+  "run_id": "57735985-8160-4205-ade8-611e857595ec",
+  "row_summary": {
+    "fixture_id": "L5",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 9,
+    "footnote_count": 9,
+    "footnote_eq_used": true,
+    "used_sources_subset_of_usable": true,
+    "no_raw_atomic_tokens": true,
+    "no_candidate_id_leak": true,
+    "atomic_validation_ok": true,
+    "verifier": {
+      "parallel": true,
+      "concurrency_limit": 2,
+      "batch_count": 1,
+      "batch_ms": [
+        81101
+      ],
+      "total_wall_ms": 81102,
+      "total_sum_ms": 81101,
+      "escalated_batches": 0,
+      "merge_order_preserved": true,
+      "rate_limit_count": 0,
+      "retry_count": 0,
+      "fallback_to_sequential": false,
+      "candidates_verified": 24,
+      "candidates_usable": 14,
+      "candidates_dropped": 10,
+      "batches_labels": [
+        "batch1"
+      ]
+    },
+    "drafter_ms": 41231,
+    "total_ms": 256844,
+    "baseline_drafter_ms": 23772,
+    "baseline_total_ms": 143011,
+    "total_ms_delta": 113833,
+    "baseline_used_sources_count": 8,
+    "used_sources_count_delta": 1,
+    "source_set_equals_baseline": false,
+    "source_set_added": [
+      "800337f3-858c-40e8-a159-d6da454c0ddc",
+      "aa4ed49b-822c-4499-8e4f-9eb68dc4b06a",
+      "4e0b46ef-505c-4467-af00-161f9bc970e6",
+      "8776a130-f340-4cb8-9010-ade45bfe454e",
+      "480b58f3-7038-486e-8634-8fc29b7a3588",
+      "5bbd7dfa-acec-4cc4-a1d1-1e49eb708a86",
+      "2e434ebc-03ba-4121-91ae-1c29fd6db6c9",
+      "dbfe6eeb-0549-4489-8639-27177f99ce85",
+      "f6f69be1-d3c6-41a1-9a04-9964aaf8a544"
+    ],
+    "source_set_removed": [
+      "6e470137-f639-41b4-9a4b-6c284687cbbb",
+      "dd28cb5d-53fc-488f-a07a-17cf5556a388",
+      "d16b4cd5-96c7-44b8-84b8-6adcedb1fc4e",
+      "4768fd57-5375-4134-b6ab-a6df140bda2a",
+      "bcdf9599-6d6a-42ef-b567-eb9e4c860f2f",
+      "6daffd6c-02e9-4cd5-91cf-a0fb0daf9d60",
+      "175b9e1d-d477-4701-946c-22697f5e1f77",
+      "18f5fb17-7081-4759-89c1-200a678027f4"
+    ],
+    "placement_telemetry": {
+      "ok": false,
+      "cluster_count": 21,
+      "end_paragraph_dump_count": 1
+    }
+  },
+  "verifier_full": {
+    "ms": 81102,
+    "counts": {
+      "by_support": {
+        "direct": 9,
+        "partial": 5,
+        "unrelated": 9,
+        "tangential": 1
+      },
+      "by_role_match": {
+        "true": 23,
+        "false": 1
+      }
+    },
+    "errors": [],
+    "usable": [
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "5bbd7dfa-acec-4cc4-a1d1-1e49eb708a86",
+        "verdict_claim_ids": [
+          "C3"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "2e434ebc-03ba-4121-91ae-1c29fd6db6c9",
+        "verdict_claim_ids": [
+          "C3"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "8ff15b1d-5c3a-406e-98f6-77871d7d47eb",
+        "verdict_claim_ids": [
+          "C3"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "0300a202-94f9-41c4-99e6-b56e05970158",
+        "verdict_claim_ids": [
+          "C3"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "8776a130-f340-4cb8-9010-ade45bfe454e",
+        "verdict_claim_ids": [
+          "C3"
+        ]
+      },
+      {
+        "role_match": false,
+        "best_support": "partial",
+        "candidate_id": "b93956c4-c430-4a5a-b871-52ed31d7572a",
+        "verdict_claim_ids": [
+          "C4"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "800337f3-858c-40e8-a159-d6da454c0ddc",
+        "verdict_claim_ids": [
+          "C1"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "aa4ed49b-822c-4499-8e4f-9eb68dc4b06a",
+        "verdict_claim_ids": [
+          "C1"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "4e0b46ef-505c-4467-af00-161f9bc970e6",
+        "verdict_claim_ids": [
+          "C2"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "480b58f3-7038-486e-8634-8fc29b7a3588",
+        "verdict_claim_ids": [
+          "C3"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "dbfe6eeb-0549-4489-8639-27177f99ce85",
+        "verdict_claim_ids": [
+          "C4"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "f6f69be1-d3c6-41a1-9a04-9964aaf8a544",
+        "verdict_claim_ids": [
+          "C4"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "248d541b-4984-48e5-9ecc-a7a21e0ea69a",
+        "verdict_claim_ids": [
+          "C5"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "4c1487cd-9924-49bf-ab46-03bb5c12e76c",
+        "verdict_claim_ids": [
+          "C3"
+        ]
+      }
+    ],
+    "batches": [
+      {
+        "ms": 81101,
+        "label": "batch1",
+        "claim_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C4",
+          "C5"
+        ],
+        "escalated": false,
+        "candidates": 24
+      }
+    ],
+    "dropped": [
+      {
+        "role": "primary_statute",
+        "title": "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+        "origin": "local_db",
+        "reason": "מסמך על החלטות גמלאות לנושאי משרה/הוראת שעה אינו מתמקד בהיקף הביקורת השיפוטית או בעקרון ה-justiciability.",
+        "candidate_id": "96c5f56d-34fd-4025-b94d-c2adda4f125f",
+        "worst_support": "unrelated",
+        "retrieval_method": "exact_authority"
+      },
+      {
+        "role": "primary_statute",
+        "title": "חוק יסודות המשפט",
+        "origin": "local_db",
+        "reason": "המסמך עוסק בעיקר בעקרונות כלליים של המשפט ולא מתמקד בגבולות הביקורת השיפוטית או בהבחנות לגבי תחומי רגישות.",
+        "candidate_id": "718a79f3-1b68-4f29-95a9-bb053e623311",
+        "worst_support": "tangential",
+        "retrieval_method": "exact_authority"
+      },
+      {
+        "role": "binding_case_law",
+        "title": "תקנות סדר הדין הפלילי",
+        "origin": "local_db",
+        "reason": "תקנות סדר דין פלילי מתמקדות בהליכים פליליים ולא בעוצמת הביקורת המנהלית או בשאלת justiciability.",
+        "candidate_id": "e0296629-426e-4a0b-bb7d-f49e1cc6633d",
+        "worst_support": "unrelated",
+        "retrieval_method": "vector"
+      },
+      {
+        "role": "binding_case_law",
+        "title": "תקנות שיקים ללא כיסוי (סייגים לתחולת החוק – שירות חירום)",
+        "origin": "local_db",
+        "reason": "תקנות שיקים ללא כיסוי הן רגולציה תחומית שאינה דנה בסעדי בג\"ץ בעילת סבירות.",
+        "candidate_id": "a3e84bcf-91c5-479c-8a6f-9ba025e543f1",
+        "worst_support": "unrelated",
+        "retrieval_method": "vector"
+      },
+      {
+        "role": "binding_case_law",
+        "title": "ביהמ\"ש המחוזי בת\"א, סגן הנשיא חגי ברנר: החלטה בשאלה האם ואילו תנאים ניתן לברר תביעה כספית במסגרת דיונית של בקשה למתן הוראות בתיק חדלות פירעון (חדל\"ת 15599-05-21)",
+        "origin": "local_db",
+        "reason": "פסק דין אזרחי/התייחסות לנהלי דיון בחדלות פירעון שאינו דן ביחסי דוקטרינות הביקורת השיפוטית או בשינוי בעקבות חוקי היסוד.",
+        "candidate_id": "d6401f19-73cf-4594-91ac-528c5a4d257e",
+        "worst_support": "unrelated",
+        "retrieval_method": "vector"
+      },
+      {
+        "role": "binding_case_law",
+        "title": "תקנות בית הדין לעבודה (סדר הדין בסכסוך קיבוצי)",
+        "origin": "local_db",
+        "reason": "תקנות סדר הדין של בית הדין לעבודה אינן עוסקות ביחס בין עילת הסבירות לדוקטרינות אחרות או בהשפעת חוקי היסוד.",
+        "candidate_id": "e0a2bd59-d7ac-4330-b29b-de9b2b0924e5",
+        "worst_support": "unrelated",
+        "retrieval_method": "vector"
+      },
+      {
+        "role": "binding_case_law",
+        "title": "תקנות בית דין לעבודה (המצאת מסמך בשטחים המוחזקים)",
+        "origin": "local_db",
+        "reason": "תקנות הנוגעות להמצאת מסמך בבית הדין לעבודה אינן דנות בסעדים שהבג\"ץ יכול להורות בגין אי־סבירות.",
+        "candidate_id": "8dd52e55-8a9e-48db-ace7-8d15b8648b33",
+        "worst_support": "unrelated",
+        "retrieval_method": "vector"
+      },
+      {
+        "role": "binding_case_law",
+        "title": "תקנות בית הדין לעבודה (פישור)",
+        "origin": "local_db",
+        "reason": "תקנות בית הדין לעבודה הן טקסט רגולטורי שאינו עוסק בקריטריונים לשיקול אי־סבירות של רשויות מנהליות.",
+        "candidate_id": "660e044e-5ceb-4fbb-ade1-03061a252af1",
+        "worst_support": "unrelated",
+        "retrieval_method": "vector"
+      },
+      {
+        "role": "persuasive_case_law",
+        "title": "תקנות הביטוח הלאומי (תשלומים בהכשרה מקצועית לענין דמי אבטלה)",
+        "origin": "local_db",
+        "reason": "תקנות הביטוח הלאומי מתמקדות בענייני זכאות ותשלומים, ולא בקריטריונים משפטיים למבחן הסבירות.",
+        "candidate_id": "0b6cf58d-6ee8-4f8c-91e2-eee778d15647",
+        "worst_support": "unrelated",
+        "retrieval_method": "vector"
+      },
+      {
+        "role": "binding_case_law",
+        "title": "תקנות חוקרים פרטיים ושירותי שמירה (אתיקה מקצועית)",
+        "origin": "local_db",
+        "reason": "המסמך הוא תקנות אתיקה לחוקרים פרטיים ואינו דן בעילת הסבירות או בהתפתחותה בפסיקה.",
+        "candidate_id": "50ec5949-c340-48da-af25-78f30fa9ca49",
+        "worst_support": "unrelated",
+        "retrieval_method": "vector"
+      }
+    ],
+    "batch_ms": [
+      81101
+    ],
+    "parallel": true,
+    "verdicts": [
+      {
+        "reason": "מאמר אקדמי מקיף בעברית שעוסק במפורש בהגדרה, מטרת הדוקטרינה והתפתחותה בפסיקה הישראלית, לכן תומך ישירות.",
+        "support": "direct",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "800337f3-858c-40e8-a159-d6da454c0ddc",
+        "supported_points": [
+          "מגדיר את עילת אי־הסבירות"
+        ]
+      },
+      {
+        "reason": "מאמר אקדמי-משפטי המנתח במפורש את התפתחות עילת הסבירות בישראל ובין הגישות השיפוטיות, ולכן תומך ישירות.",
+        "support": "direct",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "aa4ed49b-822c-4499-8e4f-9eb68dc4b06a",
+        "supported_points": [
+          "סקירת התפתחות היסטורית והבחנה בין מודלים (Wednesbury/איזון)"
+        ]
+      },
+      {
+        "reason": "המסמך הוא תקנות אתיקה לחוקרים פרטיים ואינו דן בעילת הסבירות או בהתפתחותה בפסיקה.",
+        "support": "unrelated",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "50ec5949-c340-48da-af25-78f30fa9ca49",
+        "supported_points": []
+      },
+      {
+        "reason": "מאמר אקדמי העוסק במבחן הסבירות ובכלים המעשיים להערכת החלטות מנהליות, ולכן תומך ישירות בקריטריונים המצויינים בטענה.",
+        "support": "direct",
+        "claim_id": "C2",
+        "role_match": true,
+        "candidate_id": "4e0b46ef-505c-4467-af00-161f9bc970e6",
+        "supported_points": [
+          "דן במבחן הסבירות ובמבחנים מנהליים מקבילים",
+          "מציין בעיות של מדדים, משקלים וסכנות להצדקה בדיעבד"
+        ]
+      },
+      {
+        "reason": "תקנות בית הדין לעבודה הן טקסט רגולטורי שאינו עוסק בקריטריונים לשיקול אי־סבירות של רשויות מנהליות.",
+        "support": "unrelated",
+        "claim_id": "C2",
+        "role_match": true,
+        "candidate_id": "660e044e-5ceb-4fbb-ade1-03061a252af1",
+        "supported_points": []
+      },
+      {
+        "reason": "תקנות הביטוח הלאומי מתמקדות בענייני זכאות ותשלומים, ולא בקריטריונים משפטיים למבחן הסבירות.",
+        "support": "unrelated",
+        "claim_id": "C2",
+        "role_match": true,
+        "candidate_id": "0b6cf58d-6ee8-4f8c-91e2-eee778d15647",
+        "supported_points": []
+      },
+      {
+        "reason": "מסמך על החלטות גמלאות לנושאי משרה/הוראת שעה אינו מתמקד בהיקף הביקורת השיפוטית או בעקרון ה-justiciability.",
+        "support": "unrelated",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "96c5f56d-34fd-4025-b94d-c2adda4f125f",
+        "supported_points": []
+      },
+      {
+        "reason": "חוק יסוד רלוונטי לזכויות המעצבות את עוצמת הביקורת אך אינו מפרט כללים ל-justiciability; מתאים כתמיכה חלקית.",
+        "support": "partial",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "5bbd7dfa-acec-4cc4-a1d1-1e49eb708a86",
+        "supported_points": [
+          "חוק יסוד העוסק בחופש העיסוק כזכות יסוד",
+          "מהווה מסגרת רלוונטית לעוצמת הביקורת השיפוטית בשאלות כלכליות/מנהליות"
+        ]
+      },
+      {
+        "reason": "חוק יסוד מרכזי שמספק מסגרת חוקתית לעוצמת הביקורת אך אינו קובע גבולות ישירות.",
+        "support": "partial",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "2e434ebc-03ba-4121-91ae-1c29fd6db6c9",
+        "supported_points": [
+          "חוק יסוד לכבוד האדם והחירות משמש בסיס להגנה על זכויות יסוד",
+          "משפיע על עוצמת הביקורת בשאלות מעוררות רגישות"
+        ]
+      },
+      {
+        "reason": "המסמך רלוונטי לנושא היקף הביקורת בתחומי מדיניות כלכלית אך אינו מסמך פסיקה על שפיטות/justiciability.",
+        "support": "partial",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "8ff15b1d-5c3a-406e-98f6-77871d7d47eb",
+        "supported_points": [
+          "חוק יסוד המשק מכיל עקרונות כלכליים ותקציביים",
+          "רלוונטי לדיון על הימנעות שיפוטית בתחומי מדיניות כלכלית"
+        ]
+      },
+      {
+        "reason": "המסמך עוסק בעיקר בעקרונות כלליים של המשפט ולא מתמקד בגבולות הביקורת השיפוטית או בהבחנות לגבי תחומי רגישות.",
+        "support": "tangential",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "718a79f3-1b68-4f29-95a9-bb053e623311",
+        "supported_points": [
+          "חוק יסודות המשפט קובע עקרונות משפטיים כלליים"
+        ]
+      },
+      {
+        "reason": "חוק התקציב רלוונטי לדיון על היקף ההתערבות השיפוטית בתחומי תקציביים אך אינו דן במפורש ב-justiciability.",
+        "support": "partial",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "0300a202-94f9-41c4-99e6-b56e05970158",
+        "supported_points": [
+          "חוק יסודות התקציב מגדיר מסגרת תקציבית לאומית",
+          "רלוונטי לדיון על נמנעות שיפוטית במדיניות תקציבית"
+        ]
+      },
+      {
+        "reason": "סקירה הממוקדת בשפיטות ובהגבלות על התערבות שיפוטית תומכת ישירות בטענה לגבי היקף הביקורת.",
+        "support": "direct",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "8776a130-f340-4cb8-9010-ade45bfe454e",
+        "supported_points": [
+          "דן במושגי 'שפיטות מוסדית' ונורמטיבית",
+          "מפרט את נסיבות שבהן בתי המשפט נמנעים מעמוד בסוגיות פוליטיות/ביטחוניות"
+        ]
+      },
+      {
+        "reason": "מאמר אקדמי המיועד לדון בהיקף הביקורת בתחומים רגישים—תמיכה ישירה.",
+        "support": "direct",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "480b58f3-7038-486e-8634-8fc29b7a3588",
+        "supported_points": [
+          "בחינת גבולות ההתערבות השיפוטית במדיניות כלכלית וביטחונית",
+          "מנתח הנימוקים לריסון שיפוטי"
+        ]
+      },
+      {
+        "reason": "תקנות סדר דין פלילי מתמקדות בהליכים פליליים ולא בעוצמת הביקורת המנהלית או בשאלת justiciability.",
+        "support": "unrelated",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "e0296629-426e-4a0b-bb7d-f49e1cc6633d",
+        "supported_points": []
+      },
+      {
+        "reason": "מסמך מחקרי של מרכז המחקר של הכנסת שעוסק בביקורת שיפוטית ומשווה שיטות—רלוונטי ישירות לנושא.",
+        "support": "direct",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "4c1487cd-9924-49bf-ab46-03bb5c12e76c",
+        "supported_points": [
+          "סקירה משפטית משווה של ביקורת שיפוטית",
+          "כוללת ניתוח של מגבלות השפיטה וההתערבות השיפוטית"
+        ]
+      },
+      {
+        "reason": "המסמך דן בסעדים בהקשר של אי-חוקתיות של חקיקה; רלוונטי חלקית לסעדים ולנקיטת צעדים לאחר ביטול אך אינו מתמקד בסבירות מנהלית.",
+        "support": "partial",
+        "claim_id": "C4",
+        "role_match": false,
+        "candidate_id": "b93956c4-c430-4a5a-b871-52ed31d7572a",
+        "supported_points": [
+          "מסביר את תוצאות פסילה של חקיקה ותהליכים פרלמנטריים לאחר פסילה"
+        ]
+      },
+      {
+        "reason": "דוח וסקירת הלכה המתארים במפורש את הסעדים והנחיות בית המשפט לאחר ביטול החלטה מנהלית—תמיכה ישירה.",
+        "support": "direct",
+        "claim_id": "C4",
+        "role_match": true,
+        "candidate_id": "dbfe6eeb-0549-4489-8639-27177f99ce85",
+        "supported_points": [
+          "מפרט את סוגי הסעד שבג\"ץ יכול להעניק: צו עשה/לא־עשה, צו ביטול וצו הצהרתי",
+          "דן בהחזרה לדיון בפני הרשות ובאופני הנחיית הרשות לאחר ביטול"
+        ]
+      },
+      {
+        "reason": "מאמר/פרק שמפרט את העקרונות והסעדים בביקורת שיפוטית, ולכן תומך ישירות בטענה.",
+        "support": "direct",
+        "claim_id": "C4",
+        "role_match": true,
+        "candidate_id": "f6f69be1-d3c6-41a1-9a04-9964aaf8a544",
+        "supported_points": [
+          "דן בביטול והחזרה לרשות (remand) כפסלות אופציונליות",
+          "מנתח היקף הסעדים השליליים וכיצד בית המשפט מנחה את הרשות לאחר ביטול"
+        ]
+      },
+      {
+        "reason": "תקנות שיקים ללא כיסוי הן רגולציה תחומית שאינה דנה בסעדי בג\"ץ בעילת סבירות.",
+        "support": "unrelated",
+        "claim_id": "C4",
+        "role_match": true,
+        "candidate_id": "a3e84bcf-91c5-479c-8a6f-9ba025e543f1",
+        "supported_points": []
+      },
+      {
+        "reason": "תקנות הנוגעות להמצאת מסמך בבית הדין לעבודה אינן דנות בסעדים שהבג\"ץ יכול להורות בגין אי־סבירות.",
+        "support": "unrelated",
+        "claim_id": "C4",
+        "role_match": true,
+        "candidate_id": "8dd52e55-8a9e-48db-ace7-8d15b8648b33",
+        "supported_points": []
+      },
+      {
+        "reason": "מאמר אקדמי הבוחן במפורש את היחס בין עילת הסבירות לדוקטרינות אחרות ואת השפעת חוקי היסוד — תומך ישירות.",
+        "support": "direct",
+        "claim_id": "C5",
+        "role_match": true,
+        "candidate_id": "248d541b-4984-48e5-9ecc-a7a21e0ea69a",
+        "supported_points": [
+          "דן בהשפעת פסיקה עדכנית על יחס הביקורת השיפוטית לחוקי היסוד",
+          "מנתח את המתח בין ביקורת שיפוטית לשינויים חוקתיים"
+        ]
+      },
+      {
+        "reason": "פסק דין אזרחי/התייחסות לנהלי דיון בחדלות פירעון שאינו דן ביחסי דוקטרינות הביקורת השיפוטית או בשינוי בעקבות חוקי היסוד.",
+        "support": "unrelated",
+        "claim_id": "C5",
+        "role_match": true,
+        "candidate_id": "d6401f19-73cf-4594-91ac-528c5a4d257e",
+        "supported_points": []
+      },
+      {
+        "reason": "תקנות סדר הדין של בית הדין לעבודה אינן עוסקות ביחס בין עילת הסבירות לדוקטרינות אחרות או בהשפעת חוקי היסוד.",
+        "support": "unrelated",
+        "claim_id": "C5",
+        "role_match": true,
+        "candidate_id": "e0a2bd59-d7ac-4330-b29b-de9b2b0924e5",
+        "supported_points": []
+      }
+    ],
+    "batch_count": 1,
+    "model_final": "openai/gpt-5-mini",
+    "retry_count": 0,
+    "per_claim_ms": {
+      "C1": 81101,
+      "C2": 81101,
+      "C3": 81101,
+      "C4": 81101,
+      "C5": 81101
+    },
+    "total_sum_ms": 81101,
+    "model_initial": "openai/gpt-5-mini",
+    "total_wall_ms": 81102,
+    "escalated_claims": [],
+    "rate_limit_count": 0,
+    "candidates_usable": 14,
+    "concurrency_limit": 2,
+    "escalated_batches": 0,
+    "candidates_dropped": 10,
+    "candidates_verified": 24,
+    "merge_order_preserved": true,
+    "fallback_to_sequential": false
+  },
+  "atomic": {
+    "mode": "validate",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 41,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 41
+  },
+  "placement": {
+    "ok": false,
+    "cluster_count": 21,
+    "cluster_samples": [
+      "עוסקות במשק ובתקציב.⁶⁷⁸\n- **זכויות יסוד וסו",
+      "ול את מידת ההתערבות.⁵⁹\n\nסעדים ואמצעי מנחה ",
+      " לנהל את הדיון מחדש.¹⁰¹¹\nמכלול הסעדים המפורט",
+      "נחיות מפורטות לרשות.¹⁰ בנוסף, נהוג כי בית ",
+      "ך הלא־סביר לא יישנה.¹¹\n\nיחס הדוקטרינה לאחר"
+    ],
+    "end_dump_samples": [
+      "קיימת הבחנה בין תחומים שבהם בית המשפט נוקט בעמדה ביקורתית יותר לבין תחומים שבהם הוא נזהר ומתכנס לעקרון ה**שפיטות המוסדית/נורמטיבית** (justiciability/prudential restraint).⁵\n- **נושאים ביטחוניים ומדיני"
+    ],
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 1,
+    "superscript_parens_count": 0
+  },
+  "answer_preview": "הקדמה ומסגרת הגדרה\nעילת ה**סבירות** (או: אי־הסבירות) היא דוקטרינה בביקורת שיפוטית של החלטות מנהליות, שנועדה לבחון אם החלטה שננקטה על ידי רשות מנהלית חורגת ממסגרת ההגיונית והמקובלת של קבלת החלטות בתכלית ובמהות, עד כדי כך שהשיקול שננקט אינו ניתן להצדקה שיפוטית.¹ מטרת הדוקטרינה היא להבטיח כי רשויות ציבוריות יפעלו במסגרת שיקולים סבירים, ייתנו משקל נכון לשיקולים הרלוונטיים ולא יתעלמו מהם, ובכך להגן על האזרח מפני שימוש שרירותי בכוח המינהלי.²\n\nיסודות ובחינות מעשיות\nבתי המשפט בישראל גיבשו מספר מבחנים וקריטריונים מעשיים לקביעת חוסר סבירות בהחלטה מנהלית. בין העקרונות הבולטים:\n- **חוסר קישור סיבתי בין הא"
+}

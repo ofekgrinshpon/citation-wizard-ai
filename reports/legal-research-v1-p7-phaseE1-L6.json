@@ -1,0 +1,327 @@
+{
+  "generated_at": "2026-05-26T08:00:42.174Z",
+  "fixture": {
+    "id": "L6",
+    "question": "רשות מקומית נתנה הבטחה מנהלית לאזרח אשר הסתמך עליה, ולאחר מכן חל שינוי נסיבות מהותי. מהם השיקולים והכללים החלים על אכיפת ההבטחה אל מול שינוי הנסיבות, ומה היחס בין סמכות הרשות, אינטרס ההסתמכות של האזרח, והאינטרס הציבורי?"
+  },
+  "qa_log_id": "83e0e8ca-2d87-491b-a412-f6b8cd8ad122",
+  "run_id": "cf9263e6-e215-464f-adfe-95dc1fba48b9",
+  "row_summary": {
+    "fixture_id": "L6",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 6,
+    "footnote_count": 6,
+    "footnote_eq_used": true,
+    "used_sources_subset_of_usable": true,
+    "no_raw_atomic_tokens": true,
+    "no_candidate_id_leak": true,
+    "atomic_validation_ok": true,
+    "verifier": {
+      "parallel": true,
+      "concurrency_limit": 2,
+      "batch_count": 1,
+      "batch_ms": [
+        33646
+      ],
+      "total_wall_ms": 33646,
+      "total_sum_ms": 33646,
+      "escalated_batches": 0,
+      "merge_order_preserved": true,
+      "rate_limit_count": 0,
+      "retry_count": 0,
+      "fallback_to_sequential": false,
+      "candidates_verified": 8,
+      "candidates_usable": 6,
+      "candidates_dropped": 2,
+      "batches_labels": [
+        "batch1"
+      ]
+    },
+    "drafter_ms": 28277,
+    "total_ms": 179999,
+    "baseline_drafter_ms": 23013,
+    "baseline_total_ms": 269059,
+    "total_ms_delta": -89060,
+    "baseline_used_sources_count": 8,
+    "used_sources_count_delta": -2,
+    "source_set_equals_baseline": false,
+    "source_set_added": [
+      "7794aed9-fdf4-43eb-8846-eea0c27bff28",
+      "914ad865-efdd-41a4-84e2-75cc9e1efceb",
+      "84e00d19-1d09-4f2e-8c8b-9a549cebef43",
+      "baf5479e-20c4-42d9-83fe-c45e671c230d",
+      "491131bd-61ed-4194-9304-a2f32746296c",
+      "1544215c-02e1-42f5-8778-3f052ed3421d"
+    ],
+    "source_set_removed": [
+      "af78f268-e5c3-4420-ad02-7697bec85248",
+      "b77ef1ef-45bd-4094-a879-0f90981163bb",
+      "77a37d0e-51a9-4c4e-a214-415dc05f6c15",
+      "520f7649-5615-4c50-927b-6fd5a1620304",
+      "c48eab64-9b41-4823-9135-97be21e05b28",
+      "a9b3488a-d597-4f06-86d9-0e94d644c0a5",
+      "e6189010-2c9d-46ac-8f36-e8ee5b6220c0",
+      "bb4509be-a0b8-44a9-ac56-4c86d530289c"
+    ],
+    "placement_telemetry": {
+      "ok": false,
+      "cluster_count": 10,
+      "end_paragraph_dump_count": 1
+    }
+  },
+  "verifier_full": {
+    "ms": 33646,
+    "counts": {
+      "by_support": {
+        "direct": 4,
+        "partial": 2,
+        "unrelated": 2,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 7,
+        "false": 1
+      }
+    },
+    "errors": [],
+    "usable": [
+      {
+        "role_match": false,
+        "best_support": "direct",
+        "candidate_id": "84e00d19-1d09-4f2e-8c8b-9a549cebef43",
+        "verdict_claim_ids": [
+          "C2"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "7794aed9-fdf4-43eb-8846-eea0c27bff28",
+        "verdict_claim_ids": [
+          "C1"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "914ad865-efdd-41a4-84e2-75cc9e1efceb",
+        "verdict_claim_ids": [
+          "C1"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "baf5479e-20c4-42d9-83fe-c45e671c230d",
+        "verdict_claim_ids": [
+          "C1"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "491131bd-61ed-4194-9304-a2f32746296c",
+        "verdict_claim_ids": [
+          "C2"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "1544215c-02e1-42f5-8778-3f052ed3421d",
+        "verdict_claim_ids": [
+          "C4"
+        ]
+      }
+    ],
+    "batches": [
+      {
+        "ms": 33646,
+        "label": "batch1",
+        "claim_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "escalated": false,
+        "candidates": 8
+      }
+    ],
+    "dropped": [
+      {
+        "role": "primary_statute",
+        "title": "חוק הרשויות המקומיות (בחירות), התשכ״ה-1965",
+        "origin": "perplexity",
+        "reason": "חוק זה עוסק בסידורי בחירות של רשויות מקומיות ולא נוגע להגבלת התחייבות רשות מנהלית או לעקרון אי-חריגה מסמכות.",
+        "candidate_id": "6325296c-17ec-4137-98f5-4a97b5377a75",
+        "worst_support": "unrelated",
+        "retrieval_method": "perplexity"
+      },
+      {
+        "role": "primary_statute",
+        "title": "חוק הרשויות המקומיות (הגבלת הזכות להיבחר), התשכ״ד-1964",
+        "origin": "perplexity",
+        "reason": "החומר המצויין הוא פרסום של חוקי הרשויות המקומיות בנושאי זכויות הצבעה/הגבלת זכאות להיבחר, שאינם עוסקים בהיקף סמכותה של הרשות בכל הנוגע להבטחות מנהליות.",
+        "candidate_id": "de3ee904-f504-4e54-82c8-251455539990",
+        "worst_support": "unrelated",
+        "retrieval_method": "perplexity"
+      }
+    ],
+    "batch_ms": [
+      33646
+    ],
+    "parallel": true,
+    "verdicts": [
+      {
+        "reason": "מאמר אקדמי מקיף שמנסח ומשכלל את התנאים הקלאסיים לקיום ואכיפת הבטחה מנהלית, ולכן תומך ישירות בטענה.",
+        "support": "direct",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "7794aed9-fdf4-43eb-8846-eea0c27bff28",
+        "supported_points": [
+          "מאמר יסוד העוסק במפורש בתנאי קיומה של הבטחה מנהלית",
+          "דן בהגנה על אינטרס ההסתמכות ותנאי תום-הלב והיקף ההסתמכות",
+          "מפרט גבולות ההבטחה וההתנגדות לדין ולתקנת הציבור"
+        ]
+      },
+      {
+        "reason": "מאמר תולדותי-דוקטרינלי שמנסח באופן ישיר את התנאים והמרכיבים של ההבטחה המינהלית, ולכן מהווה תמיכה ישירה בטענה.",
+        "support": "direct",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "914ad865-efdd-41a4-84e2-75cc9e1efceb",
+        "supported_points": [
+          "סקירת התפתחות ההלכה וניסוח קלאסי של התנאים המחייבים",
+          "התייחסות לכוונת הרשות ולשיקולים שנשקלו בעת מתן ההבטחה",
+          "דיון בהסתמכות תום-לב ובהיקף ההסתמכות"
+        ]
+      },
+      {
+        "reason": "מאמר אקדמי המתמקד בהבטחה מינהלית ובגבולותיה, ולכן עוסק ישירות בתנאים שבטענה.",
+        "support": "direct",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "baf5479e-20c4-42d9-83fe-c45e671c230d",
+        "supported_points": [
+          "דן בקשר בין הבטחה מינהלית, אמון הציבור ומגבלות שיקול הדעת",
+          "מפרט היבטים של בהירות ההבטחה וכוונת הרשות",
+          "מתייחס להסתמכות נאותה ולמגבלות משפטיות"
+        ]
+      },
+      {
+        "reason": "מסמך ממשלתי/משפטי המסכם את הכלל המעשי לגבי שינוי נסיבות ואיזון אינטרסים, ולכן תומך ישירות בטענה.",
+        "support": "direct",
+        "claim_id": "C2",
+        "role_match": false,
+        "candidate_id": "84e00d19-1d09-4f2e-8c8b-9a549cebef43",
+        "supported_points": [
+          "מסמך רשמי המצטט את ההלכה בנוגע להסתמכות, שינוי מצב לרעה ואינטרס ציבורי",
+          "כולל אזכור הצורך באיזון בין ההסתמכות לאינטרס הציבורי",
+          "מתייחס לשאלת התנאים לשינוי או לסגת מהבטחה מנהלית"
+        ]
+      },
+      {
+        "reason": "נראה כניתוח תיאורטי-אקדמי שמיישם ומרחיב את שיקולי האיזון, אך אינו מקור מחייב חוקי/פסיקתי ולכן מהווה תמיכה משלימה.",
+        "support": "partial",
+        "claim_id": "C2",
+        "role_match": true,
+        "candidate_id": "491131bd-61ed-4194-9304-a2f32746296c",
+        "supported_points": [
+          "מאמר אקדמי על השתחררות רשות מנהלית שעוסק בשינוי נסיבות",
+          "דן בשיקולים תקציביים ובצורך באיזון בין אינטרס ציבורי להסתמכות"
+        ]
+      },
+      {
+        "reason": "חוק זה עוסק בסידורי בחירות של רשויות מקומיות ולא נוגע להגבלת התחייבות רשות מנהלית או לעקרון אי-חריגה מסמכות.",
+        "support": "unrelated",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "6325296c-17ec-4137-98f5-4a97b5377a75",
+        "supported_points": []
+      },
+      {
+        "reason": "החומר המצויין הוא פרסום של חוקי הרשויות המקומיות בנושאי זכויות הצבעה/הגבלת זכאות להיבחר, שאינם עוסקים בהיקף סמכותה של הרשות בכל הנוגע להבטחות מנהליות.",
+        "support": "unrelated",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "de3ee904-f504-4e54-82c8-251455539990",
+        "supported_points": []
+      },
+      {
+        "reason": "מסמך אקדמי שמתאים לניתוח סוגי הסעדים (צו עשה/מניעה ותחליפים), אך אינו מתמקד באופן ספציפי בהבטחה מינהלית ולכן מהווה תמיכה חלקית.",
+        "support": "partial",
+        "claim_id": "C4",
+        "role_match": true,
+        "candidate_id": "1544215c-02e1-42f5-8778-3f052ed3421d",
+        "supported_points": [
+          "מאמר על סוגי צווי אכיפה וצווים שליליים הרלוונטיים לסעד מנהלי",
+          "דן בהבחנה בין צווים שונים ובהשפעתם על בחירת הסעד"
+        ]
+      }
+    ],
+    "batch_count": 1,
+    "model_final": "openai/gpt-5-mini",
+    "retry_count": 0,
+    "per_claim_ms": {
+      "C1": 33646,
+      "C2": 33646,
+      "C3": 33646,
+      "C4": 33646
+    },
+    "total_sum_ms": 33646,
+    "model_initial": "openai/gpt-5-mini",
+    "total_wall_ms": 33646,
+    "escalated_claims": [],
+    "rate_limit_count": 0,
+    "candidates_usable": 6,
+    "concurrency_limit": 2,
+    "escalated_batches": 0,
+    "candidates_dropped": 2,
+    "candidates_verified": 8,
+    "merge_order_preserved": true,
+    "fallback_to_sequential": false
+  },
+  "atomic": {
+    "mode": "validate",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 28,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 28
+  },
+  "placement": {
+    "ok": false,
+    "cluster_count": 10,
+    "cluster_samples": [
+      "ת וביציבות הוראותיה.⁴⁵\n\nמגבלות הסמכות ועקר",
+      "את הפגיעה ככל שניתן.⁴⁶\n\nהיחס בין סמכות הרש",
+      "ב לכדי צמצום הפגיעה.¹²\n- **איזון מידתי**: ",
+      "ויות חלופיות ופיצוי.³⁵\n- **שמירה על אמון ה",
+      "בחינת חלופות ופיצוי;⁴⁵ (3) קיום הליך הוגן "
+    ],
+    "end_dump_samples": [
+      "תנאים לקיומה ולאכיפתה של הבטחה מינהלית\nההלכה והתיאוריה מזהות קבוצת תנאים מקובלים לקיומה ולאכיפתה של **הבטחה מנהלית**: שההבטחה ניתנה במסגרת סמכות הרשות, שהיא ברורה ומסוימת, שנלווית אליה כוונת התחייבות "
+    ],
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 1,
+    "superscript_parens_count": 0
+  },
+  "answer_preview": "מבוא\nהרשאה מנהלית להבטיח לעובד או לאזרח דבר מה יוצרת חובת סבירות והגנה על **אינטרס ההסתמכות**; עם זאת, ההבטחה אינה בלתי ניתנת לשינוי מוחלט כאשר חלים שינויים נסיבתיים מהותיים. להלן ניתוח עקרוני של התנאים לאכיפה, אופי ההתמודדות עם שינוי נסיבות והיחס בין סמכות הרשות, האינטרס הפרטי של המסתמך והאינטרס הציבורי, על בסיס ספרות מקצועית ופסקנית רלבנטית.\n\nתנאים לקיומה ולאכיפתה של הבטחה מינהלית\nההלכה והתיאוריה מזהות קבוצת תנאים מקובלים לקיומה ולאכיפתה של **הבטחה מנהלית**: שההבטחה ניתנה במסגרת סמכות הרשות, שהיא ברורה ומסוימת, שנלווית אליה כוונת התחייבות ניהולית מצד הרשות, ונשקלו בעת מתן ההבטחה שיקולים רלוו"
+}

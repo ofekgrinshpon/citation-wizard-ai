@@ -1,0 +1,248 @@
+{
+  "generated_at": "2026-05-26T07:59:40.329Z",
+  "fixture": {
+    "id": "L4",
+    "question": "מהי דוקטרינת השתק פלוגתא?"
+  },
+  "qa_log_id": "461bb2fa-3f24-43aa-8ac1-65ca3670464c",
+  "run_id": "b9e08c41-1f1f-49ec-84d0-3e3c7f1d1140",
+  "row_summary": {
+    "fixture_id": "L4",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 3,
+    "footnote_count": 3,
+    "footnote_eq_used": true,
+    "used_sources_subset_of_usable": true,
+    "no_raw_atomic_tokens": true,
+    "no_candidate_id_leak": true,
+    "atomic_validation_ok": true,
+    "verifier": {
+      "parallel": true,
+      "concurrency_limit": 2,
+      "batch_count": 1,
+      "batch_ms": [
+        16374
+      ],
+      "total_wall_ms": 16374,
+      "total_sum_ms": 16374,
+      "escalated_batches": 0,
+      "merge_order_preserved": true,
+      "rate_limit_count": 0,
+      "retry_count": 0,
+      "fallback_to_sequential": false,
+      "candidates_verified": 5,
+      "candidates_usable": 3,
+      "candidates_dropped": 2,
+      "batches_labels": [
+        "batch1"
+      ]
+    },
+    "drafter_ms": 32415,
+    "total_ms": 149967,
+    "baseline_drafter_ms": 19841,
+    "baseline_total_ms": 118187,
+    "total_ms_delta": 31780,
+    "baseline_used_sources_count": 3,
+    "used_sources_count_delta": 0,
+    "source_set_equals_baseline": false,
+    "source_set_added": [
+      "5745c4a2-509c-431e-a079-fdee22867c1d",
+      "91ea7710-5ac2-4517-a601-25958ef80caf",
+      "55adc386-9d5a-4d9f-9b4c-e87d07afdc9a"
+    ],
+    "source_set_removed": [
+      "20f7d74e-2b65-4c97-a422-87698ba160e7",
+      "b5b38709-7871-4840-af7e-3ccf2d8542f4",
+      "8fc2ecaf-1db3-48b8-b5d1-4bcd182c84eb"
+    ],
+    "placement_telemetry": {
+      "ok": false,
+      "cluster_count": 4,
+      "end_paragraph_dump_count": 0
+    }
+  },
+  "verifier_full": {
+    "ms": 16375,
+    "counts": {
+      "by_support": {
+        "direct": 3,
+        "partial": 0,
+        "unrelated": 2,
+        "tangential": 0
+      },
+      "by_role_match": {
+        "true": 3,
+        "false": 2
+      }
+    },
+    "errors": [],
+    "usable": [
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "5745c4a2-509c-431e-a079-fdee22867c1d",
+        "verdict_claim_ids": [
+          "C3"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "91ea7710-5ac2-4517-a601-25958ef80caf",
+        "verdict_claim_ids": [
+          "C2"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "55adc386-9d5a-4d9f-9b4c-e87d07afdc9a",
+        "verdict_claim_ids": [
+          "C2"
+        ]
+      }
+    ],
+    "batches": [
+      {
+        "ms": 16374,
+        "label": "batch1",
+        "claim_ids": [
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "escalated": false,
+        "candidates": 5
+      }
+    ],
+    "dropped": [
+      {
+        "role": "primary_statute",
+        "title": "סעיף 394 לחוק הביטוח הלאומי [נוסח משולב], התשנ\"ה-1995",
+        "origin": "perplexity",
+        "reason": "סעיף בחוק הביטוח הלאומי אינו עוסק בדוקטרינת השתק פלוגתא או בהחרגותיה ולכן אינו רלוונטי לטענה.",
+        "candidate_id": "afbdf3f8-27e0-41b6-be85-c7f8accf0dab",
+        "worst_support": "unrelated",
+        "retrieval_method": "perplexity"
+      },
+      {
+        "role": "primary_statute",
+        "title": "חוק הביטוח הלאומי [נוסח משולב], התשנ\"ה-1995 – PDF",
+        "origin": "perplexity",
+        "reason": "גרסת חוק באתר המוסד לביטוח לאומי מתמקדת בסדרי דין ובזכויות ביטוחיות ולא ברגולציה של דוקטרינת השתק פלוגתא; לא רלוונטית לטענה.",
+        "candidate_id": "e3d768cf-7364-4bf4-9723-df78aaa0c4bd",
+        "worst_support": "unrelated",
+        "retrieval_method": "perplexity"
+      }
+    ],
+    "batch_ms": [
+      16374
+    ],
+    "parallel": true,
+    "verdicts": [
+      {
+        "reason": "ספר אקדמי המוקדש למעשה בית דין שמסביר במפורש את אלמנטי השתק פלוגתא ולכן תומך ישירות בטענה.",
+        "support": "direct",
+        "claim_id": "C2",
+        "role_match": true,
+        "candidate_id": "91ea7710-5ac2-4517-a601-25958ef80caf",
+        "supported_points": [
+          "מפרט את יסודות הדוקטרינה: זהות פלוגתא, הכרעה חיונית והזדמנות להתדיין"
+        ]
+      },
+      {
+        "reason": "ניתוח/פסק-דין שמעריך ומפרט את תנאי הדוקטרינה — מסמך שיכול לשמש כהוכחה תומכת ישירה למכלול התנאים.",
+        "support": "direct",
+        "claim_id": "C2",
+        "role_match": true,
+        "candidate_id": "55adc386-9d5a-4d9f-9b4c-e87d07afdc9a",
+        "supported_points": [
+          "מצטט ומסכמם ארבעת התנאים לתחולת השתק פלוגתא כולל זהות פלוגתא והכרעה חיובית וחיוניות להכרעה"
+        ]
+      },
+      {
+        "reason": "פסק דין של בית המשפט העליון שעוסק במפורש בהבחנות ובהשלכות הפרקטיות של השתק ולכן תומך ישירות בטענה.",
+        "support": "direct",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "5745c4a2-509c-431e-a079-fdee22867c1d",
+        "supported_points": [
+          "דן בהבחנות בין סוגי השתק ובין השתק פלוגתא להשתק עילה (res judicata)",
+          "מסביר מה ההשתק מונע — הכרעה חוזרת של סוגיה ספציפית"
+        ]
+      },
+      {
+        "reason": "סעיף בחוק הביטוח הלאומי אינו עוסק בדוקטרינת השתק פלוגתא או בהחרגותיה ולכן אינו רלוונטי לטענה.",
+        "support": "unrelated",
+        "claim_id": "C4",
+        "role_match": false,
+        "candidate_id": "afbdf3f8-27e0-41b6-be85-c7f8accf0dab",
+        "supported_points": []
+      },
+      {
+        "reason": "גרסת חוק באתר המוסד לביטוח לאומי מתמקדת בסדרי דין ובזכויות ביטוחיות ולא ברגולציה של דוקטרינת השתק פלוגתא; לא רלוונטית לטענה.",
+        "support": "unrelated",
+        "claim_id": "C4",
+        "role_match": false,
+        "candidate_id": "e3d768cf-7364-4bf4-9723-df78aaa0c4bd",
+        "supported_points": []
+      }
+    ],
+    "batch_count": 1,
+    "model_final": "openai/gpt-5-mini",
+    "retry_count": 0,
+    "per_claim_ms": {
+      "C2": 16374,
+      "C3": 16374,
+      "C4": 16374
+    },
+    "total_sum_ms": 16374,
+    "model_initial": "openai/gpt-5-mini",
+    "total_wall_ms": 16374,
+    "escalated_claims": [],
+    "rate_limit_count": 0,
+    "candidates_usable": 3,
+    "concurrency_limit": 2,
+    "escalated_batches": 0,
+    "candidates_dropped": 2,
+    "candidates_verified": 5,
+    "merge_order_preserved": true,
+    "fallback_to_sequential": false
+  },
+  "atomic": {
+    "mode": "validate",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 12,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 12
+  },
+  "placement": {
+    "ok": false,
+    "cluster_count": 4,
+    "cluster_samples": [
+      "ה זו בפסק הדין הקודם²³. תנאים אלה מהווים א",
+      " אפשרות הכרעה מחודשת²³.\n\nאופן היישום בבית ",
+      "ם לקביעת תחולת ההשתק²³. ההשלכה הפרקטית היא",
+      "משפט את תחולתה בפועל²³."
+    ],
+    "end_dump_samples": [],
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 0,
+    "superscript_parens_count": 0
+  },
+  "answer_preview": "השתק פלוגתא היא דוקטרינה המונעת את ההכרעה החוזרת של **שאלה משפטית ספציפית** שכבר נדונה והוכרעה בפסק דין קודם, ומטרתה לשמור על סופיות וסדר בהליכים שיפוטיים ולהמנע מפערים הכרעתיים בין פסקי דין שונים¹. התפיסה הבסיסית של הדוקטרינה ויחסה אל עקרונות תהליך הוגן ותכלית היעילות מתוארת גם בספרות המקצועית כמנגנון השעיה של השאלה המוכתבת על‑ידי הכרעה קודמת².\n\nיסודות ותנאים לחולתה של דוקטרינת השתק פלוגתא ניתן לסכם בכמה מצאי יסוד עקרוניים שנבחנים על‑ידי בתי המשפט: ראשית — **זהות הפלוגתא**: יש לדון באותה שאלה עובדתית‑משפטית שנידונה בפסק הדין הקודם; שנית — **הכרעה חלוטה/הכרעה פוזיטיבית**: הסוגיה נדרשה להכרעה ו"
+}
