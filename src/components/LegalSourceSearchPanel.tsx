@@ -518,12 +518,22 @@ function SourceResultsView({
   );
 }
 
-function SourceCard({ src }: { src: SourceResult }) {
+function SourceCard({
+  src,
+  variant = "recommended",
+}: {
+  src: SourceResult;
+  variant?: "recommended" | "additional";
+}) {
+  const isAdditional = variant === "additional";
+  const cardCls = isAdditional
+    ? "rounded-lg border border-border/60 bg-muted/20 p-3 space-y-2"
+    : "rounded-lg border border-border bg-card p-3 space-y-2";
   return (
-    <div className="rounded-lg border border-border bg-card p-3 space-y-2">
+    <div className={cardCls}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <div className="text-sm font-semibold text-foreground leading-snug">
+          <div className={`text-sm font-semibold leading-snug ${isAdditional ? "text-foreground/90" : "text-foreground"}`}>
             <span className="text-muted-foreground text-xs ml-2">{src.rank}.</span>
             {src.title}
           </div>
@@ -549,11 +559,18 @@ function SourceCard({ src }: { src: SourceResult }) {
         <Chip variant={src.origin === "local_db" ? "primary" : "muted"}>
           {src.origin === "local_db" ? "מאגר מקומי" : "Perplexity"}
         </Chip>
-        <Chip variant={src.support === "direct" ? "primary" : "muted"}>
-          {src.support === "direct" ? "ישיר" : "חלקי"}
-        </Chip>
-        {!src.role_match && <Chip variant="muted">תפקיד שונה</Chip>}
+        {isAdditional ? (
+          <Chip variant="muted">לבדיקה</Chip>
+        ) : (
+          <>
+            <Chip variant={src.support === "direct" ? "primary" : "muted"}>
+              {src.support === "direct" ? "ישיר" : "חלקי"}
+            </Chip>
+            {!src.role_match && <Chip variant="muted">תפקיד שונה</Chip>}
+          </>
+        )}
       </div>
+
 
       {src.reason && (
         <p className="text-xs text-muted-foreground leading-relaxed">{src.reason}</p>
