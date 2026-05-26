@@ -159,11 +159,6 @@ export interface Footnote {
   title: string;
   url: string | null;
   source_type?: string;
-  // Phase B (Rule 37) telemetry — UI ignores these optional fields.
-  is_short_form?: boolean;
-  short_form_of?: number;       // full-citation footnote number this short-forms
-  candidate_id?: string;        // for back-reference validation only
-  short_form_kind?: "shem" | "supra";
 }
 
 // ─── Phase C.1: Atomic marker representation ──────────────────────────────
