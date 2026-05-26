@@ -397,59 +397,67 @@ export interface PerplexityRetrievalResult {
   }>;
   stage_runs: StageRun[];
   ms: number;
+  parallel: boolean;
+  concurrency_limit: number;
+  query_count: number;
+  query_ms: number[];
+  total_wall_ms: number;
+  total_sum_ms: number;
+  rate_limit_count: number;
+  retry_count: number;
+  fallback_to_sequential: boolean;
+  merge_order_preserved: boolean;
 }
 
-export async function runPerplexityRetrieval(
-  queries: Query[],
-): Promise<PerplexityRetrievalResult> {
-  const t0 = Date.now();
-  const key = Deno.env.get("PERPLEXITY_API_KEY");
-  if (!key) {
-    return {
-      candidates: [], dropped: [], per_query: [],
-      stage_runs: [{ stage: "perplexity_retrieval.skipped", ms: 0, ok: false }],
-      ms: 0,
-    };
+interface PerQueryWorkResult {
+  index: number;
+  candidates: Candidate[];
+  dropped: DroppedSource[];
+  per_query: PerplexityRetrievalResult["per_query"][number];
+  rate_limited: boolean;
+}
+
+async function runOneQuery(
+  q: Query,
+  index: number,
+): Promise<PerQueryWorkResult> {
+  const first = await callPerplexity(q);
+  const { admitted, rows, followupTerms } = processRaw(q, first.raw);
+  const allCandidates: Candidate[] = [...admitted];
+  let totalMs = first.ms;
+  let followupAdmitted = 0;
+  let rate_limited = first.http === 429;
+
+  // One follow-up using the most promising extracted term, if any.
+  if (followupTerms.length > 0) {
+    const term = followupTerms[0];
+    const second = await callPerplexity(q, `${term} ${q.query_he}`.slice(0, 200));
+    totalMs += second.ms;
+    if (second.http === 429) rate_limited = true;
+    const second_p = processRaw(q, second.raw);
+    allCandidates.push(...second_p.admitted);
+    followupAdmitted = second_p.admitted.length;
+    for (const r of second_p.rows) {
+      rows.push({ ...r, drop_reason: r.drop_reason ? `followup:${r.drop_reason}` : r.drop_reason });
+    }
   }
-  const targets = queries.filter((q) => q.targets.includes("perplexity"));
 
-  const candidates: Candidate[] = [];
-  const dropped: DroppedSource[] = [];
-  const per_query: PerplexityRetrievalResult["per_query"] = [];
-
-  for (const q of targets) {
-    const first = await callPerplexity(q);
-    const { admitted, rows, followupTerms } = processRaw(q, first.raw);
-    candidates.push(...admitted);
-    let totalMs = first.ms;
-    let followupAdmitted = 0;
-
-    // One follow-up using the most promising extracted term, if any.
-    if (followupTerms.length > 0) {
-      const term = followupTerms[0];
-      const second = await callPerplexity(q, `${term} ${q.query_he}`.slice(0, 200));
-      totalMs += second.ms;
-      const second_p = processRaw(q, second.raw);
-      candidates.push(...second_p.admitted);
-      followupAdmitted = second_p.admitted.length;
-      // mark these in rows as followup
-      for (const r of second_p.rows) {
-        rows.push({ ...r, drop_reason: r.drop_reason ? `followup:${r.drop_reason}` : r.drop_reason });
-      }
+  const droppedRows: DroppedSource[] = [];
+  for (const r of rows) {
+    if (!r.admitted_to_candidate_pool) {
+      droppedRows.push({
+        query_he: q.query_he, claim_id: q.claim_id, role: q.role,
+        origin: "perplexity", title: r.title, url: r.url,
+        drop_reason: r.drop_reason || "unknown",
+      });
     }
+  }
 
-    // Build dropped[] for backwards-compat top-level telemetry.
-    for (const r of rows) {
-      if (!r.admitted_to_candidate_pool) {
-        dropped.push({
-          query_he: q.query_he, claim_id: q.claim_id, role: q.role,
-          origin: "perplexity", title: r.title, url: r.url,
-          drop_reason: r.drop_reason || "unknown",
-        });
-      }
-    }
-
-    per_query.push({
+  return {
+    index,
+    candidates: allCandidates,
+    dropped: droppedRows,
+    per_query: {
       claim_id: q.claim_id,
       role: q.role,
       query_he: q.query_he,
@@ -461,14 +469,84 @@ export async function runPerplexityRetrieval(
       followup_admitted: followupAdmitted,
       ms: totalMs,
       results: rows,
-    });
+    },
+    rate_limited,
+  };
+}
+
+export async function runPerplexityRetrieval(
+  queries: Query[],
+): Promise<PerplexityRetrievalResult> {
+  const t0 = Date.now();
+  const key = Deno.env.get("PERPLEXITY_API_KEY");
+  const concEnv = Number(Deno.env.get("PERPLEXITY_CONCURRENCY") ?? "4");
+  const concurrency_limit = Number.isFinite(concEnv) && concEnv > 0 ? Math.min(8, Math.floor(concEnv)) : 4;
+
+  if (!key) {
+    return {
+      candidates: [], dropped: [], per_query: [],
+      stage_runs: [{ stage: "perplexity_retrieval.skipped", ms: 0, ok: false }],
+      ms: 0,
+      parallel: false, concurrency_limit, query_count: 0,
+      query_ms: [], total_wall_ms: 0, total_sum_ms: 0,
+      rate_limit_count: 0, retry_count: 0,
+      fallback_to_sequential: false, merge_order_preserved: true,
+    };
   }
+  const targets = queries.filter((q) => q.targets.includes("perplexity"));
+
+  // Bounded-concurrency worker pool. Preserves original order in results
+  // by indexing the input array; merge below walks indices in order.
+  const results: (PerQueryWorkResult | undefined)[] = new Array(targets.length);
+  let next = 0;
+  async function worker() {
+    while (true) {
+      const i = next++;
+      if (i >= targets.length) return;
+      results[i] = await runOneQuery(targets[i], i);
+    }
+  }
+  const workerCount = Math.max(1, Math.min(concurrency_limit, targets.length));
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+
+  // Deterministic merge in original input order.
+  const candidates: Candidate[] = [];
+  const dropped: DroppedSource[] = [];
+  const per_query: PerplexityRetrievalResult["per_query"] = [];
+  const query_ms: number[] = [];
+  let rate_limit_count = 0;
+  let merge_order_preserved = true;
+  let lastIndex = -1;
+  for (let i = 0; i < targets.length; i++) {
+    const r = results[i];
+    if (!r) continue;
+    if (r.index !== i || r.index <= lastIndex) merge_order_preserved = false;
+    lastIndex = r.index;
+    candidates.push(...r.candidates);
+    dropped.push(...r.dropped);
+    per_query.push(r.per_query);
+    query_ms.push(r.per_query.ms);
+    if (r.rate_limited) rate_limit_count++;
+  }
+
+  const total_wall_ms = Date.now() - t0;
+  const total_sum_ms = query_ms.reduce((a, b) => a + b, 0);
 
   return {
     candidates,
     dropped,
     per_query,
-    stage_runs: [{ stage: "perplexity_retrieval", ms: Date.now() - t0, ok: true }],
-    ms: Date.now() - t0,
+    stage_runs: [{ stage: "perplexity_retrieval", ms: total_wall_ms, ok: true }],
+    ms: total_wall_ms,
+    parallel: workerCount > 1,
+    concurrency_limit,
+    query_count: targets.length,
+    query_ms,
+    total_wall_ms,
+    total_sum_ms,
+    rate_limit_count,
+    retry_count: 0,
+    fallback_to_sequential: false,
+    merge_order_preserved,
   };
 }
