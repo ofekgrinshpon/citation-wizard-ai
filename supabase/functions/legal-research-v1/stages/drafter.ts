@@ -317,7 +317,7 @@ function buildUserMessage(
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
   lines.push("");
-  lines.push("טענות (claims):");
+  lines.push("טענות (לשימוש פנימי בלבד — אין להזכיר את מזהי הטענות בתשובה):");
   for (const cl of claims) {
     lines.push(
       `- (${cl.claim_id}) ${cl.text_he} [is_black_letter=${cl.is_black_letter}]`,
