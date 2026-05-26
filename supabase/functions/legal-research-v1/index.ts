@@ -242,6 +242,7 @@ async function handle(req: Request): Promise<Response> {
   const analyzerContext = buildAnalyzerContext(attachmentResult.documents);
 
   // ─── P2: Claim Analyzer ──────────────────────────────────────────────────
+  await markStage("analyzer");
   let analyzerStage;
   try {
     analyzerStage = await runClaimAnalyzer(question, { attachmentsContext: analyzerContext });
