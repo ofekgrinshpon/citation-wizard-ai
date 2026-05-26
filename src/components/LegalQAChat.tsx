@@ -26,6 +26,7 @@ type StageEvent = {
 import { CitationReviewPanel } from "@/components/legal-qa/CitationReviewPanel";
 import { MaintenanceCard } from "@/components/MaintenanceCard";
 import { LegalResearchV1Panel } from "@/components/LegalResearchV1Panel";
+import { LegalSourceSearchPanel } from "@/components/LegalSourceSearchPanel";
 
 // ─── Offline-engine guard (D1 reset) ──────────────────────────────
 // Research mode and academic chapter generation (body/introduction/
