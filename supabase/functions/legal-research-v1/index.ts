@@ -529,6 +529,7 @@ async function handle(req: Request): Promise<Response> {
     atomic: drafter.atomic,
     error: drafter.error,
     raw_text: drafter.raw_text,
+    internal_id_scrub: drafter.internal_id_scrub,
   };
 
   const finalAnswer = drafter.ok ? drafter.answer_markdown : STUB_ANSWER;

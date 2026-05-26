@@ -157,6 +157,49 @@ function detectInternalIdLeak(text: string): { leak: boolean; tokens: string[] }
   return { leak: tokens.size > 0, tokens: [...tokens] };
 }
 
+// ─── Narrow deterministic scrub for leaked C# claim scaffolding ───────────
+// Removes ONLY obvious heading/label scaffolding like "C1 — ", "(C1) ",
+// "טענה C1:" at line starts, standalone parenthetical "(C1)", and bold
+// wrappers "**C1** —". Never touches bare `C\d+` mid-sentence. Returns the
+// cleaned text plus the labels of patterns that matched (for telemetry).
+export function scrubInternalClaimLabels(
+  answer: string,
+): { text: string; patterns: string[]; changed: boolean } {
+  const patterns: string[] = [];
+  let text = answer;
+
+  const apply = (re: RegExp, label: string, replacement: string) => {
+    if (re.test(text)) {
+      patterns.push(label);
+      re.lastIndex = 0;
+      text = text.replace(re, replacement);
+    } else {
+      re.lastIndex = 0;
+    }
+  };
+
+  // (e) bold/heading wrappers around claim labels: **C1** — / __C1__:
+  apply(/(?:^|\n)[ \t]*(?:\*\*|__)C\d+(?:\*\*|__)[ \t]*[—\-:][ \t]*/g, "bold_label", "\n");
+  // (c) "טענה C1:" / "Claim C1 -" at line start
+  apply(/(?:^|\n)[ \t]*(?:טענה|Claim|claim)[ \t]+C\d+[ \t]*[:\-—][ \t]*/g, "claim_word_prefix", "\n");
+  // (b) "(C1) " at line start (optional trailing separator)
+  apply(/(?:^|\n)[ \t]*\(C\d+\)[ \t]*[—\-:.]?[ \t]+/g, "paren_label", "\n");
+  // (a) "C1 — " / "C1: " / "C1. " at line start
+  apply(/(?:^|\n)[ \t]*C\d+[ \t]*[—\-:.\)][ \t]+/g, "line_prefix", "\n");
+  // (d) standalone parenthetical " (C1)" mid-text, followed by punctuation/space/EOL
+  apply(/[ \t]\(C\d+\)(?=[\s.,;:!?\)\]]|$)/g, "standalone_paren", "");
+
+  // Collapse any leading newline we may have introduced at the very start.
+  text = text.replace(/^\n+/, "");
+  // Collapse 3+ consecutive newlines down to 2 (preserve paragraph breaks).
+  text = text.replace(/\n{3,}/g, "\n\n");
+
+  return { text, patterns, changed: text !== answer };
+}
+
+
+
+
 const SYSTEM_PROMPT = `אתה כותב משפטי ישראלי בסגנון אקדמי. תקבל שאלת משתמש, רשימת טענות (claims), ורשימת מקורות מאומתים בלבד. ייתכן שיופיעו גם מקורות שצורפו על־ידי המשתמש (ref מסוג u1p1, u1p2, u2p1 וכד'). אלו ציטוטים ישירים ממסמכים שצירף המשתמש, מותר לצטט מהם, אבל אין להתייחס אליהם כאל פסיקה או חקיקה מחייבת, ואין לגזור מהם דוקטרינה משפטית כללית — רק את מה שהם אומרים בפועל.
 כל מקור מסומן ב-ref כגון s1, s2, s3 ועוד.
 המשימה: לכתוב תשובה משפטית מפותחת ומבוססת בעברית, עם הערות שוליים מספריות.
@@ -173,7 +216,7 @@ const SYSTEM_PROMPT = `אתה כותב משפטי ישראלי בסגנון אק
 - השתמש אך ורק במקורות שסופקו. אל תמציא חוקים, פסקי דין, שמות צדדים, סעיפים, שנים או מחברים.
 - ניתן (ומומלץ) להישען על supported_points של כל מקור כדי לדעת *מה* הוא תומך.
 - אם תמיכה במקור היא partial בלבד או דקה — נסח בזהירות ("יש הסוברים", "ככלל", "במקרים מסוימים"), או השמט את הטענה. אל תוסיף טענות שאין להן תמיכה במקורות.
-- אל תזכיר בתשובה זהויות פנימיות כגון candidate_id, claim_id, C1, S1, LS#, "verifier" וכד'.
+- איסור מוחלט על דליפת מזהים פנימיים: התווים והתבניות הבאות הם פיגומים פנימיים בלבד ואסור שיופיעו ב-answer_markdown בשום צורה — לא ככותרת, לא כתווית, לא בסוגריים, ולא בתוך משפט: candidate_id, claim_id, C1, C2, C#, S1, S#, LS#, cand_*, "verifier". אסור לארגן את התשובה לפי מזהי טענות (אל תכתוב "C1 — ...", "(C1) ...", "טענה C1: ..." וכד'). אם נדרשת חלוקה לכותרות, השתמש בכותרות עבריות טבעיות הנובעות מהתוכן המשפטי (למשל **הגדרה**, **יסודות העוולה**, **יישום**, **סייגים**, **חריגים**). הפנייה למקורות תיעשה אך ורק דרך מספרי הערות השוליים בכתב עילי (¹ ² ³ …).
 - בתשובה התייחס למקורות רק דרך מספרי ההערות. שמות מלאים של חוקים/פסקי דין מותרים *רק אם* הם מופיעים במפורש בכותרת או ב-supported_points של מקור שסופק.
 - השתמש ב-**bold** להדגשת מונחים מפתח. אל תשתמש בכותרות מסוג # ## ###.
 
@@ -317,7 +360,7 @@ function buildUserMessage(
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
   lines.push("");
-  lines.push("טענות (claims):");
+  lines.push("טענות (לשימוש פנימי בלבד — אין להזכיר את מזהי הטענות בתשובה):");
   for (const cl of claims) {
     lines.push(
       `- (${cl.claim_id}) ${cl.text_he} [is_black_letter=${cl.is_black_letter}]`,
@@ -622,6 +665,16 @@ export interface DrafterResult {
   stage_runs: StageRun[];
   error?: string;
   raw_text?: string;
+  internal_id_scrub?: {
+    attempted: boolean;
+    accepted: boolean;
+    patterns: string[];
+    rejected_reason?:
+      | "no_pattern_matched"
+      | "marker_validation_failed"
+      | "residual_leak"
+      | "marker_count_changed";
+  };
 }
 
 export async function runDrafter(
@@ -687,6 +740,17 @@ export async function runDrafter(
     parameters: DRAFTER_TOOL_PARAMETERS,
   };
 
+  // Scrub telemetry (populated when C# leak triggers narrow cleanup).
+  let scrub_attempted = false;
+  let scrub_accepted = false;
+  let scrub_patterns: string[] = [];
+  let scrub_rejected_reason:
+    | "no_pattern_matched"
+    | "marker_validation_failed"
+    | "residual_leak"
+    | "marker_count_changed"
+    | undefined;
+
   // Attempt 1: gpt-5-mini
   const t0 = Date.now();
   let modelUsed = MODEL_MINI;
@@ -735,6 +799,35 @@ export async function runDrafter(
     }
   }
 
+  // Narrow C# scrub before escalation — saves the ~133s gpt-5 round trip
+  // when the only failure is leaked claim-label scaffolding.
+  if (
+    parsed.ok && !marker.ok && marker.internal_id_leak &&
+    marker.leaked_tokens.length === 1 && marker.leaked_tokens[0] === "C#"
+  ) {
+    const scrub = scrubInternalClaimLabels(answer);
+    scrub_attempted = true;
+    scrub_patterns = scrub.patterns;
+    if (!scrub.changed) {
+      scrub_rejected_reason = "no_pattern_matched";
+    } else {
+      const candidate = scrub.text;
+      const prevMarkers = extractMarkers(answer).length;
+      const m2 = runMarkerValidation(candidate, used);
+      if (!m2.ok) {
+        scrub_rejected_reason = "marker_validation_failed";
+      } else if (m2.internal_id_leak) {
+        scrub_rejected_reason = "residual_leak";
+      } else if (extractMarkers(candidate).length !== prevMarkers) {
+        scrub_rejected_reason = "marker_count_changed";
+      } else {
+        answer = candidate;
+        marker = { ...m2, repaired: true };
+        scrub_accepted = true;
+      }
+    }
+  }
+
   // Escalate once to gpt-5 if still broken.
   if (!parsed.ok || !marker.ok) {
     escalated = true;
@@ -778,6 +871,36 @@ export async function runDrafter(
         if (m2.ok) {
           marker = { ...m2, repaired: true };
           repaired = true;
+        }
+      }
+    }
+
+    // Final scrub safety net (after escalation): same narrow C# cleanup.
+    if (
+      !scrub_accepted &&
+      parsed.ok && !marker.ok && marker.internal_id_leak &&
+      marker.leaked_tokens.length === 1 && marker.leaked_tokens[0] === "C#"
+    ) {
+      const scrub = scrubInternalClaimLabels(answer);
+      scrub_attempted = true;
+      scrub_patterns = scrub.patterns;
+      scrub_rejected_reason = undefined;
+      if (!scrub.changed) {
+        scrub_rejected_reason = "no_pattern_matched";
+      } else {
+        const candidate = scrub.text;
+        const prevMarkers = extractMarkers(answer).length;
+        const m2 = runMarkerValidation(candidate, used);
+        if (!m2.ok) {
+          scrub_rejected_reason = "marker_validation_failed";
+        } else if (m2.internal_id_leak) {
+          scrub_rejected_reason = "residual_leak";
+        } else if (extractMarkers(candidate).length !== prevMarkers) {
+          scrub_rejected_reason = "marker_count_changed";
+        } else {
+          answer = candidate;
+          marker = { ...m2, repaired: true };
+          scrub_accepted = true;
         }
       }
     }
@@ -878,5 +1001,13 @@ export async function runDrafter(
     stage_runs,
     error: ok ? undefined : (marker.error || parsed.errors.join("; ") || "drafter_failed"),
     raw_text: ok ? undefined : (resp.raw_text || "").slice(0, 1000),
+    internal_id_scrub: scrub_attempted
+      ? {
+          attempted: true,
+          accepted: scrub_accepted,
+          patterns: scrub_patterns,
+          rejected_reason: scrub_accepted ? undefined : scrub_rejected_reason,
+        }
+      : undefined,
   };
 }
