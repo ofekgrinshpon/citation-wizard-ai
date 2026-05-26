@@ -534,6 +534,10 @@ async function handle(req: Request): Promise<Response> {
   const finalAnswer = drafter.ok ? drafter.answer_markdown : STUB_ANSWER;
   const finalFootnotes = drafter.ok ? drafter.footnotes : [];
 
+  // Mark final stage (footnote rendering / finalize) as active then complete.
+  await markStage("finalize");
+  await completeAllStages();
+
   // ─── Success: write telemetry + return P5 payload ────────────────────────
   await writeTelemetry(admin, {
     ...telemetryBase,
