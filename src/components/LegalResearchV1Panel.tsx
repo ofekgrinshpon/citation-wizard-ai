@@ -71,8 +71,8 @@ export function LegalResearchV1Panel() {
   const { currentProject } = useProjects();
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [stageIdx, setStageIdx] = useState(0);
+  const [currentStage, setCurrentStage] = useState<string | null>(null);
+  const [completedStages, setCompletedStages] = useState<string[]>([]);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ResearchResponse | null>(null);
