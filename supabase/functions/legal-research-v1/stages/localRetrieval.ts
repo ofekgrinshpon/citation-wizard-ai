@@ -305,6 +305,7 @@ async function exactAuthorityLookup(
     return {
       rows: collected, status: "error",
       error: e instanceof Error ? e.message : String(e), diags,
+      ms: Date.now() - t0,
     };
   }
   // Dedup by document_id (prefer rows that gained a snippet).
@@ -314,7 +315,7 @@ async function exactAuthorityLookup(
     if (!prev || (!prev.chunk_content && r.chunk_content)) byId.set(r.document_id, r);
   }
   const unique = [...byId.values()];
-  return { rows: unique, status: unique.length ? "ok" : "empty", diags };
+  return { rows: unique, status: unique.length ? "ok" : "empty", diags, ms: Date.now() - t0 };
 }
 
 // ─── RPC helpers ────────────────────────────────────────────────────────────
