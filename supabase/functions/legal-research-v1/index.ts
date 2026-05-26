@@ -21,6 +21,9 @@ import { runDrafter } from "./stages/drafter.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
 import { StageRun } from "./lib/types.ts";
+import { buildSourcesOnlyPayload } from "./lib/sourcesOnly.ts";
+
+type PipelineMode = "answer" | "sources_only";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
