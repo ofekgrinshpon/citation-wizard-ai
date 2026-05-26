@@ -1,0 +1,309 @@
+{
+  "results": [
+    {
+      "fixture_id": "S1",
+      "label": "השתק שיפוטי",
+      "question": "מהי דוקטרינת ההשתק השיפוטי במשפט הישראלי, ומהם התנאים להחלתה?",
+      "run_id": "ffbccdfb-2152-4d47-b12b-bee256b1f7dd",
+      "qa_log_id": "0c0d55bc-15f4-4504-97a5-f34f55d3ff00",
+      "total_ms": 151806,
+      "stage_ms": [
+        {
+          "ms": 21356,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "claim_analyzer.initial",
+          "http_status": 200
+        },
+        {
+          "ms": 37630,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "query_planner.initial"
+        },
+        {
+          "ms": 4007,
+          "ok": true,
+          "stage": "local_retrieval"
+        },
+        {
+          "ms": 7317,
+          "ok": true,
+          "stage": "perplexity_retrieval"
+        },
+        {
+          "ms": 53384,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "verifier.batch1.initial"
+        },
+        {
+          "ms": 31824,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "drafter.initial"
+        }
+      ],
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "footnote_count": 6,
+      "used_sources_count": 6,
+      "footnote_eq_used": true,
+      "used_subset_of_usable": true,
+      "drafter_ok": true,
+      "stub_answer": false,
+      "verifier_usable": 6,
+      "answer_len_chars": 3467,
+      "soft_warning": false
+    },
+    {
+      "fixture_id": "S2",
+      "label": "נסיבות מחמירות 345(ב)",
+      "question": "מהן הנסיבות המחמירות הקבועות בסעיף 345(ב) לחוק העונשין, וכיצד פירשה אותן הפסיקה?",
+      "run_id": "ed49356f-0fd8-4614-bed7-9453f90ff8df",
+      "qa_log_id": "d03fb2a0-8df4-45a3-9fa2-f712c9f7fbfc",
+      "total_ms": 155399,
+      "stage_ms": [
+        {
+          "ms": 22532,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "claim_analyzer.initial",
+          "http_status": 200
+        },
+        {
+          "ms": 40047,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "query_planner.initial"
+        },
+        {
+          "ms": 5181,
+          "ok": true,
+          "stage": "local_retrieval"
+        },
+        {
+          "ms": 11266,
+          "ok": true,
+          "stage": "perplexity_retrieval"
+        },
+        {
+          "ms": 45585,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "verifier.batch1.initial"
+        },
+        {
+          "ms": 46087,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "verifier.batch2.initial"
+        },
+        {
+          "ms": 34981,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "drafter.initial"
+        }
+      ],
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "footnote_count": 8,
+      "used_sources_count": 8,
+      "footnote_eq_used": true,
+      "used_subset_of_usable": true,
+      "drafter_ok": true,
+      "stub_answer": false,
+      "verifier_usable": 9,
+      "answer_len_chars": 3674,
+      "soft_warning": false
+    },
+    {
+      "fixture_id": "S3",
+      "label": "חופש מידע גופים דו־מהותיים",
+      "question": "האם חוק חופש המידע חל על גופים דו־מהותיים, ומה היקף תחולתו עליהם לפי הפסיקה?",
+      "run_id": "9fe67fde-c0c6-4360-8505-1e1a34562c09",
+      "qa_log_id": "23715878-8c1b-41fb-aa09-f8334d67c760",
+      "total_ms": 155428,
+      "stage_ms": [
+        {
+          "ms": 23026,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "claim_analyzer.initial",
+          "http_status": 200
+        },
+        {
+          "ms": 49165,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "query_planner.initial"
+        },
+        {
+          "ms": 3190,
+          "ok": true,
+          "stage": "local_retrieval"
+        },
+        {
+          "ms": 6130,
+          "ok": true,
+          "stage": "perplexity_retrieval"
+        },
+        {
+          "ms": 28938,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "verifier.batch1.initial"
+        },
+        {
+          "ms": 41717,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "verifier.batch2.initial"
+        },
+        {
+          "ms": 35077,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "drafter.initial"
+        }
+      ],
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "footnote_count": 9,
+      "used_sources_count": 9,
+      "footnote_eq_used": true,
+      "used_subset_of_usable": true,
+      "drafter_ok": true,
+      "stub_answer": false,
+      "verifier_usable": 14,
+      "answer_len_chars": 2940,
+      "soft_warning": false
+    },
+    {
+      "fixture_id": "S4",
+      "label": "NDA בהייטק",
+      "question": "מהם הכללים והמגבלות לאכיפת הסכמי סודיות (NDA) של עובדים בענף ההייטק בישראל?",
+      "run_id": "4e10c56b-cb85-46e2-8c34-ed2dcf569be7",
+      "qa_log_id": "bda84c5f-3bfe-4796-ad03-37b2f3d1e463",
+      "total_ms": 193243,
+      "stage_ms": [
+        {
+          "ms": 35302,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "claim_analyzer.initial",
+          "http_status": 200
+        },
+        {
+          "ms": 54100,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "query_planner.initial"
+        },
+        {
+          "ms": 3314,
+          "ok": true,
+          "stage": "local_retrieval"
+        },
+        {
+          "ms": 13779,
+          "ok": true,
+          "stage": "perplexity_retrieval"
+        },
+        {
+          "ms": 45720,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "verifier.batch1.initial"
+        },
+        {
+          "ms": 43987,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "drafter.initial"
+        }
+      ],
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "footnote_count": 8,
+      "used_sources_count": 8,
+      "footnote_eq_used": true,
+      "used_subset_of_usable": true,
+      "drafter_ok": true,
+      "stub_answer": false,
+      "verifier_usable": 8,
+      "answer_len_chars": 4344,
+      "soft_warning": false
+    },
+    {
+      "fixture_id": "S5",
+      "label": "ייצוגית מול נגזרת בהפרת חובת אמונים",
+      "question": "מהו היחס בין תביעה ייצוגית לתובענה נגזרת כאשר מדובר בהפרת חובת אמונים של נושאי משרה בחברה ציבורית?",
+      "run_id": "720e12b8-28c0-4779-a497-d160d1952cbe",
+      "qa_log_id": "5cb77258-d558-4910-985b-235fc7a3ead8",
+      "total_ms": 214066,
+      "stage_ms": [
+        {
+          "ms": 20073,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "claim_analyzer.initial",
+          "http_status": 200
+        },
+        {
+          "ms": 40780,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "query_planner.initial"
+        },
+        {
+          "ms": 6999,
+          "ok": true,
+          "stage": "local_retrieval"
+        },
+        {
+          "ms": 11796,
+          "ok": true,
+          "stage": "perplexity_retrieval"
+        },
+        {
+          "ms": 39602,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "verifier.batch1.initial"
+        },
+        {
+          "ms": 38846,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "verifier.batch2.initial"
+        },
+        {
+          "ms": 71943,
+          "ok": true,
+          "model": "openai/gpt-5",
+          "stage": "verifier.batch2.escalated",
+          "escalated": true
+        },
+        {
+          "ms": 30084,
+          "ok": true,
+          "model": "openai/gpt-5-mini",
+          "stage": "drafter.initial"
+        }
+      ],
+      "marker_validation_ok": true,
+      "internal_id_leak": false,
+      "footnote_count": 7,
+      "used_sources_count": 7,
+      "footnote_eq_used": true,
+      "used_subset_of_usable": true,
+      "drafter_ok": true,
+      "stub_answer": false,
+      "verifier_usable": 10,
+      "answer_len_chars": 3319,
+      "soft_warning": false
+    }
+  ]
+}
