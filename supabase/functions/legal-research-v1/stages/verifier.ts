@@ -270,7 +270,20 @@ function planBatches(claims: Claim[], byClaim: Map<string, Candidate[]>): Batch[
   const totalNormal = normal.reduce((s, c) => s + (byClaim.get(c.claim_id)?.length ?? 0), 0);
   if (totalNormal === 0) return batches;
 
-  if (totalNormal <= SINGLE_BATCH_MAX) {
+  // Test-only: force splitting into 2 buckets to exercise the parallel path.
+  // Triggered via env var VERIFIER_FORCE_SPLIT=1 (set by E.1 validation runner
+  // only). Production paths never set this; behavior is identical when unset.
+  const forceSplit = (Deno.env.get("VERIFIER_FORCE_SPLIT") ?? "") === "1";
+
+  if (!forceSplit && totalNormal <= SINGLE_BATCH_MAX) {
+    batches.push({
+      label: `batch1`,
+      claims: normal,
+      candidates: normal.flatMap((c) => byClaim.get(c.claim_id) ?? []),
+    });
+    return batches;
+  }
+  if (forceSplit && normal.length < 2) {
     batches.push({
       label: `batch1`,
       claims: normal,
@@ -307,6 +320,7 @@ export async function runVerifier(
   question: string,
   claims: Claim[],
   candidates: Candidate[],
+  opts?: { forceSplit?: boolean },
 ): Promise<VerifierResult> {
   const t_total = Date.now();
   const stage_runs: StageRun[] = [];
@@ -325,7 +339,17 @@ export async function runVerifier(
   }
   const claimsById = new Map(claims.map((c) => [c.claim_id, c]));
 
+  // Test-only: caller may force planBatches to split into >=2 buckets so the
+  // parallel orchestration path is actually exercised in E.1 validation. We
+  // briefly set the env flag planBatches reads, then restore it. Production
+  // paths never pass opts.forceSplit.
+  const prevForce = Deno.env.get("VERIFIER_FORCE_SPLIT");
+  if (opts?.forceSplit) Deno.env.set("VERIFIER_FORCE_SPLIT", "1");
   const batches = planBatches(claims, byClaim);
+  if (opts?.forceSplit) {
+    if (prevForce === undefined) Deno.env.delete("VERIFIER_FORCE_SPLIT");
+    else Deno.env.set("VERIFIER_FORCE_SPLIT", prevForce);
+  }
 
   let anyEscalated = false;
 
