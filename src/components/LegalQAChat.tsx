@@ -31,7 +31,7 @@ import { LegalResearchV1Panel } from "@/components/LegalResearchV1Panel";
 // Research mode and academic chapter generation (body/introduction/
 // conclusion) are temporarily offline while the search engine is rebuilt.
 // Short academic steps (suggest_topics / validate_question / propose_outline /
-// abstract synthesis) and all other modes (case_summary, pleading_analysis,
+// abstract synthesis) and all other modes (case_summary,
 // citation/bibliography) remain fully available.
 const RESEARCH_OFFLINE_TITLE = "מצב מחקר משפטי בשדרוג";
 const RESEARCH_OFFLINE_MESSAGE =
