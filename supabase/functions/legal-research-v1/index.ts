@@ -517,7 +517,72 @@ async function handle(req: Request): Promise<Response> {
     fallback_to_sequential: verifier.fallback_to_sequential,
   };
 
-  // ─── P5: Drafter + simple linked footnotes ───────────────────────────────
+  // ─── Sources-only short-circuit (skip drafter) ───────────────────────────
+  if (is_sources_only) {
+    await markStage("ranking");
+    const sourcesPayload = buildSourcesOnlyPayload({
+      question,
+      run_id,
+      candidates: pool.candidates,
+      usable: verifier.usable,
+      verdicts: verifier.verdicts,
+      candidates_verified: verifier.candidates_verified,
+      candidates_usable: verifier.candidates_usable,
+      candidates_dropped: verifier.candidates_dropped,
+    });
+    await completeAllStages();
+
+    const debugBlock = {
+      run_id,
+      phase: "sources_only",
+      stage_runs,
+      planning: planningMeta,
+      claims: analyzer.claims,
+      queries: planner!.queries,
+      retrieval: retrievalMeta,
+      candidates: pool.candidates,
+      dropped_sources: pplx.dropped,
+      verifier: verifierMeta,
+    };
+
+    await writeTelemetry(admin, {
+      ...telemetryBase,
+      // Non-null answer so the existing history sidebar query
+      // (.not("answer","is",null)) still surfaces these runs.
+      answer: "(חיפוש מקורות)",
+      // Wrap the full payload in a sentinel envelope inside `footnotes` so the
+      // history sidebar can re-hydrate the source list on click without
+      // schema changes (mirrors __case_summary pattern).
+      footnotes: [{ __sources_only: true, payload: sourcesPayload }] as unknown[],
+      task_mode: "legal_source_search",
+      metadata: {
+        pipeline: "legal-research-v1",
+        pipeline_mode: "sources_only",
+        phase: "sources_only",
+        run_id,
+        total_ms: Date.now() - t_start,
+        stage_runs,
+        planning: planningMeta,
+        claims: analyzer.claims,
+        queries: planner!.queries,
+        retrieval: retrievalMeta,
+        candidates: pool.candidates,
+        dropped_sources: pplx.dropped,
+        verifier: verifierMeta,
+        sources_only: {
+          summary: sourcesPayload.summary,
+          source_count: sourcesPayload.sources.length,
+        },
+      },
+    });
+
+    return jsonResponse(200, {
+      ...sourcesPayload,
+      debug: debugBlock,
+    });
+  }
+
+
   await markStage("drafter");
   const drafter = await runDrafter(
     question,
