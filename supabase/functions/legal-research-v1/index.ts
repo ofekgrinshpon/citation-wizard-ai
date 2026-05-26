@@ -449,6 +449,17 @@ async function handle(req: Request): Promise<Response> {
     dropped: verifier.dropped,
     errors: verifier.errors,
     batches: verifier.batches,
+    parallel: verifier.parallel,
+    concurrency_limit: verifier.concurrency_limit,
+    batch_count: verifier.batch_count,
+    batch_ms: verifier.batch_ms,
+    total_wall_ms: verifier.total_wall_ms,
+    total_sum_ms: verifier.total_sum_ms,
+    escalated_batches: verifier.escalated_batches,
+    merge_order_preserved: verifier.merge_order_preserved,
+    rate_limit_count: verifier.rate_limit_count,
+    retry_count: verifier.retry_count,
+    fallback_to_sequential: verifier.fallback_to_sequential,
   };
 
   // ─── P5: Drafter + simple linked footnotes ───────────────────────────────
