@@ -155,6 +155,18 @@ async function handle(req: Request): Promise<Response> {
     project_id = project_id_raw;
   }
 
+  // Pipeline mode: "answer" (default — current Research v1 behavior) or
+  // "sources_only" (skip drafter, return grouped/ranked sources).
+  const mode_raw = body.mode;
+  let pipeline_mode: PipelineMode = "answer";
+  if (mode_raw !== undefined && mode_raw !== null) {
+    if (mode_raw !== "answer" && mode_raw !== "sources_only") {
+      return jsonResponse(400, { error: "invalid_input", field: "mode" });
+    }
+    pipeline_mode = mode_raw;
+  }
+  const is_sources_only = pipeline_mode === "sources_only";
+
   // Attachments (optional). Up to MAX_FILES PDF/DOCX uploaded to user-documents
   // under {user.id}/research/...
   const attachmentsRaw = Array.isArray(body.attachments) ? body.attachments : [];
