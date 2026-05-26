@@ -62,7 +62,6 @@ function formatLedgerReason(raw: string | null): string {
   if (qa) {
     const modes: Record<string, string> = {
       research: "עוזר משפטי – מחקר",
-      pleading_analysis: "עוזר משפטי – ביקורת מסמך",
       case_summary: "עוזר משפטי – סיכום פסק דין",
       academic_writing: "עוזר משפטי – כתיבה אקדמית",
     };
