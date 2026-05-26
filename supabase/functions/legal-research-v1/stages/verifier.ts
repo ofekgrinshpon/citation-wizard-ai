@@ -25,6 +25,11 @@ import {
 const SINGLE_BATCH_MAX = 24;
 // If any individual claim has more candidates than this, it gets its own call.
 const PER_CLAIM_OVERSIZED = 24;
+// P6.2b: Verifier batches run concurrently with a small cap. Cap=2 is enough
+// for today's planBatches output (≤2 normal batches + oversized-per-claim) and
+// keeps headroom against provider rate limits. Failed-with-rate-limit batches
+// fall back to a sequential retry preserving plan order.
+const VERIFIER_BATCH_CONCURRENCY = 2;
 
 const SYSTEM_PROMPT = `אתה מאמת מקורות משפטי (Source Verifier) במערכת מחקר משפטי ישראלית.
 תקבל שאלה אחת של המשתמש, רשימת טענות משפטיות (claims), ורשימת מועמדים (candidates) שאוחזרו עבורן.
