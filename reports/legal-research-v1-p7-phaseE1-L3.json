@@ -1,0 +1,404 @@
+{
+  "generated_at": "2026-05-26T07:59:40.217Z",
+  "fixture": {
+    "id": "L3",
+    "question": "מתי בית המשפט יפחית פיצוי מוסכם לפי סעיף 15 לחוק החוזים תרופות?"
+  },
+  "qa_log_id": "c8e18066-9736-46a9-bc41-292dce376c0a",
+  "run_id": "8628ba4a-f264-47c9-b672-fc7d6e6ce3a6",
+  "row_summary": {
+    "fixture_id": "L3",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 4,
+    "footnote_count": 4,
+    "footnote_eq_used": true,
+    "used_sources_subset_of_usable": true,
+    "no_raw_atomic_tokens": true,
+    "no_candidate_id_leak": true,
+    "atomic_validation_ok": true,
+    "verifier": {
+      "parallel": true,
+      "concurrency_limit": 2,
+      "batch_count": 1,
+      "batch_ms": [
+        28324
+      ],
+      "total_wall_ms": 28324,
+      "total_sum_ms": 28324,
+      "escalated_batches": 0,
+      "merge_order_preserved": true,
+      "rate_limit_count": 0,
+      "retry_count": 0,
+      "fallback_to_sequential": false,
+      "candidates_verified": 13,
+      "candidates_usable": 4,
+      "candidates_dropped": 9,
+      "batches_labels": [
+        "batch1"
+      ]
+    },
+    "drafter_ms": 25123,
+    "total_ms": 149899,
+    "baseline_drafter_ms": 19827,
+    "baseline_total_ms": 154804,
+    "total_ms_delta": -4905,
+    "baseline_used_sources_count": 5,
+    "used_sources_count_delta": -1,
+    "source_set_equals_baseline": false,
+    "source_set_added": [
+      "5990e969-668c-44f3-971a-07de293cbea3",
+      "90e9add8-8187-4904-9b0b-465268777d6a",
+      "af28f7fb-965f-48fe-9746-c1a9e94c413d",
+      "4cf09e65-27be-496b-820d-1fa10154303f"
+    ],
+    "source_set_removed": [
+      "2fba14ad-d229-4a5c-923c-faa3acda5ab0",
+      "7b2445ce-bdae-4210-995c-e8a0d2db308b",
+      "707c53ab-f907-4f3e-8df5-993593c9ff7d",
+      "496b656c-8a6d-4d0a-8236-19ea5e6d83a9",
+      "cdf127fd-bb23-4b37-a56e-19aa3c6c3360"
+    ],
+    "placement_telemetry": {
+      "ok": false,
+      "cluster_count": 7,
+      "end_paragraph_dump_count": 0
+    }
+  },
+  "verifier_full": {
+    "ms": 28324,
+    "counts": {
+      "by_support": {
+        "direct": 2,
+        "partial": 2,
+        "unrelated": 7,
+        "tangential": 2
+      },
+      "by_role_match": {
+        "true": 12,
+        "false": 1
+      }
+    },
+    "errors": [],
+    "usable": [
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "5990e969-668c-44f3-971a-07de293cbea3",
+        "verdict_claim_ids": [
+          "C1"
+        ]
+      },
+      {
+        "role_match": false,
+        "best_support": "direct",
+        "candidate_id": "90e9add8-8187-4904-9b0b-465268777d6a",
+        "verdict_claim_ids": [
+          "C2"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "af28f7fb-965f-48fe-9746-c1a9e94c413d",
+        "verdict_claim_ids": [
+          "C3"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "4cf09e65-27be-496b-820d-1fa10154303f",
+        "verdict_claim_ids": [
+          "C2"
+        ]
+      }
+    ],
+    "batches": [
+      {
+        "ms": 28324,
+        "label": "batch1",
+        "claim_ids": [
+          "C1",
+          "C2",
+          "C3",
+          "C5"
+        ],
+        "escalated": false,
+        "candidates": 13
+      }
+    ],
+    "dropped": [
+      {
+        "role": "primary_statute",
+        "title": "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+        "origin": "local_db",
+        "reason": "מסמך על החלטת גמלאות/הוראת שעה שאינו עוסק בסעיף 15 לחוק החוזים או בכללים לגבי פיצוי מוסכם.",
+        "candidate_id": "5140aa94-8873-46be-b294-d0b8b2040afd",
+        "worst_support": "unrelated",
+        "retrieval_method": "exact_authority"
+      },
+      {
+        "role": "primary_statute",
+        "title": "החוק העותומני על האגודות",
+        "origin": "local_db",
+        "reason": "חוק עותומני על אגודות — אינו רלוונטי לסעיף 15 לחוק החוזים (תרופות).",
+        "candidate_id": "087b0f98-c3d4-4a87-8623-47fdf815abed",
+        "worst_support": "unrelated",
+        "retrieval_method": "exact_authority"
+      },
+      {
+        "role": "primary_statute",
+        "title": "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+        "origin": "local_db",
+        "reason": "תקנות הנוגעות לחוק העותומני על האגודות — לא רלוונטיות לתשתית וסייגי סעיף 15 לחוק החוזים.",
+        "candidate_id": "e20e00f3-26fa-45ba-9a5c-0fa18fbaab63",
+        "worst_support": "unrelated",
+        "retrieval_method": "exact_authority"
+      },
+      {
+        "role": "primary_statute",
+        "title": "חוק אמנת החברה הבינלאומית למימון",
+        "origin": "local_db",
+        "reason": "חוק אמנת החברה הבינלאומית למימון — אינו קשור לסעיף 15 לחוק החוזים (תרופות).",
+        "candidate_id": "8c5863d0-e3bd-4b08-ab44-fd193c293355",
+        "worst_support": "unrelated",
+        "retrieval_method": "exact_authority"
+      },
+      {
+        "role": "primary_statute",
+        "title": "חוק אמנת האג (החזרת ילדים חטופים)",
+        "origin": "local_db",
+        "reason": "חוק אמנת האג בנושא החזרת ילדים חטופים — לא רלוונטי לשאלת סעיף 15 לחוק החוזים.",
+        "candidate_id": "ac29f2fc-8257-4947-871c-cc74843e7730",
+        "worst_support": "unrelated",
+        "retrieval_method": "exact_authority"
+      },
+      {
+        "role": "primary_statute",
+        "title": "חוק אמנת החברה הבין-אמריקנית להשקעות",
+        "origin": "local_db",
+        "reason": "חוק אמנת החברה הבין-אמריקנית — לא נוגע להוראת סעיף 15 לחוק החוזים.",
+        "candidate_id": "d571f97e-f0b0-47d9-8b55-dbffaddcb26a",
+        "worst_support": "unrelated",
+        "retrieval_method": "exact_authority"
+      },
+      {
+        "role": "binding_case_law",
+        "title": "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 53737-03-25)",
+        "origin": "local_db",
+        "reason": "פסק הדין המצויין עוסק בדחיית רשות ערעור והליכים פרוצדורליים כלליים ולא בקריטריונים המהותיים לסעיף 15 לגבי 'יחס סביר' ופיצוי עונשי/פיצייתי.",
+        "candidate_id": "c2bbd51a-d3df-4a03-92f5-78e27fcc6028",
+        "worst_support": "unrelated",
+        "retrieval_method": "exact_authority"
+      },
+      {
+        "role": "scholarship",
+        "title": "חצי יובל לפקודת הנזיקין האזרחיים — בעיות ומגמות",
+        "origin": "perplexity",
+        "reason": "המאמר עוסק בדיני נזיקין באופן כללי ולא במפורש בהשלכות משפטיות מעשיות של הקטנת פיצוי מוסכם לפי סעיף 15.",
+        "candidate_id": "ab4394cb-7ecb-4bfb-bc73-d4ead47b6113",
+        "worst_support": "tangential",
+        "retrieval_method": "perplexity"
+      },
+      {
+        "role": "scholarship",
+        "title": "האחריות בנזיקין של רשויות ציבור ועובדי ציבור",
+        "origin": "perplexity",
+        "reason": "המאמר אינו דן ישירות בסעיף 15 או בפסקי דין הקובעים את האפשרויות המעשיות בעקבות הפחתת פיצוי מוסכם, ולכן רק נוגע לשוליים.",
+        "candidate_id": "18b657a8-5bdb-403c-b4c1-18f0b6255221",
+        "worst_support": "tangential",
+        "retrieval_method": "perplexity"
+      }
+    ],
+    "batch_ms": [
+      28324
+    ],
+    "parallel": true,
+    "verdicts": [
+      {
+        "reason": "זהו נוסח ההוראה המחייב בחוק (סעיף 15), ולכן תומך ישירות בשאלה לגבי התשתית והסייגים המפורשים.",
+        "support": "direct",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "5990e969-668c-44f3-971a-07de293cbea3",
+        "supported_points": [
+          "מכיל את נוסח סעיף 15 במלואו; קובע את עקרון הפיצויים המוסכמים ללא הוכחת נזק",
+          "מציין במפורש את סמכות בית המשפט \"להפחיתם\" אם נקבעו ללא יחס סביר לנזק שניתן היה לצפות מראש",
+          "מהווה את התשתית החוקית הישירה והבלתי-מתווכת לטענה על סמכות ההפחתה/שלילה"
+        ]
+      },
+      {
+        "reason": "מסמך על החלטת גמלאות/הוראת שעה שאינו עוסק בסעיף 15 לחוק החוזים או בכללים לגבי פיצוי מוסכם.",
+        "support": "unrelated",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "5140aa94-8873-46be-b294-d0b8b2040afd",
+        "supported_points": []
+      },
+      {
+        "reason": "חוק עותומני על אגודות — אינו רלוונטי לסעיף 15 לחוק החוזים (תרופות).",
+        "support": "unrelated",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "087b0f98-c3d4-4a87-8623-47fdf815abed",
+        "supported_points": []
+      },
+      {
+        "reason": "תקנות הנוגעות לחוק העותומני על האגודות — לא רלוונטיות לתשתית וסייגי סעיף 15 לחוק החוזים.",
+        "support": "unrelated",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "e20e00f3-26fa-45ba-9a5c-0fa18fbaab63",
+        "supported_points": []
+      },
+      {
+        "reason": "חוק אמנת החברה הבינלאומית למימון — אינו קשור לסעיף 15 לחוק החוזים (תרופות).",
+        "support": "unrelated",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "8c5863d0-e3bd-4b08-ab44-fd193c293355",
+        "supported_points": []
+      },
+      {
+        "reason": "חוק אמנת האג בנושא החזרת ילדים חטופים — לא רלוונטי לשאלת סעיף 15 לחוק החוזים.",
+        "support": "unrelated",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "ac29f2fc-8257-4947-871c-cc74843e7730",
+        "supported_points": []
+      },
+      {
+        "reason": "חוק אמנת החברה הבין-אמריקנית — לא נוגע להוראת סעיף 15 לחוק החוזים.",
+        "support": "unrelated",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "d571f97e-f0b0-47d9-8b55-dbffaddcb26a",
+        "supported_points": []
+      },
+      {
+        "reason": "פסק הדין המצויין עוסק בדחיית רשות ערעור והליכים פרוצדורליים כלליים ולא בקריטריונים המהותיים לסעיף 15 לגבי 'יחס סביר' ופיצוי עונשי/פיצייתי.",
+        "support": "unrelated",
+        "claim_id": "C2",
+        "role_match": true,
+        "candidate_id": "c2bbd51a-d3df-4a03-92f5-78e27fcc6028",
+        "supported_points": []
+      },
+      {
+        "reason": "זהו נוסח החוק שמגדיר את מבחן ה'לא סביר' ונותן את הנוסחה המשפטית המרכזית להערכת פיצוי מוסכם.",
+        "support": "direct",
+        "claim_id": "C2",
+        "role_match": false,
+        "candidate_id": "90e9add8-8187-4904-9b0b-465268777d6a",
+        "supported_points": [
+          "נוסח סעיף 15 קובע את מבחן ה\"יחס הסביר לנזק שניתן היה לצפות מראש\" כבסיס להקטנה",
+          "מכיל את ההבחנה בין פיצויים מוסכמים ללא הוכחת נזק לסמכות שיפוטית להפחתה",
+          "מהווה את המסגרת החוקית לקביעת קריטריונים מהותיים"
+        ]
+      },
+      {
+        "reason": "כתיבה אקדמית שמנתחת את נוסח החוק ופסיקה רלוונטית; תומכת בקריטריונים אך אינה מהווה שיקוף מחייב של פסיקה יחידה.",
+        "support": "partial",
+        "claim_id": "C2",
+        "role_match": true,
+        "candidate_id": "4cf09e65-27be-496b-820d-1fa10154303f",
+        "supported_points": [
+          "מאמר עיוני המנתח את סעיף 15 ואת דרישת ה\"יחס הסביר\"",
+          "דן בהבחנה בין פיצוי פנצייתי/עונשי לבין פיצוי פיצייתי/מזערי וכיצד בתי המשפט מתייחסים לכך",
+          "משמש כמקור להשוואת פסיקה והסבר תיאורטי לקריטריונים שנבחנים"
+        ]
+      },
+      {
+        "reason": "פסק דין על סעיף 15 תומך בטענות פרוצדורליות ומהותיות, אך הקטע שסופק רק מזכיר את הסמכות ולא מפרט במפורש על נטל ההוכחה ומועד הטענות.",
+        "support": "partial",
+        "claim_id": "C3",
+        "role_match": true,
+        "candidate_id": "af28f7fb-965f-48fe-9746-c1a9e94c413d",
+        "supported_points": [
+          "פסק-דין על סמכות בית המשפט לפי סעיף 15 ומזכיר השלכות חיוביות של פיצוי מוסכם",
+          "כסוג של פסיקה על הנושא — ניתן להפיק ממנה מסקנות פרוצדורליות לגבי מתי וכיצד בית המשפט יתערב"
+        ]
+      },
+      {
+        "reason": "המאמר עוסק בדיני נזיקין באופן כללי ולא במפורש בהשלכות משפטיות מעשיות של הקטנת פיצוי מוסכם לפי סעיף 15.",
+        "support": "tangential",
+        "claim_id": "C5",
+        "role_match": true,
+        "candidate_id": "ab4394cb-7ecb-4bfb-bc73-d4ead47b6113",
+        "supported_points": [
+          "מאמר על דיני הנזיקין המספק רקע מדיני ותמיכה רעיונית לנקיטת מדיניות בהקשר של פיצויים",
+          "עשוי לסייע בהסבר השלכות תיאורטיות של הקטנת פיצוי מוסכם"
+        ]
+      },
+      {
+        "reason": "המאמר אינו דן ישירות בסעיף 15 או בפסקי דין הקובעים את האפשרויות המעשיות בעקבות הפחתת פיצוי מוסכם, ולכן רק נוגע לשוליים.",
+        "support": "tangential",
+        "claim_id": "C5",
+        "role_match": true,
+        "candidate_id": "18b657a8-5bdb-403c-b4c1-18f0b6255221",
+        "supported_points": [
+          "מאמר על אחריות נזיקית שיכול לשמש כרקע להבנת השלכות פרקטיות ופוליטיות של קביעות פיצוי",
+          "מספק מסגור תיאורטי לגבי שיקולי מדיניות המשפיעים על חישוב נזקים"
+        ]
+      }
+    ],
+    "batch_count": 1,
+    "model_final": "openai/gpt-5-mini",
+    "retry_count": 0,
+    "per_claim_ms": {
+      "C1": 28324,
+      "C2": 28324,
+      "C3": 28324,
+      "C5": 28324
+    },
+    "total_sum_ms": 28324,
+    "model_initial": "openai/gpt-5-mini",
+    "total_wall_ms": 28324,
+    "escalated_claims": [],
+    "rate_limit_count": 0,
+    "candidates_usable": 4,
+    "concurrency_limit": 2,
+    "escalated_batches": 0,
+    "candidates_dropped": 9,
+    "candidates_verified": 13,
+    "merge_order_preserved": true,
+    "fallback_to_sequential": false
+  },
+  "atomic": {
+    "mode": "validate",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 19,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 19
+  },
+  "placement": {
+    "ok": false,
+    "cluster_count": 7,
+    "cluster_samples": [
+      "אה מסתברת של ההפרה\".¹²\n\nהיקף וסייגי הסמכות",
+      "פוי בעת כריתת החוזה.¹²\nפסיקה בית־משפטית אי",
+      "פות בעת כריתת החוזה.³⁴\nבפרוצדורה מעשית משמ",
+      " להרתעה ומניעת עושק.⁴³\n\nתוצאות מעשיות של ה",
+      "יחס סביר לנזק הצפוי;¹³ ג. במקום להסתמך על "
+    ],
+    "end_dump_samples": [],
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 0,
+    "superscript_parens_count": 0
+  },
+  "answer_preview": "המבוא והבסיס החוקי\nסעיף 15 לחוק החוזים (תרופות) קובע כי כאשר הצדדים הסכימו מראש על שיעור פיצויים – יהיו הפיצויים כמוסכם, ללא הוכחת נזק; אך לבית המשפט סמכות להפחית אותם אם מצא שהם נקבעו \"ללא כל יחס סביר לנזק שניתן היה לראותו מראש בעת כריתת החוזה כתוצאה מסתברת של ההפרה\".¹²\n\nהיקף וסייגי הסמכות על פי הסעיף\nהסמכות העיקרית והמפורשת בסעיף היא סמכות בית המשפט **להפחית** את גובה הפיצוי המוסכם כשהוא חורג מיחס סביר אל מול הנזק הצפוי; הסעיף אינו מנוסח כמתיר לבית המשפט להחליט באופן אקראי, אלא להפעיל יפוי-שיפוט במטרה להתאימו לנסיבות ולנזק הצפוי בעת כריתת החוזה.¹²\nפסיקה בית־משפטית אישרה וקיבלה את קיומה של הס"
+}

@@ -25,6 +25,11 @@ import {
 const SINGLE_BATCH_MAX = 24;
 // If any individual claim has more candidates than this, it gets its own call.
 const PER_CLAIM_OVERSIZED = 24;
+// P6.2b: Verifier batches run concurrently with a small cap. Cap=2 is enough
+// for today's planBatches output (≤2 normal batches + oversized-per-claim) and
+// keeps headroom against provider rate limits. Failed-with-rate-limit batches
+// fall back to a sequential retry preserving plan order.
+const VERIFIER_BATCH_CONCURRENCY = 2;
 
 const SYSTEM_PROMPT = `אתה מאמת מקורות משפטי (Source Verifier) במערכת מחקר משפטי ישראלית.
 תקבל שאלה אחת של המשתמש, רשימת טענות משפטיות (claims), ורשימת מועמדים (candidates) שאוחזרו עבורן.
@@ -220,6 +225,18 @@ export interface VerifierResult {
   stage_runs: StageRun[];
   errors: Array<{ claim_id: string; reason: string }>;
   batches: Array<{ label: string; claim_ids: string[]; candidates: number; escalated: boolean; ms: number }>;
+  // P6.2b parallel verifier telemetry (orchestration only, contract preserved):
+  parallel: boolean;
+  concurrency_limit: number;
+  batch_count: number;
+  batch_ms: number[];
+  total_wall_ms: number;
+  total_sum_ms: number;
+  escalated_batches: number;
+  merge_order_preserved: boolean;
+  rate_limit_count: number;
+  retry_count: number;
+  fallback_to_sequential: boolean;
 }
 
 interface Batch {
@@ -312,11 +329,51 @@ export async function runVerifier(
 
   let anyEscalated = false;
 
-  for (const batch of batches) {
+  // ---- P6.2b: parallel verifier batches with deterministic plan-order merge.
+  // Each batch is processed by processBatch() into a self-contained BatchOutcome.
+  // After the bounded pool drains, outcomes are flushed in slot (plan) order
+  // into the existing accumulators so stage_runs / batchesMeta / per_claim_ms
+  // remain byte-identical in ordering to the sequential implementation.
+  interface BatchOutcome {
+    stage_runs: StageRun[];
+    verdicts: Verdict[];
+    meta: { label: string; claim_ids: string[]; candidates: number; escalated: boolean; ms: number };
+    errors: Array<{ claim_id: string; reason: string }>;
+    per_claim_ms: Record<string, number>;
+    escalated_claim_ids: string[];
+    rate_limited: boolean;
+    failed: boolean;
+    failure_reason?: string;
+  }
+
+  const isRateLimited = (r: { http_status: number; http_error?: string }): boolean => {
+    if (r.http_status === 429) return true;
+    const t = (r.http_error || "").toLowerCase();
+    return /(^|\b)429\b/.test(t) || /rate[\s_-]*limit/.test(t);
+  };
+
+  const processBatch = async (batch: Batch): Promise<BatchOutcome> => {
+    const out: BatchOutcome = {
+      stage_runs: [],
+      verdicts: [],
+      meta: {
+        label: batch.label,
+        claim_ids: batch.claims.map((c) => c.claim_id),
+        candidates: batch.candidates.length,
+        escalated: false,
+        ms: 0,
+      },
+      errors: [],
+      per_claim_ms: {},
+      escalated_claim_ids: [],
+      rate_limited: false,
+      failed: false,
+    };
+
     // Validate that all batch claims exist in analyzer output.
     for (const cl of batch.claims) {
       if (!claimsById.has(cl.claim_id)) {
-        errors.push({ claim_id: cl.claim_id, reason: "claim not found in analyzer output" });
+        out.errors.push({ claim_id: cl.claim_id, reason: "claim not found in analyzer output" });
       }
     }
     const expectedPairs = new Set<string>(
@@ -334,19 +391,18 @@ export async function runVerifier(
         parameters: VERIFIER_TOOL_PARAMETERS,
       },
     });
-    stage_runs.push({
+    out.stage_runs.push({
       stage: `verifier.${batch.label}.initial`,
       model: MODEL_MINI,
       ms: Date.now() - t0,
       ok: !!resp.data,
     });
+    if (isRateLimited(resp)) out.rate_limited = true;
     let parsed = validateBatchVerdicts(resp.data, expectedPairs);
-    let escalated = false;
 
     if (!parsed.ok) {
-      escalated = true;
-      anyEscalated = true;
-      for (const cl of batch.claims) escalated_claims.push(cl.claim_id);
+      out.meta.escalated = true;
+      for (const cl of batch.claims) out.escalated_claim_ids.push(cl.claim_id);
       const t1 = Date.now();
       resp = await callOpenAIJsonTool<unknown>({
         model: MODEL_FULL,
@@ -358,18 +414,19 @@ export async function runVerifier(
           parameters: VERIFIER_TOOL_PARAMETERS,
         },
       });
-      stage_runs.push({
+      out.stage_runs.push({
         stage: `verifier.${batch.label}.escalated`,
         model: MODEL_FULL,
         ms: Date.now() - t1,
         ok: !!resp.data,
         escalated: true,
       });
+      if (isRateLimited(resp)) out.rate_limited = true;
       parsed = validateBatchVerdicts(resp.data, expectedPairs);
     }
 
     if (parsed.errors.length) {
-      errors.push({
+      out.errors.push({
         claim_id: batch.claims.map((c) => c.claim_id).join(","),
         reason: parsed.errors.slice(0, 3).join("; "),
       });
@@ -381,14 +438,14 @@ export async function runVerifier(
       const cand = candById.get(v.candidate_id);
       const claim = claimsById.get(v.claim_id);
       if (cand && claim) v.role_match = rolesMatch(cand.role, claim.required_roles);
-      allVerdicts.push(v);
+      out.verdicts.push(v);
     }
     for (const missingKey of parsed.missing) {
       const [candidate_id, claim_id] = missingKey.split("::");
       const cand = candById.get(candidate_id);
       const claim = claimsById.get(claim_id);
       if (!cand || !claim) continue;
-      allVerdicts.push({
+      out.verdicts.push({
         candidate_id,
         claim_id,
         support: "unrelated",
@@ -398,16 +455,117 @@ export async function runVerifier(
       });
     }
 
-    const batchMs = Date.now() - t0;
-    for (const cl of batch.claims) per_claim_ms[cl.claim_id] = batchMs;
-    batchesMeta.push({
-      label: batch.label,
-      claim_ids: batch.claims.map((c) => c.claim_id),
-      candidates: batch.candidates.length,
-      escalated,
-      ms: batchMs,
-    });
+    out.meta.ms = Date.now() - t0;
+    for (const cl of batch.claims) out.per_claim_ms[cl.claim_id] = out.meta.ms;
+
+    // A batch is "failed" only when the final response had no data AND no
+    // verdicts were produced. Backfilled-unrelated verdicts count, matching
+    // sequential behavior where a broken LLM call still produces the same
+    // backfill set downstream.
+    if (!resp.data && parsed.verdicts.length === 0) {
+      out.failed = true;
+      out.failure_reason =
+        resp.http_error || resp.parse_error || `http_status=${resp.http_status}`;
+    }
+    return out;
+  };
+
+  // Bounded-concurrency worker pool. Cursor is shared via closure; JS is
+  // single-threaded so `cursor++` is atomic across workers.
+  const slots: (BatchOutcome | undefined)[] = new Array(batches.length).fill(undefined);
+  const t_pool = Date.now();
+  {
+    let cursor = 0;
+    const workers: Promise<void>[] = [];
+    const workerCount = Math.min(VERIFIER_BATCH_CONCURRENCY, batches.length);
+    for (let w = 0; w < workerCount; w++) {
+      workers.push((async () => {
+        while (true) {
+          const i = cursor++;
+          if (i >= batches.length) return;
+          try {
+            slots[i] = await processBatch(batches[i]);
+          } catch (e) {
+            slots[i] = {
+              stage_runs: [],
+              verdicts: [],
+              meta: {
+                label: batches[i].label,
+                claim_ids: batches[i].claims.map((c) => c.claim_id),
+                candidates: batches[i].candidates.length,
+                escalated: false,
+                ms: 0,
+              },
+              errors: [{
+                claim_id: batches[i].claims.map((c) => c.claim_id).join(","),
+                reason: `processBatch threw: ${e instanceof Error ? e.message : String(e)}`,
+              }],
+              per_claim_ms: {},
+              escalated_claim_ids: [],
+              rate_limited: false,
+              failed: true,
+              failure_reason: e instanceof Error ? e.message : String(e),
+            };
+          }
+        }
+      })());
+    }
+    await Promise.all(workers);
   }
+
+  // Rate-limit safety net: re-run only rate-limited failed slots sequentially.
+  // Preserves slot indexes; never re-runs successful batches.
+  let rate_limit_count = slots.reduce((n, s) => n + (s?.rate_limited ? 1 : 0), 0);
+  let retry_count = 0;
+  let fallback_to_sequential = false;
+  const rateLimitedFailed: number[] = [];
+  for (let i = 0; i < slots.length; i++) {
+    const s = slots[i];
+    if (s && s.failed && s.rate_limited) rateLimitedFailed.push(i);
+  }
+  if (rateLimitedFailed.length > 0) {
+    fallback_to_sequential = true;
+    for (const i of rateLimitedFailed) {
+      try {
+        slots[i] = await processBatch(batches[i]);
+      } catch (e) {
+        const prev = slots[i]!;
+        prev.errors.push({
+          claim_id: batches[i].claims.map((c) => c.claim_id).join(","),
+          reason: `sequential retry threw: ${e instanceof Error ? e.message : String(e)}`,
+        });
+      }
+      retry_count++;
+      if (slots[i]?.rate_limited) rate_limit_count++;
+    }
+  }
+
+  // Flush slots in plan order — deterministic merge.
+  let merge_order_preserved = true;
+  let escalated_batches = 0;
+  const batch_ms_arr: number[] = [];
+  for (let i = 0; i < batches.length; i++) {
+    const s = slots[i];
+    if (!s) {
+      merge_order_preserved = false;
+      continue;
+    }
+    if (s.meta.label !== batches[i].label) merge_order_preserved = false;
+    stage_runs.push(...s.stage_runs);
+    allVerdicts.push(...s.verdicts);
+    errors.push(...s.errors);
+    for (const cid of s.escalated_claim_ids) escalated_claims.push(cid);
+    for (const [k, v] of Object.entries(s.per_claim_ms)) per_claim_ms[k] = v;
+    batchesMeta.push(s.meta);
+    batch_ms_arr.push(s.meta.ms);
+    if (s.meta.escalated) {
+      escalated_batches++;
+      anyEscalated = true;
+    }
+  }
+  const total_wall_ms = Date.now() - t_pool;
+  const total_sum_ms = batch_ms_arr.reduce((a, b) => a + b, 0);
+
 
   // Aggregate per-candidate best/worst across all its verdicts.
   const bestByCand = new Map<string, Verdict>();
@@ -481,5 +639,16 @@ export async function runVerifier(
     stage_runs,
     errors,
     batches: batchesMeta,
+    parallel: true,
+    concurrency_limit: VERIFIER_BATCH_CONCURRENCY,
+    batch_count: batches.length,
+    batch_ms: batch_ms_arr,
+    total_wall_ms,
+    total_sum_ms,
+    escalated_batches,
+    merge_order_preserved,
+    rate_limit_count,
+    retry_count,
+    fallback_to_sequential,
   };
 }

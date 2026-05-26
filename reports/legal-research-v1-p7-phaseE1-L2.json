@@ -1,0 +1,452 @@
+{
+  "generated_at": "2026-05-26T07:59:40.098Z",
+  "fixture": {
+    "id": "L2",
+    "question": "מהי דוקטרינת ההבטחה המנהלית?"
+  },
+  "qa_log_id": "ca6649f1-d7f0-4e4f-9c34-7da85afb6ab1",
+  "run_id": "92b29b81-f20c-45f8-8ee8-f53242dacb20",
+  "row_summary": {
+    "fixture_id": "L2",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 9,
+    "footnote_count": 9,
+    "footnote_eq_used": true,
+    "used_sources_subset_of_usable": true,
+    "no_raw_atomic_tokens": true,
+    "no_candidate_id_leak": true,
+    "atomic_validation_ok": true,
+    "verifier": {
+      "parallel": true,
+      "concurrency_limit": 2,
+      "batch_count": 1,
+      "batch_ms": [
+        47428
+      ],
+      "total_wall_ms": 47428,
+      "total_sum_ms": 47428,
+      "escalated_batches": 0,
+      "merge_order_preserved": true,
+      "rate_limit_count": 0,
+      "retry_count": 0,
+      "fallback_to_sequential": false,
+      "candidates_verified": 14,
+      "candidates_usable": 12,
+      "candidates_dropped": 2,
+      "batches_labels": [
+        "batch1"
+      ]
+    },
+    "drafter_ms": 36971,
+    "total_ms": 175516,
+    "baseline_drafter_ms": 24673,
+    "baseline_total_ms": 120026,
+    "total_ms_delta": 55490,
+    "baseline_used_sources_count": 6,
+    "used_sources_count_delta": 3,
+    "source_set_equals_baseline": false,
+    "source_set_added": [
+      "4a5b599f-f248-4bc0-91eb-c95c9beaa2b3",
+      "9c9dca64-b479-496c-bf22-2e50940fb3c6",
+      "c7a96736-9c24-4055-bfc9-264d6a50dc5e",
+      "c1097d62-f896-44fa-8420-3ac8f012960c",
+      "9cdff13c-e197-4182-8dd5-6b8253e8420b",
+      "ea1ac9d1-06c0-4493-983c-c390c2152355",
+      "525ca547-05ff-4f8c-b9d0-1100c46d9ff8",
+      "80a7d2db-93ce-4681-9f4e-c3dc25cb7c0d",
+      "0a59b7de-6990-4c1b-88aa-931e6e40fbdc"
+    ],
+    "source_set_removed": [
+      "ac946ce1-73c8-4557-9e55-723c7b997a2b",
+      "3bce43f4-38ad-45ee-bcba-919a478fb8f4",
+      "08dce689-0079-4101-8273-3b23f417a8de",
+      "973a8036-39b4-4c1c-a8c7-95c08737849d",
+      "4455f9aa-31b2-4956-b932-67445d02b6fc",
+      "ea0157cc-7610-4312-b8ab-f9490536f79b"
+    ],
+    "placement_telemetry": {
+      "ok": false,
+      "cluster_count": 20,
+      "end_paragraph_dump_count": 2
+    }
+  },
+  "verifier_full": {
+    "ms": 47429,
+    "counts": {
+      "by_support": {
+        "direct": 7,
+        "partial": 5,
+        "unrelated": 0,
+        "tangential": 2
+      },
+      "by_role_match": {
+        "true": 14,
+        "false": 0
+      }
+    },
+    "errors": [],
+    "usable": [
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "9cdff13c-e197-4182-8dd5-6b8253e8420b",
+        "verdict_claim_ids": [
+          "C2"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "525ca547-05ff-4f8c-b9d0-1100c46d9ff8",
+        "verdict_claim_ids": [
+          "C4"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "80a7d2db-93ce-4681-9f4e-c3dc25cb7c0d",
+        "verdict_claim_ids": [
+          "C4"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "ac507dcd-01cf-4d83-9a99-3be5dce1425c",
+        "verdict_claim_ids": [
+          "C4"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "889671bf-bb6c-4a85-99a2-5792943189bc",
+        "verdict_claim_ids": [
+          "C4"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "9c9dca64-b479-496c-bf22-2e50940fb3c6",
+        "verdict_claim_ids": [
+          "C1"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "4a5b599f-f248-4bc0-91eb-c95c9beaa2b3",
+        "verdict_claim_ids": [
+          "C1"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "c7a96736-9c24-4055-bfc9-264d6a50dc5e",
+        "verdict_claim_ids": [
+          "C1"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "ea1ac9d1-06c0-4493-983c-c390c2152355",
+        "verdict_claim_ids": [
+          "C1"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "c1097d62-f896-44fa-8420-3ac8f012960c",
+        "verdict_claim_ids": [
+          "C2"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "partial",
+        "candidate_id": "65606a57-af5f-4908-8564-f706a0d04af1",
+        "verdict_claim_ids": [
+          "C2"
+        ]
+      },
+      {
+        "role_match": true,
+        "best_support": "direct",
+        "candidate_id": "0a59b7de-6990-4c1b-88aa-931e6e40fbdc",
+        "verdict_claim_ids": [
+          "C5"
+        ]
+      }
+    ],
+    "batches": [
+      {
+        "ms": 47428,
+        "label": "batch1",
+        "claim_ids": [
+          "C1",
+          "C2",
+          "C4",
+          "C5"
+        ],
+        "escalated": false,
+        "candidates": 14
+      }
+    ],
+    "dropped": [
+      {
+        "role": "primary_statute",
+        "title": "חוק חופש המידע, התשנ\"ח-1998",
+        "origin": "perplexity",
+        "reason": "החוק מתייחס למגבלות ספציפיות על מסירת מידע ולא דן באופן ישיר בהגבלות או בחריגים של דוקטרינת ההבטחה המינהלית, ולכן הוא רק משלים ברקע.",
+        "candidate_id": "e9a89e40-9ca2-468e-984a-860b375861d1",
+        "worst_support": "tangential",
+        "retrieval_method": "perplexity"
+      },
+      {
+        "role": "persuasive_case_law",
+        "title": "דין ודברים על 'ציפייה לגיטימית' / 'השתק' / 'הבטחה מנהלית' - חיפוש ממוקד בפסיקה ישראלית (תקדין/נבו/פסקדין)",
+        "origin": "perplexity",
+        "reason": "הפריט אינו פסק‑דין משכנע אלא המלצה למאגר חיפוש; הוא שימושי למציאת פסיקה השוואתית אך אינו מהווה מקור משפטי תומך ישיר להתייחסות לתאוריות.",
+        "candidate_id": "0b4c75ec-88ad-4630-8db9-d809a52e0734",
+        "worst_support": "tangential",
+        "retrieval_method": "perplexity"
+      }
+    ],
+    "batch_ms": [
+      47428
+    ],
+    "parallel": true,
+    "verdicts": [
+      {
+        "reason": "מאמר אקדמי זה עוסק במפורש בהגדרה ובהיקף ההבטחה המינהלית ולכן מהווה מקור ישיר להגדרת הדוקטרינה ולשאלה מתי נוצר איסור לחזור בו.",
+        "support": "direct",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "9c9dca64-b479-496c-bf22-2e50940fb3c6",
+        "supported_points": [
+          "מאמר עוסק במושג 'הבטחה מינהלית' ובהגדרתו במרחב המשפטי",
+          "מנתח מתי הבטחה מהווה התחייבות רלוונטית לאזרח (בהתאם לסמכות הרשות)",
+          "כולל הבחנה בין הבטחה שבמסגרת סמכות לבין הבטחה הכרוכה בחריגה מסמכות"
+        ]
+      },
+      {
+        "reason": "מאמר מקצועי המתמקד בהבטחה מינהלית ומציג בצורה מפורשת את ההגדרה והנשמעות של איסור החזרה מהבטחה.",
+        "support": "direct",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "4a5b599f-f248-4bc0-91eb-c95c9beaa2b3",
+        "supported_points": [
+          "מאמר ב'משפטים' שמנסח את עיקרי הדוקטרינה של הבטחה מינהלית",
+          "דן ביחס שבין חופש החלטה מנהלית לבין הגנת ציפיות והסתמכות אזרח",
+          "מספק ניסוחי יסוד שימושיים להגדרה ונשמעותה של הדוקטרינה"
+        ]
+      },
+      {
+        "reason": "המאמר עוסק במישרין בדוקטרינה ובהתפתחותה ולכן ישמש כעדות ישירה להגדרת הדוקטרינה ולנסיבות היווצרות האיסור.",
+        "support": "direct",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "c7a96736-9c24-4055-bfc9-264d6a50dc5e",
+        "supported_points": [
+          "מאמר אקדמי על 'הבטחה מינהלית לציבור' ובחינת התפתחות הדין",
+          "דן בהגנה המשפטית על ציפיות והסתמכות שנוצרו בעקבות הבטחות רשות",
+          "מכיל ניתוחים שמגדירים מתי ההבטחה יוצרת איסור על הרשות לחזור בה"
+        ]
+      },
+      {
+        "reason": "מאמר זה מספק ניתוח ישיר של הדוקטרינה ושל המקרים שבהם אסור לרשות לחזור מהבטחה ולכן מהווה מקור ישיר.",
+        "support": "direct",
+        "claim_id": "C1",
+        "role_match": true,
+        "candidate_id": "ea1ac9d1-06c0-4493-983c-c390c2152355",
+        "supported_points": [
+          "מאמר היסטורי ותיאורטי על לידת הדוקטרינה, תולדותיה ומשמעותה",
+          "מנתח את התלות בין סמכות המינהלית, הסתמכות הציבור וההגנה על ציפיות",
+          "מסקנותיו נוגעות ישירות למתי אמורה הרשות להיחשב מחויבת בהבטחתה"
+        ]
+      },
+      {
+        "reason": "פסק‑דין עליון שמנתח את יסודות ההגנה על הסתמכות והציפייה וקובע קריטריונים שניתן להחילם כאלמנטים דרושים.",
+        "support": "direct",
+        "claim_id": "C2",
+        "role_match": true,
+        "candidate_id": "9cdff13c-e197-4182-8dd5-6b8253e8420b",
+        "supported_points": [
+          "פסק‑דין של בית המשפט העליון הכולל דיון בהסתמכות ובבחינת התחייבות/הבטחה בהקשר ציבורי",
+          "מזכיר מבחנים מעשיים: בהירות ההבטחה, היקף הסמכות וההסתמכות של הציבור",
+          "מתייחס לנזק או שינוי מצב שנגרם לנוכח ההסתמכות"
+        ]
+      },
+      {
+        "reason": "המאמר מסביר במפורש את יסודות ההגנה על הסתמכות ומספק נוסחים ופרשנות רלוונטיים להוכחת הדרישות.",
+        "support": "direct",
+        "claim_id": "C2",
+        "role_match": true,
+        "candidate_id": "c1097d62-f896-44fa-8420-3ac8f012960c",
+        "supported_points": [
+          "מאמר שבוחן הצדקות נורמטיביות להגנת ההסתמכות ומשלים את ההבחנה האתית‑משפטית",
+          "מפרט קריטריונים מעשיים כגון הבטחה ברורה, הסתמכות סבירה ושינוי מצב",
+          "דן ביחס בין הוכחת מניע פסול לבין הגנה על ציפיות לגיטימיות"
+        ]
+      },
+      {
+        "reason": "המאמר רלוונטי ברמת ההסבר התיאורטי והכרתי, אך אינו מציג ניסוח פסק‑דיני מחייב מפורט של כל יסודות הנטענים בטענה.",
+        "support": "partial",
+        "claim_id": "C2",
+        "role_match": true,
+        "candidate_id": "65606a57-af5f-4908-8564-f706a0d04af1",
+        "supported_points": [
+          "מאמר העוסק בקשר בין הבטחה, הסתמכות ותום לב ובהתפתחות הפסיקה (רקע תיאורטי)",
+          "מספק תובנות לגבי חשיבות ההסתמכות והנזק כגורמים שיכולים להצדיק הגנה"
+        ]
+      },
+      {
+        "reason": "החוק מספק מסגרת כללית המגבילה את רשויות השלטון ונותן בסיס חוקתי לטענה כי הבטחות שסותרות דין אינן מתקיימות, אך אינו דן ספציפית בדוקטרינת ההבטחה המינהלית.",
+        "support": "partial",
+        "claim_id": "C4",
+        "role_match": true,
+        "candidate_id": "525ca547-05ff-4f8c-b9d0-1100c46d9ff8",
+        "supported_points": [
+          "חוק יסוד: הממשלה קובע כי פעולות הממשלה חייבות להתבצע 'כפוף לכל דין'",
+          "ניתן להשתמש בסעיף זה כדי לטעון שהבטחה מנהלית שאינה תואמת דין אינה מחייבת"
+        ]
+      },
+      {
+        "reason": "החוק מספק כללי פרשנות המגבילים סמכויות ומסייע לבסס מקרים שבהם הבטחה מינהלית נכשלה עקב ניגוד לחקיקה, אך אינו עוסק בדוקטרינה באופן ישיר.",
+        "support": "partial",
+        "claim_id": "C4",
+        "role_match": true,
+        "candidate_id": "80a7d2db-93ce-4681-9f4e-c3dc25cb7c0d",
+        "supported_points": [
+          "חוק הפרשנות (סעיפים 16–17) קובע כללים לפרשנות סמכויות ולמעשים שאינם מותרים אם הם סותרים דין",
+          "רלוונטי לטיעון שפועל מנהלי המופרך בחוק אינו יכול להצדיק השתקה או הבטחה מחייבת"
+        ]
+      },
+      {
+        "reason": "החוק מהווה מקור לפרוצדורה ואכיפה של מגבלות על פעולות מנהליות, אך אינו מפרט מבחנים מהותיים לחריגי הבטחה מינהלית.",
+        "support": "partial",
+        "claim_id": "C4",
+        "role_match": true,
+        "candidate_id": "ac507dcd-01cf-4d83-9a99-3be5dce1425c",
+        "supported_points": [
+          "חוק בתי המשפט לעניינים מינהליים יוצר מסגרת לסיקור שגיאות שיפוטיות ולמתן סעד נגד פעולות מנהליות",
+          "מספק את המנגנון שבו ניתן לאכוף הגבלות על הבטחות בלתי‑חוקיות או פגומות"
+        ]
+      },
+      {
+        "reason": "החוק מתייחס למגבלות ספציפיות על מסירת מידע ולא דן באופן ישיר בהגבלות או בחריגים של דוקטרינת ההבטחה המינהלית, ולכן הוא רק משלים ברקע.",
+        "support": "tangential",
+        "claim_id": "C4",
+        "role_match": true,
+        "candidate_id": "e9a89e40-9ca2-468e-984a-860b375861d1",
+        "supported_points": [
+          "חוק חופש המידע קובע מגבלות ושקיפות ביחס לפעולות המנהליות והוא יכול ליצור מתחים עם הבטחות של הרשות (למשל בנושא סודיות)"
+        ]
+      },
+      {
+        "reason": "החוק מחזק את שלטון החוק והאחריותיות המנהלית ומעניק כלי פרוצדורלי שיכולים להגביל הבטחות, אך אינו עוסק בדוקטרינה באופן מהותי.",
+        "support": "partial",
+        "claim_id": "C4",
+        "role_match": true,
+        "candidate_id": "889671bf-bb6c-4a85-99a2-5792943189bc",
+        "supported_points": [
+          "חוק לתיקון סדרי המינהל מטיל חובות הנמקה על הרשות ומגביל שיקול דעת מנהלי",
+          "הנמקה ושקיפות יכולות להוות כלי למניעת הבטחות בלתי־מוצדקות ולבחינת כשירותן"
+        ]
+      },
+      {
+        "reason": "המאמר מספק ניתוח ישיר של הקשר והמבחנים המבדילים בין דוקטרינות קרובות ולכן מהווה מקור ישיר לדיון בהבחנות המהותיות.",
+        "support": "direct",
+        "claim_id": "C5",
+        "role_match": true,
+        "candidate_id": "0a59b7de-6990-4c1b-88aa-931e6e40fbdc",
+        "supported_points": [
+          "מאמר עוסק במפורש בהבחנה בין מדיניות להבטחה מנהלית ובהיקף הביקורת על שינוי מדיניות",
+          "דן ביחס בין 'ציפייה לגיטימית' לבין אמצעים מנהליים אחרים וכולל ניתוח השוואתי"
+        ]
+      },
+      {
+        "reason": "הפריט אינו פסק‑דין משכנע אלא המלצה למאגר חיפוש; הוא שימושי למציאת פסיקה השוואתית אך אינו מהווה מקור משפטי תומך ישיר להתייחסות לתאוריות.",
+        "support": "tangential",
+        "claim_id": "C5",
+        "role_match": true,
+        "candidate_id": "0b4c75ec-88ad-4630-8db9-d809a52e0734",
+        "supported_points": [
+          "קישור למאגר החיפוש 'נבו' ומדריך חיפוש לפסיקה בנושא ציפייה לגיטימית, השתק והבטחה מינהלית"
+        ]
+      }
+    ],
+    "batch_count": 1,
+    "model_final": "openai/gpt-5-mini",
+    "retry_count": 0,
+    "per_claim_ms": {
+      "C1": 47428,
+      "C2": 47428,
+      "C4": 47428,
+      "C5": 47428
+    },
+    "total_sum_ms": 47428,
+    "model_initial": "openai/gpt-5-mini",
+    "total_wall_ms": 47428,
+    "escalated_claims": [],
+    "rate_limit_count": 0,
+    "candidates_usable": 12,
+    "concurrency_limit": 2,
+    "escalated_batches": 0,
+    "candidates_dropped": 2,
+    "candidates_verified": 14,
+    "merge_order_preserved": true,
+    "fallback_to_sequential": false
+  },
+  "atomic": {
+    "mode": "validate",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 42,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 42
+  },
+  "placement": {
+    "ok": false,
+    "cluster_count": 20,
+    "cluster_samples": [
+      " בסיס משפטי שמצדיקו.¹²³\n\n2. יסודות והדרישות",
+      " מעוררת בעיות אכיפה.²⁴\n- **הסתמכות סבירה ו",
+      " כתוצאה מהסתמכות זו.⁴⁵\n- **איזון אינטרסים*",
+      "ין הגנת ציפיות הפרט.²⁶\n\nהפסיקה והספרות מצי",
+      "נוי מצב כתוצאה ממנה.⁴⁵\n\n3. השלכות וסוגי סע"
+    ],
+    "end_dump_samples": [
+      "יסודות והדרישות שנדרש להוכיח\nעל־פי הניתוח התיאורטי והפסיקתי של הספרות והמשפט, ניתן לזהות קריטריונים מעשיים שחייבים להיבחן כאשר נטען כי דוקטרינת ההבטחה חלה: \n- **בהירות ההבטחה** — יש לבחון האם המדובר ב",
+      "מגבלות והתנגדויות לחלות הדוקטרינה\nמספר מגבלות עקרוניות מונעות או מצמצמות את חלות הדוקטרינה: \n- **ניגוד לחוק או להוראה רגולטורית כתובה** — הבטחה שנוגדת דין כתוב אינה יכולה להעמיד את הרשות בניגוד לחובה "
+    ],
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 2,
+    "superscript_parens_count": 0
+  },
+  "answer_preview": "הקדמה וסיכום עקרוני\nדוקטרינת ה\"הבטחה המינהלית\" היא מכלול כללי־משפט שנועדו להגן על **ציפיות והסתמכות של אזרחים** לנוכח הבטחות או התחייבויות שניתנו להם על‑ידי רשות מינהלית, ולמנוע מרשות לחזור בה באופן בלתי־מוצדק כאשר ההסתמכות מצדיקה הגנה משפטית.¹\n\n1. הגדרה ונשמעותה (מתי נוצר איסור על הרשות לחזור בה?)\nהדוקטרינה עוסקת במצב שבו רשות מינהלית הבטיחה דבר מה לציבור או לפרט, וההבטחה יצרה ציפייה וגרמה להסתמכות שניתן לה חשיבות משפטית; במקרים כאלה נוצר איסור מנהלי להיפוך פתאומי של ההבטחה, אלא אם יש בסיס משפטי שמצדיקו.¹²³\n\n2. יסודות והדרישות שנדרש להוכיח\nעל־פי הניתוח התיאורטי והפסיקתי של הספרות והמשפט, ניתן"
+}
