@@ -1,124 +1,98 @@
 
-**Phase C.1 — Backend atomic normalization + validation (concrete plan)**
+# Phase E.1 — Parallel verifier batches (source-safe)
 
-Scope: introduce `[[fn:N]]` as a deterministic, post-validation internal representation, and add an atomic validator. **Do not** expose atomic tokens to the UI yet. **Do not** touch Rule 37. **Do not** touch retrieval / verifier / source selection / Perplexity / URL hygiene / legal-qa / DB schema.
+Single-file change to `supabase/functions/legal-research-v1/stages/verifier.ts`. Orchestration-only. No change to candidates, prompts, model selection, schema, support logic, role-match, usable/dropped derivation, or anything downstream.
 
----
+## Scope
 
-**Flag behavior**
+**Changed:** the `for (const batch of batches)` loop in `runVerifier` (verifier.ts ~line 315) becomes a bounded-concurrency runner.
 
-Single env flag read once in `drafter.ts`:
+**Unchanged (hard constraints):**
+- `planBatches(...)` — same batches, same candidates in each, same order.
+- `buildBatchUserMessage`, `SYSTEM_PROMPT`, `VERIFIER_TOOL_PARAMETERS`, `validateBatchVerdicts`.
+- Initial model `MODEL_MINI`, escalation to `MODEL_FULL`, escalation trigger (`!parsed.ok`).
+- `rolesMatch` role-match backfill.
+- Missing-pair backfill as `support: "unrelated"` with existing reason.
+- Aggregation: `bestByCand` by min `SUPPORT_RANK`, all downstream `usable` / `dropped` derivation.
+- `VerifierResult` shape — existing fields keep identical types and meanings.
 
-- `LEGAL_RESEARCH_V1_ATOMIC_MARKERS`
-  - `"off"` (default) — pipeline behavior identical to Phase B.1. No normalization runs. Response `n` is superscript. `marker_format = "legacy_superscript"`.
-  - `"validate"` — normalization runs **in-memory only** for validation/telemetry. The shipped `n` is still superscript. Atomic validation result is reported in telemetry. **Safe to deploy to production** — users see exactly what they see today.
-  - `"emit"` — pipeline ships atomic `n` (tokens `[[fn:N]]`). `marker_format = "atomic"`. **Must not be set in any environment until C.2 (UI renderer) is deployed and accepted.** Used only by the C.1 fixture runner via an explicit per-request header override.
+## Deterministic merge (guardrail)
 
-Per-request override (test-only): runner may send header `x-atomic-markers: emit|validate|off`. Header is ignored unless the env flag is `"validate"` or `"emit"`, so prod can't be flipped accidentally by a client.
+Results are flushed in **plan order**, never completion order:
 
-Default for the C.1 deploy: `"validate"`. This gives us atomic-validator telemetry on real traffic without changing user-visible output.
+1. `const batches = planBatches(...)` — fixed input order, indexed 0..N-1.
+2. Each batch's processing populates a slot in fixed-size arrays sized to `batches.length`:
+   - `slotStageRuns: StageRun[][]`
+   - `slotVerdicts: Verdict[][]`
+   - `slotMeta: BatchMeta[]` (label, claim_ids, candidates, escalated, ms)
+   - `slotErrors: Array<{claim_id,reason}>[]`
+   - `slotPerClaimMs: Array<Record<string, number>>`
+   - `slotEscalatedClaimIds: string[][]`
+3. After `await` of the pool, flush slots in index order into the existing accumulators (`stage_runs`, `allVerdicts`, `batchesMeta`, `errors`, `per_claim_ms`, `escalated_claims`). This guarantees byte-identical ordering to the sequential path for stage_runs and batchesMeta, regardless of which batch's LLM call returned first.
+4. `bestByCand` aggregation is order-independent (`SUPPORT_RANK` min), so flush order does not affect `usable` / `dropped` content.
 
----
+Telemetry will assert and log `merge_order_preserved: true` after the flush (cheap structural check: `slotMeta.map(m => m.label)` equals `batches.map(b => b.label)`).
 
-**Files touched (backend only)**
+## Concurrency
 
-1. `supabase/functions/legal-research-v1/stages/drafter.ts`
-   - Add `ATOMIC_RE = /\[\[fn:(\d+)\]\]/g`.
-   - Add `normalizeToAtomic(answer: string, used: UsedSource[]): { atomic: string; ok: boolean; reason?: string }`
-     - Uses the same per-char tokenizer as `extractMarkers` (one superscript char = one marker).
-     - Replaces every superscript run with the concatenation of `[[fn:N]]` tokens.
-     - Pure function. No side effects on `used_sources`.
-     - Refuses (returns `ok:false`) if the input contains pre-existing `[[fn:` fragments or unknown marker numbers.
-   - Add `extractAtomicMarkers(answer: string): number[]`.
-   - Add `validateAtomicMarkers(answer: string, used: UsedSource[]): MarkerValidation`
-     - Same shape as `runMarkerValidation`. Independent implementation — does not call superscript code.
-     - Enforces: every `[[fn:N]]` resolves to a `used_sources[*].number`; every used source number appears ≥1 time; no duplicate footnote numbers in `used`; no internal-id leak (`candidate_id`, raw URLs, stray `[[fn:` or `]]` fragments outside well-formed tokens); no residual superscript digits in atomic mode.
-   - Pipeline insertion point: **after** all existing superscript validation (including the placement repair pass), **before** the Rule 37 call site. Rule 37 stays disabled in C.1 — no change to its code path.
-   - Build a `drafter.atomic` telemetry block:
-     ```
-     {
-       mode: "off" | "validate" | "emit",
-       normalize_ok: boolean,
-       normalize_reason?: string,
-       validation: MarkerValidation | null,
-       used_sources_byte_equal: boolean,
-       superscript_marker_count: number,
-       atomic_marker_count: number,
-     }
-     ```
-   - Emit decision:
-     - mode `"off"` → ship superscript `n`, `marker_format = "legacy_superscript"`, atomic block omitted or `{mode:"off"}`.
-     - mode `"validate"` → ship superscript `n`, `marker_format = "legacy_superscript"`, atomic block populated.
-     - mode `"emit"` → require `normalize_ok && validation.ok && used_sources_byte_equal`. If any fail: fall back to superscript output and set `marker_format = "legacy_superscript_fallback"` with `atomic.emit_fallback_reason`.
+- Constant `VERIFIER_BATCH_CONCURRENCY = 2` at top of file. Cap=2 is sufficient (current `planBatches` produces ≤2 normal batches plus oversized-per-claim); cap is enforced even if future planner changes generate more.
+- Simple promise pool: keep an active set of size N; on each completion start the next pending batch. No `Promise.all` over an unbounded list, no third-party dep.
 
-2. `supabase/functions/legal-research-v1/lib/types.ts`
-   - Add `marker_format: "legacy_superscript" | "legacy_superscript_fallback" | "atomic"` to the response type.
-   - Add `AtomicReport` interface (the telemetry block above).
-   - No change to `Footnote`, `UsedSource`, `MarkerValidation`.
+## Failure handling
 
-3. `supabase/functions/legal-research-v1/index.ts`
-   - Pipe `marker_format` and `atomic` block through to the response and `qa_logs.metadata`.
-   - No logic change.
+- Each batch reuses the existing initial→escalate flow exactly. No new retry logic added (keeps behavior identical when batches succeed).
+- If a batch throws (network/5xx/timeout from `callOpenAIJsonTool`), the error is captured in that slot as `{ error, claim_ids }`. The pool drains remaining in-flight batches (does not cancel siblings — partial parallel results are still usable and identical to what those batches would have produced sequentially).
+- After drain: if any slot has an error, the function returns the existing error path — push an `errors[]` entry per failed batch with `reason` = error message and let downstream behave as it does today when `callOpenAIJsonTool` fails. **No silent candidate drop**: failed batches do not contribute verdicts, which means their candidates are still considered (just without verdicts), matching sequential behavior on the same failure.
+- **Sequential fallback (rate-limit safety net):** if `parallelErrorCount >= 1` and the error message includes `429` / `rate` (case-insensitive), the function records `verifier.fallback_to_sequential: true` and re-runs only the failed batches sequentially. This is a small, bounded retry of just the failed slots — does not re-run successful ones — and preserves deterministic order because retries write back into their original slot indexes.
 
-4. `supabase/functions/legal-research-v1/lib/telemetry.ts`
-   - No code change; `metadata` already free-form.
+## Telemetry additions
 
-Frontend: **untouched** in C.1. `LegalResearchV1Panel.tsx` keeps rendering `result.answer` (superscripts) exactly as today.
+Added to `VerifierResult` (and surfaced top-level in `index.ts` `verifierMeta`):
 
----
+```
+parallel: true
+concurrency_limit: 2
+batch_count: number
+batch_ms: number[]              // per-batch wall, plan order
+total_wall_ms: number           // Date.now() - t_total at end of pool
+total_sum_ms: number            // sum(batch_ms)
+escalated_batches: number
+merge_order_preserved: boolean  // structural assertion result
+rate_limit_count: number        // count of caught 429-like errors
+retry_count: number             // count of slots re-run via sequential fallback
+fallback_to_sequential: boolean
+```
 
-**Validation runner**
+Existing `batches[]`, `ms`, `per_claim_ms`, `escalated_claims`, `usable`, `dropped`, `verdicts`, `counts`, `candidates_verified/usable/dropped` stay byte-identical in shape.
 
-New file: `scripts/legal-research-v1-p7-phaseC1-runner.ts` (parallel to `phaseB1-runner.ts`).
+## Validation (Phase E.1 report)
 
-- Sends `x-atomic-markers: emit` per request (force-emit for fixture run only) and `x-rule37: 0` (Rule 37 explicitly off).
-- 6 fixtures L1–L6.
-- For each fixture, writes `reports/legal-research-v1-p7-phaseC1-L{N}.json` with:
-  - `marker_validation.ok` (pre-atomic, superscript)
-  - `atomic.normalize_ok`, `atomic.validation.ok`
-  - `used_sources` count and `used_sources_byte_equal`
-  - atomic vs superscript marker counts (must match)
-  - `internal_id_leak` (from atomic validation)
-  - `marker_format` in response
-  - rule37 status (must be disabled / no-op)
-- Writes aggregate `reports/legal-research-v1-p7-phaseC1-summary.json`.
+Deploy `legal-research-v1`. Re-run L1–L6 using a Phase-E copy of the Phase-D runner. Write `reports/legal-research-v1-p7-phaseE1-{L1..L6}.json` + summary.
 
-Acceptance gates (block ship if any fail):
-- 6/6 `marker_validation.ok = true` (superscript layer unchanged)
-- 6/6 `atomic.normalize_ok = true`
-- 6/6 `atomic.validation.ok = true`
-- 6/6 `used_sources_byte_equal = true`
-- 6/6 atomic marker count == superscript marker count
-- 6/6 `internal_id_leak = false`
-- 6/6 Rule 37 reports `enabled: false` or `applied: false` with `discarded_reason: "disabled"`
-- No regression vs Phase B.1 superscript metrics (compared report-to-report)
+| Gate | Target |
+|---|---|
+| `marker_validation.ok` | 6/6 |
+| `internal_id_leak=false` | 6/6 |
+| `used_sources ⊆ verifier.usable` | 6/6 |
+| `footnote_count == used_sources_count` | 6/6 |
+| `no_raw_atomic_tokens` | 6/6 |
+| `no_candidate_id_leak` | 6/6 |
+| `atomic.validation.ok` | 6/6 |
+| verifier candidates verified (count) | equal to Phase D per fixture |
+| `verifier.usable` candidate-id set | equal to Phase D per fixture (LLM nondeterminism may shift borderline `partial↔tangential` verdicts but not the set on identical prompts; report any drift) |
+| `verifier.dropped` count | equal to Phase D per fixture (allow ±1 from LLM noise; report) |
+| L6 `verifier.total_wall_ms` | materially lower than 136 s; expected ~95 s (≈ max(batch_ms)) |
+| L1–L5 `verifier.total_wall_ms` | within ±2 s of Phase D (single batch → no parallelism gain) |
+| `rate_limit_count` | 0 |
+| `fallback_to_sequential` | false on all 6 |
+| `merge_order_preserved` | true on all 6 |
 
----
+Report will compare slot-by-slot: Phase D `batches[].ms` and Phase D `batches[].label` vs Phase E.1 equivalents to confirm identical batch plans.
 
-**Deployment guard (user-visibility)**
+## Rollback
 
-- Production env flag value at C.1 ship: `"validate"`. Users see superscripts as today. Atomic tokens never reach the browser.
-- The `"emit"` mode is reachable only via the fixture runner's explicit header override, which itself only works when the env flag is already `"validate"` or `"emit"`. Header alone cannot promote `"off"` → emit.
-- After C.2 (UI renderer) is accepted, a separate deploy flips the env flag to `"emit"`. That promotion is its own change with its own validation; it is **not** part of C.1.
+Revert `verifier.ts` `runVerifier` body to the sequential `for` loop. Single-file revert. No schema, contract, or env-flag changes.
 
----
+## Out of scope (explicit, not implemented)
 
-**Rollback behavior**
-
-- Code-level: every new function is additive. The pipeline branch on `mode === "off"` is byte-identical to the Phase B.1 path. Setting the env flag to `"off"` (or unsetting it) fully restores Phase B.1 behavior without redeploy if the platform supports runtime env edits, otherwise via a one-line env change + redeploy.
-- Data-level: nothing is written to the DB that isn't already free-form metadata. No migration to roll back.
-- If atomic validation fails in `"emit"` mode at runtime, the function auto-falls back to superscript output (`legacy_superscript_fallback`) and logs the reason. No user-visible breakage even if the flag is mis-flipped.
-- If a regression is observed post-deploy, immediate mitigation is `LEGAL_RESEARCH_V1_ATOMIC_MARKERS=off`. Code can stay in place.
-
----
-
-**Out of scope for C.1 (explicit)**
-
-- Rule 37 changes — deferred to C.3.
-- UI renderer — deferred to C.2.
-- Drafter prompt changes — none. The model keeps emitting superscripts.
-- DB schema — no migration.
-- Retrieval, verifier, source selection, Perplexity, URL hygiene, footnote shape, legal-qa — untouched.
-- Historical answer rewriting / backfill — none. Legacy rows remain as-is.
-
-Stop after the Phase C.1 report. C.2 is a separate approval.
+Retrieval, Perplexity, candidate pool, source selection, verifier strictness/prompts/schema, drafter, footnotes, citation formatting, Rule 37, atomic emit, placement repair, caching, eager gpt-5, model downgrades, UI streaming.
