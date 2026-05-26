@@ -3169,21 +3169,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 ) : (
                   <button
                     onClick={handleSubmit}
-                    disabled={
-                      (taskMode as string) === "pleading_analysis"
-                        ? true
-                        : question.trim().length < 5
-                    }
-                    title={
-                      (taskMode as string) === "pleading_analysis"
-                        ? PLEADING_OFFLINE_TITLE
-                        : undefined
-                    }
-
+                    disabled={question.trim().length < 5}
                     className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
                   >
                     ⇧
                   </button>
+
                 )}
               </div>
 
