@@ -1060,11 +1060,15 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
   // Load external result from history sidebar
   useEffect(() => {
-    if (externalResult) {
+    if (!externalResult) return;
+    if (externalResult.taskMode === "legal_source_search") {
       setQuestion(externalResult.question);
-      setResult(externalResult.result);
-      setTaskMode(externalResult.taskMode);
+      setTaskMode("legal_source_search");
+      return;
     }
+    setQuestion(externalResult.question);
+    setResult(externalResult.result);
+    setTaskMode(externalResult.taskMode);
   }, [externalResult]);
 
   // Resume academic session from history sidebar click (DB first, localStorage fallback)
