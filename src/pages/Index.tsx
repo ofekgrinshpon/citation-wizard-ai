@@ -130,7 +130,7 @@ const Index = () => {
   } | null>(null);
   const [citationRefreshKey, setCitationRefreshKey] = useState(0);
   const [qaRefreshKey, setQaRefreshKey] = useState(0);
-  const [qaExternalResult, setQaExternalResult] = useState<{ question: string; result: any; taskMode: "research" | "pleading_analysis" | "case_summary" | "academic_writing" } | null>(null);
+  const [qaExternalResult, setQaExternalResult] = useState<{ question: string; result: any; taskMode: "research" | "case_summary" | "academic_writing" } | null>(null);
   const [academicResumeSignal, setAcademicResumeSignal] = useState<number>(0);
   const [academicResumeFallback, setAcademicResumeFallback] = useState<{ question: string; result: any } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
