@@ -318,7 +318,7 @@ export function LegalResearchV1Panel() {
       } catch { /* ignore quota */ }
       pollJob(data.job_id);
     } catch (e) {
-      stopAll(progress);
+      stopAll();
       setLoading(false);
       const msg = e instanceof Error ? e.message : String(e);
       setError(msg || "שגיאה לא ידועה.");
