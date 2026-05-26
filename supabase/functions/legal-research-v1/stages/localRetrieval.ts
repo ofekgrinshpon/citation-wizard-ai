@@ -192,9 +192,11 @@ async function exactAuthorityLookup(
   status: "ok" | "empty" | "error";
   error?: string;
   diags: ClueLookupDiag[];
+  ms: number;
 }> {
+  const t0 = Date.now();
   const diags: ClueLookupDiag[] = [];
-  if (!clues.length) return { rows: [], status: "empty", diags };
+  if (!clues.length) return { rows: [], status: "empty", diags, ms: Date.now() - t0 };
   const allowedTypes: string[] | null = ROLE_SOURCE_TYPES[role] ?? null;
   const collected: RpcRow[] = [];
   // Track which collected row came from which clue (for section snippet lookup).
