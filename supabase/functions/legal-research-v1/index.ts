@@ -415,6 +415,7 @@ async function handle(req: Request): Promise<Response> {
   }
 
   // ─── P3: Retrieval (local DB + Perplexity) ───────────────────────────────
+  await markStage("retrieval");
   const tRetrieval = Date.now();
   const [local, pplx] = await Promise.all([
     runLocalRetrieval(admin, planner!.queries, { question, claims: analyzer.claims }),
