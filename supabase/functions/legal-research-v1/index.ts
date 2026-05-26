@@ -503,6 +503,7 @@ async function handle(req: Request): Promise<Response> {
   };
 
   // ─── P5: Drafter + simple linked footnotes ───────────────────────────────
+  await markStage("drafter");
   const drafter = await runDrafter(
     question,
     analyzer.claims,
