@@ -1,0 +1,219 @@
+{
+  "fixture_id": "L6",
+  "run_id": "adbd1684-5779-4c1b-9a56-e7e241370a52",
+  "qa_log_id": "818b4046-309a-4865-a61e-0f536a5f2b58",
+  "local_retrieval": {
+    "wall_ms": 22579,
+    "candidates": 91,
+    "aggregate": {
+      "wall_ms": 22579,
+      "max_query_ms": 22578,
+      "sum_query_ms": 156353,
+      "slowest_query": {
+        "ms": 22578,
+        "role": "binding_case_law",
+        "text_ms": 20001,
+        "claim_id": "C1",
+        "exact_ms": 230,
+        "query_he": "בית המשפט העליון פסיקה 'הבטחה מינהלית' או 'התחייבות רשות מקומית' תנאי אכיפה: סמכות, מסוימות, גמירות־דעת, הסתמכות, שינוי מצב",
+        "vector_ms": 2575,
+        "embedding_ms": 184
+      },
+      "slowest_method": "text",
+      "method_total_ms": {
+        "text": 140010,
+        "exact": 1849,
+        "vector": 16336,
+        "embedding": 1349
+      },
+      "queries_executed": 7,
+      "exact_error_count": 0,
+      "text_timeout_count": 7,
+      "candidates_by_method": {
+        "text": 0,
+        "vector": 37,
+        "exact_authority": 54
+      },
+      "vector_timeout_count": 0,
+      "bottleneck_hypothesis": "rpc_timeout_cap (text_timeouts=7, vector_timeouts=0, RPC_TIMEOUT_MS=20000)",
+      "duplicate_query_count": 0
+    },
+    "per_query": [
+      {
+        "claim_id": "C5",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסיקה 'התחייבות רשות מקומית לקדם תב\"ע' 'אי-כבילת שיקול הדעת התכנוני' 'הגבלות סטטוטוריות'",
+        "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות העליון פסיקה התחייבות רשות",
+        "total_query_ms": 22038,
+        "exact": {
+          "ms": 223,
+          "status": "ok",
+          "hits": 6
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 176,
+          "rpc_ms": 2035,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 11
+      },
+      {
+        "claim_id": "C2",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסיקה 'הבטחה שניתנה בחוסר סמכות' 'חוסר סמכות מהותי' אי־כח חוקיות אכיפה או סעדים חלופיים 'הגנה הסתמכותית'",
+        "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות העליון פסיקה שניתנה בחוסר",
+        "total_query_ms": 22116,
+        "exact": {
+          "ms": 222,
+          "status": "ok",
+          "hits": 6
+        },
+        "text": {
+          "ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 277,
+          "rpc_ms": 2113,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20002,
+        "kept": 12
+      },
+      {
+        "claim_id": "C3",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסיקות 'הסתמכות' 'השקעות כלכליות' 'סעד הסתמכותי' 'הבטחה מינהלית' קביעת משקל ההסתמכות מול שלטון החוק",
+        "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות העליון פסיקות הסתמכות השקעות",
+        "total_query_ms": 22183,
+        "exact": {
+          "ms": 214,
+          "status": "ok",
+          "hits": 6
+        },
+        "text": {
+          "ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 174,
+          "rpc_ms": 2181,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20002,
+        "kept": 12
+      },
+      {
+        "claim_id": "C2",
+        "role": "primary_statute",
+        "query_he": "חוק התכנון והבניה, התשכ\"ה-1965 סמכויות רשות מקומית לקידום תב\"ע התחייבויות בלתי מותנות מול יזמים",
+        "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות חוק התכנון והבניה התשכ",
+        "total_query_ms": 22430,
+        "exact": {
+          "ms": 377,
+          "status": "ok",
+          "hits": 12
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 170,
+          "rpc_ms": 2428,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 17
+      },
+      {
+        "claim_id": "C5",
+        "role": "primary_statute",
+        "query_he": "חוק התכנון והבניה, התשכ\"ה-1965 סמכויות רשות מקומית לקידום תב\"ע מבחינת מהות ההתחייבות והכפיפות להליכי תכנון סטטוטוריים",
+        "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות חוק התכנון והבניה התשכ",
+        "total_query_ms": 22433,
+        "exact": {
+          "ms": 360,
+          "status": "ok",
+          "hits": 12
+        },
+        "text": {
+          "ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 186,
+          "rpc_ms": 2431,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20002,
+        "kept": 17
+      },
+      {
+        "claim_id": "C1",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסיקה 'הבטחה מינהלית' או 'התחייבות רשות מקומית' תנאי אכיפה: סמכות, מסוימות, גמירות־דעת, הסתמכות, שינוי מצב",
+        "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות העליון פסיקה מינהלית התחייבות",
+        "total_query_ms": 22578,
+        "exact": {
+          "ms": 230,
+          "status": "ok",
+          "hits": 6
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 184,
+          "rpc_ms": 2575,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 11
+      },
+      {
+        "claim_id": "C4",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון 'שינוי מדיניות' 'חזרה מהבטחה' 'הנמקה' 'מידתיות' 'הסדרי מעבר' פסיקה עקרונות",
+        "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות העליון שינוי מדיניות חזרה",
+        "total_query_ms": 22575,
+        "exact": {
+          "ms": 223,
+          "status": "ok",
+          "hits": 6
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 182,
+          "rpc_ms": 2573,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 11
+      }
+    ]
+  }
+}

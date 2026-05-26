@@ -1,0 +1,169 @@
+{
+  "fixture_id": "L1",
+  "run_id": "93bf6ade-cd6a-4cc9-acaa-6ddfd53d7fd3",
+  "qa_log_id": "11ae0b2e-ec1c-4f29-a742-7a9ee36992af",
+  "local_retrieval": {
+    "wall_ms": 24054,
+    "candidates": 30,
+    "aggregate": {
+      "wall_ms": 24054,
+      "max_query_ms": 24054,
+      "sum_query_ms": 119321,
+      "slowest_query": {
+        "ms": 24054,
+        "role": "binding_case_law",
+        "text_ms": 20002,
+        "claim_id": "C1",
+        "exact_ms": 0,
+        "query_he": "בית המשפט העליון פסק דין צו מניעה זמני 'עילה סבירה' 'סיכוי ממשי' 'prima facie case' קביעה על סיכוי להתקבל תביעה",
+        "vector_ms": 4051,
+        "embedding_ms": 195
+      },
+      "slowest_method": "text",
+      "method_total_ms": {
+        "text": 100011,
+        "exact": 0,
+        "vector": 19306,
+        "embedding": 1051
+      },
+      "queries_executed": 5,
+      "exact_error_count": 0,
+      "text_timeout_count": 5,
+      "candidates_by_method": {
+        "text": 0,
+        "vector": 30,
+        "exact_authority": 0
+      },
+      "vector_timeout_count": 0,
+      "bottleneck_hypothesis": "rpc_timeout_cap (text_timeouts=5, vector_timeouts=0, RPC_TIMEOUT_MS=20000)",
+      "duplicate_query_count": 0
+    },
+    "per_query": [
+      {
+        "claim_id": "C4",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסק דין 'התחייבות לפיצוי' 'undertaking as to damages' 'בטחונות' צו מניעה זמני דרישות לביטחונות ופיצוי",
+        "compact_query_he": "צו מניעה זמני העליון דין התחייבות לפיצוי undertaking as to",
+        "total_query_ms": 23599,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20003,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 292,
+          "rpc_ms": 3595,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20003,
+        "kept": 6
+      },
+      {
+        "claim_id": "C2",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסק דין 'נזק בלתי הפיך' 'נזק שלא ניתן לתקן בפיצוי' צו מניעה זמני קביעות על irreparable harm",
+        "compact_query_he": "צו מניעה זמני העליון דין נזק בלתי הפיך שלא ניתן",
+        "total_query_ms": 23734,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 193,
+          "rpc_ms": 3731,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20002,
+        "kept": 6
+      },
+      {
+        "claim_id": "C5",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסק דין 'צו ללא הודעה' 'ex parte' 'דחיפות' צו מניעה זמני קביעות על קריטריונים להוצאת צו ללא הודעה",
+        "compact_query_he": "צו מניעה זמני העליון דין ללא הודעה ex parte דחיפות",
+        "total_query_ms": 23917,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 178,
+          "rpc_ms": 3914,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20002,
+        "kept": 6
+      },
+      {
+        "claim_id": "C3",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסק דין 'איזון הנוחות' 'balance of convenience' 'אינטרס הציבור' צו מניעה זמני החלטות שיפוטיות על איזון אינטרסים",
+        "compact_query_he": "צו מניעה זמני העליון דין איזון הנוחות balance of convenience",
+        "total_query_ms": 24017,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 193,
+          "rpc_ms": 4015,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20002,
+        "kept": 6
+      },
+      {
+        "claim_id": "C1",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסק דין צו מניעה זמני 'עילה סבירה' 'סיכוי ממשי' 'prima facie case' קביעה על סיכוי להתקבל תביעה",
+        "compact_query_he": "צו מניעה זמני העליון דין עילה סבירה סיכוי ממשי prima",
+        "total_query_ms": 24054,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 195,
+          "rpc_ms": 4051,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20002,
+        "kept": 6
+      }
+    ]
+  }
+}

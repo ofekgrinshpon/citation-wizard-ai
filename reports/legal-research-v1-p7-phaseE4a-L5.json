@@ -1,0 +1,169 @@
+{
+  "fixture_id": "L5",
+  "run_id": "665fc09c-76a8-46ec-925d-9aac8001323f",
+  "qa_log_id": "a3c5d44c-a568-450f-b031-2e2d43e26be1",
+  "local_retrieval": {
+    "wall_ms": 23310,
+    "candidates": 27,
+    "aggregate": {
+      "wall_ms": 23310,
+      "max_query_ms": 23309,
+      "sum_query_ms": 113873,
+      "slowest_query": {
+        "ms": 23309,
+        "role": "binding_case_law",
+        "text_ms": 20001,
+        "claim_id": "C1",
+        "exact_ms": 0,
+        "query_he": "בית המשפט העליון בג\"ץ פסקי-דין על 'עילת הסבירות' הגדרה דוקטרינלית של עילת הסבירות בביקורת שיפוטית על החלטות מנהליות פסק דין מנחה",
+        "vector_ms": 3306,
+        "embedding_ms": 771
+      },
+      "slowest_method": "text",
+      "method_total_ms": {
+        "text": 100008,
+        "exact": 0,
+        "vector": 13861,
+        "embedding": 3168
+      },
+      "queries_executed": 5,
+      "exact_error_count": 0,
+      "text_timeout_count": 5,
+      "candidates_by_method": {
+        "text": 0,
+        "vector": 27,
+        "exact_authority": 0
+      },
+      "vector_timeout_count": 0,
+      "bottleneck_hypothesis": "rpc_timeout_cap (text_timeouts=5, vector_timeouts=0, RPC_TIMEOUT_MS=20000)",
+      "duplicate_query_count": 0
+    },
+    "per_query": [
+      {
+        "claim_id": "C5",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסקי-דין שדן בהשפעת שיקולי הפרדת רשויות והתמחות מקצועית של המינהל על מידת הביקורת השיפוטית בבחינת סבירות (הורות על מתן משקל להתמחות המינהלית)",
+        "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות העליון פסקי-דין שדן בהשפעת",
+        "total_query_ms": 22363,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 673,
+          "rpc_ms": 2360,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20002,
+        "kept": 5
+      },
+      {
+        "claim_id": "C3",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסקי-דין המשווים בין מבחן הסבירות לבין מבחני חוקיות, מידתיות (פרופורציונליות) והליך הוגן מתי משתמשים בכל מבחן ומה ההיררכיה בפסיקה הישראלית",
+        "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות העליון פסקי-דין המשווים בין",
+        "total_query_ms": 22394,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 577,
+          "rpc_ms": 2392,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20002,
+        "kept": 5
+      },
+      {
+        "claim_id": "C2",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסקי-דין על עומק הביקורת השיפוטית במבחן הסבירות מתי בתי המשפט מצמצמים את הביקורת ומתי מוחלים רמות בדיקה שונות (הסבר מקרים מעשיים)",
+        "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות העליון פסקי-דין עומק הביקורת",
+        "total_query_ms": 22669,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 582,
+          "rpc_ms": 2667,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20002,
+        "kept": 5
+      },
+      {
+        "claim_id": "C4",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסקי-דין השלכות מעשיות של קביעת אי-סבירות סעדים ביטול החלטה מנהלית צו שיפוטי הפניה להכרעה מחודשת השפעה על מיינת הראיות",
+        "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות העליון פסקי-דין השלכות מעשיות",
+        "total_query_ms": 23138,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 565,
+          "rpc_ms": 3136,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20002,
+        "kept": 6
+      },
+      {
+        "claim_id": "C1",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון בג\"ץ פסקי-דין על 'עילת הסבירות' הגדרה דוקטרינלית של עילת הסבירות בביקורת שיפוטית על החלטות מנהליות פסק דין מנחה",
+        "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות העליון בג פסקי-דין הגדרה",
+        "total_query_ms": 23309,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 771,
+          "rpc_ms": 3306,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 6
+      }
+    ]
+  }
+}

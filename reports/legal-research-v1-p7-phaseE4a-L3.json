@@ -1,0 +1,244 @@
+{
+  "fixture_id": "L3",
+  "run_id": "258ff157-7cc5-421a-81b5-c149763662c8",
+  "qa_log_id": "2ddf29d0-a558-4764-9a7d-4b610480c19f",
+  "local_retrieval": {
+    "wall_ms": 32097,
+    "candidates": 134,
+    "aggregate": {
+      "wall_ms": 32097,
+      "max_query_ms": 32096,
+      "sum_query_ms": 211878,
+      "slowest_query": {
+        "ms": 32096,
+        "role": "primary_statute",
+        "text_ms": 20002,
+        "claim_id": "C1",
+        "exact_ms": 592,
+        "query_he": "סעיף 15 לחוק החוזים (תרופות) טקסט סעיף 15 המלא והסבר הפרשנות המפורש של מתי ניתן להפחית פיצוי מוסכם",
+        "vector_ms": 12091,
+        "embedding_ms": 162
+      },
+      "slowest_method": "text",
+      "method_total_ms": {
+        "text": 160009,
+        "exact": 5338,
+        "vector": 51856,
+        "embedding": 1599
+      },
+      "queries_executed": 8,
+      "exact_error_count": 0,
+      "text_timeout_count": 8,
+      "candidates_by_method": {
+        "text": 0,
+        "vector": 31,
+        "exact_authority": 103
+      },
+      "vector_timeout_count": 0,
+      "bottleneck_hypothesis": "rpc_timeout_cap (text_timeouts=8, vector_timeouts=0, RPC_TIMEOUT_MS=20000)",
+      "duplicate_query_count": 0
+    },
+    "per_query": [
+      {
+        "claim_id": "C3",
+        "role": "primary_statute",
+        "query_he": "סעיף 15 לחוק החוזים (תרופות) סמכות הפחתה נטל הראיה מי נושא בנטל לפי הסעיף כיצד ננסח בחוק 'מופרז' או כל ההוראה המנחה",
+        "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות סמכות הפחתה נטל הראיה מי",
+        "total_query_ms": 22959,
+        "exact": {
+          "ms": 745,
+          "status": "ok",
+          "hits": 12
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 292,
+          "rpc_ms": 2955,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 16
+      },
+      {
+        "claim_id": "C3",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסקי דין משקל הראיות נטל הראיה 'פיצוי מוסכם' 'הפחתה' האם בתי המשפט מורידים לסכום נזק משוער או מפחיתים חלקית 'סעיף 15'",
+        "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון דין משקל הראיות נטל",
+        "total_query_ms": 23153,
+        "exact": {
+          "ms": 624,
+          "status": "ok",
+          "hits": 11
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 172,
+          "rpc_ms": 3151,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 15
+      },
+      {
+        "claim_id": "C2",
+        "role": "primary_statute",
+        "query_he": "סעיף 15 לחוק החוזים (תרופות) הוראות הסעיף קריטריונים מפורשים או נסיבות בהן יש להפחית פיצוי מוסכם",
+        "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות הוראות הסעיף קריטריונים",
+        "total_query_ms": 23159,
+        "exact": {
+          "ms": 760,
+          "status": "ok",
+          "hits": 12
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 198,
+          "rpc_ms": 3157,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 16
+      },
+      {
+        "claim_id": "C4",
+        "role": "primary_statute",
+        "query_he": "סעיף 15 לחוק החוזים (תרופות) וטיפוסיות יחסי התנגשות עם חוקים אחרים (חוק הגנת הצרכן, דיני עבודה) האם יש הוראות יוצאות דופן או הגבלות בחקיקה",
+        "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות וטיפוסיות יחסי התנגשות חוקים",
+        "total_query_ms": 23158,
+        "exact": {
+          "ms": 738,
+          "status": "ok",
+          "hits": 18
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 254,
+          "rpc_ms": 3157,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 22
+      },
+      {
+        "claim_id": "C4",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסקי דין התנגשות בין סעיף 15 לחוקים מיוחדים כגון חוק הגנת הצרכן או דיני עבודה האם נדחתה או הוגבלה סמכות הפחתה",
+        "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון דין התנגשות בין לחוקים",
+        "total_query_ms": 23167,
+        "exact": {
+          "ms": 728,
+          "status": "ok",
+          "hits": 16
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 170,
+          "rpc_ms": 3165,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 19
+      },
+      {
+        "claim_id": "C1",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסק דין \"סעיף 15\" \"חוק החוזים (תרופות)\" הפחתת פיצוי מוסכם מובילים/החלטות מנחות",
+        "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון דין",
+        "total_query_ms": 32094,
+        "exact": {
+          "ms": 564,
+          "status": "ok",
+          "hits": 11
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 148,
+          "rpc_ms": 12091,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 15
+      },
+      {
+        "claim_id": "C2",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסקי דין קריטריונים להפחתת פיצוי מוסכם יחס בין סכום הפיצוי לנזק כוונת הצדדים עונשיות חוסר שוויון בכוח מיקוח \"פיצוי מוסכם\" \"סעיף 15\"",
+        "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון דין",
+        "total_query_ms": 32092,
+        "exact": {
+          "ms": 587,
+          "status": "ok",
+          "hits": 11
+        },
+        "text": {
+          "ms": 20001,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 203,
+          "rpc_ms": 12089,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20001,
+        "kept": 15
+      },
+      {
+        "claim_id": "C1",
+        "role": "primary_statute",
+        "query_he": "סעיף 15 לחוק החוזים (תרופות) טקסט סעיף 15 המלא והסבר הפרשנות המפורש של מתי ניתן להפחית פיצוי מוסכם",
+        "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות טקסט המלא והסבר הפרשנות",
+        "total_query_ms": 32096,
+        "exact": {
+          "ms": 592,
+          "status": "ok",
+          "hits": 12
+        },
+        "text": {
+          "ms": 20002,
+          "status": "timeout",
+          "hits": 0
+        },
+        "vector": {
+          "embedding_ms": 162,
+          "rpc_ms": 12091,
+          "status": "ok",
+          "hits": 6
+        },
+        "parallel_batch_ms": 20002,
+        "kept": 16
+      }
+    ]
+  }
+}

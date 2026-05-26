@@ -1,0 +1,1116 @@
+[
+  {
+    "fixture_id": "L1",
+    "run_id": "93bf6ade-cd6a-4cc9-acaa-6ddfd53d7fd3",
+    "qa_log_id": "11ae0b2e-ec1c-4f29-a742-7a9ee36992af",
+    "local_retrieval": {
+      "wall_ms": 24054,
+      "candidates": 30,
+      "aggregate": {
+        "wall_ms": 24054,
+        "max_query_ms": 24054,
+        "sum_query_ms": 119321,
+        "slowest_query": {
+          "ms": 24054,
+          "role": "binding_case_law",
+          "text_ms": 20002,
+          "claim_id": "C1",
+          "exact_ms": 0,
+          "query_he": "בית המשפט העליון פסק דין צו מניעה זמני 'עילה סבירה' 'סיכוי ממשי' 'prima facie case' קביעה על סיכוי להתקבל תביעה",
+          "vector_ms": 4051,
+          "embedding_ms": 195
+        },
+        "slowest_method": "text",
+        "method_total_ms": {
+          "text": 100011,
+          "exact": 0,
+          "vector": 19306,
+          "embedding": 1051
+        },
+        "queries_executed": 5,
+        "exact_error_count": 0,
+        "text_timeout_count": 5,
+        "candidates_by_method": {
+          "text": 0,
+          "vector": 30,
+          "exact_authority": 0
+        },
+        "vector_timeout_count": 0,
+        "bottleneck_hypothesis": "rpc_timeout_cap (text_timeouts=5, vector_timeouts=0, RPC_TIMEOUT_MS=20000)",
+        "duplicate_query_count": 0
+      },
+      "per_query": [
+        {
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסק דין 'התחייבות לפיצוי' 'undertaking as to damages' 'בטחונות' צו מניעה זמני דרישות לביטחונות ופיצוי",
+          "compact_query_he": "צו מניעה זמני העליון דין התחייבות לפיצוי undertaking as to",
+          "total_query_ms": 23599,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20003,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 292,
+            "rpc_ms": 3595,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20003,
+          "kept": 6
+        },
+        {
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסק דין 'נזק בלתי הפיך' 'נזק שלא ניתן לתקן בפיצוי' צו מניעה זמני קביעות על irreparable harm",
+          "compact_query_he": "צו מניעה זמני העליון דין נזק בלתי הפיך שלא ניתן",
+          "total_query_ms": 23734,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20002,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 193,
+            "rpc_ms": 3731,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20002,
+          "kept": 6
+        },
+        {
+          "claim_id": "C5",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסק דין 'צו ללא הודעה' 'ex parte' 'דחיפות' צו מניעה זמני קביעות על קריטריונים להוצאת צו ללא הודעה",
+          "compact_query_he": "צו מניעה זמני העליון דין ללא הודעה ex parte דחיפות",
+          "total_query_ms": 23917,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20002,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 178,
+            "rpc_ms": 3914,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20002,
+          "kept": 6
+        },
+        {
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסק דין 'איזון הנוחות' 'balance of convenience' 'אינטרס הציבור' צו מניעה זמני החלטות שיפוטיות על איזון אינטרסים",
+          "compact_query_he": "צו מניעה זמני העליון דין איזון הנוחות balance of convenience",
+          "total_query_ms": 24017,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20002,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 193,
+            "rpc_ms": 4015,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20002,
+          "kept": 6
+        },
+        {
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסק דין צו מניעה זמני 'עילה סבירה' 'סיכוי ממשי' 'prima facie case' קביעה על סיכוי להתקבל תביעה",
+          "compact_query_he": "צו מניעה זמני העליון דין עילה סבירה סיכוי ממשי prima",
+          "total_query_ms": 24054,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20002,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 195,
+            "rpc_ms": 4051,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20002,
+          "kept": 6
+        }
+      ]
+    }
+  },
+  {
+    "fixture_id": "L2",
+    "run_id": "1e2d44d1-cd75-41e5-b2ee-e8806ce9a4b5",
+    "qa_log_id": "cc3cbba3-10ce-48b5-b184-d8244676f940",
+    "local_retrieval": {
+      "wall_ms": 20670,
+      "candidates": 36,
+      "aggregate": {
+        "wall_ms": 20670,
+        "max_query_ms": 20668,
+        "sum_query_ms": 98244,
+        "slowest_query": {
+          "ms": 20668,
+          "role": "binding_case_law",
+          "text_ms": 20000,
+          "claim_id": "C2",
+          "exact_ms": 0,
+          "query_he": "בית המשפט העליון פסק-דין 'הבטחה ברורה וחד-משמעית' 'נציג מוסמך' 'הסתמכות סבירה' 'נזק' 'הבטחה מנהלית'",
+          "vector_ms": 667,
+          "embedding_ms": 168
+        },
+        "slowest_method": "text",
+        "method_total_ms": {
+          "text": 95165,
+          "exact": 0,
+          "vector": 3073,
+          "embedding": 798
+        },
+        "queries_executed": 5,
+        "exact_error_count": 0,
+        "text_timeout_count": 2,
+        "candidates_by_method": {
+          "text": 18,
+          "vector": 18,
+          "exact_authority": 0
+        },
+        "vector_timeout_count": 0,
+        "bottleneck_hypothesis": "rpc_timeout_cap (text_timeouts=2, vector_timeouts=0, RPC_TIMEOUT_MS=20000)",
+        "duplicate_query_count": 0
+      },
+      "per_query": [
+        {
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסקי-דין 'פיצוי בעקבות הבטחה מנהלית' 'צו מניעה' 'צו שימור' 'צו ספציפי' 'הבטחה מנהלית'",
+          "compact_query_he": "הבטחה מנהלית ביקורת שיפוטית העליון פסקי-דין פיצוי בעקבות צו מניעה",
+          "total_query_ms": 18423,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 17777,
+            "status": "ok",
+            "hits": 6
+          },
+          "vector": {
+            "embedding_ms": 150,
+            "rpc_ms": 644,
+            "status": "ok",
+            "hits": 2
+          },
+          "parallel_batch_ms": 17777,
+          "kept": 8
+        },
+        {
+          "claim_id": "C4",
+          "role": "persuasive_case_law",
+          "query_he": "פסקי דין מחוזי/שלום 'הבטחה מנהלית' 'השתק' 'estoppel' השוואה דוקטרינות מנהליות דומים בחומרת פסקי-דין מחוזי",
+          "compact_query_he": "הבטחה מנהלית ביקורת שיפוטית דין מחוזי/שלום השתק estoppel השוואה דוקטרינות",
+          "total_query_ms": 19080,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 18286,
+            "status": "ok",
+            "hits": 6
+          },
+          "vector": {
+            "embedding_ms": 148,
+            "rpc_ms": 794,
+            "status": "ok",
+            "hits": 2
+          },
+          "parallel_batch_ms": 18286,
+          "kept": 8
+        },
+        {
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "query_he": "פסק דין בית המשפט העליון \"הבטחה מנהלית\" \"הבטחה לציבור\" הגדרה דוקטרינה 'legitimate expectation' החלטות מפקחות על אכיפה של הבטחה מנהלית",
+          "compact_query_he": "הבטחה מנהלית ביקורת שיפוטית דין העליון לציבור הגדרה דוקטרינה legitimate",
+          "total_query_ms": 19770,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 19099,
+            "status": "ok",
+            "hits": 6
+          },
+          "vector": {
+            "embedding_ms": 162,
+            "rpc_ms": 669,
+            "status": "ok",
+            "hits": 2
+          },
+          "parallel_batch_ms": 19099,
+          "kept": 8
+        },
+        {
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסקי-דין מושגים קרובים 'השתק (estoppel)' 'legitimate expectation' 'עקרון ההגינות הפרוצדורלית' השוואה לדוקטרינת הבטחה מנהלית",
+          "compact_query_he": "הבטחה מנהלית ביקורת שיפוטית העליון פסקי-דין מושגים קרובים השתק estoppel",
+          "total_query_ms": 20303,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20003,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 170,
+            "rpc_ms": 299,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20003,
+          "kept": 6
+        },
+        {
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסק-דין 'הבטחה ברורה וחד-משמעית' 'נציג מוסמך' 'הסתמכות סבירה' 'נזק' 'הבטחה מנהלית'",
+          "compact_query_he": "הבטחה מנהלית ביקורת שיפוטית העליון פסק-דין ברורה וחד-משמעית נציג מוסמך",
+          "total_query_ms": 20668,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20000,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 168,
+            "rpc_ms": 667,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 6
+        }
+      ]
+    }
+  },
+  {
+    "fixture_id": "L3",
+    "run_id": "258ff157-7cc5-421a-81b5-c149763662c8",
+    "qa_log_id": "2ddf29d0-a558-4764-9a7d-4b610480c19f",
+    "local_retrieval": {
+      "wall_ms": 32097,
+      "candidates": 134,
+      "aggregate": {
+        "wall_ms": 32097,
+        "max_query_ms": 32096,
+        "sum_query_ms": 211878,
+        "slowest_query": {
+          "ms": 32096,
+          "role": "primary_statute",
+          "text_ms": 20002,
+          "claim_id": "C1",
+          "exact_ms": 592,
+          "query_he": "סעיף 15 לחוק החוזים (תרופות) טקסט סעיף 15 המלא והסבר הפרשנות המפורש של מתי ניתן להפחית פיצוי מוסכם",
+          "vector_ms": 12091,
+          "embedding_ms": 162
+        },
+        "slowest_method": "text",
+        "method_total_ms": {
+          "text": 160009,
+          "exact": 5338,
+          "vector": 51856,
+          "embedding": 1599
+        },
+        "queries_executed": 8,
+        "exact_error_count": 0,
+        "text_timeout_count": 8,
+        "candidates_by_method": {
+          "text": 0,
+          "vector": 31,
+          "exact_authority": 103
+        },
+        "vector_timeout_count": 0,
+        "bottleneck_hypothesis": "rpc_timeout_cap (text_timeouts=8, vector_timeouts=0, RPC_TIMEOUT_MS=20000)",
+        "duplicate_query_count": 0
+      },
+      "per_query": [
+        {
+          "claim_id": "C3",
+          "role": "primary_statute",
+          "query_he": "סעיף 15 לחוק החוזים (תרופות) סמכות הפחתה נטל הראיה מי נושא בנטל לפי הסעיף כיצד ננסח בחוק 'מופרז' או כל ההוראה המנחה",
+          "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות סמכות הפחתה נטל הראיה מי",
+          "total_query_ms": 22959,
+          "exact": {
+            "ms": 745,
+            "status": "ok",
+            "hits": 12
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 292,
+            "rpc_ms": 2955,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 16
+        },
+        {
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסקי דין משקל הראיות נטל הראיה 'פיצוי מוסכם' 'הפחתה' האם בתי המשפט מורידים לסכום נזק משוער או מפחיתים חלקית 'סעיף 15'",
+          "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון דין משקל הראיות נטל",
+          "total_query_ms": 23153,
+          "exact": {
+            "ms": 624,
+            "status": "ok",
+            "hits": 11
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 172,
+            "rpc_ms": 3151,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 15
+        },
+        {
+          "claim_id": "C2",
+          "role": "primary_statute",
+          "query_he": "סעיף 15 לחוק החוזים (תרופות) הוראות הסעיף קריטריונים מפורשים או נסיבות בהן יש להפחית פיצוי מוסכם",
+          "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות הוראות הסעיף קריטריונים",
+          "total_query_ms": 23159,
+          "exact": {
+            "ms": 760,
+            "status": "ok",
+            "hits": 12
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 198,
+            "rpc_ms": 3157,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 16
+        },
+        {
+          "claim_id": "C4",
+          "role": "primary_statute",
+          "query_he": "סעיף 15 לחוק החוזים (תרופות) וטיפוסיות יחסי התנגשות עם חוקים אחרים (חוק הגנת הצרכן, דיני עבודה) האם יש הוראות יוצאות דופן או הגבלות בחקיקה",
+          "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות וטיפוסיות יחסי התנגשות חוקים",
+          "total_query_ms": 23158,
+          "exact": {
+            "ms": 738,
+            "status": "ok",
+            "hits": 18
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 254,
+            "rpc_ms": 3157,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 22
+        },
+        {
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסקי דין התנגשות בין סעיף 15 לחוקים מיוחדים כגון חוק הגנת הצרכן או דיני עבודה האם נדחתה או הוגבלה סמכות הפחתה",
+          "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון דין התנגשות בין לחוקים",
+          "total_query_ms": 23167,
+          "exact": {
+            "ms": 728,
+            "status": "ok",
+            "hits": 16
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 170,
+            "rpc_ms": 3165,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 19
+        },
+        {
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסק דין \"סעיף 15\" \"חוק החוזים (תרופות)\" הפחתת פיצוי מוסכם מובילים/החלטות מנחות",
+          "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון דין",
+          "total_query_ms": 32094,
+          "exact": {
+            "ms": 564,
+            "status": "ok",
+            "hits": 11
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 148,
+            "rpc_ms": 12091,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 15
+        },
+        {
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסקי דין קריטריונים להפחתת פיצוי מוסכם יחס בין סכום הפיצוי לנזק כוונת הצדדים עונשיות חוסר שוויון בכוח מיקוח \"פיצוי מוסכם\" \"סעיף 15\"",
+          "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון דין",
+          "total_query_ms": 32092,
+          "exact": {
+            "ms": 587,
+            "status": "ok",
+            "hits": 11
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 203,
+            "rpc_ms": 12089,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 15
+        },
+        {
+          "claim_id": "C1",
+          "role": "primary_statute",
+          "query_he": "סעיף 15 לחוק החוזים (תרופות) טקסט סעיף 15 המלא והסבר הפרשנות המפורש של מתי ניתן להפחית פיצוי מוסכם",
+          "compact_query_he": "פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות טקסט המלא והסבר הפרשנות",
+          "total_query_ms": 32096,
+          "exact": {
+            "ms": 592,
+            "status": "ok",
+            "hits": 12
+          },
+          "text": {
+            "ms": 20002,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 162,
+            "rpc_ms": 12091,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20002,
+          "kept": 16
+        }
+      ]
+    }
+  },
+  {
+    "fixture_id": "L4",
+    "run_id": "1a12cec7-7387-48b6-ad0b-8e180d676482",
+    "qa_log_id": "6f1a9502-38bb-49c4-9707-66225318b0c0",
+    "local_retrieval": {
+      "wall_ms": 25193,
+      "candidates": 23,
+      "aggregate": {
+        "wall_ms": 25193,
+        "max_query_ms": 25192,
+        "sum_query_ms": 99756,
+        "slowest_query": {
+          "ms": 25192,
+          "role": "binding_case_law",
+          "text_ms": 20001,
+          "claim_id": "C1",
+          "exact_ms": 0,
+          "query_he": "פסקי דין של בית המשפט העליון שמגדירים את דוקטרינת 'השתק פלוגתא' או משתמשים במונח 'השתק פלוגתא' כהגדרה עקרונית — חיפוש ניסוח הגדרה, רקע היסטורי ופסיקה מכוננת",
+          "vector_ms": 5188,
+          "embedding_ms": 159
+        },
+        "slowest_method": "text",
+        "method_total_ms": {
+          "text": 80005,
+          "exact": 0,
+          "vector": 19745,
+          "embedding": 767
+        },
+        "queries_executed": 4,
+        "exact_error_count": 0,
+        "text_timeout_count": 4,
+        "candidates_by_method": {
+          "text": 0,
+          "vector": 23,
+          "exact_authority": 0
+        },
+        "vector_timeout_count": 0,
+        "bottleneck_hypothesis": "rpc_timeout_cap (text_timeouts=4, vector_timeouts=0, RPC_TIMEOUT_MS=20000)",
+        "duplicate_query_count": 0
+      },
+      "per_query": [
+        {
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסקי דין על חריגים להשתק פלוגתא — שינוי נסיבות מהותי, ראיות חדשות שלא היו אפשריות קודם, פסק דין לא סופי או פגמים בסמכות, ועקרונות של צדק מהותי וסעד מקל",
+          "compact_query_he": "השתק פלוגתא זהות פלוגתא השתק עילה העליון דין חריגים להשתק שינוי",
+          "total_query_ms": 24805,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 168,
+            "rpc_ms": 4802,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 6
+        },
+        {
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "query_he": "פסיקה של בית המשפט העליון שקובעת את תנאי היישום של השתק פלוגתא — חיפוש ביטויים: \"זהות פלוגתא\" \"הכרעה סופית\" \"חיוניות ההכרעה\" \"זהות צדדים\" \"הזדמנות להתדיין\"",
+          "compact_query_he": "השתק פלוגתא זהות פלוגתא השתק עילה פסיקה העליון שקובעת היישום חיפוש",
+          "total_query_ms": 24844,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 167,
+            "rpc_ms": 4842,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 6
+        },
+        {
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "query_he": "פסקי דין של בית המשפט העליון שקובעים מהי ההשפעה המשפטית של השתק פלוגתא על הליכים מאוחרים — מה נחשב מוכרע, היקף האיסור על ריליטיגציה וההבחנה בין השתק פלוגתא להשתק עילה (res judicata)",
+          "compact_query_he": "השתק פלוגתא זהות פלוגתא השתק עילה דין העליון שקובעים ההשפעה המשפטית",
+          "total_query_ms": 24915,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20002,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 273,
+            "rpc_ms": 4913,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20002,
+          "kept": 6
+        },
+        {
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "query_he": "פסקי דין של בית המשפט העליון שמגדירים את דוקטרינת 'השתק פלוגתא' או משתמשים במונח 'השתק פלוגתא' כהגדרה עקרונית — חיפוש ניסוח הגדרה, רקע היסטורי ופסיקה מכוננת",
+          "compact_query_he": "השתק פלוגתא זהות פלוגתא השתק עילה דין העליון שמגדירים דוקטרינת משתמשים",
+          "total_query_ms": 25192,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 159,
+            "rpc_ms": 5188,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 5
+        }
+      ]
+    }
+  },
+  {
+    "fixture_id": "L5",
+    "run_id": "665fc09c-76a8-46ec-925d-9aac8001323f",
+    "qa_log_id": "a3c5d44c-a568-450f-b031-2e2d43e26be1",
+    "local_retrieval": {
+      "wall_ms": 23310,
+      "candidates": 27,
+      "aggregate": {
+        "wall_ms": 23310,
+        "max_query_ms": 23309,
+        "sum_query_ms": 113873,
+        "slowest_query": {
+          "ms": 23309,
+          "role": "binding_case_law",
+          "text_ms": 20001,
+          "claim_id": "C1",
+          "exact_ms": 0,
+          "query_he": "בית המשפט העליון בג\"ץ פסקי-דין על 'עילת הסבירות' הגדרה דוקטרינלית של עילת הסבירות בביקורת שיפוטית על החלטות מנהליות פסק דין מנחה",
+          "vector_ms": 3306,
+          "embedding_ms": 771
+        },
+        "slowest_method": "text",
+        "method_total_ms": {
+          "text": 100008,
+          "exact": 0,
+          "vector": 13861,
+          "embedding": 3168
+        },
+        "queries_executed": 5,
+        "exact_error_count": 0,
+        "text_timeout_count": 5,
+        "candidates_by_method": {
+          "text": 0,
+          "vector": 27,
+          "exact_authority": 0
+        },
+        "vector_timeout_count": 0,
+        "bottleneck_hypothesis": "rpc_timeout_cap (text_timeouts=5, vector_timeouts=0, RPC_TIMEOUT_MS=20000)",
+        "duplicate_query_count": 0
+      },
+      "per_query": [
+        {
+          "claim_id": "C5",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסקי-דין שדן בהשפעת שיקולי הפרדת רשויות והתמחות מקצועית של המינהל על מידת הביקורת השיפוטית בבחינת סבירות (הורות על מתן משקל להתמחות המינהלית)",
+          "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות העליון פסקי-דין שדן בהשפעת",
+          "total_query_ms": 22363,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20002,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 673,
+            "rpc_ms": 2360,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20002,
+          "kept": 5
+        },
+        {
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסקי-דין המשווים בין מבחן הסבירות לבין מבחני חוקיות, מידתיות (פרופורציונליות) והליך הוגן מתי משתמשים בכל מבחן ומה ההיררכיה בפסיקה הישראלית",
+          "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות העליון פסקי-דין המשווים בין",
+          "total_query_ms": 22394,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 577,
+            "rpc_ms": 2392,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20002,
+          "kept": 5
+        },
+        {
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסקי-דין על עומק הביקורת השיפוטית במבחן הסבירות מתי בתי המשפט מצמצמים את הביקורת ומתי מוחלים רמות בדיקה שונות (הסבר מקרים מעשיים)",
+          "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות העליון פסקי-דין עומק הביקורת",
+          "total_query_ms": 22669,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20002,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 582,
+            "rpc_ms": 2667,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20002,
+          "kept": 5
+        },
+        {
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסקי-דין השלכות מעשיות של קביעת אי-סבירות סעדים ביטול החלטה מנהלית צו שיפוטי הפניה להכרעה מחודשת השפעה על מיינת הראיות",
+          "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות העליון פסקי-דין השלכות מעשיות",
+          "total_query_ms": 23138,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20002,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 565,
+            "rpc_ms": 3136,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20002,
+          "kept": 6
+        },
+        {
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון בג\"ץ פסקי-דין על 'עילת הסבירות' הגדרה דוקטרינלית של עילת הסבירות בביקורת שיפוטית על החלטות מנהליות פסק דין מנחה",
+          "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות העליון בג פסקי-דין הגדרה",
+          "total_query_ms": 23309,
+          "exact": {
+            "ms": 0,
+            "status": "empty",
+            "hits": 0
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 771,
+            "rpc_ms": 3306,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 6
+        }
+      ]
+    }
+  },
+  {
+    "fixture_id": "L6",
+    "run_id": "adbd1684-5779-4c1b-9a56-e7e241370a52",
+    "qa_log_id": "818b4046-309a-4865-a61e-0f536a5f2b58",
+    "local_retrieval": {
+      "wall_ms": 22579,
+      "candidates": 91,
+      "aggregate": {
+        "wall_ms": 22579,
+        "max_query_ms": 22578,
+        "sum_query_ms": 156353,
+        "slowest_query": {
+          "ms": 22578,
+          "role": "binding_case_law",
+          "text_ms": 20001,
+          "claim_id": "C1",
+          "exact_ms": 230,
+          "query_he": "בית המשפט העליון פסיקה 'הבטחה מינהלית' או 'התחייבות רשות מקומית' תנאי אכיפה: סמכות, מסוימות, גמירות־דעת, הסתמכות, שינוי מצב",
+          "vector_ms": 2575,
+          "embedding_ms": 184
+        },
+        "slowest_method": "text",
+        "method_total_ms": {
+          "text": 140010,
+          "exact": 1849,
+          "vector": 16336,
+          "embedding": 1349
+        },
+        "queries_executed": 7,
+        "exact_error_count": 0,
+        "text_timeout_count": 7,
+        "candidates_by_method": {
+          "text": 0,
+          "vector": 37,
+          "exact_authority": 54
+        },
+        "vector_timeout_count": 0,
+        "bottleneck_hypothesis": "rpc_timeout_cap (text_timeouts=7, vector_timeouts=0, RPC_TIMEOUT_MS=20000)",
+        "duplicate_query_count": 0
+      },
+      "per_query": [
+        {
+          "claim_id": "C5",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסיקה 'התחייבות רשות מקומית לקדם תב\"ע' 'אי-כבילת שיקול הדעת התכנוני' 'הגבלות סטטוטוריות'",
+          "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות העליון פסיקה התחייבות רשות",
+          "total_query_ms": 22038,
+          "exact": {
+            "ms": 223,
+            "status": "ok",
+            "hits": 6
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 176,
+            "rpc_ms": 2035,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 11
+        },
+        {
+          "claim_id": "C2",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסיקה 'הבטחה שניתנה בחוסר סמכות' 'חוסר סמכות מהותי' אי־כח חוקיות אכיפה או סעדים חלופיים 'הגנה הסתמכותית'",
+          "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות העליון פסיקה שניתנה בחוסר",
+          "total_query_ms": 22116,
+          "exact": {
+            "ms": 222,
+            "status": "ok",
+            "hits": 6
+          },
+          "text": {
+            "ms": 20002,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 277,
+            "rpc_ms": 2113,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20002,
+          "kept": 12
+        },
+        {
+          "claim_id": "C3",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסיקות 'הסתמכות' 'השקעות כלכליות' 'סעד הסתמכותי' 'הבטחה מינהלית' קביעת משקל ההסתמכות מול שלטון החוק",
+          "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות העליון פסיקות הסתמכות השקעות",
+          "total_query_ms": 22183,
+          "exact": {
+            "ms": 214,
+            "status": "ok",
+            "hits": 6
+          },
+          "text": {
+            "ms": 20002,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 174,
+            "rpc_ms": 2181,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20002,
+          "kept": 12
+        },
+        {
+          "claim_id": "C2",
+          "role": "primary_statute",
+          "query_he": "חוק התכנון והבניה, התשכ\"ה-1965 סמכויות רשות מקומית לקידום תב\"ע התחייבויות בלתי מותנות מול יזמים",
+          "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות חוק התכנון והבניה התשכ",
+          "total_query_ms": 22430,
+          "exact": {
+            "ms": 377,
+            "status": "ok",
+            "hits": 12
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 170,
+            "rpc_ms": 2428,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 17
+        },
+        {
+          "claim_id": "C5",
+          "role": "primary_statute",
+          "query_he": "חוק התכנון והבניה, התשכ\"ה-1965 סמכויות רשות מקומית לקידום תב\"ע מבחינת מהות ההתחייבות והכפיפות להליכי תכנון סטטוטוריים",
+          "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות חוק התכנון והבניה התשכ",
+          "total_query_ms": 22433,
+          "exact": {
+            "ms": 360,
+            "status": "ok",
+            "hits": 12
+          },
+          "text": {
+            "ms": 20002,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 186,
+            "rpc_ms": 2431,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20002,
+          "kept": 17
+        },
+        {
+          "claim_id": "C1",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון פסיקה 'הבטחה מינהלית' או 'התחייבות רשות מקומית' תנאי אכיפה: סמכות, מסוימות, גמירות־דעת, הסתמכות, שינוי מצב",
+          "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות העליון פסיקה מינהלית התחייבות",
+          "total_query_ms": 22578,
+          "exact": {
+            "ms": 230,
+            "status": "ok",
+            "hits": 6
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 184,
+            "rpc_ms": 2575,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 11
+        },
+        {
+          "claim_id": "C4",
+          "role": "binding_case_law",
+          "query_he": "בית המשפט העליון 'שינוי מדיניות' 'חזרה מהבטחה' 'הנמקה' 'מידתיות' 'הסדרי מעבר' פסיקה עקרונות",
+          "compact_query_he": "הבטחה מנהלית מידתיות תום לב חוסר סמכות העליון שינוי מדיניות חזרה",
+          "total_query_ms": 22575,
+          "exact": {
+            "ms": 223,
+            "status": "ok",
+            "hits": 6
+          },
+          "text": {
+            "ms": 20001,
+            "status": "timeout",
+            "hits": 0
+          },
+          "vector": {
+            "embedding_ms": 182,
+            "rpc_ms": 2573,
+            "status": "ok",
+            "hits": 6
+          },
+          "parallel_batch_ms": 20001,
+          "kept": 11
+        }
+      ]
+    }
+  }
+]
