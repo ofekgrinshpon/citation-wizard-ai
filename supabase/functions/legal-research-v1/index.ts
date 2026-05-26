@@ -333,6 +333,7 @@ async function handle(req: Request): Promise<Response> {
 
 
   // ─── P2: Research Query Planner ──────────────────────────────────────────
+  await markStage("planner");
   let plannerStage;
   try {
     plannerStage = await runQueryPlanner(question, analyzer);
