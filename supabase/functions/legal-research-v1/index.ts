@@ -529,6 +529,8 @@ async function handle(req: Request): Promise<Response> {
       candidates_verified: verifier.candidates_verified,
       candidates_usable: verifier.candidates_usable,
       candidates_dropped: verifier.candidates_dropped,
+      perplexityDropped: pplx.dropped,
+      verifierDropped: verifier.dropped,
     });
     await completeAllStages();
 
