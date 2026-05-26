@@ -245,7 +245,7 @@ interface Batch {
   candidates: Candidate[];
 }
 
-function planBatches(claims: Claim[], byClaim: Map<string, Candidate[]>): Batch[] {
+function planBatches(claims: Claim[], byClaim: Map<string, Candidate[]>, planOpts?: { forceSplit?: boolean }): Batch[] {
   const present = claims.filter((c) => (byClaim.get(c.claim_id)?.length ?? 0) > 0);
   if (present.length === 0) return [];
 
