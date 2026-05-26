@@ -367,28 +367,64 @@ export function LegalResearchV1Panel() {
       {/* ── Top region: loading / error / result (scrollable) ── */}
       <div className="flex-1 min-h-0 overflow-y-auto space-y-4 pb-4">
         {loading && (
-          <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-2">
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span className="font-medium text-foreground">{STAGES[stageIdx]}</span>
-              <span>{fmtElapsed(elapsed)}</span>
-            </div>
-            <Progress value={progress} className="h-2" />
-            {elapsed < SOFT_NOTICE_1_MS && (
-              <p className="text-xs text-muted-foreground">זה עשוי לקחת 2–3 דקות</p>
-            )}
-            {elapsed >= SOFT_NOTICE_1_MS && elapsed < SOFT_NOTICE_2_MS && (
-              <p className="text-xs text-muted-foreground">עדיין עובד… זה לוקח יותר מהרגיל</p>
-            )}
-            {elapsed >= SOFT_NOTICE_2_MS && (
-              <p className="text-xs text-muted-foreground">עדיין עובד ברקע, אפשר להמתין או לבטל</p>
-            )}
-            {jobId && (
-              <div className="flex justify-end pt-1">
-                <Button onClick={handleCancel} variant="ghost" size="sm" className="h-7 px-2 text-xs">
-                  בטל
-                </Button>
+          <div className="space-y-3 animate-fade-in">
+            <div className="rounded-lg border border-border bg-muted/30 p-4 space-y-3">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span className="font-medium text-foreground">מבצע סקירה משפטית…</span>
+                <span>{fmtElapsed(elapsed)}</span>
               </div>
-            )}
+              <ol className="space-y-2">
+                {STAGES.map((stage) => {
+                  const isDone = completedStages.includes(stage.key);
+                  const isActive = !isDone && currentStage === stage.key;
+                  return (
+                    <li
+                      key={stage.key}
+                      className="flex items-center gap-2.5 text-sm"
+                    >
+                      <span className="flex w-5 h-5 items-center justify-center shrink-0">
+                        {isDone ? (
+                          <Check className="w-4 h-4 text-primary" />
+                        ) : isActive ? (
+                          <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                        ) : (
+                          <span className="w-3.5 h-3.5 rounded-full border border-border" />
+                        )}
+                      </span>
+                      <span
+                        className={
+                          isDone
+                            ? "text-foreground"
+                            : isActive
+                            ? "text-foreground font-medium"
+                            : "text-muted-foreground"
+                        }
+                      >
+                        {stage.label}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
+              {elapsed < SOFT_NOTICE_1_MS && (
+                <p className="text-xs text-muted-foreground">זה עשוי לקחת 2–3 דקות</p>
+              )}
+              {elapsed >= SOFT_NOTICE_1_MS && elapsed < SOFT_NOTICE_2_MS && (
+                <p className="text-xs text-muted-foreground">עדיין עובד… זה לוקח יותר מהרגיל</p>
+              )}
+              {elapsed >= SOFT_NOTICE_2_MS && (
+                <p className="text-xs text-muted-foreground">עדיין עובד ברקע, אפשר להמתין או לבטל</p>
+              )}
+              {jobId && (
+                <div className="flex justify-end pt-1">
+                  <Button onClick={handleCancel} variant="ghost" size="sm" className="h-7 px-2 text-xs">
+                    בטל
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <GhostAnswer />
           </div>
         )}
 
