@@ -2941,7 +2941,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           </div>
         )}
 
-        {!isAcademic && !result && !loading && !error && taskMode !== "research" && (
+        {!isAcademic && taskMode === "legal_source_search" && (
+          <div className="h-full flex flex-col py-4">
+            <LegalSourceSearchPanel
+              externalResult={
+                externalResult && externalResult.taskMode === "legal_source_search"
+                  ? { question: externalResult.question, payload: externalResult.sourcesPayload }
+                  : null
+              }
+            />
+          </div>
+        )}
+
+        {!isAcademic && !result && !loading && !error && taskMode !== "research" && taskMode !== "legal_source_search" && (
 
           <div className="flex flex-col items-center justify-center h-full py-12 text-center">
             <div className="text-4xl mb-3">⚖️</div>
