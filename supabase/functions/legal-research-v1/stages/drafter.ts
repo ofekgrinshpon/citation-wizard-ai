@@ -871,6 +871,36 @@ export async function runDrafter(
         }
       }
     }
+
+    // Final scrub safety net (after escalation): same narrow C# cleanup.
+    if (
+      !scrub_accepted &&
+      parsed.ok && !marker.ok && marker.internal_id_leak &&
+      marker.leaked_tokens.length === 1 && marker.leaked_tokens[0] === "C#"
+    ) {
+      const scrub = scrubInternalClaimLabels(answer);
+      scrub_attempted = true;
+      scrub_patterns = scrub.patterns;
+      scrub_rejected_reason = undefined;
+      if (!scrub.changed) {
+        scrub_rejected_reason = "no_pattern_matched";
+      } else {
+        const candidate = scrub.text;
+        const prevMarkers = extractMarkers(answer).length;
+        const m2 = runMarkerValidation(candidate, used);
+        if (!m2.ok) {
+          scrub_rejected_reason = "marker_validation_failed";
+        } else if (m2.internal_id_leak) {
+          scrub_rejected_reason = "residual_leak";
+        } else if (extractMarkers(candidate).length !== prevMarkers) {
+          scrub_rejected_reason = "marker_count_changed";
+        } else {
+          answer = candidate;
+          marker = { ...m2, repaired: true };
+          scrub_accepted = true;
+        }
+      }
+    }
   }
 
   // ─── Phase D: placement telemetry (read-only, no repair, no LLM call) ───
