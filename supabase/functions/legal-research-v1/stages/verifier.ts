@@ -340,16 +340,9 @@ export async function runVerifier(
   const claimsById = new Map(claims.map((c) => [c.claim_id, c]));
 
   // Test-only: caller may force planBatches to split into >=2 buckets so the
-  // parallel orchestration path is actually exercised in E.1 validation. We
-  // briefly set the env flag planBatches reads, then restore it. Production
-  // paths never pass opts.forceSplit.
-  const prevForce = Deno.env.get("VERIFIER_FORCE_SPLIT");
-  if (opts?.forceSplit) Deno.env.set("VERIFIER_FORCE_SPLIT", "1");
-  const batches = planBatches(claims, byClaim);
-  if (opts?.forceSplit) {
-    if (prevForce === undefined) Deno.env.delete("VERIFIER_FORCE_SPLIT");
-    else Deno.env.set("VERIFIER_FORCE_SPLIT", prevForce);
-  }
+  // parallel orchestration path is actually exercised in E.1 validation.
+  // Production paths never pass opts.forceSplit. No env mutation.
+  const batches = planBatches(claims, byClaim, { forceSplit: opts?.forceSplit === true });
 
   let anyEscalated = false;
 
