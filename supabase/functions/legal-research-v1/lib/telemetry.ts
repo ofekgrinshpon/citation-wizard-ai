@@ -21,6 +21,9 @@ export interface TelemetryRow {
   // stub answer fields — kept for shape compatibility with qa_logs
   answer: string;
   footnotes: unknown[];
+  // Optional override; defaults to "legal_research_v1" (drafter pipeline).
+  // The sources-only mode passes "legal_source_search".
+  task_mode?: string;
 }
 
 export async function writeTelemetry(
@@ -33,7 +36,7 @@ export async function writeTelemetry(
       project_id: row.project_id,
       question: row.question,
       answer: row.answer,
-      task_mode: "legal_research_v1",
+      task_mode: row.task_mode ?? "legal_research_v1",
       footnotes: row.footnotes,
       local_footnotes_count: 0,
       perplexity_footnotes_count: 0,
