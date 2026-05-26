@@ -1,0 +1,97 @@
+{
+  "generated_at": "2026-05-26T07:35:31.225Z",
+  "fixture": {
+    "id": "L4",
+    "question": "מהי דוקטרינת השתק פלוגתא?"
+  },
+  "qa_log_id": "6d884b8b-ab7f-443a-ae83-42e7b423a601",
+  "run_id": "e11a0246-02e8-42b3-b1f6-5c75380ed0bc",
+  "row_summary": {
+    "fixture_id": "L4",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 3,
+    "footnote_count": 3,
+    "footnote_eq_used": true,
+    "used_sources_subset_of_usable": true,
+    "no_raw_atomic_tokens": true,
+    "no_candidate_id_leak": true,
+    "atomic_mode": "validate",
+    "atomic_normalize_ok": true,
+    "atomic_validation_ok": true,
+    "atomic_used_sources_byte_equal": true,
+    "placement_telemetry": {
+      "ok": false,
+      "cluster_count": 4,
+      "out_of_order_count": 0,
+      "end_paragraph_dump_count": 0
+    },
+    "drafter_ms": 19841,
+    "total_ms": 118187,
+    "baseline_drafter_ms": null,
+    "baseline_total_ms": null,
+    "drafter_ms_delta": null,
+    "total_ms_delta": null,
+    "source_set_equals_baseline": false,
+    "source_set_added": [
+      "20f7d74e-2b65-4c97-a422-87698ba160e7",
+      "b5b38709-7871-4840-af7e-3ccf2d8542f4",
+      "8fc2ecaf-1db3-48b8-b5d1-4bcd182c84eb"
+    ],
+    "source_set_removed": []
+  },
+  "atomic": {
+    "mode": "validate",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 18,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 18
+  },
+  "placement": {
+    "ok": false,
+    "cluster_count": 4,
+    "cluster_samples": [
+      "לטת בית-המשפט בפועל.²³\n- **זהות צדדים (או ",
+      "טית ובניתוח השוואתי.¹³\n- השפעת ההשתק חלה ב",
+      "עים מנסיבות מיוחדות.¹²³"
+    ],
+    "end_dump_samples": [],
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 0,
+    "superscript_parens_count": 0
+  },
+  "answer_preview": "דוקטרינת ה**השתק פלוגתא** היא כלל דוקטרינלי המסייע לשמירה על יציבות ופירוש משמעתי של הכרעות שיפוטיות בכך שהיא **מונעת מהצד לטעון מחדש עובדה או שאלה משפטית שכבר הוכרעו בהליך קודם בין אותם צדדים**.¹  שיפוטי ישראל והמשפט השוויוני דנו והפעילו את הדוקטרינה במסגרת פסיקה, כאשר בית-המשפט העליון פירש והחיל את העיקרון כבסיס לסימון טענות בלתי ניתנות להשבה לאחר הכרעה קודמת.²\n\nיסודות הדוקטרינה — האלמנטים הנדרשים\n- **זהות פלוגתא**: ההשתק חל רק לגבי אותו עניין מהותי או שאלה משפטית שנידונה ונקבעה בהליך הקודם.³\n- **פסק-דין חלוט ובית-משפט מוסמך**: חייבת להיות הכרעה שיפוטית סופית (או בעלת תוקף מחייב) שניתנה על ידי בית-משפט המוסמך לדון בסוגיה.²\n- **חיוניות ההכרעה לתוצאה**: ההכרעה בסוגיה צריכה להיות **חיונית** להמצאת פסק-הדין — כלומר, ההכרעה נושאת בתוכה תרומתה להחלטת בית-המשפט בפועל.²³\n- **זהות צדדים (או חליפי",
+  "footnotes": [
+    {
+      "url": "https://law.tau.ac.il/sites/law.tau.ac.il/files/media_server/law_heb/Tovanot/Articles/klement&hamdani.pdf",
+      "title": "The Long and Short of it: Issue Preclusion in the United States and Israel",
+      "number": 1,
+      "source_type": "academic_pdf"
+    },
+    {
+      "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F17%2F760%2F045%2Fy08&fileName=17045760.Y08&type=2",
+      "title": "החלטה בתיק ע\"א 4576/17",
+      "number": 2,
+      "source_type": "פסק דין / החלטה של בית המשפט העליון"
+    },
+    {
+      "url": "https://www.psakdin.co.il/Court/%D7%94%D7%97%D7%9C%D7%98%D7%94-%D7%91%D7%AA%D7%99%D7%A7-%D7%AA%22%D7%90-1173-07",
+      "title": "החלטה בתיק ת\"א 1173-07",
+      "number": 3,
+      "source_type": "court decision"
+    }
+  ]
+}

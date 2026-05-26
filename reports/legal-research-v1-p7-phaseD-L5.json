@@ -1,0 +1,139 @@
+{
+  "generated_at": "2026-05-26T07:35:31.344Z",
+  "fixture": {
+    "id": "L5",
+    "question": "מהי עילת הסבירות ומה היקף הביקורת השיפוטית עליה?"
+  },
+  "qa_log_id": "0bea7434-6e22-47c6-bf70-551a88a47954",
+  "run_id": "a2f7be59-d07d-47db-b33d-b3b9a77d7a00",
+  "row_summary": {
+    "fixture_id": "L5",
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_sources_count": 8,
+    "footnote_count": 8,
+    "footnote_eq_used": true,
+    "used_sources_subset_of_usable": true,
+    "no_raw_atomic_tokens": true,
+    "no_candidate_id_leak": true,
+    "atomic_mode": "validate",
+    "atomic_normalize_ok": true,
+    "atomic_validation_ok": true,
+    "atomic_used_sources_byte_equal": true,
+    "placement_telemetry": {
+      "ok": false,
+      "cluster_count": 15,
+      "out_of_order_count": 0,
+      "end_paragraph_dump_count": 0
+    },
+    "drafter_ms": 23772,
+    "total_ms": 143011,
+    "baseline_drafter_ms": null,
+    "baseline_total_ms": null,
+    "drafter_ms_delta": null,
+    "total_ms_delta": null,
+    "source_set_equals_baseline": false,
+    "source_set_added": [
+      "6e470137-f639-41b4-9a4b-6c284687cbbb",
+      "dd28cb5d-53fc-488f-a07a-17cf5556a388",
+      "d16b4cd5-96c7-44b8-84b8-6adcedb1fc4e",
+      "4768fd57-5375-4134-b6ab-a6df140bda2a",
+      "bcdf9599-6d6a-42ef-b567-eb9e4c860f2f",
+      "6daffd6c-02e9-4cd5-91cf-a0fb0daf9d60",
+      "175b9e1d-d477-4701-946c-22697f5e1f77",
+      "18f5fb17-7081-4759-89c1-200a678027f4"
+    ],
+    "source_set_removed": []
+  },
+  "atomic": {
+    "mode": "validate",
+    "validation": {
+      "ok": true,
+      "repaired": false,
+      "leaked_tokens": [],
+      "unused_sources": [],
+      "missing_sources": [],
+      "internal_id_leak": false,
+      "markers_in_answer": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    "normalize_ok": true,
+    "atomic_marker_count": 41,
+    "used_sources_byte_equal": true,
+    "superscript_marker_count": 41
+  },
+  "placement": {
+    "ok": false,
+    "cluster_count": 15,
+    "cluster_samples": [
+      "שיקול הנתונים לרשות.¹²³\n\nהשתרשות בפסיקה היש",
+      "תאם למערכת הישראלית.¹³ הדקויות ההבדלתיות ב",
+      "ליישום בעילות שונות.¹⁴\n\nדרגות ובחינת חומרת",
+      "י של המטרה המינהלית.²⁴ ככל שמדובר בפגיעה ב",
+      "ה מבחינה דוקטרינרית.²⁴\n\nמערך היחסים בינה ל"
+    ],
+    "end_dump_samples": [],
+    "out_of_order_count": 0,
+    "end_paragraph_dump_count": 0,
+    "superscript_parens_count": 0
+  },
+  "answer_preview": "מבוא\nעילת ה**אי־סבירות** היא כלי ביקורת מינהלית מרכזי שנועדה לבחון האם החלטה מנהלית חורגת ממה שניתן להיחשב כהחלטה סבירה במסגרת טווח שיקול הדעת של הרשות.¹ מטרתה לשמור על שלטון החוק וההגינות בהליך קבלת ההחלטות, מבלי להחליף את שיקול דעת הרשות בשיקול בית המשפט אלא כאשר התקבלה החלטה שהיא חריגה עד כדי חוסר תוקף דוקטרינרי.²\n\nמהותה ומרכיביה של עילת הסבירות\nהעילה נשענת על זיהוי **סטייה מהותית או קיצונית** מהנורמה המקובלת של קבלת החלטות רציונלית — כלומר החלטה שבה נפל שגיאה מהותית בשיקול הדעת, בהשוואה לכללי הגיון, ראיות ושקלול שקולים רלוונטיים.³ מרכיבי העילה הנדונים בספרות כוללים: (1) בחינת ההיגיון הפנימי של ההחלטה; (2) בדיקת ההתאמה בין המטרה לבין האמצעים שננקטו; ו-(3) הערכת מידת הסטייה מ'טווח הסבירות' המקובל בתחומי השיקול הנתונים לרשות.¹²³\n\nהשתרשות בפסיקה הישראלית\nהדיון התשתיתי בעילה ותחילתה נמצאים ",
+  "footnotes": [
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%A2%D7%99%D7%9C%D7%AA%20%D7%90%D7%99%D6%BE%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+      "title": "עילת אי־הסבירות במשפט המינהלי",
+      "number": 1,
+      "source_type": "מאמר משפטי / כתב עת"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%A2%D7%A8%D7%95%D7%AA%20%D7%A2%D7%9C%20%D7%91%D7%99%D7%A7%D7%95%D7%A8%D7%AA%20%D7%94%D7%A1%D7%91%D7%99%D7%A8%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%99%D7%A0%D7%94%D7%לי.pdf",
+      "title": "הערות על ביקורת הסבירות במשפט המינהלי",
+      "number": 2,
+      "source_type": "מאמר אקדמי (PDF)"
+    },
+    {
+      "url": "http://lawjournal.huji.ac.il/article/12/1042",
+      "title": "עילת אי־הסבירות במשפט המנהלי",
+      "number": 3,
+      "source_type": "כתב עת אקדמי"
+    },
+    {
+      "url": "https://en-law.tau.ac.il/sites/law-english.tau.ac.il/files/media_server/law_heb/Maasei_Mishpat/18/7Raphael%20Bitton.pdf",
+      "title": "על עילת הסבירות הישראלית ככלי לביסוס עליונות שיפוטית",
+      "number": 4,
+      "source_type": "מאמר משפטי / כתב עת"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%9B%D7%91%D7%95%D7%93_%D7%94%D7%90%D7%93%D7%9D_%D7%95%D7%97%D7%99%D7%A8%D7%95%D7%AA%D7%95",
+      "title": "חוק-יסוד: כבוד האדם וחירותו",
+      "number": 5,
+      "source_type": "israeli_law"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7-%D7%99%D7%A1%D7%95%D7%93%3A_%D7%97%D7%95%D7%A4%D7%A9_%D7%94%D7%A2%D7%99%D7%A1%D7%95%D7%A7",
+      "title": "חוק-יסוד: חופש העיסוק",
+      "number": 6,
+      "source_type": "israeli_law"
+    },
+    {
+      "url": "https://he.wikisource.org/wiki/%D7%97%D7%95%D7%A7_%D7%99%D7%A1%D7%95%D7%93%D7%95%D7%AA_%D7%94%D7%9E%D7%A9%D7%A4%D7%98",
+      "title": "חוק יסודות המשפט",
+      "number": 7,
+      "source_type": "israeli_law"
+    },
+    {
+      "url": "https://lawjournal.huji.ac.il/sites/default/files/2018-02/%D7%94%D7%92%D7%A0%D7%AA%20%D7%94%D7%94%D7%A1%D7%AA%D7%9E%D7%9B%D7%95%D7%AA%20%D7%91%D7%9E%D7%A9%D7%A4%D7%98%20%D7%94%D7%9E%D7%A0%D7%94%D7%9C%D7%99.pdf",
+      "title": "הגנת ההסתמכות במשפט המנהלי",
+      "number": 8,
+      "source_type": "academic article (Hebrew)"
+    }
+  ]
+}
