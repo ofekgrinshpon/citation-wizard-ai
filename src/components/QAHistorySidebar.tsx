@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, BookOpen, GraduationCap, Clock } from "lucide-react";
+import { Search, BookOpen, GraduationCap, BookMarked, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { he } from "date-fns/locale";
 
@@ -35,6 +35,7 @@ interface Props {
 
 const MODE_LABELS: Record<string, { label: string; icon: typeof Search }> = {
   research: { label: "מחקר", icon: Search },
+  legal_source_search: { label: "חיפוש מקורות", icon: BookMarked },
   case_summary: { label: "סיכום", icon: BookOpen },
   academic_writing: { label: "כתיבה אקדמית", icon: GraduationCap },
 };
@@ -92,8 +93,16 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
     : logs;
 
   const handleClick = (log: QALogRecord) => {
-    if (!onLoadResult || !log.answer) return;
+    if (!onLoadResult || log.answer === null || log.answer === undefined) return;
     const fn = log.footnotes;
+    const sourcesEnvelope =
+      Array.isArray(fn) && fn.length > 0 && fn[0] && typeof fn[0] === "object" && (fn[0] as any).__sources_only === true
+        ? (fn[0] as any)
+        : (fn && !Array.isArray(fn) && typeof fn === "object" && (fn as any).__sources_only === true ? (fn as any) : null);
+    if (sourcesEnvelope) {
+      onLoadResult(log.question, sourcesEnvelope.payload ?? sourcesEnvelope, "legal_source_search");
+      return;
+    }
     const isCaseSummaryEnvelope = fn && !Array.isArray(fn) && typeof fn === "object" && fn.__case_summary === true;
     const result: QAResult = isCaseSummaryEnvelope
       ? {

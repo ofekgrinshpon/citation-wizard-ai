@@ -130,7 +130,11 @@ const Index = () => {
   } | null>(null);
   const [citationRefreshKey, setCitationRefreshKey] = useState(0);
   const [qaRefreshKey, setQaRefreshKey] = useState(0);
-  const [qaExternalResult, setQaExternalResult] = useState<{ question: string; result: any; taskMode: "research" | "case_summary" | "academic_writing" } | null>(null);
+  const [qaExternalResult, setQaExternalResult] = useState<
+    | { question: string; result: any; taskMode: "research" | "case_summary" | "academic_writing" }
+    | { question: string; sourcesPayload: any; taskMode: "legal_source_search" }
+    | null
+  >(null);
   const [academicResumeSignal, setAcademicResumeSignal] = useState<number>(0);
   const [academicResumeFallback, setAcademicResumeFallback] = useState<{ question: string; result: any } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -1204,6 +1208,8 @@ const Index = () => {
                   if (taskMode === "academic_writing") {
                     setAcademicResumeFallback({ question, result });
                     setAcademicResumeSignal(Date.now());
+                  } else if (taskMode === "legal_source_search") {
+                    setQaExternalResult({ question, sourcesPayload: result, taskMode: "legal_source_search" });
                   } else {
                     setQaExternalResult({ question, result, taskMode: taskMode as "research" | "case_summary" | "academic_writing" });
                   }

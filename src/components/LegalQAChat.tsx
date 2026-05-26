@@ -10,7 +10,7 @@ import { safeStorage } from "@/lib/safeStorage";
 
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
-import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, BookOpen, GraduationCap, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, Lock, Wand2, Zap, Brain, type LucideIcon } from "lucide-react";
+import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, BookOpen, GraduationCap, BookMarked, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, Lock, Wand2, Zap, Brain, type LucideIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CaseSummaryReport } from "@/components/CaseSummaryReport";
 
@@ -26,6 +26,7 @@ type StageEvent = {
 import { CitationReviewPanel } from "@/components/legal-qa/CitationReviewPanel";
 import { MaintenanceCard } from "@/components/MaintenanceCard";
 import { LegalResearchV1Panel } from "@/components/LegalResearchV1Panel";
+import { LegalSourceSearchPanel } from "@/components/LegalSourceSearchPanel";
 
 // ─── Offline-engine guard (D1 reset) ──────────────────────────────
 // Research mode and academic chapter generation (body/introduction/
@@ -143,12 +144,13 @@ interface QAResult {
   noCoverage?: boolean;
 }
 
-type TaskMode = "research" | "case_summary" | "academic_writing";
+type TaskMode = "research" | "legal_source_search" | "case_summary" | "academic_writing";
 
 const FILE_RELEVANT_MODES: TaskMode[] = ["case_summary", "academic_writing"];
 
 const TASK_MODES: { id: TaskMode; label: string; description: string; placeholder: string; icon: LucideIcon }[] = [
   { id: "research", label: "מחקר משפטי", description: "סריקה מקיפה עם מסגרת נורמטיבית מלאה", placeholder: "תארו שאלה משפטית לסקירה מקיפה...", icon: Search },
+  { id: "legal_source_search", label: "חיפוש מקורות", description: "חיפוש מקורות אקדמיים למחקר משפטי", placeholder: "הזן שאלה משפטית או נושא למחקר…", icon: BookMarked },
   { id: "case_summary", label: "סיכום פסיקה", description: "תמצית: עובדות, שאלה משפטית, הכרעה ורציו", placeholder: "הזינו שם פסק דין או הדביקו טקסט לסיכום...", icon: BookOpen },
   { id: "academic_writing", label: "כתיבה אקדמית", description: "ליווי בכתיבת סמינריונים ומאמרים אקדמיים בשלבים", placeholder: "תארו נושא מחקר או שאלת מחקר...", icon: GraduationCap },
 ];
@@ -860,7 +862,10 @@ async function extractDocxText(file: File): Promise<string> {
 
 interface LegalQAChatProps {
   onResultSaved?: () => void;
-  externalResult?: { question: string; result: QAResult; taskMode: TaskMode } | null;
+  externalResult?:
+    | { question: string; result: QAResult; taskMode: "research" | "case_summary" | "academic_writing" }
+    | { question: string; sourcesPayload: any; taskMode: "legal_source_search" }
+    | null;
   academicResumeSignal?: number;
   academicResumeFallback?: { question: string; result: QAResult } | null;
 }
@@ -1055,11 +1060,15 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
 
   // Load external result from history sidebar
   useEffect(() => {
-    if (externalResult) {
+    if (!externalResult) return;
+    if (externalResult.taskMode === "legal_source_search") {
       setQuestion(externalResult.question);
-      setResult(externalResult.result);
-      setTaskMode(externalResult.taskMode);
+      setTaskMode("legal_source_search");
+      return;
     }
+    setQuestion(externalResult.question);
+    setResult(externalResult.result);
+    setTaskMode(externalResult.taskMode);
   }, [externalResult]);
 
   // Resume academic session from history sidebar click (DB first, localStorage fallback)
@@ -1922,6 +1931,8 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       if (wizardStep === "init" || wizardStep === "topic_or_question") return;
       return;
     }
+    // Sources-only mode is owned entirely by its own panel.
+    if (taskMode === "legal_source_search") return;
     // D1: Research is offline. Never fire a request — show the maintenance
     // notice and bail before any network call. String cast prevents TS from
     // narrowing `taskMode` and breaking downstream branches we leave in place
@@ -2930,7 +2941,19 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           </div>
         )}
 
-        {!isAcademic && !result && !loading && !error && taskMode !== "research" && (
+        {!isAcademic && taskMode === "legal_source_search" && (
+          <div className="h-full flex flex-col py-4">
+            <LegalSourceSearchPanel
+              externalResult={
+                externalResult && externalResult.taskMode === "legal_source_search"
+                  ? { question: externalResult.question, payload: externalResult.sourcesPayload }
+                  : null
+              }
+            />
+          </div>
+        )}
+
+        {!isAcademic && !result && !loading && !error && taskMode !== "research" && taskMode !== "legal_source_search" && (
 
           <div className="flex flex-col items-center justify-center h-full py-12 text-center">
             <div className="text-4xl mb-3">⚖️</div>
@@ -3105,7 +3128,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       {/* Bottom: Input bar pinned */}
       <div className="mt-auto px-2 sm:px-4 pb-2 pt-2 space-y-1.5 border-t border-border bg-background">
         {/* Hide input bar for academic mode (it has its own UI) unless in non-wizard steps */}
-        {!isAcademic && taskMode !== "research" && (
+        {!isAcademic && taskMode !== "research" && taskMode !== "legal_source_search" && (
           <div className="flex gap-2 items-end">
             {/* File upload zone */}
             <div
