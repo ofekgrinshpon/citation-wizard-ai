@@ -1,0 +1,56 @@
+{
+  "fixture_id": "L1",
+  "run_id": "8bacba33-d4f1-4cb7-a2c1-dcf7f3fecc65",
+  "qa_log_id": "9f909eb5-31da-487d-8ed1-1c3d9f405085",
+  "total_ms": 184988,
+  "stage_ms": {
+    "analyzer_ms": null,
+    "planner_ms": null,
+    "local_retrieval_ms": 2811,
+    "perplexity_ms": 36885,
+    "verifier_ms": 39484,
+    "drafter_ms": 42006
+  },
+  "verifier": {
+    "batch_count": 1,
+    "parallel": true,
+    "concurrency_limit": 2,
+    "candidates_verified": 9,
+    "usable": 6,
+    "dropped": 3,
+    "escalated_claims": [],
+    "escalated_batches": 0,
+    "model_initial": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "rate_limit_count": 0,
+    "fallback_to_sequential": false
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "model_initial": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "footnote_count": 6,
+    "used_sources_count": 6,
+    "footnote_eq_used": true,
+    "marker_validation_ok": true,
+    "internal_id_leak": false
+  },
+  "candidate_pool": {
+    "found": 53,
+    "after_dedup": 9,
+    "by_origin": {
+      "local_db": 4,
+      "perplexity": 5
+    },
+    "final_in_metadata": 9
+  },
+  "local_aggregate": {
+    "wall_ms": 2811,
+    "text_timeout_count": 0,
+    "vector_timeout_count": 0,
+    "slowest_method": "text",
+    "max_query_ms": 2806
+  },
+  "stub_answer": false
+}
