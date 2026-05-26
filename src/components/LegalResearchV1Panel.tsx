@@ -29,9 +29,6 @@ function fmtSize(b: number) {
   return `${(b / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-
-// ─── Loading stages (Hebrew, ordered) ──────────────────────────────────────
-const STAGES = [
 // Stage keys must match what the edge function writes into
 // legal_research_jobs.current_stage / completed_stages.
 const STAGES: Array<{ key: string; label: string }> = [
