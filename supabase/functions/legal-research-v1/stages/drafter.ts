@@ -796,6 +796,35 @@ export async function runDrafter(
     }
   }
 
+  // Narrow C# scrub before escalation — saves the ~133s gpt-5 round trip
+  // when the only failure is leaked claim-label scaffolding.
+  if (
+    parsed.ok && !marker.ok && marker.internal_id_leak &&
+    marker.leaked_tokens.length === 1 && marker.leaked_tokens[0] === "C#"
+  ) {
+    const scrub = scrubInternalClaimLabels(answer);
+    scrub_attempted = true;
+    scrub_patterns = scrub.patterns;
+    if (!scrub.changed) {
+      scrub_rejected_reason = "no_pattern_matched";
+    } else {
+      const candidate = scrub.text;
+      const prevMarkers = extractMarkers(answer).length;
+      const m2 = runMarkerValidation(candidate, used);
+      if (!m2.ok) {
+        scrub_rejected_reason = "marker_validation_failed";
+      } else if (m2.internal_id_leak) {
+        scrub_rejected_reason = "residual_leak";
+      } else if (extractMarkers(candidate).length !== prevMarkers) {
+        scrub_rejected_reason = "marker_count_changed";
+      } else {
+        answer = candidate;
+        marker = { ...m2, repaired: true };
+        scrub_accepted = true;
+      }
+    }
+  }
+
   // Escalate once to gpt-5 if still broken.
   if (!parsed.ok || !marker.ok) {
     escalated = true;
