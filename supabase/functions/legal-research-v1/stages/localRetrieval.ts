@@ -423,6 +423,21 @@ export interface LocalRetrievalResult {
     clues_from_question: ExactClue[];
     clues_from_claims: ExactClue[];
   };
+  aggregate: {
+    wall_ms: number;
+    queries_executed: number;
+    duplicate_query_count: number;
+    text_timeout_count: number;
+    vector_timeout_count: number;
+    exact_error_count: number;
+    sum_query_ms: number;
+    max_query_ms: number;
+    slowest_query: { claim_id: string; role: string; query_he: string; ms: number; exact_ms: number; text_ms: number; vector_ms: number; embedding_ms: number } | null;
+    method_total_ms: { exact: number; text: number; embedding: number; vector: number };
+    slowest_method: "exact" | "text" | "embedding" | "vector";
+    candidates_by_method: { exact_authority: number; text: number; vector: number };
+    bottleneck_hypothesis: string;
+  };
 }
 
 export async function runLocalRetrieval(
