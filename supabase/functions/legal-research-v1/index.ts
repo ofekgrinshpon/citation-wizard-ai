@@ -58,6 +58,30 @@ async function handle(req: Request): Promise<Response> {
     }
   };
 
+  // Per-stage progress tracking for the client UI.
+  const completedStages: string[] = [];
+  let currentStage: string | null = null;
+  const markStage = async (stage: string) => {
+    if (currentStage && !completedStages.includes(currentStage)) {
+      completedStages.push(currentStage);
+    }
+    currentStage = stage;
+    await setJobStatus({
+      current_stage: stage,
+      completed_stages: completedStages,
+    });
+  };
+  const completeAllStages = async () => {
+    if (currentStage && !completedStages.includes(currentStage)) {
+      completedStages.push(currentStage);
+    }
+    currentStage = null;
+    await setJobStatus({
+      current_stage: null,
+      completed_stages: completedStages,
+    });
+  };
+
   const run_id = crypto.randomUUID();
   const t_start = Date.now();
   const stage_runs: StageRun[] = [];
