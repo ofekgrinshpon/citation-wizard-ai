@@ -110,7 +110,12 @@ function fmtElapsed(ms: number) {
   return `${mm}:${ss}`;
 }
 
-export function LegalSourceSearchPanel() {
+interface LegalSourceSearchPanelProps {
+  externalResult?: { question: string; payload: SourcesOnlyResponse } | null;
+  onConsumeExternalResult?: () => void;
+}
+
+export function LegalSourceSearchPanel({ externalResult, onConsumeExternalResult }: LegalSourceSearchPanelProps = {}) {
   const { currentProject } = useProjects();
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
@@ -120,6 +125,18 @@ export function LegalSourceSearchPanel() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<SourcesOnlyResponse | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
+
+  // Hydrate from history click
+  useEffect(() => {
+    if (externalResult?.payload) {
+      setResult(externalResult.payload);
+      setQuestion(externalResult.question || "");
+      setLoading(false);
+      setError(null);
+      onConsumeExternalResult?.();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [externalResult]);
 
   const progressTimerRef = useRef<number | null>(null);
   const pollTimerRef = useRef<number | null>(null);
