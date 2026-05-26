@@ -15,7 +15,6 @@ import {
   MarkerValidation,
   MODEL_FULL,
   MODEL_MINI,
-  Rule37Report,
   StageRun,
   UsableCandidate,
   UsedSource,
