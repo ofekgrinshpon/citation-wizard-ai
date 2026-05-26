@@ -862,7 +862,10 @@ async function extractDocxText(file: File): Promise<string> {
 
 interface LegalQAChatProps {
   onResultSaved?: () => void;
-  externalResult?: { question: string; result: QAResult; taskMode: TaskMode } | null;
+  externalResult?:
+    | { question: string; result: QAResult; taskMode: "research" | "case_summary" | "academic_writing" }
+    | { question: string; sourcesPayload: any; taskMode: "legal_source_search" }
+    | null;
   academicResumeSignal?: number;
   academicResumeFallback?: { question: string; result: QAResult } | null;
 }
