@@ -1,0 +1,144 @@
+{
+  "fixture_id": "L1",
+  "run_id": "ebd1d67e-8681-4c9c-ab86-d70104af1a89",
+  "qa_log_id": "48482287-9a47-4243-8d7d-539952c4aecf",
+  "local_retrieval": {
+    "wall_ms": 5101,
+    "candidates": 32,
+    "aggregate": {
+      "wall_ms": 5101,
+      "max_query_ms": 5098,
+      "sum_query_ms": 19168,
+      "slowest_query": {
+        "ms": 5098,
+        "role": "binding_case_law",
+        "text_ms": 3507,
+        "claim_id": "C2",
+        "exact_ms": 0,
+        "query_he": "צו מניעה זמני בית המשפט העליון 'איזון נזקים' 'פגיעה בלתי-הפיכה' 'balance of convenience' פסק-דין",
+        "vector_ms": 1590,
+        "embedding_ms": 250
+      },
+      "slowest_method": "text",
+      "method_total_ms": {
+        "text": 13410,
+        "exact": 0,
+        "vector": 5754,
+        "embedding": 786
+      },
+      "queries_executed": 4,
+      "exact_error_count": 0,
+      "text_timeout_count": 0,
+      "candidates_by_method": {
+        "text": 24,
+        "vector": 8,
+        "exact_authority": 0
+      },
+      "vector_timeout_count": 0,
+      "bottleneck_hypothesis": "single_slow_query (max=5098ms ≈ wall=5101ms)",
+      "duplicate_query_count": 0
+    },
+    "per_query": [
+      {
+        "claim_id": "C3",
+        "role": "binding_case_law",
+        "query_he": "צו מניעה זמני בית המשפט העליון 'התחייבות לפיצוי' 'undertaking as to damages' 'ערובה' פסק-דין",
+        "compact_query_he": "צו מניעה זמני העליון התחייבות לפיצוי undertaking as to damages",
+        "total_query_ms": 4264,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 3296,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 194,
+          "rpc_ms": 968,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 3296,
+        "kept": 8
+      },
+      {
+        "claim_id": "C1",
+        "role": "binding_case_law",
+        "query_he": "צו מניעה זמני בית המשפט העליון 'שאלה אמיתית לדיון' 'סיכוי סביר' 'prima facie' פסק-דין",
+        "compact_query_he": "צו מניעה זמני העליון שאלה אמיתית לדיון סיכוי סביר prima",
+        "total_query_ms": 4728,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 3303,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 183,
+          "rpc_ms": 1422,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 3303,
+        "kept": 8
+      },
+      {
+        "claim_id": "C4",
+        "role": "binding_case_law",
+        "query_he": "צו מניעה זמני בית המשפט העליון 'הסעד הסופי חסר תכלית' 'rendering final relief ineffectual' פסק-דין",
+        "compact_query_he": "צו מניעה זמני העליון הסעד הסופי חסר תכלית rendering final",
+        "total_query_ms": 5078,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 3304,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 159,
+          "rpc_ms": 1774,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 3303,
+        "kept": 8
+      },
+      {
+        "claim_id": "C2",
+        "role": "binding_case_law",
+        "query_he": "צו מניעה זמני בית המשפט העליון 'איזון נזקים' 'פגיעה בלתי-הפיכה' 'balance of convenience' פסק-דין",
+        "compact_query_he": "צו מניעה זמני העליון איזון נזקים פגיעה בלתי-הפיכה balance of",
+        "total_query_ms": 5098,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 3507,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 250,
+          "rpc_ms": 1590,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 3507,
+        "kept": 8
+      }
+    ]
+  }
+}

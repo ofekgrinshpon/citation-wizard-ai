@@ -1,0 +1,219 @@
+{
+  "fixture_id": "L3",
+  "run_id": "fe40f7d5-92d4-4ca6-b1ac-4310df8c9e8d",
+  "qa_log_id": "6215fe1e-5db7-4eda-9603-7a54ee95ea19",
+  "local_retrieval": {
+    "wall_ms": 5762,
+    "candidates": 96,
+    "aggregate": {
+      "wall_ms": 5762,
+      "max_query_ms": 5759,
+      "sum_query_ms": 39401,
+      "slowest_query": {
+        "ms": 5759,
+        "role": "persuasive_case_law",
+        "text_ms": 5590,
+        "claim_id": "C2",
+        "exact_ms": 483,
+        "query_he": "בתי משפט מחוזיים/שלום פיצוי מוסכם הפחתת סעיף 15 חוק החוזים (תרופות) מבחן אי-תאימות הפרזה חוזק מיקום המיקוח הטעיה רשלנות",
+        "vector_ms": 167,
+        "embedding_ms": 324
+      },
+      "slowest_method": "text",
+      "method_total_ms": {
+        "text": 38169,
+        "exact": 3643,
+        "vector": 1227,
+        "embedding": 1724
+      },
+      "queries_executed": 7,
+      "exact_error_count": 0,
+      "text_timeout_count": 0,
+      "candidates_by_method": {
+        "text": 41,
+        "vector": 11,
+        "exact_authority": 44
+      },
+      "vector_timeout_count": 0,
+      "bottleneck_hypothesis": "single_slow_query (max=5759ms ≈ wall=5762ms)",
+      "duplicate_query_count": 0
+    },
+    "per_query": [
+      {
+        "claim_id": "C4",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון דוגמאות הפחתת פיצוי מוסכם הסכמי צרכנות ערבויות סעיפי נזקים עתידיים 'סעיף 15 לחוק החוזים (תרופות)' מקרים טיפוסיים",
+        "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון",
+        "total_query_ms": 5469,
+        "exact": {
+          "ms": 523,
+          "status": "ok",
+          "hits": 6
+        },
+        "text": {
+          "ms": 5240,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 198,
+          "rpc_ms": 228,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 5240,
+        "kept": 13
+      },
+      {
+        "claim_id": "C1",
+        "role": "primary_statute",
+        "query_he": "נוסח וסעיפים: \"סעיף 15 לחוק החוזים (תרופות)\" הוראות הפחתת פיצוי מוסכם סמכות בית המשפט פירוש מילולי ופרשנות חקיקתית",
+        "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות נוסח",
+        "total_query_ms": 5534,
+        "exact": {
+          "ms": 587,
+          "status": "ok",
+          "hits": 7
+        },
+        "text": {
+          "ms": 5244,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 240,
+          "rpc_ms": 289,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 5244,
+        "kept": 13
+      },
+      {
+        "claim_id": "C3",
+        "role": "primary_statute",
+        "query_he": "\"סעיף 15 לחוק החוזים (תרופות)\" הוראות פירושיות האם מצוין נטל הוכחה סטנדרט ראייתי תוצאות משפטיות אפשריות (הפחתה לסכום סביר/ביטול)",
+        "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות הוראות",
+        "total_query_ms": 5535,
+        "exact": {
+          "ms": 553,
+          "status": "ok",
+          "hits": 7
+        },
+        "text": {
+          "ms": 5364,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 239,
+          "rpc_ms": 171,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 5364,
+        "kept": 15
+      },
+      {
+        "claim_id": "C3",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון 'נטל הוכחה' 'פיצוי מוסכם' 'סעיף 15' סטנדרט ראיה מי נושא בנטל התוצאה הפחתה לסכום סביר ביטול הסעיף",
+        "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון נטל",
+        "total_query_ms": 5672,
+        "exact": {
+          "ms": 513,
+          "status": "ok",
+          "hits": 6
+        },
+        "text": {
+          "ms": 5541,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 216,
+          "rpc_ms": 131,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 5541,
+        "kept": 13
+      },
+      {
+        "claim_id": "C2",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פיצוי מוסכם \"סעיף 15 לחוק החוזים (תרופות)\" מבחן הפרזה אי-תאימות פיצוי או עונש כוונת הצדדים גורמים שיקוליים",
+        "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות העליון מבחן",
+        "total_query_ms": 5675,
+        "exact": {
+          "ms": 475,
+          "status": "ok",
+          "hits": 6
+        },
+        "text": {
+          "ms": 5537,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 305,
+          "rpc_ms": 137,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 5537,
+        "kept": 14
+      },
+      {
+        "claim_id": "C4",
+        "role": "persuasive_case_law",
+        "query_he": "בתי משפט מחוזיים פיצוי מוסכם דוגמאות מעשיות הסכמי שירותים צורכנות ראיות עסקיות ופיננסיות להוכחת אי-תאימות מבוססות תצהירים דוחות כספיים",
+        "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות בתי משפט",
+        "total_query_ms": 5757,
+        "exact": {
+          "ms": 509,
+          "status": "ok",
+          "hits": 6
+        },
+        "text": {
+          "ms": 5653,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 202,
+          "rpc_ms": 104,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 5653,
+        "kept": 14
+      },
+      {
+        "claim_id": "C2",
+        "role": "persuasive_case_law",
+        "query_he": "בתי משפט מחוזיים/שלום פיצוי מוסכם הפחתת סעיף 15 חוק החוזים (תרופות) מבחן אי-תאימות הפרזה חוזק מיקום המיקוח הטעיה רשלנות",
+        "compact_query_he": "פיצוי מוסכם הפחתת פיצוי מוסכם סעיף 15 לחוק החוזים חוק החוזים תרופות בתי משפט",
+        "total_query_ms": 5759,
+        "exact": {
+          "ms": 483,
+          "status": "ok",
+          "hits": 6
+        },
+        "text": {
+          "ms": 5590,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 324,
+          "rpc_ms": 167,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 5590,
+        "kept": 14
+      }
+    ]
+  }
+}

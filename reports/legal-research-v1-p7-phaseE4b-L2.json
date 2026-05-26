@@ -1,0 +1,169 @@
+{
+  "fixture_id": "L2",
+  "run_id": "8759fbf2-b367-42ad-b0fe-fb9d12fbde12",
+  "qa_log_id": "ea118653-b01f-42e0-8ee8-28b213b00c9f",
+  "local_retrieval": {
+    "wall_ms": 2365,
+    "candidates": 40,
+    "aggregate": {
+      "wall_ms": 2365,
+      "max_query_ms": 2361,
+      "sum_query_ms": 10664,
+      "slowest_query": {
+        "ms": 2361,
+        "role": "binding_case_law",
+        "text_ms": 1720,
+        "claim_id": "C3",
+        "exact_ms": 0,
+        "query_he": "בית המשפט העליון \"הבטחה מנהלית\" \"שינוי נסיבות\" חריגים \"אינטרס ציבורי\" מתי רשויות יכולות לשנות הבטחות פסק דין",
+        "vector_ms": 640,
+        "embedding_ms": 170
+      },
+      "slowest_method": "text",
+      "method_total_ms": {
+        "text": 8595,
+        "exact": 0,
+        "vector": 2063,
+        "embedding": 982
+      },
+      "queries_executed": 5,
+      "exact_error_count": 0,
+      "text_timeout_count": 0,
+      "candidates_by_method": {
+        "text": 30,
+        "vector": 10,
+        "exact_authority": 0
+      },
+      "vector_timeout_count": 0,
+      "bottleneck_hypothesis": "single_slow_query (max=2361ms ≈ wall=2365ms)",
+      "duplicate_query_count": 0
+    },
+    "per_query": [
+      {
+        "claim_id": "C1",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסק דין \"הבטחה מנהלית\" \"הסתמכות סבירה\" \"הצהרה\" \"נזק\" אלמנטים דוקטרינת ההבטחה המנהלית",
+        "compact_query_he": "הבטחה מנהלית חוסר סמכות העליון דין הסתמכות סבירה הצהרה נזק",
+        "total_query_ms": 2012,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 1738,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 279,
+          "rpc_ms": 272,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 1738,
+        "kept": 8
+      },
+      {
+        "claim_id": "C4",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון פסק דין \"הבטחה מנהלית\" \"סעד\" \"צו מניעה\" \"צו לשחזור מצב קדם\" \"פיצוי\" \"התאמה שיפוטית\"",
+        "compact_query_he": "הבטחה מנהלית חוסר סמכות העליון דין סעד צו מניעה לשחזור",
+        "total_query_ms": 2035,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 1748,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 180,
+          "rpc_ms": 286,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 1748,
+        "kept": 8
+      },
+      {
+        "claim_id": "C2",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון \"הבסיס הנורמטיבי\" \"הבטחה מנהלית\" האם נגזרת מחקיקה או מפסיקה פסק דין דן במסמכותה הנורמטיבית",
+        "compact_query_he": "הבטחה מנהלית חוסר סמכות העליון הבסיס הנורמטיבי נגזרת מחקיקה מפסיקה",
+        "total_query_ms": 2052,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 1576,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 183,
+          "rpc_ms": 474,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 1576,
+        "kept": 8
+      },
+      {
+        "claim_id": "C5",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון \"הבדל בין הבטחה מנהלית ל‑estoppel\" \"legitimate expectation\" \"השתקה\" פסק דין מבחינים בדוקטרינות",
+        "compact_query_he": "הבטחה מנהלית חוסר סמכות העליון הבדל בין ל‑estoppel legitimate expectation",
+        "total_query_ms": 2204,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 1813,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 170,
+          "rpc_ms": 391,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 1813,
+        "kept": 8
+      },
+      {
+        "claim_id": "C3",
+        "role": "binding_case_law",
+        "query_he": "בית המשפט העליון \"הבטחה מנהלית\" \"שינוי נסיבות\" חריגים \"אינטרס ציבורי\" מתי רשויות יכולות לשנות הבטחות פסק דין",
+        "compact_query_he": "הבטחה מנהלית חוסר סמכות העליון שינוי נסיבות חריגים אינטרס ציבורי",
+        "total_query_ms": 2361,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 1720,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 170,
+          "rpc_ms": 640,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 1720,
+        "kept": 8
+      }
+    ]
+  }
+}
