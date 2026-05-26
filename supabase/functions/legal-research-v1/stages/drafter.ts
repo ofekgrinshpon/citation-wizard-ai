@@ -737,6 +737,17 @@ export async function runDrafter(
     parameters: DRAFTER_TOOL_PARAMETERS,
   };
 
+  // Scrub telemetry (populated when C# leak triggers narrow cleanup).
+  let scrub_attempted = false;
+  let scrub_accepted = false;
+  let scrub_patterns: string[] = [];
+  let scrub_rejected_reason:
+    | "no_pattern_matched"
+    | "marker_validation_failed"
+    | "residual_leak"
+    | "marker_count_changed"
+    | undefined;
+
   // Attempt 1: gpt-5-mini
   const t0 = Date.now();
   let modelUsed = MODEL_MINI;
