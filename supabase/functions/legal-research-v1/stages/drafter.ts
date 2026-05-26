@@ -528,47 +528,6 @@ function validatePlacement(answer: string): import("../lib/types.ts").PlacementR
   };
 }
 
-function buildPlacementRepairUserMessage(
-  originalUserMsg: string,
-  currentAnswer: string,
-  used: Array<{ ref: string; number: number; candidate_id: string }>,
-  placement: import("../lib/types.ts").PlacementReport,
-): string {
-  const lines: string[] = [];
-  lines.push(originalUserMsg);
-  lines.push("");
-  lines.push("=== מצב תיקון מיקום הערות שוליים בלבד ===");
-  lines.push("התשובה הקודמת שלך:");
-  lines.push(currentAnswer);
-  lines.push("");
-  lines.push("בעיות מיקום שזוהו:");
-  if (placement.cluster_count > 0) {
-    lines.push(`- ${placement.cluster_count} צמדי סימוני־על סמוכים על אותה מילה. דוגמאות:`);
-    for (const s of placement.cluster_samples) lines.push(`  • ${s}`);
-  }
-  if (placement.end_paragraph_dump_count > 0) {
-    lines.push(`- ${placement.end_paragraph_dump_count} פסקאות מסתיימות בריכוז הערות. דוגמאות:`);
-    for (const s of placement.end_dump_samples) lines.push(`  • ${s}`);
-  }
-  if (placement.out_of_order_count > 0) {
-    lines.push(`- ${placement.out_of_order_count} הערות שאינן בסדר כרונולוגי לפי הופעה ראשונה.`);
-  }
-  lines.push("");
-  lines.push("הוראות תיקון מחייבות:");
-  lines.push("- מותר להזיז סימוני־על למיקום מתאים יותר במשפט/בפסקה.");
-  lines.push("- מותר לפזר סימונים סמוכים על פני המשפטים הרלוונטיים באותה פסקה.");
-  lines.push("- מותר לפצל משפט בודד לשני משפטים כשהדבר הכרחי לפיזור הסימונים.");
-  lines.push("- אסור להסיר סימוני־על. אסור להסיר מקורות. אסור לשנות את רשימת used_sources, את מיפוי ref→candidate_id, או את המספרים שהוקצו למקורות.");
-  lines.push("- אסור לשנות את הניסוח המשפטי או להוסיף קביעות חדשות. השינוי היחיד המותר הוא הזזת סימונים ופיצול משפטים נחוץ.");
-  lines.push("- אסור להוסיף מקורות חדשים.");
-  lines.push("- שמור על אותו מספר סימונים בדיוק, ועל אותם מספרי הערות כפי שמופיעים כעת.");
-  lines.push("");
-  lines.push("מספרי הערות נוכחיים (אסור לשנותם):");
-  for (const u of used) lines.push(`  - ${u.ref} → ${u.number}`);
-  lines.push("");
-  lines.push("החזר את התשובה המתוקנת דרך emit_draft עם אותו used_sources בדיוק.");
-  return lines.join("\n");
-}
 
 
 /**
