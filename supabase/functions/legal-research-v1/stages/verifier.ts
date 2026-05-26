@@ -225,6 +225,18 @@ export interface VerifierResult {
   stage_runs: StageRun[];
   errors: Array<{ claim_id: string; reason: string }>;
   batches: Array<{ label: string; claim_ids: string[]; candidates: number; escalated: boolean; ms: number }>;
+  // P6.2b parallel verifier telemetry (orchestration only, contract preserved):
+  parallel: boolean;
+  concurrency_limit: number;
+  batch_count: number;
+  batch_ms: number[];
+  total_wall_ms: number;
+  total_sum_ms: number;
+  escalated_batches: number;
+  merge_order_preserved: boolean;
+  rate_limit_count: number;
+  retry_count: number;
+  fallback_to_sequential: boolean;
 }
 
 interface Batch {
