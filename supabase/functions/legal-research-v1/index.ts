@@ -473,7 +473,6 @@ async function handle(req: Request): Promise<Response> {
     marker_validation: drafter.marker_validation,
     omitted_candidate_ids: drafter.omitted_candidate_ids,
     used_sources: drafter.used_sources,
-    rule37: drafter.rule37,
     marker_format: drafter.marker_format,
     atomic: drafter.atomic,
     error: drafter.error,
