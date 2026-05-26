@@ -35,6 +35,7 @@ interface Props {
 
 const MODE_LABELS: Record<string, { label: string; icon: typeof Search }> = {
   research: { label: "מחקר", icon: Search },
+  legal_source_search: { label: "חיפוש מקורות", icon: BookMarked },
   case_summary: { label: "סיכום", icon: BookOpen },
   academic_writing: { label: "כתיבה אקדמית", icon: GraduationCap },
 };
