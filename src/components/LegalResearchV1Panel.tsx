@@ -662,4 +662,33 @@ function DebugBlock({ title, data }: { title: string; data: unknown }) {
   );
 }
 
+
+function GhostAnswer() {
+  const answerLines = ["w-11/12", "w-full", "w-10/12", "w-11/12", "w-9/12", "w-full", "w-8/12"];
+  const footnoteLines = ["w-7/12", "w-8/12", "w-6/12"];
+  return (
+    <div className="space-y-4 animate-fade-in" aria-hidden>
+      <div className="rounded-lg border border-border bg-card p-4 space-y-2.5">
+        <div className="h-4 w-24 rounded bg-muted blur-[1px] animate-pulse" />
+        {answerLines.map((w, i) => (
+          <div
+            key={i}
+            className={`h-3 ${w} rounded bg-muted blur-[2px] animate-pulse`}
+            style={{ animationDelay: `${i * 120}ms` }}
+          />
+        ))}
+      </div>
+      <div className="rounded-lg border border-border bg-card p-4 space-y-2">
+        <div className="h-4 w-32 rounded bg-muted blur-[1px] animate-pulse" />
+        {footnoteLines.map((w, i) => (
+          <div
+            key={i}
+            className={`h-2.5 ${w} rounded bg-muted blur-[2px] animate-pulse`}
+            style={{ animationDelay: `${(i + 2) * 120}ms` }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 export default LegalResearchV1Panel;
