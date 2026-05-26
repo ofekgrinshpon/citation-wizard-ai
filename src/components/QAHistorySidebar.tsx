@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, BookOpen, FileSearch, GraduationCap, Clock } from "lucide-react";
+import { Search, BookOpen, GraduationCap, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { he } from "date-fns/locale";
 
@@ -35,7 +35,6 @@ interface Props {
 
 const MODE_LABELS: Record<string, { label: string; icon: typeof Search }> = {
   research: { label: "מחקר", icon: Search },
-  pleading_analysis: { label: "ביקורת מסמך", icon: FileSearch },
   case_summary: { label: "סיכום", icon: BookOpen },
   academic_writing: { label: "כתיבה אקדמית", icon: GraduationCap },
 };

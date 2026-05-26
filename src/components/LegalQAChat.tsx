@@ -10,7 +10,7 @@ import { safeStorage } from "@/lib/safeStorage";
 
 import { toast } from "sonner";
 import { copyRichText } from "@/lib/clipboard";
-import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, FileSearch, BookOpen, GraduationCap, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, Lock, Wand2, Zap, Brain, type LucideIcon } from "lucide-react";
+import { Send, Copy, AlertTriangle, ExternalLink, Upload, X, FileText, Search, BookOpen, GraduationCap, StopCircle, Plus, Trash2, ChevronRight, ChevronLeft, Check, Lock, Wand2, Zap, Brain, type LucideIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { CaseSummaryReport } from "@/components/CaseSummaryReport";
 
@@ -31,7 +31,7 @@ import { LegalResearchV1Panel } from "@/components/LegalResearchV1Panel";
 // Research mode and academic chapter generation (body/introduction/
 // conclusion) are temporarily offline while the search engine is rebuilt.
 // Short academic steps (suggest_topics / validate_question / propose_outline /
-// abstract synthesis) and all other modes (case_summary, pleading_analysis,
+// abstract synthesis) and all other modes (case_summary,
 // citation/bibliography) remain fully available.
 const RESEARCH_OFFLINE_TITLE = "מצב מחקר משפטי בשדרוג";
 const RESEARCH_OFFLINE_MESSAGE =
@@ -39,9 +39,6 @@ const RESEARCH_OFFLINE_MESSAGE =
 const CHAPTER_OFFLINE_TITLE = "כתיבת פרקים בשדרוג";
 const CHAPTER_OFFLINE_MESSAGE =
   "כתיבת פרקי גוף, מבוא וסיכום מושבתת זמנית. אישור שאלת מחקר, הצעת נושאים, בניית מתווה וייצור התקציר זמינים כרגיל.";
-const PLEADING_OFFLINE_TITLE = "בדיקת כתבי טענות בשדרוג";
-const PLEADING_OFFLINE_MESSAGE =
-  "בקרת מסמכים משפטיים מושבתת זמנית בזמן שדרוג מנוע הניתוח. בינתיים ניתן להשתמש בסיכום פסיקה, אזכור אחיד, ביבליוגרפיה ובשלבים המקדימים של הכתיבה האקדמית.";
 
 
 // ─── Chapter role helpers ──────────────────────────────────────────
@@ -146,13 +143,12 @@ interface QAResult {
   noCoverage?: boolean;
 }
 
-type TaskMode = "research" | "pleading_analysis" | "case_summary" | "academic_writing";
+type TaskMode = "research" | "case_summary" | "academic_writing";
 
-const FILE_RELEVANT_MODES: TaskMode[] = ["pleading_analysis", "case_summary", "academic_writing"];
+const FILE_RELEVANT_MODES: TaskMode[] = ["case_summary", "academic_writing"];
 
 const TASK_MODES: { id: TaskMode; label: string; description: string; placeholder: string; icon: LucideIcon }[] = [
   { id: "research", label: "מחקר משפטי", description: "סריקה מקיפה עם מסגרת נורמטיבית מלאה", placeholder: "תארו שאלה משפטית לסקירה מקיפה...", icon: Search },
-  { id: "pleading_analysis", label: "בקרה למסמכים משפטיים", description: "דיוק אזכורים, סתירות לוגיות, ניתוח משפטי", placeholder: "הדביקו או העלו מסמך משפטי (כתב טענה, חוזה, חוות דעת) לביקורת מקיפה...", icon: FileSearch },
   { id: "case_summary", label: "סיכום פסיקה", description: "תמצית: עובדות, שאלה משפטית, הכרעה ורציו", placeholder: "הזינו שם פסק דין או הדביקו טקסט לסיכום...", icon: BookOpen },
   { id: "academic_writing", label: "כתיבה אקדמית", description: "ליווי בכתיבת סמינריונים ומאמרים אקדמיים בשלבים", placeholder: "תארו נושא מחקר או שאלת מחקר...", icon: GraduationCap },
 ];
@@ -1926,34 +1922,21 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       if (wizardStep === "init" || wizardStep === "topic_or_question") return;
       return;
     }
-    // D1/D3: Research and pleading_analysis are offline. Never fire a request —
-    // show the maintenance notice and bail before any network call. String
-    // casts prevent TS from narrowing `taskMode` and breaking downstream
-    // branches we leave in place for the eventual rebuild.
+    // D1: Research is offline. Never fire a request — show the maintenance
+    // notice and bail before any network call. String cast prevents TS from
+    // narrowing `taskMode` and breaking downstream branches we leave in place
+    // for the eventual rebuild.
     if ((taskMode as string) === "research") {
       toast.info(RESEARCH_OFFLINE_TITLE);
-      return;
-    }
-    if ((taskMode as string) === "pleading_analysis") {
-      toast.info(PLEADING_OFFLINE_TITLE);
       return;
     }
 
     const q = question.trim();
     const hasFile = extractedTexts.length > 0;
 
-    // For pleading_analysis: allow file-only submissions (no typed text required).
-    // For other modes: require ≥5 chars of typed text.
-    if ((taskMode as string) === "pleading_analysis") {
-      if (!hasFile && q.length < 5) {
-        toast.error("הזינו טקסט או העלו מסמך לביקורת.");
-        return;
-      }
-    } else {
-      if (!q || q.length < 5) {
-        toast.error("השאלה קצרה מדי. נסו לפרט יותר.");
-        return;
-      }
+    if (!q || q.length < 5) {
+      toast.error("השאלה קצרה מדי. נסו לפרט יותר.");
+      return;
     }
 
     setLoading(true);
@@ -1968,16 +1951,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
     abortControllerRef.current = controller;
 
     try {
-      // For pleading_analysis with a file but no typed text, send a default instruction
-      // so the edge function has a non-empty `question`. The actual audit subject is the file.
-      const effectiveQuestion =
-        (taskMode as string) === "pleading_analysis" && hasFile && q.length === 0
-          ? "בצע ביקורת מקיפה על המסמך המצורף"
-          : q;
+      const effectiveQuestion = q;
 
 
       // D3.1: Deep research async path removed. Research mode is offline
       // (short-circuited to 503 server-side). Fast SSE path is also dead but
+
       // left intact for any future revival.
       const body: Record<string, unknown> = {
         question: effectiveQuestion,
@@ -2951,12 +2930,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
           </div>
         )}
 
-        {!isAcademic && !result && !loading && !error && taskMode === "pleading_analysis" && (
-          <div className="py-6">
-            <MaintenanceCard title={PLEADING_OFFLINE_TITLE} message={PLEADING_OFFLINE_MESSAGE} />
-          </div>
-        )}
-        {!isAcademic && !result && !loading && !error && taskMode !== "research" && (taskMode as string) !== "pleading_analysis" && (
+        {!isAcademic && !result && !loading && !error && taskMode !== "research" && (
 
           <div className="flex flex-col items-center justify-center h-full py-12 text-center">
             <div className="text-4xl mb-3">⚖️</div>
@@ -2968,6 +2942,7 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
             </p>
           </div>
         )}
+
 
         {/* Inline error */}
         {!result && !loading && error && (
@@ -3194,21 +3169,12 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
                 ) : (
                   <button
                     onClick={handleSubmit}
-                    disabled={
-                      (taskMode as string) === "pleading_analysis"
-                        ? true
-                        : question.trim().length < 5
-                    }
-                    title={
-                      (taskMode as string) === "pleading_analysis"
-                        ? PLEADING_OFFLINE_TITLE
-                        : undefined
-                    }
-
+                    disabled={question.trim().length < 5}
                     className="btn-send px-4 py-2.5 m-1.5 text-primary-foreground text-base flex-shrink-0 disabled:text-muted-foreground"
                   >
                     ⇧
                   </button>
+
                 )}
               </div>
 
