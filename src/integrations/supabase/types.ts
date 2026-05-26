@@ -835,13 +835,6 @@ export type Database = {
         Args: { _user_id: string }
         Returns: Json
       }
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
       increment_citation_count: { Args: never; Returns: undefined }
       increment_usage_count: { Args: { source_id: string }; Returns: undefined }
       match_legal_chunks: {
