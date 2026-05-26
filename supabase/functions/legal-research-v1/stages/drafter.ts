@@ -157,6 +157,46 @@ function detectInternalIdLeak(text: string): { leak: boolean; tokens: string[] }
   return { leak: tokens.size > 0, tokens: [...tokens] };
 }
 
+// ─── Narrow deterministic scrub for leaked C# claim scaffolding ───────────
+// Removes ONLY obvious heading/label scaffolding like "C1 — ", "(C1) ",
+// "טענה C1:" at line starts, standalone parenthetical "(C1)", and bold
+// wrappers "**C1** —". Never touches bare `C\d+` mid-sentence. Returns the
+// cleaned text plus the labels of patterns that matched (for telemetry).
+export function scrubInternalClaimLabels(
+  answer: string,
+): { text: string; patterns: string[]; changed: boolean } {
+  const patterns: string[] = [];
+  let text = answer;
+
+  const apply = (re: RegExp, label: string, replacement: string) => {
+    if (re.test(text)) {
+      patterns.push(label);
+      re.lastIndex = 0;
+      text = text.replace(re, replacement);
+    } else {
+      re.lastIndex = 0;
+    }
+  };
+
+  // (e) bold/heading wrappers around claim labels: **C1** — / __C1__:
+  apply(/(?:^|\n)[ \t]*(?:\*\*|__)C\d+(?:\*\*|__)[ \t]*[—\-:][ \t]*/g, "bold_label", "\n");
+  // (c) "טענה C1:" / "Claim C1 -" at line start
+  apply(/(?:^|\n)[ \t]*(?:טענה|Claim|claim)[ \t]+C\d+[ \t]*[:\-—][ \t]*/g, "claim_word_prefix", "\n");
+  // (b) "(C1) " at line start (optional trailing separator)
+  apply(/(?:^|\n)[ \t]*\(C\d+\)[ \t]*[—\-:.]?[ \t]+/g, "paren_label", "\n");
+  // (a) "C1 — " / "C1: " / "C1. " at line start
+  apply(/(?:^|\n)[ \t]*C\d+[ \t]*[—\-:.\)][ \t]+/g, "line_prefix", "\n");
+  // (d) standalone parenthetical " (C1)" mid-text, followed by punctuation/space/EOL
+  apply(/[ \t]\(C\d+\)(?=[\s.,;:!?\)\]]|$)/g, "standalone_paren", "");
+
+  // Collapse any leading newline we may have introduced at the very start.
+  text = text.replace(/^\n+/, "");
+  // Collapse 3+ consecutive newlines down to 2 (preserve paragraph breaks).
+  text = text.replace(/\n{3,}/g, "\n\n");
+
+  return { text, patterns, changed: text !== answer };
+
+
 const SYSTEM_PROMPT = `אתה כותב משפטי ישראלי בסגנון אקדמי. תקבל שאלת משתמש, רשימת טענות (claims), ורשימת מקורות מאומתים בלבד. ייתכן שיופיעו גם מקורות שצורפו על־ידי המשתמש (ref מסוג u1p1, u1p2, u2p1 וכד'). אלו ציטוטים ישירים ממסמכים שצירף המשתמש, מותר לצטט מהם, אבל אין להתייחס אליהם כאל פסיקה או חקיקה מחייבת, ואין לגזור מהם דוקטרינה משפטית כללית — רק את מה שהם אומרים בפועל.
 כל מקור מסומן ב-ref כגון s1, s2, s3 ועוד.
 המשימה: לכתוב תשובה משפטית מפותחת ומבוססת בעברית, עם הערות שוליים מספריות.
