@@ -144,18 +144,14 @@ async function handle(req: Request): Promise<Response> {
     attachments.push({ storage_path: sp, file_name: fn, mime_type: mt, size: sz });
   }
   const useAsSource = body.use_as_source !== false; // default true
-  const rule37Header = req.headers.get("x-rule37");
-  const useRule37: boolean | undefined =
-    rule37Header === "1" || rule37Header === "on" ? true
-      : rule37Header === "0" || rule37Header === "off" ? false
-      : undefined;
   const atomicHeader = (req.headers.get("x-atomic-markers") ?? "").toLowerCase();
-  // Gate: header is honored only for service-role/smoke requests, so prod
-  // clients can never flip atomic emission via header.
-  const atomicMode: "off" | "validate" | "emit" | undefined =
+  // Gate: header is honored only for service-role/smoke requests. Only "off"
+  // and "validate" are accepted — "emit" was removed in Phase D so atomic
+  // tokens can never reach users.
+  const atomicMode: "off" | "validate" | undefined =
     (smokeMode || isServiceRole) &&
-    (atomicHeader === "emit" || atomicHeader === "validate" || atomicHeader === "off")
-      ? (atomicHeader as "off" | "validate" | "emit")
+    (atomicHeader === "validate" || atomicHeader === "off")
+      ? (atomicHeader as "off" | "validate")
       : undefined;
 
   // ─── Credit pre-flight (skipped in smoke mode) ───────────────────────────
