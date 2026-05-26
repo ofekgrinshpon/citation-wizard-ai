@@ -1,8 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useProjects } from "@/hooks/useProjects";
+import { useEffect, useRef, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useProjects } from "@/hooks/useProjects";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronDown, Paperclip, X, FileText, Trash2, ArrowUp, Loader2, Check } from "lucide-react";
+import { toast } from "sonner";
 import {
   Collapsible,
   CollapsibleContent,
