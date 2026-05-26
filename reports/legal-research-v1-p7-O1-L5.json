@@ -1,0 +1,61 @@
+{
+  "fixture_id": "L5",
+  "run_id": "d75ce2f6-e92a-4ba2-8c23-77a66e22aaa4",
+  "qa_log_id": "e84751e1-7b4e-4e88-8f76-08d97561556b",
+  "total_ms": 185378,
+  "stages_ms": {
+    "local": 5206,
+    "perplexity": 10092,
+    "verifier": 62092,
+    "drafter": 40999
+  },
+  "perplexity": {
+    "wall_ms": 10092,
+    "sum_ms": 27911,
+    "query_count": 5,
+    "query_ms": [
+      4155,
+      4027,
+      5858,
+      7809,
+      6062
+    ],
+    "parallel": true,
+    "concurrency_limit": 4,
+    "rate_limit_count": 0,
+    "retry_count": 0,
+    "fallback_to_sequential": false,
+    "merge_order_preserved": true,
+    "candidates_admitted": 8,
+    "candidates_dropped": 16,
+    "slowest_query_ms": 7809,
+    "speedup": 2.77
+  },
+  "pool": {
+    "after_dedup": 19,
+    "by_origin": {
+      "local_db": 11,
+      "perplexity": 8
+    }
+  },
+  "verifier": {
+    "batch_count": 1,
+    "parallel": true,
+    "usable": 10,
+    "dropped": 9,
+    "verified": 19,
+    "escalated_batches": 0
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "model_initial": "openai/gpt-5-mini",
+    "model_final": "openai/gpt-5-mini",
+    "footnote_count": 9,
+    "used_sources_count": 9,
+    "footnote_eq_used": true,
+    "marker_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true
+  }
+}
