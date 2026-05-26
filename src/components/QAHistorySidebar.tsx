@@ -93,8 +93,14 @@ export function QAHistorySidebar({ projectId, onLoadResult, refreshKey }: Props)
     : logs;
 
   const handleClick = (log: QALogRecord) => {
-    if (!onLoadResult || !log.answer) return;
+    if (!onLoadResult || log.answer === null || log.answer === undefined) return;
     const fn = log.footnotes;
+    const isSourcesOnlyEnvelope =
+      fn && !Array.isArray(fn) && typeof fn === "object" && fn.__sources_only === true;
+    if (isSourcesOnlyEnvelope) {
+      onLoadResult(log.question, fn.payload ?? fn, "legal_source_search");
+      return;
+    }
     const isCaseSummaryEnvelope = fn && !Array.isArray(fn) && typeof fn === "object" && fn.__case_summary === true;
     const result: QAResult = isCaseSummaryEnvelope
       ? {
