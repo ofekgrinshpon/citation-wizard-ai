@@ -94,7 +94,7 @@ export function LegalResearchV1Panel() {
     };
   }, []);
 
-  const stopAll = (finalPct?: number) => {
+  const stopAll = () => {
     if (progressTimerRef.current) {
       window.clearInterval(progressTimerRef.current);
       progressTimerRef.current = null;
@@ -103,7 +103,6 @@ export function LegalResearchV1Panel() {
       window.clearInterval(pollTimerRef.current);
       pollTimerRef.current = null;
     }
-    if (typeof finalPct === "number") setProgress(finalPct);
   };
 
   const clearResume = () => {
@@ -111,7 +110,7 @@ export function LegalResearchV1Panel() {
   };
 
   const handleCancel = () => {
-    stopAll(progress);
+    stopAll();
     setLoading(false);
     setJobId(null);
     clearResume();
@@ -120,17 +119,12 @@ export function LegalResearchV1Panel() {
 
   const startProgress = (startedAt?: number) => {
     startRef.current = startedAt ?? Date.now();
-    const initialEl = Date.now() - startRef.current;
-    setProgress(Math.min(95, 5 + (initialEl / (STAGES.length * STAGE_BUDGET_MS)) * 85));
-    setStageIdx(Math.min(STAGES.length - 1, Math.floor(initialEl / STAGE_BUDGET_MS)));
-    setElapsed(initialEl);
+    setElapsed(Date.now() - startRef.current);
+    setCurrentStage(null);
+    setCompletedStages([]);
     if (progressTimerRef.current) window.clearInterval(progressTimerRef.current);
     progressTimerRef.current = window.setInterval(() => {
-      const el = Date.now() - startRef.current;
-      setElapsed(el);
-      setStageIdx(Math.min(STAGES.length - 1, Math.floor(el / STAGE_BUDGET_MS)));
-      const pct = 5 + (el / (STAGES.length * STAGE_BUDGET_MS)) * 85;
-      setProgress(Math.min(95, pct));
+      setElapsed(Date.now() - startRef.current);
     }, 1000);
   };
 
@@ -140,7 +134,7 @@ export function LegalResearchV1Panel() {
       try {
         const { data, error: qErr } = await supabase
           .from("legal_research_jobs")
-          .select("status, result, error")
+          .select("status, result, error, current_stage, completed_stages")
           .eq("id", jid)
           .maybeSingle();
         if (qErr) {
@@ -148,22 +142,35 @@ export function LegalResearchV1Panel() {
           return;
         }
         if (!data) return;
-        const status = (data as { status: string }).status;
-        if (status === "done") {
-          stopAll(100);
-          setStageIdx(STAGES.length - 1);
-          setResult((data as unknown as { result: ResearchResponse }).result);
+        const row = data as {
+          status: string;
+          result?: ResearchResponse;
+          error?: string;
+          current_stage?: string | null;
+          completed_stages?: string[] | null;
+        };
+        // Live stage progress
+        if (Array.isArray(row.completed_stages)) {
+          setCompletedStages(row.completed_stages);
+        }
+        if (typeof row.current_stage === "string" || row.current_stage === null) {
+          setCurrentStage(row.current_stage ?? null);
+        }
+        if (row.status === "done") {
+          stopAll();
+          setCurrentStage(null);
+          setCompletedStages(STAGES.map((s) => s.key));
+          setResult(row.result as ResearchResponse);
           setLoading(false);
           setJobId(null);
           setFiles([]);
           clearResume();
-
-        } else if (status === "error") {
-          stopAll(progress);
+        } else if (row.status === "error") {
+          stopAll();
           setLoading(false);
           setJobId(null);
           clearResume();
-          const rawErr = (data as { error?: string }).error || "";
+          const rawErr = row.error || "";
           if (rawErr.includes("analyzer_escalation_unavailable")) {
             setError("מודל הניתוח המשפטי לא היה זמין רגעית. נסו שוב בעוד דקה.");
           } else {
