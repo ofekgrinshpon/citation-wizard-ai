@@ -1,0 +1,169 @@
+{
+  "fixture_id": "L6",
+  "run_id": "eb8dd7a7-dcad-476c-9b3b-17e6b61f3158",
+  "qa_log_id": "9eab6848-dd7c-4e1a-8bff-ec6e1291ad88",
+  "local_retrieval": {
+    "wall_ms": 2458,
+    "candidates": 40,
+    "aggregate": {
+      "wall_ms": 2458,
+      "max_query_ms": 2454,
+      "sum_query_ms": 11910,
+      "slowest_query": {
+        "ms": 2454,
+        "role": "binding_case_law",
+        "text_ms": 2104,
+        "claim_id": "C3",
+        "exact_ms": 0,
+        "query_he": "פסק דין בית המשפט העליון 'שינוי מדיניות' 'הסתמכות' 'איזון בין אינטרס ציבורי להסתמכות' 'הסדר מעבר' פיצוי",
+        "vector_ms": 350,
+        "embedding_ms": 271
+      },
+      "slowest_method": "text",
+      "method_total_ms": {
+        "text": 10522,
+        "exact": 0,
+        "vector": 1382,
+        "embedding": 901
+      },
+      "queries_executed": 5,
+      "exact_error_count": 0,
+      "text_timeout_count": 0,
+      "candidates_by_method": {
+        "text": 30,
+        "vector": 10,
+        "exact_authority": 0
+      },
+      "vector_timeout_count": 0,
+      "bottleneck_hypothesis": "single_slow_query (max=2454ms ≈ wall=2458ms)",
+      "duplicate_query_count": 0
+    },
+    "per_query": [
+      {
+        "claim_id": "C5",
+        "role": "binding_case_law",
+        "query_he": "פסק דין בית המשפט העליון 'פיצוי הסתמכות' 'החזר הוצאות' 'צו לבצע בחינה מחודשת' 'הבטחה מנהלית'",
+        "compact_query_he": "הבטחה מנהלית תום לב חוסר סמכות שיקול דעת דין העליון פיצוי הסתמכות",
+        "total_query_ms": 2335,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 2164,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 167,
+          "rpc_ms": 170,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 2164,
+        "kept": 8
+      },
+      {
+        "claim_id": "C4",
+        "role": "binding_case_law",
+        "query_he": "פסק דין בית המשפט העליון 'רשות מקומית התחייבה לאישור תב\"ע' 'אין כבילה של שיקול דעת מוסדות התכנון' 'התחייבות לקדם הליך'",
+        "compact_query_he": "הבטחה מנהלית תום לב חוסר סמכות שיקול דעת דין העליון רשות מקומית",
+        "total_query_ms": 2337,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 2121,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 143,
+          "rpc_ms": 214,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 2121,
+        "kept": 8
+      },
+      {
+        "claim_id": "C2",
+        "role": "binding_case_law",
+        "query_he": "פסק דין בית המשפט העליון 'הבטחה שניתנה בחוסר סמכות' 'אין בהשתק הקניית סמכות' 'החזר הוצאות' 'פיצוי הסתמכות'",
+        "compact_query_he": "הבטחה מנהלית תום לב חוסר סמכות שיקול דעת דין העליון שניתנה בחוסר",
+        "total_query_ms": 2383,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 1989,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 157,
+          "rpc_ms": 393,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 1989,
+        "kept": 8
+      },
+      {
+        "claim_id": "C1",
+        "role": "binding_case_law",
+        "query_he": "פסק דין בית המשפט העליון החלטות עקרוניות על 'הבטחה מנהלית' 'אכיפת הבטחה' 'הסתמכות סבירה' 'קשר מחייב' איזון בין אינטרס ציבורי להסתמכות",
+        "compact_query_he": "הבטחה מנהלית תום לב חוסר סמכות שיקול דעת דין העליון החלטות עקרוניות",
+        "total_query_ms": 2401,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 2144,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 163,
+          "rpc_ms": 255,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 2144,
+        "kept": 8
+      },
+      {
+        "claim_id": "C3",
+        "role": "binding_case_law",
+        "query_he": "פסק דין בית המשפט העליון 'שינוי מדיניות' 'הסתמכות' 'איזון בין אינטרס ציבורי להסתמכות' 'הסדר מעבר' פיצוי",
+        "compact_query_he": "הבטחה מנהלית תום לב חוסר סמכות שיקול דעת דין העליון שינוי מדיניות",
+        "total_query_ms": 2454,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 2104,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 271,
+          "rpc_ms": 350,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 2104,
+        "kept": 8
+      }
+    ]
+  }
+}

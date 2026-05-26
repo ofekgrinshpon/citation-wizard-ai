@@ -1,0 +1,144 @@
+{
+  "fixture_id": "L4",
+  "run_id": "70401548-f7fb-4a79-b7dc-bf5d5260da02",
+  "qa_log_id": "9b84ef03-b48b-43a0-b2f1-274817eb4fb8",
+  "local_retrieval": {
+    "wall_ms": 4968,
+    "candidates": 32,
+    "aggregate": {
+      "wall_ms": 4968,
+      "max_query_ms": 4965,
+      "sum_query_ms": 19849,
+      "slowest_query": {
+        "ms": 4965,
+        "role": "binding_case_law",
+        "text_ms": 4714,
+        "claim_id": "C3",
+        "exact_ms": 0,
+        "query_he": "פסק-דין בית המשפט העליון היקף ההשפעה של 'השתק פלוגתא' אילו סוגי הכרעות חוסמות מבחינת עובדות/טענות/שאלות משפטיות ההבחנה בינה לבין השתק עילה (res judicata) דוגמות יישום",
+        "vector_ms": 250,
+        "embedding_ms": 183
+      },
+      "slowest_method": "text",
+      "method_total_ms": {
+        "text": 18933,
+        "exact": 0,
+        "vector": 912,
+        "embedding": 623
+      },
+      "queries_executed": 4,
+      "exact_error_count": 0,
+      "text_timeout_count": 0,
+      "candidates_by_method": {
+        "text": 24,
+        "vector": 8,
+        "exact_authority": 0
+      },
+      "vector_timeout_count": 0,
+      "bottleneck_hypothesis": "single_slow_query (max=4965ms ≈ wall=4968ms)",
+      "duplicate_query_count": 0
+    },
+    "per_query": [
+      {
+        "claim_id": "C2",
+        "role": "binding_case_law",
+        "query_he": "פסקי-דין בית המשפט העליון תנאי הפעלת 'השתק פלוגתא' זהות פלוגתא הכרעה חיונית פסק דין חלוט זהות צדדים הזדמנות מלאה להתדיין דוגמאות יישום בישראל",
+        "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית פסק דין חלוט השתק עילה סבירות פסקי-דין",
+        "total_query_ms": 4960,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 4720,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 158,
+          "rpc_ms": 240,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 4720,
+        "kept": 8
+      },
+      {
+        "claim_id": "C1",
+        "role": "binding_case_law",
+        "query_he": "פסקי-דין בית המשפט העליון עקרון 'השתק פלוגתא' הגדרה ותכלית העקרון האם חוסם חזרה להכרעה עובדתית/משפטית שכבר הוכרעה בפסק-דין קודם",
+        "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית פסק דין חלוט השתק עילה סבירות פסקי-דין",
+        "total_query_ms": 4963,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 4750,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 129,
+          "rpc_ms": 212,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 4749,
+        "kept": 8
+      },
+      {
+        "claim_id": "C4",
+        "role": "binding_case_law",
+        "query_he": "פסק-דין בית המשפט העליון חריגים להפעלת 'השתק פלוגתא' ראיות חדשות שלא היו ניתנות להמצאה שינוי בחוק או בנסיבות חוסר הזדמנות הוגנת להתדיין פסק דין שאינו חיוני או ביניים",
+        "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית פסק דין חלוט השתק עילה סבירות פסק-דין",
+        "total_query_ms": 4961,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 4749,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 153,
+          "rpc_ms": 210,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 4749,
+        "kept": 8
+      },
+      {
+        "claim_id": "C3",
+        "role": "binding_case_law",
+        "query_he": "פסק-דין בית המשפט העליון היקף ההשפעה של 'השתק פלוגתא' אילו סוגי הכרעות חוסמות מבחינת עובדות/טענות/שאלות משפטיות ההבחנה בינה לבין השתק עילה (res judicata) דוגמות יישום",
+        "compact_query_he": "השתק פלוגתא זהות פלוגתא הכרעה חיונית פסק דין חלוט השתק עילה סבירות פסק-דין",
+        "total_query_ms": 4965,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 4714,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 183,
+          "rpc_ms": 250,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 4714,
+        "kept": 8
+      }
+    ]
+  }
+}

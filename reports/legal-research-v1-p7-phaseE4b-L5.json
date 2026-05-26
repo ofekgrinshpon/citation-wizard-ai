@@ -1,0 +1,144 @@
+{
+  "fixture_id": "L5",
+  "run_id": "b170fa1a-ea7a-40cc-a2ea-3d339354beac",
+  "qa_log_id": "48ffa89f-4e01-4698-9e8d-85aaf7aa938c",
+  "local_retrieval": {
+    "wall_ms": 2415,
+    "candidates": 28,
+    "aggregate": {
+      "wall_ms": 2415,
+      "max_query_ms": 2413,
+      "sum_query_ms": 7704,
+      "slowest_query": {
+        "ms": 2413,
+        "role": "binding_case_law",
+        "text_ms": 1253,
+        "claim_id": "C2",
+        "exact_ms": 0,
+        "query_he": "פסיקות בית המשפט העליון שקובעות מבחני סבירות והמדדים לבחינת החלטה מנהלית בלתי סבירה — חיפוש ניסוחי מבחנים בפסקי דין (בג\"ץ/ע\"א) 'מבחן סבירות' 'סבירות קיצונית'",
+        "vector_ms": 1160,
+        "embedding_ms": 183
+      },
+      "slowest_method": "text",
+      "method_total_ms": {
+        "text": 5453,
+        "exact": 0,
+        "vector": 2248,
+        "embedding": 794
+      },
+      "queries_executed": 4,
+      "exact_error_count": 0,
+      "text_timeout_count": 0,
+      "candidates_by_method": {
+        "text": 24,
+        "vector": 4,
+        "exact_authority": 0
+      },
+      "vector_timeout_count": 0,
+      "bottleneck_hypothesis": "single_slow_query (max=2413ms ≈ wall=2415ms)",
+      "duplicate_query_count": 0
+    },
+    "per_query": [
+      {
+        "claim_id": "C3",
+        "role": "binding_case_law",
+        "query_he": "פסקי דין של בית המשפט העליון העוסקים בהיקף ועומק הביקורת השיפוטית על סבירות ובמונחי אינטנסיביות/מדרגיות ביקורת — חפש נוסחים כמו 'אינטנסיביות הביקורת' 'מידת הביקורת' 'סבירות' בבג\"ץ",
+        "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות דין העליון העוסקים בהיקף",
+        "total_query_ms": 1730,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 1426,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 174,
+          "rpc_ms": 302,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 1426,
+        "kept": 7
+      },
+      {
+        "claim_id": "C4",
+        "role": "binding_case_law",
+        "query_he": "פסקי דין של בית המשפט העליון המעמיקים ביחס בין עילת הסבירות לעילת המידתיות (proportionality) וכן לטיפול בחריגה מסמכויות וחוסר שיקולים רלוונטיים — 'בית המשפט העליון' 'סבירות' 'מידתיות' 'חריגה מסמכויות'",
+        "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות דין העליון המעמיקים ביחס",
+        "total_query_ms": 1735,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 1359,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 174,
+          "rpc_ms": 376,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 1359,
+        "kept": 7
+      },
+      {
+        "claim_id": "C1",
+        "role": "binding_case_law",
+        "query_he": "בג\"ץ / פסקי דין של בית המשפט העליון המתמקדים בהגדרת 'עילת הסבירות' כעילת ביקורת מנהלית — חיפוש פסקי דין מובילים שבהם הוצגה הגדרה ועקרון יסוד לעילת הסבירות",
+        "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות בג דין העליון המתמקדים",
+        "total_query_ms": 1826,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 1415,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 263,
+          "rpc_ms": 410,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 1415,
+        "kept": 7
+      },
+      {
+        "claim_id": "C2",
+        "role": "binding_case_law",
+        "query_he": "פסיקות בית המשפט העליון שקובעות מבחני סבירות והמדדים לבחינת החלטה מנהלית בלתי סבירה — חיפוש ניסוחי מבחנים בפסקי דין (בג\"ץ/ע\"א) 'מבחן סבירות' 'סבירות קיצונית'",
+        "compact_query_he": "עילת הסבירות ביקורת שיפוטית סבירות מידתיות פסיקות העליון שקובעות מבחני",
+        "total_query_ms": 2413,
+        "exact": {
+          "ms": 0,
+          "status": "empty",
+          "hits": 0
+        },
+        "text": {
+          "ms": 1253,
+          "status": "ok",
+          "hits": 6
+        },
+        "vector": {
+          "embedding_ms": 183,
+          "rpc_ms": 1160,
+          "status": "ok",
+          "hits": 2
+        },
+        "parallel_batch_ms": 1253,
+        "kept": 7
+      }
+    ]
+  }
+}
