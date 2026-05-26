@@ -1,0 +1,48 @@
+{
+  "fixture_id": "L5",
+  "run_id": "170e8295-c460-4b27-ae4e-505a851f2355",
+  "qa_log_id": "e794e090-b4b8-4a28-aa34-1201777a39db",
+  "verifier": {
+    "parallel": true,
+    "concurrency_limit": 2,
+    "batch_count": 2,
+    "batch_ms": [
+      36408,
+      42748
+    ],
+    "total_wall_ms": 42750,
+    "total_sum_ms": 79156,
+    "merge_order_preserved": true,
+    "rate_limit_count": 0,
+    "fallback_to_sequential": false,
+    "candidates_verified": 26,
+    "candidates_usable": 18,
+    "candidates_dropped": 8,
+    "batches_labels": [
+      "batch1",
+      "batch2"
+    ]
+  },
+  "drafter": {
+    "used_sources_count": 9,
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_count": 9
+  },
+  "gates": {
+    "batch_count_ge_2": true,
+    "parallel_true": true,
+    "concurrency_2": true,
+    "merge_order_preserved": true,
+    "used_sources_subset_of_usable": true,
+    "no_rate_limit": true,
+    "no_fallback": true,
+    "wall_close_to_max_not_sum": true,
+    "speedup_ratio": 1.85
+  },
+  "baseline_phaseD": {
+    "usable_count": 0,
+    "usable_equals_baseline": false,
+    "verifier_wall_ms": null
+  }
+}
