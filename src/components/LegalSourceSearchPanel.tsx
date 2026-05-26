@@ -430,37 +430,72 @@ function SourceResultsView({
 }) {
   const s = result.summary;
   const directCount = result.sources.filter((x) => x.support === "direct").length;
+  const additional = result.additional_sources ?? [];
+  const additionalGroups = (result.additional_groups ?? {}) as Partial<Record<GroupKey, SourceResult[]>>;
+  const additionalCount = s.additional_count ?? additional.length;
+
   return (
     <div className="space-y-4 animate-fade-in">
       <div className="rounded-lg border border-border bg-card p-4">
         <div className="flex items-center gap-2 text-sm font-bold text-foreground">
           <BookMarked className="w-4 h-4 text-primary" />
-          <span>נמצאו {s.usable} מקורות רלוונטיים</span>
+          <span>נמצאו {s.usable} מקורות מומלצים</span>
         </div>
         <p className="text-xs text-muted-foreground mt-1">
           מתוכם {directCount} מקורות ישירים · {s.local_count} מהמאגר המקומי, {s.perplexity_count} חיצוניים
+          {additionalCount > 0 ? ` · +${additionalCount} מקורות נוספים לבדיקה` : ""}
         </p>
       </div>
 
-      {GROUP_ORDER.map((g) => {
-        const items = result.groups?.[g] ?? [];
-        if (items.length === 0) return null;
-        return (
-          <section key={g} className="space-y-2">
-            <h3 className="text-sm font-bold text-foreground">
-              {GROUP_LABEL[g]} <span className="text-xs font-normal text-muted-foreground">({items.length})</span>
-            </h3>
-            <div className="space-y-2">
-              {items.map((src) => <SourceCard key={`${g}-${src.rank}`} src={src} />)}
-            </div>
-          </section>
-        );
-      })}
+      {/* Main recommended list */}
+      <section className="space-y-2">
+        <h2 className="text-sm font-bold text-foreground">מקורות מומלצים</h2>
+        {GROUP_ORDER.map((g) => {
+          const items = result.groups?.[g] ?? [];
+          if (items.length === 0) return null;
+          return (
+            <section key={`main-${g}`} className="space-y-2">
+              <h3 className="text-xs font-semibold text-muted-foreground">
+                {GROUP_LABEL[g]} <span className="text-xs font-normal text-muted-foreground">({items.length})</span>
+              </h3>
+              <div className="space-y-2">
+                {items.map((src) => <SourceCard key={`main-${g}-${src.rank}`} src={src} variant="recommended" />)}
+              </div>
+            </section>
+          );
+        })}
 
-      {result.sources.length === 0 && (
-        <div className="rounded-lg border border-border bg-muted/30 p-4 text-sm text-muted-foreground text-center">
-          לא נמצאו מקורות מאומתים לשאלה זו. נסו לנסח אותה אחרת או להוסיף הקשר.
-        </div>
+        {result.sources.length === 0 && (
+          <div className="rounded-lg border border-border bg-muted/30 p-4 text-sm text-muted-foreground text-center">
+            לא נמצאו מקורות מאומתים לשאלה זו. נסו לנסח אותה אחרת או להוסיף הקשר.
+          </div>
+        )}
+      </section>
+
+      {/* Additional sources for inspection */}
+      {additional.length > 0 && (
+        <section className="space-y-2 pt-2 border-t border-border/60">
+          <div>
+            <h2 className="text-sm font-bold text-foreground">מקורות נוספים לבדיקה</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              מקורות אלה נמצאו כרלוונטיים אפשריים, אך לא דורגו כמקורות מומלצים על ידי מנגנון האימות.
+            </p>
+          </div>
+          {GROUP_ORDER.map((g) => {
+            const items = additionalGroups[g] ?? [];
+            if (items.length === 0) return null;
+            return (
+              <section key={`add-${g}`} className="space-y-2">
+                <h3 className="text-xs font-semibold text-muted-foreground">
+                  {GROUP_LABEL[g]} <span className="text-xs font-normal text-muted-foreground">({items.length})</span>
+                </h3>
+                <div className="space-y-2">
+                  {items.map((src) => <SourceCard key={`add-${g}-${src.rank}`} src={src} variant="additional" />)}
+                </div>
+              </section>
+            );
+          })}
+        </section>
       )}
 
       {import.meta.env.DEV && (
