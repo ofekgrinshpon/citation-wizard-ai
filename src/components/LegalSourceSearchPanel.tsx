@@ -180,7 +180,7 @@ export function LegalSourceSearchPanel() {
           return;
         }
         if (!data) return;
-        const row = data as {
+        const row = data as unknown as {
           status: string;
           result?: SourcesOnlyResponse;
           error?: string;
