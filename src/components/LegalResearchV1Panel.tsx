@@ -663,28 +663,37 @@ function DebugBlock({ title, data }: { title: string; data: unknown }) {
 }
 
 
+const GHOST_LINES = [
+  "w-11/12",
+  "w-full",
+  "w-10/12",
+  "w-11/12",
+  "w-9/12",
+  "w-full",
+  "w-8/12",
+  "w-11/12",
+  "w-10/12",
+  "w-9/12",
+];
+
 function GhostAnswer() {
-  const answerLines = ["w-11/12", "w-full", "w-10/12", "w-11/12", "w-9/12", "w-full", "w-8/12"];
-  const footnoteLines = ["w-7/12", "w-8/12", "w-6/12"];
+  const [visibleCount, setVisibleCount] = useState(1);
+
+  useEffect(() => {
+    if (visibleCount >= GHOST_LINES.length) return;
+    const delay = 600 + Math.random() * 350;
+    const t = setTimeout(() => setVisibleCount((c) => Math.min(c + 1, GHOST_LINES.length)), delay);
+    return () => clearTimeout(t);
+  }, [visibleCount]);
+
   return (
-    <div className="space-y-4 animate-fade-in" aria-hidden>
+    <div className="animate-fade-in" aria-hidden>
       <div className="rounded-lg border border-border bg-card p-4 space-y-2.5">
         <div className="h-4 w-24 rounded bg-muted blur-[1px] animate-pulse" />
-        {answerLines.map((w, i) => (
+        {GHOST_LINES.slice(0, visibleCount).map((w, i) => (
           <div
             key={i}
-            className={`h-3 ${w} rounded bg-muted blur-[2px] animate-pulse`}
-            style={{ animationDelay: `${i * 120}ms` }}
-          />
-        ))}
-      </div>
-      <div className="rounded-lg border border-border bg-card p-4 space-y-2">
-        <div className="h-4 w-32 rounded bg-muted blur-[1px] animate-pulse" />
-        {footnoteLines.map((w, i) => (
-          <div
-            key={i}
-            className={`h-2.5 ${w} rounded bg-muted blur-[2px] animate-pulse`}
-            style={{ animationDelay: `${(i + 2) * 120}ms` }}
+            className={`h-3 ${w} rounded bg-muted blur-[2px] animate-pulse animate-fade-in`}
           />
         ))}
       </div>
