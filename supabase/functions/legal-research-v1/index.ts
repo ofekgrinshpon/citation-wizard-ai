@@ -470,6 +470,7 @@ async function handle(req: Request): Promise<Response> {
   };
 
   // ─── P4: Source Verifier ─────────────────────────────────────────────────
+  await markStage("verifier");
   const forceSplit = (req.headers.get("x-verifier-force-split") ?? "") === "1";
   const verifier = await runVerifier(question, analyzer.claims, pool.candidates, { forceSplit });
   stage_runs.push(...verifier.stage_runs);
