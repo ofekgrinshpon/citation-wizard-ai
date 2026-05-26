@@ -304,7 +304,7 @@ export function LegalResearchV1Panel() {
       });
 
       if (invokeErr || !data?.job_id) {
-        stopAll(progress);
+        stopAll();
         setLoading(false);
         setError(invokeErr?.message || "לא הצלחנו לפתוח את הבקשה.");
         return;
