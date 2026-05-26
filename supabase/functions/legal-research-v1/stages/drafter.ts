@@ -998,5 +998,13 @@ export async function runDrafter(
     stage_runs,
     error: ok ? undefined : (marker.error || parsed.errors.join("; ") || "drafter_failed"),
     raw_text: ok ? undefined : (resp.raw_text || "").slice(0, 1000),
+    internal_id_scrub: scrub_attempted
+      ? {
+          attempted: true,
+          accepted: scrub_accepted,
+          patterns: scrub_patterns,
+          rejected_reason: scrub_accepted ? undefined : scrub_rejected_reason,
+        }
+      : undefined,
   };
 }
