@@ -84,6 +84,7 @@ interface SourceResult {
   supported_claim_ids: string[];
   snippet: string | null;
   display_citation: string | null;
+  tier?: "recommended" | "additional";
 }
 
 interface SourcesOnlyResponse {
@@ -92,6 +93,9 @@ interface SourcesOnlyResponse {
   run_id: string;
   sources: SourceResult[];
   groups: Record<GroupKey, SourceResult[]>;
+  // Optional — older history rows won't have these.
+  additional_sources?: SourceResult[];
+  additional_groups?: Partial<Record<GroupKey, SourceResult[]>>;
   summary: {
     total_candidates: number;
     verified: number;
@@ -99,6 +103,7 @@ interface SourcesOnlyResponse {
     dropped: number;
     local_count: number;
     perplexity_count: number;
+    additional_count?: number;
   };
   debug?: Record<string, unknown>;
 }
