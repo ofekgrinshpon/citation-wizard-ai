@@ -32,15 +32,17 @@ function fmtSize(b: number) {
 
 // ─── Loading stages (Hebrew, ordered) ──────────────────────────────────────
 const STAGES = [
-  "מנתח את השאלה",
-  "מתכנן חיפושים משפטיים",
-  "מחפש מקורות",
-  "מאמת את המקורות",
-  "כותב תשובה",
-  "מסדר הערות שוליים",
+// Stage keys must match what the edge function writes into
+// legal_research_jobs.current_stage / completed_stages.
+const STAGES: Array<{ key: string; label: string }> = [
+  { key: "analyzer",  label: "מנתח את השאלה" },
+  { key: "planner",   label: "מתכנן חיפושים משפטיים" },
+  { key: "retrieval", label: "מחפש מקורות" },
+  { key: "verifier",  label: "מאמת את המקורות" },
+  { key: "drafter",   label: "כותב תשובה" },
+  { key: "finalize",  label: "מסדר הערות שוליים" },
 ];
 
-const STAGE_BUDGET_MS = 25_000;
 const POLL_INTERVAL_MS = 2_000;
 const SOFT_NOTICE_1_MS = 180_000; // 3 min
 const SOFT_NOTICE_2_MS = 300_000; // 5 min
