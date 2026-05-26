@@ -632,7 +632,6 @@ export async function runDrafter(
   opts?: {
     userDocs?: UserDocument[];
     useAsSource?: boolean;
-    useRule37?: boolean;
     atomicMode?: AtomicMode;
   },
 ): Promise<DrafterResult> {
