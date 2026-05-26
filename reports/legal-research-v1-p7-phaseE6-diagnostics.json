@@ -1,0 +1,789 @@
+{
+  "phase": "E.6-llm-stage-diagnostics",
+  "fixtures": [
+    {
+      "fixture_id": "L1",
+      "total_ms": 184988,
+      "question_length": 30,
+      "answer_length": 2826,
+      "answer_words": 476,
+      "planner": {
+        "ms": {
+          "ms": 41774,
+          "model_final": "openai/gpt-5-mini",
+          "schema_valid": true,
+          "model_initial": "openai/gpt-5-mini",
+          "escalated_to_gpt5": false,
+          "escalation_reason": []
+        },
+        "analyzer_ms": {
+          "ms": 24716,
+          "confidence": 0.93,
+          "legal_area": "סדר דין אזרחי",
+          "answer_type": "doctrinal_explanation",
+          "model_final": "openai/gpt-5-mini",
+          "schema_valid": true,
+          "model_initial": "openai/gpt-5-mini",
+          "escalated_to_gpt5": false,
+          "escalation_reason": []
+        },
+        "claims_count": 5,
+        "queries_count": 12,
+        "truncated_claims": 0,
+        "truncated_queries": 0,
+        "model": "openai/gpt-5-mini",
+        "escalated": false,
+        "targets_distribution": {
+          "local_db": 6,
+          "perplexity": 6
+        },
+        "planner_stage_ms_runs": [
+          41774
+        ]
+      },
+      "analyzer": {
+        "ms_stage": 24716,
+        "model": "openai/gpt-5-mini",
+        "escalated": false
+      },
+      "drafter": {
+        "initial_ms": 41999,
+        "all_runs_ms": [
+          41999
+        ],
+        "wall_ms": 42006,
+        "escalated": false,
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "sources_passed": 6,
+        "footnote_count": 6,
+        "omitted_candidate_ids": 0,
+        "marker_ok": true,
+        "repaired": false,
+        "internal_id_leak": false,
+        "unused_sources": 0,
+        "missing_sources": 0,
+        "atomic_normalize_ok": true,
+        "atomic_marker_count": 18,
+        "stub": false,
+        "escalation_reason": null
+      },
+      "verifier": {
+        "wall_ms": 39484,
+        "sum_ms": 39482,
+        "batch_ms": [
+          39482
+        ],
+        "batch_count": 1,
+        "parallel": true,
+        "concurrency_limit": 2,
+        "escalated_claims": [],
+        "escalated_batches": 0,
+        "verified": 9,
+        "usable": 6,
+        "dropped": 3,
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "rate_limit_count": 0,
+        "fallback_to_sequential": false
+      },
+      "perplexity": {
+        "wall_ms": 36885,
+        "queries_sent": 6,
+        "admitted": 5,
+        "dropped": 25,
+        "raw_results": 30,
+        "role_corrections": [],
+        "per_query_ms": [
+          4619,
+          5632,
+          9089,
+          6813,
+          7050,
+          3673
+        ],
+        "sum_query_ms": 36876,
+        "slowest_query_ms": 9089,
+        "parallel_inferred": false
+      }
+    },
+    {
+      "fixture_id": "L2",
+      "total_ms": 221521,
+      "question_length": 28,
+      "answer_length": 4151,
+      "answer_words": 670,
+      "planner": {
+        "ms": {
+          "ms": 57842,
+          "model_final": "openai/gpt-5-mini",
+          "schema_valid": true,
+          "model_initial": "openai/gpt-5-mini",
+          "escalated_to_gpt5": false,
+          "escalation_reason": []
+        },
+        "analyzer_ms": {
+          "ms": 26366,
+          "confidence": 0.9,
+          "legal_area": "משפט מנהלי",
+          "answer_type": "doctrinal_explanation",
+          "model_final": "openai/gpt-5-mini",
+          "schema_valid": true,
+          "model_initial": "openai/gpt-5-mini",
+          "escalated_to_gpt5": false,
+          "escalation_reason": []
+        },
+        "claims_count": 4,
+        "queries_count": 10,
+        "truncated_claims": 0,
+        "truncated_queries": 0,
+        "model": "openai/gpt-5-mini",
+        "escalated": false,
+        "targets_distribution": {
+          "perplexity": 10
+        },
+        "planner_stage_ms_runs": [
+          57842
+        ]
+      },
+      "analyzer": {
+        "ms_stage": 26366,
+        "model": "openai/gpt-5-mini",
+        "escalated": false
+      },
+      "drafter": {
+        "initial_ms": 44443,
+        "all_runs_ms": [
+          44443
+        ],
+        "wall_ms": 44448,
+        "escalated": false,
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "sources_passed": 11,
+        "footnote_count": 9,
+        "omitted_candidate_ids": 2,
+        "marker_ok": true,
+        "repaired": true,
+        "internal_id_leak": false,
+        "unused_sources": 0,
+        "missing_sources": 0,
+        "atomic_normalize_ok": true,
+        "atomic_marker_count": 40,
+        "stub": false,
+        "escalation_reason": null
+      },
+      "verifier": {
+        "wall_ms": 42533,
+        "sum_ms": 42533,
+        "batch_ms": [
+          42533
+        ],
+        "batch_count": 1,
+        "parallel": true,
+        "concurrency_limit": 2,
+        "escalated_claims": [],
+        "escalated_batches": 0,
+        "verified": 16,
+        "usable": 11,
+        "dropped": 5,
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "rate_limit_count": 0,
+        "fallback_to_sequential": false
+      },
+      "perplexity": {
+        "wall_ms": 50182,
+        "queries_sent": 10,
+        "admitted": 31,
+        "dropped": 10,
+        "raw_results": 41,
+        "role_corrections": [
+          {
+            "to": "primary_statute",
+            "url": "https://www.gov.il/BlobFolder/dynamiccollectorresultitem/hityashenut-drori/he/the-hebrew-case-law_hityashenut-drori.docx",
+            "from": "scholarship",
+            "title": "המשפט העברי וההתיישנות",
+            "admitted": true,
+            "claim_id": "C3"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://fs.knesset.gov.il/17/Committees/17_ptv_136085.doc",
+            "from": "scholarship",
+            "title": "חוק הקרקעות העות'מאני",
+            "admitted": true,
+            "claim_id": "C3"
+          }
+        ],
+        "per_query_ms": [
+          5442,
+          3661,
+          5101,
+          4028,
+          7181,
+          4548,
+          3460,
+          9264,
+          5058,
+          2433
+        ],
+        "sum_query_ms": 50176,
+        "slowest_query_ms": 9264,
+        "parallel_inferred": false
+      }
+    },
+    {
+      "fixture_id": "L3",
+      "total_ms": 253325,
+      "question_length": 63,
+      "answer_length": 2679,
+      "answer_words": 460,
+      "planner": {
+        "ms": {
+          "ms": 54791,
+          "model_final": "openai/gpt-5-mini",
+          "schema_valid": true,
+          "model_initial": "openai/gpt-5-mini",
+          "escalated_to_gpt5": false,
+          "escalation_reason": []
+        },
+        "analyzer_ms": {
+          "ms": 20921,
+          "confidence": 0.9,
+          "legal_area": "דיני חוזים",
+          "answer_type": "doctrinal_explanation",
+          "model_final": "openai/gpt-5-mini",
+          "schema_valid": true,
+          "model_initial": "openai/gpt-5-mini",
+          "escalated_to_gpt5": false,
+          "escalation_reason": []
+        },
+        "claims_count": 4,
+        "queries_count": 11,
+        "truncated_claims": 0,
+        "truncated_queries": 0,
+        "model": "openai/gpt-5-mini",
+        "escalated": false,
+        "targets_distribution": {
+          "local_db": 5,
+          "perplexity": 6
+        },
+        "planner_stage_ms_runs": [
+          54791
+        ]
+      },
+      "analyzer": {
+        "ms_stage": 20921,
+        "model": "openai/gpt-5-mini",
+        "escalated": false
+      },
+      "drafter": {
+        "initial_ms": 24722,
+        "all_runs_ms": [
+          24722,
+          45874
+        ],
+        "wall_ms": 70599,
+        "escalated": true,
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5",
+        "sources_passed": 3,
+        "footnote_count": 3,
+        "omitted_candidate_ids": 0,
+        "marker_ok": true,
+        "repaired": false,
+        "internal_id_leak": false,
+        "unused_sources": 0,
+        "missing_sources": 0,
+        "atomic_normalize_ok": true,
+        "atomic_marker_count": 17,
+        "stub": false,
+        "escalation_reason": null
+      },
+      "verifier": {
+        "wall_ms": 68188,
+        "sum_ms": 68188,
+        "batch_ms": [
+          68188
+        ],
+        "batch_count": 1,
+        "parallel": true,
+        "concurrency_limit": 2,
+        "escalated_claims": [
+          "C1",
+          "C2",
+          "C3",
+          "C4"
+        ],
+        "escalated_batches": 1,
+        "verified": 19,
+        "usable": 3,
+        "dropped": 16,
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5",
+        "rate_limit_count": 0,
+        "fallback_to_sequential": false
+      },
+      "perplexity": {
+        "wall_ms": 38711,
+        "queries_sent": 6,
+        "admitted": 8,
+        "dropped": 21,
+        "raw_results": 24,
+        "role_corrections": [
+          {
+            "to": "binding_case_law",
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F16%2F080%2F102%2Fw03&fileName=16102080.W03&type=2",
+            "from": "scholarship",
+            "title": "פסק-דין בתיק ע\"א 10208/16",
+            "admitted": true,
+            "claim_id": "C3"
+          },
+          {
+            "to": "binding_case_law",
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F16%2F080%2F102%2Fw03&fileName=16102080.W03&type=2",
+            "from": "scholarship",
+            "title": "פסקי דין והדיון בסעיף 15 לחוק החוזים (תרופות)",
+            "admitted": true,
+            "claim_id": "C4"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://fs.knesset.gov.il/7/law/7_lsr_211750.PDF",
+            "from": "persuasive_case_law",
+            "title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל\"א-1970",
+            "admitted": true,
+            "claim_id": "C4"
+          }
+        ],
+        "per_query_ms": [
+          5712,
+          2378,
+          7947,
+          12733,
+          5362,
+          4565
+        ],
+        "sum_query_ms": 38697,
+        "slowest_query_ms": 12733,
+        "parallel_inferred": false
+      }
+    },
+    {
+      "fixture_id": "L4",
+      "total_ms": 179454,
+      "question_length": 25,
+      "answer_length": 2180,
+      "answer_words": 341,
+      "planner": {
+        "ms": {
+          "ms": 38811,
+          "model_final": "openai/gpt-5-mini",
+          "schema_valid": true,
+          "model_initial": "openai/gpt-5-mini",
+          "escalated_to_gpt5": false,
+          "escalation_reason": []
+        },
+        "analyzer_ms": {
+          "ms": 23743,
+          "confidence": 0.9,
+          "legal_area": "סדר דין אזרחי (דיני מעשה בית דין)",
+          "answer_type": "doctrinal_explanation",
+          "model_final": "openai/gpt-5-mini",
+          "schema_valid": true,
+          "model_initial": "openai/gpt-5-mini",
+          "escalated_to_gpt5": false,
+          "escalation_reason": []
+        },
+        "claims_count": 4,
+        "queries_count": 10,
+        "truncated_claims": 0,
+        "truncated_queries": 0,
+        "model": "openai/gpt-5-mini",
+        "escalated": false,
+        "targets_distribution": {
+          "local_db": 4,
+          "perplexity": 6
+        },
+        "planner_stage_ms_runs": [
+          38811
+        ]
+      },
+      "analyzer": {
+        "ms_stage": 23743,
+        "model": "openai/gpt-5-mini",
+        "escalated": false
+      },
+      "drafter": {
+        "initial_ms": 48139,
+        "all_runs_ms": [
+          48139
+        ],
+        "wall_ms": 48144,
+        "escalated": false,
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "sources_passed": 3,
+        "footnote_count": 3,
+        "omitted_candidate_ids": 0,
+        "marker_ok": true,
+        "repaired": false,
+        "internal_id_leak": false,
+        "unused_sources": 0,
+        "missing_sources": 0,
+        "atomic_normalize_ok": true,
+        "atomic_marker_count": 21,
+        "stub": false,
+        "escalation_reason": null
+      },
+      "verifier": {
+        "wall_ms": 20174,
+        "sum_ms": 20174,
+        "batch_ms": [
+          20174
+        ],
+        "batch_count": 1,
+        "parallel": true,
+        "concurrency_limit": 2,
+        "escalated_claims": [],
+        "escalated_batches": 0,
+        "verified": 4,
+        "usable": 3,
+        "dropped": 1,
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "rate_limit_count": 0,
+        "fallback_to_sequential": false
+      },
+      "perplexity": {
+        "wall_ms": 48481,
+        "queries_sent": 6,
+        "admitted": 5,
+        "dropped": 30,
+        "raw_results": 30,
+        "role_corrections": [
+          {
+            "to": "binding_case_law",
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F17%2F760%2F045%2Fy08&fileName=17045760.Y08&type=2",
+            "from": "scholarship",
+            "title": "החלטה בתיק ע\"א 4576/17",
+            "admitted": true,
+            "claim_id": "C1"
+          },
+          {
+            "to": "binding_case_law",
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F17%2F760%2F045%2Fy08&fileName=17045760.Y08&type=2",
+            "from": "scholarship",
+            "title": "החלטה בתיק ע\"א 4576/17",
+            "admitted": true,
+            "claim_id": "C3"
+          },
+          {
+            "to": "binding_case_law",
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F17%2F760%2F045%2Fy08&fileName=17045760.Y08&type=2",
+            "from": "scholarship",
+            "title": "החלטה בתיק ע\"א 4576/17",
+            "admitted": true,
+            "claim_id": "C4"
+          }
+        ],
+        "per_query_ms": [
+          6146,
+          6000,
+          17930,
+          4635,
+          7897,
+          5864
+        ],
+        "sum_query_ms": 48472,
+        "slowest_query_ms": 17930,
+        "parallel_inferred": false
+      }
+    },
+    {
+      "fixture_id": "L5",
+      "total_ms": 189170,
+      "question_length": 48,
+      "answer_length": 3873,
+      "answer_words": 598,
+      "planner": {
+        "ms": {
+          "ms": 48139,
+          "model_final": "openai/gpt-5-mini",
+          "schema_valid": true,
+          "model_initial": "openai/gpt-5-mini",
+          "escalated_to_gpt5": false,
+          "escalation_reason": []
+        },
+        "analyzer_ms": {
+          "ms": 22344,
+          "confidence": 0.9,
+          "legal_area": "משפט מינהלי",
+          "answer_type": "doctrinal_explanation",
+          "model_final": "openai/gpt-5-mini",
+          "schema_valid": true,
+          "model_initial": "openai/gpt-5-mini",
+          "escalated_to_gpt5": false,
+          "escalation_reason": []
+        },
+        "claims_count": 5,
+        "queries_count": 13,
+        "truncated_claims": 0,
+        "truncated_queries": 0,
+        "model": "openai/gpt-5-mini",
+        "escalated": false,
+        "targets_distribution": {
+          "local_db": 7,
+          "perplexity": 6
+        },
+        "planner_stage_ms_runs": [
+          48139
+        ]
+      },
+      "analyzer": {
+        "ms_stage": 22344,
+        "model": "openai/gpt-5-mini",
+        "escalated": false
+      },
+      "drafter": {
+        "initial_ms": 43736,
+        "all_runs_ms": [
+          43736
+        ],
+        "wall_ms": 43741,
+        "escalated": false,
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "sources_passed": 15,
+        "footnote_count": 9,
+        "omitted_candidate_ids": 6,
+        "marker_ok": true,
+        "repaired": true,
+        "internal_id_leak": false,
+        "unused_sources": 0,
+        "missing_sources": 0,
+        "atomic_normalize_ok": true,
+        "atomic_marker_count": 16,
+        "stub": false,
+        "escalation_reason": null
+      },
+      "verifier": {
+        "wall_ms": 40905,
+        "sum_ms": 78396,
+        "batch_ms": [
+          37492,
+          40904
+        ],
+        "batch_count": 2,
+        "parallel": true,
+        "concurrency_limit": 2,
+        "escalated_claims": [],
+        "escalated_batches": 0,
+        "verified": 30,
+        "usable": 15,
+        "dropped": 15,
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "rate_limit_count": 0,
+        "fallback_to_sequential": false
+      },
+      "perplexity": {
+        "wall_ms": 33903,
+        "queries_sent": 6,
+        "admitted": 19,
+        "dropped": 11,
+        "raw_results": 30,
+        "role_corrections": [
+          {
+            "to": "primary_statute",
+            "url": "https://fs.knesset.gov.il/globaldocs/MMM/7a6447cc-8d91-ed11-8151-005056aac6c3/2_7a6447cc-8d91-ed11-8151-005056aac6c3_11_19979.pdf",
+            "from": "scholarship",
+            "title": "הביקורת השיפוטית על חוקתיות החוק – אתר הכנסת",
+            "admitted": true,
+            "claim_id": "C2"
+          },
+          {
+            "to": "binding_case_law",
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F23%2F990%2F022%2Fx03&fileName=23022990.X03&type=4",
+            "from": "scholarship",
+            "title": "רע\"א 2299/23 - החלטה",
+            "admitted": true,
+            "claim_id": "C4"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_2798965.pdf",
+            "from": "scholarship",
+            "title": "ביטול עילת הסבירות",
+            "admitted": true,
+            "claim_id": "C5"
+          },
+          {
+            "to": "binding_case_law",
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F23%2F580%2F056%2Fv31&fileName=23056580.V31&type=2",
+            "from": "scholarship",
+            "title": "פסק-דין בתיק בג\"ץ 5658/23",
+            "admitted": true,
+            "claim_id": "C5"
+          },
+          {
+            "to": "primary_statute",
+            "url": "https://fs.knesset.gov.il/25/law/25_ls_bk_6702632.pdf",
+            "from": "government_report",
+            "title": "דו\"ח ועדת שמגר לבחינת דרכי השפיטה והביקורת השיפוטית (ככל שמדובר בדו\"ח ממשלתי/ציבורי על גבולות השפיטה)",
+            "admitted": true,
+            "claim_id": "C5"
+          },
+          {
+            "to": "binding_case_law",
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F23%2F580%2F056%2Fv31&fileName=23056580.V31&type=2",
+            "from": "government_report",
+            "title": "פסק-דין בבג\"ץ 5658/23",
+            "admitted": true,
+            "claim_id": "C5"
+          }
+        ],
+        "per_query_ms": [
+          4010,
+          6559,
+          7563,
+          5688,
+          5366,
+          4711
+        ],
+        "sum_query_ms": 33897,
+        "slowest_query_ms": 7563,
+        "parallel_inferred": false
+      }
+    },
+    {
+      "fixture_id": "L6",
+      "total_ms": 249892,
+      "question_length": 306,
+      "answer_length": 4731,
+      "answer_words": 773,
+      "planner": {
+        "ms": {
+          "ms": 43461,
+          "model_final": "openai/gpt-5-mini",
+          "schema_valid": true,
+          "model_initial": "openai/gpt-5-mini",
+          "escalated_to_gpt5": false,
+          "escalation_reason": []
+        },
+        "analyzer_ms": {
+          "ms": 47243,
+          "confidence": 0.84,
+          "legal_area": "משפט מינהלי ותכנון ובנייה",
+          "answer_type": "doctrinal_explanation",
+          "model_final": "openai/gpt-5",
+          "schema_valid": true,
+          "model_initial": "openai/gpt-5",
+          "escalated_to_gpt5": false,
+          "escalation_reason": [
+            "A1:question.length>200"
+          ]
+        },
+        "claims_count": 5,
+        "queries_count": 10,
+        "truncated_claims": 0,
+        "truncated_queries": 0,
+        "model": "openai/gpt-5-mini",
+        "escalated": false,
+        "targets_distribution": {
+          "perplexity": 10
+        },
+        "planner_stage_ms_runs": [
+          43461
+        ]
+      },
+      "analyzer": {
+        "ms_stage": 47243,
+        "model": "openai/gpt-5",
+        "escalated": false
+      },
+      "drafter": {
+        "initial_ms": 57283,
+        "all_runs_ms": [
+          57283
+        ],
+        "wall_ms": 57287,
+        "escalated": false,
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "sources_passed": 11,
+        "footnote_count": 9,
+        "omitted_candidate_ids": 2,
+        "marker_ok": true,
+        "repaired": false,
+        "internal_id_leak": false,
+        "unused_sources": 0,
+        "missing_sources": 0,
+        "atomic_normalize_ok": true,
+        "atomic_marker_count": 36,
+        "stub": false,
+        "escalation_reason": null
+      },
+      "verifier": {
+        "wall_ms": 42458,
+        "sum_ms": 42458,
+        "batch_ms": [
+          42458
+        ],
+        "batch_count": 1,
+        "parallel": true,
+        "concurrency_limit": 2,
+        "escalated_claims": [],
+        "escalated_batches": 0,
+        "verified": 13,
+        "usable": 11,
+        "dropped": 2,
+        "model_initial": "openai/gpt-5-mini",
+        "model_final": "openai/gpt-5-mini",
+        "rate_limit_count": 0,
+        "fallback_to_sequential": false
+      },
+      "perplexity": {
+        "wall_ms": 59344,
+        "queries_sent": 10,
+        "admitted": 31,
+        "dropped": 17,
+        "raw_results": 48,
+        "role_corrections": [
+          {
+            "to": "binding_case_law",
+            "url": "https://supremedecisions.court.gov.il/Home/Download?path=HebrewVerdicts%2F13%2F480%2F049%2Fe14&fileName=13049480_e14.txt&type=2",
+            "from": "scholarship",
+            "title": "פסק-דין בתיק ע\"א 4948/13",
+            "admitted": true,
+            "claim_id": "C3"
+          },
+          {
+            "to": "persuasive_case_law",
+            "url": "https://www.nevo.co.il/",
+            "from": "primary_statute",
+            "title": "חוק התכנון והבניה, התשכ\"ה-1965 - נבו",
+            "admitted": true,
+            "claim_id": "C5"
+          }
+        ],
+        "per_query_ms": [
+          5479,
+          3260,
+          5040,
+          5591,
+          5456,
+          5184,
+          6003,
+          7921,
+          8023,
+          7378
+        ],
+        "sum_query_ms": 59335,
+        "slowest_query_ms": 8023,
+        "parallel_inferred": false
+      }
+    }
+  ]
+}
