@@ -1,108 +1,125 @@
 ## Goal
 
-Replace the current time-based single progress bar in the academic legal research panel with:
-1. A vertical checklist of stages — each stage shows a live spinner while running and a check icon when actually complete (driven by real backend signals, not a timer).
-2. A blurred "ghost" answer area beneath the checklist that animates as if text is being written, then resolves into the real answer when the job finishes.
+Stop the drafter from throwing away a perfectly good Hebrew answer just because the model echoed internal claim labels (`C1 —`, `C2:`, `טענה C1:` …) as section headings. Keep all safety gates; add one narrow deterministic scrub step.
 
-## Current state (for context)
+All changes are confined to `supabase/functions/legal-research-v1/stages/drafter.ts`. No retrieval, verifier, candidate pool, marker parser rewrite, footnote placement, Rule 37, or citation-format work.
 
-`src/components/LegalResearchV1Panel.tsx` currently:
-- Shows one `<Progress>` bar driven by a `setInterval` timer (`STAGE_BUDGET_MS = 25s` per stage).
-- Polls `legal_research_jobs` for `status` ∈ `running | done | error` only.
-- Has no per-stage signal from the backend — stage labels advance purely by elapsed time.
+---
 
-`supabase/functions/legal-research-v1/index.ts` already tracks `stage_runs[]` internally and goes through a deterministic sequence: `attachments.extract → claim_analyzer → query_planner → retrieval(local+perplexity) → verifier → drafter → finalize`. It only writes `status` and final `result` to the DB.
+## Root cause (recap)
+
+1. `buildUserMessage` feeds claims to the model as `- (C1) טענה … [is_black_letter=…]` and each source carries `claim_ids: ["C1","C3"]`.
+2. The SYSTEM_PROMPT mentions internal IDs once in a single bullet but does not forbid using them as headings.
+3. GPT-5 reused those labels as natural-looking section openers (`C1 — …`, `C2 — …`).
+4. `detectInternalIdLeak` correctly flagged `C#` → `marker_validation.ok = false` → pipeline returned the hard-coded `STUB_ANSWER`.
+
+The `C\d+` tokens are scaffolding, not legal content. Removing the heading scaffolding does not touch any legal substance, footnote markers, `used_sources`, or footnote numbering.
+
+---
 
 ## Plan
 
-### 1. Backend: emit per-stage progress to the job row
+### 1. Prompt hardening (drafter.ts SYSTEM_PROMPT, ~line 176)
 
-- Migration: add two nullable columns to `public.legal_research_jobs`:
-  - `current_stage text` — short key (e.g. `analyzer`, `planner`, `retrieval`, `verifier`, `drafter`, `finalize`).
-  - `completed_stages text[]` default `'{}'` — stages already finished, in order.
-- In `supabase/functions/legal-research-v1/index.ts`, add a small `markStage(stage)` helper that updates the job row at the start of each major stage and pushes the previous stage into `completed_stages`. Insert calls at the existing stage boundaries (analyzer start, planner start, retrieval start, verifier start, drafter start, finalize).
-- No changes to retrieval/verifier/drafter logic, models, prompts, or scoring. Pure telemetry write.
-- RLS: existing "Users can read own research jobs" policy already covers the new columns.
+Replace the single bullet about internal IDs with a stronger, explicit block:
 
-### 2. Frontend: stage checklist UI
+- Tokens like `candidate_id`, `claim_id`, `C1`, `C2`, `C#`, `S1`, `S#`, `LS#`, `cand_*`, `verifier` are internal scaffolding only.
+- They must never appear anywhere in `answer_markdown` — not as section headings, not as labels, not in parentheses, not inline.
+- Do not organize the answer by claim IDs. Use natural Hebrew section headings derived from the legal content (e.g. **הגדרה**, **יסודות העוולה**, **יישום**, **סייגים**) when structure is needed.
+- Reference sources only via the superscript footnote numbers (`¹ ² ³ …`).
 
-In `LegalResearchV1Panel.tsx`:
-- Replace the single `<Progress>` block with a vertical list (one row per stage) using the existing Hebrew `STAGES` labels mapped to backend stage keys:
-  - `מנתח את השאלה` → `analyzer`
-  - `מתכנן חיפושים משפטיים` → `planner`
-  - `מחפש מקורות` → `retrieval`
-  - `מאמת את המקורות` → `verifier`
-  - `כותב תשובה` → `drafter`
-  - `מסדר הערות שוליים` → `finalize`
-- Each row renders one of three states based on poll data:
-  - **done** → `Check` icon (success color), label in `text-foreground`.
-  - **active** → `Loader2` spinner, label bold, subtle pulse.
-  - **pending** → empty circle, label in `text-muted-foreground`.
-- Driven by `current_stage` + `completed_stages` from the poll query (extend the `.select(...)` and the `pollJob` handler). The existing elapsed timer stays for the small `mm:ss` display and the soft-notice messages at 3 min / 5 min.
-- Keep Cancel button and resume-on-mount behavior unchanged.
+Also tighten `buildUserMessage` header from `טענות (claims):` to `טענות (לשימוש פנימי בלבד — אין להזכיר את מזהי הטענות בתשובה):`.
 
-### 3. Frontend: blurred "being written" answer preview
+### 2. Narrow deterministic scrub (new helper in drafter.ts)
 
-- Below the checklist, while `loading` is true, render a `GhostAnswer` block:
-  - 6–8 stacked `<div>` lines with varying widths (e.g. `w-11/12, w-10/12, w-9/12, w-11/12, w-8/12 …`) styled with `bg-muted` + `rounded` + Tailwind `blur-sm` + `animate-pulse`.
-  - A second group of "footnote-like" shorter lines beneath, to mimic the eventual answer + footnotes layout.
-  - Uses semantic tokens only (`bg-muted`, `text-muted-foreground`).
-- When `status === "done"`, the ghost block unmounts and the existing real answer + footnotes block renders in its place with a `animate-fade-in` transition (utility already in tailwind config).
-- No changes to the answer/footnotes/debug rendering itself.
+Add `scrubInternalClaimLabels(answer: string): { text: string; patterns: string[]; changed: boolean }`.
 
-### 4. Out of scope (explicit)
+Only the following anchored, conservative patterns are removed (Hebrew + English, line-anchored or wrapped):
 
-- No changes to the pipeline (analyzer/planner/retrieval/verifier/drafter), prompts, models, scoring, or admission rules.
-- No changes to attachments upload, auth, project selection.
-- No changes to debug panel.
-- No new toasts.
+| # | Pattern | Action |
+|---|---|---|
+| a | `^\s*C\d+\s*[—\-:.)]\s+` (line start) | drop the prefix, keep the rest of the line |
+| b | `^\s*\(C\d+\)\s*[—\-:.]?\s+` (line start) | drop the prefix |
+| c | `^\s*(?:טענה|Claim)\s+C\d+\s*[:\-—]\s*` (line start, case-insensitive for "Claim") | drop the prefix |
+| d | `\s\(C\d+\)(?=[\s.,;:!?\)\]]|$)` (standalone parenthetical) | drop the parenthetical |
+| e | bold/heading wrappers around any of the above (`\*\*C1\*\*`, `__C1__`) when followed by `—`/`:` | drop wrapper + label |
 
-## Technical details
+Explicitly **not** removed: bare `C\d+` mid-sentence with no separator, `C1` inside quoted legal text, anything matching `S\d+` / `LS\d+` / `candidate_id` / `claim_id` / `cand_*` / `verifier`. If any of those leak, do not scrub — fall through to the existing rejection path.
 
-**Migration sketch**
-```sql
-alter table public.legal_research_jobs
-  add column if not exists current_stage text,
-  add column if not exists completed_stages text[] not null default '{}';
-```
+Each successful pattern hit pushes its label (`line_prefix`, `paren_label`, `claim_word_prefix`, `standalone_paren`, `bold_label`) into the returned `patterns` array for telemetry.
 
-**Edge function helper sketch**
-```ts
-async function markStage(stage: string) {
-  await admin.from("legal_research_jobs")
-    .update({ current_stage: stage })
-    .eq("id", jobId);
+### 3. Wire the scrub into the existing flow (drafter.ts, after each `runMarkerValidation` call)
+
+There are two call sites — after the initial gpt-5-mini attempt (~line 710) and after the gpt-5 escalation (~line 759). At each site, in addition to today's `deterministicRepair` (which already handles numbering when there is **no** leak), add:
+
+```text
+if (parsed.ok && !marker.ok && marker.internal_id_leak
+    && marker.leaked_tokens.length === 1
+    && marker.leaked_tokens[0] === "C#") {
+  const scrub = scrubInternalClaimLabels(answer);
+  scrub_attempted = true;
+  scrub_patterns  = scrub.patterns;
+  if (scrub.changed) {
+    const candidate = scrub.text;
+    const m2 = runMarkerValidation(candidate, used);
+    // Accept only if all gates pass and footnotes/used_sources are unchanged.
+    if (m2.ok
+        && !m2.internal_id_leak
+        && extractMarkers(candidate).length === extractMarkers(answer).length) {
+      answer = candidate;
+      marker = { ...m2, repaired: true };
+      scrub_accepted = true;
+    } else {
+      scrub_rejected_reason =
+        !m2.ok ? "marker_validation_failed"
+        : m2.internal_id_leak ? "residual_leak"
+        : "marker_count_changed";
+    }
+  } else {
+    scrub_rejected_reason = "no_pattern_matched";
+  }
 }
-// and on stage completion:
-await admin.from("legal_research_jobs")
-  .update({ completed_stages: [...done, stage] })
-  .eq("id", jobId);
-```
-(Implementation will use the existing admin client / `setJobStatus`-style helper already in `index.ts` to avoid a new client.)
-
-**Poll query change**
-```ts
-.select("status, result, error, current_stage, completed_stages")
 ```
 
-**Stage row component (semantic tokens only)**
-- `done`: `<Check className="w-4 h-4 text-primary" />`
-- `active`: `<Loader2 className="w-4 h-4 animate-spin text-primary" />`
-- `pending`: `<div className="w-4 h-4 rounded-full border border-border" />`
+Guarantees from the gate:
+- `used_sources` is never touched (we only edit `answer_markdown`).
+- Footnote marker **count** is preserved → numbering and `footnote_count == used_sources` are preserved.
+- Only runs when `C#` is the *only* leaked token type → other leaks still fail closed.
+- Runs **before** the gpt-5 escalation on attempt 1 (saves the ~133s second call when scrub is enough) and again after the escalation as a final safety net.
 
-**Ghost answer block**
-```tsx
-<div className="space-y-2 rounded-lg border border-border bg-card p-4 animate-fade-in">
-  {widths.map((w, i) => (
-    <div key={i} className={`h-3 ${w} rounded bg-muted blur-[2px] animate-pulse`} />
-  ))}
-</div>
-```
+### 4. Telemetry (drafter.ts → DrafterResult & index.ts drafterMeta)
 
-## Acceptance
+Extend `marker_validation` (or add a sibling `scrub` object on `DrafterResult`) with:
 
-- Each stage row transitions spinner → check exactly when the backend advances, not on a timer.
-- If the backend stalls on a stage, that stage keeps its spinner (no false "completed" state).
-- Ghost answer is visible the whole time the job is running and is replaced by the real answer on `done`.
-- No regression in cancel, resume-on-mount, error display, attachments upload, or debug panel.
-- No backend pipeline behavior changes; only two new DB columns and progress writes.
+- `internal_id_scrub_attempted: boolean`
+- `internal_id_scrub_accepted: boolean`
+- `internal_id_scrub_patterns: string[]`
+- `internal_id_scrub_rejected_reason?: "no_pattern_matched" | "marker_validation_failed" | "residual_leak" | "marker_count_changed"`
+
+These bubble up into `drafterMeta` in `legal-research-v1/index.ts` (single field add — no other change to that file).
+
+### 5. Validation
+
+- **Unit test** `supabase/functions/legal-research-v1/stages/drafter.scrub.test.ts` with synthetic answers:
+  - `C1 — טקסט\nC2 — טקסט` → cleaned, validation passes.
+  - `(C1) טקסט` standalone paren → cleaned.
+  - `טענה C1: טקסט` → cleaned.
+  - `C1` mid-sentence with no separator → **not** touched, leak still flagged.
+  - Mixed leak (`C#` + `S#`) → scrub skipped, original rejection preserved.
+  - Bold wrapper `**C1** — טקסט` → cleaned.
+- **Fixture re-run** of L1–L6 via the existing `scripts/legal-research-v1-p7-phaseE5-baseline.ts` runner; diff `marker_validation.ok` and `footnote_count` vs the saved baseline. Expect no regressions.
+- **Live re-run** of the failing user question (job `b1f77b7b…`) via `scripts/deep-smoke.ts` or a one-off smoke-mode call; confirm `drafter.ok = true`, `scrub_accepted = true`, footnotes intact.
+
+### Acceptance
+
+- `marker_validation.ok = true` on the previously failing answer.
+- No `C\d+` survives in `answer_markdown`.
+- `footnote_count == used_sources.length`; `used_sources ⊆ verifier.usable` (unchanged).
+- L1–L6 unchanged.
+- If scrub cannot fix the answer, current rejection + STUB_ANSWER behavior is preserved.
+
+---
+
+## Side note (no code change in this plan)
+
+You also asked whether the `STUB_ANSWER` fallback should be replaced with a user-friendly error. Recommendation: **yes, eventually** — today a drafter failure surfaces as a confusing "[stub] התשובה תיווצר בשלב P5…" Hebrew message that implies the feature is unfinished. A better UX would be a clear error like *"לא הצלחנו להפיק תשובה מהמקורות שאותרו. נסו לנסח את השאלה אחרת או לצמצם את ההיקף."* plus a 422 status from the edge function so the client can render it as an error card instead of a chat answer. Out of scope for this plan; flag for a separate small task.
