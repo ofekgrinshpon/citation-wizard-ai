@@ -168,7 +168,7 @@ export interface Footnote {
 
 // ─── Phase C.1: Atomic marker representation ──────────────────────────────
 export type AtomicMode = "off" | "validate" | "emit";
-export type MarkerFormat = "legacy_superscript" | "legacy_superscript_fallback" | "atomic";
+export type MarkerFormat = "legacy_superscript";
 
 export interface AtomicReport {
   mode: AtomicMode;
