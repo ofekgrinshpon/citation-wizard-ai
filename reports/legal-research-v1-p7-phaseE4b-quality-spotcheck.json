@@ -1,0 +1,1133 @@
+{
+  "phase": "E.4b-quality-spotcheck",
+  "fixtures": {
+    "L3": {
+      "pool_summary": {
+        "found": 109,
+        "counts": {
+          "by_role": {
+            "scholarship": 4,
+            "factual_report": 1,
+            "primary_statute": 11,
+            "binding_case_law": 2,
+            "persuasive_case_law": 4
+          },
+          "by_claim": {
+            "C1": 12,
+            "C2": 4,
+            "C3": 2,
+            "C4": 4
+          },
+          "by_origin": {
+            "local_db": 12,
+            "perplexity": 10
+          }
+        },
+        "after_dedup": 22,
+        "dedup_drops": 87
+      },
+      "local_by_method_counts": {
+        "exact_authority": 8,
+        "text": 3,
+        "vector": 1
+      },
+      "top_local_by_method": {
+        "exact_authority": [
+          {
+            "candidate_id": "10a3cf80-252f-4284-b670-9b61ae266115",
+            "origin": "local_db",
+            "retrieval_method": "exact_authority",
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "score": 1.5,
+            "title": "חוק החוזים (תרופות בשל הפרת חוזה)",
+            "query_he": "נוסח וסעיפים: \"סעיף 15 לחוק החוזים (תרופות)\" הוראות הפחתת פיצוי מוסכם סמכות בית המשפט פירוש מילולי ופרשנות חקיקתית"
+          },
+          {
+            "candidate_id": "47bb14b8-4a4b-4e2f-a98c-c57026464bb5",
+            "origin": "local_db",
+            "retrieval_method": "exact_authority",
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "score": 1.35,
+            "title": "בית המשפט המחוזי בחיפה בשבתו כבית-משפט לערעורים אזרחיים, השופט חננאל שרעבי:  דחיית רשות ערעור על החלטה בעיון חוזר ועל החלטה דיונית (רמ\"ש 537",
+            "query_he": "בית המשפט העליון דוגמאות הפחתת פיצוי מוסכם הסכמי צרכנות ערבויות סעיפי נזקים עתידיים 'סעיף 15 לחוק החוזים (תרופות)' מקרים"
+          },
+          {
+            "candidate_id": "87a5e5e6-634d-4737-b48d-2f8ee235a9a9",
+            "origin": "local_db",
+            "retrieval_method": "exact_authority",
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "score": 1.35,
+            "title": "החלטת גמלאות לנושאי משרה ברשויות השלטון (שרים וסגני שרים ושאיריהם) (הפסקת חברות בכנסת לפי הוראות סעיף 42ג לחוק-יסוד: הכנסת) (הוראת שעה)",
+            "query_he": "נוסח וסעיפים: \"סעיף 15 לחוק החוזים (תרופות)\" הוראות הפחתת פיצוי מוסכם סמכות בית המשפט פירוש מילולי ופרשנות חקיקתית"
+          },
+          {
+            "candidate_id": "3e37d3bc-5e27-4ed4-a7ce-f3fce53335ec",
+            "origin": "local_db",
+            "retrieval_method": "exact_authority",
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "score": 1.35,
+            "title": "החוק העותומני על האגודות",
+            "query_he": "נוסח וסעיפים: \"סעיף 15 לחוק החוזים (תרופות)\" הוראות הפחתת פיצוי מוסכם סמכות בית המשפט פירוש מילולי ופרשנות חקיקתית"
+          },
+          {
+            "candidate_id": "0e7daf70-3c26-45bf-b51d-5b9fa8e2fae7",
+            "origin": "local_db",
+            "retrieval_method": "exact_authority",
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "score": 1.35,
+            "title": "תקנות החוק העותומני על האגודות (דיווח ושקיפות)",
+            "query_he": "נוסח וסעיפים: \"סעיף 15 לחוק החוזים (תרופות)\" הוראות הפחתת פיצוי מוסכם סמכות בית המשפט פירוש מילולי ופרשנות חקיקתית"
+          },
+          {
+            "candidate_id": "998d335c-f6ab-49e6-bf87-909162fe0815",
+            "origin": "local_db",
+            "retrieval_method": "exact_authority",
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "score": 1.35,
+            "title": "חוק אמנת החברה הבינלאומית למימון",
+            "query_he": "נוסח וסעיפים: \"סעיף 15 לחוק החוזים (תרופות)\" הוראות הפחתת פיצוי מוסכם סמכות בית המשפט פירוש מילולי ופרשנות חקיקתית"
+          },
+          {
+            "candidate_id": "80077080-cac0-4e90-9150-08be409d243d",
+            "origin": "local_db",
+            "retrieval_method": "exact_authority",
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "score": 1.35,
+            "title": "חוק אמנת האג (החזרת ילדים חטופים)",
+            "query_he": "נוסח וסעיפים: \"סעיף 15 לחוק החוזים (תרופות)\" הוראות הפחתת פיצוי מוסכם סמכות בית המשפט פירוש מילולי ופרשנות חקיקתית"
+          },
+          {
+            "candidate_id": "e6fbdba8-c62f-4d05-a770-d75ddb21a640",
+            "origin": "local_db",
+            "retrieval_method": "exact_authority",
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "score": 1.35,
+            "title": "חוק אמנת החברה הבין-אמריקנית להשקעות",
+            "query_he": "נוסח וסעיפים: \"סעיף 15 לחוק החוזים (תרופות)\" הוראות הפחתת פיצוי מוסכם סמכות בית המשפט פירוש מילולי ופרשנות חקיקתית"
+          }
+        ],
+        "text": [
+          {
+            "candidate_id": "8b905965-0b81-4abf-a166-fe630128f93e",
+            "origin": "local_db",
+            "retrieval_method": "text",
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "score": 0.113678358867764,
+            "title": "חוק בינוי ופינוי של אזורי שיקום",
+            "query_he": "נוסח וסעיפים: \"סעיף 15 לחוק החוזים (תרופות)\" הוראות הפחתת פיצוי מוסכם סמכות בית המשפט פירוש מילולי ופרשנות חקיקתית"
+          },
+          {
+            "candidate_id": "04940202-77c2-4101-a59d-4347385c5c7d",
+            "origin": "local_db",
+            "retrieval_method": "text",
+            "role": "primary_statute",
+            "claim_id": "C3",
+            "score": 0.0418169423937798,
+            "title": "ע\"א 3277/19 פקיד שומה ירושלים נ׳ אפרים סקמסקי פסק דין (16.08.2021)",
+            "query_he": "\"סעיף 15 לחוק החוזים (תרופות)\" הוראות פירושיות האם מצוין נטל הוכחה סטנדרט ראייתי תוצאות משפטיות אפשריות (הפחתה לסכום סבי"
+          },
+          {
+            "candidate_id": "71648d5c-6d4d-43f6-823d-36e826c1d918",
+            "origin": "local_db",
+            "retrieval_method": "text",
+            "role": "primary_statute",
+            "claim_id": "C3",
+            "score": 0.0360112376511097,
+            "title": "נשים בספורט הישראלי – מדיניות ונתונים",
+            "query_he": "\"סעיף 15 לחוק החוזים (תרופות)\" הוראות פירושיות האם מצוין נטל הוכחה סטנדרט ראייתי תוצאות משפטיות אפשריות (הפחתה לסכום סבי"
+          }
+        ],
+        "vector": [
+          {
+            "candidate_id": "03cfe10f-eb33-4053-8ba0-1651a4b85321",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "persuasive_case_law",
+            "claim_id": "C4",
+            "score": 0.4095715178362866,
+            "title": "ריפוי החוזה לאחר הפרתו",
+            "query_he": "בתי משפט מחוזיים פיצוי מוסכם דוגמאות מעשיות הסכמי שירותים צורכנות ראיות עסקיות ופיננסיות להוכחת אי-תאימות מבוססות תצהירי"
+          }
+        ]
+      },
+      "verifier": {
+        "usable_count": 12,
+        "dropped_count": 10,
+        "usable": [
+          {
+            "candidate_id": "10a3cf80-252f-4284-b670-9b61ae266115",
+            "origin": "local_db",
+            "retrieval_method": "exact_authority",
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "score": 1.5,
+            "title": "חוק החוזים (תרופות בשל הפרת חוזה)",
+            "query_he": "נוסח וסעיפים: \"סעיף 15 לחוק החוזים (תרופות)\" הוראות הפחתת פיצוי מוסכם סמכות בית המשפט פירוש מילולי ופרשנות חקיקתית"
+          },
+          {
+            "candidate_id": "d9268ee7-ee09-4c56-81e2-57c85843b861",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "score": 0.95,
+            "title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל\"א-1970",
+            "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) ניתוח משפטי של סמכות בית המשפט להפחתת פיצוי מוסכם כתבי-עת משפטיים ביקורתיים"
+          },
+          {
+            "candidate_id": "0012924b-34fb-45fa-aac4-b232d38a9672",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "score": 0.95,
+            "title": "פסק דין בע\"א 10208/16",
+            "query_he": "דו\"ח משרד המשפטים/משרד הכלכלה/ועדת הכנסת על סעיפי פיצוי מוסכם בהסכמי צרכנות דו\"ח עדכני על שימוש בסעיפי עונש והמלצות רגול"
+          },
+          {
+            "candidate_id": "ef317187-92fc-4bd4-84cd-f79198934726",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C1",
+            "score": 0.75,
+            "title": "משבר הפיצוי המוסכם? על סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה)",
+            "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) ניתוח משפטי של סמכות בית המשפט להפחתת פיצוי מוסכם כתבי-עת משפטיים ביקורתיים"
+          },
+          {
+            "candidate_id": "a77e7009-82fa-43a5-88ed-f93cd49a16df",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "persuasive_case_law",
+            "claim_id": "C1",
+            "score": 0.75,
+            "title": "סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה): פיצויים מוסכמים והפחתתם",
+            "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) ניתוח משפטי של סמכות בית המשפט להפחתת פיצוי מוסכם כתבי-עת משפטיים ביקורתיים"
+          },
+          {
+            "candidate_id": "7fb43000-cb3f-44fd-8fc8-5510ba4c384a",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "persuasive_case_law",
+            "claim_id": "C1",
+            "score": 0.75,
+            "title": "פיצויים מוסכמים והפחתתם: עיונים בסעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה)",
+            "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) ניתוח משפטי של סמכות בית המשפט להפחתת פיצוי מוסכם כתבי-עת משפטיים ביקורתיים"
+          },
+          {
+            "candidate_id": "e00ce749-a85c-4211-92ac-e270df14363d",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C2",
+            "score": 0.75,
+            "title": "פיצוי מוסכם – סוגיות והיבטים",
+            "query_he": "מאמרים משפטיים מבחן הפרזה פיצוי מוסכם 'סעיף 15 לחוק החוזים (תרופות)' ניתוח פסיקה והשוואה בין מבחנים אקדמיה"
+          },
+          {
+            "candidate_id": "885a429f-abe2-457f-b74f-270762ebed16",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "persuasive_case_law",
+            "claim_id": "C2",
+            "score": 0.75,
+            "title": "הפחתת פיצויים מוסכמים: בין חופש החוזים להתערבות שיפוטית",
+            "query_he": "מאמרים משפטיים מבחן הפרזה פיצוי מוסכם 'סעיף 15 לחוק החוזים (תרופות)' ניתוח פסיקה והשוואה בין מבחנים אקדמיה"
+          },
+          {
+            "candidate_id": "28f5abf1-a47e-4979-b5af-e6a3e7cd76e4",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C2",
+            "score": 0.75,
+            "title": "Damages Clauses and Penalty Rules in Israeli Contract Law",
+            "query_he": "מאמרים משפטיים מבחן הפרזה פיצוי מוסכם 'סעיף 15 לחוק החוזים (תרופות)' ניתוח פסיקה והשוואה בין מבחנים אקדמיה"
+          },
+          {
+            "candidate_id": "9781d213-67d3-4764-800c-9a6c3402fe05",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C2",
+            "score": 0.75,
+            "title": "Liquidated Damages and Judicial Reduction under Israeli Law",
+            "query_he": "מאמרים משפטיים מבחן הפרזה פיצוי מוסכם 'סעיף 15 לחוק החוזים (תרופות)' ניתוח פסיקה והשוואה בין מבחנים אקדמיה"
+          },
+          {
+            "candidate_id": "084b88d0-cd94-4115-89b8-73ca75849391",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "factual_report",
+            "claim_id": "C4",
+            "score": 0.75,
+            "title": "פסק דין 15310-09-20",
+            "query_he": "דו\"ח משרד המשפטים/משרד הכלכלה/ועדת הכנסת על סעיפי פיצוי מוסכם בהסכמי צרכנות דו\"ח עדכני על שימוש בסעיפי עונש והמלצות רגול"
+          },
+          {
+            "candidate_id": "03cfe10f-eb33-4053-8ba0-1651a4b85321",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "persuasive_case_law",
+            "claim_id": "C4",
+            "score": 0.4095715178362866,
+            "title": "ריפוי החוזה לאחר הפרתו",
+            "query_he": "בתי משפט מחוזיים פיצוי מוסכם דוגמאות מעשיות הסכמי שירותים צורכנות ראיות עסקיות ופיננסיות להוכחת אי-תאימות מבוססות תצהירי"
+          }
+        ]
+      },
+      "drafter": {
+        "used_sources_count": 8,
+        "used_sources": [
+          {
+            "candidate_id": "d9268ee7-ee09-4c56-81e2-57c85843b861",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "primary_statute",
+            "claim_id": "C1",
+            "score": 0.95,
+            "title": "חוק החוזים (תרופות בשל הפרת חוזה), תשל\"א-1970",
+            "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) ניתוח משפטי של סמכות בית המשפט להפחתת פיצוי מוסכם כתבי-עת משפטיים ביקורתיים"
+          },
+          {
+            "candidate_id": "0012924b-34fb-45fa-aac4-b232d38a9672",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "score": 0.95,
+            "title": "פסק דין בע\"א 10208/16",
+            "query_he": "דו\"ח משרד המשפטים/משרד הכלכלה/ועדת הכנסת על סעיפי פיצוי מוסכם בהסכמי צרכנות דו\"ח עדכני על שימוש בסעיפי עונש והמלצות רגול"
+          },
+          {
+            "candidate_id": "e00ce749-a85c-4211-92ac-e270df14363d",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C2",
+            "score": 0.75,
+            "title": "פיצוי מוסכם – סוגיות והיבטים",
+            "query_he": "מאמרים משפטיים מבחן הפרזה פיצוי מוסכם 'סעיף 15 לחוק החוזים (תרופות)' ניתוח פסיקה והשוואה בין מבחנים אקדמיה"
+          },
+          {
+            "candidate_id": "a77e7009-82fa-43a5-88ed-f93cd49a16df",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "persuasive_case_law",
+            "claim_id": "C1",
+            "score": 0.75,
+            "title": "סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה): פיצויים מוסכמים והפחתתם",
+            "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) ניתוח משפטי של סמכות בית המשפט להפחתת פיצוי מוסכם כתבי-עת משפטיים ביקורתיים"
+          },
+          {
+            "candidate_id": "7fb43000-cb3f-44fd-8fc8-5510ba4c384a",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "persuasive_case_law",
+            "claim_id": "C1",
+            "score": 0.75,
+            "title": "פיצויים מוסכמים והפחתתם: עיונים בסעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה)",
+            "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) ניתוח משפטי של סמכות בית המשפט להפחתת פיצוי מוסכם כתבי-עת משפטיים ביקורתיים"
+          },
+          {
+            "candidate_id": "084b88d0-cd94-4115-89b8-73ca75849391",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "factual_report",
+            "claim_id": "C4",
+            "score": 0.75,
+            "title": "פסק דין 15310-09-20",
+            "query_he": "דו\"ח משרד המשפטים/משרד הכלכלה/ועדת הכנסת על סעיפי פיצוי מוסכם בהסכמי צרכנות דו\"ח עדכני על שימוש בסעיפי עונש והמלצות רגול"
+          },
+          {
+            "candidate_id": "03cfe10f-eb33-4053-8ba0-1651a4b85321",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "persuasive_case_law",
+            "claim_id": "C4",
+            "score": 0.4095715178362866,
+            "title": "ריפוי החוזה לאחר הפרתו",
+            "query_he": "בתי משפט מחוזיים פיצוי מוסכם דוגמאות מעשיות הסכמי שירותים צורכנות ראיות עסקיות ופיננסיות להוכחת אי-תאימות מבוססות תצהירי"
+          },
+          {
+            "candidate_id": "ef317187-92fc-4bd4-84cd-f79198934726",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C1",
+            "score": 0.75,
+            "title": "משבר הפיצוי המוסכם? על סעיף 15 לחוק החוזים (תרופות בשל הפרת חוזה)",
+            "query_he": "מאמר פירוש סעיף 15 לחוק החוזים (תרופות) ניתוח משפטי של סמכות בית המשפט להפחתת פיצוי מוסכם כתבי-עת משפטיים ביקורתיים"
+          }
+        ],
+        "marker_validation_ok": true,
+        "footnote_count": 8
+      },
+      "used_subset_of_usable": true
+    },
+    "L4": {
+      "pool_summary": {
+        "found": 35,
+        "counts": {
+          "by_role": {
+            "scholarship": 1,
+            "binding_case_law": 3
+          },
+          "by_claim": {
+            "C1": 1,
+            "C2": 1,
+            "C4": 2
+          },
+          "by_origin": {
+            "local_db": 2,
+            "perplexity": 2
+          }
+        },
+        "after_dedup": 4,
+        "dedup_drops": 31
+      },
+      "local_by_method_counts": {
+        "text": 1,
+        "vector": 1
+      },
+      "top_local_by_method": {
+        "text": [
+          {
+            "candidate_id": "a98d9873-b26e-475e-af62-c518b3a19fb4",
+            "origin": "local_db",
+            "retrieval_method": "text",
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "score": 0.18519072830677,
+            "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+            "query_he": "פסק-דין בית המשפט העליון חריגים להפעלת 'השתק פלוגתא' ראיות חדשות שלא היו ניתנות להמצאה שינוי בחוק או בנסיבות חוסר הזדמנו"
+          }
+        ],
+        "vector": [
+          {
+            "candidate_id": "1c38f5ef-858b-4d46-a4ff-0fdada6b2aca",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "score": 0.3971704206764802,
+            "title": "על סופיות בפסקים זרים",
+            "query_he": "פסק-דין בית המשפט העליון חריגים להפעלת 'השתק פלוגתא' ראיות חדשות שלא היו ניתנות להמצאה שינוי בחוק או בנסיבות חוסר הזדמנו"
+          }
+        ]
+      },
+      "verifier": {
+        "usable_count": 3,
+        "dropped_count": 1,
+        "usable": [
+          {
+            "candidate_id": "a98d9873-b26e-475e-af62-c518b3a19fb4",
+            "origin": "local_db",
+            "retrieval_method": "text",
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "score": 0.18519072830677,
+            "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+            "query_he": "פסק-דין בית המשפט העליון חריגים להפעלת 'השתק פלוגתא' ראיות חדשות שלא היו ניתנות להמצאה שינוי בחוק או בנסיבות חוסר הזדמנו"
+          },
+          {
+            "candidate_id": "81f027f7-217a-4a14-9c28-f6caa2569141",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "score": 0.95,
+            "title": "החלטה בתיק ע\"א 4576/17",
+            "query_he": "מאמר 'השתק פלוגתא' תנאים זהות פלוגתא 'הכרעה חיונית' 'פסק דין חלוט' 'זהות צדדים' 'הזדמנות להתדיין' ניתוח משפטי בישראל (מא"
+          },
+          {
+            "candidate_id": "1c38f5ef-858b-4d46-a4ff-0fdada6b2aca",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "score": 0.3971704206764802,
+            "title": "על סופיות בפסקים זרים",
+            "query_he": "פסק-דין בית המשפט העליון חריגים להפעלת 'השתק פלוגתא' ראיות חדשות שלא היו ניתנות להמצאה שינוי בחוק או בנסיבות חוסר הזדמנו"
+          }
+        ]
+      },
+      "drafter": {
+        "used_sources_count": 3,
+        "used_sources": [
+          {
+            "candidate_id": "a98d9873-b26e-475e-af62-c518b3a19fb4",
+            "origin": "local_db",
+            "retrieval_method": "text",
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "score": 0.18519072830677,
+            "title": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה סבאח: פסק דין בעניין הכרעה בטענה מקדמית של השתק פלוגתא (תלה\"מ 39113-09-24)",
+            "query_he": "פסק-דין בית המשפט העליון חריגים להפעלת 'השתק פלוגתא' ראיות חדשות שלא היו ניתנות להמצאה שינוי בחוק או בנסיבות חוסר הזדמנו"
+          },
+          {
+            "candidate_id": "81f027f7-217a-4a14-9c28-f6caa2569141",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "score": 0.95,
+            "title": "החלטה בתיק ע\"א 4576/17",
+            "query_he": "מאמר 'השתק פלוגתא' תנאים זהות פלוגתא 'הכרעה חיונית' 'פסק דין חלוט' 'זהות צדדים' 'הזדמנות להתדיין' ניתוח משפטי בישראל (מא"
+          },
+          {
+            "candidate_id": "1c38f5ef-858b-4d46-a4ff-0fdada6b2aca",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "score": 0.3971704206764802,
+            "title": "על סופיות בפסקים זרים",
+            "query_he": "פסק-דין בית המשפט העליון חריגים להפעלת 'השתק פלוגתא' ראיות חדשות שלא היו ניתנות להמצאה שינוי בחוק או בנסיבות חוסר הזדמנו"
+          }
+        ],
+        "marker_validation_ok": true,
+        "footnote_count": 3
+      },
+      "used_subset_of_usable": true
+    },
+    "L5": {
+      "pool_summary": {
+        "found": 46,
+        "counts": {
+          "by_role": {
+            "scholarship": 5,
+            "primary_statute": 2,
+            "binding_case_law": 4,
+            "persuasive_case_law": 2
+          },
+          "by_claim": {
+            "C1": 4,
+            "C2": 2,
+            "C3": 3,
+            "C4": 4
+          },
+          "by_origin": {
+            "local_db": 4,
+            "perplexity": 9
+          }
+        },
+        "after_dedup": 13,
+        "dedup_drops": 33
+      },
+      "local_by_method_counts": {
+        "text": 1,
+        "vector": 3
+      },
+      "top_local_by_method": {
+        "text": [
+          {
+            "candidate_id": "01e3395f-6e35-472d-b8b3-d48ed2132217",
+            "origin": "local_db",
+            "retrieval_method": "text",
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "score": 0.144961273670197,
+            "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנו",
+            "query_he": "בג\"ץ / פסקי דין של בית המשפט העליון המתמקדים בהגדרת 'עילת הסבירות' כעילת ביקורת מנהלית — חיפוש פסקי דין מובילים שבהם הוצ"
+          }
+        ],
+        "vector": [
+          {
+            "candidate_id": "59190e34-b8a5-404e-b497-e82516c50483",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "score": 0.3394897736052666,
+            "title": "תקנות הבטיחות בעבודה (כלים לשיקוע פינים בפעולה ישירה)",
+            "query_he": "בג\"ץ / פסקי דין של בית המשפט העליון המתמקדים בהגדרת 'עילת הסבירות' כעילת ביקורת מנהלית — חיפוש פסקי דין מובילים שבהם הוצ"
+          },
+          {
+            "candidate_id": "5e8d39b0-76d8-4637-b533-128e9a23c2db",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "score": 0.33800991980981276,
+            "title": "פרמיית השליטה בעסקות מיזוג מסוג going private | מורן אופיר (כרך כ)",
+            "query_he": "פסקי דין של בית המשפט העליון העוסקים בהיקף ועומק הביקורת השיפוטית על סבירות ובמונחי אינטנסיביות/מדרגיות ביקורת — חפש נוס"
+          },
+          {
+            "candidate_id": "202ce622-7fd5-4545-9f10-8ee4511c40bc",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "score": 0.323457168908631,
+            "title": "החלופות להפיכת חברה ציבורית לפרטית: ניתוח משפטי וממצאים אמפיריים",
+            "query_he": "פסקי דין של בית המשפט העליון המעמיקים ביחס בין עילת הסבירות לעילת המידתיות (proportionality) וכן לטיפול בחריגה מסמכויות "
+          }
+        ]
+      },
+      "verifier": {
+        "usable_count": 8,
+        "dropped_count": 5,
+        "usable": [
+          {
+            "candidate_id": "01e3395f-6e35-472d-b8b3-d48ed2132217",
+            "origin": "local_db",
+            "retrieval_method": "text",
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "score": 0.144961273670197,
+            "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנו",
+            "query_he": "בג\"ץ / פסקי דין של בית המשפט העליון המתמקדים בהגדרת 'עילת הסבירות' כעילת ביקורת מנהלית — חיפוש פסקי דין מובילים שבהם הוצ"
+          },
+          {
+            "candidate_id": "5d97eb26-8d94-4613-bb19-221bc15733f3",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "persuasive_case_law",
+            "claim_id": "C1",
+            "score": 0.95,
+            "title": "דפי זהב בע״מ נ׳ רשות השידור",
+            "query_he": "פסקי דין של בתי משפט מחוזיים/ערעור (ע\"א/מחוזי) המתארים ומיישמים את עילת הסבירות — חיפוש החלטות מחוזיות שמנסחות הגדרה פרק"
+          },
+          {
+            "candidate_id": "a8c3d96a-9f5c-49a2-81c9-13c4b6097fda",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C1",
+            "score": 0.75,
+            "title": "עילת אי־הסבירות במשפט המנהלי",
+            "query_he": "מאמרים אקדמיים על הגדרת עילת הסבירות במשפט המנהלי — חיפוש בכתב העת 'משפטים' או Israel Law Review: 'עילת הסבירות' 'הגדרה'"
+          },
+          {
+            "candidate_id": "3465e938-fae0-4e18-89d7-44fa5e7e4c3b",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C2",
+            "score": 0.75,
+            "title": "מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט הישראלי",
+            "query_he": "מאמרים ותזות על מבחני הסבירות והכלים הביקורתיים בהן משתמשים בתי המשפט לבחון סבירות — חיפוש ב'משפטים' וכתבי-עת משפטיים: '"
+          },
+          {
+            "candidate_id": "9bee4526-b2e7-4116-8ce3-f483482b15f4",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C2",
+            "score": 0.75,
+            "title": "על עילת הסבירות הישראלית ככלי לביסוס עליונות שיפוטית",
+            "query_he": "מאמרים ותזות על מבחני הסבירות והכלים הביקורתיים בהן משתמשים בתי המשפט לבחון סבירות — חיפוש ב'משפטים' וכתבי-עת משפטיים: '"
+          },
+          {
+            "candidate_id": "7b8d784d-b1ce-4865-9c5c-d2fbee61f27a",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "persuasive_case_law",
+            "claim_id": "C3",
+            "score": 0.75,
+            "title": "בית המשפט העליון וביקורת שיפוטית על החלטות מנהליות: על מדרגיות ואינטנסיביות",
+            "query_he": "מאמרים אקדמיים על מדרגיות האינטנסיביות בביקורת השיפוטית בסבירות — חיפוש ב'משפטים' וכתבי-עת מדעיים: 'אינטנסיביות הביקורת'"
+          },
+          {
+            "candidate_id": "593fbfd4-a071-480b-8e73-cfc72406a92c",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C4",
+            "score": 0.75,
+            "title": "הערות על ביקורת הסבירות במשפט המינהלי",
+            "query_he": "מאמרים משפטיים המשווים בין עילת הסבירות לעילת המידתיות (proportionality) ודן ביחסים לעילות כמו חריגה מסמכויות או חוסר שי"
+          },
+          {
+            "candidate_id": "87721e93-39e1-4ffd-8da7-07c321415d4f",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C4",
+            "score": 0.75,
+            "title": "\"האם המחוקק ירה בתותח כדי לפגוע בזבוב\" על מידתיות במשפט",
+            "query_he": "מאמרים משפטיים המשווים בין עילת הסבירות לעילת המידתיות (proportionality) ודן ביחסים לעילות כמו חריגה מסמכויות או חוסר שי"
+          }
+        ]
+      },
+      "drafter": {
+        "used_sources_count": 7,
+        "used_sources": [
+          {
+            "candidate_id": "5d97eb26-8d94-4613-bb19-221bc15733f3",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "persuasive_case_law",
+            "claim_id": "C1",
+            "score": 0.95,
+            "title": "דפי זהב בע״מ נ׳ רשות השידור",
+            "query_he": "פסקי דין של בתי משפט מחוזיים/ערעור (ע\"א/מחוזי) המתארים ומיישמים את עילת הסבירות — חיפוש החלטות מחוזיות שמנסחות הגדרה פרק"
+          },
+          {
+            "candidate_id": "a8c3d96a-9f5c-49a2-81c9-13c4b6097fda",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C1",
+            "score": 0.75,
+            "title": "עילת אי־הסבירות במשפט המנהלי",
+            "query_he": "מאמרים אקדמיים על הגדרת עילת הסבירות במשפט המנהלי — חיפוש בכתב העת 'משפטים' או Israel Law Review: 'עילת הסבירות' 'הגדרה'"
+          },
+          {
+            "candidate_id": "593fbfd4-a071-480b-8e73-cfc72406a92c",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C4",
+            "score": 0.75,
+            "title": "הערות על ביקורת הסבירות במשפט המינהלי",
+            "query_he": "מאמרים משפטיים המשווים בין עילת הסבירות לעילת המידתיות (proportionality) ודן ביחסים לעילות כמו חריגה מסמכויות או חוסר שי"
+          },
+          {
+            "candidate_id": "9bee4526-b2e7-4116-8ce3-f483482b15f4",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C2",
+            "score": 0.75,
+            "title": "על עילת הסבירות הישראלית ככלי לביסוס עליונות שיפוטית",
+            "query_he": "מאמרים ותזות על מבחני הסבירות והכלים הביקורתיים בהן משתמשים בתי המשפט לבחון סבירות — חיפוש ב'משפטים' וכתבי-עת משפטיים: '"
+          },
+          {
+            "candidate_id": "3465e938-fae0-4e18-89d7-44fa5e7e4c3b",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C2",
+            "score": 0.75,
+            "title": "מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט הישראלי",
+            "query_he": "מאמרים ותזות על מבחני הסבירות והכלים הביקורתיים בהן משתמשים בתי המשפט לבחון סבירות — חיפוש ב'משפטים' וכתבי-עת משפטיים: '"
+          },
+          {
+            "candidate_id": "01e3395f-6e35-472d-b8b3-d48ed2132217",
+            "origin": "local_db",
+            "retrieval_method": "text",
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "score": 0.144961273670197,
+            "title": "בית המשפט העליון, השופט יוסף אלרון, השופט אלכס שטיין, השופטת גילה כנפי-שטייניץ: פסק דין בעתירה העוסקת בדרישה לאפשר ייצוג משפטי בוועדות לתכנו",
+            "query_he": "בג\"ץ / פסקי דין של בית המשפט העליון המתמקדים בהגדרת 'עילת הסבירות' כעילת ביקורת מנהלית — חיפוש פסקי דין מובילים שבהם הוצ"
+          },
+          {
+            "candidate_id": "87721e93-39e1-4ffd-8da7-07c321415d4f",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C4",
+            "score": 0.75,
+            "title": "\"האם המחוקק ירה בתותח כדי לפגוע בזבוב\" על מידתיות במשפט",
+            "query_he": "מאמרים משפטיים המשווים בין עילת הסבירות לעילת המידתיות (proportionality) ודן ביחסים לעילות כמו חריגה מסמכויות או חוסר שי"
+          }
+        ],
+        "marker_validation_ok": true,
+        "footnote_count": 7
+      },
+      "used_subset_of_usable": true
+    },
+    "L6": {
+      "pool_summary": {
+        "found": 61,
+        "counts": {
+          "by_role": {
+            "scholarship": 4,
+            "primary_statute": 8,
+            "binding_case_law": 7,
+            "persuasive_case_law": 1
+          },
+          "by_claim": {
+            "C1": 5,
+            "C2": 4,
+            "C3": 2,
+            "C4": 7,
+            "C5": 2
+          },
+          "by_origin": {
+            "local_db": 7,
+            "perplexity": 13
+          }
+        },
+        "after_dedup": 20,
+        "dedup_drops": 41
+      },
+      "local_by_method_counts": {
+        "text": 1,
+        "vector": 6
+      },
+      "top_local_by_method": {
+        "text": [
+          {
+            "candidate_id": "3c7f1b49-b249-427e-b26b-11a7e185acc6",
+            "origin": "local_db",
+            "retrieval_method": "text",
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "score": 0.14052847251296,
+            "title": "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ ",
+            "query_he": "פסק דין בית המשפט העליון 'הבטחה שניתנה בחוסר סמכות' 'אין בהשתק הקניית סמכות' 'החזר הוצאות' 'פיצוי הסתמכות'"
+          }
+        ],
+        "vector": [
+          {
+            "candidate_id": "be976367-c8de-4728-ad7e-d333ddadf147",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C5",
+            "score": 0.40774904055438055,
+            "title": "על כללים והצדקות: הבעיה הקשה",
+            "query_he": "פסק דין בית המשפט העליון 'פיצוי הסתמכות' 'החזר הוצאות' 'צו לבצע בחינה מחודשת' 'הבטחה מנהלית'"
+          },
+          {
+            "candidate_id": "23fabef0-7537-4da2-afcf-4dcd17909441",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "score": 0.39451556811667615,
+            "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+            "query_he": "פסק דין בית המשפט העליון החלטות עקרוניות על 'הבטחה מנהלית' 'אכיפת הבטחה' 'הסתמכות סבירה' 'קשר מחייב' איזון בין אינטרס צי"
+          },
+          {
+            "candidate_id": "31901c83-6c90-4d30-b204-d45d01aa1724",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "score": 0.3943560435126936,
+            "title": "יובל פרוקצ’יה על התאוריה של חוזה המתנה 661 (כרך ט\"ו)",
+            "query_he": "פסק דין בית המשפט העליון החלטות עקרוניות על 'הבטחה מנהלית' 'אכיפת הבטחה' 'הסתמכות סבירה' 'קשר מחייב' איזון בין אינטרס צי"
+          },
+          {
+            "candidate_id": "057da5bb-12b1-4b94-ad10-8422c085b4e2",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C4",
+            "score": 0.3926665875789504,
+            "title": "צמצום שלא כפשוטו: אחריותם של נושאי משרה בחברה בסמיכות לחדלות פירעון | עמיר ליכט (כרך כד(2))",
+            "query_he": "פסק דין בית המשפט העליון 'רשות מקומית התחייבה לאישור תב\"ע' 'אין כבילה של שיקול דעת מוסדות התכנון' 'התחייבות לקדם הליך'"
+          },
+          {
+            "candidate_id": "5de0027c-170f-468b-9654-fc7d5c458d1b",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "score": 0.3830091406190256,
+            "title": "חריגה מסמכות עניינית בהליך האזרחי | אלון קלמנט (כרך יח)",
+            "query_he": "פסק דין בית המשפט העליון 'הבטחה שניתנה בחוסר סמכות' 'אין בהשתק הקניית סמכות' 'החזר הוצאות' 'פיצוי הסתמכות'"
+          },
+          {
+            "candidate_id": "7a88da3a-f558-4f7c-a783-38e115ea44aa",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "score": 0.3816906812603088,
+            "title": "ההבחנה בין סיכון משפטי לסיכון מסחרי – האם היא מוצדקת? | עדי ליבזון וגדעון פרחומובסקי (כרך כד(2))",
+            "query_he": "פסק דין בית המשפט העליון 'שינוי מדיניות' 'הסתמכות' 'איזון בין אינטרס ציבורי להסתמכות' 'הסדר מעבר' פיצוי"
+          }
+        ]
+      },
+      "verifier": {
+        "usable_count": 18,
+        "dropped_count": 2,
+        "usable": [
+          {
+            "candidate_id": "3c7f1b49-b249-427e-b26b-11a7e185acc6",
+            "origin": "local_db",
+            "retrieval_method": "text",
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "score": 0.14052847251296,
+            "title": "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ ",
+            "query_he": "פסק דין בית המשפט העליון 'הבטחה שניתנה בחוסר סמכות' 'אין בהשתק הקניית סמכות' 'החזר הוצאות' 'פיצוי הסתמכות'"
+          },
+          {
+            "candidate_id": "8916e5ec-f2fe-4823-996b-5f3f1e702236",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "primary_statute",
+            "claim_id": "C2",
+            "score": 0.95,
+            "title": "חוק התכנון והבנייה, תשכ\"ה-1965 — אתר הכנסת (PDF, פרק א)",
+            "query_he": "חוק התכנון והבניה זכויות וסמכויות הרשות המקומית התחייבויות בכתב של הרשות המקומית 'חוסר סמכות' 'התחייבות' אתר משרד המשפטי"
+          },
+          {
+            "candidate_id": "1362dbb7-cb8f-4bc0-91ee-42ec46843875",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "primary_statute",
+            "claim_id": "C4",
+            "score": 0.95,
+            "title": "חוק התכנון והבניה, תשכ\"ה-1965 – נבו",
+            "query_he": "חוק התכנון והבניה סמכויות הרשות המקומית לקדם תב\"ע התחייבות לקידום תב\"ע 'אישור תב\"ע' 'התחייבות לתוצאה'"
+          },
+          {
+            "candidate_id": "8b8a9c3a-368d-407f-bf12-1700a7f2798d",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "primary_statute",
+            "claim_id": "C4",
+            "score": 0.95,
+            "title": "חוק התכנון והבניה, תשכ\"ה-1965 – אתר הכנסת (fs.knesset.gov.il / knesset.gov.il)",
+            "query_he": "חוק התכנון והבניה סמכויות הרשות המקומית לקדם תב\"ע התחייבות לקידום תב\"ע 'אישור תב\"ע' 'התחייבות לתוצאה'"
+          },
+          {
+            "candidate_id": "9cc3343b-5c5c-4583-b270-6c734ea0d283",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "primary_statute",
+            "claim_id": "C4",
+            "score": 0.95,
+            "title": "תיקון 101 לחוק התכנון והבניה – Gov.il",
+            "query_he": "חוק התכנון והבניה סמכויות הרשות המקומית לקדם תב\"ע התחייבות לקידום תב\"ע 'אישור תב\"ע' 'התחייבות לתוצאה'"
+          },
+          {
+            "candidate_id": "6571e0bd-a452-4b19-9f8c-e4df5c7fd38a",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "primary_statute",
+            "claim_id": "C4",
+            "score": 0.95,
+            "title": "תזכיר חוק התכנון והבניה (תיקון מס' __), התשפ\"ה-2024 – תזכירים ממשלתיים",
+            "query_he": "חוק התכנון והבניה סמכויות הרשות המקומית לקדם תב\"ע התחייבות לקידום תב\"ע 'אישור תב\"ע' 'התחייבות לתוצאה'"
+          },
+          {
+            "candidate_id": "efed88bf-9ede-4c47-ad82-10c7b1043b72",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "primary_statute",
+            "claim_id": "C4",
+            "score": 0.95,
+            "title": "חוק התכנון והבנייה – נוסח/תיקונים בכנסת (מסמך DOCX)",
+            "query_he": "חוק התכנון והבניה סמכויות הרשות המקומית לקדם תב\"ע התחייבות לקידום תב\"ע 'אישור תב\"ע' 'התחייבות לתוצאה'"
+          },
+          {
+            "candidate_id": "d4008613-43da-4be3-8772-45e68eb1fde5",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "primary_statute",
+            "claim_id": "C4",
+            "score": 0.95,
+            "title": "תיקון 101 לחוק התכנון והבניה – שיתוף ציבור / חלוקת סמכויות",
+            "query_he": "חוק התכנון והבניה סמכויות הרשות המקומית לקדם תב\"ע התחייבות לקידום תב\"ע 'אישור תב\"ע' 'התחייבות לתוצאה'"
+          },
+          {
+            "candidate_id": "ea656754-c322-43ee-9072-81e18d2f53c0",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "persuasive_case_law",
+            "claim_id": "C5",
+            "score": 0.95,
+            "title": "ע\"א 8463/14 — פסק דין של בית המשפט העליון",
+            "query_he": "פסק דין בית הדין המחוזי/בית משפט השלום 'פיצוי על הוצאות השקעה בהסתמך על התחייבות רשות מקומית' 'הסדר מעבר'"
+          },
+          {
+            "candidate_id": "83d12e3b-453e-4b4c-b2a4-2d5ec68c3859",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C1",
+            "score": 0.75,
+            "title": "הבטחה מינהלית*",
+            "query_he": "מאמר משפטי 'הבטחה מנהלית' 'אכיפת הבטחה' 'הסתמכות' 'איזון מנהלי' משפט מנהלי תכנון ובניה"
+          },
+          {
+            "candidate_id": "7954a611-f068-4045-bd83-6dc60ab50b94",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C1",
+            "score": 0.75,
+            "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+            "query_he": "מאמר משפטי 'הבטחה מנהלית' 'אכיפת הבטחה' 'הסתמכות' 'איזון מנהלי' משפט מנהלי תכנון ובניה"
+          },
+          {
+            "candidate_id": "3f3203f3-579d-458d-999e-680d126348f8",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C1",
+            "score": 0.75,
+            "title": "הבטחה מינהלית לציבור",
+            "query_he": "מאמר משפטי 'הבטחה מנהלית' 'אכיפת הבטחה' 'הסתמכות' 'איזון מנהלי' משפט מנהלי תכנון ובניה"
+          },
+          {
+            "candidate_id": "e1aac12e-9e27-4ed5-9023-33ba2e1d77a7",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C3",
+            "score": 0.75,
+            "title": "הגנת ההסתמכות במשפט המנהלי",
+            "query_he": "מאמר משפטי 'שינוי מדיניות' 'הבטחה מנהלית' 'איזון אינטרס ציבורי מול הסתמכות' 'פיצוי' משפט מנהלי תכנון ובניה"
+          },
+          {
+            "candidate_id": "be976367-c8de-4728-ad7e-d333ddadf147",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C5",
+            "score": 0.40774904055438055,
+            "title": "על כללים והצדקות: הבעיה הקשה",
+            "query_he": "פסק דין בית המשפט העליון 'פיצוי הסתמכות' 'החזר הוצאות' 'צו לבצע בחינה מחודשת' 'הבטחה מנהלית'"
+          },
+          {
+            "candidate_id": "23fabef0-7537-4da2-afcf-4dcd17909441",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "score": 0.39451556811667615,
+            "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+            "query_he": "פסק דין בית המשפט העליון החלטות עקרוניות על 'הבטחה מנהלית' 'אכיפת הבטחה' 'הסתמכות סבירה' 'קשר מחייב' איזון בין אינטרס צי"
+          },
+          {
+            "candidate_id": "31901c83-6c90-4d30-b204-d45d01aa1724",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "score": 0.3943560435126936,
+            "title": "יובל פרוקצ’יה על התאוריה של חוזה המתנה 661 (כרך ט\"ו)",
+            "query_he": "פסק דין בית המשפט העליון החלטות עקרוניות על 'הבטחה מנהלית' 'אכיפת הבטחה' 'הסתמכות סבירה' 'קשר מחייב' איזון בין אינטרס צי"
+          },
+          {
+            "candidate_id": "5de0027c-170f-468b-9654-fc7d5c458d1b",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "score": 0.3830091406190256,
+            "title": "חריגה מסמכות עניינית בהליך האזרחי | אלון קלמנט (כרך יח)",
+            "query_he": "פסק דין בית המשפט העליון 'הבטחה שניתנה בחוסר סמכות' 'אין בהשתק הקניית סמכות' 'החזר הוצאות' 'פיצוי הסתמכות'"
+          },
+          {
+            "candidate_id": "7a88da3a-f558-4f7c-a783-38e115ea44aa",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C3",
+            "score": 0.3816906812603088,
+            "title": "ההבחנה בין סיכון משפטי לסיכון מסחרי – האם היא מוצדקת? | עדי ליבזון וגדעון פרחומובסקי (כרך כד(2))",
+            "query_he": "פסק דין בית המשפט העליון 'שינוי מדיניות' 'הסתמכות' 'איזון בין אינטרס ציבורי להסתמכות' 'הסדר מעבר' פיצוי"
+          }
+        ]
+      },
+      "drafter": {
+        "used_sources_count": 9,
+        "used_sources": [
+          {
+            "candidate_id": "83d12e3b-453e-4b4c-b2a4-2d5ec68c3859",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C1",
+            "score": 0.75,
+            "title": "הבטחה מינהלית*",
+            "query_he": "מאמר משפטי 'הבטחה מנהלית' 'אכיפת הבטחה' 'הסתמכות' 'איזון מנהלי' משפט מנהלי תכנון ובניה"
+          },
+          {
+            "candidate_id": "7954a611-f068-4045-bd83-6dc60ab50b94",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C1",
+            "score": 0.75,
+            "title": "הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?",
+            "query_he": "מאמר משפטי 'הבטחה מנהלית' 'אכיפת הבטחה' 'הסתמכות' 'איזון מנהלי' משפט מנהלי תכנון ובניה"
+          },
+          {
+            "candidate_id": "e1aac12e-9e27-4ed5-9023-33ba2e1d77a7",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "scholarship",
+            "claim_id": "C3",
+            "score": 0.75,
+            "title": "הגנת ההסתמכות במשפט המנהלי",
+            "query_he": "מאמר משפטי 'שינוי מדיניות' 'הבטחה מנהלית' 'איזון אינטרס ציבורי מול הסתמכות' 'פיצוי' משפט מנהלי תכנון ובניה"
+          },
+          {
+            "candidate_id": "1362dbb7-cb8f-4bc0-91ee-42ec46843875",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "primary_statute",
+            "claim_id": "C4",
+            "score": 0.95,
+            "title": "חוק התכנון והבניה, תשכ\"ה-1965 – נבו",
+            "query_he": "חוק התכנון והבניה סמכויות הרשות המקומית לקדם תב\"ע התחייבות לקידום תב\"ע 'אישור תב\"ע' 'התחייבות לתוצאה'"
+          },
+          {
+            "candidate_id": "d4008613-43da-4be3-8772-45e68eb1fde5",
+            "origin": "perplexity",
+            "retrieval_method": "perplexity",
+            "role": "primary_statute",
+            "claim_id": "C4",
+            "score": 0.95,
+            "title": "תיקון 101 לחוק התכנון והבניה – שיתוף ציבור / חלוקת סמכויות",
+            "query_he": "חוק התכנון והבניה סמכויות הרשות המקומית לקדם תב\"ע התחייבות לקידום תב\"ע 'אישור תב\"ע' 'התחייבות לתוצאה'"
+          },
+          {
+            "candidate_id": "be976367-c8de-4728-ad7e-d333ddadf147",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C5",
+            "score": 0.40774904055438055,
+            "title": "על כללים והצדקות: הבעיה הקשה",
+            "query_he": "פסק דין בית המשפט העליון 'פיצוי הסתמכות' 'החזר הוצאות' 'צו לבצע בחינה מחודשת' 'הבטחה מנהלית'"
+          },
+          {
+            "candidate_id": "3c7f1b49-b249-427e-b26b-11a7e185acc6",
+            "origin": "local_db",
+            "retrieval_method": "text",
+            "role": "binding_case_law",
+            "claim_id": "C2",
+            "score": 0.14052847251296,
+            "title": "בהמ\"ש לעניינים מנהליים בתל אביב -יפו, השופטת מיכל אגמון-גונן: פסק דין בעניין הליכי קבלת מעמד של מבקש מקלט מסודן הנשוי לאזרחית ישראלית (עמ\"נ ",
+            "query_he": "פסק דין בית המשפט העליון 'הבטחה שניתנה בחוסר סמכות' 'אין בהשתק הקניית סמכות' 'החזר הוצאות' 'פיצוי הסתמכות'"
+          },
+          {
+            "candidate_id": "23fabef0-7537-4da2-afcf-4dcd17909441",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "score": 0.39451556811667615,
+            "title": "נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו)",
+            "query_he": "פסק דין בית המשפט העליון החלטות עקרוניות על 'הבטחה מנהלית' 'אכיפת הבטחה' 'הסתמכות סבירה' 'קשר מחייב' איזון בין אינטרס צי"
+          },
+          {
+            "candidate_id": "31901c83-6c90-4d30-b204-d45d01aa1724",
+            "origin": "local_db",
+            "retrieval_method": "vector",
+            "role": "binding_case_law",
+            "claim_id": "C1",
+            "score": 0.3943560435126936,
+            "title": "יובל פרוקצ’יה על התאוריה של חוזה המתנה 661 (כרך ט\"ו)",
+            "query_he": "פסק דין בית המשפט העליון החלטות עקרוניות על 'הבטחה מנהלית' 'אכיפת הבטחה' 'הסתמכות סבירה' 'קשר מחייב' איזון בין אינטרס צי"
+          }
+        ],
+        "marker_validation_ok": true,
+        "footnote_count": 9
+      },
+      "used_subset_of_usable": true
+    }
+  }
+}
