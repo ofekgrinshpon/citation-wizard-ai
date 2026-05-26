@@ -1931,6 +1931,8 @@ export function LegalQAChat({ onResultSaved, externalResult, academicResumeSigna
       if (wizardStep === "init" || wizardStep === "topic_or_question") return;
       return;
     }
+    // Sources-only mode is owned entirely by its own panel.
+    if (taskMode === "legal_source_search") return;
     // D1: Research is offline. Never fire a request — show the maintenance
     // notice and bail before any network call. String cast prevents TS from
     // narrowing `taskMode` and breaking downstream branches we leave in place
