@@ -616,7 +616,6 @@ export interface DrafterResult {
   used_sources: UsedSource[];
   footnotes: Footnote[];
   marker_validation: MarkerValidation;
-  rule37?: Rule37Report;
   marker_format: MarkerFormat;
   atomic?: AtomicReport;
   omitted_candidate_ids: string[];
