@@ -75,3 +75,25 @@ Deno.test("marker count invariant under Phase 1 + Phase 2", () => {
   const after = (r.answer.match(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/gu) ?? []).length;
   assertEquals(after, before);
 });
+
+Deno.test("placement telemetry: max_cluster_len for clustered markers", () => {
+  const r = validatePlacement("אחריות¹²³⁴ והשאר.");
+  assertEquals(r.max_cluster_len, 4);
+  assertEquals(r.cluster_run_count, 1);
+});
+
+Deno.test("placement telemetry: final_summary_dump=true on 5+ markers in last paragraph", () => {
+  const answer = "פתיחה¹ ועוד טקסט².\n\nלסיכום, האחריות חלה.³⁴⁵⁶⁷";
+  const r = validatePlacement(answer);
+  assertEquals(r.final_summary_dump, true);
+  assertEquals(r.final_summary_dump_count, 1);
+  assert((r.final_paragraph_marker_count ?? 0) >= 5);
+});
+
+Deno.test("placement telemetry: final_summary_dump=false when markers are scattered", () => {
+  const answer = "פתיחה¹.\n\nגוף² נוסף³.\n\nמסקנה קצרה⁴.";
+  const r = validatePlacement(answer);
+  assertEquals(r.final_summary_dump, false);
+  assertEquals(r.final_summary_dump_count, 0);
+  assertEquals(r.max_cluster_len, 0);
+});
