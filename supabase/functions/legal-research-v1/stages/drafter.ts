@@ -1159,9 +1159,11 @@ export function applyOccurrenceFootnotes(
     while ((m = FN_TOKEN_RE.exec(tokenized)) !== null) {
       rewritten += tokenized.slice(lastEnd, m.index);
       occurrence++;
-      const origN = Number(m[1]);
       rewritten += `[[fn:${occurrence}]]`;
-      occurrenceFromMultiDigitSingleToken.push(String(origN).length >= 2);
+      // Since tokens are non-adjacent (guard below), each rendered
+      // superscript run corresponds to exactly one occurrence — so a
+      // rendered multi-digit run necessarily comes from one single token.
+      occurrenceFromMultiDigitSingleToken.push(String(occurrence).length >= 2);
       lastEnd = m.index + m[0].length;
     }
     rewritten += tokenized.slice(lastEnd);
