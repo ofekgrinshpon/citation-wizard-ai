@@ -1376,14 +1376,11 @@ export async function runDrafter(
   // We record placement metrics for observability only. Placement is never
   // gated, never blocked, never rewritten. Aesthetics-only repairs were
   // removed because they cost ~136s on gpt-5 without affecting correctness.
-  if (parsed.ok && marker.ok) {
-    marker.placement = validatePlacement(answer);
-  }
-
+  // (Placement is recomputed once below, after Phase 3 may have rewritten answer.)
 
   // Build UsedSource + Footnote outputs from inputSources × used.
   const inputByRef = new Map(inputSources.map((s) => [s.ref, s]));
-  const used_sources: UsedSource[] = used
+  let used_sources: UsedSource[] = used
     .map((u) => {
       const s = inputByRef.get(u.ref);
       if (!s) return null;
@@ -1398,12 +1395,74 @@ export async function runDrafter(
     })
     .filter((x): x is UsedSource => x !== null)
     .sort((a, b) => a.number - b.number);
-  const footnotes: Footnote[] = used_sources.map((u) => ({
+  let footnotes: Footnote[] = used_sources.map((u) => ({
     number: u.number,
     title: u.title,
     url: u.url,
     source_type: u.source_type,
   }));
+
+  // ─── Phase 3: occurrence-indexed footnotes + short forms ─────────────────
+  const envP3 = (Deno.env.get("LEGAL_RESEARCH_V1_OCCURRENCE_FOOTNOTES") ?? "on").toLowerCase();
+  const p3Enabled = parsed.ok && marker.ok && envP3 !== "off";
+  let phase3Report: NonNullable<import("../lib/types.ts").CitationCleanupReport["phase3"]> =
+    p3Enabled ? { applied: false } : { applied: false, discarded_reason: "disabled_by_env" };
+  if (p3Enabled) {
+    const p3 = applyOccurrenceFootnotes(
+      answer,
+      used_sources.map((u) => ({
+        number: u.number,
+        title: u.title,
+        url: u.url,
+        source_type: u.source_type,
+        candidate_id: u.candidate_id,
+      })),
+      footnotes,
+    );
+    phase3Report = p3.report;
+    if (p3.applied) {
+      const origByCand = new Map(used_sources.map((u) => [u.candidate_id, u]));
+      answer = p3.answer;
+      used_sources = p3.used_sources.map((u) => {
+        const orig = u.candidate_id ? origByCand.get(u.candidate_id) : undefined;
+        return {
+          candidate_id: u.candidate_id ?? orig?.candidate_id ?? "",
+          number: u.number,
+          title: u.title,
+          url: u.url,
+          source_type: u.source_type ?? orig?.source_type ?? "",
+          origin: orig?.origin ?? "local_db",
+        };
+      });
+      footnotes = p3.footnotes;
+      const v = p3.validation!;
+      const occMarkers = Array.from({ length: v.occurrence_count }, (_, i) => i + 1);
+      marker = {
+        ...marker,
+        markers_in_answer: occMarkers,
+        unused_sources: [],
+        missing_sources: [],
+        occurrence_mode: true,
+        occurrence_count: v.occurrence_count,
+        unique_source_count: v.unique_source_count,
+        short_form_count: v.short_form_count,
+        ibid_count: v.ibid_count,
+        supra_count: v.supra_count,
+        every_marker_has_footnote: v.every_marker_has_footnote,
+        every_footnote_in_usable: v.every_footnote_in_usable,
+        no_adjacent_marker_clusters: v.no_adjacent_marker_clusters,
+        repaired: true,
+      };
+    }
+  }
+  if (marker.citation_cleanup) {
+    marker.citation_cleanup = { ...marker.citation_cleanup, phase3: phase3Report };
+  }
+
+  // Placement telemetry (read-only) on the final answer.
+  if (parsed.ok && marker.ok) {
+    marker.placement = validatePlacement(answer);
+  }
 
   const usedCandIds = new Set(used_sources.map((u) => u.candidate_id));
   const omitted_candidate_ids = inputSources
