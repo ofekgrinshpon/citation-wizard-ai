@@ -1,7 +1,7 @@
 // Unit tests for applyCitationCleanup — Phase 1 chronological renumbering,
 // Phase 2 punctuation normalization, and cluster telemetry.
 import { assert, assertEquals } from "https://deno.land/std@0.168.0/testing/asserts.ts";
-import { applyCitationCleanup } from "./drafter.ts";
+import { applyCitationCleanup, validatePlacement } from "./drafter.ts";
 
 const u = (n: number) => ({ ref: `s${n}`, number: n, candidate_id: `c${n}` });
 
