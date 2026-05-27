@@ -233,8 +233,15 @@ export interface CitationCleanupReport {
       | "marker_validation_failed"
       | "footnote_resolution_failed"
       | "no_markers"
-      | "disabled_by_env";
+      | "disabled_by_env"
+      | "ambiguous_raw_superscript_run"
+      | "adjacent_tokens_would_render_ambiguous"
+      | "token_leak_detected";
     cluster_examples?: string[];
+    ambiguous_run_samples?: Array<{ run: string; context: string; candidates: string[] }>;
+    multi_digit_marker_runs_count?: number;
+    multi_digit_runs_from_single_token_count?: number;
+    every_multi_digit_run_from_single_token?: boolean;
   };
 }
 
@@ -259,6 +266,13 @@ export interface MarkerValidation {
   every_marker_has_footnote?: boolean;
   every_footnote_in_usable?: boolean;
   no_adjacent_marker_clusters?: boolean;
+  // Token-aware multi-digit proof (Phase 3 v2). Report-only; do not gate on
+  // `no_adjacent_marker_clusters` after v2 — the token-adjacency guard inside
+  // applyOccurrenceFootnotes is the real safety net.
+  multi_digit_marker_runs_count?: number;
+  multi_digit_runs_from_single_token_count?: number;
+  every_multi_digit_run_from_single_token?: boolean;
+  token_model_ok?: boolean;
 }
 
 

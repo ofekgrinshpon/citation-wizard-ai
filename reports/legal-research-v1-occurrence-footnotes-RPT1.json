@@ -1,8 +1,8 @@
 {
   "fixture_id": "RPT1",
-  "run_id": "08227634-c608-4cc9-93cf-443e5acce21e",
-  "qa_log_id": "6061b1a8-f69c-4356-9117-a2b3568d41e1",
-  "total_ms": 165230,
+  "run_id": "3a22eabf-2c32-4ae9-8f98-fcd614fefec9",
+  "qa_log_id": "858647d2-cb57-4819-88ec-f7a0773a6b8c",
+  "total_ms": 189819,
   "baseline_total_ms": null,
   "runtime_delta_ms": null,
   "hard_gates": {
@@ -16,43 +16,43 @@
   },
   "phase3": {
     "applied": false,
-    "discarded_reason": "ambiguous_adjacent_markers",
+    "discarded_reason": "adjacent_tokens_would_render_ambiguous",
     "occurrence_count": null,
     "unique_source_count": null,
     "short_form_count": null,
     "ibid_count": null,
     "supra_count": null,
-    "cluster_examples": [
-      " הרלוונטיות.¹²³\n\nיסודות החל",
-      "יעות נוספות.¹²\n- הדרישות ה",
-      "ות על הנושא.¹²³\n\nמהי **הכרע",
-      "להכרעת הדין.³¹\n- **חיוניות",
-      "ר אפקט השתק.²³⁴\n\nהתמודדות ע"
-    ]
+    "cluster_examples": null,
+    "ambiguous_run_samples": null,
+    "multi_digit_marker_runs_count": null,
+    "multi_digit_runs_from_single_token_count": null,
+    "every_multi_digit_run_from_single_token": null
   },
   "short_form_samples": [],
   "placement": {
-    "cluster_count": 19,
-    "max_cluster_len": 3,
+    "cluster_count": 5,
+    "max_cluster_len": 2,
     "final_summary_dump": false
   },
   "source_list": {
-    "count": 5,
+    "count": 7,
     "baseline_count": null,
     "ids": [
-      "179fa001-366d-498e-8a63-189db288b7ec",
-      "f00c5951-daec-4ec1-acc3-58e72ca4c841",
-      "a5b0fc39-60c6-42d9-9144-85acff66d8b9",
-      "7f60627d-b06b-4d9f-81fc-a0bd87954581",
-      "9a97e6fe-20ee-42a1-86e6-f788611bff88"
+      "58440c38-112a-49ab-a86d-3f1db5e9bd69",
+      "690abc61-5ea5-4380-afce-80d77ae20428",
+      "1a5438b2-426f-42b5-8f18-e457112a2d8a",
+      "7c850cf8-ecb6-441b-a102-64cf6d2d33e1",
+      "c0b4ae47-80ad-4b66-8720-9eec8b9cbe5b",
+      "4b8a0df1-95c2-4967-bd01-2e72ef921dcb",
+      "3a774ee8-04e7-48a4-91d8-4c5d83e11f86"
     ]
   },
   "drafter": {
     "ok": true,
-    "escalated": false,
-    "footnote_count": 5,
-    "unique_source_count": 5
+    "escalated": true,
+    "footnote_count": 7,
+    "unique_source_count": 7
   },
-  "answer_strip_sup_len": 3440,
-  "answer_tail": "רחית בתקן הנמוך יותר; בקשות השתק הנשענות על הרשעה פלילית חזקות בדרך כלל יותר מאלו הנשענות על זיכוי בלבד.¹²⁵\n\nסיכום קצר מהצד המעשי: ההשתק פלוגתא בין הליכים פליליים ואזרחיים אפשרי, אך רק כאשר ברור מהטקסט השיפוטי הקודם שקוימו כל היסודות המצטברים — וזהו הנטל של הטוען להשתק להוכיח.¹²³"
+  "answer_strip_sup_len": 2399,
+  "answer_tail": "ל \"השתק הגנה\" – מתן אפשרות לנתבע להיתמך במעשה בית דין גם ללא זהות מלאה של בעלי הדין, מטעמי הוגנות וסופיות; החלתו תלויה בנסיבות ובתנאי הצדק הדיוני.⁷ בהקשר המעבר פלילי–אזרחי, יש להפעיל את הכללים בזהירות, לנוכח השוני המוסדי והדיוני בין ההליכים והשלכת רמות ההוכחה על משמעות הממצאים.⁵\n"
 }

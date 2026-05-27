@@ -1,10 +1,10 @@
 {
   "fixture_id": "PROT",
-  "run_id": "8126516c-5d4b-4f2d-ae75-c007336841c6",
-  "qa_log_id": "130a2896-0ad5-4846-b657-3bdef38edb36",
-  "total_ms": 228739,
+  "run_id": "7fcd3cae-ef82-4a49-a61b-fcc94c68b6cd",
+  "qa_log_id": "29472466-029b-412e-87c5-ad75c571365a",
+  "total_ms": 294354,
   "baseline_total_ms": 220512,
-  "runtime_delta_ms": 8227,
+  "runtime_delta_ms": 73842,
   "hard_gates": {
     "marker_validation_ok": true,
     "internal_id_leak": false,
@@ -16,45 +16,51 @@
   },
   "phase3": {
     "applied": false,
-    "discarded_reason": "ambiguous_adjacent_markers",
+    "discarded_reason": "ambiguous_raw_superscript_run",
     "occurrence_count": null,
     "unique_source_count": null,
     "short_form_count": null,
     "ibid_count": null,
     "supra_count": null,
-    "cluster_examples": [
-      "יים מצטברים.¹²\n\nהעמדת היסו",
-      "הזכות לחיים.²⁴\n\nגורמים פרק",
-      "יפה שיפוטית.⁶⁷\n\nמגבלות וסי",
-      "קצאת משאבים;²⁴ כמו כן, השו",
-      " מימון כולל.⁵⁶\n\nהמלצות מעש"
-    ]
+    "cluster_examples": null,
+    "ambiguous_run_samples": [
+      {
+        "run": "¹⁰",
+        "context": "לכשלים מערכתיים.¹⁰\n\nסעדים שיפוטיים",
+        "candidates": []
+      }
+    ],
+    "multi_digit_marker_runs_count": null,
+    "multi_digit_runs_from_single_token_count": null,
+    "every_multi_digit_run_from_single_token": null
   },
   "short_form_samples": [],
   "placement": {
-    "cluster_count": 12,
-    "max_cluster_len": 7,
-    "final_summary_dump": true
+    "cluster_count": 19,
+    "max_cluster_len": 4,
+    "final_summary_dump": false
   },
   "source_list": {
-    "count": 7,
+    "count": 9,
     "baseline_count": 9,
     "ids": [
-      "54592c77-a37b-4b78-a17a-2ed4557c0d2c",
-      "fcea3b7c-8be7-4a33-90a1-c9ccf6a43aff",
-      "c468227d-b476-4d1b-b6e7-cc3771da5934",
-      "7c515aac-a0f3-4c81-be09-8c08967e0c7a",
-      "f3f6acbe-e9e4-44fa-b214-f14976103c85",
-      "33508a60-6971-4409-8a95-411f47fdb12c",
-      "fcc92233-c68f-43ff-b152-1839b84e3643"
+      "ed7fea48-bbb8-4d63-ae08-3c0592aaad7f",
+      "cd084069-bffa-44c4-bdbf-1cfd1492d3fd",
+      "274cea91-6c1e-4bbc-96f6-7353452c1c08",
+      "b9e4f542-cd8f-4d0e-92b0-6806cf62db8c",
+      "536675d5-4ba5-4dbc-9be4-443cc950ef22",
+      "644b69fb-2a0c-4447-a4ac-20764df48d8e",
+      "93a946e5-f912-4b42-a487-901ddb5e247b",
+      "b5dfee83-1dd1-4373-ac7d-af1b2f82800e",
+      "454bc68c-30ee-4fdd-8c1f-06e025008b2e"
     ]
   },
   "drafter": {
     "ok": true,
     "escalated": false,
-    "footnote_count": 7,
-    "unique_source_count": 7
+    "footnote_count": 9,
+    "unique_source_count": 9
   },
-  "answer_strip_sup_len": 2776,
-  "answer_tail": "ם ומחמירים, להכיר בכישלון מערכתי באכיפת 'פרוטקשן' כמחדל חקיקתי המחייב תגובה שיפוטית בגיבוי חובת ההגנה החיובית על החיים והבטחון; יחד עם זאת, ההכרה מותנית בהוכחת סיכון ממשי ומיידי, בקשר סיבתי ברור ובאיזון שמכביד על רשויות השיפוט להורות על הקצאת משאבים רחבה ללא מנגנוני בקרה.¹²³⁵⁶⁷⁴\n"
+  "answer_strip_sup_len": 3937,
+  "answer_tail": "סיבות—קיים בסיס עיוני־חוקתי וטיעון מעשי לכך שכישלון מערכתי באכיפה של גביית דמי חסות יכול להעמיד את המדינה באחריות על מחדל בחובת ההגנה על חיי וביטחון, אך הצלחה במשפט תיתכן רק כאשר ניתן להוכיח את האלמנטים הנ\"ל ברף ראייתי גבוה, ובהתחשב במגבלות של ביקורת שיפוטית על מדיניות ציבורית.¹²"
 }

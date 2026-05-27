@@ -1,10 +1,10 @@
 {
   "fixture_id": "L2",
-  "run_id": "2280c159-17b3-47a5-bfb2-2fb6e341b84c",
-  "qa_log_id": "beea1d42-8bff-4c81-9507-f3c50dce5c7e",
-  "total_ms": 174237,
+  "run_id": "e2003c9d-2d44-48c0-a1ca-93ba0b295197",
+  "qa_log_id": "6dc48780-58c4-42b5-a8f7-c9e49c9dba61",
+  "total_ms": 131526,
   "baseline_total_ms": 144377,
-  "runtime_delta_ms": 29860,
+  "runtime_delta_ms": -12851,
   "hard_gates": {
     "marker_validation_ok": true,
     "internal_id_leak": false,
@@ -16,44 +16,41 @@
   },
   "phase3": {
     "applied": false,
-    "discarded_reason": "ambiguous_adjacent_markers",
+    "discarded_reason": "adjacent_tokens_would_render_ambiguous",
     "occurrence_count": null,
     "unique_source_count": null,
     "short_form_count": null,
     "ibid_count": null,
     "supra_count": null,
-    "cluster_examples": [
-      "צום התערבות.⁸⁹\n- **מניעת ת",
-      "ות הציבורית.¹⁰\n- הדוקטרינה"
-    ]
+    "cluster_examples": null,
+    "ambiguous_run_samples": null,
+    "multi_digit_marker_runs_count": null,
+    "multi_digit_runs_from_single_token_count": null,
+    "every_multi_digit_run_from_single_token": null
   },
   "short_form_samples": [],
   "placement": {
-    "cluster_count": 2,
-    "max_cluster_len": 2,
+    "cluster_count": 15,
+    "max_cluster_len": 3,
     "final_summary_dump": false
   },
   "source_list": {
-    "count": 9,
+    "count": 5,
     "baseline_count": 7,
     "ids": [
-      "b3cdf647-7b34-4f66-8869-fc564f442a71",
-      "47cff71f-dd70-4f11-9872-65cdef8c6d9a",
-      "285d74da-fdd3-4cd5-80b1-9c7c2cc17516",
-      "896c75c4-b248-47be-a486-2f7590c7fac8",
-      "71cac6e8-311b-45e7-baf2-0bf864bac20d",
-      "398dcf24-f9bd-4cb3-adeb-4e9ba257f348",
-      "c7c5f9d5-a89c-4fee-89ad-0ba7ce10a693",
-      "1fe7cb31-a4bf-4edf-895c-dd05a6bbd113",
-      "ea9dad76-8099-4c6e-b878-0dcab43d8824"
+      "2ebd658b-ff85-4533-91ec-22ff2d363193",
+      "3d30ccba-01a6-4057-a61a-e5243900a499",
+      "6a579864-ec16-4cb1-b143-49762eda63f5",
+      "1dcef8f8-80f2-411c-8a48-0a09e1533218",
+      "1d6749cc-9c2a-4a11-87db-afa22b9e620c"
     ]
   },
   "drafter": {
     "ok": true,
     "escalated": false,
-    "footnote_count": 9,
-    "unique_source_count": 9
+    "footnote_count": 5,
+    "unique_source_count": 5
   },
-  "answer_strip_sup_len": 3616,
-  "answer_tail": "ת של הרשות, אך אינה כלי כובל שאוסר אי‑פעם שינוי מדיניות; היא שוקלת סמכות, הסתמכות, יכולת קיום ואינטרס ציבורי. בתי‑המשפט נעזרים במספר מבחנים ובאיזונים כדי לקבוע האם והיכן יש להעניק אכיפה או פיצוי, כאשר ההחלטה המשקללת תלויה בנסיבות המקרה וביחס שבין זכויות הפרט לצורכי הציבור.² ⁷ ⁵ ⁶"
+  "answer_strip_sup_len": 2849,
+  "answer_tail": "נה מעשית: הבטחה מנהלית פועלת ככלי איזון — היא מצריכה הוכחת ייצוג ברור, סמכות, הסתמכות סבירה ונזק מושגי; הסעד הניתן מותנה בשקלול ציבורי־ממשלי ולא ניתן אוטומטית. השימוש בדוקטרינה מועיל לתיקון עוול הסתמכותי, אך יידרש תמיד תרגום דק של אלמנטים אלה מול ענייני סמכות ויעילות ציבורית.¹²⁵\n"
 }

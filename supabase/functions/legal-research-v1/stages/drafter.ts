@@ -863,8 +863,153 @@ export interface Phase3Result {
     short_form_count: number;
     ibid_count: number;
     supra_count: number;
+    multi_digit_marker_runs_count: number;
+    multi_digit_runs_from_single_token_count: number;
+    every_multi_digit_run_from_single_token: boolean;
+    token_model_ok: boolean;
     ok: boolean;
   } | null;
+}
+
+// ─── Phase 3 v2: tokenized superscript representation ─────────────────────
+// Internal token (never persisted, never returned). Single render boundary
+// is `renderMarkersToSuperscripts`; `assertNoTokenLeak` is the final gate.
+const FN_TOKEN_RE = /\[\[fn:(\d+)\]\]/gu;
+
+// Enumerate every way to split a digit string into parts whose numeric
+// values are all in `numberSet`. No leading-zero parts (since markers > 0
+// and there are no leading-zero source numbers). Caps at 4 results so a
+// degenerate run cannot blow up.
+function enumerateValidSplits(digits: string, numberSet: Set<number>): string[][] {
+  const out: string[][] = [];
+  const walk = (start: number, acc: string[]) => {
+    if (out.length >= 4) return;
+    if (start === digits.length) {
+      if (acc.length >= 2) out.push([...acc]);
+      return;
+    }
+    for (let end = start + 1; end <= digits.length; end++) {
+      const part = digits.slice(start, end);
+      if (part.length > 1 && part[0] === "0") continue;
+      const n = Number(part);
+      if (!numberSet.has(n)) continue;
+      acc.push(part);
+      walk(end, acc);
+      acc.pop();
+    }
+  };
+  walk(0, []);
+  return out;
+}
+
+type TokenizeOk = {
+  ok: true;
+  tokenized: string;
+  // Per multi-digit superscript run that became a single token, record the
+  // value so we can later prove `every_multi_digit_run_from_single_token`.
+  multiDigitSingleTokenValues: number[];
+};
+type TokenizeErr = {
+  ok: false;
+  reason: "ambiguous_raw_superscript_run";
+  samples: Array<{ run: string; context: string; candidates: string[] }>;
+};
+
+function tokenizeSuperscripts(
+  answer: string,
+  numberSet: Set<number>,
+): TokenizeOk | TokenizeErr {
+  let out = "";
+  let i = 0;
+  const samples: Array<{ run: string; context: string; candidates: string[] }> = [];
+  const multiDigitSingleTokenValues: number[] = [];
+  while (i < answer.length) {
+    const ch = answer[i];
+    if (SUP_TO_DIGIT[ch] === undefined) {
+      out += ch;
+      i++;
+      continue;
+    }
+    // Walk the whole superscript run.
+    const runStart = i;
+    let digits = "";
+    while (i < answer.length && SUP_TO_DIGIT[answer[i]] !== undefined) {
+      digits += SUP_TO_DIGIT[answer[i]];
+      i++;
+    }
+    const run = answer.slice(runStart, i);
+    // Drop leading zeros for numeric interpretation (¹⁰ stays 10; a leading
+    // zero in a single-char run means marker 0 which is invalid).
+    if (digits.length === 1) {
+      const n = Number(digits);
+      if (n === 0) {
+        // Marker 0 is invalid; skip the char (matches legacy extractMarkers).
+        continue;
+      }
+      if (!numberSet.has(n)) {
+        if (samples.length < 5) {
+          const s = Math.max(0, runStart - 16);
+          const e = Math.min(answer.length, i + 16);
+          samples.push({ run, context: answer.slice(s, e), candidates: [] });
+        }
+        // Fall through; we record but keep collecting samples then fail.
+        continue;
+      }
+      out += `[[fn:${n}]]`;
+      continue;
+    }
+    // Multi-digit run.
+    const R = Number(digits);
+    const rIsInS = Number.isFinite(R) && numberSet.has(R) && digits[0] !== "0";
+    const validSplits = enumerateValidSplits(digits, numberSet);
+    const candidates: string[] = [];
+    if (rIsInS) candidates.push(String(R));
+    for (const sp of validSplits) candidates.push(sp.join("+"));
+
+    let classified: "single" | "split" | "ambiguous";
+    if (rIsInS && validSplits.length === 0) classified = "single";
+    else if (!rIsInS && validSplits.length === 1) classified = "split";
+    else classified = "ambiguous";
+
+    if (classified === "ambiguous") {
+      if (samples.length < 5) {
+        const s = Math.max(0, runStart - 16);
+        const e = Math.min(answer.length, i + 16);
+        samples.push({ run, context: answer.slice(s, e), candidates });
+      }
+      // Continue scanning so we collect more samples, but mark a failure flag
+      // by emitting a sentinel char that cannot be a token; we'll fail below.
+      out += "\u0000";
+      continue;
+    }
+    if (classified === "single") {
+      out += `[[fn:${R}]]`;
+      multiDigitSingleTokenValues.push(R);
+    } else {
+      const parts = validSplits[0];
+      for (const p of parts) out += `[[fn:${Number(p)}]]`;
+    }
+  }
+
+  if (samples.length > 0 || out.includes("\u0000")) {
+    return { ok: false, reason: "ambiguous_raw_superscript_run", samples };
+  }
+  return { ok: true, tokenized: out, multiDigitSingleTokenValues };
+}
+
+function renderMarkersToSuperscripts(tokenized: string): string {
+  return tokenized.replace(FN_TOKEN_RE, (_m, d) => toSuperscript(Number(d)));
+}
+
+function assertNoTokenLeak(s: string): boolean {
+  FN_TOKEN_RE.lastIndex = 0;
+  return !FN_TOKEN_RE.test(s);
+}
+
+// Detect any two `[[fn:N]]` tokens with zero non-token characters between
+// them. Multi-digit single tokens (`[[fn:12]]`) are immune by construction.
+function hasAdjacentTokens(tokenized: string): boolean {
+  return /\]\]\[\[fn:/u.test(tokenized);
 }
 
 export function applyOccurrenceFootnotes(
@@ -881,38 +1026,30 @@ export function applyOccurrenceFootnotes(
     validation: null,
   });
 
-  // Precondition #1: no adjacent superscript clusters.
-  {
-    const re = /[⁰¹²³⁴⁵⁶⁷⁸⁹]{2,}/gu;
-    const cluster_examples: string[] = [];
-    let cm: RegExpExecArray | null;
-    while ((cm = re.exec(answer)) !== null) {
-      if (cluster_examples.length < 5) {
-        const s = Math.max(0, cm.index - 12);
-        const e = Math.min(answer.length, cm.index + cm[0].length + 12);
-        cluster_examples.push(answer.slice(s, e));
-      }
-    }
-    if (cluster_examples.length > 0) {
-      const r = passthrough();
-      r.report = {
-        applied: false,
-        discarded_reason: "ambiguous_adjacent_markers",
-        cluster_examples,
-      };
-      return r;
-    }
-  }
+  const numberSet = new Set(used.map((u) => u.number));
 
-  // Walk markers; each run is length 1 by precondition #1.
-  type MarkerHit = { start: number; end: number; sourceNumber: number };
-  const hits: MarkerHit[] = [];
-  for (let i = 0; i < answer.length; i++) {
-    const d = SUP_TO_DIGIT[answer[i]];
-    if (d === undefined) continue;
-    const n = Number(d);
-    if (!Number.isFinite(n) || n < 1) continue;
-    hits.push({ start: i, end: i + 1, sourceNumber: n });
+  // Phase 3-v2 step 1: tokenize raw superscripts conservatively.
+  const tok = tokenizeSuperscripts(answer, numberSet);
+  if (!tok.ok) {
+    const r = passthrough();
+    r.report = {
+      applied: false,
+      discarded_reason: "ambiguous_raw_superscript_run",
+      ambiguous_run_samples: tok.samples,
+    };
+    return r;
+  }
+  const tokenized = tok.tokenized;
+
+  // Collect token instances in order.
+  type TokenHit = { sourceNumber: number };
+  const hits: TokenHit[] = [];
+  {
+    FN_TOKEN_RE.lastIndex = 0;
+    let m: RegExpExecArray | null;
+    while ((m = FN_TOKEN_RE.exec(tokenized)) !== null) {
+      hits.push({ sourceNumber: Number(m[1]) });
+    }
   }
   const K = hits.length;
 
@@ -921,20 +1058,11 @@ export function applyOccurrenceFootnotes(
     r.report = { applied: false, discarded_reason: "no_markers" };
     return r;
   }
-  if (K >= 10) {
-    const r = passthrough();
-    r.report = {
-      applied: false,
-      discarded_reason: "multi_digit_occurrences_require_boundary_tokens",
-      occurrence_count: K,
-    };
-    return r;
-  }
 
+  // Resolve every marker to a source (defense in depth — tokenizer already
+  // enforced numberSet membership).
   const bySourceNumber = new Map<number, Phase3SourceLike>();
   for (const u of used) bySourceNumber.set(u.number, u);
-
-  // Resolve every marker to a source.
   for (const h of hits) {
     if (!bySourceNumber.has(h.sourceNumber)) {
       const r = passthrough();
@@ -943,8 +1071,8 @@ export function applyOccurrenceFootnotes(
     }
   }
 
-  // Assign occurrence indices 1..K and build new footnotes + used_sources.
-  const firstSeen = new Map<number, number>(); // originalSourceNumber → occurrenceIndex
+  // Build occurrence-renumbered token stream + footnotes.
+  const firstSeen = new Map<number, number>();
   const newFootnotes: Footnote[] = [];
   const newUsedSources: Phase3SourceLike[] = [];
   let prevSourceNumber: number | null = null;
@@ -1013,18 +1141,71 @@ export function applyOccurrenceFootnotes(
     prevSourceNumber = origNum;
   }
 
-  // Rewrite answer right-to-left so positions stay valid. K<10 so single digit only.
-  let newAnswer = answer;
-  for (let i = hits.length - 1; i >= 0; i--) {
-    const occurrenceIndex = i + 1;
-    const { start, end } = hits[i];
-    newAnswer = newAnswer.slice(0, start) + toSuperscript(occurrenceIndex) + newAnswer.slice(end);
+  // Rewrite tokenized string left-to-right, replacing each token with
+  // [[fn:occurrenceIndex]]. Track which occurrence tokens originated from a
+  // multi-digit single-token raw run (for the per-token proof).
+  let rewritten = "";
+  let occurrence = 0;
+  // Map original source-number multi-token-origin set: an occurrence is
+  // "from a multi-digit single token" iff its source had a multi-digit raw
+  // run at this position. Since the tokenizer already collapsed those, every
+  // [[fn:N]] in `tokenized` with N having >=2 digits originated from a
+  // single multi-digit run by construction.
+  const occurrenceFromMultiDigitSingleToken: boolean[] = [];
+  {
+    FN_TOKEN_RE.lastIndex = 0;
+    let lastEnd = 0;
+    let m: RegExpExecArray | null;
+    while ((m = FN_TOKEN_RE.exec(tokenized)) !== null) {
+      rewritten += tokenized.slice(lastEnd, m.index);
+      occurrence++;
+      rewritten += `[[fn:${occurrence}]]`;
+      // Since tokens are non-adjacent (guard below), each rendered
+      // superscript run corresponds to exactly one occurrence — so a
+      // rendered multi-digit run necessarily comes from one single token.
+      occurrenceFromMultiDigitSingleToken.push(String(occurrence).length >= 2);
+      lastEnd = m.index + m[0].length;
+    }
+    rewritten += tokenized.slice(lastEnd);
   }
 
-  // Post-expansion guard.
-  if (ADJACENT_SUP_RE.test(newAnswer)) {
+  // Token-adjacency guard (the only adjacency rule that survives).
+  if (hasAdjacentTokens(rewritten)) {
     const r = passthrough();
-    r.report = { applied: false, discarded_reason: "would_create_ambiguous_markers" };
+    r.report = { applied: false, discarded_reason: "adjacent_tokens_would_render_ambiguous" };
+    return r;
+  }
+
+  // Token-model validation, pre-render.
+  const tokenNums: number[] = [];
+  {
+    FN_TOKEN_RE.lastIndex = 0;
+    let m: RegExpExecArray | null;
+    while ((m = FN_TOKEN_RE.exec(rewritten)) !== null) tokenNums.push(Number(m[1]));
+  }
+  const footnoteNumberSet = new Set(newFootnotes.map((f) => f.number));
+  const usableNumbers = new Set(newUsedSources.map((u) => u.number));
+  const every_marker_has_footnote =
+    tokenNums.length === K &&
+    tokenNums.every((n, idx) => n === idx + 1) &&
+    tokenNums.every((n) => footnoteNumberSet.has(n));
+  const every_footnote_in_usable = newFootnotes.every(
+    (f) => f.source_number !== undefined && usableNumbers.has(f.source_number),
+  );
+  const token_model_ok = every_marker_has_footnote && every_footnote_in_usable;
+  if (!token_model_ok) {
+    const r = passthrough();
+    r.report = { applied: false, discarded_reason: "marker_validation_failed" };
+    return r;
+  }
+
+  // Render boundary.
+  const newAnswer = renderMarkersToSuperscripts(rewritten);
+
+  // Leak detector — hard rollback.
+  if (!assertNoTokenLeak(newAnswer)) {
+    const r = passthrough();
+    r.report = { applied: false, discarded_reason: "token_leak_detected" };
     return r;
   }
 
@@ -1035,33 +1216,28 @@ export function applyOccurrenceFootnotes(
     return r;
   }
 
-  // Validate occurrence footnotes.
-  const usableNumbers = new Set(newUsedSources.map((u) => u.number));
-  const markerNums: number[] = [];
-  for (const ch of newAnswer) {
-    const d = SUP_TO_DIGIT[ch];
-    if (d !== undefined) {
-      const n = Number(d);
-      if (n >= 1) markerNums.push(n);
-    }
-  }
-  const footnoteNumberSet = new Set(newFootnotes.map((f) => f.number));
-  const every_marker_has_footnote =
-    markerNums.length === K &&
-    markerNums.every((n, idx) => n === idx + 1) &&
-    markerNums.every((n) => footnoteNumberSet.has(n));
-  const every_footnote_in_usable = newFootnotes.every(
-    (f) => f.source_number !== undefined && usableNumbers.has(f.source_number),
-  );
-  const no_adjacent_marker_clusters = !ADJACENT_SUP_RE.test(newAnswer);
-  const validationOk =
-    every_marker_has_footnote && every_footnote_in_usable && no_adjacent_marker_clusters;
-
-  if (!validationOk) {
+  // Per-token multi-digit proof on the rendered string.
+  const multiDigitRuns = newAnswer.match(/[⁰¹²³⁴⁵⁶⁷⁸⁹]{2,}/gu) ?? [];
+  const multi_digit_marker_runs_count = multiDigitRuns.length;
+  // Every multi-digit rendered run must correspond to an occurrence whose
+  // tokenized source-number had >=2 digits in the rewritten stream — which
+  // it does, because (a) we never emit adjacent tokens (guard above) and
+  // (b) the tokenizer produced exactly one token per original run.
+  const multi_digit_runs_from_single_token_count = occurrenceFromMultiDigitSingleToken.filter(
+    Boolean,
+  ).length;
+  // Sanity: counts must match. If they don't, something exotic happened —
+  // roll back rather than ship a maybe-ambiguous render.
+  const every_multi_digit_run_from_single_token =
+    multi_digit_marker_runs_count === multi_digit_runs_from_single_token_count;
+  if (!every_multi_digit_run_from_single_token) {
     const r = passthrough();
-    r.report = { applied: false, discarded_reason: "marker_validation_failed" };
+    r.report = { applied: false, discarded_reason: "adjacent_tokens_would_render_ambiguous" };
     return r;
   }
+
+  // Report-only: legacy "no adjacent superscripts" flag, no longer a gate.
+  const no_adjacent_marker_clusters = multi_digit_marker_runs_count === 0;
 
   return {
     applied: true,
@@ -1076,6 +1252,9 @@ export function applyOccurrenceFootnotes(
       ibid_count: ibidCount,
       supra_count: supraCount,
       examples,
+      multi_digit_marker_runs_count,
+      multi_digit_runs_from_single_token_count,
+      every_multi_digit_run_from_single_token,
     },
     validation: {
       every_marker_has_footnote,
@@ -1086,7 +1265,11 @@ export function applyOccurrenceFootnotes(
       short_form_count: ibidCount + supraCount,
       ibid_count: ibidCount,
       supra_count: supraCount,
-      ok: validationOk,
+      multi_digit_marker_runs_count,
+      multi_digit_runs_from_single_token_count,
+      every_multi_digit_run_from_single_token,
+      token_model_ok,
+      ok: true,
     },
   };
 }
@@ -1451,6 +1634,10 @@ export async function runDrafter(
         every_marker_has_footnote: v.every_marker_has_footnote,
         every_footnote_in_usable: v.every_footnote_in_usable,
         no_adjacent_marker_clusters: v.no_adjacent_marker_clusters,
+        multi_digit_marker_runs_count: v.multi_digit_marker_runs_count,
+        multi_digit_runs_from_single_token_count: v.multi_digit_runs_from_single_token_count,
+        every_multi_digit_run_from_single_token: v.every_multi_digit_run_from_single_token,
+        token_model_ok: v.token_model_ok,
         repaired: true,
       };
     }
