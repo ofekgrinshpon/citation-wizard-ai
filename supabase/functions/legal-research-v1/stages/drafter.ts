@@ -11,6 +11,7 @@ import {
   Candidate,
   Claim,
   Footnote,
+  FootnoteItem,
   MarkerFormat,
   MarkerValidation,
   MODEL_FULL,
