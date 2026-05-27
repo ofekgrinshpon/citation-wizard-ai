@@ -1,0 +1,100 @@
+{
+  "fixture_id": "L1",
+  "run_id": "4054dad6-1207-4626-9a62-6370b6b2c405",
+  "qa_log_id": "967f2ad3-745a-4cf2-8e4b-27cb926c15a0",
+  "total_ms": 114897,
+  "baseline_total_ms": 184988,
+  "runtime_delta_ms": -70091,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "citation_cleanup": {
+    "phase1": {
+      "applied": true,
+      "changed": false,
+      "after_order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "before_order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    "phase2": {
+      "applied": false,
+      "punct_swaps": 0
+    },
+    "clusters": {
+      "count": 0,
+      "examples": []
+    }
+  },
+  "chronological": {
+    "chronological_ok": true,
+    "phase1_before_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "phase1_after_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ]
+  },
+  "clusters_observed": {
+    "count": 0,
+    "examples": []
+  },
+  "rolled_back": false,
+  "source_list": {
+    "count": 9,
+    "ids": [
+      "ee158d42-8b40-4f8a-8162-6461b154cd6a",
+      "f256665d-83ed-46b4-b3d2-2f2f3ad0f964",
+      "013b5147-d07b-4c59-bbcd-c657cbd0e093",
+      "0f48fc9f-1b9c-41e2-8090-769d72ca1090",
+      "a72996d2-cb70-4ebe-8665-ae587c20b023",
+      "bedfeb09-ff07-4958-a7b8-a4ac7ce7dec7",
+      "62614e6f-f15f-44d4-862b-f458c94816aa",
+      "f0db15aa-c375-4546-8aee-7037e8fb86b3",
+      "b1d12737-89af-4d35-9c54-042ac7152305"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 9,
+    "used_sources_count": 9
+  }
+}

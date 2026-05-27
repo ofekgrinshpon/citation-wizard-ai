@@ -1,0 +1,120 @@
+{
+  "fixture_id": "L5",
+  "run_id": "ee865dfb-8413-4e9b-ba68-d31671c47300",
+  "qa_log_id": "25af2a52-d152-4ca2-a3b1-92778ea8eed6",
+  "total_ms": 196471,
+  "baseline_total_ms": 189170,
+  "runtime_delta_ms": 7301,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "citation_cleanup": {
+    "phase1": {
+      "applied": true,
+      "changed": false,
+      "after_order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "before_order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "phase2": {
+      "applied": false,
+      "punct_swaps": 0
+    },
+    "clusters": {
+      "count": 5,
+      "examples": [
+        {
+          "run": "²³",
+          "index": 413,
+          "context": "מכים בהחלטה.²³\n\nהבחינה של "
+        },
+        {
+          "run": "²³",
+          "index": 889,
+          "context": " חשיבה סביר.²³\n\nהיקף הביקו"
+        },
+        {
+          "run": "⁴⁵",
+          "index": 1154,
+          "context": "בות מצומצמת.⁴⁵ בהתנגשות עם"
+        },
+        {
+          "run": "³⁴⁵",
+          "index": 1582,
+          "context": "וצדק במובהק.³⁴⁵\n\nהיבטים פרק"
+        },
+        {
+          "run": "³¹⁴⁵⁶",
+          "index": 2200,
+          "context": "לה רחב יותר.³¹⁴⁵⁶\n\n\n"
+        }
+      ]
+    }
+  },
+  "chronological": {
+    "chronological_ok": true,
+    "phase1_before_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "phase1_after_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "clusters_observed": {
+    "count": 3,
+    "examples": [
+      "⁴⁵",
+      "⁴⁵",
+      "⁴⁵⁶"
+    ]
+  },
+  "rolled_back": false,
+  "source_list": {
+    "count": 7,
+    "ids": [
+      "e4735a71-9e59-4a09-bf11-37b895ccbb4c",
+      "517be8f9-512b-4461-8e53-01bc1c8640bb",
+      "e5ed377d-e871-48f3-9133-c1d4288453e8",
+      "43af38d0-c287-48d7-9e72-fe165184e6f0",
+      "19df8adf-9c66-4946-ba45-668afe744958",
+      "8946fe43-a1a6-4869-b334-83b407243afa",
+      "edb05099-6a88-426f-ab92-8e4e0c9f4fff"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 7,
+    "used_sources_count": 7
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "fixture_id": "L6",
+  "run_id": "7b70b2da-7317-419a-9f3b-c694a8a48dfc",
+  "qa_log_id": "73dcc86c-0f43-414b-963b-cad132256bb2",
+  "total_ms": 155176,
+  "baseline_total_ms": 249892,
+  "runtime_delta_ms": -94716,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "citation_cleanup": {
+    "phase1": {
+      "applied": true,
+      "changed": false,
+      "after_order": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "before_order": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "phase2": {
+      "applied": false,
+      "punct_swaps": 0
+    },
+    "clusters": {
+      "count": 8,
+      "examples": [
+        {
+          "run": "¹²³⁴⁵",
+          "index": 390,
+          "context": " כגון פיצוי.¹²³⁴⁵\n\nיסודות האכ"
+        },
+        {
+          "run": "¹²³",
+          "index": 775,
+          "context": "עה בהסתמכות.¹²³\n\nבהירות וכו"
+        },
+        {
+          "run": "²³",
+          "index": 1211,
+          "context": "מכות של הצד.²³\n\nמשקל ההסתמ"
+        },
+        {
+          "run": "⁴⁵",
+          "index": 1570,
+          "context": "ופורציונלית.⁴⁵\n\nשינוי נסיב"
+        },
+        {
+          "run": "⁵⁴",
+          "index": 1866,
+          "context": "במקום אכיפה.⁵⁴\n\nהשלכות מעש"
+        }
+      ]
+    }
+  },
+  "chronological": {
+    "chronological_ok": true,
+    "phase1_before_order": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "phase1_after_order": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "clusters_observed": {
+    "count": 4,
+    "examples": [
+      "⁴⁵",
+      "⁴⁵",
+      "⁵⁴",
+      "⁴⁵"
+    ]
+  },
+  "rolled_back": false,
+  "source_list": {
+    "count": 5,
+    "ids": [
+      "efb91e1f-1f89-450b-b483-69ce8367ccb1",
+      "3c8c04e3-3798-4a9f-8a9d-4d08c25fc171",
+      "4f8d38f9-9f45-49d0-a63a-2442260796c2",
+      "0c82e190-3ac5-4d23-8c80-29f481679f2e",
+      "9c00b118-8ec3-45a0-9f93-219b8a7c2fe2"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 5,
+    "used_sources_count": 5
+  }
+}
