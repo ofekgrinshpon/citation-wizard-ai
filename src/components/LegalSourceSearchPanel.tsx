@@ -537,6 +537,12 @@ function SourceCard({
   const cardCls = isAdditional
     ? "rounded-lg border border-border/60 bg-muted/20 p-3 space-y-2"
     : "rounded-lg border border-border bg-card p-3 space-y-2";
+  const vstate = src.url_validation_state;
+  const isUnreachable = vstate === "unreachable";
+  const isUnverified = vstate === "unverified";
+  const linkCls = `shrink-0 inline-flex items-center gap-1 text-xs text-primary hover:underline${
+    isUnreachable ? " line-through opacity-70" : ""
+  }`;
   return (
     <div className={cardCls}>
       <div className="flex items-start justify-between gap-2">
@@ -554,7 +560,8 @@ function SourceCard({
             href={src.url}
             target="_blank"
             rel="noreferrer"
-            className="shrink-0 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+            className={linkCls}
+            title={isUnreachable ? src.url : undefined}
           >
             <ExternalLink className="w-3.5 h-3.5" />
             פתח מקור
@@ -576,6 +583,22 @@ function SourceCard({
             </Chip>
             {!src.role_match && <Chip variant="muted">תפקיד שונה</Chip>}
           </>
+        )}
+        {isUnreachable && (
+          <span
+            title='ייתכן שזהו מקור שגוי שהוחזר ע"י מנוע החיפוש. מומלץ לאמת ידנית לפני שימוש.'
+            className="inline-flex items-center px-2 py-0.5 rounded-full border bg-destructive/10 text-destructive border-destructive/30"
+          >
+            קישור לא זמין
+          </span>
+        )}
+        {isUnverified && (
+          <span
+            title="לא הצלחנו לאמת את הקישור בזמן סביר. ייתכן שהאתר איטי או חוסם בדיקות אוטומטיות."
+            className="inline-flex items-center px-2 py-0.5 rounded-full border bg-muted text-muted-foreground border-border"
+          >
+            הקישור לא אומת
+          </span>
         )}
       </div>
 
