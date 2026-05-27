@@ -1,12 +1,11 @@
 {
   "fixture_id": "L6",
-  "run_id": "5a8c6788-a0f3-4174-84d3-e9990e296837",
-  "qa_log_id": "e5f0e652-2a97-41b4-bb96-6e9faa2ca4be",
-  "total_ms": 197255,
+  "run_id": "0b2c2783-f84c-4fb0-b950-8a0d5afd1364",
+  "qa_log_id": "6c193a4c-1819-4aa4-843c-c19e5fb126ec",
   "baseline_total_ms": 210426,
-  "runtime_delta_ms": -13171,
+  "runtime_delta_ms": null,
   "hard_gates": {
-    "marker_validation_ok": true,
+    "marker_validation_ok": false,
     "internal_id_leak": false,
     "footnote_eq_used": true,
     "used_subset_of_usable": true,
@@ -26,29 +25,18 @@
   },
   "short_form_samples": [],
   "placement": {
-    "cluster_count": 17,
-    "max_cluster_len": 4,
-    "final_summary_dump": false
+    "cluster_count": null,
+    "max_cluster_len": null,
+    "final_summary_dump": null
   },
   "source_list": {
-    "count": 7,
+    "count": 0,
     "baseline_count": 8,
-    "ids": [
-      "7c4f26fc-eee4-4ab1-8ffc-9e6c742093b5",
-      "8361fd68-107e-4c2e-b29d-b936b0f4f3e4",
-      "9036a167-a23b-482a-8f03-27c41d06f29b",
-      "06aa4bfe-3af2-4732-bc36-8c4975e1f268",
-      "171fceee-3e8b-40f6-bb63-8f67eb7945e0",
-      "5ffc1203-44d1-4720-9efe-2d49925c8850",
-      "e0eabbfd-d8a9-4132-b5fd-13321ffaea7c"
-    ]
+    "ids": []
   },
   "drafter": {
-    "ok": true,
-    "escalated": false,
-    "footnote_count": 7,
-    "unique_source_count": 7
+    "unique_source_count": 0
   },
-  "answer_strip_sup_len": 3311,
-  "answer_tail": "שפט יאכוף הבטחה מנהלית רק כאשר מצטברים יסודות הבהירות, כוונת ההתחייבות, סמכות־משתמע או ההצגה של סמכות, והסתמכות סבירה הנושאת עמה עוול לא מצופה; חוסר סמכות מהותי או אינטרס ציבורי כבד עשויים למנוע אכיפה מלאה, אך בדרך כלל יחייבו התחשבות בהסתמכות דרך פיצוי או הסדרי מעבר הוגנים.²³⁶⁷\n\n"
+  "answer_strip_sup_len": 82,
+  "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
 }

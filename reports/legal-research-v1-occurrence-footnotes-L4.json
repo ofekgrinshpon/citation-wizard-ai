@@ -1,10 +1,10 @@
 {
   "fixture_id": "L4",
-  "run_id": "d954930b-f4e5-464c-9948-c310c008b6b3",
-  "qa_log_id": "6e5f4e9c-d664-4216-bfaa-a6bea8a22d02",
-  "total_ms": 122936,
+  "run_id": "6907aae6-1229-4f2f-9d80-46dc6971a8d6",
+  "qa_log_id": "ec1a18c4-5970-499f-b6c8-f168097a91ea",
+  "total_ms": 125645,
   "baseline_total_ms": 143165,
-  "runtime_delta_ms": -20229,
+  "runtime_delta_ms": -17520,
   "hard_gates": {
     "marker_validation_ok": true,
     "internal_id_leak": false,
@@ -16,17 +16,21 @@
   },
   "phase3": {
     "applied": false,
-    "discarded_reason": null,
+    "discarded_reason": "ambiguous_adjacent_markers",
     "occurrence_count": null,
     "unique_source_count": null,
     "short_form_count": null,
     "ibid_count": null,
     "supra_count": null,
-    "cluster_examples": null
+    "cluster_examples": [
+      " אותו עניין.¹²\n\nמגבלות וחר",
+      "ירה על חוסם.¹²³\n\nמסקנה מעשי",
+      "ניתנה בפועל.¹²³\n"
+    ]
   },
   "short_form_samples": [],
   "placement": {
-    "cluster_count": 9,
+    "cluster_count": 5,
     "max_cluster_len": 3,
     "final_summary_dump": false
   },
@@ -34,10 +38,10 @@
     "count": 4,
     "baseline_count": 7,
     "ids": [
-      "da99ab58-a070-41f6-a6b4-3751b076333c",
-      "63e3d863-8fdc-400a-925c-e117c7afecca",
-      "b15eb15b-4a9c-436b-bdeb-dc7a7465c49e",
-      "9766d3f4-73ea-42cd-8e5b-64fa5e9892cf"
+      "168b9938-c5e0-4c89-a18f-b3e5d010e8e3",
+      "09cad855-8422-409e-b28d-2c93dae2d6de",
+      "af8505f6-68ed-4f18-9ce3-fd78a61ad79c",
+      "de8cd954-33d0-4ae0-8b3b-b10e164c90f0"
     ]
   },
   "drafter": {
@@ -46,6 +50,6 @@
     "footnote_count": 4,
     "unique_source_count": 4
   },
-  "answer_strip_sup_len": 2502,
-  "answer_tail": "יבות/עדויות/צדק, לא תחול ההשתק.²³⁴\n\nהערה אחרונה: בפועל בתי המשפט מאזנים בין הצורך בסופיות לבין מניעת עיוות; לכן יש לגשת לטענת השתק פלוגתא בצורה מסודרת, עם הדגשה של היסוד החזק ביותר (למשל חיוניות ההכרעה וזהות פלוגתא) וראיות לפסק הדין הבעייתי ולהזדמנות ההתדיינות שניתנה לצד הקודם.¹²"
+  "answer_strip_sup_len": 2425,
+  "answer_tail": "קרה חדש יש לנסח את התביעה/ההגנה כך שתבחין בין טענות חדשות לבין שאלות שכבר כורעו, ולדאוג כי ברקורד של ההליך הקודם נראית בבירור ההכרעה החיונית אם מבקשים להסתמך על השתק; לעומת זאת מי שמבקש לחסום תביעה על בסיס השתק חייב להראות התאמה ברורה של היסודות ושהזדמנות ההתדיין ניתנה בפועל.¹²³\n"
 }

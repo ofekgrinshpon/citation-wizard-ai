@@ -1,8 +1,8 @@
 {
   "fixture_id": "RPT1",
-  "run_id": "36eb9b12-d7c6-461d-bff1-02170e154a8d",
-  "qa_log_id": "e7f5f081-8889-4522-9f5b-8e2e08c97d23",
-  "total_ms": 124286,
+  "run_id": "08227634-c608-4cc9-93cf-443e5acce21e",
+  "qa_log_id": "6061b1a8-f69c-4356-9117-a2b3568d41e1",
+  "total_ms": 165230,
   "baseline_total_ms": null,
   "runtime_delta_ms": null,
   "hard_gates": {
@@ -16,39 +16,43 @@
   },
   "phase3": {
     "applied": false,
-    "discarded_reason": null,
+    "discarded_reason": "ambiguous_adjacent_markers",
     "occurrence_count": null,
     "unique_source_count": null,
     "short_form_count": null,
     "ibid_count": null,
     "supra_count": null,
-    "cluster_examples": null
+    "cluster_examples": [
+      " הרלוונטיות.¹²³\n\nיסודות החל",
+      "יעות נוספות.¹²\n- הדרישות ה",
+      "ות על הנושא.¹²³\n\nמהי **הכרע",
+      "להכרעת הדין.³¹\n- **חיוניות",
+      "ר אפקט השתק.²³⁴\n\nהתמודדות ע"
+    ]
   },
   "short_form_samples": [],
   "placement": {
-    "cluster_count": 0,
-    "max_cluster_len": 0,
+    "cluster_count": 19,
+    "max_cluster_len": 3,
     "final_summary_dump": false
   },
   "source_list": {
-    "count": 7,
+    "count": 5,
     "baseline_count": null,
     "ids": [
-      "3c306dbd-3277-44c3-a506-0a26f9cc06c2",
-      "09eeb458-c94d-4daa-bdfd-254d8013f370",
-      "12a1741a-7f13-4d3e-94f2-29639e6421fa",
-      "50c84b33-5e0f-47a6-a301-84037604645a",
-      "f84e512b-29e7-4813-83f8-ab05cc084bd8",
-      "04be0afc-7a4a-4c85-8709-fce4922f81c4",
-      "263d0933-04d1-4aab-b23e-2a1377be008c"
+      "179fa001-366d-498e-8a63-189db288b7ec",
+      "f00c5951-daec-4ec1-acc3-58e72ca4c841",
+      "a5b0fc39-60c6-42d9-9144-85acff66d8b9",
+      "7f60627d-b06b-4d9f-81fc-a0bd87954581",
+      "9a97e6fe-20ee-42a1-86e6-f788611bff88"
     ]
   },
   "drafter": {
     "ok": true,
     "escalated": false,
-    "footnote_count": 7,
-    "unique_source_count": 7
+    "footnote_count": 5,
+    "unique_source_count": 5
   },
-  "answer_strip_sup_len": 2902,
-  "answer_tail": "בקש להסתמך על הכרעה פלילית כעל מחסום צריך לנסח ולתמוך טיעונים המשקפים מצגים ברורים לכל ארבעת היסודות ולהציג ברורה מדוע ההכרעה הייתה חיונית; מי המתמודד עם טענה זו יתרכז בהבחנה בין נקודות המחלוקת העובדתיות/המשפטיות ובהצבעת פגמים או חוסר הזדמנות להתדיין כדי לפרוך את החלת ההשתק.² ⁷ ⁵"
+  "answer_strip_sup_len": 3440,
+  "answer_tail": "רחית בתקן הנמוך יותר; בקשות השתק הנשענות על הרשעה פלילית חזקות בדרך כלל יותר מאלו הנשענות על זיכוי בלבד.¹²⁵\n\nסיכום קצר מהצד המעשי: ההשתק פלוגתא בין הליכים פליליים ואזרחיים אפשרי, אך רק כאשר ברור מהטקסט השיפוטי הקודם שקוימו כל היסודות המצטברים — וזהו הנטל של הטוען להשתק להוכיח.¹²³"
 }

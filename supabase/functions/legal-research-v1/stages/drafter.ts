@@ -1455,9 +1455,17 @@ export async function runDrafter(
       };
     }
   }
+  if (!phase3Report.applied) {
+    marker = {
+      ...marker,
+      occurrence_mode: false,
+      unique_source_count: used_sources.length,
+    };
+  }
   if (marker.citation_cleanup) {
     marker.citation_cleanup = { ...marker.citation_cleanup, phase3: phase3Report };
   }
+
 
   // Placement telemetry (read-only) on the final answer.
   if (parsed.ok && marker.ok) {

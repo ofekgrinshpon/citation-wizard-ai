@@ -1,8 +1,8 @@
 {
   "fixture_id": "RPT3",
-  "run_id": "eb9dc36a-63e2-43db-ae9f-c7380ba43929",
-  "qa_log_id": "5c9e8c40-e7bb-4be5-bffa-2c3bae118071",
-  "total_ms": 171873,
+  "run_id": "14031edd-fe59-4a43-aadd-49c9432ee51e",
+  "qa_log_id": "c8686f6a-b576-4426-b5fe-cd688b7e5861",
+  "total_ms": 190426,
   "baseline_total_ms": null,
   "runtime_delta_ms": null,
   "hard_gates": {
@@ -16,33 +16,39 @@
   },
   "phase3": {
     "applied": false,
-    "discarded_reason": null,
+    "discarded_reason": "ambiguous_adjacent_markers",
     "occurrence_count": null,
     "unique_source_count": null,
     "short_form_count": null,
     "ibid_count": null,
     "supra_count": null,
-    "cluster_examples": null
+    "cluster_examples": [
+      "היחיד שנגרם.¹²\n\nניתוח\n\nאפש",
+      "ני לכל עילה.¹²³\nמעבר לכך, פ",
+      "סופו של יום.¹²³\n\nהאם הפרת ח",
+      "ביעת רשלנות.¹⁴\nבנוסף, בפסי",
+      "הירות מפורש.²³\n\nיחס בין סט"
+    ]
   },
   "short_form_samples": [],
   "placement": {
-    "cluster_count": 13,
-    "max_cluster_len": 4,
+    "cluster_count": 15,
+    "max_cluster_len": 3,
     "final_summary_dump": false
   },
   "source_list": {
     "count": 9,
     "baseline_count": null,
     "ids": [
-      "d479fec0-2146-4fac-8d1a-9d230a30be49",
-      "f682cbad-3f5f-4914-b20d-e4e5a7d0d848",
-      "fc7bcdf2-ea50-4015-a6cd-2e10f709d345",
-      "20f5acfa-b8c7-4ec9-ae81-269830e12ed3",
-      "d98c31bd-a903-4677-a882-1e08426d6051",
-      "43eee71e-8d57-4633-abff-9a11af415ec0",
-      "39aa86a9-19a9-45b0-86bf-a580151e2c14",
-      "6a4c9e7e-e378-4662-93e5-4cea162118e0",
-      "5adf4bb9-647b-4e15-b743-2d7cb482ff28"
+      "99ac5ab4-42e4-4c02-8d76-01d49036898f",
+      "b0be0d4e-d91a-4a2f-b91f-6b5f11c068cd",
+      "2f8328b5-c45a-408d-b865-e23f0a2eca17",
+      "a8e5e568-f69b-4872-a20f-07e63a7628c6",
+      "6bf2bd31-a526-4a4e-b56e-13f0b89908d7",
+      "5ea0cfb4-0c90-4bcf-8e20-e8c5f18cfc7f",
+      "df6299ff-fa1d-4220-9d62-ad07b3561e7b",
+      "0183ff6d-1d1a-40dd-8878-a96e65316aa2",
+      "32489f96-aa83-47a9-92f4-f06ebddb868b"
     ]
   },
   "drafter": {
@@ -51,6 +57,6 @@
     "footnote_count": 9,
     "unique_source_count": 9
   },
-  "answer_strip_sup_len": 3718,
-  "answer_tail": "קש) מוצדק.⁴\n\nסיכום קצר: הפרת חובה חקוקה בדרך‑כלל איננה מחליפה את בחינת יסודות הרשלנות, אך היא ראיה חזקה; במצבים שבהם המחוקק נתן זכות פרטית או אמצעי אכיפה אזרחיים ייתכן שבית המשפט יכיר בעוולה חקוקתית נפרדת; בכל מקרה יש להימנע מאפשרות כפל פיצוי באמצעות אגרגציה ובדיקה של סוגי הסעד.\n"
+  "answer_strip_sup_len": 3797,
+  "answer_tail": "יים איפלוס בין גישות: ספקולטיבי להחיל כלל גורף של \"negligence per se\"; הגישה המעשית במשפט הישראלי נוטה לראות בהפרת חובה חקוקה ראיה כבדה שדורשת בחינה עובדתית ותכליתית בנסיבות המקרה, ואילו מנגנוני פיצוי יגנו על מניעת כפל פיצוי באמצעות שיוך והפחתה בהתאם למה שהמחוקק והפסיקה קבעו.¹⁴⁶\n"
 }
