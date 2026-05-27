@@ -188,6 +188,25 @@ export interface PlacementReport {
   repair_failed?: boolean;
 }
 
+export interface CitationCleanupReport {
+  phase1: {
+    applied: boolean;
+    changed: boolean;
+    before_order: number[];
+    after_order: number[];
+    discarded_reason?: "marker_validation_failed" | "no_markers";
+  };
+  phase2: {
+    applied: boolean;
+    punct_swaps: number;
+    discarded_reason?: "marker_validation_failed";
+  };
+  clusters: {
+    count: number;
+    examples: Array<{ run: string; index: number; context: string }>;
+  };
+}
+
 export interface MarkerValidation {
   ok: boolean;
   markers_in_answer: number[];
@@ -198,6 +217,7 @@ export interface MarkerValidation {
   repaired: boolean;
   error?: string;
   placement?: PlacementReport;
+  citation_cleanup?: CitationCleanupReport;
 }
 
 

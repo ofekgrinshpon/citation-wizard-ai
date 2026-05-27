@@ -656,6 +656,122 @@ function deterministicRepair(
 }
 
 
+// ─── Deterministic citation cleanup (Phase 1 + Phase 2 + cluster telemetry) ─
+// Always-on, post-validation, no LLM. Never adds/removes/moves markers across
+// words. Rolls back to the pre-cleanup state if marker_validation fails.
+function firstAppearanceOrder(text: string): number[] {
+  const out: number[] = [];
+  const seen = new Set<number>();
+  for (const ch of text) {
+    const d = SUP_TO_DIGIT[ch];
+    if (d === undefined) continue;
+    const n = Number(d);
+    if (n < 1 || seen.has(n)) continue;
+    seen.add(n);
+    out.push(n);
+  }
+  return out;
+}
+
+export function applyCitationCleanup(
+  answer: string,
+  used: Array<{ ref: string; number: number; candidate_id: string }>,
+): {
+  answer: string;
+  used: Array<{ ref: string; number: number; candidate_id: string }>;
+  report: import("../lib/types.ts").CitationCleanupReport;
+} {
+  const beforeOrder = firstAppearanceOrder(answer);
+
+  // ── Phase 1: chronological renumbering (always attempt) ──
+  let phase1: import("../lib/types.ts").CitationCleanupReport["phase1"] = {
+    applied: false,
+    changed: false,
+    before_order: beforeOrder,
+    after_order: beforeOrder,
+  };
+  let curAnswer = answer;
+  let curUsed = used;
+
+  if (beforeOrder.length === 0) {
+    phase1.discarded_reason = "no_markers";
+  } else {
+    const fix = deterministicRepair(answer, used);
+    if (fix) {
+      const v = runMarkerValidation(fix.answer_markdown, fix.used_sources);
+      if (v.ok) {
+        curAnswer = fix.answer_markdown;
+        curUsed = fix.used_sources;
+        phase1 = {
+          applied: true,
+          changed: fix.answer_markdown !== answer,
+          before_order: beforeOrder,
+          after_order: firstAppearanceOrder(fix.answer_markdown),
+        };
+      } else {
+        phase1.discarded_reason = "marker_validation_failed";
+      }
+    } else {
+      phase1.discarded_reason = "marker_validation_failed";
+    }
+  }
+
+  // ── Phase 2: punctuation normalization (marker ↔ adjacent ASCII punctuation) ──
+  let phase2: import("../lib/types.ts").CitationCleanupReport["phase2"] = {
+    applied: false,
+    punct_swaps: 0,
+  };
+  const PUNCT_RE = /([⁰¹²³⁴⁵⁶⁷⁸⁹])([.,;:?!])/gu;
+  let swaps = 0;
+  let next = curAnswer;
+  let prev: string;
+  do {
+    prev = next;
+    next = next.replace(PUNCT_RE, (_m, sup, p) => {
+      swaps++;
+      return p + sup;
+    });
+  } while (next !== prev);
+
+  if (swaps > 0) {
+    const v = runMarkerValidation(next, curUsed);
+    if (v.ok) {
+      curAnswer = next;
+      phase2 = { applied: true, punct_swaps: swaps };
+    } else {
+      phase2 = {
+        applied: false,
+        punct_swaps: swaps,
+        discarded_reason: "marker_validation_failed",
+      };
+    }
+  }
+
+  // ── Cluster telemetry (detection only) ──
+  const CLUSTER_RE = /[⁰¹²³⁴⁵⁶⁷⁸⁹]{2,}/gu;
+  const examples: Array<{ run: string; index: number; context: string }> = [];
+  let count = 0;
+  let cm: RegExpExecArray | null;
+  while ((cm = CLUSTER_RE.exec(curAnswer)) !== null) {
+    count++;
+    if (examples.length < 5) {
+      const s = Math.max(0, cm.index - 12);
+      const e = Math.min(curAnswer.length, cm.index + cm[0].length + 12);
+      examples.push({ run: cm[0], index: cm.index, context: curAnswer.slice(s, e) });
+    }
+  }
+
+  return {
+    answer: curAnswer,
+    used: curUsed,
+    report: { phase1, phase2, clusters: { count, examples } },
+  };
+}
+
+
+
+
+
 
 export interface DrafterResult {
   ok: boolean;
@@ -916,6 +1032,23 @@ export async function runDrafter(
     }
   }
 
+  // ─── Citation cleanup (Phase 1 chronological + Phase 2 punctuation + cluster telemetry) ───
+  // Deterministic, no LLM. Runs only when the draft already validates; any
+  // sub-phase that would break marker_validation is rolled back individually.
+  if (parsed.ok && marker.ok) {
+    const cleanup = applyCitationCleanup(answer, used);
+    answer = cleanup.answer;
+    used = cleanup.used;
+    const m2 = runMarkerValidation(answer, used);
+    // m2.ok must remain true by construction (each phase self-validates).
+    marker = {
+      ...m2,
+      repaired: marker.repaired || cleanup.report.phase1.changed || cleanup.report.phase2.applied,
+      placement: marker.placement,
+      citation_cleanup: cleanup.report,
+    };
+  }
+
   // ─── Phase D: placement telemetry (read-only, no repair, no LLM call) ───
   // We record placement metrics for observability only. Placement is never
   // gated, never blocked, never rewritten. Aesthetics-only repairs were
@@ -923,6 +1056,7 @@ export async function runDrafter(
   if (parsed.ok && marker.ok) {
     marker.placement = validatePlacement(answer);
   }
+
 
   // Build UsedSource + Footnote outputs from inputSources × used.
   const inputByRef = new Map(inputSources.map((s) => [s.ref, s]));
