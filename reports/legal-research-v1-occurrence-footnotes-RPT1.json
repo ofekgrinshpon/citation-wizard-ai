@@ -1,0 +1,54 @@
+{
+  "fixture_id": "RPT1",
+  "run_id": "36eb9b12-d7c6-461d-bff1-02170e154a8d",
+  "qa_log_id": "e7f5f081-8889-4522-9f5b-8e2e08c97d23",
+  "total_ms": 124286,
+  "baseline_total_ms": null,
+  "runtime_delta_ms": null,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true,
+    "every_marker_has_footnote": null,
+    "every_footnote_in_usable": null,
+    "no_adjacent_marker_clusters": null
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": null,
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "cluster_examples": null
+  },
+  "short_form_samples": [],
+  "placement": {
+    "cluster_count": 0,
+    "max_cluster_len": 0,
+    "final_summary_dump": false
+  },
+  "source_list": {
+    "count": 7,
+    "baseline_count": null,
+    "ids": [
+      "3c306dbd-3277-44c3-a506-0a26f9cc06c2",
+      "09eeb458-c94d-4daa-bdfd-254d8013f370",
+      "12a1741a-7f13-4d3e-94f2-29639e6421fa",
+      "50c84b33-5e0f-47a6-a301-84037604645a",
+      "f84e512b-29e7-4813-83f8-ab05cc084bd8",
+      "04be0afc-7a4a-4c85-8709-fce4922f81c4",
+      "263d0933-04d1-4aab-b23e-2a1377be008c"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 7,
+    "unique_source_count": 7
+  },
+  "answer_strip_sup_len": 2902,
+  "answer_tail": "בקש להסתמך על הכרעה פלילית כעל מחסום צריך לנסח ולתמוך טיעונים המשקפים מצגים ברורים לכל ארבעת היסודות ולהציג ברורה מדוע ההכרעה הייתה חיונית; מי המתמודד עם טענה זו יתרכז בהבחנה בין נקודות המחלוקת העובדתיות/המשפטיות ובהצבעת פגמים או חוסר הזדמנות להתדיין כדי לפרוך את החלת ההשתק.² ⁷ ⁵"
+}

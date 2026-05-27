@@ -1,0 +1,56 @@
+{
+  "fixture_id": "L5",
+  "run_id": "8f760673-9cab-4548-bd4b-de544ee447b3",
+  "qa_log_id": "7b706c3c-673d-4587-87dc-4701b1f8356b",
+  "total_ms": 145736,
+  "baseline_total_ms": 135191,
+  "runtime_delta_ms": 10545,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true,
+    "every_marker_has_footnote": null,
+    "every_footnote_in_usable": null,
+    "no_adjacent_marker_clusters": null
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": null,
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "cluster_examples": null
+  },
+  "short_form_samples": [],
+  "placement": {
+    "cluster_count": 2,
+    "max_cluster_len": 2,
+    "final_summary_dump": false
+  },
+  "source_list": {
+    "count": 9,
+    "baseline_count": 9,
+    "ids": [
+      "ec8aad06-92df-4afe-8eed-4291455179f5",
+      "0cd71f24-4def-44db-a389-e9832fd0a012",
+      "21487cff-373c-4139-9f93-c621e243ebaa",
+      "8a8a98c8-1a2e-4953-8370-2180a865a7fc",
+      "c8ee704f-3a77-48e2-b291-266da4495dc3",
+      "4806eedd-0652-4283-bacc-ed8d46284092",
+      "0e35101c-8238-4e85-acdc-b066a6ca6d07",
+      "2a483089-e5bc-4e58-8304-1607175c5e40",
+      "b55b00c3-6dda-4871-a9ad-351fe96d246b"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 9,
+    "unique_source_count": 9
+  },
+  "answer_strip_sup_len": 3166,
+  "answer_tail": "ימד הפגיעה ביחס לתכלית ולנימוקים הרשמיים, שכן במצבים אלה בית המשפט נוטה לבחינה אינטנסיבית יותר.⁵ ⁶\n- לבי״כ/לבתי דין מנהליים יש כלים פרוצדורליים להורות על תיקון או בקרה של ההחלטה; יש להתכונן לשיקולי שיפוטיות כגון מידת היכרות בית המשפט בנושא ומידת ההשפעה על המדיניות הציבורית.⁹ ¹⁰\n\n"
+}

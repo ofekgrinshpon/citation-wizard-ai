@@ -1,0 +1,51 @@
+{
+  "fixture_id": "L3",
+  "run_id": "c63ec66b-f2fa-4575-b79a-c2ed5bfbc5db",
+  "qa_log_id": "7b58d7c4-1ce8-4640-99ad-c412e5e04ec0",
+  "total_ms": 130144,
+  "baseline_total_ms": 159655,
+  "runtime_delta_ms": -29511,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true,
+    "every_marker_has_footnote": null,
+    "every_footnote_in_usable": null,
+    "no_adjacent_marker_clusters": null
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": null,
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "cluster_examples": null
+  },
+  "short_form_samples": [],
+  "placement": {
+    "cluster_count": 4,
+    "max_cluster_len": 3,
+    "final_summary_dump": false
+  },
+  "source_list": {
+    "count": 4,
+    "baseline_count": 6,
+    "ids": [
+      "a45555f2-c613-4e50-96aa-c79004754b73",
+      "030f147e-59a2-4259-aa75-b23369bebb0f",
+      "7502329d-131c-465f-a865-cf116bf9f5ed",
+      "ee332599-c48a-436b-a00b-12b3dcb6cdc8"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 4,
+    "unique_source_count": 4
+  },
+  "answer_strip_sup_len": 2614,
+  "answer_tail": "המוסכם.³⁴\n\nמסקנה קצרה\n\nסעיף 15 מעניק לבית המשפט סמכות מדודה ותכליתית: להפחית סכום מוסכם אך ורק כאשר קיים ליקוי של יחס סביר לנזק כפי שהיה ניתן לצפות בעת כריתת החוזה; סמכות זו מיושמת בזהירות, תחת הנטל על המבקש להפחית, ובהתבסס על ראיות קונקרטיות על הערכת הנזק והמניעים בעת החתימה.¹³⁴"
+}

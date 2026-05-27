@@ -1,0 +1,54 @@
+{
+  "fixture_id": "L1",
+  "run_id": "cb5cb092-d2a0-4b9e-8024-7104b4a62b85",
+  "qa_log_id": "b285c125-c7ed-4a35-9c47-aaa14c111d78",
+  "total_ms": 112301,
+  "baseline_total_ms": 170993,
+  "runtime_delta_ms": -58692,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true,
+    "every_marker_has_footnote": null,
+    "every_footnote_in_usable": null,
+    "no_adjacent_marker_clusters": null
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": null,
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "cluster_examples": null
+  },
+  "short_form_samples": [],
+  "placement": {
+    "cluster_count": 2,
+    "max_cluster_len": 2,
+    "final_summary_dump": false
+  },
+  "source_list": {
+    "count": 7,
+    "baseline_count": 8,
+    "ids": [
+      "3ad33014-fa2a-46a1-970f-e9455d585a01",
+      "49cfc732-8664-428f-a18b-d0e1ff3f550d",
+      "55ef31b7-21b5-46fb-a19f-b0e2ae848aaf",
+      "9fc6e469-da37-48b7-ac84-43e5c9e41765",
+      "f2832ef6-b9f3-4391-8e6e-61fd78e71a67",
+      "f75b236c-5060-4b78-a15a-44c847766447",
+      "97edbb9a-5131-4240-959a-279e24e399d9"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 7,
+    "unique_source_count": 7
+  },
+  "answer_strip_sup_len": 1814,
+  "answer_tail": "יצוע העברת כספים) כדרישה לפני מימוש הסעד הזמני.⁷⁴\n\nמסקנה מעשית: בבקשה לצו זמני יש להביא תיק ראיות תומך בסבירות העילה, בעובדות המצדיקות דחיפות ונזק בלתי‑הפיך, ולהכין נימוקים לאיזון הנוחות ולשיקולים ציבוריים; מומלץ להיערך להציע ערבות או תנאים שמקלים על שיקול בית המשפט במקרה הצורך. "
+}

@@ -1,0 +1,56 @@
+{
+  "fixture_id": "PROT",
+  "run_id": "14f9c670-4f5b-44d3-9568-89949097c01f",
+  "qa_log_id": "b02fc792-de88-4131-8533-6feeff4bf682",
+  "total_ms": 178996,
+  "baseline_total_ms": 220512,
+  "runtime_delta_ms": -41516,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true,
+    "every_marker_has_footnote": null,
+    "every_footnote_in_usable": null,
+    "no_adjacent_marker_clusters": null
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": null,
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "cluster_examples": null
+  },
+  "short_form_samples": [],
+  "placement": {
+    "cluster_count": 13,
+    "max_cluster_len": 2,
+    "final_summary_dump": false
+  },
+  "source_list": {
+    "count": 9,
+    "baseline_count": 9,
+    "ids": [
+      "97a4a74b-0d74-4fd0-a516-e17a9de3d915",
+      "cd7da66e-80fd-4436-8e2d-0d31685ae406",
+      "4ffc162e-b4f4-4b6c-865b-6769f81ce7ed",
+      "309edcb3-791f-41a2-ba12-2733417fdeb7",
+      "0b796b79-94bd-4dde-9315-60ce55bd8fbc",
+      "769f20fb-d73f-4d1b-a00b-b5729677457b",
+      "e4cf655b-05f5-41ae-9c46-c9b9d777958e",
+      "875eccb3-8cf4-487e-bb2e-94783e96458f",
+      "5fca9449-1ef8-48bc-be9b-3d36dd34b5d6"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 9,
+    "unique_source_count": 9
+  },
+  "answer_strip_sup_len": 3934,
+  "answer_tail": "; המקורות מראים שגם אם חולשה חקיקתית הייתה קיימת בעבר, תיקונים חקיקתיים לא בוטלים את צורך בבחינת מימושם בפועל.⁴ ⁵\n- דרישת ראיות היא גבוהה; נדרש ניסיון להוכיח דפוס, מודעות רשמית וקשר סיבתי ממשי לסיכון על החיים — מטלה שבה חוות דעת מבקר המדינה ונתוני הכנסת יכולים להיות מכריעים.³ ⁹\n\n"
+}
