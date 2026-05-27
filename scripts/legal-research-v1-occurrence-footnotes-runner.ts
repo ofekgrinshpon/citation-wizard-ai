@@ -139,6 +139,12 @@ function summarize(row: any, fx: { id: string }, run_id: string, baseline: any |
       ibid_count: phase3.ibid_count ?? null,
       supra_count: phase3.supra_count ?? null,
       cluster_examples: phase3.cluster_examples ?? null,
+      ambiguous_run_samples: phase3.ambiguous_run_samples ?? null,
+      multi_digit_marker_runs_count: phase3.multi_digit_marker_runs_count ?? null,
+      multi_digit_runs_from_single_token_count:
+        phase3.multi_digit_runs_from_single_token_count ?? null,
+      every_multi_digit_run_from_single_token:
+        phase3.every_multi_digit_run_from_single_token ?? null,
     },
     short_form_samples: shortFormSamples,
     placement: {
