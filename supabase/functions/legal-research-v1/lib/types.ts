@@ -159,6 +159,12 @@ export interface Footnote {
   title: string;
   url: string | null;
   source_type?: string;
+  // Phase 3 (occurrence-footnote) additive fields. Absent when phase3 not applied.
+  source_number?: number;          // points to used_sources[].number for the unique source
+  is_short_form?: boolean;
+  short_form_kind?: "ibid" | "supra";
+  back_ref_number?: number;        // first-occurrence footnote number of the source
+  source_candidate_id?: string;    // debug only, never rendered
 }
 
 // ─── Phase C.1: Atomic marker representation ──────────────────────────────
