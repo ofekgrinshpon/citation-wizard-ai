@@ -85,6 +85,10 @@ interface SourceResult {
   snippet: string | null;
   display_citation: string | null;
   tier?: "recommended" | "additional";
+  // URL liveness validation (sources_only mode, perplexity-origin only).
+  url_validation_state?: "ok" | "unreachable" | "unverified";
+  url_status?: string;
+  url_unreachable?: boolean;
 }
 
 interface SourcesOnlyResponse {
@@ -104,6 +108,8 @@ interface SourcesOnlyResponse {
     local_count: number;
     perplexity_count: number;
     additional_count?: number;
+    url_checks_failed?: number;
+    url_checks_unverified?: number;
   };
   debug?: Record<string, unknown>;
 }
