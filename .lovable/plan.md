@@ -1,179 +1,130 @@
 
-# Citation Cleanup Plan — legal-research-v1 (revised, deterministic-only)
+# Drafter Cluster-Prevention Plan (prompt-only + telemetry)
 
-Scope this round: **Phase 1 (chronological renumbering) + Phase 2
-(punctuation normalization) + cluster telemetry only**. No thin-space
-separation, no marker movement across words, no Rule-37 body rewrite, no
-repeated-citation short forms, no LLM calls. Stops after the validation
-report.
+Scope: drafter prompt guidance + deterministic cluster telemetry only.
+No retrieval, Perplexity, verifier, candidate-pool, source-selection, DB,
+frontend, extra LLM call, placement repair, marker movement, thin-space,
+Rule 37, or repeated-citation work.
 
-Untouched: retrieval, Perplexity, verifier, candidate pool, source
-selection, drafter prose, sources-only mode, DB schema, frontend.
+## 1. Prompt change — `supabase/functions/legal-research-v1/stages/drafter.ts` `SYSTEM_PROMPT` (lines ~233–249)
 
-## Where the code lives
+The existing "מיקום הערות שוליים" block already says "source preservation
+outranks aesthetics" and "split sentences before clustering". The new
+guidance keeps that ordering but explicitly forbids the two failure modes
+we still see: clusters on a single word, and a final summary sentence that
+re-cites every source.
 
-- `supabase/functions/legal-research-v1/stages/drafter.ts`
-  - Existing helpers: `toSuperscript`, `SUP_TO_DIGIT`, `extractMarkers`,
-    `runMarkerValidation`, `deterministicRepair` (~lines 580–656).
-  - `deterministicRepair` today runs **only on marker_validation failure**
-    (called at lines 800 and 876). This plan promotes it to an always-on
-    normalization step and adds a punctuation pass + cluster counter
-    immediately after it.
-- `supabase/functions/legal-research-v1/lib/telemetry.ts` — no edits;
-  new fields ride on the existing `metadata` blob.
-- No new files. No frontend changes.
+Replace the current placement block with a tightened version that adds the
+user's Hebrew wording verbatim (kept whole so we don't dilute it):
 
----
-
-## Phase 1 — Chronological renumbering (always on)
-
-**Edits in `drafter.ts`:**
-
-1. Add a thin wrapper `normalizeNumbering(answer, used)` that calls the
-   existing `deterministicRepair` and, when markers are already 1..k in
-   first-appearance order, returns the input unchanged (instead of `null`)
-   so the caller never has to special-case "no-op".
-2. After the initial parse (~line 795) and again after escalation
-   (~line 874), call it unconditionally on `parsed.ok` paths, then re-run
-   `runMarkerValidation`:
-   ```ts
-   const before = answer;
-   const norm = normalizeNumbering(answer, used);
-   const candidate = norm ?? { answer_markdown: answer, used_sources: used };
-   const m2 = runMarkerValidation(candidate.answer_markdown, candidate.used_sources);
-   if (m2.ok) {
-     answer = candidate.answer_markdown;
-     used   = candidate.used_sources;
-     marker = { ...m2, repaired: m2 !== marker };
-     cleanup.phase1 = { applied: true, changed: before !== answer };
-   } else {
-     cleanup.phase1 = { applied: false, discarded_reason: "marker_validation_failed" };
-   }
-   ```
-3. Keep all existing failure-path fallbacks (C# scrub, escalation) as-is.
-
-**Telemetry:** `metadata.citation_cleanup.phase1 = { applied, changed,
-discarded_reason?, before_order, after_order }`.
-
-**Acceptance:** chronological markers; `footnote_count === used_sources.length`;
-`used_sources ⊆ verifier.usable`; no internal-id leaks; only marker digit
-characters change; if validation fails, original output is preserved.
-
----
-
-## Phase 2 — Punctuation normalization
-
-Runs immediately after Phase 1, on the same `answer` string.
-
-**Transform (single regex, iterated to fixed-point):**
-
-```ts
-const PUNCT = /([⁰-⁹])([.,;:?!])/u;   // ASCII terminal/clause punctuation
-let punctSwaps = 0;
-let prev: string;
-do {
-  prev = answer;
-  answer = answer.replace(new RegExp(PUNCT, "gu"), (_m, sup, p) => {
-    punctSwaps++;
-    return p + sup;
-  });
-} while (answer !== prev);
+```
+מיקום הערות שוליים:
+- קדימות שימור מקורות (גוברת על כל כללי המיקום שלהלן):
+  * אין לוותר על מקור מאומת או על הערת שוליים תומכת כדי לשפר את האסתטיקה של מיקום ההערות.
+  * אם נדרש לבחור בין השארת מקבץ הערות לבין השמטת מקור — השאר את המקור. שיפור מיקום לעולם לא מצדיק הסרת תמיכה.
+  * אין למחוק, לאחד, או לדלג על מספר מקור המופיע ברשימת המקורות שניתנה לך.
+- הצמדה לטענה הספציפית:
+  * הצמד כל הערת שוליים לטענה הספציפית שהיא תומכת בה. אין לרכז כמה הערות שוליים על אותה מילה או בסוף משפט אחד, אלא אם אכן מדובר באותה טענה יחידה הנתמכת במצטבר על ידי כמה מקורות.
+  * כאשר כמה מקורות תומכים בפסקה אחת, פצל את הפסקה למשפטים או לטענות משנה, והצב כל הערה במקום הטבעי ליד הטענה שהיא תומכת בה.
+  * אין לוותר על מקור מאומת רק כדי לשפר את מיקום ההערות; אם מקור נחוץ, שלב את הטענה שהוא תומך בה בגוף הפסקה.
+- איסור "מצבור סיום":
+  * אל תוסיף בסוף התשובה משפט מסכם הנושא את כל הערות השוליים.
+  * מסקנה או סיכום אינם צריכים לחזור על כל המקורות שכבר תמכו בטענות בגוף התשובה. אם המסקנה אינה מוסיפה טענה חדשה — אל תצרף לה הערות שוליים.
+- חזרות סמוכות של אותו סמן: כמו קודם — אין לחזור על אותו מספר על משפטים סמוכים, אך אין להסירו אם נדרש לתמיכה.
+- פורמט סמנים: כמו קודם (ספרות עיליות יוניקוד, ללא סוגריים, ¹⁰/¹¹/¹² ולא 10/11/12).
 ```
 
-Rules enforced by construction:
-- Marker must be **immediately** before the punctuation char (no space) →
-  `קוראים¹ לי אופק.` is left alone (space between `¹` and `לי`).
-- Hops exactly one punctuation character; never crosses a word boundary or
-  sentence boundary.
-- Punctuation set kept conservative: `. , ; : ? !` (ASCII forms; Hebrew
-  legal text uses ASCII for these). Hebrew gershayim/geresh (`״`, `׳`)
-  are **excluded** — they're typographic marks inside words, not clause
-  terminators, and including them would create false positives.
-- Marker count, marker digits, footnote list, and `used_sources` are
-  untouched. Verified by re-running `runMarkerValidation`; if it fails for
-  any reason, the punctuation pass is rolled back to the Phase-1 output.
+Removed sub-bullets ("עדיף לשלוח ¹²³ מאשר להשמיט מקור") are intentionally
+dropped — they implicitly licensed clusters. Source-preservation precedence
+is preserved by the first block.
 
-**Telemetry:** `metadata.citation_cleanup.phase2 = { applied, punct_swaps,
-discarded_reason? }`.
+No other prompt content changes. No tool-schema change. No emit_draft
+parameter change.
 
-**Acceptance examples:**
-- `טקסט¹.` → `טקסט.¹`, `טקסט²,` → `טקסט,²`, `טקסט³;` → `טקסט;³`,
-  `טקסט⁴?` → `טקסט?⁴`, `טקסט⁵!` → `טקסט!⁵`
-- `קוראים¹ לי אופק.` unchanged
-- `אחריות¹²³⁴.` → `אחריות¹²³.⁴` (only the last marker hops the dot —
-  cluster handling is out of scope for Phase 2 by design; reported via
-  telemetry below)
+## 2. Telemetry — `validatePlacement` (~lines 489–582 in `drafter.ts`) and `PlacementReport` (`lib/types.ts`)
 
----
+Add deterministic fields needed by the validation report. No gating, no
+retry, no repair. Pure measurement.
 
-## Cluster telemetry (detection only)
+New fields on `PlacementReport`:
+- `max_cluster_len: number` — longest run length from `[⁰-⁹]{2,}` matches
+  (0 if no clusters). Existing `cluster_count` stays as "extra markers
+  in clusters" for back-compat; add `cluster_run_count` = number of
+  cluster runs.
+- `final_paragraph_marker_count: number` — distinct markers in the final
+  paragraph.
+- `final_summary_dump: boolean` — true iff the final paragraph contains
+  ≥5 distinct markers OR its last sentence contains ≥5 distinct markers.
+- `final_summary_dump_count: number` — 0 or 1 (matches the boolean,
+  exposed as a count for aggregation).
 
-After Phase 2, scan the final `answer` for adjacent superscript runs:
+Implementation in `validatePlacement`:
+- During the cluster scan, track `max_cluster_len = max(m[0].length)`.
+- After paragraph split, compute the final paragraph's distinct marker
+  count and its last sentence's distinct marker count using existing
+  `SUP_TO_DIGIT` walker.
+- Append all four fields to the returned object. `ok` definition
+  unchanged (still cluster_count===0 && out_of_order===0 && end_dump===0).
 
-```ts
-const CLUSTER = /[⁰-⁹]{2,}/gu;
-const clusters: Array<{ run: string; index: number; context: string }> = [];
-for (const m of answer.matchAll(CLUSTER)) {
-  clusters.push({
-    run: m[0],
-    index: m.index!,
-    context: answer.slice(Math.max(0, m.index! - 12), m.index! + m[0].length + 12),
-  });
-}
-```
+Persisted via existing `marker.placement` → `metadata.drafter.marker_validation.placement`. No new metadata blob, no new top-level field.
 
-Record `metadata.citation_cleanup.clusters = { count: clusters.length,
-examples: clusters.slice(0, 5) }`. No mutation, no markers moved, no
-spaces inserted, no merges.
+## 3. Validation harness
 
----
+New runner: `scripts/legal-research-v1-cluster-prevention-runner.ts`,
+modelled on `legal-research-v1-citation-cleanup-runner.ts`.
 
-## Tests (unit, in drafter test file or new `drafter.cleanup.test.ts`)
+Fixtures: L1–L6 from `eval/legal-research-v1/fixtures.json` + one ad-hoc
+question:
+`"האם כישלון מערכתי באכיפת עבירת גביית דמי חסות (פרוטקשן) יכול להוות מחדל חקיקתי בהגנה על הזכות לחיים וביטחון?"`
+(id `PROT`).
 
-- Phase 1: drafter emits `...²...¹...³` → renumbered to `...¹...²...³`
-  with reordered `used_sources`; pass-through when already sorted.
-- Phase 1 rollback: synthetic case where renumbering would yield a
-  `marker_validation` failure → original answer/used preserved,
-  `discarded_reason === "marker_validation_failed"`.
-- Phase 2 hops: `.,;:?!` each swap once; iterated form handles
-  `טקסט¹.` and confirms idempotence on a second pass.
-- Phase 2 non-hop: space between marker and punctuation prevents swap;
-  `קוראים¹ לי אופק.` unchanged.
-- Cluster telemetry: `¹²³⁴` produces one cluster of length 4 in metadata,
-  answer unchanged.
-- Marker-count invariant under Phase 1 + Phase 2 across all of the above.
+Per fixture, capture from `qa_logs.metadata`:
+- hard gates: `marker_validation.ok`, `internal_id_leak === false`,
+  `footnote_count === used_sources.length`,
+  `used_sources ⊆ verifier.usable`
+- placement: `cluster_count`, `cluster_run_count`, `max_cluster_len`,
+  `end_paragraph_dump_count`, `final_paragraph_marker_count`,
+  `final_summary_dump_count`, up to 5 `cluster_samples` and
+  `end_dump_samples`
+- runtime: `total_ms` and Δ vs phaseE5 baseline
+- source list count vs candidate pool (sanity: no drops)
 
----
+Baselines: take the most recent run per fixture from the existing
+`reports/legal-research-v1-citation-cleanup-*.json` set as the "before"
+snapshot. Re-run with the new prompt as "after". Diff in
+`reports/legal-research-v1-cluster-prevention.md`.
 
-## Validation harness
+Also a small qualitative spot-check (manual, 2–3 lines per fixture) on
+whether the answer body reads coherently — captured in the `.md` only.
 
-Reuse `eval/legal-research-v1/fixtures.json` (L1–L6) plus 5 real questions
-captured from `qa_logs` flagged as clustered or out-of-order in earlier
-phaseB runs. New runner: `scripts/legal-research-v1-citation-cleanup-runner.ts`
-mirroring the existing p7-phase runners; report at
-`reports/legal-research-v1-citation-cleanup.json` + a short `.md` summary.
+## 4. Tests
 
-Per fixture report:
-- `marker_validation.ok` (must be true)
-- `internal_id_leak` (must be false)
-- `footnote_count === used_sources.length`
-- `used_sources ⊆ verifier.usable`
-- chronological numbering before/after (markers strictly increasing on
-  first appearance)
-- `punct_swaps` count
-- `cluster_count` before / after with up to 5 example contexts
-- `runtime_delta_ms` vs the equivalent phaseE5 baseline (target ≈ 0)
-- `cleanup_discarded` flag + reason when validation forced rollback
+Unit tests in `drafter.cleanup.test.ts` (extend, no new file):
+- `validatePlacement` reports `max_cluster_len = 4` for `אחריות¹²³⁴`.
+- `final_summary_dump = true` when the last paragraph is
+  `לסיכום, האחריות חלה.¹²³⁴⁵`; `false` when markers are scattered.
+- Existing cluster/end-dump tests still pass; field counts unchanged.
+
+Prompt change is non-testable in unit tests — covered by the L1–L6+PROT
+runner.
+
+## 5. Acceptance gates (reported, not enforced in code)
+
+- All hard grounding gates green across L1–L6+PROT.
+- No source drops (used count == prior used count ± natural variance, no
+  systematic loss).
+- `cluster_count` and `max_cluster_len` decrease materially vs baseline.
+- `final_summary_dump_count == 0` on every fixture (especially PROT).
+- Runtime delta within noise (≤ a few seconds; we only changed prompt
+  text length by ~250 chars).
+- Spot-check confirms answers remain coherent.
+
+If clusters or summary dumps persist on PROT after the prompt-only
+change, stop and report — no repair/retry will be added in this phase.
 
 ## Out of scope (explicit)
 
-- No thin-space or comma-separated marker rendering.
-- No movement of markers across words or sentences.
-- No LLM-based placement repair.
-- No Rule-37 body-marker rewrite.
-- No repeated-citation short forms (deferred Phase 3).
-- No retrieval / verifier / drafter / source-selection changes.
-- No frontend changes.
-- No DB schema changes.
-
-Stop after the Phase 1 + punctuation-normalization report.
+Retrieval / Perplexity / verifier / candidate pool / source selection /
+DB / frontend / extra LLM call / placement repair / marker movement /
+thin-space / comma-separated markers / Rule 37 / repeated-citation
+short forms / failing or retrying answers based on the new telemetry.
