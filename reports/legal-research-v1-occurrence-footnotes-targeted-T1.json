@@ -1,0 +1,40 @@
+{
+  "fixture_id": "T1",
+  "run_id": "0b46fbda-3458-4524-8870-976a365bf598",
+  "qa_log_id": "49d155dd-6288-4b68-90ed-798b5c2bce0b",
+  "total_ms": 158921,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "adjacent_tokens_would_render_ambiguous",
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "multi_digit_marker_runs_count": null,
+    "multi_digit_runs_from_single_token_count": null,
+    "every_multi_digit_run_from_single_token": null
+  },
+  "ibid_examples": [],
+  "supra_examples": [],
+  "token_leak_count": 0,
+  "source_set": {
+    "count": 6,
+    "ids": [
+      "89f48fcd-3dc7-4e54-8b65-6349f05e9cab",
+      "ae408839-be99-4ec0-a23c-5637576c1a7d",
+      "ab09f10c-ccc0-43d3-b42e-72ab49588b1d",
+      "3f4606d1-2536-4685-bd70-072cbfa06aad",
+      "f9d48546-25cd-4994-8235-1becd99c20c8",
+      "e0b47f10-6e5d-438e-b96d-423497d03348"
+    ]
+  },
+  "answer_strip_sup_len": 2953,
+  "answer_tail": " במצבים מסוימים, וכן דנים בהשפעת תיקונים בחוק החוזים על המשקל הפרשני של לשון החוזה.⁶⁴\n\nמסקנה מעשית קצרה: הלכת אפרופים היא כלי פרשני חשוב שנועד להגן על ודאות לשונית אך אינו מוחלט; בתי המשפט והפרשנות המעשית מאזנים בין לשון, הקשר ותכלית, והדיון התאורטי־חקיקתי ממשיך להשפיע על הגבולות שבהם ראיות חיצוניות יתקבלו או יידחו.¹³⁶"
+}

@@ -1,0 +1,135 @@
+{
+  "phase": "occurrence-footnotes-targeted-apply-path",
+  "ran": 3,
+  "errors": 0,
+  "applied_count": 0,
+  "any_applied": false,
+  "hard_gates_all_pass": true,
+  "total_token_leaks": 0,
+  "fixtures": [
+    {
+      "fixture_id": "T1",
+      "run_id": "0b46fbda-3458-4524-8870-976a365bf598",
+      "qa_log_id": "49d155dd-6288-4b68-90ed-798b5c2bce0b",
+      "total_ms": 158921,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "adjacent_tokens_would_render_ambiguous",
+        "occurrence_count": null,
+        "unique_source_count": null,
+        "short_form_count": null,
+        "ibid_count": null,
+        "supra_count": null,
+        "multi_digit_marker_runs_count": null,
+        "multi_digit_runs_from_single_token_count": null,
+        "every_multi_digit_run_from_single_token": null
+      },
+      "ibid_examples": [],
+      "supra_examples": [],
+      "token_leak_count": 0,
+      "source_set": {
+        "count": 6,
+        "ids": [
+          "89f48fcd-3dc7-4e54-8b65-6349f05e9cab",
+          "ae408839-be99-4ec0-a23c-5637576c1a7d",
+          "ab09f10c-ccc0-43d3-b42e-72ab49588b1d",
+          "3f4606d1-2536-4685-bd70-072cbfa06aad",
+          "f9d48546-25cd-4994-8235-1becd99c20c8",
+          "e0b47f10-6e5d-438e-b96d-423497d03348"
+        ]
+      },
+      "answer_strip_sup_len": 2953,
+      "answer_tail": " במצבים מסוימים, וכן דנים בהשפעת תיקונים בחוק החוזים על המשקל הפרשני של לשון החוזה.⁶⁴\n\nמסקנה מעשית קצרה: הלכת אפרופים היא כלי פרשני חשוב שנועד להגן על ודאות לשונית אך אינו מוחלט; בתי המשפט והפרשנות המעשית מאזנים בין לשון, הקשר ותכלית, והדיון התאורטי־חקיקתי ממשיך להשפיע על הגבולות שבהם ראיות חיצוניות יתקבלו או יידחו.¹³⁶"
+    },
+    {
+      "fixture_id": "T2",
+      "run_id": "4b36921d-7ccc-45fa-b87d-4fab0173ea51",
+      "qa_log_id": "1124a60c-e733-4813-b6aa-af107bfa8e58",
+      "total_ms": 158237,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "adjacent_tokens_would_render_ambiguous",
+        "occurrence_count": null,
+        "unique_source_count": null,
+        "short_form_count": null,
+        "ibid_count": null,
+        "supra_count": null,
+        "multi_digit_marker_runs_count": null,
+        "multi_digit_runs_from_single_token_count": null,
+        "every_multi_digit_run_from_single_token": null
+      },
+      "ibid_examples": [],
+      "supra_examples": [],
+      "token_leak_count": 0,
+      "source_set": {
+        "count": 9,
+        "ids": [
+          "7e84d344-3f89-4f15-96d4-b539292788c6",
+          "ccb7d8d5-eaac-46be-a804-57139c209d96",
+          "63b3e3f3-be27-4bff-8d9b-d5d8f12ffb2c",
+          "980fc387-5b28-4367-bee8-2d96b16d2670",
+          "fa6b253d-6eb2-4d9d-8db0-0e74179934f4",
+          "f237c30f-20a7-4e2a-bc38-44d84b085d2c",
+          "d6ca8ea8-d32e-40fd-a119-4e5878f53535",
+          "f2a4b31e-f046-405e-8739-72acc642d6f5",
+          "630f1bc1-99de-4b02-a973-7e6dcc8febbb"
+        ]
+      },
+      "answer_strip_sup_len": 2609,
+      "answer_tail": "הקודמת אינה סופית ביחס לאותן סוגיות מהותיות.⁵⁹\n\nמסקנה מעשית קצרה\nמוסכם כי נוסחת חניון חיפה מצמצמת מאוד את אפשרויות הגלגול השלישי: בקשת רשות תעמוד רק אם המבקש עומד בעול הנטל ומציג מסה משכנעת המצביעה על חשיבות ציבורית ממשית או על סכנה לעיוות דין, ובהיעדר ניסוח ועמידה בדרישות אלה בית המשפט ימנע מפתיחת גלגול נוסף.¹²³⁴⁵⁶⁷⁸⁹"
+    },
+    {
+      "fixture_id": "T3",
+      "run_id": "e207d2f7-34bb-4998-801a-e40713e142ea",
+      "qa_log_id": "a5bb47cc-5e5d-4d13-b258-545b7e1e10a9",
+      "total_ms": 201440,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "adjacent_tokens_would_render_ambiguous",
+        "occurrence_count": null,
+        "unique_source_count": null,
+        "short_form_count": null,
+        "ibid_count": null,
+        "supra_count": null,
+        "multi_digit_marker_runs_count": null,
+        "multi_digit_runs_from_single_token_count": null,
+        "every_multi_digit_run_from_single_token": null
+      },
+      "ibid_examples": [],
+      "supra_examples": [],
+      "token_leak_count": 0,
+      "source_set": {
+        "count": 7,
+        "ids": [
+          "f54d43b2-696e-40bc-a820-9505b15a62da",
+          "ddfb466a-5cfa-4580-b7ee-0a87f1208ca6",
+          "ecb1c781-fdac-4479-bda9-eb7bd7673046",
+          "5e48fd76-0c84-4a8f-bde6-1808e8ac1c5b",
+          "c8ac75fb-6771-45bc-bd29-678e68ea9096",
+          "6954bb8e-6ba6-4672-aed2-4fcc144f7d5e",
+          "b9ccbb54-2f56-4d1d-a13a-c6404681e617"
+        ]
+      },
+      "answer_strip_sup_len": 2725,
+      "answer_tail": "מי ובמחקר הכנסת, והעלה אפשרויות של ריסון שיפוטי או מודלים חלופיים למענה על פגמים בחקיקה.⁶⁷\n\nמסקנה מעשית: בבחינה של פגיעה בזכויות לפי סעיף 8 יש למלא ולחדד ארבעת התנאים; המרכזי שבהם — מבחן המידתיות — מצריך בחינה תלת‑שלבית (התאמה, הצטמצמות, איזון) שתכריע בפועל אם בית המשפט יפסוק לתקן, לצמצם או לבטל את ההגבלה החקיקתית.²³⁴\n"
+    }
+  ]
+}
