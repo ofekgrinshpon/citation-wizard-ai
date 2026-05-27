@@ -1,8 +1,8 @@
 {
   "fixture_id": "RPT2",
-  "run_id": "66bc96d8-64d3-41b4-b706-051dc0e4c3ba",
-  "qa_log_id": "e6d4c69d-383d-4393-898e-c3dff52b3219",
-  "total_ms": 149856,
+  "run_id": "393e2dfb-df12-4605-87f4-6892dffb8d90",
+  "qa_log_id": "533efc21-022b-43af-98b2-87e5ce48fca1",
+  "total_ms": 195037,
   "baseline_total_ms": null,
   "runtime_delta_ms": null,
   "hard_gates": {
@@ -16,17 +16,23 @@
   },
   "phase3": {
     "applied": false,
-    "discarded_reason": null,
+    "discarded_reason": "ambiguous_adjacent_markers",
     "occurrence_count": null,
     "unique_source_count": null,
     "short_form_count": null,
     "ibid_count": null,
     "supra_count": null,
-    "cluster_examples": null
+    "cluster_examples": [
+      "ות הישראלית.¹²\n\nהגדרה ותכל",
+      "מימוש החוזה.¹² ההצעה החוקת",
+      " תרופות אלו.³⁴\n\nיסודות מתן",
+      "כריתת החוזה.⁵⁶\n\nהוכחת הפסד",
+      "פות חלופיות.⁶²\n\nקשר סיבתי "
+    ]
   },
   "short_form_samples": [],
   "placement": {
-    "cluster_count": 20,
+    "cluster_count": 21,
     "max_cluster_len": 4,
     "final_summary_dump": false
   },
@@ -34,15 +40,15 @@
     "count": 9,
     "baseline_count": null,
     "ids": [
-      "fa779a46-e8ab-43d7-9da0-9c3be4fa7646",
-      "e0c3215b-b4de-4892-86d1-377feaa0383d",
-      "2558b546-ce4d-4dca-92c9-e829c2e2f5ef",
-      "5c17d012-b330-405f-91c0-f6e1a9578713",
-      "f7074083-cb23-466f-935a-8c27a746fc9e",
-      "bc1c865c-0502-4c2d-8cd0-f5404dfc65c3",
-      "e972c923-99d6-472a-bfb8-020fbde669aa",
-      "4276517c-7928-411d-86ef-27290292f1cf",
-      "64ea06eb-fd20-40c5-9ea4-27b41977caa4"
+      "24891aa7-d42e-418f-b1f4-46a6d67e4c81",
+      "5584ea30-11af-42ae-8341-5b7d9aca8c80",
+      "c1b2e9dd-2084-40b5-9b84-8770d722d0de",
+      "14336527-0c21-4110-ba9f-f3ca8f242b73",
+      "082f68ea-93c0-45fe-abd4-fba77560d212",
+      "51bd6a0e-b437-4230-8721-5945cefb0606",
+      "281bd101-9de8-4d32-bc5e-90143b9b9f8b",
+      "eebebeae-fdc1-41e2-973c-26e54a40647a",
+      "7a526ca7-28b1-46b0-96f4-3fd1ae85bcce"
     ]
   },
   "drafter": {
@@ -51,6 +57,6 @@
     "footnote_count": 9,
     "unique_source_count": 9
   },
-  "answer_strip_sup_len": 3646,
-  "answer_tail": "פי דוקטרינת הציפיות בצירוף הוכחות ברורות ל'ציפייה סבירה', להסתמכות ולנזק, ולהכין אלטרנטיבה של פיצוי הסתמכות או בקשה לתיקון/השלמה של החוזה כאשר צפי הפיצוי קשה למדידה; בו־זמנית יש להעריך סיכונים של מניעה מחקיקתית/רגולטורית ושל שיקולי מדיניות שעלולים להביא להטלת הגבלות על האכיפה.¹⁴\n"
+  "answer_strip_sup_len": 3456,
+  "answer_tail": "מעשי: בבקשה לתביעת פיצויי צפיות יש להקפיד על (א) ניסוח ברור של הנזק הצפוי ותמיכה ראייתית כמותית; (ב) הוכחת קשר סיבתי סביר; (ג) היערכות לטענות הנתבע על אי־הקטנה או על קיומו של סעיף פיצוי מוסכם; ו(ד) שקילה מוקדמת של רכיב ההסתמכות או החזרת היתרון אם רווחים נדמים או בלתי־מדידים.⁵⁶⁷⁸\n"
 }

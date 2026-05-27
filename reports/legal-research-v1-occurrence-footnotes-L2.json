@@ -1,10 +1,10 @@
 {
   "fixture_id": "L2",
-  "run_id": "e97be2f1-65c0-48d2-9c6c-bd508a0494a7",
-  "qa_log_id": "1156de46-03fe-42e2-ab1c-6b1ccf198550",
-  "total_ms": 129953,
+  "run_id": "2280c159-17b3-47a5-bfb2-2fb6e341b84c",
+  "qa_log_id": "beea1d42-8bff-4c81-9507-f3c50dce5c7e",
+  "total_ms": 174237,
   "baseline_total_ms": 144377,
-  "runtime_delta_ms": -14424,
+  "runtime_delta_ms": 29860,
   "hard_gates": {
     "marker_validation_ok": true,
     "internal_id_leak": false,
@@ -16,33 +16,36 @@
   },
   "phase3": {
     "applied": false,
-    "discarded_reason": null,
+    "discarded_reason": "ambiguous_adjacent_markers",
     "occurrence_count": null,
     "unique_source_count": null,
     "short_form_count": null,
     "ibid_count": null,
     "supra_count": null,
-    "cluster_examples": null
+    "cluster_examples": [
+      "צום התערבות.⁸⁹\n- **מניעת ת",
+      "ות הציבורית.¹⁰\n- הדוקטרינה"
+    ]
   },
   "short_form_samples": [],
   "placement": {
-    "cluster_count": 8,
-    "max_cluster_len": 3,
+    "cluster_count": 2,
+    "max_cluster_len": 2,
     "final_summary_dump": false
   },
   "source_list": {
     "count": 9,
     "baseline_count": 7,
     "ids": [
-      "ad778d6c-4386-4c95-aee8-ceae69874a7b",
-      "85e88ee0-49d5-4439-bf78-860c2d2cf43d",
-      "96010596-821f-49b8-8239-b1f89299438f",
-      "1e3c19ea-2c12-4471-be1e-280942494219",
-      "f6cdc157-d4f1-46ae-bacb-591ac4285542",
-      "c8c1a791-cf2a-4b2b-aa21-14905e7de843",
-      "2978eacf-1ed0-4468-92f8-22444ed9ad71",
-      "e5cbaaa3-c950-4e09-9a90-580aaec9e186",
-      "a74b66a6-d1cf-48df-b588-83bf0683bf2f"
+      "b3cdf647-7b34-4f66-8869-fc564f442a71",
+      "47cff71f-dd70-4f11-9872-65cdef8c6d9a",
+      "285d74da-fdd3-4cd5-80b1-9c7c2cc17516",
+      "896c75c4-b248-47be-a486-2f7590c7fac8",
+      "71cac6e8-311b-45e7-baf2-0bf864bac20d",
+      "398dcf24-f9bd-4cb3-adeb-4e9ba257f348",
+      "c7c5f9d5-a89c-4fee-89ad-0ba7ce10a693",
+      "1fe7cb31-a4bf-4edf-895c-dd05a6bbd113",
+      "ea9dad76-8099-4c6e-b878-0dcab43d8824"
     ]
   },
   "drafter": {
@@ -51,6 +54,6 @@
     "footnote_count": 9,
     "unique_source_count": 9
   },
-  "answer_strip_sup_len": 2607,
-  "answer_tail": "השיפוטי.⁹¹⁰\n\nמסקנה פרקטית: בית המשפט יבחן הטענות על הבטחה מינהלית לפי הקריטריונים של ייצוג ברור, סמכות המבטיח, הסתמכות סבירה ונזק ממשי — אך ההכרה בה היא תמיד תוצאה של איזון שיפוטי מול טובת הציבור והחובה לכבד גבולות חוקיים; הסעד מותאם לעוצמת הסתמכות ולמגבלות הסמכותיות של הרשות.¹²\n"
+  "answer_strip_sup_len": 3616,
+  "answer_tail": "ת של הרשות, אך אינה כלי כובל שאוסר אי‑פעם שינוי מדיניות; היא שוקלת סמכות, הסתמכות, יכולת קיום ואינטרס ציבורי. בתי‑המשפט נעזרים במספר מבחנים ובאיזונים כדי לקבוע האם והיכן יש להעניק אכיפה או פיצוי, כאשר ההחלטה המשקללת תלויה בנסיבות המקרה וביחס שבין זכויות הפרט לצורכי הציבור.² ⁷ ⁵ ⁶"
 }

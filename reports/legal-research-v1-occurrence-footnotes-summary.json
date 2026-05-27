@@ -1,76 +1,27 @@
 {
   "phase": "occurrence-footnotes-validation",
-  "ran": 10,
-  "errors": 0,
-  "hard_gates_all_pass": true,
+  "ran": 9,
+  "errors": 1,
+  "hard_gates_all_pass": false,
   "fixtures_phase3_applied": 0,
-  "fixtures_skipped_ambiguous_clusters": 0,
+  "fixtures_skipped_ambiguous_clusters": 8,
   "fixtures_skipped_k_too_large": 0,
-  "fixtures_with_source_count_change": 5,
+  "fixtures_with_source_count_change": 4,
   "short_form_examples_across_fixtures": [],
-  "total_runtime_delta_ms": -166998,
+  "total_runtime_delta_ms": 67454,
   "fixtures": [
     {
       "fixture_id": "L1",
-      "run_id": "cb5cb092-d2a0-4b9e-8024-7104b4a62b85",
-      "qa_log_id": "b285c125-c7ed-4a35-9c47-aaa14c111d78",
-      "total_ms": 112301,
-      "baseline_total_ms": 170993,
-      "runtime_delta_ms": -58692,
-      "hard_gates": {
-        "marker_validation_ok": true,
-        "internal_id_leak": false,
-        "footnote_eq_used": true,
-        "used_subset_of_usable": true,
-        "every_marker_has_footnote": null,
-        "every_footnote_in_usable": null,
-        "no_adjacent_marker_clusters": null
-      },
-      "phase3": {
-        "applied": false,
-        "discarded_reason": null,
-        "occurrence_count": null,
-        "unique_source_count": null,
-        "short_form_count": null,
-        "ibid_count": null,
-        "supra_count": null,
-        "cluster_examples": null
-      },
-      "short_form_samples": [],
-      "placement": {
-        "cluster_count": 2,
-        "max_cluster_len": 2,
-        "final_summary_dump": false
-      },
-      "source_list": {
-        "count": 7,
-        "baseline_count": 8,
-        "ids": [
-          "3ad33014-fa2a-46a1-970f-e9455d585a01",
-          "49cfc732-8664-428f-a18b-d0e1ff3f550d",
-          "55ef31b7-21b5-46fb-a19f-b0e2ae848aaf",
-          "9fc6e469-da37-48b7-ac84-43e5c9e41765",
-          "f2832ef6-b9f3-4391-8e6e-61fd78e71a67",
-          "f75b236c-5060-4b78-a15a-44c847766447",
-          "97edbb9a-5131-4240-959a-279e24e399d9"
-        ]
-      },
-      "drafter": {
-        "ok": true,
-        "escalated": false,
-        "footnote_count": 7,
-        "unique_source_count": 7
-      },
-      "answer_strip_sup_len": 1814,
-      "answer_tail": "יצוע העברת כספים) כדרישה לפני מימוש הסעד הזמני.⁷⁴\n\nמסקנה מעשית: בבקשה לצו זמני יש להביא תיק ראיות תומך בסבירות העילה, בעובדות המצדיקות דחיפות ונזק בלתי‑הפיך, ולהכין נימוקים לאיזון הנוחות ולשיקולים ציבוריים; מומלץ להיערך להציע ערבות או תנאים שמקלים על שיקול בית המשפט במקרה הצורך. "
+      "run_id": "ffb3dd09-2f70-420f-8245-541b1ead48fb",
+      "error": "poll_timeout"
     },
     {
       "fixture_id": "L2",
-      "run_id": "e97be2f1-65c0-48d2-9c6c-bd508a0494a7",
-      "qa_log_id": "1156de46-03fe-42e2-ab1c-6b1ccf198550",
-      "total_ms": 129953,
+      "run_id": "2280c159-17b3-47a5-bfb2-2fb6e341b84c",
+      "qa_log_id": "beea1d42-8bff-4c81-9507-f3c50dce5c7e",
+      "total_ms": 174237,
       "baseline_total_ms": 144377,
-      "runtime_delta_ms": -14424,
+      "runtime_delta_ms": 29860,
       "hard_gates": {
         "marker_validation_ok": true,
         "internal_id_leak": false,
@@ -82,33 +33,36 @@
       },
       "phase3": {
         "applied": false,
-        "discarded_reason": null,
+        "discarded_reason": "ambiguous_adjacent_markers",
         "occurrence_count": null,
         "unique_source_count": null,
         "short_form_count": null,
         "ibid_count": null,
         "supra_count": null,
-        "cluster_examples": null
+        "cluster_examples": [
+          "צום התערבות.⁸⁹\n- **מניעת ת",
+          "ות הציבורית.¹⁰\n- הדוקטרינה"
+        ]
       },
       "short_form_samples": [],
       "placement": {
-        "cluster_count": 8,
-        "max_cluster_len": 3,
+        "cluster_count": 2,
+        "max_cluster_len": 2,
         "final_summary_dump": false
       },
       "source_list": {
         "count": 9,
         "baseline_count": 7,
         "ids": [
-          "ad778d6c-4386-4c95-aee8-ceae69874a7b",
-          "85e88ee0-49d5-4439-bf78-860c2d2cf43d",
-          "96010596-821f-49b8-8239-b1f89299438f",
-          "1e3c19ea-2c12-4471-be1e-280942494219",
-          "f6cdc157-d4f1-46ae-bacb-591ac4285542",
-          "c8c1a791-cf2a-4b2b-aa21-14905e7de843",
-          "2978eacf-1ed0-4468-92f8-22444ed9ad71",
-          "e5cbaaa3-c950-4e09-9a90-580aaec9e186",
-          "a74b66a6-d1cf-48df-b588-83bf0683bf2f"
+          "b3cdf647-7b34-4f66-8869-fc564f442a71",
+          "47cff71f-dd70-4f11-9872-65cdef8c6d9a",
+          "285d74da-fdd3-4cd5-80b1-9c7c2cc17516",
+          "896c75c4-b248-47be-a486-2f7590c7fac8",
+          "71cac6e8-311b-45e7-baf2-0bf864bac20d",
+          "398dcf24-f9bd-4cb3-adeb-4e9ba257f348",
+          "c7c5f9d5-a89c-4fee-89ad-0ba7ce10a693",
+          "1fe7cb31-a4bf-4edf-895c-dd05a6bbd113",
+          "ea9dad76-8099-4c6e-b878-0dcab43d8824"
         ]
       },
       "drafter": {
@@ -117,16 +71,16 @@
         "footnote_count": 9,
         "unique_source_count": 9
       },
-      "answer_strip_sup_len": 2607,
-      "answer_tail": "השיפוטי.⁹¹⁰\n\nמסקנה פרקטית: בית המשפט יבחן הטענות על הבטחה מינהלית לפי הקריטריונים של ייצוג ברור, סמכות המבטיח, הסתמכות סבירה ונזק ממשי — אך ההכרה בה היא תמיד תוצאה של איזון שיפוטי מול טובת הציבור והחובה לכבד גבולות חוקיים; הסעד מותאם לעוצמת הסתמכות ולמגבלות הסמכותיות של הרשות.¹²\n"
+      "answer_strip_sup_len": 3616,
+      "answer_tail": "ת של הרשות, אך אינה כלי כובל שאוסר אי‑פעם שינוי מדיניות; היא שוקלת סמכות, הסתמכות, יכולת קיום ואינטרס ציבורי. בתי‑המשפט נעזרים במספר מבחנים ובאיזונים כדי לקבוע האם והיכן יש להעניק אכיפה או פיצוי, כאשר ההחלטה המשקללת תלויה בנסיבות המקרה וביחס שבין זכויות הפרט לצורכי הציבור.² ⁷ ⁵ ⁶"
     },
     {
       "fixture_id": "L3",
-      "run_id": "c63ec66b-f2fa-4575-b79a-c2ed5bfbc5db",
-      "qa_log_id": "7b58d7c4-1ce8-4640-99ad-c412e5e04ec0",
-      "total_ms": 130144,
+      "run_id": "4b72ecd2-509f-4dad-866d-e7e9957c5a52",
+      "qa_log_id": "49845ab4-aa47-442f-910a-47330de32bfc",
+      "total_ms": 183305,
       "baseline_total_ms": 159655,
-      "runtime_delta_ms": -29511,
+      "runtime_delta_ms": 23650,
       "hard_gates": {
         "marker_validation_ok": true,
         "internal_id_leak": false,
@@ -138,46 +92,54 @@
       },
       "phase3": {
         "applied": false,
-        "discarded_reason": null,
+        "discarded_reason": "ambiguous_adjacent_markers",
         "occurrence_count": null,
         "unique_source_count": null,
         "short_form_count": null,
         "ibid_count": null,
         "supra_count": null,
-        "cluster_examples": null
+        "cluster_examples": [
+          " שקובע החוק.¹²\n\nלהסבר וליי",
+          "יבות העניין.¹²\n\nתכלית ההור",
+          "סעד לא סביר.³⁴\n\nקריטריונים",
+          "זית של החוק.¹²\n- **אופי הפ",
+          "לטובת הפחתה.³⁵\n- **אופי הצ"
+        ]
       },
       "short_form_samples": [],
       "placement": {
-        "cluster_count": 4,
+        "cluster_count": 11,
         "max_cluster_len": 3,
         "final_summary_dump": false
       },
       "source_list": {
-        "count": 4,
+        "count": 6,
         "baseline_count": 6,
         "ids": [
-          "a45555f2-c613-4e50-96aa-c79004754b73",
-          "030f147e-59a2-4259-aa75-b23369bebb0f",
-          "7502329d-131c-465f-a865-cf116bf9f5ed",
-          "ee332599-c48a-436b-a00b-12b3dcb6cdc8"
+          "8376050a-0859-4411-bed9-b79a1aa15f8b",
+          "ea681e33-4394-4277-b3fa-be3d8b66860c",
+          "2d5ef936-0ecc-4996-bdf3-f892ac6bcb24",
+          "6ab8dabb-aa29-4b80-b5d3-69a4825a8304",
+          "f70ebeaa-c5e9-42fe-aa43-706b469558ea",
+          "3c609069-ed4f-41c5-97c4-e1af3b9eff09"
         ]
       },
       "drafter": {
         "ok": true,
         "escalated": false,
-        "footnote_count": 4,
-        "unique_source_count": 4
+        "footnote_count": 6,
+        "unique_source_count": 6
       },
-      "answer_strip_sup_len": 2614,
-      "answer_tail": "המוסכם.³⁴\n\nמסקנה קצרה\n\nסעיף 15 מעניק לבית המשפט סמכות מדודה ותכליתית: להפחית סכום מוסכם אך ורק כאשר קיים ליקוי של יחס סביר לנזק כפי שהיה ניתן לצפות בעת כריתת החוזה; סמכות זו מיושמת בזהירות, תחת הנטל על המבקש להפחית, ובהתבסס על ראיות קונקרטיות על הערכת הנזק והמניעים בעת החתימה.¹³⁴"
+      "answer_strip_sup_len": 2711,
+      "answer_tail": " לפני שבית המשפט ייפחיתו.³⁶\n\nלסיכום קצר: הסמכות להפחית מוסדרת במפורש בסעיף 15 והדגש השיפוטי הוא על **קשר סיבתי ויחסיות לנזק שניתן היה לראותו מראש**; שולל אוטומטית אךינה של פיצוי מוסכם רק כשהוא עומד בסף הסביר, ובמידה והוא חורג — יסיק בית המשפט הפחתה לשיעור הסביר בהתאם לנסיבות.¹²³\n"
     },
     {
       "fixture_id": "L4",
-      "run_id": "d954930b-f4e5-464c-9948-c310c008b6b3",
-      "qa_log_id": "6e5f4e9c-d664-4216-bfaa-a6bea8a22d02",
-      "total_ms": 122936,
+      "run_id": "6907aae6-1229-4f2f-9d80-46dc6971a8d6",
+      "qa_log_id": "ec1a18c4-5970-499f-b6c8-f168097a91ea",
+      "total_ms": 125645,
       "baseline_total_ms": 143165,
-      "runtime_delta_ms": -20229,
+      "runtime_delta_ms": -17520,
       "hard_gates": {
         "marker_validation_ok": true,
         "internal_id_leak": false,
@@ -189,17 +151,21 @@
       },
       "phase3": {
         "applied": false,
-        "discarded_reason": null,
+        "discarded_reason": "ambiguous_adjacent_markers",
         "occurrence_count": null,
         "unique_source_count": null,
         "short_form_count": null,
         "ibid_count": null,
         "supra_count": null,
-        "cluster_examples": null
+        "cluster_examples": [
+          " אותו עניין.¹²\n\nמגבלות וחר",
+          "ירה על חוסם.¹²³\n\nמסקנה מעשי",
+          "ניתנה בפועל.¹²³\n"
+        ]
       },
       "short_form_samples": [],
       "placement": {
-        "cluster_count": 9,
+        "cluster_count": 5,
         "max_cluster_len": 3,
         "final_summary_dump": false
       },
@@ -207,10 +173,10 @@
         "count": 4,
         "baseline_count": 7,
         "ids": [
-          "da99ab58-a070-41f6-a6b4-3751b076333c",
-          "63e3d863-8fdc-400a-925c-e117c7afecca",
-          "b15eb15b-4a9c-436b-bdeb-dc7a7465c49e",
-          "9766d3f4-73ea-42cd-8e5b-64fa5e9892cf"
+          "168b9938-c5e0-4c89-a18f-b3e5d010e8e3",
+          "09cad855-8422-409e-b28d-2c93dae2d6de",
+          "af8505f6-68ed-4f18-9ce3-fd78a61ad79c",
+          "de8cd954-33d0-4ae0-8b3b-b10e164c90f0"
         ]
       },
       "drafter": {
@@ -219,16 +185,16 @@
         "footnote_count": 4,
         "unique_source_count": 4
       },
-      "answer_strip_sup_len": 2502,
-      "answer_tail": "יבות/עדויות/צדק, לא תחול ההשתק.²³⁴\n\nהערה אחרונה: בפועל בתי המשפט מאזנים בין הצורך בסופיות לבין מניעת עיוות; לכן יש לגשת לטענת השתק פלוגתא בצורה מסודרת, עם הדגשה של היסוד החזק ביותר (למשל חיוניות ההכרעה וזהות פלוגתא) וראיות לפסק הדין הבעייתי ולהזדמנות ההתדיינות שניתנה לצד הקודם.¹²"
+      "answer_strip_sup_len": 2425,
+      "answer_tail": "קרה חדש יש לנסח את התביעה/ההגנה כך שתבחין בין טענות חדשות לבין שאלות שכבר כורעו, ולדאוג כי ברקורד של ההליך הקודם נראית בבירור ההכרעה החיונית אם מבקשים להסתמך על השתק; לעומת זאת מי שמבקש לחסום תביעה על בסיס השתק חייב להראות התאמה ברורה של היסודות ושהזדמנות ההתדיין ניתנה בפועל.¹²³\n"
     },
     {
       "fixture_id": "L5",
-      "run_id": "8f760673-9cab-4548-bd4b-de544ee447b3",
-      "qa_log_id": "7b706c3c-673d-4587-87dc-4701b1f8356b",
-      "total_ms": 145736,
+      "run_id": "aecac6ce-d45f-4334-b205-4485807398d2",
+      "qa_log_id": "9bb6ae9a-ffb4-4312-8802-833f106f90d7",
+      "total_ms": 158428,
       "baseline_total_ms": 135191,
-      "runtime_delta_ms": 10545,
+      "runtime_delta_ms": 23237,
       "hard_gates": {
         "marker_validation_ok": true,
         "internal_id_leak": false,
@@ -240,13 +206,16 @@
       },
       "phase3": {
         "applied": false,
-        "discarded_reason": null,
+        "discarded_reason": "ambiguous_adjacent_markers",
         "occurrence_count": null,
         "unique_source_count": null,
         "short_form_count": null,
         "ibid_count": null,
         "supra_count": null,
-        "cluster_examples": null
+        "cluster_examples": [
+          "ם העובדתיים.¹²\n\nהגדרה וקרי",
+          " ההחלטה.⁵ ⁶ ¹¹\n\nההשפעה של "
+        ]
       },
       "short_form_samples": [],
       "placement": {
@@ -258,15 +227,15 @@
         "count": 9,
         "baseline_count": 9,
         "ids": [
-          "ec8aad06-92df-4afe-8eed-4291455179f5",
-          "0cd71f24-4def-44db-a389-e9832fd0a012",
-          "21487cff-373c-4139-9f93-c621e243ebaa",
-          "8a8a98c8-1a2e-4953-8370-2180a865a7fc",
-          "c8ee704f-3a77-48e2-b291-266da4495dc3",
-          "4806eedd-0652-4283-bacc-ed8d46284092",
-          "0e35101c-8238-4e85-acdc-b066a6ca6d07",
-          "2a483089-e5bc-4e58-8304-1607175c5e40",
-          "b55b00c3-6dda-4871-a9ad-351fe96d246b"
+          "a9167468-0ade-4980-bd94-cf29d1758f33",
+          "8c334cb9-f6d1-42d0-aafb-cdf21ad3fa6e",
+          "cc16d2f4-dc76-4328-b45e-bd335d6ed78d",
+          "028ad905-b90d-49d8-be62-42ee95ba17d5",
+          "9c424a9f-3c1c-42f7-970a-7515037949d3",
+          "66523273-2693-47a8-9413-95ef6ba51085",
+          "b10aa1b8-9759-4f50-bf88-243daa240115",
+          "b7f64320-4e30-4378-8b7d-5f43446b1fcd",
+          "8f3d2e90-aa73-4c73-93e7-241d8ab3d611"
         ]
       },
       "drafter": {
@@ -275,18 +244,17 @@
         "footnote_count": 9,
         "unique_source_count": 9
       },
-      "answer_strip_sup_len": 3166,
-      "answer_tail": "ימד הפגיעה ביחס לתכלית ולנימוקים הרשמיים, שכן במצבים אלה בית המשפט נוטה לבחינה אינטנסיבית יותר.⁵ ⁶\n- לבי״כ/לבתי דין מנהליים יש כלים פרוצדורליים להורות על תיקון או בקרה של ההחלטה; יש להתכונן לשיקולי שיפוטיות כגון מידת היכרות בית המשפט בנושא ומידת ההשפעה על המדיניות הציבורית.⁹ ¹⁰\n\n"
+      "answer_strip_sup_len": 2505,
+      "answer_tail": "ל איזה מכשל מקרי מן המנויים התרחש (חוסר שקילה של שיקול רלוונטי; שקילה של שיקול בלתי‑רלוונטי; סטייה עובדית; קיצוניות) ולהלמד מדוע נסיבות המקרה מצדיקות בדיקה מהותית ולא דחייה פורמליסטית — כולל הצגת היקף הפגיעה בזכויות, קיומם של אינטרסים ציבוריים מתנגדים ומידת המומחיות של הרשות.⁴ ⁵\n"
     },
     {
       "fixture_id": "L6",
-      "run_id": "5a8c6788-a0f3-4174-84d3-e9990e296837",
-      "qa_log_id": "e5f0e652-2a97-41b4-bb96-6e9faa2ca4be",
-      "total_ms": 197255,
+      "run_id": "0b2c2783-f84c-4fb0-b950-8a0d5afd1364",
+      "qa_log_id": "6c193a4c-1819-4aa4-843c-c19e5fb126ec",
       "baseline_total_ms": 210426,
-      "runtime_delta_ms": -13171,
+      "runtime_delta_ms": null,
       "hard_gates": {
-        "marker_validation_ok": true,
+        "marker_validation_ok": false,
         "internal_id_leak": false,
         "footnote_eq_used": true,
         "used_subset_of_usable": true,
@@ -306,39 +274,28 @@
       },
       "short_form_samples": [],
       "placement": {
-        "cluster_count": 17,
-        "max_cluster_len": 4,
-        "final_summary_dump": false
+        "cluster_count": null,
+        "max_cluster_len": null,
+        "final_summary_dump": null
       },
       "source_list": {
-        "count": 7,
+        "count": 0,
         "baseline_count": 8,
-        "ids": [
-          "7c4f26fc-eee4-4ab1-8ffc-9e6c742093b5",
-          "8361fd68-107e-4c2e-b29d-b936b0f4f3e4",
-          "9036a167-a23b-482a-8f03-27c41d06f29b",
-          "06aa4bfe-3af2-4732-bc36-8c4975e1f268",
-          "171fceee-3e8b-40f6-bb63-8f67eb7945e0",
-          "5ffc1203-44d1-4720-9efe-2d49925c8850",
-          "e0eabbfd-d8a9-4132-b5fd-13321ffaea7c"
-        ]
+        "ids": []
       },
       "drafter": {
-        "ok": true,
-        "escalated": false,
-        "footnote_count": 7,
-        "unique_source_count": 7
+        "unique_source_count": 0
       },
-      "answer_strip_sup_len": 3311,
-      "answer_tail": "שפט יאכוף הבטחה מנהלית רק כאשר מצטברים יסודות הבהירות, כוונת ההתחייבות, סמכות־משתמע או ההצגה של סמכות, והסתמכות סבירה הנושאת עמה עוול לא מצופה; חוסר סמכות מהותי או אינטרס ציבורי כבד עשויים למנוע אכיפה מלאה, אך בדרך כלל יחייבו התחשבות בהסתמכות דרך פיצוי או הסדרי מעבר הוגנים.²³⁶⁷\n\n"
+      "answer_strip_sup_len": 82,
+      "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
     },
     {
       "fixture_id": "PROT",
-      "run_id": "14f9c670-4f5b-44d3-9568-89949097c01f",
-      "qa_log_id": "b02fc792-de88-4131-8533-6feeff4bf682",
-      "total_ms": 178996,
+      "run_id": "8126516c-5d4b-4f2d-ae75-c007336841c6",
+      "qa_log_id": "130a2896-0ad5-4846-b657-3bdef38edb36",
+      "total_ms": 228739,
       "baseline_total_ms": 220512,
-      "runtime_delta_ms": -41516,
+      "runtime_delta_ms": 8227,
       "hard_gates": {
         "marker_validation_ok": true,
         "internal_id_leak": false,
@@ -350,87 +307,37 @@
       },
       "phase3": {
         "applied": false,
-        "discarded_reason": null,
+        "discarded_reason": "ambiguous_adjacent_markers",
         "occurrence_count": null,
         "unique_source_count": null,
         "short_form_count": null,
         "ibid_count": null,
         "supra_count": null,
-        "cluster_examples": null
-      },
-      "short_form_samples": [],
-      "placement": {
-        "cluster_count": 13,
-        "max_cluster_len": 2,
-        "final_summary_dump": false
-      },
-      "source_list": {
-        "count": 9,
-        "baseline_count": 9,
-        "ids": [
-          "97a4a74b-0d74-4fd0-a516-e17a9de3d915",
-          "cd7da66e-80fd-4436-8e2d-0d31685ae406",
-          "4ffc162e-b4f4-4b6c-865b-6769f81ce7ed",
-          "309edcb3-791f-41a2-ba12-2733417fdeb7",
-          "0b796b79-94bd-4dde-9315-60ce55bd8fbc",
-          "769f20fb-d73f-4d1b-a00b-b5729677457b",
-          "e4cf655b-05f5-41ae-9c46-c9b9d777958e",
-          "875eccb3-8cf4-487e-bb2e-94783e96458f",
-          "5fca9449-1ef8-48bc-be9b-3d36dd34b5d6"
+        "cluster_examples": [
+          "יים מצטברים.¹²\n\nהעמדת היסו",
+          "הזכות לחיים.²⁴\n\nגורמים פרק",
+          "יפה שיפוטית.⁶⁷\n\nמגבלות וסי",
+          "קצאת משאבים;²⁴ כמו כן, השו",
+          " מימון כולל.⁵⁶\n\nהמלצות מעש"
         ]
       },
-      "drafter": {
-        "ok": true,
-        "escalated": false,
-        "footnote_count": 9,
-        "unique_source_count": 9
-      },
-      "answer_strip_sup_len": 3934,
-      "answer_tail": "; המקורות מראים שגם אם חולשה חקיקתית הייתה קיימת בעבר, תיקונים חקיקתיים לא בוטלים את צורך בבחינת מימושם בפועל.⁴ ⁵\n- דרישת ראיות היא גבוהה; נדרש ניסיון להוכיח דפוס, מודעות רשמית וקשר סיבתי ממשי לסיכון על החיים — מטלה שבה חוות דעת מבקר המדינה ונתוני הכנסת יכולים להיות מכריעים.³ ⁹\n\n"
-    },
-    {
-      "fixture_id": "RPT1",
-      "run_id": "36eb9b12-d7c6-461d-bff1-02170e154a8d",
-      "qa_log_id": "e7f5f081-8889-4522-9f5b-8e2e08c97d23",
-      "total_ms": 124286,
-      "baseline_total_ms": null,
-      "runtime_delta_ms": null,
-      "hard_gates": {
-        "marker_validation_ok": true,
-        "internal_id_leak": false,
-        "footnote_eq_used": true,
-        "used_subset_of_usable": true,
-        "every_marker_has_footnote": null,
-        "every_footnote_in_usable": null,
-        "no_adjacent_marker_clusters": null
-      },
-      "phase3": {
-        "applied": false,
-        "discarded_reason": null,
-        "occurrence_count": null,
-        "unique_source_count": null,
-        "short_form_count": null,
-        "ibid_count": null,
-        "supra_count": null,
-        "cluster_examples": null
-      },
       "short_form_samples": [],
       "placement": {
-        "cluster_count": 0,
-        "max_cluster_len": 0,
-        "final_summary_dump": false
+        "cluster_count": 12,
+        "max_cluster_len": 7,
+        "final_summary_dump": true
       },
       "source_list": {
         "count": 7,
-        "baseline_count": null,
+        "baseline_count": 9,
         "ids": [
-          "3c306dbd-3277-44c3-a506-0a26f9cc06c2",
-          "09eeb458-c94d-4daa-bdfd-254d8013f370",
-          "12a1741a-7f13-4d3e-94f2-29639e6421fa",
-          "50c84b33-5e0f-47a6-a301-84037604645a",
-          "f84e512b-29e7-4813-83f8-ab05cc084bd8",
-          "04be0afc-7a4a-4c85-8709-fce4922f81c4",
-          "263d0933-04d1-4aab-b23e-2a1377be008c"
+          "54592c77-a37b-4b78-a17a-2ed4557c0d2c",
+          "fcea3b7c-8be7-4a33-90a1-c9ccf6a43aff",
+          "c468227d-b476-4d1b-b6e7-cc3771da5934",
+          "7c515aac-a0f3-4c81-be09-8c08967e0c7a",
+          "f3f6acbe-e9e4-44fa-b214-f14976103c85",
+          "33508a60-6971-4409-8a95-411f47fdb12c",
+          "fcc92233-c68f-43ff-b152-1839b84e3643"
         ]
       },
       "drafter": {
@@ -439,14 +346,72 @@
         "footnote_count": 7,
         "unique_source_count": 7
       },
-      "answer_strip_sup_len": 2902,
-      "answer_tail": "בקש להסתמך על הכרעה פלילית כעל מחסום צריך לנסח ולתמוך טיעונים המשקפים מצגים ברורים לכל ארבעת היסודות ולהציג ברורה מדוע ההכרעה הייתה חיונית; מי המתמודד עם טענה זו יתרכז בהבחנה בין נקודות המחלוקת העובדתיות/המשפטיות ובהצבעת פגמים או חוסר הזדמנות להתדיין כדי לפרוך את החלת ההשתק.² ⁷ ⁵"
+      "answer_strip_sup_len": 2776,
+      "answer_tail": "ם ומחמירים, להכיר בכישלון מערכתי באכיפת 'פרוטקשן' כמחדל חקיקתי המחייב תגובה שיפוטית בגיבוי חובת ההגנה החיובית על החיים והבטחון; יחד עם זאת, ההכרה מותנית בהוכחת סיכון ממשי ומיידי, בקשר סיבתי ברור ובאיזון שמכביד על רשויות השיפוט להורות על הקצאת משאבים רחבה ללא מנגנוני בקרה.¹²³⁵⁶⁷⁴\n"
+    },
+    {
+      "fixture_id": "RPT1",
+      "run_id": "08227634-c608-4cc9-93cf-443e5acce21e",
+      "qa_log_id": "6061b1a8-f69c-4356-9117-a2b3568d41e1",
+      "total_ms": 165230,
+      "baseline_total_ms": null,
+      "runtime_delta_ms": null,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true,
+        "every_marker_has_footnote": null,
+        "every_footnote_in_usable": null,
+        "no_adjacent_marker_clusters": null
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "ambiguous_adjacent_markers",
+        "occurrence_count": null,
+        "unique_source_count": null,
+        "short_form_count": null,
+        "ibid_count": null,
+        "supra_count": null,
+        "cluster_examples": [
+          " הרלוונטיות.¹²³\n\nיסודות החל",
+          "יעות נוספות.¹²\n- הדרישות ה",
+          "ות על הנושא.¹²³\n\nמהי **הכרע",
+          "להכרעת הדין.³¹\n- **חיוניות",
+          "ר אפקט השתק.²³⁴\n\nהתמודדות ע"
+        ]
+      },
+      "short_form_samples": [],
+      "placement": {
+        "cluster_count": 19,
+        "max_cluster_len": 3,
+        "final_summary_dump": false
+      },
+      "source_list": {
+        "count": 5,
+        "baseline_count": null,
+        "ids": [
+          "179fa001-366d-498e-8a63-189db288b7ec",
+          "f00c5951-daec-4ec1-acc3-58e72ca4c841",
+          "a5b0fc39-60c6-42d9-9144-85acff66d8b9",
+          "7f60627d-b06b-4d9f-81fc-a0bd87954581",
+          "9a97e6fe-20ee-42a1-86e6-f788611bff88"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 5,
+        "unique_source_count": 5
+      },
+      "answer_strip_sup_len": 3440,
+      "answer_tail": "רחית בתקן הנמוך יותר; בקשות השתק הנשענות על הרשעה פלילית חזקות בדרך כלל יותר מאלו הנשענות על זיכוי בלבד.¹²⁵\n\nסיכום קצר מהצד המעשי: ההשתק פלוגתא בין הליכים פליליים ואזרחיים אפשרי, אך רק כאשר ברור מהטקסט השיפוטי הקודם שקוימו כל היסודות המצטברים — וזהו הנטל של הטוען להשתק להוכיח.¹²³"
     },
     {
       "fixture_id": "RPT2",
-      "run_id": "66bc96d8-64d3-41b4-b706-051dc0e4c3ba",
-      "qa_log_id": "e6d4c69d-383d-4393-898e-c3dff52b3219",
-      "total_ms": 149856,
+      "run_id": "393e2dfb-df12-4605-87f4-6892dffb8d90",
+      "qa_log_id": "533efc21-022b-43af-98b2-87e5ce48fca1",
+      "total_ms": 195037,
       "baseline_total_ms": null,
       "runtime_delta_ms": null,
       "hard_gates": {
@@ -460,17 +425,23 @@
       },
       "phase3": {
         "applied": false,
-        "discarded_reason": null,
+        "discarded_reason": "ambiguous_adjacent_markers",
         "occurrence_count": null,
         "unique_source_count": null,
         "short_form_count": null,
         "ibid_count": null,
         "supra_count": null,
-        "cluster_examples": null
+        "cluster_examples": [
+          "ות הישראלית.¹²\n\nהגדרה ותכל",
+          "מימוש החוזה.¹² ההצעה החוקת",
+          " תרופות אלו.³⁴\n\nיסודות מתן",
+          "כריתת החוזה.⁵⁶\n\nהוכחת הפסד",
+          "פות חלופיות.⁶²\n\nקשר סיבתי "
+        ]
       },
       "short_form_samples": [],
       "placement": {
-        "cluster_count": 20,
+        "cluster_count": 21,
         "max_cluster_len": 4,
         "final_summary_dump": false
       },
@@ -478,15 +449,15 @@
         "count": 9,
         "baseline_count": null,
         "ids": [
-          "fa779a46-e8ab-43d7-9da0-9c3be4fa7646",
-          "e0c3215b-b4de-4892-86d1-377feaa0383d",
-          "2558b546-ce4d-4dca-92c9-e829c2e2f5ef",
-          "5c17d012-b330-405f-91c0-f6e1a9578713",
-          "f7074083-cb23-466f-935a-8c27a746fc9e",
-          "bc1c865c-0502-4c2d-8cd0-f5404dfc65c3",
-          "e972c923-99d6-472a-bfb8-020fbde669aa",
-          "4276517c-7928-411d-86ef-27290292f1cf",
-          "64ea06eb-fd20-40c5-9ea4-27b41977caa4"
+          "24891aa7-d42e-418f-b1f4-46a6d67e4c81",
+          "5584ea30-11af-42ae-8341-5b7d9aca8c80",
+          "c1b2e9dd-2084-40b5-9b84-8770d722d0de",
+          "14336527-0c21-4110-ba9f-f3ca8f242b73",
+          "082f68ea-93c0-45fe-abd4-fba77560d212",
+          "51bd6a0e-b437-4230-8721-5945cefb0606",
+          "281bd101-9de8-4d32-bc5e-90143b9b9f8b",
+          "eebebeae-fdc1-41e2-973c-26e54a40647a",
+          "7a526ca7-28b1-46b0-96f4-3fd1ae85bcce"
         ]
       },
       "drafter": {
@@ -495,14 +466,14 @@
         "footnote_count": 9,
         "unique_source_count": 9
       },
-      "answer_strip_sup_len": 3646,
-      "answer_tail": "פי דוקטרינת הציפיות בצירוף הוכחות ברורות ל'ציפייה סבירה', להסתמכות ולנזק, ולהכין אלטרנטיבה של פיצוי הסתמכות או בקשה לתיקון/השלמה של החוזה כאשר צפי הפיצוי קשה למדידה; בו־זמנית יש להעריך סיכונים של מניעה מחקיקתית/רגולטורית ושל שיקולי מדיניות שעלולים להביא להטלת הגבלות על האכיפה.¹⁴\n"
+      "answer_strip_sup_len": 3456,
+      "answer_tail": "מעשי: בבקשה לתביעת פיצויי צפיות יש להקפיד על (א) ניסוח ברור של הנזק הצפוי ותמיכה ראייתית כמותית; (ב) הוכחת קשר סיבתי סביר; (ג) היערכות לטענות הנתבע על אי־הקטנה או על קיומו של סעיף פיצוי מוסכם; ו(ד) שקילה מוקדמת של רכיב ההסתמכות או החזרת היתרון אם רווחים נדמים או בלתי־מדידים.⁵⁶⁷⁸\n"
     },
     {
       "fixture_id": "RPT3",
-      "run_id": "eb9dc36a-63e2-43db-ae9f-c7380ba43929",
-      "qa_log_id": "5c9e8c40-e7bb-4be5-bffa-2c3bae118071",
-      "total_ms": 171873,
+      "run_id": "14031edd-fe59-4a43-aadd-49c9432ee51e",
+      "qa_log_id": "c8686f6a-b576-4426-b5fe-cd688b7e5861",
+      "total_ms": 190426,
       "baseline_total_ms": null,
       "runtime_delta_ms": null,
       "hard_gates": {
@@ -516,33 +487,39 @@
       },
       "phase3": {
         "applied": false,
-        "discarded_reason": null,
+        "discarded_reason": "ambiguous_adjacent_markers",
         "occurrence_count": null,
         "unique_source_count": null,
         "short_form_count": null,
         "ibid_count": null,
         "supra_count": null,
-        "cluster_examples": null
+        "cluster_examples": [
+          "היחיד שנגרם.¹²\n\nניתוח\n\nאפש",
+          "ני לכל עילה.¹²³\nמעבר לכך, פ",
+          "סופו של יום.¹²³\n\nהאם הפרת ח",
+          "ביעת רשלנות.¹⁴\nבנוסף, בפסי",
+          "הירות מפורש.²³\n\nיחס בין סט"
+        ]
       },
       "short_form_samples": [],
       "placement": {
-        "cluster_count": 13,
-        "max_cluster_len": 4,
+        "cluster_count": 15,
+        "max_cluster_len": 3,
         "final_summary_dump": false
       },
       "source_list": {
         "count": 9,
         "baseline_count": null,
         "ids": [
-          "d479fec0-2146-4fac-8d1a-9d230a30be49",
-          "f682cbad-3f5f-4914-b20d-e4e5a7d0d848",
-          "fc7bcdf2-ea50-4015-a6cd-2e10f709d345",
-          "20f5acfa-b8c7-4ec9-ae81-269830e12ed3",
-          "d98c31bd-a903-4677-a882-1e08426d6051",
-          "43eee71e-8d57-4633-abff-9a11af415ec0",
-          "39aa86a9-19a9-45b0-86bf-a580151e2c14",
-          "6a4c9e7e-e378-4662-93e5-4cea162118e0",
-          "5adf4bb9-647b-4e15-b743-2d7cb482ff28"
+          "99ac5ab4-42e4-4c02-8d76-01d49036898f",
+          "b0be0d4e-d91a-4a2f-b91f-6b5f11c068cd",
+          "2f8328b5-c45a-408d-b865-e23f0a2eca17",
+          "a8e5e568-f69b-4872-a20f-07e63a7628c6",
+          "6bf2bd31-a526-4a4e-b56e-13f0b89908d7",
+          "5ea0cfb4-0c90-4bcf-8e20-e8c5f18cfc7f",
+          "df6299ff-fa1d-4220-9d62-ad07b3561e7b",
+          "0183ff6d-1d1a-40dd-8878-a96e65316aa2",
+          "32489f96-aa83-47a9-92f4-f06ebddb868b"
         ]
       },
       "drafter": {
@@ -551,8 +528,8 @@
         "footnote_count": 9,
         "unique_source_count": 9
       },
-      "answer_strip_sup_len": 3718,
-      "answer_tail": "קש) מוצדק.⁴\n\nסיכום קצר: הפרת חובה חקוקה בדרך‑כלל איננה מחליפה את בחינת יסודות הרשלנות, אך היא ראיה חזקה; במצבים שבהם המחוקק נתן זכות פרטית או אמצעי אכיפה אזרחיים ייתכן שבית המשפט יכיר בעוולה חקוקתית נפרדת; בכל מקרה יש להימנע מאפשרות כפל פיצוי באמצעות אגרגציה ובדיקה של סוגי הסעד.\n"
+      "answer_strip_sup_len": 3797,
+      "answer_tail": "יים איפלוס בין גישות: ספקולטיבי להחיל כלל גורף של \"negligence per se\"; הגישה המעשית במשפט הישראלי נוטה לראות בהפרת חובה חקוקה ראיה כבדה שדורשת בחינה עובדתית ותכליתית בנסיבות המקרה, ואילו מנגנוני פיצוי יגנו על מניעת כפל פיצוי באמצעות שיוך והפחתה בהתאם למה שהמחוקק והפסיקה קבעו.¹⁴⁶\n"
     }
   ]
 }
