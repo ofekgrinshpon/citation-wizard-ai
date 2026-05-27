@@ -24,6 +24,8 @@ export type SourcesOnlyOrigin = "local_db" | "perplexity";
 export type SourcesOnlySupport = "direct" | "partial";
 export type SourceTier = "recommended" | "additional";
 
+export type UrlValidationState = "ok" | "unreachable" | "unverified";
+
 export interface SourceResult {
   rank: number;
   title: string;
@@ -38,6 +40,10 @@ export interface SourceResult {
   snippet: string | null;
   display_citation: string | null;
   tier?: SourceTier; // "additional" only set for secondary list entries
+  // URL liveness validation (sources_only mode, perplexity-origin only).
+  url_validation_state?: UrlValidationState;
+  url_status?: string;
+  url_unreachable?: boolean;
 }
 
 export type SourceGroupKey =
