@@ -1632,6 +1632,10 @@ export async function runDrafter(
         every_marker_has_footnote: v.every_marker_has_footnote,
         every_footnote_in_usable: v.every_footnote_in_usable,
         no_adjacent_marker_clusters: v.no_adjacent_marker_clusters,
+        multi_digit_marker_runs_count: v.multi_digit_marker_runs_count,
+        multi_digit_runs_from_single_token_count: v.multi_digit_runs_from_single_token_count,
+        every_multi_digit_run_from_single_token: v.every_multi_digit_run_from_single_token,
+        token_model_ok: v.token_model_ok,
         repaired: true,
       };
     }
