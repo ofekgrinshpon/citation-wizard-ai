@@ -24,6 +24,8 @@ export type SourcesOnlyOrigin = "local_db" | "perplexity";
 export type SourcesOnlySupport = "direct" | "partial";
 export type SourceTier = "recommended" | "additional";
 
+export type UrlValidationState = "ok" | "unreachable" | "unverified";
+
 export interface SourceResult {
   rank: number;
   title: string;
@@ -38,6 +40,10 @@ export interface SourceResult {
   snippet: string | null;
   display_citation: string | null;
   tier?: SourceTier; // "additional" only set for secondary list entries
+  // URL liveness validation (sources_only mode, perplexity-origin only).
+  url_validation_state?: UrlValidationState;
+  url_status?: string;
+  url_unreachable?: boolean;
 }
 
 export type SourceGroupKey =
@@ -67,6 +73,8 @@ export interface SourcesOnlySummary {
   local_count: number;
   perplexity_count: number;
   additional_count: number;
+  url_checks_failed?: number;
+  url_checks_unverified?: number;
 }
 
 export interface SourcesOnlyPayload {
@@ -444,7 +452,142 @@ function buildAdditionalSources(
 
 // ─── Public entry ─────────────────────────────────────────────────────────
 
-export function buildSourcesOnlyPayload(input: BuildSourcesOnlyInput): SourcesOnlyPayload {
+// ─── URL liveness validation (sources_only only) ──────────────────────────
+
+type UrlCheckResult = { state: UrlValidationState; status: string };
+
+async function fetchWithSignals(
+  url: string,
+  method: "HEAD" | "GET",
+  globalSignal: AbortSignal,
+): Promise<Response | { error: "timeout" | "dns" | "network" }> {
+  const perCtrl = new AbortController();
+  const perTimer = setTimeout(() => perCtrl.abort(), 4000);
+  const onGlobal = () => perCtrl.abort();
+  globalSignal.addEventListener("abort", onGlobal);
+  const headers: Record<string, string> = {
+    "user-agent": "Mozilla/5.0 (compatible; ReLexBot/1.0; +https://relexlm.com)",
+    "accept": "*/*",
+  };
+  if (method === "GET") headers["range"] = "bytes=0-0";
+  try {
+    const r = await fetch(url, {
+      method,
+      redirect: "follow",
+      signal: perCtrl.signal,
+      headers,
+    });
+    return r;
+  } catch (e) {
+    const msg = String((e as { message?: string })?.message ?? e);
+    const name = (e as { name?: string })?.name ?? "";
+    if (name === "AbortError" || name === "TimeoutError" || globalSignal.aborted || /aborted|timeout/i.test(msg)) {
+      return { error: "timeout" };
+    }
+    if (/ENOTFOUND|getaddrinfo|dns/i.test(msg)) return { error: "dns" };
+    return { error: "network" };
+  } finally {
+    clearTimeout(perTimer);
+    globalSignal.removeEventListener("abort", onGlobal);
+  }
+}
+
+function interpretStatus(status: number): UrlCheckResult | null {
+  if (status >= 200 && status < 300) return { state: "ok", status: "ok" };
+  if (status === 401 || status === 403) return { state: "ok", status: "paywalled" };
+  if (status === 404 || status === 410) return { state: "unreachable", status: String(status) };
+  return null;
+}
+
+async function checkOneUrl(url: string, globalSignal: AbortSignal): Promise<UrlCheckResult> {
+  const head = await fetchWithSignals(url, "HEAD", globalSignal);
+  if ("error" in head) {
+    if (head.error === "timeout") return { state: "unverified", status: "timeout" };
+    if (head.error === "dns") return { state: "unreachable", status: "dns" };
+    // network: fall back to GET
+    const get = await fetchWithSignals(url, "GET", globalSignal);
+    if ("error" in get) {
+      if (get.error === "timeout") return { state: "unverified", status: "timeout" };
+      if (get.error === "dns") return { state: "unreachable", status: "dns" };
+      return { state: "unverified", status: "network" };
+    }
+    return interpretStatus(get.status) ?? { state: "unverified", status: "unknown" };
+  }
+  const r = interpretStatus(head.status);
+  if (r) return r;
+  // HEAD returned an ambiguous status (commonly 405 method-not-allowed, or other 4xx/5xx).
+  // Retry as GET with a tiny Range request before deciding.
+  const get = await fetchWithSignals(url, "GET", globalSignal);
+  if ("error" in get) {
+    if (get.error === "timeout") return { state: "unverified", status: "timeout" };
+    if (get.error === "dns") return { state: "unreachable", status: "dns" };
+    return { state: "unverified", status: "blocked" };
+  }
+  return interpretStatus(get.status) ?? { state: "unverified", status: "unknown" };
+}
+
+async function validateUrls(
+  allSources: SourceResult[],
+): Promise<{ failed: number; unverified: number }> {
+  // Unique perplexity-origin URLs only.
+  const seen = new Map<string, string>();
+  for (const s of allSources) {
+    if (s.origin !== "perplexity" || !s.url) continue;
+    const key = normUrl(s.url);
+    if (!key || seen.has(key)) continue;
+    seen.set(key, s.url);
+  }
+  const targets = Array.from(seen.values());
+  if (targets.length === 0) return { failed: 0, unverified: 0 };
+
+  const globalCtrl = new AbortController();
+  const globalTimer = setTimeout(() => globalCtrl.abort(), 6000);
+
+  const results = new Map<string, UrlCheckResult>();
+  const CONCURRENCY = 8;
+  let idx = 0;
+  const worker = async (): Promise<void> => {
+    while (idx < targets.length) {
+      const myIdx = idx++;
+      const url = targets[myIdx];
+      if (globalCtrl.signal.aborted) {
+        results.set(normUrl(url), { state: "unverified", status: "timeout" });
+        continue;
+      }
+      try {
+        const r = await checkOneUrl(url, globalCtrl.signal);
+        results.set(normUrl(url), r);
+      } catch {
+        results.set(normUrl(url), { state: "unverified", status: "unknown" });
+      }
+    }
+  };
+  const workers: Promise<void>[] = [];
+  for (let w = 0; w < Math.min(CONCURRENCY, targets.length); w++) workers.push(worker());
+  await Promise.allSettled(workers);
+  clearTimeout(globalTimer);
+
+  let failed = 0;
+  let unverified = 0;
+  for (const s of allSources) {
+    if (s.origin !== "perplexity" || !s.url) continue;
+    const r = results.get(normUrl(s.url));
+    if (!r) continue;
+    s.url_validation_state = r.state;
+    s.url_status = r.status;
+    if (r.state === "unreachable") {
+      s.url_unreachable = true;
+      failed++;
+    } else if (r.state === "unverified") {
+      unverified++;
+    }
+  }
+  return { failed, unverified };
+}
+
+// ─── Public entry ─────────────────────────────────────────────────────────
+
+export async function buildSourcesOnlyPayload(input: BuildSourcesOnlyInput): Promise<SourcesOnlyPayload> {
   const candById = new Map(input.candidates.map((c) => [c.candidate_id, c] as const));
 
   // Main list — exactly verifier.usable, regrouped by actual nature.
@@ -487,6 +630,18 @@ export function buildSourcesOnlyPayload(input: BuildSourcesOnlyInput): SourcesOn
   const addRaw = buildAdditionalSources(input, mainKeys);
   const addGrouped = groupAndRank(addRaw, mainGrouped.sources.length + 1);
 
+  // URL liveness validation (perplexity-origin only, both lists).
+  let urlChecksFailed = 0;
+  let urlChecksUnverified = 0;
+  try {
+    const v = await validateUrls([...mainGrouped.sources, ...addGrouped.sources]);
+    urlChecksFailed = v.failed;
+    urlChecksUnverified = v.unverified;
+  } catch (e) {
+    console.warn("[sourcesOnly] validateUrls failed (non-fatal):", e);
+  }
+
+
   let local_count = 0;
   let perplexity_count = 0;
   for (const s of mainGrouped.sources) {
@@ -510,6 +665,8 @@ export function buildSourcesOnlyPayload(input: BuildSourcesOnlyInput): SourcesOn
       local_count,
       perplexity_count,
       additional_count: addGrouped.sources.length,
+      url_checks_failed: urlChecksFailed,
+      url_checks_unverified: urlChecksUnverified,
     },
   };
 }
