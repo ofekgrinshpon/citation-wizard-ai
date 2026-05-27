@@ -1,0 +1,52 @@
+{
+  "fixture_id": "L1",
+  "run_id": "c1a2aeff-c687-40a3-8f9f-72b454029dc7",
+  "qa_log_id": "dc2095e5-325f-4233-b918-f33def61618c",
+  "total_ms": 170993,
+  "baseline_total_ms": 114897,
+  "runtime_delta_ms": 56096,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "placement": {
+    "cluster_count": 0,
+    "cluster_run_count": 0,
+    "max_cluster_len": 0,
+    "end_paragraph_dump_count": 1,
+    "final_paragraph_marker_count": 0,
+    "final_paragraph_last_sentence_marker_count": 0,
+    "final_summary_dump": false,
+    "final_summary_dump_count": 0,
+    "cluster_samples": [],
+    "end_dump_samples": [
+      "עילת תביעה בסיסית / סיכוי סביר**\nבבקשת צו זמני על המבקש להראות טענה משפטית שיש לה סבירות ממשית — לא רק אפשרות קלושה — כך שהבקשה איננה ריקה מנימוק מהותי.²  יישום המבחן אינו דורש הכרעה מוחלטת בתקרת הראי"
+    ]
+  },
+  "baseline_placement": {
+    "cluster_count": null,
+    "end_paragraph_dump_count": null
+  },
+  "source_list": {
+    "count": 8,
+    "ids": [
+      "bcf4c93f-9c5d-48e7-9808-926cf7e9c5ed",
+      "379f137e-7b50-4fb0-a54c-4d1c671a9049",
+      "8bd6ad60-bdcb-4d39-ad9c-a978ecd75885",
+      "7fd61b85-0fc8-457c-987d-309e89f63090",
+      "0c6903a1-aa0a-40a1-a816-a159faea0006",
+      "570934a5-3443-4117-9827-24aa57c6e20e",
+      "fc8bb849-7e01-4985-81db-200321860f22",
+      "f2480046-2ac3-491c-9f78-49a6d8d44236"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 8,
+    "used_sources_count": 8
+  },
+  "answer_tail": "צגת ראיות מספקות לעילת התביעה (חלון ראייתי מצומצם אך ממשי), תיעוד מוחשי של הסכנה לנזק בלתי־ניתן לתיקון, והכנת טיעון ניצב לשקלול האינטרסים הכולל הצעת ערובה/התחייבות מתאימה. במקרים שבהם הבקשה מוגשת ללא הודעה לצד השני, חובה להבהיר מדוע נדרש הליך כזה מבחינה פרוצדורלית ומעשית.⁵ ⁷ ¹\n\n\n"
+}

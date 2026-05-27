@@ -1,0 +1,60 @@
+{
+  "fixture_id": "L5",
+  "run_id": "c554cced-69d5-4817-87ad-17a501126f3d",
+  "qa_log_id": "89127559-7ba3-4951-9915-996db374f4ff",
+  "total_ms": 135191,
+  "baseline_total_ms": 196471,
+  "runtime_delta_ms": -61280,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "placement": {
+    "cluster_count": 8,
+    "cluster_run_count": 6,
+    "max_cluster_len": 3,
+    "end_paragraph_dump_count": 2,
+    "final_paragraph_marker_count": 2,
+    "final_paragraph_last_sentence_marker_count": 2,
+    "final_summary_dump": false,
+    "final_summary_dump_count": 0,
+    "cluster_samples": [
+      "נת צדקת ההחלטה עצמה.¹²\n\nמבחנים מעשיים להער",
+      "קול דעת (deference).⁶⁷⁸\nנקודות שהשפעתן על מ",
+      "ית על מדיניות קיימת.⁷⁸\n\nיחסי סבירות עם דוק",
+      "ה השיפוטית הספציפית.⁹¹⁰\n\nאופני סעד מקובלים ",
+      "מסגרת משפטית מסוימת.¹¹\n\nמסקנות מעשיות ופתר"
+    ],
+    "end_dump_samples": [
+      "אלה כוללים בין היתר: (א) מבחן ה**קשר התכליתי** — האם ההחלטה מקושרת למטרה החוקית של הסמכות;³ (ב) **אי‑גיון גמור / manifest irrationality** — החלטה הנוגדת כל שיקול תבוני סביר;³ (ג) **טעות בשיקול הדעת** ",
+      "ככל שהפסק הדין נוגע ב**זכויות יסוד, באינטרסים ציבוריים מהותיים, או בשינוי מדיניות עקבי והכרחי** — הביקורת תהיה צמודה יותר; לעומת זאת, בעניינים טכניים, מקצועיים או שבהם הרשות מביאה מומחיות מיוחדת, יסופ"
+    ]
+  },
+  "baseline_placement": {
+    "cluster_count": null,
+    "end_paragraph_dump_count": null
+  },
+  "source_list": {
+    "count": 9,
+    "ids": [
+      "a4da9f40-3da9-425c-93a7-2f40360dc3b8",
+      "0f33317e-5938-44b8-bf01-453075829039",
+      "bf5107b4-1873-4f0b-8d73-54ecfa291f2b",
+      "715659d6-4ad8-4fe5-a87e-a27e6348f7e3",
+      "1e1def55-31ec-4eaa-b1da-2963bd7240a8",
+      "bf3645f6-e914-45a5-ac5c-9d749922971c",
+      "bef293b9-bd01-4cd0-a5e7-58ed37e6d253",
+      "5f08b331-4eef-4734-9aed-355c6d542fa2",
+      "b6a10ec1-45d5-4b34-b818-c56802e9ae8d"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 9,
+    "used_sources_count": 9
+  },
+  "answer_tail": " טווח שיקול הדעת אם קיימת כוונה לאפשר deference שיפוטי.⁶\n\nסעיף אחרון — אי ודאות שנותרה: המקורות מצביעים על מסגרת מוסכמת אך לא אחידה — קיימת מחלוקת על המיקום הדוקטרינרי של הסבירות מול המידתיות והחוקיות, וכן על מידת הצפייה שהשופט ירשה לעצמו \"להחליף\" שיקול דעת מינהלי במקום הרשות.²⁹\n"
+}

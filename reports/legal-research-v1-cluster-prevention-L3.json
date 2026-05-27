@@ -1,0 +1,56 @@
+{
+  "fixture_id": "L3",
+  "run_id": "d48d56d4-bef2-4594-a0ef-be772c71a600",
+  "qa_log_id": "8d005c48-7247-4af0-a1dc-87696458127b",
+  "total_ms": 159655,
+  "baseline_total_ms": 138208,
+  "runtime_delta_ms": 21447,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "placement": {
+    "cluster_count": 8,
+    "cluster_run_count": 5,
+    "max_cluster_len": 3,
+    "end_paragraph_dump_count": 1,
+    "final_paragraph_marker_count": 1,
+    "final_paragraph_last_sentence_marker_count": 1,
+    "final_summary_dump": false,
+    "final_summary_dump_count": 0,
+    "cluster_samples": [
+      " צדדים שווים בכוחם.^¹²\n\nהבסיס החוקי והיקף ",
+      "מד בסבירות הנסיבות.^¹²\n\nקריטריונים מהותיים",
+      "והסתמכות של הניזוק.^³⁴⁵\n\nהיבטים פרוצדורליים",
+      " המחוייב של ההוראה.^³¹²\n\nמתי בתי המשפט נוטי",
+      " הצדדים בעת הסיכום.^⁴⁵⁶\n\nמסקנה מעשית קצרה: "
+    ],
+    "end_dump_samples": [
+      "קריטריונים מהותיים שישקלו בתי המשפט בקביעת חוסר ההלימה של הפיצוי: יחס בין סכום הפיצוי לנזק בפועל או לנזק הסביר שניתן היה לצפותו; היקף וחוזק יחסי הכוח והמשא ומתן בין הצדדים בעת כריתת ההסכם; כוונת הצדדי"
+    ]
+  },
+  "baseline_placement": {
+    "cluster_count": null,
+    "end_paragraph_dump_count": null
+  },
+  "source_list": {
+    "count": 6,
+    "ids": [
+      "d3de053b-d28b-4fe6-98db-7b0f342d72db",
+      "f635a13b-e662-44fd-8f50-8c6e2565656c",
+      "5b54ccf3-2f8e-47de-bb9a-2747a100c401",
+      "12f743b6-d161-4803-801d-c84d8af78bba",
+      "f39941dc-4a99-4ffd-a89f-d44d5b1efabd",
+      "85bca1a4-a9ea-4252-aede-218a68dd78d4"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 6,
+    "used_sources_count": 6
+  },
+  "answer_tail": " הניסיון להצליח בבקשת הפחתה מצריך הוכחה ממוקדת של הפער בין סכום הפיצוי לנזק הסביר שניתן היה לצפותו, ראיות לעמדת כוח בלתי מאוזנת או לכוונה קנסית של הסכום בעת הכריתה, וכל ראיה על הסתמכות או חוסר מידע שהיה לו משמעות על הערכת הנזק; אם הפיצוי נראה כאומדן סביר — סיכויי ההפחתה קלושים.^³"
+}

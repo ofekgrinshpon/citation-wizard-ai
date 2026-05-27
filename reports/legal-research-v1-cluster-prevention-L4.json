@@ -1,0 +1,55 @@
+{
+  "fixture_id": "L4",
+  "run_id": "9ad21952-f1d5-435a-8525-1654be904bde",
+  "qa_log_id": "c60ad246-0a05-4873-90f9-00dad56fc39b",
+  "total_ms": 143165,
+  "baseline_total_ms": 122017,
+  "runtime_delta_ms": 21148,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "placement": {
+    "cluster_count": 6,
+    "cluster_run_count": 6,
+    "max_cluster_len": 2,
+    "end_paragraph_dump_count": 0,
+    "final_paragraph_marker_count": 0,
+    "final_paragraph_last_sentence_marker_count": 0,
+    "final_summary_dump": false,
+    "final_summary_dump_count": 0,
+    "cluster_samples": [
+      "לטת בית המשפט הקודם.¹²\n\nהנמקה ועיקרי הדוקט",
+      " נפרדת או בהליך אחר.²⁴\n\nיסודות מקובלים ליי",
+      "מלאה והוגנת להתדיין.³⁵\n\nהיקף ההשפעה וההבחנ",
+      "היא מהותית לפרקטיקה.²⁴ במקרים מסוימים דנים",
+      " אפשרות לדיון מחודש.⁷⁶\n\nהשלכה מעשית\n\nבעשיי"
+    ],
+    "end_dump_samples": []
+  },
+  "baseline_placement": {
+    "cluster_count": null,
+    "end_paragraph_dump_count": null
+  },
+  "source_list": {
+    "count": 7,
+    "ids": [
+      "cc14811b-2958-476b-ad65-1f9fc7fb57e1",
+      "227eab94-a974-40cc-bf8e-6e0cd0ad3892",
+      "b8130b6f-a5ad-43ef-9d68-739b7714e4d9",
+      "4f02fc68-6879-4c7a-9d2b-1f9c54105eed",
+      "19578a05-1873-44f0-9fe9-d308ec42ea96",
+      "595513f8-9979-4b88-9d37-00835381008f",
+      "c8e88865-aeaa-4218-a0fc-61552d2b8d38"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 7,
+    "used_sources_count": 7
+  },
+  "answer_tail": "טיות, ושיקולי צדק או מדיניות ציבורית שמחייבים אפשרות לדיון מחודש.⁷⁶\n\nהשלכה מעשית\n\nבעשייה משפטית משמעותי לזהות בפירוש את \"הפלוגתא\" המבוקשת ולבחון האם ההכרעה הקודמת הייתה באמת חיונית להחלטה; אם קיימים פגמים בהליכי הדיון הקודם או ראיות חדשות מהותיות — ניתן לטעון כנגד החלת ההשתק.³⁵\n\n"
+}
