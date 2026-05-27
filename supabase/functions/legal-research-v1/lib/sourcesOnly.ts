@@ -73,6 +73,8 @@ export interface SourcesOnlySummary {
   local_count: number;
   perplexity_count: number;
   additional_count: number;
+  url_checks_failed?: number;
+  url_checks_unverified?: number;
 }
 
 export interface SourcesOnlyPayload {
