@@ -796,6 +796,302 @@ export function applyCitationCleanup(
 }
 
 
+// ─── Phase 3: occurrence-indexed footnotes + short forms (deterministic) ────
+// Body markers become 1..K in chronological occurrence order. Repeated uses of
+// the same source get NEW occurrence numbers, with footnote entries rendered
+// as "שם." (ibid) or "<short>, לעיל ה״ש N." (supra). Conservative v1 — two
+// hard preconditions:
+//   (a) no adjacent superscript clusters in input;
+//   (b) total occurrence count K < 10.
+// On any validation failure the entire rewrite is rolled back.
+
+const ADJACENT_SUP_RE = /[⁰¹²³⁴⁵⁶⁷⁸⁹]{2,}/u;
+
+interface Phase3SourceLike {
+  number: number;
+  title: string;
+  url: string | null;
+  source_type?: string;
+  candidate_id?: string;
+}
+
+export function shortenTitle(title: string, source_type?: string): string {
+  if (!title) return "";
+  const t = title.trim();
+  if (source_type === "case" || / נ['׳] /u.test(t)) {
+    const comma = t.indexOf(",");
+    return (comma > 0 ? t.slice(0, comma) : t).trim().slice(0, 120);
+  }
+  if (source_type === "statute" || source_type === "regulation") {
+    let s = t.replace(/,\s*הת[ש][״"][^,]*$/u, "");
+    s = s.replace(/\s*\([^)]*\)\s*$/u, "");
+    s = s.trim();
+    return s || t.slice(0, 80);
+  }
+  if (source_type === "academic") {
+    const comma = t.indexOf(",");
+    const author = comma > 0 ? t.slice(0, comma).trim() : "";
+    const rest = comma > 0 ? t.slice(comma + 1).trim() : t;
+    const words = rest.split(/\s+/).slice(0, 6).join(" ");
+    const combined = (author ? `${author}, ` : "") + words;
+    return combined.trim() || t.slice(0, 80);
+  }
+  // report / other / unknown
+  const words = t.split(/\s+/);
+  if (words.length <= 8) return t;
+  return words.slice(0, 8).join(" ") + "…";
+}
+
+function stripSup(s: string): string {
+  let out = "";
+  for (const ch of s) if (SUP_TO_DIGIT[ch] === undefined) out += ch;
+  return out;
+}
+
+export interface Phase3Result {
+  applied: boolean;
+  answer: string;
+  used_sources: Phase3SourceLike[];
+  footnotes: Footnote[];
+  report: NonNullable<import("../lib/types.ts").CitationCleanupReport["phase3"]>;
+  validation: {
+    every_marker_has_footnote: boolean;
+    every_footnote_in_usable: boolean;
+    no_adjacent_marker_clusters: boolean;
+    occurrence_count: number;
+    unique_source_count: number;
+    short_form_count: number;
+    ibid_count: number;
+    supra_count: number;
+    ok: boolean;
+  } | null;
+}
+
+export function applyOccurrenceFootnotes(
+  answer: string,
+  used: Phase3SourceLike[],
+  footnotes: Footnote[],
+): Phase3Result {
+  const passthrough = (): Phase3Result => ({
+    applied: false,
+    answer,
+    used_sources: used,
+    footnotes,
+    report: { applied: false },
+    validation: null,
+  });
+
+  // Precondition #1: no adjacent superscript clusters.
+  {
+    const re = /[⁰¹²³⁴⁵⁶⁷⁸⁹]{2,}/gu;
+    const cluster_examples: string[] = [];
+    let cm: RegExpExecArray | null;
+    while ((cm = re.exec(answer)) !== null) {
+      if (cluster_examples.length < 5) {
+        const s = Math.max(0, cm.index - 12);
+        const e = Math.min(answer.length, cm.index + cm[0].length + 12);
+        cluster_examples.push(answer.slice(s, e));
+      }
+    }
+    if (cluster_examples.length > 0) {
+      const r = passthrough();
+      r.report = {
+        applied: false,
+        discarded_reason: "ambiguous_adjacent_markers",
+        cluster_examples,
+      };
+      return r;
+    }
+  }
+
+  // Walk markers; each run is length 1 by precondition #1.
+  type MarkerHit = { start: number; end: number; sourceNumber: number };
+  const hits: MarkerHit[] = [];
+  for (let i = 0; i < answer.length; i++) {
+    const d = SUP_TO_DIGIT[answer[i]];
+    if (d === undefined) continue;
+    const n = Number(d);
+    if (!Number.isFinite(n) || n < 1) continue;
+    hits.push({ start: i, end: i + 1, sourceNumber: n });
+  }
+  const K = hits.length;
+
+  if (K === 0) {
+    const r = passthrough();
+    r.report = { applied: false, discarded_reason: "no_markers" };
+    return r;
+  }
+  if (K >= 10) {
+    const r = passthrough();
+    r.report = {
+      applied: false,
+      discarded_reason: "multi_digit_occurrences_require_boundary_tokens",
+      occurrence_count: K,
+    };
+    return r;
+  }
+
+  const bySourceNumber = new Map<number, Phase3SourceLike>();
+  for (const u of used) bySourceNumber.set(u.number, u);
+
+  // Resolve every marker to a source.
+  for (const h of hits) {
+    if (!bySourceNumber.has(h.sourceNumber)) {
+      const r = passthrough();
+      r.report = { applied: false, discarded_reason: "footnote_resolution_failed" };
+      return r;
+    }
+  }
+
+  // Assign occurrence indices 1..K and build new footnotes + used_sources.
+  const firstSeen = new Map<number, number>(); // originalSourceNumber → occurrenceIndex
+  const newFootnotes: Footnote[] = [];
+  const newUsedSources: Phase3SourceLike[] = [];
+  let prevSourceNumber: number | null = null;
+  let ibidCount = 0;
+  let supraCount = 0;
+  const examples: Array<{ marker_number: number; rendering: string }> = [];
+
+  for (let i = 0; i < hits.length; i++) {
+    const occurrenceIndex = i + 1;
+    const origNum = hits[i].sourceNumber;
+    const src = bySourceNumber.get(origNum)!;
+
+    if (!firstSeen.has(origNum)) {
+      firstSeen.set(origNum, occurrenceIndex);
+      newFootnotes.push({
+        number: occurrenceIndex,
+        title: src.title,
+        url: src.url,
+        source_type: src.source_type,
+        source_number: occurrenceIndex,
+        is_short_form: false,
+        source_candidate_id: src.candidate_id,
+      });
+      newUsedSources.push({
+        number: occurrenceIndex,
+        title: src.title,
+        url: src.url,
+        source_type: src.source_type,
+        candidate_id: src.candidate_id,
+      });
+    } else {
+      const back = firstSeen.get(origNum)!;
+      if (prevSourceNumber === origNum) {
+        ibidCount++;
+        const rendering = "שם.";
+        newFootnotes.push({
+          number: occurrenceIndex,
+          title: rendering,
+          url: null,
+          source_type: src.source_type,
+          source_number: back,
+          is_short_form: true,
+          short_form_kind: "ibid",
+          back_ref_number: back,
+          source_candidate_id: src.candidate_id,
+        });
+        if (examples.length < 5) examples.push({ marker_number: occurrenceIndex, rendering });
+      } else {
+        supraCount++;
+        const short = shortenTitle(src.title, src.source_type);
+        const rendering = `${short}, לעיל ה״ש ${back}.`;
+        newFootnotes.push({
+          number: occurrenceIndex,
+          title: rendering,
+          url: null,
+          source_type: src.source_type,
+          source_number: back,
+          is_short_form: true,
+          short_form_kind: "supra",
+          back_ref_number: back,
+          source_candidate_id: src.candidate_id,
+        });
+        if (examples.length < 5) examples.push({ marker_number: occurrenceIndex, rendering });
+      }
+    }
+    prevSourceNumber = origNum;
+  }
+
+  // Rewrite answer right-to-left so positions stay valid. K<10 so single digit only.
+  let newAnswer = answer;
+  for (let i = hits.length - 1; i >= 0; i--) {
+    const occurrenceIndex = i + 1;
+    const { start, end } = hits[i];
+    newAnswer = newAnswer.slice(0, start) + toSuperscript(occurrenceIndex) + newAnswer.slice(end);
+  }
+
+  // Post-expansion guard.
+  if (ADJACENT_SUP_RE.test(newAnswer)) {
+    const r = passthrough();
+    r.report = { applied: false, discarded_reason: "would_create_ambiguous_markers" };
+    return r;
+  }
+
+  // Prose invariance.
+  if (stripSup(newAnswer) !== stripSup(answer)) {
+    const r = passthrough();
+    r.report = { applied: false, discarded_reason: "marker_validation_failed" };
+    return r;
+  }
+
+  // Validate occurrence footnotes.
+  const usableNumbers = new Set(newUsedSources.map((u) => u.number));
+  const markerNums: number[] = [];
+  for (const ch of newAnswer) {
+    const d = SUP_TO_DIGIT[ch];
+    if (d !== undefined) {
+      const n = Number(d);
+      if (n >= 1) markerNums.push(n);
+    }
+  }
+  const footnoteNumberSet = new Set(newFootnotes.map((f) => f.number));
+  const every_marker_has_footnote =
+    markerNums.length === K &&
+    markerNums.every((n, idx) => n === idx + 1) &&
+    markerNums.every((n) => footnoteNumberSet.has(n));
+  const every_footnote_in_usable = newFootnotes.every(
+    (f) => f.source_number !== undefined && usableNumbers.has(f.source_number),
+  );
+  const no_adjacent_marker_clusters = !ADJACENT_SUP_RE.test(newAnswer);
+  const validationOk =
+    every_marker_has_footnote && every_footnote_in_usable && no_adjacent_marker_clusters;
+
+  if (!validationOk) {
+    const r = passthrough();
+    r.report = { applied: false, discarded_reason: "marker_validation_failed" };
+    return r;
+  }
+
+  return {
+    applied: true,
+    answer: newAnswer,
+    used_sources: newUsedSources,
+    footnotes: newFootnotes,
+    report: {
+      applied: true,
+      occurrence_count: K,
+      unique_source_count: newUsedSources.length,
+      short_form_count: ibidCount + supraCount,
+      ibid_count: ibidCount,
+      supra_count: supraCount,
+      examples,
+    },
+    validation: {
+      every_marker_has_footnote,
+      every_footnote_in_usable,
+      no_adjacent_marker_clusters,
+      occurrence_count: K,
+      unique_source_count: newUsedSources.length,
+      short_form_count: ibidCount + supraCount,
+      ibid_count: ibidCount,
+      supra_count: supraCount,
+      ok: validationOk,
+    },
+  };
+}
+
+
 
 
 
