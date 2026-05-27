@@ -208,14 +208,26 @@ const results = await Promise.all(
 
 const ok = results.filter((r: any) => !r.error);
 const applied = ok.filter((r: any) => r.phase3?.applied);
-const skipAmb = ok.filter((r: any) => r.phase3?.discarded_reason === "ambiguous_adjacent_markers");
+const skipAmbAdj = ok.filter(
+  (r: any) => r.phase3?.discarded_reason === "ambiguous_adjacent_markers",
+);
 const skipK = ok.filter(
   (r: any) =>
     r.phase3?.discarded_reason === "multi_digit_occurrences_require_boundary_tokens",
 );
+const skipAmbRun = ok.filter(
+  (r: any) => r.phase3?.discarded_reason === "ambiguous_raw_superscript_run",
+);
+const skipAdjTok = ok.filter(
+  (r: any) =>
+    r.phase3?.discarded_reason === "adjacent_tokens_would_render_ambiguous",
+);
+const skipLeak = ok.filter(
+  (r: any) => r.phase3?.discarded_reason === "token_leak_detected",
+);
 
 const summary = {
-  phase: "occurrence-footnotes-validation",
+  phase: "occurrence-footnotes-validation-v2",
   ran: ok.length,
   errors: results.length - ok.length,
   hard_gates_all_pass:
@@ -224,8 +236,14 @@ const summary = {
     ok.every((r: any) => r.hard_gates.footnote_eq_used) &&
     ok.every((r: any) => r.hard_gates.used_subset_of_usable),
   fixtures_phase3_applied: applied.length,
-  fixtures_skipped_ambiguous_clusters: skipAmb.length,
-  fixtures_skipped_k_too_large: skipK.length,
+  fixtures_skipped_ambiguous_legacy: skipAmbAdj.length,
+  fixtures_skipped_k_legacy: skipK.length,
+  fixtures_skipped_ambiguous_raw_run: skipAmbRun.length,
+  fixtures_skipped_adjacent_tokens: skipAdjTok.length,
+  fixtures_skipped_token_leak: skipLeak.length,
+  every_multi_digit_run_from_single_token_on_applied: applied.every(
+    (r: any) => r.phase3.every_multi_digit_run_from_single_token !== false,
+  ),
   fixtures_with_source_count_change: ok.filter(
     (r: any) =>
       r.source_list.baseline_count !== null &&
