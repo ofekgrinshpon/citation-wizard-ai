@@ -1,0 +1,68 @@
+{
+  "fixture_id": "T1",
+  "run_id": "0bd9bdfc-3975-49af-b095-f4e330d85236",
+  "qa_log_id": "c60111f0-220c-4c5c-aca2-94d9b1970e66",
+  "total_ms": 151192,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "ambiguous_raw_superscript_run",
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "ambiguous_run_samples": [
+      {
+        "run": "⁷⁸¹⁰",
+        "context": "בעסקאות מסוימות.⁷⁸¹⁰\n\nמגבלות וביקורת",
+        "candidates": []
+      }
+    ]
+  },
+  "placement": {
+    "cluster_count": 11,
+    "max_cluster_len": 4,
+    "final_summary_dump": false
+  },
+  "final_paragraph": {
+    "final_paragraph_preview": "ים בחקיקה; לפיכך המלצת מעשית לצדדים היא להקפיד על ניסוח מדויק, לשקול כלילת סעיפי אינטגרציה (integration/entire agreement) ולתעד במפורש נקודות מרכזיות כדי לצמצם אי‑בהירות שעלולה להוביל ליישום רחב יותר של ראיות חיצוניות.²⁵",
+    "last_sentence_preview": "ים בחקיקה; לפיכך המלצת מעשית לצדדים היא להקפיד על ניסוח מדויק, לשקול כלילת סעיפי אינטגרציה (integration/entire agreement) ולתעד במפורש נקודות מרכזיות כדי לצמצם אי‑בהירות שעלולה להוביל ליישום רחב יותר של ראיות חיצוניות.²⁵",
+    "final_paragraph_marker_count": 2,
+    "final_paragraph_runs": [
+      "²⁵"
+    ],
+    "final_paragraph_last_sentence_marker_count": 2,
+    "final_paragraph_last_sentence_runs": [
+      "²⁵"
+    ],
+    "final_paragraph_last_sentence_longest_run": 2,
+    "final_summary_dump_heuristic": false
+  },
+  "source_set": {
+    "count": 9,
+    "ids": [
+      "b8ba807a-75e3-4665-982c-124c4bd8b5b3",
+      "00b90edb-7d45-4dcf-8b7d-8b0b75f67171",
+      "1c7e69d6-576d-4aa2-a90e-e6559ab59701",
+      "1cbde9ac-0a78-4d19-a2cb-48d883001beb",
+      "83bbf41e-d03f-45ab-860c-e119d24ae133",
+      "e29425f2-a314-47db-a78c-39fffaab7867",
+      "65c466d2-69ec-4d9e-9a0d-f7b231e57293",
+      "2dff8f00-033b-4999-b917-c07615ad203c",
+      "0b8ced68-8ed1-4ef0-a86b-da7670fe0793"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 9,
+    "unique_source_count": 9
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 2404,
+  "answer_tail": " בחריגים המפורטים בסקירת ה‑parol evidence. לצד זאת הצעת החוק העכשווית מצביעה על רצון להבהיר את הכללים בחקיקה; לפיכך המלצת מעשית לצדדים היא להקפיד על ניסוח מדויק, לשקול כלילת סעיפי אינטגרציה (integration/entire agreement) ולתעד במפורש נקודות מרכזיות כדי לצמצם אי‑בהירות שעלולה להוביל ליישום רחב יותר של ראיות חיצוניות.²⁵\n"
+}

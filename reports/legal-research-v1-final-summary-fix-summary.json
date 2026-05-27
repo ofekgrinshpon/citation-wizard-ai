@@ -1,0 +1,262 @@
+{
+  "phase": "drafter-prompt-final-summary-fix",
+  "ran": 4,
+  "errors": 0,
+  "any_final_summary_dump": false,
+  "fixtures_with_dump": [],
+  "phase3_applied_count": 0,
+  "phase3_applied_fixtures": [],
+  "hard_gates_all_pass": true,
+  "total_token_leaks": 0,
+  "fixtures": [
+    {
+      "fixture_id": "T1",
+      "run_id": "0bd9bdfc-3975-49af-b095-f4e330d85236",
+      "qa_log_id": "c60111f0-220c-4c5c-aca2-94d9b1970e66",
+      "total_ms": 151192,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "ambiguous_raw_superscript_run",
+        "occurrence_count": null,
+        "unique_source_count": null,
+        "ibid_count": null,
+        "supra_count": null,
+        "ambiguous_run_samples": [
+          {
+            "run": "⁷⁸¹⁰",
+            "context": "בעסקאות מסוימות.⁷⁸¹⁰\n\nמגבלות וביקורת",
+            "candidates": []
+          }
+        ]
+      },
+      "placement": {
+        "cluster_count": 11,
+        "max_cluster_len": 4,
+        "final_summary_dump": false
+      },
+      "final_paragraph": {
+        "final_paragraph_preview": "ים בחקיקה; לפיכך המלצת מעשית לצדדים היא להקפיד על ניסוח מדויק, לשקול כלילת סעיפי אינטגרציה (integration/entire agreement) ולתעד במפורש נקודות מרכזיות כדי לצמצם אי‑בהירות שעלולה להוביל ליישום רחב יותר של ראיות חיצוניות.²⁵",
+        "last_sentence_preview": "ים בחקיקה; לפיכך המלצת מעשית לצדדים היא להקפיד על ניסוח מדויק, לשקול כלילת סעיפי אינטגרציה (integration/entire agreement) ולתעד במפורש נקודות מרכזיות כדי לצמצם אי‑בהירות שעלולה להוביל ליישום רחב יותר של ראיות חיצוניות.²⁵",
+        "final_paragraph_marker_count": 2,
+        "final_paragraph_runs": [
+          "²⁵"
+        ],
+        "final_paragraph_last_sentence_marker_count": 2,
+        "final_paragraph_last_sentence_runs": [
+          "²⁵"
+        ],
+        "final_paragraph_last_sentence_longest_run": 2,
+        "final_summary_dump_heuristic": false
+      },
+      "source_set": {
+        "count": 9,
+        "ids": [
+          "b8ba807a-75e3-4665-982c-124c4bd8b5b3",
+          "00b90edb-7d45-4dcf-8b7d-8b0b75f67171",
+          "1c7e69d6-576d-4aa2-a90e-e6559ab59701",
+          "1cbde9ac-0a78-4d19-a2cb-48d883001beb",
+          "83bbf41e-d03f-45ab-860c-e119d24ae133",
+          "e29425f2-a314-47db-a78c-39fffaab7867",
+          "65c466d2-69ec-4d9e-9a0d-f7b231e57293",
+          "2dff8f00-033b-4999-b917-c07615ad203c",
+          "0b8ced68-8ed1-4ef0-a86b-da7670fe0793"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 9,
+        "unique_source_count": 9
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 2404,
+      "answer_tail": " בחריגים המפורטים בסקירת ה‑parol evidence. לצד זאת הצעת החוק העכשווית מצביעה על רצון להבהיר את הכללים בחקיקה; לפיכך המלצת מעשית לצדדים היא להקפיד על ניסוח מדויק, לשקול כלילת סעיפי אינטגרציה (integration/entire agreement) ולתעד במפורש נקודות מרכזיות כדי לצמצם אי‑בהירות שעלולה להוביל ליישום רחב יותר של ראיות חיצוניות.²⁵\n"
+    },
+    {
+      "fixture_id": "T2",
+      "run_id": "da5c0c8a-6e7f-4d4a-a774-d49acf2c0e91",
+      "qa_log_id": "851de832-3d3f-4290-9ac4-5d892eb97d3a",
+      "total_ms": 124266,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "adjacent_tokens_would_render_ambiguous",
+        "occurrence_count": null,
+        "unique_source_count": null,
+        "ibid_count": null,
+        "supra_count": null,
+        "ambiguous_run_samples": null
+      },
+      "placement": {
+        "cluster_count": 10,
+        "max_cluster_len": 4,
+        "final_summary_dump": false
+      },
+      "final_paragraph": {
+        "final_paragraph_preview": "מה שנשאר פתוח: הגבול המדויק בין \"טענת ערעור רגילה\" לבין טענה המעגנת עיוות מהותי איננו מנוסח כנקודת־חיתוך חד־משמעית בפסיקה; יש לכך ביטויים יישומיים בפסיקה האחרונה, אך עדיין נותר שדה לשיקול בידי בית־המשפט.¹³",
+        "last_sentence_preview": "מה שנשאר פתוח: הגבול המדויק בין \"טענת ערעור רגילה\" לבין טענה המעגנת עיוות מהותי איננו מנוסח כנקודת־חיתוך חד־משמעית בפסיקה; יש לכך ביטויים יישומיים בפסיקה האחרונה, אך עדיין נותר שדה לשיקול בידי בית־המשפט.¹³",
+        "final_paragraph_marker_count": 2,
+        "final_paragraph_runs": [
+          "¹³"
+        ],
+        "final_paragraph_last_sentence_marker_count": 2,
+        "final_paragraph_last_sentence_runs": [
+          "¹³"
+        ],
+        "final_paragraph_last_sentence_longest_run": 2,
+        "final_summary_dump_heuristic": false
+      },
+      "source_set": {
+        "count": 7,
+        "ids": [
+          "35b4d4c4-d3f8-499e-9d98-87d44fd23bf8",
+          "f1596f62-874b-42a4-ba88-020c72bd9b43",
+          "b3d9deef-5fd2-4747-8d0c-88445b8818cb",
+          "3cac3cd3-1d57-4e1b-8d41-7c9e7a754995",
+          "1c998a2b-1518-4b0d-9279-10de6ea753a9",
+          "434ce8e8-55f2-48d5-9d69-00e8e69092c6",
+          "b5df0914-7eda-4fb2-8032-86f9ade125b4"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 7,
+        "unique_source_count": 7
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 2434,
+      "answer_tail": " הקודמות. הצגת טיעון המסתכם בחוסר הסכמה עם החלטת הערכאה הקודמת ללא תיחום של אחד מהשיקולים הנ\"ל צפויה להידחות.³⁴\n\nמה שנשאר פתוח: הגבול המדויק בין \"טענת ערעור רגילה\" לבין טענה המעגנת עיוות מהותי איננו מנוסח כנקודת־חיתוך חד־משמעית בפסיקה; יש לכך ביטויים יישומיים בפסיקה האחרונה, אך עדיין נותר שדה לשיקול בידי בית־המשפט.¹³\n\n"
+    },
+    {
+      "fixture_id": "T3",
+      "run_id": "bfb1607d-1163-4c0d-acfd-b9463cd62b1a",
+      "qa_log_id": "c20d939f-389e-44ad-93e5-494ae2a09763",
+      "total_ms": 164068,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "adjacent_tokens_would_render_ambiguous",
+        "occurrence_count": null,
+        "unique_source_count": null,
+        "ibid_count": null,
+        "supra_count": null,
+        "ambiguous_run_samples": null
+      },
+      "placement": {
+        "cluster_count": 7,
+        "max_cluster_len": 3,
+        "final_summary_dump": false
+      },
+      "final_paragraph": {
+        "final_paragraph_preview": "הערה מעשית: בעת בחינה שיפוטית יש להקפיד להצמיד לכל דרישת פורמליות גם בדיקת ענייניות: דרישת \"לפי חוק\" בודקת סמכות ותקינות חקיקה; דרישות התכלית והמידתיות בוחנות את הטעם הציבורי והיחסיות של האמצעים.³⁴⁵",
+        "last_sentence_preview": "הערה מעשית: בעת בחינה שיפוטית יש להקפיד להצמיד לכל דרישת פורמליות גם בדיקת ענייניות: דרישת \"לפי חוק\" בודקת סמכות ותקינות חקיקה; דרישות התכלית והמידתיות בוחנות את הטעם הציבורי והיחסיות של האמצעים.³⁴⁵",
+        "final_paragraph_marker_count": 3,
+        "final_paragraph_runs": [
+          "³⁴⁵"
+        ],
+        "final_paragraph_last_sentence_marker_count": 3,
+        "final_paragraph_last_sentence_runs": [
+          "³⁴⁵"
+        ],
+        "final_paragraph_last_sentence_longest_run": 3,
+        "final_summary_dump_heuristic": false
+      },
+      "source_set": {
+        "count": 6,
+        "ids": [
+          "497895e7-d5c0-4514-8ebe-f237a1a832aa",
+          "52258979-cae2-4c59-91c3-7368501a018a",
+          "9b4e391e-5ca2-454f-aebf-e0f7a4f1ccca",
+          "6e06412a-6df1-4ec0-9cd0-c7e4147d0c7b",
+          "b7805a86-9dbf-415d-9e28-15c6c7c9b79f",
+          "7319f3a6-5446-4613-bc7c-49b9cbe8b9e8"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 6,
+        "unique_source_count": 6
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 1923,
+      "answer_tail": "סקה והארבעת התנאים הם נוסח מקובל בחוקי היסוד ובמסמכי הרקע של הכנסת, ופרשוּתם המפורטת פותחה בפסיקה ובספרות המשפטית.⁶  \n\nהערה מעשית: בעת בחינה שיפוטית יש להקפיד להצמיד לכל דרישת פורמליות גם בדיקת ענייניות: דרישת \"לפי חוק\" בודקת סמכות ותקינות חקיקה; דרישות התכלית והמידתיות בוחנות את הטעם הציבורי והיחסיות של האמצעים.³⁴⁵  \n"
+    },
+    {
+      "fixture_id": "PROT",
+      "run_id": "6be77beb-4210-412d-900a-eb366c56e7ce",
+      "qa_log_id": "1e63ddaf-1133-4e56-805d-dd88add0106b",
+      "total_ms": 188429,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "adjacent_tokens_would_render_ambiguous",
+        "occurrence_count": null,
+        "unique_source_count": null,
+        "ibid_count": null,
+        "supra_count": null,
+        "ambiguous_run_samples": null
+      },
+      "placement": {
+        "cluster_count": 22,
+        "max_cluster_len": 5,
+        "final_summary_dump": false
+      },
+      "final_paragraph": {
+        "final_paragraph_preview": " מחדל חקיקתי אפשרית, אך תנאי ההוכחה הם לא פשוטים: חובה להציב קו ראייתי שמוכיח כרוניות או מדיניות של כשל, חובת הגנה חיובית שניתן היה ומציעה מנגנון פעיל למניעת הסיכון, וקשר סיבתי סביר בין הכשל לפגיעה בזכות לחיים/בבטחון.¹²³",
+        "last_sentence_preview": " מחדל חקיקתי אפשרית, אך תנאי ההוכחה הם לא פשוטים: חובה להציב קו ראייתי שמוכיח כרוניות או מדיניות של כשל, חובת הגנה חיובית שניתן היה ומציעה מנגנון פעיל למניעת הסיכון, וקשר סיבתי סביר בין הכשל לפגיעה בזכות לחיים/בבטחון.¹²³",
+        "final_paragraph_marker_count": 3,
+        "final_paragraph_runs": [
+          "¹²³"
+        ],
+        "final_paragraph_last_sentence_marker_count": 3,
+        "final_paragraph_last_sentence_runs": [
+          "¹²³"
+        ],
+        "final_paragraph_last_sentence_longest_run": 3,
+        "final_summary_dump_heuristic": false
+      },
+      "source_set": {
+        "count": 9,
+        "ids": [
+          "83477b30-0a55-4198-bd64-93b506158222",
+          "3c41f55d-89a8-48c3-8ec9-a0fa7e4d7819",
+          "b361b081-7935-4ccd-87de-cfd24d061f43",
+          "3d2c4f02-4e3f-4d2c-adf9-ad71062881da",
+          "aa8b3396-1dcf-4a98-8396-17c06108c3e5",
+          "ab1c1c92-df79-4ef8-8df4-d52744a304eb",
+          "d360b4f9-b180-4a49-9f51-5cdd7b10f80c",
+          "b3994251-1aa3-4565-bf9d-0b18c3e9d063",
+          "41c85c77-08c1-4fb1-bfbb-5fe995886d67"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 9,
+        "unique_source_count": 9
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 3843,
+      "answer_tail": "להפעיל) וכי הכשל הגדיל סיכון צפוי ונראה לעין לפגיעה בחיי התובע/אוכלוסייה.⁸⁶¹⁷\n\nסיכום קצר: קביעה של מחדל חקיקתי אפשרית, אך תנאי ההוכחה הם לא פשוטים: חובה להציב קו ראייתי שמוכיח כרוניות או מדיניות של כשל, חובת הגנה חיובית שניתן היה ומציעה מנגנון פעיל למניעת הסיכון, וקשר סיבתי סביר בין הכשל לפגיעה בזכות לחיים/בבטחון.¹²³\n\n"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "fixture_id": "T2",
+  "run_id": "da5c0c8a-6e7f-4d4a-a774-d49acf2c0e91",
+  "qa_log_id": "851de832-3d3f-4290-9ac4-5d892eb97d3a",
+  "total_ms": 124266,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "adjacent_tokens_would_render_ambiguous",
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "ambiguous_run_samples": null
+  },
+  "placement": {
+    "cluster_count": 10,
+    "max_cluster_len": 4,
+    "final_summary_dump": false
+  },
+  "final_paragraph": {
+    "final_paragraph_preview": "מה שנשאר פתוח: הגבול המדויק בין \"טענת ערעור רגילה\" לבין טענה המעגנת עיוות מהותי איננו מנוסח כנקודת־חיתוך חד־משמעית בפסיקה; יש לכך ביטויים יישומיים בפסיקה האחרונה, אך עדיין נותר שדה לשיקול בידי בית־המשפט.¹³",
+    "last_sentence_preview": "מה שנשאר פתוח: הגבול המדויק בין \"טענת ערעור רגילה\" לבין טענה המעגנת עיוות מהותי איננו מנוסח כנקודת־חיתוך חד־משמעית בפסיקה; יש לכך ביטויים יישומיים בפסיקה האחרונה, אך עדיין נותר שדה לשיקול בידי בית־המשפט.¹³",
+    "final_paragraph_marker_count": 2,
+    "final_paragraph_runs": [
+      "¹³"
+    ],
+    "final_paragraph_last_sentence_marker_count": 2,
+    "final_paragraph_last_sentence_runs": [
+      "¹³"
+    ],
+    "final_paragraph_last_sentence_longest_run": 2,
+    "final_summary_dump_heuristic": false
+  },
+  "source_set": {
+    "count": 7,
+    "ids": [
+      "35b4d4c4-d3f8-499e-9d98-87d44fd23bf8",
+      "f1596f62-874b-42a4-ba88-020c72bd9b43",
+      "b3d9deef-5fd2-4747-8d0c-88445b8818cb",
+      "3cac3cd3-1d57-4e1b-8d41-7c9e7a754995",
+      "1c998a2b-1518-4b0d-9279-10de6ea753a9",
+      "434ce8e8-55f2-48d5-9d69-00e8e69092c6",
+      "b5df0914-7eda-4fb2-8032-86f9ade125b4"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 7,
+    "unique_source_count": 7
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 2434,
+  "answer_tail": " הקודמות. הצגת טיעון המסתכם בחוסר הסכמה עם החלטת הערכאה הקודמת ללא תיחום של אחד מהשיקולים הנ\"ל צפויה להידחות.³⁴\n\nמה שנשאר פתוח: הגבול המדויק בין \"טענת ערעור רגילה\" לבין טענה המעגנת עיוות מהותי איננו מנוסח כנקודת־חיתוך חד־משמעית בפסיקה; יש לכך ביטויים יישומיים בפסיקה האחרונה, אך עדיין נותר שדה לשיקול בידי בית־המשפט.¹³\n\n"
+}

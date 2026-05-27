@@ -1,0 +1,62 @@
+{
+  "fixture_id": "PROT",
+  "run_id": "6be77beb-4210-412d-900a-eb366c56e7ce",
+  "qa_log_id": "1e63ddaf-1133-4e56-805d-dd88add0106b",
+  "total_ms": 188429,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "adjacent_tokens_would_render_ambiguous",
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "ambiguous_run_samples": null
+  },
+  "placement": {
+    "cluster_count": 22,
+    "max_cluster_len": 5,
+    "final_summary_dump": false
+  },
+  "final_paragraph": {
+    "final_paragraph_preview": " מחדל חקיקתי אפשרית, אך תנאי ההוכחה הם לא פשוטים: חובה להציב קו ראייתי שמוכיח כרוניות או מדיניות של כשל, חובת הגנה חיובית שניתן היה ומציעה מנגנון פעיל למניעת הסיכון, וקשר סיבתי סביר בין הכשל לפגיעה בזכות לחיים/בבטחון.¹²³",
+    "last_sentence_preview": " מחדל חקיקתי אפשרית, אך תנאי ההוכחה הם לא פשוטים: חובה להציב קו ראייתי שמוכיח כרוניות או מדיניות של כשל, חובת הגנה חיובית שניתן היה ומציעה מנגנון פעיל למניעת הסיכון, וקשר סיבתי סביר בין הכשל לפגיעה בזכות לחיים/בבטחון.¹²³",
+    "final_paragraph_marker_count": 3,
+    "final_paragraph_runs": [
+      "¹²³"
+    ],
+    "final_paragraph_last_sentence_marker_count": 3,
+    "final_paragraph_last_sentence_runs": [
+      "¹²³"
+    ],
+    "final_paragraph_last_sentence_longest_run": 3,
+    "final_summary_dump_heuristic": false
+  },
+  "source_set": {
+    "count": 9,
+    "ids": [
+      "83477b30-0a55-4198-bd64-93b506158222",
+      "3c41f55d-89a8-48c3-8ec9-a0fa7e4d7819",
+      "b361b081-7935-4ccd-87de-cfd24d061f43",
+      "3d2c4f02-4e3f-4d2c-adf9-ad71062881da",
+      "aa8b3396-1dcf-4a98-8396-17c06108c3e5",
+      "ab1c1c92-df79-4ef8-8df4-d52744a304eb",
+      "d360b4f9-b180-4a49-9f51-5cdd7b10f80c",
+      "b3994251-1aa3-4565-bf9d-0b18c3e9d063",
+      "41c85c77-08c1-4fb1-bfbb-5fe995886d67"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 9,
+    "unique_source_count": 9
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 3843,
+  "answer_tail": "להפעיל) וכי הכשל הגדיל סיכון צפוי ונראה לעין לפגיעה בחיי התובע/אוכלוסייה.⁸⁶¹⁷\n\nסיכום קצר: קביעה של מחדל חקיקתי אפשרית, אך תנאי ההוכחה הם לא פשוטים: חובה להציב קו ראייתי שמוכיח כרוניות או מדיניות של כשל, חובת הגנה חיובית שניתן היה ומציעה מנגנון פעיל למניעת הסיכון, וקשר סיבתי סביר בין הכשל לפגיעה בזכות לחיים/בבטחון.¹²³\n\n"
+}
