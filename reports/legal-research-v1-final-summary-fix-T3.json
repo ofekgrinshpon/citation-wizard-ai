@@ -1,0 +1,59 @@
+{
+  "fixture_id": "T3",
+  "run_id": "bfb1607d-1163-4c0d-acfd-b9463cd62b1a",
+  "qa_log_id": "c20d939f-389e-44ad-93e5-494ae2a09763",
+  "total_ms": 164068,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "adjacent_tokens_would_render_ambiguous",
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "ambiguous_run_samples": null
+  },
+  "placement": {
+    "cluster_count": 7,
+    "max_cluster_len": 3,
+    "final_summary_dump": false
+  },
+  "final_paragraph": {
+    "final_paragraph_preview": "הערה מעשית: בעת בחינה שיפוטית יש להקפיד להצמיד לכל דרישת פורמליות גם בדיקת ענייניות: דרישת \"לפי חוק\" בודקת סמכות ותקינות חקיקה; דרישות התכלית והמידתיות בוחנות את הטעם הציבורי והיחסיות של האמצעים.³⁴⁵",
+    "last_sentence_preview": "הערה מעשית: בעת בחינה שיפוטית יש להקפיד להצמיד לכל דרישת פורמליות גם בדיקת ענייניות: דרישת \"לפי חוק\" בודקת סמכות ותקינות חקיקה; דרישות התכלית והמידתיות בוחנות את הטעם הציבורי והיחסיות של האמצעים.³⁴⁵",
+    "final_paragraph_marker_count": 3,
+    "final_paragraph_runs": [
+      "³⁴⁵"
+    ],
+    "final_paragraph_last_sentence_marker_count": 3,
+    "final_paragraph_last_sentence_runs": [
+      "³⁴⁵"
+    ],
+    "final_paragraph_last_sentence_longest_run": 3,
+    "final_summary_dump_heuristic": false
+  },
+  "source_set": {
+    "count": 6,
+    "ids": [
+      "497895e7-d5c0-4514-8ebe-f237a1a832aa",
+      "52258979-cae2-4c59-91c3-7368501a018a",
+      "9b4e391e-5ca2-454f-aebf-e0f7a4f1ccca",
+      "6e06412a-6df1-4ec0-9cd0-c7e4147d0c7b",
+      "b7805a86-9dbf-415d-9e28-15c6c7c9b79f",
+      "7319f3a6-5446-4613-bc7c-49b9cbe8b9e8"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 6,
+    "unique_source_count": 6
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 1923,
+  "answer_tail": "סקה והארבעת התנאים הם נוסח מקובל בחוקי היסוד ובמסמכי הרקע של הכנסת, ופרשוּתם המפורטת פותחה בפסיקה ובספרות המשפטית.⁶  \n\nהערה מעשית: בעת בחינה שיפוטית יש להקפיד להצמיד לכל דרישת פורמליות גם בדיקת ענייניות: דרישת \"לפי חוק\" בודקת סמכות ותקינות חקיקה; דרישות התכלית והמידתיות בוחנות את הטעם הציבורי והיחסיות של האמצעים.³⁴⁵  \n"
+}
