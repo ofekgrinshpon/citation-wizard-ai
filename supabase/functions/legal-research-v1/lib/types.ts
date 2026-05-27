@@ -154,6 +154,17 @@ export interface UsedSource {
   origin: Origin | "user_upload";
 }
 
+export interface FootnoteItem {
+  source_number: number;
+  title: string;
+  url: string | null;
+  source_type?: string;
+  is_short_form?: boolean;
+  short_form_kind?: "ibid" | "supra";
+  back_ref_number?: number;
+  source_candidate_id?: string;
+}
+
 export interface Footnote {
   number: number;
   title: string;
@@ -165,6 +176,10 @@ export interface Footnote {
   short_form_kind?: "ibid" | "supra";
   back_ref_number?: number;        // first-occurrence footnote number of the source
   source_candidate_id?: string;    // debug only, never rendered
+  // Phase 3 v3 — compound footnote (same-position citation cluster).
+  is_compound?: boolean;
+  source_numbers?: number[];
+  items?: FootnoteItem[];
 }
 
 // ─── Phase C.1: Atomic marker representation ──────────────────────────────
