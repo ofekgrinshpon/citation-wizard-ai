@@ -1135,11 +1135,16 @@ export function applyOccurrenceFootnotes(
   }
 
   // Build occurrence-renumbered token stream + footnotes.
-  // One occurrence per GROUP (not per token).
-  const firstSeen = new Map<number, number>(); // sourceNumber -> first occurrence#
+  // One occurrence (footnote) per GROUP (not per token). Source numbering is
+  // independent of footnote numbering — compound footnote #1 can carry sources
+  // #1 and #2; a later single citation of a NEW source would become footnote
+  // #2 / source #3.
+  const firstSeenFootnoteNumber = new Map<number, number>(); // origNum -> footnote# of first appearance
+  const firstSeenSourceNumber = new Map<number, number>(); // origNum -> assigned source#
+  let nextSourceNumber = 1;
   const newFootnotes: Footnote[] = [];
   const newUsedSources: Phase3SourceLike[] = [];
-  let prevSingleSourceNumber: number | null = null; // for שם.; null if prev was compound
+  let prevSingleSourceOrigNum: number | null = null; // for שם.; null if prev was compound or first
   let ibidCount = 0;
   let supraCount = 0;
   const examples: Array<{ marker_number: number; rendering: string }> = [];
@@ -1178,10 +1183,12 @@ export function applyOccurrenceFootnotes(
     rendering: string;
     kind: "first" | "ibid" | "supra";
   } => {
-    if (!firstSeen.has(origNum)) {
-      firstSeen.set(origNum, occurrenceIndex);
+    if (!firstSeenFootnoteNumber.has(origNum)) {
+      const assignedSourceNumber = nextSourceNumber++;
+      firstSeenFootnoteNumber.set(origNum, occurrenceIndex);
+      firstSeenSourceNumber.set(origNum, assignedSourceNumber);
       newUsedSources.push({
-        number: occurrenceIndex,
+        number: assignedSourceNumber,
         title: src.title,
         url: src.url,
         source_type: src.source_type,
@@ -1192,7 +1199,7 @@ export function applyOccurrenceFootnotes(
         kind: "first",
         rendering,
         item: {
-          source_number: occurrenceIndex,
+          source_number: assignedSourceNumber,
           title: src.title,
           url: src.url,
           source_type: src.source_type,
@@ -1201,39 +1208,40 @@ export function applyOccurrenceFootnotes(
         },
       };
     }
-    const back = firstSeen.get(origNum)!;
-    if (allowIbid && prevSingleSourceNumber === origNum) {
+    const backFn = firstSeenFootnoteNumber.get(origNum)!;
+    const srcNum = firstSeenSourceNumber.get(origNum)!;
+    if (allowIbid && prevSingleSourceOrigNum === origNum) {
       ibidCount++;
       const rendering = "שם.";
       return {
         kind: "ibid",
         rendering,
         item: {
-          source_number: back,
+          source_number: srcNum,
           title: rendering,
           url: null,
           source_type: src.source_type,
           is_short_form: true,
           short_form_kind: "ibid",
-          back_ref_number: back,
+          back_ref_number: backFn,
           source_candidate_id: src.candidate_id,
         },
       };
     }
     supraCount++;
     const short = shortenTitle(src.title, src.source_type);
-    const rendering = `${short}, לעיל ה״ש ${back}.`;
+    const rendering = `${short}, לעיל ה״ש ${backFn}.`;
     return {
       kind: "supra",
       rendering,
       item: {
-        source_number: back,
+        source_number: srcNum,
         title: rendering,
         url: null,
         source_type: src.source_type,
         is_short_form: true,
         short_form_kind: "supra",
-        back_ref_number: back,
+        back_ref_number: backFn,
         source_candidate_id: src.candidate_id,
       },
     };
@@ -1255,13 +1263,14 @@ export function applyOccurrenceFootnotes(
       const origNum = members[0];
       const src = bySourceNumber.get(origNum)!;
       const m = renderMember(origNum, occurrenceIndex, src, true);
+      const srcNum = firstSeenSourceNumber.get(origNum)!;
       if (m.kind === "first") {
         newFootnotes.push({
           number: occurrenceIndex,
           title: src.title,
           url: src.url,
           source_type: src.source_type,
-          source_number: occurrenceIndex,
+          source_number: srcNum,
           is_short_form: false,
           source_candidate_id: src.candidate_id,
         });
@@ -1271,7 +1280,7 @@ export function applyOccurrenceFootnotes(
           title: m.rendering,
           url: null,
           source_type: src.source_type,
-          source_number: m.item.back_ref_number!,
+          source_number: srcNum,
           is_short_form: true,
           short_form_kind: m.kind,
           back_ref_number: m.item.back_ref_number!,
@@ -1280,7 +1289,7 @@ export function applyOccurrenceFootnotes(
         if (examples.length < 5)
           examples.push({ marker_number: occurrenceIndex, rendering: m.rendering });
       }
-      prevSingleSourceNumber = origNum;
+      prevSingleSourceOrigNum = origNum;
     } else {
       // Compound: never emit שם. inside; only first / supra per member.
       compoundGroupCount++;
@@ -1295,24 +1304,26 @@ export function applyOccurrenceFootnotes(
         renderings.push(m.rendering.endsWith(".") ? m.rendering.slice(0, -1) : m.rendering);
       }
       const joined = renderings.join("; ") + ".";
+      const memberSourceNumbers = members.map((n) => firstSeenSourceNumber.get(n)!);
       newFootnotes.push({
         number: occurrenceIndex,
         title: joined,
         url: null,
         source_type: undefined,
         is_compound: true,
-        source_numbers: members.map((n) => firstSeen.get(n)!),
+        source_numbers: memberSourceNumbers,
         items,
       });
       if (compoundExamples.length < 5)
         compoundExamples.push({
           marker_number: occurrenceIndex,
-          member_source_numbers: members.map((n) => firstSeen.get(n)!),
+          member_source_numbers: memberSourceNumbers,
           rendering: joined,
         });
-      prevSingleSourceNumber = null; // compound breaks שם. chain
+      prevSingleSourceOrigNum = null; // compound breaks שם. chain
     }
   }
+
 
   // Rewrite tokenized string: replace each group with [[fn:occurrenceIndex]].
   let rewritten = "";
