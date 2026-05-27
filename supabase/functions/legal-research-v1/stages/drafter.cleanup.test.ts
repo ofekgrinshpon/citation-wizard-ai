@@ -14,7 +14,7 @@ Deno.test("phase1: renumbers out-of-order markers by first appearance", () => {
   assertEquals(r.report.phase1.after_order, [1, 2, 3]);
   // First marker in text should now be ¹
   assert(/אחד¹/.test(r.answer));
-  assert(/טקסט¹.*ועוד טקסט²/.test(r.answer));
+  assert(/אחד¹.*טקסט²/.test(r.answer));
   // used_sources renumbered too
   const numbers = r.used.map((x) => x.number).sort();
   assertEquals(numbers, [1, 2, 3]);
