@@ -489,10 +489,14 @@ function validatePlacement(answer: string): import("../lib/types.ts").PlacementR
   // 1. Clusters: runs of ≥2 superscript digits with no non-superscript char between.
   const clusterRe = /[⁰¹²³⁴⁵⁶⁷⁸⁹]{2,}/gu;
   let cluster_count = 0;
+  let cluster_run_count = 0;
+  let max_cluster_len = 0;
   const cluster_samples: string[] = [];
   let m: RegExpExecArray | null;
   while ((m = clusterRe.exec(answer)) !== null) {
     cluster_count += m[0].length - 1;
+    cluster_run_count++;
+    if (m[0].length > max_cluster_len) max_cluster_len = m[0].length;
     if (cluster_samples.length < 5) {
       const s = Math.max(0, m.index - 20);
       const e = Math.min(answer.length, m.index + m[0].length + 20);
@@ -526,7 +530,6 @@ function validatePlacement(answer: string): import("../lib/types.ts").PlacementR
   const paragraphs = answer.split(/\n\s*\n+/);
   const firstAppearancePos = new Map<number, number>();
   {
-    let cursor = 0;
     const seen2 = new Set<number>();
     for (let idx = 0; idx < answer.length; idx++) {
       const d = SUP_TO_DIGIT[answer[idx]];
@@ -536,11 +539,9 @@ function validatePlacement(answer: string): import("../lib/types.ts").PlacementR
       seen2.add(n);
       firstAppearancePos.set(n, idx);
     }
-    cursor; // silence
   }
   let paraOffset = 0;
   for (const para of paragraphs) {
-    // Last sentence: split on .?!׃ followed by space/end. Take final non-empty chunk.
     const sentences = para.split(/(?<=[\.!?׃])\s+/u).filter((s) => s.trim().length > 0);
     const tail = sentences.length ? sentences[sentences.length - 1] : "";
     if (tail) {
@@ -561,11 +562,32 @@ function validatePlacement(answer: string): import("../lib/types.ts").PlacementR
         if (end_dump_samples.length < 3) end_dump_samples.push(tail.slice(0, 200));
       }
     }
-    paraOffset += para.length + 2; // approx for blank-line separator
+    paraOffset += para.length + 2;
   }
 
-  // Phase A.2: report-only count of superscript parentheses around markers
-  // (e.g., ⁽¹⁾, ⁽²⁾). Does NOT gate placement.ok and does NOT feed repair.
+  // Final paragraph marker counts (distinct markers, regardless of first-appearance).
+  const distinctMarkersIn = (s: string): Set<number> => {
+    const out = new Set<number>();
+    for (const ch of s) {
+      const d = SUP_TO_DIGIT[ch];
+      if (d === undefined) continue;
+      const n = Number(d);
+      if (n >= 1) out.add(n);
+    }
+    return out;
+  };
+  const finalPara = paragraphs.length ? paragraphs[paragraphs.length - 1] : "";
+  const finalSentences = finalPara
+    .split(/(?<=[\.!?׃])\s+/u)
+    .filter((s) => s.trim().length > 0);
+  const finalLast = finalSentences.length ? finalSentences[finalSentences.length - 1] : "";
+  const final_paragraph_marker_count = distinctMarkersIn(finalPara).size;
+  const final_paragraph_last_sentence_marker_count = distinctMarkersIn(finalLast).size;
+  const final_summary_dump =
+    final_paragraph_marker_count >= 5 || final_paragraph_last_sentence_marker_count >= 5;
+  const final_summary_dump_count = final_summary_dump ? 1 : 0;
+
+  // Phase A.2: report-only count of superscript parentheses around markers.
   const parensRe = /[⁽⁾]/gu;
   const superscript_parens_count = (answer.match(parensRe) ?? []).length;
 
@@ -577,6 +599,12 @@ function validatePlacement(answer: string): import("../lib/types.ts").PlacementR
     end_paragraph_dump_count,
     end_dump_samples,
     superscript_parens_count,
+    max_cluster_len,
+    cluster_run_count,
+    final_paragraph_marker_count,
+    final_paragraph_last_sentence_marker_count,
+    final_summary_dump,
+    final_summary_dump_count,
   };
 }
 
