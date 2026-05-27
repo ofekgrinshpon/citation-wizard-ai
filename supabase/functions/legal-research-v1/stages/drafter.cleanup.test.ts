@@ -212,12 +212,14 @@ Deno.test("phase3 prose invariance: stripSup(out) === stripSup(in)", () => {
   assertEquals(strip(r.answer), strip(answer));
 });
 
-Deno.test("phase3 idempotency: re-applying is a no-op (still applies, identical output)", () => {
-  const answer = "א¹ ב² א¹.";
-  const used = [src(1, "פ נ' א"), src(2, "ב נ' ג")];
-  const footnotes = [fnUnique(1, used[0].title), fnUnique(2, used[1].title)];
+Deno.test("phase3 idempotency: no-repeats input maps 1:1 and re-applies identically", () => {
+  // With no repeated sources, occurrence numbering equals source numbering.
+  const answer = "א¹ ב² ג³.";
+  const used = [src(1, "פ נ' א"), src(2, "ב נ' ג"), src(3, "ד נ' ה")];
+  const footnotes = used.map((u) => fnUnique(u.number, u.title));
   const r1 = applyOccurrenceFootnotes(answer, used, footnotes);
   assert(r1.applied);
+  assertEquals(r1.answer, answer);
   const r2 = applyOccurrenceFootnotes(r1.answer, r1.used_sources, r1.footnotes);
   assert(r2.applied);
   assertEquals(r2.answer, r1.answer);
