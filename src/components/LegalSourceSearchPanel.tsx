@@ -450,6 +450,8 @@ function SourceResultsView({
         <p className="text-xs text-muted-foreground mt-1">
           מתוכם {directCount} מקורות ישירים · {s.local_count} מהמאגר המקומי, {s.perplexity_count} חיצוניים
           {additionalCount > 0 ? ` · +${additionalCount} מקורות נוספים לבדיקה` : ""}
+          {s.url_checks_failed && s.url_checks_failed > 0 ? ` · ${s.url_checks_failed} קישורים לא זמינים` : ""}
+          {s.url_checks_unverified && s.url_checks_unverified > 0 ? ` · ${s.url_checks_unverified} קישורים שלא אומתו` : ""}
         </p>
       </div>
 
