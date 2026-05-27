@@ -1,0 +1,41 @@
+{
+  "fixture_id": "T3",
+  "run_id": "e207d2f7-34bb-4998-801a-e40713e142ea",
+  "qa_log_id": "a5bb47cc-5e5d-4d13-b258-545b7e1e10a9",
+  "total_ms": 201440,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "adjacent_tokens_would_render_ambiguous",
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "multi_digit_marker_runs_count": null,
+    "multi_digit_runs_from_single_token_count": null,
+    "every_multi_digit_run_from_single_token": null
+  },
+  "ibid_examples": [],
+  "supra_examples": [],
+  "token_leak_count": 0,
+  "source_set": {
+    "count": 7,
+    "ids": [
+      "f54d43b2-696e-40bc-a820-9505b15a62da",
+      "ddfb466a-5cfa-4580-b7ee-0a87f1208ca6",
+      "ecb1c781-fdac-4479-bda9-eb7bd7673046",
+      "5e48fd76-0c84-4a8f-bde6-1808e8ac1c5b",
+      "c8ac75fb-6771-45bc-bd29-678e68ea9096",
+      "6954bb8e-6ba6-4672-aed2-4fcc144f7d5e",
+      "b9ccbb54-2f56-4d1d-a13a-c6404681e617"
+    ]
+  },
+  "answer_strip_sup_len": 2725,
+  "answer_tail": "מי ובמחקר הכנסת, והעלה אפשרויות של ריסון שיפוטי או מודלים חלופיים למענה על פגמים בחקיקה.⁶⁷\n\nמסקנה מעשית: בבחינה של פגיעה בזכויות לפי סעיף 8 יש למלא ולחדד ארבעת התנאים; המרכזי שבהם — מבחן המידתיות — מצריך בחינה תלת‑שלבית (התאמה, הצטמצמות, איזון) שתכריע בפועל אם בית המשפט יפסוק לתקן, לצמצם או לבטל את ההגבלה החקיקתית.²³⁴\n"
+}

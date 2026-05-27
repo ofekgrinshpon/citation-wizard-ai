@@ -1,0 +1,43 @@
+{
+  "fixture_id": "T2",
+  "run_id": "4b36921d-7ccc-45fa-b87d-4fab0173ea51",
+  "qa_log_id": "1124a60c-e733-4813-b6aa-af107bfa8e58",
+  "total_ms": 158237,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "adjacent_tokens_would_render_ambiguous",
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "multi_digit_marker_runs_count": null,
+    "multi_digit_runs_from_single_token_count": null,
+    "every_multi_digit_run_from_single_token": null
+  },
+  "ibid_examples": [],
+  "supra_examples": [],
+  "token_leak_count": 0,
+  "source_set": {
+    "count": 9,
+    "ids": [
+      "7e84d344-3f89-4f15-96d4-b539292788c6",
+      "ccb7d8d5-eaac-46be-a804-57139c209d96",
+      "63b3e3f3-be27-4bff-8d9b-d5d8f12ffb2c",
+      "980fc387-5b28-4367-bee8-2d96b16d2670",
+      "fa6b253d-6eb2-4d9d-8db0-0e74179934f4",
+      "f237c30f-20a7-4e2a-bc38-44d84b085d2c",
+      "d6ca8ea8-d32e-40fd-a119-4e5878f53535",
+      "f2a4b31e-f046-405e-8739-72acc642d6f5",
+      "630f1bc1-99de-4b02-a973-7e6dcc8febbb"
+    ]
+  },
+  "answer_strip_sup_len": 2609,
+  "answer_tail": "הקודמת אינה סופית ביחס לאותן סוגיות מהותיות.⁵⁹\n\nמסקנה מעשית קצרה\nמוסכם כי נוסחת חניון חיפה מצמצמת מאוד את אפשרויות הגלגול השלישי: בקשת רשות תעמוד רק אם המבקש עומד בעול הנטל ומציג מסה משכנעת המצביעה על חשיבות ציבורית ממשית או על סכנה לעיוות דין, ובהיעדר ניסוח ועמידה בדרישות אלה בית המשפט ימנע מפתיחת גלגול נוסף.¹²³⁴⁵⁶⁷⁸⁹"
+}
