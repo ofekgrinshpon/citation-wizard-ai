@@ -1,0 +1,51 @@
+{
+  "fixture_id": "L4",
+  "run_id": "d954930b-f4e5-464c-9948-c310c008b6b3",
+  "qa_log_id": "6e5f4e9c-d664-4216-bfaa-a6bea8a22d02",
+  "total_ms": 122936,
+  "baseline_total_ms": 143165,
+  "runtime_delta_ms": -20229,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true,
+    "every_marker_has_footnote": null,
+    "every_footnote_in_usable": null,
+    "no_adjacent_marker_clusters": null
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": null,
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "cluster_examples": null
+  },
+  "short_form_samples": [],
+  "placement": {
+    "cluster_count": 9,
+    "max_cluster_len": 3,
+    "final_summary_dump": false
+  },
+  "source_list": {
+    "count": 4,
+    "baseline_count": 7,
+    "ids": [
+      "da99ab58-a070-41f6-a6b4-3751b076333c",
+      "63e3d863-8fdc-400a-925c-e117c7afecca",
+      "b15eb15b-4a9c-436b-bdeb-dc7a7465c49e",
+      "9766d3f4-73ea-42cd-8e5b-64fa5e9892cf"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 4,
+    "unique_source_count": 4
+  },
+  "answer_strip_sup_len": 2502,
+  "answer_tail": "יבות/עדויות/צדק, לא תחול ההשתק.²³⁴\n\nהערה אחרונה: בפועל בתי המשפט מאזנים בין הצורך בסופיות לבין מניעת עיוות; לכן יש לגשת לטענת השתק פלוגתא בצורה מסודרת, עם הדגשה של היסוד החזק ביותר (למשל חיוניות ההכרעה וזהות פלוגתא) וראיות לפסק הדין הבעייתי ולהזדמנות ההתדיינות שניתנה לצד הקודם.¹²"
+}

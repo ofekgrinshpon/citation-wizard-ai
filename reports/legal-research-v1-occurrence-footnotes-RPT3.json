@@ -1,0 +1,56 @@
+{
+  "fixture_id": "RPT3",
+  "run_id": "eb9dc36a-63e2-43db-ae9f-c7380ba43929",
+  "qa_log_id": "5c9e8c40-e7bb-4be5-bffa-2c3bae118071",
+  "total_ms": 171873,
+  "baseline_total_ms": null,
+  "runtime_delta_ms": null,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true,
+    "every_marker_has_footnote": null,
+    "every_footnote_in_usable": null,
+    "no_adjacent_marker_clusters": null
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": null,
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "cluster_examples": null
+  },
+  "short_form_samples": [],
+  "placement": {
+    "cluster_count": 13,
+    "max_cluster_len": 4,
+    "final_summary_dump": false
+  },
+  "source_list": {
+    "count": 9,
+    "baseline_count": null,
+    "ids": [
+      "d479fec0-2146-4fac-8d1a-9d230a30be49",
+      "f682cbad-3f5f-4914-b20d-e4e5a7d0d848",
+      "fc7bcdf2-ea50-4015-a6cd-2e10f709d345",
+      "20f5acfa-b8c7-4ec9-ae81-269830e12ed3",
+      "d98c31bd-a903-4677-a882-1e08426d6051",
+      "43eee71e-8d57-4633-abff-9a11af415ec0",
+      "39aa86a9-19a9-45b0-86bf-a580151e2c14",
+      "6a4c9e7e-e378-4662-93e5-4cea162118e0",
+      "5adf4bb9-647b-4e15-b743-2d7cb482ff28"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 9,
+    "unique_source_count": 9
+  },
+  "answer_strip_sup_len": 3718,
+  "answer_tail": "קש) מוצדק.⁴\n\nסיכום קצר: הפרת חובה חקוקה בדרך‑כלל איננה מחליפה את בחינת יסודות הרשלנות, אך היא ראיה חזקה; במצבים שבהם המחוקק נתן זכות פרטית או אמצעי אכיפה אזרחיים ייתכן שבית המשפט יכיר בעוולה חקוקתית נפרדת; בכל מקרה יש להימנע מאפשרות כפל פיצוי באמצעות אגרגציה ובדיקה של סוגי הסעד.\n"
+}

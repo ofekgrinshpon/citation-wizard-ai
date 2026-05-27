@@ -1,0 +1,54 @@
+{
+  "fixture_id": "L6",
+  "run_id": "5a8c6788-a0f3-4174-84d3-e9990e296837",
+  "qa_log_id": "e5f0e652-2a97-41b4-bb96-6e9faa2ca4be",
+  "total_ms": 197255,
+  "baseline_total_ms": 210426,
+  "runtime_delta_ms": -13171,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true,
+    "every_marker_has_footnote": null,
+    "every_footnote_in_usable": null,
+    "no_adjacent_marker_clusters": null
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": null,
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "cluster_examples": null
+  },
+  "short_form_samples": [],
+  "placement": {
+    "cluster_count": 17,
+    "max_cluster_len": 4,
+    "final_summary_dump": false
+  },
+  "source_list": {
+    "count": 7,
+    "baseline_count": 8,
+    "ids": [
+      "7c4f26fc-eee4-4ab1-8ffc-9e6c742093b5",
+      "8361fd68-107e-4c2e-b29d-b936b0f4f3e4",
+      "9036a167-a23b-482a-8f03-27c41d06f29b",
+      "06aa4bfe-3af2-4732-bc36-8c4975e1f268",
+      "171fceee-3e8b-40f6-bb63-8f67eb7945e0",
+      "5ffc1203-44d1-4720-9efe-2d49925c8850",
+      "e0eabbfd-d8a9-4132-b5fd-13321ffaea7c"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 7,
+    "unique_source_count": 7
+  },
+  "answer_strip_sup_len": 3311,
+  "answer_tail": "שפט יאכוף הבטחה מנהלית רק כאשר מצטברים יסודות הבהירות, כוונת ההתחייבות, סמכות־משתמע או ההצגה של סמכות, והסתמכות סבירה הנושאת עמה עוול לא מצופה; חוסר סמכות מהותי או אינטרס ציבורי כבד עשויים למנוע אכיפה מלאה, אך בדרך כלל יחייבו התחשבות בהסתמכות דרך פיצוי או הסדרי מעבר הוגנים.²³⁶⁷\n\n"
+}

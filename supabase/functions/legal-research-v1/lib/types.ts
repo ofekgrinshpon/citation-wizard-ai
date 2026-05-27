@@ -159,6 +159,12 @@ export interface Footnote {
   title: string;
   url: string | null;
   source_type?: string;
+  // Phase 3 (occurrence-footnote) additive fields. Absent when phase3 not applied.
+  source_number?: number;          // points to used_sources[].number for the unique source
+  is_short_form?: boolean;
+  short_form_kind?: "ibid" | "supra";
+  back_ref_number?: number;        // first-occurrence footnote number of the source
+  source_candidate_id?: string;    // debug only, never rendered
 }
 
 // ─── Phase C.1: Atomic marker representation ──────────────────────────────
@@ -212,6 +218,24 @@ export interface CitationCleanupReport {
     count: number;
     examples: Array<{ run: string; index: number; context: string }>;
   };
+  phase3?: {
+    applied: boolean;
+    occurrence_count?: number;
+    unique_source_count?: number;
+    short_form_count?: number;
+    ibid_count?: number;
+    supra_count?: number;
+    examples?: Array<{ marker_number: number; rendering: string }>;
+    discarded_reason?:
+      | "ambiguous_adjacent_markers"
+      | "multi_digit_occurrences_require_boundary_tokens"
+      | "would_create_ambiguous_markers"
+      | "marker_validation_failed"
+      | "footnote_resolution_failed"
+      | "no_markers"
+      | "disabled_by_env";
+    cluster_examples?: string[];
+  };
 }
 
 export interface MarkerValidation {
@@ -225,6 +249,16 @@ export interface MarkerValidation {
   error?: string;
   placement?: PlacementReport;
   citation_cleanup?: CitationCleanupReport;
+  // Phase 3 additive fields.
+  occurrence_mode?: boolean;
+  occurrence_count?: number;
+  unique_source_count?: number;
+  short_form_count?: number;
+  ibid_count?: number;
+  supra_count?: number;
+  every_marker_has_footnote?: boolean;
+  every_footnote_in_usable?: boolean;
+  no_adjacent_marker_clusters?: boolean;
 }
 
 

@@ -604,6 +604,7 @@ async function handle(req: Request): Promise<Response> {
     sources_passed: drafter.sources_passed,
     sources_used: drafter.sources_used,
     footnote_count: drafter.footnotes.length,
+    unique_source_count: drafter.used_sources.length,
     marker_validation: drafter.marker_validation,
     omitted_candidate_ids: drafter.omitted_candidate_ids,
     used_sources: drafter.used_sources,

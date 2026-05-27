@@ -1,0 +1,56 @@
+{
+  "fixture_id": "L2",
+  "run_id": "e97be2f1-65c0-48d2-9c6c-bd508a0494a7",
+  "qa_log_id": "1156de46-03fe-42e2-ab1c-6b1ccf198550",
+  "total_ms": 129953,
+  "baseline_total_ms": 144377,
+  "runtime_delta_ms": -14424,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true,
+    "every_marker_has_footnote": null,
+    "every_footnote_in_usable": null,
+    "no_adjacent_marker_clusters": null
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": null,
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "cluster_examples": null
+  },
+  "short_form_samples": [],
+  "placement": {
+    "cluster_count": 8,
+    "max_cluster_len": 3,
+    "final_summary_dump": false
+  },
+  "source_list": {
+    "count": 9,
+    "baseline_count": 7,
+    "ids": [
+      "ad778d6c-4386-4c95-aee8-ceae69874a7b",
+      "85e88ee0-49d5-4439-bf78-860c2d2cf43d",
+      "96010596-821f-49b8-8239-b1f89299438f",
+      "1e3c19ea-2c12-4471-be1e-280942494219",
+      "f6cdc157-d4f1-46ae-bacb-591ac4285542",
+      "c8c1a791-cf2a-4b2b-aa21-14905e7de843",
+      "2978eacf-1ed0-4468-92f8-22444ed9ad71",
+      "e5cbaaa3-c950-4e09-9a90-580aaec9e186",
+      "a74b66a6-d1cf-48df-b588-83bf0683bf2f"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 9,
+    "unique_source_count": 9
+  },
+  "answer_strip_sup_len": 2607,
+  "answer_tail": "השיפוטי.⁹¹⁰\n\nמסקנה פרקטית: בית המשפט יבחן הטענות על הבטחה מינהלית לפי הקריטריונים של ייצוג ברור, סמכות המבטיח, הסתמכות סבירה ונזק ממשי — אך ההכרה בה היא תמיד תוצאה של איזון שיפוטי מול טובת הציבור והחובה לכבד גבולות חוקיים; הסעד מותאם לעוצמת הסתמכות ולמגבלות הסמכותיות של הרשות.¹²\n"
+}
