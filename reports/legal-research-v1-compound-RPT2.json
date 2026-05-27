@@ -1,0 +1,43 @@
+{
+  "fixture_id": "RPT2",
+  "run_id": "407e14ec-1e2f-42a4-a6e2-13b078909006",
+  "qa_log_id": "66fec103-0243-4da9-a878-b4ee8a63ccd0",
+  "total_ms": 150514,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "ambiguous_raw_superscript_run",
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "compound_enabled": null,
+    "compound_group_count": null,
+    "compound_member_count_total": null,
+    "compound_max_group_size": null,
+    "every_compound_member_in_usable": null,
+    "compound_footnote_examples": null
+  },
+  "persisted_compound_footnote_count": 0,
+  "persisted_compound_member_total": 0,
+  "source_set": {
+    "count": 9,
+    "unique_count_in_phase3": 9
+  },
+  "source_set_equal": true,
+  "drafter": {
+    "ok": true,
+    "footnote_count": 9,
+    "unique_source_count": 9
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 3782,
+  "adjacent_superscript_runs_in_body": 10,
+  "answer_tail": "ם תקנות וענפי סיכון מיוחדים.²⁴⁸\n\nהמלצה מעשית: לטובת תביעת ציפיות יש לתעד לשון ברורה של ההתחייבות, ראיות להסתמכות (הוצאות/היערכות), ולהכין עמדת מדידה מציאותית של התועלת החוזית — כשקיומן יגביר את סיכויי קבלת סעד לפי תקנת הציפיות ורלוונטיות ההגבלות הנזכרות לעיל.\n"
+}

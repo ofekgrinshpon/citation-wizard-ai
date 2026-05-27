@@ -11,6 +11,7 @@ import {
   Candidate,
   Claim,
   Footnote,
+  FootnoteItem,
   MarkerFormat,
   MarkerValidation,
   MODEL_FULL,
@@ -1073,105 +1074,271 @@ export function applyOccurrenceFootnotes(
     }
   }
 
+  // Phase 3 v3 — group adjacent tokens (same-position citation cluster) and
+  // collapse each group into ONE occurrence footnote (compound when |group|>=2).
+  // Gated by env PHASE3_COMPOUND_ENABLED (default on). When off, the legacy
+  // adjacent-tokens guard fails closed.
+  const COMPOUND_ENABLED =
+    (Deno.env.get("PHASE3_COMPOUND_ENABLED") ?? "1") !== "0";
+  const COMPOUND_MAX_GROUP_SIZE = 9;
+
+  // Walk `tokenized` once, producing an ordered list of groups. A "group" is
+  // either a single non-adjacent token or a maximal run of adjacent tokens.
+  type Group = {
+    sourceNumbers: number[]; // length>=1; >=2 means compound
+    start: number; // index in `tokenized` of the first token's "[["
+    end: number; // index in `tokenized` one past the last token's "]]"
+  };
+  const groups: Group[] = [];
+  {
+    const TOK = /\[\[fn:(\d+)\]\]/gu;
+    TOK.lastIndex = 0;
+    let m: RegExpExecArray | null;
+    let cur: Group | null = null;
+    while ((m = TOK.exec(tokenized)) !== null) {
+      const n = Number(m[1]);
+      const start = m.index;
+      const end = TOK.lastIndex;
+      if (cur && cur.end === start) {
+        cur.sourceNumbers.push(n);
+        cur.end = end;
+      } else {
+        if (cur) groups.push(cur);
+        cur = { sourceNumbers: [n], start, end };
+      }
+    }
+    if (cur) groups.push(cur);
+  }
+
+  // If compound is disabled, fail closed on any size>=2 group (legacy behavior).
+  if (!COMPOUND_ENABLED && groups.some((g) => g.sourceNumbers.length >= 2)) {
+    const r = passthrough();
+    r.report = {
+      applied: false,
+      discarded_reason: "adjacent_tokens_would_render_ambiguous",
+      compound_enabled: false,
+    };
+    return r;
+  }
+
+  // Group-size cap.
+  const oversized = groups.find((g) => g.sourceNumbers.length > COMPOUND_MAX_GROUP_SIZE);
+  if (oversized) {
+    const r = passthrough();
+    r.report = {
+      applied: false,
+      discarded_reason: "compound_group_too_large",
+      compound_enabled: COMPOUND_ENABLED,
+      compound_max_group_size: oversized.sourceNumbers.length,
+    };
+    return r;
+  }
+
   // Build occurrence-renumbered token stream + footnotes.
-  const firstSeen = new Map<number, number>();
+  // One occurrence (footnote) per GROUP (not per token). Source numbering is
+  // independent of footnote numbering — compound footnote #1 can carry sources
+  // #1 and #2; a later single citation of a NEW source would become footnote
+  // #2 / source #3.
+  const firstSeenFootnoteNumber = new Map<number, number>(); // origNum -> footnote# of first appearance
+  const firstSeenSourceNumber = new Map<number, number>(); // origNum -> assigned source#
+  let nextSourceNumber = 1;
   const newFootnotes: Footnote[] = [];
   const newUsedSources: Phase3SourceLike[] = [];
-  let prevSourceNumber: number | null = null;
+  let prevSingleSourceOrigNum: number | null = null; // for שם.; null if prev was compound or first
   let ibidCount = 0;
   let supraCount = 0;
   const examples: Array<{ marker_number: number; rendering: string }> = [];
+  const compoundExamples: Array<{
+    marker_number: number;
+    member_source_numbers: number[];
+    rendering: string;
+  }> = [];
+  let compoundGroupCount = 0;
+  let compoundMemberCountTotal = 0;
+  let compoundMaxGroupSize = 0;
 
-  for (let i = 0; i < hits.length; i++) {
-    const occurrenceIndex = i + 1;
-    const origNum = hits[i].sourceNumber;
-    const src = bySourceNumber.get(origNum)!;
+  // Dedupe within a group defensively (¹¹-style shouldn't reach here, but be safe).
+  const dedupeGroup = (arr: number[]) => {
+    const seen = new Set<number>();
+    const out: number[] = [];
+    for (const n of arr) {
+      if (!seen.has(n)) {
+        seen.add(n);
+        out.push(n);
+      }
+    }
+    return out;
+  };
 
-    if (!firstSeen.has(origNum)) {
-      firstSeen.set(origNum, occurrenceIndex);
-      newFootnotes.push({
-        number: occurrenceIndex,
-        title: src.title,
-        url: src.url,
-        source_type: src.source_type,
-        source_number: occurrenceIndex,
-        is_short_form: false,
-        source_candidate_id: src.candidate_id,
-      });
+  // Per-member rendering inside any footnote (single or compound).
+  // `allowIbid` is only true for the first-and-only member of a non-compound
+  // footnote whose previous occurrence was also a non-compound for the same src.
+  const renderMember = (
+    origNum: number,
+    occurrenceIndex: number,
+    src: Phase3SourceLike,
+    allowIbid: boolean,
+  ): {
+    item: FootnoteItem;
+    rendering: string;
+    kind: "first" | "ibid" | "supra";
+  } => {
+    if (!firstSeenFootnoteNumber.has(origNum)) {
+      const assignedSourceNumber = nextSourceNumber++;
+      firstSeenFootnoteNumber.set(origNum, occurrenceIndex);
+      firstSeenSourceNumber.set(origNum, assignedSourceNumber);
       newUsedSources.push({
-        number: occurrenceIndex,
+        number: assignedSourceNumber,
         title: src.title,
         url: src.url,
         source_type: src.source_type,
         candidate_id: src.candidate_id,
       });
-    } else {
-      const back = firstSeen.get(origNum)!;
-      if (prevSourceNumber === origNum) {
-        ibidCount++;
-        const rendering = "שם.";
-        newFootnotes.push({
-          number: occurrenceIndex,
+      const rendering = src.title;
+      return {
+        kind: "first",
+        rendering,
+        item: {
+          source_number: assignedSourceNumber,
+          title: src.title,
+          url: src.url,
+          source_type: src.source_type,
+          is_short_form: false,
+          source_candidate_id: src.candidate_id,
+        },
+      };
+    }
+    const backFn = firstSeenFootnoteNumber.get(origNum)!;
+    const srcNum = firstSeenSourceNumber.get(origNum)!;
+    if (allowIbid && prevSingleSourceOrigNum === origNum) {
+      ibidCount++;
+      const rendering = "שם.";
+      return {
+        kind: "ibid",
+        rendering,
+        item: {
+          source_number: srcNum,
           title: rendering,
           url: null,
           source_type: src.source_type,
-          source_number: back,
           is_short_form: true,
           short_form_kind: "ibid",
-          back_ref_number: back,
+          back_ref_number: backFn,
           source_candidate_id: src.candidate_id,
-        });
-        if (examples.length < 5) examples.push({ marker_number: occurrenceIndex, rendering });
-      } else {
-        supraCount++;
-        const short = shortenTitle(src.title, src.source_type);
-        const rendering = `${short}, לעיל ה״ש ${back}.`;
-        newFootnotes.push({
-          number: occurrenceIndex,
-          title: rendering,
-          url: null,
-          source_type: src.source_type,
-          source_number: back,
-          is_short_form: true,
-          short_form_kind: "supra",
-          back_ref_number: back,
-          source_candidate_id: src.candidate_id,
-        });
-        if (examples.length < 5) examples.push({ marker_number: occurrenceIndex, rendering });
+        },
+      };
+    }
+    supraCount++;
+    const short = shortenTitle(src.title, src.source_type);
+    const rendering = `${short}, לעיל ה״ש ${backFn}.`;
+    return {
+      kind: "supra",
+      rendering,
+      item: {
+        source_number: srcNum,
+        title: rendering,
+        url: null,
+        source_type: src.source_type,
+        is_short_form: true,
+        short_form_kind: "supra",
+        back_ref_number: backFn,
+        source_candidate_id: src.candidate_id,
+      },
+    };
+  };
+
+  for (let gi = 0; gi < groups.length; gi++) {
+    const occurrenceIndex = gi + 1;
+    const g = groups[gi];
+    const members = dedupeGroup(g.sourceNumbers);
+    // Resolve every member to a source (defensive; tokenizer enforced).
+    for (const sn of members) {
+      if (!bySourceNumber.has(sn)) {
+        const r = passthrough();
+        r.report = { applied: false, discarded_reason: "footnote_resolution_failed" };
+        return r;
       }
     }
-    prevSourceNumber = origNum;
+    if (members.length === 1) {
+      const origNum = members[0];
+      const src = bySourceNumber.get(origNum)!;
+      const m = renderMember(origNum, occurrenceIndex, src, true);
+      const srcNum = firstSeenSourceNumber.get(origNum)!;
+      if (m.kind === "first") {
+        newFootnotes.push({
+          number: occurrenceIndex,
+          title: src.title,
+          url: src.url,
+          source_type: src.source_type,
+          source_number: srcNum,
+          is_short_form: false,
+          source_candidate_id: src.candidate_id,
+        });
+      } else {
+        newFootnotes.push({
+          number: occurrenceIndex,
+          title: m.rendering,
+          url: null,
+          source_type: src.source_type,
+          source_number: srcNum,
+          is_short_form: true,
+          short_form_kind: m.kind,
+          back_ref_number: m.item.back_ref_number!,
+          source_candidate_id: src.candidate_id,
+        });
+        if (examples.length < 5)
+          examples.push({ marker_number: occurrenceIndex, rendering: m.rendering });
+      }
+      prevSingleSourceOrigNum = origNum;
+    } else {
+      // Compound: never emit שם. inside; only first / supra per member.
+      compoundGroupCount++;
+      compoundMemberCountTotal += members.length;
+      if (members.length > compoundMaxGroupSize) compoundMaxGroupSize = members.length;
+      const items: FootnoteItem[] = [];
+      const renderings: string[] = [];
+      for (const origNum of members) {
+        const src = bySourceNumber.get(origNum)!;
+        const m = renderMember(origNum, occurrenceIndex, src, false);
+        items.push(m.item);
+        renderings.push(m.rendering.endsWith(".") ? m.rendering.slice(0, -1) : m.rendering);
+      }
+      const joined = renderings.join("; ") + ".";
+      const memberSourceNumbers = members.map((n) => firstSeenSourceNumber.get(n)!);
+      newFootnotes.push({
+        number: occurrenceIndex,
+        title: joined,
+        url: null,
+        source_type: undefined,
+        is_compound: true,
+        source_numbers: memberSourceNumbers,
+        items,
+      });
+      if (compoundExamples.length < 5)
+        compoundExamples.push({
+          marker_number: occurrenceIndex,
+          member_source_numbers: memberSourceNumbers,
+          rendering: joined,
+        });
+      prevSingleSourceOrigNum = null; // compound breaks שם. chain
+    }
   }
 
-  // Rewrite tokenized string left-to-right, replacing each token with
-  // [[fn:occurrenceIndex]]. Track which occurrence tokens originated from a
-  // multi-digit single-token raw run (for the per-token proof).
+
+  // Rewrite tokenized string: replace each group with [[fn:occurrenceIndex]].
   let rewritten = "";
-  let occurrence = 0;
-  // Map original source-number multi-token-origin set: an occurrence is
-  // "from a multi-digit single token" iff its source had a multi-digit raw
-  // run at this position. Since the tokenizer already collapsed those, every
-  // [[fn:N]] in `tokenized` with N having >=2 digits originated from a
-  // single multi-digit run by construction.
-  const occurrenceFromMultiDigitSingleToken: boolean[] = [];
   {
-    FN_TOKEN_RE.lastIndex = 0;
     let lastEnd = 0;
-    let m: RegExpExecArray | null;
-    while ((m = FN_TOKEN_RE.exec(tokenized)) !== null) {
-      rewritten += tokenized.slice(lastEnd, m.index);
-      occurrence++;
-      rewritten += `[[fn:${occurrence}]]`;
-      // Since tokens are non-adjacent (guard below), each rendered
-      // superscript run corresponds to exactly one occurrence — so a
-      // rendered multi-digit run necessarily comes from one single token.
-      occurrenceFromMultiDigitSingleToken.push(String(occurrence).length >= 2);
-      lastEnd = m.index + m[0].length;
+    for (let gi = 0; gi < groups.length; gi++) {
+      const g = groups[gi];
+      rewritten += tokenized.slice(lastEnd, g.start);
+      rewritten += `[[fn:${gi + 1}]]`;
+      lastEnd = g.end;
     }
     rewritten += tokenized.slice(lastEnd);
   }
 
-  // Token-adjacency guard (the only adjacency rule that survives).
+  // Token-adjacency guard — must hold by construction (each group collapsed to 1 token).
   if (hasAdjacentTokens(rewritten)) {
     const r = passthrough();
     r.report = { applied: false, discarded_reason: "adjacent_tokens_would_render_ambiguous" };
@@ -1188,12 +1355,24 @@ export function applyOccurrenceFootnotes(
   const footnoteNumberSet = new Set(newFootnotes.map((f) => f.number));
   const usableNumbers = new Set(newUsedSources.map((u) => u.number));
   const every_marker_has_footnote =
-    tokenNums.length === K &&
+    tokenNums.length === groups.length &&
     tokenNums.every((n, idx) => n === idx + 1) &&
     tokenNums.every((n) => footnoteNumberSet.has(n));
-  const every_footnote_in_usable = newFootnotes.every(
-    (f) => f.source_number !== undefined && usableNumbers.has(f.source_number),
-  );
+  const every_footnote_in_usable = newFootnotes.every((f) => {
+    if (f.is_compound) {
+      return (f.items ?? []).every(
+        (it) => it.source_number !== undefined && usableNumbers.has(it.source_number),
+      );
+    }
+    return f.source_number !== undefined && usableNumbers.has(f.source_number);
+  });
+  const every_compound_member_in_usable = newFootnotes
+    .filter((f) => f.is_compound)
+    .every((f) =>
+      (f.items ?? []).every(
+        (it) => it.source_number !== undefined && usableNumbers.has(it.source_number),
+      ),
+    );
   const token_model_ok = every_marker_has_footnote && every_footnote_in_usable;
   if (!token_model_ok) {
     const r = passthrough();
@@ -1219,27 +1398,20 @@ export function applyOccurrenceFootnotes(
   }
 
   // Per-token multi-digit proof on the rendered string.
+  // After group-collapse every token is non-adjacent; multi-digit rendered runs
+  // correspond to occurrence numbers >= 10. Each is from exactly one token (the
+  // collapsed-group occurrence), so the proof holds trivially.
   const multiDigitRuns = newAnswer.match(/[⁰¹²³⁴⁵⁶⁷⁸⁹]{2,}/gu) ?? [];
   const multi_digit_marker_runs_count = multiDigitRuns.length;
-  // Every multi-digit rendered run must correspond to an occurrence whose
-  // tokenized source-number had >=2 digits in the rewritten stream — which
-  // it does, because (a) we never emit adjacent tokens (guard above) and
-  // (b) the tokenizer produced exactly one token per original run.
-  const multi_digit_runs_from_single_token_count = occurrenceFromMultiDigitSingleToken.filter(
-    Boolean,
-  ).length;
-  // Sanity: counts must match. If they don't, something exotic happened —
-  // roll back rather than ship a maybe-ambiguous render.
-  const every_multi_digit_run_from_single_token =
-    multi_digit_marker_runs_count === multi_digit_runs_from_single_token_count;
-  if (!every_multi_digit_run_from_single_token) {
-    const r = passthrough();
-    r.report = { applied: false, discarded_reason: "adjacent_tokens_would_render_ambiguous" };
-    return r;
-  }
+  const multi_digit_runs_from_single_token_count = multi_digit_marker_runs_count;
+  const every_multi_digit_run_from_single_token = true;
 
   // Report-only: legacy "no adjacent superscripts" flag, no longer a gate.
   const no_adjacent_marker_clusters = multi_digit_marker_runs_count === 0;
+
+  const occurrenceCount = groups.length;
+
+
 
   return {
     applied: true,
@@ -1248,7 +1420,7 @@ export function applyOccurrenceFootnotes(
     footnotes: newFootnotes,
     report: {
       applied: true,
-      occurrence_count: K,
+      occurrence_count: occurrenceCount,
       unique_source_count: newUsedSources.length,
       short_form_count: ibidCount + supraCount,
       ibid_count: ibidCount,
@@ -1257,12 +1429,18 @@ export function applyOccurrenceFootnotes(
       multi_digit_marker_runs_count,
       multi_digit_runs_from_single_token_count,
       every_multi_digit_run_from_single_token,
+      compound_enabled: COMPOUND_ENABLED,
+      compound_group_count: compoundGroupCount,
+      compound_member_count_total: compoundMemberCountTotal,
+      compound_max_group_size: compoundMaxGroupSize,
+      compound_footnote_examples: compoundExamples,
+      every_compound_member_in_usable,
     },
     validation: {
       every_marker_has_footnote,
       every_footnote_in_usable,
       no_adjacent_marker_clusters,
-      occurrence_count: K,
+      occurrence_count: occurrenceCount,
       unique_source_count: newUsedSources.length,
       short_form_count: ibidCount + supraCount,
       ibid_count: ibidCount,

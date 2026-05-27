@@ -1,0 +1,43 @@
+{
+  "fixture_id": "L5",
+  "run_id": "21fdea9d-79ec-438f-9702-eb2280acd68d",
+  "qa_log_id": "63b99b39-a958-48e7-96b3-6db28facc594",
+  "total_ms": 129283,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "ambiguous_raw_superscript_run",
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "compound_enabled": null,
+    "compound_group_count": null,
+    "compound_member_count_total": null,
+    "compound_max_group_size": null,
+    "every_compound_member_in_usable": null,
+    "compound_footnote_examples": null
+  },
+  "persisted_compound_footnote_count": 0,
+  "persisted_compound_member_total": 0,
+  "source_set": {
+    "count": 9,
+    "unique_count_in_phase3": 9
+  },
+  "source_set_equal": true,
+  "drafter": {
+    "ok": true,
+    "footnote_count": 9,
+    "unique_source_count": 9
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 3871,
+  "adjacent_superscript_runs_in_body": 10,
+  "answer_tail": "תר של כוח שיפוטי.⁴\n\nלכן, בעת ניסוח עתירה או עמדת הגנה יש להעמיד בפני בית המשפט מסמכים המפרטים את תהליך השקלול, החלופות שנבדקו והנמקה עניינית — כדי לעגן את ההחלטה בתוך מתח הסבירות ולאפשר בית משפט להתנער מקביעה של אי־סבירות ללא צורך בהחלפה פורמלית של שיקול הדעת."
+}

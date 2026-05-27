@@ -1,0 +1,43 @@
+{
+  "fixture_id": "PROT",
+  "run_id": "3ce60062-2857-4a02-822e-941a545f545a",
+  "qa_log_id": "9943f135-289c-41ea-9a59-d120b119ec69",
+  "total_ms": 217001,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "ambiguous_raw_superscript_run",
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "compound_enabled": null,
+    "compound_group_count": null,
+    "compound_member_count_total": null,
+    "compound_max_group_size": null,
+    "every_compound_member_in_usable": null,
+    "compound_footnote_examples": null
+  },
+  "persisted_compound_footnote_count": 0,
+  "persisted_compound_member_total": 0,
+  "source_set": {
+    "count": 9,
+    "unique_count_in_phase3": 9
+  },
+  "source_set_equal": true,
+  "drafter": {
+    "ok": true,
+    "footnote_count": 9,
+    "unique_source_count": 9
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 3621,
+  "adjacent_superscript_runs_in_body": 13,
+  "answer_tail": "מבחינה משפטית־תיאורטית קיימת אפשרות להעמדת המדינה באחריות בגין כשל מערכתי באכיפת דמי חסות, אך ההיתכנות המעשית תלויה בהבחנה בין מחדל חקיקתי למחדל ביצועי, בכוח הראיות העובדתיות להראות סיכון וקשר סיבתי, וברצון ובעוצמת הפסיקה להרחיב את מרחב ההתערבות השיפוטית.״¹⁴\n\n"
+}

@@ -1,0 +1,84 @@
+{
+  "fixture_id": "L2",
+  "run_id": "cdab0298-2f06-4c4b-97f3-4ff293c131e8",
+  "qa_log_id": "f83daec3-f535-46b5-88df-236ef2f6a4a2",
+  "total_ms": 150428,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "occurrence_count": 9,
+    "unique_source_count": 5,
+    "short_form_count": 12,
+    "ibid_count": 0,
+    "supra_count": 12,
+    "compound_enabled": true,
+    "compound_group_count": 7,
+    "compound_member_count_total": 15,
+    "compound_max_group_size": 3,
+    "every_compound_member_in_usable": true,
+    "compound_footnote_examples": [
+      {
+        "rendering": "הבטחה מינהלית; הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?.",
+        "marker_number": 1,
+        "member_source_numbers": [
+          1,
+          2
+        ]
+      },
+      {
+        "rendering": "הבטחה מינהלית, לעיל ה״ש 1; הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע…, לעיל ה״ש 1.",
+        "marker_number": 2,
+        "member_source_numbers": [
+          1,
+          2
+        ]
+      },
+      {
+        "rendering": "הבטחה מינהלית, לעיל ה״ש 1; הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע…, לעיל ה״ש 1.",
+        "marker_number": 3,
+        "member_source_numbers": [
+          1,
+          2
+        ]
+      },
+      {
+        "rendering": "[PDF] The Doctrine of Legitimate Expectations and the Distinction between Reliance and Expectation Interests in the Law of Contract Remedies; ביקורת שיפוטית על רשויות אכיפת החוק: בין מינהלי לפלילי.",
+        "marker_number": 4,
+        "member_source_numbers": [
+          3,
+          4
+        ]
+      },
+      {
+        "rendering": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע…, לעיל ה״ש 1; הבטחה מינהלית, לעיל ה״ש 1.",
+        "marker_number": 6,
+        "member_source_numbers": [
+          2,
+          1
+        ]
+      }
+    ]
+  },
+  "persisted_compound_footnote_count": 7,
+  "persisted_compound_member_total": 15,
+  "source_set": {
+    "count": 5,
+    "unique_count_in_phase3": 5
+  },
+  "source_set_equal": true,
+  "drafter": {
+    "ok": true,
+    "footnote_count": 9,
+    "unique_source_count": 5
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 2513,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "ולי השירות הציבורי וסמכות הרשות.⁸\n\nהשלכות מעשיות קצרות: בקשה לאכיפת הבטחה מנהלית תדרוש הוכחה ממוקדת של ההתחייבות, של הסתמכות סבירה ושל נזק/פגיעה, ולרשות יהיו טיעונים מבוססים לנסיגה כשהיא תצביע על שינוי מדיניות, אינטרס ציבורי עליון, חוסר סמכות או הונאה/טעות.⁹\n\n"
+}

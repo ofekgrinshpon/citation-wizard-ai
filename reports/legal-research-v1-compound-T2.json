@@ -1,0 +1,79 @@
+{
+  "fixture_id": "T2",
+  "run_id": "c515dfd7-1537-47ea-8f57-1a0b7a2917a0",
+  "qa_log_id": "d65eaafe-f295-4fe7-9771-533e25304134",
+  "total_ms": 127855,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "occurrence_count": 14,
+    "unique_source_count": 6,
+    "short_form_count": 15,
+    "ibid_count": 1,
+    "supra_count": 14,
+    "compound_enabled": true,
+    "compound_group_count": 4,
+    "compound_member_count_total": 11,
+    "compound_max_group_size": 5,
+    "every_compound_member_in_usable": true,
+    "compound_footnote_examples": [
+      {
+        "rendering": "גלגול שלישי - גבולות הלכת חניון חיפה, לעיל ה״ש 2; בקשת רשות ערעור — הלכה ואין מורין כן, לעיל ה״ש 5.",
+        "marker_number": 7,
+        "member_source_numbers": [
+          2,
+          3
+        ]
+      },
+      {
+        "rendering": "רע\"פ 9215/20 שבחיה מזרחי נ׳ מדינת ישראל החלטה (30.12.2020); ע\"א 206/20 טבע תעשיות פרמצבטיות בע\"מ נ׳ טי.אנד.אם גושן פסק דין (13.12.2021).",
+        "marker_number": 8,
+        "member_source_numbers": [
+          4,
+          5
+        ]
+      },
+      {
+        "rendering": "בקשת רשות ערעור בגלגול שלישי - דוגמת טיעון/מסמך…, לעיל ה״ש 9; בקשת רשות ערעור — הלכה ואין מורין כן, לעיל ה״ש 5.",
+        "marker_number": 11,
+        "member_source_numbers": [
+          6,
+          3
+        ]
+      },
+      {
+        "rendering": "פסק דין בתיק רע\"א 3065/21, לעיל ה״ש 1; גלגול שלישי - גבולות הלכת חניון חיפה, לעיל ה״ש 2; בקשת רשות ערעור — הלכה ואין מורין כן, לעיל ה״ש 5; בקשת רשות ערעור בגלגול שלישי - דוגמת טיעון/מסמך…, לעיל ה״ש 9; ע\"א 206/20 טבע תעשיות פרמצבטיות בע\"מ נ׳ טי.אנד.אם גושן פסק דין (13.12.2021), לעיל ה״ש 8.",
+        "marker_number": 14,
+        "member_source_numbers": [
+          1,
+          2,
+          3,
+          6,
+          5
+        ]
+      }
+    ]
+  },
+  "persisted_compound_footnote_count": 4,
+  "persisted_compound_member_total": 11,
+  "source_set": {
+    "count": 6,
+    "unique_count_in_phase3": 6
+  },
+  "source_set_equal": true,
+  "drafter": {
+    "ok": true,
+    "footnote_count": 14,
+    "unique_source_count": 6
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 2768,
+  "adjacent_superscript_runs_in_body": 5,
+  "answer_tail": "ראש ובראשונה בהצגת **שאלה משפטית/ציבורית מהותית** או בעוול מהותי שיחייב בחינה נוספת; לכל טענה משנית (חילוקי דעות, סיכוי להשפעה וכו') יש להציג ראיות ותימוכין נקודתיים, אך יש לזכור שהסף לפתיחת גלגול שלישי גבוה והחלטת פתיחה נשענת על שיקול דעת מצומצם של העליון.¹⁴\n"
+}

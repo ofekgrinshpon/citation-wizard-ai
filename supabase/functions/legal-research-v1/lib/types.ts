@@ -154,6 +154,17 @@ export interface UsedSource {
   origin: Origin | "user_upload";
 }
 
+export interface FootnoteItem {
+  source_number: number;
+  title: string;
+  url: string | null;
+  source_type?: string;
+  is_short_form?: boolean;
+  short_form_kind?: "ibid" | "supra";
+  back_ref_number?: number;
+  source_candidate_id?: string;
+}
+
 export interface Footnote {
   number: number;
   title: string;
@@ -165,6 +176,10 @@ export interface Footnote {
   short_form_kind?: "ibid" | "supra";
   back_ref_number?: number;        // first-occurrence footnote number of the source
   source_candidate_id?: string;    // debug only, never rendered
+  // Phase 3 v3 — compound footnote (same-position citation cluster).
+  is_compound?: boolean;
+  source_numbers?: number[];
+  items?: FootnoteItem[];
 }
 
 // ─── Phase C.1: Atomic marker representation ──────────────────────────────
@@ -236,12 +251,24 @@ export interface CitationCleanupReport {
       | "disabled_by_env"
       | "ambiguous_raw_superscript_run"
       | "adjacent_tokens_would_render_ambiguous"
-      | "token_leak_detected";
+      | "token_leak_detected"
+      | "compound_group_too_large";
     cluster_examples?: string[];
     ambiguous_run_samples?: Array<{ run: string; context: string; candidates: string[] }>;
     multi_digit_marker_runs_count?: number;
     multi_digit_runs_from_single_token_count?: number;
     every_multi_digit_run_from_single_token?: boolean;
+    // Phase 3 v3 — compound footnote telemetry.
+    compound_enabled?: boolean;
+    compound_group_count?: number;
+    compound_member_count_total?: number;
+    compound_max_group_size?: number;
+    compound_footnote_examples?: Array<{
+      marker_number: number;
+      member_source_numbers: number[];
+      rendering: string;
+    }>;
+    every_compound_member_in_usable?: boolean;
   };
 }
 

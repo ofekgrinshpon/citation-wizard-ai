@@ -154,25 +154,67 @@ Deno.test("phase3: A,A,B,A → ibid at 2, full B at 3, supra at 4", () => {
   assertEquals(r.footnotes[3].back_ref_number, 1);
 });
 
-Deno.test("phase3 v2: adjacent run ²³ with S={2,3} → tokenizes as split → adjacent token skip", () => {
+Deno.test("phase3 v3: adjacent run ²³ → compound footnote (one body marker)", () => {
   const answer = "אחריות²³ ועוד.";
   const used = [src(2, "X"), src(3, "Y")];
   const r = applyOccurrenceFootnotes(answer, used, [fnUnique(2, "X"), fnUnique(3, "Y")]);
-  assertEquals(r.applied, false);
-  assertEquals(r.report.discarded_reason, "adjacent_tokens_would_render_ambiguous");
-  assertEquals(r.answer, answer);
+  assertEquals(r.applied, true);
+  // One body marker, no adjacent superscripts.
+  assertEquals(r.answer, "אחריות¹ ועוד.");
+  assertEquals(r.footnotes.length, 1);
+  assertEquals(r.footnotes[0].is_compound, true);
+  assertEquals(r.footnotes[0].source_numbers, [1, 2]);
+  assertEquals((r.footnotes[0].items ?? []).length, 2);
+  assertEquals(r.footnotes[0].title, "X; Y.");
+  assertEquals(r.report.compound_group_count, 1);
 });
 
-Deno.test("phase3 v2: adjacent run ¹²³ with S={1,2,3} → unique split → adjacent token skip", () => {
+Deno.test("phase3 v3: adjacent run ¹²³ → compound footnote with 3 members", () => {
   const answer = "ראיות¹²³ במצטבר.";
-  const used = [src(1, "X"), src(2, "Y"), src(3, "Z")];
+  const used = [src(1, "A"), src(2, "B"), src(3, "C")];
   const r = applyOccurrenceFootnotes(answer, used, [
-    fnUnique(1, "X"),
-    fnUnique(2, "Y"),
-    fnUnique(3, "Z"),
+    fnUnique(1, "A"),
+    fnUnique(2, "B"),
+    fnUnique(3, "C"),
   ]);
-  assertEquals(r.applied, false);
-  assertEquals(r.report.discarded_reason, "adjacent_tokens_would_render_ambiguous");
+  assertEquals(r.applied, true);
+  assertEquals(r.answer, "ראיות¹ במצטבר.");
+  assertEquals(r.footnotes.length, 1);
+  assertEquals(r.footnotes[0].is_compound, true);
+  assertEquals(r.footnotes[0].title, "A; B; C.");
+  assertEquals((r.footnotes[0].items ?? []).length, 3);
+  assertEquals(r.report.compound_member_count_total, 3);
+  assertEquals(r.report.compound_max_group_size, 3);
+  // No raw [[fn:]] leak.
+  assertEquals(/\[\[fn:/.test(r.answer), false);
+});
+
+Deno.test("phase3 v3: compound then later single of A → supra (לעיל ה״ש 1)", () => {
+  const answer = "אחריות¹² ובהמשך אחריות¹.";
+  const used = [src(1, "A"), src(2, "B")];
+  const r = applyOccurrenceFootnotes(answer, used, [fnUnique(1, "A"), fnUnique(2, "B")]);
+  assertEquals(r.applied, true);
+  // Body: one marker for compound, then one for the later single. So ¹ then ².
+  assertEquals(r.answer, "אחריות¹ ובהמשך אחריות².");
+  assertEquals(r.footnotes[0].is_compound, true);
+  assertEquals(r.footnotes[1].is_compound, undefined);
+  assertEquals(r.footnotes[1].short_form_kind, "supra");
+  assertEquals(r.footnotes[1].back_ref_number, 1);
+});
+
+Deno.test("phase3 v3: compound never emits שם. inside (uses full or supra per member)", () => {
+  // First a single A, then a compound containing A+B. Inside compound, A must
+  // be supra (לעיל ה״ש 1), never שם, because previous footnote was a single.
+  const answer = "ראשון¹ אחר־כך¹².";
+  const used = [src(1, "A"), src(2, "B")];
+  const r = applyOccurrenceFootnotes(answer, used, [fnUnique(1, "A"), fnUnique(2, "B")]);
+  assertEquals(r.applied, true);
+  assertEquals(r.answer, "ראשון¹ אחר־כך².");
+  assertEquals(r.footnotes[1].is_compound, true);
+  const items = r.footnotes[1].items ?? [];
+  assertEquals(items[0].short_form_kind, "supra");
+  assertEquals(items[0].back_ref_number, 1);
+  assertEquals(items[1].is_short_form, false);
 });
 
 Deno.test("phase3 v2: ²⁴⁵ with no decode (245∉S, no split) → ambiguous skip", () => {

@@ -1,0 +1,885 @@
+{
+  "phase": "phase3-v3-compound",
+  "ran": 13,
+  "errors": 0,
+  "hard_gates_all_pass": true,
+  "phase3_applied_count": 9,
+  "phase3_applied_fixtures": [
+    "T2",
+    "T3",
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L6",
+    "RPT1",
+    "RPT3"
+  ],
+  "compound_groups_across_applied": 43,
+  "compound_members_across_applied": 96,
+  "every_compound_member_in_usable_all": true,
+  "source_set_equality_all": true,
+  "total_token_leaks": 0,
+  "applied_with_adjacent_body_markers": [
+    "T2",
+    "T3",
+    "L3",
+    "L6",
+    "RPT1",
+    "RPT3"
+  ],
+  "skip_reasons": {
+    "ambiguous_raw_superscript_run": 4,
+    "applied": 9
+  },
+  "fixtures": [
+    {
+      "fixture_id": "T1",
+      "run_id": "56027466-a277-40ad-864b-4e93562915cc",
+      "qa_log_id": "d7ff9704-246a-460d-89c6-b4fa6a085c54",
+      "total_ms": 145608,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "ambiguous_raw_superscript_run",
+        "occurrence_count": null,
+        "unique_source_count": null,
+        "short_form_count": null,
+        "ibid_count": null,
+        "supra_count": null,
+        "compound_enabled": null,
+        "compound_group_count": null,
+        "compound_member_count_total": null,
+        "compound_max_group_size": null,
+        "every_compound_member_in_usable": null,
+        "compound_footnote_examples": null
+      },
+      "persisted_compound_footnote_count": 0,
+      "persisted_compound_member_total": 0,
+      "source_set": {
+        "count": 9,
+        "unique_count_in_phase3": 9
+      },
+      "source_set_equal": true,
+      "drafter": {
+        "ok": true,
+        "footnote_count": 9,
+        "unique_source_count": 9
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 3493,
+      "adjacent_superscript_runs_in_body": 7,
+      "answer_tail": "שי: משמעות הדברים היא פרקטית וברורה — מי ששואף לקבוע דיני פרשנות נוחים בעסקאותיו יעשה זאת באמצעות לשון מדויקת, ניסוח מונחה סיכון ואינטגרציה ברורה; מנגד, בבתי המשפט ממשיך להיות איזון—הלשון מובילה אך אינה אוטומטית סופית כשקיימת סתירה או חוסר מהותי שנדרש למלא.⁶² "
+    },
+    {
+      "fixture_id": "T2",
+      "run_id": "c515dfd7-1537-47ea-8f57-1a0b7a2917a0",
+      "qa_log_id": "d65eaafe-f295-4fe7-9771-533e25304134",
+      "total_ms": 127855,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "occurrence_count": 14,
+        "unique_source_count": 6,
+        "short_form_count": 15,
+        "ibid_count": 1,
+        "supra_count": 14,
+        "compound_enabled": true,
+        "compound_group_count": 4,
+        "compound_member_count_total": 11,
+        "compound_max_group_size": 5,
+        "every_compound_member_in_usable": true,
+        "compound_footnote_examples": [
+          {
+            "rendering": "גלגול שלישי - גבולות הלכת חניון חיפה, לעיל ה״ש 2; בקשת רשות ערעור — הלכה ואין מורין כן, לעיל ה״ש 5.",
+            "marker_number": 7,
+            "member_source_numbers": [
+              2,
+              3
+            ]
+          },
+          {
+            "rendering": "רע\"פ 9215/20 שבחיה מזרחי נ׳ מדינת ישראל החלטה (30.12.2020); ע\"א 206/20 טבע תעשיות פרמצבטיות בע\"מ נ׳ טי.אנד.אם גושן פסק דין (13.12.2021).",
+            "marker_number": 8,
+            "member_source_numbers": [
+              4,
+              5
+            ]
+          },
+          {
+            "rendering": "בקשת רשות ערעור בגלגול שלישי - דוגמת טיעון/מסמך…, לעיל ה״ש 9; בקשת רשות ערעור — הלכה ואין מורין כן, לעיל ה״ש 5.",
+            "marker_number": 11,
+            "member_source_numbers": [
+              6,
+              3
+            ]
+          },
+          {
+            "rendering": "פסק דין בתיק רע\"א 3065/21, לעיל ה״ש 1; גלגול שלישי - גבולות הלכת חניון חיפה, לעיל ה״ש 2; בקשת רשות ערעור — הלכה ואין מורין כן, לעיל ה״ש 5; בקשת רשות ערעור בגלגול שלישי - דוגמת טיעון/מסמך…, לעיל ה״ש 9; ע\"א 206/20 טבע תעשיות פרמצבטיות בע\"מ נ׳ טי.אנד.אם גושן פסק דין (13.12.2021), לעיל ה״ש 8.",
+            "marker_number": 14,
+            "member_source_numbers": [
+              1,
+              2,
+              3,
+              6,
+              5
+            ]
+          }
+        ]
+      },
+      "persisted_compound_footnote_count": 4,
+      "persisted_compound_member_total": 11,
+      "source_set": {
+        "count": 6,
+        "unique_count_in_phase3": 6
+      },
+      "source_set_equal": true,
+      "drafter": {
+        "ok": true,
+        "footnote_count": 14,
+        "unique_source_count": 6
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 2768,
+      "adjacent_superscript_runs_in_body": 5,
+      "answer_tail": "ראש ובראשונה בהצגת **שאלה משפטית/ציבורית מהותית** או בעוול מהותי שיחייב בחינה נוספת; לכל טענה משנית (חילוקי דעות, סיכוי להשפעה וכו') יש להציג ראיות ותימוכין נקודתיים, אך יש לזכור שהסף לפתיחת גלגול שלישי גבוה והחלטת פתיחה נשענת על שיקול דעת מצומצם של העליון.¹⁴\n"
+    },
+    {
+      "fixture_id": "T3",
+      "run_id": "b3e49b62-07e2-4974-a504-e3597f0c8c60",
+      "qa_log_id": "50f16a62-94e9-4ec7-a836-66929fef198a",
+      "total_ms": 211027,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "occurrence_count": 10,
+        "unique_source_count": 5,
+        "short_form_count": 7,
+        "ibid_count": 0,
+        "supra_count": 7,
+        "compound_enabled": true,
+        "compound_group_count": 2,
+        "compound_member_count_total": 4,
+        "compound_max_group_size": 2,
+        "every_compound_member_in_usable": true,
+        "compound_footnote_examples": [
+          {
+            "rendering": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי, לעיל ה״ש 2; חוק־יסוד: כבוד האדם וחירותו וחוק־יסוד: חופש העיסוק, לעיל ה״ש 4.",
+            "marker_number": 7,
+            "member_source_numbers": [
+              2,
+              4
+            ]
+          },
+          {
+            "rendering": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי, לעיל ה״ש 2; חוק־יסוד: כבוד האדם וחירותו וחוק־יסוד: חופש העיסוק, לעיל ה״ש 4.",
+            "marker_number": 10,
+            "member_source_numbers": [
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "persisted_compound_footnote_count": 2,
+      "persisted_compound_member_total": 4,
+      "source_set": {
+        "count": 5,
+        "unique_count_in_phase3": 5
+      },
+      "source_set_equal": true,
+      "drafter": {
+        "ok": true,
+        "footnote_count": 10,
+        "unique_source_count": 5
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 2032,
+      "adjacent_superscript_runs_in_body": 1,
+      "answer_tail": "ית בזכות עצמה.⁹\n\nהשלכה מעשית קצרה: כדי להצדיק הגבלה חוקתית יש להראות שההגבלה מבוססת על חוק מתאים, משרתת מטרה ראויה, עומדת במבחני ההכשירות, ההכרחיות והאיזון, ואינה פוגעת במהות הזכות. כישלון בכל אחד מהיסודות עלול להביא לביטול ההגבלה כחריגה מהגנת החוק היסודית.¹⁰\n"
+    },
+    {
+      "fixture_id": "PROT",
+      "run_id": "3ce60062-2857-4a02-822e-941a545f545a",
+      "qa_log_id": "9943f135-289c-41ea-9a59-d120b119ec69",
+      "total_ms": 217001,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "ambiguous_raw_superscript_run",
+        "occurrence_count": null,
+        "unique_source_count": null,
+        "short_form_count": null,
+        "ibid_count": null,
+        "supra_count": null,
+        "compound_enabled": null,
+        "compound_group_count": null,
+        "compound_member_count_total": null,
+        "compound_max_group_size": null,
+        "every_compound_member_in_usable": null,
+        "compound_footnote_examples": null
+      },
+      "persisted_compound_footnote_count": 0,
+      "persisted_compound_member_total": 0,
+      "source_set": {
+        "count": 9,
+        "unique_count_in_phase3": 9
+      },
+      "source_set_equal": true,
+      "drafter": {
+        "ok": true,
+        "footnote_count": 9,
+        "unique_source_count": 9
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 3621,
+      "adjacent_superscript_runs_in_body": 13,
+      "answer_tail": "מבחינה משפטית־תיאורטית קיימת אפשרות להעמדת המדינה באחריות בגין כשל מערכתי באכיפת דמי חסות, אך ההיתכנות המעשית תלויה בהבחנה בין מחדל חקיקתי למחדל ביצועי, בכוח הראיות העובדתיות להראות סיכון וקשר סיבתי, וברצון ובעוצמת הפסיקה להרחיב את מרחב ההתערבות השיפוטית.״¹⁴\n\n"
+    },
+    {
+      "fixture_id": "L1",
+      "run_id": "1f1115c2-4dd6-45c0-aaa0-6646b280833e",
+      "qa_log_id": "d85d292b-8036-4d88-abf4-48ffed4a787f",
+      "total_ms": 168019,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "occurrence_count": 5,
+        "unique_source_count": 7,
+        "short_form_count": 5,
+        "ibid_count": 0,
+        "supra_count": 5,
+        "compound_enabled": true,
+        "compound_group_count": 4,
+        "compound_member_count_total": 11,
+        "compound_max_group_size": 3,
+        "every_compound_member_in_usable": true,
+        "compound_footnote_examples": [
+          {
+            "rendering": "בימ\"ש המחוזי ת\"א, השופטת אירית קלמן ברום: החלטה…, לעיל ה״ש 1; פסק-דין בתיק ע\"א 8954/11.",
+            "marker_number": 2,
+            "member_source_numbers": [
+              1,
+              2
+            ]
+          },
+          {
+            "rendering": "Irreparable Harm: A Flexible Standard for Injunctions; The Irreparable Harm Requirement in Preliminary Injunctions; צווי מניעה זמניים ודרישת הנזק הבלתי הפיך במשפט הישראלי.",
+            "marker_number": 3,
+            "member_source_numbers": [
+              3,
+              4,
+              5
+            ]
+          },
+          {
+            "rendering": "פסק-דין בתיק ע\"א 8954/11, לעיל ה״ש 2; רע\"א 6557/20 ערוץ 10 החדש בע\"מ נ׳ שרת התרבות והספורט פסק דין (02.08.2020); נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו).",
+            "marker_number": 4,
+            "member_source_numbers": [
+              2,
+              6,
+              7
+            ]
+          },
+          {
+            "rendering": "בימ\"ש המחוזי ת\"א, השופטת אירית קלמן ברום: החלטה…, לעיל ה״ש 1; רע\"א 6557/20 ערוץ 10 החדש בע\"מ נ׳ שרת התרבות והספורט פסק דין (02.08.2020), לעיל ה״ש 4; נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית…, לעיל ה״ש 4.",
+            "marker_number": 5,
+            "member_source_numbers": [
+              1,
+              6,
+              7
+            ]
+          }
+        ]
+      },
+      "persisted_compound_footnote_count": 4,
+      "persisted_compound_member_total": 11,
+      "source_set": {
+        "count": 7,
+        "unique_count_in_phase3": 7
+      },
+      "source_set_equal": true,
+      "drafter": {
+        "ok": true,
+        "footnote_count": 5,
+        "unique_source_count": 7
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 1751,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "ערך להוכחת שלושת היסודות בצורה ממוקדת — עובדות ותעודות התומכות בהופעה הראשונית, תיעוד ברור של הנזק הבלתי הפיך והערכת שקלול ההטבות והנזקים (כולל שיקולים ציבוריים). במקביל, יש לצפות כי בית המשפט ישקול הטלת תנאים וערבויות ככל שיידרש כדי לשמור על איזון ומידתיות.\n\n"
+    },
+    {
+      "fixture_id": "L2",
+      "run_id": "cdab0298-2f06-4c4b-97f3-4ff293c131e8",
+      "qa_log_id": "f83daec3-f535-46b5-88df-236ef2f6a4a2",
+      "total_ms": 150428,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "occurrence_count": 9,
+        "unique_source_count": 5,
+        "short_form_count": 12,
+        "ibid_count": 0,
+        "supra_count": 12,
+        "compound_enabled": true,
+        "compound_group_count": 7,
+        "compound_member_count_total": 15,
+        "compound_max_group_size": 3,
+        "every_compound_member_in_usable": true,
+        "compound_footnote_examples": [
+          {
+            "rendering": "הבטחה מינהלית; הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?.",
+            "marker_number": 1,
+            "member_source_numbers": [
+              1,
+              2
+            ]
+          },
+          {
+            "rendering": "הבטחה מינהלית, לעיל ה״ש 1; הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע…, לעיל ה״ש 1.",
+            "marker_number": 2,
+            "member_source_numbers": [
+              1,
+              2
+            ]
+          },
+          {
+            "rendering": "הבטחה מינהלית, לעיל ה״ש 1; הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע…, לעיל ה״ש 1.",
+            "marker_number": 3,
+            "member_source_numbers": [
+              1,
+              2
+            ]
+          },
+          {
+            "rendering": "[PDF] The Doctrine of Legitimate Expectations and the Distinction between Reliance and Expectation Interests in the Law of Contract Remedies; ביקורת שיפוטית על רשויות אכיפת החוק: בין מינהלי לפלילי.",
+            "marker_number": 4,
+            "member_source_numbers": [
+              3,
+              4
+            ]
+          },
+          {
+            "rendering": "הבטחה מנהלית: לידתה, תולדותיה, אחריתה — אך מדוע…, לעיל ה״ש 1; הבטחה מינהלית, לעיל ה״ש 1.",
+            "marker_number": 6,
+            "member_source_numbers": [
+              2,
+              1
+            ]
+          }
+        ]
+      },
+      "persisted_compound_footnote_count": 7,
+      "persisted_compound_member_total": 15,
+      "source_set": {
+        "count": 5,
+        "unique_count_in_phase3": 5
+      },
+      "source_set_equal": true,
+      "drafter": {
+        "ok": true,
+        "footnote_count": 9,
+        "unique_source_count": 5
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 2513,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "ולי השירות הציבורי וסמכות הרשות.⁸\n\nהשלכות מעשיות קצרות: בקשה לאכיפת הבטחה מנהלית תדרוש הוכחה ממוקדת של ההתחייבות, של הסתמכות סבירה ושל נזק/פגיעה, ולרשות יהיו טיעונים מבוססים לנסיגה כשהיא תצביע על שינוי מדיניות, אינטרס ציבורי עליון, חוסר סמכות או הונאה/טעות.⁹\n\n"
+    },
+    {
+      "fixture_id": "L3",
+      "run_id": "d9e98195-a64e-4e71-a65a-97f711955f21",
+      "qa_log_id": "83daae34-27cd-4979-9882-56c7a8c8dd48",
+      "total_ms": 180857,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "occurrence_count": 13,
+        "unique_source_count": 6,
+        "short_form_count": 17,
+        "ibid_count": 1,
+        "supra_count": 16,
+        "compound_enabled": true,
+        "compound_group_count": 8,
+        "compound_member_count_total": 18,
+        "compound_max_group_size": 3,
+        "every_compound_member_in_usable": true,
+        "compound_footnote_examples": [
+          {
+            "rendering": "פיצוי מוסכם – סוגיות והיבטים; The Penalty Clause in Israeli Contract Law.",
+            "marker_number": 3,
+            "member_source_numbers": [
+              2,
+              3
+            ]
+          },
+          {
+            "rendering": "פיצוי מוסכם – סוגיות והיבטים, לעיל ה״ש 3; The Penalty Clause in Israeli Contract Law, לעיל ה״ש 3.",
+            "marker_number": 4,
+            "member_source_numbers": [
+              2,
+              3
+            ]
+          },
+          {
+            "rendering": "פיצוי מוסכם – סוגיות והיבטים, לעיל ה״ש 3; דיני חוזים.",
+            "marker_number": 6,
+            "member_source_numbers": [
+              2,
+              5
+            ]
+          },
+          {
+            "rendering": "חוק החוזים (תרופות בשל הפרת חוזה), לעיל ה״ש 1; פיצוי מוסכם – סוגיות והיבטים, לעיל ה״ש 3; דיני חוזים, לעיל ה״ש 6.",
+            "marker_number": 7,
+            "member_source_numbers": [
+              1,
+              2,
+              5
+            ]
+          },
+          {
+            "rendering": "פיצוי מוסכם – סוגיות והיבטים, לעיל ה״ש 3; The Penalty Clause in Israeli Contract Law, לעיל ה״ש 3.",
+            "marker_number": 8,
+            "member_source_numbers": [
+              2,
+              3
+            ]
+          }
+        ]
+      },
+      "persisted_compound_footnote_count": 8,
+      "persisted_compound_member_total": 18,
+      "source_set": {
+        "count": 6,
+        "unique_count_in_phase3": 6
+      },
+      "source_set_equal": true,
+      "drafter": {
+        "ok": true,
+        "footnote_count": 13,
+        "unique_source_count": 6
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 2866,
+      "adjacent_superscript_runs_in_body": 4,
+      "answer_tail": "אלא של כוונת ענישה או חוסר איזון.¹²\n\nמסקנה קצרה: הסייג הסמכותי של סעיף 15 הוא יחס הסבירות בינתחומי — בית המשפט יפחית פיצוי מוסכם רק כאשר ימצא שהוא נקבע ללא יחס סביר לנזק הצפוי במועד כריתת החוזה, ובדרך כלל ימיר את הסכום המוסכם בסכום שנראה סביר בנסיבות העניין.¹³"
+    },
+    {
+      "fixture_id": "L4",
+      "run_id": "243528a3-32cd-458f-8c73-01bec40c8585",
+      "qa_log_id": "da2f81d2-c538-4586-a711-fe873b2c3f66",
+      "total_ms": 123216,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "occurrence_count": 9,
+        "unique_source_count": 6,
+        "short_form_count": 9,
+        "ibid_count": 1,
+        "supra_count": 8,
+        "compound_enabled": true,
+        "compound_group_count": 5,
+        "compound_member_count_total": 11,
+        "compound_max_group_size": 3,
+        "every_compound_member_in_usable": true,
+        "compound_footnote_examples": [
+          {
+            "rendering": "רע\"א 2401/21 סאמי ג'אעוני נ׳ נחלת שמעון בע\"מ פסק דין; ע\"א 4460-22 תרצה אביתר נ׳ מדינת ישראל המרכז לגביית קנסות, אגרות והוצאות פסק דין.",
+            "marker_number": 3,
+            "member_source_numbers": [
+              2,
+              3
+            ]
+          },
+          {
+            "rendering": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה…, לעיל ה״ש 1; רע\"א 7162/20 לובה יונתוב נ׳ התחנה המרכזית החדשה בתל אביב יפו בע\"מ החלטה (13.08.2020).",
+            "marker_number": 5,
+            "member_source_numbers": [
+              1,
+              4
+            ]
+          },
+          {
+            "rendering": "מעשה בית דין בהליך אזרחי; ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה…, לעיל ה״ש 1.",
+            "marker_number": 6,
+            "member_source_numbers": [
+              5,
+              1
+            ]
+          },
+          {
+            "rendering": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה…, לעיל ה״ש 1; רע\"א 2401/21 סאמי ג'אעוני נ׳ נחלת שמעון בע\"מ פסק דין, לעיל ה״ש 3; החלטה בתיק ע\"א 4576/17.",
+            "marker_number": 7,
+            "member_source_numbers": [
+              1,
+              2,
+              6
+            ]
+          },
+          {
+            "rendering": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה…, לעיל ה״ש 1; מעשה בית דין בהליך אזרחי, לעיל ה״ש 6.",
+            "marker_number": 8,
+            "member_source_numbers": [
+              1,
+              5
+            ]
+          }
+        ]
+      },
+      "persisted_compound_footnote_count": 5,
+      "persisted_compound_member_total": 11,
+      "source_set": {
+        "count": 6,
+        "unique_count_in_phase3": 6
+      },
+      "source_set_equal": true,
+      "drafter": {
+        "ok": true,
+        "footnote_count": 9,
+        "unique_source_count": 6
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 2556,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "נה שומרת על סופיות הדיון בכך שהיא מונעת הכרעה חוזרת בנקודות שנקבעו כבוטחות; עם זאת היא תלויה בבדיקת יסודות מיוחדים (זהות פלוגתא, הכרעה חיובית וחיונית, חלוטות, זהות צדדים/חליפים והזדמנות להתדיין) והמנה השיפוטית משקללת לעתים שיקולי צדק והוכחות חדשות בטרם תחילתו."
+    },
+    {
+      "fixture_id": "L5",
+      "run_id": "21fdea9d-79ec-438f-9702-eb2280acd68d",
+      "qa_log_id": "63b99b39-a958-48e7-96b3-6db28facc594",
+      "total_ms": 129283,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "ambiguous_raw_superscript_run",
+        "occurrence_count": null,
+        "unique_source_count": null,
+        "short_form_count": null,
+        "ibid_count": null,
+        "supra_count": null,
+        "compound_enabled": null,
+        "compound_group_count": null,
+        "compound_member_count_total": null,
+        "compound_max_group_size": null,
+        "every_compound_member_in_usable": null,
+        "compound_footnote_examples": null
+      },
+      "persisted_compound_footnote_count": 0,
+      "persisted_compound_member_total": 0,
+      "source_set": {
+        "count": 9,
+        "unique_count_in_phase3": 9
+      },
+      "source_set_equal": true,
+      "drafter": {
+        "ok": true,
+        "footnote_count": 9,
+        "unique_source_count": 9
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 3871,
+      "adjacent_superscript_runs_in_body": 10,
+      "answer_tail": "תר של כוח שיפוטי.⁴\n\nלכן, בעת ניסוח עתירה או עמדת הגנה יש להעמיד בפני בית המשפט מסמכים המפרטים את תהליך השקלול, החלופות שנבדקו והנמקה עניינית — כדי לעגן את ההחלטה בתוך מתח הסבירות ולאפשר בית משפט להתנער מקביעה של אי־סבירות ללא צורך בהחלפה פורמלית של שיקול הדעת."
+    },
+    {
+      "fixture_id": "L6",
+      "run_id": "85aa8e2b-7c2a-46a2-a7d2-5fe23c0c6f34",
+      "qa_log_id": "03e9fcbf-61fb-4df0-b326-ff7f65ea41e5",
+      "total_ms": 179347,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "occurrence_count": 11,
+        "unique_source_count": 8,
+        "short_form_count": 12,
+        "ibid_count": 0,
+        "supra_count": 12,
+        "compound_enabled": true,
+        "compound_group_count": 9,
+        "compound_member_count_total": 18,
+        "compound_max_group_size": 2,
+        "every_compound_member_in_usable": true,
+        "compound_footnote_examples": [
+          {
+            "rendering": "הבטחה מינהלית*; על כללים והצדקות: הבעיה הקשה.",
+            "marker_number": 1,
+            "member_source_numbers": [
+              1,
+              2
+            ]
+          },
+          {
+            "rendering": "הבטחה מינהלית*, לעיל ה״ש 1; הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?.",
+            "marker_number": 2,
+            "member_source_numbers": [
+              1,
+              3
+            ]
+          },
+          {
+            "rendering": "על כללים והצדקות: הבעיה הקשה, לעיל ה״ש 1; מסמך רקע בנושא: הרשויות המקומיות: בעיות מרכזיות וחלופות לפתרונן.",
+            "marker_number": 3,
+            "member_source_numbers": [
+              2,
+              4
+            ]
+          },
+          {
+            "rendering": "מסמך רקע בנושא: הרשויות המקומיות: בעיות מרכזיות וחלופות…, לעיל ה״ש 3; על כללים והצדקות: הבעיה הקשה, לעיל ה״ש 1.",
+            "marker_number": 4,
+            "member_source_numbers": [
+              4,
+              2
+            ]
+          },
+          {
+            "rendering": "פסק-דין בתיק ע\"א 8422/17; הגנת ההסתמכות במשפט המנהלי, לעיל ה״ש 5.",
+            "marker_number": 6,
+            "member_source_numbers": [
+              6,
+              5
+            ]
+          }
+        ]
+      },
+      "persisted_compound_footnote_count": 9,
+      "persisted_compound_member_total": 18,
+      "source_set": {
+        "count": 8,
+        "unique_count_in_phase3": 8
+      },
+      "source_set_equal": true,
+      "drafter": {
+        "ok": true,
+        "footnote_count": 11,
+        "unique_source_count": 8
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 2837,
+      "adjacent_superscript_runs_in_body": 2,
+      "answer_tail": " סביר לדרוש הבהרות ולשמר אינטרס הציבור דרך בדיקת חלופות — כדי למקסם סיכוי לאכיפה פרוצדורלית או לפיצוי הסתמכות. אם הרשות טוענת לחוסר סמכות או לאינטרס ציבורי חדש — היא נדרשת להצגה עניינית, בדיקת חלופות ויישום עקרונות המידתיות והשימוע לפני שתחליט להיפרע מההבטחה.\n"
+    },
+    {
+      "fixture_id": "RPT1",
+      "run_id": "60dc2a20-a4ff-442c-86ad-b5548d62e9e3",
+      "qa_log_id": "1a4e0056-87e0-4d53-a3c3-b3c1920d8623",
+      "total_ms": 151325,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "occurrence_count": 15,
+        "unique_source_count": 5,
+        "short_form_count": 11,
+        "ibid_count": 2,
+        "supra_count": 9,
+        "compound_enabled": true,
+        "compound_group_count": 1,
+        "compound_member_count_total": 2,
+        "compound_max_group_size": 2,
+        "every_compound_member_in_usable": true,
+        "compound_footnote_examples": [
+          {
+            "rendering": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה…, לעיל ה״ש 2; ע\"א 4460-22 תרצה אביתר נ׳ מדינת ישראל המרכז לגביית קנסות, אגרות והוצאות פסק דין.",
+            "marker_number": 7,
+            "member_source_numbers": [
+              2,
+              4
+            ]
+          }
+        ]
+      },
+      "persisted_compound_footnote_count": 1,
+      "persisted_compound_member_total": 2,
+      "source_set": {
+        "count": 5,
+        "unique_count_in_phase3": 5
+      },
+      "source_set_equal": true,
+      "drafter": {
+        "ok": true,
+        "footnote_count": 15,
+        "unique_source_count": 5
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 3302,
+      "adjacent_superscript_runs_in_body": 6,
+      "answer_tail": "ווה שיקול מרכזי שמפעיל בית המשפט בשלב שקלול משקלו של פסק הדין הפלילי. מי שטוען השתק פלוגתא חייב להגיש את המסמכים והטיעונים שמראים זהות פלוגתא והכרעה חיונית; בית המשפט ישקול גם שיקולי סופיות, עניין ציבור וצדק פרוצדורלי בטרם יכריע בחסימה של זכות הצד לדיון אזרחי."
+    },
+    {
+      "fixture_id": "RPT2",
+      "run_id": "407e14ec-1e2f-42a4-a6e2-13b078909006",
+      "qa_log_id": "66fec103-0243-4da9-a878-b4ee8a63ccd0",
+      "total_ms": 150514,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "ambiguous_raw_superscript_run",
+        "occurrence_count": null,
+        "unique_source_count": null,
+        "short_form_count": null,
+        "ibid_count": null,
+        "supra_count": null,
+        "compound_enabled": null,
+        "compound_group_count": null,
+        "compound_member_count_total": null,
+        "compound_max_group_size": null,
+        "every_compound_member_in_usable": null,
+        "compound_footnote_examples": null
+      },
+      "persisted_compound_footnote_count": 0,
+      "persisted_compound_member_total": 0,
+      "source_set": {
+        "count": 9,
+        "unique_count_in_phase3": 9
+      },
+      "source_set_equal": true,
+      "drafter": {
+        "ok": true,
+        "footnote_count": 9,
+        "unique_source_count": 9
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 3782,
+      "adjacent_superscript_runs_in_body": 10,
+      "answer_tail": "ם תקנות וענפי סיכון מיוחדים.²⁴⁸\n\nהמלצה מעשית: לטובת תביעת ציפיות יש לתעד לשון ברורה של ההתחייבות, ראיות להסתמכות (הוצאות/היערכות), ולהכין עמדת מדידה מציאותית של התועלת החוזית — כשקיומן יגביר את סיכויי קבלת סעד לפי תקנת הציפיות ורלוונטיות ההגבלות הנזכרות לעיל.\n"
+    },
+    {
+      "fixture_id": "RPT3",
+      "run_id": "24d1d1ee-d2b8-4ebc-8173-7cfaeba45456",
+      "qa_log_id": "b39f961b-53e4-419e-adf0-6ca75815df84",
+      "total_ms": 198088,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "occurrence_count": 11,
+        "unique_source_count": 5,
+        "short_form_count": 9,
+        "ibid_count": 3,
+        "supra_count": 6,
+        "compound_enabled": true,
+        "compound_group_count": 3,
+        "compound_member_count_total": 6,
+        "compound_max_group_size": 2,
+        "every_compound_member_in_usable": true,
+        "compound_footnote_examples": [
+          {
+            "rendering": "פסק-דין בתיק ע\"א 4486/11, לעיל ה״ש 1; פיצוי נאות: על סעדים וצדק בדיני הנטילה השלטונית בישראל.",
+            "marker_number": 2,
+            "member_source_numbers": [
+              1,
+              2
+            ]
+          },
+          {
+            "rendering": "הקפיצה הגדולה - על גובה הפיצוי בגין פגיעה באוטונומיה; בין רשלנות בנק (באנגליה) לרשלנות המדינה (בישראל) - נזק כלכלי טהור בעוולת הרשלנות בראי הפסיקה החדשה, ניתוח והערכה במבט השוואתי.",
+            "marker_number": 7,
+            "member_source_numbers": [
+              4,
+              5
+            ]
+          },
+          {
+            "rendering": "פסק-דין בתיק ע\"א 4486/11, לעיל ה״ש 1; כלל ״הדבר מעיד על עצמו״ בדיני הנזיקין -…, לעיל ה״ש 6.",
+            "marker_number": 9,
+            "member_source_numbers": [
+              1,
+              3
+            ]
+          }
+        ]
+      },
+      "persisted_compound_footnote_count": 3,
+      "persisted_compound_member_total": 6,
+      "source_set": {
+        "count": 5,
+        "unique_count_in_phase3": 5
+      },
+      "source_set_equal": true,
+      "drafter": {
+        "ok": true,
+        "footnote_count": 11,
+        "unique_source_count": 5
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 2068,
+      "adjacent_superscript_runs_in_body": 2,
+      "answer_tail": "ו שתי העילות מוכחות ביחס לאותו ראש נזק, לא ייפסק פיצוי כפול; הפיצוי ייגזר מן הנזק המוכח ויינתן פעם אחת בלבד ביחס לכל ראש נזק, לשם השבת המצב לקדמותו במידת האפשר.¹⁰ בכך נשמר האיזון בין אפשרות התובע להיתמך בעילות חלופיות לבין מניעת השאת־יתר באמצעות כפל פיצויים.¹¹"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "fixture_id": "T1",
+  "run_id": "56027466-a277-40ad-864b-4e93562915cc",
+  "qa_log_id": "d7ff9704-246a-460d-89c6-b4fa6a085c54",
+  "total_ms": 145608,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "ambiguous_raw_superscript_run",
+    "occurrence_count": null,
+    "unique_source_count": null,
+    "short_form_count": null,
+    "ibid_count": null,
+    "supra_count": null,
+    "compound_enabled": null,
+    "compound_group_count": null,
+    "compound_member_count_total": null,
+    "compound_max_group_size": null,
+    "every_compound_member_in_usable": null,
+    "compound_footnote_examples": null
+  },
+  "persisted_compound_footnote_count": 0,
+  "persisted_compound_member_total": 0,
+  "source_set": {
+    "count": 9,
+    "unique_count_in_phase3": 9
+  },
+  "source_set_equal": true,
+  "drafter": {
+    "ok": true,
+    "footnote_count": 9,
+    "unique_source_count": 9
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 3493,
+  "adjacent_superscript_runs_in_body": 7,
+  "answer_tail": "שי: משמעות הדברים היא פרקטית וברורה — מי ששואף לקבוע דיני פרשנות נוחים בעסקאותיו יעשה זאת באמצעות לשון מדויקת, ניסוח מונחה סיכון ואינטגרציה ברורה; מנגד, בבתי המשפט ממשיך להיות איזון—הלשון מובילה אך אינה אוטומטית סופית כשקיימת סתירה או חוסר מהותי שנדרש למלא.⁶² "
+}

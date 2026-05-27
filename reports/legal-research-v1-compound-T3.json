@@ -1,0 +1,60 @@
+{
+  "fixture_id": "T3",
+  "run_id": "b3e49b62-07e2-4974-a504-e3597f0c8c60",
+  "qa_log_id": "50f16a62-94e9-4ec7-a836-66929fef198a",
+  "total_ms": 211027,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "occurrence_count": 10,
+    "unique_source_count": 5,
+    "short_form_count": 7,
+    "ibid_count": 0,
+    "supra_count": 7,
+    "compound_enabled": true,
+    "compound_group_count": 2,
+    "compound_member_count_total": 4,
+    "compound_max_group_size": 2,
+    "every_compound_member_in_usable": true,
+    "compound_footnote_examples": [
+      {
+        "rendering": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי, לעיל ה״ש 2; חוק־יסוד: כבוד האדם וחירותו וחוק־יסוד: חופש העיסוק, לעיל ה״ש 4.",
+        "marker_number": 7,
+        "member_source_numbers": [
+          2,
+          4
+        ]
+      },
+      {
+        "rendering": "בנק המזרחי המאוחד בע\"מ נ' מגדל כפר שיתופי, לעיל ה״ש 2; חוק־יסוד: כבוד האדם וחירותו וחוק־יסוד: חופש העיסוק, לעיל ה״ש 4.",
+        "marker_number": 10,
+        "member_source_numbers": [
+          2,
+          4
+        ]
+      }
+    ]
+  },
+  "persisted_compound_footnote_count": 2,
+  "persisted_compound_member_total": 4,
+  "source_set": {
+    "count": 5,
+    "unique_count_in_phase3": 5
+  },
+  "source_set_equal": true,
+  "drafter": {
+    "ok": true,
+    "footnote_count": 10,
+    "unique_source_count": 5
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 2032,
+  "adjacent_superscript_runs_in_body": 1,
+  "answer_tail": "ית בזכות עצמה.⁹\n\nהשלכה מעשית קצרה: כדי להצדיק הגבלה חוקתית יש להראות שההגבלה מבוססת על חוק מתאים, משרתת מטרה ראויה, עומדת במבחני ההכשירות, ההכרחיות והאיזון, ואינה פוגעת במהות הזכות. כישלון בכל אחד מהיסודות עלול להביא לביטול ההגבלה כחריגה מהגנת החוק היסודית.¹⁰\n"
+}

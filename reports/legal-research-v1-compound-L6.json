@@ -1,0 +1,84 @@
+{
+  "fixture_id": "L6",
+  "run_id": "85aa8e2b-7c2a-46a2-a7d2-5fe23c0c6f34",
+  "qa_log_id": "03e9fcbf-61fb-4df0-b326-ff7f65ea41e5",
+  "total_ms": 179347,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "occurrence_count": 11,
+    "unique_source_count": 8,
+    "short_form_count": 12,
+    "ibid_count": 0,
+    "supra_count": 12,
+    "compound_enabled": true,
+    "compound_group_count": 9,
+    "compound_member_count_total": 18,
+    "compound_max_group_size": 2,
+    "every_compound_member_in_usable": true,
+    "compound_footnote_examples": [
+      {
+        "rendering": "הבטחה מינהלית*; על כללים והצדקות: הבעיה הקשה.",
+        "marker_number": 1,
+        "member_source_numbers": [
+          1,
+          2
+        ]
+      },
+      {
+        "rendering": "הבטחה מינהלית*, לעיל ה״ש 1; הבטחה מינהלית: לידתה, תולדותיה, אחריתה — אך מדוע נגזרה עליה מיתה?.",
+        "marker_number": 2,
+        "member_source_numbers": [
+          1,
+          3
+        ]
+      },
+      {
+        "rendering": "על כללים והצדקות: הבעיה הקשה, לעיל ה״ש 1; מסמך רקע בנושא: הרשויות המקומיות: בעיות מרכזיות וחלופות לפתרונן.",
+        "marker_number": 3,
+        "member_source_numbers": [
+          2,
+          4
+        ]
+      },
+      {
+        "rendering": "מסמך רקע בנושא: הרשויות המקומיות: בעיות מרכזיות וחלופות…, לעיל ה״ש 3; על כללים והצדקות: הבעיה הקשה, לעיל ה״ש 1.",
+        "marker_number": 4,
+        "member_source_numbers": [
+          4,
+          2
+        ]
+      },
+      {
+        "rendering": "פסק-דין בתיק ע\"א 8422/17; הגנת ההסתמכות במשפט המנהלי, לעיל ה״ש 5.",
+        "marker_number": 6,
+        "member_source_numbers": [
+          6,
+          5
+        ]
+      }
+    ]
+  },
+  "persisted_compound_footnote_count": 9,
+  "persisted_compound_member_total": 18,
+  "source_set": {
+    "count": 8,
+    "unique_count_in_phase3": 8
+  },
+  "source_set_equal": true,
+  "drafter": {
+    "ok": true,
+    "footnote_count": 11,
+    "unique_source_count": 8
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 2837,
+  "adjacent_superscript_runs_in_body": 2,
+  "answer_tail": " סביר לדרוש הבהרות ולשמר אינטרס הציבור דרך בדיקת חלופות — כדי למקסם סיכוי לאכיפה פרוצדורלית או לפיצוי הסתמכות. אם הרשות טוענת לחוסר סמכות או לאינטרס ציבורי חדש — היא נדרשת להצגה עניינית, בדיקת חלופות ויישום עקרונות המידתיות והשימוע לפני שתחליט להיפרע מההבטחה.\n"
+}

@@ -1,0 +1,52 @@
+{
+  "fixture_id": "RPT1",
+  "run_id": "60dc2a20-a4ff-442c-86ad-b5548d62e9e3",
+  "qa_log_id": "1a4e0056-87e0-4d53-a3c3-b3c1920d8623",
+  "total_ms": 151325,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "occurrence_count": 15,
+    "unique_source_count": 5,
+    "short_form_count": 11,
+    "ibid_count": 2,
+    "supra_count": 9,
+    "compound_enabled": true,
+    "compound_group_count": 1,
+    "compound_member_count_total": 2,
+    "compound_max_group_size": 2,
+    "every_compound_member_in_usable": true,
+    "compound_footnote_examples": [
+      {
+        "rendering": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה…, לעיל ה״ש 2; ע\"א 4460-22 תרצה אביתר נ׳ מדינת ישראל המרכז לגביית קנסות, אגרות והוצאות פסק דין.",
+        "marker_number": 7,
+        "member_source_numbers": [
+          2,
+          4
+        ]
+      }
+    ]
+  },
+  "persisted_compound_footnote_count": 1,
+  "persisted_compound_member_total": 2,
+  "source_set": {
+    "count": 5,
+    "unique_count_in_phase3": 5
+  },
+  "source_set_equal": true,
+  "drafter": {
+    "ok": true,
+    "footnote_count": 15,
+    "unique_source_count": 5
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 3302,
+  "adjacent_superscript_runs_in_body": 6,
+  "answer_tail": "ווה שיקול מרכזי שמפעיל בית המשפט בשלב שקלול משקלו של פסק הדין הפלילי. מי שטוען השתק פלוגתא חייב להגיש את המסמכים והטיעונים שמראים זהות פלוגתא והכרעה חיונית; בית המשפט ישקול גם שיקולי סופיות, עניין ציבור וצדק פרוצדורלי בטרם יכריע בחסימה של זכות הצד לדיון אזרחי."
+}

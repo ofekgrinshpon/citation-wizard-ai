@@ -1,0 +1,85 @@
+{
+  "fixture_id": "L3",
+  "run_id": "d9e98195-a64e-4e71-a65a-97f711955f21",
+  "qa_log_id": "83daae34-27cd-4979-9882-56c7a8c8dd48",
+  "total_ms": 180857,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "occurrence_count": 13,
+    "unique_source_count": 6,
+    "short_form_count": 17,
+    "ibid_count": 1,
+    "supra_count": 16,
+    "compound_enabled": true,
+    "compound_group_count": 8,
+    "compound_member_count_total": 18,
+    "compound_max_group_size": 3,
+    "every_compound_member_in_usable": true,
+    "compound_footnote_examples": [
+      {
+        "rendering": "פיצוי מוסכם – סוגיות והיבטים; The Penalty Clause in Israeli Contract Law.",
+        "marker_number": 3,
+        "member_source_numbers": [
+          2,
+          3
+        ]
+      },
+      {
+        "rendering": "פיצוי מוסכם – סוגיות והיבטים, לעיל ה״ש 3; The Penalty Clause in Israeli Contract Law, לעיל ה״ש 3.",
+        "marker_number": 4,
+        "member_source_numbers": [
+          2,
+          3
+        ]
+      },
+      {
+        "rendering": "פיצוי מוסכם – סוגיות והיבטים, לעיל ה״ש 3; דיני חוזים.",
+        "marker_number": 6,
+        "member_source_numbers": [
+          2,
+          5
+        ]
+      },
+      {
+        "rendering": "חוק החוזים (תרופות בשל הפרת חוזה), לעיל ה״ש 1; פיצוי מוסכם – סוגיות והיבטים, לעיל ה״ש 3; דיני חוזים, לעיל ה״ש 6.",
+        "marker_number": 7,
+        "member_source_numbers": [
+          1,
+          2,
+          5
+        ]
+      },
+      {
+        "rendering": "פיצוי מוסכם – סוגיות והיבטים, לעיל ה״ש 3; The Penalty Clause in Israeli Contract Law, לעיל ה״ש 3.",
+        "marker_number": 8,
+        "member_source_numbers": [
+          2,
+          3
+        ]
+      }
+    ]
+  },
+  "persisted_compound_footnote_count": 8,
+  "persisted_compound_member_total": 18,
+  "source_set": {
+    "count": 6,
+    "unique_count_in_phase3": 6
+  },
+  "source_set_equal": true,
+  "drafter": {
+    "ok": true,
+    "footnote_count": 13,
+    "unique_source_count": 6
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 2866,
+  "adjacent_superscript_runs_in_body": 4,
+  "answer_tail": "אלא של כוונת ענישה או חוסר איזון.¹²\n\nמסקנה קצרה: הסייג הסמכותי של סעיף 15 הוא יחס הסבירות בינתחומי — בית המשפט יפחית פיצוי מוסכם רק כאשר ימצא שהוא נקבע ללא יחס סביר לנזק הצפוי במועד כריתת החוזה, ובדרך כלל ימיר את הסכום המוסכם בסכום שנראה סביר בנסיבות העניין.¹³"
+}
