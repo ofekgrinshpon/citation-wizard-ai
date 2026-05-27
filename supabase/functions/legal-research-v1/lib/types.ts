@@ -266,6 +266,13 @@ export interface MarkerValidation {
   every_marker_has_footnote?: boolean;
   every_footnote_in_usable?: boolean;
   no_adjacent_marker_clusters?: boolean;
+  // Token-aware multi-digit proof (Phase 3 v2). Report-only; do not gate on
+  // `no_adjacent_marker_clusters` after v2 — the token-adjacency guard inside
+  // applyOccurrenceFootnotes is the real safety net.
+  multi_digit_marker_runs_count?: number;
+  multi_digit_runs_from_single_token_count?: number;
+  every_multi_digit_run_from_single_token?: boolean;
+  token_model_ok?: boolean;
 }
 
 
