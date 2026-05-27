@@ -673,7 +673,7 @@ function firstAppearanceOrder(text: string): number[] {
   return out;
 }
 
-function applyCitationCleanup(
+export function applyCitationCleanup(
   answer: string,
   used: Array<{ ref: string; number: number; candidate_id: string }>,
 ): {
