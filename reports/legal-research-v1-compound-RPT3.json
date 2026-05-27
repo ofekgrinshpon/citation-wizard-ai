@@ -1,0 +1,68 @@
+{
+  "fixture_id": "RPT3",
+  "run_id": "24d1d1ee-d2b8-4ebc-8173-7cfaeba45456",
+  "qa_log_id": "b39f961b-53e4-419e-adf0-6ca75815df84",
+  "total_ms": 198088,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "occurrence_count": 11,
+    "unique_source_count": 5,
+    "short_form_count": 9,
+    "ibid_count": 3,
+    "supra_count": 6,
+    "compound_enabled": true,
+    "compound_group_count": 3,
+    "compound_member_count_total": 6,
+    "compound_max_group_size": 2,
+    "every_compound_member_in_usable": true,
+    "compound_footnote_examples": [
+      {
+        "rendering": "פסק-דין בתיק ע\"א 4486/11, לעיל ה״ש 1; פיצוי נאות: על סעדים וצדק בדיני הנטילה השלטונית בישראל.",
+        "marker_number": 2,
+        "member_source_numbers": [
+          1,
+          2
+        ]
+      },
+      {
+        "rendering": "הקפיצה הגדולה - על גובה הפיצוי בגין פגיעה באוטונומיה; בין רשלנות בנק (באנגליה) לרשלנות המדינה (בישראל) - נזק כלכלי טהור בעוולת הרשלנות בראי הפסיקה החדשה, ניתוח והערכה במבט השוואתי.",
+        "marker_number": 7,
+        "member_source_numbers": [
+          4,
+          5
+        ]
+      },
+      {
+        "rendering": "פסק-דין בתיק ע\"א 4486/11, לעיל ה״ש 1; כלל ״הדבר מעיד על עצמו״ בדיני הנזיקין -…, לעיל ה״ש 6.",
+        "marker_number": 9,
+        "member_source_numbers": [
+          1,
+          3
+        ]
+      }
+    ]
+  },
+  "persisted_compound_footnote_count": 3,
+  "persisted_compound_member_total": 6,
+  "source_set": {
+    "count": 5,
+    "unique_count_in_phase3": 5
+  },
+  "source_set_equal": true,
+  "drafter": {
+    "ok": true,
+    "footnote_count": 11,
+    "unique_source_count": 5
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 2068,
+  "adjacent_superscript_runs_in_body": 2,
+  "answer_tail": "ו שתי העילות מוכחות ביחס לאותו ראש נזק, לא ייפסק פיצוי כפול; הפיצוי ייגזר מן הנזק המוכח ויינתן פעם אחת בלבד ביחס לכל ראש נזק, לשם השבת המצב לקדמותו במידת האפשר.¹⁰ בכך נשמר האיזון בין אפשרות התובע להיתמך בעילות חלופיות לבין מניעת השאת־יתר באמצעות כפל פיצויים.¹¹"
+}

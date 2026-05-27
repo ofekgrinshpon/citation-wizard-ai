@@ -1,0 +1,79 @@
+{
+  "fixture_id": "L1",
+  "run_id": "1f1115c2-4dd6-45c0-aaa0-6646b280833e",
+  "qa_log_id": "d85d292b-8036-4d88-abf4-48ffed4a787f",
+  "total_ms": 168019,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "occurrence_count": 5,
+    "unique_source_count": 7,
+    "short_form_count": 5,
+    "ibid_count": 0,
+    "supra_count": 5,
+    "compound_enabled": true,
+    "compound_group_count": 4,
+    "compound_member_count_total": 11,
+    "compound_max_group_size": 3,
+    "every_compound_member_in_usable": true,
+    "compound_footnote_examples": [
+      {
+        "rendering": "בימ\"ש המחוזי ת\"א, השופטת אירית קלמן ברום: החלטה…, לעיל ה״ש 1; פסק-דין בתיק ע\"א 8954/11.",
+        "marker_number": 2,
+        "member_source_numbers": [
+          1,
+          2
+        ]
+      },
+      {
+        "rendering": "Irreparable Harm: A Flexible Standard for Injunctions; The Irreparable Harm Requirement in Preliminary Injunctions; צווי מניעה זמניים ודרישת הנזק הבלתי הפיך במשפט הישראלי.",
+        "marker_number": 3,
+        "member_source_numbers": [
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "rendering": "פסק-דין בתיק ע\"א 8954/11, לעיל ה״ש 2; רע\"א 6557/20 ערוץ 10 החדש בע\"מ נ׳ שרת התרבות והספורט פסק דין (02.08.2020); נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית של שיקול דעת שלטוני בראי המשפט המקובל 461 (כרך ט\"ו).",
+        "marker_number": 4,
+        "member_source_numbers": [
+          2,
+          6,
+          7
+        ]
+      },
+      {
+        "rendering": "בימ\"ש המחוזי ת\"א, השופטת אירית קלמן ברום: החלטה…, לעיל ה״ש 1; רע\"א 6557/20 ערוץ 10 החדש בע\"מ נ׳ שרת התרבות והספורט פסק דין (02.08.2020), לעיל ה״ש 4; נדב דגן מידתיות חוקתית, סבירות מנהלית: הסדרה משפטית…, לעיל ה״ש 4.",
+        "marker_number": 5,
+        "member_source_numbers": [
+          1,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "persisted_compound_footnote_count": 4,
+  "persisted_compound_member_total": 11,
+  "source_set": {
+    "count": 7,
+    "unique_count_in_phase3": 7
+  },
+  "source_set_equal": true,
+  "drafter": {
+    "ok": true,
+    "footnote_count": 5,
+    "unique_source_count": 7
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 1751,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "ערך להוכחת שלושת היסודות בצורה ממוקדת — עובדות ותעודות התומכות בהופעה הראשונית, תיעוד ברור של הנזק הבלתי הפיך והערכת שקלול ההטבות והנזקים (כולל שיקולים ציבוריים). במקביל, יש לצפות כי בית המשפט ישקול הטלת תנאים וערבויות ככל שיידרש כדי לשמור על איזון ומידתיות.\n\n"
+}

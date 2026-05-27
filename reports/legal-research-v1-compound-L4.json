@@ -1,0 +1,85 @@
+{
+  "fixture_id": "L4",
+  "run_id": "243528a3-32cd-458f-8c73-01bec40c8585",
+  "qa_log_id": "da2f81d2-c538-4586-a711-fe873b2c3f66",
+  "total_ms": 123216,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "occurrence_count": 9,
+    "unique_source_count": 6,
+    "short_form_count": 9,
+    "ibid_count": 1,
+    "supra_count": 8,
+    "compound_enabled": true,
+    "compound_group_count": 5,
+    "compound_member_count_total": 11,
+    "compound_max_group_size": 3,
+    "every_compound_member_in_usable": true,
+    "compound_footnote_examples": [
+      {
+        "rendering": "רע\"א 2401/21 סאמי ג'אעוני נ׳ נחלת שמעון בע\"מ פסק דין; ע\"א 4460-22 תרצה אביתר נ׳ מדינת ישראל המרכז לגביית קנסות, אגרות והוצאות פסק דין.",
+        "marker_number": 3,
+        "member_source_numbers": [
+          2,
+          3
+        ]
+      },
+      {
+        "rendering": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה…, לעיל ה״ש 1; רע\"א 7162/20 לובה יונתוב נ׳ התחנה המרכזית החדשה בתל אביב יפו בע\"מ החלטה (13.08.2020).",
+        "marker_number": 5,
+        "member_source_numbers": [
+          1,
+          4
+        ]
+      },
+      {
+        "rendering": "מעשה בית דין בהליך אזרחי; ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה…, לעיל ה״ש 1.",
+        "marker_number": 6,
+        "member_source_numbers": [
+          5,
+          1
+        ]
+      },
+      {
+        "rendering": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה…, לעיל ה״ש 1; רע\"א 2401/21 סאמי ג'אעוני נ׳ נחלת שמעון בע\"מ פסק דין, לעיל ה״ש 3; החלטה בתיק ע\"א 4576/17.",
+        "marker_number": 7,
+        "member_source_numbers": [
+          1,
+          2,
+          6
+        ]
+      },
+      {
+        "rendering": "ביהמ\"ש לענייני משפחה בפתח תקוה, ש' סמאח מנאסרה…, לעיל ה״ש 1; מעשה בית דין בהליך אזרחי, לעיל ה״ש 6.",
+        "marker_number": 8,
+        "member_source_numbers": [
+          1,
+          5
+        ]
+      }
+    ]
+  },
+  "persisted_compound_footnote_count": 5,
+  "persisted_compound_member_total": 11,
+  "source_set": {
+    "count": 6,
+    "unique_count_in_phase3": 6
+  },
+  "source_set_equal": true,
+  "drafter": {
+    "ok": true,
+    "footnote_count": 9,
+    "unique_source_count": 6
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 2556,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "נה שומרת על סופיות הדיון בכך שהיא מונעת הכרעה חוזרת בנקודות שנקבעו כבוטחות; עם זאת היא תלויה בבדיקת יסודות מיוחדים (זהות פלוגתא, הכרעה חיובית וחיונית, חלוטות, זהות צדדים/חליפים והזדמנות להתדיין) והמנה השיפוטית משקללת לעתים שיקולי צדק והוכחות חדשות בטרם תחילתו."
+}
