@@ -665,6 +665,8 @@ export async function buildSourcesOnlyPayload(input: BuildSourcesOnlyInput): Pro
       local_count,
       perplexity_count,
       additional_count: addGrouped.sources.length,
+      url_checks_failed: urlChecksFailed,
+      url_checks_unverified: urlChecksUnverified,
     },
   };
 }
