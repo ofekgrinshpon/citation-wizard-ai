@@ -823,7 +823,7 @@ export function shortenTitle(title: string, source_type?: string): string {
     return (comma > 0 ? t.slice(0, comma) : t).trim().slice(0, 120);
   }
   if (source_type === "statute" || source_type === "regulation") {
-    let s = t.replace(/,\s*הת[ש][״"][^,]*$/u, "");
+    let s = t.replace(/,\s*ה?ת[שת][\u0590-\u05FF״"׳']*-?\d*$/u, "");
     s = s.replace(/\s*\([^)]*\)\s*$/u, "");
     s = s.trim();
     return s || t.slice(0, 80);
