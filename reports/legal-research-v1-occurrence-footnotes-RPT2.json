@@ -1,8 +1,8 @@
 {
   "fixture_id": "RPT2",
-  "run_id": "393e2dfb-df12-4605-87f4-6892dffb8d90",
-  "qa_log_id": "533efc21-022b-43af-98b2-87e5ce48fca1",
-  "total_ms": 195037,
+  "run_id": "de50924c-629a-4588-9c2f-d63d1022beee",
+  "qa_log_id": "6f8b395c-7647-47e4-88ae-772c0d5350ed",
+  "total_ms": 283729,
   "baseline_total_ms": null,
   "runtime_delta_ms": null,
   "hard_gates": {
@@ -16,47 +16,51 @@
   },
   "phase3": {
     "applied": false,
-    "discarded_reason": "ambiguous_adjacent_markers",
+    "discarded_reason": "ambiguous_raw_superscript_run",
     "occurrence_count": null,
     "unique_source_count": null,
     "short_form_count": null,
     "ibid_count": null,
     "supra_count": null,
-    "cluster_examples": [
-      "ות הישראלית.¹²\n\nהגדרה ותכל",
-      "מימוש החוזה.¹² ההצעה החוקת",
-      " תרופות אלו.³⁴\n\nיסודות מתן",
-      "כריתת החוזה.⁵⁶\n\nהוכחת הפסד",
-      "פות חלופיות.⁶²\n\nקשר סיבתי "
-    ]
+    "cluster_examples": null,
+    "ambiguous_run_samples": [
+      {
+        "run": "¹⁰",
+        "context": "ה למשפט החוזי.⁹ ¹⁰\n- סיכול והמעבר ",
+        "candidates": []
+      }
+    ],
+    "multi_digit_marker_runs_count": null,
+    "multi_digit_runs_from_single_token_count": null,
+    "every_multi_digit_run_from_single_token": null
   },
   "short_form_samples": [],
   "placement": {
-    "cluster_count": 21,
-    "max_cluster_len": 4,
+    "cluster_count": 2,
+    "max_cluster_len": 2,
     "final_summary_dump": false
   },
   "source_list": {
     "count": 9,
     "baseline_count": null,
     "ids": [
-      "24891aa7-d42e-418f-b1f4-46a6d67e4c81",
-      "5584ea30-11af-42ae-8341-5b7d9aca8c80",
-      "c1b2e9dd-2084-40b5-9b84-8770d722d0de",
-      "14336527-0c21-4110-ba9f-f3ca8f242b73",
-      "082f68ea-93c0-45fe-abd4-fba77560d212",
-      "51bd6a0e-b437-4230-8721-5945cefb0606",
-      "281bd101-9de8-4d32-bc5e-90143b9b9f8b",
-      "eebebeae-fdc1-41e2-973c-26e54a40647a",
-      "7a526ca7-28b1-46b0-96f4-3fd1ae85bcce"
+      "2f24b10e-065b-4410-9b3b-c70314986c36",
+      "bf9dbe78-11da-4c81-b9a1-c56a1e53e7b7",
+      "8c965d06-0bea-4c79-93a0-e88379e28e23",
+      "4d20de88-9d76-4ee3-9143-a980e6f4d8c6",
+      "1aabeaf4-ef00-4dce-8c63-0189207b937c",
+      "86266a19-7863-421c-8320-fe8e97a6d8ce",
+      "f91afed1-18e7-44da-94e0-e8663e17c95b",
+      "8512febf-72be-4e31-83f1-fee17ec16c49",
+      "ed609244-78fe-4748-ac67-53752297ac5b"
     ]
   },
   "drafter": {
     "ok": true,
-    "escalated": false,
+    "escalated": true,
     "footnote_count": 9,
     "unique_source_count": 9
   },
-  "answer_strip_sup_len": 3456,
-  "answer_tail": "מעשי: בבקשה לתביעת פיצויי צפיות יש להקפיד על (א) ניסוח ברור של הנזק הצפוי ותמיכה ראייתית כמותית; (ב) הוכחת קשר סיבתי סביר; (ג) היערכות לטענות הנתבע על אי־הקטנה או על קיומו של סעיף פיצוי מוסכם; ו(ד) שקילה מוקדמת של רכיב ההסתמכות או החזרת היתרון אם רווחים נדמים או בלתי־מדידים.⁵⁶⁷⁸\n"
+  "answer_strip_sup_len": 3346,
+  "answer_tail": " הקיום (ציפייה) לאינטרס ההסתמכות מכתיבה את בחירת הסעד ואת היקף הפיצוי בפועל.⁶ ³\n\nהלקח המוסדי: להגנה אפקטיבית על ציפיות סבירות יש לפעול קודם כל במישור הניסוח – לעגן בלשון ברורה את חלוקת הסיכונים והתרופות – ולהימנע מהסתמכות על ציפיות חוץ‑טקסטואליות שיתקשו להתממש בפרשנות שיפוטית.² ⁸"
 }

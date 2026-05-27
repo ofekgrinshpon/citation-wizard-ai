@@ -1,8 +1,8 @@
 {
   "fixture_id": "RPT3",
-  "run_id": "14031edd-fe59-4a43-aadd-49c9432ee51e",
-  "qa_log_id": "c8686f6a-b576-4426-b5fe-cd688b7e5861",
-  "total_ms": 190426,
+  "run_id": "ad383738-26cd-4ee0-a130-6760224faa04",
+  "qa_log_id": "391aebf4-9ea3-48d3-ae48-e77611c898e7",
+  "total_ms": 273379,
   "baseline_total_ms": null,
   "runtime_delta_ms": null,
   "hard_gates": {
@@ -16,39 +16,43 @@
   },
   "phase3": {
     "applied": false,
-    "discarded_reason": "ambiguous_adjacent_markers",
+    "discarded_reason": "ambiguous_raw_superscript_run",
     "occurrence_count": null,
     "unique_source_count": null,
     "short_form_count": null,
     "ibid_count": null,
     "supra_count": null,
-    "cluster_examples": [
-      "היחיד שנגרם.¹²\n\nניתוח\n\nאפש",
-      "ני לכל עילה.¹²³\nמעבר לכך, פ",
-      "סופו של יום.¹²³\n\nהאם הפרת ח",
-      "ביעת רשלנות.¹⁴\nבנוסף, בפסי",
-      "הירות מפורש.²³\n\nיחס בין סט"
-    ]
+    "cluster_examples": null,
+    "ambiguous_run_samples": [
+      {
+        "run": "⁷⁸⁹¹⁰",
+        "context": "ת ולעובדי ציבור.⁷⁸⁹¹⁰\n\nמסקנה מעשית קצ",
+        "candidates": []
+      }
+    ],
+    "multi_digit_marker_runs_count": null,
+    "multi_digit_runs_from_single_token_count": null,
+    "every_multi_digit_run_from_single_token": null
   },
   "short_form_samples": [],
   "placement": {
-    "cluster_count": 15,
-    "max_cluster_len": 3,
-    "final_summary_dump": false
+    "cluster_count": 23,
+    "max_cluster_len": 6,
+    "final_summary_dump": true
   },
   "source_list": {
     "count": 9,
     "baseline_count": null,
     "ids": [
-      "99ac5ab4-42e4-4c02-8d76-01d49036898f",
-      "b0be0d4e-d91a-4a2f-b91f-6b5f11c068cd",
-      "2f8328b5-c45a-408d-b865-e23f0a2eca17",
-      "a8e5e568-f69b-4872-a20f-07e63a7628c6",
-      "6bf2bd31-a526-4a4e-b56e-13f0b89908d7",
-      "5ea0cfb4-0c90-4bcf-8e20-e8c5f18cfc7f",
-      "df6299ff-fa1d-4220-9d62-ad07b3561e7b",
-      "0183ff6d-1d1a-40dd-8878-a96e65316aa2",
-      "32489f96-aa83-47a9-92f4-f06ebddb868b"
+      "a5810a24-6cfb-4029-a3af-0bdeb1a8b0ea",
+      "b2034bb5-da9a-4d41-9fd8-9775848886c3",
+      "ef10b8d5-15d0-47c4-b44b-38bc29bb6620",
+      "6a3da978-f6e5-4007-82a8-ff0132f42ecf",
+      "b2bd2ce0-71e0-47b3-97ca-b952eb843a68",
+      "d7e0b5ba-8011-45a0-bb36-f90b48277027",
+      "2a3b629a-00ae-496f-9fe6-bb84b823c751",
+      "8798ab8e-224d-48a2-b4ad-ec5070ba7044",
+      "ce6b65ae-54e5-43c1-ab48-342ecf60c065"
     ]
   },
   "drafter": {
@@ -57,6 +61,6 @@
     "footnote_count": 9,
     "unique_source_count": 9
   },
-  "answer_strip_sup_len": 3797,
-  "answer_tail": "יים איפלוס בין גישות: ספקולטיבי להחיל כלל גורף של \"negligence per se\"; הגישה המעשית במשפט הישראלי נוטה לראות בהפרת חובה חקוקה ראיה כבדה שדורשת בחינה עובדתית ותכליתית בנסיבות המקרה, ואילו מנגנוני פיצוי יגנו על מניעת כפל פיצוי באמצעות שיוך והפחתה בהתאם למה שהמחוקק והפסיקה קבעו.¹⁴⁶\n"
+  "answer_strip_sup_len": 3059,
+  "answer_tail": "רור (א) את יסודות סעיף 63 (חובה־חיקוק, ייעוד, קשר סיבתי) כדי לבדוק אם יש עילת הפרת חובה חקוקה נפרדת, (ב) להבהיר כיצד עובדות המקרה מקיימות או מחריגות את דרגת הקשר אל מול חובת זהירות רגילה, ולשלשר לדיון כללים של בחירת סעד ומניעת כפילות פיצוי בהסתמך על פסיקה ומדיניות ציבורית.¹⁴⁵⁶⁷⁸\n"
 }
