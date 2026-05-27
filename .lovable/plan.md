@@ -1,130 +1,187 @@
 
-# Drafter Cluster-Prevention Plan (prompt-only + telemetry)
+# Repeated-Citation Short Forms — Occurrence Footnotes (conservative v1, approved)
 
-Scope: drafter prompt guidance + deterministic cluster telemetry only.
-No retrieval, Perplexity, verifier, candidate-pool, source-selection, DB,
-frontend, extra LLM call, placement repair, marker movement, thin-space,
-Rule 37, or repeated-citation work.
+Deterministic post-processor in the drafter. No LLM, no drafter prompt change, no marker movement, no prose rewrite, no retrieval/verifier/source-selection changes, no DB schema change, no frontend rendering change, no sources-only change.
 
-## 1. Prompt change — `supabase/functions/legal-research-v1/stages/drafter.ts` `SYSTEM_PROMPT` (lines ~233–249)
+## 1. Conceptual model
 
-The existing "מיקום הערות שוליים" block already says "source preservation
-outranks aesthetics" and "split sentences before clustering". The new
-guidance keeps that ordering but explicitly forbids the two failure modes
-we still see: clusters on a single word, and a final summary sentence that
-re-cites every source.
+- `used_sources[]` — unique verified sources (unchanged).
+- `footnotes[]` — becomes **occurrence-indexed**: one entry per body-marker occurrence, numbered chronologically `1..K`. Each entry resolves back to a `used_sources` row via `source_number`.
+- Repeated body markers get **new** occurrence numbers. The footnote list uses `שם.` (ibid) or `<short>, לעיל ה״ש N.` (supra).
 
-Replace the current placement block with a tightened version that adds the
-user's Hebrew wording verbatim (kept whole so we don't dilute it):
+## 2. Hard preconditions (both must hold to apply Phase 3)
 
+Run on the **post-cleanup** answer, before any rewrite.
+
+1. **No adjacent superscript clusters.** If `/[⁰¹²³⁴⁵⁶⁷⁸⁹]{2,}/u` matches anywhere → skip Phase 3 entirely. Record `phase3.discarded_reason = "ambiguous_adjacent_markers"` + up to 5 cluster snippets. Reason: `²³` → `¹²` is forbidden — visually indistinguishable from footnote 12.
+2. **K < 10.** Count distinct marker occurrences in the answer. If `K >= 10` → skip Phase 3 entirely. Record `phase3.discarded_reason = "multi_digit_occurrences_require_boundary_tokens"`. Reason: a legitimate `¹⁰` occurrence marker is visually indistinguishable from adjacent single-digit markers without an explicit boundary token; v1 refuses to ship in that regime.
+
+When either precondition fails, legacy outputs (`answer`, `used_sources`, `footnotes`) are preserved unchanged.
+
+Additionally, a **post-expansion guard** re-scans the rewritten answer for `/[⁰¹²³⁴⁵⁶⁷⁸⁹]{2,}/u`. Any hit → full rollback, `phase3.discarded_reason = "would_create_ambiguous_markers"`. (Defense in depth; with K<10 + no-input-cluster, this should be unreachable.)
+
+## 3. Schema (additive, `lib/types.ts`)
+
+```ts
+export interface Footnote {
+  number: number;                       // occurrence index 1..K when phase3 applied; legacy unique number otherwise
+  title: string;                        // full title OR short-form rendering ("שם." / "<short>, לעיל ה״ש N.")
+  url: string | null;                   // null for short-form entries
+  source_type?: string;
+  source_number?: number;               // back-pointer into used_sources[].number (first-occurrence number)
+  is_short_form?: boolean;
+  short_form_kind?: "ibid" | "supra";
+  back_ref_number?: number;             // first-occurrence footnote number for this source
+  source_candidate_id?: string;         // debug only, never rendered
+}
 ```
-מיקום הערות שוליים:
-- קדימות שימור מקורות (גוברת על כל כללי המיקום שלהלן):
-  * אין לוותר על מקור מאומת או על הערת שוליים תומכת כדי לשפר את האסתטיקה של מיקום ההערות.
-  * אם נדרש לבחור בין השארת מקבץ הערות לבין השמטת מקור — השאר את המקור. שיפור מיקום לעולם לא מצדיק הסרת תמיכה.
-  * אין למחוק, לאחד, או לדלג על מספר מקור המופיע ברשימת המקורות שניתנה לך.
-- הצמדה לטענה הספציפית:
-  * הצמד כל הערת שוליים לטענה הספציפית שהיא תומכת בה. אין לרכז כמה הערות שוליים על אותה מילה או בסוף משפט אחד, אלא אם אכן מדובר באותה טענה יחידה הנתמכת במצטבר על ידי כמה מקורות.
-  * כאשר כמה מקורות תומכים בפסקה אחת, פצל את הפסקה למשפטים או לטענות משנה, והצב כל הערה במקום הטבעי ליד הטענה שהיא תומכת בה.
-  * אין לוותר על מקור מאומת רק כדי לשפר את מיקום ההערות; אם מקור נחוץ, שלב את הטענה שהוא תומך בה בגוף הפסקה.
-- איסור "מצבור סיום":
-  * אל תוסיף בסוף התשובה משפט מסכם הנושא את כל הערות השוליים.
-  * מסקנה או סיכום אינם צריכים לחזור על כל המקורות שכבר תמכו בטענות בגוף התשובה. אם המסקנה אינה מוסיפה טענה חדשה — אל תצרף לה הערות שוליים.
-- חזרות סמוכות של אותו סמן: כמו קודם — אין לחזור על אותו מספר על משפטים סמוכים, אך אין להסירו אם נדרש לתמיכה.
-- פורמט סמנים: כמו קודם (ספרות עיליות יוניקוד, ללא סוגריים, ¹⁰/¹¹/¹² ולא 10/11/12).
+
+`UsedSource` unchanged. `used_sources[i].number` denotes the **first-occurrence footnote number** for that unique source after expansion, so `back_ref_number === used_sources[*].number` for the matching row.
+
+`MarkerValidation` (all optional, additive):
+
+```ts
+occurrence_mode?: boolean;
+occurrence_count?: number;              // K
+unique_source_count?: number;
+short_form_count?: number;
+ibid_count?: number;
+supra_count?: number;
+every_marker_has_footnote?: boolean;    // hard gate
+every_footnote_in_usable?: boolean;     // hard gate
+no_adjacent_marker_clusters?: boolean;  // hard gate
 ```
 
-Removed sub-bullets ("עדיף לשלוח ¹²³ מאשר להשמיט מקור") are intentionally
-dropped — they implicitly licensed clusters. Source-preservation precedence
-is preserved by the first block.
+`CitationCleanupReport.phase3`:
 
-No other prompt content changes. No tool-schema change. No emit_draft
-parameter change.
+```ts
+phase3: {
+  applied: boolean;
+  occurrence_count?: number;
+  unique_source_count?: number;
+  short_form_count?: number;
+  ibid_count?: number;
+  supra_count?: number;
+  examples?: Array<{ marker_number: number; rendering: string }>;
+  discarded_reason?:
+    | "ambiguous_adjacent_markers"
+    | "multi_digit_occurrences_require_boundary_tokens"
+    | "would_create_ambiguous_markers"
+    | "marker_validation_failed"
+    | "footnote_resolution_failed"
+    | "no_markers";
+  cluster_examples?: string[];
+};
+```
 
-## 2. Telemetry — `validatePlacement` (~lines 489–582 in `drafter.ts`) and `PlacementReport` (`lib/types.ts`)
+## 4. Validation rules
 
-Add deterministic fields needed by the validation report. No gating, no
-retry, no repair. Pure measurement.
+Legacy invariants kept when `phase3.applied === false`:
+- `footnote_count === used_sources.length`
+- `markers_in_answer ⊆ used_sources.numbers`
 
-New fields on `PlacementReport`:
-- `max_cluster_len: number` — longest run length from `[⁰-⁹]{2,}` matches
-  (0 if no clusters). Existing `cluster_count` stays as "extra markers
-  in clusters" for back-compat; add `cluster_run_count` = number of
-  cluster runs.
-- `final_paragraph_marker_count: number` — distinct markers in the final
-  paragraph.
-- `final_summary_dump: boolean` — true iff the final paragraph contains
-  ≥5 distinct markers OR its last sentence contains ≥5 distinct markers.
-- `final_summary_dump_count: number` — 0 or 1 (matches the boolean,
-  exposed as a count for aggregation).
+New invariants when `phase3.applied === true` (checked by `validateOccurrenceFootnotes`, AND-ed into `marker_validation.ok`):
+- Pre-expansion preconditions held (no adjacent clusters; `K < 10`).
+- `markers_in_answer` is exactly `[1..K]` in order of first appearance (single-digit only by precondition #2).
+- `footnotes.length === K`; each `footnotes[i].number === i+1` in order.
+- For every footnote `f`: `f.source_number ∈ used_sources.map(u => u.number)`.
+- For every `used_sources[u]`: `u.candidate_id ∈ verifier.usable.map(v => v.candidate_id)` (unchanged).
+- Source-set equality: the set of `source_number` values present in `footnotes[]` equals the set of `used_sources[*].number` (no source added, no source dropped).
+- `internal_id_leak === false` (unchanged).
+- `no_adjacent_marker_clusters === true` on the rewritten answer.
+- `stripSup(rewritten) === stripSup(input)` (prose byte-equal except superscript digits).
 
-Implementation in `validatePlacement`:
-- During the cluster scan, track `max_cluster_len = max(m[0].length)`.
-- After paragraph split, compute the final paragraph's distinct marker
-  count and its last sentence's distinct marker count using existing
-  `SUP_TO_DIGIT` walker.
-- Append all four fields to the returned object. `ok` definition
-  unchanged (still cluster_count===0 && out_of_order===0 && end_dump===0).
+`index.ts` telemetry adds `unique_source_count` alongside the existing `footnote_count` (which equals K when applied, equals unique count when skipped).
 
-Persisted via existing `marker.placement` → `metadata.drafter.marker_validation.placement`. No new metadata blob, no new top-level field.
+## 5. Algorithm — `applyOccurrenceFootnotes(answer, used, footnotes_pre)`
 
-## 3. Validation harness
+Pure-string, deterministic, idempotent. Runs in `drafter.ts` between `applyCitationCleanup(...)` and `validatePlacement(...)`. Env gate: `LEGAL_RESEARCH_V1_OCCURRENCE_FOOTNOTES` (default `on`).
 
-New runner: `scripts/legal-research-v1-cluster-prevention-runner.ts`,
-modelled on `legal-research-v1-citation-cleanup-runner.ts`.
+1. **Precondition #1 (clusters).** If `/[⁰¹²³⁴⁵⁶⁷⁸⁹]{2,}/u` matches → record reason `ambiguous_adjacent_markers` (+ up to 5 cluster examples) and return inputs unchanged.
+2. **Marker walk + precondition #2 (K).** Walk `/[⁰¹²³⁴⁵⁶⁷⁸⁹]+/u` left→right. Precondition #1 guarantees every run is length 1, but we still parse each run as a number for safety. Count occurrences `K`. If `K === 0` → reason `no_markers`, return unchanged. If `K >= 10` → reason `multi_digit_occurrences_require_boundary_tokens`, return unchanged.
+3. **Source resolution.** For each marker at value `N`, look up `used.find(u => u.number === N)`. Lookup failure → reason `footnote_resolution_failed`, return unchanged.
+4. **Assign occurrence numbers `1..K`** in walk order. Build rewritten answer by splicing the superscript encoding of each new occurrence number at the exact original positions; all non-marker characters untouched.
+5. **Post-expansion guard.** Re-scan rewritten answer for `/[⁰¹²³⁴⁵⁶⁷⁸⁹]{2,}/u` → rollback if hit, reason `would_create_ambiguous_markers`.
+6. **Build occurrence `footnotes[]` of length K.** Track `firstSeen: Map<originalSourceNumber, occurrenceIndex>` and `prevSourceNumber`.
+   - First time seeing source `S` at occurrence `i`: full footnote `{ number: i, title: S.title, url: S.url, source_type: S.source_type, source_number: i, is_short_form: false }`. Record `firstSeen[S.number_original] = i`. Update the matching `used_sources` row so its `number` becomes `i`.
+   - Else if `prevSourceNumber === S` (immediately preceding occurrence is same source): ibid → `{ number: i, title: "שם.", url: null, is_short_form: true, short_form_kind: "ibid", back_ref_number: firstSeen[S], source_number: firstSeen[S] }`.
+   - Else: supra → `{ number: i, title: <short>(S) + ", לעיל ה״ש " + firstSeen[S] + ".", url: null, is_short_form: true, short_form_kind: "supra", back_ref_number: firstSeen[S], source_number: firstSeen[S] }`.
+7. **Validate.** Run existing `runMarkerValidation` on rewritten answer + updated `used_sources`, then `validateOccurrenceFootnotes`. Any failure → full rollback, reason `marker_validation_failed`.
+8. **Prose-invariance assertion.** `stripSup(rewritten) === stripSup(input)`. Mismatch → rollback.
 
-Fixtures: L1–L6 from `eval/legal-research-v1/fixtures.json` + one ad-hoc
-question:
-`"האם כישלון מערכתי באכיפת עבירת גביית דמי חסות (פרוטקשן) יכול להוות מחדל חקיקתי בהגנה על הזכות לחיים וביטחון?"`
-(id `PROT`).
+## 6. `shortenTitle(source)` — deterministic, no LLM
 
-Per fixture, capture from `qa_logs.metadata`:
-- hard gates: `marker_validation.ok`, `internal_id_leak === false`,
-  `footnote_count === used_sources.length`,
-  `used_sources ⊆ verifier.usable`
-- placement: `cluster_count`, `cluster_run_count`, `max_cluster_len`,
-  `end_paragraph_dump_count`, `final_paragraph_marker_count`,
-  `final_summary_dump_count`, up to 5 `cluster_samples` and
-  `end_dump_samples`
-- runtime: `total_ms` and Δ vs phaseE5 baseline
-- source list count vs candidate pool (sanity: no drops)
+Used only for `supra`. Pure string heuristics over `source.title` + `source.source_type`:
 
-Baselines: take the most recent run per fixture from the existing
-`reports/legal-research-v1-citation-cleanup-*.json` set as the "before"
-snapshot. Re-run with the new prompt as "after". Diff in
-`reports/legal-research-v1-cluster-prevention.md`.
+- **case**: substring up to the first comma; if title contains ` נ' `, take `"<plaintiff> נ' <defendant>"` up to the next comma.
+- **statute / regulation**: strip trailing `, התש"…—NNNN` and any trailing parenthetical; keep law name.
+- **academic**: author surname (token before first comma), then quoted/«…» title truncated to ~6 Hebrew words.
+- **report / other / unknown**: first 8 words of the title, ellipsis if longer.
 
-Also a small qualitative spot-check (manual, 2–3 lines per fixture) on
-whether the answer body reads coherently — captured in the `.md` only.
+Fallback when extraction yields empty: `title.slice(0, 80)`. Unit-tested.
 
-## 4. Tests
+## 7. Files touched
 
-Unit tests in `drafter.cleanup.test.ts` (extend, no new file):
-- `validatePlacement` reports `max_cluster_len = 4` for `אחריות¹²³⁴`.
-- `final_summary_dump = true` when the last paragraph is
-  `לסיכום, האחריות חלה.¹²³⁴⁵`; `false` when markers are scattered.
-- Existing cluster/end-dump tests still pass; field counts unchanged.
+- `supabase/functions/legal-research-v1/lib/types.ts` — additive fields.
+- `supabase/functions/legal-research-v1/stages/drafter.ts` — new exported `applyOccurrenceFootnotes`, `validateOccurrenceFootnotes`, `shortenTitle`; wired between `applyCitationCleanup` and `validatePlacement`; env-gated.
+- `supabase/functions/legal-research-v1/stages/drafter.cleanup.test.ts` — extend with the cases below.
+- `supabase/functions/legal-research-v1/index.ts` — add `unique_source_count` to telemetry next to `footnote_count`.
+- `scripts/legal-research-v1-occurrence-footnotes-runner.ts` — new validation harness.
+- `reports/legal-research-v1-occurrence-footnotes-*.json` + `.md`.
 
-Prompt change is non-testable in unit tests — covered by the L1–L6+PROT
-runner.
+**Untouched**: retrieval, verifier, candidate pool, sources-only (`lib/sourcesOnly.ts`), frontend rendering (`FootnotesSection.tsx`, `footnoteRerender.ts`), DB schema, RLS, drafter prompt.
 
-## 5. Acceptance gates (reported, not enforced in code)
+## 8. Unit tests (`drafter.cleanup.test.ts`)
 
-- All hard grounding gates green across L1–L6+PROT.
-- No source drops (used count == prior used count ± natural variance, no
-  systematic loss).
-- `cluster_count` and `max_cluster_len` decrease materially vs baseline.
-- `final_summary_dump_count == 0` on every fixture (especially PROT).
-- Runtime delta within noise (≤ a few seconds; we only changed prompt
-  text length by ~250 chars).
-- Spot-check confirms answers remain coherent.
+- Separated repeat (A, A): `אחריות³ ... השפעה³` → `אחריות¹ ... השפעה²`; footnote 2 = `שם.`, `back_ref_number = 1`.
+- A, B, A: `…³ …⁴ …³` → `…¹ …² …³`; footnote 3 = `"<short A>, לעיל ה״ש 1."`.
+- A, A, B, A: ibid at 2, full B at 3, supra-to-1 at 4.
+- **Cluster guard:** input containing `²³` → skip, `phase3.discarded_reason === "ambiguous_adjacent_markers"`, outputs byte-equal to input.
+- **Cluster guard (longer):** input containing `¹²³` → same skip.
+- **K-guard:** synthetic input with 10 separated markers (each on its own word, no clusters) → skip, `phase3.discarded_reason === "multi_digit_occurrences_require_boundary_tokens"`.
+- **K-guard boundary:** 9 separated markers → applies normally; 10 → skips.
+- Prose invariance: `stripSup(out) === stripSup(in)` on every successful expansion.
+- Idempotency: running expansion twice on a successful output is a no-op.
+- `shortenTitle`: statute, case, academic, report cases.
 
-If clusters or summary dumps persist on PROT after the prompt-only
-change, stop and report — no repair/retry will be added in this phase.
+## 9. Production validation harness
+
+`scripts/legal-research-v1-occurrence-footnotes-runner.ts`, modelled on `legal-research-v1-cluster-prevention-runner.ts`. Fixtures: L1–L6 + PROT + 3 ad-hoc citation-heavy questions designed to induce same-source repeats.
+
+Per fixture capture:
+- hard gates: `marker_validation.ok`, `internal_id_leak === false`, `every_marker_has_footnote`, `every_footnote_in_usable`, `no_adjacent_marker_clusters`, `unique_source_count` unchanged vs baseline.
+- counts: `phase3.applied`, `phase3.discarded_reason`, `occurrence_count` (K), `unique_source_count`, `short_form_count`, `ibid_count`, `supra_count`.
+- examples: up to 5 short-form footnotes verbatim with surrounding body context.
+- prose-diff: `stripSup` byte-equal before/after on every applied fixture.
+- runtime: total_ms vs cluster-prevention baseline.
+
+Summary report aggregates explicitly:
+- # fixtures with Phase 3 applied;
+- # skipped due to `ambiguous_adjacent_markers`;
+- # skipped due to `multi_digit_occurrences_require_boundary_tokens`;
+- examples of `שם` and `לעיל ה״ש`;
+- runtime delta;
+- proof of prose invariance;
+- proof of zero source drops;
+- proof of no footnote-mapping regression.
+
+## 10. Acceptance gates
+
+- All existing hard grounding gates remain green on every fixture.
+- No ambiguous marker rendering anywhere (`no_adjacent_marker_clusters === true` on all shipped answers).
+- Every applied fixture has `K < 10`.
+- For every applied fixture:
+  - body markers strictly `[1..K]` in order of appearance;
+  - every marker has exactly one footnote;
+  - every footnote's `source_number ∈ used_sources[*].number`;
+  - `unique_source_count` unchanged vs baseline (no source dropped, no source added);
+  - repeat patterns produce `שם` / `לעיל ה״ש` correctly on spot-checks;
+  - `stripSup` byte-equal before/after.
+- For skipped fixtures: legacy outputs ship unchanged; legacy invariants still hold; reason is one of the two preconditions.
+- Runtime delta within noise.
+
+If any fixture fails hard gates while `phase3.applied === true`, the run stops and reports. No LLM repair, retry, or expansion of the preconditions will be added without further approval.
 
 ## Out of scope (explicit)
 
-Retrieval / Perplexity / verifier / candidate pool / source selection /
-DB / frontend / extra LLM call / placement repair / marker movement /
-thin-space / comma-separated markers / Rule 37 / repeated-citation
-short forms / failing or retrying answers based on the new telemetry.
+LLM repair, drafter prompt changes, marker movement across words/sentences, retrieval/verifier/selection/DB/sources-only/frontend changes, expansion of adjacent clusters (`²³` → `¹²`), multi-digit occurrence support (`K >= 10`), explicit marker-boundary tokens, Rule 37 body rewrites beyond occurrence numbering.
