@@ -1,0 +1,676 @@
+{
+  "phase": "citation-cleanup-validation",
+  "ran": 6,
+  "errors": 0,
+  "hard_gates_all_pass": true,
+  "chronological_all_ok": false,
+  "any_rollback": false,
+  "total_punct_swaps": 0,
+  "total_clusters_remaining": 10,
+  "runtime_deltas_ms": [
+    {
+      "id": "L1",
+      "delta": -70091
+    },
+    {
+      "id": "L2",
+      "delta": -104461
+    },
+    {
+      "id": "L3",
+      "delta": -115117
+    },
+    {
+      "id": "L4",
+      "delta": -57437
+    },
+    {
+      "id": "L5",
+      "delta": 7301
+    },
+    {
+      "id": "L6",
+      "delta": -94716
+    }
+  ],
+  "fixtures": [
+    {
+      "fixture_id": "L1",
+      "run_id": "4054dad6-1207-4626-9a62-6370b6b2c405",
+      "qa_log_id": "967f2ad3-745a-4cf2-8e4b-27cb926c15a0",
+      "total_ms": 114897,
+      "baseline_total_ms": 184988,
+      "runtime_delta_ms": -70091,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "citation_cleanup": {
+        "phase1": {
+          "applied": true,
+          "changed": false,
+          "after_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "before_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ]
+        },
+        "phase2": {
+          "applied": false,
+          "punct_swaps": 0
+        },
+        "clusters": {
+          "count": 0,
+          "examples": []
+        }
+      },
+      "chronological": {
+        "chronological_ok": true,
+        "first_appearance_order": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "total_marker_count": 15
+      },
+      "clusters_observed": {
+        "count": 0,
+        "examples": []
+      },
+      "rolled_back": false,
+      "source_list": {
+        "count": 9,
+        "ids": [
+          "ee158d42-8b40-4f8a-8162-6461b154cd6a",
+          "f256665d-83ed-46b4-b3d2-2f2f3ad0f964",
+          "013b5147-d07b-4c59-bbcd-c657cbd0e093",
+          "0f48fc9f-1b9c-41e2-8090-769d72ca1090",
+          "a72996d2-cb70-4ebe-8665-ae587c20b023",
+          "bedfeb09-ff07-4958-a7b8-a4ac7ce7dec7",
+          "62614e6f-f15f-44d4-862b-f458c94816aa",
+          "f0db15aa-c375-4546-8aee-7037e8fb86b3",
+          "b1d12737-89af-4d35-9c54-042ac7152305"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 9,
+        "used_sources_count": 9
+      }
+    },
+    {
+      "fixture_id": "L2",
+      "run_id": "943779e0-48c3-4726-888e-746885ee0a38",
+      "qa_log_id": "36877e52-f14e-426d-82bb-4448f8b6cbe3",
+      "total_ms": 117060,
+      "baseline_total_ms": 221521,
+      "runtime_delta_ms": -104461,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "citation_cleanup": {
+        "phase1": {
+          "applied": true,
+          "changed": true,
+          "after_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "before_order": [
+            1,
+            2,
+            3,
+            5,
+            7,
+            6,
+            4
+          ]
+        },
+        "phase2": {
+          "applied": false,
+          "punct_swaps": 0
+        },
+        "clusters": {
+          "count": 8,
+          "examples": [
+            {
+              "run": "¹²",
+              "index": 313,
+              "context": "סמכות הרשות.¹²\n\nבהרחבה — ה"
+            },
+            {
+              "run": "²³",
+              "index": 577,
+              "context": " של מדיניות.²³\n\nיסודות/אלמ"
+            },
+            {
+              "run": "²³",
+              "index": 963,
+              "context": "ה על ההבטחה;²³ (4) **נזק א"
+            },
+            {
+              "run": "³⁴",
+              "index": 1066,
+              "context": "הפרת ההבטחה.³⁴\n\nהשלכות וסע"
+            },
+            {
+              "run": "⁴⁵",
+              "index": 1470,
+              "context": "גבלות סמכות;⁴⁵\n- הסתמכות ש"
+            }
+          ]
+        }
+      },
+      "chronological": {
+        "chronological_ok": false,
+        "first_appearance_order": [
+          12,
+          23,
+          2,
+          3,
+          34,
+          4,
+          45,
+          6,
+          726,
+          7,
+          12346
+        ],
+        "total_marker_count": 16
+      },
+      "clusters_observed": {
+        "count": 3,
+        "examples": [
+          "⁴⁵",
+          "⁴⁵",
+          "⁴⁶"
+        ]
+      },
+      "rolled_back": false,
+      "source_list": {
+        "count": 7,
+        "ids": [
+          "defaf530-7f86-458b-8999-1700d6ae3f0d",
+          "b74f2781-b3db-485d-93d6-83eed74e3ec2",
+          "2d069955-2cc8-420b-a00e-5a3baa0f09e4",
+          "a1e8a8d6-5d5d-4cfd-b43c-4033591f214b",
+          "111b61ca-d2b1-4911-8963-d1bd0296bcc5",
+          "6e97b5cc-5acc-4304-b990-6d672a80573a",
+          "c886f633-b2e3-4426-bf3c-deed7b617595"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 7,
+        "used_sources_count": 7
+      }
+    },
+    {
+      "fixture_id": "L3",
+      "run_id": "3d8157ea-2596-4beb-be66-e13739fda8e5",
+      "qa_log_id": "518dee32-1dd2-4bb7-83b9-562101c98cfd",
+      "total_ms": 138208,
+      "baseline_total_ms": 253325,
+      "runtime_delta_ms": -115117,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "citation_cleanup": {
+        "phase1": {
+          "applied": true,
+          "changed": false,
+          "after_order": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "before_order": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        "phase2": {
+          "applied": false,
+          "punct_swaps": 0
+        },
+        "clusters": {
+          "count": 13,
+          "examples": [
+            {
+              "run": "¹²",
+              "index": 745,
+              "context": "נשיות\" בלבד.¹²\n\nנטל הראיה."
+            },
+            {
+              "run": "²³⁴",
+              "index": 1090,
+              "context": "של הטיעונים.²³⁴\n\nשיקולים מה"
+            },
+            {
+              "run": "¹³",
+              "index": 1318,
+              "context": " בעת החתימה;¹³\n- מידת השיה"
+            },
+            {
+              "run": "¹³",
+              "index": 1422,
+              "context": "כח או סביר);¹³\n- חומרת ההפ"
+            },
+            {
+              "run": "¹³",
+              "index": 1532,
+              "context": "חומרת ההפרה;¹³\n- פערי כוח "
+            }
+          ]
+        }
+      },
+      "chronological": {
+        "chronological_ok": false,
+        "first_appearance_order": [
+          1,
+          12,
+          234,
+          13,
+          3,
+          34,
+          134,
+          15,
+          35,
+          135,
+          123
+        ],
+        "total_marker_count": 15
+      },
+      "clusters_observed": {
+        "count": 0,
+        "examples": []
+      },
+      "rolled_back": false,
+      "source_list": {
+        "count": 5,
+        "ids": [
+          "5de4e332-cc10-4777-8c3c-79312b62db60",
+          "1a08c23c-59f9-41ea-a222-f05ee6d928cc",
+          "33d7b7b1-9276-4893-b996-627211f22fe7",
+          "818e0299-e94e-428c-9d20-16cc2be3d977",
+          "316ed1e8-acc5-460f-a6ca-18360a77ef14"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 5,
+        "used_sources_count": 5
+      }
+    },
+    {
+      "fixture_id": "L4",
+      "run_id": "eb5902cb-6600-421f-8fa6-867e3e7d9a07",
+      "qa_log_id": "56323cc8-7df9-491a-ad4e-7a2473ed5199",
+      "total_ms": 122017,
+      "baseline_total_ms": 179454,
+      "runtime_delta_ms": -57437,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "citation_cleanup": {
+        "phase1": {
+          "applied": true,
+          "changed": false,
+          "after_order": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "before_order": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        "phase2": {
+          "applied": false,
+          "punct_swaps": 0
+        },
+        "clusters": {
+          "count": 8,
+          "examples": [
+            {
+              "run": "¹²",
+              "index": 230,
+              "context": "יון שהסתיים.¹²\n\nהגדרה ותכל"
+            },
+            {
+              "run": "¹²",
+              "index": 546,
+              "context": "כרעה הקודמת.¹²\n\nמרכיבי היס"
+            },
+            {
+              "run": "¹²",
+              "index": 1093,
+              "context": "בענין שנדון.¹²\n\nהיקף ההכרע"
+            },
+            {
+              "run": "³⁴",
+              "index": 1297,
+              "context": "מך הדין פסק.³⁴\n\nחריגים והג"
+            },
+            {
+              "run": "⁴³",
+              "index": 1733,
+              "context": "רח השתק מלא.⁴³\n\nהשלכות פרו"
+            }
+          ]
+        }
+      },
+      "chronological": {
+        "chronological_ok": false,
+        "first_appearance_order": [
+          12,
+          2,
+          3,
+          4,
+          34,
+          1,
+          5,
+          43,
+          24
+        ],
+        "total_marker_count": 15
+      },
+      "clusters_observed": {
+        "count": 0,
+        "examples": []
+      },
+      "rolled_back": false,
+      "source_list": {
+        "count": 5,
+        "ids": [
+          "384c1f67-378c-403e-a452-0b2a34b4f040",
+          "1b284fe3-16ee-4d3a-b16b-52bf0b96b414",
+          "b8e8dc8c-c323-4915-8d94-7429232e1995",
+          "4449615f-c825-4abf-833e-65d986a79bba",
+          "899c7af0-8d1c-41cc-842d-5f1deb0c679e"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 5,
+        "used_sources_count": 5
+      }
+    },
+    {
+      "fixture_id": "L5",
+      "run_id": "ee865dfb-8413-4e9b-ba68-d31671c47300",
+      "qa_log_id": "25af2a52-d152-4ca2-a3b1-92778ea8eed6",
+      "total_ms": 196471,
+      "baseline_total_ms": 189170,
+      "runtime_delta_ms": 7301,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "citation_cleanup": {
+        "phase1": {
+          "applied": true,
+          "changed": false,
+          "after_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "before_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        },
+        "phase2": {
+          "applied": false,
+          "punct_swaps": 0
+        },
+        "clusters": {
+          "count": 5,
+          "examples": [
+            {
+              "run": "²³",
+              "index": 413,
+              "context": "מכים בהחלטה.²³\n\nהבחינה של "
+            },
+            {
+              "run": "²³",
+              "index": 889,
+              "context": " חשיבה סביר.²³\n\nהיקף הביקו"
+            },
+            {
+              "run": "⁴⁵",
+              "index": 1154,
+              "context": "בות מצומצמת.⁴⁵ בהתנגשות עם"
+            },
+            {
+              "run": "³⁴⁵",
+              "index": 1582,
+              "context": "וצדק במובהק.³⁴⁵\n\nהיבטים פרק"
+            },
+            {
+              "run": "³¹⁴⁵⁶",
+              "index": 2200,
+              "context": "לה רחב יותר.³¹⁴⁵⁶\n\n\n"
+            }
+          ]
+        }
+      },
+      "chronological": {
+        "chronological_ok": false,
+        "first_appearance_order": [
+          1,
+          23,
+          45,
+          3,
+          345,
+          6,
+          7,
+          31456
+        ],
+        "total_marker_count": 10
+      },
+      "clusters_observed": {
+        "count": 3,
+        "examples": [
+          "⁴⁵",
+          "⁴⁵",
+          "⁴⁵⁶"
+        ]
+      },
+      "rolled_back": false,
+      "source_list": {
+        "count": 7,
+        "ids": [
+          "e4735a71-9e59-4a09-bf11-37b895ccbb4c",
+          "517be8f9-512b-4461-8e53-01bc1c8640bb",
+          "e5ed377d-e871-48f3-9133-c1d4288453e8",
+          "43af38d0-c287-48d7-9e72-fe165184e6f0",
+          "19df8adf-9c66-4946-ba45-668afe744958",
+          "8946fe43-a1a6-4869-b334-83b407243afa",
+          "edb05099-6a88-426f-ab92-8e4e0c9f4fff"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 7,
+        "used_sources_count": 7
+      }
+    },
+    {
+      "fixture_id": "L6",
+      "run_id": "7b70b2da-7317-419a-9f3b-c694a8a48dfc",
+      "qa_log_id": "73dcc86c-0f43-414b-963b-cad132256bb2",
+      "total_ms": 155176,
+      "baseline_total_ms": 249892,
+      "runtime_delta_ms": -94716,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "citation_cleanup": {
+        "phase1": {
+          "applied": true,
+          "changed": false,
+          "after_order": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "before_order": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        "phase2": {
+          "applied": false,
+          "punct_swaps": 0
+        },
+        "clusters": {
+          "count": 8,
+          "examples": [
+            {
+              "run": "¹²³⁴⁵",
+              "index": 390,
+              "context": " כגון פיצוי.¹²³⁴⁵\n\nיסודות האכ"
+            },
+            {
+              "run": "¹²³",
+              "index": 775,
+              "context": "עה בהסתמכות.¹²³\n\nבהירות וכו"
+            },
+            {
+              "run": "²³",
+              "index": 1211,
+              "context": "מכות של הצד.²³\n\nמשקל ההסתמ"
+            },
+            {
+              "run": "⁴⁵",
+              "index": 1570,
+              "context": "ופורציונלית.⁴⁵\n\nשינוי נסיב"
+            },
+            {
+              "run": "⁵⁴",
+              "index": 1866,
+              "context": "במקום אכיפה.⁵⁴\n\nהשלכות מעש"
+            }
+          ]
+        }
+      },
+      "chronological": {
+        "chronological_ok": false,
+        "first_appearance_order": [
+          12345,
+          123,
+          1,
+          23,
+          45,
+          54,
+          124,
+          234,
+          2345
+        ],
+        "total_marker_count": 9
+      },
+      "clusters_observed": {
+        "count": 4,
+        "examples": [
+          "⁴⁵",
+          "⁴⁵",
+          "⁵⁴",
+          "⁴⁵"
+        ]
+      },
+      "rolled_back": false,
+      "source_list": {
+        "count": 5,
+        "ids": [
+          "efb91e1f-1f89-450b-b483-69ce8367ccb1",
+          "3c8c04e3-3798-4a9f-8a9d-4d08c25fc171",
+          "4f8d38f9-9f45-49d0-a63a-2442260796c2",
+          "0c82e190-3ac5-4d23-8c80-29f481679f2e",
+          "9c00b118-8ec3-45a0-9f93-219b8a7c2fe2"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 5,
+        "used_sources_count": 5
+      }
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "fixture_id": "L4",
+  "run_id": "eb5902cb-6600-421f-8fa6-867e3e7d9a07",
+  "qa_log_id": "56323cc8-7df9-491a-ad4e-7a2473ed5199",
+  "total_ms": 122017,
+  "baseline_total_ms": 179454,
+  "runtime_delta_ms": -57437,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "citation_cleanup": {
+    "phase1": {
+      "applied": true,
+      "changed": false,
+      "after_order": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "before_order": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "phase2": {
+      "applied": false,
+      "punct_swaps": 0
+    },
+    "clusters": {
+      "count": 8,
+      "examples": [
+        {
+          "run": "¹²",
+          "index": 230,
+          "context": "יון שהסתיים.¹²\n\nהגדרה ותכל"
+        },
+        {
+          "run": "¹²",
+          "index": 546,
+          "context": "כרעה הקודמת.¹²\n\nמרכיבי היס"
+        },
+        {
+          "run": "¹²",
+          "index": 1093,
+          "context": "בענין שנדון.¹²\n\nהיקף ההכרע"
+        },
+        {
+          "run": "³⁴",
+          "index": 1297,
+          "context": "מך הדין פסק.³⁴\n\nחריגים והג"
+        },
+        {
+          "run": "⁴³",
+          "index": 1733,
+          "context": "רח השתק מלא.⁴³\n\nהשלכות פרו"
+        }
+      ]
+    }
+  },
+  "chronological": {
+    "chronological_ok": false,
+    "first_appearance_order": [
+      12,
+      2,
+      3,
+      4,
+      34,
+      1,
+      5,
+      43,
+      24
+    ],
+    "total_marker_count": 15
+  },
+  "clusters_observed": {
+    "count": 0,
+    "examples": []
+  },
+  "rolled_back": false,
+  "source_list": {
+    "count": 5,
+    "ids": [
+      "384c1f67-378c-403e-a452-0b2a34b4f040",
+      "1b284fe3-16ee-4d3a-b16b-52bf0b96b414",
+      "b8e8dc8c-c323-4915-8d94-7429232e1995",
+      "4449615f-c825-4abf-833e-65d986a79bba",
+      "899c7af0-8d1c-41cc-842d-5f1deb0c679e"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 5,
+    "used_sources_count": 5
+  }
+}

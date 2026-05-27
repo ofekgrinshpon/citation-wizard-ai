@@ -1,0 +1,106 @@
+{
+  "fixture_id": "L3",
+  "run_id": "3d8157ea-2596-4beb-be66-e13739fda8e5",
+  "qa_log_id": "518dee32-1dd2-4bb7-83b9-562101c98cfd",
+  "total_ms": 138208,
+  "baseline_total_ms": 253325,
+  "runtime_delta_ms": -115117,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "citation_cleanup": {
+    "phase1": {
+      "applied": true,
+      "changed": false,
+      "after_order": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "before_order": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "phase2": {
+      "applied": false,
+      "punct_swaps": 0
+    },
+    "clusters": {
+      "count": 13,
+      "examples": [
+        {
+          "run": "¹²",
+          "index": 745,
+          "context": "נשיות\" בלבד.¹²\n\nנטל הראיה."
+        },
+        {
+          "run": "²³⁴",
+          "index": 1090,
+          "context": "של הטיעונים.²³⁴\n\nשיקולים מה"
+        },
+        {
+          "run": "¹³",
+          "index": 1318,
+          "context": " בעת החתימה;¹³\n- מידת השיה"
+        },
+        {
+          "run": "¹³",
+          "index": 1422,
+          "context": "כח או סביר);¹³\n- חומרת ההפ"
+        },
+        {
+          "run": "¹³",
+          "index": 1532,
+          "context": "חומרת ההפרה;¹³\n- פערי כוח "
+        }
+      ]
+    }
+  },
+  "chronological": {
+    "chronological_ok": false,
+    "first_appearance_order": [
+      1,
+      12,
+      234,
+      13,
+      3,
+      34,
+      134,
+      15,
+      35,
+      135,
+      123
+    ],
+    "total_marker_count": 15
+  },
+  "clusters_observed": {
+    "count": 0,
+    "examples": []
+  },
+  "rolled_back": false,
+  "source_list": {
+    "count": 5,
+    "ids": [
+      "5de4e332-cc10-4777-8c3c-79312b62db60",
+      "1a08c23c-59f9-41ea-a222-f05ee6d928cc",
+      "33d7b7b1-9276-4893-b996-627211f22fe7",
+      "818e0299-e94e-428c-9d20-16cc2be3d977",
+      "316ed1e8-acc5-460f-a6ca-18360a77ef14"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 5,
+    "used_sources_count": 5
+  }
+}

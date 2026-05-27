@@ -1,0 +1,116 @@
+{
+  "fixture_id": "L2",
+  "run_id": "943779e0-48c3-4726-888e-746885ee0a38",
+  "qa_log_id": "36877e52-f14e-426d-82bb-4448f8b6cbe3",
+  "total_ms": 117060,
+  "baseline_total_ms": 221521,
+  "runtime_delta_ms": -104461,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "citation_cleanup": {
+    "phase1": {
+      "applied": true,
+      "changed": true,
+      "after_order": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "before_order": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        6,
+        4
+      ]
+    },
+    "phase2": {
+      "applied": false,
+      "punct_swaps": 0
+    },
+    "clusters": {
+      "count": 8,
+      "examples": [
+        {
+          "run": "¹²",
+          "index": 313,
+          "context": "סמכות הרשות.¹²\n\nבהרחבה — ה"
+        },
+        {
+          "run": "²³",
+          "index": 577,
+          "context": " של מדיניות.²³\n\nיסודות/אלמ"
+        },
+        {
+          "run": "²³",
+          "index": 963,
+          "context": "ה על ההבטחה;²³ (4) **נזק א"
+        },
+        {
+          "run": "³⁴",
+          "index": 1066,
+          "context": "הפרת ההבטחה.³⁴\n\nהשלכות וסע"
+        },
+        {
+          "run": "⁴⁵",
+          "index": 1470,
+          "context": "גבלות סמכות;⁴⁵\n- הסתמכות ש"
+        }
+      ]
+    }
+  },
+  "chronological": {
+    "chronological_ok": false,
+    "first_appearance_order": [
+      12,
+      23,
+      2,
+      3,
+      34,
+      4,
+      45,
+      6,
+      726,
+      7,
+      12346
+    ],
+    "total_marker_count": 16
+  },
+  "clusters_observed": {
+    "count": 3,
+    "examples": [
+      "⁴⁵",
+      "⁴⁵",
+      "⁴⁶"
+    ]
+  },
+  "rolled_back": false,
+  "source_list": {
+    "count": 7,
+    "ids": [
+      "defaf530-7f86-458b-8999-1700d6ae3f0d",
+      "b74f2781-b3db-485d-93d6-83eed74e3ec2",
+      "2d069955-2cc8-420b-a00e-5a3baa0f09e4",
+      "a1e8a8d6-5d5d-4cfd-b43c-4033591f214b",
+      "111b61ca-d2b1-4911-8963-d1bd0296bcc5",
+      "6e97b5cc-5acc-4304-b990-6d672a80573a",
+      "c886f633-b2e3-4426-bf3c-deed7b617595"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 7,
+    "used_sources_count": 7
+  }
+}
