@@ -520,7 +520,7 @@ async function handle(req: Request): Promise<Response> {
   // ─── Sources-only short-circuit (skip drafter) ───────────────────────────
   if (is_sources_only) {
     await markStage("ranking");
-    const sourcesPayload = buildSourcesOnlyPayload({
+    const sourcesPayload = await buildSourcesOnlyPayload({
       question,
       run_id,
       candidates: pool.candidates,
