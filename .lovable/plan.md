@@ -1,108 +1,179 @@
-**Goal**
 
-In `mode: "sources_only"` (חיפוש מקורות), detect likely Perplexity-hallucinated or broken URLs and warn the user instead of silently presenting them as reliable links. Confirmed-dead links get a strong warning; ambiguous/slow links get a softer "not verified" note. Nothing is dropped.
+# Citation Cleanup Plan — legal-research-v1 (revised, deterministic-only)
 
-**Strict scope (unchanged)**
+Scope this round: **Phase 1 (chronological renumbering) + Phase 2
+(punctuation normalization) + cluster telemetry only**. No thin-space
+separation, no marker movement across words, no Rule-37 body rewrite, no
+repeated-citation short forms, no LLM calls. Stops after the validation
+report.
 
-sources_only only. No changes to: answer pipeline, drafter, verifier, retrieval, candidate pool, Perplexity prompts, citation engine, DB schema, source admission rules.
+Untouched: retrieval, Perplexity, verifier, candidate pool, source
+selection, drafter prose, sources-only mode, DB schema, frontend.
 
----
+## Where the code lives
 
-**Server: `supabase/functions/legal-research-v1/lib/sourcesOnly.ts`**
-
-1. **Extend `SourceResult`** with three optional fields:
-   - `url_validation_state?: "ok" | "unreachable" | "unverified"`
-   - `url_unreachable?: boolean` (true only when state === "unreachable"; kept for back-compat / quick checks)
-   - `url_status?: "404" | "410" | "dns" | "network" | "timeout" | "blocked" | "paywalled" | "ok" | string`
-
-2. **New internal `validateUrls(allSources: SourceResult[]): Promise<void>`**
-   - Collect unique URLs where `origin === "perplexity"` and a URL exists. Local DB sources are skipped entirely (never validated, never chipped).
-   - Normalize URL for cache key (lowercase host, strip trailing `/`).
-   - Per-run `Map<normalizedUrl, { state, status }>`.
-   - **Concurrency 8** via a tiny worker-pool (no external deps).
-   - **Per-URL timeout: 4s** via `AbortSignal.timeout(4000)`.
-   - **Global soft deadline: 6s** for the whole stage, via a shared `AbortController` triggered by a `setTimeout(6000)`; any URL still in-flight when the deadline fires is marked `unverified / timeout`.
-   - Wrapped in `Promise.allSettled` so a thrown error never breaks the response.
-
-3. **Per-URL check**
-   - Try `HEAD` with `redirect: "follow"`.
-   - Status interpretation:
-     - `2xx` → `ok`
-     - `3xx` final → follows; treat by final status
-     - `401` / `403` → `ok` (state) with `status: "paywalled"` — NO chip
-     - `404` / `410` → `unreachable`
-     - HEAD `405` or HEAD `403` or network/CORS-ish error → **fallback** `GET` with `Range: bytes=0-0` + same 4s timeout
-       - If GET succeeds (2xx) → `ok`
-       - If GET 404/410 → `unreachable`
-       - If GET 401/403 → `ok` / `paywalled`
-       - Else → `unverified` (status: `blocked` or `network`)
-     - DNS / `ENOTFOUND` / `ECONNREFUSED` → `unreachable` (status: `dns` / `network`)
-     - Abort due to per-URL timeout → `unverified` / `timeout`
-     - Abort due to global deadline → `unverified` / `timeout`
-     - Any unexpected non-2xx not covered above → `unverified` / `unknown`
-
-4. **Apply results**
-   - Mutate only Perplexity-origin entries in both `mainGrouped.sources` and `addGrouped.sources` (and the groups buckets, since they share object refs).
-   - For each: set `url_validation_state`, `url_status`, and `url_unreachable = state === "unreachable"`.
-   - Local DB entries: leave all three fields unset.
-
-5. **Summary**
-   - `summary.url_checks_failed` — count of confirmed `unreachable`
-   - `summary.url_checks_unverified` — count of `unverified`
-   - (Existing summary fields unchanged.)
-
-6. **Async conversion**
-   - Convert `buildSourcesOnlyPayload` to `async`. Call `await validateUrls(...)` once, after both main and additional are grouped/ranked, before returning the payload.
-   - Update the single `sources_only` branch in `legal-research-v1/index.ts` to `await` the builder. No other call sites exist (answer mode never calls this builder).
+- `supabase/functions/legal-research-v1/stages/drafter.ts`
+  - Existing helpers: `toSuperscript`, `SUP_TO_DIGIT`, `extractMarkers`,
+    `runMarkerValidation`, `deterministicRepair` (~lines 580–656).
+  - `deterministicRepair` today runs **only on marker_validation failure**
+    (called at lines 800 and 876). This plan promotes it to an always-on
+    normalization step and adds a punctuation pass + cluster counter
+    immediately after it.
+- `supabase/functions/legal-research-v1/lib/telemetry.ts` — no edits;
+  new fields ride on the existing `metadata` blob.
+- No new files. No frontend changes.
 
 ---
 
-**Frontend: `src/components/LegalSourceSearchPanel.tsx`**
+## Phase 1 — Chronological renumbering (always on)
 
-1. **Extend types** on `SourceResult` to mirror the three new optional fields, and on `SourcesOnlyResponse["summary"]` to include `url_checks_failed?: number` and `url_checks_unverified?: number`.
+**Edits in `drafter.ts`:**
 
-2. **`SourceCard` chip rendering**
-   - If `url_validation_state === "unreachable"`:
-     - Destructive-variant chip text: `קישור לא זמין`
-     - Tooltip: `ייתכן שזהו מקור שגוי שהוחזר ע"י מנוע החיפוש. מומלץ לאמת ידנית לפני שימוש.`
-     - Apply `line-through` to the URL line only (not the title).
-   - If `url_validation_state === "unverified"`:
-     - Muted/warning-variant chip text: `הקישור לא אומת`
-     - Tooltip: `לא הצלחנו לאמת את הקישור בזמן סביר. ייתכן שהאתר איטי או חוסם בדיקות אוטומטיות.`
-     - No line-through.
-   - For `ok`, paywalled (401/403), local DB sources, or any source without the field → no chip.
-   - Chip placement: next to the existing support / "לבדיקה" chip, using `<Tooltip>` from `@/components/ui/tooltip` and `<Badge>` variants from the existing design system (no custom colors).
+1. Add a thin wrapper `normalizeNumbering(answer, used)` that calls the
+   existing `deterministicRepair` and, when markers are already 1..k in
+   first-appearance order, returns the input unchanged (instead of `null`)
+   so the caller never has to special-case "no-op".
+2. After the initial parse (~line 795) and again after escalation
+   (~line 874), call it unconditionally on `parsed.ok` paths, then re-run
+   `runMarkerValidation`:
+   ```ts
+   const before = answer;
+   const norm = normalizeNumbering(answer, used);
+   const candidate = norm ?? { answer_markdown: answer, used_sources: used };
+   const m2 = runMarkerValidation(candidate.answer_markdown, candidate.used_sources);
+   if (m2.ok) {
+     answer = candidate.answer_markdown;
+     used   = candidate.used_sources;
+     marker = { ...m2, repaired: m2 !== marker };
+     cleanup.phase1 = { applied: true, changed: before !== answer };
+   } else {
+     cleanup.phase1 = { applied: false, discarded_reason: "marker_validation_failed" };
+   }
+   ```
+3. Keep all existing failure-path fallbacks (C# scrub, escalation) as-is.
 
-3. **Summary line**
-   - Append ` · {n} קישורים לא זמינים` only when `summary.url_checks_failed > 0`.
-   - Append ` · {n} קישורים שלא אומתו` only when `summary.url_checks_unverified > 0`.
+**Telemetry:** `metadata.citation_cleanup.phase1 = { applied, changed,
+discarded_reason?, before_order, after_order }`.
 
----
-
-**Backward compatibility**
-
-All new fields are optional. Old `qa_logs` rehydrated from history (no `url_validation_state`, no new summary fields) render exactly as today: no chips, no extra summary text.
-
----
-
-**Validation (re-run judicial-activism in חיפוש מקורות)**
-
-- The two Cambridge Core entries (#21, #22) show `קישור לא זמין` with the strong tooltip.
-- Live Knesset / nevo.co.il / court.gov.il / real IDI URLs show no chip.
-- JSTOR/Cambridge entries that return 401/403 paywalls show no chip.
-- Pure timeout cases show `הקישור לא אומת` (not the strong chip).
-- Local DB sources never get any chip.
-- No source disappears; grouping and rank order unchanged.
-- Old history rows render cleanly.
-- Typical added latency ≤ ~3s; hard cap ≈ 6s + small overhead even with many bad URLs.
-- Answer-generation mode latency and output unchanged.
+**Acceptance:** chronological markers; `footnote_count === used_sources.length`;
+`used_sources ⊆ verifier.usable`; no internal-id leaks; only marker digit
+characters change; if validation fails, original output is preserved.
 
 ---
 
-**Out of scope**
+## Phase 2 — Punctuation normalization
 
-- No URL validation in answer mode.
-- No Perplexity prompt or admit-list changes.
-- No automatic resolution/replacement of broken URLs.
-- No DB columns, no schema migration, no telemetry table changes.
-- No source-admission policy changes.
+Runs immediately after Phase 1, on the same `answer` string.
+
+**Transform (single regex, iterated to fixed-point):**
+
+```ts
+const PUNCT = /([⁰-⁹])([.,;:?!])/u;   // ASCII terminal/clause punctuation
+let punctSwaps = 0;
+let prev: string;
+do {
+  prev = answer;
+  answer = answer.replace(new RegExp(PUNCT, "gu"), (_m, sup, p) => {
+    punctSwaps++;
+    return p + sup;
+  });
+} while (answer !== prev);
+```
+
+Rules enforced by construction:
+- Marker must be **immediately** before the punctuation char (no space) →
+  `קוראים¹ לי אופק.` is left alone (space between `¹` and `לי`).
+- Hops exactly one punctuation character; never crosses a word boundary or
+  sentence boundary.
+- Punctuation set kept conservative: `. , ; : ? !` (ASCII forms; Hebrew
+  legal text uses ASCII for these). Hebrew gershayim/geresh (`״`, `׳`)
+  are **excluded** — they're typographic marks inside words, not clause
+  terminators, and including them would create false positives.
+- Marker count, marker digits, footnote list, and `used_sources` are
+  untouched. Verified by re-running `runMarkerValidation`; if it fails for
+  any reason, the punctuation pass is rolled back to the Phase-1 output.
+
+**Telemetry:** `metadata.citation_cleanup.phase2 = { applied, punct_swaps,
+discarded_reason? }`.
+
+**Acceptance examples:**
+- `טקסט¹.` → `טקסט.¹`, `טקסט²,` → `טקסט,²`, `טקסט³;` → `טקסט;³`,
+  `טקסט⁴?` → `טקסט?⁴`, `טקסט⁵!` → `טקסט!⁵`
+- `קוראים¹ לי אופק.` unchanged
+- `אחריות¹²³⁴.` → `אחריות¹²³.⁴` (only the last marker hops the dot —
+  cluster handling is out of scope for Phase 2 by design; reported via
+  telemetry below)
+
+---
+
+## Cluster telemetry (detection only)
+
+After Phase 2, scan the final `answer` for adjacent superscript runs:
+
+```ts
+const CLUSTER = /[⁰-⁹]{2,}/gu;
+const clusters: Array<{ run: string; index: number; context: string }> = [];
+for (const m of answer.matchAll(CLUSTER)) {
+  clusters.push({
+    run: m[0],
+    index: m.index!,
+    context: answer.slice(Math.max(0, m.index! - 12), m.index! + m[0].length + 12),
+  });
+}
+```
+
+Record `metadata.citation_cleanup.clusters = { count: clusters.length,
+examples: clusters.slice(0, 5) }`. No mutation, no markers moved, no
+spaces inserted, no merges.
+
+---
+
+## Tests (unit, in drafter test file or new `drafter.cleanup.test.ts`)
+
+- Phase 1: drafter emits `...²...¹...³` → renumbered to `...¹...²...³`
+  with reordered `used_sources`; pass-through when already sorted.
+- Phase 1 rollback: synthetic case where renumbering would yield a
+  `marker_validation` failure → original answer/used preserved,
+  `discarded_reason === "marker_validation_failed"`.
+- Phase 2 hops: `.,;:?!` each swap once; iterated form handles
+  `טקסט¹.` and confirms idempotence on a second pass.
+- Phase 2 non-hop: space between marker and punctuation prevents swap;
+  `קוראים¹ לי אופק.` unchanged.
+- Cluster telemetry: `¹²³⁴` produces one cluster of length 4 in metadata,
+  answer unchanged.
+- Marker-count invariant under Phase 1 + Phase 2 across all of the above.
+
+---
+
+## Validation harness
+
+Reuse `eval/legal-research-v1/fixtures.json` (L1–L6) plus 5 real questions
+captured from `qa_logs` flagged as clustered or out-of-order in earlier
+phaseB runs. New runner: `scripts/legal-research-v1-citation-cleanup-runner.ts`
+mirroring the existing p7-phase runners; report at
+`reports/legal-research-v1-citation-cleanup.json` + a short `.md` summary.
+
+Per fixture report:
+- `marker_validation.ok` (must be true)
+- `internal_id_leak` (must be false)
+- `footnote_count === used_sources.length`
+- `used_sources ⊆ verifier.usable`
+- chronological numbering before/after (markers strictly increasing on
+  first appearance)
+- `punct_swaps` count
+- `cluster_count` before / after with up to 5 example contexts
+- `runtime_delta_ms` vs the equivalent phaseE5 baseline (target ≈ 0)
+- `cleanup_discarded` flag + reason when validation forced rollback
+
+## Out of scope (explicit)
+
+- No thin-space or comma-separated marker rendering.
+- No movement of markers across words or sentences.
+- No LLM-based placement repair.
+- No Rule-37 body-marker rewrite.
+- No repeated-citation short forms (deferred Phase 3).
+- No retrieval / verifier / drafter / source-selection changes.
+- No frontend changes.
+- No DB schema changes.
+
+Stop after the Phase 1 + punctuation-normalization report.
