@@ -154,16 +154,16 @@ Deno.test("phase3: A,A,B,A → ibid at 2, full B at 3, supra at 4", () => {
   assertEquals(r.footnotes[3].back_ref_number, 1);
 });
 
-Deno.test("phase3 guard: adjacent cluster ²³ → skip", () => {
+Deno.test("phase3 v2: adjacent run ²³ with S={2,3} → tokenizes as split → adjacent token skip", () => {
   const answer = "אחריות²³ ועוד.";
   const used = [src(2, "X"), src(3, "Y")];
   const r = applyOccurrenceFootnotes(answer, used, [fnUnique(2, "X"), fnUnique(3, "Y")]);
   assertEquals(r.applied, false);
-  assertEquals(r.report.discarded_reason, "ambiguous_adjacent_markers");
+  assertEquals(r.report.discarded_reason, "adjacent_tokens_would_render_ambiguous");
   assertEquals(r.answer, answer);
 });
 
-Deno.test("phase3 guard: cluster ¹²³ → skip", () => {
+Deno.test("phase3 v2: adjacent run ¹²³ with S={1,2,3} → unique split → adjacent token skip", () => {
   const answer = "ראיות¹²³ במצטבר.";
   const used = [src(1, "X"), src(2, "Y"), src(3, "Z")];
   const r = applyOccurrenceFootnotes(answer, used, [
@@ -172,22 +172,60 @@ Deno.test("phase3 guard: cluster ¹²³ → skip", () => {
     fnUnique(3, "Z"),
   ]);
   assertEquals(r.applied, false);
-  assertEquals(r.report.discarded_reason, "ambiguous_adjacent_markers");
+  assertEquals(r.report.discarded_reason, "adjacent_tokens_would_render_ambiguous");
 });
 
-Deno.test("phase3 K-guard: K=10 → skip", () => {
-  // 10 separated single-digit markers (values cycling 1..5 to stay digit-safe).
+Deno.test("phase3 v2: ²⁴⁵ with no decode (245∉S, no split) → ambiguous skip", () => {
+  const answer = "מקבץ²⁴⁵ כאן.";
+  const used = [src(2, "X"), src(4, "Y")];
+  const r = applyOccurrenceFootnotes(answer, used, [fnUnique(2, "X"), fnUnique(4, "Y")]);
+  assertEquals(r.applied, false);
+  assertEquals(r.report.discarded_reason, "ambiguous_raw_superscript_run");
+});
+
+Deno.test("phase3 v2: ¹² with BOTH 12∈S and 1+2 valid → ambiguous skip", () => {
+  const answer = "טקסט¹² כאן.";
+  const used = [src(1, "A"), src(2, "B"), src(12, "L")];
+  const r = applyOccurrenceFootnotes(answer, used, [
+    fnUnique(1, "A"),
+    fnUnique(2, "B"),
+    fnUnique(12, "L"),
+  ]);
+  assertEquals(r.applied, false);
+  assertEquals(r.report.discarded_reason, "ambiguous_raw_superscript_run");
+});
+
+Deno.test("phase3 v2: ¹² with only 12∈S → unambiguous single → applies, renders ¹²", () => {
+  // Build a doc that uses only source #12 (separated repeats so K≥1).
+  const answer = "אחריות¹² ושוב השפעה¹².";
+  const used = [src(12, "פלוני נ' אלמוני")];
+  const r = applyOccurrenceFootnotes(answer, used, [fnUnique(12, used[0].title)]);
+  assert(r.applied);
+  // First occurrence becomes 1; second becomes 2 (ibid). Both single-digit
+  // here, so the multi-digit-run proof should report 0 multi-digit runs.
+  assert(/אחריות¹ ושוב השפעה²/.test(r.answer));
+  assertEquals(r.report.multi_digit_marker_runs_count, 0);
+  assertEquals(r.footnotes[1].short_form_kind, "ibid");
+});
+
+Deno.test("phase3 v2: K=10 now applies and renders ¹⁰ from a single token", () => {
+  // 10 separated single-digit markers cycling 1..5.
   const parts: string[] = [];
   for (let i = 0; i < 10; i++) parts.push(`טקסט${toSup((i % 5) + 1)}`);
   const answer = parts.join(" ") + ".";
   const used = [1, 2, 3, 4, 5].map((n) => src(n, `T${n}`));
   const footnotes = used.map((u) => fnUnique(u.number, u.title));
   const r = applyOccurrenceFootnotes(answer, used, footnotes);
-  assertEquals(r.applied, false);
-  assertEquals(r.report.discarded_reason, "multi_digit_occurrences_require_boundary_tokens");
+  assert(r.applied);
+  assertEquals(r.report.occurrence_count, 10);
+  // The 10th marker renders as ¹⁰ — a multi-digit run from one token.
+  assert(/¹⁰/u.test(r.answer));
+  assertEquals(r.report.multi_digit_marker_runs_count, 1);
+  assertEquals(r.report.multi_digit_runs_from_single_token_count, 1);
+  assertEquals(r.report.every_multi_digit_run_from_single_token, true);
 });
 
-Deno.test("phase3 K-guard: K=9 → applies", () => {
+Deno.test("phase3 v2: K=9 → applies (regression)", () => {
   const parts: string[] = [];
   for (let i = 0; i < 9; i++) parts.push(`טקסט${toSup((i % 5) + 1)}`);
   const answer = parts.join(" ") + ".";
