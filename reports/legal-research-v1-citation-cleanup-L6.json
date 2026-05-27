@@ -66,19 +66,21 @@
     }
   },
   "chronological": {
-    "chronological_ok": false,
-    "first_appearance_order": [
-      12345,
-      123,
+    "chronological_ok": true,
+    "phase1_before_order": [
       1,
-      23,
-      45,
-      54,
-      124,
-      234,
-      2345
+      2,
+      3,
+      4,
+      5
     ],
-    "total_marker_count": 9
+    "phase1_after_order": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
   },
   "clusters_observed": {
     "count": 4,

@@ -1,36 +1,49 @@
 {
   "phase": "citation-cleanup-validation",
   "ran": 6,
-  "errors": 0,
   "hard_gates_all_pass": true,
-  "chronological_all_ok": false,
+  "chronological_all_ok": true,
   "any_rollback": false,
+  "any_phase1_changed": true,
+  "total_phase1_changed": 1,
   "total_punct_swaps": 0,
-  "total_clusters_remaining": 10,
+  "total_clusters_remaining": 42,
   "runtime_deltas_ms": [
     {
       "id": "L1",
-      "delta": -70091
+      "delta": -70091,
+      "total": 114897,
+      "baseline": 184988
     },
     {
       "id": "L2",
-      "delta": -104461
+      "delta": -104461,
+      "total": 117060,
+      "baseline": 221521
     },
     {
       "id": "L3",
-      "delta": -115117
+      "delta": -115117,
+      "total": 138208,
+      "baseline": 253325
     },
     {
       "id": "L4",
-      "delta": -57437
+      "delta": -57437,
+      "total": 122017,
+      "baseline": 179454
     },
     {
       "id": "L5",
-      "delta": 7301
+      "delta": 7301,
+      "total": 196471,
+      "baseline": 189170
     },
     {
       "id": "L6",
-      "delta": -94716
+      "delta": -94716,
+      "total": 155176,
+      "baseline": 249892
     }
   ],
   "fixtures": [
@@ -85,7 +98,7 @@
       },
       "chronological": {
         "chronological_ok": true,
-        "first_appearance_order": [
+        "phase1_before_order": [
           1,
           2,
           3,
@@ -96,7 +109,17 @@
           8,
           9
         ],
-        "total_marker_count": 15
+        "phase1_after_order": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
       },
       "clusters_observed": {
         "count": 0,
@@ -196,21 +219,25 @@
         }
       },
       "chronological": {
-        "chronological_ok": false,
-        "first_appearance_order": [
-          12,
-          23,
+        "chronological_ok": true,
+        "phase1_before_order": [
+          1,
           2,
           3,
-          34,
-          4,
-          45,
-          6,
-          726,
+          5,
           7,
-          12346
+          6,
+          4
         ],
-        "total_marker_count": 16
+        "phase1_after_order": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
       },
       "clusters_observed": {
         "count": 3,
@@ -308,21 +335,21 @@
         }
       },
       "chronological": {
-        "chronological_ok": false,
-        "first_appearance_order": [
+        "chronological_ok": true,
+        "phase1_before_order": [
           1,
-          12,
-          234,
-          13,
+          2,
           3,
-          34,
-          134,
-          15,
-          35,
-          135,
-          123
+          4,
+          5
         ],
-        "total_marker_count": 15
+        "phase1_after_order": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
       },
       "clusters_observed": {
         "count": 0,
@@ -414,19 +441,21 @@
         }
       },
       "chronological": {
-        "chronological_ok": false,
-        "first_appearance_order": [
-          12,
+        "chronological_ok": true,
+        "phase1_before_order": [
+          1,
           2,
           3,
           4,
-          34,
-          1,
-          5,
-          43,
-          24
+          5
         ],
-        "total_marker_count": 15
+        "phase1_after_order": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
       },
       "clusters_observed": {
         "count": 0,
@@ -522,18 +551,25 @@
         }
       },
       "chronological": {
-        "chronological_ok": false,
-        "first_appearance_order": [
+        "chronological_ok": true,
+        "phase1_before_order": [
           1,
-          23,
-          45,
+          2,
           3,
-          345,
+          4,
+          5,
           6,
-          7,
-          31456
+          7
         ],
-        "total_marker_count": 10
+        "phase1_after_order": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
       },
       "clusters_observed": {
         "count": 3,
@@ -631,19 +667,21 @@
         }
       },
       "chronological": {
-        "chronological_ok": false,
-        "first_appearance_order": [
-          12345,
-          123,
+        "chronological_ok": true,
+        "phase1_before_order": [
           1,
-          23,
-          45,
-          54,
-          124,
-          234,
-          2345
+          2,
+          3,
+          4,
+          5
         ],
-        "total_marker_count": 9
+        "phase1_after_order": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
       },
       "clusters_observed": {
         "count": 4,
