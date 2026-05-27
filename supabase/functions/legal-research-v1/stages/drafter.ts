@@ -485,7 +485,7 @@ function runMarkerValidation(
 //   2. First-appearance order not strictly 1,2,3,…
 //   3. End-of-paragraph dumps: ≥3 distinct first-appearance markers in the
 //      last sentence of any paragraph.
-function validatePlacement(answer: string): import("../lib/types.ts").PlacementReport {
+export function validatePlacement(answer: string): import("../lib/types.ts").PlacementReport {
   // 1. Clusters: runs of ≥2 superscript digits with no non-superscript char between.
   const clusterRe = /[⁰¹²³⁴⁵⁶⁷⁸⁹]{2,}/gu;
   let cluster_count = 0;
