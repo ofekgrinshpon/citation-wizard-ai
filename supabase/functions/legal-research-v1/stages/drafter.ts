@@ -1032,6 +1032,23 @@ export async function runDrafter(
     }
   }
 
+  // ─── Citation cleanup (Phase 1 chronological + Phase 2 punctuation + cluster telemetry) ───
+  // Deterministic, no LLM. Runs only when the draft already validates; any
+  // sub-phase that would break marker_validation is rolled back individually.
+  if (parsed.ok && marker.ok) {
+    const cleanup = applyCitationCleanup(answer, used);
+    answer = cleanup.answer;
+    used = cleanup.used;
+    const m2 = runMarkerValidation(answer, used);
+    // m2.ok must remain true by construction (each phase self-validates).
+    marker = {
+      ...m2,
+      repaired: marker.repaired || cleanup.report.phase1.changed || cleanup.report.phase2.applied,
+      placement: marker.placement,
+      citation_cleanup: cleanup.report,
+    };
+  }
+
   // ─── Phase D: placement telemetry (read-only, no repair, no LLM call) ───
   // We record placement metrics for observability only. Placement is never
   // gated, never blocked, never rewritten. Aesthetics-only repairs were
@@ -1039,6 +1056,7 @@ export async function runDrafter(
   if (parsed.ok && marker.ok) {
     marker.placement = validatePlacement(answer);
   }
+
 
   // Build UsedSource + Footnote outputs from inputSources × used.
   const inputByRef = new Map(inputSources.map((s) => [s.ref, s]));
