@@ -97,3 +97,151 @@ Deno.test("placement telemetry: final_summary_dump=false when markers are scatte
   assertEquals(r.final_summary_dump_count, 0);
   assertEquals(r.max_cluster_len, 0);
 });
+
+// ─── Phase 3: occurrence-indexed footnotes ────────────────────────────────
+import { applyOccurrenceFootnotes, shortenTitle } from "./drafter.ts";
+
+const src = (n: number, title: string, source_type = "case") => ({
+  number: n,
+  title,
+  url: null,
+  source_type,
+  candidate_id: `c${n}`,
+});
+const fnUnique = (n: number, title: string, source_type = "case") => ({
+  number: n,
+  title,
+  url: null,
+  source_type,
+});
+
+Deno.test("phase3: separated repeat A,A → 1,2 with ibid", () => {
+  const answer = "אחריות³ ושוב השפעה³.";
+  const used = [src(3, "פלוני נ' אלמוני, פד\"י נא(2) 12")];
+  const footnotes = [fnUnique(3, used[0].title)];
+  const r = applyOccurrenceFootnotes(answer, used, footnotes);
+  assert(r.applied);
+  assert(/אחריות¹ ושוב השפעה²/.test(r.answer));
+  assertEquals(r.footnotes.length, 2);
+  assertEquals(r.footnotes[0].is_short_form, false);
+  assertEquals(r.footnotes[1].is_short_form, true);
+  assertEquals(r.footnotes[1].short_form_kind, "ibid");
+  assertEquals(r.footnotes[1].back_ref_number, 1);
+  assertEquals(r.footnotes[1].title, "שם.");
+  assertEquals(r.used_sources.length, 1);
+  assertEquals(r.used_sources[0].number, 1);
+});
+
+Deno.test("phase3: A,B,A → supra to 1", () => {
+  const answer = "ראשון¹ שני² ושוב ראשון¹.";
+  const used = [src(1, "פלוני נ' אלמוני, פד\"י נא(2) 12"), src(2, "ב נ' ג, פד\"י נב 5")];
+  const footnotes = [fnUnique(1, used[0].title), fnUnique(2, used[1].title)];
+  const r = applyOccurrenceFootnotes(answer, used, footnotes);
+  assert(r.applied);
+  assertEquals(r.footnotes.length, 3);
+  assertEquals(r.footnotes[2].short_form_kind, "supra");
+  assertEquals(r.footnotes[2].back_ref_number, 1);
+  assert(/לעיל ה״ש 1/.test(r.footnotes[2].title));
+});
+
+Deno.test("phase3: A,A,B,A → ibid at 2, full B at 3, supra at 4", () => {
+  const answer = "א¹ א¹ ב² א¹.";
+  const used = [src(1, "פ נ' א"), src(2, "ב נ' ג")];
+  const footnotes = [fnUnique(1, used[0].title), fnUnique(2, used[1].title)];
+  const r = applyOccurrenceFootnotes(answer, used, footnotes);
+  assert(r.applied);
+  assertEquals(r.footnotes.map((f) => f.short_form_kind), [undefined, "ibid", undefined, "supra"]);
+  assertEquals(r.footnotes[3].back_ref_number, 1);
+});
+
+Deno.test("phase3 guard: adjacent cluster ²³ → skip", () => {
+  const answer = "אחריות²³ ועוד.";
+  const used = [src(2, "X"), src(3, "Y")];
+  const r = applyOccurrenceFootnotes(answer, used, [fnUnique(2, "X"), fnUnique(3, "Y")]);
+  assertEquals(r.applied, false);
+  assertEquals(r.report.discarded_reason, "ambiguous_adjacent_markers");
+  assertEquals(r.answer, answer);
+});
+
+Deno.test("phase3 guard: cluster ¹²³ → skip", () => {
+  const answer = "ראיות¹²³ במצטבר.";
+  const used = [src(1, "X"), src(2, "Y"), src(3, "Z")];
+  const r = applyOccurrenceFootnotes(answer, used, [
+    fnUnique(1, "X"),
+    fnUnique(2, "Y"),
+    fnUnique(3, "Z"),
+  ]);
+  assertEquals(r.applied, false);
+  assertEquals(r.report.discarded_reason, "ambiguous_adjacent_markers");
+});
+
+Deno.test("phase3 K-guard: K=10 → skip", () => {
+  // 10 separated single-digit markers (values cycling 1..5 to stay digit-safe).
+  const parts: string[] = [];
+  for (let i = 0; i < 10; i++) parts.push(`טקסט${toSup((i % 5) + 1)}`);
+  const answer = parts.join(" ") + ".";
+  const used = [1, 2, 3, 4, 5].map((n) => src(n, `T${n}`));
+  const footnotes = used.map((u) => fnUnique(u.number, u.title));
+  const r = applyOccurrenceFootnotes(answer, used, footnotes);
+  assertEquals(r.applied, false);
+  assertEquals(r.report.discarded_reason, "multi_digit_occurrences_require_boundary_tokens");
+});
+
+Deno.test("phase3 K-guard: K=9 → applies", () => {
+  const parts: string[] = [];
+  for (let i = 0; i < 9; i++) parts.push(`טקסט${toSup((i % 5) + 1)}`);
+  const answer = parts.join(" ") + ".";
+  const used = [1, 2, 3, 4, 5].map((n) => src(n, `T${n}`));
+  const footnotes = used.map((u) => fnUnique(u.number, u.title));
+  const r = applyOccurrenceFootnotes(answer, used, footnotes);
+  assert(r.applied);
+  assertEquals(r.report.occurrence_count, 9);
+});
+
+function toSup(n: number): string {
+  const d = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+  return String(n).split("").map((c) => d[Number(c)]).join("");
+}
+
+Deno.test("phase3 prose invariance: stripSup(out) === stripSup(in)", () => {
+  const answer = "אחריות³ ושוב השפעה³.";
+  const used = [src(3, "פלוני נ' אלמוני")];
+  const r = applyOccurrenceFootnotes(answer, used, [fnUnique(3, used[0].title)]);
+  assert(r.applied);
+  const strip = (s: string) => s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/gu, "");
+  assertEquals(strip(r.answer), strip(answer));
+});
+
+Deno.test("phase3 idempotency: re-applying is a no-op (still applies, identical output)", () => {
+  const answer = "א¹ ב² א¹.";
+  const used = [src(1, "פ נ' א"), src(2, "ב נ' ג")];
+  const footnotes = [fnUnique(1, used[0].title), fnUnique(2, used[1].title)];
+  const r1 = applyOccurrenceFootnotes(answer, used, footnotes);
+  assert(r1.applied);
+  const r2 = applyOccurrenceFootnotes(r1.answer, r1.used_sources, r1.footnotes);
+  assert(r2.applied);
+  assertEquals(r2.answer, r1.answer);
+});
+
+Deno.test("shortenTitle: case takes up to first comma", () => {
+  assertEquals(
+    shortenTitle("פלוני נ' אלמוני, פד\"י נא(2) 12", "case"),
+    "פלוני נ' אלמוני",
+  );
+});
+
+Deno.test("shortenTitle: statute strips year tail", () => {
+  const out = shortenTitle("חוק החוזים (חלק כללי), התשל\"ג-1973", "statute");
+  assertEquals(out, "חוק החוזים");
+});
+
+Deno.test("shortenTitle: academic keeps author + few words", () => {
+  const out = shortenTitle("דניאל פרידמן, דיני עשיית עושר ולא במשפט (מהדורה שנייה, 2015)", "academic");
+  assert(out.startsWith("דניאל פרידמן, "));
+});
+
+Deno.test("shortenTitle: report truncates to 8 words", () => {
+  const long = "אחת שתיים שלוש ארבע חמש שש שבע שמונה תשע עשר";
+  const out = shortenTitle(long, "report");
+  assertEquals(out, "אחת שתיים שלוש ארבע חמש שש שבע שמונה…");
+});
