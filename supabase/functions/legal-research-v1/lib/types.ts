@@ -186,6 +186,13 @@ export interface PlacementReport {
   superscript_parens_count?: number;
   repaired?: boolean;
   repair_failed?: boolean;
+  // Added by cluster-prevention phase (measurement only, no gating).
+  max_cluster_len?: number;
+  cluster_run_count?: number;
+  final_paragraph_marker_count?: number;
+  final_paragraph_last_sentence_marker_count?: number;
+  final_summary_dump?: boolean;
+  final_summary_dump_count?: number;
 }
 
 export interface CitationCleanupReport {

@@ -1,0 +1,404 @@
+{
+  "phase": "cluster-prevention-validation",
+  "ran": 7,
+  "errors": 0,
+  "hard_gates_all_pass": true,
+  "total_clusters": 53,
+  "total_cluster_runs": 38,
+  "max_cluster_len_any": 4,
+  "total_final_summary_dumps": 0,
+  "fixtures": [
+    {
+      "fixture_id": "L1",
+      "run_id": "c1a2aeff-c687-40a3-8f9f-72b454029dc7",
+      "qa_log_id": "dc2095e5-325f-4233-b918-f33def61618c",
+      "total_ms": 170993,
+      "baseline_total_ms": 114897,
+      "runtime_delta_ms": 56096,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "placement": {
+        "cluster_count": 0,
+        "cluster_run_count": 0,
+        "max_cluster_len": 0,
+        "end_paragraph_dump_count": 1,
+        "final_paragraph_marker_count": 0,
+        "final_paragraph_last_sentence_marker_count": 0,
+        "final_summary_dump": false,
+        "final_summary_dump_count": 0,
+        "cluster_samples": [],
+        "end_dump_samples": [
+          "עילת תביעה בסיסית / סיכוי סביר**\nבבקשת צו זמני על המבקש להראות טענה משפטית שיש לה סבירות ממשית — לא רק אפשרות קלושה — כך שהבקשה איננה ריקה מנימוק מהותי.²  יישום המבחן אינו דורש הכרעה מוחלטת בתקרת הראי"
+        ]
+      },
+      "baseline_placement": {
+        "cluster_count": null,
+        "end_paragraph_dump_count": null
+      },
+      "source_list": {
+        "count": 8,
+        "ids": [
+          "bcf4c93f-9c5d-48e7-9808-926cf7e9c5ed",
+          "379f137e-7b50-4fb0-a54c-4d1c671a9049",
+          "8bd6ad60-bdcb-4d39-ad9c-a978ecd75885",
+          "7fd61b85-0fc8-457c-987d-309e89f63090",
+          "0c6903a1-aa0a-40a1-a816-a159faea0006",
+          "570934a5-3443-4117-9827-24aa57c6e20e",
+          "fc8bb849-7e01-4985-81db-200321860f22",
+          "f2480046-2ac3-491c-9f78-49a6d8d44236"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 8,
+        "used_sources_count": 8
+      },
+      "answer_tail": "צגת ראיות מספקות לעילת התביעה (חלון ראייתי מצומצם אך ממשי), תיעוד מוחשי של הסכנה לנזק בלתי־ניתן לתיקון, והכנת טיעון ניצב לשקלול האינטרסים הכולל הצעת ערובה/התחייבות מתאימה. במקרים שבהם הבקשה מוגשת ללא הודעה לצד השני, חובה להבהיר מדוע נדרש הליך כזה מבחינה פרוצדורלית ומעשית.⁵ ⁷ ¹\n\n\n"
+    },
+    {
+      "fixture_id": "L2",
+      "run_id": "57a1e663-96ea-4062-a7f9-54333ba020e9",
+      "qa_log_id": "c2daa186-bbca-407f-968e-d83941b57cfe",
+      "total_ms": 144377,
+      "baseline_total_ms": 117060,
+      "runtime_delta_ms": 27317,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "placement": {
+        "cluster_count": 8,
+        "cluster_run_count": 6,
+        "max_cluster_len": 3,
+        "end_paragraph_dump_count": 1,
+        "final_paragraph_marker_count": 2,
+        "final_paragraph_last_sentence_marker_count": 2,
+        "final_summary_dump": false,
+        "final_summary_dump_count": 0,
+        "cluster_samples": [
+          "בור והסמכות המנהלית.³⁴\n\nלצורך פרקטי, אפשר ",
+          "יפות של טובת הציבור.²³⁵\n\n**סעדים והגבלות**:",
+          "נה במקום קיום מוחלט.¹²⁶\n\nעוד יש בתי מחויבות",
+          "וע בלתי־ניתן לתיקון.⁶⁵\n\n**יחס לדוקטרינות ק",
+          "הכרח הודעות פרטניות.⁷⁴  כמו כן קיימת חפיפה"
+        ],
+        "end_dump_samples": [
+          "**יסודות ותנאים** — לפי הנוסח המקובל בפסיקה ובספרות, יש להוכיח יסודות מצטברים כדי שהבטחה תיחשב מחייבת: סמכותו של נותן ההבטחה; כוונה לתוקף משפטי מחייב; בהירות וספציפיות של הייצוג; היכולת של הרשות לממש "
+        ]
+      },
+      "baseline_placement": {
+        "cluster_count": null,
+        "end_paragraph_dump_count": null
+      },
+      "source_list": {
+        "count": 7,
+        "ids": [
+          "df48eb85-47cc-4b4d-bf4c-485c354bd77e",
+          "8eb50ce4-abd3-4529-a5f6-f3c08b44e090",
+          "f33c5ca2-e482-4eb7-bb43-0bba77c42957",
+          "3b880a23-e698-4f6b-928f-031070ae0a5d",
+          "a82d9284-19fd-44da-8bd4-3a9cbd020bee",
+          "0d3824b9-7ddc-491d-ae1a-b83bc1fe3c9b",
+          "64005399-7c4b-410b-be1b-25e5169c480d"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 7,
+        "used_sources_count": 7
+      },
+      "answer_tail": "כלי מעשי להגבלת שיקול הדעת המנהלתי כאשר נעשה שימוש בייצוגים רשותיים שיוצרים הסתמכות ממשית; עם זאת, יישומה מותנה בבחינה מדוקדקת של סמכותיות ההבטחה, בהירותה, משקל ההסתמכות ושיקולי טובת הציבור, כך שהארכה רחבה מדי של הדוקטרינה עלולה להתנגש עם עקרונות של שלטון החוק והגמישות המנהלית.⁴⁵"
+    },
+    {
+      "fixture_id": "L3",
+      "run_id": "d48d56d4-bef2-4594-a0ef-be772c71a600",
+      "qa_log_id": "8d005c48-7247-4af0-a1dc-87696458127b",
+      "total_ms": 159655,
+      "baseline_total_ms": 138208,
+      "runtime_delta_ms": 21447,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "placement": {
+        "cluster_count": 8,
+        "cluster_run_count": 5,
+        "max_cluster_len": 3,
+        "end_paragraph_dump_count": 1,
+        "final_paragraph_marker_count": 1,
+        "final_paragraph_last_sentence_marker_count": 1,
+        "final_summary_dump": false,
+        "final_summary_dump_count": 0,
+        "cluster_samples": [
+          " צדדים שווים בכוחם.^¹²\n\nהבסיס החוקי והיקף ",
+          "מד בסבירות הנסיבות.^¹²\n\nקריטריונים מהותיים",
+          "והסתמכות של הניזוק.^³⁴⁵\n\nהיבטים פרוצדורליים",
+          " המחוייב של ההוראה.^³¹²\n\nמתי בתי המשפט נוטי",
+          " הצדדים בעת הסיכום.^⁴⁵⁶\n\nמסקנה מעשית קצרה: "
+        ],
+        "end_dump_samples": [
+          "קריטריונים מהותיים שישקלו בתי המשפט בקביעת חוסר ההלימה של הפיצוי: יחס בין סכום הפיצוי לנזק בפועל או לנזק הסביר שניתן היה לצפותו; היקף וחוזק יחסי הכוח והמשא ומתן בין הצדדים בעת כריתת ההסכם; כוונת הצדדי"
+        ]
+      },
+      "baseline_placement": {
+        "cluster_count": null,
+        "end_paragraph_dump_count": null
+      },
+      "source_list": {
+        "count": 6,
+        "ids": [
+          "d3de053b-d28b-4fe6-98db-7b0f342d72db",
+          "f635a13b-e662-44fd-8f50-8c6e2565656c",
+          "5b54ccf3-2f8e-47de-bb9a-2747a100c401",
+          "12f743b6-d161-4803-801d-c84d8af78bba",
+          "f39941dc-4a99-4ffd-a89f-d44d5b1efabd",
+          "85bca1a4-a9ea-4252-aede-218a68dd78d4"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 6,
+        "used_sources_count": 6
+      },
+      "answer_tail": " הניסיון להצליח בבקשת הפחתה מצריך הוכחה ממוקדת של הפער בין סכום הפיצוי לנזק הסביר שניתן היה לצפותו, ראיות לעמדת כוח בלתי מאוזנת או לכוונה קנסית של הסכום בעת הכריתה, וכל ראיה על הסתמכות או חוסר מידע שהיה לו משמעות על הערכת הנזק; אם הפיצוי נראה כאומדן סביר — סיכויי ההפחתה קלושים.^³"
+    },
+    {
+      "fixture_id": "L4",
+      "run_id": "9ad21952-f1d5-435a-8525-1654be904bde",
+      "qa_log_id": "c60ad246-0a05-4873-90f9-00dad56fc39b",
+      "total_ms": 143165,
+      "baseline_total_ms": 122017,
+      "runtime_delta_ms": 21148,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "placement": {
+        "cluster_count": 6,
+        "cluster_run_count": 6,
+        "max_cluster_len": 2,
+        "end_paragraph_dump_count": 0,
+        "final_paragraph_marker_count": 0,
+        "final_paragraph_last_sentence_marker_count": 0,
+        "final_summary_dump": false,
+        "final_summary_dump_count": 0,
+        "cluster_samples": [
+          "לטת בית המשפט הקודם.¹²\n\nהנמקה ועיקרי הדוקט",
+          " נפרדת או בהליך אחר.²⁴\n\nיסודות מקובלים ליי",
+          "מלאה והוגנת להתדיין.³⁵\n\nהיקף ההשפעה וההבחנ",
+          "היא מהותית לפרקטיקה.²⁴ במקרים מסוימים דנים",
+          " אפשרות לדיון מחודש.⁷⁶\n\nהשלכה מעשית\n\nבעשיי"
+        ],
+        "end_dump_samples": []
+      },
+      "baseline_placement": {
+        "cluster_count": null,
+        "end_paragraph_dump_count": null
+      },
+      "source_list": {
+        "count": 7,
+        "ids": [
+          "cc14811b-2958-476b-ad65-1f9fc7fb57e1",
+          "227eab94-a974-40cc-bf8e-6e0cd0ad3892",
+          "b8130b6f-a5ad-43ef-9d68-739b7714e4d9",
+          "4f02fc68-6879-4c7a-9d2b-1f9c54105eed",
+          "19578a05-1873-44f0-9fe9-d308ec42ea96",
+          "595513f8-9979-4b88-9d37-00835381008f",
+          "c8e88865-aeaa-4218-a0fc-61552d2b8d38"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 7,
+        "used_sources_count": 7
+      },
+      "answer_tail": "טיות, ושיקולי צדק או מדיניות ציבורית שמחייבים אפשרות לדיון מחודש.⁷⁶\n\nהשלכה מעשית\n\nבעשייה משפטית משמעותי לזהות בפירוש את \"הפלוגתא\" המבוקשת ולבחון האם ההכרעה הקודמת הייתה באמת חיונית להחלטה; אם קיימים פגמים בהליכי הדיון הקודם או ראיות חדשות מהותיות — ניתן לטעון כנגד החלת ההשתק.³⁵\n\n"
+    },
+    {
+      "fixture_id": "L5",
+      "run_id": "c554cced-69d5-4817-87ad-17a501126f3d",
+      "qa_log_id": "89127559-7ba3-4951-9915-996db374f4ff",
+      "total_ms": 135191,
+      "baseline_total_ms": 196471,
+      "runtime_delta_ms": -61280,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "placement": {
+        "cluster_count": 8,
+        "cluster_run_count": 6,
+        "max_cluster_len": 3,
+        "end_paragraph_dump_count": 2,
+        "final_paragraph_marker_count": 2,
+        "final_paragraph_last_sentence_marker_count": 2,
+        "final_summary_dump": false,
+        "final_summary_dump_count": 0,
+        "cluster_samples": [
+          "נת צדקת ההחלטה עצמה.¹²\n\nמבחנים מעשיים להער",
+          "קול דעת (deference).⁶⁷⁸\nנקודות שהשפעתן על מ",
+          "ית על מדיניות קיימת.⁷⁸\n\nיחסי סבירות עם דוק",
+          "ה השיפוטית הספציפית.⁹¹⁰\n\nאופני סעד מקובלים ",
+          "מסגרת משפטית מסוימת.¹¹\n\nמסקנות מעשיות ופתר"
+        ],
+        "end_dump_samples": [
+          "אלה כוללים בין היתר: (א) מבחן ה**קשר התכליתי** — האם ההחלטה מקושרת למטרה החוקית של הסמכות;³ (ב) **אי‑גיון גמור / manifest irrationality** — החלטה הנוגדת כל שיקול תבוני סביר;³ (ג) **טעות בשיקול הדעת** ",
+          "ככל שהפסק הדין נוגע ב**זכויות יסוד, באינטרסים ציבוריים מהותיים, או בשינוי מדיניות עקבי והכרחי** — הביקורת תהיה צמודה יותר; לעומת זאת, בעניינים טכניים, מקצועיים או שבהם הרשות מביאה מומחיות מיוחדת, יסופ"
+        ]
+      },
+      "baseline_placement": {
+        "cluster_count": null,
+        "end_paragraph_dump_count": null
+      },
+      "source_list": {
+        "count": 9,
+        "ids": [
+          "a4da9f40-3da9-425c-93a7-2f40360dc3b8",
+          "0f33317e-5938-44b8-bf01-453075829039",
+          "bf5107b4-1873-4f0b-8d73-54ecfa291f2b",
+          "715659d6-4ad8-4fe5-a87e-a27e6348f7e3",
+          "1e1def55-31ec-4eaa-b1da-2963bd7240a8",
+          "bf3645f6-e914-45a5-ac5c-9d749922971c",
+          "bef293b9-bd01-4cd0-a5e7-58ed37e6d253",
+          "5f08b331-4eef-4734-9aed-355c6d542fa2",
+          "b6a10ec1-45d5-4b34-b818-c56802e9ae8d"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 9,
+        "used_sources_count": 9
+      },
+      "answer_tail": " טווח שיקול הדעת אם קיימת כוונה לאפשר deference שיפוטי.⁶\n\nסעיף אחרון — אי ודאות שנותרה: המקורות מצביעים על מסגרת מוסכמת אך לא אחידה — קיימת מחלוקת על המיקום הדוקטרינרי של הסבירות מול המידתיות והחוקיות, וכן על מידת הצפייה שהשופט ירשה לעצמו \"להחליף\" שיקול דעת מינהלי במקום הרשות.²⁹\n"
+    },
+    {
+      "fixture_id": "L6",
+      "run_id": "e91e5b5d-db3e-4e53-845b-91bd318f9d67",
+      "qa_log_id": "966c7473-64d4-4fb2-a09e-3a33ec939383",
+      "total_ms": 210426,
+      "baseline_total_ms": 155176,
+      "runtime_delta_ms": 55250,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "placement": {
+        "cluster_count": 8,
+        "cluster_run_count": 6,
+        "max_cluster_len": 3,
+        "end_paragraph_dump_count": 0,
+        "final_paragraph_marker_count": 0,
+        "final_paragraph_last_sentence_marker_count": 0,
+        "final_summary_dump": false,
+        "final_summary_dump_count": 0,
+        "cluster_samples": [
+          "דיק חזרה מההתחייבות.¹²\n\nהסמכות כתנאי יסוד:",
+          "פה מהותית של ההבטחה.¹³\n\nבהירות וכוונה להיק",
+          "שביסוד הבקשה לאכיפה.⁴⁵\n\nהשלכת חוסר סמכות: ",
+          " כגון פיצוי או השבה.³¹⁴\n\nשינוי נסיבות ואינט",
+          " קבלת החלטה אכיפתית.⁶³\n\nסעדים בפרקטיקה התי"
+        ],
+        "end_dump_samples": []
+      },
+      "baseline_placement": {
+        "cluster_count": null,
+        "end_paragraph_dump_count": null
+      },
+      "source_list": {
+        "count": 8,
+        "ids": [
+          "2c2051e1-d0ab-413e-9e38-2c31de2aeab3",
+          "fc9b2c6c-6e41-4ca7-8de6-85aef8c90e7a",
+          "748bc7b6-80bb-4408-b4d3-38e9372c5dd3",
+          "bb67687e-59de-4655-a5a7-bb04bbcf63a9",
+          "9163b69b-98ba-4b56-9a76-d236591d858e",
+          "70152e7c-744e-4fc8-809c-08fa3eb60efb",
+          "9730d035-3408-4ae0-9a22-308034fcf15b",
+          "a74cf128-2126-426f-96b0-935e3bee2dcf"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 8,
+        "used_sources_count": 8
+      },
+      "answer_tail": "תית — יש לבדוק ראשית את כושר הסמכות של נותן ההבטחה ואת בהירותה; לתעד היטב את היקף ההשקעה וההסתמכות; ואם נשקפת חוסר סמכות או שינוי נסיבות מצד הרשות — לשקול דרישת פיצוי או הסדרי יישוב חלופיים, ולבקש במסגרת ההליכי שימוע פירוט נימוקי הרשות, בחינת חלופות ופיצוי הולם עבור נזק ההסתמכות."
+    },
+    {
+      "fixture_id": "PROT",
+      "run_id": "400572c4-64a1-4b78-91f7-6cc1d6a76657",
+      "qa_log_id": "73fa65b7-bfe0-46db-aba9-36987421f511",
+      "total_ms": 220512,
+      "baseline_total_ms": null,
+      "runtime_delta_ms": null,
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true,
+        "used_subset_of_usable": true
+      },
+      "placement": {
+        "cluster_count": 15,
+        "cluster_run_count": 9,
+        "max_cluster_len": 4,
+        "end_paragraph_dump_count": 1,
+        "final_paragraph_marker_count": 3,
+        "final_paragraph_last_sentence_marker_count": 3,
+        "final_summary_dump": false,
+        "final_summary_dump_count": 0,
+        "cluster_samples": [
+          " פגיעה מהותית בזכות.²³\n\nהבחנה בין מחדל חקי",
+          "ת קורבנות מהתלוננות.⁵⁶ קיים גם מדד סטטיסטי",
+          " או לצמצם את הפגיעה.¹⁰\n\nסעדים פרקטיים וזמי",
+          "ו לממש חובות חוקיות.¹¹\n- פיצוי ונזיקין: תב",
+          "יבים הוכחה משמעותית.⁹¹⁰\n- הבטחה לתיקון מדינ"
+        ],
+        "end_dump_samples": [
+          "ההיקף וההוכחות לקיומו של כישלון מערכתי באכיפה בסחיטת דמי חסות\nדו\"חות מבקר המדינה ונתוני אכיפה מצביעים על התרחבות תופעת דמי החסות והסחרור של ארגוני פשיעה במרחבים כמו הנגב, לצד פערים משמעותיים בפתיחת תי"
+        ]
+      },
+      "baseline_placement": null,
+      "source_list": {
+        "count": 9,
+        "ids": [
+          "6829bb7b-2349-46ed-b699-94fd9b884787",
+          "81a6d8c4-a0c8-45d2-9dd4-10eb8a3805af",
+          "b049f149-8174-493e-add6-78eb75e3fcf7",
+          "c162754b-6d67-415b-b053-81d2741a189d",
+          "34230f3d-f0fd-4b9e-8e6e-ba12d23819c9",
+          "1de6994f-f1bb-4a94-8fdd-0f4f925ff2c3",
+          "ffe25202-7b1a-43b6-94bf-95521c082980",
+          "e562e245-b240-44d8-bdbf-21a20a2e7f79",
+          "c3e8f246-a293-4a27-ac21-1d8d125009c7"
+        ]
+      },
+      "drafter": {
+        "ok": true,
+        "escalated": false,
+        "footnote_count": 9,
+        "used_sources_count": 9
+      },
+      "answer_tail": "יכום קצר\nיש בסיס חוקתי וכללי לקבלת הטענה כי כישלון מערכתי באכיפת עבירות סחיטת דמי חסות עלול להוות פגיעה בזכות לחיים ובביטחון ולצד זאת להצדיק סעד ציבורי ומינהלי רחב; עם זאת, המיון בין מחדל חקיקתי לבין כישלון ביצועי רלוונטי הן מבחינת הנטל ההוכחתי והן מבחינת סוגי הסעדים הצפויים.⁴⁹¹¹"
+    }
+  ]
+}

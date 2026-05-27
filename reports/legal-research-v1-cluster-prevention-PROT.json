@@ -1,0 +1,56 @@
+{
+  "fixture_id": "PROT",
+  "run_id": "400572c4-64a1-4b78-91f7-6cc1d6a76657",
+  "qa_log_id": "73fa65b7-bfe0-46db-aba9-36987421f511",
+  "total_ms": 220512,
+  "baseline_total_ms": null,
+  "runtime_delta_ms": null,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "placement": {
+    "cluster_count": 15,
+    "cluster_run_count": 9,
+    "max_cluster_len": 4,
+    "end_paragraph_dump_count": 1,
+    "final_paragraph_marker_count": 3,
+    "final_paragraph_last_sentence_marker_count": 3,
+    "final_summary_dump": false,
+    "final_summary_dump_count": 0,
+    "cluster_samples": [
+      " פגיעה מהותית בזכות.²³\n\nהבחנה בין מחדל חקי",
+      "ת קורבנות מהתלוננות.⁵⁶ קיים גם מדד סטטיסטי",
+      " או לצמצם את הפגיעה.¹⁰\n\nסעדים פרקטיים וזמי",
+      "ו לממש חובות חוקיות.¹¹\n- פיצוי ונזיקין: תב",
+      "יבים הוכחה משמעותית.⁹¹⁰\n- הבטחה לתיקון מדינ"
+    ],
+    "end_dump_samples": [
+      "ההיקף וההוכחות לקיומו של כישלון מערכתי באכיפה בסחיטת דמי חסות\nדו\"חות מבקר המדינה ונתוני אכיפה מצביעים על התרחבות תופעת דמי החסות והסחרור של ארגוני פשיעה במרחבים כמו הנגב, לצד פערים משמעותיים בפתיחת תי"
+    ]
+  },
+  "baseline_placement": null,
+  "source_list": {
+    "count": 9,
+    "ids": [
+      "6829bb7b-2349-46ed-b699-94fd9b884787",
+      "81a6d8c4-a0c8-45d2-9dd4-10eb8a3805af",
+      "b049f149-8174-493e-add6-78eb75e3fcf7",
+      "c162754b-6d67-415b-b053-81d2741a189d",
+      "34230f3d-f0fd-4b9e-8e6e-ba12d23819c9",
+      "1de6994f-f1bb-4a94-8fdd-0f4f925ff2c3",
+      "ffe25202-7b1a-43b6-94bf-95521c082980",
+      "e562e245-b240-44d8-bdbf-21a20a2e7f79",
+      "c3e8f246-a293-4a27-ac21-1d8d125009c7"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 9,
+    "used_sources_count": 9
+  },
+  "answer_tail": "יכום קצר\nיש בסיס חוקתי וכללי לקבלת הטענה כי כישלון מערכתי באכיפת עבירות סחיטת דמי חסות עלול להוות פגיעה בזכות לחיים ובביטחון ולצד זאת להצדיק סעד ציבורי ומינהלי רחב; עם זאת, המיון בין מחדל חקיקתי לבין כישלון ביצועי רלוונטי הן מבחינת הנטל ההוכחתי והן מבחינת סוגי הסעדים הצפויים.⁴⁹¹¹"
+}

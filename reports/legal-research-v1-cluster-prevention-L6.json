@@ -1,0 +1,56 @@
+{
+  "fixture_id": "L6",
+  "run_id": "e91e5b5d-db3e-4e53-845b-91bd318f9d67",
+  "qa_log_id": "966c7473-64d4-4fb2-a09e-3a33ec939383",
+  "total_ms": 210426,
+  "baseline_total_ms": 155176,
+  "runtime_delta_ms": 55250,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "placement": {
+    "cluster_count": 8,
+    "cluster_run_count": 6,
+    "max_cluster_len": 3,
+    "end_paragraph_dump_count": 0,
+    "final_paragraph_marker_count": 0,
+    "final_paragraph_last_sentence_marker_count": 0,
+    "final_summary_dump": false,
+    "final_summary_dump_count": 0,
+    "cluster_samples": [
+      "דיק חזרה מההתחייבות.¹²\n\nהסמכות כתנאי יסוד:",
+      "פה מהותית של ההבטחה.¹³\n\nבהירות וכוונה להיק",
+      "שביסוד הבקשה לאכיפה.⁴⁵\n\nהשלכת חוסר סמכות: ",
+      " כגון פיצוי או השבה.³¹⁴\n\nשינוי נסיבות ואינט",
+      " קבלת החלטה אכיפתית.⁶³\n\nסעדים בפרקטיקה התי"
+    ],
+    "end_dump_samples": []
+  },
+  "baseline_placement": {
+    "cluster_count": null,
+    "end_paragraph_dump_count": null
+  },
+  "source_list": {
+    "count": 8,
+    "ids": [
+      "2c2051e1-d0ab-413e-9e38-2c31de2aeab3",
+      "fc9b2c6c-6e41-4ca7-8de6-85aef8c90e7a",
+      "748bc7b6-80bb-4408-b4d3-38e9372c5dd3",
+      "bb67687e-59de-4655-a5a7-bb04bbcf63a9",
+      "9163b69b-98ba-4b56-9a76-d236591d858e",
+      "70152e7c-744e-4fc8-809c-08fa3eb60efb",
+      "9730d035-3408-4ae0-9a22-308034fcf15b",
+      "a74cf128-2126-426f-96b0-935e3bee2dcf"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 8,
+    "used_sources_count": 8
+  },
+  "answer_tail": "תית — יש לבדוק ראשית את כושר הסמכות של נותן ההבטחה ואת בהירותה; לתעד היטב את היקף ההשקעה וההסתמכות; ואם נשקפת חוסר סמכות או שינוי נסיבות מצד הרשות — לשקול דרישת פיצוי או הסדרי יישוב חלופיים, ולבקש במסגרת ההליכי שימוע פירוט נימוקי הרשות, בחינת חלופות ופיצוי הולם עבור נזק ההסתמכות."
+}

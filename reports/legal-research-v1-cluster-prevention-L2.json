@@ -1,0 +1,57 @@
+{
+  "fixture_id": "L2",
+  "run_id": "57a1e663-96ea-4062-a7f9-54333ba020e9",
+  "qa_log_id": "c2daa186-bbca-407f-968e-d83941b57cfe",
+  "total_ms": 144377,
+  "baseline_total_ms": 117060,
+  "runtime_delta_ms": 27317,
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true,
+    "used_subset_of_usable": true
+  },
+  "placement": {
+    "cluster_count": 8,
+    "cluster_run_count": 6,
+    "max_cluster_len": 3,
+    "end_paragraph_dump_count": 1,
+    "final_paragraph_marker_count": 2,
+    "final_paragraph_last_sentence_marker_count": 2,
+    "final_summary_dump": false,
+    "final_summary_dump_count": 0,
+    "cluster_samples": [
+      "בור והסמכות המנהלית.³⁴\n\nלצורך פרקטי, אפשר ",
+      "יפות של טובת הציבור.²³⁵\n\n**סעדים והגבלות**:",
+      "נה במקום קיום מוחלט.¹²⁶\n\nעוד יש בתי מחויבות",
+      "וע בלתי־ניתן לתיקון.⁶⁵\n\n**יחס לדוקטרינות ק",
+      "הכרח הודעות פרטניות.⁷⁴  כמו כן קיימת חפיפה"
+    ],
+    "end_dump_samples": [
+      "**יסודות ותנאים** — לפי הנוסח המקובל בפסיקה ובספרות, יש להוכיח יסודות מצטברים כדי שהבטחה תיחשב מחייבת: סמכותו של נותן ההבטחה; כוונה לתוקף משפטי מחייב; בהירות וספציפיות של הייצוג; היכולת של הרשות לממש "
+    ]
+  },
+  "baseline_placement": {
+    "cluster_count": null,
+    "end_paragraph_dump_count": null
+  },
+  "source_list": {
+    "count": 7,
+    "ids": [
+      "df48eb85-47cc-4b4d-bf4c-485c354bd77e",
+      "8eb50ce4-abd3-4529-a5f6-f3c08b44e090",
+      "f33c5ca2-e482-4eb7-bb43-0bba77c42957",
+      "3b880a23-e698-4f6b-928f-031070ae0a5d",
+      "a82d9284-19fd-44da-8bd4-3a9cbd020bee",
+      "0d3824b9-7ddc-491d-ae1a-b83bc1fe3c9b",
+      "64005399-7c4b-410b-be1b-25e5169c480d"
+    ]
+  },
+  "drafter": {
+    "ok": true,
+    "escalated": false,
+    "footnote_count": 7,
+    "used_sources_count": 7
+  },
+  "answer_tail": "כלי מעשי להגבלת שיקול הדעת המנהלתי כאשר נעשה שימוש בייצוגים רשותיים שיוצרים הסתמכות ממשית; עם זאת, יישומה מותנה בבחינה מדוקדקת של סמכותיות ההבטחה, בהירותה, משקל ההסתמכות ושיקולי טובת הציבור, כך שהארכה רחבה מדי של הדוקטרינה עלולה להתנגש עם עקרונות של שלטון החוק והגמישות המנהלית.⁴⁵"
+}
