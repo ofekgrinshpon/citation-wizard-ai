@@ -1,0 +1,75 @@
+{
+  "fixture_id": "T3",
+  "run_id": "c7017069-c0c1-4c99-af7e-e26c4485290a",
+  "qa_log_id": "8e259a2e-d484-481b-a4d8-b3616b45e474",
+  "total_ms": 234274,
+  "final_action": "controlled_failure",
+  "quality_gate": {
+    "enabled": true,
+    "triggered": true,
+    "reasons": [
+      "phantom_footnote_run"
+    ],
+    "retry_attempted": true,
+    "retry_passed": false,
+    "source_set_equal_on_retry": false,
+    "extra_drafter_ms": 40514,
+    "before": {
+      "cluster_count": 3,
+      "phase3_applied": true,
+      "max_cluster_len": 2,
+      "cluster_run_count": 3,
+      "compound_group_count": 9,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [
+        {
+          "run": "¹⁰",
+          "context": "ווה שלב ראשון במבחני המידתיות.¹⁰\n- האם יש מבחן מידתיות/הכרחיות",
+          "max_valid": 8,
+          "parsed_number": 10
+        },
+        {
+          "run": "¹¹",
+          "context": "את הפגיעה מול התועלת הציבורית.¹¹\n\nמה שנותר פתוח\nהשאלה של גבולו",
+          "max_valid": 8,
+          "parsed_number": 11
+        },
+        {
+          "run": "¹²",
+          "context": "הכרעה מוחלטת על פורמליזם בלבד.¹²\n",
+          "max_valid": 8,
+          "parsed_number": 12
+        }
+      ],
+      "language_artifact_count": 0,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 0,
+      "language_artifacts_found": []
+    },
+    "after": null
+  },
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "compound_group_count": 9
+  },
+  "source_set": {
+    "count_initial": 8,
+    "count_shipped": 8
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 12,
+    "unique_source_count": 8
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 82,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "initial_answer_tail": "וקלים את הפגיעה מול התועלת הציבורית.¹¹\n\nמה שנותר פתוח\nהשאלה של גבולות ההסמכה המינהלית לעומת חוק ראשי ביישום מעשי נותרת נושא לו דיונים בספרות ובפסיקה; המקורות שסופקו מראים שמוקד הבדיקה של בתי המשפט הוא איכות ההסמכה ותכליתה, ולא הכרעה מוחלטת על פורמליזם בלבד.¹²\n"
+}

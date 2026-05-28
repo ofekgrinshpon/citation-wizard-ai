@@ -1,0 +1,1528 @@
+{
+  "phase": "quality-gate-v1",
+  "ran": 13,
+  "errors": 0,
+  "triggered_count": 12,
+  "retry_attempted_count": 12,
+  "retry_passed_count": 1,
+  "controlled_failure_count": 11,
+  "shipped_initial_count": 1,
+  "shipped_retry_count": 1,
+  "hard_gates_all_pass": true,
+  "total_token_leaks": 0,
+  "source_set_equality_on_retry": false,
+  "extra_drafter_ms_total_for_triggered": 486218,
+  "retry_examples": [
+    {
+      "fixture": "L3",
+      "reasons": [
+        "end_paragraph_dump",
+        "phantom_footnote_run"
+      ],
+      "before": {
+        "max_cluster_len": 2,
+        "end_paragraph_dump_count": 1,
+        "cluster_run_count": 3,
+        "phantom": [
+          "¹⁰",
+          "¹¹",
+          "¹²"
+        ],
+        "lang": []
+      },
+      "after": {
+        "max_cluster_len": 0,
+        "end_paragraph_dump_count": 0,
+        "cluster_run_count": 0,
+        "phantom": [],
+        "lang": []
+      }
+    }
+  ],
+  "controlled_failures": [
+    {
+      "fixture": "T1",
+      "reasons": [
+        "end_paragraph_dump",
+        "phantom_footnote_run",
+        "lang_artifact:שורת התחתית"
+      ],
+      "source_set_equal": false,
+      "after": null
+    },
+    {
+      "fixture": "T2",
+      "reasons": [
+        "end_paragraph_dump",
+        "excessive_cluster_density",
+        "phantom_footnote_run"
+      ],
+      "source_set_equal": false,
+      "after": null
+    },
+    {
+      "fixture": "T3",
+      "reasons": [
+        "phantom_footnote_run"
+      ],
+      "source_set_equal": false,
+      "after": null
+    },
+    {
+      "fixture": "PROT",
+      "reasons": [
+        "end_paragraph_dump",
+        "excessive_cluster_density",
+        "phantom_footnote_run"
+      ],
+      "source_set_equal": false,
+      "after": null
+    },
+    {
+      "fixture": "L2",
+      "reasons": [
+        "ambiguous_raw_superscript_run_with_long_cluster",
+        "end_paragraph_dump",
+        "phantom_footnote_run"
+      ],
+      "source_set_equal": false,
+      "after": null
+    },
+    {
+      "fixture": "L4",
+      "reasons": [
+        "end_paragraph_dump",
+        "excessive_cluster_density",
+        "phantom_footnote_run"
+      ],
+      "source_set_equal": true,
+      "after": {
+        "cluster_count": 5,
+        "phase3_applied": true,
+        "max_cluster_len": 2,
+        "cluster_run_count": 5,
+        "compound_group_count": 3,
+        "ambiguous_run_samples": null,
+        "phantom_footnote_runs": [
+          {
+            "run": "¹⁰",
+            "context": "לכן נשאר מקום לתביעות משלימות.¹⁰  במצבים מסוימים (למשל, סוגיות",
+            "max_valid": 7,
+            "parsed_number": 10
+          },
+          {
+            "run": "¹¹",
+            "context": "קשר המנהלי/אזרחי ולמטרת ההליך.¹¹\n\n**חריגים והגנות כנגד החלת הה",
+            "max_valid": 7,
+            "parsed_number": 11
+          },
+          {
+            "run": "¹²",
+            "context": "ו מחדל בהזדמנות להתדיין בפועל.¹²  בנוסף, חוסר קיומן של הכרעות ",
+            "max_valid": 7,
+            "parsed_number": 12
+          },
+          {
+            "run": "¹³",
+            "context": " הקודם יכשיל הקמת השתק פלוגתא.¹³  מאמרים וסוגיות פרקטיות בתחום",
+            "max_valid": 7,
+            "parsed_number": 13
+          },
+          {
+            "run": "¹⁴",
+            "context": "לפי הנסיבות המיוחדות של ההליך.¹⁴\n\nלסיכום מעשי: בעת טענת השתק פ",
+            "max_valid": 7,
+            "parsed_number": 14
+          }
+        ],
+        "language_artifact_count": 0,
+        "phase3_discarded_reason": null,
+        "end_paragraph_dump_count": 1,
+        "language_artifacts_found": []
+      }
+    },
+    {
+      "fixture": "L5",
+      "reasons": [
+        "lang_artifact:שורת התחתית"
+      ],
+      "source_set_equal": false,
+      "after": null
+    },
+    {
+      "fixture": "L6",
+      "reasons": [
+        "phantom_footnote_run",
+        "lang_artifact:שורת התחתית"
+      ],
+      "source_set_equal": true,
+      "after": {
+        "cluster_count": 0,
+        "phase3_applied": true,
+        "max_cluster_len": 0,
+        "cluster_run_count": 0,
+        "compound_group_count": 1,
+        "ambiguous_run_samples": null,
+        "phantom_footnote_runs": [],
+        "language_artifact_count": 1,
+        "phase3_discarded_reason": null,
+        "end_paragraph_dump_count": 0,
+        "language_artifacts_found": [
+          "שורת התחתית"
+        ]
+      }
+    },
+    {
+      "fixture": "RPT1",
+      "reasons": [
+        "end_paragraph_dump",
+        "phantom_footnote_run"
+      ],
+      "source_set_equal": true,
+      "after": {
+        "cluster_count": 6,
+        "phase3_applied": true,
+        "max_cluster_len": 2,
+        "cluster_run_count": 6,
+        "compound_group_count": 6,
+        "ambiguous_run_samples": null,
+        "phantom_footnote_runs": [
+          {
+            "run": "¹⁰",
+            "context": "למנוע הכרעה סותרת בהליך אזרחי.¹⁰\n\nהערכת פסק‑דין אזרחי בביהמ\"ש ",
+            "max_valid": 6,
+            "parsed_number": 10
+          },
+          {
+            "run": "¹¹",
+            "context": "ציבור ונטל ההוכחה בו כבד יותר.¹¹\n- **השפעה על החלטות להגשת כתב",
+            "max_valid": 6,
+            "parsed_number": 11
+          },
+          {
+            "run": "¹²",
+            "context": "מידתיות שחלה על רשויות התביעה.¹²\n\nחריגים ומגבלות פרקטיות\n- שינ",
+            "max_valid": 6,
+            "parsed_number": 12
+          },
+          {
+            "run": "¹³",
+            "context": "גנת במקרים של עיוות הליך קודם.¹³\n- החלטות שלא עסקו במהות העובד",
+            "max_valid": 6,
+            "parsed_number": 13
+          },
+          {
+            "run": "¹⁴",
+            "context": " יוצרות בדרך כלל מחסום פלוגתא.¹⁴\n- עניינים של אינטרס ציבורי, מ",
+            "max_valid": 6,
+            "parsed_number": 14
+          }
+        ],
+        "language_artifact_count": 0,
+        "phase3_discarded_reason": null,
+        "end_paragraph_dump_count": 1,
+        "language_artifacts_found": []
+      }
+    },
+    {
+      "fixture": "RPT2",
+      "reasons": [
+        "end_paragraph_dump",
+        "excessive_cluster_density",
+        "phantom_footnote_run",
+        "lang_artifact:שורת התחתית"
+      ],
+      "source_set_equal": true,
+      "after": {
+        "cluster_count": 7,
+        "phase3_applied": true,
+        "max_cluster_len": 2,
+        "cluster_run_count": 7,
+        "compound_group_count": 6,
+        "ambiguous_run_samples": null,
+        "phantom_footnote_runs": [
+          {
+            "run": "¹⁰",
+            "context": " בכללי מידתיות משפטית וכלכלית.¹⁰\nעוד כללי מדידה: חובת ה**מזעור",
+            "max_valid": 8,
+            "parsed_number": 10
+          },
+          {
+            "run": "¹¹",
+            "context": "כחלק מהאיזון בין טענות הצדדים.¹¹\n\nסייגים והגבלות\nהחלת האינטרס ",
+            "max_valid": 8,
+            "parsed_number": 11
+          },
+          {
+            "run": "¹²",
+            "context": "א להיפגע במסגרת מדידת הציפיות.¹²\nשנית, שינוי נסיבות מהותי או ס",
+            "max_valid": 8,
+            "parsed_number": 12
+          },
+          {
+            "run": "¹³",
+            "context": "פר או שאינו מוטל על הצד הנפגע.¹³\nשלישית, שיקולים של תום לב ומד",
+            "max_valid": 8,
+            "parsed_number": 13
+          },
+          {
+            "run": "¹⁴",
+            "context": "צור שיפוטי או להפנות לסעד אחר.¹⁴\nלבסוף, דוקטרינות קרובות כמו ה",
+            "max_valid": 8,
+            "parsed_number": 14
+          }
+        ],
+        "language_artifact_count": 0,
+        "phase3_discarded_reason": null,
+        "end_paragraph_dump_count": 1,
+        "language_artifacts_found": []
+      }
+    },
+    {
+      "fixture": "RPT3",
+      "reasons": [
+        "ambiguous_raw_superscript_run_with_long_cluster",
+        "phantom_footnote_run",
+        "lang_artifact:שורת התחתית"
+      ],
+      "source_set_equal": false,
+      "after": null
+    }
+  ],
+  "fixtures": [
+    {
+      "fixture_id": "T1",
+      "run_id": "aa9ac49d-e890-439a-a1ac-f38a624003a1",
+      "qa_log_id": "1cf67357-60d0-4ee2-8049-7de60e945595",
+      "total_ms": 264886,
+      "final_action": "controlled_failure",
+      "quality_gate": {
+        "enabled": true,
+        "triggered": true,
+        "reasons": [
+          "end_paragraph_dump",
+          "phantom_footnote_run",
+          "lang_artifact:שורת התחתית"
+        ],
+        "retry_attempted": true,
+        "retry_passed": false,
+        "source_set_equal_on_retry": false,
+        "extra_drafter_ms": 31856,
+        "before": {
+          "cluster_count": 3,
+          "phase3_applied": false,
+          "max_cluster_len": 3,
+          "cluster_run_count": 2,
+          "compound_group_count": null,
+          "ambiguous_run_samples": [
+            {
+              "run": "⁹¹⁰",
+              "context": "וסר ודאות מופרז.⁹¹⁰\n\nמקרה מבחן — בי",
+              "candidates": []
+            }
+          ],
+          "phantom_footnote_runs": [
+            {
+              "run": "⁵⁶",
+              "context": "מובהקים או בעסקאות בשווי גבוה.⁵⁶\n\nמחלוקת פרשנית ודיון תאורטי: ",
+              "max_valid": 9,
+              "parsed_number": 56
+            },
+            {
+              "run": "⁹¹⁰",
+              "context": "כדי לא ליצור חוסר ודאות מופרז.⁹¹⁰\n\nמקרה מבחן — ביבי כבישים נ' ר",
+              "max_valid": 9,
+              "parsed_number": 91
+            }
+          ],
+          "language_artifact_count": 1,
+          "phase3_discarded_reason": "ambiguous_raw_superscript_run",
+          "end_paragraph_dump_count": 1,
+          "language_artifacts_found": [
+            "שורת התחתית"
+          ]
+        },
+        "after": null
+      },
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "ambiguous_raw_superscript_run",
+        "compound_group_count": null
+      },
+      "source_set": {
+        "count_initial": 9,
+        "count_shipped": 9
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 9,
+        "unique_source_count": 9
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 82,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "initial_answer_tail": "ה חשיבות לאומד דעת הצדדים; יחד עם זאת, בפסיקה המאוחרת ועבודת המחוקק ניכרת תשומת לב מחודשת לבכורה של הלשון ולמתן גבולות לשימוש בראיות חיצוניות — המאוזנות בתוך מבחן תכליתי שגם כיום נותר רלבנטי. (הסיכום הזה מסנתז טענות שנתמכו בגוף הטקסט מבלי להוסיף מקורות חדשים.)"
+    },
+    {
+      "fixture_id": "T2",
+      "run_id": "b917e5de-0e79-45f8-9c84-5f96b070f77d",
+      "qa_log_id": "db08d054-e377-47df-9970-68d5aa0e1139",
+      "total_ms": 225453,
+      "final_action": "controlled_failure",
+      "quality_gate": {
+        "enabled": true,
+        "triggered": true,
+        "reasons": [
+          "end_paragraph_dump",
+          "excessive_cluster_density",
+          "phantom_footnote_run"
+        ],
+        "retry_attempted": true,
+        "retry_passed": false,
+        "source_set_equal_on_retry": false,
+        "extra_drafter_ms": 56182,
+        "before": {
+          "cluster_count": 23,
+          "phase3_applied": true,
+          "max_cluster_len": 2,
+          "cluster_run_count": 23,
+          "compound_group_count": 0,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [
+            {
+              "run": "¹⁰",
+              "context": "יבות משפטית או עניין ציבורי.⁹ ¹⁰\n- **קיום פגם מהותי בפסק-הדין ",
+              "max_valid": 9,
+              "parsed_number": 10
+            },
+            {
+              "run": "¹¹",
+              "context": " הראיות או שיקול עיגול שיפוטי.¹¹ ¹²\n- **סתירה בפסיקה או הצורך ",
+              "max_valid": 9,
+              "parsed_number": 11
+            },
+            {
+              "run": "¹²",
+              "context": "איות או שיקול עיגול שיפוטי.¹¹ ¹²\n- **סתירה בפסיקה או הצורך באח",
+              "max_valid": 9,
+              "parsed_number": 12
+            },
+            {
+              "run": "¹³",
+              "context": "סקרת, יש לכך משקל בהענקת רשות.¹³ ¹⁴\n- **מניעת עיוות דין חמור**",
+              "max_valid": 9,
+              "parsed_number": 13
+            },
+            {
+              "run": "¹⁴",
+              "context": "ת, יש לכך משקל בהענקת רשות.¹³ ¹⁴\n- **מניעת עיוות דין חמור** — ",
+              "max_valid": 9,
+              "parsed_number": 14
+            }
+          ],
+          "language_artifact_count": 0,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 2,
+          "language_artifacts_found": []
+        },
+        "after": null
+      },
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "compound_group_count": 0
+      },
+      "source_set": {
+        "count_initial": 9,
+        "count_shipped": 9
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 32,
+        "unique_source_count": 9
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 82,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "initial_answer_tail": "ת/פגם/עיוות) כדי להגדיל סיכוי לאישור.³¹ ³²\n\nהמלצה מעשית קצרה: בבקשה לגלגול שלישי יש להקדיש מקום בהצגה לעמידה בקריטריונים: להדגיש חשיבות ציבורית, לפרט פגם מהותי משפיע, להראות צורך באחידות הדין או עיוות דין, ולמזער טענות טכניות שניתן היה להעלות בערכאות הקודמות.\n"
+    },
+    {
+      "fixture_id": "T3",
+      "run_id": "c7017069-c0c1-4c99-af7e-e26c4485290a",
+      "qa_log_id": "8e259a2e-d484-481b-a4d8-b3616b45e474",
+      "total_ms": 234274,
+      "final_action": "controlled_failure",
+      "quality_gate": {
+        "enabled": true,
+        "triggered": true,
+        "reasons": [
+          "phantom_footnote_run"
+        ],
+        "retry_attempted": true,
+        "retry_passed": false,
+        "source_set_equal_on_retry": false,
+        "extra_drafter_ms": 40514,
+        "before": {
+          "cluster_count": 3,
+          "phase3_applied": true,
+          "max_cluster_len": 2,
+          "cluster_run_count": 3,
+          "compound_group_count": 9,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [
+            {
+              "run": "¹⁰",
+              "context": "ווה שלב ראשון במבחני המידתיות.¹⁰\n- האם יש מבחן מידתיות/הכרחיות",
+              "max_valid": 8,
+              "parsed_number": 10
+            },
+            {
+              "run": "¹¹",
+              "context": "את הפגיעה מול התועלת הציבורית.¹¹\n\nמה שנותר פתוח\nהשאלה של גבולו",
+              "max_valid": 8,
+              "parsed_number": 11
+            },
+            {
+              "run": "¹²",
+              "context": "הכרעה מוחלטת על פורמליזם בלבד.¹²\n",
+              "max_valid": 8,
+              "parsed_number": 12
+            }
+          ],
+          "language_artifact_count": 0,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 0,
+          "language_artifacts_found": []
+        },
+        "after": null
+      },
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "compound_group_count": 9
+      },
+      "source_set": {
+        "count_initial": 8,
+        "count_shipped": 8
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 12,
+        "unique_source_count": 8
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 82,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "initial_answer_tail": "וקלים את הפגיעה מול התועלת הציבורית.¹¹\n\nמה שנותר פתוח\nהשאלה של גבולות ההסמכה המינהלית לעומת חוק ראשי ביישום מעשי נותרת נושא לו דיונים בספרות ובפסיקה; המקורות שסופקו מראים שמוקד הבדיקה של בתי המשפט הוא איכות ההסמכה ותכליתה, ולא הכרעה מוחלטת על פורמליזם בלבד.¹²\n"
+    },
+    {
+      "fixture_id": "PROT",
+      "run_id": "bba86ce2-d1e8-41ed-b09b-eb1198ae9c77",
+      "qa_log_id": "e4bb4daa-7ac3-4fa4-8490-522dc52b0246",
+      "total_ms": 246129,
+      "final_action": "controlled_failure",
+      "quality_gate": {
+        "enabled": true,
+        "triggered": true,
+        "reasons": [
+          "end_paragraph_dump",
+          "excessive_cluster_density",
+          "phantom_footnote_run"
+        ],
+        "retry_attempted": true,
+        "retry_passed": false,
+        "source_set_equal_on_retry": false,
+        "extra_drafter_ms": 38680,
+        "before": {
+          "cluster_count": 15,
+          "phase3_applied": false,
+          "max_cluster_len": 2,
+          "cluster_run_count": 15,
+          "compound_group_count": null,
+          "ambiguous_run_samples": [
+            {
+              "run": "¹⁰",
+              "context": "סגרת המשאבים.⁹  ¹⁰\n- **השתייכות לנ",
+              "candidates": []
+            },
+            {
+              "run": "¹⁰",
+              "context": "הפרדת הרשויות.³ ¹⁰ ⁹\n\nסעדים אפשריי",
+              "candidates": []
+            },
+            {
+              "run": "¹⁰",
+              "context": "מערכתי לעיתים.³ ¹⁰\n\nמגבלות משרדיות",
+              "candidates": []
+            },
+            {
+              "run": "¹⁰",
+              "context": "ת החובה והסעד.⁹ ¹⁰ ¹³\n\nמסקנה מעשית",
+              "candidates": []
+            }
+          ],
+          "phantom_footnote_runs": [
+            {
+              "run": "¹¹",
+              "context": "לשיטתיות וידוענות של אי‑אכיפה.¹¹ ¹²\n\nתמיכה עובדית וסיבתית: דו\"",
+              "max_valid": 9,
+              "parsed_number": 11
+            },
+            {
+              "run": "¹²",
+              "context": "טתיות וידוענות של אי‑אכיפה.¹¹ ¹²\n\nתמיכה עובדית וסיבתית: דו\"חות",
+              "max_valid": 9,
+              "parsed_number": 12
+            },
+            {
+              "run": "¹¹",
+              "context": "תגבשת למנהג רשמי או בלתי‑רשמי.¹¹ ¹²\n- **ידיעת הרשויות** — מודע",
+              "max_valid": 9,
+              "parsed_number": 11
+            },
+            {
+              "run": "¹²",
+              "context": "שת למנהג רשמי או בלתי‑רשמי.¹¹ ¹²\n- **ידיעת הרשויות** — מודעות ",
+              "max_valid": 9,
+              "parsed_number": 12
+            },
+            {
+              "run": "¹²",
+              "context": "משלה לקיומו של דפוס האי‑אכיפה.¹²\n- **סיבתיות ונסיבות היסוד** —",
+              "max_valid": 9,
+              "parsed_number": 12
+            }
+          ],
+          "language_artifact_count": 0,
+          "phase3_discarded_reason": "ambiguous_raw_superscript_run",
+          "end_paragraph_dump_count": 2,
+          "language_artifacts_found": []
+        },
+        "after": null
+      },
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "ambiguous_raw_superscript_run",
+        "compound_group_count": null
+      },
+      "source_set": {
+        "count_initial": 9,
+        "count_shipped": 9
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 9,
+        "unique_source_count": 9
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 82,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "initial_answer_tail": " של אי‑אכיפה, ידיעת הרשויות, וקשר סיבתי סביר לפגיעה בחיי אדם או בביטחונם; הלקוח/הטוען/ת צריך/ה להיערך לאיסוף ראיות דו\"חיות ודפוסיות (דו\"חות מבקר, חומרים פנימיים של גורמי אכיפה) ולהתמקד בבקשת סעד מבני ופיקוח שיפוטי יותר מאשר בדרישה לפיצוי כספי ישיר.⁶ ¹¹ ¹² ¹³\n\n"
+    },
+    {
+      "fixture_id": "L1",
+      "run_id": "aa766ffb-fc89-4a36-a0ca-9e4f2b93a9fa",
+      "qa_log_id": "4731180c-b54b-4cf8-b52a-81aefcb12c55",
+      "total_ms": 157536,
+      "final_action": "shipped_initial",
+      "quality_gate": {
+        "enabled": true,
+        "triggered": false,
+        "reasons": [],
+        "retry_attempted": false,
+        "retry_passed": false,
+        "source_set_equal_on_retry": null,
+        "extra_drafter_ms": 0,
+        "before": {
+          "cluster_count": 0,
+          "phase3_applied": true,
+          "max_cluster_len": 0,
+          "cluster_run_count": 0,
+          "compound_group_count": 0,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [],
+          "language_artifact_count": 0,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 0,
+          "language_artifacts_found": []
+        },
+        "after": null
+      },
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "compound_group_count": 0
+      },
+      "source_set": {
+        "count_initial": 4,
+        "count_shipped": 4
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 7,
+        "unique_source_count": 4
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 1887,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "סעד עם הצגת יסוד ראייתי לסיכוי ההצלחה, פירוט הנזק המיידי ונסיבות הדחיפות, ולהיות מוכנים להציע בטחונות מידתיים. במצבים של דחייה בהגשה יש לשקול שמא פגעה העיכוב במשקל טענת הדחיפות והנזק, ומנגד להיערך למשא ומתן על ערבויות כדי להקטין את התנגדויות בית המשפט למתן צו.",
+      "initial_answer_tail": null
+    },
+    {
+      "fixture_id": "L2",
+      "run_id": "1c02c25b-2a62-441f-8964-36efb8a7b1e7",
+      "qa_log_id": "8b9ae8d9-5e5e-4091-bb31-c605279c4d1d",
+      "total_ms": 206293,
+      "final_action": "controlled_failure",
+      "quality_gate": {
+        "enabled": true,
+        "triggered": true,
+        "reasons": [
+          "ambiguous_raw_superscript_run_with_long_cluster",
+          "end_paragraph_dump",
+          "phantom_footnote_run"
+        ],
+        "retry_attempted": true,
+        "retry_passed": false,
+        "source_set_equal_on_retry": false,
+        "extra_drafter_ms": 37423,
+        "before": {
+          "cluster_count": 12,
+          "phase3_applied": false,
+          "max_cluster_len": 4,
+          "cluster_run_count": 6,
+          "compound_group_count": null,
+          "ambiguous_run_samples": [
+            {
+              "run": "¹⁰¹¹",
+              "context": " סעד ובהשלכותיו.¹⁰¹¹\n\nמגבלות מרכזיות",
+              "candidates": []
+            },
+            {
+              "run": "⁹¹⁰",
+              "context": "ת מבוססות הבטחה.⁹¹⁰\n\nמסקנה מעשית קצ",
+              "candidates": []
+            }
+          ],
+          "phantom_footnote_runs": [
+            {
+              "run": "¹²",
+              "context": "או לתת סעד מאזן בהתאם לנסיבות.¹²\n\nהבדל מהותי בינה ובין חובת הה",
+              "max_valid": 9,
+              "parsed_number": 12
+            },
+            {
+              "run": "³⁴",
+              "context": "בוריים ונורמטיביים רחבים יותר.³⁴\n\nיסודות ותנאי הוכחה מקובלים ל",
+              "max_valid": 9,
+              "parsed_number": 34
+            },
+            {
+              "run": "¹⁰¹¹",
+              "context": " העוסקת בסיווג סעד ובהשלכותיו.¹⁰¹¹\n\nמגבלות מרכזיות: בית המשפט יה",
+              "max_valid": 9,
+              "parsed_number": 10
+            },
+            {
+              "run": "¹²¹³",
+              "context": "רי עלול לגבור על ההגנה הפרטית.¹²¹³\n\nיישום מעשי וייעוץ:\n- בהערכת ",
+              "max_valid": 9,
+              "parsed_number": 12
+            },
+            {
+              "run": "⁵⁶⁷",
+              "context": "ם של שיקולים ציבוריים מנוגדים.⁵⁶⁷\n- לרשויות: תעוד מפורש של הבטח",
+              "max_valid": 9,
+              "parsed_number": 56
+            }
+          ],
+          "language_artifact_count": 0,
+          "phase3_discarded_reason": "ambiguous_raw_superscript_run",
+          "end_paragraph_dump_count": 1,
+          "language_artifacts_found": []
+        },
+        "after": null
+      },
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "ambiguous_raw_superscript_run",
+        "compound_group_count": null
+      },
+      "source_set": {
+        "count_initial": 9,
+        "count_shipped": 9
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 9,
+        "unique_source_count": 9
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 82,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "initial_answer_tail": "\nמסקנה מעשית קצרה: הדוקטרינה מעניקה הגנה ממשית להסתמכות על הבטחות מנהליות אך אינה מוחלטת — בית המשפט מאזּן בין זכות ההסתמכות לאינטרס הציבורי ולמסגרת הסמכות, ולפיכך ההערכה המעשית דורשת בדיקה פרטנית של בהירות ההבטחה, היקף ההסתמכות והעובדות הנוגעות לסמכות ולחוק. "
+    },
+    {
+      "fixture_id": "L3",
+      "run_id": "4a0e34b2-58b7-499f-a3aa-0938ef96e603",
+      "qa_log_id": "01ba2062-c233-4be5-a928-ecea1d3b6f78",
+      "total_ms": 184921,
+      "final_action": "shipped_retry",
+      "quality_gate": {
+        "enabled": true,
+        "triggered": true,
+        "reasons": [
+          "end_paragraph_dump",
+          "phantom_footnote_run"
+        ],
+        "retry_attempted": true,
+        "retry_passed": true,
+        "source_set_equal_on_retry": true,
+        "extra_drafter_ms": 33166,
+        "before": {
+          "cluster_count": 3,
+          "phase3_applied": true,
+          "max_cluster_len": 2,
+          "cluster_run_count": 3,
+          "compound_group_count": 10,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [
+            {
+              "run": "¹⁰",
+              "context": "מסחר והציפיות שנוצרו מהסכמים.^¹⁰\n\nהשלכות מעשיות והמלצות טקטיות",
+              "max_valid": 4,
+              "parsed_number": 10
+            },
+            {
+              "run": "¹¹",
+              "context": "ן בין הסכום לנזק אינם סבירים.^¹¹\n\nפתוח: גבולות היקף ההתערבות ה",
+              "max_valid": 4,
+              "parsed_number": 11
+            },
+            {
+              "run": "¹²",
+              "context": " מלאה של נוסחה מתמטית להפחתה.^¹²\n",
+              "max_valid": 4,
+              "parsed_number": 12
+            }
+          ],
+          "language_artifact_count": 0,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 1,
+          "language_artifacts_found": []
+        },
+        "after": {
+          "cluster_count": 0,
+          "phase3_applied": true,
+          "max_cluster_len": 0,
+          "cluster_run_count": 0,
+          "compound_group_count": 0,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [],
+          "language_artifact_count": 0,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 0,
+          "language_artifacts_found": []
+        }
+      },
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "compound_group_count": 0
+      },
+      "source_set": {
+        "count_initial": 4,
+        "count_shipped": 4
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 8,
+        "unique_source_count": 4
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 1954,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "לגבי הנזק הצפוי בעת כריתת החוזה, טיעונים לגבי יחסי הגומלין בין הסכום לנזק, ואינדיקציות לאופי עונשי של הפיצוי; בית המשפט יאזן בין כבוד להסכמה החופשית של הצדדים לבין מניעת פיצוי בלתי סביר או עונשי, ובהתאם יוכל לצמצם את הפיצוי לגובה שנראה לו סביר בנסיבות העניין. ",
+      "initial_answer_tail": "לא כאמצעי ענישה, אך יפעיל את סמכות ההפחתה כשיחסי הגומלין בין הסכום לנזק אינם סבירים.^¹¹\n\nפתוח: גבולות היקף ההתערבות השיפוטית ותיחום פרטי הראיות נשארים תחום שבו יש מקום לדיון ופיתוח דוקטרינלי; הפסיקה נותנת קווים אך לא פורמליזציה מלאה של נוסחה מתמטית להפחתה.^¹²\n"
+    },
+    {
+      "fixture_id": "L4",
+      "run_id": "7d41cd28-e7d4-4766-b43f-d25da3fa7726",
+      "qa_log_id": "45c0105c-670e-4577-aed3-6a08a6564bb9",
+      "total_ms": 258313,
+      "final_action": "controlled_failure",
+      "quality_gate": {
+        "enabled": true,
+        "triggered": true,
+        "reasons": [
+          "end_paragraph_dump",
+          "excessive_cluster_density",
+          "phantom_footnote_run"
+        ],
+        "retry_attempted": true,
+        "retry_passed": false,
+        "source_set_equal_on_retry": true,
+        "extra_drafter_ms": 37060,
+        "before": {
+          "cluster_count": 11,
+          "phase3_applied": true,
+          "max_cluster_len": 2,
+          "cluster_run_count": 11,
+          "compound_group_count": 3,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [
+            {
+              "run": "¹⁰",
+              "context": "מקום שבו לא נקבעו ממצאים כאלה.¹⁰ לשם הוגנות הדיון, נשקלת גם הש",
+              "max_valid": 7,
+              "parsed_number": 10
+            },
+            {
+              "run": "¹¹",
+              "context": "ות מלאה” להתדיין בהליך הראשון.¹¹\n\nהיקף ההשפעה והשלכות מעשיות\nה",
+              "max_valid": 7,
+              "parsed_number": 11
+            },
+            {
+              "run": "¹²",
+              "context": "ש לסתור את הממצא החיוני שנקבע.¹² בפועל, ממצאים פוזיטיביים וחיו",
+              "max_valid": 7,
+              "parsed_number": 12
+            },
+            {
+              "run": "¹³",
+              "context": "ם) כדי לעקוף את מחסום הסופיות.¹³ הכלל חל בהליך האזרחי על ענפיו",
+              "max_valid": 7,
+              "parsed_number": 13
+            },
+            {
+              "run": "¹⁴",
+              "context": "בכללם בית המשפט לענייני משפחה;¹⁴ עם זאת, הספרות מצביעה על כך ש",
+              "max_valid": 7,
+              "parsed_number": 14
+            }
+          ],
+          "language_artifact_count": 0,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 2,
+          "language_artifacts_found": []
+        },
+        "after": {
+          "cluster_count": 5,
+          "phase3_applied": true,
+          "max_cluster_len": 2,
+          "cluster_run_count": 5,
+          "compound_group_count": 3,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [
+            {
+              "run": "¹⁰",
+              "context": "לכן נשאר מקום לתביעות משלימות.¹⁰  במצבים מסוימים (למשל, סוגיות",
+              "max_valid": 7,
+              "parsed_number": 10
+            },
+            {
+              "run": "¹¹",
+              "context": "קשר המנהלי/אזרחי ולמטרת ההליך.¹¹\n\n**חריגים והגנות כנגד החלת הה",
+              "max_valid": 7,
+              "parsed_number": 11
+            },
+            {
+              "run": "¹²",
+              "context": "ו מחדל בהזדמנות להתדיין בפועל.¹²  בנוסף, חוסר קיומן של הכרעות ",
+              "max_valid": 7,
+              "parsed_number": 12
+            },
+            {
+              "run": "¹³",
+              "context": " הקודם יכשיל הקמת השתק פלוגתא.¹³  מאמרים וסוגיות פרקטיות בתחום",
+              "max_valid": 7,
+              "parsed_number": 13
+            },
+            {
+              "run": "¹⁴",
+              "context": "לפי הנסיבות המיוחדות של ההליך.¹⁴\n\nלסיכום מעשי: בעת טענת השתק פ",
+              "max_valid": 7,
+              "parsed_number": 14
+            }
+          ],
+          "language_artifact_count": 0,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 1,
+          "language_artifacts_found": []
+        }
+      },
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "compound_group_count": 3
+      },
+      "source_set": {
+        "count_initial": 7,
+        "count_shipped": 7
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 20,
+        "unique_source_count": 7
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 82,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "initial_answer_tail": "היעדר חלוטיות של ההכרעה הראשונה.¹⁹ מנגד, פלוגתא שלא הייתה חיונית לתוצאה לא תקים השתק פלוגתא מלכתחילה.²⁰ ממילא, בתכנון אסטרטגי של ההליכים חשוב לזהות במועד מוקדם אילו קביעות עלולות לקבע את ההתדיינות העתידית, ומתי נכון לטעון לחריגים כדי להימנע מכבילה בלתי מוצדקת."
+    },
+    {
+      "fixture_id": "L5",
+      "run_id": "2c7d9aee-b400-488f-b02e-cd3681320356",
+      "qa_log_id": "e03eb845-cc32-4b91-9add-c024b2eb4572",
+      "total_ms": 184870,
+      "final_action": "controlled_failure",
+      "quality_gate": {
+        "enabled": true,
+        "triggered": true,
+        "reasons": [
+          "lang_artifact:שורת התחתית"
+        ],
+        "retry_attempted": true,
+        "retry_passed": false,
+        "source_set_equal_on_retry": false,
+        "extra_drafter_ms": 36961,
+        "before": {
+          "cluster_count": 0,
+          "phase3_applied": true,
+          "max_cluster_len": 0,
+          "cluster_run_count": 0,
+          "compound_group_count": 4,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [],
+          "language_artifact_count": 1,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 0,
+          "language_artifacts_found": [
+            "שורת התחתית"
+          ]
+        },
+        "after": null
+      },
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "compound_group_count": 4
+      },
+      "source_set": {
+        "count_initial": 9,
+        "count_shipped": 9
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 8,
+        "unique_source_count": 9
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 82,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "initial_answer_tail": "וניות ושרירותיות אך סובלת מבעיית אמות‑מידה ברורות; יש לשקול את פניה זהירות תוך הדגשת הצורך בהצגת ליקויים מוחשיים בתהליך קבלת ההחלטה (כישלון בשיקלול שיקולים רלוונטיים, חשיבה לקויה או חוסר התאמה בין עובדות למסקנות) ולא הסתמכות על אי‑סיפוק לשקולנות מעשית בלבד.⁸\n\n"
+    },
+    {
+      "fixture_id": "L6",
+      "run_id": "0329913e-303b-4717-adc8-1093e8116598",
+      "qa_log_id": "40b25b9d-8939-4cb6-b017-31cbeb80ee67",
+      "total_ms": 238972,
+      "final_action": "controlled_failure",
+      "quality_gate": {
+        "enabled": true,
+        "triggered": true,
+        "reasons": [
+          "phantom_footnote_run",
+          "lang_artifact:שורת התחתית"
+        ],
+        "retry_attempted": true,
+        "retry_passed": false,
+        "source_set_equal_on_retry": true,
+        "extra_drafter_ms": 35717,
+        "before": {
+          "cluster_count": 2,
+          "phase3_applied": true,
+          "max_cluster_len": 2,
+          "cluster_run_count": 2,
+          "compound_group_count": 8,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [
+            {
+              "run": "¹⁰",
+              "context": "ת ההגנה על מי שהשקיע בהסתמכות.¹⁰\n\nמסקנה קצרה: ההגנה על הבטחה מ",
+              "max_valid": 6,
+              "parsed_number": 10
+            },
+            {
+              "run": "¹¹",
+              "context": "את שיקול הדעת של ועדות התכנון.¹¹",
+              "max_valid": 6,
+              "parsed_number": 11
+            }
+          ],
+          "language_artifact_count": 1,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 0,
+          "language_artifacts_found": [
+            "שורת התחתית"
+          ]
+        },
+        "after": {
+          "cluster_count": 0,
+          "phase3_applied": true,
+          "max_cluster_len": 0,
+          "cluster_run_count": 0,
+          "compound_group_count": 1,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [],
+          "language_artifact_count": 1,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 0,
+          "language_artifacts_found": [
+            "שורת התחתית"
+          ]
+        }
+      },
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "compound_group_count": 8
+      },
+      "source_set": {
+        "count_initial": 6,
+        "count_shipped": 6
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 11,
+        "unique_source_count": 6
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 82,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "initial_answer_tail": "נשענת על שילוב של סמכות, בהירות והסתמכות; חוסר סמכות מהותי או אינטרס ציבורי מנומק יכולים לכרסם אכיפה ישירה, אך בעיקר יביאו לשקילה של סעד חלופי — חיוב בפעולה בתום לב, הסדרי מעבר או פיצוי — ובתחום התכנון יש להימנע מפסק דין שמכביל את שיקול הדעת של ועדות התכנון.¹¹"
+    },
+    {
+      "fixture_id": "RPT1",
+      "run_id": "544a256a-2abd-475a-ab2d-fa10744b4cc6",
+      "qa_log_id": "fe9e2f1e-8658-4b8b-9a1e-832bdcc11a80",
+      "total_ms": 188983,
+      "final_action": "controlled_failure",
+      "quality_gate": {
+        "enabled": true,
+        "triggered": true,
+        "reasons": [
+          "end_paragraph_dump",
+          "phantom_footnote_run"
+        ],
+        "retry_attempted": true,
+        "retry_passed": false,
+        "source_set_equal_on_retry": true,
+        "extra_drafter_ms": 43170,
+        "before": {
+          "cluster_count": 6,
+          "phase3_applied": true,
+          "max_cluster_len": 2,
+          "cluster_run_count": 6,
+          "compound_group_count": 12,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [
+            {
+              "run": "¹⁰",
+              "context": "שנועד להגן על האינטרס הציבורי.¹⁰\n- בפועל פסיקה העלתה כי בתי המ",
+              "max_valid": 6,
+              "parsed_number": 10
+            },
+            {
+              "run": "¹¹",
+              "context": " כאשר יש פערים בראיות או בנטל.¹¹\n\nחריגים ומגבלות\n- בתי המשפט מ",
+              "max_valid": 6,
+              "parsed_number": 11
+            },
+            {
+              "run": "¹²",
+              "context": "יים העולים במשקל בהליך הפלילי.¹²\n- הפסיקה דורשת זהירות יישומית",
+              "max_valid": 6,
+              "parsed_number": 12
+            },
+            {
+              "run": "¹³",
+              "context": " יוטל מחסום מוחלט על הליך אחר.¹³\n\nהשלכות מעשיות\n- במקרים של הר",
+              "max_valid": 6,
+              "parsed_number": 13
+            },
+            {
+              "run": "¹⁴",
+              "context": "וגתא על פי הקריטריונים שנקבעו.¹⁴\n- רעיון המיצוי והזהות מעשית מ",
+              "max_valid": 6,
+              "parsed_number": 14
+            }
+          ],
+          "language_artifact_count": 0,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 2,
+          "language_artifacts_found": []
+        },
+        "after": {
+          "cluster_count": 6,
+          "phase3_applied": true,
+          "max_cluster_len": 2,
+          "cluster_run_count": 6,
+          "compound_group_count": 6,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [
+            {
+              "run": "¹⁰",
+              "context": "למנוע הכרעה סותרת בהליך אזרחי.¹⁰\n\nהערכת פסק‑דין אזרחי בביהמ\"ש ",
+              "max_valid": 6,
+              "parsed_number": 10
+            },
+            {
+              "run": "¹¹",
+              "context": "ציבור ונטל ההוכחה בו כבד יותר.¹¹\n- **השפעה על החלטות להגשת כתב",
+              "max_valid": 6,
+              "parsed_number": 11
+            },
+            {
+              "run": "¹²",
+              "context": "מידתיות שחלה על רשויות התביעה.¹²\n\nחריגים ומגבלות פרקטיות\n- שינ",
+              "max_valid": 6,
+              "parsed_number": 12
+            },
+            {
+              "run": "¹³",
+              "context": "גנת במקרים של עיוות הליך קודם.¹³\n- החלטות שלא עסקו במהות העובד",
+              "max_valid": 6,
+              "parsed_number": 13
+            },
+            {
+              "run": "¹⁴",
+              "context": " יוצרות בדרך כלל מחסום פלוגתא.¹⁴\n- עניינים של אינטרס ציבורי, מ",
+              "max_valid": 6,
+              "parsed_number": 14
+            }
+          ],
+          "language_artifact_count": 0,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 1,
+          "language_artifacts_found": []
+        }
+      },
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "compound_group_count": 12
+      },
+      "source_set": {
+        "count_initial": 6,
+        "count_shipped": 6
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 15,
+        "unique_source_count": 6
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 82,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "initial_answer_tail": " פלוגתא, הכרעה חיובית וסופית, זהות צדדים/privies והזדמנות מיצה להתדיין; ההשפעה של הכרעה פלילית חזקתה מן האזרחית, אך זיכוי פלילי בדרך כלל אינו חוסם תביעה אזרחית. בתי המשפט מיישמים עקרונות אלה במשקל שיקלול בין סופיות ההכרעה לבין שיקולי צדק מהותי ואינטרס ציבורי. "
+    },
+    {
+      "fixture_id": "RPT2",
+      "run_id": "2dfd0c00-cefa-43ad-97aa-f3cef658c5a8",
+      "qa_log_id": "cc0bdd61-209f-4427-98ba-3026154bb175",
+      "total_ms": 180682,
+      "final_action": "controlled_failure",
+      "quality_gate": {
+        "enabled": true,
+        "triggered": true,
+        "reasons": [
+          "end_paragraph_dump",
+          "excessive_cluster_density",
+          "phantom_footnote_run",
+          "lang_artifact:שורת התחתית"
+        ],
+        "retry_attempted": true,
+        "retry_passed": false,
+        "source_set_equal_on_retry": true,
+        "extra_drafter_ms": 43596,
+        "before": {
+          "cluster_count": 27,
+          "phase3_applied": true,
+          "max_cluster_len": 2,
+          "cluster_run_count": 27,
+          "compound_group_count": 0,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [
+            {
+              "run": "¹⁰",
+              "context": "ולא על ספקולציות בלתי מוגבלות.¹⁰ ¹¹\n- חובת הפחתת נזק (mitigati",
+              "max_valid": 8,
+              "parsed_number": 10
+            },
+            {
+              "run": "¹¹",
+              "context": " על ספקולציות בלתי מוגבלות.¹⁰ ¹¹\n- חובת הפחתת נזק (mitigation)",
+              "max_valid": 8,
+              "parsed_number": 11
+            },
+            {
+              "run": "¹²",
+              "context": "ל היה לעשות כדי לצמצם את הנזק.¹²\n\nאמצעי משפטי וכללי מדידה בפרק",
+              "max_valid": 8,
+              "parsed_number": 12
+            },
+            {
+              "run": "¹³",
+              "context": "ת על ההפרש הכלכלי מהמצב הצפוי.¹³ ¹⁴\n- ביצוע ספציפי או צו על תנ",
+              "max_valid": 8,
+              "parsed_number": 13
+            },
+            {
+              "run": "¹⁴",
+              "context": "ל ההפרש הכלכלי מהמצב הצפוי.¹³ ¹⁴\n- ביצוע ספציפי או צו על תנאי:",
+              "max_valid": 8,
+              "parsed_number": 14
+            }
+          ],
+          "language_artifact_count": 1,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 2,
+          "language_artifacts_found": [
+            "שורת התחתית"
+          ]
+        },
+        "after": {
+          "cluster_count": 7,
+          "phase3_applied": true,
+          "max_cluster_len": 2,
+          "cluster_run_count": 7,
+          "compound_group_count": 6,
+          "ambiguous_run_samples": null,
+          "phantom_footnote_runs": [
+            {
+              "run": "¹⁰",
+              "context": " בכללי מידתיות משפטית וכלכלית.¹⁰\nעוד כללי מדידה: חובת ה**מזעור",
+              "max_valid": 8,
+              "parsed_number": 10
+            },
+            {
+              "run": "¹¹",
+              "context": "כחלק מהאיזון בין טענות הצדדים.¹¹\n\nסייגים והגבלות\nהחלת האינטרס ",
+              "max_valid": 8,
+              "parsed_number": 11
+            },
+            {
+              "run": "¹²",
+              "context": "א להיפגע במסגרת מדידת הציפיות.¹²\nשנית, שינוי נסיבות מהותי או ס",
+              "max_valid": 8,
+              "parsed_number": 12
+            },
+            {
+              "run": "¹³",
+              "context": "פר או שאינו מוטל על הצד הנפגע.¹³\nשלישית, שיקולים של תום לב ומד",
+              "max_valid": 8,
+              "parsed_number": 13
+            },
+            {
+              "run": "¹⁴",
+              "context": "צור שיפוטי או להפנות לסעד אחר.¹⁴\nלבסוף, דוקטרינות קרובות כמו ה",
+              "max_valid": 8,
+              "parsed_number": 14
+            }
+          ],
+          "language_artifact_count": 0,
+          "phase3_discarded_reason": null,
+          "end_paragraph_dump_count": 1,
+          "language_artifacts_found": []
+        }
+      },
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": true,
+        "discarded_reason": null,
+        "compound_group_count": 0
+      },
+      "source_set": {
+        "count_initial": 8,
+        "count_shipped": 8
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 36,
+        "unique_source_count": 8
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 82,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "initial_answer_tail": " הסעד הכספי.³¹ ³²\n\nמסקנה מעשית: בית המשפט הישראלי נוטה לראות ב'אינטרס הציפייה' כאמצעי מרכזי לתיקון הפסד חבלה בחוזה, אך החלתו מותנית בעמידה בדרישות ראייתיות של סיבתיות והוכחת הפסד סביר וכן נשענת על סייגים מדיניים ומעשהיים (ריחוק נזק, סיכול, תום לב).³³ ³⁴ ³⁵ ³⁶\n"
+    },
+    {
+      "fixture_id": "RPT3",
+      "run_id": "e2b585f0-55ae-48a7-b55c-7d22856f51c5",
+      "qa_log_id": "44ad7399-795b-4ad3-90b7-c9250dd003b1",
+      "total_ms": 229370,
+      "final_action": "controlled_failure",
+      "quality_gate": {
+        "enabled": true,
+        "triggered": true,
+        "reasons": [
+          "ambiguous_raw_superscript_run_with_long_cluster",
+          "phantom_footnote_run",
+          "lang_artifact:שורת התחתית"
+        ],
+        "retry_attempted": true,
+        "retry_passed": false,
+        "source_set_equal_on_retry": false,
+        "extra_drafter_ms": 51893,
+        "before": {
+          "cluster_count": 8,
+          "phase3_applied": false,
+          "max_cluster_len": 4,
+          "cluster_run_count": 5,
+          "compound_group_count": null,
+          "ambiguous_run_samples": [
+            {
+              "run": "¹⁰",
+              "context": "ציאת הפרת חקיקה.¹⁰\n\nהשתק פלוגתא וי",
+              "candidates": []
+            }
+          ],
+          "phantom_footnote_runs": [
+            {
+              "run": "⁴⁵",
+              "context": "ייתית שיש להבהיר או להיזהר בה.⁴⁵\n\nהגשת טענות חלופיות (pleading",
+              "max_valid": 9,
+              "parsed_number": 45
+            },
+            {
+              "run": "⁷⁸",
+              "context": "עקרונות הסופיות וההשתק פלוגתא.⁷⁸\n\nהשלכות ראייתיות ופוסקיות של ",
+              "max_valid": 9,
+              "parsed_number": 78
+            },
+            {
+              "run": "⁹¹¹",
+              "context": " רק בהימצאות ההפרה הסטטוטורית.⁹¹¹\n\nיש להבחין גם במקרים שבהם המח",
+              "max_valid": 9,
+              "parsed_number": 91
+            },
+            {
+              "run": "¹⁰",
+              "context": " הפוסקיות של מציאת הפרת חקיקה.¹⁰\n\nהשתק פלוגתא ויחס בין הכרעות ",
+              "max_valid": 9,
+              "parsed_number": 10
+            },
+            {
+              "run": "¹²¹¹",
+              "context": " זהות או שוות ערך בהליך עתידי.¹²¹¹\n\nיישום מעשי לעורכי דין: 1) לנ",
+              "max_valid": 9,
+              "parsed_number": 12
+            }
+          ],
+          "language_artifact_count": 1,
+          "phase3_discarded_reason": "ambiguous_raw_superscript_run",
+          "end_paragraph_dump_count": 0,
+          "language_artifacts_found": [
+            "שורת התחתית"
+          ]
+        },
+        "after": null
+      },
+      "hard_gates": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "footnote_eq_used": true
+      },
+      "phase3": {
+        "applied": false,
+        "discarded_reason": "ambiguous_raw_superscript_run",
+        "compound_group_count": null
+      },
+      "source_set": {
+        "count_initial": 9,
+        "count_shipped": 9
+      },
+      "drafter": {
+        "ok": true,
+        "footnote_count": 9,
+        "unique_source_count": 9
+      },
+      "token_leak_count": 0,
+      "answer_strip_sup_len": 82,
+      "adjacent_superscript_runs_in_body": 0,
+      "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+      "initial_answer_tail": "יל תביעות נזיקיות במקרה המדובר.\n\nבקצרה: אין כלל אוטומטי—הפרת חובה חקוקה יכולה להוות גם עוולה עצמאית וגם ראייה חזקה לרשלנות; בתי המשפט בוחנים את ההתאמה התכליתית של החקיקה, את סוג הנזק ואת הקשר הסיבתי, מאפשרים ניסוח חלופי אך שומרים על כללי סופיות והגנות הצדדים.\n"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "fixture_id": "L1",
+  "run_id": "aa766ffb-fc89-4a36-a0ca-9e4f2b93a9fa",
+  "qa_log_id": "4731180c-b54b-4cf8-b52a-81aefcb12c55",
+  "total_ms": 157536,
+  "final_action": "shipped_initial",
+  "quality_gate": {
+    "enabled": true,
+    "triggered": false,
+    "reasons": [],
+    "retry_attempted": false,
+    "retry_passed": false,
+    "source_set_equal_on_retry": null,
+    "extra_drafter_ms": 0,
+    "before": {
+      "cluster_count": 0,
+      "phase3_applied": true,
+      "max_cluster_len": 0,
+      "cluster_run_count": 0,
+      "compound_group_count": 0,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [],
+      "language_artifact_count": 0,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 0,
+      "language_artifacts_found": []
+    },
+    "after": null
+  },
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "compound_group_count": 0
+  },
+  "source_set": {
+    "count_initial": 4,
+    "count_shipped": 4
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 7,
+    "unique_source_count": 4
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 1887,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "סעד עם הצגת יסוד ראייתי לסיכוי ההצלחה, פירוט הנזק המיידי ונסיבות הדחיפות, ולהיות מוכנים להציע בטחונות מידתיים. במצבים של דחייה בהגשה יש לשקול שמא פגעה העיכוב במשקל טענת הדחיפות והנזק, ומנגד להיערך למשא ומתן על ערבויות כדי להקטין את התנגדויות בית המשפט למתן צו.",
+  "initial_answer_tail": null
+}

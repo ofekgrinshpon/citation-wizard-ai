@@ -1,0 +1,100 @@
+{
+  "fixture_id": "L2",
+  "run_id": "1c02c25b-2a62-441f-8964-36efb8a7b1e7",
+  "qa_log_id": "8b9ae8d9-5e5e-4091-bb31-c605279c4d1d",
+  "total_ms": 206293,
+  "final_action": "controlled_failure",
+  "quality_gate": {
+    "enabled": true,
+    "triggered": true,
+    "reasons": [
+      "ambiguous_raw_superscript_run_with_long_cluster",
+      "end_paragraph_dump",
+      "phantom_footnote_run"
+    ],
+    "retry_attempted": true,
+    "retry_passed": false,
+    "source_set_equal_on_retry": false,
+    "extra_drafter_ms": 37423,
+    "before": {
+      "cluster_count": 12,
+      "phase3_applied": false,
+      "max_cluster_len": 4,
+      "cluster_run_count": 6,
+      "compound_group_count": null,
+      "ambiguous_run_samples": [
+        {
+          "run": "¹⁰¹¹",
+          "context": " סעד ובהשלכותיו.¹⁰¹¹\n\nמגבלות מרכזיות",
+          "candidates": []
+        },
+        {
+          "run": "⁹¹⁰",
+          "context": "ת מבוססות הבטחה.⁹¹⁰\n\nמסקנה מעשית קצ",
+          "candidates": []
+        }
+      ],
+      "phantom_footnote_runs": [
+        {
+          "run": "¹²",
+          "context": "או לתת סעד מאזן בהתאם לנסיבות.¹²\n\nהבדל מהותי בינה ובין חובת הה",
+          "max_valid": 9,
+          "parsed_number": 12
+        },
+        {
+          "run": "³⁴",
+          "context": "בוריים ונורמטיביים רחבים יותר.³⁴\n\nיסודות ותנאי הוכחה מקובלים ל",
+          "max_valid": 9,
+          "parsed_number": 34
+        },
+        {
+          "run": "¹⁰¹¹",
+          "context": " העוסקת בסיווג סעד ובהשלכותיו.¹⁰¹¹\n\nמגבלות מרכזיות: בית המשפט יה",
+          "max_valid": 9,
+          "parsed_number": 10
+        },
+        {
+          "run": "¹²¹³",
+          "context": "רי עלול לגבור על ההגנה הפרטית.¹²¹³\n\nיישום מעשי וייעוץ:\n- בהערכת ",
+          "max_valid": 9,
+          "parsed_number": 12
+        },
+        {
+          "run": "⁵⁶⁷",
+          "context": "ם של שיקולים ציבוריים מנוגדים.⁵⁶⁷\n- לרשויות: תעוד מפורש של הבטח",
+          "max_valid": 9,
+          "parsed_number": 56
+        }
+      ],
+      "language_artifact_count": 0,
+      "phase3_discarded_reason": "ambiguous_raw_superscript_run",
+      "end_paragraph_dump_count": 1,
+      "language_artifacts_found": []
+    },
+    "after": null
+  },
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "ambiguous_raw_superscript_run",
+    "compound_group_count": null
+  },
+  "source_set": {
+    "count_initial": 9,
+    "count_shipped": 9
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 9,
+    "unique_source_count": 9
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 82,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "initial_answer_tail": "\nמסקנה מעשית קצרה: הדוקטרינה מעניקה הגנה ממשית להסתמכות על הבטחות מנהליות אך אינה מוחלטת — בית המשפט מאזּן בין זכות ההסתמכות לאינטרס הציבורי ולמסגרת הסמכות, ולפיכך ההערכה המעשית דורשת בדיקה פרטנית של בהירות ההבטחה, היקף ההסתמכות והעובדות הנוגעות לסמכות ולחוק. "
+}

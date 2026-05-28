@@ -1,0 +1,110 @@
+{
+  "fixture_id": "PROT",
+  "run_id": "bba86ce2-d1e8-41ed-b09b-eb1198ae9c77",
+  "qa_log_id": "e4bb4daa-7ac3-4fa4-8490-522dc52b0246",
+  "total_ms": 246129,
+  "final_action": "controlled_failure",
+  "quality_gate": {
+    "enabled": true,
+    "triggered": true,
+    "reasons": [
+      "end_paragraph_dump",
+      "excessive_cluster_density",
+      "phantom_footnote_run"
+    ],
+    "retry_attempted": true,
+    "retry_passed": false,
+    "source_set_equal_on_retry": false,
+    "extra_drafter_ms": 38680,
+    "before": {
+      "cluster_count": 15,
+      "phase3_applied": false,
+      "max_cluster_len": 2,
+      "cluster_run_count": 15,
+      "compound_group_count": null,
+      "ambiguous_run_samples": [
+        {
+          "run": "¹⁰",
+          "context": "סגרת המשאבים.⁹  ¹⁰\n- **השתייכות לנ",
+          "candidates": []
+        },
+        {
+          "run": "¹⁰",
+          "context": "הפרדת הרשויות.³ ¹⁰ ⁹\n\nסעדים אפשריי",
+          "candidates": []
+        },
+        {
+          "run": "¹⁰",
+          "context": "מערכתי לעיתים.³ ¹⁰\n\nמגבלות משרדיות",
+          "candidates": []
+        },
+        {
+          "run": "¹⁰",
+          "context": "ת החובה והסעד.⁹ ¹⁰ ¹³\n\nמסקנה מעשית",
+          "candidates": []
+        }
+      ],
+      "phantom_footnote_runs": [
+        {
+          "run": "¹¹",
+          "context": "לשיטתיות וידוענות של אי‑אכיפה.¹¹ ¹²\n\nתמיכה עובדית וסיבתית: דו\"",
+          "max_valid": 9,
+          "parsed_number": 11
+        },
+        {
+          "run": "¹²",
+          "context": "טתיות וידוענות של אי‑אכיפה.¹¹ ¹²\n\nתמיכה עובדית וסיבתית: דו\"חות",
+          "max_valid": 9,
+          "parsed_number": 12
+        },
+        {
+          "run": "¹¹",
+          "context": "תגבשת למנהג רשמי או בלתי‑רשמי.¹¹ ¹²\n- **ידיעת הרשויות** — מודע",
+          "max_valid": 9,
+          "parsed_number": 11
+        },
+        {
+          "run": "¹²",
+          "context": "שת למנהג רשמי או בלתי‑רשמי.¹¹ ¹²\n- **ידיעת הרשויות** — מודעות ",
+          "max_valid": 9,
+          "parsed_number": 12
+        },
+        {
+          "run": "¹²",
+          "context": "משלה לקיומו של דפוס האי‑אכיפה.¹²\n- **סיבתיות ונסיבות היסוד** —",
+          "max_valid": 9,
+          "parsed_number": 12
+        }
+      ],
+      "language_artifact_count": 0,
+      "phase3_discarded_reason": "ambiguous_raw_superscript_run",
+      "end_paragraph_dump_count": 2,
+      "language_artifacts_found": []
+    },
+    "after": null
+  },
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "ambiguous_raw_superscript_run",
+    "compound_group_count": null
+  },
+  "source_set": {
+    "count_initial": 9,
+    "count_shipped": 9
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 9,
+    "unique_source_count": 9
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 82,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "initial_answer_tail": " של אי‑אכיפה, ידיעת הרשויות, וקשר סיבתי סביר לפגיעה בחיי אדם או בביטחונם; הלקוח/הטוען/ת צריך/ה להיערך לאיסוף ראיות דו\"חיות ודפוסיות (דו\"חות מבקר, חומרים פנימיים של גורמי אכיפה) ולהתמקד בבקשת סעד מבני ופיקוח שיפוטי יותר מאשר בדרישה לפיצוי כספי ישיר.⁶ ¹¹ ¹² ¹³\n\n"
+}

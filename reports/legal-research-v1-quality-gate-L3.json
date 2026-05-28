@@ -1,0 +1,88 @@
+{
+  "fixture_id": "L3",
+  "run_id": "4a0e34b2-58b7-499f-a3aa-0938ef96e603",
+  "qa_log_id": "01ba2062-c233-4be5-a928-ecea1d3b6f78",
+  "total_ms": 184921,
+  "final_action": "shipped_retry",
+  "quality_gate": {
+    "enabled": true,
+    "triggered": true,
+    "reasons": [
+      "end_paragraph_dump",
+      "phantom_footnote_run"
+    ],
+    "retry_attempted": true,
+    "retry_passed": true,
+    "source_set_equal_on_retry": true,
+    "extra_drafter_ms": 33166,
+    "before": {
+      "cluster_count": 3,
+      "phase3_applied": true,
+      "max_cluster_len": 2,
+      "cluster_run_count": 3,
+      "compound_group_count": 10,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [
+        {
+          "run": "¹⁰",
+          "context": "מסחר והציפיות שנוצרו מהסכמים.^¹⁰\n\nהשלכות מעשיות והמלצות טקטיות",
+          "max_valid": 4,
+          "parsed_number": 10
+        },
+        {
+          "run": "¹¹",
+          "context": "ן בין הסכום לנזק אינם סבירים.^¹¹\n\nפתוח: גבולות היקף ההתערבות ה",
+          "max_valid": 4,
+          "parsed_number": 11
+        },
+        {
+          "run": "¹²",
+          "context": " מלאה של נוסחה מתמטית להפחתה.^¹²\n",
+          "max_valid": 4,
+          "parsed_number": 12
+        }
+      ],
+      "language_artifact_count": 0,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 1,
+      "language_artifacts_found": []
+    },
+    "after": {
+      "cluster_count": 0,
+      "phase3_applied": true,
+      "max_cluster_len": 0,
+      "cluster_run_count": 0,
+      "compound_group_count": 0,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [],
+      "language_artifact_count": 0,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 0,
+      "language_artifacts_found": []
+    }
+  },
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "compound_group_count": 0
+  },
+  "source_set": {
+    "count_initial": 4,
+    "count_shipped": 4
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 8,
+    "unique_source_count": 4
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 1954,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "לגבי הנזק הצפוי בעת כריתת החוזה, טיעונים לגבי יחסי הגומלין בין הסכום לנזק, ואינדיקציות לאופי עונשי של הפיצוי; בית המשפט יאזן בין כבוד להסכמה החופשית של הצדדים לבין מניעת פיצוי בלתי סביר או עונשי, ובהתאם יוכל לצמצם את הפיצוי לגובה שנראה לו סביר בנסיבות העניין. ",
+  "initial_answer_tail": "לא כאמצעי ענישה, אך יפעיל את סמכות ההפחתה כשיחסי הגומלין בין הסכום לנזק אינם סבירים.^¹¹\n\nפתוח: גבולות היקף ההתערבות השיפוטית ותיחום פרטי הראיות נשארים תחום שבו יש מקום לדיון ופיתוח דוקטרינלי; הפסיקה נותנת קווים אך לא פורמליזציה מלאה של נוסחה מתמטית להפחתה.^¹²\n"
+}

@@ -1,0 +1,58 @@
+{
+  "fixture_id": "L5",
+  "run_id": "2c7d9aee-b400-488f-b02e-cd3681320356",
+  "qa_log_id": "e03eb845-cc32-4b91-9add-c024b2eb4572",
+  "total_ms": 184870,
+  "final_action": "controlled_failure",
+  "quality_gate": {
+    "enabled": true,
+    "triggered": true,
+    "reasons": [
+      "lang_artifact:שורת התחתית"
+    ],
+    "retry_attempted": true,
+    "retry_passed": false,
+    "source_set_equal_on_retry": false,
+    "extra_drafter_ms": 36961,
+    "before": {
+      "cluster_count": 0,
+      "phase3_applied": true,
+      "max_cluster_len": 0,
+      "cluster_run_count": 0,
+      "compound_group_count": 4,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [],
+      "language_artifact_count": 1,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 0,
+      "language_artifacts_found": [
+        "שורת התחתית"
+      ]
+    },
+    "after": null
+  },
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "compound_group_count": 4
+  },
+  "source_set": {
+    "count_initial": 9,
+    "count_shipped": 9
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 8,
+    "unique_source_count": 9
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 82,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "initial_answer_tail": "וניות ושרירותיות אך סובלת מבעיית אמות‑מידה ברורות; יש לשקול את פניה זהירות תוך הדגשת הצורך בהצגת ליקויים מוחשיים בתהליך קבלת ההחלטה (כישלון בשיקלול שיקולים רלוונטיים, חשיבה לקויה או חוסר התאמה בין עובדות למסקנות) ולא הסתמכות על אי‑סיפוק לשקולנות מעשית בלבד.⁸\n\n"
+}

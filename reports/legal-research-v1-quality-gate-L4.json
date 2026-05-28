@@ -1,0 +1,132 @@
+{
+  "fixture_id": "L4",
+  "run_id": "7d41cd28-e7d4-4766-b43f-d25da3fa7726",
+  "qa_log_id": "45c0105c-670e-4577-aed3-6a08a6564bb9",
+  "total_ms": 258313,
+  "final_action": "controlled_failure",
+  "quality_gate": {
+    "enabled": true,
+    "triggered": true,
+    "reasons": [
+      "end_paragraph_dump",
+      "excessive_cluster_density",
+      "phantom_footnote_run"
+    ],
+    "retry_attempted": true,
+    "retry_passed": false,
+    "source_set_equal_on_retry": true,
+    "extra_drafter_ms": 37060,
+    "before": {
+      "cluster_count": 11,
+      "phase3_applied": true,
+      "max_cluster_len": 2,
+      "cluster_run_count": 11,
+      "compound_group_count": 3,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [
+        {
+          "run": "¹⁰",
+          "context": "מקום שבו לא נקבעו ממצאים כאלה.¹⁰ לשם הוגנות הדיון, נשקלת גם הש",
+          "max_valid": 7,
+          "parsed_number": 10
+        },
+        {
+          "run": "¹¹",
+          "context": "ות מלאה” להתדיין בהליך הראשון.¹¹\n\nהיקף ההשפעה והשלכות מעשיות\nה",
+          "max_valid": 7,
+          "parsed_number": 11
+        },
+        {
+          "run": "¹²",
+          "context": "ש לסתור את הממצא החיוני שנקבע.¹² בפועל, ממצאים פוזיטיביים וחיו",
+          "max_valid": 7,
+          "parsed_number": 12
+        },
+        {
+          "run": "¹³",
+          "context": "ם) כדי לעקוף את מחסום הסופיות.¹³ הכלל חל בהליך האזרחי על ענפיו",
+          "max_valid": 7,
+          "parsed_number": 13
+        },
+        {
+          "run": "¹⁴",
+          "context": "בכללם בית המשפט לענייני משפחה;¹⁴ עם זאת, הספרות מצביעה על כך ש",
+          "max_valid": 7,
+          "parsed_number": 14
+        }
+      ],
+      "language_artifact_count": 0,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 2,
+      "language_artifacts_found": []
+    },
+    "after": {
+      "cluster_count": 5,
+      "phase3_applied": true,
+      "max_cluster_len": 2,
+      "cluster_run_count": 5,
+      "compound_group_count": 3,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [
+        {
+          "run": "¹⁰",
+          "context": "לכן נשאר מקום לתביעות משלימות.¹⁰  במצבים מסוימים (למשל, סוגיות",
+          "max_valid": 7,
+          "parsed_number": 10
+        },
+        {
+          "run": "¹¹",
+          "context": "קשר המנהלי/אזרחי ולמטרת ההליך.¹¹\n\n**חריגים והגנות כנגד החלת הה",
+          "max_valid": 7,
+          "parsed_number": 11
+        },
+        {
+          "run": "¹²",
+          "context": "ו מחדל בהזדמנות להתדיין בפועל.¹²  בנוסף, חוסר קיומן של הכרעות ",
+          "max_valid": 7,
+          "parsed_number": 12
+        },
+        {
+          "run": "¹³",
+          "context": " הקודם יכשיל הקמת השתק פלוגתא.¹³  מאמרים וסוגיות פרקטיות בתחום",
+          "max_valid": 7,
+          "parsed_number": 13
+        },
+        {
+          "run": "¹⁴",
+          "context": "לפי הנסיבות המיוחדות של ההליך.¹⁴\n\nלסיכום מעשי: בעת טענת השתק פ",
+          "max_valid": 7,
+          "parsed_number": 14
+        }
+      ],
+      "language_artifact_count": 0,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 1,
+      "language_artifacts_found": []
+    }
+  },
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "compound_group_count": 3
+  },
+  "source_set": {
+    "count_initial": 7,
+    "count_shipped": 7
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 20,
+    "unique_source_count": 7
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 82,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "initial_answer_tail": "היעדר חלוטיות של ההכרעה הראשונה.¹⁹ מנגד, פלוגתא שלא הייתה חיונית לתוצאה לא תקים השתק פלוגתא מלכתחילה.²⁰ ממילא, בתכנון אסטרטגי של ההליכים חשוב לזהות במועד מוקדם אילו קביעות עלולות לקבע את ההתדיינות העתידית, ומתי נכון לטעון לחריגים כדי להימנע מכבילה בלתי מוצדקת."
+}

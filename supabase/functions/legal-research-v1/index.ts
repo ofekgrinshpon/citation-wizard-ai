@@ -18,6 +18,12 @@ import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
+import {
+  evaluateQualityGate,
+  RETRY_PRESENTATION_ADDENDUM,
+  sourceSetsEqual,
+  type QualityGateEvaluation,
+} from "./stages/qualityGate.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
 import { StageRun } from "./lib/types.ts";
@@ -586,15 +592,93 @@ async function handle(req: Request): Promise<Response> {
 
 
   await markStage("drafter");
-  const drafter = await runDrafter(
+  const drafterInitial = await runDrafter(
     question,
     analyzer.claims,
     pool.candidates,
     { usable: verifier.usable, verdicts: verifier.verdicts },
     { userDocs: attachmentResult.documents, useAsSource, atomicMode },
   );
+  stage_runs.push(...drafterInitial.stage_runs);
 
-  stage_runs.push(...drafter.stage_runs);
+  // ─── Post-drafter quality gate ─────────────────────────────────────────────
+  // Pure JS evaluation. Triggers at most one targeted regeneration against the
+  // exact same source set. No retrieval / verifier / source-selection change.
+  const gateEnv = (Deno.env.get("LRV1_QUALITY_GATE") ?? "on").toLowerCase();
+  const gateOn = gateEnv !== "off";
+
+  let drafter = drafterInitial;
+  let drafterRetry: typeof drafterInitial | null = null;
+  let extra_drafter_ms = 0;
+
+  let gateInitial: QualityGateEvaluation | null = null;
+  let gateAfter: QualityGateEvaluation | null = null;
+  let source_set_equal_on_retry: boolean | null = null;
+  let retry_attempted = false;
+  let retry_passed = false;
+  let final_action: "shipped_initial" | "shipped_retry" | "controlled_failure" =
+    "shipped_initial";
+
+  if (gateOn && drafterInitial.ok) {
+    gateInitial = evaluateQualityGate({
+      answer: drafterInitial.answer_markdown,
+      used_sources: drafterInitial.used_sources,
+      footnotes: drafterInitial.footnotes,
+      marker_validation: drafterInitial.marker_validation,
+    });
+
+    if (gateInitial.triggered) {
+      retry_attempted = true;
+      const tRetry = Date.now();
+      try {
+        drafterRetry = await runDrafter(
+          question,
+          analyzer.claims,
+          pool.candidates,
+          { usable: verifier.usable, verdicts: verifier.verdicts },
+          {
+            userDocs: attachmentResult.documents,
+            useAsSource,
+            atomicMode,
+            extraSystemSuffix: RETRY_PRESENTATION_ADDENDUM,
+          },
+        );
+      } catch (e) {
+        console.error("[lrv1 quality-gate retry threw]", e);
+        drafterRetry = null;
+      }
+      extra_drafter_ms = Date.now() - tRetry;
+      if (drafterRetry) stage_runs.push(...drafterRetry.stage_runs);
+
+      if (drafterRetry && drafterRetry.ok) {
+        source_set_equal_on_retry = sourceSetsEqual(
+          drafterInitial.used_sources,
+          drafterRetry.used_sources,
+        );
+        if (source_set_equal_on_retry) {
+          gateAfter = evaluateQualityGate({
+            answer: drafterRetry.answer_markdown,
+            used_sources: drafterRetry.used_sources,
+            footnotes: drafterRetry.footnotes,
+            marker_validation: drafterRetry.marker_validation,
+          });
+          if (!gateAfter.triggered) {
+            drafter = drafterRetry;
+            retry_passed = true;
+            final_action = "shipped_retry";
+          } else {
+            final_action = "controlled_failure";
+          }
+        } else {
+          // Retry changed the source set — discard.
+          final_action = "controlled_failure";
+        }
+      } else {
+        final_action = "controlled_failure";
+      }
+    }
+  }
+
   const drafterMeta = {
     ok: drafter.ok,
     model_initial: drafter.model_initial,
@@ -615,14 +699,36 @@ async function handle(req: Request): Promise<Response> {
     internal_id_scrub: drafter.internal_id_scrub,
   };
 
-  const finalAnswer = drafter.ok ? drafter.answer_markdown : STUB_ANSWER;
-  const finalFootnotes = drafter.ok ? drafter.footnotes : [];
+  const qualityGateMeta = {
+    enabled: gateOn,
+    triggered: gateInitial?.triggered ?? false,
+    reasons: gateInitial?.reasons ?? [],
+    retry_attempted,
+    retry_passed,
+    final_action,
+    source_set_equal_on_retry,
+    extra_drafter_ms,
+    language_artifact_count_initial: gateInitial?.metrics.language_artifact_count ?? 0,
+    language_artifact_count_final: gateAfter?.metrics.language_artifact_count
+      ?? gateInitial?.metrics.language_artifact_count ?? 0,
+    before: gateInitial?.metrics ?? null,
+    after: gateAfter?.metrics ?? null,
+  };
+
+  const isControlledFailure = final_action === "controlled_failure";
+
+  const finalAnswer = !isControlledFailure && drafter.ok
+    ? drafter.answer_markdown
+    : STUB_ANSWER;
+  const finalFootnotes = !isControlledFailure && drafter.ok
+    ? drafter.footnotes
+    : [];
 
   // Mark final stage (footnote rendering / finalize) as active then complete.
   await markStage("finalize");
   await completeAllStages();
 
-  // ─── Success: write telemetry + return P5 payload ────────────────────────
+  // ─── Telemetry write (always) ────────────────────────────────────────────
   await writeTelemetry(admin, {
     ...telemetryBase,
     answer: finalAnswer,
@@ -641,6 +747,16 @@ async function handle(req: Request): Promise<Response> {
       dropped_sources: pplx.dropped,
       verifier: verifierMeta,
       drafter: drafterMeta,
+      quality_gate: qualityGateMeta,
+      quality_gate_drafter_initial: retry_attempted
+        ? {
+            ok: drafterInitial.ok,
+            answer_markdown: drafterInitial.answer_markdown,
+            footnote_count: drafterInitial.footnotes.length,
+            unique_source_count: drafterInitial.used_sources.length,
+            marker_validation: drafterInitial.marker_validation,
+          }
+        : null,
       attachments: {
         count: attachmentResult.documents.length,
         use_as_source: useAsSource,
@@ -655,8 +771,23 @@ async function handle(req: Request): Promise<Response> {
         })),
       },
     },
-
   });
+
+  if (isControlledFailure) {
+    return jsonResponse(200, {
+      error: "answer_quality_gate_failed",
+      user_message:
+        "לא הצלחנו להפיק תשובה עם אזכורים תקינים מספיק. נסו להריץ שוב או לנסח את השאלה באופן ממוקד יותר.",
+      run_id,
+      debug: {
+        run_id,
+        phase: "P5",
+        stage_runs,
+        quality_gate: qualityGateMeta,
+        drafter: drafterMeta,
+      },
+    });
+  }
 
   return jsonResponse(200, {
     answer: finalAnswer,
@@ -675,6 +806,7 @@ async function handle(req: Request): Promise<Response> {
       dropped_sources: pplx.dropped,
       verifier: verifierMeta,
       drafter: drafterMeta,
+      quality_gate: qualityGateMeta,
     },
   });
   }; // end runPipeline

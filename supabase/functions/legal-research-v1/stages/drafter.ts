@@ -1498,6 +1498,10 @@ export async function runDrafter(
     userDocs?: UserDocument[];
     useAsSource?: boolean;
     atomicMode?: AtomicMode;
+    /** Optional presentation-only addendum appended to SYSTEM_PROMPT. Used by
+     *  the post-drafter quality gate for its single targeted retry. Never
+     *  changes legal substance or source set. */
+    extraSystemSuffix?: string;
   },
 ): Promise<DrafterResult> {
   const t_total = Date.now();
@@ -1563,13 +1567,17 @@ export async function runDrafter(
     | "marker_count_changed"
     | undefined;
 
+  const systemPrompt = opts?.extraSystemSuffix
+    ? SYSTEM_PROMPT + opts.extraSystemSuffix
+    : SYSTEM_PROMPT;
+
   // Attempt 1: gpt-5-mini
   const t0 = Date.now();
   let modelUsed = MODEL_MINI;
   let escalated = false;
   let resp = await callOpenAIJsonTool<unknown>({
     model: MODEL_MINI,
-    system: SYSTEM_PROMPT,
+    system: systemPrompt,
     user: userMsg,
     tool,
   });
@@ -1647,7 +1655,7 @@ export async function runDrafter(
     const t1 = Date.now();
     resp = await callOpenAIJsonTool<unknown>({
       model: MODEL_FULL,
-      system: SYSTEM_PROMPT,
+      system: systemPrompt,
       user: userMsg,
       tool,
     });

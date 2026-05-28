@@ -1,0 +1,131 @@
+{
+  "fixture_id": "RPT1",
+  "run_id": "544a256a-2abd-475a-ab2d-fa10744b4cc6",
+  "qa_log_id": "fe9e2f1e-8658-4b8b-9a1e-832bdcc11a80",
+  "total_ms": 188983,
+  "final_action": "controlled_failure",
+  "quality_gate": {
+    "enabled": true,
+    "triggered": true,
+    "reasons": [
+      "end_paragraph_dump",
+      "phantom_footnote_run"
+    ],
+    "retry_attempted": true,
+    "retry_passed": false,
+    "source_set_equal_on_retry": true,
+    "extra_drafter_ms": 43170,
+    "before": {
+      "cluster_count": 6,
+      "phase3_applied": true,
+      "max_cluster_len": 2,
+      "cluster_run_count": 6,
+      "compound_group_count": 12,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [
+        {
+          "run": "¹⁰",
+          "context": "שנועד להגן על האינטרס הציבורי.¹⁰\n- בפועל פסיקה העלתה כי בתי המ",
+          "max_valid": 6,
+          "parsed_number": 10
+        },
+        {
+          "run": "¹¹",
+          "context": " כאשר יש פערים בראיות או בנטל.¹¹\n\nחריגים ומגבלות\n- בתי המשפט מ",
+          "max_valid": 6,
+          "parsed_number": 11
+        },
+        {
+          "run": "¹²",
+          "context": "יים העולים במשקל בהליך הפלילי.¹²\n- הפסיקה דורשת זהירות יישומית",
+          "max_valid": 6,
+          "parsed_number": 12
+        },
+        {
+          "run": "¹³",
+          "context": " יוטל מחסום מוחלט על הליך אחר.¹³\n\nהשלכות מעשיות\n- במקרים של הר",
+          "max_valid": 6,
+          "parsed_number": 13
+        },
+        {
+          "run": "¹⁴",
+          "context": "וגתא על פי הקריטריונים שנקבעו.¹⁴\n- רעיון המיצוי והזהות מעשית מ",
+          "max_valid": 6,
+          "parsed_number": 14
+        }
+      ],
+      "language_artifact_count": 0,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 2,
+      "language_artifacts_found": []
+    },
+    "after": {
+      "cluster_count": 6,
+      "phase3_applied": true,
+      "max_cluster_len": 2,
+      "cluster_run_count": 6,
+      "compound_group_count": 6,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [
+        {
+          "run": "¹⁰",
+          "context": "למנוע הכרעה סותרת בהליך אזרחי.¹⁰\n\nהערכת פסק‑דין אזרחי בביהמ\"ש ",
+          "max_valid": 6,
+          "parsed_number": 10
+        },
+        {
+          "run": "¹¹",
+          "context": "ציבור ונטל ההוכחה בו כבד יותר.¹¹\n- **השפעה על החלטות להגשת כתב",
+          "max_valid": 6,
+          "parsed_number": 11
+        },
+        {
+          "run": "¹²",
+          "context": "מידתיות שחלה על רשויות התביעה.¹²\n\nחריגים ומגבלות פרקטיות\n- שינ",
+          "max_valid": 6,
+          "parsed_number": 12
+        },
+        {
+          "run": "¹³",
+          "context": "גנת במקרים של עיוות הליך קודם.¹³\n- החלטות שלא עסקו במהות העובד",
+          "max_valid": 6,
+          "parsed_number": 13
+        },
+        {
+          "run": "¹⁴",
+          "context": " יוצרות בדרך כלל מחסום פלוגתא.¹⁴\n- עניינים של אינטרס ציבורי, מ",
+          "max_valid": 6,
+          "parsed_number": 14
+        }
+      ],
+      "language_artifact_count": 0,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 1,
+      "language_artifacts_found": []
+    }
+  },
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "compound_group_count": 12
+  },
+  "source_set": {
+    "count_initial": 6,
+    "count_shipped": 6
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 15,
+    "unique_source_count": 6
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 82,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "initial_answer_tail": " פלוגתא, הכרעה חיובית וסופית, זהות צדדים/privies והזדמנות מיצה להתדיין; ההשפעה של הכרעה פלילית חזקתה מן האזרחית, אך זיכוי פלילי בדרך כלל אינו חוסם תביעה אזרחית. בתי המשפט מיישמים עקרונות אלה במשקל שיקלול בין סופיות ההכרעה לבין שיקולי צדק מהותי ואינטרס ציבורי. "
+}

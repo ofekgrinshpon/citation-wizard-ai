@@ -1,0 +1,86 @@
+{
+  "fixture_id": "L6",
+  "run_id": "0329913e-303b-4717-adc8-1093e8116598",
+  "qa_log_id": "40b25b9d-8939-4cb6-b017-31cbeb80ee67",
+  "total_ms": 238972,
+  "final_action": "controlled_failure",
+  "quality_gate": {
+    "enabled": true,
+    "triggered": true,
+    "reasons": [
+      "phantom_footnote_run",
+      "lang_artifact:שורת התחתית"
+    ],
+    "retry_attempted": true,
+    "retry_passed": false,
+    "source_set_equal_on_retry": true,
+    "extra_drafter_ms": 35717,
+    "before": {
+      "cluster_count": 2,
+      "phase3_applied": true,
+      "max_cluster_len": 2,
+      "cluster_run_count": 2,
+      "compound_group_count": 8,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [
+        {
+          "run": "¹⁰",
+          "context": "ת ההגנה על מי שהשקיע בהסתמכות.¹⁰\n\nמסקנה קצרה: ההגנה על הבטחה מ",
+          "max_valid": 6,
+          "parsed_number": 10
+        },
+        {
+          "run": "¹¹",
+          "context": "את שיקול הדעת של ועדות התכנון.¹¹",
+          "max_valid": 6,
+          "parsed_number": 11
+        }
+      ],
+      "language_artifact_count": 1,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 0,
+      "language_artifacts_found": [
+        "שורת התחתית"
+      ]
+    },
+    "after": {
+      "cluster_count": 0,
+      "phase3_applied": true,
+      "max_cluster_len": 0,
+      "cluster_run_count": 0,
+      "compound_group_count": 1,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [],
+      "language_artifact_count": 1,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 0,
+      "language_artifacts_found": [
+        "שורת התחתית"
+      ]
+    }
+  },
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "compound_group_count": 8
+  },
+  "source_set": {
+    "count_initial": 6,
+    "count_shipped": 6
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 11,
+    "unique_source_count": 6
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 82,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "initial_answer_tail": "נשענת על שילוב של סמכות, בהירות והסתמכות; חוסר סמכות מהותי או אינטרס ציבורי מנומק יכולים לכרסם אכיפה ישירה, אך בעיקר יביאו לשקילה של סעד חלופי — חיוב בפעולה בתום לב, הסדרי מעבר או פיצוי — ובתחום התכנון יש להימנע מפסק דין שמכביל את שיקול הדעת של ועדות התכנון.¹¹"
+}

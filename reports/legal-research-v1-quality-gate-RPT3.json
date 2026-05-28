@@ -1,0 +1,97 @@
+{
+  "fixture_id": "RPT3",
+  "run_id": "e2b585f0-55ae-48a7-b55c-7d22856f51c5",
+  "qa_log_id": "44ad7399-795b-4ad3-90b7-c9250dd003b1",
+  "total_ms": 229370,
+  "final_action": "controlled_failure",
+  "quality_gate": {
+    "enabled": true,
+    "triggered": true,
+    "reasons": [
+      "ambiguous_raw_superscript_run_with_long_cluster",
+      "phantom_footnote_run",
+      "lang_artifact:שורת התחתית"
+    ],
+    "retry_attempted": true,
+    "retry_passed": false,
+    "source_set_equal_on_retry": false,
+    "extra_drafter_ms": 51893,
+    "before": {
+      "cluster_count": 8,
+      "phase3_applied": false,
+      "max_cluster_len": 4,
+      "cluster_run_count": 5,
+      "compound_group_count": null,
+      "ambiguous_run_samples": [
+        {
+          "run": "¹⁰",
+          "context": "ציאת הפרת חקיקה.¹⁰\n\nהשתק פלוגתא וי",
+          "candidates": []
+        }
+      ],
+      "phantom_footnote_runs": [
+        {
+          "run": "⁴⁵",
+          "context": "ייתית שיש להבהיר או להיזהר בה.⁴⁵\n\nהגשת טענות חלופיות (pleading",
+          "max_valid": 9,
+          "parsed_number": 45
+        },
+        {
+          "run": "⁷⁸",
+          "context": "עקרונות הסופיות וההשתק פלוגתא.⁷⁸\n\nהשלכות ראייתיות ופוסקיות של ",
+          "max_valid": 9,
+          "parsed_number": 78
+        },
+        {
+          "run": "⁹¹¹",
+          "context": " רק בהימצאות ההפרה הסטטוטורית.⁹¹¹\n\nיש להבחין גם במקרים שבהם המח",
+          "max_valid": 9,
+          "parsed_number": 91
+        },
+        {
+          "run": "¹⁰",
+          "context": " הפוסקיות של מציאת הפרת חקיקה.¹⁰\n\nהשתק פלוגתא ויחס בין הכרעות ",
+          "max_valid": 9,
+          "parsed_number": 10
+        },
+        {
+          "run": "¹²¹¹",
+          "context": " זהות או שוות ערך בהליך עתידי.¹²¹¹\n\nיישום מעשי לעורכי דין: 1) לנ",
+          "max_valid": 9,
+          "parsed_number": 12
+        }
+      ],
+      "language_artifact_count": 1,
+      "phase3_discarded_reason": "ambiguous_raw_superscript_run",
+      "end_paragraph_dump_count": 0,
+      "language_artifacts_found": [
+        "שורת התחתית"
+      ]
+    },
+    "after": null
+  },
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": false,
+    "discarded_reason": "ambiguous_raw_superscript_run",
+    "compound_group_count": null
+  },
+  "source_set": {
+    "count_initial": 9,
+    "count_shipped": 9
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 9,
+    "unique_source_count": 9
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 82,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "initial_answer_tail": "יל תביעות נזיקיות במקרה המדובר.\n\nבקצרה: אין כלל אוטומטי—הפרת חובה חקוקה יכולה להוות גם עוולה עצמאית וגם ראייה חזקה לרשלנות; בתי המשפט בוחנים את ההתאמה התכליתית של החקיקה, את סוג הנזק ואת הקשר הסיבתי, מאפשרים ניסוח חלופי אך שומרים על כללי סופיות והגנות הצדדים.\n"
+}
