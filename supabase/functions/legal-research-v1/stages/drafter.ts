@@ -1567,13 +1567,17 @@ export async function runDrafter(
     | "marker_count_changed"
     | undefined;
 
+  const systemPrompt = opts?.extraSystemSuffix
+    ? SYSTEM_PROMPT + opts.extraSystemSuffix
+    : SYSTEM_PROMPT;
+
   // Attempt 1: gpt-5-mini
   const t0 = Date.now();
   let modelUsed = MODEL_MINI;
   let escalated = false;
   let resp = await callOpenAIJsonTool<unknown>({
     model: MODEL_MINI,
-    system: SYSTEM_PROMPT,
+    system: systemPrompt,
     user: userMsg,
     tool,
   });
