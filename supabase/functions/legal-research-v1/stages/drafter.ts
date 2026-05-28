@@ -1655,7 +1655,7 @@ export async function runDrafter(
     const t1 = Date.now();
     resp = await callOpenAIJsonTool<unknown>({
       model: MODEL_FULL,
-      system: SYSTEM_PROMPT,
+      system: systemPrompt,
       user: userMsg,
       tool,
     });
