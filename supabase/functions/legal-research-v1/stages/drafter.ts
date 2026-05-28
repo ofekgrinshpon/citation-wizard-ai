@@ -1498,6 +1498,10 @@ export async function runDrafter(
     userDocs?: UserDocument[];
     useAsSource?: boolean;
     atomicMode?: AtomicMode;
+    /** Optional presentation-only addendum appended to SYSTEM_PROMPT. Used by
+     *  the post-drafter quality gate for its single targeted retry. Never
+     *  changes legal substance or source set. */
+    extraSystemSuffix?: string;
   },
 ): Promise<DrafterResult> {
   const t_total = Date.now();
