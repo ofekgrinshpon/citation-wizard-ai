@@ -1,0 +1,89 @@
+{
+  "fixture_id": "T2",
+  "run_id": "b917e5de-0e79-45f8-9c84-5f96b070f77d",
+  "qa_log_id": "db08d054-e377-47df-9970-68d5aa0e1139",
+  "total_ms": 225453,
+  "final_action": "controlled_failure",
+  "quality_gate": {
+    "enabled": true,
+    "triggered": true,
+    "reasons": [
+      "end_paragraph_dump",
+      "excessive_cluster_density",
+      "phantom_footnote_run"
+    ],
+    "retry_attempted": true,
+    "retry_passed": false,
+    "source_set_equal_on_retry": false,
+    "extra_drafter_ms": 56182,
+    "before": {
+      "cluster_count": 23,
+      "phase3_applied": true,
+      "max_cluster_len": 2,
+      "cluster_run_count": 23,
+      "compound_group_count": 0,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [
+        {
+          "run": "¹⁰",
+          "context": "יבות משפטית או עניין ציבורי.⁹ ¹⁰\n- **קיום פגם מהותי בפסק-הדין ",
+          "max_valid": 9,
+          "parsed_number": 10
+        },
+        {
+          "run": "¹¹",
+          "context": " הראיות או שיקול עיגול שיפוטי.¹¹ ¹²\n- **סתירה בפסיקה או הצורך ",
+          "max_valid": 9,
+          "parsed_number": 11
+        },
+        {
+          "run": "¹²",
+          "context": "איות או שיקול עיגול שיפוטי.¹¹ ¹²\n- **סתירה בפסיקה או הצורך באח",
+          "max_valid": 9,
+          "parsed_number": 12
+        },
+        {
+          "run": "¹³",
+          "context": "סקרת, יש לכך משקל בהענקת רשות.¹³ ¹⁴\n- **מניעת עיוות דין חמור**",
+          "max_valid": 9,
+          "parsed_number": 13
+        },
+        {
+          "run": "¹⁴",
+          "context": "ת, יש לכך משקל בהענקת רשות.¹³ ¹⁴\n- **מניעת עיוות דין חמור** — ",
+          "max_valid": 9,
+          "parsed_number": 14
+        }
+      ],
+      "language_artifact_count": 0,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 2,
+      "language_artifacts_found": []
+    },
+    "after": null
+  },
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "compound_group_count": 0
+  },
+  "source_set": {
+    "count_initial": 9,
+    "count_shipped": 9
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 32,
+    "unique_source_count": 9
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 82,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "initial_answer_tail": "ת/פגם/עיוות) כדי להגדיל סיכוי לאישור.³¹ ³²\n\nהמלצה מעשית קצרה: בבקשה לגלגול שלישי יש להקדיש מקום בהצגה לעמידה בקריטריונים: להדגיש חשיבות ציבורית, לפרט פגם מהותי משפיע, להראות צורך באחידות הדין או עיוות דין, ולמזער טענות טכניות שניתן היה להעלות בערכאות הקודמות.\n"
+}

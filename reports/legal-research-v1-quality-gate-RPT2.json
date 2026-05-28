@@ -1,0 +1,135 @@
+{
+  "fixture_id": "RPT2",
+  "run_id": "2dfd0c00-cefa-43ad-97aa-f3cef658c5a8",
+  "qa_log_id": "cc0bdd61-209f-4427-98ba-3026154bb175",
+  "total_ms": 180682,
+  "final_action": "controlled_failure",
+  "quality_gate": {
+    "enabled": true,
+    "triggered": true,
+    "reasons": [
+      "end_paragraph_dump",
+      "excessive_cluster_density",
+      "phantom_footnote_run",
+      "lang_artifact:שורת התחתית"
+    ],
+    "retry_attempted": true,
+    "retry_passed": false,
+    "source_set_equal_on_retry": true,
+    "extra_drafter_ms": 43596,
+    "before": {
+      "cluster_count": 27,
+      "phase3_applied": true,
+      "max_cluster_len": 2,
+      "cluster_run_count": 27,
+      "compound_group_count": 0,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [
+        {
+          "run": "¹⁰",
+          "context": "ולא על ספקולציות בלתי מוגבלות.¹⁰ ¹¹\n- חובת הפחתת נזק (mitigati",
+          "max_valid": 8,
+          "parsed_number": 10
+        },
+        {
+          "run": "¹¹",
+          "context": " על ספקולציות בלתי מוגבלות.¹⁰ ¹¹\n- חובת הפחתת נזק (mitigation)",
+          "max_valid": 8,
+          "parsed_number": 11
+        },
+        {
+          "run": "¹²",
+          "context": "ל היה לעשות כדי לצמצם את הנזק.¹²\n\nאמצעי משפטי וכללי מדידה בפרק",
+          "max_valid": 8,
+          "parsed_number": 12
+        },
+        {
+          "run": "¹³",
+          "context": "ת על ההפרש הכלכלי מהמצב הצפוי.¹³ ¹⁴\n- ביצוע ספציפי או צו על תנ",
+          "max_valid": 8,
+          "parsed_number": 13
+        },
+        {
+          "run": "¹⁴",
+          "context": "ל ההפרש הכלכלי מהמצב הצפוי.¹³ ¹⁴\n- ביצוע ספציפי או צו על תנאי:",
+          "max_valid": 8,
+          "parsed_number": 14
+        }
+      ],
+      "language_artifact_count": 1,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 2,
+      "language_artifacts_found": [
+        "שורת התחתית"
+      ]
+    },
+    "after": {
+      "cluster_count": 7,
+      "phase3_applied": true,
+      "max_cluster_len": 2,
+      "cluster_run_count": 7,
+      "compound_group_count": 6,
+      "ambiguous_run_samples": null,
+      "phantom_footnote_runs": [
+        {
+          "run": "¹⁰",
+          "context": " בכללי מידתיות משפטית וכלכלית.¹⁰\nעוד כללי מדידה: חובת ה**מזעור",
+          "max_valid": 8,
+          "parsed_number": 10
+        },
+        {
+          "run": "¹¹",
+          "context": "כחלק מהאיזון בין טענות הצדדים.¹¹\n\nסייגים והגבלות\nהחלת האינטרס ",
+          "max_valid": 8,
+          "parsed_number": 11
+        },
+        {
+          "run": "¹²",
+          "context": "א להיפגע במסגרת מדידת הציפיות.¹²\nשנית, שינוי נסיבות מהותי או ס",
+          "max_valid": 8,
+          "parsed_number": 12
+        },
+        {
+          "run": "¹³",
+          "context": "פר או שאינו מוטל על הצד הנפגע.¹³\nשלישית, שיקולים של תום לב ומד",
+          "max_valid": 8,
+          "parsed_number": 13
+        },
+        {
+          "run": "¹⁴",
+          "context": "צור שיפוטי או להפנות לסעד אחר.¹⁴\nלבסוף, דוקטרינות קרובות כמו ה",
+          "max_valid": 8,
+          "parsed_number": 14
+        }
+      ],
+      "language_artifact_count": 0,
+      "phase3_discarded_reason": null,
+      "end_paragraph_dump_count": 1,
+      "language_artifacts_found": []
+    }
+  },
+  "hard_gates": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "footnote_eq_used": true
+  },
+  "phase3": {
+    "applied": true,
+    "discarded_reason": null,
+    "compound_group_count": 0
+  },
+  "source_set": {
+    "count_initial": 8,
+    "count_shipped": 8
+  },
+  "drafter": {
+    "ok": true,
+    "footnote_count": 36,
+    "unique_source_count": 8
+  },
+  "token_leak_count": 0,
+  "answer_strip_sup_len": 82,
+  "adjacent_superscript_runs_in_body": 0,
+  "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר.",
+  "initial_answer_tail": " הסעד הכספי.³¹ ³²\n\nמסקנה מעשית: בית המשפט הישראלי נוטה לראות ב'אינטרס הציפייה' כאמצעי מרכזי לתיקון הפסד חבלה בחוזה, אך החלתו מותנית בעמידה בדרישות ראייתיות של סיבתיות והוכחת הפסד סביר וכן נשענת על סייגים מדיניים ומעשהיים (ריחוק נזק, סיכול, תום לב).³³ ³⁴ ³⁵ ³⁶\n"
+}
