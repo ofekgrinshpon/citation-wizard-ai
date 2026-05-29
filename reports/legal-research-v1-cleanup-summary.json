@@ -1,0 +1,289 @@
+{
+  "phase": "cleanup-validation",
+  "ran": 7,
+  "errors": 0,
+  "all_acceptance_pass": false,
+  "sources_only_ok": true,
+  "fixtures": [
+    {
+      "fixture_id": "L1",
+      "run_id": "eb004841-0b28-4ce0-8808-21f7fa360fc7",
+      "qa_log_id": "9f5c7c5d-b4d8-4ed0-b723-73eaf3ace5cc",
+      "total_ms": 189595,
+      "acceptance": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true,
+        "answer_non_empty": true,
+        "answer_not_stub": true,
+        "cleanup_phase1_present": true,
+        "cleanup_phase1_applied": true,
+        "cleanup_phase2_present": true,
+        "placement_telemetry_present": true,
+        "no_token_leak": true,
+        "no_removed_keys": true
+      },
+      "placement": {
+        "cluster_count": 6,
+        "cluster_run_count": 4,
+        "max_cluster_len": 4,
+        "end_paragraph_dump_count": 1,
+        "final_summary_dump": false
+      },
+      "counts": {
+        "used_sources": 4,
+        "footnotes": 4
+      },
+      "removed_keys_present": {
+        "quality_gate": false,
+        "quality_gate_drafter_initial": false,
+        "drafter_atomic": false,
+        "mv_occurrence_mode": false,
+        "cc_phase3": false,
+        "any_compound_footnote": false
+      },
+      "answer_tail": "ת של המבחן והצורך בבחינת נסיבות כל מקרה מציבים דרישה לשיקול עובדתי מעמיק בכל טענה על התנדבות/מלגה; תיוג פורמלי אינו מייתר את הבדיקה המהותית שעל פיה עלולות לחול חובות חוקיות מחייבות על המארגן/המעסיק.\n\n"
+    },
+    {
+      "fixture_id": "L2",
+      "run_id": "819ac48a-c9e0-476c-91ea-c09b2030f46e",
+      "qa_log_id": "edef0cfe-b7f8-4076-872d-f0b899d9551c",
+      "total_ms": 134808,
+      "acceptance": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true,
+        "answer_non_empty": true,
+        "answer_not_stub": true,
+        "cleanup_phase1_present": true,
+        "cleanup_phase1_applied": true,
+        "cleanup_phase2_present": true,
+        "placement_telemetry_present": true,
+        "no_token_leak": true,
+        "no_removed_keys": true
+      },
+      "placement": {
+        "cluster_count": 1,
+        "cluster_run_count": 1,
+        "max_cluster_len": 2,
+        "end_paragraph_dump_count": 1,
+        "final_summary_dump": false
+      },
+      "counts": {
+        "used_sources": 5,
+        "footnotes": 5
+      },
+      "removed_keys_present": {
+        "quality_gate": false,
+        "quality_gate_drafter_initial": false,
+        "drafter_atomic": false,
+        "mv_occurrence_mode": false,
+        "cc_phase3": false,
+        "any_compound_footnote": false
+      },
+      "answer_tail": "טענה לביצוע בקירוב יש להעמיד ראיות ממשיות להשפעת הליקוי על תכלית ההתקשרות, לבדוק במישרין את המסמכים החוזיים והרגולטוריים שעשויים להגביל את הדוקטרינה, ולנסח דרישה למידוד כספי ברור של הניכויים/הפיצויים."
+    },
+    {
+      "fixture_id": "L3",
+      "run_id": "624a63ef-9d77-48dc-b947-f96da063cad3",
+      "qa_log_id": "1a63ff9a-3ef9-4a12-b897-8ac7122ab8bc",
+      "total_ms": 235298,
+      "acceptance": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true,
+        "answer_non_empty": true,
+        "answer_not_stub": true,
+        "cleanup_phase1_present": true,
+        "cleanup_phase1_applied": true,
+        "cleanup_phase2_present": true,
+        "placement_telemetry_present": true,
+        "no_token_leak": true,
+        "no_removed_keys": true
+      },
+      "placement": {
+        "cluster_count": 20,
+        "cluster_run_count": 11,
+        "max_cluster_len": 8,
+        "end_paragraph_dump_count": 2,
+        "final_summary_dump": false
+      },
+      "counts": {
+        "used_sources": 9,
+        "footnotes": 9
+      },
+      "removed_keys_present": {
+        "quality_gate": false,
+        "quality_gate_drafter_initial": false,
+        "drafter_atomic": false,
+        "mv_occurrence_mode": false,
+        "cc_phase3": false,
+        "any_compound_footnote": false
+      },
+      "answer_tail": "⁶⁷⁹⁸\n\nהדבר שנותר פתוח ומחייב זהירות פרקטית הוא סף הידע האובייקטיבי שמוטל על הקונה, ומהי רמת הויתור ההתקשרותי התקפה לגבי זכויות אלה — שאלות שהספרות ממשיכה לדון בהן ונמצאות בעין הבוחן של הפסיקה העדכנית."
+    },
+    {
+      "fixture_id": "L4",
+      "run_id": "18dcc7e4-c98b-4ae7-90dc-c7e3f7e32dd5",
+      "qa_log_id": "e9596fe1-c5bc-4bd8-8a12-6f5f3fb5b32b",
+      "total_ms": 234962,
+      "acceptance": {
+        "marker_validation_ok": false,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": false,
+        "answer_non_empty": true,
+        "answer_not_stub": false,
+        "cleanup_phase1_present": false,
+        "cleanup_phase1_applied": false,
+        "cleanup_phase2_present": false,
+        "placement_telemetry_present": false,
+        "no_token_leak": true,
+        "no_removed_keys": true
+      },
+      "placement": {
+        "cluster_count": null,
+        "cluster_run_count": null,
+        "max_cluster_len": null,
+        "end_paragraph_dump_count": null,
+        "final_summary_dump": null
+      },
+      "counts": {
+        "used_sources": 8,
+        "footnotes": 0
+      },
+      "removed_keys_present": {
+        "quality_gate": false,
+        "quality_gate_drafter_initial": false,
+        "drafter_atomic": false,
+        "mv_occurrence_mode": false,
+        "cc_phase3": false,
+        "any_compound_footnote": false
+      },
+      "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+    },
+    {
+      "fixture_id": "L5",
+      "run_id": "5cb672f7-13ae-42e3-b058-0fec45e0cf99",
+      "qa_log_id": "a38ff2d0-63df-40a8-aeb8-1eec258edb18",
+      "total_ms": 162540,
+      "acceptance": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true,
+        "answer_non_empty": true,
+        "answer_not_stub": true,
+        "cleanup_phase1_present": true,
+        "cleanup_phase1_applied": true,
+        "cleanup_phase2_present": true,
+        "placement_telemetry_present": true,
+        "no_token_leak": true,
+        "no_removed_keys": true
+      },
+      "placement": {
+        "cluster_count": 8,
+        "cluster_run_count": 4,
+        "max_cluster_len": 4,
+        "end_paragraph_dump_count": 2,
+        "final_summary_dump": false
+      },
+      "counts": {
+        "used_sources": 9,
+        "footnotes": 9
+      },
+      "removed_keys_present": {
+        "quality_gate": false,
+        "quality_gate_drafter_initial": false,
+        "drafter_atomic": false,
+        "mv_occurrence_mode": false,
+        "cc_phase3": false,
+        "any_compound_footnote": false
+      },
+      "answer_tail": "יא כלי מצומצם יותר. יש להיערך לניסוח טיעונים ממוקדים: הצגה ברורה של הפגם העובדתי או ההליך השגוי, שקילת שיקולים רלוונטיים שנמנעה, והדגשת חציית סף ה־\"חומרה\" של אי‑סבירות במקרה של טענה לעילת \"קיצונית\".\n\n"
+    },
+    {
+      "fixture_id": "L6",
+      "run_id": "690b46f7-6b4c-4e2c-81e0-5a9422ee8009",
+      "qa_log_id": "3fc2841c-f296-4775-8fae-d345c8aa0590",
+      "total_ms": 152982,
+      "acceptance": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true,
+        "answer_non_empty": true,
+        "answer_not_stub": true,
+        "cleanup_phase1_present": true,
+        "cleanup_phase1_applied": true,
+        "cleanup_phase2_present": true,
+        "placement_telemetry_present": true,
+        "no_token_leak": true,
+        "no_removed_keys": true
+      },
+      "placement": {
+        "cluster_count": 4,
+        "cluster_run_count": 3,
+        "max_cluster_len": 3,
+        "end_paragraph_dump_count": 2,
+        "final_summary_dump": false
+      },
+      "counts": {
+        "used_sources": 9,
+        "footnotes": 9
+      },
+      "removed_keys_present": {
+        "quality_gate": false,
+        "quality_gate_drafter_initial": false,
+        "drafter_atomic": false,
+        "mv_occurrence_mode": false,
+        "cc_phase3": false,
+        "any_compound_footnote": false
+      },
+      "answer_tail": "יש צורך, אפשר להציג שורה של שאלות ענייניות לבדיקה עובדתית במשפט פרקטי (מי הייתה הקבוצת סיכון המצופה? מה הידע המקצועי של הנתבע? האם אירע גורם מתערב?) — אוכל להכין טופס בדיקה קצר לצורך איסוף נתונים אלה."
+    },
+    {
+      "fixture_id": "PROT",
+      "run_id": "530d3273-dfab-4470-b78b-970f796022ba",
+      "qa_log_id": "c2ef2834-f01a-42d3-abd8-ca270e888e07",
+      "total_ms": 195354,
+      "acceptance": {
+        "marker_validation_ok": true,
+        "internal_id_leak": false,
+        "used_subset_of_usable": true,
+        "footnote_eq_used": true,
+        "answer_non_empty": true,
+        "answer_not_stub": true,
+        "cleanup_phase1_present": true,
+        "cleanup_phase1_applied": true,
+        "cleanup_phase2_present": true,
+        "placement_telemetry_present": true,
+        "no_token_leak": true,
+        "no_removed_keys": true
+      },
+      "placement": {
+        "cluster_count": 6,
+        "cluster_run_count": 5,
+        "max_cluster_len": 3,
+        "end_paragraph_dump_count": 0,
+        "final_summary_dump": false
+      },
+      "counts": {
+        "used_sources": 6,
+        "footnotes": 6
+      },
+      "removed_keys_present": {
+        "quality_gate": false,
+        "quality_gate_drafter_initial": false,
+        "drafter_atomic": false,
+        "mv_occurrence_mode": false,
+        "cc_phase3": false,
+        "any_compound_footnote": false
+      },
+      "answer_tail": "ל ביצועי הקושר סיבתית לפגיעה או לסיכון ממשי, להצדיק טענה למחדל חקיקתי/אכיפתי — אך מקורות אלה מדגישים בעיקר את הצורך בפעולה מערכתית וחקיקתית ולא מספקים מסמך ברור על סוגי סעדים שיפוטיים שיתקבלו בוודאות."
+    }
+  ]
+}

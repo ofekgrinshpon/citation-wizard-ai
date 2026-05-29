@@ -1,0 +1,40 @@
+{
+  "fixture_id": "L2",
+  "run_id": "819ac48a-c9e0-476c-91ea-c09b2030f46e",
+  "qa_log_id": "edef0cfe-b7f8-4076-872d-f0b899d9551c",
+  "total_ms": 134808,
+  "acceptance": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true,
+    "answer_non_empty": true,
+    "answer_not_stub": true,
+    "cleanup_phase1_present": true,
+    "cleanup_phase1_applied": true,
+    "cleanup_phase2_present": true,
+    "placement_telemetry_present": true,
+    "no_token_leak": true,
+    "no_removed_keys": true
+  },
+  "placement": {
+    "cluster_count": 1,
+    "cluster_run_count": 1,
+    "max_cluster_len": 2,
+    "end_paragraph_dump_count": 1,
+    "final_summary_dump": false
+  },
+  "counts": {
+    "used_sources": 5,
+    "footnotes": 5
+  },
+  "removed_keys_present": {
+    "quality_gate": false,
+    "quality_gate_drafter_initial": false,
+    "drafter_atomic": false,
+    "mv_occurrence_mode": false,
+    "cc_phase3": false,
+    "any_compound_footnote": false
+  },
+  "answer_tail": "טענה לביצוע בקירוב יש להעמיד ראיות ממשיות להשפעת הליקוי על תכלית ההתקשרות, לבדוק במישרין את המסמכים החוזיים והרגולטוריים שעשויים להגביל את הדוקטרינה, ולנסח דרישה למידוד כספי ברור של הניכויים/הפיצויים."
+}

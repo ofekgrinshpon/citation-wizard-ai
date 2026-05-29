@@ -1,0 +1,40 @@
+{
+  "fixture_id": "L6",
+  "run_id": "690b46f7-6b4c-4e2c-81e0-5a9422ee8009",
+  "qa_log_id": "3fc2841c-f296-4775-8fae-d345c8aa0590",
+  "total_ms": 152982,
+  "acceptance": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true,
+    "answer_non_empty": true,
+    "answer_not_stub": true,
+    "cleanup_phase1_present": true,
+    "cleanup_phase1_applied": true,
+    "cleanup_phase2_present": true,
+    "placement_telemetry_present": true,
+    "no_token_leak": true,
+    "no_removed_keys": true
+  },
+  "placement": {
+    "cluster_count": 4,
+    "cluster_run_count": 3,
+    "max_cluster_len": 3,
+    "end_paragraph_dump_count": 2,
+    "final_summary_dump": false
+  },
+  "counts": {
+    "used_sources": 9,
+    "footnotes": 9
+  },
+  "removed_keys_present": {
+    "quality_gate": false,
+    "quality_gate_drafter_initial": false,
+    "drafter_atomic": false,
+    "mv_occurrence_mode": false,
+    "cc_phase3": false,
+    "any_compound_footnote": false
+  },
+  "answer_tail": "יש צורך, אפשר להציג שורה של שאלות ענייניות לבדיקה עובדתית במשפט פרקטי (מי הייתה הקבוצת סיכון המצופה? מה הידע המקצועי של הנתבע? האם אירע גורם מתערב?) — אוכל להכין טופס בדיקה קצר לצורך איסוף נתונים אלה."
+}

@@ -1,0 +1,40 @@
+{
+  "fixture_id": "L3",
+  "run_id": "624a63ef-9d77-48dc-b947-f96da063cad3",
+  "qa_log_id": "1a63ff9a-3ef9-4a12-b897-8ac7122ab8bc",
+  "total_ms": 235298,
+  "acceptance": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true,
+    "answer_non_empty": true,
+    "answer_not_stub": true,
+    "cleanup_phase1_present": true,
+    "cleanup_phase1_applied": true,
+    "cleanup_phase2_present": true,
+    "placement_telemetry_present": true,
+    "no_token_leak": true,
+    "no_removed_keys": true
+  },
+  "placement": {
+    "cluster_count": 20,
+    "cluster_run_count": 11,
+    "max_cluster_len": 8,
+    "end_paragraph_dump_count": 2,
+    "final_summary_dump": false
+  },
+  "counts": {
+    "used_sources": 9,
+    "footnotes": 9
+  },
+  "removed_keys_present": {
+    "quality_gate": false,
+    "quality_gate_drafter_initial": false,
+    "drafter_atomic": false,
+    "mv_occurrence_mode": false,
+    "cc_phase3": false,
+    "any_compound_footnote": false
+  },
+  "answer_tail": "⁶⁷⁹⁸\n\nהדבר שנותר פתוח ומחייב זהירות פרקטית הוא סף הידע האובייקטיבי שמוטל על הקונה, ומהי רמת הויתור ההתקשרותי התקפה לגבי זכויות אלה — שאלות שהספרות ממשיכה לדון בהן ונמצאות בעין הבוחן של הפסיקה העדכנית."
+}

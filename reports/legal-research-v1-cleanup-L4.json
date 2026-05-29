@@ -1,0 +1,40 @@
+{
+  "fixture_id": "L4",
+  "run_id": "18dcc7e4-c98b-4ae7-90dc-c7e3f7e32dd5",
+  "qa_log_id": "e9596fe1-c5bc-4bd8-8a12-6f5f3fb5b32b",
+  "total_ms": 234962,
+  "acceptance": {
+    "marker_validation_ok": false,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": false,
+    "answer_non_empty": true,
+    "answer_not_stub": false,
+    "cleanup_phase1_present": false,
+    "cleanup_phase1_applied": false,
+    "cleanup_phase2_present": false,
+    "placement_telemetry_present": false,
+    "no_token_leak": true,
+    "no_removed_keys": true
+  },
+  "placement": {
+    "cluster_count": null,
+    "cluster_run_count": null,
+    "max_cluster_len": null,
+    "end_paragraph_dump_count": null,
+    "final_summary_dump": null
+  },
+  "counts": {
+    "used_sources": 8,
+    "footnotes": 0
+  },
+  "removed_keys_present": {
+    "quality_gate": false,
+    "quality_gate_drafter_initial": false,
+    "drafter_atomic": false,
+    "mv_occurrence_mode": false,
+    "cc_phase3": false,
+    "any_compound_footnote": false
+  },
+  "answer_tail": "[stub] התשובה תיווצר בשלב P5. כרגע הצינור מבצע רק ניתוח טענות ותכנון שאילתות מחקר."
+}
