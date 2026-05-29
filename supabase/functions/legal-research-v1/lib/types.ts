@@ -154,48 +154,14 @@ export interface UsedSource {
   origin: Origin | "user_upload";
 }
 
-export interface FootnoteItem {
-  source_number: number;
-  title: string;
-  url: string | null;
-  source_type?: string;
-  is_short_form?: boolean;
-  short_form_kind?: "ibid" | "supra";
-  back_ref_number?: number;
-  source_candidate_id?: string;
-}
-
 export interface Footnote {
   number: number;
   title: string;
   url: string | null;
   source_type?: string;
-  // Phase 3 (occurrence-footnote) additive fields. Absent when phase3 not applied.
-  source_number?: number;          // points to used_sources[].number for the unique source
-  is_short_form?: boolean;
-  short_form_kind?: "ibid" | "supra";
-  back_ref_number?: number;        // first-occurrence footnote number of the source
-  source_candidate_id?: string;    // debug only, never rendered
-  // Phase 3 v3 — compound footnote (same-position citation cluster).
-  is_compound?: boolean;
-  source_numbers?: number[];
-  items?: FootnoteItem[];
 }
 
-// ─── Phase C.1: Atomic marker representation ──────────────────────────────
-export type AtomicMode = "off" | "validate";
 export type MarkerFormat = "legacy_superscript";
-
-export interface AtomicReport {
-  mode: AtomicMode;
-  normalize_ok: boolean;
-  normalize_reason?: string;
-  validation: MarkerValidation | null;
-  used_sources_byte_equal: boolean;
-  superscript_marker_count: number;
-  atomic_marker_count: number;
-}
-
 
 export interface PlacementReport {
   ok: boolean;
@@ -207,7 +173,7 @@ export interface PlacementReport {
   superscript_parens_count?: number;
   repaired?: boolean;
   repair_failed?: boolean;
-  // Added by cluster-prevention phase (measurement only, no gating).
+  // Cluster telemetry (measurement only, no gating).
   max_cluster_len?: number;
   cluster_run_count?: number;
   final_paragraph_marker_count?: number;
@@ -233,43 +199,6 @@ export interface CitationCleanupReport {
     count: number;
     examples: Array<{ run: string; index: number; context: string }>;
   };
-  phase3?: {
-    applied: boolean;
-    occurrence_count?: number;
-    unique_source_count?: number;
-    short_form_count?: number;
-    ibid_count?: number;
-    supra_count?: number;
-    examples?: Array<{ marker_number: number; rendering: string }>;
-    discarded_reason?:
-      | "ambiguous_adjacent_markers"
-      | "multi_digit_occurrences_require_boundary_tokens"
-      | "would_create_ambiguous_markers"
-      | "marker_validation_failed"
-      | "footnote_resolution_failed"
-      | "no_markers"
-      | "disabled_by_env"
-      | "ambiguous_raw_superscript_run"
-      | "adjacent_tokens_would_render_ambiguous"
-      | "token_leak_detected"
-      | "compound_group_too_large";
-    cluster_examples?: string[];
-    ambiguous_run_samples?: Array<{ run: string; context: string; candidates: string[] }>;
-    multi_digit_marker_runs_count?: number;
-    multi_digit_runs_from_single_token_count?: number;
-    every_multi_digit_run_from_single_token?: boolean;
-    // Phase 3 v3 — compound footnote telemetry.
-    compound_enabled?: boolean;
-    compound_group_count?: number;
-    compound_member_count_total?: number;
-    compound_max_group_size?: number;
-    compound_footnote_examples?: Array<{
-      marker_number: number;
-      member_source_numbers: number[];
-      rendering: string;
-    }>;
-    every_compound_member_in_usable?: boolean;
-  };
 }
 
 export interface MarkerValidation {
@@ -283,23 +212,7 @@ export interface MarkerValidation {
   error?: string;
   placement?: PlacementReport;
   citation_cleanup?: CitationCleanupReport;
-  // Phase 3 additive fields.
-  occurrence_mode?: boolean;
-  occurrence_count?: number;
-  unique_source_count?: number;
-  short_form_count?: number;
-  ibid_count?: number;
-  supra_count?: number;
-  every_marker_has_footnote?: boolean;
-  every_footnote_in_usable?: boolean;
-  no_adjacent_marker_clusters?: boolean;
-  // Token-aware multi-digit proof (Phase 3 v2). Report-only; do not gate on
-  // `no_adjacent_marker_clusters` after v2 — the token-adjacency guard inside
-  // applyOccurrenceFootnotes is the real safety net.
-  multi_digit_marker_runs_count?: number;
-  multi_digit_runs_from_single_token_count?: number;
-  every_multi_digit_run_from_single_token?: boolean;
-  token_model_ok?: boolean;
 }
+
 
 
