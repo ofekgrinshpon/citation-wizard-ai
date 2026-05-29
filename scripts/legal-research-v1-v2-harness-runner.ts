@@ -166,7 +166,7 @@ function summarize(row: any, fx: Fixture, run_id: string) {
       heading_count: headingCount(baselineAnswer),
       prose_length: baselineAnswer.length,
       superscript_count: countSuperscripts(baselineAnswer),
-      adjacent_runs: (baselineAnswer.match(ADJ_RE) ?? []).length,
+      adjacent_runs: countAdjacentMarkerRuns(baselineAnswer),
       ms: drafter.ms ?? null,
       escalated: drafter.escalated === true,
       is_stub: baselineAnswer === STUB_ANSWER,
