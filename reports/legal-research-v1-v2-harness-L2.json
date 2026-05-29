@@ -1,0 +1,26 @@
+{
+  "fixture_id": "L2",
+  "source": "fixture",
+  "run_id": "acafb182-d369-4bd9-a932-563d1f22aa4f",
+  "total_ms": 146061,
+  "verifier_usable_count": 2,
+  "baseline": {
+    "ok": true,
+    "marker_ok": true,
+    "internal_id_leak": false,
+    "used_count": 2,
+    "footnote_count": 2,
+    "used_subset_of_usable": true,
+    "source_coverage": 1,
+    "paragraph_count": 8,
+    "heading_count": 0,
+    "prose_length": 2191,
+    "superscript_count": 11,
+    "adjacent_runs": 2,
+    "ms": 38790,
+    "escalated": false,
+    "is_stub": false
+  },
+  "v2": null,
+  "diff": null
+}

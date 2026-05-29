@@ -187,7 +187,7 @@ const DRAFTER_TOOL_PARAMETERS: Record<string, unknown> = {
   additionalProperties: false,
 };
 
-interface DrafterInputSource {
+export interface DrafterInputSource {
   ref: string;
   candidate_id: string;
   title: string;
@@ -206,7 +206,7 @@ interface RawDraft {
   used_sources?: unknown;
 }
 
-function buildInputSources(
+export function buildInputSources(
   candidates: Candidate[],
   verdicts: Verdict[],
   usable: UsableCandidate[],
