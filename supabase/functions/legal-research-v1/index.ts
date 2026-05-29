@@ -18,6 +18,7 @@ import { runPerplexityRetrieval } from "./stages/perplexityRetrieval.ts";
 import { buildCandidatePool } from "./stages/candidatePool.ts";
 import { runVerifier } from "./stages/verifier.ts";
 import { runDrafter } from "./stages/drafter.ts";
+import { runDrafterV2 } from "./stages/drafterV2.ts";
 import { makeAdminClient, writeTelemetry } from "./lib/telemetry.ts";
 import { extractAttachments, buildAnalyzerContext, ATTACHMENT_LIMITS, type AttachmentInput } from "./lib/attachments.ts";
 import { StageRun } from "./lib/types.ts";
@@ -587,6 +588,28 @@ async function handle(req: Request): Promise<Response> {
   );
   stage_runs.push(...drafter.stage_runs);
 
+  // ─── V2 harness comparison (smoke-mode only) ─────────────────────────────
+  // When `x-drafter-mode: v2_compare` is set on a smoke-mode service-role
+  // request, also run the structured drafter against the SAME verifier
+  // output and stash the result under metadata.drafter_v2. Production
+  // traffic is unaffected — this branch is gated by smokeMode below.
+  const harnessV2 = smokeMode && req.headers.get("x-drafter-mode") === "v2_compare";
+  let drafterV2: Awaited<ReturnType<typeof runDrafterV2>> | null = null;
+  if (harnessV2) {
+    try {
+      drafterV2 = await runDrafterV2(
+        question,
+        analyzer.claims,
+        pool.candidates,
+        { usable: verifier.usable, verdicts: verifier.verdicts },
+        { userDocs: attachmentResult.documents, useAsSource },
+      );
+      stage_runs.push(...drafterV2.stage_runs);
+    } catch (e) {
+      console.error("[lrv1 drafter_v2 harness error]", e);
+    }
+  }
+
   const drafterMeta = {
     ok: drafter.ok,
     model_initial: drafter.model_initial,
@@ -605,6 +628,26 @@ async function handle(req: Request): Promise<Response> {
     raw_text: drafter.raw_text,
     internal_id_scrub: drafter.internal_id_scrub,
   };
+
+  const drafterV2Meta = drafterV2
+    ? {
+        ok: drafterV2.ok,
+        model_initial: drafterV2.model_initial,
+        model_final: drafterV2.model_final,
+        escalated: drafterV2.escalated,
+        ms: drafterV2.ms,
+        sources_passed: drafterV2.sources_passed,
+        sources_used: drafterV2.sources_used,
+        answer_markdown: drafterV2.answer_markdown,
+        footnotes: drafterV2.footnotes,
+        used_sources: drafterV2.used_sources,
+        structured_validation: drafterV2.structured_validation,
+        builder_report: drafterV2.builder_report,
+        error: drafterV2.error,
+        schema_failure_reason: drafterV2.schema_failure_reason,
+        raw_text: drafterV2.raw_text,
+      }
+    : null;
 
   const finalAnswer = drafter.ok ? drafter.answer_markdown : STUB_ANSWER;
   const finalFootnotes = drafter.ok ? drafter.footnotes : [];
@@ -632,7 +675,7 @@ async function handle(req: Request): Promise<Response> {
       dropped_sources: pplx.dropped,
       verifier: verifierMeta,
       drafter: drafterMeta,
-      attachments: {
+      drafter_v2: drafterV2Meta,
         count: attachmentResult.documents.length,
         use_as_source: useAsSource,
         total_chars: attachmentResult.total_chars,
