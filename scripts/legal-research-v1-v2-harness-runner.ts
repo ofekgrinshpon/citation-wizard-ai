@@ -139,7 +139,7 @@ function summarize(row: any, fx: Fixture, run_id: string) {
   const v2Footnotes: any[] = drafterV2?.footnotes ?? [];
 
   const v2SupCount = countSuperscripts(v2Answer);
-  const v2AdjCount = (v2Answer.match(ADJ_RE) ?? []).length;
+  const v2AdjCount = countAdjacentMarkerRuns(v2Answer);
   // count superscripts inside source text of structured draft? We only see final answer.
   // No way to inspect segments here; rely on builder_report.adjacent_marker_count.
 
