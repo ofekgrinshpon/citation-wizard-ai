@@ -4,7 +4,7 @@
   "baseline_ok_count": 25,
   "v2_ok_count": 26,
   "v2_failure_count": 1,
-  "v2_zero_adjacent_markers": false,
+  "v2_zero_adjacent_markers": true,
   "v2_all_used_subset_of_usable": true,
   "v2_unknown_source_refs_total": 0,
   "baseline_avg_source_coverage": 0.771,
@@ -2158,5 +2158,6 @@
         "paragraph_count_delta": 5
       }
     }
-  ]
+  ],
+  "adjacency_metric_fixed": "V2.1c: telemetry regex now counts maximal superscript runs as one marker; multi-digit footnote numerals no longer false-positive."
 }
