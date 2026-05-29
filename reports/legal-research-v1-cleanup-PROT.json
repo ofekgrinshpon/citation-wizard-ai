@@ -1,0 +1,40 @@
+{
+  "fixture_id": "PROT",
+  "run_id": "530d3273-dfab-4470-b78b-970f796022ba",
+  "qa_log_id": "c2ef2834-f01a-42d3-abd8-ca270e888e07",
+  "total_ms": 195354,
+  "acceptance": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true,
+    "answer_non_empty": true,
+    "answer_not_stub": true,
+    "cleanup_phase1_present": true,
+    "cleanup_phase1_applied": true,
+    "cleanup_phase2_present": true,
+    "placement_telemetry_present": true,
+    "no_token_leak": true,
+    "no_removed_keys": true
+  },
+  "placement": {
+    "cluster_count": 6,
+    "cluster_run_count": 5,
+    "max_cluster_len": 3,
+    "end_paragraph_dump_count": 0,
+    "final_summary_dump": false
+  },
+  "counts": {
+    "used_sources": 6,
+    "footnotes": 6
+  },
+  "removed_keys_present": {
+    "quality_gate": false,
+    "quality_gate_drafter_initial": false,
+    "drafter_atomic": false,
+    "mv_occurrence_mode": false,
+    "cc_phase3": false,
+    "any_compound_footnote": false
+  },
+  "answer_tail": "ל ביצועי הקושר סיבתית לפגיעה או לסיכון ממשי, להצדיק טענה למחדל חקיקתי/אכיפתי — אך מקורות אלה מדגישים בעיקר את הצורך בפעולה מערכתית וחקיקתית ולא מספקים מסמך ברור על סוגי סעדים שיפוטיים שיתקבלו בוודאות."
+}

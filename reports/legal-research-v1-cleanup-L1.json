@@ -1,0 +1,40 @@
+{
+  "fixture_id": "L1",
+  "run_id": "eb004841-0b28-4ce0-8808-21f7fa360fc7",
+  "qa_log_id": "9f5c7c5d-b4d8-4ed0-b723-73eaf3ace5cc",
+  "total_ms": 189595,
+  "acceptance": {
+    "marker_validation_ok": true,
+    "internal_id_leak": false,
+    "used_subset_of_usable": true,
+    "footnote_eq_used": true,
+    "answer_non_empty": true,
+    "answer_not_stub": true,
+    "cleanup_phase1_present": true,
+    "cleanup_phase1_applied": true,
+    "cleanup_phase2_present": true,
+    "placement_telemetry_present": true,
+    "no_token_leak": true,
+    "no_removed_keys": true
+  },
+  "placement": {
+    "cluster_count": 6,
+    "cluster_run_count": 4,
+    "max_cluster_len": 4,
+    "end_paragraph_dump_count": 1,
+    "final_summary_dump": false
+  },
+  "counts": {
+    "used_sources": 4,
+    "footnotes": 4
+  },
+  "removed_keys_present": {
+    "quality_gate": false,
+    "quality_gate_drafter_initial": false,
+    "drafter_atomic": false,
+    "mv_occurrence_mode": false,
+    "cc_phase3": false,
+    "any_compound_footnote": false
+  },
+  "answer_tail": "ת של המבחן והצורך בבחינת נסיבות כל מקרה מציבים דרישה לשיקול עובדתי מעמיק בכל טענה על התנדבות/מלגה; תיוג פורמלי אינו מייתר את הבדיקה המהותית שעל פיה עלולות לחול חובות חוקיות מחייבות על המארגן/המעסיק.\n\n"
+}
