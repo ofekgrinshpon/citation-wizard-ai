@@ -84,7 +84,21 @@ async function pollByRunId(run_id: string, timeoutMs = 600_000) {
 }
 
 const SUPERSCRIPT_RE = /[\u00B2\u00B3\u00B9\u2070-\u209F]/u;
-const ADJ_RE = /[\u2070-\u209F\u00B2\u00B3\u00B9]{2,}/gu;
+const SUP_CHAR_RE = /[\u2070-\u209F\u00B2\u00B3\u00B9]/gu;
+const SUP_RUN_RE = /[\u2070-\u209F\u00B2\u00B3\u00B9]+/gu;
+// Count pairs of superscript runs separated only by whitespace. Multi-digit
+// numerals like ¹⁰ are a single run, so they no longer false-positive as
+// adjacency.
+function countAdjacentMarkerRuns(s: string): number {
+  let prevEnd = -1;
+  let count = 0;
+  for (const m of s.matchAll(SUP_RUN_RE)) {
+    const start = m.index ?? 0;
+    if (prevEnd >= 0 && /^\s*$/.test(s.slice(prevEnd, start))) count++;
+    prevEnd = start + m[0].length;
+  }
+  return count;
+}
 
 function countSuperscripts(s: string) {
   return (s.match(/[\u00B2\u00B3\u00B9\u2070-\u209F]/gu) ?? []).length;
