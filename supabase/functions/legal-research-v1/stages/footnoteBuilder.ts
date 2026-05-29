@@ -201,8 +201,22 @@ export function buildFootnotedAnswer(
   }
 
   // Adjacent marker invariant check (telemetry only — must be 0).
-  const adjacent_marker_count =
-    (answer_markdown.match(/[\u2070-\u209F\u00B2\u00B3\u00B9]{2,}/gu) ?? []).length;
+  // A "marker" is a maximal superscript run (so multi-digit numerals like
+  // ¹⁰, ¹¹, ¹² count as ONE marker, not two). Adjacency means two such
+  // markers separated by nothing but whitespace — which the builder cannot
+  // produce by construction, because every emitted marker is followed by
+  // either a block boundary or body text from the next segment.
+  const SUP_RUN_RE = /[\u2070-\u209F\u00B2\u00B3\u00B9]+/gu;
+  let adjacent_marker_count = 0;
+  let prevEnd = -1;
+  for (const m of answer_markdown.matchAll(SUP_RUN_RE)) {
+    const start = (m.index ?? 0);
+    if (prevEnd >= 0) {
+      const between = answer_markdown.slice(prevEnd, start);
+      if (/^\s*$/.test(between)) adjacent_marker_count++;
+    }
+    prevEnd = start + m[0].length;
+  }
 
   const totalRefs = entriesInOrder.reduce((s, e) => s + e.source_candidate_ids.length, 0);
   const compound_footnote_count = entriesInOrder.filter((e) => e.source_candidate_ids.length > 1).length;
