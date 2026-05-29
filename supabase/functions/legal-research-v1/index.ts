@@ -676,6 +676,7 @@ async function handle(req: Request): Promise<Response> {
       verifier: verifierMeta,
       drafter: drafterMeta,
       drafter_v2: drafterV2Meta,
+      attachments: {
         count: attachmentResult.documents.length,
         use_as_source: useAsSource,
         total_chars: attachmentResult.total_chars,
