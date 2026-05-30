@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronDown, Paperclip, X, FileText, Trash2, ArrowUp, Loader2, Check } from "lucide-react";
 import { toast } from "sonner";
+import { renderAnswerMarkdown } from "@/lib/legalQa/renderAnswerMarkdown";
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
