@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronDown, Paperclip, X, FileText, Trash2, ArrowUp, Loader2, Check } from "lucide-react";
 import { toast } from "sonner";
+import { renderAnswerMarkdown } from "@/lib/legalQa/renderAnswerMarkdown";
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -439,7 +440,7 @@ export function LegalResearchV1Panel() {
             <div className="rounded-lg border border-border bg-card p-4">
               <h3 className="text-sm font-bold text-foreground mb-2">תשובה</h3>
               <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                {result.answer}
+                {renderAnswerMarkdown(result.answer)}
               </div>
             </div>
 
