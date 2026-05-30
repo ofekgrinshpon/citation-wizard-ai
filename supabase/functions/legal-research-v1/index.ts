@@ -579,7 +579,11 @@ async function handle(req: Request): Promise<Response> {
 
 
   await markStage("drafter");
-  const drafter = await runDrafter(
+  // V2.1c is the default drafter (structured blocks + deterministic
+  // footnoteBuilder). The legacy Markdown baseline `runDrafter` remains
+  // imported for easy revert — re-point this call to `runDrafter(...)` and
+  // restore the baseline-shaped `drafterMeta` if V2 needs to be rolled back.
+  const drafter = await runDrafterV2(
     question,
     analyzer.claims,
     pool.candidates,
@@ -588,27 +592,26 @@ async function handle(req: Request): Promise<Response> {
   );
   stage_runs.push(...drafter.stage_runs);
 
-  // ─── V2 harness comparison (smoke-mode only) ─────────────────────────────
-  // When `x-drafter-mode: v2_compare` is set on a smoke-mode service-role
-  // request, also run the structured drafter against the SAME verifier
-  // output and stash the result under metadata.drafter_v2. Production
-  // traffic is unaffected — this branch is gated by smokeMode below.
-  const harnessV2 = smokeMode && req.headers.get("x-drafter-mode") === "v2_compare";
-  let drafterV2: Awaited<ReturnType<typeof runDrafterV2>> | null = null;
-  if (harnessV2) {
-    try {
-      drafterV2 = await runDrafterV2(
-        question,
-        analyzer.claims,
-        pool.candidates,
-        { usable: verifier.usable, verdicts: verifier.verdicts },
-        { userDocs: attachmentResult.documents, useAsSource },
-      );
-      stage_runs.push(...drafterV2.stage_runs);
-    } catch (e) {
-      console.error("[lrv1 drafter_v2 harness error]", e);
-    }
-  }
+  // Compute omitted candidate ids (verifier.usable \ used by drafter) so the
+  // frontend debug panel keeps the same shape as the baseline drafter.
+  const usedIds = new Set(drafter.used_sources.map((u) => u.candidate_id));
+  const omitted_candidate_ids = verifier.usable
+    .map((u) => u.candidate_id)
+    .filter((id) => !usedIds.has(id));
+
+  // Synthetic marker_validation for shape compatibility. V2's footnoteBuilder
+  // emits markers deterministically, so by construction there are no unused
+  // sources, no missing sources, no internal-id leaks, and no marker repair.
+  const marker_validation = {
+    ok: drafter.ok,
+    markers_in_answer: drafter.footnotes.map((f) => f.number),
+    unused_sources: [] as string[],
+    missing_sources: [] as string[],
+    internal_id_leak: false,
+    leaked_tokens: [] as string[],
+    repaired: false,
+    error: drafter.ok ? undefined : (drafter.error ?? drafter.schema_failure_reason),
+  };
 
   const drafterMeta = {
     ok: drafter.ok,
@@ -620,34 +623,18 @@ async function handle(req: Request): Promise<Response> {
     sources_used: drafter.sources_used,
     footnote_count: drafter.footnotes.length,
     unique_source_count: drafter.used_sources.length,
-    marker_validation: drafter.marker_validation,
-    omitted_candidate_ids: drafter.omitted_candidate_ids,
+    marker_validation,
+    omitted_candidate_ids,
     used_sources: drafter.used_sources,
-    marker_format: drafter.marker_format,
+    marker_format: "superscript" as const,
     error: drafter.error,
     raw_text: drafter.raw_text,
-    internal_id_scrub: drafter.internal_id_scrub,
+    // V2-specific telemetry (additive — does not break baseline consumers).
+    drafter_version: "v2.1c" as const,
+    structured_validation: drafter.structured_validation,
+    builder_report: drafter.builder_report,
+    schema_failure_reason: drafter.schema_failure_reason,
   };
-
-  const drafterV2Meta = drafterV2
-    ? {
-        ok: drafterV2.ok,
-        model_initial: drafterV2.model_initial,
-        model_final: drafterV2.model_final,
-        escalated: drafterV2.escalated,
-        ms: drafterV2.ms,
-        sources_passed: drafterV2.sources_passed,
-        sources_used: drafterV2.sources_used,
-        answer_markdown: drafterV2.answer_markdown,
-        footnotes: drafterV2.footnotes,
-        used_sources: drafterV2.used_sources,
-        structured_validation: drafterV2.structured_validation,
-        builder_report: drafterV2.builder_report,
-        error: drafterV2.error,
-        schema_failure_reason: drafterV2.schema_failure_reason,
-        raw_text: drafterV2.raw_text,
-      }
-    : null;
 
   const finalAnswer = drafter.ok ? drafter.answer_markdown : STUB_ANSWER;
   const finalFootnotes = drafter.ok ? drafter.footnotes : [];
@@ -675,7 +662,6 @@ async function handle(req: Request): Promise<Response> {
       dropped_sources: pplx.dropped,
       verifier: verifierMeta,
       drafter: drafterMeta,
-      drafter_v2: drafterV2Meta,
       attachments: {
         count: attachmentResult.documents.length,
         use_as_source: useAsSource,
@@ -696,7 +682,7 @@ async function handle(req: Request): Promise<Response> {
     answer: finalAnswer,
     footnotes: finalFootnotes,
     used_sources: drafter.ok ? drafter.used_sources : [],
-    marker_format: drafter.marker_format,
+    marker_format: "superscript" as const,
     debug: {
       run_id,
       phase: "P5",
