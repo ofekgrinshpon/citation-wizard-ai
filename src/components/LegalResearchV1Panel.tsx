@@ -454,6 +454,18 @@ export function LegalResearchV1Panel() {
 
         {result && !loading && (
           <div className="space-y-4">
+            <div className="flex justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopyResult}
+                className="gap-1.5 text-xs"
+              >
+                <Copy className="w-3.5 h-3.5" />
+                העתק
+              </Button>
+            </div>
+
             <div className="rounded-lg border border-border bg-card p-4">
               <h3 className="text-sm font-bold text-foreground mb-2">תשובה</h3>
               <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
