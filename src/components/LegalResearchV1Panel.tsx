@@ -364,6 +364,22 @@ export function LegalResearchV1Panel() {
   const sendDisabled = loading || uploadingFiles || question.trim().length < 5;
   const isBusy = loading || uploadingFiles;
 
+  const handleCopyResult = async () => {
+    if (!result) return;
+    const parts: string[] = [];
+    parts.push(result.answer.trim());
+    if (result.footnotes && result.footnotes.length > 0) {
+      parts.push("");
+      parts.push("הערות שוליים");
+      result.footnotes.forEach((fn) => {
+        const line = fn.url ? `${fn.number}. ${fn.title} — ${fn.url}` : `${fn.number}. ${fn.title}`;
+        parts.push(line);
+      });
+    }
+    await copyPlainText(parts.join("\n"));
+    toast.success("התשובה והערות השוליים הועתקו ללוח");
+  };
+
   return (
     <div className="flex flex-col h-full min-h-0" dir="rtl">
       {/* ── Top region: loading / error / result (scrollable) ── */}
