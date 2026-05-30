@@ -7,9 +7,10 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown, Paperclip, X, FileText, Trash2, ArrowUp, Loader2, Check } from "lucide-react";
+import { ChevronDown, Paperclip, X, FileText, Trash2, ArrowUp, Loader2, Check, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { renderAnswerMarkdown } from "@/lib/legalQa/renderAnswerMarkdown";
+import { copyPlainText } from "@/lib/clipboard";
 
 const MAX_FILES = 5;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -363,6 +364,22 @@ export function LegalResearchV1Panel() {
   const sendDisabled = loading || uploadingFiles || question.trim().length < 5;
   const isBusy = loading || uploadingFiles;
 
+  const handleCopyResult = async () => {
+    if (!result) return;
+    const parts: string[] = [];
+    parts.push(result.answer.trim());
+    if (result.footnotes && result.footnotes.length > 0) {
+      parts.push("");
+      parts.push("הערות שוליים");
+      result.footnotes.forEach((fn) => {
+        const line = fn.url ? `${fn.number}. ${fn.title} — ${fn.url}` : `${fn.number}. ${fn.title}`;
+        parts.push(line);
+      });
+    }
+    await copyPlainText(parts.join("\n"));
+    toast.success("התשובה והערות השוליים הועתקו ללוח");
+  };
+
   return (
     <div className="flex flex-col h-full min-h-0" dir="rtl">
       {/* ── Top region: loading / error / result (scrollable) ── */}
@@ -437,6 +454,18 @@ export function LegalResearchV1Panel() {
 
         {result && !loading && (
           <div className="space-y-4">
+            <div className="flex justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopyResult}
+                className="gap-1.5 text-xs"
+              >
+                <Copy className="w-3.5 h-3.5" />
+                העתק
+              </Button>
+            </div>
+
             <div className="rounded-lg border border-border bg-card p-4">
               <h3 className="text-sm font-bold text-foreground mb-2">תשובה</h3>
               <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
