@@ -439,7 +439,7 @@ export function LegalResearchV1Panel() {
             <div className="rounded-lg border border-border bg-card p-4">
               <h3 className="text-sm font-bold text-foreground mb-2">תשובה</h3>
               <div className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                {result.answer}
+                {renderAnswerMarkdown(result.answer)}
               </div>
             </div>
 
