@@ -490,21 +490,53 @@ export function LegalResearchV1Panel() {
                 <ol className="space-y-1.5 text-sm text-foreground">
                   {result.footnotes.map((fn) => (
                     <li key={fn.number} className="leading-relaxed">
-                      <span className="font-medium">{fn.number}.</span>{" "}
-                      <span>{fn.title}</span>
-                      {fn.url ? (
+                      {fn.sources && fn.sources.length > 1 ? (
                         <>
-                          {" — "}
-                          <a
-                            href={fn.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-primary underline break-all"
-                          >
-                            {fn.url}
-                          </a>
+                          <span className="font-medium">{fn.number}.</span>
+                          <div className="pr-4 space-y-0.5">
+                            {fn.sources.map((s, idx) => {
+                              const isLast = idx === fn.sources!.length - 1;
+                              const sep = isLast ? "." : ";";
+                              return (
+                                <div key={idx}>
+                                  <span>{s.title}{sep}</span>
+                                  {s.url ? (
+                                    <>
+                                      {" "}
+                                      <a
+                                        href={s.url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="text-primary underline break-all"
+                                      >
+                                        {s.url}
+                                      </a>
+                                    </>
+                                  ) : null}
+                                </div>
+                              );
+                            })}
+                          </div>
                         </>
-                      ) : null}
+                      ) : (
+                        <>
+                          <span className="font-medium">{fn.number}.</span>{" "}
+                          <span>{fn.title}</span>
+                          {fn.url ? (
+                            <>
+                              {" — "}
+                              <a
+                                href={fn.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-primary underline break-all"
+                              >
+                                {fn.url}
+                              </a>
+                            </>
+                          ) : null}
+                        </>
+                      )}
                     </li>
                   ))}
                 </ol>
