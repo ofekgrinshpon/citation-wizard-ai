@@ -373,8 +373,18 @@ export function LegalResearchV1Panel() {
       parts.push("");
       parts.push("הערות שוליים");
       result.footnotes.forEach((fn) => {
-        const line = fn.url ? `${fn.number}. ${fn.title} — ${fn.url}` : `${fn.number}. ${fn.title}`;
-        parts.push(line);
+        if (fn.sources && fn.sources.length > 1) {
+          parts.push(`${fn.number}.`);
+          fn.sources.forEach((s, idx) => {
+            const isLast = idx === fn.sources!.length - 1;
+            const sep = isLast ? "." : ";";
+            const line = s.url ? `   ${s.title}${sep} ${s.url}` : `   ${s.title}${sep}`;
+            parts.push(line);
+          });
+        } else {
+          const line = fn.url ? `${fn.number}. ${fn.title} — ${fn.url}` : `${fn.number}. ${fn.title}`;
+          parts.push(line);
+        }
       });
     }
     await copyPlainText(parts.join("\n"));
