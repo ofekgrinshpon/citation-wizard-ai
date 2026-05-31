@@ -159,6 +159,7 @@ export interface Footnote {
   title: string;
   url: string | null;
   source_type?: string;
+  sources?: Array<{ title: string; url: string | null; source_type: string }>;
 }
 
 export type MarkerFormat = "legacy_superscript";

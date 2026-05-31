@@ -178,6 +178,11 @@ export function buildFootnotedAnswer(
     title: e.title,
     url: e.url,
     source_type: e.source_type,
+    sources: e.source_inputs.map((s) => ({
+      title: s.title,
+      url: s.url,
+      source_type: s.source_type,
+    })),
   }));
 
   // used_sources: one entry per (candidate_id) with the number of the entry

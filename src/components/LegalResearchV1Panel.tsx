@@ -47,7 +47,8 @@ const SOFT_NOTICE_1_MS = 180_000; // 3 min
 const SOFT_NOTICE_2_MS = 300_000; // 5 min
 const RESUME_STORAGE_KEY = "lrv1:active_job";
 
-type Footnote = { number: number; title: string; url?: string | null };
+type FootnoteSource = { title: string; url?: string | null; source_type?: string };
+type Footnote = { number: number; title: string; url?: string | null; sources?: FootnoteSource[] };
 type UsedSource = {
   number: number;
   title: string;
@@ -372,8 +373,18 @@ export function LegalResearchV1Panel() {
       parts.push("");
       parts.push("הערות שוליים");
       result.footnotes.forEach((fn) => {
-        const line = fn.url ? `${fn.number}. ${fn.title} — ${fn.url}` : `${fn.number}. ${fn.title}`;
-        parts.push(line);
+        if (fn.sources && fn.sources.length > 1) {
+          parts.push(`${fn.number}.`);
+          fn.sources.forEach((s, idx) => {
+            const isLast = idx === fn.sources!.length - 1;
+            const sep = isLast ? "." : ";";
+            const line = s.url ? `   ${s.title}${sep} ${s.url}` : `   ${s.title}${sep}`;
+            parts.push(line);
+          });
+        } else {
+          const line = fn.url ? `${fn.number}. ${fn.title} — ${fn.url}` : `${fn.number}. ${fn.title}`;
+          parts.push(line);
+        }
       });
     }
     await copyPlainText(parts.join("\n"));
@@ -479,21 +490,53 @@ export function LegalResearchV1Panel() {
                 <ol className="space-y-1.5 text-sm text-foreground">
                   {result.footnotes.map((fn) => (
                     <li key={fn.number} className="leading-relaxed">
-                      <span className="font-medium">{fn.number}.</span>{" "}
-                      <span>{fn.title}</span>
-                      {fn.url ? (
+                      {fn.sources && fn.sources.length > 1 ? (
                         <>
-                          {" — "}
-                          <a
-                            href={fn.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-primary underline break-all"
-                          >
-                            {fn.url}
-                          </a>
+                          <span className="font-medium">{fn.number}.</span>
+                          <div className="pr-4 space-y-0.5">
+                            {fn.sources.map((s, idx) => {
+                              const isLast = idx === fn.sources!.length - 1;
+                              const sep = isLast ? "." : ";";
+                              return (
+                                <div key={idx}>
+                                  <span>{s.title}{sep}</span>
+                                  {s.url ? (
+                                    <>
+                                      {" "}
+                                      <a
+                                        href={s.url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="text-primary underline break-all"
+                                      >
+                                        {s.url}
+                                      </a>
+                                    </>
+                                  ) : null}
+                                </div>
+                              );
+                            })}
+                          </div>
                         </>
-                      ) : null}
+                      ) : (
+                        <>
+                          <span className="font-medium">{fn.number}.</span>{" "}
+                          <span>{fn.title}</span>
+                          {fn.url ? (
+                            <>
+                              {" — "}
+                              <a
+                                href={fn.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-primary underline break-all"
+                              >
+                                {fn.url}
+                              </a>
+                            </>
+                          ) : null}
+                        </>
+                      )}
                     </li>
                   ))}
                 </ol>
