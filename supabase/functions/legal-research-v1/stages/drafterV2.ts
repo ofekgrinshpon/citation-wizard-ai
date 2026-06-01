@@ -419,9 +419,10 @@ export async function runDrafterV2(
     return resp;
   };
 
-  let modelUsed = MODEL_MINI;
+  const initialModel = forceModel ?? MODEL_MINI;
+  let modelUsed = initialModel;
   let escalated = false;
-  let resp = await tryOne(MODEL_MINI, "drafter_v2.initial");
+  let resp = await tryOne(initialModel, "drafter_v2.initial");
 
   let parsed = validateStructuredDraft(resp.data, allowedRefs);
   let schema_failure_reason: DrafterV2Result["schema_failure_reason"];
@@ -434,7 +435,8 @@ export async function runDrafterV2(
     else schema_failure_reason = "schema_invalid";
   }
 
-  if (!parsed.draft) {
+  if (!parsed.draft && !skipEscalation) {
+
     escalated = true;
     modelUsed = MODEL_FULL;
     resp = await tryOne(MODEL_FULL, "drafter_v2.escalated");
