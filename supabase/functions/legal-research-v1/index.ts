@@ -592,6 +592,33 @@ async function handle(req: Request): Promise<Response> {
   );
   stage_runs.push(...drafter.stage_runs);
 
+  // Harness-only: when x-drafter-v2-compare-models is "full", run drafterV2
+  // a second time forcing gpt-5 (MODEL_FULL) against the *same* input pack
+  // (same candidates, same verifier verdicts, same claims, same userDocs).
+  // The served answer/footnotes are unchanged; comparison output is stashed
+  // in metadata.drafter_v2_full_compare. Never blocks; never escalates.
+  const compareModel = req.headers.get("x-drafter-v2-compare-models");
+  let drafterFullCompare: Awaited<ReturnType<typeof runDrafterV2>> | null = null;
+  if (compareModel === "full") {
+    try {
+      drafterFullCompare = await runDrafterV2(
+        question,
+        analyzer.claims,
+        pool.candidates,
+        { usable: verifier.usable, verdicts: verifier.verdicts },
+        {
+          userDocs: attachmentResult.documents,
+          useAsSource,
+          forceModel: "openai/gpt-5",
+          skipEscalation: true,
+        },
+      );
+    } catch (e) {
+      console.error("[lrv1] drafter_v2_full_compare failed", e);
+    }
+  }
+
+
   // Compute omitted candidate ids (verifier.usable \ used by drafter) so the
   // frontend debug panel keeps the same shape as the baseline drafter.
   const usedIds = new Set(drafter.used_sources.map((u) => u.candidate_id));
