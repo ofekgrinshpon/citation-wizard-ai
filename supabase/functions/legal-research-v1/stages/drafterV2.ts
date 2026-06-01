@@ -376,7 +376,7 @@ export async function runDrafterV2(
     return {
       ok: false,
       ms: Date.now() - t_total,
-      model_initial: MODEL_MINI,
+      model_initial: forceModel ?? MODEL_MINI,
       model_final: MODEL_MINI,
       escalated: false,
       sources_passed: 0,
@@ -457,7 +457,7 @@ export async function runDrafterV2(
     return {
       ok: false,
       ms: Date.now() - t_total,
-      model_initial: MODEL_MINI,
+      model_initial: forceModel ?? MODEL_MINI,
       model_final: modelUsed,
       escalated,
       sources_passed,
@@ -478,7 +478,7 @@ export async function runDrafterV2(
   return {
     ok: true,
     ms: Date.now() - t_total,
-    model_initial: MODEL_MINI,
+    model_initial: forceModel ?? MODEL_MINI,
     model_final: modelUsed,
     escalated,
     sources_passed,
