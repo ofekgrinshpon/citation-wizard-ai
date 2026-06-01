@@ -592,14 +592,19 @@ async function handle(req: Request): Promise<Response> {
   );
   stage_runs.push(...drafter.stage_runs);
 
-  // Harness-only: when x-drafter-v2-compare-models is "full", run drafterV2
-  // a second time forcing gpt-5 (MODEL_FULL) against the *same* input pack
-  // (same candidates, same verifier verdicts, same claims, same userDocs).
-  // The served answer/footnotes are unchanged; comparison output is stashed
-  // in metadata.drafter_v2_full_compare. Never blocks; never escalates.
+  // Harness-only: when x-drafter-v2-compare-models is set, re-run drafterV2
+  // additional times against the *same* input pack (same candidates, same
+  // verifier verdicts, same claims, same userDocs). Served answer/footnotes
+  // are unchanged; comparison output is stashed in metadata.
+  //   "full"        → B = openai/gpt-5
+  //   "full+claude" → B = openai/gpt-5, C = claude sonnet, D = claude opus
   const compareModel = req.headers.get("x-drafter-v2-compare-models");
   let drafterFullCompare: Awaited<ReturnType<typeof runDrafterV2>> | null = null;
-  if (compareModel === "full") {
+  let drafterSonnetCompare: Awaited<ReturnType<typeof runDrafterV2>> | null = null;
+  let drafterOpusCompare: Awaited<ReturnType<typeof runDrafterV2>> | null = null;
+  const wantsFull = compareModel === "full" || compareModel === "full+claude";
+  const wantsClaude = compareModel === "full+claude";
+  if (wantsFull) {
     try {
       drafterFullCompare = await runDrafterV2(
         question,
@@ -615,6 +620,42 @@ async function handle(req: Request): Promise<Response> {
       );
     } catch (e) {
       console.error("[lrv1] drafter_v2_full_compare failed", e);
+    }
+  }
+  if (wantsClaude) {
+    try {
+      drafterSonnetCompare = await runDrafterV2(
+        question,
+        analyzer.claims,
+        pool.candidates,
+        { usable: verifier.usable, verdicts: verifier.verdicts },
+        {
+          userDocs: attachmentResult.documents,
+          useAsSource,
+          forceModel: "claude-sonnet-4-5",
+          skipEscalation: true,
+          provider: "anthropic",
+        },
+      );
+    } catch (e) {
+      console.error("[lrv1] drafter_v2_sonnet_compare failed", e);
+    }
+    try {
+      drafterOpusCompare = await runDrafterV2(
+        question,
+        analyzer.claims,
+        pool.candidates,
+        { usable: verifier.usable, verdicts: verifier.verdicts },
+        {
+          userDocs: attachmentResult.documents,
+          useAsSource,
+          forceModel: "claude-opus-4-1",
+          skipEscalation: true,
+          provider: "anthropic",
+        },
+      );
+    } catch (e) {
+      console.error("[lrv1] drafter_v2_opus_compare failed", e);
     }
   }
 
@@ -695,6 +736,7 @@ async function handle(req: Request): Promise<Response> {
             ok: drafterFullCompare.ok,
             model_initial: drafterFullCompare.model_initial,
             model_final: drafterFullCompare.model_final,
+            provider: drafterFullCompare.provider,
             escalated: drafterFullCompare.escalated,
             ms: drafterFullCompare.ms,
             sources_passed: drafterFullCompare.sources_passed,
@@ -706,7 +748,50 @@ async function handle(req: Request): Promise<Response> {
             builder_report: drafterFullCompare.builder_report,
             quality_warning: drafterFullCompare.quality_warning,
             schema_failure_reason: drafterFullCompare.schema_failure_reason,
+            usage: drafterFullCompare.usage,
             error: drafterFullCompare.error,
+          }
+        : null,
+      drafter_v2_sonnet_compare: drafterSonnetCompare
+        ? {
+            ok: drafterSonnetCompare.ok,
+            model_initial: drafterSonnetCompare.model_initial,
+            model_final: drafterSonnetCompare.model_final,
+            provider: drafterSonnetCompare.provider,
+            escalated: drafterSonnetCompare.escalated,
+            ms: drafterSonnetCompare.ms,
+            sources_passed: drafterSonnetCompare.sources_passed,
+            sources_used: drafterSonnetCompare.sources_used,
+            answer_markdown: drafterSonnetCompare.answer_markdown,
+            footnotes: drafterSonnetCompare.footnotes,
+            used_sources: drafterSonnetCompare.used_sources,
+            structured_validation: drafterSonnetCompare.structured_validation,
+            builder_report: drafterSonnetCompare.builder_report,
+            quality_warning: drafterSonnetCompare.quality_warning,
+            schema_failure_reason: drafterSonnetCompare.schema_failure_reason,
+            usage: drafterSonnetCompare.usage,
+            error: drafterSonnetCompare.error,
+          }
+        : null,
+      drafter_v2_opus_compare: drafterOpusCompare
+        ? {
+            ok: drafterOpusCompare.ok,
+            model_initial: drafterOpusCompare.model_initial,
+            model_final: drafterOpusCompare.model_final,
+            provider: drafterOpusCompare.provider,
+            escalated: drafterOpusCompare.escalated,
+            ms: drafterOpusCompare.ms,
+            sources_passed: drafterOpusCompare.sources_passed,
+            sources_used: drafterOpusCompare.sources_used,
+            answer_markdown: drafterOpusCompare.answer_markdown,
+            footnotes: drafterOpusCompare.footnotes,
+            used_sources: drafterOpusCompare.used_sources,
+            structured_validation: drafterOpusCompare.structured_validation,
+            builder_report: drafterOpusCompare.builder_report,
+            quality_warning: drafterOpusCompare.quality_warning,
+            schema_failure_reason: drafterOpusCompare.schema_failure_reason,
+            usage: drafterOpusCompare.usage,
+            error: drafterOpusCompare.error,
           }
         : null,
 

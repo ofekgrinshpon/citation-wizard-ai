@@ -5,6 +5,7 @@
 // markdown + footnotes + used_sources.
 
 import { callOpenAIJsonTool } from "../lib/openai.ts";
+import { callAnthropicJsonTool } from "../lib/anthropic.ts";
 import type { UserDocument } from "../lib/attachments.ts";
 import {
   Candidate,
@@ -304,6 +305,7 @@ export interface DrafterV2Result {
   ms: number;
   model_initial: string;
   model_final: string;
+  provider: "openai" | "anthropic";
   escalated: boolean;
   sources_passed: number;
   sources_used: number;
@@ -316,6 +318,7 @@ export interface DrafterV2Result {
   structured_validation: StructuredValidation;
   builder_report?: ReturnType<typeof buildFootnotedAnswer>["builder_report"];
   quality_warning?: QualityWarning;
+  usage?: { input_tokens?: number; output_tokens?: number };
   schema_failure_reason?:
     | "no_tool_call"
     | "json_parse"
@@ -338,6 +341,10 @@ export async function runDrafterV2(
     // skip the mini→full escalation. Used by offline model-comparison runs.
     forceModel?: string;
     skipEscalation?: boolean;
+    // Harness-only: provider routing. Defaults to "openai" (Lovable AI Gateway).
+    // "anthropic" calls the Anthropic Messages API directly with the same
+    // structured-output schema; the rest of the pipeline is identical.
+    provider?: "openai" | "anthropic";
   },
 ): Promise<DrafterV2Result> {
   const t_total = Date.now();
@@ -347,6 +354,7 @@ export async function runDrafterV2(
   const useAsSource = opts?.useAsSource ?? false;
   const forceModel = opts?.forceModel;
   const skipEscalation = opts?.skipEscalation === true || !!forceModel;
+  const provider: "openai" | "anthropic" = opts?.provider ?? "openai";
 
 
   const inputSources = buildInputSources(
@@ -378,6 +386,7 @@ export async function runDrafterV2(
       ms: Date.now() - t_total,
       model_initial: forceModel ?? MODEL_MINI,
       model_final: MODEL_MINI,
+      provider,
       escalated: false,
       sources_passed: 0,
       sources_used: 0,
@@ -398,25 +407,58 @@ export async function runDrafterV2(
     parameters: DRAFTER_V2_TOOL_PARAMETERS,
   };
 
+  let lastUsage: { input_tokens?: number; output_tokens?: number } | undefined;
+
   const tryOne = async (model: string, stage: string) => {
     const t0 = Date.now();
-    const resp = await callOpenAIJsonTool<unknown>({
-      model,
-      system: SYSTEM_PROMPT_V2,
-      user: userMsg,
-      tool,
-    });
+    let data: unknown = null;
+    let raw_text = "";
+    let parse_error: string | undefined;
+    let http_status = 0;
+    let http_error: string | undefined;
+
+    if (provider === "anthropic") {
+      const resp = await callAnthropicJsonTool<unknown>({
+        model,
+        system: SYSTEM_PROMPT_V2,
+        user: userMsg,
+        tool: {
+          name: tool.name,
+          description: tool.description,
+          input_schema: tool.parameters,
+        },
+      });
+      data = resp.data;
+      raw_text = resp.raw_text;
+      parse_error = resp.parse_error;
+      http_status = resp.http_status;
+      http_error = resp.http_error;
+      lastUsage = resp.usage;
+    } else {
+      const resp = await callOpenAIJsonTool<unknown>({
+        model,
+        system: SYSTEM_PROMPT_V2,
+        user: userMsg,
+        tool,
+      });
+      data = resp.data;
+      raw_text = resp.raw_text;
+      parse_error = resp.parse_error;
+      http_status = resp.http_status;
+      http_error = resp.http_error;
+    }
+
     stage_runs.push({
       stage,
       model,
       ms: Date.now() - t0,
-      ok: !!resp.data,
+      ok: !!data,
       escalated: stage === "drafter_v2.escalated",
-      parse_error: resp.parse_error,
-      http_status: resp.http_status,
-      http_error: resp.http_error,
+      parse_error,
+      http_status,
+      http_error,
     });
-    return resp;
+    return { data, raw_text, parse_error };
   };
 
   const initialModel = forceModel ?? MODEL_MINI;
@@ -459,6 +501,7 @@ export async function runDrafterV2(
       ms: Date.now() - t_total,
       model_initial: forceModel ?? MODEL_MINI,
       model_final: modelUsed,
+      provider,
       escalated,
       sources_passed,
       sources_used: 0,
@@ -470,6 +513,7 @@ export async function runDrafterV2(
       raw_text: (resp.raw_text || "").slice(0, 1000),
       structured_validation: parsed.report,
       schema_failure_reason: schema_failure_reason ?? "schema_invalid",
+      usage: lastUsage,
     };
   }
 
@@ -480,6 +524,7 @@ export async function runDrafterV2(
     ms: Date.now() - t_total,
     model_initial: forceModel ?? MODEL_MINI,
     model_final: modelUsed,
+    provider,
     escalated,
     sources_passed,
     sources_used: built.used_sources.length,
@@ -496,5 +541,6 @@ export async function runDrafterV2(
         .join("\n")
         .slice(0, 20000),
     }),
+    usage: lastUsage,
   };
 }
