@@ -331,13 +331,23 @@ export async function runDrafterV2(
   claims: Claim[],
   candidates: Candidate[],
   verifier: { usable: UsableCandidate[]; verdicts: Verdict[] },
-  opts?: { userDocs?: UserDocument[]; useAsSource?: boolean },
+  opts?: {
+    userDocs?: UserDocument[];
+    useAsSource?: boolean;
+    // Harness-only: force a specific drafter model (e.g. MODEL_FULL) and
+    // skip the mini→full escalation. Used by offline model-comparison runs.
+    forceModel?: string;
+    skipEscalation?: boolean;
+  },
 ): Promise<DrafterV2Result> {
   const t_total = Date.now();
   const stage_runs: StageRun[] = [];
 
   const userDocs = opts?.userDocs ?? [];
   const useAsSource = opts?.useAsSource ?? false;
+  const forceModel = opts?.forceModel;
+  const skipEscalation = opts?.skipEscalation === true || !!forceModel;
+
 
   const inputSources = buildInputSources(
     candidates,
@@ -366,7 +376,7 @@ export async function runDrafterV2(
     return {
       ok: false,
       ms: Date.now() - t_total,
-      model_initial: MODEL_MINI,
+      model_initial: forceModel ?? MODEL_MINI,
       model_final: MODEL_MINI,
       escalated: false,
       sources_passed: 0,
@@ -409,9 +419,10 @@ export async function runDrafterV2(
     return resp;
   };
 
-  let modelUsed = MODEL_MINI;
+  const initialModel = forceModel ?? MODEL_MINI;
+  let modelUsed = initialModel;
   let escalated = false;
-  let resp = await tryOne(MODEL_MINI, "drafter_v2.initial");
+  let resp = await tryOne(initialModel, "drafter_v2.initial");
 
   let parsed = validateStructuredDraft(resp.data, allowedRefs);
   let schema_failure_reason: DrafterV2Result["schema_failure_reason"];
@@ -424,7 +435,8 @@ export async function runDrafterV2(
     else schema_failure_reason = "schema_invalid";
   }
 
-  if (!parsed.draft) {
+  if (!parsed.draft && !skipEscalation) {
+
     escalated = true;
     modelUsed = MODEL_FULL;
     resp = await tryOne(MODEL_FULL, "drafter_v2.escalated");
@@ -445,7 +457,7 @@ export async function runDrafterV2(
     return {
       ok: false,
       ms: Date.now() - t_total,
-      model_initial: MODEL_MINI,
+      model_initial: forceModel ?? MODEL_MINI,
       model_final: modelUsed,
       escalated,
       sources_passed,
@@ -466,7 +478,7 @@ export async function runDrafterV2(
   return {
     ok: true,
     ms: Date.now() - t_total,
-    model_initial: MODEL_MINI,
+    model_initial: forceModel ?? MODEL_MINI,
     model_final: modelUsed,
     escalated,
     sources_passed,
