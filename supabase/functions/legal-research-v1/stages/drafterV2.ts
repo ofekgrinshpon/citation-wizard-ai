@@ -78,6 +78,17 @@ const SYSTEM_PROMPT_V2 = `אתה חוקר משפט ישראלי הכותב תז�
 
 העדף ניסוח משפטי ברור על פני ניסוח אקדמי־עמום. מטרת התשובה היא דיוק משפטי, לא יצירת רושם לשוני.
 
+חיזוק איכות לשונית — עברית משפטית נקייה, שמות רשמיים, ותוויות בעלי דין (חובה):
+- אל תמציא מילים בעברית ואל תייצר צורות נטייה מומצאות. אם אינך בטוח שהצירוף קיים בעברית משפטית — נסח בפשטות במונח מקובל.
+- אל תכניס מילים לועזיות (אנגלית, ספרדית, לטינית וכד') לתוך תשובה בעברית, אלא אם מדובר במונח משפטי מקובל וכשהשימוש בו הכרחי. אל תכתוב alcance, scope, due process וכד' בתוך משפט עברי — השתמש ב"היקף", "הסמכות", "הליך הוגן" וכיו"ב.
+- שמות חוקים רשמיים — בדיוק כפי שהם. למשל: "חוק-יסוד: כבוד האדם וחירותו" — לא "חוק-יסוד של כיבוד האדם והחירות", לא "כיבוד האדם והחירות", לא וריאציות אחרות. שמור על נקודתיים, יידוע ונטיות מדויקות.
+- תוויות בעלי דין לפי הקשר ההליך:
+  - הליך אזרחי / נזיקי: "תובע" ו"נתבע". אסור "נאשם" בהקשר אזרחי.
+  - הליך פלילי: "המאשימה" ו"נאשם".
+  - הליך מנהלי / עתירה: "עותר" ו"משיב".
+- אל תמציא צירופים סביב סמכות מנהלית. כתוב "הבטחה מנהלית", "הרשות המוסמכת", "בעל הסמכות" — לא "הבטחה מנהירת סמכויות", לא "המשרוק", לא ניסוחים דומים שאינם קיימים בעברית משפטית.
+- העדף עברית משפטית פשוטה ונכונה על פני ניסוח מרשים-לכאורה. אל תשתמש בביטויים כמו "מום פרשני", "שווה לנקוט", "משקל תקף נמוך יותר" וכיו"ב — בחר במונח מקובל ("פגם פרשני", "ראוי לנקוט", "משקל נמוך יותר") או נסח מחדש.
+
 זכור: אם תכניס סימן עילי כלשהו לתוך text, התשובה תיפסל.`;
 
 const DRAFTER_V2_TOOL_PARAMETERS: Record<string, unknown> = {
@@ -177,6 +188,26 @@ const BROKEN_HEBREW_DENYLIST = [
   "אפסון נזיקין",
   "סעדין ניתנים",
   "כברות של נאשם אחר",
+  // V2.1e additions — invented words / malformed compounds / unnatural phrasing.
+  "סמלייים",
+  "סמליומית",
+  "הבטחה מנהירת סמכויות",
+  "המשרוק",
+  "מום פרשני",
+  "שווה לנקוט",
+  "משקל תקף נמוך יותר",
+];
+
+// V2.1e — wrong official names. Canonical: "חוק-יסוד: כבוד האדם וחירותו".
+const WRONG_OFFICIAL_NAME_PHRASES = [
+  "כיבוד האדם והחירות",
+  "חוק-יסוד של כיבוד האדם והחירות",
+];
+
+// V2.1e — foreign words appearing inside Hebrew legal answers. Tight allowlist —
+// not a generic Latin sweep (URLs/refs contain Latin). Case-insensitive.
+const FOREIGN_WORD_PATTERNS: RegExp[] = [
+  /\balcance\b/gi,
 ];
 
 // Truncated source-label fragments: דו / הדו / והדו / הספרות והדו followed by . or "
@@ -193,7 +224,21 @@ const SCAFFOLD_PATTERNS: Array<{ bucket: string; re: RegExp }> = [
   { bucket: "scaffold_leakage", re: /\bu\d+p\d+\b/g },
 ];
 
-function computeQualityWarning(answer: string): QualityWarning | undefined {
+// V2.1e — civil/tort vs criminal context markers for wrong-party-label check.
+const CIVIL_MARKERS = [
+  "נזיקין", "רשלנות", "תביעה אזרחית", "פיצויים", "תובע", "נתבע",
+  "חוזה", "חוזים", "הפרת חוזה", "עוולה",
+];
+const CRIMINAL_MARKERS = [
+  "פלילי", "פליליים", "כתב אישום", "הרשעה", "גזר דין",
+  "עונש", "מאסר", "קנס פלילי", "המאשימה",
+];
+const NAASHAM_RE = /(?<![\u05D0-\u05EA])ה?נאשם(?:ים|ת|ות)?(?![\u05D0-\u05EA])/g;
+
+function computeQualityWarning(
+  answer: string,
+  context?: { question?: string; source_context?: string },
+): QualityWarning | undefined {
   if (!answer) return undefined;
   const hits: QualityWarningHit[] = [];
 
@@ -202,6 +247,20 @@ function computeQualityWarning(answer: string): QualityWarning | undefined {
     while (idx !== -1) {
       hits.push({ bucket: "broken_hebrew", match: phrase, index: idx });
       idx = answer.indexOf(phrase, idx + phrase.length);
+    }
+  }
+
+  for (const phrase of WRONG_OFFICIAL_NAME_PHRASES) {
+    let idx = answer.indexOf(phrase);
+    while (idx !== -1) {
+      hits.push({ bucket: "wrong_official_name", match: phrase, index: idx });
+      idx = answer.indexOf(phrase, idx + phrase.length);
+    }
+  }
+
+  for (const re of FOREIGN_WORD_PATTERNS) {
+    for (const m of answer.matchAll(re)) {
+      hits.push({ bucket: "foreign_word_in_hebrew", match: m[0], index: m.index ?? -1 });
     }
   }
 
@@ -216,6 +275,22 @@ function computeQualityWarning(answer: string): QualityWarning | undefined {
   for (const { bucket, re } of SCAFFOLD_PATTERNS) {
     for (const m of answer.matchAll(re)) {
       hits.push({ bucket, match: m[0], index: m.index ?? -1 });
+    }
+  }
+
+  // V2.1e — wrong party label in civil/tort context.
+  const ctxBlob = `${context?.question ?? ""}\n${context?.source_context ?? ""}`;
+  if (ctxBlob.trim()) {
+    const hasCivil = CIVIL_MARKERS.some((m) => ctxBlob.includes(m));
+    const hasCriminal = CRIMINAL_MARKERS.some((m) => ctxBlob.includes(m));
+    if (hasCivil && !hasCriminal) {
+      for (const m of answer.matchAll(NAASHAM_RE)) {
+        hits.push({
+          bucket: "wrong_party_label_civil",
+          match: m[0],
+          index: m.index ?? -1,
+        });
+      }
     }
   }
 
@@ -402,6 +477,12 @@ export async function runDrafterV2(
     stage_runs,
     structured_validation: parsed.report,
     builder_report: built.builder_report,
-    quality_warning: computeQualityWarning(built.answer_markdown),
+    quality_warning: computeQualityWarning(built.answer_markdown, {
+      question,
+      source_context: inputSources
+        .map((s) => `${s.title}\n${s.snippet ?? ""}\n${(s.supported_points ?? []).join("\n")}`)
+        .join("\n")
+        .slice(0, 20000),
+    }),
   };
 }
