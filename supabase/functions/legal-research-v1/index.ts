@@ -690,6 +690,26 @@ async function handle(req: Request): Promise<Response> {
       dropped_sources: pplx.dropped,
       verifier: verifierMeta,
       drafter: drafterMeta,
+      drafter_v2_full_compare: drafterFullCompare
+        ? {
+            ok: drafterFullCompare.ok,
+            model_initial: drafterFullCompare.model_initial,
+            model_final: drafterFullCompare.model_final,
+            escalated: drafterFullCompare.escalated,
+            ms: drafterFullCompare.ms,
+            sources_passed: drafterFullCompare.sources_passed,
+            sources_used: drafterFullCompare.sources_used,
+            answer_markdown: drafterFullCompare.answer_markdown,
+            footnotes: drafterFullCompare.footnotes,
+            used_sources: drafterFullCompare.used_sources,
+            structured_validation: drafterFullCompare.structured_validation,
+            builder_report: drafterFullCompare.builder_report,
+            quality_warning: drafterFullCompare.quality_warning,
+            schema_failure_reason: drafterFullCompare.schema_failure_reason,
+            error: drafterFullCompare.error,
+          }
+        : null,
+
       attachments: {
         count: attachmentResult.documents.length,
         use_as_source: useAsSource,
