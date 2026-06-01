@@ -477,6 +477,12 @@ export async function runDrafterV2(
     stage_runs,
     structured_validation: parsed.report,
     builder_report: built.builder_report,
-    quality_warning: computeQualityWarning(built.answer_markdown),
+    quality_warning: computeQualityWarning(built.answer_markdown, {
+      question,
+      source_context: inputSources
+        .map((s) => `${s.title}\n${s.snippet ?? ""}\n${(s.supported_points ?? []).join("\n")}`)
+        .join("\n")
+        .slice(0, 20000),
+    }),
   };
 }
