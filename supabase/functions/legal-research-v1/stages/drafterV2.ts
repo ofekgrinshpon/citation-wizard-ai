@@ -331,13 +331,23 @@ export async function runDrafterV2(
   claims: Claim[],
   candidates: Candidate[],
   verifier: { usable: UsableCandidate[]; verdicts: Verdict[] },
-  opts?: { userDocs?: UserDocument[]; useAsSource?: boolean },
+  opts?: {
+    userDocs?: UserDocument[];
+    useAsSource?: boolean;
+    // Harness-only: force a specific drafter model (e.g. MODEL_FULL) and
+    // skip the mini→full escalation. Used by offline model-comparison runs.
+    forceModel?: string;
+    skipEscalation?: boolean;
+  },
 ): Promise<DrafterV2Result> {
   const t_total = Date.now();
   const stage_runs: StageRun[] = [];
 
   const userDocs = opts?.userDocs ?? [];
   const useAsSource = opts?.useAsSource ?? false;
+  const forceModel = opts?.forceModel;
+  const skipEscalation = opts?.skipEscalation === true || !!forceModel;
+
 
   const inputSources = buildInputSources(
     candidates,
