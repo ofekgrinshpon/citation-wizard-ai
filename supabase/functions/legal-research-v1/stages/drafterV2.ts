@@ -188,6 +188,26 @@ const BROKEN_HEBREW_DENYLIST = [
   "אפסון נזיקין",
   "סעדין ניתנים",
   "כברות של נאשם אחר",
+  // V2.1e additions — invented words / malformed compounds / unnatural phrasing.
+  "סמלייים",
+  "סמליומית",
+  "הבטחה מנהירת סמכויות",
+  "המשרוק",
+  "מום פרשני",
+  "שווה לנקוט",
+  "משקל תקף נמוך יותר",
+];
+
+// V2.1e — wrong official names. Canonical: "חוק-יסוד: כבוד האדם וחירותו".
+const WRONG_OFFICIAL_NAME_PHRASES = [
+  "כיבוד האדם והחירות",
+  "חוק-יסוד של כיבוד האדם והחירות",
+];
+
+// V2.1e — foreign words appearing inside Hebrew legal answers. Tight allowlist —
+// not a generic Latin sweep (URLs/refs contain Latin). Case-insensitive.
+const FOREIGN_WORD_PATTERNS: RegExp[] = [
+  /\balcance\b/gi,
 ];
 
 // Truncated source-label fragments: דו / הדו / והדו / הספרות והדו followed by . or "
@@ -204,7 +224,21 @@ const SCAFFOLD_PATTERNS: Array<{ bucket: string; re: RegExp }> = [
   { bucket: "scaffold_leakage", re: /\bu\d+p\d+\b/g },
 ];
 
-function computeQualityWarning(answer: string): QualityWarning | undefined {
+// V2.1e — civil/tort vs criminal context markers for wrong-party-label check.
+const CIVIL_MARKERS = [
+  "נזיקין", "רשלנות", "תביעה אזרחית", "פיצויים", "תובע", "נתבע",
+  "חוזה", "חוזים", "הפרת חוזה", "עוולה",
+];
+const CRIMINAL_MARKERS = [
+  "פלילי", "פליליים", "כתב אישום", "הרשעה", "גזר דין",
+  "עונש", "מאסר", "קנס פלילי", "המאשימה",
+];
+const NAASHAM_RE = /(?<![\u05D0-\u05EA])ה?נאשם(?:ים|ת|ות)?(?![\u05D0-\u05EA])/g;
+
+function computeQualityWarning(
+  answer: string,
+  context?: { question?: string; source_context?: string },
+): QualityWarning | undefined {
   if (!answer) return undefined;
   const hits: QualityWarningHit[] = [];
 
@@ -213,6 +247,20 @@ function computeQualityWarning(answer: string): QualityWarning | undefined {
     while (idx !== -1) {
       hits.push({ bucket: "broken_hebrew", match: phrase, index: idx });
       idx = answer.indexOf(phrase, idx + phrase.length);
+    }
+  }
+
+  for (const phrase of WRONG_OFFICIAL_NAME_PHRASES) {
+    let idx = answer.indexOf(phrase);
+    while (idx !== -1) {
+      hits.push({ bucket: "wrong_official_name", match: phrase, index: idx });
+      idx = answer.indexOf(phrase, idx + phrase.length);
+    }
+  }
+
+  for (const re of FOREIGN_WORD_PATTERNS) {
+    for (const m of answer.matchAll(re)) {
+      hits.push({ bucket: "foreign_word_in_hebrew", match: m[0], index: m.index ?? -1 });
     }
   }
 
@@ -227,6 +275,22 @@ function computeQualityWarning(answer: string): QualityWarning | undefined {
   for (const { bucket, re } of SCAFFOLD_PATTERNS) {
     for (const m of answer.matchAll(re)) {
       hits.push({ bucket, match: m[0], index: m.index ?? -1 });
+    }
+  }
+
+  // V2.1e — wrong party label in civil/tort context.
+  const ctxBlob = `${context?.question ?? ""}\n${context?.source_context ?? ""}`;
+  if (ctxBlob.trim()) {
+    const hasCivil = CIVIL_MARKERS.some((m) => ctxBlob.includes(m));
+    const hasCriminal = CRIMINAL_MARKERS.some((m) => ctxBlob.includes(m));
+    if (hasCivil && !hasCriminal) {
+      for (const m of answer.matchAll(NAASHAM_RE)) {
+        hits.push({
+          bucket: "wrong_party_label_civil",
+          match: m[0],
+          index: m.index ?? -1,
+        });
+      }
     }
   }
 
