@@ -63,6 +63,21 @@ const SYSTEM_PROMPT_V2 = `אתה חוקר משפט ישראלי הכותב תז�
 - אל תכתוב כותרות עם # ## ###. כותרות יוצגו כ-bold דרך בלוק heading.
 - כל הפניה למקור נעשית אך ורק דרך source_refs. אסור לכתוב "ראו s2" או "לפי מקור 3" בתוך text.
 
+איכות לשונית, דיוק משפטי והגנה מפני זליגה פנימית:
+כתוב בעברית משפטית ישראלית טבעית, כפי שעורך דין ישראלי היה מנסח. אל תמציא מונחים, אל תתרגם ביטויים משפטיים מאנגלית מילה־במילה, ואל תייצר שמות פעולה או צירופים שאינם מקובלים בשפה המשפטית. אם אינך בטוח שמונח מסוים קיים בעברית משפטית תקינה — העדף ניסוח פשוט וברור.
+
+אין לכלול בתשובה ביטויים שבורים או מומצאים כגון: בשן טוב, לא להתאזר בסבירות, הודו-נתונה סמכות חוקית, תקנן הסביר, הגנה ההופכת, הכלתנייתיות, אפסון נזיקין, סעדין ניתנים, כברות של נאשם אחר.
+
+השתמש במונחים משפטיים לפי ההקשר: גזר דין מתאים להליך פלילי ולשלב הענישה; בהקשרים אזרחיים או מנהליים העדף לפי הצורך פסק דין, החלטה, סעד, פיצוי, תרופה או הכרעה.
+
+אין להוציא קטעים קטועים או תוויות מקור חלקיות בתוך גוף התשובה. אל תכתוב דו., והדו., הדו., הספרות והדו., או קיצור שנקטע באמצע. אם אתה מתכוון לדוח, כתוב דוח, דין וחשבון, או שם מקור ברור, והצמד את המקור דרך source_refs.
+
+אין לכלול בתשובה תוויות פנימיות או מזהים פנימיים כגון C1, C2, שאלה C2, claim_id, candidate_id, s1, u1p1, או כל מזהה שנראה כמו scaffold פנימי.
+
+שמור על מסגרת השאלה של המשתמש. אם המקורות עוסקים בנושא סמוך אך לא זהה, ציין זאת בזהירות ואל תחליף את שאלת המשתמש בנושא של המקורות. לדוגמה, אם המשתמש שאל על גביית דמי חסות / פרוטקשן והמקור עוסק בצווי הגנה, אל תהפוך את התשובה לשאלה על צווי הגנה; השתמש במקור רק כרקע או ציין שמדובר במקור סמוך.
+
+העדף ניסוח משפטי ברור על פני ניסוח אקדמי־עמום. מטרת התשובה היא דיוק משפטי, לא יצירת רושם לשוני.
+
 זכור: אם תכניס סימן עילי כלשהו לתוך text, התשובה תיפסל.`;
 
 const DRAFTER_V2_TOOL_PARAMETERS: Record<string, unknown> = {
@@ -100,6 +115,9 @@ function buildUserMessage(
 ): string {
   const lines: string[] = [];
   lines.push(`שאלת המשתמש: ${question}`);
+  lines.push(
+    "מסגרת התשובה חייבת להישאר נאמנה לשאלה כפי שנשאלה. אם המקורות עוסקים בנושא סמוך אך לא זהה — ציין זאת במפורש ואל תחליף את שאלת המשתמש.",
+  );
   lines.push("");
   lines.push("טענות (לשימוש פנימי בלבד — אל תזכיר מזהי טענות בשום text):");
   for (const cl of claims) {
@@ -137,6 +155,75 @@ function buildUserMessage(
   return lines.join("\n");
 }
 
+export interface QualityWarningHit {
+  bucket: string;
+  match: string;
+  index: number;
+}
+
+export interface QualityWarning {
+  buckets: string[];
+  hit_count: number;
+  hits: QualityWarningHit[];
+}
+
+const BROKEN_HEBREW_DENYLIST = [
+  "בשן טוב",
+  "לא להתאזר בסבירות",
+  "הודו-נתונה סמכות חוקית",
+  "תקנן הסביר",
+  "הגנה ההופכת",
+  "הכלתנייתיות",
+  "אפסון נזיקין",
+  "סעדין ניתנים",
+  "כברות של נאשם אחר",
+];
+
+// Truncated source-label fragments: דו / הדו / והדו / הספרות והדו followed by . or "
+// and then a non-Hebrew-letter (whitespace, punctuation, end). Hebrew letters U+05D0–U+05EA.
+const TRUNCATED_FRAGMENT_RE =
+  /(?<![\u05D0-\u05EA])((?:הספרות\s+)?ו?ה?דו)["\.](?![\u05D0-\u05EA])/g;
+
+// Scaffold leakage. Avoid broad s\d+ — too noisy.
+const SCAFFOLD_PATTERNS: Array<{ bucket: string; re: RegExp }> = [
+  { bucket: "scaffold_leakage", re: /שאלה\s+C\d+/g },
+  { bucket: "scaffold_leakage", re: /\bC\d+\b/g },
+  { bucket: "scaffold_leakage", re: /\bclaim_id\b/g },
+  { bucket: "scaffold_leakage", re: /\bcandidate_id\b/g },
+  { bucket: "scaffold_leakage", re: /\bu\d+p\d+\b/g },
+];
+
+function computeQualityWarning(answer: string): QualityWarning | undefined {
+  if (!answer) return undefined;
+  const hits: QualityWarningHit[] = [];
+
+  for (const phrase of BROKEN_HEBREW_DENYLIST) {
+    let idx = answer.indexOf(phrase);
+    while (idx !== -1) {
+      hits.push({ bucket: "broken_hebrew", match: phrase, index: idx });
+      idx = answer.indexOf(phrase, idx + phrase.length);
+    }
+  }
+
+  for (const m of answer.matchAll(TRUNCATED_FRAGMENT_RE)) {
+    hits.push({
+      bucket: "truncated_source_fragment",
+      match: m[0],
+      index: m.index ?? -1,
+    });
+  }
+
+  for (const { bucket, re } of SCAFFOLD_PATTERNS) {
+    for (const m of answer.matchAll(re)) {
+      hits.push({ bucket, match: m[0], index: m.index ?? -1 });
+    }
+  }
+
+  if (hits.length === 0) return undefined;
+  const buckets = Array.from(new Set(hits.map((h) => h.bucket))).sort();
+  return { buckets, hit_count: hits.length, hits: hits.slice(0, 50) };
+}
+
 export interface DrafterV2Result {
   ok: boolean;
   ms: number;
@@ -153,6 +240,7 @@ export interface DrafterV2Result {
   raw_text?: string;
   structured_validation: StructuredValidation;
   builder_report?: ReturnType<typeof buildFootnotedAnswer>["builder_report"];
+  quality_warning?: QualityWarning;
   schema_failure_reason?:
     | "no_tool_call"
     | "json_parse"
@@ -314,5 +402,6 @@ export async function runDrafterV2(
     stage_runs,
     structured_validation: parsed.report,
     builder_report: built.builder_report,
+    quality_warning: computeQualityWarning(built.answer_markdown),
   };
 }

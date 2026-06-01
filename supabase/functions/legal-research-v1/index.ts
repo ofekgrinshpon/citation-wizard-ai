@@ -634,6 +634,7 @@ async function handle(req: Request): Promise<Response> {
     structured_validation: drafter.structured_validation,
     builder_report: drafter.builder_report,
     schema_failure_reason: drafter.schema_failure_reason,
+    quality_warning: drafter.quality_warning,
   };
 
   const finalAnswer = drafter.ok ? drafter.answer_markdown : STUB_ANSWER;
