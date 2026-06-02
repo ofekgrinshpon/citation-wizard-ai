@@ -764,3 +764,40 @@
 **מסקנות ותובנות עקרוניות**
 
 לסיכום: מבחן Wednesbury ייצג דפררנטיות חדה שמגבילה בדיקה לתוצאות אבסורדיות; מידתיות היא מסגרת פורמלית ורב‑שלבית שמאפשרת בדיקה עניינית ואיזון מוצלח בין זכויות ותכליות; הסבירות הישראלית פועלת כגשר בין הגישות — פורמלית פחות מהמידתיות אך גמישה יותר מ‑Wednesbury, וכיום נוטה לשילוב אלמנטים מידתיים בהקשרים של זכויות יסוד ובתחומי מדיניות שאינם רגישים.⁶
+---
+
+## Correction: artifact-scan word-boundary fix
+
+The initial named-artifact scanner used a naive substring match for `סתמכות`, which spuriously fired inside the legitimate Hebrew word `הסתמכות` (reliance) and its inflections (`בהסתמכות`, `להסתמכות`, etc.). Re-scanning with a proper Hebrew word boundary — `(?<![א-ת])סתמכות` (i.e. only flag `סתמכות` when **not** preceded by a Hebrew letter, which is the standalone artifact form the user named) — yields:
+
+| Fixture | mini | GPT-5 |
+|---|---|---|
+| F1-national-identity | {} | {} |
+| F2-admin-promise | {} | {} |
+| F3-reasonableness | {} | {} |
+| F4-admin-longform | {} | {} |
+| F5-procedural | {} | {} |
+| F6-comparative | {} | {} |
+
+**Corrected named-artifact totals (both runs, all 6 fixtures):**
+
+- `כפופונקציה` / `כפו פונקציה`: **0 / 0**
+- standalone `סתמכות` (artifact form): **0 / 0**
+- `מעקרתיות`: **0 / 0**
+- `סאנטנס`: **0 / 0**
+- `דפרנציה`: **0 / 0**
+
+All five named artifacts disappear on **both** the mini revised-prompt and the forced-GPT-5 runs. The original `artifact_hits_total: 24` figure in `acceptance_gpt5` reflects only the false-positive `הסתמכות` substring matches and should be read as **0** for the user's named-artifact acceptance criterion.
+
+## Verdict
+
+- **Named-artifact acceptance: PASS on GPT-5.** Zero occurrences across all 6 fixtures of `כפופונקציה`, standalone `סתמכות`, `מעקרתיות`, `סאנטנס`, `דפרנציה`. (Mini also shows zero — meaning the specific tokens you flagged from the earlier manual read are not reproducing in this sweep on either model. The mini answers still need to be read for the broader register feel; the scanner only catches the five named tokens.)
+- **Citations clean.** `unknown_source_refs_total: 0`. `answers_with_adjacent_runs: 0`. No regression vs the mini revised-prompt run.
+- **Source usage parity.** Per-fixture `sources_used` is identical or near-identical between mini and GPT-5 (same upstream pack; any drift is purely drafter source-selection within the same usable set). No source-usage regression attributable to the drafter.
+- **Depth preserved.** GPT-5 prose length averages ~3.5k chars vs mini ~3.0k; concrete-anchor counts are comparable per fixture (see comparison table).
+- **Latency cost.** GPT-5 ~64.6s avg vs mini ~34.2s avg — ≈1.9x slower; max 79s. Token usage was not exposed in this harness path (`usage_totals_gpt5: {prompt:0, completion:0, total:0}`); a forward estimate based on prose length and OpenAI's posted GPT-5 vs GPT-5-mini pricing puts the per-answer cost delta at roughly an order of magnitude higher for GPT-5.
+- **Upstream pack frozen.** Confirmed by construction: a single pipeline run produces both the mini main answer and the forced-GPT-5 compare answer from the same claims/candidates/verifier verdicts/userDocs.
+
+## Recommendation
+
+The metric sweep does not show GPT-5 producing the artifacts you flagged manually, nor does it show mini producing them on this sweep. This suggests the artifacts you saw earlier are **stochastic on mini** rather than systematic. The next step is to **read the full GPT-5 answers above** and judge qualitatively whether the broader register (beyond the five named tokens) is materially more natural on GPT-5 — that's the decision the metrics cannot make for you. If GPT-5 reads materially cleaner on the prose-feel dimension, the question becomes whether the ~1.9x latency and higher per-answer cost are worth it for production; if not, the artifacts may be best addressed by another prompt micro-edit rather than a model swap.
