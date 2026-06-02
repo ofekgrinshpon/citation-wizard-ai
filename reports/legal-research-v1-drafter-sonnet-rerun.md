@@ -185,3 +185,34 @@ Key acceptance criteria from the request:
 
 טיוטת תקנות הכללת אמצעי זיהוי ביומטריים ונתוני
 ```
+
+## Critical finding — citation marker style
+
+Sonnet emits **Unicode superscript digits (¹²³⁴…) inline** as citation markers rather than the `[^N]` Markdown footnote refs the prompt requests. Distribution is roughly 1 superscript per footnote (avg 8.7 sup vs 7.6 footnotes per run), confirming these are model-generated inline citation markers, not stray glyphs.
+
+- `adjacent_marker_runs = 0` — no clustering (e.g. `¹²` adjacent), so no superscript-cluster artifact, but
+- the answer text still ships superscripts that the downstream renderer/cleanup pipeline expects as `[^N]`.
+
+By the acceptance criteria ("0 model-generated citation markers/superscripts"), **Sonnet fails this criterion** despite passing schema, unknown_refs, and probe checks. GPT-5 in the 4-way baseline produced 0 superscripts and used `[^N]` exclusively.
+
+## Compared to GPT-5 (summary)
+
+| Criterion | Target | Sonnet | GPT-5 (baseline) |
+|---|---|---|---|
+| Schema-valid runs | ≥10/11 | **11/11 ✅** | 11/11 |
+| Unknown source_refs | 0 | **0 ✅** | 0 |
+| Forbidden text hits | 0 | **0 ✅** | 0 |
+| Adjacent superscript runs | 0 | **0 ✅** | 0 |
+| Model-emitted superscripts | 0 | **96 ❌** | 0 |
+| Hebrew artifact probes | 0 | **0 ✅** | 0 |
+| Civil/criminal mix probes | 0 | **0 ✅** | 0 |
+| Avg latency | ≤ gpt-5 (~64s) | 69.3s (≈+9%) | ~63.6s |
+| Avg cost / run | ≤ gpt-5 (~$0.04) | $0.0675 (≈+69%) | ~$0.04 |
+
+## Conclusion
+
+The previous 5/11 `no_tool_call` failures were **almost certainly throttling / insufficient credits** — with retries + topped-up credits Sonnet reaches **11/11 schema-valid** and clean on every probe (unknown refs, forbidden text, Hebrew artifacts, civil/criminal mix).
+
+However Sonnet is **not a drop-in equivalent** to GPT-5 because it emits inline Unicode superscript citation markers instead of `[^N]` Markdown refs. This would require either a prompt change forcing `[^N]`, or a post-processor mapping superscripts → `[^N]`, before Sonnet could be considered for production. Latency is ~9% higher and cost ~69% higher than GPT-5.
+
+**Per the request, no production change is being made.** Sonnet remains gated behind the `x-drafter-v2-compare-models` header; GPT-5 remains the answer-mode default.
